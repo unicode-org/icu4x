@@ -2,10 +2,10 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! Zero-copy vector abstractions for arbitrary types.
+//! Zero-copy vector abstractions for arbitrary types, backed by byte slices.
 //!
 //! `zerovec` enables a far wider range of types — beyond just `&[u8]` and `&str` — to participate in
-//! efficient strategies like zero-copy deserialization. It is `serde` compatible and comes equipped with
+//! zero-copy deserialization from byte slices. It is `serde` compatible and comes equipped with
 //! proc macros
 //!
 //! Clients upgrading to `zerovec` benefit from zero heap allocations when deserializing

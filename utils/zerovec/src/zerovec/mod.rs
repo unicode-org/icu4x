@@ -73,11 +73,7 @@ use core::ops::Deref;
 /// items from `ZeroVec<T>`, we fetch the `T::ULE`, convert it on the fly to `T`, and return `T` by
 /// value.
 ///
-/// Benchmarks can be found in the project repository. We found that for common operations on small
-/// and large vectors, `ZeroVec<T>` performs from slightly faster to 15% slower than `Vec<T>`.
-/// However, the main performance improvement on `ZeroVec<T>` is when deserializing from a byte
-/// array; `ZeroVec<T>` deserializes 80% faster than `Vec<T>` in Serde Bincode, and it does not
-/// require any heap allocations.
+/// Benchmarks can be found in the project repository, with some results found in the [crate-level documentation](crate).
 ///
 /// See [the design doc](https://github.com/unicode-org/icu4x/blob/main/utils/zerovec/design_doc.md) for more details.
 #[derive(Clone)]
