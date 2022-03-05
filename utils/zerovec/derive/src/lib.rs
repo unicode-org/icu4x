@@ -73,11 +73,11 @@ pub fn varule_derive(input: TokenStream) -> TokenStream {
 ///
 /// let dates = Dates { dates: ZeroVec::alloc_from_slice(&[Date {y: 1985, m: 9, d: 3}, Date {y: 1970, m: 2, d: 20}, Date {y: 1990, m: 6, d: 13}]) };
 ///
-/// let postcard_bytes = postcard::to_stdvec(&dates)
+/// let bincode_bytes = bincode::serialize(&dates)
 ///     .expect("Serialization should be successful");
 ///
 /// // Will deserialize without allocations
-/// let deserialized: Dates = postcard::from_bytes(&postcard_bytes)
+/// let deserialized: Dates = bincode::deserialize(&bincode_bytes)
 ///     .expect("Deserialization should be successful");
 ///
 /// assert_eq!(deserialized.dates.get(1).unwrap().y, 1970);
@@ -166,11 +166,11 @@ pub fn make_ule(attr: TokenStream, item: TokenStream) -> TokenStream {
 /// let important_people = VarZeroVec::from(&[person1, person2]);
 /// let data = Data { important_people };
 ///
-/// let postcard_bytes = postcard::to_stdvec(&data)
+/// let bincode_bytes = bincode::serialize(&data)
 ///     .expect("Serialization should be successful");
 ///
 /// // Will deserialize without allocations
-/// let deserialized: Data = postcard::from_bytes(&postcard_bytes)
+/// let deserialized: Data = bincode::deserialize(&bincode_bytes)
 ///     .expect("Deserialization should be successful");
 ///
 /// assert_eq!(&deserialized.important_people.get(1).unwrap().name, "Jesse");
