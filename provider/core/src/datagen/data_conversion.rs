@@ -6,6 +6,17 @@ use crate::prelude::*;
 use alloc::boxed::Box;
 use core::fmt;
 
+/// A trait that allows for converting between data payloads of different types.
+///
+/// These payloads will typically be some kind of erased payload, either with
+/// AnyMarker, BufferMarker, or SerializeMarker, where converting requires reifying the type.
+/// A type implementing [`DataConverter`] will essentially have a "registry" mapping keys to
+/// concrete marker types M, and reifying the input to a `DataPayload<M>`, performing some conversion
+/// or computation, and erasing the result to `DataPayload<MTo>`.
+///
+/// It will typically be implemented on data providers used in datagen.
+///
+/// The `impl_dyn_provider` is able to automatically implement this trait.
 pub trait DataConverter<MFrom: DataMarker, MTo: DataMarker> {
     fn convert(
         &self,

@@ -189,6 +189,7 @@ macro_rules! impl_dyn_provider {
             $crate::serde::SerializeMarker
         );
 
+        // If this fails to compile, enable the "datagen" feature on this crate.
         $crate::impl_dyn_provider!(
             $provider,
             { $($pat $(if $guard)? => $struct_m),+, },
@@ -209,6 +210,8 @@ macro_rules! impl_dyn_provider {
             [ $($struct_m),+, ],
             SERDE_SE
         );
+
+        // If this fails to compile, enable the "datagen" feature on this crate.
         $crate::impl_dyn_provider!(
             $provider,
             { $(<$struct_m as $crate::ResourceMarker>::KEY => $struct_m),+, },

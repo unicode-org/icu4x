@@ -6,12 +6,14 @@ use crate::buf::{BufferFormat, BufferMarker};
 use crate::prelude::*;
 use yoke::trait_hack::YokeTraitHack;
 
+/// Stats on the heap size needed when attempting to zero-copy-deserialize
+/// a postcard-formatted data struct.
 #[derive(Debug, Copy, Clone, yoke::Yokeable, Default)]
 pub struct HeapStats {
     pub bytes_needed: u64,
 }
 
-/// The [`DataMarker`] marker type for [`AnyPayload`].
+/// The [`DataMarker`] marker type for [`HeapStats`].
 pub struct HeapStatsMarker;
 
 impl DataMarker for HeapStatsMarker {
@@ -19,6 +21,12 @@ impl DataMarker for HeapStatsMarker {
 }
 
 impl DataPayload<BufferMarker> {
+    /// Given a buffer known to be in postcard-0.7 format, attempt to zero-copy
+    /// deserialize it and record the amount of heap allocations that occurred.
+    ///
+    /// Ideally, this number should be zero.
+    ///
+    /// [`dhat`]'s profiler must be initialized before using this.
     pub fn attempt_zero_copy_heap_size<M>(self) -> HeapStats
     where
         M: DataMarker,
@@ -26,14 +34,8 @@ impl DataPayload<BufferMarker> {
         for<'de> YokeTraitHack<<M::Yokeable as yoke::Yokeable<'de>>::Output>:
             serde::Deserialize<'de>,
     {
-        // let mut s = postcard::Serializer {
-        //     output: postcard::flavors::AllocVec(vec![]),
-        // };
-        // let mut erased_s = Box::new(<dyn erased_serde::Serializer>::erase(&mut s));
-        // self.serialize(&mut *erased_s)?;
         let stats_before = dhat::HeapStats::get();
-        // let _reified_data: YokeTraitHack<<M::Yokeable as yoke::Yokeable>::Output> =
-        //     postcard::from_bytes(&s.output.0)?;
+        // reify, but do nothing with the type
         let _reified_data: DataPayload<M> = self
             .into_deserialized(BufferFormat::Postcard07)
             .expect("Failed to deserialize BufferMarker as postcard-0.7");
