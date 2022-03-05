@@ -101,7 +101,7 @@ fn main() -> eyre::Result<()> {
         eyre::bail!("Value for --uprops-path must be specified (or --input-from-testdata)",)
     };
     let cldr_paths = Box::new(CldrPathsAllInOne {
-        cldr_json_root: cldr_json_root,
+        cldr_json_root,
         locale_subset: matches
             .value_of("CLDR_LOCALE_SUBSET")
             .unwrap_or("full")
