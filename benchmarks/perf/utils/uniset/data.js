@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1646354424337,
+  "lastUpdate": 1646438409630,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -21449,6 +21449,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 52582387,
             "range": "± 307615",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "b6c6994edc1ac8f069446063b5b5151a70c328eb",
+          "message": "Split docs into their own CI job (#1563)",
+          "timestamp": "2022-03-04T17:51:53-06:00",
+          "tree_id": "d809fae9de931659277ba42cba604bc72f49f2da",
+          "url": "https://github.com/unicode-org/icu4x/commit/b6c6994edc1ac8f069446063b5b5151a70c328eb"
+        },
+        "date": 1646438393847,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 46015469,
+            "range": "± 1559415",
             "unit": "ns/iter"
           }
         ]
