@@ -283,22 +283,26 @@ pub mod vecs {
 // Due to quirks of how rustdoc does documentation on reexports, these must be in this module and not reexported from
 // a submodule
 
-/// Generate a corresponding ULE type and the relevant AsULE implementations for this type
+/// Generate a corresponding [`ULE`] type and the relevant [`AsULE`] implementations for this type
 ///
-/// This can be attached to structs containing only AsULE types, or C-like enums that have `#[repr(u8)]`
+/// This can be attached to structs containing only [`AsULE`] types, or C-like enums that have `#[repr(u8)]`
 /// and all explicit discriminants.
 ///
-/// The type must be `Copy`, `PartialEq`, and `Eq`.
+/// The type must be [`Copy`], [`PartialEq`], and [`Eq`].
 ///
-/// By default this attribute will also autogenerate a `ZeroMapKV` implementation, which requires
-/// `Ord` and `PartialOrd` on `Self`. You can opt out of this with `#[zerovec::skip_kv]`.
+/// By default this attribute will also autogenerate a [`ZeroMapKV`] implementation, which requires
+/// [`Ord`] and [`PartialOrd`] on `Self`. You can opt out of this with `#[zerovec::skip_kv]`.
 ///
-/// This implementation will also by default autogenerate `Ord` and `PartialOrd` on the ULE type based on
+/// This implementation will also by default autogenerate [`Ord`] and [`PartialOrd`] on the [`ULE`] type based on
 /// the implementation on `Self`. You can opt out of this with `#[zerovec::skip_ord]`
 ///
 /// For enums, this implementation will generate a crate-public `fn new_from_u8(value: u8) -> Option<Self>`
 /// method on the main type that allows one to construct the value from a u8. If this method is desired
 /// to be more public, it should be wrapped.
+///
+/// [`ULE`]: ule::ULE
+/// [`AsULE`]: ule::AsULE
+/// [`ZeroMapKV`]: maps::ZeroMapKV
 ///
 /// # Example
 ///
@@ -335,30 +339,38 @@ pub mod vecs {
 #[cfg(feature = "derive")]
 pub use zerovec_derive::make_ule;
 
-/// Generate a corresponding VarULE type and the relevant EncodeAsVarULE/ZeroFrom implementations for this type
+/// Generate a corresponding [`VarULE`] type and the relevant [`EncodeAsVarULE`]/[`zerofrom::ZeroFrom`]
+/// implementations for this type
 ///
-/// This can be attached to structs containing only AsULE types with the last field being `Cow<'a, str>`,
-/// `Cow<'a, [u8]>`, ZeroSlice, or VarZeroSlice.
+/// This can be attached to structs containing only [`AsULE`] types with the last field being [`Cow<'a, str>`](alloc::borrow::Cow),
+/// [`Cow<'a, str>`](alloc::borrow::Cow), [`ZeroSlice`], or [`VarZeroSlice`].
 ///
-/// The type must be `PartialEq` and `Eq`.
+/// The type must be [`PartialEq`] and [`Eq`].
 ///
-/// `EncodeAsVarULE` and `ZeroFrom` are useful for avoiding the need to deal with the VarULE type directly. In particular,
-/// it is recommended to use `ZeroFrom` to convert the VarULE type back to this type in a cheap, zero-copy way (see the example
+/// [`EncodeAsVarULE`] and [`zerofrom::ZeroFrom`] are useful for avoiding the need to deal with
+/// the [`VarULE`] type directly. In particular, it is recommended to use [`zerofrom::ZeroFrom`]
+/// to convert the [`VarULE`] type back to this type in a cheap, zero-copy way (see the example below
 /// for more details).
 ///
-/// Provided the type implements `serde::Serialize` and `serde::Deserialize`, this attribute can also generate
-/// the relevant serialize/deserialize implementations for the `VarULE` type if you apply the `#[zerovec::serde]`
+/// Provided the type implements [`serde::Serialize`] and [`serde::Deserialize`], this attribute can also generate
+/// the relevant serialize/deserialize implementations for the [`VarULE`] type if you apply the `#[zerovec::serde]`
 /// attribute. Those impls are required to support human-readable serialization of the VarZeroVec.
 /// This needs the `serde` feature to be enabled on the `zerovec` crate to work.
 ///
-/// By default this attribute will also autogenerate a `ZeroMapKV` implementation, which requires
-/// `Ord` and `PartialOrd` on the `VarULE` type. You can opt out of this with `#[zerovec::skip_kv]`.
+/// By default this attribute will also autogenerate a [`ZeroMapKV`] implementation, which requires
+/// [`Ord`] and [`PartialOrd`] on the [`VarULE`] type. You can opt out of this with `#[zerovec::skip_kv]`.
 ///
-/// This implementation will also by default autogenerate `Ord` and `PartialOrd` on the VarULE type based on
+/// This implementation will also by default autogenerate [`Ord`] and [`PartialOrd`] on the [`VarULE`] type based on
 /// the implementation on `Self`. You can opt out of this with `#[zerovec::skip_ord]`
 ///
-/// Note that this implementation will autogenerate `EncodeAsVarULE` impls for _both_ `Self` and `&Self`
-/// for convenience. This allows for a little more flexibility in how things are encoded.
+/// Note that this implementation will autogenerate [`EncodeAsVarULE`] impls for _both_ `Self` and `&Self`
+/// for convenience. This allows for a little more flexibility encoding slices.
+///
+/// [`EncodeAsVarULE`]: ule::EncodeAsVarULE
+/// [`VarULE`]: ule::VarULE
+/// [`ULE`]: ule::ULE
+/// [`AsULE`]: ule::AsULE
+/// [`ZeroMapKV`]: maps::ZeroMapKV
 ///
 /// # Example
 ///

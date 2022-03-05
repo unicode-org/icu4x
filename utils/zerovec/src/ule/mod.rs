@@ -362,20 +362,20 @@ pub unsafe trait VarULE: 'static {
 // Due to quirks of how rustdoc does documentation on reexports, these must be in this module and not reexported from
 // a submodule
 
-/// Custom derive for `zerovec::ULE`,
+/// Custom derive for [`ULE`].
 ///
-/// This can be attached to `Copy` structs containing only ULE types.
+/// This can be attached to [`Copy`] structs containing only [`ULE`] types.
 ///
-/// Most of the time, it is recommended one use [`#[make_ule]`](macro@make_ule) instead of defining
+/// Most of the time, it is recommended one use [`#[make_ule]`](crate::make_ule) instead of defining
 /// a custom ULE type.
 #[cfg(feature = "derive")]
 pub use zerovec_derive::ULE;
 
-/// Custom derive for `zerovec::VarULE`,
+/// Custom derive for [`VarULE`]
 ///
-/// This can be attached to structs containing only ULE types with one VarULE type at the end.
+/// This can be attached to structs containing only [`ULE`] types with one [`VarULE`] type at the end.
 ///
-/// Most of the time, it is recommended one use [`#[make_varule]`](macro@make_varule) instead of defining
-/// a custom VarULE type.
+/// Most of the time, it is recommended one use [`#[make_varule]`](crate::make_varule) instead of defining
+/// a custom [`VarULE`] type.
 #[cfg(feature = "derive")]
 pub use zerovec_derive::VarULE;
