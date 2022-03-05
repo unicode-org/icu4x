@@ -349,7 +349,23 @@ fn main() -> eyre::Result<()> {
         _ => unreachable!(),
     };
 
-    selected_keys.into_par_iter().try_for_each(|key| {
+    // Split the selected_keys into two sets: segmenter_keys and other_keys.
+    let (segmenter_keys, mut other_keys): (HashSet<ResourceKey>, HashSet<ResourceKey>) =
+        selected_keys
+            .into_iter()
+            .partition(|k| icu_segmenter::ALL_KEYS.contains(k));
+
+    if !segmenter_keys.is_empty() {
+        // Add resource keys for Unicode Properties that the segmenter data depends on.
+        other_keys = other_keys
+            .union(&get_segmenter_dependency_keys())
+            .copied()
+            .collect();
+    }
+
+    // First stage: generate resources for other_keys, which contain Unicode Properties required by
+    // the segmenter's rule data.
+    other_keys.into_par_iter().try_for_each(|key| {
         let result = provider
             .supported_options_for_key(key)?
             .collect::<Vec<_>>()
@@ -380,11 +396,8 @@ fn main() -> eyre::Result<()> {
         }
     })?;
 
-    // Segmenter's rule data depends on various Unicode Properties. We have to generate them after
-    // uprops.
-    if matches.is_present("TEST_KEYS") {
-        // FIXME: We should support specifying segmenter keys in --keys.
-        let segmenter_keys = icu_segmenter::ALL_KEYS;
+    // Second stage: now we have Unicode Properties generated. Generate the segmenter rule data.
+    if !segmenter_keys.is_empty() {
         let segmenter_data_root = icu_provider_segmenter::segmenter_data_root();
         let segmenter_provider: Box<dyn IterableDynProvider<SerializeMarker> + Sync> = Box::new(
             icu_provider_segmenter::create_exportable_provider(&segmenter_data_root)?,
@@ -410,8 +423,15 @@ fn main() -> eyre::Result<()> {
 
             exporter.flush(key)?;
 
-            log::info!("Writing key: {}", key);
-            result
+            if matches.is_present("TEST_KEYS")
+                && matches!(result, Err(e) if e.kind == DataErrorKind::MissingResourceKey)
+            {
+                log::trace!("Skipping key: {}", key);
+                Ok(())
+            } else {
+                log::info!("Writing key: {}", key);
+                result
+            }
         })?;
     }
 
@@ -501,7 +521,23 @@ fn get_all_keys() -> Vec<ResourceKey> {
     v.extend(icu_properties::provider::key::ALL_MAP_KEYS);
     v.extend(icu_properties::provider::key::ALL_SCRIPT_EXTENSIONS_KEYS);
     v.extend(icu_properties::provider::key::ALL_SET_KEYS);
+    v.extend(icu_segmenter::ALL_KEYS);
     v
+}
+
+fn get_segmenter_dependency_keys() -> HashSet<ResourceKey> {
+    use icu_properties::provider::key::*;
+    // Unicode properties required to generate segmenter rule break data. See the implementation in
+    // provider/segmenter/src/transform.rs.
+    HashSet::from([
+        WORD_BREAK_V1,
+        GRAPHEME_CLUSTER_BREAK_V1,
+        SENTENCE_BREAK_V1,
+        EXTENDED_PICTOGRAPHIC_V1,
+        LINE_BREAK_V1,
+        EAST_ASIAN_WIDTH_V1,
+        GENERAL_CATEGORY_V1,
+    ])
 }
 
 #[test]
