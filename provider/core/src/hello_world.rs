@@ -142,7 +142,14 @@ impl ResourceProvider<HelloWorldV1Marker> for HelloWorldProvider {
 
 impl_dyn_provider!(HelloWorldProvider, [HelloWorldV1Marker,], ANY);
 
-#[cfg(feature = "serialize")]
+#[cfg(all(feature = "serialize", not(feature = "datagen")))]
+impl_dyn_provider!(
+    HelloWorldProvider,
+    [HelloWorldV1Marker,],
+    SERDE_SE
+);
+
+#[cfg(feature = "datagen")]
 impl_dyn_provider!(
     HelloWorldProvider,
     [HelloWorldV1Marker,],
