@@ -4,6 +4,7 @@
 
 use crate::prelude::*;
 use core::fmt;
+use alloc::boxed::Box;
 
 pub trait DataConverter<MFrom: DataMarker, MTo: DataMarker> {
     fn convert(
