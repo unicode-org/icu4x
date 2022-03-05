@@ -3,8 +3,8 @@
 Zero-copy vector abstractions for arbitrary types.
 
 `zerovec` enables a far wider range of types — beyond just `&[u8]` and `&str` — to participate in
-efficient strategies like zero-copy deserialization. It is `serde` compatible and comes equipped with
-proc macros
+zero-copy deserialization from byte arrays. It is `serde` compatible and comes equipped with
+proc macros.
 
 Clients upgrading to `zerovec` benefit from zero heap allocations when deserializing
 read-only data.
