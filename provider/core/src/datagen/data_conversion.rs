@@ -3,8 +3,8 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::prelude::*;
-use core::fmt;
 use alloc::boxed::Box;
+use core::fmt;
 
 pub trait DataConverter<MFrom: DataMarker, MTo: DataMarker> {
     fn convert(
