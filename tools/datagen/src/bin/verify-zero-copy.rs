@@ -27,6 +27,9 @@ static ALLOC: dhat::Alloc = dhat::Alloc;
 
 static EXPECTED_VIOLATIONS: &[&str] = &[
     "datetime/skeletons@1",
+    "list/and@1",
+    "list/or@1",
+    "list/unit@1",
     "locale_canonicalizer/aliases@1",
     "locale_canonicalizer/likelysubtags@1",
     "time_zone/formats@1",
