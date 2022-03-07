@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1646679421669,
+  "lastUpdate": 1646686209799,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -22271,6 +22271,48 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 173772,
             "range": "± 273",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "e3d28183ffd5941035c7313fdcbf3aab24f9a184",
+          "message": "Update principles.md (#1649)",
+          "timestamp": "2022-03-07T12:41:30-08:00",
+          "tree_id": "d3ee3ff290c950f2be9800d8f1dc78c50c1cac6e",
+          "url": "https://github.com/unicode-org/icu4x/commit/e3d28183ffd5941035c7313fdcbf3aab24f9a184"
+        },
+        "date": 1646686197700,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 75580,
+            "range": "± 510",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 804572,
+            "range": "± 2111",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 173638,
+            "range": "± 319",
             "unit": "ns/iter"
           }
         ]
