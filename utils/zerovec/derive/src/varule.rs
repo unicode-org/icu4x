@@ -416,6 +416,26 @@ fn make_encode_impl(
                 dst[#remaining_offset..].copy_from_slice(last_bytes);
             }
         }
+
+        // This second impl exists to allow for using EncodeAsVarULE without cloning
+        //
+        // A blanket impl cannot exist without coherence issues
+        unsafe impl #maybe_lt_bound zerovec::ule::EncodeAsVarULE<#ule_name> for &'_ #name #maybe_lt_bound {
+            // Safety: unimplemented as the other two are implemented
+            fn encode_var_ule_as_slices<R>(&self, cb: impl FnOnce(&[&[u8]]) -> R) -> R {
+                unreachable!("other two methods implemented")
+            }
+
+            // Safety: returns the total length of the ULE form by adding up the lengths of each element's ULE forms
+            fn encode_var_ule_len(&self) -> usize {
+                (**self).encode_var_ule_len()
+            }
+
+            // Safety: converts each element to ULE form and writes them in sequence
+            fn encode_var_ule_write(&self, mut dst: &mut [u8]) {
+                (**self).encode_var_ule_write(dst)
+            }
+        }
     )
 }
 

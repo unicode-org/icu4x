@@ -7,6 +7,9 @@
 //! Traits over unaligned little-endian data (ULE, pronounced "yule").
 //!
 //! The main traits for this module are [`ULE`], [`AsULE`] and, [`VarULE`].
+//!
+//! See [the design doc](https://github.com/unicode-org/icu4x/blob/main/utils/zerovec/design_doc.md) for details on how these traits
+//! works under the hood.
 mod chars;
 #[cfg(doc)]
 pub mod custom;
@@ -25,9 +28,6 @@ use alloc::alloc::Layout;
 use alloc::borrow::ToOwned;
 use alloc::boxed::Box;
 use core::{mem, slice};
-
-#[cfg(feature = "derive")]
-pub use zerovec_derive::{VarULE, ULE};
 
 /// Fixed-width, byte-aligned data that can be cast to and from a little-endian byte slice.
 ///
@@ -355,3 +355,27 @@ pub unsafe trait VarULE: 'static {
         }
     }
 }
+
+// Proc macro reexports
+//
+// These exist so that our docs can use intra-doc links.
+// Due to quirks of how rustdoc does documentation on reexports, these must be in this module and not reexported from
+// a submodule
+
+/// Custom derive for [`ULE`].
+///
+/// This can be attached to [`Copy`] structs containing only [`ULE`] types.
+///
+/// Most of the time, it is recommended one use [`#[make_ule]`](crate::make_ule) instead of defining
+/// a custom ULE type.
+#[cfg(feature = "derive")]
+pub use zerovec_derive::ULE;
+
+/// Custom derive for [`VarULE`]
+///
+/// This can be attached to structs containing only [`ULE`] types with one [`VarULE`] type at the end.
+///
+/// Most of the time, it is recommended one use [`#[make_varule]`](crate::make_varule) instead of defining
+/// a custom [`VarULE`] type.
+#[cfg(feature = "derive")]
+pub use zerovec_derive::VarULE;
