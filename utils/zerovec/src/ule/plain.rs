@@ -199,3 +199,33 @@ impl AsULE for i8 {
 
 // EqULE is true because i8 is its own ULE.
 unsafe impl EqULE for i8 {}
+
+// These impls are actually safe and portable due to Rust always using IEEE 754, see the documentation
+// on f32::from_bits: https://doc.rust-lang.org/stable/std/primitive.f32.html#method.from_bits
+//
+// The only potential problem is that some older platforms treat signaling NaNs differently. This is
+// still quite portable, signalingness is not typically super important.
+
+impl AsULE for f32 {
+    type ULE = RawBytesULE<4>;
+    #[inline]
+    fn to_unaligned(self) -> Self::ULE {
+        self.to_bits().to_unaligned()
+    }
+    #[inline]
+    fn from_unaligned(unaligned: Self::ULE) -> Self {
+        Self::from_bits(u32::from_unaligned(unaligned))
+    }
+}
+
+impl AsULE for f64 {
+    type ULE = RawBytesULE<8>;
+    #[inline]
+    fn to_unaligned(self) -> Self::ULE {
+        self.to_bits().to_unaligned()
+    }
+    #[inline]
+    fn from_unaligned(unaligned: Self::ULE) -> Self {
+        Self::from_bits(u64::from_unaligned(unaligned))
+    }
+}
