@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1646438456513,
+  "lastUpdate": 1646679392998,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -25157,6 +25157,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 4829,
             "range": "± 307",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "e13137125fc55a0d52191f2bf259c54bce00b4ba",
+          "message": "ZeroVec documentation polish (#1655)\n\n* Improve lib docs\r\n\r\n* Fix error where insert() calls a function that should never directly be called by ZeroVec code since it can panic\r\n\r\n* Add insert_var_*()\r\n\r\n* import\r\n\r\n* regen readme\r\n\r\n* Safety sections are only useful for users when they talk about unsafe functions, 'this file is internally safe' isn't that useful\r\n\r\n* ZeroVec docs\r\n\r\n* rm non_exhaustive on zv\r\n\r\n* vzv docs\r\n\r\n* better vzv example\r\n\r\n* map docs\r\n\r\n* mention design doc\r\n\r\n* more map\r\n\r\n* Add proc macro examples\r\n\r\n* fix\r\n\r\n* regen\r\n\r\n* fixes\r\n\r\n* gen\r\n\r\n* Update utils/zerovec/README.md\r\n\r\nCo-authored-by: Shane F. Carr <shane@unicode.org>\r\n\r\n* fixes\r\n\r\n* Add autoderive for EncodeAsVar on references\r\n\r\n* postcard -> bincode in examples\r\n\r\n* Move over proc macro docs\r\n\r\n* use intra doc\r\n\r\nCo-authored-by: Shane F. Carr <shane@unicode.org>",
+          "timestamp": "2022-03-07T10:47:54-08:00",
+          "tree_id": "eb03052150045305e9905520d490005513228786",
+          "url": "https://github.com/unicode-org/icu4x/commit/e13137125fc55a0d52191f2bf259c54bce00b4ba"
+        },
+        "date": 1646679379235,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 2355,
+            "range": "± 103",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 4651,
+            "range": "± 148",
             "unit": "ns/iter"
           }
         ]
