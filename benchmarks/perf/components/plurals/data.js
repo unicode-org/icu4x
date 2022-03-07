@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1646679518323,
+  "lastUpdate": 1646686282899,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -28685,6 +28685,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 18822,
             "range": "± 838",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "e3d28183ffd5941035c7313fdcbf3aab24f9a184",
+          "message": "Update principles.md (#1649)",
+          "timestamp": "2022-03-07T12:41:30-08:00",
+          "tree_id": "d3ee3ff290c950f2be9800d8f1dc78c50c1cac6e",
+          "url": "https://github.com/unicode-org/icu4x/commit/e3d28183ffd5941035c7313fdcbf3aab24f9a184"
+        },
+        "date": 1646686268292,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 880,
+            "range": "± 26",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 6007,
+            "range": "± 326",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 17303,
+            "range": "± 1240",
             "unit": "ns/iter"
           }
         ]
