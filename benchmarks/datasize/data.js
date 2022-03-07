@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1646678967913,
+  "lastUpdate": 1646685797992,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -10553,6 +10553,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/e13137125fc55a0d52191f2bf259c54bce00b4ba"
         },
         "date": 1646678953470,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 1672368,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "e3d28183ffd5941035c7313fdcbf3aab24f9a184",
+          "message": "Update principles.md (#1649)",
+          "timestamp": "2022-03-07T12:41:30-08:00",
+          "tree_id": "d3ee3ff290c950f2be9800d8f1dc78c50c1cac6e",
+          "url": "https://github.com/unicode-org/icu4x/commit/e3d28183ffd5941035c7313fdcbf3aab24f9a184"
+        },
+        "date": 1646685779932,
         "tool": "ndjson",
         "benches": [
           {
