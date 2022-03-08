@@ -1090,6 +1090,7 @@ name = "icu_codepointtrie"
 version = "0.3.3"
 dependencies = [
  "displaydoc",
+ "icu_uniset",
  "postcard",
  "serde",
  "toml",
