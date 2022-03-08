@@ -2,12 +2,11 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use clap::{App, Arg};
+use clap::{App, Arg, ArgGroup};
 use icu_datagen::get_all_keys;
 use icu_provider::datagen::{DataConverter, HeapStatsMarker, OmnibusDatagenProvider};
 use icu_provider::filter::Filterable;
 use icu_provider::fork::by_key::ForkByKeyProvider;
-
 use icu_provider::iter::IterableDynProvider;
 use icu_provider::prelude::*;
 use icu_provider::serde::SerializeMarker;
@@ -15,7 +14,9 @@ use icu_provider_blob::BlobDataProvider;
 use icu_provider_cldr::CldrPathsAllInOne;
 use litemap::LiteMap;
 use simple_logger::SimpleLogger;
+use std::borrow::Cow;
 use std::cmp;
+use std::collections::HashSet;
 use std::fs::File;
 use std::io::Read;
 use std::mem::ManuallyDrop;
@@ -74,6 +75,28 @@ fn main() -> eyre::Result<()> {
                 .long("input-from-testdata")
                 .help("Load input data from the icu_testdata project."),
         )
+        .arg(
+            Arg::with_name("KEYS")
+                .short("k")
+                .long("keys")
+                .multiple(true)
+                .takes_value(true)
+                .help(
+                    "Include this resource key in the output. Accepts multiple arguments. \
+                    Also see --test-keys.",
+                ),
+        )
+        .group(
+            ArgGroup::with_name("KEY_MODE")
+                .arg("KEYS")
+                .arg("TEST_KEYS")
+                .required(true),
+        )
+        .arg(
+            Arg::with_name("TEST_KEYS")
+                .long("test-keys")
+                .help("Include all keys supported by testdata."),
+        )
         .get_matches();
 
     if matches.is_present("VERBOSE") {
@@ -88,6 +111,29 @@ fn main() -> eyre::Result<()> {
             .init()
             .unwrap()
     }
+
+    let all_keys = get_all_keys();
+    let selected_keys = if matches.is_present("TEST_KEYS") {
+        // We go with all keys now and later ignore key errors.
+        all_keys
+    } else {
+        let mut keys = HashSet::new();
+
+        if let Some(paths) = matches.values_of("KEYS") {
+            keys.extend(paths.map(Cow::Borrowed));
+        }
+
+        let filtered: Vec<_> = all_keys
+            .into_iter()
+            .filter(|k| keys.contains(k.get_path()))
+            .collect();
+
+        if filtered.is_empty() {
+            eyre::bail!("No keys selected (or keys passed in do not exist), pass in --keys KEYNAME or --test-keys");
+        }
+
+        filtered
+    };
 
     let cldr_json_root = if let Some(cldr) = matches.value_of("CLDR_ROOT") {
         PathBuf::from(cldr)
@@ -147,7 +193,7 @@ fn main() -> eyre::Result<()> {
     // Litemap keeps it sorted, convenient
     let mut violations: LiteMap<&'static str, u64> = LiteMap::new();
 
-    for key in get_all_keys().into_iter() {
+    for key in selected_keys.into_iter() {
         let props_key = key.get_path().starts_with("props/");
 
         let mut max_violation = 0;
