@@ -313,3 +313,15 @@ else
     exec cargo install --git https://github.com/rust-diplomat/diplomat.git --rev ${rev} diplomat-tool -f
 end
 '''
+
+[tasks.gn-gen]
+description = "Generate GN build rules for ICU4X"
+category = "ICU4X Development"
+script_runner = "@duckscript"
+script = '''
+exit_on_error true
+gnaw = which gnaw
+assert ${gnaw} "Could not find 'gnaw' in path.\n*** Please run 'cargo install gnaw' ***"
+pwd = pwd
+exec --fail-on-error ${gnaw} --manifest-path "${pwd}/ffi/gn/Cargo.toml" --project-root ${pwd} --output ${pwd}/ffi/gn/BUILD.gn
+'''

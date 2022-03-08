@@ -1,0 +1,78 @@
+# This file is part of ICU4X. For terms of use, please see the file
+# called LICENSE at the top level of the ICU4X source tree
+# (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
+
+[package]
+name = "icu_capi_gn"
+description = "GN interface to ICU4X"
+version = "0.1.0"
+authors = ["The ICU4X Project Developers"]
+edition = "2018"
+resolver = "2"
+repository = "https://github.com/unicode-org/icu4x"
+license-file = "LICENSE"
+categories = ["internationalization"]
+# Keep this in sync with other crates unless there are exceptions
+include = [
+    "src/**/*",
+    "examples/**/*",
+    "benches/**/*",
+    "tests/**/*",
+    "include/**/*",
+    "Cargo.toml",
+    "LICENSE",
+    "README.md"
+]
+
+[package.metadata.docs.rs]
+all-features = true
+
+[lib]
+crate-type = ["staticlib", "rlib"]
+path = "src/lib.rs"
+
+[dependencies]
+icu_capi = { version = "0.6", path = "../diplomat", default-features = false }
+
+# [gn.package.atomic-polyfill."0.1.5"]
+# rustflags = []
+
+# [gn.package.backtrace."0.3.63"]
+# rustflags = []
+
+# [gn.package.bare-metal."0.2.5"]
+# rustflags = []
+
+# [gn.package.camino."1.0.5"]
+# rustflags = ["--cfg=path_buf_capacity"]
+
+# [gn.package.erased-serde."0.3.16"]
+# rustflags = []
+
+# [gn.package.libc."0.2.125"]
+# rustflags = ["--cfg=freebsd11", "--cfg=libc_priv_mod_use", "--cfg=libc_union", "--cfg=libc_const_size_of", "--cfg=libc_align", "--cfg=libc_int128", "--cfg=libc_core_cvoid", "--cfg=libc_packedN", "--cfg=libc_cfg_target_vendor", "--cfg=libc_non_exhaustive", "--cfg=libc_ptr_addr_of", "--cfg=libc_underscore_const_names"]
+
+[gn.package.log."0.4.14"]
+rustflags = ["--cfg=atomic_cas", "--cfg=has_atomics"]
+
+# [gn.package.memchr."2.4.1"]
+# rustflags = []
+
+[gn.package.proc-macro2."1.0.32"]
+rustflags = ["--cfg=lexerror_display", "--cfg=hygiene", "--cfg=literal_from_str", "--cfg=is_available", "--cfg=use_proc_macro", "--cfg=wrap_proc_macro", "--cfg=proc_macro_span"]
+
+[gn.package.ryu."1.0.5"]
+rustflags = ["--cfg=integer128", "--cfg=maybe_uninit"]
+
+[gn.package.serde."1.0.130"]
+rustflags = ["--cfg=ops_bound", "--cfg=core_reverse", "--cfg=de_boxed_c_str", "--cfg=de_boxed_path", "--cfg=de_rc_dst", "--cfg=core_duration", "--cfg=integer128", "--cfg=range_inclusive", "--cfg=iterator_try_fold", "--cfg=num_nonzero", "--cfg=serde_derive", "--cfg=core_try_from", "--cfg=num_nonzero_signed", "--cfg=systemtime_checked_add", "--cfg=std_atomic64", "--cfg=std_atomic"]
+
+[gn.package.serde_derive."1.0.130"]
+rustflags = ["--cfg=underscore_consts", "--cfg=ptr_addr_of"]
+
+# TODO: Determine the correct rustflags for serde_json
+[gn.package.serde_json."1.0.69"]
+rustflags = []
+
+[gn.package.syn."1.0.81"]
+rustflags = []
