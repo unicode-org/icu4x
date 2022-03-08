@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1646686282899,
+  "lastUpdate": 1646764951313,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -28727,6 +28727,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 17303,
             "range": "± 1240",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "df232db53e2dd21c9ddb25e5a9cad4b96a4d9b54",
+          "message": "Make time_zone/formats@1 fully zero-copy (#1676)\n\n* Make time_zone/formats@1 fully zero-copy\r\n\r\n* fmt",
+          "timestamp": "2022-03-08T10:32:37-08:00",
+          "tree_id": "bfedf65725f8caec7fab6702a73326c32947968f",
+          "url": "https://github.com/unicode-org/icu4x/commit/df232db53e2dd21c9ddb25e5a9cad4b96a4d9b54"
+        },
+        "date": 1646764938460,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 903,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 5431,
+            "range": "± 12",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 16146,
+            "range": "± 6",
             "unit": "ns/iter"
           }
         ]
