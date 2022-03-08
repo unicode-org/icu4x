@@ -19,6 +19,7 @@ use zerovec::{ZeroMap, ZeroMap2d};
 pub struct TimeZoneFormatsV1<'data> {
     /// The hour format for displaying GMT offsets.
     #[cfg_attr(feature = "provider_serde", serde(borrow))]
+    #[cfg_attr(feature = "provider_serde", serde(deserialize_with = "icu_provider::serde::borrow_de_utils::tuple_of_cow"))]
     pub hour_format: (Cow<'data, str>, Cow<'data, str>),
     /// The localized GMT-offset format.
     #[cfg_attr(feature = "provider_serde", serde(borrow))]

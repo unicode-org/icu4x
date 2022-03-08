@@ -26,6 +26,14 @@ where
     <Option<CowWrap<'de>>>::deserialize(deserializer).map(|opt| opt.map(|wrap| wrap.0))
 }
 
+pub fn tuple_of_cow<'de, D>(deserializer: D) -> Result<(Cow<'de, str>, Cow<'de, str>), D::Error>
+where
+    D: Deserializer<'de>,
+    (CowWrap<'de>, CowWrap<'de>): Deserialize<'de>,
+{
+    <(CowWrap<'de>, CowWrap<'de>)>::deserialize(deserializer).map(|x| (x.0 .0, x.1 .0))
+}
+
 #[test]
 fn test_option() {
     #[derive(Debug, PartialEq, serde::Serialize, serde::Deserialize)]
@@ -36,6 +44,20 @@ fn test_option() {
     let data_new = serde_json::from_str::<Demo>(&json).expect("deserialize");
     assert_eq!(data_orig, data_new);
     assert!(matches!(data_new.0, Some(Cow::Borrowed(_))));
+}
+
+#[test]
+fn test_tuple() {
+    #[derive(Debug, PartialEq, serde::Serialize, serde::Deserialize)]
+    struct Demo<'s>(
+        #[serde(borrow, deserialize_with = "tuple_of_cow")] (Cow<'s, str>, Cow<'s, str>),
+    );
+
+    let data_orig = Demo(("Hello world".into(), "Hello earth".into()));
+    let json = serde_json::to_string(&data_orig).expect("serialize");
+    let data_new = serde_json::from_str::<Demo>(&json).expect("deserialize");
+    assert_eq!(data_orig, data_new);
+    assert!(matches!(data_new.0, (Cow::Borrowed(_), Cow::Borrowed(_))));
 }
 
 #[test]
