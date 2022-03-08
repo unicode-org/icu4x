@@ -4,6 +4,14 @@
 
 #![cfg_attr(not(test), no_std)]
 
+// Assert that the crate has no unexpected panics
+#![deny(
+    clippy::indexing_slicing,
+    clippy::unwrap_used,
+    clippy::expect_used,
+    clippy::panic
+)]
+
 mod macros;
 
 mod ascii;
