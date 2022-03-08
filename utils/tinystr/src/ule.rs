@@ -52,7 +52,6 @@ impl<'a, const N: usize> ZeroMapKV<'a> for TinyAsciiStr<N> {
 }
 
 #[cfg(test)]
-#[allow(clippy::unwrap_used)] // tests
 mod test {
     use crate::*;
     use zerovec::*;

@@ -367,7 +367,6 @@ impl<const N: usize> PartialEq<TinyAsciiStr<N>> for alloc::string::String {
 }
 
 #[cfg(test)]
-#[allow(clippy::unwrap_used, clippy::indexing_slicing)] // tests
 mod test {
     use super::*;
 
