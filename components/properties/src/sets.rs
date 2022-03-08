@@ -18,7 +18,6 @@ use crate::error::PropertiesError;
 use crate::provider::*;
 use crate::*;
 use core::iter::FromIterator;
-use core::ops::RangeInclusive;
 use icu_provider::prelude::*;
 use icu_uniset::UnicodeSet;
 
@@ -1451,27 +1450,19 @@ where
 pub fn get_for_general_category_group<D>(
     provider: &D,
     enum_val: GeneralCategoryGroup,
-) -> UnisetResult
+) -> Result<UnicodeSet<'static>, PropertiesError>
 where
     D: DynProvider<UnicodePropertyMapV1Marker<GeneralCategory>> + ?Sized,
 {
     let gc_map_payload: DataPayload<UnicodePropertyMapV1Marker<GeneralCategory>> =
         maps::get_general_category(provider)?;
-
-    let gc_group_set_payload: DataPayload<UnicodePropertyV1Marker> = gc_map_payload
-        .map_project_cloned_with_capture(enum_val, |gc_map_marker, gcg_val_capture, _| {
-            let gc = &gc_map_marker.code_point_trie;
-            let matching_gc_ranges = gc
-                .iter_ranges()
-                .filter(move |cpm_range| (1 << cpm_range.value as u32) & gcg_val_capture.0 != 0)
-                .map(|cpm_range| {
-                    RangeInclusive::new(*cpm_range.range.start(), *cpm_range.range.end())
-                });
-            let set = UnicodeSet::from_iter(matching_gc_ranges);
-            UnicodePropertyV1::from_owned_uniset(set.clone())
-        });
-
-    Ok(gc_group_set_payload)
+    let gc_data_struct = gc_map_payload.get();
+    let gc = &gc_data_struct.code_point_trie;
+    let matching_gc_ranges = gc
+        .iter_ranges()
+        .filter(|cpm_range| (1 << cpm_range.value as u32) & enum_val.0 != 0)
+        .map(|cpm_range| cpm_range.range);
+    Ok(UnicodeSet::from_iter(matching_gc_ranges))
 }
 
 #[cfg(test)]
@@ -1483,10 +1474,8 @@ mod tests {
         use icu::properties::GeneralCategoryGroup;
 
         let provider = icu_testdata::get_provider();
-        let payload = sets::get_for_general_category_group(&provider, GeneralCategoryGroup::Number)
+        let digits = sets::get_for_general_category_group(&provider, GeneralCategoryGroup::Number)
             .expect("The data should be valid");
-        let data_struct = payload.get();
-        let digits = &data_struct.inv_list;
 
         assert!(digits.contains('5'));
         assert!(digits.contains('\u{0665}')); // U+0665 ARABIC-INDIC DIGIT FIVE
@@ -1517,19 +1506,13 @@ mod tests {
     fn test_gc_groupings() {
         use icu::properties::{maps, sets};
         use icu::properties::{GeneralCategory, GeneralCategoryGroup};
-        use icu_uniset::{UnicodeSet, UnicodeSetBuilder};
-        use std::convert::TryInto;
+        use icu_uniset::UnicodeSetBuilder;
 
         let provider = icu_testdata::get_provider();
 
         let test_group = |category: GeneralCategoryGroup, subcategories: &[GeneralCategory]| {
-            let category_set_payload = sets::get_for_general_category_group(&provider, category)
+            let category_set = sets::get_for_general_category_group(&provider, category)
                 .expect("The data should be valid");
-            let category_set: UnicodeSet = category_set_payload
-                .get()
-                .clone()
-                .try_into()
-                .expect("Valid unicode set");
 
             let gc_payload =
                 maps::get_general_category(&provider).expect("The data should be valid");
