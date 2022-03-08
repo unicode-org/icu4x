@@ -101,6 +101,7 @@ args = [
     "--",
     "--input-from-testdata",
     "--test-keys",
+    "--check",
 ]
 
 [tasks.testdata]

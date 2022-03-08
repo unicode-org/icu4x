@@ -76,6 +76,11 @@ fn main() -> eyre::Result<()> {
                 .help("Load input data from the icu_testdata project."),
         )
         .arg(
+            Arg::with_name("CHECK")
+                .long("check")
+                .help("Check violations against list of expected violations (recommended to be used with --test-keys and features = experimental)."),
+        )
+        .arg(
             Arg::with_name("KEYS")
                 .short("k")
                 .long("keys")
@@ -241,7 +246,7 @@ fn main() -> eyre::Result<()> {
             log::info!("\t{}: max heap size {} bytes", name, vio);
         }
     }
-    if vio_vec != EXPECTED_VIOLATIONS {
+    if matches.is_present("CHECK") && vio_vec != EXPECTED_VIOLATIONS {
         eyre::bail!("Expected violations list does not match found violations!\n\
                     If the new list is smaller, please update EXPECTED_VIOLATIONS in verify-zero-copy.rs\n\
                     If it is bigger and that was unexpected, please make sure the key remains zero-copy, or ask ICU4X team members if it is okay\
