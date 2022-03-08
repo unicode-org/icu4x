@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1646686147193,
+  "lastUpdate": 1646764877246,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -20459,6 +20459,36 @@ window.BENCHMARK_DATA = {
             "name": "fixed_decimal/overview",
             "value": 123526,
             "range": "± 356",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "df232db53e2dd21c9ddb25e5a9cad4b96a4d9b54",
+          "message": "Make time_zone/formats@1 fully zero-copy (#1676)\n\n* Make time_zone/formats@1 fully zero-copy\r\n\r\n* fmt",
+          "timestamp": "2022-03-08T10:32:37-08:00",
+          "tree_id": "bfedf65725f8caec7fab6702a73326c32947968f",
+          "url": "https://github.com/unicode-org/icu4x/commit/df232db53e2dd21c9ddb25e5a9cad4b96a4d9b54"
+        },
+        "date": 1646764862821,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 107974,
+            "range": "± 7830",
             "unit": "ns/iter"
           }
         ]
