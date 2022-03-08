@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1646685797992,
+  "lastUpdate": 1646764466231,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -10583,6 +10583,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/e3d28183ffd5941035c7313fdcbf3aab24f9a184"
         },
         "date": 1646685779932,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 1672368,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "df232db53e2dd21c9ddb25e5a9cad4b96a4d9b54",
+          "message": "Make time_zone/formats@1 fully zero-copy (#1676)\n\n* Make time_zone/formats@1 fully zero-copy\r\n\r\n* fmt",
+          "timestamp": "2022-03-08T10:32:37-08:00",
+          "tree_id": "bfedf65725f8caec7fab6702a73326c32947968f",
+          "url": "https://github.com/unicode-org/icu4x/commit/df232db53e2dd21c9ddb25e5a9cad4b96a4d9b54"
+        },
+        "date": 1646764450450,
         "tool": "ndjson",
         "benches": [
           {
