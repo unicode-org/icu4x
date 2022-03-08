@@ -9,7 +9,7 @@ macro_rules! tinystr {
         const TINYSTR_MACRO_CONST: $crate::TinyAsciiStr<$n> = {
             match $crate::TinyAsciiStr::from_bytes($s.as_bytes()) {
                 Ok(s) => s,
-                // Panicking is expected because this is in a const context
+                // We are okay with panicking here because this is in a const context
                 #[allow(clippy::panic)]
                 // Cannot format the error since formatting isn't const yet
                 Err(_) => panic!(concat!("Failed to construct tinystr from ", $s)),
