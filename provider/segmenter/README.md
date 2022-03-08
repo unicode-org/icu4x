@@ -11,8 +11,11 @@ efficient if you use [`FsDataProvider`] or [`StaticDataProvider`] instead.
 
 ```rust
 use icu_provider_segmenter::SegmenterRuleProvider;
-let provider = SegmenterRuleProvider::try_new("/path/to/data/directory")
-    .expect_err("Specify a real directory in the line above");
+let provider = SegmenterRuleProvider::try_new(
+    "/path/to/segmenter/data/directory",
+    "/path/to/uprops/data/directory",
+)
+.expect_err("Specify a real directory in the line above");
 ```
 
 ## Exporting data

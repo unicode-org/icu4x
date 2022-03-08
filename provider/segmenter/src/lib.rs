@@ -13,8 +13,11 @@
 //!
 //! ```
 //! use icu_provider_segmenter::SegmenterRuleProvider;
-//! let provider = SegmenterRuleProvider::try_new("/path/to/data/directory")
-//!     .expect_err("Specify a real directory in the line above");
+//! let provider = SegmenterRuleProvider::try_new(
+//!     "/path/to/segmenter/data/directory",
+//!     "/path/to/uprops/data/directory",
+//! )
+//! .expect_err("Specify a real directory in the line above");
 //! ```
 //!
 //! # Exporting data
@@ -43,12 +46,16 @@ pub fn segmenter_data_root() -> PathBuf {
 }
 
 pub fn create_exportable_provider<T: DataMarker>(
-    data_root: &Path,
+    segmenter_data_root: &Path,
+    uprops_root: &Path,
 ) -> Result<MultiForkByKeyProvider<Box<dyn IterableDynProvider<T> + Sync>>, DataError>
 where
     SegmenterRuleProvider: IterableDynProvider<T>,
 {
     Ok(MultiForkByKeyProvider {
-        providers: vec![Box::new(SegmenterRuleProvider::try_new(data_root)?)],
+        providers: vec![Box::new(SegmenterRuleProvider::try_new(
+            segmenter_data_root,
+            uprops_root,
+        )?)],
     })
 }

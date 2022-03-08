@@ -9,6 +9,9 @@ use icu_properties::{
 };
 use icu_provider::iter::IterableResourceProvider;
 use icu_provider::prelude::*;
+use icu_provider_uprops::{
+    BinaryPropertyUnicodeSetDataProvider, EnumeratedPropertyCodePointTrieProvider,
+};
 use icu_segmenter::symbols::*;
 use icu_segmenter::*;
 use std::fs::File;
@@ -221,21 +224,29 @@ fn is_cjk_fullwidth(eaw: &CodePointTrie<EastAsianWidth>, codepoint: u32) -> bool
 #[derive(Debug)]
 pub struct SegmenterRuleProvider {
     /// The path to the segmenter rule break TOML files.
-    data_root: PathBuf,
+    segmenter_data_root: PathBuf,
 
-    /// A provider for the Unicode properties required to generate the segmenter runtime data.
-    provider: icu_provider_fs::FsDataProvider,
+    /// The path to the uprops TOML files that segmenter rule break data depends on.
+    uprops_root: PathBuf,
 }
 
 impl SegmenterRuleProvider {
     /// Create a new [`Self`] given a filesystem directory. See [module-level documentation](crate)
     /// for its usage.
-    pub fn try_new<P: Into<PathBuf>>(data_root: P) -> Result<Self, DataError> {
-        let data_root = data_root.into();
-        data_root.metadata()?; // Check if data_root exists.
+    pub fn try_new<P: Into<PathBuf>>(
+        segmenter_data_root: P,
+        uprops_root: P,
+    ) -> Result<Self, DataError> {
+        let segmenter_data_root = segmenter_data_root.into();
+        let uprops_root = uprops_root.into();
+
+        // Check if the paths exist.
+        segmenter_data_root.metadata()?;
+        uprops_root.metadata()?;
+
         Ok(Self {
-            data_root,
-            provider: icu_testdata::get_provider(),
+            segmenter_data_root,
+            uprops_root,
         })
     }
 
@@ -245,7 +256,7 @@ impl SegmenterRuleProvider {
             .split(&['/', '@'])
             .nth(1)
             .expect("ResourceKey format should be valid!");
-        let mut data_path = self.data_root.join(file_name);
+        let mut data_path = self.segmenter_data_root.join(file_name);
         data_path.set_extension("toml");
         data_path
     }
@@ -276,30 +287,39 @@ impl SegmenterRuleProvider {
     ) -> Result<RuleBreakDataV1<'static>, DataError> {
         let segmenter = self.load_rule_data(key)?;
 
-        let payload = maps::get_word_break(&self.provider).expect("The data should be valid!");
+        // Load enumerate Unicode property dependencies.
+        let cp_map_provider = EnumeratedPropertyCodePointTrieProvider::try_new(&self.uprops_root)
+            .expect("The data should be valid!");
+
+        let payload = maps::get_word_break(&cp_map_provider).expect("The data should be valid!");
         let wb = &payload.get().code_point_trie;
 
         let payload =
-            maps::get_grapheme_cluster_break(&self.provider).expect("The data should be valid!");
+            maps::get_grapheme_cluster_break(&cp_map_provider).expect("The data should be valid!");
         let gb = &payload.get().code_point_trie;
 
-        let payload = maps::get_sentence_break(&self.provider).expect("The data should be valid!");
+        let payload =
+            maps::get_sentence_break(&cp_map_provider).expect("The data should be valid!");
         let sb = &payload.get().code_point_trie;
 
-        let payload =
-            sets::get_extended_pictographic(&self.provider).expect("The data should be valid!");
-        let extended_pictographic = &payload.get().inv_list;
-
-        let payload = maps::get_line_break(&self.provider).expect("The data should be valid!");
+        let payload = maps::get_line_break(&cp_map_provider).expect("The data should be valid!");
         let lb = &payload.get().code_point_trie;
 
         let payload =
-            maps::get_east_asian_width(&self.provider).expect("The data should be valid!");
+            maps::get_east_asian_width(&cp_map_provider).expect("The data should be valid!");
         let eaw = &payload.get().code_point_trie;
 
         let payload =
-            maps::get_general_category(&self.provider).expect("The data should be valid!");
+            maps::get_general_category(&cp_map_provider).expect("The data should be valid!");
         let gc = &payload.get().code_point_trie;
+
+        // Load binary Unicode property dependencies.
+        let uniset_provider = BinaryPropertyUnicodeSetDataProvider::try_new(&self.uprops_root)
+            .expect("The data should be valid!");
+
+        let payload =
+            sets::get_extended_pictographic(&uniset_provider).expect("The data should be valid!");
+        let extended_pictographic = &payload.get().inv_list;
 
         // As of Unicode 14.0.0, the break property and the largest codepoint defined in UCD are
         // summarized in the following list. See details in the property txt in
@@ -719,8 +739,11 @@ mod tests {
 
     #[test]
     fn load_grapheme_cluster_data() {
-        let provider = SegmenterRuleProvider::try_new(&crate::segmenter_data_root())
-            .expect("Rule break data should exists!");
+        let provider = SegmenterRuleProvider::try_new(
+            &crate::segmenter_data_root(),
+            &icu_testdata::paths::uprops_toml_root(),
+        )
+        .expect("Rule break data should exists!");
         let payload: DataPayload<GraphemeClusterBreakDataV1Marker> = provider
             .load_resource(&DataRequest::default())
             .expect("Loading should succeed!")

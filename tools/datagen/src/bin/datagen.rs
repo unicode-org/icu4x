@@ -7,7 +7,7 @@ use eyre::WrapErr;
 use icu_locid::LanguageIdentifier;
 use icu_provider::export::DataExporter;
 use icu_provider::filter::Filterable;
-use icu_provider::fork::by_key::ForkByKeyProvider;
+use icu_provider::fork::by_key::MultiForkByKeyProvider;
 use icu_provider::hello_world::{HelloWorldProvider, HelloWorldV1Marker};
 use icu_provider::iter::IterableDynProvider;
 use icu_provider::prelude::*;
@@ -323,13 +323,23 @@ fn main() -> eyre::Result<()> {
                 eyre::bail!("Value for --uprops-root must be specified",)
             };
 
-            Box::new(ForkByKeyProvider(
-                icu_provider_cldr::create_exportable_provider(
-                    cldr_paths.as_ref(),
-                    uprops_root.clone(),
-                )?,
-                icu_provider_uprops::create_exportable_provider(&uprops_root)?,
-            ))
+            let segmenter_data_root = icu_provider_segmenter::segmenter_data_root();
+
+            Box::new(MultiForkByKeyProvider {
+                providers: vec![
+                    Box::new(icu_provider_cldr::create_exportable_provider(
+                        cldr_paths.as_ref(),
+                        uprops_root.clone(),
+                    )?),
+                    Box::new(icu_provider_uprops::create_exportable_provider(
+                        &uprops_root,
+                    )?),
+                    Box::new(icu_provider_segmenter::create_exportable_provider(
+                        &segmenter_data_root,
+                        &uprops_root,
+                    )?),
+                ],
+            })
         };
 
     if let Some(locales) = selected_locales.as_ref() {
@@ -379,41 +389,6 @@ fn main() -> eyre::Result<()> {
             result
         }
     })?;
-
-    // Segmenter's rule data depends on various Unicode Properties. We have to generate them after
-    // uprops.
-    if matches.is_present("TEST_KEYS") {
-        // FIXME: We should support specifying segmenter keys in --keys.
-        let segmenter_keys = icu_segmenter::ALL_KEYS;
-        let segmenter_data_root = icu_provider_segmenter::segmenter_data_root();
-        let segmenter_provider: Box<dyn IterableDynProvider<SerializeMarker> + Sync> = Box::new(
-            icu_provider_segmenter::create_exportable_provider(&segmenter_data_root)?,
-        );
-
-        segmenter_keys.into_par_iter().try_for_each(|key| {
-            let result = segmenter_provider
-                .supported_options_for_key(key)?
-                .collect::<Vec<_>>()
-                .into_par_iter()
-                .try_for_each(|options| {
-                    let payload = segmenter_provider
-                        .load_payload(
-                            key,
-                            &DataRequest {
-                                options: options.clone(),
-                                metadata: Default::default(),
-                            },
-                        )?
-                        .take_payload()?;
-                    exporter.put_payload(key, options, payload)
-                });
-
-            exporter.flush(key)?;
-
-            log::info!("Writing key: {}", key);
-            result
-        })?;
-    }
 
     exporter.close()?;
 
@@ -501,6 +476,7 @@ fn get_all_keys() -> Vec<ResourceKey> {
     v.extend(icu_properties::provider::key::ALL_MAP_KEYS);
     v.extend(icu_properties::provider::key::ALL_SCRIPT_EXTENSIONS_KEYS);
     v.extend(icu_properties::provider::key::ALL_SET_KEYS);
+    v.extend(icu_segmenter::ALL_KEYS);
     v
 }
 

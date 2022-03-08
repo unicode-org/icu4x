@@ -27,7 +27,7 @@ include = [
 icu_codepointtrie = { version = "0.3.3", path = "../../utils/codepointtrie" }
 icu_properties = { version = "0.5", path = "../../components/properties", features = ["provider_serde"] }
 icu_provider = { version = "0.5", path = "../../provider/core", features = ["serialize", "macros"] }
-icu_provider_fs = { version = "0.5", path = "../../provider/fs"}
+icu_provider_uprops = { version = "0.5", path = "../../provider/uprops" }
 icu_segmenter = { version = "0.1", path = "../../experimental/segmenter", features = ["provider_serde"] }
 icu_testdata = { version = "0.5", path = "../../provider/testdata" }
 serde = { version = "1.0", features = ["derive"] }

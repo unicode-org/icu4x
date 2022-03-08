@@ -1389,7 +1389,7 @@ dependencies = [
  "icu_codepointtrie",
  "icu_properties",
  "icu_provider",
- "icu_provider_fs",
+ "icu_provider_uprops",
  "icu_segmenter",
  "icu_testdata",
  "serde",
