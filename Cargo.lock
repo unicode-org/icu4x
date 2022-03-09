@@ -618,6 +618,14 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e78d4f1cc4ae33bbfc157ed5d5a5ef3bc29227303d595861deb238fcec4e9457"
 
 [[package]]
+name = "elsa"
+version = "1.6.0"
+source = "git+https://github.com/robertbastian/elsa.git#ae64294b4ed408af417d3b5db35f5725fd5bf11f"
+dependencies = [
+ "stable_deref_trait",
+]
+
+[[package]]
 name = "embedded-hal"
 version = "0.2.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1329,6 +1337,7 @@ version = "0.5.0"
 dependencies = [
  "dirs",
  "displaydoc",
+ "elsa",
  "icu_calendar",
  "icu_datetime",
  "icu_decimal",

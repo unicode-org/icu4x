@@ -5,7 +5,7 @@
 use crate::cldr_serde;
 use crate::error::Error;
 use crate::reader::{get_langid_subdirectories, get_langid_subdirectory, open_reader};
-use crate::support::FrozenBTreeMap;
+use elsa::sync::FrozenBTreeMap;
 use crate::CldrPaths;
 use icu_datetime::provider::time_zones::*;
 use icu_locid::LanguageIdentifier;
@@ -20,7 +20,7 @@ mod convert;
 #[derive(Debug)]
 pub struct TimeZonesProvider {
     path: PathBuf,
-    data: FrozenBTreeMap<LanguageIdentifier, cldr_serde::time_zone_names::TimeZoneNames>,
+    data: FrozenBTreeMap<LanguageIdentifier, Box<cldr_serde::time_zone_names::TimeZoneNames>>,
 }
 
 impl TryFrom<&dyn CldrPaths> for TimeZonesProvider {
@@ -50,13 +50,13 @@ macro_rules! impl_resource_provider {
                         let mut resource: cldr_serde::time_zone_names::Resource =
                             serde_json::from_reader(open_reader(&path)?)
                                 .map_err(|e| Error::Json(e, Some(path)))?;
-                        Ok(resource
+                        Ok(Box::new(resource
                             .main
                             .0
                             .remove(langid)
                             .expect("CLDR file contains the expected language")
                             .dates
-                            .time_zone_names)
+                            .time_zone_names))
                     })?;
 
                     let metadata = DataResponseMetadata::default();

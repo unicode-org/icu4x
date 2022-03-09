@@ -5,7 +5,7 @@
 use crate::cldr_serde;
 use crate::error::Error;
 use crate::reader::{get_langid_subdirectories, get_langid_subdirectory, open_reader};
-use crate::support::FrozenBTreeMap;
+use elsa::sync::FrozenBTreeMap;
 use crate::CldrPaths;
 
 use icu_datetime::provider::calendar::*;
@@ -22,7 +22,7 @@ mod symbols;
 #[derive(Debug)]
 pub struct CommonDateProvider {
     paths: Vec<(&'static str, &'static str, PathBuf)>,
-    data: FrozenBTreeMap<ResourceOptions, cldr_serde::ca::Dates>,
+    data: FrozenBTreeMap<ResourceOptions, Box<cldr_serde::ca::Dates>>,
 }
 
 impl TryFrom<&dyn CldrPaths> for CommonDateProvider {
@@ -69,7 +69,7 @@ macro_rules! impl_resource_provider {
                             serde_json::from_reader(open_reader(&path)?)
                                 .map_err(|e| Error::Json(e, Some(path)))?;
 
-                        Ok(resource
+                        Ok(Box::new(resource
                             .main
                             .0
                             .remove(langid)
@@ -82,7 +82,7 @@ macro_rules! impl_resource_provider {
                                     format!("{} does not have {} field", cal_file, cldr_cal),
                                     None,
                                 )
-                            })?)
+                            })?))
                     })?;
 
                     let metadata = DataResponseMetadata::default();

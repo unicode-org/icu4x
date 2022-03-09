@@ -23,7 +23,6 @@ mod cldr_paths;
 mod cldr_serde;
 mod error;
 mod reader;
-mod support;
 mod transform;
 
 #[cfg(feature = "download")]
