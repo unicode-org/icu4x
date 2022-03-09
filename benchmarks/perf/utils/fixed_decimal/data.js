@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1646790953507,
+  "lastUpdate": 1646791266656,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -20549,6 +20549,36 @@ window.BENCHMARK_DATA = {
             "name": "fixed_decimal/overview",
             "value": 103098,
             "range": "± 279",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "aethanyc@gmail.com",
+            "name": "Ting-Yu Lin",
+            "username": "aethanyc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "97da55801b4e67d0ee05ff0a082feb0078df5678",
+          "message": "Support production-ready data provider for segmenters (#1652)\n\n* Add icu_segmenter_provider crate\r\n\r\nThe purpose of the crate is to deserialize the segmenter rule break TOML files\r\ninto `SegmenterRuleTable`, and transform it into `RuleBreakDataV1`. The main\r\nfunction where the transformation takes place is in\r\nSegmenterRuleProvider::generate_break_data(), which is ported from\r\n`generate_rule_segmenter_table` along with many other helpers in\r\n`build.rs`.\r\n\r\nFlatten `RuleBreakPropertyTable` into a linear structure so that it can be\r\nserialize/dezerialize via ZeroVec.\r\n\r\nIn the next commit, we'll convert line segmenter to use RuleBreakDataV1. This\r\npatch removes \"provider_serde\" cfg for LineBreakDataV1 just to build\r\nsuccessfully.\r\n\r\n* Switch line segmenter to use RuleBreakDataV1\r\n\r\n* Regenerate testdata for segmenter\r\n\r\nThis commit is generated via `cargo make testdata`.\r\n\r\n* Remove unused build.rs\r\n\r\n* Support customized keys for segmenter keys in icu4x-datagen\r\n\r\nTo generate only the line break data, run command such as\r\n\r\n```\r\ncargo run --bin icu4x-datagen --\\\r\n          --input-from-testdata\\\r\n          --all-locales\\\r\n          --syntax=json\\\r\n          --keys \"segmenter/line@1\"\\\r\n          --out=\"/tmp/segmenter_data\"\\\r\n          --overwrite\r\n```\r\n\r\n* Make property table size larger to hold grapheme cluster break property values",
+          "timestamp": "2022-03-08T17:54:03-08:00",
+          "tree_id": "8d5a6c9a24e504f102abb149e04584e979807288",
+          "url": "https://github.com/unicode-org/icu4x/commit/97da55801b4e67d0ee05ff0a082feb0078df5678"
+        },
+        "date": 1646791253007,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 103373,
+            "range": "± 9362",
             "unit": "ns/iter"
           }
         ]
