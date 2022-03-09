@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1646764877246,
+  "lastUpdate": 1646784374723,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -20489,6 +20489,36 @@ window.BENCHMARK_DATA = {
             "name": "fixed_decimal/overview",
             "value": 107974,
             "range": "± 7830",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "elango@unicode.org",
+            "name": "Elango",
+            "username": "echeran"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "29a3028dd12bd1787609c7b62626056422597284",
+          "message": "Return sets for enumerated property value data using CPT data (#1608)",
+          "timestamp": "2022-03-08T15:57:33-08:00",
+          "tree_id": "1ceb8f597aec7cf0273be1eb44f26b52111a8e55",
+          "url": "https://github.com/unicode-org/icu4x/commit/29a3028dd12bd1787609c7b62626056422597284"
+        },
+        "date": 1646784363323,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 90868,
+            "range": "± 223",
             "unit": "ns/iter"
           }
         ]
