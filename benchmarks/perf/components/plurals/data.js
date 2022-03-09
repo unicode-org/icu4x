@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1646851065366,
+  "lastUpdate": 1646851187802,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -28979,6 +28979,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 19113,
             "range": "± 695",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "135bf92d0f206f8558f6b703d2dff0e2e87cb88a",
+          "message": "Add more AsULE impls for primitives (#1672)\n\n* Add f32/f64 ule\n\n* Add bool ULE\n\n* add equle",
+          "timestamp": "2022-03-09T10:27:31-08:00",
+          "tree_id": "8c86919aa276778f92c17766e8b87f6f31760735",
+          "url": "https://github.com/unicode-org/icu4x/commit/135bf92d0f206f8558f6b703d2dff0e2e87cb88a"
+        },
+        "date": 1646851173404,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 958,
+            "range": "± 71",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 5581,
+            "range": "± 379",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 16694,
+            "range": "± 1354",
             "unit": "ns/iter"
           }
         ]
