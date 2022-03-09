@@ -61,3 +61,23 @@ pub fn get_all_keys() -> Vec<ResourceKey> {
     v.extend(icu_segmenter::ALL_KEYS);
     v
 }
+
+#[test]
+fn no_key_collisions() {
+    let mut map = std::collections::BTreeMap::new();
+    let mut failed = false;
+    for key in get_all_keys() {
+        if let Some(colliding_key) = map.insert(key.get_hash(), key) {
+            println!(
+                "{:?} and {:?} collide at {:?}",
+                key.get_path(),
+                colliding_key.get_path(),
+                key.get_hash()
+            );
+            failed = true;
+        }
+    }
+    if failed {
+        panic!();
+    }
+}
