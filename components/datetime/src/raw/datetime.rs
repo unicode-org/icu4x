@@ -43,7 +43,6 @@ impl DateTimeFormat {
         locale: T,
         data_provider: &D,
         options: &DateTimeFormatOptions,
-
         calendar: &'static str,
     ) -> Result<Self, DateTimeFormatError>
     where

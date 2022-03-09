@@ -18,6 +18,7 @@ use crate::{
 };
 use icu_locid::{LanguageIdentifier, Locale};
 use icu_provider::prelude::*;
+use writeable::Writeable;
 
 /// Loads a resource into its destination if the destination has not already been filled.
 fn load_resource<D, L, P>(
@@ -86,9 +87,9 @@ pub struct TimeZoneFormat {
     // The kind of time zone format.
     pub(super) kind: TimeZoneFormatKind,
     pub(super) locale: Locale,
-    data_payloads: TimeZoneDataPayloads,
-    format_units: SmallVec<[TimeZoneFormatUnit; 7]>,
-    fallback_units: SmallVec<[TimeZoneFormatUnit; 2]>,
+    pub(super) data_payloads: TimeZoneDataPayloads,
+    pub(super) format_units: SmallVec<[TimeZoneFormatUnit; 3]>,
+    pub(super) fallback_unit: Option<TimeZoneFormatUnit>,
 }
 
 /// A container contains all data payloads for TimeZone.
@@ -131,8 +132,7 @@ impl TimeZoneFormat {
             + ?Sized,
     {
         let locale = locale.into();
-        let format_units = SmallVec::<[TimeZoneFormatUnit; 7]>::new();
-        let fallback_units = SmallVec::<[TimeZoneFormatUnit; 2]>::new();
+        let format_units = SmallVec::<[TimeZoneFormatUnit; 3]>::new();
         let data_payloads = TimeZoneDataPayloads {
             zone_formats: zone_provider
                 .load_resource(&DataRequest {
@@ -167,7 +167,7 @@ impl TimeZoneFormat {
             data_payloads,
             locale,
             format_units,
-            fallback_units,
+            fallback_unit: None,
         };
 
         for (length, symbol) in zone_symbols {
@@ -383,8 +383,7 @@ impl TimeZoneFormat {
             + ?Sized,
     {
         let locale = locale.into();
-        let format_units = SmallVec::<[TimeZoneFormatUnit; 7]>::new();
-        let fallback_units = SmallVec::<[TimeZoneFormatUnit; 2]>::new();
+        let format_units = SmallVec::<[TimeZoneFormatUnit; 3]>::new();
         let data_payloads = TimeZoneDataPayloads {
             zone_formats: zone_provider
                 .load_resource(&DataRequest {
@@ -404,7 +403,7 @@ impl TimeZoneFormat {
             data_payloads,
             locale,
             format_units,
-            fallback_units,
+            fallback_unit: None,
         };
 
         match config {
@@ -573,8 +572,7 @@ impl TimeZoneFormat {
         is_fallback: bool,
     ) -> Result<&mut TimeZoneFormat, DateTimeFormatError> {
         if is_fallback {
-            self.fallback_units
-                .push(TimeZoneFormatUnit::LocalizedGmt(LocalizedGmtFormat {}));
+            self.fallback_unit = Some(TimeZoneFormatUnit::LocalizedGmt(LocalizedGmtFormat {}));
         } else {
             self.format_units
                 .push(TimeZoneFormatUnit::LocalizedGmt(LocalizedGmtFormat {}));
@@ -591,12 +589,11 @@ impl TimeZoneFormat {
         is_fallback: bool,
     ) -> Result<&mut TimeZoneFormat, DateTimeFormatError> {
         if is_fallback {
-            self.fallback_units
-                .push(TimeZoneFormatUnit::Iso8601(Iso8601Format {
-                    format,
-                    minutes,
-                    seconds,
-                }));
+            self.fallback_unit = Some(TimeZoneFormatUnit::Iso8601(Iso8601Format {
+                format,
+                minutes,
+                seconds,
+            }));
         } else {
             self.format_units
                 .push(TimeZoneFormatUnit::Iso8601(Iso8601Format {
@@ -652,47 +649,15 @@ impl TimeZoneFormat {
     ///        None,
     /// );
     ///
-    /// let _ = tzf.new_formatted_time_zone(&time_zone);
+    /// let _ = tzf.format(&time_zone);
     /// ```
-    pub fn new_formatted_time_zone<'l, T>(&'l self, value: &'l T) -> FormattedTimeZone<'l, T>
+    pub fn format<'l, T>(&'l self, value: &'l T) -> FormattedTimeZone<'l, T>
     where
         T: TimeZoneInput,
     {
         FormattedTimeZone {
             time_zone_format: self,
             time_zone: value,
-        }
-    }
-
-    /// Format time zone with fallbacks.
-    pub fn format<W>(&self, w: &mut W, value: &impl TimeZoneInput)
-    where
-        W: core::fmt::Write + ?Sized,
-    {
-        match self.format_no_fallback(w, value) {
-            Ok(_) => {}
-            Err(_) => {
-                self.fallback_units
-                    .iter()
-                    .map(|unit| unit.format(w, value, &self.data_payloads))
-                    .find(Result::is_ok);
-            }
-        };
-    }
-
-    /// Format time zone with no fallback.
-    pub fn format_no_fallback<W>(&self, w: &mut W, value: &impl TimeZoneInput) -> fmt::Result
-    where
-        W: core::fmt::Write + ?Sized,
-    {
-        match self
-            .format_units
-            .iter()
-            .map(|unit| unit.format(w, value, &self.data_payloads))
-            .find(Result::is_ok)
-        {
-            Some(_) => Ok(()),
-            None => Err(core::fmt::Error),
         }
     }
 
@@ -731,8 +696,7 @@ impl TimeZoneFormat {
         w: &mut impl core::fmt::Write,
         value: &impl TimeZoneInput,
     ) -> fmt::Result {
-        self.format(w, value);
-        Ok(())
+        self.format(value).write_to(w)
     }
 
     /// Takes a [`TimeZoneInput`] implementer and returns a string with the formatted value.
@@ -857,31 +821,31 @@ pub struct TimeZoneFormatOptions {
 
 // Pacific Time
 #[derive(Debug, Clone, Copy, PartialEq)]
-struct GenericNonLocationLongFormat {}
+pub(super) struct GenericNonLocationLongFormat {}
 
 // PT
 #[derive(Debug, Clone, Copy, PartialEq)]
-struct GenericNonLocationShortFormat {}
+pub(super) struct GenericNonLocationShortFormat {}
 
 // Pacific Standard Time
 #[derive(Debug, Clone, Copy, PartialEq)]
-struct SpecificNonLocationLongFormat {}
+pub(super) struct SpecificNonLocationLongFormat {}
 
 // PDT
 #[derive(Debug, Clone, Copy, PartialEq)]
-struct SpecificNonLocationShortFormat {}
+pub(super) struct SpecificNonLocationShortFormat {}
 
 // Los Angeles Time
 #[derive(Debug, Clone, Copy, PartialEq)]
-struct GenericLocationFormat {}
+pub(super) struct GenericLocationFormat {}
 
 // GMT-07:00
 #[derive(Debug, Clone, Copy, PartialEq)]
-struct LocalizedGmtFormat {}
+pub(super) struct LocalizedGmtFormat {}
 
 // -07:00
 #[derive(Debug, Clone, Copy, PartialEq)]
-struct Iso8601Format {
+pub(super) struct Iso8601Format {
     format: IsoFormat,
     minutes: IsoMinutes,
     seconds: IsoSeconds,
@@ -889,11 +853,11 @@ struct Iso8601Format {
 
 // It is only used for pattern in special case and not public to users.
 #[derive(Debug, Clone, Copy, PartialEq)]
-struct ExemplarCityFormat {}
+pub(super) struct ExemplarCityFormat {}
 
 // An enum for time zone format unit.
 #[derive(Debug, Clone, Copy, PartialEq)]
-enum TimeZoneFormatUnit {
+pub(super) enum TimeZoneFormatUnit {
     GenericNonLocationLong(GenericNonLocationLongFormat),
     GenericNonLocationShort(GenericNonLocationShortFormat),
     SpecificNonLocationLong(SpecificNonLocationLongFormat),
@@ -904,13 +868,13 @@ enum TimeZoneFormatUnit {
     ExemplarCity(ExemplarCityFormat),
 }
 
-trait FormatTimeZone {
+pub(super) trait FormatTimeZone {
     fn format<W: fmt::Write + ?Sized>(
         &self,
         sink: &mut W,
         time_zone: &impl TimeZoneInput,
         data_payloads: &TimeZoneDataPayloads,
-    ) -> Result<(), DateTimeFormatError>;
+    ) -> Result<fmt::Result, DateTimeFormatError>;
 
     /// Formats a time segment with optional zero-padding.
     fn format_time_segment(n: u8, padding: ZeroPadding) -> String {
@@ -952,7 +916,7 @@ impl FormatTimeZone for TimeZoneFormatUnit {
         sink: &mut W,
         time_zone: &impl TimeZoneInput,
         data_payloads: &TimeZoneDataPayloads,
-    ) -> Result<(), DateTimeFormatError> {
+    ) -> Result<fmt::Result, DateTimeFormatError> {
         match self {
             Self::GenericNonLocationLong(unit) => unit.format(sink, time_zone, data_payloads),
             Self::GenericNonLocationShort(unit) => unit.format(sink, time_zone, data_payloads),
@@ -975,31 +939,35 @@ impl FormatTimeZone for GenericNonLocationLongFormat {
         sink: &mut W,
         time_zone: &impl TimeZoneInput,
         data_payloads: &TimeZoneDataPayloads,
-    ) -> Result<(), DateTimeFormatError> {
-        sink.write_str(
-            data_payloads
-                .mz_generic_long
-                .as_ref()
-                .map(|p| p.get())
-                .and_then(|metazones| {
-                    time_zone
-                        .time_zone_id()
-                        .and_then(|tz| metazones.overrides.get(tz))
-                })
-                .or_else(|| {
-                    data_payloads
-                        .mz_generic_long
-                        .as_ref()
-                        .map(|p| p.get())
-                        .and_then(|metazones| {
-                            time_zone
-                                .metazone_id()
-                                .and_then(|mz| metazones.defaults.get(mz))
-                        })
-                })
-                .ok_or(fmt::Error)?,
-        )
-        .map_err(DateTimeFormatError::from)
+    ) -> Result<fmt::Result, DateTimeFormatError> {
+        let formatted_time_zone: Option<&str> = data_payloads
+            .mz_generic_long
+            .as_ref()
+            .map(|p| p.get())
+            .and_then(|metazones| {
+                time_zone
+                    .time_zone_id()
+                    .and_then(|tz| metazones.overrides.get(tz))
+            })
+            .or_else(|| {
+                data_payloads
+                    .mz_generic_long
+                    .as_ref()
+                    .map(|p| p.get())
+                    .and_then(|metazones| {
+                        time_zone
+                            .metazone_id()
+                            .and_then(|mz| metazones.defaults.get(mz))
+                    })
+            });
+
+        match formatted_time_zone {
+            Some(ftz) => match sink.write_str(ftz) {
+                Ok(_) => Ok(Ok(())),
+                Err(_) => Ok(Err(fmt::Error)),
+            },
+            None => Err(DateTimeFormatError::UnsupportedOptions),
+        }
     }
 }
 
@@ -1012,31 +980,35 @@ impl FormatTimeZone for GenericNonLocationShortFormat {
         sink: &mut W,
         time_zone: &impl TimeZoneInput,
         data_payloads: &TimeZoneDataPayloads,
-    ) -> Result<(), DateTimeFormatError> {
-        sink.write_str(
-            data_payloads
-                .mz_generic_short
-                .as_ref()
-                .map(|p| p.get())
-                .and_then(|metazones| {
-                    time_zone
-                        .time_zone_id()
-                        .and_then(|tz| metazones.overrides.get(tz))
-                })
-                .or_else(|| {
-                    data_payloads
-                        .mz_generic_short
-                        .as_ref()
-                        .map(|p| p.get())
-                        .and_then(|metazones| {
-                            time_zone
-                                .metazone_id()
-                                .and_then(|mz| metazones.defaults.get(mz))
-                        })
-                })
-                .ok_or(fmt::Error)?,
-        )
-        .map_err(DateTimeFormatError::from)
+    ) -> Result<fmt::Result, DateTimeFormatError> {
+        let formatted_time_zone: Option<&str> = data_payloads
+            .mz_generic_short
+            .as_ref()
+            .map(|p| p.get())
+            .and_then(|metazones| {
+                time_zone
+                    .time_zone_id()
+                    .and_then(|tz| metazones.overrides.get(tz))
+            })
+            .or_else(|| {
+                data_payloads
+                    .mz_generic_short
+                    .as_ref()
+                    .map(|p| p.get())
+                    .and_then(|metazones| {
+                        time_zone
+                            .metazone_id()
+                            .and_then(|mz| metazones.defaults.get(mz))
+                    })
+            });
+
+        match formatted_time_zone {
+            Some(ftz) => match sink.write_str(ftz) {
+                Ok(_) => Ok(Ok(())),
+                Err(_) => Ok(Err(fmt::Error)),
+            },
+            None => Err(DateTimeFormatError::UnsupportedOptions),
+        }
     }
 }
 
@@ -1049,35 +1021,39 @@ impl FormatTimeZone for SpecificNonLocationShortFormat {
         sink: &mut W,
         time_zone: &impl TimeZoneInput,
         data_payloads: &TimeZoneDataPayloads,
-    ) -> Result<(), DateTimeFormatError> {
-        sink.write_str(
-            data_payloads
-                .mz_specific_short
-                .as_ref()
-                .map(|p| p.get())
-                .and_then(|metazones| {
-                    time_zone.time_zone_id().and_then(|tz| {
-                        time_zone
-                            .time_variant()
-                            .and_then(|variant| metazones.overrides.get(tz, variant).ok())
-                    })
+    ) -> Result<fmt::Result, DateTimeFormatError> {
+        let formatted_time_zone: Option<&str> = data_payloads
+            .mz_specific_short
+            .as_ref()
+            .map(|p| p.get())
+            .and_then(|metazones| {
+                time_zone.time_zone_id().and_then(|tz| {
+                    time_zone
+                        .time_variant()
+                        .and_then(|variant| metazones.overrides.get(tz, variant).ok())
                 })
-                .or_else(|| {
-                    data_payloads
-                        .mz_specific_short
-                        .as_ref()
-                        .map(|p| p.get())
-                        .and_then(|metazones| {
-                            time_zone.metazone_id().and_then(|mz| {
-                                time_zone
-                                    .time_variant()
-                                    .and_then(|variant| metazones.defaults.get(mz, variant).ok())
-                            })
+            })
+            .or_else(|| {
+                data_payloads
+                    .mz_specific_short
+                    .as_ref()
+                    .map(|p| p.get())
+                    .and_then(|metazones| {
+                        time_zone.metazone_id().and_then(|mz| {
+                            time_zone
+                                .time_variant()
+                                .and_then(|variant| metazones.defaults.get(mz, variant).ok())
                         })
-                })
-                .ok_or_else(|| DateTimeFormatError::from(fmt::Error))?,
-        )
-        .map_err(DateTimeFormatError::from)
+                    })
+            });
+
+        match formatted_time_zone {
+            Some(ftz) => match sink.write_str(ftz) {
+                Ok(_) => Ok(Ok(())),
+                Err(_) => Ok(Err(fmt::Error)),
+            },
+            None => Err(DateTimeFormatError::UnsupportedOptions),
+        }
     }
 }
 
@@ -1090,35 +1066,39 @@ impl FormatTimeZone for SpecificNonLocationLongFormat {
         sink: &mut W,
         time_zone: &impl TimeZoneInput,
         data_payloads: &TimeZoneDataPayloads,
-    ) -> Result<(), DateTimeFormatError> {
-        sink.write_str(
-            data_payloads
-                .mz_specific_long
-                .as_ref()
-                .map(|p| p.get())
-                .and_then(|metazones| {
-                    time_zone.time_zone_id().and_then(|tz| {
-                        time_zone
-                            .time_variant()
-                            .and_then(|variant| metazones.overrides.get(tz, variant).ok())
-                    })
+    ) -> Result<fmt::Result, DateTimeFormatError> {
+        let formatted_time_zone: Option<&str> = data_payloads
+            .mz_specific_long
+            .as_ref()
+            .map(|p| p.get())
+            .and_then(|metazones| {
+                time_zone.time_zone_id().and_then(|tz| {
+                    time_zone
+                        .time_variant()
+                        .and_then(|variant| metazones.overrides.get(tz, variant).ok())
                 })
-                .or_else(|| {
-                    data_payloads
-                        .mz_specific_long
-                        .as_ref()
-                        .map(|p| p.get())
-                        .and_then(|metazones| {
-                            time_zone.metazone_id().and_then(|mz| {
-                                time_zone
-                                    .time_variant()
-                                    .and_then(|variant| metazones.defaults.get(mz, variant).ok())
-                            })
+            })
+            .or_else(|| {
+                data_payloads
+                    .mz_specific_long
+                    .as_ref()
+                    .map(|p| p.get())
+                    .and_then(|metazones| {
+                        time_zone.metazone_id().and_then(|mz| {
+                            time_zone
+                                .time_variant()
+                                .and_then(|variant| metazones.defaults.get(mz, variant).ok())
                         })
-                })
-                .ok_or(fmt::Error)?,
-        )
-        .map_err(DateTimeFormatError::from)
+                    })
+            });
+
+        match formatted_time_zone {
+            Some(ftz) => match sink.write_str(ftz) {
+                Ok(_) => Ok(Ok(())),
+                Err(_) => Ok(Err(fmt::Error)),
+            },
+            None => Err(DateTimeFormatError::UnsupportedOptions),
+        }
     }
 }
 
@@ -1134,14 +1114,16 @@ impl FormatTimeZone for LocalizedGmtFormat {
         sink: &mut W,
         time_zone: &impl TimeZoneInput,
         data_payloads: &TimeZoneDataPayloads,
-    ) -> Result<(), DateTimeFormatError> {
+    ) -> Result<fmt::Result, DateTimeFormatError> {
         let gmt_offset = time_zone.gmt_offset();
         if gmt_offset.is_zero() {
-            sink.write_str(&data_payloads.zone_formats.get().gmt_zero_format.clone())
-                .map_err(DateTimeFormatError::from)
+            match sink.write_str(&data_payloads.zone_formats.get().gmt_zero_format.clone()) {
+                Ok(_) => Ok(Ok(())),
+                Err(_) => Ok(Err(fmt::Error)),
+            }
         } else {
             // TODO(blocked on #277) Use formatter utility instead of replacing "{0}".
-            sink.write_str(
+            match sink.write_str(
                 &data_payloads
                     .zone_formats
                     .get()
@@ -1158,8 +1140,10 @@ impl FormatTimeZone for LocalizedGmtFormat {
                     .replace("HH", &self.format_offset_hours(time_zone, ZeroPadding::On))
                     .replace("mm", &self.format_offset_minutes(time_zone))
                     .replace("H", &self.format_offset_hours(time_zone, ZeroPadding::Off)),
-            )
-            .map_err(DateTimeFormatError::from)
+            ) {
+                Ok(_) => Ok(Ok(())),
+                Err(_) => Ok(Err(fmt::Error)),
+            }
         }
     }
 }
@@ -1173,24 +1157,27 @@ impl FormatTimeZone for GenericLocationFormat {
         sink: &mut W,
         time_zone: &impl TimeZoneInput,
         data_payloads: &TimeZoneDataPayloads,
-    ) -> Result<(), DateTimeFormatError> {
+    ) -> Result<fmt::Result, DateTimeFormatError> {
         // TODO(blocked on #277) Use formatter utility instead of replacing "{0}".
-        sink.write_str(
-            &data_payloads
-                .exemplar_cities
-                .as_ref()
-                .map(|p| p.get())
-                .and_then(|cities| time_zone.time_zone_id().and_then(|id| cities.0.get(id)))
-                .map(|location| {
-                    data_payloads
-                        .zone_formats
-                        .get()
-                        .region_format
-                        .replace("{0}", location)
-                })
-                .ok_or(fmt::Error)?,
-        )
-        .map_err(DateTimeFormatError::from)
+        let formatted_time_zone: Option<alloc::string::String> = data_payloads
+            .exemplar_cities
+            .as_ref()
+            .map(|p| p.get())
+            .and_then(|cities| time_zone.time_zone_id().and_then(|id| cities.0.get(id)))
+            .map(|location| {
+                data_payloads
+                    .zone_formats
+                    .get()
+                    .region_format
+                    .replace("{0}", location)
+            });
+        match formatted_time_zone {
+            Some(ftz) => match sink.write_str(&ftz) {
+                Ok(_) => Ok(Ok(())),
+                Err(_) => Ok(Err(fmt::Error)),
+            },
+            None => Err(DateTimeFormatError::UnsupportedOptions),
+        }
     }
 }
 
@@ -1211,31 +1198,45 @@ impl FormatTimeZone for Iso8601Format {
         sink: &mut W,
         time_zone: &impl TimeZoneInput,
         _data_payloads: &TimeZoneDataPayloads,
-    ) -> Result<(), DateTimeFormatError> {
+    ) -> Result<fmt::Result, DateTimeFormatError> {
         let gmt_offset = time_zone.gmt_offset();
         if gmt_offset.is_zero()
             && matches!(self.format, IsoFormat::UtcBasic | IsoFormat::UtcExtended)
         {
-            return sink.write_char('Z').map_err(|err| err.into());
+            if let Err(e) = sink.write_char('Z') {
+                return Ok(Err(e));
+            }
         }
 
         let extended_format = matches!(self.format, IsoFormat::Extended | IsoFormat::UtcExtended);
-        sink.write_char(if gmt_offset.is_positive() { '+' } else { '-' })?;
-        sink.write_str(&self.format_offset_hours(time_zone, ZeroPadding::On))?;
+        if let Err(e) = sink.write_char(if gmt_offset.is_positive() { '+' } else { '-' }) {
+            return Ok(Err(e));
+        }
+        if let Err(e) = sink.write_str(&self.format_offset_hours(time_zone, ZeroPadding::On)) {
+            return Ok(Err(e));
+        }
 
         match self.minutes {
             IsoMinutes::Required => {
                 if extended_format {
-                    sink.write_char(':')?;
+                    if let Err(e) = sink.write_char(':') {
+                        return Ok(Err(e));
+                    }
                 }
-                sink.write_str(&self.format_offset_minutes(time_zone))?;
+                if let Err(e) = sink.write_str(&self.format_offset_minutes(time_zone)) {
+                    return Ok(Err(e));
+                }
             }
             IsoMinutes::Optional => {
                 if gmt_offset.has_minutes() {
                     if extended_format {
-                        sink.write_char(':')?;
+                        if let Err(e) = sink.write_char(':') {
+                            return Ok(Err(e));
+                        }
                     }
-                    sink.write_str(&self.format_offset_minutes(time_zone))?;
+                    if let Err(e) = sink.write_str(&self.format_offset_minutes(time_zone)) {
+                        return Ok(Err(e));
+                    }
                 }
             }
         }
@@ -1243,12 +1244,16 @@ impl FormatTimeZone for Iso8601Format {
         if let IsoSeconds::Optional = self.seconds {
             if gmt_offset.has_seconds() {
                 if extended_format {
-                    sink.write_char(':')?;
+                    if let Err(e) = sink.write_char(':') {
+                        return Ok(Err(e));
+                    }
                 }
-                sink.write_str(&self.format_offset_seconds(time_zone))?;
+                if let Err(e) = sink.write_str(&self.format_offset_seconds(time_zone)) {
+                    return Ok(Err(e));
+                }
             }
         }
-        Ok(())
+        Ok(Ok(()))
     }
 }
 
@@ -1258,52 +1263,38 @@ impl FormatTimeZone for ExemplarCityFormat {
         sink: &mut W,
         time_zone: &impl TimeZoneInput,
         data_payloads: &TimeZoneDataPayloads,
-    ) -> Result<(), DateTimeFormatError> {
-        self.exemplar_city(sink, time_zone, data_payloads)
-            .or_else(|_| self.unknown_city(sink, data_payloads))?;
-        Ok(())
-    }
-}
+    ) -> Result<fmt::Result, DateTimeFormatError> {
+        // Writes the exemplar city associated with this time zone.
+        let formatted_exemplar_city = data_payloads
+            .exemplar_cities
+            .as_ref()
+            .map(|p| p.get())
+            .and_then(|cities| time_zone.time_zone_id().and_then(|id| cities.0.get(id)));
 
-impl ExemplarCityFormat {
-    /// Writes the exemplar city associated with this time zone.
-    fn exemplar_city<W: fmt::Write + ?Sized>(
-        &self,
-        sink: &mut W,
-        time_zone: &impl TimeZoneInput,
-        data_payloads: &TimeZoneDataPayloads,
-    ) -> Result<(), DateTimeFormatError> {
-        sink.write_str(
-            data_payloads
-                .exemplar_cities
-                .as_ref()
-                .map(|p| p.get())
-                .and_then(|cities| time_zone.time_zone_id().and_then(|id| cities.0.get(id)))
-                .ok_or(fmt::Error)?,
-        )
-        .map_err(DateTimeFormatError::from)
-    }
-
-    /// Writes the unknown city "Etc/Unknown" for the current locale.
-    ///
-    /// If there is no localized form of "Etc/Unknown" for the current locale,
-    /// returns the "Etc/Uknown" value of the `und` locale as a hard-coded string.
-    ///
-    /// This can be used as a fallback if [`exemplar_city()`](TimeZoneFormat::exemplar_city())
-    /// is unable to produce a localized form of the time zone's exemplar city in the current locale.
-    fn unknown_city<W: fmt::Write + ?Sized>(
-        &self,
-        sink: &mut W,
-        data_payloads: &TimeZoneDataPayloads,
-    ) -> Result<(), DateTimeFormatError> {
-        sink.write_str(
-            data_payloads
-                .exemplar_cities
-                .as_ref()
-                .map(|p| p.get())
-                .and_then(|cities| cities.0.get("Etc/Unknown"))
-                .unwrap_or(&Cow::Borrowed("Unknown")),
-        )
-        .map_err(DateTimeFormatError::from)
+        match formatted_exemplar_city {
+            Some(ftz) => match sink.write_str(ftz) {
+                Ok(_) => Ok(Ok(())),
+                Err(_) => Ok(Err(fmt::Error)),
+            },
+            None => {
+                // Writes the unknown city "Etc/Unknown" for the current locale.
+                //
+                // If there is no localized form of "Etc/Unknown" for the current locale,
+                // returns the "Etc/Uknown" value of the `und` locale as a hard-coded string.
+                //
+                // This can be used as a fallback if [`exemplar_city()`](TimeZoneFormat::exemplar_city())
+                // is unable to produce a localized form of the time zone's exemplar city in the current locale.
+                let formatted_unknown_city = data_payloads
+                    .exemplar_cities
+                    .as_ref()
+                    .map(|p| p.get())
+                    .and_then(|cities| cities.0.get("Etc/Unknown"))
+                    .unwrap_or(&Cow::Borrowed("Unknown"));
+                match sink.write_str(formatted_unknown_city) {
+                    Ok(_) => Ok(Ok(())),
+                    Err(_) => Ok(Err(fmt::Error)),
+                }
+            }
+        }
     }
 }

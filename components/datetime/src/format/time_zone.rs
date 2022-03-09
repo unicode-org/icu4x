@@ -9,7 +9,8 @@ use crate::pattern::PatternItem;
 use crate::provider::calendar::patterns::PatternPluralsFromPatternsV1Marker;
 use crate::{
     date::TimeZoneInput,
-    time_zone::{TimeZoneFormat, TimeZoneFormatKind},
+    time_zone::{FormatTimeZone, TimeZoneFormat, TimeZoneFormatKind, TimeZoneFormatUnit},
+    DateTimeFormatError,
 };
 use icu_provider::DataPayload;
 use writeable::Writeable;
@@ -27,7 +28,7 @@ where
     T: TimeZoneInput,
 {
     fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
-        write_zone(self.time_zone_format, self.time_zone, sink).map_err(|_| core::fmt::Error)
+        self.write_zone(sink).map_err(|_| core::fmt::Error)
     }
 
     // TODO(#489): Implement write_len
@@ -38,75 +39,97 @@ where
     T: TimeZoneInput,
 {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write_zone(self.time_zone_format, self.time_zone, f).map_err(|_| core::fmt::Error)
+        self.write_zone(f).map_err(|_| core::fmt::Error)
     }
 }
 
-pub(crate) fn write_zone<T, W>(
-    time_zone_format: &TimeZoneFormat,
-    time_zone: &T,
-    w: &mut W,
-) -> Result<(), Error>
+impl<'l, T> FormattedTimeZone<'l, T>
 where
     T: TimeZoneInput,
-    W: fmt::Write + ?Sized,
 {
-    match &time_zone_format.kind {
-        TimeZoneFormatKind::Pattern(patterns) => {
-            write_pattern(time_zone_format, time_zone, patterns, w)
+    /// Format time zone with fallbacks.
+    pub fn write<W>(&self, w: &mut W)
+    where
+        W: core::fmt::Write + ?Sized,
+    {
+        match self.write_no_fallback(w) {
+            Ok(_) => {}
+            Err(_) => match self.time_zone_format.fallback_unit {
+                Some(TimeZoneFormatUnit::LocalizedGmt(fallback)) => {
+                    let _ =
+                        fallback.format(w, self.time_zone, &self.time_zone_format.data_payloads);
+                }
+                Some(TimeZoneFormatUnit::Iso8601(fallback)) => {
+                    let _ =
+                        fallback.format(w, self.time_zone, &self.time_zone_format.data_payloads);
+                }
+                _ => {}
+            },
+        };
+    }
+
+    /// Write time zone with no fallback.
+    pub fn write_no_fallback<W>(&self, w: &mut W) -> Result<fmt::Result, Error>
+    where
+        W: core::fmt::Write + ?Sized,
+    {
+        for unit in self.time_zone_format.format_units.iter() {
+            match unit.format(w, self.time_zone, &self.time_zone_format.data_payloads) {
+                Ok(r) => return Ok(r),
+                Err(DateTimeFormatError::UnsupportedOptions) => continue,
+                Err(e) => return Err(e),
+            }
         }
-        TimeZoneFormatKind::Config(_) => write_config(time_zone_format, time_zone, w),
+        Err(DateTimeFormatError::UnsupportedOptions)
     }
-}
 
-fn write_config<T, W>(
-    time_zone_format: &TimeZoneFormat,
-    time_zone: &T,
-    w: &mut W,
-) -> Result<(), Error>
-where
-    T: TimeZoneInput,
-    W: fmt::Write + ?Sized,
-{
-    time_zone_format.format(w, time_zone);
-    Ok(())
-}
-
-fn write_pattern<T, W>(
-    time_zone_format: &TimeZoneFormat,
-    time_zone: &T,
-    patterns: &DataPayload<PatternPluralsFromPatternsV1Marker>,
-    w: &mut W,
-) -> Result<(), Error>
-where
-    T: TimeZoneInput,
-    W: fmt::Write + ?Sized,
-{
-    let pattern = patterns
-        .get()
-        .0
-        .clone()
-        .expect_pattern("Expected a single pattern");
-    for item in pattern.items.iter() {
-        match item {
-            PatternItem::Field(_) => write_field(time_zone_format, time_zone, w)?,
-            PatternItem::Literal(ch) => w.write_char(ch)?,
+    pub(crate) fn write_zone<W>(&self, w: &mut W) -> Result<(), Error>
+    where
+        W: fmt::Write + ?Sized,
+    {
+        match &self.time_zone_format.kind {
+            TimeZoneFormatKind::Pattern(patterns) => self.write_pattern(patterns, w),
+            TimeZoneFormatKind::Config(_) => self.write_config(w),
         }
     }
-    Ok(())
-}
 
-/// Write fields according to the UTS-35 specification.
-/// https://unicode.org/reports/tr35/tr35-dates.html#dfst-zone
-pub(super) fn write_field<T, W>(
-    time_zone_format: &TimeZoneFormat,
-    time_zone: &T,
-    w: &mut W,
-) -> Result<(), Error>
-where
-    T: TimeZoneInput,
-    W: fmt::Write + ?Sized,
-{
-    time_zone_format.format(w, time_zone);
-    Ok(())
+    fn write_config<W>(&self, w: &mut W) -> Result<(), Error>
+    where
+        W: fmt::Write + ?Sized,
+    {
+        self.write(w);
+        Ok(())
+    }
+
+    fn write_pattern<W>(
+        &self,
+        patterns: &DataPayload<PatternPluralsFromPatternsV1Marker>,
+        w: &mut W,
+    ) -> Result<(), Error>
+    where
+        W: fmt::Write + ?Sized,
+    {
+        let pattern = patterns
+            .get()
+            .0
+            .clone()
+            .expect_pattern("Expected a single pattern");
+        for item in pattern.items.iter() {
+            match item {
+                PatternItem::Field(_) => self.write_field(w)?,
+                PatternItem::Literal(ch) => w.write_char(ch)?,
+            }
+        }
+        Ok(())
+    }
+
+    /// Write fields according to the UTS-35 specification.
+    /// https://unicode.org/reports/tr35/tr35-dates.html#dfst-zone
+    pub(super) fn write_field<W>(&self, w: &mut W) -> Result<(), Error>
+    where
+        W: fmt::Write + ?Sized,
+    {
+        self.write(w);
+        Ok(())
+    }
 }

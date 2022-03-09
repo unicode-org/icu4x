@@ -9,12 +9,11 @@ use crate::date::{LocalizedDateTimeInput, ZonedDateTimeInputWithLocale};
 use crate::error::DateTimeFormatError as Error;
 use crate::fields::{self, FieldSymbol};
 use crate::pattern::{runtime::Pattern, PatternItem};
-use crate::raw;
+use crate::{raw, FormattedTimeZone};
 use core::fmt;
 use writeable::Writeable;
 
 use super::datetime;
-use super::time_zone;
 
 #[allow(missing_docs)] // TODO(#686) - Add missing docs.
 pub struct FormattedZonedDateTime<'l, T>
@@ -102,11 +101,11 @@ where
         .map(|s| s.get());
 
     match field.symbol {
-        FieldSymbol::TimeZone(_time_zone) => time_zone::write_field(
-            &zoned_datetime_format.time_zone_format,
-            loc_datetime.datetime(),
-            w,
-        )?,
+        FieldSymbol::TimeZone(_time_zone) => FormattedTimeZone {
+            time_zone_format: &zoned_datetime_format.time_zone_format,
+            time_zone: loc_datetime.datetime(),
+        }
+        .write_field(w)?,
         _ => datetime::write_field(pattern, field, symbols, loc_datetime, w)?,
     }
     Ok(())
