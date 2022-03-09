@@ -10,7 +10,10 @@ use yoke::trait_hack::YokeTraitHack;
 /// a postcard-formatted data struct.
 #[derive(Debug, Copy, Clone, yoke::Yokeable, Default)]
 pub struct HeapStats {
-    pub bytes_needed: u64,
+    // Total bytes allocated during deserialization
+    pub total_bytes_allocated: u64,
+    // Total bytes allocated during deserialization that have not yet been freed
+    pub final_bytes_needed: usize,
 }
 
 /// The [`DataMarker`] marker type for [`HeapStats`].
@@ -42,7 +45,8 @@ impl DataPayload<BufferMarker> {
         let stats_after = dhat::HeapStats::get();
 
         HeapStats {
-            bytes_needed: stats_after.total_bytes - stats_before.total_bytes,
+            total_bytes_allocated: stats_after.total_bytes - stats_before.total_bytes,
+            final_bytes_needed: stats_after.curr_bytes - stats_before.curr_bytes,
         }
     }
 }

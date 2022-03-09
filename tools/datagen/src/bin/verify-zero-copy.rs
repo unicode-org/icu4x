@@ -225,7 +225,7 @@ fn main() -> eyre::Result<()> {
 
             let stats: DataPayload<HeapStatsMarker> =
                 converter.convert(key, payload).map_err(|e| e.1)?;
-            let vio = stats.get().bytes_needed;
+            let vio = stats.get().total_bytes_allocated;
             log::trace!("Key {} with options [{}] takes {} bytes", key, options, vio);
             max_violation = cmp::max(vio, max_violation);
         }
