@@ -779,7 +779,8 @@ impl<'l, 's> LineBreakType<'l, 's> for Utf16Char {
 mod tests {
     use super::*;
 
-    fn get_linebreak_property(codepoint: char) -> u8 {
+    #[test]
+    fn linebreak_propery() {
         let provider = icu_testdata::get_provider();
         let payload: DataPayload<LineBreakDataV1Marker> = provider
             .load_resource(&DataRequest::default())
@@ -787,16 +788,16 @@ mod tests {
             .take_payload()
             .expect("Data should be present!");
         let lb_data: &RuleBreakDataV1 = payload.get();
-        get_linebreak_property_with_rule(
-            &lb_data.property_table,
-            codepoint,
-            LineBreakRule::Strict,
-            WordBreakRule::Normal,
-        )
-    }
 
-    #[test]
-    fn linebreak_propery() {
+        let get_linebreak_property = |codepoint| {
+            get_linebreak_property_with_rule(
+                &lb_data.property_table,
+                codepoint,
+                LineBreakRule::Strict,
+                WordBreakRule::Normal,
+            )
+        };
+
         assert_eq!(get_linebreak_property('\u{0020}'), SP);
         assert_eq!(get_linebreak_property('\u{0022}'), QU);
         assert_eq!(get_linebreak_property('('), OP_OP30);
@@ -813,7 +814,9 @@ mod tests {
         assert_eq!(get_linebreak_property('\u{2014}'), B2);
     }
 
-    fn is_break(left: u8, right: u8) -> bool {
+    #[test]
+    #[allow(clippy::bool_assert_comparison)] // clearer when we're testing bools directly
+    fn break_rule() {
         let provider = icu_testdata::get_provider();
         let payload: DataPayload<LineBreakDataV1Marker> = provider
             .load_resource(&DataRequest::default())
@@ -821,17 +824,16 @@ mod tests {
             .take_payload()
             .expect("Data should be present!");
         let lb_data: &RuleBreakDataV1 = payload.get();
-        is_break_from_table(
-            &lb_data.break_state_table,
-            lb_data.property_count,
-            left,
-            right,
-        )
-    }
 
-    #[test]
-    #[allow(clippy::bool_assert_comparison)] // clearer when we're testing bools directly
-    fn break_rule() {
+        let is_break = |left, right| {
+            is_break_from_table(
+                &lb_data.break_state_table,
+                lb_data.property_count,
+                left,
+                right,
+            )
+        };
+
         // LB4
         assert_eq!(is_break(BK, AL), true);
         // LB5
