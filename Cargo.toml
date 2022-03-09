@@ -29,6 +29,7 @@ members = [
     "provider/core",
     "provider/fs",
     "provider/macros",
+    "provider/segmenter",
     "provider/testdata",
     "provider/uprops",
     "tools/benchmark/macros",

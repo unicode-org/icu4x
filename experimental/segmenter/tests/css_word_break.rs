@@ -13,7 +13,7 @@ fn check_with_options(
     expect_utf16: Vec<usize>,
     options: LineBreakOptions,
 ) {
-    let provider = icu_provider::inv::InvariantDataProvider;
+    let provider = icu_testdata::get_provider();
     let segmenter =
         LineBreakSegmenter::try_new_with_options(&provider, options).expect("Data exists");
 

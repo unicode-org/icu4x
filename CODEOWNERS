@@ -19,7 +19,7 @@ experimental/bies/                @sffc
 experimental/calendar/            @Manishearth @sffc
 experimental/codepointtrie/       @echeran
 experimental/provider_ppucd/      @echeran
-experimental/segmenter/           @aethanyc @makotokato @makotokato
+experimental/segmenter/           @aethanyc @makotokato
 experimental/segmenter_lstm/      @aethanyc @sffc
 ffi/capi/                         @Manishearth
 ffi/cpp/                          @Manishearth
@@ -31,6 +31,7 @@ provider/core/                    @sffc @Manishearth
 provider/fs/                      @sffc
 provider/macros/                  @Manishearth @sffc
 provider/testdata/                @unicode-org/icu4x-owners
+provider/segmenter/               @aethanyc @makotokato
 tools/benchmark/binsize/          @gnrunge
 tools/benchmark/macros/           @gregtatum
 tools/benchmark/memory/           @gregtatum

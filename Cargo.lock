@@ -1112,7 +1112,9 @@ dependencies = [
  "icu_provider_blob",
  "icu_provider_cldr",
  "icu_provider_fs",
+ "icu_provider_segmenter",
  "icu_provider_uprops",
+ "icu_segmenter",
  "icu_testdata",
  "log",
  "rayon",
@@ -1382,6 +1384,21 @@ dependencies = [
 ]
 
 [[package]]
+name = "icu_provider_segmenter"
+version = "0.1.0"
+dependencies = [
+ "icu_codepointtrie",
+ "icu_properties",
+ "icu_provider",
+ "icu_provider_uprops",
+ "icu_segmenter",
+ "icu_testdata",
+ "serde",
+ "toml",
+ "zerovec",
+]
+
+[[package]]
 name = "icu_provider_uprops"
 version = "0.5.0"
 dependencies = [
@@ -1404,18 +1421,14 @@ name = "icu_segmenter"
 version = "0.1.0"
 dependencies = [
  "criterion",
- "icu",
  "icu_char16trie",
- "icu_codepointtrie",
  "icu_provider",
- "icu_provider_fs",
  "icu_segmenter_lstm",
  "icu_testdata",
  "lazy_static",
  "serde",
  "serde-json-core",
  "serde_json",
- "toml",
  "zerovec",
 ]
 
