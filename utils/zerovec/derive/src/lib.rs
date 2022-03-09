@@ -7,6 +7,8 @@
 use proc_macro::TokenStream;
 use syn::{parse_macro_input, AttributeArgs, DeriveInput};
 
+mod make_ule;
+mod make_varule;
 pub(crate) mod ule;
 mod utils;
 mod varule;
@@ -30,7 +32,7 @@ pub fn varule_derive(input: TokenStream) -> TokenStream {
 pub fn make_ule(attr: TokenStream, item: TokenStream) -> TokenStream {
     let input = parse_macro_input!(item as DeriveInput);
     let attr = parse_macro_input!(attr as AttributeArgs);
-    TokenStream::from(ule::make_ule_impl(attr, input))
+    TokenStream::from(make_ule::make_ule_impl(attr, input))
 }
 
 /// Full docs for this proc macro can be found on the [`zerovec`](docs.rs/zerovec) crate.
@@ -38,5 +40,5 @@ pub fn make_ule(attr: TokenStream, item: TokenStream) -> TokenStream {
 pub fn make_varule(attr: TokenStream, item: TokenStream) -> TokenStream {
     let input = parse_macro_input!(item as DeriveInput);
     let attr = parse_macro_input!(attr as AttributeArgs);
-    TokenStream::from(varule::make_varule_impl(attr, input))
+    TokenStream::from(make_varule::make_varule_impl(attr, input))
 }
