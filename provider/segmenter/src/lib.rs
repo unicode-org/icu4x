@@ -31,8 +31,8 @@
 //! [`FsDataProvider`]: ../icu_provider_fs/struct.FsDataProvider.html
 //! [`StaticDataProvider`]: ../icu_provider_blob/struct.StaticDataProvider.html
 
+use icu_provider::datagen::OmnibusDatagenProvider;
 use icu_provider::fork::by_key::MultiForkByKeyProvider;
-use icu_provider::iter::IterableDynProvider;
 use icu_provider::prelude::*;
 use std::path::{Path, PathBuf};
 
@@ -48,9 +48,9 @@ pub fn segmenter_data_root() -> PathBuf {
 pub fn create_exportable_provider<T: DataMarker>(
     segmenter_data_root: &Path,
     uprops_root: &Path,
-) -> Result<MultiForkByKeyProvider<Box<dyn IterableDynProvider<T> + Sync>>, DataError>
+) -> Result<MultiForkByKeyProvider<Box<dyn OmnibusDatagenProvider<T> + Sync>>, DataError>
 where
-    SegmenterRuleProvider: IterableDynProvider<T>,
+    SegmenterRuleProvider: OmnibusDatagenProvider<T>,
 {
     Ok(MultiForkByKeyProvider {
         providers: vec![Box::new(SegmenterRuleProvider::try_new(

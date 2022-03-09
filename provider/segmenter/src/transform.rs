@@ -706,7 +706,8 @@ icu_provider::impl_dyn_provider!(
         WordBreakDataV1Marker,
         SentenceBreakDataV1Marker,
     ],
-    SERDE_SE
+    SERDE_SE,
+    impl DataConverter
 );
 
 impl IterableResourceProvider<LineBreakDataV1Marker> for SegmenterRuleProvider {
