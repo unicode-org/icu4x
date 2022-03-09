@@ -305,11 +305,10 @@ fn test_basic() {
 
     // Spot check a few expected results. There are more extensive tests in the
     // locale canonicalizer itself.
-    let lang = tinystr!(2, "iw");
     let res = data
         .get()
         .language_len2
-        .binary_search_by_key(&lang, |alias| alias.0);
+        .binary_search_by_key(&tinystr!(2, "iw"), |alias| alias.0);
     assert!(res.is_ok());
     assert_eq!(data.get().language_len2[res.unwrap()].0, "iw");
     assert_eq!(data.get().language_len2[res.unwrap()].1, "he");
@@ -317,23 +316,16 @@ fn test_basic() {
     let res = data
         .get()
         .language_len3
-        .binary_search_by_key(&lang, |alias| alias.0);
+        .binary_search_by_key(&tinystr!(3, "iw"), |alias| alias.0);
     assert!(res.is_err());
 
     assert_eq!(data.get().script[0].0, "Qaai");
     assert_eq!(data.get().script[0].1, "Zinh");
 
-    let region = tinystr!(3, "768");
-    let res = data
-        .get()
-        .region_alpha
-        .binary_search_by_key(&region, |alias| alias.0);
-    assert!(res.is_err());
-
     let res = data
         .get()
         .region_num
-        .binary_search_by_key(&region, |alias| alias.0);
+        .binary_search_by_key(&tinystr!(3, "768"), |alias| alias.0);
     assert!(res.is_ok());
     assert_eq!(data.get().region_num[res.unwrap()].0, "768");
     assert_eq!(data.get().region_num[res.unwrap()].1, "TG");
