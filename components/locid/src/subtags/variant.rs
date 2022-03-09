@@ -5,7 +5,7 @@
 use crate::parser::errors::ParserError;
 use core::ops::RangeInclusive;
 use core::str::FromStr;
-use tinystr::TinyStr8;
+use tinystr::TinyAsciiStr;
 
 /// A variant subtag (examples: `"macos"`, `"posix"`, `"1996"` etc.)
 ///
@@ -23,7 +23,7 @@ use tinystr::TinyStr8;
 ///
 /// [`unicode_variant_id`]: https://unicode.org/reports/tr35/#unicode_variant_id
 #[derive(Debug, PartialEq, Eq, Clone, Hash, PartialOrd, Ord, Copy)]
-pub struct Variant(TinyStr8);
+pub struct Variant(TinyAsciiStr<{ *VARIANT_LENGTH.end() }>);
 
 const VARIANT_LENGTH: RangeInclusive<usize> = 4..=8;
 const VARIANT_NUM_ALPHA_LENGTH: usize = 4;
@@ -49,7 +49,7 @@ impl Variant {
             return Err(ParserError::InvalidSubtag);
         }
 
-        let s = TinyStr8::from_bytes(v).map_err(|_| ParserError::InvalidSubtag)?;
+        let s = TinyAsciiStr::from_bytes(v).map_err(|_| ParserError::InvalidSubtag)?;
 
         if !s.is_ascii_alphanumeric() {
             return Err(ParserError::InvalidSubtag);
@@ -99,10 +99,10 @@ impl Variant {
     ///
     /// # Safety
     ///
-    /// This function accepts a [`u64`] that is expected to be a valid [`TinyStr8`]
+    /// This function accepts a [u8; 8] that is expected to be a valid [`TinyAsciiStr<8>`]
     /// representing a [`Variant`] subtag in canonical syntax.
     pub const unsafe fn from_raw_unchecked(v: [u8; 8]) -> Self {
-        Self(TinyStr8::from_bytes_unchecked(v))
+        Self(TinyAsciiStr::from_bytes_unchecked(v))
     }
 
     /// A helper function for displaying
@@ -154,7 +154,7 @@ impl<'l> From<&'l Variant> for &'l str {
     }
 }
 
-impl From<Variant> for TinyStr8 {
+impl From<Variant> for TinyAsciiStr<8> {
     fn from(input: Variant) -> Self {
         input.0
     }

@@ -5,7 +5,7 @@
 use core::str::FromStr;
 
 use crate::parser::errors::ParserError;
-use tinystr::TinyStr4;
+use tinystr::TinyAsciiStr;
 
 /// A key used in a list of [`Keywords`](super::Keywords).
 ///
@@ -24,7 +24,7 @@ use tinystr::TinyStr4;
 /// assert_eq!(key1, "ca");
 /// ```
 #[derive(Debug, PartialEq, Eq, Clone, Hash, PartialOrd, Ord, Copy)]
-pub struct Key(TinyStr4);
+pub struct Key(TinyAsciiStr<KEY_LENGTH>);
 
 const KEY_LENGTH: usize = 2;
 
@@ -50,11 +50,11 @@ impl Key {
             return Err(ParserError::InvalidExtension);
         }
 
-        let key = TinyStr4::from_bytes(key).map_err(|_| ParserError::InvalidSubtag)?;
+        let key = TinyAsciiStr::from_bytes(key).map_err(|_| ParserError::InvalidSubtag)?;
         Ok(Self(key.to_ascii_lowercase()))
     }
 
-    /// A constructor which takes a TinyStr4 and produces a [`Key`]
+    /// A constructor which takes a TinyAsciiStr and produces a [`Key`]
     /// without doing any checking.
     ///
     /// # Examples
@@ -63,11 +63,11 @@ impl Key {
     /// use icu::locid::extensions::unicode::Key;
     /// use tinystr::tinystr;
     ///
-    /// let key = Key::from_tinystr_unchecked(tinystr!(4, "ca"));
+    /// let key = Key::from_tinystr_unchecked(tinystr!(2, "ca"));
     ///
     /// assert_eq!(key, "ca");
     /// ```
-    pub fn from_tinystr_unchecked(key: TinyStr4) -> Self {
+    pub fn from_tinystr_unchecked(key: TinyAsciiStr<KEY_LENGTH>) -> Self {
         Self(key)
     }
 

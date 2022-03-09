@@ -6,7 +6,7 @@ use core::ops::RangeInclusive;
 use core::str::FromStr;
 
 use crate::parser::errors::ParserError;
-use tinystr::TinyStr8;
+use tinystr::TinyAsciiStr;
 
 /// A single item used in a list of [`Other`](super::Other) extensions.
 ///
@@ -24,7 +24,7 @@ use tinystr::TinyStr8;
 /// assert_eq!(key1.as_str(), "foo");
 /// ```
 #[derive(Debug, PartialEq, Eq, Clone, Hash, PartialOrd, Ord, Copy)]
-pub struct Key(TinyStr8);
+pub struct Key(TinyAsciiStr<{ *KEY_LENGTH.end() }>);
 
 const KEY_LENGTH: RangeInclusive<usize> = 2..=8;
 
@@ -52,7 +52,7 @@ impl Key {
             return Err(ParserError::InvalidExtension);
         }
 
-        let s = TinyStr8::from_bytes(v).map_err(|_| ParserError::InvalidExtension)?;
+        let s = TinyAsciiStr::from_bytes(v).map_err(|_| ParserError::InvalidExtension)?;
 
         if !s.is_ascii_alphanumeric() {
             return Err(ParserError::InvalidExtension);

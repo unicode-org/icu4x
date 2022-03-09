@@ -8,7 +8,7 @@
 //! <https://github.com/unicode-org/cldr-json/blob/main/cldr-json/cldr-core/supplemental/aliases.json>
 
 use serde::Deserialize;
-use tinystr::{TinyStr4, TinyStr8};
+use tinystr::TinyAsciiStr;
 
 #[derive(PartialEq, Debug, Deserialize)]
 pub struct Replacement<T> {
@@ -21,13 +21,13 @@ pub struct Alias {
     #[serde(with = "tuple_vec_map", rename = "languageAlias")]
     pub language_aliases: Vec<(String, Replacement<String>)>,
     #[serde(with = "tuple_vec_map", rename = "scriptAlias")]
-    pub script_aliases: Vec<(TinyStr4, Replacement<TinyStr4>)>,
+    pub script_aliases: Vec<(TinyAsciiStr<4>, Replacement<TinyAsciiStr<4>>)>,
     #[serde(with = "tuple_vec_map", rename = "territoryAlias")]
-    pub region_aliases: Vec<(TinyStr4, Replacement<String>)>,
+    pub region_aliases: Vec<(TinyAsciiStr<3>, Replacement<String>)>,
     #[serde(with = "tuple_vec_map", rename = "variantAlias")]
-    pub variant_aliases: Vec<(TinyStr8, Replacement<TinyStr8>)>,
+    pub variant_aliases: Vec<(TinyAsciiStr<8>, Replacement<TinyAsciiStr<8>>)>,
     #[serde(with = "tuple_vec_map", rename = "subdivisionAlias")]
-    pub subdivision_aliases: Vec<(TinyStr8, Replacement<String>)>,
+    pub subdivision_aliases: Vec<(TinyAsciiStr<7>, Replacement<String>)>,
 }
 
 #[derive(PartialEq, Debug, Deserialize)]
