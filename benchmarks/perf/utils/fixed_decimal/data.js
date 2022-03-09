@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1646791266656,
+  "lastUpdate": 1646791483627,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -20579,6 +20579,36 @@ window.BENCHMARK_DATA = {
             "name": "fixed_decimal/overview",
             "value": 103373,
             "range": "± 9362",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "92a15945dbea37e761e9c8be1eab1edc41f05f9c",
+          "message": "Add clippy panic annotations to tinystr crate (#1677)",
+          "timestamp": "2022-03-08T17:57:20-08:00",
+          "tree_id": "07b79996ee1b8330a0f9ca6634a46b3beeec61cb",
+          "url": "https://github.com/unicode-org/icu4x/commit/92a15945dbea37e761e9c8be1eab1edc41f05f9c"
+        },
+        "date": 1646791468042,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 108889,
+            "range": "± 3253",
             "unit": "ns/iter"
           }
         ]
