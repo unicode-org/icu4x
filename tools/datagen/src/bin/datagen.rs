@@ -4,6 +4,7 @@
 
 use clap::{App, Arg, ArgGroup, ArgMatches};
 use eyre::WrapErr;
+use icu_datagen::get_all_keys;
 use icu_locid::LanguageIdentifier;
 use icu_provider::export::DataExporter;
 use icu_provider::filter::Filterable;
