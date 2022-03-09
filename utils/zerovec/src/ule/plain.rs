@@ -230,6 +230,11 @@ impl AsULE for f64 {
     }
 }
 
+// The from_bits documentation mentions that they have identical byte representations to integers
+// and EqULE only cares about LE systems
+unsafe impl EqULE for f32 {}
+unsafe impl EqULE for f64 {}
+
 // The bool impl is not as efficient as it could be
 // We can, in the future, have https://github.com/unicode-org/icu4x/blob/main/utils/zerovec/design_doc.md#bitpacking
 // for better bitpacking
