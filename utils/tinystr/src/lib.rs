@@ -2,7 +2,17 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-#![cfg_attr(not(test), no_std)]
+// https://github.com/unicode-org/icu4x/blob/main/docs/process/boilerplate.md#library-annotations
+#![cfg_attr(
+    not(test),
+    no_std,
+    deny(
+        clippy::indexing_slicing,
+        clippy::unwrap_used,
+        clippy::expect_used,
+        clippy::panic
+    )
+)]
 
 mod macros;
 
