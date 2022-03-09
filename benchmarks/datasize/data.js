@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1646783941838,
+  "lastUpdate": 1646790560405,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -10643,6 +10643,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/29a3028dd12bd1787609c7b62626056422597284"
         },
         "date": 1646783929001,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 1605261,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "c4c749df83c71dd0d68cf924675ca12e587a8f42",
+          "message": "Split modules (#1679)",
+          "timestamp": "2022-03-08T17:47:47-08:00",
+          "tree_id": "315bf96f11b2b47aa1bddf8b49cbec5696c8533f",
+          "url": "https://github.com/unicode-org/icu4x/commit/c4c749df83c71dd0d68cf924675ca12e587a8f42"
+        },
+        "date": 1646790545156,
         "tool": "ndjson",
         "benches": [
           {
