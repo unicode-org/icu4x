@@ -8,7 +8,7 @@ use icu_datagen::get_all_keys;
 use icu_locid::LanguageIdentifier;
 use icu_provider::export::DataExporter;
 use icu_provider::filter::Filterable;
-use icu_provider::fork::by_key::ForkByKeyProvider;
+use icu_provider::fork::by_key::MultiForkByKeyProvider;
 use icu_provider::hello_world::{HelloWorldProvider, HelloWorldV1Marker};
 use icu_provider::iter::IterableDynProvider;
 use icu_provider::prelude::*;
@@ -324,13 +324,23 @@ fn main() -> eyre::Result<()> {
                 eyre::bail!("Value for --uprops-root must be specified",)
             };
 
-            Box::new(ForkByKeyProvider(
-                icu_provider_cldr::create_exportable_provider(
-                    cldr_paths.as_ref(),
-                    uprops_root.clone(),
-                )?,
-                icu_provider_uprops::create_exportable_provider(&uprops_root)?,
-            ))
+            let segmenter_data_root = icu_provider_segmenter::segmenter_data_root();
+
+            Box::new(MultiForkByKeyProvider {
+                providers: vec![
+                    Box::new(icu_provider_cldr::create_exportable_provider(
+                        cldr_paths.as_ref(),
+                        uprops_root.clone(),
+                    )?),
+                    Box::new(icu_provider_uprops::create_exportable_provider(
+                        &uprops_root,
+                    )?),
+                    Box::new(icu_provider_segmenter::create_exportable_provider(
+                        &segmenter_data_root,
+                        &uprops_root,
+                    )?),
+                ],
+            })
         };
 
     if let Some(locales) = selected_locales.as_ref() {
