@@ -103,8 +103,8 @@ impl DataExporter<SerializeMarker> for FilesystemExporter {
         log::trace!("Writing: {}/{}", key, options);
 
         let mut path_buf = self.root.clone();
-        path_buf.push(&*key.writeable_to_string());
-        path_buf.push(&*options.writeable_to_string());
+        path_buf.push(&*key.write_to_string());
+        path_buf.push(&*options.write_to_string());
         path_buf.set_extension(self.manifest.get_file_extension());
 
         if let Some(parent_dir) = path_buf.parent() {

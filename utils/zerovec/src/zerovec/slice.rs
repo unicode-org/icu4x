@@ -12,8 +12,8 @@ use core::ops::Range;
 /// owned data and as such is ideal for deserialization since most human readable
 /// serialization formats cannot unconditionally deserialize zero-copy.
 ///
-/// This type can be used inside `VarZeroVec<T>`: This essentially allows for
-/// the construction of zero-copy types isomorphic to `Vec<Vec<T>>` by instead
+/// This type can be used inside [`VarZeroVec<T>`](crate::VarZeroVec) and [`ZeroMap`](crate::ZeroMap):
+/// This essentially allows for the construction of zero-copy types isomorphic to `Vec<Vec<T>>` by instead
 /// using `VarZeroVec<ZeroSlice<T>>`. See the [`VarZeroVec`](crate::VarZeroVec) docs for an example.
 #[repr(transparent)]
 pub struct ZeroSlice<T: AsULE>([T::ULE]);

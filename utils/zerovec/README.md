@@ -1,31 +1,161 @@
 # zerovec [![crates.io](https://img.shields.io/crates/v/zerovec)](https://crates.io/crates/zerovec)
 
-Zero-copy vector abstractions over byte arrays.
+Zero-copy vector abstractions for arbitrary types, backed by byte slices.
 
-`zerovec` enable vectors of multibyte types to be backed by a byte array, abstracting away
-issues including memory alignment and endianness.
-
-This crate has four main types:
-
-- [`ZeroVec<T>`](ZeroVec) for fixed-width types like `u32`
-- [`VarZeroVec<T>`](VarZeroVec) for variable-width types like `str`
-- [`ZeroMap<K, V>`](ZeroMap) to map from `K` to `V`
-- [`ZeroMap2d<K0, K1, V>`](ZeroMap2d) to map from the pair `(K0, K1)` to `V`
-
-The first two are intended as drop-in replacements for `Vec<T>` in Serde structs serialized
-with a format supporting a borrowed byte buffer, like Bincode. The third and fourth are
-intended as a replacement for `HashMap` or `LiteMap`.
+`zerovec` enables a far wider range of types — beyond just `&[u8]` and `&str` — to participate in
+zero-copy deserialization from byte slices. It is `serde` compatible and comes equipped with
+proc macros
 
 Clients upgrading to `zerovec` benefit from zero heap allocations when deserializing
 read-only data.
 
-This crate has three optional features: `serde`, `yoke`, and `derive`. `serde` allows serializing and deserializing
-`zerovec`'s abstractions via [`serde`](https://docs.rs/serde), and `yoke` enables implementations of `Yokeable`
-from the [`yoke`](https://docs.rs/yoke/) crate.
+This crate has four main types:
 
-`derive` makes it easier to use custom types in these collections by providing the [`#[make_ule]`](crate::make_ule) and
-[`#[make_varule]`](crate::make_varule) proc macros, which generate appropriate [`ULE`](crate::ule::ULE) and
-[`VarULE`](crate::ule::VarULE)-conformant types for a given "normal" type.
+- [`ZeroVec<'a, T>`] (and [`ZeroSlice<T>`](ZeroSlice)) for fixed-width types like `u32`
+- [`VarZeroVec<'a, T>`] (and [`VarZeroSlice<T>`](ZeroSlice)) for variable-width types like `str`
+- [`ZeroMap<'a, K, V>`] to map from `K` to `V`
+- [`ZeroMap2d<'a, K0, K1, V>`] to map from the pair `(K0, K1)` to `V`
+
+The first two are intended as close-to-drop-in replacements for `Vec<T>` in Serde structs. The third and fourth are
+intended as a replacement for `HashMap` or [`LiteMap`](docs.rs/litemap). When used with Serde derives, **be sure to apply
+`#[serde(borrow)]` to these types**, same as one would for [`Cow<'a, T>`].
+
+[`ZeroVec<'a, T>`], [`VarZeroVec<'a, T>`], [`ZeroMap<'a, K, V>`], and [`ZeroMap2d<'a, K0, K1, V>`] all behave like
+[`Cow<'a, T>`] in that they abstract over either borrowed or owned data. When performing deserialization
+from human-readable formats (like `json` and `xml`), typically these types will allocate and fully own their data, whereas if deserializing
+from binary formats like `bincode` and `postcard`, these types will borrow data directly from the buffer being deserialized from,
+avoiding allocations and only performing validity checks. As such, this crate can be pretty fast (see [below](#Performance) for more information)
+on deserialization.
+
+See [the design doc](https://github.com/unicode-org/icu4x/blob/main/utils/zerovec/design_doc.md) for details on how this crate
+works under the hood.
+
+## Cargo features
+
+This crate has four optional features:
+ -  `serde`: Allows serializing and deserializing `zerovec`'s abstractions via [`serde`](https://docs.rs/serde)
+ -   `yoke`: Enables implementations of `Yokeable` from the [`yoke`](https://docs.rs/yoke/) crate, which is also useful
+             in situations involving a lot of zero-copy deserialization.
+ - `derive`: Makes it easier to use custom types in these collections by providing the [`#[make_ule]`](crate::make_ule) and
+    [`#[make_varule]`](crate::make_varule) proc macros, which generate appropriate [`ULE`](crate::ule::ULE) and
+    [`VarULE`](crate::ule::VarULE)-conformant types for a given "normal" type.
+ - `std`: Enabled `std::Error` implementations for error types. This crate is by default `no_std` with a dependency on `alloc`.
+
+[`ZeroVec<'a, T>`]: ZeroVec
+[`VarZeroVec<'a, T>`]: VarZeroVec
+[`ZeroMap<'a, K, V>`]: ZeroMap
+[`ZeroMap2d<'a, K0, K1, V>`]: ZeroMap2d
+[`Cow<'a, T>`]: alloc::borrow::Cow
+
+## Examples
+
+Serialize and deserialize a struct with ZeroVec and VarZeroVec with Bincode:
+
+```rust
+use zerovec::{ZeroVec, VarZeroVec};
+
+// This example requires the "serde" feature
+#[derive(serde::Serialize, serde::Deserialize)]
+pub struct DataStruct<'data> {
+    #[serde(borrow)]
+    nums: ZeroVec<'data, u32>,
+    #[serde(borrow)]
+    chars: ZeroVec<'data, char>,
+    #[serde(borrow)]
+    strs: VarZeroVec<'data, str>,
+}
+
+let data = DataStruct {
+    nums: ZeroVec::from_slice(&[211, 281, 421, 461]),
+    chars: ZeroVec::from_slice(&['ö', '冇', 'म']),
+    strs: VarZeroVec::from(&["hello", "world"]),
+};
+let bincode_bytes = bincode::serialize(&data)
+    .expect("Serialization should be successful");
+assert_eq!(bincode_bytes.len(), 74);
+
+let deserialized: DataStruct = bincode::deserialize(&bincode_bytes)
+    .expect("Deserialization should be successful");
+assert_eq!(deserialized.nums.first(), Some(211));
+assert_eq!(deserialized.chars.get(1), Some('冇'));
+assert_eq!(deserialized.strs.get(1), Some("world"));
+// The deserialization will not have allocated anything
+assert!(matches!(deserialized.nums, ZeroVec::Borrowed(_)));
+```
+
+Use custom types inside of ZeroVec:
+
+```rust
+use zerovec::{ZeroVec, VarZeroVec, ZeroMap};
+use std::borrow::Cow;
+use zerovec::ule::encode_varule_to_box;
+
+// custom fixed-size ULE type for ZeroVec
+#[zerovec::make_ule(DateULE)]
+#[derive(Copy, Clone, PartialEq, Eq, Ord, PartialOrd, serde::Serialize, serde::Deserialize)]
+struct Date {
+    y: u64,
+    m: u8,
+    d: u8
+}
+
+// custom variable sized VarULE type for VarZeroVec
+#[zerovec::make_varule(PersonULE)]
+#[zerovec::serde]
+#[derive(Clone, PartialEq, Eq, Ord, PartialOrd, serde::Serialize, serde::Deserialize)]
+struct Person<'a> {
+    birthday: Date,
+    favorite_character: char,
+    #[serde(borrow)]
+    name: Cow<'a, str>,
+}
+
+#[derive(serde::Serialize, serde::Deserialize)]
+struct Data<'a> {
+    #[serde(borrow)]
+    important_dates: ZeroVec<'a, Date>,
+    // note: VarZeroVec always must reference the ULE type directly
+    #[serde(borrow)]
+    important_people: VarZeroVec<'a, PersonULE>,
+    #[serde(borrow)]
+    birthdays_to_people: ZeroMap<'a, Date, PersonULE>
+}
+
+
+let person1 = Person {
+    birthday: Date { y: 1990, m: 9, d: 7},
+    favorite_character: 'π',
+    name: Cow::from("Kate")
+};
+let person2 = Person {
+    birthday: Date { y: 1960, m: 5, d: 25},
+    favorite_character: '冇',
+    name: Cow::from("Jesse")
+};
+
+let important_dates = ZeroVec::alloc_from_slice(&[Date { y: 1943, m: 3, d: 20}, Date { y: 1976, m: 8, d: 2}, Date { y: 1998, m: 2, d: 15}]);
+let important_people = VarZeroVec::from(&[&person1, &person2]);
+let mut birthdays_to_people: ZeroMap<Date, PersonULE> = ZeroMap::new();
+// `.insert_var_v()` is slightly more convenient over `.insert()` for custom ULE types
+birthdays_to_people.insert_var_v(&person1.birthday, &person1);
+birthdays_to_people.insert_var_v(&person2.birthday, &person2);
+
+let data = Data { important_dates, important_people, birthdays_to_people };
+
+let bincode_bytes = bincode::serialize(&data)
+    .expect("Serialization should be successful");
+assert_eq!(bincode_bytes.len(), 180);
+
+let deserialized: Data = bincode::deserialize(&bincode_bytes)
+    .expect("Deserialization should be successful");
+
+assert_eq!(deserialized.important_dates.get(0).unwrap().y, 1943);
+assert_eq!(&deserialized.important_people.get(1).unwrap().name, "Jesse");
+assert_eq!(&deserialized.important_people.get(0).unwrap().name, "Kate");
+assert_eq!(&deserialized.birthdays_to_people.get(&person1.birthday).unwrap().name, "Kate");
+
+} // feature = serde and derive
+```
 
 ## Performance
 
@@ -43,7 +173,7 @@ Benchmark results on x86_64:
 | Count chars in vec of 100 strings (read every element) | 747.50 ns | 955.28 ns |
 | Binary search vec of 500 strings 10 times | 466.09 ns | 790.33 ns |
 
-\* *This result is reported for `Vec<String>`. However, Serde also supports deserializing to `Vec<&str>`; this gives 1.8420 μs, much faster than `Vec<String>` but a bit slower than `zerovec`.*
+\* *This result is reported for `Vec<String>`. However, Serde also supports deserializing to the partially-zero-copy `Vec<&str>`; this gives 1.8420 μs, much faster than `Vec<String>` but a bit slower than `zerovec`.*
 
 | Operation | `HashMap<K,V>`  | `LiteMap<K,V>` | `ZeroMap<K,V>` |
 |---|---|---|---|
@@ -58,40 +188,6 @@ The benches used to generate the above table can be found in the `benches` direc
 `zeromap` benches are named by convention, e.g. `zeromap/deserialize/small`, `zeromap/lookup/large`. The type
 is appended for baseline comparisons, e.g. `zeromap/lookup/small/hashmap`.
 
-## Features
-
-- `serde`: enables Serde Serialize/Deserialize impls for ZeroVec and VarZeroVec.
-
-## Examples
-
-Serialize and deserialize a struct with ZeroVec and VarZeroVec with Bincode:
-
-```rust
-use zerovec::{ZeroVec, VarZeroVec};
-
-// This example requires the "serde" feature
-#[derive(serde::Serialize, serde::Deserialize)]
-pub struct DataStruct<'data> {
-    #[serde(borrow)]
-    nums: ZeroVec<'data, u32>,
-    #[serde(borrow)]
-    strs: VarZeroVec<'data, str>,
-}
-
-let data = DataStruct {
-    nums: ZeroVec::from_slice(&[211, 281, 421, 461]),
-    strs: VarZeroVec::from(&["hello", "world"]),
-};
-let bincode_bytes = bincode::serialize(&data)
-    .expect("Serialization should be successful");
-assert_eq!(54, bincode_bytes.len());
-
-let deserialized: DataStruct = bincode::deserialize(&bincode_bytes)
-    .expect("Deserialization should be successful");
-assert_eq!(Some(211), deserialized.nums.first());
-assert_eq!(Some("world"), deserialized.strs.get(1));
-assert!(matches!(deserialized.nums, ZeroVec::Borrowed(_)));
-```
 
 ## More Information
 

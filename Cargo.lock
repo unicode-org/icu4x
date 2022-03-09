@@ -1090,6 +1090,7 @@ name = "icu_codepointtrie"
 version = "0.3.3"
 dependencies = [
  "displaydoc",
+ "icu_uniset",
  "postcard",
  "serde",
  "toml",
@@ -3132,7 +3133,7 @@ dependencies = [
 name = "zerovec-derive"
 version = "0.6.0"
 dependencies = [
- "postcard",
+ "bincode",
  "proc-macro2",
  "quote",
  "serde",

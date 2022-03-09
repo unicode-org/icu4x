@@ -50,7 +50,7 @@ macro_rules! to_string {
             use writeable::Writeable;
             b.iter(|| {
                 for s in $data {
-                    let _ = black_box(s).writeable_to_string();
+                    let _ = black_box(s).write_to_string();
                 }
             })
         });
