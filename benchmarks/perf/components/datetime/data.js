@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1646764926296,
+  "lastUpdate": 1646784384929,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -22355,6 +22355,48 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 170872,
             "range": "± 715",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "elango@unicode.org",
+            "name": "Elango",
+            "username": "echeran"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "29a3028dd12bd1787609c7b62626056422597284",
+          "message": "Return sets for enumerated property value data using CPT data (#1608)",
+          "timestamp": "2022-03-08T15:57:33-08:00",
+          "tree_id": "1ceb8f597aec7cf0273be1eb44f26b52111a8e55",
+          "url": "https://github.com/unicode-org/icu4x/commit/29a3028dd12bd1787609c7b62626056422597284"
+        },
+        "date": 1646784372691,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 74814,
+            "range": "± 136",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 802426,
+            "range": "± 1263",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 171266,
+            "range": "± 384",
             "unit": "ns/iter"
           }
         ]
