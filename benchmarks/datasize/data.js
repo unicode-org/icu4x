@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1646850315055,
+  "lastUpdate": 1646850742305,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -10763,6 +10763,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/54804ff5a6b252a8fb2fe4a805e62667d356fd7f"
         },
         "date": 1646850302491,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4508007,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "135bf92d0f206f8558f6b703d2dff0e2e87cb88a",
+          "message": "Add more AsULE impls for primitives (#1672)\n\n* Add f32/f64 ule\n\n* Add bool ULE\n\n* add equle",
+          "timestamp": "2022-03-09T10:27:31-08:00",
+          "tree_id": "8c86919aa276778f92c17766e8b87f6f31760735",
+          "url": "https://github.com/unicode-org/icu4x/commit/135bf92d0f206f8558f6b703d2dff0e2e87cb88a"
+        },
+        "date": 1646850727329,
         "tool": "ndjson",
         "benches": [
           {
