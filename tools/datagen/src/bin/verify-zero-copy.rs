@@ -17,8 +17,7 @@ use simple_logger::SimpleLogger;
 use std::borrow::Cow;
 use std::cmp;
 use std::collections::HashSet;
-use std::fs::File;
-use std::io::Read;
+use std::fs;
 use std::mem::ManuallyDrop;
 use std::path::PathBuf;
 use std::rc::Rc;
@@ -185,11 +184,7 @@ fn main() -> eyre::Result<()> {
     } else {
         eyre::bail!("Value for --postcard-file must be specified (or --input-from-testdata)",)
     };
-    let mut blob: Vec<u8> = Vec::new();
-    File::open(postcard_file)
-        .expect("File should exist")
-        .read_to_end(&mut blob)
-        .expect("Reading pre-computed postcard buffer");
+    let blob: Vec<u8> = fs::read(postcard_file).expect("Reading pre-computed postcard buffer");
     // Create a DataProvider from it:
     let provider =
         BlobDataProvider::new_from_rc_blob(Rc::from(blob)).expect("Deserialization should succeed");

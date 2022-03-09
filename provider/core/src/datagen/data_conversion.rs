@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::prelude::*;
+use crate::ResourceKey;
 use alloc::boxed::Box;
 use core::fmt;
 
@@ -20,7 +21,7 @@ use core::fmt;
 pub trait DataConverter<MFrom: DataMarker, MTo: DataMarker> {
     fn convert(
         &self,
-        key: crate::ResourceKey,
+        key: ResourceKey,
         from: DataPayload<MFrom>,
     ) -> Result<DataPayload<MTo>, ReturnedPayloadError<MFrom>>;
 }
@@ -33,7 +34,7 @@ where
 {
     fn convert(
         &self,
-        key: crate::ResourceKey,
+        key: ResourceKey,
         from: DataPayload<MFrom>,
     ) -> Result<DataPayload<MTo>, ReturnedPayloadError<MFrom>> {
         (**self).convert(key, from)
