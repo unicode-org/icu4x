@@ -12,7 +12,7 @@ The design goals of `ICU4X` are:
 * Availability and ease of use in multiple programming languages
 * Written by i18n experts to encourage best practices
 
-***Stay informed!*** Join our public, low-traffic mailing list: [icu4x-announce@unicode.org](https://corp.unicode.org/mailman/listinfo/icu4x-announce).  *Note: After subscribing, check your spam folder for a confirmation.*
+***Stay informed!*** Join our public, low-traffic mailing list: [icu4x-announce@unicode.org](https://groups.google.com/u/1/a/unicode.org/g/icu4x-announce).  *Note: After subscribing, check your spam folder for a confirmation.*
 
 ## Documentation
 
@@ -102,3 +102,6 @@ The [binary size benchmarks](docs/process/benchmarking.md) run on Ubuntu, and ar
 
 * [wasm binaries](https://unicode-org.github.io/icu4x-docs/benchmarks/binsize/wasm/)
 * [gzip'd wasm binaries](https://unicode-org.github.io/icu4x-docs/benchmarks/binsize/gz)
+
+The data size benchmark tracks size of `provider/testdata/data/testdata.postcard` and runs on Linux.
+* [data size](https://unicode-org.github.io/icu4x-docs/benchmarks/datasize)

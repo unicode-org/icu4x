@@ -92,7 +92,7 @@ fn test_escape_for_json() {
 /// 4. FxHash is designed to output 32-bit or 64-bit values, whereas SHA outputs more bits,
 ///    such that truncation would be required in order to fit into a u32, partially reducing
 ///    the benefit of a cryptographically secure algorithm
-pub const fn fxhash_32(bytes: &[u8]) -> u32 {
+pub const fn fxhash_32(bytes: &[u8], ignore_leading: usize, ignore_trailing: usize) -> u32 {
     // This code is adapted from https://github.com/rust-lang/rustc-hash,
     // whose license text is reproduced below.
     //
@@ -106,6 +106,10 @@ pub const fn fxhash_32(bytes: &[u8]) -> u32 {
     // option. This file may not be copied, modified, or distributed
     // except according to those terms.
 
+    if ignore_leading + ignore_trailing >= bytes.len() {
+        return 0;
+    }
+
     #[inline]
     const fn hash_word_32(mut hash: u32, word: u32) -> u32 {
         const ROTATE: u32 = 5;
@@ -116,10 +120,11 @@ pub const fn fxhash_32(bytes: &[u8]) -> u32 {
         hash
     }
 
-    let mut cursor = 0;
+    let mut cursor = ignore_leading;
+    let end = bytes.len() - ignore_trailing;
     let mut hash = 0;
 
-    while bytes.len() - cursor >= 4 {
+    while end - cursor >= 4 {
         let word = u32::from_le_bytes([
             bytes[cursor],
             bytes[cursor + 1],
@@ -130,13 +135,13 @@ pub const fn fxhash_32(bytes: &[u8]) -> u32 {
         cursor += 4;
     }
 
-    if bytes.len() - cursor >= 2 {
+    if end - cursor >= 2 {
         let word = u16::from_le_bytes([bytes[cursor], bytes[cursor + 1]]);
         hash = hash_word_32(hash, word as u32);
         cursor += 2;
     }
 
-    if bytes.len() - cursor >= 1 {
+    if end - cursor >= 1 {
         hash = hash_word_32(hash, bytes[cursor] as u32);
     }
 
@@ -145,14 +150,37 @@ pub const fn fxhash_32(bytes: &[u8]) -> u32 {
 
 #[test]
 fn test_hash_word_32() {
-    assert_eq!(0, fxhash_32(b""));
-    assert_eq!(0xF3051F19, fxhash_32(b"a"));
-    assert_eq!(0x2F9DF119, fxhash_32(b"ab"));
-    assert_eq!(0xCB1D9396, fxhash_32(b"abc"));
-    assert_eq!(0x8628F119, fxhash_32(b"abcd"));
-    assert_eq!(0xBEBDB56D, fxhash_32(b"abcde"));
-    assert_eq!(0x1CE8476D, fxhash_32(b"abcdef"));
-    assert_eq!(0xC0F176A4, fxhash_32(b"abcdefg"));
-    assert_eq!(0x09AB476D, fxhash_32(b"abcdefgh"));
-    assert_eq!(0xB72F5D88, fxhash_32(b"abcdefghi"));
+    assert_eq!(0, fxhash_32(b"", 0, 0));
+    assert_eq!(0, fxhash_32(b"a", 1, 0));
+    assert_eq!(0, fxhash_32(b"a", 0, 1));
+    assert_eq!(0, fxhash_32(b"a", 0, 10));
+    assert_eq!(0, fxhash_32(b"a", 10, 0));
+    assert_eq!(0, fxhash_32(b"a", 1, 1));
+    assert_eq!(0xF3051F19, fxhash_32(b"a", 0, 0));
+    assert_eq!(0x2F9DF119, fxhash_32(b"ab", 0, 0));
+    assert_eq!(0xCB1D9396, fxhash_32(b"abc", 0, 0));
+    assert_eq!(0x8628F119, fxhash_32(b"abcd", 0, 0));
+    assert_eq!(0xBEBDB56D, fxhash_32(b"abcde", 0, 0));
+    assert_eq!(0x1CE8476D, fxhash_32(b"abcdef", 0, 0));
+    assert_eq!(0xC0F176A4, fxhash_32(b"abcdefg", 0, 0));
+    assert_eq!(0x09AB476D, fxhash_32(b"abcdefgh", 0, 0));
+    assert_eq!(0xB72F5D88, fxhash_32(b"abcdefghi", 0, 0));
+
+    assert_eq!(
+        fxhash_32(crate::tagged!("props/sc=Khmr@1").as_bytes(), 0, 0),
+        fxhash_32(crate::tagged!("props/sc=Samr@1").as_bytes(), 0, 0)
+    );
+
+    assert_ne!(
+        fxhash_32(
+            crate::tagged!("props/sc=Khmr@1").as_bytes(),
+            crate::leading_tag!().len(),
+            crate::trailing_tag!().len()
+        ),
+        fxhash_32(
+            crate::tagged!("props/sc=Samr@1").as_bytes(),
+            crate::leading_tag!().len(),
+            crate::trailing_tag!().len()
+        )
+    );
 }

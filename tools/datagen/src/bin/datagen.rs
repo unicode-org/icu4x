@@ -18,7 +18,7 @@ use icu_provider_cldr::CldrPathsAllInOne;
 use icu_provider_fs::export::fs_exporter;
 use icu_provider_fs::export::serializers;
 use icu_provider_fs::export::FilesystemExporter;
-use icu_provider_fs::manifest;
+use rayon::prelude::*;
 use simple_logger::SimpleLogger;
 use std::borrow::Cow;
 use std::collections::HashSet;
@@ -53,14 +53,6 @@ fn main() -> eyre::Result<()> {
                 .possible_value("blob")
                 .help("Output to a directory on the filesystem or a single blob.")
                 .default_value("dir"),
-        )
-        .arg(
-            Arg::with_name("ALIASING")
-                .long("aliasing")
-                .takes_value(true)
-                .possible_value("none")
-                .possible_value("symlink")
-                .help("Sets the aliasing mode of the output on the filesystem."),
         )
         .arg(
             Arg::with_name("OVERWRITE")
@@ -256,15 +248,7 @@ fn main() -> eyre::Result<()> {
         None
     };
 
-    let all_keys = {
-        // TODO(#1512): Use central key repository
-        let mut v = vec![];
-        v.extend(icu_provider_cldr::ALL_KEYS);
-        v.extend(icu_properties::provider::key::ALL_MAP_KEYS);
-        v.extend(icu_properties::provider::key::ALL_SCRIPT_EXTENSIONS_KEYS);
-        v.extend(icu_properties::provider::key::ALL_SET_KEYS);
-        v
-    };
+    let all_keys = get_all_keys();
 
     #[allow(clippy::if_same_then_else)]
     let selected_keys = if matches.is_present("ALL_KEYS") {
@@ -300,55 +284,63 @@ fn main() -> eyre::Result<()> {
         filtered
     };
 
-    let mut provider: Box<dyn IterableDynProvider<SerializeMarker>> = {
-        let cldr_paths = if let Some(tag) = matches.value_of("CLDR_TAG") {
-            Box::new(
-                CldrAllInOneDownloader::try_new_from_github(
-                    tag,
-                    matches.value_of("CLDR_LOCALE_SUBSET").unwrap_or("full"),
-                )?
-                .download()?,
-            )
+    let mut provider: Box<dyn IterableDynProvider<SerializeMarker> + Sync> =
+        if matches.is_present("HELLO_WORLD") {
+            Box::new(HelloWorldProvider::new_with_placeholder_data())
         } else {
-            let cldr_json_root = if let Some(path) = matches.value_of("CLDR_ROOT") {
-                PathBuf::from(path)
-            } else if matches.is_present("INPUT_FROM_TESTDATA") {
-                icu_testdata::paths::cldr_json_root()
+            let cldr_paths = if let Some(tag) = matches.value_of("CLDR_TAG") {
+                Box::new(
+                    CldrAllInOneDownloader::try_new_from_github(
+                        tag,
+                        matches.value_of("CLDR_LOCALE_SUBSET").unwrap_or("full"),
+                    )?
+                    .download()?,
+                )
             } else {
-                eyre::bail!(
+                let cldr_json_root = if let Some(path) = matches.value_of("CLDR_ROOT") {
+                    PathBuf::from(path)
+                } else if matches.is_present("INPUT_FROM_TESTDATA") {
+                    icu_testdata::paths::cldr_json_root()
+                } else {
+                    eyre::bail!(
                     "Either --cldr-tag or --cldr-root or --input-from-testdata must be specified",
                 )
+                };
+                Box::new(CldrPathsAllInOne {
+                    cldr_json_root,
+                    locale_subset: matches
+                        .value_of("CLDR_LOCALE_SUBSET")
+                        .unwrap_or("full")
+                        .to_string(),
+                })
             };
-            Box::new(CldrPathsAllInOne {
-                cldr_json_root,
-                locale_subset: matches
-                    .value_of("CLDR_LOCALE_SUBSET")
-                    .unwrap_or("full")
-                    .to_string(),
+
+            let uprops_root = if let Some(path) = matches.value_of("UPROPS_ROOT") {
+                PathBuf::from(path)
+            } else if matches.is_present("INPUT_FROM_TESTDATA") {
+                icu_testdata::paths::uprops_toml_root()
+            } else {
+                eyre::bail!("Value for --uprops-root must be specified",)
+            };
+
+            let segmenter_data_root = icu_provider_segmenter::segmenter_data_root();
+
+            Box::new(MultiForkByKeyProvider {
+                providers: vec![
+                    Box::new(icu_provider_cldr::create_exportable_provider(
+                        cldr_paths.as_ref(),
+                        uprops_root.clone(),
+                    )?),
+                    Box::new(icu_provider_uprops::create_exportable_provider(
+                        &uprops_root,
+                    )?),
+                    Box::new(icu_provider_segmenter::create_exportable_provider(
+                        &segmenter_data_root,
+                        &uprops_root,
+                    )?),
+                ],
             })
         };
-
-        let uprops_root = if let Some(path) = matches.value_of("UPROPS_ROOT") {
-            PathBuf::from(path)
-        } else if matches.is_present("INPUT_FROM_TESTDATA") {
-            icu_testdata::paths::uprops_toml_root()
-        } else {
-            eyre::bail!("Value for --uprops-root must be specified",)
-        };
-
-        Box::new(MultiForkByKeyProvider {
-            providers: vec![
-                Box::new(icu_provider_cldr::create_exportable_provider(
-                    cldr_paths.as_ref(),
-                    uprops_root.clone(),
-                )?) as Box<dyn IterableDynProvider<SerializeMarker>>,
-                Box::new(icu_provider_uprops::create_exportable_provider(
-                    &uprops_root,
-                )?),
-                Box::new(HelloWorldProvider::new_with_placeholder_data()),
-            ],
-        })
-    };
 
     if let Some(locales) = selected_locales.as_ref() {
         provider = Box::new(
@@ -367,18 +359,37 @@ fn main() -> eyre::Result<()> {
         _ => unreachable!(),
     };
 
-    for key in selected_keys {
-        let result =
-            icu_provider::export::export_from_iterable(key, provider.as_ref(), &mut *exporter);
+    selected_keys.into_par_iter().try_for_each(|key| {
+        let result = provider
+            .supported_options_for_key(key)?
+            .collect::<Vec<_>>()
+            .into_par_iter()
+            .try_for_each(|options| {
+                let payload = provider
+                    .load_payload(
+                        key,
+                        &DataRequest {
+                            options: options.clone(),
+                            metadata: Default::default(),
+                        },
+                    )?
+                    .take_payload()?;
+                exporter.put_payload(key, options, payload)
+            });
+
+        exporter.flush(key)?;
+
         if matches.is_present("TEST_KEYS")
             && matches!(result, Err(e) if e.kind == DataErrorKind::MissingResourceKey)
         {
             log::trace!("Skipping key: {}", key);
+            Ok(())
         } else {
             log::info!("Writing key: {}", key);
-            result?
+            result
         }
-    }
+    })?;
+
     exporter.close()?;
 
     Ok(())
@@ -397,34 +408,28 @@ fn get_fs_exporter(matches: &ArgMatches) -> eyre::Result<FilesystemExporter> {
 
     log::info!("Writing to filesystem tree at: {}", output_path.display());
 
-    let serializer: Box<dyn serializers::AbstractSerializer> = match matches.value_of("SYNTAX") {
-        Some("json") | None => {
-            let mut options = serializers::json::Options::default();
-            if matches.is_present("PRETTY") {
-                options.style = serializers::json::StyleOption::Pretty;
+    let serializer: Box<dyn serializers::AbstractSerializer + Sync> =
+        match matches.value_of("SYNTAX") {
+            Some("json") | None => {
+                let mut options = serializers::json::Options::default();
+                if matches.is_present("PRETTY") {
+                    options.style = serializers::json::StyleOption::Pretty;
+                }
+                Box::new(serializers::json::Serializer::new(options))
             }
-            Box::new(serializers::json::Serializer::new(options))
-        }
-        Some("bincode") => {
-            let options = serializers::bincode::Options::default();
-            Box::new(serializers::bincode::Serializer::new(options))
-        }
-        Some("postcard") => {
-            let options = serializers::postcard::Options::default();
-            Box::new(serializers::postcard::Serializer::new(options))
-        }
-        _ => unreachable!(),
-    };
+            Some("bincode") => {
+                let options = serializers::bincode::Options::default();
+                Box::new(serializers::bincode::Serializer::new(options))
+            }
+            Some("postcard") => {
+                let options = serializers::postcard::Options::default();
+                Box::new(serializers::postcard::Serializer::new(options))
+            }
+            _ => unreachable!(),
+        };
 
     let mut options = fs_exporter::ExporterOptions::default();
     options.root = output_path;
-    if let Some(value) = matches.value_of("ALIASING") {
-        options.aliasing = match value {
-            "none" => manifest::AliasOption::NoAliases,
-            "symlink" => manifest::AliasOption::Symlink,
-            _ => unreachable!(),
-        };
-    }
     if matches.is_present("OVERWRITE") {
         options.overwrite = fs_exporter::OverwriteOption::RemoveAndReplace
     }
@@ -449,7 +454,7 @@ fn get_blob_exporter(matches: &ArgMatches) -> eyre::Result<BlobExporter<'static>
         None => log::info!("Writing blob to standard out"),
     };
 
-    let sink: Box<dyn std::io::Write> = if let Some(path_buf) = output_path {
+    let sink: Box<dyn std::io::Write + Sync> = if let Some(path_buf) = output_path {
         if !matches.is_present("OVERWRITE") && path_buf.exists() {
             eyre::bail!("Output path is present: {:?}", path_buf);
         }
@@ -462,4 +467,35 @@ fn get_blob_exporter(matches: &ArgMatches) -> eyre::Result<BlobExporter<'static>
     };
 
     Ok(BlobExporter::new_with_sink(sink))
+}
+
+fn get_all_keys() -> Vec<ResourceKey> {
+    // TODO(#1512): Use central key repository
+    let mut v = vec![];
+    v.extend(icu_provider_cldr::ALL_KEYS);
+    v.extend(icu_properties::provider::key::ALL_MAP_KEYS);
+    v.extend(icu_properties::provider::key::ALL_SCRIPT_EXTENSIONS_KEYS);
+    v.extend(icu_properties::provider::key::ALL_SET_KEYS);
+    v.extend(icu_segmenter::ALL_KEYS);
+    v
+}
+
+#[test]
+fn no_key_collisions() {
+    let mut map = std::collections::BTreeMap::new();
+    let mut failed = false;
+    for key in get_all_keys() {
+        if let Some(colliding_key) = map.insert(key.get_hash(), key) {
+            println!(
+                "{:?} and {:?} collide at {:?}",
+                key.get_path(),
+                colliding_key.get_path(),
+                key.get_hash()
+            );
+            failed = true;
+        }
+    }
+    if failed {
+        panic!();
+    }
 }

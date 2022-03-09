@@ -33,6 +33,8 @@ It is worth noting that [`rkyv`](https://docs.rs/rkyv) satisfies many of these r
 3. Limited support for data overrides (mixing owned runtime data with borrowed static data)
 4. Little-endian and big-endian require different data files, meaning that the flag to toggle between them also needs to percolate through the data system
 
+Relative to `rkyv`, the primary limitation of `zerovec` is its inability to produce data aligned to anything other than 1 byte; i.e., there is no way for it to represent something like `&[u32]`. However, we have [benchmarked](https://github.com/unicode-org/icu4x/pull/1391) that for single-element read operations, the performance impact of an unaligned read is minimal. See [this issue](https://github.com/unicode-org/icu4x/issues/1426#issuecomment-1045043829) for a discussion of options in situations where alignment has a measurable performance benefit (perhaps vectorized operations like matrix multiplication).
+
 In other words, `zerovec` and `rkyv` solve similar problems with similar solutions; a lot of the lower level design of `zerovec` is close to what `rkyv` does via convergent evolution. However, the two are designed with different use cases in mind, which drove key differences in design decisions, which are explained throughout the rest of this doc.
 
 # Overview of technical challenges

@@ -11,48 +11,57 @@ use crate::helpers;
 use core::default::Default;
 use core::fmt;
 use core::fmt::Write;
-use core::mem;
 use icu_locid::{LanguageIdentifier, Locale};
 use writeable::{LengthHint, Writeable};
 use zerovec::ule::*;
 
+#[doc(hidden)]
+#[macro_export]
+macro_rules! leading_tag {
+    () => {
+        "\nicu4x_key_tag"
+    };
+}
+
+#[doc(hidden)]
+#[macro_export]
+macro_rules! trailing_tag {
+    () => {
+        "\n"
+    };
+}
+
+#[doc(hidden)]
+#[macro_export]
+macro_rules! tagged {
+    ($without_tags:expr) => {
+        concat!(
+            $crate::leading_tag!(),
+            $without_tags,
+            $crate::trailing_tag!()
+        )
+    };
+}
+
 /// A compact hash of a [`ResourceKey`]. Useful for keys in maps.
-#[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Copy, Clone, Hash)]
+#[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Copy, Clone, Hash, ULE)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[repr(transparent)]
 pub struct ResourceKeyHash([u8; 4]);
 
 impl ResourceKeyHash {
     const fn compute_from_str(path: &str) -> Self {
-        Self(helpers::fxhash_32(path.as_bytes()).to_le_bytes())
+        Self(
+            helpers::fxhash_32(path.as_bytes(), leading_tag!().len(), trailing_tag!().len())
+                .to_le_bytes(),
+        )
     }
 }
 
-impl<'a> zerovec::map::ZeroMapKV<'a> for ResourceKeyHash {
+impl<'a> zerovec::maps::ZeroMapKV<'a> for ResourceKeyHash {
     type Container = zerovec::ZeroVec<'a, ResourceKeyHash>;
     type GetType = <ResourceKeyHash as AsULE>::ULE;
     type OwnedType = ResourceKeyHash;
-}
-
-// Safety (based on the safety checklist on the ULE trait):
-//  1. ResourceKeyHash does not include any uninitialized or padding bytes.
-//     (achieved by `#[repr(transparent)]` on a type that satisfies this invariant)
-//  2. ResourceKeyHash is aligned to 1 byte.
-//     (achieved by `#[repr(transparent)]` on a type that satisfies this invariant)
-//  3. The impl of validate_byte_slice() returns an error if any byte is not valid (never).
-//  4. The impl of validate_byte_slice() returns an error if there are leftover bytes.
-//  5. The other ULE methods use the default impl.
-//  6. ResourceKeyHash byte equality is semantic equality
-unsafe impl ULE for ResourceKeyHash {
-    #[inline]
-    fn validate_byte_slice(bytes: &[u8]) -> Result<(), ZeroVecError> {
-        if bytes.len() % mem::size_of::<Self>() == 0 {
-            // Safe because Self is transparent over [u8; 4]
-            Ok(())
-        } else {
-            Err(ZeroVecError::length::<Self>(bytes.len()))
-        }
-    }
 }
 
 impl AsULE for ResourceKeyHash {
@@ -99,34 +108,6 @@ pub struct ResourceKey {
     // in a compiled binary.
     path: &'static str,
     hash: ResourceKeyHash,
-}
-
-#[doc(hidden)]
-#[macro_export]
-macro_rules! leading_tag {
-    () => {
-        "\nicu4x_key_tag"
-    };
-}
-
-#[doc(hidden)]
-#[macro_export]
-macro_rules! trailing_tag {
-    () => {
-        "\n"
-    };
-}
-
-#[doc(hidden)]
-#[macro_export]
-macro_rules! tagged {
-    ($without_tags:expr) => {
-        concat!(
-            $crate::leading_tag!(),
-            $without_tags,
-            $crate::trailing_tag!()
-        )
-    };
 }
 
 impl ResourceKey {
@@ -358,7 +339,7 @@ impl Writeable for ResourceKey {
         self.get_path().write_len()
     }
 
-    fn writeable_to_string(&self) -> Cow<str> {
+    fn write_to_string(&self) -> Cow<str> {
         Cow::Borrowed(self.get_path())
     }
 }

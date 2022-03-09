@@ -45,15 +45,15 @@ fn overview_bench(c: &mut Criterion) {
             WriteableMessage {
                 message: black_box(SHORT_STR),
             }
-            .writeable_to_string();
+            .write_to_string();
             WriteableMessage {
                 message: black_box(MEDIUM_STR),
             }
-            .writeable_to_string();
+            .write_to_string();
             WriteableMessage {
                 message: black_box(LONG_STR),
             }
-            .writeable_to_string();
+            .write_to_string();
         });
     });
 
@@ -72,7 +72,7 @@ fn writeable_benches(c: &mut Criterion) {
             WriteableMessage {
                 message: black_box(SHORT_STR),
             }
-            .writeable_to_string()
+            .write_to_string()
             .into_owned()
         });
     });
@@ -81,7 +81,7 @@ fn writeable_benches(c: &mut Criterion) {
             WriteableMessage {
                 message: black_box(MEDIUM_STR),
             }
-            .writeable_to_string()
+            .write_to_string()
             .into_owned()
         });
     });
@@ -90,7 +90,7 @@ fn writeable_benches(c: &mut Criterion) {
             WriteableMessage {
                 message: black_box(LONG_STR),
             }
-            .writeable_to_string()
+            .write_to_string()
             .into_owned()
         });
     });
@@ -98,7 +98,7 @@ fn writeable_benches(c: &mut Criterion) {
 
 #[cfg(feature = "bench")]
 fn writeable_dyn_benches(c: &mut Criterion) {
-    // Same as writeable_to_string, but casts to a dyn fmt::Write
+    // Same as `write_to_string`, but casts to a `dyn fmt::Write`
     fn writeable_dyn_to_string(w: &impl Writeable) -> String {
         let mut output = String::with_capacity(w.write_len().capacity());
         w.write_to(&mut output as &mut dyn fmt::Write)

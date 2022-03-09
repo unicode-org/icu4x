@@ -57,7 +57,7 @@ impl Calendar for Gregorian {
 
     /// The calendar-specific year represented by `date`
     fn year(&self, date: &Self::DateInner) -> types::Year {
-        iso_year_as_gregorian(date.0.year)
+        year_as_gregorian(date.0.year.0)
     }
 
     /// The calendar-specific month represented by `date`
@@ -77,9 +77,9 @@ impl Calendar for Gregorian {
         types::DayOfYearInfo {
             day_of_year: Iso::day_of_year(date.0),
             days_in_year: Iso::days_in_year(date.0.year),
-            prev_year: iso_year_as_gregorian(prev_year),
+            prev_year: year_as_gregorian(prev_year.0),
             days_in_prev_year: Iso::days_in_year(prev_year),
-            next_year: iso_year_as_gregorian(next_year),
+            next_year: year_as_gregorian(next_year.0),
         }
     }
 
@@ -118,18 +118,18 @@ impl DateTime<Gregorian> {
     }
 }
 
-fn iso_year_as_gregorian(year: IsoYear) -> types::Year {
-    if year.0 > 0 {
+pub fn year_as_gregorian(year: i32) -> types::Year {
+    if year > 0 {
         types::Year {
             era: types::Era(tinystr!(16, "ad")),
-            number: year.0,
-            related_iso: year.0,
+            number: year,
+            related_iso: year,
         }
     } else {
         types::Year {
             era: types::Era(tinystr!(16, "bc")),
-            number: 1 - year.0,
-            related_iso: year.0,
+            number: 1 - year,
+            related_iso: year,
         }
     }
 }

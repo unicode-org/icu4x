@@ -12,7 +12,7 @@ use core::str::FromStr;
 use tinystr::{TinyStr16, TinyStr8};
 
 /// TODO(#486): Implement era codes.
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Copy, Clone, Debug, PartialEq)]
 pub struct Era(pub TinyStr16);
 
 /// Representation of a formattable year.
@@ -356,6 +356,10 @@ impl FromStr for GmtOffset {
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 #[allow(missing_docs)] // The weekday variants should be self-obvious.
 #[repr(i8)]
+#[cfg_attr(
+    feature = "provider_serde",
+    derive(serde::Serialize, serde::Deserialize)
+)]
 pub enum IsoWeekday {
     Monday = 1,
     Tuesday,

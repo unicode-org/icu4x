@@ -512,17 +512,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "derivative"
-version = "2.2.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "fcc3dd5e9e9c0b295d6e1e4d811fb6f157d5ffd784b8d202fc62eac8035a770b"
-dependencies = [
- "proc-macro2",
- "quote",
- "syn",
-]
-
-[[package]]
 name = "dhat"
 version = "0.2.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1066,6 +1055,7 @@ dependencies = [
  "litemap",
  "serde",
  "tinystr 0.5.0",
+ "zerovec",
 ]
 
 [[package]]
@@ -1108,6 +1098,7 @@ name = "icu_codepointtrie"
 version = "0.3.3"
 dependencies = [
  "displaydoc",
+ "icu_uniset",
  "postcard",
  "serde",
  "toml",
@@ -1129,9 +1120,12 @@ dependencies = [
  "icu_provider_blob",
  "icu_provider_cldr",
  "icu_provider_fs",
+ "icu_provider_segmenter",
  "icu_provider_uprops",
+ "icu_segmenter",
  "icu_testdata",
  "log",
+ "rayon",
  "reqwest",
  "serde",
  "simple_logger",
@@ -1156,7 +1150,6 @@ dependencies = [
  "icu_provider",
  "icu_testdata",
  "litemap",
- "num_enum",
  "serde",
  "serde-tuple-vec-map",
  "serde_json",
@@ -1268,7 +1261,6 @@ dependencies = [
  "icu_locid_macros",
  "icu_provider",
  "icu_testdata",
- "num_enum",
  "serde",
  "serde_json",
  "zerovec",
@@ -1284,7 +1276,6 @@ dependencies = [
  "icu_provider",
  "icu_testdata",
  "icu_uniset",
- "num_enum",
  "serde",
  "zerovec",
 ]
@@ -1402,6 +1393,21 @@ dependencies = [
 ]
 
 [[package]]
+name = "icu_provider_segmenter"
+version = "0.1.0"
+dependencies = [
+ "icu_codepointtrie",
+ "icu_properties",
+ "icu_provider",
+ "icu_provider_uprops",
+ "icu_segmenter",
+ "icu_testdata",
+ "serde",
+ "toml",
+ "zerovec",
+]
+
+[[package]]
 name = "icu_provider_uprops"
 version = "0.5.0"
 dependencies = [
@@ -1424,17 +1430,14 @@ name = "icu_segmenter"
 version = "0.1.0"
 dependencies = [
  "criterion",
- "icu",
- "icu_codepointtrie",
+ "icu_char16trie",
  "icu_provider",
- "icu_provider_fs",
  "icu_segmenter_lstm",
  "icu_testdata",
  "lazy_static",
  "serde",
  "serde-json-core",
  "serde_json",
- "toml",
  "zerovec",
 ]
 
@@ -1789,27 +1792,6 @@ checksum = "05499f3756671c15885fee9034446956fff3f243d6077b91e5767df161f766b3"
 dependencies = [
  "hermit-abi",
  "libc",
-]
-
-[[package]]
-name = "num_enum"
-version = "0.5.4"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3f9bd055fb730c4f8f4f57d45d35cd6b3f0980535b056dc7ff119cee6a66ed6f"
-dependencies = [
- "derivative",
- "num_enum_derive",
-]
-
-[[package]]
-name = "num_enum_derive"
-version = "0.5.4"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "486ea01961c4a818096de679a8b740b26d9033146ac5291b1c98557658f8cdd9"
-dependencies = [
- "proc-macro2",
- "quote",
- "syn",
 ]
 
 [[package]]
@@ -3153,14 +3135,18 @@ dependencies = [
  "serde_json",
  "yoke",
  "zerofrom",
+ "zerovec-derive",
 ]
 
 [[package]]
 name = "zerovec-derive"
 version = "0.6.0"
 dependencies = [
+ "bincode",
  "proc-macro2",
  "quote",
+ "serde",
+ "serde_json",
  "syn",
  "synstructure",
  "zerofrom",

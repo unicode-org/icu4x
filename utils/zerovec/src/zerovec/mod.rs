@@ -23,11 +23,48 @@ use core::ops::Deref;
 ///
 /// `T` must implement [`AsULE`], which is auto-implemented for a number of built-in types,
 /// including all fixed-width multibyte integers. For variable-width types like [`str`],
-/// see [`VarZeroVec`](crate::VarZeroVec).
+/// see [`VarZeroVec`](crate::VarZeroVec). [`zerovec::make_ule`](crate::make_ule) may
+/// be used to automatically implement [`AsULE`] for a type and generate the underlying [`ULE`] type.
 ///
 /// Typically, the zero-copy equivalent of a `Vec<T>` will simply be `ZeroVec<'a, T>`.
 ///
-/// Most of the methods on `ZeroVec<'a, T>` come from its [`Deref`] implementation to [`ZeroSlice<T>`](ZeroSlice)
+/// Most of the methods on `ZeroVec<'a, T>` come from its [`Deref`] implementation to [`ZeroSlice<T>`](ZeroSlice).
+///
+/// For creating zero-copy vectors of fixed-size types, see [`VarZeroVec`](crate::VarZeroVec).
+///
+/// `ZeroVec<T>` behaves much like [`Cow`](alloc::borrow::Cow), where it can be constructed from
+/// owned data (and then mutated!) but can also borrow from some buffer.
+///
+/// # Example
+///
+/// ```
+/// use zerovec::ZeroVec;
+///
+/// // The little-endian bytes correspond to the numbers on the following line.
+/// let nums: &[u16] = &[211, 281, 421, 461];
+///
+/// #[derive(serde::Serialize, serde::Deserialize)]
+/// struct Data<'a> {
+///     #[serde(borrow)]
+///     nums: ZeroVec<'a, u16>,
+/// }
+///
+/// // The owned version will allocate
+/// let data = Data { nums: ZeroVec::alloc_from_slice(nums) };
+/// let bincode_bytes = bincode::serialize(&data)
+///     .expect("Serialization should be successful");
+///
+/// // Will deserialize without allocations
+/// let deserialized: Data = bincode::deserialize(&bincode_bytes)
+///     .expect("Deserialization should be successful");
+///
+/// // This deserializes without allocation!
+/// assert!(matches!(deserialized.nums, ZeroVec::Borrowed(_)));
+/// assert_eq!(deserialized.nums.get(2), Some(421));
+/// assert_eq!(deserialized.nums, nums);
+/// ```
+///
+/// [`ule`]: crate::ule
 ///
 /// # How it Works
 ///
@@ -36,35 +73,9 @@ use core::ops::Deref;
 /// items from `ZeroVec<T>`, we fetch the `T::ULE`, convert it on the fly to `T`, and return `T` by
 /// value.
 ///
-/// Benchmarks can be found in the project repository. We found that for common operations on small
-/// and large vectors, `ZeroVec<T>` performs from slightly faster to 15% slower than `Vec<T>`.
-/// However, the main performance improvement on `ZeroVec<T>` is when deserializing from a byte
-/// array; `ZeroVec<T>` deserializes 80% faster than `Vec<T>` in Serde Bincode, and it does not
-/// require any heap allocations.
+/// Benchmarks can be found in the project repository, with some results found in the [crate-level documentation](crate).
 ///
-/// # Safety
-///
-/// `ZeroVec<T>` contains no unsafe code. However, the conversion from `&[u8]` to `&[T::ULE]` may
-/// be unsafe. For more information, see the [`ule`] module.
-///
-/// # Example
-///
-/// ```
-/// use zerovec::ZeroVec;
-///
-/// // The little-endian bytes correspond to the numbers on the following line.
-/// let bytes: &[u8] = &[0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x01];
-/// let nums: &[u16] = &[211, 281, 421, 461];
-///
-/// let zerovec: ZeroVec<u16> = ZeroVec::parse_byte_slice(bytes).unwrap();
-///
-/// assert!(matches!(zerovec, ZeroVec::Borrowed(_)));
-/// assert_eq!(zerovec.get(2), Some(421));
-/// assert_eq!(zerovec, nums);
-/// ```
-///
-/// [`ule`]: crate::ule
-#[non_exhaustive]
+/// See [the design doc](https://github.com/unicode-org/icu4x/blob/main/utils/zerovec/design_doc.md) for more details.
 #[derive(Clone)]
 pub enum ZeroVec<'a, T>
 where
@@ -275,7 +286,39 @@ where
         }
     }
 
+    /// Casts a `ZeroVec<T>` to a compatible `ZeroVec<P>`.
+    ///
+    /// `T` and `P` are compatible if they have the same `ULE` representation.
+    ///
+    /// If the `ULE`s of `T` and `P` are different types but have the same size,
+    /// use [`Self::try_into_converted()`].
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use zerovec::ZeroVec;
+    ///
+    /// let bytes: &[u8] = &[0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x80];
+    ///
+    /// let zerovec_u16: ZeroVec<u16> = ZeroVec::parse_byte_slice(bytes).expect("infallible");
+    /// assert_eq!(zerovec_u16.get(3), Some(32973));
+    ///
+    /// let zerovec_i16: ZeroVec<i16> = zerovec_u16.cast();
+    /// assert_eq!(zerovec_i16.get(3), Some(-32563));
+    /// ```
+    pub fn cast<P>(self) -> ZeroVec<'a, P>
+    where
+        P: AsULE<ULE = T::ULE>,
+    {
+        match self {
+            Self::Owned(v) => ZeroVec::Owned(v),
+            Self::Borrowed(v) => ZeroVec::Borrowed(v),
+        }
+    }
+
     /// Converts a `ZeroVec<T>` into a `ZeroVec<P>`, retaining the current ownership model.
+    ///
+    /// If `T` and `P` have the exact same `ULE`, use [`Self::cast()`].
     ///
     /// # Panics
     ///

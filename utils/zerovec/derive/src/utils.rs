@@ -9,7 +9,7 @@ use proc_macro2::TokenStream as TokenStream2;
 use syn::parse::{Parse, ParseStream};
 use syn::punctuated::Punctuated;
 use syn::spanned::Spanned;
-use syn::{parenthesized, parse2, Attribute, Field, Fields, Ident, Index, Result, Token};
+use syn::{parenthesized, parse2, Attribute, Error, Field, Fields, Ident, Index, Result, Token};
 
 // Check that there are repr attributes satisfying the given predicate
 pub fn has_valid_repr(attrs: &[Attribute], predicate: impl Fn(&Ident) -> bool + Copy) -> bool {
@@ -116,4 +116,81 @@ pub fn field_setter(f: &Field) -> TokenStream2 {
     } else {
         quote!()
     }
+}
+
+/// Extracts a single `zerovec::name` attribute
+pub fn extract_zerovec_attribute_named(
+    attrs: &mut Vec<Attribute>,
+    name: &str,
+) -> Option<Attribute> {
+    let mut ret = None;
+    attrs.retain(|a| {
+        // skip the "zerovec" part
+        let second_segment = a.path.segments.iter().nth(1);
+
+        if let Some(second) = second_segment {
+            if second.ident == name && ret.is_none() {
+                ret = Some(a.clone());
+                return false;
+            }
+        }
+
+        true
+    });
+    ret
+}
+
+/// Removes all attributes with `zerovec` in the name and places them in a separate vector
+pub fn extract_zerovec_attributes(attrs: &mut Vec<Attribute>) -> Vec<Attribute> {
+    let mut ret = vec![];
+    attrs.retain(|a| {
+        if a.path.segments.len() == 2 && a.path.segments[0].ident == "zerovec" {
+            ret.push(a.clone());
+            return false;
+        }
+        true
+    });
+    ret
+}
+
+pub fn check_attr_empty(attr: &Option<Attribute>, name: &str) -> Result<()> {
+    if let Some(ref attr) = *attr {
+        if !attr.tokens.is_empty() {
+            return Err(Error::new(
+                attr.span(),
+                format!("#[zerovec::{name}] does not support arguments"),
+            ));
+        }
+    }
+    Ok(())
+}
+
+/// Removes all known zerovec:: attributes from attrs and validates them
+/// Returns (skip_kv, skip_ord, serde)
+pub fn extract_attributes_common(
+    attrs: &mut Vec<Attribute>,
+    name: &str,
+) -> Result<(bool, bool, bool)> {
+    let mut zerovec_attrs = extract_zerovec_attributes(attrs);
+
+    let skip_kv = extract_zerovec_attribute_named(&mut zerovec_attrs, "skip_kv");
+    let skip_ord = extract_zerovec_attribute_named(&mut zerovec_attrs, "skip_ord");
+    let serde = extract_zerovec_attribute_named(&mut zerovec_attrs, "serde");
+
+    if let Some(attr) = zerovec_attrs.get(0) {
+        return Err(Error::new(
+            attr.span(),
+            format!("Found unknown or duplicate attribute for #[{name}]"),
+        ));
+    }
+
+    check_attr_empty(&skip_kv, "skip_kv")?;
+    check_attr_empty(&skip_ord, "skip_ord")?;
+    check_attr_empty(&serde, "serde")?;
+
+    let skip_kv = skip_kv.is_some();
+    let skip_ord = skip_ord.is_some();
+    let serde = serde.is_some();
+
+    Ok((skip_kv, skip_ord, serde))
 }

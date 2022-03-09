@@ -18,7 +18,6 @@ use tinystr::{TinyStr4, TinyStr8};
     feature = "provider_serde",
     derive(serde::Serialize, serde::Deserialize)
 )]
-#[zerofrom(cloning_zf)]
 /// This alias data is used for locale canonicalization. Each field defines a
 /// mapping from an old identifier to a new identifier, based upon the rules in
 /// from <http://unicode.org/reports/tr35/#LocaleId_Canonicalization>. The data
@@ -33,26 +32,37 @@ use tinystr::{TinyStr4, TinyStr8};
 /// or modify aliases for use in this structure.
 pub struct AliasesV1 {
     /// Language data not covered by other rules, normally this will be empty.
+    #[zerofrom(clone)]
     pub language: Vec<(LanguageIdentifier, LanguageIdentifier)>,
     /// Language and variant.
+    #[zerofrom(clone)]
     pub language_variants: Vec<(LanguageIdentifier, LanguageIdentifier)>,
     /// Sign language and region data.
+    #[zerofrom(clone)]
     pub sgn_region: Vec<(TinyStr4, LanguageIdentifier)>,
     /// Two character language codes.
+    #[zerofrom(clone)]
     pub language_len2: Vec<(TinyStr4, LanguageIdentifier)>,
     /// Three character language codes.
+    #[zerofrom(clone)]
     pub language_len3: Vec<(TinyStr4, LanguageIdentifier)>,
     /// Scripts.
+    #[zerofrom(clone)]
     pub script: Vec<(TinyStr4, TinyStr4)>,
     /// Alphabetical region codes.
+    #[zerofrom(clone)]
     pub region_alpha: Vec<(TinyStr4, TinyStr4)>,
     /// Numeric region codes.
+    #[zerofrom(clone)]
     pub region_num: Vec<(TinyStr4, TinyStr4)>,
     /// Old regions which map to more than one new region.
+    #[zerofrom(clone)]
     pub complex_region: Vec<(TinyStr4, Vec<TinyStr4>)>,
     /// Variants.
+    #[zerofrom(clone)]
     pub variant: Vec<(TinyStr8, TinyStr8)>,
     /// Subdivisions.
+    #[zerofrom(clone)]
     pub subdivision: Vec<(TinyStr8, TinyStr8)>,
 }
 
@@ -62,7 +72,6 @@ pub struct AliasesV1 {
     feature = "provider_serde",
     derive(serde::Serialize, serde::Deserialize)
 )]
-#[zerofrom(cloning_zf)]
 /// This likely subtags data is used for the minimize and maximize operations.
 /// Each field defines a mapping from an old identifier to a new identifier,
 /// based upon the rules in
@@ -79,17 +88,24 @@ pub struct AliasesV1 {
 /// `LanguageIdentifier`.
 pub struct LikelySubtagsV1 {
     /// Language and script.
+    #[zerofrom(clone)]
     pub language_script: LiteMap<(TinyStr4, TinyStr4), LanguageIdentifier>,
     /// Language and region.
+    #[zerofrom(clone)]
     pub language_region: LiteMap<(TinyStr4, TinyStr4), LanguageIdentifier>,
     /// Just language.
+    #[zerofrom(clone)]
     pub language: LiteMap<TinyStr4, LanguageIdentifier>,
     /// Script and region.
+    #[zerofrom(clone)]
     pub script_region: LiteMap<(TinyStr4, TinyStr4), LanguageIdentifier>,
     /// Just script.
+    #[zerofrom(clone)]
     pub script: LiteMap<TinyStr4, LanguageIdentifier>,
     /// Just region.
+    #[zerofrom(clone)]
     pub region: LiteMap<TinyStr4, LanguageIdentifier>,
     /// Undefined.
+    #[zerofrom(clone)]
     pub und: LanguageIdentifier,
 }

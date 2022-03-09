@@ -8,7 +8,8 @@ use icu_segmenter::WordBreakSegmenter;
 
 #[test]
 fn word_break_th() {
-    let segmenter = WordBreakSegmenter::try_new().expect("Data exists");
+    let provider = icu_testdata::get_provider();
+    let segmenter = WordBreakSegmenter::try_new(&provider).expect("Data exists");
 
     // http://wpt.live/css/css-text/word-break/word-break-normal-th-000.html
     let s = "ภาษาไทยภาษาไทย";
@@ -39,7 +40,8 @@ fn word_break_th() {
 
 #[test]
 fn word_break_my() {
-    let segmenter = WordBreakSegmenter::try_new().expect("Data exists");
+    let provider = icu_testdata::get_provider();
+    let segmenter = WordBreakSegmenter::try_new(&provider).expect("Data exists");
 
     let s = "မြန်မာစာမြန်မာစာမြန်မာစာ";
     let utf16: Vec<u16> = s.encode_utf16().collect();

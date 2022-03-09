@@ -17,6 +17,7 @@ use std::path::PathBuf;
 mod patterns;
 mod skeletons;
 mod symbols;
+pub mod week_data;
 
 /// Common code for a data provider reading from CLDR JSON dates files.
 #[derive(Debug)]

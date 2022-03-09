@@ -113,18 +113,18 @@ impl<M: ResourceMarker<Yokeable = ListFormatterPatternsV1<'static>>> ResourcePro
                     // Starts with a non-Hebrew letter
                     &format!(
                         "[^{}]",
-                        icu_properties::sets::get_for_script(
-                            &icu_provider_uprops::EnumeratedPropertyUnicodeSetDataProvider::try_new(
+                        icu_properties::maps::get_script(
+                            &icu_provider_uprops::EnumeratedPropertyCodePointTrieProvider::try_new(
                                 &self.uprops_root
                             )
                             .map_err(|e| DataError::custom("Properties data provider error")
-                                .with_display_context(&e))?,
-                            icu_properties::Script::Hebrew,
+                                .with_display_context(&e))?
                         )
-                        .map_err(|e| DataError::custom("Could not find Hebrew script set")
+                        .map_err(|e| DataError::custom("data for CodePointTrie of Script")
                             .with_display_context(&e))?
                         .get()
-                        .inv_list
+                        .code_point_trie
+                        .get_set_for_value(icu_properties::Script::Hebrew)
                         .iter_ranges()
                         .map(|range| format!(r#"\u{:04x}-\u{:04x}"#, range.start(), range.end()))
                         .fold(String::new(), |a, b| a + &b)

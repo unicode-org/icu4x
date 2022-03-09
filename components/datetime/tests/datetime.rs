@@ -11,7 +11,10 @@ use icu_calendar::{buddhist::Buddhist, japanese::Japanese, AsCalendar, DateTime,
 use icu_datetime::{
     mock::{parse_gregorian_from_str, zoned_datetime::MockZonedDateTime},
     pattern::runtime::Pattern,
-    provider::calendar::{DatePatternsV1Marker, DateSkeletonPatternsV1Marker, DateSymbolsV1Marker},
+    provider::{
+        calendar::{DatePatternsV1Marker, DateSkeletonPatternsV1Marker, DateSymbolsV1Marker},
+        week_data::WeekDataV1Marker,
+    },
     time_zone::TimeZoneFormat,
     CldrCalendar, DateTimeFormat, DateTimeFormatOptions, ZonedDateTimeFormat,
 };
@@ -98,7 +101,8 @@ fn assert_fixture_element<A, D>(
     D: ResourceProvider<DateSymbolsV1Marker>
         + ResourceProvider<DatePatternsV1Marker>
         + ResourceProvider<DateSkeletonPatternsV1Marker>
-        + ResourceProvider<OrdinalV1Marker>,
+        + ResourceProvider<OrdinalV1Marker>
+        + ResourceProvider<WeekDataV1Marker>,
 {
     let locale: Locale = locale.parse().unwrap();
     let dtf = DateTimeFormat::<A::Calendar>::try_new(locale, provider, options).unwrap();
@@ -209,6 +213,17 @@ fn test_dayperiod_patterns() {
             .unwrap()
             .take_payload()
             .unwrap();
+        let week_data: DataPayload<WeekDataV1Marker> = provider
+            .load_resource(&DataRequest {
+                options: ResourceOptions {
+                    variant: langid.region.map(|r| r.as_str().to_string().into()),
+                    langid: None,
+                },
+                metadata: Default::default(),
+            })
+            .unwrap()
+            .take_payload()
+            .unwrap();
         for test_case in &test.test_cases {
             for dt_input in &test_case.datetimes {
                 let datetime = parse_gregorian_from_str(dt_input).unwrap();
@@ -233,6 +248,10 @@ fn test_dayperiod_patterns() {
                                 AnyPayloadProvider {
                                     key: DatePatternsV1Marker::KEY,
                                     data: patterns_data.clone().wrap_into_any_payload(),
+                                },
+                                AnyPayloadProvider {
+                                    key: WeekDataV1Marker::KEY,
+                                    data: week_data.clone().wrap_into_any_payload(),
                                 },
                             ],
                         };
@@ -351,6 +370,17 @@ fn test_time_zone_patterns() {
             .unwrap()
             .take_payload()
             .unwrap();
+        let week_data: DataPayload<WeekDataV1Marker> = date_provider
+            .load_resource(&DataRequest {
+                options: ResourceOptions {
+                    variant: langid.region.map(|r| r.as_str().to_string().into()),
+                    langid: None,
+                },
+                metadata: Default::default(),
+            })
+            .unwrap()
+            .take_payload()
+            .unwrap();
 
         patterns_data.with_mut(|data| {
             data.length_combinations.long = "{0}".parse().unwrap();
@@ -382,6 +412,10 @@ fn test_time_zone_patterns() {
                         AnyPayloadProvider {
                             key: DatePatternsV1Marker::KEY,
                             data: patterns_data.clone().wrap_into_any_payload(),
+                        },
+                        AnyPayloadProvider {
+                            key: WeekDataV1Marker::KEY,
+                            data: week_data.clone().wrap_into_any_payload(),
                         },
                     ],
                 };
@@ -484,31 +518,6 @@ fn test_components_partial_matches() {
 fn test_components_combine_datetime() {
     // components/datetime/tests/fixtures/tests/components-combine-datetime.json
     test_fixture("components-combine-datetime");
-}
-
-#[test]
-fn constructing_datetime_format_with_missing_pattern_is_err() {
-    use icu_datetime::{
-        options::components::{Bag, Week},
-        DateTimeFormatError, DateTimeFormatOptions,
-    };
-    use icu_locid::Locale;
-    use icu_locid_macros::langid;
-
-    let options = DateTimeFormatOptions::Components(Bag {
-        // There's no pattern for just 'w'.
-        week: Some(Week::NumericWeekOfYear),
-        ..Default::default()
-    });
-
-    let locale: Locale = langid!("en").into();
-    let provider = icu_testdata::get_provider();
-    let result = DateTimeFormat::<Gregorian>::try_new(locale, &provider, &options);
-
-    assert!(matches!(
-        result.err(),
-        Some(DateTimeFormatError::UnsupportedOptions)
-    ));
 }
 
 #[test]

@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use litemap::LiteMap;
+use std::collections::BTreeMap;
 
 use crate::cldr_serde;
 use icu_datetime::provider::calendar::*;
@@ -23,7 +23,7 @@ fn convert_eras(eras: &cldr_serde::ca::Eras, calendar: &str) -> Eras<'static> {
     let map = get_era_code_map(calendar);
     let mut out_eras = Eras::default();
 
-    for (cldr, code) in map.into_tuple_vec().into_iter() {
+    for (cldr, code) in map.into_iter() {
         if let Some(name) = eras.names.get(&cldr) {
             out_eras.names.insert(&code, name);
         }
@@ -37,7 +37,7 @@ fn convert_eras(eras: &cldr_serde::ca::Eras, calendar: &str) -> Eras<'static> {
     out_eras
 }
 
-fn get_era_code_map(calendar: &str) -> LiteMap<String, TinyStr16> {
+fn get_era_code_map(calendar: &str) -> BTreeMap<String, TinyStr16> {
     match calendar {
         "gregory" => vec![
             ("0".to_string(), tinystr!(16, "bc")),

@@ -6,85 +6,89 @@
 //!
 //! Read more about data providers: [`icu_provider`]
 
-use crate::line::BREAK_STATE_MACHINE_TABLE;
-use crate::line::PROPERTY_COUNT;
-use crate::line::PROPERTY_TABLE;
-use alloc::boxed::Box;
-use core::ops::Deref;
-use icu_provider::{yoke, zerofrom};
-use zerovec::ZeroSlice;
-use zerovec::ZeroVec;
+use icu_provider::prelude::*;
+use zerovec::{ZeroSlice, ZeroVec};
 
-/// Pre-processed Unicode data in the form of tables to be used for line breaking.
-#[icu_provider::data_struct(LineBreakDataV1Marker = "segmenter/line@1")]
-#[derive(Debug, PartialEq, Clone, Default)]
+/// Pre-processed Unicode data in the form of tables to be used for rule-based breaking.
+#[icu_provider::data_struct(
+    LineBreakDataV1Marker = "segmenter/line@1",
+    WordBreakDataV1Marker = "segmenter/word@1",
+    GraphemeClusterBreakDataV1Marker = "segmenter/grapheme@1",
+    SentenceBreakDataV1Marker = "segmenter/sentence@1"
+)]
+#[derive(Debug, PartialEq, Clone)]
 #[cfg_attr(
     feature = "provider_serde",
     derive(serde::Serialize, serde::Deserialize)
 )]
-pub struct LineBreakDataV1<'data> {
-    /// Property table for line breaking.
+pub struct RuleBreakDataV1<'data> {
+    /// Property table for rule-based breaking.
     #[cfg_attr(feature = "provider_serde", serde(borrow))]
-    pub property_table: LineBreakPropertyTable<'data>,
+    pub property_table: RuleBreakPropertyTable<'data>,
 
-    /// Rule table for line breaking.
+    /// Break state table for rule-based breaking.
     #[cfg_attr(feature = "provider_serde", serde(borrow))]
-    pub rule_table: LineBreakRuleTable<'data>,
+    pub break_state_table: RuleBreakStateTable<'data>,
+
+    /// Number of properties; should be the square root of the length of [`Self::break_state_table`].
+    pub property_count: u8,
+
+    pub last_codepoint_property: i8,
+    pub sot_property: u8,
+    pub eot_property: u8,
+    pub complex_property: u8,
 }
 
-/// Property table for line breaking.
-#[derive(Debug, PartialEq, Clone, yoke::Yokeable)]
-#[cfg_attr(
-    feature = "provider_serde",
-    derive(serde::Serialize, serde::Deserialize)
-)]
-pub enum LineBreakPropertyTable<'data> {
-    #[cfg_attr(feature = "provider_serde", serde(borrow))]
-    Borrowed(&'data [[u8; 1024]; 128]),
-    Owned(Box<[[u8; 1024]; 128]>),
-}
-
-impl Deref for LineBreakPropertyTable<'_> {
-    type Target = [[u8; 1024]; 128];
-    fn deref(&self) -> &Self::Target {
-        match self {
-            Self::Borrowed(v) => v,
-            Self::Owned(v) => v,
-        }
-    }
-}
-
-impl<'zf> zerofrom::ZeroFrom<'zf, LineBreakPropertyTable<'_>> for LineBreakPropertyTable<'zf> {
-    fn zero_from(cart: &'zf LineBreakPropertyTable<'_>) -> Self {
-        LineBreakPropertyTable::Borrowed(&*cart)
-    }
-}
-
-impl Default for LineBreakPropertyTable<'static> {
-    fn default() -> Self {
-        LineBreakPropertyTable::Borrowed(&PROPERTY_TABLE)
-    }
-}
-
-/// Rule table for line breaking.
+/// Property table for rule-based breaking.
 #[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(
     feature = "provider_serde",
     derive(serde::Serialize, serde::Deserialize)
 )]
-pub struct LineBreakRuleTable<'data> {
-    /// Matrix of rules.
+pub struct RuleBreakPropertyTable<'data>(
+    #[cfg_attr(feature = "provider_serde", serde(borrow))] pub ZeroVec<'data, u8>,
+);
+
+/// Break state table for rule-based breaking.
+#[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
+#[cfg_attr(
+    feature = "provider_serde",
+    derive(serde::Serialize, serde::Deserialize)
+)]
+pub struct RuleBreakStateTable<'data>(
+    #[cfg_attr(feature = "provider_serde", serde(borrow))] pub ZeroVec<'data, i8>,
+);
+
+/// char16trie data for dictionary break
+#[icu_provider::data_struct(UCharDictionaryBreakDataV1Marker = "segmenter/char16trie@1")]
+#[derive(Debug, PartialEq, Clone)]
+#[cfg_attr(
+    feature = "provider_serde",
+    derive(serde::Serialize, serde::Deserialize)
+)]
+pub struct UCharDictionaryBreakDataV1<'data> {
+    /// Dictionary data of char16trie.
     #[cfg_attr(feature = "provider_serde", serde(borrow))]
-    pub table_data: ZeroVec<'data, i8>,
-    /// Number of properties; should be the square root of the length of [`Self::table_data`].
-    pub property_count: u8,
+    pub trie_data: ZeroVec<'data, u16>,
 }
 
-impl Default for LineBreakRuleTable<'static> {
+impl<'data> Default for UCharDictionaryBreakDataV1<'data> {
     fn default() -> Self {
+        // Test data of thai dictionary
+        const THAI_DICTIONARY: &ZeroSlice<u16> =
+            match ZeroSlice::<u16>::try_from_bytes(include_bytes!("../tests/testdata/thai.dict")) {
+                Ok(s) => s,
+                Err(_) => panic!("invalid dictionary data"),
+            };
         Self {
-            table_data: ZeroSlice::from_ule_slice(&BREAK_STATE_MACHINE_TABLE).as_zerovec(),
-            property_count: PROPERTY_COUNT as u8,
+            trie_data: THAI_DICTIONARY.as_zerovec(),
         }
     }
 }
+
+pub const ALL_KEYS: [ResourceKey; 4] = [
+    LineBreakDataV1Marker::KEY,
+    GraphemeClusterBreakDataV1Marker::KEY,
+    WordBreakDataV1Marker::KEY,
+    SentenceBreakDataV1Marker::KEY,
+];

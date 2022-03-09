@@ -8,12 +8,16 @@ use icu_segmenter::WordBreakRule;
 
 #[diplomat::bridge]
 pub mod ffi {
+    use crate::provider::ffi::ICU4XDataProvider;
     use alloc::boxed::Box;
     use core::convert::TryFrom;
     use diplomat_runtime::DiplomatResult;
+    use icu_provider::ResourceProvider;
     use icu_segmenter::Latin1Char;
+    use icu_segmenter::LineBreakDataV1Marker;
     use icu_segmenter::LineBreakIterator;
     use icu_segmenter::LineBreakSegmenter;
+    use icu_segmenter::UCharDictionaryBreakDataV1Marker;
     use icu_segmenter::Utf16Char;
 
     #[diplomat::opaque]
@@ -55,9 +59,21 @@ pub mod ffi {
     impl ICU4XLineBreakSegmenter {
         /// Construct a [`ICU4XLineBreakSegmenter`] with default options.
         /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu_segmenter/struct.LineBreakSegmenter.html#method.try_new) for more information.
-        pub fn try_new() -> DiplomatResult<Box<ICU4XLineBreakSegmenter>, ()> {
-            let provider = icu_provider::inv::InvariantDataProvider;
-            LineBreakSegmenter::try_new(&provider)
+        pub fn try_new(
+            provider: &ICU4XDataProvider,
+        ) -> DiplomatResult<Box<ICU4XLineBreakSegmenter>, ()> {
+            use icu_provider::serde::AsDeserializingBufferProvider;
+            let provider = provider.0.as_deserializing();
+            Self::try_new_impl(&provider)
+        }
+
+        fn try_new_impl<D>(provider: &D) -> DiplomatResult<Box<ICU4XLineBreakSegmenter>, ()>
+        where
+            D: ResourceProvider<LineBreakDataV1Marker>
+                + ResourceProvider<UCharDictionaryBreakDataV1Marker>
+                + ?Sized,
+        {
+            LineBreakSegmenter::try_new(provider)
                 .map(|o| Box::new(ICU4XLineBreakSegmenter(o)))
                 .map_err(|_| ())
                 .into()
@@ -66,10 +82,24 @@ pub mod ffi {
         /// Construct a [`ICU4XLineBreakSegmenter`] with custom options.
         /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu_segmenter/struct.LineBreakSegmenter.html#method.try_new_with_options) for more information.
         pub fn try_new_with_options(
+            provider: &ICU4XDataProvider,
             options: ICU4XLineBreakOptions,
         ) -> DiplomatResult<Box<ICU4XLineBreakSegmenter>, ()> {
-            let provider = icu_provider::inv::InvariantDataProvider;
-            LineBreakSegmenter::try_new_with_options(&provider, options.into())
+            use icu_provider::serde::AsDeserializingBufferProvider;
+            let provider = provider.0.as_deserializing();
+            Self::try_new_with_options_impl(&provider, options)
+        }
+
+        fn try_new_with_options_impl<D>(
+            provider: &D,
+            options: ICU4XLineBreakOptions,
+        ) -> DiplomatResult<Box<ICU4XLineBreakSegmenter>, ()>
+        where
+            D: ResourceProvider<LineBreakDataV1Marker>
+                + ResourceProvider<UCharDictionaryBreakDataV1Marker>
+                + ?Sized,
+        {
+            LineBreakSegmenter::try_new_with_options(provider, options.into())
                 .map(|o| Box::new(ICU4XLineBreakSegmenter(o)))
                 .map_err(|_| ())
                 .into()

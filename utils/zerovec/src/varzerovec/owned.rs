@@ -2,15 +2,14 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use super::*;
+use crate::ule::*;
 use alloc::boxed::Box;
 use alloc::vec::Vec;
-
-use super::*;
-use core::fmt;
 use core::marker::PhantomData;
+use core::ops::Deref;
 use core::ops::Range;
-use core::ptr;
-use core::slice;
+use core::{fmt, ptr, slice};
 
 /// A fully-owned [`VarZeroVec`]. This type has no lifetime but has the same
 /// internal buffer representation of [`VarZeroVec`], making it cheaply convertible to
@@ -397,11 +396,9 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
             let index_u32 = 0u32;
             self.entire_slice.extend(&len_u32.to_unaligned().0);
             self.entire_slice.extend(&index_u32.to_unaligned().0);
-            element.encode_var_ule_as_slices(|slices| {
-                for slice in slices {
-                    self.entire_slice.extend(*slice)
-                }
-            });
+            let header_len = self.entire_slice.len();
+            self.entire_slice.resize(header_len + value_len, 0);
+            element.encode_var_ule_write(&mut self.entire_slice[header_len..]);
             return;
         }
 

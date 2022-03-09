@@ -6,7 +6,7 @@
 
 use std::borrow::Cow;
 use zerofrom::ZeroFrom;
-use zerovec::{map::ZeroMapKV, ule::AsULE, VarZeroVec, ZeroMap, ZeroVec};
+use zerovec::{maps::ZeroMapKV, ule::AsULE, VarZeroVec, ZeroMap, ZeroVec};
 
 #[derive(ZeroFrom, Copy, Clone)]
 pub struct IntExample {
@@ -66,36 +66,20 @@ pub fn assert_zf_map<'a, 'b>(
 }
 
 #[derive(Clone, ZeroFrom)]
-#[zerofrom(cloning_zf)]
 pub struct CloningZF1 {
+    #[zerofrom(clone)] // Vec is not ZeroFrom, so it needs to be cloned
     vec: Vec<u8>,
 }
 
 #[derive(Clone, ZeroFrom)]
-#[zerofrom(cloning_zf)] // this will clone `cow` instead of borrowing from it
 pub struct CloningZF2<'data> {
+    #[zerofrom(clone)] // Cow is ZeroFrom, but we force a clone
     cow: Cow<'data, str>,
-    vec: Vec<u8>,
 }
 
 #[derive(ZeroFrom)]
-pub struct CloningZF3<'data> {
-    cow: Cow<'data, str>,
-    #[zerofrom(cloning_zf)]
-    vec: Vec<u8>,
-}
-
-#[derive(ZeroFrom)]
-pub enum CloningZF4<'data> {
-    Cow(Cow<'data, str>),
-    #[zerofrom(cloning_zf)] // this will clone the first field instead of borrowing
-    CowVec(Cow<'data, str>, Vec<u8>),
-}
-
-#[derive(ZeroFrom)]
-pub enum CloningZF5<'data> {
-    Cow(Cow<'data, str>),
-    CowVec(Cow<'data, str>, #[zerofrom(cloning_zf)] Vec<u8>),
+pub enum CloningZF3<'data> {
+    Cow(#[zerofrom(clone)] Cow<'data, str>),
 }
 
 fn main() {}

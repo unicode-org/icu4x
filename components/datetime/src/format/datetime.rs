@@ -12,6 +12,7 @@ use crate::pattern::{
 use crate::provider;
 use crate::provider::calendar::patterns::PatternPluralsFromPatternsV1Marker;
 use crate::provider::date_time::DateTimeSymbols;
+use crate::provider::week_data::WeekDataV1;
 
 use alloc::string::ToString;
 use core::fmt;
@@ -55,6 +56,7 @@ where
     pub(crate) patterns: &'l DataPayload<PatternPluralsFromPatternsV1Marker>,
     pub(crate) symbols: Option<&'l provider::calendar::DateSymbolsV1<'l>>,
     pub(crate) datetime: &'l T,
+    pub(crate) week_data: Option<&'l WeekDataV1>,
     pub(crate) locale: &'l Locale,
     pub(crate) ordinal_rules: Option<&'l PluralRules>,
 }
@@ -68,6 +70,7 @@ where
             &self.patterns.get().0,
             self.symbols,
             self.datetime,
+            self.week_data,
             self.ordinal_rules,
             self.locale,
             sink,
@@ -130,6 +133,7 @@ pub fn write_pattern_plurals<T, W>(
     patterns: &PatternPlurals,
     symbols: Option<&provider::calendar::DateSymbolsV1>,
     datetime: &T,
+    week_data: Option<&WeekDataV1>,
     ordinal_rules: Option<&PluralRules>,
     locale: &Locale,
     w: &mut W,
@@ -138,7 +142,7 @@ where
     T: DateTimeInput,
     W: fmt::Write + ?Sized,
 {
-    let loc_datetime = DateTimeInputWithLocale::new(datetime, locale);
+    let loc_datetime = DateTimeInputWithLocale::new(datetime, week_data.map(|d| &d.0), locale);
     let pattern = patterns.select(&loc_datetime, ordinal_rules)?;
     write_pattern(pattern, symbols, &loc_datetime, w)
 }
@@ -165,12 +169,11 @@ where
                 .expect("Expect symbols to be present")
                 .get_symbol_for_era(
                     field.length,
-                    &datetime
+                    datetime
                         .datetime()
                         .year()
                         .ok_or(Error::MissingInputField)?
-                        .era
-                        .0,
+                        .era,
                 )?;
             w.write_str(symbol)?
         }
@@ -298,58 +301,84 @@ where
     Ok(())
 }
 
-// This function determins whether the struct will load symbols data.
-// Keep it in sync with the `write_field` use of symbols.
-pub fn analyze_pattern(pattern: &Pattern, supports_time_zones: bool) -> Result<bool, Field> {
-    let fields = pattern.items.iter().filter_map(|p| match p {
-        PatternItem::Field(field) => Some(field),
-        _ => None,
-    });
-
-    let mut requires_symbols = false;
-
-    for field in fields {
-        if !requires_symbols {
-            requires_symbols = match field.symbol {
-                FieldSymbol::Era => true,
-                FieldSymbol::Month(_) => {
-                    !matches!(field.length, FieldLength::One | FieldLength::TwoDigit)
-                }
-                FieldSymbol::Weekday(_) | FieldSymbol::DayPeriod(_) => true,
-                _ => false,
-            }
-        }
-
-        if supports_time_zones {
-            if requires_symbols {
-                // If we require time zones, and symbols, we know all
-                // we need to return already.
-                break;
-            }
-        } else if matches!(field.symbol, FieldSymbol::TimeZone(_)) {
-            // If we don't support time zones, and encountered a time zone
-            // field, error out.
-            return Err(field);
-        }
-    }
-
-    Ok(requires_symbols)
+/// What data is required to format a given pattern.
+#[derive(Default)]
+pub struct RequiredData {
+    // DateSymbolsV1 is required.
+    pub symbols_data: bool,
+    // WeekDataV1 is required.
+    pub week_data: bool,
 }
 
-// This function determines whether any patterns will load symbols data.
+impl RequiredData {
+    // Checks if formatting `pattern` would require us to load data & if so adds
+    // them to this struct. Returns true if requirements are saturated and would
+    // not change by any further calls.
+    // Keep it in sync with the `write_field` use of symbols.
+    fn add_requirements_from_pattern(
+        &mut self,
+        pattern: &Pattern,
+        supports_time_zones: bool,
+    ) -> Result<bool, Field> {
+        let fields = pattern.items.iter().filter_map(|p| match p {
+            PatternItem::Field(field) => Some(field),
+            _ => None,
+        });
+
+        for field in fields {
+            if !self.symbols_data {
+                self.symbols_data = match field.symbol {
+                    FieldSymbol::Era => true,
+                    FieldSymbol::Month(_) => {
+                        !matches!(field.length, FieldLength::One | FieldLength::TwoDigit)
+                    }
+                    FieldSymbol::Weekday(_) | FieldSymbol::DayPeriod(_) => true,
+                    _ => false,
+                }
+            }
+            if !self.week_data {
+                self.week_data = matches!(
+                    field.symbol,
+                    FieldSymbol::Year(Year::WeekOf) | FieldSymbol::Week(_)
+                )
+            }
+
+            if supports_time_zones {
+                if self.symbols_data && self.week_data {
+                    // If we support time zones, and require everything else, we
+                    // know all we need to return already.
+                    return Ok(true);
+                }
+            } else if matches!(field.symbol, FieldSymbol::TimeZone(_)) {
+                // If we don't support time zones, and encountered a time zone
+                // field, error out.
+                return Err(field);
+            }
+        }
+
+        Ok(false)
+    }
+}
+
+// Determines what optional data needs to be loaded to format `patterns`.
 pub fn analyze_patterns(
     patterns: &PatternPlurals,
     supports_time_zones: bool,
-) -> Result<bool, Field> {
-    patterns.patterns_iter().try_fold(false, |a, pattern| {
-        analyze_pattern(pattern, supports_time_zones).map(|b| a || b)
-    })
+) -> Result<RequiredData, Field> {
+    let mut required = RequiredData::default();
+    for pattern in patterns.patterns_iter() {
+        if required.add_requirements_from_pattern(pattern, supports_time_zones)? {
+            // We can bail early if everything is required & we don't need to
+            // validate the absence of TimeZones.
+            break;
+        }
+    }
+    Ok(required)
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
-
     #[test]
     #[cfg(feature = "provider_serde")]
     fn test_basic() {
@@ -373,7 +402,7 @@ mod tests {
         let datetime =
             DateTime::new_gregorian_datetime_from_integers(2020, 8, 1, 12, 34, 28).unwrap();
         let mut sink = String::new();
-        let loc_datetime = DateTimeInputWithLocale::new(&datetime, &"und".parse().unwrap());
+        let loc_datetime = DateTimeInputWithLocale::new(&datetime, None, &"und".parse().unwrap());
         write_pattern(&pattern, Some(data.get()), &loc_datetime, &mut sink).unwrap();
         println!("{}", sink);
     }

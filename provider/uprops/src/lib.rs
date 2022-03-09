@@ -37,7 +37,7 @@ use std::path::Path;
 
 pub fn create_exportable_provider<T: DataMarker>(
     root_dir: &Path,
-) -> eyre::Result<MultiForkByKeyProvider<Box<dyn IterableDynProvider<T>>>>
+) -> eyre::Result<MultiForkByKeyProvider<Box<dyn IterableDynProvider<T> + Sync>>>
 where
     EnumeratedPropertyCodePointTrieProvider: IterableDynProvider<T>,
     ScriptWithExtensionsPropertyProvider: IterableDynProvider<T>,
