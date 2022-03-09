@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1646790863612,
+  "lastUpdate": 1646791154338,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -55012,6 +55012,174 @@ window.BENCHMARK_DATA = {
           {
             "name": "code_line_diff+opt.wasm.gz",
             "value": 240564,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "syntatically_canonicalize_locales+opt.wasm.gz",
+            "value": 13187,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "language_names_lite_map+opt.wasm.gz",
+            "value": 3169,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "aethanyc@gmail.com",
+            "name": "Ting-Yu Lin",
+            "username": "aethanyc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "97da55801b4e67d0ee05ff0a082feb0078df5678",
+          "message": "Support production-ready data provider for segmenters (#1652)\n\n* Add icu_segmenter_provider crate\r\n\r\nThe purpose of the crate is to deserialize the segmenter rule break TOML files\r\ninto `SegmenterRuleTable`, and transform it into `RuleBreakDataV1`. The main\r\nfunction where the transformation takes place is in\r\nSegmenterRuleProvider::generate_break_data(), which is ported from\r\n`generate_rule_segmenter_table` along with many other helpers in\r\n`build.rs`.\r\n\r\nFlatten `RuleBreakPropertyTable` into a linear structure so that it can be\r\nserialize/dezerialize via ZeroVec.\r\n\r\nIn the next commit, we'll convert line segmenter to use RuleBreakDataV1. This\r\npatch removes \"provider_serde\" cfg for LineBreakDataV1 just to build\r\nsuccessfully.\r\n\r\n* Switch line segmenter to use RuleBreakDataV1\r\n\r\n* Regenerate testdata for segmenter\r\n\r\nThis commit is generated via `cargo make testdata`.\r\n\r\n* Remove unused build.rs\r\n\r\n* Support customized keys for segmenter keys in icu4x-datagen\r\n\r\nTo generate only the line break data, run command such as\r\n\r\n```\r\ncargo run --bin icu4x-datagen --\\\r\n          --input-from-testdata\\\r\n          --all-locales\\\r\n          --syntax=json\\\r\n          --keys \"segmenter/line@1\"\\\r\n          --out=\"/tmp/segmenter_data\"\\\r\n          --overwrite\r\n```\r\n\r\n* Make property table size larger to hold grapheme cluster break property values",
+          "timestamp": "2022-03-08T17:54:03-08:00",
+          "tree_id": "8d5a6c9a24e504f102abb149e04584e979807288",
+          "url": "https://github.com/unicode-org/icu4x/commit/97da55801b4e67d0ee05ff0a082feb0078df5678"
+        },
+        "date": 1646791142188,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "postcard+opt.wasm.gz",
+            "value": 5428,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "zv_serde+opt.wasm.gz",
+            "value": 225,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "permyriad+opt.wasm.gz",
+            "value": 3860,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "derive+opt.wasm.gz",
+            "value": 3103,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "and_list+opt.wasm.gz",
+            "value": 273366,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "make_var+opt.wasm.gz",
+            "value": 33777,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "borrowed_pattern+opt.wasm.gz",
+            "value": 5922,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "simple_static+opt.wasm.gz",
+            "value": 260648,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "litemap_bincode+opt.wasm.gz",
+            "value": 9269,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "unicode_bmp_blocks_selector+opt.wasm.gz",
+            "value": 6258,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "filter_langids+opt.wasm.gz",
+            "value": 6049,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "tui+opt.wasm.gz",
+            "value": 360732,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "language_names_hash_map+opt.wasm.gz",
+            "value": 5102,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "derives+opt.wasm.gz",
+            "value": 6087,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "work_log+opt.wasm.gz",
+            "value": 343178,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "unread_emails+opt.wasm.gz",
+            "value": 259370,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "owned_pattern+opt.wasm.gz",
+            "value": 7119,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "writeable_message+opt.wasm.gz",
+            "value": 9063,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "litemap_postcard+opt.wasm.gz",
+            "value": 4082,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "elevator_floors+opt.wasm.gz",
+            "value": 259346,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "make+opt.wasm.gz",
+            "value": 3637,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "code_line_diff+opt.wasm.gz",
+            "value": 257545,
             "unit": "bytes",
             "biggerIsBetter": false
           },
