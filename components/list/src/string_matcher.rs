@@ -53,6 +53,8 @@ impl<'de: 'data, 'data> serde::Deserialize<'de> for StringMatcher<'data> {
     where
         D: serde::de::Deserializer<'de>,
     {
+        use icu_provider::serde::borrow_de_utils::CowBytesWrap;
+
         #[cfg(feature = "icu4x_human_readable_de")]
         if deserializer.is_human_readable() {
             return StringMatcher::new(<&str>::deserialize(deserializer)?).map_err(|e| {
@@ -70,7 +72,7 @@ impl<'de: 'data, 'data> serde::Deserialize<'de> for StringMatcher<'data> {
             });
         }
 
-        let dfa_bytes = <Cow<'de, [u8]>>::deserialize(deserializer)?;
+        let dfa_bytes = <CowBytesWrap<'de>>::deserialize(deserializer)?.0;
 
         // Verify safety invariant
         DFA::from_bytes(&dfa_bytes).map_err(|e| {
