@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1646784471344,
+  "lastUpdate": 1646790981859,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -21599,6 +21599,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 50431296,
             "range": "± 1493862",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "c4c749df83c71dd0d68cf924675ca12e587a8f42",
+          "message": "Split modules (#1679)",
+          "timestamp": "2022-03-08T17:47:47-08:00",
+          "tree_id": "315bf96f11b2b47aa1bddf8b49cbec5696c8533f",
+          "url": "https://github.com/unicode-org/icu4x/commit/c4c749df83c71dd0d68cf924675ca12e587a8f42"
+        },
+        "date": 1646790965153,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 42440441,
+            "range": "± 2213735",
             "unit": "ns/iter"
           }
         ]
