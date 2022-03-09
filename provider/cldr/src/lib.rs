@@ -39,8 +39,8 @@ use icu_provider::prelude::*;
 use std::convert::TryFrom;
 use std::path::PathBuf;
 use transform::calendar::japanese::JapaneseErasProvider;
-use transform::datetime::CommonDateProvider;
 use transform::datetime::week_data::WeekDataProvider;
+use transform::datetime::CommonDateProvider;
 use transform::decimal::NumbersProvider;
 #[cfg(feature = "icu_list")]
 use transform::list::ListProvider;

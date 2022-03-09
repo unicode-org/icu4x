@@ -5,8 +5,8 @@
 use crate::cldr_serde;
 use crate::error::Error;
 use crate::reader::{get_langid_subdirectories, get_langid_subdirectory, open_reader};
-use elsa::sync::FrozenBTreeMap;
 use crate::CldrPaths;
+use elsa::sync::FrozenBTreeMap;
 
 use icu_datetime::provider::calendar::*;
 use icu_provider::iter::IterableResourceProvider;
