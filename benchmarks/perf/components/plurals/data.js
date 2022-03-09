@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1646764951313,
+  "lastUpdate": 1646784495127,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -28769,6 +28769,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 16146,
             "range": "± 6",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "elango@unicode.org",
+            "name": "Elango",
+            "username": "echeran"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "29a3028dd12bd1787609c7b62626056422597284",
+          "message": "Return sets for enumerated property value data using CPT data (#1608)",
+          "timestamp": "2022-03-08T15:57:33-08:00",
+          "tree_id": "1ceb8f597aec7cf0273be1eb44f26b52111a8e55",
+          "url": "https://github.com/unicode-org/icu4x/commit/29a3028dd12bd1787609c7b62626056422597284"
+        },
+        "date": 1646784482992,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 923,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 5391,
+            "range": "± 21",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 15680,
+            "range": "± 58",
             "unit": "ns/iter"
           }
         ]
