@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1646791373577,
+  "lastUpdate": 1646791567289,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -22481,6 +22481,48 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 218179,
             "range": "± 8257",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "92a15945dbea37e761e9c8be1eab1edc41f05f9c",
+          "message": "Add clippy panic annotations to tinystr crate (#1677)",
+          "timestamp": "2022-03-08T17:57:20-08:00",
+          "tree_id": "07b79996ee1b8330a0f9ca6634a46b3beeec61cb",
+          "url": "https://github.com/unicode-org/icu4x/commit/92a15945dbea37e761e9c8be1eab1edc41f05f9c"
+        },
+        "date": 1646791551502,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 96477,
+            "range": "± 6908",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 908963,
+            "range": "± 50781",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 196729,
+            "range": "± 11030",
             "unit": "ns/iter"
           }
         ]
