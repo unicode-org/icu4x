@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1646851068299,
+  "lastUpdate": 1646878136828,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -20669,6 +20669,36 @@ window.BENCHMARK_DATA = {
             "name": "fixed_decimal/overview",
             "value": 103053,
             "range": "± 360",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "ee07d7b16f5878705107eadf382577cccbc1979a",
+          "message": "Add make_forking_provider! macro (#1684)",
+          "timestamp": "2022-03-09T18:02:18-08:00",
+          "tree_id": "2780ddd60b72faa5e81699622567e30e523d5527",
+          "url": "https://github.com/unicode-org/icu4x/commit/ee07d7b16f5878705107eadf382577cccbc1979a"
+        },
+        "date": 1646878122101,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 123065,
+            "range": "± 1480",
             "unit": "ns/iter"
           }
         ]
