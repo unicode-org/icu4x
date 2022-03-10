@@ -21,9 +21,11 @@
 /// // Combine them into one:
 /// let forking1 = icu_provider::make_forking_provider!(
 ///     ForkByKeyProvider,
-///     Provider1::default(),
-///     Provider2::default(),
-///     Provider3::default()
+///     [
+///         Provider1::default(),
+///         Provider2::default(),
+///         Provider3::default(),
+///     ]
 /// );
 ///
 /// // This is equivalent to:
@@ -40,12 +42,12 @@
 #[macro_export]
 macro_rules! make_forking_provider {
     // Base case:
-    ($combo_p:path, $a:expr, $b:expr) => {
+    ($combo_p:path, [ $a:expr, $b:expr, ]) => {
         $combo_p($a, $b)
     };
     // General list:
-    ($combo_p:path, $a:expr, $b:expr, $($c:expr),+ ) => {
-        $combo_p($a, $crate::make_forking_provider!($combo_p, $b, $($c),+ ))
+    ($combo_p:path, [ $a:expr, $b:expr, $($c:expr),+, ]) => {
+        $combo_p($a, $crate::make_forking_provider!($combo_p, [ $b, $($c),+, ]))
     };
 }
 
@@ -62,9 +64,11 @@ mod test {
     fn test_make_forking_provider() {
         make_forking_provider!(
             crate::fork::by_key::ForkByKeyProvider,
-            Provider1::default(),
-            Provider2::default(),
-            Provider3::default()
+            [
+                Provider1::default(),
+                Provider2::default(),
+                Provider3::default(),
+            ]
         );
     }
 }
