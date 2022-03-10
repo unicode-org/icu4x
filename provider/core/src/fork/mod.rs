@@ -5,3 +5,6 @@
 //! Providers that combine multiple other providers.
 
 pub mod by_key;
+
+#[macro_use]
+mod macros;
