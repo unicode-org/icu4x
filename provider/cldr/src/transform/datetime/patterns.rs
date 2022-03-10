@@ -42,7 +42,12 @@ impl ResourceProvider<DatePatternsV1Marker> for DatePatternsProvider {
     }
 }
 
-icu_provider::impl_dyn_provider!(DatePatternsProvider, [DatePatternsV1Marker,], SERDE_SE);
+icu_provider::impl_dyn_provider!(
+    DatePatternsProvider,
+    [DatePatternsV1Marker,],
+    SERDE_SE,
+    impl DataConverter
+);
 
 impl IterableResourceProvider<DatePatternsV1Marker> for DatePatternsProvider {
     fn supported_options(

@@ -33,8 +33,8 @@ pub use cldr_paths::CldrPathsAllInOne;
 pub use cldr_paths::CldrPathsLocal;
 pub use error::Error as CldrError;
 
+use icu_provider::datagen::OmnibusDatagenProvider;
 use icu_provider::fork::by_key::MultiForkByKeyProvider;
-use icu_provider::iter::IterableDynProvider;
 use icu_provider::prelude::*;
 use std::convert::TryFrom;
 use std::path::PathBuf;
@@ -53,19 +53,19 @@ use transform::time_zones::TimeZonesProvider;
 pub fn create_exportable_provider<T: DataMarker>(
     cldr_paths: &dyn CldrPaths,
     _uprops_root: PathBuf,
-) -> Result<MultiForkByKeyProvider<Box<dyn IterableDynProvider<T> + Sync>>, CldrError>
+) -> Result<MultiForkByKeyProvider<Box<dyn OmnibusDatagenProvider<T> + Sync>>, CldrError>
 where
-    AliasesProvider: IterableDynProvider<T>,
-    DateSymbolsProvider: IterableDynProvider<T>,
-    DateSkeletonPatternsProvider: IterableDynProvider<T>,
-    DatePatternsProvider: IterableDynProvider<T>,
-    JapaneseErasProvider: IterableDynProvider<T>,
-    LikelySubtagsProvider: IterableDynProvider<T>,
-    NumbersProvider: IterableDynProvider<T>,
-    PluralsProvider: IterableDynProvider<T>,
-    TimeZonesProvider: IterableDynProvider<T>,
-    ListProvider: IterableDynProvider<T>,
-    WeekDataProvider: IterableDynProvider<T>,
+    AliasesProvider: OmnibusDatagenProvider<T>,
+    DateSymbolsProvider: OmnibusDatagenProvider<T>,
+    DateSkeletonPatternsProvider: OmnibusDatagenProvider<T>,
+    DatePatternsProvider: OmnibusDatagenProvider<T>,
+    JapaneseErasProvider: OmnibusDatagenProvider<T>,
+    LikelySubtagsProvider: OmnibusDatagenProvider<T>,
+    NumbersProvider: OmnibusDatagenProvider<T>,
+    PluralsProvider: OmnibusDatagenProvider<T>,
+    TimeZonesProvider: OmnibusDatagenProvider<T>,
+    ListProvider: OmnibusDatagenProvider<T>,
+    WeekDataProvider: OmnibusDatagenProvider<T>,
 {
     #[allow(unused_variables)] // uprops_root is only used if icu_list
     Ok(MultiForkByKeyProvider {

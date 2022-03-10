@@ -54,7 +54,12 @@ impl ResourceProvider<AliasesV1Marker> for AliasesProvider {
     }
 }
 
-icu_provider::impl_dyn_provider!(AliasesProvider, [AliasesV1Marker,], SERDE_SE);
+icu_provider::impl_dyn_provider!(
+    AliasesProvider,
+    [AliasesV1Marker,],
+    SERDE_SE,
+    impl DataConverter
+);
 
 impl IterableResourceProvider<AliasesV1Marker> for AliasesProvider {
     fn supported_options(&self) -> Result<Box<dyn Iterator<Item = ResourceOptions>>, DataError> {
