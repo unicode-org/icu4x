@@ -478,7 +478,7 @@ pub mod properties {
 
 pub mod list {
     //! List formatting
-    //! 
+    //!
     //! This API provides the [`ListFormatter`] which renders sequences of [`Writeable`](
     //! writeable::Writeable)s as lists in a locale-sensitive way.
     //!
@@ -518,6 +518,6 @@ pub mod list {
     //!```
     //!
     //! [`ListFormatter`]: ListFormatter
-    
+
     pub use icu_list::*;
 }
