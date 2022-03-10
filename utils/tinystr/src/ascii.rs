@@ -110,7 +110,12 @@ impl<const N: usize> TinyAsciiStr<N> {
 
     #[inline]
     #[must_use]
-    pub const fn prefix<const M: usize>(&self) -> TinyAsciiStr<M> {
+    /// Shortens a TinyAsciiStr<N> to a TinyAsciiStr<M>.
+    /// 
+    /// Note: While the idea behind this method is to shorten a TinyAsciiStr, the
+    /// bound M < N cannot currently be expressed in Rust. M >= N is safe and works
+    /// as imagined, however we might remove this functionality in the future.
+    pub const fn prefix<const M: usize>(&self) -> TinyAsciiStr<M>  {
         let mut bytes = [0; M];
         let mut i = 0;
         // Indexing is protected by the loop guard
@@ -119,8 +124,8 @@ impl<const N: usize> TinyAsciiStr<N> {
             bytes[i] = self.bytes[i];
             i += 1;
         }
-        // self.bytes only contains ASCII bytes, with no null bytes between
-        // ASCII characters, so neither does bytes.
+        // `self.bytes` only contains ASCII bytes, with no null bytes between
+        // ASCII characters, so this also holds for `bytes`.
         unsafe { TinyAsciiStr::from_bytes_unchecked(bytes) }
     }
 
