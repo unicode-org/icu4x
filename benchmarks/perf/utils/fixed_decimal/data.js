@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1646878136828,
+  "lastUpdate": 1646938214830,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -20699,6 +20699,36 @@ window.BENCHMARK_DATA = {
             "name": "fixed_decimal/overview",
             "value": 123065,
             "range": "± 1480",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "37118aa56bd2acecc4eca63434c1aa8c077e205b",
+          "message": "Add payload conversion and heap measurement tool (#1670)",
+          "timestamp": "2022-03-10T10:43:19-08:00",
+          "tree_id": "529be8502dd50898de2d460454a4ad6940a1225a",
+          "url": "https://github.com/unicode-org/icu4x/commit/37118aa56bd2acecc4eca63434c1aa8c077e205b"
+        },
+        "date": 1646938201069,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 104252,
+            "range": "± 658",
             "unit": "ns/iter"
           }
         ]
