@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1646851130786,
+  "lastUpdate": 1646878151389,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -25481,6 +25481,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 5023,
             "range": "± 186",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "ee07d7b16f5878705107eadf382577cccbc1979a",
+          "message": "Add make_forking_provider! macro (#1684)",
+          "timestamp": "2022-03-09T18:02:18-08:00",
+          "tree_id": "2780ddd60b72faa5e81699622567e30e523d5527",
+          "url": "https://github.com/unicode-org/icu4x/commit/ee07d7b16f5878705107eadf382577cccbc1979a"
+        },
+        "date": 1646878137650,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 2198,
+            "range": "± 36",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 4176,
+            "range": "± 6",
             "unit": "ns/iter"
           }
         ]
