@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1646877839052,
+  "lastUpdate": 1646937897140,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -10823,6 +10823,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/ee07d7b16f5878705107eadf382577cccbc1979a"
         },
         "date": 1646877823267,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4508007,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "37118aa56bd2acecc4eca63434c1aa8c077e205b",
+          "message": "Add payload conversion and heap measurement tool (#1670)",
+          "timestamp": "2022-03-10T10:43:19-08:00",
+          "tree_id": "529be8502dd50898de2d460454a4ad6940a1225a",
+          "url": "https://github.com/unicode-org/icu4x/commit/37118aa56bd2acecc4eca63434c1aa8c077e205b"
+        },
+        "date": 1646937881923,
         "tool": "ndjson",
         "benches": [
           {
