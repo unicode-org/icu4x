@@ -146,7 +146,8 @@ impl<M: ResourceMarker<Yokeable = ListFormatterPatternsV1<'static>>> ResourcePro
 icu_provider::impl_dyn_provider!(
     ListProvider,
     [AndListV1Marker, OrListV1Marker, UnitListV1Marker,],
-    SERDE_SE
+    SERDE_SE,
+    impl DataConverter
 );
 
 impl<M: ResourceMarker<Yokeable = ListFormatterPatternsV1<'static>>> IterableResourceProvider<M>

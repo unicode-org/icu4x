@@ -199,3 +199,78 @@ impl AsULE for i8 {
 
 // EqULE is true because i8 is its own ULE.
 unsafe impl EqULE for i8 {}
+
+// These impls are actually safe and portable due to Rust always using IEEE 754, see the documentation
+// on f32::from_bits: https://doc.rust-lang.org/stable/std/primitive.f32.html#method.from_bits
+//
+// The only potential problem is that some older platforms treat signaling NaNs differently. This is
+// still quite portable, signalingness is not typically super important.
+
+impl AsULE for f32 {
+    type ULE = RawBytesULE<4>;
+    #[inline]
+    fn to_unaligned(self) -> Self::ULE {
+        self.to_bits().to_unaligned()
+    }
+    #[inline]
+    fn from_unaligned(unaligned: Self::ULE) -> Self {
+        Self::from_bits(u32::from_unaligned(unaligned))
+    }
+}
+
+impl AsULE for f64 {
+    type ULE = RawBytesULE<8>;
+    #[inline]
+    fn to_unaligned(self) -> Self::ULE {
+        self.to_bits().to_unaligned()
+    }
+    #[inline]
+    fn from_unaligned(unaligned: Self::ULE) -> Self {
+        Self::from_bits(u64::from_unaligned(unaligned))
+    }
+}
+
+// The from_bits documentation mentions that they have identical byte representations to integers
+// and EqULE only cares about LE systems
+unsafe impl EqULE for f32 {}
+unsafe impl EqULE for f64 {}
+
+// The bool impl is not as efficient as it could be
+// We can, in the future, have https://github.com/unicode-org/icu4x/blob/main/utils/zerovec/design_doc.md#bitpacking
+// for better bitpacking
+
+// Safety (based on the safety checklist on the ULE trait):
+//  1. bool does not include any uninitialized or padding bytes (the remaining 7 bytes in bool are by definition zero)
+//  2. bool is aligned to 1 byte.
+//  3. The impl of validate_byte_slice() returns an error if any byte is not valid (bytes that are not 0 or 1).
+//  4. The impl of validate_byte_slice() returns an error if there are leftover bytes (never).
+//  5. The other ULE methods use the default impl.
+//  6. bool byte equality is semantic equality
+unsafe impl ULE for bool {
+    #[inline]
+    fn validate_byte_slice(bytes: &[u8]) -> Result<(), ZeroVecError> {
+        for byte in bytes {
+            // https://doc.rust-lang.org/reference/types/boolean.html
+            // Rust booleans are always size 1, align 1 values with valid bit patterns 0x0 or 0x1
+            if *byte > 1 {
+                return Err(ZeroVecError::parse::<Self>());
+            }
+        }
+        Ok(())
+    }
+}
+
+impl AsULE for bool {
+    type ULE = Self;
+    #[inline]
+    fn to_unaligned(self) -> Self::ULE {
+        self
+    }
+    #[inline]
+    fn from_unaligned(unaligned: Self::ULE) -> Self {
+        unaligned
+    }
+}
+
+// EqULE is true because bool is its own ULE.
+unsafe impl EqULE for bool {}

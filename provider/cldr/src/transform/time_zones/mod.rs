@@ -82,7 +82,7 @@ macro_rules! impl_resource_provider {
             }
         )+
 
-        icu_provider::impl_dyn_provider!(TimeZonesProvider, [$($marker),+,], SERDE_SE);
+        icu_provider::impl_dyn_provider!(TimeZonesProvider, [$($marker),+,], SERDE_SE, impl DataConverter);
     };
 }
 
