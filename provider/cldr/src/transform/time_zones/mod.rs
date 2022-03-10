@@ -42,7 +42,9 @@ macro_rules! impl_resource_provider {
                         .get_langid()
                         .ok_or_else(|| DataErrorKind::NeedsLocale.with_req(<$marker>::KEY, req))?;
 
-                    let time_zones = self.data.get_or_insert(&langid, || -> Result<_, DataError> {
+                    let time_zones = if let Some(time_zones) = self.data.get(langid) {
+                        time_zones
+                    } else {
                         let path = get_langid_subdirectory(&self.path, langid)?
                             .ok_or_else(|| DataErrorKind::MissingLocale.with_req(<$marker>::KEY, req))?
                             .join("timeZoneNames.json");
@@ -50,14 +52,14 @@ macro_rules! impl_resource_provider {
                         let mut resource: cldr_serde::time_zone_names::Resource =
                             serde_json::from_reader(open_reader(&path)?)
                                 .map_err(|e| Error::Json(e, Some(path)))?;
-                        Ok(Box::new(resource
+                        self.data.insert(langid.clone(), Box::new(resource
                             .main
                             .0
                             .remove(langid)
                             .expect("CLDR file contains the expected language")
                             .dates
                             .time_zone_names))
-                    })?;
+                    };
 
                     let metadata = DataResponseMetadata::default();
                     // TODO(#1109): Set metadata.data_langid correctly.

@@ -53,7 +53,9 @@ macro_rules! impl_resource_provider {
                         .as_ref()
                         .ok_or_else(|| DataErrorKind::NeedsVariant.with_req(<$marker>::KEY, req))?;
 
-                    let dates = self.data.get_or_insert(&req.options, || -> Result<_, DataError> {
+                    let dates = if let Some(dates) = self.data.get(&req.options) {
+                        dates
+                    } else {
                         let (cldr_cal, _, path) = self
                             .paths
                             .iter()
@@ -70,7 +72,7 @@ macro_rules! impl_resource_provider {
                             serde_json::from_reader(open_reader(&path)?)
                                 .map_err(|e| Error::Json(e, Some(path)))?;
 
-                        Ok(Box::new(resource
+                        self.data.insert(req.options.clone(), Box::new(resource
                             .main
                             .0
                             .remove(langid)
@@ -83,8 +85,8 @@ macro_rules! impl_resource_provider {
                                     format!("{} does not have {} field", cal_file, cldr_cal),
                                     None,
                                 )
-                            })?))
-                    })?;
+                        })?))
+                    };
 
                     let metadata = DataResponseMetadata::default();
                     // TODO(#1109): Set metadata.data_langid correctly.

@@ -609,7 +609,7 @@ checksum = "e78d4f1cc4ae33bbfc157ed5d5a5ef3bc29227303d595861deb238fcec4e9457"
 [[package]]
 name = "elsa"
 version = "1.6.0"
-source = "git+https://github.com/robertbastian/elsa.git#ae64294b4ed408af417d3b5db35f5725fd5bf11f"
+source = "git+https://github.com/manishearth/elsa.git#c9b36d6ab21c0313268f9d35afc0bead8ffe88b5"
 dependencies = [
  "stable_deref_trait",
 ]
