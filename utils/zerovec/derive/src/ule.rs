@@ -5,9 +5,9 @@
 use proc_macro2::TokenStream as TokenStream2;
 use quote::quote;
 
-use crate::utils;
+use crate::utils::{self, FieldInfo};
 use syn::spanned::Spanned;
-use syn::{Data, DeriveInput, Error, Field};
+use syn::{Data, DeriveInput, Error};
 
 pub fn derive_impl(input: &DeriveInput) -> TokenStream2 {
     if !utils::has_valid_repr(&input.attrs, |r| r == "packed" || r == "transparent") {
@@ -41,7 +41,8 @@ pub fn derive_impl(input: &DeriveInput) -> TokenStream2 {
             .to_compile_error();
     };
 
-    let (validators, remaining_offset) = generate_ule_validators(struc.fields.iter());
+    let fields = FieldInfo::make_list(struc.fields.iter());
+    let (validators, remaining_offset) = generate_ule_validators(&fields);
 
     let name = &input.ident;
 
@@ -74,33 +75,30 @@ pub fn derive_impl(input: &DeriveInput) -> TokenStream2 {
     }
 }
 
-/// Given an iterator over ULE struct fields, returns code validating that a slice variable `bytes` contains valid instances of those ULE types
+/// Given an slice over ULE struct fields, returns code validating that a slice variable `bytes` contains valid instances of those ULE types
 /// in order, plus the byte offset of any remaining unvalidated bytes. ULE types should not have any remaining bytes, but VarULE types will since
 /// the last field is the unsized one.
-pub(crate) fn generate_ule_validators<'a>(
-    iter: impl Iterator<Item = &'a Field>,
+pub(crate) fn generate_ule_validators(
+    fields: &[FieldInfo],
     // (validators, remaining_offset)
 ) -> (TokenStream2, syn::Ident) {
-    utils::generate_per_field_offsets(iter, |field, prev_offset_ident, size_ident, _| {
-        let ty = &field.ty;
-        quote!(
-            // This won't panic because the function returns if the byte slice is not the right length
-            #[allow(clippy::indexing_slicing)]
-            <#ty as zerovec::ule::ULE>::validate_byte_slice(&bytes[#prev_offset_ident .. #prev_offset_ident + #size_ident])?;
-        )
+    // This won't panic because the function returns if the byte slice is not the right length
+    #[allow(clippy::indexing_slicing)]
+    utils::generate_per_field_offsets(fields, false, |field, prev_offset_ident, size_ident| {
+        let ty = &field.field.ty;
+        quote!(<#ty as zerovec::ule::ULE>::validate_byte_slice(&bytes[#prev_offset_ident .. #prev_offset_ident + #size_ident])?;)
     })
 }
 
 /// Make corresponding ULE fields for each field
-pub(crate) fn make_ule_fields<'a>(iter: impl Iterator<Item = &'a Field>) -> Vec<TokenStream2> {
-    iter.map(|f| {
-        let ty = &f.ty;
-        let ty = quote!(<#ty as zerovec::ule::AsULE>::ULE);
-        if let Some(ref ident) = f.ident {
-            quote!(#ident: #ty)
-        } else {
-            quote!(#ty)
-        }
-    })
-    .collect::<Vec<_>>()
+pub(crate) fn make_ule_fields<'a>(fields: &[FieldInfo]) -> Vec<TokenStream2> {
+    fields
+        .iter()
+        .map(|f| {
+            let ty = &f.field.ty;
+            let ty = quote!(<#ty as zerovec::ule::AsULE>::ULE);
+            let setter = f.setter();
+            quote!(#setter #ty)
+        })
+        .collect::<Vec<_>>()
 }

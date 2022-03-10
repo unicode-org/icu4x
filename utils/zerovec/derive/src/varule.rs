@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::utils;
+use crate::utils::{self, FieldInfo};
 use proc_macro2::Span;
 use proc_macro2::TokenStream as TokenStream2;
 use quote::quote;
@@ -43,14 +43,15 @@ pub fn derive_impl(input: &DeriveInput) -> TokenStream2 {
 
     let n_fields = struc.fields.len();
 
-    let sizes = struc.fields.iter().take(n_fields - 1).map(|f| {
-        let ty = &f.ty;
+    let ule_fields = FieldInfo::make_list(struc.fields.iter().take(n_fields - 1));
+
+    let sizes = ule_fields.iter().map(|f| {
+        let ty = &f.field.ty;
         quote!(::core::mem::size_of::<#ty>())
     });
-
     let (validators, remaining_offset) = if n_fields > 1 {
         // generate ULE validators
-        crate::ule::generate_ule_validators(struc.fields.iter().take(n_fields - 1))
+        crate::ule::generate_ule_validators(&ule_fields)
     } else {
         // no ULE subfields
         (
