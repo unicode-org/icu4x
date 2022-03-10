@@ -59,7 +59,7 @@ icu_locid_macros = { version = "0.5", path = "../../components/locid/macros" }
 icu_provider_uprops = { version = "0.5", path = "../../provider/uprops", features = ["log"] }
 icu_properties = { version = "0.5", path = "../../components/properties", features = ["provider_serde", "std"] }
 zerovec = { version = "0.6", path = "../../utils/zerovec"}
-elsa = { version = "*", git = "https://github.com/manishearth/elsa.git" }
+elsa = "1.7"
 
 # Dependencies for the download feature
 urlencoding = { version = "1.1", optional = true }
