@@ -19,7 +19,7 @@ use writeable::{LengthHint, Writeable};
     OrListV1Marker = "list/or@1",
     UnitListV1Marker = "list/unit@1"
 )]
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 #[cfg_attr(
     feature = "provider_serde",
     derive(serde::Deserialize, serde::Serialize)
