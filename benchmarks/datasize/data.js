@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1646850742305,
+  "lastUpdate": 1646877839052,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -10793,6 +10793,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/135bf92d0f206f8558f6b703d2dff0e2e87cb88a"
         },
         "date": 1646850727329,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4508007,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "ee07d7b16f5878705107eadf382577cccbc1979a",
+          "message": "Add make_forking_provider! macro (#1684)",
+          "timestamp": "2022-03-09T18:02:18-08:00",
+          "tree_id": "2780ddd60b72faa5e81699622567e30e523d5527",
+          "url": "https://github.com/unicode-org/icu4x/commit/ee07d7b16f5878705107eadf382577cccbc1979a"
+        },
+        "date": 1646877823267,
         "tool": "ndjson",
         "benches": [
           {
