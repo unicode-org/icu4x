@@ -103,6 +103,7 @@ use alloc::vec::Vec;
 ///     .expect_err("Should stop at the first provider, even though the second has data");
 /// # }
 /// ```
+#[derive(Debug, PartialEq, Eq)]
 pub struct ForkByKeyProvider<P0, P1>(pub P0, pub P1);
 
 impl<P0, P1> BufferProvider for ForkByKeyProvider<P0, P1>
