@@ -6,6 +6,12 @@
 #[cfg(any(
     not(any(feature = "benchmark_memory", feature = "rust_global_allocator")),
     all(feature = "benchmark_memory", feature = "rust_global_allocator"),
+    deny(
+        clippy::indexing_slicing,
+        clippy::unwrap_used,
+        clippy::expect_used,
+        clippy::panic
+    )
 ))]
 mod default {
     #[macro_export]

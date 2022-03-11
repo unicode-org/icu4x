@@ -26,11 +26,17 @@ pub mod zoned_datetime;
 ///     .expect("Failed to parse a datetime.");
 /// ```
 pub fn parse_gregorian_from_str(input: &str) -> Result<DateTime<Gregorian>, DateTimeError> {
+    #[allow(clippy::indexing_slicing)] // TODO(#1688) Clippy exceptions need docs or fixing.
     let year: i32 = input[0..4].parse()?;
+    #[allow(clippy::indexing_slicing)] // TODO(#1688) Clippy exceptions need docs or fixing.
     let month: u8 = input[5..7].parse()?;
+    #[allow(clippy::indexing_slicing)] // TODO(#1688) Clippy exceptions need docs or fixing.
     let day: u8 = input[8..10].parse()?;
+    #[allow(clippy::indexing_slicing)] // TODO(#1688) Clippy exceptions need docs or fixing.
     let hour: u8 = input[11..13].parse()?;
+    #[allow(clippy::indexing_slicing)] // TODO(#1688) Clippy exceptions need docs or fixing.
     let minute: u8 = input[14..16].parse()?;
+    #[allow(clippy::indexing_slicing)] // TODO(#1688) Clippy exceptions need docs or fixing.
     let second: u8 = input[17..19].parse()?;
     DateTime::new_gregorian_datetime_from_integers(year, month, day, hour, minute, second)
 }

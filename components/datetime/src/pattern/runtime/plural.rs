@@ -155,6 +155,8 @@ impl<'data> PatternPlurals<'data> {
                     Week::WeekOfMonth => loc_datetime.week_of_month().0,
                     Week::WeekOfYear => loc_datetime.week_of_year()?.0,
                 };
+                #[allow(clippy::expect_used)]
+                // TODO(#1688) Clippy exceptions need docs or fixing.
                 let category = ordinal_rules
                     .expect("ordinal_rules must be set with PatternPlurals::MultipleVariants")
                     .select(week_number);
@@ -192,6 +194,7 @@ impl<'data> PatternPlurals<'data> {
     pub fn expect_pattern(self, msg: &str) -> Pattern<'data> {
         match self {
             Self::SinglePattern(pattern) => pattern,
+            #[allow(clippy::panic)] // TODO(#1688) Clippy exceptions need docs or fixing.
             _ => panic!("expect_pattern failed: {}", msg),
         }
     }

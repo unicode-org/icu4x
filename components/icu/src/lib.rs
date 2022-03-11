@@ -83,7 +83,16 @@
 //! [`Locale`]: crate::locid::Locale
 //! [`SymbolsV1`]: crate::decimal::provider::DecimalSymbolsV1
 
-#![cfg_attr(not(any(test, feature = "std")), no_std)]
+#![cfg_attr(
+    not(any(test, feature = "std")),
+    no_std,
+    deny(
+        clippy::indexing_slicing,
+        clippy::unwrap_used,
+        clippy::expect_used,
+        clippy::panic
+    )
+)]
 
 pub mod calendar {
     //! Contains the core types used by ICU4X for dealing

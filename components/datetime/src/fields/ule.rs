@@ -54,7 +54,9 @@ impl AsULE for fields::Field {
     #[inline]
     fn from_unaligned(unaligned: Self::ULE) -> Self {
         let value = unaligned.0;
+        #[allow(clippy::unwrap_used)] // TODO(#1688) Clippy exceptions need docs or fixing.
         let symbol = fields::FieldSymbol::from_idx(value[0]).unwrap();
+        #[allow(clippy::unwrap_used)] // TODO(#1688) Clippy exceptions need docs or fixing.
         let length = fields::FieldLength::from_idx(value[1]).unwrap();
         fields::Field { symbol, length }
     }
@@ -73,6 +75,7 @@ unsafe impl ULE for FieldULE {
     fn validate_byte_slice(bytes: &[u8]) -> Result<(), ZeroVecError> {
         let mut chunks = bytes.chunks_exact(2);
 
+        #[allow(clippy::indexing_slicing)] // TODO(#1688) Clippy exceptions need docs or fixing.
         if !chunks.all(|c| fields::Field::bytes_in_range(&c[0], &c[1])) {
             return Err(ZeroVecError::parse::<Self>());
         }

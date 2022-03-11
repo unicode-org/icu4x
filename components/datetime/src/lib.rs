@@ -75,7 +75,16 @@
 //! [`Length`]: options::length
 //! [`DateTime`]: icu_calendar::DateTime
 
-#![cfg_attr(not(any(test, feature = "std")), no_std)]
+#![cfg_attr(
+    not(any(test, feature = "std")),
+    no_std,
+    deny(
+        clippy::indexing_slicing,
+        clippy::unwrap_used,
+        clippy::expect_used,
+        clippy::panic
+    )
+)]
 extern crate alloc;
 
 mod calendar;

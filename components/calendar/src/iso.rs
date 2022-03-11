@@ -395,6 +395,7 @@ impl Iso {
     }
 
     fn fixed_from_iso_integers(year: i32, month: i32, day: i32) -> i32 {
+        #[allow(clippy::unwrap_used)] // TODO(#1688) Clippy exceptions need docs or fixing.
         Self::fixed_from_iso(
             *Date::new_iso_date_from_integers(year, month as u8, day as u8)
                 .unwrap()
@@ -444,6 +445,7 @@ impl Iso {
         };
         let month = (12 * (prior_days + correction) + 373) / 367;
         let day = date - Self::fixed_from_iso_integers(year, month, 1) + 1;
+        #[allow(clippy::unwrap_used)] // TODO(#1688) Clippy exceptions need docs or fixing.
         Date::new_iso_date_from_integers(year, month as u8, day as u8).unwrap()
     }
 
@@ -451,6 +453,7 @@ impl Iso {
         // Cumulatively how much are dates in each month
         // offset from "30 days in each month" (in non leap years)
         let month_offset = [0, 1, -1, 0, 0, 1, 1, 2, 3, 3, 4, 4];
+        #[allow(clippy::indexing_slicing)] // TODO(#1688) Clippy exceptions need docs or fixing.
         let mut offset = month_offset[date.month.0 as usize - 1];
         if Self::is_leap_year(date.year) && date.month.0 > 2 {
             // Months after February in a leap year are offset by one less

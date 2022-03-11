@@ -78,8 +78,17 @@
 //! [`UTS #35: Unicode LDML 3. Likely Subtags`]: https://www.unicode.org/reports/tr35/#Likely_Subtags.
 //! [`UTS #35: Unicode LDML 3. LocaleId Canonicalization`]: http://unicode.org/reports/tr35/#LocaleId_Canonicalization,
 
+#![cfg_attr(
+    not(any(test, feature = "std")),
+    no_std,
+    deny(
+        clippy::indexing_slicing,
+        clippy::unwrap_used,
+        clippy::expect_used,
+        clippy::panic
+    )
+)]
 #![warn(missing_docs)]
-#![no_std]
 
 extern crate alloc;
 

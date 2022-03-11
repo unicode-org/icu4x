@@ -44,7 +44,9 @@ impl FromStr for EraStartDate {
     type Err = ();
     fn from_str(mut s: &str) -> Result<Self, ()> {
         let mut sign = 1;
+        #[allow(clippy::indexing_slicing)]
         if s.starts_with('-') {
+            // TODO(#1688) Clippy exceptions need docs or fixing.
             s = &s[1..];
             sign = -1;
         }

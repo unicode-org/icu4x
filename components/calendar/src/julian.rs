@@ -125,6 +125,7 @@ impl Julian {
 
     fn day_of_year(date: IsoDateInner) -> u32 {
         let month_offset = [0, 1, -1, 0, 0, 1, 1, 2, 3, 3, 4, 4];
+        #[allow(clippy::indexing_slicing)] // TODO(#1688) Clippy exceptions need docs or fixing.
         let mut offset = month_offset[u8::from(date.month) as usize - 1];
         if Self::is_leap_year(date.year) && u8::from(date.month) > 2 {
             offset += 1;
@@ -166,6 +167,7 @@ impl Julian {
     }
 
     fn fixed_from_julian_integers(year: i32, month: i32, day: i32) -> i32 {
+        #[allow(clippy::unwrap_used)] // TODO(#1688) Clippy exceptions need docs or fixing.
         Self::fixed_from_julian(
             *Date::new_iso_date_from_integers(year, month as u8, day as u8)
                 .unwrap()
@@ -188,11 +190,14 @@ impl Julian {
         let month = (12 * (prior_days + correction) + 373) / 367;
         let day = date - Self::fixed_from_julian_integers(year, month, 1) + 1;
 
+        #[allow(clippy::unwrap_used)] // TODO(#1688) Clippy exceptions need docs or fixing.
         *Date::new_julian_date_from_integers(year, month as u8, day as u8)
             .unwrap()
             .inner()
     }
 
+    // Required at function level as attributes on expressions are experimental
+    #[allow(clippy::unwrap_used)] // TODO(#1688) Clippy exceptions need docs or fixing.
     fn offset_date(date: &mut JulianDateInner, mut offset: DateDuration<Self>) -> JulianDateInner {
         date.0.year.0 += offset.years;
         date.0.add_months(offset.months);

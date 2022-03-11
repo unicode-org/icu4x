@@ -47,6 +47,8 @@ impl<'l> Writeable for FormattedFixedDecimal<'l> {
                 sink.write_str(&self.symbols.decimal_separator)?;
             }
             let d = self.value.digit_at(m);
+            #[allow(clippy::indexing_slicing)]
+            // TODO(#1688) Clippy exceptions need docs or fixing.
             sink.write_char(self.symbols.digits[d as usize])?;
             if grouper::check(
                 upper_magnitude,
