@@ -15,11 +15,19 @@
 //! for your use case. It behaves very similarly to [`LiteMap`] for less than 12 elements,
 //! and upgrades itself gracefully for larger inputs.
 //!
+#![cfg_attr(
+    // for intra doc links
+    doc,
+    not(test),
+    no_std,
+    deny(
+        clippy::indexing_slicing,
+        clippy::unwrap_used,
+        clippy::expect_used,
+        clippy::panic
+    )
+)]
 
-#![no_std]
-
-// for intra doc links
-#[cfg(doc)]
 extern crate std;
 
 extern crate alloc;

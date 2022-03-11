@@ -58,6 +58,8 @@ unsafe impl ULE for CharULE {
         // Validate the bytes
         for chunk in bytes.chunks_exact(4) {
             // TODO: Use slice::as_chunks() when stabilized
+            #[allow(clippy::indexing_slicing)]
+            // TODO(#1688) Clippy exceptions need docs or fixing.i
             let u = u32::from_le_bytes([chunk[0], chunk[1], chunk[2], chunk[3]]);
             char::try_from(u).map_err(|_| ZeroVecError::parse::<Self>())?;
         }
@@ -79,6 +81,7 @@ impl AsULE for char {
         let u = u32::from_le_bytes(unaligned.0);
         // Safe because the bytes of CharULE are defined to represent a valid Unicode code point.
         // TODO: Use char::from_u32_unchecked() when stabilized
+        #[allow(clippy::unwrap_used)] // TODO(#1688) Clippy exceptions need docs or fixing.
         Self::try_from(u).unwrap()
     }
 }

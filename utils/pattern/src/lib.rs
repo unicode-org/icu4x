@@ -105,6 +105,17 @@
 //!
 //! [`ICU4X`]: ../icu/index.html
 //! [`FromStr`]: std::str::FromStr
+
+#![cfg_attr(
+    not(test),
+    deny(
+        clippy::indexing_slicing,
+        clippy::unwrap_used,
+        clippy::expect_used,
+        clippy::panic
+    )
+)]
+
 mod interpolator;
 mod parser;
 mod pattern;

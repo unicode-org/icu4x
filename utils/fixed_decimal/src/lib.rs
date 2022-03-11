@@ -38,7 +38,16 @@
 //!
 //! [`ICU4X`]: ../icu/index.html
 
-#![cfg_attr(not(any(feature = "std", test)), no_std)]
+#![cfg_attr(
+    not(any(feature = "std", test)),
+    no_std,
+    deny(
+        clippy::indexing_slicing,
+        clippy::unwrap_used,
+        clippy::expect_used,
+        clippy::panic
+    )
+)]
 
 pub mod decimal;
 pub mod signum;

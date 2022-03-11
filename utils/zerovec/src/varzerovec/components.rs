@@ -200,6 +200,8 @@ impl<'a, T: VarULE + ?Sized> VarZeroVecComponents<'a, T> {
     fn iter_checked(self) -> impl Iterator<Item = Result<&'a T, ZeroVecError>> {
         let last = iter::from_fn(move || {
             if !self.is_empty() {
+                #[allow(clippy::indexing_slicing)]
+                // TODO(#1688) Clippy exceptions need docs or fixing.
                 let start = usizeify(self.indices[self.len() - 1]);
                 let end = self.things.len();
                 Some(
@@ -215,7 +217,11 @@ impl<'a, T: VarULE + ?Sized> VarZeroVecComponents<'a, T> {
         self.indices
             .windows(2)
             .map(move |win| {
+                #[allow(clippy::indexing_slicing)]
+                // TODO(#1688) Clippy exceptions need docs or fixing.
                 let start = usizeify(win[0]);
+                #[allow(clippy::indexing_slicing)]
+                // TODO(#1688) Clippy exceptions need docs or fixing.
                 let end = usizeify(win[1]);
                 // the .get() here automatically verifies that end>=start
                 self.things
@@ -231,6 +237,8 @@ impl<'a, T: VarULE + ?Sized> VarZeroVecComponents<'a, T> {
     pub fn iter(self) -> impl Iterator<Item = &'a T> {
         let last = iter::from_fn(move || {
             if !self.is_empty() {
+                #[allow(clippy::indexing_slicing)]
+                // TODO(#1688) Clippy exceptions need docs or fixing.
                 let start = usizeify(self.indices[self.len() - 1]);
                 let end = self.things.len();
                 Some(unsafe { self.things.get_unchecked(start..end) })
@@ -242,7 +250,11 @@ impl<'a, T: VarULE + ?Sized> VarZeroVecComponents<'a, T> {
         self.indices
             .windows(2)
             .map(move |win| {
+                #[allow(clippy::indexing_slicing)]
+                // TODO(#1688) Clippy exceptions need docs or fixing.
                 let start = usizeify(win[0]);
+                #[allow(clippy::indexing_slicing)]
+                // TODO(#1688) Clippy exceptions need docs or fixing.
                 let end = usizeify(win[1]);
                 unsafe { self.things.get_unchecked(start..end) }
             })
@@ -368,7 +380,9 @@ where
     T: VarULE + ?Sized,
     A: EncodeAsVarULE<T>,
 {
+    #[allow(clippy::unwrap_used)] // TODO(#1688) Clippy exceptions need docs or fixing.
     let num_elements = u32::try_from(elements.len()).ok().unwrap();
+    #[allow(clippy::indexing_slicing)] // TODO(#1688) Clippy exceptions need docs or fixing.
     output[0..4].copy_from_slice(&num_elements.to_unaligned().0);
 
     // idx_offset = offset from the start of the buffer for the next index
@@ -382,12 +396,14 @@ where
         let element_len = element.encode_var_ule_len();
 
         let idx_limit = idx_offset + 4;
+        #[allow(clippy::indexing_slicing)] // TODO(#1688) Clippy exceptions need docs or fixing.
         let idx_slice = &mut output[idx_offset..idx_limit];
         // VZV expects data offsets to be stored relative to the first data block
         let offset = (dat_offset - first_dat_offset) as u32;
         idx_slice.copy_from_slice(&offset.to_unaligned().0);
 
         let dat_limit = dat_offset + element_len;
+        #[allow(clippy::indexing_slicing)] // TODO(#1688) Clippy exceptions need docs or fixing.
         let dat_slice = &mut output[dat_offset..dat_limit];
         element.encode_var_ule_write(dat_slice);
         debug_assert_eq!(T::validate_byte_slice(dat_slice), Ok(()));

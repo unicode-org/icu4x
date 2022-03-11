@@ -6,7 +6,16 @@
 //!
 //! See the documentation of [`ZeroFrom`] for more details.
 
-#![cfg_attr(all(not(test), not(doc)), no_std)]
+#![cfg_attr(
+    all(not(test), not(doc)),
+    no_std,
+    deny(
+        clippy::indexing_slicing,
+        clippy::unwrap_used,
+        clippy::expect_used,
+        clippy::panic
+    )
+)]
 // The lifetimes here are important for safety and explicitly writing
 // them out is good even when redundant
 #![allow(clippy::needless_lifetimes)]

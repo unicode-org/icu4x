@@ -257,7 +257,9 @@ where
     > {
         (0..self.keys.zvl_len()).map(move |idx| {
             (
+                #[allow(clippy::unwrap_used)] // TODO(#1688) Clippy exceptions need docs or fixing.
                 self.keys.zvl_get(idx).unwrap(),
+                #[allow(clippy::unwrap_used)] // TODO(#1688) Clippy exceptions need docs or fixing.
                 self.values.zvl_get(idx).unwrap(),
             )
         })
@@ -265,11 +267,13 @@ where
 
     /// Produce an ordered iterator over keys
     pub fn iter_keys<'b>(&'b self) -> impl Iterator<Item = &'b <K as ZeroMapKV<'a>>::GetType> {
+        #[allow(clippy::unwrap_used)] // TODO(#1688) Clippy exceptions need docs or fixing.
         (0..self.keys.zvl_len()).map(move |idx| self.keys.zvl_get(idx).unwrap())
     }
 
     /// Produce an iterator over values, ordered by keys
     pub fn iter_values<'b>(&'b self) -> impl Iterator<Item = &'b <V as ZeroMapKV<'a>>::GetType> {
+        #[allow(clippy::unwrap_used)] // TODO(#1688) Clippy exceptions need docs or fixing.
         (0..self.values.zvl_len()).map(move |idx| self.values.zvl_get(idx).unwrap())
     }
 }
@@ -293,7 +297,9 @@ where
     ) -> impl Iterator<Item = (&'b <K as ZeroMapKV<'a>>::GetType, V)> {
         (0..self.keys.zvl_len()).map(move |idx| {
             (
+                #[allow(clippy::unwrap_used)] // TODO(#1688) Clippy exceptions need docs or fixing.
                 self.keys.zvl_get(idx).unwrap(),
+                #[allow(clippy::unwrap_used)] // TODO(#1688) Clippy exceptions need docs or fixing.
                 ZeroSlice::get(&*self.values, idx).unwrap(),
             )
         })
@@ -315,7 +321,9 @@ where
         let values = &self.values;
         (0..keys.len()).map(move |idx| {
             (
+                #[allow(clippy::unwrap_used)] // TODO(#1688) Clippy exceptions need docs or fixing.
                 ZeroSlice::get(&**keys, idx).unwrap(),
+                #[allow(clippy::unwrap_used)] // TODO(#1688) Clippy exceptions need docs or fixing.
                 ZeroSlice::get(&**values, idx).unwrap(),
             )
         })

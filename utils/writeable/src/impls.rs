@@ -13,6 +13,8 @@ macro_rules! impl_write_num {
                 let mut buf = [b'0'; $log10(<$u>::MAX) as usize + 1];
                 let mut n = *self;
                 let mut i = buf.len();
+                #[allow(clippy::indexing_slicing)]
+                // TODO(#1688) Clippy exceptions need docs or fixing.
                 while n != 0 {
                     i -= 1;
                     buf[i] = b'0' + (n % 10) as u8;
@@ -22,6 +24,8 @@ macro_rules! impl_write_num {
                     debug_assert_eq!(*self, 0);
                     i -= 1;
                 }
+                #[allow(clippy::indexing_slicing)]
+                // TODO(#1688) Clippy exceptions need docs or fixing.
                 let s = unsafe { core::str::from_utf8_unchecked(&buf[i..]) };
                 sink.write_str(s)
             }

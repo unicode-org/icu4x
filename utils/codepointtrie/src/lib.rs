@@ -31,7 +31,16 @@
 //!
 //! [`ICU4X`]: ../icu/index.html
 
-#![no_std]
+#![cfg_attr(
+    not(test),
+    no_std,
+    deny(
+        clippy::indexing_slicing,
+        clippy::unwrap_used,
+        clippy::expect_used,
+        clippy::panic
+    )
+)]
 
 extern crate alloc;
 
