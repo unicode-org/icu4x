@@ -37,6 +37,10 @@ pub trait CldrPaths: std::fmt::Debug + Sync {
     /// <https://github.com/unicode-cldr/cldr-misc-full>
     fn cldr_misc(&self) -> Result<PathBuf, Error>;
 
+    /// Path to checkout of cldr-bcp47
+    /// <https://github.com/unicode-org/cldr-json/tree/main/cldr-json/cldr-bcp47>
+    fn cldr_bcp47(&self) -> Result<PathBuf, Error>;
+
     /// Path to checkout of CLDR dates repository for given calendar
     ///
     /// `cal` should be a BCP-47 calendar identifier
@@ -97,6 +101,7 @@ pub struct CldrPathsLocal {
     pub cldr_dates_coptic: Result<PathBuf, MissingSourceError>,
     pub cldr_numbers: Result<PathBuf, MissingSourceError>,
     pub cldr_misc: Result<PathBuf, MissingSourceError>,
+    pub cldr_bcp47: Result<PathBuf, MissingSourceError>,
 }
 
 impl CldrPaths for CldrPathsLocal {
@@ -121,6 +126,8 @@ impl CldrPaths for CldrPathsLocal {
     fn cldr_misc(&self) -> Result<PathBuf, Error> {
         self.cldr_misc.clone().map_err(|e| e.into())
     }
+
+    fn cldr_bcp47(&self) -> Result<PathBuf, Error> { self.cldr_bcp47.clone().map_err(|e| e.into()) }
 }
 
 impl Default for CldrPathsLocal {
@@ -141,6 +148,7 @@ impl Default for CldrPathsLocal {
                 src: "cldr-numbers",
             }),
             cldr_misc: Err(MissingSourceError { src: "cldr-misc" }),
+            cldr_bcp47: Err(MissingSourceError { src: "cldr-bcp47" }),
         }
     }
 }
@@ -208,6 +216,13 @@ impl CldrPaths for CldrPathsAllInOne {
             .cldr_json_root
             .clone()
             .join(format!("cldr-misc-{}", self.locale_subset)))
+    }
+
+    fn cldr_bcp47(&self) -> Result<PathBuf, Error> {
+        Ok(self
+            .cldr_json_root
+            .clone()
+            .join("cldr-bcp47"))
     }
 }
 

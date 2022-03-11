@@ -11,8 +11,10 @@ use icu_datetime::provider::time_zones::*;
 use icu_locid::LanguageIdentifier;
 use icu_provider::datagen::IterableResourceProvider;
 use icu_provider::prelude::*;
+use litemap::LiteMap;
 use std::convert::TryFrom;
 use std::path::PathBuf;
+use std::sync::RwLock;
 
 mod convert;
 
@@ -21,6 +23,8 @@ mod convert;
 pub struct TimeZonesProvider {
     path: PathBuf,
     data: FrozenBTreeMap<LanguageIdentifier, Box<cldr_serde::time_zone_names::TimeZoneNames>>,
+    bcp47_path: PathBuf,
+    bcp47_data: RwLock<LiteMap<String, String>>,
 }
 
 impl TryFrom<&dyn CldrPaths> for TimeZonesProvider {
@@ -29,6 +33,8 @@ impl TryFrom<&dyn CldrPaths> for TimeZonesProvider {
         Ok(Self {
             path: cldr_paths.cldr_dates_gregorian()?.join("main"),
             data: FrozenBTreeMap::new(),
+            bcp47_path: cldr_paths.cldr_bcp47()?.join("bcp47"),
+            bcp47_data: RwLock::new(LiteMap::new()),
         })
     }
 }
@@ -48,7 +54,6 @@ macro_rules! impl_resource_provider {
                         let path = get_langid_subdirectory(&self.path, langid)?
                             .ok_or_else(|| DataErrorKind::MissingLocale.with_req(<$marker>::KEY, req))?
                             .join("timeZoneNames.json");
-
                         let mut resource: cldr_serde::time_zone_names::Resource =
                             serde_json::from_reader(open_reader(&path)?)
                                 .map_err(|e| Error::Json(e, Some(path)))?;
@@ -60,6 +65,16 @@ macro_rules! impl_resource_provider {
                             .dates
                             .time_zone_names))
                     };
+
+                    if self.bcp47_data.read().unwrap().len() == 0 {
+                        let bcp47_time_zone_path = self.bcp47_path.join("timezone.json");
+                        let mut resource: cldr_serde::timezone::Resource =
+                            serde_json::from_reader(open_reader(&bcp47_time_zone_path)?)
+                                .map_err(|e| Error::Json(e, Some(bcp47_time_zone_path)))?;
+                        let _ = self.bcp47_data.write().unwrap();
+                    }
+
+                    let time_zones = self.data.read().unwrap().get(langid).unwrap().clone();
 
                     let metadata = DataResponseMetadata::default();
                     // TODO(#1109): Set metadata.data_langid correctly.
