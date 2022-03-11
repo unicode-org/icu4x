@@ -109,9 +109,11 @@ pub(crate) fn generate_per_field_offsets<'a>(
     (code, prev_offset_ident)
 }
 
+#[derive(Clone, Debug)]
 pub(crate) struct FieldInfo<'a> {
     pub accessor: TokenStream2,
     pub field: &'a Field,
+    pub index: usize,
 }
 
 impl<'a> FieldInfo<'a> {
@@ -126,12 +128,14 @@ impl<'a> FieldInfo<'a> {
             FieldInfo {
                 accessor: quote!(#i),
                 field: &f,
+                index,
             }
         } else {
-            let index = Index::from(index);
+            let idx = Index::from(index);
             FieldInfo {
-                accessor: quote!(#index),
+                accessor: quote!(#idx),
                 field: &f,
+                index,
             }
         }
     }

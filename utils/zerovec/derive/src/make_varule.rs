@@ -64,28 +64,52 @@ pub fn make_varule_impl(attr: AttributeArgs, mut input: DeriveInput) -> TokenStr
         }
     };
 
-    let last_field = fields.iter().next_back();
-    let last_field = if let Some(ref last) = last_field {
-        last
-    } else {
+    if fields.is_empty() {
         return Error::new(
             input.span(),
             "#[make_varule] must be applied to a struct with at least one field",
         )
         .to_compile_error();
-    };
+    }
 
-    let last_field_info = match LastField::new(&last_field, fields.len() - 1) {
-        Ok(o) => o,
-        Err(e) => return Error::new(last_field.span(), e).to_compile_error(),
-    };
+    let mut sized_fields = vec![];
+    let mut unsized_fields = vec![];
 
-    let sized_fields = FieldInfo::make_list(fields.iter().take(fields.len() - 1));
+    for (i, field) in fields.iter().enumerate() {
+        match UnsizedField::new(&field, i) {
+            Ok(o) => unsized_fields.push(o),
+            Err(_) => sized_fields.push(FieldInfo::new_for_field(&field, i)),
+        }
+    }
+
+    if unsized_fields.is_empty() {
+        let last_field = fields.iter().next_back().unwrap();
+        let e = UnsizedField::new(&last_field, fields.len() - 1).unwrap_err();
+        return Error::new(last_field.span(), e).to_compile_error();
+    }
+
+    if unsized_fields.len() != 1 {
+        return Error::new(
+            unsized_fields.last().unwrap().field.field.span(),
+            "#[make_varule] only supports having a single unsized field",
+        )
+        .to_compile_error();
+    }
+
+    let unsized_field_info = &unsized_fields[0];
+
+    if unsized_field_info.field.index != fields.len() - 1 {
+        return Error::new(
+            unsized_fields.last().unwrap().field.field.span(),
+            "#[make_varule] requires its unsized field to be at the end",
+        )
+        .to_compile_error();
+    }
 
     let mut field_inits = crate::ule::make_ule_fields(&sized_fields);
-    let last_field_ule = last_field_info.kind.varule_ty();
+    let last_field_ule = unsized_field_info.kind.varule_ty();
 
-    let setter = last_field_info.field.setter();
+    let setter = unsized_field_info.field.setter();
     field_inits.push(quote!(#setter #last_field_ule));
 
     let semi = utils::semi_for(fields);
@@ -105,7 +129,7 @@ pub fn make_varule_impl(attr: AttributeArgs, mut input: DeriveInput) -> TokenStr
 
     let encode_impl = make_encode_impl(
         &sized_fields,
-        &last_field_info,
+        &unsized_field_info,
         name,
         &ule_name,
         &maybe_lt_bound,
@@ -113,7 +137,7 @@ pub fn make_varule_impl(attr: AttributeArgs, mut input: DeriveInput) -> TokenStr
 
     let zf_impl = make_zf_impl(
         &sized_fields,
-        &last_field_info,
+        &unsized_field_info,
         &fields,
         name,
         &ule_name,
@@ -199,14 +223,14 @@ pub fn make_varule_impl(attr: AttributeArgs, mut input: DeriveInput) -> TokenStr
 
 fn make_zf_impl(
     sized_fields: &[FieldInfo],
-    last_field_info: &LastField,
+    unsized_field_info: &UnsizedField,
     fields: &Fields,
     name: &Ident,
     ule_name: &Ident,
     maybe_lt: Option<&Lifetime>,
     span: Span,
 ) -> TokenStream2 {
-    if !last_field_info.kind.has_zf() {
+    if !unsized_field_info.kind.has_zf() {
         return quote!();
     }
 
@@ -230,10 +254,10 @@ fn make_zf_impl(
         })
         .collect::<Vec<_>>();
 
-    let last_field_ty = &last_field_info.field.field.ty;
-    let last_field_ule_ty = last_field_info.kind.varule_ty();
-    let accessor = &last_field_info.field.accessor;
-    let setter = last_field_info.field.setter();
+    let last_field_ty = &unsized_field_info.field.field.ty;
+    let last_field_ule_ty = unsized_field_info.kind.varule_ty();
+    let accessor = &unsized_field_info.field.accessor;
+    let setter = unsized_field_info.field.setter();
 
     let zerofrom_trait = quote!(zerovec::__zerovec_internal_reexport::ZeroFrom);
 
@@ -252,7 +276,7 @@ fn make_zf_impl(
 
 fn make_encode_impl(
     sized_fields: &[FieldInfo],
-    last_field_info: &LastField,
+    unsized_field_info: &UnsizedField,
     name: &Ident,
     ule_name: &Ident,
     maybe_lt_bound: &Option<TokenStream2>,
@@ -264,7 +288,7 @@ fn make_encode_impl(
         lengths.push(quote!(::core::mem::size_of::<<#ty as zerovec::ule::AsULE>::ULE>()));
     }
 
-    let last_field_name = &last_field_info.field.accessor;
+    let last_field_name = &unsized_field_info.field.accessor;
 
     let (encoders, remaining_offset) = utils::generate_per_field_offsets(
         &sized_fields,
@@ -282,7 +306,7 @@ fn make_encode_impl(
         },
     );
 
-    let last_bytes = last_field_info
+    let last_bytes = unsized_field_info
         .kind
         .encode_func(quote!(self.#last_field_name));
     quote!(
@@ -331,7 +355,7 @@ fn make_encode_impl(
 /// Represents a VarULE-compatible type that would typically
 /// be found behind a `Cow<'a, _>` in the last field, and is represented
 /// roughly the same in owned and borrowed versions
-#[derive(Clone, Eq, PartialEq)]
+#[derive(Copy, Clone, Debug)]
 enum OwnULETy<'a> {
     /// [T] where T: AsULE<ULE = Self>
     Slice(&'a Type),
@@ -340,8 +364,8 @@ enum OwnULETy<'a> {
 }
 
 /// Represents the type of the last field of the struct
-#[derive(Clone, Eq, PartialEq)]
-enum LastFieldKind<'a> {
+#[derive(Copy, Clone, Debug)]
+enum UnsizedFieldKind<'a> {
     Cow(OwnULETy<'a>),
     ZeroVec(&'a Type),
     VarZeroVec(&'a Type),
@@ -352,22 +376,23 @@ enum LastFieldKind<'a> {
     Ref(OwnULETy<'a>),
 }
 
-struct LastField<'a> {
-    kind: LastFieldKind<'a>,
+#[derive(Clone, Debug)]
+struct UnsizedField<'a> {
+    kind: UnsizedFieldKind<'a>,
     field: FieldInfo<'a>,
 }
 
-impl<'a> LastField<'a> {
+impl<'a> UnsizedField<'a> {
     fn new(field: &'a Field, index: usize) -> Result<Self, String> {
-        Ok(LastField {
-            kind: LastFieldKind::new(&field.ty)?,
+        Ok(UnsizedField {
+            kind: UnsizedFieldKind::new(&field.ty)?,
             field: FieldInfo::new_for_field(field, index),
         })
     }
 }
-impl<'a> LastFieldKind<'a> {
-    /// Construct a LastFieldKind for the type of a LastFieldKind if possible
-    fn new(ty: &'a Type) -> Result<LastFieldKind<'a>, String> {
+impl<'a> UnsizedFieldKind<'a> {
+    /// Construct a UnsizedFieldKind for the type of a UnsizedFieldKind if possible
+    fn new(ty: &'a Type) -> Result<UnsizedFieldKind<'a>, String> {
         static PATH_TYPE_IDENTITY_ERROR: &str =
             "Can only automatically detect corresponding VarULE types for path types \
             that are Cow, ZeroVec, VarZeroVec, Box, String, or Vec";
@@ -375,7 +400,7 @@ impl<'a> LastFieldKind<'a> {
             "Can only automatically detect corresponding VarULE types for path \
             types with at most one lifetime and at most one generic parameter";
         match *ty {
-            Type::Reference(ref tyref) => OwnULETy::new(&tyref.elem, "reference").map(LastFieldKind::Ref),
+            Type::Reference(ref tyref) => OwnULETy::new(&tyref.elem, "reference").map(UnsizedFieldKind::Ref),
             Type::Path(ref typath) => {
                 if typath.path.segments.len() != 1 {
                     return Err("Can only automatically detect corresponding VarULE types for \
@@ -385,7 +410,7 @@ impl<'a> LastFieldKind<'a> {
                 match segment.arguments {
                     PathArguments::None => {
                         if segment.ident == "String" {
-                            Ok(LastFieldKind::Growable(OwnULETy::Str))
+                            Ok(UnsizedFieldKind::Growable(OwnULETy::Str))
                         } else {
                             Err(PATH_TYPE_IDENTITY_ERROR.into())
                         }
@@ -418,15 +443,15 @@ impl<'a> LastFieldKind<'a> {
 
                         if lifetime.is_some() {
                             match &*ident {
-                                "ZeroVec" => Ok(LastFieldKind::ZeroVec(generic)),
-                                "VarZeroVec" => Ok(LastFieldKind::VarZeroVec(generic)),
-                                "Cow" => OwnULETy::new(generic, "Cow").map(LastFieldKind::Cow),
+                                "ZeroVec" => Ok(UnsizedFieldKind::ZeroVec(generic)),
+                                "VarZeroVec" => Ok(UnsizedFieldKind::VarZeroVec(generic)),
+                                "Cow" => OwnULETy::new(generic, "Cow").map(UnsizedFieldKind::Cow),
                                 _ => Err(PATH_TYPE_IDENTITY_ERROR.into()),
                             }
                         } else {
                             match &*ident {
-                                "Vec" => Ok(LastFieldKind::Growable(OwnULETy::Slice(generic))),
-                                "Box" => OwnULETy::new(generic, "Box").map(LastFieldKind::Boxed),
+                                "Vec" => Ok(UnsizedFieldKind::Growable(OwnULETy::Slice(generic))),
+                                "Box" => OwnULETy::new(generic, "Box").map(UnsizedFieldKind::Boxed),
                                 _ => Err(PATH_TYPE_IDENTITY_ERROR.into()),
                             }
                         }
