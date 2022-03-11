@@ -7,10 +7,16 @@
         all(feature = "freertos", not(feature = "x86tiny")),
         all(feature = "x86tiny", not(feature = "freertos")),
     ),
-    feature(alloc_error_handler)
+    feature(alloc_error_handler),
+    no_std,
+    deny(
+        clippy::indexing_slicing,
+        clippy::unwrap_used,
+        clippy::expect_used,
+        clippy::panic,
+        clippy::upper_case_acronyms
+    )
 )]
-#![no_std]
-#![allow(clippy::upper_case_acronyms)]
 
 //! This module contains the source of truth for the [Diplomat](https://github.com/rust-diplomat/diplomat)-generated
 //! FFI bindings. This generates the C, C++ and Wasm bindings. This module also contains the C
