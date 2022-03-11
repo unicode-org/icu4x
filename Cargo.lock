@@ -172,7 +172,7 @@ checksum = "ba3569f383e8f1598449f1a423e72e99569137b47740b1da11ef19af3d5c3223"
 dependencies = [
  "lazy_static",
  "memchr",
- "regex-automata 0.1.10 (registry+https://github.com/rust-lang/crates.io-index)",
+ "regex-automata 0.1.10",
  "serde",
 ]
 
@@ -998,6 +998,7 @@ dependencies = [
  "icu_codepointtrie",
  "icu_datetime",
  "icu_decimal",
+ "icu_list",
  "icu_locale_canonicalizer",
  "icu_locid",
  "icu_locid_macros",
@@ -1191,7 +1192,7 @@ dependencies = [
 
 [[package]]
 name = "icu_list"
-version = "0.1.0"
+version = "0.5.0"
 dependencies = [
  "criterion",
  "deduplicating_array",
@@ -1202,7 +1203,7 @@ dependencies = [
  "icu_provider",
  "icu_testdata",
  "postcard",
- "regex-automata 0.1.10 (git+https://github.com/burntsushi/regex-automata?rev=d8eee1279fac79514f6e366b6976f97ad7b37174)",
+ "regex-automata 0.2.0",
  "serde",
  "serde_json",
  "writeable",
@@ -2175,8 +2176,9 @@ checksum = "6c230d73fb8d8c1b9c0b3135c5142a8acee3a0558fb8db5cf1cb65f8d7862132"
 
 [[package]]
 name = "regex-automata"
-version = "0.1.10"
-source = "git+https://github.com/burntsushi/regex-automata?rev=d8eee1279fac79514f6e366b6976f97ad7b37174#d8eee1279fac79514f6e366b6976f97ad7b37174"
+version = "0.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e9368763f5a9b804326f3af749e16f9abf378d227bcdee7634b13d8f17793782"
 dependencies = [
  "memchr",
  "regex-syntax",

@@ -51,7 +51,7 @@ writeable = { version = "0.3", path = "../../utils/writeable" }
 dhat = "0.3.0"
 
 [features]
-experimental = ["icu_provider_cldr/experimental"]
+experimental = []
 
 [[bin]]
 name = "icu4x-datagen"
