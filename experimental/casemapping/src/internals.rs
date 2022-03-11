@@ -8,12 +8,12 @@ use core::num::TryFromIntError;
 use icu_codepointtrie::CodePointTrieHeader;
 use icu_codepointtrie::{CodePointTrie, TrieValue};
 use icu_locid::Locale;
+use icu_provider::{yoke, zerofrom};
 use icu_uniset::UnicodeSetBuilder;
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 #[cfg(feature = "provider_transform_internals")]
 use std::collections::HashMap;
-use yoke::{Yokeable, ZeroCopyFrom};
 use zerovec::ule::{AsULE, RawBytesULE};
 use zerovec::ZeroMap;
 #[cfg(feature = "provider_transform_internals")]
@@ -227,7 +227,7 @@ impl AsULE for CaseMappingData {
     type ULE = RawBytesULE<2>;
 
     #[inline]
-    fn as_unaligned(self) -> Self::ULE {
+    fn to_unaligned(self) -> Self::ULE {
         RawBytesULE(self.0.to_le_bytes())
     }
 
@@ -249,7 +249,7 @@ impl TrieValue for CaseMappingData {
 // Reverse case folding data. Maps from multi-character strings back
 // to code-points that fold to those strings.
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
-#[derive(Debug, PartialEq, Clone, Yokeable, ZeroCopyFrom)]
+#[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[yoke(prove_covariance_manually)]
 struct CaseMappingUnfoldData<'data> {
     #[cfg_attr(feature = "serde", serde(borrow))]
@@ -338,7 +338,7 @@ impl FoldOptions {
 /// CaseMappingInternals provides low-level access to the data necessary to
 /// convert characters and strings to upper, lower, or title case.
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
-#[derive(Debug, PartialEq, Clone, Yokeable, ZeroCopyFrom)]
+#[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[yoke(prove_covariance_manually)]
 pub struct CaseMappingInternals<'data> {
     #[cfg_attr(feature = "serde", serde(borrow))]

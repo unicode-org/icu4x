@@ -7,7 +7,7 @@
 //! Read more about data providers: [`icu_provider`]
 
 use crate::internals::CaseMappingInternals;
-use icu_provider::yoke;
+use icu_provider::{yoke, zerofrom};
 
 #[icu_provider::data_struct(CaseMappingV1Marker = "props/casemap@1")]
 #[derive(Debug, PartialEq, Clone)]

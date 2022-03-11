@@ -69,9 +69,7 @@ mod tests {
 
     #[test]
     fn test_simple_mappings() {
-        let root_dir = icu_testdata::paths::data_root()
-            .join("uprops")
-            .join("ucase.toml");
+        let root_dir = icu_testdata::paths::uprops_toml_root().join("ucase.toml");
         let provider = CaseMappingDataProvider::try_new(root_dir).expect("Loading was successful");
         let case_mapping = CaseMapping::try_new(&provider).expect("Loading was successful");
 
@@ -116,9 +114,7 @@ mod tests {
     // These tests are taken from StringCaseTest::TestCaseConversion in ICU4C.
     #[test]
     fn test_full_mappings() {
-        let root_dir = icu_testdata::paths::data_root()
-            .join("uprops")
-            .join("ucase.toml");
+        let root_dir = icu_testdata::paths::uprops_toml_root().join("ucase.toml");
         let provider = CaseMappingDataProvider::try_new(root_dir).expect("Loading was successful");
 
         let case_mapping = CaseMapping::try_new(&provider).expect("Loading was successful");

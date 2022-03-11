@@ -2,9 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use icu_provider::{yoke, zerofrom};
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
-use yoke::{Yokeable, ZeroCopyFrom};
 use zerovec::{VarZeroVec, ZeroVec};
 
 use crate::error::Error;
@@ -56,7 +56,7 @@ use crate::internals::{ClosureSet, DotType, MappingKind};
 // UTF-8, we instead store strings encoded as UTF-8 in a side table. The full mapping and
 // closure slots contain indices into that side table.
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
-#[derive(Debug, Eq, PartialEq, Clone, Yokeable, ZeroCopyFrom)]
+#[derive(Debug, Eq, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
 pub(crate) struct CaseMappingExceptions<'data> {
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub(crate) slots: ZeroVec<'data, u16>,
