@@ -89,6 +89,16 @@
 //!
 //! [`ICU4X`]: ../icu/index.html
 
+#![cfg_attr(
+    not(test),
+    deny(
+        clippy::indexing_slicing,
+        clippy::unwrap_used,
+        clippy::expect_used,
+         clippy::panic
+    )
+)]
+
 mod error;
 mod fs_data_provider;
 pub mod manifest;

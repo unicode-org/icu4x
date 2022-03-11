@@ -95,18 +95,22 @@ impl From<&cldr_serde::ca::DateTimeFormats> for DateSkeletonPatternsV1<'_> {
                 Ok(s) => s,
                 Err(SkeletonError::SymbolUnimplemented(_)) => continue,
                 Err(SkeletonError::SkeletonHasVariant) => continue,
+                #[allow(clippy::panic)]
+                // TODO(#1688) Clippy exceptions need docs or fixing.
                 Err(err) => panic!(
                     "Unexpected skeleton error while parsing skeleton {:?} {}",
                     skeleton_str, err
                 ),
             };
-
+            #[allow(clippy::expect_used)] // TODO(#1688) Clippy exceptions need docs or fixing.
             let pattern_str = patterns.get("other").expect("Other variant must exist");
+            #[allow(clippy::expect_used)] // TODO(#1688) Clippy exceptions need docs or fixing.
             let pattern = pattern_str.parse().expect("Unable to parse a pattern");
 
             let mut pattern_plurals = if patterns.len() == 1 {
                 PatternPlurals::SinglePattern(pattern)
             } else {
+                #[allow(clippy::expect_used)] // TODO(#1688) Clippy exceptions need docs or fixing.
                 let mut plural_pattern =
                     PluralPattern::new(pattern).expect("Unable to construct PluralPattern");
 
@@ -114,8 +118,12 @@ impl From<&cldr_serde::ca::DateTimeFormats> for DateSkeletonPatternsV1<'_> {
                     if key == "other" {
                         continue;
                     }
+                    #[allow(clippy::expect_used)]
+                    // TODO(#1688) Clippy exceptions need docs or fixing.
                     let cat = PluralCategory::from_tr35_string(&key)
                         .expect("Failed to retrieve plural category");
+                    #[allow(clippy::expect_used)]
+                    // TODO(#1688) Clippy exceptions need docs or fixing.
                     let pattern = pattern_str.parse().expect("Unable to parse a pattern");
                     plural_pattern.maybe_set_variant(cat, pattern);
                 }

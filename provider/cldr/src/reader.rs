@@ -29,6 +29,7 @@ fn get_langid_subdirectories_internal(
         result.push(path);
     }
     Ok(result.into_iter().map(|path| {
+        #[allow(clippy::unwrap_used)] // TODO(#1688) Clippy exceptions need docs or fixing.
         (
             LanguageIdentifier::from_str(&path.file_name().unwrap().to_string_lossy()).unwrap(),
             path,
