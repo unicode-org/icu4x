@@ -88,6 +88,7 @@ pub fn make_varule_impl(attr: AttributeArgs, mut input: DeriveInput) -> TokenStr
         return Error::new(last_field.span(), e).to_compile_error();
     }
 
+    // This restriction will eventually be relaxed
     if unsized_fields.len() != 1 {
         return Error::new(
             unsized_fields.last().unwrap().field.field.span(),
@@ -98,10 +99,10 @@ pub fn make_varule_impl(attr: AttributeArgs, mut input: DeriveInput) -> TokenStr
 
     let unsized_field_info = &unsized_fields[0];
 
-    if unsized_field_info.field.index != fields.len() - 1 {
+    if unsized_field_info.field.index != fields.len() - 1 && unsized_field_info.field.field.ident.is_none() {
         return Error::new(
             unsized_fields.last().unwrap().field.field.span(),
-            "#[make_varule] requires its unsized field to be at the end",
+            "#[make_varule] requires its unsized field to be at the end for tuple structs",
         )
         .to_compile_error();
     }

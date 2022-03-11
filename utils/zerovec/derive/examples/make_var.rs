@@ -17,6 +17,18 @@ struct VarStruct<'a> {
     c: Cow<'a, str>,
 }
 
+#[make_varule(VarStructOutOfOrderULE)]
+#[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Debug, serde::Serialize, serde::Deserialize)]
+#[zerovec::serde]
+struct VarStructOutOfOrder<'a> {
+    a: u32,
+    #[serde(borrow)]
+    b: Cow<'a, str>,
+    c: char,
+    d: u8,
+}
+
+
 #[make_varule(VarTupleStructULE)]
 #[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Debug, serde::Serialize, serde::Deserialize)]
 #[zerovec::serde]
