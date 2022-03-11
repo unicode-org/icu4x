@@ -98,7 +98,8 @@ pub(crate) fn make_ule_fields<'a>(fields: &[FieldInfo]) -> Vec<TokenStream2> {
             let ty = &f.field.ty;
             let ty = quote!(<#ty as zerovec::ule::AsULE>::ULE);
             let setter = f.setter();
-            quote!(#setter #ty)
+            let vis = &f.field.vis;
+            quote!(#vis #setter #ty)
         })
         .collect::<Vec<_>>()
 }

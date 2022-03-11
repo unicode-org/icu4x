@@ -28,7 +28,6 @@ struct VarStructOutOfOrder<'a> {
     d: u8,
 }
 
-
 #[make_varule(VarTupleStructULE)]
 #[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Debug, serde::Serialize, serde::Deserialize)]
 #[zerovec::serde]

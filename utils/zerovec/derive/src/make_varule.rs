@@ -99,7 +99,9 @@ pub fn make_varule_impl(attr: AttributeArgs, mut input: DeriveInput) -> TokenStr
 
     let unsized_field_info = &unsized_fields[0];
 
-    if unsized_field_info.field.index != fields.len() - 1 && unsized_field_info.field.field.ident.is_none() {
+    if unsized_field_info.field.index != fields.len() - 1
+        && unsized_field_info.field.field.ident.is_none()
+    {
         return Error::new(
             unsized_fields.last().unwrap().field.field.span(),
             "#[make_varule] requires its unsized field to be at the end for tuple structs",
@@ -111,7 +113,8 @@ pub fn make_varule_impl(attr: AttributeArgs, mut input: DeriveInput) -> TokenStr
     let last_field_ule = unsized_field_info.kind.varule_ty();
 
     let setter = unsized_field_info.field.setter();
-    field_inits.push(quote!(#setter #last_field_ule));
+    let vis = &unsized_field_info.field.field.vis;
+    field_inits.push(quote!(#vis #setter #last_field_ule));
 
     let semi = utils::semi_for(fields);
     let repr_attr = utils::repr_for(fields);
