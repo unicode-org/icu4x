@@ -5,7 +5,7 @@
 use crate::utils::{self, FieldInfo};
 use proc_macro2::Span;
 use proc_macro2::TokenStream as TokenStream2;
-use quote::quote;
+use quote::{quote, ToTokens};
 use syn::spanned::Spanned;
 use syn::{
     parse_quote, AttributeArgs, Data, DeriveInput, Error, Field, Fields, GenericArgument, Ident,
@@ -97,10 +97,8 @@ pub fn make_varule_impl(attr: AttributeArgs, mut input: DeriveInput) -> TokenStr
         .to_compile_error();
     }
 
-    let unsized_field_info = &unsized_fields[0];
-
-    if unsized_field_info.field.index != fields.len() - 1
-        && unsized_field_info.field.field.ident.is_none()
+    if unsized_fields[0].field.index != fields.len() - 1
+        && unsized_fields[0].field.field.ident.is_none()
     {
         return Error::new(
             unsized_fields.last().unwrap().field.field.span(),
@@ -109,11 +107,13 @@ pub fn make_varule_impl(attr: AttributeArgs, mut input: DeriveInput) -> TokenStr
         .to_compile_error();
     }
 
-    let mut field_inits = crate::ule::make_ule_fields(&sized_fields);
-    let last_field_ule = unsized_field_info.kind.varule_ty();
+    let unsized_field_info = UnsizedFields::new(unsized_fields);
 
-    let setter = unsized_field_info.field.setter();
-    let vis = &unsized_field_info.field.field.vis;
+    let mut field_inits = crate::ule::make_ule_fields(&sized_fields);
+    let last_field_ule = unsized_field_info.varule_ty();
+
+    let setter = unsized_field_info.varule_setter();
+    let vis = &unsized_field_info.varule_vis();
     field_inits.push(quote!(#vis #setter #last_field_ule));
 
     let semi = utils::semi_for(fields);
@@ -227,14 +227,14 @@ pub fn make_varule_impl(attr: AttributeArgs, mut input: DeriveInput) -> TokenStr
 
 fn make_zf_impl(
     sized_fields: &[FieldInfo],
-    unsized_field_info: &UnsizedField,
+    unsized_field_info: &UnsizedFields,
     fields: &Fields,
     name: &Ident,
     ule_name: &Ident,
     maybe_lt: Option<&Lifetime>,
     span: Span,
 ) -> TokenStream2 {
-    if !unsized_field_info.kind.has_zf() {
+    if !unsized_field_info.has_zf() {
         return quote!();
     }
 
@@ -258,10 +258,10 @@ fn make_zf_impl(
         })
         .collect::<Vec<_>>();
 
-    let last_field_ty = &unsized_field_info.field.field.ty;
-    let last_field_ule_ty = unsized_field_info.kind.varule_ty();
-    let accessor = &unsized_field_info.field.accessor;
-    let setter = unsized_field_info.field.setter();
+    let last_field_ty = &unsized_field_info.fields[0].field.field.ty;
+    let last_field_ule_ty = unsized_field_info.varule_ty();
+    let accessor = &unsized_field_info.varule_accessor();
+    let setter = unsized_field_info.varule_setter();
 
     let zerofrom_trait = quote!(zerovec::__zerovec_internal_reexport::ZeroFrom);
 
@@ -280,7 +280,7 @@ fn make_zf_impl(
 
 fn make_encode_impl(
     sized_fields: &[FieldInfo],
-    unsized_field_info: &UnsizedField,
+    unsized_field_info: &UnsizedFields,
     name: &Ident,
     ule_name: &Ident,
     maybe_lt_bound: &Option<TokenStream2>,
@@ -292,7 +292,7 @@ fn make_encode_impl(
         lengths.push(quote!(::core::mem::size_of::<<#ty as zerovec::ule::AsULE>::ULE>()));
     }
 
-    let last_field_name = &unsized_field_info.field.accessor;
+    let last_field_name = &unsized_field_info.varule_accessor();
 
     let (encoders, remaining_offset) = utils::generate_per_field_offsets(
         &sized_fields,
@@ -310,9 +310,7 @@ fn make_encode_impl(
         },
     );
 
-    let last_bytes = unsized_field_info
-        .kind
-        .encode_func(quote!(self.#last_field_name));
+    let last_bytes = unsized_field_info.encode_func(quote!(self.#last_field_name));
     quote!(
         unsafe impl #maybe_lt_bound zerovec::ule::EncodeAsVarULE<#ule_name> for #name #maybe_lt_bound {
             // Safety: unimplemented as the other two are implemented
@@ -386,6 +384,75 @@ struct UnsizedField<'a> {
     field: FieldInfo<'a>,
 }
 
+struct UnsizedFields<'a> {
+    fields: Vec<UnsizedField<'a>>,
+}
+
+impl<'a> UnsizedFields<'a> {
+    fn new(fields: Vec<UnsizedField<'a>>) -> Self {
+        assert!(!fields.is_empty(), "Must have at least one unsized field");
+        Self { fields }
+    }
+
+    // Get the corresponding VarULE type that can store all of these
+    fn varule_ty(&self) -> TokenStream2 {
+        if self.fields.len() == 1 {
+            self.fields[0].kind.varule_ty()
+        } else {
+            unimplemented!()
+        }
+    }
+
+    // Get the accessor field name in the VarULE type
+    fn varule_accessor(&self) -> TokenStream2 {
+        if self.fields.len() == 1 {
+            self.fields[0].field.accessor.clone()
+        } else {
+            if self.fields[0].field.field.ident.is_some() {
+                quote!(unsized_fields)
+            } else {
+                // first unsized field
+                self.fields[0].field.accessor.clone()
+            }
+        }
+    }
+
+    // Get the setter for this type for use in struct definition/creation syntax
+    fn varule_setter(&self) -> TokenStream2 {
+        if self.fields.len() == 1 {
+            self.fields[0].field.setter()
+        } else {
+            if self.fields[0].field.field.ident.is_some() {
+                quote!(unsized_fields: )
+            } else {
+                quote!()
+            }
+        }
+    }
+
+    fn varule_vis(&self) -> TokenStream2 {
+        if self.fields.len() == 1 {
+            self.fields[0].field.field.vis.to_token_stream()
+        } else {
+            quote!()
+        }
+    }
+
+    // Check if the type has a ZeroFrom impl
+    fn has_zf(&self) -> bool {
+        self.fields.iter().all(|f| f.kind.has_zf())
+    }
+
+    // Takes expr `value` and encodes it into a byte slice
+    fn encode_func(&self, value: TokenStream2) -> TokenStream2 {
+        if self.fields.len() == 1 {
+            self.fields[0].kind.encode_func(value)
+        } else {
+            unimplemented!()
+        }
+    }
+}
+
 impl<'a> UnsizedField<'a> {
     fn new(field: &'a Field, index: usize) -> Result<Self, String> {
         Ok(UnsizedField {
@@ -394,6 +461,7 @@ impl<'a> UnsizedField<'a> {
         })
     }
 }
+
 impl<'a> UnsizedFieldKind<'a> {
     /// Construct a UnsizedFieldKind for the type of a UnsizedFieldKind if possible
     fn new(ty: &'a Type) -> Result<UnsizedFieldKind<'a>, String> {
