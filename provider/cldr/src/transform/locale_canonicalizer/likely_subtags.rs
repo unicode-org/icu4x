@@ -13,7 +13,6 @@ use litemap::LiteMap;
 
 use std::convert::TryFrom;
 use std::path::PathBuf;
-use tinystr::TinyStr4;
 
 /// A data provider reading from CLDR JSON likely subtags rule files.
 #[derive(Debug)]
@@ -76,12 +75,12 @@ impl From<&cldr_serde::likely_subtags::Resource> for LikelySubtagsV1 {
     fn from(other: &cldr_serde::likely_subtags::Resource) -> Self {
         use icu_locid::LanguageIdentifier;
 
-        let mut language_script: LiteMap<(TinyStr4, TinyStr4), LanguageIdentifier> = LiteMap::new();
-        let mut language_region: LiteMap<(TinyStr4, TinyStr4), LanguageIdentifier> = LiteMap::new();
-        let mut language: LiteMap<TinyStr4, LanguageIdentifier> = LiteMap::new();
-        let mut script_region: LiteMap<(TinyStr4, TinyStr4), LanguageIdentifier> = LiteMap::new();
-        let mut script: LiteMap<TinyStr4, LanguageIdentifier> = LiteMap::new();
-        let mut region: LiteMap<TinyStr4, LanguageIdentifier> = LiteMap::new();
+        let mut language_script = LiteMap::new();
+        let mut language_region = LiteMap::new();
+        let mut language = LiteMap::new();
+        let mut script_region = LiteMap::new();
+        let mut script = LiteMap::new();
+        let mut region = LiteMap::new();
         let mut und = LanguageIdentifier::default();
 
         // Create a result LanguageIdentifier. We only need to store the delta

@@ -10,7 +10,7 @@ use alloc::vec::Vec;
 use icu_locid::LanguageIdentifier;
 use icu_provider::prelude::*;
 use litemap::LiteMap;
-use tinystr::{TinyStr4, TinyStr8};
+use tinystr::TinyAsciiStr;
 
 #[icu_provider::data_struct(AliasesV1Marker = "locale_canonicalizer/aliases@1")]
 #[derive(Debug, PartialEq, Clone, Default)]
@@ -39,31 +39,31 @@ pub struct AliasesV1 {
     pub language_variants: Vec<(LanguageIdentifier, LanguageIdentifier)>,
     /// Sign language and region data.
     #[zerofrom(clone)]
-    pub sgn_region: Vec<(TinyStr4, LanguageIdentifier)>,
+    pub sgn_region: Vec<(TinyAsciiStr<3>, LanguageIdentifier)>,
     /// Two character language codes.
     #[zerofrom(clone)]
-    pub language_len2: Vec<(TinyStr4, LanguageIdentifier)>,
+    pub language_len2: Vec<(TinyAsciiStr<2>, LanguageIdentifier)>,
     /// Three character language codes.
     #[zerofrom(clone)]
-    pub language_len3: Vec<(TinyStr4, LanguageIdentifier)>,
+    pub language_len3: Vec<(TinyAsciiStr<3>, LanguageIdentifier)>,
     /// Scripts.
     #[zerofrom(clone)]
-    pub script: Vec<(TinyStr4, TinyStr4)>,
+    pub script: Vec<(TinyAsciiStr<4>, TinyAsciiStr<4>)>,
     /// Alphabetical region codes.
     #[zerofrom(clone)]
-    pub region_alpha: Vec<(TinyStr4, TinyStr4)>,
+    pub region_alpha: Vec<(TinyAsciiStr<2>, TinyAsciiStr<3>)>,
     /// Numeric region codes.
     #[zerofrom(clone)]
-    pub region_num: Vec<(TinyStr4, TinyStr4)>,
+    pub region_num: Vec<(TinyAsciiStr<3>, TinyAsciiStr<3>)>,
     /// Old regions which map to more than one new region.
     #[zerofrom(clone)]
-    pub complex_region: Vec<(TinyStr4, Vec<TinyStr4>)>,
+    pub complex_region: Vec<(TinyAsciiStr<3>, Vec<TinyAsciiStr<3>>)>,
     /// Variants.
     #[zerofrom(clone)]
-    pub variant: Vec<(TinyStr8, TinyStr8)>,
+    pub variant: Vec<(TinyAsciiStr<8>, TinyAsciiStr<8>)>,
     /// Subdivisions.
     #[zerofrom(clone)]
-    pub subdivision: Vec<(TinyStr8, TinyStr8)>,
+    pub subdivision: Vec<(TinyAsciiStr<7>, TinyAsciiStr<7>)>,
 }
 
 #[icu_provider::data_struct(LikelySubtagsV1Marker = "locale_canonicalizer/likelysubtags@1")]
@@ -89,22 +89,22 @@ pub struct AliasesV1 {
 pub struct LikelySubtagsV1 {
     /// Language and script.
     #[zerofrom(clone)]
-    pub language_script: LiteMap<(TinyStr4, TinyStr4), LanguageIdentifier>,
+    pub language_script: LiteMap<(TinyAsciiStr<3>, TinyAsciiStr<4>), LanguageIdentifier>,
     /// Language and region.
     #[zerofrom(clone)]
-    pub language_region: LiteMap<(TinyStr4, TinyStr4), LanguageIdentifier>,
+    pub language_region: LiteMap<(TinyAsciiStr<3>, TinyAsciiStr<3>), LanguageIdentifier>,
     /// Just language.
     #[zerofrom(clone)]
-    pub language: LiteMap<TinyStr4, LanguageIdentifier>,
+    pub language: LiteMap<TinyAsciiStr<3>, LanguageIdentifier>,
     /// Script and region.
     #[zerofrom(clone)]
-    pub script_region: LiteMap<(TinyStr4, TinyStr4), LanguageIdentifier>,
+    pub script_region: LiteMap<(TinyAsciiStr<4>, TinyAsciiStr<3>), LanguageIdentifier>,
     /// Just script.
     #[zerofrom(clone)]
-    pub script: LiteMap<TinyStr4, LanguageIdentifier>,
+    pub script: LiteMap<TinyAsciiStr<4>, LanguageIdentifier>,
     /// Just region.
     #[zerofrom(clone)]
-    pub region: LiteMap<TinyStr4, LanguageIdentifier>,
+    pub region: LiteMap<TinyAsciiStr<3>, LanguageIdentifier>,
     /// Undefined.
     #[zerofrom(clone)]
     pub und: LanguageIdentifier,

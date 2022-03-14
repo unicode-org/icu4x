@@ -108,6 +108,26 @@ impl<const N: usize> TinyAsciiStr<N> {
         &self.bytes
     }
 
+    #[inline]
+    #[must_use]
+    /// Resizes a TinyAsciiStr<N> to a TinyAsciiStr<M>.
+    ///
+    /// If M < len() the string gets truncated, otherwise only the
+    /// memory representation changes.
+    pub const fn resize<const M: usize>(self) -> TinyAsciiStr<M> {
+        let mut bytes = [0; M];
+        let mut i = 0;
+        // Indexing is protected by the loop guard
+        #[allow(clippy::indexing_slicing)]
+        while i < M && i < N {
+            bytes[i] = self.bytes[i];
+            i += 1;
+        }
+        // `self.bytes` only contains ASCII bytes, with no null bytes between
+        // ASCII characters, so this also holds for `bytes`.
+        unsafe { TinyAsciiStr::from_bytes_unchecked(bytes) }
+    }
+
     /// # Safety
     /// Must be called with a bytes array made of valid ASCII bytes, with no null bytes
     /// between ASCII characters
