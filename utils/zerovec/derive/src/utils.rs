@@ -95,7 +95,7 @@ pub(crate) fn generate_per_field_offsets<'a>(
         };
         let new_offset_ident = suffixed_ident("OFFSET", i, field.span());
         let size_ident = suffixed_ident("SIZE", i, field.span());
-        let pf_code = per_field_code(&field_info, &prev_offset_ident, &size_ident);
+        let pf_code = per_field_code(field_info, &prev_offset_ident, &size_ident);
         code = quote! {
             #code;
             const #size_ident: usize = ::core::mem::size_of::<#ty>();
@@ -127,14 +127,14 @@ impl<'a> FieldInfo<'a> {
         if let Some(ref i) = f.ident {
             FieldInfo {
                 accessor: quote!(#i),
-                field: &f,
+                field: f,
                 index,
             }
         } else {
             let idx = Index::from(index);
             FieldInfo {
                 accessor: quote!(#idx),
-                field: &f,
+                field: f,
                 index,
             }
         }

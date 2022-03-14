@@ -122,27 +122,27 @@ unsafe impl EncodeAsVarULE<[u8]> for BlankSliceEncoder {
     }
 }
 
- // Safety (based on the safety checklist on the VarULE trait):
- //  1. MultiFieldsULE does not include any uninitialized or padding bytes (achieved by being transparent over a VarULE type)
- //  2. MultiFieldsULE is aligned to 1 byte (achieved by being transparent over a VarULE type)
- //  3. The impl of `validate_byte_slice()` returns an error if any byte is not valid.
- //  4. The impl of `validate_byte_slice()` returns an error if the slice cannot be used in its entirety
- //  5. The impl of `from_byte_slice_unchecked()` returns a reference to the same data.
- //  6. All other methods are defaulted
- //  7. `MultiFieldsULE` byte equality is semantic equality (achieved by being transparent over a VarULE type)
- unsafe impl VarULE for MultiFieldsULE {
-     /// Note: MultiFieldsULE is usually used in cases where one should be calling .validate_field() directly for
-     /// each field, rather than using the regular VarULE impl.
-     ///
-     /// This impl exists so that EncodeAsVarULE can work.
-     #[inline]
-     fn validate_byte_slice(slice: &[u8]) -> Result<(), ZeroVecError> {
-         <VarZeroSlice<[u8]>>::validate_byte_slice(slice)
-     }
- 
-     #[inline]
-     unsafe fn from_byte_slice_unchecked(bytes: &[u8]) -> &Self {
-         // &Self is transparent over &VZS<..>
-         mem::transmute(<VarZeroSlice<[u8]>>::from_byte_slice_unchecked(bytes))
-     }
- }
+// Safety (based on the safety checklist on the VarULE trait):
+//  1. MultiFieldsULE does not include any uninitialized or padding bytes (achieved by being transparent over a VarULE type)
+//  2. MultiFieldsULE is aligned to 1 byte (achieved by being transparent over a VarULE type)
+//  3. The impl of `validate_byte_slice()` returns an error if any byte is not valid.
+//  4. The impl of `validate_byte_slice()` returns an error if the slice cannot be used in its entirety
+//  5. The impl of `from_byte_slice_unchecked()` returns a reference to the same data.
+//  6. All other methods are defaulted
+//  7. `MultiFieldsULE` byte equality is semantic equality (achieved by being transparent over a VarULE type)
+unsafe impl VarULE for MultiFieldsULE {
+    /// Note: MultiFieldsULE is usually used in cases where one should be calling .validate_field() directly for
+    /// each field, rather than using the regular VarULE impl.
+    ///
+    /// This impl exists so that EncodeAsVarULE can work.
+    #[inline]
+    fn validate_byte_slice(slice: &[u8]) -> Result<(), ZeroVecError> {
+        <VarZeroSlice<[u8]>>::validate_byte_slice(slice)
+    }
+
+    #[inline]
+    unsafe fn from_byte_slice_unchecked(bytes: &[u8]) -> &Self {
+        // &Self is transparent over &VZS<..>
+        mem::transmute(<VarZeroSlice<[u8]>>::from_byte_slice_unchecked(bytes))
+    }
+}

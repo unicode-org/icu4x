@@ -76,15 +76,15 @@ pub fn make_varule_impl(attr: AttributeArgs, mut input: DeriveInput) -> TokenStr
     let mut unsized_fields = vec![];
 
     for (i, field) in fields.iter().enumerate() {
-        match UnsizedField::new(&field, i) {
+        match UnsizedField::new(field, i) {
             Ok(o) => unsized_fields.push(o),
-            Err(_) => sized_fields.push(FieldInfo::new_for_field(&field, i)),
+            Err(_) => sized_fields.push(FieldInfo::new_for_field(field, i)),
         }
     }
 
     if unsized_fields.is_empty() {
         let last_field = fields.iter().next_back().unwrap();
-        let e = UnsizedField::new(&last_field, fields.len() - 1).unwrap_err();
+        let e = UnsizedField::new(last_field, fields.len() - 1).unwrap_err();
         return Error::new(last_field.span(), e).to_compile_error();
     }
 
@@ -133,7 +133,7 @@ pub fn make_varule_impl(attr: AttributeArgs, mut input: DeriveInput) -> TokenStr
     let zf_impl = make_zf_impl(
         &sized_fields,
         &unsized_field_info,
-        &fields,
+        fields,
         name,
         &ule_name,
         lt,
@@ -249,7 +249,7 @@ fn make_zf_impl(
         })
         .collect::<Vec<_>>();
 
-    unsized_field_info.push_zf_setters(&lt, &mut field_inits);
+    unsized_field_info.push_zf_setters(lt, &mut field_inits);
 
     let field_inits = utils::wrap_field_inits(&field_inits, fields);
     let zerofrom_trait = quote!(zerovec::__zerovec_internal_reexport::ZeroFrom);
@@ -277,7 +277,7 @@ fn make_encode_impl(
     }
 
     let (encoders, remaining_offset) = utils::generate_per_field_offsets(
-        &sized_fields,
+        sized_fields,
         true,
         |field, prev_offset_ident, size_ident| {
             let ty = &field.field.ty;
@@ -390,13 +390,11 @@ impl<'a> UnsizedFields<'a> {
     fn varule_accessor(&self) -> TokenStream2 {
         if self.fields.len() == 1 {
             self.fields[0].field.accessor.clone()
+        } else if self.fields[0].field.field.ident.is_some() {
+            quote!(unsized_fields)
         } else {
-            if self.fields[0].field.field.ident.is_some() {
-                quote!(unsized_fields)
-            } else {
-                // first unsized field
-                self.fields[0].field.accessor.clone()
-            }
+            // first unsized field
+            self.fields[0].field.accessor.clone()
         }
     }
 
@@ -404,12 +402,10 @@ impl<'a> UnsizedFields<'a> {
     fn varule_setter(&self) -> TokenStream2 {
         if self.fields.len() == 1 {
             self.fields[0].field.setter()
+        } else if self.fields[0].field.field.ident.is_some() {
+            quote!(unsized_fields: )
         } else {
-            if self.fields[0].field.field.ident.is_some() {
-                quote!(unsized_fields: )
-            } else {
-                quote!()
-            }
+            quote!()
         }
     }
 

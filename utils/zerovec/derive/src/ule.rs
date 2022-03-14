@@ -91,7 +91,7 @@ pub(crate) fn generate_ule_validators(
 }
 
 /// Make corresponding ULE fields for each field
-pub(crate) fn make_ule_fields<'a>(fields: &[FieldInfo]) -> Vec<TokenStream2> {
+pub(crate) fn make_ule_fields(fields: &[FieldInfo]) -> Vec<TokenStream2> {
     fields
         .iter()
         .map(|f| {
