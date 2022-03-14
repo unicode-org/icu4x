@@ -71,7 +71,7 @@ impl DynProvider<UnicodePropertyV1Marker> for EnumeratedPropertyUnicodeSetDataPr
             if parts.len() != 2 {
                 return Err(DataErrorKind::MissingResourceKey.with_req(key, req));
             }
-            #[allow(clippy::indexing_slicing)] // TODO(#1688) Clippy exceptions need docs or fixing.
+            #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
             (parts[0], parts[1])
         };
 

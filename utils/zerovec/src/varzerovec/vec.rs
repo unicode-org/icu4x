@@ -365,7 +365,7 @@ where
 {
     #[inline]
     fn from(elements: &Vec<A>) -> Self {
-        #[allow(clippy::unwrap_used)] // TODO(#1688) Clippy exceptions need docs or fixing.
+        #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
         VarZeroVecOwned::try_from_elements(elements).unwrap().into()
     }
 }
@@ -377,7 +377,7 @@ where
 {
     #[inline]
     fn from(elements: &[A]) -> Self {
-        #[allow(clippy::unwrap_used)] // TODO(#1688) Clippy exceptions need docs or fixing.
+        #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
         VarZeroVecOwned::try_from_elements(elements).unwrap().into()
     }
 }
@@ -389,7 +389,7 @@ where
 {
     #[inline]
     fn from(elements: &[A; N]) -> Self {
-        #[allow(clippy::unwrap_used)] // TODO(#1688) Clippy exceptions need docs or fixing.
+        #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
         VarZeroVecOwned::try_from_elements(elements).unwrap().into()
     }
 }

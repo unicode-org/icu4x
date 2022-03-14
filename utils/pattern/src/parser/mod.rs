@@ -27,7 +27,7 @@ macro_rules! handle_literal {
         let range = $self.advance_state($self.idx, $next_state);
         if !range.is_empty() {
             #[allow(clippy::indexing_slicing)]
-            // TODO(#1688) Clippy exceptions need docs or fixing.
+            // TODO(#1668) Clippy exceptions need docs or fixing.
             return Ok(Some(PatternToken::Literal {
                 content: Cow::Borrowed(&$self.input[range]),
                 quoted: $quoted,
@@ -277,7 +277,7 @@ impl<'p, P> Parser<'p, P> {
                 ParserState::Placeholder if *b == b'}' => {
                     let range = self.advance_state(self.idx, ParserState::Default);
                     #[allow(clippy::indexing_slicing)]
-                    // TODO(#1688) Clippy exceptions need docs or fixing.
+                    // TODO(#1668) Clippy exceptions need docs or fixing.
                     return self.input[range]
                         .parse()
                         .map(|ret| Some(PatternToken::Placeholder(ret)))
@@ -323,7 +323,7 @@ impl<'p, P> Parser<'p, P> {
                 if !range.is_empty() {
                     self.start_idx = self.len;
                     #[allow(clippy::indexing_slicing)]
-                    // TODO(#1688) Clippy exceptions need docs or fixing.
+                    // TODO(#1668) Clippy exceptions need docs or fixing.
                     Ok(Some(PatternToken::Literal {
                         content: Cow::Borrowed(&self.input[range]),
                         quoted: false,

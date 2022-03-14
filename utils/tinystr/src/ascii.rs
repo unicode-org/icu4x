@@ -41,8 +41,6 @@ impl<const N: usize> TinyAsciiStr<N> {
         let mut out = [0; N];
         let mut i = 0;
         let mut found_null = false;
-        // Indexing is protected by TinyStrError::TooLarge
-        #[allow(clippy::indexing_slicing)]
         while i < len {
             let b = bytes[start + i];
 
@@ -124,8 +122,6 @@ macro_rules! check_is {
             Aligned8::from_bytes(&$self.bytes).$check()
         } else {
             let mut i = 0;
-            // Won't panic because self.bytes has length N
-            #[allow(clippy::indexing_slicing)]
             while i < N && $self.bytes[i] != 0 {
                 if !$self.bytes[i].$check_u8() {
                     return false;
@@ -216,23 +212,17 @@ macro_rules! to {
         let mut i = 0;
         if N <= 4 {
             let aligned = Aligned4::from_bytes(&$self.bytes).$to().to_bytes();
-            // Won't panic because self.bytes has length N and aligned has length >= N
-            #[allow(clippy::indexing_slicing)]
             while i < N {
                 $self.bytes[i] = aligned[i];
                 i += 1;
             }
         } else if N <= 8 {
             let aligned = Aligned8::from_bytes(&$self.bytes).$to().to_bytes();
-            // Won't panic because self.bytes has length N and aligned has length >= N
-            #[allow(clippy::indexing_slicing)]
             while i < N {
                 $self.bytes[i] = aligned[i];
                 i += 1;
             }
         } else {
-            // Won't panic because self.bytes has length N
-            #[allow(clippy::indexing_slicing)]
             while i < N && $self.bytes[i] != 0 {
                 $self.bytes[i] = $self.bytes[i].$later_char_to();
                 i += 1;

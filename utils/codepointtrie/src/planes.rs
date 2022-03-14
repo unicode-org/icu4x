@@ -169,9 +169,9 @@ pub fn get_planes_trie() -> CodePointTrie<'static, u8> {
         0xe, 0xe, 0xe, 0xe, 0xe, 0xe, 0xe, 0xe, 0xe, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf,
         0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0x10, 0x10, 0x10, 0,
     ];
-    #[allow(clippy::expect_used)] // TODO(#1688) Clippy exceptions need docs or fixing.
+    #[allow(clippy::expect_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
     let index: ZeroVec<u16> = ZeroVec::parse_byte_slice(index_array_as_bytes).expect("infallible");
-    #[allow(clippy::expect_used)] // TODO(#1688) Clippy exceptions need docs or fixing.
+    #[allow(clippy::expect_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
     let data: ZeroVec<u8> = ZeroVec::parse_byte_slice(data_8_array).expect("infallible");
     let high_start = 0x100000;
     let shifted12_high_start = 0x100;
@@ -195,7 +195,7 @@ pub fn get_planes_trie() -> CodePointTrie<'static, u8> {
         trie_result.is_ok(),
         "Statically constructed CodePointTrie should not have errors during construction"
     );
-    #[allow(clippy::unwrap_used)] // TODO(#1688) Clippy exceptions need docs or fixing.
+    #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
     trie_result.unwrap()
 }
 

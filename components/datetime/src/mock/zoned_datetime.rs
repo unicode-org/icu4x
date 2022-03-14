@@ -83,7 +83,7 @@ impl FromStr for MockZonedDateTime {
         let time_zone = match input
             .rfind(|c| c == '+' || /* ASCII */ c == '-' || /* U+2212 */ c == '−' || c == 'Z')
         {
-            #[allow(clippy::indexing_slicing)] // TODO(#1688) Clippy exceptions need docs or fixing.
+            #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
             Some(index) => MockTimeZone::from_str(&input[index..])?,
             None => return Err(DateTimeError::InvalidTimeZoneOffset),
         };

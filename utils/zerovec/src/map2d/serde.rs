@@ -74,7 +74,7 @@ where
         S: Serializer,
     {
         let mut serde_map = serializer.serialize_map(None)?;
-        #[allow(clippy::unwrap_used)] // TODO(#1688) Clippy exceptions need docs or fixing.
+        #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
         for key1 in self.map.iter_keys1_by_index(self.key0_index).unwrap() {
             K1::Container::t_with_ser(key1, |k| serde_map.serialize_key(k))?;
             let v = self.values_it.borrow_mut().next().unwrap();

@@ -11,7 +11,7 @@ use zerovec::ZeroVec;
 
 /// Returns whether the vector is sorted ascending non inclusive, of even length,
 /// and within the bounds of `0x0 -> 0x10FFFF` inclusive.
-#[allow(clippy::indexing_slicing)] // TODO(#1688) Clippy exceptions need docs or fixing.
+#[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
 pub fn is_valid_zv(inv_list_zv: &ZeroVec<'_, u32>) -> bool {
     let slice = inv_list_zv.as_ule_slice();
     slice.is_empty()

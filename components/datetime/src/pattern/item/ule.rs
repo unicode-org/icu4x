@@ -96,7 +96,7 @@ unsafe impl ULE for PatternItemULE {
     fn validate_byte_slice(bytes: &[u8]) -> Result<(), ZeroVecError> {
         let mut chunks = bytes.chunks_exact(3);
 
-        #[allow(clippy::indexing_slicing)] // TODO(#1688) Clippy exceptions need docs or fixing.
+        #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
         if !chunks.all(|c| Self::bytes_in_range((&c[0], &c[1], &c[2]))) {
             return Err(ZeroVecError::parse::<Self>());
         }
@@ -132,15 +132,15 @@ impl AsULE for PatternItem {
             false => {
                 let u = u32::from_be_bytes([0x00, value[0], value[1], value[2]]);
                 #[allow(clippy::unwrap_used)]
-                // TODO(#1688) Clippy exceptions need docs or fixing.
+                // TODO(#1668) Clippy exceptions need docs or fixing.
                 PatternItem::Literal(char::try_from(u).unwrap())
             }
             true => {
                 #[allow(clippy::unwrap_used)]
-                // TODO(#1688) Clippy exceptions need docs or fixing.
+                // TODO(#1668) Clippy exceptions need docs or fixing.
                 let symbol = fields::FieldSymbol::from_idx(value[1]).unwrap();
                 #[allow(clippy::unwrap_used)]
-                // TODO(#1688) Clippy exceptions need docs or fixing.
+                // TODO(#1668) Clippy exceptions need docs or fixing.
                 let length = fields::FieldLength::from_idx(value[2]).unwrap();
                 let field = fields::Field { symbol, length };
                 PatternItem::Field(field)
@@ -237,7 +237,7 @@ impl GenericPatternItemULE {
 unsafe impl ULE for GenericPatternItemULE {
     fn validate_byte_slice(bytes: &[u8]) -> Result<(), ZeroVecError> {
         let mut chunks = bytes.chunks_exact(3);
-        #[allow(clippy::indexing_slicing)] // TODO(#1688) Clippy exceptions need docs or fixing.
+        #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
         if !chunks.all(|c| Self::bytes_in_range((&c[0], &c[1], &c[2]))) {
             return Err(ZeroVecError::parse::<Self>());
         }
@@ -271,7 +271,7 @@ impl AsULE for GenericPatternItem {
             false => {
                 let u = u32::from_be_bytes([0x00, value[0], value[1], value[2]]);
                 #[allow(clippy::unwrap_used)]
-                // TODO(#1688) Clippy exceptions need docs or fixing.
+                // TODO(#1668) Clippy exceptions need docs or fixing.
                 Self::Literal(char::try_from(u).unwrap())
             }
             true => Self::Placeholder(value[2]),

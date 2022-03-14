@@ -26,7 +26,7 @@ impl UnicodeSetBuilder {
     /// Returns a [`UnicodeSet`] and consumes the [`UnicodeSetBuilder`]
     pub fn build(self) -> UnicodeSet<'static> {
         let inv_list: ZeroVec<u32> = ZeroVec::alloc_from_slice(&self.intervals);
-        #[allow(clippy::unwrap_used)] // TODO(#1688) Clippy exceptions need docs or fixing.
+        #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
         UnicodeSet::from_inversion_list(inv_list).unwrap()
     }
 
@@ -49,13 +49,13 @@ impl UnicodeSetBuilder {
         } else {
             #[allow(clippy::indexing_slicing)]
             if start_pos_check {
-                // TODO(#1688) Clippy exceptions need docs or fixing.
+                // TODO(#1668) Clippy exceptions need docs or fixing.
                 self.intervals[start_ind] = start;
                 start_ind += 1;
             }
             if end_pos_check {
                 #[allow(clippy::indexing_slicing)]
-                // TODO(#1688) Clippy exceptions need docs or fixing.
+                // TODO(#1668) Clippy exceptions need docs or fixing.
                 if end_res.is_ok() {
                     end_ind += 1;
                 } else {
@@ -178,10 +178,10 @@ impl UnicodeSetBuilder {
             .for_each(|pair| {
                 self.add(
                     #[allow(clippy::indexing_slicing)]
-                    // TODO(#1688) Clippy exceptions need docs or fixing.
+                    // TODO(#1668) Clippy exceptions need docs or fixing.
                     AsULE::from_unaligned(pair[0]),
                     #[allow(clippy::indexing_slicing)]
-                    // TODO(#1688) Clippy exceptions need docs or fixing.
+                    // TODO(#1668) Clippy exceptions need docs or fixing.
                     AsULE::from_unaligned(pair[1]),
                 )
             });
@@ -196,7 +196,7 @@ impl UnicodeSetBuilder {
             return;
         }
         if let Some(last) = self.intervals.last() {
-            #[allow(clippy::indexing_slicing)] // TODO(#1688) Clippy exceptions need docs or fixing.
+            #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
             if start <= self.intervals[0] && end >= *last {
                 self.intervals.clear();
             } else {
@@ -257,10 +257,10 @@ impl UnicodeSetBuilder {
             .for_each(|pair| {
                 self.remove(
                     #[allow(clippy::indexing_slicing)]
-                    // TODO(#1688) Clippy exceptions need docs or fixing.
+                    // TODO(#1668) Clippy exceptions need docs or fixing.
                     AsULE::from_unaligned(pair[0]),
                     #[allow(clippy::indexing_slicing)]
-                    // TODO(#1688) Clippy exceptions need docs or fixing.
+                    // TODO(#1668) Clippy exceptions need docs or fixing.
                     AsULE::from_unaligned(pair[1]),
                 )
             });
@@ -325,9 +325,9 @@ impl UnicodeSetBuilder {
     pub fn retain_set(&mut self, set: &UnicodeSet) {
         let mut prev = 0;
         for pair in set.as_inversion_list().as_ule_slice().chunks(2) {
-            #[allow(clippy::indexing_slicing)] // TODO(#1688) Clippy exceptions need docs or fixing.
+            #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
             let range_start = AsULE::from_unaligned(pair[0]);
-            #[allow(clippy::indexing_slicing)] // TODO(#1688) Clippy exceptions need docs or fixing.
+            #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
             let range_limit = AsULE::from_unaligned(pair[1]);
             self.remove(prev, range_start);
             prev = range_limit;
@@ -389,7 +389,7 @@ impl UnicodeSetBuilder {
     /// ```
     pub fn complement(&mut self) {
         if !self.intervals.is_empty() {
-            #[allow(clippy::indexing_slicing)] // TODO(#1688) Clippy exceptions need docs or fixing.
+            #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
             if self.intervals[0] == 0 {
                 self.intervals.drain(0..1);
             } else {

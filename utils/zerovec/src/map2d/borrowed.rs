@@ -172,7 +172,7 @@ where
         let (_, range) = self.get_range_for_key0(key0).ok_or(KeyError::K0)?;
         debug_assert!(range.start < range.end); // '<' because every key0 should have a key1
         debug_assert!(range.end <= self.keys1.zvl_len());
-        #[allow(clippy::unwrap_used)] // TODO(#1688) Clippy exceptions need docs or fixing.
+        #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
         let index = range.start
             + self
                 .keys1
@@ -181,7 +181,7 @@ where
                 .map_err(|_| KeyError::K1)?;
         // This unwrap is protected by the invariant keys1.len() == values.len(),
         // the above debug_assert!, and the contract of zvl_binary_search_in_range.
-        #[allow(clippy::unwrap_used)] // TODO(#1688) Clippy exceptions need docs or fixing.
+        #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
         Ok(self.values.zvl_get_borrowed(index).unwrap())
     }
 
@@ -204,7 +204,7 @@ where
 
     /// Produce an ordered iterator over keys0
     pub fn iter_keys0<'b>(&'b self) -> impl Iterator<Item = &'b <K0 as ZeroMapKV<'a>>::GetType> {
-        #[allow(clippy::unwrap_used)] // TODO(#1688) Clippy exceptions need docs or fixing.
+        #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
         (0..self.keys0.zvl_len()).map(move |idx| self.keys0.zvl_get(idx).unwrap())
     }
 
@@ -214,13 +214,13 @@ where
         key0: &K0,
     ) -> Option<impl Iterator<Item = &'b <K1 as ZeroMapKV<'a>>::GetType>> {
         let (_, range) = self.get_range_for_key0(key0)?;
-        #[allow(clippy::unwrap_used)] // TODO(#1688) Clippy exceptions need docs or fixing.
+        #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
         Some(range.map(move |idx| self.keys1.zvl_get(idx).unwrap()))
     }
 
     /// Produce an iterator over values, ordered by the pair (key0,key1)
     pub fn iter_values<'b>(&'b self) -> impl Iterator<Item = &'b <V as ZeroMapKV<'a>>::GetType> {
-        #[allow(clippy::unwrap_used)] // TODO(#1688) Clippy exceptions need docs or fixing.
+        #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
         (0..self.values.zvl_len()).map(move |idx| self.values.zvl_get(idx).unwrap())
     }
 
@@ -239,11 +239,11 @@ where
             0
         } else {
             // The unwrap is protected by the debug_assert above
-            #[allow(clippy::unwrap_used)] // TODO(#1688) Clippy exceptions need docs or fixing.
+            #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
             self.joiner.get(key0_index - 1).unwrap()
         };
         // The unwrap is protected by the debug_assert above
-        #[allow(clippy::unwrap_used)] // TODO(#1688) Clippy exceptions need docs or fixing.
+        #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
         let limit = self.joiner.get(key0_index).unwrap();
         (start as usize)..(limit as usize)
     }
@@ -261,7 +261,7 @@ where
         let (_, range) = self.get_range_for_key0(key0)?;
         debug_assert!(range.start < range.end); // '<' because every key0 should have a key1
         debug_assert!(range.end <= self.keys1.zvl_len());
-        #[allow(clippy::unwrap_used)] // TODO(#1688) Clippy exceptions need docs or fixing.
+        #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
         let index = range.start
             + self
                 .keys1

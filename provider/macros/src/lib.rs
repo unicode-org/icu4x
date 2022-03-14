@@ -97,7 +97,7 @@ fn data_struct_impl(attr: AttributeArgs, item: ItemStruct) -> TokenStream2 {
                 let key_str = match key_lit {
                     syn::Lit::Str(lit_str) => lit_str.value(),
                     #[allow(clippy::panic)]
-                    // TODO(#1688) Clippy exceptions need docs or fixing.
+                    // TODO(#1668) Clippy exceptions need docs or fixing.
                     _ => panic!("Key must be a string"),
                 };
                 let docs = format!("Marker type for [`{}`]: \"{}\"", name, key_str);
@@ -122,7 +122,7 @@ fn data_struct_impl(attr: AttributeArgs, item: ItemStruct) -> TokenStream2 {
                     }
                 ));
             }
-            #[allow(clippy::panic)] // TODO(#1688) Clippy exceptions need docs or fixing.
+            #[allow(clippy::panic)] // TODO(#1668) Clippy exceptions need docs or fixing.
             _ => {
                 panic!("Invalid attribute to #[data_struct]")
             }

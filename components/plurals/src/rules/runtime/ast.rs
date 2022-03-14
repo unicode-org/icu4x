@@ -204,7 +204,7 @@ fn get_modulus(input: u32) -> Option<reference::ast::Value> {
 
 impl From<&reference::ast::Value> for u32 {
     fn from(v: &reference::ast::Value) -> Self {
-        #[allow(clippy::expect_used)] // TODO(#1688) Clippy exceptions need docs or fixing.
+        #[allow(clippy::expect_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
         v.0.try_into().expect("Failed to convert u64 into u32")
     }
 }
@@ -387,13 +387,13 @@ unsafe impl VarULE for RelationULE {
 
     #[inline]
     fn validate_byte_slice(bytes: &[u8]) -> Result<(), ZeroVecError> {
-        #[allow(clippy::indexing_slicing)] // TODO(#1688) Clippy exceptions need docs or fixing.
+        #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
         RelationULE::validate_andor_polarity_operand(bytes[0])?;
         // Skip bytes 1-4 as they're always valid `u32` for `Modulo`.
         if bytes.len() < 5 {
             return Err(ZeroVecError::parse::<Self>());
         }
-        #[allow(clippy::indexing_slicing)] // TODO(#1688) Clippy exceptions need docs or fixing.
+        #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
         let remaining = &bytes[5..];
         RangeOrValueULE::validate_byte_slice(remaining)?;
         Ok(())

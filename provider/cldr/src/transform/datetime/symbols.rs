@@ -95,7 +95,7 @@ fn get_era_code_map(calendar: &str) -> LiteMap<String, TinyStr16> {
             .into_iter()
             .collect(),
         "japanese" => crate::transform::calendar::japanese::get_era_code_map(),
-        #[allow(clippy::panic)] // TODO(#1688) Clippy exceptions need docs or fixing.
+        #[allow(clippy::panic)] // TODO(#1668) Clippy exceptions need docs or fixing.
         _ => panic!("Era map unknown for {}", calendar),
     }
 }

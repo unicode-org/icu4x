@@ -70,7 +70,7 @@ pub fn load_script_extensions_from_dir(
 }
 
 pub fn get_last_component_no_version(key: icu_provider::ResourceKey) -> &'static str {
-    #[allow(clippy::expect_used)] // TODO(#1688) Clippy exceptions need docs or fixingw.
+    #[allow(clippy::expect_used)] // TODO(#1668) Clippy exceptions need docs or fixingw.
     key.get_path()
         .split('/')
         .last()

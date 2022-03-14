@@ -397,7 +397,7 @@ mod runtime {
             {
                 // Parse a string into a list of fields.
                 #[allow(clippy::expect_used)]
-                // TODO(#1688) Clippy exceptions need docs or fixing.
+                // TODO(#1668) Clippy exceptions need docs or fixing.
                 let pattern = pattern_string.parse().expect("Failed to parse pattern");
                 Ok(GenericPattern::from(&pattern))
             }

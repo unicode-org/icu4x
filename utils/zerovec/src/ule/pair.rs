@@ -30,10 +30,10 @@ unsafe impl<A: ULE, B: ULE> ULE for PairULE<A, B> {
         }
         for chunk in bytes.chunks(a_len + b_len) {
             #[allow(clippy::indexing_slicing)]
-            // TODO(#1688) Clippy exceptions need docs or fixing.
+            // TODO(#1668) Clippy exceptions need docs or fixing.
             A::validate_byte_slice(&chunk[..a_len])?;
             #[allow(clippy::indexing_slicing)]
-            // TODO(#1688) Clippy exceptions need docs or fixing.
+            // TODO(#1668) Clippy exceptions need docs or fixing.
             B::validate_byte_slice(&chunk[a_len..])?;
         }
         Ok(())

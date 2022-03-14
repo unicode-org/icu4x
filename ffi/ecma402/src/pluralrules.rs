@@ -47,7 +47,7 @@ pub(crate) mod internal {
             ""
         } else {
             #[allow(clippy::indexing_slicing)]
-            // TODO(#1688) Clippy exceptions need docs or fixing.
+            // TODO(#1668) Clippy exceptions need docs or fixing.
             &raw_frac_part[2..]
         };
 
@@ -112,7 +112,7 @@ pub(crate) mod internal {
     pub fn to_icu4x_operands(n: f64, opts: Options) -> PluralOperands {
         dbg!("n={}", n);
         let nstr = fixed_format(n, &opts);
-        #[allow(clippy::unwrap_used)] // TODO(#1688) Clippy exceptions need docs or fixing.
+        #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
         let ret = nstr.parse().unwrap();
         dbg!("ret={:?}\n---\n", &ret);
         ret
@@ -270,7 +270,7 @@ impl PluralRules {
         Self: Sized,
     {
         let locale: String = format!("{}", l);
-        #[allow(clippy::expect_used)] // TODO(#1688) Clippy exceptions need docs or fixing.
+        #[allow(clippy::expect_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
         let locale: icu::locid::Locale = locale
             .parse()
             .expect("Converting from locale string to locale should always succeed");

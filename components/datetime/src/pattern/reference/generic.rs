@@ -24,7 +24,7 @@ impl GenericPattern {
                 GenericPatternItem::Placeholder(idx) => {
                     let replacement = replacements.get(idx as usize).ok_or_else(|| {
                         #[allow(clippy::expect_used)]
-                        // TODO(#1688) Clippy exceptions need docs or fixing.
+                        // TODO(#1668) Clippy exceptions need docs or fixing.
                         let idx = char::from_digit(idx as u32, 10)
                             .expect("Failed to convert placeholder idx to char");
                         PatternError::UnknownSubstitution(idx)

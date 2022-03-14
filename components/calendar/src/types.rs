@@ -320,31 +320,31 @@ impl FromStr for GmtOffset {
             /* ±hh */
             3 => {
                 #[allow(clippy::indexing_slicing)]
-                // TODO(#1688) Clippy exceptions need docs or fixing.
+                // TODO(#1668) Clippy exceptions need docs or fixing.
                 let hour: u8 = input[1..3].parse()?;
                 offset_sign * (hour as i32 * 60 * 60)
             }
             /* ±hhmm */
             5 => {
                 #[allow(clippy::indexing_slicing)]
-                // TODO(#1688) Clippy exceptions need docs or fixing.
+                // TODO(#1668) Clippy exceptions need docs or fixing.
                 let hour: u8 = input[1..3].parse()?;
                 #[allow(clippy::indexing_slicing)]
-                // TODO(#1688) Clippy exceptions need docs or fixing.
+                // TODO(#1668) Clippy exceptions need docs or fixing.
                 let minute: u8 = input[3..5].parse()?;
                 offset_sign * (hour as i32 * 60 * 60 + minute as i32 * 60)
             }
             /* ±hh:mm */
             6 => {
                 #[allow(clippy::indexing_slicing)]
-                // TODO(#1688) Clippy exceptions need docs or fixing.
+                // TODO(#1668) Clippy exceptions need docs or fixing.
                 let hour: u8 = input[1..3].parse()?;
                 #[allow(clippy::indexing_slicing)]
-                // TODO(#1688) Clippy exceptions need docs or fixing.
+                // TODO(#1668) Clippy exceptions need docs or fixing.
                 let minute: u8 = input[4..6].parse()?;
                 offset_sign * (hour as i32 * 60 * 60 + minute as i32 * 60)
             }
-            #[allow(clippy::panic)] // TODO(#1688) Clippy exceptions need docs or fixing.
+            #[allow(clippy::panic)] // TODO(#1668) Clippy exceptions need docs or fixing.
             _ => panic!("Invalid time-zone designator"),
         };
 

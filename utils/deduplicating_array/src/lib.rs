@@ -58,7 +58,7 @@ where
     let mut seq = serializer.serialize_tuple(N)?;
 
     for i in 0..N {
-        #[allow(clippy::indexing_slicing)] // TODO(#1688) Clippy exceptions need docs or fixing.
+        #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
         match array.iter().take(i).position(|item| item == &array[i]) {
             None if human => seq.serialize_element(&HumanSer::Value(&array[i]))?,
             None => seq.serialize_element(&MachineSer::Value(&array[i]))?,
@@ -88,7 +88,7 @@ where
             match r {
                 HumanDe::Value(v) => {
                     #[allow(clippy::indexing_slicing)]
-                    // TODO(#1688) Clippy exceptions need docs or fixing.
+                    // TODO(#1668) Clippy exceptions need docs or fixing.
                     array[i].write(v);
                 }
                 HumanDe::Fallback([j]) => unsafe {
@@ -101,7 +101,7 @@ where
                         )));
                     }
                     #[allow(clippy::indexing_slicing)]
-                    // TODO(#1688) Clippy exceptions need docs or fixing.
+                    // TODO(#1668) Clippy exceptions need docs or fixing.
                     array[i].write(array[j].assume_init_ref().clone());
                 },
             }
@@ -113,7 +113,7 @@ where
             match r {
                 MachineDe::Value(v) => {
                     #[allow(clippy::indexing_slicing)]
-                    // TODO(#1688) Clippy exceptions need docs or fixing.
+                    // TODO(#1668) Clippy exceptions need docs or fixing.
                     array[i].write(v);
                 }
                 MachineDe::Fallback(j) => unsafe {
@@ -126,7 +126,7 @@ where
                         )));
                     }
                     #[allow(clippy::indexing_slicing)]
-                    // TODO(#1688) Clippy exceptions need docs or fixing.
+                    // TODO(#1668) Clippy exceptions need docs or fixing.
                     array[i].write(array[j].assume_init_ref().clone());
                 },
             }

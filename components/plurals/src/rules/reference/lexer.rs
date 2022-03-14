@@ -129,7 +129,7 @@ impl<'l> Lexer<'l> {
 
                         let mut value = 0;
                         #[allow(clippy::indexing_slicing)]
-                        // TODO(#1688) Clippy exceptions need docs or fixing.
+                        // TODO(#1668) Clippy exceptions need docs or fixing.
                         for ptr in start..end {
                             let mul = 10_u32.pow((end - ptr - 1) as u32);
                             value += ((self.chars[ptr] - b'0') as u32) * mul;

@@ -197,7 +197,7 @@ impl<'data, T: DateTimeInput> LocalizedDateTimeInput<T> for DateTimeInputWithLoc
         year_week(
             self.data,
             #[allow(clippy::expect_used)]
-            // TODO(#1688) Clippy exceptions need docs or fixing.
+            // TODO(#1668) Clippy exceptions need docs or fixing.
             self.calendar
                 .expect("calendar must be provided when using week of methods"),
         )
@@ -211,7 +211,7 @@ impl<'data, T: DateTimeInput> LocalizedDateTimeInput<T> for DateTimeInputWithLoc
         week_of_year(
             self.data,
             #[allow(clippy::expect_used)]
-            // TODO(#1688) Clippy exceptions need docs or fixing.
+            // TODO(#1668) Clippy exceptions need docs or fixing.
             self.calendar
                 .expect("calendar must be provided when using week of methods"),
         )
@@ -232,7 +232,7 @@ impl<'data, T: ZonedDateTimeInput> LocalizedDateTimeInput<T>
     fn year_week(&self) -> Result<Year, DateTimeError> {
         year_week(
             self.data,
-            #[allow(clippy::expect_used)] // TODO(#1688) Clippy exceptions need docs or fixing.
+            #[allow(clippy::expect_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
             self.calendar
                 .expect("calendar must be provided when using week of methods"),
         )
@@ -245,7 +245,7 @@ impl<'data, T: ZonedDateTimeInput> LocalizedDateTimeInput<T>
     fn week_of_year(&self) -> Result<WeekOfYear, DateTimeError> {
         week_of_year(
             self.data,
-            #[allow(clippy::expect_used)] // TODO(#1688) Clippy exceptions need docs or fixing.
+            #[allow(clippy::expect_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
             self.calendar
                 .expect("calendar must be provided when using week of methods"),
         )

@@ -117,7 +117,7 @@ impl<'de> Visitor<'de> for TimeZoneNamesVisitor {
                 if key.contains('-') {
                     // key is of the form: "regionFormat-type-variant"
                     #[allow(clippy::unwrap_used)]
-                    // TODO(#1688) Clippy exceptions need docs or fixing.
+                    // TODO(#1668) Clippy exceptions need docs or fixing.
                     let variant = key.split('-').last().unwrap();
                     time_zone_names
                         .region_format_variants

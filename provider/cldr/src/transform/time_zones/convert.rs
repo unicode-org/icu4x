@@ -26,11 +26,11 @@ fn type_fallback(zone_format: &ZoneFormat) -> Option<&String> {
 
 fn parse_hour_format(hour_format: &str) -> (Cow<'static, str>, Cow<'static, str>) {
     // e.g. "+HH:mm;-HH:mm" -> ("+HH:mm", "-HH:mm")
-    #[allow(clippy::unwrap_used)] // TODO(#1688) Clippy exceptions need docs or fixing.
+    #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
     let index = hour_format.rfind(';').unwrap();
-    #[allow(clippy::indexing_slicing)] // TODO(#1688) Clippy exceptions need docs or fixing.
+    #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
     let positive = String::from(&hour_format[0..index]);
-    #[allow(clippy::indexing_slicing)] // TODO(#1688) Clippy exceptions need docs or fixing.
+    #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
     let negative = String::from(&hour_format[index + 1..]);
     (Cow::Owned(positive), Cow::Owned(negative))
 }
@@ -48,7 +48,7 @@ impl From<TimeZoneNames> for TimeZoneFormatsV1<'_> {
                 .into_iter()
                 .map(|(key, value)| {
                     #[allow(clippy::expect_used)]
-                    // TODO(#1688) Clippy exceptions need docs or fixing.
+                    // TODO(#1668) Clippy exceptions need docs or fixing.
                     (
                         key.parse::<TinyStr8>()
                             .expect("Time-zone variant was not compatible with TinyStr8"),
@@ -263,7 +263,7 @@ fn iterate_zone_format(
             (
                 key1.clone(),
                 #[allow(clippy::expect_used)]
-                // TODO(#1688) Clippy exceptions need docs or fixing.
+                // TODO(#1668) Clippy exceptions need docs or fixing.
                 key.parse::<TinyStr8>()
                     .expect("Time-zone variant was not compatible with TinyStr8"),
                 value,
