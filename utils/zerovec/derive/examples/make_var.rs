@@ -46,6 +46,31 @@ struct NoKV<'a>(u32, char, #[serde(borrow)] VarZeroVec<'a, str>);
 #[zerovec::serde]
 struct NoOrd<'a>(u32, char, #[serde(borrow)] VarZeroVec<'a, str>);
 
+#[make_varule(MultiFieldStructULE)]
+#[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Debug, serde::Serialize, serde::Deserialize)]
+#[zerovec::serde]
+struct MultiFieldStruct<'a> {
+    a: u32,
+    b: char,
+    #[serde(borrow)]
+    c: Cow<'a, str>,
+    d: u8,
+    #[serde(borrow)]
+    e: Cow<'a, str>,
+    f: char,
+}
+
+#[make_varule(MultiFieldTupleULE)]
+#[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Debug, serde::Serialize, serde::Deserialize)]
+#[zerovec::serde]
+struct MultiFieldTuple<'a>(
+    u8,
+    char,
+    #[serde(borrow)] VarZeroVec<'a, str>,
+    #[serde(borrow)] VarZeroVec<'a, [u8]>,
+    #[serde(borrow)] Cow<'a, str>,
+);
+
 /// The `assert` function should have the body `|(stack, zero)| assert_eq!(stack, &U::zero_from(&zero))`
 ///
 /// We cannot do this internally because we technically need a different `U` with a shorter lifetime here
@@ -101,6 +126,10 @@ fn main() {
         assert_eq!(stack, &VarStruct::zero_from(zero))
     });
 
+    assert_zerovec::<MultiFieldStructULE, MultiFieldStruct, _>(TEST_MULTIFIELD, |stack, zero| {
+        assert_eq!(stack, &MultiFieldStruct::zero_from(zero))
+    });
+
     let vartuples = &[
         VarTupleStruct(101, 'ø', TEST_STRINGS1.into()),
         VarTupleStruct(9499, '⸘', TEST_STRINGS2.into()),
@@ -132,3 +161,30 @@ const TEST_VARSTRUCTS: &[VarStruct<'static>] = &[
 const TEST_STRINGS1: &[&str] = &["foo", "bar", "baz"];
 const TEST_STRINGS2: &[&str] = &["hellø", "wørłd"];
 const TEST_STRINGS3: &[&str] = &["łořem", "ɨpsu₥"];
+
+const TEST_MULTIFIELD: &[MultiFieldStruct<'static>] = &[
+    MultiFieldStruct {
+        a: 101,
+        b: 'ø',
+        c: Cow::Borrowed("testīng strīng"),
+        d: 8,
+        e: Cow::Borrowed("another testīng strīng"),
+        f: 'å',
+    },
+    MultiFieldStruct {
+        a: 9499,
+        b: '⸘',
+        c: Cow::Borrowed("a diﬀərənt ştring"),
+        d: 120,
+        e: Cow::Borrowed("a diﬀərənt testing ştring"),
+        f: 'ł',
+    },
+    MultiFieldStruct {
+        a: 3478,
+        b: '月',
+        c: Cow::Borrowed("好多嘅 string"),
+        d: 89,
+        e: Cow::Borrowed("many 好多嘅 string"),
+        f: 'ə',
+    },
+];
