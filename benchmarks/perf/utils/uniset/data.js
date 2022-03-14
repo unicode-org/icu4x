@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1646982928387,
+  "lastUpdate": 1647279438508,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -21839,6 +21839,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 39826269,
             "range": "± 1550867",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "e8562c1b68cff0ebb4a85b86c2c716ddb63cd3e6",
+          "message": "Make list_formatter data *almost* zero-copy (#1680)\n\n* Make list_formatter data *almost* zero-copy\r\n\r\n* Update verify tool with two kinds of violations",
+          "timestamp": "2022-03-14T10:26:45-07:00",
+          "tree_id": "1a9b413181a273711e26c3da6bc1fdbdc69b59e0",
+          "url": "https://github.com/unicode-org/icu4x/commit/e8562c1b68cff0ebb4a85b86c2c716ddb63cd3e6"
+        },
+        "date": 1647279422356,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 47991840,
+            "range": "± 3290940",
             "unit": "ns/iter"
           }
         ]
