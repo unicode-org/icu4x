@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1647278967722,
+  "lastUpdate": 1647292162469,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -10918,6 +10918,36 @@ window.BENCHMARK_DATA = {
           {
             "name": "provider/testdata/data/testdata.postcard",
             "value": 4508007,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "989bade3905208e2c7bdb332a04f9488ec36c854",
+          "message": "Using TinyAsciiStr for locale_canonicalizer and locid (#1683)",
+          "timestamp": "2022-03-14T14:07:54-07:00",
+          "tree_id": "f53d15791bd3580d2a60d2a548be122dd18788ff",
+          "url": "https://github.com/unicode-org/icu4x/commit/989bade3905208e2c7bdb332a04f9488ec36c854"
+        },
+        "date": 1647292149652,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4504771,
             "unit": "bytes",
             "biggerIsBetter": false
           }
