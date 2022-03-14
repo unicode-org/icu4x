@@ -25,8 +25,9 @@ include = [
 
 [dependencies]
 icu_provider = { version = "0.6.0", path = "../core" }
-icu_locid = { version = "0.6.0", path = "../../components/locid" }
+icu_locid = { version = "0.6.0", path = "../../components/locid", features = ["zerovec"] }
 yoke = { version = "0.6.0", path = "../../utils/yoke" }
+zerovec = { path = "../../utils/zerovec", features = ["yoke"] }
 
 [features]
 std = ["icu_locid/std"]

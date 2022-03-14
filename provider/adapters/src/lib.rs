@@ -25,6 +25,7 @@
 extern crate alloc;
 
 pub mod either;
+pub mod fallback;
 pub mod filter;
 pub mod fork;
 mod helpers;
