@@ -140,7 +140,7 @@ impl From<&cldr_serde::aliases::Resource> for AliasesV1 {
                             // so we store them separately to not slow down canonicalization of
                             // common identifiers.
                             if lang.len() == 2 {
-                                language_len2.push((lang.prefix(), replacement));
+                                language_len2.push((lang.resize(), replacement));
                             } else {
                                 language_len3.push((lang, replacement));
                             }
@@ -181,7 +181,7 @@ impl From<&cldr_serde::aliases::Resource> for AliasesV1 {
 
             if let Ok(replacement) = alias.1.replacement.parse::<TinyAsciiStr<3>>() {
                 if alias.0.is_ascii_alphabetic() {
-                    region_alpha.push((alias.0.prefix(), replacement));
+                    region_alpha.push((alias.0.resize(), replacement));
                 } else {
                     region_num.push((alias.0, replacement));
                 }

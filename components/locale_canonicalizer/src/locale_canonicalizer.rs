@@ -171,7 +171,7 @@ fn uts35_check_language_rules(
             alias_data
                 .get()
                 .language_len2
-                .binary_search_by_key(&lang.prefix(), |alias| alias.0)
+                .binary_search_by_key(&lang.resize(), |alias| alias.0)
                 .ok()
                 .map(|index| &alias_data.get().language_len2[index].1)
         } else {
@@ -377,7 +377,7 @@ impl LocaleCanonicalizer {
                     self.aliases
                         .get()
                         .region_alpha
-                        .binary_search_by_key(&region.prefix(), |alias| alias.0)
+                        .binary_search_by_key(&region.resize(), |alias| alias.0)
                         .ok()
                         .map(|index| self.aliases.get().region_alpha[index].1)
                 } else {
