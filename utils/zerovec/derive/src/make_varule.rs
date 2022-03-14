@@ -258,17 +258,10 @@ fn make_zf_impl(
         })
         .collect::<Vec<_>>();
 
-    let last_field_ty = &unsized_field_info.fields[0].field.field.ty;
-    let last_field_ule_ty = unsized_field_info.varule_ty();
-    let accessor = &unsized_field_info.varule_accessor();
-    let setter = unsized_field_info.varule_setter();
-
-    let zerofrom_trait = quote!(zerovec::__zerovec_internal_reexport::ZeroFrom);
-
-    field_inits.push(quote!(#setter <#last_field_ty as #zerofrom_trait <#lt, #last_field_ule_ty>>::zero_from(&other.#accessor) ));
+    unsized_field_info.push_zf_setters(&lt, &mut field_inits);
 
     let field_inits = utils::wrap_field_inits(&field_inits, fields);
-
+    let zerofrom_trait = quote!(zerovec::__zerovec_internal_reexport::ZeroFrom);
     quote!(
         impl <#lt> #zerofrom_trait <#lt, #ule_name> for #name <#lt> {
             fn zero_from(other: &#lt #ule_name) -> Self {
@@ -292,8 +285,6 @@ fn make_encode_impl(
         lengths.push(quote!(::core::mem::size_of::<<#ty as zerovec::ule::AsULE>::ULE>()));
     }
 
-    let last_field_name = &unsized_field_info.varule_accessor();
-
     let (encoders, remaining_offset) = utils::generate_per_field_offsets(
         &sized_fields,
         true,
@@ -310,7 +301,8 @@ fn make_encode_impl(
         },
     );
 
-    let last_bytes = unsized_field_info.encode_func(quote!(self.#last_field_name));
+    let last_encode_len = unsized_field_info.encode_len();
+    let last_encode_write = unsized_field_info.encode_write(quote!(dst[#remaining_offset..]));
     quote!(
         unsafe impl #maybe_lt_bound zerovec::ule::EncodeAsVarULE<#ule_name> for #name #maybe_lt_bound {
             // Safety: unimplemented as the other two are implemented
@@ -320,15 +312,15 @@ fn make_encode_impl(
 
             // Safety: returns the total length of the ULE form by adding up the lengths of each element's ULE forms
             fn encode_var_ule_len(&self) -> usize {
-                #(#lengths +)* #last_bytes.len()
+                #(#lengths +)* #last_encode_len
             }
 
             // Safety: converts each element to ULE form and writes them in sequence
             fn encode_var_ule_write(&self, mut dst: &mut [u8]) {
                 debug_assert_eq!(self.encode_var_ule_len(), dst.len());
                 #encoders
-                let last_bytes = #last_bytes;
-                dst[#remaining_offset..].copy_from_slice(last_bytes);
+
+                #last_encode_write
             }
         }
 
@@ -399,7 +391,7 @@ impl<'a> UnsizedFields<'a> {
         if self.fields.len() == 1 {
             self.fields[0].kind.varule_ty()
         } else {
-            unimplemented!()
+            quote!(zerovec::ule::MultiFieldsULE)
         }
     }
 
@@ -434,6 +426,7 @@ impl<'a> UnsizedFields<'a> {
         if self.fields.len() == 1 {
             self.fields[0].field.field.vis.to_token_stream()
         } else {
+            // Always private
             quote!()
         }
     }
@@ -443,10 +436,33 @@ impl<'a> UnsizedFields<'a> {
         self.fields.iter().all(|f| f.kind.has_zf())
     }
 
-    // Takes expr `value` and encodes it into a byte slice
-    fn encode_func(&self, value: TokenStream2) -> TokenStream2 {
+    // Takes all unsized fields on self and encodes them into a byte slice `out`
+    fn encode_write(&self, out: TokenStream2) -> TokenStream2 {
         if self.fields.len() == 1 {
-            self.fields[0].kind.encode_func(value)
+            self.fields[0].encode_func(quote!(encode_var_ule_write), quote!(&mut #out))
+        } else {
+            unimplemented!()
+        }
+    }
+
+    // Takes all unsized fields on self and returns the length needed for encoding into a byte slice
+    fn encode_len(&self) -> TokenStream2 {
+        if self.fields.len() == 1 {
+            self.fields[0].encode_func(quote!(encode_var_ule_len), quote!())
+        } else {
+            unimplemented!()
+        }
+    }
+
+    /// Constructs ZeroFrom setters for each field of the stack type
+    fn push_zf_setters(&self, lt: &Lifetime, field_inits: &mut Vec<TokenStream2>) {
+        let zerofrom_trait = quote!(zerovec::__zerovec_internal_reexport::ZeroFrom);
+        if self.fields.len() == 1 {
+            let accessor = self.fields[0].field.accessor.clone();
+            let setter = self.fields[0].field.setter();
+            let last_field_ty = &self.fields[0].field.field.ty;
+            let last_field_ule_ty = self.fields[0].kind.varule_ty();
+            field_inits.push(quote!(#setter <#last_field_ty as #zerofrom_trait <#lt, #last_field_ule_ty>>::zero_from(&other.#accessor) ));
         } else {
             unimplemented!()
         }
@@ -459,6 +475,18 @@ impl<'a> UnsizedField<'a> {
             kind: UnsizedFieldKind::new(&field.ty)?,
             field: FieldInfo::new_for_field(field, index),
         })
+    }
+
+    /// Call `<Self as EncodeAsVarULE<V>>::#method(self.accessor #additional_args)` after adjusting
+    /// Self and self.accessor to be the right types
+    fn encode_func(&self, method: TokenStream2, additional_args: TokenStream2) -> TokenStream2 {
+        let encodeas_trait = quote!(zerovec::ule::EncodeAsVarULE);
+        let accessor = self.field.accessor.clone();
+        let value = quote!(self.#accessor);
+        let encodeable = self.kind.encodeable_value(value);
+        let encodeable_ty = self.kind.encodeable_ty();
+        let varule_ty = self.kind.varule_ty();
+        quote!(<#encodeable_ty as #encodeas_trait<#varule_ty>>::#method(#encodeable, #additional_args))
     }
 }
 
@@ -550,16 +578,26 @@ impl<'a> UnsizedFieldKind<'a> {
         }
     }
 
-    // Takes expr `value` and encodes it into a byte slice
-    fn encode_func(&self, value: TokenStream2) -> TokenStream2 {
+    // Takes expr `value` and returns it as a value that can be encoded via EncodeAsVarULE
+    fn encodeable_value(&self, value: TokenStream2) -> TokenStream2 {
+        match *self {
+            Self::Ref(_) | Self::Cow(_) | Self::Growable(_) | Self::Boxed(_) => quote!(&*#value),
+
+            Self::ZeroVec(_) => quote!(&*#value),
+            Self::VarZeroVec(_) => quote!(&*#value),
+        }
+    }
+
+    /// Returns the EncodeAsVarULE type this can be represented as, the same returned by encodeable_value()
+    fn encodeable_ty(&self) -> TokenStream2 {
         match *self {
             Self::Ref(ref inner)
             | Self::Cow(ref inner)
             | Self::Growable(ref inner)
-            | Self::Boxed(ref inner) => inner.encode_func(value),
+            | Self::Boxed(ref inner) => inner.varule_ty(),
 
-            Self::ZeroVec(_) => quote!(#value.as_bytes()),
-            Self::VarZeroVec(_) => quote!(#value.as_bytes()),
+            Self::ZeroVec(ty) => quote!(zerovec::ZeroSlice<#ty>),
+            Self::VarZeroVec(ty) => quote!(zerovec::VarZeroSlice<#ty>),
         }
     }
 
@@ -591,17 +629,6 @@ impl<'a> OwnULETy<'a> {
         match *self {
             OwnULETy::Slice(s) => quote!([#s]),
             OwnULETy::Str => quote!(str),
-        }
-    }
-    // Takes expr `value` and encodes it into a byte slice
-    fn encode_func(&self, value: TokenStream2) -> TokenStream2 {
-        match *self {
-            OwnULETy::Slice(s) => {
-                quote!(<[#s] as zerovec::ule::VarULE>::as_byte_slice(&*#value))
-            }
-            OwnULETy::Str => {
-                quote!(#value.as_bytes())
-            }
         }
     }
 }
