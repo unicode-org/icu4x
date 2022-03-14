@@ -174,7 +174,18 @@ impl<'a, T: VarULE + ?Sized> VarZeroVecComponents<'a, T> {
     /// Safety:
     /// - `idx` must be in bounds (`idx < self.len()`)
     #[inline]
-    unsafe fn get_unchecked(self, idx: usize) -> &'a T {
+    pub(crate) unsafe fn get_unchecked(self, idx: usize) -> &'a T {
+        let range = self.get_things_range(idx);
+        let things_slice = self.things.get_unchecked(range);
+        T::from_byte_slice_unchecked(things_slice)
+    }
+
+    /// Get the range in `things` for the element at `idx`. Does not bounds check.
+    ///
+    /// Safety:
+    /// - `idx` must be in bounds (`idx < self.len()`)
+    #[inline]
+    unsafe fn get_things_range(self, idx: usize) -> Range<usize> {
         let start = usizeify(*self.indices.get_unchecked(idx));
         let end = if idx + 1 == self.len() {
             self.things.len()
@@ -182,8 +193,20 @@ impl<'a, T: VarULE + ?Sized> VarZeroVecComponents<'a, T> {
             usizeify(*self.indices.get_unchecked(idx + 1))
         };
         debug_assert!(start <= end);
-        let things_slice = self.things.get_unchecked(start..end);
-        T::from_byte_slice_unchecked(things_slice)
+        start..end
+    }
+
+    /// Get the range in `entire_slice` for the element at `idx`. Does not bounds check.
+    ///
+    /// Safety:
+    /// - `idx` must be in bounds (`idx < self.len()`)
+    #[inline]
+    pub(crate) unsafe fn get_range(self, idx: usize) -> Range<usize> {
+        let range = self.get_things_range(idx);
+        let offset = (self.things as *const [u8] as *const u8)
+            .offset_from(self.entire_slice as *const [u8] as *const u8)
+            as usize;
+        range.start + offset..range.end + offset
     }
 
     /// Create an iterator over the Ts contained in VarZeroVecComponents, checking internal invariants:
