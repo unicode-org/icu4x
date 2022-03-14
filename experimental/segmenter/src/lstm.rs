@@ -8,7 +8,6 @@ use alloc::string::String;
 use alloc::string::ToString;
 use alloc::vec::Vec;
 use core::char::decode_utf16;
-use core::str::Chars;
 use icu_provider::DataPayload;
 use icu_segmenter_lstm::lstm::Lstm;
 use icu_segmenter_lstm::structs;
@@ -37,49 +36,6 @@ fn get_best_lstm_model(codepoint: u32) -> Lstm {
         Language::Thai => Lstm::try_new(DataPayload::from_owned(THAI_LSTM.clone())).unwrap(),
         Language::Burmese => Lstm::try_new(DataPayload::from_owned(BURMESE_LSTM.clone())).unwrap(),
         _ => panic!("Unsupported"),
-    }
-}
-
-/// This struct is an iterator that returns the string per language from the
-/// given string.
-///
-/// Actually supported LSTM model is Thai and Burmese only. If using other
-/// code point, it causes panic.
-struct LanguageIterator<'a> {
-    input: Chars<'a>,
-    last: Option<char>,
-}
-
-impl<'a> LanguageIterator<'a> {
-    pub fn new(input: &'a str) -> Self {
-        let mut input = input.chars();
-        let last = input.next();
-        Self { input, last }
-    }
-}
-
-impl<'a> Iterator for LanguageIterator<'a> {
-    type Item = String;
-
-    fn next(&mut self) -> Option<Self::Item> {
-        let mut s = "".to_string();
-
-        let lang = get_language(self.last? as u32);
-        s.push(self.last.unwrap());
-        loop {
-            let c = self.input.next();
-            if c.is_none() {
-                self.last = None;
-                break;
-            }
-            self.last = c;
-            let new_lang = get_language(c.unwrap() as u32);
-            if lang != new_lang {
-                break;
-            }
-            s.push(c.unwrap());
-        }
-        Some(s)
     }
 }
 
