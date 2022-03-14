@@ -14,6 +14,7 @@ use core::mem;
 /// where `V1` etc are potentially different [`VarULE`] types.
 ///
 /// Internally, it is represented by a VarZeroSlice.
+#[derive(PartialEq, Eq)]
 #[repr(transparent)]
 pub struct MultiFieldsULE(VarZeroSlice<[u8]>);
 
@@ -55,7 +56,11 @@ impl MultiFieldsULE {
     /// - `idx` must be in range
     /// - `T` must be the appropriate type expected by the custom derive in this usage of this type
     #[inline]
-    pub unsafe fn set_field_at<T: VarULE, A: EncodeAsVarULE<T>>(&mut self, idx: usize, value: &A) {
+    pub unsafe fn set_field_at<T: VarULE + ?Sized, A: EncodeAsVarULE<T> + ?Sized>(
+        &mut self,
+        idx: usize,
+        value: &A,
+    ) {
         value.encode_var_ule_write(self.0.get_bytes_at_mut(idx))
     }
 
@@ -65,7 +70,10 @@ impl MultiFieldsULE {
     ///
     /// - `index` must be in range
     #[inline]
-    pub unsafe fn validate_field<T: VarULE>(&self, index: usize) -> Result<(), ZeroVecError> {
+    pub unsafe fn validate_field<T: VarULE + ?Sized>(
+        &self,
+        index: usize,
+    ) -> Result<(), ZeroVecError> {
         T::validate_byte_slice(self.0.get_unchecked(index))
     }
 
@@ -76,7 +84,7 @@ impl MultiFieldsULE {
     /// - `index` must be in range
     /// - Element at `index` must have been created with the VarULE type T
     #[inline]
-    pub unsafe fn get_field<T: VarULE>(&self, index: usize) -> &T {
+    pub unsafe fn get_field<T: VarULE + ?Sized>(&self, index: usize) -> &T {
         T::from_byte_slice_unchecked(self.0.get_unchecked(index))
     }
 

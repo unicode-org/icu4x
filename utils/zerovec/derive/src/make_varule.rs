@@ -441,7 +441,22 @@ impl<'a> UnsizedFields<'a> {
         if self.fields.len() == 1 {
             self.fields[0].encode_func(quote!(encode_var_ule_write), quote!(&mut #out))
         } else {
-            unimplemented!()
+            let mut lengths = vec![];
+            let mut writers = vec![];
+            for (i, field) in self.fields.iter().enumerate() {
+                lengths.push(field.encode_func(quote!(encode_var_ule_len), quote!()));
+                let (encodeable_ty, encodeable) = field.encodeable_tokens();
+                let varule_ty = field.kind.varule_ty();
+                writers
+                    .push(quote!(multi.set_field_at::<#varule_ty, #encodeable_ty>(#i, #encodeable)))
+            }
+
+            quote!(
+                let lengths = [#(#lengths),*];
+                let mut multi = zerovec::ule::MultiFieldsULE::new_from_lengths_partially_initialized(&lengths, &mut #out);
+
+                #(#writers;)*
+            )
         }
     }
 
@@ -450,7 +465,11 @@ impl<'a> UnsizedFields<'a> {
         if self.fields.len() == 1 {
             self.fields[0].encode_func(quote!(encode_var_ule_len), quote!())
         } else {
-            unimplemented!()
+            let mut lengths = vec![];
+            for field in self.fields.iter() {
+                lengths.push(field.encode_func(quote!(encode_var_ule_len), quote!()));
+            }
+            quote!(zerovec::ule::MultiFieldsULE::compute_encoded_len_for(&[#(#lengths),*]))
         }
     }
 
@@ -464,7 +483,16 @@ impl<'a> UnsizedFields<'a> {
             let last_field_ule_ty = self.fields[0].kind.varule_ty();
             field_inits.push(quote!(#setter <#last_field_ty as #zerofrom_trait <#lt, #last_field_ule_ty>>::zero_from(&other.#accessor) ));
         } else {
-            unimplemented!()
+            let multi_accessor = self.varule_accessor();
+            for (i, field) in self.fields.iter().enumerate() {
+                let setter = field.field.setter();
+                let field_ty = &field.field.field.ty;
+                let field_ule_ty = field.kind.varule_ty();
+
+                field_inits.push(quote!(#setter unsafe {
+                    <#field_ty as #zerofrom_trait <#lt, #field_ule_ty>>::zero_from(&other.#multi_accessor.get_field::<#field_ule_ty>(#i))
+                }));
+            }
         }
     }
 }
@@ -481,12 +509,18 @@ impl<'a> UnsizedField<'a> {
     /// Self and self.accessor to be the right types
     fn encode_func(&self, method: TokenStream2, additional_args: TokenStream2) -> TokenStream2 {
         let encodeas_trait = quote!(zerovec::ule::EncodeAsVarULE);
+        let (encodeable_ty, encodeable) = self.encodeable_tokens();
+        let varule_ty = self.kind.varule_ty();
+        quote!(<#encodeable_ty as #encodeas_trait<#varule_ty>>::#method(#encodeable, #additional_args))
+    }
+
+    /// Returns (encodeable_ty, encodeable)
+    fn encodeable_tokens(&self) -> (TokenStream2, TokenStream2) {
         let accessor = self.field.accessor.clone();
         let value = quote!(self.#accessor);
         let encodeable = self.kind.encodeable_value(value);
         let encodeable_ty = self.kind.encodeable_ty();
-        let varule_ty = self.kind.varule_ty();
-        quote!(<#encodeable_ty as #encodeas_trait<#varule_ty>>::#method(#encodeable, #additional_args))
+        (encodeable_ty, encodeable)
     }
 }
 
