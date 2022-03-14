@@ -3,9 +3,10 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use super::*;
-use crate::ule::AsULE;
-use crate::{ZeroSlice, ZeroVec};
+use crate::ule::{AsULE, EncodeAsVarULE, VarULE};
+use crate::{VarZeroVec, ZeroSlice, ZeroVec};
 use alloc::borrow::Borrow;
+use alloc::boxed::Box;
 use core::cmp::Ordering;
 use core::fmt;
 use core::iter::FromIterator;
@@ -21,21 +22,37 @@ use core::iter::FromIterator;
 /// values, sorted by the keys. Therefore, all types used in `ZeroMap` need to work with either
 /// [`ZeroVec`] or [`VarZeroVec`].
 ///
+/// This does mean that for fixed-size data, one must use the regular type (`u32`, `u8`, `char`, etc),
+/// whereas for variable-size data, `ZeroMap` will use the dynamically sized version (`str` not `String`,
+/// `ZeroSlice` not `ZeroVec`, `FooULE` not `Foo` for custom types)
+///
 /// # Examples
 ///
 /// ```
 /// use zerovec::ZeroMap;
 ///
-/// // Example byte buffer representing the map { 1: "one" }
-/// let BINCODE_BYTES: &[u8; 31] = &[
-///     4, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 11, 0, 0, 0, 0, 0, 0, 0,
-///     1, 0, 0, 0, 0, 0, 0, 0, 111, 110, 101
-/// ];
+/// #[derive(serde::Serialize, serde::Deserialize)]
+/// struct Data<'a> {
+///     #[serde(borrow)]
+///     map: ZeroMap<'a, u32, str>,
+/// }
 ///
-/// // Deserializing to ZeroMap requires no heap allocations.
-/// let zero_map: ZeroMap<u32, str> = bincode::deserialize(BINCODE_BYTES)
-///     .expect("Should deserialize successfully");
-/// assert_eq!(zero_map.get(&1), Some("one"));
+/// let mut map = ZeroMap::new();
+/// map.insert(&1, "one");
+/// map.insert(&2, "two");
+/// map.insert(&4, "four");
+///
+/// let data = Data { map };
+///
+/// let bincode_bytes = bincode::serialize(&data)
+///     .expect("Serialization should be successful");
+///
+/// // Will deserialize without any allocations
+/// let deserialized: Data = bincode::deserialize(&bincode_bytes)
+///     .expect("Deserialization should be successful");
+///
+/// assert_eq!(data.map.get(&1), Some("one"));
+/// assert_eq!(data.map.get(&2), Some("two"));
 /// ```
 ///
 /// [`VarZeroVec`]: crate::VarZeroVec
@@ -122,6 +139,10 @@ where
     }
 
     /// Get the value associated with `key`, if it exists.
+    ///
+    /// For fixed-size ([`AsULE`]) `V` types, this _will_ return
+    /// their corresponding [`AsULE::ULE`] type. If you wish to work with the `V`
+    /// type directly, [`Self::get_copied()`] exists for convenience.
     ///
     /// ```rust
     /// use zerovec::ZeroMap;
@@ -276,6 +297,51 @@ where
         #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
         (0..self.values.zvl_len()).map(move |idx| self.values.zvl_get(idx).unwrap())
     }
+}
+
+impl<'a, K, V> ZeroMap<'a, K, V>
+where
+    K: ZeroMapKV<'a> + ?Sized,
+    V: ZeroMapKV<'a, Container = VarZeroVec<'a, V>> + ?Sized,
+    V: VarULE,
+{
+    /// Same as `insert()`, but allows using [EncodeAsVarULE](crate::ule::EncodeAsVarULE)
+    /// types with the value to avoid an extra allocation when dealing with custom ULE types.
+    ///
+    /// ```rust
+    /// use zerovec::ZeroMap;
+    /// use std::borrow::Cow;
+    ///
+    /// #[zerovec::make_varule(PersonULE)]
+    /// #[derive(Clone, Eq, PartialEq, Ord, PartialOrd)]
+    /// struct Person<'a> {
+    ///     age: u8,
+    ///     name: Cow<'a, str>    
+    /// }
+    ///
+    /// let mut map: ZeroMap<u32, PersonULE> = ZeroMap::new();
+    /// map.insert_var_v(&1, &Person { age: 20, name: "Joseph".into()    });
+    /// map.insert_var_v(&1, &Person { age: 35, name: "Carla".into()     });
+    /// assert_eq!(&map.get(&1).unwrap().name, "Carla");
+    /// assert!(map.get(&3).is_none());
+    /// ```
+    pub fn insert_var_v<VE: EncodeAsVarULE<V>>(&mut self, key: &K, value: &VE) -> Option<Box<V>> {
+        match self.keys.zvl_binary_search(key) {
+            Ok(index) => {
+                let ret = self.values.get(index).expect("invalid index").to_boxed();
+                self.values.make_mut().replace(index, value);
+                Some(ret)
+            }
+            Err(index) => {
+                self.keys.zvl_insert(index, key);
+                self.values.make_mut().insert(index, value);
+                None
+            }
+        }
+    }
+
+    // insert_var_k, insert_var_kv are not possible since one cannot perform the binary search with EncodeAsVarULE
+    // though we might be able to do it in the future if we add a trait for cross-Ord requirements
 }
 
 impl<'a, K, V> ZeroMap<'a, K, V>

@@ -66,8 +66,8 @@ where
         assert(stack, zero)
     }
 
-    let postcard = postcard::to_stdvec(&varzerovec).unwrap();
-    let deserialized: VarZeroVec<T> = postcard::from_bytes(&postcard).unwrap();
+    let bincode = bincode::serialize(&varzerovec).unwrap();
+    let deserialized: VarZeroVec<T> = bincode::deserialize(&bincode).unwrap();
 
     for (stack, zero) in slice.iter().zip(deserialized.iter()) {
         assert(stack, zero)

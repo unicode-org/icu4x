@@ -136,6 +136,8 @@ pub mod dynutil;
 pub mod any;
 pub mod buf;
 mod data_provider;
+#[cfg(feature = "datagen")]
+pub mod datagen;
 pub mod either;
 mod error;
 pub mod export;

@@ -17,7 +17,7 @@ const TEST_STR_TH: &str =
 fn line_break_iter_latin1(c: &mut Criterion) {
     let mut group = c.benchmark_group("Line Break/Latin1");
 
-    let provider = icu_provider::inv::InvariantDataProvider;
+    let provider = icu_testdata::get_static_provider();
     let segmenter = LineBreakSegmenter::try_new(&provider).expect("Data exists");
 
     let mut options = LineBreakOptions::default();
@@ -46,7 +46,7 @@ fn line_break_iter_latin1(c: &mut Criterion) {
 fn line_break_iter_utf8(c: &mut Criterion) {
     let mut group = c.benchmark_group("Line Break/UTF8");
 
-    let provider = icu_provider::inv::InvariantDataProvider;
+    let provider = icu_testdata::get_static_provider();
     let segmenter = LineBreakSegmenter::try_new(&provider).expect("Data exists");
 
     group.bench_function("En", |b| {
@@ -72,7 +72,7 @@ fn line_break_iter_utf16(c: &mut Criterion) {
     let utf16_en: Vec<u16> = TEST_STR_EN.encode_utf16().collect();
     let utf16_th: Vec<u16> = TEST_STR_TH.encode_utf16().collect();
 
-    let provider = icu_provider::inv::InvariantDataProvider;
+    let provider = icu_testdata::get_static_provider();
     let segmenter = LineBreakSegmenter::try_new(&provider).expect("Data exists");
 
     let mut options = LineBreakOptions::default();

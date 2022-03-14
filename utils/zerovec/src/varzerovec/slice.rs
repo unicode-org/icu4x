@@ -22,7 +22,11 @@ use core::ops::Range;
 /// owned data and as such is ideal for deserialization since most human readable
 /// serialization formats cannot unconditionally deserialize zero-copy.
 ///
-/// This type can be nested within [`VarZeroVec<T>`] to allow for multi-level nested `Vec`s, for
+/// This type can be used inside [`VarZeroVec<T>`](crate::VarZeroVec) and [`ZeroMap`](crate::ZeroMap):
+/// This essentially allows for the construction of zero-copy types isomorphic to `Vec<Vec<T>>` by instead
+/// using `VarZeroVec<ZeroSlice<T>>`.
+///
+/// This type can be nested within itself to allow for multi-level nested `Vec`s, for
 /// example the following code constructs the conceptual zero-copy equivalent of `Vec<Vec<Vec<str>>>`
 ///
 /// ```rust
@@ -32,8 +36,8 @@ use core::ops::Range;
 /// let strings_2: Vec<&str> = vec!["twelve", "seventeen", "forty two"];
 /// let strings_3: Vec<&str> = vec!["我", "喜歡", "烏龍茶"];
 /// let strings_4: Vec<&str> = vec!["w", "ω", "文", "𑄃"];
-/// let strings_12 = vec![strings_1.clone(), strings_2.clone()];
-/// let strings_34 = vec![strings_3.clone(), strings_4.clone()];
+/// let strings_12 = vec![&*strings_1, &*strings_2];
+/// let strings_34 = vec![&*strings_3, &*strings_4];
 /// let all_strings = vec![strings_12, strings_34];
 ///
 /// let vzv_1: VarZeroVec<str> = VarZeroVec::from(&strings_1);

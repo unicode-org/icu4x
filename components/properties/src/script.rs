@@ -9,15 +9,15 @@ use crate::error::PropertiesError;
 use crate::props::Script;
 use crate::provider::*;
 
+use crate::props::ScriptULE;
 use core::iter::FromIterator;
 use core::ops::RangeInclusive;
 use icu_codepointtrie::{CodePointTrie, TrieValue};
 use icu_provider::prelude::*;
 use icu_uniset::UnicodeSet;
-use zerovec::{ule::AsULE, VarZeroVec, ZeroSlice};
-
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
+use zerovec::{ule::AsULE, VarZeroVec, ZeroSlice};
 
 /// The number of bits at the low-end of a `ScriptWithExt` value used for
 /// storing the `Script` value (or `extensions` index).
@@ -45,6 +45,20 @@ pub struct ScriptWithExt(pub u16);
 #[doc(hidden)] // `ScriptWithExt` not intended as public-facing but for `ScriptWithExtensions` constructor
 impl ScriptWithExt {
     pub const Unknown: ScriptWithExt = ScriptWithExt(0);
+}
+
+impl AsULE for ScriptWithExt {
+    type ULE = ScriptULE;
+
+    #[inline]
+    fn to_unaligned(self) -> Self::ULE {
+        Script(self.0).to_unaligned()
+    }
+
+    #[inline]
+    fn from_unaligned(unaligned: Self::ULE) -> Self {
+        ScriptWithExt(Script::from_unaligned(unaligned).0)
+    }
 }
 
 #[doc(hidden)] // `ScriptWithExt` not intended as public-facing but for `ScriptWithExtensions` constructor
@@ -164,7 +178,7 @@ impl From<ScriptWithExt> for Script {
 /// the data and data structures that are stored in the corresponding ICU data
 /// file for these properties.
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
-#[derive(Debug, Eq, PartialEq, yoke::Yokeable, zerofrom::ZeroFrom)]
+#[derive(Clone, Debug, Eq, PartialEq, yoke::Yokeable, zerofrom::ZeroFrom)]
 pub struct ScriptWithExtensions<'data> {
     /// Note: The `ScriptWithExt` values in this array will assume a 12-bit layout. The 2
     /// higher order bits 11..10 will indicate how to deduce the Script value and

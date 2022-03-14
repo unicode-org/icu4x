@@ -132,7 +132,7 @@ fn test_grouper() {
             )
             .unwrap();
             let actual = fdf.format(&dec);
-            assert_eq!(cas.expected[i], actual.writeable_to_string(), "{:?}", cas);
+            assert_eq!(cas.expected[i], actual.write_to_string(), "{:?}", cas);
         }
     }
 }

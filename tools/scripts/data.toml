@@ -90,6 +90,20 @@ args = [
     "--overwrite",
 ]
 
+[tasks.testdata-verify-zero-copy]
+description = "Verify that testdata is zero-copy for all known keys."
+category = "ICU4X Data"
+command = "cargo"
+args = [
+    "run",
+    "--bin=icu4x-verify-zero-copy",
+    "--features=experimental",
+    "--",
+    "--input-from-testdata",
+    "--test-keys",
+    "--check",
+]
+
 [tasks.testdata]
 description = "Rebuild all ICU4X testdata from source data checked into the repository"
 category = "ICU4X Data"
@@ -99,7 +113,7 @@ dependencies = [
     "testdata-build-blob-smaller",
 ]
 
-[tasks.testdata-check]
+[tasks.testdata-check-unchanged]
 description = "Rebuild ICU4X testdata and ensure that the working copy is clean"
 category = "ICU4X Data"
 dependencies = [
@@ -120,6 +134,14 @@ if greater_than ${output_length} 0
     trigger_error ${msg}
 end
 '''
+
+[tasks.testdata-check]
+description = "Rebuild ICU4X testdata and perform various checks pertaining to it"
+category = "ICU4X Data"
+dependencies = [
+    "testdata-check-unchanged",
+    "testdata-verify-zero-copy",
+]
 
 [tasks.testdata-build-bincode]
 description = "Build ICU4X Bincode filesystem structure from the downloaded CLDR JSON, overwriting the existing ICU4X Bincode if present."

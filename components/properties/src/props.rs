@@ -4,7 +4,6 @@
 
 //! A collection of enums for enumerated properties.
 
-use num_enum::{TryFromPrimitive, UnsafeFromPrimitive};
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 
@@ -47,8 +46,9 @@ pub enum EnumeratedProperty {
 ///
 /// GeneralCategory only supports specific subcategories (eg `UppercaseLetter`).
 /// It does not support grouped categories (eg `Letter`). For grouped categories, use [`GeneralCategoryGroup`].
-#[derive(Copy, Clone, PartialEq, Eq, Debug, TryFromPrimitive, UnsafeFromPrimitive)]
+#[derive(Copy, Clone, PartialEq, Eq, Debug, Ord, PartialOrd)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[zerovec::make_ule(GeneralCategoryULE)]
 #[repr(u8)]
 pub enum GeneralCategory {
     /// (`Cn`) A reserved unassigned code point or a noncharacter
@@ -322,9 +322,10 @@ impl From<GeneralCategory> for GeneralCategoryGroup {
 ///
 /// For more information, see UAX #24: <http://www.unicode.org/reports/tr24/>.
 /// See `UScriptCode` in ICU4C.
-#[derive(Copy, Clone, Debug, Eq, PartialEq)]
+#[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[repr(transparent)]
+#[zerovec::make_ule(ScriptULE)]
 pub struct Script(pub u16);
 
 #[allow(missing_docs)] // These constants don't need individual documentation.
@@ -500,9 +501,10 @@ impl Script {
 /// <https://www.unicode.org/reports/tr11/#Definitions>
 ///
 /// The numeric value is compatible with `UEastAsianWidth` in ICU4C.
-#[derive(Copy, Clone, Debug, Eq, PartialEq)]
+#[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[repr(transparent)]
+#[zerovec::make_ule(EastAsianWidthULE)]
 pub struct EastAsianWidth(pub u8);
 
 #[allow(missing_docs)] // These constants don't need individual documentation.
@@ -522,9 +524,10 @@ impl EastAsianWidth {
 /// value: <https://www.unicode.org/reports/tr14/#Properties>
 ///
 /// The numeric value is compatible with `ULineBreak` in ICU4C.
-#[derive(Copy, Clone, Debug, Eq, PartialEq)]
+#[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[repr(transparent)]
+#[zerovec::make_ule(LineBreakULE)]
 pub struct LineBreak(pub u8);
 
 #[allow(missing_docs)] // These constants don't need individual documentation.
@@ -582,9 +585,10 @@ impl LineBreak {
 /// <https://www.unicode.org/reports/tr29/#Default_Grapheme_Cluster_Table>
 ///
 /// The numeric value is compatible with `UGraphemeClusterBreak` in ICU4C.
-#[derive(Copy, Clone, Debug, Eq, PartialEq)]
+#[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[repr(transparent)]
+#[zerovec::make_ule(GraphemeClusterBreakULE)]
 pub struct GraphemeClusterBreak(pub u8);
 
 #[allow(missing_docs)] // These constants don't need individual documentation.
@@ -621,9 +625,10 @@ impl GraphemeClusterBreak {
 /// <https://www.unicode.org/reports/tr29/#Default_Word_Boundaries>.
 ///
 /// The numeric value is compatible with `UWordBreakValues` in ICU4C.
-#[derive(Copy, Clone, Debug, Eq, PartialEq)]
+#[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[repr(transparent)]
+#[zerovec::make_ule(WordBreakULE)]
 pub struct WordBreak(pub u8);
 
 #[allow(missing_docs)] // These constants don't need individual documentation.
@@ -664,9 +669,10 @@ impl WordBreak {
 /// <https://www.unicode.org/reports/tr29/#Default_Word_Boundaries>.
 ///
 /// The numeric value is compatible with `USentenceBreak` in ICU4C.
-#[derive(Copy, Clone, Debug, Eq, PartialEq)]
+#[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[repr(transparent)]
+#[zerovec::make_ule(SentenceBreakULE)]
 pub struct SentenceBreak(pub u8);
 
 #[allow(missing_docs)] // These constants don't need individual documentation.
@@ -695,6 +701,7 @@ impl SentenceBreak {
 #[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[repr(transparent)]
+#[zerovec::make_ule(CanonicalCombiningClassULE)]
 pub struct CanonicalCombiningClass(pub u8);
 
 // These constant names come from PropertyValueAliases.txt

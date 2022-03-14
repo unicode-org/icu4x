@@ -657,7 +657,7 @@ impl writeable::Writeable for FixedDecimal {
     /// use writeable::LengthHint;
     ///
     /// let dec = FixedDecimal::from(-5000).multiplied_pow10(-2).expect("Bounds are small");
-    /// let result = dec.writeable_to_string();
+    /// let result = dec.write_to_string();
     /// assert_eq!(LengthHint::exact(6), dec.write_len());
     /// ```
     fn write_len(&self) -> writeable::LengthHint {
@@ -924,13 +924,13 @@ impl FixedDecimal {
     /// use writeable::Writeable;
     ///
     /// let decimal = FixedDecimal::new_from_f64(0.012345678, DoublePrecision::Maximum).unwrap();
-    /// assert_eq!(decimal.writeable_to_string(), "0.012345678");
+    /// assert_eq!(decimal.write_to_string(), "0.012345678");
     ///
     /// let decimal = FixedDecimal::new_from_f64(-123456.78, DoublePrecision::Maximum).unwrap();
-    /// assert_eq!(decimal.writeable_to_string(), "-123456.78");
+    /// assert_eq!(decimal.write_to_string(), "-123456.78");
     ///
     /// let decimal = FixedDecimal::new_from_f64(12345678000., DoublePrecision::Maximum).unwrap();
-    /// assert_eq!(decimal.writeable_to_string(), "12345678000");
+    /// assert_eq!(decimal.write_to_string(), "12345678000");
     /// ```
     pub fn new_from_f64(float: f64, precision: DoublePrecision) -> Result<Self, Error> {
         let mut decimal = Self::new_from_f64_raw(float)?;

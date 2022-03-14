@@ -68,7 +68,6 @@ impl Calendar for Japanese {
         Iso.offset_date(&mut date.inner, offset.cast_unit())
     }
 
-    #[allow(clippy::field_reassign_with_default)] // it's more clear this way
     fn until(
         &self,
         date1: &Self::DateInner,
@@ -165,7 +164,6 @@ impl Japanese {
     fn era_for(&self, date: &IsoDateInner) -> (EraStartDate, TinyStr16) {
         let date: EraStartDate = date.into();
         let era_data = self.eras.get();
-        let deref_tuple = |x: (&EraStartDate, &TinyStr16)| (*x.0, *x.1);
         // We optimize for the five "modern" post-Meiji eras, which are stored in a smaller
         // array and also hardcoded. The hardcoded version is not used if data indicates the
         // presence of newer eras.
@@ -188,27 +186,19 @@ impl Japanese {
                     .dates_to_eras
                     .iter()
                     .rev()
-                    .find(|(k, _)| **k < date)
-                    .map(deref_tuple)
+                    .find(|&(k, _)| k < date)
                     .unwrap_or(FALLBACK_ERA)
             }
         } else {
             let historical = &era_data.dates_to_historical_eras;
-            match historical.find_index(&date) {
-                Ok(index) => historical
-                    .get_indexed(index)
-                    .map(deref_tuple)
-                    .unwrap_or(FALLBACK_ERA),
-                Err(index) if index == 0 => historical
-                    .get_indexed(index)
-                    .map(deref_tuple)
-                    .unwrap_or(FALLBACK_ERA),
+            match historical.binary_search_by(|(d, _)| d.cmp(&date)) {
+                Ok(index) => historical.get(index),
+                Err(index) if index == 0 => historical.get(index),
                 Err(index) => historical
-                    .get_indexed(index - 1)
-                    .or_else(|| historical.get_indexed(historical.len() - 1))
-                    .map(deref_tuple)
-                    .unwrap_or(FALLBACK_ERA),
+                    .get(index - 1)
+                    .or_else(|| historical.iter().next_back()),
             }
+            .unwrap_or(FALLBACK_ERA)
         }
     }
 }

@@ -172,7 +172,7 @@ checksum = "ba3569f383e8f1598449f1a423e72e99569137b47740b1da11ef19af3d5c3223"
 dependencies = [
  "lazy_static",
  "memchr",
- "regex-automata 0.1.10 (registry+https://github.com/rust-lang/crates.io-index)",
+ "regex-automata 0.1.10",
  "serde",
 ]
 
@@ -512,17 +512,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "derivative"
-version = "2.2.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "fcc3dd5e9e9c0b295d6e1e4d811fb6f157d5ffd784b8d202fc62eac8035a770b"
-dependencies = [
- "proc-macro2",
- "quote",
- "syn",
-]
-
-[[package]]
 name = "dhat"
 version = "0.2.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -530,6 +519,21 @@ checksum = "831575a3f71e26e99f5a290b7f8cba0f19222fbf9917855db226e1a665b97bc7"
 dependencies = [
  "backtrace",
  "lazy_static",
+ "rustc-hash",
+ "serde",
+ "serde_json",
+ "thousands",
+]
+
+[[package]]
+name = "dhat"
+version = "0.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "47003dc9f6368a88e85956c3b2573a7e6872746a3e5d762a8885da3a136a0381"
+dependencies = [
+ "backtrace",
+ "lazy_static",
+ "parking_lot",
  "rustc-hash",
  "serde",
  "serde_json",
@@ -994,6 +998,7 @@ dependencies = [
  "icu_codepointtrie",
  "icu_datetime",
  "icu_decimal",
+ "icu_list",
  "icu_locale_canonicalizer",
  "icu_locid",
  "icu_locid_macros",
@@ -1035,7 +1040,7 @@ dependencies = [
 name = "icu_benchmark_macros"
 version = "0.5.0"
 dependencies = [
- "dhat",
+ "dhat 0.2.2",
  "dlmalloc",
 ]
 
@@ -1058,6 +1063,7 @@ dependencies = [
  "litemap",
  "serde",
  "tinystr 0.5.0",
+ "zerovec",
 ]
 
 [[package]]
@@ -1100,6 +1106,7 @@ name = "icu_codepointtrie"
 version = "0.3.3"
 dependencies = [
  "displaydoc",
+ "icu_uniset",
  "postcard",
  "serde",
  "toml",
@@ -1113,6 +1120,7 @@ name = "icu_datagen"
 version = "0.5.0"
 dependencies = [
  "clap",
+ "dhat 0.3.0",
  "eyre",
  "futures",
  "icu_locid",
@@ -1121,9 +1129,13 @@ dependencies = [
  "icu_provider_blob",
  "icu_provider_cldr",
  "icu_provider_fs",
+ "icu_provider_segmenter",
  "icu_provider_uprops",
+ "icu_segmenter",
  "icu_testdata",
+ "litemap",
  "log",
+ "rayon",
  "reqwest",
  "serde",
  "simple_logger",
@@ -1148,7 +1160,6 @@ dependencies = [
  "icu_provider",
  "icu_testdata",
  "litemap",
- "num_enum",
  "serde",
  "serde-tuple-vec-map",
  "serde_json",
@@ -1181,7 +1192,7 @@ dependencies = [
 
 [[package]]
 name = "icu_list"
-version = "0.1.0"
+version = "0.5.0"
 dependencies = [
  "criterion",
  "deduplicating_array",
@@ -1192,7 +1203,7 @@ dependencies = [
  "icu_provider",
  "icu_testdata",
  "postcard",
- "regex-automata 0.1.10 (git+https://github.com/burntsushi/regex-automata?rev=d8eee1279fac79514f6e366b6976f97ad7b37174)",
+ "regex-automata 0.2.0",
  "serde",
  "serde_json",
  "writeable",
@@ -1260,7 +1271,6 @@ dependencies = [
  "icu_locid_macros",
  "icu_provider",
  "icu_testdata",
- "num_enum",
  "serde",
  "serde_json",
  "zerovec",
@@ -1276,7 +1286,6 @@ dependencies = [
  "icu_provider",
  "icu_testdata",
  "icu_uniset",
- "num_enum",
  "serde",
  "zerovec",
 ]
@@ -1286,6 +1295,7 @@ name = "icu_provider"
 version = "0.5.0"
 dependencies = [
  "bincode",
+ "dhat 0.3.0",
  "displaydoc",
  "erased-serde",
  "icu_locid",
@@ -1393,6 +1403,21 @@ dependencies = [
 ]
 
 [[package]]
+name = "icu_provider_segmenter"
+version = "0.1.0"
+dependencies = [
+ "icu_codepointtrie",
+ "icu_properties",
+ "icu_provider",
+ "icu_provider_uprops",
+ "icu_segmenter",
+ "icu_testdata",
+ "serde",
+ "toml",
+ "zerovec",
+]
+
+[[package]]
 name = "icu_provider_uprops"
 version = "0.5.0"
 dependencies = [
@@ -1415,17 +1440,14 @@ name = "icu_segmenter"
 version = "0.1.0"
 dependencies = [
  "criterion",
- "icu",
- "icu_codepointtrie",
+ "icu_char16trie",
  "icu_provider",
- "icu_provider_fs",
  "icu_segmenter_lstm",
  "icu_testdata",
  "lazy_static",
  "serde",
  "serde-json-core",
  "serde_json",
- "toml",
  "zerovec",
 ]
 
@@ -1507,6 +1529,15 @@ checksum = "bc633605454125dec4b66843673f01c7df2b89479b32e0ed634e43a91cff62a5"
 dependencies = [
  "autocfg",
  "hashbrown",
+]
+
+[[package]]
+name = "instant"
+version = "0.1.12"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "7a5bbe824c507c5da5956355e86a746d82e0e1464f65d862cc5e71da70e94b2c"
+dependencies = [
+ "cfg-if",
 ]
 
 [[package]]
@@ -1783,27 +1814,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "num_enum"
-version = "0.5.4"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3f9bd055fb730c4f8f4f57d45d35cd6b3f0980535b056dc7ff119cee6a66ed6f"
-dependencies = [
- "derivative",
- "num_enum_derive",
-]
-
-[[package]]
-name = "num_enum_derive"
-version = "0.5.4"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "486ea01961c4a818096de679a8b740b26d9033146ac5291b1c98557658f8cdd9"
-dependencies = [
- "proc-macro2",
- "quote",
- "syn",
-]
-
-[[package]]
 name = "object"
 version = "0.27.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1855,6 +1865,31 @@ dependencies = [
  "libc",
  "pkg-config",
  "vcpkg",
+]
+
+[[package]]
+name = "parking_lot"
+version = "0.11.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "7d17b78036a60663b797adeaee46f5c9dfebb86948d1255007a1d6be0271ff99"
+dependencies = [
+ "instant",
+ "lock_api",
+ "parking_lot_core",
+]
+
+[[package]]
+name = "parking_lot_core"
+version = "0.8.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d76e8e1493bcac0d2766c42737f34458f1c8c50c0d23bcb24ea953affb273216"
+dependencies = [
+ "cfg-if",
+ "instant",
+ "libc",
+ "redox_syscall",
+ "smallvec",
+ "winapi",
 ]
 
 [[package]]
@@ -2141,8 +2176,9 @@ checksum = "6c230d73fb8d8c1b9c0b3135c5142a8acee3a0558fb8db5cf1cb65f8d7862132"
 
 [[package]]
 name = "regex-automata"
-version = "0.1.10"
-source = "git+https://github.com/burntsushi/regex-automata?rev=d8eee1279fac79514f6e366b6976f97ad7b37174#d8eee1279fac79514f6e366b6976f97ad7b37174"
+version = "0.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e9368763f5a9b804326f3af749e16f9abf378d227bcdee7634b13d8f17793782"
 dependencies = [
  "memchr",
  "regex-syntax",
@@ -3151,7 +3187,7 @@ dependencies = [
 name = "zerovec-derive"
 version = "0.6.0"
 dependencies = [
- "postcard",
+ "bincode",
  "proc-macro2",
  "quote",
  "serde",

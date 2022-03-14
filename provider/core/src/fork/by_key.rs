@@ -103,6 +103,7 @@ use alloc::vec::Vec;
 ///     .expect_err("Should stop at the first provider, even though the second has data");
 /// # }
 /// ```
+#[derive(Debug, PartialEq, Eq)]
 pub struct ForkByKeyProvider<P0, P1>(pub P0, pub P1);
 
 impl<P0, P1> BufferProvider for ForkByKeyProvider<P0, P1>
@@ -305,5 +306,68 @@ where
             }
         }
         Err(DataErrorKind::MissingResourceKey.with_key(key))
+    }
+}
+
+#[cfg(feature = "datagen")]
+impl<P, MFrom, MTo> crate::datagen::DataConverter<MFrom, MTo> for MultiForkByKeyProvider<P>
+where
+    P: crate::datagen::DataConverter<MFrom, MTo>,
+    MFrom: DataMarker,
+    MTo: DataMarker,
+{
+    fn convert(
+        &self,
+        key: crate::ResourceKey,
+        mut from: DataPayload<MFrom>,
+    ) -> Result<DataPayload<MTo>, crate::datagen::ReturnedPayloadError<MFrom>> {
+        use crate::datagen::ReturnedPayloadError;
+
+        for provider in self.providers.iter() {
+            let result = provider.convert(key, from);
+            match result {
+                Ok(_) => return result,
+                Err(e) => {
+                    let ReturnedPayloadError(returned, error) = e;
+                    if error.kind != DataErrorKind::MissingResourceKey {
+                        return Err(ReturnedPayloadError(returned, error));
+                    }
+                    from = returned;
+                }
+            }
+        }
+        Err(ReturnedPayloadError(
+            from,
+            DataErrorKind::MissingResourceKey.with_key(key),
+        ))
+    }
+}
+
+#[cfg(feature = "datagen")]
+impl<P0, P1, MFrom, MTo> crate::datagen::DataConverter<MFrom, MTo> for ForkByKeyProvider<P0, P1>
+where
+    P0: crate::datagen::DataConverter<MFrom, MTo>,
+    P1: crate::datagen::DataConverter<MFrom, MTo>,
+    MFrom: DataMarker,
+    MTo: DataMarker,
+{
+    fn convert(
+        &self,
+        key: crate::ResourceKey,
+        mut from: DataPayload<MFrom>,
+    ) -> Result<DataPayload<MTo>, crate::datagen::ReturnedPayloadError<MFrom>> {
+        use crate::datagen::ReturnedPayloadError;
+        let result = self.0.convert(key, from);
+        match result {
+            Ok(_) => return result,
+            Err(e) => {
+                let ReturnedPayloadError(returned, error) = e;
+                if error.kind != DataErrorKind::MissingResourceKey {
+                    return Err(ReturnedPayloadError(returned, error));
+                }
+                from = returned;
+            }
+        }
+        self.1.convert(key, from)
     }
 }

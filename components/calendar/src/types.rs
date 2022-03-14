@@ -12,7 +12,7 @@ use core::str::FromStr;
 use tinystr::{TinyStr16, TinyStr8};
 
 /// TODO(#486): Implement era codes.
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Copy, Clone, Debug, PartialEq)]
 pub struct Era(pub TinyStr16);
 
 /// Representation of a formattable year.

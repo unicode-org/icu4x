@@ -65,17 +65,28 @@ impl<A: fmt::Debug + ULE, B: fmt::Debug + ULE> fmt::Debug for PairULE<A, B> {
     }
 }
 
+// We need manual impls since `#[derive()]` is disallowed on packed types
+
 impl<A: PartialEq + ULE, B: PartialEq + ULE> PartialEq for PairULE<A, B> {
     fn eq(&self, other: &Self) -> bool {
-        let a = self.0;
-        let b = self.1;
-        let other_a = other.0;
-        let other_b = other.1;
-        (a, b) == (other_a, other_b)
+        (self.0, self.1) == (other.0, other.1)
     }
 }
 
-// We need manual impls since `#[derive()]` is disallowed on packed types
+impl<A: Eq + ULE, B: Eq + ULE> Eq for PairULE<A, B> {}
+
+impl<A: PartialOrd + ULE, B: PartialOrd + ULE> PartialOrd for PairULE<A, B> {
+    fn partial_cmp(&self, other: &Self) -> Option<core::cmp::Ordering> {
+        (self.0, self.1).partial_cmp(&(other.0, other.1))
+    }
+}
+
+impl<A: Ord + ULE, B: Ord + ULE> Ord for PairULE<A, B> {
+    fn cmp(&self, other: &Self) -> core::cmp::Ordering {
+        (self.0, self.1).cmp(&(other.0, other.1))
+    }
+}
+
 impl<A: ULE, B: ULE> Clone for PairULE<A, B> {
     fn clone(&self) -> Self {
         // copy to the stack to avoid hitting a future incompat error

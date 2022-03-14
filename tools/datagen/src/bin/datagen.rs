@@ -4,10 +4,11 @@
 
 use clap::{App, Arg, ArgGroup, ArgMatches};
 use eyre::WrapErr;
+use icu_datagen::get_all_keys;
 use icu_locid::LanguageIdentifier;
 use icu_provider::export::DataExporter;
 use icu_provider::filter::Filterable;
-use icu_provider::fork::by_key::ForkByKeyProvider;
+use icu_provider::fork::by_key::MultiForkByKeyProvider;
 use icu_provider::hello_world::{HelloWorldProvider, HelloWorldV1Marker};
 use icu_provider::iter::IterableDynProvider;
 use icu_provider::prelude::*;
@@ -18,6 +19,7 @@ use icu_provider_cldr::CldrPathsAllInOne;
 use icu_provider_fs::export::fs_exporter;
 use icu_provider_fs::export::serializers;
 use icu_provider_fs::export::FilesystemExporter;
+use rayon::prelude::*;
 use simple_logger::SimpleLogger;
 use std::borrow::Cow;
 use std::collections::HashSet;
@@ -283,7 +285,7 @@ fn main() -> eyre::Result<()> {
         filtered
     };
 
-    let mut provider: Box<dyn IterableDynProvider<SerializeMarker>> =
+    let mut provider: Box<dyn IterableDynProvider<SerializeMarker> + Sync> =
         if matches.is_present("HELLO_WORLD") {
             Box::new(HelloWorldProvider::new_with_placeholder_data())
         } else {
@@ -322,13 +324,23 @@ fn main() -> eyre::Result<()> {
                 eyre::bail!("Value for --uprops-root must be specified",)
             };
 
-            Box::new(ForkByKeyProvider(
-                icu_provider_cldr::create_exportable_provider(
-                    cldr_paths.as_ref(),
-                    uprops_root.clone(),
-                )?,
-                icu_provider_uprops::create_exportable_provider(&uprops_root)?,
-            ))
+            let segmenter_data_root = icu_provider_segmenter::segmenter_data_root();
+
+            Box::new(MultiForkByKeyProvider {
+                providers: vec![
+                    Box::new(icu_provider_cldr::create_exportable_provider(
+                        cldr_paths.as_ref(),
+                        uprops_root.clone(),
+                    )?),
+                    Box::new(icu_provider_uprops::create_exportable_provider(
+                        &uprops_root,
+                    )?),
+                    Box::new(icu_provider_segmenter::create_exportable_provider(
+                        &segmenter_data_root,
+                        &uprops_root,
+                    )?),
+                ],
+            })
         };
 
     if let Some(locales) = selected_locales.as_ref() {
@@ -348,11 +360,11 @@ fn main() -> eyre::Result<()> {
         _ => unreachable!(),
     };
 
-    // TODO: Parallelize this.
-    selected_keys.into_iter().try_for_each(|key| {
+    selected_keys.into_par_iter().try_for_each(|key| {
         let result = provider
             .supported_options_for_key(key)?
-            // TODO: Parallelize this.
+            .collect::<Vec<_>>()
+            .into_par_iter()
             .try_for_each(|options| {
                 let payload = provider
                     .load_payload(
@@ -456,34 +468,4 @@ fn get_blob_exporter(matches: &ArgMatches) -> eyre::Result<BlobExporter<'static>
     };
 
     Ok(BlobExporter::new_with_sink(sink))
-}
-
-fn get_all_keys() -> Vec<ResourceKey> {
-    // TODO(#1512): Use central key repository
-    let mut v = vec![];
-    v.extend(icu_provider_cldr::ALL_KEYS);
-    v.extend(icu_properties::provider::key::ALL_MAP_KEYS);
-    v.extend(icu_properties::provider::key::ALL_SCRIPT_EXTENSIONS_KEYS);
-    v.extend(icu_properties::provider::key::ALL_SET_KEYS);
-    v
-}
-
-#[test]
-fn no_key_collisions() {
-    let mut map = std::collections::BTreeMap::new();
-    let mut failed = false;
-    for key in get_all_keys() {
-        if let Some(colliding_key) = map.insert(key.get_hash(), key) {
-            println!(
-                "{:?} and {:?} collide at {:?}",
-                key.get_path(),
-                colliding_key.get_path(),
-                key.get_hash()
-            );
-            failed = true;
-        }
-    }
-    if failed {
-        panic!();
-    }
 }

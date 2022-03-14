@@ -51,7 +51,7 @@ impl DynProvider<UnicodePropertyV1Marker> for BinaryPropertyUnicodeSetDataProvid
 
 icu_provider::impl_dyn_provider!(BinaryPropertyUnicodeSetDataProvider, {
     _k if _k.get_path().starts_with("props/") => UnicodePropertyV1Marker,
-}, SERDE_SE);
+}, SERDE_SE, impl DataConverter);
 
 impl IterableDynProvider<UnicodePropertyV1Marker> for BinaryPropertyUnicodeSetDataProvider {
     fn supported_options_for_key(

@@ -8,7 +8,7 @@ use icu_provider::prelude::DataError;
 
 /// A list of possible error outcomes for the [`PluralRules`](crate::PluralRules) struct.
 ///
-#[derive(Display, Debug)]
+#[derive(Display, Debug, Clone, Copy)]
 pub enum PluralRulesError {
     /// A parsing error for the plural rules.
     #[displaydoc("Parser error: {0}")]

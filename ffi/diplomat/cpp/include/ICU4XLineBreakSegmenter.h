@@ -11,15 +11,16 @@ extern "C" {
 #endif
 
 typedef struct ICU4XLineBreakSegmenter ICU4XLineBreakSegmenter;
+#include "ICU4XDataProvider.h"
 #include "result_box_ICU4XLineBreakSegmenter_void.h"
 #include "ICU4XLineBreakOptions.h"
 #include "ICU4XLineBreakIteratorUtf8.h"
 #include "ICU4XLineBreakIteratorUtf16.h"
 #include "ICU4XLineBreakIteratorLatin1.h"
 
-segmenter_line_ffi_result_box_ICU4XLineBreakSegmenter_void ICU4XLineBreakSegmenter_try_new();
+segmenter_line_ffi_result_box_ICU4XLineBreakSegmenter_void ICU4XLineBreakSegmenter_try_new(const ICU4XDataProvider* provider);
 
-segmenter_line_ffi_result_box_ICU4XLineBreakSegmenter_void ICU4XLineBreakSegmenter_try_new_with_options(ICU4XLineBreakOptions options);
+segmenter_line_ffi_result_box_ICU4XLineBreakSegmenter_void ICU4XLineBreakSegmenter_try_new_with_options(const ICU4XDataProvider* provider, ICU4XLineBreakOptions options);
 
 ICU4XLineBreakIteratorUtf8* ICU4XLineBreakSegmenter_segment_utf8(const ICU4XLineBreakSegmenter* self, const char* input_data, size_t input_len);
 

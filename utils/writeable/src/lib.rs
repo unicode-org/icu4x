@@ -16,17 +16,17 @@
 //! `writeable` is a utility crate of the [`ICU4X`] project.
 //!
 //! It includes [`Writeable`], a core trait representing an object that can be written to a
-//! sink implementing std::fmt::Write. It is an alternative to std::fmt::Display with the
+//! sink implementing `std::fmt::Write`. It is an alternative to `std::fmt::Display` with the
 //! addition of a function indicating the number of bytes to be written.
 //!
-//! Writeable improves upon std::fmt::Display in two ways:
+//! `Writeable` improves upon `std::fmt::Display` in two ways:
 //!
 //! 1. More efficient, since the sink can pre-allocate bytes.
 //! 2. Smaller code, since the format machinery can be short-circuited.
 //!
-//! Types implementing Writeable have a defaulted writeable_to_string function.
-//! If desired, types implementing Writeable can manually implement ToString
-//! to wrap writeable_to_string.
+//! Types implementing Writeable have a defaulted [`write_to_string`](Writeable::write_to_string)
+//! function. If desired, types implementing `Writeable` can manually implement `ToString`
+//! to wrap `write_to_string`.
 //!
 //! # Examples
 //!
@@ -70,15 +70,16 @@ use alloc::string::String;
 use alloc::vec::Vec;
 use core::fmt;
 
-/// A hint to help consumers of Writeable pre-allocate bytes before they call write_to.
+/// A hint to help consumers of `Writeable` pre-allocate bytes before they call
+/// [`write_to`](Writeable::write_to).
 ///
-/// This behaves like Iterator::size_hint: it is a tuple where the first element is the
+/// This behaves like `Iterator::size_hint`: it is a tuple where the first element is the
 /// lower bound, and the second element is the upper bound. If the upper bound is `None`
-/// either there is no known upper bound, or the upper bound is larger than usize.
+/// either there is no known upper bound, or the upper bound is larger than `usize`.
 ///
-/// LengthHint implements std::ops::{Add, Mul} and similar traits for easy composition.
-/// During computation, the lower bound will saturate at usize::MAX, while the upper
-/// bound will become None if usize::MAX is exceeded.
+/// `LengthHint` implements std`::ops::{Add, Mul}` and similar traits for easy composition.
+/// During computation, the lower bound will saturate at `usize::MAX`, while the upper
+/// bound will become `None` if `usize::MAX` is exceeded.
 #[derive(Debug, PartialEq, Eq, Copy, Clone)]
 pub struct LengthHint(pub usize, pub Option<usize>);
 
@@ -87,22 +88,22 @@ impl LengthHint {
         Self(0, None)
     }
 
-    /// This is the exact length from write_to.
+    /// This is the exact length from `write_to`.
     pub fn exact(n: usize) -> Self {
         Self(n, Some(n))
     }
 
-    /// This is at least the length from write_to.
+    /// This is at least the length from `write_to`.
     pub fn at_least(n: usize) -> Self {
         Self(n, None)
     }
 
-    /// This is at most the length from write_to.
+    /// This is at most the length from `write_to`.
     pub fn at_most(n: usize) -> Self {
         Self(0, Some(n))
     }
 
-    /// The length from write_to is in between n and m.
+    /// The length from `write_to` is in between `n` and `m`.
     pub fn between(n: usize, m: usize) -> Self {
         Self(Ord::min(n, m), Some(Ord::max(n, m)))
     }
@@ -127,7 +128,7 @@ impl LengthHint {
         }
     }
 
-    /// Returns whether the LengthHint indicates that the string is exactly 0 bytes long.
+    /// Returns whether the `LengthHint` indicates that the string is exactly 0 bytes long.
     pub fn is_zero(&self) -> bool {
         self.1 == Some(0)
     }
@@ -139,7 +140,7 @@ pub struct Part {
     pub value: &'static str,
 }
 
-/// A sink that supports annotating parts of the string with Parts.
+/// A sink that supports annotating parts of the string with `Part`s.
 pub trait PartsWrite: fmt::Write {
     type SubPartsWrite: PartsWrite + ?Sized;
 
@@ -150,11 +151,11 @@ pub trait PartsWrite: fmt::Write {
     ) -> fmt::Result;
 }
 
-/// Writeable is an alternative to std::fmt::Display with the addition of a length function.
+/// `Writeable` is an alternative to `std::fmt::Display` with the addition of a length function.
 pub trait Writeable {
     /// Writes bytes to the given sink. Errors from the sink are bubbled up.
-    /// The default implementation delegates to write_to_parts, and discards any
-    /// Part annotations.
+    /// The default implementation delegates to `write_to_parts`, and discards any
+    /// `Part` annotations.
     fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
         struct CoreWriteAsPartsWrite<W: fmt::Write + ?Sized>(W);
         impl<W: fmt::Write + ?Sized> fmt::Write for CoreWriteAsPartsWrite<W> {
@@ -182,9 +183,9 @@ pub trait Writeable {
         self.write_to_parts(&mut CoreWriteAsPartsWrite(sink))
     }
 
-    /// Write bytes and Part annotations to the given sink. Errors from the
-    /// sink are bubbled up. The default implementation delegates to write_to,
-    /// and doesn't produce any Part annotations.
+    /// Write bytes and `Part` annotations to the given sink. Errors from the
+    /// sink are bubbled up. The default implementation delegates to `write_to`,
+    /// and doesn't produce any `Part` annotations.
     fn write_to_parts<S: PartsWrite + ?Sized>(&self, sink: &mut S) -> fmt::Result {
         self.write_to(sink)
     }
@@ -196,10 +197,10 @@ pub trait Writeable {
         LengthHint::undefined()
     }
 
-    /// Creates a new String with the data from this Writeable. Like ToString,
+    /// Creates a new `String` with the data from this `Writeable`. Like `ToString`,
     /// but smaller and faster.
     ///
-    /// The default impl allocates an owned String. However, if it is possible to return a
+    /// The default impl allocates an owned `String`. However, if it is possible to return a
     /// borrowed string, overwrite this method to return a `Cow::Borrowed`.
     ///
     /// To remove the `Cow` wrapper, call `.into_owned()`.
@@ -217,7 +218,7 @@ pub trait Writeable {
     ///     W: Writeable + ?Sized,
     ///     S: Write + ?Sized,
     /// {
-    ///     let s = w.writeable_to_string();
+    ///     let s = w.write_to_string();
     ///     if s.is_ascii() {
     ///         sink.write_str(&s)
     ///     } else {
@@ -232,10 +233,10 @@ pub trait Writeable {
     /// use writeable::Writeable;
     ///
     /// fn make_string(w: &impl Writeable) -> String {
-    ///     w.writeable_to_string().into_owned()
+    ///     w.write_to_string().into_owned()
     /// }
     /// ```
-    fn writeable_to_string(&self) -> Cow<str> {
+    fn write_to_string(&self) -> Cow<str> {
         let mut output = String::with_capacity(self.write_len().capacity());
         #[allow(clippy::expect_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
         self.write_to(&mut output)
@@ -288,7 +289,7 @@ macro_rules! assert_writeable_eq {
         let actual_writeable = &$actual_writeable;
         let (actual_str, _) = $crate::writeable_to_parts_for_test(actual_writeable).unwrap();
         assert_eq!(actual_str, $expected_str, $($arg)*);
-        assert_eq!(actual_str, $crate::Writeable::writeable_to_string(actual_writeable), $($arg)+);
+        assert_eq!(actual_str, $crate::Writeable::write_to_string(actual_writeable), $($arg)+);
         let length_hint = $crate::Writeable::write_len(actual_writeable);
         assert!(length_hint.0 <= actual_str.len(), $($arg)*);
         if let Some(upper) = length_hint.1 {
@@ -306,7 +307,7 @@ macro_rules! assert_writeable_parts_eq {
         let actual_writeable = &$actual_writeable;
         let (actual_str, actual_parts) = $crate::writeable_to_parts_for_test(actual_writeable).unwrap();
         assert_eq!(actual_str, $expected_str, $($arg)+);
-        assert_eq!(actual_str, $crate::Writeable::writeable_to_string(actual_writeable), $($arg)+);
+        assert_eq!(actual_str, $crate::Writeable::write_to_string(actual_writeable), $($arg)+);
         assert_eq!(actual_parts, $expected_parts, $($arg)+);
         let length_hint = $crate::Writeable::write_len(actual_writeable);
         assert!(length_hint.0 <= actual_str.len(), $($arg)+);

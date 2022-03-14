@@ -36,9 +36,8 @@ displaydoc = { version = "0.2.3", default-features = false }
 icu_codepointtrie = { version = "0.3.3", path = "../../utils/codepointtrie", features = ["serde"] }
 icu_provider = { version = "0.5", path = "../../provider/core", features = ["macros"] }
 icu_uniset = { version = "0.4.1", path = "../../utils/uniset", features = ["serde"] }
-num_enum = { version = "0.5.4", default-features = false }
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }
-zerovec = { version = "0.6", path = "../../utils/zerovec", features = ["serde"] }
+zerovec = { version = "0.6", path = "../../utils/zerovec", features = ["serde", "derive"] }
 
 [dev-dependencies]
 icu = { path = "../../components/icu", default-features = false }

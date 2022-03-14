@@ -136,7 +136,12 @@ impl ResourceProvider<DecimalSymbolsV1Marker> for NumbersProvider {
     }
 }
 
-icu_provider::impl_dyn_provider!(NumbersProvider, [DecimalSymbolsV1Marker,], SERDE_SE);
+icu_provider::impl_dyn_provider!(
+    NumbersProvider,
+    [DecimalSymbolsV1Marker,],
+    SERDE_SE,
+    impl DataConverter
+);
 
 impl IterableResourceProvider<DecimalSymbolsV1Marker> for NumbersProvider {
     fn supported_options(

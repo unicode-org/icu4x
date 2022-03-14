@@ -59,7 +59,12 @@ impl ResourceProvider<LikelySubtagsV1Marker> for LikelySubtagsProvider {
     }
 }
 
-icu_provider::impl_dyn_provider!(LikelySubtagsProvider, [LikelySubtagsV1Marker,], SERDE_SE);
+icu_provider::impl_dyn_provider!(
+    LikelySubtagsProvider,
+    [LikelySubtagsV1Marker,],
+    SERDE_SE,
+    impl DataConverter
+);
 
 impl IterableResourceProvider<LikelySubtagsV1Marker> for LikelySubtagsProvider {
     fn supported_options(&self) -> Result<Box<dyn Iterator<Item = ResourceOptions>>, DataError> {
