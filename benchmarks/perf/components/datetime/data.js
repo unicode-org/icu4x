@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1647279473945,
+  "lastUpdate": 1647292608997,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -22775,6 +22775,48 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 179851,
             "range": "± 20740",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "989bade3905208e2c7bdb332a04f9488ec36c854",
+          "message": "Using TinyAsciiStr for locale_canonicalizer and locid (#1683)",
+          "timestamp": "2022-03-14T14:07:54-07:00",
+          "tree_id": "f53d15791bd3580d2a60d2a548be122dd18788ff",
+          "url": "https://github.com/unicode-org/icu4x/commit/989bade3905208e2c7bdb332a04f9488ec36c854"
+        },
+        "date": 1647292594335,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 95641,
+            "range": "± 10542",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 835895,
+            "range": "± 61524",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 183443,
+            "range": "± 13726",
             "unit": "ns/iter"
           }
         ]
