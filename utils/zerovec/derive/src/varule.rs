@@ -9,7 +9,12 @@ use quote::quote;
 use syn::spanned::Spanned;
 use syn::{Data, DeriveInput, Error, Ident};
 
-pub fn derive_impl(input: &DeriveInput) -> TokenStream2 {
+/// Implementation for derive(VarULE). `custom_varule_validator` validates the last field bytes `last_field_bytes`
+/// if specified, if not, the VarULE implementation will be used.
+pub fn derive_impl(
+    input: &DeriveInput,
+    custom_varule_validator: Option<TokenStream2>,
+) -> TokenStream2 {
     if !utils::has_valid_repr(&input.attrs, |r| r == "packed" || r == "transparent") {
         return Error::new(
             input.span(),
@@ -73,6 +78,12 @@ pub fn derive_impl(input: &DeriveInput) -> TokenStream2 {
         Span::call_site(),
     );
 
+    let last_field_validator = if let Some(custom_varule_validator) = custom_varule_validator {
+        custom_varule_validator
+    } else {
+        quote!(<#unsized_field as zerovec::ule::VarULE>::validate_byte_slice(last_field_bytes)?;)
+    };
+
     // Safety (based on the safety checklist on the ULE trait):
     //  1. #name does not include any uninitialized or padding bytes
     //     (achieved by enforcing #[repr(transparent)] or #[repr(packed)] on a struct of only ULE types)
@@ -95,7 +106,8 @@ pub fn derive_impl(input: &DeriveInput) -> TokenStream2 {
                 }
                 #validators
                 debug_assert_eq!(#remaining_offset, #ule_size);
-                <#unsized_field as zerovec::ule::VarULE>::validate_byte_slice(&bytes[#remaining_offset..])?;
+                let last_field_bytes = &bytes[#remaining_offset..];
+                #last_field_validator
                 Ok(())
             }
             #[inline]

@@ -118,7 +118,7 @@ pub fn make_varule_impl(attr: AttributeArgs, mut input: DeriveInput) -> TokenStr
         #vis struct #ule_name #field_inits #semi
     );
 
-    let derived = crate::varule::derive_impl(&varule_struct);
+    let derived = crate::varule::derive_impl(&varule_struct, unsized_field_info.varule_validator());
 
     let maybe_lt_bound = lt.as_ref().map(|lt| quote!(<#lt>));
 
@@ -445,8 +445,9 @@ impl<'a> UnsizedFields<'a> {
             quote!(
                 let lengths = [#(#lengths),*];
                 let mut multi = zerovec::ule::MultiFieldsULE::new_from_lengths_partially_initialized(&lengths, &mut #out);
-
-                #(#writers;)*
+                unsafe {
+                    #(#writers;)*
+                }
             )
         }
     }
@@ -484,6 +485,28 @@ impl<'a> UnsizedFields<'a> {
                     <#field_ty as #zerofrom_trait <#lt, #field_ule_ty>>::zero_from(&other.#multi_accessor.get_field::<#field_ule_ty>(#i))
                 }));
             }
+        }
+    }
+
+    /// In case this needs custom validation code, return it
+    ///
+    /// The code will validate a variable known as `last_field_bytes`
+    fn varule_validator(&self) -> Option<TokenStream2> {
+        if self.fields.len() == 1 {
+            None
+        } else {
+            let mut validators = vec![];
+            for (i, field) in self.fields.iter().enumerate() {
+                let varule_ty = field.kind.varule_ty();
+                validators.push(quote!(multi.validate_field::<#varule_ty>(#i)?;));
+            }
+
+            Some(quote!(
+                let multi = zerovec::ule::MultiFieldsULE::parse_byte_slice(last_field_bytes)?;
+                unsafe {
+                    #(#validators)*
+                }
+            ))
         }
     }
 }
