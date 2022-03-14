@@ -110,7 +110,7 @@ mod tests {
         let utf16: Vec<u16> = s.encode_utf16().collect();
         let mut iter = LanguageIteratorUtf16::new(&utf16);
         assert_eq!(iter.next(), Some(utf16), "Thai language only with UTF-16");
-        let mut iter = LanguageIterator::new(&s);
+        let mut iter = LanguageIterator::new(s);
         assert_eq!(
             iter.next(),
             Some(s.to_string()),
