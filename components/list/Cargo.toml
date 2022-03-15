@@ -29,6 +29,14 @@ deduplicating_array = { version = "0.1", path = "../../utils/deduplicating_array
 regex-automata = { version = "0.2", default-features = false }
 writeable = { version = "0.3", path = "../../utils/writeable" }
 
+# Datagen
+serde_json = { version = "1.0", default-features = false, features = ["alloc"], optional = true }
+# Not required after #1631
+icu_locid_macros = { version = "0.5", path = "../locid/macros", optional = true }
+icu_properties = { version = "0.5", path = "../properties", features = ["provider_serde", "std"], optional = true }
+# This would be the icu4x_datagen feature on icu_properties
+icu_provider_uprops = { version = "0.5", path = "../../provider/uprops", features = ["log"], optional = true }
+
 [dev-dependencies]
 criterion = "0.3.3"
 serde_json = "1"
@@ -44,7 +52,7 @@ path = "src/lib.rs"
 default = ["icu4x_human_readable_de"]
 std = ["icu_provider/std", "icu_locid/std", "regex-automata/std", "regex-automata/alloc"]
 provider_serde = ["serde", "icu_provider/serde", "zerovec/serde", "deduplicating_array"]
-provider_transform_internals = ["provider_serde", "std"]
+icu4x_datagen = ["provider_serde", "std", "icu_locid_macros", "serde_json", "icu_properties", "icu_provider_uprops", "icu_locid/serde"]
 icu4x_human_readable_de = ["provider_serde", "regex-automata/alloc"]
 
 [[example]]

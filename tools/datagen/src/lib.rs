@@ -50,6 +50,7 @@
 //! ```
 
 use icu_provider::ResourceKey;
+use icu_provider::ResourceMarker;
 
 pub fn get_all_keys() -> Vec<ResourceKey> {
     // TODO(#1512): Use central key repository
@@ -59,6 +60,9 @@ pub fn get_all_keys() -> Vec<ResourceKey> {
     v.extend(icu_properties::provider::key::ALL_SCRIPT_EXTENSIONS_KEYS);
     v.extend(icu_properties::provider::key::ALL_SET_KEYS);
     v.extend(icu_segmenter::ALL_KEYS);
+    v.push(icu_list::provider::AndListV1Marker::KEY);
+    v.push(icu_list::provider::OrListV1Marker::KEY);
+    v.push(icu_list::provider::UnitListV1Marker::KEY);
     v
 }
 

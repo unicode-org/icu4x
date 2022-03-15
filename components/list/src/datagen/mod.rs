@@ -2,14 +2,14 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::cldr_serde;
-use crate::error::Error;
-use crate::reader::{get_langid_subdirectories, get_langid_subdirectory, open_reader};
-use crate::CldrPaths;
-use icu_list::provider::*;
+mod cldr_serde;
+mod reader;
+
+use crate::provider::*;
 use icu_locid_macros::langid;
 use icu_provider::iter::IterableResourceProvider;
 use icu_provider::prelude::*;
+use reader::{get_langid_subdirectories, get_langid_subdirectory, open_reader};
 use std::path::PathBuf;
 
 /// A data provider reading from CLDR JSON list rule files.
@@ -20,11 +20,11 @@ pub struct ListProvider {
 }
 
 impl ListProvider {
-    pub fn try_from(cldr_paths: &dyn CldrPaths, uprops_root: PathBuf) -> Result<Self, Error> {
-        Ok(Self {
-            cldr_misc: cldr_paths.cldr_misc()?,
+    pub fn new(cldr_misc: PathBuf, uprops_root: PathBuf) -> Self {
+        Self {
+            cldr_misc,
             uprops_root,
-        })
+        }
     }
 }
 
@@ -36,11 +36,15 @@ impl<M: ResourceMarker<Yokeable = ListFormatterPatternsV1<'static>>> ResourcePro
             .get_langid()
             .ok_or_else(|| DataErrorKind::NeedsLocale.with_req(M::KEY, req))?;
 
-        let resource: cldr_serde::list_patterns::Resource = {
+        let resource: cldr_serde::Resource = {
             let path = get_langid_subdirectory(&self.cldr_misc.join("main"), langid)?
                 .ok_or_else(|| DataErrorKind::MissingLocale.with_req(M::KEY, req))?
                 .join("listPatterns.json");
-            serde_json::from_reader(open_reader(&path)?).map_err(|e| Error::Json(e, Some(path)))?
+            serde_json::from_reader(open_reader(&path)?).map_err(|e| {
+                DataError::custom("CLDR JSON: Json Parse Error")
+                    .with_error_context(&e)
+                    .with_path(&path)
+            })?
         };
 
         let data = &resource

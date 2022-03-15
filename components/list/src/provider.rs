@@ -157,7 +157,7 @@ impl<'data> ListJoinerPattern<'data> {
     }
 }
 
-#[cfg(feature = "provider_transform_internals")]
+#[cfg(feature = "icu4x_datagen")]
 mod datagen {
     use super::*;
     use icu_provider::DataError;
@@ -254,7 +254,7 @@ mod datagen {
     }
 }
 
-#[cfg(all(test, feature = "provider_transform_internals"))]
+#[cfg(all(test, feature = "icu4x_datagen"))]
 pub(crate) mod test {
     use super::*;
 

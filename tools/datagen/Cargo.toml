@@ -35,6 +35,7 @@ icu_properties = { version = "0.5", path = "../../components/properties", featur
 icu_provider = { version = "0.5", path = "../../provider/core", features = ["std", "log_error_context"]}
 icu_provider_blob = { version = "0.5", path = "../../provider/blob", features = ["export"] }
 icu_provider_cldr = { version = "0.5", path = "../../provider/cldr", features = ["download"] }
+icu_list = { version = "0.5", path = "../../components/list", features = ["icu4x_datagen"]}
 icu_provider_fs = { version = "0.5", path = "../../provider/fs", features = ["export"] }
 icu_provider_uprops = { version = "0.5", path = "../../provider/uprops", features = ["log"] }
 icu_provider_segmenter = { version = "0.1", path = "../../provider/segmenter" }

@@ -15,6 +15,7 @@ use icu_provider::prelude::*;
 use icu_provider::serde::SerializeMarker;
 use icu_provider_blob::export::BlobExporter;
 use icu_provider_cldr::download::CldrAllInOneDownloader;
+use icu_provider_cldr::CldrPaths;
 use icu_provider_cldr::CldrPathsAllInOne;
 use icu_provider_fs::export::fs_exporter;
 use icu_provider_fs::export::serializers;
@@ -331,7 +332,11 @@ fn main() -> eyre::Result<()> {
                     Box::new(icu_provider_cldr::create_exportable_provider(
                         cldr_paths.as_ref(),
                         uprops_root.clone(),
-                    )?),
+                    )?) as Box<dyn IterableDynProvider<SerializeMarker> + Sync>,
+                    Box::new(icu_list::datagen::ListProvider::new(
+                        cldr_paths.cldr_misc()?,
+                        uprops_root.clone(),
+                    )),
                     Box::new(icu_provider_uprops::create_exportable_provider(
                         &uprops_root,
                     )?),

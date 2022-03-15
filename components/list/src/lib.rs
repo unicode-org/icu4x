@@ -51,6 +51,9 @@ extern crate alloc;
 mod list_formatter;
 mod string_matcher;
 
+#[cfg(feature = "icu4x_datagen")]
+pub mod datagen;
+
 pub mod provider;
 
 pub use list_formatter::*;

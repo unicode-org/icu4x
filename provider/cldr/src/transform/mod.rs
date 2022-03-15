@@ -9,7 +9,6 @@
 pub(crate) mod calendar;
 pub(crate) mod datetime;
 pub(crate) mod decimal;
-pub(crate) mod list;
 pub(crate) mod locale_canonicalizer;
 pub(crate) mod plurals;
 pub(crate) mod time_zones;

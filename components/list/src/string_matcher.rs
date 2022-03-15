@@ -88,10 +88,7 @@ impl<'de: 'data, 'data> serde::Deserialize<'de> for StringMatcher<'data> {
 }
 
 impl<'data> StringMatcher<'data> {
-    #[cfg(any(
-        feature = "provider_transform_internals",
-        feature = "icu4x_human_readable_de",
-    ))]
+    #[cfg(any(feature = "icu4x_datagen", feature = "icu4x_human_readable_de",))]
     pub fn new(pattern: &str) -> Result<Self, icu_provider::DataError> {
         use regex_automata::{
             dfa::dense::{Builder, Config},
@@ -129,7 +126,7 @@ impl<'data> StringMatcher<'data> {
     }
 }
 
-#[cfg(all(test, feature = "provider_transform_internals"))]
+#[cfg(all(test, feature = "icu4x_datagen"))]
 mod test {
     use super::*;
 
