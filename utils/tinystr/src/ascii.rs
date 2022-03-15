@@ -19,6 +19,36 @@ impl<const N: usize> TinyAsciiStr<N> {
         Self::from_bytes_inner(bytes, 0, bytes.len(), false)
     }
 
+    /// Attempts to parse a fixed-length byte array to a `TinyAsciiStr`.
+    ///
+    /// The byte array may contain trailing NUL bytes.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use tinystr::TinyAsciiStr;
+    /// use tinystr::tinystr;
+    ///
+    /// assert_eq!(
+    ///     TinyAsciiStr::<3>::try_from_raw(b"GB\0"),
+    ///     Ok(&tinystr!(3, "GB")));
+    /// assert_eq!(
+    ///     TinyAsciiStr::<3>::try_from_raw(b"USD"),
+    ///     Ok(&tinystr!(3, "USD")));
+    /// assert!(matches!(
+    ///     TinyAsciiStr::<3>::try_from_raw(b"\0A\0"),
+    ///     Err(_)));
+    /// ```
+    pub const fn try_from_raw(raw: &[u8; N]) -> Result<&Self, TinyStrError> {
+        match Self::from_bytes_inner(raw, 0, N, true) {
+            Ok(_) => {
+                // Safety: The byte slice is valid according to the previous line.
+                Ok(unsafe { core::mem::transmute(raw) })
+            }
+            Err(e) => Err(e),
+        }
+    }
+
     pub const fn from_bytes_manual_slice(
         bytes: &[u8],
         start: usize,
@@ -638,7 +668,7 @@ mod test {
                         .chars()
                         .map(|c| c.to_ascii_lowercase())
                         .collect::<String>();
-                    // Safe because the string is an ASCII string
+                    // Safe because the string is nonempty and an ASCII string
                     unsafe { r.as_bytes_mut()[0].make_ascii_uppercase() };
                     r
                 },
