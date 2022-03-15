@@ -306,7 +306,13 @@ impl<const N: usize> TinyAsciiStr<N> {
     #[inline]
     #[must_use]
     pub const fn is_ascii_lowercase(&self) -> bool {
-        check_is!(self, is_ascii_lowercase, CASE, is_ascii_uppercase, is_ascii_uppercase)
+        check_is!(
+            self,
+            is_ascii_lowercase,
+            CASE,
+            is_ascii_uppercase,
+            is_ascii_uppercase
+        )
     }
 
     /// Checks if the value is in ASCII title case.
@@ -333,7 +339,13 @@ impl<const N: usize> TinyAsciiStr<N> {
     #[inline]
     #[must_use]
     pub const fn is_ascii_titlecase(&self) -> bool {
-        check_is!(self, is_ascii_titlecase, CASE, is_ascii_lowercase, is_ascii_uppercase)
+        check_is!(
+            self,
+            is_ascii_titlecase,
+            CASE,
+            is_ascii_lowercase,
+            is_ascii_uppercase
+        )
     }
 
     /// Checks if the value is in ASCII upper case.
@@ -359,7 +371,13 @@ impl<const N: usize> TinyAsciiStr<N> {
     #[inline]
     #[must_use]
     pub const fn is_ascii_uppercase(&self) -> bool {
-        check_is!(self, is_ascii_uppercase, CASE, is_ascii_lowercase, is_ascii_lowercase)
+        check_is!(
+            self,
+            is_ascii_uppercase,
+            CASE,
+            is_ascii_lowercase,
+            is_ascii_lowercase
+        )
     }
 }
 
@@ -520,6 +538,11 @@ impl<const N: usize> PartialEq<TinyAsciiStr<N>> for alloc::string::String {
 #[cfg(test)]
 mod test {
     use super::*;
+    use rand::distributions::Distribution;
+    use rand::distributions::Standard;
+    use rand::rngs::SmallRng;
+    use rand::seq::SliceRandom;
+    use rand::SeedableRng;
 
     const STRINGS: &[&str] = &[
         "Latn",
@@ -550,21 +573,44 @@ mod test {
         "E12",
     ];
 
+    fn gen_strings(num_strings: usize, allowed_lengths: &[usize]) -> Vec<String> {
+        let mut rng = SmallRng::seed_from_u64(2022);
+        // Need to do this in 2 steps since the RNG is needed twice
+        let string_lengths = core::iter::repeat_with(|| *allowed_lengths.choose(&mut rng).unwrap())
+            .take(num_strings)
+            .collect::<Vec<usize>>();
+        string_lengths
+            .iter()
+            .map(|len| {
+                Standard
+                    .sample_iter(&mut rng)
+                    .filter(|b: &u8| *b > 0 && *b < 0x80)
+                    .take(*len)
+                    .collect::<Vec<u8>>()
+            })
+            .map(|byte_vec| String::from_utf8(byte_vec).expect("All ASCII"))
+            .collect()
+    }
+
     fn check_operation<T, F1, F2, const N: usize>(reference_f: F1, tinystr_f: F2)
     where
         F1: Fn(&str) -> T,
         F2: Fn(TinyAsciiStr<N>) -> T,
         T: core::fmt::Debug + core::cmp::PartialEq,
     {
-        for s in STRINGS {
-            let t = match TinyAsciiStr::<N>::from_str(s) {
+        for s in STRINGS
+            .iter()
+            .map(|s| s.to_string())
+            .chain(gen_strings(100, &[3, 4, 5, 8, 12]))
+        {
+            let t = match TinyAsciiStr::<N>::from_str(&s) {
                 Ok(t) => t,
                 Err(TinyStrError::TooLarge { .. }) => continue,
                 Err(e) => panic!("{}", e),
             };
-            let expected = reference_f(s);
+            let expected = reference_f(&s);
             let actual = tinystr_f(t);
-            assert_eq!(expected, actual, "TinyAsciiStr<{}>: '{}'", N, s);
+            assert_eq!(expected, actual, "TinyAsciiStr<{}>: {:?}", N, s);
         }
     }
 
