@@ -31,6 +31,7 @@ skip_optional_dependencies = true
 all-features = true
 
 [dependencies]
+cached-path = { version = "0.5", optional = true }
 clap = "2.33"
 dhat = "0.3.0"
 displaydoc = { version = "0.2.3", default-features = false }
@@ -72,12 +73,6 @@ toml = { version = "0.5" }
 writeable = { version = "0.3", path = "../../utils/writeable" }
 zerovec = { version = "0.6", path = "../../utils/zerovec", features = ["serde", "yoke"] }
 
-# Dependencies for the download feature
-urlencoding = { version = "1.1", optional = true }
-reqwest = { version = "0.11", features = ["json", "stream", "gzip", "blocking"], optional = true }
-unzip = { version = "0.1", optional = true }
-dirs = { version = "3.0", optional = true }
-
 [dev-dependencies]
 mktemp = "0.4"
 icu_locid = { version = "0.5", path = "../../components/locid" }
@@ -87,16 +82,13 @@ writeable = { version = "0.3", path = "../../utils/writeable" }
 [features]
 experimental = []
 casemapping = ["icu_casemapping"]
-# Automatically download CLDR data from a host
-download = ["urlencoding", "reqwest", "unzip", "dirs"]
-# TODO(#1739): Disable the "download" feature by default
-default = ["casemapping", "download"]
+# Automatically download CLDR and uprops data
+download = ["cached-path"]
+default = ["casemapping"]
 
 [[bin]]
 name = "icu4x-datagen"
 path = "src/bin/datagen.rs"
-# TODO(#1739): Make it such that icu4x-datagen does not require the download feature
-required-features = ["download"]
 
 [[bin]]
 name = "icu4x-testdata-download"

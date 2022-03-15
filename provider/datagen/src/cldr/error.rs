@@ -7,9 +7,6 @@ use icu_locid::LanguageIdentifier;
 use icu_provider::DataError;
 use std::path::{Path, PathBuf};
 
-#[cfg(feature = "download")]
-use crate::cldr::download;
-
 #[non_exhaustive]
 #[derive(Display, Debug)]
 pub enum Error {
@@ -21,22 +18,9 @@ pub enum Error {
     Custom(String, Option<LanguageIdentifier>),
     #[displaydoc("{0}")]
     MissingSource(MissingSourceError),
-    #[cfg(feature = "download")]
-    #[displaydoc("{0}")]
-    Download(download::Error),
 }
 
 impl std::error::Error for Error {}
-
-#[cfg(feature = "download")]
-impl From<download::Error> for Error {
-    fn from(err: download::Error) -> Error {
-        match err {
-            download::Error::Io(err, path) => Error::Io(err, path),
-            _ => Error::Download(err),
-        }
-    }
-}
 
 #[derive(Display, Debug, PartialEq, Copy, Clone)]
 #[displaydoc("Missing CLDR data source: {src}")]
@@ -103,8 +87,6 @@ impl From<Error> for DataError {
             MissingSource(e) => {
                 DataError::custom("CLDR JSON: MissingSource").with_error_context(&e)
             }
-            #[cfg(feature = "download")]
-            Download(e) => DataError::custom("CLDR JSON: Download").with_error_context(&e),
         }
     }
 }

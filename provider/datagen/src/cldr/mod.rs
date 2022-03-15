@@ -24,9 +24,6 @@ mod error;
 mod reader;
 mod transform;
 
-#[cfg(feature = "download")]
-pub mod download;
-
 pub use cldr_paths::CldrPaths;
 pub use cldr_paths::CldrPathsAllInOne;
 pub use cldr_paths::CldrPathsLocal;
