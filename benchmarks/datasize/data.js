@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1647292162469,
+  "lastUpdate": 1647385782226,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -10943,6 +10943,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/989bade3905208e2c7bdb332a04f9488ec36c854"
         },
         "date": 1647292149652,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4504771,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "90e20f381b8c725352289acbd4457cb2c3ff6496",
+          "message": "Add more functions to TinyAsciiStr (#1694)",
+          "timestamp": "2022-03-15T16:08:13-07:00",
+          "tree_id": "bfd88cd4bd1b1e26f6d11c2c000e5a414bb06764",
+          "url": "https://github.com/unicode-org/icu4x/commit/90e20f381b8c725352289acbd4457cb2c3ff6496"
+        },
+        "date": 1647385768746,
         "tool": "ndjson",
         "benches": [
           {
