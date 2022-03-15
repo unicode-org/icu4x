@@ -32,7 +32,7 @@
 //!     .filter_by_langid(|langid| langid.language == language!("de"));
 //! ```
 //!
-//! [`IterableDynProvider`]: crate::iter::IterableDynProvider
+//! [`IterableDynProvider`]: crate::datagen::IterableDynProvider
 
 mod impls;
 
