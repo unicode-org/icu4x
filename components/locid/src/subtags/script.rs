@@ -69,7 +69,7 @@ impl Script {
     /// assert!(matches!(Script::try_from_raw(b"LATN"), Err(_)));
     /// ```
     pub fn try_from_raw(v: &[u8; 4]) -> Result<&Self, ParserError> {
-        let s = TinyAsciiStr::<{ core::mem::size_of::<Self>() }>::try_from_raw(&v)
+        let s = TinyAsciiStr::<{ core::mem::size_of::<Self>() }>::try_from_raw(v)
             .map_err(|_| ParserError::InvalidSubtag)?;
         let is_valid = match s.len() {
             SCRIPT_LENGTH => s.is_ascii_alphabetic() && s.is_ascii_titlecase(),
@@ -187,7 +187,7 @@ impl From<Script> for TinyAsciiStr<4> {
 unsafe impl zerovec::ule::ULE for Script {
     fn validate_byte_slice(bytes: &[u8]) -> Result<(), zerovec::ZeroVecError> {
         let it = bytes.chunks_exact(core::mem::size_of::<Self>());
-        if it.remainder().len() > 0 {
+        if !it.remainder().is_empty() {
             return Err(zerovec::ZeroVecError::length::<Self>(bytes.len()));
         }
         for v in it {

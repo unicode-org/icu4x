@@ -78,7 +78,7 @@ impl Region {
     /// assert!(matches!(Region::try_from_raw(b"us\0"), Err(_)));
     /// ```
     pub fn try_from_raw(v: &[u8; 3]) -> Result<&Self, ParserError> {
-        let s = TinyAsciiStr::<{ core::mem::size_of::<Self>() }>::try_from_raw(&v)
+        let s = TinyAsciiStr::<{ core::mem::size_of::<Self>() }>::try_from_raw(v)
             .map_err(|_| ParserError::InvalidSubtag)?;
         let is_valid = match s.len() {
             REGION_ALPHA_LENGTH => s.is_ascii_uppercase(),
@@ -213,7 +213,7 @@ impl From<Region> for TinyAsciiStr<3> {
 unsafe impl zerovec::ule::ULE for Region {
     fn validate_byte_slice(bytes: &[u8]) -> Result<(), zerovec::ZeroVecError> {
         let it = bytes.chunks_exact(core::mem::size_of::<Self>());
-        if it.remainder().len() > 0 {
+        if !it.remainder().is_empty() {
             return Err(zerovec::ZeroVecError::length::<Self>(bytes.len()));
         }
         for v in it {

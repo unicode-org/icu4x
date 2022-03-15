@@ -79,7 +79,7 @@ impl Variant {
     /// assert!(matches!(Variant::try_from_raw(b"POSIX\0\0\0"), Err(_)));
     /// ```
     pub fn try_from_raw(v: &[u8; 8]) -> Result<&Self, ParserError> {
-        let s = TinyAsciiStr::<{ core::mem::size_of::<Self>() }>::try_from_raw(&v)
+        let s = TinyAsciiStr::<{ core::mem::size_of::<Self>() }>::try_from_raw(v)
             .map_err(|_| ParserError::InvalidSubtag)?;
         let is_valid = s.is_ascii_alphanumeric()
             && s.is_ascii_lowercase()
@@ -206,7 +206,7 @@ impl From<Variant> for TinyAsciiStr<8> {
 unsafe impl zerovec::ule::ULE for Variant {
     fn validate_byte_slice(bytes: &[u8]) -> Result<(), zerovec::ZeroVecError> {
         let it = bytes.chunks_exact(core::mem::size_of::<Self>());
-        if it.remainder().len() > 0 {
+        if !it.remainder().is_empty() {
             return Err(zerovec::ZeroVecError::length::<Self>(bytes.len()));
         }
         for v in it {
