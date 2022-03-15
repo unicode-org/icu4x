@@ -156,6 +156,28 @@ macro_rules! check_is {
             true
         }
     };
+    ($self:ident, $check:ident, CASE, $check_u8_0:ident, $check_u8_1:ident) => {
+        if N <= 4 {
+            Aligned4::from_bytes(&$self.bytes).$check()
+        } else if N <= 8 {
+            Aligned8::from_bytes(&$self.bytes).$check()
+        } else {
+            // Won't panic because N is > 8
+            if $self.bytes[0].$check_u8_0() {
+                return false;
+            }
+            let mut i = 1;
+            // Won't panic because self.bytes has length N
+            #[allow(clippy::indexing_slicing)]
+            while i < N && $self.bytes[i] != 0 {
+                if $self.bytes[i].$check_u8_1() {
+                    return false;
+                }
+                i += 1;
+            }
+            true
+        }
+    };
 }
 
 impl<const N: usize> TinyAsciiStr<N> {
@@ -230,6 +252,45 @@ impl<const N: usize> TinyAsciiStr<N> {
     pub const fn is_ascii_numeric(&self) -> bool {
         check_is!(self, is_ascii_numeric, is_ascii_digit)
     }
+
+    #[inline]
+    #[must_use]
+    pub const fn is_ascii_lowercase(&self) -> bool {
+        check_is!(self, is_ascii_lowercase, CASE, is_ascii_uppercase, is_ascii_uppercase)
+    }
+
+    /// Checks if the value is in ASCII title case.
+    ///
+    /// This verifies that the first character is ASCII uppercase and all others ASCII lowercase.
+    /// Non-letter characters are ignored.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use tinystr::TinyAsciiStr;
+    ///
+    /// let s1: TinyAsciiStr<4> = "teSt".parse()
+    ///     .expect("Failed to parse.");
+    /// let s2: TinyAsciiStr<4> = "Test".parse()
+    ///     .expect("Failed to parse.");
+    /// let s3: TinyAsciiStr<4> = "001z".parse()
+    ///     .expect("Failed to parse.");
+    ///
+    /// assert!(s1.is_ascii_titlecase());
+    /// assert!(!s2.is_ascii_titlecase());
+    /// assert!(s3.is_ascii_titlecase());
+    /// ```
+    #[inline]
+    #[must_use]
+    pub const fn is_ascii_titlecase(&self) -> bool {
+        check_is!(self, is_ascii_titlecase, CASE, is_ascii_lowercase, is_ascii_uppercase)
+    }
+
+    #[inline]
+    #[must_use]
+    pub const fn is_ascii_uppercase(&self) -> bool {
+        check_is!(self, is_ascii_uppercase, CASE, is_ascii_lowercase, is_ascii_lowercase)
+    }
 }
 
 macro_rules! to {
@@ -287,15 +348,15 @@ impl<const N: usize> TinyAsciiStr<N> {
 
     /// Converts this type to its ASCII title case equivalent in-place.
     ///
-    /// First character, if is an ASCII letter 'a' to 'z' is mapped to 'A' to 'Z',
-    /// other characters are unchanged.
+    /// The first character is converted to ASCII uppercase; the remaining characters
+    /// are converted to ASCII lowercase.
     ///
     /// # Examples
     ///
     /// ```
     /// use tinystr::TinyAsciiStr;
     ///
-    /// let s1: TinyAsciiStr<4> = "test".parse()
+    /// let s1: TinyAsciiStr<4> = "teSt".parse()
     ///     .expect("Failed to parse.");
     ///
     /// assert_eq!(&*s1.to_ascii_titlecase(), "Test");
@@ -392,6 +453,7 @@ mod test {
 
     const STRINGS: &[&str] = &[
         "Latn",
+        "laTn",
         "windows",
         "AR",
         "Hans",
@@ -405,6 +467,15 @@ mod test {
         "NO",
         "419",
         "MacintoshOSX2019",
+        "a3z",
+        "A3z",
+        "A3Z",
+        "a3Z",
+        "3A",
+        "3Z",
+        "3a",
+        "3z",
+        "@@[`{",
         "UK",
         "E12",
     ];
@@ -423,7 +494,7 @@ mod test {
             };
             let expected = reference_f(s);
             let actual = tinystr_f(t);
-            assert_eq!(expected, actual);
+            assert_eq!(expected, actual, "TinyAsciiStr<{}>: '{}'", N, s);
         }
     }
 
@@ -465,6 +536,69 @@ mod test {
             check_operation(
                 |s| s.chars().all(|c| c.is_ascii_digit()),
                 |t: TinyAsciiStr<N>| TinyAsciiStr::is_ascii_numeric(&t),
+            )
+        }
+        check::<2>();
+        check::<3>();
+        check::<4>();
+        check::<5>();
+        check::<8>();
+        check::<16>();
+    }
+
+    #[test]
+    fn test_is_ascii_lowercase() {
+        fn check<const N: usize>() {
+            check_operation(
+                |s| {
+                    s == TinyAsciiStr::<16>::from_str(s)
+                        .unwrap()
+                        .to_ascii_lowercase()
+                        .as_str()
+                },
+                |t: TinyAsciiStr<N>| TinyAsciiStr::is_ascii_lowercase(&t),
+            )
+        }
+        check::<2>();
+        check::<3>();
+        check::<4>();
+        check::<5>();
+        check::<8>();
+        check::<16>();
+    }
+
+    #[test]
+    fn test_is_ascii_titlecase() {
+        fn check<const N: usize>() {
+            check_operation(
+                |s| {
+                    s == TinyAsciiStr::<16>::from_str(s)
+                        .unwrap()
+                        .to_ascii_titlecase()
+                        .as_str()
+                },
+                |t: TinyAsciiStr<N>| TinyAsciiStr::is_ascii_titlecase(&t),
+            )
+        }
+        check::<2>();
+        check::<3>();
+        check::<4>();
+        check::<5>();
+        check::<8>();
+        check::<16>();
+    }
+
+    #[test]
+    fn test_is_ascii_uppercase() {
+        fn check<const N: usize>() {
+            check_operation(
+                |s| {
+                    s == TinyAsciiStr::<16>::from_str(s)
+                        .unwrap()
+                        .to_ascii_uppercase()
+                        .as_str()
+                },
+                |t: TinyAsciiStr<N>| TinyAsciiStr::is_ascii_uppercase(&t),
             )
         }
         check::<2>();
