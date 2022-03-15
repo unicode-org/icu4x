@@ -57,7 +57,7 @@ where
 ///
 /// ```
 /// use icu_provider::prelude::*;
-/// use icu_provider::iter::*;
+/// use icu_provider::datagen::*;
 /// use icu_provider::hello_world::*;
 /// use icu_provider::inv::InvariantDataProvider;
 ///
@@ -250,13 +250,13 @@ macro_rules! impl_dyn_provider {
 
     ($provider:ty, [ $($struct_m:ty),+, ], ITERABLE_SERDE_SE) => {
 
-         impl $crate::iter::IterableDynProvider<$crate::serde::SerializeMarker> for $provider
+         impl $crate::datagen::IterableDynProvider<$crate::serde::SerializeMarker> for $provider
          {
              fn supported_options_for_key(&self, key: $crate::ResourceKey) -> Result<Box<dyn Iterator<Item = $crate::ResourceOptions> + '_>, $crate::DataError> {
                  match key {
                      $(
                          <$struct_m as $crate::ResourceMarker>::KEY => {
-                             $crate::iter::IterableResourceProvider::<$struct_m>::supported_options(self)
+                             $crate::datagen::IterableResourceProvider::<$struct_m>::supported_options(self)
                          }
                      )+,
                      _ => Err($crate::DataErrorKind::MissingResourceKey.with_key(key))
@@ -266,12 +266,12 @@ macro_rules! impl_dyn_provider {
     };
     ($provider:ty, { $($pat:pat $(if $guard:expr)? => $struct_m:ty),+, }, ITERABLE_SERDE_SE) => {
 
-        impl $crate::iter::IterableDynProvider<$crate::serde::SerializeMarker> for $provider {
+        impl $crate::datagen::IterableDynProvider<$crate::serde::SerializeMarker> for $provider {
             fn supported_options_for_key(&self, key: $crate::ResourceKey) -> Result<Box<dyn Iterator<Item = $crate::ResourceOptions> + '_>, $crate::DataError> {
                 match key {
                     $(
                         $pat $(if $guard)? => {
-                            $crate::iter::IterableDynProvider::<$struct_m>::supported_options_for_key(self, key)
+                            $crate::datagen::IterableDynProvider::<$struct_m>::supported_options_for_key(self, key)
                         }
                     )+,
                     _ => Err($crate::DataErrorKind::MissingResourceKey.with_key(key))

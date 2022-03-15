@@ -4,8 +4,10 @@
 
 //! Locale-invariant data provider that requires no I/O.
 
-use crate::iter::IterableDynProvider;
+#[cfg(feature = "datagen")]
+use crate::datagen::IterableDynProvider;
 use crate::prelude::*;
+#[cfg(feature = "datagen")]
 use alloc::boxed::Box;
 
 /// A locale-invariant data provider. Sometimes useful for testing. Not intended to be used in
@@ -59,6 +61,7 @@ where
     }
 }
 
+#[cfg(feature = "datagen")]
 impl<M> IterableDynProvider<M> for InvariantDataProvider
 where
     M: DataMarker,

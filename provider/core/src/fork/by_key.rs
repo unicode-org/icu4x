@@ -4,8 +4,10 @@
 
 //! Providers that invoke other providers based on the resource key.
 
-use crate::iter::IterableDynProvider;
+#[cfg(feature = "datagen")]
+use crate::datagen::IterableDynProvider;
 use crate::prelude::*;
+#[cfg(feature = "datagen")]
 use alloc::boxed::Box;
 use alloc::vec::Vec;
 
@@ -157,6 +159,7 @@ where
     }
 }
 
+#[cfg(feature = "datagen")]
 impl<M, P0, P1> IterableDynProvider<M> for ForkByKeyProvider<P0, P1>
 where
     M: DataMarker,
@@ -290,6 +293,7 @@ where
     }
 }
 
+#[cfg(feature = "datagen")]
 impl<M, P> IterableDynProvider<M> for MultiForkByKeyProvider<P>
 where
     M: DataMarker,

@@ -4,8 +4,11 @@
 
 //! Helpers for switching between multiple providers.
 
-use crate::iter::*;
 use crate::prelude::*;
+
+#[cfg(feature = "datagen")]
+use crate::datagen::{IterableDynProvider, IterableResourceProvider};
+#[cfg(feature = "datagen")]
 use alloc::boxed::Box;
 
 /// A provider that is one of two types determined at runtime.
@@ -73,6 +76,7 @@ impl<M: ResourceMarker, P0: ResourceProvider<M>, P1: ResourceProvider<M>> Resour
     }
 }
 
+#[cfg(feature = "datagen")]
 impl<M: DataMarker, P0: IterableDynProvider<M>, P1: IterableDynProvider<M>> IterableDynProvider<M>
     for EitherProvider<P0, P1>
 {
@@ -89,6 +93,7 @@ impl<M: DataMarker, P0: IterableDynProvider<M>, P1: IterableDynProvider<M>> Iter
     }
 }
 
+#[cfg(feature = "datagen")]
 impl<M: ResourceMarker, P0: IterableResourceProvider<M>, P1: IterableResourceProvider<M>>
     IterableResourceProvider<M> for EitherProvider<P0, P1>
 {

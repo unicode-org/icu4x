@@ -137,7 +137,6 @@ pub mod fork;
 pub mod hello_world;
 mod helpers;
 pub mod inv;
-pub mod iter;
 #[macro_use]
 pub mod marker;
 #[macro_use]

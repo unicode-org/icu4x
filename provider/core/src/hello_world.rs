@@ -5,8 +5,9 @@
 //! Data provider returning multilingual "Hello World" strings for testing.
 
 use crate::buf::BufferFormat;
+#[cfg(feature = "datagen")]
+use crate::datagen::IterableResourceProvider;
 use crate::helpers;
-use crate::iter::IterableResourceProvider;
 use crate::prelude::*;
 use crate::yoke::{self, *};
 use crate::zerofrom::{self, *};
@@ -179,6 +180,7 @@ impl BufferProvider for HelloWorldJsonProvider {
     }
 }
 
+#[cfg(feature = "datagen")]
 impl IterableResourceProvider<HelloWorldV1Marker> for HelloWorldProvider {
     fn supported_options(
         &self,
