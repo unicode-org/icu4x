@@ -152,11 +152,12 @@ impl Language {
     ///
     /// `Notice`: For many use cases, such as comparison,
     /// [`Language`] implements [`PartialEq`]`<&`[`str`]`>` which allows for direct comparisons.
+    #[inline]
     pub fn as_str(&self) -> &str {
         self.0.as_str()
     }
 
-    /// Resets the [`Language`] subtag to an empty one.
+    /// Resets the [`Language`] subtag to an empty one (equal to `"und"`).
     ///
     /// # Examples
     ///
@@ -172,11 +173,12 @@ impl Language {
     ///
     /// assert_eq!(lang.as_str(), "und");
     /// ```
+    #[inline]
     pub fn clear(&mut self) {
         *self = UND
     }
 
-    /// Tests if the [`Language`] subtag is empty.
+    /// Tests if the [`Language`] subtag is empty (equal to `"und"`).
     ///
     /// # Examples
     ///
@@ -192,8 +194,33 @@ impl Language {
     ///
     /// assert_eq!(lang.is_empty(), true);
     /// ```
+    #[inline]
     pub fn is_empty(self) -> bool {
         self == UND
+    }
+
+    /// Returns an `Option<Language>`, which is `None` if the subtag is `"und"`,
+    /// and `Some(self)` otherwise.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::locid::subtags::Language;
+    ///
+    /// assert!(matches!(
+    ///     Language::und().to_option(),
+    ///     None));
+    /// assert!(matches!(
+    ///     Language::from_bytes(b"uk").unwrap().to_option(),
+    ///     Some(_)));
+    /// ```
+    #[inline]
+    pub fn to_option(self) -> Option<Language> {
+        if !self.is_empty() {
+            Some(self)
+        } else {
+            None
+        }
     }
 }
 
@@ -243,7 +270,7 @@ impl<'l> From<&'l Language> for &'l str {
 
 impl From<Language> for TinyAsciiStr<3> {
     fn from(input: Language) -> Self {
-        input.0.into()
+        input.0
     }
 }
 

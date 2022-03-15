@@ -165,7 +165,7 @@ fn uts35_check_language_rules(
     locale: &mut Locale,
     alias_data: &DataPayload<AliasesV1Marker>,
 ) -> CanonicalizationResult {
-    let maybe_lang: Option<TinyAsciiStr<3>> = locale.id.language.into();
+    let maybe_lang: Option<TinyAsciiStr<3>> = locale.id.language.to_option().map(Into::into);
     if let Some(lang) = maybe_lang {
         let replacement = if lang.len() == 2 {
             alias_data
@@ -557,14 +557,14 @@ impl LocaleCanonicalizer {
             return CanonicalizationResult::Unmodified;
         }
 
-        if let Some(language) = langid.language.into() {
+        if let Some(language) = langid.language.to_option() {
             if let Some(region) = langid.region {
-                maximize_locale!(langid, data.language_region, language, region.into());
+                maximize_locale!(langid, data.language_region, language.into(), region.into());
             }
             if let Some(script) = langid.script {
-                maximize_locale!(langid, data.language_script, language, script.into());
+                maximize_locale!(langid, data.language_script, language.into(), script.into());
             }
-            maximize_locale!(langid, data.language, language);
+            maximize_locale!(langid, data.language, language.into());
         }
         if let Some(script) = langid.script {
             if let Some(region) = langid.region {

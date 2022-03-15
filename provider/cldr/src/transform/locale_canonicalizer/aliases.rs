@@ -138,21 +138,21 @@ impl From<&cldr_serde::aliases::Resource> for AliasesV1 {
                         continue;
                     }
 
-                    let maybe_lang: Option<TinyAsciiStr<3>> = langid.language.into();
-                    if let Some(lang) = maybe_lang {
+                    if let Some(lang) = langid.language.to_option() {
+                        let lang_str: TinyAsciiStr<3> = lang.into();
                         if langid.region.is_none() && langid.variants.is_empty() {
                             // Relatively few aliases exist for two character language identifiers,
                             // so we store them separately to not slow down canonicalization of
                             // common identifiers.
-                            if lang.len() == 2 {
-                                language_len2.push((lang.resize(), replacement));
+                            if lang_str.len() == 2 {
+                                language_len2.push((lang_str.resize(), replacement));
                             } else {
-                                language_len3.push((lang, replacement));
+                                language_len3.push((lang_str, replacement));
                             }
                         } else if let Some(region) = langid.region {
                             // All current language-region aliases are for "sgn", so we store them
                             // separately to not slow down canonicalization of common identifiers.
-                            if lang == "sgn" {
+                            if lang_str == "sgn" {
                                 sgn_region.push((region.into(), replacement));
                             } else {
                                 language.push((langid, replacement));
