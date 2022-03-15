@@ -70,7 +70,12 @@ pub enum TimeZoneValues {
 }
 
 #[derive(PartialEq, Debug, Deserialize)]
-pub struct TimeZones (pub LiteMap<String, TimeZoneValues>);
+pub struct TimeZones {
+    pub _alias: String,
+    pub _description: String,
+    #[serde(flatten)]
+    pub values: LiteMap<String, TimeZoneValues>
+}
 
 
 #[derive(PartialEq, Debug, Deserialize)]
