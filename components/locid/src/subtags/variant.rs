@@ -23,6 +23,7 @@ use tinystr::TinyAsciiStr;
 ///
 /// [`unicode_variant_id`]: https://unicode.org/reports/tr35/#unicode_variant_id
 #[derive(Debug, PartialEq, Eq, Clone, Hash, PartialOrd, Ord, Copy)]
+#[repr(transparent)]
 pub struct Variant(TinyAsciiStr<{ *VARIANT_LENGTH.end() }>);
 
 const VARIANT_LENGTH: RangeInclusive<usize> = 4..=8;
@@ -60,6 +61,39 @@ impl Variant {
         }
 
         Ok(Self(s.to_ascii_lowercase()))
+    }
+
+    /// Safely creates a [`Variant`] from a reference to its raw format
+    /// as returned by [`Variant::into_raw()`].
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::locid::subtags::Variant;
+    ///
+    /// assert!(matches!(Variant::try_from_raw(b"fonipa\0\0"), Ok(_)));
+    /// assert!(matches!(Variant::try_from_raw(b"1992\0\0\0\0"), Ok(_)));
+    /// assert!(matches!(Variant::try_from_raw(b"foo\0\0\0\0\0"), Err(_)));
+    ///
+    /// // Unlike the other constructors, this one is case-sensitive:
+    /// assert!(matches!(Variant::try_from_raw(b"POSIX\0\0\0"), Err(_)));
+    /// ```
+    pub fn try_from_raw(v: &[u8; 8]) -> Result<&Self, ParserError> {
+        let s = TinyAsciiStr::<{ core::mem::size_of::<Self>() }>::try_from_raw(&v)
+            .map_err(|_| ParserError::InvalidSubtag)?;
+        let is_valid = s.is_ascii_alphanumeric()
+            && s.is_ascii_lowercase()
+            && match s.len() {
+                VARIANT_NUM_ALPHA_LENGTH => s.as_bytes()[0].is_ascii_digit(),
+                4..=8 => true, // VARIANT_LENGTH
+                _ => false,
+            };
+        if is_valid {
+            // Safe since the bytes are valid
+            Ok(unsafe { core::mem::transmute(v) })
+        } else {
+            Err(ParserError::InvalidSubtag)
+        }
     }
 
     /// Deconstructs the [`Variant`] into raw format to be consumed
@@ -158,4 +192,67 @@ impl From<Variant> for TinyAsciiStr<8> {
     fn from(input: Variant) -> Self {
         input.0
     }
+}
+
+// Safety checklist for ULE:
+//
+// 1. Must not include any uninitialized or padding bytes (true since transparent over a ULE).
+// 2. Must have an alignment of 1 byte (true since transparent over a ULE).
+// 3. ULE::validate_byte_slice() checks that the given byte slice represents a valid slice.
+// 4. ULE::validate_byte_slice() checks that the given byte slice has a valid length.
+// 5. All other methods must be left with their default impl.
+// 6. Byte equality is semantic equality.
+#[cfg(feature = "zerovec")]
+unsafe impl zerovec::ule::ULE for Variant {
+    fn validate_byte_slice(bytes: &[u8]) -> Result<(), zerovec::ZeroVecError> {
+        let it = bytes.chunks_exact(core::mem::size_of::<Self>());
+        if it.remainder().len() > 0 {
+            return Err(zerovec::ZeroVecError::length::<Self>(bytes.len()));
+        }
+        for v in it {
+            // The following can be removed once `array_chunks` is stabilized.
+            let mut a = [0; core::mem::size_of::<Self>()];
+            a.copy_from_slice(v);
+            if Self::try_from_raw(&a).is_err() {
+                return Err(zerovec::ZeroVecError::parse::<Self>());
+            }
+        }
+        Ok(())
+    }
+}
+
+/// Impl enabling `Variant` to be used in a [`ZeroVec`]. Enabled with the `"zerovec"` feature.
+///
+/// # Example
+///
+/// ```
+/// use icu::locid::subtags::Variant;
+/// use icu::locid::macros::variant;
+/// use zerovec::ZeroVec;
+///
+/// let zv = ZeroVec::<Variant>::parse_byte_slice(b"fonipa\0\01992\0\0\0\0posix\0\0\0")
+///     .expect("Valid variant subtags");
+/// assert_eq!(zv.get(1), Some(variant!("1992")));
+///
+/// ZeroVec::<Variant>::parse_byte_slice(b"invalid")
+///     .expect_err("Invalid byte slice");
+/// ```
+///
+/// [`ZeroVec`]: zerovec::ZeroVec
+#[cfg(feature = "zerovec")]
+impl zerovec::ule::AsULE for Variant {
+    type ULE = Self;
+    fn to_unaligned(self) -> Self::ULE {
+        self
+    }
+    fn from_unaligned(unaligned: Self::ULE) -> Self {
+        unaligned
+    }
+}
+
+#[cfg(feature = "zerovec")]
+impl<'a> zerovec::maps::ZeroMapKV<'a> for Variant {
+    type Container = zerovec::ZeroVec<'a, Variant>;
+    type GetType = Variant;
+    type OwnedType = Variant;
 }
