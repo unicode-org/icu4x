@@ -24,7 +24,7 @@ pub struct TimeZonesProvider {
     path: PathBuf,
     data: FrozenBTreeMap<LanguageIdentifier, Box<cldr_serde::time_zone_names::TimeZoneNames>>,
     bcp47_path: PathBuf,
-    bcp47_data: RwLock<LiteMap<String, String>>,
+    bcp47_data: RwLock<LiteMap<String, cldr_serde::timezone::TimeZoneValues>>,
 }
 
 impl TryFrom<&dyn CldrPaths> for TimeZonesProvider {
@@ -68,12 +68,19 @@ macro_rules! impl_resource_provider {
 
                     if self.bcp47_data.read().unwrap().len() == 0 {
                         let bcp47_time_zone_path = self.bcp47_path.join("timezone.json");
-                        let mut resource: cldr_serde::timezone::Resource =
+
+                        let resource: cldr_serde::timezone::Resource =
                             serde_json::from_reader(open_reader(&bcp47_time_zone_path)?)
                                 .map_err(|e| Error::Json(e, Some(bcp47_time_zone_path)))?;
-                        let _ = self.bcp47_data.write().unwrap();
-                    }
+                         let r = resource
+                            .keyword
+                            .u
+                            .time_zones
+                            .0;
 
+                        let mut data_guard = self.bcp47_data.write().unwrap();
+                        data_guard.extend_from_litemap(r);
+                    }
                     let time_zones = self.data.read().unwrap().get(langid).unwrap().clone();
 
                     let metadata = DataResponseMetadata::default();

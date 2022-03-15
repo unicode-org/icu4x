@@ -10,34 +10,67 @@
 use litemap::LiteMap;
 use serde::Deserialize;
 
-/*
-#[derive(PartialEq, Debug, Deserialize)]
-pub struct Alias {
+#[derive(PartialEq, Debug, Clone, Deserialize)]
+pub struct ValueWithDeprecatedDescriptionAlias {
+    #[serde(rename = "_deprecated")]
+    pub deprecated: bool,
+    pub preferred: Option<String>,
+    #[serde(rename = "_description")]
+    pub description: String,
     #[serde(rename = "_alias")]
     pub alias: String,
-}
-
-#[derive(PartialEq, Debug, Deserialize)]
-pub struct TimeZones{
-    pub tz: LiteMap<String, String>,
+    pub since: Option<String>,
 }
 
 
-#[derive(PartialEq, Debug, Deserialize)]
-pub struct TimeZones{
-    pub time_zone: LiteMap<String, Alias>,
-}
-
- */
-
-#[derive(PartialEq, Debug, Deserialize)]
-pub struct Alias {
+#[derive(PartialEq, Debug, Clone, Deserialize)]
+pub struct ValueWithDescriptionAliasSince {
+    pub deprecated: Option<bool>,
+    pub preferred: Option<String>,
+    #[serde(rename = "_description")]
+    pub description: String,
     #[serde(rename = "_alias")]
     pub alias: String,
+    #[serde(rename = "_since")]
+    pub since: String,
+}
+
+#[derive(PartialEq, Debug, Clone, Deserialize)]
+pub struct ValueWithDeprecatedDescriptionPreferred {
+    #[serde(rename = "_deprecated")]
+    pub deprecated: bool,
+    #[serde(rename = "_preferred")]
+    pub preferred: String,
+    #[serde(rename = "_description")]
+    pub description: String,
+    pub alias: Option<String>,
+    pub since: Option<String>,
+}
+
+#[derive(PartialEq, Debug, Clone, Deserialize)]
+pub struct ValueWithDescriptionAlias {
+    pub deprecated: Option<bool>,
+    pub preferred: Option<String>,
+    #[serde(rename = "_description")]
+    pub description: String,
+    #[serde(rename = "_alias")]
+    pub alias: String,
+    pub since: Option<String>,
+}
+
+#[derive(PartialEq, Debug, Clone, Deserialize)]
+#[serde(untagged)]
+#[allow(clippy::enum_variant_names)]
+pub enum TimeZoneValues {
+    ValueWithDeprecatedDescriptionAlias(ValueWithDeprecatedDescriptionAlias),
+    ValueWithDescriptionAliasSince(ValueWithDescriptionAliasSince),
+    ValueWithDescriptionAlias(ValueWithDescriptionAlias),
+    ValueWithDeprecatedDescriptionPreferred(ValueWithDeprecatedDescriptionPreferred),
+    ValueString(String),
 }
 
 #[derive(PartialEq, Debug, Deserialize)]
-pub struct TimeZones (pub LiteMap<String, Alias>);
+pub struct TimeZones (pub LiteMap<String, TimeZoneValues>);
 
 
 #[derive(PartialEq, Debug, Deserialize)]
