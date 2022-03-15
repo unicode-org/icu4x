@@ -97,7 +97,7 @@ impl DynProvider<ScriptWithExtensionsPropertyV1Marker> for ScriptWithExtensionsP
 
 icu_provider::impl_dyn_provider!(ScriptWithExtensionsPropertyProvider, {
     key::SCRIPT_EXTENSIONS_V1 => ScriptWithExtensionsPropertyV1Marker,
-}, SERDE_SE);
+}, SERDE_SE, impl DataConverter);
 
 impl IterableDynProvider<ScriptWithExtensionsPropertyV1Marker>
     for ScriptWithExtensionsPropertyProvider

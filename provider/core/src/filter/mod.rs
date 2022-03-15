@@ -198,6 +198,24 @@ where
     }
 }
 
+#[cfg(feature = "datagen")]
+impl<D, F, MFrom, MTo> crate::datagen::DataConverter<MFrom, MTo> for RequestFilterDataProvider<D, F>
+where
+    D: crate::datagen::DataConverter<MFrom, MTo>,
+    MFrom: DataMarker,
+    MTo: DataMarker,
+    F: Fn(&DataRequest) -> bool,
+{
+    fn convert(
+        &self,
+        key: crate::ResourceKey,
+        from: DataPayload<MFrom>,
+    ) -> Result<DataPayload<MTo>, crate::datagen::ReturnedPayloadError<MFrom>> {
+        // Conversions are type-agnostic
+        self.inner.convert(key, from)
+    }
+}
+
 pub trait Filterable: Sized {
     /// Creates a filterable data provider with the given name for debugging.
     ///

@@ -37,11 +37,11 @@
 
     An ICU4X line-break segmenter, capable of finding breakpoints in strings. See `the Rust docs <https://unicode-org.github.io/icu4x-docs/doc/icu_segmenter/struct.LineBreakSegmenter.html>`__ for more information.
 
-    .. js:staticfunction:: try_new()
+    .. js:staticfunction:: try_new(provider)
 
         Construct a :js:class:`ICU4XLineBreakSegmenter` with default options. See `the Rust docs <https://unicode-org.github.io/icu4x-docs/doc/icu_segmenter/struct.LineBreakSegmenter.html#method.try_new>`__ for more information.
 
-    .. js:staticfunction:: try_new_with_options(options)
+    .. js:staticfunction:: try_new_with_options(provider, options)
 
         Construct a :js:class:`ICU4XLineBreakSegmenter` with custom options. See `the Rust docs <https://unicode-org.github.io/icu4x-docs/doc/icu_segmenter/struct.LineBreakSegmenter.html#method.try_new_with_options>`__ for more information.
 

@@ -4,7 +4,7 @@
 
 use crate::parser::errors::ParserError;
 use core::str::FromStr;
-use tinystr::TinyStr4;
+use tinystr::TinyAsciiStr;
 
 /// A region subtag (examples: `"US"`, `"CN"`, `"AR"` etc.)
 ///
@@ -22,7 +22,7 @@ use tinystr::TinyStr4;
 ///
 /// [`unicode_region_id`]: https://unicode.org/reports/tr35/#unicode_region_id
 #[derive(Debug, PartialEq, Eq, Clone, Hash, PartialOrd, Ord, Copy)]
-pub struct Region(TinyStr4);
+pub struct Region(TinyAsciiStr<REGION_NUM_LENGTH>);
 
 const REGION_ALPHA_LENGTH: usize = 2;
 const REGION_NUM_LENGTH: usize = 3;
@@ -52,13 +52,14 @@ impl Region {
         start: usize,
         end: usize,
     ) -> Result<Self, ParserError> {
-        let s = match TinyStr4::from_bytes_manual_slice(v, start, end) {
-            Ok(s) => s,
-            _ => return Err(ParserError::InvalidSubtag),
-        };
-        match end - start {
-            REGION_ALPHA_LENGTH if s.is_ascii_alphabetic() => Ok(Self(s.to_ascii_uppercase())),
-            REGION_NUM_LENGTH if s.is_ascii_numeric() => Ok(Self(s)),
+        match (
+            end - start,
+            TinyAsciiStr::from_bytes_manual_slice(v, start, end),
+        ) {
+            (REGION_ALPHA_LENGTH, Ok(s)) if s.is_ascii_alphabetic() => {
+                Ok(Self(s.to_ascii_uppercase()))
+            }
+            (REGION_NUM_LENGTH, Ok(s)) if s.is_ascii_numeric() => Ok(Self(s)),
             _ => Err(ParserError::InvalidSubtag),
         }
     }
@@ -78,7 +79,7 @@ impl Region {
     /// let region = unsafe { Region::from_raw_unchecked(raw) };
     /// assert_eq!(region, "US");
     /// ```
-    pub fn into_raw(self) -> [u8; 4] {
+    pub fn into_raw(self) -> [u8; 3] {
         *self.0.all_bytes()
     }
 
@@ -100,10 +101,10 @@ impl Region {
     ///
     /// # Safety
     ///
-    /// This function accepts a [`u32`] that is expected to be a valid [`TinyStr4`]
+    /// This function accepts a [`[u8; 3]`] that is expected to be a valid [`TinyAsciiStr<3>`]
     /// representing a [`Region`] subtag in canonical syntax.
-    pub const unsafe fn from_raw_unchecked(v: [u8; 4]) -> Self {
-        Self(TinyStr4::from_bytes_unchecked(v))
+    pub const unsafe fn from_raw_unchecked(v: [u8; 3]) -> Self {
+        Self(TinyAsciiStr::from_bytes_unchecked(v))
     }
 
     /// A helper function for displaying
@@ -165,7 +166,7 @@ impl<'l> From<&'l Region> for &'l str {
     }
 }
 
-impl From<Region> for TinyStr4 {
+impl From<Region> for TinyAsciiStr<3> {
     fn from(input: Region) -> Self {
         input.0
     }

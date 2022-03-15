@@ -5,10 +5,9 @@
 use zerovec::ule::AsULE;
 use zerovec::ule::EncodeAsVarULE;
 use zerovec::*;
-use zerovec_derive::*;
 
 #[repr(packed)]
-#[derive(ULE, Copy, Clone)]
+#[derive(ule::ULE, Copy, Clone)]
 pub struct FooULE {
     a: u8,
     b: <u32 as AsULE>::ULE,
@@ -42,7 +41,7 @@ impl AsULE for Foo {
 }
 
 #[repr(packed)]
-#[derive(VarULE)]
+#[derive(ule::VarULE)]
 pub struct RelationULE {
     /// This maps to (AndOr, Polarity, Operand),
     /// with the first bit mapping to AndOr (1 == And), the second bit

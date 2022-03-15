@@ -25,7 +25,7 @@ let fdf = FixedDecimalFormat::try_new(locale, &provider, Default::default())
 
 let fixed_decimal = 1000007.into();
 let formatted_value = fdf.format(&fixed_decimal);
-let formatted_str = formatted_value.writeable_to_string();
+let formatted_str = formatted_value.write_to_string();
 
 assert_eq!("১০,০০,০০৭", formatted_str);
 ```
@@ -47,7 +47,7 @@ let fixed_decimal = FixedDecimal::from(200050)
     .multiplied_pow10(-2)
     .expect("Operation is fully in range");
 
-assert_eq!("2,000.50", fdf.format(&fixed_decimal).writeable_to_string());
+assert_eq!("2,000.50", fdf.format(&fixed_decimal).write_to_string());
 ```
 
 [`FixedDecimalFormat`]: FixedDecimalFormat

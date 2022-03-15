@@ -17,7 +17,9 @@
 use crate::error::PropertiesError;
 use crate::provider::*;
 use crate::*;
+use core::iter::FromIterator;
 use icu_provider::prelude::*;
+use icu_uniset::UnicodeSet;
 
 /// TODO(#1239): Finalize this API.
 pub type UnisetResult = Result<DataPayload<UnicodePropertyV1Marker>, PropertiesError>;
@@ -1442,275 +1444,175 @@ where
 // Enumerated property getter fns
 //
 
-/// Return a [`UnicodeSet`] for a particular value of the General_Category Unicode enumerated property. See [`GeneralCategory`].
-///
-/// [`UnicodeSet`]: icu_uniset::UnicodeSet
-pub fn get_for_general_category<D>(provider: &D, enum_val: GeneralCategory) -> UnisetResult
-where
-    D: DynProvider<UnicodePropertyV1Marker> + ?Sized,
-{
-    let key = match enum_val {
-        GeneralCategory::Control => key::GENERAL_CATEGORY_CONTROL_V1,
-        GeneralCategory::Format => key::GENERAL_CATEGORY_FORMAT_V1,
-        GeneralCategory::Unassigned => key::GENERAL_CATEGORY_UNASSIGNED_V1,
-        GeneralCategory::PrivateUse => key::GENERAL_CATEGORY_PRIVATE_USE_V1,
-        GeneralCategory::Surrogate => key::GENERAL_CATEGORY_SURROGATE_V1,
-        GeneralCategory::LowercaseLetter => key::GENERAL_CATEGORY_LOWERCASE_LETTER_V1,
-        GeneralCategory::ModifierLetter => key::GENERAL_CATEGORY_MODIFIER_LETTER_V1,
-        GeneralCategory::OtherLetter => key::GENERAL_CATEGORY_OTHER_LETTER_V1,
-        GeneralCategory::TitlecaseLetter => key::GENERAL_CATEGORY_TITLECASE_LETTER_V1,
-        GeneralCategory::UppercaseLetter => key::GENERAL_CATEGORY_UPPERCASE_LETTER_V1,
-        GeneralCategory::SpacingMark => key::GENERAL_CATEGORY_SPACING_MARK_V1,
-        GeneralCategory::EnclosingMark => key::GENERAL_CATEGORY_ENCLOSING_MARK_V1,
-        GeneralCategory::NonspacingMark => key::GENERAL_CATEGORY_NONSPACING_MARK_V1,
-        GeneralCategory::DecimalNumber => key::GENERAL_CATEGORY_DIGIT_V1,
-        GeneralCategory::LetterNumber => key::GENERAL_CATEGORY_LETTER_NUMBER_V1,
-        GeneralCategory::OtherNumber => key::GENERAL_CATEGORY_OTHER_NUMBER_V1,
-        GeneralCategory::ConnectorPunctuation => key::GENERAL_CATEGORY_CONNECTOR_PUNCTUATION_V1,
-        GeneralCategory::DashPunctuation => key::GENERAL_CATEGORY_DASH_PUNCTUATION_V1,
-        GeneralCategory::ClosePunctuation => key::GENERAL_CATEGORY_CLOSE_PUNCTUATION_V1,
-        GeneralCategory::FinalPunctuation => key::GENERAL_CATEGORY_FINAL_PUNCTUATION_V1,
-        GeneralCategory::InitialPunctuation => key::GENERAL_CATEGORY_INITIAL_PUNCTUATION_V1,
-        GeneralCategory::OtherPunctuation => key::GENERAL_CATEGORY_OTHER_PUNCTUATION_V1,
-        GeneralCategory::OpenPunctuation => key::GENERAL_CATEGORY_OPEN_PUNCTUATION_V1,
-        GeneralCategory::CurrencySymbol => key::GENERAL_CATEGORY_CURRENCY_SYMBOL_V1,
-        GeneralCategory::ModifierSymbol => key::GENERAL_CATEGORY_MODIFIER_SYMBOL_V1,
-        GeneralCategory::MathSymbol => key::GENERAL_CATEGORY_MATH_SYMBOL_V1,
-        GeneralCategory::OtherSymbol => key::GENERAL_CATEGORY_OTHER_SYMBOL_V1,
-        GeneralCategory::LineSeparator => key::GENERAL_CATEGORY_LINE_SEPARATOR_V1,
-        GeneralCategory::ParagraphSeparator => key::GENERAL_CATEGORY_PARAGRAPH_SEPARATOR_V1,
-        GeneralCategory::SpaceSeparator => key::GENERAL_CATEGORY_SPACE_SEPARATOR_V1,
-    };
-    get_uniset(provider, key)
-}
-
 /// Return a [`UnicodeSet`] for a value or a grouping of values of the General_Category property. See [`GeneralCategoryGroup`].
 ///
 /// [`UnicodeSet`]: icu_uniset::UnicodeSet
 pub fn get_for_general_category_group<D>(
     provider: &D,
     enum_val: GeneralCategoryGroup,
-) -> UnisetResult
+) -> Result<UnicodeSet<'static>, PropertiesError>
 where
-    D: DynProvider<UnicodePropertyV1Marker> + ?Sized,
+    D: DynProvider<UnicodePropertyMapV1Marker<GeneralCategory>> + ?Sized,
 {
-    let key = match enum_val {
-        GeneralCategoryGroup::Other => key::GENERAL_CATEGORY_OTHER_V1,
-        GeneralCategoryGroup::Control => key::GENERAL_CATEGORY_CONTROL_V1,
-        GeneralCategoryGroup::Format => key::GENERAL_CATEGORY_FORMAT_V1,
-        GeneralCategoryGroup::Unassigned => key::GENERAL_CATEGORY_UNASSIGNED_V1,
-        GeneralCategoryGroup::PrivateUse => key::GENERAL_CATEGORY_PRIVATE_USE_V1,
-        GeneralCategoryGroup::Surrogate => key::GENERAL_CATEGORY_SURROGATE_V1,
-        GeneralCategoryGroup::Letter => key::GENERAL_CATEGORY_LETTER_V1,
-        GeneralCategoryGroup::CasedLetter => key::GENERAL_CATEGORY_CASED_LETTER_V1,
-        GeneralCategoryGroup::LowercaseLetter => key::GENERAL_CATEGORY_LOWERCASE_LETTER_V1,
-        GeneralCategoryGroup::ModifierLetter => key::GENERAL_CATEGORY_MODIFIER_LETTER_V1,
-        GeneralCategoryGroup::OtherLetter => key::GENERAL_CATEGORY_OTHER_LETTER_V1,
-        GeneralCategoryGroup::TitlecaseLetter => key::GENERAL_CATEGORY_TITLECASE_LETTER_V1,
-        GeneralCategoryGroup::UppercaseLetter => key::GENERAL_CATEGORY_UPPERCASE_LETTER_V1,
-        GeneralCategoryGroup::Mark => key::GENERAL_CATEGORY_MARK_V1,
-        GeneralCategoryGroup::SpacingMark => key::GENERAL_CATEGORY_SPACING_MARK_V1,
-        GeneralCategoryGroup::EnclosingMark => key::GENERAL_CATEGORY_ENCLOSING_MARK_V1,
-        GeneralCategoryGroup::NonspacingMark => key::GENERAL_CATEGORY_NONSPACING_MARK_V1,
-        GeneralCategoryGroup::Number => key::GENERAL_CATEGORY_NUMBER_V1,
-        GeneralCategoryGroup::DecimalNumber => key::GENERAL_CATEGORY_DIGIT_V1,
-        GeneralCategoryGroup::LetterNumber => key::GENERAL_CATEGORY_LETTER_NUMBER_V1,
-        GeneralCategoryGroup::OtherNumber => key::GENERAL_CATEGORY_OTHER_NUMBER_V1,
-        GeneralCategoryGroup::Punctuation => key::GENERAL_CATEGORY_PUNCTUATION_V1,
-        GeneralCategoryGroup::ConnectorPunctuation => {
-            key::GENERAL_CATEGORY_CONNECTOR_PUNCTUATION_V1
-        }
-        GeneralCategoryGroup::DashPunctuation => key::GENERAL_CATEGORY_DASH_PUNCTUATION_V1,
-        GeneralCategoryGroup::ClosePunctuation => key::GENERAL_CATEGORY_CLOSE_PUNCTUATION_V1,
-        GeneralCategoryGroup::FinalPunctuation => key::GENERAL_CATEGORY_FINAL_PUNCTUATION_V1,
-        GeneralCategoryGroup::InitialPunctuation => key::GENERAL_CATEGORY_INITIAL_PUNCTUATION_V1,
-        GeneralCategoryGroup::OtherPunctuation => key::GENERAL_CATEGORY_OTHER_PUNCTUATION_V1,
-        GeneralCategoryGroup::OpenPunctuation => key::GENERAL_CATEGORY_OPEN_PUNCTUATION_V1,
-        GeneralCategoryGroup::Symbol => key::GENERAL_CATEGORY_SYMBOL_V1,
-        GeneralCategoryGroup::CurrencySymbol => key::GENERAL_CATEGORY_CURRENCY_SYMBOL_V1,
-        GeneralCategoryGroup::ModifierSymbol => key::GENERAL_CATEGORY_MODIFIER_SYMBOL_V1,
-        GeneralCategoryGroup::MathSymbol => key::GENERAL_CATEGORY_MATH_SYMBOL_V1,
-        GeneralCategoryGroup::OtherSymbol => key::GENERAL_CATEGORY_OTHER_SYMBOL_V1,
-        GeneralCategoryGroup::Separator => key::GENERAL_CATEGORY_SEPARATOR_V1,
-        GeneralCategoryGroup::LineSeparator => key::GENERAL_CATEGORY_LINE_SEPARATOR_V1,
-        GeneralCategoryGroup::ParagraphSeparator => key::GENERAL_CATEGORY_PARAGRAPH_SEPARATOR_V1,
-        GeneralCategoryGroup::SpaceSeparator => key::GENERAL_CATEGORY_SPACE_SEPARATOR_V1,
-        _ => return Err(PropertiesError::UnknownGeneralCategoryGroup(enum_val.0)),
-    };
-    get_uniset(provider, key)
+    let gc_map_payload: DataPayload<UnicodePropertyMapV1Marker<GeneralCategory>> =
+        maps::get_general_category(provider)?;
+    let gc_data_struct = gc_map_payload.get();
+    let gc = &gc_data_struct.code_point_trie;
+    let matching_gc_ranges = gc
+        .iter_ranges()
+        .filter(|cpm_range| (1 << cpm_range.value as u32) & enum_val.0 != 0)
+        .map(|cpm_range| cpm_range.range);
+    Ok(UnicodeSet::from_iter(matching_gc_ranges))
 }
 
-/// Return a [`UnicodeSet`] for a particular value of the Script Unicode enumerated property. See [`Script`].
-///
-/// [`UnicodeSet`]: icu_uniset::UnicodeSet
-pub fn get_for_script<D>(provider: &D, enum_val: Script) -> UnisetResult
-where
-    D: DynProvider<UnicodePropertyV1Marker> + ?Sized,
-{
-    let key = match enum_val {
-        Script::Adlam => key::SCRIPT_ADLAM_V1,
-        Script::Ahom => key::SCRIPT_AHOM_V1,
-        Script::AnatolianHieroglyphs => key::SCRIPT_ANATOLIAN_HIEROGLYPHS_V1,
-        Script::Arabic => key::SCRIPT_ARABIC_V1,
-        Script::Armenian => key::SCRIPT_ARMENIAN_V1,
-        Script::Avestan => key::SCRIPT_AVESTAN_V1,
-        Script::Balinese => key::SCRIPT_BALINESE_V1,
-        Script::Bamum => key::SCRIPT_BAMUM_V1,
-        Script::BassaVah => key::SCRIPT_BASSA_VAH_V1,
-        Script::Batak => key::SCRIPT_BATAK_V1,
-        Script::Bengali => key::SCRIPT_BENGALI_V1,
-        Script::Bhaiksuki => key::SCRIPT_BHAIKSUKI_V1,
-        Script::Bopomofo => key::SCRIPT_BOPOMOFO_V1,
-        Script::Brahmi => key::SCRIPT_BRAHMI_V1,
-        Script::Braille => key::SCRIPT_BRAILLE_V1,
-        Script::Buginese => key::SCRIPT_BUGINESE_V1,
-        Script::Buhid => key::SCRIPT_BUHID_V1,
-        Script::CanadianAboriginal => key::SCRIPT_CANADIAN_ABORIGINAL_V1,
-        Script::Carian => key::SCRIPT_CARIAN_V1,
-        Script::CaucasianAlbanian => key::SCRIPT_CAUCASIAN_ALBANIAN_V1,
-        Script::Chakma => key::SCRIPT_CHAKMA_V1,
-        Script::Cham => key::SCRIPT_CHAM_V1,
-        Script::Cherokee => key::SCRIPT_CHEROKEE_V1,
-        Script::Chorasmian => key::SCRIPT_CHORASMIAN_V1,
-        Script::Common => key::SCRIPT_COMMON_V1,
-        Script::Coptic => key::SCRIPT_COPTIC_V1,
-        Script::Cuneiform => key::SCRIPT_CUNEIFORM_V1,
-        Script::Cypriot => key::SCRIPT_CYPRIOT_V1,
-        Script::CyproMinoan => key::SCRIPT_CYPRO_MINOAN_V1,
-        Script::Cyrillic => key::SCRIPT_CYRILLIC_V1,
-        Script::Deseret => key::SCRIPT_DESERET_V1,
-        Script::Devanagari => key::SCRIPT_DEVANAGARI_V1,
-        Script::DivesAkuru => key::SCRIPT_DIVES_AKURU_V1,
-        Script::Dogra => key::SCRIPT_DOGRA_V1,
-        Script::Duployan => key::SCRIPT_DUPLOYAN_V1,
-        Script::EgyptianHieroglyphs => key::SCRIPT_EGYPTIAN_HIEROGLYPHS_V1,
-        Script::Elbasan => key::SCRIPT_ELBASAN_V1,
-        Script::Elymaic => key::SCRIPT_ELYMAIC_V1,
-        Script::Ethiopic => key::SCRIPT_ETHIOPIC_V1,
-        Script::Georgian => key::SCRIPT_GEORGIAN_V1,
-        Script::Glagolitic => key::SCRIPT_GLAGOLITIC_V1,
-        Script::Gothic => key::SCRIPT_GOTHIC_V1,
-        Script::Grantha => key::SCRIPT_GRANTHA_V1,
-        Script::Greek => key::SCRIPT_GREEK_V1,
-        Script::Gujarati => key::SCRIPT_GUJARATI_V1,
-        Script::GunjalaGondi => key::SCRIPT_GUNJALA_GONDI_V1,
-        Script::Gurmukhi => key::SCRIPT_GURMUKHI_V1,
-        Script::Han => key::SCRIPT_HAN_V1,
-        Script::Hangul => key::SCRIPT_HANGUL_V1,
-        Script::HanifiRohingya => key::SCRIPT_HANIFI_ROHINGYA_V1,
-        Script::Hanunoo => key::SCRIPT_HANUNOO_V1,
-        Script::Hatran => key::SCRIPT_HATRAN_V1,
-        Script::Hebrew => key::SCRIPT_HEBREW_V1,
-        Script::Hiragana => key::SCRIPT_HIRAGANA_V1,
-        Script::ImperialAramaic => key::SCRIPT_IMPERIAL_ARAMAIC_V1,
-        Script::Inherited => key::SCRIPT_INHERITED_V1,
-        Script::InscriptionalPahlavi => key::SCRIPT_INSCRIPTIONAL_PAHLAVI_V1,
-        Script::InscriptionalParthian => key::SCRIPT_INSCRIPTIONAL_PARTHIAN_V1,
-        Script::Javanese => key::SCRIPT_JAVANESE_V1,
-        Script::Kaithi => key::SCRIPT_KAITHI_V1,
-        Script::Kannada => key::SCRIPT_KANNADA_V1,
-        Script::Katakana => key::SCRIPT_KATAKANA_V1,
-        Script::KayahLi => key::SCRIPT_KAYAH_LI_V1,
-        Script::Kharoshthi => key::SCRIPT_KHAROSHTHI_V1,
-        Script::KhitanSmallScript => key::SCRIPT_KHITAN_SMALL_SCRIPT_V1,
-        Script::Khmer => key::SCRIPT_KHMER_V1,
-        Script::Khojki => key::SCRIPT_KHOJKI_V1,
-        Script::Khudawadi => key::SCRIPT_KHUDAWADI_V1,
-        Script::Lao => key::SCRIPT_LAO_V1,
-        Script::Latin => key::SCRIPT_LATIN_V1,
-        Script::Lepcha => key::SCRIPT_LEPCHA_V1,
-        Script::Limbu => key::SCRIPT_LIMBU_V1,
-        Script::LinearA => key::SCRIPT_LINEAR_A_V1,
-        Script::LinearB => key::SCRIPT_LINEAR_B_V1,
-        Script::Lisu => key::SCRIPT_LISU_V1,
-        Script::Lycian => key::SCRIPT_LYCIAN_V1,
-        Script::Lydian => key::SCRIPT_LYDIAN_V1,
-        Script::Mahajani => key::SCRIPT_MAHAJANI_V1,
-        Script::Makasar => key::SCRIPT_MAKASAR_V1,
-        Script::Malayalam => key::SCRIPT_MALAYALAM_V1,
-        Script::Mandaic => key::SCRIPT_MANDAIC_V1,
-        Script::Manichaean => key::SCRIPT_MANICHAEAN_V1,
-        Script::Marchen => key::SCRIPT_MARCHEN_V1,
-        Script::MasaramGondi => key::SCRIPT_MASARAM_GONDI_V1,
-        Script::Medefaidrin => key::SCRIPT_MEDEFAIDRIN_V1,
-        Script::MeeteiMayek => key::SCRIPT_MEETEI_MAYEK_V1,
-        Script::MendeKikakui => key::SCRIPT_MENDE_KIKAKUI_V1,
-        Script::MeroiticCursive => key::SCRIPT_MEROITIC_CURSIVE_V1,
-        Script::MeroiticHieroglyphs => key::SCRIPT_MEROITIC_HIEROGLYPHS_V1,
-        Script::Miao => key::SCRIPT_MIAO_V1,
-        Script::Modi => key::SCRIPT_MODI_V1,
-        Script::Mongolian => key::SCRIPT_MONGOLIAN_V1,
-        Script::Mro => key::SCRIPT_MRO_V1,
-        Script::Multani => key::SCRIPT_MULTANI_V1,
-        Script::Myanmar => key::SCRIPT_MYANMAR_V1,
-        Script::Nabataean => key::SCRIPT_NABATAEAN_V1,
-        Script::Nandinagari => key::SCRIPT_NANDINAGARI_V1,
-        Script::NewTaiLue => key::SCRIPT_NEW_TAI_LUE_V1,
-        Script::Newa => key::SCRIPT_NEWA_V1,
-        Script::Nko => key::SCRIPT_NKO_V1,
-        Script::Nushu => key::SCRIPT_NUSHU_V1,
-        Script::NyiakengPuachueHmong => key::SCRIPT_NYIAKENG_PUACHUE_HMONG_V1,
-        Script::Ogham => key::SCRIPT_OGHAM_V1,
-        Script::OlChiki => key::SCRIPT_OL_CHIKI_V1,
-        Script::OldHungarian => key::SCRIPT_OLD_HUNGARIAN_V1,
-        Script::OldItalic => key::SCRIPT_OLD_ITALIC_V1,
-        Script::OldNorthArabian => key::SCRIPT_OLD_NORTH_ARABIAN_V1,
-        Script::OldPermic => key::SCRIPT_OLD_PERMIC_V1,
-        Script::OldPersian => key::SCRIPT_OLD_PERSIAN_V1,
-        Script::OldSogdian => key::SCRIPT_OLD_SOGDIAN_V1,
-        Script::OldSouthArabian => key::SCRIPT_OLD_SOUTH_ARABIAN_V1,
-        Script::OldTurkic => key::SCRIPT_OLD_TURKIC_V1,
-        Script::OldUyghur => key::SCRIPT_OLD_UYGHUR_V1,
-        Script::Oriya => key::SCRIPT_ORIYA_V1,
-        Script::Osage => key::SCRIPT_OSAGE_V1,
-        Script::Osmanya => key::SCRIPT_OSMANYA_V1,
-        Script::PahawhHmong => key::SCRIPT_PAHAWH_HMONG_V1,
-        Script::Palmyrene => key::SCRIPT_PALMYRENE_V1,
-        Script::PauCinHau => key::SCRIPT_PAU_CIN_HAU_V1,
-        Script::PhagsPa => key::SCRIPT_PHAGS_PA_V1,
-        Script::Phoenician => key::SCRIPT_PHOENICIAN_V1,
-        Script::PsalterPahlavi => key::SCRIPT_PSALTER_PAHLAVI_V1,
-        Script::Rejang => key::SCRIPT_REJANG_V1,
-        Script::Runic => key::SCRIPT_RUNIC_V1,
-        Script::Samaritan => key::SCRIPT_SAMARITAN_V1,
-        Script::Saurashtra => key::SCRIPT_SAURASHTRA_V1,
-        Script::Sharada => key::SCRIPT_SHARADA_V1,
-        Script::Shavian => key::SCRIPT_SHAVIAN_V1,
-        Script::Siddham => key::SCRIPT_SIDDHAM_V1,
-        Script::SignWriting => key::SCRIPT_SIGNWRITING_V1,
-        Script::Sinhala => key::SCRIPT_SINHALA_V1,
-        Script::Sogdian => key::SCRIPT_SOGDIAN_V1,
-        Script::SoraSompeng => key::SCRIPT_SORA_SOMPENG_V1,
-        Script::Soyombo => key::SCRIPT_SOYOMBO_V1,
-        Script::Sundanese => key::SCRIPT_SUNDANESE_V1,
-        Script::SylotiNagri => key::SCRIPT_SYLOTI_NAGRI_V1,
-        Script::Syriac => key::SCRIPT_SYRIAC_V1,
-        Script::Tagalog => key::SCRIPT_TAGALOG_V1,
-        Script::Tagbanwa => key::SCRIPT_TAGBANWA_V1,
-        Script::TaiLe => key::SCRIPT_TAI_LE_V1,
-        Script::TaiTham => key::SCRIPT_TAI_THAM_V1,
-        Script::TaiViet => key::SCRIPT_TAI_VIET_V1,
-        Script::Takri => key::SCRIPT_TAKRI_V1,
-        Script::Tamil => key::SCRIPT_TAMIL_V1,
-        Script::Tangsa => key::SCRIPT_TANGSA_V1,
-        Script::Tangut => key::SCRIPT_TANGUT_V1,
-        Script::Telugu => key::SCRIPT_TELUGU_V1,
-        Script::Thaana => key::SCRIPT_THAANA_V1,
-        Script::Thai => key::SCRIPT_THAI_V1,
-        Script::Tibetan => key::SCRIPT_TIBETAN_V1,
-        Script::Tifinagh => key::SCRIPT_TIFINAGH_V1,
-        Script::Tirhuta => key::SCRIPT_TIRHUTA_V1,
-        Script::Toto => key::SCRIPT_TOTO_V1,
-        Script::Ugaritic => key::SCRIPT_UGARITIC_V1,
-        Script::Unknown => key::SCRIPT_UNKNOWN_V1,
-        Script::Vai => key::SCRIPT_VAI_V1,
-        Script::Vithkuqi => key::SCRIPT_VITHKUQI_V1,
-        Script::Wancho => key::SCRIPT_WANCHO_V1,
-        Script::WarangCiti => key::SCRIPT_WARANG_CITI_V1,
-        Script::Yezidi => key::SCRIPT_YEZIDI_V1,
-        Script::Yi => key::SCRIPT_YI_V1,
-        Script::ZanabazarSquare => key::SCRIPT_ZANABAZAR_SQUARE_V1,
-        _ => return Err(PropertiesError::UnknownScriptId(enum_val.0)),
-    };
-    get_uniset(provider, key)
+#[cfg(test)]
+mod tests {
+
+    #[test]
+    fn test_general_category() {
+        use icu::properties::sets;
+        use icu::properties::GeneralCategoryGroup;
+
+        let provider = icu_testdata::get_provider();
+        let digits = sets::get_for_general_category_group(&provider, GeneralCategoryGroup::Number)
+            .expect("The data should be valid");
+
+        assert!(digits.contains('5'));
+        assert!(digits.contains('\u{0665}')); // U+0665 ARABIC-INDIC DIGIT FIVE
+        assert!(digits.contains('\u{096b}')); // U+0969 DEVANAGARI DIGIT FIVE
+
+        assert!(!digits.contains('A'));
+    }
+
+    #[test]
+    fn test_script() {
+        use icu::properties::maps;
+        use icu::properties::Script;
+
+        let provider = icu_testdata::get_provider();
+        let payload = maps::get_script(&provider).expect("The data should be valid");
+        let data_struct = payload.get();
+        let script = &data_struct.code_point_trie;
+        let thai = script.get_set_for_value(Script::Thai);
+
+        assert!(thai.contains('\u{0e01}')); // U+0E01 THAI CHARACTER KO KAI
+        assert!(thai.contains('\u{0e50}')); // U+0E50 THAI DIGIT ZERO
+
+        assert!(!thai.contains('A'));
+        assert!(!thai.contains('\u{0e3f}')); // U+0E50 THAI CURRENCY SYMBOL BAHT
+    }
+
+    #[test]
+    fn test_gc_groupings() {
+        use icu::properties::{maps, sets};
+        use icu::properties::{GeneralCategory, GeneralCategoryGroup};
+        use icu_uniset::UnicodeSetBuilder;
+
+        let provider = icu_testdata::get_provider();
+
+        let test_group = |category: GeneralCategoryGroup, subcategories: &[GeneralCategory]| {
+            let category_set = sets::get_for_general_category_group(&provider, category)
+                .expect("The data should be valid");
+
+            let gc_payload =
+                maps::get_general_category(&provider).expect("The data should be valid");
+            let data_struct = gc_payload.get();
+            let gc = &data_struct.code_point_trie;
+
+            let mut builder = UnicodeSetBuilder::new();
+            for subcategory in subcategories {
+                builder.add_set(&gc.get_set_for_value(*subcategory));
+            }
+            let combined_set = builder.build();
+            println!("{:?} {:?}", category, subcategories);
+            assert_eq!(
+                category_set.get_inversion_list(),
+                combined_set.get_inversion_list()
+            );
+        };
+
+        test_group(
+            GeneralCategoryGroup::Letter,
+            &[
+                GeneralCategory::UppercaseLetter,
+                GeneralCategory::LowercaseLetter,
+                GeneralCategory::TitlecaseLetter,
+                GeneralCategory::ModifierLetter,
+                GeneralCategory::OtherLetter,
+            ],
+        );
+        test_group(
+            GeneralCategoryGroup::Other,
+            &[
+                GeneralCategory::Control,
+                GeneralCategory::Format,
+                GeneralCategory::Unassigned,
+                GeneralCategory::PrivateUse,
+                GeneralCategory::Surrogate,
+            ],
+        );
+        test_group(
+            GeneralCategoryGroup::Mark,
+            &[
+                GeneralCategory::SpacingMark,
+                GeneralCategory::EnclosingMark,
+                GeneralCategory::NonspacingMark,
+            ],
+        );
+        test_group(
+            GeneralCategoryGroup::Number,
+            &[
+                GeneralCategory::DecimalNumber,
+                GeneralCategory::LetterNumber,
+                GeneralCategory::OtherNumber,
+            ],
+        );
+        test_group(
+            GeneralCategoryGroup::Punctuation,
+            &[
+                GeneralCategory::ConnectorPunctuation,
+                GeneralCategory::DashPunctuation,
+                GeneralCategory::ClosePunctuation,
+                GeneralCategory::FinalPunctuation,
+                GeneralCategory::InitialPunctuation,
+                GeneralCategory::OtherPunctuation,
+                GeneralCategory::OpenPunctuation,
+            ],
+        );
+        test_group(
+            GeneralCategoryGroup::Symbol,
+            &[
+                GeneralCategory::CurrencySymbol,
+                GeneralCategory::ModifierSymbol,
+                GeneralCategory::MathSymbol,
+                GeneralCategory::OtherSymbol,
+            ],
+        );
+        test_group(
+            GeneralCategoryGroup::Separator,
+            &[
+                GeneralCategory::LineSeparator,
+                GeneralCategory::ParagraphSeparator,
+                GeneralCategory::SpaceSeparator,
+            ],
+        );
+    }
+
+    #[test]
+    fn test_gc_surrogate() {
+        use icu::properties::maps;
+        use icu::properties::GeneralCategory;
+
+        let provider = icu_testdata::get_provider();
+        let gc_payload = maps::get_general_category(&provider).expect("The data should be valid");
+        let data_struct = gc_payload.get();
+        let gc = &data_struct.code_point_trie;
+        let surrogates = gc.get_set_for_value(GeneralCategory::Surrogate);
+
+        assert!(surrogates.contains_u32(0xd800));
+        assert!(surrogates.contains_u32(0xd900));
+        assert!(surrogates.contains_u32(0xdfff));
+
+        assert!(!surrogates.contains('A'));
+    }
 }

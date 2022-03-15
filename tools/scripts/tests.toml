@@ -23,9 +23,3 @@ description = "Run all Rust doctests with all features"
 category = "ICU4X Development"
 command = "cargo"
 args = ["test", "--all-features", "--doc"]
-
-[tasks.test-docs-default]
-description = "Run all Rust doctests with default features"
-category = "ICU4X Development"
-command = "cargo"
-args = ["test", "--doc"]

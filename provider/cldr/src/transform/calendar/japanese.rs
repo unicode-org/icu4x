@@ -10,12 +10,14 @@ use icu_calendar::provider::*;
 use icu_locid::langid;
 use icu_provider::iter::IterableResourceProvider;
 use icu_provider::prelude::*;
-use litemap::LiteMap;
+use std::collections::BTreeMap;
 use std::convert::TryFrom;
 use std::env;
 use std::path::PathBuf;
 use std::str::FromStr;
 use tinystr::TinyStr16;
+use zerovec::ule::AsULE;
+use zerovec::ZeroVec;
 
 const JAPANESE_FILE: &str = include_str!("./snapshot-japanese@1.json");
 
@@ -88,8 +90,8 @@ impl ResourceProvider<JapaneseErasV1Marker> for JapaneseErasProvider {
         let era_dates_map = &era_dates.supplemental.calendar_data.japanese.eras;
 
         let mut ret = JapaneseErasV1 {
-            dates_to_eras: LiteMap::new(),
-            dates_to_historical_eras: LiteMap::new(),
+            dates_to_eras: ZeroVec::new(),
+            dates_to_historical_eras: ZeroVec::new(),
         };
 
         for (era_id, era_name) in era_name_map.iter() {
@@ -123,11 +125,18 @@ impl ResourceProvider<JapaneseErasV1Marker> for JapaneseErasProvider {
             let code =
                 era_to_code(era_name, start_date.year).map_err(|e| Error::Custom(e, None))?;
             if start_date.year >= 1868 {
-                ret.dates_to_eras.insert(start_date, code);
+                ret.dates_to_eras
+                    .to_mut()
+                    .push((start_date, code).to_unaligned());
             } else {
-                ret.dates_to_historical_eras.insert(start_date, code);
+                ret.dates_to_historical_eras
+                    .to_mut()
+                    .push((start_date, code).to_unaligned());
             }
         }
+
+        ret.dates_to_eras.to_mut().sort_unstable();
+        ret.dates_to_historical_eras.to_mut().sort_unstable();
 
         // Integrity check
         //
@@ -209,7 +218,12 @@ fn era_to_code(original: &str, year: i32) -> Result<TinyStr16, String> {
     Ok(code)
 }
 
-icu_provider::impl_dyn_provider!(JapaneseErasProvider, [JapaneseErasV1Marker,], SERDE_SE);
+icu_provider::impl_dyn_provider!(
+    JapaneseErasProvider,
+    [JapaneseErasV1Marker,],
+    SERDE_SE,
+    impl DataConverter
+);
 
 impl IterableResourceProvider<JapaneseErasV1Marker> for JapaneseErasProvider {
     fn supported_options(&self) -> Result<Box<dyn Iterator<Item = ResourceOptions>>, DataError> {
@@ -217,17 +231,14 @@ impl IterableResourceProvider<JapaneseErasV1Marker> for JapaneseErasProvider {
     }
 }
 
-pub fn get_era_code_map() -> LiteMap<String, TinyStr16> {
+pub fn get_era_code_map() -> BTreeMap<String, TinyStr16> {
     let snapshot: JapaneseErasV1 = serde_json::from_str(JAPANESE_FILE)
         .expect("Failed to parse the precached snapshot-japanese@1.json. This is a bug.");
-    let mut map = LiteMap::new();
-    for (i, value) in snapshot
+    snapshot
         .dates_to_historical_eras
-        .iter_values()
-        .chain(snapshot.dates_to_eras.iter_values())
+        .iter()
+        .chain(snapshot.dates_to_eras.iter())
         .enumerate()
-    {
-        map.insert(i.to_string(), *value);
-    }
-    map
+        .map(|(i, (_, value))| (i.to_string(), value))
+        .collect()
 }

@@ -12,7 +12,7 @@ use icu_provider::iter::IterableResourceProvider;
 use icu_provider::prelude::*;
 use std::convert::TryFrom;
 use std::path::PathBuf;
-use tinystr::{TinyStr4, TinyStr8};
+use tinystr::TinyAsciiStr;
 
 /// A data provider reading from CLDR JSON likely subtags rule files.
 #[derive(Debug)]
@@ -54,7 +54,12 @@ impl ResourceProvider<AliasesV1Marker> for AliasesProvider {
     }
 }
 
-icu_provider::impl_dyn_provider!(AliasesProvider, [AliasesV1Marker,], SERDE_SE);
+icu_provider::impl_dyn_provider!(
+    AliasesProvider,
+    [AliasesV1Marker,],
+    SERDE_SE,
+    impl DataConverter
+);
 
 impl IterableResourceProvider<AliasesV1Marker> for AliasesProvider {
     fn supported_options(&self) -> Result<Box<dyn Iterator<Item = ResourceOptions>>, DataError> {
@@ -97,29 +102,28 @@ impl From<&cldr_serde::aliases::Resource> for AliasesV1 {
         // for commonly used languages. With the current CLDR data, all aliases end up in
         // a special case, but we retain the catchall language category in case new or
         // customized CLDR data is used.
-        let mut language: Vec<(LanguageIdentifier, LanguageIdentifier)> = Vec::new();
-        let mut language_variants: Vec<(LanguageIdentifier, LanguageIdentifier)> = Vec::new();
-        let mut language_region: Vec<(TinyStr4, TinyStr4, LanguageIdentifier)> = Vec::new();
-        let mut sgn_region: Vec<(TinyStr4, LanguageIdentifier)> = Vec::new();
-        let mut language_len2: Vec<(TinyStr4, LanguageIdentifier)> = Vec::new();
-        let mut language_len3: Vec<(TinyStr4, LanguageIdentifier)> = Vec::new();
+        let mut language = Vec::new();
+        let mut language_variants = Vec::new();
+        let mut sgn_region = Vec::new();
+        let mut language_len2 = Vec::new();
+        let mut language_len3 = Vec::new();
 
-        let mut script: Vec<(TinyStr4, TinyStr4)> = Vec::new();
+        let mut script = Vec::new();
 
         // There are many more aliases for numeric region codes than for alphabetic,
         // so by storing them separately, we can minimize comparisons for alphabetic codes.
-        let mut region_alpha: Vec<(TinyStr4, TinyStr4)> = Vec::new();
-        let mut region_num: Vec<(TinyStr4, TinyStr4)> = Vec::new();
+        let mut region_alpha = Vec::new();
+        let mut region_num = Vec::new();
 
         // Complex regions are cases similar to the Soviet Union, where an old region
         // is replaced by multiple new regions. Determining the new region requires using
         // likely subtags. Many implementations preprocess the complex regions into simple
         // regions as part of data import, but that would introduce a dependency between
         // CDLR providers that we're not currently set up to handle.
-        let mut complex_region: Vec<(TinyStr4, Vec<TinyStr4>)> = Vec::new();
+        let mut complex_region = Vec::new();
 
-        let mut variant: Vec<(TinyStr8, TinyStr8)> = Vec::new();
-        let mut subdivision: Vec<(TinyStr8, TinyStr8)> = Vec::new();
+        let mut variant = Vec::new();
+        let mut subdivision = Vec::new();
 
         // Step 2. Capture all languageAlias rules where the type is an invalid languageId
         // into a set of BCP47 LegacyRules. This implementation discards these.
@@ -134,14 +138,14 @@ impl From<&cldr_serde::aliases::Resource> for AliasesV1 {
                         continue;
                     }
 
-                    let maybe_lang: Option<TinyStr4> = langid.language.into();
+                    let maybe_lang: Option<TinyAsciiStr<3>> = langid.language.into();
                     if let Some(lang) = maybe_lang {
                         if langid.region.is_none() && langid.variants.is_empty() {
                             // Relatively few aliases exist for two character language identifiers,
                             // so we store them separately to not slow down canonicalization of
                             // common identifiers.
                             if lang.len() == 2 {
-                                language_len2.push((lang, replacement));
+                                language_len2.push((lang.resize(), replacement));
                             } else {
                                 language_len3.push((lang, replacement));
                             }
@@ -180,9 +184,9 @@ impl From<&cldr_serde::aliases::Resource> for AliasesV1 {
                 continue;
             }
 
-            if let Ok(replacement) = alias.1.replacement.parse::<TinyStr4>() {
+            if let Ok(replacement) = alias.1.replacement.parse::<TinyAsciiStr<3>>() {
                 if alias.0.is_ascii_alphabetic() {
-                    region_alpha.push((alias.0, replacement));
+                    region_alpha.push((alias.0.resize(), replacement));
                 } else {
                     region_num.push((alias.0, replacement));
                 }
@@ -194,7 +198,7 @@ impl From<&cldr_serde::aliases::Resource> for AliasesV1 {
                         .replacement
                         .split(' ')
                         .into_iter()
-                        .filter_map(|r| r.parse::<TinyStr4>().ok())
+                        .filter_map(|r| r.parse::<TinyAsciiStr<3>>().ok())
                         .collect(),
                 ));
             }
@@ -215,9 +219,9 @@ impl From<&cldr_serde::aliases::Resource> for AliasesV1 {
                         // Following http://unicode.org/reports/tr35/#Canonical_Unicode_Locale_Identifiers,
                         // append "zzzz" to make this syntactically correct.
                         let replacement = r.to_string().to_ascii_lowercase() + "zzzz";
-                        TinyStr8::from_bytes(replacement.as_bytes()).ok()
+                        <TinyAsciiStr<7>>::from_bytes(replacement.as_bytes()).ok()
                     } else {
-                        TinyStr8::from_bytes(r.as_bytes()).ok()
+                        <TinyAsciiStr<7>>::from_bytes(r.as_bytes()).ok()
                     }
                 })
                 .next()
@@ -231,7 +235,6 @@ impl From<&cldr_serde::aliases::Resource> for AliasesV1 {
         //      2. and then alphabetically by field.
         language.sort_unstable_by(|a, b| rules_cmp(&a.0, &b.0));
         language_variants.sort_unstable_by(|a, b| rules_cmp(&a.0, &b.0));
-        language_region.sort_unstable();
         sgn_region.sort_unstable();
         language_len2.sort_unstable();
         language_len3.sort_unstable();
@@ -280,6 +283,8 @@ fn test_rules_cmp() {
 
 #[test]
 fn test_basic() {
+    use tinystr::tinystr;
+
     let cldr_paths = crate::cldr_paths::for_test();
     let provider = AliasesProvider::try_from(&cldr_paths as &dyn CldrPaths).unwrap();
     let data: DataPayload<AliasesV1Marker> = provider
@@ -305,11 +310,10 @@ fn test_basic() {
 
     // Spot check a few expected results. There are more extensive tests in the
     // locale canonicalizer itself.
-    let lang = TinyStr4::from_str("iw").unwrap();
     let res = data
         .get()
         .language_len2
-        .binary_search_by_key(&lang, |alias| alias.0);
+        .binary_search_by_key(&tinystr!(2, "iw"), |alias| alias.0);
     assert!(res.is_ok());
     assert_eq!(data.get().language_len2[res.unwrap()].0, "iw");
     assert_eq!(data.get().language_len2[res.unwrap()].1, "he");
@@ -317,23 +321,16 @@ fn test_basic() {
     let res = data
         .get()
         .language_len3
-        .binary_search_by_key(&lang, |alias| alias.0);
+        .binary_search_by_key(&tinystr!(3, "iw"), |alias| alias.0);
     assert!(res.is_err());
 
     assert_eq!(data.get().script[0].0, "Qaai");
     assert_eq!(data.get().script[0].1, "Zinh");
 
-    let region = TinyStr4::from_str("768").unwrap();
-    let res = data
-        .get()
-        .region_alpha
-        .binary_search_by_key(&region, |alias| alias.0);
-    assert!(res.is_err());
-
     let res = data
         .get()
         .region_num
-        .binary_search_by_key(&region, |alias| alias.0);
+        .binary_search_by_key(&tinystr!(3, "768"), |alias| alias.0);
     assert!(res.is_ok());
     assert_eq!(data.get().region_num[res.unwrap()].0, "768");
     assert_eq!(data.get().region_num[res.unwrap()].1, "TG");

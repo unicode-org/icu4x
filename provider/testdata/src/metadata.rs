@@ -48,7 +48,7 @@ impl PackageMetadata {
         for pattern in self.cldr_json_glob.iter() {
             if pattern.contains("$LOCALES") {
                 for locale in self.locales.iter() {
-                    let locale_str = writeable::Writeable::writeable_to_string(locale);
+                    let locale_str = writeable::Writeable::write_to_string(locale);
                     paths.push(pattern.replace("$LOCALES", &locale_str));
                 }
                 // Also add "root" for older CLDRs

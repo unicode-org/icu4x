@@ -33,8 +33,8 @@ pub use cldr_paths::CldrPathsAllInOne;
 pub use cldr_paths::CldrPathsLocal;
 pub use error::Error as CldrError;
 
+use icu_provider::datagen::OmnibusDatagenProvider;
 use icu_provider::fork::by_key::MultiForkByKeyProvider;
-use icu_provider::iter::IterableDynProvider;
 use icu_provider::prelude::*;
 use std::convert::TryFrom;
 use std::path::PathBuf;
@@ -44,32 +44,28 @@ use transform::datetime::skeletons::DateSkeletonPatternsProvider;
 use transform::datetime::symbols::DateSymbolsProvider;
 use transform::datetime::week_data::WeekDataProvider;
 use transform::decimal::NumbersProvider;
-#[cfg(feature = "icu_list")]
 use transform::list::ListProvider;
 use transform::locale_canonicalizer::aliases::AliasesProvider;
 use transform::locale_canonicalizer::likely_subtags::LikelySubtagsProvider;
 use transform::plurals::PluralsProvider;
 use transform::time_zones::TimeZonesProvider;
 
-#[cfg(not(feature = "icu_list"))]
-type ListProvider = PluralsProvider; // we can't cfg-exclude part of the bound, but we can do this...
-
 pub fn create_exportable_provider<T: DataMarker>(
     cldr_paths: &dyn CldrPaths,
     _uprops_root: PathBuf,
-) -> Result<MultiForkByKeyProvider<Box<dyn IterableDynProvider<T>>>, CldrError>
+) -> Result<MultiForkByKeyProvider<Box<dyn OmnibusDatagenProvider<T> + Sync>>, CldrError>
 where
-    AliasesProvider: IterableDynProvider<T>,
-    DateSymbolsProvider: IterableDynProvider<T>,
-    DateSkeletonPatternsProvider: IterableDynProvider<T>,
-    DatePatternsProvider: IterableDynProvider<T>,
-    JapaneseErasProvider: IterableDynProvider<T>,
-    LikelySubtagsProvider: IterableDynProvider<T>,
-    NumbersProvider: IterableDynProvider<T>,
-    PluralsProvider: IterableDynProvider<T>,
-    TimeZonesProvider: IterableDynProvider<T>,
-    ListProvider: IterableDynProvider<T>,
-    WeekDataProvider: IterableDynProvider<T>,
+    AliasesProvider: OmnibusDatagenProvider<T>,
+    DateSymbolsProvider: OmnibusDatagenProvider<T>,
+    DateSkeletonPatternsProvider: OmnibusDatagenProvider<T>,
+    DatePatternsProvider: OmnibusDatagenProvider<T>,
+    JapaneseErasProvider: OmnibusDatagenProvider<T>,
+    LikelySubtagsProvider: OmnibusDatagenProvider<T>,
+    NumbersProvider: OmnibusDatagenProvider<T>,
+    PluralsProvider: OmnibusDatagenProvider<T>,
+    TimeZonesProvider: OmnibusDatagenProvider<T>,
+    ListProvider: OmnibusDatagenProvider<T>,
+    WeekDataProvider: OmnibusDatagenProvider<T>,
 {
     #[allow(unused_variables)] // uprops_root is only used if icu_list
     Ok(MultiForkByKeyProvider {
@@ -84,13 +80,12 @@ where
             Box::new(PluralsProvider::try_from(cldr_paths)?),
             Box::new(TimeZonesProvider::try_from(cldr_paths)?),
             Box::new(WeekDataProvider::try_from(cldr_paths)?),
-            #[cfg(feature = "icu_list")]
             Box::new(ListProvider::try_from(cldr_paths, _uprops_root)?),
         ],
     })
 }
 
-pub const ALL_KEYS: [ResourceKey; if cfg!(feature = "icu_list") { 19 } else { 16 }] = [
+pub const ALL_KEYS: [ResourceKey; 19] = [
     icu_calendar::provider::JapaneseErasV1Marker::KEY,
     icu_datetime::provider::calendar::DatePatternsV1Marker::KEY,
     icu_datetime::provider::calendar::DateSkeletonPatternsV1Marker::KEY,
@@ -103,11 +98,8 @@ pub const ALL_KEYS: [ResourceKey; if cfg!(feature = "icu_list") { 19 } else { 16
     icu_datetime::provider::time_zones::MetaZoneSpecificNamesShortV1Marker::KEY,
     icu_datetime::provider::week_data::WeekDataV1Marker::KEY,
     icu_decimal::provider::DecimalSymbolsV1Marker::KEY,
-    #[cfg(feature = "icu_list")]
     icu_list::provider::AndListV1Marker::KEY,
-    #[cfg(feature = "icu_list")]
     icu_list::provider::OrListV1Marker::KEY,
-    #[cfg(feature = "icu_list")]
     icu_list::provider::UnitListV1Marker::KEY,
     icu_locale_canonicalizer::provider::AliasesV1Marker::KEY,
     icu_locale_canonicalizer::provider::LikelySubtagsV1Marker::KEY,

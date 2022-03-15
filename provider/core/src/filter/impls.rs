@@ -10,7 +10,7 @@ use icu_locid::LanguageIdentifier;
 
 impl<D, F> RequestFilterDataProvider<D, F>
 where
-    F: Fn(&DataRequest) -> bool,
+    F: Fn(&DataRequest) -> bool + Sync,
 {
     /// Filter out data requests with certain langids according to the predicate function. The
     /// predicate should return `true` to allow a langid and `false` to reject a langid.
@@ -134,7 +134,7 @@ where
     pub fn filter_by_langid_allowlist_strict<'a>(
         self,
         allowlist: &'a [LanguageIdentifier],
-    ) -> RequestFilterDataProvider<D, Box<dyn Fn(&DataRequest) -> bool + 'a>>
+    ) -> RequestFilterDataProvider<D, Box<dyn Fn(&DataRequest) -> bool + Sync + 'a>>
     where
         F: 'a,
     {

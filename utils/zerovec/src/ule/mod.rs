@@ -7,6 +7,9 @@
 //! Traits over unaligned little-endian data (ULE, pronounced "yule").
 //!
 //! The main traits for this module are [`ULE`], [`AsULE`] and, [`VarULE`].
+//!
+//! See [the design doc](https://github.com/unicode-org/icu4x/blob/main/utils/zerovec/design_doc.md) for details on how these traits
+//! works under the hood.
 mod chars;
 #[cfg(doc)]
 pub mod custom;
@@ -27,6 +30,9 @@ use alloc::boxed::Box;
 use core::{mem, slice};
 
 /// Fixed-width, byte-aligned data that can be cast to and from a little-endian byte slice.
+///
+/// If you need to implement this trait, consider using [`#[make_ule]`](crate::make_ule) or
+///  [`#[derive(ULE)]`](macro@ULE) instead.
 ///
 /// Types that are not fixed-width can implement [`VarULE`] instead.
 ///
@@ -142,6 +148,8 @@ where
 }
 
 /// A trait for any type that has a 1:1 mapping with an unaligned little-endian (ULE) type.
+///
+/// If you need to implement this trait, consider using [`#[make_varule]`](crate::make_ule) instead.
 pub trait AsULE: Copy {
     /// The ULE type corresponding to `Self`.
     ///
@@ -224,6 +232,9 @@ where
 }
 
 /// Variable-width, byte-aligned data that can be cast to and from a little-endian byte slice.
+///
+/// If you need to implement this trait, consider using [`#[make_varule]`](crate::make_varule) or
+///  [`#[derive(VarULE)]`](macro@VarULE) instead.
 ///
 /// This trait is mostly for unsized types like `str` and `[T]`. It can be implemented on sized types;
 /// however, it is much more preferable to use [`ULE`] for that purpose. The [`custom`] module contains
@@ -344,3 +355,27 @@ pub unsafe trait VarULE: 'static {
         }
     }
 }
+
+// Proc macro reexports
+//
+// These exist so that our docs can use intra-doc links.
+// Due to quirks of how rustdoc does documentation on reexports, these must be in this module and not reexported from
+// a submodule
+
+/// Custom derive for [`ULE`].
+///
+/// This can be attached to [`Copy`] structs containing only [`ULE`] types.
+///
+/// Most of the time, it is recommended one use [`#[make_ule]`](crate::make_ule) instead of defining
+/// a custom ULE type.
+#[cfg(feature = "derive")]
+pub use zerovec_derive::ULE;
+
+/// Custom derive for [`VarULE`]
+///
+/// This can be attached to structs containing only [`ULE`] types with one [`VarULE`] type at the end.
+///
+/// Most of the time, it is recommended one use [`#[make_varule]`](crate::make_varule) instead of defining
+/// a custom [`VarULE`] type.
+#[cfg(feature = "derive")]
+pub use zerovec_derive::VarULE;

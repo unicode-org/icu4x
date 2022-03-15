@@ -41,7 +41,7 @@ impl DataExporter<SerializeMarker> for BlobExporter<'_> {
         payload.serialize(&mut <dyn erased_serde::Serializer>::erase(&mut serializer))?;
         self.resources.lock().unwrap().push((
             key.get_hash(),
-            options.writeable_to_string().into_owned(),
+            options.write_to_string().into_owned(),
             serializer.output.0,
         ));
         Ok(())

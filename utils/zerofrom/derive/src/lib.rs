@@ -19,19 +19,18 @@ mod visitor;
 /// without a lifetime parameter, and `ZeroFrom<Ty<'data>> for Ty<'static>`
 /// for types with a lifetime parameter.
 ///
-/// Apply the `#[zerofrom(cloning_zf)]` attribute if you wish for this custom derive
-/// to use `.clone()` for its implementation. The attribute can be applied to
-/// fields as well.
+/// Apply the `#[zerofrom(clone)]` attribute to a field if it doesn't implement
+/// ZeroFrom; this data will be cloned when the struct is zero_from'ed.
 #[proc_macro_derive(ZeroFrom, attributes(zerofrom))]
 pub fn zf_derive(input: TokenStream) -> TokenStream {
     let input = parse_macro_input!(input as DeriveInput);
     TokenStream::from(zf_derive_impl(&input))
 }
 
-fn has_cloning_zf_attr(attrs: &[syn::Attribute]) -> bool {
+fn has_clone_attr(attrs: &[syn::Attribute]) -> bool {
     attrs.iter().any(|a| {
         if let Ok(i) = a.parse_args::<Ident>() {
-            if i == "cloning_zf" {
+            if i == "clone" {
                 return true;
             }
         }
@@ -45,10 +44,16 @@ fn zf_derive_impl(input: &DeriveInput) -> TokenStream2 {
         .iter()
         .map(|ty| ty.ident.clone())
         .collect::<Vec<_>>();
-    let has_clone = has_cloning_zf_attr(&input.attrs);
     let lts = input.generics.lifetimes().count();
     let name = &input.ident;
+    let structure = Structure::new(input);
+
     if lts == 0 {
+        let has_clone = structure
+            .variants()
+            .iter()
+            .flat_map(|variant| variant.bindings().iter())
+            .any(|binding| has_clone_attr(&binding.ast().attrs));
         let (clone, clone_trait) = if has_clone {
             (quote!(this.clone()), quote!(Clone))
         } else {
@@ -73,28 +78,16 @@ fn zf_derive_impl(input: &DeriveInput) -> TokenStream2 {
             )
             .to_compile_error();
         }
-        if has_clone {
-            return quote! {
-                impl<'zf> zerofrom::ZeroFrom<'zf, #name<'_>> for #name<'zf> {
-                    fn zero_from(this: &'zf #name<'_>) -> Self {
-                        this.clone()
-                    }
-                }
-            };
-        }
 
-        let structure = Structure::new(input);
         let generics_env = typarams.iter().cloned().collect();
 
         let mut zf_bounds: Vec<WherePredicate> = vec![];
         let body = structure.each_variant(|vi| {
-            let variant_cloning = has_cloning_zf_attr(vi.ast().attrs);
             vi.construct(|f, i| {
-                let binding_cloning = variant_cloning || has_cloning_zf_attr(&f.attrs);
                 let binding = format!("__binding_{}", i);
                 let field = Ident::new(&binding, Span::call_site());
 
-                if binding_cloning {
+                if has_clone_attr(&f.attrs) {
                     quote! {
                         #field.clone()
                     }

@@ -776,7 +776,7 @@ export class ICU4XLineBreakSegmenter {
     this.underlying = underlying;
   }
 
-  static try_new() {
+  static try_new(provider) {
     const diplomat_out = (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
       const result_tag = {};
@@ -785,7 +785,7 @@ export class ICU4XLineBreakSegmenter {
         size: 5,
         align: 4,
       });
-      wasm.ICU4XLineBreakSegmenter_try_new(diplomat_receive_buffer);
+      wasm.ICU4XLineBreakSegmenter_try_new(diplomat_receive_buffer, provider.underlying);
       const is_ok = (new Uint8Array(wasm.memory.buffer, diplomat_receive_buffer + 4, 1))[0] == 1;
       if (is_ok) {
         const ok_value = (() => {
@@ -802,7 +802,7 @@ export class ICU4XLineBreakSegmenter {
     return diplomat_out;
   }
 
-  static try_new_with_options(options) {
+  static try_new_with_options(provider, options) {
     const diplomat_ICU4XLineBreakOptions_extracted_line_break_rule = options["line_break_rule"];
     const diplomat_ICU4XLineBreakOptions_extracted_word_break_rule = options["word_break_rule"];
     const diplomat_ICU4XLineBreakOptions_extracted_ja_zh = options["ja_zh"];
@@ -814,7 +814,7 @@ export class ICU4XLineBreakSegmenter {
         size: 5,
         align: 4,
       });
-      wasm.ICU4XLineBreakSegmenter_try_new_with_options(diplomat_receive_buffer, ICU4XLineBreakRule_js_to_rust[diplomat_ICU4XLineBreakOptions_extracted_line_break_rule], ICU4XWordBreakRule_js_to_rust[diplomat_ICU4XLineBreakOptions_extracted_word_break_rule], diplomat_ICU4XLineBreakOptions_extracted_ja_zh);
+      wasm.ICU4XLineBreakSegmenter_try_new_with_options(diplomat_receive_buffer, provider.underlying, ICU4XLineBreakRule_js_to_rust[diplomat_ICU4XLineBreakOptions_extracted_line_break_rule], ICU4XWordBreakRule_js_to_rust[diplomat_ICU4XLineBreakOptions_extracted_word_break_rule], diplomat_ICU4XLineBreakOptions_extracted_ja_zh);
       const is_ok = (new Uint8Array(wasm.memory.buffer, diplomat_receive_buffer + 4, 1))[0] == 1;
       if (is_ok) {
         const ok_value = (() => {

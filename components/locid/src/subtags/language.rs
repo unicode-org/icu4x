@@ -6,7 +6,7 @@ use crate::parser::errors::ParserError;
 use core::fmt;
 use core::ops::RangeInclusive;
 use core::str::FromStr;
-use tinystr::{tinystr, TinyStr4};
+use tinystr::{tinystr, TinyAsciiStr};
 
 /// A language subtag (examples: `"en"`, `"csb"`, `"zh"`, `"und"`, etc.)
 ///
@@ -39,10 +39,10 @@ use tinystr::{tinystr, TinyStr4};
 ///
 /// [`unicode_language_id`]: https://unicode.org/reports/tr35/#unicode_language_id
 #[derive(Default, Debug, PartialEq, Eq, Clone, Hash, PartialOrd, Ord, Copy)]
-pub struct Language(Option<TinyStr4>);
+pub struct Language(Option<TinyAsciiStr<{ *LANGUAGE_LENGTH.end() }>>);
 
 const LANGUAGE_LENGTH: RangeInclusive<usize> = 2..=3;
-const UND_VALUE: TinyStr4 = tinystr!(4, "und");
+const UND_VALUE: TinyAsciiStr<3> = tinystr!(3, "und");
 
 impl Language {
     /// A constructor which takes a utf8 slice, parses it and
@@ -75,7 +75,7 @@ impl Language {
             return Err(ParserError::InvalidLanguage);
         }
 
-        let s = match TinyStr4::from_bytes_manual_slice(v, start, end) {
+        let s = match TinyAsciiStr::from_bytes_manual_slice(v, start, end) {
             Ok(s) => s,
             _ => return Err(ParserError::InvalidLanguage),
         };
@@ -112,8 +112,8 @@ impl Language {
     /// let lang = unsafe { Language::from_raw_unchecked(raw) };
     /// assert_eq!(lang, "en");
     /// ```
-    pub fn into_raw(self) -> Option<[u8; 4]> {
-        self.0.as_ref().map(TinyStr4::all_bytes).copied()
+    pub fn into_raw(self) -> Option<[u8; 3]> {
+        self.0.as_ref().map(TinyAsciiStr::all_bytes).copied()
     }
 
     /// Constructor which takes a raw value returned by
@@ -134,11 +134,11 @@ impl Language {
     ///
     /// # Safety
     ///
-    /// This function accepts a [`u32`] that is expected to be a valid [`TinyStr4`]
+    /// This function accepts a [`[u8; 3]`] that is expected to be a valid [`TinyAsciiStr<3>`]
     /// representing a [`Language`] subtag in canonical syntax.
-    pub const unsafe fn from_raw_unchecked(v: Option<[u8; 4]>) -> Self {
+    pub const unsafe fn from_raw_unchecked(v: Option<[u8; 3]>) -> Self {
         Self(match v {
-            Some(v) => Some(TinyStr4::from_bytes_unchecked(v)),
+            Some(v) => Some(TinyAsciiStr::from_bytes_unchecked(v)),
             None => None,
         })
     }
@@ -264,7 +264,7 @@ impl<'l> From<&'l Language> for &'l str {
     }
 }
 
-impl From<Language> for Option<TinyStr4> {
+impl From<Language> for Option<TinyAsciiStr<3>> {
     fn from(input: Language) -> Self {
         input.0.map(Into::into)
     }

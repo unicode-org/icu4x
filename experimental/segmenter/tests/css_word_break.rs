@@ -13,7 +13,7 @@ fn check_with_options(
     expect_utf16: Vec<usize>,
     options: LineBreakOptions,
 ) {
-    let provider = icu_provider::inv::InvariantDataProvider;
+    let provider = icu_testdata::get_provider();
     let segmenter =
         LineBreakSegmenter::try_new_with_options(&provider, options).expect("Data exists");
 
@@ -162,12 +162,10 @@ fn wordbreak_keepall_lstm() {
 }
 
 #[test]
-#[cfg_attr(not(feature = "lstm"), ignore)]
 fn wordbreak_normal() {
-    {
-        let s = "\u{0e20}\u{0e32}\u{0e29}\u{0e32}\u{0e44}\u{0e17}\u{0e22}\u{0e20}\u{0e32}\u{0e29}\u{0e32}\u{0e44}\u{0e17}\u{0e22}";
-        normal(s, vec![12, 21, 33, 42], vec![4, 7, 11, 14]);
-    }
+    // from css/css-text/word-break/word-break-normal-th-000.html
+    let s = "ภาษาไทยภาษาไทย";
+    normal(s, vec![12, 21, 33, 42], vec![4, 7, 11, 14]);
 }
 
 #[test]

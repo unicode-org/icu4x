@@ -6,7 +6,7 @@ use core::ops::RangeInclusive;
 use core::str::FromStr;
 
 use crate::parser::errors::ParserError;
-use tinystr::TinyStr8;
+use tinystr::TinyAsciiStr;
 
 /// An attribute used in a set of [`Attributes`](super::Attributes).
 ///
@@ -25,7 +25,7 @@ use tinystr::TinyStr8;
 /// assert_eq!(attr, "buddhist");
 /// ```
 #[derive(Debug, PartialEq, Eq, Clone, Hash, PartialOrd, Ord, Copy)]
-pub struct Attribute(TinyStr8);
+pub struct Attribute(TinyAsciiStr<{ *ATTR_LENGTH.end() }>);
 
 const ATTR_LENGTH: RangeInclusive<usize> = 3..=8;
 
@@ -50,7 +50,7 @@ impl Attribute {
             return Err(ParserError::InvalidExtension);
         }
 
-        let s = TinyStr8::from_bytes(v).map_err(|_| ParserError::InvalidExtension)?;
+        let s = TinyAsciiStr::from_bytes(v).map_err(|_| ParserError::InvalidExtension)?;
 
         if !s.is_ascii_alphanumeric() {
             return Err(ParserError::InvalidExtension);

@@ -102,3 +102,6 @@ The [binary size benchmarks](docs/process/benchmarking.md) run on Ubuntu, and ar
 
 * [wasm binaries](https://unicode-org.github.io/icu4x-docs/benchmarks/binsize/wasm/)
 * [gzip'd wasm binaries](https://unicode-org.github.io/icu4x-docs/benchmarks/binsize/gz)
+
+The data size benchmark tracks size of `provider/testdata/data/testdata.postcard` and runs on Linux.
+* [data size](https://unicode-org.github.io/icu4x-docs/benchmarks/datasize)

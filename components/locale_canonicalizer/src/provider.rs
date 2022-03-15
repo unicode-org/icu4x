@@ -10,7 +10,7 @@ use alloc::vec::Vec;
 use icu_locid::LanguageIdentifier;
 use icu_provider::prelude::*;
 use litemap::LiteMap;
-use tinystr::{TinyStr4, TinyStr8};
+use tinystr::TinyAsciiStr;
 
 #[icu_provider::data_struct(AliasesV1Marker = "locale_canonicalizer/aliases@1")]
 #[derive(Debug, PartialEq, Clone, Default)]
@@ -18,7 +18,6 @@ use tinystr::{TinyStr4, TinyStr8};
     feature = "provider_serde",
     derive(serde::Serialize, serde::Deserialize)
 )]
-#[zerofrom(cloning_zf)]
 /// This alias data is used for locale canonicalization. Each field defines a
 /// mapping from an old identifier to a new identifier, based upon the rules in
 /// from <http://unicode.org/reports/tr35/#LocaleId_Canonicalization>. The data
@@ -33,27 +32,38 @@ use tinystr::{TinyStr4, TinyStr8};
 /// or modify aliases for use in this structure.
 pub struct AliasesV1 {
     /// Language data not covered by other rules, normally this will be empty.
+    #[zerofrom(clone)]
     pub language: Vec<(LanguageIdentifier, LanguageIdentifier)>,
     /// Language and variant.
+    #[zerofrom(clone)]
     pub language_variants: Vec<(LanguageIdentifier, LanguageIdentifier)>,
     /// Sign language and region data.
-    pub sgn_region: Vec<(TinyStr4, LanguageIdentifier)>,
+    #[zerofrom(clone)]
+    pub sgn_region: Vec<(TinyAsciiStr<3>, LanguageIdentifier)>,
     /// Two character language codes.
-    pub language_len2: Vec<(TinyStr4, LanguageIdentifier)>,
+    #[zerofrom(clone)]
+    pub language_len2: Vec<(TinyAsciiStr<2>, LanguageIdentifier)>,
     /// Three character language codes.
-    pub language_len3: Vec<(TinyStr4, LanguageIdentifier)>,
+    #[zerofrom(clone)]
+    pub language_len3: Vec<(TinyAsciiStr<3>, LanguageIdentifier)>,
     /// Scripts.
-    pub script: Vec<(TinyStr4, TinyStr4)>,
+    #[zerofrom(clone)]
+    pub script: Vec<(TinyAsciiStr<4>, TinyAsciiStr<4>)>,
     /// Alphabetical region codes.
-    pub region_alpha: Vec<(TinyStr4, TinyStr4)>,
+    #[zerofrom(clone)]
+    pub region_alpha: Vec<(TinyAsciiStr<2>, TinyAsciiStr<3>)>,
     /// Numeric region codes.
-    pub region_num: Vec<(TinyStr4, TinyStr4)>,
+    #[zerofrom(clone)]
+    pub region_num: Vec<(TinyAsciiStr<3>, TinyAsciiStr<3>)>,
     /// Old regions which map to more than one new region.
-    pub complex_region: Vec<(TinyStr4, Vec<TinyStr4>)>,
+    #[zerofrom(clone)]
+    pub complex_region: Vec<(TinyAsciiStr<3>, Vec<TinyAsciiStr<3>>)>,
     /// Variants.
-    pub variant: Vec<(TinyStr8, TinyStr8)>,
+    #[zerofrom(clone)]
+    pub variant: Vec<(TinyAsciiStr<8>, TinyAsciiStr<8>)>,
     /// Subdivisions.
-    pub subdivision: Vec<(TinyStr8, TinyStr8)>,
+    #[zerofrom(clone)]
+    pub subdivision: Vec<(TinyAsciiStr<7>, TinyAsciiStr<7>)>,
 }
 
 #[icu_provider::data_struct(LikelySubtagsV1Marker = "locale_canonicalizer/likelysubtags@1")]
@@ -62,7 +72,6 @@ pub struct AliasesV1 {
     feature = "provider_serde",
     derive(serde::Serialize, serde::Deserialize)
 )]
-#[zerofrom(cloning_zf)]
 /// This likely subtags data is used for the minimize and maximize operations.
 /// Each field defines a mapping from an old identifier to a new identifier,
 /// based upon the rules in
@@ -79,17 +88,24 @@ pub struct AliasesV1 {
 /// `LanguageIdentifier`.
 pub struct LikelySubtagsV1 {
     /// Language and script.
-    pub language_script: LiteMap<(TinyStr4, TinyStr4), LanguageIdentifier>,
+    #[zerofrom(clone)]
+    pub language_script: LiteMap<(TinyAsciiStr<3>, TinyAsciiStr<4>), LanguageIdentifier>,
     /// Language and region.
-    pub language_region: LiteMap<(TinyStr4, TinyStr4), LanguageIdentifier>,
+    #[zerofrom(clone)]
+    pub language_region: LiteMap<(TinyAsciiStr<3>, TinyAsciiStr<3>), LanguageIdentifier>,
     /// Just language.
-    pub language: LiteMap<TinyStr4, LanguageIdentifier>,
+    #[zerofrom(clone)]
+    pub language: LiteMap<TinyAsciiStr<3>, LanguageIdentifier>,
     /// Script and region.
-    pub script_region: LiteMap<(TinyStr4, TinyStr4), LanguageIdentifier>,
+    #[zerofrom(clone)]
+    pub script_region: LiteMap<(TinyAsciiStr<4>, TinyAsciiStr<3>), LanguageIdentifier>,
     /// Just script.
-    pub script: LiteMap<TinyStr4, LanguageIdentifier>,
+    #[zerofrom(clone)]
+    pub script: LiteMap<TinyAsciiStr<4>, LanguageIdentifier>,
     /// Just region.
-    pub region: LiteMap<TinyStr4, LanguageIdentifier>,
+    #[zerofrom(clone)]
+    pub region: LiteMap<TinyAsciiStr<3>, LanguageIdentifier>,
     /// Undefined.
+    #[zerofrom(clone)]
     pub und: LanguageIdentifier,
 }

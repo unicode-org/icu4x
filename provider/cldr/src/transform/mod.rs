@@ -9,7 +9,6 @@
 pub(crate) mod calendar;
 pub(crate) mod datetime;
 pub(crate) mod decimal;
-#[cfg(feature = "icu_list")]
 pub(crate) mod list;
 pub(crate) mod locale_canonicalizer;
 pub(crate) mod plurals;

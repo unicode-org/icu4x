@@ -30,19 +30,19 @@ pub use enum_codepointtrie::EnumeratedPropertyCodePointTrieProvider;
 pub use enum_uniset::EnumeratedPropertyUnicodeSetDataProvider;
 pub use script::ScriptWithExtensionsPropertyProvider;
 
+use icu_provider::datagen::OmnibusDatagenProvider;
 use icu_provider::fork::by_key::MultiForkByKeyProvider;
-use icu_provider::iter::IterableDynProvider;
 use icu_provider::DataMarker;
 use std::path::Path;
 
 pub fn create_exportable_provider<T: DataMarker>(
     root_dir: &Path,
-) -> eyre::Result<MultiForkByKeyProvider<Box<dyn IterableDynProvider<T>>>>
+) -> eyre::Result<MultiForkByKeyProvider<Box<dyn OmnibusDatagenProvider<T> + Sync>>>
 where
-    EnumeratedPropertyCodePointTrieProvider: IterableDynProvider<T>,
-    ScriptWithExtensionsPropertyProvider: IterableDynProvider<T>,
-    EnumeratedPropertyUnicodeSetDataProvider: IterableDynProvider<T>,
-    BinaryPropertyUnicodeSetDataProvider: IterableDynProvider<T>,
+    EnumeratedPropertyCodePointTrieProvider: OmnibusDatagenProvider<T>,
+    ScriptWithExtensionsPropertyProvider: OmnibusDatagenProvider<T>,
+    EnumeratedPropertyUnicodeSetDataProvider: OmnibusDatagenProvider<T>,
+    BinaryPropertyUnicodeSetDataProvider: OmnibusDatagenProvider<T>,
 {
     Ok(MultiForkByKeyProvider {
         providers: vec![

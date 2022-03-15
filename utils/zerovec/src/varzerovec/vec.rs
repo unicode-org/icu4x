@@ -19,7 +19,8 @@ use super::*;
 ///
 /// `T` must implement [`VarULE`], which is already implemented for [`str`] and `[u8]`. For storing more
 /// complicated series of elements, it is implemented on `ZeroSlice<T>` as well as `VarZeroSlice<T>`
-/// for nesting.
+/// for nesting. [`zerovec::make_varule`](crate::make_varule) may be used to generate
+/// a dynamically-sized [`VarULE`] type and conversions to and from a custom type.
 ///
 /// For example, here are some owned types and their zero-copy equivalents:
 ///
@@ -28,28 +29,12 @@ use super::*;
 /// - `Vec<Vec<u32>>`: `VarZeroVec<'a, ZeroSlice<u32>>`
 /// - `Vec<Vec<String>>`: `VarZeroVec<'a, VarZeroSlice<str>>`
 ///
+/// Most of the methods on `VarZeroVec<'a, T>` come from its [`Deref`] implementation to [`VarZeroSlice<T>`](VarZeroSlice).
+///
 /// For creating zero-copy vectors of fixed-size types, see [`ZeroVec`](crate::ZeroVec).
 ///
 /// `VarZeroVec<T>` behaves much like [`Cow`](alloc::borrow::Cow), where it can be constructed from
 /// owned data (and then mutated!) but can also borrow from some buffer.
-///
-/// # How it Works
-///
-/// `VarZeroVec<T>`, when used with non-human-readable serializers (like `bincode`), will
-/// serialize to a specially formatted list of bytes. The format is:
-///
-/// - 4 bytes for `length` (interpreted as a little-endian u32)
-/// - `4 * length` bytes of `indices` (interpreted as little-endian u32)
-/// - Remaining bytes for actual `data`
-///
-/// Each element in the `indices` array points to the starting index of its corresponding
-/// data part in the `data` list. The ending index can be calculated from the starting index
-/// of the next element (or the length of the slice if dealing with the last element).
-///
-/// # Safety
-///
-/// `VarZeroVec<T>` is implemented with a fair amount of unsafe code, but is externally
-/// safe to use.
 ///
 /// # Example
 ///
@@ -60,15 +45,24 @@ use super::*;
 ///
 /// // The little-endian bytes correspond to the list of strings.
 /// let strings = vec!["w", "ω", "文", "𑄃"];
-/// let bytes = &[
-///     4, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0,  3, 0, 0, 0,
-///     6, 0, 0, 0, 119, 207, 137, 230, 150, 135, 240, 145, 132, 131,
-/// ];
 ///
-/// let zerovec: VarZeroVec<str> = VarZeroVec::parse_byte_slice(bytes)?;
+/// #[derive(serde::Serialize, serde::Deserialize)]
+/// struct Data<'a> {
+///     #[serde(borrow)]
+///     strings: VarZeroVec<'a, str>
+/// }
 ///
-/// assert_eq!(zerovec.get(2), Some("文"));
-/// assert_eq!(zerovec, &*strings);
+/// let data = Data { strings: VarZeroVec::from(&strings) };
+///
+/// let bincode_bytes = bincode::serialize(&data)
+///     .expect("Serialization should be successful");
+///
+/// // Will deserialize without allocations
+/// let deserialized: Data = bincode::deserialize(&bincode_bytes)
+///     .expect("Deserialization should be successful");
+///
+/// assert_eq!(deserialized.strings.get(2), Some("文"));
+/// assert_eq!(deserialized.strings, &*strings);
 /// # Ok::<(), ZeroVecError>(())
 /// ```
 ///
@@ -83,29 +77,50 @@ use super::*;
 /// use zerovec::ule::*;
 ///
 /// // The structured list correspond to the list of integers.
-/// let numbers: Vec<Vec<u32>> = vec![
-///     vec![12, 25, 38],
-///     vec![39179, 100],
-///     vec![42, 55555],
-///     vec![12345, 54321, 9],
+/// let numbers: &[&[u32]] = &[
+///     &[12, 25, 38],
+///     &[39179, 100],
+///     &[42, 55555],
+///     &[12345, 54321, 9],
 /// ];
-/// let bytes = &[4, 0, 0, 0, 0, 0, 0, 0, 12, 0, 0, 0, 20, 0, 0, 0, 28, 0, 0, 0,
-///              12, 0, 0, 0, 25, 0, 0, 0, 38, 0, 0, 0, 11, 153, 0, 0, 100, 0,
-///              0, 0, 42, 0, 0, 0, 3, 217, 0, 0, 57, 48, 0, 0, 49, 212, 0, 0,
-///              9, 0, 0, 0];
 ///
-/// let zerovec1: VarZeroVec<ZeroSlice<u32>> = VarZeroVec::parse_byte_slice(bytes)?;
-/// assert_eq!(zerovec1.get(2).and_then(|v| v.get(1)), Some(55555));
+/// #[derive(serde::Serialize, serde::Deserialize)]
+/// struct Data<'a> {
+///     #[serde(borrow)]
+///     vecs: VarZeroVec<'a, ZeroSlice<u32>>
+/// }
 ///
-/// let zerovec2: VarZeroVec<ZeroSlice<u32>> = (&numbers).into();
-/// assert_eq!(zerovec1, zerovec2);
+/// let data = Data { vecs: VarZeroVec::from(numbers) };
+///
+/// let bincode_bytes = bincode::serialize(&data)
+///     .expect("Serialization should be successful");
+///
+/// let deserialized: Data = bincode::deserialize(&bincode_bytes)
+///     .expect("Deserialization should be successful");
+///
+/// assert_eq!(deserialized.vecs[0].get(1).unwrap(), 25);
+/// assert_eq!(deserialized.vecs[1], *numbers[1]);
 ///
 /// # Ok::<(), ZeroVecError>(())
 /// ```
 ///
-///
-/// [`VarZeroVec`]s can be nested infinitely, see the docs of [`VarZeroSlice`]
+/// [`VarZeroVec`]s can be nested infinitely via a similar mechanism, see the docs of [`VarZeroSlice`]
 /// for more information.
+///
+/// # How it Works
+///
+/// `VarZeroVec<T>`, when used with non-human-readable serializers (like `bincode`), will
+/// serialize to a specially formatted list of bytes. The format is:
+///
+/// - 4 bytes for `length` (interpreted as a little-endian u32)
+/// - `4 * length` bytes of `indices` (interpreted as little-endian u32)
+/// - Remaining bytes for actual `data`
+///
+/// Each element in the `indices` array points to the starting index of its corresponding
+/// data part in the `data` list. The ending index can be calculated from the starting index
+/// of the next element (or the length of the slice if dealing with the last element).
+///
+/// See [the design doc](https://github.com/unicode-org/icu4x/blob/main/utils/zerovec/design_doc.md) for more details.
 ///
 /// [`ule`]: crate::ule
 pub enum VarZeroVec<'a, T: ?Sized> {

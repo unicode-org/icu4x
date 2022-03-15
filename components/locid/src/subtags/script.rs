@@ -4,7 +4,7 @@
 
 use crate::parser::errors::ParserError;
 use core::str::FromStr;
-use tinystr::TinyStr4;
+use tinystr::TinyAsciiStr;
 
 /// A script subtag (examples: `"Latn"`, `"Arab"`, etc.)
 ///
@@ -22,7 +22,7 @@ use tinystr::TinyStr4;
 ///
 /// [`unicode_script_id`]: https://unicode.org/reports/tr35/#unicode_script_id
 #[derive(Debug, PartialEq, Eq, Clone, Hash, PartialOrd, Ord, Copy)]
-pub struct Script(TinyStr4);
+pub struct Script(TinyAsciiStr<SCRIPT_LENGTH>);
 
 pub const SCRIPT_LENGTH: usize = 4;
 
@@ -55,7 +55,7 @@ impl Script {
             return Err(ParserError::InvalidSubtag);
         }
 
-        let s = match TinyStr4::from_bytes_manual_slice(v, start, end) {
+        let s = match TinyAsciiStr::from_bytes_manual_slice(v, start, end) {
             Ok(s) => s,
             _ => return Err(ParserError::InvalidSubtag),
         };
@@ -103,10 +103,10 @@ impl Script {
     ///
     /// # Safety
     ///
-    /// This function accepts a [`u32`] that is expected to be a valid [`TinyStr4`]
+    /// This function accepts a [u8; 4] that is expected to be a valid [`TinyAsciiStr<4>`]
     /// representing a [`Script`] subtag in canonical syntax.
     pub const unsafe fn from_raw_unchecked(v: [u8; 4]) -> Self {
-        Self(TinyStr4::from_bytes_unchecked(v))
+        Self(TinyAsciiStr::from_bytes_unchecked(v))
     }
 
     /// A helper function for displaying
@@ -152,7 +152,7 @@ impl<'l> From<&'l Script> for &'l str {
     }
 }
 
-impl From<Script> for TinyStr4 {
+impl From<Script> for TinyAsciiStr<4> {
     fn from(input: Script) -> Self {
         input.0
     }

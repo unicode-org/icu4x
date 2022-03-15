@@ -163,7 +163,7 @@ pub mod decimal {
     //!
     //! let fixed_decimal = 1000007.into();
     //! let formatted_value = fdf.format(&fixed_decimal);
-    //! let formatted_str = formatted_value.writeable_to_string();
+    //! let formatted_str = formatted_value.write_to_string();
     //!
     //! assert_eq!("১০,০০,০০৭", formatted_str);
     //! ```
@@ -185,7 +185,7 @@ pub mod decimal {
     //!     .multiplied_pow10(-2)
     //!     .expect("Operation is fully in range");
     //!
-    //! assert_eq!("2,000.50", fdf.format(&fixed_decimal).writeable_to_string());
+    //! assert_eq!("2,000.50", fdf.format(&fixed_decimal).write_to_string());
     //! ```
     //!
     //! [`FixedDecimal`]: fixed_decimal::FixedDecimal
@@ -378,7 +378,7 @@ pub mod properties {
     //! ## Property data as `UnicodeSet`s
     //!
     //! ```
-    //! use icu::properties::{sets, GeneralCategory};
+    //! use icu::properties::{maps, sets, GeneralCategory};
     //!
     //! let provider = icu_testdata::get_provider();
     //!
@@ -395,11 +395,10 @@ pub mod properties {
     //!
     //! // An individual enumerated property value as a `UnicodeSet`
     //!
-    //! let payload =
-    //!     sets::get_for_general_category(&provider, GeneralCategory::LineSeparator)
-    //!         .expect("The data should be valid");
+    //! let payload = maps::get_general_category(&provider).expect("The data should be valid");
     //! let data_struct = payload.get();
-    //! let line_sep = &data_struct.inv_list;
+    //! let gc = &data_struct.code_point_trie;
+    //! let line_sep = gc.get_set_for_value(GeneralCategory::LineSeparator);
     //!
     //! assert!(line_sep.contains_u32(0x2028));
     //! assert!(!line_sep.contains_u32(0x2029));
@@ -471,4 +470,50 @@ pub mod properties {
     //! [`CodePointTrie`]: ../../icu_codepointtrie/codepointtrie/struct.CodePointTrie.html
     //! [`maps`]: maps
     pub use icu_properties::*;
+}
+
+pub mod list {
+    //! List formatting
+    //!
+    //! This API provides the [`ListFormatter`] which renders sequences of [`Writeable`](
+    //! writeable::Writeable)s as lists in a locale-sensitive way.
+    //!
+    //! # Examples
+    //!
+    //! ## Format a list of strings in Spanish
+    //!
+    //! ```
+    //! use icu_list::{ListFormatter, ListStyle};
+    //! use icu_locid::Locale;
+    //! use icu_locid_macros::langid;
+    //! use writeable::Writeable;
+    //!
+    //! let locale: Locale = langid!("es").into();
+    //! let provider = icu_testdata::get_provider();
+    //! let list_formatter = ListFormatter::try_new_and(locale, &provider, ListStyle::Wide)
+    //!     .expect("Data should load successfully");
+    //!
+    //! assert_eq!(
+    //!     list_formatter.format(["España", "Suiza"].iter())
+    //!         .write_to_string(),
+    //!     "España y Suiza"
+    //! );
+    //!
+    //! // The Spanish 'y' sometimes becomes an 'e':
+    //! assert_eq!(
+    //!     list_formatter.format(["España", "Suiza", "Italia"].iter())
+    //!         .write_to_string(),
+    //!     "España, Suiza e Italia"
+    //! );
+    //!
+    //! // We can use any Writeables as inputs:
+    //! assert_eq!(
+    //!     list_formatter.format(1..=10).write_to_string(),
+    //!     "1, 2, 3, 4, 5, 6, 7, 8, 9 y 10"
+    //! );
+    //!```
+    //!
+    //! [`ListFormatter`]: ListFormatter
+
+    pub use icu_list::*;
 }
