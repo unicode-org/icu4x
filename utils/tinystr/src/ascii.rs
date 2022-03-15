@@ -30,23 +30,17 @@ impl<const N: usize> TinyAsciiStr<N> {
     /// use tinystr::tinystr;
     ///
     /// assert_eq!(
-    ///     TinyAsciiStr::<3>::try_from_raw(b"GB\0"),
-    ///     Ok(&tinystr!(3, "GB")));
+    ///     TinyAsciiStr::<3>::try_from_raw(*b"GB\0"),
+    ///     Ok(tinystr!(3, "GB")));
     /// assert_eq!(
-    ///     TinyAsciiStr::<3>::try_from_raw(b"USD"),
-    ///     Ok(&tinystr!(3, "USD")));
+    ///     TinyAsciiStr::<3>::try_from_raw(*b"USD"),
+    ///     Ok(tinystr!(3, "USD")));
     /// assert!(matches!(
-    ///     TinyAsciiStr::<3>::try_from_raw(b"\0A\0"),
+    ///     TinyAsciiStr::<3>::try_from_raw(*b"\0A\0"),
     ///     Err(_)));
     /// ```
-    pub const fn try_from_raw(raw: &[u8; N]) -> Result<&Self, TinyStrError> {
-        match Self::from_bytes_inner(raw, 0, N, true) {
-            Ok(_) => {
-                // Safety: The byte slice is valid according to the previous line.
-                Ok(unsafe { core::mem::transmute(raw) })
-            }
-            Err(e) => Err(e),
-        }
+    pub const fn try_from_raw(raw: [u8; N]) -> Result<Self, TinyStrError> {
+        Self::from_bytes_inner(&raw, 0, N, true)
     }
 
     pub const fn from_bytes_manual_slice(
