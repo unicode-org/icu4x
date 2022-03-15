@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1647292608997,
+  "lastUpdate": 1647386202125,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -22817,6 +22817,48 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 183443,
             "range": "± 13726",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "90e20f381b8c725352289acbd4457cb2c3ff6496",
+          "message": "Add more functions to TinyAsciiStr (#1694)",
+          "timestamp": "2022-03-15T16:08:13-07:00",
+          "tree_id": "bfd88cd4bd1b1e26f6d11c2c000e5a414bb06764",
+          "url": "https://github.com/unicode-org/icu4x/commit/90e20f381b8c725352289acbd4457cb2c3ff6496"
+        },
+        "date": 1647386188937,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 75573,
+            "range": "± 174",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 810606,
+            "range": "± 1531",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 173239,
+            "range": "± 341",
             "unit": "ns/iter"
           }
         ]
