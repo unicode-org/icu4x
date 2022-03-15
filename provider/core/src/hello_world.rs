@@ -150,7 +150,7 @@ impl_dyn_provider!(
     HelloWorldProvider,
     [HelloWorldV1Marker,],
     SERDE_SE,
-    impl DataConverter
+    DATA_CONVERTER
 );
 
 pub struct HelloWorldJsonProvider(HelloWorldProvider);

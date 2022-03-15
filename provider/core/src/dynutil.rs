@@ -160,19 +160,18 @@ where
 #[macro_export]
 macro_rules! impl_dyn_provider {
     // allow passing in multiple things to do and get dispatched
-    ($provider:ty, $arms:tt, $one:tt, $($($rest:tt)+),+) => {
+    ($provider:ty, $arms:tt, $one:tt, $($rest:tt),+) => {
         $crate::impl_dyn_provider!(
             $provider,
             $arms,
             $one
         );
-        $(
-            $crate::impl_dyn_provider!(
-                $provider,
-                $arms,
-                $($rest)+
-            );
-        )+
+        
+        $crate::impl_dyn_provider!(
+            $provider,
+            $arms,
+            $($rest),+
+        );
     };
 
     // Convenience shortcuts for dyn markers
@@ -208,16 +207,16 @@ macro_rules! impl_dyn_provider {
     };
 
     // DataConverter stuff
-    ($provider:ty, [ $($struct_m:ty),+, ], impl DataConverter) => {
+    ($provider:ty, [ $($struct_m:ty),+, ], DATA_CONVERTER) => {
 
          // If this fails to compile, enable the "datagen" feature on this crate.
          $crate::impl_dyn_provider!(
              $provider,
              { $(<$struct_m as $crate::ResourceMarker>::KEY => $struct_m),+, },
-             impl DataConverter
+             DATA_CONVERTER
          );
     };
-    ($provider:ty, { $($pat:pat $(if $guard:expr)? => $struct_m:ty),+, }, impl DataConverter) => {
+    ($provider:ty, { $($pat:pat $(if $guard:expr)? => $struct_m:ty),+, }, DATA_CONVERTER) => {
         // If this fails to compile, enable the "datagen" feature on this crate.
         impl $crate::datagen::DataConverter<$crate::any::AnyMarker, $crate::serde::SerializeMarker> for $provider {
             fn convert(&self, key: $crate::ResourceKey, from: DataPayload<$crate::any::AnyMarker>) -> Result<$crate::DataPayload<$crate::serde::SerializeMarker>, $crate::datagen::ReturnedPayloadError<$crate::any::AnyMarker>> {
@@ -249,7 +248,7 @@ macro_rules! impl_dyn_provider {
         }
     };
 
-    ($provider:ty, [ $($struct_m:ty),+, ], impl IterableDynProvider<SERDE_SE>) => {
+    ($provider:ty, [ $($struct_m:ty),+, ], ITERABLE_SERDE_SE) => {
 
          impl $crate::iter::IterableDynProvider<$crate::serde::SerializeMarker> for $provider
          {
@@ -265,7 +264,7 @@ macro_rules! impl_dyn_provider {
              }
          }
     };
-    ($provider:ty, { $($pat:pat $(if $guard:expr)? => $struct_m:ty),+, }, impl IterableDynProvider<SERDE_SE>) => {
+    ($provider:ty, { $($pat:pat $(if $guard:expr)? => $struct_m:ty),+, }, ITERABLE_SERDE_SE) => {
 
         impl $crate::iter::IterableDynProvider<$crate::serde::SerializeMarker> for $provider {
             fn supported_options_for_key(&self, key: $crate::ResourceKey) -> Result<Box<dyn Iterator<Item = $crate::ResourceOptions> + '_>, $crate::DataError> {
