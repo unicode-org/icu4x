@@ -106,7 +106,7 @@ where
 ///
 /// ```
 /// use icu_provider::prelude::*;
-/// use icu_provider::iter::*;
+/// use icu_provider::datagen::*;
 /// use icu_provider::hello_world::*;
 /// use icu_provider::inv::InvariantDataProvider;
 ///

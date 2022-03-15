@@ -10,7 +10,7 @@ use icu_properties::provider::{
 };
 use icu_properties::script::{ScriptWithExt, ScriptWithExtensions};
 use icu_properties::Script;
-use icu_provider::iter::IterableDynProvider;
+use icu_provider::datagen::IterableDynProvider;
 use icu_provider::prelude::*;
 use std::convert::TryFrom;
 use std::path::Path;

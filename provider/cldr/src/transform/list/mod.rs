@@ -8,7 +8,7 @@ use crate::reader::{get_langid_subdirectories, get_langid_subdirectory, open_rea
 use crate::CldrPaths;
 use icu_list::provider::*;
 use icu_locid_macros::langid;
-use icu_provider::iter::IterableResourceProvider;
+use icu_provider::datagen::IterableResourceProvider;
 use icu_provider::prelude::*;
 use std::path::PathBuf;
 

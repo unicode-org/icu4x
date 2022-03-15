@@ -7,7 +7,7 @@ use crate::error::Error;
 use crate::reader::open_reader;
 use crate::CldrPaths;
 use icu_locale_canonicalizer::provider::*;
-use icu_provider::iter::IterableResourceProvider;
+use icu_provider::datagen::IterableResourceProvider;
 use icu_provider::prelude::*;
 use litemap::LiteMap;
 

@@ -6,7 +6,7 @@ use crate::uprops_helpers::{self, get_last_component_no_version, TomlEnumerated}
 
 use icu_properties::provider::UnicodePropertyV1;
 use icu_properties::provider::UnicodePropertyV1Marker;
-use icu_provider::iter::IterableDynProvider;
+use icu_provider::datagen::IterableDynProvider;
 use icu_provider::prelude::*;
 use icu_uniset::UnicodeSetBuilder;
 use std::path::Path;

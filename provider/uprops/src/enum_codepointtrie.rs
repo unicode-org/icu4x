@@ -12,7 +12,7 @@ use icu_properties::{
     CanonicalCombiningClass, EastAsianWidth, GeneralCategory, GraphemeClusterBreak, LineBreak,
     Script, SentenceBreak, WordBreak,
 };
-use icu_provider::iter::IterableDynProvider;
+use icu_provider::datagen::IterableDynProvider;
 use icu_provider::prelude::*;
 use std::convert::TryFrom;
 use std::path::Path;

@@ -7,7 +7,7 @@ use crate::error::Error;
 use crate::reader::{get_langid_subdirectories, get_langid_subdirectory, open_reader};
 use crate::CldrPaths;
 use icu_decimal::provider::*;
-use icu_provider::iter::IterableResourceProvider;
+use icu_provider::datagen::IterableResourceProvider;
 use icu_provider::prelude::*;
 use litemap::LiteMap;
 use std::borrow::Cow;

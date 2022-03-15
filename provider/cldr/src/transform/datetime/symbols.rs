@@ -7,7 +7,7 @@ use crate::cldr_serde;
 use crate::error::Error;
 use crate::CldrPaths;
 use icu_datetime::provider::calendar::*;
-use icu_provider::iter::IterableResourceProvider;
+use icu_provider::datagen::IterableResourceProvider;
 use icu_provider::prelude::*;
 use std::borrow::Cow;
 use std::collections::BTreeMap;
