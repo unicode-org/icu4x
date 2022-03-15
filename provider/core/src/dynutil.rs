@@ -159,6 +159,23 @@ where
 /// [`SerializeMarker`]: (crate::serde::SerializeMarker)
 #[macro_export]
 macro_rules! impl_dyn_provider {
+    // allow passing in multiple things to do and get dispatched
+    ($provider:ty, $arms:tt, $one:tt, $($($rest:tt)+),+) => {
+        $crate::impl_dyn_provider!(
+            $provider,
+            $arms,
+            $one
+        );
+        $(
+            $crate::impl_dyn_provider!(
+                $provider,
+                $arms,
+                $($rest)+
+            );
+        )+
+    };
+
+    // Convenience shortcuts for dyn markers
     ($provider:ty, { $($pat:pat $(if $guard:expr)? => $struct_m:ty),+, }, ANY) => {
         $crate::impl_dyn_provider!(
             $provider,
@@ -181,21 +198,6 @@ macro_rules! impl_dyn_provider {
             $crate::serde::SerializeMarker
         );
     };
-    ($provider:ty, { $($pat:pat $(if $guard:expr)? => $struct_m:ty),+, }, SERDE_SE, impl DataConverter) => {
-        // If this fails to compile, enable the "serialize" feature on this crate.
-        $crate::impl_dyn_provider!(
-            $provider,
-            { $($pat $(if $guard)? => $struct_m),+, },
-            $crate::serde::SerializeMarker
-        );
-
-        // If this fails to compile, enable the "datagen" feature on this crate.
-        $crate::impl_dyn_provider!(
-            $provider,
-            { $($pat $(if $guard)? => $struct_m),+, },
-            impl DataConverter
-        );
-    };
     ($provider:ty, [ $($struct_m:ty),+, ], SERDE_SE) => {
         // If this fails to compile, enable the "serialize" feature on this crate.
         $crate::impl_dyn_provider!(
@@ -204,19 +206,16 @@ macro_rules! impl_dyn_provider {
             $crate::serde::SerializeMarker
         );
     };
-    ($provider:ty, [ $($struct_m:ty),+, ], SERDE_SE, impl DataConverter) => {
-        $crate::impl_dyn_provider!(
-            $provider,
-            [ $($struct_m),+, ],
-            SERDE_SE
-        );
 
-        // If this fails to compile, enable the "datagen" feature on this crate.
-        $crate::impl_dyn_provider!(
-            $provider,
-            { $(<$struct_m as $crate::ResourceMarker>::KEY => $struct_m),+, },
-            impl DataConverter
-        );
+    // DataConverter stuff
+    ($provider:ty, [ $($struct_m:ty),+, ], impl DataConverter) => {
+
+         // If this fails to compile, enable the "datagen" feature on this crate.
+         $crate::impl_dyn_provider!(
+             $provider,
+             { $(<$struct_m as $crate::ResourceMarker>::KEY => $struct_m),+, },
+             impl DataConverter
+         );
     };
     ($provider:ty, { $($pat:pat $(if $guard:expr)? => $struct_m:ty),+, }, impl DataConverter) => {
         // If this fails to compile, enable the "datagen" feature on this crate.
@@ -250,6 +249,7 @@ macro_rules! impl_dyn_provider {
         }
     };
 
+    // DynProvider stuff
     ($provider:ty, { $($pat:pat $(if $guard:expr)? => $struct_m:ty),+, }, $dyn_m:path) => {
         impl $crate::DynProvider<$dyn_m> for $provider
         {
