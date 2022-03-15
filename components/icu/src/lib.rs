@@ -485,7 +485,7 @@ pub mod list {
     //! ```
     //! use icu_list::{ListFormatter, ListStyle};
     //! use icu_locid::Locale;
-    //! use icu_locid_macros::langid;
+    //! use icu_locid::langid;
     //! use writeable::Writeable;
     //!
     //! let locale: Locale = langid!("es").into();
