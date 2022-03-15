@@ -62,6 +62,37 @@ impl Region {
         }
     }
 
+    /// Safely creates a [`Region`] from a reference to its raw format
+    /// as returned by [`Region::into_raw()`].
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::locid::subtags::Region;
+    ///
+    /// assert!(matches!(Region::try_from_raw(b"US\0"), Ok(_)));
+    /// assert!(matches!(Region::try_from_raw(b"419"), Ok(_)));
+    /// assert!(matches!(Region::try_from_raw(b"foo"), Err(_)));
+    ///
+    /// // Unlike the other constructors, this one is case-sensitive:
+    /// assert!(matches!(Region::try_from_raw(b"us\0"), Err(_)));
+    /// ```
+    pub fn try_from_raw(v: &[u8; 3]) -> Result<&Self, ParserError> {
+        let s = TinyAsciiStr::<REGION_NUM_LENGTH>::try_from_raw(&v)
+            .map_err(|_| ParserError::InvalidSubtag)?;
+        let is_valid = match s.len() {
+            REGION_ALPHA_LENGTH => s.is_ascii_uppercase(),
+            REGION_NUM_LENGTH => s.is_ascii_numeric(),
+            _ => false,
+        };
+        if is_valid {
+            // Safe since the bytes are valid
+            Ok(unsafe { core::mem::transmute(v) })
+        } else {
+            Err(ParserError::InvalidSubtag)
+        }
+    }
+
     /// Deconstructs the [`Region`] into raw format to be consumed
     /// by [`from_raw_unchecked()`](Region::from_raw_unchecked()).
     ///
@@ -189,22 +220,9 @@ unsafe impl zerovec::ule::ULE for Region {
             // The following can be removed once `array_chunks` is stabilized.
             let mut a = [0; 3];
             a.copy_from_slice(v);
-            let s = TinyAsciiStr::<REGION_NUM_LENGTH>::try_from_raw(&a)
-                .map_err(|_| zerovec::ZeroVecError::parse::<Self>())?;
-            match s.len() {
-                REGION_ALPHA_LENGTH => {
-                    if s.is_ascii_uppercase() {
-                        continue;
-                    }
-                }
-                REGION_NUM_LENGTH => {
-                    if s.is_ascii_numeric() {
-                        continue;
-                    }
-                }
-                _ => ()
-            };
-            return Err(zerovec::ZeroVecError::parse::<Self>());
+            if Self::try_from_raw(&a).is_err() {
+                return Err(zerovec::ZeroVecError::parse::<Self>());
+            }
         }
         Ok(())
     }
