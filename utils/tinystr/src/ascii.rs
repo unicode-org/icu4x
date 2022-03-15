@@ -283,6 +283,26 @@ impl<const N: usize> TinyAsciiStr<N> {
         check_is!(self, is_ascii_numeric, is_ascii_digit)
     }
 
+    /// Checks if the value is in ASCII lower case.
+    ///
+    /// All letter characters are checked for case. Non-letter characters are ignored.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use tinystr::TinyAsciiStr;
+    ///
+    /// let s1: TinyAsciiStr<4> = "teSt".parse()
+    ///     .expect("Failed to parse.");
+    /// let s2: TinyAsciiStr<4> = "test".parse()
+    ///     .expect("Failed to parse.");
+    /// let s3: TinyAsciiStr<4> = "001z".parse()
+    ///     .expect("Failed to parse.");
+    ///
+    /// assert!(!s1.is_ascii_lowercase());
+    /// assert!(s2.is_ascii_lowercase());
+    /// assert!(s3.is_ascii_lowercase());
+    /// ```
     #[inline]
     #[must_use]
     pub const fn is_ascii_lowercase(&self) -> bool {
@@ -306,8 +326,8 @@ impl<const N: usize> TinyAsciiStr<N> {
     /// let s3: TinyAsciiStr<4> = "001z".parse()
     ///     .expect("Failed to parse.");
     ///
-    /// assert!(s1.is_ascii_titlecase());
-    /// assert!(!s2.is_ascii_titlecase());
+    /// assert!(!s1.is_ascii_titlecase());
+    /// assert!(s2.is_ascii_titlecase());
     /// assert!(s3.is_ascii_titlecase());
     /// ```
     #[inline]
@@ -316,6 +336,26 @@ impl<const N: usize> TinyAsciiStr<N> {
         check_is!(self, is_ascii_titlecase, CASE, is_ascii_lowercase, is_ascii_uppercase)
     }
 
+    /// Checks if the value is in ASCII upper case.
+    ///
+    /// All letter characters are checked for case. Non-letter characters are ignored.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use tinystr::TinyAsciiStr;
+    ///
+    /// let s1: TinyAsciiStr<4> = "teSt".parse()
+    ///     .expect("Failed to parse.");
+    /// let s2: TinyAsciiStr<4> = "TEST".parse()
+    ///     .expect("Failed to parse.");
+    /// let s3: TinyAsciiStr<4> = "001z".parse()
+    ///     .expect("Failed to parse.");
+    ///
+    /// assert!(!s1.is_ascii_uppercase());
+    /// assert!(s2.is_ascii_uppercase());
+    /// assert!(!s3.is_ascii_uppercase());
+    /// ```
     #[inline]
     #[must_use]
     pub const fn is_ascii_uppercase(&self) -> bool {
