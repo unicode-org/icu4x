@@ -222,7 +222,8 @@ icu_provider::impl_dyn_provider!(
     JapaneseErasProvider,
     [JapaneseErasV1Marker,],
     SERDE_SE,
-    impl DataConverter
+    ITERABLE_SERDE_SE,
+    DATA_CONVERTER
 );
 
 impl IterableResourceProvider<JapaneseErasV1Marker> for JapaneseErasProvider {

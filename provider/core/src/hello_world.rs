@@ -150,6 +150,7 @@ impl_dyn_provider!(
     HelloWorldProvider,
     [HelloWorldV1Marker,],
     SERDE_SE,
+    ITERABLE_SERDE_SE,
     DATA_CONVERTER
 );
 

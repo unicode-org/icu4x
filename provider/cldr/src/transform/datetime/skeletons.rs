@@ -47,7 +47,8 @@ icu_provider::impl_dyn_provider!(
     DateSkeletonPatternsProvider,
     [DateSkeletonPatternsV1Marker,],
     SERDE_SE,
-    impl DataConverter
+    ITERABLE_SERDE_SE,
+    DATA_CONVERTER
 );
 
 impl IterableResourceProvider<DateSkeletonPatternsV1Marker> for DateSkeletonPatternsProvider {

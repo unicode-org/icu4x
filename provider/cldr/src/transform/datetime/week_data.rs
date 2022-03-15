@@ -127,7 +127,8 @@ icu_provider::impl_dyn_provider!(
     WeekDataProvider,
     [WeekDataV1Marker,],
     SERDE_SE,
-    impl DataConverter
+    ITERABLE_SERDE_SE,
+    DATA_CONVERTER
 );
 
 #[test]

@@ -102,7 +102,8 @@ icu_provider::impl_dyn_provider!(
     PluralsProvider,
     [OrdinalV1Marker, CardinalV1Marker,],
     SERDE_SE,
-    impl DataConverter
+    ITERABLE_SERDE_SE,
+    DATA_CONVERTER
 );
 
 impl<M: ResourceMarker<Yokeable = PluralRulesV1<'static>>> IterableResourceProvider<M>

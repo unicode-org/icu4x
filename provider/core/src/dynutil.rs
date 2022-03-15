@@ -166,7 +166,7 @@ macro_rules! impl_dyn_provider {
             $arms,
             $one
         );
-        
+
         $crate::impl_dyn_provider!(
             $provider,
             $arms,

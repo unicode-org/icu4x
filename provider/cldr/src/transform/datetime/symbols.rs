@@ -48,7 +48,8 @@ icu_provider::impl_dyn_provider!(
     DateSymbolsProvider,
     [DateSymbolsV1Marker,],
     SERDE_SE,
-    impl DataConverter
+    ITERABLE_SERDE_SE,
+    DATA_CONVERTER
 );
 
 impl IterableResourceProvider<DateSymbolsV1Marker> for DateSymbolsProvider {

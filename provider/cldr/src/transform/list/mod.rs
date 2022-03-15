@@ -147,7 +147,8 @@ icu_provider::impl_dyn_provider!(
     ListProvider,
     [AndListV1Marker, OrListV1Marker, UnitListV1Marker,],
     SERDE_SE,
-    impl DataConverter
+    ITERABLE_SERDE_SE,
+    DATA_CONVERTER
 );
 
 impl<M: ResourceMarker<Yokeable = ListFormatterPatternsV1<'static>>> IterableResourceProvider<M>

@@ -128,7 +128,7 @@ icu_provider::impl_dyn_provider!(EnumeratedPropertyCodePointTrieProvider, {
     key::GRAPHEME_CLUSTER_BREAK_V1 => UnicodePropertyMapV1Marker<GraphemeClusterBreak>,
     key::WORD_BREAK_V1 => UnicodePropertyMapV1Marker<WordBreak>,
     key::SENTENCE_BREAK_V1 => UnicodePropertyMapV1Marker<SentenceBreak>,
-}, SERDE_SE, impl DataConverter);
+}, SERDE_SE, ITERABLE_SERDE_SE, DATA_CONVERTER);
 
 impl<T: TrieValue> IterableDynProvider<UnicodePropertyMapV1Marker<T>>
     for EnumeratedPropertyCodePointTrieProvider
