@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1647393235788,
+  "lastUpdate": 1647410749408,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -20879,6 +20879,36 @@ window.BENCHMARK_DATA = {
             "name": "fixed_decimal/overview",
             "value": 107837,
             "range": "± 1313",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "0fd8cdefbba595733aa79a5ddba057846dc75ae3",
+          "message": "Simplify Language representation (#1695)",
+          "timestamp": "2022-03-15T22:58:08-07:00",
+          "tree_id": "00c5ab7a90b2853d87b5332b92a4da1630330dcb",
+          "url": "https://github.com/unicode-org/icu4x/commit/0fd8cdefbba595733aa79a5ddba057846dc75ae3"
+        },
+        "date": 1647410733371,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 119077,
+            "range": "± 8662",
             "unit": "ns/iter"
           }
         ]
