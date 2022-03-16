@@ -4,7 +4,7 @@
 
 use super::error::SkeletonError;
 use crate::fields::{self, Field, FieldLength, FieldSymbol};
-#[cfg(feature = "provider_transform_internals")]
+#[cfg(feature = "datagen")]
 use crate::pattern::reference::Pattern;
 use alloc::vec::Vec;
 use core::convert::TryFrom;
@@ -62,7 +62,7 @@ impl From<Vec<fields::Field>> for Skeleton {
 /// At the time of this writing, it's being used for applying hour cycle preferences and should not
 /// be exposed as a public API for end users.
 #[doc(hidden)]
-#[cfg(feature = "provider_transform_internals")]
+#[cfg(feature = "datagen")]
 impl From<&Pattern> for Skeleton {
     fn from(pattern: &Pattern) -> Self {
         let mut fields: SmallVec<[fields::Field; 5]> = SmallVec::new();

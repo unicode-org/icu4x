@@ -49,5 +49,5 @@ bench = false  # This option is required for Benchmark CI
 path = "src/lib.rs"
 
 [features]
-default = ["provider_serde"]
-provider_serde = ["serde"]
+default = ["serialize"]
+serialize = ["serde"]

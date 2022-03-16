@@ -178,7 +178,7 @@ impl<'a, W: Writeable + 'a, I: Iterator<Item = W> + Clone + 'a> Writeable for Li
     }
 }
 
-#[cfg(all(test, feature = "provider_transform_internals"))]
+#[cfg(all(test, feature = "datagen"))]
 mod tests {
     use super::*;
     use writeable::{assert_writeable_eq, assert_writeable_parts_eq};

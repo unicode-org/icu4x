@@ -43,10 +43,10 @@ path = "src/lib.rs"
 [features]
 default = ["icu4x_human_readable_de"]
 std = ["icu_provider/std", "icu_locid/std", "regex-automata/std", "regex-automata/alloc"]
-provider_serde = ["serde", "icu_provider/serde", "zerovec/serde", "deduplicating_array"]
-provider_transform_internals = ["provider_serde", "std"]
-icu4x_human_readable_de = ["provider_serde", "regex-automata/alloc"]
+serialize = ["serde", "icu_provider/serde", "zerovec/serde", "deduplicating_array"]
+datagen = ["serialize", "std"]
+icu4x_human_readable_de = ["serialize", "regex-automata/alloc"]
 
 [[example]]
 name = "and_list"
-required-features = ["provider_serde"]
+required-features = ["serialize"]

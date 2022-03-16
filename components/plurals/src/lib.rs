@@ -139,10 +139,8 @@ pub enum PluralRuleType {
 /// assert_eq!(pr.select(5_usize), PluralCategory::Other);
 /// ```
 #[derive(Debug, PartialEq, Eq, Clone, Copy, Hash, Ord, PartialOrd)]
-#[cfg_attr(
-    feature = "provider_serde",
-    derive(serde::Serialize, serde::Deserialize)
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize))]
+#[cfg_attr(feature = "serialize", derive(serde::Deserialize))]
 pub enum PluralCategory {
     /// CLDR "zero" plural category. Used in Arabic and Latvian, among others.
     ///

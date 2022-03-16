@@ -5,17 +5,15 @@
 use super::{runtime::Pattern, PatternItem};
 use crate::pattern::{reference, runtime};
 use crate::{fields, options::preferences};
-#[cfg(feature = "provider_transform_internals")]
+#[cfg(feature = "datagen")]
 use crate::{provider, skeleton};
 use icu_provider::{yoke, zerofrom};
 
 /// Used to represent either H11/H12, or H23/H24. Skeletons only store these
 /// hour cycles as H12 or H23.
 #[derive(Debug, PartialEq, Clone, Copy, yoke::Yokeable, zerofrom::ZeroFrom)]
-#[cfg_attr(
-    feature = "provider_serde",
-    derive(serde::Serialize, serde::Deserialize)
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize))]
+#[cfg_attr(feature = "serialize", derive(serde::Deserialize))]
 pub enum CoarseHourCycle {
     /// Can either be fields::Hour::H11 or fields::Hour::H12
     H11H12,
@@ -54,7 +52,7 @@ impl CoarseHourCycle {
     /// Invoke the pattern matching machinery to transform the hour cycle of a pattern. This provides
     /// a safe mapping from a h11/h12 to h23/h24 for transforms.
     #[doc(hidden)]
-    #[cfg(feature = "provider_transform_internals")]
+    #[cfg(feature = "datagen")]
     pub fn apply_on_pattern<'data>(
         &self,
         date_time: &provider::calendar::patterns::GenericLengthPatternsV1<'data>,

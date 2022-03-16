@@ -10,10 +10,7 @@ pub mod week_of {
 
     /// Information about how a given calendar assigns weeks to a year or month.
     #[derive(Clone, Copy, Debug)]
-    #[cfg_attr(
-        feature = "provider_serde",
-        derive(serde::Serialize, serde::Deserialize)
-    )]
+    #[cfg_attr(feature = "serialize", derive(serde::Serialize, serde::Deserialize))]
     pub struct CalendarInfo {
         /// The first day of a week.
         pub first_weekday: IsoWeekday,

@@ -17,17 +17,15 @@ use zerovec::{ZeroSlice, ZeroVec};
     SentenceBreakDataV1Marker = "segmenter/sentence@1"
 )]
 #[derive(Debug, PartialEq, Clone)]
-#[cfg_attr(
-    feature = "provider_serde",
-    derive(serde::Serialize, serde::Deserialize)
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize))]
+#[cfg_attr(feature = "serialize", derive(serde::Deserialize))]
 pub struct RuleBreakDataV1<'data> {
     /// Property table for rule-based breaking.
-    #[cfg_attr(feature = "provider_serde", serde(borrow))]
+    #[cfg_attr(feature = "serialize", serde(borrow))]
     pub property_table: RuleBreakPropertyTable<'data>,
 
     /// Break state table for rule-based breaking.
-    #[cfg_attr(feature = "provider_serde", serde(borrow))]
+    #[cfg_attr(feature = "serialize", serde(borrow))]
     pub break_state_table: RuleBreakStateTable<'data>,
 
     /// Number of properties; should be the square root of the length of [`Self::break_state_table`].
@@ -41,34 +39,28 @@ pub struct RuleBreakDataV1<'data> {
 
 /// Property table for rule-based breaking.
 #[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
-#[cfg_attr(
-    feature = "provider_serde",
-    derive(serde::Serialize, serde::Deserialize)
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize))]
+#[cfg_attr(feature = "serialize", derive(serde::Deserialize))]
 pub struct RuleBreakPropertyTable<'data>(
-    #[cfg_attr(feature = "provider_serde", serde(borrow))] pub ZeroVec<'data, u8>,
+    #[cfg_attr(feature = "serialize", serde(borrow))] pub ZeroVec<'data, u8>,
 );
 
 /// Break state table for rule-based breaking.
 #[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
-#[cfg_attr(
-    feature = "provider_serde",
-    derive(serde::Serialize, serde::Deserialize)
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize))]
+#[cfg_attr(feature = "serialize", derive(serde::Deserialize))]
 pub struct RuleBreakStateTable<'data>(
-    #[cfg_attr(feature = "provider_serde", serde(borrow))] pub ZeroVec<'data, i8>,
+    #[cfg_attr(feature = "serialize", serde(borrow))] pub ZeroVec<'data, i8>,
 );
 
 /// char16trie data for dictionary break
 #[icu_provider::data_struct(UCharDictionaryBreakDataV1Marker = "segmenter/char16trie@1")]
 #[derive(Debug, PartialEq, Clone)]
-#[cfg_attr(
-    feature = "provider_serde",
-    derive(serde::Serialize, serde::Deserialize)
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize))]
+#[cfg_attr(feature = "serialize", derive(serde::Deserialize))]
 pub struct UCharDictionaryBreakDataV1<'data> {
     /// Dictionary data of char16trie.
-    #[cfg_attr(feature = "provider_serde", serde(borrow))]
+    #[cfg_attr(feature = "serialize", serde(borrow))]
     pub trie_data: ZeroVec<'data, u16>,
 }
 

@@ -436,7 +436,7 @@ pub fn get_best_available_format_pattern<'data>(
 
     // Modify the resulting pattern to have fields of the same length.
     if prefer_matched_pattern {
-        #[cfg(not(feature = "provider_transform_internals"))]
+        #[cfg(not(feature = "datagen"))]
         panic!("This code branch should only be run when transforming provider code.");
     } else {
         closest_format_pattern.for_each_mut(|pattern| {

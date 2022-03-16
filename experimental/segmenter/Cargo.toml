@@ -54,6 +54,7 @@ name = "complex_word"
 required-features = ["lstm"]
 
 [features]
-default = ["provider_serde"]
+default = ["serialize"]
 lstm = ["icu_segmenter_lstm"]
-provider_serde = ["serde"]
+serialize = ["serde"]
+datagen = ["serialize"]

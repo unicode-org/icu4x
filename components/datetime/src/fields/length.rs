@@ -15,10 +15,8 @@ pub enum LengthError {
 impl std::error::Error for LengthError {}
 
 #[derive(Debug, Eq, PartialEq, Clone, Copy, Ord, PartialOrd)]
-#[cfg_attr(
-    feature = "provider_serde",
-    derive(serde::Serialize, serde::Deserialize)
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize))]
+#[cfg_attr(feature = "serialize", derive(serde::Deserialize))]
 pub enum FieldLength {
     One = 1,
     TwoDigit = 2,

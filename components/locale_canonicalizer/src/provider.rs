@@ -14,10 +14,9 @@ use tinystr::TinyAsciiStr;
 
 #[icu_provider::data_struct(AliasesV1Marker = "locale_canonicalizer/aliases@1")]
 #[derive(Debug, PartialEq, Clone, Default)]
-#[cfg_attr(
-    feature = "provider_serde",
-    derive(serde::Serialize, serde::Deserialize)
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize))]
+#[cfg_attr(feature = "serialize", derive(serde::Deserialize))]
+
 /// This alias data is used for locale canonicalization. Each field defines a
 /// mapping from an old identifier to a new identifier, based upon the rules in
 /// from <http://unicode.org/reports/tr35/#LocaleId_Canonicalization>. The data
@@ -68,10 +67,8 @@ pub struct AliasesV1 {
 
 #[icu_provider::data_struct(LikelySubtagsV1Marker = "locale_canonicalizer/likelysubtags@1")]
 #[derive(Debug, PartialEq, Clone, Default)]
-#[cfg_attr(
-    feature = "provider_serde",
-    derive(serde::Serialize, serde::Deserialize)
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize))]
+#[cfg_attr(feature = "serialize", derive(serde::Deserialize))]
 /// This likely subtags data is used for the minimize and maximize operations.
 /// Each field defines a mapping from an old identifier to a new identifier,
 /// based upon the rules in
