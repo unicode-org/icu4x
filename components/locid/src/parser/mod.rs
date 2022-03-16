@@ -13,59 +13,62 @@ pub use langid::{
 };
 pub use locale::parse_locale;
 
-pub const fn get_subtag_iterator(t: &[u8]) -> SubtagIterator {
-    let mut l_cursor = 0;
-    while l_cursor < t.len() && (t[l_cursor] == b'_' || t[l_cursor] == b'-') {
-        l_cursor += 1;
+pub const fn get_subtag_iterator(slice: &[u8]) -> SubtagIterator {
+    let mut current_start = 0;
+    while current_start < slice.len()
+        && (slice[current_start] == b'_' || slice[current_start] == b'-')
+    {
+        current_start += 1;
     }
-    let mut r_cursor = l_cursor;
-    while r_cursor < t.len() && t[r_cursor] != b'_' && t[r_cursor] != b'-' {
-        r_cursor += 1;
+    let mut current_end = current_start;
+    while current_end < slice.len() && slice[current_end] != b'_' && slice[current_end] != b'-' {
+        current_end += 1;
     }
     SubtagIterator {
-        t,
-        l_cursor,
-        r_cursor,
+        slice,
+        current_start,
+        current_end,
     }
 }
 
 #[derive(Copy, Clone, Debug)]
 pub struct SubtagIterator<'a> {
-    t: &'a [u8],
-    l_cursor: usize,
-    r_cursor: usize,
+    slice: &'a [u8],
+    current_start: usize,
+    current_end: usize,
 }
 
 pub type ManualSlice<'a> = (&'a [u8], usize, usize);
 
 impl<'a> SubtagIterator<'a> {
     pub const fn next_manual(mut self) -> (Self, Option<ManualSlice<'a>>) {
-        if self.l_cursor == self.r_cursor {
+        if self.current_start == self.current_end {
             (self, None)
         } else {
-            let r = (self.t, self.l_cursor, self.r_cursor);
-            self.l_cursor = self.r_cursor;
-            while self.l_cursor < self.t.len()
-                && (self.t[self.l_cursor] == b'_' || self.t[self.l_cursor] == b'-')
+            let r = (self.slice, self.current_start, self.current_end);
+            self.current_start = self.current_end;
+            while self.current_start < self.slice.len()
+                && (self.slice[self.current_start] == b'_'
+                    || self.slice[self.current_start] == b'-')
             {
-                self.l_cursor += 1;
+                self.current_start += 1;
             }
-            self.r_cursor = self.l_cursor;
-            while self.r_cursor < self.t.len()
-                && self.t[self.r_cursor] != b'_'
-                && self.t[self.r_cursor] != b'-'
+            self.current_end = self.current_start;
+            while self.current_end < self.slice.len()
+                && self.slice[self.current_end] != b'_'
+                && self.slice[self.current_end] != b'-'
             {
-                self.r_cursor += 1;
+                self.current_end += 1;
             }
             (self, Some(r))
         }
     }
 
     pub const fn peek_manual(&self) -> Option<ManualSlice<'a>> {
-        if self.l_cursor == self.r_cursor {
+        if self.current_start == self.current_end {
             None
         } else {
-            Some((self.t, self.l_cursor, self.r_cursor))
+            Some((self.slice, self.current_start, self.current_end))
         }
     }
 

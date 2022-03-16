@@ -60,20 +60,14 @@ impl Variant {
             return Err(ParserError::InvalidSubtag);
         }
 
-        let s = match TinyAsciiStr::from_bytes_manual_slice(v, start, end) {
-            Ok(s) => s,
-            _ => return Err(ParserError::InvalidSubtag),
-        };
-
-        if !s.is_ascii_alphanumeric() {
-            return Err(ParserError::InvalidSubtag);
-        }
-
         if slen == VARIANT_NUM_ALPHA_LENGTH && !v[start].is_ascii_digit() {
             return Err(ParserError::InvalidSubtag);
         }
 
-        Ok(Self(s.to_ascii_lowercase()))
+        match TinyAsciiStr::from_bytes_manual_slice(v, start, end) {
+            Ok(s) if s.is_ascii_alphanumeric() => Ok(Self(s.to_ascii_lowercase())),
+            _ => Err(ParserError::InvalidSubtag),
+        }
     }
 
     /// Safely creates a [`Variant`] from a reference to its raw format

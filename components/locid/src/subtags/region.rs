@@ -53,14 +53,15 @@ impl Region {
         start: usize,
         end: usize,
     ) -> Result<Self, ParserError> {
-        match (
-            end - start,
-            TinyAsciiStr::from_bytes_manual_slice(v, start, end),
-        ) {
-            (REGION_ALPHA_LENGTH, Ok(s)) if s.is_ascii_alphabetic() => {
-                Ok(Self(s.to_ascii_uppercase()))
-            }
-            (REGION_NUM_LENGTH, Ok(s)) if s.is_ascii_numeric() => Ok(Self(s)),
+        match end - start {
+            REGION_ALPHA_LENGTH => match TinyAsciiStr::from_bytes_manual_slice(v, start, end) {
+                Ok(s) if s.is_ascii_alphabetic() => Ok(Self(s.to_ascii_uppercase())),
+                _ => Err(ParserError::InvalidSubtag),
+            },
+            REGION_NUM_LENGTH => match TinyAsciiStr::from_bytes_manual_slice(v, start, end) {
+                Ok(s) if s.is_ascii_numeric() => Ok(Self(s)),
+                _ => Err(ParserError::InvalidSubtag),
+            },
             _ => Err(ParserError::InvalidSubtag),
         }
     }

@@ -56,15 +56,10 @@ impl Script {
             return Err(ParserError::InvalidSubtag);
         }
 
-        let s = match TinyAsciiStr::from_bytes_manual_slice(v, start, end) {
-            Ok(s) => s,
-            _ => return Err(ParserError::InvalidSubtag),
-        };
-
-        if !s.is_ascii_alphabetic() {
-            return Err(ParserError::InvalidSubtag);
+        match TinyAsciiStr::from_bytes_manual_slice(v, start, end) {
+            Ok(s) if s.is_ascii_alphabetic() => Ok(Self(s.to_ascii_titlecase())),
+            _ => Err(ParserError::InvalidSubtag),
         }
-        Ok(Self(s.to_ascii_titlecase()))
     }
 
     /// Safely creates a [`Script`] from a reference to its raw format

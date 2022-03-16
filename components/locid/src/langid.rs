@@ -89,8 +89,8 @@ impl LanguageIdentifier {
     }
 
     #[doc(hidden)]
-    // We cannot return `Result<Self, ParserError>`, as it's currently impossible to unwrap non-Copy
-    // types in a const context. See [rust-lang#73255](https://github.com/rust-lang/rust/issues/73255).
+    // The return type should be `Result<Self, ParserError>` once the `const_precise_live_drops`
+    // is stabilized ([rust-lang#73255](https://github.com/rust-lang/rust/issues/73255)).
     pub const fn from_bytes_without_variants(
         v: &[u8],
     ) -> Result<

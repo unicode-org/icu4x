@@ -75,25 +75,17 @@ impl Language {
             return Err(ParserError::InvalidLanguage);
         }
 
-        let s = match TinyAsciiStr::from_bytes_manual_slice(v, start, end) {
-            Ok(s) => s,
-            _ => return Err(ParserError::InvalidLanguage),
-        };
-
-        if !s.is_ascii_alphabetic() {
-            return Err(ParserError::InvalidLanguage);
+        if slen == 3
+            && v[start] == UND_VALUE.all_bytes()[0]
+            && v[start + 1] == UND_VALUE.all_bytes()[1]
+            && v[start + 2] == UND_VALUE.all_bytes()[2]
+        {
+            return Ok(Self(None));
         }
 
-        let value = s.to_ascii_lowercase();
-
-        if slen == 3
-            && value.all_bytes()[0] == UND_VALUE.all_bytes()[0]
-            && value.all_bytes()[1] == UND_VALUE.all_bytes()[1]
-            && value.all_bytes()[2] == UND_VALUE.all_bytes()[2]
-        {
-            Ok(Self(None))
-        } else {
-            Ok(Self(Some(value)))
+        match TinyAsciiStr::from_bytes_manual_slice(v, start, end) {
+            Ok(s) if s.is_ascii_alphabetic() => Ok(Self(Some(s.to_ascii_lowercase()))),
+            _ => Err(ParserError::InvalidLanguage),
         }
     }
 
