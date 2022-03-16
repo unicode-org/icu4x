@@ -4,7 +4,7 @@
 
 //! This module contains types and implementations for the Julian calendar
 
-use crate::iso::{Iso, IsoDay, IsoMonth, IsoYear};
+use crate::iso::{Iso, IsoYear};
 use crate::{
     types, ArithmeticDate, Calendar, CalendarArithmetic, Date, DateDuration, DateDurationUnit,
     DateTime, DateTimeError,
@@ -23,15 +23,15 @@ pub struct Julian;
 
 #[derive(Copy, Clone, Debug, Hash, Eq, PartialEq)]
 // The inner date type used for representing Date<Julian>
-pub struct JulianDateInner(ArithmeticDate<Julian>);
+pub struct JulianDateInner(pub(crate) ArithmeticDate<Julian>);
 
 impl CalendarArithmetic for Julian {
-    fn month_days(month: u8, year: i32) -> u8 {
+    fn month_days(year: i32, month: u8) -> u8 {
         match month {
             4 | 6 | 9 | 11 => 30,
             2 if Self::is_leap_year(year) => 29,
             2 => 28,
-            1 | 3 | 5 | 7 | 8 | 10 => 31,
+            1 | 3 | 5 | 7 | 8 | 10 | 12 => 31,
             _ => 0,
         }
     }
@@ -134,7 +134,7 @@ impl Julian {
     // The fixed calculations algorithms are from the Calendrical Calculations book
     //
     // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/1ee51ecfaae6f856b0d7de3e36e9042100b4f424/calendar.l#L1689-L1709
-    fn fixed_from_julian(date: ArithmeticDate<Julian>) -> i32 {
+    pub(crate) fn fixed_from_julian(date: ArithmeticDate<Julian>) -> i32 {
         let year = if date.year < 0 {
             date.year + 1
         } else {
@@ -153,7 +153,7 @@ impl Julian {
         fixed + (date.day as i32)
     }
 
-    fn fixed_from_julian_integers(year: i32, month: i32, day: i32) -> i32 {
+    pub(crate) fn fixed_from_julian_integers(year: i32, month: i32, day: i32) -> i32 {
         Self::fixed_from_julian(ArithmeticDate {
             year,
             month: month.try_into().unwrap(),
@@ -195,36 +195,26 @@ impl Julian {
 
 impl Date<Julian> {
     /// Construct new Julian Date
-    pub fn new_julian_date(
-        year: IsoYear,
-        month: IsoMonth,
-        day: IsoDay,
-    ) -> Result<Date<Julian>, DateTimeError> {
-        let day_int = u8::from(day);
-
-        let inner = ArithmeticDate {
-            year: year.0,
-            month: month.into(),
-            day: day.into(),
-            marker: PhantomData,
-        };
-
-        if day_int > 28 {
-            let bound = inner.days_in_month();
-            if day_int > bound {
-                return Err(DateTimeError::OutOfRange);
-            }
-        }
-
-        Ok(Date::from_raw(JulianDateInner(inner), Julian))
-    }
-
     pub fn new_julian_date_from_integers(
         year: i32,
         month: u8,
         day: u8,
     ) -> Result<Date<Julian>, DateTimeError> {
-        Self::new_julian_date(year.into(), month.try_into()?, day.try_into()?)
+        let inner = ArithmeticDate {
+            year,
+            month,
+            day,
+            marker: PhantomData,
+        };
+
+        if day > 28 {
+            let bound = inner.days_in_month();
+            if day > bound {
+                return Err(DateTimeError::OutOfRange);
+            }
+        }
+
+        Ok(Date::from_raw(JulianDateInner(inner), Julian))
     }
 }
 
@@ -239,7 +229,7 @@ impl DateTime<Julian> {
         second: u8,
     ) -> Result<DateTime<Julian>, DateTimeError> {
         Ok(DateTime {
-            date: Date::new_julian_date(year.into(), month.try_into()?, day.try_into()?)?,
+            date: Date::new_julian_date_from_integers(year, month, day)?,
             time: types::Time::try_new(hour, minute, second)?,
         })
     }
