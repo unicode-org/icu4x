@@ -76,8 +76,8 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
     pub fn days_in_year(&self) -> u32 {
         let months_in_year = C::months_for_every_year();
         let mut days: u32 = 0;
-        for _month in 1..=months_in_year {
-            days += C::month_days(self.month, self.year) as u32;
+        for month in 1..=months_in_year {
+            days += C::month_days(month, self.year) as u32;
         }
         days
     }
@@ -95,8 +95,8 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
     #[inline]
     pub fn day_of_year(&self) -> u32 {
         let mut day_of_year = 0;
-        for _month in 1..self.month {
-            day_of_year += C::month_days(self.month, self.year) as u32;
+        for month in 1..self.month {
+            day_of_year += C::month_days(month, self.year) as u32;
         }
         day_of_year + (self.day as u32)
     }
