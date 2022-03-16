@@ -42,6 +42,7 @@ use tinystr::TinyAsciiStr;
 pub struct Language(TinyAsciiStr<{ *LANGUAGE_LENGTH.end() }>);
 
 const LANGUAGE_LENGTH: RangeInclusive<usize> = 2..=3;
+// TODO(#348): Change this to invoke a const function.
 // Safe because "und" is a valid language subtag
 const UND: Language = Language(unsafe { TinyAsciiStr::from_bytes_unchecked(*b"und") });
 
