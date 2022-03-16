@@ -6,7 +6,7 @@ use crate::parser::errors::ParserError;
 use core::fmt;
 use core::ops::RangeInclusive;
 use core::str::FromStr;
-use tinystr::{tinystr, TinyAsciiStr};
+use tinystr::TinyAsciiStr;
 
 /// A language subtag (examples: `"en"`, `"csb"`, `"zh"`, `"und"`, etc.)
 ///
@@ -38,11 +38,13 @@ use tinystr::{tinystr, TinyAsciiStr};
 /// but that form has not been used and ICU4X does not support it right now.
 ///
 /// [`unicode_language_id`]: https://unicode.org/reports/tr35/#unicode_language_id
-#[derive(Default, Debug, PartialEq, Eq, Clone, Hash, PartialOrd, Ord, Copy)]
-pub struct Language(Option<TinyAsciiStr<{ *LANGUAGE_LENGTH.end() }>>);
+#[derive(Debug, PartialEq, Eq, Clone, Hash, PartialOrd, Ord, Copy)]
+pub struct Language(TinyAsciiStr<{ *LANGUAGE_LENGTH.end() }>);
 
 const LANGUAGE_LENGTH: RangeInclusive<usize> = 2..=3;
-const UND_VALUE: TinyAsciiStr<3> = tinystr!(3, "und");
+// TODO(#348): Change this to invoke a const function.
+// Safe because "und" is a valid language subtag
+const UND: Language = Language(unsafe { TinyAsciiStr::from_bytes_unchecked(*b"und") });
 
 impl Language {
     /// A constructor which takes a utf8 slice, parses it and
@@ -73,11 +75,7 @@ impl Language {
 
         let value = s.to_ascii_lowercase();
 
-        if value == UND_VALUE {
-            Ok(Self(None))
-        } else {
-            Ok(Self(Some(value)))
-        }
+        Ok(Self(value))
     }
 
     /// Deconstructs the [`Language`] into raw format to be consumed
@@ -95,8 +93,8 @@ impl Language {
     /// let lang = unsafe { Language::from_raw_unchecked(raw) };
     /// assert_eq!(lang, "en");
     /// ```
-    pub fn into_raw(self) -> Option<[u8; 3]> {
-        self.0.as_ref().map(TinyAsciiStr::all_bytes).copied()
+    pub fn into_raw(self) -> [u8; 3] {
+        *self.0.all_bytes()
     }
 
     /// Constructor which takes a raw value returned by
@@ -119,11 +117,8 @@ impl Language {
     ///
     /// This function accepts a [`[u8; 3]`] that is expected to be a valid [`TinyAsciiStr<3>`]
     /// representing a [`Language`] subtag in canonical syntax.
-    pub const unsafe fn from_raw_unchecked(v: Option<[u8; 3]>) -> Self {
-        Self(match v {
-            Some(v) => Some(TinyAsciiStr::from_bytes_unchecked(v)),
-            None => None,
-        })
+    pub const unsafe fn from_raw_unchecked(v: [u8; 3]) -> Self {
+        Self(TinyAsciiStr::from_bytes_unchecked(v))
     }
 
     /// Returns the default undefined language "und". Same as [`default()`](Default::default()), but is `const`.
@@ -139,7 +134,7 @@ impl Language {
     /// ```
     #[inline]
     pub const fn und() -> Self {
-        Self(None)
+        UND
     }
 
     /// A helper function for displaying
@@ -158,11 +153,12 @@ impl Language {
     ///
     /// `Notice`: For many use cases, such as comparison,
     /// [`Language`] implements [`PartialEq`]`<&`[`str`]`>` which allows for direct comparisons.
+    #[inline]
     pub fn as_str(&self) -> &str {
-        self.0.as_deref().unwrap_or("und")
+        self.0.as_str()
     }
 
-    /// Resets the [`Language`] subtag to an empty one.
+    /// Resets the [`Language`] subtag to an empty one (equal to `"und"`).
     ///
     /// # Examples
     ///
@@ -178,11 +174,12 @@ impl Language {
     ///
     /// assert_eq!(lang.as_str(), "und");
     /// ```
+    #[inline]
     pub fn clear(&mut self) {
-        self.0.take();
+        *self = UND
     }
 
-    /// Tests if the [`Language`] subtag is empty.
+    /// Tests if the [`Language`] subtag is empty (equal to `"und"`).
     ///
     /// # Examples
     ///
@@ -198,8 +195,9 @@ impl Language {
     ///
     /// assert_eq!(lang.is_empty(), true);
     /// ```
+    #[inline]
     pub fn is_empty(self) -> bool {
-        self.0.is_none()
+        self == UND
     }
 }
 
@@ -224,7 +222,7 @@ impl writeable::Writeable for Language {
 
     #[inline]
     fn write_len(&self) -> writeable::LengthHint {
-        writeable::LengthHint::exact(self.0.map_or(3, |t| t.len()))
+        writeable::LengthHint::exact(self.0.len())
     }
 }
 
@@ -247,8 +245,14 @@ impl<'l> From<&'l Language> for &'l str {
     }
 }
 
-impl From<Language> for Option<TinyAsciiStr<3>> {
+impl From<Language> for TinyAsciiStr<3> {
     fn from(input: Language) -> Self {
-        input.0.map(Into::into)
+        input.0
+    }
+}
+
+impl Default for Language {
+    fn default() -> Language {
+        Language::und()
     }
 }
