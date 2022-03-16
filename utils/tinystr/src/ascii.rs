@@ -21,6 +21,30 @@ impl<const N: usize> TinyAsciiStr<N> {
         Self::from_bytes_inner(bytes, 0, bytes.len(), false)
     }
 
+    /// Attempts to parse a fixed-length byte array to a `TinyAsciiStr`.
+    ///
+    /// The byte array may contain trailing NUL bytes.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use tinystr::TinyAsciiStr;
+    /// use tinystr::tinystr;
+    ///
+    /// assert_eq!(
+    ///     TinyAsciiStr::<3>::try_from_raw(*b"GB\0"),
+    ///     Ok(tinystr!(3, "GB")));
+    /// assert_eq!(
+    ///     TinyAsciiStr::<3>::try_from_raw(*b"USD"),
+    ///     Ok(tinystr!(3, "USD")));
+    /// assert!(matches!(
+    ///     TinyAsciiStr::<3>::try_from_raw(*b"\0A\0"),
+    ///     Err(_)));
+    /// ```
+    pub const fn try_from_raw(raw: [u8; N]) -> Result<Self, TinyStrError> {
+        Self::from_bytes_inner(&raw, 0, N, true)
+    }
+
     /// Equivalent to [`from_bytes(bytes[start..end])`](Self::from_bytes),
     /// but callable in a `const` context (which range indexing is not).
     pub const fn from_bytes_manual_slice(
@@ -160,6 +184,28 @@ macro_rules! check_is {
             true
         }
     };
+    ($self:ident, $check:ident, CASE, $check_u8_0:ident, $check_u8_1:ident) => {
+        if N <= 4 {
+            Aligned4::from_bytes(&$self.bytes).$check()
+        } else if N <= 8 {
+            Aligned8::from_bytes(&$self.bytes).$check()
+        } else {
+            // Won't panic because N is > 8
+            if $self.bytes[0].$check_u8_0() {
+                return false;
+            }
+            let mut i = 1;
+            // Won't panic because self.bytes has length N
+            #[allow(clippy::indexing_slicing)]
+            while i < N && $self.bytes[i] != 0 {
+                if $self.bytes[i].$check_u8_1() {
+                    return false;
+                }
+                i += 1;
+            }
+            true
+        }
+    };
 }
 
 impl<const N: usize> TinyAsciiStr<N> {
@@ -234,6 +280,103 @@ impl<const N: usize> TinyAsciiStr<N> {
     pub const fn is_ascii_numeric(&self) -> bool {
         check_is!(self, is_ascii_numeric, is_ascii_digit)
     }
+
+    /// Checks if the value is in ASCII lower case.
+    ///
+    /// All letter characters are checked for case. Non-letter characters are ignored.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use tinystr::TinyAsciiStr;
+    ///
+    /// let s1: TinyAsciiStr<4> = "teSt".parse()
+    ///     .expect("Failed to parse.");
+    /// let s2: TinyAsciiStr<4> = "test".parse()
+    ///     .expect("Failed to parse.");
+    /// let s3: TinyAsciiStr<4> = "001z".parse()
+    ///     .expect("Failed to parse.");
+    ///
+    /// assert!(!s1.is_ascii_lowercase());
+    /// assert!(s2.is_ascii_lowercase());
+    /// assert!(s3.is_ascii_lowercase());
+    /// ```
+    #[inline]
+    #[must_use]
+    pub const fn is_ascii_lowercase(&self) -> bool {
+        check_is!(
+            self,
+            is_ascii_lowercase,
+            CASE,
+            is_ascii_uppercase,
+            is_ascii_uppercase
+        )
+    }
+
+    /// Checks if the value is in ASCII title case.
+    ///
+    /// This verifies that the first character is ASCII uppercase and all others ASCII lowercase.
+    /// Non-letter characters are ignored.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use tinystr::TinyAsciiStr;
+    ///
+    /// let s1: TinyAsciiStr<4> = "teSt".parse()
+    ///     .expect("Failed to parse.");
+    /// let s2: TinyAsciiStr<4> = "Test".parse()
+    ///     .expect("Failed to parse.");
+    /// let s3: TinyAsciiStr<4> = "001z".parse()
+    ///     .expect("Failed to parse.");
+    ///
+    /// assert!(!s1.is_ascii_titlecase());
+    /// assert!(s2.is_ascii_titlecase());
+    /// assert!(s3.is_ascii_titlecase());
+    /// ```
+    #[inline]
+    #[must_use]
+    pub const fn is_ascii_titlecase(&self) -> bool {
+        check_is!(
+            self,
+            is_ascii_titlecase,
+            CASE,
+            is_ascii_lowercase,
+            is_ascii_uppercase
+        )
+    }
+
+    /// Checks if the value is in ASCII upper case.
+    ///
+    /// All letter characters are checked for case. Non-letter characters are ignored.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use tinystr::TinyAsciiStr;
+    ///
+    /// let s1: TinyAsciiStr<4> = "teSt".parse()
+    ///     .expect("Failed to parse.");
+    /// let s2: TinyAsciiStr<4> = "TEST".parse()
+    ///     .expect("Failed to parse.");
+    /// let s3: TinyAsciiStr<4> = "001z".parse()
+    ///     .expect("Failed to parse.");
+    ///
+    /// assert!(!s1.is_ascii_uppercase());
+    /// assert!(s2.is_ascii_uppercase());
+    /// assert!(!s3.is_ascii_uppercase());
+    /// ```
+    #[inline]
+    #[must_use]
+    pub const fn is_ascii_uppercase(&self) -> bool {
+        check_is!(
+            self,
+            is_ascii_uppercase,
+            CASE,
+            is_ascii_lowercase,
+            is_ascii_lowercase
+        )
+    }
 }
 
 macro_rules! to {
@@ -291,15 +434,15 @@ impl<const N: usize> TinyAsciiStr<N> {
 
     /// Converts this type to its ASCII title case equivalent in-place.
     ///
-    /// First character, if is an ASCII letter 'a' to 'z' is mapped to 'A' to 'Z',
-    /// other characters are unchanged.
+    /// The first character is converted to ASCII uppercase; the remaining characters
+    /// are converted to ASCII lowercase.
     ///
     /// # Examples
     ///
     /// ```
     /// use tinystr::TinyAsciiStr;
     ///
-    /// let s1: TinyAsciiStr<4> = "test".parse()
+    /// let s1: TinyAsciiStr<4> = "teSt".parse()
     ///     .expect("Failed to parse.");
     ///
     /// assert_eq!(&*s1.to_ascii_titlecase(), "Test");
@@ -393,9 +536,15 @@ impl<const N: usize> PartialEq<TinyAsciiStr<N>> for alloc::string::String {
 #[cfg(test)]
 mod test {
     use super::*;
+    use rand::distributions::Distribution;
+    use rand::distributions::Standard;
+    use rand::rngs::SmallRng;
+    use rand::seq::SliceRandom;
+    use rand::SeedableRng;
 
     const STRINGS: &[&str] = &[
         "Latn",
+        "laTn",
         "windows",
         "AR",
         "Hans",
@@ -409,9 +558,37 @@ mod test {
         "NO",
         "419",
         "MacintoshOSX2019",
+        "a3z",
+        "A3z",
+        "A3Z",
+        "a3Z",
+        "3A",
+        "3Z",
+        "3a",
+        "3z",
+        "@@[`{",
         "UK",
         "E12",
     ];
+
+    fn gen_strings(num_strings: usize, allowed_lengths: &[usize]) -> Vec<String> {
+        let mut rng = SmallRng::seed_from_u64(2022);
+        // Need to do this in 2 steps since the RNG is needed twice
+        let string_lengths = core::iter::repeat_with(|| *allowed_lengths.choose(&mut rng).unwrap())
+            .take(num_strings)
+            .collect::<Vec<usize>>();
+        string_lengths
+            .iter()
+            .map(|len| {
+                Standard
+                    .sample_iter(&mut rng)
+                    .filter(|b: &u8| *b > 0 && *b < 0x80)
+                    .take(*len)
+                    .collect::<Vec<u8>>()
+            })
+            .map(|byte_vec| String::from_utf8(byte_vec).expect("All ASCII"))
+            .collect()
+    }
 
     fn check_operation<T, F1, F2, const N: usize>(reference_f: F1, tinystr_f: F2)
     where
@@ -419,15 +596,19 @@ mod test {
         F2: Fn(TinyAsciiStr<N>) -> T,
         T: core::fmt::Debug + core::cmp::PartialEq,
     {
-        for s in STRINGS {
-            let t = match TinyAsciiStr::<N>::from_str(s) {
+        for s in STRINGS
+            .iter()
+            .map(|s| s.to_string())
+            .chain(gen_strings(100, &[3, 4, 5, 8, 12]))
+        {
+            let t = match TinyAsciiStr::<N>::from_str(&s) {
                 Ok(t) => t,
                 Err(TinyStrError::TooLarge { .. }) => continue,
                 Err(e) => panic!("{}", e),
             };
-            let expected = reference_f(s);
+            let expected = reference_f(&s);
             let actual = tinystr_f(t);
-            assert_eq!(expected, actual);
+            assert_eq!(expected, actual, "TinyAsciiStr<{}>: {:?}", N, s);
         }
     }
 
@@ -480,6 +661,69 @@ mod test {
     }
 
     #[test]
+    fn test_is_ascii_lowercase() {
+        fn check<const N: usize>() {
+            check_operation(
+                |s| {
+                    s == TinyAsciiStr::<16>::from_str(s)
+                        .unwrap()
+                        .to_ascii_lowercase()
+                        .as_str()
+                },
+                |t: TinyAsciiStr<N>| TinyAsciiStr::is_ascii_lowercase(&t),
+            )
+        }
+        check::<2>();
+        check::<3>();
+        check::<4>();
+        check::<5>();
+        check::<8>();
+        check::<16>();
+    }
+
+    #[test]
+    fn test_is_ascii_titlecase() {
+        fn check<const N: usize>() {
+            check_operation(
+                |s| {
+                    s == TinyAsciiStr::<16>::from_str(s)
+                        .unwrap()
+                        .to_ascii_titlecase()
+                        .as_str()
+                },
+                |t: TinyAsciiStr<N>| TinyAsciiStr::is_ascii_titlecase(&t),
+            )
+        }
+        check::<2>();
+        check::<3>();
+        check::<4>();
+        check::<5>();
+        check::<8>();
+        check::<16>();
+    }
+
+    #[test]
+    fn test_is_ascii_uppercase() {
+        fn check<const N: usize>() {
+            check_operation(
+                |s| {
+                    s == TinyAsciiStr::<16>::from_str(s)
+                        .unwrap()
+                        .to_ascii_uppercase()
+                        .as_str()
+                },
+                |t: TinyAsciiStr<N>| TinyAsciiStr::is_ascii_uppercase(&t),
+            )
+        }
+        check::<2>();
+        check::<3>();
+        check::<4>();
+        check::<5>();
+        check::<8>();
+        check::<16>();
+    }
+
+    #[test]
     fn test_to_ascii_lowercase() {
         fn check<const N: usize>() {
             check_operation(
@@ -508,7 +752,7 @@ mod test {
                         .chars()
                         .map(|c| c.to_ascii_lowercase())
                         .collect::<String>();
-                    // Safe because the string is an ASCII string
+                    // Safe because the string is nonempty and an ASCII string
                     unsafe { r.as_bytes_mut()[0].make_ascii_uppercase() };
                     r
                 },
