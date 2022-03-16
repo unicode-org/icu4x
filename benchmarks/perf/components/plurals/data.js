@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1647393415785,
+  "lastUpdate": 1647410813832,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -29315,6 +29315,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 15703,
             "range": "± 506",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "0fd8cdefbba595733aa79a5ddba057846dc75ae3",
+          "message": "Simplify Language representation (#1695)",
+          "timestamp": "2022-03-15T22:58:08-07:00",
+          "tree_id": "00c5ab7a90b2853d87b5332b92a4da1630330dcb",
+          "url": "https://github.com/unicode-org/icu4x/commit/0fd8cdefbba595733aa79a5ddba057846dc75ae3"
+        },
+        "date": 1647410800558,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 929,
+            "range": "± 4",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 5472,
+            "range": "± 4",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 13017,
+            "range": "± 19",
             "unit": "ns/iter"
           }
         ]
