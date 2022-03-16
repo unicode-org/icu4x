@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1647386202125,
+  "lastUpdate": 1647393305417,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -22859,6 +22859,48 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 173239,
             "range": "± 341",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "35907cb897d795105f074d36f945cbae47a461bf",
+          "message": "Make Region, Script, and Variant subtags ULE (#1696)",
+          "timestamp": "2022-03-15T18:06:27-07:00",
+          "tree_id": "1b1a9ec6299503ae9fa355a5e348a2cb61d9f8d0",
+          "url": "https://github.com/unicode-org/icu4x/commit/35907cb897d795105f074d36f945cbae47a461bf"
+        },
+        "date": 1647393292304,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 74898,
+            "range": "± 808",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 810370,
+            "range": "± 6591",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 172021,
+            "range": "± 706",
             "unit": "ns/iter"
           }
         ]
