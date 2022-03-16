@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1647410386150,
+  "lastUpdate": 1647446882158,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -11033,6 +11033,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/0fd8cdefbba595733aa79a5ddba057846dc75ae3"
         },
         "date": 1647410370733,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4504771,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "pandusonu@google.com",
+            "name": "Gollapudi Vamsi Krishna",
+            "username": "pandusonu2"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "cf1d001e177738544c646d6163548c6c874942d0",
+          "message": "Change month_lenghts to return individual month lengths  (#1705)\n\n* Change month_lenghts to return individual month lengths in Calendar Arithmetic\r\n\r\n* Clippy fixes\r\n\r\n* Clippy fixes\r\n\r\n* Fix logic",
+          "timestamp": "2022-03-16T09:03:46-07:00",
+          "tree_id": "cc08f38ed594d28cfca5200a5a9090e8221a1c37",
+          "url": "https://github.com/unicode-org/icu4x/commit/cf1d001e177738544c646d6163548c6c874942d0"
+        },
+        "date": 1647446866088,
         "tool": "ndjson",
         "benches": [
           {
