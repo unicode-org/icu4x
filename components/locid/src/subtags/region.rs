@@ -22,6 +22,7 @@ use tinystr::TinyAsciiStr;
 ///
 /// [`unicode_region_id`]: https://unicode.org/reports/tr35/#unicode_region_id
 #[derive(Debug, PartialEq, Eq, Clone, Hash, PartialOrd, Ord, Copy)]
+#[repr(transparent)]
 pub struct Region(TinyAsciiStr<REGION_NUM_LENGTH>);
 
 const REGION_ALPHA_LENGTH: usize = 2;
@@ -58,6 +59,36 @@ impl Region {
                 Ok(Self(s))
             }
             _ => Err(ParserError::InvalidSubtag),
+        }
+    }
+
+    /// Safely creates a [`Region`] from a reference to its raw format
+    /// as returned by [`Region::into_raw()`].
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::locid::subtags::Region;
+    ///
+    /// assert!(matches!(Region::try_from_raw(*b"US\0"), Ok(_)));
+    /// assert!(matches!(Region::try_from_raw(*b"419"), Ok(_)));
+    /// assert!(matches!(Region::try_from_raw(*b"foo"), Err(_)));
+    ///
+    /// // Unlike the other constructors, this one is case-sensitive:
+    /// assert!(matches!(Region::try_from_raw(*b"us\0"), Err(_)));
+    /// ```
+    pub fn try_from_raw(v: [u8; 3]) -> Result<Self, ParserError> {
+        let s = TinyAsciiStr::<{ core::mem::size_of::<Self>() }>::try_from_raw(v)
+            .map_err(|_| ParserError::InvalidSubtag)?;
+        let is_valid = match s.len() {
+            REGION_ALPHA_LENGTH => s.is_ascii_uppercase(),
+            REGION_NUM_LENGTH => s.is_ascii_numeric(),
+            _ => false,
+        };
+        if is_valid {
+            Ok(Self(s))
+        } else {
+            Err(ParserError::InvalidSubtag)
         }
     }
 
@@ -167,4 +198,67 @@ impl From<Region> for TinyAsciiStr<3> {
     fn from(input: Region) -> Self {
         input.0
     }
+}
+
+// Safety checklist for ULE:
+//
+// 1. Must not include any uninitialized or padding bytes (true since transparent over a ULE).
+// 2. Must have an alignment of 1 byte (true since transparent over a ULE).
+// 3. ULE::validate_byte_slice() checks that the given byte slice represents a valid slice.
+// 4. ULE::validate_byte_slice() checks that the given byte slice has a valid length.
+// 5. All other methods must be left with their default impl.
+// 6. Byte equality is semantic equality.
+#[cfg(feature = "zerovec")]
+unsafe impl zerovec::ule::ULE for Region {
+    fn validate_byte_slice(bytes: &[u8]) -> Result<(), zerovec::ZeroVecError> {
+        let it = bytes.chunks_exact(core::mem::size_of::<Self>());
+        if !it.remainder().is_empty() {
+            return Err(zerovec::ZeroVecError::length::<Self>(bytes.len()));
+        }
+        for v in it {
+            // The following can be removed once `array_chunks` is stabilized.
+            let mut a = [0; core::mem::size_of::<Self>()];
+            a.copy_from_slice(v);
+            if Self::try_from_raw(a).is_err() {
+                return Err(zerovec::ZeroVecError::parse::<Self>());
+            }
+        }
+        Ok(())
+    }
+}
+
+/// Impl enabling `Region` to be used in a [`ZeroVec`]. Enabled with the `"zerovec"` feature.
+///
+/// # Example
+///
+/// ```
+/// use icu::locid::subtags::Region;
+/// use icu::locid::macros::region;
+/// use zerovec::ZeroVec;
+///
+/// let zv = ZeroVec::<Region>::parse_byte_slice(b"GB\0419001DE\0")
+///     .expect("Valid region subtags");
+/// assert_eq!(zv.get(1), Some(region!("419")));
+///
+/// ZeroVec::<Region>::parse_byte_slice(b"invalid")
+///     .expect_err("Invalid byte slice");
+/// ```
+///
+/// [`ZeroVec`]: zerovec::ZeroVec
+#[cfg(feature = "zerovec")]
+impl zerovec::ule::AsULE for Region {
+    type ULE = Self;
+    fn to_unaligned(self) -> Self::ULE {
+        self
+    }
+    fn from_unaligned(unaligned: Self::ULE) -> Self {
+        unaligned
+    }
+}
+
+#[cfg(feature = "zerovec")]
+impl<'a> zerovec::maps::ZeroMapKV<'a> for Region {
+    type Container = zerovec::ZeroVec<'a, Region>;
+    type GetType = Region;
+    type OwnedType = Region;
 }
