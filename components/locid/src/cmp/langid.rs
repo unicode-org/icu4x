@@ -55,15 +55,12 @@ impl<'a> Iterator for LanguageIdentifierSubtagIterator<'a> {
             }
         }
         if let State::AfterVariant(i) = self.state {
-            // if i >= self.langid.variants.len() {
-            //     return None;
-            // }
             self.state = State::AfterVariant(i + 1);
             if let Some(variant) = self.langid.variants.get(i + 1) {
                 return Some(TinyAsciiStr::from(*variant).resize());
             }
         }
-        return None;
+        None
     }
 }
 
