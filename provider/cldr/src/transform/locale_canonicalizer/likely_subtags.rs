@@ -108,7 +108,8 @@ impl From<&cldr_serde::likely_subtags::Resource> for LikelySubtagsV1 {
             };
 
         for entry in other.supplemental.likely_subtags.iter() {
-            if let Some(lang) = entry.0.language.to_option().map(Into::into) {
+            if !entry.0.language.is_empty() {
+                let lang = entry.0.language.into();
                 if let Some(script) = entry.0.script {
                     language_script.insert((lang, script.into()), extract_result(entry));
                 } else if let Some(region) = entry.0.region {

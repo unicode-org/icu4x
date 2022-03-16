@@ -198,30 +198,6 @@ impl Language {
     pub fn is_empty(self) -> bool {
         self == UND
     }
-
-    /// Returns an `Option<Language>`, which is `None` if the subtag is `"und"`,
-    /// and `Some(self)` otherwise.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use icu::locid::subtags::Language;
-    ///
-    /// assert!(matches!(
-    ///     Language::und().to_option(),
-    ///     None));
-    /// assert!(matches!(
-    ///     Language::from_bytes(b"uk").unwrap().to_option(),
-    ///     Some(_)));
-    /// ```
-    #[inline]
-    pub fn to_option(self) -> Option<Language> {
-        if !self.is_empty() {
-            Some(self)
-        } else {
-            None
-        }
-    }
 }
 
 impl FromStr for Language {

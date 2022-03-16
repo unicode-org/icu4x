@@ -138,8 +138,8 @@ impl From<&cldr_serde::aliases::Resource> for AliasesV1 {
                         continue;
                     }
 
-                    if let Some(lang) = langid.language.to_option() {
-                        let lang_str: TinyAsciiStr<3> = lang.into();
+                    if !langid.language.is_empty() {
+                        let lang_str: TinyAsciiStr<3> = langid.language.into();
                         if langid.region.is_none() && langid.variants.is_empty() {
                             // Relatively few aliases exist for two character language identifiers,
                             // so we store them separately to not slow down canonicalization of
