@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1647410813832,
+  "lastUpdate": 1647447375292,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -29357,6 +29357,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 13017,
             "range": "± 19",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "pandusonu@google.com",
+            "name": "Gollapudi Vamsi Krishna",
+            "username": "pandusonu2"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "cf1d001e177738544c646d6163548c6c874942d0",
+          "message": "Change month_lenghts to return individual month lengths  (#1705)\n\n* Change month_lenghts to return individual month lengths in Calendar Arithmetic\r\n\r\n* Clippy fixes\r\n\r\n* Clippy fixes\r\n\r\n* Fix logic",
+          "timestamp": "2022-03-16T09:03:46-07:00",
+          "tree_id": "cc08f38ed594d28cfca5200a5a9090e8221a1c37",
+          "url": "https://github.com/unicode-org/icu4x/commit/cf1d001e177738544c646d6163548c6c874942d0"
+        },
+        "date": 1647447362137,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 928,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 4789,
+            "range": "± 4",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 11472,
+            "range": "± 153",
             "unit": "ns/iter"
           }
         ]
