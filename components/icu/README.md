@@ -36,10 +36,10 @@ an [`FsDataProvider`] with locally available subset of data.
 ICU4X components share a set of common features that control whether core pieces of
 functionality are compiled. These features are:
 
-- `provider_serde`: Whether to include Serde Serialize/Deserialize implementations for
-  ICU4X locale data structs, such as [`SymbolsV1`]. (On by default)
-- `serde`: Whether to include Serde Serialize/Deserialize implementations for core libary
-  types, such as [`Locale`].
+- `serialize`: Whether to include Serde Deserialize implementations for
+  ICU4X locale data structs, such as [`SymbolsV1`], and Serialize/Deserialize implementations
+  for core libary types, such as [`Locale`] (On by default)
+- `datagen`: Whether to include Serde Serialize and other data generation traits for ICU4X locale data structs.
 - `bench`: Whether to enable exhaustive benchmarks. This can be enabled on individual crates
   when running `cargo bench`.
 - `experimental`: Whether to enable experimental preview features. Modules enabled with
