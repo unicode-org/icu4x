@@ -89,8 +89,7 @@ impl Variant {
                 _ => false,
             };
         if is_valid {
-            // Safe since the bytes are valid
-            Ok(unsafe { core::mem::transmute(v) })
+            Ok(Self(s))
         } else {
             Err(ParserError::InvalidSubtag)
         }
