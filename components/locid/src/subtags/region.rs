@@ -70,14 +70,14 @@ impl Region {
     /// ```
     /// use icu::locid::subtags::Region;
     ///
-    /// assert!(matches!(Region::try_from_raw(b"US\0"), Ok(_)));
-    /// assert!(matches!(Region::try_from_raw(b"419"), Ok(_)));
-    /// assert!(matches!(Region::try_from_raw(b"foo"), Err(_)));
+    /// assert!(matches!(Region::try_from_raw(*b"US\0"), Ok(_)));
+    /// assert!(matches!(Region::try_from_raw(*b"419"), Ok(_)));
+    /// assert!(matches!(Region::try_from_raw(*b"foo"), Err(_)));
     ///
     /// // Unlike the other constructors, this one is case-sensitive:
-    /// assert!(matches!(Region::try_from_raw(b"us\0"), Err(_)));
+    /// assert!(matches!(Region::try_from_raw(*b"us\0"), Err(_)));
     /// ```
-    pub fn try_from_raw(v: &[u8; 3]) -> Result<&Self, ParserError> {
+    pub fn try_from_raw(v: [u8; 3]) -> Result<Self, ParserError> {
         let s = TinyAsciiStr::<{ core::mem::size_of::<Self>() }>::try_from_raw(v)
             .map_err(|_| ParserError::InvalidSubtag)?;
         let is_valid = match s.len() {
@@ -220,7 +220,7 @@ unsafe impl zerovec::ule::ULE for Region {
             // The following can be removed once `array_chunks` is stabilized.
             let mut a = [0; core::mem::size_of::<Self>()];
             a.copy_from_slice(v);
-            if Self::try_from_raw(&a).is_err() {
+            if Self::try_from_raw(a).is_err() {
                 return Err(zerovec::ZeroVecError::parse::<Self>());
             }
         }

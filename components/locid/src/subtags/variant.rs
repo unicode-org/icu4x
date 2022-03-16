@@ -71,14 +71,14 @@ impl Variant {
     /// ```
     /// use icu::locid::subtags::Variant;
     ///
-    /// assert!(matches!(Variant::try_from_raw(b"fonipa\0\0"), Ok(_)));
-    /// assert!(matches!(Variant::try_from_raw(b"1992\0\0\0\0"), Ok(_)));
-    /// assert!(matches!(Variant::try_from_raw(b"foo\0\0\0\0\0"), Err(_)));
+    /// assert!(matches!(Variant::try_from_raw(*b"fonipa\0\0"), Ok(_)));
+    /// assert!(matches!(Variant::try_from_raw(*b"1992\0\0\0\0"), Ok(_)));
+    /// assert!(matches!(Variant::try_from_raw(*b"foo\0\0\0\0\0"), Err(_)));
     ///
     /// // Unlike the other constructors, this one is case-sensitive:
-    /// assert!(matches!(Variant::try_from_raw(b"POSIX\0\0\0"), Err(_)));
+    /// assert!(matches!(Variant::try_from_raw(*b"POSIX\0\0\0"), Err(_)));
     /// ```
-    pub fn try_from_raw(v: &[u8; 8]) -> Result<&Self, ParserError> {
+    pub fn try_from_raw(v: [u8; 8]) -> Result<Self, ParserError> {
         let s = TinyAsciiStr::<{ core::mem::size_of::<Self>() }>::try_from_raw(v)
             .map_err(|_| ParserError::InvalidSubtag)?;
         let is_valid = s.is_ascii_alphanumeric()
@@ -213,7 +213,7 @@ unsafe impl zerovec::ule::ULE for Variant {
             // The following can be removed once `array_chunks` is stabilized.
             let mut a = [0; core::mem::size_of::<Self>()];
             a.copy_from_slice(v);
-            if Self::try_from_raw(&a).is_err() {
+            if Self::try_from_raw(a).is_err() {
                 return Err(zerovec::ZeroVecError::parse::<Self>());
             }
         }

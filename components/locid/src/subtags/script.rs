@@ -61,14 +61,14 @@ impl Script {
     /// ```
     /// use icu::locid::subtags::Script;
     ///
-    /// assert!(matches!(Script::try_from_raw(b"Latn"), Ok(_)));
-    /// assert!(matches!(Script::try_from_raw(b"Mymr"), Ok(_)));
-    /// assert!(matches!(Script::try_from_raw(b"1234"), Err(_)));
+    /// assert!(matches!(Script::try_from_raw(*b"Latn"), Ok(_)));
+    /// assert!(matches!(Script::try_from_raw(*b"Mymr"), Ok(_)));
+    /// assert!(matches!(Script::try_from_raw(*b"1234"), Err(_)));
     ///
     /// // Unlike the other constructors, this one is case-sensitive:
-    /// assert!(matches!(Script::try_from_raw(b"LATN"), Err(_)));
+    /// assert!(matches!(Script::try_from_raw(*b"LATN"), Err(_)));
     /// ```
-    pub fn try_from_raw(v: &[u8; 4]) -> Result<&Self, ParserError> {
+    pub fn try_from_raw(v: [u8; 4]) -> Result<Self, ParserError> {
         let s = TinyAsciiStr::<{ core::mem::size_of::<Self>() }>::try_from_raw(v)
             .map_err(|_| ParserError::InvalidSubtag)?;
         let is_valid = match s.len() {
@@ -194,7 +194,7 @@ unsafe impl zerovec::ule::ULE for Script {
             // The following can be removed once `array_chunks` is stabilized.
             let mut a = [0; core::mem::size_of::<Self>()];
             a.copy_from_slice(v);
-            if Self::try_from_raw(&a).is_err() {
+            if Self::try_from_raw(a).is_err() {
                 return Err(zerovec::ZeroVecError::parse::<Self>());
             }
         }
