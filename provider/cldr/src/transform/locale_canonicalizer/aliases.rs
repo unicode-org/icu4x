@@ -138,8 +138,8 @@ impl From<&cldr_serde::aliases::Resource> for AliasesV1 {
                         continue;
                     }
 
-                    let maybe_lang: Option<TinyAsciiStr<3>> = langid.language.into();
-                    if let Some(lang) = maybe_lang {
+                    if !langid.language.is_empty() {
+                        let lang: TinyAsciiStr<3> = langid.language.into();
                         if langid.region.is_none() && langid.variants.is_empty() {
                             // Relatively few aliases exist for two character language identifiers,
                             // so we store them separately to not slow down canonicalization of
@@ -275,9 +275,9 @@ fn test_rules_cmp() {
     assert_eq!(union_size(&rules[3]), 2);
 
     rules.sort_unstable_by(rules_cmp);
-    assert_eq!(rules[0], "und-hepburn-heploc");
-    assert_eq!(rules[1], "en-GB");
-    assert_eq!(rules[2], "fr-CA");
+    assert_eq!(rules[0], "en-GB");
+    assert_eq!(rules[1], "fr-CA");
+    assert_eq!(rules[2], "und-hepburn-heploc");
     assert_eq!(rules[3], "CA");
 }
 
