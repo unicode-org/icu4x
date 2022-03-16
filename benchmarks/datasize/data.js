@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1647385782226,
+  "lastUpdate": 1647392874546,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -10973,6 +10973,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/90e20f381b8c725352289acbd4457cb2c3ff6496"
         },
         "date": 1647385768746,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4504771,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "35907cb897d795105f074d36f945cbae47a461bf",
+          "message": "Make Region, Script, and Variant subtags ULE (#1696)",
+          "timestamp": "2022-03-15T18:06:27-07:00",
+          "tree_id": "1b1a9ec6299503ae9fa355a5e348a2cb61d9f8d0",
+          "url": "https://github.com/unicode-org/icu4x/commit/35907cb897d795105f074d36f945cbae47a461bf"
+        },
+        "date": 1647392861884,
         "tool": "ndjson",
         "benches": [
           {
