@@ -93,7 +93,7 @@ mod reference {
         }
     }
 
-    #[cfg(test)]
+    #[cfg(all(test, feature = "datagen"))]
     mod test {
         use super::*;
 
@@ -201,7 +201,7 @@ mod runtime {
         }
     }
 
-    #[cfg(test)]
+    #[cfg(all(test, feature = "datagen"))]
     mod test {
         use super::*;
 
@@ -331,7 +331,7 @@ mod runtime {
             }
         }
 
-        #[cfg(test)]
+        #[cfg(all(test, feature = "datagen"))]
         mod test {
             use super::*;
             use icu_plurals::PluralCategory;
@@ -438,7 +438,7 @@ mod runtime {
             }
         }
 
-        #[cfg(test)]
+        #[cfg(all(test, feature = "datagen"))]
         mod test {
             use super::*;
 

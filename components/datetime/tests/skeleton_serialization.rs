@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-#![cfg(all(test, feature = "serialize"))]
+#![cfg(all(test, feature = "datagen"))]
 
 use icu_datetime::skeleton::reference::Skeleton;
 use std::{fs::File, io::BufReader};

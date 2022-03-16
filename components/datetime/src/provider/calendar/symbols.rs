@@ -145,7 +145,7 @@ symbols!(
     }
 );
 
-#[cfg(all(test, feature = "serialize"))]
+#[cfg(all(test, feature = "datagen"))]
 mod test {
     use super::*;
 

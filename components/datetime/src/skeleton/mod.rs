@@ -13,7 +13,7 @@ mod serde;
 pub use error::*;
 pub use helpers::*;
 
-#[cfg(all(test, feature = "serialize"))]
+#[cfg(all(test, feature = "datagen"))]
 mod test {
     use super::reference::Skeleton;
     use super::*;
