@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1647386281631,
+  "lastUpdate": 1647393415785,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -29273,6 +29273,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 14341,
             "range": "± 933",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "35907cb897d795105f074d36f945cbae47a461bf",
+          "message": "Make Region, Script, and Variant subtags ULE (#1696)",
+          "timestamp": "2022-03-15T18:06:27-07:00",
+          "tree_id": "1b1a9ec6299503ae9fa355a5e348a2cb61d9f8d0",
+          "url": "https://github.com/unicode-org/icu4x/commit/35907cb897d795105f074d36f945cbae47a461bf"
+        },
+        "date": 1647393399999,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1012,
+            "range": "± 40",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 6702,
+            "range": "± 195",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 15703,
+            "range": "± 506",
             "unit": "ns/iter"
           }
         ]
