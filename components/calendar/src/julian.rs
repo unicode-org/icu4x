@@ -26,12 +26,14 @@ pub struct Julian;
 pub struct JulianDateInner(ArithmeticDate<Julian>);
 
 impl CalendarArithmetic for Julian {
-    fn month_lengths(year: i32) -> [u8; 12] {
-        let mut months = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
-        if Self::is_leap_year(year) {
-            months[1] += 1;
+    fn month_days(month: u8, year: i32) -> u8 {
+        match month {
+            4 | 6 | 9 | 11 => 30,
+            2 if Self::is_leap_year(year) => 29,
+            2 => 28,
+            1 | 3 | 5 | 7 | 8 | 10 => 31,
+            _ => 0,
         }
-        months
     }
 
     fn months_for_every_year() -> u8 {

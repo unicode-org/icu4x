@@ -16,7 +16,7 @@ pub struct ArithmeticDate<C: CalendarArithmetic> {
 }
 
 pub trait CalendarArithmetic: Calendar {
-    fn month_lengths(year: i32) -> [u8; 12];
+    fn month_days(month: u8, year: i32) -> u8;
     fn months_for_every_year() -> u8;
     fn is_leap_year(year: i32) -> bool;
 }
@@ -24,7 +24,6 @@ pub trait CalendarArithmetic: Calendar {
 impl<C: CalendarArithmetic> ArithmeticDate<C> {
     #[inline]
     pub fn offset_date(&mut self, mut offset: DateDuration<C>) {
-        let month_lengths = C::month_lengths(self.year);
         self.year += offset.years;
         self.month += offset.months as u8;
         offset.months = 0;
@@ -37,7 +36,7 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
         while offset.days != 0 {
             if offset.days < 0 {
                 self.month -= 1;
-                let month_days = month_lengths[self.month as usize];
+                let month_days = C::month_days(self.month, self.year);
                 if (-offset.days) > month_days as i32 {
                     offset.days += month_days as i32;
                 } else {
@@ -45,7 +44,7 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
                     offset.days = 0;
                 }
             } else {
-                let month_days = month_lengths[self.month as usize];
+                let month_days = C::month_days(self.month, self.year);
 
                 if offset.days >= month_days as i32 {
                     self.month += 1;
@@ -75,31 +74,29 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
 
     #[inline]
     pub fn days_in_year(&self) -> u32 {
-        let months = C::month_lengths(self.year);
+        let months_in_year = C::months_for_every_year();
         let mut days: u32 = 0;
-        for month in months {
-            days += month as u32;
+        for month in 1..=months_in_year {
+            days += C::month_days(month, self.year) as u32;
         }
         days
     }
 
     #[inline]
-    pub fn days_in_month(&self) -> u8 {
-        let months = C::month_lengths(self.year);
-        months[self.month as usize]
+    pub fn months_in_year(&self) -> u8 {
+        C::months_for_every_year() as u8
     }
 
     #[inline]
-    pub fn months_in_year(&self) -> u8 {
-        C::month_lengths(self.year).len() as u8
+    pub fn days_in_month(&self) -> u8 {
+        C::month_days(self.month, self.year)
     }
 
     #[inline]
     pub fn day_of_year(&self) -> u32 {
-        let months = C::month_lengths(self.year);
         let mut day_of_year = 0;
         for month in 1..self.month {
-            day_of_year += months[month as usize] as u32;
+            day_of_year += C::month_days(month, self.year) as u32;
         }
         day_of_year + (self.day as u32)
     }
