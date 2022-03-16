@@ -44,7 +44,7 @@ pub struct Language(TinyAsciiStr<{ *LANGUAGE_LENGTH.end() }>);
 const LANGUAGE_LENGTH: RangeInclusive<usize> = 2..=3;
 // TODO(#348): Change this to invoke a const function.
 // Safe because "und" is a valid language subtag
-const UND: Language = Language(unsafe { TinyAsciiStr::from_bytes_unchecked(*b"und") });
+const UND: Language = crate::language!("und");
 
 impl Language {
     /// A constructor which takes a utf8 slice, parses it and
