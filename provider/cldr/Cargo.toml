@@ -38,10 +38,10 @@ all-features = true
 [dependencies]
 icu_provider = { version = "0.5", path = "../../provider/core", features = ["serialize", "datagen"] }
 icu_locid = { version = "0.5", path = "../../components/locid" }
-icu_plurals = { version = "0.5", path = "../../components/plurals" }
+icu_plurals = { version = "0.5", path = "../../components/plurals", features = ["datagen"] }
 icu_datetime = { version = "0.5", path = "../../components/datetime", features = ["datagen"] }
-icu_locale_canonicalizer = { version = "0.5", path = "../../components/locale_canonicalizer" }
-icu_decimal = { version = "0.5", path = "../../components/decimal" }
+icu_locale_canonicalizer = { version = "0.5", path = "../../components/locale_canonicalizer", features = ["datagen"] }
+icu_decimal = { version = "0.5", path = "../../components/decimal", features = ["datagen"] }
 icu_calendar = { version = "0.5", path = "../../components/calendar", features = ["datagen"] }
 icu_list = { version = "0.5", path = "../../components/list", features = ["datagen"]}
 itertools = "0.10"
