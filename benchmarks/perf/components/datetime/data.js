@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1647393305417,
+  "lastUpdate": 1647410803035,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -22901,6 +22901,48 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 172021,
             "range": "± 706",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "0fd8cdefbba595733aa79a5ddba057846dc75ae3",
+          "message": "Simplify Language representation (#1695)",
+          "timestamp": "2022-03-15T22:58:08-07:00",
+          "tree_id": "00c5ab7a90b2853d87b5332b92a4da1630330dcb",
+          "url": "https://github.com/unicode-org/icu4x/commit/0fd8cdefbba595733aa79a5ddba057846dc75ae3"
+        },
+        "date": 1647410787613,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 90066,
+            "range": "± 271",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 958274,
+            "range": "± 16583",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 206353,
+            "range": "± 1440",
             "unit": "ns/iter"
           }
         ]
