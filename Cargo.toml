@@ -17,6 +17,7 @@ members = [
     "components/plurals",
     "components/properties",
     "experimental/bies",
+    "experimental/casemapping",
     "experimental/char16trie",
     "experimental/crabbake",
     "experimental/crabbake/derive",
