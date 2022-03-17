@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1647545002884,
+  "lastUpdate": 1647548141864,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -25949,6 +25949,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 4114,
             "range": "± 18",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "pandusonu@google.com",
+            "name": "Gollapudi Vamsi Krishna",
+            "username": "pandusonu2"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "539f979d8c9cc64534396aa162240a9e204a4578",
+          "message": "Add coptic calendar (#1660)",
+          "timestamp": "2022-03-17T13:07:53-07:00",
+          "tree_id": "b706fcd39a9a5f18496db7373b98f3f02383f63b",
+          "url": "https://github.com/unicode-org/icu4x/commit/539f979d8c9cc64534396aa162240a9e204a4578"
+        },
+        "date": 1647548126305,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 2593,
+            "range": "± 4",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 4890,
+            "range": "± 105",
             "unit": "ns/iter"
           }
         ]
