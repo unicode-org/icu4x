@@ -7,7 +7,9 @@
 mod fixtures;
 mod patterns;
 
-use icu_calendar::{buddhist::Buddhist, japanese::Japanese, AsCalendar, DateTime, Gregorian};
+use icu_calendar::{
+    buddhist::Buddhist, coptic::Coptic, japanese::Japanese, AsCalendar, DateTime, Gregorian,
+};
 use icu_datetime::{
     mock::{parse_gregorian_from_str, zoned_datetime::MockZonedDateTime},
     pattern::runtime::Pattern,
@@ -45,6 +47,7 @@ fn test_fixture(fixture_name: &str) {
         let input_value = parse_gregorian_from_str(&fx.input.value).unwrap();
         let input_buddhist = input_value.to_calendar(Buddhist);
         let input_japanese = input_value.to_calendar(japanese);
+        let input_coptic = input_value.to_calendar(Coptic);
 
         let description = match fx.description {
             Some(description) => {
@@ -69,6 +72,15 @@ fn test_fixture(fixture_name: &str) {
                 assert_fixture_element(
                     locale,
                     &input_japanese,
+                    &output_value,
+                    &provider,
+                    &options,
+                    &description,
+                )
+            } else if let Some(locale) = locale.strip_prefix("coptic/") {
+                assert_fixture_element(
+                    locale,
+                    &input_coptic,
                     &output_value,
                     &provider,
                     &options,
