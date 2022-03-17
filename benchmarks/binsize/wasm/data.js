@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1647501011566,
+  "lastUpdate": 1647544948649,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -57233,6 +57233,174 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/3657f8030f372c262722d3e59b67e5a1063b95be"
         },
         "date": 1647500998917,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "owned_pattern+opt.wasm",
+            "value": 15749,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "unread_emails+opt.wasm",
+            "value": 1955875,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "tui+opt.wasm",
+            "value": 2237015,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "code_line_diff+opt.wasm",
+            "value": 1952585,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "derive+opt.wasm",
+            "value": 6832,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "filter_langids+opt.wasm",
+            "value": 12839,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "borrowed_pattern+opt.wasm",
+            "value": 13178,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "language_names_lite_map+opt.wasm",
+            "value": 6856,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "writeable_message+opt.wasm",
+            "value": 20788,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "work_log+opt.wasm",
+            "value": 2180188,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "postcard+opt.wasm",
+            "value": 11724,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "simple_static+opt.wasm",
+            "value": 1958942,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "permyriad+opt.wasm",
+            "value": 8545,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "zv_serde+opt.wasm",
+            "value": 197,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "syntatically_canonicalize_locales+opt.wasm",
+            "value": 31389,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "make_var+opt.wasm",
+            "value": 72062,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "derives+opt.wasm",
+            "value": 13195,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "litemap_bincode+opt.wasm",
+            "value": 17658,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "and_list+opt.wasm",
+            "value": 1987224,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "make+opt.wasm",
+            "value": 7912,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "litemap_postcard+opt.wasm",
+            "value": 9081,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "unicode_bmp_blocks_selector+opt.wasm",
+            "value": 13919,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "language_names_hash_map+opt.wasm",
+            "value": 10056,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "elevator_floors+opt.wasm",
+            "value": 1955866,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "iireland@mozilla.com",
+            "name": "iainireland",
+            "username": "iainireland"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "82ed6e4f290306e55ddc9821d75dead17d726263",
+          "message": "Implement case mapping internals (#1349)\n\n* Skeleton implementation of simple casefolding\r\n\r\n* Hook up zerovec and codepointtrie\r\n\r\n* Polish code\r\n\r\n* Initial tests\r\n\r\n* Benchmarking unfold implementations\r\n\r\n* Rename crate\r\n\r\n* Provider work\r\n\r\n* Data provider work\r\n\r\n* First draft of provider\r\n\r\n* Implement validation\r\n\r\n* Finish validation\r\n\r\n* Add doc comments\r\n\r\n* More provider work\r\n\r\n* fmt\r\n\r\n* Remove obsolete benchmarks and testdata\r\n\r\n* Implement validation test\r\n\r\n* Add tests\r\n\r\n* Update zerovec version\r\n\r\n* Generate README\r\n\r\n* Add string closure test\r\n\r\n* clippy\r\n\r\n* Address feedback\r\n\r\n* Additional bullet-proofing\r\n\r\n* Fmt and tidy\r\n\r\n* Rebase\r\n\r\n* Rebase again\r\n\r\n* Fmt\r\n\r\n* Clippy\r\n\r\n* Rebase again\r\n\r\n* Clippy, again\r\n\r\n* Implementing full mapping\r\n\r\n* Rewrite CaseMappingExceptions to store strings in side tables\r\n\r\n* Refactoring\r\n\r\n* Refactor CaseMapping to CaseMappingInternals\r\n\r\n* Rebase\r\n\r\n* Cargo fmt + tidy + clippy\r\n\r\n* Polish and port testcases\r\n\r\n* Remove closure code for now\r\n\r\n* Update DataProvider -> ResourceProvider\r\n\r\n* Minimal documentation\r\n\r\n* Minor review fixes\r\n\r\n* Cargo fmt\r\n\r\n* Rebase",
+          "timestamp": "2022-03-17T12:15:33-07:00",
+          "tree_id": "1a8ab43ac0d5c5c409c883dcccc7b714b3d217dc",
+          "url": "https://github.com/unicode-org/icu4x/commit/82ed6e4f290306e55ddc9821d75dead17d726263"
+        },
+        "date": 1647544932660,
         "tool": "ndjson",
         "benches": [
           {
