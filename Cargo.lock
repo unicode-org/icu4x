@@ -47,6 +47,24 @@ dependencies = [
 ]
 
 [[package]]
+name = "arraystring"
+version = "0.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "4d517c467117e1d8ca795bc8cc90857ff7f79790cca0e26f6e9462694ece0185"
+dependencies = [
+ "typenum",
+]
+
+[[package]]
+name = "atoi"
+version = "1.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d7c57d12312ff59c811c0643f4d80830505833c9ffaebd193d819392b265be8e"
+dependencies = [
+ "num-traits",
+]
+
+[[package]]
 name = "atomic-polyfill"
 version = "0.1.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1389,6 +1407,27 @@ dependencies = [
 ]
 
 [[package]]
+name = "icu_collator"
+version = "0.6.0"
+dependencies = [
+ "arraystring",
+ "atoi",
+ "displaydoc",
+ "icu_char16trie",
+ "icu_codepointtrie",
+ "icu_locid",
+ "icu_normalizer",
+ "icu_properties",
+ "icu_provider",
+ "icu_testdata",
+ "postcard",
+ "serde",
+ "smallvec",
+ "utf8_iter",
+ "zerovec",
+]
+
+[[package]]
 name = "icu_datagen"
 version = "0.6.0"
 dependencies = [
@@ -1404,11 +1443,13 @@ dependencies = [
  "icu_casemapping",
  "icu_codepointtrie",
  "icu_codepointtrie_builder",
+ "icu_collator",
  "icu_datetime",
  "icu_decimal",
  "icu_list",
  "icu_locale_canonicalizer",
  "icu_locid",
+ "icu_normalizer",
  "icu_plurals",
  "icu_properties",
  "icu_provider",
@@ -1544,6 +1585,22 @@ dependencies = [
  "serde_json",
  "tinystr 0.6.0",
  "writeable",
+ "zerovec",
+]
+
+[[package]]
+name = "icu_normalizer"
+version = "0.6.0"
+dependencies = [
+ "displaydoc",
+ "icu_codepointtrie",
+ "icu_properties",
+ "icu_provider",
+ "icu_testdata",
+ "icu_uniset",
+ "serde",
+ "smallvec",
+ "utf8_iter",
  "zerovec",
 ]
 
@@ -3382,6 +3439,12 @@ dependencies = [
  "matches",
  "percent-encoding",
 ]
+
+[[package]]
+name = "utf8_iter"
+version = "1.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "0504000636d0ee2fdd46b28a0078b0a232b76d05f13d9c5e041827ee257c41da"
 
 [[package]]
 name = "vcell"

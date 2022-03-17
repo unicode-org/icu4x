@@ -44,6 +44,8 @@ icu_properties = { version = "0.6", path = "../../components/properties", featur
 # (experimental)
 icu_casemapping = { version = "0.1", path = "../../experimental/casemapping", features = ["datagen"], optional = true }
 icu_segmenter = { version = "0.6", path = "../../experimental/segmenter", features = ["datagen"], optional = true }
+icu_collator = { version = "0.6", path = "../../experimental/collator", features = ["datagen"], optional = true }
+icu_normalizer = { version = "0.6", path = "../../experimental/normalizer", features = ["datagen"], optional = true }
 
 # ICU provider infrastructure
 icu_provider = { version = "0.6", path = "../core", features = ["std", "log_error_context"]}
@@ -73,6 +75,7 @@ crabbake = { path = "../../experimental/crabbake"}
 proc-macro2 = "1.0"
 crlify = { version = "1", path = "../../utils/crlify"}
 syn = {version = "1.0", features = ["parsing"] }
+writeable = { version = "0.4", path = "../../utils/writeable", optional = true }
 
 # Dependencies for "bin" feature
 clap = { version = "2.33", optional = true }
@@ -90,7 +93,7 @@ icu_testdata = { path = "../testdata", features = ["metadata"] }
 
 [features]
 default = []
-experimental = ["icu_casemapping", "icu_segmenter"]
+experimental = ["icu_casemapping", "icu_segmenter", "icu_collator", "icu_normalizer", "writeable"]
 bin = ["clap", "cached-path", "eyre", "pathdiff","sha2", "simple_logger", "walkdir"]
 
 [[bin]]

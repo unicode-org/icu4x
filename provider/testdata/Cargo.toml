@@ -33,8 +33,6 @@ all-features = true
 [package.metadata.icu4x_testdata]
 
 # Locales to include in testdata. Keep this list somewhat short, but cover all features.
-# We use 10 base languages with a small number of variants to allow for 10 languages to be
-# used in microbenchmarks.
 locales = [
     # Arabic:
     # - Good example for RTL
@@ -44,6 +42,7 @@ locales = [
 
     # Bangla:
     # - Uses non-Latin numerals
+    # - Contracts subsequent starters in collation
     "bn",
 
     # Chakma:
@@ -68,6 +67,10 @@ locales = [
     # - Often the first non-English locale to receive new data in CLDR
     "fr",
 
+    # Finnish:
+    # - Some ASCII letters with diacritics treated as distinct base letters in collation
+    "fi",
+
     # Filipino:
     # - Week of month/year have plural variants.
     "fil",
@@ -76,6 +79,14 @@ locales = [
     # - Four scripts
     # - Complex date patterns
     "ja",
+
+    # Korean
+    # - Script handled specially in collation
+    "ko",
+
+    # Lithuanian
+    # - Diacritics special-cased in collation
+    "lt",
 
     # Russian:
     # - Cyrillic script
@@ -91,13 +102,26 @@ locales = [
     "sr-Cyrl",
     "sr-Latn",
 
+    # Swedish:
+    # - Unusual default collation variant name
+    "sv",
+
     # Thai:
     # - Complex word breaking
+    # - Ignores punctuation in collation by default
     "th",
 
     # Turkish:
     # - Interesting case-mappings
     "tr",
+
+    # Vietnamese:
+    # - Tailors the collation order of diacritics
+    "vi",
+
+    # Chinese:
+    # - Unusual default collation variant name
+    "zh",
 
     # Root data
     "und",

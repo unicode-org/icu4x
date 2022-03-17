@@ -85,7 +85,7 @@
 #[cfg(feature = "bidi")]
 pub mod bidi;
 
-mod error;
+pub mod error;
 pub mod maps;
 mod props;
 pub mod provider;
