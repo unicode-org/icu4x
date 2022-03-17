@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use core::cmp::Ordering;
 use core::str::FromStr;
 
 use crate::parser::{get_subtag_iterator, parse_language_identifier, ParserError, ParserMode};
@@ -141,6 +142,42 @@ impl LanguageIdentifier {
     pub fn canonicalize<S: AsRef<[u8]>>(input: S) -> Result<String, ParserError> {
         let lang_id = Self::from_bytes(input.as_ref())?;
         Ok(lang_id.to_string())
+    }
+
+    /// Compare this `LanguageIdentifier` with a BCP-47 string.
+    ///
+    /// The return value is equivalent to what would happen if you first converted this
+    /// `LanguageIdentifier` to a BCP-47 string and then performed a byte comparison.
+    ///
+    /// This function is case-sensitive and results in a *total order*, so it is appropriate for
+    /// binary search. The only argument producing [`Ordering::Equal`] is `self.to_string()`.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::locid::LanguageIdentifier;
+    /// use std::cmp::Ordering;
+    ///
+    /// let bcp47_strings: &[&[u8]] = &[
+    ///     b"pl-Latn-PL",
+    ///     b"und",
+    ///     b"und-Adlm",
+    ///     b"und-GB",
+    ///     b"und-ZA",
+    ///     b"und-fonipa",
+    ///     b"zh",
+    /// ];
+    ///
+    /// for ab in bcp47_strings.windows(2) {
+    ///     let a = ab[0];
+    ///     let b = ab[1];
+    ///     assert!(a.cmp(b) == Ordering::Less);
+    ///     let a_langid = LanguageIdentifier::from_bytes(a).unwrap();
+    ///     assert!(a_langid.cmp_bytes(b) == Ordering::Less);
+    /// }
+    /// ```
+    pub fn cmp_bytes(&self, other: &[u8]) -> Ordering {
+        crate::cmp::langid::cmp(self, other)
     }
 }
 
