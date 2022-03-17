@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1647478425056,
+  "lastUpdate": 1647500805693,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -11123,6 +11123,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/52ac1cfadf76c59dcefc7b7236a28827f61939eb"
         },
         "date": 1647478409351,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4504771,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "3657f8030f372c262722d3e59b67e5a1063b95be",
+          "message": "Move IterableDynProvider to datagen, refactor impl_dyn_provider (#1699)\n\n* Add dispatch to impl_dyn_provider macro\r\n\r\n* Split out IterableDynProvider branches\r\n\r\n* don't use anything with spaces to avoid macro parsing ambiguity\r\n\r\n* Add correct invocations\r\n\r\n* Move IterableDataProvider to datagen\r\n\r\n* rename imports\r\n\r\n* improve docs\r\n\r\n* fixes",
+          "timestamp": "2022-03-17T00:05:06-07:00",
+          "tree_id": "be35c30455e9c99465cd6d48ca30af1a4af79c7f",
+          "url": "https://github.com/unicode-org/icu4x/commit/3657f8030f372c262722d3e59b67e5a1063b95be"
+        },
+        "date": 1647500789148,
         "tool": "ndjson",
         "benches": [
           {
