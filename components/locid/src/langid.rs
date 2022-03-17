@@ -149,6 +149,9 @@ impl LanguageIdentifier {
     /// The return value is equivalent to what would happen if you first converted this
     /// `LanguageIdentifier` to a BCP-47 string and then performed a byte comparison.
     ///
+    /// This function is case-sensitive and results in a strict ordering, so it is appropriate for
+    /// binary search. The only argument producing [`Ordering::Equal`] is `self.to_string()`.
+    ///
     /// # Examples
     ///
     /// ```
@@ -169,7 +172,7 @@ impl LanguageIdentifier {
     ///     let a = ab[0];
     ///     let b = ab[1];
     ///     assert!(a.cmp(b) == Ordering::Less);
-    ///     let a_langid = LanguageIdentifier::from_bytes(a).expect(&String::from_utf8_lossy(a));
+    ///     let a_langid = LanguageIdentifier::from_bytes(a).unwrap();
     ///     assert!(a_langid.cmp_bytes(b) == Ordering::Less);
     /// }
     /// ```
