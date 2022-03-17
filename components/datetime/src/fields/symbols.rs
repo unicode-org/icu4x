@@ -23,8 +23,7 @@ pub enum SymbolError {
 impl std::error::Error for SymbolError {}
 
 #[derive(Debug, Eq, PartialEq, Clone, Copy)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize))]
-#[cfg_attr(feature = "serialize", derive(serde::Deserialize))]
+#[cfg_attr(feature = "serialize", derive(serde::Serialize, serde::Deserialize))]
 pub enum FieldSymbol {
     Era,
     Year(Year),
