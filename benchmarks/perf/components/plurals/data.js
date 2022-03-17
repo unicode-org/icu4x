@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1647545160047,
+  "lastUpdate": 1647548235395,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -29567,6 +29567,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 16903,
             "range": "± 1069",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "pandusonu@google.com",
+            "name": "Gollapudi Vamsi Krishna",
+            "username": "pandusonu2"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "539f979d8c9cc64534396aa162240a9e204a4578",
+          "message": "Add coptic calendar (#1660)",
+          "timestamp": "2022-03-17T13:07:53-07:00",
+          "tree_id": "b706fcd39a9a5f18496db7373b98f3f02383f63b",
+          "url": "https://github.com/unicode-org/icu4x/commit/539f979d8c9cc64534396aa162240a9e204a4578"
+        },
+        "date": 1647548219135,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 991,
+            "range": "± 32",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 6581,
+            "range": "± 367",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 15320,
+            "range": "± 371",
             "unit": "ns/iter"
           }
         ]
