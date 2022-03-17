@@ -10,8 +10,7 @@ enum State {
     Start,
     AfterLanguage,
     AfterScript,
-    AfterRegion,
-    AfterVariant(usize),
+    BeforeVariant(usize),
 }
 
 pub struct LanguageIdentifierSubtagIterator<'a> {
@@ -44,20 +43,14 @@ impl<'a> Iterator for LanguageIdentifierSubtagIterator<'a> {
                     }
                 }
                 State::AfterScript => {
-                    self.state = State::AfterRegion;
+                    self.state = State::BeforeVariant(0);
                     if let Some(ref region) = self.langid.region {
                         return Some(region.as_str().as_bytes());
                     }
                 }
-                State::AfterRegion => {
-                    self.state = State::AfterVariant(0);
-                    if let Some(variant) = self.langid.variants.get(0) {
-                        return Some(variant.as_str().as_bytes());
-                    }
-                }
-                State::AfterVariant(i) => {
-                    if let Some(variant) = self.langid.variants.get(i + 1) {
-                        self.state = State::AfterVariant(i + 1);
+                State::BeforeVariant(i) => {
+                    if let Some(variant) = self.langid.variants.get(i) {
+                        self.state = State::BeforeVariant(i + 1);
                         return Some(variant.as_str().as_bytes());
                     } else {
                         return None;
