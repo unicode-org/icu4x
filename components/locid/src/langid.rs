@@ -149,7 +149,7 @@ impl LanguageIdentifier {
     /// The return value is equivalent to what would happen if you first converted this
     /// `LanguageIdentifier` to a BCP-47 string and then performed a byte comparison.
     ///
-    /// This function is case-sensitive and results in a strict ordering, so it is appropriate for
+    /// This function is case-sensitive and results in a *total order*, so it is appropriate for
     /// binary search. The only argument producing [`Ordering::Equal`] is `self.to_string()`.
     ///
     /// # Examples
