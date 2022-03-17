@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1647446882158,
+  "lastUpdate": 1647477053123,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -11063,6 +11063,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/cf1d001e177738544c646d6163548c6c874942d0"
         },
         "date": 1647446866088,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4504771,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "dbfbee78528d019cc9293247a5e2c7d2973d02f9",
+          "message": "Create scorecards.yml",
+          "timestamp": "2022-03-16T17:29:24-07:00",
+          "tree_id": "e009661b07a9818ee7e47b490036ae064246fcfc",
+          "url": "https://github.com/unicode-org/icu4x/commit/dbfbee78528d019cc9293247a5e2c7d2973d02f9"
+        },
+        "date": 1647477040242,
         "tool": "ndjson",
         "benches": [
           {
