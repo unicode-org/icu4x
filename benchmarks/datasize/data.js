@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1647544631101,
+  "lastUpdate": 1647547761547,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -11183,6 +11183,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/82ed6e4f290306e55ddc9821d75dead17d726263"
         },
         "date": 1647544616144,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4504771,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "pandusonu@google.com",
+            "name": "Gollapudi Vamsi Krishna",
+            "username": "pandusonu2"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "539f979d8c9cc64534396aa162240a9e204a4578",
+          "message": "Add coptic calendar (#1660)",
+          "timestamp": "2022-03-17T13:07:53-07:00",
+          "tree_id": "b706fcd39a9a5f18496db7373b98f3f02383f63b",
+          "url": "https://github.com/unicode-org/icu4x/commit/539f979d8c9cc64534396aa162240a9e204a4578"
+        },
+        "date": 1647547748559,
         "tool": "ndjson",
         "benches": [
           {
