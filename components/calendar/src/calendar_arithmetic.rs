@@ -16,7 +16,7 @@ pub struct ArithmeticDate<C: CalendarArithmetic> {
 }
 
 pub trait CalendarArithmetic: Calendar {
-    fn month_days(month: u8, year: i32) -> u8;
+    fn month_days(year: i32, month: u8) -> u8;
     fn months_for_every_year() -> u8;
     fn is_leap_year(year: i32) -> bool;
 }
@@ -36,7 +36,7 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
         while offset.days != 0 {
             if offset.days < 0 {
                 self.month -= 1;
-                let month_days = C::month_days(self.month, self.year);
+                let month_days = C::month_days(self.year, self.month);
                 if (-offset.days) > month_days as i32 {
                     offset.days += month_days as i32;
                 } else {
@@ -44,7 +44,7 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
                     offset.days = 0;
                 }
             } else {
-                let month_days = C::month_days(self.month, self.year);
+                let month_days = C::month_days(self.year, self.month);
 
                 if offset.days >= month_days as i32 {
                     self.month += 1;
@@ -77,7 +77,7 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
         let months_in_year = C::months_for_every_year();
         let mut days: u32 = 0;
         for month in 1..=months_in_year {
-            days += C::month_days(month, self.year) as u32;
+            days += C::month_days(self.year, month) as u32;
         }
         days
     }
@@ -89,14 +89,14 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
 
     #[inline]
     pub fn days_in_month(&self) -> u8 {
-        C::month_days(self.month, self.year)
+        C::month_days(self.year, self.month)
     }
 
     #[inline]
     pub fn day_of_year(&self) -> u32 {
         let mut day_of_year = 0;
         for month in 1..self.month {
-            day_of_year += C::month_days(month, self.year) as u32;
+            day_of_year += C::month_days(self.year, month) as u32;
         }
         day_of_year + (self.day as u32)
     }
