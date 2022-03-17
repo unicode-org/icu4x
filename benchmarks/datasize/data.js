@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1647477053123,
+  "lastUpdate": 1647478425056,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -11093,6 +11093,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/dbfbee78528d019cc9293247a5e2c7d2973d02f9"
         },
         "date": 1647477040242,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4504771,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "52ac1cfadf76c59dcefc7b7236a28827f61939eb",
+          "message": "Add license header to scorecards.yml",
+          "timestamp": "2022-03-16T17:52:03-07:00",
+          "tree_id": "99fb92c032a796c3100c4c77e2a4fb5009795d3d",
+          "url": "https://github.com/unicode-org/icu4x/commit/52ac1cfadf76c59dcefc7b7236a28827f61939eb"
+        },
+        "date": 1647478409351,
         "tool": "ndjson",
         "benches": [
           {
