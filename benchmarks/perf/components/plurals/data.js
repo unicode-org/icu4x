@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1647477562378,
+  "lastUpdate": 1647478905716,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -29441,6 +29441,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 15286,
             "range": "± 742",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "52ac1cfadf76c59dcefc7b7236a28827f61939eb",
+          "message": "Add license header to scorecards.yml",
+          "timestamp": "2022-03-16T17:52:03-07:00",
+          "tree_id": "99fb92c032a796c3100c4c77e2a4fb5009795d3d",
+          "url": "https://github.com/unicode-org/icu4x/commit/52ac1cfadf76c59dcefc7b7236a28827f61939eb"
+        },
+        "date": 1647478889266,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1114,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 6592,
+            "range": "± 74",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 15616,
+            "range": "± 214",
             "unit": "ns/iter"
           }
         ]
