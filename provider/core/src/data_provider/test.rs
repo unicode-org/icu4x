@@ -8,8 +8,8 @@ use core::fmt::Debug;
 use serde::{Deserialize, Serialize};
 
 use super::*;
+use crate::datagen::IterableResourceProvider;
 use crate::hello_world::*;
-use crate::iter::*;
 use crate::prelude::*;
 use crate::yoke;
 use crate::zerofrom;

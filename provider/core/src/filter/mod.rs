@@ -32,14 +32,17 @@
 //!     .filter_by_langid(|langid| langid.language == language!("de"));
 //! ```
 //!
-//! [`IterableDynProvider`]: crate::iter::IterableDynProvider
+//! [`IterableDynProvider`]: crate::datagen::IterableDynProvider
 
 mod impls;
 
 pub use impls::*;
 
-use crate::iter::*;
+#[cfg(feature = "datagen")]
+use crate::datagen::{IterableDynProvider, IterableResourceProvider};
+
 use crate::prelude::*;
+#[cfg(feature = "datagen")]
 use alloc::boxed::Box;
 
 /// A data provider that selectively filters out data requests.
@@ -139,6 +142,7 @@ where
     }
 }
 
+#[cfg(feature = "datagen")]
 impl<M, D, F> IterableDynProvider<M> for RequestFilterDataProvider<D, F>
 where
     M: DataMarker,
@@ -169,6 +173,7 @@ where
     }
 }
 
+#[cfg(feature = "datagen")]
 impl<M, D, F> IterableResourceProvider<M> for RequestFilterDataProvider<D, F>
 where
     M: ResourceMarker,

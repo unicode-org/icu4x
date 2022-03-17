@@ -10,7 +10,7 @@ use icu_properties::provider::{
 };
 use icu_properties::script::{ScriptWithExt, ScriptWithExtensions};
 use icu_properties::Script;
-use icu_provider::iter::IterableDynProvider;
+use icu_provider::datagen::IterableDynProvider;
 use icu_provider::prelude::*;
 use std::convert::TryFrom;
 use std::path::Path;
@@ -97,7 +97,7 @@ impl DynProvider<ScriptWithExtensionsPropertyV1Marker> for ScriptWithExtensionsP
 
 icu_provider::impl_dyn_provider!(ScriptWithExtensionsPropertyProvider, {
     key::SCRIPT_EXTENSIONS_V1 => ScriptWithExtensionsPropertyV1Marker,
-}, SERDE_SE, impl DataConverter);
+}, SERDE_SE, ITERABLE_SERDE_SE, DATA_CONVERTER);
 
 impl IterableDynProvider<ScriptWithExtensionsPropertyV1Marker>
     for ScriptWithExtensionsPropertyProvider

@@ -4,10 +4,10 @@
 
 use clap::{App, Arg, ArgGroup};
 use icu_datagen::get_all_keys;
+use icu_provider::datagen::IterableDynProvider;
 use icu_provider::datagen::{DataConverter, HeapStatsMarker, OmnibusDatagenProvider};
 use icu_provider::filter::Filterable;
 use icu_provider::fork::by_key::MultiForkByKeyProvider;
-use icu_provider::iter::IterableDynProvider;
 use icu_provider::prelude::*;
 use icu_provider::serde::SerializeMarker;
 use icu_provider_blob::BlobDataProvider;
