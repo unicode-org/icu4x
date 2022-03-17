@@ -31,35 +31,40 @@ impl<'a> LanguageIdentifierSubtagIterator<'a> {
 impl<'a> Iterator for LanguageIdentifierSubtagIterator<'a> {
     type Item = &'a [u8];
     fn next(&mut self) -> Option<Self::Item> {
-        if self.state == State::Start {
-            self.state = State::AfterLanguage;
-            return Some(self.langid.language.as_str().as_bytes());
-        }
-        if self.state == State::AfterLanguage {
-            self.state = State::AfterScript;
-            if let Some(ref script) = self.langid.script {
-                return Some(script.as_str().as_bytes());
+        loop {
+            match self.state {
+                State::Start => {
+                    self.state = State::AfterLanguage;
+                    return Some(self.langid.language.as_str().as_bytes());
+                }
+                State::AfterLanguage => {
+                    self.state = State::AfterScript;
+                    if let Some(ref script) = self.langid.script {
+                        return Some(script.as_str().as_bytes());
+                    }
+                }
+                State::AfterScript => {
+                    self.state = State::AfterRegion;
+                    if let Some(ref region) = self.langid.region {
+                        return Some(region.as_str().as_bytes());
+                    }
+                }
+                State::AfterRegion => {
+                    self.state = State::AfterVariant(0);
+                    if let Some(variant) = self.langid.variants.get(0) {
+                        return Some(variant.as_str().as_bytes());
+                    }
+                }
+                State::AfterVariant(i) => {
+                    if let Some(variant) = self.langid.variants.get(i + 1) {
+                        self.state = State::AfterVariant(i + 1);
+                        return Some(variant.as_str().as_bytes());
+                    } else {
+                        return None;
+                    }
+                }
             }
         }
-        if self.state == State::AfterScript {
-            self.state = State::AfterRegion;
-            if let Some(ref region) = self.langid.region {
-                return Some(region.as_str().as_bytes());
-            }
-        }
-        if self.state == State::AfterRegion {
-            self.state = State::AfterVariant(0);
-            if let Some(variant) = self.langid.variants.get(0) {
-                return Some(variant.as_str().as_bytes());
-            }
-        }
-        if let State::AfterVariant(i) = self.state {
-            self.state = State::AfterVariant(i + 1);
-            if let Some(variant) = self.langid.variants.get(i + 1) {
-                return Some(variant.as_str().as_bytes());
-            }
-        }
-        None
     }
 }
 
