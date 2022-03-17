@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1647477383994,
+  "lastUpdate": 1647478760898,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -20969,6 +20969,36 @@ window.BENCHMARK_DATA = {
             "name": "fixed_decimal/overview",
             "value": 108082,
             "range": "± 454",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "52ac1cfadf76c59dcefc7b7236a28827f61939eb",
+          "message": "Add license header to scorecards.yml",
+          "timestamp": "2022-03-16T17:52:03-07:00",
+          "tree_id": "99fb92c032a796c3100c4c77e2a4fb5009795d3d",
+          "url": "https://github.com/unicode-org/icu4x/commit/52ac1cfadf76c59dcefc7b7236a28827f61939eb"
+        },
+        "date": 1647478745860,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 125833,
+            "range": "± 6389",
             "unit": "ns/iter"
           }
         ]
