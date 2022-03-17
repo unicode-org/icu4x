@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1647478862364,
+  "lastUpdate": 1647501185553,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -23069,6 +23069,48 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 222543,
             "range": "± 15032",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "3657f8030f372c262722d3e59b67e5a1063b95be",
+          "message": "Move IterableDynProvider to datagen, refactor impl_dyn_provider (#1699)\n\n* Add dispatch to impl_dyn_provider macro\r\n\r\n* Split out IterableDynProvider branches\r\n\r\n* don't use anything with spaces to avoid macro parsing ambiguity\r\n\r\n* Add correct invocations\r\n\r\n* Move IterableDataProvider to datagen\r\n\r\n* rename imports\r\n\r\n* improve docs\r\n\r\n* fixes",
+          "timestamp": "2022-03-17T00:05:06-07:00",
+          "tree_id": "be35c30455e9c99465cd6d48ca30af1a4af79c7f",
+          "url": "https://github.com/unicode-org/icu4x/commit/3657f8030f372c262722d3e59b67e5a1063b95be"
+        },
+        "date": 1647501168555,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 92802,
+            "range": "± 9827",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 863793,
+            "range": "± 68784",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 181575,
+            "range": "± 18055",
             "unit": "ns/iter"
           }
         ]
