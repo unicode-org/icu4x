@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1647447326810,
+  "lastUpdate": 1647477507638,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -22985,6 +22985,48 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 206299,
             "range": "± 1296",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "dbfbee78528d019cc9293247a5e2c7d2973d02f9",
+          "message": "Create scorecards.yml",
+          "timestamp": "2022-03-16T17:29:24-07:00",
+          "tree_id": "e009661b07a9818ee7e47b490036ae064246fcfc",
+          "url": "https://github.com/unicode-org/icu4x/commit/dbfbee78528d019cc9293247a5e2c7d2973d02f9"
+        },
+        "date": 1647477492835,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 89126,
+            "range": "± 1703",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 918522,
+            "range": "± 13659",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 199807,
+            "range": "± 3732",
             "unit": "ns/iter"
           }
         ]
