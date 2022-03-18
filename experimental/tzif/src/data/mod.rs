@@ -6,5 +6,9 @@
 /// <https://www.gnu.org/software/libc/manual/html_node/TZ-Variable.html>
 pub mod posix;
 
+/// Structs for holding data encoded by TZif binary files, as specified by
+/// <https://datatracker.ietf.org/doc/html/rfc8536>
+pub mod tzif;
+
 /// Simple structs for keeping track of seconds, hours, and minutes with the type system.
 pub mod time;
