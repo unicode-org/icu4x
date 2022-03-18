@@ -166,6 +166,10 @@ impl Variants {
     pub fn clear(&mut self) {
         self.0 = None;
     }
+
+    pub(crate) fn iter_subtags(&self) -> impl Iterator<Item = &str> {
+        self.iter().map(|v| v.as_str())
+    }
 }
 
 impl_writeable_for_subtag_list!(Variants, "macos", "posix");

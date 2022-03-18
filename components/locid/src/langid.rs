@@ -177,11 +177,18 @@ impl LanguageIdentifier {
     /// }
     /// ```
     pub fn cmp_bytes(&self, other: &[u8]) -> Ordering {
-        crate::cmp::langid::cmp(self, other)
+        let base_iter = self.iter_subtags().map(str::as_bytes);
+        // Note: This does not use get_subtag_iterator because we want to guarantee
+        // perfect lexicographic ordering of the strings.
+        let other_iter = other.split(|b| *b == b'-');
+        base_iter.cmp(other_iter)
     }
 
     pub(crate) fn iter_subtags(&self) -> impl Iterator<Item = &str> {
-        crate::cmp::langid::LanguageIdentifierSubtagIterator::new(self)
+        core::iter::once(self.language.as_str())
+            .chain(self.script.as_ref().map(|t| t.as_str()))
+            .chain(self.region.as_ref().map(|t| t.as_str()))
+            .chain(self.variants.iter_subtags())
     }
 }
 
