@@ -5,3 +5,7 @@
 /// Trait extensions for parsing POSIX time-zone strings as specified by
 /// <https://www.gnu.org/software/libc/manual/html_node/TZ-Variable.html>
 pub mod posix;
+
+/// Trait extensions for parsing TZif binary files as specified by
+/// <https://datatracker.ietf.org/doc/html/rfc8536>
+pub mod tzif;
