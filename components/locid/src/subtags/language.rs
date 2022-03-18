@@ -39,6 +39,7 @@ use tinystr::TinyAsciiStr;
 ///
 /// [`unicode_language_id`]: https://unicode.org/reports/tr35/#unicode_language_id
 #[derive(Debug, PartialEq, Eq, Clone, Hash, PartialOrd, Ord, Copy)]
+#[repr(transparent)]
 pub struct Language(TinyAsciiStr<{ *LANGUAGE_LENGTH.end() }>);
 
 const LANGUAGE_LENGTH: RangeInclusive<usize> = 2..=3;
@@ -76,6 +77,36 @@ impl Language {
         let value = s.to_ascii_lowercase();
 
         Ok(Self(value))
+    }
+
+    /// Safely creates a [`Language`] from a reference to its raw format
+    /// as returned by [`Language::into_raw()`].
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::locid::subtags::Language;
+    ///
+    /// assert!(matches!(Language::try_from_raw(*b"de\0"), Ok(_)));
+    /// assert!(matches!(Language::try_from_raw(*b"ars"), Ok(_)));
+    /// assert!(matches!(Language::try_from_raw(*b"419"), Err(_)));
+    ///
+    /// // Unlike the other constructors, this one is case-sensitive:
+    /// assert!(matches!(Language::try_from_raw(*b"EN\0"), Err(_)));
+    /// ```
+    pub fn try_from_raw(v: [u8; 3]) -> Result<Self, ParserError> {
+        let s = TinyAsciiStr::<{ core::mem::size_of::<Self>() }>::try_from_raw(v)
+            .map_err(|_| ParserError::InvalidSubtag)?;
+        let is_valid = match s.len() {
+            // LANGUAGE_LENGTH
+            2..=3 => s.is_ascii_alphabetic() && s.is_ascii_lowercase(),
+            _ => false,
+        };
+        if is_valid {
+            Ok(Self(s))
+        } else {
+            Err(ParserError::InvalidSubtag)
+        }
     }
 
     /// Deconstructs the [`Language`] into raw format to be consumed
@@ -255,4 +286,67 @@ impl Default for Language {
     fn default() -> Language {
         Language::und()
     }
+}
+
+// Safety checklist for ULE:
+//
+// 1. Must not include any uninitialized or padding bytes (true since transparent over a ULE).
+// 2. Must have an alignment of 1 byte (true since transparent over a ULE).
+// 3. ULE::validate_byte_slice() checks that the given byte slice represents a valid slice.
+// 4. ULE::validate_byte_slice() checks that the given byte slice has a valid length.
+// 5. All other methods must be left with their default impl.
+// 6. Byte equality is semantic equality.
+#[cfg(feature = "zerovec")]
+unsafe impl zerovec::ule::ULE for Language {
+    fn validate_byte_slice(bytes: &[u8]) -> Result<(), zerovec::ZeroVecError> {
+        let it = bytes.chunks_exact(core::mem::size_of::<Self>());
+        if !it.remainder().is_empty() {
+            return Err(zerovec::ZeroVecError::length::<Self>(bytes.len()));
+        }
+        for v in it {
+            // The following can be removed once `array_chunks` is stabilized.
+            let mut a = [0; core::mem::size_of::<Self>()];
+            a.copy_from_slice(v);
+            if Self::try_from_raw(a).is_err() {
+                return Err(zerovec::ZeroVecError::parse::<Self>());
+            }
+        }
+        Ok(())
+    }
+}
+
+/// Impl enabling `Language` to be used in a [`ZeroVec`]. Enabled with the `"zerovec"` feature.
+///
+/// # Example
+///
+/// ```
+/// use icu::locid::subtags::Language;
+/// use icu::locid::macros::language;
+/// use zerovec::ZeroVec;
+///
+/// let zv = ZeroVec::<Language>::parse_byte_slice(b"de\0fr\0arsar\0")
+///     .expect("Valid language subtags");
+/// assert_eq!(zv.get(1), Some(language!("fr")));
+///
+/// ZeroVec::<Language>::parse_byte_slice(b"invalid")
+///     .expect_err("Invalid byte slice");
+/// ```
+///
+/// [`ZeroVec`]: zerovec::ZeroVec
+#[cfg(feature = "zerovec")]
+impl zerovec::ule::AsULE for Language {
+    type ULE = Self;
+    fn to_unaligned(self) -> Self::ULE {
+        self
+    }
+    fn from_unaligned(unaligned: Self::ULE) -> Self {
+        unaligned
+    }
+}
+
+#[cfg(feature = "zerovec")]
+impl<'a> zerovec::maps::ZeroMapKV<'a> for Language {
+    type Container = zerovec::ZeroVec<'a, Language>;
+    type GetType = Language;
+    type OwnedType = Language;
 }
