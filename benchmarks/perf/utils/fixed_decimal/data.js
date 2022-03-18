@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1647552010590,
+  "lastUpdate": 1647564634354,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -21119,6 +21119,36 @@ window.BENCHMARK_DATA = {
             "name": "fixed_decimal/overview",
             "value": 109129,
             "range": "± 411",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "d118e3d1f3264096ee7e92d867ebf2c46069ef56",
+          "message": "Add ULE for Language and fix bug in Region (#1711)",
+          "timestamp": "2022-03-17T17:43:25-07:00",
+          "tree_id": "a73151c42998aa6efef50482c63dfac90fbb522a",
+          "url": "https://github.com/unicode-org/icu4x/commit/d118e3d1f3264096ee7e92d867ebf2c46069ef56"
+        },
+        "date": 1647564620757,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 108009,
+            "range": "± 369",
             "unit": "ns/iter"
           }
         ]
