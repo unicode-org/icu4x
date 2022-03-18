@@ -2,11 +2,11 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use core::cmp::Ordering;
 use crate::parser::{get_subtag_iterator, parse_locale, ParserError};
 use crate::{extensions, subtags, LanguageIdentifier};
 use alloc::string::String;
 use alloc::string::ToString;
+use core::cmp::Ordering;
 use core::str::FromStr;
 
 /// A core struct representing a [`Unicode Locale Identifier`].
