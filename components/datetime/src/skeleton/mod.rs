@@ -8,12 +8,12 @@ mod error;
 mod helpers;
 pub mod reference;
 pub mod runtime;
-#[cfg(feature = "provider_serde")]
+#[cfg(feature = "serialize")]
 mod serde;
 pub use error::*;
 pub use helpers::*;
 
-#[cfg(all(test, feature = "provider_serde"))]
+#[cfg(all(test, feature = "datagen"))]
 mod test {
     use super::reference::Skeleton;
     use super::*;
@@ -340,7 +340,7 @@ mod test {
     /// trusted, test that the bincode gets validated correctly.
     struct TestInvalidSkeleton(Vec<Field>);
 
-    #[cfg(feature = "provider_serde")]
+    #[cfg(feature = "serialize")]
     impl Serialize for TestInvalidSkeleton {
         fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
         where
@@ -355,7 +355,7 @@ mod test {
         }
     }
 
-    #[cfg(feature = "provider_transform_internals")]
+    #[cfg(feature = "datagen")]
     fn assert_pattern_to_skeleton(pattern: &str, skeleton: &str, message: &str) {
         assert_eq!(
             serde_json::to_string(skeleton).expect("Failed to transform skeleton to string."),
@@ -371,7 +371,7 @@ mod test {
     }
 
     #[test]
-    #[cfg(feature = "provider_transform_internals")]
+    #[cfg(feature = "datagen")]
     fn test_pattern_to_skeleton() {
         assert_pattern_to_skeleton("H:mm:ss v", "Hmmssv", "Test a complicated time pattern");
         assert_pattern_to_skeleton(

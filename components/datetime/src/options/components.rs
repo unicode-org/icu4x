@@ -80,12 +80,12 @@ use crate::{
 use alloc::vec::Vec;
 
 use super::preferences;
-#[cfg(feature = "serde")]
+#[cfg(feature = "serialize")]
 use serde::{Deserialize, Serialize};
 
 /// See the [module-level](./index.html) docs for more information.
 #[derive(Debug, Clone, PartialEq, Default, Copy)]
-#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "serialize", derive(Serialize, Deserialize))]
 pub struct Bag {
     /// Include the era, such as "AD" or "CE".
     pub era: Option<Text>,
@@ -331,7 +331,7 @@ impl Bag {
 /// and second.
 #[derive(Debug, Clone, Copy, PartialEq)]
 #[cfg_attr(
-    feature = "serde",
+    feature = "serialize",
     derive(Serialize, Deserialize),
     serde(rename_all = "kebab-case")
 )]
@@ -345,7 +345,7 @@ pub enum Numeric {
 /// A text component for the `components::`[`Bag`]. It is used for the era and weekday.
 #[derive(Debug, Clone, Copy, PartialEq)]
 #[cfg_attr(
-    feature = "serde",
+    feature = "serialize",
     derive(Serialize, Deserialize),
     serde(rename_all = "kebab-case")
 )]
@@ -361,7 +361,7 @@ pub enum Text {
 /// Options for displaying a Year for the `components::`[`Bag`].
 #[derive(Debug, Clone, Copy, PartialEq)]
 #[cfg_attr(
-    feature = "serde",
+    feature = "serialize",
     derive(Serialize, Deserialize),
     serde(rename_all = "kebab-case")
 )]
@@ -381,7 +381,7 @@ pub enum Year {
 /// Options for displaying a Month for the `components::`[`Bag`].
 #[derive(Debug, Clone, Copy, PartialEq)]
 #[cfg_attr(
-    feature = "serde",
+    feature = "serialize",
     derive(Serialize, Deserialize),
     serde(rename_all = "kebab-case")
 )]
@@ -406,7 +406,7 @@ pub enum Month {
 // TODO(#488): make visible once fully supported.
 #[derive(Debug, Clone, Copy, PartialEq)]
 #[cfg_attr(
-    feature = "serde",
+    feature = "serialize",
     derive(Serialize, Deserialize),
     serde(rename_all = "kebab-case")
 )]
@@ -425,7 +425,7 @@ pub enum Week {
 /// options.
 #[derive(Debug, Clone, Copy, PartialEq)]
 #[cfg_attr(
-    feature = "serde",
+    feature = "serialize",
     derive(Serialize, Deserialize),
     serde(rename_all = "kebab-case")
 )]

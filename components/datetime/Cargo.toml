@@ -52,7 +52,7 @@ icu = { path = "../icu", default-features = false }
 icu_benchmark_macros = { version = "0.5", path = "../../tools/benchmark/macros" }
 icu_provider = { version = "0.5", path = "../../provider/core" }
 icu_testdata = { version = "0.5", path = "../../provider/testdata", features = ["static"] }
-icu_calendar = { version = "0.5", path = "../calendar", features = ["provider_serde"] }
+icu_calendar = { version = "0.5", path = "../calendar", features = ["serialize"] }
 icu_locid_macros = { version = "0.5", path = "../locid/macros" }
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
@@ -64,15 +64,15 @@ bench = false  # This option is required for Benchmark CI
 
 [features]
 std = ["icu_provider/std", "icu_locid/std", "icu_calendar/std"]
-default = ["provider_serde"]
+default = ["serialize"]
 bench = []
-provider_serde = ["serde", "litemap/serde_serialize", "smallvec/serde", "litemap/serde", "zerovec/serde", "tinystr/serde", "icu_calendar/provider_serde", "icu_provider/serde"]
-provider_transform_internals = ["std"]
+serialize = ["serde", "litemap/serde", "zerovec/serde", "tinystr/serde", "smallvec/serde", "icu_calendar/serialize", "icu_provider/serialize"]
+datagen = ["serialize", "icu_calendar/datagen", "icu_provider/datagen", "litemap/serde_serialize", "std"]
 
 [[bench]]
 name = "datetime"
 harness = false
-required-features = ["provider_serde"]
+required-features = ["serialize"]
 
 [[bench]]
 name = "pattern"
@@ -81,8 +81,8 @@ required-features = ["bench"]
 
 [[test]]
 name = "datetime"
-required-features = ["provider_serde"]
+required-features = ["serialize"]
 
 [[example]]
 name = "work_log"
-required-features = ["provider_serde"]
+required-features = ["serialize"]
