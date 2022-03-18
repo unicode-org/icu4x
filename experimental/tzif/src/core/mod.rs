@@ -2,6 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+/// Generic trait extensions to the core parsing functionality.
+pub mod ext;
+
 /// A result containing a parsed item and a source for the remaining input.
 pub type ParseResult<Item, Source> = eyre::Result<Parsed<Item, Source>>;
 
@@ -68,6 +71,16 @@ where
             }
         }
         false
+    }
+
+    /// Returns a [`ParseResult`] that is compatible with the [`Chain`]
+    /// trait to parse multiple values into a single tuple.
+    ///
+    /// See the [`Chain`] trait for more information.
+    ///
+    /// [`Chain`]: ext::chain::Chain
+    fn begin_chain(&mut self) -> ParseResult<(), Source> {
+        self.source().map(|source| Parsed::new((), source))
     }
 
     /// Returns the source of the parse input, if present.
