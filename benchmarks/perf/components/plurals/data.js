@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1647564747573,
+  "lastUpdate": 1647618014134,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -29693,6 +29693,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 13842,
             "range": "± 17",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "0fe7baeecae5c286f456681eb4dff1191a83a7f4",
+          "message": "Consistently use `datagen` and `serialize` features for serde work (#1702)\n\n* Basic upgrade of everything to split features\r\n\r\n* fix litemap imports\r\n\r\n* fixups\r\n\r\n* fixup test deps\r\n\r\n* Update docs\r\n\r\n* fix char16trie\r\n\r\n* fix cldr deps\r\n\r\n* Make some things always serializable",
+          "timestamp": "2022-03-18T08:31:49-07:00",
+          "tree_id": "085b566d114ac7118964ed48f3a0d1ae38b869f3",
+          "url": "https://github.com/unicode-org/icu4x/commit/0fe7baeecae5c286f456681eb4dff1191a83a7f4"
+        },
+        "date": 1647618000194,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 868,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 5363,
+            "range": "± 20",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 14052,
+            "range": "± 118",
             "unit": "ns/iter"
           }
         ]
