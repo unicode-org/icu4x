@@ -56,7 +56,7 @@ impl<InnerIn, InnerOut, Source: Clone> MapInner<InnerIn, InnerOut, Source>
     /// Maps the value of the [`Parsed`] object, propagating the source.
     fn map_inner(self, f: impl FnOnce(InnerIn) -> InnerOut) -> Self::Mapped {
         let (value, source) = self.split();
-        Self::Mapped::new(value.map(|inner| f(inner)), source)
+        Self::Mapped::new(value.map(f), source)
     }
 }
 

@@ -42,7 +42,7 @@ where
         predicate: F,
     ) -> ParseResult<Vec<Item>, Source> {
         match self.take(n) {
-            Ok(parsed) if predicate(&parsed.value()) => Ok(parsed),
+            Ok(parsed) if predicate(parsed.value()) => Ok(parsed),
             Ok(parsed) => eyre::bail!(
                 "require_take(): false predicate, found {:?}",
                 parsed.value()

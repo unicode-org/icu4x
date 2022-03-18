@@ -26,7 +26,7 @@ where
     /// Then drops the parsed value, returning the unit type.
     fn expect_next<F: FnOnce(&Item) -> bool>(&mut self, predicate: F) -> ParseResult<(), Source> {
         match self.next() {
-            Ok(parsed) if predicate(&parsed.value()) => Ok(parsed.map_value(|_| ())),
+            Ok(parsed) if predicate(parsed.value()) => Ok(parsed.map_value(|_| ())),
             Ok(parsed) => eyre::bail!("expect_next(): false predicate, found `{}`", parsed.value()),
             Err(err) => Err(err),
         }

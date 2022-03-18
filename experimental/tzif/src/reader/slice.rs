@@ -25,7 +25,7 @@ pub struct SliceByteReader<'a> {
 impl<'a> Clone for SliceByteReader<'a> {
     fn clone(&self) -> Self {
         Self {
-            bytes: self.bytes.clone(),
+            bytes: self.bytes,
             position: self.position,
         }
     }
@@ -33,12 +33,12 @@ impl<'a> Clone for SliceByteReader<'a> {
 
 impl<'a> SliceByteReader<'a> {
     /// Create a [`SliceByteReader`] instance from a slice of bytes.
-    pub fn from_bytes(bytes: &'a [u8]) -> Self {
+    pub fn with_slice_source(bytes: &'a [u8]) -> Self {
         SliceByteReader { bytes, position: 0 }
     }
 
     /// Create a [`SliceByteReader`] instance from a string slice.
-    pub fn from_str(s: &'a str) -> Self {
+    pub fn with_str_source(s: &'a str) -> Self {
         SliceByteReader {
             bytes: s.as_bytes(),
             position: 0,
@@ -101,7 +101,7 @@ mod test {
 
     #[test]
     fn next() {
-        let mut source = SliceByteReader::from_str("abcdefg");
+        let mut source = SliceByteReader::with_str_source("abcdefg");
         let mut parsed = source.next().unwrap();
         assert_eq!(*parsed.value(), b'a');
         let position = parsed.source().position;
@@ -111,7 +111,7 @@ mod test {
 
     #[test]
     fn chain_next() {
-        let mut source = SliceByteReader::from_str("abcdefg");
+        let mut source = SliceByteReader::with_str_source("abcdefg");
         let mut parsed = source.next().next().unwrap();
         assert_eq!(*parsed.value(), b'b');
         let position = parsed.source().position;
@@ -121,7 +121,7 @@ mod test {
 
     #[test]
     fn take() {
-        let mut source = SliceByteReader::from_str("abcdefg");
+        let mut source = SliceByteReader::with_str_source("abcdefg");
         let mut parsed = source.take(2).unwrap();
         assert_eq!(parsed.value(), b"ab");
         let position = parsed.source().position;
@@ -131,7 +131,7 @@ mod test {
 
     #[test]
     fn end_of_input() {
-        let mut source = SliceByteReader::from_str("123");
+        let mut source = SliceByteReader::with_str_source("123");
         let mut parsed1 = source.next().unwrap();
         let mut parsed2 = parsed1.next().unwrap();
         let mut parsed3 = parsed2.next().unwrap();

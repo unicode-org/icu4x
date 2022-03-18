@@ -128,7 +128,7 @@ where
     fn source(&mut self) -> eyre::Result<Source> {
         self.as_mut()
             .map_err(|err| std::mem::replace(err, ParseError::Empty.into()))
-            .map(|parsed| parsed.source().clone())
+            .map(|parsed| parsed.source())
     }
 
     /// Returns a [`ParseResult`] containing the next item, and a source containing

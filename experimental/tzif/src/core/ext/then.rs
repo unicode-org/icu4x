@@ -73,7 +73,7 @@ impl<Value, Source: Clone> Then<Value, Source> for Parsed<Value, Source> {
         f: impl Fn(&Value) -> bool,
         e: impl FnOnce(Option<&Value>) -> String,
     ) -> ParseResult<Value, Source> {
-        if f(&self.value()) {
+        if f(self.value()) {
             return Ok(self);
         }
         bail!(e(Some(self.value())))

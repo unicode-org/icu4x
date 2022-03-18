@@ -44,7 +44,7 @@ mod test {
 
     #[test]
     fn maybe_parse() {
-        let mut source = SliceByteReader::from_str("abcdefg");
+        let mut source = SliceByteReader::with_str_source("abcdefg");
 
         let parsed = source
             .maybe_parse(|source| source.require_next(|&byte| byte == b'z'))
@@ -73,7 +73,7 @@ mod test {
 
     #[test]
     fn require_next() {
-        let mut source = SliceByteReader::from_str("abcdefg");
+        let mut source = SliceByteReader::with_str_source("abcdefg");
 
         assert!(source.require_next(|&byte| byte == b'0').is_err());
 
@@ -98,7 +98,7 @@ mod test {
 
     #[test]
     fn require_take() {
-        let mut source = SliceByteReader::from_str("abcdefg");
+        let mut source = SliceByteReader::with_str_source("abcdefg");
 
         assert!(source.require_take(4, |bytes| bytes == b"ab").is_err());
         assert!(!source.end_of_input());
@@ -119,7 +119,7 @@ mod test {
 
     #[test]
     fn test_zero_or_more() {
-        let mut source = SliceByteReader::from_str("abcdefg");
+        let mut source = SliceByteReader::with_str_source("abcdefg");
         let mut parsed = source
             .parse_zero_or_more(|source| source.next())
             .then(|bytes| assert_eq!(bytes, b"abcdefg"));
@@ -138,7 +138,7 @@ mod test {
 
     #[test]
     fn test_one_or_more() {
-        let mut source = SliceByteReader::from_str("abcdefg");
+        let mut source = SliceByteReader::with_str_source("abcdefg");
         let mut parsed = source
             .parse_one_or_more(|source| source.next())
             .then(|bytes| assert_eq!(bytes, b"abcdefg"));
@@ -157,7 +157,7 @@ mod test {
 
     #[test]
     fn skip() {
-        let mut source = SliceByteReader::from_str("abcdefg");
+        let mut source = SliceByteReader::with_str_source("abcdefg");
         let mut parsed = source
             .skip(0)
             .parse_one_or_more(|source| source.next())
@@ -177,7 +177,7 @@ mod test {
 
     #[test]
     fn skip_while() {
-        let mut source = SliceByteReader::from_str("abcdefg");
+        let mut source = SliceByteReader::with_str_source("abcdefg");
         let mut parsed = source
             .skip_while(|&byte| byte < b'd')
             .then(|&skipped| assert_eq!(skipped, 3))

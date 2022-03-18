@@ -350,12 +350,12 @@ mod test {
 
     #[test]
     fn parse_valid_std_name() {
-        let mut source = SliceByteReader::from_str("PST");
+        let mut source = SliceByteReader::with_str_source("PST");
         let (std, mut source) = source.parse_zone_variant_name().unwrap().split();
         assert_eq!(std, "PST");
         assert!(source.end_of_input());
 
-        let mut source = SliceByteReader::from_str("PST,");
+        let mut source = SliceByteReader::with_str_source("PST,");
         let (std, mut source) = source.parse_zone_variant_name().unwrap().split();
         assert_eq!(std, "PST");
         assert!(!source.end_of_input());
@@ -370,28 +370,28 @@ mod test {
 
     #[test]
     fn parse_invalid_std_name() {
-        let mut source = SliceByteReader::from_str("");
+        let mut source = SliceByteReader::with_str_source("");
         assert!(source.parse_zone_variant_name().is_err());
 
-        let mut source = SliceByteReader::from_str(":PST,");
+        let mut source = SliceByteReader::with_str_source(":PST,");
         assert!(source.parse_zone_variant_name().is_err());
     }
 
     #[test]
     fn parse_valid_hours() {
-        let hours = SliceByteReader::from_str("+24")
+        let hours = SliceByteReader::with_str_source("+24")
             .parse_hours(Hours(24))
             .unwrap()
             .into_value();
         assert_eq!(hours, Hours(24));
 
-        let hours = SliceByteReader::from_str("-24")
+        let hours = SliceByteReader::with_str_source("-24")
             .parse_hours(Hours(24))
             .unwrap()
             .into_value();
         assert_eq!(hours, Hours(-24));
 
-        let hours = SliceByteReader::from_str("08")
+        let hours = SliceByteReader::with_str_source("08")
             .parse_hours(Hours(24))
             .unwrap()
             .into_value();
@@ -400,35 +400,35 @@ mod test {
 
     #[test]
     fn parse_invalid_hours() {
-        assert!(SliceByteReader::from_str("+25")
+        assert!(SliceByteReader::with_str_source("+25")
             .parse_hours(Hours(24))
             .is_err());
-        assert!(SliceByteReader::from_str("-25")
+        assert!(SliceByteReader::with_str_source("-25")
             .parse_hours(Hours(24))
             .is_err());
-        assert!(SliceByteReader::from_str("25")
+        assert!(SliceByteReader::with_str_source("25")
             .parse_hours(Hours(24))
             .is_err());
-        assert!(SliceByteReader::from_str("NaN")
+        assert!(SliceByteReader::with_str_source("NaN")
             .parse_hours(Hours(24))
             .is_err());
     }
 
     #[test]
     fn parse_valid_minutes_offset() {
-        let minutes = SliceByteReader::from_str("60")
+        let minutes = SliceByteReader::with_str_source("60")
             .parse_minutes()
             .unwrap()
             .into_value();
         assert_eq!(minutes, Minutes(60));
 
-        let minutes = SliceByteReader::from_str("00")
+        let minutes = SliceByteReader::with_str_source("00")
             .parse_minutes()
             .unwrap()
             .into_value();
         assert_eq!(minutes, Minutes(0));
 
-        let minutes = SliceByteReader::from_str("05")
+        let minutes = SliceByteReader::with_str_source("05")
             .parse_minutes()
             .unwrap()
             .into_value();
@@ -437,26 +437,32 @@ mod test {
 
     #[test]
     fn parse_invalid_minutes() {
-        assert!(SliceByteReader::from_str("61").parse_minutes().is_err());
-        assert!(SliceByteReader::from_str("-1").parse_minutes().is_err());
-        assert!(SliceByteReader::from_str("NaN").parse_minutes().is_err());
+        assert!(SliceByteReader::with_str_source("61")
+            .parse_minutes()
+            .is_err());
+        assert!(SliceByteReader::with_str_source("-1")
+            .parse_minutes()
+            .is_err());
+        assert!(SliceByteReader::with_str_source("NaN")
+            .parse_minutes()
+            .is_err());
     }
 
     #[test]
     fn parse_valid_seconds_ofset() {
-        let seconds = SliceByteReader::from_str("60")
+        let seconds = SliceByteReader::with_str_source("60")
             .parse_seconds()
             .unwrap()
             .into_value();
         assert_eq!(seconds, Seconds(60));
 
-        let seconds = SliceByteReader::from_str("00")
+        let seconds = SliceByteReader::with_str_source("00")
             .parse_seconds()
             .unwrap()
             .into_value();
         assert_eq!(seconds, Seconds(0));
 
-        let seconds = SliceByteReader::from_str("05")
+        let seconds = SliceByteReader::with_str_source("05")
             .parse_seconds()
             .unwrap()
             .into_value();
@@ -465,32 +471,38 @@ mod test {
 
     #[test]
     fn parse_invalid_seconds() {
-        assert!(SliceByteReader::from_str("61").parse_seconds().is_err());
-        assert!(SliceByteReader::from_str("-1").parse_seconds().is_err());
-        assert!(SliceByteReader::from_str("NaN").parse_seconds().is_err());
+        assert!(SliceByteReader::with_str_source("61")
+            .parse_seconds()
+            .is_err());
+        assert!(SliceByteReader::with_str_source("-1")
+            .parse_seconds()
+            .is_err());
+        assert!(SliceByteReader::with_str_source("NaN")
+            .parse_seconds()
+            .is_err());
     }
 
     #[test]
     fn parse_valid_offset_time() {
-        let offset_time = SliceByteReader::from_str("-15")
+        let offset_time = SliceByteReader::with_str_source("-15")
             .parse_offset_time()
             .unwrap()
             .into_value();
         assert_eq!(offset_time, Hours(-15).as_seconds());
 
-        let offset_time = SliceByteReader::from_str("-10:00")
+        let offset_time = SliceByteReader::with_str_source("-10:00")
             .parse_offset_time()
             .unwrap()
             .into_value();
         assert_eq!(offset_time, Hours(-10).as_seconds());
 
-        let offset_time = SliceByteReader::from_str("-24:00:00")
+        let offset_time = SliceByteReader::with_str_source("-24:00:00")
             .parse_offset_time()
             .unwrap()
             .into_value();
         assert_eq!(offset_time, Hours(-24).as_seconds());
 
-        let offset_time = SliceByteReader::from_str("+12:52")
+        let offset_time = SliceByteReader::with_str_source("+12:52")
             .parse_offset_time()
             .unwrap()
             .into_value();
@@ -499,7 +511,7 @@ mod test {
             Hours(12).as_seconds() + Minutes(52).as_seconds()
         );
 
-        let offset_time = SliceByteReader::from_str("+12:52:14")
+        let offset_time = SliceByteReader::with_str_source("+12:52:14")
             .parse_offset_time()
             .unwrap()
             .into_value();
@@ -508,7 +520,7 @@ mod test {
             Hours(12).as_seconds() + Minutes(52).as_seconds() + Seconds(14)
         );
 
-        let offset_time = SliceByteReader::from_str("12:52:14")
+        let offset_time = SliceByteReader::with_str_source("12:52:14")
             .parse_offset_time()
             .unwrap()
             .into_value();
@@ -517,7 +529,7 @@ mod test {
             Hours(12).as_seconds() + Minutes(52).as_seconds() + Seconds(14)
         );
 
-        let offset_time = SliceByteReader::from_str("-12:52:14")
+        let offset_time = SliceByteReader::with_str_source("-12:52:14")
             .parse_offset_time()
             .unwrap()
             .into_value();
@@ -529,32 +541,32 @@ mod test {
 
     #[test]
     fn parse_invalid_offset_time() {
-        assert!(SliceByteReader::from_str("00:")
+        assert!(SliceByteReader::with_str_source("00:")
             .parse_offset_time()
             .is_err());
-        assert!(SliceByteReader::from_str("-25:00")
+        assert!(SliceByteReader::with_str_source("-25:00")
             .parse_offset_time()
             .is_err());
-        assert!(SliceByteReader::from_str("25:00:00")
+        assert!(SliceByteReader::with_str_source("25:00:00")
             .parse_offset_time()
             .is_err());
-        assert!(SliceByteReader::from_str("15:-5:00")
+        assert!(SliceByteReader::with_str_source("15:-5:00")
             .parse_offset_time()
             .is_err());
-        assert!(SliceByteReader::from_str("15:61:00")
+        assert!(SliceByteReader::with_str_source("15:61:00")
             .parse_offset_time()
             .is_err());
-        assert!(SliceByteReader::from_str("15:02:-2")
+        assert!(SliceByteReader::with_str_source("15:02:-2")
             .parse_offset_time()
             .is_err());
-        assert!(SliceByteReader::from_str("15:02:61")
+        assert!(SliceByteReader::with_str_source("15:02:61")
             .parse_offset_time()
             .is_err());
     }
 
     #[test]
     fn parse_valid_transition_date() {
-        let transition_date = SliceByteReader::from_str("M3.2.0")
+        let transition_date = SliceByteReader::with_str_source("M3.2.0")
             .parse_tranansition_date()
             .unwrap()
             .into_value();
@@ -566,7 +578,7 @@ mod test {
             }
         );
 
-        let transition_date = SliceByteReader::from_str("M3.2.0/3")
+        let transition_date = SliceByteReader::with_str_source("M3.2.0/3")
             .parse_tranansition_date()
             .unwrap()
             .into_value();
@@ -578,7 +590,7 @@ mod test {
             }
         );
 
-        let transition_date = SliceByteReader::from_str("J1/0")
+        let transition_date = SliceByteReader::with_str_source("J1/0")
             .parse_tranansition_date()
             .unwrap()
             .into_value();
@@ -590,7 +602,7 @@ mod test {
             }
         );
 
-        let transition_date = SliceByteReader::from_str("0/0")
+        let transition_date = SliceByteReader::with_str_source("0/0")
             .parse_tranansition_date()
             .unwrap()
             .into_value();
@@ -605,47 +617,47 @@ mod test {
 
     #[test]
     fn parse_invalid_transition_date() {
-        assert!(SliceByteReader::from_str("M0.2.0")
+        assert!(SliceByteReader::with_str_source("M0.2.0")
             .parse_tranansition_date()
             .is_err());
-        assert!(SliceByteReader::from_str("M1.0.0")
+        assert!(SliceByteReader::with_str_source("M1.0.0")
             .parse_tranansition_date()
             .is_err());
-        assert!(SliceByteReader::from_str("M1.1.-1")
+        assert!(SliceByteReader::with_str_source("M1.1.-1")
             .parse_tranansition_date()
             .is_err());
-        assert!(SliceByteReader::from_str("M1.1.7")
+        assert!(SliceByteReader::with_str_source("M1.1.7")
             .parse_tranansition_date()
             .is_err());
-        assert!(SliceByteReader::from_str("M1.6.1")
+        assert!(SliceByteReader::with_str_source("M1.6.1")
             .parse_tranansition_date()
             .is_err());
-        assert!(SliceByteReader::from_str("M13.5.6")
+        assert!(SliceByteReader::with_str_source("M13.5.6")
             .parse_tranansition_date()
             .is_err());
-        assert!(SliceByteReader::from_str("-1")
+        assert!(SliceByteReader::with_str_source("-1")
             .parse_tranansition_date()
             .is_err());
-        assert!(SliceByteReader::from_str("366")
+        assert!(SliceByteReader::with_str_source("366")
             .parse_tranansition_date()
             .is_err());
-        assert!(SliceByteReader::from_str("J0")
+        assert!(SliceByteReader::with_str_source("J0")
             .parse_tranansition_date()
             .is_err());
-        assert!(SliceByteReader::from_str("J366")
+        assert!(SliceByteReader::with_str_source("J366")
             .parse_tranansition_date()
             .is_err());
-        assert!(SliceByteReader::from_str("M1.1.1/abc")
+        assert!(SliceByteReader::with_str_source("M1.1.1/abc")
             .parse_tranansition_date()
             .is_err());
-        assert!(SliceByteReader::from_str("M1.1.1/10:ab:05")
+        assert!(SliceByteReader::with_str_source("M1.1.1/10:ab:05")
             .parse_tranansition_date()
             .is_err());
     }
 
     #[test]
     fn test_valid_posix_tz_string() {
-        let actual = SliceByteReader::from_str("EST+5EDT,M3.2.0/2,M11.1.0/2")
+        let actual = SliceByteReader::with_str_source("EST+5EDT,M3.2.0/2,M11.1.0/2")
             .parse_posix_tz_string()
             .unwrap()
             .into_value();
@@ -672,7 +684,7 @@ mod test {
         };
         assert_eq!(expected, actual);
 
-        let actual = SliceByteReader::from_str("IST-2IDT,M3.4.4/26,M10.5.0")
+        let actual = SliceByteReader::with_str_source("IST-2IDT,M3.4.4/26,M10.5.0")
             .parse_posix_tz_string()
             .unwrap()
             .into_value();
@@ -699,7 +711,7 @@ mod test {
         };
         assert_eq!(expected, actual);
 
-        let actual = SliceByteReader::from_str("WART4WARST,J1/0,J365/25")
+        let actual = SliceByteReader::with_str_source("WART4WARST,J1/0,J365/25")
             .parse_posix_tz_string()
             .unwrap()
             .into_value();
@@ -726,7 +738,7 @@ mod test {
         };
         assert_eq!(expected, actual);
 
-        let actual = SliceByteReader::from_str("WGT3WGST,M3.5.0/-2,M10.5.0/-1")
+        let actual = SliceByteReader::with_str_source("WGT3WGST,M3.5.0/-2,M10.5.0/-1")
             .parse_posix_tz_string()
             .unwrap()
             .into_value();

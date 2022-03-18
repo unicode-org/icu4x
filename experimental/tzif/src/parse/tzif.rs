@@ -686,7 +686,7 @@ pub trait TzifParser<Source: Clone + ParseInput<u8, Vec<u8>, Source>>:
                     )
             })
             .chain(|source| source.expect_byte(b'\n'))
-            .try_map_value(|(_, bytes, _)| SliceByteReader::from_bytes(&bytes).parse_posix_tz_string().map(Parsed::into_value))
+            .try_map_value(|(_, bytes, _)| SliceByteReader::with_slice_source(&bytes).parse_posix_tz_string().map(Parsed::into_value))
             .wrap_err("parse_footer(): failed to parse TZif footer")
     }
 
@@ -700,7 +700,7 @@ pub trait TzifParser<Source: Clone + ParseInput<u8, Vec<u8>, Source>>:
                 if header1.version() == 1 {
                     Ok(Parsed::new(None, source.clone()))
                 } else {
-                    source.parse_header().map_value(|header| Some(header))
+                    source.parse_header().map_value(Some)
                 }
             })
             .chain_with_context(|(.., header2), source| match header2 {
@@ -710,11 +710,11 @@ pub trait TzifParser<Source: Clone + ParseInput<u8, Vec<u8>, Source>>:
                     3 => source.parse_data_block::<3>(header),
                     n => eyre::bail!("parse_tzif(): found unsupported TZif version `{}`", n),
                 }
-                .map_value(|block| Some(block)),
+                .map_value(Some),
             })
             .chain_with_context(|(.., data_block2), source| match data_block2 {
                 None => Ok(Parsed::new(None, source.clone())),
-                Some(_) => source.parse_footer().map_value(|footer| Some(footer)),
+                Some(_) => source.parse_footer().map_value(Some),
             })
             .map_value(
                 |(header1, data_block1, header2, data_block2, footer)| TzifData {
@@ -738,7 +738,7 @@ mod test {
 
     #[test]
     fn parse_invalid_magic_sequence() {
-        let mut source = SliceByteReader::from_str("invalid_sequence");
+        let mut source = SliceByteReader::with_str_source("invalid_sequence");
         let parsed = source.expect_magic_sequence();
 
         assert!(parsed.is_err());
@@ -747,7 +747,7 @@ mod test {
 
     #[test]
     fn parse_valid_magic_sequence() {
-        let mut source = SliceByteReader::from_str("TZif");
+        let mut source = SliceByteReader::with_str_source("TZif");
         let mut parsed = source.expect_magic_sequence();
 
         assert!(parsed.is_ok());
@@ -757,7 +757,7 @@ mod test {
 
     #[test]
     fn parse_invalid_version() {
-        let mut source = SliceByteReader::from_str("4");
+        let mut source = SliceByteReader::with_str_source("4");
         let parsed = source.parse_version();
 
         assert!(parsed.is_err());
@@ -766,7 +766,7 @@ mod test {
 
     #[test]
     fn parse_valid_version() -> eyre::Result<()> {
-        let mut source = SliceByteReader::from_str("2");
+        let mut source = SliceByteReader::with_str_source("2");
         let mut parsed = source
             .parse_version()
             .then(|&version| assert_eq!(version, 2))?;
