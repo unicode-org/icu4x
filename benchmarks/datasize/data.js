@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1647564302912,
+  "lastUpdate": 1647617601146,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -11273,6 +11273,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/d118e3d1f3264096ee7e92d867ebf2c46069ef56"
         },
         "date": 1647564287212,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4504771,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "0fe7baeecae5c286f456681eb4dff1191a83a7f4",
+          "message": "Consistently use `datagen` and `serialize` features for serde work (#1702)\n\n* Basic upgrade of everything to split features\r\n\r\n* fix litemap imports\r\n\r\n* fixups\r\n\r\n* fixup test deps\r\n\r\n* Update docs\r\n\r\n* fix char16trie\r\n\r\n* fix cldr deps\r\n\r\n* Make some things always serializable",
+          "timestamp": "2022-03-18T08:31:49-07:00",
+          "tree_id": "085b566d114ac7118964ed48f3a0d1ae38b869f3",
+          "url": "https://github.com/unicode-org/icu4x/commit/0fe7baeecae5c286f456681eb4dff1191a83a7f4"
+        },
+        "date": 1647617587513,
         "tool": "ndjson",
         "benches": [
           {
