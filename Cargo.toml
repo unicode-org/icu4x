@@ -23,6 +23,7 @@ members = [
     "experimental/crabbake/derive",
     "experimental/segmenter",
     "experimental/segmenter_lstm",
+    "experimental/tzif",
     "ffi/diplomat",
     "ffi/ecma402",
     "provider/blob",

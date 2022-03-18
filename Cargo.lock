@@ -1433,6 +1433,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "icu_provider_tzif"
+version = "0.1.0"
+dependencies = [
+ "eyre",
+ "thiserror",
+]
+
+[[package]]
 name = "icu_provider_uprops"
 version = "0.5.0"
 dependencies = [

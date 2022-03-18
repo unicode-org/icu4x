@@ -1,0 +1,17 @@
+# This file is part of ICU4X. For terms of use, please see the file
+# called LICENSE at the top level of the ICU4X source tree
+# (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
+
+[package]
+name = "icu_provider_tzif"
+author = ["The ICU4X Project Developers"]
+version = "0.1.0"
+edition = "2021"
+readme = "README.md"
+license-file = "LICENSE"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+eyre = "0.6.5"
+thiserror = "1.0.30"
