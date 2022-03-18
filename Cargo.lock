@@ -1438,6 +1438,7 @@ version = "0.1.0"
 dependencies = [
  "eyre",
  "thiserror",
+ "walkdir",
 ]
 
 [[package]]

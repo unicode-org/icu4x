@@ -14,4 +14,5 @@ license-file = "LICENSE"
 
 [dependencies]
 eyre = "0.6.5"
+walkdir = "2.3.2"
 thiserror = "1.0.30"
