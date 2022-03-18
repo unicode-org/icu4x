@@ -13,5 +13,8 @@
 /// The core structs and traits that comprise the parsing infrastructure.
 pub mod core;
 
+/// The parsed data representations.
+pub mod data;
+
 /// The structs that read input and feed it to the parsers.
 pub mod reader;
