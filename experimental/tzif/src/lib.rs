@@ -16,5 +16,8 @@ pub mod core;
 /// The parsed data representations.
 pub mod data;
 
+/// The parser implementations.
+pub mod parse;
+
 /// The structs that read input and feed it to the parsers.
 pub mod reader;
