@@ -172,6 +172,15 @@ impl Unicode {
             attributes: Attributes::from_vec_unchecked(attributes),
         })
     }
+
+    pub(crate) fn iter_subtags(&self) -> impl Iterator<Item = &str> {
+        let prefix: &[&str] = if self.is_empty() { &[] } else { &["u"] };
+        prefix
+            .iter()
+            .copied()
+            .chain(self.attributes.iter_subtags())
+            .chain(self.keywords.iter_subtags())
+    }
 }
 
 impl core::fmt::Display for Unicode {

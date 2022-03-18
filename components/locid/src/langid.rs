@@ -179,6 +179,10 @@ impl LanguageIdentifier {
     pub fn cmp_bytes(&self, other: &[u8]) -> Ordering {
         crate::cmp::langid::cmp(self, other)
     }
+
+    pub(crate) fn iter_subtags(&self) -> impl Iterator<Item = &str> {
+        crate::cmp::langid::LanguageIdentifierSubtagIterator::new(self)
+    }
 }
 
 impl AsRef<LanguageIdentifier> for LanguageIdentifier {

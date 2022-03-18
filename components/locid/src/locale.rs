@@ -151,6 +151,10 @@ impl Locale {
     ) -> Option<&extensions::unicode::Value> {
         self.extensions.unicode.keywords.get(key)
     }
+
+    pub(crate) fn iter_subtags(&self) -> impl Iterator<Item = &str> {
+        self.id.iter_subtags().chain(self.extensions.iter_subtags())
+    }
 }
 
 impl FromStr for Locale {
@@ -241,6 +245,7 @@ fn test_writeable() {
         Locale::from_str("en-001-x-foo-bar").unwrap(),
         "en-001-x-foo-bar",
     );
+    assert_writeable_eq!(Locale::from_str("und-t-m0-true").unwrap(), "und-t-m0-true",);
 }
 
 impl PartialEq<&str> for Locale {

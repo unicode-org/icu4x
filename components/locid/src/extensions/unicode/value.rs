@@ -91,6 +91,10 @@ impl Value {
             Ok(Some(s))
         }
     }
+
+    pub(crate) fn iter_subtags(&self) -> impl Iterator<Item = &str> {
+        self.0.iter().map(|t| t.as_str())
+    }
 }
 
 impl FromStr for Value {

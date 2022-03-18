@@ -178,6 +178,24 @@ impl Extensions {
             other,
         })
     }
+
+    pub(crate) fn iter_subtags(&self) -> impl Iterator<Item = &str> {
+        self.other
+            .iter()
+            .filter(|o| o.get_ext() <= 't')
+            .map(|o| o.iter_subtags())
+            .flatten()
+            .chain(self.transform.iter_subtags())
+            .chain(self.unicode.iter_subtags())
+            .chain(
+                self.other
+                    .iter()
+                    .filter(|o| o.get_ext() > 't')
+                    .map(|o| o.iter_subtags())
+                    .flatten(),
+            )
+            .chain(self.private.iter_subtags())
+    }
 }
 
 impl core::fmt::Display for Extensions {

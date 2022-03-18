@@ -131,6 +131,14 @@ impl Private {
 
         Ok(Self::from_vec_unchecked(keys))
     }
+
+    pub(crate) fn iter_subtags(&self) -> impl Iterator<Item = &str> {
+        let prefix: &[&str] = if self.is_empty() { &[] } else { &["x"] };
+        prefix
+            .iter()
+            .copied()
+            .chain(self.iter().map(|t| t.as_str()))
+    }
 }
 
 impl core::fmt::Display for Private {

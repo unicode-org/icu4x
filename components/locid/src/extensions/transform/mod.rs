@@ -177,6 +177,21 @@ impl Transform {
             fields: Fields::from_vec_unchecked(tfields),
         })
     }
+
+    pub(crate) fn iter_subtags(&self) -> impl Iterator<Item = &str> {
+        let prefix: &[&str] = if self.is_empty() { &[] } else { &["t"] };
+        prefix
+            .iter()
+            .copied()
+            .chain(
+                self.lang
+                    .as_ref()
+                    .map(|l| l.iter_subtags())
+                    .into_iter()
+                    .flatten(),
+            )
+            .chain(self.fields.iter_subtags())
+    }
 }
 
 impl core::fmt::Display for Transform {

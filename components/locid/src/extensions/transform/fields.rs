@@ -158,6 +158,12 @@ impl Fields {
             None
         }
     }
+
+    pub(crate) fn iter_subtags(&self) -> impl Iterator<Item = &str> {
+        self.iter()
+            .map(|(k, v)| core::iter::once(k.as_str()).chain(v.iter_subtags()))
+            .flatten()
+    }
 }
 
 impl_writeable_for_key_value!(Fields, "h0", "hybrid", "m0", "m0-true");

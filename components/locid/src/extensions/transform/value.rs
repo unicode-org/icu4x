@@ -98,6 +98,14 @@ impl Value {
             Ok(Some(s))
         }
     }
+
+    pub(crate) fn iter_subtags(&self) -> impl Iterator<Item = &str> {
+        let prefix: &[&str] = if self.0.is_empty() { &["true"] } else { &[] };
+        prefix
+            .iter()
+            .copied()
+            .chain(self.0.iter().map(|t| t.as_str()))
+    }
 }
 
 impl FromStr for Value {
