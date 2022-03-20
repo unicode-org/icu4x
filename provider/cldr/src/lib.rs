@@ -19,16 +19,6 @@
 //! [data provider]: icu_provider
 //! [`FsDataProvider`]: ../icu_provider_fs/struct.FsDataProvider.html
 
-#![cfg_attr(
-    not(test),
-    deny(
-        clippy::indexing_slicing,
-        clippy::unwrap_used,
-        clippy::expect_used,
-        clippy::panic
-    )
-)]
-
 mod cldr_paths;
 mod cldr_serde;
 mod error;

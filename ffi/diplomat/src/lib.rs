@@ -7,7 +7,9 @@
         all(feature = "freertos", not(feature = "x86tiny")),
         all(feature = "x86tiny", not(feature = "freertos")),
     ),
-    feature(alloc_error_handler),
+    feature(alloc_error_handler)
+)]
+#![cfg_attr(
     no_std,
     deny(
         clippy::indexing_slicing,
