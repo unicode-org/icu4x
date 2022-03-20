@@ -8,7 +8,7 @@ use crate::reader::{get_langid_subdirectories, get_langid_subdirectory, open_rea
 use crate::CldrPaths;
 use icu_list::provider::*;
 use icu_locid_macros::langid;
-use icu_provider::iter::IterableResourceProvider;
+use icu_provider::datagen::IterableResourceProvider;
 use icu_provider::prelude::*;
 use std::path::PathBuf;
 
@@ -147,7 +147,8 @@ icu_provider::impl_dyn_provider!(
     ListProvider,
     [AndListV1Marker, OrListV1Marker, UnitListV1Marker,],
     SERDE_SE,
-    impl DataConverter
+    ITERABLE_SERDE_SE,
+    DATA_CONVERTER
 );
 
 impl<M: ResourceMarker<Yokeable = ListFormatterPatternsV1<'static>>> IterableResourceProvider<M>

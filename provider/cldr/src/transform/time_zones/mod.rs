@@ -8,7 +8,7 @@ use crate::reader::{get_langid_subdirectories, get_langid_subdirectory, open_rea
 use crate::CldrPaths;
 use icu_datetime::provider::time_zones::*;
 use icu_locid::LanguageIdentifier;
-use icu_provider::iter::IterableResourceProvider;
+use icu_provider::datagen::IterableResourceProvider;
 use icu_provider::prelude::*;
 use litemap::LiteMap;
 use std::convert::TryFrom;
@@ -88,7 +88,7 @@ macro_rules! impl_data_provider {
             }
         )+
 
-        icu_provider::impl_dyn_provider!(TimeZonesProvider, [$($marker),+,], SERDE_SE, impl DataConverter);
+        icu_provider::impl_dyn_provider!(TimeZonesProvider, [$($marker),+,], SERDE_SE, ITERABLE_SERDE_SE, DATA_CONVERTER);
     };
 }
 

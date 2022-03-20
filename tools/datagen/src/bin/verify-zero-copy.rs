@@ -4,10 +4,10 @@
 
 use clap::{App, Arg, ArgGroup};
 use icu_datagen::get_all_keys;
+use icu_provider::datagen::IterableDynProvider;
 use icu_provider::datagen::{DataConverter, HeapStatsMarker, OmnibusDatagenProvider};
 use icu_provider::filter::Filterable;
 use icu_provider::fork::by_key::MultiForkByKeyProvider;
-use icu_provider::iter::IterableDynProvider;
 use icu_provider::prelude::*;
 use icu_provider::serde::SerializeMarker;
 use icu_provider_blob::BlobDataProvider;
@@ -25,13 +25,31 @@ use std::rc::Rc;
 #[global_allocator]
 static ALLOC: dhat::Alloc = dhat::Alloc;
 
-static EXPECTED_VIOLATIONS: &[&str] = &[
+// Types in this list cannot be zero-copy deserialized (and are unlikely to work with CrabBake).
+//
+// Such types contain some data that was allocated during deserializations
+//
+// Every entry in this list is a bug that needs to be addressed before ICU4X 1.0.
+static EXPECTED_NET_VIOLATIONS: &[&str] = &[
+    // https://github.com/unicode-org/icu4x/issues/1678
     "datetime/skeletons@1",
+    // https://github.com/unicode-org/icu4x/issues/1034
+    "locale_canonicalizer/aliases@1",
+    // https://github.com/unicode-org/icu4x/issues/1034
+    "locale_canonicalizer/likelysubtags@1",
+];
+
+// Types in this list can be zero-copy deserialized (and do not contain allocated data),
+// however there is some allocation that occurs during deserialization for validation. This is unlikely to affect
+// CrabBake since CrabBake can bypass validation steps.
+//
+// Entries in this list represent a less-than-ideal state of things, however ICU4X is shippable with violations
+// in this list since it does not affect CrabBake.
+static EXPECTED_TOTAL_VIOLATIONS: &[&str] = &[
+    // Regex DFAs need to be validated, which involved creating a BTreeMap
     "list/and@1",
     "list/or@1",
     "list/unit@1",
-    "locale_canonicalizer/aliases@1",
-    "locale_canonicalizer/likelysubtags@1",
 ];
 
 fn main() -> eyre::Result<()> {
@@ -200,12 +218,17 @@ fn main() -> eyre::Result<()> {
         BlobDataProvider::new_from_rc_blob(Rc::from(blob)).expect("Deserialization should succeed");
 
     // Litemap keeps it sorted, convenient
-    let mut violations: LiteMap<&'static str, u64> = LiteMap::new();
+
+    // violations for net_bytes_allocated
+    let mut net_violations: LiteMap<&'static str, usize> = LiteMap::new();
+    // violations for total_bytes_allocated (but not net_bytes_allocated)
+    let mut total_violations: LiteMap<&'static str, u64> = LiteMap::new();
 
     for key in selected_keys.into_iter() {
         let props_key = key.get_path().starts_with("props/");
 
-        let mut max_violation = 0;
+        let mut max_total_violation = 0;
+        let mut max_net_violation = 0;
 
         for options in converter.supported_options_for_key(key)? {
             let result = provider.load_buffer(
@@ -230,32 +253,60 @@ fn main() -> eyre::Result<()> {
 
             let stats: DataPayload<HeapStatsMarker> =
                 converter.convert(key, payload).map_err(|e| e.1)?;
-            let vio = stats.get().total_bytes_allocated;
-            log::trace!("Key {} with options [{}] takes {} bytes", key, options, vio);
-            max_violation = cmp::max(vio, max_violation);
+            let vio_total = stats.get().total_bytes_allocated;
+            let vio_net = stats.get().net_bytes_allocated;
+            log::trace!(
+                "Key {} with options [{}] takes {} bytes ({} net)",
+                key,
+                options,
+                vio_total,
+                vio_net
+            );
+            max_total_violation = cmp::max(vio_total, max_total_violation);
+            max_net_violation = cmp::max(vio_net, max_net_violation);
         }
-        log::info!("Key {} takes max {} bytes", key, max_violation);
-        if max_violation != 0 {
-            violations.insert(key.get_path(), max_violation);
+        log::info!(
+            "Key {} takes max {} bytes ({} net)",
+            key,
+            max_total_violation,
+            max_net_violation
+        );
+        if max_total_violation != 0 {
+            if max_net_violation != 0 {
+                net_violations.insert(key.get_path(), max_net_violation);
+            } else {
+                total_violations.insert(key.get_path(), max_total_violation);
+            }
         }
     }
 
-    let vio_vec: Vec<_> = violations.iter_keys().copied().collect();
+    let total_vio_vec: Vec<_> = total_violations.iter_keys().copied().collect();
+    let net_vio_vec: Vec<_> = net_violations.iter_keys().copied().collect();
 
-    if vio_vec.is_empty() {
+    if total_vio_vec.is_empty() && net_vio_vec.is_empty() {
         log::info!("Congratulations! All keys are zero-copy");
     } else {
         log::info!("Found the following keys that are not yet zero-copy:");
-        for (name, vio) in violations.iter() {
+        for (name, vio) in net_violations.iter() {
             log::info!("\t{}: max heap size {} bytes", name, vio);
         }
+
+        if !total_vio_vec.is_empty() {
+            log::info!("Also found the following keys that are zero-copy but temporarily allocate during deserialization:");
+
+            for (name, vio) in total_violations.iter() {
+                log::info!("\t{}: allocates a maximum of {} bytes", name, vio);
+            }
+        }
     }
-    if matches.is_present("CHECK") && vio_vec != EXPECTED_VIOLATIONS {
+    if matches.is_present("CHECK")
+        && (total_vio_vec != EXPECTED_TOTAL_VIOLATIONS || net_vio_vec != EXPECTED_NET_VIOLATIONS)
+    {
         eyre::bail!("Expected violations list does not match found violations!\n\
                     If the new list is smaller, please update EXPECTED_VIOLATIONS in verify-zero-copy.rs\n\
                     If it is bigger and that was unexpected, please make sure the key remains zero-copy, or ask ICU4X team members if it is okay\
                     to temporarily allow for this key to be allowlisted.\n\
-                    Expected:\n{:?}\nFound:\n{:?}", EXPECTED_VIOLATIONS, vio_vec)
+                    Expected (net):\n{:?}\nFound (net):\n{:?}\nExpected (total):\n{:?}\nFound (total):\n{:?}", EXPECTED_NET_VIOLATIONS, net_vio_vec, EXPECTED_TOTAL_VIOLATIONS, total_vio_vec)
     }
 
     Ok(())

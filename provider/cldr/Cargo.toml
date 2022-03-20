@@ -38,12 +38,12 @@ all-features = true
 [dependencies]
 icu_provider = { version = "0.5", path = "../../provider/core", features = ["serialize", "datagen"] }
 icu_locid = { version = "0.5", path = "../../components/locid" }
-icu_plurals = { version = "0.5", path = "../../components/plurals" }
-icu_datetime = { version = "0.5", path = "../../components/datetime", features = ["provider_transform_internals"] }
-icu_locale_canonicalizer = { version = "0.5", path = "../../components/locale_canonicalizer" }
-icu_decimal = { version = "0.5", path = "../../components/decimal" }
-icu_calendar = { version = "0.5", path = "../../components/calendar", features = ["provider_serde"] }
-icu_list = { version = "0.5", path = "../../components/list", features = ["provider_transform_internals"]}
+icu_plurals = { version = "0.5", path = "../../components/plurals", features = ["datagen"] }
+icu_datetime = { version = "0.5", path = "../../components/datetime", features = ["datagen"] }
+icu_locale_canonicalizer = { version = "0.5", path = "../../components/locale_canonicalizer", features = ["datagen"] }
+icu_decimal = { version = "0.5", path = "../../components/decimal", features = ["datagen"] }
+icu_calendar = { version = "0.5", path = "../../components/calendar", features = ["datagen"] }
+icu_list = { version = "0.5", path = "../../components/list", features = ["datagen"]}
 itertools = "0.10"
 json = "0.12"
 litemap = { version = "0.3.0", path = "../../utils/litemap/" }
@@ -57,7 +57,7 @@ tinystr = { path = "../../utils/tinystr", version = "0.5.0", features = ["alloc"
 displaydoc = { version = "0.2.3", default-features = false }
 icu_locid_macros = { version = "0.5", path = "../../components/locid/macros" }
 icu_provider_uprops = { version = "0.5", path = "../../provider/uprops", features = ["log"] }
-icu_properties = { version = "0.5", path = "../../components/properties", features = ["provider_serde", "std"] }
+icu_properties = { version = "0.5", path = "../../components/properties", features = ["datagen", "std"] }
 zerovec = { version = "0.6", path = "../../utils/zerovec"}
 
 # Dependencies for the download feature

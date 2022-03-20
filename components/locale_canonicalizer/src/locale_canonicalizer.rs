@@ -14,7 +14,7 @@ use icu_locid::{
     subtags, LanguageIdentifier, Locale,
 };
 use icu_provider::prelude::*;
-use tinystr::{tinystr, TinyStr4, TinyStr8};
+use tinystr::{tinystr, TinyAsciiStr};
 
 /// Used to track the result of a canonicalization operation that potentially modifies its argument in place.
 #[derive(Debug, PartialEq)]
@@ -165,18 +165,26 @@ fn uts35_check_language_rules(
     locale: &mut Locale,
     alias_data: &DataPayload<AliasesV1Marker>,
 ) -> CanonicalizationResult {
-    let maybe_lang: Option<TinyStr4> = locale.id.language.into();
-    if let Some(lang) = maybe_lang {
-        let aliases = if lang.len() == 2 {
-            &alias_data.get().language_len2
+    if !locale.id.language.is_empty() {
+        let lang: TinyAsciiStr<3> = locale.id.language.into();
+        let replacement = if lang.len() == 2 {
+            alias_data
+                .get()
+                .language_len2
+                .binary_search_by_key(&lang.resize(), |alias| alias.0)
+                .ok()
+                .map(|index| &alias_data.get().language_len2[index].1)
         } else {
-            &alias_data.get().language_len3
+            alias_data
+                .get()
+                .language_len3
+                .binary_search_by_key(&lang, |alias| alias.0)
+                .ok()
+                .map(|index| &alias_data.get().language_len3[index].1)
         };
 
-        if let Ok(index) = aliases.binary_search_by_key(&lang, |alias| alias.0) {
-            #[allow(clippy::indexing_slicing)]
-            // TODO(#1668) Clippy exceptions need docs or fixing.
-            uts35_replacement(locale, true, false, false, None, &aliases[index].1);
+        if let Some(replacement) = replacement {
+            uts35_replacement(locale, true, false, false, None, replacement);
             return CanonicalizationResult::Modified;
         }
     }
@@ -235,8 +243,8 @@ impl LocaleCanonicalizer {
         // The `rg` region override and `sd` regional subdivision keys may contain
         // language codes that require canonicalization.
         let extension_keys = vec![
-            Key::from_tinystr_unchecked(tinystr!(4, "rg")),
-            Key::from_tinystr_unchecked(tinystr!(4, "sd")),
+            Key::from_tinystr_unchecked(tinystr!(2, "rg")),
+            Key::from_tinystr_unchecked(tinystr!(2, "sd")),
         ];
         let aliases: DataPayload<AliasesV1Marker> = provider
             .load_resource(&DataRequest::default())?
@@ -368,18 +376,25 @@ impl LocaleCanonicalizer {
             }
 
             if let Some(region) = locale.id.region {
-                let region_aliases = if region.is_alphabetic() {
-                    &self.aliases.get().region_alpha
+                let replacement = if region.is_alphabetic() {
+                    let region: TinyAsciiStr<3> = region.into();
+                    self.aliases
+                        .get()
+                        .region_alpha
+                        .binary_search_by_key(&region.resize(), |alias| alias.0)
+                        .ok()
+                        .map(|index| self.aliases.get().region_alpha[index].1)
                 } else {
-                    &self.aliases.get().region_num
+                    self.aliases
+                        .get()
+                        .region_num
+                        .binary_search_by_key(&region.into(), |alias| alias.0)
+                        .ok()
+                        .map(|index| self.aliases.get().region_num[index].1)
                 };
 
-                if let Ok(index) =
-                    region_aliases.binary_search_by_key(&region.into(), |alias| alias.0)
-                {
-                    #[allow(clippy::indexing_slicing)]
-                    // TODO(#1668) Clippy exceptions need docs or fixing.
-                    if let Ok(replacement) = region_aliases[index].1.parse() {
+                if let Some(replacement) = replacement {
+                    if let Ok(replacement) = replacement.parse() {
                         locale.id.region = Some(replacement);
                         result = CanonicalizationResult::Modified;
                         continue;
@@ -406,7 +421,7 @@ impl LocaleCanonicalizer {
                     let replacement =
                         if self.maximize(&mut for_likely) == CanonicalizationResult::Modified {
                             if let Some(likely_region) = for_likely.region {
-                                let as_tinystr: TinyStr4 = likely_region.into();
+                                let as_tinystr: TinyAsciiStr<3> = likely_region.into();
                                 if let Some(region) =
                                     rule.1.iter().find(|region| as_tinystr == **region)
                                 {
@@ -438,7 +453,7 @@ impl LocaleCanonicalizer {
                 let mut modified = Vec::new();
                 let mut unmodified = Vec::new();
                 for variant in locale.id.variants.iter() {
-                    let variant_as_tinystr: TinyStr8 = (*variant).into();
+                    let variant_as_tinystr: TinyAsciiStr<8> = (*variant).into();
                     if let Ok(index) = self
                         .aliases
                         .get()
@@ -497,7 +512,7 @@ impl LocaleCanonicalizer {
 
         for key in self.extension_keys.iter() {
             if let Some(value) = locale.extensions.unicode.keywords.get_mut(key) {
-                if let Ok(value_as_tinystr) = value.to_string().parse::<TinyStr8>() {
+                if let Ok(value_as_tinystr) = value.to_string().parse::<TinyAsciiStr<7>>() {
                     if let Ok(index) = self
                         .aliases
                         .get()
@@ -558,14 +573,24 @@ impl LocaleCanonicalizer {
             return CanonicalizationResult::Unmodified;
         }
 
-        if let Some(language) = langid.language.into() {
+        if !langid.language.is_empty() {
             if let Some(region) = langid.region {
-                maximize_locale!(langid, data.language_region, language, region.into());
+                maximize_locale!(
+                    langid,
+                    data.language_region,
+                    langid.language.into(),
+                    region.into()
+                );
             }
             if let Some(script) = langid.script {
-                maximize_locale!(langid, data.language_script, language, script.into());
+                maximize_locale!(
+                    langid,
+                    data.language_script,
+                    langid.language.into(),
+                    script.into()
+                );
             }
-            maximize_locale!(langid, data.language, language);
+            maximize_locale!(langid, data.language, langid.language.into());
         }
         if let Some(script) = langid.script {
             if let Some(region) = langid.region {

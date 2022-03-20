@@ -25,7 +25,8 @@ include = [
 
 [features]
 std = []
-provider_serde = ["serde", "litemap/serde_serialize", "zerovec/serde", "tinystr/serde"]
+serialize = ["serde", "litemap/serde", "zerovec/serde", "tinystr/serde"]
+datagen = ["serialize", "litemap/serde_serialize"]
 
 [package.metadata.docs.rs]
 all-features = true

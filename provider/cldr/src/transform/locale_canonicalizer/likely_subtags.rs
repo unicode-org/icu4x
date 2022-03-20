@@ -7,13 +7,12 @@ use crate::error::Error;
 use crate::reader::open_reader;
 use crate::CldrPaths;
 use icu_locale_canonicalizer::provider::*;
-use icu_provider::iter::IterableResourceProvider;
+use icu_provider::datagen::IterableResourceProvider;
 use icu_provider::prelude::*;
 use litemap::LiteMap;
 
 use std::convert::TryFrom;
 use std::path::PathBuf;
-use tinystr::TinyStr4;
 
 /// A data provider reading from CLDR JSON likely subtags rule files.
 #[derive(Debug)]
@@ -63,7 +62,8 @@ icu_provider::impl_dyn_provider!(
     LikelySubtagsProvider,
     [LikelySubtagsV1Marker,],
     SERDE_SE,
-    impl DataConverter
+    ITERABLE_SERDE_SE,
+    DATA_CONVERTER
 );
 
 impl IterableResourceProvider<LikelySubtagsV1Marker> for LikelySubtagsProvider {
@@ -76,12 +76,12 @@ impl From<&cldr_serde::likely_subtags::Resource> for LikelySubtagsV1 {
     fn from(other: &cldr_serde::likely_subtags::Resource) -> Self {
         use icu_locid::LanguageIdentifier;
 
-        let mut language_script: LiteMap<(TinyStr4, TinyStr4), LanguageIdentifier> = LiteMap::new();
-        let mut language_region: LiteMap<(TinyStr4, TinyStr4), LanguageIdentifier> = LiteMap::new();
-        let mut language: LiteMap<TinyStr4, LanguageIdentifier> = LiteMap::new();
-        let mut script_region: LiteMap<(TinyStr4, TinyStr4), LanguageIdentifier> = LiteMap::new();
-        let mut script: LiteMap<TinyStr4, LanguageIdentifier> = LiteMap::new();
-        let mut region: LiteMap<TinyStr4, LanguageIdentifier> = LiteMap::new();
+        let mut language_script = LiteMap::new();
+        let mut language_region = LiteMap::new();
+        let mut language = LiteMap::new();
+        let mut script_region = LiteMap::new();
+        let mut script = LiteMap::new();
+        let mut region = LiteMap::new();
         let mut und = LanguageIdentifier::default();
 
         // Create a result LanguageIdentifier. We only need to store the delta
@@ -109,7 +109,8 @@ impl From<&cldr_serde::likely_subtags::Resource> for LikelySubtagsV1 {
             };
 
         for entry in other.supplemental.likely_subtags.iter() {
-            if let Some(lang) = entry.0.language.into() {
+            if !entry.0.language.is_empty() {
+                let lang = entry.0.language.into();
                 if let Some(script) = entry.0.script {
                     language_script.insert((lang, script.into()), extract_result(entry));
                 } else if let Some(region) = entry.0.region {

@@ -6,8 +6,10 @@ use super::LiteMap;
 use core::fmt;
 use core::marker::PhantomData;
 use serde::de::{MapAccess, SeqAccess, Visitor};
-use serde::ser::SerializeMap;
-use serde::{Deserialize, Deserializer, Serialize, Serializer};
+use serde::{Deserialize, Deserializer};
+
+#[cfg(feature = "serde_serialize")]
+use serde::{ser::SerializeMap, Serialize, Serializer};
 
 #[cfg(feature = "serde_serialize")]
 impl<K: Serialize, V: Serialize> Serialize for LiteMap<K, V> {

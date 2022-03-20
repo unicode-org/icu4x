@@ -8,7 +8,7 @@ use alloc::vec;
 use alloc::vec::Vec;
 use core::ops::RangeInclusive;
 use core::str::FromStr;
-use tinystr::TinyStr8;
+use tinystr::TinyAsciiStr;
 
 /// A value used in a list of [`Keywords`](super::Keywords).
 ///
@@ -32,10 +32,10 @@ use tinystr::TinyStr8;
 /// assert_eq!(&value2.to_string(), "islamic-civil");
 /// ```
 #[derive(Debug, PartialEq, Eq, Clone, Hash, PartialOrd, Ord)]
-pub struct Value(Box<[TinyStr8]>);
+pub struct Value(Box<[TinyAsciiStr<{ *VALUE_LENGTH.end() }>]>);
 
 const VALUE_LENGTH: RangeInclusive<usize> = 3..=8;
-const TRUE_VALUE: TinyStr8 = tinystr::tinystr!(8, "true");
+const TRUE_VALUE: TinyAsciiStr<8> = tinystr::tinystr!(8, "true");
 
 impl Value {
     /// A constructor which takes a utf8 slice, parses it and
@@ -60,7 +60,7 @@ impl Value {
                     return Err(ParserError::InvalidExtension);
                 }
                 let val =
-                    TinyStr8::from_bytes(subtag).map_err(|_| ParserError::InvalidExtension)?;
+                    TinyAsciiStr::from_bytes(subtag).map_err(|_| ParserError::InvalidExtension)?;
                 if val != TRUE_VALUE {
                     v.push(val);
                 }
@@ -69,7 +69,7 @@ impl Value {
         Ok(Self(v.into_boxed_slice()))
     }
 
-    pub(crate) fn from_vec_unchecked(input: Vec<TinyStr8>) -> Self {
+    pub(crate) fn from_vec_unchecked(input: Vec<TinyAsciiStr<8>>) -> Self {
         Self(input.into_boxed_slice())
     }
 
@@ -77,8 +77,8 @@ impl Value {
         VALUE_LENGTH.contains(&t.len()) && !t.iter().any(|c: &u8| !c.is_ascii_alphanumeric())
     }
 
-    pub(crate) fn parse_subtag(t: &[u8]) -> Result<Option<TinyStr8>, ParserError> {
-        let s = TinyStr8::from_bytes(t).map_err(|_| ParserError::InvalidSubtag)?;
+    pub(crate) fn parse_subtag(t: &[u8]) -> Result<Option<TinyAsciiStr<8>>, ParserError> {
+        let s = TinyAsciiStr::from_bytes(t).map_err(|_| ParserError::InvalidSubtag)?;
         if !VALUE_LENGTH.contains(&t.len()) || !s.is_ascii_alphanumeric() {
             return Err(ParserError::InvalidExtension);
         }

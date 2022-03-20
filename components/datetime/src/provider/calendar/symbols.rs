@@ -10,34 +10,30 @@ use zerovec::ZeroMap;
 
 #[icu_provider::data_struct(DateSymbolsV1Marker = "datetime/symbols@1")]
 #[derive(Debug, PartialEq, Clone, Default)]
-#[cfg_attr(
-    feature = "provider_serde",
-    derive(serde::Serialize, serde::Deserialize)
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize))]
+#[cfg_attr(feature = "serialize", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
 pub struct DateSymbolsV1<'data> {
-    #[cfg_attr(feature = "provider_serde", serde(borrow))]
+    #[cfg_attr(feature = "serialize", serde(borrow))]
     pub months: months::ContextsV1<'data>,
-    #[cfg_attr(feature = "provider_serde", serde(borrow))]
+    #[cfg_attr(feature = "serialize", serde(borrow))]
     pub weekdays: weekdays::ContextsV1<'data>,
-    #[cfg_attr(feature = "provider_serde", serde(borrow))]
+    #[cfg_attr(feature = "serialize", serde(borrow))]
     pub day_periods: day_periods::ContextsV1<'data>,
-    #[cfg_attr(feature = "provider_serde", serde(borrow))]
+    #[cfg_attr(feature = "serialize", serde(borrow))]
     pub eras: Eras<'data>,
 }
 
 #[derive(Debug, PartialEq, Clone, Default, yoke::Yokeable, zerofrom::ZeroFrom)]
-#[cfg_attr(
-    feature = "provider_serde",
-    derive(serde::Serialize, serde::Deserialize)
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize))]
+#[cfg_attr(feature = "serialize", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
 pub struct Eras<'data> {
-    #[cfg_attr(feature = "provider_serde", serde(borrow))]
+    #[cfg_attr(feature = "serialize", serde(borrow))]
     pub names: ZeroMap<'data, str, str>,
-    #[cfg_attr(feature = "provider_serde", serde(borrow))]
+    #[cfg_attr(feature = "serialize", serde(borrow))]
     pub abbr: ZeroMap<'data, str, str>,
-    #[cfg_attr(feature = "provider_serde", serde(borrow))]
+    #[cfg_attr(feature = "serialize", serde(borrow))]
     pub narrow: ZeroMap<'data, str, str>,
 }
 
@@ -47,44 +43,48 @@ macro_rules! symbols {
             use super::*;
 
             #[derive(Debug, PartialEq, Clone, Default, zerofrom::ZeroFrom, yoke::Yokeable)]
-            #[cfg_attr(feature="provider_serde", derive(serde::Serialize, serde::Deserialize))]
+            #[cfg_attr(feature = "datagen", derive(serde::Serialize))]
+            #[cfg_attr(feature = "serialize", derive(serde::Deserialize))]
             $symbols
 
             // UTS 35 specifies that `format` widths are mandatory
             // except of `short`.
             #[derive(Debug, PartialEq, Clone, Default, yoke::Yokeable, zerofrom::ZeroFrom)]
-            #[cfg_attr(feature="provider_serde", derive(serde::Serialize, serde::Deserialize))]
+            #[cfg_attr(feature = "datagen", derive(serde::Serialize))]
+            #[cfg_attr(feature = "serialize", derive(serde::Deserialize))]
             pub struct FormatWidthsV1<'data> {
-                #[cfg_attr(feature = "provider_serde", serde(borrow))]
+                #[cfg_attr(feature = "serialize", serde(borrow))]
                 pub abbreviated: SymbolsV1<'data>,
-                #[cfg_attr(feature = "provider_serde", serde(borrow))]
+                #[cfg_attr(feature = "serialize", serde(borrow))]
                 pub narrow: SymbolsV1<'data>,
-                #[cfg_attr(feature = "provider_serde", serde(borrow))]
+                #[cfg_attr(feature = "serialize", serde(borrow))]
                 pub short: Option<SymbolsV1<'data>>,
-                #[cfg_attr(feature = "provider_serde", serde(borrow))]
+                #[cfg_attr(feature = "serialize", serde(borrow))]
                 pub wide: SymbolsV1<'data>,
             }
 
             // UTS 35 specifies that `stand_alone` widths are optional
             #[derive(Debug, PartialEq, Clone, Default, yoke::Yokeable, zerofrom::ZeroFrom)]
-            #[cfg_attr(feature="provider_serde", derive(serde::Serialize, serde::Deserialize))]
+            #[cfg_attr(feature = "datagen", derive(serde::Serialize))]
+            #[cfg_attr(feature = "serialize", derive(serde::Deserialize))]
             pub struct StandAloneWidthsV1<'data> {
-                #[cfg_attr(feature = "provider_serde", serde(borrow))]
+                #[cfg_attr(feature = "serialize", serde(borrow))]
                 pub abbreviated: Option<SymbolsV1<'data>>,
-                #[cfg_attr(feature = "provider_serde", serde(borrow))]
+                #[cfg_attr(feature = "serialize", serde(borrow))]
                 pub narrow: Option<SymbolsV1<'data>>,
-                #[cfg_attr(feature = "provider_serde", serde(borrow))]
+                #[cfg_attr(feature = "serialize", serde(borrow))]
                 pub short: Option<SymbolsV1<'data>>,
-                #[cfg_attr(feature = "provider_serde", serde(borrow))]
+                #[cfg_attr(feature = "serialize", serde(borrow))]
                 pub wide: Option<SymbolsV1<'data>>,
             }
 
             #[derive(Debug, PartialEq, Clone, Default, yoke::Yokeable, zerofrom::ZeroFrom)]
-            #[cfg_attr(feature="provider_serde", derive(serde::Serialize, serde::Deserialize))]
+            #[cfg_attr(feature = "datagen", derive(serde::Serialize))]
+            #[cfg_attr(feature = "serialize", derive(serde::Deserialize))]
             pub struct ContextsV1<'data> {
-                #[cfg_attr(feature = "provider_serde", serde(borrow))]
+                #[cfg_attr(feature = "serialize", serde(borrow))]
                 pub format: FormatWidthsV1<'data>,
-                #[cfg_attr(feature = "provider_serde", serde(borrow))]
+                #[cfg_attr(feature = "serialize", serde(borrow))]
                 pub stand_alone: Option<StandAloneWidthsV1<'data>>,
             }
         }
@@ -95,7 +95,7 @@ symbols!(
     months,
     pub struct SymbolsV1<'data>(
         #[cfg_attr(
-            feature = "provider_serde",
+            feature = "serialize",
             serde(
                 borrow,
                 deserialize_with = "icu_provider::serde::borrow_de_utils::array_of_cow"
@@ -109,7 +109,7 @@ symbols!(
     weekdays,
     pub struct SymbolsV1<'data>(
         #[cfg_attr(
-            feature = "provider_serde",
+            feature = "serialize",
             serde(
                 borrow,
                 deserialize_with = "icu_provider::serde::borrow_de_utils::array_of_cow"
@@ -122,12 +122,12 @@ symbols!(
 symbols!(
     day_periods,
     pub struct SymbolsV1<'data> {
-        #[cfg_attr(feature = "provider_serde", serde(borrow))]
+        #[cfg_attr(feature = "serialize", serde(borrow))]
         pub am: Cow<'data, str>,
-        #[cfg_attr(feature = "provider_serde", serde(borrow))]
+        #[cfg_attr(feature = "serialize", serde(borrow))]
         pub pm: Cow<'data, str>,
         #[cfg_attr(
-            feature = "provider_serde",
+            feature = "serialize",
             serde(
                 borrow,
                 deserialize_with = "icu_provider::serde::borrow_de_utils::option_of_cow"
@@ -135,7 +135,7 @@ symbols!(
         )]
         pub noon: Option<Cow<'data, str>>,
         #[cfg_attr(
-            feature = "provider_serde",
+            feature = "serialize",
             serde(
                 borrow,
                 deserialize_with = "icu_provider::serde::borrow_de_utils::option_of_cow"
@@ -145,7 +145,7 @@ symbols!(
     }
 );
 
-#[cfg(all(test, feature = "provider_serde"))]
+#[cfg(all(test, feature = "datagen"))]
 mod test {
     use super::*;
 

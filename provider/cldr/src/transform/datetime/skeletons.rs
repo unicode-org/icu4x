@@ -11,7 +11,7 @@ use icu_datetime::provider::calendar::*;
 use icu_datetime::skeleton::SkeletonError;
 
 use icu_plurals::PluralCategory;
-use icu_provider::iter::IterableResourceProvider;
+use icu_provider::datagen::IterableResourceProvider;
 use icu_provider::prelude::*;
 use std::convert::TryFrom;
 
@@ -47,7 +47,8 @@ icu_provider::impl_dyn_provider!(
     DateSkeletonPatternsProvider,
     [DateSkeletonPatternsV1Marker,],
     SERDE_SE,
-    impl DataConverter
+    ITERABLE_SERDE_SE,
+    DATA_CONVERTER
 );
 
 impl IterableResourceProvider<DateSkeletonPatternsV1Marker> for DateSkeletonPatternsProvider {

@@ -367,10 +367,7 @@ impl FromStr for GmtOffset {
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 #[allow(missing_docs)] // The weekday variants should be self-obvious.
 #[repr(i8)]
-#[cfg_attr(
-    feature = "provider_serde",
-    derive(serde::Serialize, serde::Deserialize)
-)]
+#[cfg_attr(feature = "serialize", derive(serde::Serialize, serde::Deserialize))]
 pub enum IsoWeekday {
     Monday = 1,
     Tuesday,

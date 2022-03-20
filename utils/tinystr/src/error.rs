@@ -4,7 +4,7 @@
 
 use displaydoc::Display;
 
-#[derive(Display, Debug)]
+#[derive(Display, Debug, PartialEq, Eq)]
 pub enum TinyStrError {
     #[displaydoc("found string of larger length {len} when constructing string of length {max}")]
     TooLarge { max: usize, len: usize },

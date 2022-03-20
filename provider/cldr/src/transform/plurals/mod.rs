@@ -8,7 +8,7 @@ use crate::reader::open_reader;
 use crate::CldrPaths;
 use icu_plurals::provider::*;
 use icu_plurals::rules::runtime::ast::Rule;
-use icu_provider::iter::IterableResourceProvider;
+use icu_provider::datagen::IterableResourceProvider;
 use icu_provider::prelude::*;
 use std::convert::TryFrom;
 use std::path::PathBuf;
@@ -111,7 +111,8 @@ icu_provider::impl_dyn_provider!(
     PluralsProvider,
     [OrdinalV1Marker, CardinalV1Marker,],
     SERDE_SE,
-    impl DataConverter
+    ITERABLE_SERDE_SE,
+    DATA_CONVERTER
 );
 
 impl<M: ResourceMarker<Yokeable = PluralRulesV1<'static>>> IterableResourceProvider<M>

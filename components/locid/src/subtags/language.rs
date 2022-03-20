@@ -6,7 +6,7 @@ use crate::parser::errors::ParserError;
 use core::fmt;
 use core::ops::RangeInclusive;
 use core::str::FromStr;
-use tinystr::{tinystr, TinyStr4};
+use tinystr::TinyAsciiStr;
 
 /// A language subtag (examples: `"en"`, `"csb"`, `"zh"`, `"und"`, etc.)
 ///
@@ -38,11 +38,14 @@ use tinystr::{tinystr, TinyStr4};
 /// but that form has not been used and ICU4X does not support it right now.
 ///
 /// [`unicode_language_id`]: https://unicode.org/reports/tr35/#unicode_language_id
-#[derive(Default, Debug, PartialEq, Eq, Clone, Hash, PartialOrd, Ord, Copy)]
-pub struct Language(Option<TinyStr4>);
+#[derive(Debug, PartialEq, Eq, Clone, Hash, PartialOrd, Ord, Copy)]
+#[repr(transparent)]
+pub struct Language(TinyAsciiStr<{ *LANGUAGE_LENGTH.end() }>);
 
 const LANGUAGE_LENGTH: RangeInclusive<usize> = 2..=3;
-const UND_VALUE: TinyStr4 = tinystr!(4, "und");
+// TODO(#348): Change this to invoke a const function.
+// Safe because "und" is a valid language subtag
+const UND: Language = Language(unsafe { TinyAsciiStr::from_bytes_unchecked(*b"und") });
 
 impl Language {
     /// A constructor which takes a utf8 slice, parses it and
@@ -65,7 +68,7 @@ impl Language {
             return Err(ParserError::InvalidLanguage);
         }
 
-        let s = TinyStr4::from_bytes(v).map_err(|_| ParserError::InvalidLanguage)?;
+        let s = TinyAsciiStr::from_bytes(v).map_err(|_| ParserError::InvalidLanguage)?;
 
         if !s.is_ascii_alphabetic() {
             return Err(ParserError::InvalidLanguage);
@@ -73,10 +76,36 @@ impl Language {
 
         let value = s.to_ascii_lowercase();
 
-        if value == UND_VALUE {
-            Ok(Self(None))
+        Ok(Self(value))
+    }
+
+    /// Safely creates a [`Language`] from a reference to its raw format
+    /// as returned by [`Language::into_raw()`].
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::locid::subtags::Language;
+    ///
+    /// assert!(matches!(Language::try_from_raw(*b"de\0"), Ok(_)));
+    /// assert!(matches!(Language::try_from_raw(*b"ars"), Ok(_)));
+    /// assert!(matches!(Language::try_from_raw(*b"419"), Err(_)));
+    ///
+    /// // Unlike the other constructors, this one is case-sensitive:
+    /// assert!(matches!(Language::try_from_raw(*b"EN\0"), Err(_)));
+    /// ```
+    pub fn try_from_raw(v: [u8; 3]) -> Result<Self, ParserError> {
+        let s = TinyAsciiStr::<{ core::mem::size_of::<Self>() }>::try_from_raw(v)
+            .map_err(|_| ParserError::InvalidSubtag)?;
+        let is_valid = match s.len() {
+            // LANGUAGE_LENGTH
+            2..=3 => s.is_ascii_alphabetic() && s.is_ascii_lowercase(),
+            _ => false,
+        };
+        if is_valid {
+            Ok(Self(s))
         } else {
-            Ok(Self(Some(value)))
+            Err(ParserError::InvalidSubtag)
         }
     }
 
@@ -95,8 +124,8 @@ impl Language {
     /// let lang = unsafe { Language::from_raw_unchecked(raw) };
     /// assert_eq!(lang, "en");
     /// ```
-    pub fn into_raw(self) -> Option<[u8; 4]> {
-        self.0.as_ref().map(TinyStr4::all_bytes).copied()
+    pub fn into_raw(self) -> [u8; 3] {
+        *self.0.all_bytes()
     }
 
     /// Constructor which takes a raw value returned by
@@ -117,13 +146,10 @@ impl Language {
     ///
     /// # Safety
     ///
-    /// This function accepts a [`u32`] that is expected to be a valid [`TinyStr4`]
+    /// This function accepts a [`[u8; 3]`] that is expected to be a valid [`TinyAsciiStr<3>`]
     /// representing a [`Language`] subtag in canonical syntax.
-    pub const unsafe fn from_raw_unchecked(v: Option<[u8; 4]>) -> Self {
-        Self(match v {
-            Some(v) => Some(TinyStr4::from_bytes_unchecked(v)),
-            None => None,
-        })
+    pub const unsafe fn from_raw_unchecked(v: [u8; 3]) -> Self {
+        Self(TinyAsciiStr::from_bytes_unchecked(v))
     }
 
     /// Returns the default undefined language "und". Same as [`default()`](Default::default()), but is `const`.
@@ -139,7 +165,7 @@ impl Language {
     /// ```
     #[inline]
     pub const fn und() -> Self {
-        Self(None)
+        UND
     }
 
     /// A helper function for displaying
@@ -158,11 +184,12 @@ impl Language {
     ///
     /// `Notice`: For many use cases, such as comparison,
     /// [`Language`] implements [`PartialEq`]`<&`[`str`]`>` which allows for direct comparisons.
+    #[inline]
     pub fn as_str(&self) -> &str {
-        self.0.as_deref().unwrap_or("und")
+        self.0.as_str()
     }
 
-    /// Resets the [`Language`] subtag to an empty one.
+    /// Resets the [`Language`] subtag to an empty one (equal to `"und"`).
     ///
     /// # Examples
     ///
@@ -178,11 +205,12 @@ impl Language {
     ///
     /// assert_eq!(lang.as_str(), "und");
     /// ```
+    #[inline]
     pub fn clear(&mut self) {
-        self.0.take();
+        *self = UND
     }
 
-    /// Tests if the [`Language`] subtag is empty.
+    /// Tests if the [`Language`] subtag is empty (equal to `"und"`).
     ///
     /// # Examples
     ///
@@ -198,8 +226,9 @@ impl Language {
     ///
     /// assert_eq!(lang.is_empty(), true);
     /// ```
+    #[inline]
     pub fn is_empty(self) -> bool {
-        self.0.is_none()
+        self == UND
     }
 }
 
@@ -224,7 +253,7 @@ impl writeable::Writeable for Language {
 
     #[inline]
     fn write_len(&self) -> writeable::LengthHint {
-        writeable::LengthHint::exact(self.0.map_or(3, |t| t.len()))
+        writeable::LengthHint::exact(self.0.len())
     }
 }
 
@@ -247,8 +276,77 @@ impl<'l> From<&'l Language> for &'l str {
     }
 }
 
-impl From<Language> for Option<TinyStr4> {
+impl From<Language> for TinyAsciiStr<3> {
     fn from(input: Language) -> Self {
-        input.0.map(Into::into)
+        input.0
     }
+}
+
+impl Default for Language {
+    fn default() -> Language {
+        Language::und()
+    }
+}
+
+// Safety checklist for ULE:
+//
+// 1. Must not include any uninitialized or padding bytes (true since transparent over a ULE).
+// 2. Must have an alignment of 1 byte (true since transparent over a ULE).
+// 3. ULE::validate_byte_slice() checks that the given byte slice represents a valid slice.
+// 4. ULE::validate_byte_slice() checks that the given byte slice has a valid length.
+// 5. All other methods must be left with their default impl.
+// 6. Byte equality is semantic equality.
+#[cfg(feature = "zerovec")]
+unsafe impl zerovec::ule::ULE for Language {
+    fn validate_byte_slice(bytes: &[u8]) -> Result<(), zerovec::ZeroVecError> {
+        let it = bytes.chunks_exact(core::mem::size_of::<Self>());
+        if !it.remainder().is_empty() {
+            return Err(zerovec::ZeroVecError::length::<Self>(bytes.len()));
+        }
+        for v in it {
+            // The following can be removed once `array_chunks` is stabilized.
+            let mut a = [0; core::mem::size_of::<Self>()];
+            a.copy_from_slice(v);
+            if Self::try_from_raw(a).is_err() {
+                return Err(zerovec::ZeroVecError::parse::<Self>());
+            }
+        }
+        Ok(())
+    }
+}
+
+/// Impl enabling `Language` to be used in a [`ZeroVec`]. Enabled with the `"zerovec"` feature.
+///
+/// # Example
+///
+/// ```
+/// use icu::locid::subtags::Language;
+/// use icu::locid::macros::language;
+/// use zerovec::ZeroVec;
+///
+/// let zv = ZeroVec::<Language>::parse_byte_slice(b"de\0fr\0arsar\0")
+///     .expect("Valid language subtags");
+/// assert_eq!(zv.get(1), Some(language!("fr")));
+///
+/// ZeroVec::<Language>::parse_byte_slice(b"invalid")
+///     .expect_err("Invalid byte slice");
+/// ```
+///
+/// [`ZeroVec`]: zerovec::ZeroVec
+#[cfg(feature = "zerovec")]
+impl zerovec::ule::AsULE for Language {
+    type ULE = Self;
+    fn to_unaligned(self) -> Self::ULE {
+        self
+    }
+    fn from_unaligned(unaligned: Self::ULE) -> Self {
+        unaligned
+    }
+}
+
+#[cfg(feature = "zerovec")]
+impl<'a> zerovec::maps::ZeroMapKV<'a> for Language {
+    type Container = zerovec::ZeroVec<'a, Language>;
+    type GetType = Language;
+    type OwnedType = Language;
 }

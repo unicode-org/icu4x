@@ -56,9 +56,10 @@ bench = false  # This option is required for Benchmark CI
 
 [features]
 std = ["icu_locid/std", "icu_provider/std"]
-default = ["provider_serde"]
+default = ["serialize"]
 bench = []
-provider_serde = ["serde", "zerovec/serde"]
+serialize = ["serde", "zerovec/serde"]
+datagen = ["serialize"]
 
 [[bench]]
 name = "operands"
@@ -67,25 +68,25 @@ harness = false
 [[bench]]
 name = "parser"
 harness = false
-required-features = ["provider_serde"]
+required-features = ["serialize"]
 
 [[bench]]
 name = "pluralrules"
 harness = false
-required-features = ["provider_serde"]
+required-features = ["serialize"]
 
 [[test]]
 name = "plurals"
-required-features = ["provider_serde"]
+required-features = ["serialize"]
 
 [[test]]
 name = "operands"
-required-features = ["provider_serde", "std"]
+required-features = ["serialize", "std"]
 
 [[example]]
 name = "unread_emails"
-required-features = ["provider_serde"]
+required-features = ["serialize"]
 
 [[example]]
 name = "elevator_floors"
-required-features = ["provider_serde"]
+required-features = ["serialize"]

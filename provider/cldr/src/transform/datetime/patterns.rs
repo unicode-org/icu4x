@@ -12,7 +12,7 @@ use icu_datetime::pattern;
 use icu_datetime::pattern::CoarseHourCycle;
 use icu_datetime::provider::calendar::*;
 
-use icu_provider::iter::IterableResourceProvider;
+use icu_provider::datagen::IterableResourceProvider;
 use icu_provider::prelude::*;
 use std::convert::TryFrom;
 
@@ -46,7 +46,8 @@ icu_provider::impl_dyn_provider!(
     DatePatternsProvider,
     [DatePatternsV1Marker,],
     SERDE_SE,
-    impl DataConverter
+    ITERABLE_SERDE_SE,
+    DATA_CONVERTER
 );
 
 impl IterableResourceProvider<DatePatternsV1Marker> for DatePatternsProvider {

@@ -6,7 +6,7 @@ use crate::uprops_helpers::{self, get_last_component_no_version, TomlBinary};
 
 use icu_properties::provider::UnicodePropertyV1;
 use icu_properties::provider::UnicodePropertyV1Marker;
-use icu_provider::iter::IterableDynProvider;
+use icu_provider::datagen::IterableDynProvider;
 use icu_provider::prelude::*;
 use icu_uniset::UnicodeSetBuilder;
 use std::path::Path;
@@ -51,7 +51,7 @@ impl DynProvider<UnicodePropertyV1Marker> for BinaryPropertyUnicodeSetDataProvid
 
 icu_provider::impl_dyn_provider!(BinaryPropertyUnicodeSetDataProvider, {
     _k if _k.get_path().starts_with("props/") => UnicodePropertyV1Marker,
-}, SERDE_SE, impl DataConverter);
+}, SERDE_SE, ITERABLE_SERDE_SE, DATA_CONVERTER);
 
 impl IterableDynProvider<UnicodePropertyV1Marker> for BinaryPropertyUnicodeSetDataProvider {
     fn supported_options_for_key(

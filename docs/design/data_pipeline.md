@@ -79,7 +79,7 @@ Data provider structs should implement `Default`, returning generic, invariant d
 
 The name of the data provider struct should include its schema version; for example, `SampleDataStructV1` has schema version 1. Data provider structs should *not* use `#[non_exhaustive]`. If new fields are to be added, a new schema version must be introduced, like `SampleDataStructV2`.
 
-The `"provider_serde"` feature flag is relevant to data struct construction: it should be used to enable Serde on the data provider structs.
+The `"datagen"` feature flag is relevant to data struct construction: it should be used to enable Serde on the data provider structs.
 
 Here is an example of a `provider.rs` boilerplate for a component:
 
@@ -93,10 +93,8 @@ pub mod key {
 
 /// This is a sample data struct.
 #[derive(Debug, PartialEq, Clone)]
-#[cfg_attr(
-    feature = "provider_serde",
-    derive(serde::Serialize, serde::Deserialize)
-)]
+#[cfg_attr(feature = "serialize", derive(Deserialize))]
+#[cfg_attr(feature = "datagen", derive(Serialize))]
 pub struct SampleDataStructV1<'data> {
     /// This field is always present, and it may be borrowed or owned.
     pub normal_value: Cow<'data, str>,

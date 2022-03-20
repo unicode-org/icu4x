@@ -29,6 +29,7 @@ pub mod arithmetic;
 pub mod buddhist;
 mod calendar;
 mod calendar_arithmetic;
+pub mod coptic;
 mod date;
 mod datetime;
 mod duration;

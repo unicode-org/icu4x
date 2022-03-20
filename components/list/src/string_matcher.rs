@@ -3,10 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use alloc::borrow::Cow;
-#[cfg(any(
-    feature = "icu4x_human_readable_de",
-    feature = "provider_transform_internals"
-))]
+#[cfg(any(feature = "icu4x_human_readable_de", feature = "datagen"))]
 use alloc::string::ToString;
 use icu_provider::{yoke, zerofrom};
 use regex_automata::dfa::sparse::DFA;
@@ -25,7 +22,7 @@ impl PartialEq for StringMatcher<'_> {
     }
 }
 
-#[cfg(feature = "provider_serde")]
+#[cfg(feature = "serialize")]
 impl serde::Serialize for StringMatcher<'_> {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
@@ -47,12 +44,14 @@ impl serde::Serialize for StringMatcher<'_> {
     }
 }
 
-#[cfg(feature = "provider_serde")]
+#[cfg(feature = "serialize")]
 impl<'de: 'data, 'data> serde::Deserialize<'de> for StringMatcher<'data> {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where
         D: serde::de::Deserializer<'de>,
     {
+        use icu_provider::serde::borrow_de_utils::CowBytesWrap;
+
         #[cfg(feature = "icu4x_human_readable_de")]
         if deserializer.is_human_readable() {
             return StringMatcher::new(<&str>::deserialize(deserializer)?).map_err(|e| {
@@ -70,7 +69,7 @@ impl<'de: 'data, 'data> serde::Deserialize<'de> for StringMatcher<'data> {
             });
         }
 
-        let dfa_bytes = <Cow<'de, [u8]>>::deserialize(deserializer)?;
+        let dfa_bytes = <CowBytesWrap<'de>>::deserialize(deserializer)?.0;
 
         // Verify safety invariant
         DFA::from_bytes(&dfa_bytes).map_err(|e| {
@@ -86,10 +85,7 @@ impl<'de: 'data, 'data> serde::Deserialize<'de> for StringMatcher<'data> {
 }
 
 impl<'data> StringMatcher<'data> {
-    #[cfg(any(
-        feature = "provider_transform_internals",
-        feature = "icu4x_human_readable_de",
-    ))]
+    #[cfg(any(feature = "datagen", feature = "icu4x_human_readable_de",))]
     pub fn new(pattern: &str) -> Result<Self, icu_provider::DataError> {
         use regex_automata::{
             dfa::dense::{Builder, Config},
@@ -127,7 +123,7 @@ impl<'data> StringMatcher<'data> {
     }
 }
 
-#[cfg(all(test, feature = "provider_transform_internals"))]
+#[cfg(all(test, feature = "datagen"))]
 mod test {
     use super::*;
 

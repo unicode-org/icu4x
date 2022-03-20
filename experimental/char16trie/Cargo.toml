@@ -21,5 +21,4 @@ serde = { version = "1.0", features = ["derive"] }
 path = "src/lib.rs"
 
 [features]
-default = ["provider_serde"]
-provider_serde = ["serde"]
+default = ["serde"]

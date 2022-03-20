@@ -49,10 +49,7 @@ macro_rules! field_type {
         #[derive(Debug, Eq, PartialEq, Ord, PartialOrd, Clone, Copy, yoke::Yokeable, zerofrom::ZeroFrom)]
         // FIXME: This should be replaced with a custom derive.
         // See: https://github.com/unicode-org/icu4x/issues/1044
-        #[cfg_attr(
-            feature = "provider_serde",
-            derive(serde::Serialize, serde::Deserialize)
-        )]
+        #[cfg_attr(feature = "serialize", derive(serde::Serialize, serde::Deserialize))]
         #[allow(clippy::enum_variant_names)]
         #[repr(u8)]
         #[zerovec::make_ule($ule_name)]

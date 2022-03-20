@@ -36,6 +36,9 @@ mod uprops_helpers;
 mod uprops_serde;
 
 pub use bin_uniset::BinaryPropertyUnicodeSetDataProvider;
+#[cfg(feature = "casemapping")]
+pub mod casemapping;
+
 pub use enum_codepointtrie::EnumeratedPropertyCodePointTrieProvider;
 pub use enum_uniset::EnumeratedPropertyUnicodeSetDataProvider;
 pub use script::ScriptWithExtensionsPropertyProvider;
