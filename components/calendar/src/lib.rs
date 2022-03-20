@@ -40,6 +40,7 @@ mod datetime;
 mod duration;
 mod error;
 pub mod gregorian;
+pub mod indian;
 pub mod iso;
 pub mod japanese;
 pub mod julian;
