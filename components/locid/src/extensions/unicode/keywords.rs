@@ -167,6 +167,7 @@ impl Keywords {
     {
         if let Ok(idx) = self.binary_search_by_key(key.borrow(), |(key, _)| *key) {
             if let Some(ref mut data) = self.0 {
+                 #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.i
                 Some(&mut data[idx].1)
             } else {
                 None

@@ -328,6 +328,7 @@ where
     pub fn insert_var_v<VE: EncodeAsVarULE<V>>(&mut self, key: &K, value: &VE) -> Option<Box<V>> {
         match self.keys.zvl_binary_search(key) {
             Ok(index) => {
+                #[allow(clippy::expect_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
                 let ret = self.values.get(index).expect("invalid index").to_boxed();
                 self.values.make_mut().replace(index, value);
                 Some(ret)

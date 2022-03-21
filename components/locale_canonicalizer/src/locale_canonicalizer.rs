@@ -168,6 +168,7 @@ fn uts35_check_language_rules(
     if !locale.id.language.is_empty() {
         let lang: TinyAsciiStr<3> = locale.id.language.into();
         let replacement = if lang.len() == 2 {
+            #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
             alias_data
                 .get()
                 .language_len2
@@ -175,6 +176,7 @@ fn uts35_check_language_rules(
                 .ok()
                 .map(|index| &alias_data.get().language_len2[index].1)
         } else {
+            #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
             alias_data
                 .get()
                 .language_len3
@@ -378,6 +380,8 @@ impl LocaleCanonicalizer {
             if let Some(region) = locale.id.region {
                 let replacement = if region.is_alphabetic() {
                     let region: TinyAsciiStr<3> = region.into();
+                    #[allow(clippy::indexing_slicing)]
+                    // TODO(#1668) Clippy exceptions need docs or fixing.
                     self.aliases
                         .get()
                         .region_alpha
@@ -385,6 +389,8 @@ impl LocaleCanonicalizer {
                         .ok()
                         .map(|index| self.aliases.get().region_alpha[index].1)
                 } else {
+                    #[allow(clippy::indexing_slicing)]
+                    // TODO(#1668) Clippy exceptions need docs or fixing.
                     self.aliases
                         .get()
                         .region_num

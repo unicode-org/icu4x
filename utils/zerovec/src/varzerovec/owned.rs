@@ -409,6 +409,8 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
             self.entire_slice.extend(&index_u32.to_unaligned().0);
             let header_len = self.entire_slice.len();
             self.entire_slice.resize(header_len + value_len, 0);
+            #[allow(clippy::indexing_slicing)]
+            // TODO(#1668) Clippy exceptions need docs or fixing.
             element.encode_var_ule_write(&mut self.entire_slice[header_len..]);
             return;
         }

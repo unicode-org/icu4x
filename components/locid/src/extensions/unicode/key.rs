@@ -43,6 +43,7 @@ impl Key {
     /// assert_eq!(key, "ca");
     /// ```
     pub fn from_bytes(key: &[u8]) -> Result<Self, ParserError> {
+        #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
         if key.len() != KEY_LENGTH
             || !key[0].is_ascii_alphanumeric()
             || !key[1].is_ascii_alphabetic()
