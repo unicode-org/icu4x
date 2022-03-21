@@ -9,7 +9,6 @@
     ),
     feature(alloc_error_handler)
 )]
-
 #![no_std]
 #![allow(clippy::upper_case_acronyms)]
 #![cfg_attr(
