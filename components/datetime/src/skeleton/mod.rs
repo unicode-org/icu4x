@@ -204,7 +204,8 @@ mod test {
     #[rustfmt::skip]
     const SUPPORTED_STRING_SKELETONS: &[&str] = &[
         "E", "dEEEE", "EHm", "EHms", "dE", "Ehm", "Ehms", "H", "HHmm", "HHmmss", "Hm", "Hms", "M",
-        "MdEEEE", "MdE", "MMM", "MMMdEEEE", "MMMdE", "MMMM", "MMMMdEEEE", "MMMMdE", "MMMMd",
+        "MdEEEE", "MdE", "MMM", "MMMdEEEE", "MMMdE", "MMMM", "MMMMW",
+        "MMMMdEEEE", "MMMMdE", "MMMMd",
         "MMMMdd", "MMMd", "MMMdd", "MMd", "MMdd", "Md", "Mdd", "d", "h", "hm", "hms", "mmss", "ms",
         "y", "yM", "yMdEEEE", "yMdE", "yMM", "yMMM", "yMMMdEEEE", "yMMMdE", "yMMMM", "yMMMMdEEEE",
         "yMMMMdE", "yMMMMdcccc", "yMMMMd", "yMMMd", "yMMdd", "yMd", "yw",
@@ -221,8 +222,6 @@ mod test {
     const UNSUPPORTED_STRING_SKELETONS: &[&str] = &[
         // TODO(#487) - Flexible day periods
         "Bh", "Bhm", "Bhms", "EBhm", "EBhms",
-        // TODO(#502) - Week of month
-        "MMMMW",
         // TODO(#501) - Quarters
         "yQ", "yQQQ", "yQQQQ",
     ];

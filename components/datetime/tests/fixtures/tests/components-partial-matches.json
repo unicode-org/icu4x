@@ -69,5 +69,23 @@
                 "en": "week 53 of 2002"
             }
         }
+    },
+    {
+        "description": "Partial match for: MMMMWEEEE -> MMMMW -> 'week' W 'of' MMMM",
+        "input": {
+            "value": "2002-12-31T08:25:07.000",
+            "options": {
+                "components": {
+                    "month": "long",
+                    "week": "week-of-month",
+                    "weekday": "long"
+                }
+            }
+        },
+        "output": {
+            "values": {
+                "en":  "week 1 of December"
+            }
+        }
     }
 ]
