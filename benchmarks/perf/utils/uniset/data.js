@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1647617949539,
+  "lastUpdate": 1647869495436,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -22259,6 +22259,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 46052525,
             "range": "± 1247515",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "10595307+mildgravitas@users.noreply.github.com",
+            "name": "mildgravitas",
+            "username": "mildgravitas"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "d3cbc2855e2623056e72cb209b3dc39e04e47afc",
+          "message": "Add support for week-of-month. (#1468)\n\nContrary to UTS 35 this always uses min_days = 1 as there's no month of\r\nweek-of-month field so there would be inconsistencies otherwise (e.g. in\r\nthe ISO calendar 2021-01-01 is the last week of December but 'MMMMW' would\r\nhave it formatted as 'week 5 of January').",
+          "timestamp": "2022-03-21T08:24:03-05:00",
+          "tree_id": "fff92bb6e7022879cfa45bc6031a7be0f218dcb6",
+          "url": "https://github.com/unicode-org/icu4x/commit/d3cbc2855e2623056e72cb209b3dc39e04e47afc"
+        },
+        "date": 1647869480165,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 39973221,
+            "range": "± 1172657",
             "unit": "ns/iter"
           }
         ]
