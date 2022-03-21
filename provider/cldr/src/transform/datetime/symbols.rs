@@ -99,6 +99,12 @@ fn get_era_code_map(calendar: &str) -> BTreeMap<String, TinyStr16> {
             .into_iter()
             .collect(),
         "japanese" => crate::transform::calendar::japanese::get_era_code_map(),
+        "coptic" => vec![
+            ("0".to_string(), tinystr!(16, "bc")),
+            ("1".to_string(), tinystr!(16, "ad")),
+        ]
+        .into_iter()
+        .collect(),
         _ => panic!("Era map unknown for {}", calendar),
     }
 }
