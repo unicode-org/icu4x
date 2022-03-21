@@ -93,9 +93,7 @@ pub struct Bag {
     pub year: Option<Year>,
     /// Include the month, such as "April" or "Apr".
     pub month: Option<Month>,
-    /// Include the week, such as "1st" or "1".
-    #[doc(hidden)]
-    // TODO(#488): make visible once fully supported.
+    /// Include the week number, such as "51st" or "51" for week 51.
     pub week: Option<Week>,
     /// Include the day, such as "07" or "7".
     pub day: Option<Numeric>,
@@ -396,7 +394,7 @@ pub enum Month {
     Numeric,
     /// The two-digit value of the month, such as "04".
     TwoDigit,
-    /// The two-digit value of the month, such as "April".
+    /// The long value of the month, such as "April".
     Long,
     /// The short value of the month, such as "Apr".
     Short,
@@ -406,10 +404,10 @@ pub enum Month {
 
 // Each enum variant is documented with the UTS 35 field information from:
 // https://unicode.org/reports/tr35/tr35-dates.html#Date_Field_Symbol_Table
-//
-/// Options for displaying the current week for the `components::`[`Bag`].
-#[doc(hidden)]
-// TODO(#488): make visible once fully supported.
+
+/// Options for displaying the current week number for the `components::`[`Bag`].
+///
+/// Week numbers are relative to either a month or year, e.g. 'week 3 of January' or 'week 40 of 2000'.
 #[derive(Debug, Clone, Copy, PartialEq)]
 #[cfg_attr(
     feature = "serialize",
@@ -417,11 +415,11 @@ pub enum Month {
     serde(rename_all = "kebab-case")
 )]
 pub enum Week {
-    /// The week of the month, such as "3".
+    /// The week of the month, such as the "3" in "week 3 of January".
     WeekOfMonth,
-    /// The numeric value of the week of the year, such as "8".
+    /// The numeric value of the week of the year, such as the "8" in "week 8 of 2000".
     NumericWeekOfYear,
-    /// The two-digit value of the week of the year, such as "08".
+    /// The two-digit value of the week of the year, such as the "08" in "2000-W08".
     TwoDigitWeekOfYear,
 }
 

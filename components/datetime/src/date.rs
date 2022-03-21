@@ -103,8 +103,10 @@ pub trait LocalizedDateTimeInput<T: DateTimeInput> {
     /// For example, December 31, 2020 is part of the first week of 2021.
     fn year_week(&self) -> Result<Year, DateTimeError>;
 
-    /// The week of the month according to UTS 35.
-    fn week_of_month(&self) -> WeekOfMonth;
+    /// The week of the month.
+    ///
+    /// For example, January 1, 2021 is part of the first week of January.
+    fn week_of_month(&self) -> Result<WeekOfMonth, DateTimeError>;
 
     /// The week number of the year.
     ///
@@ -163,6 +165,32 @@ fn week_of_year<T: DateInput>(
     Ok(WeekOfYear(u32::from(week.week)))
 }
 
+/// Returns the week of month according to a calendar with min_week_days = 1.
+///
+/// This is different from what the UTS35 spec describes [1] but the latter is
+/// missing a month of week-of-month field so following the spec would result
+/// in inconsistencies (e.g. in the ISO calendar 2021-01-01 is the last week
+/// of December but 'MMMMW' would have it formatted as 'week 5 of January').
+///
+/// 1: https://www.unicode.org/reports/tr35/tr35-55/tr35-dates.html#Date_Patterns_Week_Of_Year
+fn week_of_month<T: DateInput>(
+    datetime: &T,
+    first_weekday: IsoWeekday,
+) -> Result<WeekOfMonth, DateTimeError> {
+    let day_of_month = datetime
+        .day_of_month()
+        .ok_or(DateTimeError::MissingInput("DateTimeInput::day_of_month"))?;
+
+    let week = week_of::simple_week_of(
+        first_weekday,
+        day_of_month.0 as u16,
+        datetime
+            .iso_weekday()
+            .ok_or(DateTimeError::MissingInput("DateTimeInput::iso_weekday"))?,
+    );
+    Ok(WeekOfMonth(u32::from(week)))
+}
+
 impl<'data, T: DateTimeInput> DateTimeInputWithLocale<'data, T> {
     pub fn new(
         data: &'data T,
@@ -203,8 +231,13 @@ impl<'data, T: DateTimeInput> LocalizedDateTimeInput<T> for DateTimeInputWithLoc
         )
     }
 
-    fn week_of_month(&self) -> WeekOfMonth {
-        todo!("#488")
+    fn week_of_month(&self) -> Result<WeekOfMonth, DateTimeError> {
+        week_of_month(
+            self.data,
+            self.calendar
+                .expect("calendar must be provided when using week of methods")
+                .first_weekday,
+        )
     }
 
     fn week_of_year(&self) -> Result<WeekOfYear, DateTimeError> {
@@ -238,8 +271,13 @@ impl<'data, T: ZonedDateTimeInput> LocalizedDateTimeInput<T>
         )
     }
 
-    fn week_of_month(&self) -> WeekOfMonth {
-        todo!("#488")
+    fn week_of_month(&self) -> Result<WeekOfMonth, DateTimeError> {
+        week_of_month(
+            self.data,
+            self.calendar
+                .expect("calendar must be provided when using week of methods")
+                .first_weekday,
+        )
     }
 
     fn week_of_year(&self) -> Result<WeekOfYear, DateTimeError> {

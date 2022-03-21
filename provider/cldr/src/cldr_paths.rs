@@ -25,6 +25,10 @@ pub trait CldrPaths: std::fmt::Debug + Sync {
     /// <https://github.com/unicode-cldr/cldr-cal-japanese-full>
     fn cldr_dates_japanese(&self) -> Result<PathBuf, Error>;
 
+    /// Path to checkout of cldr-cal-coptic:
+    /// <https://github.com/unicode-cldr/cldr-cal-coptic-full>
+    fn cldr_dates_coptic(&self) -> Result<PathBuf, Error>;
+
     /// Path to checkout of cldr-numbers:
     /// <https://github.com/unicode-cldr/cldr-numbers-full>
     fn cldr_numbers(&self) -> Result<PathBuf, Error>;
@@ -41,6 +45,7 @@ pub trait CldrPaths: std::fmt::Debug + Sync {
             "gregory" => self.cldr_dates_gregorian(),
             "buddhist" => self.cldr_dates_buddhist(),
             "japanese" => self.cldr_dates_japanese(),
+            "coptic" => self.cldr_dates_coptic(),
             _ => Err(Error::Custom(format!("Unsupported calendar {}", cal), None)),
         }
     }
@@ -56,6 +61,9 @@ pub trait CldrPaths: std::fmt::Debug + Sync {
         }
         if let Ok(jp) = self.cldr_dates_japanese() {
             vec.push(("japanese", "japanese", jp));
+        }
+        if let Ok(cop) = self.cldr_dates_coptic() {
+            vec.push(("coptic", "coptic", cop))
         }
         // TODO Japanese is not yet fully supported (#1116)
         // more calendars here
@@ -86,6 +94,7 @@ pub struct CldrPathsLocal {
     pub cldr_dates_gregorian: Result<PathBuf, MissingSourceError>,
     pub cldr_dates_buddhist: Result<PathBuf, MissingSourceError>,
     pub cldr_dates_japanese: Result<PathBuf, MissingSourceError>,
+    pub cldr_dates_coptic: Result<PathBuf, MissingSourceError>,
     pub cldr_numbers: Result<PathBuf, MissingSourceError>,
     pub cldr_misc: Result<PathBuf, MissingSourceError>,
 }
@@ -102,6 +111,9 @@ impl CldrPaths for CldrPathsLocal {
     }
     fn cldr_dates_japanese(&self) -> Result<PathBuf, Error> {
         self.cldr_dates_japanese.clone().map_err(|e| e.into())
+    }
+    fn cldr_dates_coptic(&self) -> Result<PathBuf, Error> {
+        self.cldr_dates_coptic.clone().map_err(|e| e.into())
     }
     fn cldr_numbers(&self) -> Result<PathBuf, Error> {
         self.cldr_numbers.clone().map_err(|e| e.into())
@@ -121,6 +133,9 @@ impl Default for CldrPathsLocal {
             }),
             cldr_dates_japanese: Err(MissingSourceError {
                 src: "cldr-cal-japanese-full",
+            }),
+            cldr_dates_coptic: Err(MissingSourceError {
+                src: "cldr-cal-coptic-full",
             }),
             cldr_numbers: Err(MissingSourceError {
                 src: "cldr-numbers",
@@ -175,6 +190,12 @@ impl CldrPaths for CldrPathsAllInOne {
             .cldr_json_root
             .clone()
             .join(format!("cldr-cal-japanese-{}", self.locale_subset)))
+    }
+    fn cldr_dates_coptic(&self) -> Result<PathBuf, Error> {
+        Ok(self
+            .cldr_json_root
+            .clone()
+            .join(format!("cldr-cal-coptic-{}", self.locale_subset)))
     }
     fn cldr_numbers(&self) -> Result<PathBuf, Error> {
         Ok(self

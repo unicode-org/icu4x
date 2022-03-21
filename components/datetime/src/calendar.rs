@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use icu_calendar::{buddhist::Buddhist, japanese::Japanese, Gregorian};
+use icu_calendar::{buddhist::Buddhist, coptic::Coptic, japanese::Japanese, Gregorian};
 
 /// A calendar that can be found in CLDR
 ///
@@ -23,4 +23,8 @@ impl CldrCalendar for Buddhist {
 
 impl CldrCalendar for Japanese {
     const IDENTIFIER: &'static str = "japanese";
+}
+
+impl CldrCalendar for Coptic {
+    const IDENTIFIER: &'static str = "coptic";
 }
