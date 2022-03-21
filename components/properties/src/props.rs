@@ -15,6 +15,8 @@ use serde::{Deserialize, Serialize};
 #[non_exhaustive]
 #[repr(i32)]
 pub enum EnumeratedProperty {
+    // Enumerated property Bidi_Class.
+    BidiClass = 0x1000,
     /// the Canonical_Combining_Class property.
     CanonicalCombiningClass = 0x1002,
     /// The East_Asian_Width property. See [`EastAsianWidth`].
@@ -37,6 +39,41 @@ pub enum EnumeratedProperty {
     ScriptExtensions = 0x7000, // TODO(#1160) - this is a Miscellaneous property, not Enumerated
     /// Represents an invalid or unknown Unicode property.
     InvalidCode = -1, // TODO(#1160) - taken from ICU4C UProperty::UCHAR_INVALID_CODE
+}
+
+/// Enumerated property Bidi_Class
+///
+///
+///
+#[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[repr(transparent)]
+#[zerovec::make_ule(BidiClassULE)]
+pub struct BidiClass(pub u16);
+impl BidiClass {
+    pub const LEFT_TO_RIGHT: BidiClass = BidiClass(0);
+    pub const RIGHT_TO_LEFT: BidiClass = BidiClass(1);
+    pub const EUROPEAN_NUMBER: BidiClass = BidiClass(2);
+    pub const EUROPEAN_SEPARATOR: BidiClass = BidiClass(3);
+    pub const EUROPEAN_TERMINATOR: BidiClass = BidiClass(4);
+    pub const ARABIC_NUMBER: BidiClass = BidiClass(5);
+    pub const COMMON_SEPARATOR: BidiClass = BidiClass(6);
+    pub const PARAGRAPH_SEPARATOR: BidiClass = BidiClass(7);
+    pub const SEGMENT_SEPARATOR: BidiClass = BidiClass(8);
+    pub const WHITE_SPACE: BidiClass = BidiClass(9);
+    pub const OTHER_NEUTRAL: BidiClass = BidiClass(10);
+    pub const LEFT_TO_RIGHT_EMBEDDING: BidiClass = BidiClass(11);
+    pub const LEFT_TO_RIGHT_OVERRIDE: BidiClass = BidiClass(12);
+    pub const ARABIC_LETTER: BidiClass = BidiClass(13);
+    pub const RIGHT_TO_LEFT_EMBEDDING: BidiClass = BidiClass(14);
+    pub const RIGHT_TO_LEFT_OVERRIDE: BidiClass = BidiClass(15);
+    pub const POP_DIRECTIONAL_FORMAT: BidiClass = BidiClass(16);
+    pub const NONSPACING_MARK: BidiClass = BidiClass(17);
+    pub const BOUNDARY_NEUTRAL: BidiClass = BidiClass(18);
+    pub const FIRST_STRONG_ISOLATE: BidiClass = BidiClass(19);
+    pub const LEFT_TO_RIGHT_ISOLATE: BidiClass = BidiClass(20);
+    pub const RIGHT_TO_LEFT_ISOLATE: BidiClass = BidiClass(21);
+    pub const POP_DIRECTIONAL_ISOLATE: BidiClass = BidiClass(22);
 }
 
 /// Enumerated property General_Category.

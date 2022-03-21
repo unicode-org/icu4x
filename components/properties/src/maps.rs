@@ -13,6 +13,7 @@
 //! [`TR44`]: https://www.unicode.org/reports/tr44
 
 use crate::error::PropertiesError;
+use crate::props::BidiClass;
 use crate::provider::*;
 use crate::*;
 use icu_codepointtrie::TrieValue;
@@ -59,6 +60,13 @@ where
     D: DynProvider<UnicodePropertyMapV1Marker<GeneralCategory>> + ?Sized,
 {
     get_cp_map(provider, key::GENERAL_CATEGORY_V1)
+}
+
+pub fn get_bidi_class<D>(provider: &D) -> CodePointMapResult<BidiClass>
+where
+    D: DynProvider<UnicodePropertyMapV1Marker<BidiClass>> + ?Sized,
+{
+    get_cp_map(provider, key::BIDI_CLASS)
 }
 
 /// Return a [`CodePointTrie`] for the Script Unicode enumerated property. See [`Script`].

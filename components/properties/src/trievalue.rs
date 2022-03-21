@@ -4,8 +4,8 @@
 
 use crate::script::ScriptWithExt;
 use crate::{
-    CanonicalCombiningClass, EastAsianWidth, GeneralCategory, GraphemeClusterBreak, LineBreak,
-    Script, SentenceBreak, WordBreak,
+    BidiClass, CanonicalCombiningClass, EastAsianWidth, GeneralCategory, GraphemeClusterBreak,
+    LineBreak, Script, SentenceBreak, WordBreak,
 };
 use core::convert::TryInto;
 use core::num::TryFromIntError;
@@ -19,6 +19,15 @@ impl TrieValue for CanonicalCombiningClass {
 
     fn try_from_u32(i: u32) -> Result<Self, Self::TryFromU32Error> {
         u8::try_from(i).map(Self)
+    }
+}
+
+impl TrieValue for BidiClass {
+    const DATA_GET_ERROR_VALUE: BidiClass = BidiClass::OTHER_NEUTRAL;
+    type TryFromU32Error = TryFromIntError;
+
+    fn try_from_u32(i: u32) -> Result<Self, Self::TryFromU32Error> {
+        u16::try_from(i).map(Self)
     }
 }
 
