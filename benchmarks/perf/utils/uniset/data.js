@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1647869495436,
+  "lastUpdate": 1647897508536,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -22289,6 +22289,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 39973221,
             "range": "± 1172657",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "pandusonu@google.com",
+            "name": "Gollapudi Vamsi Krishna",
+            "username": "pandusonu2"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "82e2588fd5fe108f5e4ee3db8bd724a35fdba22a",
+          "message": "Add coptic calendar to cldr (#1710)",
+          "timestamp": "2022-03-21T14:10:59-07:00",
+          "tree_id": "1a84e869d27ad9f80e43297503b29e2864360dbb",
+          "url": "https://github.com/unicode-org/icu4x/commit/82e2588fd5fe108f5e4ee3db8bd724a35fdba22a"
+        },
+        "date": 1647897494636,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 43865579,
+            "range": "± 241468",
             "unit": "ns/iter"
           }
         ]
