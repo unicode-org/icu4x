@@ -882,7 +882,7 @@ pub enum DoublePrecision {
     ///
     /// This results in a FixedDecimal having enough digits to recover the original floating point
     /// value, with no trailing zeros.
-    Maximum,
+    Floating,
 }
 
 /// Specifies how numbers should be rounded
@@ -901,24 +901,41 @@ pub enum RoundingMode {
 
 #[cfg(feature = "ryu")]
 impl FixedDecimal {
-    /// Construct a [`FixedDecimal`] from an f64. This uses `ryu` and
-    /// goes through an intermediate string representation, so is not
-    /// fully efficient. See [icu4x#166](https://github.com/unicode-org/icu4x/issues/166) for
-    /// more details.
+    /// Construct a [`FixedDecimal`] from an f64.
+    ///
+    /// Since f64 values do not carry a notion of their precision, the second argument to this
+    /// function specifies the type of precision associated with the f64. For more information,
+    /// see [`DoublePrecision`].
+    ///
+    /// This function uses `ryu`, which is an efficient double-to-string algorithm, but other
+    /// implementations may yield higher performance; for more details, see
+    /// [icu4x#166](https://github.com/unicode-org/icu4x/issues/166).
     ///
     /// This function can be made available with the `"ryu"` feature.
     ///
     /// ```rust
-    /// use fixed_decimal::{DoublePrecision, FixedDecimal};
+    /// use fixed_decimal::{DoublePrecision, FixedDecimal, RoundingMode};
     /// use writeable::Writeable;
     ///
-    /// let decimal = FixedDecimal::new_from_f64(0.012345678, DoublePrecision::Maximum).unwrap();
+    /// let decimal = FixedDecimal::new_from_f64(
+    ///     -5.1,
+    ///     DoublePrecision::Magnitude(-2, RoundingMode::Unnecessary)
+    /// )
+    /// .expect("Finite quantity with limited precision");
+    /// assert_eq!(decimal.write_to_string(), "-5.10");
+    ///
+    /// let decimal = FixedDecimal::new_from_f64(
+    ///     0.012345678,
+    ///     DoublePrecision::Floating
+    /// )
+    /// .expect("Finite quantity");
     /// assert_eq!(decimal.write_to_string(), "0.012345678");
     ///
-    /// let decimal = FixedDecimal::new_from_f64(-123456.78, DoublePrecision::Maximum).unwrap();
-    /// assert_eq!(decimal.write_to_string(), "-123456.78");
-    ///
-    /// let decimal = FixedDecimal::new_from_f64(12345678000., DoublePrecision::Maximum).unwrap();
+    /// let decimal = FixedDecimal::new_from_f64(
+    ///     12345678000.,
+    ///     DoublePrecision::Integer
+    /// )
+    /// .expect("Finite, integer-valued quantity");
     /// assert_eq!(decimal.write_to_string(), "12345678000");
     /// ```
     pub fn new_from_f64(float: f64, precision: DoublePrecision) -> Result<Self, Error> {
@@ -932,7 +949,7 @@ impl FixedDecimal {
             decimal.lower_magnitude = 0;
         }
         match precision {
-            DoublePrecision::Maximum => (),
+            DoublePrecision::Floating => (),
             DoublePrecision::Integer => {
                 if lowest_magnitude < 0 {
                     return Err(Error::Limit);
@@ -989,6 +1006,7 @@ impl FixedDecimal {
         decimal.check_invariants();
         Ok(decimal)
     }
+
     /// Internal function for parsing directly from floats using ryū
     fn new_from_f64_raw(float: f64) -> Result<Self, Error> {
         if !float.is_finite() {
@@ -1165,12 +1183,12 @@ fn test_float() {
     let cases = [
         TestCase {
             input: 1.234567,
-            precision: DoublePrecision::Maximum,
+            precision: DoublePrecision::Floating,
             expected: "1.234567",
         },
         TestCase {
             input: 888999.,
-            precision: DoublePrecision::Maximum,
+            precision: DoublePrecision::Floating,
             expected: "888999",
         },
         // HalfExpand tests

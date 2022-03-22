@@ -44,7 +44,7 @@ pub mod ffi {
         /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.from_f64) for more information.
         pub fn create_from_f64_with_max_precision(f: f64) -> Option<Box<ICU4XFixedDecimal>> {
             Some(Box::new(ICU4XFixedDecimal(
-                FixedDecimal::new_from_f64(f, DoublePrecision::Maximum).ok()?,
+                FixedDecimal::new_from_f64(f, DoublePrecision::Floating).ok()?,
             )))
         }
 
