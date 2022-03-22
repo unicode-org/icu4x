@@ -105,7 +105,7 @@ where
             time_zone_format: &zoned_datetime_format.time_zone_format,
             time_zone: loc_datetime.datetime(),
         }
-        .write_field(w)?,
+        .write_to(w)?,
         _ => datetime::write_field(pattern, field, symbols, loc_datetime, w)?,
     }
     Ok(())
