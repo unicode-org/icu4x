@@ -917,28 +917,28 @@ impl FixedDecimal {
     /// use fixed_decimal::{DoublePrecision, FixedDecimal, RoundingMode};
     /// use writeable::Writeable;
     ///
-    /// let decimal = FixedDecimal::new_from_f64(
+    /// let decimal = FixedDecimal::try_from_f64(
     ///     -5.1,
     ///     DoublePrecision::Magnitude(-2, RoundingMode::Unnecessary)
     /// )
     /// .expect("Finite quantity with limited precision");
     /// assert_eq!(decimal.write_to_string(), "-5.10");
     ///
-    /// let decimal = FixedDecimal::new_from_f64(
+    /// let decimal = FixedDecimal::try_from_f64(
     ///     0.012345678,
     ///     DoublePrecision::Floating
     /// )
     /// .expect("Finite quantity");
     /// assert_eq!(decimal.write_to_string(), "0.012345678");
     ///
-    /// let decimal = FixedDecimal::new_from_f64(
+    /// let decimal = FixedDecimal::try_from_f64(
     ///     12345678000.,
     ///     DoublePrecision::Integer
     /// )
     /// .expect("Finite, integer-valued quantity");
     /// assert_eq!(decimal.write_to_string(), "12345678000");
     /// ```
-    pub fn new_from_f64(float: f64, precision: DoublePrecision) -> Result<Self, Error> {
+    pub fn try_from_f64(float: f64, precision: DoublePrecision) -> Result<Self, Error> {
         let mut decimal = Self::new_from_f64_raw(float)?;
         let n_digits = decimal.digits.len();
         // magnitude of the lowest digit in self.digits
@@ -1356,7 +1356,7 @@ fn test_float() {
     ];
 
     for case in &cases {
-        let dec = FixedDecimal::new_from_f64(case.input, case.precision).unwrap();
+        let dec = FixedDecimal::try_from_f64(case.input, case.precision).unwrap();
         writeable::assert_writeable_eq!(dec, case.expected, "{:?}", case);
     }
 }
