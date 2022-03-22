@@ -233,7 +233,7 @@ unsafe impl zerovec::ule::ULE for Variant {
 ///
 /// ```
 /// use icu::locid::subtags::Variant;
-/// use icu::locid::macros::variant;
+/// use icu::locid::variant;
 /// use zerovec::ZeroVec;
 ///
 /// let zv = ZeroVec::<Variant>::parse_byte_slice(b"fonipa\0\01992\0\0\0\0posix\0\0\0")

@@ -216,7 +216,7 @@ unsafe impl zerovec::ule::ULE for Script {
 ///
 /// ```
 /// use icu::locid::subtags::Script;
-/// use icu::locid::macros::script;
+/// use icu::locid::script;
 /// use zerovec::ZeroVec;
 ///
 /// let zv = ZeroVec::<Script>::parse_byte_slice(b"LatnAdlmMymrLatnLatn")
