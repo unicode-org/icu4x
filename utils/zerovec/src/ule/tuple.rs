@@ -118,9 +118,9 @@ macro_rules! tuple_ule {
     };
 }
 
-tuple_ule!(PairULE, "2", [ A 0, B 1 ]);
+tuple_ule!(Tuple2ULE, "2", [ A 0, B 1 ]);
 
-tuple_ule!(TripleULE, "3", [ A 0, B 1, C 2 ]);
+tuple_ule!(Tuple3ULE, "3", [ A 0, B 1, C 2 ]);
 
 #[test]
 fn test_pairule_validate() {

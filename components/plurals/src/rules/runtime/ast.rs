@@ -8,7 +8,7 @@ use crate::rules::reference;
 use core::{convert::TryInto, fmt, str::FromStr};
 use icu_provider::{yoke, zerofrom};
 use zerovec::{
-    ule::{AsULE, PairULE, ZeroVecError, ULE},
+    ule::{AsULE, tuple::Tuple2ULE, ZeroVecError, ULE},
     {VarZeroVec, ZeroVec},
 };
 
@@ -330,7 +330,7 @@ impl AsULE for AndOrPolarityOperand {
     }
 }
 
-type RangeOrValueULE = PairULE<<u32 as AsULE>::ULE, <u32 as AsULE>::ULE>;
+type RangeOrValueULE = Tuple2ULE<<u32 as AsULE>::ULE, <u32 as AsULE>::ULE>;
 
 impl AsULE for RangeOrValue {
     type ULE = RangeOrValueULE;
@@ -338,8 +338,8 @@ impl AsULE for RangeOrValue {
     #[inline]
     fn to_unaligned(self) -> Self::ULE {
         match self {
-            Self::Range(start, end) => PairULE(start.to_unaligned(), end.to_unaligned()),
-            Self::Value(idx) => PairULE(idx.to_unaligned(), idx.to_unaligned()),
+            Self::Range(start, end) => Tuple2ULE(start.to_unaligned(), end.to_unaligned()),
+            Self::Value(idx) => Tuple2ULE(idx.to_unaligned(), idx.to_unaligned()),
         }
     }
 
