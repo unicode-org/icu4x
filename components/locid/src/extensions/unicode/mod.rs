@@ -173,13 +173,17 @@ impl Unicode {
         })
     }
 
-    pub(crate) fn iter_subtags(&self) -> impl Iterator<Item = &str> {
-        let prefix: &[&str] = if self.is_empty() { &[] } else { &["u"] };
-        prefix
-            .iter()
-            .copied()
-            .chain(self.attributes.iter_subtags())
-            .chain(self.keywords.iter_subtags())
+    pub(crate) fn for_each_subtag_str<E, F>(
+        &self,
+        f: &mut F,
+    ) -> Result<(), E> where F: FnMut(&str) -> Result<(), E> {
+        if self.is_empty() {
+            return Ok(());
+        }
+        f("u")?;
+        self.attributes.for_each_subtag_str(f)?;
+        self.keywords.for_each_subtag_str(f)?;
+        Ok(())
     }
 }
 

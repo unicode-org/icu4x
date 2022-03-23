@@ -99,12 +99,16 @@ impl Value {
         }
     }
 
-    pub(crate) fn iter_subtags(&self) -> impl Iterator<Item = &str> {
-        let prefix: &[&str] = if self.0.is_empty() { &["true"] } else { &[] };
-        prefix
-            .iter()
-            .copied()
-            .chain(self.0.iter().map(|t| t.as_str()))
+    pub(crate) fn for_each_subtag_str<E, F>(
+        &self,
+        f: &mut F,
+    ) -> Result<(), E> where F: FnMut(&str) -> Result<(), E> {
+        if self.0.is_empty() {
+            f("true")?;
+        } else {
+            self.0.iter().map(TinyAsciiStr::as_str).try_for_each(f)?;
+        }
+        Ok(())
     }
 }
 

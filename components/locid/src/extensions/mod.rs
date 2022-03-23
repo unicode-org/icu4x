@@ -179,22 +179,35 @@ impl Extensions {
         })
     }
 
-    pub(crate) fn iter_subtags(&self) -> impl Iterator<Item = &str> {
-        self.other
-            .iter()
-            .filter(|o| o.get_ext() <= 't')
-            .map(|o| o.iter_subtags())
-            .flatten()
-            .chain(self.transform.iter_subtags())
-            .chain(self.unicode.iter_subtags())
-            .chain(
-                self.other
-                    .iter()
-                    .filter(|o| o.get_ext() > 't')
-                    .map(|o| o.iter_subtags())
-                    .flatten(),
-            )
-            .chain(self.private.iter_subtags())
+    pub(crate) fn for_each_subtag_str<E, F>(
+        &self,
+        f: &mut F,
+    ) -> Result<(), E> where F: FnMut(&str) -> Result<(), E> {
+        let mut wrote_tu = false;
+        // Alphabetic by singleton
+        self.other.iter().try_for_each(|other| {
+            if other.get_ext() > 't' && !wrote_tu {
+                // Since 't' and 'u' are next to each other in alphabetical
+                // order, write both now.
+                self.transform.for_each_subtag_str(f)?;
+                self.unicode.for_each_subtag_str(f)?;
+                wrote_tu = true;
+            }
+            other.for_each_subtag_str(f)?;
+            Ok(())
+        })?;
+
+        if !wrote_tu {
+            self.transform.for_each_subtag_str(f)?;
+            self.unicode.for_each_subtag_str(f)?;
+        }
+
+        // Private must be written last, since it allows single character
+        // keys. Extensions must also be written in alphabetical order,
+        // which would seem to imply that other extensions `y` and `z` are
+        // invalid, but this is not specified.
+        self.private.for_each_subtag_str(f)?;
+        Ok(())
     }
 }
 

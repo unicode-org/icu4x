@@ -159,10 +159,15 @@ impl Fields {
         }
     }
 
-    pub(crate) fn iter_subtags(&self) -> impl Iterator<Item = &str> {
-        self.iter()
-            .map(|(k, v)| core::iter::once(k.as_str()).chain(v.iter_subtags()))
-            .flatten()
+    pub(crate) fn for_each_subtag_str<E, F>(
+        &self,
+        f: &mut F,
+    ) -> Result<(), E> where F: FnMut(&str) -> Result<(), E> {
+        for (k, v) in self.iter() {
+            f(k.as_str())?;
+            v.for_each_subtag_str(f)?;
+        }
+        Ok(())
     }
 }
 

@@ -103,12 +103,11 @@ impl Attributes {
         self.0 = None;
     }
 
-    pub(crate) fn iter_subtags(&self) -> impl Iterator<Item = &str> {
-        self.0
-            .as_ref()
-            .map(|a| a.iter().map(|t| t.as_str()))
-            .into_iter()
-            .flatten()
+    pub(crate) fn for_each_subtag_str<E, F>(
+        &self,
+        f: &mut F,
+    ) -> Result<(), E> where F: FnMut(&str) -> Result<(), E> {
+        self.deref().iter().map(|t| t.as_str()).try_for_each(f)
     }
 }
 

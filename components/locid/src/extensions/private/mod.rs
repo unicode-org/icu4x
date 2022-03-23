@@ -132,12 +132,15 @@ impl Private {
         Ok(Self::from_vec_unchecked(keys))
     }
 
-    pub(crate) fn iter_subtags(&self) -> impl Iterator<Item = &str> {
-        let prefix: &[&str] = if self.is_empty() { &[] } else { &["x"] };
-        prefix
-            .iter()
-            .copied()
-            .chain(self.iter().map(|t| t.as_str()))
+    pub(crate) fn for_each_subtag_str<E, F>(
+        &self,
+        f: &mut F,
+    ) -> Result<(), E> where F: FnMut(&str) -> Result<(), E> {
+        if self.is_empty() {
+            return Ok(());
+        }
+        f("x")?;
+        self.deref().iter().map(|t| t.as_str()).try_for_each(f)
     }
 }
 

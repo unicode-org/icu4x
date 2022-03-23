@@ -105,11 +105,16 @@ impl Other {
         self.0 .0 as char
     }
 
-    pub(crate) fn iter_subtags(&self) -> impl Iterator<Item = &str> {
+    pub(crate) fn for_each_subtag_str<E, F>(
+        &self,
+        f: &mut F,
+    ) -> Result<(), E> where F: FnMut(&str) -> Result<(), E> {
+        let (ext, keys) = &self.0;
         debug_assert!(self.0 .0.is_ascii_alphabetic());
         // Safety: ext is ascii_alphabetic, so it is valid UTF-8
-        let ext_str = unsafe { core::str::from_utf8_unchecked(core::slice::from_ref(&self.0 .0)) };
-        core::iter::once(ext_str).chain(self.0 .1.iter().map(|t| t.as_str()))
+        let ext_str = unsafe { core::str::from_utf8_unchecked(core::slice::from_ref(&ext)) };
+        f(ext_str)?;
+        keys.iter().map(|t| t.as_str()).try_for_each(f)
     }
 }
 

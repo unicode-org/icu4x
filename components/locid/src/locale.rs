@@ -186,15 +186,33 @@ impl Locale {
     /// }
     /// ```
     pub fn cmp_bytes(&self, other: &[u8]) -> Ordering {
-        let base_iter = self.iter_subtags().map(str::as_bytes);
-        // Note: This does not use get_subtag_iterator because we want to guarantee
-        // perfect lexicographic ordering of the strings.
-        let other_iter = other.split(|b| *b == b'-');
-        base_iter.cmp(other_iter)
+        let mut other_iter = other.split(|b| *b == b'-');
+        let r = self.for_each_subtag_str(&mut |subtag| {
+            if let Some(other) = other_iter.next() {
+                match subtag.as_bytes().cmp(other) {
+                    Ordering::Equal => Ok(()),
+                    not_equal => Err(not_equal),
+                }
+            } else {
+                Err(Ordering::Greater)
+            }
+        });
+        if let Err(o) = r {
+            return o;
+        }
+        if let Some(_) = other_iter.next() {
+            return Ordering::Less;
+        }
+        return Ordering::Equal;
     }
 
-    pub(crate) fn iter_subtags(&self) -> impl Iterator<Item = &str> {
-        self.id.iter_subtags().chain(self.extensions.iter_subtags())
+    pub(crate) fn for_each_subtag_str<E, F>(
+        &self,
+        f: &mut F,
+    ) -> Result<(), E> where F: FnMut(&str) -> Result<(), E> {
+        self.id.for_each_subtag_str(f)?;
+        self.extensions.for_each_subtag_str(f)?;
+        Ok(())
     }
 }
 

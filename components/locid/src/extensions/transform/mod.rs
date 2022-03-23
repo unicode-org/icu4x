@@ -178,19 +178,18 @@ impl Transform {
         })
     }
 
-    pub(crate) fn iter_subtags(&self) -> impl Iterator<Item = &str> {
-        let prefix: &[&str] = if self.is_empty() { &[] } else { &["t"] };
-        prefix
-            .iter()
-            .copied()
-            .chain(
-                self.lang
-                    .as_ref()
-                    .map(|l| l.iter_subtags())
-                    .into_iter()
-                    .flatten(),
-            )
-            .chain(self.fields.iter_subtags())
+    pub(crate) fn for_each_subtag_str<E, F>(
+        &self,
+        f: &mut F,
+    ) -> Result<(), E> where F: FnMut(&str) -> Result<(), E> {
+        if self.is_empty() {
+            return Ok(());
+        }
+        f("t")?;
+        if let Some(lang) = &self.lang {
+            lang.for_each_subtag_str(f)?;
+        }
+        self.fields.for_each_subtag_str(f)
     }
 }
 

@@ -177,19 +177,8 @@ impl LanguageIdentifier {
     /// }
     /// ```
     pub fn cmp_bytes(&self, other: &[u8]) -> Ordering {
-        /* // V1
-        crate::cmp::langid::cmp(self, other)
-        // */
-        /* // V2
-        let base_iter = self.iter_subtags().map(str::as_bytes);
-        // Note: This does not use get_subtag_iterator because we want to guarantee
-        // perfect lexicographic ordering of the strings.
-        let other_iter = other.split(|b| *b == b'-');
-        base_iter.cmp(other_iter)
-        // */
-        /**/ // V3
         let mut other_iter = other.split(|b| *b == b'-');
-        let r = self.for_each_subtag(|subtag| {
+        let r = self.for_each_subtag_str(&mut |subtag| {
             if let Some(other) = other_iter.next() {
                 match subtag.as_bytes().cmp(other) {
                     Ordering::Equal => Ok(()),
@@ -206,24 +195,11 @@ impl LanguageIdentifier {
             return Ordering::Less;
         }
         return Ordering::Equal;
-        // */
     }
 
-    pub(crate) fn iter_subtags(&self) -> impl Iterator<Item = &str> {
-        /**/ // V1
-        crate::cmp::langid::LanguageIdentifierSubtagIterator::new(self)
-        // */
-        /* // V2
-        core::iter::once(self.language.as_str())
-            .chain(self.script.as_ref().map(|t| t.as_str()))
-            .chain(self.region.as_ref().map(|t| t.as_str()))
-            .chain(self.variants.iter_subtags())
-        // */
-    }
-
-    pub(crate) fn for_each_subtag<E, F>(
+    pub(crate) fn for_each_subtag_str<E, F>(
         &self,
-        mut f: F,
+        f: &mut F,
     ) -> Result<(), E> where F: FnMut(&str) -> Result<(), E> {
         f(self.language.as_str())?;
         if let Some(ref script) = self.script {
@@ -274,7 +250,7 @@ impl core::fmt::Display for LanguageIdentifier {
 impl writeable::Writeable for LanguageIdentifier {
     fn write_to<W: core::fmt::Write + ?Sized>(&self, sink: &mut W) -> core::fmt::Result {
         let mut first = true;
-        self.for_each_subtag(|subtag| {
+        self.for_each_subtag_str(&mut |subtag| {
             if first {
                 first = false;
             } else {
@@ -287,7 +263,7 @@ impl writeable::Writeable for LanguageIdentifier {
     fn write_len(&self) -> writeable::LengthHint {
         let mut result = writeable::LengthHint::exact(0);
         let mut first = true;
-        self.for_each_subtag::<core::convert::Infallible, _>(|subtag| {
+        self.for_each_subtag_str::<core::convert::Infallible, _>(&mut |subtag| {
             if first {
                 first = false;
             } else {
