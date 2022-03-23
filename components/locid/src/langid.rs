@@ -177,18 +177,65 @@ impl LanguageIdentifier {
     /// }
     /// ```
     pub fn cmp_bytes(&self, other: &[u8]) -> Ordering {
+        /* // V1
+        crate::cmp::langid::cmp(self, other)
+        // */
+        /* // V2
         let base_iter = self.iter_subtags().map(str::as_bytes);
         // Note: This does not use get_subtag_iterator because we want to guarantee
         // perfect lexicographic ordering of the strings.
         let other_iter = other.split(|b| *b == b'-');
         base_iter.cmp(other_iter)
+        // */
+        /**/ // V3
+        let mut other_iter = other.split(|b| *b == b'-');
+        let r = self.for_each_subtag(|subtag| {
+            if let Some(other) = other_iter.next() {
+                match subtag.as_bytes().cmp(other) {
+                    Ordering::Equal => Ok(()),
+                    not_equal => Err(not_equal),
+                }
+            } else {
+                Err(Ordering::Greater)
+            }
+        });
+        if let Err(o) = r {
+            return o;
+        }
+        if let Some(_) = other_iter.next() {
+            return Ordering::Less;
+        }
+        return Ordering::Equal;
+        // */
     }
 
     pub(crate) fn iter_subtags(&self) -> impl Iterator<Item = &str> {
+        /**/ // V1
+        crate::cmp::langid::LanguageIdentifierSubtagIterator::new(self)
+        // */
+        /* // V2
         core::iter::once(self.language.as_str())
             .chain(self.script.as_ref().map(|t| t.as_str()))
             .chain(self.region.as_ref().map(|t| t.as_str()))
             .chain(self.variants.iter_subtags())
+        // */
+    }
+
+    pub(crate) fn for_each_subtag<E, F>(
+        &self,
+        mut f: F,
+    ) -> Result<(), E> where F: FnMut(&str) -> Result<(), E> {
+        f(self.language.as_str())?;
+        if let Some(ref script) = self.script {
+            f(script.as_str())?;
+        }
+        if let Some(ref region) = self.region {
+            f(region.as_str())?;
+        }
+        for variant in self.variants.iter() {
+            f(variant.as_str())?;
+        }
+        Ok(())
     }
 }
 
@@ -226,33 +273,29 @@ impl core::fmt::Display for LanguageIdentifier {
 
 impl writeable::Writeable for LanguageIdentifier {
     fn write_to<W: core::fmt::Write + ?Sized>(&self, sink: &mut W) -> core::fmt::Result {
-        writeable::Writeable::write_to(&self.language, sink)?;
-        if let Some(ref script) = self.script {
-            sink.write_char('-')?;
-            writeable::Writeable::write_to(script, sink)?;
-        }
-        if let Some(ref region) = self.region {
-            sink.write_char('-')?;
-            writeable::Writeable::write_to(region, sink)?;
-        }
-        if !self.variants.is_empty() {
-            sink.write_char('-')?;
-            writeable::Writeable::write_to(&self.variants, sink)?;
-        }
-        Ok(())
+        let mut first = true;
+        self.for_each_subtag(|subtag| {
+            if first {
+                first = false;
+            } else {
+                sink.write_char('-')?;
+            }
+            sink.write_str(subtag)
+        })
     }
 
     fn write_len(&self) -> writeable::LengthHint {
-        let mut result = writeable::Writeable::write_len(&self.language);
-        if let Some(ref script) = self.script {
-            result += writeable::Writeable::write_len(script) + 1;
-        }
-        if let Some(ref region) = self.region {
-            result += writeable::Writeable::write_len(region) + 1;
-        }
-        if !self.variants.is_empty() {
-            result += writeable::Writeable::write_len(&self.variants) + 1;
-        }
+        let mut result = writeable::LengthHint::exact(0);
+        let mut first = true;
+        self.for_each_subtag::<core::convert::Infallible, _>(|subtag| {
+            if first {
+                first = false;
+            } else {
+                result += 1;
+            }
+            result += subtag.len();
+            Ok(())
+        }).expect("infallible");
         result
     }
 }
