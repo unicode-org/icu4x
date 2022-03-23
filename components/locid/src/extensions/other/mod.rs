@@ -105,10 +105,10 @@ impl Other {
         self.0 .0 as char
     }
 
-    pub(crate) fn for_each_subtag_str<E, F>(
-        &self,
-        f: &mut F,
-    ) -> Result<(), E> where F: FnMut(&str) -> Result<(), E> {
+    pub(crate) fn for_each_subtag_str<E, F>(&self, f: &mut F) -> Result<(), E>
+    where
+        F: FnMut(&str) -> Result<(), E>,
+    {
         let (ext, keys) = &self.0;
         debug_assert!(self.0 .0.is_ascii_alphabetic());
         // Safety: ext is ascii_alphabetic, so it is valid UTF-8

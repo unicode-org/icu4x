@@ -92,10 +92,10 @@ impl Value {
         }
     }
 
-    pub(crate) fn for_each_subtag_str<E, F>(
-        &self,
-        f: &mut F,
-    ) -> Result<(), E> where F: FnMut(&str) -> Result<(), E> {
+    pub(crate) fn for_each_subtag_str<E, F>(&self, f: &mut F) -> Result<(), E>
+    where
+        F: FnMut(&str) -> Result<(), E>,
+    {
         self.0.iter().map(|t| t.as_str()).try_for_each(f)
     }
 }

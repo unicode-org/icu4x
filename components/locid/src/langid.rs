@@ -197,10 +197,10 @@ impl LanguageIdentifier {
         return Ordering::Equal;
     }
 
-    pub(crate) fn for_each_subtag_str<E, F>(
-        &self,
-        f: &mut F,
-    ) -> Result<(), E> where F: FnMut(&str) -> Result<(), E> {
+    pub(crate) fn for_each_subtag_str<E, F>(&self, f: &mut F) -> Result<(), E>
+    where
+        F: FnMut(&str) -> Result<(), E>,
+    {
         f(self.language.as_str())?;
         if let Some(ref script) = self.script {
             f(script.as_str())?;

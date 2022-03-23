@@ -60,7 +60,8 @@ macro_rules! impl_writeable_for_each_subtag_str_no_test {
                     }
                     result += subtag.len();
                     Ok(())
-                }).expect("infallible");
+                })
+                .expect("infallible");
                 result
             }
         }

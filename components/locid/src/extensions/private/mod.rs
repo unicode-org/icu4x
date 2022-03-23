@@ -132,10 +132,10 @@ impl Private {
         Ok(Self::from_vec_unchecked(keys))
     }
 
-    pub(crate) fn for_each_subtag_str<E, F>(
-        &self,
-        f: &mut F,
-    ) -> Result<(), E> where F: FnMut(&str) -> Result<(), E> {
+    pub(crate) fn for_each_subtag_str<E, F>(&self, f: &mut F) -> Result<(), E>
+    where
+        F: FnMut(&str) -> Result<(), E>,
+    {
         if self.is_empty() {
             return Ok(());
         }
