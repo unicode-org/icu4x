@@ -241,40 +241,7 @@ impl FromStr for LanguageIdentifier {
     }
 }
 
-impl core::fmt::Display for LanguageIdentifier {
-    fn fmt(&self, f: &mut core::fmt::Formatter) -> core::fmt::Result {
-        writeable::Writeable::write_to(self, f)
-    }
-}
-
-impl writeable::Writeable for LanguageIdentifier {
-    fn write_to<W: core::fmt::Write + ?Sized>(&self, sink: &mut W) -> core::fmt::Result {
-        let mut first = true;
-        self.for_each_subtag_str(&mut |subtag| {
-            if first {
-                first = false;
-            } else {
-                sink.write_char('-')?;
-            }
-            sink.write_str(subtag)
-        })
-    }
-
-    fn write_len(&self) -> writeable::LengthHint {
-        let mut result = writeable::LengthHint::exact(0);
-        let mut first = true;
-        self.for_each_subtag_str::<core::convert::Infallible, _>(&mut |subtag| {
-            if first {
-                first = false;
-            } else {
-                result += 1;
-            }
-            result += subtag.len();
-            Ok(())
-        }).expect("infallible");
-        result
-    }
-}
+impl_writeable_for_each_subtag_str_no_test!(LanguageIdentifier);
 
 #[test]
 fn test_writeable() {

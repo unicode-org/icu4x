@@ -27,8 +27,8 @@ macro_rules! impl_writeable_for_single_subtag {
     };
 }
 
-macro_rules! impl_writeable_for_subtag_list {
-    ($type:tt, $sample1:literal, $sample2:literal) => {
+macro_rules! impl_writeable_for_each_subtag_str_no_test {
+    ($type:tt) => {
         impl core::fmt::Display for $type {
             fn fmt(&self, f: &mut core::fmt::Formatter) -> core::fmt::Result {
                 writeable::Writeable::write_to(self, f)
@@ -38,29 +38,38 @@ macro_rules! impl_writeable_for_subtag_list {
         impl writeable::Writeable for $type {
             fn write_to<W: core::fmt::Write + ?Sized>(&self, sink: &mut W) -> core::fmt::Result {
                 let mut initial = true;
-                for subtag in self.iter() {
+                self.for_each_subtag_str(&mut |subtag| {
                     if initial {
                         initial = false;
                     } else {
                         sink.write_char('-')?;
                     }
-                    writeable::Writeable::write_to(subtag, sink)?;
-                }
-                Ok(())
+                    sink.write_str(subtag)
+                })
             }
 
             #[inline]
             fn write_len(&self) -> writeable::LengthHint {
-                if self.0.is_none() {
-                    writeable::LengthHint::exact(0)
-                } else {
-                    self.iter()
-                        .map(writeable::Writeable::write_len)
-                        .sum::<writeable::LengthHint>()
-                        + (self.len() - 1)
-                }
+                let mut result = writeable::LengthHint::exact(0);
+                let mut initial = true;
+                self.for_each_subtag_str::<core::convert::Infallible, _>(&mut |subtag| {
+                    if initial {
+                        initial = false;
+                    } else {
+                        result += 1;
+                    }
+                    result += subtag.len();
+                    Ok(())
+                }).expect("infallible");
+                result
             }
         }
+    };
+}
+
+macro_rules! impl_writeable_for_subtag_list {
+    ($type:tt, $sample1:literal, $sample2:literal) => {
+        impl_writeable_for_each_subtag_str_no_test!($type);
 
         #[test]
         fn test_writeable() {
@@ -82,42 +91,7 @@ macro_rules! impl_writeable_for_subtag_list {
 
 macro_rules! impl_writeable_for_tinystr_list {
     ($type:tt, $if_empty:literal, $sample1:literal, $sample2:literal) => {
-        impl core::fmt::Display for $type {
-            fn fmt(&self, f: &mut core::fmt::Formatter) -> core::fmt::Result {
-                writeable::Writeable::write_to(self, f)
-            }
-        }
-
-        impl writeable::Writeable for $type {
-            fn write_to<W: core::fmt::Write + ?Sized>(&self, sink: &mut W) -> core::fmt::Result {
-                let mut initial = true;
-                if self.0.len() == 0 {
-                    sink.write_str($if_empty)?;
-                }
-                for subtag in self.0.iter() {
-                    if initial {
-                        initial = false;
-                    } else {
-                        sink.write_char('-')?;
-                    }
-                    sink.write_str(subtag.as_str())?;
-                }
-                Ok(())
-            }
-
-            #[inline]
-            fn write_len(&self) -> writeable::LengthHint {
-                if self.0.len() == 0 {
-                    writeable::LengthHint::exact($if_empty.len())
-                } else {
-                    self.0
-                        .iter()
-                        .map(|s| s.len())
-                        .sum::<writeable::LengthHint>()
-                        + (self.0.len() - 1)
-                }
-            }
-        }
+        impl_writeable_for_each_subtag_str_no_test!($type);
 
         #[test]
         fn test_writeable() {
@@ -138,50 +112,7 @@ macro_rules! impl_writeable_for_tinystr_list {
 
 macro_rules! impl_writeable_for_key_value {
     ($type:tt, $key1:literal, $value1:literal, $key2:literal, $expected2:literal) => {
-        impl core::fmt::Display for $type {
-            fn fmt(&self, f: &mut core::fmt::Formatter) -> core::fmt::Result {
-                writeable::Writeable::write_to(self, f)
-            }
-        }
-
-        impl writeable::Writeable for $type {
-            fn write_to<W: core::fmt::Write + ?Sized>(&self, sink: &mut W) -> core::fmt::Result {
-                let mut initial = true;
-                for (key, value) in self.iter() {
-                    if initial {
-                        initial = false;
-                    } else {
-                        sink.write_char('-')?;
-                    }
-                    writeable::Writeable::write_to(key, sink)?;
-                    if !writeable::Writeable::write_len(value).is_zero() {
-                        sink.write_char('-')?;
-                        writeable::Writeable::write_to(value, sink)?;
-                    }
-                }
-                Ok(())
-            }
-
-            #[inline]
-            fn write_len(&self) -> writeable::LengthHint {
-                if self.0.is_none() {
-                    writeable::LengthHint::exact(0)
-                } else {
-                    self.iter()
-                        .map(|(key, value)| {
-                            writeable::Writeable::write_len(key)
-                                + writeable::Writeable::write_len(value)
-                                + if writeable::Writeable::write_len(value).is_zero() {
-                                    0
-                                } else {
-                                    1
-                                }
-                        })
-                        .sum::<writeable::LengthHint>()
-                        + (self.len() - 1)
-                }
-            }
-        }
+        impl_writeable_for_each_subtag_str_no_test!($type);
 
         #[test]
         fn test_writeable() {

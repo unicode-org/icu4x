@@ -257,25 +257,7 @@ impl core::fmt::Debug for Locale {
     }
 }
 
-impl core::fmt::Display for Locale {
-    fn fmt(&self, f: &mut core::fmt::Formatter) -> core::fmt::Result {
-        writeable::Writeable::write_to(self, f)
-    }
-}
-
-impl writeable::Writeable for Locale {
-    fn write_to<W: core::fmt::Write + ?Sized>(&self, sink: &mut W) -> core::fmt::Result {
-        writeable::Writeable::write_to(&self.id, sink)?;
-        writeable::Writeable::write_to(&self.extensions, sink)?;
-        Ok(())
-    }
-
-    fn write_len(&self) -> writeable::LengthHint {
-        let mut result = writeable::Writeable::write_len(&self.id);
-        result += writeable::Writeable::write_len(&self.extensions);
-        result
-    }
-}
+impl_writeable_for_each_subtag_str_no_test!(Locale);
 
 #[test]
 fn test_writeable() {
