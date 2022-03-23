@@ -124,38 +124,28 @@ The way `ICU4X` plugs into that dataset is one of its novelties aiming at making
 In result, compared to most internationalization solutions, working with `ICU4X` and data is a bit more explicit. `ICU4X` provides a trait called `DataProvider` and a number of concrete APIs that implement that trait for different scenarios.
 Users are also free to design their own providers that best fit into their ecosystem requirements.
 
-In this tutorial we are going to use a synchronous file-system data provider which uses ICU4X format JSON resource files.
+In this tutorial we are going to use ICU4X's "test" data provider and then move on to a synchronous file-system data provider which uses ICU4X format JSON resource files.
 
 ## Test data
 
-ICU4X's repository comes with pre-generated test data that covers all of its keys for a select set of locales. For production use it is recommended one use the steps in [Generating Data](#Generating Data) to generate a JSON directory tree or postcard blob and feed it to `FsDataProvider` or `BlobDataProvider` respectively, but for the purposes of trying stuff out, it is sufficient to use the data found in `icu4x/provider/testdata/data/json`, provided you have checked out ICU4X at the appropriate version:
+ICU4X's repository comes with pre-generated test data that covers all of its keys for a select set of locales. For production use it is recommended one use the steps in [Generating Data](#Generating Data) to generate a JSON directory tree or postcard blob and feed it to `FsDataProvider` or `BlobDataProvider` respectively, but for the purposes of trying stuff out, it is sufficient to use the data providers exported by `icu_testdata`.
 
-```
-git clone https://github.com/unicode-org/icu4x
-cd icu4x
-git checkout icu@0.5.0
-```
 
-## Using Data
-
-Now that we have the data, we can use an instance of an API that implements `DataProvider` pointing at the directory.
+## Using test data
 
 First, we need to register our choice of the provider in `~/projects/icu/myapp/Cargo.toml`:
 
 ```
 [dependencies]
 icu = "0.5"
-icu_provider_fs = {version = "0.5" , features = ["deserialize_json"]}
+icu_testdata = "0.5"
 ```
 
 and then we can use it in our code:
 
 ```rust
-use icu_provider_fs::FsDataProvider;
-
 fn main() {
-    let _provider = FsDataProvider::try_new("/path/to/icu4x/provider/testdata/data/json")
-        .expect("Failed to initialize Data Provider.");
+    let _provider = icu_testdata::get_provider();
 }
 ```
 
@@ -165,7 +155,6 @@ While this app doesn't do anything on its own yet, we now have a loaded data pro
 use icu::locid::langid;
 use icu::locid::Locale;
 use icu::datetime::{DateTimeFormat, mock::parse_gregorian_from_str, options::length};
-use icu_provider_fs::FsDataProvider;
 
 fn main() {
     let loc: Locale = langid!("ja").into();
@@ -173,8 +162,7 @@ fn main() {
     let date = parse_gregorian_from_str("2020-10-14T13:21:00")
         .expect("Failed to parse a datetime.");
 
-    let provider = FsDataProvider::try_new("/path/to/icu4x/provider/testdata/data/json")
-        .expect("Failed to initialize Data Provider.");
+    let provider = icu_testdata::get_provider();
 
     let options = length::Bag {
         time: Some(length::Time::Medium),
@@ -202,6 +190,26 @@ Here's an internationalized date!
 
 *Notice:* Default `cargo run` builds and runs a `debug` mode of the binary. If you want to evaluate performance, memory or size of this example, use `cargo run --release`. Our example is also using `json` resource format. Generate the data in `bincode` for better performance.
 
+## Using data from the filesystem
+
+If you have ICU4X data on the file system in a JSON format, it can be loaded via `FsDataProvider`:
+
+```toml
+[dependencies]
+icu = "0.5"
+icu_provider_fs = {version = "0.5" , features = ["deserialize_json"]}
+```
+
+```rs
+use icu_provider_fs::FsDataProvider;
+
+fn main() {
+    let _provider = FsDataProvider::try_new("/path/to/data")
+       .expect("Failed to initialize Data Provider.");
+}
+```
+
+The ICU4X repository has test data checked in tree in `provider/testdata/data/json`, however it is recommended one generate data on their own as described in the [next section](#generating data). Under the hood, `icu_testdata::get_provider()` is simply loading this data.
 
 ## Generating data
 
