@@ -2,14 +2,32 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+//! ULE impls for tuples.
+//!
+//! Rust does not guarantee the layout of tuples, so we define our own tuple ULE types.
+//!
+//! # Examples
+//!
+//! ```
+//! use zerovec::ZeroVec;
+//!
+//! // ZeroVec of tuples!
+//! let zerovec: ZeroVec<(u32, char)> = [
+//!     (1, 'a'),
+//!     (1234901, '啊'),
+//!     (100, 'अ'),
+//! ].iter().copied().collect();
+//!
+//! assert_eq!(zerovec.get(1), Some((1234901, '啊')));
+//! ```
+
 use super::*;
 use core::fmt;
 use core::mem;
 
 macro_rules! tuple_ule {
-    ($name:ident, [ $($t:ident $i:tt),+ ]) => {
-        /// We do not have guarantees for the layouts of tuples, so we must define a custom
-        /// ULE type for pairs. This could potentially be generalized for larger tuples if necessary
+    ($name:ident, $len:literal, [ $($t:ident $i:tt),+ ]) => {
+        #[doc = concat!("ULE type for tuples with ", $len, " elements.")]
         #[repr(packed)]
         pub struct $name<$($t),+>($(pub $t),+);
 
@@ -100,9 +118,9 @@ macro_rules! tuple_ule {
     };
 }
 
-tuple_ule!(PairULE, [ A 0, B 1 ]);
+tuple_ule!(PairULE, "2", [ A 0, B 1 ]);
 
-tuple_ule!(TripleULE, [ A 0, B 1, C 2 ]);
+tuple_ule!(TripleULE, "3", [ A 0, B 1, C 2 ]);
 
 #[test]
 fn test_pairule_validate() {
