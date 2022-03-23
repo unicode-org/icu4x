@@ -127,7 +127,9 @@ impl CldrPaths for CldrPathsLocal {
         self.cldr_misc.clone().map_err(|e| e.into())
     }
 
-    fn cldr_bcp47(&self) -> Result<PathBuf, Error> { self.cldr_bcp47.clone().map_err(|e| e.into()) }
+    fn cldr_bcp47(&self) -> Result<PathBuf, Error> {
+        self.cldr_bcp47.clone().map_err(|e| e.into())
+    }
 }
 
 impl Default for CldrPathsLocal {
@@ -219,10 +221,7 @@ impl CldrPaths for CldrPathsAllInOne {
     }
 
     fn cldr_bcp47(&self) -> Result<PathBuf, Error> {
-        Ok(self
-            .cldr_json_root
-            .clone()
-            .join("cldr-bcp47"))
+        Ok(self.cldr_json_root.clone().join("cldr-bcp47"))
     }
 }
 
