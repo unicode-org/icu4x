@@ -126,13 +126,92 @@ Users are also free to design their own providers that best fit into their ecosy
 
 In this tutorial we are going to use a synchronous file-system data provider which uses ICU4X format JSON resource files.
 
+## Test data
+
+ICU4X's repository comes with pre-generated test data that covers all of its keys for a select set of locales. For production use it is recommended one use the steps in [Generating Data](#Generating Data) to generate a JSON directory tree or postcard blob and feed it to `FsDataProvider` or `BlobDataProvider` respectively, but for the purposes of trying stuff out, it is sufficient to use the data found in `icu4x/provider/testdata/data/json`, provided you have checked out ICU4X at the appropriate version:
+
+```
+git clone https://github.com/unicode-org/icu4x
+cd icu4x
+git checkout icu@0.5.0
+```
+
+## Using Data
+
+Now that we have the data, we can use an instance of an API that implements `DataProvider` pointing at the directory.
+
+First, we need to register our choice of the provider in `~/projects/icu/myapp/Cargo.toml`:
+
+```
+[dependencies]
+icu = "0.5"
+icu_provider_fs = {version = "0.5" , features = ["deserialize_json"]}
+```
+
+and then we can use it in our code:
+
+```rust
+use icu_provider_fs::FsDataProvider;
+
+fn main() {
+    let _provider = FsDataProvider::try_new("/path/to/icu4x/provider/testdata/data/json")
+        .expect("Failed to initialize Data Provider.");
+}
+```
+
+While this app doesn't do anything on its own yet, we now have a loaded data provider, and can use it to format a date:
+
+```rust
+use icu::locid::langid;
+use icu::locid::Locale;
+use icu::datetime::{DateTimeFormat, mock::parse_gregorian_from_str, options::length};
+use icu_provider_fs::FsDataProvider;
+
+fn main() {
+    let loc: Locale = langid!("ja").into();
+
+    let date = parse_gregorian_from_str("2020-10-14T13:21:00")
+        .expect("Failed to parse a datetime.");
+
+    let provider = FsDataProvider::try_new("/path/to/icu4x/provider/testdata/data/json")
+        .expect("Failed to initialize Data Provider.");
+
+    let options = length::Bag {
+        time: Some(length::Time::Medium),
+        date: Some(length::Date::Long),
+        ..Default::default()
+    }.into();
+
+    let dtf = DateTimeFormat::try_new(loc, &provider, &options)
+        .expect("Failed to initialize DateTimeFormat");
+
+    let formatted_date = dtf.format(&date);
+
+    println!("📅: {}", formatted_date);
+}
+```
+*Notice:* Before proceeding, update your path to the ICU4X data directory.
+
+If all went well, running the app with `cargo run` should display:
+
+```
+📅: 2020年10月14日 13:21:00
+```
+
+Here's an internationalized date!
+
+*Notice:* Default `cargo run` builds and runs a `debug` mode of the binary. If you want to evaluate performance, memory or size of this example, use `cargo run --release`. Our example is also using `json` resource format. Generate the data in `bincode` for better performance.
+
+
 ## Generating data
+
+For production usage, it is better to generate your own data that is filtered to suit your needs.
 
 We're going to use [JSON CLDR](https://github.com/unicode-cldr/cldr-json) as our source data. JSON CLDR is an export of [CLDR data](http://cldr.unicode.org/index/downloads) into JSON maintained by Unicode.
 
 We are also going to use Unicode property data shipped as a zip file in the ICU4C release.
 
-The `provider_fs` component has a binary application which will fetch the CLDR data and generate ICU4X data out of it.
+The `datagen` component has a binary application which will fetch the CLDR data and generate ICU4X data out of it.
 
 ```
 cd ~/projects/icu
@@ -140,7 +219,7 @@ wget https://github.com/unicode-org/icu/releases/download/release-70-1/icuexport
 unzip icuexportdata_uprops_full.zip
 git clone https://github.com/unicode-org/icu4x
 cd icu4x
-git checkout icu@0.4.1
+git checkout icu@0.5.0
 cargo run --bin icu4x-datagen -- \
     --cldr-tag 40.0.0 \
     --uprops-root ../icuexportdata_uprops_full/small \
@@ -164,71 +243,6 @@ After that step, it should be possible to navigate to `~/projects/icu/icu4x-data
 *Notice:* In particular, in production, the `bincode` format will yield better performance results.
 *Notice:* For offline or unconventional use, the user can also pass `--cldr-core` and `--cldr-dates` paths to local clones of the repositories instead of `--cldr-tag`.
 
-## Using Data
-
-Now that we have the data generated, we can use an instance of an API that implements `DataProvider` pointing at the directory.
-
-First, we need to register our choice of the provider in `~/projects/icu/myapp/Cargo.toml`:
-
-```
-[dependencies]
-icu = "0.1"
-icu_provider_fs = "0.1"
-```
-
-and then we can use it in our code:
-
-```rust
-use icu_provider_fs::FsDataProvider;
-
-fn main() {
-    let _provider = FsDataProvider::try_new("/home/{USER}/projects/icu/icu4x-data")
-        .expect("Failed to initialize Data Provider.");
-}
-```
-
-While this app doesn't do anything on its own yet, we now have a loaded data provider, and can use it to format a date:
-
-```rust
-use icu::locid::langid;
-use icu::locid::Locale;
-use icu::datetime::{DateTimeFormat, mock::datetime::MockDateTime, options::length};
-use icu_provider_fs::FsDataProvider;
-
-fn main() {
-    let loc: Locale = langid!("pl").into();
-
-    let date: MockDateTime = "2020-10-14T13:21:00".parse()
-        .expect("Failed to parse a datetime.");
-
-    let provider = FsDataProvider::try_new("/home/{USER}/projects/icu/icu4x-data")
-        .expect("Failed to initialize Data Provider.");
-
-    let options = length::Bag {
-        time: Some(length::Time::Medium),
-        date: Some(length::Date::Long),
-        ..Default::default()
-    }.into();
-
-    let dtf = DateTimeFormat::try_new(loc, &provider, &options)
-        .expect("Failed to initialize DateTimeFormat");
-
-    let formatted_date = dtf.format(&date);
-
-    println!("📅: {}", formatted_date);
-}
-```
-*Notice:* Before proceeding, update your path to the ICU4X data directory.
-
-If all went well, running the app with `cargo run` should display:
-
-```
-📅: 14 października 2020 13:21:00
-```
-
-Here's an internationalized date!
-
-*Notice:* Default `cargo run` builds and runs a `debug` mode of the binary. If you want to evaluate performance, memory or size of this example, use `cargo run --release`. Our example is also using `json` resource format. Generate the data in `bincode` for better performance.
 
 # 6. Summary
 
