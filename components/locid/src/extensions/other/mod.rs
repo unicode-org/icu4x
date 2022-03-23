@@ -110,7 +110,7 @@ impl Other {
         F: FnMut(&str) -> Result<(), E>,
     {
         let (ext, keys) = &self.0;
-        debug_assert!(self.0 .0.is_ascii_alphabetic());
+        debug_assert!(ext.is_ascii_alphabetic());
         // Safety: ext is ascii_alphabetic, so it is valid UTF-8
         let ext_str = unsafe { core::str::from_utf8_unchecked(core::slice::from_ref(ext)) };
         f(ext_str)?;
