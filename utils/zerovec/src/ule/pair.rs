@@ -35,9 +35,7 @@ macro_rules! tuple_ule {
                     $(
                         let j = i;
                         i += mem::size_of::<$t>();
-                        <$t>::validate_byte_slice(
-                            &chunk[j..i]
-                        )?;
+                        <$t>::validate_byte_slice(&chunk[j..i])?;
                     )+
                 }
                 Ok(())
@@ -114,6 +112,11 @@ fn test_pairule_validate() {
     let bytes = zerovec.as_bytes();
     let zerovec2 = ZeroVec::parse_byte_slice(bytes).unwrap();
     assert_eq!(zerovec, zerovec2);
+
+    // Test failed validation with a correctly sized but differently constrained tuple
+    // Note: 1234901 is not a valid char
+    let zerovec3 = ZeroVec::<(char, u32)>::parse_byte_slice(bytes);
+    assert!(matches!(zerovec3, Err(_)));
 }
 
 #[test]
@@ -124,4 +127,9 @@ fn test_tripleule_validate() {
     let bytes = zerovec.as_bytes();
     let zerovec2 = ZeroVec::parse_byte_slice(bytes).unwrap();
     assert_eq!(zerovec, zerovec2);
+
+    // Test failed validation with a correctly sized but differently constrained tuple
+    // Note: 1234901 is not a valid char
+    let zerovec3 = ZeroVec::<(char, i8, u32)>::parse_byte_slice(bytes);
+    assert!(matches!(zerovec3, Err(_)));
 }
