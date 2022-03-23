@@ -48,7 +48,7 @@ macro_rules! tuple_ule {
 
             #[inline]
             fn to_unaligned(self) -> Self::ULE {
-                PairULE($(
+                $name($(
                     self.$i.to_unaligned()
                 ),+)
             }
@@ -93,21 +93,33 @@ macro_rules! tuple_ule {
                 // copy to the stack to avoid hitting a future incompat error
                 // https://github.com/rust-lang/rust/issues/82523#issuecomment-947900712
                 let stack = ($(self.$i),+);
-                PairULE($(stack.$i),+)
+                $name($(stack.$i),+)
             }
         }
 
-        impl<$($t: Copy + ULE),+> Copy for $name<$($t),+> {}
+        impl<$($t: ULE),+> Copy for $name<$($t),+> {}
     };
 }
 
 tuple_ule!(PairULE, [ A 0, B 1 ]);
+
+tuple_ule!(TripleULE, [ A 0, B 1, C 2 ]);
 
 #[test]
 fn test_pairule_validate() {
     use crate::ZeroVec;
     let vec: Vec<(u32, char)> = vec![(1, 'a'), (1234901, '啊'), (100, 'अ')];
     let zerovec: ZeroVec<(u32, char)> = vec.iter().copied().collect();
+    let bytes = zerovec.as_bytes();
+    let zerovec2 = ZeroVec::parse_byte_slice(bytes).unwrap();
+    assert_eq!(zerovec, zerovec2);
+}
+
+#[test]
+fn test_tripleule_validate() {
+    use crate::ZeroVec;
+    let vec: Vec<(u32, char, i8)> = vec![(1, 'a', -5), (1234901, '啊', 3), (100, 'अ', -127)];
+    let zerovec: ZeroVec<(u32, char, i8)> = vec.iter().copied().collect();
     let bytes = zerovec.as_bytes();
     let zerovec2 = ZeroVec::parse_byte_slice(bytes).unwrap();
     assert_eq!(zerovec, zerovec2);
