@@ -191,10 +191,10 @@ impl LanguageIdentifier {
         if let Err(o) = r {
             return o;
         }
-        if let Some(_) = other_iter.next() {
+        if other_iter.next().is_some() {
             return Ordering::Less;
         }
-        return Ordering::Equal;
+        Ordering::Equal
     }
 
     pub(crate) fn for_each_subtag_str<E, F>(&self, f: &mut F) -> Result<(), E>
