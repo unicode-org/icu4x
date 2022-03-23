@@ -119,8 +119,8 @@ macro_rules! tuple_ule {
 }
 
 tuple_ule!(Tuple2ULE, "2", [ A 0, B 1 ]);
-
 tuple_ule!(Tuple3ULE, "3", [ A 0, B 1, C 2 ]);
+tuple_ule!(Tuple4ULE, "4", [ A 0, B 1, C 2, D 3 ]);
 
 #[test]
 fn test_pairule_validate() {
@@ -149,5 +149,21 @@ fn test_tripleule_validate() {
     // Test failed validation with a correctly sized but differently constrained tuple
     // Note: 1234901 is not a valid char
     let zerovec3 = ZeroVec::<(char, i8, u32)>::parse_byte_slice(bytes);
+    assert!(matches!(zerovec3, Err(_)));
+}
+
+#[test]
+fn test_quadule_validate() {
+    use crate::ZeroVec;
+    let vec: Vec<(u32, char, i8, u16)> =
+        vec![(1, 'a', -5, 3), (1234901, '啊', 3, 11), (100, 'अ', -127, 0)];
+    let zerovec: ZeroVec<(u32, char, i8, u16)> = vec.iter().copied().collect();
+    let bytes = zerovec.as_bytes();
+    let zerovec2 = ZeroVec::parse_byte_slice(bytes).unwrap();
+    assert_eq!(zerovec, zerovec2);
+
+    // Test failed validation with a correctly sized but differently constrained tuple
+    // Note: 1234901 is not a valid char
+    let zerovec3 = ZeroVec::<(char, i8, u16, u32)>::parse_byte_slice(bytes);
     assert!(matches!(zerovec3, Err(_)));
 }
