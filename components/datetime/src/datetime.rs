@@ -221,7 +221,7 @@ impl<C: CldrCalendar> DateTimeFormat<C> {
     ///     components::Bag {
     ///         year: Some(components::Year::Numeric),
     ///         month: Some(components::Month::Short),
-    ///         day: Some(components::Numeric::Numeric),
+    ///         day: Some(components::Day::NumericDayOfMonth),
     ///         ..Default::default()
     ///     }
     /// );

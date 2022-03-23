@@ -47,7 +47,7 @@
 //! let bag = components::Bag {
 //!     year: Some(components::Year::Numeric),
 //!     month: Some(components::Month::Long),
-//!     day: Some(components::Numeric::Numeric),
+//!     day: Some(components::Day::NumericDayOfMonth),
 //!
 //!     hour: Some(components::Numeric::TwoDigit),
 //!     minute: Some(components::Numeric::TwoDigit),
@@ -95,8 +95,8 @@ pub struct Bag {
     pub month: Option<Month>,
     /// Include the week number, such as "51st" or "51" for week 51.
     pub week: Option<Week>,
-    /// Include the day, such as "07" or "7".
-    pub day: Option<Numeric>,
+    /// Include the day of the month/year, such as "07" or "7".
+    pub day: Option<Day>,
     /// Include the weekday, such as "Wednesday" or "Wed".
     pub weekday: Option<Text>,
 
@@ -208,8 +208,8 @@ impl Bag {
                     // Day of month (numeric).
                     // d    1 	  Numeric: minimum digits
                     // dd   01 	  Numeric: 2 digits, zero pad if needed
-                    Numeric::Numeric => FieldLength::One,
-                    Numeric::TwoDigit => FieldLength::TwoDigit,
+                    Day::NumericDayOfMonth => FieldLength::One,
+                    Day::TwoDigitDayOfMonth => FieldLength::TwoDigit,
                 },
             });
         }
@@ -423,6 +423,21 @@ pub enum Week {
     TwoDigitWeekOfYear,
 }
 
+/// Options for displaying the current day of the month or year.
+#[derive(Debug, Clone, PartialEq, Copy)]
+#[cfg_attr(
+    feature = "serde",
+    derive(Serialize, Deserialize),
+    serde(rename_all = "kebab-case")
+)]
+pub enum Day {
+    /// The numeric value of the day of month, such as the "2" in July 2 1984.
+    NumericDayOfMonth,
+    /// The two digit value of the day of month, such as the "02" in 1984-07-02.
+    TwoDigitDayOfMonth,
+    // TODO(#592): Add 'F'
+}
+
 /// Options for displaying a time zone for the `components::`[`Bag`].
 ///
 /// Note that the initial implementation is focusing on only supporting ECMA-402 compatible
@@ -559,8 +574,8 @@ impl<'data> From<&PatternPlurals<'data>> for Bag {
                 FieldSymbol::Day(day) => {
                     bag.day = Some(match day {
                         fields::Day::DayOfMonth => match field.length {
-                            FieldLength::TwoDigit => Numeric::TwoDigit,
-                            _ => Numeric::Numeric,
+                            FieldLength::TwoDigit => Day::TwoDigitDayOfMonth,
+                            _ => Day::NumericDayOfMonth,
                         },
                         fields::Day::DayOfYear => unimplemented!("fields::Day::DayOfYear #591"),
                         fields::Day::DayOfWeekInMonth => {
@@ -687,7 +702,7 @@ mod test {
             year: Some(Year::Numeric),
             month: Some(Month::Long),
             week: Some(Week::WeekOfMonth),
-            day: Some(Numeric::Numeric),
+            day: Some(Day::NumericDayOfMonth),
 
             hour: Some(Numeric::Numeric),
             minute: Some(Numeric::Numeric),
@@ -714,7 +729,7 @@ mod test {
         let bag = Bag {
             year: Some(Year::Numeric),
             month: Some(Month::TwoDigit),
-            day: Some(Numeric::Numeric),
+            day: Some(Day::NumericDayOfMonth),
             ..Default::default()
         };
         assert_eq!(

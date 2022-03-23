@@ -7,7 +7,7 @@
                 "components": {
                     "year": "numeric",
                     "month": "short",
-                    "day": "numeric",
+                    "day": "numeric-day-of-month",
 
                     "weekday": "short",
                     "hour": "numeric",
@@ -30,7 +30,7 @@
                 "components": {
                     "year": "numeric",
                     "month": "long",
-                    "day": "numeric",
+                    "day": "numeric-day-of-month",
 
                     "weekday": "long",
                     "hour": "numeric",

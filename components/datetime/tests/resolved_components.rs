@@ -28,7 +28,7 @@ fn test_length_date() {
         &components::Bag {
             year: Some(components::Year::Numeric),
             month: Some(components::Month::Short),
-            day: Some(components::Numeric::Numeric),
+            day: Some(components::Day::NumericDayOfMonth),
             ..Default::default()
         },
     );
@@ -83,7 +83,7 @@ fn test_components_bag() {
             era: Some(components::Text::Short),
             year: Some(components::Year::Numeric),
             month: Some(components::Month::Numeric),
-            day: Some(components::Numeric::TwoDigit),
+            day: Some(components::Day::TwoDigitDayOfMonth),
             weekday: Some(components::Text::Long),
             hour: Some(components::Numeric::Numeric),
             minute: Some(components::Numeric::TwoDigit),
@@ -95,7 +95,7 @@ fn test_components_bag() {
             era: Some(components::Text::Short),
             year: Some(components::Year::Numeric),
             month: Some(components::Month::Short),
-            day: Some(components::Numeric::TwoDigit),
+            day: Some(components::Day::TwoDigitDayOfMonth),
             weekday: Some(components::Text::Long),
             hour: Some(components::Numeric::Numeric),
             minute: Some(components::Numeric::TwoDigit),

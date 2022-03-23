@@ -75,7 +75,7 @@ mod test {
         let components = components::Bag {
             year: Some(components::Year::Numeric),
             month: Some(components::Month::Long),
-            day: Some(components::Numeric::Numeric),
+            day: Some(components::Day::NumericDayOfMonth),
 
             hour: Some(components::Numeric::Numeric),
             minute: Some(components::Numeric::Numeric),
@@ -134,7 +134,7 @@ mod test {
         let components = components::Bag {
             year: Some(components::Year::Numeric),
             month: Some(components::Month::Long),
-            day: Some(components::Numeric::Numeric),
+            day: Some(components::Day::NumericDayOfMonth),
             // This will be appended.
             time_zone_name: Some(components::TimeZoneName::LongSpecific),
             ..Default::default()
