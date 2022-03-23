@@ -31,12 +31,13 @@ macro_rules! tuple_ule {
                     return Err(ZeroVecError::length::<Self>(bytes.len()));
                 }
                 for chunk in bytes.chunks(ule_bytes) {
-                    let mut start: usize = 0;
+                    let mut i: usize = 0;
                     $(
+                        let j = i;
+                        i += mem::size_of::<$t>();
                         <$t>::validate_byte_slice(
-                            &chunk[start..(start+mem::size_of::<$t>())]
+                            &chunk[j..i]
                         )?;
-                        start += mem::size_of::<$t>();
                     )+
                 }
                 Ok(())
