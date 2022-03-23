@@ -61,59 +61,47 @@ macro_rules! tuple_ule {
             }
         }
 
-        impl<$($t: PartialEq + ULE),+> PartialEq for $name<$($t),+> {
-            fn eq(&self, other: &Self) -> bool {
-                ($(self.$i),+) == ($(other.$i),+)
+        impl<$($t: fmt::Debug + ULE),+> fmt::Debug for $name<$($t),+> {
+            fn fmt(&self, f: &mut fmt::Formatter<'_>) -> Result<(), fmt::Error> {
+                ($(self.$i),+).fmt(f)
             }
         }
+
+        // We need manual impls since `#[derive()]` is disallowed on packed types
+        impl<$($t: PartialEq + ULE),+> PartialEq for $name<$($t),+> {
+            fn eq(&self, other: &Self) -> bool {
+                ($(self.$i),+).eq(&($(other.$i),+))
+            }
+        }
+
+        impl<$($t: Eq + ULE),+> Eq for $name<$($t),+> {}
+
+        impl<$($t: PartialOrd + ULE),+> PartialOrd for $name<$($t),+> {
+            fn partial_cmp(&self, other: &Self) -> Option<core::cmp::Ordering> {
+                ($(self.$i),+).partial_cmp(&($(other.$i),+))
+            }
+        }
+
+        impl<$($t: Ord + ULE),+> Ord for $name<$($t),+> {
+            fn cmp(&self, other: &Self) -> core::cmp::Ordering {
+                ($(self.$i),+).cmp(&($(other.$i),+))
+            }
+        }
+
+        impl<$($t: ULE),+> Clone for $name<$($t),+> {
+            fn clone(&self) -> Self {
+                // copy to the stack to avoid hitting a future incompat error
+                // https://github.com/rust-lang/rust/issues/82523#issuecomment-947900712
+                let stack = ($(self.$i),+);
+                PairULE($(stack.$i),+)
+            }
+        }
+
+        impl<$($t: Copy + ULE),+> Copy for $name<$($t),+> {}
     };
 }
 
 tuple_ule!(PairULE, [ A 0, B 1 ]);
-
-impl<A: fmt::Debug + ULE, B: fmt::Debug + ULE> fmt::Debug for PairULE<A, B> {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> Result<(), fmt::Error> {
-        let a = self.0;
-        let b = self.1;
-        (a, b).fmt(f)
-    }
-}
-
-// We need manual impls since `#[derive()]` is disallowed on packed types
-
-/*
-impl<A: PartialEq + ULE, B: PartialEq + ULE> PartialEq for PairULE<A, B> {
-    fn eq(&self, other: &Self) -> bool {
-        (self.0, self.1) == (other.0, other.1)
-    }
-}
-*/
-
-impl<A: Eq + ULE, B: Eq + ULE> Eq for PairULE<A, B> {}
-
-impl<A: PartialOrd + ULE, B: PartialOrd + ULE> PartialOrd for PairULE<A, B> {
-    fn partial_cmp(&self, other: &Self) -> Option<core::cmp::Ordering> {
-        (self.0, self.1).partial_cmp(&(other.0, other.1))
-    }
-}
-
-impl<A: Ord + ULE, B: Ord + ULE> Ord for PairULE<A, B> {
-    fn cmp(&self, other: &Self) -> core::cmp::Ordering {
-        (self.0, self.1).cmp(&(other.0, other.1))
-    }
-}
-
-impl<A: ULE, B: ULE> Clone for PairULE<A, B> {
-    fn clone(&self) -> Self {
-        // copy to the stack to avoid hitting a future incompat error
-        // https://github.com/rust-lang/rust/issues/82523#issuecomment-947900712
-        let zero = self.0;
-        let one = self.1;
-        PairULE(zero, one)
-    }
-}
-
-impl<A: ULE, B: ULE> Copy for PairULE<A, B> {}
 
 #[test]
 fn test_pairule_validate() {
