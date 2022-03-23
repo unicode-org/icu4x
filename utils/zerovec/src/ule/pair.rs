@@ -6,52 +6,70 @@ use super::*;
 use core::fmt;
 use core::mem;
 
-/// We do not have guarantees for the layouts of tuples, so we must define a custom
-/// ULE type for pairs. This could potentially be generalized for larger tuples if necessary
-#[repr(packed)]
-pub struct PairULE<A, B>(pub A, pub B);
+macro_rules! tuple_ule {
+    ($name:ident, [ $($t:ident $i:tt),+ ]) => {
+        /// We do not have guarantees for the layouts of tuples, so we must define a custom
+        /// ULE type for pairs. This could potentially be generalized for larger tuples if necessary
+        #[repr(packed)]
+        pub struct $name<$($t),+>($(pub $t),+);
 
-// Safety (based on the safety checklist on the ULE trait):
-//  1. PairULE does not include any uninitialized or padding bytes.
-//     (achieved by `#[repr(packed)]` on a struct containing only ULE fields)
-//  2. PairULE is aligned to 1 byte.
-//     (achieved by `#[repr(packed)]` on a struct containing only ULE fields)
-//  3. The impl of validate_byte_slice() returns an error if any byte is not valid.
-//  4. The impl of validate_byte_slice() returns an error if there are extra bytes.
-//  5. The other ULE methods use the default impl.
-//  6. PairULE byte equality is semantic equality by relying on the ULE equality
-//     invariant on the subfields
-unsafe impl<A: ULE, B: ULE> ULE for PairULE<A, B> {
-    fn validate_byte_slice(bytes: &[u8]) -> Result<(), ZeroVecError> {
-        let a_len = mem::size_of::<A>();
-        let b_len = mem::size_of::<B>();
-        if bytes.len() % (a_len + b_len) != 0 {
-            return Err(ZeroVecError::length::<Self>(bytes.len()));
+        // Safety (based on the safety checklist on the ULE trait):
+        //  1. TupleULE does not include any uninitialized or padding bytes.
+        //     (achieved by `#[repr(packed)]` on a struct containing only ULE fields)
+        //  2. TupleULE is aligned to 1 byte.
+        //     (achieved by `#[repr(packed)]` on a struct containing only ULE fields)
+        //  3. The impl of validate_byte_slice() returns an error if any byte is not valid.
+        //  4. The impl of validate_byte_slice() returns an error if there are extra bytes.
+        //  5. The other ULE methods use the default impl.
+        //  6. TupleULE byte equality is semantic equality by relying on the ULE equality
+        //     invariant on the subfields
+        unsafe impl<$($t: ULE),+> ULE for $name<$($t),+> {
+            fn validate_byte_slice(bytes: &[u8]) -> Result<(), ZeroVecError> {
+                // expands to: 0size + mem::size_of::<A>() + mem::size_of::<B>();
+                let ule_bytes: usize = 0usize $(+ mem::size_of::<$t>())+;
+                if bytes.len() % ule_bytes != 0 {
+                    return Err(ZeroVecError::length::<Self>(bytes.len()));
+                }
+                for chunk in bytes.chunks(ule_bytes) {
+                    let mut start: usize = 0;
+                    $(
+                        <$t>::validate_byte_slice(
+                            &chunk[start..(start+mem::size_of::<$t>())]
+                        )?;
+                        start += mem::size_of::<$t>();
+                    )+
+                }
+                Ok(())
+            }
         }
-        for chunk in bytes.chunks(a_len + b_len) {
-            A::validate_byte_slice(&chunk[..a_len])?;
-            B::validate_byte_slice(&chunk[a_len..])?;
+
+        impl<$($t: AsULE),+> AsULE for ($($t),+) {
+            type ULE = $name<$(<$t>::ULE),+>;
+
+            #[inline]
+            fn to_unaligned(self) -> Self::ULE {
+                PairULE($(
+                    self.$i.to_unaligned()
+                ),+)
+            }
+
+            #[inline]
+            fn from_unaligned(unaligned: Self::ULE) -> Self {
+                ($(
+                    <$t>::from_unaligned(unaligned.$i)
+                ),+)
+            }
         }
-        Ok(())
-    }
+
+        impl<$($t: PartialEq + ULE),+> PartialEq for $name<$($t),+> {
+            fn eq(&self, other: &Self) -> bool {
+                ($(self.$i),+) == ($(other.$i),+)
+            }
+        }
+    };
 }
 
-impl<A: AsULE, B: AsULE> AsULE for (A, B) {
-    type ULE = PairULE<A::ULE, B::ULE>;
-
-    #[inline]
-    fn to_unaligned(self) -> Self::ULE {
-        PairULE(self.0.to_unaligned(), self.1.to_unaligned())
-    }
-
-    #[inline]
-    fn from_unaligned(unaligned: Self::ULE) -> Self {
-        (
-            A::from_unaligned(unaligned.0),
-            B::from_unaligned(unaligned.1),
-        )
-    }
-}
+tuple_ule!(PairULE, [ A 0, B 1 ]);
 
 impl<A: fmt::Debug + ULE, B: fmt::Debug + ULE> fmt::Debug for PairULE<A, B> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> Result<(), fmt::Error> {
@@ -63,11 +81,13 @@ impl<A: fmt::Debug + ULE, B: fmt::Debug + ULE> fmt::Debug for PairULE<A, B> {
 
 // We need manual impls since `#[derive()]` is disallowed on packed types
 
+/*
 impl<A: PartialEq + ULE, B: PartialEq + ULE> PartialEq for PairULE<A, B> {
     fn eq(&self, other: &Self) -> bool {
         (self.0, self.1) == (other.0, other.1)
     }
 }
+*/
 
 impl<A: Eq + ULE, B: Eq + ULE> Eq for PairULE<A, B> {}
 
