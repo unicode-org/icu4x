@@ -177,6 +177,17 @@ impl Keywords {
             None
         }
     }
+
+    pub(crate) fn for_each_subtag_str<E, F>(&self, f: &mut F) -> Result<(), E>
+    where
+        F: FnMut(&str) -> Result<(), E>,
+    {
+        for (k, v) in self.iter() {
+            f(k.as_str())?;
+            v.for_each_subtag_str(f)?;
+        }
+        Ok(())
+    }
 }
 
 impl_writeable_for_key_value!(Keywords, "ca", "islamic-civil", "aa", "aa");

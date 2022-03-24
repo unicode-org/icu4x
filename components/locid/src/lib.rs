@@ -67,7 +67,6 @@ extern crate alloc;
 #[macro_use]
 mod helpers;
 
-mod cmp;
 pub mod extensions;
 mod langid;
 mod locale;

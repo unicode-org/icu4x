@@ -177,7 +177,41 @@ impl LanguageIdentifier {
     /// }
     /// ```
     pub fn cmp_bytes(&self, other: &[u8]) -> Ordering {
-        crate::cmp::langid::cmp(self, other)
+        let mut other_iter = other.split(|b| *b == b'-');
+        let r = self.for_each_subtag_str(&mut |subtag| {
+            if let Some(other) = other_iter.next() {
+                match subtag.as_bytes().cmp(other) {
+                    Ordering::Equal => Ok(()),
+                    not_equal => Err(not_equal),
+                }
+            } else {
+                Err(Ordering::Greater)
+            }
+        });
+        if let Err(o) = r {
+            return o;
+        }
+        if other_iter.next().is_some() {
+            return Ordering::Less;
+        }
+        Ordering::Equal
+    }
+
+    pub(crate) fn for_each_subtag_str<E, F>(&self, f: &mut F) -> Result<(), E>
+    where
+        F: FnMut(&str) -> Result<(), E>,
+    {
+        f(self.language.as_str())?;
+        if let Some(ref script) = self.script {
+            f(script.as_str())?;
+        }
+        if let Some(ref region) = self.region {
+            f(region.as_str())?;
+        }
+        for variant in self.variants.iter() {
+            f(variant.as_str())?;
+        }
+        Ok(())
     }
 }
 
@@ -207,44 +241,7 @@ impl FromStr for LanguageIdentifier {
     }
 }
 
-impl core::fmt::Display for LanguageIdentifier {
-    fn fmt(&self, f: &mut core::fmt::Formatter) -> core::fmt::Result {
-        writeable::Writeable::write_to(self, f)
-    }
-}
-
-impl writeable::Writeable for LanguageIdentifier {
-    fn write_to<W: core::fmt::Write + ?Sized>(&self, sink: &mut W) -> core::fmt::Result {
-        writeable::Writeable::write_to(&self.language, sink)?;
-        if let Some(ref script) = self.script {
-            sink.write_char('-')?;
-            writeable::Writeable::write_to(script, sink)?;
-        }
-        if let Some(ref region) = self.region {
-            sink.write_char('-')?;
-            writeable::Writeable::write_to(region, sink)?;
-        }
-        if !self.variants.is_empty() {
-            sink.write_char('-')?;
-            writeable::Writeable::write_to(&self.variants, sink)?;
-        }
-        Ok(())
-    }
-
-    fn write_len(&self) -> writeable::LengthHint {
-        let mut result = writeable::Writeable::write_len(&self.language);
-        if let Some(ref script) = self.script {
-            result += writeable::Writeable::write_len(script) + 1;
-        }
-        if let Some(ref region) = self.region {
-            result += writeable::Writeable::write_len(region) + 1;
-        }
-        if !self.variants.is_empty() {
-            result += writeable::Writeable::write_len(&self.variants) + 1;
-        }
-        result
-    }
-}
+impl_writeable_for_each_subtag_str_no_test!(LanguageIdentifier);
 
 #[test]
 fn test_writeable() {

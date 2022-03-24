@@ -2,6 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+//! Documentation on implementing custom VarULE types.
+//!
 //! This module contains documentation for defining custom VarULE types,
 //! especially those using complex custom dynamically sized types.
 //!

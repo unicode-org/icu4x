@@ -12,14 +12,14 @@ use icu_locid::extensions::Extensions;
 use icu_locid::{subtags, LanguageIdentifier, Locale, ParserError};
 use serde::Deserialize;
 
-#[derive(Deserialize, Clone)]
+#[derive(Debug, Deserialize, Clone)]
 pub struct LocaleIdentifier {
     #[serde(rename = "type")]
     pub field_type: String,
     pub identifier: String,
 }
 
-#[derive(Deserialize, Clone)]
+#[derive(Debug, Deserialize, Clone)]
 pub struct LocaleExtensionUnicode {
     #[serde(default)]
     keywords: HashMap<String, Option<String>>,
@@ -27,14 +27,14 @@ pub struct LocaleExtensionUnicode {
     attributes: Vec<String>,
 }
 
-#[derive(Deserialize, Clone)]
+#[derive(Debug, Deserialize, Clone)]
 pub struct LocaleExtensionTransform {
     tlang: Option<String>,
     #[serde(default)]
     tfields: HashMap<String, Option<String>>,
 }
 
-#[derive(Deserialize, Clone)]
+#[derive(Debug, Deserialize, Clone)]
 pub struct LocaleExtensions {
     unicode: Option<LocaleExtensionUnicode>,
     transform: Option<LocaleExtensionTransform>,
@@ -109,7 +109,7 @@ impl TryFrom<LocaleExtensions> for Extensions {
     }
 }
 
-#[derive(Deserialize, Clone)]
+#[derive(Debug, Deserialize, Clone)]
 pub struct LocaleSubtags {
     #[serde(rename = "type")]
     pub field_type: String,
@@ -121,13 +121,13 @@ pub struct LocaleSubtags {
     pub extensions: Option<LocaleExtensions>,
 }
 
-#[derive(Deserialize, Clone)]
+#[derive(Debug, Deserialize, Clone)]
 pub struct LocaleError {
     pub error: String,
     pub text: String,
 }
 
-#[derive(Deserialize, Clone)]
+#[derive(Debug, Deserialize, Clone)]
 #[serde(untagged)]
 #[allow(clippy::large_enum_variant)] // test code
 pub enum LocaleInfo {
@@ -256,7 +256,7 @@ impl From<LocaleError> for ParserError {
     }
 }
 
-#[derive(Deserialize)]
+#[derive(Debug, Deserialize)]
 pub struct LocaleTest {
     pub input: LocaleInfo,
     pub output: LocaleInfo,

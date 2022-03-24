@@ -6,6 +6,7 @@ use crate::parser::{get_subtag_iterator, parse_locale, ParserError};
 use crate::{extensions, subtags, LanguageIdentifier};
 use alloc::string::String;
 use alloc::string::ToString;
+use core::cmp::Ordering;
 use core::str::FromStr;
 
 /// A core struct representing a [`Unicode Locale Identifier`].
@@ -151,6 +152,68 @@ impl Locale {
     ) -> Option<&extensions::unicode::Value> {
         self.extensions.unicode.keywords.get(key)
     }
+
+    /// Compare this `Locale` with a BCP-47 string.
+    ///
+    /// The return value is equivalent to what would happen if you first converted this
+    /// `Locale` to a BCP-47 string and then performed a byte comparison.
+    ///
+    /// This function is case-sensitive and results in a *total order*, so it is appropriate for
+    /// binary search. The only argument producing [`Ordering::Equal`] is `self.to_string()`.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::locid::Locale;
+    /// use std::cmp::Ordering;
+    ///
+    /// let bcp47_strings: &[&[u8]] = &[
+    ///     b"pl-Latn-PL",
+    ///     b"und",
+    ///     b"und-fonipa",
+    ///     b"und-t-m0-true",
+    ///     b"und-u-ca-hebrew",
+    ///     b"und-u-ca-japanese",
+    ///     b"zh",
+    /// ];
+    ///
+    /// for ab in bcp47_strings.windows(2) {
+    ///     let a = ab[0];
+    ///     let b = ab[1];
+    ///     assert!(a.cmp(b) == Ordering::Less);
+    ///     let a_langid = Locale::from_bytes(a).unwrap();
+    ///     assert!(a_langid.cmp_bytes(b) == Ordering::Less);
+    /// }
+    /// ```
+    pub fn cmp_bytes(&self, other: &[u8]) -> Ordering {
+        let mut other_iter = other.split(|b| *b == b'-');
+        let r = self.for_each_subtag_str(&mut |subtag| {
+            if let Some(other) = other_iter.next() {
+                match subtag.as_bytes().cmp(other) {
+                    Ordering::Equal => Ok(()),
+                    not_equal => Err(not_equal),
+                }
+            } else {
+                Err(Ordering::Greater)
+            }
+        });
+        if let Err(o) = r {
+            return o;
+        }
+        if other_iter.next().is_some() {
+            return Ordering::Less;
+        }
+        Ordering::Equal
+    }
+
+    pub(crate) fn for_each_subtag_str<E, F>(&self, f: &mut F) -> Result<(), E>
+    where
+        F: FnMut(&str) -> Result<(), E>,
+    {
+        self.id.for_each_subtag_str(f)?;
+        self.extensions.for_each_subtag_str(f)?;
+        Ok(())
+    }
 }
 
 impl FromStr for Locale {
@@ -194,25 +257,7 @@ impl core::fmt::Debug for Locale {
     }
 }
 
-impl core::fmt::Display for Locale {
-    fn fmt(&self, f: &mut core::fmt::Formatter) -> core::fmt::Result {
-        writeable::Writeable::write_to(self, f)
-    }
-}
-
-impl writeable::Writeable for Locale {
-    fn write_to<W: core::fmt::Write + ?Sized>(&self, sink: &mut W) -> core::fmt::Result {
-        writeable::Writeable::write_to(&self.id, sink)?;
-        writeable::Writeable::write_to(&self.extensions, sink)?;
-        Ok(())
-    }
-
-    fn write_len(&self) -> writeable::LengthHint {
-        let mut result = writeable::Writeable::write_len(&self.id);
-        result += writeable::Writeable::write_len(&self.extensions);
-        result
-    }
-}
+impl_writeable_for_each_subtag_str_no_test!(Locale);
 
 #[test]
 fn test_writeable() {
@@ -241,6 +286,7 @@ fn test_writeable() {
         Locale::from_str("en-001-x-foo-bar").unwrap(),
         "en-001-x-foo-bar",
     );
+    assert_writeable_eq!(Locale::from_str("und-t-m0-true").unwrap(), "und-t-m0-true",);
 }
 
 impl PartialEq<&str> for Locale {
