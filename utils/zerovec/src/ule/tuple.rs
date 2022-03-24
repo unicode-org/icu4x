@@ -4,7 +4,10 @@
 
 //! ULE impls for tuples.
 //!
-//! Rust does not guarantee the layout of tuples, so we define our own tuple ULE types.
+//! Rust does not guarantee the layout of tuples, so ZeroVec defines its own tuple ULE types.
+//!
+//! Impls are defined for tuples of up to 6 elements. For longer tuples, use a custom struct
+//! with [`#[make_ule]`](crate::make_ule).
 //!
 //! # Examples
 //!
@@ -127,6 +130,8 @@ macro_rules! tuple_ule {
 tuple_ule!(Tuple2ULE, "2", [ A 0, B 1 ]);
 tuple_ule!(Tuple3ULE, "3", [ A 0, B 1, C 2 ]);
 tuple_ule!(Tuple4ULE, "4", [ A 0, B 1, C 2, D 3 ]);
+tuple_ule!(Tuple5ULE, "5", [ A 0, B 1, C 2, D 3, E 4 ]);
+tuple_ule!(Tuple6ULE, "6", [ A 0, B 1, C 2, D 3, E 4, F 5 ]);
 
 #[test]
 fn test_pairule_validate() {
