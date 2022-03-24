@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1648144651900,
+  "lastUpdate": 1648155611318,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -30071,6 +30071,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 18617,
             "range": "± 1028",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ghimire.manoj92@gmail.com",
+            "name": "Manoj Ghimire",
+            "username": "ozghimire"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "9d86b99823f5a6441e791bd9b8a098a353666c40",
+          "message": "Add clippy lints for panics (#1650)\n\nSee #1363",
+          "timestamp": "2022-03-24T13:50:59-07:00",
+          "tree_id": "2524a838ad4083ffe11c20b5e1d942efae583c63",
+          "url": "https://github.com/unicode-org/icu4x/commit/9d86b99823f5a6441e791bd9b8a098a353666c40"
+        },
+        "date": 1648155596754,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 948,
+            "range": "± 7",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 5440,
+            "range": "± 19",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 15973,
+            "range": "± 27",
             "unit": "ns/iter"
           }
         ]
