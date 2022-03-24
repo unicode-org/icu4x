@@ -145,7 +145,10 @@ mod test {
         // ZeroVec should deserialize from JSON to either Vec or ZeroVec
         let vec_new: Vec<u32> =
             serde_json::from_str(&json_str).expect("deserialize from buffer to Vec");
-        assert_eq!(zerovec_orig, ZeroVec::<u32>::from_slice_or_alloc(vec_new.as_slice()));
+        assert_eq!(
+            zerovec_orig,
+            ZeroVec::<u32>::from_slice_or_alloc(vec_new.as_slice())
+        );
         let zerovec_new: ZeroVec<u32> =
             serde_json::from_str(&json_str).expect("deserialize from buffer to ZeroVec");
         assert_eq!(zerovec_orig, zerovec_new);

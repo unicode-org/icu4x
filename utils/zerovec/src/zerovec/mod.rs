@@ -551,7 +551,7 @@ where
     /// let bytes: &[u8] = &[0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x01];
     /// let nums: &[u16] = &[211, 281, 421, 461];
     ///
-    /// let zerovec = ZeroVec::from_slice_or_alloc_or_alloc(nums);
+    /// let zerovec = ZeroVec::from_slice_or_alloc(nums);
     ///
     /// // Note: zerovec could be either borrowed or owned.
     /// assert_eq!(bytes, zerovec.as_bytes());

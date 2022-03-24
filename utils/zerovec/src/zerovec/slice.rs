@@ -15,6 +15,21 @@ use core::ops::Range;
 /// This type can be used inside [`VarZeroVec<T>`](crate::VarZeroVec) and [`ZeroMap`](crate::ZeroMap):
 /// This essentially allows for the construction of zero-copy types isomorphic to `Vec<Vec<T>>` by instead
 /// using `VarZeroVec<ZeroSlice<T>>`. See the [`VarZeroVec`](crate::VarZeroVec) docs for an example.
+///
+/// # Examples
+///
+/// Const-construct a ZeroSlice of u16:
+///
+/// ```
+/// use zerovec::ZeroSlice;
+/// use zerovec::ule::AsULE;
+///
+/// const DATA: &ZeroSlice<u16> = ZeroSlice::<u16>::from_ule_slice_const(
+///     &<u16 as AsULE>::ULE::from_array([211, 281, 421, 32973])
+/// );
+///
+/// assert_eq!(DATA.get(1), Some(281));
+/// ```
 #[repr(transparent)]
 pub struct ZeroSlice<T: AsULE>([T::ULE]);
 

@@ -64,6 +64,17 @@ macro_rules! impl_byte_slice_size {
             pub fn as_unsigned_int(&self) -> $unsigned {
                 <$unsigned as $crate::ule::AsULE>::from_unaligned(*self)
             }
+
+            /// Convert an array of native-endian aligned integers to an array of RawBytesULE.
+            pub const fn from_array<const N: usize>(arr: [$unsigned; N]) -> [Self; N] {
+                let mut result = [RawBytesULE([0; $size]); N];
+                let mut i = 0;
+                while i < N {
+                    result[i].0 = arr[i].to_le_bytes();
+                    i += 1;
+                }
+                result
+            }
         }
 
         impl ZeroSlice<$unsigned> {
@@ -74,7 +85,7 @@ macro_rules! impl_byte_slice_size {
             /// this method is needed in a non-const context, check out [`ZeroSlice::parse_byte_slice()`]
             /// instead.
             ///
-            /// See [ZeroSlice::cast()] for an example.
+            /// See [`ZeroSlice::cast()`] for an example.
             pub const fn try_from_bytes(bytes: &[u8]) -> Result<&Self, ZeroVecError> {
                 let len = bytes.len();
                 if len % $size == 0 {
@@ -97,6 +108,16 @@ macro_rules! impl_byte_slice_size {
                         len,
                     })
                 }
+            }
+
+            /// This function can be used for constructing ZeroVecs in a const context, avoiding
+            /// parsing checks.
+            ///
+            /// See [`ZeroSlice`] for an example.
+            pub const fn from_ule_slice_const(slice: &[RawBytesULE<$size>]) -> &Self {
+                // This is safe because ZeroSlice is transparent over [T::ULE]
+                // so &ZeroSlice<T> can be safely cast from &[T::ULE]
+                unsafe { &*(slice as *const _ as *const Self) }
             }
         }
     };
