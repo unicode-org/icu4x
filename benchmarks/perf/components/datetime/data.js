@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1648156142960,
+  "lastUpdate": 1648156737136,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -23741,6 +23741,48 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 157127,
             "range": "± 257",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "2180717961d049fb638b008ce5bb051e9a38fb72",
+          "message": "Split off non-core functionality from icu_provider into icu_provider_adapters (#1730)",
+          "timestamp": "2022-03-24T14:10:14-07:00",
+          "tree_id": "435be6aecf50b3a1a6e6c5e2e5890efe34b78781",
+          "url": "https://github.com/unicode-org/icu4x/commit/2180717961d049fb638b008ce5bb051e9a38fb72"
+        },
+        "date": 1648156719885,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 87365,
+            "range": "± 4038",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 968078,
+            "range": "± 33597",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 211570,
+            "range": "± 7591",
             "unit": "ns/iter"
           }
         ]
