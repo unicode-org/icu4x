@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1648140949319,
+  "lastUpdate": 1648144478640,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -21389,6 +21389,36 @@ window.BENCHMARK_DATA = {
             "name": "fixed_decimal/overview",
             "value": 121743,
             "range": "± 3747",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "5bd67c85323246891bc7aaf4b983136407929e52",
+          "message": "Export registry in datagen crate (#1714)",
+          "timestamp": "2022-03-24T12:46:22-05:00",
+          "tree_id": "c1b4eb46573e09ba205f53285c4ff08271786655",
+          "url": "https://github.com/unicode-org/icu4x/commit/5bd67c85323246891bc7aaf4b983136407929e52"
+        },
+        "date": 1648144462667,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 108494,
+            "range": "± 625",
             "unit": "ns/iter"
           }
         ]
