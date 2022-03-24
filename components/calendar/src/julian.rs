@@ -154,6 +154,7 @@ impl Julian {
     }
 
     pub(crate) fn fixed_from_julian_integers(year: i32, month: i32, day: i32) -> i32 {
+        #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
         Self::fixed_from_julian(ArithmeticDate {
             year,
             month: month.try_into().unwrap(),

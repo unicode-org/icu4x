@@ -3,16 +3,21 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 // If no features or all features are present, define empty macros
-#[cfg(any(
-    not(any(feature = "benchmark_memory", feature = "rust_global_allocator")),
-    all(feature = "benchmark_memory", feature = "rust_global_allocator"),
+#![cfg_attr(
+    not(test),
     deny(
         clippy::indexing_slicing,
         clippy::unwrap_used,
         clippy::expect_used,
         clippy::panic
     )
+)]
+
+#[cfg(any(
+    not(any(feature = "benchmark_memory", feature = "rust_global_allocator")),
+    all(feature = "benchmark_memory", feature = "rust_global_allocator"),
 ))]
+
 mod default {
     #[macro_export]
     macro_rules! static_setup {

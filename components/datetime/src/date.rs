@@ -232,6 +232,7 @@ impl<'data, T: DateTimeInput> LocalizedDateTimeInput<T> for DateTimeInputWithLoc
     }
 
     fn week_of_month(&self) -> Result<WeekOfMonth, DateTimeError> {
+        #[allow(clippy::expect_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
         week_of_month(
             self.data,
             self.calendar
@@ -272,6 +273,7 @@ impl<'data, T: ZonedDateTimeInput> LocalizedDateTimeInput<T>
     }
 
     fn week_of_month(&self) -> Result<WeekOfMonth, DateTimeError> {
+        #[allow(clippy::expect_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
         week_of_month(
             self.data,
             self.calendar

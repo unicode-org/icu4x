@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 //! Proc macros for generating `ULE`, `VarULE` impls and types for the `zerovec` crate
+#![allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
 
 use proc_macro::TokenStream;
 use syn::{parse_macro_input, AttributeArgs, DeriveInput};

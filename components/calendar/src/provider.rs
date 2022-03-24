@@ -6,6 +6,8 @@
 //!
 //! Read more about data providers: [`icu_provider`]
 
+#![allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
+
 use core::str::FromStr;
 use icu_provider::{yoke, zerofrom};
 use tinystr::TinyStr16;

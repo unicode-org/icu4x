@@ -140,6 +140,7 @@ impl Coptic {
     }
 
     fn fixed_from_coptic_integers(year: i32, month: i32, day: i32) -> i32 {
+        #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
         Self::fixed_from_coptic(ArithmeticDate {
             year,
             month: month.try_into().unwrap(),
@@ -155,6 +156,7 @@ impl Coptic {
         let month = (date - Self::fixed_from_coptic_integers(year, 1, 1)) / 30 + 1;
         let day = date + 1 - Self::fixed_from_coptic_integers(year, month, 1);
 
+        #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
         *Date::new_coptic_date_from_integers(year, month as u8, day as u8)
             .unwrap()
             .inner()
