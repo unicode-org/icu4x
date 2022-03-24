@@ -8,7 +8,7 @@ use crate::rules::reference;
 use core::{convert::TryInto, fmt, str::FromStr};
 use icu_provider::{yoke, zerofrom};
 use zerovec::{
-    ule::{AsULE, tuple::Tuple2ULE, ZeroVecError, ULE},
+    ule::{tuple::Tuple2ULE, AsULE, ZeroVecError, ULE},
     {VarZeroVec, ZeroVec},
 };
 
