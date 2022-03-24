@@ -68,7 +68,7 @@ fn u32_benches(c: &mut Criterion) {
     });
 
     c.bench_function("zerovec_serde/serialize/u32/zerovec", |b| {
-        b.iter(|| bincode::serialize(&ZeroVec::from_slice(black_box(TEST_SLICE))));
+        b.iter(|| bincode::serialize(&ZeroVec::from_slice_or_alloc(black_box(TEST_SLICE))));
     });
 
     c.bench_function("zerovec_serde/deserialize_sum/u32/zerovec", |b| {
@@ -101,11 +101,12 @@ fn char_benches(c: &mut Criterion) {
     });
 
     c.bench_function("zerovec_serde/serialize/char/zerovec", |b| {
-        b.iter(|| bincode::serialize(&ZeroVec::from_slice(black_box(ORIGINAL_CHARS))));
+        b.iter(|| bincode::serialize(&ZeroVec::from_slice_or_alloc(black_box(ORIGINAL_CHARS))));
     });
 
     c.bench_function("zerovec_serde/deserialize/char/zerovec", |b| {
-        let buffer = bincode::serialize(&ZeroVec::from_slice(black_box(ORIGINAL_CHARS))).unwrap();
+        let buffer =
+            bincode::serialize(&ZeroVec::from_slice_or_alloc(black_box(ORIGINAL_CHARS))).unwrap();
         b.iter(|| bincode::deserialize::<ZeroVec<char>>(&buffer));
     });
 }
@@ -114,7 +115,7 @@ fn char_benches(c: &mut Criterion) {
 fn stress_benches(c: &mut Criterion) {
     let number_vec = random_numbers(100);
     let bincode_vec = bincode::serialize(&number_vec).unwrap();
-    let zerovec_aligned = ZeroVec::from_slice(number_vec.as_slice());
+    let zerovec_aligned = ZeroVec::from_slice_or_alloc(number_vec.as_slice());
     let bincode_zerovec = bincode::serialize(&zerovec_aligned).unwrap();
 
     // *** Deserialize vec of 100 `u32` ***

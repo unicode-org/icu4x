@@ -161,7 +161,7 @@ where
     ///
     /// assert_eq!(
     ///     zerovec.get_subslice(1..3),
-    ///     Some(&*ZeroVec::from_slice(&[0x0119, 0x01A5]))
+    ///     Some(&*ZeroVec::from_slice_or_alloc(&[0x0119, 0x01A5]))
     /// );
     /// assert_eq!(zerovec.get_subslice(3..5), None);
     /// ```
