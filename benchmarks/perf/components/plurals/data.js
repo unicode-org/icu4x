@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1648135428275,
+  "lastUpdate": 1648141093653,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -29987,6 +29987,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 19245,
             "range": "± 726",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "d9756b8bf21515807c6ce920db800884ef06e3c5",
+          "message": "Improvements to FixedDecimal f64 APIs (#1718)",
+          "timestamp": "2022-03-24T09:21:52-07:00",
+          "tree_id": "ad428d8abb7d1fe4b2b3f03b8070c673d7395b78",
+          "url": "https://github.com/unicode-org/icu4x/commit/d9756b8bf21515807c6ce920db800884ef06e3c5"
+        },
+        "date": 1648141075260,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 870,
+            "range": "± 27",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 5884,
+            "range": "± 441",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 16922,
+            "range": "± 960",
             "unit": "ns/iter"
           }
         ]
