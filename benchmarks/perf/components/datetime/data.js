@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1648135389964,
+  "lastUpdate": 1648141012659,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -23573,6 +23573,48 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 215705,
             "range": "± 8101",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "d9756b8bf21515807c6ce920db800884ef06e3c5",
+          "message": "Improvements to FixedDecimal f64 APIs (#1718)",
+          "timestamp": "2022-03-24T09:21:52-07:00",
+          "tree_id": "ad428d8abb7d1fe4b2b3f03b8070c673d7395b78",
+          "url": "https://github.com/unicode-org/icu4x/commit/d9756b8bf21515807c6ce920db800884ef06e3c5"
+        },
+        "date": 1648140997709,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 73070,
+            "range": "± 90",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 804348,
+            "range": "± 4209",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 155834,
+            "range": "± 1507",
             "unit": "ns/iter"
           }
         ]
