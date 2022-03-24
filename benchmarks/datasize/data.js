@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1648134976912,
+  "lastUpdate": 1648140641528,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -11483,6 +11483,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/a4c650b3cf434a6a803b7e1e2c8443740a5ae3f7"
         },
         "date": 1648134961486,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4545559,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "d9756b8bf21515807c6ce920db800884ef06e3c5",
+          "message": "Improvements to FixedDecimal f64 APIs (#1718)",
+          "timestamp": "2022-03-24T09:21:52-07:00",
+          "tree_id": "ad428d8abb7d1fe4b2b3f03b8070c673d7395b78",
+          "url": "https://github.com/unicode-org/icu4x/commit/d9756b8bf21515807c6ce920db800884ef06e3c5"
+        },
+        "date": 1648140627677,
         "tool": "ndjson",
         "benches": [
           {
