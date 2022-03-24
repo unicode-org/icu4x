@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1648155488928,
+  "lastUpdate": 1648156115833,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -22529,6 +22529,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 43610141,
             "range": "± 710723",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "96ec92d3991fe087bf412c72d18b81403bad8b55",
+          "message": "Rename ZeroVec::from_slice and add new method for const-constructed ZeroSlice (#1728)",
+          "timestamp": "2022-03-24T14:00:47-07:00",
+          "tree_id": "b2e557a5e2dcdbbe01c2f94d83c940ff14b63fbf",
+          "url": "https://github.com/unicode-org/icu4x/commit/96ec92d3991fe087bf412c72d18b81403bad8b55"
+        },
+        "date": 1648156097719,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 50287854,
+            "range": "± 1058726",
             "unit": "ns/iter"
           }
         ]
