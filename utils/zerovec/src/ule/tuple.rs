@@ -115,6 +115,12 @@ macro_rules! tuple_ule {
         }
 
         impl<$($t: ULE),+> Copy for $name<$($t),+> {}
+
+        impl<'a, $($t: Ord + AsULE + 'static),+> crate::map::ZeroMapKV<'a> for ($($t),+) {
+            type Container = crate::ZeroVec<'a, ($($t),+)>;
+            type GetType = $name<$(<$t>::ULE),+>;
+            type OwnedType = ($($t),+);
+        }
     };
 }
 
