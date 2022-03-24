@@ -1315,6 +1315,7 @@ dependencies = [
  "erased-serde",
  "icu_locid",
  "icu_locid_macros",
+ "icu_provider_adapters",
  "icu_provider_macros",
  "litemap",
  "log",
@@ -1327,6 +1328,16 @@ dependencies = [
  "yoke",
  "zerofrom",
  "zerovec",
+]
+
+[[package]]
+name = "icu_provider_adapters"
+version = "0.5.0"
+dependencies = [
+ "icu_locid",
+ "icu_locid_macros",
+ "icu_provider",
+ "yoke",
 ]
 
 [[package]]

@@ -8,7 +8,7 @@
 /// # Examples
 ///
 /// ```
-/// use icu_provider::fork::by_key::ForkByKeyProvider;
+/// use icu_provider_adapters::fork::by_key::ForkByKeyProvider;
 ///
 /// // Some empty example providers:
 /// #[derive(Default, PartialEq, Debug)]
@@ -19,7 +19,7 @@
 /// struct Provider3;
 ///
 /// // Combine them into one:
-/// let forking1 = icu_provider::make_forking_provider!(
+/// let forking1 = icu_provider_adapters::make_forking_provider!(
 ///     ForkByKeyProvider,
 ///     [
 ///         Provider1::default(),

@@ -5,11 +5,13 @@
 //! Providers that invoke other providers based on the resource key.
 
 #[cfg(feature = "datagen")]
-use crate::datagen::IterableDynProvider;
-use crate::prelude::*;
+use icu_provider::datagen;
+use icu_provider::prelude::*;
 #[cfg(feature = "datagen")]
 use alloc::boxed::Box;
 use alloc::vec::Vec;
+
+use crate::helpers::result_is_err_missing_resource_key;
 
 /// A provider that returns data from one of two child providers based on the key.
 ///
@@ -30,7 +32,7 @@ use alloc::vec::Vec;
 /// use icu_provider::prelude::*;
 /// use icu_provider::hello_world::*;
 /// use icu_locid_macros::langid;
-/// use icu_provider::fork::by_key::ForkByKeyProvider;
+/// use icu_provider_adapters::fork::by_key::ForkByKeyProvider;
 ///
 /// struct DummyBufferProvider;
 /// impl BufferProvider for DummyBufferProvider {
@@ -67,8 +69,8 @@ use alloc::vec::Vec;
 /// use icu_provider::prelude::*;
 /// use icu_provider::hello_world::*;
 /// use icu_locid_macros::{language, langid};
-/// use icu_provider::filter::Filterable;
-/// use icu_provider::fork::by_key::ForkByKeyProvider;
+/// use icu_provider_adapters::filter::Filterable;
+/// use icu_provider_adapters::fork::by_key::ForkByKeyProvider;
 ///
 /// let forking_provider = ForkByKeyProvider(
 ///     HelloWorldProvider::new_with_placeholder_data()
@@ -119,7 +121,7 @@ where
         req: &DataRequest,
     ) -> Result<DataResponse<BufferMarker>, DataError> {
         let result = self.0.load_buffer(key, req);
-        if !DataError::result_is_err_missing_resource_key(&result) {
+        if !result_is_err_missing_resource_key(&result) {
             return result;
         }
         self.1.load_buffer(key, req)
@@ -133,7 +135,7 @@ where
 {
     fn load_any(&self, key: ResourceKey, req: &DataRequest) -> Result<AnyResponse, DataError> {
         let result = self.0.load_any(key, req);
-        if !DataError::result_is_err_missing_resource_key(&result) {
+        if !result_is_err_missing_resource_key(&result) {
             return result;
         }
         self.1.load_any(key, req)
@@ -152,7 +154,7 @@ where
         req: &DataRequest,
     ) -> Result<DataResponse<M>, DataError> {
         let result = self.0.load_payload(key, req);
-        if !DataError::result_is_err_missing_resource_key(&result) {
+        if !result_is_err_missing_resource_key(&result) {
             return result;
         }
         self.1.load_payload(key, req)
@@ -160,18 +162,18 @@ where
 }
 
 #[cfg(feature = "datagen")]
-impl<M, P0, P1> IterableDynProvider<M> for ForkByKeyProvider<P0, P1>
+impl<M, P0, P1> datagen::IterableDynProvider<M> for ForkByKeyProvider<P0, P1>
 where
     M: DataMarker,
-    P0: IterableDynProvider<M>,
-    P1: IterableDynProvider<M>,
+    P0: datagen::IterableDynProvider<M>,
+    P1: datagen::IterableDynProvider<M>,
 {
     fn supported_options_for_key(
         &self,
         key: ResourceKey,
     ) -> Result<Box<dyn Iterator<Item = ResourceOptions> + '_>, DataError> {
         let result = self.0.supported_options_for_key(key);
-        if !DataError::result_is_err_missing_resource_key(&result) {
+        if !result_is_err_missing_resource_key(&result) {
             return result;
         }
         self.1.supported_options_for_key(key)
@@ -195,8 +197,8 @@ where
 /// use icu_provider::prelude::*;
 /// use icu_provider::hello_world::*;
 /// use icu_locid_macros::{language, langid};
-/// use icu_provider::filter::Filterable;
-/// use icu_provider::fork::by_key::MultiForkByKeyProvider;
+/// use icu_provider_adapters::filter::Filterable;
+/// use icu_provider_adapters::fork::by_key::MultiForkByKeyProvider;
 ///
 /// let forking_provider = MultiForkByKeyProvider {
 ///     providers: vec![
@@ -250,7 +252,7 @@ where
     ) -> Result<DataResponse<BufferMarker>, DataError> {
         for provider in self.providers.iter() {
             let result = provider.load_buffer(key, req);
-            if !DataError::result_is_err_missing_resource_key(&result) {
+            if !result_is_err_missing_resource_key(&result) {
                 return result;
             }
         }
@@ -265,7 +267,7 @@ where
     fn load_any(&self, key: ResourceKey, req: &DataRequest) -> Result<AnyResponse, DataError> {
         for provider in self.providers.iter() {
             let result = provider.load_any(key, req);
-            if !DataError::result_is_err_missing_resource_key(&result) {
+            if !result_is_err_missing_resource_key(&result) {
                 return result;
             }
         }
@@ -285,7 +287,7 @@ where
     ) -> Result<DataResponse<M>, DataError> {
         for provider in self.providers.iter() {
             let result = provider.load_payload(key, req);
-            if !DataError::result_is_err_missing_resource_key(&result) {
+            if !result_is_err_missing_resource_key(&result) {
                 return result;
             }
         }
@@ -294,10 +296,10 @@ where
 }
 
 #[cfg(feature = "datagen")]
-impl<M, P> IterableDynProvider<M> for MultiForkByKeyProvider<P>
+impl<M, P> datagen::IterableDynProvider<M> for MultiForkByKeyProvider<P>
 where
     M: DataMarker,
-    P: IterableDynProvider<M>,
+    P: datagen::IterableDynProvider<M>,
 {
     fn supported_options_for_key(
         &self,
@@ -305,7 +307,7 @@ where
     ) -> Result<Box<dyn Iterator<Item = ResourceOptions> + '_>, DataError> {
         for provider in self.providers.iter() {
             let result = provider.supported_options_for_key(key);
-            if !DataError::result_is_err_missing_resource_key(&result) {
+            if !result_is_err_missing_resource_key(&result) {
                 return result;
             }
         }
@@ -314,18 +316,18 @@ where
 }
 
 #[cfg(feature = "datagen")]
-impl<P, MFrom, MTo> crate::datagen::DataConverter<MFrom, MTo> for MultiForkByKeyProvider<P>
+impl<P, MFrom, MTo> datagen::DataConverter<MFrom, MTo> for MultiForkByKeyProvider<P>
 where
-    P: crate::datagen::DataConverter<MFrom, MTo>,
+    P: datagen::DataConverter<MFrom, MTo>,
     MFrom: DataMarker,
     MTo: DataMarker,
 {
     fn convert(
         &self,
-        key: crate::ResourceKey,
+        key: ResourceKey,
         mut from: DataPayload<MFrom>,
-    ) -> Result<DataPayload<MTo>, crate::datagen::ReturnedPayloadError<MFrom>> {
-        use crate::datagen::ReturnedPayloadError;
+    ) -> Result<DataPayload<MTo>, datagen::ReturnedPayloadError<MFrom>> {
+        use datagen::ReturnedPayloadError;
 
         for provider in self.providers.iter() {
             let result = provider.convert(key, from);
@@ -348,19 +350,19 @@ where
 }
 
 #[cfg(feature = "datagen")]
-impl<P0, P1, MFrom, MTo> crate::datagen::DataConverter<MFrom, MTo> for ForkByKeyProvider<P0, P1>
+impl<P0, P1, MFrom, MTo> datagen::DataConverter<MFrom, MTo> for ForkByKeyProvider<P0, P1>
 where
-    P0: crate::datagen::DataConverter<MFrom, MTo>,
-    P1: crate::datagen::DataConverter<MFrom, MTo>,
+    P0: datagen::DataConverter<MFrom, MTo>,
+    P1: datagen::DataConverter<MFrom, MTo>,
     MFrom: DataMarker,
     MTo: DataMarker,
 {
     fn convert(
         &self,
-        key: crate::ResourceKey,
+        key: ResourceKey,
         mut from: DataPayload<MFrom>,
-    ) -> Result<DataPayload<MTo>, crate::datagen::ReturnedPayloadError<MFrom>> {
-        use crate::datagen::ReturnedPayloadError;
+    ) -> Result<DataPayload<MTo>, datagen::ReturnedPayloadError<MFrom>> {
+        use datagen::ReturnedPayloadError;
         let result = self.0.convert(key, from);
         match result {
             Ok(_) => return result,

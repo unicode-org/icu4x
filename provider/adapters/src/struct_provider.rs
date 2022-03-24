@@ -4,7 +4,7 @@
 
 //! Data provider always serving the same struct.
 
-use crate::prelude::*;
+use icu_provider::prelude::*;
 use yoke::trait_hack::YokeTraitHack;
 use yoke::Yokeable;
 use zerofrom::ZeroFrom;
@@ -16,7 +16,7 @@ use zerofrom::ZeroFrom;
 /// ```
 /// use icu_provider::prelude::*;
 /// use icu_provider::hello_world::*;
-/// use icu_provider::struct_provider::AnyPayloadProvider;
+/// use icu_provider_adapters::struct_provider::AnyPayloadProvider;
 /// use std::borrow::Cow;
 ///
 /// const CONST_DATA: HelloWorldV1<'static> = HelloWorldV1 {
