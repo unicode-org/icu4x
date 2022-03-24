@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1648087877184,
+  "lastUpdate": 1648134976912,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -11453,6 +11453,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/eae38373145ad911bc7b063a3753c062fbcbca0d"
         },
         "date": 1648087859112,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4545559,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "a4c650b3cf434a6a803b7e1e2c8443740a5ae3f7",
+          "message": "Treat ZeroMap sort order as an optional invariant (#1727)",
+          "timestamp": "2022-03-24T10:14:11-05:00",
+          "tree_id": "ec0f2bd628c9542509eedeecb9a999487f71fb59",
+          "url": "https://github.com/unicode-org/icu4x/commit/a4c650b3cf434a6a803b7e1e2c8443740a5ae3f7"
+        },
+        "date": 1648134961486,
         "tool": "ndjson",
         "benches": [
           {
