@@ -86,7 +86,10 @@
 //! If it is necessary to store and obtain an arbitrary locale, it is currently recommended to
 //! store a BCP-47 string and parse it when needed.
 //!
-//! However, before doing this, consider the architecture and whether this can be avoided.
+//! Since the string is stored in an unparsed state, it is not safe to `unwrap` the result from
+//! `Locale::from_bytes()`. See [icu4x#831](https://github.com/unicode-org/icu4x/issues/831)
+//! for a discussion on potential data models that could ensure that the locale is valid during
+//! deserialization.
 //!
 //! ```
 //! use icu_locid::Locale;
@@ -109,12 +112,6 @@
 //!
 //! assert_eq!(loc, Ok(langid!("zh-TW").into()));
 //! ```
-//!
-//! Note that since the string is stored in an unparsed state, it is not safe to `unwrap` the
-//! result from `Locale::from_bytes()`. See
-//! [icu4x#831](https://github.com/unicode-org/icu4x/issues/831)
-//! for a discussion on potential data models that could ensure that the locale is valid during
-//! deserialization.
 //!
 //! [`Locale`]: crate::Locale
 //! [`Locale::cmp_bytes()`]: crate::Locale::cmp_bytes()
