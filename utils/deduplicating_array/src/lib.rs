@@ -28,9 +28,10 @@
 //! This implies that singleton integer arrays cannot be used as array elements (they do work in Bincode,
 //! but there's really not much point in using them).
 
+// https://github.com/unicode-org/icu4x/blob/main/docs/process/boilerplate.md#library-annotations
+#![cfg_attr(not(test), no_std)]
 #![cfg_attr(
     not(test),
-    no_std,
     deny(
         clippy::indexing_slicing,
         clippy::unwrap_used,
