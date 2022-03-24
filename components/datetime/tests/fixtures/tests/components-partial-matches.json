@@ -119,5 +119,22 @@
                 "en":  "week 1 of December"
             }
         }
+    },
+    {
+        "description": "Singleton fallback for F (F -> d)",
+        "input": {
+            "locale": "en",
+            "value": "2022-01-09T08:25:07.000",
+            "options": {
+                "components": {
+                    "day": "day-of-week-in-month"
+                }
+            }
+        },
+        "output": {
+            "values": {
+                "en":  "2"
+            }
+        }
     }
 ]

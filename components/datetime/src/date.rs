@@ -113,6 +113,11 @@ pub trait LocalizedDateTimeInput<T: DateTimeInput> {
     /// For example, December 31, 2020 is part of the first week of 2021.
     fn week_of_year(&self) -> Result<WeekOfYear, DateTimeError>;
 
+    /// The day of week in this month.
+    ///
+    /// For example, July 8, 2020 is the 2nd Wednesday of July.
+    fn day_of_week_in_month(&self) -> Result<DayOfWeekInMonth, DateTimeError>;
+
     /// TODO(#487): Implement flexible day periods.
     fn flexible_day_period(&self);
 }
@@ -191,6 +196,13 @@ fn week_of_month<T: DateInput>(
     Ok(WeekOfMonth(u32::from(week)))
 }
 
+fn day_of_week_in_month<T: DateInput>(datetime: &T) -> Result<DayOfWeekInMonth, DateTimeError> {
+    let day_of_month = datetime
+        .day_of_month()
+        .ok_or(DateTimeError::MissingInput("DateTimeInput::day_of_month"))?;
+    Ok(day_of_month.into())
+}
+
 impl<'data, T: DateTimeInput> DateTimeInputWithLocale<'data, T> {
     pub fn new(
         data: &'data T,
@@ -251,6 +263,10 @@ impl<'data, T: DateTimeInput> LocalizedDateTimeInput<T> for DateTimeInputWithLoc
         )
     }
 
+    fn day_of_week_in_month(&self) -> Result<DayOfWeekInMonth, DateTimeError> {
+        day_of_week_in_month(self.data)
+    }
+
     fn flexible_day_period(&self) {
         todo!("#487")
     }
@@ -289,6 +305,10 @@ impl<'data, T: ZonedDateTimeInput> LocalizedDateTimeInput<T>
             self.calendar
                 .expect("calendar must be provided when using week of methods"),
         )
+    }
+
+    fn day_of_week_in_month(&self) -> Result<DayOfWeekInMonth, DateTimeError> {
+        day_of_week_in_month(self.data)
     }
 
     fn flexible_day_period(&self) {

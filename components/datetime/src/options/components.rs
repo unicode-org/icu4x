@@ -203,12 +203,15 @@ impl Bag {
             // F - Day of week in month
             // g - Modified Julian day.
             fields.push(Field {
-                symbol: FieldSymbol::Day(fields::Day::DayOfMonth),
+                symbol: FieldSymbol::Day(match day {
+                    Day::NumericDayOfMonth | Day::TwoDigitDayOfMonth => fields::Day::DayOfMonth,
+                    Day::DayOfWeekInMonth => fields::Day::DayOfWeekInMonth,
+                }),
                 length: match day {
-                    // Day of month (numeric).
-                    // d    1 	  Numeric: minimum digits
-                    // dd   01 	  Numeric: 2 digits, zero pad if needed
-                    Day::NumericDayOfMonth => FieldLength::One,
+                    // d    1 	  Numeric day of month: minimum digits
+                    // dd   01 	  Numeric day of month: 2 digits, zero pad if needed
+                    // F    1  	  Numeric day of week in month: minimum digits
+                    Day::NumericDayOfMonth | Day::DayOfWeekInMonth => FieldLength::One,
                     Day::TwoDigitDayOfMonth => FieldLength::TwoDigit,
                 },
             });
@@ -435,7 +438,8 @@ pub enum Day {
     NumericDayOfMonth,
     /// The two digit value of the day of month, such as the "02" in 1984-07-02.
     TwoDigitDayOfMonth,
-    // TODO(#592): Add 'F'
+    /// The day of week in this month, such as the "2" in 2nd Wednesday of July.
+    DayOfWeekInMonth,
 }
 
 /// Options for displaying a time zone for the `components::`[`Bag`].
