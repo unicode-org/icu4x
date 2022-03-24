@@ -130,6 +130,7 @@ pub mod ffi {
         /// Format the [`ICU4XFixedDecimal`] as a string.
         /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.write_to) for more information.
         pub fn to_string(&self, to: &mut diplomat_runtime::DiplomatWriteable) {
+            #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
             self.0.write_to(to).unwrap();
         }
     }

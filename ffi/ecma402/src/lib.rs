@@ -4,6 +4,15 @@
 
 //! This crate provides an experimental implementation of the `ECMA-402` traits using `ICU4X` library.
 
+#![cfg_attr(
+    not(any(test, feature = "std")),
+    deny(
+        clippy::indexing_slicing,
+        clippy::unwrap_used,
+        clippy::expect_used,
+        clippy::panic
+    )
+)]
 use icu::locid::LanguageIdentifier;
 
 /// Implements ECMA-402 [`Intl.PluralRules`][link].

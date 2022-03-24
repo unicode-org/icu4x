@@ -19,7 +19,9 @@ pub struct CaseMappingDataProvider {
 /// A data provider reading from .toml files produced by the ICU4C icuwriteuprops tool.
 impl CaseMappingDataProvider {
     pub fn try_new(path: PathBuf) -> Result<Self, DataError> {
+        #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
         let toml_str = fs::read_to_string(&path).unwrap();
+        #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
         let toml: uprops_serde::case::Main = toml::from_str(&toml_str).unwrap();
 
         let trie_data = &toml.ucase.code_point_trie;

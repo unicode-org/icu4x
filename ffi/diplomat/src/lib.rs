@@ -11,7 +11,15 @@
 )]
 #![no_std]
 #![allow(clippy::upper_case_acronyms)]
-
+#![cfg_attr(
+    not(test),
+    deny(
+        clippy::indexing_slicing,
+        clippy::unwrap_used,
+        clippy::expect_used,
+        clippy::panic
+    )
+)]
 //! This module contains the source of truth for the [Diplomat](https://github.com/rust-diplomat/diplomat)-generated
 //! FFI bindings. This generates the C, C++ and Wasm bindings. This module also contains the C
 //! FFI for ICU4X.

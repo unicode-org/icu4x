@@ -134,6 +134,7 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
     ///
     /// ## Safety
     /// No safe functions may be called until `self.as_encoded_bytes()` is well-formed.
+    #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
     unsafe fn set_len(&mut self, len: u32) {
         RawBytesULE::<4>::from_byte_slice_unchecked_mut(&mut self.entire_slice[..4])[0] =
             len.into();
@@ -148,6 +149,7 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
     ///
     /// ## Safety
     /// The index must be valid, and self.as_encoded_bytes() must be well-formed
+    #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
     unsafe fn index_data(&self, index: usize) -> &RawBytesULE<4> {
         &RawBytesULE::<4>::from_byte_slice_unchecked(&self.entire_slice[Self::index_range(index)])
             [0]
@@ -167,6 +169,7 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
         // if we know the buffer is larger.
         let data = slice::from_raw_parts_mut(ptr.add(range.start), 4);
 
+        #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
         &mut RawBytesULE::<4>::from_byte_slice_unchecked_mut(data)[0]
     }
 
@@ -177,8 +180,10 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
     /// The length of the slice must be correctly set.
     unsafe fn shift_indices(&mut self, starting_index: usize, amount: i32) {
         let len = self.len();
+        #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
         let indices =
             RawBytesULE::<4>::from_byte_slice_unchecked_mut(&mut self.entire_slice[4..4 + 4 * len]);
+        #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
         for idx in &mut indices[starting_index..] {
             *idx = (u32::from_unaligned(*idx).wrapping_add(amount as u32)).into();
         }
@@ -243,6 +248,7 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
             new_size as i64 - (prev_element.end - prev_element.start) as i64 + index_shift;
         let new_slice_len = slice_len.wrapping_add(shift as usize);
         if shift > 0 {
+            #[allow(clippy::panic)] // TODO(#1668) Clippy exceptions need docs or fixing.
             if new_slice_len > u32::MAX as usize {
                 panic!(
                     "Attempted to grow VarZeroVec to an encoded size that does not fit within a u32"
@@ -315,6 +321,7 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
 
         // Return a mut slice to the new element data.
         let element_pos = 4 + self.len() * 4 + self.element_position_unchecked(index);
+        #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
         &mut self.entire_slice[element_pos..element_pos + new_size as usize]
     }
 
@@ -334,6 +341,7 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
             _ => (),
         }
         let len = unsafe {
+            #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
             u32::from_unaligned(
                 RawBytesULE::<4>::from_byte_slice_unchecked(&self.entire_slice[..4])[0],
             )
@@ -355,6 +363,7 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
 
         // Test index validity.
         let indices = unsafe {
+            #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
             RawBytesULE::<4>::from_byte_slice_unchecked(&self.entire_slice[4..4 + len as usize * 4])
         };
         for idx in indices {
@@ -364,6 +373,7 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
             }
         }
         for window in indices.windows(2) {
+            #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
             if u32::from_unaligned(window[0]) > u32::from_unaligned(window[1]) {
                 // Indices must be in non-decreasing order.
                 return false;
@@ -380,6 +390,7 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
     /// Insert an element at index `idx`
     pub fn insert<A: EncodeAsVarULE<T> + ?Sized>(&mut self, index: usize, element: &A) {
         let len = self.len();
+        #[allow(clippy::panic)] // TODO(#1668) Clippy exceptions need docs or fixing.
         if index > len {
             panic!(
                 "Called out-of-bounds insert() on VarZeroVec, index {} len {}",
@@ -398,6 +409,8 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
             self.entire_slice.extend(&index_u32.to_unaligned().0);
             let header_len = self.entire_slice.len();
             self.entire_slice.resize(header_len + value_len, 0);
+            #[allow(clippy::indexing_slicing)]
+            // TODO(#1668) Clippy exceptions need docs or fixing.
             element.encode_var_ule_write(&mut self.entire_slice[header_len..]);
             return;
         }
@@ -412,6 +425,7 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
     /// Remove the element at index `idx`
     pub fn remove(&mut self, index: usize) {
         let len = self.len();
+        #[allow(clippy::panic)] // TODO(#1668) Clippy exceptions need docs or fixing.
         if index >= len {
             panic!(
                 "Called out-of-bounds remove() on VarZeroVec, index {} len {}",
@@ -431,6 +445,7 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
     /// Replace the element at index `idx` with another
     pub fn replace<A: EncodeAsVarULE<T> + ?Sized>(&mut self, index: usize, element: &A) {
         let len = self.len();
+        #[allow(clippy::panic)] // TODO(#1668) Clippy exceptions need docs or fixing.
         if index >= len {
             panic!(
                 "Called out-of-bounds replace() on VarZeroVec, index {} len {}",

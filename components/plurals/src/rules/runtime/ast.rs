@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 #![allow(missing_docs)]
+#![allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
 
 use crate::rules::reference;
 use core::{convert::TryInto, fmt, str::FromStr};
@@ -215,6 +216,7 @@ fn get_modulus(input: u32) -> Option<reference::ast::Value> {
 
 impl From<&reference::ast::Value> for u32 {
     fn from(v: &reference::ast::Value) -> Self {
+        #[allow(clippy::expect_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
         v.0.try_into().expect("Failed to convert u64 into u32")
     }
 }

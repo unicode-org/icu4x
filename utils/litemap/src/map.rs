@@ -99,6 +99,7 @@ impl<K: Ord, V> LiteMap<K, V> {
         Q: Ord,
     {
         match self.find_index(key) {
+            #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
             Ok(found) => Some(&self.values[found].1),
             Err(_) => None,
         }
@@ -142,6 +143,7 @@ impl<K: Ord, V> LiteMap<K, V> {
         Q: Ord,
     {
         match self.find_index(key) {
+            #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
             Ok(found) => Some(&mut self.values[found].1),
             Err(_) => None,
         }
@@ -241,6 +243,7 @@ impl<K: Ord, V> LiteMap<K, V> {
     /// Version of [`Self::insert()`] that returns both the key and the old value.
     fn insert_save_key(&mut self, key: K, value: V) -> Option<(K, V)> {
         match self.values.binary_search_by(|k| k.0.cmp(&key)) {
+            #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
             Ok(found) => Some((key, mem::replace(&mut self.values[found].1, value))),
             Err(ins) => {
                 self.values.insert(ins, (key, value));
@@ -362,11 +365,13 @@ impl<K, V> Default for LiteMap<K, V> {
 impl<K: Ord, V> Index<&'_ K> for LiteMap<K, V> {
     type Output = V;
     fn index(&self, key: &K) -> &V {
+        #[allow(clippy::expect_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
         self.get(key).expect("LiteMap could not find key")
     }
 }
 impl<K: Ord, V> IndexMut<&'_ K> for LiteMap<K, V> {
     fn index_mut(&mut self, key: &K) -> &mut V {
+        #[allow(clippy::expect_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
         self.get_mut(key).expect("LiteMap could not find key")
     }
 }

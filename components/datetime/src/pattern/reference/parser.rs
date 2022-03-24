@@ -103,6 +103,7 @@ impl<'p> Parser<'p> {
                 (Segment::Literal { ref mut quoted, .. }, false) => {
                     *quoted = !*quoted;
                 }
+                #[allow(clippy::panic)] // TODO(#1668) Clippy exceptions need docs or fixing.
                 _ => panic!(),
             }
             Ok(true)
@@ -150,6 +151,7 @@ impl<'p> Parser<'p> {
                     }
                 }
             }
+            #[allow(clippy::panic)] // TODO(#1668) Clippy exceptions need docs or fixing.
             _ => panic!(),
         }
         Ok(())

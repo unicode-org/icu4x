@@ -206,6 +206,7 @@ where
         debug_assert!(range.start < range.end); // '<' because every key0 should have a key1
         debug_assert!(range.end <= self.keys1.zvl_len());
         // The above debug_assert! protects the unwrap() below
+        #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
         let index = range.start
             + self
                 .keys1
@@ -214,6 +215,7 @@ where
                 .map_err(|_| KeyError::K1)?;
         // This unwrap is protected by the invariant keys1.len() == values.len(),
         // the above debug_assert!, and the contract of zvl_binary_search_in_range.
+        #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
         Ok(self.values.zvl_get(index).unwrap())
     }
 
@@ -240,6 +242,7 @@ where
         debug_assert!(range.start <= range.end); // '<=' because we may have inserted a new key0
         debug_assert!(range.end <= self.keys1.zvl_len());
         // The above debug_assert! protects the unwrap() below
+        #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
         let index = range.start
             + match self.keys1.zvl_binary_search_in_range(key1, range).unwrap() {
                 Ok(index) => return Some(self.values.zvl_replace(index, value)),
@@ -272,6 +275,7 @@ where
         debug_assert!(range.end <= self.keys1.zvl_len());
         // The above debug_assert! protects the unwrap() below
         let is_singleton_range = range.start + 1 == range.end;
+        #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
         let index = range.start
             + self
                 .keys1
@@ -330,8 +334,10 @@ where
         }
 
         // The unwraps are protected by the fact that we are not empty
+        #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
         let last_key0 = self.keys0.zvl_get(self.keys0.zvl_len() - 1).unwrap();
         let key0_cmp = K0::Container::t_cmp_get(key0, last_key0);
+        #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
         let last_key1 = self.keys1.zvl_get(self.keys1.zvl_len() - 1).unwrap();
         let key1_cmp = K1::Container::t_cmp_get(key1, last_key1);
 
@@ -353,10 +359,12 @@ where
             _ => {}
         }
 
+        #[allow(clippy::expect_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
         let joiner_value = u32::try_from(self.keys1.zvl_len() + 1)
             .expect("Attempted to add more than 2^32 elements to a ZeroMap2d");
 
         // All OK to append
+        #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
         if key0_cmp == Ordering::Greater {
             self.keys0.zvl_push(key0);
             self.joiner.to_mut().push(joiner_value.to_unaligned());
@@ -376,6 +384,7 @@ where
     /// Produce an ordered iterator over keys0.
     pub fn iter_keys0<'b>(&'b self) -> impl Iterator<Item = &'b <K0 as ZeroMapKV<'a>>::GetType> {
         // The unwrap is protected because we are looping over the range of indices in the vec
+        #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
         (0..self.keys0.zvl_len()).map(move |idx| self.keys0.zvl_get(idx).unwrap())
     }
 
@@ -386,6 +395,7 @@ where
     ) -> Option<impl Iterator<Item = &'b <K1 as ZeroMapKV<'a>>::GetType>> {
         let (_, range) = self.get_range_for_key0(key0)?;
         // The unwrap is protected because all ranges are valid according to invariants 1-4
+        #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
         Some(range.map(move |idx| self.keys1.zvl_get(idx).unwrap()))
     }
 
@@ -430,12 +440,14 @@ where
         assert!(key0_index < self.keys0.zvl_len());
         let range = self.get_range_for_key0_index(key0_index);
         // The unwrap is protected because all ranges are valid according to invariants 1-4
+        #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
         Some(range.map(move |idx| self.keys1.zvl_get(idx).unwrap()))
     }
 
     /// Produce an iterator over values, ordered by the pair (key0,key1)
     pub fn iter_values<'b>(&'b self) -> impl Iterator<Item = &'b <V as ZeroMapKV<'a>>::GetType> {
         // The unwrap is protected because we are looping over the range of indices in the vec
+        #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
         (0..self.values.zvl_len()).map(move |idx| self.values.zvl_get(idx).unwrap())
     }
 
@@ -491,6 +503,7 @@ where
 
     /// Shifts all joiner ranges from key0_index onward one index up
     fn joiner_expand(&mut self, key0_index: usize) {
+        #[allow(clippy::expect_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
         self.joiner
             .to_mut()
             .iter_mut()
@@ -507,6 +520,7 @@ where
 
     /// Shifts all joiner ranges from key0_index onward one index down
     fn joiner_shrink(&mut self, key0_index: usize) {
+        #[allow(clippy::expect_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
         self.joiner
             .to_mut()
             .iter_mut()
@@ -537,6 +551,7 @@ where
             };
             let j1 = self.joiner.get(i).unwrap() as usize;
             debug_assert_ne!(j0, j1);
+            #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
             for j in (j0 + 1)..j1 {
                 let m0 = self.keys1.zvl_get(j - 1).unwrap();
                 let m1 = self.keys1.zvl_get(j).unwrap();
@@ -571,6 +586,7 @@ where
         debug_assert!(range.start < range.end); // '<' because every key0 should have a key1
         debug_assert!(range.end <= self.keys1.zvl_len());
         // The above debug_assert! protects the unwrap() below
+        #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
         let index = range.start
             + self
                 .keys1

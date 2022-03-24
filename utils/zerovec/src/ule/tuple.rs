@@ -56,6 +56,7 @@ macro_rules! tuple_ule {
                     $(
                         let j = i;
                         i += mem::size_of::<$t>();
+                        #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
                         <$t>::validate_byte_slice(&chunk[j..i])?;
                     )+
                 }

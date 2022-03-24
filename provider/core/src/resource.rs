@@ -301,6 +301,8 @@ macro_rules! resource_key {
         const RESOURCE_KEY_MACRO_CONST: $crate::ResourceKey = {
             match $crate::ResourceKey::construct_internal($crate::tagged!($path)) {
                 Ok(v) => v,
+                #[allow(clippy::panic)]
+                // TODO(#1668) Clippy exceptions need docs or fixing.
                 Err(_) => panic!(concat!("Invalid resource key: ", $path)),
                 // TODO Once formatting is const:
                 // Err((expected, index)) => panic!(

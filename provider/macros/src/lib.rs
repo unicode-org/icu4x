@@ -2,6 +2,16 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+#![cfg_attr(
+    not(test),
+    deny(
+        clippy::indexing_slicing,
+        clippy::unwrap_used,
+        clippy::expect_used,
+        clippy::panic
+    )
+)]
+
 extern crate proc_macro;
 use proc_macro::TokenStream;
 use proc_macro2::TokenStream as TokenStream2;
@@ -87,6 +97,8 @@ fn data_struct_impl(attr: AttributeArgs, item: ItemStruct) -> TokenStream2 {
                 let key_lit = &name_value.lit;
                 let key_str = match key_lit {
                     syn::Lit::Str(lit_str) => lit_str.value(),
+                    #[allow(clippy::panic)]
+                    // TODO(#1668) Clippy exceptions need docs or fixing.
                     _ => panic!("Key must be a string"),
                 };
                 let docs = format!("Marker type for [`{}`]: \"{}\"", name, key_str);
@@ -111,6 +123,7 @@ fn data_struct_impl(attr: AttributeArgs, item: ItemStruct) -> TokenStream2 {
                     }
                 ));
             }
+            #[allow(clippy::panic)] // TODO(#1668) Clippy exceptions need docs or fixing.
             _ => {
                 panic!("Invalid attribute to #[data_struct]")
             }

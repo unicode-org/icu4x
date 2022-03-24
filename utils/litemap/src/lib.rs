@@ -16,7 +16,16 @@
 //! and upgrades itself gracefully for larger inputs.
 //!
 
-#![no_std]
+#![cfg_attr(
+    not(test),
+    no_std,
+    deny(
+        clippy::indexing_slicing,
+        clippy::unwrap_used,
+        clippy::expect_used,
+        clippy::panic
+    )
+)]
 
 // for intra doc links
 #[cfg(doc)]

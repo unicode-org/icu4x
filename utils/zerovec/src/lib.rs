@@ -193,7 +193,16 @@
 //! `zeromap` benches are named by convention, e.g. `zeromap/deserialize/small`, `zeromap/lookup/large`. The type
 //! is appended for baseline comparisons, e.g. `zeromap/lookup/small/hashmap`.
 //!
-#![cfg_attr(not(any(test, feature = "std")), no_std)]
+#![cfg_attr(
+    not(any(test, feature = "std")),
+    no_std,
+    deny(
+        clippy::indexing_slicing,
+        clippy::unwrap_used,
+        clippy::expect_used,
+        clippy::panic
+    )
+)]
 // this crate does a lot of nuanced lifetime manipulation, being explicit
 // is better here.
 #![allow(clippy::needless_lifetimes)]

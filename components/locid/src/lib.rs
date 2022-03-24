@@ -51,7 +51,16 @@
 //! [`Unicode Extensions`]: extensions
 
 #![warn(missing_docs)]
-#![cfg_attr(not(any(feature = "std", test)), no_std)]
+#![cfg_attr(
+    not(any(feature = "std", test)),
+    no_std,
+    deny(
+        clippy::indexing_slicing,
+        clippy::unwrap_used,
+        clippy::expect_used,
+        clippy::panic
+    )
+)]
 
 extern crate alloc;
 

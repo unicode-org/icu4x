@@ -167,6 +167,8 @@ impl FixedDecimal {
             if i != 0 || d != 0 {
                 i += 1;
                 match X.checked_sub(i) {
+                    #[allow(clippy::indexing_slicing)]
+                    // TODO(#1668) Clippy exceptions need docs or fixing.
                     Some(v) => mem[v] = d,
                     // This error should be obsolete after X is made generic
                     None => return Err(Error::Limit),
@@ -182,6 +184,8 @@ impl FixedDecimal {
             result.magnitude = magnitude as i16;
             result.upper_magnitude = result.magnitude;
             debug_assert!(i <= X);
+            #[allow(clippy::indexing_slicing)]
+            // TODO(#1668) Clippy exceptions need docs or fixing.
             result.digits.extend_from_slice(&mem[(X - i)..]);
         }
         #[cfg(debug_assertions)]
@@ -601,6 +605,7 @@ impl FixedDecimal {
         // digits invariants:
         let max_len = (self.magnitude as i32 - self.lower_magnitude as i32 + 1) as usize;
         debug_assert!(self.digits.len() <= max_len, "{:?}", self);
+        #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
         if !self.digits.is_empty() {
             debug_assert_ne!(self.digits[0], 0, "Starts with a zero {:?}", self);
             debug_assert_ne!(
@@ -680,7 +685,9 @@ impl FromStr for FixedDecimal {
             return Err(Error::Syntax);
         }
         let input_str = input_str.as_bytes();
+        #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
         let is_negative = input_str[0] == b'-';
+        #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
         let no_sign_str = if is_negative {
             &input_str[1..]
         } else {
@@ -738,6 +745,7 @@ impl FromStr for FixedDecimal {
         // The string without the exponent (or sign)
         // We do the bulk of the calculation on this string,
         // and extract the exponent at the end
+        #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
         let no_exponent_str = &no_sign_str[..exponent_index];
 
         // If there was no dot, truncate the dot index
@@ -815,6 +823,7 @@ impl FromStr for FixedDecimal {
         }
 
         // Constructing DecimalFixed.digits
+        #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
         let v: SmallVec<[u8; 8]> = no_exponent_str[leftmost_digit..rightmost_digit_end]
             .iter()
             .filter(|c| **c != b'.')
@@ -829,6 +838,8 @@ impl FromStr for FixedDecimal {
         if has_exponent {
             let mut pow = 0;
             let mut pos_neg = 1;
+            #[allow(clippy::indexing_slicing)]
+            // TODO(#1668) Clippy exceptions need docs or fixing.
             for digit in &no_sign_str[exponent_index + 1..] {
                 if *digit == b'-' {
                     pos_neg = -1;
@@ -1076,13 +1087,16 @@ impl FixedDecimal {
 
         // Do we need to round our significant digits?
         // TODO(#1177): This heuristic is insufficient for most rounding modes.
+        #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
         let round = self.digits[cutoff] >= 5;
 
         self.digits.truncate(cutoff);
 
         if round {
             // how much to truncate by after rounding
+            #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
             let mut round_truncate = cutoff;
+            #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
             for digit in self.digits[..cutoff].iter_mut().rev() {
                 if *digit == 9 {
                     // Truncate this digit, the next digit can be rounded
