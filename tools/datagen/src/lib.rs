@@ -50,9 +50,9 @@
 //! ```
 
 use icu_provider::datagen::OmnibusDatagenProvider;
-use icu_provider::fork::by_key::MultiForkByKeyProvider;
 use icu_provider::serde::SerializeMarker;
 use icu_provider::ResourceKey;
+use icu_provider_adapters::fork::by_key::MultiForkByKeyProvider;
 use icu_provider_cldr::CldrPaths;
 use std::path::Path;
 

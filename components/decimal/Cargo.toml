@@ -44,6 +44,7 @@ icu = { path = "../icu", default-features = false }
 icu_benchmark_macros = { version = "0.5", path = "../../tools/benchmark/macros" }
 icu_locid_macros = { version = "0.5", path = "../locid/macros" }
 icu_testdata = { version = "0.5", path = "../../provider/testdata", features = ["static"] }
+icu_provider_adapters = { path = "../../provider/adapters" }
 rand = "0.8"
 rand_pcg = "0.3"
 rand_distr = "0.4"

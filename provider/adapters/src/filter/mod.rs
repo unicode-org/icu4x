@@ -13,7 +13,7 @@
 //! To create a `RequestFilterDataProvider`, you can use the [`Filterable`] blanket function:
 //!
 //! ```
-//! use icu_provider::filter::Filterable;
+//! use icu_provider_adapters::filter::Filterable;
 //!
 //! // now call .filterable() on any object to get a RequestFilterDataProvider
 //! ```
@@ -23,7 +23,7 @@
 //! ```
 //! use icu_provider::prelude::*;
 //! use icu_provider::hello_world::*;
-//! use icu_provider::filter::Filterable;
+//! use icu_provider_adapters::filter::Filterable;
 //! use icu_locid_macros::language;
 //!
 //! // Only return German data from a HelloWorldProvider:
@@ -32,24 +32,23 @@
 //!     .filter_by_langid(|langid| langid.language == language!("de"));
 //! ```
 //!
-//! [`IterableDynProvider`]: crate::datagen::IterableDynProvider
+//! [`IterableDynProvider`]: icu_provider::datagen::IterableDynProvider
 
 mod impls;
 
 pub use impls::*;
 
 #[cfg(feature = "datagen")]
-use crate::datagen::{IterableDynProvider, IterableResourceProvider};
-
-use crate::prelude::*;
-#[cfg(feature = "datagen")]
 use alloc::boxed::Box;
+#[cfg(feature = "datagen")]
+use icu_provider::datagen;
+use icu_provider::prelude::*;
 
 /// A data provider that selectively filters out data requests.
 ///
 /// Data requests that are rejected by the filter will return a [`DataError`] with kind
 /// [`FilteredResource`](DataErrorKind::FilteredResource), and they will not be returned
-/// by [`IterableDynProvider::supported_options_for_key`].
+/// by [`datagen::IterableDynProvider::supported_options_for_key`].
 ///
 /// Although this struct can be created directly, the traits in this module provide helper
 /// functions for common filtering patterns.
@@ -143,11 +142,11 @@ where
 }
 
 #[cfg(feature = "datagen")]
-impl<M, D, F> IterableDynProvider<M> for RequestFilterDataProvider<D, F>
+impl<M, D, F> datagen::IterableDynProvider<M> for RequestFilterDataProvider<D, F>
 where
     M: DataMarker,
     F: Fn(&DataRequest) -> bool,
-    D: IterableDynProvider<M>,
+    D: datagen::IterableDynProvider<M>,
 {
     fn supported_options_for_key(
         &self,
@@ -174,11 +173,11 @@ where
 }
 
 #[cfg(feature = "datagen")]
-impl<M, D, F> IterableResourceProvider<M> for RequestFilterDataProvider<D, F>
+impl<M, D, F> datagen::IterableResourceProvider<M> for RequestFilterDataProvider<D, F>
 where
     M: ResourceMarker,
     F: Fn(&DataRequest) -> bool,
-    D: IterableResourceProvider<M>,
+    D: datagen::IterableResourceProvider<M>,
 {
     fn supported_options(
         &self,
@@ -204,18 +203,18 @@ where
 }
 
 #[cfg(feature = "datagen")]
-impl<D, F, MFrom, MTo> crate::datagen::DataConverter<MFrom, MTo> for RequestFilterDataProvider<D, F>
+impl<D, F, MFrom, MTo> datagen::DataConverter<MFrom, MTo> for RequestFilterDataProvider<D, F>
 where
-    D: crate::datagen::DataConverter<MFrom, MTo>,
+    D: datagen::DataConverter<MFrom, MTo>,
     MFrom: DataMarker,
     MTo: DataMarker,
     F: Fn(&DataRequest) -> bool,
 {
     fn convert(
         &self,
-        key: crate::ResourceKey,
+        key: ResourceKey,
         from: DataPayload<MFrom>,
-    ) -> Result<DataPayload<MTo>, crate::datagen::ReturnedPayloadError<MFrom>> {
+    ) -> Result<DataPayload<MTo>, datagen::ReturnedPayloadError<MFrom>> {
         // Conversions are type-agnostic
         self.inner.convert(key, from)
     }
@@ -224,7 +223,7 @@ where
 pub trait Filterable: Sized {
     /// Creates a filterable data provider with the given name for debugging.
     ///
-    /// For more details, see [`icu_provider::filter`](crate::filter).
+    /// For more details, see [`icu_provider_adapters::filter`](crate::filter).
     fn filterable(
         self,
         filter_name: &'static str,

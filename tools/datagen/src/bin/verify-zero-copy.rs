@@ -6,7 +6,7 @@ use clap::{App, Arg, ArgGroup};
 use icu_datagen::get_all_keys;
 use icu_provider::datagen::IterableDynProvider;
 use icu_provider::datagen::{DataConverter, HeapStatsMarker};
-use icu_provider::filter::Filterable;
+use icu_provider_adapters::filter::Filterable;
 
 use icu_provider::prelude::*;
 
