@@ -56,6 +56,8 @@ use core::iter::FromIterator;
 /// ```
 ///
 /// [`VarZeroVec`]: crate::VarZeroVec
+// ZeroMap has only one invariant: keys.len() == values.len()
+// It is also expected that the keys are sorted, but this is not an invariant. See #1433
 pub struct ZeroMap<'a, K, V>
 where
     K: ZeroMapKV<'a> + ?Sized,
