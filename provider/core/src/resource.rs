@@ -141,6 +141,8 @@ impl ResourceKey {
 
     #[doc(hidden)]
     // Error is a str of the expected character class and the index where it wasn't encountered
+    // The indexing operations in this function have been reviewed in detail and won't panic.
+    #[allow(clippy::indexing_slicing)]
     pub const fn construct_internal(path: &'static str) -> Result<Self, (&'static str, usize)> {
         if path.len() < leading_tag!().len() + trailing_tag!().len() {
             return Err(("tag", 0));

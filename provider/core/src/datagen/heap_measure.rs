@@ -30,6 +30,11 @@ impl DataPayload<BufferMarker> {
     /// Ideally, this number should be zero.
     ///
     /// [`dhat`]'s profiler must be initialized before using this.
+    ///
+    /// # Panics
+    ///
+    /// Panics if the buffer is not in postcard-0.7 format.
+    #[allow(clippy::expect_used)] // The function documents when panics may occur.
     pub fn attempt_zero_copy_heap_size<M>(self) -> HeapStats
     where
         M: DataMarker,
