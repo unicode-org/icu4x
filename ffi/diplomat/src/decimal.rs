@@ -12,7 +12,7 @@ pub mod ffi {
         FixedDecimalFormat,
     };
     use icu_locid::Locale;
-    use icu_provider::struct_provider::AnyPayloadProvider;
+    use icu_provider_adapters::struct_provider::AnyPayloadProvider;
     use icu_provider::ResourceMarker;
     use icu_provider::ResourceProvider;
     use writeable::Writeable;

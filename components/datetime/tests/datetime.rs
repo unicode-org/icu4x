@@ -22,9 +22,9 @@ use icu_datetime::{
 };
 use icu_locid::{LanguageIdentifier, Locale};
 use icu_plurals::provider::OrdinalV1Marker;
-use icu_provider::fork::by_key::MultiForkByKeyProvider;
+use icu_provider_adapters::fork::by_key::MultiForkByKeyProvider;
 use icu_provider::prelude::*;
-use icu_provider::struct_provider::AnyPayloadProvider;
+use icu_provider_adapters::struct_provider::AnyPayloadProvider;
 use patterns::{
     get_dayperiod_tests, get_time_zone_tests,
     structs::{

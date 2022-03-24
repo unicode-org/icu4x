@@ -34,7 +34,7 @@ pub use enum_uniset::EnumeratedPropertyUnicodeSetDataProvider;
 pub use script::ScriptWithExtensionsPropertyProvider;
 
 use icu_provider::datagen::OmnibusDatagenProvider;
-use icu_provider::fork::by_key::MultiForkByKeyProvider;
+use icu_provider_adapters::fork::by_key::MultiForkByKeyProvider;
 use icu_provider::DataMarker;
 use std::path::Path;
 

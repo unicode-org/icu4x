@@ -32,7 +32,7 @@
 //! [`StaticDataProvider`]: ../icu_provider_blob/struct.StaticDataProvider.html
 
 use icu_provider::datagen::OmnibusDatagenProvider;
-use icu_provider::fork::by_key::MultiForkByKeyProvider;
+use icu_provider_adapters::fork::by_key::MultiForkByKeyProvider;
 use icu_provider::prelude::*;
 use std::path::{Path, PathBuf};
 

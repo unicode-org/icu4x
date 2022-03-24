@@ -48,7 +48,7 @@ fn test_grouper() {
     use fixed_decimal::FixedDecimal;
     use icu_locid::LanguageIdentifier;
     use icu_provider::prelude::*;
-    use icu_provider::struct_provider::AnyPayloadProvider;
+    use icu_provider_adapters::struct_provider::AnyPayloadProvider;
     use writeable::Writeable;
 
     let western_sizes = GroupingSizesV1 {
