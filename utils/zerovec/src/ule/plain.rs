@@ -69,6 +69,8 @@ macro_rules! impl_byte_slice_size {
             pub const fn from_array<const N: usize>(arr: [$unsigned; N]) -> [Self; N] {
                 let mut result = [RawBytesULE([0; $size]); N];
                 let mut i = 0;
+                // Won't panic because i < N and arr has length N
+                #[allow(clippy::indexing_slicing)]
                 while i < N {
                     result[i].0 = arr[i].to_le_bytes();
                     i += 1;
