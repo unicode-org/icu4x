@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1648144173955,
+  "lastUpdate": 1648155160790,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -11543,6 +11543,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/5bd67c85323246891bc7aaf4b983136407929e52"
         },
         "date": 1648144159967,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4545559,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ghimire.manoj92@gmail.com",
+            "name": "Manoj Ghimire",
+            "username": "ozghimire"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "9d86b99823f5a6441e791bd9b8a098a353666c40",
+          "message": "Add clippy lints for panics (#1650)\n\nSee #1363",
+          "timestamp": "2022-03-24T13:50:59-07:00",
+          "tree_id": "2524a838ad4083ffe11c20b5e1d942efae583c63",
+          "url": "https://github.com/unicode-org/icu4x/commit/9d86b99823f5a6441e791bd9b8a098a353666c40"
+        },
+        "date": 1648155143489,
         "tool": "ndjson",
         "benches": [
           {
