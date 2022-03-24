@@ -17,7 +17,6 @@
         clippy::panic
     )
 )]
-
 // The lifetimes here are important for safety and explicitly writing
 // them out is good even when redundant
 #![allow(clippy::needless_lifetimes)]
