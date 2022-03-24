@@ -296,12 +296,12 @@ mod test {
         type ZS<T> = ZeroSlice<T>;
         type VZS<T> = VarZeroSlice<T>;
 
-        let u8_zerovec: ZeroVec<u8> = ZeroVec::from_slice(&U8_ARRAY);
+        let u8_zerovec: ZeroVec<u8> = ZeroVec::from_slice_or_alloc(&U8_ARRAY);
         let u8_2d_zerovec: [ZeroVec<u8>; 2] = [u8_zerovec.clone(), u8_zerovec.clone()];
         let u8_2d_vec: Vec<Vec<u8>> = vec![U8_ARRAY.into(), U8_ARRAY.into()];
         let u8_3d_vec: Vec<Vec<Vec<u8>>> = vec![u8_2d_vec.clone(), u8_2d_vec.clone()];
 
-        let u32_zerovec: ZeroVec<u32> = ZeroVec::from_slice(&U32_ARRAY);
+        let u32_zerovec: ZeroVec<u32> = ZeroVec::from_slice_or_alloc(&U32_ARRAY);
         let u32_2d_zerovec: [ZeroVec<u32>; 2] = [u32_zerovec.clone(), u32_zerovec.clone()];
         let u32_2d_vec: Vec<Vec<u32>> = vec![U32_ARRAY.into(), U32_ARRAY.into()];
         let u32_3d_vec: Vec<Vec<Vec<u32>>> = vec![u32_2d_vec.clone(), u32_2d_vec.clone()];

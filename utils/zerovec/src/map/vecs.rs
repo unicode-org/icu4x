@@ -511,7 +511,7 @@ mod test {
 
     #[test]
     fn test_zerovec_binary_search_in_range() {
-        let zv: ZeroVec<u16> = ZeroVec::from_slice(&[11, 22, 33, 44, 55, 66, 77]);
+        let zv: ZeroVec<u16> = ZeroVec::from_slice_or_alloc(&[11, 22, 33, 44, 55, 66, 77]);
 
         // Full range search
         assert_eq!(zv.zvl_binary_search_in_range(&11, 0..7), Some(Ok(0)));

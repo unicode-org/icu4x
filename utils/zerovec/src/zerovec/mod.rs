@@ -86,7 +86,7 @@ where
     Owned(Vec<T::ULE>),
 
     /// A borrowed `ZeroVec<T>`. This will typically be constructed by [`ZeroVec::parse_byte_slice()`],
-    /// [`ZeroVec::from_slice()`], or deserializers capable of doing zero-copy deserialization.
+    /// [`ZeroVec::from_slice_or_alloc()`], or deserializers capable of doing zero-copy deserialization.
     ///
     /// If you already have a slice of `[T::ULE]`s, you can directly construct one of these.
     ///
@@ -551,13 +551,13 @@ where
     /// let bytes: &[u8] = &[0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x01];
     /// let nums: &[u16] = &[211, 281, 421, 461];
     ///
-    /// let zerovec = ZeroVec::from_slice(nums);
+    /// let zerovec = ZeroVec::from_slice_or_alloc(nums);
     ///
     /// // Note: zerovec could be either borrowed or owned.
     /// assert_eq!(bytes, zerovec.as_bytes());
     /// ```
     #[inline]
-    pub fn from_slice(slice: &'a [T]) -> Self {
+    pub fn from_slice_or_alloc(slice: &'a [T]) -> Self {
         Self::try_from_slice(slice).unwrap_or_else(|| Self::alloc_from_slice(slice))
     }
 }
@@ -705,7 +705,7 @@ mod tests {
     #[test]
     fn test_get() {
         {
-            let zerovec = ZeroVec::from_slice(TEST_SLICE);
+            let zerovec = ZeroVec::from_slice_or_alloc(TEST_SLICE);
             assert_eq!(zerovec.get(0), Some(TEST_SLICE[0]));
             assert_eq!(zerovec.get(1), Some(TEST_SLICE[1]));
             assert_eq!(zerovec.get(2), Some(TEST_SLICE[2]));
@@ -721,7 +721,7 @@ mod tests {
     #[test]
     fn test_binary_search() {
         {
-            let zerovec = ZeroVec::from_slice(TEST_SLICE);
+            let zerovec = ZeroVec::from_slice_or_alloc(TEST_SLICE);
             assert_eq!(Ok(3), zerovec.binary_search(&0x0e0d0c));
             assert_eq!(Err(3), zerovec.binary_search(&0x0c0d0c));
         }

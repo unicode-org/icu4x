@@ -8,7 +8,7 @@ use alloc::vec::Vec;
 use core::{char, ops::RangeBounds, ops::RangeInclusive};
 use yoke::Yokeable;
 use zerofrom::ZeroFrom;
-use zerovec::{ule::AsULE, ZeroVec};
+use zerovec::{ule::AsULE, ZeroSlice, ZeroVec};
 
 use super::UnicodeSetError;
 use crate::utils::{deconstruct_range, is_valid_zv};
@@ -17,10 +17,15 @@ use crate::utils::{deconstruct_range, is_valid_zv};
 const BMP_MAX: u32 = 0xFFFF;
 
 /// Represents the inversion list for a set of all code points in the Basic Multilingual Plane.
-const BMP_INV_LIST_SLICE: &[u32] = &[0x0, BMP_MAX + 1];
+const BMP_INV_LIST_SLICE: &ZeroSlice<u32> =
+    ZeroSlice::<u32>::from_ule_slice_const(&<u32 as AsULE>::ULE::from_array([0x0, BMP_MAX + 1]));
 
 /// Represents the inversion list for all of the code points in the Unicode range.
-const ALL_SLICE: &[u32] = &[0x0, (char::MAX as u32) + 1];
+const ALL_SLICE: &ZeroSlice<u32> =
+    ZeroSlice::<u32>::from_ule_slice_const(&<u32 as AsULE>::ULE::from_array([
+        0x0,
+        (char::MAX as u32) + 1,
+    ]));
 
 /// A membership wrapper for [`UnicodeSet`].
 ///
@@ -83,12 +88,12 @@ impl<'data> UnicodeSet<'data> {
     /// use icu_uniset::UnicodeSetError;
     /// use zerovec::ZeroVec;
     /// let valid = [0x0, 0x10000];
-    /// let inv_list: ZeroVec<u32> = ZeroVec::from_slice(&valid);
+    /// let inv_list: ZeroVec<u32> = ZeroVec::from_slice_or_alloc(&valid);
     /// let result = UnicodeSet::from_inversion_list(inv_list);
     /// assert!(matches!(result, UnicodeSet));
     ///
     /// let invalid: Vec<u32> = vec![0x0, 0x80, 0x3];
-    /// let inv_list: ZeroVec<u32> = ZeroVec::from_slice(&invalid);
+    /// let inv_list: ZeroVec<u32> = ZeroVec::from_slice_or_alloc(&invalid);
     /// let result = UnicodeSet::from_inversion_list(inv_list);
     /// assert!(matches!(result, Err(UnicodeSetError::InvalidSet(_))));
     /// if let Err(UnicodeSetError::InvalidSet(actual)) = result {
@@ -118,7 +123,7 @@ impl<'data> UnicodeSet<'data> {
     /// The inversion list must be of even length, sorted ascending non-overlapping,
     /// and within the bounds of `0x0 -> 0x10FFFF` inclusive, and end points being exclusive.
     ///
-    /// Note: The slice may be cloned on certain platforms; for more information, see [`ZeroVec::from_slice`].
+    /// Note: The slice may be cloned on certain platforms; for more information, see [`ZeroVec::from_slice_or_alloc`].
     ///
     /// # Examples
     ///
@@ -138,7 +143,7 @@ impl<'data> UnicodeSet<'data> {
     /// }
     /// ```
     pub fn from_inversion_list_slice(inv_list: &'data [u32]) -> Result<Self, UnicodeSetError> {
-        let inv_list_zv: ZeroVec<u32> = ZeroVec::from_slice(inv_list);
+        let inv_list_zv: ZeroVec<u32> = ZeroVec::from_slice_or_alloc(inv_list);
         UnicodeSet::from_inversion_list(inv_list_zv)
     }
 
@@ -208,7 +213,7 @@ impl<'data> UnicodeSet<'data> {
     /// ```
     pub fn all() -> Self {
         Self {
-            inv_list: ZeroVec::<u32>::from_slice(ALL_SLICE),
+            inv_list: ALL_SLICE.as_zerovec(),
             size: (char::MAX as usize) + 1,
         }
     }
@@ -234,7 +239,7 @@ impl<'data> UnicodeSet<'data> {
     /// ```
     pub fn bmp() -> Self {
         Self {
-            inv_list: ZeroVec::<u32>::from_slice(BMP_INV_LIST_SLICE),
+            inv_list: BMP_INV_LIST_SLICE.as_zerovec(),
             size: (BMP_MAX as usize) + 1,
         }
     }
@@ -545,7 +550,7 @@ mod tests {
     #[test]
     fn test_unicodeset_try_from_vec_error() {
         let check = vec![0x1, 0x1, 0x2, 0x3, 0x4];
-        let inv_list = ZeroVec::from_slice(&check);
+        let inv_list = ZeroVec::from_slice_or_alloc(&check);
         let set = UnicodeSet::from_inversion_list(inv_list);
         assert!(matches!(set, Err(UnicodeSetError::InvalidSet(_))));
         if let Err(UnicodeSetError::InvalidSet(actual)) = set {
@@ -641,7 +646,7 @@ mod tests {
         assert_eq!(expected as usize, check.size());
         let inv_list_vec: Vec<u32> = vec![];
         let check = UnicodeSet {
-            inv_list: ZeroVec::from_slice(&inv_list_vec),
+            inv_list: ZeroVec::from_slice_or_alloc(&inv_list_vec),
             size: 0,
         };
         assert_eq!(check.size(), 0);
@@ -651,7 +656,7 @@ mod tests {
     fn test_unicodeset_is_empty() {
         let inv_list_vec: Vec<u32> = vec![];
         let check = UnicodeSet {
-            inv_list: ZeroVec::from_slice(&inv_list_vec),
+            inv_list: ZeroVec::from_slice_or_alloc(&inv_list_vec),
             size: 0,
         };
         assert!(check.is_empty());

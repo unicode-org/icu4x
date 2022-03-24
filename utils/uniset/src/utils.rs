@@ -50,44 +50,44 @@ mod tests {
 
     #[test]
     fn test_is_valid_zv() {
-        let check = ZeroVec::from_slice(&[0x2, 0x3, 0x4, 0x5]);
+        let check = ZeroVec::from_slice_or_alloc(&[0x2, 0x3, 0x4, 0x5]);
         assert!(is_valid_zv(&check));
     }
 
     #[test]
     fn test_is_valid_zv_empty() {
         let v: Vec<u32> = vec![];
-        let check = ZeroVec::from_slice(&v);
+        let check = ZeroVec::from_slice_or_alloc(&v);
         assert!(is_valid_zv(&check));
     }
 
     #[test]
     fn test_is_valid_zv_overlapping() {
-        let check = ZeroVec::from_slice(&[0x2, 0x5, 0x4, 0x6]);
+        let check = ZeroVec::from_slice_or_alloc(&[0x2, 0x5, 0x4, 0x6]);
         assert!(!is_valid_zv(&check));
     }
 
     #[test]
     fn test_is_valid_zv_out_of_order() {
-        let check = ZeroVec::from_slice(&[0x5, 0x4, 0x5, 0x6, 0x7]);
+        let check = ZeroVec::from_slice_or_alloc(&[0x5, 0x4, 0x5, 0x6, 0x7]);
         assert!(!is_valid_zv(&check));
     }
 
     #[test]
     fn test_is_valid_zv_duplicate() {
-        let check = ZeroVec::from_slice(&[0x1, 0x2, 0x3, 0x3, 0x5]);
+        let check = ZeroVec::from_slice_or_alloc(&[0x1, 0x2, 0x3, 0x3, 0x5]);
         assert!(!is_valid_zv(&check));
     }
 
     #[test]
     fn test_is_valid_zv_odd() {
-        let check = ZeroVec::from_slice(&[0x1, 0x2, 0x3, 0x4, 0x5]);
+        let check = ZeroVec::from_slice_or_alloc(&[0x1, 0x2, 0x3, 0x4, 0x5]);
         assert!(!is_valid_zv(&check));
     }
 
     #[test]
     fn test_is_valid_zv_out_of_range() {
-        let check = ZeroVec::from_slice(&[0x1, 0x2, 0x3, 0x4, (char::MAX as u32) + 1]);
+        let check = ZeroVec::from_slice_or_alloc(&[0x1, 0x2, 0x3, 0x4, (char::MAX as u32) + 1]);
         assert!(!is_valid_zv(&check));
     }
 

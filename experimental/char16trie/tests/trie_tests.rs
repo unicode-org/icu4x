@@ -10,7 +10,7 @@ use zerovec::ZeroVec;
 #[test]
 fn char16trie_test_empty() {
     let trie_data = test_util::load_char16trie_data("tests/testdata/empty.toml");
-    let trie = Char16Trie::new(ZeroVec::from_slice(trie_data.as_slice()));
+    let trie = Char16Trie::new(ZeroVec::from_slice_or_alloc(trie_data.as_slice()));
     let res = trie.iter().next('h');
     assert_eq!(res, TrieResult::NoMatch);
 }
@@ -18,7 +18,7 @@ fn char16trie_test_empty() {
 #[test]
 fn char16trie_test_a() {
     let trie_data = test_util::load_char16trie_data("tests/testdata/test_a.toml");
-    let trie = Char16Trie::new(ZeroVec::from_slice(trie_data.as_slice()));
+    let trie = Char16Trie::new(ZeroVec::from_slice_or_alloc(trie_data.as_slice()));
 
     let mut iter = trie.iter();
     let res = iter.next('h');
@@ -34,7 +34,7 @@ fn char16trie_test_a() {
 #[test]
 fn char16trie_test_a_b() {
     let trie_data = test_util::load_char16trie_data("tests/testdata/test_a_ab.toml");
-    let trie = Char16Trie::new(ZeroVec::from_slice(trie_data.as_slice()));
+    let trie = Char16Trie::new(ZeroVec::from_slice_or_alloc(trie_data.as_slice()));
 
     let mut iter = trie.iter();
     let res = iter.next('a');
@@ -54,7 +54,7 @@ fn char16trie_test_a_b() {
 #[test]
 fn char16trie_test_shortest_branch() {
     let trie_data = test_util::load_char16trie_data("tests/testdata/test_shortest_branch.toml");
-    let trie = Char16Trie::new(ZeroVec::from_slice(trie_data.as_slice()));
+    let trie = Char16Trie::new(ZeroVec::from_slice_or_alloc(trie_data.as_slice()));
 
     let mut iter = trie.iter();
     let res = iter.next('a');
@@ -72,7 +72,7 @@ fn char16trie_test_shortest_branch() {
 #[test]
 fn char16trie_test_branches() {
     let trie_data = test_util::load_char16trie_data("tests/testdata/test_branches.toml");
-    let trie = Char16Trie::new(ZeroVec::from_slice(trie_data.as_slice()));
+    let trie = Char16Trie::new(ZeroVec::from_slice_or_alloc(trie_data.as_slice()));
 
     for (query, expected) in [
         ("a", TrieResult::FinalValue(0x10)),
@@ -105,7 +105,7 @@ fn char16trie_test_branches() {
 #[test]
 fn char16trie_test_long_sequence() {
     let trie_data = test_util::load_char16trie_data("tests/testdata/test_long_sequence.toml");
-    let trie = Char16Trie::new(ZeroVec::from_slice(trie_data.as_slice()));
+    let trie = Char16Trie::new(ZeroVec::from_slice_or_alloc(trie_data.as_slice()));
 
     for (query, expected) in [
         ("a", TrieResult::Intermediate(-1)),
@@ -146,7 +146,7 @@ fn char16trie_test_long_sequence() {
 #[test]
 fn char16trie_test_long_branch() {
     let trie_data = test_util::load_char16trie_data("tests/testdata/test_long_branch.toml");
-    let trie = Char16Trie::new(ZeroVec::from_slice(trie_data.as_slice()));
+    let trie = Char16Trie::new(ZeroVec::from_slice_or_alloc(trie_data.as_slice()));
 
     for (query, expected) in [
         ("a", TrieResult::FinalValue(-2)),
@@ -197,7 +197,7 @@ fn char16trie_test_long_branch() {
 #[test]
 fn char16trie_test_compact() {
     let trie_data = test_util::load_char16trie_data("tests/testdata/test_compact.toml");
-    let trie = Char16Trie::new(ZeroVec::from_slice(trie_data.as_slice()));
+    let trie = Char16Trie::new(ZeroVec::from_slice_or_alloc(trie_data.as_slice()));
 
     for (query, expected) in [
         ("+", TrieResult::Intermediate(0)),
@@ -236,7 +236,7 @@ fn char16trie_test_compact() {
 #[test]
 fn char16trie_test_months() {
     let trie_data = test_util::load_char16trie_data("tests/testdata/months.toml");
-    let trie = Char16Trie::new(ZeroVec::from_slice(trie_data.as_slice()));
+    let trie = Char16Trie::new(ZeroVec::from_slice_or_alloc(trie_data.as_slice()));
 
     let mut iter = trie.iter();
     for (chr, expected) in [

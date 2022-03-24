@@ -69,8 +69,8 @@
 //! }
 //!
 //! let data = DataStruct {
-//!     nums: ZeroVec::from_slice(&[211, 281, 421, 461]),
-//!     chars: ZeroVec::from_slice(&['ö', '冇', 'म']),
+//!     nums: ZeroVec::from_slice_or_alloc(&[211, 281, 421, 461]),
+//!     chars: ZeroVec::from_slice_or_alloc(&['ö', '冇', 'म']),
 //!     strs: VarZeroVec::from(&["hello", "world"]),
 //! };
 //! let bincode_bytes = bincode::serialize(&data)
