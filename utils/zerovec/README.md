@@ -188,7 +188,6 @@ The benches used to generate the above table can be found in the `benches` direc
 `zeromap` benches are named by convention, e.g. `zeromap/deserialize/small`, `zeromap/lookup/large`. The type
 is appended for baseline comparisons, e.g. `zeromap/lookup/small/hashmap`.
 
-
 ## More Information
 
 For more information on development, authorship, contributing etc. please visit [`ICU4X home page`](https://github.com/unicode-org/icu4x).
