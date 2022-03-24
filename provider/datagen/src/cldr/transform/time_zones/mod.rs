@@ -161,10 +161,7 @@ mod tests {
             .unwrap()
             .take_payload()
             .unwrap();
-        assert_eq!(
-            "Pohnpei",
-            exemplar_cities.get().0.get("Pacific/Ponape").unwrap()
-        );
+        assert_eq!("Pohnpei", exemplar_cities.get().0.get("fmpni").unwrap());
 
         let generic_names_long: DataPayload<MetaZoneGenericNamesLongV1Marker> = provider
             .load_resource(&DataRequest {
