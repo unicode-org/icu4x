@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1648070904243,
+  "lastUpdate": 1648083661031,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -21269,6 +21269,36 @@ window.BENCHMARK_DATA = {
             "name": "fixed_decimal/overview",
             "value": 107208,
             "range": "± 5601",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "0ce4fd69bb6c956bd44a25badd17917697846c2f",
+          "message": "Generalize PairULE to support longer tuples (#1721)",
+          "timestamp": "2022-03-23T17:53:14-07:00",
+          "tree_id": "966c6e5d49d0005bb6356267df47013342556d90",
+          "url": "https://github.com/unicode-org/icu4x/commit/0ce4fd69bb6c956bd44a25badd17917697846c2f"
+        },
+        "date": 1648083644716,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 105641,
+            "range": "± 6810",
             "unit": "ns/iter"
           }
         ]
