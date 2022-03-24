@@ -7,9 +7,9 @@
 use icu_provider::prelude::*;
 
 #[cfg(feature = "datagen")]
-use icu_provider::datagen;
-#[cfg(feature = "datagen")]
 use alloc::boxed::Box;
+#[cfg(feature = "datagen")]
+use icu_provider::datagen;
 
 /// A provider that is one of two types determined at runtime.
 ///
@@ -77,8 +77,8 @@ impl<M: ResourceMarker, P0: ResourceProvider<M>, P1: ResourceProvider<M>> Resour
 }
 
 #[cfg(feature = "datagen")]
-impl<M: DataMarker, P0: datagen::IterableDynProvider<M>, P1: datagen::IterableDynProvider<M>> datagen::IterableDynProvider<M>
-    for EitherProvider<P0, P1>
+impl<M: DataMarker, P0: datagen::IterableDynProvider<M>, P1: datagen::IterableDynProvider<M>>
+    datagen::IterableDynProvider<M> for EitherProvider<P0, P1>
 {
     #[inline]
     fn supported_options_for_key(
@@ -94,8 +94,11 @@ impl<M: DataMarker, P0: datagen::IterableDynProvider<M>, P1: datagen::IterableDy
 }
 
 #[cfg(feature = "datagen")]
-impl<M: ResourceMarker, P0: datagen::IterableResourceProvider<M>, P1: datagen::IterableResourceProvider<M>>
-    datagen::IterableResourceProvider<M> for EitherProvider<P0, P1>
+impl<
+        M: ResourceMarker,
+        P0: datagen::IterableResourceProvider<M>,
+        P1: datagen::IterableResourceProvider<M>,
+    > datagen::IterableResourceProvider<M> for EitherProvider<P0, P1>
 {
     #[inline]
     fn supported_options(

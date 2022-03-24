@@ -3,8 +3,8 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use super::*;
-use icu_provider::prelude::*;
 use alloc::boxed::Box;
+use icu_provider::prelude::*;
 
 use icu_locid::LanguageIdentifier;
 

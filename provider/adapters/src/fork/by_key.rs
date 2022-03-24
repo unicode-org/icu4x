@@ -5,11 +5,11 @@
 //! Providers that invoke other providers based on the resource key.
 
 #[cfg(feature = "datagen")]
-use icu_provider::datagen;
-use icu_provider::prelude::*;
-#[cfg(feature = "datagen")]
 use alloc::boxed::Box;
 use alloc::vec::Vec;
+#[cfg(feature = "datagen")]
+use icu_provider::datagen;
+use icu_provider::prelude::*;
 
 use crate::helpers::result_is_err_missing_resource_key;
 

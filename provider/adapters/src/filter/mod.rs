@@ -39,10 +39,10 @@ mod impls;
 pub use impls::*;
 
 #[cfg(feature = "datagen")]
+use alloc::boxed::Box;
+#[cfg(feature = "datagen")]
 use icu_provider::datagen;
 use icu_provider::prelude::*;
-#[cfg(feature = "datagen")]
-use alloc::boxed::Box;
 
 /// A data provider that selectively filters out data requests.
 ///
