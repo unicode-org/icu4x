@@ -114,6 +114,24 @@ impl Unicode {
         self.keywords.is_empty() && self.attributes.is_empty()
     }
 
+    /// Clears all Unicode extension keywords and attributes, effectively removing
+    /// the Unicode extension.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use std::str::FromStr;
+    /// use icu::locid::Locale;
+    ///
+    /// let mut loc: Locale = "und-t-mul-u-hello-ca-buddhist-hc-h12".parse().unwrap();
+    /// loc.extensions.unicode.clear();
+    /// assert_eq!(loc, "und-t-mul");
+    /// ```
+    pub fn clear(&mut self) {
+        self.keywords.clear();
+        self.attributes.clear();
+    }
+
     pub(crate) fn try_from_iter<'a>(
         iter: &mut Peekable<impl Iterator<Item = &'a [u8]>>,
     ) -> Result<Self, ParserError> {
