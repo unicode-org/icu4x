@@ -188,7 +188,7 @@ If all went well, running the app with `cargo run` should display:
 
 Here's an internationalized date!
 
-*Notice:* Default `cargo run` builds and runs a `debug` mode of the binary. If you want to evaluate performance, memory or size of this example, use `cargo run --release`. Our example is also using `json` resource format. Generate the data in `bincode` for better performance.
+*Notice:* Default `cargo run` builds and runs a `debug` mode of the binary. If you want to evaluate performance, memory or size of this example, use `cargo run --release`. Our example is also using `json` resource format. Generate the data in `postcard` (and use `BlobDataProvider`) for better performance.
 
 ## Using data from the filesystem
 
@@ -248,7 +248,7 @@ The last command is a bit dense, so let's dissect it.
 After that step, it should be possible to navigate to `~/projects/icu/icu4x-data` and there should be a `manifest.json` file, and directories with data.
 
 *Notice:* In this tutorial we export data as compact `JSON` which provides decent performance and readable data files. There are other formats and options for formatting of the data available. Please consult `cargo run --bin icu4x-datagen -- --help` for details.
-*Notice:* In particular, in production, the `bincode` format will yield better performance results.
+*Notice:* In particular, in production, the `postcard` format will yield better performance results.
 *Notice:* For offline or unconventional use, the user can also pass `--cldr-core` and `--cldr-dates` paths to local clones of the repositories instead of `--cldr-tag`.
 
 
