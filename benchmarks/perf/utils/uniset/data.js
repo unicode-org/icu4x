@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1648088168161,
+  "lastUpdate": 1648135297049,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -22409,6 +22409,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 55025760,
             "range": "± 646396",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "a4c650b3cf434a6a803b7e1e2c8443740a5ae3f7",
+          "message": "Treat ZeroMap sort order as an optional invariant (#1727)",
+          "timestamp": "2022-03-24T10:14:11-05:00",
+          "tree_id": "ec0f2bd628c9542509eedeecb9a999487f71fb59",
+          "url": "https://github.com/unicode-org/icu4x/commit/a4c650b3cf434a6a803b7e1e2c8443740a5ae3f7"
+        },
+        "date": 1648135280821,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 41192653,
+            "range": "± 1676012",
             "unit": "ns/iter"
           }
         ]
