@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1648144554613,
+  "lastUpdate": 1648155562788,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -23657,6 +23657,48 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 170388,
             "range": "± 219",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ghimire.manoj92@gmail.com",
+            "name": "Manoj Ghimire",
+            "username": "ozghimire"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "9d86b99823f5a6441e791bd9b8a098a353666c40",
+          "message": "Add clippy lints for panics (#1650)\n\nSee #1363",
+          "timestamp": "2022-03-24T13:50:59-07:00",
+          "tree_id": "2524a838ad4083ffe11c20b5e1d942efae583c63",
+          "url": "https://github.com/unicode-org/icu4x/commit/9d86b99823f5a6441e791bd9b8a098a353666c40"
+        },
+        "date": 1648155547365,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 73286,
+            "range": "± 660",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 773843,
+            "range": "± 998",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 156103,
+            "range": "± 760",
             "unit": "ns/iter"
           }
         ]
