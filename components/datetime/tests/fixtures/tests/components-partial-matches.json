@@ -1,6 +1,6 @@
 [
     {
-        "description": "Partial match for m -> hm -> h:m a",
+        "description": "Singleton fields are returned directly if there are no singleton matches (m -> hm)",
         "input": {
             "value": "2002-12-31T08:05:07.000",
             "options": {
@@ -11,8 +11,7 @@
         },
         "output": {
             "values": {
-                "en": "8:5 AM",
-                "fr": "8:5 AM"
+                "en": "5"
             }
         }
     },

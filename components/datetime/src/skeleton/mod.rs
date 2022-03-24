@@ -178,11 +178,12 @@ mod test {
     #[test]
     fn test_skeleton_no_match() {
         let components = components::Bag {
+            hour: Some(components::Numeric::Numeric),
             time_zone_name: Some(components::TimeZoneName::LongSpecific),
             ..Default::default()
         };
         let requested_fields = components.to_vec_fields();
-        // Construct a set of skeletons that do not use the time zone symbol.
+        // Construct a set of skeletons that do not use the hour nor time zone symbols.
         let mut skeletons = LiteMap::new();
         skeletons.insert(
             SkeletonV1::try_from("EEEE").unwrap(),
