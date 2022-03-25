@@ -2,15 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-#![cfg_attr(
-    any(
-        all(feature = "freertos", not(feature = "x86tiny")),
-        all(feature = "x86tiny", not(feature = "freertos")),
-    ),
-    feature(alloc_error_handler)
-)]
+// https://github.com/unicode-org/icu4x/blob/main/docs/process/boilerplate.md#library-annotations
 #![no_std]
-#![allow(clippy::upper_case_acronyms)]
 #![cfg_attr(
     not(test),
     deny(
@@ -20,6 +13,15 @@
         clippy::panic
     )
 )]
+#![allow(clippy::upper_case_acronyms)]
+#![cfg_attr(
+    any(
+        all(feature = "freertos", not(feature = "x86tiny")),
+        all(feature = "x86tiny", not(feature = "freertos")),
+    ),
+    feature(alloc_error_handler)
+)]
+
 //! This module contains the source of truth for the [Diplomat](https://github.com/rust-diplomat/diplomat)-generated
 //! FFI bindings. This generates the C, C++ and Wasm bindings. This module also contains the C
 //! FFI for ICU4X.
