@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1648172232354,
+  "lastUpdate": 1648184576864,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -22619,6 +22619,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 53286231,
             "range": "± 1766660",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "c53194da5a76593641b818447d44846fbb538c78",
+          "message": "Run docs tests that failed prior to Rust 1.57 and update links (#1732)",
+          "timestamp": "2022-03-24T21:56:03-07:00",
+          "tree_id": "cc8bd2f1dc1f0f419d82283bcac64ecf541d2013",
+          "url": "https://github.com/unicode-org/icu4x/commit/c53194da5a76593641b818447d44846fbb538c78"
+        },
+        "date": 1648184559898,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 51601636,
+            "range": "± 860995",
             "unit": "ns/iter"
           }
         ]
