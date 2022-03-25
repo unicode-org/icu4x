@@ -101,6 +101,93 @@ impl<T: Copy + PartialEq> PartialEq for OptionULE<T> {
     }
 }
 
-impl<T: Copy + Eq> Eq for OptionULE<T> {
+impl<T: Copy + Eq> Eq for OptionULE<T> {}
 
+use core::marker::PhantomData;
+
+/// A type allowing one to represent `Option<T>` for [`VarULE`] `T` types.
+// The slice field is empty when None (bool = false),
+// and is a valid T when Some (bool = true)
+#[repr(packed)]
+pub struct OptionVarULE<T: VarULE + ?Sized>(PhantomData<T>, bool, [u8]);
+
+impl<T: VarULE + ?Sized> OptionVarULE<T> {
+    /// Obtain this as an `Option<&T>`
+    pub fn as_ref(&self) -> Option<&T> {
+        if self.1 {
+            unsafe {
+                // Safety: byte field is a valid T if boolean field is true
+                Some(T::from_byte_slice_unchecked(&self.2))
+            }
+        } else {
+            None
+        }
+    }
+}
+
+// Safety (based on the safety checklist on the VarULE trait):
+//  1. OptionVarULE<T> does not include any uninitialized or padding bytes (achieved by being repr(packed) on ULE types)
+//  2. OptionVarULE<T> is aligned to 1 byte (achieved by being repr(packed) on ULE types)
+//  3. The impl of `validate_byte_slice()` returns an error if any byte is not valid.
+//  4. The impl of `validate_byte_slice()` returns an error if the slice cannot be used in its entirety
+//  5. The impl of `from_byte_slice_unchecked()` returns a reference to the same data.
+//  6. All other methods are defaulted
+//  7. OptionVarULE<T> byte equality is semantic equality (achieved by being an aggregate)
+unsafe impl<T: VarULE + ?Sized> VarULE for OptionVarULE<T> {
+    #[inline]
+    fn validate_byte_slice(slice: &[u8]) -> Result<(), ZeroVecError> {
+        if slice.is_empty() {
+            return Err(ZeroVecError::length::<Self>(slice.len()));
+        }
+        match slice[0] {
+            0 => {
+                if slice.len() != 1 {
+                    Err(ZeroVecError::length::<Self>(slice.len()))
+                } else {
+                    Ok(())
+                }
+            }
+            1 => T::validate_byte_slice(&slice[1..]),
+            _ => Err(ZeroVecError::parse::<Self>()),
+        }
+    }
+
+    #[inline]
+    unsafe fn from_byte_slice_unchecked(bytes: &[u8]) -> &Self {
+        let metadata = bytes.len() - 1;
+        let entire_struct_as_slice: *const [u8] =
+            ::core::slice::from_raw_parts(bytes.as_ptr(), metadata);
+        &*(entire_struct_as_slice as *const Self)
+    }
+}
+
+unsafe impl<T, U> EncodeAsVarULE<OptionVarULE<U>> for Option<T>
+where
+    T: EncodeAsVarULE<U>,
+    U: VarULE,
+{
+    fn encode_var_ule_as_slices<R>(&self, _: impl FnOnce(&[&[u8]]) -> R) -> R {
+        // unnecessary if the other two are implemented
+        unreachable!()
+    }
+
+    #[inline]
+    fn encode_var_ule_len(&self) -> usize {
+        if let Some(ref inner) = *self {
+            // slice + boolean
+            1 + inner.encode_var_ule_len()
+        } else {
+            // boolean + empty slice
+            1
+        }
+    }
+
+    fn encode_var_ule_write(&self, dst: &mut [u8]) {
+        if let Some(ref inner) = *self {
+            dst[0] = 1;
+            inner.encode_var_ule_write(&mut dst[1..]);
+        } else {
+            dst[0] = 0;
+        }
+    }
 }
