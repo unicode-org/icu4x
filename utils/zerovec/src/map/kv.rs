@@ -54,6 +54,12 @@ impl_sized_kv!(i64);
 impl_sized_kv!(i128);
 impl_sized_kv!(char);
 
+impl<'a, T: AsULE + Ord + 'static> ZeroMapKV<'a> for Option<T> {
+    type Container = ZeroVec<'a, Option<T>>;
+    type GetType = <Option<T> as AsULE>::ULE;
+    type OwnedType = Option<T>;
+}
+
 impl<'a> ZeroMapKV<'a> for str {
     type Container = VarZeroVec<'a, str>;
     type GetType = str;
