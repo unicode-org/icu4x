@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1648171870741,
+  "lastUpdate": 1648184262028,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -11663,6 +11663,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/1d275ea9930434cb74c8a8e0b3a44c9b65e6e33c"
         },
         "date": 1648171854129,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4545559,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "c53194da5a76593641b818447d44846fbb538c78",
+          "message": "Run docs tests that failed prior to Rust 1.57 and update links (#1732)",
+          "timestamp": "2022-03-24T21:56:03-07:00",
+          "tree_id": "cc8bd2f1dc1f0f419d82283bcac64ecf541d2013",
+          "url": "https://github.com/unicode-org/icu4x/commit/c53194da5a76593641b818447d44846fbb538c78"
+        },
+        "date": 1648184244031,
         "tool": "ndjson",
         "benches": [
           {
