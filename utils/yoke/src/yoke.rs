@@ -90,12 +90,12 @@ impl<Y: for<'a> Yokeable<'a>, C: StableDeref> Yoke<Y, C> {
     ///
     /// Call sites for this function may not compile; if this happens, use
     /// [`Yoke::attach_to_cart_badly()`] instead.
-    /// 
+    ///
     /// # Examples
-    /// 
+    ///
     /// The following code does not currently compile.
     /// See [#1061](https://github.com/unicode-org/icu4x/issues/1061).
-    /// 
+    ///
     /// ```compile_fail
     /// # use yoke::{Yoke, Yokeable};
     /// # use std::rc::Rc;
