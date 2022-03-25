@@ -455,10 +455,7 @@ where
     ///
     /// Same example as above, but this time, do not move out of `p1`:
     ///
-    /// ***[#1061](https://github.com/unicode-org/icu4x/issues/1061): The following example
-    /// requires Rust 1.57.***
-    ///
-    /// ```ignore
+    /// ```
     /// // Same imports and definitions as above
     /// # use icu_provider::hello_world::*;
     /// # use icu_provider::prelude::*;
@@ -504,10 +501,7 @@ where
     ///
     /// Capture a string from the context and append it to the message:
     ///
-    /// ***[#1061](https://github.com/unicode-org/icu4x/issues/1061): The following example
-    /// requires Rust 1.57.***
-    ///
-    /// ```ignore
+    /// ```
     /// // Same imports and definitions as above
     /// # use icu_provider::hello_world::*;
     /// # use icu_provider::prelude::*;
@@ -527,34 +521,6 @@ where
     ///     "Extra",
     ///     |mut obj, capture, _| {
     ///         obj.message.to_mut().push_str(capture);
-    ///         obj.message
-    ///     });
-    ///
-    /// assert_eq!("Hello WorldExtra", p2.get());
-    /// ```
-    ///
-    /// Prior to Rust 1.57, pass the capture by value instead of by reference:
-    ///
-    /// ```
-    /// // Same imports and definitions as above
-    /// # use icu_provider::hello_world::*;
-    /// # use icu_provider::prelude::*;
-    /// # use std::borrow::Cow;
-    /// # struct HelloWorldV1MessageMarker;
-    /// # impl DataMarker for HelloWorldV1MessageMarker {
-    /// #     type Yokeable = Cow<'static, str>;
-    /// # }
-    ///
-    /// let p1: DataPayload<HelloWorldV1Marker> = DataPayload::from_owned(HelloWorldV1 {
-    ///     message: Cow::Borrowed("Hello World")
-    /// });
-    ///
-    /// assert_eq!("Hello World", p1.get().message);
-    ///
-    /// let p2: DataPayload<HelloWorldV1MessageMarker> = p1.map_project_with_capture(
-    ///     "Extra".to_string(),
-    ///     |mut obj, capture, _| {
-    ///         obj.message.to_mut().push_str(&capture);
     ///         obj.message
     ///     });
     ///
@@ -585,10 +551,7 @@ where
     ///
     /// Same example as above, but this time, do not move out of `p1`:
     ///
-    /// ***[#1061](https://github.com/unicode-org/icu4x/issues/1061): The following example
-    /// requires Rust 1.57.***
-    ///
-    /// ```ignore
+    /// ```
     /// // Same imports and definitions as above
     /// # use icu_provider::hello_world::*;
     /// # use icu_provider::prelude::*;
@@ -641,10 +604,7 @@ where
     ///
     /// Same example as above, but bubble up an error:
     ///
-    /// ***[#1061](https://github.com/unicode-org/icu4x/issues/1061): The following example
-    /// requires Rust 1.57.***
-    ///
-    /// ```ignore
+    /// ```
     /// // Same imports and definitions as above
     /// # use icu_provider::hello_world::*;
     /// # use icu_provider::prelude::*;
@@ -673,38 +633,6 @@ where
     /// assert_eq!("Hello WorldExtra", p2.get());
     /// # Ok::<(), &'static str>(())
     /// ```
-    ///
-    /// Prior to Rust 1.57, pass the capture by value instead of by reference:
-    ///
-    /// ```
-    /// // Same imports and definitions as above
-    /// # use icu_provider::hello_world::*;
-    /// # use icu_provider::prelude::*;
-    /// # use std::borrow::Cow;
-    /// # struct HelloWorldV1MessageMarker;
-    /// # impl DataMarker for HelloWorldV1MessageMarker {
-    /// #     type Yokeable = Cow<'static, str>;
-    /// # }
-    ///
-    /// let p1: DataPayload<HelloWorldV1Marker> = DataPayload::from_owned(HelloWorldV1 {
-    ///     message: Cow::Borrowed("Hello World")
-    /// });
-    ///
-    /// assert_eq!("Hello World", p1.get().message);
-    ///
-    /// let p2: DataPayload<HelloWorldV1MessageMarker> = p1.try_map_project_with_capture(
-    ///     "Extra".to_string(),
-    ///     |mut obj, capture, _| {
-    ///         if obj.message.is_empty() {
-    ///             return Err(())
-    ///         }
-    ///         obj.message.to_mut().push_str(&capture);
-    ///         Ok(obj.message)
-    ///     })?;
-    ///
-    /// assert_eq!("Hello WorldExtra", p2.get());
-    /// # Ok::<(), ()>(())
-    /// ```
     #[allow(clippy::type_complexity)]
     pub fn try_map_project_with_capture<M2, T, E>(
         self,
@@ -730,10 +658,7 @@ where
     ///
     /// Same example as above, but bubble up an error:
     ///
-    /// ***[#1061](https://github.com/unicode-org/icu4x/issues/1061): The following example
-    /// requires Rust 1.57.***
-    ///
-    /// ```ignore
+    /// ```
     /// // Same imports and definitions as above
     /// # use icu_provider::hello_world::*;
     /// # use icu_provider::prelude::*;
