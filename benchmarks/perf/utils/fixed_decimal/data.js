@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1648156610378,
+  "lastUpdate": 1648172192146,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -21509,6 +21509,36 @@ window.BENCHMARK_DATA = {
             "name": "fixed_decimal/overview",
             "value": 94267,
             "range": "± 343",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "1d275ea9930434cb74c8a8e0b3a44c9b65e6e33c",
+          "message": "Make lib.rs boilerplate consistent across ICU4X (#1731)",
+          "timestamp": "2022-03-24T18:29:34-07:00",
+          "tree_id": "fef427e105816e2ed98d1322802085c53df47ab2",
+          "url": "https://github.com/unicode-org/icu4x/commit/1d275ea9930434cb74c8a8e0b3a44c9b65e6e33c"
+        },
+        "date": 1648172177488,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 108054,
+            "range": "± 410",
             "unit": "ns/iter"
           }
         ]
