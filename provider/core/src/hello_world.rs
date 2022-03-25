@@ -103,6 +103,8 @@ impl HelloWorldProvider {
             .iter()
             .map(|(loc, value)| {
                 (
+                    // TODO(#348): Use a const function to construct the langids.
+                    #[allow(clippy::unwrap_used)]
                     LanguageIdentifier::from_str(loc).unwrap(),
                     Cow::Borrowed(*value),
                 )

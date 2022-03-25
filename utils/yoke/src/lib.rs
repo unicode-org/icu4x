@@ -24,9 +24,10 @@
 //!
 //! See the documentation of [`Yoke`] for more details.
 
+// https://github.com/unicode-org/icu4x/blob/main/docs/process/boilerplate.md#library-annotations
+#![cfg_attr(all(not(test), not(doc)), no_std)]
 #![cfg_attr(
-    all(not(test), not(doc)),
-    no_std,
+    not(test),
     deny(
         clippy::indexing_slicing,
         clippy::unwrap_used,
