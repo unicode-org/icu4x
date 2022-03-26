@@ -21,8 +21,8 @@
 //! ```
 //!
 //! [`Keys`]: Key
+
 mod key;
-use alloc::boxed::Box;
 
 use crate::parser::ParserError;
 use alloc::vec::Vec;
@@ -53,7 +53,7 @@ pub use key::Key;
 /// [`Other Use Extensions`]: https://unicode.org/reports/tr35/#other_extensions
 /// [`Unicode Locale Identifier`]: https://unicode.org/reports/tr35/#Unicode_locale_identifier
 #[derive(Clone, PartialEq, Eq, Debug, Default, Hash, PartialOrd, Ord)]
-pub struct Other((u8, Box<[Key]>));
+pub struct Other((u8, Vec<Key>));
 
 impl Other {
     /// A constructor which takes a pre-sorted list of [`Key`].
@@ -77,7 +77,7 @@ impl Other {
     /// ```
     pub fn from_vec_unchecked(ext: u8, input: Vec<Key>) -> Self {
         assert!(ext.is_ascii_alphabetic());
-        Self((ext, input.into_boxed_slice()))
+        Self((ext, input))
     }
 
     pub(crate) fn try_from_iter<'a>(
