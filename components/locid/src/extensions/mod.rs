@@ -148,28 +148,31 @@ impl Extensions {
     /// let loc: Locale = "und-a-hello-t-mul-u-world-z-zzz-x-extra".parse().unwrap();
     ///
     /// let mut only_unicode = loc.clone();
-    /// only_unicode.extensions.retain_types(&[ExtensionType::Unicode]);
+    /// only_unicode.extensions.retain_by_type(|t| t == ExtensionType::Unicode);
     /// assert_eq!(only_unicode, "und-u-world");
     ///
     /// let mut only_t_z = loc.clone();
-    /// only_t_z.extensions.retain_types(&[
-    ///     ExtensionType::Transform,
-    ///     ExtensionType::Other(b'z'),
-    /// ]);
+    /// only_t_z.extensions.retain_by_type(|t| {
+    ///     t == ExtensionType::Transform
+    ///         || t == ExtensionType::Other(b'z')
+    /// });
     /// assert_eq!(only_t_z, "und-t-mul-z-zzz");
     /// ```
-    pub fn retain_types(&mut self, types: &[ExtensionType]) {
-        if !types.contains(&ExtensionType::Unicode) {
+    pub fn retain_by_type<F>(&mut self, mut predicate: F)
+    where
+        F: FnMut(ExtensionType) -> bool,
+    {
+        if !predicate(ExtensionType::Unicode) {
             self.unicode.clear();
         }
-        if !types.contains(&ExtensionType::Transform) {
+        if !predicate(ExtensionType::Transform) {
             self.transform.clear();
         }
-        if !types.contains(&ExtensionType::Private) {
+        if !predicate(ExtensionType::Private) {
             self.private.clear();
         }
         self.other
-            .retain(|o| types.contains(&ExtensionType::Other(o.get_ext_byte())));
+            .retain(|o| predicate(ExtensionType::Other(o.get_ext_byte())));
     }
 
     pub(crate) fn try_from_iter<'a>(
