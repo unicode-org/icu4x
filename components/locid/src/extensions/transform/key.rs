@@ -81,6 +81,12 @@ impl FromStr for Key {
 
 impl_writeable_for_single_subtag!(Key, "k0");
 
+impl PartialEq<str> for Key {
+    fn eq(&self, other: &str) -> bool {
+        self.as_str() == other
+    }
+}
+
 impl PartialEq<&str> for Key {
     fn eq(&self, other: &&str) -> bool {
         self.as_str() == *other

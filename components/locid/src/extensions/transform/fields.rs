@@ -157,6 +157,29 @@ impl Fields {
         }
     }
 
+    /// Retains a subset of fields as specified by the predicate function.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::locid::Locale;
+    /// use std::str::FromStr;
+    ///
+    /// let mut loc: Locale = "und-t-h0-hybrid-d0-hex-m0-xml".parse().unwrap();
+    ///
+    /// loc.extensions.transform.fields.retain_by_key(|k| k == "h0");
+    /// assert_eq!(loc, "und-t-h0-hybrid");
+    ///
+    /// loc.extensions.transform.fields.retain_by_key(|k| k == "d0");
+    /// assert_eq!(loc, "und");
+    /// ```
+    pub fn retain_by_key<F>(&mut self, mut predicate: F)
+    where
+        F: FnMut(&Key) -> bool,
+    {
+        self.0.retain(|(k, _)| predicate(k))
+    }
+
     pub(crate) fn for_each_subtag_str<E, F>(&self, f: &mut F) -> Result<(), E>
     where
         F: FnMut(&str) -> Result<(), E>,
