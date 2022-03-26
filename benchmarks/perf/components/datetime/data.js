@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1648184675980,
+  "lastUpdate": 1648328393106,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -23867,6 +23867,48 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 223464,
             "range": "± 9533",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "7eeafcc3fab59fc9c90d2df5cf9ca3664c7df8c2",
+          "message": "Add OptionULE and OptionVarULE (#1736)\n\n* Add OptionULE\n\n* tests\n\n* git add\n\n* add OptionVarULE\n\n* review comments\n\n* add KV impl for OptionVarULE\n\n* add test\n\n* clarify\n\n* fix\n\n* clip",
+          "timestamp": "2022-03-26T13:50:32-07:00",
+          "tree_id": "017a2bcf12eb14e899c778d2dffdb76f1861d268",
+          "url": "https://github.com/unicode-org/icu4x/commit/7eeafcc3fab59fc9c90d2df5cf9ca3664c7df8c2"
+        },
+        "date": 1648328376698,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 95475,
+            "range": "± 5883",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 997963,
+            "range": "± 64214",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 215881,
+            "range": "± 9011",
             "unit": "ns/iter"
           }
         ]
