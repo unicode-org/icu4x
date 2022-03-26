@@ -67,6 +67,7 @@ unsafe impl<U: ULE> ULE for OptionULE<U> {
             return Err(ZeroVecError::length::<Self>(bytes.len()));
         }
         for chunk in bytes.chunks(size) {
+            #[allow(clippy::indexing_slicing)] // `chunk` will have enough bytes to fit Self
             match chunk[0] {
                 // https://doc.rust-lang.org/reference/types/boolean.html
                 // Rust booleans are always size 1, align 1 values with valid bit patterns 0x0 or 0x1
@@ -160,6 +161,7 @@ unsafe impl<U: VarULE + ?Sized> VarULE for OptionVarULE<U> {
         if slice.is_empty() {
             return Err(ZeroVecError::length::<Self>(slice.len()));
         }
+        #[allow(clippy::indexing_slicing)] // slice already verified to be nonempty
         match slice[0] {
             // https://doc.rust-lang.org/reference/types/boolean.html
             // Rust booleans are always size 1, align 1 values with valid bit patterns 0x0 or 0x1
@@ -205,11 +207,20 @@ where
         }
     }
 
+    #[allow(clippy::indexing_slicing)] // This method is allowed to panic when lengths are invalid
     fn encode_var_ule_write(&self, dst: &mut [u8]) {
         if let Some(ref inner) = *self {
+            debug_assert!(
+                !dst.is_empty(),
+                "OptionVarULE must have at least one byte when Some"
+            );
             dst[0] = 1;
             inner.encode_var_ule_write(&mut dst[1..]);
         } else {
+            debug_assert!(
+                dst.len() == 1,
+                "OptionVarULE must have exactly one byte when None"
+            );
             dst[0] = 0;
         }
     }
