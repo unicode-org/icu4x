@@ -3,8 +3,8 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use super::*;
-use crate::prelude::*;
 use alloc::boxed::Box;
+use icu_provider::prelude::*;
 
 use icu_locid::LanguageIdentifier;
 
@@ -23,8 +23,8 @@ where
     /// ```
     /// use icu_provider::prelude::*;
     /// use icu_provider::hello_world::*;
-    /// use icu_provider::filter::Filterable;
     /// use icu_provider::datagen::*;
+    /// use icu_provider_adapters::filter::Filterable;
     /// use icu_locid::LanguageIdentifier;
     /// use icu_locid_macros::{language, langid};
     ///
@@ -98,7 +98,7 @@ where
     /// ```
     /// use icu_provider::prelude::*;
     /// use icu_provider::hello_world::*;
-    /// use icu_provider::filter::Filterable;
+    /// use icu_provider_adapters::filter::Filterable;
     /// use icu_locid_macros::langid;
     ///
     /// let allowlist = vec![langid!("de"), langid!("zh")];
@@ -161,7 +161,7 @@ where
     /// ```
     /// use icu_provider::prelude::*;
     /// use icu_provider::hello_world::*;
-    /// use icu_provider::filter::Filterable;
+    /// use icu_provider_adapters::filter::Filterable;
     /// use icu_locid_macros::langid;
     ///
     /// let provider = HelloWorldProvider::new_with_placeholder_data()

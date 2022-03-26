@@ -17,6 +17,17 @@
 //! [`FsDataProvider`]: ../icu_provider_fs/struct.FsDataProvider.html
 //! [`StaticDataProvider`]: ../icu_provider_blob/struct.StaticDataProvider.html
 
+// https://github.com/unicode-org/icu4x/blob/main/docs/process/boilerplate.md#library-annotations
+#![cfg_attr(
+    not(test),
+    deny(
+        clippy::indexing_slicing,
+        clippy::unwrap_used,
+        clippy::expect_used,
+        clippy::panic
+    )
+)]
+
 mod bin_uniset;
 mod enum_codepointtrie;
 mod enum_uniset;
@@ -34,8 +45,8 @@ pub use enum_uniset::EnumeratedPropertyUnicodeSetDataProvider;
 pub use script::ScriptWithExtensionsPropertyProvider;
 
 use icu_provider::datagen::OmnibusDatagenProvider;
-use icu_provider::fork::by_key::MultiForkByKeyProvider;
 use icu_provider::DataMarker;
+use icu_provider_adapters::fork::by_key::MultiForkByKeyProvider;
 use std::path::Path;
 
 pub fn create_exportable_provider<T: DataMarker>(

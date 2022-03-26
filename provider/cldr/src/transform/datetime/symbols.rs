@@ -105,6 +105,7 @@ fn get_era_code_map(calendar: &str) -> BTreeMap<String, TinyStr16> {
         ]
         .into_iter()
         .collect(),
+        #[allow(clippy::panic)] // TODO(#1668) Clippy exceptions need docs or fixing.
         _ => panic!("Era map unknown for {}", calendar),
     }
 }

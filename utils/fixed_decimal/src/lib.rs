@@ -38,7 +38,17 @@
 //!
 //! [`ICU4X`]: ../icu/index.html
 
-#![cfg_attr(not(any(feature = "std", test)), no_std)]
+// https://github.com/unicode-org/icu4x/blob/main/docs/process/boilerplate.md#library-annotations
+#![cfg_attr(not(any(test, feature = "std")), no_std)]
+#![cfg_attr(
+    not(test),
+    deny(
+        clippy::indexing_slicing,
+        clippy::unwrap_used,
+        clippy::expect_used,
+        clippy::panic
+    )
+)]
 
 pub mod decimal;
 pub mod signum;
@@ -48,6 +58,7 @@ mod uint_iterator;
 pub use decimal::DoublePrecision;
 
 pub use decimal::FixedDecimal;
+pub use decimal::RoundingMode;
 use displaydoc::Display;
 pub use signum::Signum;
 

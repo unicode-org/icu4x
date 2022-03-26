@@ -29,7 +29,7 @@ const POSTCARD_BYTES: [u8; 33] = [
 #[allow(dead_code)]
 fn serialize() {
     let data = DataStruct {
-        nums: ZeroVec::from_slice(&U16_SLICE),
+        nums: ZeroVec::from_slice_or_alloc(&U16_SLICE),
     };
     let postcard_bytes = postcard::to_stdvec(&data).expect("Serialization should be successful");
     println!("Postcard bytes: {:#x?}", postcard_bytes);

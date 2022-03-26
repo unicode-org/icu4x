@@ -57,6 +57,8 @@ impl<'data> GenericPattern<'data> {
                     result.extend(date.items.iter());
                 }
                 GenericPatternItem::Placeholder(idx) => {
+                    #[allow(clippy::expect_used)]
+                    // TODO(#1668) Clippy exceptions need docs or fixing.
                     let idx = char::from_digit(idx as u32, 10)
                         .expect("Failed to convert placeholder idx to char");
                     return Err(PatternError::UnknownSubstitution(idx));

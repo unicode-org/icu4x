@@ -44,6 +44,7 @@ impl TryFrom<&dyn CldrPaths> for NumbersProvider {
 impl NumbersProvider {
     /// Returns the digits for the given numbering system name.
     fn get_digits_for_numbering_system(&self, nsname: TinyStr8) -> Option<[char; 10]> {
+        #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
         match self
             .cldr_numbering_systems_data
             .read()
@@ -93,6 +94,7 @@ impl ResourceProvider<DecimalSymbolsV1Marker> for NumbersProvider {
             serde_json::from_reader(open_reader(&path)?).map_err(|e| Error::Json(e, Some(path)))?
         };
 
+        #[allow(clippy::expect_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
         let numbers = &resource
             .main
             .0
@@ -104,6 +106,7 @@ impl ResourceProvider<DecimalSymbolsV1Marker> for NumbersProvider {
         let mut result = DecimalSymbolsV1::try_from(numbers)
             .map_err(|s| Error::Custom(s.to_string(), Some(langid.clone())))?;
 
+        #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
         if self.cldr_numbering_systems_data.read().unwrap().is_none() {
             let resource: cldr_serde::numbering_systems::Resource =
                 serde_json::from_reader(open_reader(&self.numbering_systems_path)?)

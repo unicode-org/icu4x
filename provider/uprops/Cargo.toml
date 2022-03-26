@@ -32,6 +32,7 @@ icu_casemapping = { version = "0.1", path = "../../experimental/casemapping", fe
 icu_codepointtrie = { version = "0.3.3", path = "../../utils/codepointtrie", features = ["serialize"] }
 icu_properties = { version = "0.5", path = "../../components/properties", features = ["datagen", "std"] }
 icu_provider = { version = "0.5", path = "../../provider/core", features = ["serialize", "std", "datagen"] }
+icu_provider_adapters = { path = "../../provider/adapters" }
 icu_uniset = { version = "0.4.1", path = "../../utils/uniset", features = ["serialize"] }
 serde = { version = "1.0", features = ["derive"] }
 toml = { version = "0.5" }

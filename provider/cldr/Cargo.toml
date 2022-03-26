@@ -37,6 +37,7 @@ all-features = true
 
 [dependencies]
 icu_provider = { version = "0.5", path = "../../provider/core", features = ["serialize", "datagen"] }
+icu_provider_adapters = { path = "../../provider/adapters" }
 icu_locid = { version = "0.5", path = "../../components/locid" }
 icu_plurals = { version = "0.5", path = "../../components/plurals", features = ["datagen"] }
 icu_datetime = { version = "0.5", path = "../../components/datetime", features = ["datagen"] }

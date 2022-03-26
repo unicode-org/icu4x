@@ -61,6 +61,7 @@ impl IterableResourceProvider<DatePatternsV1Marker> for DatePatternsProvider {
 impl From<&cldr_serde::ca::LengthPatterns> for patterns::LengthPatternsV1<'_> {
     fn from(other: &cldr_serde::ca::LengthPatterns) -> Self {
         // TODO(#308): Support numbering system variations. We currently throw them away.
+        #[allow(clippy::expect_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
         Self {
             full: other
                 .full
@@ -89,6 +90,7 @@ impl From<&cldr_serde::ca::LengthPatterns> for patterns::LengthPatternsV1<'_> {
 impl From<&cldr_serde::ca::DateTimeFormats> for patterns::LengthPatternsV1<'_> {
     fn from(other: &cldr_serde::ca::DateTimeFormats) -> Self {
         // TODO(#308): Support numbering system variations. We currently throw them away.
+        #[allow(clippy::expect_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
         Self {
             full: other
                 .full
@@ -117,6 +119,7 @@ impl From<&cldr_serde::ca::DateTimeFormats> for patterns::LengthPatternsV1<'_> {
 impl From<&cldr_serde::ca::DateTimeFormats> for patterns::GenericLengthPatternsV1<'_> {
     fn from(other: &cldr_serde::ca::DateTimeFormats) -> Self {
         // TODO(#308): Support numbering system variations. We currently throw them away.
+        #[allow(clippy::expect_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
         Self {
             full: other
                 .full
@@ -153,15 +156,19 @@ impl From<&cldr_serde::ca::Dates> for DatePatternsV1<'_> {
         let pattern_str_medium = other.time_formats.medium.get_pattern();
         let pattern_str_short = other.time_formats.short.get_pattern();
 
+        #[allow(clippy::expect_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
         let pattern_full = pattern_str_full
             .parse()
             .expect("Failed to create a full Pattern from bytes.");
+        #[allow(clippy::expect_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
         let pattern_long = pattern_str_long
             .parse()
             .expect("Failed to create a long Pattern from bytes.");
+        #[allow(clippy::expect_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
         let pattern_medium = pattern_str_medium
             .parse()
             .expect("Failed to create a medium Pattern from bytes.");
+        #[allow(clippy::expect_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
         let pattern_short = pattern_str_short
             .parse()
             .expect("Failed to create a short Pattern from bytes.");
@@ -185,6 +192,7 @@ impl From<&cldr_serde::ca::Dates> for DatePatternsV1<'_> {
             }
         }
 
+        #[allow(clippy::expect_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
         let preferred_hour_cycle =
             preferred_hour_cycle.expect("Could not find a preferred hour cycle.");
         let alt_hour_cycle = if preferred_hour_cycle == CoarseHourCycle::H11H12 {
@@ -195,6 +203,7 @@ impl From<&cldr_serde::ca::Dates> for DatePatternsV1<'_> {
 
         let (time_h11_h12, time_h23_h24) = {
             let time = (&other.time_formats).into();
+            #[allow(clippy::expect_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
             let alt_time = patterns::LengthPatternsV1 {
                 full: alt_hour_cycle
                     .apply_on_pattern(

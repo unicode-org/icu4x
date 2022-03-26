@@ -66,8 +66,8 @@ pub struct DataStruct<'data> {
 }
 
 let data = DataStruct {
-    nums: ZeroVec::from_slice(&[211, 281, 421, 461]),
-    chars: ZeroVec::from_slice(&['ö', '冇', 'म']),
+    nums: ZeroVec::from_slice_or_alloc(&[211, 281, 421, 461]),
+    chars: ZeroVec::from_slice_or_alloc(&['ö', '冇', 'म']),
     strs: VarZeroVec::from(&["hello", "world"]),
 };
 let bincode_bytes = bincode::serialize(&data)
@@ -187,7 +187,6 @@ Small = 16 elements, large = 131,072 elements. Maps contain `<String, String>`.
 The benches used to generate the above table can be found in the `benches` directory in the project repository.
 `zeromap` benches are named by convention, e.g. `zeromap/deserialize/small`, `zeromap/lookup/large`. The type
 is appended for baseline comparisons, e.g. `zeromap/lookup/small/hashmap`.
-
 
 ## More Information
 

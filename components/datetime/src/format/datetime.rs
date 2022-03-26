@@ -103,6 +103,8 @@ where
             } else {
                 let buffer = num.to_string();
                 let len = buffer.len();
+                #[allow(clippy::indexing_slicing)]
+                // TODO(#1668) Clippy exceptions need docs or fixing.
                 result.write_str(&buffer[len - 2..])
             }
         }
@@ -165,6 +167,7 @@ where
 {
     match field.symbol {
         FieldSymbol::Era => {
+            #[allow(clippy::expect_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
             let symbol = symbols
                 .expect("Expect symbols to be present")
                 .get_symbol_for_era(
@@ -200,6 +203,7 @@ where
                 field.length,
             )?,
             length => {
+                #[allow(clippy::expect_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
                 let symbol = symbols
                     .expect("Expect symbols to be present")
                     .get_symbol_for_month(
@@ -228,6 +232,7 @@ where
                 .datetime()
                 .iso_weekday()
                 .ok_or(Error::MissingInputField)?;
+            #[allow(clippy::expect_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
             let symbol = symbols
                 .expect("Expect symbols to be present")
                 .get_symbol_for_weekday(weekday, field.length, dow)?;
@@ -287,6 +292,7 @@ where
             field.length,
         )?,
         FieldSymbol::DayPeriod(period) => {
+            #[allow(clippy::expect_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
             let symbol = symbols
                 .expect("Expect symbols to be present")
                 .get_symbol_for_day_period(

@@ -92,6 +92,8 @@ fn test_escape_for_json() {
 /// 4. FxHash is designed to output 32-bit or 64-bit values, whereas SHA outputs more bits,
 ///    such that truncation would be required in order to fit into a u32, partially reducing
 ///    the benefit of a cryptographically secure algorithm
+// The indexing operations in this function have been reviewed in detail and won't panic.
+#[allow(clippy::indexing_slicing)]
 pub const fn fxhash_32(bytes: &[u8], ignore_leading: usize, ignore_trailing: usize) -> u32 {
     // This code is adapted from https://github.com/rust-lang/rustc-hash,
     // whose license text is reproduced below.

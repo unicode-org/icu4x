@@ -49,10 +49,15 @@
 //!     --out /tmp/icu4x_data/work_log_json
 //! ```
 
+use icu_provider::datagen::OmnibusDatagenProvider;
+use icu_provider::serde::SerializeMarker;
 use icu_provider::ResourceKey;
+use icu_provider_adapters::fork::by_key::MultiForkByKeyProvider;
+use icu_provider_cldr::CldrPaths;
+use std::path::Path;
 
+/// List of all supported keys
 pub fn get_all_keys() -> Vec<ResourceKey> {
-    // TODO(#1512): Use central key repository
     let mut v = vec![];
     v.extend(icu_provider_cldr::ALL_KEYS);
     v.extend(icu_properties::provider::key::ALL_MAP_KEYS);
@@ -60,6 +65,29 @@ pub fn get_all_keys() -> Vec<ResourceKey> {
     v.extend(icu_properties::provider::key::ALL_SET_KEYS);
     v.extend(icu_segmenter::ALL_KEYS);
     v
+}
+
+/// Get a registry that has the appropriate ConvertData and IterableDynProvider implementations
+pub fn get_registry(
+    cldr_paths: &impl CldrPaths,
+    uprops_root: &Path,
+    segmenter_data_root: &Path,
+) -> Result<impl OmnibusDatagenProvider<SerializeMarker>, eyre::Report> {
+    Ok(MultiForkByKeyProvider {
+        providers: vec![
+            Box::new(icu_provider_cldr::create_exportable_provider(
+                cldr_paths,
+                uprops_root.into(),
+            )?),
+            Box::new(icu_provider_uprops::create_exportable_provider(
+                uprops_root,
+            )?),
+            Box::new(icu_provider_segmenter::create_exportable_provider(
+                segmenter_data_root,
+                uprops_root,
+            )?),
+        ],
+    })
 }
 
 #[test]

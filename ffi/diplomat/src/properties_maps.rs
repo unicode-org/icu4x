@@ -40,6 +40,8 @@ pub mod ffi {
         ) -> ICU4XCodePointMapData16Response {
             match result {
                 Ok(data) => {
+                    #[allow(clippy::expect_used)]
+                    // TODO(#1668) Clippy exceptions need docs or fixing.
                     let data: DataPayload<UnicodePropertyMapV1Marker<u16>> = data
                         .try_map_project_with_capture((), |data_struct, _, _| {
                             match data_struct.code_point_trie.try_into_converted::<u16>() {

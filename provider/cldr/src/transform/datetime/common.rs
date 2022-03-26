@@ -55,6 +55,7 @@ impl CommonDateProvider {
         let mut resource: cldr_serde::ca::Resource =
             serde_json::from_reader(open_reader(&path)?).map_err(|e| Error::Json(e, Some(path)))?;
 
+        #[allow(clippy::expect_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
         Ok(resource
             .main
             .0

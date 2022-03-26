@@ -317,7 +317,13 @@ impl Bag {
         }
 
         debug_assert!(
-            fields.windows(2).all(|f| f[0] < f[1]),
+            fields.windows(2).all(|f| {
+                #[allow(clippy::indexing_slicing)]
+                // TODO(#1668) Clippy exceptions need docs or fixing.
+                // Change to code redired as clippy on statements arex experimental
+                let comp = f[0] < f[1];
+                comp
+            }),
             "The fields are sorted and unique."
         );
 

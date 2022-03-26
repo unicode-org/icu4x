@@ -53,7 +53,7 @@ where
     buffer.0.push(0);
     buffer
         .0
-        .extend(ZeroVec::from_slice(vec.as_slice()).as_bytes());
+        .extend(ZeroVec::from_slice_or_alloc(vec.as_slice()).as_bytes());
     ZeroVec::<T>::parse_byte_slice(&buffer.0[1..]).unwrap()
 }
 

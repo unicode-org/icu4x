@@ -5,11 +5,11 @@
 use clap::{App, Arg, ArgGroup};
 use icu_datagen::get_all_keys;
 use icu_provider::datagen::IterableDynProvider;
-use icu_provider::datagen::{DataConverter, HeapStatsMarker, OmnibusDatagenProvider};
-use icu_provider::filter::Filterable;
-use icu_provider::fork::by_key::MultiForkByKeyProvider;
+use icu_provider::datagen::{DataConverter, HeapStatsMarker};
+use icu_provider_adapters::filter::Filterable;
+
 use icu_provider::prelude::*;
-use icu_provider::serde::SerializeMarker;
+
 use icu_provider_blob::BlobDataProvider;
 use icu_provider_cldr::CldrPathsAllInOne;
 use litemap::LiteMap;
@@ -180,22 +180,7 @@ fn main() -> eyre::Result<()> {
 
     let segmenter_data_root = icu_provider_segmenter::segmenter_data_root();
 
-    let converter: Box<dyn OmnibusDatagenProvider<SerializeMarker> + Sync> =
-        Box::new(MultiForkByKeyProvider {
-            providers: vec![
-                Box::new(icu_provider_cldr::create_exportable_provider(
-                    cldr_paths.as_ref(),
-                    uprops_root.clone(),
-                )?),
-                Box::new(icu_provider_uprops::create_exportable_provider(
-                    &uprops_root,
-                )?),
-                Box::new(icu_provider_segmenter::create_exportable_provider(
-                    &segmenter_data_root,
-                    &uprops_root,
-                )?),
-            ],
-        });
+    let converter = icu_datagen::get_registry(&*cldr_paths, &uprops_root, &segmenter_data_root)?;
 
     let selected_locales = icu_testdata::metadata::load()?.package_metadata.locales;
 

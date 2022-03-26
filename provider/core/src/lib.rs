@@ -65,13 +65,10 @@
 //! - [`InvariantDataProvider`] returns fixed data that does not vary by locale.
 //! - [`HelloWorldProvider`] returns "hello world" strings in several languages.
 //!
-//! ## Combinatorial Providers
+//! ## Provider Adapters
 //!
-//! ICU4X offers several built-in modules to combine providers in interesting ways:
-//!
-//! - Use the [`fork`] module to marshall data requests between multiple possible providers.
-//! - Use the [`either`] module to choose between multiple provider types at runtime.
-//! - Use the [`filter`] module to programmatically reject certain data requests.
+//! ICU4X offers several built-in modules to combine providers in interesting ways.
+//! These can be found in the [`icu_provider_adapters`] crate.
 //!
 //! ## Types and Lifetimes
 //!
@@ -108,18 +105,29 @@
 //! [`IterableDynProvider`]: datagen::IterableDynProvider
 //! [`IterableResourceProvider`]: datagen::IterableResourceProvider
 //! [`InvariantDataProvider`]: inv::InvariantDataProvider
-//! [`AnyPayloadProvider`]: struct_provider::AnyPayloadProvider
+//! [`AnyPayloadProvider`]: ../icu_provider_adapters/struct_provider/struct.AnyPayloadProvider.html
 //! [`HelloWorldProvider`]: hello_world::HelloWorldProvider
 //! [`AnyProvider`]: any::AnyProvider
 //! [`Yokeable`]: yoke::Yokeable
 //! [`impl_dyn_provider!`]: impl_dyn_provider
+//! [`icu_provider_adapters`]: ../icu_provider_adapters/index.html
 //! [`as_downcasting()`]: AsDowncastingAnyProvider::as_downcasting
 //! [`as_deserializing()`]: AsDeserializingBufferProvider::as_deserializing
 //! [`CldrJsonDataProvider`]: ../icu_provider_cldr/struct.CldrJsonDataProvider.html
 //! [`FsDataProvider`]: ../icu_provider_fs/struct.FsDataProvider.html
 //! [`BlobDataProvider`]: ../icu_provider_blob/struct.BlobDataProvider.html
 
+// https://github.com/unicode-org/icu4x/blob/main/docs/process/boilerplate.md#library-annotations
 #![cfg_attr(not(any(test, feature = "std")), no_std)]
+#![cfg_attr(
+    not(test),
+    deny(
+        clippy::indexing_slicing,
+        clippy::unwrap_used,
+        clippy::expect_used,
+        clippy::panic
+    )
+)]
 
 extern crate alloc;
 
@@ -131,11 +139,8 @@ pub mod buf;
 mod data_provider;
 #[cfg(feature = "datagen")]
 pub mod datagen;
-pub mod either;
 mod error;
 pub mod export;
-pub mod filter;
-pub mod fork;
 pub mod hello_world;
 mod helpers;
 pub mod inv;
@@ -145,7 +150,6 @@ pub mod marker;
 mod resource;
 #[cfg(feature = "serde")]
 pub mod serde;
-pub mod struct_provider;
 
 #[cfg(feature = "macros")]
 pub use icu_provider_macros::data_struct;

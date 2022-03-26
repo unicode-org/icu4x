@@ -88,9 +88,35 @@ impl<Y: for<'a> Yokeable<'a>, C: StableDeref> Yoke<Y, C> {
     ///
     /// See also [`Yoke::try_attach_to_cart()`] to return a `Result` from the closure.
     ///
-    /// Due to [compiler bug #84937](https://github.com/rust-lang/rust/issues/84937), call sites
-    /// for this function may not compile; if this happens, use
+    /// Call sites for this function may not compile; if this happens, use
     /// [`Yoke::attach_to_cart_badly()`] instead.
+    ///
+    /// # Examples
+    ///
+    /// The following code does not currently compile.
+    /// See [#1061](https://github.com/unicode-org/icu4x/issues/1061).
+    ///
+    /// ```compile_fail
+    /// # use yoke::{Yoke, Yokeable};
+    /// # use std::rc::Rc;
+    /// # use std::borrow::Cow;
+    /// # fn load_from_cache(_filename: &str) -> Rc<[u8]> {
+    /// #     // dummy implementation
+    /// #     Rc::new([0x5, 0, 0, 0, 0, 0, 0, 0, 0x68, 0x65, 0x6c, 0x6c, 0x6f])
+    /// # }
+    ///
+    /// fn load_object(filename: &str) -> Yoke<Cow<'static, str>, Rc<[u8]>> {
+    ///     let rc: Rc<[u8]> = load_from_cache(filename);
+    ///     Yoke::<Cow<'static, str>, Rc<[u8]>>::attach_to_cart(rc, |data: &[u8]| {
+    ///         // essentially forcing a #[serde(borrow)]
+    ///         Cow::Borrowed(bincode::deserialize(data).unwrap())
+    ///     })
+    /// }
+    ///
+    /// let yoke: Yoke<Cow<str>, _> = load_object("filename.bincode");
+    /// assert_eq!(&**yoke.get(), "hello");
+    /// assert!(matches!(yoke.get(), &Cow::Borrowed(_)));
+    /// ```
     pub fn attach_to_cart<F>(cart: C, f: F) -> Self
     where
         F: for<'de> FnOnce(&'de <C as Deref>::Target) -> <Y as Yokeable<'de>>::Output,
@@ -105,9 +131,9 @@ impl<Y: for<'a> Yokeable<'a>, C: StableDeref> Yoke<Y, C> {
     /// Construct a [`Yoke`] by yokeing an object to a cart. If an error occurs in the
     /// deserializer function, the error is passed up to the caller.
     ///
-    /// Due to [compiler bug #84937](https://github.com/rust-lang/rust/issues/84937), call sites
-    /// for this function may not compile; if this happens, use
+    /// Call sites for this function may not compile; if this happens, use
     /// [`Yoke::try_attach_to_cart_badly()`] instead.
+    /// See [#1061](https://github.com/unicode-org/icu4x/issues/1061).
     pub fn try_attach_to_cart<E, F>(cart: C, f: F) -> Result<Self, E>
     where
         F: for<'de> FnOnce(&'de <C as Deref>::Target) -> Result<<Y as Yokeable<'de>>::Output, E>,
@@ -584,18 +610,12 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     /// described in [#86702](https://github.com/rust-lang/rust/issues/86702). This parameter
     /// should just be ignored in the function.
     ///
-    /// Furthermore,
-    /// [compiler bug #84937](https://github.com/rust-lang/rust/issues/84937) prevents
-    /// this from taking a capturing closure, however [`Yoke::project_with_capture()`]
-    /// can be used for the same use cases.
-    ///
+    /// To capture data and pass it to the closure, use [`Yoke::project_with_capture()`].
+    /// See [#1061](https://github.com/unicode-org/icu4x/issues/1061).
     ///
     /// This can be used, for example, to transform data from one format to another:
     ///
-    /// ***[#1061](https://github.com/unicode-org/icu4x/issues/1061): The following example
-    /// requires Rust 1.56.***
-    ///
-    /// ```rust,ignore
+    /// ```
     /// # use std::rc::Rc;
     /// # use yoke::Yoke;
     /// #
@@ -607,10 +627,7 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     ///
     /// This can also be used to create a yoke for a subfield
     ///
-    /// ***[#1061](https://github.com/unicode-org/icu4x/issues/1061): The following example
-    /// requires Rust 1.56.***
-    ///
-    /// ```rust,ignore
+    /// ```
     /// # use std::borrow::Cow;
     /// # use yoke::{Yoke, Yokeable};
     /// # use std::mem;
@@ -694,9 +711,9 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
         }
     }
 
-    /// This is similar to [`Yoke::project`], however it works around it not being able to
-    /// use `FnOnce` by using an explicit capture input, until [compiler bug #84937](https://github.com/rust-lang/rust/issues/84937)
-    /// is fixed.
+    /// This is similar to [`Yoke::project`], but it works around it not being able to
+    /// use `FnOnce` by using an explicit capture input.
+    /// See [#1061](https://github.com/unicode-org/icu4x/issues/1061).
     ///
     /// See the docs of [`Yoke::project`] for how this works.
     pub fn project_with_capture<P, T>(
@@ -719,8 +736,8 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     }
 
     /// This is similar to [`Yoke::project_cloned`], however it works around it not being able to
-    /// use `FnOnce` by using an explicit capture input, until [compiler bug #84937](https://github.com/rust-lang/rust/issues/84937)
-    /// is fixed.
+    /// use `FnOnce` by using an explicit capture input.
+    /// See [#1061](https://github.com/unicode-org/icu4x/issues/1061).
     ///
     /// See the docs of [`Yoke::project_cloned`] for how this works.
     pub fn project_cloned_with_capture<'this, P, T>(

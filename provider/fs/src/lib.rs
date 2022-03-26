@@ -89,6 +89,17 @@
 //!
 //! [`ICU4X`]: ../icu/index.html
 
+// https://github.com/unicode-org/icu4x/blob/main/docs/process/boilerplate.md#library-annotations
+#![cfg_attr(
+    not(test),
+    deny(
+        clippy::indexing_slicing,
+        clippy::unwrap_used,
+        clippy::expect_used,
+        clippy::panic
+    )
+)]
+
 mod error;
 mod fs_data_provider;
 pub mod manifest;

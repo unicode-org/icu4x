@@ -193,6 +193,7 @@ pub mod week_of {
             min_week_days: 1,
         };
 
+        #[allow(clippy::expect_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
         week_of(
             &calendar,
             // The duration of the current and previous unit does not influence the result if min_week_days = 1

@@ -168,6 +168,7 @@ fn uts35_check_language_rules(
     if !locale.id.language.is_empty() {
         let lang: TinyAsciiStr<3> = locale.id.language.into();
         let replacement = if lang.len() == 2 {
+            #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
             alias_data
                 .get()
                 .language_len2
@@ -175,6 +176,7 @@ fn uts35_check_language_rules(
                 .ok()
                 .map(|index| &alias_data.get().language_len2[index].1)
         } else {
+            #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
             alias_data
                 .get()
                 .language_len3
@@ -334,6 +336,8 @@ impl LocaleCanonicalizer {
                             .sgn_region
                             .binary_search_by_key(&region.into(), |alias| alias.0)
                         {
+                            #[allow(clippy::indexing_slicing)]
+                            // TODO(#1668) Clippy exceptions need docs or fixing.
                             uts35_replacement(
                                 locale,
                                 true,
@@ -363,6 +367,8 @@ impl LocaleCanonicalizer {
                     .script
                     .binary_search_by_key(&script.into(), |alias| alias.0)
                 {
+                    #[allow(clippy::indexing_slicing)]
+                    // TODO(#1668) Clippy exceptions need docs or fixing.
                     if let Ok(replacement) = self.aliases.get().script[index].1.parse() {
                         locale.id.script = Some(replacement);
                         result = CanonicalizationResult::Modified;
@@ -374,6 +380,8 @@ impl LocaleCanonicalizer {
             if let Some(region) = locale.id.region {
                 let replacement = if region.is_alphabetic() {
                     let region: TinyAsciiStr<3> = region.into();
+                    #[allow(clippy::indexing_slicing)]
+                    // TODO(#1668) Clippy exceptions need docs or fixing.
                     self.aliases
                         .get()
                         .region_alpha
@@ -381,6 +389,8 @@ impl LocaleCanonicalizer {
                         .ok()
                         .map(|index| self.aliases.get().region_alpha[index].1)
                 } else {
+                    #[allow(clippy::indexing_slicing)]
+                    // TODO(#1668) Clippy exceptions need docs or fixing.
                     self.aliases
                         .get()
                         .region_num
@@ -403,6 +413,8 @@ impl LocaleCanonicalizer {
                     .complex_region
                     .binary_search_by_key(&region.into(), |alias| alias.0)
                 {
+                    #[allow(clippy::indexing_slicing)]
+                    // TODO(#1668) Clippy exceptions need docs or fixing.
                     let rule = &self.aliases.get().complex_region[index];
 
                     let mut for_likely = LanguageIdentifier {
@@ -421,12 +433,18 @@ impl LocaleCanonicalizer {
                                 {
                                     region
                                 } else {
+                                    #[allow(clippy::indexing_slicing)]
+                                    // TODO(#1668) Clippy exceptions need docs or fixing.
                                     &rule.1[0]
                                 }
                             } else {
+                                #[allow(clippy::indexing_slicing)]
+                                // TODO(#1668) Clippy exceptions need docs or fixing.
                                 &rule.1[0]
                             }
                         } else {
+                            #[allow(clippy::indexing_slicing)]
+                            // TODO(#1668) Clippy exceptions need docs or fixing.
                             &rule.1[0]
                         };
                     if let Ok(replacement) = replacement.parse::<subtags::Region>() {
@@ -448,6 +466,8 @@ impl LocaleCanonicalizer {
                         .variant
                         .binary_search_by_key(&variant_as_tinystr, |alias| alias.0)
                     {
+                        #[allow(clippy::indexing_slicing)]
+                        // TODO(#1668) Clippy exceptions need docs or fixing.
                         if let Ok(updated) = subtags::Variant::from_bytes(
                             self.aliases.get().variant[index].1.as_bytes(),
                         ) {
@@ -505,6 +525,8 @@ impl LocaleCanonicalizer {
                         .subdivision
                         .binary_search_by_key(&value_as_tinystr, |alias| alias.0)
                     {
+                        #[allow(clippy::indexing_slicing)]
+                        // TODO(#1668) Clippy exceptions need docs or fixing.
                         if let Ok(modified_value) =
                             Value::from_bytes(self.aliases.get().subdivision[index].1.as_bytes())
                         {
