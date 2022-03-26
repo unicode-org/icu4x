@@ -60,6 +60,16 @@ impl<'a, T: AsULE + Ord + 'static> ZeroMapKV<'a> for Option<T> {
     type OwnedType = Option<T>;
 }
 
+impl<'a, T> ZeroMapKV<'a> for OptionVarULE<T>
+where
+    T: VarULE + ?Sized,
+    T: Ord,
+{
+    type Container = VarZeroVec<'a, OptionVarULE<T>>;
+    type GetType = OptionVarULE<T>;
+    type OwnedType = Box<OptionVarULE<T>>;
+}
+
 impl<'a> ZeroMapKV<'a> for str {
     type Container = VarZeroVec<'a, str>;
     type GetType = str;

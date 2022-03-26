@@ -3,6 +3,8 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use super::*;
+use core::cmp::Ordering;
+use core::marker::PhantomData;
 use core::mem::{self, MaybeUninit};
 
 /// This type is the [`ULE`] type for `Option<U>` where `U` is a [`ULE`] type
@@ -105,21 +107,19 @@ impl<U: Copy + PartialEq> PartialEq for OptionULE<U> {
 
 impl<U: Copy + Eq> Eq for OptionULE<U> {}
 
-use core::marker::PhantomData;
-
-/// A type allowing one to represent `Option<T>` for [`VarULE`] `T` types.
+/// A type allowing one to represent `Option<U>` for [`VarULE`] `U` types.
 // The slice field is empty when None (bool = false),
 // and is a valid T when Some (bool = true)
 #[repr(packed)]
-pub struct OptionVarULE<T: VarULE + ?Sized>(PhantomData<T>, bool, [u8]);
+pub struct OptionVarULE<U: VarULE + ?Sized>(PhantomData<U>, bool, [u8]);
 
-impl<T: VarULE + ?Sized> OptionVarULE<T> {
-    /// Obtain this as an `Option<&T>`
-    pub fn as_ref(&self) -> Option<&T> {
+impl<U: VarULE + ?Sized> OptionVarULE<U> {
+    /// Obtain this as an `Option<&U>`
+    pub fn as_ref(&self) -> Option<&U> {
         if self.1 {
             unsafe {
                 // Safety: byte field is a valid T if boolean field is true
-                Some(T::from_byte_slice_unchecked(&self.2))
+                Some(U::from_byte_slice_unchecked(&self.2))
             }
         } else {
             None
@@ -136,7 +136,7 @@ impl<T: VarULE + ?Sized> OptionVarULE<T> {
 //  5. The impl of `from_byte_slice_unchecked()` returns a reference to the same data.
 //  6. All other methods are defaulted
 //  7. OptionVarULE<T> byte equality is semantic equality (achieved by being an aggregate)
-unsafe impl<T: VarULE + ?Sized> VarULE for OptionVarULE<T> {
+unsafe impl<U: VarULE + ?Sized> VarULE for OptionVarULE<U> {
     #[inline]
     fn validate_byte_slice(slice: &[u8]) -> Result<(), ZeroVecError> {
         if slice.is_empty() {
@@ -151,7 +151,7 @@ unsafe impl<T: VarULE + ?Sized> VarULE for OptionVarULE<T> {
                     Ok(())
                 }
             }
-            1 => T::validate_byte_slice(&slice[1..]),
+            1 => U::validate_byte_slice(&slice[1..]),
             _ => Err(ZeroVecError::parse::<Self>()),
         }
     }
@@ -193,5 +193,25 @@ where
         } else {
             dst[0] = 0;
         }
+    }
+}
+
+impl<U: VarULE + ?Sized + PartialEq> PartialEq for OptionVarULE<U> {
+    fn eq(&self, other: &Self) -> bool {
+        self.as_ref().eq(&other.as_ref())
+    }
+}
+
+impl<U: VarULE + ?Sized + Eq> Eq for OptionVarULE<U> {}
+
+impl<U: VarULE + ?Sized + PartialOrd> PartialOrd for OptionVarULE<U> {
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        self.as_ref().partial_cmp(&other.as_ref())
+    }
+}
+
+impl<U: VarULE + ?Sized + Ord> Ord for OptionVarULE<U> {
+    fn cmp(&self, other: &Self) -> Ordering {
+        self.as_ref().cmp(&other.as_ref())
     }
 }
