@@ -5,7 +5,7 @@
 use super::*;
 use core::mem::{self, MaybeUninit};
 
-/// This type is the [`ULE`] type for `Option<T>`.
+/// This type is the [`ULE`] type for `Option<U>` where `U` is a [`ULE`] type
 ///
 /// # Example
 ///
@@ -20,11 +20,11 @@ use core::mem::{self, MaybeUninit};
 // The MaybeUninit is zeroed when None (bool = false),
 // and is valid when Some (bool = true)
 #[repr(packed)]
-pub struct OptionULE<T>(bool, MaybeUninit<T>);
+pub struct OptionULE<U>(bool, MaybeUninit<U>);
 
-impl<T: Copy> OptionULE<T> {
+impl<U: Copy> OptionULE<U> {
     /// Obtain this as an Option<T>
-    pub fn get(self) -> Option<T> {
+    pub fn get(self) -> Option<U> {
         if self.0 {
             unsafe {
                 // safety: self.0 is true so the MaybeUninit is valid
@@ -35,8 +35,8 @@ impl<T: Copy> OptionULE<T> {
         }
     }
 
-    /// Construct an OptionULE<T> from an equivalent Option<T>
-    pub fn new(opt: Option<T>) -> Self {
+    /// Construct an OptionULE<U> from an equivalent Option<T>
+    pub fn new(opt: Option<U>) -> Self {
         if let Some(inner) = opt {
             Self(true, MaybeUninit::new(inner))
         } else {
@@ -47,15 +47,16 @@ impl<T: Copy> OptionULE<T> {
 
 // Safety (based on the safety checklist on the ULE trait):
 //  1. OptionULE does not include any uninitialized or padding bytes.
-//     (achieved by `#[repr(packed)]` on a struct containing only ULE fields)
+//     (achieved by `#[repr(packed)]` on a struct containing only ULE fields,
+//     in the context of this impl. The MaybeUninit is valid for all byte sequences)
 //  2. OptionULE is aligned to 1 byte.
-//     (achieved by `#[repr(packed)]` on a struct containing only ULE fields)
+//     (achieved by `#[repr(packed)]` on a struct containing only ULE fields, in the context of this impl)
 //  3. The impl of validate_byte_slice() returns an error if any byte is not valid.
 //  4. The impl of validate_byte_slice() returns an error if there are extra bytes.
 //  5. The other ULE methods use the default impl.
 //  6. OptionULE byte equality is semantic equality by relying on the ULE equality
 //     invariant on the subfields
-unsafe impl<T: ULE> ULE for OptionULE<T> {
+unsafe impl<U: ULE> ULE for OptionULE<U> {
     fn validate_byte_slice(bytes: &[u8]) -> Result<(), ZeroVecError> {
         let size = mem::size_of::<Self>();
         if bytes.len() % size != 0 {
@@ -63,12 +64,13 @@ unsafe impl<T: ULE> ULE for OptionULE<T> {
         }
         for chunk in bytes.chunks(size) {
             match chunk[0] {
+                // bool is defined to be 0 when false, 1 when true
                 0 => {
                     if !chunk[1..].iter().all(|x| *x == 0) {
                         return Err(ZeroVecError::parse::<Self>());
                     }
                 }
-                1 => T::validate_byte_slice(&chunk[1..])?,
+                1 => U::validate_byte_slice(&chunk[1..])?,
                 _ => return Err(ZeroVecError::parse::<Self>()),
             }
         }
@@ -87,21 +89,21 @@ impl<T: AsULE> AsULE for Option<T> {
     }
 }
 
-impl<T: Copy> Copy for OptionULE<T> {}
+impl<U: Copy> Copy for OptionULE<U> {}
 
-impl<T: Copy> Clone for OptionULE<T> {
+impl<U: Copy> Clone for OptionULE<U> {
     fn clone(&self) -> Self {
         *self
     }
 }
 
-impl<T: Copy + PartialEq> PartialEq for OptionULE<T> {
+impl<U: Copy + PartialEq> PartialEq for OptionULE<U> {
     fn eq(&self, other: &Self) -> bool {
         self.get().eq(&other.get())
     }
 }
 
-impl<T: Copy + Eq> Eq for OptionULE<T> {}
+impl<U: Copy + Eq> Eq for OptionULE<U> {}
 
 use core::marker::PhantomData;
 
@@ -126,7 +128,8 @@ impl<T: VarULE + ?Sized> OptionVarULE<T> {
 }
 
 // Safety (based on the safety checklist on the VarULE trait):
-//  1. OptionVarULE<T> does not include any uninitialized or padding bytes (achieved by being repr(packed) on ULE types)
+//  1. OptionVarULE<T> does not include any uninitialized or padding bytes
+//     (achieved by being repr(packed) on ULE types)
 //  2. OptionVarULE<T> is aligned to 1 byte (achieved by being repr(packed) on ULE types)
 //  3. The impl of `validate_byte_slice()` returns an error if any byte is not valid.
 //  4. The impl of `validate_byte_slice()` returns an error if the slice cannot be used in its entirety
@@ -140,6 +143,7 @@ unsafe impl<T: VarULE + ?Sized> VarULE for OptionVarULE<T> {
             return Err(ZeroVecError::length::<Self>(slice.len()));
         }
         match slice[0] {
+            // bool is defined to be 0 when false and 1 when true
             0 => {
                 if slice.len() != 1 {
                     Err(ZeroVecError::length::<Self>(slice.len()))
