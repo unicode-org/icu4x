@@ -174,6 +174,29 @@ impl Keywords {
         }
     }
 
+    /// Retains a subset of keywords as specified by the predicate function.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::locid::Locale;
+    /// use std::str::FromStr;
+    ///
+    /// let mut loc: Locale = "und-u-ca-buddhist-hc-h12-ms-metric".parse().unwrap();
+    ///
+    /// loc.extensions.unicode.keywords.retain_by_key(|k| k == "hc");
+    /// assert_eq!(loc, "und-u-hc-h12");
+    ///
+    /// loc.extensions.unicode.keywords.retain_by_key(|k| k == "ms");
+    /// assert_eq!(loc, "und");
+    /// ```
+    pub fn retain_by_key<F>(&mut self, mut predicate: F)
+    where
+        F: FnMut(&Key) -> bool,
+    {
+        self.0.retain(|(k, _)| predicate(k))
+    }
+
     pub(crate) fn for_each_subtag_str<E, F>(&self, f: &mut F) -> Result<(), E>
     where
         F: FnMut(&str) -> Result<(), E>,
