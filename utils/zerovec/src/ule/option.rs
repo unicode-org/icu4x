@@ -68,7 +68,8 @@ unsafe impl<U: ULE> ULE for OptionULE<U> {
         }
         for chunk in bytes.chunks(size) {
             match chunk[0] {
-                // bool is defined to be 0 when false, 1 when true
+                // https://doc.rust-lang.org/reference/types/boolean.html
+                // Rust booleans are always size 1, align 1 values with valid bit patterns 0x0 or 0x1
                 0 => {
                     if !chunk[1..].iter().all(|x| *x == 0) {
                         return Err(ZeroVecError::parse::<Self>());
@@ -160,7 +161,8 @@ unsafe impl<U: VarULE + ?Sized> VarULE for OptionVarULE<U> {
             return Err(ZeroVecError::length::<Self>(slice.len()));
         }
         match slice[0] {
-            // bool is defined to be 0 when false and 1 when true
+            // https://doc.rust-lang.org/reference/types/boolean.html
+            // Rust booleans are always size 1, align 1 values with valid bit patterns 0x0 or 0x1
             0 => {
                 if slice.len() != 1 {
                     Err(ZeroVecError::length::<Self>(slice.len()))
