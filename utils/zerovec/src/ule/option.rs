@@ -14,9 +14,10 @@ use core::mem::{self, MaybeUninit};
 /// ```rust
 /// use zerovec::ZeroVec;
 ///
-/// let z = ZeroVec::alloc_from_slice(&[Some('a'), Some('á'), Some('ø'), Some('ł')]);
+/// let z = ZeroVec::alloc_from_slice(&[Some('a'), Some('á'), Some('ø'), None, Some('ł')]);
 ///
 /// assert_eq!(z.get(2), Some(Some(('ø'))));
+/// assert_eq!(z.get(3), Some(None));
 /// ```
 // Invariants:
 // The MaybeUninit is zeroed when None (bool = false),
@@ -108,6 +109,21 @@ impl<U: Copy + PartialEq> PartialEq for OptionULE<U> {
 impl<U: Copy + Eq> Eq for OptionULE<U> {}
 
 /// A type allowing one to represent `Option<U>` for [`VarULE`] `U` types.
+///
+/// ```rust
+/// use zerovec::VarZeroVec;
+/// use zerovec::ule::OptionVarULE;
+///
+/// let mut zv: VarZeroVec<OptionVarULE<str>> = VarZeroVec::new();
+///
+/// zv.make_mut().push(&None::<&str>);
+/// zv.make_mut().push(&Some("hello"));
+/// zv.make_mut().push(&Some("world"));
+/// zv.make_mut().push(&None::<&str>);
+///
+/// assert_eq!(zv.get(0).unwrap().as_ref(), None);
+/// assert_eq!(zv.get(1).unwrap().as_ref(), Some("hello"));
+/// ```
 // The slice field is empty when None (bool = false),
 // and is a valid T when Some (bool = true)
 #[repr(packed)]
@@ -168,7 +184,7 @@ unsafe impl<U: VarULE + ?Sized> VarULE for OptionVarULE<U> {
 unsafe impl<T, U> EncodeAsVarULE<OptionVarULE<U>> for Option<T>
 where
     T: EncodeAsVarULE<U>,
-    U: VarULE,
+    U: VarULE + ?Sized,
 {
     fn encode_var_ule_as_slices<R>(&self, _: impl FnOnce(&[&[u8]]) -> R) -> R {
         // unnecessary if the other two are implemented
