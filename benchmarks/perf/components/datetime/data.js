@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1648328393106,
+  "lastUpdate": 1648422368907,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -23909,6 +23909,48 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 215881,
             "range": "± 9011",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "4c700aa91c8ce080fab9aecebd43c498367c601a",
+          "message": "Merge CLDR, UProps, and Segmenter providers into icu_datagen (#1740)",
+          "timestamp": "2022-03-27T15:58:12-07:00",
+          "tree_id": "4c52f627a427a2816a920ee668f4ed58c7de3681",
+          "url": "https://github.com/unicode-org/icu4x/commit/4c700aa91c8ce080fab9aecebd43c498367c601a"
+        },
+        "date": 1648422354910,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 73121,
+            "range": "± 149",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 805757,
+            "range": "± 1747",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 172660,
+            "range": "± 212",
             "unit": "ns/iter"
           }
         ]
