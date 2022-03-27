@@ -28,6 +28,7 @@ ffi/wasm/                         @Manishearth
 provider/blob/                    @sffc @Manishearth
 provider/cldr/                    @sffc @nordzilla
 provider/core/                    @sffc @Manishearth
+provider/datagen/                 @sffc
 provider/fs/                      @sffc
 provider/macros/                  @Manishearth @sffc
 provider/testdata/                @unicode-org/icu4x-owners
@@ -35,7 +36,6 @@ provider/segmenter/               @aethanyc @makotokato
 tools/benchmark/binsize/          @gnrunge
 tools/benchmark/macros/           @gregtatum
 tools/benchmark/memory/           @gregtatum
-tools/datagen/                    @sffc
 tools/scripts/                    @Manishearth @sffc
 utils/fixed_decimal/              @sffc
 utils/litemap/                    @Manishearth @sffc
