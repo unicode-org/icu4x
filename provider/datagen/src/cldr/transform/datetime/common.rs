@@ -81,9 +81,11 @@ impl CommonDateProvider {
         self.paths
             .iter()
             .find(|(_, cal, _)| cal == &"gregory")
-            .ok_or(Error::MissingSource(crate::cldr::error::MissingSourceError {
-                src: "cldr-dates/gregory",
-            }))?;
+            .ok_or(Error::MissingSource(
+                crate::cldr::error::MissingSourceError {
+                    src: "cldr-dates/gregory",
+                },
+            ))?;
 
         let mut r = Vec::new();
         for (_, cal, path) in &self.paths {

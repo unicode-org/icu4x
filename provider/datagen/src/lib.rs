@@ -53,11 +53,11 @@ pub mod cldr;
 pub mod segmenter;
 pub mod uprops;
 
+use cldr::CldrPaths;
 use icu_provider::datagen::OmnibusDatagenProvider;
 use icu_provider::serde::SerializeMarker;
 use icu_provider::ResourceKey;
 use icu_provider_adapters::fork::by_key::MultiForkByKeyProvider;
-use cldr::CldrPaths;
 use std::path::Path;
 
 /// List of all supported keys
@@ -83,9 +83,7 @@ pub fn get_registry(
                 cldr_paths,
                 uprops_root.into(),
             )?),
-            Box::new(uprops::create_exportable_provider(
-                uprops_root,
-            )?),
+            Box::new(uprops::create_exportable_provider(uprops_root)?),
             Box::new(segmenter::create_exportable_provider(
                 segmenter_data_root,
                 uprops_root,

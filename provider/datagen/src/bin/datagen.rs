@@ -4,7 +4,12 @@
 
 use clap::{App, Arg, ArgGroup, ArgMatches};
 use eyre::WrapErr;
+use icu_datagen::cldr;
+use icu_datagen::cldr::download::CldrAllInOneDownloader;
+use icu_datagen::cldr::CldrPathsAllInOne;
 use icu_datagen::get_all_keys;
+use icu_datagen::segmenter;
+use icu_datagen::uprops;
 use icu_locid::LanguageIdentifier;
 use icu_provider::datagen::IterableDynProvider;
 use icu_provider::export::DataExporter;
@@ -14,11 +19,6 @@ use icu_provider::serde::SerializeMarker;
 use icu_provider_adapters::filter::Filterable;
 use icu_provider_adapters::fork::by_key::MultiForkByKeyProvider;
 use icu_provider_blob::export::BlobExporter;
-use icu_datagen::cldr;
-use icu_datagen::cldr::download::CldrAllInOneDownloader;
-use icu_datagen::cldr::CldrPathsAllInOne;
-use icu_datagen::segmenter;
-use icu_datagen::uprops;
 use icu_provider_fs::export::fs_exporter;
 use icu_provider_fs::export::serializers;
 use icu_provider_fs::export::FilesystemExporter;
@@ -335,9 +335,7 @@ fn main() -> eyre::Result<()> {
                         cldr_paths.as_ref(),
                         uprops_root.clone(),
                     )?),
-                    Box::new(uprops::create_exportable_provider(
-                        &uprops_root,
-                    )?),
+                    Box::new(uprops::create_exportable_provider(&uprops_root)?),
                     Box::new(segmenter::create_exportable_provider(
                         &segmenter_data_root,
                         &uprops_root,

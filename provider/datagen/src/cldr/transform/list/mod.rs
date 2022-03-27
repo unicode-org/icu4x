@@ -115,11 +115,9 @@ impl<M: ResourceMarker<Yokeable = ListFormatterPatternsV1<'static>>> ResourcePro
                     &format!(
                         "[^{}]",
                         icu_properties::maps::get_script(
-                            &EnumeratedPropertyCodePointTrieProvider::try_new(
-                                &self.uprops_root
-                            )
-                            .map_err(|e| DataError::custom("Properties data provider error")
-                                .with_display_context(&e))?
+                            &EnumeratedPropertyCodePointTrieProvider::try_new(&self.uprops_root)
+                                .map_err(|e| DataError::custom("Properties data provider error")
+                                    .with_display_context(&e))?
                         )
                         .map_err(|e| DataError::custom("data for CodePointTrie of Script")
                             .with_display_context(&e))?

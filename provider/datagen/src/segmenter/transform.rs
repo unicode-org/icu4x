@@ -2,6 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::uprops::{
+    BinaryPropertyUnicodeSetDataProvider, EnumeratedPropertyCodePointTrieProvider,
+};
 use icu_codepointtrie::CodePointTrie;
 use icu_properties::{
     maps, sets, EastAsianWidth, GeneralCategory, GraphemeClusterBreak, LineBreak, SentenceBreak,
@@ -9,9 +12,6 @@ use icu_properties::{
 };
 use icu_provider::datagen::IterableResourceProvider;
 use icu_provider::prelude::*;
-use crate::uprops::{
-    BinaryPropertyUnicodeSetDataProvider, EnumeratedPropertyCodePointTrieProvider,
-};
 use icu_segmenter::symbols::*;
 use icu_segmenter::*;
 use std::fs::File;

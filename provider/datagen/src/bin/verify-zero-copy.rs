@@ -10,8 +10,8 @@ use icu_provider_adapters::filter::Filterable;
 
 use icu_provider::prelude::*;
 
-use icu_provider_blob::BlobDataProvider;
 use icu_datagen::cldr::CldrPathsAllInOne;
+use icu_provider_blob::BlobDataProvider;
 use litemap::LiteMap;
 use simple_logger::SimpleLogger;
 use std::borrow::Cow;
