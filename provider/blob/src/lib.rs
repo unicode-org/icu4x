@@ -33,7 +33,7 @@
 //!
 //! [`ICU4X`]: ../icu/index.html
 //! [`BufferProvider`]: icu_provider::BufferProvider
-//! [`icu4x-datagen`]: https://github.com/unicode-org/icu4x/tree/main/tools/datagen#readme
+//! [`icu4x-datagen`]: https://github.com/unicode-org/icu4x/tree/main/provider/datagen#readme
 
 // https://github.com/unicode-org/icu4x/blob/main/docs/process/boilerplate.md#library-annotations
 #![cfg_attr(not(any(test, feature = "std")), no_std)]

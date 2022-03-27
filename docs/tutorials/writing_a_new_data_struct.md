@@ -55,11 +55,11 @@ Although they may share common code, source data providers are implemented speci
 
 Examples of source data providers include:
 
-- [`CldrJsonDataProvider`](https://unicode-org.github.io/icu4x-docs/doc/icu_provider_cldr/transform/struct.CldrJsonDataProvider.html#)
-    - [`NumbersProvider`](https://unicode-org.github.io/icu4x-docs/doc/icu_provider_cldr/transform/struct.NumbersProvider.html)
-    - [`PluralsProvider`](https://unicode-org.github.io/icu4x-docs/doc/icu_provider_cldr/transform/struct.PluralsProvider.html)
-    - [`DateSymbolsProvider`](https://unicode-org.github.io/icu4x-docs/doc/icu_provider_cldr/transform/struct.DateSymbolsProvider.html)
-    - [&hellip; more examples](https://unicode-org.github.io/icu4x-docs/doc/icu_provider_cldr/transform/index.html)
+- [`CldrJsonDataProvider`](https://unicode-org.github.io/icu4x-docs/doc/icu_datagen/cldr/transform/struct.CldrJsonDataProvider.html#)
+    - [`NumbersProvider`](https://unicode-org.github.io/icu4x-docs/doc/icu_datagen/cldr/transform/struct.NumbersProvider.html)
+    - [`PluralsProvider`](https://unicode-org.github.io/icu4x-docs/doc/icu_datagen/cldr/transform/struct.PluralsProvider.html)
+    - [`DateSymbolsProvider`](https://unicode-org.github.io/icu4x-docs/doc/icu_datagen/cldr/transform/struct.DateSymbolsProvider.html)
+    - [&hellip; more examples](https://unicode-org.github.io/icu4x-docs/doc/icu_datagen/cldr/transform/index.html)
 - `BinaryPropertyUnicodeSetDataProvider`
 - [`HelloWorldProvider`](https://unicode-org.github.io/icu4x-docs/doc/icu_provider/hello_world/struct.HelloWorldProvider.html)
 
