@@ -14,8 +14,11 @@ use icu_provider::serde::SerializeMarker;
 use icu_provider_adapters::filter::Filterable;
 use icu_provider_adapters::fork::by_key::MultiForkByKeyProvider;
 use icu_provider_blob::export::BlobExporter;
-use icu_provider_cldr::download::CldrAllInOneDownloader;
-use icu_provider_cldr::CldrPathsAllInOne;
+use icu_datagen::cldr;
+use icu_datagen::cldr::download::CldrAllInOneDownloader;
+use icu_datagen::cldr::CldrPathsAllInOne;
+use icu_datagen::segmenter;
+use icu_datagen::uprops;
 use icu_provider_fs::export::fs_exporter;
 use icu_provider_fs::export::serializers;
 use icu_provider_fs::export::FilesystemExporter;
@@ -324,18 +327,18 @@ fn main() -> eyre::Result<()> {
                 eyre::bail!("Value for --uprops-root must be specified",)
             };
 
-            let segmenter_data_root = icu_provider_segmenter::segmenter_data_root();
+            let segmenter_data_root = icu_datagen::segmenter::segmenter_data_root();
 
             Box::new(MultiForkByKeyProvider {
                 providers: vec![
-                    Box::new(icu_provider_cldr::create_exportable_provider(
+                    Box::new(cldr::create_exportable_provider(
                         cldr_paths.as_ref(),
                         uprops_root.clone(),
                     )?),
-                    Box::new(icu_provider_uprops::create_exportable_provider(
+                    Box::new(uprops::create_exportable_provider(
                         &uprops_root,
                     )?),
-                    Box::new(icu_provider_segmenter::create_exportable_provider(
+                    Box::new(segmenter::create_exportable_provider(
                         &segmenter_data_root,
                         &uprops_root,
                     )?),

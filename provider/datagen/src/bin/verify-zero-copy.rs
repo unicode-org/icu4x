@@ -11,7 +11,7 @@ use icu_provider_adapters::filter::Filterable;
 use icu_provider::prelude::*;
 
 use icu_provider_blob::BlobDataProvider;
-use icu_provider_cldr::CldrPathsAllInOne;
+use icu_datagen::cldr::CldrPathsAllInOne;
 use litemap::LiteMap;
 use simple_logger::SimpleLogger;
 use std::borrow::Cow;
@@ -178,7 +178,7 @@ fn main() -> eyre::Result<()> {
             .to_string(),
     });
 
-    let segmenter_data_root = icu_provider_segmenter::segmenter_data_root();
+    let segmenter_data_root = icu_datagen::segmenter::segmenter_data_root();
 
     let converter = icu_datagen::get_registry(&*cldr_paths, &uprops_root, &segmenter_data_root)?;
 
