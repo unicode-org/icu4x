@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1648328364071,
+  "lastUpdate": 1648422316940,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -26597,6 +26597,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 4934,
             "range": "± 174",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "4c700aa91c8ce080fab9aecebd43c498367c601a",
+          "message": "Merge CLDR, UProps, and Segmenter providers into icu_datagen (#1740)",
+          "timestamp": "2022-03-27T15:58:12-07:00",
+          "tree_id": "4c52f627a427a2816a920ee668f4ed58c7de3681",
+          "url": "https://github.com/unicode-org/icu4x/commit/4c700aa91c8ce080fab9aecebd43c498367c601a"
+        },
+        "date": 1648422299790,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 2145,
+            "range": "± 15",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 4192,
+            "range": "± 18",
             "unit": "ns/iter"
           }
         ]
