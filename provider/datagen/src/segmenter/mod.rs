@@ -12,7 +12,7 @@
 //! # Examples
 //!
 //! ```
-//! use icu_provider_segmenter::SegmenterRuleProvider;
+//! use icu_datagen::segmenter::SegmenterRuleProvider;
 //! let provider = SegmenterRuleProvider::try_new(
 //!     "/path/to/segmenter/data/directory",
 //!     "/path/to/uprops/data/directory",

@@ -152,11 +152,11 @@ impl ResourceProvider<JapaneseErasV1Marker> for JapaneseErasProvider {
                 return Err(DataError::custom(
                     "Era data has changed! This can be for two reasons: Either the CLDR locale data for Japanese eras has \
                     changed in an incompatible way, or there is a new Japanese era. Please comment out the integrity \
-                    check in icu_provider_cldr's japanese.rs and inspect the update to japanese@1.json (resource key `calendar/japanese`) \
+                    check in icu_datagen's japanese.rs and inspect the update to japanese@1.json (resource key `calendar/japanese`) \
                     in the generated JSON by rerunning the datagen tool (`cargo make testdata` in the ICU4X repo). \
                     Rerun with ICU4X_SKIP_JAPANESE_INTEGRITY_CHECK=1 to regenerate testdata properly, and check which situation \
                     it is. If a new era has been introduced, copy over the new testdata to snapshot-japanese@1.json \
-                    in icu_provider_cldr. If not, it's likely that japanese.rs in icu_provider_cldr will need \
+                    in icu_datagen. If not, it's likely that japanese.rs in icu_datagen will need \
                     to be updated to handle the data changes. Once done, be sure to regenerate datetime/symbols@1 as well if not \
                     doing so already"
                 ));

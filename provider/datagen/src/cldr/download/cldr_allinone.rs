@@ -20,8 +20,8 @@ use std::path::PathBuf;
 ///
 /// ```no_run because we don't want to download
 /// use std::boxed::Box;
-/// use icu_provider_cldr::CldrPaths;
-/// use icu_provider_cldr::download::CldrAllInOneDownloader;
+/// use icu_datagen::cldr::CldrPaths;
+/// use icu_datagen::cldr::download::CldrAllInOneDownloader;
 
 /// let downloader = CldrAllInOneDownloader::try_new_from_github("38.1.0", "modern")
 ///     .expect("Cache directory not found");

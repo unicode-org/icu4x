@@ -77,8 +77,8 @@ pub trait CldrPaths: std::fmt::Debug + Sync {
 /// # Examples
 ///
 /// ```
-/// use icu_provider_cldr::CldrPaths;
-/// use icu_provider_cldr::CldrPathsLocal;
+/// use icu_datagen::cldr::CldrPaths;
+/// use icu_datagen::cldr::CldrPathsLocal;
 /// use std::path::PathBuf;
 ///
 /// let mut paths = CldrPathsLocal::default();
@@ -150,8 +150,8 @@ impl Default for CldrPathsLocal {
 /// # Examples
 ///
 /// ```
-/// use icu_provider_cldr::CldrPaths;
-/// use icu_provider_cldr::CldrPathsAllInOne;
+/// use icu_datagen::cldr::CldrPaths;
+/// use icu_datagen::cldr::CldrPathsAllInOne;
 /// use std::path::PathBuf;
 ///
 /// let paths = CldrPathsAllInOne {
