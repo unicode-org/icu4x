@@ -11,7 +11,6 @@ use std::path::{Path, PathBuf};
 
 /// Helper function to open a file and return failures as a crate error.
 pub fn open_reader(path: &Path) -> eyre::Result<BufReader<File>> {
-    #[cfg(feature = "log")]
     log::trace!("Reading: {:?}", path);
     File::open(&path)
         .map(BufReader::new)

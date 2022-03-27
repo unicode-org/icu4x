@@ -26,9 +26,6 @@ include = [
 [package.metadata.cargo-all-features]
 # Omit most optional dependency features from permutation testing
 skip_optional_dependencies = true
-extra_features = [
-    "log",
-]
 
 [package.metadata.docs.rs]
 all-features = true
@@ -60,7 +57,7 @@ icu_uniset = { version = "0.4.1", path = "../../utils/uniset", features = ["seri
 itertools = "0.10"
 json = "0.12"
 litemap = { version = "0.3.0", path = "../../utils/litemap" }
-log = { version = "0.4", optional = true }
+log = { version = "0.4" }
 rayon = "1.5"
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"] }
 serde_json = { version = "1.0", default-features = false, features = ["alloc"] }
@@ -91,16 +88,18 @@ writeable = { version = "0.3", path = "../../utils/writeable" }
 experimental = []
 casemapping = ["icu_casemapping"]
 # Automatically download CLDR data from a host
-download = ["urlencoding", "reqwest", "unzip", "dirs", "log"]
+download = ["urlencoding", "reqwest", "unzip", "dirs"]
 default = ["casemapping"]
 
 [[bin]]
 name = "icu4x-datagen"
 path = "src/bin/datagen.rs"
+required-features = ["download"]
 
 [[bin]]
 name = "icu4x-testdata-download"
 path = "src/bin/testdata-download.rs"
+required-features = ["download"]
 
 [[bin]]
 name = "icu4x-verify-zero-copy"

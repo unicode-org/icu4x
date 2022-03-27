@@ -12,7 +12,6 @@ use std::str::FromStr;
 
 /// Helper function to open a file and return failures as a crate error.
 pub fn open_reader(path: &Path) -> Result<BufReader<File>, Error> {
-    #[cfg(feature = "log")]
     log::trace!("Reading: {:?}", path);
     File::open(&path)
         .map(BufReader::new)
