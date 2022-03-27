@@ -89,11 +89,13 @@ experimental = []
 casemapping = ["icu_casemapping"]
 # Automatically download CLDR data from a host
 download = ["urlencoding", "reqwest", "unzip", "dirs"]
-default = ["casemapping"]
+# TODO(#1739): Disable the "download" feature by default
+default = ["casemapping", "download"]
 
 [[bin]]
 name = "icu4x-datagen"
 path = "src/bin/datagen.rs"
+# TODO(#1739): Make it such that icu4x-datagen does not require the download feature
 required-features = ["download"]
 
 [[bin]]
