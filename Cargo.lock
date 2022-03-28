@@ -1249,6 +1249,7 @@ dependencies = [
  "log",
  "mktemp",
  "rayon",
+ "reqwest",
  "serde",
  "serde-aux",
  "serde-tuple-vec-map",

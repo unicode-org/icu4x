@@ -11,6 +11,7 @@ command = "cargo"
 args = [
     "run",
     "--bin=icu4x-testdata-download",
+    "--features=download-testdata",
     "--",
     "-v",
 ]

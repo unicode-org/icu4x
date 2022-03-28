@@ -36,7 +36,6 @@ clap = "2.33"
 dhat = "0.3.0"
 displaydoc = { version = "0.2.3", default-features = false }
 eyre = "0.6"
-futures = "0.3"
 icu_calendar = { version = "0.5", path = "../../components/calendar", features = ["datagen"] }
 icu_casemapping = { version = "0.1", path = "../../experimental/casemapping", features = ["provider_serde", "provider_transform_internals"], optional = true }
 icu_codepointtrie = { version = "0.3.3", path = "../../utils/codepointtrie", features = ["serialize"] }
@@ -68,10 +67,14 @@ simple_logger = "1.12"
 smallstr = { version = "0.2", features = ["serde"] }
 smallvec = "1.6"
 tinystr = { path = "../../utils/tinystr", version = "0.5.0", features = ["alloc", "serde", "zerovec"], default-features = false }
-tokio = { version = "1.5", features = ["rt-multi-thread", "macros", "fs"] }
 toml = { version = "0.5" }
 writeable = { version = "0.3", path = "../../utils/writeable" }
 zerovec = { version = "0.6", path = "../../utils/zerovec", features = ["serde", "yoke"] }
+
+# Dependencies for the "download-testdata" feature
+reqwest = { version = "0.11", features = ["stream"], optional = true }
+tokio = { version = "1.5", features = ["rt-multi-thread", "macros", "fs"], optional = true }
+futures = { version = "0.3", optional = true }
 
 [dev-dependencies]
 mktemp = "0.4"
@@ -84,6 +87,7 @@ experimental = []
 casemapping = ["icu_casemapping"]
 # Automatically download CLDR and uprops data
 download = ["cached-path"]
+download-testdata = ["reqwest", "icu_testdata/metadata", "tokio", "futures"]
 default = ["casemapping"]
 
 [[bin]]
@@ -93,7 +97,7 @@ path = "src/bin/datagen.rs"
 [[bin]]
 name = "icu4x-testdata-download"
 path = "src/bin/testdata-download.rs"
-required-features = ["download"]
+required-features = ["download-testdata"]
 
 [[bin]]
 name = "icu4x-verify-zero-copy"
