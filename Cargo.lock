@@ -1092,6 +1092,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "icu_capi_staticlib"
+version = "0.1.0"
+dependencies = [
+ "icu_capi",
+]
+
+[[package]]
 name = "icu_casemapping"
 version = "0.1.0"
 dependencies = [

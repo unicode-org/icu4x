@@ -24,6 +24,7 @@ members = [
     "experimental/segmenter",
     "experimental/segmenter_lstm",
     "ffi/diplomat",
+    "ffi/capi_staticlib",
     "ffi/ecma402",
     "ffi/freertos",
     "provider/adapters",

@@ -39,17 +39,12 @@ denylist = ["bench", "x86tiny", "smaller_static"]
 crate-type = ["rlib"]
 path = "src/lib.rs"
 
+# Please keep the features list in sync with the icu_capi_staticlib crate
 [features]
 default = ["provider_fs", "provider_static"]
-
 provider_fs = ["icu_provider_fs", "icu_provider_fs/deserialize_json"]
 provider_static = ["icu_testdata"]
 smaller_static = ["provider_static"]
-
-# Only 1 of the following features can be set. Doing so disables std and
-# replaces the global allocator and panic handler with something else.
-# If multiple of these features are set, it is as if none of them are set.
-
 # Enables size-optimized builds on x86_64
 x86tiny = ["dlmalloc"]
 
