@@ -2,6 +2,17 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+
+//! This exists as a separate crate to work around
+//! cargo being unable to conditionally compile crate-types.
+//! 
+//! https://github.com/rust-lang/cargo/issues/4881
+//!
+//! This leads to problems like emscripten being unable to link
+//! because symbols like log_js are not defined even if the crate_type
+//! is not actually desired. As a workaround, the capi_staticlib and capi_dylib
+//! crates exist as endpoints to be built when those respective library types are needed.
+
 // https://github.com/unicode-org/icu4x/blob/main/docs/process/boilerplate.md#library-annotations
 #![no_std]
 #![cfg_attr(
@@ -13,29 +24,6 @@
         clippy::panic
     )
 )]
-#![allow(clippy::upper_case_acronyms)]
-#![feature(alloc_error_handler)]
-
-extern crate alloc;
 
 // Necessary to for symbols to be linked in
 extern crate icu_capi;
-
-use alloc::alloc::Layout;
-use core::panic::PanicInfo;
-use cortex_m::asm;
-use freertos_rust::FreeRtosAllocator;
-
-#[global_allocator]
-static GLOBAL: FreeRtosAllocator = FreeRtosAllocator;
-
-#[alloc_error_handler]
-fn alloc_error(_layout: Layout) -> ! {
-    asm::bkpt();
-    loop {}
-}
-
-#[panic_handler]
-fn panic(_info: &PanicInfo) -> ! {
-    loop {}
-}

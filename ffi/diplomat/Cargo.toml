@@ -77,20 +77,3 @@ log = { version = "0.4" }
 
 [target.'cfg(not(any(target_arch = "wasm32", target_os = "none")))'.dependencies]
 icu_provider_fs = { path = "../../provider/fs/", optional = true }
-
-# Unfortunately, --crate-type cannot be set per-target
-# (https://github.com/rust-lang/cargo/issues/4881)
-# and emscripten has link errors when compiling icu_capi due to
-# symbols like log_js being undefined. There is no way to ask Cargo
-# to only build a particular crate type for an invocation
-#
-# As a workaround, we define an example crate that just reexports icu_capi,
-# but is built as a cdylib. Due to how Cargo invocations work around examples,
-# `--features` is still passed down to `icu_capi`, but the end result is an
-# `icu_capi_cdylib.wasm`/`icu_capi_cdylib.so`/etc file that is for all intents
-# and purposes identical to the file one would get from adding "cdylib" to
-# `crate-type` above.
-[[example]]
-name = "icu_capi_cdylib"
-path = "src/crate_type_hack.rs"
-crate-type = ["cdylib"]

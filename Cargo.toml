@@ -23,6 +23,7 @@ members = [
     "experimental/crabbake/derive",
     "experimental/segmenter",
     "experimental/segmenter_lstm",
+    "ffi/capi_cdylib",
     "ffi/diplomat",
     "ffi/capi_staticlib",
     "ffi/ecma402",

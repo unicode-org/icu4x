@@ -56,4 +56,3 @@ mod wasm_glue;
 
 #[cfg(all(feature = "x86tiny", not(target_os = "none")))]
 mod x86tiny_glue;
-

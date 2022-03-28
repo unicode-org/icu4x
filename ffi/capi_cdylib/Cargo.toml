@@ -1,0 +1,49 @@
+[package]
+name = "icu_capi_cdylib"
+description = "C interface to ICU4X"
+version = "0.1.0"
+authors = ["The ICU4X Project Developers"]
+edition = "2018"
+resolver = "2"
+repository = "https://github.com/unicode-org/icu4x"
+license-file = "LICENSE"
+categories = ["internationalization"]
+# Keep this in sync with other crates unless there are exceptions
+include = [
+    "src/**/*",
+    "examples/**/*",
+    "benches/**/*",
+    "tests/**/*",
+    "include/**/*",
+    "Cargo.toml",
+    "LICENSE",
+    "README.md"
+]
+
+[package.metadata.docs.rs]
+all-features = true
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+path = "src/lib.rs"
+
+[dependencies]
+icu_capi = { version = "0.1", path = "../diplomat", default-features = false }
+
+
+# Please keep features/cargo-all-features lists in sync with the icu_capi crate
+[features]
+default = ["provider_fs", "provider_static"]
+provider_fs = ["icu_capi/provider_fs"]
+provider_static = ["icu_capi/provider_static"]
+smaller_static = ["icu_capi/smaller_static"]
+# Enables size-optimized builds on x86_64
+x86tiny = ["icu_capi/x86tiny"]
+
+[package.metadata.cargo-all-features]
+# Omit most optional dependency features from permutation testing
+skip_optional_dependencies = true
+# Bench feature gets tested separately and is only relevant for CI.
+# x86tiny is not relevant in normal environments,
+# smaller_static gets tested on the FFI job anyway
+denylist = ["bench", "x86tiny", "smaller_static"]
