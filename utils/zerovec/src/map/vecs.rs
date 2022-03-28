@@ -55,7 +55,9 @@ pub trait ZeroVecLike<'a, T: ?Sized> {
     /// The length of this vector
     fn zvl_len(&self) -> usize;
     /// Check if this vector is in ascending order according to `T`s `Ord` impl
-    fn zvl_is_ascending(&self) -> bool;
+    fn zvl_is_ascending(&self) -> bool
+    where
+        T: Ord;
     /// Check if this vector is empty
     fn zvl_is_empty(&self) -> bool {
         self.zvl_len() == 0
@@ -156,7 +158,7 @@ pub trait MutableZeroVecLike<'a, T: ?Sized>: ZeroVecLike<'a, T> {
 
 impl<'a, T> ZeroVecLike<'a, T> for ZeroVec<'a, T>
 where
-    T: 'a + AsULE + Ord + Copy,
+    T: 'a + AsULE + Copy,
 {
     type GetType = T::ULE;
     type BorrowedVariant = &'a ZeroSlice<T>;
@@ -189,7 +191,10 @@ where
     fn zvl_len(&self) -> usize {
         ZeroSlice::len(self)
     }
-    fn zvl_is_ascending(&self) -> bool {
+    fn zvl_is_ascending(&self) -> bool
+    where
+        T: Ord,
+    {
         #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
         self.as_ule_slice()
             .windows(2)
@@ -219,7 +224,7 @@ where
 
 impl<'a, T> ZeroVecLike<'a, T> for &'a ZeroSlice<T>
 where
-    T: AsULE + Ord + Copy,
+    T: AsULE + Copy,
 {
     type GetType = T::ULE;
     type BorrowedVariant = &'a ZeroSlice<T>;
@@ -252,7 +257,10 @@ where
     fn zvl_len(&self) -> usize {
         ZeroSlice::len(*self)
     }
-    fn zvl_is_ascending(&self) -> bool {
+    fn zvl_is_ascending(&self) -> bool
+    where
+        T: Ord,
+    {
         #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
         self.as_ule_slice()
             .windows(2)
@@ -277,7 +285,7 @@ where
 
 impl<'a, T> BorrowedZeroVecLike<'a, T> for &'a ZeroSlice<T>
 where
-    T: AsULE + Ord + Copy,
+    T: AsULE + Copy,
 {
     fn zvl_get_borrowed(&self, index: usize) -> Option<&'a T::ULE> {
         self.as_ule_slice().get(index)
@@ -286,7 +294,7 @@ where
 
 impl<'a, T> MutableZeroVecLike<'a, T> for ZeroVec<'a, T>
 where
-    T: AsULE + Ord + Copy + 'static,
+    T: AsULE + Copy + 'static,
 {
     type OwnedType = T;
     fn zvl_insert(&mut self, index: usize, value: &T) {
@@ -321,7 +329,6 @@ where
 impl<'a, T> ZeroVecLike<'a, T> for VarZeroVec<'a, T>
 where
     T: VarULE,
-    T: Ord,
     T: ?Sized,
 {
     type GetType = T;
@@ -351,7 +358,10 @@ where
     fn zvl_len(&self) -> usize {
         self.len()
     }
-    fn zvl_is_ascending(&self) -> bool {
+    fn zvl_is_ascending(&self) -> bool
+    where
+        T: Ord,
+    {
         if !self.is_empty() {
             let mut prev = self.get(0).unwrap();
             for element in self.iter().skip(1) {
@@ -387,7 +397,6 @@ where
 impl<'a, T> ZeroVecLike<'a, T> for &'a VarZeroSlice<T>
 where
     T: VarULE,
-    T: Ord,
     T: ?Sized,
 {
     type GetType = T;
@@ -417,7 +426,10 @@ where
     fn zvl_len(&self) -> usize {
         self.len()
     }
-    fn zvl_is_ascending(&self) -> bool {
+    fn zvl_is_ascending(&self) -> bool
+    where
+        T: Ord,
+    {
         if !self.is_empty() {
             let mut prev = self.get(0).unwrap();
             for element in self.iter().skip(1) {
@@ -449,7 +461,6 @@ where
 impl<'a, T> BorrowedZeroVecLike<'a, T> for &'a VarZeroSlice<T>
 where
     T: VarULE,
-    T: Ord,
     T: ?Sized,
 {
     fn zvl_get_borrowed(&self, index: usize) -> Option<&'a T> {
@@ -460,7 +471,6 @@ where
 impl<'a, T> MutableZeroVecLike<'a, T> for VarZeroVec<'a, T>
 where
     T: VarULE,
-    T: Ord,
     T: ?Sized,
 {
     type OwnedType = Box<T>;
