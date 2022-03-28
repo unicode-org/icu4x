@@ -49,31 +49,31 @@ pub enum EnumeratedProperty {
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[repr(transparent)]
 #[zerovec::make_ule(BidiClassULE)]
-pub struct BidiClass(pub u16);
+pub struct BidiClass(pub u8);
 impl BidiClass {
-    pub const LEFT_TO_RIGHT: BidiClass = BidiClass(0);
-    pub const RIGHT_TO_LEFT: BidiClass = BidiClass(1);
-    pub const EUROPEAN_NUMBER: BidiClass = BidiClass(2);
-    pub const EUROPEAN_SEPARATOR: BidiClass = BidiClass(3);
-    pub const EUROPEAN_TERMINATOR: BidiClass = BidiClass(4);
-    pub const ARABIC_NUMBER: BidiClass = BidiClass(5);
-    pub const COMMON_SEPARATOR: BidiClass = BidiClass(6);
-    pub const PARAGRAPH_SEPARATOR: BidiClass = BidiClass(7);
-    pub const SEGMENT_SEPARATOR: BidiClass = BidiClass(8);
-    pub const WHITE_SPACE: BidiClass = BidiClass(9);
-    pub const OTHER_NEUTRAL: BidiClass = BidiClass(10);
-    pub const LEFT_TO_RIGHT_EMBEDDING: BidiClass = BidiClass(11);
-    pub const LEFT_TO_RIGHT_OVERRIDE: BidiClass = BidiClass(12);
-    pub const ARABIC_LETTER: BidiClass = BidiClass(13);
-    pub const RIGHT_TO_LEFT_EMBEDDING: BidiClass = BidiClass(14);
-    pub const RIGHT_TO_LEFT_OVERRIDE: BidiClass = BidiClass(15);
-    pub const POP_DIRECTIONAL_FORMAT: BidiClass = BidiClass(16);
-    pub const NONSPACING_MARK: BidiClass = BidiClass(17);
-    pub const BOUNDARY_NEUTRAL: BidiClass = BidiClass(18);
-    pub const FIRST_STRONG_ISOLATE: BidiClass = BidiClass(19);
-    pub const LEFT_TO_RIGHT_ISOLATE: BidiClass = BidiClass(20);
-    pub const RIGHT_TO_LEFT_ISOLATE: BidiClass = BidiClass(21);
-    pub const POP_DIRECTIONAL_ISOLATE: BidiClass = BidiClass(22);
+    pub const LeftToRight: BidiClass = BidiClass(0);
+    pub const RightToLeft: BidiClass = BidiClass(1);
+    pub const EuropeanNumber: BidiClass = BidiClass(2);
+    pub const EuropeanSeparator: BidiClass = BidiClass(3);
+    pub const EuropeanTerminator: BidiClass = BidiClass(4);
+    pub const ArabicNumber: BidiClass = BidiClass(5);
+    pub const CommonSeparator: BidiClass = BidiClass(6);
+    pub const ParagraphSeparator: BidiClass = BidiClass(7);
+    pub const SegmentSeparator: BidiClass = BidiClass(8);
+    pub const WhiteSpace: BidiClass = BidiClass(9);
+    pub const OtherNeutral: BidiClass = BidiClass(10);
+    pub const LeftToRightEmbedding: BidiClass = BidiClass(11);
+    pub const LeftToRightOverride: BidiClass = BidiClass(12);
+    pub const ArabicLetter: BidiClass = BidiClass(13);
+    pub const RightToLeftEmbedding: BidiClass = BidiClass(14);
+    pub const RightToLeftOverride: BidiClass = BidiClass(15);
+    pub const PopDirectionalFormat: BidiClass = BidiClass(16);
+    pub const NonspacingMark: BidiClass = BidiClass(17);
+    pub const BoundaryNeutral: BidiClass = BidiClass(18);
+    pub const FirstStrongIsolate: BidiClass = BidiClass(19);
+    pub const LeftToRightIsolate: BidiClass = BidiClass(20);
+    pub const RightToLeftIsolate: BidiClass = BidiClass(21);
+    pub const PopDirectionalIsolate: BidiClass = BidiClass(22);
 }
 
 /// Enumerated property General_Category.

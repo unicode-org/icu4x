@@ -23,11 +23,11 @@ impl TrieValue for CanonicalCombiningClass {
 }
 
 impl TrieValue for BidiClass {
-    const DATA_GET_ERROR_VALUE: BidiClass = BidiClass::OTHER_NEUTRAL;
+    const DATA_GET_ERROR_VALUE: BidiClass = BidiClass::OtherNeutral;
     type TryFromU32Error = TryFromIntError;
 
     fn try_from_u32(i: u32) -> Result<Self, Self::TryFromU32Error> {
-        u16::try_from(i).map(Self)
+        u8::try_from(i).map(Self)
     }
 }
 
