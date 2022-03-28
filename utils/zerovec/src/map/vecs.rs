@@ -83,13 +83,22 @@ pub trait ZeroVecLike<'a, T: ?Sized> {
 
     /// Compare this type with a `Self::GetType`. This must produce the same result as
     /// if `g` were converted to `Self`
-    fn t_cmp_get(t: &T, g: &Self::GetType) -> Ordering;
+    #[inline]
+    fn t_cmp_get(t: &T, g: &Self::GetType) -> Ordering where T: Ord {
+        Self::zvl_get_as_t(g, |g| t.cmp(g))
+    }
 
     /// Compare two values of `Self::GetType`. This must produce the same result as
     /// if both `a` and `b` were converted to `Self`
-    fn get_cmp_get(a: &Self::GetType, b: &Self::GetType) -> Ordering;
+    #[inline]
+    fn get_cmp_get(a: &Self::GetType, b: &Self::GetType) -> Ordering
+    where
+        T: Ord,
+    {
+        Self::zvl_get_as_t(a, |a| Self::zvl_get_as_t(b, |b| a.cmp(b)))
+    }
 
-    /// Obtain a version of T suitable for serialization
+    /// Obtain a reference to T, passed to a closure
     ///
     /// This uses a callback because it's not possible to return owned-or-borrowed
     /// types without GATs
@@ -188,18 +197,12 @@ where
             None
         }
     }
+
     fn zvl_from_borrowed(b: &'a ZeroSlice<T>) -> Self {
         b.as_zerovec()
     }
 
-    fn t_cmp_get(t: &T, g: &Self::GetType) -> Ordering {
-        t.cmp(&T::from_unaligned(*g))
-    }
-
-    fn get_cmp_get(a: &Self::GetType, b: &Self::GetType) -> Ordering {
-        T::from_unaligned(*a).cmp(&T::from_unaligned(*b))
-    }
-
+    #[inline]
     fn zvl_get_as_t<R>(g: &Self::GetType, f: impl FnOnce(&T) -> R) -> R {
         f(&T::from_unaligned(*g))
     }
@@ -255,14 +258,7 @@ where
         b
     }
 
-    fn t_cmp_get(t: &T, g: &Self::GetType) -> Ordering {
-        t.cmp(&T::from_unaligned(*g))
-    }
-
-    fn get_cmp_get(a: &Self::GetType, b: &Self::GetType) -> Ordering {
-        T::from_unaligned(*a).cmp(&T::from_unaligned(*b))
-    }
-
+    #[inline]
     fn zvl_get_as_t<R>(g: &Self::GetType, f: impl FnOnce(&T) -> R) -> R {
         f(&T::from_unaligned(*g))
     }
@@ -369,14 +365,6 @@ where
         b.as_varzerovec()
     }
 
-    fn t_cmp_get(t: &T, g: &Self::GetType) -> Ordering {
-        t.cmp(g)
-    }
-
-    fn get_cmp_get(a: &Self::GetType, b: &Self::GetType) -> Ordering {
-        a.cmp(b)
-    }
-
     #[inline]
     fn zvl_get_as_t<R>(g: &Self::GetType, f: impl FnOnce(&T) -> R) -> R {
         f(g)
@@ -435,14 +423,6 @@ where
     }
     fn zvl_from_borrowed(b: &'a VarZeroSlice<T>) -> Self {
         b
-    }
-
-    fn t_cmp_get(t: &T, g: &Self::GetType) -> Ordering {
-        t.cmp(g)
-    }
-
-    fn get_cmp_get(a: &Self::GetType, b: &Self::GetType) -> Ordering {
-        a.cmp(b)
     }
 
     #[inline]
