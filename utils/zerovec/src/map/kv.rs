@@ -54,7 +54,7 @@ impl_sized_kv!(i64);
 impl_sized_kv!(i128);
 impl_sized_kv!(char);
 
-impl<'a, T: AsULE + Ord + 'static> ZeroMapKV<'a> for Option<T> {
+impl<'a, T: AsULE + 'static> ZeroMapKV<'a> for Option<T> {
     type Container = ZeroVec<'a, Option<T>>;
     type GetType = <Option<T> as AsULE>::ULE;
     type OwnedType = Option<T>;
@@ -63,7 +63,6 @@ impl<'a, T: AsULE + Ord + 'static> ZeroMapKV<'a> for Option<T> {
 impl<'a, T> ZeroMapKV<'a> for OptionVarULE<T>
 where
     T: VarULE + ?Sized,
-    T: Ord,
 {
     type Container = VarZeroVec<'a, OptionVarULE<T>>;
     type GetType = OptionVarULE<T>;
@@ -79,14 +78,13 @@ impl<'a> ZeroMapKV<'a> for str {
 impl<'a, T> ZeroMapKV<'a> for [T]
 where
     T: ULE + AsULE<ULE = T>,
-    T: Ord,
 {
     type Container = VarZeroVec<'a, [T]>;
     type GetType = [T];
     type OwnedType = Box<[T]>;
 }
 
-impl<'a, T: AsULE + 'static + Ord> ZeroMapKV<'a> for ZeroSlice<T> {
+impl<'a, T: AsULE + 'static> ZeroMapKV<'a> for ZeroSlice<T> {
     type Container = VarZeroVec<'a, ZeroSlice<T>>;
     type GetType = ZeroSlice<T>;
     type OwnedType = Box<ZeroSlice<T>>;
