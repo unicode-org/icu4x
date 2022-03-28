@@ -326,7 +326,7 @@ unsafe impl zerovec::ule::ULE for Language {
 ///
 /// ```
 /// use icu::locid::subtags::Language;
-/// use icu::locid::macros::language;
+/// use icu::locid::language;
 /// use zerovec::ZeroVec;
 ///
 /// let zv = ZeroVec::<Language>::parse_byte_slice(b"de\0fr\0arsar\0")

@@ -41,6 +41,7 @@ macro_rules! language {
         const R: $crate::subtags::Language =
             match $crate::subtags::Language::from_bytes($language.as_bytes()) {
                 Ok(r) => r,
+                #[allow(clippy::panic)] // const context
                 _ => panic!(concat!("Invalid language code: ", $language)),
             };
         R

@@ -238,7 +238,7 @@ unsafe impl zerovec::ule::ULE for Region {
 ///
 /// ```
 /// use icu::locid::subtags::Region;
-/// use icu::locid`::region;
+/// use icu::locid::region;
 /// use zerovec::ZeroVec;
 ///
 /// let zv = ZeroVec::<Region>::parse_byte_slice(b"GB\0419001DE\0")

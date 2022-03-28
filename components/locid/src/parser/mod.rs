@@ -15,12 +15,14 @@ pub use locale::parse_locale;
 
 pub const fn get_subtag_iterator(slice: &[u8]) -> SubtagIterator {
     let mut current_start = 0;
+    #[allow(clippy::indexing_slicing)]
     while current_start < slice.len()
         && (slice[current_start] == b'-' || slice[current_start] == b'_')
     {
         current_start += 1;
     }
     let mut current_end = current_start;
+    #[allow(clippy::indexing_slicing)]
     while current_end < slice.len() && slice[current_end] != b'-' && slice[current_end] != b'_' {
         current_end += 1;
     }
@@ -47,6 +49,7 @@ impl<'a> SubtagIterator<'a> {
         } else {
             let r = (self.slice, self.current_start, self.current_end);
             self.current_start = self.current_end;
+            #[allow(clippy::indexing_slicing)]
             while self.current_start < self.slice.len()
                 && (self.slice[self.current_start] == b'-'
                     || self.slice[self.current_start] == b'_')
@@ -54,6 +57,7 @@ impl<'a> SubtagIterator<'a> {
                 self.current_start += 1;
             }
             self.current_end = self.current_start;
+            #[allow(clippy::indexing_slicing)]
             while self.current_end < self.slice.len()
                 && self.slice[self.current_end] != b'-'
                 && self.slice[self.current_end] != b'_'
@@ -73,6 +77,7 @@ impl<'a> SubtagIterator<'a> {
     }
 
     pub fn peek(&self) -> Option<&'a [u8]> {
+        #[allow(clippy::indexing_slicing)] // peek_manual returns valid indices
         self.peek_manual().map(|(t, s, e)| &t[s..e])
     }
 }
@@ -83,6 +88,7 @@ impl<'a> Iterator for SubtagIterator<'a> {
     fn next(&mut self) -> Option<Self::Item> {
         let (s, res) = self.next_manual();
         self.clone_from(&s);
+        #[allow(clippy::indexing_slicing)] // next_manual returns valid indices
         res.map(|(t, s, e)| &t[s..e])
     }
 }
