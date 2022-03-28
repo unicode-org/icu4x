@@ -32,7 +32,9 @@ pub trait ZeroVecLike<'a, T: ?Sized> {
     /// Search for a key in a sorted vector, returns `Ok(index)` if found,
     /// returns `Err(insert_index)` if not found, where `insert_index` is the
     /// index where it should be inserted to maintain sort order.
-    fn zvl_binary_search(&self, k: &T) -> Result<usize, usize>;
+    fn zvl_binary_search(&self, k: &T) -> Result<usize, usize>
+    where
+        T: Ord;
     /// Search for a key within a certain range in a sorted vector. Returns `None` if the
     /// range is out of bounds, and `Ok` or `Err` in the same way as `zvl_binary_search`.
     /// Indices are returned relative to the start of the range.
@@ -40,7 +42,9 @@ pub trait ZeroVecLike<'a, T: ?Sized> {
         &self,
         k: &T,
         range: Range<usize>,
-    ) -> Option<Result<usize, usize>>;
+    ) -> Option<Result<usize, usize>>
+    where
+        T: Ord;
 
     /// Search for a key in a sorted vector by a predicate, returns `Ok(index)` if found,
     /// returns `Err(insert_index)` if not found, where `insert_index` is the
@@ -84,7 +88,10 @@ pub trait ZeroVecLike<'a, T: ?Sized> {
     /// Compare this type with a `Self::GetType`. This must produce the same result as
     /// if `g` were converted to `Self`
     #[inline]
-    fn t_cmp_get(t: &T, g: &Self::GetType) -> Ordering where T: Ord {
+    fn t_cmp_get(t: &T, g: &Self::GetType) -> Ordering
+    where
+        T: Ord,
+    {
         Self::zvl_get_as_t(g, |g| t.cmp(g))
     }
 
@@ -157,14 +164,16 @@ where
     fn zvl_new() -> Self {
         Self::new()
     }
-    fn zvl_binary_search(&self, k: &T) -> Result<usize, usize> {
+    fn zvl_binary_search(&self, k: &T) -> Result<usize, usize>
+    where
+        T: Ord,
+    {
         ZeroSlice::binary_search(self, k)
     }
-    fn zvl_binary_search_in_range(
-        &self,
-        k: &T,
-        range: Range<usize>,
-    ) -> Option<Result<usize, usize>> {
+    fn zvl_binary_search_in_range(&self, k: &T, range: Range<usize>) -> Option<Result<usize, usize>>
+    where
+        T: Ord,
+    {
         let zs: &ZeroSlice<T> = &*self;
         zs.zvl_binary_search_in_range(k, range)
     }
@@ -218,14 +227,16 @@ where
     fn zvl_new() -> Self {
         ZeroSlice::from_ule_slice(&[])
     }
-    fn zvl_binary_search(&self, k: &T) -> Result<usize, usize> {
+    fn zvl_binary_search(&self, k: &T) -> Result<usize, usize>
+    where
+        T: Ord,
+    {
         ZeroSlice::binary_search(*self, k)
     }
-    fn zvl_binary_search_in_range(
-        &self,
-        k: &T,
-        range: Range<usize>,
-    ) -> Option<Result<usize, usize>> {
+    fn zvl_binary_search_in_range(&self, k: &T, range: Range<usize>) -> Option<Result<usize, usize>>
+    where
+        T: Ord,
+    {
         let subslice = self.get_subslice(range)?;
         Some(ZeroSlice::binary_search(subslice, k))
     }
@@ -319,14 +330,16 @@ where
     fn zvl_new() -> Self {
         Self::new()
     }
-    fn zvl_binary_search(&self, k: &T) -> Result<usize, usize> {
+    fn zvl_binary_search(&self, k: &T) -> Result<usize, usize>
+    where
+        T: Ord,
+    {
         self.binary_search(k)
     }
-    fn zvl_binary_search_in_range(
-        &self,
-        k: &T,
-        range: Range<usize>,
-    ) -> Option<Result<usize, usize>> {
+    fn zvl_binary_search_in_range(&self, k: &T, range: Range<usize>) -> Option<Result<usize, usize>>
+    where
+        T: Ord,
+    {
         self.binary_search_in_range(k, range)
     }
     fn zvl_binary_search_by(&self, predicate: impl FnMut(&T) -> Ordering) -> Result<usize, usize> {
@@ -383,14 +396,16 @@ where
     fn zvl_new() -> Self {
         VarZeroSlice::new_empty()
     }
-    fn zvl_binary_search(&self, k: &T) -> Result<usize, usize> {
+    fn zvl_binary_search(&self, k: &T) -> Result<usize, usize>
+    where
+        T: Ord,
+    {
         self.binary_search(k)
     }
-    fn zvl_binary_search_in_range(
-        &self,
-        k: &T,
-        range: Range<usize>,
-    ) -> Option<Result<usize, usize>> {
+    fn zvl_binary_search_in_range(&self, k: &T, range: Range<usize>) -> Option<Result<usize, usize>>
+    where
+        T: Ord,
+    {
         self.binary_search_in_range(k, range)
     }
     fn zvl_binary_search_by(&self, predicate: impl FnMut(&T) -> Ordering) -> Result<usize, usize> {

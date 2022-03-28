@@ -313,7 +313,7 @@ where
 
 impl<'a, K, V> ZeroMap<'a, K, V>
 where
-    K: ZeroMapKV<'a> + ?Sized,
+    K: ZeroMapKV<'a> + ?Sized + Ord,
     V: ZeroMapKV<'a, Container = VarZeroVec<'a, V>> + ?Sized,
     V: VarULE,
 {
