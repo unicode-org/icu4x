@@ -8,9 +8,8 @@
 //!
 //! This crate contains two implementations of [`CldrPaths`]:
 //!
-//! - [`CldrPathsLocal`] points to local copies of the CLDR JSON repositories.
-//! - [`CldrAllInOneDownloader`](download::CldrAllInOneDownloader) downloads and caches the
-//!   CLDR JSON repositories. Requires the "download" feature.
+//! - [`CldrPathsLocal`] which points directly to each local CLDR file, and
+//! - [`CldrPathsAllInOne`] which points to a local CLDR tree.
 //!
 //! **Important:** This data provider implementation is not optimized
 //! for production use. Read more in the [data provider] docs.
