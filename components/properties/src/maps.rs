@@ -62,7 +62,7 @@ where
     get_cp_map(provider, key::GENERAL_CATEGORY_V1)
 }
 
-/// Return a [`CodePointTrie`] for the BidiClass Unicode enumerated property. See [`BidiClass`].
+/// Return a [`CodePointTrie`] for the Bidi_Class Unicode enumerated property. See [`BidiClass`].
 ///
 /// # Example
 ///

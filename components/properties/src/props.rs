@@ -43,13 +43,16 @@ pub enum EnumeratedProperty {
 
 /// Enumerated property Bidi_Class
 ///
-///
-///
+/// These are the categories required by the Unicode Bidirectional Algorithm.
+/// For the property values, see [Bidirectional Class Values](https://unicode.org/reports/tr44/#Bidi_Class_Values).
+/// For more information, see [Unicode Standard Annex #9](https://unicode.org/reports/tr41/tr41-28.html#UAX9).
 #[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[repr(transparent)]
 #[zerovec::make_ule(BidiClassULE)]
 pub struct BidiClass(pub u8);
+
+#[allow(non_upper_case_globals)]
 impl BidiClass {
     pub const LeftToRight: BidiClass = BidiClass(0);
     pub const RightToLeft: BidiClass = BidiClass(1);
