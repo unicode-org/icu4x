@@ -24,8 +24,8 @@ where
         if serializer.is_human_readable() {
             let mut map = serializer.serialize_map(Some(self.len()))?;
             for (k, v) in self.iter() {
-                K::Container::t_with_ser(k, |k| map.serialize_key(k))?;
-                V::Container::t_with_ser(v, |v| map.serialize_value(v))?;
+                K::Container::zvl_get_as_t(k, |k| map.serialize_key(k))?;
+                V::Container::zvl_get_as_t(v, |v| map.serialize_value(v))?;
             }
             map.end()
         } else {

@@ -93,7 +93,7 @@ pub trait ZeroVecLike<'a, T: ?Sized> {
     ///
     /// This uses a callback because it's not possible to return owned-or-borrowed
     /// types without GATs
-    fn t_with_ser<R>(g: &Self::GetType, f: impl FnOnce(&T) -> R) -> R;
+    fn zvl_get_as_t<R>(g: &Self::GetType, f: impl FnOnce(&T) -> R) -> R;
 }
 
 /// Trait abstracting over [`ZeroVec`] and [`VarZeroVec`], for use in [`ZeroMap`](super::ZeroMap). **You
@@ -200,7 +200,7 @@ where
         T::from_unaligned(*a).cmp(&T::from_unaligned(*b))
     }
 
-    fn t_with_ser<R>(g: &Self::GetType, f: impl FnOnce(&T) -> R) -> R {
+    fn zvl_get_as_t<R>(g: &Self::GetType, f: impl FnOnce(&T) -> R) -> R {
         f(&T::from_unaligned(*g))
     }
 }
@@ -263,7 +263,7 @@ where
         T::from_unaligned(*a).cmp(&T::from_unaligned(*b))
     }
 
-    fn t_with_ser<R>(g: &Self::GetType, f: impl FnOnce(&T) -> R) -> R {
+    fn zvl_get_as_t<R>(g: &Self::GetType, f: impl FnOnce(&T) -> R) -> R {
         f(&T::from_unaligned(*g))
     }
 }
@@ -378,7 +378,7 @@ where
     }
 
     #[inline]
-    fn t_with_ser<R>(g: &Self::GetType, f: impl FnOnce(&T) -> R) -> R {
+    fn zvl_get_as_t<R>(g: &Self::GetType, f: impl FnOnce(&T) -> R) -> R {
         f(g)
     }
 }
@@ -446,7 +446,7 @@ where
     }
 
     #[inline]
-    fn t_with_ser<R>(g: &Self::GetType, f: impl FnOnce(&T) -> R) -> R {
+    fn zvl_get_as_t<R>(g: &Self::GetType, f: impl FnOnce(&T) -> R) -> R {
         f(g)
     }
 }

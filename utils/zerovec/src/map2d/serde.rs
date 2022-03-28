@@ -31,7 +31,7 @@ where
             let mut values_it = self.iter_values();
             let mut serde_map = serializer.serialize_map(None)?;
             for (key0_index, key0) in self.iter_keys0().enumerate() {
-                K0::Container::t_with_ser(key0, |k| serde_map.serialize_key(k))?;
+                K0::Container::zvl_get_as_t(key0, |k| serde_map.serialize_key(k))?;
                 let inner_map = ZeroMap2dInnerMapSerialize {
                     key0_index,
                     map: self,
@@ -76,9 +76,9 @@ where
         let mut serde_map = serializer.serialize_map(None)?;
         #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
         for key1 in self.map.iter_keys1_by_index(self.key0_index).unwrap() {
-            K1::Container::t_with_ser(key1, |k| serde_map.serialize_key(k))?;
+            K1::Container::zvl_get_as_t(key1, |k| serde_map.serialize_key(k))?;
             let v = self.values_it.borrow_mut().next().unwrap();
-            V::Container::t_with_ser(v, |v| serde_map.serialize_value(v))?;
+            V::Container::zvl_get_as_t(v, |v| serde_map.serialize_value(v))?;
         }
         serde_map.end()
     }
