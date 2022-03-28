@@ -16,12 +16,12 @@ pub use locale::parse_locale;
 pub const fn get_subtag_iterator(slice: &[u8]) -> SubtagIterator {
     let mut current_start = 0;
     while current_start < slice.len()
-        && (slice[current_start] == b'_' || slice[current_start] == b'-')
+        && (slice[current_start] == b'-' || slice[current_start] == b'_')
     {
         current_start += 1;
     }
     let mut current_end = current_start;
-    while current_end < slice.len() && slice[current_end] != b'_' && slice[current_end] != b'-' {
+    while current_end < slice.len() && slice[current_end] != b'-' && slice[current_end] != b'_' {
         current_end += 1;
     }
     SubtagIterator {
@@ -48,15 +48,15 @@ impl<'a> SubtagIterator<'a> {
             let r = (self.slice, self.current_start, self.current_end);
             self.current_start = self.current_end;
             while self.current_start < self.slice.len()
-                && (self.slice[self.current_start] == b'_'
-                    || self.slice[self.current_start] == b'-')
+                && (self.slice[self.current_start] == b'-'
+                    || self.slice[self.current_start] == b'_')
             {
                 self.current_start += 1;
             }
             self.current_end = self.current_start;
             while self.current_end < self.slice.len()
-                && self.slice[self.current_end] != b'_'
                 && self.slice[self.current_end] != b'-'
+                && self.slice[self.current_end] != b'_'
             {
                 self.current_end += 1;
             }
