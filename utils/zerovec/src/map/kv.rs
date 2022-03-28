@@ -53,6 +53,8 @@ impl_sized_kv!(i32);
 impl_sized_kv!(i64);
 impl_sized_kv!(i128);
 impl_sized_kv!(char);
+impl_sized_kv!(f32);
+impl_sized_kv!(f64);
 
 impl<'a, T: AsULE + 'static> ZeroMapKV<'a> for Option<T> {
     type Container = ZeroVec<'a, Option<T>>;
