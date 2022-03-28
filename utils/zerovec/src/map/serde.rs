@@ -12,7 +12,7 @@ use serde::{Deserialize, Deserializer, Serialize, Serializer};
 /// This impl can be made available by enabling the optional `serde` feature of the `zerovec` crate
 impl<'a, K, V> Serialize for ZeroMap<'a, K, V>
 where
-    K: ZeroMapKV<'a> + Serialize + ?Sized,
+    K: ZeroMapKV<'a> + Serialize + ?Sized + Ord,
     V: ZeroMapKV<'a> + Serialize + ?Sized,
     K::Container: Serialize,
     V::Container: Serialize,
@@ -37,7 +37,7 @@ where
 /// This impl can be made available by enabling the optional `serde` feature of the `zerovec` crate
 impl<'a, K, V> Serialize for ZeroMapBorrowed<'a, K, V>
 where
-    K: ZeroMapKV<'a> + Serialize + ?Sized,
+    K: ZeroMapKV<'a> + Serialize + ?Sized + Ord,
     V: ZeroMapKV<'a> + Serialize + ?Sized,
     K::Container: Serialize,
     V::Container: Serialize,
@@ -53,7 +53,7 @@ where
 /// Modified example from https://serde.rs/deserialize-map.html
 struct ZeroMapMapVisitor<'a, K, V>
 where
-    K: ZeroMapKV<'a> + ?Sized,
+    K: ZeroMapKV<'a> + ?Sized + Ord,
     V: ZeroMapKV<'a> + ?Sized,
 {
     #[allow(clippy::type_complexity)] // it's a marker type, complexity doesn't matter
@@ -62,7 +62,7 @@ where
 
 impl<'a, K, V> ZeroMapMapVisitor<'a, K, V>
 where
-    K: ZeroMapKV<'a> + ?Sized,
+    K: ZeroMapKV<'a> + ?Sized + Ord,
     V: ZeroMapKV<'a> + ?Sized,
 {
     fn new() -> Self {

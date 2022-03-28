@@ -119,7 +119,15 @@ where
     pub fn is_empty(&self) -> bool {
         self.values.zvl_len() == 0
     }
+}
 
+impl<'a, K, V> ZeroMapBorrowed<'a, K, V>
+where
+    K: ZeroMapKV<'a> + Ord,
+    V: ZeroMapKV<'a>,
+    K: ?Sized,
+    V: ?Sized,
+{
     /// Get the value associated with `key`, if it exists.
     ///
     /// This is able to return values that live longer than the map itself
@@ -190,7 +198,15 @@ where
     pub fn contains_key(&self, key: &K) -> bool {
         self.keys.zvl_binary_search(key).is_ok()
     }
+}
 
+impl<'a, K, V> ZeroMapBorrowed<'a, K, V>
+where
+    K: ZeroMapKV<'a>,
+    V: ZeroMapKV<'a>,
+    K: ?Sized,
+    V: ?Sized,
+{
     /// Produce an ordered iterator over key-value pairs
     pub fn iter<'b>(
         &'b self,
@@ -227,7 +243,7 @@ where
 
 impl<'a, K, V> ZeroMapBorrowed<'a, K, V>
 where
-    K: ZeroMapKV<'a> + ?Sized,
+    K: ZeroMapKV<'a> + ?Sized + Ord,
     V: ZeroMapKV<'a, Container = ZeroVec<'a, V>> + ?Sized,
     V: AsULE + Ord + Copy + 'static,
 {

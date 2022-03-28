@@ -98,7 +98,6 @@ where
             values: V::Container::zvl_new(),
         }
     }
-
     /// Construct a new [`ZeroMap`] with a given capacity
     pub fn with_capacity(capacity: usize) -> Self {
         Self {
@@ -139,7 +138,12 @@ where
         self.keys.zvl_reserve(additional);
         self.values.zvl_reserve(additional);
     }
-
+}
+impl<'a, K, V> ZeroMap<'a, K, V>
+where
+    K: ZeroMapKV<'a> + ?Sized + Ord,
+    V: ZeroMapKV<'a> + ?Sized,
+{
     /// Get the value associated with `key`, if it exists.
     ///
     /// For fixed-size ([`AsULE`]) `V` types, this _will_ return
@@ -268,7 +272,13 @@ where
         self.values.zvl_push(value);
         None
     }
+}
 
+impl<'a, K, V> ZeroMap<'a, K, V>
+where
+    K: ZeroMapKV<'a> + ?Sized,
+    V: ZeroMapKV<'a> + ?Sized,
+{
     /// Produce an ordered iterator over key-value pairs
     pub fn iter<'b>(
         &'b self,
@@ -349,7 +359,7 @@ where
 
 impl<'a, K, V> ZeroMap<'a, K, V>
 where
-    K: ZeroMapKV<'a> + ?Sized,
+    K: ZeroMapKV<'a> + ?Sized + Ord,
     V: ZeroMapKV<'a, Container = ZeroVec<'a, V>> + ?Sized,
     V: AsULE + Copy,
 {
@@ -390,7 +400,14 @@ where
         let index = self.keys.zvl_binary_search_by(predicate).ok()?;
         ZeroSlice::get(&*self.values, index)
     }
+}
 
+impl<'a, K, V> ZeroMap<'a, K, V>
+where
+    K: ZeroMapKV<'a> + ?Sized,
+    V: ZeroMapKV<'a, Container = ZeroVec<'a, V>> + ?Sized,
+    V: AsULE + Copy,
+{
     /// Similar to [`Self::iter()`] except it returns a direct copy of the values instead of references
     /// to `V::ULE`, in cases when `V` is fixed-size
     pub fn iter_copied_values<'b>(
@@ -495,7 +512,7 @@ impl<'a, A, B, K, V> FromIterator<(A, B)> for ZeroMap<'a, K, V>
 where
     A: Borrow<K>,
     B: Borrow<V>,
-    K: ZeroMapKV<'a> + ?Sized,
+    K: ZeroMapKV<'a> + ?Sized + Ord,
     V: ZeroMapKV<'a> + ?Sized,
 {
     fn from_iter<T>(iter: T) -> Self

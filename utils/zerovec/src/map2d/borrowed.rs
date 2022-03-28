@@ -140,7 +140,17 @@ where
     pub fn is_empty(&self) -> bool {
         self.values.zvl_len() == 0
     }
+}
 
+impl<'a, K0, K1, V> ZeroMap2dBorrowed<'a, K0, K1, V>
+where
+    K0: ZeroMapKV<'a> + Ord,
+    K1: ZeroMapKV<'a> + Ord,
+    V: ZeroMapKV<'a>,
+    K0: ?Sized,
+    K1: ?Sized,
+    V: ?Sized,
+{
     /// Get the value associated with `key`, if it exists.
     ///
     /// This is able to return values that live longer than the map itself
@@ -251,8 +261,8 @@ where
 
 impl<'a, K0, K1, V> ZeroMap2dBorrowed<'a, K0, K1, V>
 where
-    K0: ZeroMapKV<'a> + ?Sized,
-    K1: ZeroMapKV<'a> + ?Sized,
+    K0: ZeroMapKV<'a> + ?Sized + Ord,
+    K1: ZeroMapKV<'a> + ?Sized + Ord,
     V: ZeroMapKV<'a, Container = ZeroVec<'a, V>> + ?Sized,
     V: AsULE + Ord + Copy + 'static,
 {

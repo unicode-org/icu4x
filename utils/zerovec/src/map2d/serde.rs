@@ -16,8 +16,8 @@ use serde::{Deserialize, Deserializer, Serialize, Serializer};
 /// This impl can be made available by enabling the optional `serde` feature of the `zerovec` crate
 impl<'a, K0, K1, V> Serialize for ZeroMap2d<'a, K0, K1, V>
 where
-    K0: ZeroMapKV<'a> + Serialize + ?Sized,
-    K1: ZeroMapKV<'a> + Serialize + ?Sized,
+    K0: ZeroMapKV<'a> + Serialize + ?Sized + Ord,
+    K1: ZeroMapKV<'a> + Serialize + ?Sized + Ord,
     V: ZeroMapKV<'a> + Serialize + ?Sized,
     K0::Container: Serialize,
     K1::Container: Serialize,
@@ -50,8 +50,8 @@ where
 /// Helper struct for human-serializing the inner map of a ZeroMap2d
 struct ZeroMap2dInnerMapSerialize<'a, 'l, K0, K1, V, I>
 where
-    K0: ZeroMapKV<'a> + ?Sized,
-    K1: ZeroMapKV<'a> + ?Sized,
+    K0: ZeroMapKV<'a> + ?Sized + Ord,
+    K1: ZeroMapKV<'a> + ?Sized + Ord,
     V: ZeroMapKV<'a> + ?Sized,
 {
     pub key0_index: usize,
@@ -61,8 +61,8 @@ where
 
 impl<'a, 'l, K0, K1, V, I> Serialize for ZeroMap2dInnerMapSerialize<'a, 'l, K0, K1, V, I>
 where
-    K0: ZeroMapKV<'a> + Serialize + ?Sized,
-    K1: ZeroMapKV<'a> + Serialize + ?Sized,
+    K0: ZeroMapKV<'a> + Serialize + ?Sized + Ord,
+    K1: ZeroMapKV<'a> + Serialize + ?Sized + Ord,
     V: ZeroMapKV<'a> + Serialize + ?Sized,
     K0::Container: Serialize,
     K1::Container: Serialize,
@@ -87,8 +87,8 @@ where
 /// This impl can be made available by enabling the optional `serde` feature of the `zerovec` crate
 impl<'a, K0, K1, V> Serialize for ZeroMap2dBorrowed<'a, K0, K1, V>
 where
-    K0: ZeroMapKV<'a> + Serialize + ?Sized,
-    K1: ZeroMapKV<'a> + Serialize + ?Sized,
+    K0: ZeroMapKV<'a> + Serialize + ?Sized + Ord,
+    K1: ZeroMapKV<'a> + Serialize + ?Sized + Ord,
     V: ZeroMapKV<'a> + Serialize + ?Sized,
     K0::Container: Serialize,
     K1::Container: Serialize,
@@ -105,8 +105,8 @@ where
 /// Modified example from https://serde.rs/deserialize-map.html
 struct ZeroMap2dMapVisitor<'a, K0, K1, V>
 where
-    K0: ZeroMapKV<'a> + ?Sized,
-    K1: ZeroMapKV<'a> + ?Sized,
+    K0: ZeroMapKV<'a> + ?Sized + Ord,
+    K1: ZeroMapKV<'a> + ?Sized + Ord,
     V: ZeroMapKV<'a> + ?Sized,
 {
     #[allow(clippy::type_complexity)] // it's a marker type, complexity doesn't matter
@@ -115,8 +115,8 @@ where
 
 impl<'a, K0, K1, V> ZeroMap2dMapVisitor<'a, K0, K1, V>
 where
-    K0: ZeroMapKV<'a> + ?Sized,
-    K1: ZeroMapKV<'a> + ?Sized,
+    K0: ZeroMapKV<'a> + ?Sized + Ord,
+    K1: ZeroMapKV<'a> + ?Sized + Ord,
     V: ZeroMapKV<'a> + ?Sized,
 {
     fn new() -> Self {
@@ -128,8 +128,8 @@ where
 
 impl<'a, 'de, K0, K1, V> Visitor<'de> for ZeroMap2dMapVisitor<'a, K0, K1, V>
 where
-    K0: ZeroMapKV<'a> + Ord + ?Sized,
-    K1: ZeroMapKV<'a> + Ord + ?Sized,
+    K0: ZeroMapKV<'a> + Ord + ?Sized + Ord,
+    K1: ZeroMapKV<'a> + Ord + ?Sized + Ord,
     V: ZeroMapKV<'a> + ?Sized,
     K1::Container: Deserialize<'de>,
     V::Container: Deserialize<'de>,
