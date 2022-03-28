@@ -2,10 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-
 //! This exists as a separate crate to work around
 //! cargo being unable to conditionally compile crate-types.
-//! 
+//!
 //! https://github.com/rust-lang/cargo/issues/4881
 //!
 //! This leads to problems like emscripten being unable to link
