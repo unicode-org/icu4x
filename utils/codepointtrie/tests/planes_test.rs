@@ -60,8 +60,8 @@ fn planes_trie_deserialize_check_test() {
         trie_type: trie_type_enum,
     };
 
-    let data = ZeroVec::from_slice(code_point_trie_struct.data_8.as_ref().unwrap());
-    let index = ZeroVec::from_slice(&code_point_trie_struct.index);
+    let data = ZeroVec::from_slice_or_alloc(code_point_trie_struct.data_8.as_ref().unwrap());
+    let index = ZeroVec::from_slice_or_alloc(&code_point_trie_struct.index);
     let trie_result: Result<CodePointTrie<u8>, Error> =
         CodePointTrie::try_new(trie_header, index, data);
     let act_planes_trie = trie_result.unwrap();

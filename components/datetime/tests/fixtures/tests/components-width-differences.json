@@ -29,7 +29,9 @@
         "output": {
             "values": {
                 "en": "2020 AD",
-                "buddhist/en": "2563 BE"
+                "buddhist/en": "2563 BE",
+                "coptic/en": "1736 ERA1",
+                "coptic/fr": "1736 ap. D."
             }
         }
     },
@@ -85,7 +87,9 @@
             "values": {
                 "en": "1/7/2020",
                 "buddhist/en": "1/7/2563 BE",
-                "fr": "07/01/2020"
+                "fr": "07/01/2020",
+                "coptic/en": "4/28/1736 ERA1",
+                "coptic/fr": "28/4/1736 ap. D."
             }
         }
     },
@@ -105,7 +109,9 @@
             "values": {
                 "en": "01/7/2020",
                 "buddhist/en": "01/7/2563 BE",
-                "fr": "7/01/2020"
+                "fr": "7/01/2020",
+                "coptic/en": "04/28/1736 ERA1",
+                "coptic/fr": "28/04/1736 ap. D."
             }
         }
     },
@@ -125,7 +131,9 @@
             "values": {
                 "en": "Jan 7, 2020",
                 "buddhist/en": "Jan 7, 2563 BE",
-                "fr": "7 janv. 2020"
+                "fr": "7 janv. 2020",
+                "coptic/en": "Kiahk 28, 1736 ERA1",
+                "coptic/fr": "28 kya. 1736 ap. D."
             }
         }
     },
@@ -145,7 +153,9 @@
             "values": {
                 "en": "January 7, 2020",
                 "buddhist/en": "January 7, 2563 BE",
-                "fr": "7 janvier 2020"
+                "fr": "7 janvier 2020",
+                "coptic/en": "Kiahk 28, 1736 ERA1",
+                "coptic/fr": "28 kyahk 1736 ap. D."
             }
         }
     },
@@ -165,7 +175,9 @@
             "values": {
                 "en": "J 7, 2020",
                 "buddhist/en": "J 7, 2563 BE",
-                "fr": "7 J 2020"
+                "fr": "7 J 2020",
+                "coptic/en": "4 28, 1736 ERA1",
+                "coptic/fr": "28 4 1736 ap. D."
             }
         }
     }

@@ -77,6 +77,7 @@ impl Region {
     /// assert!(matches!(Region::try_from_raw(*b"US\0"), Ok(_)));
     /// assert!(matches!(Region::try_from_raw(*b"419"), Ok(_)));
     /// assert!(matches!(Region::try_from_raw(*b"foo"), Err(_)));
+    /// assert!(matches!(Region::try_from_raw(*b"US0"), Err(_)));
     ///
     /// // Unlike the other constructors, this one is case-sensitive:
     /// assert!(matches!(Region::try_from_raw(*b"us\0"), Err(_)));
@@ -85,7 +86,7 @@ impl Region {
         let s = TinyAsciiStr::<{ core::mem::size_of::<Self>() }>::try_from_raw(v)
             .map_err(|_| ParserError::InvalidSubtag)?;
         let is_valid = match s.len() {
-            REGION_ALPHA_LENGTH => s.is_ascii_uppercase(),
+            REGION_ALPHA_LENGTH => s.is_ascii_alphabetic() && s.is_ascii_uppercase(),
             REGION_NUM_LENGTH => s.is_ascii_numeric(),
             _ => false,
         };

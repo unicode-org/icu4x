@@ -174,6 +174,20 @@ impl Transform {
             fields: Fields::from_vec_unchecked(tfields),
         })
     }
+
+    pub(crate) fn for_each_subtag_str<E, F>(&self, f: &mut F) -> Result<(), E>
+    where
+        F: FnMut(&str) -> Result<(), E>,
+    {
+        if self.is_empty() {
+            return Ok(());
+        }
+        f("t")?;
+        if let Some(lang) = &self.lang {
+            lang.for_each_subtag_str(f)?;
+        }
+        self.fields.for_each_subtag_str(f)
+    }
 }
 
 impl core::fmt::Display for Transform {

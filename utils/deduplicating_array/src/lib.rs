@@ -28,7 +28,18 @@
 //! This implies that singleton integer arrays cannot be used as array elements (they do work in Bincode,
 //! but there's really not much point in using them).
 
-#![no_std]
+// https://github.com/unicode-org/icu4x/blob/main/docs/process/boilerplate.md#library-annotations
+#![cfg_attr(not(test), no_std)]
+#![cfg_attr(
+    not(test),
+    deny(
+        clippy::indexing_slicing,
+        clippy::unwrap_used,
+        clippy::expect_used,
+        clippy::panic
+    )
+)]
+
 extern crate alloc;
 
 use alloc::fmt::{Error, Formatter};
@@ -48,6 +59,7 @@ where
     let mut seq = serializer.serialize_tuple(N)?;
 
     for i in 0..N {
+        #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
         match array.iter().take(i).position(|item| item == &array[i]) {
             None if human => seq.serialize_element(&HumanSer::Value(&array[i]))?,
             None => seq.serialize_element(&MachineSer::Value(&array[i]))?,
@@ -76,6 +88,8 @@ where
         {
             match r {
                 HumanDe::Value(v) => {
+                    #[allow(clippy::indexing_slicing)]
+                    // TODO(#1668) Clippy exceptions need docs or fixing.
                     array[i].write(v);
                 }
                 HumanDe::Fallback([j]) => unsafe {
@@ -87,6 +101,8 @@ where
                             i, j
                         )));
                     }
+                    #[allow(clippy::indexing_slicing)]
+                    // TODO(#1668) Clippy exceptions need docs or fixing.
                     array[i].write(array[j].assume_init_ref().clone());
                 },
             }
@@ -97,6 +113,8 @@ where
         {
             match r {
                 MachineDe::Value(v) => {
+                    #[allow(clippy::indexing_slicing)]
+                    // TODO(#1668) Clippy exceptions need docs or fixing.
                     array[i].write(v);
                 }
                 MachineDe::Fallback(j) => unsafe {
@@ -108,6 +126,8 @@ where
                             i, j
                         )));
                     }
+                    #[allow(clippy::indexing_slicing)]
+                    // TODO(#1668) Clippy exceptions need docs or fixing.
                     array[i].write(array[j].assume_init_ref().clone());
                 },
             }

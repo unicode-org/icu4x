@@ -95,3 +95,30 @@ fn test_locale_partialeq_str() {
     let locale: Locale = "en".parse().expect("Parsing failed.");
     assert_ne!(locale, "en-US");
 }
+
+#[test]
+fn test_locale_cmp_bytes() {
+    let path = "./tests/fixtures/locale.json";
+    let tests: Vec<fixtures::LocaleTest> =
+        helpers::read_fixture(path).expect("Failed to read a fixture");
+    let bcp47_strings = tests
+        .iter()
+        .map(|t| match t.input {
+            fixtures::LocaleInfo::Identifier(ref s) => s.identifier.as_str(),
+            _ => match t.output {
+                fixtures::LocaleInfo::Identifier(ref s) => s.identifier.as_str(),
+                _ => panic!("No string in fixture input or output: {:?}", t),
+            },
+        })
+        .collect::<Vec<&str>>();
+    for a in bcp47_strings.iter() {
+        for b in bcp47_strings.iter() {
+            use std::str::FromStr;
+            let a_langid = Locale::from_str(a).expect("Invalid BCP-47 in fixture");
+            let a_normalized = a_langid.to_string();
+            let string_cmp = a_normalized.as_bytes().cmp(b.as_bytes());
+            let test_cmp = a_langid.cmp_bytes(b.as_bytes());
+            assert_eq!(string_cmp, test_cmp, "{:?}/{:?}", a, b);
+        }
+    }
+}

@@ -48,9 +48,10 @@ bench = false  # This option is required for Benchmark CI
 path = "src/lib.rs"
 
 [features]
-default = ["provider_serde"]
+default = ["serialize"]
 bench = []
-provider_serde = ["icu_locid/serde", "litemap/serde_serialize", "serde"]
+serialize = ["serde", "icu_locid/serde", "litemap/serde"]
+datagen = ["serialize", "litemap/serde_serialize"]
 
 [[bench]]
 name = "locale_canonicalizer"
@@ -58,4 +59,4 @@ harness = false
 
 [[test]]
 name = "locale_canonicalizer"
-required-features = ["provider_serde"]
+required-features = ["serialize"]

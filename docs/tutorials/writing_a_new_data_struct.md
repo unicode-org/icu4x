@@ -55,11 +55,11 @@ Although they may share common code, source data providers are implemented speci
 
 Examples of source data providers include:
 
-- [`CldrJsonDataProvider`](https://unicode-org.github.io/icu4x-docs/doc/icu_provider_cldr/transform/struct.CldrJsonDataProvider.html#)
-    - [`NumbersProvider`](https://unicode-org.github.io/icu4x-docs/doc/icu_provider_cldr/transform/struct.NumbersProvider.html)
-    - [`PluralsProvider`](https://unicode-org.github.io/icu4x-docs/doc/icu_provider_cldr/transform/struct.PluralsProvider.html)
-    - [`DateSymbolsProvider`](https://unicode-org.github.io/icu4x-docs/doc/icu_provider_cldr/transform/struct.DateSymbolsProvider.html)
-    - [&hellip; more examples](https://unicode-org.github.io/icu4x-docs/doc/icu_provider_cldr/transform/index.html)
+- [`CldrJsonDataProvider`](https://unicode-org.github.io/icu4x-docs/doc/icu_datagen/cldr/transform/struct.CldrJsonDataProvider.html#)
+    - [`NumbersProvider`](https://unicode-org.github.io/icu4x-docs/doc/icu_datagen/cldr/transform/struct.NumbersProvider.html)
+    - [`PluralsProvider`](https://unicode-org.github.io/icu4x-docs/doc/icu_datagen/cldr/transform/struct.PluralsProvider.html)
+    - [`DateSymbolsProvider`](https://unicode-org.github.io/icu4x-docs/doc/icu_datagen/cldr/transform/struct.DateSymbolsProvider.html)
+    - [&hellip; more examples](https://unicode-org.github.io/icu4x-docs/doc/icu_datagen/cldr/transform/index.html)
 - `BinaryPropertyUnicodeSetDataProvider`
 - [`HelloWorldProvider`](https://unicode-org.github.io/icu4x-docs/doc/icu_provider/hello_world/struct.HelloWorldProvider.html)
 
@@ -122,21 +122,19 @@ The following example shows all the pieces that make up the data pipeline for `D
 ```rust
 #[icu_provider::data_struct]
 #[derive(Debug, PartialEq, Clone)]
-#[cfg_attr(
-    feature = "provider_serde",
-    derive(serde::Serialize, serde::Deserialize)
-)]
+#[cfg_attr(feature = "serialize", derive(Deserialize))]
+#[cfg_attr(feature = "datagen", derive(Serialize))]
 pub struct DecimalSymbolsV1<'data> {
     /// Prefix and suffix to apply when a negative sign is needed.
-    #[cfg_attr(feature = "provider_serde", serde(borrow))]
+    #[cfg_attr(feature = "serialize", serde(borrow))]
     pub minus_sign_affixes: AffixesV1<'data>,
 
     /// Prefix and suffix to apply when a plus sign is needed.
-    #[cfg_attr(feature = "provider_serde", serde(borrow))]
+    #[cfg_attr(feature = "serialize", serde(borrow))]
     pub plus_sign_affixes: AffixesV1<'data>,
 
     /// Character used to separate the integer and fraction parts of the number.
-    #[cfg_attr(feature = "provider_serde", serde(borrow))]
+    #[cfg_attr(feature = "serialize", serde(borrow))]
     pub decimal_separator: Cow<'data, str>,
 
     // ...

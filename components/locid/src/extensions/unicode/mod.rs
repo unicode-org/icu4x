@@ -169,6 +169,19 @@ impl Unicode {
             attributes: Attributes::from_vec_unchecked(attributes),
         })
     }
+
+    pub(crate) fn for_each_subtag_str<E, F>(&self, f: &mut F) -> Result<(), E>
+    where
+        F: FnMut(&str) -> Result<(), E>,
+    {
+        if self.is_empty() {
+            return Ok(());
+        }
+        f("u")?;
+        self.attributes.for_each_subtag_str(f)?;
+        self.keywords.for_each_subtag_str(f)?;
+        Ok(())
+    }
 }
 
 impl core::fmt::Display for Unicode {

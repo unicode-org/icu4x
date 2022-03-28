@@ -2,12 +2,14 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-#![cfg(feature = "serde")]
+#![cfg(feature = "serialize")]
 
 mod fixtures;
 mod patterns;
 
-use icu_calendar::{buddhist::Buddhist, japanese::Japanese, AsCalendar, DateTime, Gregorian};
+use icu_calendar::{
+    buddhist::Buddhist, coptic::Coptic, japanese::Japanese, AsCalendar, DateTime, Gregorian,
+};
 use icu_datetime::{
     mock::{parse_gregorian_from_str, zoned_datetime::MockZonedDateTime},
     pattern::runtime::Pattern,
@@ -20,9 +22,9 @@ use icu_datetime::{
 };
 use icu_locid::{LanguageIdentifier, Locale};
 use icu_plurals::provider::OrdinalV1Marker;
-use icu_provider::fork::by_key::MultiForkByKeyProvider;
 use icu_provider::prelude::*;
-use icu_provider::struct_provider::AnyPayloadProvider;
+use icu_provider_adapters::fork::by_key::MultiForkByKeyProvider;
+use icu_provider_adapters::struct_provider::AnyPayloadProvider;
 use patterns::{
     get_dayperiod_tests, get_time_zone_tests,
     structs::{
@@ -45,6 +47,7 @@ fn test_fixture(fixture_name: &str) {
         let input_value = parse_gregorian_from_str(&fx.input.value).unwrap();
         let input_buddhist = input_value.to_calendar(Buddhist);
         let input_japanese = input_value.to_calendar(japanese);
+        let input_coptic = input_value.to_calendar(Coptic);
 
         let description = match fx.description {
             Some(description) => {
@@ -69,6 +72,15 @@ fn test_fixture(fixture_name: &str) {
                 assert_fixture_element(
                     locale,
                     &input_japanese,
+                    &output_value,
+                    &provider,
+                    &options,
+                    &description,
+                )
+            } else if let Some(locale) = locale.strip_prefix("coptic/") {
+                assert_fixture_element(
+                    locale,
+                    &input_coptic,
                     &output_value,
                     &provider,
                     &options,

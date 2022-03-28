@@ -25,6 +25,7 @@ pub fn maybe_replace_first(
         .iter()
         .enumerate()
         .find_map(|(i, item)| f(&item).map(|result| (i, result)));
+    #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
     if let Some((i, result)) = result {
         pattern.items.to_mut()[i] = result.to_unaligned();
     }
@@ -49,6 +50,7 @@ pub fn maybe_replace(
         .iter()
         .enumerate()
         .find_map(|(i, item)| f(&item).map(|result| (i, result)));
+    #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
     if let Some((i, result)) = result {
         let owned = pattern.items.to_mut();
         owned[i] = result.to_unaligned();

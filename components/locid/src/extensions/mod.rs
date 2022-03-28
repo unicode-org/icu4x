@@ -175,52 +175,69 @@ impl Extensions {
             other,
         })
     }
-}
 
-impl core::fmt::Display for Extensions {
-    fn fmt(&self, f: &mut core::fmt::Formatter) -> core::fmt::Result {
-        writeable::Writeable::write_to(self, f)
-    }
-}
-
-impl writeable::Writeable for Extensions {
-    fn write_to<W: core::fmt::Write + ?Sized>(&self, sink: &mut W) -> core::fmt::Result {
+    pub(crate) fn for_each_subtag_str<E, F>(&self, f: &mut F) -> Result<(), E>
+    where
+        F: FnMut(&str) -> Result<(), E>,
+    {
         let mut wrote_tu = false;
         // Alphabetic by singleton
         self.other.iter().try_for_each(|other| {
             if other.get_ext() > 't' && !wrote_tu {
                 // Since 't' and 'u' are next to each other in alphabetical
                 // order, write both now.
-                writeable::Writeable::write_to(&self.transform, sink)?;
-                writeable::Writeable::write_to(&self.unicode, sink)?;
+                self.transform.for_each_subtag_str(f)?;
+                self.unicode.for_each_subtag_str(f)?;
                 wrote_tu = true;
             }
-            writeable::Writeable::write_to(other, sink)
+            other.for_each_subtag_str(f)?;
+            Ok(())
         })?;
 
         if !wrote_tu {
-            writeable::Writeable::write_to(&self.transform, sink)?;
-            writeable::Writeable::write_to(&self.unicode, sink)?;
+            self.transform.for_each_subtag_str(f)?;
+            self.unicode.for_each_subtag_str(f)?;
         }
 
         // Private must be written last, since it allows single character
         // keys. Extensions must also be written in alphabetical order,
         // which would seem to imply that other extensions `y` and `z` are
         // invalid, but this is not specified.
-        writeable::Writeable::write_to(&self.private, sink)?;
+        self.private.for_each_subtag_str(f)?;
         Ok(())
     }
+}
 
-    fn write_len(&self) -> writeable::LengthHint {
-        let mut result = writeable::LengthHint::exact(0);
-        result += writeable::Writeable::write_len(&self.transform);
-        result += writeable::Writeable::write_len(&self.unicode);
-        result += writeable::Writeable::write_len(&self.private);
-        result += self
-            .other
-            .iter()
-            .map(writeable::Writeable::write_len)
-            .sum::<writeable::LengthHint>();
-        result
-    }
+impl_writeable_for_each_subtag_str_no_test!(Extensions);
+
+#[test]
+fn test_writeable() {
+    use crate::Locale;
+    use core::str::FromStr;
+    use writeable::assert_writeable_eq;
+    assert_writeable_eq!(Extensions::new(), "",);
+    assert_writeable_eq!(
+        Locale::from_str("my-t-my-d0-zawgyi").unwrap().extensions,
+        "t-my-d0-zawgyi",
+    );
+    assert_writeable_eq!(
+        Locale::from_str("ar-SA-u-ca-islamic-civil")
+            .unwrap()
+            .extensions,
+        "u-ca-islamic-civil",
+    );
+    assert_writeable_eq!(
+        Locale::from_str("en-001-x-foo-bar").unwrap().extensions,
+        "x-foo-bar",
+    );
+    assert_writeable_eq!(
+        Locale::from_str("und-t-m0-true").unwrap().extensions,
+        "t-m0-true",
+    );
+    assert_writeable_eq!(
+        Locale::from_str("und-a-foo-t-foo-u-foo-w-foo-z-foo-x-foo")
+            .unwrap()
+            .extensions,
+        "a-foo-t-foo-u-foo-w-foo-z-foo-x-foo",
+    );
 }

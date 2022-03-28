@@ -28,6 +28,15 @@
   "MMM": "LLL",
   "MMMd": "MMM d",
   "MMMdE": "E, MMM d",
+  "MMMMW": {
+    "pivot_field": "WeekOfMonth",
+    "zero": null,
+    "one": "'ika-'W 'linggo ng' MMMM",
+    "two": null,
+    "few": null,
+    "many": null,
+    "other": "'linggo' W 'ng' MMMM"
+  },
   "MMMMd": "MMMM d",
   "MMMMdE": "E, MMMM d",
   "d": "d",

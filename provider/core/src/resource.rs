@@ -141,6 +141,8 @@ impl ResourceKey {
 
     #[doc(hidden)]
     // Error is a str of the expected character class and the index where it wasn't encountered
+    // The indexing operations in this function have been reviewed in detail and won't panic.
+    #[allow(clippy::indexing_slicing)]
     pub const fn construct_internal(path: &'static str) -> Result<Self, (&'static str, usize)> {
         if path.len() < leading_tag!().len() + trailing_tag!().len() {
             return Err(("tag", 0));
@@ -301,6 +303,8 @@ macro_rules! resource_key {
         const RESOURCE_KEY_MACRO_CONST: $crate::ResourceKey = {
             match $crate::ResourceKey::construct_internal($crate::tagged!($path)) {
                 Ok(v) => v,
+                #[allow(clippy::panic)]
+                // TODO(#1668) Clippy exceptions need docs or fixing.
                 Err(_) => panic!(concat!("Invalid resource key: ", $path)),
                 // TODO Once formatting is const:
                 // Err((expected, index)) => panic!(

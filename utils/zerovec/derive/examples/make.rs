@@ -10,7 +10,7 @@ use zerovec::*;
 struct Struct {
     a: u8,
     b: u32,
-    c: char,
+    c: Option<char>,
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
@@ -76,17 +76,17 @@ const TEST_SLICE_STRUCT: &[Struct] = &[
     Struct {
         a: 101,
         b: 924,
-        c: '⸘',
+        c: Some('⸘'),
     },
     Struct {
         a: 217,
         b: 4228,
-        c: 'ə',
+        c: Some('ə'),
     },
     Struct {
         a: 117,
         b: 9090,
-        c: 'ø',
+        c: Some('ø'),
     },
 ];
 

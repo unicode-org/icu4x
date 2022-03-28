@@ -26,7 +26,7 @@
 //! ```
 use crate::fields;
 
-#[cfg(feature = "serde")]
+#[cfg(feature = "serialize")]
 use serde::{Deserialize, Serialize};
 
 /// Stores user preferences which may affect the result of date and time formatting.
@@ -41,18 +41,18 @@ use serde::{Deserialize, Serialize};
 /// };
 /// ```
 #[derive(Debug, Clone, PartialEq, Copy)]
-#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "serialize", derive(Serialize, Deserialize))]
 pub struct Bag {
     /// The hour cycle can be adjusts according to user preferences, for instance at the OS-level.
     /// That preference can be applied here to change the hour cycle from the default for the
     /// given locale.
-    #[cfg_attr(feature = "serde", serde(rename = "hourCycle"))]
+    #[cfg_attr(feature = "serialize", serde(rename = "hourCycle"))]
     pub hour_cycle: Option<HourCycle>,
 }
 
 /// A user preference for adjusting how the hour component is displayed.
 #[derive(Debug, Clone, Copy, PartialEq)]
-#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "serialize", derive(Serialize, Deserialize))]
 pub enum HourCycle {
     /// Hour is formatted to be in range 1-24 where midnight is 24:00.
     ///
@@ -64,7 +64,7 @@ pub enum HourCycle {
     /// "19:00";
     /// "23:21";
     /// ```
-    #[cfg_attr(feature = "serde", serde(rename = "h24"))]
+    #[cfg_attr(feature = "serialize", serde(rename = "h24"))]
     H24,
     /// Hour is formatted to be in range 0-23 where midnight is 00:00.
     ///
@@ -76,7 +76,7 @@ pub enum HourCycle {
     /// "19:00";
     /// "23:21";
     /// ```
-    #[cfg_attr(feature = "serde", serde(rename = "h23"))]
+    #[cfg_attr(feature = "serialize", serde(rename = "h23"))]
     H23,
     /// Hour is formatted to be in range 1-12 where midnight is 12:00.
     ///
@@ -88,7 +88,7 @@ pub enum HourCycle {
     /// "7:00";
     /// "11:21";
     /// ```
-    #[cfg_attr(feature = "serde", serde(rename = "h12"))]
+    #[cfg_attr(feature = "serialize", serde(rename = "h12"))]
     H12,
     /// Hour is formatted to be in range 0-11 where midnight is 00:00.
     ///
@@ -100,7 +100,7 @@ pub enum HourCycle {
     /// "7:00";
     /// "11:21";
     /// ```
-    #[cfg_attr(feature = "serde", serde(rename = "h11"))]
+    #[cfg_attr(feature = "serialize", serde(rename = "h11"))]
     H11,
 }
 

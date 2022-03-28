@@ -5,8 +5,9 @@
 //! Data provider returning multilingual "Hello World" strings for testing.
 
 use crate::buf::BufferFormat;
+#[cfg(feature = "datagen")]
+use crate::datagen::IterableResourceProvider;
 use crate::helpers;
-use crate::iter::IterableResourceProvider;
 use crate::prelude::*;
 use crate::yoke::{self, *};
 use crate::zerofrom::{self, *};
@@ -102,6 +103,8 @@ impl HelloWorldProvider {
             .iter()
             .map(|(loc, value)| {
                 (
+                    // TODO(#348): Use a const function to construct the langids.
+                    #[allow(clippy::unwrap_used)]
                     LanguageIdentifier::from_str(loc).unwrap(),
                     Cow::Borrowed(*value),
                 )
@@ -150,7 +153,8 @@ impl_dyn_provider!(
     HelloWorldProvider,
     [HelloWorldV1Marker,],
     SERDE_SE,
-    impl DataConverter
+    ITERABLE_SERDE_SE,
+    DATA_CONVERTER
 );
 
 pub struct HelloWorldJsonProvider(HelloWorldProvider);
@@ -178,6 +182,7 @@ impl BufferProvider for HelloWorldJsonProvider {
     }
 }
 
+#[cfg(feature = "datagen")]
 impl IterableResourceProvider<HelloWorldV1Marker> for HelloWorldProvider {
     fn supported_options(
         &self,

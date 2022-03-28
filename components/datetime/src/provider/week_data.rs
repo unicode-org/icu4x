@@ -8,8 +8,6 @@ use icu_provider::prelude::*;
 /// See CLDR-JSON's weekData.json for more context.
 #[icu_provider::data_struct(WeekDataV1Marker = "datetime/week_data@1")]
 #[derive(Clone, Copy, Default)]
-#[cfg_attr(
-    feature = "provider_serde",
-    derive(serde::Serialize, serde::Deserialize)
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize))]
+#[cfg_attr(feature = "serialize", derive(serde::Deserialize))]
 pub struct WeekDataV1(pub icu_calendar::arithmetic::week_of::CalendarInfo);

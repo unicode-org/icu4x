@@ -10,13 +10,13 @@
 
 mod data_conversion;
 mod heap_measure;
-
+mod iter;
 pub use data_conversion::{DataConverter, ReturnedPayloadError};
 pub use heap_measure::{HeapStats, HeapStatsMarker};
+pub use iter::{IterableDynProvider, IterableResourceProvider};
 
 use crate::any::AnyMarker;
 use crate::buf::BufferMarker;
-use crate::iter::IterableDynProvider;
 use crate::serde::SerializeMarker;
 use crate::DataMarker;
 

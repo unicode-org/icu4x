@@ -172,6 +172,7 @@ where
         ZeroSlice::len(self)
     }
     fn zvl_is_ascending(&self) -> bool {
+        #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
         self.as_ule_slice()
             .windows(2)
             .all(|w| T::from_unaligned(w[1]).cmp(&T::from_unaligned(w[0])) == Ordering::Greater)
@@ -238,6 +239,7 @@ where
         ZeroSlice::len(*self)
     }
     fn zvl_is_ascending(&self) -> bool {
+        #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
         self.as_ule_slice()
             .windows(2)
             .all(|w| T::from_unaligned(w[1]).cmp(&T::from_unaligned(w[0])) == Ordering::Greater)
@@ -288,6 +290,7 @@ where
     }
     fn zvl_replace(&mut self, index: usize, value: &T) -> T {
         let vec = self.to_mut();
+        #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
         T::from_unaligned(mem::replace(&mut vec[index], value.to_unaligned()))
     }
     fn zvl_push(&mut self, value: &T) {
@@ -471,12 +474,14 @@ where
     }
     fn zvl_remove(&mut self, index: usize) -> Box<T> {
         let vec = self.make_mut();
+        #[allow(clippy::expect_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
         let old = vec.get(index).expect("invalid index").to_boxed();
         vec.remove(index);
         old
     }
     fn zvl_replace(&mut self, index: usize, value: &T) -> Box<T> {
         let vec = self.make_mut();
+        #[allow(clippy::expect_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
         let old = vec.get(index).expect("invalid index").to_boxed();
         vec.replace(index, value);
         old
@@ -506,7 +511,7 @@ mod test {
 
     #[test]
     fn test_zerovec_binary_search_in_range() {
-        let zv: ZeroVec<u16> = ZeroVec::from_slice(&[11, 22, 33, 44, 55, 66, 77]);
+        let zv: ZeroVec<u16> = ZeroVec::from_slice_or_alloc(&[11, 22, 33, 44, 55, 66, 77]);
 
         // Full range search
         assert_eq!(zv.zvl_binary_search_in_range(&11, 0..7), Some(Ok(0)));

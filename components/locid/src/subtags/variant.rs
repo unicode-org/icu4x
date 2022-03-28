@@ -60,6 +60,7 @@ impl Variant {
             return Err(ParserError::InvalidSubtag);
         }
 
+        #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
         if slen == VARIANT_NUM_ALPHA_LENGTH && !v[start].is_ascii_digit() {
             return Err(ParserError::InvalidSubtag);
         }
@@ -88,6 +89,7 @@ impl Variant {
     pub fn try_from_raw(v: [u8; 8]) -> Result<Self, ParserError> {
         let s = TinyAsciiStr::<{ core::mem::size_of::<Self>() }>::try_from_raw(v)
             .map_err(|_| ParserError::InvalidSubtag)?;
+        #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
         let is_valid = s.is_ascii_alphanumeric()
             && s.is_ascii_lowercase()
             && match s.len() {

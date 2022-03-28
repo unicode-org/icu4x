@@ -63,13 +63,10 @@ This crate also contains some concrete implementations for testing purposes:
 - [`InvariantDataProvider`] returns fixed data that does not vary by locale.
 - [`HelloWorldProvider`] returns "hello world" strings in several languages.
 
-### Combinatorial Providers
+### Provider Adapters
 
-ICU4X offers several built-in modules to combine providers in interesting ways:
-
-- Use the [`fork`] module to marshall data requests between multiple possible providers.
-- Use the [`either`] module to choose between multiple provider types at runtime.
-- Use the [`filter`] module to programmatically reject certain data requests.
+ICU4X offers several built-in modules to combine providers in interesting ways.
+These can be found in the [`icu_provider_adapters`] crate.
 
 ### Types and Lifetimes
 
@@ -81,13 +78,6 @@ structs to borrow zero-copy data.
 
 ### Additional Traits
 
-#### `IterableDataProvider`
-
-Data providers can implement [`IterableDynProvider`]/[`IterableResourceProvider`], allowing
-iteration over all [`ResourceOptions`] instances supported for a certain key in the data provider.
-
-For more information, see the [`iter`] module.
-
 #### `DataProvider<SerializeMarker>`
 
 *Enabled with the "serialize" feature*
@@ -97,21 +87,31 @@ as input to a data exporter, such as when writing data to the filesystem.
 
 This trait is normally implemented using the [`impl_dyn_provider!`] macro.
 
+#### `IterableDataProvider`
+
+*Enabled with the "datagen" feature*
+
+Data providers can implement [`IterableDynProvider`]/[`IterableResourceProvider`], allowing
+iteration over all [`ResourceOptions`] instances supported for a certain key in the data provider.
+
+This trait is normally implemented using the [`impl_dyn_provider!`] macro using the `ITERABLE_SERDE_SE` option.
+
 [`ICU4X`]: ../icu/index.html
 [`DataProvider`]: data_provider::DataProvider
 [`ResourceKey`]: resource::ResourceKey
 [`ResourceOptions`]: resource::ResourceOptions
-[`IterableDynProvider`]: iter::IterableDynProvider
-[`IterableResourceProvider`]: iter::IterableResourceProvider
+[`IterableDynProvider`]: datagen::IterableDynProvider
+[`IterableResourceProvider`]: datagen::IterableResourceProvider
 [`InvariantDataProvider`]: inv::InvariantDataProvider
-[`AnyPayloadProvider`]: struct_provider::AnyPayloadProvider
+[`AnyPayloadProvider`]: ../icu_provider_adapters/struct_provider/struct.AnyPayloadProvider.html
 [`HelloWorldProvider`]: hello_world::HelloWorldProvider
 [`AnyProvider`]: any::AnyProvider
 [`Yokeable`]: yoke::Yokeable
 [`impl_dyn_provider!`]: impl_dyn_provider
+[`icu_provider_adapters`]: ../icu_provider_adapters/index.html
 [`as_downcasting()`]: AsDowncastingAnyProvider::as_downcasting
 [`as_deserializing()`]: AsDeserializingBufferProvider::as_deserializing
-[`CldrJsonDataProvider`]: ../icu_provider_cldr/struct.CldrJsonDataProvider.html
+[`CldrJsonDataProvider`]: ../icu_datagen/cldr/struct.CldrJsonDataProvider.html
 [`FsDataProvider`]: ../icu_provider_fs/struct.FsDataProvider.html
 [`BlobDataProvider`]: ../icu_provider_blob/struct.BlobDataProvider.html
 

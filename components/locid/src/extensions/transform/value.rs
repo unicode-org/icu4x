@@ -98,6 +98,18 @@ impl Value {
             Ok(Some(s))
         }
     }
+
+    pub(crate) fn for_each_subtag_str<E, F>(&self, f: &mut F) -> Result<(), E>
+    where
+        F: FnMut(&str) -> Result<(), E>,
+    {
+        if self.0.is_empty() {
+            f("true")?;
+        } else {
+            self.0.iter().map(TinyAsciiStr::as_str).try_for_each(f)?;
+        }
+        Ok(())
+    }
 }
 
 impl FromStr for Value {

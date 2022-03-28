@@ -49,5 +49,6 @@ path = "src/lib.rs"
 
 [features]
 std = ["icu_provider/std"]
-default = ["provider_serde"]
-provider_serde = ["serde"]
+default = ["serialize"]
+serialize = ["serde"]
+datagen = ["serialize"]

@@ -257,7 +257,7 @@ impl AnyResponse {
 /// ```
 /// use icu_provider::prelude::*;
 /// use icu_provider::hello_world::*;
-/// use icu_provider::struct_provider::AnyPayloadProvider;
+/// use icu_provider_adapters::struct_provider::AnyPayloadProvider;
 /// use std::borrow::Cow;
 ///
 /// const CONST_DATA: HelloWorldV1<'static> = HelloWorldV1 {
@@ -283,7 +283,7 @@ impl AnyResponse {
 /// assert_eq!(payload.get().message, "Custom Hello World");
 /// ```
 ///
-/// [`AnyPayloadProvider`]: crate::struct_provider::AnyPayloadProvider
+/// [`AnyPayloadProvider`]: ../icu_provider_adapters/struct_provider/struct.AnyPayloadProvider.html
 pub trait AnyProvider {
     fn load_any(&self, key: ResourceKey, req: &DataRequest) -> Result<AnyResponse, DataError>;
 }

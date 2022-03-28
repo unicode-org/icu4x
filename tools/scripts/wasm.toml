@@ -372,7 +372,7 @@ script_runner = "@duckscript"
 script = '''
 exit_on_error true
 
-expected = readfile tools/datagen/tests/testdata/work_log+keys.txt
+expected = readfile provider/datagen/tests/testdata/work_log+keys.txt
 actual = readfile wasmpkg/keys/work_log+keys.txt
 are_equal = eq ${expected} ${actual}
 
@@ -383,7 +383,7 @@ else
     echo "work_log+keys.txt do not match! Actual generated output:"
     echo ""
     echo ${actual}
-    echo "If this is expected, copy the above output into tools/datagen/tests/testdata/work_log+keys.txt"
+    echo "If this is expected, copy the above output into provider/datagen/tests/testdata/work_log+keys.txt"
     echo "*****"
     exit 1
 end
