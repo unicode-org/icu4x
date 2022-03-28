@@ -31,17 +31,16 @@ all-features = true
 # Omit most optional dependency features from permutation testing
 skip_optional_dependencies = true
 # Bench feature gets tested separately and is only relevant for CI.
-# wearos/freertos/x86tiny are not relevant in normal environments,
+# x86tiny is not relevant in normal environments,
 # smaller_static gets tested on the FFI job anyway
-denylist = ["bench", "wearos", "freertos", "x86tiny", "smaller_static"]
+denylist = ["bench", "x86tiny", "smaller_static"]
 
 [lib]
-crate-type = ["staticlib", "rlib"]
+crate-type = ["rlib"]
 path = "src/lib.rs"
 
 [features]
 default = ["provider_fs", "provider_static"]
-wearos = ["smaller_static", "freertos"]
 
 provider_fs = ["icu_provider_fs", "icu_provider_fs/deserialize_json"]
 provider_static = ["icu_testdata"]
@@ -53,9 +52,6 @@ smaller_static = ["provider_static"]
 
 # Enables size-optimized builds on x86_64
 x86tiny = ["dlmalloc"]
-
-# Enables no_std builds for freertos
-freertos = ["freertos-rust", "cortex-m"]
 
 [dependencies]
 fixed_decimal = { path = "../../utils/fixed_decimal", features = ["ryu"] }
@@ -86,10 +82,6 @@ log = { version = "0.4" }
 
 [target.'cfg(not(any(target_arch = "wasm32", target_os = "none")))'.dependencies]
 icu_provider_fs = { path = "../../provider/fs/", optional = true }
-
-[target.'cfg(target_os = "none")'.dependencies]
-freertos-rust = { version = "0.1.2", optional = true }
-cortex-m = { version = "0.7.3", optional = true }
 
 # Unfortunately, --crate-type cannot be set per-target
 # (https://github.com/rust-lang/cargo/issues/4881)

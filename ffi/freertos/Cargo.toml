@@ -1,0 +1,38 @@
+[package]
+name = "icu_freertos"
+description = "C interface to ICU4X"
+version = "0.1.0"
+authors = ["The ICU4X Project Developers"]
+edition = "2018"
+resolver = "2"
+repository = "https://github.com/unicode-org/icu4x"
+license-file = "LICENSE"
+categories = ["internationalization"]
+# Keep this in sync with other crates unless there are exceptions
+include = [
+    "src/**/*",
+    "examples/**/*",
+    "benches/**/*",
+    "tests/**/*",
+    "include/**/*",
+    "Cargo.toml",
+    "LICENSE",
+    "README.md"
+]
+
+[package.metadata.docs.rs]
+all-features = true
+
+[lib]
+crate-type = ["staticlib", "rlib"]
+path = "src/lib.rs"
+
+[dependencies]
+icu_capi = { version = "0.1", path = "../diplomat" }
+
+[target.'cfg(target_os = "none")'.dependencies]
+freertos-rust = { version = "0.1.2" }
+cortex-m = { version = "0.7.3" }
+
+[features]
+wearos = ["icu_capi/smaller_static"]
