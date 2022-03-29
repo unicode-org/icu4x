@@ -238,8 +238,7 @@ The last command is a bit dense, so let's dissect it.
 * We tell it that the binary is named `icu4x-datagen`
 * Then we use `--` to separate arguments to `cargo` from arguments to our app
 * Then we pass `--cldr-tag` which informs the program which CLDR version to use
-* Then we pass `--uprops-root` which informs the program where to get the Unicode property data
-* Then we pass `--out` directory which is where the generated ICU4X data will be stored
+* Then we pass `--out` directory which is where we want the generated ICU4X data to be stored
 * Finally, we set `--all-keys` which specify that we want to export all keys available
 
 After that step, it should be possible to navigate to `~/projects/icu/icu4x-data` and there should be a `manifest.json` file, and directories with data.
@@ -253,7 +252,7 @@ After that step, it should be possible to navigate to `~/projects/icu/icu4x-data
 
 This concludes this introduction tutorial. 
 
-With the help of `DateTimeFormat`, `Locale` and `DataProvider` we formatted a date to polish, but that's just a start.
+With the help of `DateTimeFormat`, `Locale` and `DataProvider` we formatted a date to Japanese, but that's just a start.
 
 The scope of internationalization domain is broad and there are many components with non-trivial interactions between them.
 
