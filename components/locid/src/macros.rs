@@ -74,6 +74,7 @@ macro_rules! script {
         const R: $crate::subtags::Script =
             match $crate::subtags::Script::from_bytes($script.as_bytes()) {
                 Ok(r) => r,
+                #[allow(clippy::panic)] // const context
                 _ => panic!(concat!("Invalid script code: ", $script)),
             };
         R
@@ -106,6 +107,7 @@ macro_rules! region {
         const R: $crate::subtags::Region =
             match $crate::subtags::Region::from_bytes($region.as_bytes()) {
                 Ok(r) => r,
+                #[allow(clippy::panic)] // const context
                 _ => panic!(concat!("Invalid region code: ", $region)),
             };
         R
@@ -138,6 +140,7 @@ macro_rules! variant {
         const R: $crate::subtags::Variant =
             match $crate::subtags::Variant::from_bytes($variant.as_bytes()) {
                 Ok(r) => r,
+                #[allow(clippy::panic)] // const context
                 _ => panic!(concat!("Invalid variant code: ", $variant)),
             };
         R
@@ -179,7 +182,8 @@ macro_rules! langid {
                     region,
                     variants: $crate::subtags::Variants::new(),
                 },
-                Err(_) => panic!(concat!("Invalid language code: ", $langid)),
+                #[allow(clippy::panic)] // const context
+                _ => panic!(concat!("Invalid language code: ", $langid)),
             };
         R
     }};
