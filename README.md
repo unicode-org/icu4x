@@ -32,7 +32,7 @@ icu_provider_fs = "0.2"
 ```
 
 ```rust
-use icu::locid::macros::langid;
+use icu::locid::langid;
 use icu::locid::Locale;
 use icu::datetime::{DateTimeFormat, mock::datetime::MockDateTime, options::length};
 use icu_provider_fs::FsDataProvider;

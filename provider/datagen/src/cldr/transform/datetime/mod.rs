@@ -143,12 +143,12 @@ impl_resource_provider!(
 mod test {
     use super::*;
     use icu_datetime::pattern::runtime::{Pattern, PluralPattern};
-    use icu_locid_macros::langid;
+    use icu_locid::langid;
     use icu_plurals::PluralCategory;
 
     #[test]
     fn test_basic_patterns() {
-        let cldr_paths = crate::cldr_paths::for_test();
+        let cldr_paths = crate::cldr::cldr_paths::for_test();
         let provider = CommonDateProvider::try_from(&cldr_paths as &dyn CldrPaths)
             .expect("Failed to retrieve provider");
 
@@ -169,7 +169,7 @@ mod test {
 
     #[test]
     fn test_with_numbering_system() {
-        let cldr_paths = crate::cldr_paths::for_test();
+        let cldr_paths = crate::cldr::cldr_paths::for_test();
         let provider = CommonDateProvider::try_from(&cldr_paths as &dyn CldrPaths)
             .expect("Failed to retrieve provider");
 
@@ -192,7 +192,7 @@ mod test {
 
     #[test]
     fn test_datetime_skeletons() {
-        let cldr_paths = crate::cldr_paths::for_test();
+        let cldr_paths = crate::cldr::cldr_paths::for_test();
         let provider = CommonDateProvider::try_from(&cldr_paths as &dyn CldrPaths)
             .expect("Failed to retrieve provider");
 
@@ -238,7 +238,7 @@ mod test {
 
     #[test]
     fn test_basic_symbols() {
-        let cldr_paths = crate::cldr_paths::for_test();
+        let cldr_paths = crate::cldr::cldr_paths::for_test();
         let provider = CommonDateProvider::try_from(&cldr_paths as &dyn CldrPaths).unwrap();
 
         let cs_dates: DataPayload<DateSymbolsV1Marker> = provider
@@ -263,7 +263,7 @@ mod test {
 
     #[test]
     fn unalias_contexts() {
-        let cldr_paths = crate::cldr_paths::for_test();
+        let cldr_paths = crate::cldr::cldr_paths::for_test();
         let provider = CommonDateProvider::try_from(&cldr_paths as &dyn CldrPaths).unwrap();
 
         let cs_dates: DataPayload<DateSymbolsV1Marker> = provider

@@ -24,7 +24,7 @@
 //! # Examples
 //!
 //! ```
-//! use icu::locid::macros::langid;
+//! use icu::locid::langid;
 //! use icu::plurals::{PluralRules, PluralRuleType, PluralCategory};
 //!
 //! let lid = langid!("en");
@@ -135,7 +135,7 @@ pub enum PluralRuleType {
 /// # Examples
 ///
 /// ```
-/// use icu::locid::macros::langid;
+/// use icu::locid::langid;
 /// use icu::plurals::{PluralRules, PluralRuleType, PluralCategory};
 /// use icu_provider::inv::InvariantDataProvider;
 ///
@@ -262,7 +262,7 @@ impl PluralCategory {
 /// # Examples
 ///
 /// ```
-/// use icu::locid::macros::langid;
+/// use icu::locid::langid;
 /// use icu::plurals::{PluralRules, PluralRuleType, PluralCategory};
 /// use icu_provider::inv::InvariantDataProvider;
 ///
@@ -292,7 +292,7 @@ impl PluralRules {
     /// # Examples
     ///
     /// ```
-    /// use icu::locid::macros::langid;
+    /// use icu::locid::langid;
     /// use icu::plurals::{PluralRules, PluralRuleType};
     /// use icu_provider::inv::InvariantDataProvider;
     ///
@@ -332,7 +332,7 @@ impl PluralRules {
     /// # Examples
     ///
     /// ```
-    /// use icu::locid::macros::langid;
+    /// use icu::locid::langid;
     /// use icu::plurals::{PluralRules, PluralCategory};
     ///
     /// let lid = langid!("ru");
@@ -379,7 +379,7 @@ impl PluralRules {
     /// # Examples
     ///
     /// ```
-    /// use icu::locid::macros::langid;
+    /// use icu::locid::langid;
     /// use icu::plurals::{PluralRules, PluralCategory};
     ///
     /// let lid = langid!("ru");
@@ -419,7 +419,7 @@ impl PluralRules {
     /// # Examples
     ///
     /// ```
-    /// use icu::locid::macros::langid;
+    /// use icu::locid::langid;
     /// use icu::plurals::{PluralRules, PluralRuleType, PluralCategory};
     /// use icu_provider::inv::InvariantDataProvider;
     ///
@@ -449,7 +449,7 @@ impl PluralRules {
     ///
     /// ```
     /// use std::convert::TryFrom;
-    /// use icu::locid::macros::langid;
+    /// use icu::locid::langid;
     /// use icu::plurals::{PluralRules, PluralRuleType};
     /// use icu::plurals::{PluralCategory, PluralOperands};
     /// use icu_provider::inv::InvariantDataProvider;
@@ -503,7 +503,7 @@ impl PluralRules {
     /// # Examples
     ///
     /// ```
-    /// use icu::locid::macros::langid;
+    /// use icu::locid::langid;
     /// use icu::plurals::{PluralRules, PluralRuleType, PluralCategory};
     /// use icu_provider::inv::InvariantDataProvider;
     ///

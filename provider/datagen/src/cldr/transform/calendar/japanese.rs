@@ -7,7 +7,7 @@ use crate::cldr::error::Error;
 use crate::cldr::reader::open_reader;
 use crate::cldr::CldrPaths;
 use icu_calendar::provider::*;
-use icu_locid_macros::langid;
+use icu_locid::langid;
 use icu_provider::datagen::IterableResourceProvider;
 use icu_provider::prelude::*;
 use std::collections::BTreeMap;

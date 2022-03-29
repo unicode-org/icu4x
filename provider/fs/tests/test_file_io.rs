@@ -4,8 +4,8 @@
 
 #![allow(unused_imports)]
 
+use icu_locid::langid;
 use icu_locid::LanguageIdentifier;
-use icu_locid_macros::langid;
 use icu_plurals::{provider::*, rules::runtime::ast::Rule};
 use icu_provider::prelude::*;
 use icu_provider::serde::*;

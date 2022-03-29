@@ -134,7 +134,7 @@ icu_provider::impl_dyn_provider!(
 #[test]
 fn basic_cldr_week_data() {
     use icu_calendar::types::IsoWeekday;
-    use icu_locid_macros::langid;
+    use icu_locid::langid;
 
     let cldr_paths = crate::cldr::cldr_paths::for_test();
     let provider = WeekDataProvider::try_from(&cldr_paths as &dyn CldrPaths).unwrap();

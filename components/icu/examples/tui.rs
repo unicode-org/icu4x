@@ -9,7 +9,7 @@
 
 use icu::calendar::Gregorian;
 use icu::datetime::DateTimeFormatOptions;
-use icu::locid::{macros::langid, Locale};
+use icu::locid::{langid, Locale};
 use icu::plurals::{PluralCategory, PluralRules};
 use icu_datetime::{mock::zoned_datetime::MockZonedDateTime, ZonedDateTimeFormat};
 use icu_uniset::UnicodeSetBuilder;

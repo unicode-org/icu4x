@@ -29,9 +29,9 @@ use crate::helpers::result_is_err_missing_resource_key;
 ///
 /// ```
 /// # #[cfg(feature = "deserialize_json")] {
+/// use icu_locid::langid;
 /// use icu_provider::prelude::*;
 /// use icu_provider::hello_world::*;
-/// use icu_locid_macros::langid;
 /// use icu_provider_adapters::fork::by_key::ForkByKeyProvider;
 ///
 /// struct DummyBufferProvider;
@@ -66,9 +66,9 @@ use crate::helpers::result_is_err_missing_resource_key;
 ///
 /// ```
 /// # #[cfg(feature = "deserialize_json")] {
+/// use icu_locid::{language, langid};
 /// use icu_provider::prelude::*;
 /// use icu_provider::hello_world::*;
-/// use icu_locid_macros::{language, langid};
 /// use icu_provider_adapters::filter::Filterable;
 /// use icu_provider_adapters::fork::by_key::ForkByKeyProvider;
 ///
@@ -196,7 +196,7 @@ where
 /// # #[cfg(feature = "deserialize_json")] {
 /// use icu_provider::prelude::*;
 /// use icu_provider::hello_world::*;
-/// use icu_locid_macros::{language, langid};
+/// use icu_locid::{language, langid};
 /// use icu_provider_adapters::filter::Filterable;
 /// use icu_provider_adapters::fork::by_key::MultiForkByKeyProvider;
 ///

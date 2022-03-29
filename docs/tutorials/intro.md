@@ -94,7 +94,7 @@ For that purpose, ICU4X provides a macro one can use to parse it at compilation 
 
 ```rust
 use icu::locid::Locale;
-use icu::locid::macros::langid;
+use icu::locid::langid;
 
 fn main() {
     let loc: Locale = langid!("ES-AR").into();
@@ -190,7 +190,7 @@ fn main() {
 While this app doesn't do anything on its own yet, we now have a loaded data provider, and can use it to format a date:
 
 ```rust
-use icu::locid::macros::langid;
+use icu::locid::langid;
 use icu::locid::Locale;
 use icu::datetime::{DateTimeFormat, mock::datetime::MockDateTime, options::length};
 use icu_provider_fs::FsDataProvider;
