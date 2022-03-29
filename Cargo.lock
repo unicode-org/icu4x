@@ -1072,7 +1072,6 @@ version = "0.1.0"
 dependencies = [
  "diplomat",
  "diplomat-runtime",
- "dlmalloc",
  "fixed_decimal",
  "icu_decimal",
  "icu_locale_canonicalizer",
@@ -1102,6 +1101,7 @@ dependencies = [
 name = "icu_capi_staticlib"
 version = "0.1.0"
 dependencies = [
+ "dlmalloc",
  "icu_capi",
 ]
 

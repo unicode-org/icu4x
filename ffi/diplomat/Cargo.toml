@@ -31,9 +31,8 @@ all-features = true
 # Omit most optional dependency features from permutation testing
 skip_optional_dependencies = true
 # Bench feature gets tested separately and is only relevant for CI.
-# x86tiny is not relevant in normal environments,
 # smaller_static gets tested on the FFI job anyway
-denylist = ["bench", "x86tiny", "smaller_static", "internal_all_features_hack"]
+denylist = ["bench", "smaller_static"]
 
 [lib]
 crate-type = ["rlib"]
@@ -45,11 +44,6 @@ default = ["provider_fs", "provider_static"]
 provider_fs = ["icu_provider_fs", "icu_provider_fs/deserialize_json"]
 provider_static = ["icu_testdata"]
 smaller_static = ["provider_static"]
-# Enables size-optimized builds on x86_64
-x86tiny = ["dlmalloc"]
-# We can't exclude x86tiny from `--all-features` and it messes up the build for other crates
-# Instead, we use this feature to detect when `--all-features` is occurring
-internal_all_features_hack = []
 
 [dependencies]
 fixed_decimal = { path = "../../utils/fixed_decimal", features = ["ryu"] }
@@ -70,10 +64,6 @@ writeable = { path = "../../utils/writeable/" }
 diplomat = { git = "https://github.com/rust-diplomat/diplomat", rev = "a46d01025159e842982b2e4bc8ca9361d4b897dc" }
 diplomat-runtime = { git = "https://github.com/rust-diplomat/diplomat", rev = "a46d01025159e842982b2e4bc8ca9361d4b897dc" }
 icu_testdata = { version = "0.5", path = "../../provider/testdata", default-features = false, features = ["static"], optional = true }
-
-# This cfg originates in dlmalloc/lib.rs
-[target.'cfg(any(target_os = "linux", target_os = "macos", target_arch = "wasm32"))'.dependencies]
-dlmalloc = { version = "0.2", optional = true, features = ["global"] }
 
 [target.'cfg(target_arch = "wasm32")'.dependencies]
 log = { version = "0.4" }

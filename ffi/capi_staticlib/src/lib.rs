@@ -24,5 +24,17 @@
     )
 )]
 
+
+#![cfg_attr(
+    all(feature = "x86tiny", not(feature = "internal_all_features_hack")),
+    feature(alloc_error_handler)
+)]
+
 // Necessary to for symbols to be linked in
 extern crate icu_capi;
+
+extern crate alloc;
+
+
+#[cfg(all(feature = "x86tiny", not(feature = "internal_all_features_hack")))]
+mod x86tiny_glue;

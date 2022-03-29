@@ -37,8 +37,12 @@ default = ["provider_fs", "provider_static"]
 provider_fs = ["icu_capi/provider_fs"]
 provider_static = ["icu_capi/provider_static"]
 smaller_static = ["icu_capi/smaller_static"]
+
 # Enables size-optimized builds on x86_64
-x86tiny = ["icu_capi/x86tiny"]
+x86tiny = ["dlmalloc"]
+
+# Hack to prevent nightly code from being compiled with --all-features
+internal_all_features_hack = []
 
 [package.metadata.cargo-all-features]
 # Omit most optional dependency features from permutation testing
@@ -46,4 +50,8 @@ skip_optional_dependencies = true
 # Bench feature gets tested separately and is only relevant for CI.
 # x86tiny is not relevant in normal environments,
 # smaller_static gets tested on the FFI job anyway
-denylist = ["bench", "x86tiny", "smaller_static"]
+denylist = ["bench", "x86tiny", "smaller_static", "internal_all_features_hack"]
+
+# This cfg originates in dlmalloc/lib.rs
+[target.'cfg(any(target_os = "linux", target_os = "macos", target_arch = "wasm32"))'.dependencies]
+dlmalloc = { version = "0.2", optional = true, features = ["global"] }
