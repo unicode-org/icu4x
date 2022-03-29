@@ -37,6 +37,8 @@ if (typeof fetch === 'undefined') {
   const pathsToTry = [
     "./icu_capi.wasm",
     "../../../../wasmpkg/icu_capi.wasm",
+    "./icu_capi_cdylib.wasm",
+    "../../../../wasmpkg/icu_capi_cdylib.wasm",
   ];
   let loadedWasm;
   for (const path of pathsToTry) {

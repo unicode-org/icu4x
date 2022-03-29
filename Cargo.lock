@@ -1078,12 +1078,9 @@ dependencies = [
 name = "icu_capi"
 version = "0.1.0"
 dependencies = [
- "cortex-m",
  "diplomat",
  "diplomat-runtime",
- "dlmalloc",
  "fixed_decimal",
- "freertos-rust",
  "icu_decimal",
  "icu_locale_canonicalizer",
  "icu_locid",
@@ -1098,6 +1095,21 @@ dependencies = [
  "log",
  "tinystr 0.5.0",
  "writeable",
+]
+
+[[package]]
+name = "icu_capi_cdylib"
+version = "0.1.0"
+dependencies = [
+ "icu_capi",
+]
+
+[[package]]
+name = "icu_capi_staticlib"
+version = "0.1.0"
+dependencies = [
+ "dlmalloc",
+ "icu_capi",
 ]
 
 [[package]]
@@ -1233,6 +1245,15 @@ dependencies = [
  "rand_pcg",
  "serde",
  "writeable",
+]
+
+[[package]]
+name = "icu_freertos"
+version = "0.1.0"
+dependencies = [
+ "cortex-m",
+ "freertos-rust",
+ "icu_capi",
 ]
 
 [[package]]
