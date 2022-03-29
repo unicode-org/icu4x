@@ -246,7 +246,7 @@ After that step, it should be possible to navigate to `~/projects/icu/icu4x-data
 
 *Notice:* In this tutorial we export data as compact `JSON` which provides decent performance and readable data files. There are other formats and options for formatting of the data available. Please consult `cargo run --bin icu4x-datagen -- --help` for details.
 *Notice:* In particular, in production, the `postcard` format will yield better performance results.
-*Notice:* For offline or unconventional use, the user can also pass `--cldr-core` and `--cldr-dates` paths to local clones of the repositories instead of `--cldr-tag`.
+*Notice:* For offline or unconventional use, the user can also pass `--cldr-root` to a local clone of the CLDR repository instead of `--cldr-tag`.
 
 
 # 6. Summary
