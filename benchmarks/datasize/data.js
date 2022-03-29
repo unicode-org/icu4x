@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1648529648260,
+  "lastUpdate": 1648530514614,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -11873,6 +11873,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/9aba3895cd5e48d702f5eadfe9c93f97150771a8"
         },
         "date": 1648529631475,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4545626,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "cfb979253da5d711824fda1df0ae0ebff63240b1",
+          "message": "Fixing locid macro docs (#1748)",
+          "timestamp": "2022-03-28T22:06:52-07:00",
+          "tree_id": "845c2acfac94b61157d60159389d4ffbc33740bb",
+          "url": "https://github.com/unicode-org/icu4x/commit/cfb979253da5d711824fda1df0ae0ebff63240b1"
+        },
+        "date": 1648530497761,
         "tool": "ndjson",
         "benches": [
           {
