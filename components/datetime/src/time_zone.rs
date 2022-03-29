@@ -32,14 +32,12 @@ where
     L: Clone + Into<LanguageIdentifier>,
     P: ResourceProvider<D> + ?Sized,
 {
+    let langid: LanguageIdentifier = locale.clone().into();
     if destination.is_none() {
         *destination = Some(
             provider
                 .load_resource(&DataRequest {
-                    options: ResourceOptions {
-                        langid: Some(locale.clone().into()),
-                        variant: None,
-                    },
+                    options: langid.into(),
                     metadata: Default::default(),
                 })?
                 .take_payload()?,

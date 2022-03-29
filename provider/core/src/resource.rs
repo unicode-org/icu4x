@@ -354,8 +354,7 @@ impl Writeable for ResourceKey {
 #[derive(PartialEq, Clone, Default, PartialOrd, Eq, Ord)]
 pub struct ResourceOptions {
     // TODO: Consider making multiple variant fields.
-    pub variant: Option<Cow<'static, str>>,
-    pub langid: Option<LanguageIdentifier>,
+    pub locale: Locale,
 }
 
 impl fmt::Debug for ResourceOptions {
@@ -372,34 +371,11 @@ impl fmt::Display for ResourceOptions {
 
 impl Writeable for ResourceOptions {
     fn write_to<W: core::fmt::Write + ?Sized>(&self, sink: &mut W) -> core::fmt::Result {
-        let mut initial = true;
-        if let Some(variant) = &self.variant {
-            variant.write_to(sink)?;
-            initial = false;
-        }
-        if let Some(langid) = &self.langid {
-            if !initial {
-                sink.write_char('/')?;
-            }
-            langid.write_to(sink)?;
-        }
-        Ok(())
+        self.locale.write_to(sink)
     }
 
     fn write_len(&self) -> LengthHint {
-        let mut length_hint = LengthHint::exact(0);
-        let mut initial = true;
-        if let Some(variant) = &self.variant {
-            length_hint += variant.write_len();
-            initial = false;
-        }
-        if let Some(langid) = &self.langid {
-            if !initial {
-                length_hint += 1;
-            }
-            length_hint += langid.write_len();
-        }
-        length_hint
+        self.locale.write_len()
     }
 }
 
@@ -407,8 +383,7 @@ impl From<LanguageIdentifier> for ResourceOptions {
     /// Create a ResourceOptions with the given language identifier and an empty variant field.
     fn from(langid: LanguageIdentifier) -> Self {
         Self {
-            langid: Some(langid),
-            variant: None,
+            locale: langid.into()
         }
     }
 }
@@ -417,8 +392,7 @@ impl From<Locale> for ResourceOptions {
     /// Create a ResourceOptions with the given language identifier and an empty variant field.
     fn from(locale: Locale) -> Self {
         Self {
-            langid: Some(locale.id),
-            variant: None,
+            locale
         }
     }
 }
@@ -470,28 +444,24 @@ mod tests {
     }
 
     fn get_options_test_cases() -> [OptionsTestCase; 3] {
-        use icu_locid::langid;
         [
             OptionsTestCase {
                 options: ResourceOptions {
-                    variant: None,
-                    langid: Some(LanguageIdentifier::und()),
+                    locale: Locale::und(),
                 },
                 expected: "und",
             },
             OptionsTestCase {
                 options: ResourceOptions {
-                    variant: Some(Cow::Borrowed("GBP")),
-                    langid: Some(LanguageIdentifier::und()),
+                    locale: "und-u-cu-gbp".parse().unwrap()
                 },
-                expected: "GBP/und",
+                expected: "und-u-cu-gbp",
             },
             OptionsTestCase {
                 options: ResourceOptions {
-                    variant: Some(Cow::Borrowed("GBP")),
-                    langid: Some(langid!("en-ZA")),
+                    locale: "en-ZA-u-cu-gbp".parse().unwrap()
                 },
-                expected: "GBP/en-ZA",
+                expected: "en-ZA-u-cu-gbp",
             },
         ]
     }

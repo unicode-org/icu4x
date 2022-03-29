@@ -2,8 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use alloc::string::{String, ToString};
-use icu_locid::{LanguageIdentifier, Locale};
+use alloc::string::String;
+use icu_locid::Locale;
 use icu_plurals::{provider::OrdinalV1Marker, PluralRules};
 use icu_provider::prelude::*;
 
@@ -63,7 +63,6 @@ impl ZonedDateTimeFormat {
         PP: ResourceProvider<OrdinalV1Marker>,
     {
         let locale = locale.into();
-        let langid: LanguageIdentifier = locale.clone().into();
 
         let patterns = provider::date_time::PatternSelector::for_options(
             date_provider,
@@ -75,12 +74,12 @@ impl ZonedDateTimeFormat {
             .map_err(|field| DateTimeFormatError::UnsupportedField(field.symbol))?;
 
         let week_data = if required.week_data {
+            let loc_with_region = crate::provider::region_to_locale(locale.id.region);
             Some(
                 date_provider
                     .load_resource(&DataRequest {
                         options: ResourceOptions {
-                            variant: langid.region.map(|r| r.as_str().to_string().into()),
-                            langid: None,
+                            locale: loc_with_region,
                         },
                         metadata: Default::default(),
                     })?
@@ -100,12 +99,12 @@ impl ZonedDateTimeFormat {
         };
 
         let symbols_data = if required.symbols_data {
+            let loc_with_calendar = crate::provider::combine_langid_and_calendar(locale.id.clone(), calendar);
             Some(
                 date_provider
                     .load_resource(&DataRequest {
                         options: ResourceOptions {
-                            variant: Some(calendar.into()),
-                            langid: Some(langid),
+                            locale: loc_with_calendar
                         },
                         metadata: Default::default(),
                     })?

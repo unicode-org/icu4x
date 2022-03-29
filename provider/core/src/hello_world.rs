@@ -202,7 +202,7 @@ fn test_iter() {
     let mut supported_langids: Vec<LanguageIdentifier> = provider
         .supported_options()
         .unwrap()
-        .map(|resc_options| resc_options.langid.unwrap())
+        .map(|resc_options| resc_options.locale.id)
         .collect();
     supported_langids.sort();
 

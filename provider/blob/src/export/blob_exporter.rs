@@ -13,7 +13,7 @@ use zerovec::ZeroMap2d;
 /// A data exporter that writes data to a single-file blob.
 /// See the module-level docs for an example.
 pub struct BlobExporter<'w> {
-    resources: Mutex<Vec<(ResourceKeyHash, String, Vec<u8>)>>,
+    resources: Mutex<Vec<(ResourceKeyHash, Vec<u8>, Vec<u8>)>>,
     sink: Box<dyn std::io::Write + Sync + 'w>,
 }
 
@@ -42,7 +42,7 @@ impl DataExporter<SerializeMarker> for BlobExporter<'_> {
         payload.serialize(&mut <dyn erased_serde::Serializer>::erase(&mut serializer))?;
         self.resources.lock().unwrap().push((
             key.get_hash(),
-            options.write_to_string().into_owned(),
+            options.write_to_string().into_owned().into_bytes(),
             serializer.output.0,
         ));
         Ok(())

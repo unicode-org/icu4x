@@ -206,12 +206,12 @@ where
         )))
     }
     fn patterns_data_payload(self) -> Result<DataPayload<DatePatternsV1Marker>> {
+        let loc_with_calendar = crate::provider::combine_langid_and_calendar(self.locale.id.clone(), self.calendar);
         let data = self
             .data_provider
             .load_resource(&DataRequest {
                 options: ResourceOptions {
-                    variant: Some(self.calendar.into()),
-                    langid: Some(self.locale.clone().into()),
+                    locale: loc_with_calendar
                 },
                 metadata: Default::default(),
             })?
@@ -220,12 +220,12 @@ where
     }
 
     fn skeleton_data_payload(self) -> Result<DataPayload<DateSkeletonPatternsV1Marker>> {
+        let loc_with_calendar = crate::provider::combine_langid_and_calendar(self.locale.id.clone(), self.calendar);
         let data = self
             .data_provider
             .load_resource(&DataRequest {
                 options: ResourceOptions {
-                    variant: Some(self.calendar.into()),
-                    langid: Some(self.locale.clone().into()),
+                    locale: loc_with_calendar
                 },
                 metadata: Default::default(),
             })?

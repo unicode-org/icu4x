@@ -13,7 +13,7 @@ use crate::{
     provider::calendar::{DatePatternsV1Marker, DateSkeletonPatternsV1Marker, DateSymbolsV1Marker},
     provider::week_data::WeekDataV1Marker,
 };
-use alloc::string::{String, ToString};
+use alloc::string::String;
 use icu_locid::Locale;
 use icu_plurals::{provider::OrdinalV1Marker, PluralRules};
 use icu_provider::prelude::*;
@@ -64,15 +64,13 @@ impl DateTimeFormat {
         let required = datetime::analyze_patterns(&patterns.get().0, false)
             .map_err(|field| DateTimeFormatError::UnsupportedField(field.symbol))?;
 
-        let langid: icu_locid::LanguageIdentifier = locale.clone().into();
-
         let week_data = if required.week_data {
+            let loc_with_region = crate::provider::region_to_locale(locale.id.region);
             Some(
                 data_provider
                     .load_resource(&DataRequest {
                         options: ResourceOptions {
-                            variant: langid.region.map(|r| r.as_str().to_string().into()),
-                            langid: None,
+                            locale: loc_with_region
                         },
                         metadata: Default::default(),
                     })?
@@ -89,12 +87,12 @@ impl DateTimeFormat {
         };
 
         let symbols_data = if required.symbols_data {
+            let loc_with_calendar = crate::provider::combine_langid_and_calendar(locale.id.clone(), calendar);
             Some(
                 data_provider
                     .load_resource(&DataRequest {
                         options: ResourceOptions {
-                            variant: Some(calendar.into()),
-                            langid: Some(langid),
+                            locale: loc_with_calendar
                         },
                         metadata: Default::default(),
                     })?

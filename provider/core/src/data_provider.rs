@@ -69,7 +69,7 @@ impl DataRequest {
     /// ));
     /// ```
     pub fn get_langid(&self) -> Option<&LanguageIdentifier> {
-        self.options.langid.as_ref()
+        Some(self.options.locale.id.as_ref())
     }
 }
 
