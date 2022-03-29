@@ -50,7 +50,7 @@ use zerovec::maps::{KeyError, ZeroMap2dBorrowed};
 ///
 /// [`BlobDataProvider`]: crate::BlobDataProvider
 pub struct StaticDataProvider {
-    data: ZeroMap2dBorrowed<'static, ResourceKeyHash, str, [u8]>,
+    data: ZeroMap2dBorrowed<'static, ResourceKeyHash, [u8], [u8]>,
 }
 
 impl StaticDataProvider {
@@ -97,7 +97,7 @@ impl StaticDataProvider {
 
     fn get_file(&self, key: ResourceKey, req: &DataRequest) -> Result<&'static [u8], DataError> {
         self.data
-            .get(&key.get_hash(), &req.options.write_to_string())
+            .get(&key.get_hash(), &req.options.write_to_string().as_bytes())
             .map_err(|e| {
                 match e {
                     KeyError::K0 => DataErrorKind::MissingResourceKey,

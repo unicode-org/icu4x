@@ -15,6 +15,7 @@ pub enum BlobSchema<'data> {
 /// Version 1 of the ICU4X data blob schema.
 #[derive(serde::Serialize, serde::Deserialize)]
 pub struct BlobSchemaV1<'data> {
+    /// Map from key hash and locale to buffer
     #[serde(borrow)]
-    pub resources: ZeroMap2dBorrowed<'data, ResourceKeyHash, str, [u8]>,
+    pub resources: ZeroMap2dBorrowed<'data, ResourceKeyHash, [u8], [u8]>,
 }
