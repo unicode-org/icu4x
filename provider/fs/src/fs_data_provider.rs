@@ -7,8 +7,6 @@ use crate::manifest::Manifest;
 use crate::manifest::MANIFEST_FILE;
 use icu_provider::prelude::*;
 use icu_provider::serde::*;
-use icu_provider::yoke::trait_hack::YokeTraitHack;
-use icu_provider::yoke::Yokeable;
 use writeable::Writeable;
 
 use std::fmt::Debug;
@@ -90,32 +88,4 @@ impl BufferProvider for FsDataProvider {
     }
 }
 
-impl<M> ResourceProvider<M> for FsDataProvider
-where
-    M: ResourceMarker,
-    // Actual bound:
-    //     for<'de> <M::Yokeable as Yokeable<'de>>::Output: serde::de::Deserialize<'de>,
-    // Necessary workaround bound (see `yoke::trait_hack` docs):
-    for<'de> YokeTraitHack<<M::Yokeable as Yokeable<'de>>::Output>: serde::de::Deserialize<'de>,
-{
-    fn load_resource(&self, req: &DataRequest) -> Result<DataResponse<M>, DataError> {
-        self.as_deserializing().load_resource(req)
-    }
-}
-
-impl<M> DynProvider<M> for FsDataProvider
-where
-    M: DataMarker,
-    // Actual bound:
-    //     for<'de> <M::Yokeable as Yokeable<'de>>::Output: serde::de::Deserialize<'de>,
-    // Necessary workaround bound (see `yoke::trait_hack` docs):
-    for<'de> YokeTraitHack<<M::Yokeable as Yokeable<'de>>::Output>: serde::de::Deserialize<'de>,
-{
-    fn load_payload(
-        &self,
-        key: ResourceKey,
-        req: &DataRequest,
-    ) -> Result<DataResponse<M>, DataError> {
-        self.as_deserializing().load_payload(key, req)
-    }
-}
+icu_provider::impl_auto_deserializing!(FsDataProvider);
