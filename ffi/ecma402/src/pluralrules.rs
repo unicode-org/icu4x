@@ -331,19 +331,25 @@ mod testing {
             },
         ];
         let provider = icu_testdata::get_provider();
-        for test in tests {
-            let l = crate::Locale::FromLocale(test.locale);
-            let plr = super::PluralRules::try_new_with_provider(l, test.clone().opts, &provider)?;
-            let actual = test
-                .numbers
-                .iter()
-                .map(|n| {
-                    let mut result = String::new();
-                    plr.select(*n, &mut result).unwrap();
-                    result
-                })
-                .collect::<Vec<String>>();
-            assert_eq!(test.expected, actual, "for test case: {:?}", &test);
+        for (i, test) in tests.into_iter().enumerate() {
+            let plr = super::PluralRules::try_new_with_provider(
+                crate::Locale::FromLocale(test.locale),
+                test.opts,
+                &provider,
+            )?;
+            assert_eq!(
+                test.numbers
+                    .iter()
+                    .map(|n| {
+                        let mut result = String::new();
+                        plr.select(*n, &mut result).unwrap();
+                        result
+                    })
+                    .collect::<Vec<_>>(),
+                test.expected,
+                "for test case: {}",
+                i
+            );
         }
         Ok(())
     }

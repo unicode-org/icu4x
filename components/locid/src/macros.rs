@@ -269,7 +269,7 @@ mod test {
     #[test]
     fn locale() {
         let locale = locale!("de_Arab_aT");
-        
+
         assert_eq!(locale.to_string(), "de-Arab-AT");
         assert_eq!(LOCALE.to_string(), "de-Arab-AT");
         assert_eq!(locale, LOCALE);
