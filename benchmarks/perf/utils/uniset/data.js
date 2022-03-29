@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1648524889034,
+  "lastUpdate": 1648527223371,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -22769,6 +22769,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 43182867,
             "range": "± 2115134",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "a67c3c09fa5e17a88425ba73d2823783e27709cf",
+          "message": "Some more ZF (#1624)",
+          "timestamp": "2022-03-28T21:07:02-07:00",
+          "tree_id": "7d233557b9c790efa8c933e4479f55735427b993",
+          "url": "https://github.com/unicode-org/icu4x/commit/a67c3c09fa5e17a88425ba73d2823783e27709cf"
+        },
+        "date": 1648527207921,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 44337763,
+            "range": "± 2443870",
             "unit": "ns/iter"
           }
         ]
