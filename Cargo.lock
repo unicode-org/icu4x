@@ -1266,6 +1266,7 @@ dependencies = [
  "serde",
  "serde_json",
  "tinystr 0.5.0",
+ "zerovec",
 ]
 
 [[package]]
@@ -1579,6 +1580,7 @@ dependencies = [
  "rkyv",
  "serde",
  "serde_json",
+ "yoke",
 ]
 
 [[package]]

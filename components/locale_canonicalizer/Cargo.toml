@@ -33,9 +33,10 @@ all-features = true
 [dependencies]
 icu_locid = { version = "0.5", path = "../locid" }
 icu_provider = { version = "0.5", path = "../../provider/core", features = ["macros"] }
-litemap = { version = "0.3.0", path = "../../utils/litemap" }
+litemap = { version = "0.3.0", path = "../../utils/litemap", features = ["yoke"] }
 serde = { version = "1.0", features = ["derive", "alloc"], optional = true, default-features = false }
-tinystr = { path = "../../utils/tinystr", version = "0.5.0", default-features = false, features = ["alloc", "serde"] }
+tinystr = { path = "../../utils/tinystr", version = "0.5.0", default-features = false, features = ["alloc", "zerovec"] }
+zerovec = { path = "../../utils/zerovec", version = "0.6.0", features = ["yoke"]}
 
 [dev-dependencies]
 criterion = "0.3.3"
@@ -50,7 +51,7 @@ path = "src/lib.rs"
 [features]
 default = ["serialize"]
 bench = []
-serialize = ["serde", "icu_locid/serde", "litemap/serde"]
+serialize = ["serde", "icu_locid/serde", "litemap/serde", "tinystr/serde", "zerovec/serde"]
 datagen = ["serialize", "litemap/serde_serialize"]
 
 [[bench]]
