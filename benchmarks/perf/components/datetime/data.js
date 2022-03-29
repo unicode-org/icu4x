@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1648570516712,
+  "lastUpdate": 1648585823098,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -24203,6 +24203,48 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 210444,
             "range": "± 12542",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "younies.mahmoud@gmail.com",
+            "name": "Younies Mahmoud",
+            "username": "younies"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "c0e95dfd78c0385325391ffb01150be25e41d440",
+          "message": "Add Bidi class data. (#1716)\n\n* Add Bidi class data.\r\n\r\n* Fix the comments.\r\n\r\n* fix the doc of the BidiClass.\r\n\r\n* Make copyright year 2021\r\n\r\n* build testdata.postcard",
+          "timestamp": "2022-03-29T22:21:28+02:00",
+          "tree_id": "986238f6b57f97a4446e803c68bd5bba3d53760e",
+          "url": "https://github.com/unicode-org/icu4x/commit/c0e95dfd78c0385325391ffb01150be25e41d440"
+        },
+        "date": 1648585806563,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 88614,
+            "range": "± 7320",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 957885,
+            "range": "± 3244",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 207380,
+            "range": "± 3801",
             "unit": "ns/iter"
           }
         ]
