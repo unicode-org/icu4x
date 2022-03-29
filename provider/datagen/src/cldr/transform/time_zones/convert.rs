@@ -35,28 +35,27 @@ fn parse_hour_format(hour_format: &str) -> (Cow<'static, str>, Cow<'static, str>
     (Cow::Owned(positive), Cow::Owned(negative))
 }
 
-impl From<TimeZoneNames> for TimeZoneFormatsV1<'_> {
-    fn from(other: TimeZoneNames) -> Self {
+impl From<&TimeZoneNames> for TimeZoneFormatsV1<'_> {
+    fn from(other: &TimeZoneNames) -> Self {
         Self {
             hour_format: parse_hour_format(&other.hour_format),
-            gmt_format: other.gmt_format.into(),
-            gmt_zero_format: other.gmt_zero_format.into(),
-            region_format: other.region_format.into(),
+            gmt_format: other.gmt_format.clone().into(),
+            gmt_zero_format: other.gmt_zero_format.clone().into(),
+            region_format: other.region_format.clone().into(),
             region_format_variants: other
                 .region_format_variants
-                .into_tuple_vec()
-                .into_iter()
+                .iter()
                 .map(|(key, value)| {
                     #[allow(clippy::expect_used)]
                     // TODO(#1668) Clippy exceptions need docs or fixing.
                     (
                         key.parse::<TinyStr8>()
                             .expect("Time-zone variant was not compatible with TinyStr8"),
-                        value,
+                        value.clone(),
                     )
                 })
                 .collect(),
-            fallback_format: other.fallback_format.into(),
+            fallback_format: other.fallback_format.clone().into(),
         }
     }
 }
@@ -87,38 +86,37 @@ impl Location {
     }
 }
 
-impl From<TimeZoneNames> for ExemplarCitiesV1<'_> {
-    fn from(other: TimeZoneNames) -> Self {
+impl From<&TimeZoneNames> for ExemplarCitiesV1<'_> {
+    fn from(other: &TimeZoneNames) -> Self {
         Self(
             other
                 .zone
                 .0
-                .into_tuple_vec()
-                .into_iter()
+                .iter()
                 .flat_map(|(key, region)| {
-                    region.0.into_tuple_vec().into_iter().flat_map(
-                        move |(inner_key, place_or_region)| {
+                    region
+                        .0
+                        .iter()
+                        .flat_map(move |(inner_key, place_or_region)| {
                             let mut key = key.clone();
                             key.push('/');
-                            key.push_str(&inner_key);
+                            key.push_str(inner_key);
                             match place_or_region {
                                 LocationOrSubRegion::Location(place) => place
                                     .exemplar_city()
                                     .map(|city| vec![(key, city)])
                                     .unwrap_or_default(),
                                 LocationOrSubRegion::SubRegion(region) => region
-                                    .into_tuple_vec()
-                                    .into_iter()
+                                    .iter()
                                     .filter_map(|(inner_key, place)| {
                                         let mut key = key.clone();
                                         key.push('/');
-                                        key.push_str(&inner_key);
+                                        key.push_str(inner_key);
                                         place.exemplar_city().map(|city| (key, city))
                                     })
                                     .collect::<Vec<_>>(),
                             }
-                        },
-                    )
+                        })
                 })
                 .collect(),
         )
@@ -127,10 +125,10 @@ impl From<TimeZoneNames> for ExemplarCitiesV1<'_> {
 
 macro_rules! long_short_impls {
     ($generic:ty, $specific:ty, $field:ident, $metazones_name:ident) => {
-        impl From<TimeZoneNames> for $generic {
-            fn from(other: TimeZoneNames) -> Self {
+        impl From<&TimeZoneNames> for $generic {
+            fn from(other: &TimeZoneNames) -> Self {
                 Self {
-                    defaults: match other.metazone {
+                    defaults: match &other.metazone {
                         None => ZeroMap::new(),
                         Some(metazones) => metazones
                             .0
@@ -147,11 +145,12 @@ macro_rules! long_short_impls {
                     overrides: other
                         .zone
                         .0
-                        .into_tuple_vec()
-                        .into_iter()
+                        .iter()
                         .flat_map(|(key, region)| {
-                            region.0.into_tuple_vec().into_iter().flat_map(
-                                move |(inner_key, place_or_region)| {
+                            region
+                                .0
+                                .iter()
+                                .flat_map(move |(inner_key, place_or_region)| {
                                     let mut key = key.clone();
                                     key.push('/');
                                     key.push_str(&inner_key);
@@ -162,8 +161,7 @@ macro_rules! long_short_impls {
                                             .map(|format| vec![(key, format)])
                                             .unwrap_or_default(),
                                         LocationOrSubRegion::SubRegion(region) => region
-                                            .into_tuple_vec()
-                                            .into_iter()
+                                            .iter()
                                             .filter_map(|(inner_key, place)| {
                                                 let mut key = key.clone();
                                                 key.push('/');
@@ -175,35 +173,39 @@ macro_rules! long_short_impls {
                                             })
                                             .collect::<Vec<_>>(),
                                     }
-                                },
-                            )
+                                })
                         })
                         .collect(),
                 }
             }
         }
 
-        impl From<TimeZoneNames> for $specific {
-            fn from(other: TimeZoneNames) -> Self {
+        impl From<&TimeZoneNames> for $specific {
+            fn from(other: &TimeZoneNames) -> Self {
                 Self {
-                    defaults: match other.metazone {
+                    defaults: match &other.metazone {
                         None => ZeroMap2d::new(),
                         Some(metazones) => metazones
                             .0
-                            .into_tuple_vec()
-                            .into_iter()
-                            .filter_map(|(key, metazone)| metazone.$field.map(|value| (key, value)))
+                            .iter()
+                            .filter_map(|(key, metazone)| {
+                                metazone
+                                    .$field
+                                    .as_ref()
+                                    .map(|value| (key.clone(), value.clone()))
+                            })
                             .flat_map(iterate_zone_format)
                             .collect(),
                     },
                     overrides: other
                         .zone
                         .0
-                        .into_tuple_vec()
-                        .into_iter()
+                        .iter()
                         .flat_map(|(key, region)| {
-                            region.0.into_tuple_vec().into_iter().flat_map(
-                                move |(inner_key, place_or_region)| {
+                            region
+                                .0
+                                .iter()
+                                .flat_map(move |(inner_key, place_or_region)| {
                                     let mut key = key.clone();
                                     key.push('/');
                                     key.push_str(&inner_key);
@@ -217,8 +219,7 @@ macro_rules! long_short_impls {
                                             })
                                             .collect::<Vec<_>>(),
                                         LocationOrSubRegion::SubRegion(region) => region
-                                            .into_tuple_vec()
-                                            .into_iter()
+                                            .iter()
                                             .filter_map(|(inner_key, place)| {
                                                 let mut key = key.clone();
                                                 key.push('/');
@@ -227,8 +228,7 @@ macro_rules! long_short_impls {
                                             })
                                             .collect::<Vec<_>>(),
                                     }
-                                },
-                            )
+                                })
                         })
                         .flat_map(iterate_zone_format)
                         .collect(),

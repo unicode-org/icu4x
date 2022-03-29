@@ -38,10 +38,8 @@ use icu_provider_adapters::fork::by_key::MultiForkByKeyProvider;
 use std::convert::TryFrom;
 use std::path::PathBuf;
 use transform::calendar::japanese::JapaneseErasProvider;
-use transform::datetime::patterns::DatePatternsProvider;
-use transform::datetime::skeletons::DateSkeletonPatternsProvider;
-use transform::datetime::symbols::DateSymbolsProvider;
 use transform::datetime::week_data::WeekDataProvider;
+use transform::datetime::CommonDateProvider;
 use transform::decimal::NumbersProvider;
 use transform::list::ListProvider;
 use transform::locale_canonicalizer::aliases::AliasesProvider;
@@ -55,9 +53,7 @@ pub fn create_exportable_provider<T: DataMarker>(
 ) -> Result<MultiForkByKeyProvider<Box<dyn OmnibusDatagenProvider<T> + Sync>>, CldrError>
 where
     AliasesProvider: OmnibusDatagenProvider<T>,
-    DateSymbolsProvider: OmnibusDatagenProvider<T>,
-    DateSkeletonPatternsProvider: OmnibusDatagenProvider<T>,
-    DatePatternsProvider: OmnibusDatagenProvider<T>,
+    CommonDateProvider: OmnibusDatagenProvider<T>,
     JapaneseErasProvider: OmnibusDatagenProvider<T>,
     LikelySubtagsProvider: OmnibusDatagenProvider<T>,
     NumbersProvider: OmnibusDatagenProvider<T>,
@@ -70,9 +66,7 @@ where
     Ok(MultiForkByKeyProvider {
         providers: vec![
             Box::new(AliasesProvider::try_from(cldr_paths)?),
-            Box::new(DateSymbolsProvider::try_from(cldr_paths)?),
-            Box::new(DateSkeletonPatternsProvider::try_from(cldr_paths)?),
-            Box::new(DatePatternsProvider::try_from(cldr_paths)?),
+            Box::new(CommonDateProvider::try_from(cldr_paths)?),
             Box::new(JapaneseErasProvider::try_from(cldr_paths)?),
             Box::new(LikelySubtagsProvider::try_from(cldr_paths)?),
             Box::new(NumbersProvider::try_from(cldr_paths)?),

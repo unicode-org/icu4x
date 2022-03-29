@@ -2,65 +2,13 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use super::common::CommonDateProvider;
 use crate::cldr::cldr_serde;
-use crate::cldr::error::Error;
-use crate::cldr::CldrPaths;
 use icu_datetime::provider::calendar::*;
-use icu_provider::datagen::IterableResourceProvider;
-use icu_provider::prelude::*;
 use std::borrow::Cow;
 use std::collections::BTreeMap;
-use std::convert::TryFrom;
 use tinystr::{tinystr, TinyStr16};
 
-/// A data provider reading from CLDR JSON dates files.
-#[derive(Debug)]
-pub struct DateSymbolsProvider(CommonDateProvider);
-
-impl TryFrom<&dyn CldrPaths> for DateSymbolsProvider {
-    type Error = Error;
-    fn try_from(cldr_paths: &dyn CldrPaths) -> Result<Self, Self::Error> {
-        CommonDateProvider::try_from(cldr_paths).map(DateSymbolsProvider)
-    }
-}
-
-impl ResourceProvider<DateSymbolsV1Marker> for DateSymbolsProvider {
-    fn load_resource(
-        &self,
-        req: &DataRequest,
-    ) -> Result<DataResponse<DateSymbolsV1Marker>, DataError> {
-        let dates = &self.0.dates_for::<DateSymbolsV1Marker>(req)?;
-        let metadata = DataResponseMetadata::default();
-        // TODO(#1109): Set metadata.data_langid correctly.
-        let calendar =
-            req.options.variant.as_ref().ok_or_else(|| {
-                DataErrorKind::NeedsVariant.with_req(DateSymbolsV1Marker::KEY, req)
-            })?;
-        Ok(DataResponse {
-            metadata,
-            payload: Some(DataPayload::from_owned(convert_dates(dates, calendar))),
-        })
-    }
-}
-
-icu_provider::impl_dyn_provider!(
-    DateSymbolsProvider,
-    [DateSymbolsV1Marker,],
-    SERDE_SE,
-    ITERABLE_SERDE_SE,
-    DATA_CONVERTER
-);
-
-impl IterableResourceProvider<DateSymbolsV1Marker> for DateSymbolsProvider {
-    fn supported_options(
-        &self,
-    ) -> Result<Box<dyn Iterator<Item = ResourceOptions> + '_>, DataError> {
-        self.0.supported_options()
-    }
-}
-
-fn convert_dates(other: &cldr_serde::ca::Dates, calendar: &str) -> DateSymbolsV1<'static> {
+pub fn convert_dates(other: &cldr_serde::ca::Dates, calendar: &str) -> DateSymbolsV1<'static> {
     DateSymbolsV1 {
         months: (&other.months).into(),
         weekdays: (&other.days).into(),
@@ -226,90 +174,3 @@ symbols_from!(
         midnight,
     },
 );
-
-#[test]
-fn test_basic() {
-    use icu_locid::langid;
-
-    let cldr_paths = crate::cldr::cldr_paths::for_test();
-    let provider = DateSymbolsProvider::try_from(&cldr_paths as &dyn CldrPaths).unwrap();
-
-    let cs_dates: DataPayload<DateSymbolsV1Marker> = provider
-        .load_resource(&DataRequest {
-            options: ResourceOptions {
-                variant: Some("gregory".into()),
-                langid: Some(langid!("cs")),
-            },
-            metadata: Default::default(),
-        })
-        .unwrap()
-        .take_payload()
-        .unwrap();
-
-    assert_eq!("srpna", cs_dates.get().months.format.wide.0[7]);
-
-    assert_eq!(
-        "po",
-        cs_dates.get().weekdays.format.short.as_ref().unwrap().0[1]
-    );
-}
-
-#[test]
-fn unalias_contexts() {
-    use icu_locid::langid;
-
-    let cldr_paths = crate::cldr::cldr_paths::for_test();
-    let provider = DateSymbolsProvider::try_from(&cldr_paths as &dyn CldrPaths).unwrap();
-
-    let cs_dates: DataPayload<DateSymbolsV1Marker> = provider
-        .load_resource(&DataRequest {
-            options: ResourceOptions {
-                variant: Some("gregory".into()),
-                langid: Some(langid!("cs")),
-            },
-            metadata: Default::default(),
-        })
-        .unwrap()
-        .take_payload()
-        .unwrap();
-
-    // Czech months are not unaliased because `wide` differs.
-    assert!(cs_dates.get().months.stand_alone.is_some());
-
-    // Czech months are not unaliased because `wide` differs.
-    assert!(cs_dates
-        .get()
-        .months
-        .stand_alone
-        .as_ref()
-        .unwrap()
-        .abbreviated
-        .is_none());
-    assert!(cs_dates
-        .get()
-        .months
-        .stand_alone
-        .as_ref()
-        .unwrap()
-        .short
-        .is_none());
-    assert!(cs_dates
-        .get()
-        .months
-        .stand_alone
-        .as_ref()
-        .unwrap()
-        .narrow
-        .is_none());
-    assert!(cs_dates
-        .get()
-        .months
-        .stand_alone
-        .as_ref()
-        .unwrap()
-        .wide
-        .is_some());
-
-    // Czech weekdays are unaliased because they completely overlap.
-    assert!(cs_dates.get().weekdays.stand_alone.is_none());
-}

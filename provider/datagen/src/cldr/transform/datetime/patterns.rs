@@ -2,61 +2,10 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use super::common::CommonDateProvider;
-
-use crate::cldr::error::Error;
-
 use crate::cldr::cldr_serde;
-use crate::cldr::CldrPaths;
 use icu_datetime::pattern;
 use icu_datetime::pattern::CoarseHourCycle;
 use icu_datetime::provider::calendar::*;
-
-use icu_provider::datagen::IterableResourceProvider;
-use icu_provider::prelude::*;
-use std::convert::TryFrom;
-
-/// A data provider reading from CLDR JSON dates files.
-#[derive(Debug)]
-pub struct DatePatternsProvider(CommonDateProvider);
-
-impl TryFrom<&dyn CldrPaths> for DatePatternsProvider {
-    type Error = Error;
-    fn try_from(cldr_paths: &dyn CldrPaths) -> Result<Self, Self::Error> {
-        CommonDateProvider::try_from(cldr_paths).map(DatePatternsProvider)
-    }
-}
-
-impl ResourceProvider<DatePatternsV1Marker> for DatePatternsProvider {
-    fn load_resource(
-        &self,
-        req: &DataRequest,
-    ) -> Result<DataResponse<DatePatternsV1Marker>, DataError> {
-        let dates = &self.0.dates_for::<DatePatternsV1Marker>(req)?;
-        let metadata = DataResponseMetadata::default();
-        // TODO(#1109): Set metadata.data_langid correctly.
-        Ok(DataResponse {
-            metadata,
-            payload: Some(DataPayload::from_owned(DatePatternsV1::from(dates))),
-        })
-    }
-}
-
-icu_provider::impl_dyn_provider!(
-    DatePatternsProvider,
-    [DatePatternsV1Marker,],
-    SERDE_SE,
-    ITERABLE_SERDE_SE,
-    DATA_CONVERTER
-);
-
-impl IterableResourceProvider<DatePatternsV1Marker> for DatePatternsProvider {
-    fn supported_options(
-        &self,
-    ) -> Result<Box<dyn Iterator<Item = ResourceOptions> + '_>, DataError> {
-        self.0.supported_options()
-    }
-}
 
 impl From<&cldr_serde::ca::LengthPatterns> for patterns::LengthPatternsV1<'_> {
     fn from(other: &cldr_serde::ca::LengthPatterns) -> Self {
@@ -149,7 +98,7 @@ impl From<&cldr_serde::ca::Dates> for DatePatternsV1<'_> {
     fn from(other: &cldr_serde::ca::Dates) -> Self {
         let length_combinations_v1 =
             patterns::GenericLengthPatternsV1::from(&other.datetime_formats);
-        let skeletons_v1 = DateSkeletonPatternsV1::from(&other.datetime_formats);
+        let skeletons_v1 = DateSkeletonPatternsV1::from(other);
 
         let pattern_str_full = other.time_formats.full.get_pattern();
         let pattern_str_long = other.time_formats.long.get_pattern();
@@ -261,52 +210,4 @@ impl From<&cldr_serde::ca::Dates> for DatePatternsV1<'_> {
             length_combinations: length_combinations_v1,
         }
     }
-}
-
-#[test]
-fn test_basic() {
-    use icu_locid::langid;
-
-    let cldr_paths = crate::cldr::cldr_paths::for_test();
-    let provider = DatePatternsProvider::try_from(&cldr_paths as &dyn CldrPaths)
-        .expect("Failed to retrieve provider");
-
-    let cs_dates: DataPayload<DatePatternsV1Marker> = provider
-        .load_resource(&DataRequest {
-            options: ResourceOptions {
-                variant: Some("gregory".into()),
-                langid: Some(langid!("cs")),
-            },
-            metadata: Default::default(),
-        })
-        .expect("Failed to load payload")
-        .take_payload()
-        .expect("Failed to retrieve payload");
-
-    assert_eq!("d. M. y", cs_dates.get().date.medium.to_string());
-}
-
-#[test]
-fn test_with_numbering_system() {
-    use icu_locid::langid;
-
-    let cldr_paths = crate::cldr::cldr_paths::for_test();
-    let provider = DatePatternsProvider::try_from(&cldr_paths as &dyn CldrPaths)
-        .expect("Failed to retrieve provider");
-
-    let cs_dates: DataPayload<DatePatternsV1Marker> = provider
-        .load_resource(&DataRequest {
-            options: ResourceOptions {
-                variant: Some("gregory".into()),
-                langid: Some(langid!("haw")),
-            },
-            metadata: Default::default(),
-        })
-        .expect("Failed to load payload")
-        .take_payload()
-        .expect("Failed to retrieve payload");
-
-    assert_eq!("d MMM y", cs_dates.get().date.medium.to_string());
-    // TODO(#308): Support numbering system variations. We currently throw them away.
-    assert_eq!("d/M/yy", cs_dates.get().date.short.to_string());
 }
