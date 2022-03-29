@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1648422319716,
+  "lastUpdate": 1648518155007,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -21629,6 +21629,36 @@ window.BENCHMARK_DATA = {
             "name": "fixed_decimal/overview",
             "value": 117791,
             "range": "± 11504",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "421728f2a8611026c6054b8bb902d67fd1bb590d",
+          "message": "Making `icu_locid_macros` into `consts` (#1631)",
+          "timestamp": "2022-03-29T03:35:32+02:00",
+          "tree_id": "0b1b3db7cfdfed1cabf209c878f2116b91565e6e",
+          "url": "https://github.com/unicode-org/icu4x/commit/421728f2a8611026c6054b8bb902d67fd1bb590d"
+        },
+        "date": 1648518139829,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 99212,
+            "range": "± 2225",
             "unit": "ns/iter"
           }
         ]
