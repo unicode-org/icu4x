@@ -2,19 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! This module provides convenience macros.
-//!
-//! # Examples
-//!
-//! ```rust
-//! use icu::locid::{language, region, langid};
-//!
-//! let lid = langid!("EN_US");
-//!
-//! assert_eq!(lid.language, language!("en"));
-//! assert_eq!(lid.region, Some(region!("US")));
-//! ```
-
 /// A macro allowing for compile-time construction of valid [`Language`] subtag.
 ///
 /// The macro will perform syntax canonicalization of the tag.
