@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1648421981536,
+  "lastUpdate": 1648517830994,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -11753,6 +11753,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/4c700aa91c8ce080fab9aecebd43c498367c601a"
         },
         "date": 1648421966510,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4545559,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "421728f2a8611026c6054b8bb902d67fd1bb590d",
+          "message": "Making `icu_locid_macros` into `consts` (#1631)",
+          "timestamp": "2022-03-29T03:35:32+02:00",
+          "tree_id": "0b1b3db7cfdfed1cabf209c878f2116b91565e6e",
+          "url": "https://github.com/unicode-org/icu4x/commit/421728f2a8611026c6054b8bb902d67fd1bb590d"
+        },
+        "date": 1648517815960,
         "tool": "ndjson",
         "benches": [
           {
