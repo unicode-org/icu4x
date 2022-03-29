@@ -76,6 +76,8 @@ mod parser;
 #[cfg(feature = "serde")]
 mod serde;
 pub mod subtags;
+#[cfg(feature = "zerovec")]
+pub mod zerovec;
 
 pub use langid::LanguageIdentifier;
 pub use locale::Locale;
