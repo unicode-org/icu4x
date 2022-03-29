@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1648518223465,
+  "lastUpdate": 1648524982478,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -23993,6 +23993,48 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 171162,
             "range": "± 845",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "11364f02c2e620e8e85a1bc7fab3e320d226152e",
+          "message": "Reducing file IO and parsing in CLDR transformers (#1623)",
+          "timestamp": "2022-03-29T05:27:49+02:00",
+          "tree_id": "edd1ec5c68366b778df24770a7d90616aa59dbda",
+          "url": "https://github.com/unicode-org/icu4x/commit/11364f02c2e620e8e85a1bc7fab3e320d226152e"
+        },
+        "date": 1648524965896,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 104257,
+            "range": "± 4524",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 1061265,
+            "range": "± 120404",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 224135,
+            "range": "± 6928",
             "unit": "ns/iter"
           }
         ]
