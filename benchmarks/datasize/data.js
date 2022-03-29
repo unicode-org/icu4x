@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1648530514614,
+  "lastUpdate": 1648570109718,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -11903,6 +11903,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/cfb979253da5d711824fda1df0ae0ebff63240b1"
         },
         "date": 1648530497761,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4545626,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "1fdaa3570b217512f690c4a9c3715406c03758df",
+          "message": "Using the cached-path crate for downloading and unzipping (#1744)",
+          "timestamp": "2022-03-29T09:06:22-07:00",
+          "tree_id": "c2960ed28a65da17c2b073d9127ced5ab3c7cebd",
+          "url": "https://github.com/unicode-org/icu4x/commit/1fdaa3570b217512f690c4a9c3715406c03758df"
+        },
+        "date": 1648570091648,
         "tool": "ndjson",
         "benches": [
           {
