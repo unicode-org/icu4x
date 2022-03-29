@@ -32,7 +32,7 @@ where
         match self.write_no_fallback(sink) {
             Ok(Ok(r)) => Ok(r),
             _ => match self.time_zone_format.fallback_unit {
-                Some(TimeZoneFormatUnit::LocalizedGmt(fallback)) => {
+                TimeZoneFormatUnit::LocalizedGmt(fallback) => {
                     match fallback.format(
                         sink,
                         self.time_zone,
@@ -43,7 +43,7 @@ where
                         Err(e) => Err(e).map_err(|_| core::fmt::Error),
                     }
                 }
-                Some(TimeZoneFormatUnit::Iso8601(fallback)) => {
+                TimeZoneFormatUnit::Iso8601(fallback) => {
                     match fallback.format(
                         sink,
                         self.time_zone,

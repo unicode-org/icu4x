@@ -34,7 +34,6 @@ pub struct TimeZoneExpectation {
 
 #[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize)]
 pub enum FallbackFormat {
-    None,
     Iso8601(IsoFormat, IsoMinutes, IsoSeconds),
     LocalizedGmt,
 }
@@ -44,18 +43,15 @@ impl From<FallbackFormat> for time_zone::TimeZoneFormatOptions {
         match other {
             FallbackFormat::Iso8601(iso_format, iso_minutes, iso_seconds) => {
                 time_zone::TimeZoneFormatOptions {
-                    fallback_format: Some(time_zone::FallbackFormat::Iso8601(
+                    fallback_format: time_zone::FallbackFormat::Iso8601(
                         iso_format.into(),
                         iso_minutes.into(),
                         iso_seconds.into(),
-                    )),
+                    ),
                 }
             }
             FallbackFormat::LocalizedGmt => time_zone::TimeZoneFormatOptions {
-                fallback_format: Some(time_zone::FallbackFormat::LocalizedGmt),
-            },
-            FallbackFormat::None => time_zone::TimeZoneFormatOptions {
-                fallback_format: None,
+                fallback_format: time_zone::FallbackFormat::LocalizedGmt,
             },
         }
     }

@@ -89,7 +89,7 @@ pub struct TimeZoneFormat {
     pub(super) locale: Locale,
     pub(super) data_payloads: TimeZoneDataPayloads,
     pub(super) format_units: SmallVec<[TimeZoneFormatUnit; 3]>,
-    pub(super) fallback_unit: Option<TimeZoneFormatUnit>,
+    pub(super) fallback_unit: TimeZoneFormatUnit,
 }
 
 /// A container contains all data payloads for TimeZone.
@@ -167,9 +167,8 @@ impl TimeZoneFormat {
             data_payloads,
             locale,
             format_units,
-            fallback_unit: None,
+            fallback_unit: TimeZoneFormat::get_fallback_unit(options.fallback_format),
         };
-
         let mut count_zone_symbols = 0;
         for (length, symbol) in zone_symbols {
             count_zone_symbols += 1;
@@ -335,11 +334,9 @@ impl TimeZoneFormat {
                 },
             }
         }
-
         if count_zone_symbols > 1 {
             return Err(DateTimeFormatError::UnsupportedOptions);
         }
-        tz_format.load_fallback_format(options.fallback_format)?;
         Ok(tz_format)
     }
 
@@ -397,7 +394,7 @@ impl TimeZoneFormat {
             data_payloads,
             locale,
             format_units,
-            fallback_unit: None,
+            fallback_unit: TimeZoneFormat::get_fallback_unit(options.fallback_format),
         };
 
         match config {
@@ -423,7 +420,6 @@ impl TimeZoneFormat {
                 tz_format.load_iso_8601_format(format, minutes, seconds)?;
             }
         }
-        tz_format.load_fallback_format(options.fallback_format)?;
         Ok(tz_format)
     }
 
@@ -583,27 +579,17 @@ impl TimeZoneFormat {
 
     /// Load a fallback format for timezone. The fallback format will be executed if there are no
     /// matching format results.
-    pub fn load_fallback_format(
-        &mut self,
-        fallback_format: Option<FallbackFormat>,
-    ) -> Result<&mut TimeZoneFormat, DateTimeFormatError> {
+    pub(super) fn get_fallback_unit(fallback_format: FallbackFormat) -> TimeZoneFormatUnit {
         match fallback_format {
-            None => {}
-            Some(fallback) => match fallback {
-                FallbackFormat::LocalizedGmt => {
-                    self.fallback_unit =
-                        Some(TimeZoneFormatUnit::LocalizedGmt(LocalizedGmtFormat {}));
-                }
-                FallbackFormat::Iso8601(format, minutes, seconds) => {
-                    self.fallback_unit = Some(TimeZoneFormatUnit::Iso8601(Iso8601Format {
-                        format,
-                        minutes,
-                        seconds,
-                    }));
-                }
-            },
+            FallbackFormat::LocalizedGmt => TimeZoneFormatUnit::LocalizedGmt(LocalizedGmtFormat {}),
+            FallbackFormat::Iso8601(format, minutes, seconds) => {
+                TimeZoneFormatUnit::Iso8601(Iso8601Format {
+                    format,
+                    minutes,
+                    seconds,
+                })
+            }
         }
-        Ok(self)
     }
 
     /// Takes a [`TimeZoneInput`] implementer and returns an instance of a [`FormattedTimeZone`]
@@ -827,10 +813,24 @@ pub enum FallbackFormat {
     LocalizedGmt,
 }
 
+impl Default for FallbackFormat {
+    fn default() -> Self {
+        FallbackFormat::LocalizedGmt
+    }
+}
+
 /// A bag of options to define how time zone will be formatted.
-#[derive(Default, Debug, Clone, Copy, PartialEq)]
+#[derive(Debug, Clone, Copy, PartialEq)]
 pub struct TimeZoneFormatOptions {
-    pub fallback_format: Option<FallbackFormat>,
+    pub fallback_format: FallbackFormat,
+}
+
+impl Default for TimeZoneFormatOptions {
+    fn default() -> Self {
+        Self {
+            fallback_format: FallbackFormat::default(),
+        }
+    }
 }
 
 // Pacific Time
