@@ -25,9 +25,8 @@ mod key;
 use alloc::boxed::Box;
 
 use crate::parser::ParserError;
+use crate::parser::SubtagIterator;
 use alloc::vec::Vec;
-use core::iter::Peekable;
-
 pub use key::Key;
 
 /// A list of [`Other Use Extensions`] as defined in [`Unicode Locale
@@ -80,10 +79,7 @@ impl Other {
         Self((ext, input.into_boxed_slice()))
     }
 
-    pub(crate) fn try_from_iter<'a>(
-        ext: u8,
-        iter: &mut Peekable<impl Iterator<Item = &'a [u8]>>,
-    ) -> Result<Self, ParserError> {
+    pub(crate) fn try_from_iter(ext: u8, iter: &mut SubtagIterator) -> Result<Self, ParserError> {
         debug_assert!(ext.is_ascii_alphabetic());
 
         let mut keys = Vec::new();

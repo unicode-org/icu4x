@@ -55,7 +55,6 @@ static_assertions = { version = "1.1", optional = true }
 
 [dev-dependencies]
 icu_benchmark_macros = { version = "0.5", path = "../../tools/benchmark/macros" }
-icu_locid_macros = { version = "0.5", path = "../../components/locid/macros" }
 icu_plurals = { version = "0.5", path = "../../components/plurals" }
 serde-json-core = { version = "0.4", features = ["std"] }
 criterion = "0.3.3"

@@ -191,7 +191,7 @@ impl TryFrom<&cldr_serde::numbers::Numbers> for DecimalSymbolsV1<'static> {
 
 #[test]
 fn test_basic() {
-    use icu_locid_macros::langid;
+    use icu_locid::langid;
 
     let cldr_paths = crate::cldr::cldr_paths::for_test();
     let provider = NumbersProvider::try_from(&cldr_paths as &dyn CldrPaths).unwrap();

@@ -12,8 +12,8 @@ icu_benchmark_macros::static_setup!();
 use icu_calendar::{DateTime, Gregorian};
 use icu_datetime::mock::parse_gregorian_from_str;
 use icu_datetime::{options::length, DateTimeFormat};
+use icu_locid::langid;
 use icu_locid::Locale;
-use icu_locid_macros::langid;
 
 const DATES_ISO: &[&str] = &[
     "2001-09-08T18:46:40:000",

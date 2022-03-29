@@ -13,7 +13,6 @@ members = [
     "components/list",
     "components/locale_canonicalizer",
     "components/locid",
-    "components/locid/macros",
     "components/plurals",
     "components/properties",
     "experimental/bies",

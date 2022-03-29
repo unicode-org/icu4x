@@ -470,7 +470,7 @@ mod tests {
     }
 
     fn get_options_test_cases() -> [OptionsTestCase; 3] {
-        use icu_locid_macros::langid;
+        use icu_locid::langid;
         [
             OptionsTestCase {
                 options: ResourceOptions {

@@ -229,7 +229,7 @@ symbols_from!(
 
 #[test]
 fn test_basic() {
-    use icu_locid_macros::langid;
+    use icu_locid::langid;
 
     let cldr_paths = crate::cldr::cldr_paths::for_test();
     let provider = DateSymbolsProvider::try_from(&cldr_paths as &dyn CldrPaths).unwrap();
@@ -256,7 +256,7 @@ fn test_basic() {
 
 #[test]
 fn unalias_contexts() {
-    use icu_locid_macros::langid;
+    use icu_locid::langid;
 
     let cldr_paths = crate::cldr::cldr_paths::for_test();
     let provider = DateSymbolsProvider::try_from(&cldr_paths as &dyn CldrPaths).unwrap();

@@ -147,7 +147,7 @@ impl From<&cldr_serde::ca::DateTimeFormats> for DateSkeletonPatternsV1<'_> {
 #[test]
 fn test_datetime_skeletons() {
     use icu_datetime::pattern::runtime::{Pattern, PluralPattern};
-    use icu_locid_macros::langid;
+    use icu_locid::langid;
     use icu_plurals::PluralCategory;
 
     let cldr_paths = crate::cldr::cldr_paths::for_test();

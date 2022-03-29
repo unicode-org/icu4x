@@ -56,7 +56,7 @@ impl ResourceMarker for HelloWorldV1Marker {
 /// ```
 /// use icu_provider::hello_world::*;
 /// use icu_provider::prelude::*;
-/// use icu_locid_macros::langid;
+/// use icu_locid::langid;
 ///
 /// let provider = HelloWorldProvider::new_with_placeholder_data();
 ///
@@ -209,22 +209,22 @@ fn test_iter() {
     assert_eq!(
         supported_langids,
         vec![
-            icu_locid_macros::langid!("bn"),
-            icu_locid_macros::langid!("cs"),
-            icu_locid_macros::langid!("de"),
-            icu_locid_macros::langid!("el"),
-            icu_locid_macros::langid!("en"),
-            icu_locid_macros::langid!("eo"),
-            icu_locid_macros::langid!("fa"),
-            icu_locid_macros::langid!("fi"),
-            icu_locid_macros::langid!("is"),
-            icu_locid_macros::langid!("ja"),
-            icu_locid_macros::langid!("la"),
-            icu_locid_macros::langid!("pt"),
-            icu_locid_macros::langid!("ro"),
-            icu_locid_macros::langid!("ru"),
-            icu_locid_macros::langid!("vi"),
-            icu_locid_macros::langid!("zh")
+            icu_locid::langid!("bn"),
+            icu_locid::langid!("cs"),
+            icu_locid::langid!("de"),
+            icu_locid::langid!("el"),
+            icu_locid::langid!("en"),
+            icu_locid::langid!("eo"),
+            icu_locid::langid!("fa"),
+            icu_locid::langid!("fi"),
+            icu_locid::langid!("is"),
+            icu_locid::langid!("ja"),
+            icu_locid::langid!("la"),
+            icu_locid::langid!("pt"),
+            icu_locid::langid!("ro"),
+            icu_locid::langid!("ru"),
+            icu_locid::langid!("vi"),
+            icu_locid::langid!("zh")
         ]
     );
 }

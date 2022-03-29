@@ -95,7 +95,7 @@ icu_provider_fs = "0.1"
 and then:
 
 ```rust
-use icu::locid::macros::langid;
+use icu::locid::langid;
 use icu::datetime::{DateTimeFormat, date::MockDateTime, options::length};
 use icu_provider_fs::FsDataProvider;
 

@@ -265,7 +265,7 @@ impl From<&cldr_serde::ca::Dates> for DatePatternsV1<'_> {
 
 #[test]
 fn test_basic() {
-    use icu_locid_macros::langid;
+    use icu_locid::langid;
 
     let cldr_paths = crate::cldr::cldr_paths::for_test();
     let provider = DatePatternsProvider::try_from(&cldr_paths as &dyn CldrPaths)
@@ -288,7 +288,7 @@ fn test_basic() {
 
 #[test]
 fn test_with_numbering_system() {
-    use icu_locid_macros::langid;
+    use icu_locid::langid;
 
     let cldr_paths = crate::cldr::cldr_paths::for_test();
     let provider = DatePatternsProvider::try_from(&cldr_paths as &dyn CldrPaths)
