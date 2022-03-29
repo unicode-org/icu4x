@@ -16,6 +16,39 @@
         }
     },
     {
+        "description": "Singleton fields are returned directly if there are no singleton matches (m -> hm)",
+        "input": {
+            "value": "2002-12-31T08:05:07.000",
+            "options": {
+                "components": {
+                    "minute": "two-digit"
+                }
+            }
+        },
+        "output": {
+            "values": {
+                "en": "05"
+            }
+        }
+    },
+    {
+        "description": "Singleton fields are returned directly if there are no singleton matches (G -> Gy)",
+        "input": {
+            "value": "2002-12-31T08:05:07.000",
+            "options": {
+                "components": {
+                    "era": "long"
+                }
+            }
+        },
+        "output": {
+            "values": {
+                "en": "Anno Domini",
+                "fr": "après Jésus-Christ"
+            }
+        }
+    },
+    {
         "description": "Partial match for hs -> hms -> h:mm:s a",
         "input": {
             "value": "2002-12-31T08:05:07.000",
