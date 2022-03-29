@@ -4,7 +4,6 @@
 
 // https://github.com/unicode-org/icu4x/blob/main/docs/process/boilerplate.md#library-annotations
 #![no_std]
-
 #![cfg_attr(
     not(test),
     deny(
@@ -15,8 +14,6 @@
     )
 )]
 #![allow(clippy::upper_case_acronyms)]
-
-
 #![cfg_attr(target_os = "none", feature(alloc_error_handler))]
 
 // Necessary to for symbols to be linked in
@@ -27,7 +24,6 @@ extern crate icu_capi;
 mod stuff {
     extern crate alloc;
 
-
     use alloc::alloc::Layout;
     use core::panic::PanicInfo;
     use cortex_m::asm;
@@ -35,7 +31,6 @@ mod stuff {
 
     #[global_allocator]
     static GLOBAL: FreeRtosAllocator = FreeRtosAllocator;
-
 
     #[alloc_error_handler]
     fn alloc_error(_layout: Layout) -> ! {

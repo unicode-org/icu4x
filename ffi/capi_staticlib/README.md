@@ -1,9 +1,7 @@
 # icu_capi_staticlib [![crates.io](https://img.shields.io/crates/v/icu_capi_staticlib)](https://crates.io/crates/icu_capi_staticlib)
 
 This exists as a separate crate to work around
-cargo being unable to conditionally compile crate-types.
-
-https://github.com/rust-lang/cargo/issues/4881
+cargo being [unable to conditionally compile crate-types](https://github.com/rust-lang/cargo/issues/4881).
 
 This leads to problems like emscripten being unable to link
 because symbols like log_js are not defined even if the crate_type
