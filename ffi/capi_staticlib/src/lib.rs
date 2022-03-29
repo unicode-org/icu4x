@@ -26,8 +26,15 @@
     feature(alloc_error_handler)
 )]
 
+
 // Necessary to for symbols to be linked in
 extern crate icu_capi;
+
+// Needed to be able to build cdylibs/etc
+//
+// Renamed so you can't accidentally use it
+#[cfg(not(feature = "x86tiny"))]
+extern crate std as rust_std;
 
 extern crate alloc;
 
