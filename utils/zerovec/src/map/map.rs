@@ -56,6 +56,8 @@ use core::iter::FromIterator;
 /// ```
 ///
 /// [`VarZeroVec`]: crate::VarZeroVec
+// ZeroMap has only one invariant: keys.len() == values.len()
+// It is also expected that the keys are sorted, but this is not an invariant. See #1433
 pub struct ZeroMap<'a, K, V>
 where
     K: ZeroMapKV<'a> + ?Sized,
@@ -278,7 +280,9 @@ where
     > {
         (0..self.keys.zvl_len()).map(move |idx| {
             (
+                #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
                 self.keys.zvl_get(idx).unwrap(),
+                #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
                 self.values.zvl_get(idx).unwrap(),
             )
         })
@@ -286,11 +290,13 @@ where
 
     /// Produce an ordered iterator over keys
     pub fn iter_keys<'b>(&'b self) -> impl Iterator<Item = &'b <K as ZeroMapKV<'a>>::GetType> {
+        #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
         (0..self.keys.zvl_len()).map(move |idx| self.keys.zvl_get(idx).unwrap())
     }
 
     /// Produce an iterator over values, ordered by keys
     pub fn iter_values<'b>(&'b self) -> impl Iterator<Item = &'b <V as ZeroMapKV<'a>>::GetType> {
+        #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
         (0..self.values.zvl_len()).map(move |idx| self.values.zvl_get(idx).unwrap())
     }
 }
@@ -324,6 +330,7 @@ where
     pub fn insert_var_v<VE: EncodeAsVarULE<V>>(&mut self, key: &K, value: &VE) -> Option<Box<V>> {
         match self.keys.zvl_binary_search(key) {
             Ok(index) => {
+                #[allow(clippy::expect_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
                 let ret = self.values.get(index).expect("invalid index").to_boxed();
                 self.values.make_mut().replace(index, value);
                 Some(ret)
@@ -346,9 +353,41 @@ where
     V: ZeroMapKV<'a, Container = ZeroVec<'a, V>> + ?Sized,
     V: AsULE + Copy,
 {
-    /// For cases when `V` is fixed-size, obtain a direct copy of `V` instead of `V::ULE`
+    /// For cases when `V` is fixed-size, obtain a direct copy of `V` instead of `V::ULE`.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use zerovec::ZeroMap;
+    ///
+    /// let mut map = ZeroMap::new();
+    /// map.insert(&1, &'a');
+    /// map.insert(&2, &'b');
+    /// assert_eq!(map.get_copied(&1), Some('a'));
+    /// assert_eq!(map.get_copied(&3), None);
     pub fn get_copied(&self, key: &K) -> Option<V> {
         let index = self.keys.zvl_binary_search(key).ok()?;
+        ZeroSlice::get(&*self.values, index)
+    }
+
+    /// Binary search the map with `predicate` to find a key, returning the value.
+    ///
+    /// For cases when `V` is fixed-size, use this method to obtain a direct copy of `V`
+    /// instead of `V::ULE`.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use zerovec::ZeroMap;
+    ///
+    /// let mut map = ZeroMap::new();
+    /// map.insert(&1, &'a');
+    /// map.insert(&2, &'b');
+    /// assert_eq!(map.get_copied_by(|probe| probe.cmp(&1)), Some('a'));
+    /// assert_eq!(map.get_copied_by(|probe| probe.cmp(&3)), None);
+    /// ```
+    pub fn get_copied_by(&self, predicate: impl FnMut(&K) -> Ordering) -> Option<V> {
+        let index = self.keys.zvl_binary_search_by(predicate).ok()?;
         ZeroSlice::get(&*self.values, index)
     }
 
@@ -359,7 +398,9 @@ where
     ) -> impl Iterator<Item = (&'b <K as ZeroMapKV<'a>>::GetType, V)> {
         (0..self.keys.zvl_len()).map(move |idx| {
             (
+                #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
                 self.keys.zvl_get(idx).unwrap(),
+                #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
                 ZeroSlice::get(&*self.values, idx).unwrap(),
             )
         })
@@ -381,7 +422,9 @@ where
         let values = &self.values;
         (0..keys.len()).map(move |idx| {
             (
+                #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
                 ZeroSlice::get(&**keys, idx).unwrap(),
+                #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
                 ZeroSlice::get(&**values, idx).unwrap(),
             )
         })

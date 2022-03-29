@@ -68,7 +68,12 @@ default-features = false
 
 [dependencies.icu_properties]
 version = "0.5"
-path = "../../components/properties"
+path = "../properties"
+default-features = false
+
+[dependencies.icu_list]
+version = "0.5"
+path = "../list"
 default-features = false
 
 [dependencies.fixed_decimal]
@@ -81,24 +86,31 @@ icu_codepointtrie = { version = "0.3.3", path = "../../utils/codepointtrie" }
 icu_provider = { version = "0.5", path = "../../provider/core" }
 icu_testdata = { version = "0.5", path = "../../provider/testdata", features = ["static"] }
 icu_uniset = { version = "0.4.1", path = "../../utils/uniset" }
-writeable = { version = "0.3", path = "../../utils/writeable" }
+
+[dependencies]
+writeable = { version = "0.3", path = "../../utils/writeable" } # required for icu::list doc
 
 [features]
 std = [
     "icu_datetime/std",
+    "icu_list/std",
     "icu_locid/std",
     "icu_plurals/std",
     "icu_properties/std",
     "fixed_decimal/std"
 ]
-default = ["provider_serde"]
+default = ["serialize"]
 serde = [
     "icu_locid/serde"
 ]
-provider_serde = [
-    "icu_datetime/provider_serde",
-    "icu_decimal/provider_serde",
-    "icu_locale_canonicalizer/provider_serde",
-    "icu_plurals/provider_serde",
-    "icu_properties/provider_serde",
+serialize = [
+    "icu_datetime/serialize",
+    "icu_decimal/serialize",
+    "icu_locale_canonicalizer/serialize",
+    "icu_plurals/serialize",
+    "icu_properties/serialize",
+    "icu_list/serialize",
+]
+icu4x_human_readable_de = [
+    "icu_list/icu4x_human_readable_de"
 ]

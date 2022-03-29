@@ -4,6 +4,7 @@
 
 //! A collection of enums for enumerated properties.
 
+#![allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 

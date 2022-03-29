@@ -8,14 +8,14 @@ use alloc::vec;
 use alloc::vec::Vec;
 use core::ops::RangeInclusive;
 use core::str::FromStr;
-use tinystr::TinyStr8;
+use tinystr::TinyAsciiStr;
 
 #[derive(Debug, PartialEq, Eq, Clone, Hash, PartialOrd, Ord)]
 #[allow(missing_docs)] // TODO(#1028) - Add missing docs.
-pub struct Value(Box<[TinyStr8]>);
+pub struct Value(Box<[TinyAsciiStr<{ *TYPE_LENGTH.end() }>]>);
 
 const TYPE_LENGTH: RangeInclusive<usize> = 3..=8;
-const TRUE_TVALUE: TinyStr8 = tinystr::tinystr!(8, "true");
+const TRUE_TVALUE: TinyAsciiStr<8> = tinystr::tinystr!(8, "true");
 
 /// A value used in a list of [`Fields`](super::Fields).
 ///
@@ -61,7 +61,8 @@ impl Value {
                 return Err(ParserError::InvalidExtension);
             }
             has_value = true;
-            let val = TinyStr8::from_bytes(subtag).map_err(|_| ParserError::InvalidExtension)?;
+            let val =
+                TinyAsciiStr::from_bytes(subtag).map_err(|_| ParserError::InvalidExtension)?;
             if val != TRUE_TVALUE {
                 v.push(val);
             }
@@ -73,7 +74,7 @@ impl Value {
         Ok(Self(v.into_boxed_slice()))
     }
 
-    pub(crate) fn from_vec_unchecked(input: Vec<TinyStr8>) -> Self {
+    pub(crate) fn from_vec_unchecked(input: Vec<TinyAsciiStr<{ *TYPE_LENGTH.end() }>>) -> Self {
         Self(input.into_boxed_slice())
     }
 
@@ -81,8 +82,10 @@ impl Value {
         TYPE_LENGTH.contains(&t.len()) && !t.iter().any(|c: &u8| !c.is_ascii_alphanumeric())
     }
 
-    pub(crate) fn parse_subtag(t: &[u8]) -> Result<Option<TinyStr8>, ParserError> {
-        let s = TinyStr8::from_bytes(t).map_err(|_| ParserError::InvalidSubtag)?;
+    pub(crate) fn parse_subtag(
+        t: &[u8],
+    ) -> Result<Option<TinyAsciiStr<{ *TYPE_LENGTH.end() }>>, ParserError> {
+        let s = TinyAsciiStr::from_bytes(t).map_err(|_| ParserError::InvalidSubtag)?;
         if !TYPE_LENGTH.contains(&t.len()) || !s.is_ascii_alphanumeric() {
             return Err(ParserError::InvalidExtension);
         }
@@ -94,6 +97,18 @@ impl Value {
         } else {
             Ok(Some(s))
         }
+    }
+
+    pub(crate) fn for_each_subtag_str<E, F>(&self, f: &mut F) -> Result<(), E>
+    where
+        F: FnMut(&str) -> Result<(), E>,
+    {
+        if self.0.is_empty() {
+            f("true")?;
+        } else {
+            self.0.iter().map(TinyAsciiStr::as_str).try_for_each(f)?;
+        }
+        Ok(())
     }
 }
 

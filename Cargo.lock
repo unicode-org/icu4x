@@ -172,7 +172,7 @@ checksum = "ba3569f383e8f1598449f1a423e72e99569137b47740b1da11ef19af3d5c3223"
 dependencies = [
  "lazy_static",
  "memchr",
- "regex-automata 0.1.10 (registry+https://github.com/rust-lang/crates.io-index)",
+ "regex-automata 0.1.10",
  "serde",
 ]
 
@@ -580,9 +580,9 @@ dependencies = [
 
 [[package]]
 name = "dirs-sys"
-version = "0.3.6"
+version = "0.3.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "03d86534ed367a67548dc68113a0f5db55432fdfbb6e6f9d77704397d95d5780"
+checksum = "1b1d1d91c932ef41c0f2663aa8b0ca0342d444d842c06914aa0a7e352d0bada6"
 dependencies = [
  "libc",
  "redox_users",
@@ -1007,6 +1007,7 @@ dependencies = [
  "icu_codepointtrie",
  "icu_datetime",
  "icu_decimal",
+ "icu_list",
  "icu_locale_canonicalizer",
  "icu_locid",
  "icu_locid_macros",
@@ -1091,6 +1092,7 @@ dependencies = [
  "icu_plurals",
  "icu_properties",
  "icu_provider",
+ "icu_provider_adapters",
  "icu_provider_blob",
  "icu_provider_fs",
  "icu_segmenter",
@@ -1098,6 +1100,20 @@ dependencies = [
  "log",
  "tinystr 0.5.0",
  "writeable",
+]
+
+[[package]]
+name = "icu_casemapping"
+version = "0.1.0"
+dependencies = [
+ "displaydoc",
+ "icu_codepointtrie",
+ "icu_locid",
+ "icu_provider",
+ "icu_uniset",
+ "serde",
+ "yoke",
+ "zerovec",
 ]
 
 [[package]]
@@ -1129,26 +1145,50 @@ version = "0.5.0"
 dependencies = [
  "clap",
  "dhat 0.3.0",
+ "dirs",
+ "displaydoc",
+ "elsa",
  "eyre",
  "futures",
+ "icu_calendar",
+ "icu_casemapping",
+ "icu_codepointtrie",
+ "icu_datetime",
+ "icu_decimal",
+ "icu_list",
+ "icu_locale_canonicalizer",
  "icu_locid",
+ "icu_locid_macros",
+ "icu_plurals",
  "icu_properties",
  "icu_provider",
+ "icu_provider_adapters",
  "icu_provider_blob",
- "icu_provider_cldr",
  "icu_provider_fs",
- "icu_provider_segmenter",
- "icu_provider_uprops",
  "icu_segmenter",
  "icu_testdata",
+ "icu_uniset",
+ "itertools",
+ "json",
  "litemap",
  "log",
+ "mktemp",
  "rayon",
  "reqwest",
  "serde",
+ "serde-aux",
+ "serde-tuple-vec-map",
+ "serde_json",
  "simple_logger",
+ "smallstr",
+ "smallvec",
+ "tinystr 0.5.0",
  "tokio",
+ "toml",
+ "unzip",
+ "urlencoding",
  "writeable",
+ "zerovec",
 ]
 
 [[package]]
@@ -1166,6 +1206,7 @@ dependencies = [
  "icu_locid_macros",
  "icu_plurals",
  "icu_provider",
+ "icu_provider_adapters",
  "icu_testdata",
  "litemap",
  "serde",
@@ -1190,6 +1231,7 @@ dependencies = [
  "icu_locid",
  "icu_locid_macros",
  "icu_provider",
+ "icu_provider_adapters",
  "icu_testdata",
  "rand",
  "rand_distr",
@@ -1200,7 +1242,7 @@ dependencies = [
 
 [[package]]
 name = "icu_list"
-version = "0.1.0"
+version = "0.5.0"
 dependencies = [
  "criterion",
  "deduplicating_array",
@@ -1211,7 +1253,7 @@ dependencies = [
  "icu_provider",
  "icu_testdata",
  "postcard",
- "regex-automata 0.1.10 (git+https://github.com/burntsushi/regex-automata?rev=d8eee1279fac79514f6e366b6976f97ad7b37174)",
+ "regex-automata 0.2.0",
  "serde",
  "serde_json",
  "writeable",
@@ -1245,6 +1287,7 @@ dependencies = [
  "serde_json",
  "tinystr 0.5.0",
  "writeable",
+ "zerovec",
 ]
 
 [[package]]
@@ -1308,6 +1351,7 @@ dependencies = [
  "erased-serde",
  "icu_locid",
  "icu_locid_macros",
+ "icu_provider_adapters",
  "icu_provider_macros",
  "litemap",
  "log",
@@ -1320,6 +1364,16 @@ dependencies = [
  "yoke",
  "zerofrom",
  "zerovec",
+]
+
+[[package]]
+name = "icu_provider_adapters"
+version = "0.5.0"
+dependencies = [
+ "icu_locid",
+ "icu_locid_macros",
+ "icu_provider",
+ "yoke",
 ]
 
 [[package]]
@@ -1338,44 +1392,6 @@ dependencies = [
  "serde",
  "writeable",
  "yoke",
- "zerovec",
-]
-
-[[package]]
-name = "icu_provider_cldr"
-version = "0.5.0"
-dependencies = [
- "dirs",
- "displaydoc",
- "elsa",
- "icu_calendar",
- "icu_datetime",
- "icu_decimal",
- "icu_list",
- "icu_locale_canonicalizer",
- "icu_locid",
- "icu_locid_macros",
- "icu_plurals",
- "icu_properties",
- "icu_provider",
- "icu_provider_uprops",
- "icu_testdata",
- "itertools",
- "json",
- "litemap",
- "log",
- "mktemp",
- "reqwest",
- "serde",
- "serde-aux",
- "serde-tuple-vec-map",
- "serde_json",
- "smallstr",
- "smallvec",
- "tinystr 0.5.0",
- "unzip",
- "urlencoding",
- "writeable",
  "zerovec",
 ]
 
@@ -1409,39 +1425,6 @@ dependencies = [
  "proc-macro2",
  "quote",
  "syn",
-]
-
-[[package]]
-name = "icu_provider_segmenter"
-version = "0.1.0"
-dependencies = [
- "icu_codepointtrie",
- "icu_properties",
- "icu_provider",
- "icu_provider_uprops",
- "icu_segmenter",
- "icu_testdata",
- "serde",
- "toml",
- "zerovec",
-]
-
-[[package]]
-name = "icu_provider_uprops"
-version = "0.5.0"
-dependencies = [
- "displaydoc",
- "eyre",
- "icu_codepointtrie",
- "icu_properties",
- "icu_provider",
- "icu_testdata",
- "icu_uniset",
- "log",
- "serde",
- "tinystr 0.4.11",
- "toml",
- "zerovec",
 ]
 
 [[package]]
@@ -2059,14 +2042,13 @@ dependencies = [
 
 [[package]]
 name = "rand"
-version = "0.8.4"
+version = "0.8.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2e7573632e6454cf6b99d7aac4ccca54be06da05aca2ef7423d22d27d4d4bcd8"
+checksum = "34af8d1a0e25924bc5b7c43c079c942339d8f0a8b57c39049bef581b46327404"
 dependencies = [
  "libc",
  "rand_chacha",
  "rand_core",
- "rand_hc",
 ]
 
 [[package]]
@@ -2096,15 +2078,6 @@ checksum = "964d548f8e7d12e102ef183a0de7e98180c9f8729f555897a857b96e48122d2f"
 dependencies = [
  "num-traits",
  "rand",
-]
-
-[[package]]
-name = "rand_hc"
-version = "0.3.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d51e9f596de227fda2ea6c84607f5558e196eeaf43c986b724ba4fb8fdf497e7"
-dependencies = [
- "rand_core",
 ]
 
 [[package]]
@@ -2149,21 +2122,22 @@ dependencies = [
 
 [[package]]
 name = "redox_syscall"
-version = "0.2.10"
+version = "0.2.12"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8383f39639269cde97d255a32bdb68c047337295414940c68bdd30c2e13203ff"
+checksum = "8ae183fc1b06c149f0c1793e1eb447c8b04bfe46d48e9e48bfb8d2d7ed64ecf0"
 dependencies = [
  "bitflags",
 ]
 
 [[package]]
 name = "redox_users"
-version = "0.4.0"
+version = "0.4.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "528532f3d801c87aec9def2add9ca802fe569e44a544afe633765267840abe64"
+checksum = "7776223e2696f1aa4c6b0170e83212f47296a00424305117d013dfe86fb0fe55"
 dependencies = [
  "getrandom",
  "redox_syscall",
+ "thiserror",
 ]
 
 [[package]]
@@ -2185,8 +2159,9 @@ checksum = "6c230d73fb8d8c1b9c0b3135c5142a8acee3a0558fb8db5cf1cb65f8d7862132"
 
 [[package]]
 name = "regex-automata"
-version = "0.1.10"
-source = "git+https://github.com/burntsushi/regex-automata?rev=d8eee1279fac79514f6e366b6976f97ad7b37174#d8eee1279fac79514f6e366b6976f97ad7b37174"
+version = "0.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e9368763f5a9b804326f3af749e16f9abf378d227bcdee7634b13d8f17793782"
 dependencies = [
  "memchr",
  "regex-syntax",
@@ -2716,6 +2691,7 @@ dependencies = [
  "criterion",
  "displaydoc",
  "postcard",
+ "rand",
  "serde",
  "serde_json",
  "tinystr 0.4.11",

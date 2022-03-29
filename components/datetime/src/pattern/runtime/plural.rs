@@ -14,25 +14,23 @@ use icu_provider::{yoke, zerofrom};
 
 /// A collection of plural variants of a pattern.
 #[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
-#[cfg_attr(
-    feature = "provider_serde",
-    derive(::serde::Serialize, ::serde::Deserialize)
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize))]
+#[cfg_attr(feature = "serialize", derive(serde::Deserialize))]
 pub struct PluralPattern<'data> {
     /// The field that 'variants' are predicated on.
     pivot_field: Week,
 
-    #[cfg_attr(feature = "provider_serde", serde(borrow))]
+    #[cfg_attr(feature = "serialize", serde(borrow))]
     pub(crate) zero: Option<Pattern<'data>>,
-    #[cfg_attr(feature = "provider_serde", serde(borrow))]
+    #[cfg_attr(feature = "serialize", serde(borrow))]
     pub(crate) one: Option<Pattern<'data>>,
-    #[cfg_attr(feature = "provider_serde", serde(borrow))]
+    #[cfg_attr(feature = "serialize", serde(borrow))]
     pub(crate) two: Option<Pattern<'data>>,
-    #[cfg_attr(feature = "provider_serde", serde(borrow))]
+    #[cfg_attr(feature = "serialize", serde(borrow))]
     pub(crate) few: Option<Pattern<'data>>,
-    #[cfg_attr(feature = "provider_serde", serde(borrow))]
+    #[cfg_attr(feature = "serialize", serde(borrow))]
     pub(crate) many: Option<Pattern<'data>>,
-    #[cfg_attr(feature = "provider_serde", serde(borrow))]
+    #[cfg_attr(feature = "serialize", serde(borrow))]
     pub(crate) other: Pattern<'data>,
 }
 
@@ -152,9 +150,11 @@ impl<'data> PatternPlurals<'data> {
             Self::SinglePattern(pattern) => Ok(pattern),
             Self::MultipleVariants(plural_pattern) => {
                 let week_number = match plural_pattern.pivot_field() {
-                    Week::WeekOfMonth => loc_datetime.week_of_month().0,
+                    Week::WeekOfMonth => loc_datetime.week_of_month()?.0,
                     Week::WeekOfYear => loc_datetime.week_of_year()?.0,
                 };
+                #[allow(clippy::expect_used)]
+                // TODO(#1668) Clippy exceptions need docs or fixing.
                 let category = ordinal_rules
                     .expect("ordinal_rules must be set with PatternPlurals::MultipleVariants")
                     .select(week_number);
@@ -192,6 +192,7 @@ impl<'data> PatternPlurals<'data> {
     pub fn expect_pattern(self, msg: &str) -> Pattern<'data> {
         match self {
             Self::SinglePattern(pattern) => pattern,
+            #[allow(clippy::panic)] // TODO(#1668) Clippy exceptions need docs or fixing.
             _ => panic!("expect_pattern failed: {}", msg),
         }
     }

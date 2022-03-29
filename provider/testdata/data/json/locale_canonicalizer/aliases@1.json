@@ -2,10 +2,6 @@
   "language": [],
   "language_variants": [
     [
-      "und-hepburn-heploc",
-      "und-alalc97"
-    ],
-    [
       "aa-saaho",
       "ssy"
     ],
@@ -28,6 +24,10 @@
     [
       "no-nynorsk",
       "nn"
+    ],
+    [
+      "und-hepburn-heploc",
+      "und-alalc97"
     ],
     [
       "zh-guoyu",

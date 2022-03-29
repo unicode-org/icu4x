@@ -38,10 +38,10 @@
 //! ICU4X components share a set of common features that control whether core pieces of
 //! functionality are compiled. These features are:
 //!
-//! - `provider_serde`: Whether to include Serde Serialize/Deserialize implementations for
-//!   ICU4X locale data structs, such as [`SymbolsV1`]. (On by default)
-//! - `serde`: Whether to include Serde Serialize/Deserialize implementations for core libary
-//!   types, such as [`Locale`].
+//! - `serialize`: Whether to include Serde Deserialize implementations for
+//!   ICU4X locale data structs, such as [`SymbolsV1`], and Serialize/Deserialize implementations
+//!   for core libary types, such as [`Locale`] (On by default)
+//! - `datagen`: Whether to include Serde Serialize and other data generation traits for ICU4X locale data structs.
 //! - `bench`: Whether to enable exhaustive benchmarks. This can be enabled on individual crates
 //!   when running `cargo bench`.
 //! - `experimental`: Whether to enable experimental preview features. Modules enabled with
@@ -83,7 +83,17 @@
 //! [`Locale`]: crate::locid::Locale
 //! [`SymbolsV1`]: crate::decimal::provider::DecimalSymbolsV1
 
+// https://github.com/unicode-org/icu4x/blob/main/docs/process/boilerplate.md#library-annotations
 #![cfg_attr(not(any(test, feature = "std")), no_std)]
+#![cfg_attr(
+    not(test),
+    deny(
+        clippy::indexing_slicing,
+        clippy::unwrap_used,
+        clippy::expect_used,
+        clippy::panic
+    )
+)]
 
 pub mod calendar {
     //! Contains the core types used by ICU4X for dealing
@@ -474,4 +484,50 @@ pub mod properties {
     //! [`CodePointTrie`]: ../../icu_codepointtrie/codepointtrie/struct.CodePointTrie.html
     //! [`maps`]: maps
     pub use icu_properties::*;
+}
+
+pub mod list {
+    //! List formatting
+    //!
+    //! This API provides the [`ListFormatter`] which renders sequences of [`Writeable`](
+    //! writeable::Writeable)s as lists in a locale-sensitive way.
+    //!
+    //! # Examples
+    //!
+    //! ## Format a list of strings in Spanish
+    //!
+    //! ```
+    //! use icu_list::{ListFormatter, ListStyle};
+    //! use icu_locid::Locale;
+    //! use icu_locid_macros::langid;
+    //! use writeable::Writeable;
+    //!
+    //! let locale: Locale = langid!("es").into();
+    //! let provider = icu_testdata::get_provider();
+    //! let list_formatter = ListFormatter::try_new_and(locale, &provider, ListStyle::Wide)
+    //!     .expect("Data should load successfully");
+    //!
+    //! assert_eq!(
+    //!     list_formatter.format(["España", "Suiza"].iter())
+    //!         .write_to_string(),
+    //!     "España y Suiza"
+    //! );
+    //!
+    //! // The Spanish 'y' sometimes becomes an 'e':
+    //! assert_eq!(
+    //!     list_formatter.format(["España", "Suiza", "Italia"].iter())
+    //!         .write_to_string(),
+    //!     "España, Suiza e Italia"
+    //! );
+    //!
+    //! // We can use any Writeables as inputs:
+    //! assert_eq!(
+    //!     list_formatter.format(1..=10).write_to_string(),
+    //!     "1, 2, 3, 4, 5, 6, 7, 8, 9 y 10"
+    //! );
+    //!```
+    //!
+    //! [`ListFormatter`]: ListFormatter
+
+    pub use icu_list::*;
 }

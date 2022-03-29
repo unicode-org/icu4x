@@ -80,12 +80,12 @@ use crate::{
 use alloc::vec::Vec;
 
 use super::preferences;
-#[cfg(feature = "serde")]
+#[cfg(feature = "serialize")]
 use serde::{Deserialize, Serialize};
 
 /// See the [module-level](./index.html) docs for more information.
 #[derive(Debug, Clone, PartialEq, Default, Copy)]
-#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "serialize", derive(Serialize, Deserialize))]
 pub struct Bag {
     /// Include the era, such as "AD" or "CE".
     pub era: Option<Text>,
@@ -93,9 +93,7 @@ pub struct Bag {
     pub year: Option<Year>,
     /// Include the month, such as "April" or "Apr".
     pub month: Option<Month>,
-    /// Include the week, such as "1st" or "1".
-    #[doc(hidden)]
-    // TODO(#488): make visible once fully supported.
+    /// Include the week number, such as "51st" or "51" for week 51.
     pub week: Option<Week>,
     /// Include the day, such as "07" or "7".
     pub day: Option<Numeric>,
@@ -319,7 +317,13 @@ impl Bag {
         }
 
         debug_assert!(
-            fields.windows(2).all(|f| f[0] < f[1]),
+            fields.windows(2).all(|f| {
+                #[allow(clippy::indexing_slicing)]
+                // TODO(#1668) Clippy exceptions need docs or fixing.
+                // Change to code redired as clippy on statements arex experimental
+                let comp = f[0] < f[1];
+                comp
+            }),
             "The fields are sorted and unique."
         );
 
@@ -331,7 +335,7 @@ impl Bag {
 /// and second.
 #[derive(Debug, Clone, Copy, PartialEq)]
 #[cfg_attr(
-    feature = "serde",
+    feature = "serialize",
     derive(Serialize, Deserialize),
     serde(rename_all = "kebab-case")
 )]
@@ -345,7 +349,7 @@ pub enum Numeric {
 /// A text component for the `components::`[`Bag`]. It is used for the era and weekday.
 #[derive(Debug, Clone, Copy, PartialEq)]
 #[cfg_attr(
-    feature = "serde",
+    feature = "serialize",
     derive(Serialize, Deserialize),
     serde(rename_all = "kebab-case")
 )]
@@ -361,7 +365,7 @@ pub enum Text {
 /// Options for displaying a Year for the `components::`[`Bag`].
 #[derive(Debug, Clone, Copy, PartialEq)]
 #[cfg_attr(
-    feature = "serde",
+    feature = "serialize",
     derive(Serialize, Deserialize),
     serde(rename_all = "kebab-case")
 )]
@@ -381,7 +385,7 @@ pub enum Year {
 /// Options for displaying a Month for the `components::`[`Bag`].
 #[derive(Debug, Clone, Copy, PartialEq)]
 #[cfg_attr(
-    feature = "serde",
+    feature = "serialize",
     derive(Serialize, Deserialize),
     serde(rename_all = "kebab-case")
 )]
@@ -390,7 +394,7 @@ pub enum Month {
     Numeric,
     /// The two-digit value of the month, such as "04".
     TwoDigit,
-    /// The two-digit value of the month, such as "April".
+    /// The long value of the month, such as "April".
     Long,
     /// The short value of the month, such as "Apr".
     Short,
@@ -400,22 +404,22 @@ pub enum Month {
 
 // Each enum variant is documented with the UTS 35 field information from:
 // https://unicode.org/reports/tr35/tr35-dates.html#Date_Field_Symbol_Table
-//
-/// Options for displaying the current week for the `components::`[`Bag`].
-#[doc(hidden)]
-// TODO(#488): make visible once fully supported.
+
+/// Options for displaying the current week number for the `components::`[`Bag`].
+///
+/// Week numbers are relative to either a month or year, e.g. 'week 3 of January' or 'week 40 of 2000'.
 #[derive(Debug, Clone, Copy, PartialEq)]
 #[cfg_attr(
-    feature = "serde",
+    feature = "serialize",
     derive(Serialize, Deserialize),
     serde(rename_all = "kebab-case")
 )]
 pub enum Week {
-    /// The week of the month, such as "3".
+    /// The week of the month, such as the "3" in "week 3 of January".
     WeekOfMonth,
-    /// The numeric value of the week of the year, such as "8".
+    /// The numeric value of the week of the year, such as the "8" in "week 8 of 2000".
     NumericWeekOfYear,
-    /// The two-digit value of the week of the year, such as "08".
+    /// The two-digit value of the week of the year, such as the "08" in "2000-W08".
     TwoDigitWeekOfYear,
 }
 
@@ -425,7 +429,7 @@ pub enum Week {
 /// options.
 #[derive(Debug, Clone, Copy, PartialEq)]
 #[cfg_attr(
-    feature = "serde",
+    feature = "serialize",
     derive(Serialize, Deserialize),
     serde(rename_all = "kebab-case")
 )]

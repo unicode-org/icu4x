@@ -4,7 +4,7 @@
 
 use crate::parser::errors::ParserError;
 use core::str::FromStr;
-use tinystr::TinyStr4;
+use tinystr::TinyAsciiStr;
 
 /// A key used in a list of [`Fields`](super::Fields).
 ///
@@ -23,7 +23,7 @@ use tinystr::TinyStr4;
 /// assert_eq!(key1.as_str(), "k0");
 /// ```
 #[derive(Debug, PartialEq, Eq, Clone, Hash, PartialOrd, Ord, Copy)]
-pub struct Key(TinyStr4);
+pub struct Key(TinyAsciiStr<KEY_LENGTH>);
 
 const KEY_LENGTH: usize = 2;
 
@@ -42,10 +42,11 @@ impl Key {
     /// assert_eq!(key, "i0");
     /// ```
     pub fn from_bytes(key: &[u8]) -> Result<Self, ParserError> {
+        #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
         if key.len() != KEY_LENGTH || !key[0].is_ascii_alphabetic() || !key[1].is_ascii_digit() {
             return Err(ParserError::InvalidExtension);
         }
-        let tkey = TinyStr4::from_bytes(key).map_err(|_| ParserError::InvalidExtension)?;
+        let tkey = TinyAsciiStr::from_bytes(key).map_err(|_| ParserError::InvalidExtension)?;
         Ok(Self(tkey.to_ascii_lowercase()))
     }
 

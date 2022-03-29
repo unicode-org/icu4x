@@ -20,6 +20,7 @@
   "MMM": "LLL",
   "MMMd": "dd MMM",
   "MMMdE": "E, dd MMM",
+  "MMMMW": "'week' W 'of' MMMM",
   "MMMMd": "d MMMM",
   "d": "d",
   "dE": "E d",

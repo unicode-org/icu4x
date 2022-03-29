@@ -349,6 +349,7 @@ unsafe impl<T: VarULE + ?Sized + 'static> VarULE for VarZeroSlice<T> {
 impl<T: VarULE + ?Sized> Index<usize> for VarZeroSlice<T> {
     type Output = T;
     fn index(&self, index: usize) -> &Self::Output {
+        #[allow(clippy::expect_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
         self.get(index).expect("Indexing VarZeroVec out of bounds")
     }
 }

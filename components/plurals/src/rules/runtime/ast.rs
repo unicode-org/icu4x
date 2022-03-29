@@ -3,12 +3,13 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 #![allow(missing_docs)]
+#![allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
 
 use crate::rules::reference;
 use core::{convert::TryInto, fmt, str::FromStr};
 use icu_provider::{yoke, zerofrom};
 use zerovec::{
-    ule::{AsULE, PairULE, ZeroVecError, ULE},
+    ule::{tuple::Tuple2ULE, AsULE, ZeroVecError, ULE},
     {VarZeroVec, ZeroVec},
 };
 
@@ -215,6 +216,7 @@ fn get_modulus(input: u32) -> Option<reference::ast::Value> {
 
 impl From<&reference::ast::Value> for u32 {
     fn from(v: &reference::ast::Value) -> Self {
+        #[allow(clippy::expect_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
         v.0.try_into().expect("Failed to convert u64 into u32")
     }
 }
@@ -330,7 +332,7 @@ impl AsULE for AndOrPolarityOperand {
     }
 }
 
-type RangeOrValueULE = PairULE<<u32 as AsULE>::ULE, <u32 as AsULE>::ULE>;
+type RangeOrValueULE = Tuple2ULE<<u32 as AsULE>::ULE, <u32 as AsULE>::ULE>;
 
 impl AsULE for RangeOrValue {
     type ULE = RangeOrValueULE;
@@ -338,8 +340,8 @@ impl AsULE for RangeOrValue {
     #[inline]
     fn to_unaligned(self) -> Self::ULE {
         match self {
-            Self::Range(start, end) => PairULE(start.to_unaligned(), end.to_unaligned()),
-            Self::Value(idx) => PairULE(idx.to_unaligned(), idx.to_unaligned()),
+            Self::Range(start, end) => Tuple2ULE(start.to_unaligned(), end.to_unaligned()),
+            Self::Value(idx) => Tuple2ULE(idx.to_unaligned(), idx.to_unaligned()),
         }
     }
 
@@ -355,7 +357,7 @@ impl AsULE for RangeOrValue {
     }
 }
 
-#[cfg(feature = "provider_serde")]
+#[cfg(feature = "serialize")]
 mod serde {
     use super::*;
     use ::serde::{de, ser, Deserialize, Deserializer, Serialize};

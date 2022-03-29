@@ -50,8 +50,18 @@
 //! [`ICU4X`]: ../icu/index.html
 //! [`Unicode Extensions`]: extensions
 
+// https://github.com/unicode-org/icu4x/blob/main/docs/process/boilerplate.md#library-annotations
+#![cfg_attr(not(any(test, feature = "std")), no_std)]
+#![cfg_attr(
+    not(test),
+    deny(
+        clippy::indexing_slicing,
+        clippy::unwrap_used,
+        clippy::expect_used,
+        clippy::panic
+    )
+)]
 #![warn(missing_docs)]
-#![cfg_attr(not(any(feature = "std", test)), no_std)]
 
 extern crate alloc;
 

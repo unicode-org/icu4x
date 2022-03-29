@@ -167,6 +167,8 @@ impl FixedDecimal {
             if i != 0 || d != 0 {
                 i += 1;
                 match X.checked_sub(i) {
+                    #[allow(clippy::indexing_slicing)]
+                    // TODO(#1668) Clippy exceptions need docs or fixing.
                     Some(v) => mem[v] = d,
                     // This error should be obsolete after X is made generic
                     None => return Err(Error::Limit),
@@ -182,6 +184,8 @@ impl FixedDecimal {
             result.magnitude = magnitude as i16;
             result.upper_magnitude = result.magnitude;
             debug_assert!(i <= X);
+            #[allow(clippy::indexing_slicing)]
+            // TODO(#1668) Clippy exceptions need docs or fixing.
             result.digits.extend_from_slice(&mem[(X - i)..]);
         }
         #[cfg(debug_assertions)]
@@ -601,6 +605,7 @@ impl FixedDecimal {
         // digits invariants:
         let max_len = (self.magnitude as i32 - self.lower_magnitude as i32 + 1) as usize;
         debug_assert!(self.digits.len() <= max_len, "{:?}", self);
+        #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
         if !self.digits.is_empty() {
             debug_assert_ne!(self.digits[0], 0, "Starts with a zero {:?}", self);
             debug_assert_ne!(
@@ -680,7 +685,9 @@ impl FromStr for FixedDecimal {
             return Err(Error::Syntax);
         }
         let input_str = input_str.as_bytes();
+        #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
         let is_negative = input_str[0] == b'-';
+        #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
         let no_sign_str = if is_negative {
             &input_str[1..]
         } else {
@@ -738,6 +745,7 @@ impl FromStr for FixedDecimal {
         // The string without the exponent (or sign)
         // We do the bulk of the calculation on this string,
         // and extract the exponent at the end
+        #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
         let no_exponent_str = &no_sign_str[..exponent_index];
 
         // If there was no dot, truncate the dot index
@@ -815,6 +823,7 @@ impl FromStr for FixedDecimal {
         }
 
         // Constructing DecimalFixed.digits
+        #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
         let v: SmallVec<[u8; 8]> = no_exponent_str[leftmost_digit..rightmost_digit_end]
             .iter()
             .filter(|c| **c != b'.')
@@ -829,6 +838,8 @@ impl FromStr for FixedDecimal {
         if has_exponent {
             let mut pow = 0;
             let mut pos_neg = 1;
+            #[allow(clippy::indexing_slicing)]
+            // TODO(#1668) Clippy exceptions need docs or fixing.
             for digit in &no_sign_str[exponent_index + 1..] {
                 if *digit == b'-' {
                     pos_neg = -1;
@@ -882,7 +893,7 @@ pub enum DoublePrecision {
     ///
     /// This results in a FixedDecimal having enough digits to recover the original floating point
     /// value, with no trailing zeros.
-    Maximum,
+    Floating,
 }
 
 /// Specifies how numbers should be rounded
@@ -901,27 +912,44 @@ pub enum RoundingMode {
 
 #[cfg(feature = "ryu")]
 impl FixedDecimal {
-    /// Construct a [`FixedDecimal`] from an f64. This uses `ryu` and
-    /// goes through an intermediate string representation, so is not
-    /// fully efficient. See [icu4x#166](https://github.com/unicode-org/icu4x/issues/166) for
-    /// more details.
+    /// Construct a [`FixedDecimal`] from an f64.
+    ///
+    /// Since f64 values do not carry a notion of their precision, the second argument to this
+    /// function specifies the type of precision associated with the f64. For more information,
+    /// see [`DoublePrecision`].
+    ///
+    /// This function uses `ryu`, which is an efficient double-to-string algorithm, but other
+    /// implementations may yield higher performance; for more details, see
+    /// [icu4x#166](https://github.com/unicode-org/icu4x/issues/166).
     ///
     /// This function can be made available with the `"ryu"` feature.
     ///
     /// ```rust
-    /// use fixed_decimal::{DoublePrecision, FixedDecimal};
+    /// use fixed_decimal::{DoublePrecision, FixedDecimal, RoundingMode};
     /// use writeable::Writeable;
     ///
-    /// let decimal = FixedDecimal::new_from_f64(0.012345678, DoublePrecision::Maximum).unwrap();
+    /// let decimal = FixedDecimal::try_from_f64(
+    ///     -5.1,
+    ///     DoublePrecision::Magnitude(-2, RoundingMode::Unnecessary)
+    /// )
+    /// .expect("Finite quantity with limited precision");
+    /// assert_eq!(decimal.write_to_string(), "-5.10");
+    ///
+    /// let decimal = FixedDecimal::try_from_f64(
+    ///     0.012345678,
+    ///     DoublePrecision::Floating
+    /// )
+    /// .expect("Finite quantity");
     /// assert_eq!(decimal.write_to_string(), "0.012345678");
     ///
-    /// let decimal = FixedDecimal::new_from_f64(-123456.78, DoublePrecision::Maximum).unwrap();
-    /// assert_eq!(decimal.write_to_string(), "-123456.78");
-    ///
-    /// let decimal = FixedDecimal::new_from_f64(12345678000., DoublePrecision::Maximum).unwrap();
+    /// let decimal = FixedDecimal::try_from_f64(
+    ///     12345678000.,
+    ///     DoublePrecision::Integer
+    /// )
+    /// .expect("Finite, integer-valued quantity");
     /// assert_eq!(decimal.write_to_string(), "12345678000");
     /// ```
-    pub fn new_from_f64(float: f64, precision: DoublePrecision) -> Result<Self, Error> {
+    pub fn try_from_f64(float: f64, precision: DoublePrecision) -> Result<Self, Error> {
         let mut decimal = Self::new_from_f64_raw(float)?;
         let n_digits = decimal.digits.len();
         // magnitude of the lowest digit in self.digits
@@ -932,7 +960,7 @@ impl FixedDecimal {
             decimal.lower_magnitude = 0;
         }
         match precision {
-            DoublePrecision::Maximum => (),
+            DoublePrecision::Floating => (),
             DoublePrecision::Integer => {
                 if lowest_magnitude < 0 {
                     return Err(Error::Limit);
@@ -989,6 +1017,7 @@ impl FixedDecimal {
         decimal.check_invariants();
         Ok(decimal)
     }
+
     /// Internal function for parsing directly from floats using ryū
     fn new_from_f64_raw(float: f64) -> Result<Self, Error> {
         if !float.is_finite() {
@@ -1058,13 +1087,16 @@ impl FixedDecimal {
 
         // Do we need to round our significant digits?
         // TODO(#1177): This heuristic is insufficient for most rounding modes.
+        #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
         let round = self.digits[cutoff] >= 5;
 
         self.digits.truncate(cutoff);
 
         if round {
             // how much to truncate by after rounding
+            #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
             let mut round_truncate = cutoff;
+            #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
             for digit in self.digits[..cutoff].iter_mut().rev() {
                 if *digit == 9 {
                     // Truncate this digit, the next digit can be rounded
@@ -1165,12 +1197,12 @@ fn test_float() {
     let cases = [
         TestCase {
             input: 1.234567,
-            precision: DoublePrecision::Maximum,
+            precision: DoublePrecision::Floating,
             expected: "1.234567",
         },
         TestCase {
             input: 888999.,
-            precision: DoublePrecision::Maximum,
+            precision: DoublePrecision::Floating,
             expected: "888999",
         },
         // HalfExpand tests
@@ -1338,7 +1370,7 @@ fn test_float() {
     ];
 
     for case in &cases {
-        let dec = FixedDecimal::new_from_f64(case.input, case.precision).unwrap();
+        let dec = FixedDecimal::try_from_f64(case.input, case.precision).unwrap();
         writeable::assert_writeable_eq!(dec, case.expected, "{:?}", case);
     }
 }

@@ -10,10 +10,7 @@ pub mod week_of {
 
     /// Information about how a given calendar assigns weeks to a year or month.
     #[derive(Clone, Copy, Debug)]
-    #[cfg_attr(
-        feature = "provider_serde",
-        derive(serde::Serialize, serde::Deserialize)
-    )]
+    #[cfg_attr(feature = "serialize", derive(serde::Serialize, serde::Deserialize))]
     pub struct CalendarInfo {
         /// The first day of a week.
         pub first_weekday: IsoWeekday,
@@ -182,6 +179,32 @@ pub mod week_of {
                 unit: RelativeUnit::Next,
             }),
         }
+    }
+
+    /// Computes & returns the week of given month or year accoding to a calendar with min_week_days = 1.
+    ///
+    /// # Arguments
+    ///  - first_weekday: The first day of a week.
+    ///  - day: 1-based day of the month or year.
+    ///  - week_day: The weekday of `day`.
+    pub fn simple_week_of(first_weekday: IsoWeekday, day: u16, week_day: IsoWeekday) -> u16 {
+        let calendar = CalendarInfo {
+            first_weekday,
+            min_week_days: 1,
+        };
+
+        #[allow(clippy::expect_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
+        week_of(
+            &calendar,
+            // The duration of the current and previous unit does not influence the result if min_week_days = 1
+            // so we only need to use a valid value.
+            MIN_UNIT_DAYS,
+            MIN_UNIT_DAYS,
+            day,
+            week_day,
+        )
+        .expect("week_of should can't fail with MIN_UNIT_DAYS")
+        .week
     }
 
     #[cfg(test)]
@@ -424,5 +447,30 @@ pub mod week_of {
 
             Ok(())
         }
+    }
+
+    #[test]
+    fn test_simple_week_of() {
+        // The 1st is a Monday and the week starts on Mondays.
+        assert_eq!(
+            simple_week_of(IsoWeekday::Monday, 2, IsoWeekday::Tuesday),
+            1
+        );
+        assert_eq!(simple_week_of(IsoWeekday::Monday, 7, IsoWeekday::Sunday), 1);
+        assert_eq!(simple_week_of(IsoWeekday::Monday, 8, IsoWeekday::Monday), 2);
+
+        // The 1st is a Wednesday and the week starts on Tuesdays.
+        assert_eq!(
+            simple_week_of(IsoWeekday::Tuesday, 1, IsoWeekday::Wednesday),
+            1
+        );
+        assert_eq!(
+            simple_week_of(IsoWeekday::Tuesday, 6, IsoWeekday::Monday),
+            1
+        );
+        assert_eq!(
+            simple_week_of(IsoWeekday::Tuesday, 7, IsoWeekday::Tuesday),
+            2
+        );
     }
 }

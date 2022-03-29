@@ -28,6 +28,7 @@ impl<'w> BlobExporter<'w> {
 }
 
 impl DataExporter<SerializeMarker> for BlobExporter<'_> {
+    #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
     fn put_payload(
         &self,
         key: ResourceKey,
@@ -47,6 +48,7 @@ impl DataExporter<SerializeMarker> for BlobExporter<'_> {
         Ok(())
     }
 
+    #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
     fn close(&mut self) -> Result<(), DataError> {
         let zm = self
             .resources

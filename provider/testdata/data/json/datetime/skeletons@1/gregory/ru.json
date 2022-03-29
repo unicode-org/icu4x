@@ -21,6 +21,7 @@
   "MMM": "LLL",
   "MMMd": "d MMM",
   "MMMdE": "ccc, d MMM",
+  "MMMMW": "W-я неделя MMMM",
   "MMMMd": "d MMMM",
   "d": "d",
   "dE": "ccc, d",

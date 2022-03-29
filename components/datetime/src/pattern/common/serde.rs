@@ -3,8 +3,11 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::pattern::{PatternItem, TimeGranularity};
-use ::serde::{de, ser, Deserialize, Deserializer, Serialize};
-use alloc::{fmt, format, string::ToString, vec::Vec};
+use ::serde::{de, Deserialize, Deserializer};
+use alloc::{fmt, format, vec::Vec};
+
+#[cfg(feature = "datagen")]
+use ::serde::{ser, Serialize};
 
 mod reference {
     use super::*;
@@ -12,7 +15,8 @@ mod reference {
 
     /// A helper struct that is shaped exactly like `runtime::Pattern`
     /// and is used to aid in quick deserialization.
-    #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+    #[derive(Debug, Clone, PartialEq, Deserialize)]
+    #[cfg_attr(feature = "datagen", derive(Serialize))]
     struct PatternForSerde {
         pub items: Vec<PatternItem>,
         pub(crate) time_granularity: TimeGranularity,
@@ -74,6 +78,7 @@ mod reference {
         }
     }
 
+    #[cfg(feature = "datagen")]
     impl Serialize for Pattern {
         fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
         where
@@ -88,7 +93,7 @@ mod reference {
         }
     }
 
-    #[cfg(test)]
+    #[cfg(all(test, feature = "datagen"))]
     mod test {
         use super::*;
 
@@ -115,12 +120,12 @@ mod reference {
 mod runtime {
     use super::*;
     use crate::pattern::{runtime::Pattern, PatternItem};
-    use alloc::string::ToString;
     use zerovec::ZeroVec;
 
     /// A helper struct that is shaped exactly like `runtime::Pattern`
     /// and is used to aid in quick deserialization.
-    #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+    #[derive(Debug, Clone, PartialEq, Deserialize)]
+    #[cfg_attr(feature = "datagen", derive(Serialize))]
     struct PatternForSerde<'data> {
         #[serde(borrow)]
         pub items: ZeroVec<'data, PatternItem>,
@@ -181,6 +186,7 @@ mod runtime {
         }
     }
 
+    #[cfg(feature = "datagen")]
     impl Serialize for Pattern<'_> {
         fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
         where
@@ -195,7 +201,7 @@ mod runtime {
         }
     }
 
-    #[cfg(test)]
+    #[cfg(all(test, feature = "datagen"))]
     mod test {
         use super::*;
 
@@ -223,12 +229,12 @@ mod runtime {
         // Postcard can't handle enums not discriminated at compilation time.
         use super::*;
         use crate::pattern::runtime::{PatternPlurals, PluralPattern};
-        use alloc::string::ToString;
         use core::fmt;
 
         /// A helper struct that is shaped exactly like `runtime::PatternPlurals`
         /// and is used to aid in quick deserialization.
-        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+        #[derive(Debug, Clone, PartialEq, Deserialize)]
+        #[cfg_attr(feature = "datagen", derive(Serialize))]
         #[allow(clippy::large_enum_variant)]
         enum PatternPluralsForSerde<'data> {
             #[serde(borrow)]
@@ -301,6 +307,7 @@ mod runtime {
             }
         }
 
+        #[cfg(feature = "datagen")]
         impl Serialize for PatternPlurals<'_> {
             fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
             where
@@ -324,7 +331,7 @@ mod runtime {
             }
         }
 
-        #[cfg(test)]
+        #[cfg(all(test, feature = "datagen"))]
         mod test {
             use super::*;
             use icu_plurals::PluralCategory;
@@ -396,6 +403,8 @@ mod runtime {
                 E: de::Error,
             {
                 // Parse a string into a list of fields.
+                #[allow(clippy::expect_used)]
+                // TODO(#1668) Clippy exceptions need docs or fixing.
                 let pattern = pattern_string.parse().expect("Failed to parse pattern");
                 Ok(GenericPattern::from(&pattern))
             }
@@ -415,6 +424,7 @@ mod runtime {
             }
         }
 
+        #[cfg(feature = "datagen")]
         impl Serialize for GenericPattern<'_> {
             fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
             where
@@ -430,7 +440,7 @@ mod runtime {
             }
         }
 
-        #[cfg(test)]
+        #[cfg(all(test, feature = "datagen"))]
         mod test {
             use super::*;
 

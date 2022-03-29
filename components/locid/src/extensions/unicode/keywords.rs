@@ -167,6 +167,8 @@ impl Keywords {
     {
         if let Ok(idx) = self.binary_search_by_key(key.borrow(), |(key, _)| *key) {
             if let Some(ref mut data) = self.0 {
+                #[allow(clippy::indexing_slicing)]
+                // TODO(#1668) Clippy exceptions need docs or fixing.i
                 Some(&mut data[idx].1)
             } else {
                 None
@@ -174,6 +176,17 @@ impl Keywords {
         } else {
             None
         }
+    }
+
+    pub(crate) fn for_each_subtag_str<E, F>(&self, f: &mut F) -> Result<(), E>
+    where
+        F: FnMut(&str) -> Result<(), E>,
+    {
+        for (k, v) in self.iter() {
+            f(k.as_str())?;
+            v.for_each_subtag_str(f)?;
+        }
+        Ok(())
     }
 }
 

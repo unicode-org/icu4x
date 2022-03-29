@@ -1,0 +1,43 @@
+# This file is part of ICU4X. For terms of use, please see the file
+# called LICENSE at the top level of the ICU4X source tree
+# (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
+
+[package]
+name = "icu_casemapping"
+description = "Unicode case mapping algorithms"
+version = "0.1.0"
+authors = ["The ICU4X Project Developers"]
+edition = "2018"
+readme = "README.md"
+repository = "https://github.com/unicode-org/icu4x"
+license-file = "LICENSE"
+# Keep this in sync with other crates unless there are exceptions
+include = [
+    "src/**/*",
+    "examples/**/*",
+    "benches/**/*",
+    "tests/**/*",
+    "Cargo.toml",
+    "LICENSE",
+    "README.md"
+]
+
+[dependencies]
+displaydoc = { version = "0.2.3", default-features = false }
+icu_codepointtrie = { version = "0.3", path = "../../utils/codepointtrie", features = ["serde"] }
+icu_locid = { version = "0.5", path = "../../components/locid" }
+icu_provider = { version = "0.5", path = "../../provider/core", features = ["macros"] }
+icu_uniset = { version = "0.4", path = "../../utils/uniset" }
+yoke = { path = "../../utils/yoke", version = "0.4", features = ["derive"] }
+zerovec = { version = "0.6", path = "../../utils/zerovec", features = ["serde", "yoke"] }
+serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }
+
+[lib]
+path = "src/lib.rs"
+bench = false  # This option is required for Benchmark CI
+
+[features]
+std = ["icu_provider/std"]
+default = ["provider_serde"]
+provider_serde = ["serde"]
+provider_transform_internals = ["std"]

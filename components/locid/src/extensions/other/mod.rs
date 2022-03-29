@@ -58,6 +58,10 @@ pub struct Other((u8, Box<[Key]>));
 impl Other {
     /// A constructor which takes a pre-sorted list of [`Key`].
     ///
+    /// # Panics
+    ///
+    /// Panics if `ext` is not ASCII alphabetic.
+    ///
     /// # Examples
     ///
     /// ```
@@ -72,7 +76,7 @@ impl Other {
     /// assert_eq!(&other.to_string(), "-a-foo-bar");
     /// ```
     pub fn from_vec_unchecked(ext: u8, input: Vec<Key>) -> Self {
-        debug_assert!(ext.is_ascii_alphabetic());
+        assert!(ext.is_ascii_alphabetic());
         Self((ext, input.into_boxed_slice()))
     }
 
@@ -99,6 +103,18 @@ impl Other {
     #[allow(missing_docs)] // TODO(#1028) - Add missing docs.
     pub fn get_ext(&self) -> char {
         self.0 .0 as char
+    }
+
+    pub(crate) fn for_each_subtag_str<E, F>(&self, f: &mut F) -> Result<(), E>
+    where
+        F: FnMut(&str) -> Result<(), E>,
+    {
+        let (ext, keys) = &self.0;
+        debug_assert!(ext.is_ascii_alphabetic());
+        // Safety: ext is ascii_alphabetic, so it is valid UTF-8
+        let ext_str = unsafe { core::str::from_utf8_unchecked(core::slice::from_ref(ext)) };
+        f(ext_str)?;
+        keys.iter().map(|t| t.as_str()).try_for_each(f)
     }
 }
 

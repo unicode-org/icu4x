@@ -44,6 +44,7 @@ icu = { path = "../icu", default-features = false }
 icu_benchmark_macros = { version = "0.5", path = "../../tools/benchmark/macros" }
 icu_locid_macros = { version = "0.5", path = "../locid/macros" }
 icu_testdata = { version = "0.5", path = "../../provider/testdata", features = ["static"] }
+icu_provider_adapters = { path = "../../provider/adapters" }
 rand = "0.8"
 rand_pcg = "0.3"
 rand_distr = "0.4"
@@ -51,9 +52,10 @@ getrandom = { version = "0.2", features = ["js"] }
 
 [features]
 std = ["icu_locid/std", "icu_provider/std", "fixed_decimal/std"]
-default = ["provider_serde"]
+default = ["serialize"]
 bench = []
-provider_serde = ["serde"]
+serialize = ["serde"]
+datagen = ["serialize"]
 
 [[bench]]
 name = "fixed_decimal_format"
@@ -61,4 +63,4 @@ harness = false
 
 [[example]]
 name = "code_line_diff"
-required-features = ["provider_serde"]
+required-features = ["serialize"]

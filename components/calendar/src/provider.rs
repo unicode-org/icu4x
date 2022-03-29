@@ -6,6 +6,8 @@
 //!
 //! Read more about data providers: [`icu_provider`]
 
+#![allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
+
 use core::str::FromStr;
 use icu_provider::{yoke, zerofrom};
 use tinystr::TinyStr16;
@@ -18,10 +20,8 @@ use zerovec::ZeroVec;
 #[derive(
     Copy, Clone, PartialEq, PartialOrd, Eq, Ord, Hash, Debug, yoke::Yokeable, zerofrom::ZeroFrom,
 )]
-#[cfg_attr(
-    feature = "provider_serde",
-    derive(serde::Serialize, serde::Deserialize)
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize))]
+#[cfg_attr(feature = "serialize", derive(serde::Deserialize))]
 pub struct EraStartDate {
     pub year: i32,
     pub month: u8,
@@ -30,14 +30,12 @@ pub struct EraStartDate {
 
 #[icu_provider::data_struct(JapaneseErasV1Marker = "calendar/japanese@1")]
 #[derive(Debug, PartialEq, Clone, Default)]
-#[cfg_attr(
-    feature = "provider_serde",
-    derive(serde::Serialize, serde::Deserialize)
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize))]
+#[cfg_attr(feature = "serialize", derive(serde::Deserialize))]
 pub struct JapaneseErasV1<'data> {
-    #[cfg_attr(feature = "provider_serde", serde(borrow))]
+    #[cfg_attr(feature = "serialize", serde(borrow))]
     pub dates_to_historical_eras: ZeroVec<'data, (EraStartDate, TinyStr16)>,
-    #[cfg_attr(feature = "provider_serde", serde(borrow))]
+    #[cfg_attr(feature = "serialize", serde(borrow))]
     pub dates_to_eras: ZeroVec<'data, (EraStartDate, TinyStr16)>,
 }
 
@@ -45,7 +43,9 @@ impl FromStr for EraStartDate {
     type Err = ();
     fn from_str(mut s: &str) -> Result<Self, ()> {
         let mut sign = 1;
+        #[allow(clippy::indexing_slicing)]
         if s.starts_with('-') {
+            // TODO(#1668) Clippy exceptions need docs or fixing.
             s = &s[1..];
             sign = -1;
         }

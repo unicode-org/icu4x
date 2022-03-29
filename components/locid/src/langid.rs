@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use core::cmp::Ordering;
 use core::str::FromStr;
 
 use crate::parser::{get_subtag_iterator, parse_language_identifier, ParserError, ParserMode};
@@ -142,6 +143,76 @@ impl LanguageIdentifier {
         let lang_id = Self::from_bytes(input.as_ref())?;
         Ok(lang_id.to_string())
     }
+
+    /// Compare this `LanguageIdentifier` with a BCP-47 string.
+    ///
+    /// The return value is equivalent to what would happen if you first converted this
+    /// `LanguageIdentifier` to a BCP-47 string and then performed a byte comparison.
+    ///
+    /// This function is case-sensitive and results in a *total order*, so it is appropriate for
+    /// binary search. The only argument producing [`Ordering::Equal`] is `self.to_string()`.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::locid::LanguageIdentifier;
+    /// use std::cmp::Ordering;
+    ///
+    /// let bcp47_strings: &[&[u8]] = &[
+    ///     b"pl-Latn-PL",
+    ///     b"und",
+    ///     b"und-Adlm",
+    ///     b"und-GB",
+    ///     b"und-ZA",
+    ///     b"und-fonipa",
+    ///     b"zh",
+    /// ];
+    ///
+    /// for ab in bcp47_strings.windows(2) {
+    ///     let a = ab[0];
+    ///     let b = ab[1];
+    ///     assert!(a.cmp(b) == Ordering::Less);
+    ///     let a_langid = LanguageIdentifier::from_bytes(a).unwrap();
+    ///     assert!(a_langid.cmp_bytes(b) == Ordering::Less);
+    /// }
+    /// ```
+    pub fn cmp_bytes(&self, other: &[u8]) -> Ordering {
+        let mut other_iter = other.split(|b| *b == b'-');
+        let r = self.for_each_subtag_str(&mut |subtag| {
+            if let Some(other) = other_iter.next() {
+                match subtag.as_bytes().cmp(other) {
+                    Ordering::Equal => Ok(()),
+                    not_equal => Err(not_equal),
+                }
+            } else {
+                Err(Ordering::Greater)
+            }
+        });
+        if let Err(o) = r {
+            return o;
+        }
+        if other_iter.next().is_some() {
+            return Ordering::Less;
+        }
+        Ordering::Equal
+    }
+
+    pub(crate) fn for_each_subtag_str<E, F>(&self, f: &mut F) -> Result<(), E>
+    where
+        F: FnMut(&str) -> Result<(), E>,
+    {
+        f(self.language.as_str())?;
+        if let Some(ref script) = self.script {
+            f(script.as_str())?;
+        }
+        if let Some(ref region) = self.region {
+            f(region.as_str())?;
+        }
+        for variant in self.variants.iter() {
+            f(variant.as_str())?;
+        }
+        Ok(())
+    }
 }
 
 impl AsRef<LanguageIdentifier> for LanguageIdentifier {
@@ -170,44 +241,7 @@ impl FromStr for LanguageIdentifier {
     }
 }
 
-impl core::fmt::Display for LanguageIdentifier {
-    fn fmt(&self, f: &mut core::fmt::Formatter) -> core::fmt::Result {
-        writeable::Writeable::write_to(self, f)
-    }
-}
-
-impl writeable::Writeable for LanguageIdentifier {
-    fn write_to<W: core::fmt::Write + ?Sized>(&self, sink: &mut W) -> core::fmt::Result {
-        writeable::Writeable::write_to(&self.language, sink)?;
-        if let Some(ref script) = self.script {
-            sink.write_char('-')?;
-            writeable::Writeable::write_to(script, sink)?;
-        }
-        if let Some(ref region) = self.region {
-            sink.write_char('-')?;
-            writeable::Writeable::write_to(region, sink)?;
-        }
-        if !self.variants.is_empty() {
-            sink.write_char('-')?;
-            writeable::Writeable::write_to(&self.variants, sink)?;
-        }
-        Ok(())
-    }
-
-    fn write_len(&self) -> writeable::LengthHint {
-        let mut result = writeable::Writeable::write_len(&self.language);
-        if let Some(ref script) = self.script {
-            result += writeable::Writeable::write_len(script) + 1;
-        }
-        if let Some(ref region) = self.region {
-            result += writeable::Writeable::write_len(region) + 1;
-        }
-        if !self.variants.is_empty() {
-            result += writeable::Writeable::write_len(&self.variants) + 1;
-        }
-        result
-    }
-}
+impl_writeable_for_each_subtag_str_no_test!(LanguageIdentifier);
 
 #[test]
 fn test_writeable() {

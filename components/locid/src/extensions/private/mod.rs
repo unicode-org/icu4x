@@ -131,6 +131,17 @@ impl Private {
 
         Ok(Self::from_vec_unchecked(keys))
     }
+
+    pub(crate) fn for_each_subtag_str<E, F>(&self, f: &mut F) -> Result<(), E>
+    where
+        F: FnMut(&str) -> Result<(), E>,
+    {
+        if self.is_empty() {
+            return Ok(());
+        }
+        f("x")?;
+        self.deref().iter().map(|t| t.as_str()).try_for_each(f)
+    }
 }
 
 impl core::fmt::Display for Private {

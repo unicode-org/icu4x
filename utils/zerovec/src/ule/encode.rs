@@ -69,6 +69,8 @@ pub unsafe trait EncodeAsVarULE<T: VarULE + ?Sized> {
     fn encode_var_ule_write(&self, mut dst: &mut [u8]) {
         debug_assert_eq!(self.encode_var_ule_len(), dst.len());
         self.encode_var_ule_as_slices(move |slices| {
+            #[allow(clippy::indexing_slicing)]
+            // TODO(#1668) Clippy exceptions need docs or fixing.
             for slice in slices {
                 dst[..slice.len()].copy_from_slice(slice);
                 dst = &mut dst[slice.len()..];
@@ -207,6 +209,7 @@ where
         unreachable!()
     }
 
+    #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.i
     fn encode_var_ule_len(&self) -> usize {
         // TODO(#1410): Rethink length errors in VZV.
         crate::varzerovec::components::compute_serializable_len(self).unwrap() as usize
@@ -293,12 +296,12 @@ mod test {
         type ZS<T> = ZeroSlice<T>;
         type VZS<T> = VarZeroSlice<T>;
 
-        let u8_zerovec: ZeroVec<u8> = ZeroVec::from_slice(&U8_ARRAY);
+        let u8_zerovec: ZeroVec<u8> = ZeroVec::from_slice_or_alloc(&U8_ARRAY);
         let u8_2d_zerovec: [ZeroVec<u8>; 2] = [u8_zerovec.clone(), u8_zerovec.clone()];
         let u8_2d_vec: Vec<Vec<u8>> = vec![U8_ARRAY.into(), U8_ARRAY.into()];
         let u8_3d_vec: Vec<Vec<Vec<u8>>> = vec![u8_2d_vec.clone(), u8_2d_vec.clone()];
 
-        let u32_zerovec: ZeroVec<u32> = ZeroVec::from_slice(&U32_ARRAY);
+        let u32_zerovec: ZeroVec<u32> = ZeroVec::from_slice_or_alloc(&U32_ARRAY);
         let u32_2d_zerovec: [ZeroVec<u32>; 2] = [u32_zerovec.clone(), u32_zerovec.clone()];
         let u32_2d_vec: Vec<Vec<u32>> = vec![U32_ARRAY.into(), U32_ARRAY.into()];
         let u32_3d_vec: Vec<Vec<Vec<u32>>> = vec![u32_2d_vec.clone(), u32_2d_vec.clone()];

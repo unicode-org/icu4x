@@ -60,8 +60,6 @@ impl From<fields::SymbolError> for SkeletonError {
                 match ch {
                     // TODO(#487) - Flexible day periods
                     'B'
-                    // TODO(#502) - Week of month
-                    | 'W'
                     // TODO(#501) - Quarters
                     | 'Q'
                     => Self::SymbolUnimplemented(ch),

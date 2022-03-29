@@ -21,6 +21,7 @@ fn try_from_range<'data, 'r>(
     if from < till {
         let set = vec![from, till];
         let inv_list: ZeroVec<u32> = ZeroVec::alloc_from_slice(&set);
+        #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
         Ok(UnicodeSet::from_inversion_list(inv_list).unwrap())
     } else {
         Err(UnicodeSetError::InvalidRange(from, till))
