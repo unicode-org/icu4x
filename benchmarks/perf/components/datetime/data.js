@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1648530900793,
+  "lastUpdate": 1648570516712,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -24161,6 +24161,48 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 155909,
             "range": "± 524",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "1fdaa3570b217512f690c4a9c3715406c03758df",
+          "message": "Using the cached-path crate for downloading and unzipping (#1744)",
+          "timestamp": "2022-03-29T09:06:22-07:00",
+          "tree_id": "c2960ed28a65da17c2b073d9127ced5ab3c7cebd",
+          "url": "https://github.com/unicode-org/icu4x/commit/1fdaa3570b217512f690c4a9c3715406c03758df"
+        },
+        "date": 1648570500261,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 96265,
+            "range": "± 4810",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 988135,
+            "range": "± 36719",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 210444,
+            "range": "± 12542",
             "unit": "ns/iter"
           }
         ]
