@@ -312,14 +312,14 @@ unsafe impl<'a, T: 'static> Yokeable<'a> for alloc::vec::Vec<T> {
     }
     #[inline]
     unsafe fn make(from: alloc::vec::Vec<T>) -> Self {
-        mem::transmute(from)
+        from
     }
     #[inline]
     fn transform_mut<F>(&'a mut self, f: F)
     where
         F: 'static + for<'b> FnOnce(&'b mut Self::Output),
     {
-        // Cast away the lifetime of Self
-        unsafe { f(mem::transmute::<&'a mut Self, &'a mut Self::Output>(self)) }
+        // Doesn't need unsafe: `'a` is covariant so this lifetime cast is always safe
+        f(self)
     }
 }
