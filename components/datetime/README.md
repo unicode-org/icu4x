@@ -12,7 +12,7 @@ used to quickly format any date and time provided.
 
 ```rust
 use icu::locid::Locale;
-use icu::locid::macros::langid;
+use icu::locid::langid;
 use icu::calendar::Gregorian;
 use icu::datetime::{DateTimeFormat, DateTimeFormatOptions, mock::parse_gregorian_from_str, options::length};
 
@@ -43,7 +43,7 @@ convert a [`options::length::Bag`] into a [`DateTimeFormatOptions::Length`].
 
 ```rust
 use icu::locid::Locale;
-use icu::locid::macros::langid;
+use icu::locid::langid;
 use icu::calendar::Gregorian;
 use icu::datetime::{DateTimeFormat, DateTimeFormatOptions, options::length};
 let options = length::Bag {

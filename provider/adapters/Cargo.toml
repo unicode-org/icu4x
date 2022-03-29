@@ -28,9 +28,6 @@ icu_provider = { path = "../core" }
 icu_locid = { path = "../../components/locid" }
 yoke = { path = "../../utils/yoke" }
 
-[dev-dependencies]
-icu_locid_macros = { version = "0.5", path = "../../components/locid/macros" }
-
 [features]
 std = ["icu_locid/std"]
 datagen = ["icu_provider/datagen"]

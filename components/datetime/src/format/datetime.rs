@@ -32,7 +32,7 @@ use writeable::Writeable;
 ///
 /// ```
 /// use icu::locid::Locale;
-/// use icu::locid::macros::langid;
+/// use icu::locid::langid;
 /// use icu::datetime::{DateTimeFormat, DateTimeFormatOptions};
 /// use icu::calendar::{DateTime, Gregorian};
 /// use icu_provider::inv::InvariantDataProvider;

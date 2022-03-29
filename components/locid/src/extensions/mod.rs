@@ -56,10 +56,9 @@ pub use transform::Transform;
 pub use unicode::Unicode;
 
 use alloc::vec::Vec;
-use core::iter::Peekable;
 
 use crate::parser::ParserError;
-
+use crate::parser::SubtagIterator;
 /// Defines the type of extension.
 #[derive(Debug, PartialEq, Eq, Clone, Hash, PartialOrd, Ord, Copy)]
 pub enum ExtensionType {
@@ -175,9 +174,7 @@ impl Extensions {
             .retain(|o| predicate(ExtensionType::Other(o.get_ext_byte())));
     }
 
-    pub(crate) fn try_from_iter<'a>(
-        iter: &mut Peekable<impl Iterator<Item = &'a [u8]>>,
-    ) -> Result<Self, ParserError> {
+    pub(crate) fn try_from_iter(iter: &mut SubtagIterator) -> Result<Self, ParserError> {
         let mut unicode = None;
         let mut transform = None;
         let mut private = None;

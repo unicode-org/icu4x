@@ -45,7 +45,7 @@ pub struct Language(TinyAsciiStr<{ *LANGUAGE_LENGTH.end() }>);
 const LANGUAGE_LENGTH: RangeInclusive<usize> = 2..=3;
 // TODO(#348): Change this to invoke a const function.
 // Safe because "und" is a valid language subtag
-const UND: Language = Language(unsafe { TinyAsciiStr::from_bytes_unchecked(*b"und") });
+const UND: Language = crate::language!("und");
 
 impl Language {
     /// A constructor which takes a utf8 slice, parses it and
@@ -61,22 +61,27 @@ impl Language {
     ///
     /// assert_eq!(lang, "en");
     /// ```
-    pub fn from_bytes(v: &[u8]) -> Result<Self, ParserError> {
-        let slen = v.len();
+    pub const fn from_bytes(v: &[u8]) -> Result<Self, ParserError> {
+        Self::from_bytes_manual_slice(v, 0, v.len())
+    }
 
-        if !LANGUAGE_LENGTH.contains(&slen) {
+    /// Equivalent to [`from_bytes(bytes[start..end])`](Self::from_bytes),
+    /// but callable in a `const` context (which range indexing is not).
+    pub const fn from_bytes_manual_slice(
+        v: &[u8],
+        start: usize,
+        end: usize,
+    ) -> Result<Self, ParserError> {
+        let slen = end - start;
+
+        if slen < *LANGUAGE_LENGTH.start() || *LANGUAGE_LENGTH.end() < slen {
             return Err(ParserError::InvalidLanguage);
         }
 
-        let s = TinyAsciiStr::from_bytes(v).map_err(|_| ParserError::InvalidLanguage)?;
-
-        if !s.is_ascii_alphabetic() {
-            return Err(ParserError::InvalidLanguage);
+        match TinyAsciiStr::from_bytes_manual_slice(v, start, end) {
+            Ok(s) if s.is_ascii_alphabetic() => Ok(Self(s.to_ascii_lowercase())),
+            _ => Err(ParserError::InvalidLanguage),
         }
-
-        let value = s.to_ascii_lowercase();
-
-        Ok(Self(value))
     }
 
     /// Safely creates a [`Language`] from a reference to its raw format
@@ -321,7 +326,7 @@ unsafe impl zerovec::ule::ULE for Language {
 ///
 /// ```
 /// use icu::locid::subtags::Language;
-/// use icu::locid::macros::language;
+/// use icu::locid::language;
 /// use zerovec::ZeroVec;
 ///
 /// let zv = ZeroVec::<Language>::parse_byte_slice(b"de\0fr\0arsar\0")

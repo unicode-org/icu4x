@@ -43,8 +43,7 @@ pub use keywords::Keywords;
 pub use value::Value;
 
 use crate::parser::ParserError;
-
-use core::iter::Peekable;
+use crate::parser::SubtagIterator;
 
 /// Unicode Extensions provide information about user preferences in a given locale.
 ///
@@ -132,9 +131,7 @@ impl Unicode {
         self.attributes.clear();
     }
 
-    pub(crate) fn try_from_iter<'a>(
-        iter: &mut Peekable<impl Iterator<Item = &'a [u8]>>,
-    ) -> Result<Self, ParserError> {
+    pub(crate) fn try_from_iter(iter: &mut SubtagIterator) -> Result<Self, ParserError> {
         let mut attributes = vec![];
         let mut keywords = vec![];
 

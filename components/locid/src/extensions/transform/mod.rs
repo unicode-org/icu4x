@@ -40,12 +40,11 @@ pub use fields::Fields;
 pub use key::Key;
 pub use value::Value;
 
+use crate::parser::SubtagIterator;
 use crate::parser::{parse_language_identifier_from_iter, ParserError, ParserMode};
 use crate::subtags::Language;
 use crate::LanguageIdentifier;
 use alloc::vec;
-
-use core::iter::Peekable;
 
 /// A list of [`Unicode BCP47 T Extensions`] as defined in [`Unicode Locale
 /// Identifier`] specification.
@@ -134,9 +133,7 @@ impl Transform {
         self.fields.clear();
     }
 
-    pub(crate) fn try_from_iter<'a>(
-        iter: &mut Peekable<impl Iterator<Item = &'a [u8]>>,
-    ) -> Result<Self, ParserError> {
+    pub(crate) fn try_from_iter(iter: &mut SubtagIterator) -> Result<Self, ParserError> {
         let mut tlang = None;
         let mut tfields = vec![];
 

@@ -538,8 +538,8 @@ fn constructing_datetime_format_with_time_zone_pattern_symbols_is_err() {
         options::length::{Bag, Time},
         DateTimeFormatOptions,
     };
+    use icu_locid::langid;
     use icu_locid::Locale;
-    use icu_locid_macros::langid;
 
     let options = DateTimeFormatOptions::Length(Bag {
         // Full has time-zone symbols.

@@ -43,24 +43,32 @@ impl Variant {
     ///
     /// assert_eq!(variant, "posix");
     /// ```
-    pub fn from_bytes(v: &[u8]) -> Result<Self, ParserError> {
-        let slen = v.len();
+    pub const fn from_bytes(v: &[u8]) -> Result<Self, ParserError> {
+        Self::from_bytes_manual_slice(v, 0, v.len())
+    }
 
-        if !VARIANT_LENGTH.contains(&slen) {
+    /// Equivalent to [`from_bytes(bytes[start..end])`](Self::from_bytes),
+    /// but callable in a `const` context (which range indexing is not).
+    pub const fn from_bytes_manual_slice(
+        v: &[u8],
+        start: usize,
+        end: usize,
+    ) -> Result<Self, ParserError> {
+        let slen = end - start;
+
+        if slen < *VARIANT_LENGTH.start() || *VARIANT_LENGTH.end() < slen {
             return Err(ParserError::InvalidSubtag);
         }
 
-        let s = TinyAsciiStr::from_bytes(v).map_err(|_| ParserError::InvalidSubtag)?;
-
-        if !s.is_ascii_alphanumeric() {
-            return Err(ParserError::InvalidSubtag);
-        }
         #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
-        if slen == VARIANT_NUM_ALPHA_LENGTH && !v[0].is_ascii_digit() {
+        if slen == VARIANT_NUM_ALPHA_LENGTH && !v[start].is_ascii_digit() {
             return Err(ParserError::InvalidSubtag);
         }
 
-        Ok(Self(s.to_ascii_lowercase()))
+        match TinyAsciiStr::from_bytes_manual_slice(v, start, end) {
+            Ok(s) if s.is_ascii_alphanumeric() => Ok(Self(s.to_ascii_lowercase())),
+            _ => Err(ParserError::InvalidSubtag),
+        }
     }
 
     /// Safely creates a [`Variant`] from a reference to its raw format
@@ -227,7 +235,7 @@ unsafe impl zerovec::ule::ULE for Variant {
 ///
 /// ```
 /// use icu::locid::subtags::Variant;
-/// use icu::locid::macros::variant;
+/// use icu::locid::variant;
 /// use zerovec::ZeroVec;
 ///
 /// let zv = ZeroVec::<Variant>::parse_byte_slice(b"fonipa\0\01992\0\0\0\0posix\0\0\0")
