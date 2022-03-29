@@ -286,27 +286,27 @@ impl PluralRules {
 mod testing {
     use ecma402_traits::pluralrules;
     use ecma402_traits::pluralrules::PluralRules;
-    use icu::locid::Locale;
+    use icu::locid::{locale, Locale};
     use icu::plurals::PluralRulesError;
 
     #[test]
     fn plurals_per_locale() -> Result<(), PluralRulesError> {
         #[derive(Debug, Clone)]
         struct TestCase {
-            locale: &'static str,
+            locale: Locale,
             opts: pluralrules::Options,
             numbers: Vec<f64>,
             expected: Vec<&'static str>,
         }
         let tests = vec![
             TestCase {
-                locale: "ar",
+                locale: locale!("ar"),
                 opts: Default::default(),
                 numbers: vec![0.0, 1.0, 2.0, 5.0, 6.0, 18.0],
                 expected: vec!["zero", "one", "two", "few", "few", "many"],
             },
             TestCase {
-                locale: "ar",
+                locale: locale!("ar"),
                 opts: pluralrules::Options {
                     in_type: pluralrules::options::Type::Ordinal,
                     ..Default::default()
@@ -315,13 +315,13 @@ mod testing {
                 expected: vec!["other", "other", "other", "other", "other", "other"],
             },
             TestCase {
-                locale: "sr",
+                locale: locale!("sr"),
                 opts: Default::default(),
                 numbers: vec![0.0, 1.0, 2.0, 5.0, 6.0, 18.0],
                 expected: vec!["other", "one", "few", "other", "other", "other"],
             },
             TestCase {
-                locale: "sr",
+                locale: locale!("sr"),
                 opts: pluralrules::Options {
                     in_type: pluralrules::options::Type::Ordinal,
                     ..Default::default()
@@ -332,8 +332,7 @@ mod testing {
         ];
         let provider = icu_testdata::get_provider();
         for test in tests {
-            let l: Locale = test.locale.parse().expect("locale exists");
-            let l = crate::Locale::FromLocale(l);
+            let l = crate::Locale::FromLocale(test.locale);
             let plr = super::PluralRules::try_new_with_provider(l, test.clone().opts, &provider)?;
             let actual = test
                 .numbers

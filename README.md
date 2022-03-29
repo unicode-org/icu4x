@@ -32,14 +32,11 @@ icu_provider_fs = "0.2"
 ```
 
 ```rust
-use icu::locid::langid;
-use icu::locid::Locale;
+use icu::locid::locale;
 use icu::datetime::{DateTimeFormat, mock::datetime::MockDateTime, options::length};
 use icu_provider_fs::FsDataProvider;
 
 fn main() {
-    let loc: Locale = langid!("pl").into();
-
     let date: MockDateTime = "2020-10-14T13:21:00".parse()
         .expect("Failed to parse a datetime.");
 
@@ -52,7 +49,7 @@ fn main() {
         ..Default::default()
     }.into();
 
-    let dtf = DateTimeFormat::try_new(loc, &provider, &options)
+    let dtf = DateTimeFormat::try_new(locale!("pl"), &provider, &options)
         .expect("Failed to initialize DateTimeFormat");
 
     let formatted_date = dtf.format(&date);

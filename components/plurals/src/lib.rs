@@ -27,11 +27,9 @@
 //! use icu::locid::langid;
 //! use icu::plurals::{PluralRules, PluralRuleType, PluralCategory};
 //!
-//! let lid = langid!("en");
-//!
 //! let provider = icu_testdata::get_provider();
 //!
-//! let pr = PluralRules::try_new(lid, &provider, PluralRuleType::Cardinal)
+//! let pr = PluralRules::try_new(langid!("en"), &provider, PluralRuleType::Cardinal)
 //!     .expect("Failed to construct a PluralRules struct.");
 //!
 //! assert_eq!(pr.select(5_usize), PluralCategory::Other);
@@ -139,11 +137,9 @@ pub enum PluralRuleType {
 /// use icu::plurals::{PluralRules, PluralRuleType, PluralCategory};
 /// use icu_provider::inv::InvariantDataProvider;
 ///
-/// let lid = langid!("en");
-///
 /// let dp = InvariantDataProvider;
 ///
-/// let pr = PluralRules::try_new(lid, &dp, PluralRuleType::Cardinal)
+/// let pr = PluralRules::try_new(langid!("en"), &dp, PluralRuleType::Cardinal)
 ///     .expect("Failed to construct a PluralRules struct.");
 ///
 /// assert_eq!(pr.select(5_usize), PluralCategory::Other);
@@ -266,11 +262,9 @@ impl PluralCategory {
 /// use icu::plurals::{PluralRules, PluralRuleType, PluralCategory};
 /// use icu_provider::inv::InvariantDataProvider;
 ///
-/// let lid = langid!("en");
-///
 /// let dp = InvariantDataProvider;
 ///
-/// let pr = PluralRules::try_new(lid, &dp, PluralRuleType::Cardinal)
+/// let pr = PluralRules::try_new(langid!("en"), &dp, PluralRuleType::Cardinal)
 ///     .expect("Failed to construct a PluralRules struct.");
 ///
 /// assert_eq!(pr.select(5_usize), PluralCategory::Other);
@@ -335,11 +329,9 @@ impl PluralRules {
     /// use icu::locid::langid;
     /// use icu::plurals::{PluralRules, PluralCategory};
     ///
-    /// let lid = langid!("ru");
-    ///
     /// let dp = icu_testdata::get_provider();
     ///
-    /// let rules = PluralRules::try_new_cardinal(lid, &dp)
+    /// let rules = PluralRules::try_new_cardinal(langid!("ru"), &dp)
     ///     .expect("Data should be present");
     ///
     /// assert_eq!(rules.select(2_usize), PluralCategory::Few);
@@ -382,11 +374,9 @@ impl PluralRules {
     /// use icu::locid::langid;
     /// use icu::plurals::{PluralRules, PluralCategory};
     ///
-    /// let lid = langid!("ru");
-    ///
     /// let dp = icu_testdata::get_provider();
     ///
-    /// let rules = PluralRules::try_new_ordinal(lid, &dp)
+    /// let rules = PluralRules::try_new_ordinal(langid!("ru"), &dp)
     ///     .expect("Data should be present");
     ///
     /// assert_eq!(rules.select(2_usize), PluralCategory::Other);
@@ -423,11 +413,9 @@ impl PluralRules {
     /// use icu::plurals::{PluralRules, PluralRuleType, PluralCategory};
     /// use icu_provider::inv::InvariantDataProvider;
     ///
-    /// let lid = langid!("en");
-    ///
     /// let dp = InvariantDataProvider;
     ///
-    /// let pr = PluralRules::try_new(lid, &dp, PluralRuleType::Cardinal)
+    /// let pr = PluralRules::try_new(langid!("en"), &dp, PluralRuleType::Cardinal)
     ///     .expect("Failed to construct a PluralRules struct.");
     ///
     /// match pr.select(1_usize) {
@@ -454,11 +442,9 @@ impl PluralRules {
     /// use icu::plurals::{PluralCategory, PluralOperands};
     /// use icu_provider::inv::InvariantDataProvider;
     /// #
-    /// # let lid = langid!("en");
-    /// #
     /// # let dp = InvariantDataProvider;
     /// #
-    /// # let pr = PluralRules::try_new(lid, &dp, PluralRuleType::Cardinal)
+    /// # let pr = PluralRules::try_new(langid!("en"), &dp, PluralRuleType::Cardinal)
     /// #     .expect("Failed to construct a PluralRules struct.");
     ///
     /// let operands = PluralOperands::try_from(-5)
@@ -507,11 +493,9 @@ impl PluralRules {
     /// use icu::plurals::{PluralRules, PluralRuleType, PluralCategory};
     /// use icu_provider::inv::InvariantDataProvider;
     ///
-    /// let lid = langid!("fr");
-    ///
     /// let dp = icu_testdata::get_provider();
     ///
-    /// let pr = PluralRules::try_new(lid, &dp, PluralRuleType::Cardinal)
+    /// let pr = PluralRules::try_new(langid!("fr"), &dp, PluralRuleType::Cardinal)
     ///     .expect("Failed to construct a PluralRules struct.");
     ///
     /// let mut categories = pr.categories();

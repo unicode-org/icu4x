@@ -6,11 +6,9 @@ use icu::locid::langid;
 use icu::plurals::{PluralCategory, PluralRuleType, PluralRules};
 
 fn main() {
-    let lid = langid!("en");
-
     let dp = icu_testdata::get_static_provider();
 
-    let pr = PluralRules::try_new(lid, &dp, PluralRuleType::Cardinal)
+    let pr = PluralRules::try_new(langid!("en"), &dp, PluralRuleType::Cardinal)
         .expect("Failed to construct a PluralRules struct.");
 
     assert_eq!(pr.select(5_usize), PluralCategory::Other);
