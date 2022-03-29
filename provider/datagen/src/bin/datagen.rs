@@ -309,14 +309,13 @@ fn main() -> eyre::Result<()> {
                 #[cfg(not(feature = "download"))]
                 eyre::bail!("--cldr-tag requires the download feature");
                 #[cfg(feature = "download")]
-                        cached_path::CacheBuilder::new().freshness_lifetime(u64::MAX).build()?
-                            .cached_path_with_options(
-                                &format!(
+                cached_path::CacheBuilder::new().freshness_lifetime(u64::MAX).build()?
+                    .cached_path_with_options(
+                        &format!(
                             "https://github.com/unicode-org/cldr-json/releases/download/{}/cldr-{}-json-{}.zip",
-                            _tag, _tag, matches.value_of("CLDR_LOCALE_SUBSET").unwrap_or("full")
-                        ),
-                                &cached_path::Options::default().extract(),
-                            )?
+                            _tag, _tag, matches.value_of("CLDR_LOCALE_SUBSET").unwrap_or("full")),
+                        &cached_path::Options::default().extract(),
+                    )?
             } else if let Some(path) = matches.value_of("CLDR_ROOT") {
                 PathBuf::from(path)
             } else if matches.is_present("INPUT_FROM_TESTDATA") {
@@ -336,12 +335,13 @@ fn main() -> eyre::Result<()> {
             #[cfg(not(feature = "download"))]
             eyre::bail!("--uprops-tag requires the download feature");
             #[cfg(feature = "download")]
-                cached_path::CacheBuilder::new().freshness_lifetime(u64::MAX).build()?.cached_path_with_options(
-                        &format!(
-                            "https://github.com/unicode-org/icu/releases/download/{}/icuexportdata_uprops_full.zip",
-                            _tag) ,
-                    &cached_path::Options::default().extract())?.join("icuexportdata_uprops_full")
-                    .join(matches.value_of("UPROPS_MODE").unwrap())
+            cached_path::CacheBuilder::new().freshness_lifetime(u64::MAX).build()?
+                .cached_path_with_options(
+                    &format!("https://github.com/unicode-org/icu/releases/download/{}/icuexportdata_uprops_full.zip", _tag),
+                    &cached_path::Options::default().extract()
+                )?
+                .join("icuexportdata_uprops_full")
+                .join(matches.value_of("UPROPS_MODE").unwrap())
         } else if let Some(path) = matches.value_of("UPROPS_ROOT") {
             PathBuf::from(path)
         } else if matches.is_present("INPUT_FROM_TESTDATA") {
