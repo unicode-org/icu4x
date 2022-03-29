@@ -13,6 +13,7 @@
 //! [`TR44`]: https://www.unicode.org/reports/tr44
 
 use crate::error::PropertiesError;
+use crate::props::BidiClass;
 use crate::provider::*;
 use crate::*;
 use icu_codepointtrie::TrieValue;
@@ -59,6 +60,33 @@ where
     D: DynProvider<UnicodePropertyMapV1Marker<GeneralCategory>> + ?Sized,
 {
     get_cp_map(provider, key::GENERAL_CATEGORY_V1)
+}
+
+/// Return a [`CodePointTrie`] for the Bidi_Class Unicode enumerated property. See [`BidiClass`].
+///
+/// # Example
+///
+/// ```
+/// use icu::properties::{maps, BidiClass};
+/// use icu_codepointtrie::CodePointTrie;
+///
+/// let provider = icu_testdata::get_provider();
+///
+/// let payload =
+///     maps::get_bidi_class(&provider)
+///         .expect("The data should be valid");
+/// let data_struct = payload.get();
+/// let bc = &data_struct.code_point_trie;
+/// assert_eq!(bc.get('y' as u32), BidiClass::LeftToRight);  // U+0079
+/// assert_eq!(bc.get('ع' as u32), BidiClass::ArabicLetter);  // U+0639
+/// ```
+///
+/// [`CodePointTrie`]: icu_codepointtrie::CodePointTrie
+pub fn get_bidi_class<D>(provider: &D) -> CodePointMapResult<BidiClass>
+where
+    D: DynProvider<UnicodePropertyMapV1Marker<BidiClass>> + ?Sized,
+{
+    get_cp_map(provider, key::BIDI_CLASS)
 }
 
 /// Return a [`CodePointTrie`] for the Script Unicode enumerated property. See [`Script`].

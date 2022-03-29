@@ -106,7 +106,7 @@ pub mod key {
         (XID_START_V1, "XIDS"),
     );
 
-    define_resource_keys!(ALL_MAP_KEYS; 8;
+    define_resource_keys!(ALL_MAP_KEYS; 9;
         //
         // Enumerated property CodePointMaps
         //
@@ -115,6 +115,7 @@ pub mod key {
 
         (CANONICAL_COMBINING_CLASS_V1, "ccc"),
         (GENERAL_CATEGORY_V1, "gc"),
+        (BIDI_CLASS, "bc"),
         (SCRIPT_V1, "sc"),
         (EAST_ASIAN_WIDTH_V1, "ea"),
         (LINE_BREAK_V1, "lb"),
