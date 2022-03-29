@@ -26,7 +26,6 @@
     feature(alloc_error_handler)
 )]
 
-
 // Necessary to for symbols to be linked in
 extern crate icu_capi;
 
