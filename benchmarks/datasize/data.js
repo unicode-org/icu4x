@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1648517830994,
+  "lastUpdate": 1648524565240,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -11783,6 +11783,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/421728f2a8611026c6054b8bb902d67fd1bb590d"
         },
         "date": 1648517815960,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4545559,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "11364f02c2e620e8e85a1bc7fab3e320d226152e",
+          "message": "Reducing file IO and parsing in CLDR transformers (#1623)",
+          "timestamp": "2022-03-29T05:27:49+02:00",
+          "tree_id": "edd1ec5c68366b778df24770a7d90616aa59dbda",
+          "url": "https://github.com/unicode-org/icu4x/commit/11364f02c2e620e8e85a1bc7fab3e320d226152e"
+        },
+        "date": 1648524548888,
         "tool": "ndjson",
         "benches": [
           {
