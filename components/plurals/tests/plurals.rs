@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use icu_locid::langid;
+use icu_locid::locale;
 use icu_plurals::{
     provider::CardinalV1Marker, rules::runtime::ast::Rule, PluralCategory, PluralRuleType,
     PluralRules,
@@ -14,9 +14,7 @@ use zerovec::VarZeroVec;
 fn test_plural_rules() {
     let provider = icu_testdata::get_provider();
 
-    let lid = langid!("en");
-
-    let pr = PluralRules::try_new(lid, &provider, PluralRuleType::Cardinal).unwrap();
+    let pr = PluralRules::try_new(locale!("en"), &provider, PluralRuleType::Cardinal).unwrap();
 
     assert_eq!(pr.select(5_usize), PluralCategory::Other);
 }
@@ -25,11 +23,9 @@ fn test_plural_rules() {
 fn test_static_provider_borrowed_rules() {
     let provider = icu_testdata::get_static_provider();
 
-    let lid = langid!("en");
-
     let rules: DataPayload<CardinalV1Marker> = provider
         .load_resource(&DataRequest {
-            options: lid.into(),
+            options: locale!("en").into(),
             metadata: Default::default(),
         })
         .expect("Failed to load payload")
@@ -43,9 +39,7 @@ fn test_static_provider_borrowed_rules() {
 fn test_plural_rules_missing() {
     let provider = icu_testdata::get_provider();
 
-    let lid = langid!("xx");
-
-    let pr = PluralRules::try_new(lid, &provider, PluralRuleType::Cardinal);
+    let pr = PluralRules::try_new(locale!("xx"), &provider, PluralRuleType::Cardinal);
 
     assert!(pr.is_err());
 }

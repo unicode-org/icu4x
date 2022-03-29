@@ -7,7 +7,7 @@
 icu_benchmark_macros::static_setup!();
 
 use icu_list::{ListFormatter, ListStyle};
-use icu_locid::langid;
+use icu_locid::locale;
 use writeable::Writeable;
 
 #[no_mangle]
@@ -17,7 +17,7 @@ fn main(_argc: isize, _argv: *const *const u8) -> isize {
     let provider = icu_testdata::get_static_provider();
 
     let list_formatter =
-        ListFormatter::try_new_and(langid!("es"), &provider, ListStyle::Wide).unwrap();
+        ListFormatter::try_new_and(locale!("es"), &provider, ListStyle::Wide).unwrap();
 
     println!(
         "{}",

@@ -312,12 +312,12 @@ pub mod plurals {
     //! # Examples
     //!
     //! ```
-    //! use icu::locid::langid;
+    //! use icu::locid::locale;
     //! use icu::plurals::{PluralRules, PluralRuleType, PluralCategory};
     //!
     //! let provider = icu_testdata::get_provider();
     //!
-    //! let pr = PluralRules::try_new(langid!("en"), &provider, PluralRuleType::Cardinal)
+    //! let pr = PluralRules::try_new(locale!("en"), &provider, PluralRuleType::Cardinal)
     //!     .expect("Failed to construct a PluralRules struct.");
     //!
     //! assert_eq!(pr.select(5_usize), PluralCategory::Other);

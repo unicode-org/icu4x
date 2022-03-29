@@ -24,12 +24,12 @@
 //! # Examples
 //!
 //! ```
-//! use icu::locid::langid;
+//! use icu::locid::locale;
 //! use icu::plurals::{PluralRules, PluralRuleType, PluralCategory};
 //!
 //! let provider = icu_testdata::get_provider();
 //!
-//! let pr = PluralRules::try_new(langid!("en"), &provider, PluralRuleType::Cardinal)
+//! let pr = PluralRules::try_new(locale!("en"), &provider, PluralRuleType::Cardinal)
 //!     .expect("Failed to construct a PluralRules struct.");
 //!
 //! assert_eq!(pr.select(5_usize), PluralCategory::Other);
@@ -133,13 +133,13 @@ pub enum PluralRuleType {
 /// # Examples
 ///
 /// ```
-/// use icu::locid::langid;
+/// use icu::locid::locale;
 /// use icu::plurals::{PluralRules, PluralRuleType, PluralCategory};
 /// use icu_provider::inv::InvariantDataProvider;
 ///
 /// let dp = InvariantDataProvider;
 ///
-/// let pr = PluralRules::try_new(langid!("en"), &dp, PluralRuleType::Cardinal)
+/// let pr = PluralRules::try_new(locale!("en"), &dp, PluralRuleType::Cardinal)
 ///     .expect("Failed to construct a PluralRules struct.");
 ///
 /// assert_eq!(pr.select(5_usize), PluralCategory::Other);
@@ -258,13 +258,13 @@ impl PluralCategory {
 /// # Examples
 ///
 /// ```
-/// use icu::locid::langid;
+/// use icu::locid::locale;
 /// use icu::plurals::{PluralRules, PluralRuleType, PluralCategory};
 /// use icu_provider::inv::InvariantDataProvider;
 ///
 /// let dp = InvariantDataProvider;
 ///
-/// let pr = PluralRules::try_new(langid!("en"), &dp, PluralRuleType::Cardinal)
+/// let pr = PluralRules::try_new(locale!("en"), &dp, PluralRuleType::Cardinal)
 ///     .expect("Failed to construct a PluralRules struct.");
 ///
 /// assert_eq!(pr.select(5_usize), PluralCategory::Other);
@@ -286,11 +286,11 @@ impl PluralRules {
     /// # Examples
     ///
     /// ```
-    /// use icu::locid::langid;
+    /// use icu::locid::locale;
     /// use icu::plurals::{PluralRules, PluralRuleType};
     /// use icu_provider::inv::InvariantDataProvider;
     ///
-    /// let lid = langid!("en");
+    /// let lid = locale!("en");
     ///
     /// let dp = InvariantDataProvider;
     ///
@@ -326,12 +326,12 @@ impl PluralRules {
     /// # Examples
     ///
     /// ```
-    /// use icu::locid::langid;
+    /// use icu::locid::locale;
     /// use icu::plurals::{PluralRules, PluralCategory};
     ///
     /// let dp = icu_testdata::get_provider();
     ///
-    /// let rules = PluralRules::try_new_cardinal(langid!("ru"), &dp)
+    /// let rules = PluralRules::try_new_cardinal(locale!("ru"), &dp)
     ///     .expect("Data should be present");
     ///
     /// assert_eq!(rules.select(2_usize), PluralCategory::Few);
@@ -371,12 +371,12 @@ impl PluralRules {
     /// # Examples
     ///
     /// ```
-    /// use icu::locid::langid;
+    /// use icu::locid::locale;
     /// use icu::plurals::{PluralRules, PluralCategory};
     ///
     /// let dp = icu_testdata::get_provider();
     ///
-    /// let rules = PluralRules::try_new_ordinal(langid!("ru"), &dp)
+    /// let rules = PluralRules::try_new_ordinal(locale!("ru"), &dp)
     ///     .expect("Data should be present");
     ///
     /// assert_eq!(rules.select(2_usize), PluralCategory::Other);
@@ -409,13 +409,13 @@ impl PluralRules {
     /// # Examples
     ///
     /// ```
-    /// use icu::locid::langid;
+    /// use icu::locid::locale;
     /// use icu::plurals::{PluralRules, PluralRuleType, PluralCategory};
     /// use icu_provider::inv::InvariantDataProvider;
     ///
     /// let dp = InvariantDataProvider;
     ///
-    /// let pr = PluralRules::try_new(langid!("en"), &dp, PluralRuleType::Cardinal)
+    /// let pr = PluralRules::try_new(locale!("en"), &dp, PluralRuleType::Cardinal)
     ///     .expect("Failed to construct a PluralRules struct.");
     ///
     /// match pr.select(1_usize) {
@@ -437,14 +437,14 @@ impl PluralRules {
     ///
     /// ```
     /// use std::convert::TryFrom;
-    /// use icu::locid::langid;
+    /// use icu::locid::locale;
     /// use icu::plurals::{PluralRules, PluralRuleType};
     /// use icu::plurals::{PluralCategory, PluralOperands};
     /// use icu_provider::inv::InvariantDataProvider;
     /// #
     /// # let dp = InvariantDataProvider;
     /// #
-    /// # let pr = PluralRules::try_new(langid!("en"), &dp, PluralRuleType::Cardinal)
+    /// # let pr = PluralRules::try_new(locale!("en"), &dp, PluralRuleType::Cardinal)
     /// #     .expect("Failed to construct a PluralRules struct.");
     ///
     /// let operands = PluralOperands::try_from(-5)
@@ -489,13 +489,13 @@ impl PluralRules {
     /// # Examples
     ///
     /// ```
-    /// use icu::locid::langid;
+    /// use icu::locid::locale;
     /// use icu::plurals::{PluralRules, PluralRuleType, PluralCategory};
     /// use icu_provider::inv::InvariantDataProvider;
     ///
     /// let dp = icu_testdata::get_provider();
     ///
-    /// let pr = PluralRules::try_new(langid!("fr"), &dp, PluralRuleType::Cardinal)
+    /// let pr = PluralRules::try_new(locale!("fr"), &dp, PluralRuleType::Cardinal)
     ///     .expect("Failed to construct a PluralRules struct.");
     ///
     /// let mut categories = pr.categories();

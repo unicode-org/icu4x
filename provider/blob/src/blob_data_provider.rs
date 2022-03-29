@@ -22,7 +22,7 @@ use zerovec::maps::{KeyError, ZeroMap2dBorrowed};
 /// # Examples
 ///
 /// ```
-/// use icu_locid::langid;
+/// use icu_locid::locale;
 /// use icu_provider::prelude::*;
 /// use icu_provider::hello_world::*;
 /// use icu_provider_blob::BlobDataProvider;
@@ -48,7 +48,7 @@ use zerovec::maps::{KeyError, ZeroMap2dBorrowed};
 /// // Check that it works:
 /// let response: DataPayload<HelloWorldV1Marker> = provider
 ///     .load_resource(&DataRequest {
-///         options: langid!("la").into(),
+///         options: locale!("la").into(),
 ///         metadata: Default::default(),
 ///     })
 ///     .expect("Data should be valid")

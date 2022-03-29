@@ -8,7 +8,7 @@ use crate::cldr::reader::{get_langid_subdirectories, get_langid_subdirectory, op
 use crate::cldr::CldrPaths;
 use crate::uprops::EnumeratedPropertyCodePointTrieProvider;
 use icu_list::provider::*;
-use icu_locid::langid;
+use icu_locid::{language, locale};
 use icu_provider::datagen::IterableResourceProvider;
 use icu_provider::prelude::*;
 use std::path::PathBuf;
@@ -78,7 +78,7 @@ impl<M: ResourceMarker<Yokeable = ListFormatterPatternsV1<'static>>> ResourcePro
         ])
         .map_err(|e| e.with_req(M::KEY, req))?;
 
-        if langid.language == langid!("es").language {
+        if langid.language == language!("es") {
             match M::KEY {
                 // Replace " y " with " e " before /i/ sounds.
                 // https://unicode.org/reports/tr35/tr35-general.html#:~:text=important.%20For%20example%3A-,Spanish,AND,-Use%20%E2%80%98e%E2%80%99%20instead
@@ -105,7 +105,7 @@ impl<M: ResourceMarker<Yokeable = ListFormatterPatternsV1<'static>>> ResourcePro
             }
         }
 
-        if langid.language == langid!("he").language {
+        if langid.language == language!("he") {
             // Add dashes between ו and non-Hebrew characters
             // https://unicode.org/reports/tr35/tr35-general.html#:~:text=is%20not%20mute.-,Hebrew,AND,-Use%20%E2%80%98%2D%D7%95%E2%80%99%20instead
             patterns
@@ -162,7 +162,7 @@ impl<M: ResourceMarker<Yokeable = ListFormatterPatternsV1<'static>>> IterableRes
                 // our invariant that {0} is at index 0 (and rotates the output).
                 // ml has middle and start patterns with suffixes.
                 // See https://github.com/unicode-org/icu4x/issues/1282
-                .filter(|l| l != &langid!("ur-IN") && l != &langid!("ml"))
+                .filter(|l| l != &locale!("ur-IN") && l != &locale!("ml"))
                 .map(Into::<ResourceOptions>::into),
         ))
     }
@@ -172,15 +172,15 @@ impl<M: ResourceMarker<Yokeable = ListFormatterPatternsV1<'static>>> IterableRes
 mod tests {
     use super::*;
     use icu_list::{ListFormatter, ListStyle};
-    use icu_locid::langid;
+    use icu_locid::locale;
     use writeable::assert_writeable_eq;
 
     macro_rules! test {
-        ($langid:literal, $type:ident, $(($input:expr, $output:literal),)+) => {
+        ($locale:literal, $type:ident, $(($input:expr, $output:literal),)+) => {
             let cldr_paths = crate::cldr::cldr_paths::for_test();
             let provider = ListProvider::try_from(
                 &cldr_paths as &dyn CldrPaths, icu_testdata::paths::uprops_toml_root()).unwrap();
-            let f = ListFormatter::$type(langid!($langid), &provider, ListStyle::Wide).unwrap();
+            let f = ListFormatter::$type(locale!($locale), &provider, ListStyle::Wide).unwrap();
             $(
                 assert_writeable_eq!(f.format($input.iter()), $output);
             )+

@@ -403,16 +403,6 @@ impl Writeable for ResourceOptions {
     }
 }
 
-impl From<LanguageIdentifier> for ResourceOptions {
-    /// Create a ResourceOptions with the given language identifier and an empty variant field.
-    fn from(langid: LanguageIdentifier) -> Self {
-        Self {
-            langid: Some(langid),
-            variant: None,
-        }
-    }
-}
-
 impl From<Locale> for ResourceOptions {
     /// Create a ResourceOptions with the given language identifier and an empty variant field.
     fn from(locale: Locale) -> Self {

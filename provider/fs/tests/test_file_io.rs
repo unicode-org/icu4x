@@ -4,7 +4,7 @@
 
 #![allow(unused_imports)]
 
-use icu_locid::langid;
+use icu_locid::locale;
 use icu_locid::LanguageIdentifier;
 use icu_plurals::{provider::*, rules::runtime::ast::Rule};
 use icu_provider::prelude::*;
@@ -70,7 +70,7 @@ fn test_json() {
 
     let plurals_data: DataPayload<CardinalV1Marker> = provider
         .load_resource(&DataRequest {
-            options: langid!("ru").into(),
+            options: locale!("ru").into(),
             metadata: Default::default(),
         })
         .expect("The data should be valid")
@@ -88,7 +88,7 @@ fn test_json_dyn_erased_serde() {
     let plurals_data: DataPayload<CardinalV1Marker> = (&provider as &dyn BufferProvider)
         .as_deserializing()
         .load_resource(&DataRequest {
-            options: langid!("ru").into(),
+            options: locale!("ru").into(),
             metadata: Default::default(),
         })
         .expect("The data should be valid")
@@ -110,7 +110,7 @@ fn test_json_errors() {
         CardinalProvider::load_resource(
             &provider,
             &DataRequest {
-                options: langid!("ru").into(),
+                options: locale!("ru").into(),
                 metadata: Default::default(),
             },
         ),
@@ -121,7 +121,7 @@ fn test_json_errors() {
         CardinalProvider::load_resource(
             &provider,
             &DataRequest {
-                options: langid!("zh").into(),
+                options: locale!("zh").into(),
                 metadata: Default::default(),
             },
         ),
@@ -135,7 +135,7 @@ fn test_json_errors() {
         OrdinalProvider::load_resource(
             &provider,
             &DataRequest {
-                options: langid!("ru").into(),
+                options: locale!("ru").into(),
                 metadata: Default::default(),
             },
         ),
@@ -149,7 +149,7 @@ fn test_json_errors() {
         OrdinalProvider::load_resource(
             &provider,
             &DataRequest {
-                options: langid!("ru").into(),
+                options: locale!("ru").into(),
                 metadata: Default::default(),
             },
         ),
@@ -168,7 +168,7 @@ fn test_bincode() {
 
     let plurals_data: DataPayload<CardinalV1Marker> = provider
         .load_resource(&DataRequest {
-            options: langid!("sr").into(),
+            options: locale!("sr").into(),
             metadata: Default::default(),
         })
         .expect("The data should be valid")
@@ -186,7 +186,7 @@ fn test_bincode_dyn_erased_serde() {
     let plurals_data: DataPayload<CardinalV1Marker> = (&provider as &dyn BufferProvider)
         .as_deserializing()
         .load_resource(&DataRequest {
-            options: langid!("sr").into(),
+            options: locale!("sr").into(),
             metadata: Default::default(),
         })
         .expect("The data should be valid")
