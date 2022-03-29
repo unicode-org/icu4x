@@ -34,10 +34,6 @@ skip_optional_dependencies = true
 # smaller_static gets tested on the FFI job anyway
 denylist = ["bench", "smaller_static"]
 
-[lib]
-crate-type = ["rlib"]
-path = "src/lib.rs"
-
 # Please keep the features list in sync with the icu_capi_staticlib crate
 [features]
 default = ["provider_fs", "provider_static"]
