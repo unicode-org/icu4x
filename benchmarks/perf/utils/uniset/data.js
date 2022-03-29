@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1648527223371,
+  "lastUpdate": 1648529926309,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -22799,6 +22799,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 44337763,
             "range": "± 2443870",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "9aba3895cd5e48d702f5eadfe9c93f97150771a8",
+          "message": "Split out capi targets: make separate freertos, staticlib, and cdylib crates as targets (#1747)\n\n* Add separate freertos crate\n\n* Add icu_capi_staticlib\n\n* Add icu_capi_cdylib\n\n* Add README for FFI\n\n* generate readmes\n\n* Fix all-targets errors\n\n* fix cargo warning about clashing target names\n\n* Move x86tiny to staticlib\n\n* rm rlib\n\n* fixup ci\n\n* fix std linkage\n\n* tidy\n\n* fmt\n\n* licenses",
+          "timestamp": "2022-03-28T21:52:31-07:00",
+          "tree_id": "1f76c81383185272212cf72f333cfedf64fd565e",
+          "url": "https://github.com/unicode-org/icu4x/commit/9aba3895cd5e48d702f5eadfe9c93f97150771a8"
+        },
+        "date": 1648529912638,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 43748589,
+            "range": "± 106664",
             "unit": "ns/iter"
           }
         ]
