@@ -238,6 +238,7 @@ The last command is a bit dense, so let's dissect it.
 * We tell it that the binary is named `icu4x-datagen`
 * Then we use `--` to separate arguments to `cargo` from arguments to our app
 * Then we pass `--cldr-tag` which informs the program which CLDR version to use
+* Then we pass `--uprops-tag` which informs the program which ICU-exported Unicode Properties version to use
 * Then we pass `--out` directory which is where we want the generated ICU4X data to be stored
 * Finally, we set `--all-keys` which specify that we want to export all keys available
 
