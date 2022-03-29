@@ -44,7 +44,7 @@
 //! assert_eq!(loc.to_string(), "en-GB");
 //! ```
 //!
-//! # Macros
+//! ## Macros
 //!
 //! ```rust
 //! use icu::locid::{language, region, langid};
