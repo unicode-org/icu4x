@@ -162,7 +162,7 @@ impl<const N: usize> TinyAsciiStr<N> {
 }
 
 macro_rules! check_is {
-    ($self:ident, check_int: $check_int:ident, check_u8: $check_u8:ident) => {
+    ($self:ident, $check_int:ident, $check_u8:ident) => {
         if N <= 4 {
             Aligned4::from_bytes(&$self.bytes).$check_int()
         } else if N <= 8 {
@@ -180,7 +180,7 @@ macro_rules! check_is {
             true
         }
     };
-    ($self:ident, check_int: $check_int:ident, check_u8_0: !$check_u8_0_inv:ident, check_u8_1: !$check_u8_1_inv:ident) => {
+    ($self:ident, $check_int:ident, !$check_u8_0_inv:ident, !$check_u8_1_inv:ident) => {
         if N <= 4 {
             Aligned4::from_bytes(&$self.bytes).$check_int()
         } else if N <= 8 {
@@ -228,8 +228,8 @@ impl<const N: usize> TinyAsciiStr<N> {
     pub const fn is_ascii_alphabetic(&self) -> bool {
         check_is!(
             self,
-            check_int: is_ascii_alphabetic,
-            check_u8: is_ascii_alphabetic
+            is_ascii_alphabetic,
+            is_ascii_alphabetic
         )
     }
 
@@ -257,8 +257,8 @@ impl<const N: usize> TinyAsciiStr<N> {
     pub const fn is_ascii_alphanumeric(&self) -> bool {
         check_is!(
             self,
-            check_int: is_ascii_alphanumeric,
-            check_u8: is_ascii_alphanumeric
+            is_ascii_alphanumeric,
+            is_ascii_alphanumeric
         )
     }
 
@@ -282,7 +282,7 @@ impl<const N: usize> TinyAsciiStr<N> {
     #[inline]
     #[must_use]
     pub const fn is_ascii_numeric(&self) -> bool {
-        check_is!(self, check_int: is_ascii_numeric, check_u8: is_ascii_digit)
+        check_is!(self, is_ascii_numeric, is_ascii_digit)
     }
 
     /// Checks if the value is in ASCII lower case.
@@ -310,9 +310,9 @@ impl<const N: usize> TinyAsciiStr<N> {
     pub const fn is_ascii_lowercase(&self) -> bool {
         check_is!(
             self,
-            check_int: is_ascii_lowercase,
-            check_u8_0: !is_ascii_uppercase,
-            check_u8_1: !is_ascii_uppercase
+            is_ascii_lowercase,
+            !is_ascii_uppercase,
+            !is_ascii_uppercase
         )
     }
 
@@ -342,9 +342,9 @@ impl<const N: usize> TinyAsciiStr<N> {
     pub const fn is_ascii_titlecase(&self) -> bool {
         check_is!(
             self,
-            check_int: is_ascii_titlecase,
-            check_u8_0: !is_ascii_lowercase,
-            check_u8_1: !is_ascii_uppercase
+            is_ascii_titlecase,
+            !is_ascii_lowercase,
+            !is_ascii_uppercase
         )
     }
 
@@ -373,9 +373,9 @@ impl<const N: usize> TinyAsciiStr<N> {
     pub const fn is_ascii_uppercase(&self) -> bool {
         check_is!(
             self,
-            check_int: is_ascii_uppercase,
-            check_u8_0: !is_ascii_lowercase,
-            check_u8_1: !is_ascii_lowercase
+            is_ascii_uppercase,
+            !is_ascii_lowercase,
+            !is_ascii_lowercase
         )
     }
 }
