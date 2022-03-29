@@ -4,6 +4,7 @@
 
 // https://github.com/unicode-org/icu4x/blob/main/docs/process/boilerplate.md#library-annotations
 #![no_std]
+
 #![cfg_attr(
     not(test),
     deny(
@@ -14,28 +15,37 @@
     )
 )]
 #![allow(clippy::upper_case_acronyms)]
-#![feature(alloc_error_handler)]
 
-extern crate alloc;
+
+#![cfg_attr(target_os = "none", feature(alloc_error_handler))]
 
 // Necessary to for symbols to be linked in
 extern crate icu_capi;
 
-use alloc::alloc::Layout;
-use core::panic::PanicInfo;
-use cortex_m::asm;
-use freertos_rust::FreeRtosAllocator;
+// CFG it off so that it doesn't break the --all-features build due to needing unstable rust
+#[cfg(target_os = "none")]
+mod stuff {
+    extern crate alloc;
 
-#[global_allocator]
-static GLOBAL: FreeRtosAllocator = FreeRtosAllocator;
 
-#[alloc_error_handler]
-fn alloc_error(_layout: Layout) -> ! {
-    asm::bkpt();
-    loop {}
-}
+    use alloc::alloc::Layout;
+    use core::panic::PanicInfo;
+    use cortex_m::asm;
+    use freertos_rust::FreeRtosAllocator;
 
-#[panic_handler]
-fn panic(_info: &PanicInfo) -> ! {
-    loop {}
+    #[global_allocator]
+    static GLOBAL: FreeRtosAllocator = FreeRtosAllocator;
+
+
+    #[alloc_error_handler]
+    fn alloc_error(_layout: Layout) -> ! {
+        asm::bkpt();
+        loop {}
+    }
+
+    #[cfg(target_os = "none")]
+    #[panic_handler]
+    fn panic(_info: &PanicInfo) -> ! {
+        loop {}
+    }
 }

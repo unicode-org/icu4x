@@ -33,7 +33,7 @@ skip_optional_dependencies = true
 # Bench feature gets tested separately and is only relevant for CI.
 # x86tiny is not relevant in normal environments,
 # smaller_static gets tested on the FFI job anyway
-denylist = ["bench", "x86tiny", "smaller_static"]
+denylist = ["bench", "x86tiny", "smaller_static", "internal_all_features_hack"]
 
 [lib]
 crate-type = ["rlib"]
@@ -47,6 +47,9 @@ provider_static = ["icu_testdata"]
 smaller_static = ["provider_static"]
 # Enables size-optimized builds on x86_64
 x86tiny = ["dlmalloc"]
+# We can't exclude x86tiny from `--all-features` and it messes up the build for other crates
+# Instead, we use this feature to detect when `--all-features` is occurring
+internal_all_features_hack = []
 
 [dependencies]
 fixed_decimal = { path = "../../utils/fixed_decimal", features = ["ryu"] }

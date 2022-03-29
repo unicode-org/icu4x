@@ -15,7 +15,7 @@
 )]
 #![allow(clippy::upper_case_acronyms)]
 #![cfg_attr(
-    any(feature = "x86tiny", target_os = "none"),
+    all(feature = "x86tiny", not(feature = "internal_all_features_hack")),
     feature(alloc_error_handler)
 )]
 
@@ -54,5 +54,5 @@ pub mod segmenter_line;
 #[cfg(target_arch = "wasm32")]
 mod wasm_glue;
 
-#[cfg(all(feature = "x86tiny", not(target_os = "none")))]
+#[cfg(all(feature = "x86tiny", not(feature = "internal_all_features_hack")))]
 mod x86tiny_glue;
