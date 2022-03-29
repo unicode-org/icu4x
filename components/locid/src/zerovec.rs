@@ -57,7 +57,7 @@
 //! ```
 //! use icu_locid::LanguageIdentifier;
 //! use icu_locid::subtags::{Language, Script, Region};
-//! use icu_locid_macros::{language, script, region, langid};
+//! use icu_locid::{language, script, region, langid};
 //! use zerovec::ZeroMap;
 //!
 //! // ZeroMap from integer to LSR (language-script-region)
@@ -93,7 +93,7 @@
 //!
 //! ```
 //! use icu_locid::Locale;
-//! use icu_locid_macros::langid;
+//! use icu_locid::langid;
 //! use zerovec::ZeroMap;
 //!
 //! // ZeroMap from integer to locale string
