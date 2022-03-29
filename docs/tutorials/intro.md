@@ -222,15 +222,12 @@ We are also going to use Unicode property data shipped as a zip file in the ICU4
 The `datagen` component has a binary application which will fetch the CLDR data and generate ICU4X data out of it.
 
 ```
-cd ~/projects/icu
-wget https://github.com/unicode-org/icu/releases/download/release-70-1/icuexportdata_uprops_full.zip
-unzip icuexportdata_uprops_full.zip
 git clone https://github.com/unicode-org/icu4x
 cd icu4x
 git checkout icu@0.5.0
-cargo run --bin icu4x-datagen -- \
+cargo run --bin icu4x-datagen --features download -- \
     --cldr-tag 40.0.0 \
-    --uprops-root ../icuexportdata_uprops_full/small \
+    --uprops-tag release-71-1 \
     --out ~/projects/icu/icu4x-data \
     --all-keys --all-locales
 ```
