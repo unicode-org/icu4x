@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1648529995589,
+  "lastUpdate": 1648530900793,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -24119,6 +24119,48 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 171844,
             "range": "± 259",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "cfb979253da5d711824fda1df0ae0ebff63240b1",
+          "message": "Fixing locid macro docs (#1748)",
+          "timestamp": "2022-03-28T22:06:52-07:00",
+          "tree_id": "845c2acfac94b61157d60159389d4ffbc33740bb",
+          "url": "https://github.com/unicode-org/icu4x/commit/cfb979253da5d711824fda1df0ae0ebff63240b1"
+        },
+        "date": 1648530885645,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 72657,
+            "range": "± 754",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 781177,
+            "range": "± 710",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 155909,
+            "range": "± 524",
             "unit": "ns/iter"
           }
         ]
