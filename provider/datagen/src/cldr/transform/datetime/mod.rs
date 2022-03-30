@@ -46,8 +46,7 @@ macro_rules! impl_resource_provider {
                 ) -> Result<DataResponse<$marker>, DataError> {
                     let langid = req.langid();
                     let variant = req.options.temp_get_extension("ca")
-                    .map(writeable::Writeable::write_to_string)
-                    .ok_or_else(|| DataErrorKind::NeedsVariant.with_req(<$marker>::KEY, req))?;
+                        .ok_or_else(|| DataErrorKind::NeedsVariant.with_req(<$marker>::KEY, req))?;
 
                     let dates = if let Some(dates) = self.data.get(&req.options) {
                         dates

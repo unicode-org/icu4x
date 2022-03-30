@@ -8,6 +8,7 @@ use alloc::borrow::Cow;
 
 use crate::error::{DataError, DataErrorKind};
 use crate::helpers;
+use alloc::string::{String, ToString};
 use core::default::Default;
 use core::fmt;
 use core::fmt::Write;
@@ -354,7 +355,8 @@ impl Writeable for ResourceKey {
 /// The fields in a [`ResourceOptions`] are not generally known until runtime.
 #[derive(PartialEq, Clone, Default, PartialOrd, Eq, Ord)]
 pub struct ResourceOptions {
-    locale: Locale,
+    langid: LanguageIdentifier,
+    variant: Option<String>,
 }
 
 impl fmt::Debug for ResourceOptions {
@@ -371,60 +373,67 @@ impl fmt::Display for ResourceOptions {
 
 impl Writeable for ResourceOptions {
     fn write_to<W: core::fmt::Write + ?Sized>(&self, sink: &mut W) -> core::fmt::Result {
-        self.locale.write_to(sink)
+        self.langid.write_to(sink)?;
+        if let Some(v) = &self.variant {
+            sink.write_char('/')?;
+            sink.write_str(&v)?;
+        }
+        Ok(())
     }
 
     fn write_len(&self) -> LengthHint {
-        self.locale.write_len()
+        self.langid.write_len()
+            + if let Some(v) = &self.variant {
+                1 + v.len()
+            } else {
+                0
+            }
     }
 }
 
 impl From<LanguageIdentifier> for ResourceOptions {
     fn from(langid: LanguageIdentifier) -> Self {
         Self {
-            locale: langid.into(),
+            langid,
+            variant: None,
         }
     }
 }
 
 impl From<Locale> for ResourceOptions {
     fn from(locale: Locale) -> Self {
-        Self { locale }
+        // TODO(#1109): Implement proper vertical fallback
+        debug_assert!(locale.extensions.is_empty());
+        Self {
+            langid: locale.id,
+            variant: None,
+        }
     }
 }
 
 impl ResourceOptions {
     /// TODO(#1109): Delete this function and use vertical fallback instead
     pub fn temp_for_region(region: Option<Region>) -> Self {
-        let mut locale = icu_locid::Locale::default();
-        locale.id.region = region;
-        Self { locale }
+        // let mut locale = icu_locid::Locale::default();
+        // locale.id.region = region;
+        // Self { locale }
+        Self {
+            langid: LanguageIdentifier::und(),
+            variant: region.map(|r| r.write_to_string().into_owned()),
+        }
     }
 
     // TODO(#1109): Delete this function and use vertical fallback instead
-    pub fn temp_with_unicode_ext(langid: LanguageIdentifier, key: &str, value: &str) -> Self {
-        let mut locale_str = String::new();
-        locale_str.push_str("und-u-");
-        locale_str.push_str(key);
-        locale_str.push('-');
-        locale_str.push_str(value);
-        // This is temporary code that will be removed as part of #1109
-        #[allow(clippy::unwrap_used)]
-        let mut locale: icu_locid::Locale = locale_str.parse().unwrap();
-        locale.id = langid;
-        Self { locale }
+    pub fn temp_with_unicode_ext(langid: LanguageIdentifier, _key: &str, value: &str) -> Self {
+        Self {
+            langid,
+            variant: Some(value.to_string()),
+        }
     }
 
     // TODO(#1109): Delete this function and use vertical fallback instead
-    pub fn temp_get_extension(&self, key: &str) -> Option<&icu_locid::extensions::unicode::Value> {
-        use icu_locid::extensions::unicode::Key;
-        // This is temporary code that will be removed as part of #1109
-        #[allow(clippy::unwrap_used)]
-        self.locale
-            .extensions
-            .unicode
-            .keywords
-            .get(Key::from_bytes(key.as_bytes()).unwrap())
+    pub fn temp_get_extension(&self, _key: &str) -> Option<String> {
+        self.variant.clone()
     }
 
     /// Returns whether this [`ResourceOptions`] has all empty fields (no components).
@@ -434,12 +443,12 @@ impl ResourceOptions {
 
     /// Returns whether the [`LanguageIdentifier`] associated with this request is `und`.
     pub fn is_und(&self) -> bool {
-        self.locale == Locale::und()
+        self.langid == LanguageIdentifier::und()
     }
 
     /// Returns the [`LanguageIdentifier`] for this [`ResourceOptions`].
     pub fn langid(&self) -> LanguageIdentifier {
-        self.locale.id.clone()
+        self.langid.clone()
     }
 }
 
@@ -483,23 +492,18 @@ mod tests {
     }
 
     fn get_options_test_cases() -> [OptionsTestCase; 3] {
+        use std::str::FromStr;
         [
             OptionsTestCase {
-                options: ResourceOptions {
-                    locale: Locale::und(),
-                },
+                options: Locale::und().into(),
                 expected: "und",
             },
             OptionsTestCase {
-                options: ResourceOptions {
-                    locale: "und-u-cu-gbp".parse().unwrap(),
-                },
+                options: Locale::from_str("und-u-cu-gbp").unwrap().into(),
                 expected: "und-u-cu-gbp",
             },
             OptionsTestCase {
-                options: ResourceOptions {
-                    locale: "en-ZA-u-cu-gbp".parse().unwrap(),
-                },
+                options: Locale::from_str("en-ZA-u-cu-gbp").unwrap().into(),
                 expected: "en-ZA-u-cu-gbp",
             },
         ]
