@@ -8,7 +8,6 @@ use icu_provider::buf::BufferFormat;
 use icu_provider::prelude::*;
 use serde::de::Deserialize;
 use writeable::Writeable;
-use yoke::trait_hack::YokeTraitHack;
 use yoke::*;
 use zerovec::maps::{KeyError, ZeroMap2dBorrowed};
 
@@ -26,23 +25,16 @@ use zerovec::maps::{KeyError, ZeroMap2dBorrowed};
 /// use icu_provider::prelude::*;
 /// use icu_provider::hello_world::*;
 /// use icu_provider_blob::BlobDataProvider;
-/// use std::fs::File;
-/// use std::io::Read;
-/// use std::rc::Rc;
+/// use std::fs;
 ///
 /// // Read an ICU4X data blob dynamically:
-/// let mut blob: Vec<u8> = Vec::new();
-/// let filename = concat!(
+/// let blob = fs::read(concat!(
 ///     env!("CARGO_MANIFEST_DIR"),
 ///     "/tests/data/hello_world.postcard",
-/// );
-/// File::open(filename)
-///     .expect("File should exist")
-///     .read_to_end(&mut blob)
-///     .expect("Reading pre-computed postcard buffer");
+/// )).expect("Reading pre-computed postcard buffer");
 ///
 /// // Create a DataProvider from it:
-/// let provider = BlobDataProvider::new_from_rc_blob(Rc::from(blob))
+/// let provider = BlobDataProvider::new_from_rc_blob(blob.into())
 ///     .expect("Deserialization should succeed");
 ///
 /// // Check that it works:
@@ -77,58 +69,6 @@ impl BlobDataProvider {
             })?,
         })
     }
-
-    /// Gets the buffer for the given DataRequest out of the BlobSchema and returns it yoked
-    /// to the buffer backing the BlobSchema.
-    fn get_file(
-        &self,
-        key: ResourceKey,
-        req: &DataRequest,
-    ) -> Result<Yoke<&'static [u8], Rc<[u8]>>, DataError> {
-        self.data
-            .try_project_cloned_with_capture((key, req), |zm, (key, req), _| {
-                zm.get(&key.get_hash(), &req.options.write_to_string())
-                    .map_err(|e| {
-                        match e {
-                            KeyError::K0 => DataErrorKind::MissingResourceKey,
-                            KeyError::K1 => DataErrorKind::MissingResourceOptions,
-                        }
-                        .with_req(key, req)
-                    })
-            })
-    }
-}
-
-impl<M> ResourceProvider<M> for BlobDataProvider
-where
-    M: ResourceMarker,
-    // Actual bound:
-    //     for<'de> <M::Yokeable as Yokeable<'de>>::Output: serde::de::Deserialize<'de>,
-    // Necessary workaround bound (see `yoke::trait_hack` docs):
-    for<'de> YokeTraitHack<<M::Yokeable as yoke::Yokeable<'de>>::Output>:
-        serde::de::Deserialize<'de>,
-{
-    fn load_resource(&self, req: &DataRequest) -> Result<DataResponse<M>, DataError> {
-        self.as_deserializing().load_resource(req)
-    }
-}
-
-impl<M> DynProvider<M> for BlobDataProvider
-where
-    M: DataMarker,
-    // Actual bound:
-    //     for<'de> <M::Yokeable as Yokeable<'de>>::Output: serde::de::Deserialize<'de>,
-    // Necessary workaround bound (see `yoke::trait_hack` docs):
-    for<'de> YokeTraitHack<<M::Yokeable as yoke::Yokeable<'de>>::Output>:
-        serde::de::Deserialize<'de>,
-{
-    fn load_payload(
-        &self,
-        key: ResourceKey,
-        req: &DataRequest,
-    ) -> Result<DataResponse<M>, DataError> {
-        self.as_deserializing().load_payload(key, req)
-    }
 }
 
 impl BufferProvider for BlobDataProvider {
@@ -137,13 +77,26 @@ impl BufferProvider for BlobDataProvider {
         key: ResourceKey,
         req: &DataRequest,
     ) -> Result<DataResponse<BufferMarker>, DataError> {
-        let yoked_buffer = self.get_file(key, req)?;
         let mut metadata = DataResponseMetadata::default();
         // TODO(#1109): Set metadata.data_langid correctly.
         metadata.buffer_format = Some(BufferFormat::Postcard07);
         Ok(DataResponse {
             metadata,
-            payload: Some(DataPayload::from_yoked_buffer(yoked_buffer)),
+            payload: Some(DataPayload::from_yoked_buffer(
+                self.data
+                    .try_project_cloned_with_capture((key, req), |zm, (key, req), _| {
+                        zm.get(&key.get_hash(), &req.options.write_to_string())
+                            .map_err(|e| {
+                                match e {
+                                    KeyError::K0 => DataErrorKind::MissingResourceKey,
+                                    KeyError::K1 => DataErrorKind::MissingResourceOptions,
+                                }
+                                .with_req(key, req)
+                            })
+                    })?,
+            )),
         })
     }
 }
+
+icu_provider::impl_auto_deserializing!(BlobDataProvider);
