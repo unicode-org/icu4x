@@ -22,6 +22,7 @@ Once the release is complete, the assigned release driver will:
 * `cargo publish` each component and meta component
 * Add `icu4x-release` group as owners to each new component you're publishing
   * `cargo owner -a github:unicode-org:icu4x-release`
+* Ensure that the steps in `docs/tutorials/intro.md` still work with updated version numbers
 * Announce the release to public
 
 
