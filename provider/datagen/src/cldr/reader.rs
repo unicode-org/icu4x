@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::cldr::error::Error;
-use icu_locid::{LanguageIdentifier, Locale};
+use icu_locid::LanguageIdentifier;
 use std::fs;
 use std::fs::File;
 use std::io::BufReader;
@@ -20,7 +20,7 @@ pub fn open_reader(path: &Path) -> Result<BufReader<File>, Error> {
 
 fn get_langid_subdirectories_internal(
     root: &Path,
-) -> Result<impl Iterator<Item = (Locale, PathBuf)>, Error> {
+) -> Result<impl Iterator<Item = (LanguageIdentifier, PathBuf)>, Error> {
     let mut result = vec![];
     for entry in fs::read_dir(root).map_err(|e| (e, root))? {
         let entry = entry.map_err(|e| (e, root))?;
@@ -30,14 +30,16 @@ fn get_langid_subdirectories_internal(
     Ok(result.into_iter().map(|path| {
         #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
         (
-            Locale::from_str(&path.file_name().unwrap().to_string_lossy()).unwrap(),
+            LanguageIdentifier::from_str(&path.file_name().unwrap().to_string_lossy()).unwrap(),
             path,
         )
     }))
 }
 
 /// Helper function which returns an unsorted list of langids for which subdirectories exist.
-pub fn get_langid_subdirectories(root: &Path) -> Result<impl Iterator<Item = Locale>, Error> {
+pub fn get_langid_subdirectories(
+    root: &Path,
+) -> Result<impl Iterator<Item = LanguageIdentifier>, Error> {
     get_langid_subdirectories_internal(root).map(|iter| iter.map(|(l, _)| l))
 }
 
@@ -47,7 +49,7 @@ pub fn get_langid_subdirectory(
     langid: &LanguageIdentifier,
 ) -> Result<Option<PathBuf>, Error> {
     get_langid_subdirectories_internal(root).map(|mut iter| {
-        iter.find(|(langid2, _)| &langid2.id == langid)
+        iter.find(|(langid2, _)| langid2 == langid)
             .map(|(_, path)| path)
     })
 }

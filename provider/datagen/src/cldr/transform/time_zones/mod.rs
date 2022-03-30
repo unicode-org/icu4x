@@ -103,14 +103,14 @@ mod tests {
 
     #[test]
     fn basic_cldr_time_zones() {
-        use icu_locid::locale;
+        use icu_locid::langid;
 
         let cldr_paths = crate::cldr::cldr_paths::for_test();
         let provider = TimeZonesProvider::try_from(&cldr_paths as &dyn CldrPaths).unwrap();
 
         let time_zone_formats: DataPayload<TimeZoneFormatsV1Marker> = provider
             .load_resource(&DataRequest {
-                options: locale!("en").into(),
+                options: langid!("en").into(),
                 metadata: Default::default(),
             })
             .unwrap()
@@ -120,7 +120,7 @@ mod tests {
 
         let exemplar_cities: DataPayload<ExemplarCitiesV1Marker> = provider
             .load_resource(&DataRequest {
-                options: locale!("en").into(),
+                options: langid!("en").into(),
                 metadata: Default::default(),
             })
             .unwrap()
@@ -133,7 +133,7 @@ mod tests {
 
         let generic_names_long: DataPayload<MetaZoneGenericNamesLongV1Marker> = provider
             .load_resource(&DataRequest {
-                options: locale!("en").into(),
+                options: langid!("en").into(),
                 metadata: Default::default(),
             })
             .unwrap()
@@ -150,7 +150,7 @@ mod tests {
 
         let specific_names_long: DataPayload<MetaZoneSpecificNamesLongV1Marker> = provider
             .load_resource(&DataRequest {
-                options: locale!("en").into(),
+                options: langid!("en").into(),
                 metadata: Default::default(),
             })
             .unwrap()
@@ -167,7 +167,7 @@ mod tests {
 
         let generic_names_short: DataPayload<MetaZoneGenericNamesShortV1Marker> = provider
             .load_resource(&DataRequest {
-                options: locale!("en").into(),
+                options: langid!("en").into(),
                 metadata: Default::default(),
             })
             .unwrap()
@@ -184,7 +184,7 @@ mod tests {
 
         let specific_names_short: DataPayload<MetaZoneSpecificNamesShortV1Marker> = provider
             .load_resource(&DataRequest {
-                options: locale!("en").into(),
+                options: langid!("en").into(),
                 metadata: Default::default(),
             })
             .unwrap()

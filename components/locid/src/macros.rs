@@ -143,8 +143,17 @@ macro_rules! variant {
 /// assert_eq!(DE_AT, de_at);
 /// ```
 ///
-/// *Note*: As of Rust 1.47, the macro cannot produce language identifier
-/// with variants due to const limitations (see [`Heap Allocations in Constants`]).
+/// *Note*: The macro cannot produce language identifiers with variants due to const
+/// limitations (see [`Heap Allocations in Constants`]):
+///
+/// ```compile_fail
+/// icu::locid::langid("de_at-foobar");
+/// ```
+///
+/// Use runtime parsing instead:
+/// ```
+/// "de_at-foobar".parse::<icu::locid::LanguageIdentifier>().unwrap();
+/// ```
 ///
 /// [`LanguageIdentifier`]: crate::LanguageIdentifier
 /// [`Heap Allocations in Constants`]: https://github.com/rust-lang/const-eval/issues/20
@@ -184,8 +193,16 @@ macro_rules! langid {
 /// assert_eq!(DE_AT, de_at);
 /// ```
 ///
-/// *Note*: As of Rust 1.47, the macro cannot produce locales with variants or
-/// Unicode extensions due to const limitations (see [`Heap Allocations in Constants`]).
+/// *Note*: The macro cannot produce locales with variants or Unicode extensions due to
+/// const limitations (see [`Heap Allocations in Constants`]):
+///
+/// ```compile_fail
+/// icu::locid::locale!("en-US-u-ca-ja");
+/// ```
+/// Use runtime parsing instead:
+/// ```
+/// "en-US-u-ca-ja".parse::<icu::locid::Locale>().unwrap();
+/// ```
 ///
 /// [`Locale`]: crate::Locale
 /// [`Heap Allocations in Constants`]: https://github.com/rust-lang/const-eval/issues/20

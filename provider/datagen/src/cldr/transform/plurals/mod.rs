@@ -6,7 +6,6 @@ use crate::cldr::cldr_serde;
 use crate::cldr::error::Error;
 use crate::cldr::reader::open_reader;
 use crate::cldr::CldrPaths;
-use icu_locid::Locale;
 use icu_plurals::provider::*;
 use icu_plurals::rules::runtime::ast::Rule;
 use icu_provider::datagen::IterableResourceProvider;
@@ -135,7 +134,6 @@ impl<M: ResourceMarker<Yokeable = PluralRulesV1<'static>>> IterableResourceProvi
                 .cloned()
                 .collect::<Vec<_>>()
                 .into_iter()
-                .map(Into::<Locale>::into)
                 .map(Into::<ResourceOptions>::into),
         ))
     }
@@ -162,7 +160,7 @@ impl From<&cldr_serde::plurals::LocalePluralRules> for PluralRulesV1<'static> {
 
 #[test]
 fn test_basic() {
-    use icu_locid::locale;
+    use icu_locid::langid;
 
     let cldr_paths = crate::cldr::cldr_paths::for_test();
     let provider = PluralsProvider::try_from(&cldr_paths as &dyn CldrPaths).unwrap();
@@ -170,7 +168,7 @@ fn test_basic() {
     // Spot-check locale 'cs' since it has some interesting entries
     let cs_rules: DataPayload<CardinalV1Marker> = provider
         .load_resource(&DataRequest {
-            options: locale!("cs").into(),
+            options: langid!("cs").into(),
             metadata: Default::default(),
         })
         .unwrap()

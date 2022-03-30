@@ -4,7 +4,7 @@
 
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
 
-use icu_locid::locale;
+use icu_locid::langid;
 use icu_plurals::provider::*;
 use icu_provider::prelude::*;
 use icu_provider_fs::FsDataProvider;
@@ -17,7 +17,7 @@ fn overview_bench(c: &mut Criterion) {
                 .expect("Loading file from testdata directory");
             let _: DataPayload<CardinalV1Marker> = black_box(&provider)
                 .load_resource(&DataRequest {
-                    options: locale!("ru").into(),
+                    options: langid!("ru").into(),
                     metadata: Default::default(),
                 })
                 .expect("The data should be valid")
@@ -45,7 +45,7 @@ fn json_bench(c: &mut Criterion) {
         b.iter(|| {
             let _: DataPayload<CardinalV1Marker> = black_box(&provider)
                 .load_resource(&DataRequest {
-                    options: locale!("ru").into(),
+                    options: langid!("ru").into(),
                     metadata: Default::default(),
                 })
                 .expect("The data should be valid")
@@ -59,7 +59,7 @@ fn json_bench(c: &mut Criterion) {
             let _: DataPayload<CardinalV1Marker> = black_box(&provider as &dyn BufferProvider)
                 .as_deserializing()
                 .load_resource(&DataRequest {
-                    options: locale!("ru").into(),
+                    options: langid!("ru").into(),
                     metadata: Default::default(),
                 })
                 .expect("The data should be valid")
@@ -78,7 +78,7 @@ fn bincode_bench(c: &mut Criterion) {
         b.iter(|| {
             let _: DataPayload<CardinalV1Marker> = black_box(&provider)
                 .load_resource(&DataRequest {
-                    options: locale!("sr").into(),
+                    options: langid!("sr").into(),
                     metadata: Default::default(),
                 })
                 .expect("The data should be valid")
@@ -92,7 +92,7 @@ fn bincode_bench(c: &mut Criterion) {
             let _: DataPayload<CardinalV1Marker> = black_box(&provider as &dyn BufferProvider)
                 .as_deserializing()
                 .load_resource(&DataRequest {
-                    options: locale!("sr").into(),
+                    options: langid!("sr").into(),
                     metadata: Default::default(),
                 })
                 .expect("The data should be valid")
