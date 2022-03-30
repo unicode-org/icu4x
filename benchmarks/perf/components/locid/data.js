@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1648605556964,
+  "lastUpdate": 1648660191105,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -26921,6 +26921,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 4206,
             "range": "± 55",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "b544d9595e762f6a261e0227585a355766e10d72",
+          "message": "Simplifying file IO and runtime data provider code (#1752)",
+          "timestamp": "2022-03-30T19:01:32+02:00",
+          "tree_id": "118d4db6efe582cf818b1dacca45cf0d37e36510",
+          "url": "https://github.com/unicode-org/icu4x/commit/b544d9595e762f6a261e0227585a355766e10d72"
+        },
+        "date": 1648660170775,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 2721,
+            "range": "± 4",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 4894,
+            "range": "± 15",
             "unit": "ns/iter"
           }
         ]
