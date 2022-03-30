@@ -33,12 +33,12 @@
     }
   },
   "overrides": {
-    "Etc/UTC": {
-      "standard": "UTC"
-    },
-    "Pacific/Honolulu": {
+    "ushnl": {
       "daylight": "HDT",
       "standard": "HST"
+    },
+    "utc": {
+      "standard": "UTC"
     }
   }
 }

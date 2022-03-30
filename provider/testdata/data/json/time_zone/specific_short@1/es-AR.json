@@ -10,7 +10,7 @@
     }
   },
   "overrides": {
-    "Etc/UTC": {
+    "utc": {
       "standard": "UTC"
     }
   }

@@ -197,6 +197,7 @@ macro_rules! long_short_impls {
         impl From<CldrTimeZonesData> for $specific {
             fn from(other: CldrTimeZonesData) -> Self {
                 let data = other.time_zone_names;
+                let bcp47_tzid_data = &other.bcp47_tzids;
                 Self {
                     defaults: match data.metazone {
                         None => ZeroMap2d::new(),
@@ -225,21 +226,33 @@ macro_rules! long_short_impls {
                                     key.push('/');
                                     key.push_str(&inner_key);
                                     match place_or_region {
-                                        LocationOrSubRegion::Location(place) => vec![place]
-                                            .into_iter()
-                                            .filter_map(|inner_place| {
-                                                inner_place
-                                                    .$metazones_name()
-                                                    .map(|format| (key.clone(), format))
-                                            })
-                                            .collect::<Vec<_>>(),
+                                        LocationOrSubRegion::Location(place) => {
+                                            match bcp47_tzid_data.get(&key) {
+                                                Some(bcp47) => vec![place]
+                                                    .into_iter()
+                                                    .filter_map(|inner_place| {
+                                                        inner_place
+                                                            .$metazones_name()
+                                                            .map(|format| (bcp47.clone(), format))
+                                                    })
+                                                    .collect::<Vec<_>>(),
+                                                None => panic!("Cannot find bcp47 for {:?}.", key),
+                                            }
+                                        }
                                         LocationOrSubRegion::SubRegion(region) => region
                                             .iter()
                                             .filter_map(|(inner_key, place)| {
                                                 let mut key = key.clone();
                                                 key.push('/');
                                                 key.push_str(&inner_key);
-                                                place.$metazones_name().map(|format| (key, format))
+                                                match bcp47_tzid_data.get(&key) {
+                                                    Some(bcp47) => place
+                                                        .$metazones_name()
+                                                        .map(|format| (bcp47.clone(), format)),
+                                                    None => {
+                                                        panic!("Cannot find bcp47 for {:?}.", key)
+                                                    }
+                                                }
                                             })
                                             .collect::<Vec<_>>(),
                                     }

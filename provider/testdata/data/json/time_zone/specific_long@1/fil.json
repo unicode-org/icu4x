@@ -530,14 +530,14 @@
     }
   },
   "overrides": {
-    "Etc/UTC": {
-      "standard": "Coordinated Universal Time"
+    "gblon": {
+      "daylight": "Oras sa Tag-init ng Britain"
     },
-    "Europe/Dublin": {
+    "iedub": {
       "daylight": "Standard na Oras sa Ireland"
     },
-    "Europe/London": {
-      "daylight": "Oras sa Tag-init ng Britain"
+    "utc": {
+      "standard": "Coordinated Universal Time"
     }
   }
 }
