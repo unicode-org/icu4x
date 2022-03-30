@@ -93,11 +93,10 @@ It's a bit unergonomic to have to perform the parsing of them at runtime and han
 For that purpose, ICU4X provides a macro one can use to parse it at compilation time:
 
 ```rust
-use icu::locid::Locale;
-use icu::locid::langid;
+use icu::locid::locale;
 
 fn main() {
-    let loc: Locale = langid!("ES-AR").into();
+    let loc = locale!("ES-AR");
 
     if loc.id.language == "es" {
         println!("¡Hola amigo!");
@@ -109,7 +108,7 @@ fn main() {
 
 In this case, the parsing is performed at compilation time, so we don't need to handle an error case. Try passing an malformed identifier, like "foo-bar" and try to call `cargo check`.
 
-*Notice:* ICU4X does not expose yet a macro for `locale!` compile time parsing. Instead, `langid!` macro constructs a `LanguageIdentifier`, which we then `Into` a `Locale`.
+*Notice:* The compile time macros `langid!`, and `locale!` don't support variants or extension tags, as storing these requires allocation. If you have such a tag you need to use runtime parsing.
 
 Next, let's add some more complex functionality.
 
@@ -152,13 +151,10 @@ fn main() {
 While this app doesn't do anything on its own yet, we now have a loaded data provider, and can use it to format a date:
 
 ```rust
-use icu::locid::langid;
-use icu::locid::Locale;
+use icu::locid::locale;
 use icu::datetime::{DateTimeFormat, mock::parse_gregorian_from_str, options::length};
 
 fn main() {
-    let loc: Locale = langid!("ja").into();
-
     let date = parse_gregorian_from_str("2020-10-14T13:21:00")
         .expect("Failed to parse a datetime.");
 
@@ -170,7 +166,7 @@ fn main() {
         ..Default::default()
     }.into();
 
-    let dtf = DateTimeFormat::try_new(loc, &provider, &options)
+    let dtf = DateTimeFormat::try_new(locale!("ja"), &provider, &options)
         .expect("Failed to initialize DateTimeFormat");
 
     let formatted_date = dtf.format(&date);

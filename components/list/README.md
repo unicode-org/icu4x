@@ -9,13 +9,11 @@ writeable::Writeable)s as lists in a locale-sensitive way.
 
 ```rust
 use icu_list::{ListFormatter, ListStyle};
-use icu_locid::Locale;
-use icu_locid::langid;
+use icu_locid::locale;
 use writeable::Writeable;
 
-let locale: Locale = langid!("es").into();
 let provider = icu_testdata::get_provider();
-let list_formatter = ListFormatter::try_new_and(locale, &provider, ListStyle::Wide)
+let list_formatter = ListFormatter::try_new_and(locale!("es"), &provider, ListStyle::Wide)
     .expect("Data should load successfully");
 
 assert_eq!(
