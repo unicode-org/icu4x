@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1648585824486,
+  "lastUpdate": 1648605617346,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -30659,6 +30659,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 13912,
             "range": "± 61",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "6ebd111a7ecfb9606c1d9e303909efa38a701403",
+          "message": "Fix up intro doc (#1720)\n\n* Fix up intro doc\r\n\r\nCo-authored-by: Robert Bastian <robertbastian@users.noreply.github.com>",
+          "timestamp": "2022-03-29T18:52:24-07:00",
+          "tree_id": "bfde338c5e259c896d09ed56861d8c086aa95984",
+          "url": "https://github.com/unicode-org/icu4x/commit/6ebd111a7ecfb9606c1d9e303909efa38a701403"
+        },
+        "date": 1648605599615,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 825,
+            "range": "± 2",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 4771,
+            "range": "± 23",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 12306,
+            "range": "± 703",
             "unit": "ns/iter"
           }
         ]
