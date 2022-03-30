@@ -78,9 +78,7 @@ impl ZonedDateTimeFormat {
             Some(
                 date_provider
                     .load_resource(&DataRequest {
-                        options: ResourceOptions {
-                            locale: loc_with_region,
-                        },
+                        options: loc_with_region.into(),
                         metadata: Default::default(),
                     })?
                     .take_payload()?,
@@ -103,9 +101,7 @@ impl ZonedDateTimeFormat {
             Some(
                 date_provider
                     .load_resource(&DataRequest {
-                        options: ResourceOptions {
-                            locale: loc_with_calendar
-                        },
+                        options: loc_with_calendar.into(),
                         metadata: Default::default(),
                     })?
                     .take_payload()?,

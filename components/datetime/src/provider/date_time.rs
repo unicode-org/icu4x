@@ -210,9 +210,7 @@ where
         let data = self
             .data_provider
             .load_resource(&DataRequest {
-                options: ResourceOptions {
-                    locale: loc_with_calendar
-                },
+                options: loc_with_calendar.into(),
                 metadata: Default::default(),
             })?
             .take_payload()?;
@@ -224,9 +222,7 @@ where
         let data = self
             .data_provider
             .load_resource(&DataRequest {
-                options: ResourceOptions {
-                    locale: loc_with_calendar
-                },
+                options: loc_with_calendar.into(),
                 metadata: Default::default(),
             })?
             .take_payload()?;

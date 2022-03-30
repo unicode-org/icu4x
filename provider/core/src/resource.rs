@@ -402,6 +402,7 @@ impl ResourceOptions {
         self == &Self::default()
     }
 
+    /// Returns whether the [`LanguageIdentifier`] associated with this request is `und`.
     pub fn is_und(&self) -> bool {
         self.locale == Locale::und()
     }
