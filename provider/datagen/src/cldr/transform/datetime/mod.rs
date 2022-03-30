@@ -44,14 +44,10 @@ macro_rules! impl_resource_provider {
                     &self,
                     req: &DataRequest,
                 ) -> Result<DataResponse<$marker>, DataError> {
-                    let langid = req
-                        .get_langid()
-                        .ok_or_else(|| DataErrorKind::NeedsLocale.with_req(<$marker>::KEY, req))?;
-                    let variant = req
-                        .options
-                        .variant
-                        .as_ref()
-                        .ok_or_else(|| DataErrorKind::NeedsVariant.with_req(<$marker>::KEY, req))?;
+                    let langid = req.langid();
+                    let variant = req.options.temp_get_extension("ca")
+                    .map(writeable::Writeable::write_to_string)
+                    .ok_or_else(|| DataErrorKind::NeedsVariant.with_req(<$marker>::KEY, req))?;
 
                     let dates = if let Some(dates) = self.data.get(&req.options) {
                         dates
@@ -59,10 +55,10 @@ macro_rules! impl_resource_provider {
                         let (cldr_cal, _, path) = self
                             .paths
                             .iter()
-                            .find(|(_, bcp_cal, _)| bcp_cal == &&**variant)
+                            .find(|(_, bcp_cal, _)| bcp_cal == &&*variant)
                             .ok_or_else(|| DataErrorKind::MissingVariant.with_req(<$marker>::KEY, req))?;
 
-                        let locale_dir = get_langid_subdirectory(&path.join("main"), langid)?
+                        let locale_dir = get_langid_subdirectory(&path.join("main"), &langid)?
                             .ok_or_else(|| DataErrorKind::MissingLocale.with_req(<$marker>::KEY, req))?;
 
                         let cal_file = format!("ca-{}.json", cldr_cal);
@@ -75,7 +71,7 @@ macro_rules! impl_resource_provider {
                         self.data.insert(req.options.clone(), Box::new(resource
                             .main
                             .0
-                            .remove(langid)
+                            .remove(&langid)
                             .expect("CLDR file contains the expected language")
                             .dates
                             .calendars
@@ -93,7 +89,7 @@ macro_rules! impl_resource_provider {
                     Ok(DataResponse {
                         metadata,
                         #[allow(clippy::redundant_closure_call)]
-                        payload: Some(DataPayload::from_owned(($expr)(dates, variant))),
+                        payload: Some(DataPayload::from_owned(($expr)(dates, &variant))),
                     })
                 }
             }
@@ -112,14 +108,9 @@ macro_rules! impl_resource_provider {
 
                     let mut r = Vec::new();
                     for (_, cal, path) in &self.paths {
-                        let cal = Some((*cal).into());
                         r.extend(
                             get_langid_subdirectories(&path.join("main"))?
-                                .map(Into::<ResourceOptions>::into)
-                                .map(move |mut r| {
-                                    r.variant = cal.clone();
-                                    r
-                                }),
+                                .map(|lid| ResourceOptions::temp_with_unicode_ext(lid, "ca", cal))
                         );
                     }
                     Ok(Box::new(r.into_iter()))
@@ -154,10 +145,7 @@ mod test {
 
         let cs_dates: DataPayload<DatePatternsV1Marker> = provider
             .load_resource(&DataRequest {
-                options: ResourceOptions {
-                    variant: Some("gregory".into()),
-                    langid: Some(langid!("cs")),
-                },
+                options: ResourceOptions::temp_with_unicode_ext(langid!("cs"), "ca", "gregory"),
                 metadata: Default::default(),
             })
             .expect("Failed to load payload")
@@ -175,10 +163,7 @@ mod test {
 
         let cs_dates: DataPayload<DatePatternsV1Marker> = provider
             .load_resource(&DataRequest {
-                options: ResourceOptions {
-                    variant: Some("gregory".into()),
-                    langid: Some(langid!("haw")),
-                },
+                options: ResourceOptions::temp_with_unicode_ext(langid!("haw"), "ca", "gregory"),
                 metadata: Default::default(),
             })
             .expect("Failed to load payload")
@@ -198,10 +183,7 @@ mod test {
 
         let skeletons: DataPayload<DateSkeletonPatternsV1Marker> = provider
             .load_resource(&DataRequest {
-                options: ResourceOptions {
-                    variant: Some("gregory".into()),
-                    langid: Some(langid!("fil")),
-                },
+                options: ResourceOptions::temp_with_unicode_ext(langid!("fil"), "ca", "gregory"),
                 metadata: Default::default(),
             })
             .expect("Failed to load payload")
@@ -243,10 +225,7 @@ mod test {
 
         let cs_dates: DataPayload<DateSymbolsV1Marker> = provider
             .load_resource(&DataRequest {
-                options: ResourceOptions {
-                    variant: Some("gregory".into()),
-                    langid: Some(langid!("cs")),
-                },
+                options: ResourceOptions::temp_with_unicode_ext(langid!("cs"), "ca", "gregory"),
                 metadata: Default::default(),
             })
             .unwrap()
@@ -268,10 +247,7 @@ mod test {
 
         let cs_dates: DataPayload<DateSymbolsV1Marker> = provider
             .load_resource(&DataRequest {
-                options: ResourceOptions {
-                    variant: Some("gregory".into()),
-                    langid: Some(langid!("cs")),
-                },
+                options: ResourceOptions::temp_with_unicode_ext(langid!("cs"), "ca", "gregory"),
                 metadata: Default::default(),
             })
             .unwrap()

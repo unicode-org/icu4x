@@ -36,14 +36,12 @@ impl TryFrom<&dyn CldrPaths> for AliasesProvider {
 
 impl ResourceProvider<AliasesV1Marker> for AliasesProvider {
     fn load_resource(&self, req: &DataRequest) -> Result<DataResponse<AliasesV1Marker>, DataError> {
-        let langid = &req.options.langid;
-
         let data: cldr_serde::aliases::Resource = serde_json::from_reader(open_reader(&self.path)?)
             .map_err(|e| Error::Json(e, Some(self.path.clone())))?;
 
         // We treat searching for `und` as a request for all data. Other requests
         // are not currently supported.
-        if langid.is_none() {
+        if req.options.is_empty() {
             let metadata = DataResponseMetadata::default();
             // TODO(#1109): Set metadata.data_langid correctly.
             Ok(DataResponse {

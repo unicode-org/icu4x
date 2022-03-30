@@ -38,14 +38,12 @@ macro_rules! impl_resource_provider {
         $(
             impl ResourceProvider<$marker> for TimeZonesProvider {
                 fn load_resource(&self, req: &DataRequest) -> Result<DataResponse<$marker>, DataError> {
-                    let langid = req
-                        .get_langid()
-                        .ok_or_else(|| DataErrorKind::NeedsLocale.with_req(<$marker>::KEY, req))?;
+                    let langid = req.langid();
 
-                    let time_zones = if let Some(time_zones) = self.data.get(langid) {
+                    let time_zones = if let Some(time_zones) = self.data.get(&langid) {
                         time_zones
                     } else {
-                        let path = get_langid_subdirectory(&self.path, langid)?
+                        let path = get_langid_subdirectory(&self.path, &langid)?
                             .ok_or_else(|| DataErrorKind::MissingLocale.with_req(<$marker>::KEY, req))?
                             .join("timeZoneNames.json");
 
@@ -55,7 +53,7 @@ macro_rules! impl_resource_provider {
                         self.data.insert(langid.clone(), Box::new(resource
                             .main
                             .0
-                            .remove(langid)
+                            .remove(&langid)
                             .expect("CLDR file contains the expected language")
                             .dates
                             .time_zone_names))

@@ -83,11 +83,6 @@ impl PluralsProvider {
 
 impl<M: ResourceMarker<Yokeable = PluralRulesV1<'static>>> ResourceProvider<M> for PluralsProvider {
     fn load_resource(&self, req: &DataRequest) -> Result<DataResponse<M>, DataError> {
-        // TODO: Implement language fallback?
-        let langid = req
-            .get_langid()
-            .ok_or_else(|| DataErrorKind::NeedsLocale.with_req(M::KEY, req))?;
-
         let metadata = DataResponseMetadata::default();
         // TODO(#1109): Set metadata.data_langid correctly.
         Ok(DataResponse {
@@ -100,7 +95,7 @@ impl<M: ResourceMarker<Yokeable = PluralRulesV1<'static>>> ResourceProvider<M> f
                     .as_ref()
                     .ok_or_else(|| DataErrorKind::MissingResourceKey.with_key(M::KEY))?
                     .0
-                    .get(langid)
+                    .get(&req.langid())
                     .ok_or_else(|| DataErrorKind::MissingLocale.with_req(M::KEY, req))?,
             ))),
         })

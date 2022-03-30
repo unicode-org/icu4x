@@ -421,6 +421,13 @@ impl ResourceOptions {
         }
     }
 
+    // TODO(#1109): Delete this function and use vertical fallback instead
+    pub fn temp_get_extension(&self, key: &str) -> Option<&icu_locid::extensions::unicode::Value> {
+        use icu_locid::extensions::unicode::Key;
+        // This is temporary code that will be removed as part of #1109
+        self.locale.extensions.unicode.keywords.get(Key::from_bytes(key.as_bytes()).unwrap())
+    }
+
     /// Returns whether this [`ResourceOptions`] has all empty fields (no components).
     pub fn is_empty(&self) -> bool {
         self == &Self::default()

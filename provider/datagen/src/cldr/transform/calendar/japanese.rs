@@ -53,7 +53,7 @@ impl ResourceProvider<JapaneseErasV1Marker> for JapaneseErasProvider {
         &self,
         req: &DataRequest,
     ) -> Result<DataResponse<JapaneseErasV1Marker>, DataError> {
-        if req.options.langid.is_some() || req.options.variant.is_some() {
+        if !req.options.is_empty() {
             return Err(
                 DataErrorKind::ExtraneousResourceOptions.with_req(JapaneseErasV1Marker::KEY, req)
             );

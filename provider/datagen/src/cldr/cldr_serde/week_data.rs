@@ -13,6 +13,7 @@ use std::collections::BTreeMap;
 use std::num::ParseIntError;
 use std::str::FromStr;
 use tinystr::{tinystr, TinyStr4};
+use icu_locid::{region, subtags::Region};
 
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -50,15 +51,15 @@ impl From<&Weekday> for icu_calendar::types::IsoWeekday {
 #[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub enum Territory {
     // A territory string, e.g. "AD" for Andorra.
-    Region(TinyStr4),
+    Region(Region),
     // An alternative variant for a given territory (e.g. the first day of the
     // week can be sunday rather than monday GB). The string is set to the region
     // with the "-alt-variant" suffix present in the json.
-    AltVariantRegion(TinyStr4),
+    AltVariantRegion(Region),
 }
 
 /// The string used to represent the default territory.
-pub const DEFAULT_TERRITORY: Territory = Territory::Region(tinystr!(4, "001"));
+pub const DEFAULT_TERRITORY: Territory = Territory::Region(region!("001"));
 
 /// Suffix used to denote alternative week data variants for a given territory (e.g. English BC/AD v English BCE/CE).
 const ALT_VARIANT_SUFFIX: &str = "-alt-variant";
@@ -87,13 +88,13 @@ impl<'de> Deserialize<'de> for Territory {
                 if let Some(prefix) = s.strip_suffix(ALT_VARIANT_SUFFIX) {
                     return Ok(Territory::AltVariantRegion(
                         prefix
-                            .parse::<TinyStr4>()
+                            .parse::<Region>()
                             .map_err(serde::de::Error::custom)?,
                     ));
                 }
 
                 Ok(Territory::Region(
-                    s.parse::<TinyStr4>().map_err(serde::de::Error::custom)?,
+                    s.parse::<Region>().map_err(serde::de::Error::custom)?,
                 ))
             }
         }
