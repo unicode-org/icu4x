@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1648660264487,
+  "lastUpdate": 1648673376026,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -24329,6 +24329,48 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 216415,
             "range": "± 8407",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "cb23c585250a7f2e5d7ff02cd8bbd45815a72c8d",
+          "message": "Add Locale Extensions retain_by_type (#1726)",
+          "timestamp": "2022-03-30T13:40:43-07:00",
+          "tree_id": "9dbcb85363bedf35626bfcd1f91d222c544201e5",
+          "url": "https://github.com/unicode-org/icu4x/commit/cb23c585250a7f2e5d7ff02cd8bbd45815a72c8d"
+        },
+        "date": 1648673357076,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 102444,
+            "range": "± 9575",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 1043756,
+            "range": "± 35277",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 220052,
+            "range": "± 8660",
             "unit": "ns/iter"
           }
         ]
