@@ -21,7 +21,7 @@ fn parser(c: &mut Criterion) {
     for langid in fixture_data.langs {
         let data_payload: DataPayload<icu_plurals::provider::CardinalV1Marker> = provider
             .load_resource(&DataRequest {
-                options: langid.into(),
+                options: Into::<icu::locid::Locale>::into(langid).into(),
                 metadata: Default::default(),
             })
             .unwrap()
