@@ -340,3 +340,92 @@ impl PartialEq<str> for Locale {
         iter.next() == None
     }
 }
+
+/// # Examples
+///
+/// ```
+/// use icu::locid::Locale;
+/// use icu::locid::language;
+///
+/// let language = language!("en");
+/// let loc = Locale::from(language);
+///
+/// assert_eq!(loc.id.language, "en");
+/// assert_eq!(loc, "en");
+/// ```
+impl From<subtags::Language> for Locale {
+    fn from(language: subtags::Language) -> Self {
+        Self {
+            id: language.into(),
+            ..Default::default()
+        }
+    }
+}
+
+/// # Examples
+///
+/// ```
+/// use icu::locid::Locale;
+/// use icu::locid::script;
+///
+/// let script = script!("latn");
+/// let loc = Locale::from(script);
+///
+/// assert_eq!(loc.id.script.unwrap(), "Latn");
+/// assert_eq!(loc, "und-Latn");
+/// ```
+impl From<subtags::Script> for Locale {
+    fn from(script: subtags::Script) -> Self {
+        Self {
+            id: script.into(),
+            ..Default::default()
+        }
+    }
+}
+
+/// # Examples
+///
+/// ```
+/// use icu::locid::Locale;
+/// use icu::locid::region;
+///
+/// let region = region!("US");
+/// let loc = Locale::from(region);
+///
+/// assert_eq!(loc.id.region.unwrap(), "US");
+/// assert_eq!(loc, "und-US");
+/// ```
+impl From<subtags::Region> for Locale {
+    fn from(region: subtags::Region) -> Self {
+        Self {
+            id: region.into(),
+            ..Default::default()
+        }
+    }
+}
+
+/// # Examples
+///
+/// ```
+/// use icu::locid::Locale;
+/// use icu::locid::{language, script, region};
+///
+/// let lang = language!("en");
+/// let script = script!("Latn");
+/// let region = region!("US");
+/// let loc = Locale::from((lang, script, region));
+///
+/// assert_eq!(loc.id.language, "en");
+/// assert_eq!(loc.id.script.unwrap(), "Latn");
+/// assert_eq!(loc.id.region.unwrap(), "US");
+/// assert_eq!(loc.id.variants.len(), 0);
+/// assert_eq!(loc, "en-Latn-US");
+/// ```
+impl From<(subtags::Language, subtags::Script, subtags::Region)> for Locale {
+    fn from(lsr: (subtags::Language, subtags::Script, subtags::Region)) -> Self {
+        Self {
+            id: lsr.into(),
+            ..Default::default()
+        }
+    }
+}

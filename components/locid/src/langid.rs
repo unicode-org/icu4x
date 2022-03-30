@@ -324,3 +324,94 @@ impl PartialEq<str> for LanguageIdentifier {
         iter.next() == None
     }
 }
+
+/// # Examples
+///
+/// ```
+/// use icu::locid::LanguageIdentifier;
+/// use icu::locid::language;
+///
+/// let language = language!("en");
+/// let li = LanguageIdentifier::from(language);
+///
+/// assert_eq!(li.language, "en");
+/// assert_eq!(li, "en");
+/// ```
+impl From<subtags::Language> for LanguageIdentifier {
+    fn from(language: subtags::Language) -> Self {
+        Self {
+            language,
+            ..Default::default()
+        }
+    }
+}
+
+/// # Examples
+///
+/// ```
+/// use icu::locid::LanguageIdentifier;
+/// use icu::locid::script;
+///
+/// let script = script!("latn");
+/// let li = LanguageIdentifier::from(script);
+///
+/// assert_eq!(li.script.unwrap(), "Latn");
+/// assert_eq!(li, "und-Latn");
+/// ```
+impl From<subtags::Script> for LanguageIdentifier {
+    fn from(script: subtags::Script) -> Self {
+        Self {
+            script: Some(script),
+            ..Default::default()
+        }
+    }
+}
+
+/// # Examples
+///
+/// ```
+/// use icu::locid::LanguageIdentifier;
+/// use icu::locid::region;
+///
+/// let region = region!("US");
+/// let li = LanguageIdentifier::from(region);
+///
+/// assert_eq!(li.region.unwrap(), "US");
+/// assert_eq!(li, "und-US");
+/// ```
+impl From<subtags::Region> for LanguageIdentifier {
+    fn from(region: subtags::Region) -> Self {
+        Self {
+            region: Some(region),
+            ..Default::default()
+        }
+    }
+}
+
+/// # Examples
+///
+/// ```
+/// use icu::locid::LanguageIdentifier;
+/// use icu::locid::{language, script, region};
+///
+/// let lang = language!("en");
+/// let script = script!("Latn");
+/// let region = region!("US");
+/// let li = LanguageIdentifier::from((lang, script, region));
+///
+/// assert_eq!(li.language, "en");
+/// assert_eq!(li.script.unwrap(), "Latn");
+/// assert_eq!(li.region.unwrap(), "US");
+/// assert_eq!(li.variants.len(), 0);
+/// assert_eq!(li, "en-Latn-US");
+/// ```
+impl From<(subtags::Language, subtags::Script, subtags::Region)> for LanguageIdentifier {
+    fn from(lsr: (subtags::Language, subtags::Script, subtags::Region)) -> Self {
+        Self {
+            language: lsr.0,
+            script: Some(lsr.1),
+            region: Some(lsr.2),
+            ..Default::default()
+        }
+    }
+}
