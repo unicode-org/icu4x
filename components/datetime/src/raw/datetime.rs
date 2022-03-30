@@ -65,11 +65,10 @@ impl DateTimeFormat {
             .map_err(|field| DateTimeFormatError::UnsupportedField(field.symbol))?;
 
         let week_data = if required.week_data {
-            let loc_with_region = crate::provider::region_to_locale(locale.id.region);
             Some(
                 data_provider
                     .load_resource(&DataRequest {
-                        options: loc_with_region.into(),
+                        options: ResourceOptions::temp_for_region(locale.id.region),
                         metadata: Default::default(),
                     })?
                     .take_payload()?,
@@ -85,11 +84,10 @@ impl DateTimeFormat {
         };
 
         let symbols_data = if required.symbols_data {
-            let loc_with_calendar = crate::provider::combine_langid_and_calendar(locale.id.clone(), calendar);
             Some(
                 data_provider
                     .load_resource(&DataRequest {
-                        options: loc_with_calendar.into(),
+                        options: ResourceOptions::temp_with_unicode_ext(locale.id.clone(), "ca", calendar),
                         metadata: Default::default(),
                     })?
                     .take_payload()?,

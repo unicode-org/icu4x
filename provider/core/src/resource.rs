@@ -12,6 +12,7 @@ use core::default::Default;
 use core::fmt;
 use core::fmt::Write;
 use icu_locid::{LanguageIdentifier, Locale};
+use icu_locid::subtags::{Region};
 use writeable::{LengthHint, Writeable};
 use zerovec::ule::*;
 
@@ -379,7 +380,6 @@ impl Writeable for ResourceOptions {
 }
 
 impl From<LanguageIdentifier> for ResourceOptions {
-    /// Create a ResourceOptions with the given language identifier and an empty variant field.
     fn from(langid: LanguageIdentifier) -> Self {
         Self {
             locale: langid.into()
@@ -388,7 +388,6 @@ impl From<LanguageIdentifier> for ResourceOptions {
 }
 
 impl From<Locale> for ResourceOptions {
-    /// Create a ResourceOptions with the given language identifier and an empty variant field.
     fn from(locale: Locale) -> Self {
         Self {
             locale
@@ -397,6 +396,31 @@ impl From<Locale> for ResourceOptions {
 }
 
 impl ResourceOptions {
+    /// TODO(#1109): Delete this function and use vertical fallback instead
+    pub fn temp_for_region(region: Option<Region>) -> Self {
+        let mut locale = icu_locid::Locale::default();
+        locale.id.region = region;
+        Self {
+            locale
+        }
+    }
+
+    // TODO(#1109): Delete this function and use vertical fallback instead
+    pub fn temp_with_unicode_ext(langid: LanguageIdentifier, key: &str, value: &str) -> Self {
+        let mut locale_str = String::new();
+        locale_str.push_str("und-u-");
+        locale_str.push_str(key);
+        locale_str.push('-');
+        locale_str.push_str(value);
+        // This is temporary code that will be removed as part of #1109
+        #[allow(clippy::unwrap_used)]
+        let mut locale: icu_locid::Locale = locale_str.parse().unwrap();
+        locale.id = langid;
+        Self {
+            locale
+        }
+    }
+
     /// Returns whether this [`ResourceOptions`] has all empty fields (no components).
     pub fn is_empty(&self) -> bool {
         self == &Self::default()
