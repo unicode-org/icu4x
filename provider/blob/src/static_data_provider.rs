@@ -97,7 +97,7 @@ impl StaticDataProvider {
 
     fn get_file(&self, key: ResourceKey, req: &DataRequest) -> Result<&'static [u8], DataError> {
         self.data
-            .get(&key.get_hash(), &req.options.write_to_string().as_bytes())
+            .get(&key.get_hash(), req.options.write_to_string().as_bytes())
             .map_err(|e| {
                 match e {
                     KeyError::K0 => DataErrorKind::MissingResourceKey,

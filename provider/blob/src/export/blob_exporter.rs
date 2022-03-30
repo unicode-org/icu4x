@@ -13,6 +13,7 @@ use zerovec::ZeroMap2d;
 /// A data exporter that writes data to a single-file blob.
 /// See the module-level docs for an example.
 pub struct BlobExporter<'w> {
+    #[allow(clippy::type_complexity)]
     resources: Mutex<Vec<(ResourceKeyHash, Vec<u8>, Vec<u8>)>>,
     sink: Box<dyn std::io::Write + Sync + 'w>,
 }

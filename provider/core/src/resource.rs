@@ -419,6 +419,7 @@ impl ResourceOptions {
     pub fn temp_get_extension(&self, key: &str) -> Option<&icu_locid::extensions::unicode::Value> {
         use icu_locid::extensions::unicode::Key;
         // This is temporary code that will be removed as part of #1109
+        #[allow(clippy::unwrap_used)]
         self.locale
             .extensions
             .unicode

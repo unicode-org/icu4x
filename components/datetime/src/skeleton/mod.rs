@@ -53,7 +53,7 @@ mod test {
             .expect("Failed to retrieve payload");
         let skeletons = provider
             .load_resource(&DataRequest {
-                options: ResourceOptions::temp_with_unicode_ext(langid.clone(), "ca", "gregory"),
+                options: ResourceOptions::temp_with_unicode_ext(langid, "ca", "gregory"),
                 metadata: Default::default(),
             })
             .expect("Failed to load payload")
