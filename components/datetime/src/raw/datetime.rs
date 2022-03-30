@@ -87,7 +87,11 @@ impl DateTimeFormat {
             Some(
                 data_provider
                     .load_resource(&DataRequest {
-                        options: ResourceOptions::temp_with_unicode_ext(locale.id.clone(), "ca", calendar),
+                        options: ResourceOptions::temp_with_unicode_ext(
+                            locale.id.clone(),
+                            "ca",
+                            calendar,
+                        ),
                         metadata: Default::default(),
                     })?
                     .take_payload()?,

@@ -209,7 +209,11 @@ where
         let data = self
             .data_provider
             .load_resource(&DataRequest {
-                options: ResourceOptions::temp_with_unicode_ext(self.locale.id.clone(), "ca", self.calendar),
+                options: ResourceOptions::temp_with_unicode_ext(
+                    self.locale.id.clone(),
+                    "ca",
+                    self.calendar,
+                ),
                 metadata: Default::default(),
             })?
             .take_payload()?;
@@ -220,7 +224,11 @@ where
         let data = self
             .data_provider
             .load_resource(&DataRequest {
-                options: ResourceOptions::temp_with_unicode_ext(self.locale.id.clone(), "ca", self.calendar),
+                options: ResourceOptions::temp_with_unicode_ext(
+                    self.locale.id.clone(),
+                    "ca",
+                    self.calendar,
+                ),
                 metadata: Default::default(),
             })?
             .take_payload()?;

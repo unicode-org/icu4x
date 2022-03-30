@@ -8,11 +8,11 @@
 //! `<https://github.com/unicode-org/cldr-json/blob/main/cldr-json/cldr-core/supplemental/weekData.json>`
 
 use core::convert::TryFrom;
+use icu_locid::{region, subtags::Region};
 use serde::{Deserialize, Deserializer};
 use std::collections::BTreeMap;
 use std::num::ParseIntError;
 use std::str::FromStr;
-use icu_locid::{region, subtags::Region};
 
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -86,9 +86,7 @@ impl<'de> Deserialize<'de> for Territory {
             {
                 if let Some(prefix) = s.strip_suffix(ALT_VARIANT_SUFFIX) {
                     return Ok(Territory::AltVariantRegion(
-                        prefix
-                            .parse::<Region>()
-                            .map_err(serde::de::Error::custom)?,
+                        prefix.parse::<Region>().map_err(serde::de::Error::custom)?,
                     ));
                 }
 

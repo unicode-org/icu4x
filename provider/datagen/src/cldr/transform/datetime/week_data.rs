@@ -11,11 +11,11 @@ use crate::cldr::reader::open_reader;
 use crate::cldr::CldrPaths;
 use icu_calendar::arithmetic::week_of::CalendarInfo;
 use icu_datetime::provider::week_data::*;
+use icu_locid::subtags::Region;
 use icu_provider::datagen::IterableResourceProvider;
 use icu_provider::prelude::*;
 use std::collections::HashSet;
 use std::convert::TryFrom;
-use icu_locid::subtags::Region;
 
 /// A data provider reading from CLDR JSON weekData files.
 #[derive(Debug)]
@@ -74,9 +74,11 @@ impl IterableResourceProvider<WeekDataV1Marker> for WeekDataProvider {
                 _ => None,
             })
             .collect();
-        Ok(Box::new(regions.into_iter().map(|r| {
-            ResourceOptions::temp_for_region(r)
-        })))
+        Ok(Box::new(
+            regions
+                .into_iter()
+                .map(|r| ResourceOptions::temp_for_region(r)),
+        ))
     }
 }
 

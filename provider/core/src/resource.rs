@@ -11,8 +11,8 @@ use crate::helpers;
 use core::default::Default;
 use core::fmt;
 use core::fmt::Write;
+use icu_locid::subtags::Region;
 use icu_locid::{LanguageIdentifier, Locale};
-use icu_locid::subtags::{Region};
 use writeable::{LengthHint, Writeable};
 use zerovec::ule::*;
 
@@ -382,16 +382,14 @@ impl Writeable for ResourceOptions {
 impl From<LanguageIdentifier> for ResourceOptions {
     fn from(langid: LanguageIdentifier) -> Self {
         Self {
-            locale: langid.into()
+            locale: langid.into(),
         }
     }
 }
 
 impl From<Locale> for ResourceOptions {
     fn from(locale: Locale) -> Self {
-        Self {
-            locale
-        }
+        Self { locale }
     }
 }
 
@@ -400,9 +398,7 @@ impl ResourceOptions {
     pub fn temp_for_region(region: Option<Region>) -> Self {
         let mut locale = icu_locid::Locale::default();
         locale.id.region = region;
-        Self {
-            locale
-        }
+        Self { locale }
     }
 
     // TODO(#1109): Delete this function and use vertical fallback instead
@@ -416,16 +412,18 @@ impl ResourceOptions {
         #[allow(clippy::unwrap_used)]
         let mut locale: icu_locid::Locale = locale_str.parse().unwrap();
         locale.id = langid;
-        Self {
-            locale
-        }
+        Self { locale }
     }
 
     // TODO(#1109): Delete this function and use vertical fallback instead
     pub fn temp_get_extension(&self, key: &str) -> Option<&icu_locid::extensions::unicode::Value> {
         use icu_locid::extensions::unicode::Key;
         // This is temporary code that will be removed as part of #1109
-        self.locale.extensions.unicode.keywords.get(Key::from_bytes(key.as_bytes()).unwrap())
+        self.locale
+            .extensions
+            .unicode
+            .keywords
+            .get(Key::from_bytes(key.as_bytes()).unwrap())
     }
 
     /// Returns whether this [`ResourceOptions`] has all empty fields (no components).
@@ -493,13 +491,13 @@ mod tests {
             },
             OptionsTestCase {
                 options: ResourceOptions {
-                    locale: "und-u-cu-gbp".parse().unwrap()
+                    locale: "und-u-cu-gbp".parse().unwrap(),
                 },
                 expected: "und-u-cu-gbp",
             },
             OptionsTestCase {
                 options: ResourceOptions {
-                    locale: "en-ZA-u-cu-gbp".parse().unwrap()
+                    locale: "en-ZA-u-cu-gbp".parse().unwrap(),
                 },
                 expected: "en-ZA-u-cu-gbp",
             },
