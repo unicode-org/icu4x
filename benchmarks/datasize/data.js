@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1648605245887,
+  "lastUpdate": 1648659794211,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -11993,6 +11993,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/6ebd111a7ecfb9606c1d9e303909efa38a701403"
         },
         "date": 1648605228756,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4555035,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "b544d9595e762f6a261e0227585a355766e10d72",
+          "message": "Simplifying file IO and runtime data provider code (#1752)",
+          "timestamp": "2022-03-30T19:01:32+02:00",
+          "tree_id": "118d4db6efe582cf818b1dacca45cf0d37e36510",
+          "url": "https://github.com/unicode-org/icu4x/commit/b544d9595e762f6a261e0227585a355766e10d72"
+        },
+        "date": 1648659777424,
         "tool": "ndjson",
         "benches": [
           {
