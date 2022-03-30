@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1648659794211,
+  "lastUpdate": 1648672942141,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -12023,6 +12023,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/b544d9595e762f6a261e0227585a355766e10d72"
         },
         "date": 1648659777424,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4555035,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "cb23c585250a7f2e5d7ff02cd8bbd45815a72c8d",
+          "message": "Add Locale Extensions retain_by_type (#1726)",
+          "timestamp": "2022-03-30T13:40:43-07:00",
+          "tree_id": "9dbcb85363bedf35626bfcd1f91d222c544201e5",
+          "url": "https://github.com/unicode-org/icu4x/commit/cb23c585250a7f2e5d7ff02cd8bbd45815a72c8d"
+        },
+        "date": 1648672924774,
         "tool": "ndjson",
         "benches": [
           {
