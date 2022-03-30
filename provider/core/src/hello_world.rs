@@ -124,12 +124,10 @@ impl ResourceProvider<HelloWorldV1Marker> for HelloWorldProvider {
         &self,
         req: &DataRequest,
     ) -> Result<DataResponse<HelloWorldV1Marker>, DataError> {
-        let langid = req
-            .get_langid()
-            .ok_or_else(|| DataErrorKind::NeedsLocale.with_req(HelloWorldV1Marker::KEY, req))?;
+        let langid = req.langid();
         let data = self
             .map
-            .get(langid)
+            .get(&langid)
             .map(|s| HelloWorldV1 { message: s.clone() })
             .ok_or_else(|| DataErrorKind::MissingLocale.with_key(HelloWorldV1Marker::KEY))?;
         let metadata = DataResponseMetadata {
@@ -202,7 +200,7 @@ fn test_iter() {
     let mut supported_langids: Vec<LanguageIdentifier> = provider
         .supported_options()
         .unwrap()
-        .map(|resc_options| resc_options.locale.id)
+        .map(|resc_options| resc_options.langid())
         .collect();
     supported_langids.sort();
 

@@ -353,8 +353,7 @@ impl Writeable for ResourceKey {
 /// The fields in a [`ResourceOptions`] are not generally known until runtime.
 #[derive(PartialEq, Clone, Default, PartialOrd, Eq, Ord)]
 pub struct ResourceOptions {
-    // TODO: Consider making multiple variant fields.
-    pub locale: Locale,
+    locale: Locale,
 }
 
 impl fmt::Debug for ResourceOptions {
@@ -401,6 +400,15 @@ impl ResourceOptions {
     /// Returns whether this [`ResourceOptions`] has all empty fields (no components).
     pub fn is_empty(&self) -> bool {
         self == &Self::default()
+    }
+
+    pub fn is_und(&self) -> bool {
+        self.locale == Locale::und()
+    }
+
+    /// Returns the [`LanguageIdentifier`] for this [`ResourceOptions`].
+    pub fn langid(&self) -> LanguageIdentifier {
+        self.locale.id.clone()
     }
 }
 

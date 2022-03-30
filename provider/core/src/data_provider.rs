@@ -39,7 +39,7 @@ impl fmt::Display for DataRequest {
 }
 
 impl DataRequest {
-    /// Returns the [`LanguageIdentifier`] for this [`DataRequest`], or `None` if it is not present.
+    /// Returns the [`LanguageIdentifier`] for this [`DataRequest`].
     ///
     /// # Examples
     ///
@@ -68,8 +68,8 @@ impl DataRequest {
     ///     Some(_)
     /// ));
     /// ```
-    pub fn get_langid(&self) -> Option<&LanguageIdentifier> {
-        Some(self.options.locale.id.as_ref())
+    pub fn langid(&self) -> LanguageIdentifier {
+        self.options.langid()
     }
 }
 

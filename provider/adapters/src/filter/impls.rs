@@ -75,7 +75,7 @@ where
                 if !(old_predicate)(request) {
                     return false;
                 }
-                predicate(&request.options.locale.id)
+                predicate(&request.langid())
             }),
             filter_name: self.filter_name,
         }
@@ -142,8 +142,7 @@ where
                 if !(old_predicate)(request) {
                     return false;
                 }
-                let langid = &request.options.locale.id;
-                langid == &LanguageIdentifier::und() || allowlist.contains(langid)
+                request.options.is_und() || allowlist.contains(&request.langid())
             }),
             filter_name: self.filter_name,
         }
@@ -197,7 +196,7 @@ where
                 if !(old_predicate)(request) {
                     return false;
                 }
-                request.options.locale.id != LanguageIdentifier::und()
+                request.options.is_und()
             }),
             filter_name: self.filter_name,
         }
