@@ -12,7 +12,6 @@ use serde::{Deserialize, Deserializer};
 use std::collections::BTreeMap;
 use std::num::ParseIntError;
 use std::str::FromStr;
-use tinystr::{tinystr, TinyStr4};
 use icu_locid::{region, subtags::Region};
 
 #[derive(Debug, Deserialize)]

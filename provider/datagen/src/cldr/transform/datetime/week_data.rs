@@ -13,10 +13,8 @@ use icu_calendar::arithmetic::week_of::CalendarInfo;
 use icu_datetime::provider::week_data::*;
 use icu_provider::datagen::IterableResourceProvider;
 use icu_provider::prelude::*;
-use std::borrow::Cow;
 use std::collections::HashSet;
 use std::convert::TryFrom;
-use tinystr::TinyStr4;
 use icu_locid::subtags::Region;
 
 /// A data provider reading from CLDR JSON weekData files.
@@ -134,7 +132,7 @@ icu_provider::impl_dyn_provider!(
 #[test]
 fn basic_cldr_week_data() {
     use icu_calendar::types::IsoWeekday;
-    use icu_locid::{langid, region};
+    use icu_locid::region;
 
     let cldr_paths = crate::cldr::cldr_paths::for_test();
     let provider = WeekDataProvider::try_from(&cldr_paths as &dyn CldrPaths).unwrap();
