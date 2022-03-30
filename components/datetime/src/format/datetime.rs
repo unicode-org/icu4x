@@ -389,6 +389,8 @@ pub fn analyze_patterns(
 #[cfg(test)]
 mod tests {
     use super::*;
+    use icu_locid::langid;
+
     #[test]
     #[cfg(feature = "serialize")]
     fn test_basic() {
@@ -399,10 +401,7 @@ mod tests {
         let provider = icu_testdata::get_provider();
         let data: DataPayload<DateSymbolsV1Marker> = provider
             .load_resource(&DataRequest {
-                options: ResourceOptions {
-                    variant: Some("gregory".into()),
-                    langid: Some("en".parse().unwrap()),
-                },
+                options: ResourceOptions::temp_with_unicode_ext(langid!("en"), "ca", "gregory"),
                 metadata: Default::default(),
             })
             .unwrap()

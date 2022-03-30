@@ -45,10 +45,7 @@ mod test {
         let langid = langid!("en");
         let patterns = provider
             .load_resource(&DataRequest {
-                options: ResourceOptions {
-                    variant: Some("gregory".into()),
-                    langid: Some(langid.clone()),
-                },
+                options: ResourceOptions::temp_with_unicode_ext(langid.clone(), "ca", "gregory"),
                 metadata: Default::default(),
             })
             .expect("Failed to load payload")
@@ -56,10 +53,7 @@ mod test {
             .expect("Failed to retrieve payload");
         let skeletons = provider
             .load_resource(&DataRequest {
-                options: ResourceOptions {
-                    variant: Some("gregory".into()),
-                    langid: Some(langid),
-                },
+                options: ResourceOptions::temp_with_unicode_ext(langid.clone(), "ca", "gregory"),
                 metadata: Default::default(),
             })
             .expect("Failed to load payload")

@@ -191,10 +191,7 @@ fn test_dayperiod_patterns() {
         let langid: LanguageIdentifier = test.locale.parse().unwrap();
         let mut patterns_data: DataPayload<DatePatternsV1Marker> = provider
             .load_resource(&DataRequest {
-                options: ResourceOptions {
-                    variant: Some("gregory".into()),
-                    langid: Some(langid.clone()),
-                },
+                options: ResourceOptions::temp_with_unicode_ext(langid.clone(), "ca", "gregory"),
                 metadata: Default::default(),
             })
             .unwrap()
@@ -205,10 +202,7 @@ fn test_dayperiod_patterns() {
         });
         let symbols_data: DataPayload<DateSymbolsV1Marker> = provider
             .load_resource(&DataRequest {
-                options: ResourceOptions {
-                    variant: Some("gregory".into()),
-                    langid: Some(langid.clone()),
-                },
+                options: ResourceOptions::temp_with_unicode_ext(langid.clone(), "ca", "gregory"),
                 metadata: Default::default(),
             })
             .unwrap()
@@ -216,10 +210,7 @@ fn test_dayperiod_patterns() {
             .unwrap();
         let skeleton_data: DataPayload<DateSkeletonPatternsV1Marker> = provider
             .load_resource(&DataRequest {
-                options: ResourceOptions {
-                    variant: Some("gregory".into()),
-                    langid: Some(langid.clone()),
-                },
+                options: ResourceOptions::temp_with_unicode_ext(langid.clone(), "ca", "gregory"),
                 metadata: Default::default(),
             })
             .unwrap()
@@ -227,10 +218,7 @@ fn test_dayperiod_patterns() {
             .unwrap();
         let week_data: DataPayload<WeekDataV1Marker> = provider
             .load_resource(&DataRequest {
-                options: ResourceOptions {
-                    variant: langid.region.map(|r| r.as_str().to_string().into()),
-                    langid: None,
-                },
+                options: ResourceOptions::temp_for_region(langid.region),
                 metadata: Default::default(),
             })
             .unwrap()
@@ -351,10 +339,7 @@ fn test_time_zone_patterns() {
 
         let mut patterns_data: DataPayload<DatePatternsV1Marker> = date_provider
             .load_resource(&DataRequest {
-                options: ResourceOptions {
-                    variant: Some("gregory".into()),
-                    langid: Some(langid.clone()),
-                },
+                options: ResourceOptions::temp_with_unicode_ext(langid.clone(), "ca", "gregory"),
                 metadata: Default::default(),
             })
             .unwrap()
@@ -362,10 +347,7 @@ fn test_time_zone_patterns() {
             .unwrap();
         let skeleton_data: DataPayload<DateSkeletonPatternsV1Marker> = date_provider
             .load_resource(&DataRequest {
-                options: ResourceOptions {
-                    variant: Some("gregory".into()),
-                    langid: Some(langid.clone()),
-                },
+                options: ResourceOptions::temp_with_unicode_ext(langid.clone(), "ca", "gregory"),
                 metadata: Default::default(),
             })
             .unwrap()
@@ -373,10 +355,7 @@ fn test_time_zone_patterns() {
             .unwrap();
         let symbols_data: DataPayload<DateSymbolsV1Marker> = date_provider
             .load_resource(&DataRequest {
-                options: ResourceOptions {
-                    variant: Some("gregory".into()),
-                    langid: Some(langid.clone()),
-                },
+                options: ResourceOptions::temp_with_unicode_ext(langid.clone(), "ca", "gregory"),
                 metadata: Default::default(),
             })
             .unwrap()
@@ -384,10 +363,7 @@ fn test_time_zone_patterns() {
             .unwrap();
         let week_data: DataPayload<WeekDataV1Marker> = date_provider
             .load_resource(&DataRequest {
-                options: ResourceOptions {
-                    variant: langid.region.map(|r| r.as_str().to_string().into()),
-                    langid: None,
-                },
+                options: ResourceOptions::temp_for_region(langid.region),
                 metadata: Default::default(),
             })
             .unwrap()
