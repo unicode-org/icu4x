@@ -96,9 +96,36 @@ impl Other {
         Ok(Self::from_vec_unchecked(ext, keys))
     }
 
-    #[allow(missing_docs)] // TODO(#1028) - Add missing docs.
+    /// Gets the tag character for this extension as a char.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use std::str::FromStr;
+    /// use icu::locid::Locale;
+    ///
+    /// let loc: Locale = "und-a-hello-world".parse().unwrap();
+    /// let other_ext = &loc.extensions.other[0];
+    /// assert_eq!(other_ext.get_ext(), 'a');
+    /// ```
     pub fn get_ext(&self) -> char {
-        self.0 .0 as char
+        self.get_ext_byte() as char
+    }
+
+    /// Gets the tag character for this extension as a byte.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use std::str::FromStr;
+    /// use icu::locid::Locale;
+    ///
+    /// let loc: Locale = "und-a-hello-world".parse().unwrap();
+    /// let other_ext = &loc.extensions.other[0];
+    /// assert_eq!(other_ext.get_ext_byte(), b'a');
+    /// ```
+    pub fn get_ext_byte(&self) -> u8 {
+        self.0 .0
     }
 
     pub(crate) fn for_each_subtag_str<E, F>(&self, f: &mut F) -> Result<(), E>
