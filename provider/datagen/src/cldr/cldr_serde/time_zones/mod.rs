@@ -9,7 +9,7 @@ use litemap::LiteMap;
 use time_zone_names::TimeZoneNames;
 
 #[derive(Debug)]
-pub struct CldrTimeZonesData<'a> {
-    pub time_zone_names: &'a TimeZoneNames,
+pub struct CldrTimeZonesData {
+    pub time_zone_names: TimeZoneNames,
     pub bcp47_tzids: LiteMap<String, String>,
 }

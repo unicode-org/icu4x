@@ -92,7 +92,7 @@ macro_rules! impl_resource_provider {
                     let bcp47_tzids = self.bcp47_tzid_data.read().unwrap().clone();
 
                     let cldr_time_zones_data = CldrTimeZonesData {
-                        time_zone_names,
+                        time_zone_names: time_zone_names.clone(),
                         bcp47_tzids,
                     };
 
