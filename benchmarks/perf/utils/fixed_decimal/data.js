@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1648660150506,
+  "lastUpdate": 1648673252767,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -21899,6 +21899,36 @@ window.BENCHMARK_DATA = {
             "name": "fixed_decimal/overview",
             "value": 110589,
             "range": "± 7225",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "cb23c585250a7f2e5d7ff02cd8bbd45815a72c8d",
+          "message": "Add Locale Extensions retain_by_type (#1726)",
+          "timestamp": "2022-03-30T13:40:43-07:00",
+          "tree_id": "9dbcb85363bedf35626bfcd1f91d222c544201e5",
+          "url": "https://github.com/unicode-org/icu4x/commit/cb23c585250a7f2e5d7ff02cd8bbd45815a72c8d"
+        },
+        "date": 1648673236541,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 125874,
+            "range": "± 4555",
             "unit": "ns/iter"
           }
         ]
