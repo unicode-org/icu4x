@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1648585718298,
+  "lastUpdate": 1648605575559,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -22919,6 +22919,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 43821825,
             "range": "± 256330",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "6ebd111a7ecfb9606c1d9e303909efa38a701403",
+          "message": "Fix up intro doc (#1720)\n\n* Fix up intro doc\r\n\r\nCo-authored-by: Robert Bastian <robertbastian@users.noreply.github.com>",
+          "timestamp": "2022-03-29T18:52:24-07:00",
+          "tree_id": "bfde338c5e259c896d09ed56861d8c086aa95984",
+          "url": "https://github.com/unicode-org/icu4x/commit/6ebd111a7ecfb9606c1d9e303909efa38a701403"
+        },
+        "date": 1648605557456,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 46025842,
+            "range": "± 1296185",
             "unit": "ns/iter"
           }
         ]
