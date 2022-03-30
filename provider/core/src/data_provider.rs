@@ -59,14 +59,8 @@ impl DataRequest {
     ///     metadata: Default::default(),
     /// };
     ///
-    /// assert!(matches!(
-    ///     req_no_langid.get_langid(),
-    ///     None
-    /// ));
-    /// assert!(matches!(
-    ///     req_with_langid.get_langid(),
-    ///     Some(_)
-    /// ));
+    /// assert_eq!(req_no_langid.langid(), langid!("und"));
+    /// assert_eq!(req_with_langid.langid(), langid!("ar-EG"));
     /// ```
     pub fn langid(&self) -> LanguageIdentifier {
         self.options.langid()
