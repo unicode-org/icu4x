@@ -9,15 +9,15 @@ use alloc::borrow::Cow;
 use crate::error::{DataError, DataErrorKind};
 use crate::helpers;
 use alloc::string::{String, ToString};
+use alloc::vec;
 use core::default::Default;
 use core::fmt;
 use core::fmt::Write;
+use icu_locid::extensions::unicode as unicode_ext;
 use icu_locid::subtags::Region;
 use icu_locid::{LanguageIdentifier, Locale};
 use writeable::{LengthHint, Writeable};
 use zerovec::ule::*;
-use icu_locid::extensions::unicode as unicode_ext;
-use alloc::vec;
 
 #[doc(hidden)]
 #[macro_export]
@@ -384,7 +384,9 @@ impl Writeable for ResourceOptions {
     }
 
     fn write_len(&self) -> LengthHint {
-        self.langid.write_len() + if !self.keywords.is_empty() { 3 } else { 0 } + self.keywords.write_len()
+        self.langid.write_len()
+            + if !self.keywords.is_empty() { 3 } else { 0 }
+            + self.keywords.write_len()
     }
 }
 
