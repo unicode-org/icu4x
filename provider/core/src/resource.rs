@@ -420,6 +420,7 @@ impl ResourceOptions {
     }
 
     // TODO(#1109): Delete this function and use vertical fallback instead
+    #[allow(clippy::unwrap_used)] // temporary function
     pub fn temp_with_unicode_ext(langid: LanguageIdentifier, key: &str, value: &str) -> Self {
         let key = unicode_ext::Key::from_bytes(key.as_bytes()).unwrap();
         let value = unicode_ext::Value::from_bytes(value.as_bytes()).unwrap();
@@ -430,6 +431,7 @@ impl ResourceOptions {
     }
 
     // TODO(#1109): Delete this function and use vertical fallback instead
+    #[allow(clippy::unwrap_used)] // temporary function
     pub fn temp_get_extension(&self, key: &str) -> Option<String> {
         let key = unicode_ext::Key::from_bytes(key.as_bytes()).unwrap();
         self.keywords.get(key).map(|v| v.to_string())
