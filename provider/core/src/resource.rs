@@ -376,12 +376,15 @@ impl fmt::Display for ResourceOptions {
 impl Writeable for ResourceOptions {
     fn write_to<W: core::fmt::Write + ?Sized>(&self, sink: &mut W) -> core::fmt::Result {
         self.langid.write_to(sink)?;
-        self.keywords.write_to(sink)?;
+        if !self.keywords.is_empty() {
+            sink.write_str("-u-")?;
+            self.keywords.write_to(sink)?;
+        }
         Ok(())
     }
 
     fn write_len(&self) -> LengthHint {
-        self.langid.write_len() + self.keywords.write_len()
+        self.langid.write_len() + if !self.keywords.is_empty() { 3 } else { 0 } + self.keywords.write_len()
     }
 }
 
