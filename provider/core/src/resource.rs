@@ -408,19 +408,9 @@ impl From<Locale> for ResourceOptions {
 impl ResourceOptions {
     /// TODO(#1109): Delete this function and use vertical fallback instead
     pub fn temp_for_region(region: Option<Region>) -> Self {
-        // let mut locale = icu_locid::Locale::default();
-        // locale.id.region = region;
-        // Self { locale }
-        let keywords = if let Some(region) = region {
-            let key = unicode_ext::Key::from_bytes(b"rg").unwrap();
-            let value = unicode_ext::Value::from_bytes(region.as_str().as_bytes()).unwrap();
-            vec![(key, value)]
-        } else {
-            vec![]
-        };
         Self {
-            langid: LanguageIdentifier::und(),
-            keywords: unicode_ext::Keywords::from_vec_unchecked(keywords),
+            langid: LanguageIdentifier::from(region),
+            keywords: unicode_ext::Keywords::new(),
         }
     }
 
