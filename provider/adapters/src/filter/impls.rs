@@ -26,7 +26,7 @@ where
     /// use icu_provider::datagen::*;
     /// use icu_provider_adapters::filter::Filterable;
     /// use icu_locid::LanguageIdentifier;
-    /// use icu_locid::{language, langid};
+    /// use icu_locid::{language, locale, langid};
     ///
     /// let provider = HelloWorldProvider::new_with_placeholder_data()
     ///     .filterable("Demo no-English filter")
@@ -34,7 +34,7 @@ where
     ///
     /// // German requests should succeed:
     /// let req_de = DataRequest {
-    ///     options: langid!("de").into(),
+    ///     options: locale!("de").into(),
     ///     metadata: Default::default(),
     /// };
     /// let response: Result<DataResponse<HelloWorldV1Marker>, _> =
@@ -43,7 +43,7 @@ where
     ///
     /// // English requests should fail:
     /// let req_en = DataRequest {
-    ///     options: langid!("en-US").into(),
+    ///     options: locale!("en-US").into(),
     ///     metadata: Default::default(),
     /// };
     /// let response: Result<DataResponse<HelloWorldV1Marker>, _> =
@@ -99,7 +99,7 @@ where
     /// use icu_provider::prelude::*;
     /// use icu_provider::hello_world::*;
     /// use icu_provider_adapters::filter::Filterable;
-    /// use icu_locid::langid;
+    /// use icu_locid::{locale, langid};
     ///
     /// let allowlist = vec![langid!("de"), langid!("zh")];
     /// let provider = HelloWorldProvider::new_with_placeholder_data()
@@ -108,7 +108,7 @@ where
     ///
     /// // German requests should succeed:
     /// let req_de = DataRequest {
-    ///     options: langid!("de").into(),
+    ///     options: locale!("de").into(),
     ///     metadata: Default::default(),
     /// };
     /// let response: Result<DataResponse<HelloWorldV1Marker>, _> =
@@ -117,7 +117,7 @@ where
     ///
     /// // English requests should fail:
     /// let req_en = DataRequest {
-    ///     options: langid!("en-US").into(),
+    ///     options: locale!("en-US").into(),
     ///     metadata: Default::default(),
     /// };
     /// let response: Result<DataResponse<HelloWorldV1Marker>, _> =
@@ -162,7 +162,7 @@ where
     /// use icu_provider::prelude::*;
     /// use icu_provider::hello_world::*;
     /// use icu_provider_adapters::filter::Filterable;
-    /// use icu_locid::langid;
+    /// use icu_locid::locale;
     ///
     /// let provider = HelloWorldProvider::new_with_placeholder_data()
     ///     .filterable("Demo require-langid filter")
@@ -170,7 +170,7 @@ where
     ///
     /// // Requests with a langid should succeed:
     /// let req_with_langid = DataRequest {
-    ///     options: langid!("de").into(),
+    ///     options: locale!("de").into(),
     ///     metadata: Default::default(),
     /// };
     /// let response: Result<DataResponse<HelloWorldV1Marker>, _> =

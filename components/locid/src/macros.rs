@@ -2,19 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! This module provides convenience macros.
-//!
-//! # Examples
-//!
-//! ```rust
-//! use icu::locid::{language, region, langid};
-//!
-//! let lid = langid!("EN_US");
-//!
-//! assert_eq!(lid.language, language!("en"));
-//! assert_eq!(lid.region, Some(region!("US")));
-//! ```
-
 /// A macro allowing for compile-time construction of valid [`Language`] subtag.
 ///
 /// The macro will perform syntax canonicalization of the tag.
@@ -22,13 +9,11 @@
 /// # Examples
 ///
 /// ```
-/// use icu::locid::subtags::Language;
-/// use icu::locid::language;
+/// use icu::locid::{language, subtags::Language};
 ///
 /// const DE: Language = language!("DE");
 ///
-/// let de: Language = "DE".parse()
-///     .expect("Failed to parse language subtag.");
+/// let de: Language = "DE".parse().unwrap();
 ///
 /// assert_eq!(DE, "de");
 /// assert_eq!(DE, de);
@@ -55,13 +40,11 @@ macro_rules! language {
 /// # Examples
 ///
 /// ```
-/// use icu::locid::subtags::Script;
-/// use icu::locid::script;
+/// use icu::locid::{script, subtags::Script};
 ///
 /// const ARAB: Script = script!("aRAB");
 ///
-/// let arab: Script = "aRaB".parse()
-///     .expect("Failed to parse script subtag.");
+/// let arab: Script = "aRaB".parse().unwrap();
 ///
 /// assert_eq!(ARAB, "Arab");
 /// assert_eq!(ARAB, arab);
@@ -88,13 +71,11 @@ macro_rules! script {
 /// # Examples
 ///
 /// ```
-/// use icu::locid::subtags::Region;
-/// use icu::locid::region;
+/// use icu::locid::{region, subtags::Region};
 ///
 /// const CN: Region = region!("cn");
 ///
-/// let cn: Region = "cn".parse()
-///     .expect("Failed to parse region subtag.");
+/// let cn: Region = "cn".parse().unwrap();
 ///
 /// assert_eq!(CN, "CN");
 /// assert_eq!(CN, cn);
@@ -121,13 +102,11 @@ macro_rules! region {
 /// # Examples
 ///
 /// ```
-/// use icu::locid::subtags::Variant;
-/// use icu::locid::variant;
+/// use icu::locid::{variant, subtags::Variant};
 ///
 /// const POSIX: Variant = variant!("Posix");
 ///
-/// let posix: Variant = "Posix".parse()
-///     .expect("Failed to parse variant subtag.");
+/// let posix: Variant = "Posix".parse().unwrap();
 ///
 /// assert_eq!(POSIX, "posix");
 /// assert_eq!(POSIX, posix);
@@ -147,27 +126,34 @@ macro_rules! variant {
     }};
 }
 
-/// A macro allowing for compile-time construction of valid [`LanguageIdentifier`].
+/// A macro allowing for compile-time construction of valid [`LanguageIdentifier`]s.
 ///
 /// The macro will perform syntax canonicalization of the tag.
 ///
 /// # Examples
 ///
 /// ```
-/// use icu::locid::LanguageIdentifier;
-/// use icu::locid::langid;
+/// use icu::locid::{LanguageIdentifier, langid};
 ///
 /// const DE_AT: LanguageIdentifier = langid!("de_at");
 ///
-/// let de_at: LanguageIdentifier = "de_at".parse()
-///     .expect("Failed to parse language identifier.");
+/// let de_at: LanguageIdentifier = "de_at".parse().unwrap();
 ///
 /// assert_eq!(DE_AT, "de-AT");
 /// assert_eq!(DE_AT, de_at);
 /// ```
 ///
-/// *Note*: As of Rust 1.47, the macro cannot produce language identifier
-/// with variants in the const mode pending [`Heap Allocations in Constants`].
+/// *Note*: The macro cannot produce language identifiers with variants due to const
+/// limitations (see [`Heap Allocations in Constants`]):
+///
+/// ```compile_fail
+/// icu::locid::langid("de_at-foobar");
+/// ```
+///
+/// Use runtime parsing instead:
+/// ```
+/// "de_at-foobar".parse::<icu::locid::LanguageIdentifier>().unwrap();
+/// ```
 ///
 /// [`LanguageIdentifier`]: crate::LanguageIdentifier
 /// [`Heap Allocations in Constants`]: https://github.com/rust-lang/const-eval/issues/20
@@ -183,7 +169,61 @@ macro_rules! langid {
                     variants: $crate::subtags::Variants::new(),
                 },
                 #[allow(clippy::panic)] // const context
-                _ => panic!(concat!("Invalid language code: ", $langid)),
+                _ => panic!(concat!("Invalid language code: ", $langid, " . Note that variant tags are not \
+                                        supported by the langid! macro, use runtime parsing instead.")),
+            };
+        R
+    }};
+}
+
+/// A macro allowing for compile-time construction of valid [`Locale`]s.
+///
+/// The macro will perform syntax canonicalization of the tag.
+///
+/// # Examples
+///
+/// ```
+/// use icu::locid::{Locale, locale};
+///
+/// const DE_AT: Locale = locale!("de_at");
+///
+/// let de_at: Locale = "de_at".parse().unwrap();
+///
+/// assert_eq!(DE_AT, "de-AT");
+/// assert_eq!(DE_AT, de_at);
+/// ```
+///
+/// *Note*: The macro cannot produce locales with variants or Unicode extensions due to
+/// const limitations (see [`Heap Allocations in Constants`]):
+///
+/// ```compile_fail
+/// icu::locid::locale!("en-US-u-ca-ja");
+/// ```
+/// Use runtime parsing instead:
+/// ```
+/// "en-US-u-ca-ja".parse::<icu::locid::Locale>().unwrap();
+/// ```
+///
+/// [`Locale`]: crate::Locale
+/// [`Heap Allocations in Constants`]: https://github.com/rust-lang/const-eval/issues/20
+#[macro_export]
+macro_rules! locale {
+    ($locale:literal) => {{
+        const R: $crate::Locale =
+            match $crate::LanguageIdentifier::from_bytes_without_variants($locale.as_bytes()) {
+                Ok((language, script, region)) => $crate::Locale {
+                    id: $crate::LanguageIdentifier {
+                        language,
+                        script,
+                        region,
+                        variants: $crate::subtags::Variants::new(),
+                    },
+                    extensions: $crate::extensions::Extensions::new(),
+                },
+                #[allow(clippy::panic)] // const context
+                _ => panic!(concat!("Invalid language code: ", $locale, " . Note that variant tags and \
+                                        Unicode extensions are not supported by the locale! macro, use \
+                                        runtime parsing instead.")),
             };
         R
     }};
@@ -196,6 +236,7 @@ mod test {
     const REGION_US: crate::subtags::Region = region!("us");
     const VARIANT_MACOS: crate::subtags::Variant = variant!("MACOS");
     const LANGID: crate::LanguageIdentifier = langid!("de-Arab-AT");
+    const LOCALE: crate::Locale = locale!("de-Arab-AT");
 
     #[test]
     fn language() {
@@ -240,5 +281,14 @@ mod test {
         assert_eq!(langid.to_string(), "de-Arab-AT");
         assert_eq!(LANGID.to_string(), "de-Arab-AT");
         assert_eq!(langid, LANGID);
+    }
+
+    #[test]
+    fn locale() {
+        let locale = locale!("de_Arab_aT");
+
+        assert_eq!(locale.to_string(), "de-Arab-AT");
+        assert_eq!(LOCALE.to_string(), "de-Arab-AT");
+        assert_eq!(locale, LOCALE);
     }
 }

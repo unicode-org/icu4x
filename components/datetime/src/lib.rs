@@ -15,14 +15,11 @@
 //! # Examples
 //!
 //! ```
-//! use icu::locid::Locale;
-//! use icu::locid::langid;
+//! use icu::locid::locale;
 //! use icu::calendar::Gregorian;
 //! use icu::datetime::{DateTimeFormat, DateTimeFormatOptions, mock::parse_gregorian_from_str, options::length};
 //!
 //! let provider = icu_testdata::get_provider();
-//!
-//! let locale: Locale = langid!("en").into();
 //!
 //! // See the next code example for a more ergonomic example with .into().
 //! let options = DateTimeFormatOptions::Length(length::Bag {
@@ -31,7 +28,7 @@
 //!     ..Default::default()
 //! });
 //!
-//! let dtf = DateTimeFormat::<Gregorian>::try_new(locale, &provider, &options)
+//! let dtf = DateTimeFormat::<Gregorian>::try_new(locale!("en"), &provider, &options)
 //!     .expect("Failed to create DateTimeFormat instance.");
 //!
 //!
@@ -46,12 +43,10 @@
 //! convert a [`options::length::Bag`] into a [`DateTimeFormatOptions::Length`].
 //!
 //! ```
-//! use icu::locid::Locale;
-//! use icu::locid::langid;
 //! use icu::calendar::Gregorian;
 //! use icu::datetime::{DateTimeFormat, DateTimeFormatOptions, options::length};
 //! # let provider = icu_testdata::get_provider();
-//! # let locale: Locale = langid!("en").into();
+//! # let locale = icu::locid::locale!("en");
 //! let options = length::Bag {
 //!     date: Some(length::Date::Medium),
 //!     time: Some(length::Time::Short),

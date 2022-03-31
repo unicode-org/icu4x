@@ -22,12 +22,12 @@ Each component should use `ResourceProvider` only to construct the instance of e
 pub struct AdditiveIdentity(char);
 
 impl AdditiveIdentity {
-    pub fn try_new<P: ResourceProvider<DecimalSymbolsV1Marker>>(
-        langid: LanguageIdentifier,
+    pub fn try_new<L: Into<Locale>, P: ResourceProvider<DecimalSymbolsV1Marker>>(
+        locale: L,
         provider: &D,
     ) -> Result<Self, MyError> {
         let response = data_provider.load_resource(&DataRequest {
-            options: langid.into().into(),
+            options: locale.into().into(),
             metadata: Default::default(),
         })?.take_payload()?;
 

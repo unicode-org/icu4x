@@ -191,14 +191,14 @@ impl TryFrom<&cldr_serde::numbers::Numbers> for DecimalSymbolsV1<'static> {
 
 #[test]
 fn test_basic() {
-    use icu_locid::langid;
+    use icu_locid::locale;
 
     let cldr_paths = crate::cldr::cldr_paths::for_test();
     let provider = NumbersProvider::try_from(&cldr_paths as &dyn CldrPaths).unwrap();
 
     let ar_decimal: DataPayload<DecimalSymbolsV1Marker> = provider
         .load_resource(&DataRequest {
-            options: langid!("ar-EG").into(),
+            options: locale!("ar-EG").into(),
             metadata: Default::default(),
         })
         .unwrap()

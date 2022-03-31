@@ -143,7 +143,7 @@ category = "ICU4X FFI"
 toolchain = "nightly-2021-12-22"
 env = { "RUSTFLAGS" = "-Ctarget-cpu=cortex-m33 -Cpanic=abort" }
 command = "cargo"
-args = ["build", "--package", "icu_capi",
+args = ["build", "--package", "icu_freertos",
         "--target", "thumbv8m.main-none-eabihf",
         "--no-default-features", "--features=wearos",
         "--release",

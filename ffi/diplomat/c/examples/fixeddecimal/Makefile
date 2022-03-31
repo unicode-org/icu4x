@@ -13,11 +13,11 @@ $(ALL_RUST):
 $(ALL_HEADERS):
 
 
-../../../../../target/debug/libicu_capi.a: $(ALL_RUST)
-	cargo build
+../../../../../target/debug/libicu_capi_staticlib.a: $(ALL_RUST)
+	cargo build -p icu_capi_staticlib
 
-a.out: ../../../../../target/debug/libicu_capi.a $(ALL_HEADERS) test.c
-	gcc test.c ../../../../../target/debug/libicu_capi.a -ldl -lpthread -lm -g
+a.out: ../../../../../target/debug/libicu_capi_staticlib.a $(ALL_HEADERS) test.c
+	gcc test.c ../../../../../target/debug/libicu_capi_staticlib.a -ldl -lpthread -lm -g
 
 build: a.out
 

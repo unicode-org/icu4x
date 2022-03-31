@@ -538,8 +538,7 @@ fn constructing_datetime_format_with_time_zone_pattern_symbols_is_err() {
         options::length::{Bag, Time},
         DateTimeFormatOptions,
     };
-    use icu_locid::langid;
-    use icu_locid::Locale;
+    use icu_locid::locale;
 
     let options = DateTimeFormatOptions::Length(Bag {
         // Full has time-zone symbols.
@@ -547,9 +546,8 @@ fn constructing_datetime_format_with_time_zone_pattern_symbols_is_err() {
         ..Default::default()
     });
 
-    let locale: Locale = langid!("en").into();
     let provider = icu_testdata::get_provider();
-    let result = DateTimeFormat::<Gregorian>::try_new(locale, &provider, &options);
+    let result = DateTimeFormat::<Gregorian>::try_new(locale!("en"), &provider, &options);
 
     assert!(result.is_err());
 }
