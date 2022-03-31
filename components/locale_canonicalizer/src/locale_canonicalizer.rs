@@ -9,6 +9,7 @@ use alloc::string::ToString;
 use alloc::vec;
 use alloc::vec::Vec;
 use core::mem;
+use icu_locid::subtags::{Language, Region, Script};
 use icu_locid::{
     extensions::unicode::{Key, Value},
     subtags, LanguageIdentifier, Locale,
@@ -184,23 +185,25 @@ fn uts35_check_language_rules(
 
 #[inline]
 fn update_langid(
-    entry: &LanguageIdentifier,
+    language: Language,
+    script: Option<Script>,
+    region: Option<Region>,
     langid: &mut LanguageIdentifier,
 ) -> CanonicalizationResult {
     let mut modified = false;
 
-    if langid.language.is_empty() && !entry.language.is_empty() {
-        langid.language = entry.language;
+    if langid.language.is_empty() && !language.is_empty() {
+        langid.language = language;
         modified = true;
     }
 
-    if langid.script.is_none() && entry.script.is_some() {
-        langid.script = entry.script;
+    if langid.script.is_none() && script.is_some() {
+        langid.script = script;
         modified = true;
     }
 
-    if langid.region.is_none() && entry.region.is_some() {
-        langid.region = entry.region;
+    if langid.region.is_none() && region.is_some() {
+        langid.region = region;
         modified = true;
     }
 
@@ -209,19 +212,6 @@ fn update_langid(
     } else {
         CanonicalizationResult::Unmodified
     }
-}
-
-macro_rules! maximize_locale {
-    ( $langid:ident, $table:expr, $key:expr ) => {{
-        if let Some(language_identifier) = $table.get(&&$key) {
-            return update_langid(language_identifier, $langid);
-        }
-    }};
-    ( $langid:ident, $table:expr, $key1:expr, $key2:expr ) => {{
-        if let Some(language_identifier) = $table.get(&($key1, $key2)) {
-            return update_langid(language_identifier, $langid);
-        }
-    }};
 }
 
 impl LocaleCanonicalizer {
@@ -509,33 +499,56 @@ impl LocaleCanonicalizer {
 
         if !langid.language.is_empty() {
             if let Some(region) = langid.region {
-                maximize_locale!(
-                    langid,
-                    data.language_region,
-                    langid.language.into(),
-                    region.into()
-                );
+                if let Some(script) = data
+                    .language_region
+                    .get(&(langid.language, region))
+                    .copied()
+                {
+                    return update_langid(Language::UND, Some(script), None, langid);
+                }
             }
             if let Some(script) = langid.script {
-                maximize_locale!(
-                    langid,
-                    data.language_script,
-                    langid.language.into(),
-                    script.into()
-                );
+                if let Some(region) = data
+                    .language_script
+                    .get(&(langid.language, script))
+                    .copied()
+                {
+                    return update_langid(Language::UND, None, Some(region), langid);
+                }
             }
-            maximize_locale!(langid, data.language, langid.language.into());
+            if let Some((script, region)) = data
+                .language
+                .get(&langid.language)
+                .map(|u| zerovec::ule::AsULE::from_unaligned(*u))
+            {
+                return update_langid(Language::UND, Some(script), Some(region), langid);
+            }
         }
         if let Some(script) = langid.script {
             if let Some(region) = langid.region {
-                maximize_locale!(langid, data.script_region, script.into(), region.into());
+                if let Some(language) = data.script_region.get(&(script, region)).copied() {
+                    return update_langid(language, None, None, langid);
+                }
             }
-            maximize_locale!(langid, data.script, script.into());
+            if let Some((language, region)) = data
+                .script
+                .get(&script)
+                .map(|u| zerovec::ule::AsULE::from_unaligned(*u))
+            {
+                return update_langid(language, None, Some(region), langid);
+            }
         }
         if let Some(region) = langid.region {
-            maximize_locale!(langid, data.region, region.into());
+            if let Some((language, script)) = data
+                .region
+                .get(&region)
+                .map(|u| zerovec::ule::AsULE::from_unaligned(*u))
+            {
+                return update_langid(language, Some(script), None, langid);
+            }
         }
-        update_langid(&data.und, langid)
+
+        update_langid(data.und.0, Some(data.und.1), Some(data.und.2), langid)
     }
 
     /// This returns a new Locale that is the result of running the

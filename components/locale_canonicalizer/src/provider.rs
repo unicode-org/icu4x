@@ -7,7 +7,10 @@
 //! Read more about data providers: [`icu_provider`]
 
 use alloc::vec::Vec;
-use icu_locid::LanguageIdentifier;
+use icu_locid::{
+    subtags::{Language, Region, Script},
+    LanguageIdentifier,
+};
 use icu_provider::prelude::*;
 use litemap::LiteMap;
 use tinystr::TinyAsciiStr;
@@ -69,7 +72,7 @@ pub struct AliasesV1<'data> {
 }
 
 #[icu_provider::data_struct(LikelySubtagsV1Marker = "locale_canonicalizer/likelysubtags@1")]
-#[derive(Debug, PartialEq, Clone, Default)]
+#[derive(Debug, PartialEq, Clone)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize))]
 #[cfg_attr(feature = "serialize", derive(serde::Deserialize))]
 /// This likely subtags data is used for the minimize and maximize operations.
@@ -82,30 +85,29 @@ pub struct AliasesV1<'data> {
 /// defined for the likely subtags maximize algorithm.
 ///
 /// For efficiency, only the relevant part of the LanguageIdentifier is stored
-/// for searching. E.g., the `language_script` field is used to store rules for
-/// `LanguageIdentifier` that contain a language and a script, but not a region.
-/// This also allows for space savings by using a `TinyStr4` rather than a full
-/// `LanguageIdentifier`.
-pub struct LikelySubtagsV1 {
+/// for searching and replacing. E.g., the `language_script` field is used to store
+/// rules for `LanguageIdentifier`s that contain a language and a script, but not a
+/// region.
+#[yoke(prove_covariance_manually)]
+pub struct LikelySubtagsV1<'data> {
     /// Language and script.
-    #[zerofrom(clone)]
-    pub language_script: LiteMap<(TinyAsciiStr<3>, TinyAsciiStr<4>), LanguageIdentifier>,
+    #[cfg_attr(feature = "serialize", serde(borrow))]
+    pub language_script: ZeroMap<'data, (Language, Script), Region>,
     /// Language and region.
-    #[zerofrom(clone)]
-    pub language_region: LiteMap<(TinyAsciiStr<3>, TinyAsciiStr<3>), LanguageIdentifier>,
+    #[cfg_attr(feature = "serialize", serde(borrow))]
+    pub language_region: ZeroMap<'data, (Language, Region), Script>,
     /// Just language.
-    #[zerofrom(clone)]
-    pub language: LiteMap<TinyAsciiStr<3>, LanguageIdentifier>,
+    #[cfg_attr(feature = "serialize", serde(borrow))]
+    pub language: ZeroMap<'data, Language, (Script, Region)>,
     /// Script and region.
-    #[zerofrom(clone)]
-    pub script_region: LiteMap<(TinyAsciiStr<4>, TinyAsciiStr<3>), LanguageIdentifier>,
+    #[cfg_attr(feature = "serialize", serde(borrow))]
+    pub script_region: ZeroMap<'data, (Script, Region), Language>,
     /// Just script.
-    #[zerofrom(clone)]
-    pub script: LiteMap<TinyAsciiStr<4>, LanguageIdentifier>,
+    #[cfg_attr(feature = "serialize", serde(borrow))]
+    pub script: ZeroMap<'data, Script, (Language, Region)>,
     /// Just region.
-    #[zerofrom(clone)]
-    pub region: LiteMap<TinyAsciiStr<3>, LanguageIdentifier>,
+    #[cfg_attr(feature = "serialize", serde(borrow))]
+    pub region: ZeroMap<'data, Region, (Language, Script)>,
     /// Undefined.
-    #[zerofrom(clone)]
-    pub und: LanguageIdentifier,
+    pub und: (Language, Script, Region),
 }

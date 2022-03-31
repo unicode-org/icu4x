@@ -31,7 +31,7 @@ denylist = ["bench"]
 all-features = true
 
 [dependencies]
-icu_locid = { version = "0.5", path = "../locid" }
+icu_locid = { version = "0.5", path = "../locid", features = ["serde", "zerovec"] }
 icu_provider = { version = "0.5", path = "../../provider/core", features = ["macros"] }
 litemap = { version = "0.3.0", path = "../../utils/litemap", features = ["yoke"] }
 serde = { version = "1.0", features = ["derive", "alloc"], optional = true, default-features = false }
