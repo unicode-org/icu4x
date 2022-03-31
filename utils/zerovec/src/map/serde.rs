@@ -26,7 +26,7 @@ where
             // Many human-readable formats don't support values other
             // than numbers and strings as map keys. For them, we can serialize
             // as a vec of tuples instead
-            if let Some(ref k) = self.iter_keys().next() {
+            if let Some(k) = self.iter_keys().next() {
                 let json = K::Container::t_with_ser(k, |k| serde_json::json!(k));
                 if !json.is_string() && !json.is_number() {
                     let mut seq = serializer.serialize_seq(Some(self.len()))?;
