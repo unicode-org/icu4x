@@ -353,27 +353,6 @@ impl From<subtags::Language> for LanguageIdentifier {
 /// use icu::locid::script;
 ///
 /// let script = script!("latn");
-/// let li = LanguageIdentifier::from(script);
-///
-/// assert_eq!(li.script.unwrap(), "Latn");
-/// assert_eq!(li, "und-Latn");
-/// ```
-impl From<subtags::Script> for LanguageIdentifier {
-    fn from(script: subtags::Script) -> Self {
-        Self {
-            script: Some(script),
-            ..Default::default()
-        }
-    }
-}
-
-/// # Examples
-///
-/// ```
-/// use icu::locid::LanguageIdentifier;
-/// use icu::locid::script;
-///
-/// let script = script!("latn");
 /// let li = LanguageIdentifier::from(Some(script));
 ///
 /// assert_eq!(li.script.unwrap(), "Latn");
@@ -383,27 +362,6 @@ impl From<Option<subtags::Script>> for LanguageIdentifier {
     fn from(script: Option<subtags::Script>) -> Self {
         Self {
             script,
-            ..Default::default()
-        }
-    }
-}
-
-/// # Examples
-///
-/// ```
-/// use icu::locid::LanguageIdentifier;
-/// use icu::locid::region;
-///
-/// let region = region!("US");
-/// let li = LanguageIdentifier::from(region);
-///
-/// assert_eq!(li.region.unwrap(), "US");
-/// assert_eq!(li, "und-US");
-/// ```
-impl From<subtags::Region> for LanguageIdentifier {
-    fn from(region: subtags::Region) -> Self {
-        Self {
-            region: Some(region),
             ..Default::default()
         }
     }
