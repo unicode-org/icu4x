@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1648683499204,
+  "lastUpdate": 1648697042422,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -21959,6 +21959,36 @@ window.BENCHMARK_DATA = {
             "name": "fixed_decimal/overview",
             "value": 94448,
             "range": "± 586",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "zibi@braniecki.net",
+            "name": "Zibi Braniecki",
+            "username": "zbraniecki"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "feb1c9b4d17958fb837076b8a3aaabe41d6ec15e",
+          "message": "Add convenience From<subtag> for LanguageIdentifier and Locale (#1753)",
+          "timestamp": "2022-03-30T20:17:24-07:00",
+          "tree_id": "ed4190e40d1438eab2aa472d4fe69173ae3affa7",
+          "url": "https://github.com/unicode-org/icu4x/commit/feb1c9b4d17958fb837076b8a3aaabe41d6ec15e"
+        },
+        "date": 1648697025864,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 128665,
+            "range": "± 1570",
             "unit": "ns/iter"
           }
         ]
