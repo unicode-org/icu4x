@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1648683227867,
+  "lastUpdate": 1648696739800,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -12083,6 +12083,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/7760718130baa37445a5500dbb4fb4429fbd0ed8"
         },
         "date": 1648683213576,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4555035,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "zibi@braniecki.net",
+            "name": "Zibi Braniecki",
+            "username": "zbraniecki"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "feb1c9b4d17958fb837076b8a3aaabe41d6ec15e",
+          "message": "Add convenience From<subtag> for LanguageIdentifier and Locale (#1753)",
+          "timestamp": "2022-03-30T20:17:24-07:00",
+          "tree_id": "ed4190e40d1438eab2aa472d4fe69173ae3affa7",
+          "url": "https://github.com/unicode-org/icu4x/commit/feb1c9b4d17958fb837076b8a3aaabe41d6ec15e"
+        },
+        "date": 1648696722869,
         "tool": "ndjson",
         "benches": [
           {
