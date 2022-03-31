@@ -72,11 +72,9 @@
 //!     data.iter().copied().collect();
 //!
 //! // Construct a LanguageIdentifier from a tuple entry
-//! let value = zm.get_copied(&25).expect("element is present");
-//! let mut lid = LanguageIdentifier::default();
-//! lid.language = value.0;
-//! lid.script = value.1;
-//! lid.region = value.2;
+//! let lid: LanguageIdentifier = zm.get_copied(&25)
+//!     .expect("element is present")
+//!     .into();
 //!
 //! assert_eq!(lid, langid!("zh-TW"));
 //! ```
