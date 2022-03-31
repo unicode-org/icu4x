@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1648740377766,
+  "lastUpdate": 1648743559829,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -12143,6 +12143,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/18c3eb85fd8e46d1352e0f766fdeeab1cdef200a"
         },
         "date": 1648740360133,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4555035,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "cd8d95720098e70d885dbd7a31261cf20205c894",
+          "message": "Change Locale internals to Vec and add retain_by_key functions (#1737)",
+          "timestamp": "2022-03-31T09:17:48-07:00",
+          "tree_id": "300d7899c6508b96f969630e3f9961b3c86e6b12",
+          "url": "https://github.com/unicode-org/icu4x/commit/cd8d95720098e70d885dbd7a31261cf20205c894"
+        },
+        "date": 1648743543832,
         "tool": "ndjson",
         "benches": [
           {
