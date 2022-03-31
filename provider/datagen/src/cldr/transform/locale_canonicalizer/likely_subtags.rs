@@ -92,7 +92,7 @@ impl From<&cldr_serde::likely_subtags::Resource> for LikelySubtagsV1 {
                     language: if entry.0.language != entry.1.language {
                         entry.1.language
                     } else {
-                        icu_locid::subtags::Language::und()
+                        icu_locid::subtags::Language::UND
                     },
                     script: if entry.0.script != entry.1.script {
                         entry.1.script
