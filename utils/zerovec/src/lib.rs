@@ -368,7 +368,7 @@ pub use zerovec_derive::make_ule;
 /// to convert the [`VarULE`] type back to this type in a cheap, zero-copy way (see the example below
 /// for more details).
 ///
-/// Provided the type implements [`serde::Serialize`] and [`serde::Deserialize`], this attribute can also generate
+/// Provided the type implements [`serde::Serialize`](dep_serde::Serialize) and [`serde::Deserialize`](dep_serde::Deserialize), this attribute can also generate
 /// the relevant serialize/deserialize implementations for the [`VarULE`] type if you apply the `#[zerovec::serde]`
 /// attribute. Those impls are required to support human-readable serialization of the VarZeroVec.
 /// This needs the `serde` feature to be enabled on the `zerovec` crate to work.
