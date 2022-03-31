@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1648697128957,
+  "lastUpdate": 1648740786226,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -24455,6 +24455,48 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 203000,
             "range": "± 2544",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "18c3eb85fd8e46d1352e0f766fdeeab1cdef200a",
+          "message": "Add documentation for zero-copy locales (#1749)",
+          "timestamp": "2022-03-31T08:24:38-07:00",
+          "tree_id": "0a308445d7955496c7a4576572b1c78aed77f94e",
+          "url": "https://github.com/unicode-org/icu4x/commit/18c3eb85fd8e46d1352e0f766fdeeab1cdef200a"
+        },
+        "date": 1648740770476,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 72991,
+            "range": "± 86",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 792268,
+            "range": "± 1184",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 154823,
+            "range": "± 1847",
             "unit": "ns/iter"
           }
         ]
