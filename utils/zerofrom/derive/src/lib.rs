@@ -38,10 +38,10 @@ pub fn zf_derive(input: TokenStream) -> TokenStream {
     TokenStream::from(zf_derive_impl(&input))
 }
 
-fn has_clone_attr(attrs: &[syn::Attribute]) -> bool {
+fn has_attr(attrs: &[syn::Attribute], lit: &str) -> bool {
     attrs.iter().any(|a| {
         if let Ok(i) = a.parse_args::<Ident>() {
-            if i == "clone" {
+            if i == lit {
                 return true;
             }
         }
@@ -64,7 +64,7 @@ fn zf_derive_impl(input: &DeriveInput) -> TokenStream2 {
             .variants()
             .iter()
             .flat_map(|variant| variant.bindings().iter())
-            .any(|binding| has_clone_attr(&binding.ast().attrs));
+            .any(|binding| has_attr(&binding.ast().attrs, "clone"));
         let (clone, clone_trait) = if has_clone {
             (quote!(this.clone()), quote!(Clone))
         } else {
@@ -98,9 +98,15 @@ fn zf_derive_impl(input: &DeriveInput) -> TokenStream2 {
                 let binding = format!("__binding_{}", i);
                 let field = Ident::new(&binding, Span::call_site());
 
-                if has_clone_attr(&f.attrs) {
+                if has_attr(&f.attrs, "clone") {
                     quote! {
                         #field.clone()
+                    }
+                } else if has_attr(&f.attrs, "copy") {
+                    let fty = f.ty.clone();
+                    zf_bounds.push(parse_quote!(#fty: Copy));
+                    quote! {
+                        *#field
                     }
                 } else {
                     let fty = replace_lifetime(&f.ty, custom_lt("'zf"));
