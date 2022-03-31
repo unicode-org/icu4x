@@ -3,7 +3,6 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::parser::{get_subtag_iterator, ParserError};
-use alloc::boxed::Box;
 use alloc::vec;
 use alloc::vec::Vec;
 use core::ops::RangeInclusive;
@@ -32,7 +31,7 @@ use tinystr::TinyAsciiStr;
 /// assert_eq!(&value2.to_string(), "islamic-civil");
 /// ```
 #[derive(Debug, PartialEq, Eq, Clone, Hash, PartialOrd, Ord)]
-pub struct Value(Box<[TinyAsciiStr<{ *VALUE_LENGTH.end() }>]>);
+pub struct Value(Vec<TinyAsciiStr<{ *VALUE_LENGTH.end() }>>);
 
 const VALUE_LENGTH: RangeInclusive<usize> = 3..=8;
 const TRUE_VALUE: TinyAsciiStr<8> = tinystr::tinystr!(8, "true");
@@ -66,11 +65,11 @@ impl Value {
                 }
             }
         }
-        Ok(Self(v.into_boxed_slice()))
+        Ok(Self(v))
     }
 
     pub(crate) fn from_vec_unchecked(input: Vec<TinyAsciiStr<8>>) -> Self {
-        Self(input.into_boxed_slice())
+        Self(input)
     }
 
     pub(crate) fn is_type_subtag(t: &[u8]) -> bool {

@@ -28,8 +28,8 @@
 //! ```
 //!
 //! [`Keys`]: Key
+
 mod key;
-use alloc::boxed::Box;
 
 use alloc::vec::Vec;
 use core::ops::Deref;
@@ -62,7 +62,7 @@ use crate::parser::SubtagIterator;
 /// [`Private Use Extensions`]: https://unicode.org/reports/tr35/#pu_extensions
 /// [`Unicode Locale Identifier`]: https://unicode.org/reports/tr35/#Unicode_locale_identifier
 #[derive(Clone, PartialEq, Eq, Debug, Default, Hash, PartialOrd, Ord)]
-pub struct Private(Option<Box<[Key]>>);
+pub struct Private(Vec<Key>);
 
 impl Private {
     /// Returns a new empty list of private-use extensions. Same as [`default()`](Default::default()), but is `const`.
@@ -76,7 +76,7 @@ impl Private {
     /// ```
     #[inline]
     pub const fn new() -> Self {
-        Self(None)
+        Self(Vec::new())
     }
 
     /// A constructor which takes a pre-sorted list of [`Key`].
@@ -95,11 +95,7 @@ impl Private {
     /// assert_eq!(&private.to_string(), "-x-foo-bar");
     /// ```
     pub fn from_vec_unchecked(input: Vec<Key>) -> Self {
-        if input.is_empty() {
-            Self(None)
-        } else {
-            Self(Some(input.into_boxed_slice()))
-        }
+        Self(input)
     }
 
     /// Empties the [`Private`] list.
@@ -122,7 +118,7 @@ impl Private {
     /// assert_eq!(&private.to_string(), "");
     /// ```
     pub fn clear(&mut self) {
-        self.0 = None;
+        self.0.clear();
     }
 
     pub(crate) fn try_from_iter(iter: &mut SubtagIterator) -> Result<Self, ParserError> {
@@ -178,10 +174,6 @@ impl Deref for Private {
     type Target = [Key];
 
     fn deref(&self) -> &Self::Target {
-        if let Some(ref data) = self.0 {
-            data
-        } else {
-            &[]
-        }
+        self.0.deref()
     }
 }

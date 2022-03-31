@@ -2,8 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use alloc::boxed::Box;
-
 use alloc::vec::Vec;
 use core::borrow::Borrow;
 use core::ops::Deref;
@@ -37,7 +35,7 @@ use super::Value;
 /// assert_eq!(&keywords.to_string(), "hc-h23");
 /// ```
 #[derive(Clone, PartialEq, Eq, Debug, Default, Hash, PartialOrd, Ord)]
-pub struct Keywords(Option<Box<[(Key, Value)]>>);
+pub struct Keywords(Vec<(Key, Value)>);
 
 impl Keywords {
     /// Returns a new empty list of key-value pairs. Same as [`default()`](Default::default()), but is `const`.
@@ -51,7 +49,7 @@ impl Keywords {
     /// ```
     #[inline]
     pub const fn new() -> Self {
-        Self(None)
+        Self(Vec::new())
     }
 
     /// A constructor which takes a pre-sorted list of `(`[`Key`]`, `[`Value`]`)` tuples.
@@ -71,11 +69,7 @@ impl Keywords {
     /// assert_eq!(&keywords.to_string(), "ca-buddhist");
     /// ```
     pub fn from_vec_unchecked(input: Vec<(Key, Value)>) -> Self {
-        if input.is_empty() {
-            Self(None)
-        } else {
-            Self(Some(input.into_boxed_slice()))
-        }
+        Self(input)
     }
 
     /// Returns `true` if the list contains a [`Value`] for the specified [`Key`].
@@ -138,6 +132,8 @@ impl Keywords {
 
     /// Returns a mutable reference to the [`Value`] corresponding to the [`Key`].
     ///
+    /// Returns `None` if the key doesn't exist or if the key has no value.
+    ///
     ///
     /// # Examples
     ///
@@ -166,13 +162,9 @@ impl Keywords {
         Q: Borrow<Key>,
     {
         if let Ok(idx) = self.binary_search_by_key(key.borrow(), |(key, _)| *key) {
-            if let Some(ref mut data) = self.0 {
-                #[allow(clippy::indexing_slicing)]
-                // TODO(#1668) Clippy exceptions need docs or fixing.i
-                Some(&mut data[idx].1)
-            } else {
-                None
-            }
+            // Won't panic because the index was given to us by binary_search
+            #[allow(clippy::indexing_slicing)]
+            Some(&mut self.0[idx].1)
         } else {
             None
         }
@@ -191,7 +183,30 @@ impl Keywords {
     /// assert_eq!(loc, "und-u-hello");
     /// ```
     pub fn clear(&mut self) {
-        self.0 = None;
+        self.0.clear();
+    }
+
+    /// Retains a subset of keywords as specified by the predicate function.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::locid::Locale;
+    /// use std::str::FromStr;
+    ///
+    /// let mut loc: Locale = "und-u-ca-buddhist-hc-h12-ms-metric".parse().unwrap();
+    ///
+    /// loc.extensions.unicode.keywords.retain_by_key(|k| k == "hc");
+    /// assert_eq!(loc, "und-u-hc-h12");
+    ///
+    /// loc.extensions.unicode.keywords.retain_by_key(|k| k == "ms");
+    /// assert_eq!(loc, "und");
+    /// ```
+    pub fn retain_by_key<F>(&mut self, mut predicate: F)
+    where
+        F: FnMut(&Key) -> bool,
+    {
+        self.0.retain(|(k, _)| predicate(k))
     }
 
     pub(crate) fn for_each_subtag_str<E, F>(&self, f: &mut F) -> Result<(), E>
@@ -212,10 +227,6 @@ impl Deref for Keywords {
     type Target = [(Key, Value)];
 
     fn deref(&self) -> &Self::Target {
-        if let Some(ref data) = self.0 {
-            data
-        } else {
-            &[]
-        }
+        self.0.deref()
     }
 }
