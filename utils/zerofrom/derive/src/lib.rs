@@ -102,11 +102,6 @@ fn zf_derive_impl(input: &DeriveInput) -> TokenStream2 {
                     quote! {
                         #field.clone()
                     }
-                } else if !visitor::check_type_for_parameters(&f.ty, &generics_env).1 {
-                    // Field has zero lifetimes so it should be copy
-                    quote! {
-                        *#field
-                    }
                 } else {
                     let fty = replace_lifetime(&f.ty, custom_lt("'zf"));
                     let lifetime_ty = replace_lifetime(&f.ty, custom_lt("'zf_inner"));
@@ -124,11 +119,15 @@ fn zf_derive_impl(input: &DeriveInput) -> TokenStream2 {
                             zf_bounds.push(parse_quote!(#fty: zerofrom::ZeroFrom<'zf, #fty>));
                         }
                     }
-
-                    // By doing this we essentially require ZF to be implemented
-                    // on all fields
-                    quote! {
-                        <#fty as zerofrom::ZeroFrom<'zf, #lifetime_ty>>::zero_from(#field)
+                    if has_ty || has_lt {
+                        // By doing this we essentially require ZF to be implemented
+                        // on all fields
+                        quote! {
+                            <#fty as zerofrom::ZeroFrom<'zf, #lifetime_ty>>::zero_from(#field)
+                        }
+                    } else {
+                        // No lifetimes, so we can just copy
+                        quote! { *#field }
                     }
                 }
             })

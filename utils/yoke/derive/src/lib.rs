@@ -128,7 +128,7 @@ fn yokeable_derive_impl(input: &DeriveInput) -> TokenStream2 {
                             <#fty as yoke::Yokeable<'a>>::transform_owned(#field)
                         }
                     } else {
-                        // No nested types or lifetimes, so we can just copy
+                        // No nested lifetimes, so nothing to be done
                         quote! { #field }
                     }
                 })
