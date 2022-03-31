@@ -69,11 +69,7 @@ impl Fields {
     /// assert_eq!(&fields.to_string(), "h0-hybrid");
     /// ```
     pub fn from_vec_unchecked(input: Vec<(Key, Value)>) -> Self {
-        if input.is_empty() {
-            Self(Vec::new())
-        } else {
-            Self(input)
-        }
+        Self(input)
     }
 
     /// Empties the [`Fields`] list.

@@ -95,11 +95,7 @@ impl Private {
     /// assert_eq!(&private.to_string(), "-x-foo-bar");
     /// ```
     pub fn from_vec_unchecked(input: Vec<Key>) -> Self {
-        if input.is_empty() {
-            Self(Vec::new())
-        } else {
-            Self(input)
-        }
+        Self(input)
     }
 
     /// Empties the [`Private`] list.

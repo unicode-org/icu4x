@@ -69,11 +69,7 @@ impl Keywords {
     /// assert_eq!(&keywords.to_string(), "ca-buddhist");
     /// ```
     pub fn from_vec_unchecked(input: Vec<(Key, Value)>) -> Self {
-        if input.is_empty() {
-            Self(Vec::new())
-        } else {
-            Self(input)
-        }
+        Self(input)
     }
 
     /// Returns `true` if the list contains a [`Value`] for the specified [`Key`].
@@ -187,7 +183,7 @@ impl Keywords {
     /// assert_eq!(loc, "und-u-hello");
     /// ```
     pub fn clear(&mut self) {
-        self.0 = None;
+        self.0.clear();
     }
 
     /// Retains a subset of keywords as specified by the predicate function.

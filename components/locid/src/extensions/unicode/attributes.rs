@@ -70,11 +70,7 @@ impl Attributes {
     /// for the caller to use [`binary_search`](slice::binary_search) instead of [`sort`](slice::sort)
     /// and [`dedup`](Vec::dedup()).
     pub fn from_vec_unchecked(input: Vec<Attribute>) -> Self {
-        if input.is_empty() {
-            Self(Vec::new())
-        } else {
-            Self(input)
-        }
+        Self(input)
     }
 
     /// Empties the [`Attributes`] list.
