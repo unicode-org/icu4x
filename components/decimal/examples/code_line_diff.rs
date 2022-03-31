@@ -9,8 +9,7 @@
 
 use fixed_decimal::FixedDecimal;
 use icu_decimal::{options, FixedDecimalFormat};
-use icu_locid::Locale;
-use icu_locid_macros::langid;
+use icu_locid::locale;
 use writeable::Writeable;
 
 icu_benchmark_macros::static_setup!();
@@ -27,14 +26,12 @@ const LINES_REMOVED_ADDED: [(i64, i64); 5] = [
 fn main(_argc: isize, _argv: *const *const u8) -> isize {
     icu_benchmark_macros::main_setup!();
 
-    let locale: Locale = langid!("bn").into();
-
     let provider = icu_testdata::get_static_provider();
 
     let mut options: options::FixedDecimalFormatOptions = Default::default();
     options.sign_display = options::SignDisplay::ExceptZero;
 
-    let fdf = FixedDecimalFormat::try_new(locale, &provider, options)
+    let fdf = FixedDecimalFormat::try_new(locale!("bn"), &provider, options)
         .expect("Failed to create FixedDecimalFormat instance.");
 
     for line in LINES_REMOVED_ADDED.iter() {

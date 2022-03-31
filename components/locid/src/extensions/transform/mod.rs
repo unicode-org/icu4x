@@ -40,12 +40,11 @@ pub use fields::Fields;
 pub use key::Key;
 pub use value::Value;
 
+use crate::parser::SubtagIterator;
 use crate::parser::{parse_language_identifier_from_iter, ParserError, ParserMode};
 use crate::subtags::Language;
 use crate::LanguageIdentifier;
 use alloc::vec;
-
-use core::iter::Peekable;
 
 /// A list of [`Unicode BCP47 T Extensions`] as defined in [`Unicode Locale
 /// Identifier`] specification.
@@ -118,9 +117,23 @@ impl Transform {
         self.lang.is_none() && self.fields.is_empty()
     }
 
-    pub(crate) fn try_from_iter<'a>(
-        iter: &mut Peekable<impl Iterator<Item = &'a [u8]>>,
-    ) -> Result<Self, ParserError> {
+    /// Clears the transform extension, effectively removing it from the locale.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::locid::Locale;
+    ///
+    /// let mut loc: Locale = "en-US-t-es-AR".parse().unwrap();
+    /// loc.extensions.transform.clear();
+    /// assert_eq!(loc, "en-US");
+    /// ```
+    pub fn clear(&mut self) {
+        self.lang = None;
+        self.fields.clear();
+    }
+
+    pub(crate) fn try_from_iter(iter: &mut SubtagIterator) -> Result<Self, ParserError> {
         let mut tlang = None;
         let mut tfields = vec![];
 

@@ -7,13 +7,11 @@ use icu_datetime::{
     options::{components, length, preferences},
     DateTimeFormat, DateTimeFormatOptions,
 };
-use icu_locid::Locale;
-use icu_locid_macros::langid;
+use icu_locid::locale;
 
 fn assert_resolved_components(options: &DateTimeFormatOptions, bag: &components::Bag) {
-    let locale: Locale = langid!("en").into();
     let provider = icu_testdata::get_provider();
-    let dtf = DateTimeFormat::<Gregorian>::try_new(locale, &provider, options)
+    let dtf = DateTimeFormat::<Gregorian>::try_new(locale!("en"), &provider, options)
         .expect("Failed to create a DateTimeFormat.");
 
     assert_eq!(dtf.resolve_components(), *bag);

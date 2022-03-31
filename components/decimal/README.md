@@ -14,13 +14,11 @@ follow [icu4x#275](https://github.com/unicode-org/icu4x/issues/275).
 
 ```rust
 use icu::decimal::FixedDecimalFormat;
-use icu::locid::Locale;
-use icu::locid::macros::langid;
+use icu::locid::locale;
 use writeable::Writeable;
 
-let locale: Locale = langid!("bn").into();
 let provider = icu_testdata::get_provider();
-let fdf = FixedDecimalFormat::try_new(locale, &provider, Default::default())
+let fdf = FixedDecimalFormat::try_new(locale!("bn"), &provider, Default::default())
     .expect("Data should load successfully");
 
 let fixed_decimal = 1000007.into();
@@ -38,9 +36,8 @@ use icu::decimal::FixedDecimalFormat;
 use icu::locid::Locale;
 use writeable::Writeable;
 
-let locale = Locale::und();
 let provider = icu_provider::inv::InvariantDataProvider;
-let fdf = FixedDecimalFormat::try_new(locale, &provider, Default::default())
+let fdf = FixedDecimalFormat::try_new(Locale::und(), &provider, Default::default())
     .expect("Data should load successfully");
 
 let fixed_decimal = FixedDecimal::from(200050)

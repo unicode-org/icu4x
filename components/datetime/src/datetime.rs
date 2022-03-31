@@ -32,13 +32,10 @@ use crate::{date::DateTimeInput, CldrCalendar, DateTimeFormatError, FormattedDat
 /// # Examples
 ///
 /// ```
-/// use icu::locid::Locale;
-/// use icu::locid::macros::langid;
+/// use icu::locid::locale;
 /// use icu::datetime::{DateTimeFormat, options::length};
 /// use icu::calendar::{DateTime, Gregorian};
 /// use icu_provider::inv::InvariantDataProvider;
-///
-/// let locale: Locale = langid!("en").into();
 ///
 /// let provider = InvariantDataProvider;
 ///
@@ -47,7 +44,7 @@ use crate::{date::DateTimeInput, CldrCalendar, DateTimeFormatError, FormattedDat
 ///     time: Some(length::Time::Short),
 ///     ..Default::default()
 /// };
-/// let dtf = DateTimeFormat::<Gregorian>::try_new(locale, &provider, &options.into())
+/// let dtf = DateTimeFormat::<Gregorian>::try_new(locale!("en"), &provider, &options.into())
 ///     .expect("Failed to create DateTimeFormat instance.");
 ///
 ///
@@ -69,19 +66,16 @@ impl<C: CldrCalendar> DateTimeFormat<C> {
     /// # Examples
     ///
     /// ```
-    /// use icu::locid::Locale;
-    /// use icu::locid::macros::langid;
+    /// use icu::locid::locale;
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::{DateTimeFormat, DateTimeFormatOptions};
     /// use icu_provider::inv::InvariantDataProvider;
-    ///
-    /// let locale: Locale = langid!("en").into();
     ///
     /// let provider = InvariantDataProvider;
     ///
     /// let options = DateTimeFormatOptions::default();
     ///
-    /// let dtf = DateTimeFormat::<Gregorian>::try_new(locale, &provider, &options);
+    /// let dtf = DateTimeFormat::<Gregorian>::try_new(locale!("en"), &provider, &options);
     ///
     /// assert_eq!(dtf.is_ok(), true);
     /// ```
@@ -112,12 +106,10 @@ impl<C: CldrCalendar> DateTimeFormat<C> {
     /// # Examples
     ///
     /// ```
-    /// use icu::locid::Locale;
-    /// use icu::locid::macros::langid;
     /// use icu::datetime::{DateTimeFormat, DateTimeFormatOptions};
     /// use icu::calendar::{DateTime, Gregorian};
     /// use icu_provider::inv::InvariantDataProvider;
-    /// # let locale: Locale = langid!("en").into();
+    /// # let locale = icu::locid::locale!("en");
     /// # let provider = InvariantDataProvider;
     /// # let options = DateTimeFormatOptions::default();
     /// let dtf = DateTimeFormat::<Gregorian>::try_new(locale, &provider, &options)
@@ -148,12 +140,10 @@ impl<C: CldrCalendar> DateTimeFormat<C> {
     /// # Examples
     ///
     /// ```
-    /// use icu::locid::Locale;
-    /// use icu::locid::macros::langid;
     /// use icu::datetime::{DateTimeFormat, DateTimeFormatOptions};
     /// use icu::calendar::{DateTime, Gregorian};
     /// use icu_provider::inv::InvariantDataProvider;
-    /// # let locale: Locale = langid!("en").into();
+    /// # let locale = icu::locid::locale!("en");
     /// # let provider = InvariantDataProvider;
     /// # let options = DateTimeFormatOptions::default();
     /// let dtf = DateTimeFormat::<Gregorian>::try_new(locale, &provider, &options.into())
@@ -182,12 +172,10 @@ impl<C: CldrCalendar> DateTimeFormat<C> {
     /// # Examples
     ///
     /// ```
-    /// use icu::locid::Locale;
-    /// use icu::locid::macros::langid;
     /// use icu::datetime::{DateTimeFormat, DateTimeFormatOptions};
     /// use icu::calendar::{DateTime, Gregorian};
     /// use icu_provider::inv::InvariantDataProvider;
-    /// # let locale: Locale = langid!("en").into();
+    /// # let locale = icu::locid::locale!("en");
     /// # let provider = InvariantDataProvider;
     /// # let options = DateTimeFormatOptions::default();
     /// let dtf = DateTimeFormat::<Gregorian>::try_new(locale, &provider, &options.into())
@@ -216,8 +204,7 @@ impl<C: CldrCalendar> DateTimeFormat<C> {
     ///     options::{components, length},
     ///     DateTimeFormat, DateTimeFormatOptions,
     /// };
-    /// use icu::locid::macros::langid;
-    /// use icu::locid::Locale;
+    /// use icu::locid::locale;
     ///
     /// let options = DateTimeFormatOptions::Length(length::Bag {
     ///     date: Some(length::Date::Medium),
@@ -225,9 +212,8 @@ impl<C: CldrCalendar> DateTimeFormat<C> {
     ///     preferences: None,
     /// });
     ///
-    /// let locale: Locale = langid!("en").into();
     /// let provider = icu_testdata::get_provider();
-    /// let dtf = DateTimeFormat::<Gregorian>::try_new(locale, &provider, &options)
+    /// let dtf = DateTimeFormat::<Gregorian>::try_new(locale!("en"), &provider, &options)
     ///     .expect("Failed to create DateTimeFormat instance.");
     ///
     /// assert_eq!(

@@ -29,9 +29,9 @@ use crate::helpers::result_is_err_missing_resource_key;
 ///
 /// ```
 /// # #[cfg(feature = "deserialize_json")] {
+/// use icu_locid::locale;
 /// use icu_provider::prelude::*;
 /// use icu_provider::hello_world::*;
-/// use icu_locid_macros::langid;
 /// use icu_provider_adapters::fork::by_key::ForkByKeyProvider;
 ///
 /// struct DummyBufferProvider;
@@ -51,7 +51,7 @@ use crate::helpers::result_is_err_missing_resource_key;
 ///
 /// let german_hello_world: DataPayload<HelloWorldV1Marker> = data_provider
 ///     .load_resource(&DataRequest {
-///         options: langid!("de").into(),
+///         options: locale!("de").into(),
 ///         metadata: Default::default(),
 ///     })
 ///     .expect("Loading should succeed")
@@ -66,9 +66,9 @@ use crate::helpers::result_is_err_missing_resource_key;
 ///
 /// ```
 /// # #[cfg(feature = "deserialize_json")] {
+/// use icu_locid::{language, locale};
 /// use icu_provider::prelude::*;
 /// use icu_provider::hello_world::*;
-/// use icu_locid_macros::{language, langid};
 /// use icu_provider_adapters::filter::Filterable;
 /// use icu_provider_adapters::fork::by_key::ForkByKeyProvider;
 ///
@@ -89,7 +89,7 @@ use crate::helpers::result_is_err_missing_resource_key;
 /// // Chinese is the first provider, so this succeeds
 /// let chinese_hello_world = data_provider
 ///     .load_resource(&DataRequest {
-///         options: langid!("zh").into(),
+///         options: locale!("zh").into(),
 ///         metadata: Default::default(),
 ///     })
 ///     .expect("Loading should succeed")
@@ -101,7 +101,7 @@ use crate::helpers::result_is_err_missing_resource_key;
 /// // German is shadowed by Chinese, so this fails
 /// data_provider
 ///     .load_resource(&DataRequest {
-///         options: langid!("de").into(),
+///         options: locale!("de").into(),
 ///         metadata: Default::default(),
 ///     })
 ///     .expect_err("Should stop at the first provider, even though the second has data");
@@ -196,7 +196,7 @@ where
 /// # #[cfg(feature = "deserialize_json")] {
 /// use icu_provider::prelude::*;
 /// use icu_provider::hello_world::*;
-/// use icu_locid_macros::{language, langid};
+/// use icu_locid::{language, locale};
 /// use icu_provider_adapters::filter::Filterable;
 /// use icu_provider_adapters::fork::by_key::MultiForkByKeyProvider;
 ///
@@ -219,7 +219,7 @@ where
 /// // Chinese is the first provider, so this succeeds
 /// let chinese_hello_world = data_provider
 ///     .load_resource(&DataRequest {
-///         options: langid!("zh").into(),
+///         options: locale!("zh").into(),
 ///         metadata: Default::default(),
 ///     })
 ///     .expect("Loading should succeed")
@@ -231,7 +231,7 @@ where
 /// // German is shadowed by Chinese, so this fails
 /// data_provider
 ///     .load_resource(&DataRequest {
-///         options: langid!("de").into(),
+///         options: locale!("de").into(),
 ///         metadata: Default::default(),
 ///     })
 ///     .expect_err("Should stop at the first provider, even though the second has data");

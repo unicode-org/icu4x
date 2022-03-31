@@ -26,7 +26,7 @@ impl DataMarker for BufferMarker {
 /// # #[cfg(feature = "deserialize_json")] {
 /// use icu_provider::prelude::*;
 /// use icu_provider::hello_world::*;
-/// use icu_locid_macros::langid;
+/// use icu_locid::locale;
 ///
 /// let buffer_provider = HelloWorldProvider::new_with_placeholder_data()
 ///     .into_json_provider();
@@ -35,7 +35,7 @@ impl DataMarker for BufferMarker {
 ///
 /// let german_hello_world: DataPayload<HelloWorldV1Marker> = data_provider
 ///     .load_resource(&DataRequest {
-///         options: langid!("de").into(),
+///         options: locale!("de").into(),
 ///         metadata: Default::default(),
 ///     })
 ///     .expect("Loading should succeed")

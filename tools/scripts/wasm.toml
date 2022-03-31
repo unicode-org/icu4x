@@ -10,7 +10,7 @@ category = "ICU4X WASM"
 install_crate = { rustup_component_name = "rust-src" }
 toolchain = "nightly-2021-12-22"
 command = "cargo"
-args = ["wasm-build-dev", "--package", "icu_capi", "--example", "icu_capi_cdylib"]
+args = ["wasm-build-dev", "--package", "icu_capi_cdylib"]
 
 [tasks.wasm-build-release]
 description = "Build WASM FFI into the target directory (release mode)"
@@ -20,7 +20,7 @@ toolchain = "nightly-2021-12-22"
 # We don't care about panics in release mode because most incorrect inputs are handled by result types.
 env = { "RUSTFLAGS" = "-C panic=abort -C opt-level=s" }
 command = "cargo"
-args = ["wasm-build-release", "--package", "icu_capi", "--example", "icu_capi_cdylib"]
+args = ["wasm-build-release", "--package", "icu_capi_cdylib"]
 
 [tasks.wasm-build-examples]
 description = "Build WASM examples into the target directory"
@@ -47,14 +47,14 @@ args = ["-p", "wasmpkg"]
 description = "Copy the WASM files from dev into wasmpkg"
 category = "ICU4X WASM"
 command = "cp"
-args = ["${CARGO_MAKE_WORKSPACE_WORKING_DIRECTORY}/target/wasm32-unknown-unknown/debug/examples/icu_capi_cdylib.wasm", "wasmpkg/icu_capi.wasm"]
+args = ["${CARGO_MAKE_WORKSPACE_WORKING_DIRECTORY}/target/wasm32-unknown-unknown/debug/icu_capi_cdylib.wasm", "wasmpkg/icu_capi.wasm"]
 dependencies = ["wasm-build-dev", "wasm-dir"]
 
 [tasks.wasm-wasm-release]
 description = "Copy the WASM files from release into wasmpkg"
 category = "ICU4X WASM"
 command = "cp"
-args = ["${CARGO_MAKE_WORKSPACE_WORKING_DIRECTORY}/target/wasm32-unknown-unknown/release/examples/icu_capi_cdylib.wasm", "wasmpkg/icu_capi.wasm"]
+args = ["${CARGO_MAKE_WORKSPACE_WORKING_DIRECTORY}/target/wasm32-unknown-unknown/release/icu_capi_cdylib.wasm", "wasmpkg/icu_capi.wasm"]
 dependencies = ["wasm-build-release", "wasm-dir"]
 
 [tasks.wasm-cpp-emscripten]
@@ -95,8 +95,8 @@ for json_message in ${json_messages}
     if ${is_compiler_artifact} and ${is_example}
         # Copy the wasm file to the output directory
         filename = basename ${json_obj.executable}
-        # We have the icu_capi_cdylib hack example, which is not a real "example"
-        # and won't produce an executable here. We should filter it out.
+        # Some examples may not be real "example"s
+        # and won't produce executables. We should filter them out.
         empty = is_empty ${filename}
         if not ${empty}
             out_path = concat wasmpkg/ ${filename}
@@ -372,7 +372,7 @@ script_runner = "@duckscript"
 script = '''
 exit_on_error true
 
-expected = readfile tools/datagen/tests/testdata/work_log+keys.txt
+expected = readfile provider/datagen/tests/testdata/work_log+keys.txt
 actual = readfile wasmpkg/keys/work_log+keys.txt
 are_equal = eq ${expected} ${actual}
 
@@ -383,7 +383,7 @@ else
     echo "work_log+keys.txt do not match! Actual generated output:"
     echo ""
     echo ${actual}
-    echo "If this is expected, copy the above output into tools/datagen/tests/testdata/work_log+keys.txt"
+    echo "If this is expected, copy the above output into provider/datagen/tests/testdata/work_log+keys.txt"
     echo "*****"
     exit 1
 end

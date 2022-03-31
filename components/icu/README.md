@@ -51,13 +51,10 @@ functionality are compiled. These features are:
 ## Example
 
 ```rust
-use icu::locid::Locale;
-use icu::locid::macros::langid;
+use icu::locid::locale;
 use icu::datetime::{DateTimeFormat, options::length, mock::parse_gregorian_from_str};
 
 let provider = icu_testdata::get_provider();
-
-let locale: Locale = langid!("en").into();
 
 let options = length::Bag {
     date: Some(length::Date::Long),
@@ -65,7 +62,7 @@ let options = length::Bag {
     ..Default::default()
 }.into();
 
-let dtf = DateTimeFormat::try_new(locale, &provider, &options)
+let dtf = DateTimeFormat::try_new(locale!("en"), &provider, &options)
     .expect("Failed to create DateTimeFormat instance.");
 
 let date = parse_gregorian_from_str("2020-09-12T12:35:00")

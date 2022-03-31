@@ -24,7 +24,7 @@
 //! use icu_provider::prelude::*;
 //! use icu_provider::hello_world::*;
 //! use icu_provider_adapters::filter::Filterable;
-//! use icu_locid_macros::language;
+//! use icu_locid::language;
 //!
 //! // Only return German data from a HelloWorldProvider:
 //! HelloWorldProvider::new_with_placeholder_data()

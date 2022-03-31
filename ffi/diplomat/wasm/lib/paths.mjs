@@ -7,6 +7,6 @@ import * as url from "url";
 
 export const TOP_DIR = path.resolve(path.join(path.dirname(url.fileURLToPath(import.meta.url)), "../../../../"));
 
-export const WASM_PATH = path.resolve(path.join(TOP_DIR, "target/wasm32-unknown-unknown/release/examples/icu_capi_cdylib.wasm"));
+export const WASM_PATH = path.resolve(path.join(TOP_DIR, "target/wasm32-unknown-unknown/release/icu_capi_cdylib.wasm"));
 
 export const TESTDATA_POSTCARD_PATH = path.resolve(path.join(TOP_DIR, "provider/testdata/data/testdata.postcard"));

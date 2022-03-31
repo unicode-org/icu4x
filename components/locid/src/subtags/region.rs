@@ -42,22 +42,26 @@ impl Region {
     ///
     /// assert_eq!(region, "FR");
     /// ```
-    pub fn from_bytes(v: &[u8]) -> Result<Self, ParserError> {
-        match v.len() {
-            REGION_ALPHA_LENGTH => {
-                let s = TinyAsciiStr::from_bytes(v).map_err(|_| ParserError::InvalidSubtag)?;
-                if !s.is_ascii_alphabetic() {
-                    return Err(ParserError::InvalidSubtag);
-                }
-                Ok(Self(s.to_ascii_uppercase()))
-            }
-            REGION_NUM_LENGTH => {
-                let s = TinyAsciiStr::from_bytes(v).map_err(|_| ParserError::InvalidSubtag)?;
-                if !s.is_ascii_numeric() {
-                    return Err(ParserError::InvalidSubtag);
-                }
-                Ok(Self(s))
-            }
+    pub const fn from_bytes(v: &[u8]) -> Result<Self, ParserError> {
+        Self::from_bytes_manual_slice(v, 0, v.len())
+    }
+
+    /// Equivalent to [`from_bytes(bytes[start..end])`](Self::from_bytes),
+    /// but callable in a `const` context (which range indexing is not).
+    pub const fn from_bytes_manual_slice(
+        v: &[u8],
+        start: usize,
+        end: usize,
+    ) -> Result<Self, ParserError> {
+        match end - start {
+            REGION_ALPHA_LENGTH => match TinyAsciiStr::from_bytes_manual_slice(v, start, end) {
+                Ok(s) if s.is_ascii_alphabetic() => Ok(Self(s.to_ascii_uppercase())),
+                _ => Err(ParserError::InvalidSubtag),
+            },
+            REGION_NUM_LENGTH => match TinyAsciiStr::from_bytes_manual_slice(v, start, end) {
+                Ok(s) if s.is_ascii_numeric() => Ok(Self(s)),
+                _ => Err(ParserError::InvalidSubtag),
+            },
             _ => Err(ParserError::InvalidSubtag),
         }
     }
@@ -234,7 +238,7 @@ unsafe impl zerovec::ule::ULE for Region {
 ///
 /// ```
 /// use icu::locid::subtags::Region;
-/// use icu::locid::macros::region;
+/// use icu::locid::region;
 /// use zerovec::ZeroVec;
 ///
 /// let zv = ZeroVec::<Region>::parse_byte_slice(b"GB\0419001DE\0")

@@ -174,6 +174,22 @@ impl Keywords {
         }
     }
 
+    /// Clears all Unicode extension keywords, leaving Unicode attributes.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use std::str::FromStr;
+    /// use icu::locid::Locale;
+    ///
+    /// let mut loc: Locale = "und-u-hello-ca-buddhist-hc-h12".parse().unwrap();
+    /// loc.extensions.unicode.keywords.clear();
+    /// assert_eq!(loc, "und-u-hello");
+    /// ```
+    pub fn clear(&mut self) {
+        self.0 = None;
+    }
+
     /// Retains a subset of keywords as specified by the predicate function.
     ///
     /// # Examples

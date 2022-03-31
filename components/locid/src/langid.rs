@@ -5,7 +5,10 @@
 use core::cmp::Ordering;
 use core::str::FromStr;
 
-use crate::parser::{get_subtag_iterator, parse_language_identifier, ParserError, ParserMode};
+use crate::parser::{
+    get_subtag_iterator, parse_language_identifier, parse_language_identifier_without_variants,
+    ParserError, ParserMode,
+};
 use crate::subtags;
 use alloc::string::String;
 use alloc::string::ToString;
@@ -84,6 +87,22 @@ impl LanguageIdentifier {
     /// ```
     pub fn from_bytes(v: &[u8]) -> Result<Self, ParserError> {
         parse_language_identifier(v, ParserMode::LanguageIdentifier)
+    }
+
+    #[doc(hidden)]
+    // The return type should be `Result<Self, ParserError>` once the `const_precise_live_drops`
+    // is stabilized ([rust-lang#73255](https://github.com/rust-lang/rust/issues/73255)).
+    pub const fn from_bytes_without_variants(
+        v: &[u8],
+    ) -> Result<
+        (
+            subtags::Language,
+            Option<subtags::Script>,
+            Option<subtags::Region>,
+        ),
+        ParserError,
+    > {
+        parse_language_identifier_without_variants(v, ParserMode::LanguageIdentifier)
     }
 
     /// A constructor which takes a utf8 slice which may contain extension keys,
@@ -303,5 +322,108 @@ impl PartialEq<str> for LanguageIdentifier {
             }
         }
         iter.next() == None
+    }
+}
+
+/// # Examples
+///
+/// ```
+/// use icu::locid::LanguageIdentifier;
+/// use icu::locid::language;
+///
+/// let language = language!("en");
+/// let li = LanguageIdentifier::from(language);
+///
+/// assert_eq!(li.language, "en");
+/// assert_eq!(li, "en");
+/// ```
+impl From<subtags::Language> for LanguageIdentifier {
+    fn from(language: subtags::Language) -> Self {
+        Self {
+            language,
+            ..Default::default()
+        }
+    }
+}
+
+/// # Examples
+///
+/// ```
+/// use icu::locid::LanguageIdentifier;
+/// use icu::locid::script;
+///
+/// let script = script!("latn");
+/// let li = LanguageIdentifier::from(Some(script));
+///
+/// assert_eq!(li.script.unwrap(), "Latn");
+/// assert_eq!(li, "und-Latn");
+/// ```
+impl From<Option<subtags::Script>> for LanguageIdentifier {
+    fn from(script: Option<subtags::Script>) -> Self {
+        Self {
+            script,
+            ..Default::default()
+        }
+    }
+}
+
+/// # Examples
+///
+/// ```
+/// use icu::locid::LanguageIdentifier;
+/// use icu::locid::region;
+///
+/// let region = region!("US");
+/// let li = LanguageIdentifier::from(Some(region));
+///
+/// assert_eq!(li.region.unwrap(), "US");
+/// assert_eq!(li, "und-US");
+/// ```
+impl From<Option<subtags::Region>> for LanguageIdentifier {
+    fn from(region: Option<subtags::Region>) -> Self {
+        Self {
+            region,
+            ..Default::default()
+        }
+    }
+}
+
+/// # Examples
+///
+/// ```
+/// use icu::locid::LanguageIdentifier;
+/// use icu::locid::{language, script, region};
+///
+/// let lang = language!("en");
+/// let script = script!("Latn");
+/// let region = region!("US");
+/// let li = LanguageIdentifier::from((lang, Some(script), Some(region)));
+///
+/// assert_eq!(li.language, "en");
+/// assert_eq!(li.script.unwrap(), "Latn");
+/// assert_eq!(li.region.unwrap(), "US");
+/// assert_eq!(li.variants.len(), 0);
+/// assert_eq!(li, "en-Latn-US");
+/// ```
+impl
+    From<(
+        subtags::Language,
+        Option<subtags::Script>,
+        Option<subtags::Region>,
+    )> for LanguageIdentifier
+{
+    fn from(
+        lsr: (
+            subtags::Language,
+            Option<subtags::Script>,
+            Option<subtags::Region>,
+        ),
+    ) -> Self {
+        Self {
+            language: lsr.0,
+            script: lsr.1,
+            region: lsr.2,
+            ..Default::default()
+        }
     }
 }

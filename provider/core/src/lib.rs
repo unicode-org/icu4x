@@ -113,7 +113,7 @@
 //! [`icu_provider_adapters`]: ../icu_provider_adapters/index.html
 //! [`as_downcasting()`]: AsDowncastingAnyProvider::as_downcasting
 //! [`as_deserializing()`]: AsDeserializingBufferProvider::as_deserializing
-//! [`CldrJsonDataProvider`]: ../icu_provider_cldr/struct.CldrJsonDataProvider.html
+//! [`CldrJsonDataProvider`]: ../icu_datagen/cldr/struct.CldrJsonDataProvider.html
 //! [`FsDataProvider`]: ../icu_provider_fs/struct.FsDataProvider.html
 //! [`BlobDataProvider`]: ../icu_provider_blob/struct.BlobDataProvider.html
 

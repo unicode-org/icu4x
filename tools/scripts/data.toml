@@ -11,6 +11,7 @@ command = "cargo"
 args = [
     "run",
     "--bin=icu4x-testdata-download",
+    "--features=download-testdata",
     "--",
     "-v",
 ]
@@ -204,8 +205,8 @@ args = [
     "--features=experimental",
     "--",
     "--input-from-testdata",
-    "--out=tools/datagen/tests/testdata/work_log_bincode",
-    "--key-file=tools/datagen/tests/testdata/work_log+keys.txt",
+    "--out=provider/datagen/tests/testdata/work_log_bincode",
+    "--key-file=provider/datagen/tests/testdata/work_log+keys.txt",
     "--locales=de",
     "--locales=es",
     "--syntax=bincode",

@@ -9,7 +9,6 @@ use icu_segmenter_lstm::structs;
 use serde::{Deserialize, Serialize};
 use std::fs::File;
 use std::io::BufReader;
-use std::io::Read;
 use std::rc::Rc;
 
 /// `TestCase` is a struct used to store a single test case.
@@ -40,9 +39,7 @@ impl TestText {
 }
 
 fn load_lstm_data(filename: &str) -> DataPayload<structs::LstmDataMarker> {
-    let mut file = File::open(filename).expect("File should be present");
-    let mut buf = Vec::new();
-    file.read_to_end(&mut buf).expect("File can read to end");
+    let buf = std::fs::read(filename).expect("File can read to end");
     DataPayload::<structs::LstmDataMarker>::try_from_rc_buffer_badly(Rc::from(buf), |bytes| {
         serde_json::from_slice(bytes)
     })

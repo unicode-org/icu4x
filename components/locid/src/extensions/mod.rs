@@ -56,10 +56,9 @@ pub use transform::Transform;
 pub use unicode::Unicode;
 
 use alloc::vec::Vec;
-use core::iter::Peekable;
 
 use crate::parser::ParserError;
-
+use crate::parser::SubtagIterator;
 /// Defines the type of extension.
 #[derive(Debug, PartialEq, Eq, Clone, Hash, PartialOrd, Ord, Copy)]
 pub enum ExtensionType {
@@ -136,9 +135,46 @@ impl Extensions {
             && self.other.is_empty()
     }
 
-    pub(crate) fn try_from_iter<'a>(
-        iter: &mut Peekable<impl Iterator<Item = &'a [u8]>>,
-    ) -> Result<Self, ParserError> {
+    /// Retains the specified extension types, clearing all others.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use std::str::FromStr;
+    /// use icu::locid::Locale;
+    /// use icu::locid::extensions::ExtensionType;
+    ///
+    /// let loc: Locale = "und-a-hello-t-mul-u-world-z-zzz-x-extra".parse().unwrap();
+    ///
+    /// let mut only_unicode = loc.clone();
+    /// only_unicode.extensions.retain_by_type(|t| t == ExtensionType::Unicode);
+    /// assert_eq!(only_unicode, "und-u-world");
+    ///
+    /// let mut only_t_z = loc.clone();
+    /// only_t_z.extensions.retain_by_type(|t| {
+    ///     t == ExtensionType::Transform
+    ///         || t == ExtensionType::Other(b'z')
+    /// });
+    /// assert_eq!(only_t_z, "und-t-mul-z-zzz");
+    /// ```
+    pub fn retain_by_type<F>(&mut self, mut predicate: F)
+    where
+        F: FnMut(ExtensionType) -> bool,
+    {
+        if !predicate(ExtensionType::Unicode) {
+            self.unicode.clear();
+        }
+        if !predicate(ExtensionType::Transform) {
+            self.transform.clear();
+        }
+        if !predicate(ExtensionType::Private) {
+            self.private.clear();
+        }
+        self.other
+            .retain(|o| predicate(ExtensionType::Other(o.get_ext_byte())));
+    }
+
+    pub(crate) fn try_from_iter(iter: &mut SubtagIterator) -> Result<Self, ParserError> {
         let mut unicode = None;
         let mut transform = None;
         let mut private = None;

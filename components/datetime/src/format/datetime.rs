@@ -31,15 +31,12 @@ use writeable::Writeable;
 /// # Examples
 ///
 /// ```
-/// use icu::locid::Locale;
-/// use icu::locid::macros::langid;
-/// use icu::datetime::{DateTimeFormat, DateTimeFormatOptions};
+/// use icu::locid::locale;
+/// use icu::datetime::DateTimeFormat;
 /// use icu::calendar::{DateTime, Gregorian};
-/// use icu_provider::inv::InvariantDataProvider;
-/// let locale: Locale = langid!("en").into();
-/// # let provider = InvariantDataProvider;
-/// # let options = DateTimeFormatOptions::default();
-/// let dtf = DateTimeFormat::<Gregorian>::try_new(locale, &provider, &options)
+/// # let provider = icu_provider::inv::InvariantDataProvider;
+/// # let options = icu::datetime::DateTimeFormatOptions::default();
+/// let dtf = DateTimeFormat::<Gregorian>::try_new(locale!("en"), &provider, &options)
 ///     .expect("Failed to create DateTimeFormat instance.");
 ///
 /// let datetime = DateTime::new_gregorian_datetime_from_integers(2020, 9, 1, 12, 34, 28)

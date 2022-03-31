@@ -7,7 +7,6 @@ use icu_provider::buf::BufferFormat;
 use icu_provider::prelude::*;
 use serde::de::Deserialize;
 use writeable::Writeable;
-use yoke::trait_hack::YokeTraitHack;
 use zerovec::maps::{KeyError, ZeroMap2dBorrowed};
 
 /// A data provider loading data statically baked in to the binary.
@@ -26,7 +25,7 @@ use zerovec::maps::{KeyError, ZeroMap2dBorrowed};
 /// use icu_provider::prelude::*;
 /// use icu_provider::hello_world::*;
 /// use icu_provider_blob::StaticDataProvider;
-/// use icu_locid_macros::langid;
+/// use icu_locid::locale;
 ///
 /// const HELLO_WORLD_BLOB: &[u8] = include_bytes!(concat!(
 ///     env!("CARGO_MANIFEST_DIR"),
@@ -38,7 +37,7 @@ use zerovec::maps::{KeyError, ZeroMap2dBorrowed};
 ///
 /// let response: DataPayload<HelloWorldV1Marker> = provider
 ///     .load_resource(&DataRequest {
-///         options: langid!("la").into(),
+///         options: locale!("la").into(),
 ///         metadata: Default::default(),
 ///     })
 ///     .expect("Data should be valid")
@@ -76,14 +75,14 @@ impl StaticDataProvider {
     /// use icu_provider::prelude::*;
     /// use icu_provider::hello_world::*;
     /// use icu_provider_blob::StaticDataProvider;
-    /// use icu_locid_macros::langid;
+    /// use icu_locid::locale;
     ///
     /// let stub_provider = StaticDataProvider::new_empty();
     ///
     /// ResourceProvider::<HelloWorldV1Marker>::load_resource(
     ///     &stub_provider,
     ///     &DataRequest {
-    ///         options: langid!("la").into(),
+    ///         options: locale!("la").into(),
     ///         metadata: Default::default(),
     ///     }
     /// )
@@ -94,50 +93,6 @@ impl StaticDataProvider {
             data: ZeroMap2dBorrowed::new(),
         }
     }
-
-    fn get_file(&self, key: ResourceKey, req: &DataRequest) -> Result<&'static [u8], DataError> {
-        self.data
-            .get(&key.get_hash(), &req.options.write_to_string())
-            .map_err(|e| {
-                match e {
-                    KeyError::K0 => DataErrorKind::MissingResourceKey,
-                    KeyError::K1 => DataErrorKind::MissingResourceOptions,
-                }
-                .with_req(key, req)
-            })
-    }
-}
-
-impl<M> ResourceProvider<M> for StaticDataProvider
-where
-    M: ResourceMarker,
-    // Actual bound:
-    //     for<'de> <M::Yokeable as Yokeable<'de>>::Output: serde::de::Deserialize<'de>,
-    // Necessary workaround bound (see `yoke::trait_hack` docs):
-    for<'de> YokeTraitHack<<M::Yokeable as yoke::Yokeable<'de>>::Output>:
-        serde::de::Deserialize<'de>,
-{
-    fn load_resource(&self, req: &DataRequest) -> Result<DataResponse<M>, DataError> {
-        self.as_deserializing().load_resource(req)
-    }
-}
-
-impl<M> DynProvider<M> for StaticDataProvider
-where
-    M: DataMarker,
-    // Actual bound:
-    //     for<'de> <M::Yokeable as Yokeable<'de>>::Output: serde::de::Deserialize<'de>,
-    // Necessary workaround bound (see `yoke::trait_hack` docs):
-    for<'de> YokeTraitHack<<M::Yokeable as yoke::Yokeable<'de>>::Output>:
-        serde::de::Deserialize<'de>,
-{
-    fn load_payload(
-        &self,
-        key: ResourceKey,
-        req: &DataRequest,
-    ) -> Result<DataResponse<M>, DataError> {
-        self.as_deserializing().load_payload(key, req)
-    }
 }
 
 impl BufferProvider for StaticDataProvider {
@@ -146,13 +101,24 @@ impl BufferProvider for StaticDataProvider {
         key: ResourceKey,
         req: &DataRequest,
     ) -> Result<DataResponse<BufferMarker>, DataError> {
-        let static_buffer = self.get_file(key, req)?;
         let mut metadata = DataResponseMetadata::default();
         // TODO(#1109): Set metadata.data_langid correctly.
         metadata.buffer_format = Some(BufferFormat::Postcard07);
         Ok(DataResponse {
             metadata,
-            payload: Some(DataPayload::from_static_buffer(static_buffer)),
+            payload: Some(DataPayload::from_static_buffer(
+                self.data
+                    .get(&key.get_hash(), &req.options.write_to_string())
+                    .map_err(|e| {
+                        match e {
+                            KeyError::K0 => DataErrorKind::MissingResourceKey,
+                            KeyError::K1 => DataErrorKind::MissingResourceOptions,
+                        }
+                        .with_req(key, req)
+                    })?,
+            )),
         })
     }
 }
+
+icu_provider::impl_auto_deserializing!(StaticDataProvider);

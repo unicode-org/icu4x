@@ -41,16 +41,25 @@ impl Script {
     ///
     /// assert_eq!(script, "Latn");
     /// ```
-    pub fn from_bytes(v: &[u8]) -> Result<Self, ParserError> {
-        if v.len() != SCRIPT_LENGTH {
+    pub const fn from_bytes(v: &[u8]) -> Result<Self, ParserError> {
+        Self::from_bytes_manual_slice(v, 0, v.len())
+    }
+
+    /// Equivalent to [`from_bytes(bytes[start..end])`](Self::from_bytes),
+    /// but callable in a `const` context (which range indexing is not).
+    pub const fn from_bytes_manual_slice(
+        v: &[u8],
+        start: usize,
+        end: usize,
+    ) -> Result<Self, ParserError> {
+        if end - start != SCRIPT_LENGTH {
             return Err(ParserError::InvalidSubtag);
         }
 
-        let s = TinyAsciiStr::from_bytes(v).map_err(|_| ParserError::InvalidSubtag)?;
-        if !s.is_ascii_alphabetic() {
-            return Err(ParserError::InvalidSubtag);
+        match TinyAsciiStr::from_bytes_manual_slice(v, start, end) {
+            Ok(s) if s.is_ascii_alphabetic() => Ok(Self(s.to_ascii_titlecase())),
+            _ => Err(ParserError::InvalidSubtag),
         }
-        Ok(Self(s.to_ascii_titlecase()))
     }
 
     /// Safely creates a [`Script`] from a reference to its raw format
@@ -207,7 +216,7 @@ unsafe impl zerovec::ule::ULE for Script {
 ///
 /// ```
 /// use icu::locid::subtags::Script;
-/// use icu::locid::macros::script;
+/// use icu::locid::script;
 /// use zerovec::ZeroVec;
 ///
 /// let zv = ZeroVec::<Script>::parse_byte_slice(b"LatnAdlmMymrLatnLatn")
