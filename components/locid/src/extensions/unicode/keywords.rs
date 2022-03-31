@@ -5,6 +5,7 @@
 use alloc::vec::Vec;
 use core::borrow::Borrow;
 use core::ops::Deref;
+use litemap::LiteMap;
 
 use super::Key;
 use super::Value;
@@ -35,7 +36,7 @@ use super::Value;
 /// assert_eq!(&keywords.to_string(), "hc-h23");
 /// ```
 #[derive(Clone, PartialEq, Eq, Debug, Default, Hash, PartialOrd, Ord)]
-pub struct Keywords(Vec<(Key, Value)>);
+pub struct Keywords(LiteMap<Key, Value>);
 
 impl Keywords {
     /// Returns a new empty list of key-value pairs. Same as [`default()`](Default::default()), but is `const`.
@@ -49,7 +50,7 @@ impl Keywords {
     /// ```
     #[inline]
     pub const fn new() -> Self {
-        Self(Vec::new())
+        Self(LiteMap::new())
     }
 
     /// A constructor which takes a pre-sorted list of `(`[`Key`]`, `[`Value`]`)` tuples.
@@ -69,7 +70,8 @@ impl Keywords {
     /// assert_eq!(&keywords.to_string(), "ca-buddhist");
     /// ```
     pub fn from_vec_unchecked(input: Vec<(Key, Value)>) -> Self {
-        Self(input)
+        // Safety: This function is documented to provide a pre-sorted list
+        Self(unsafe { LiteMap::from_tuple_vec_unchecked(input) })
     }
 
     /// Returns `true` if the list contains a [`Value`] for the specified [`Key`].
@@ -90,12 +92,16 @@ impl Keywords {
     ///     .expect("Failed to parse a Key.");
     /// assert!(&keywords.contains_key(&key));
     /// ```
-    pub fn contains_key<Q>(&self, key: Q) -> bool
+    pub fn contains_key<Q>(&self, key: &Q) -> bool
     where
-        Q: Borrow<Key>,
+    Key: Borrow<Q>,
+    Q: Ord
     {
-        self.binary_search_by_key(key.borrow(), |(key, _)| *key)
-            .is_ok()
+        self.0.contains_key(key)
+    }
+
+    pub fn is_empty(&self) -> bool {
+        self.0.is_empty()
     }
 
     /// Returns a reference to the [`Value`] corresponding to the [`Key`].
@@ -119,15 +125,12 @@ impl Keywords {
     ///     Some("buddhist".to_string())
     /// );
     /// ```
-    pub fn get<Q>(&self, key: Q) -> Option<&Value>
+    pub fn get<Q>(&self, key: &Q) -> Option<&Value>
     where
-        Q: Borrow<Key>,
+    Key: Borrow<Q>,
+    Q: Ord
     {
-        if let Ok(idx) = self.binary_search_by_key(key.borrow(), |(key, _)| *key) {
-            self.deref().get(idx).map(|(_, v)| v)
-        } else {
-            None
-        }
+        self.0.get(key)
     }
 
     /// Returns a mutable reference to the [`Value`] corresponding to the [`Key`].
@@ -157,17 +160,12 @@ impl Keywords {
     ///     Some("gregory".to_string())
     /// );
     /// ```
-    pub fn get_mut<Q>(&mut self, key: Q) -> Option<&mut Value>
+    pub fn get_mut<Q>(&mut self, key: &Q) -> Option<&mut Value>
     where
-        Q: Borrow<Key>,
+    Key: Borrow<Q>,
+    Q: Ord
     {
-        if let Ok(idx) = self.binary_search_by_key(key.borrow(), |(key, _)| *key) {
-            // Won't panic because the index was given to us by binary_search
-            #[allow(clippy::indexing_slicing)]
-            Some(&mut self.0[idx].1)
-        } else {
-            None
-        }
+        self.0.get_mut(key)
     }
 
     /// Clears all Unicode extension keywords, leaving Unicode attributes.
@@ -206,14 +204,15 @@ impl Keywords {
     where
         F: FnMut(&Key) -> bool,
     {
-        self.0.retain(|(k, _)| predicate(k))
+        todo!()
+        // self.0.retain(|(k, _)| predicate(k))
     }
 
     pub(crate) fn for_each_subtag_str<E, F>(&self, f: &mut F) -> Result<(), E>
     where
         F: FnMut(&str) -> Result<(), E>,
     {
-        for (k, v) in self.iter() {
+        for (k, v) in self.0.iter() {
             f(k.as_str())?;
             v.for_each_subtag_str(f)?;
         }
@@ -223,10 +222,11 @@ impl Keywords {
 
 impl_writeable_for_key_value!(Keywords, "ca", "islamic-civil", "aa", "aa");
 
-impl Deref for Keywords {
-    type Target = [(Key, Value)];
+// impl Deref for Keywords {
+//     type Target = [(Key, Value)];
 
-    fn deref(&self) -> &Self::Target {
-        self.0.deref()
-    }
-}
+//     fn deref(&self) -> &Self::Target {
+//         todo!()
+//         // self.0.deref()
+//     }
+// }

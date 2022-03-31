@@ -15,7 +15,7 @@ use core::ops::{Index, IndexMut};
 ///
 /// The API is roughly similar to that of [`std::collections::HashMap`], though it
 /// requires `Ord` instead of `Hash`.
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[cfg_attr(feature = "yoke", derive(yoke::Yokeable))]
 pub struct LiteMap<K, V> {
     pub(crate) values: Vec<(K, V)>,
@@ -23,8 +23,10 @@ pub struct LiteMap<K, V> {
 
 impl<K, V> LiteMap<K, V> {
     /// Construct a new [`LiteMap`]
-    pub fn new() -> Self {
-        Self::default()
+    pub const fn new() -> Self {
+        Self {
+            values: Vec::new()
+        }
     }
 
     /// Construct a new [`LiteMap`] with a given capacity
