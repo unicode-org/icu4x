@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1648746608825,
+  "lastUpdate": 1648748412069,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -27209,6 +27209,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 4400,
             "range": "± 7",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "49699333+dependabot[bot]@users.noreply.github.com",
+            "name": "dependabot[bot]",
+            "username": "dependabot[bot]"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "4993eca3908ab57240e260faaefc91286c6e7ca2",
+          "message": "Bump minimist from 1.2.5 to 1.2.6 in /ffi/diplomat/wasm (#1754)\n\nBumps [minimist](https://github.com/substack/minimist) from 1.2.5 to 1.2.6.\r\n- [Release notes](https://github.com/substack/minimist/releases)\r\n- [Commits](https://github.com/substack/minimist/compare/1.2.5...1.2.6)\r\n\r\n---\r\nupdated-dependencies:\r\n- dependency-name: minimist\r\n  dependency-type: indirect\r\n...\r\n\r\nSigned-off-by: dependabot[bot] <support@github.com>\r\n\r\nCo-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>",
+          "timestamp": "2022-03-31T10:33:24-07:00",
+          "tree_id": "e090187614ca27701938f95c731673a70b5ebbaa",
+          "url": "https://github.com/unicode-org/icu4x/commit/4993eca3908ab57240e260faaefc91286c6e7ca2"
+        },
+        "date": 1648748397150,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 2076,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 3660,
+            "range": "± 16",
             "unit": "ns/iter"
           }
         ]
