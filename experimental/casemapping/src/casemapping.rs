@@ -29,7 +29,7 @@ impl CaseMapping {
     where
         P: ResourceProvider<CaseMappingV1Marker> + ?Sized,
     {
-        Self::try_new_with_locale(provider, &Locale::und())
+        Self::try_new_with_locale(provider, &Locale::UND)
     }
 
     /// A constructor which takes a [`ResourceProvider`] and creates a [`CaseMapping`] for the given locale.

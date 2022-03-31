@@ -475,14 +475,14 @@ mod tests {
             OptionsTestCase {
                 options: ResourceOptions {
                     variant: None,
-                    langid: Some(LanguageIdentifier::und()),
+                    langid: Some(LanguageIdentifier::UND),
                 },
                 expected: "und",
             },
             OptionsTestCase {
                 options: ResourceOptions {
                     variant: Some(Cow::Borrowed("GBP")),
-                    langid: Some(LanguageIdentifier::und()),
+                    langid: Some(LanguageIdentifier::UND),
                 },
                 expected: "GBP/und",
             },

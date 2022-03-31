@@ -179,7 +179,7 @@ pub mod decimal {
     //! use writeable::Writeable;
     //!
     //! let provider = icu_provider::inv::InvariantDataProvider;
-    //! let fdf = FixedDecimalFormat::try_new(Locale::und(), &provider, Default::default())
+    //! let fdf = FixedDecimalFormat::try_new(Locale::UND, &provider, Default::default())
     //!     .expect("Data should load successfully");
     //!
     //! let fixed_decimal = FixedDecimal::from(200050)

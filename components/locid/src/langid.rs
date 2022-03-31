@@ -125,26 +125,22 @@ impl LanguageIdentifier {
         parse_language_identifier(v, ParserMode::Locale)
     }
 
-    /// Returns the default undefined language "und". Same as [`default()`](Default::default()), but is `const`.
+    /// The default undefined language "und". Same as [`default()`](Default::default()).
     ///
     /// # Examples
     ///
     /// ```
     /// use icu::locid::LanguageIdentifier;
     ///
-    /// const langid: LanguageIdentifier = LanguageIdentifier::und();
-    /// assert_eq!(LanguageIdentifier::default(), langid);
-    /// assert_eq!("und", langid.to_string());
+    /// assert_eq!(LanguageIdentifier::default(), LanguageIdentifier::UND);
+    /// assert_eq!("und", LanguageIdentifier::UND.to_string());
     /// ```
-    #[inline]
-    pub const fn und() -> Self {
-        Self {
-            language: subtags::Language::und(),
-            script: None,
-            region: None,
-            variants: subtags::Variants::new(),
-        }
-    }
+    pub const UND: Self = Self {
+        language: subtags::Language::UND,
+        script: None,
+        region: None,
+        variants: subtags::Variants::new(),
+    };
 
     /// This is a best-effort operation that performs all available levels of canonicalization.
     ///
@@ -265,7 +261,7 @@ impl_writeable_for_each_subtag_str_no_test!(LanguageIdentifier);
 #[test]
 fn test_writeable() {
     use writeable::assert_writeable_eq;
-    assert_writeable_eq!(LanguageIdentifier::und(), "und");
+    assert_writeable_eq!(LanguageIdentifier::UND, "und");
     assert_writeable_eq!(LanguageIdentifier::from_str("und-001").unwrap(), "und-001");
     assert_writeable_eq!(
         LanguageIdentifier::from_str("und-Mymr").unwrap(),
