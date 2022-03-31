@@ -229,6 +229,42 @@ macro_rules! locale {
     }};
 }
 
+/// A macro allowing for compile-time construction of valid Unicode [`Key`] subtag.
+///
+/// The macro will perform syntax canonicalization of the tag.
+///
+/// # Examples
+///
+/// ```
+/// use icu::locid::unicode_key;
+/// use icu::locid::extensions::unicode::{Key, Value};
+/// use icu::locid::Locale;
+/// use writeable::Writeable;
+///
+/// const CALENDAR_KEY: Key = unicode_key!("ca");
+///
+/// let loc: Locale = "de-u-ca-buddhist".parse().unwrap();
+///
+/// assert_eq!(
+///     loc.extensions.unicode.keywords.get(CALENDAR_KEY),
+///     Some(&Value::from_bytes(b"buddhist").unwrap())
+/// );
+/// ```
+///
+/// [`Key`]: crate::extensions::unicode::Key
+#[macro_export]
+macro_rules! unicode_key {
+    ($key:literal) => {{
+        const R: $crate::extensions::unicode::Key =
+            match $crate::extensions::unicode::Key::from_bytes($key.as_bytes()) {
+                Ok(r) => r,
+                #[allow(clippy::panic)] // const context
+                _ => panic!(concat!("Invalid Unicode extension key: ", $key)),
+            };
+        R
+    }};
+}
+
 #[cfg(test)]
 mod test {
     const LANG_PL: crate::subtags::Language = language!("pL");
