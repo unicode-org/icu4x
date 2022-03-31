@@ -108,7 +108,7 @@ impl BufferProvider for StaticDataProvider {
             metadata,
             payload: Some(DataPayload::from_static_buffer(
                 self.data
-                    .get(&key.get_hash(), &req.options.write_to_string().as_bytes())
+                    .get(&key.get_hash(), req.options.write_to_string().as_bytes())
                     .map_err(|e| {
                         match e {
                             KeyError::K0 => DataErrorKind::MissingResourceKey,

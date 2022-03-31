@@ -376,7 +376,7 @@ impl Writeable for ResourceOptions {
         self.langid.write_to(sink)?;
         if let Some(v) = &self.variant {
             sink.write_char('/')?;
-            sink.write_str(&v)?;
+            sink.write_str(v)?;
         }
         Ok(())
     }
