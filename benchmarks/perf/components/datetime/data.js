@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1648740786226,
+  "lastUpdate": 1648744018881,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -24497,6 +24497,48 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 154823,
             "range": "± 1847",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "cd8d95720098e70d885dbd7a31261cf20205c894",
+          "message": "Change Locale internals to Vec and add retain_by_key functions (#1737)",
+          "timestamp": "2022-03-31T09:17:48-07:00",
+          "tree_id": "300d7899c6508b96f969630e3f9961b3c86e6b12",
+          "url": "https://github.com/unicode-org/icu4x/commit/cd8d95720098e70d885dbd7a31261cf20205c894"
+        },
+        "date": 1648744000335,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 113053,
+            "range": "± 5133",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 1160778,
+            "range": "± 99279",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 235187,
+            "range": "± 16293",
             "unit": "ns/iter"
           }
         ]
