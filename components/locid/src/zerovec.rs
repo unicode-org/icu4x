@@ -16,8 +16,8 @@
 //!
 //! # Lookup
 //!
-//! To perform lookup, store the BCP-47 byte array for the locale, and then use
-//! [`Locale::cmp_bytes()`] to perform an efficient, zero-allocation lookup.
+//! To perform lookup, store the stringified locale in a canonical BCP-47 form as a byte array,
+//! and then use [`Locale::cmp_bytes()`] to perform an efficient, zero-allocation lookup.
 //!
 //! ```
 //! use std::str::FromStr;
@@ -101,14 +101,19 @@
 //!     (15, b"my-MM"),
 //!     (20, b"sr-Cyrl-ME"),
 //!     (25, b"zh-TW"),
+//!     (30, b"INVALID"),
 //! ];
 //! let zm: ZeroMap<u32, [u8]> = data.iter().copied().collect();
 //!
 //! // Construct a Locale by parsing the string.
 //! let value = zm.get(&25).expect("element is present");
 //! let loc = Locale::from_bytes(value);
-//!
 //! assert_eq!(loc, Ok(langid!("zh-TW").into()));
+//! 
+//! // Invalid entries are fallible
+//! let err_value = zm.get(&30).expect("element is present");
+//! let err_loc = Locale::from_bytes(err_value);
+//! assert!(matches!(err_loc, Err(_)));
 //! ```
 //!
 //! [`Locale`]: crate::Locale
