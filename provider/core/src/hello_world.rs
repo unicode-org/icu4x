@@ -16,8 +16,7 @@ use alloc::boxed::Box;
 use alloc::rc::Rc;
 use alloc::string::String;
 use core::fmt::Debug;
-use core::str::FromStr;
-use icu_locid::LanguageIdentifier;
+use icu_locid::locale;
 use litemap::LiteMap;
 
 /// A struct containing "Hello World" in the requested language.
@@ -56,13 +55,13 @@ impl ResourceMarker for HelloWorldV1Marker {
 /// ```
 /// use icu_provider::hello_world::*;
 /// use icu_provider::prelude::*;
-/// use icu_locid::langid;
+/// use icu_locid::locale;
 ///
 /// let provider = HelloWorldProvider::new_with_placeholder_data();
 ///
 /// let german_hello_world: DataPayload<HelloWorldV1Marker> = provider
 ///     .load_resource(&DataRequest {
-///         options: langid!("de").into(),
+///         options: locale!("de").into(),
 ///         metadata: Default::default(),
 ///     })
 ///     .expect("Loading should succeed")
@@ -73,42 +72,34 @@ impl ResourceMarker for HelloWorldV1Marker {
 /// ```
 #[derive(Debug, PartialEq, Default)]
 pub struct HelloWorldProvider {
-    map: LiteMap<LanguageIdentifier, Cow<'static, str>>,
+    map: LiteMap<ResourceOptions, Cow<'static, str>>,
 }
 
 impl HelloWorldProvider {
     /// Creates a [`HelloWorldProvider`] pre-populated with hardcoded data from Wiktionary.
     pub fn new_with_placeholder_data() -> HelloWorldProvider {
         // Data from https://en.wiktionary.org/wiki/Hello_World#Translations
-        // Note: we don't want to use langid!() because icu_langid_macros is heavy.
         HelloWorldProvider {
             map: [
-                ("bn", "ওহে বিশ্ব"),
-                ("cs", "Ahoj světe"),
-                ("de", "Hallo Welt"),
-                ("el", "Καλημέρα κόσμε"),
-                ("en", "Hello World"),
-                ("eo", "Saluton, Mondo"),
-                ("fa", "سلام دنیا‎"),
-                ("fi", "hei maailma"),
-                ("is", "Halló, heimur"),
-                ("ja", "こんにちは世界"),
-                ("la", "Ave, munde"),
-                ("pt", "Olá, mundo"),
-                ("ro", "Salut, lume"),
-                ("ru", "Привет, мир"),
-                ("vi", "Xin chào thế giới"),
-                ("zh", "你好世界"),
+                (locale!("bn"), "ওহে বিশ্ব"),
+                (locale!("cs"), "Ahoj světe"),
+                (locale!("de"), "Hallo Welt"),
+                (locale!("el"), "Καλημέρα κόσμε"),
+                (locale!("en"), "Hello World"),
+                (locale!("eo"), "Saluton, Mondo"),
+                (locale!("fa"), "سلام دنیا‎"),
+                (locale!("fi"), "hei maailma"),
+                (locale!("is"), "Halló, heimur"),
+                (locale!("ja"), "こんにちは世界"),
+                (locale!("la"), "Ave, munde"),
+                (locale!("pt"), "Olá, mundo"),
+                (locale!("ro"), "Salut, lume"),
+                (locale!("ru"), "Привет, мир"),
+                (locale!("vi"), "Xin chào thế giới"),
+                (locale!("zh"), "你好世界"),
             ]
-            .iter()
-            .map(|(loc, value)| {
-                (
-                    // TODO(#348): Use a const function to construct the langids.
-                    #[allow(clippy::unwrap_used)]
-                    LanguageIdentifier::from_str(loc).unwrap(),
-                    Cow::Borrowed(*value),
-                )
-            })
+            .into_iter()
+            .map(|(loc, value)| (loc.into(), value.into()))
             .collect(),
         }
     }
@@ -124,14 +115,13 @@ impl ResourceProvider<HelloWorldV1Marker> for HelloWorldProvider {
         &self,
         req: &DataRequest,
     ) -> Result<DataResponse<HelloWorldV1Marker>, DataError> {
-        let langid = req.langid();
         let data = self
             .map
-            .get(&langid)
+            .get(&req.options)
             .map(|s| HelloWorldV1 { message: s.clone() })
             .ok_or_else(|| DataErrorKind::MissingLocale.with_key(HelloWorldV1Marker::KEY))?;
         let metadata = DataResponseMetadata {
-            data_langid: Some(langid.clone()),
+            data_langid: Some(req.langid()),
             ..Default::default()
         };
         Ok(DataResponse {
@@ -197,32 +187,29 @@ impl IterableResourceProvider<HelloWorldV1Marker> for HelloWorldProvider {
 #[test]
 fn test_iter() {
     let provider = HelloWorldProvider::new_with_placeholder_data();
-    let mut supported_langids: Vec<LanguageIdentifier> = provider
-        .supported_options()
-        .unwrap()
-        .map(|resc_options| resc_options.langid())
-        .collect();
+    let mut supported_langids: Vec<ResourceOptions> =
+        provider.supported_options().unwrap().collect();
     supported_langids.sort();
 
     assert_eq!(
         supported_langids,
         vec![
-            icu_locid::langid!("bn"),
-            icu_locid::langid!("cs"),
-            icu_locid::langid!("de"),
-            icu_locid::langid!("el"),
-            icu_locid::langid!("en"),
-            icu_locid::langid!("eo"),
-            icu_locid::langid!("fa"),
-            icu_locid::langid!("fi"),
-            icu_locid::langid!("is"),
-            icu_locid::langid!("ja"),
-            icu_locid::langid!("la"),
-            icu_locid::langid!("pt"),
-            icu_locid::langid!("ro"),
-            icu_locid::langid!("ru"),
-            icu_locid::langid!("vi"),
-            icu_locid::langid!("zh")
+            locale!("bn").into(),
+            locale!("cs").into(),
+            locale!("de").into(),
+            locale!("el").into(),
+            locale!("en").into(),
+            locale!("eo").into(),
+            locale!("fa").into(),
+            locale!("fi").into(),
+            locale!("is").into(),
+            locale!("ja").into(),
+            locale!("la").into(),
+            locale!("pt").into(),
+            locale!("ro").into(),
+            locale!("ru").into(),
+            locale!("vi").into(),
+            locale!("zh").into()
         ]
     );
 }

@@ -34,12 +34,12 @@ pub mod ffi {
 
         /// Construct an [`ICU4XLocale`] for the English language.
         pub fn create_en() -> Box<ICU4XLocale> {
-            Box::new(ICU4XLocale(icu_locid::langid!("en").into()))
+            Box::new(ICU4XLocale(icu_locid::locale!("en")))
         }
 
         /// Construct an [`ICU4XLocale`] for the Bangla language.
         pub fn create_bn() -> Box<ICU4XLocale> {
-            Box::new(ICU4XLocale(icu_locid::langid!("bn").into()))
+            Box::new(ICU4XLocale(icu_locid::locale!("bn")))
         }
 
         /// Construct a default undefined [`ICU4XLocale`] "und".

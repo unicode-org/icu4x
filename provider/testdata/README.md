@@ -40,13 +40,13 @@ The following commands are also available:
 ```rust
 use std::borrow::Cow;
 use icu_provider::prelude::*;
-use icu_locid::langid;
+use icu_locid::locale;
 
 let data_provider = icu_testdata::get_provider();
 
 let data: DataPayload<icu_plurals::provider::CardinalV1Marker> = data_provider
     .load_resource(&DataRequest {
-        options: langid!("ru").into(),
+        options: locale!("ru").into(),
         metadata: Default::default(),
     })
     .unwrap()

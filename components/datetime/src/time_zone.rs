@@ -60,17 +60,15 @@ where
 /// # Examples
 ///
 /// ```
-/// use icu_locid::Locale;
-/// use icu::locid::langid;
+/// use icu_locid::locale;
 /// use icu_datetime::{TimeZoneFormat, TimeZoneFormatConfig};
 /// use icu_datetime::date::GmtOffset;
 /// use icu_datetime::mock::time_zone::MockTimeZone;
 /// use icu_provider::inv::InvariantDataProvider;
 ///
-/// let locale: Locale = langid!("en").into();
 /// let provider = InvariantDataProvider;
 ///
-/// let tzf = TimeZoneFormat::try_from_config(locale, TimeZoneFormatConfig::GenericNonLocationLong, &provider)
+/// let tzf = TimeZoneFormat::try_from_config(locale!("en"), TimeZoneFormatConfig::GenericNonLocationLong, &provider)
 ///     .expect("Failed to create TimeZoneFormat");
 ///
 /// let time_zone = MockTimeZone::new(
@@ -220,16 +218,14 @@ impl TimeZoneFormat {
     /// # Examples
     ///
     /// ```
-    /// use icu_locid::Locale;
-    /// use icu::locid::langid;
+    /// use icu_locid::locale;
     /// use icu_datetime::{TimeZoneFormat, TimeZoneFormatConfig};
     /// use icu_datetime::mock::time_zone::MockTimeZone;
     /// use icu_provider::inv::InvariantDataProvider;
     ///
-    /// let locale: Locale = langid!("en").into();
     /// let provider = InvariantDataProvider;
     ///
-    /// let tzf = TimeZoneFormat::try_from_config(locale, TimeZoneFormatConfig::LocalizedGMT, &provider);
+    /// let tzf = TimeZoneFormat::try_from_config(locale!("en"), TimeZoneFormatConfig::LocalizedGMT, &provider);
     ///
     /// assert!(tzf.is_ok());
     /// ```
@@ -310,17 +306,15 @@ impl TimeZoneFormat {
     /// # Examples
     ///
     /// ```
-    /// use icu_locid::Locale;
-    /// use icu::locid::langid;
+    /// use icu_locid::locale;
     /// use icu_datetime::{TimeZoneFormat, TimeZoneFormatConfig};
     /// use icu_datetime::date::GmtOffset;
     /// use icu_datetime::mock::time_zone::MockTimeZone;
     /// use icu_provider::inv::InvariantDataProvider;
     ///
-    /// let locale: Locale = langid!("en").into();
     /// let provider = InvariantDataProvider;
     ///
-    /// let tzf = TimeZoneFormat::try_from_config(locale, TimeZoneFormatConfig::LocalizedGMT, &provider)
+    /// let tzf = TimeZoneFormat::try_from_config(locale!("en"), TimeZoneFormatConfig::LocalizedGMT, &provider)
     ///     .expect("Failed to create TimeZoneFormat");
     ///
     /// let time_zone = MockTimeZone::new(
@@ -348,17 +342,15 @@ impl TimeZoneFormat {
     /// # Examples
     ///
     /// ```
-    /// use icu_locid::Locale;
-    /// use icu::locid::langid;
+    /// use icu_locid::locale;
     /// use icu_datetime::{TimeZoneFormat, TimeZoneFormatConfig};
     /// use icu_datetime::date::GmtOffset;
     /// use icu_datetime::mock::time_zone::MockTimeZone;
     /// use icu_provider::inv::InvariantDataProvider;
     ///
-    /// let locale: Locale = langid!("en").into();
     /// let provider = InvariantDataProvider;
     ///
-    /// let tzf = TimeZoneFormat::try_from_config(locale, TimeZoneFormatConfig::LocalizedGMT, &provider)
+    /// let tzf = TimeZoneFormat::try_from_config(locale!("en"), TimeZoneFormatConfig::LocalizedGMT, &provider)
     ///     .expect("Failed to create TimeZoneFormat");
     ///
     /// let time_zone = MockTimeZone::new(
@@ -387,17 +379,15 @@ impl TimeZoneFormat {
     /// # Examples
     ///
     /// ```
-    /// use icu_locid::Locale;
-    /// use icu::locid::langid;
+    /// use icu_locid::locale;
     /// use icu_datetime::{TimeZoneFormat, TimeZoneFormatConfig};
     /// use icu_datetime::date::GmtOffset;
     /// use icu_datetime::mock::time_zone::MockTimeZone;
     /// use icu_provider::inv::InvariantDataProvider;
     ///
-    /// let locale: Locale = langid!("en").into();
     /// let provider = InvariantDataProvider;
     ///
-    /// let tzf = TimeZoneFormat::try_from_config(locale, TimeZoneFormatConfig::LocalizedGMT, &provider)
+    /// let tzf = TimeZoneFormat::try_from_config(locale!("en"), TimeZoneFormatConfig::LocalizedGMT, &provider)
     ///     .expect("Failed to create TimeZoneFormat");
     ///
     /// let time_zone = MockTimeZone::new(

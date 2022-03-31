@@ -44,6 +44,18 @@
 //! assert_eq!(loc.to_string(), "en-GB");
 //! ```
 //!
+//! ## Macros
+//!
+//! ```rust
+//! use icu::locid::{language, region, langid};
+//!
+//! let lid = langid!("EN_US");
+//!
+//! assert_eq!(lid.language, language!("en"));
+//! assert_eq!(lid.region, Some(region!("US")));
+//! ```
+
+//!
 //! For more details, see [`Locale`] and [`LanguageIdentifier`].
 //!
 //! [`UTS #35: Unicode LDML 3. Unicode Language and Locale Identifiers`]: https://unicode.org/reports/tr35/tr35.html#Unicode_Language_and_Locale_Identifiers
@@ -71,7 +83,7 @@ mod helpers;
 pub mod extensions;
 mod langid;
 mod locale;
-pub mod macros;
+mod macros;
 mod parser;
 #[cfg(feature = "serde")]
 mod serde;

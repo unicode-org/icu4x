@@ -45,7 +45,7 @@ impl DataRequest {
     ///
     /// ```
     /// use icu_provider::prelude::*;
-    /// use icu_locid::langid;
+    /// use icu_locid::locale;
     ///
     /// const FOO_BAR: ResourceKey = icu_provider::resource_key!("foo/bar@1");
     ///
@@ -55,7 +55,7 @@ impl DataRequest {
     /// };
     ///
     /// let req_with_langid = DataRequest {
-    ///     options: langid!("ar-EG").into(),
+    ///     options: locale!("ar-EG").into(),
     ///     metadata: Default::default(),
     /// };
     ///

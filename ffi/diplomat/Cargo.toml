@@ -31,31 +31,15 @@ all-features = true
 # Omit most optional dependency features from permutation testing
 skip_optional_dependencies = true
 # Bench feature gets tested separately and is only relevant for CI.
-# wearos/freertos/x86tiny are not relevant in normal environments,
 # smaller_static gets tested on the FFI job anyway
-denylist = ["bench", "wearos", "freertos", "x86tiny", "smaller_static"]
+denylist = ["bench", "smaller_static"]
 
-[lib]
-crate-type = ["staticlib", "rlib"]
-path = "src/lib.rs"
-
+# Please keep the features list in sync with the icu_capi_staticlib crate
 [features]
 default = ["provider_fs", "provider_static"]
-wearos = ["smaller_static", "freertos"]
-
 provider_fs = ["icu_provider_fs", "icu_provider_fs/deserialize_json"]
 provider_static = ["icu_testdata"]
 smaller_static = ["provider_static"]
-
-# Only 1 of the following features can be set. Doing so disables std and
-# replaces the global allocator and panic handler with something else.
-# If multiple of these features are set, it is as if none of them are set.
-
-# Enables size-optimized builds on x86_64
-x86tiny = ["dlmalloc"]
-
-# Enables no_std builds for freertos
-freertos = ["freertos-rust", "cortex-m"]
 
 [dependencies]
 fixed_decimal = { path = "../../utils/fixed_decimal", features = ["ryu"] }
@@ -76,33 +60,8 @@ diplomat = { git = "https://github.com/rust-diplomat/diplomat", rev = "a46d01025
 diplomat-runtime = { git = "https://github.com/rust-diplomat/diplomat", rev = "a46d01025159e842982b2e4bc8ca9361d4b897dc" }
 icu_testdata = { version = "0.5", path = "../../provider/testdata", default-features = false, features = ["static"], optional = true }
 
-# This cfg originates in dlmalloc/lib.rs
-[target.'cfg(any(target_os = "linux", target_os = "macos", target_arch = "wasm32"))'.dependencies]
-dlmalloc = { version = "0.2", optional = true, features = ["global"] }
-
 [target.'cfg(target_arch = "wasm32")'.dependencies]
 log = { version = "0.4" }
 
 [target.'cfg(not(any(target_arch = "wasm32", target_os = "none")))'.dependencies]
 icu_provider_fs = { path = "../../provider/fs/", optional = true }
-
-[target.'cfg(target_os = "none")'.dependencies]
-freertos-rust = { version = "0.1.2", optional = true }
-cortex-m = { version = "0.7.3", optional = true }
-
-# Unfortunately, --crate-type cannot be set per-target
-# (https://github.com/rust-lang/cargo/issues/4881)
-# and emscripten has link errors when compiling icu_capi due to
-# symbols like log_js being undefined. There is no way to ask Cargo
-# to only build a particular crate type for an invocation
-#
-# As a workaround, we define an example crate that just reexports icu_capi,
-# but is built as a cdylib. Due to how Cargo invocations work around examples,
-# `--features` is still passed down to `icu_capi`, but the end result is an
-# `icu_capi_cdylib.wasm`/`icu_capi_cdylib.so`/etc file that is for all intents
-# and purposes identical to the file one would get from adding "cdylib" to
-# `crate-type` above.
-[[example]]
-name = "icu_capi_cdylib"
-path = "src/crate_type_hack.rs"
-crate-type = ["cdylib"]

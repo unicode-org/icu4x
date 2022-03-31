@@ -53,13 +53,10 @@
 //! # Example
 //!
 //! ```
-//! use icu::locid::Locale;
-//! use icu::locid::langid;
+//! use icu::locid::locale;
 //! use icu::datetime::{DateTimeFormat, options::length, mock::parse_gregorian_from_str};
 //!
 //! let provider = icu_testdata::get_provider();
-//!
-//! let locale: Locale = langid!("en").into();
 //!
 //! let options = length::Bag {
 //!     date: Some(length::Date::Long),
@@ -67,7 +64,7 @@
 //!     ..Default::default()
 //! }.into();
 //!
-//! let dtf = DateTimeFormat::try_new(locale, &provider, &options)
+//! let dtf = DateTimeFormat::try_new(locale!("en"), &provider, &options)
 //!     .expect("Failed to create DateTimeFormat instance.");
 //!
 //! let date = parse_gregorian_from_str("2020-09-12T12:35:00")
@@ -121,13 +118,10 @@ pub mod datetime {
     //! # Examples
     //!
     //! ```
-    //! use icu::locid::Locale;
-    //! use icu::locid::langid;
+    //! use icu::locid::locale;
     //! use icu::datetime::{DateTimeFormat, options::length, mock::parse_gregorian_from_str};
     //!
     //! let provider = icu_testdata::get_provider();
-    //!
-    //! let locale: Locale = langid!("en").into();
     //!
     //! let options = length::Bag {
     //!     date: Some(length::Date::Medium),
@@ -135,7 +129,7 @@ pub mod datetime {
     //!     ..Default::default()
     //! }.into();
     //!
-    //! let dtf = DateTimeFormat::try_new(locale, &provider, &options)
+    //! let dtf = DateTimeFormat::try_new(locale!("en"), &provider, &options)
     //!     .expect("Failed to create DateTimeFormat instance.");
     //!
     //! let date = parse_gregorian_from_str("2020-09-12T12:35:00")
@@ -162,13 +156,11 @@ pub mod decimal {
     //!
     //! ```
     //! use icu::decimal::FixedDecimalFormat;
-    //! use icu::locid::Locale;
-    //! use icu::locid::langid;
+    //! use icu::locid::locale;
     //! use writeable::Writeable;
     //!
-    //! let locale: Locale = langid!("bn").into();
     //! let provider = icu_testdata::get_provider();
-    //! let fdf = FixedDecimalFormat::try_new(locale, &provider, Default::default())
+    //! let fdf = FixedDecimalFormat::try_new(locale!("bn"), &provider, Default::default())
     //!     .expect("Data should load successfully");
     //!
     //! let fixed_decimal = 1000007.into();
@@ -186,9 +178,8 @@ pub mod decimal {
     //! use icu::locid::Locale;
     //! use writeable::Writeable;
     //!
-    //! let locale = Locale::und();
     //! let provider = icu_provider::inv::InvariantDataProvider;
-    //! let fdf = FixedDecimalFormat::try_new(locale, &provider, Default::default())
+    //! let fdf = FixedDecimalFormat::try_new(Locale::und(), &provider, Default::default())
     //!     .expect("Data should load successfully");
     //!
     //! let fixed_decimal = FixedDecimal::from(200050)
@@ -275,23 +266,16 @@ pub mod locid {
     //! # Examples
     //!
     //! ```
-    //! use icu::locid::Locale;
-    //! use icu::locid::subtags::{Language, Region};
+    //! use icu::locid::{language, locale, region};
     //!
-    //! let mut loc: Locale = "en-US".parse()
-    //!     .expect("Parsing failed.");
+    //! let mut loc = locale!("en-US").clone();
     //!
-    //! let lang: Language = "en".parse()
-    //!     .expect("Parsing failed.");
-    //! let region: Region = "US".parse()
-    //!     .expect("Parsing failed.");
-    //!
-    //! assert_eq!(loc.id.language, lang);
+    //! assert_eq!(loc.id.language, language!("en"));
     //! assert_eq!(loc.id.script, None);
-    //! assert_eq!(loc.id.region, Some(region));
+    //! assert_eq!(loc.id.region, Some(region!("US")));
     //! assert_eq!(loc.id.variants.len(), 0);
     //!
-    //! let region: Region = "GB".parse().expect("Parsing failed.");
+    //! let region = region!("GB");
     //! loc.id.region = Some(region);
     //!
     //! assert_eq!(loc.to_string(), "en-GB");
@@ -328,14 +312,12 @@ pub mod plurals {
     //! # Examples
     //!
     //! ```
-    //! use icu::locid::langid;
+    //! use icu::locid::locale;
     //! use icu::plurals::{PluralRules, PluralRuleType, PluralCategory};
-    //!
-    //! let lid = langid!("en");
     //!
     //! let provider = icu_testdata::get_provider();
     //!
-    //! let pr = PluralRules::try_new(lid, &provider, PluralRuleType::Cardinal)
+    //! let pr = PluralRules::try_new(locale!("en"), &provider, PluralRuleType::Cardinal)
     //!     .expect("Failed to construct a PluralRules struct.");
     //!
     //! assert_eq!(pr.select(5_usize), PluralCategory::Other);
@@ -493,14 +475,12 @@ pub mod list {
     //! ## Format a list of strings in Spanish
     //!
     //! ```
-    //! use icu_list::{ListFormatter, ListStyle};
-    //! use icu_locid::Locale;
-    //! use icu_locid::langid;
+    //! use icu::list::{ListFormatter, ListStyle};
+    //! use icu::locid::locale;
     //! use writeable::Writeable;
     //!
-    //! let locale: Locale = langid!("es").into();
     //! let provider = icu_testdata::get_provider();
-    //! let list_formatter = ListFormatter::try_new_and(locale, &provider, ListStyle::Wide)
+    //! let list_formatter = ListFormatter::try_new_and(locale!("es"), &provider, ListStyle::Wide)
     //!     .expect("Data should load successfully");
     //!
     //! assert_eq!(

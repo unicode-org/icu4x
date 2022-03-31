@@ -93,11 +93,10 @@ It's a bit unergonomic to have to perform the parsing of them at runtime and han
 For that purpose, ICU4X provides a macro one can use to parse it at compilation time:
 
 ```rust
-use icu::locid::Locale;
-use icu::locid::langid;
+use icu::locid::locale;
 
 fn main() {
-    let loc: Locale = langid!("ES-AR").into();
+    let loc = locale!("ES-AR");
 
     if loc.id.language == "es" {
         println!("¡Hola amigo!");
@@ -109,7 +108,7 @@ fn main() {
 
 In this case, the parsing is performed at compilation time, so we don't need to handle an error case. Try passing an malformed identifier, like "foo-bar" and try to call `cargo check`.
 
-*Notice:* ICU4X does not expose yet a macro for `locale!` compile time parsing. Instead, `langid!` macro constructs a `LanguageIdentifier`, which we then `Into` a `Locale`.
+*Notice:* The compile time macros `langid!`, and `locale!` don't support variants or extension tags, as storing these requires allocation. If you have such a tag you need to use runtime parsing.
 
 Next, let's add some more complex functionality.
 
@@ -124,85 +123,42 @@ The way `ICU4X` plugs into that dataset is one of its novelties aiming at making
 In result, compared to most internationalization solutions, working with `ICU4X` and data is a bit more explicit. `ICU4X` provides a trait called `DataProvider` and a number of concrete APIs that implement that trait for different scenarios.
 Users are also free to design their own providers that best fit into their ecosystem requirements.
 
-In this tutorial we are going to use a synchronous file-system data provider which uses ICU4X format JSON resource files.
+In this tutorial we are going to use ICU4X's "test" data provider and then move on to a synchronous file-system data provider which uses ICU4X format JSON resource files.
 
-## Generating data
+## Test data
 
-We're going to use [JSON CLDR](https://github.com/unicode-cldr/cldr-json) as our source data. JSON CLDR is an export of [CLDR data](http://cldr.unicode.org/index/downloads) into JSON maintained by Unicode.
+ICU4X's repository comes with pre-generated test data that covers all of its keys for a select set of locales. For production use it is recommended one use the steps in [Generating Data](#Generating Data) to generate a JSON directory tree or postcard blob and feed it to `FsDataProvider` or `BlobDataProvider` respectively, but for the purposes of trying stuff out, it is sufficient to use the data providers exported by `icu_testdata`.
 
-We are also going to use Unicode property data shipped as a zip file in the ICU4C release.
 
-The `provider_fs` component has a binary application which will fetch the CLDR data and generate ICU4X data out of it.
-
-```
-cd ~/projects/icu
-wget https://github.com/unicode-org/icu/releases/download/release-70-1/icuexportdata_uprops_full.zip
-unzip icuexportdata_uprops_full.zip
-git clone https://github.com/unicode-org/icu4x
-cd icu4x
-git checkout icu@0.4.1
-cargo run --bin icu4x-datagen -- \
-    --cldr-tag 40.0.0 \
-    --uprops-root ../icuexportdata_uprops_full/small \
-    --out ~/projects/icu/icu4x-data \
-    --all-keys --all-locales
-```
-
-The last command is a bit dense, so let's dissect it.
-
-* First, we call `cargo run` which runs a binary in the crate
-* We tell it that the binary is named `icu4x-datagen`
-* Then we use `--` to separate arguments to `cargo` from arguments to our app
-* Then we pass `--cldr-tag` which informs the program which CLDR version to use
-* Then we pass `--uprops-root` which informs the program where to get the Unicode property data
-* Then we pass `--out` directory which is where the generated ICU4X data will be stored
-* Finally, we set `--all-keys` which specify that we want to export all keys available
-
-After that step, it should be possible to navigate to `~/projects/icu/icu4x-data` and there should be a `manifest.json` file, and directories with data.
-
-*Notice:* In this tutorial we export data as compact `JSON` which provides decent performance and readable data files. There are other formats and options for formatting of the data available. Please consult `cargo run --bin icu4x-datagen -- --help` for details.
-*Notice:* In particular, in production, the `bincode` format will yield better performance results.
-*Notice:* For offline or unconventional use, the user can also pass `--cldr-core` and `--cldr-dates` paths to local clones of the repositories instead of `--cldr-tag`.
-
-## Using Data
-
-Now that we have the data generated, we can use an instance of an API that implements `DataProvider` pointing at the directory.
+## Using test data
 
 First, we need to register our choice of the provider in `~/projects/icu/myapp/Cargo.toml`:
 
 ```
 [dependencies]
-icu = "0.1"
-icu_provider_fs = "0.1"
+icu = "0.5"
+icu_testdata = "0.5"
 ```
 
 and then we can use it in our code:
 
 ```rust
-use icu_provider_fs::FsDataProvider;
-
 fn main() {
-    let _provider = FsDataProvider::try_new("/home/{USER}/projects/icu/icu4x-data")
-        .expect("Failed to initialize Data Provider.");
+    let _provider = icu_testdata::get_provider();
 }
 ```
 
 While this app doesn't do anything on its own yet, we now have a loaded data provider, and can use it to format a date:
 
 ```rust
-use icu::locid::langid;
-use icu::locid::Locale;
-use icu::datetime::{DateTimeFormat, mock::datetime::MockDateTime, options::length};
-use icu_provider_fs::FsDataProvider;
+use icu::locid::locale;
+use icu::datetime::{DateTimeFormat, mock::parse_gregorian_from_str, options::length};
 
 fn main() {
-    let loc: Locale = langid!("pl").into();
-
-    let date: MockDateTime = "2020-10-14T13:21:00".parse()
+    let date = parse_gregorian_from_str("2020-10-14T13:21:00")
         .expect("Failed to parse a datetime.");
 
-    let provider = FsDataProvider::try_new("/home/{USER}/projects/icu/icu4x-data")
-        .expect("Failed to initialize Data Provider.");
+    let provider = icu_testdata::get_provider();
 
     let options = length::Bag {
         time: Some(length::Time::Medium),
@@ -210,7 +166,7 @@ fn main() {
         ..Default::default()
     }.into();
 
-    let dtf = DateTimeFormat::try_new(loc, &provider, &options)
+    let dtf = DateTimeFormat::try_new(locale!("ja"), &provider, &options)
         .expect("Failed to initialize DateTimeFormat");
 
     let formatted_date = dtf.format(&date);
@@ -223,18 +179,77 @@ fn main() {
 If all went well, running the app with `cargo run` should display:
 
 ```
-📅: 14 października 2020 13:21:00
+📅: 2020年10月14日 13:21:00
 ```
 
 Here's an internationalized date!
 
-*Notice:* Default `cargo run` builds and runs a `debug` mode of the binary. If you want to evaluate performance, memory or size of this example, use `cargo run --release`. Our example is also using `json` resource format. Generate the data in `bincode` for better performance.
+*Notice:* Default `cargo run` builds and runs a `debug` mode of the binary. If you want to evaluate performance, memory or size of this example, use `cargo run --release`. Our example is also using `json` resource format. Generate the data in `postcard` (and use `BlobDataProvider`) for better performance.
+
+## Using data from the filesystem
+
+If you have ICU4X data on the file system in a JSON format, it can be loaded via `FsDataProvider`:
+
+```toml
+[dependencies]
+icu = "0.5"
+icu_provider_fs = {version = "0.5" , features = ["deserialize_json"]}
+```
+
+```rs
+use icu_provider_fs::FsDataProvider;
+
+fn main() {
+    let _provider = FsDataProvider::try_new("/path/to/data")
+       .expect("Failed to initialize Data Provider.");
+}
+```
+
+The ICU4X repository has test data checked in tree in `provider/testdata/data/json`, however it is recommended one generate data on their own as described in the [next section](#generating data). Under the hood, `icu_testdata::get_provider()` is simply loading this data.
+
+## Generating data
+
+For production usage, it is better to generate your own data that is filtered to suit your needs.
+
+We're going to use [JSON CLDR](https://github.com/unicode-cldr/cldr-json) as our source data. JSON CLDR is an export of [CLDR data](http://cldr.unicode.org/index/downloads) into JSON maintained by Unicode.
+
+We are also going to use Unicode property data shipped as a zip file in the ICU4C release.
+
+The `datagen` component has a binary application which will fetch the CLDR data and generate ICU4X data out of it.
+
+```
+git clone https://github.com/unicode-org/icu4x
+cd icu4x
+git checkout icu@0.5.0
+cargo run --bin icu4x-datagen --features download -- \
+    --cldr-tag 40.0.0 \
+    --uprops-tag release-71-1 \
+    --out ~/projects/icu/icu4x-data \
+    --all-keys --all-locales
+```
+
+The last command is a bit dense, so let's dissect it.
+
+* First, we call `cargo run` which runs a binary in the crate
+* We tell it that the binary is named `icu4x-datagen`
+* Then we use `--` to separate arguments to `cargo` from arguments to our app
+* Then we pass `--cldr-tag` which informs the program which CLDR version to use
+* Then we pass `--uprops-tag` which informs the program which ICU-exported Unicode Properties version to use
+* Then we pass `--out` directory which is where we want the generated ICU4X data to be stored
+* Finally, we set `--all-keys` which specify that we want to export all keys available
+
+After that step, it should be possible to navigate to `~/projects/icu/icu4x-data` and there should be a `manifest.json` file, and directories with data.
+
+*Notice:* In this tutorial we export data as compact `JSON` which provides decent performance and readable data files. There are other formats and options for formatting of the data available. Please consult `cargo run --bin icu4x-datagen -- --help` for details.
+*Notice:* In particular, in production, the `postcard` format will yield better performance results.
+*Notice:* For offline or unconventional use, the user can also pass `--cldr-root` to a local clone of the CLDR repository instead of `--cldr-tag`.
+
 
 # 6. Summary
 
 This concludes this introduction tutorial. 
 
-With the help of `DateTimeFormat`, `Locale` and `DataProvider` we formatted a date to polish, but that's just a start.
+With the help of `DateTimeFormat`, `Locale` and `DataProvider` we formatted a date to Japanese, but that's just a start.
 
 The scope of internationalization domain is broad and there are many components with non-trivial interactions between them.
 

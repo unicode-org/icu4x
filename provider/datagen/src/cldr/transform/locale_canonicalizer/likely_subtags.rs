@@ -143,7 +143,7 @@ impl From<&cldr_serde::likely_subtags::Resource> for LikelySubtagsV1 {
 
 #[test]
 fn test_basic() {
-    use icu_locid::langid;
+    use icu_locid::script;
 
     let cldr_paths = crate::cldr::cldr_paths::for_test();
     let provider = LikelySubtagsProvider::try_from(&cldr_paths as &dyn CldrPaths).unwrap();
@@ -153,12 +153,7 @@ fn test_basic() {
         .take_payload()
         .unwrap();
 
-    let langid = langid!("cu-Glag");
-    let entry = result
-        .get()
-        .script
-        .get(&(langid.script.unwrap().into()))
-        .unwrap();
+    let entry = result.get().script.get(&(script!("Glag").into())).unwrap();
     assert_eq!(entry.language, "cu");
     assert_eq!(entry.region.unwrap(), "BG");
 }
