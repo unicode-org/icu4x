@@ -9,6 +9,7 @@ use alloc::vec::Vec;
 use core::cell::RefCell;
 use core::fmt;
 use core::marker::PhantomData;
+use dep_serde as serde;
 use serde::de::{self, MapAccess, Visitor};
 use serde::ser::SerializeMap;
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
@@ -362,13 +363,15 @@ where
 mod test {
     use super::super::*;
 
-    #[derive(::serde::Serialize, ::serde::Deserialize)]
+    #[derive(dep_serde::Serialize, dep_serde::Deserialize)]
+    #[serde(crate = "dep_serde")]
     struct DeriveTest_ZeroMap2d<'data> {
         #[serde(borrow)]
         _data: ZeroMap2d<'data, u16, str, [u8]>,
     }
 
-    #[derive(::serde::Serialize, ::serde::Deserialize)]
+    #[derive(dep_serde::Serialize, dep_serde::Deserialize)]
+    #[serde(crate = "dep_serde")]
     struct DeriveTest_ZeroMap2dBorrowed<'data> {
         #[serde(borrow)]
         _data: ZeroMap2dBorrowed<'data, u16, str, [u8]>,

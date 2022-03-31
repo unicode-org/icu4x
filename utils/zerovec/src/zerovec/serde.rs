@@ -9,6 +9,7 @@ use alloc::vec::Vec;
 use core::fmt;
 use core::marker::PhantomData;
 use core::mem;
+use dep_serde as serde;
 use serde::de::{self, Deserialize, Deserializer, SeqAccess, Visitor};
 use serde::ser::{Serialize, SerializeSeq, Serializer};
 
@@ -131,7 +132,8 @@ mod test {
     use super::super::*;
     use crate::samples::*;
 
-    #[derive(::serde::Serialize, ::serde::Deserialize)]
+    #[derive(dep_serde::Serialize, dep_serde::Deserialize)]
+    #[serde(crate = "dep_serde")]
     struct DeriveTest_ZeroVec<'data> {
         #[serde(borrow)]
         _data: ZeroVec<'data, u16>,

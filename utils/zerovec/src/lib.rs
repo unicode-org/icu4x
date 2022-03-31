@@ -58,7 +58,9 @@
 //! use zerovec::{ZeroVec, VarZeroVec};
 //!
 //! // This example requires the "serde" feature
+//! # pub use dep_serde as serde;
 //! #[derive(serde::Serialize, serde::Deserialize)]
+//! # #[serde(crate = "dep_serde")]
 //! pub struct DataStruct<'data> {
 //!     #[serde(borrow)]
 //!     nums: ZeroVec<'data, u32>,
@@ -115,7 +117,9 @@
 //!     name: Cow<'a, str>,
 //! }
 //!
+//! # pub use dep_serde as serde;
 //! #[derive(serde::Serialize, serde::Deserialize)]
+//! # #[serde(crate = "dep_serde")]
 //! struct Data<'a> {
 //!     #[serde(borrow)]
 //!     important_dates: ZeroVec<'a, Date>,
@@ -239,7 +243,7 @@ pub mod __zerovec_internal_reexport {
     pub use alloc::boxed;
 
     #[cfg(feature = "serde")]
-    pub use serde;
+    pub use dep_serde as serde;
 }
 
 pub mod maps {
@@ -327,7 +331,9 @@ pub mod vecs {
 ///     d: u8
 /// }
 ///
+/// # pub use dep_serde as serde;
 /// #[derive(serde::Serialize, serde::Deserialize)]
+/// # #[serde(crate = "dep_serde")]
 /// struct Dates<'a> {
 ///     #[serde(borrow)]
 ///     dates: ZeroVec<'a, Date>   
@@ -410,7 +416,9 @@ pub use zerovec_derive::make_ule;
 ///     name: Cow<'a, str>,
 /// }
 ///
+/// # pub use dep_serde as serde;
 /// #[derive(serde::Serialize, serde::Deserialize)]
+/// # #[serde(crate = "dep_serde")]
 /// struct Data<'a> {
 ///     // note: VarZeroVec always must reference the ULE type directly
 ///     #[serde(borrow)]
