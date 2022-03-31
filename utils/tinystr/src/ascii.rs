@@ -226,11 +226,7 @@ impl<const N: usize> TinyAsciiStr<N> {
     #[inline]
     #[must_use]
     pub const fn is_ascii_alphabetic(&self) -> bool {
-        check_is!(
-            self,
-            is_ascii_alphabetic,
-            is_ascii_alphabetic
-        )
+        check_is!(self, is_ascii_alphabetic, is_ascii_alphabetic)
     }
 
     /// Checks if the value is composed of ASCII alphanumeric characters:
@@ -255,11 +251,7 @@ impl<const N: usize> TinyAsciiStr<N> {
     #[inline]
     #[must_use]
     pub const fn is_ascii_alphanumeric(&self) -> bool {
-        check_is!(
-            self,
-            is_ascii_alphanumeric,
-            is_ascii_alphanumeric
-        )
+        check_is!(self, is_ascii_alphanumeric, is_ascii_alphanumeric)
     }
 
     /// Checks if the value is composed of ASCII decimal digits:
