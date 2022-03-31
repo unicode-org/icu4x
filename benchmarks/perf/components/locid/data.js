@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1648743878756,
+  "lastUpdate": 1648745130402,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -27137,6 +27137,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 3203,
             "range": "± 18",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "f0caf5a1ed64809b2107a0258b8a6323aca689e9",
+          "message": "Improve check_is! macro (#1701)",
+          "timestamp": "2022-03-31T09:38:00-07:00",
+          "tree_id": "faf2a58dba6b3c4a93d6e7ef519a882dac10ec95",
+          "url": "https://github.com/unicode-org/icu4x/commit/f0caf5a1ed64809b2107a0258b8a6323aca689e9"
+        },
+        "date": 1648745113353,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 2412,
+            "range": "± 31",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 4343,
+            "range": "± 62",
             "unit": "ns/iter"
           }
         ]
