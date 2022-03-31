@@ -85,19 +85,12 @@ impl ResourceProvider<WeekDataV1Marker> for WeekDataProvider {
         &self,
         req: &DataRequest,
     ) -> Result<DataResponse<WeekDataV1Marker>, DataError> {
-        use writeable::Writeable;
         let metadata = DataResponseMetadata::default();
         // TODO(#1109): Set metadata.data_langid correctly.
         let territory = req
             .options
-            .temp_get_extension("ca")
-            .map(|v| -> Result<Territory, DataError> {
-                Ok(Territory::Region(
-                    Region::from_bytes(v.write_to_string().as_bytes()).map_err(|_| {
-                        DataErrorKind::MissingVariant.with_req(WeekDataV1Marker::KEY, req)
-                    })?,
-                ))
-            })
+            .region()
+            .map(|v| -> Result<Territory, DataError> { Ok(Territory::Region(v)) })
             .transpose()?
             .unwrap_or_else(|| DEFAULT_TERRITORY.clone());
 

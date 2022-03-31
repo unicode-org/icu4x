@@ -14,7 +14,7 @@ use core::default::Default;
 use core::fmt;
 use core::fmt::Write;
 use icu_locid::extensions::unicode as unicode_ext;
-use icu_locid::subtags::Region;
+use icu_locid::subtags::{Language, Script, Region};
 use icu_locid::{LanguageIdentifier, Locale};
 use writeable::{LengthHint, Writeable};
 use zerovec::ule::*;
@@ -450,6 +450,21 @@ impl ResourceOptions {
     /// Returns the [`LanguageIdentifier`] for this [`ResourceOptions`].
     pub fn langid(&self) -> LanguageIdentifier {
         self.langid.clone()
+    }
+
+    /// Returns the [`Language`] for this [`ResourceOptions`].
+    pub fn language(&self) -> Language {
+        self.langid.language
+    }
+
+    /// Returns the [`Script`] for this [`ResourceOptions`].
+    pub fn script(&self) -> Option<Script> {
+        self.langid.script
+    }
+
+    /// Returns the [`Region`] for this [`ResourceOptions`].
+    pub fn region(&self) -> Option<Region> {
+        self.langid.region
     }
 }
 
