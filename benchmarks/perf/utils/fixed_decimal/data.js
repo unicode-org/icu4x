@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1648697042422,
+  "lastUpdate": 1648740752224,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -21989,6 +21989,36 @@ window.BENCHMARK_DATA = {
             "name": "fixed_decimal/overview",
             "value": 128665,
             "range": "± 1570",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "18c3eb85fd8e46d1352e0f766fdeeab1cdef200a",
+          "message": "Add documentation for zero-copy locales (#1749)",
+          "timestamp": "2022-03-31T08:24:38-07:00",
+          "tree_id": "0a308445d7955496c7a4576572b1c78aed77f94e",
+          "url": "https://github.com/unicode-org/icu4x/commit/18c3eb85fd8e46d1352e0f766fdeeab1cdef200a"
+        },
+        "date": 1648740734190,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 136716,
+            "range": "± 2097",
             "unit": "ns/iter"
           }
         ]
