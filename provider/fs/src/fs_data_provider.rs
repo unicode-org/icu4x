@@ -63,17 +63,11 @@ impl BufferProvider for FsDataProvider {
     ) -> Result<DataResponse<BufferMarker>, DataError> {
         let mut path_buf = self.res_root.clone();
         path_buf.push(&*key.write_to_string());
-        if req.options.is_empty() {
-            path_buf.set_extension(self.manifest.get_file_extension());
-        }
         if !path_buf.exists() {
             return Err(DataErrorKind::MissingResourceKey.with_req(key, req));
         }
-        if !req.options.is_empty() {
-            // TODO: Implement proper locale fallback
-            path_buf.push(&*req.options.write_to_string());
-            path_buf.set_extension(self.manifest.get_file_extension());
-        }
+        path_buf.push(&*req.options.write_to_string());
+        path_buf.set_extension(self.manifest.get_file_extension());
         if !path_buf.exists() {
             return Err(DataErrorKind::MissingResourceOptions.with_req(key, req));
         }
