@@ -31,17 +31,17 @@ mod visitor;
 /// for types with a lifetime parameter.
 ///
 /// Apply the `#[zerofrom(clone)]` attribute to a field if it doesn't implement
-/// ZeroFrom; this data will be cloned when the struct is zero_from'ed.
+/// Copy or ZeroFrom; this data will be cloned when the struct is zero_from'ed.
 #[proc_macro_derive(ZeroFrom, attributes(zerofrom))]
 pub fn zf_derive(input: TokenStream) -> TokenStream {
     let input = parse_macro_input!(input as DeriveInput);
     TokenStream::from(zf_derive_impl(&input))
 }
 
-fn has_attr(attrs: &[syn::Attribute], lit: &str) -> bool {
+fn has_clone_attr(attrs: &[syn::Attribute]) -> bool {
     attrs.iter().any(|a| {
         if let Ok(i) = a.parse_args::<Ident>() {
-            if i == lit {
+            if i == "clone" {
                 return true;
             }
         }
@@ -64,7 +64,7 @@ fn zf_derive_impl(input: &DeriveInput) -> TokenStream2 {
             .variants()
             .iter()
             .flat_map(|variant| variant.bindings().iter())
-            .any(|binding| has_attr(&binding.ast().attrs, "clone"));
+            .any(|binding| has_clone_attr(&binding.ast().attrs));
         let (clone, clone_trait) = if has_clone {
             (quote!(this.clone()), quote!(Clone))
         } else {
@@ -98,13 +98,12 @@ fn zf_derive_impl(input: &DeriveInput) -> TokenStream2 {
                 let binding = format!("__binding_{}", i);
                 let field = Ident::new(&binding, Span::call_site());
 
-                if has_attr(&f.attrs, "clone") {
+                if has_clone_attr(&f.attrs) {
                     quote! {
                         #field.clone()
                     }
-                } else if has_attr(&f.attrs, "copy") {
-                    let fty = f.ty.clone();
-                    zf_bounds.push(parse_quote!(#fty: Copy));
+                } else if !visitor::check_type_for_parameters(&f.ty, &generics_env).1 {
+                    // Field has zero lifetimes so it should be copy
                     quote! {
                         *#field
                     }

@@ -82,10 +82,4 @@ pub enum CloningZF3<'data> {
     Cow(#[zerofrom(clone)] Cow<'data, str>),
 }
 
-#[derive(Copy, ZeroFrom)]
-pub struct CopyingZF1 {
-    #[zerofrom(copy)] // While u8 has a ZeroFrom impl, other copy types might not
-    vec: u8,
-}
-
 fn main() {}
