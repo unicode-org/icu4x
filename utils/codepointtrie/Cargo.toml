@@ -51,4 +51,4 @@ path = "src/lib.rs"
 [features]
 default = ["serialize"]
 serialize = ["serde", "zerovec/serde", "icu_uniset/serde"]
-serde_serialize = ["zerovec/serde_serialize", "icu_uniset/serde_serialize"]
+serde_serialize = ["serialize", "zerovec/serde_serialize", "icu_uniset/serde_serialize"]
