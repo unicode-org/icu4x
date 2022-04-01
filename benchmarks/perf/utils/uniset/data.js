@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1648789710168,
+  "lastUpdate": 1648828222462,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -23279,6 +23279,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 52484884,
             "range": "± 146473",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "10595307+mildgravitas@users.noreply.github.com",
+            "name": "mildgravitas",
+            "username": "mildgravitas"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "8dc1a8271a2bf0ca3645676c03fa415e45ca6eed",
+          "message": "fix(datetime): Return singleton patterns for single field bags. (#1729)\n\n* fix(datetime): Return singleton patterns for single field bags.\r\n\r\n* test(datetime): Add testcases covering extra locales, symbols & widths.\r\n\r\n* tests(datetime): Add hXX tests for singleton 'h'.",
+          "timestamp": "2022-04-01T17:44:16+02:00",
+          "tree_id": "a6e362cda8663297d40c0b93b3eb448eecdc8535",
+          "url": "https://github.com/unicode-org/icu4x/commit/8dc1a8271a2bf0ca3645676c03fa415e45ca6eed"
+        },
+        "date": 1648828206436,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 55234149,
+            "range": "± 745520",
             "unit": "ns/iter"
           }
         ]
