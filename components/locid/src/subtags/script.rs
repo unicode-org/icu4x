@@ -22,7 +22,7 @@ use tinystr::TinyAsciiStr;
 ///
 /// [`unicode_script_id`]: https://unicode.org/reports/tr35/#unicode_script_id
 #[derive(Debug, PartialEq, Eq, Clone, Hash, PartialOrd, Ord, Copy)]
-#[cfg_attr(feature = "serialize", derive(serde::Serialize, serde::Deserialize))]
+#[cfg_attr(feature = "serialize", derive(serde::Serialize))]
 #[repr(transparent)]
 pub struct Script(TinyAsciiStr<SCRIPT_LENGTH>);
 
@@ -182,67 +182,4 @@ impl From<Script> for TinyAsciiStr<4> {
     fn from(input: Script) -> Self {
         input.0
     }
-}
-
-// Safety checklist for ULE:
-//
-// 1. Must not include any uninitialized or padding bytes (true since transparent over a ULE).
-// 2. Must have an alignment of 1 byte (true since transparent over a ULE).
-// 3. ULE::validate_byte_slice() checks that the given byte slice represents a valid slice.
-// 4. ULE::validate_byte_slice() checks that the given byte slice has a valid length.
-// 5. All other methods must be left with their default impl.
-// 6. Byte equality is semantic equality.
-#[cfg(feature = "zerovec")]
-unsafe impl zerovec::ule::ULE for Script {
-    fn validate_byte_slice(bytes: &[u8]) -> Result<(), zerovec::ZeroVecError> {
-        let it = bytes.chunks_exact(core::mem::size_of::<Self>());
-        if !it.remainder().is_empty() {
-            return Err(zerovec::ZeroVecError::length::<Self>(bytes.len()));
-        }
-        for v in it {
-            // The following can be removed once `array_chunks` is stabilized.
-            let mut a = [0; core::mem::size_of::<Self>()];
-            a.copy_from_slice(v);
-            if Self::try_from_raw(a).is_err() {
-                return Err(zerovec::ZeroVecError::parse::<Self>());
-            }
-        }
-        Ok(())
-    }
-}
-
-/// Impl enabling `Script` to be used in a [`ZeroVec`]. Enabled with the `"zerovec"` feature.
-///
-/// # Example
-///
-/// ```
-/// use icu::locid::subtags::Script;
-/// use icu::locid::script;
-/// use zerovec::ZeroVec;
-///
-/// let zv = ZeroVec::<Script>::parse_byte_slice(b"LatnAdlmMymrLatnLatn")
-///     .expect("Valid script subtags");
-/// assert_eq!(zv.get(1), Some(script!("Adlm")));
-///
-/// ZeroVec::<Script>::parse_byte_slice(b"invalid")
-///     .expect_err("Invalid byte slice");
-/// ```
-///
-/// [`ZeroVec`]: zerovec::ZeroVec
-#[cfg(feature = "zerovec")]
-impl zerovec::ule::AsULE for Script {
-    type ULE = Self;
-    fn to_unaligned(self) -> Self::ULE {
-        self
-    }
-    fn from_unaligned(unaligned: Self::ULE) -> Self {
-        unaligned
-    }
-}
-
-#[cfg(feature = "zerovec")]
-impl<'a> zerovec::maps::ZeroMapKV<'a> for Script {
-    type Container = zerovec::ZeroVec<'a, Script>;
-    type GetType = Script;
-    type OwnedType = Script;
 }
