@@ -53,7 +53,7 @@ path = "src/lib.rs"
 [features]
 bench = []
 serialize = ["serde", "zerovec/serde"]
-serde_serialize = ["zerovec/serde_serialize"]
+serde_serialize = ["serde", "zerovec/serde_serialize"]
 
 [[bench]]
 name = "inv_list"
