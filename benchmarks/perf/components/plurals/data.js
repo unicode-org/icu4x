@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1648849646803,
+  "lastUpdate": 1648857583079,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -31289,6 +31289,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 16550,
             "range": "± 13",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "e265c6023a7fcad356632274177359e1ab9d5fa8",
+          "message": "Removing CLDR 40 compatibility (#1765)",
+          "timestamp": "2022-04-01T16:49:32-07:00",
+          "tree_id": "f7b6f073f4e51636631f8efea7de4046c891b82b",
+          "url": "https://github.com/unicode-org/icu4x/commit/e265c6023a7fcad356632274177359e1ab9d5fa8"
+        },
+        "date": 1648857561086,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1166,
+            "range": "± 172",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 7975,
+            "range": "± 913",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 27961,
+            "range": "± 2411",
             "unit": "ns/iter"
           }
         ]
