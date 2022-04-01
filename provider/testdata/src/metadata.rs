@@ -103,6 +103,6 @@ fn test_metadata() {
     assert!(package_info
         .package_metadata
         .locales
-        .contains(&(LanguageIdentifier::und())));
+        .contains(&(LanguageIdentifier::UND)));
     assert!(package_info.package_metadata.locales.len() > 10);
 }

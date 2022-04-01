@@ -33,7 +33,7 @@ fn overview_bench(c: &mut Criterion) {
             // ranging from -1e9 to 1e9.
             let provider = icu_provider::inv::InvariantDataProvider;
             let fdf =
-                FixedDecimalFormat::try_new(Locale::und(), &provider, Default::default()).unwrap();
+                FixedDecimalFormat::try_new(Locale::UND, &provider, Default::default()).unwrap();
             nums.iter()
                 .map(|v| black_box(*v))
                 .map(FixedDecimal::from)

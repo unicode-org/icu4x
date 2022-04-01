@@ -99,17 +99,6 @@ impl<'zf, C, T: ZeroFrom<'zf, C>> ZeroFrom<'zf, Option<C>> for Option<T> {
     }
 }
 
-impl<'zf, C1, T1: ZeroFrom<'zf, C1>, C2, T2: ZeroFrom<'zf, C2>> ZeroFrom<'zf, (C1, C2)>
-    for (T1, T2)
-{
-    fn zero_from(other: &'zf (C1, C2)) -> Self {
-        (
-            <T1 as ZeroFrom<C1>>::zero_from(&other.0),
-            <T2 as ZeroFrom<C2>>::zero_from(&other.1),
-        )
-    }
-}
-
 // These duplicate the functionality from above and aren't quite necessary due
 // to deref coercions, however for the custom derive to work, there always needs
 // to be `impl ZeroFrom<T> for T`, otherwise it may fail to perform the necessary

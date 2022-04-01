@@ -671,7 +671,7 @@ impl LocaleCanonicalizer {
 fn test_uts35_rule_matches() {
     assert!(uts35_rule_matches(
         &"ja".parse().unwrap(),
-        &LanguageIdentifier::und()
+        &LanguageIdentifier::UND
     ));
 
     assert!(uts35_rule_matches(

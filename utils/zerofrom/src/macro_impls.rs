@@ -68,3 +68,78 @@ array_zf_impl!(13; 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12);
 array_zf_impl!(14; 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13);
 array_zf_impl!(15; 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14);
 array_zf_impl!(16; 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15);
+
+macro_rules! tuple_zf_impl {
+    ($(($c:ident, $t:ident, $i:tt)),+) => {
+        impl<'zf, $($c, $t: ZeroFrom<'zf, $c>),+> ZeroFrom<'zf, ($($c),+)>
+            for ($($t),+)
+            {
+            fn zero_from(other: &'zf ($($c),+)) -> Self {
+                (
+                    $(<$t as ZeroFrom<$c>>::zero_from(&other.$i)),+
+                )
+            }
+        }
+    };
+}
+
+tuple_zf_impl!((C1, T1, 0), (C2, T2, 1));
+tuple_zf_impl!((C1, T1, 0), (C2, T2, 1), (C3, T3, 2));
+tuple_zf_impl!((C1, T1, 0), (C2, T2, 1), (C3, T3, 2), (C4, T4, 3));
+tuple_zf_impl!(
+    (C1, T1, 0),
+    (C2, T2, 1),
+    (C3, T3, 2),
+    (C4, T4, 3),
+    (C5, T5, 4)
+);
+tuple_zf_impl!(
+    (C1, T1, 0),
+    (C2, T2, 1),
+    (C3, T3, 2),
+    (C4, T4, 3),
+    (C5, T5, 4),
+    (C6, T6, 5)
+);
+tuple_zf_impl!(
+    (C1, T1, 0),
+    (C2, T2, 1),
+    (C3, T3, 2),
+    (C4, T4, 3),
+    (C5, T5, 4),
+    (C6, T6, 5),
+    (C7, T7, 6)
+);
+tuple_zf_impl!(
+    (C1, T1, 0),
+    (C2, T2, 1),
+    (C3, T3, 2),
+    (C4, T4, 3),
+    (C5, T5, 4),
+    (C6, T6, 5),
+    (C7, T7, 6),
+    (C8, T8, 7)
+);
+tuple_zf_impl!(
+    (C1, T1, 0),
+    (C2, T2, 1),
+    (C3, T3, 2),
+    (C4, T4, 3),
+    (C5, T5, 4),
+    (C6, T6, 5),
+    (C7, T7, 6),
+    (C8, T8, 7),
+    (C9, T9, 8)
+);
+tuple_zf_impl!(
+    (C1, T1, 0),
+    (C2, T2, 1),
+    (C3, T3, 2),
+    (C4, T4, 3),
+    (C5, T5, 4),
+    (C6, T6, 5),
+    (C7, T7, 6),
+    (C8, T8, 7),
+    (C9, T9, 8),
+    (C10, T10, 9)
+);
