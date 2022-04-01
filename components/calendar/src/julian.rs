@@ -130,8 +130,9 @@ impl Julian {
         Self
     }
 
-    // Fixed is day count representation of calendars starting from Jan 1st of year 1 of Georgian Calendar.
-    // The fixed calculations algorithms are from the Calendrical Calculations book
+    // "Fixed" is a day count representation of calendars staring from Jan 1st of year 1 of the Georgian Calendar.
+    // The fixed date algorithms are from
+    // Dershowitz, Nachum, and Edward M. Reingold. _Calendrical calculations_. Cambridge University Press, 2008.
     //
     // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/1ee51ecfaae6f856b0d7de3e36e9042100b4f424/calendar.l#L1689-L1709
     pub(crate) fn fixed_from_julian(date: ArithmeticDate<Julian>) -> i32 {
