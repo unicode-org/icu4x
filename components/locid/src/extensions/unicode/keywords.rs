@@ -2,10 +2,10 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use alloc::vec::Vec;
 use core::borrow::Borrow;
 use core::ops::Deref;
 use litemap::LiteMap;
+use core::iter::FromIterator;
 
 use super::Key;
 use super::Value;
@@ -31,7 +31,7 @@ use super::Value;
 ///     .expect("Failed to parse a Key.");
 /// let value: Value = "h23".parse()
 ///     .expect("Failed to parse a Value.");
-/// let keywords = Keywords::from_vec_unchecked(vec![(key, value)]);
+/// let keywords: Keywords = vec![(key, value)].into_iter().collect();
 ///
 /// assert_eq!(&keywords.to_string(), "hc-h23");
 /// ```
@@ -53,27 +53,6 @@ impl Keywords {
         Self(LiteMap::new())
     }
 
-    /// A constructor which takes a pre-sorted list of `(`[`Key`]`, `[`Value`]`)` tuples.
-    ///
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use icu::locid::extensions::unicode::{Keywords, Key, Value};
-    ///
-    /// let key: Key = "ca".parse()
-    ///     .expect("Failed to parse a Key.");
-    /// let value: Value = "buddhist".parse()
-    ///     .expect("Failed to parse a Value.");
-    /// let keywords = Keywords::from_vec_unchecked(vec![(key, value)]);
-    ///
-    /// assert_eq!(&keywords.to_string(), "ca-buddhist");
-    /// ```
-    pub fn from_vec_unchecked(input: Vec<(Key, Value)>) -> Self {
-        // Safety: This function is documented to provide a pre-sorted list
-        Self(unsafe { LiteMap::from_tuple_vec_unchecked(input) })
-    }
-
     /// Returns `true` if the list contains a [`Value`] for the specified [`Key`].
     ///
     ///
@@ -81,12 +60,13 @@ impl Keywords {
     ///
     /// ```
     /// use icu::locid::extensions::unicode::{Keywords, Key, Value};
+    /// use litemap::LiteMap;
     ///
     /// let key: Key = "ca".parse()
     ///     .expect("Failed to parse a Key.");
     /// let value: Value = "gregory".parse()
     ///     .expect("Failed to parse a Value.");
-    /// let mut keywords = Keywords::from_vec_unchecked(vec![(key, value)]);
+    /// let keywords: Keywords = vec![(key, value)].into_iter().collect();
     ///
     /// let key: Key = "ca".parse()
     ///     .expect("Failed to parse a Key.");
@@ -98,10 +78,6 @@ impl Keywords {
     Q: Ord
     {
         self.0.contains_key(key)
-    }
-
-    pub fn is_empty(&self) -> bool {
-        self.0.is_empty()
     }
 
     /// Returns a reference to the [`Value`] corresponding to the [`Key`].
@@ -116,7 +92,7 @@ impl Keywords {
     ///     .expect("Failed to parse a Key.");
     /// let value: Value = "buddhist".parse()
     ///     .expect("Failed to parse a Value.");
-    /// let mut keywords = Keywords::from_vec_unchecked(vec![(key, value)]);
+    /// let keywords: Keywords = vec![(key, value)].into_iter().collect();
     ///
     /// let key: Key = "ca".parse()
     ///     .expect("Failed to parse a Key.");
@@ -147,11 +123,11 @@ impl Keywords {
     ///     .expect("Failed to parse a Key.");
     /// let value: Value = "buddhist".parse()
     ///     .expect("Failed to parse a Value.");
-    /// let mut keywords = Keywords::from_vec_unchecked(vec![(key, value)]);
+    /// let mut keywords: Keywords = vec![(key, value)].into_iter().collect();
     ///
     /// let key: Key = "ca".parse()
     ///     .expect("Failed to parse a Key.");
-    /// if let Some(value) = keywords.get_mut(key) {
+    /// if let Some(value) = keywords.get_mut(&key) {
     ///     *value = "gregory".parse()
     ///         .expect("Failed to parse a Value.");
     /// }
@@ -204,8 +180,7 @@ impl Keywords {
     where
         F: FnMut(&Key) -> bool,
     {
-        todo!()
-        // self.0.retain(|(k, _)| predicate(k))
+        self.0.retain(|(k, _)| predicate(k))
     }
 
     pub(crate) fn for_each_subtag_str<E, F>(&self, f: &mut F) -> Result<(), E>
@@ -220,13 +195,24 @@ impl Keywords {
     }
 }
 
+impl From<LiteMap<Key, Value>> for Keywords {
+    fn from(map: LiteMap<Key, Value>) -> Self {
+        Self(map)
+    }
+}
+
+impl FromIterator<(Key, Value)> for Keywords {
+    fn from_iter<I: IntoIterator<Item = (Key, Value)>>(iter: I) -> Self {
+        LiteMap::from_iter(iter).into()
+    }
+}
+
 impl_writeable_for_key_value!(Keywords, "ca", "islamic-civil", "aa", "aa");
 
-// impl Deref for Keywords {
-//     type Target = [(Key, Value)];
+impl Deref for Keywords {
+    type Target = LiteMap<Key, Value>;
 
-//     fn deref(&self) -> &Self::Target {
-//         todo!()
-//         // self.0.deref()
-//     }
-// }
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
+}

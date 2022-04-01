@@ -24,9 +24,7 @@ pub struct LiteMap<K, V> {
 impl<K, V> LiteMap<K, V> {
     /// Construct a new [`LiteMap`]
     pub const fn new() -> Self {
-        Self {
-            values: Vec::new()
-        }
+        Self { values: Vec::new() }
     }
 
     /// Construct a new [`LiteMap`] with a given capacity

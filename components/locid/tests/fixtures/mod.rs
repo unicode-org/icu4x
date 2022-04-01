@@ -11,6 +11,7 @@ use icu_locid::extensions::unicode;
 use icu_locid::extensions::Extensions;
 use icu_locid::{subtags, LanguageIdentifier, Locale, ParserError};
 use serde::Deserialize;
+use litemap::LiteMap;
 
 #[derive(Debug, Deserialize, Clone)]
 pub struct LocaleIdentifier {
@@ -49,7 +50,7 @@ impl TryFrom<LocaleExtensions> for Extensions {
     fn try_from(input: LocaleExtensions) -> Result<Self, Self::Error> {
         let mut ext = Extensions::default();
         if let Some(unicode) = input.unicode {
-            let mut v: Vec<(unicode::Key, unicode::Value)> = unicode
+            let keywords: LiteMap<unicode::Key, unicode::Value> = unicode
                 .keywords
                 .iter()
                 .map(|(k, v)| {
@@ -65,8 +66,7 @@ impl TryFrom<LocaleExtensions> for Extensions {
                     )
                 })
                 .collect();
-            v.sort_by_key(|i| i.0);
-            ext.unicode.keywords = unicode::Keywords::from_vec_unchecked(v);
+            ext.unicode.keywords = keywords.into();
             let v: Vec<unicode::Attribute> = unicode
                 .attributes
                 .iter()
