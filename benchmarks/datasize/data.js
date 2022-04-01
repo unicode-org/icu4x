@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1648849243821,
+  "lastUpdate": 1648857057183,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -12413,6 +12413,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/452fea46ee75161514113f1441066888c7de711c"
         },
         "date": 1648849226010,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4555035,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "e265c6023a7fcad356632274177359e1ab9d5fa8",
+          "message": "Removing CLDR 40 compatibility (#1765)",
+          "timestamp": "2022-04-01T16:49:32-07:00",
+          "tree_id": "f7b6f073f4e51636631f8efea7de4046c891b82b",
+          "url": "https://github.com/unicode-org/icu4x/commit/e265c6023a7fcad356632274177359e1ab9d5fa8"
+        },
+        "date": 1648857042412,
         "tool": "ndjson",
         "benches": [
           {
