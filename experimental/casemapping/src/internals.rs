@@ -10,8 +10,6 @@ use icu_codepointtrie::{CodePointTrie, TrieValue};
 use icu_locid::Locale;
 use icu_provider::{yoke, zerofrom};
 use icu_uniset::UnicodeSetBuilder;
-#[cfg(feature = "serde")]
-use serde::{Deserialize, Serialize};
 #[cfg(feature = "datagen")]
 use std::collections::HashMap;
 use zerovec::ule::{AsULE, RawBytesULE};
@@ -99,7 +97,8 @@ impl DotType {
 
 // The datatype stored in the codepoint trie for casemapping.
 #[derive(Copy, Clone, Debug, Eq, PartialEq)]
-#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "serialize", derive(serde::Deserialize))]
+#[cfg_attr(feature = "serde_serialize", derive(serde::Serialize))]
 struct CaseMappingData(u16);
 
 impl CaseMappingData {
@@ -248,11 +247,12 @@ impl TrieValue for CaseMappingData {
 
 // Reverse case folding data. Maps from multi-character strings back
 // to code-points that fold to those strings.
-#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "serialize", derive(serde::Deserialize))]
+#[cfg_attr(feature = "serde_serialize", derive(serde::Serialize))]
 #[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[yoke(prove_covariance_manually)]
 struct CaseMappingUnfoldData<'data> {
-    #[cfg_attr(feature = "serde", serde(borrow))]
+    #[cfg_attr(feature = "serialize", serde(borrow))]
     map: ZeroMap<'data, str, str>,
 }
 
@@ -337,15 +337,16 @@ impl FoldOptions {
 
 /// CaseMappingInternals provides low-level access to the data necessary to
 /// convert characters and strings to upper, lower, or title case.
-#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "serialize", derive(serde::Deserialize))]
+#[cfg_attr(feature = "serde_serialize", derive(serde::Serialize))]
 #[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[yoke(prove_covariance_manually)]
 pub struct CaseMappingInternals<'data> {
-    #[cfg_attr(feature = "serde", serde(borrow))]
+    #[cfg_attr(feature = "serialize", serde(borrow))]
     trie: CodePointTrie<'data, CaseMappingData>,
-    #[cfg_attr(feature = "serde", serde(borrow))]
+    #[cfg_attr(feature = "serialize", serde(borrow))]
     exceptions: CaseMappingExceptions<'data>,
-    #[cfg_attr(feature = "serde", serde(borrow))]
+    #[cfg_attr(feature = "serialize", serde(borrow))]
     unfold: CaseMappingUnfoldData<'data>,
 }
 
