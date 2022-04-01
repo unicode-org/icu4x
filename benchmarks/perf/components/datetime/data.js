@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1648828349930,
+  "lastUpdate": 1648838282988,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -24791,6 +24791,48 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 221028,
             "range": "± 13108",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "1df7fa8511472130d34359a50027a4bd08076315",
+          "message": "Prep work for #1760 (#1761)",
+          "timestamp": "2022-04-01T20:29:13+02:00",
+          "tree_id": "a6411e5c03ac43562d785be7ee6a55aa096edce9",
+          "url": "https://github.com/unicode-org/icu4x/commit/1df7fa8511472130d34359a50027a4bd08076315"
+        },
+        "date": 1648838264697,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 107422,
+            "range": "± 6869",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 1075665,
+            "range": "± 39761",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 228586,
+            "range": "± 10940",
             "unit": "ns/iter"
           }
         ]
