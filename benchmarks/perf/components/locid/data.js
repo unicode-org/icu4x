@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1648780012086,
+  "lastUpdate": 1648789750528,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -27281,6 +27281,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 4369,
             "range": "± 129",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "0188c9c623b46c9390a26024704291a7f93f0a6d",
+          "message": "Add transform_ext_key! macro (#1763)",
+          "timestamp": "2022-03-31T22:01:33-07:00",
+          "tree_id": "9b1b89a250390c396d47e1b4328c3f01e83c64c4",
+          "url": "https://github.com/unicode-org/icu4x/commit/0188c9c623b46c9390a26024704291a7f93f0a6d"
+        },
+        "date": 1648789732270,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 2342,
+            "range": "± 135",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 4261,
+            "range": "± 195",
             "unit": "ns/iter"
           }
         ]
