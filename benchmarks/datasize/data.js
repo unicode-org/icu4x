@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1648789389480,
+  "lastUpdate": 1648827957421,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -12323,6 +12323,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/0188c9c623b46c9390a26024704291a7f93f0a6d"
         },
         "date": 1648789371808,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4555035,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "10595307+mildgravitas@users.noreply.github.com",
+            "name": "mildgravitas",
+            "username": "mildgravitas"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "8dc1a8271a2bf0ca3645676c03fa415e45ca6eed",
+          "message": "fix(datetime): Return singleton patterns for single field bags. (#1729)\n\n* fix(datetime): Return singleton patterns for single field bags.\r\n\r\n* test(datetime): Add testcases covering extra locales, symbols & widths.\r\n\r\n* tests(datetime): Add hXX tests for singleton 'h'.",
+          "timestamp": "2022-04-01T17:44:16+02:00",
+          "tree_id": "a6e362cda8663297d40c0b93b3eb448eecdc8535",
+          "url": "https://github.com/unicode-org/icu4x/commit/8dc1a8271a2bf0ca3645676c03fa415e45ca6eed"
+        },
+        "date": 1648827939581,
         "tool": "ndjson",
         "benches": [
           {
