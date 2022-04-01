@@ -501,7 +501,7 @@ impl LocaleCanonicalizer {
             if let Some(region) = langid.region {
                 if let Some(script) = data
                     .language_region
-                    .get(&(langid.language, region))
+                    .get(&(langid.language.into(), region.into()))
                     .copied()
                 {
                     return update_langid(Language::UND, Some(script), None, langid);
@@ -510,7 +510,7 @@ impl LocaleCanonicalizer {
             if let Some(script) = langid.script {
                 if let Some(region) = data
                     .language_script
-                    .get(&(langid.language, script))
+                    .get(&(langid.language.into(), script.into()))
                     .copied()
                 {
                     return update_langid(Language::UND, None, Some(region), langid);
@@ -518,7 +518,7 @@ impl LocaleCanonicalizer {
             }
             if let Some((script, region)) = data
                 .language
-                .get(&langid.language)
+                .get(&langid.language.into())
                 .map(|u| zerovec::ule::AsULE::from_unaligned(*u))
             {
                 return update_langid(Language::UND, Some(script), Some(region), langid);
@@ -526,13 +526,17 @@ impl LocaleCanonicalizer {
         }
         if let Some(script) = langid.script {
             if let Some(region) = langid.region {
-                if let Some(language) = data.script_region.get(&(script, region)).copied() {
+                if let Some(language) = data
+                    .script_region
+                    .get(&(script.into(), region.into()))
+                    .copied()
+                {
                     return update_langid(language, None, None, langid);
                 }
             }
             if let Some((language, region)) = data
                 .script
-                .get(&script)
+                .get(&script.into())
                 .map(|u| zerovec::ule::AsULE::from_unaligned(*u))
             {
                 return update_langid(language, None, Some(region), langid);
@@ -541,7 +545,7 @@ impl LocaleCanonicalizer {
         if let Some(region) = langid.region {
             if let Some((language, script)) = data
                 .region
-                .get(&region)
+                .get(&region.into())
                 .map(|u| zerovec::ule::AsULE::from_unaligned(*u))
             {
                 return update_langid(language, Some(script), None, langid);

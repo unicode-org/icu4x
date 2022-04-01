@@ -121,22 +121,22 @@ impl From<&cldr_serde::likely_subtags::Resource> for LikelySubtagsV1<'static> {
             if !entry.0.language.is_empty() {
                 let lang = entry.0.language;
                 if let Some(script) = entry.0.script {
-                    with_diff!((Language::UND, None, Some(region)) => language_script.insert(&(lang, script), &region));
+                    with_diff!((Language::UND, None, Some(region)) => language_script.insert(&(lang.into(), script.into()), &region));
                 } else if let Some(region) = entry.0.region {
-                    with_diff!((Language::UND, Some(script), None) => language_region.insert(&(lang, region), &script));
+                    with_diff!((Language::UND, Some(script), None) => language_region.insert(&(lang.into(), region.into()), &script));
                 } else {
-                    with_diff!((Language::UND, Some(script), Some(region)) => language.insert(&lang, &(script, region)));
+                    with_diff!((Language::UND, Some(script), Some(region)) => language.insert(&lang.into(), &(script, region)));
                 }
             } else if let Some(scr) = entry.0.script {
                 if let Some(region) = entry.0.region {
-                    with_diff!((language, None, None) => script_region.insert(&(scr, region), &language));
+                    with_diff!((language, None, None) => script_region.insert(&(scr.into(), region.into()), &language));
                 } else {
-                    with_diff!((language, None, Some(region)) => script.insert(&scr, &(language, region)));
+                    with_diff!((language, None, Some(region)) => script.insert(&scr.into(), &(language, region)));
                 }
             } else if let Some(reg) = entry.0.region {
                 // Some of the target regions here are not equal to the source, such as und-002 -> en-Latn-NG.
                 // However in the `maximize` method we do not replace tags, so we don't need to store the region.
-                with_diff!((language, Some(script), _) => region.insert(&reg, &(language, script)));
+                with_diff!((language, Some(script), _) => region.insert(&reg.into(), &(language, script)));
             } else {
                 und = Some((
                     entry.1.language,
