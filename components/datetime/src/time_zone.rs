@@ -169,9 +169,16 @@ impl TimeZoneFormat {
             format_units,
             fallback_unit: TimeZoneFormat::get_fallback_unit(options.fallback_format),
         };
-        let mut count_zone_symbols = 0;
+        let mut prev_length = None;
+        let mut prev_symbol = None;
         for (length, symbol) in zone_symbols {
-            count_zone_symbols += 1;
+            if prev_length == None && prev_symbol == None {
+                prev_length = Some(length);
+                prev_symbol = Some(symbol);
+            } else if prev_length != Some(length) && prev_symbol != Some(symbol) {
+                return Err(DateTimeFormatError::UnsupportedOptions);
+            }
+
             match symbol {
                 TimeZone::LowerZ => match length {
                     1..=3 => {
@@ -333,9 +340,6 @@ impl TimeZoneFormat {
                     }
                 },
             }
-        }
-        if count_zone_symbols > 1 {
-            return Err(DateTimeFormatError::UnsupportedOptions);
         }
         Ok(tz_format)
     }
@@ -725,11 +729,14 @@ impl TimeZoneFormat {
     }
 
     /// Formats the seconds as a [`String`] with zero-padding.
-    fn format_offset_seconds(time_zone: &impl TimeZoneInput) -> String {
-        TimeZoneFormat::format_time_segment(
+    fn format_offset_seconds<W: fmt::Write + ?Sized>(
+        sink: &mut W,
+        time_zone: &impl TimeZoneInput,
+    ) -> fmt::Result {
+        sink.write_str(&TimeZoneFormat::format_time_segment(
             (time_zone.gmt_offset().raw_offset_seconds() % 3600 % 60).abs() as u8,
             ZeroPadding::On,
-        )
+        ))
     }
 }
 
@@ -820,17 +827,9 @@ impl Default for FallbackFormat {
 }
 
 /// A bag of options to define how time zone will be formatted.
-#[derive(Debug, Clone, Copy, PartialEq)]
+#[derive(Default, Debug, Clone, Copy, PartialEq)]
 pub struct TimeZoneFormatOptions {
     pub fallback_format: FallbackFormat,
-}
-
-impl Default for TimeZoneFormatOptions {
-    fn default() -> Self {
-        Self {
-            fallback_format: FallbackFormat::default(),
-        }
-    }
 }
 
 // Pacific Time
@@ -1225,7 +1224,7 @@ impl FormatTimeZone for Iso8601Format {
                         return Ok(Err(e));
                     }
                 }
-                if let Err(e) = sink.write_str(&TimeZoneFormat::format_offset_seconds(time_zone)) {
+                if let Err(e) = TimeZoneFormat::format_offset_seconds(sink, time_zone) {
                     return Ok(Err(e));
                 }
             }
