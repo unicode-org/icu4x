@@ -265,6 +265,42 @@ macro_rules! unicode_ext_key {
     }};
 }
 
+/// A macro allowing for compile-time construction of valid Transform [`Key`] subtag.
+///
+/// The macro will perform syntax canonicalization of the tag.
+///
+/// # Examples
+///
+/// ```
+/// use icu::locid::transform_ext_key;
+/// use icu::locid::extensions::transform::{Key, Value};
+/// use icu::locid::Locale;
+/// use writeable::Writeable;
+///
+/// const HYBRID_KEY: Key = transform_ext_key!("h0");
+///
+/// let loc: Locale = "hi-t-en-h0-hybrid".parse().unwrap();
+///
+/// assert_eq!(
+///     loc.extensions.transform.fields.get(HYBRID_KEY),
+///     Some(&Value::from_bytes(b"hybrid").unwrap())
+/// );
+/// ```
+///
+/// [`Key`]: crate::extensions::transform::Key
+#[macro_export]
+macro_rules! transform_ext_key {
+    ($key:literal) => {{
+        const R: $crate::extensions::transform::Key =
+            match $crate::extensions::transform::Key::from_bytes($key.as_bytes()) {
+                Ok(r) => r,
+                #[allow(clippy::panic)] // const context
+                _ => panic!(concat!("Invalid Transform extension key: ", $key)),
+            };
+        R
+    }};
+}
+
 #[cfg(test)]
 mod test {
     const LANG_PL: crate::subtags::Language = language!("pL");
@@ -274,6 +310,7 @@ mod test {
     const LANGID: crate::LanguageIdentifier = langid!("de-Arab-AT");
     const LOCALE: crate::Locale = locale!("de-Arab-AT");
     const UNICODE_EXT_KEY: crate::extensions::unicode::Key = unicode_ext_key!("ms");
+    const TRANSFORM_EXT_KEY: crate::extensions::transform::Key = transform_ext_key!("h0");
 
     #[test]
     fn language() {
@@ -336,5 +373,14 @@ mod test {
         assert_eq!(unicode_ext_key.to_string(), "ms");
         assert_eq!(UNICODE_EXT_KEY.to_string(), "ms");
         assert_eq!(unicode_ext_key, UNICODE_EXT_KEY);
+    }
+
+    #[test]
+    fn transform_ext_key() {
+        let transform_ext_key = transform_ext_key!("H0");
+
+        assert_eq!(transform_ext_key.to_string(), "h0");
+        assert_eq!(TRANSFORM_EXT_KEY.to_string(), "h0");
+        assert_eq!(transform_ext_key, TRANSFORM_EXT_KEY);
     }
 }
