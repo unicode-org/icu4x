@@ -3,8 +3,8 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use core::borrow::Borrow;
-use litemap::LiteMap;
 use core::iter::FromIterator;
+use litemap::LiteMap;
 
 use super::Key;
 use super::Value;
@@ -113,8 +113,8 @@ impl Fields {
     /// ```
     pub fn contains_key<Q>(&self, key: &Q) -> bool
     where
-    Key: Borrow<Q>,
-    Q: Ord,
+        Key: Borrow<Q>,
+        Q: Ord,
     {
         self.0.contains_key(key)
     }
