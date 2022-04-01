@@ -246,7 +246,7 @@ macro_rules! locale {
 /// let loc: Locale = "de-u-ca-buddhist".parse().unwrap();
 ///
 /// assert_eq!(
-///     loc.extensions.unicode.keywords.get(CALENDAR_KEY),
+///     loc.extensions.unicode.keywords.get(&CALENDAR_KEY),
 ///     Some(&Value::from_bytes(b"buddhist").unwrap())
 /// );
 /// ```
@@ -282,7 +282,7 @@ macro_rules! unicode_ext_key {
 /// let loc: Locale = "hi-t-en-h0-hybrid".parse().unwrap();
 ///
 /// assert_eq!(
-///     loc.extensions.transform.fields.get(HYBRID_KEY),
+///     loc.extensions.transform.fields.get(&HYBRID_KEY),
 ///     Some(&Value::from_bytes(b"hybrid").unwrap())
 /// );
 /// ```
