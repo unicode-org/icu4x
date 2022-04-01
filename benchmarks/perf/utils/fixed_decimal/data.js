@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1648849550993,
+  "lastUpdate": 1648857375808,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -22289,6 +22289,36 @@ window.BENCHMARK_DATA = {
             "name": "fixed_decimal/overview",
             "value": 96647,
             "range": "± 478",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "e265c6023a7fcad356632274177359e1ab9d5fa8",
+          "message": "Removing CLDR 40 compatibility (#1765)",
+          "timestamp": "2022-04-01T16:49:32-07:00",
+          "tree_id": "f7b6f073f4e51636631f8efea7de4046c891b82b",
+          "url": "https://github.com/unicode-org/icu4x/commit/e265c6023a7fcad356632274177359e1ab9d5fa8"
+        },
+        "date": 1648857352872,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 130013,
+            "range": "± 602",
             "unit": "ns/iter"
           }
         ]
