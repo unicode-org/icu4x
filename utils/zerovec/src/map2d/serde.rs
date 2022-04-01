@@ -6,15 +6,15 @@ use super::{ZeroMap2d, ZeroMap2dBorrowed};
 use crate::map::{MutableZeroVecLike, ZeroMapKV, ZeroVecLike};
 use crate::ZeroVec;
 use alloc::vec::Vec;
-use core::cell::RefCell;
 use core::fmt;
 use core::marker::PhantomData;
 use dep_serde as serde;
-use serde::de::{self, MapAccess, Visitor};
-use serde::ser::SerializeMap;
-use serde::{Deserialize, Deserializer, Serialize, Serializer};
+use serde::de::{self, Deserialize, Deserializer, MapAccess, Visitor};
+#[cfg(feature = "serde_serialize")]
+use serde::ser::{Serialize, SerializeMap, Serializer};
 
-/// This impl can be made available by enabling the optional `serde` feature of the `zerovec` crate
+/// This impl can be made available by enabling the optional `serde_serialize` feature of the `zerovec` crate
+#[cfg(feature = "serde_serialize")]
 impl<'a, K0, K1, V> Serialize for ZeroMap2d<'a, K0, K1, V>
 where
     K0: ZeroMapKV<'a> + Serialize + ?Sized,
@@ -36,7 +36,7 @@ where
                 let inner_map = ZeroMap2dInnerMapSerialize {
                     key0_index,
                     map: self,
-                    values_it: RefCell::new(values_it),
+                    values_it: core::cell::RefCell::new(values_it),
                 };
                 serde_map.serialize_value(&inner_map)?;
                 values_it = inner_map.values_it.into_inner();
@@ -49,6 +49,7 @@ where
 }
 
 /// Helper struct for human-serializing the inner map of a ZeroMap2d
+#[cfg(feature = "serde_serialize")]
 struct ZeroMap2dInnerMapSerialize<'a, 'l, K0, K1, V, I>
 where
     K0: ZeroMapKV<'a> + ?Sized,
@@ -57,9 +58,10 @@ where
 {
     pub key0_index: usize,
     pub map: &'l ZeroMap2d<'a, K0, K1, V>,
-    pub values_it: RefCell<I>,
+    pub values_it: core::cell::RefCell<I>,
 }
 
+#[cfg(feature = "serde_serialize")]
 impl<'a, 'l, K0, K1, V, I> Serialize for ZeroMap2dInnerMapSerialize<'a, 'l, K0, K1, V, I>
 where
     K0: ZeroMapKV<'a> + Serialize + ?Sized,
@@ -85,7 +87,8 @@ where
     }
 }
 
-/// This impl can be made available by enabling the optional `serde` feature of the `zerovec` crate
+/// This impl can be made available by enabling the optional `serde_serialize` feature of the `zerovec` crate
+#[cfg(feature = "serde_serialize")]
 impl<'a, K0, K1, V> Serialize for ZeroMap2dBorrowed<'a, K0, K1, V>
 where
     K0: ZeroMapKV<'a> + Serialize + ?Sized,
@@ -296,7 +299,7 @@ where
     }
 }
 
-// /// This impl can be made available by enabling the optional `serde` feature of the `zerovec` crate
+/// This impl can be made available by enabling the optional `serde` feature of the `zerovec` crate
 impl<'de, 'a, K0, K1, V> Deserialize<'de> for ZeroMap2dBorrowed<'a, K0, K1, V>
 where
     K0: ZeroMapKV<'a> + Ord + ?Sized,

@@ -53,7 +53,8 @@ zerofrom = { version = "0.1.0", path = "../zerofrom", features = ["derive"] }
 bench = []
 std = []
 derive = ["zerovec-derive"]
-serde = ["dep_serde", "serde_json"]
+serde = ["dep_serde"]
+serde_serialize = ["serde", "serde_json"]
 
 [[bench]]
 name = "zerovec"

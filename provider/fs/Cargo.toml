@@ -36,7 +36,7 @@ extra_features = [
 all-features = true
 
 [dependencies]
-icu_provider = { version = "0.5", path = "../../provider/core", features = ["serde", "std"] }
+icu_provider = { version = "0.5", path = "../core", features = ["serialize", "std"] }
 icu_locid = { version = "0.5", path = "../../components/locid", features = ["serde"] }
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"] }
 erased-serde = { version = "0.3", default-features = false, features = ["alloc"] }

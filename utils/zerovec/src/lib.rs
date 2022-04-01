@@ -34,8 +34,8 @@
 //!
 //! # Cargo features
 //!
-//! This crate has four optional features:
-//!  -  `serde`: Allows serializing and deserializing `zerovec`'s abstractions via [`serde`](https://docs.rs/serde)
+//! This crate has five optional features:
+//!  -  `serde` and `serde_serialize: Allows serializing and deserializing `zerovec`'s abstractions via [`serde`](https://docs.rs/serde)
 //!  -   `yoke`: Enables implementations of `Yokeable` from the [`yoke`](https://docs.rs/yoke/) crate, which is also useful
 //!              in situations involving a lot of zero-copy deserialization.
 //!  - `derive`: Makes it easier to use custom types in these collections by providing the [`#[make_ule]`](crate::make_ule) and
@@ -54,7 +54,7 @@
 //! Serialize and deserialize a struct with ZeroVec and VarZeroVec with Bincode:
 //!
 //! ```
-//! # #[cfg(feature = "serde")] {
+//! # #[cfg(feature = "serde_serialize")] {
 //! use zerovec::{ZeroVec, VarZeroVec};
 //!
 //! // This example requires the "serde" feature
@@ -86,20 +86,22 @@
 //! assert_eq!(deserialized.strs.get(1), Some("world"));
 //! // The deserialization will not have allocated anything
 //! assert!(matches!(deserialized.nums, ZeroVec::Borrowed(_)));
-//! # } // feature = "serde"
+//! # } // feature = "serde_serialize"
 //! ```
 //!
 //! Use custom types inside of ZeroVec:
 //!
 //! ```rust
-//! # #[cfg(all(feature = "serde", feature = "derive"))] {
+//! # #[cfg(all(feature = "serde_serialize", feature = "derive"))] {
 //! use zerovec::{ZeroVec, VarZeroVec, ZeroMap};
 //! use std::borrow::Cow;
 //! use zerovec::ule::encode_varule_to_box;
+//! # use dep_serde as serde;
 //!
 //! // custom fixed-size ULE type for ZeroVec
 //! #[zerovec::make_ule(DateULE)]
 //! #[derive(Copy, Clone, PartialEq, Eq, Ord, PartialOrd, serde::Serialize, serde::Deserialize)]
+//! # #[serde(crate = "dep_serde")]
 //! struct Date {
 //!     y: u64,
 //!     m: u8,
@@ -110,6 +112,7 @@
 //! #[zerovec::make_varule(PersonULE)]
 //! #[zerovec::serde]
 //! #[derive(Clone, PartialEq, Eq, Ord, PartialOrd, serde::Serialize, serde::Deserialize)]
+//! # #[serde(crate = "dep_serde")]
 //! struct Person<'a> {
 //!     birthday: Date,
 //!     favorite_character: char,
@@ -117,7 +120,6 @@
 //!     name: Cow<'a, str>,
 //! }
 //!
-//! # pub use dep_serde as serde;
 //! #[derive(serde::Serialize, serde::Deserialize)]
 //! # #[serde(crate = "dep_serde")]
 //! struct Data<'a> {
@@ -322,16 +324,17 @@ pub mod vecs {
 ///
 /// ```rust
 /// use zerovec::ZeroVec;
+/// # use dep_serde as serde;
 ///
 /// #[zerovec::make_ule(DateULE)]
 /// #[derive(Copy, Clone, PartialEq, Eq, Ord, PartialOrd, serde::Serialize, serde::Deserialize)]
+/// # #[serde(crate = "dep_serde")]
 /// struct Date {
 ///     y: u64,
 ///     m: u8,
 ///     d: u8
 /// }
 ///
-/// # pub use dep_serde as serde;
 /// #[derive(serde::Serialize, serde::Deserialize)]
 /// # #[serde(crate = "dep_serde")]
 /// struct Dates<'a> {
@@ -371,7 +374,7 @@ pub use zerovec_derive::make_ule;
 /// Provided the type implements [`serde::Serialize`](dep_serde::Serialize) and [`serde::Deserialize`](dep_serde::Deserialize), this attribute can also generate
 /// the relevant serialize/deserialize implementations for the [`VarULE`] type if you apply the `#[zerovec::serde]`
 /// attribute. Those impls are required to support human-readable serialization of the VarZeroVec.
-/// This needs the `serde` feature to be enabled on the `zerovec` crate to work.
+/// This needs the `serde`/`serde_serialize` features to be enabled on the `zerovec` crate to work.
 ///
 /// By default this attribute will also autogenerate a [`ZeroMapKV`] implementation, which requires
 /// [`Ord`] and [`PartialOrd`] on the [`VarULE`] type. You can opt out of this with `#[zerovec::skip_kv]`.
@@ -395,10 +398,12 @@ pub use zerovec_derive::make_ule;
 /// use std::borrow::Cow;
 /// use zerovec::ule::encode_varule_to_box;
 /// use zerofrom::ZeroFrom;
+/// # use dep_serde as serde;
 ///
 /// // custom fixed-size ULE type for ZeroVec
 /// #[zerovec::make_ule(DateULE)]
 /// #[derive(Copy, Clone, PartialEq, Eq, Ord, PartialOrd, serde::Serialize, serde::Deserialize)]
+/// # #[serde(crate = "dep_serde")]
 /// struct Date {
 ///     y: u64,
 ///     m: u8,
@@ -409,6 +414,7 @@ pub use zerovec_derive::make_ule;
 /// #[zerovec::make_varule(PersonULE)]
 /// #[zerovec::serde]
 /// #[derive(Clone, PartialEq, Eq, Ord, PartialOrd, serde::Serialize, serde::Deserialize)]
+/// # #[serde(crate = "dep_serde")]
 /// struct Person<'a> {
 ///     birthday: Date,
 ///     favorite_character: char,
@@ -416,7 +422,6 @@ pub use zerovec_derive::make_ule;
 ///     name: Cow<'a, str>,
 /// }
 ///
-/// # pub use dep_serde as serde;
 /// #[derive(serde::Serialize, serde::Deserialize)]
 /// # #[serde(crate = "dep_serde")]
 /// struct Data<'a> {

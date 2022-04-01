@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-#[cfg(feature = "serde")]
+#[cfg(feature = "serialize")]
 use alloc::format;
 use alloc::vec::Vec;
 use core::{char, ops::RangeBounds, ops::RangeInclusive};
@@ -42,7 +42,7 @@ pub struct UnicodeSet<'data> {
     size: usize,
 }
 
-#[cfg(any(feature = "serde", test))]
+#[cfg(any(feature = "serialize", test))]
 impl<'de: 'a, 'a> serde::Deserialize<'de> for UnicodeSet<'a> {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where
@@ -64,7 +64,7 @@ impl<'de: 'a, 'a> serde::Deserialize<'de> for UnicodeSet<'a> {
 // to replace the struct when serializing. The error message from the default
 // serialization is: "can only flatten structs and maps (got a sequence)".
 
-#[cfg(any(feature = "serde", test))]
+#[cfg(any(feature = "serde_serialize", test))]
 impl<'data> serde::Serialize for UnicodeSet<'data> {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where

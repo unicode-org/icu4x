@@ -6,11 +6,12 @@ use super::{MutableZeroVecLike, ZeroMap, ZeroMapBorrowed, ZeroMapKV, ZeroVecLike
 use core::fmt;
 use core::marker::PhantomData;
 use dep_serde as serde;
-use serde::de::{self, MapAccess, SeqAccess, Visitor};
-use serde::ser::{SerializeMap, SerializeSeq};
-use serde::{Deserialize, Deserializer, Serialize, Serializer};
+use serde::de::{self, Deserialize, Deserializer, MapAccess, SeqAccess, Visitor};
+#[cfg(feature = "serde_serialize")]
+use serde::ser::{Serialize, SerializeMap, SerializeSeq, Serializer};
 
-/// This impl can be made available by enabling the optional `serde` feature of the `zerovec` crate
+/// This impl can be made available by enabling the optional `serde_serialize` feature of the `zerovec` crate
+#[cfg(feature = "serde_serialize")]
 impl<'a, K, V> Serialize for ZeroMap<'a, K, V>
 where
     K: ZeroMapKV<'a> + Serialize + ?Sized,
@@ -50,7 +51,8 @@ where
     }
 }
 
-/// This impl can be made available by enabling the optional `serde` feature of the `zerovec` crate
+/// This impl can be made available by enabling the optional `serde_serialize` feature of the `zerovec` crate
+#[cfg(feature = "serde_serialize")]
 impl<'a, K, V> Serialize for ZeroMapBorrowed<'a, K, V>
 where
     K: ZeroMapKV<'a> + Serialize + ?Sized,

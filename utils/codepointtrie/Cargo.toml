@@ -33,11 +33,11 @@ all-features = true
 
 [dependencies]
 displaydoc = { version = "0.2.3", default-features = false }
-icu_uniset = { version = "0.4.1", path = "../../utils/uniset", features = ["serde"] }
+icu_uniset = { version = "0.4.1", path = "../uniset" }
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }
 yoke = { version = "0.4.0", path = "../yoke", features = ["derive"] }
 zerofrom = { version = "0.1.0", path = "../zerofrom", features = ["derive"] }
-zerovec = { version = "0.6", path = "../../utils/zerovec", features = ["serde", "yoke"] }
+zerovec = { version = "0.6", path = "../zerovec", features = ["yoke"] }
 
 [dev-dependencies]
 postcard = { version = "0.7", features = ["alloc"] }
@@ -50,4 +50,5 @@ path = "src/lib.rs"
 
 [features]
 default = ["serialize"]
-serialize = ["serde"]
+serialize = ["serde", "zerovec/serde", "icu_uniset/serde"]
+serde_serialize = ["zerovec/serde_serialize", "icu_uniset/serde_serialize"]

@@ -10,6 +10,7 @@ use core::fmt;
 use core::marker::PhantomData;
 use dep_serde as serde;
 use serde::de::{self, Deserialize, Deserializer, SeqAccess, Visitor};
+#[cfg(feature = "serde_serialize")]
 use serde::ser::{Serialize, SerializeSeq, Serializer};
 
 struct VarZeroVecVisitor<T: ?Sized> {
@@ -108,6 +109,7 @@ where
 }
 
 /// This impl can be made available by enabling the optional `serde` feature of the `zerovec` crate
+#[cfg(feature = "serde_serialize")]
 impl<T> Serialize for VarZeroVec<'_, T>
 where
     T: Serialize + VarULE + ?Sized,
@@ -129,6 +131,7 @@ where
 }
 
 /// This impl can be made available by enabling the optional `serde` feature of the `zerovec` crate
+#[cfg(feature = "serde_serialize")]
 impl<T> Serialize for VarZeroSlice<T>
 where
     T: Serialize + VarULE + ?Sized,
