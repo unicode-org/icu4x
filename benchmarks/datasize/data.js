@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1648779641421,
+  "lastUpdate": 1648789389480,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -12293,6 +12293,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/8b97e42cbd2dbcbcd3abf7ee350c0153361f1f64"
         },
         "date": 1648779627393,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4555035,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "0188c9c623b46c9390a26024704291a7f93f0a6d",
+          "message": "Add transform_ext_key! macro (#1763)",
+          "timestamp": "2022-03-31T22:01:33-07:00",
+          "tree_id": "9b1b89a250390c396d47e1b4328c3f01e83c64c4",
+          "url": "https://github.com/unicode-org/icu4x/commit/0188c9c623b46c9390a26024704291a7f93f0a6d"
+        },
+        "date": 1648789371808,
         "tool": "ndjson",
         "benches": [
           {
