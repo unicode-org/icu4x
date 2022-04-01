@@ -9,10 +9,10 @@
 
 use icu::calendar::Gregorian;
 use icu::datetime::DateTimeFormatOptions;
-use icu::locid::{macros::langid, Locale};
+use icu::locid::{locale, Locale};
 use icu::plurals::{PluralCategory, PluralRules};
 use icu_datetime::{
-    mock::zoned_datetime::MockZonedDateTime, time_zone::TimeZoneFormatOptions, ZonedDateTimeFormat,
+    mock::zoned_datetime::MockZonedDateTime, TimeZoneFormatOptions, ZonedDateTimeFormat,
 };
 use icu_uniset::UnicodeSetBuilder;
 use std::env;
@@ -30,8 +30,8 @@ fn main(_argc: isize, _argv: *const *const u8) -> isize {
 
     let locale: Locale = args
         .get(1)
-        .map(|s| s.parse().expect("Failed to parse language identifier"))
-        .unwrap_or_else(|| langid!("en").into());
+        .map(|s| s.parse().expect("Failed to parse locale"))
+        .unwrap_or_else(|| locale!("en"));
 
     let user_name = args.get(2).cloned().unwrap_or_else(|| "John".to_string());
 
@@ -80,9 +80,8 @@ fn main(_argc: isize, _argv: *const *const u8) -> isize {
     }
 
     {
-        let en = langid!("en");
-        let pr =
-            PluralRules::try_new_cardinal(en, &provider).expect("Failed to create PluralRules.");
+        let pr = PluralRules::try_new_cardinal(locale!("en"), &provider)
+            .expect("Failed to create PluralRules.");
 
         match pr.select(email_count) {
             PluralCategory::One => print("Note: You have one unread email."),

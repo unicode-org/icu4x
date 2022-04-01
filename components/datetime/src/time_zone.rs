@@ -62,7 +62,7 @@ where
 ///
 /// ```
 /// use icu_locid::locale;
-/// use icu_datetime::{TimeZoneFormat, TimeZoneFormatConfig};
+/// use icu_datetime::{TimeZoneFormat, TimeZoneFormatConfig, TimeZoneFormatOptions};
 /// use icu_datetime::date::GmtOffset;
 /// use icu_datetime::mock::time_zone::MockTimeZone;
 /// use icu_provider::inv::InvariantDataProvider;
@@ -351,7 +351,7 @@ impl TimeZoneFormat {
     ///
     /// ```
     /// use icu_locid::locale;
-    /// use icu_datetime::{TimeZoneFormat, TimeZoneFormatConfig};
+    /// use icu_datetime::{TimeZoneFormat, TimeZoneFormatConfig, TimeZoneFormatOptions};
     /// use icu_datetime::mock::time_zone::MockTimeZone;
     /// use icu_provider::inv::InvariantDataProvider;
     ///
@@ -603,7 +603,7 @@ impl TimeZoneFormat {
     ///
     /// ```
     /// use icu_locid::locale;
-    /// use icu_datetime::{TimeZoneFormat, TimeZoneFormatConfig};
+    /// use icu_datetime::{TimeZoneFormat, TimeZoneFormatConfig, TimeZoneFormatOptions};
     /// use icu_datetime::date::GmtOffset;
     /// use icu_datetime::mock::time_zone::MockTimeZone;
     /// use icu_provider::inv::InvariantDataProvider;
@@ -639,7 +639,7 @@ impl TimeZoneFormat {
     ///
     /// ```
     /// use icu_locid::locale;
-    /// use icu_datetime::{TimeZoneFormat, TimeZoneFormatConfig};
+    /// use icu_datetime::{TimeZoneFormat, TimeZoneFormatConfig, TimeZoneFormatOptions};
     /// use icu_datetime::date::GmtOffset;
     /// use icu_datetime::mock::time_zone::MockTimeZone;
     /// use icu_provider::inv::InvariantDataProvider;
@@ -676,7 +676,7 @@ impl TimeZoneFormat {
     ///
     /// ```
     /// use icu_locid::locale;
-    /// use icu_datetime::{TimeZoneFormat, TimeZoneFormatConfig};
+    /// use icu_datetime::{TimeZoneFormat, TimeZoneFormatConfig, TimeZoneFormatOptions};
     /// use icu_datetime::date::GmtOffset;
     /// use icu_datetime::mock::time_zone::MockTimeZone;
     /// use icu_provider::inv::InvariantDataProvider;
