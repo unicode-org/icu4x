@@ -8,7 +8,7 @@ use crate::cldr::reader::{get_langid_subdirectories, get_langid_subdirectory, op
 use crate::cldr::CldrPaths;
 use crate::uprops::EnumeratedPropertyCodePointTrieProvider;
 use icu_list::provider::*;
-use icu_locid::{langid, language};
+use icu_locid::language;
 use icu_provider::datagen::IterableResourceProvider;
 use icu_provider::prelude::*;
 use std::path::PathBuf;
@@ -158,11 +158,6 @@ impl<M: ResourceMarker<Yokeable = ListFormatterPatternsV1<'static>>> IterableRes
     ) -> Result<Box<dyn Iterator<Item = ResourceOptions> + '_>, DataError> {
         Ok(Box::new(
             get_langid_subdirectories(&self.cldr_misc.join("main"))?
-                // ur-IN has a buggy pattern ("{1}, {0}") which violates
-                // our invariant that {0} is at index 0 (and rotates the output).
-                // ml has middle and start patterns with suffixes.
-                // See https://github.com/unicode-org/icu4x/issues/1282
-                .filter(|l| l != &langid!("ur-IN") && l != &langid!("ml"))
                 .map(Into::<ResourceOptions>::into),
         ))
     }
