@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1648748107735,
+  "lastUpdate": 1648779641421,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -12263,6 +12263,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/4993eca3908ab57240e260faaefc91286c6e7ca2"
         },
         "date": 1648748089207,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4555035,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "8b97e42cbd2dbcbcd3abf7ee350c0153361f1f64",
+          "message": "Add unicode_key! macro (#1759)",
+          "timestamp": "2022-03-31T19:19:14-07:00",
+          "tree_id": "6b31a5b178ce04432488fd895b3180639c54fff7",
+          "url": "https://github.com/unicode-org/icu4x/commit/8b97e42cbd2dbcbcd3abf7ee350c0153361f1f64"
+        },
+        "date": 1648779627393,
         "tool": "ndjson",
         "benches": [
           {
