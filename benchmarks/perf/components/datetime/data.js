@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1648849664243,
+  "lastUpdate": 1648857413848,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -24875,6 +24875,48 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 193706,
             "range": "± 9661",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "e265c6023a7fcad356632274177359e1ab9d5fa8",
+          "message": "Removing CLDR 40 compatibility (#1765)",
+          "timestamp": "2022-04-01T16:49:32-07:00",
+          "tree_id": "f7b6f073f4e51636631f8efea7de4046c891b82b",
+          "url": "https://github.com/unicode-org/icu4x/commit/e265c6023a7fcad356632274177359e1ab9d5fa8"
+        },
+        "date": 1648857397272,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 73579,
+            "range": "± 162",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 765873,
+            "range": "± 854",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 157186,
+            "range": "± 286",
             "unit": "ns/iter"
           }
         ]
