@@ -35,7 +35,7 @@ all-features = true
 
 [dependencies]
 tinystr = { path = "../../utils/tinystr", version = "0.5.0", features = ["alloc"], default-features = false }
-serde = { version = "1.0", optional = true, default-features = false, features = ["alloc"] }
+serde = { version = "1.0", optional = true, default-features = false, features = ["alloc", "derive"] }
 writeable = { version = "0.3", path = "../../utils/writeable" }
 displaydoc = { version = "0.2.3", default-features = false }
 zerovec = { version = "0.6", path = "../../utils/zerovec", optional = true }
@@ -55,6 +55,7 @@ bench = false  # This option is required for Benchmark CI
 default = []
 std = []
 bench = []
+serialize = ["serde", "tinystr/serde"]
 
 [[bench]]
 name = "subtags"

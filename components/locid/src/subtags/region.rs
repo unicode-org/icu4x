@@ -22,7 +22,7 @@ use tinystr::TinyAsciiStr;
 ///
 /// [`unicode_region_id`]: https://unicode.org/reports/tr35/#unicode_region_id
 #[derive(Debug, PartialEq, Eq, Clone, Hash, PartialOrd, Ord, Copy)]
-#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+#[cfg_attr(feature = "serialize", derive(serde::Serialize, serde::Deserialize))]
 #[repr(transparent)]
 pub struct Region(TinyAsciiStr<REGION_NUM_LENGTH>);
 
