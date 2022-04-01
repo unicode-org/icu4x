@@ -32,7 +32,6 @@ denylist = ["bench"]
 all-features = true
 
 [dependencies]
-litemap = { version = "0.3.0", path = "../litemap" }
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }
 tinystr = { path = "../tinystr", version = "0.5.0", features = ["alloc"], default-features = false }
 displaydoc = { version = "0.2.3", default-features = false }
