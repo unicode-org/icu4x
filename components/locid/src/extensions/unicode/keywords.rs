@@ -60,7 +60,7 @@ impl Keywords {
     /// use icu::locid::Locale;
     /// use icu::locid::extensions::unicode::Keywords;
     ///
-    /// let loc1 = Locale::from_bytes(b"und-t-mul").unwrap();
+    /// let loc1 = Locale::from_bytes(b"und-t-h0-hybrid").unwrap();
     /// let loc2 = Locale::from_bytes(b"und-u-ca-buddhist").unwrap();
     ///
     /// assert!(loc1.extensions.unicode.keywords.is_empty());

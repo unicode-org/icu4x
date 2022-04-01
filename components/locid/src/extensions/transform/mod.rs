@@ -45,6 +45,7 @@ use crate::parser::{parse_language_identifier_from_iter, ParserError, ParserMode
 use crate::subtags::Language;
 use crate::LanguageIdentifier;
 use alloc::vec;
+use litemap::LiteMap;
 
 /// A list of [`Unicode BCP47 T Extensions`] as defined in [`Unicode Locale
 /// Identifier`] specification.
@@ -135,7 +136,7 @@ impl Transform {
 
     pub(crate) fn try_from_iter(iter: &mut SubtagIterator) -> Result<Self, ParserError> {
         let mut tlang = None;
-        let mut tfields = vec![];
+        let mut tfields = LiteMap::new();
 
         if let Some(subtag) = iter.peek() {
             if Language::from_bytes(subtag).is_ok() {
@@ -157,10 +158,10 @@ impl Transform {
                     if current_tvalue.is_empty() {
                         return Err(ParserError::InvalidExtension);
                     }
-                    tfields.push((
+                    tfields.insert(
                         tkey,
                         Value::from_vec_unchecked(current_tvalue.drain(..).flatten().collect()),
-                    ));
+                    );
                     current_tkey = None;
                     continue;
                 }
@@ -177,17 +178,15 @@ impl Transform {
             if current_tvalue.is_empty() {
                 return Err(ParserError::InvalidExtension);
             }
-            tfields.push((
+            tfields.insert(
                 tkey,
                 Value::from_vec_unchecked(current_tvalue.into_iter().flatten().collect()),
-            ));
+            );
         }
-
-        tfields.sort_by_key(|f| f.0);
 
         Ok(Self {
             lang: tlang,
-            fields: Fields::from_vec_unchecked(tfields),
+            fields: tfields.into(),
         })
     }
 

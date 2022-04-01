@@ -50,7 +50,7 @@ impl TryFrom<LocaleExtensions> for Extensions {
     fn try_from(input: LocaleExtensions) -> Result<Self, Self::Error> {
         let mut ext = Extensions::default();
         if let Some(unicode) = input.unicode {
-            let keywords: LiteMap<unicode::Key, unicode::Value> = unicode
+            ext.unicode.keywords = unicode
                 .keywords
                 .iter()
                 .map(|(k, v)| {
@@ -66,7 +66,6 @@ impl TryFrom<LocaleExtensions> for Extensions {
                     )
                 })
                 .collect();
-            ext.unicode.keywords = keywords.into();
             let v: Vec<unicode::Attribute> = unicode
                 .attributes
                 .iter()
@@ -77,7 +76,7 @@ impl TryFrom<LocaleExtensions> for Extensions {
             ext.unicode.attributes = unicode::Attributes::from_vec_unchecked(v);
         }
         if let Some(transform) = input.transform {
-            let mut v: Vec<(transform::Key, transform::Value)> = transform
+            ext.transform.fields = transform
                 .tfields
                 .iter()
                 .map(|(k, v)| {
@@ -92,8 +91,6 @@ impl TryFrom<LocaleExtensions> for Extensions {
                     )
                 })
                 .collect();
-            v.sort_by_key(|i| i.0);
-            ext.transform.fields = transform::Fields::from_vec_unchecked(v);
 
             if let Some(tlang) = transform.tlang {
                 ext.transform.lang = Some(tlang.parse().expect("Failed to parse tlang."));
