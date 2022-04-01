@@ -416,6 +416,34 @@ impl<K, V> LiteMap<K, V> {
     pub fn iter_mut(&mut self) -> impl Iterator<Item = (&K, &mut V)> + DoubleEndedIterator {
         self.values.iter_mut().map(|val| (&val.0, &mut val.1))
     }
+
+    /// Retains only the elements specified by the predicate.
+    ///
+    /// In other words, remove all elements such that `f((&k, &v))` returns `false`.
+    ///
+    /// # Example
+    ///
+    /// ```rust
+    /// use litemap::LiteMap;
+    ///
+    /// let mut map = LiteMap::new();
+    /// map.insert(1, "one");
+    /// map.insert(2, "two");
+    /// map.insert(3, "three");
+    ///
+    /// // Retain elements with odd keys
+    /// map.retain(|(k, _)| k % 2 == 1);
+    ///
+    /// assert_eq!(map.get(&1), Some(&"one"));
+    /// assert_eq!(map.get(&2), None);
+    /// ```
+    #[inline]
+    pub fn retain<F>(&mut self, mut predicate: F)
+    where
+        F: FnMut((&K, &V)) -> bool,
+    {
+        self.values.retain(|(ref k, ref v)| predicate((k, v)))
+    }
 }
 
 #[cfg(test)]
