@@ -27,7 +27,7 @@ include = [
 all-features = true
 
 [dependencies]
-icu_provider = { version = "0.5", path = "../../provider/core", features = ["deserialize_postcard_07", "serde"] }
+icu_provider = { version = "0.5", path = "../core", features = ["deserialize_postcard_07", "serde"] }
 icu_locid = { version = "0.5", path = "../../components/locid", features = ["serde"] }
 serde = { version = "1.0", default-features = false, features = ["alloc"] }
 postcard = { version = "0.7.0", default-features = false }
@@ -42,11 +42,11 @@ litemap = { version = "0.3.0", path = "../../utils/litemap/", optional = true }
 
 [dev-dependencies]
 icu = { version = "0.5", path = "../../components/icu" }
-icu_testdata = { version = "0.5", path = "../../provider/testdata", features = ["static"] }
+icu_testdata = { version = "0.5", path = "../testdata", features = ["static"] }
 
 [lib]
 path = "src/lib.rs"
 
 [features]
-export = ["log", "postcard/alloc", "std", "litemap", "icu_provider/serialize"]
+export = ["log", "postcard/alloc", "std", "litemap", "icu_provider/serialize", "zerovec/serde_serialize"]
 std = ["icu_locid/std", "icu_provider/std"]

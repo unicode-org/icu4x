@@ -35,7 +35,7 @@
 //! # Cargo features
 //!
 //! This crate has five optional features:
-//!  -  `serde` and `serde_serialize: Allows serializing and deserializing `zerovec`'s abstractions via [`serde`](https://docs.rs/serde)
+//!  -  `serde` and `serde_serialize`: Allows serializing and deserializing `zerovec`'s abstractions via [`serde`](https://docs.rs/serde)
 //!  -   `yoke`: Enables implementations of `Yokeable` from the [`yoke`](https://docs.rs/yoke/) crate, which is also useful
 //!              in situations involving a lot of zero-copy deserialization.
 //!  - `derive`: Makes it easier to use custom types in these collections by providing the [`#[make_ule]`](crate::make_ule) and

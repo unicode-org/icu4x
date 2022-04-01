@@ -177,7 +177,8 @@ impl From<ScriptWithExt> for Script {
 /// Script_Extensions properties in an efficient way. This structure matches
 /// the data and data structures that are stored in the corresponding ICU data
 /// file for these properties.
-#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "serde", derive(Deserialize))]
+#[cfg_attr(feature = "datagen", derive(Serialize))]
 #[derive(Clone, Debug, Eq, PartialEq, yoke::Yokeable, zerofrom::ZeroFrom)]
 pub struct ScriptWithExtensions<'data> {
     /// Note: The `ScriptWithExt` values in this array will assume a 12-bit layout. The 2
