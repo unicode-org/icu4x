@@ -70,7 +70,7 @@ use litemap::LiteMap;
 ///
 /// let key: Key = "ca".parse().expect("Parsing key failed.");
 /// let value: Value = "buddhist".parse().expect("Parsing value failed.");
-/// assert_eq!(loc.extensions.unicode.keywords.get(key),
+/// assert_eq!(loc.extensions.unicode.keywords.get(&key),
 ///            Some(&value));
 /// ```
 #[derive(Clone, PartialEq, Eq, Debug, Default, Hash, PartialOrd, Ord)]
@@ -154,7 +154,7 @@ impl Unicode {
             let slen = subtag.len();
             if slen == 2 {
                 if let Some(kw) = current_keyword.take() {
-                    keywords.insert(kw, Value::from_vec_unchecked(current_type));
+                    keywords.try_insert(kw, Value::from_vec_unchecked(current_type));
                     current_type = vec![];
                 }
                 current_keyword = Some(Key::from_bytes(subtag)?);
@@ -171,7 +171,7 @@ impl Unicode {
         }
 
         if let Some(kw) = current_keyword.take() {
-            keywords.insert(kw, Value::from_vec_unchecked(current_type));
+            keywords.try_insert(kw, Value::from_vec_unchecked(current_type));
         }
 
         // Ensure we've defined at least one attribute or keyword

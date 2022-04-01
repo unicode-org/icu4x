@@ -27,8 +27,8 @@
 //!     .expect("Parsing value failed.");
 //!
 //! assert_eq!(loc.extensions.transform.lang, Some(lang));
-//! assert!(loc.extensions.transform.fields.contains_key(key));
-//! assert_eq!(loc.extensions.transform.fields.get(key), Some(&value));
+//! assert!(loc.extensions.transform.fields.contains_key(&key));
+//! assert_eq!(loc.extensions.transform.fields.get(&key), Some(&value));
 //!
 //! assert_eq!(&loc.extensions.transform.to_string(), "-t-es-AR-h0-hybrid");
 //! ```
@@ -158,7 +158,7 @@ impl Transform {
                     if current_tvalue.is_empty() {
                         return Err(ParserError::InvalidExtension);
                     }
-                    tfields.insert(
+                    tfields.try_insert(
                         tkey,
                         Value::from_vec_unchecked(current_tvalue.drain(..).flatten().collect()),
                     );
@@ -178,7 +178,7 @@ impl Transform {
             if current_tvalue.is_empty() {
                 return Err(ParserError::InvalidExtension);
             }
-            tfields.insert(
+            tfields.try_insert(
                 tkey,
                 Value::from_vec_unchecked(current_tvalue.into_iter().flatten().collect()),
             );

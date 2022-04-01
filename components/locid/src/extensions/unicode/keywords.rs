@@ -230,4 +230,4 @@ impl FromIterator<(Key, Value)> for Keywords {
     }
 }
 
-impl_writeable_for_key_value!(Keywords, "ca", "islamic-civil", "aa", "aa");
+impl_writeable_for_key_value!(Keywords, "ca", "islamic-civil", "mm", "mm");

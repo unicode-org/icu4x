@@ -30,7 +30,7 @@ use super::Value;
 ///     .expect("Failed to parse a Key.");
 /// let value: Value = "hybrid".parse()
 ///     .expect("Failed to parse a Value.");
-/// let fields = Fields::from_vec_unchecked(vec![(key, value)]);
+/// let fields: Fields = vec![(key, value)].into_iter().collect();
 ///
 /// assert_eq!(&fields.to_string(), "h0-hybrid");
 /// ```
@@ -63,8 +63,8 @@ impl Fields {
     /// let loc1 = Locale::from_bytes(b"und-t-h0-hybrid").unwrap();
     /// let loc2 = Locale::from_bytes(b"und-u-ca-buddhist").unwrap();
     ///
-    /// assert!(!loc1.extensions.transform.keywords.is_empty());
-    /// assert!(loc2.extensions.transform.keywords.is_empty());
+    /// assert!(!loc1.extensions.transform.fields.is_empty());
+    /// assert!(loc2.extensions.transform.fields.is_empty());
     /// ```
     pub fn is_empty(&self) -> bool {
         self.0.is_empty()
@@ -81,7 +81,7 @@ impl Fields {
     ///     .expect("Failed to parse a Key.");
     /// let value: Value = "hybrid".parse()
     ///     .expect("Failed to parse a Value.");
-    /// let mut fields = Fields::from_vec_unchecked(vec![(key, value)]);
+    /// let mut fields: Fields = vec![(key, value)].into_iter().collect();
     ///
     /// assert_eq!(&fields.to_string(), "h0-hybrid");
     ///
@@ -105,7 +105,7 @@ impl Fields {
     ///     .expect("Failed to parse a Key.");
     /// let value: Value = "hybrid".parse()
     ///     .expect("Failed to parse a Value.");
-    /// let mut fields = Fields::from_vec_unchecked(vec![(key, value)]);
+    /// let mut fields: Fields = vec![(key, value)].into_iter().collect();
     ///
     /// let key: Key = "h0".parse()
     ///     .expect("Failed to parse a Key.");
@@ -131,7 +131,7 @@ impl Fields {
     ///     .expect("Failed to parse a Key.");
     /// let value: Value = "hybrid".parse()
     ///     .expect("Failed to parse a Value.");
-    /// let mut fields = Fields::from_vec_unchecked(vec![(key, value)]);
+    /// let mut fields: Fields = vec![(key, value)].into_iter().collect();
     ///
     /// let key: Key = "h0".parse()
     ///     .expect("Failed to parse a Key.");

@@ -244,8 +244,42 @@ impl<K: Ord, V> LiteMap<K, V> {
     /// Version of [`Self::insert()`] that returns both the key and the old value.
     fn insert_save_key(&mut self, key: K, value: V) -> Option<(K, V)> {
         match self.values.binary_search_by(|k| k.0.cmp(&key)) {
-            #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
+            #[allow(clippy::indexing_slicing)] // Index came from binary_search
             Ok(found) => Some((key, mem::replace(&mut self.values[found].1, value))),
+            Err(ins) => {
+                self.values.insert(ins, (key, value));
+                None
+            }
+        }
+    }
+
+    /// Attempts to insert a unique entry into the map.
+    ///
+    /// If `key` is not already in the map, inserts it with the corresponding `value`
+    /// and returns `None`.
+    ///
+    /// If `key` is already in the map, no change is made to the map, and the key and value
+    /// are returned back to the caller.
+    ///
+    /// ```
+    /// use litemap::LiteMap;
+    ///
+    /// let mut map = LiteMap::new();
+    /// map.insert(1, "one");
+    /// map.insert(3, "three");
+    ///
+    /// // 2 is not yet in the map...
+    /// assert_eq!(map.try_insert(2, "two"), None);
+    /// assert_eq!(map.len(), 3);
+    ///
+    /// // ...but now it is.
+    /// assert_eq!(map.try_insert(2, "TWO"), Some((2, "TWO")));
+    /// assert_eq!(map.len(), 3);
+    /// ```
+    pub fn try_insert(&mut self, key: K, value: V) -> Option<(K, V)> {
+        match self.values.binary_search_by(|k| k.0.cmp(&key)) {
+            #[allow(clippy::indexing_slicing)] // Index came from binary_search
+            Ok(_) => Some((key, value)),
             Err(ins) => {
                 self.values.insert(ins, (key, value));
                 None
