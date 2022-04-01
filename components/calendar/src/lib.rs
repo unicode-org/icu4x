@@ -25,7 +25,7 @@
 //! The [`iso`] and [`gregorian`] modules contain implementations for the ISO and
 //! Gregorian calendars respectively.
 //!
-//! Some of the algorithms implemented here are based on 
+//! Some of the algorithms implemented here are based on
 //! Dershowitz, Nachum, and Edward M. Reingold. _Calendrical calculations_. Cambridge University Press, 2008.
 //! with associated Lisp code found at <https://github.com/EdReingold/calendar-code2>.
 extern crate alloc;
