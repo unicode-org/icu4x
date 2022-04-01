@@ -120,11 +120,16 @@ fn yokeable_derive_impl(input: &DeriveInput) -> TokenStream2 {
                             yoke_bounds.push(parse_quote!(#fty: yoke::Yokeable<'a, Output = #fty>));
                         }
                     }
-                    // By calling transform_owned on all fields, we manually prove
-                    // that the lifetimes are covariant, since this requirement
-                    // must already be true for the type that implements transform_owned().
-                    quote! {
-                        <#fty as yoke::Yokeable<'a>>::transform_owned(#field)
+                    if has_ty || has_lt {
+                        // By calling transform_owned on all fields, we manually prove
+                        // that the lifetimes are covariant, since this requirement
+                        // must already be true for the type that implements transform_owned().
+                        quote! {
+                            <#fty as yoke::Yokeable<'a>>::transform_owned(#field)
+                        }
+                    } else {
+                        // No nested lifetimes, so nothing to be done
+                        quote! { #field }
                     }
                 })
             });

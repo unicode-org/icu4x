@@ -154,6 +154,8 @@ where
     }
 }
 
+/// Implements [ResourceProvider] and [DynProvider] if [BufferProvider] is implemented.
+/// This allows dropping the call to `.as_deserializing()`.
 #[macro_export]
 macro_rules! impl_auto_deserializing {
     ($buffer_provider: ty) => {

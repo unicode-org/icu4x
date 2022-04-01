@@ -41,12 +41,15 @@ impl Key {
     ///
     /// assert_eq!(key, "i0");
     /// ```
-    pub fn from_bytes(key: &[u8]) -> Result<Self, ParserError> {
+    pub const fn from_bytes(key: &[u8]) -> Result<Self, ParserError> {
         #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
         if key.len() != KEY_LENGTH || !key[0].is_ascii_alphabetic() || !key[1].is_ascii_digit() {
             return Err(ParserError::InvalidExtension);
         }
-        let tkey = TinyAsciiStr::from_bytes(key).map_err(|_| ParserError::InvalidExtension)?;
+        let tkey = match TinyAsciiStr::from_bytes(key) {
+            Ok(k) => k,
+            Err(_) => return Err(ParserError::InvalidSubtag),
+        };
         Ok(Self(tkey.to_ascii_lowercase()))
     }
 

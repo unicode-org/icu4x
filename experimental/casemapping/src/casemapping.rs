@@ -2,13 +2,13 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-#[cfg(feature = "provider_transform_internals")]
+#[cfg(feature = "datagen")]
 use crate::error::Error;
 use crate::internals::*;
-#[cfg(feature = "provider_transform_internals")]
+#[cfg(feature = "datagen")]
 use crate::provider::CaseMappingV1;
 use crate::provider::CaseMappingV1Marker;
-#[cfg(feature = "provider_transform_internals")]
+#[cfg(feature = "datagen")]
 use icu_codepointtrie::CodePointTrieHeader;
 use icu_locid::Locale;
 use icu_provider::prelude::*;
@@ -29,7 +29,7 @@ impl CaseMapping {
     where
         P: ResourceProvider<CaseMappingV1Marker> + ?Sized,
     {
-        Self::try_new_with_locale(provider, &Locale::und())
+        Self::try_new_with_locale(provider, &Locale::UND)
     }
 
     /// A constructor which takes a [`ResourceProvider`] and creates a [`CaseMapping`] for the given locale.
@@ -47,7 +47,7 @@ impl CaseMapping {
 
     /// Creates a new CaseMapping using data exported by the `icuexportdata` tool
     /// in ICU4C. Validates that the data is consistent.
-    #[cfg(feature = "provider_transform_internals")]
+    #[cfg(feature = "datagen")]
     pub fn try_from_icu(
         trie_header: CodePointTrieHeader,
         trie_index: &[u16],

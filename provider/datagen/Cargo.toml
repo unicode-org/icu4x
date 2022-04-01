@@ -38,8 +38,8 @@ displaydoc = { version = "0.2.3", default-features = false }
 elsa = "1.7"
 eyre = "0.6"
 icu_calendar = { version = "0.5", path = "../../components/calendar", features = ["datagen"] }
-icu_casemapping = { version = "0.1", path = "../../experimental/casemapping", features = ["provider_serde", "provider_transform_internals"], optional = true }
-icu_codepointtrie = { version = "0.3.3", path = "../../utils/codepointtrie", features = ["serialize"] }
+icu_casemapping = { version = "0.1", path = "../../experimental/casemapping", features = ["serialize", "datagen"], optional = true }
+icu_codepointtrie = { version = "0.3.3", path = "../../utils/codepointtrie", features = ["serde_serialize"] }
 icu_datetime = { version = "0.5", path = "../../components/datetime", features = ["datagen"] }
 icu_decimal = { version = "0.5", path = "../../components/decimal", features = ["datagen"] }
 icu_list = { version = "0.5", path = "../../components/list", features = ["datagen"]}
@@ -47,12 +47,12 @@ icu_locale_canonicalizer = { version = "0.5", path = "../../components/locale_ca
 icu_locid = { version = "0.5", path = "../../components/locid", features = ["std"]}
 icu_plurals = { version = "0.5", path = "../../components/plurals", features = ["datagen"] }
 icu_properties = { version = "0.5", path = "../../components/properties", features = ["std", "datagen"]}
-icu_provider = { version = "0.5", path = "../../provider/core", features = ["std", "log_error_context"]}
-icu_provider_adapters = { path = "../../provider/adapters", features = ["datagen"] }
-icu_provider_blob = { version = "0.5", path = "../../provider/blob", features = ["export"] }
-icu_provider_fs = { version = "0.5", path = "../../provider/fs", features = ["export"] }
+icu_provider = { version = "0.5", path = "../core", features = ["std", "log_error_context"]}
+icu_provider_adapters = { path = "../adapters", features = ["datagen"] }
+icu_provider_blob = { version = "0.5", path = "../blob", features = ["export"] }
+icu_provider_fs = { version = "0.5", path = "../fs", features = ["export"] }
 icu_segmenter = { version = "0.1", path = "../../experimental/segmenter", features = ["datagen"] }
-icu_testdata = { version = "0.5", path = "../../provider/testdata", features = ["metadata"] }
+icu_testdata = { version = "0.5", path = "../testdata", features = ["metadata"] }
 icu_uniset = { version = "0.4.1", path = "../../utils/uniset", features = ["serialize"] }
 itertools = "0.10"
 json = "0.12"
@@ -69,7 +69,7 @@ smallvec = "1.6"
 tinystr = { path = "../../utils/tinystr", version = "0.5.0", features = ["alloc", "serde", "zerovec"], default-features = false }
 toml = { version = "0.5" }
 writeable = { version = "0.3", path = "../../utils/writeable" }
-zerovec = { version = "0.6", path = "../../utils/zerovec", features = ["serde", "yoke"] }
+zerovec = { version = "0.6", path = "../../utils/zerovec", features = ["serde_serialize", "yoke"] }
 
 # Dependencies for the "download-testdata" feature
 reqwest = { version = "0.11", features = ["stream"], optional = true }
@@ -78,7 +78,7 @@ futures = { version = "0.3", optional = true }
 
 [dev-dependencies]
 mktemp = "0.4"
-icu_testdata = { version = "0.5", path = "../../provider/testdata" }
+icu_testdata = { version = "0.5", path = "../testdata" }
 writeable = { version = "0.3", path = "../../utils/writeable" }
 
 [features]

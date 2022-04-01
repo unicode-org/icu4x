@@ -126,8 +126,9 @@ impl Coptic {
         Self
     }
 
-    // Fixed is day count representation of calendars staring from Jan 1st of year 1 of Georgian Calendar.
-    // The fixed calculations algorithms are from the CAlendarival Calculations book
+    // "Fixed" is a day count representation of calendars staring from Jan 1st of year 1 of the Georgian Calendar.
+    // The fixed date algorithms are from
+    // Dershowitz, Nachum, and Edward M. Reingold. _Calendrical calculations_. Cambridge University Press, 2008.
     //
     // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/1ee51ecfaae6f856b0d7de3e36e9042100b4f424/calendar.l#L1978
     fn fixed_from_coptic(date: ArithmeticDate<Coptic>) -> i32 {
@@ -149,7 +150,7 @@ impl Coptic {
         })
     }
 
-    // Lisp code regerence: https://github.com/EdReingold/calendar-code2/blob/1ee51ecfaae6f856b0d7de3e36e9042100b4f424/calendar.l#L1990
+    // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/1ee51ecfaae6f856b0d7de3e36e9042100b4f424/calendar.l#L1990
     fn coptic_from_fixed(date: i32) -> CopticDateInner {
         let coptic_epoch = Julian::fixed_from_julian_integers(284, 8, 29);
         let year = (4 * (date - coptic_epoch) + 1463) / 1461;

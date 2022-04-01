@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use alloc::vec;
 use alloc::vec::Vec;
 use core::cmp::Ordering;
 
@@ -421,6 +422,16 @@ pub fn get_best_available_format_pattern<'data>(
             closest_format_pattern = Some(pattern);
             closest_distance = distance;
             closest_missing_fields = missing_fields;
+        }
+    }
+
+    if !prefer_matched_pattern && closest_distance >= TEXT_VS_NUMERIC_DISTANCE {
+        if let [field] = fields {
+            // A single field was requested and the best pattern either includes extra fields or can't be adjusted to match
+            // (e.g. text vs numeric). We return the field instead of the matched pattern.
+            return BestSkeleton::AllFieldsMatch(
+                Pattern::from(vec![PatternItem::Field(*field)]).into(),
+            );
         }
     }
 

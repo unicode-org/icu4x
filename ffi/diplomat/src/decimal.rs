@@ -84,7 +84,7 @@ pub mod ffi {
                 data: data_struct.0.clone(),
             };
             Self::try_new_impl(
-                &ICU4XLocale(Locale::und()),
+                &ICU4XLocale(Locale::UND),
                 &provider.as_downcasting(),
                 options,
             )
