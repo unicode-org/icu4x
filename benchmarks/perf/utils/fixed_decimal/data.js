@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1648838180763,
+  "lastUpdate": 1648849550993,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -22259,6 +22259,36 @@ window.BENCHMARK_DATA = {
             "name": "fixed_decimal/overview",
             "value": 114651,
             "range": "± 5621",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "452fea46ee75161514113f1441066888c7de711c",
+          "message": "Improve attribution of Calendrical Calculations book (#1758)\n\n* typos\r\n\r\n* cite\r\n\r\n* add readme\r\n\r\n* fx",
+          "timestamp": "2022-04-01T14:39:06-07:00",
+          "tree_id": "cbb4ea20aed636e25d612cc794595860f59b53e5",
+          "url": "https://github.com/unicode-org/icu4x/commit/452fea46ee75161514113f1441066888c7de711c"
+        },
+        "date": 1648849536429,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 96647,
+            "range": "± 478",
             "unit": "ns/iter"
           }
         ]
