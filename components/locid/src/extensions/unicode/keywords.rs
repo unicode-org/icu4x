@@ -210,6 +210,12 @@ impl Keywords {
         }
         Ok(())
     }
+
+    /// This needs to be its own method to help with type inference in helpers.rs
+    #[cfg(test)]
+    pub(crate) fn from_tuple_vec(v: Vec<(Key, Value)>) -> Self {
+        v.into_iter().collect()
+    }
 }
 
 impl From<LiteMap<Key, Value>> for Keywords {
