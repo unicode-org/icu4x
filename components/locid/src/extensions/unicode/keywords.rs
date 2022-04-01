@@ -3,9 +3,8 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use core::borrow::Borrow;
-use core::ops::Deref;
-use litemap::LiteMap;
 use core::iter::FromIterator;
+use litemap::LiteMap;
 
 use super::Key;
 use super::Value;
@@ -53,6 +52,24 @@ impl Keywords {
         Self(LiteMap::new())
     }
 
+    /// Returns `true` if there are no keywords.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::locid::Locale;
+    /// use icu::locid::extensions::unicode::Keywords;
+    ///
+    /// let loc1 = Locale::from_bytes(b"und-t-mul").unwrap();
+    /// let loc2 = Locale::from_bytes(b"und-u-ca-buddhist").unwrap();
+    ///
+    /// assert!(loc1.extensions.unicode.keywords.is_empty());
+    /// assert!(!loc2.extensions.unicode.keywords.is_empty());
+    /// ```
+    pub fn is_empty(&self) -> bool {
+        self.0.is_empty()
+    }
+
     /// Returns `true` if the list contains a [`Value`] for the specified [`Key`].
     ///
     ///
@@ -74,8 +91,8 @@ impl Keywords {
     /// ```
     pub fn contains_key<Q>(&self, key: &Q) -> bool
     where
-    Key: Borrow<Q>,
-    Q: Ord
+        Key: Borrow<Q>,
+        Q: Ord,
     {
         self.0.contains_key(key)
     }
@@ -103,8 +120,8 @@ impl Keywords {
     /// ```
     pub fn get<Q>(&self, key: &Q) -> Option<&Value>
     where
-    Key: Borrow<Q>,
-    Q: Ord
+        Key: Borrow<Q>,
+        Q: Ord,
     {
         self.0.get(key)
     }
@@ -138,8 +155,8 @@ impl Keywords {
     /// ```
     pub fn get_mut<Q>(&mut self, key: &Q) -> Option<&mut Value>
     where
-    Key: Borrow<Q>,
-    Q: Ord
+        Key: Borrow<Q>,
+        Q: Ord,
     {
         self.0.get_mut(key)
     }
@@ -208,11 +225,3 @@ impl FromIterator<(Key, Value)> for Keywords {
 }
 
 impl_writeable_for_key_value!(Keywords, "ca", "islamic-civil", "aa", "aa");
-
-impl Deref for Keywords {
-    type Target = LiteMap<Key, Value>;
-
-    fn deref(&self) -> &Self::Target {
-        &self.0
-    }
-}

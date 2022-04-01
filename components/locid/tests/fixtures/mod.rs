@@ -10,8 +10,8 @@ use icu_locid::extensions::transform;
 use icu_locid::extensions::unicode;
 use icu_locid::extensions::Extensions;
 use icu_locid::{subtags, LanguageIdentifier, Locale, ParserError};
-use serde::Deserialize;
 use litemap::LiteMap;
+use serde::Deserialize;
 
 #[derive(Debug, Deserialize, Clone)]
 pub struct LocaleIdentifier {
