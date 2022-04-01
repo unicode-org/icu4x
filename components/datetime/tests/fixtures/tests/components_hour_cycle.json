@@ -143,5 +143,73 @@
                 "ar": "24:25"
             }
         }
+    },
+    {
+        "description": "h11 with singleton h",
+        "input": {
+            "value": "2002-12-31T00:05:07.000",
+            "options": {
+                "components": {
+                    "hour": "numeric",
+                    "preferences": { "hourCycle": "h11" }
+                }
+            }
+        },
+        "output": {
+            "values": {
+                "en": "0 AM"
+            }
+        }
+    },
+    {
+        "description": "h12 with singleton h",
+        "input": {
+            "value": "2002-12-31T00:05:07.000",
+            "options": {
+                "components": {
+                    "hour": "numeric",
+                    "preferences": { "hourCycle": "h12" }
+                }
+            }
+        },
+        "output": {
+            "values": {
+                "en": "12 AM"
+            }
+        }
+    },
+    {
+        "description": "h23 with singleton h",
+        "input": {
+            "value": "2002-12-31T00:05:07.000",
+            "options": {
+                "components": {
+                    "hour": "numeric",
+                    "preferences": { "hourCycle": "h23" }
+                }
+            }
+        },
+        "output": {
+            "values": {
+                "en": "00"
+            }
+        }
+    },
+    {
+        "description": "h24 with singleton h",
+        "input": {
+            "value": "2002-12-31T00:05:07.000",
+            "options": {
+                "components": {
+                    "hour": "numeric",
+                    "preferences": { "hourCycle": "h24" }
+                }
+            }
+        },
+        "output": {
+            "values": {
+                "en": "24"
+            }
+        }
     }
 ]
