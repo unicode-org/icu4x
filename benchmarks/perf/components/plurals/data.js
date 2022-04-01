@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1648780095964,
+  "lastUpdate": 1648789835690,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -31121,6 +31121,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 14099,
             "range": "± 700",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "0188c9c623b46c9390a26024704291a7f93f0a6d",
+          "message": "Add transform_ext_key! macro (#1763)",
+          "timestamp": "2022-03-31T22:01:33-07:00",
+          "tree_id": "9b1b89a250390c396d47e1b4328c3f01e83c64c4",
+          "url": "https://github.com/unicode-org/icu4x/commit/0188c9c623b46c9390a26024704291a7f93f0a6d"
+        },
+        "date": 1648789819246,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 948,
+            "range": "± 53",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 6254,
+            "range": "± 327",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 15135,
+            "range": "± 652",
             "unit": "ns/iter"
           }
         ]
