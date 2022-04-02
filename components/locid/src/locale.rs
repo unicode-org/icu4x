@@ -36,7 +36,7 @@ use core::str::FromStr;
 ///
 /// let key: Key = "ca".parse().expect("Parsing key failed.");
 /// let value: Value = "buddhist".parse().expect("Parsing value failed.");
-/// assert_eq!(loc.extensions.unicode.keywords.get(key),
+/// assert_eq!(loc.extensions.unicode.keywords.get(&key),
 ///     Some(&value));
 /// ```
 ///

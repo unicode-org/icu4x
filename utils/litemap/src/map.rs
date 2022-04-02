@@ -15,7 +15,7 @@ use core::ops::{Index, IndexMut};
 ///
 /// The API is roughly similar to that of [`std::collections::HashMap`], though it
 /// requires `Ord` instead of `Hash`.
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[cfg_attr(feature = "yoke", derive(yoke::Yokeable))]
 pub struct LiteMap<K, V> {
     pub(crate) values: Vec<(K, V)>,
@@ -23,8 +23,8 @@ pub struct LiteMap<K, V> {
 
 impl<K, V> LiteMap<K, V> {
     /// Construct a new [`LiteMap`]
-    pub fn new() -> Self {
-        Self::default()
+    pub const fn new() -> Self {
+        Self { values: Vec::new() }
     }
 
     /// Construct a new [`LiteMap`] with a given capacity
@@ -244,8 +244,42 @@ impl<K: Ord, V> LiteMap<K, V> {
     /// Version of [`Self::insert()`] that returns both the key and the old value.
     fn insert_save_key(&mut self, key: K, value: V) -> Option<(K, V)> {
         match self.values.binary_search_by(|k| k.0.cmp(&key)) {
-            #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
+            #[allow(clippy::indexing_slicing)] // Index came from binary_search
             Ok(found) => Some((key, mem::replace(&mut self.values[found].1, value))),
+            Err(ins) => {
+                self.values.insert(ins, (key, value));
+                None
+            }
+        }
+    }
+
+    /// Attempts to insert a unique entry into the map.
+    ///
+    /// If `key` is not already in the map, inserts it with the corresponding `value`
+    /// and returns `None`.
+    ///
+    /// If `key` is already in the map, no change is made to the map, and the key and value
+    /// are returned back to the caller.
+    ///
+    /// ```
+    /// use litemap::LiteMap;
+    ///
+    /// let mut map = LiteMap::new();
+    /// map.insert(1, "one");
+    /// map.insert(3, "three");
+    ///
+    /// // 2 is not yet in the map...
+    /// assert_eq!(map.try_insert(2, "two"), None);
+    /// assert_eq!(map.len(), 3);
+    ///
+    /// // ...but now it is.
+    /// assert_eq!(map.try_insert(2, "TWO"), Some((2, "TWO")));
+    /// assert_eq!(map.len(), 3);
+    /// ```
+    pub fn try_insert(&mut self, key: K, value: V) -> Option<(K, V)> {
+        match self.values.binary_search_by(|k| k.0.cmp(&key)) {
+            #[allow(clippy::indexing_slicing)] // Index came from binary_search
+            Ok(_) => Some((key, value)),
             Err(ins) => {
                 self.values.insert(ins, (key, value));
                 None
@@ -413,6 +447,34 @@ impl<K, V> LiteMap<K, V> {
     /// Produce an ordered mutable iterator over key-value pairs
     pub fn iter_mut(&mut self) -> impl Iterator<Item = (&K, &mut V)> + DoubleEndedIterator {
         self.values.iter_mut().map(|val| (&val.0, &mut val.1))
+    }
+
+    /// Retains only the elements specified by the predicate.
+    ///
+    /// In other words, remove all elements such that `f((&k, &v))` returns `false`.
+    ///
+    /// # Example
+    ///
+    /// ```rust
+    /// use litemap::LiteMap;
+    ///
+    /// let mut map = LiteMap::new();
+    /// map.insert(1, "one");
+    /// map.insert(2, "two");
+    /// map.insert(3, "three");
+    ///
+    /// // Retain elements with odd keys
+    /// map.retain(|(k, _)| k % 2 == 1);
+    ///
+    /// assert_eq!(map.get(&1), Some(&"one"));
+    /// assert_eq!(map.get(&2), None);
+    /// ```
+    #[inline]
+    pub fn retain<F>(&mut self, mut predicate: F)
+    where
+        F: FnMut((&K, &V)) -> bool,
+    {
+        self.values.retain(|(ref k, ref v)| predicate((k, v)))
     }
 }
 

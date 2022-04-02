@@ -2,9 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use alloc::vec::Vec;
 use core::borrow::Borrow;
-use core::ops::Deref;
+use core::iter::FromIterator;
+use litemap::LiteMap;
 
 use super::Key;
 use super::Value;
@@ -30,12 +30,12 @@ use super::Value;
 ///     .expect("Failed to parse a Key.");
 /// let value: Value = "hybrid".parse()
 ///     .expect("Failed to parse a Value.");
-/// let fields = Fields::from_vec_unchecked(vec![(key, value)]);
+/// let fields: Fields = vec![(key, value)].into_iter().collect();
 ///
 /// assert_eq!(&fields.to_string(), "h0-hybrid");
 /// ```
 #[derive(Clone, PartialEq, Eq, Debug, Default, Hash, PartialOrd, Ord)]
-pub struct Fields(Vec<(Key, Value)>);
+pub struct Fields(LiteMap<Key, Value>);
 
 impl Fields {
     /// Returns a new empty list of key-value pairs. Same as [`default()`](Default::default()), but is `const`.
@@ -49,27 +49,25 @@ impl Fields {
     /// ```
     #[inline]
     pub const fn new() -> Self {
-        Self(Vec::new())
+        Self(LiteMap::new())
     }
 
-    /// A constructor which takes a pre-sorted list of `(`[`Key`]`, `[`Value`]`)` tuples.
-    ///
+    /// Returns `true` if there are no fields.
     ///
     /// # Examples
     ///
     /// ```
-    /// use icu::locid::extensions::transform::{Fields, Key, Value};
+    /// use icu::locid::Locale;
+    /// use icu::locid::extensions::transform::Fields;
     ///
-    /// let key: Key = "h0".parse()
-    ///     .expect("Failed to parse a Key.");
-    /// let value: Value = "hybrid".parse()
-    ///     .expect("Failed to parse a Value.");
-    /// let fields = Fields::from_vec_unchecked(vec![(key, value)]);
+    /// let loc1 = Locale::from_bytes(b"und-t-h0-hybrid").unwrap();
+    /// let loc2 = Locale::from_bytes(b"und-u-ca-buddhist").unwrap();
     ///
-    /// assert_eq!(&fields.to_string(), "h0-hybrid");
+    /// assert!(!loc1.extensions.transform.fields.is_empty());
+    /// assert!(loc2.extensions.transform.fields.is_empty());
     /// ```
-    pub fn from_vec_unchecked(input: Vec<(Key, Value)>) -> Self {
-        Self(input)
+    pub fn is_empty(&self) -> bool {
+        self.0.is_empty()
     }
 
     /// Empties the [`Fields`] list.
@@ -83,7 +81,7 @@ impl Fields {
     ///     .expect("Failed to parse a Key.");
     /// let value: Value = "hybrid".parse()
     ///     .expect("Failed to parse a Value.");
-    /// let mut fields = Fields::from_vec_unchecked(vec![(key, value)]);
+    /// let mut fields: Fields = vec![(key, value)].into_iter().collect();
     ///
     /// assert_eq!(&fields.to_string(), "h0-hybrid");
     ///
@@ -107,18 +105,18 @@ impl Fields {
     ///     .expect("Failed to parse a Key.");
     /// let value: Value = "hybrid".parse()
     ///     .expect("Failed to parse a Value.");
-    /// let mut fields = Fields::from_vec_unchecked(vec![(key, value)]);
+    /// let mut fields: Fields = vec![(key, value)].into_iter().collect();
     ///
     /// let key: Key = "h0".parse()
     ///     .expect("Failed to parse a Key.");
     /// assert!(&fields.contains_key(&key));
     /// ```
-    pub fn contains_key<Q>(&self, key: Q) -> bool
+    pub fn contains_key<Q>(&self, key: &Q) -> bool
     where
-        Q: Borrow<Key>,
+        Key: Borrow<Q>,
+        Q: Ord,
     {
-        self.binary_search_by_key(key.borrow(), |(key, _)| *key)
-            .is_ok()
+        self.0.contains_key(key)
     }
 
     /// Returns a reference to the [`Value`] corresponding to the [`Key`].
@@ -133,7 +131,7 @@ impl Fields {
     ///     .expect("Failed to parse a Key.");
     /// let value: Value = "hybrid".parse()
     ///     .expect("Failed to parse a Value.");
-    /// let mut fields = Fields::from_vec_unchecked(vec![(key, value)]);
+    /// let mut fields: Fields = vec![(key, value)].into_iter().collect();
     ///
     /// let key: Key = "h0".parse()
     ///     .expect("Failed to parse a Key.");
@@ -142,15 +140,12 @@ impl Fields {
     ///     Some("hybrid".to_string())
     /// );
     /// ```
-    pub fn get<Q>(&self, key: Q) -> Option<&Value>
+    pub fn get<Q>(&self, key: &Q) -> Option<&Value>
     where
-        Q: Borrow<Key>,
+        Key: Borrow<Q>,
+        Q: Ord,
     {
-        if let Ok(idx) = self.binary_search_by_key(key.borrow(), |(key, _)| *key) {
-            self.deref().get(idx).map(|(_, v)| v)
-        } else {
-            None
-        }
+        self.0.get(key)
     }
 
     /// Retains a subset of fields as specified by the predicate function.
@@ -180,20 +175,30 @@ impl Fields {
     where
         F: FnMut(&str) -> Result<(), E>,
     {
-        for (k, v) in self.iter() {
+        for (k, v) in self.0.iter() {
             f(k.as_str())?;
             v.for_each_subtag_str(f)?;
         }
         Ok(())
     }
+
+    /// This needs to be its own method to help with type inference in helpers.rs
+    #[cfg(test)]
+    pub(crate) fn from_tuple_vec(v: Vec<(Key, Value)>) -> Self {
+        v.into_iter().collect()
+    }
+}
+
+impl From<LiteMap<Key, Value>> for Fields {
+    fn from(map: LiteMap<Key, Value>) -> Self {
+        Self(map)
+    }
+}
+
+impl FromIterator<(Key, Value)> for Fields {
+    fn from_iter<I: IntoIterator<Item = (Key, Value)>>(iter: I) -> Self {
+        LiteMap::from_iter(iter).into()
+    }
 }
 
 impl_writeable_for_key_value!(Fields, "h0", "hybrid", "m0", "m0-true");
-
-impl Deref for Fields {
-    type Target = [(Key, Value)];
-
-    fn deref(&self) -> &Self::Target {
-        self.0.deref()
-    }
-}
