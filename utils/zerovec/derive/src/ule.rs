@@ -65,6 +65,7 @@ pub fn derive_impl(input: &DeriveInput) -> TokenStream2 {
                     return Err(zerovec::ZeroVecError::length::<Self>(bytes.len()));
                 }
                 // Validate the bytes
+                #[allow(clippy::indexing_slicing)] // We're slicing a chunk of known size
                 for chunk in bytes.chunks_exact(SIZE) {
                     #validators
                     debug_assert_eq!(#remaining_offset, SIZE);
