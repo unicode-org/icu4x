@@ -2,14 +2,19 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::utils;
+use crate::utils::{self, FieldInfo};
 use proc_macro2::Span;
 use proc_macro2::TokenStream as TokenStream2;
 use quote::quote;
 use syn::spanned::Spanned;
 use syn::{Data, DeriveInput, Error, Ident};
 
-pub fn derive_impl(input: &DeriveInput) -> TokenStream2 {
+/// Implementation for derive(VarULE). `custom_varule_validator` validates the last field bytes `last_field_bytes`
+/// if specified, if not, the VarULE implementation will be used.
+pub fn derive_impl(
+    input: &DeriveInput,
+    custom_varule_validator: Option<TokenStream2>,
+) -> TokenStream2 {
     if !utils::has_valid_repr(&input.attrs, |r| r == "packed" || r == "transparent") {
         return Error::new(
             input.span(),
@@ -43,14 +48,15 @@ pub fn derive_impl(input: &DeriveInput) -> TokenStream2 {
 
     let n_fields = struc.fields.len();
 
-    let sizes = struc.fields.iter().take(n_fields - 1).map(|f| {
-        let ty = &f.ty;
+    let ule_fields = FieldInfo::make_list(struc.fields.iter().take(n_fields - 1));
+
+    let sizes = ule_fields.iter().map(|f| {
+        let ty = &f.field.ty;
         quote!(::core::mem::size_of::<#ty>())
     });
-
     let (validators, remaining_offset) = if n_fields > 1 {
         // generate ULE validators
-        crate::ule::generate_ule_validators(struc.fields.iter().take(n_fields - 1))
+        crate::ule::generate_ule_validators(&ule_fields)
     } else {
         // no ULE subfields
         (
@@ -71,6 +77,12 @@ pub fn derive_impl(input: &DeriveInput) -> TokenStream2 {
         &format!("__IMPL_VarULE_FOR_{name}_ULE_SIZE"),
         Span::call_site(),
     );
+
+    let last_field_validator = if let Some(custom_varule_validator) = custom_varule_validator {
+        custom_varule_validator
+    } else {
+        quote!(<#unsized_field as zerovec::ule::VarULE>::validate_byte_slice(last_field_bytes)?;)
+    };
 
     // Safety (based on the safety checklist on the ULE trait):
     //  1. #name does not include any uninitialized or padding bytes
@@ -94,7 +106,8 @@ pub fn derive_impl(input: &DeriveInput) -> TokenStream2 {
                 }
                 #validators
                 debug_assert_eq!(#remaining_offset, #ule_size);
-                <#unsized_field as zerovec::ule::VarULE>::validate_byte_slice(&bytes[#remaining_offset..])?;
+                let last_field_bytes = &bytes[#remaining_offset..];
+                #last_field_validator
                 Ok(())
             }
             #[inline]

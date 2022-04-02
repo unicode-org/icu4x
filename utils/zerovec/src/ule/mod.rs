@@ -14,6 +14,7 @@ mod chars;
 #[cfg(doc)]
 pub mod custom;
 mod encode;
+mod multi;
 mod option;
 mod plain;
 mod slices;
@@ -22,6 +23,7 @@ pub mod tuple;
 pub use super::ZeroVecError;
 pub use chars::CharULE;
 pub use encode::{encode_varule_to_box, EncodeAsVarULE};
+pub use multi::MultiFieldsULE;
 pub use option::{OptionULE, OptionVarULE};
 pub use plain::RawBytesULE;
 
