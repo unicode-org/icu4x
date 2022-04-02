@@ -426,7 +426,7 @@ impl ResourceOptions {
         let value = unicode_ext::Value::from_bytes(value.as_bytes()).unwrap();
         Self {
             langid,
-            keywords: unicode_ext::Keywords::from_vec_unchecked(vec![(key, value)]),
+            keywords: vec![(key, value)].into_iter().collect(),
         }
     }
 
@@ -434,7 +434,7 @@ impl ResourceOptions {
     #[allow(clippy::unwrap_used)] // temporary function
     pub fn temp_get_extension(&self, key: &str) -> Option<String> {
         let key = unicode_ext::Key::from_bytes(key.as_bytes()).unwrap();
-        self.keywords.get(key).map(|v| v.to_string())
+        self.keywords.get(&key).map(|v| v.to_string())
     }
 
     /// Returns whether this [`ResourceOptions`] has all empty fields (no components).
@@ -444,7 +444,7 @@ impl ResourceOptions {
 
     /// Returns whether the [`LanguageIdentifier`] associated with this request is `und`.
     pub fn is_und(&self) -> bool {
-        self.langid == LanguageIdentifier::und()
+        self.langid == LanguageIdentifier::UND
     }
 
     /// Returns the [`LanguageIdentifier`] for this [`ResourceOptions`].
