@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1648857989943,
+  "lastUpdate": 1648858543651,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -12473,6 +12473,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/579b7a52c50780af63a1f5fbd7b132fbd0ce7adc"
         },
         "date": 1648857971164,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4555035,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "552a1edd517b59c9b192ef36cd9ac1039e1d1f09",
+          "message": "Convert Unicode Keywords and Transform Fields to LiteMap (#1762)",
+          "timestamp": "2022-04-01T17:14:08-07:00",
+          "tree_id": "566f9b8661907e2586ac317e90f6f2c1b04bb88a",
+          "url": "https://github.com/unicode-org/icu4x/commit/552a1edd517b59c9b192ef36cd9ac1039e1d1f09"
+        },
+        "date": 1648858526360,
         "tool": "ndjson",
         "benches": [
           {
