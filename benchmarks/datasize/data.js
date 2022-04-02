@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1648857057183,
+  "lastUpdate": 1648857989943,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -12443,6 +12443,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/e265c6023a7fcad356632274177359e1ab9d5fa8"
         },
         "date": 1648857042412,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4555035,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "579b7a52c50780af63a1f5fbd7b132fbd0ce7adc",
+          "message": "Support non-Ord values in ZeroMap (#1743)",
+          "timestamp": "2022-04-01T17:04:45-07:00",
+          "tree_id": "bea6e54a82bfe73d8b932bd1a536fed4c27a8706",
+          "url": "https://github.com/unicode-org/icu4x/commit/579b7a52c50780af63a1f5fbd7b132fbd0ce7adc"
+        },
+        "date": 1648857971164,
         "tool": "ndjson",
         "benches": [
           {
