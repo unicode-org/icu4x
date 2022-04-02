@@ -8,7 +8,6 @@ use alloc::borrow::Cow;
 
 use crate::error::{DataError, DataErrorKind};
 use crate::helpers;
-use alloc::string::{String, ToString};
 use alloc::vec;
 use core::default::Default;
 use core::fmt;
@@ -430,13 +429,6 @@ impl ResourceOptions {
         }
     }
 
-    // TODO(#1109): Delete this function and use vertical fallback instead
-    #[allow(clippy::unwrap_used)] // temporary function
-    pub fn temp_get_extension(&self, key: &str) -> Option<String> {
-        let key = unicode_ext::Key::from_bytes(key.as_bytes()).unwrap();
-        self.keywords.get(&key).map(|v| v.to_string())
-    }
-
     /// Returns whether this [`ResourceOptions`] has all empty fields (no components).
     pub fn is_empty(&self) -> bool {
         self == &Self::default()
@@ -491,6 +483,11 @@ impl ResourceOptions {
     /// Returns the [`Region`] for this [`ResourceOptions`].
     pub fn region(&self) -> Option<Region> {
         self.langid.region
+    }
+
+    /// Returns the value of the specified Unicode extension keyword for this [`ResourceOptions`].
+    pub fn unicode_ext(&self, key: &unicode_ext::Key) -> Option<&unicode_ext::Value> {
+        self.keywords.get(key)
     }
 }
 

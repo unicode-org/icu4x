@@ -13,6 +13,7 @@ use icu_provider::datagen::IterableResourceProvider;
 use icu_provider::prelude::*;
 use std::convert::TryFrom;
 use std::path::PathBuf;
+use icu_locid::unicode_ext_key;
 
 mod patterns;
 mod skeletons;
@@ -45,8 +46,9 @@ macro_rules! impl_resource_provider {
                     req: &DataRequest,
                 ) -> Result<DataResponse<$marker>, DataError> {
                     let langid = req.langid();
-                    let variant = req.options.temp_get_extension("ca")
-                    .ok_or_else(|| DataErrorKind::NeedsVariant.with_req(<$marker>::KEY, req))?;
+                    let calendar = req.options.unicode_ext(&unicode_ext_key!("ca"))
+                    .ok_or_else(|| DataErrorKind::NeedsVariant.with_req(<$marker>::KEY, req))?
+                    .to_string();
 
                     let dates = if let Some(dates) = self.data.get(&req.options) {
                         dates
@@ -54,7 +56,7 @@ macro_rules! impl_resource_provider {
                         let (cldr_cal, _, path) = self
                             .paths
                             .iter()
-                            .find(|(_, bcp_cal, _)| bcp_cal == &&*variant)
+                            .find(|(_, bcp_cal, _)| bcp_cal == &&*calendar)
                             .ok_or_else(|| DataErrorKind::MissingVariant.with_req(<$marker>::KEY, req))?;
 
                         let locale_dir = get_langid_subdirectory(&path.join("main"), &langid)?
@@ -88,7 +90,7 @@ macro_rules! impl_resource_provider {
                     Ok(DataResponse {
                         metadata,
                         #[allow(clippy::redundant_closure_call)]
-                        payload: Some(DataPayload::from_owned(($expr)(dates, &variant))),
+                        payload: Some(DataPayload::from_owned(($expr)(dates, &calendar))),
                     })
                 }
             }
