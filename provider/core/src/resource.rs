@@ -443,7 +443,10 @@ impl ResourceOptions {
     }
 
     /// Returns whether the [`LanguageIdentifier`] associated with this request is `und`.
-    pub fn is_und(&self) -> bool {
+    ///
+    /// Note that this only checks the language identifier; extension keywords may also be set.
+    /// To check the entire `ResourceOptions`, use [`ResourceOptions::is_empty()`].
+    pub fn is_langid_und(&self) -> bool {
         self.langid == LanguageIdentifier::UND
     }
 

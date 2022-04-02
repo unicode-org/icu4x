@@ -142,7 +142,7 @@ where
                 if !(old_predicate)(request) {
                     return false;
                 }
-                request.options.is_und() || allowlist.contains(&request.langid())
+                request.options.is_langid_und() || allowlist.contains(&request.langid())
             }),
             filter_name: self.filter_name,
         }
@@ -196,7 +196,7 @@ where
                 if !(old_predicate)(request) {
                     return false;
                 }
-                request.options.is_und()
+                request.options.is_langid_und()
             }),
             filter_name: self.filter_name,
         }
