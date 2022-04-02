@@ -56,7 +56,7 @@ impl Value {
         if !input.is_empty() {
             for subtag in get_subtag_iterator(input) {
                 let val = Self::subtag_from_bytes(subtag)?;
-                if val != TRUE_VALUE {
+                if let Some(val) = val {
                     v.push(val);
                 }
             }
@@ -78,8 +78,19 @@ impl Value {
     pub const fn try_from_single_subtag(subtag: &[u8]) -> Result<Self, ParserError> {
         match Self::subtag_from_bytes(subtag) {
             Err(_) => Err(ParserError::InvalidExtension),
-            Ok(TRUE_VALUE) => Ok(Self(ShortVec::new())),
-            Ok(val) => Ok(Self(ShortVec::new_single(val))),
+            Ok(option) => Ok(Self::from_tinystr(option)),
+        }
+    }
+
+    #[doc(hidden)]
+    pub const fn from_tinystr(subtag: Option<TinyAsciiStr<8>>) -> Self {
+        match subtag {
+            None => Self(ShortVec::new()),
+            Some(val) => {
+                debug_assert!(val.is_ascii_alphanumeric());
+                debug_assert!(!matches!(val, TRUE_VALUE));
+                Self(ShortVec::new_single(val))
+            }
         }
     }
 
@@ -87,12 +98,14 @@ impl Value {
         Self(input.into())
     }
 
-    const fn subtag_from_bytes(bytes: &[u8]) -> Result<TinyAsciiStr<8>, ParserError> {
+    #[doc(hidden)]
+    pub const fn subtag_from_bytes(bytes: &[u8]) -> Result<Option<TinyAsciiStr<8>>, ParserError> {
         if *VALUE_LENGTH.start() > bytes.len() || *VALUE_LENGTH.end() < bytes.len() {
             return Err(ParserError::InvalidExtension);
         };
         match TinyAsciiStr::from_bytes(bytes) {
-            Ok(val) if val.is_ascii_alphanumeric() => Ok(val),
+            Ok(TRUE_VALUE) => Ok(None),
+            Ok(val) if val.is_ascii_alphanumeric() => Ok(Some(val)),
             _ => Err(ParserError::InvalidExtension),
         }
     }
