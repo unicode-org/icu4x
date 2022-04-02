@@ -22,10 +22,10 @@ impl MultiFieldsULE {
     /// Compute the amount of bytes needed to support elements with lengths `lengths`
     #[inline]
     pub fn compute_encoded_len_for(lengths: &[usize]) -> usize {
+        #[allow(clippy::expect_used)] // See #1410
         unsafe {
             // safe since BlankSliceEncoder is transparent over usize
             let lengths = &*(lengths as *const [usize] as *const [BlankSliceEncoder]);
-            #[allow(expect_used)] // See #1410
             crate::varzerovec::components::compute_serializable_len(lengths)
                 .expect("Too many bytes to encode") as usize
         }
