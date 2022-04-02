@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1648861880659,
+  "lastUpdate": 1648870425901,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -23429,6 +23429,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 49029949,
             "range": "± 301588",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "7b24c775d00d3de54df797f084f196200fa3d65e",
+          "message": "Add multiple field support to make_varule (#1693)\n\n\r\n* Allow non-tuple structs to have VarULE fields in any position\r\n\r\n* Add MultiFieldsULE\r\n\r\n* Add multiple field support to make_varule",
+          "timestamp": "2022-04-01T20:27:03-07:00",
+          "tree_id": "baa79be0f273c18819375e1701e409d6f8dde955",
+          "url": "https://github.com/unicode-org/icu4x/commit/7b24c775d00d3de54df797f084f196200fa3d65e"
+        },
+        "date": 1648870407444,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 39230454,
+            "range": "± 1290271",
             "unit": "ns/iter"
           }
         ]
