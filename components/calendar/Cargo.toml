@@ -25,8 +25,8 @@ include = [
 
 [features]
 std = []
-serialize = ["serde", "litemap/serde", "zerovec/serde", "tinystr/serde"]
-datagen = ["serialize", "litemap/serde_serialize"]
+serialize = ["serde", "zerovec/serde", "tinystr/serde"]
+datagen = ["serialize", "zerovec/serde_serialize"]
 
 [package.metadata.docs.rs]
 all-features = true
@@ -40,7 +40,6 @@ denylist = ["bench"]
 displaydoc = { version = "0.2.3", default-features = false }
 tinystr = { path = "../../utils/tinystr", version = "0.5.0", features = ["alloc", "zerovec"], default-features = false }
 icu_provider = { version = "0.5", path = "../../provider/core", features = ["macros"] }
-litemap = { version = "0.3.0", path = "../../utils/litemap", default-features = false }
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }
 zerovec = { version = "0.6", path = "../../utils/zerovec", default-features = false, features = ["derive"] }
 

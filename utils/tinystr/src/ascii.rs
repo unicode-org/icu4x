@@ -166,11 +166,11 @@ impl<const N: usize> TinyAsciiStr<N> {
 }
 
 macro_rules! check_is {
-    ($self:ident, $check:ident, $check_u8:ident) => {
+    ($self:ident, $check_int:ident, $check_u8:ident) => {
         if N <= 4 {
-            Aligned4::from_bytes(&$self.bytes).$check()
+            Aligned4::from_bytes(&$self.bytes).$check_int()
         } else if N <= 8 {
-            Aligned8::from_bytes(&$self.bytes).$check()
+            Aligned8::from_bytes(&$self.bytes).$check_int()
         } else {
             let mut i = 0;
             // Won't panic because self.bytes has length N
@@ -184,21 +184,21 @@ macro_rules! check_is {
             true
         }
     };
-    ($self:ident, $check:ident, CASE, $check_u8_0:ident, $check_u8_1:ident) => {
+    ($self:ident, $check_int:ident, !$check_u8_0_inv:ident, !$check_u8_1_inv:ident) => {
         if N <= 4 {
-            Aligned4::from_bytes(&$self.bytes).$check()
+            Aligned4::from_bytes(&$self.bytes).$check_int()
         } else if N <= 8 {
-            Aligned8::from_bytes(&$self.bytes).$check()
+            Aligned8::from_bytes(&$self.bytes).$check_int()
         } else {
             // Won't panic because N is > 8
-            if $self.bytes[0].$check_u8_0() {
+            if $self.bytes[0].$check_u8_0_inv() {
                 return false;
             }
             let mut i = 1;
             // Won't panic because self.bytes has length N
             #[allow(clippy::indexing_slicing)]
             while i < N && $self.bytes[i] != 0 {
-                if $self.bytes[i].$check_u8_1() {
+                if $self.bytes[i].$check_u8_1_inv() {
                     return false;
                 }
                 i += 1;
@@ -307,9 +307,8 @@ impl<const N: usize> TinyAsciiStr<N> {
         check_is!(
             self,
             is_ascii_lowercase,
-            CASE,
-            is_ascii_uppercase,
-            is_ascii_uppercase
+            !is_ascii_uppercase,
+            !is_ascii_uppercase
         )
     }
 
@@ -340,9 +339,8 @@ impl<const N: usize> TinyAsciiStr<N> {
         check_is!(
             self,
             is_ascii_titlecase,
-            CASE,
-            is_ascii_lowercase,
-            is_ascii_uppercase
+            !is_ascii_lowercase,
+            !is_ascii_uppercase
         )
     }
 
@@ -372,9 +370,8 @@ impl<const N: usize> TinyAsciiStr<N> {
         check_is!(
             self,
             is_ascii_uppercase,
-            CASE,
-            is_ascii_lowercase,
-            is_ascii_lowercase
+            !is_ascii_lowercase,
+            !is_ascii_lowercase
         )
     }
 }

@@ -11,7 +11,8 @@ icu_benchmark_macros::static_setup!();
 
 use zerovec::ZeroVec;
 
-#[derive(serde::Serialize, serde::Deserialize)]
+#[derive(dep_serde::Serialize, dep_serde::Deserialize)]
+#[serde(crate = "dep_serde")]
 struct DataStruct<'s> {
     #[serde(borrow)]
     pub nums: ZeroVec<'s, u16>,

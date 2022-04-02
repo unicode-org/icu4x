@@ -32,13 +32,12 @@ denylist = ["bench"]
 all-features = true
 
 [dependencies]
-litemap = { version = "0.3.0", path = "../../utils/litemap" }
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }
-tinystr = { path = "../../utils/tinystr", version = "0.5.0", features = ["alloc"], default-features = false }
+tinystr = { path = "../tinystr", version = "0.5.0", features = ["alloc"], default-features = false }
 displaydoc = { version = "0.2.3", default-features = false }
 yoke = { version = "0.4.0", path = "../yoke", features = ["derive"] }
 zerofrom = { version = "0.1.0", path = "../zerofrom", features = ["derive"] }
-zerovec = { version = "0.6", path = "../../utils/zerovec", features = ["serde", "yoke"] }
+zerovec = { version = "0.6", path = "../zerovec", features = ["yoke"] }
 
 [dev-dependencies]
 criterion = "0.3.3"
@@ -53,7 +52,8 @@ path = "src/lib.rs"
 
 [features]
 bench = []
-serialize = ["serde"]
+serialize = ["serde", "zerovec/serde"]
+serde_serialize = ["serde", "zerovec/serde_serialize"]
 
 [[bench]]
 name = "inv_list"

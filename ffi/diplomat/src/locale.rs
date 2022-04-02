@@ -44,7 +44,7 @@ pub mod ffi {
 
         /// Construct a default undefined [`ICU4XLocale`] "und".
         pub fn und() -> Box<ICU4XLocale> {
-            Box::new(ICU4XLocale(Locale::und()))
+            Box::new(ICU4XLocale(Locale::UND))
         }
 
         /// Clones the [`ICU4XLocale`].
@@ -118,7 +118,7 @@ pub mod ffi {
         /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#method.from_bytes) for more information.
         pub fn set_language(&mut self, bytes: &str) -> DiplomatResult<(), ICU4XLocaleError> {
             if bytes.is_empty() {
-                self.0.id.language = Language::und();
+                self.0.id.language = Language::UND;
                 return Ok(()).into();
             }
             match Language::from_bytes(bytes.as_bytes()) {

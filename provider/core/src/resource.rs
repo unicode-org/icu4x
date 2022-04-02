@@ -511,7 +511,7 @@ mod tests {
         use std::str::FromStr;
         [
             OptionsTestCase {
-                options: Locale::und().into(),
+                options: Locale::UND.into(),
                 expected: "und",
             },
             OptionsTestCase {

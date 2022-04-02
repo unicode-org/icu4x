@@ -52,7 +52,7 @@ path = "src/lib.rs"
 default = ["serialize"]
 bench = []
 serialize = ["serde", "icu_locid/serde", "litemap/serde", "tinystr/serde", "zerovec/serde"]
-datagen = ["serialize", "litemap/serde_serialize"]
+datagen = ["serialize", "litemap/serde_serialize", "zerovec/serde_serialize"]
 
 [[bench]]
 name = "locale_canonicalizer"

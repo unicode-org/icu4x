@@ -43,7 +43,9 @@ use core::ops::Deref;
 /// // The little-endian bytes correspond to the numbers on the following line.
 /// let nums: &[u16] = &[211, 281, 421, 461];
 ///
+/// # pub use dep_serde as serde;
 /// #[derive(serde::Serialize, serde::Deserialize)]
+/// # #[serde(crate = "dep_serde")]
 /// struct Data<'a> {
 ///     #[serde(borrow)]
 ///     nums: ZeroVec<'a, u16>,

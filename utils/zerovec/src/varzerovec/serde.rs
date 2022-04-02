@@ -8,7 +8,9 @@ use alloc::boxed::Box;
 use alloc::vec::Vec;
 use core::fmt;
 use core::marker::PhantomData;
+use dep_serde as serde;
 use serde::de::{self, Deserialize, Deserializer, SeqAccess, Visitor};
+#[cfg(feature = "serde_serialize")]
 use serde::ser::{Serialize, SerializeSeq, Serializer};
 
 struct VarZeroVecVisitor<T: ?Sized> {
@@ -107,6 +109,7 @@ where
 }
 
 /// This impl can be made available by enabling the optional `serde` feature of the `zerovec` crate
+#[cfg(feature = "serde_serialize")]
 impl<T> Serialize for VarZeroVec<'_, T>
 where
     T: Serialize + VarULE + ?Sized,
@@ -128,6 +131,7 @@ where
 }
 
 /// This impl can be made available by enabling the optional `serde` feature of the `zerovec` crate
+#[cfg(feature = "serde_serialize")]
 impl<T> Serialize for VarZeroSlice<T>
 where
     T: Serialize + VarULE + ?Sized,
@@ -145,13 +149,15 @@ where
 mod test {
     use super::super::*;
 
-    #[derive(::serde::Serialize, ::serde::Deserialize)]
+    #[derive(dep_serde::Serialize, dep_serde::Deserialize)]
+    #[serde(crate = "dep_serde")]
     struct DeriveTest_VarZeroVec<'data> {
         #[serde(borrow)]
         _data: VarZeroVec<'data, str>,
     }
 
-    #[derive(::serde::Serialize, ::serde::Deserialize)]
+    #[derive(dep_serde::Serialize, dep_serde::Deserialize)]
+    #[serde(crate = "dep_serde")]
     struct DeriveTest_VarZeroSlice<'data> {
         #[serde(borrow)]
         _data: &'data VarZeroSlice<str>,

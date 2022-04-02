@@ -184,7 +184,17 @@ where
         self.keys1.zvl_reserve(additional);
         self.values.zvl_reserve(additional);
     }
+}
 
+impl<'a, K0, K1, V> ZeroMap2d<'a, K0, K1, V>
+where
+    K0: ZeroMapKV<'a> + Ord,
+    K1: ZeroMapKV<'a> + Ord,
+    V: ZeroMapKV<'a>,
+    K0: ?Sized,
+    K1: ?Sized,
+    V: ?Sized,
+{
     /// Get the value associated with `key0` and `key1`, if it exists.
     ///
     /// ```rust
@@ -563,8 +573,8 @@ where
 
 impl<'a, K0, K1, V> ZeroMap2d<'a, K0, K1, V>
 where
-    K0: ZeroMapKV<'a> + ?Sized,
-    K1: ZeroMapKV<'a> + ?Sized,
+    K0: ZeroMapKV<'a> + ?Sized + Ord,
+    K1: ZeroMapKV<'a> + ?Sized + Ord,
     V: ZeroMapKV<'a, Container = ZeroVec<'a, V>> + ?Sized,
     V: AsULE + Copy,
 {
@@ -679,8 +689,8 @@ where
     A: Borrow<K0>,
     B: Borrow<K1>,
     C: Borrow<V>,
-    K0: ZeroMapKV<'a> + ?Sized,
-    K1: ZeroMapKV<'a> + ?Sized,
+    K0: ZeroMapKV<'a> + ?Sized + Ord,
+    K1: ZeroMapKV<'a> + ?Sized + Ord,
     V: ZeroMapKV<'a> + ?Sized,
 {
     fn from_iter<T>(iter: T) -> Self

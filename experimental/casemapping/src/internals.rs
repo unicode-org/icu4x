@@ -4,24 +4,22 @@
 
 use core::convert::TryFrom;
 use core::num::TryFromIntError;
-#[cfg(feature = "provider_transform_internals")]
+#[cfg(feature = "datagen")]
 use icu_codepointtrie::CodePointTrieHeader;
 use icu_codepointtrie::{CodePointTrie, TrieValue};
 use icu_locid::Locale;
 use icu_provider::{yoke, zerofrom};
 use icu_uniset::UnicodeSetBuilder;
-#[cfg(feature = "serde")]
-use serde::{Deserialize, Serialize};
-#[cfg(feature = "provider_transform_internals")]
+#[cfg(feature = "datagen")]
 use std::collections::HashMap;
 use zerovec::ule::{AsULE, RawBytesULE};
 use zerovec::ZeroMap;
-#[cfg(feature = "provider_transform_internals")]
+#[cfg(feature = "datagen")]
 use zerovec::ZeroVec;
 
 use crate::error::Error;
 use crate::exceptions::{CaseMappingExceptions, ExceptionSlot};
-#[cfg(feature = "provider_transform_internals")]
+#[cfg(feature = "datagen")]
 use crate::exceptions_builder::CaseMappingExceptionsBuilder;
 
 #[derive(Copy, Clone, Debug, Eq, PartialEq)]
@@ -99,7 +97,8 @@ impl DotType {
 
 // The datatype stored in the codepoint trie for casemapping.
 #[derive(Copy, Clone, Debug, Eq, PartialEq)]
-#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "serialize", derive(serde::Deserialize))]
+#[cfg_attr(feature = "serde_serialize", derive(serde::Serialize))]
 struct CaseMappingData(u16);
 
 impl CaseMappingData {
@@ -140,7 +139,7 @@ impl CaseMappingData {
     const DOT_SHIFT: u16 = 5;
 
     // The bits that are set for every CaseMappingData (not part of the exception index).
-    #[cfg(feature = "provider_transform_internals")]
+    #[cfg(feature = "datagen")]
     const COMMON_MASK: u16 =
         CaseType::CASE_MASK | Self::IGNORABLE_FLAG | CaseMappingData::EXCEPTION_FLAG;
 
@@ -211,7 +210,7 @@ impl CaseMappingData {
     // from the exception index for the same codepoint in ICU4C. Given
     // a mapping from old to new, this function updates the exception
     // index if necessary.
-    #[cfg(feature = "provider_transform_internals")]
+    #[cfg(feature = "datagen")]
     fn with_updated_exception(self, updates: &HashMap<u16, u16>) -> Self {
         if self.has_exception() {
             if let Some(updated_exception) = updates.get(&self.exception_index()) {
@@ -248,11 +247,12 @@ impl TrieValue for CaseMappingData {
 
 // Reverse case folding data. Maps from multi-character strings back
 // to code-points that fold to those strings.
-#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "serialize", derive(serde::Deserialize))]
+#[cfg_attr(feature = "serde_serialize", derive(serde::Serialize))]
 #[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[yoke(prove_covariance_manually)]
 struct CaseMappingUnfoldData<'data> {
-    #[cfg_attr(feature = "serde", serde(borrow))]
+    #[cfg_attr(feature = "serialize", serde(borrow))]
     map: ZeroMap<'data, str, str>,
 }
 
@@ -270,7 +270,7 @@ impl<'data> CaseMappingUnfoldData<'data> {
     //
     // Rust strings are UTF8 by default. To avoid the cost of converting from UTF16 on access,
     // we convert the ICU data into a more convenient format during construction.
-    #[cfg(feature = "provider_transform_internals")]
+    #[cfg(feature = "datagen")]
     fn try_from_icu(raw: &[u16]) -> Result<Self, Error> {
         const ROWS_INDEX: usize = 0;
         const ROW_WIDTH_INDEX: usize = 1;
@@ -307,7 +307,7 @@ impl<'data> CaseMappingUnfoldData<'data> {
     }
 
     // Decode a zero-terminated UTF16 string from a slice of u16.
-    #[cfg(feature = "provider_transform_internals")]
+    #[cfg(feature = "datagen")]
     fn decode_string(slice: &[u16]) -> Option<String> {
         let iter = slice.iter().copied().take_while(|&c| c != 0);
         char::decode_utf16(iter).collect::<Result<String, _>>().ok()
@@ -337,15 +337,16 @@ impl FoldOptions {
 
 /// CaseMappingInternals provides low-level access to the data necessary to
 /// convert characters and strings to upper, lower, or title case.
-#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "serialize", derive(serde::Deserialize))]
+#[cfg_attr(feature = "serde_serialize", derive(serde::Serialize))]
 #[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[yoke(prove_covariance_manually)]
 pub struct CaseMappingInternals<'data> {
-    #[cfg_attr(feature = "serde", serde(borrow))]
+    #[cfg_attr(feature = "serialize", serde(borrow))]
     trie: CodePointTrie<'data, CaseMappingData>,
-    #[cfg_attr(feature = "serde", serde(borrow))]
+    #[cfg_attr(feature = "serialize", serde(borrow))]
     exceptions: CaseMappingExceptions<'data>,
-    #[cfg_attr(feature = "serde", serde(borrow))]
+    #[cfg_attr(feature = "serialize", serde(borrow))]
     unfold: CaseMappingUnfoldData<'data>,
 }
 
@@ -353,7 +354,7 @@ impl<'data> CaseMappingInternals<'data> {
     /// Creates a new CaseMappingInternals using data exported by the
     // `icuexportdata` tool in ICU4C. Validates that the data is
     // consistent.
-    #[cfg(feature = "provider_transform_internals")]
+    #[cfg(feature = "datagen")]
     pub fn try_from_icu(
         trie_header: CodePointTrieHeader,
         trie_index: &[u16],

@@ -44,6 +44,7 @@ pub use value::Value;
 
 use crate::parser::ParserError;
 use crate::parser::SubtagIterator;
+use litemap::LiteMap;
 
 /// Unicode Extensions provide information about user preferences in a given locale.
 ///
@@ -69,7 +70,7 @@ use crate::parser::SubtagIterator;
 ///
 /// let key: Key = "ca".parse().expect("Parsing key failed.");
 /// let value: Value = "buddhist".parse().expect("Parsing value failed.");
-/// assert_eq!(loc.extensions.unicode.keywords.get(key),
+/// assert_eq!(loc.extensions.unicode.keywords.get(&key),
 ///            Some(&value));
 /// ```
 #[derive(Clone, PartialEq, Eq, Debug, Default, Hash, PartialOrd, Ord)]
@@ -133,7 +134,7 @@ impl Unicode {
 
     pub(crate) fn try_from_iter(iter: &mut SubtagIterator) -> Result<Self, ParserError> {
         let mut attributes = vec![];
-        let mut keywords = vec![];
+        let mut keywords = LiteMap::new();
 
         let mut current_keyword = None;
         let mut current_type = vec![];
@@ -153,9 +154,7 @@ impl Unicode {
             let slen = subtag.len();
             if slen == 2 {
                 if let Some(kw) = current_keyword.take() {
-                    if let Err(idx) = keywords.binary_search_by_key(&kw, |(k, _)| *k) {
-                        keywords.insert(idx, (kw, Value::from_vec_unchecked(current_type)));
-                    }
+                    keywords.try_insert(kw, Value::from_vec_unchecked(current_type));
                     current_type = vec![];
                 }
                 current_keyword = Some(Key::from_bytes(subtag)?);
@@ -172,9 +171,7 @@ impl Unicode {
         }
 
         if let Some(kw) = current_keyword.take() {
-            if let Err(idx) = keywords.binary_search_by_key(&kw, |(k, _)| *k) {
-                keywords.insert(idx, (kw, Value::from_vec_unchecked(current_type)));
-            }
+            keywords.try_insert(kw, Value::from_vec_unchecked(current_type));
         }
 
         // Ensure we've defined at least one attribute or keyword
@@ -183,7 +180,7 @@ impl Unicode {
         }
 
         Ok(Self {
-            keywords: Keywords::from_vec_unchecked(keywords),
+            keywords: keywords.into(),
             attributes: Attributes::from_vec_unchecked(attributes),
         })
     }

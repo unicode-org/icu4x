@@ -11,7 +11,7 @@ edition = "2021"
 
 [dependencies]
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }
-zerovec = { version = "0.6", path = "../../utils/zerovec", features = ["serde", "yoke"] }
+zerovec = { version = "0.6", path = "../../utils/zerovec", features = ["yoke"] }
 
 [dev-dependencies]
 toml = "0.5"
@@ -21,4 +21,6 @@ serde = { version = "1.0", features = ["derive"] }
 path = "src/lib.rs"
 
 [features]
-default = ["serde"]
+default = ["serialize"]
+serialize = ["serde", "zerovec/serde"]
+serde_serialize = ["serialize", "zerovec/serde_serialize"]

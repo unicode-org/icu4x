@@ -5,14 +5,16 @@
 use super::{MutableZeroVecLike, ZeroMap, ZeroMapBorrowed, ZeroMapKV, ZeroVecLike};
 use core::fmt;
 use core::marker::PhantomData;
-use serde::de::{self, MapAccess, Visitor};
-use serde::ser::SerializeMap;
-use serde::{Deserialize, Deserializer, Serialize, Serializer};
+use dep_serde as serde;
+use serde::de::{self, Deserialize, Deserializer, MapAccess, SeqAccess, Visitor};
+#[cfg(feature = "serde_serialize")]
+use serde::ser::{Serialize, SerializeMap, SerializeSeq, Serializer};
 
-/// This impl can be made available by enabling the optional `serde` feature of the `zerovec` crate
+/// This impl can be made available by enabling the optional `serde_serialize` feature of the `zerovec` crate
+#[cfg(feature = "serde_serialize")]
 impl<'a, K, V> Serialize for ZeroMap<'a, K, V>
 where
-    K: ZeroMapKV<'a> + Serialize + ?Sized,
+    K: ZeroMapKV<'a> + Serialize + ?Sized + Ord,
     V: ZeroMapKV<'a> + Serialize + ?Sized,
     K::Container: Serialize,
     V::Container: Serialize,
@@ -22,10 +24,25 @@ where
         S: Serializer,
     {
         if serializer.is_human_readable() {
+            // Many human-readable formats don't support values other
+            // than numbers and strings as map keys. For them, we can serialize
+            // as a vec of tuples instead
+            if let Some(k) = self.iter_keys().next() {
+                let json = K::Container::zvl_get_as_t(k, |k| serde_json::json!(k));
+                if !json.is_string() && !json.is_number() {
+                    let mut seq = serializer.serialize_seq(Some(self.len()))?;
+                    for (k, v) in self.iter() {
+                        K::Container::zvl_get_as_t(k, |k| {
+                            V::Container::zvl_get_as_t(v, |v| seq.serialize_element(&(k, v)))
+                        })?;
+                    }
+                    return seq.end();
+                }
+            }
             let mut map = serializer.serialize_map(Some(self.len()))?;
             for (k, v) in self.iter() {
-                K::Container::t_with_ser(k, |k| map.serialize_key(k))?;
-                V::Container::t_with_ser(v, |v| map.serialize_value(v))?;
+                K::Container::zvl_get_as_t(k, |k| map.serialize_key(k))?;
+                V::Container::zvl_get_as_t(v, |v| map.serialize_value(v))?;
             }
             map.end()
         } else {
@@ -34,10 +51,11 @@ where
     }
 }
 
-/// This impl can be made available by enabling the optional `serde` feature of the `zerovec` crate
+/// This impl can be made available by enabling the optional `serde_serialize` feature of the `zerovec` crate
+#[cfg(feature = "serde_serialize")]
 impl<'a, K, V> Serialize for ZeroMapBorrowed<'a, K, V>
 where
-    K: ZeroMapKV<'a> + Serialize + ?Sized,
+    K: ZeroMapKV<'a> + Serialize + ?Sized + Ord,
     V: ZeroMapKV<'a> + Serialize + ?Sized,
     K::Container: Serialize,
     V::Container: Serialize,
@@ -53,7 +71,7 @@ where
 /// Modified example from https://serde.rs/deserialize-map.html
 struct ZeroMapMapVisitor<'a, K, V>
 where
-    K: ZeroMapKV<'a> + ?Sized,
+    K: ZeroMapKV<'a> + ?Sized + Ord,
     V: ZeroMapKV<'a> + ?Sized,
 {
     #[allow(clippy::type_complexity)] // it's a marker type, complexity doesn't matter
@@ -62,7 +80,7 @@ where
 
 impl<'a, K, V> ZeroMapMapVisitor<'a, K, V>
 where
-    K: ZeroMapKV<'a> + ?Sized,
+    K: ZeroMapKV<'a> + ?Sized + Ord,
     V: ZeroMapKV<'a> + ?Sized,
 {
     fn new() -> Self {
@@ -83,6 +101,34 @@ where
 
     fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
         formatter.write_str("a map produced by ZeroMap")
+    }
+
+    fn visit_seq<S>(self, mut access: S) -> Result<Self::Value, S::Error>
+    where
+        S: SeqAccess<'de>,
+    {
+        let mut map = ZeroMap::with_capacity(access.size_hint().unwrap_or(0));
+
+        // While there are entries remaining in the input, add them
+        // into our map.
+        while let Some((key, value)) = access.next_element::<(K::OwnedType, V::OwnedType)>()? {
+            // Try to append it at the end, hoping for a sorted map.
+            // If not sorted, return an error
+            // a serialized map that came from another ZeroMap
+            if map
+                .try_append(
+                    K::Container::owned_as_t(&key),
+                    V::Container::owned_as_t(&value),
+                )
+                .is_some()
+            {
+                return Err(de::Error::custom(
+                    "ZeroMap's keys must be sorted while deserializing",
+                ));
+            }
+        }
+
+        Ok(map)
     }
 
     fn visit_map<M>(self, mut access: M) -> Result<Self::Value, M::Error>
@@ -130,7 +176,7 @@ where
         D: Deserializer<'de>,
     {
         if deserializer.is_human_readable() {
-            deserializer.deserialize_map(ZeroMapMapVisitor::<'a, K, V>::new())
+            deserializer.deserialize_any(ZeroMapMapVisitor::<'a, K, V>::new())
         } else {
             let (keys, values): (K::Container, V::Container) =
                 Deserialize::deserialize(deserializer)?;
@@ -191,13 +237,15 @@ where
 mod test {
     use super::super::*;
 
-    #[derive(::serde::Serialize, ::serde::Deserialize)]
+    #[derive(dep_serde::Serialize, dep_serde::Deserialize)]
+    #[serde(crate = "dep_serde")]
     struct DeriveTest_ZeroMap<'data> {
         #[serde(borrow)]
         _data: ZeroMap<'data, str, [u8]>,
     }
 
-    #[derive(::serde::Serialize, ::serde::Deserialize)]
+    #[derive(dep_serde::Serialize, dep_serde::Deserialize)]
+    #[serde(crate = "dep_serde")]
     struct DeriveTest_ZeroMapBorrowed<'data> {
         #[serde(borrow)]
         _data: ZeroMapBorrowed<'data, str, [u8]>,
@@ -216,12 +264,32 @@ mod test {
         map.insert(&3, "tres");
         map
     }
+
     #[test]
     fn test_serde_json() {
         let map = make_map();
         let json_str = serde_json::to_string(&map).expect("serialize");
         assert_eq!(JSON_STR, json_str);
         let new_map: ZeroMap<u32, str> = serde_json::from_str(&json_str).expect("deserialize");
+        assert_eq!(
+            new_map.iter().collect::<Vec<_>>(),
+            map.iter().collect::<Vec<_>>()
+        );
+    }
+
+    #[test]
+    fn test_serde_json_complex_key() {
+        let mut map = ZeroMap::new();
+        map.insert(&(1, 1), "uno");
+        map.insert(&(2, 2), "dos");
+        map.insert(&(3, 3), "tres");
+        let json_str = serde_json::to_string(&map).expect("serialize");
+        assert_eq!(
+            json_str,
+            "[[[1,1],\"uno\"],[[2,2],\"dos\"],[[3,3],\"tres\"]]"
+        );
+        let new_map: ZeroMap<(u32, u32), str> =
+            serde_json::from_str(&json_str).expect("deserialize");
         assert_eq!(
             new_map.iter().collect::<Vec<_>>(),
             map.iter().collect::<Vec<_>>()

@@ -36,7 +36,7 @@ use core::str::FromStr;
 ///
 /// let key: Key = "ca".parse().expect("Parsing key failed.");
 /// let value: Value = "buddhist".parse().expect("Parsing value failed.");
-/// assert_eq!(loc.extensions.unicode.keywords.get(key),
+/// assert_eq!(loc.extensions.unicode.keywords.get(&key),
 ///     Some(&value));
 /// ```
 ///
@@ -95,24 +95,20 @@ impl Locale {
         parse_locale(v)
     }
 
-    /// Returns the default undefined locale "und". Same as [`default()`](Default::default()), but is `const`.
+    /// The default undefined locale "und". Same as [`default()`](Default::default()).
     ///
     /// # Examples
     ///
     /// ```
     /// use icu::locid::Locale;
     ///
-    /// const loc: Locale = Locale::und();
-    /// assert_eq!(Locale::default(), loc);
-    /// assert_eq!("und", loc.to_string());
+    /// assert_eq!(Locale::default(), Locale::UND);
+    /// assert_eq!("und", Locale::UND.to_string());
     /// ```
-    #[inline]
-    pub const fn und() -> Self {
-        Self {
-            id: LanguageIdentifier::und(),
-            extensions: extensions::Extensions::new(),
-        }
-    }
+    pub const UND: Self = Self {
+        id: LanguageIdentifier::UND,
+        extensions: extensions::Extensions::new(),
+    };
 
     /// This is a best-effort operation that performs all available levels of canonicalization.
     ///
@@ -262,7 +258,7 @@ impl_writeable_for_each_subtag_str_no_test!(Locale);
 #[test]
 fn test_writeable() {
     use writeable::assert_writeable_eq;
-    assert_writeable_eq!(Locale::und(), "und");
+    assert_writeable_eq!(Locale::UND, "und");
     assert_writeable_eq!(Locale::from_str("und-001").unwrap(), "und-001");
     assert_writeable_eq!(Locale::from_str("und-Mymr").unwrap(), "und-Mymr");
     assert_writeable_eq!(Locale::from_str("my-Mymr-MM").unwrap(), "my-Mymr-MM");

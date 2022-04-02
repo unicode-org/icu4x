@@ -32,7 +32,9 @@ pub trait ZeroVecLike<'a, T: ?Sized> {
     /// Search for a key in a sorted vector, returns `Ok(index)` if found,
     /// returns `Err(insert_index)` if not found, where `insert_index` is the
     /// index where it should be inserted to maintain sort order.
-    fn zvl_binary_search(&self, k: &T) -> Result<usize, usize>;
+    fn zvl_binary_search(&self, k: &T) -> Result<usize, usize>
+    where
+        T: Ord;
     /// Search for a key within a certain range in a sorted vector. Returns `None` if the
     /// range is out of bounds, and `Ok` or `Err` in the same way as `zvl_binary_search`.
     /// Indices are returned relative to the start of the range.
@@ -40,7 +42,9 @@ pub trait ZeroVecLike<'a, T: ?Sized> {
         &self,
         k: &T,
         range: Range<usize>,
-    ) -> Option<Result<usize, usize>>;
+    ) -> Option<Result<usize, usize>>
+    where
+        T: Ord;
 
     /// Search for a key in a sorted vector by a predicate, returns `Ok(index)` if found,
     /// returns `Err(insert_index)` if not found, where `insert_index` is the
@@ -51,7 +55,9 @@ pub trait ZeroVecLike<'a, T: ?Sized> {
     /// The length of this vector
     fn zvl_len(&self) -> usize;
     /// Check if this vector is in ascending order according to `T`s `Ord` impl
-    fn zvl_is_ascending(&self) -> bool;
+    fn zvl_is_ascending(&self) -> bool
+    where
+        T: Ord;
     /// Check if this vector is empty
     fn zvl_is_empty(&self) -> bool {
         self.zvl_len() == 0
@@ -83,17 +89,29 @@ pub trait ZeroVecLike<'a, T: ?Sized> {
 
     /// Compare this type with a `Self::GetType`. This must produce the same result as
     /// if `g` were converted to `Self`
-    fn t_cmp_get(t: &T, g: &Self::GetType) -> Ordering;
+    #[inline]
+    fn t_cmp_get(t: &T, g: &Self::GetType) -> Ordering
+    where
+        T: Ord,
+    {
+        Self::zvl_get_as_t(g, |g| t.cmp(g))
+    }
 
     /// Compare two values of `Self::GetType`. This must produce the same result as
     /// if both `a` and `b` were converted to `Self`
-    fn get_cmp_get(a: &Self::GetType, b: &Self::GetType) -> Ordering;
+    #[inline]
+    fn get_cmp_get(a: &Self::GetType, b: &Self::GetType) -> Ordering
+    where
+        T: Ord,
+    {
+        Self::zvl_get_as_t(a, |a| Self::zvl_get_as_t(b, |b| a.cmp(b)))
+    }
 
-    /// Obtain a version of T suitable for serialization
+    /// Obtain a reference to T, passed to a closure
     ///
     /// This uses a callback because it's not possible to return owned-or-borrowed
     /// types without GATs
-    fn t_with_ser<R>(g: &Self::GetType, f: impl FnOnce(&T) -> R) -> R;
+    fn zvl_get_as_t<R>(g: &Self::GetType, f: impl FnOnce(&T) -> R) -> R;
 }
 
 /// Trait abstracting over [`ZeroVec`] and [`VarZeroVec`], for use in [`ZeroMap`](super::ZeroMap). **You
@@ -140,7 +158,7 @@ pub trait MutableZeroVecLike<'a, T: ?Sized>: ZeroVecLike<'a, T> {
 
 impl<'a, T> ZeroVecLike<'a, T> for ZeroVec<'a, T>
 where
-    T: 'a + AsULE + Ord + Copy,
+    T: 'a + AsULE + Copy,
 {
     type GetType = T::ULE;
     type BorrowedVariant = &'a ZeroSlice<T>;
@@ -148,14 +166,16 @@ where
     fn zvl_new() -> Self {
         Self::new()
     }
-    fn zvl_binary_search(&self, k: &T) -> Result<usize, usize> {
+    fn zvl_binary_search(&self, k: &T) -> Result<usize, usize>
+    where
+        T: Ord,
+    {
         ZeroSlice::binary_search(self, k)
     }
-    fn zvl_binary_search_in_range(
-        &self,
-        k: &T,
-        range: Range<usize>,
-    ) -> Option<Result<usize, usize>> {
+    fn zvl_binary_search_in_range(&self, k: &T, range: Range<usize>) -> Option<Result<usize, usize>>
+    where
+        T: Ord,
+    {
         let zs: &ZeroSlice<T> = &*self;
         zs.zvl_binary_search_in_range(k, range)
     }
@@ -171,7 +191,10 @@ where
     fn zvl_len(&self) -> usize {
         ZeroSlice::len(self)
     }
-    fn zvl_is_ascending(&self) -> bool {
+    fn zvl_is_ascending(&self) -> bool
+    where
+        T: Ord,
+    {
         #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
         self.as_ule_slice()
             .windows(2)
@@ -188,26 +211,20 @@ where
             None
         }
     }
+
     fn zvl_from_borrowed(b: &'a ZeroSlice<T>) -> Self {
         b.as_zerovec()
     }
 
-    fn t_cmp_get(t: &T, g: &Self::GetType) -> Ordering {
-        t.cmp(&T::from_unaligned(*g))
-    }
-
-    fn get_cmp_get(a: &Self::GetType, b: &Self::GetType) -> Ordering {
-        T::from_unaligned(*a).cmp(&T::from_unaligned(*b))
-    }
-
-    fn t_with_ser<R>(g: &Self::GetType, f: impl FnOnce(&T) -> R) -> R {
+    #[inline]
+    fn zvl_get_as_t<R>(g: &Self::GetType, f: impl FnOnce(&T) -> R) -> R {
         f(&T::from_unaligned(*g))
     }
 }
 
 impl<'a, T> ZeroVecLike<'a, T> for &'a ZeroSlice<T>
 where
-    T: AsULE + Ord + Copy,
+    T: AsULE + Copy,
 {
     type GetType = T::ULE;
     type BorrowedVariant = &'a ZeroSlice<T>;
@@ -215,14 +232,16 @@ where
     fn zvl_new() -> Self {
         ZeroSlice::from_ule_slice(&[])
     }
-    fn zvl_binary_search(&self, k: &T) -> Result<usize, usize> {
+    fn zvl_binary_search(&self, k: &T) -> Result<usize, usize>
+    where
+        T: Ord,
+    {
         ZeroSlice::binary_search(*self, k)
     }
-    fn zvl_binary_search_in_range(
-        &self,
-        k: &T,
-        range: Range<usize>,
-    ) -> Option<Result<usize, usize>> {
+    fn zvl_binary_search_in_range(&self, k: &T, range: Range<usize>) -> Option<Result<usize, usize>>
+    where
+        T: Ord,
+    {
         let subslice = self.get_subslice(range)?;
         Some(ZeroSlice::binary_search(subslice, k))
     }
@@ -238,7 +257,10 @@ where
     fn zvl_len(&self) -> usize {
         ZeroSlice::len(*self)
     }
-    fn zvl_is_ascending(&self) -> bool {
+    fn zvl_is_ascending(&self) -> bool
+    where
+        T: Ord,
+    {
         #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
         self.as_ule_slice()
             .windows(2)
@@ -255,22 +277,15 @@ where
         b
     }
 
-    fn t_cmp_get(t: &T, g: &Self::GetType) -> Ordering {
-        t.cmp(&T::from_unaligned(*g))
-    }
-
-    fn get_cmp_get(a: &Self::GetType, b: &Self::GetType) -> Ordering {
-        T::from_unaligned(*a).cmp(&T::from_unaligned(*b))
-    }
-
-    fn t_with_ser<R>(g: &Self::GetType, f: impl FnOnce(&T) -> R) -> R {
+    #[inline]
+    fn zvl_get_as_t<R>(g: &Self::GetType, f: impl FnOnce(&T) -> R) -> R {
         f(&T::from_unaligned(*g))
     }
 }
 
 impl<'a, T> BorrowedZeroVecLike<'a, T> for &'a ZeroSlice<T>
 where
-    T: AsULE + Ord + Copy,
+    T: AsULE + Copy,
 {
     fn zvl_get_borrowed(&self, index: usize) -> Option<&'a T::ULE> {
         self.as_ule_slice().get(index)
@@ -279,7 +294,7 @@ where
 
 impl<'a, T> MutableZeroVecLike<'a, T> for ZeroVec<'a, T>
 where
-    T: AsULE + Ord + Copy + 'static,
+    T: AsULE + Copy + 'static,
 {
     type OwnedType = T;
     fn zvl_insert(&mut self, index: usize, value: &T) {
@@ -314,7 +329,6 @@ where
 impl<'a, T> ZeroVecLike<'a, T> for VarZeroVec<'a, T>
 where
     T: VarULE,
-    T: Ord,
     T: ?Sized,
 {
     type GetType = T;
@@ -323,14 +337,16 @@ where
     fn zvl_new() -> Self {
         Self::new()
     }
-    fn zvl_binary_search(&self, k: &T) -> Result<usize, usize> {
+    fn zvl_binary_search(&self, k: &T) -> Result<usize, usize>
+    where
+        T: Ord,
+    {
         self.binary_search(k)
     }
-    fn zvl_binary_search_in_range(
-        &self,
-        k: &T,
-        range: Range<usize>,
-    ) -> Option<Result<usize, usize>> {
+    fn zvl_binary_search_in_range(&self, k: &T, range: Range<usize>) -> Option<Result<usize, usize>>
+    where
+        T: Ord,
+    {
         self.binary_search_in_range(k, range)
     }
     fn zvl_binary_search_by(&self, predicate: impl FnMut(&T) -> Ordering) -> Result<usize, usize> {
@@ -342,7 +358,10 @@ where
     fn zvl_len(&self) -> usize {
         self.len()
     }
-    fn zvl_is_ascending(&self) -> bool {
+    fn zvl_is_ascending(&self) -> bool
+    where
+        T: Ord,
+    {
         if !self.is_empty() {
             let mut prev = self.get(0).unwrap();
             for element in self.iter().skip(1) {
@@ -369,16 +388,8 @@ where
         b.as_varzerovec()
     }
 
-    fn t_cmp_get(t: &T, g: &Self::GetType) -> Ordering {
-        t.cmp(g)
-    }
-
-    fn get_cmp_get(a: &Self::GetType, b: &Self::GetType) -> Ordering {
-        a.cmp(b)
-    }
-
     #[inline]
-    fn t_with_ser<R>(g: &Self::GetType, f: impl FnOnce(&T) -> R) -> R {
+    fn zvl_get_as_t<R>(g: &Self::GetType, f: impl FnOnce(&T) -> R) -> R {
         f(g)
     }
 }
@@ -386,7 +397,6 @@ where
 impl<'a, T> ZeroVecLike<'a, T> for &'a VarZeroSlice<T>
 where
     T: VarULE,
-    T: Ord,
     T: ?Sized,
 {
     type GetType = T;
@@ -395,14 +405,16 @@ where
     fn zvl_new() -> Self {
         VarZeroSlice::new_empty()
     }
-    fn zvl_binary_search(&self, k: &T) -> Result<usize, usize> {
+    fn zvl_binary_search(&self, k: &T) -> Result<usize, usize>
+    where
+        T: Ord,
+    {
         self.binary_search(k)
     }
-    fn zvl_binary_search_in_range(
-        &self,
-        k: &T,
-        range: Range<usize>,
-    ) -> Option<Result<usize, usize>> {
+    fn zvl_binary_search_in_range(&self, k: &T, range: Range<usize>) -> Option<Result<usize, usize>>
+    where
+        T: Ord,
+    {
         self.binary_search_in_range(k, range)
     }
     fn zvl_binary_search_by(&self, predicate: impl FnMut(&T) -> Ordering) -> Result<usize, usize> {
@@ -414,7 +426,10 @@ where
     fn zvl_len(&self) -> usize {
         self.len()
     }
-    fn zvl_is_ascending(&self) -> bool {
+    fn zvl_is_ascending(&self) -> bool
+    where
+        T: Ord,
+    {
         if !self.is_empty() {
             let mut prev = self.get(0).unwrap();
             for element in self.iter().skip(1) {
@@ -437,16 +452,8 @@ where
         b
     }
 
-    fn t_cmp_get(t: &T, g: &Self::GetType) -> Ordering {
-        t.cmp(g)
-    }
-
-    fn get_cmp_get(a: &Self::GetType, b: &Self::GetType) -> Ordering {
-        a.cmp(b)
-    }
-
     #[inline]
-    fn t_with_ser<R>(g: &Self::GetType, f: impl FnOnce(&T) -> R) -> R {
+    fn zvl_get_as_t<R>(g: &Self::GetType, f: impl FnOnce(&T) -> R) -> R {
         f(g)
     }
 }
@@ -454,7 +461,6 @@ where
 impl<'a, T> BorrowedZeroVecLike<'a, T> for &'a VarZeroSlice<T>
 where
     T: VarULE,
-    T: Ord,
     T: ?Sized,
 {
     fn zvl_get_borrowed(&self, index: usize) -> Option<&'a T> {
@@ -465,7 +471,6 @@ where
 impl<'a, T> MutableZeroVecLike<'a, T> for VarZeroVec<'a, T>
 where
     T: VarULE,
-    T: Ord,
     T: ?Sized,
 {
     type OwnedType = Box<T>;

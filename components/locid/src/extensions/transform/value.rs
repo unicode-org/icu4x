@@ -3,7 +3,6 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::parser::{get_subtag_iterator, ParserError};
-use alloc::boxed::Box;
 use alloc::vec;
 use alloc::vec::Vec;
 use core::ops::RangeInclusive;
@@ -12,7 +11,7 @@ use tinystr::TinyAsciiStr;
 
 #[derive(Debug, PartialEq, Eq, Clone, Hash, PartialOrd, Ord)]
 #[allow(missing_docs)] // TODO(#1028) - Add missing docs.
-pub struct Value(Box<[TinyAsciiStr<{ *TYPE_LENGTH.end() }>]>);
+pub struct Value(Vec<TinyAsciiStr<{ *TYPE_LENGTH.end() }>>);
 
 const TYPE_LENGTH: RangeInclusive<usize> = 3..=8;
 const TRUE_TVALUE: TinyAsciiStr<8> = tinystr::tinystr!(8, "true");
@@ -71,11 +70,11 @@ impl Value {
         if !has_value {
             return Err(ParserError::InvalidExtension);
         }
-        Ok(Self(v.into_boxed_slice()))
+        Ok(Self(v))
     }
 
     pub(crate) fn from_vec_unchecked(input: Vec<TinyAsciiStr<{ *TYPE_LENGTH.end() }>>) -> Self {
-        Self(input.into_boxed_slice())
+        Self(input)
     }
 
     pub(crate) fn is_type_subtag(t: &[u8]) -> bool {

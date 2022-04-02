@@ -31,7 +31,7 @@ mod visitor;
 /// for types with a lifetime parameter.
 ///
 /// Apply the `#[zerofrom(clone)]` attribute to a field if it doesn't implement
-/// ZeroFrom; this data will be cloned when the struct is zero_from'ed.
+/// Copy or ZeroFrom; this data will be cloned when the struct is zero_from'ed.
 #[proc_macro_derive(ZeroFrom, attributes(zerofrom))]
 pub fn zf_derive(input: TokenStream) -> TokenStream {
     let input = parse_macro_input!(input as DeriveInput);
@@ -119,11 +119,15 @@ fn zf_derive_impl(input: &DeriveInput) -> TokenStream2 {
                             zf_bounds.push(parse_quote!(#fty: zerofrom::ZeroFrom<'zf, #fty>));
                         }
                     }
-
-                    // By doing this we essentially require ZF to be implemented
-                    // on all fields
-                    quote! {
-                        <#fty as zerofrom::ZeroFrom<'zf, #lifetime_ty>>::zero_from(#field)
+                    if has_ty || has_lt {
+                        // By doing this we essentially require ZF to be implemented
+                        // on all fields
+                        quote! {
+                            <#fty as zerofrom::ZeroFrom<'zf, #lifetime_ty>>::zero_from(#field)
+                        }
+                    } else {
+                        // No lifetimes, so we can just copy
+                        quote! { *#field }
                     }
                 }
             })

@@ -9,7 +9,9 @@ use alloc::vec::Vec;
 use core::fmt;
 use core::marker::PhantomData;
 use core::mem;
+use dep_serde as serde;
 use serde::de::{self, Deserialize, Deserializer, SeqAccess, Visitor};
+#[cfg(feature = "serde_serialize")]
 use serde::ser::{Serialize, SerializeSeq, Serializer};
 
 struct ZeroVecVisitor<T> {
@@ -76,7 +78,8 @@ where
     }
 }
 
-/// This impl can be made available by enabling the optional `serde` feature of the `zerovec` crate
+/// This impl can be made available by enabling the optional `serde_serialize` feature of the `zerovec` crate
+#[cfg(feature = "serde_serialize")]
 impl<T> Serialize for ZeroVec<'_, T>
 where
     T: Serialize + AsULE,
@@ -112,7 +115,8 @@ where
     }
 }
 
-/// This impl can be made available by enabling the optional `serde` feature of the `zerovec` crate
+/// This impl can be made available by enabling the optional `serde_serialize` feature of the `zerovec` crate
+#[cfg(feature = "serde_serialize")]
 impl<T> Serialize for ZeroSlice<T>
 where
     T: Serialize + AsULE,
@@ -131,7 +135,8 @@ mod test {
     use super::super::*;
     use crate::samples::*;
 
-    #[derive(::serde::Serialize, ::serde::Deserialize)]
+    #[derive(dep_serde::Serialize, dep_serde::Deserialize)]
+    #[serde(crate = "dep_serde")]
     struct DeriveTest_ZeroVec<'data> {
         #[serde(borrow)]
         _data: ZeroVec<'data, u16>,

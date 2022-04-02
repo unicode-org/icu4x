@@ -3,7 +3,6 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use super::Attribute;
-use alloc::boxed::Box;
 
 use alloc::vec::Vec;
 use core::ops::Deref;
@@ -31,7 +30,7 @@ use core::ops::Deref;
 /// ```
 ///
 #[derive(Default, Debug, PartialEq, Eq, Clone, Hash, PartialOrd, Ord)]
-pub struct Attributes(Option<Box<[Attribute]>>);
+pub struct Attributes(Vec<Attribute>);
 
 impl Attributes {
     /// Returns a new empty set of attributes. Same as [`default()`](Default::default()), but is `const`.
@@ -45,7 +44,7 @@ impl Attributes {
     /// ```
     #[inline]
     pub const fn new() -> Self {
-        Self(None)
+        Self(Vec::new())
     }
 
     /// A constructor which takes a pre-sorted list of [`Attribute`] elements.
@@ -71,11 +70,7 @@ impl Attributes {
     /// for the caller to use [`binary_search`](slice::binary_search) instead of [`sort`](slice::sort)
     /// and [`dedup`](Vec::dedup()).
     pub fn from_vec_unchecked(input: Vec<Attribute>) -> Self {
-        if input.is_empty() {
-            Self(None)
-        } else {
-            Self(Some(input.into_boxed_slice()))
-        }
+        Self(input)
     }
 
     /// Empties the [`Attributes`] list.
@@ -100,7 +95,7 @@ impl Attributes {
     /// assert_eq!(attributes.to_string(), "");
     /// ```
     pub fn clear(&mut self) {
-        self.0 = None;
+        self.0.clear();
     }
 
     pub(crate) fn for_each_subtag_str<E, F>(&self, f: &mut F) -> Result<(), E>
@@ -117,10 +112,6 @@ impl Deref for Attributes {
     type Target = [Attribute];
 
     fn deref(&self) -> &[Attribute] {
-        if let Some(ref data) = self.0 {
-            data
-        } else {
-            &[]
-        }
+        self.0.deref()
     }
 }

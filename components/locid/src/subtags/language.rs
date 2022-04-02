@@ -43,9 +43,6 @@ use tinystr::TinyAsciiStr;
 pub struct Language(TinyAsciiStr<{ *LANGUAGE_LENGTH.end() }>);
 
 const LANGUAGE_LENGTH: RangeInclusive<usize> = 2..=3;
-// TODO(#348): Change this to invoke a const function.
-// Safe because "und" is a valid language subtag
-const UND: Language = crate::language!("und");
 
 impl Language {
     /// A constructor which takes a utf8 slice, parses it and
@@ -157,21 +154,17 @@ impl Language {
         Self(TinyAsciiStr::from_bytes_unchecked(v))
     }
 
-    /// Returns the default undefined language "und". Same as [`default()`](Default::default()), but is `const`.
+    /// The default undefined language "und". Same as [`default()`](Default::default()).
     ///
     /// # Examples
     ///
     /// ```
     /// use icu::locid::subtags::Language;
     ///
-    /// const language: Language = Language::und();
-    /// assert_eq!(Language::default(), language);
-    /// assert_eq!("und", language.to_string());
+    /// assert_eq!(Language::default(), Language::UND);
+    /// assert_eq!("und", Language::UND.to_string());
     /// ```
-    #[inline]
-    pub const fn und() -> Self {
-        UND
-    }
+    pub const UND: Self = crate::language!("und");
 
     /// A helper function for displaying
     /// a [`Language`] subtag as a `&`[`str`].
@@ -212,7 +205,7 @@ impl Language {
     /// ```
     #[inline]
     pub fn clear(&mut self) {
-        *self = UND
+        *self = Self::UND
     }
 
     /// Tests if the [`Language`] subtag is empty (equal to `"und"`).
@@ -233,7 +226,7 @@ impl Language {
     /// ```
     #[inline]
     pub fn is_empty(self) -> bool {
-        self == UND
+        self == Self::UND
     }
 }
 
@@ -289,7 +282,7 @@ impl From<Language> for TinyAsciiStr<3> {
 
 impl Default for Language {
     fn default() -> Language {
-        Language::und()
+        Language::UND
     }
 }
 

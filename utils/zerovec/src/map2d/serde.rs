@@ -6,18 +6,19 @@ use super::{ZeroMap2d, ZeroMap2dBorrowed};
 use crate::map::{MutableZeroVecLike, ZeroMapKV, ZeroVecLike};
 use crate::ZeroVec;
 use alloc::vec::Vec;
-use core::cell::RefCell;
 use core::fmt;
 use core::marker::PhantomData;
-use serde::de::{self, MapAccess, Visitor};
-use serde::ser::SerializeMap;
-use serde::{Deserialize, Deserializer, Serialize, Serializer};
+use dep_serde as serde;
+use serde::de::{self, Deserialize, Deserializer, MapAccess, Visitor};
+#[cfg(feature = "serde_serialize")]
+use serde::ser::{Serialize, SerializeMap, Serializer};
 
-/// This impl can be made available by enabling the optional `serde` feature of the `zerovec` crate
+/// This impl can be made available by enabling the optional `serde_serialize` feature of the `zerovec` crate
+#[cfg(feature = "serde_serialize")]
 impl<'a, K0, K1, V> Serialize for ZeroMap2d<'a, K0, K1, V>
 where
-    K0: ZeroMapKV<'a> + Serialize + ?Sized,
-    K1: ZeroMapKV<'a> + Serialize + ?Sized,
+    K0: ZeroMapKV<'a> + Serialize + ?Sized + Ord,
+    K1: ZeroMapKV<'a> + Serialize + ?Sized + Ord,
     V: ZeroMapKV<'a> + Serialize + ?Sized,
     K0::Container: Serialize,
     K1::Container: Serialize,
@@ -31,11 +32,11 @@ where
             let mut values_it = self.iter_values();
             let mut serde_map = serializer.serialize_map(None)?;
             for (key0_index, key0) in self.iter_keys0().enumerate() {
-                K0::Container::t_with_ser(key0, |k| serde_map.serialize_key(k))?;
+                K0::Container::zvl_get_as_t(key0, |k| serde_map.serialize_key(k))?;
                 let inner_map = ZeroMap2dInnerMapSerialize {
                     key0_index,
                     map: self,
-                    values_it: RefCell::new(values_it),
+                    values_it: core::cell::RefCell::new(values_it),
                 };
                 serde_map.serialize_value(&inner_map)?;
                 values_it = inner_map.values_it.into_inner();
@@ -48,21 +49,23 @@ where
 }
 
 /// Helper struct for human-serializing the inner map of a ZeroMap2d
+#[cfg(feature = "serde_serialize")]
 struct ZeroMap2dInnerMapSerialize<'a, 'l, K0, K1, V, I>
 where
-    K0: ZeroMapKV<'a> + ?Sized,
-    K1: ZeroMapKV<'a> + ?Sized,
+    K0: ZeroMapKV<'a> + ?Sized + Ord,
+    K1: ZeroMapKV<'a> + ?Sized + Ord,
     V: ZeroMapKV<'a> + ?Sized,
 {
     pub key0_index: usize,
     pub map: &'l ZeroMap2d<'a, K0, K1, V>,
-    pub values_it: RefCell<I>,
+    pub values_it: core::cell::RefCell<I>,
 }
 
+#[cfg(feature = "serde_serialize")]
 impl<'a, 'l, K0, K1, V, I> Serialize for ZeroMap2dInnerMapSerialize<'a, 'l, K0, K1, V, I>
 where
-    K0: ZeroMapKV<'a> + Serialize + ?Sized,
-    K1: ZeroMapKV<'a> + Serialize + ?Sized,
+    K0: ZeroMapKV<'a> + Serialize + ?Sized + Ord,
+    K1: ZeroMapKV<'a> + Serialize + ?Sized + Ord,
     V: ZeroMapKV<'a> + Serialize + ?Sized,
     K0::Container: Serialize,
     K1::Container: Serialize,
@@ -76,19 +79,20 @@ where
         let mut serde_map = serializer.serialize_map(None)?;
         #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
         for key1 in self.map.iter_keys1_by_index(self.key0_index).unwrap() {
-            K1::Container::t_with_ser(key1, |k| serde_map.serialize_key(k))?;
+            K1::Container::zvl_get_as_t(key1, |k| serde_map.serialize_key(k))?;
             let v = self.values_it.borrow_mut().next().unwrap();
-            V::Container::t_with_ser(v, |v| serde_map.serialize_value(v))?;
+            V::Container::zvl_get_as_t(v, |v| serde_map.serialize_value(v))?;
         }
         serde_map.end()
     }
 }
 
-/// This impl can be made available by enabling the optional `serde` feature of the `zerovec` crate
+/// This impl can be made available by enabling the optional `serde_serialize` feature of the `zerovec` crate
+#[cfg(feature = "serde_serialize")]
 impl<'a, K0, K1, V> Serialize for ZeroMap2dBorrowed<'a, K0, K1, V>
 where
-    K0: ZeroMapKV<'a> + Serialize + ?Sized,
-    K1: ZeroMapKV<'a> + Serialize + ?Sized,
+    K0: ZeroMapKV<'a> + Serialize + ?Sized + Ord,
+    K1: ZeroMapKV<'a> + Serialize + ?Sized + Ord,
     V: ZeroMapKV<'a> + Serialize + ?Sized,
     K0::Container: Serialize,
     K1::Container: Serialize,
@@ -105,8 +109,8 @@ where
 /// Modified example from https://serde.rs/deserialize-map.html
 struct ZeroMap2dMapVisitor<'a, K0, K1, V>
 where
-    K0: ZeroMapKV<'a> + ?Sized,
-    K1: ZeroMapKV<'a> + ?Sized,
+    K0: ZeroMapKV<'a> + ?Sized + Ord,
+    K1: ZeroMapKV<'a> + ?Sized + Ord,
     V: ZeroMapKV<'a> + ?Sized,
 {
     #[allow(clippy::type_complexity)] // it's a marker type, complexity doesn't matter
@@ -115,8 +119,8 @@ where
 
 impl<'a, K0, K1, V> ZeroMap2dMapVisitor<'a, K0, K1, V>
 where
-    K0: ZeroMapKV<'a> + ?Sized,
-    K1: ZeroMapKV<'a> + ?Sized,
+    K0: ZeroMapKV<'a> + ?Sized + Ord,
+    K1: ZeroMapKV<'a> + ?Sized + Ord,
     V: ZeroMapKV<'a> + ?Sized,
 {
     fn new() -> Self {
@@ -128,8 +132,8 @@ where
 
 impl<'a, 'de, K0, K1, V> Visitor<'de> for ZeroMap2dMapVisitor<'a, K0, K1, V>
 where
-    K0: ZeroMapKV<'a> + Ord + ?Sized,
-    K1: ZeroMapKV<'a> + Ord + ?Sized,
+    K0: ZeroMapKV<'a> + Ord + ?Sized + Ord,
+    K1: ZeroMapKV<'a> + Ord + ?Sized + Ord,
     V: ZeroMapKV<'a> + ?Sized,
     K1::Container: Deserialize<'de>,
     V::Container: Deserialize<'de>,
@@ -295,7 +299,7 @@ where
     }
 }
 
-// /// This impl can be made available by enabling the optional `serde` feature of the `zerovec` crate
+/// This impl can be made available by enabling the optional `serde` feature of the `zerovec` crate
 impl<'de, 'a, K0, K1, V> Deserialize<'de> for ZeroMap2dBorrowed<'a, K0, K1, V>
 where
     K0: ZeroMapKV<'a> + Ord + ?Sized,
@@ -362,13 +366,15 @@ where
 mod test {
     use super::super::*;
 
-    #[derive(::serde::Serialize, ::serde::Deserialize)]
+    #[derive(dep_serde::Serialize, dep_serde::Deserialize)]
+    #[serde(crate = "dep_serde")]
     struct DeriveTest_ZeroMap2d<'data> {
         #[serde(borrow)]
         _data: ZeroMap2d<'data, u16, str, [u8]>,
     }
 
-    #[derive(::serde::Serialize, ::serde::Deserialize)]
+    #[derive(dep_serde::Serialize, dep_serde::Deserialize)]
+    #[serde(crate = "dep_serde")]
     struct DeriveTest_ZeroMap2dBorrowed<'data> {
         #[serde(borrow)]
         _data: ZeroMap2dBorrowed<'data, u16, str, [u8]>,

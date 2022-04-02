@@ -85,8 +85,8 @@ fn main() -> eyre::Result<()> {
                 .long("cldr-tag")
                 .value_name("TAG")
                 .help(
-                    "Download CLDR JSON data from this GitHub tag: \n\
-                    https://github.com/unicode-org/cldr-json/tags",
+                    "Download CLDR JSON data from this GitHub tag (https://github.com/unicode-org/cldr-json/tags)\n\
+                    Note that some keys do not support versions before 41.0.0.",
                 )
                 .takes_value(true),
         )
@@ -95,9 +95,9 @@ fn main() -> eyre::Result<()> {
                 .long("cldr-root")
                 .value_name("PATH")
                 .help(
-                    "Path to the CLDR JSON root directory. Ignored if \
-                        '--cldr-tag' is present.\n\
-                    https://github.com/unicode-org/cldr-json/tree/master/cldr-json",
+                    "Path to a local cldr-{version}-json-full.zip directory (see https://github.com/unicode-org/cldr-json/releases).\n\
+                    Ignored if '--cldr-tag' is present.\n\
+                    Note that some keys do not support versions before 41.0.0.",
                 )
                 .takes_value(true),
         )
@@ -105,6 +105,10 @@ fn main() -> eyre::Result<()> {
             Arg::with_name("UPROPS_TAG")
                 .long("uprops-tag")
                 .value_name("TAG")
+                .help(
+                    "Download Unicode Properties data from this GitHub tag (https://github.com/unicode-org/icu/tags)\n\
+                    Note that some keys do not support versions before release-71-1."
+                )
                 .takes_value(true),
         )
         .arg(
@@ -112,9 +116,9 @@ fn main() -> eyre::Result<()> {
                 .long("uprops-root")
                 .value_name("PATH")
                 .help(
-                    "Path to a local icuexportdata_uprops_full directory. Ignored if \
-                        '--uprops-tag is present.\n\
-                        https://github.com/unicode-org/icu/releases",
+                    "Path to a local icuexportdata_uprops_full directory (see https://github.com/unicode-org/icu/releases).\n\
+                    Ignored if '--uprops-tag is present.\n\
+                    Note that some keys do not support versions before release-71-1.",
                 )
                 .takes_value(true),
         )
