@@ -148,6 +148,36 @@ impl Fields {
         self.0.get(key)
     }
 
+    /// Sets the specified keyword, returning the old value if it already existed.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use std::str::FromStr;
+    /// use std::string::ToString;
+    /// use icu::locid::transform_ext_key;
+    /// use icu::locid::Locale;
+    /// use icu::locid::extensions::transform::Key;
+    /// use icu::locid::extensions::transform::Value;
+    ///
+    /// const D0_KEY: Key = transform_ext_key!("d0");
+    /// let lower = Value::from_str("lower").expect("valid extension subtag");
+    /// let casefold = Value::from_str("casefold").expect("valid extension subtag");
+    ///
+    /// let mut loc: Locale = "en-t-hi-d0-casefold".parse()
+    ///     .expect("valid BCP-47 identifier");
+    /// let old_value = loc.extensions.transform.fields.set(
+    ///     D0_KEY,
+    ///     lower
+    /// );
+    ///
+    /// assert_eq!(old_value, Some(casefold));
+    /// assert_eq!(loc, "en-t-hi-d0-lower");
+    /// ```
+    pub fn set(&mut self, key: Key, value: Value) -> Option<Value> {
+        self.0.insert(key, value)
+    }
+
     /// Retains a subset of fields as specified by the predicate function.
     ///
     /// # Examples
