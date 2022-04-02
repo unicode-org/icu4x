@@ -127,18 +127,18 @@ impl Locale {
         Ok(locale.to_string())
     }
 
-    /// Accessor method for unicode extensions.
+    /// Accessor method for Unicode extensions.
     ///
     /// # Examples
     ///
     /// ```
-    /// use icu::locid::{extensions::unicode::Key, Locale};
+    /// use icu::locid::{extensions::unicode::Key, Locale, unicode_ext_key};
+    ///
+    /// const KEY: Key = unicode_ext_key!("hc");
     ///
     /// let loc = Locale::from_bytes("en-US-u-hc-h12".as_bytes())
     ///     .expect("Parsing failed.");
-    /// let key = "hc".parse::<Key>()
-    ///     .expect("Invalid key.");
-    /// let ext = loc.get_unicode_extension(&key)
+    /// let ext = loc.get_unicode_extension(&KEY)
     ///     .expect("Extension not defined");
     /// assert_eq!(ext.to_string(), "h12");
     /// ```
@@ -147,6 +147,55 @@ impl Locale {
         key: &extensions::unicode::Key,
     ) -> Option<&extensions::unicode::Value> {
         self.extensions.unicode.keywords.get(key)
+    }
+
+    /// Mutating setter method for Unicode extensions.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::locid::{extensions::unicode::Key, locale, unicode_ext_key};
+    ///
+    /// const KEY: Key = unicode_ext_key!("hc");
+    ///
+    /// let mut loc = locale!("en-US");
+    /// loc.set_unicode_extension(KEY, "h12".parse().expect("valid subtag"));
+    /// assert_eq!(
+    ///     loc,
+    ///     "en-US-u-hc-h12"
+    /// );
+    /// ```
+    pub fn set_unicode_extension(
+        &mut self,
+        key: extensions::unicode::Key,
+        value: extensions::unicode::Value,
+    ) {
+        self.extensions.unicode.keywords.set(key, value);
+    }
+
+    /// Chainable setter method for Unicode extensions.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::locid::{extensions::unicode::Key, locale, unicode_ext_key};
+    ///
+    /// const KEY: Key = unicode_ext_key!("hc");
+    ///
+    /// let loc = locale!("en-US")
+    ///     .with_unicode_extension(KEY, "h12".parse().expect("valid subtag"));
+    /// assert_eq!(
+    ///     loc,
+    ///     "en-US-u-hc-h12"
+    /// );
+    /// ```
+    pub fn with_unicode_extension(
+        mut self,
+        key: extensions::unicode::Key,
+        value: extensions::unicode::Value,
+    ) -> Self {
+        self.extensions.unicode.keywords.set(key, value);
+        self
     }
 
     /// Compare this `Locale` with a BCP-47 string.
