@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1648857583079,
+  "lastUpdate": 1648862032585,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -31331,6 +31331,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 27961,
             "range": "± 2411",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "09cd22c35bdb00c19757d70309c4e756b4f941bf",
+          "message": "Fixup t_with_ser error (#1766)",
+          "timestamp": "2022-04-01T18:04:01-07:00",
+          "tree_id": "76ec875b2c27cfee9f31ddb6a32f1a7513532142",
+          "url": "https://github.com/unicode-org/icu4x/commit/09cd22c35bdb00c19757d70309c4e756b4f941bf"
+        },
+        "date": 1648862014433,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1043,
+            "range": "± 32",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 6692,
+            "range": "± 441",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 18708,
+            "range": "± 844",
             "unit": "ns/iter"
           }
         ]
