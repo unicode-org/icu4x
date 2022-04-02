@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1648858543651,
+  "lastUpdate": 1648861530825,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -12503,6 +12503,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/552a1edd517b59c9b192ef36cd9ac1039e1d1f09"
         },
         "date": 1648858526360,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4555035,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "09cd22c35bdb00c19757d70309c4e756b4f941bf",
+          "message": "Fixup t_with_ser error (#1766)",
+          "timestamp": "2022-04-01T18:04:01-07:00",
+          "tree_id": "76ec875b2c27cfee9f31ddb6a32f1a7513532142",
+          "url": "https://github.com/unicode-org/icu4x/commit/09cd22c35bdb00c19757d70309c4e756b4f941bf"
+        },
+        "date": 1648861514551,
         "tool": "ndjson",
         "benches": [
           {
