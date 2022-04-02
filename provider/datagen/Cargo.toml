@@ -75,6 +75,9 @@ zerovec = { version = "0.6", path = "../../utils/zerovec", features = ["serde_se
 reqwest = { version = "0.11", features = ["stream"], optional = true }
 tokio = { version = "1.5", features = ["rt-multi-thread", "macros", "fs"], optional = true }
 futures = { version = "0.3", optional = true }
+walkdir = "2.3.2"
+sha2 = "0.10.2"
+pathdiff = "0.2.1"
 
 [dev-dependencies]
 mktemp = "0.4"
@@ -101,3 +104,7 @@ required-features = ["download-testdata"]
 [[bin]]
 name = "icu4x-verify-zero-copy"
 path = "src/bin/verify-zero-copy.rs"
+
+[[bin]]
+name = "icu4x-fingerprint-data"
+path = "src/bin/fingerprint-data.rs"
