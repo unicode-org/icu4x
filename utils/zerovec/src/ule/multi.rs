@@ -25,6 +25,7 @@ impl MultiFieldsULE {
         unsafe {
             // safe since BlankSliceEncoder is transparent over usize
             let lengths = &*(lengths as *const [usize] as *const [BlankSliceEncoder]);
+            #[allow(expect_used)] // See #1410
             crate::varzerovec::components::compute_serializable_len(lengths)
                 .expect("Too many bytes to encode") as usize
         }

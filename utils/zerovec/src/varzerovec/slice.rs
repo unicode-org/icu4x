@@ -254,6 +254,7 @@ impl<T: VarULE + ?Sized> VarZeroSlice<T> {
 
     pub(crate) unsafe fn get_bytes_at_mut(&mut self, idx: usize) -> &mut [u8] {
         let range = self.as_components().get_range(idx);
+        #[allow(clippy::indexing_slicing)] // get_range() is known to return in-bounds ranges
         &mut self.entire_slice[range]
     }
 }
