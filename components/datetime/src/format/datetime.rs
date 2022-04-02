@@ -393,16 +393,11 @@ mod tests {
     fn test_basic() {
         use crate::provider::calendar::DateSymbolsV1Marker;
         use icu_calendar::DateTime;
-        use icu_locid::{locale, unicode_ext_key};
+        use icu_locid::{locale, unicode_ext_key, unicode_ext_value};
         use icu_provider::prelude::*;
 
         let provider = icu_testdata::get_provider();
-        let mut locale = locale!("en");
-        locale
-            .extensions
-            .unicode
-            .keywords
-            .set(unicode_ext_key!("ca"), "gregory".parse().unwrap());
+        let locale = locale!("en").with_unicode_extension(unicode_ext_key!("ca"), unicode_ext_value!("gregory"));
         let data: DataPayload<DateSymbolsV1Marker> = provider
             .load_resource(&DataRequest {
                 options: locale.into(),
