@@ -14,7 +14,7 @@ use core::default::Default;
 use core::fmt;
 use core::fmt::Write;
 use icu_locid::extensions::unicode as unicode_ext;
-use icu_locid::subtags::{Language, Script, Region};
+use icu_locid::subtags::{Language, Region, Script};
 use icu_locid::{LanguageIdentifier, Locale};
 use writeable::{LengthHint, Writeable};
 use zerovec::ule::*;
@@ -448,8 +448,31 @@ impl ResourceOptions {
     }
 
     /// Returns the [`LanguageIdentifier`] for this [`ResourceOptions`].
+    ///
+    /// If you have ownership over the `ResourceOptions`, use [`ResourceOptions::into_locale()`]
+    /// and then access the `id` field.
     pub fn langid(&self) -> LanguageIdentifier {
         self.langid.clone()
+    }
+
+    /// Returns the [`Locale`] for this [`ResourceOptions`].
+    ///
+    /// If you have ownership over the `ResourceOptions`, use [`ResourceOptions::into_locale()`].
+    pub fn locale(&self) -> Locale {
+        let mut loc = Locale::default();
+        loc.id = self.langid.clone();
+        loc.extensions.unicode.keywords = self.keywords.clone();
+        loc
+    }
+
+    /// Converts this [`ResourceOptions`] into a [`Locale`].
+    ///
+    /// If you do not have ownership over the `ResourceOptions`, use [`ResourceOptions::locale()`].
+    pub fn into_locale(self) -> Locale {
+        let mut loc = Locale::default();
+        loc.id = self.langid;
+        loc.extensions.unicode.keywords = self.keywords;
+        loc
     }
 
     /// Returns the [`Language`] for this [`ResourceOptions`].
