@@ -522,7 +522,7 @@ where
     /// map.insert(3, "three");
     ///
     /// // Retain elements with odd keys
-    /// map.retain(|(k, _)| k % 2 == 1);
+    /// map.retain(|k, _| k % 2 == 1);
     ///
     /// assert_eq!(map.get(&1), Some(&"one"));
     /// assert_eq!(map.get(&2), None);
