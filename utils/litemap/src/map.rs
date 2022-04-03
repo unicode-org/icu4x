@@ -33,7 +33,7 @@ where
     /// Construct a new [`LiteMap`] with a given capacity
     pub fn with_capacity(capacity: usize) -> Self {
         Self {
-            values: S::with_capacity(capacity),
+            values: S::lm_with_capacity(capacity),
             _key_type: PhantomData,
             _value_type: PhantomData,
         }
@@ -41,17 +41,17 @@ where
 
     /// The number of elements in the [`LiteMap`]
     pub fn len(&self) -> usize {
-        self.values.len()
+        self.values.lm_len()
     }
 
     /// Whether the [`LiteMap`] is empty
     pub fn is_empty(&self) -> bool {
-        self.values.is_empty()
+        self.values.lm_is_empty()
     }
 
     /// Remove all elements from the [`LiteMap`]
     pub fn clear(&mut self) {
-        self.values.clear()
+        self.values.lm_clear()
     }
 
     /// Reserve capacity for `additional` more elements to be inserted into
@@ -59,7 +59,7 @@ where
     ///
     /// See [`Vec::reserve()`] for more information.
     pub fn reserve(&mut self, additional: usize) {
-        self.values.reserve(additional)
+        self.values.lm_reserve(additional)
     }
 
     /// Convert a `Vec<(K, V)>` into a [`LiteMap`].
@@ -87,7 +87,7 @@ where
     /// In most cases, prefer [`LiteMap::get()`] over this method.
     #[inline]
     pub fn get_indexed(&self, index: usize) -> Option<(&K, &V)> {
-        self.values.get(index)
+        self.values.lm_get(index)
     }
 
 }
@@ -115,7 +115,7 @@ where
     {
         match self.find_index(key) {
             #[allow(clippy::unwrap)] // find_index returns a valid index
-            Ok(found) => Some(self.values.get(found).unwrap().1),
+            Ok(found) => Some(self.values.lm_get(found).unwrap().1),
             Err(_) => None,
         }
     }
@@ -159,7 +159,7 @@ where
     {
         match self.find_index(key) {
             #[allow(clippy::unwrap)] // find_index returns a valid index
-            Ok(found) => Some(self.values.get_mut(found).unwrap().1),
+            Ok(found) => Some(self.values.lm_get_mut(found).unwrap().1),
             Err(_) => None,
         }
     }
@@ -179,7 +179,7 @@ where
     /// ```
     #[inline]
     pub fn first(&self) -> Option<(&K, &V)> {
-        self.values.get(0).map(|(k, v)| (k, v))
+        self.values.lm_get(0).map(|(k, v)| (k, v))
     }
 
     /// Get the highest-rank key/value pair from the `LiteMap`, if it exists.
@@ -197,7 +197,7 @@ where
     /// ```
     #[inline]
     pub fn last(&self) -> Option<(&K, &V)> {
-        self.values.get(self.len() - 1).map(|(k, v)| (k, v))
+        self.values.lm_get(self.len() - 1).map(|(k, v)| (k, v))
     }
 
     /// Appends `value` with `key` to the end of the underlying vector, returning
@@ -230,13 +230,13 @@ where
     /// ```
     #[must_use]
     pub fn try_append(&mut self, key: K, value: V) -> Option<(K, V)> {
-        if let Some(last) = self.values.last() {
+        if let Some(last) = self.values.lm_last() {
             if last.0 >= &key {
                 return Some((key, value));
             }
         }
 
-        self.values.push(key, value);
+        self.values.lm_push(key, value);
         None
     }
 
@@ -257,14 +257,14 @@ where
 
     /// Version of [`Self::insert()`] that returns both the key and the old value.
     fn insert_save_key(&mut self, key: K, value: V) -> Option<(K, V)> {
-        match self.values.binary_search_by(|k| k.0.cmp(&key)) {
+        match self.values.lm_binary_search_by(|k| k.0.cmp(&key)) {
             #[allow(clippy::unwrap_used)] // Index came from binary_search
             Ok(found) => Some((
                 key,
-                mem::replace(self.values.get_mut(found).unwrap().1, value),
+                mem::replace(self.values.lm_get_mut(found).unwrap().1, value),
             )),
             Err(ins) => {
-                self.values.insert(ins, key, value);
+                self.values.lm_insert(ins, key, value);
                 None
             }
         }
@@ -294,10 +294,10 @@ where
     /// assert_eq!(map.len(), 3);
     /// ```
     pub fn try_insert(&mut self, key: K, value: V) -> Option<(K, V)> {
-        match self.values.binary_search_by(|k| k.0.cmp(&key)) {
+        match self.values.lm_binary_search_by(|k| k.0.cmp(&key)) {
             Ok(_) => Some((key, value)),
             Err(ins) => {
-                self.values.insert(ins, key, value);
+                self.values.lm_insert(ins, key, value);
                 None
             }
         }
@@ -319,9 +319,9 @@ where
         K: Borrow<Q>,
         Q: Ord,
     {
-        match self.values.binary_search_by(|k| k.0.borrow().cmp(key)) {
+        match self.values.lm_binary_search_by(|k| k.0.borrow().cmp(key)) {
             #[allow(clippy::unwrap_used)] // Index came from binary_search
-            Ok(found) => Some(self.values.remove(found).unwrap().1),
+            Ok(found) => Some(self.values.lm_remove(found).unwrap().1),
             Err(_) => None,
         }
     }
@@ -374,17 +374,17 @@ where
         }
         if self.last().map(|(k, _)| k) < other.first().map(|(k, _)| k) {
             // append other to self
-            self.values.extend_end(other.values);
+            self.values.lm_extend_end(other.values);
             None
         } else if self.first().map(|(k, _)| k) > other.last().map(|(k, _)| k) {
             // prepend other to self
-            self.values.extend_start(other.values);
+            self.values.lm_extend_start(other.values);
             None
         } else {
             // insert every element
             let leftover_tuples = other
                 .values
-                .into_iter()
+                .lm_into_iter()
                 .filter_map(|(k, v)| self.insert_save_key(k, v))
                 .collect();
             let ret = LiteMapWithStore {
@@ -419,7 +419,7 @@ where
         K: Borrow<Q>,
         Q: Ord,
     {
-        self.values.binary_search_by(|k| k.0.borrow().cmp(key))
+        self.values.lm_binary_search_by(|k| k.0.borrow().cmp(key))
     }
 }
 
@@ -484,24 +484,24 @@ where
 {
     /// Produce an ordered iterator over key-value pairs
     pub fn iter(&'a self) -> impl Iterator<Item = (&'a K, &'a V)> + DoubleEndedIterator {
-        self.values.iter()
+        self.values.lm_iter()
     }
 
     /// Produce an ordered iterator over keys
     pub fn iter_keys(&'a self) -> impl Iterator<Item = &'a K> + DoubleEndedIterator {
-        self.values.iter().map(|val| val.0)
+        self.values.lm_iter().map(|val| val.0)
     }
 
     /// Produce an iterator over values, ordered by their keys
     pub fn iter_values(&'a self) -> impl Iterator<Item = &'a V> + DoubleEndedIterator {
-        self.values.iter().map(|val| val.1)
+        self.values.lm_iter().map(|val| val.1)
     }
 
     /// Produce an ordered mutable iterator over key-value pairs
     pub fn iter_mut(
         &'a mut self,
     ) -> impl Iterator<Item = (&'a K, &'a mut V)> + DoubleEndedIterator {
-        self.values.iter_mut()
+        self.values.lm_iter_mut()
     }
 }
 
@@ -534,7 +534,7 @@ where
     where
         F: FnMut((&K, &V)) -> bool,
     {
-        self.values.retain(|(ref k, ref v)| predicate((k, v)))
+        self.values.lm_retain(|(ref k, ref v)| predicate((k, v)))
     }
 }
 

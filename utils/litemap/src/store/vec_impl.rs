@@ -6,54 +6,54 @@ use alloc::vec::Vec;
 use super::*;
 
 impl<K, V> Store<K, V> for Vec<(K, V)> {
-    fn with_capacity(len: usize) -> Self {
+    fn lm_with_capacity(len: usize) -> Self {
         todo!()
     }
-    fn len(&self) -> usize {
+    fn lm_len(&self) -> usize {
         todo!()
     }
-    fn is_empty(&self) -> bool {
-        todo!()
-    }
-
-    fn get(&self, index: usize) -> Option<(&K, &V)> {
-        todo!()
-    }
-    fn get_mut(&mut self, index: usize) -> Option<(&K, &mut V)> {
-        todo!()
-    }
-    fn last(&self) -> Option<(&K, &V)> {
+    fn lm_is_empty(&self) -> bool {
         todo!()
     }
 
-    fn binary_search_by<F>(&self, cmp: F) -> Result<usize, usize>
+    fn lm_get(&self, index: usize) -> Option<(&K, &V)> {
+        todo!()
+    }
+    fn lm_get_mut(&mut self, index: usize) -> Option<(&K, &mut V)> {
+        todo!()
+    }
+    fn lm_last(&self) -> Option<(&K, &V)> {
+        todo!()
+    }
+
+    fn lm_binary_search_by<F>(&self, cmp: F) -> Result<usize, usize>
     where
         F: FnMut((&K, &V)) -> Ordering {
             todo!()
         }
-    fn push(&mut self, key: K, value: V) {
+    fn lm_push(&mut self, key: K, value: V) {
         todo!()
     }
-    fn insert(&mut self, index: usize, key: K, value: V) {
+    fn lm_insert(&mut self, index: usize, key: K, value: V) {
         todo!()
     }
-    fn remove(&mut self, index: usize) -> Option<(K, V)> {
+    fn lm_remove(&mut self, index: usize) -> Option<(K, V)> {
         todo!()
     }
-    fn extend_end(&mut self, other: Self) {
+    fn lm_extend_end(&mut self, other: Self) {
         todo!()
     }
-    fn extend_start(&mut self, other: Self) {
+    fn lm_extend_start(&mut self, other: Self) {
         todo!()
     }
 
-    fn clear(&mut self) {
+    fn lm_clear(&mut self) {
         todo!()
     }
-    fn reserve(&mut self, additional: usize) {
+    fn lm_reserve(&mut self, additional: usize) {
         todo!()
     }
-    fn retain<F>(&mut self, predicate: F)
+    fn lm_retain<F>(&mut self, predicate: F)
     where
         F: FnMut((&K, &V)) -> bool {
             todo!()
@@ -80,15 +80,15 @@ impl<'a, K: 'a, V: 'a> StoreIterable<'a, K, V> for Vec<(K, V)> {
     type KeyValueIntoIter = alloc::vec::IntoIter<(K, V)>;
 
     #[inline]
-    fn iter(&'a self) -> Self::KeyValueIter {
+    fn lm_iter(&'a self) -> Self::KeyValueIter {
         self.as_slice().iter().map(map_f)
     }
     #[inline]
-    fn iter_mut(&'a mut self) -> Self::KeyValueIterMut {
+    fn lm_iter_mut(&'a mut self) -> Self::KeyValueIterMut {
         self.as_mut_slice().iter_mut().map(map_f_mut)
     }
     #[inline]
-    fn into_iter(self) -> Self::KeyValueIntoIter {
+    fn lm_into_iter(self) -> Self::KeyValueIntoIter {
         IntoIterator::into_iter(self)
     }
 }
