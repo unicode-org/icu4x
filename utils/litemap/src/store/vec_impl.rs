@@ -5,61 +5,6 @@
 use alloc::vec::Vec;
 use super::*;
 
-impl<K, V> Store<K, V> for Vec<(K, V)> {
-    fn lm_with_capacity(len: usize) -> Self {
-        todo!()
-    }
-    fn lm_len(&self) -> usize {
-        todo!()
-    }
-    fn lm_is_empty(&self) -> bool {
-        todo!()
-    }
-
-    fn lm_get(&self, index: usize) -> Option<(&K, &V)> {
-        todo!()
-    }
-    fn lm_get_mut(&mut self, index: usize) -> Option<(&K, &mut V)> {
-        todo!()
-    }
-    fn lm_last(&self) -> Option<(&K, &V)> {
-        todo!()
-    }
-
-    fn lm_binary_search_by<F>(&self, cmp: F) -> Result<usize, usize>
-    where
-        F: FnMut((&K, &V)) -> Ordering {
-            todo!()
-        }
-    fn lm_push(&mut self, key: K, value: V) {
-        todo!()
-    }
-    fn lm_insert(&mut self, index: usize, key: K, value: V) {
-        todo!()
-    }
-    fn lm_remove(&mut self, index: usize) -> Option<(K, V)> {
-        todo!()
-    }
-    fn lm_extend_end(&mut self, other: Self) {
-        todo!()
-    }
-    fn lm_extend_start(&mut self, other: Self) {
-        todo!()
-    }
-
-    fn lm_clear(&mut self) {
-        todo!()
-    }
-    fn lm_reserve(&mut self, additional: usize) {
-        todo!()
-    }
-    fn lm_retain<F>(&mut self, predicate: F)
-    where
-        F: FnMut((&K, &V)) -> bool {
-            todo!()
-        }
-}
-
 type MapF<'a, K, V> = fn(&'a (K, V)) -> (&'a K, &'a V);
 
 #[inline]
@@ -72,6 +17,76 @@ type MapFMut<'a, K, V> = fn(&'a mut (K, V)) -> (&'a K, &'a mut V);
 #[inline]
 fn map_f_mut<'a, K, V>(input: &'a mut (K, V)) -> (&'a K, &'a mut V) {
     (&input.0, &mut input.1)
+}
+
+impl<K, V> Store<K, V> for Vec<(K, V)> {
+    #[inline]
+    fn lm_with_capacity(capacity: usize) -> Self {
+        Self::with_capacity(capacity)
+    }
+    #[inline]
+    fn lm_len(&self) -> usize {
+        self.len()
+    }
+    #[inline]
+    fn lm_is_empty(&self) -> bool {
+        self.is_empty()
+    }
+
+    #[inline]
+    fn lm_get(&self, index: usize) -> Option<(&K, &V)> {
+        self.get(index).map(map_f)
+    }
+    #[inline]
+    fn lm_get_mut(&mut self, index: usize) -> Option<(&K, &mut V)> {
+        self.get_mut(index).map(map_f_mut)
+    }
+    #[inline]
+    fn lm_last(&self) -> Option<(&K, &V)> {
+        self.last().map(map_f)
+    }
+
+    #[inline]
+    fn lm_binary_search_by<F>(&self, mut cmp: F) -> Result<usize, usize>
+    where
+        F: FnMut(&K) -> Ordering {
+            self.binary_search_by(|(k, _)| cmp(&k))
+        }
+    #[inline]
+    fn lm_push(&mut self, key: K, value: V) {
+        todo!()
+    }
+    #[inline]
+    fn lm_insert(&mut self, index: usize, key: K, value: V) {
+        todo!()
+    }
+    #[inline]
+    fn lm_remove(&mut self, index: usize) -> Option<(K, V)> {
+        todo!()
+    }
+    #[inline]
+    fn lm_extend_end(&mut self, other: Self) {
+        todo!()
+    }
+    #[inline]
+    fn lm_extend_start(&mut self, other: Self) {
+        todo!()
+    }
+
+
+    #[inline]    fn lm_clear(&mut self) {
+        todo!()
+    }
+    #[inline]
+    fn lm_reserve(&mut self, additional: usize) {
+        todo!()
+    }
+    #[inline]
+    fn lm_retain<F>(&mut self, predicate: F)
+    where
+        F: FnMut(&K, &V) -> bool {
+            todo!()
+        }
 }
 
 impl<'a, K: 'a, V: 'a> StoreIterable<'a, K, V> for Vec<(K, V)> {

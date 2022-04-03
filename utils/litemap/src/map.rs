@@ -257,7 +257,7 @@ where
 
     /// Version of [`Self::insert()`] that returns both the key and the old value.
     fn insert_save_key(&mut self, key: K, value: V) -> Option<(K, V)> {
-        match self.values.lm_binary_search_by(|k| k.0.cmp(&key)) {
+        match self.values.lm_binary_search_by(|k| k.cmp(&key)) {
             #[allow(clippy::unwrap_used)] // Index came from binary_search
             Ok(found) => Some((
                 key,
@@ -294,7 +294,7 @@ where
     /// assert_eq!(map.len(), 3);
     /// ```
     pub fn try_insert(&mut self, key: K, value: V) -> Option<(K, V)> {
-        match self.values.lm_binary_search_by(|k| k.0.cmp(&key)) {
+        match self.values.lm_binary_search_by(|k| k.cmp(&key)) {
             Ok(_) => Some((key, value)),
             Err(ins) => {
                 self.values.lm_insert(ins, key, value);
@@ -319,7 +319,7 @@ where
         K: Borrow<Q>,
         Q: Ord,
     {
-        match self.values.lm_binary_search_by(|k| k.0.borrow().cmp(key)) {
+        match self.values.lm_binary_search_by(|k| k.borrow().cmp(key)) {
             #[allow(clippy::unwrap_used)] // Index came from binary_search
             Ok(found) => Some(self.values.lm_remove(found).unwrap().1),
             Err(_) => None,
@@ -419,7 +419,7 @@ where
         K: Borrow<Q>,
         Q: Ord,
     {
-        self.values.lm_binary_search_by(|k| k.0.borrow().cmp(key))
+        self.values.lm_binary_search_by(|k| k.borrow().cmp(key))
     }
 }
 
@@ -532,9 +532,9 @@ where
     #[inline]
     pub fn retain<F>(&mut self, mut predicate: F)
     where
-        F: FnMut((&K, &V)) -> bool,
+        F: FnMut(&K, &V) -> bool,
     {
-        self.values.lm_retain(|(ref k, ref v)| predicate((k, v)))
+        self.values.lm_retain(predicate)
     }
 }
 

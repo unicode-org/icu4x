@@ -197,7 +197,7 @@ impl Keywords {
     where
         F: FnMut(&Key) -> bool,
     {
-        self.0.retain(|(k, _)| predicate(k))
+        self.0.retain(|k, _| predicate(k))
     }
 
     pub(crate) fn for_each_subtag_str<E, F>(&self, f: &mut F) -> Result<(), E>

@@ -10,7 +10,7 @@ use core::iter::FromIterator;
 use core::iter::Iterator;
 
 pub trait Store<K, V> {
-    fn lm_with_capacity(len: usize) -> Self;
+    fn lm_with_capacity(capacity: usize) -> Self;
     fn lm_len(&self) -> usize;
     fn lm_is_empty(&self) -> bool;
 
@@ -20,7 +20,7 @@ pub trait Store<K, V> {
 
     fn lm_binary_search_by<F>(&self, cmp: F) -> Result<usize, usize>
     where
-        F: FnMut((&K, &V)) -> Ordering;
+        F: FnMut(&K) -> Ordering;
     fn lm_push(&mut self, key: K, value: V);
     fn lm_insert(&mut self, index: usize, key: K, value: V);
     fn lm_remove(&mut self, index: usize) -> Option<(K, V)>;
@@ -31,7 +31,7 @@ pub trait Store<K, V> {
     fn lm_reserve(&mut self, additional: usize);
     fn lm_retain<F>(&mut self, predicate: F)
     where
-        F: FnMut((&K, &V)) -> bool;
+        F: FnMut(&K, &V) -> bool;
 }
 
 pub trait StoreIterable<'a, K: 'a, V: 'a>: Store<K, V> {
