@@ -2,8 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use alloc::vec::Vec;
 use super::*;
+use alloc::vec::Vec;
 
 type MapF<'a, K, V> = fn(&'a (K, V)) -> (&'a K, &'a V);
 
@@ -49,44 +49,46 @@ impl<K, V> Store<K, V> for Vec<(K, V)> {
     #[inline]
     fn lm_binary_search_by<F>(&self, mut cmp: F) -> Result<usize, usize>
     where
-        F: FnMut(&K) -> Ordering {
-            self.binary_search_by(|(k, _)| cmp(&k))
-        }
+        F: FnMut(&K) -> Ordering,
+    {
+        self.binary_search_by(|(k, _)| cmp(&k))
+    }
     #[inline]
     fn lm_push(&mut self, key: K, value: V) {
-        todo!()
+        self.push((key, value))
     }
     #[inline]
     fn lm_insert(&mut self, index: usize, key: K, value: V) {
-        todo!()
+        self.insert(index, (key, value))
     }
     #[inline]
-    fn lm_remove(&mut self, index: usize) -> Option<(K, V)> {
-        todo!()
+    fn lm_remove(&mut self, index: usize) -> (K, V) {
+        self.remove(index)
     }
     #[inline]
     fn lm_extend_end(&mut self, other: Self) {
-        todo!()
+        self.extend(other)
     }
     #[inline]
     fn lm_extend_start(&mut self, other: Self) {
-        todo!()
+        self.splice(0..0, other);
     }
 
-
-    #[inline]    fn lm_clear(&mut self) {
-        todo!()
+    #[inline]
+    fn lm_clear(&mut self) {
+        self.clear()
     }
     #[inline]
     fn lm_reserve(&mut self, additional: usize) {
-        todo!()
+        self.reserve(additional)
     }
     #[inline]
-    fn lm_retain<F>(&mut self, predicate: F)
+    fn lm_retain<F>(&mut self, mut predicate: F)
     where
-        F: FnMut(&K, &V) -> bool {
-            todo!()
-        }
+        F: FnMut(&K, &V) -> bool,
+    {
+        self.retain(|(k, v)| predicate(k, v))
+    }
 }
 
 impl<'a, K: 'a, V: 'a> StoreIterable<'a, K, V> for Vec<(K, V)> {

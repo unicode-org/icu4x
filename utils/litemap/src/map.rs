@@ -89,7 +89,6 @@ where
     pub fn get_indexed(&self, index: usize) -> Option<(&K, &V)> {
         self.values.lm_get(index)
     }
-
 }
 
 impl<K, V, S> LiteMapWithStore<K, V, S>
@@ -320,8 +319,7 @@ where
         Q: Ord,
     {
         match self.values.lm_binary_search_by(|k| k.borrow().cmp(key)) {
-            #[allow(clippy::unwrap_used)] // Index came from binary_search
-            Ok(found) => Some(self.values.lm_remove(found).unwrap().1),
+            Ok(found) => Some(self.values.lm_remove(found).1),
             Err(_) => None,
         }
     }
@@ -530,7 +528,7 @@ where
     /// assert_eq!(map.get(&2), None);
     /// ```
     #[inline]
-    pub fn retain<F>(&mut self, mut predicate: F)
+    pub fn retain<F>(&mut self, predicate: F)
     where
         F: FnMut(&K, &V) -> bool,
     {
@@ -540,7 +538,6 @@ where
 
 #[cfg(test)]
 mod test {
-    use super::*;
     use crate::LiteMap;
 
     #[test]

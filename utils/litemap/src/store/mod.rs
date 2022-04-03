@@ -23,7 +23,7 @@ pub trait Store<K, V> {
         F: FnMut(&K) -> Ordering;
     fn lm_push(&mut self, key: K, value: V);
     fn lm_insert(&mut self, index: usize, key: K, value: V);
-    fn lm_remove(&mut self, index: usize) -> Option<(K, V)>;
+    fn lm_remove(&mut self, index: usize) -> (K, V);
     fn lm_extend_end(&mut self, other: Self);
     fn lm_extend_start(&mut self, other: Self);
 
