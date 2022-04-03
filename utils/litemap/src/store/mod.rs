@@ -2,13 +2,14 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+mod vec_impl;
+
 use core::cmp::Ordering;
 use core::iter::DoubleEndedIterator;
 use core::iter::FromIterator;
 use core::iter::Iterator;
 
 pub trait Store<K, V> {
-    fn new() -> Self;
     fn with_capacity(len: usize) -> Self;
     fn len(&self) -> usize;
     fn is_empty(&self) -> bool;
