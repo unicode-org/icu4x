@@ -89,18 +89,18 @@ macro_rules! impl_resource_provider {
                             }
                         }
                     }
-                    let bcp47_tzids = self.bcp47_tzid_data.read().unwrap().clone();
+                    let bcp47_tzids = self.bcp47_tzid_data.read().unwrap();
 
                     let cldr_time_zones_data = CldrTimeZonesData {
-                        time_zone_names: time_zone_names.clone(),
-                        bcp47_tzids,
+                        time_zone_names,
+                        bcp47_tzids: &bcp47_tzids,
                     };
 
                     let metadata = DataResponseMetadata::default();
                     // TODO(#1109): Set metadata.data_langid correctly.
                     Ok(DataResponse {
                         metadata,
-                        payload: Some(DataPayload::from_owned(<$marker as DataMarker>::Yokeable::from(cldr_time_zones_data))),
+                        payload: Some(DataPayload::from_owned(<$marker as DataMarker>::Yokeable::from(&cldr_time_zones_data))),
                     })
                 }
             }

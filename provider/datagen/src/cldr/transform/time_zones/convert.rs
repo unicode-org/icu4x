@@ -35,9 +35,9 @@ fn parse_hour_format(hour_format: &str) -> (Cow<'static, str>, Cow<'static, str>
     (Cow::Owned(positive), Cow::Owned(negative))
 }
 
-impl From<CldrTimeZonesData> for TimeZoneFormatsV1<'_> {
-    fn from(other: CldrTimeZonesData) -> Self {
-        let data = other.time_zone_names;
+impl From<&CldrTimeZonesData<'_>> for TimeZoneFormatsV1<'static> {
+    fn from(other: &CldrTimeZonesData) -> Self {
+        let data = &other.time_zone_names;
         Self {
             hour_format: parse_hour_format(&data.hour_format),
             gmt_format: data.gmt_format.clone().into(),
@@ -87,9 +87,9 @@ impl Location {
     }
 }
 
-impl From<CldrTimeZonesData> for ExemplarCitiesV1<'_> {
-    fn from(other: CldrTimeZonesData) -> Self {
-        let time_zone_names_data = other.time_zone_names;
+impl From<&CldrTimeZonesData<'_>> for ExemplarCitiesV1<'static> {
+    fn from(other: &CldrTimeZonesData) -> Self {
+        let time_zone_names_data = &other.time_zone_names;
         let bcp47_tzid_data = &other.bcp47_tzids;
         Self(
             time_zone_names_data
@@ -138,11 +138,11 @@ impl From<CldrTimeZonesData> for ExemplarCitiesV1<'_> {
 
 macro_rules! long_short_impls {
     ($generic:ty, $specific:ty, $field:ident, $metazones_name:ident) => {
-        impl From<CldrTimeZonesData> for $generic {
-            fn from(other: CldrTimeZonesData) -> Self {
-                let data = other.time_zone_names;
+        impl From<&CldrTimeZonesData<'_>> for $generic {
+            fn from(other: &CldrTimeZonesData) -> Self {
+                let data = &other.time_zone_names;
                 Self {
-                    defaults: match data.metazone {
+                    defaults: match &data.metazone {
                         None => ZeroMap::new(),
                         Some(metazones) => metazones
                             .0
@@ -194,12 +194,12 @@ macro_rules! long_short_impls {
             }
         }
 
-        impl From<CldrTimeZonesData> for $specific {
-            fn from(other: CldrTimeZonesData) -> Self {
-                let data = other.time_zone_names;
+        impl From<&CldrTimeZonesData<'_>> for $specific {
+            fn from(other: &CldrTimeZonesData) -> Self {
+                let data = &other.time_zone_names;
                 let bcp47_tzid_data = &other.bcp47_tzids;
                 Self {
-                    defaults: match data.metazone {
+                    defaults: match &data.metazone {
                         None => ZeroMap2d::new(),
                         Some(metazones) => metazones
                             .0
@@ -267,15 +267,15 @@ macro_rules! long_short_impls {
 }
 
 long_short_impls!(
-    MetaZoneGenericNamesLongV1<'_>,
-    MetaZoneSpecificNamesLongV1<'_>,
+    MetaZoneGenericNamesLongV1<'static>,
+    MetaZoneSpecificNamesLongV1<'static>,
     long,
     long_metazone_names
 );
 
 long_short_impls!(
-    MetaZoneGenericNamesShortV1<'_>,
-    MetaZoneSpecificNamesShortV1<'_>,
+    MetaZoneGenericNamesShortV1<'static>,
+    MetaZoneSpecificNamesShortV1<'static>,
     short,
     short_metazone_names
 );
