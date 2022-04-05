@@ -10,7 +10,7 @@ use std::borrow::Cow;
 use tinystr::TinyStr8;
 use zerovec::{ZeroMap, ZeroMap2d};
 
-use crate::cldr::cldr_serde::time_zone_names::*;
+use crate::cldr::cldr_serde::{time_zones::time_zone_names::*, time_zones::CldrTimeZonesData};
 
 /// Performs part 1 of type fallback as specified in the UTS-35 spec for TimeZone Goals:
 /// https://unicode.org/reports/tr35/tr35-dates.html#Time_Zone_Goals
@@ -35,14 +35,15 @@ fn parse_hour_format(hour_format: &str) -> (Cow<'static, str>, Cow<'static, str>
     (Cow::Owned(positive), Cow::Owned(negative))
 }
 
-impl From<&TimeZoneNames> for TimeZoneFormatsV1<'_> {
-    fn from(other: &TimeZoneNames) -> Self {
+impl From<&CldrTimeZonesData<'_>> for TimeZoneFormatsV1<'static> {
+    fn from(other: &CldrTimeZonesData) -> Self {
+        let data = &other.time_zone_names;
         Self {
-            hour_format: parse_hour_format(&other.hour_format),
-            gmt_format: other.gmt_format.clone().into(),
-            gmt_zero_format: other.gmt_zero_format.clone().into(),
-            region_format: other.region_format.clone().into(),
-            region_format_variants: other
+            hour_format: parse_hour_format(&data.hour_format),
+            gmt_format: data.gmt_format.clone().into(),
+            gmt_zero_format: data.gmt_zero_format.clone().into(),
+            region_format: data.region_format.clone().into(),
+            region_format_variants: data
                 .region_format_variants
                 .iter()
                 .map(|(key, value)| {
@@ -55,7 +56,7 @@ impl From<&TimeZoneNames> for TimeZoneFormatsV1<'_> {
                     )
                 })
                 .collect(),
-            fallback_format: other.fallback_format.clone().into(),
+            fallback_format: data.fallback_format.clone().into(),
         }
     }
 }
@@ -86,10 +87,12 @@ impl Location {
     }
 }
 
-impl From<&TimeZoneNames> for ExemplarCitiesV1<'_> {
-    fn from(other: &TimeZoneNames) -> Self {
+impl From<&CldrTimeZonesData<'_>> for ExemplarCitiesV1<'static> {
+    fn from(other: &CldrTimeZonesData) -> Self {
+        let time_zone_names_data = &other.time_zone_names;
+        let bcp47_tzid_data = &other.bcp47_tzids;
         Self(
-            other
+            time_zone_names_data
                 .zone
                 .0
                 .iter()
@@ -102,17 +105,27 @@ impl From<&TimeZoneNames> for ExemplarCitiesV1<'_> {
                             key.push('/');
                             key.push_str(inner_key);
                             match place_or_region {
-                                LocationOrSubRegion::Location(place) => place
-                                    .exemplar_city()
-                                    .map(|city| vec![(key, city)])
-                                    .unwrap_or_default(),
+                                LocationOrSubRegion::Location(place) => {
+                                    match bcp47_tzid_data.get(&key) {
+                                        Some(bcp47) => place
+                                            .exemplar_city()
+                                            .map(|city| vec![(bcp47.clone(), city)])
+                                            .unwrap_or_default(),
+                                        None => panic!("Cannot find bcp47 for {:?}.", key),
+                                    }
+                                }
                                 LocationOrSubRegion::SubRegion(region) => region
                                     .iter()
                                     .filter_map(|(inner_key, place)| {
                                         let mut key = key.clone();
                                         key.push('/');
                                         key.push_str(inner_key);
-                                        place.exemplar_city().map(|city| (key, city))
+                                        match bcp47_tzid_data.get(&key) {
+                                            Some(bcp47) => place
+                                                .exemplar_city()
+                                                .map(|city| (bcp47.clone(), city)),
+                                            None => panic!("Cannot find bcp47 for {:?}.", key),
+                                        }
                                     })
                                     .collect::<Vec<_>>(),
                             }
@@ -125,10 +138,11 @@ impl From<&TimeZoneNames> for ExemplarCitiesV1<'_> {
 
 macro_rules! long_short_impls {
     ($generic:ty, $specific:ty, $field:ident, $metazones_name:ident) => {
-        impl From<&TimeZoneNames> for $generic {
-            fn from(other: &TimeZoneNames) -> Self {
+        impl From<&CldrTimeZonesData<'_>> for $generic {
+            fn from(other: &CldrTimeZonesData) -> Self {
+                let data = &other.time_zone_names;
                 Self {
-                    defaults: match &other.metazone {
+                    defaults: match &data.metazone {
                         None => ZeroMap::new(),
                         Some(metazones) => metazones
                             .0
@@ -142,7 +156,7 @@ macro_rules! long_short_impls {
                             })
                             .collect(),
                     },
-                    overrides: other
+                    overrides: data
                         .zone
                         .0
                         .iter()
@@ -180,10 +194,12 @@ macro_rules! long_short_impls {
             }
         }
 
-        impl From<&TimeZoneNames> for $specific {
-            fn from(other: &TimeZoneNames) -> Self {
+        impl From<&CldrTimeZonesData<'_>> for $specific {
+            fn from(other: &CldrTimeZonesData) -> Self {
+                let data = &other.time_zone_names;
+                let bcp47_tzid_data = &other.bcp47_tzids;
                 Self {
-                    defaults: match &other.metazone {
+                    defaults: match &data.metazone {
                         None => ZeroMap2d::new(),
                         Some(metazones) => metazones
                             .0
@@ -197,7 +213,7 @@ macro_rules! long_short_impls {
                             .flat_map(iterate_zone_format)
                             .collect(),
                     },
-                    overrides: other
+                    overrides: data
                         .zone
                         .0
                         .iter()
@@ -210,21 +226,33 @@ macro_rules! long_short_impls {
                                     key.push('/');
                                     key.push_str(&inner_key);
                                     match place_or_region {
-                                        LocationOrSubRegion::Location(place) => vec![place]
-                                            .into_iter()
-                                            .filter_map(|inner_place| {
-                                                inner_place
-                                                    .$metazones_name()
-                                                    .map(|format| (key.clone(), format))
-                                            })
-                                            .collect::<Vec<_>>(),
+                                        LocationOrSubRegion::Location(place) => {
+                                            match bcp47_tzid_data.get(&key) {
+                                                Some(bcp47) => vec![place]
+                                                    .into_iter()
+                                                    .filter_map(|inner_place| {
+                                                        inner_place
+                                                            .$metazones_name()
+                                                            .map(|format| (bcp47.clone(), format))
+                                                    })
+                                                    .collect::<Vec<_>>(),
+                                                None => panic!("Cannot find bcp47 for {:?}.", key),
+                                            }
+                                        }
                                         LocationOrSubRegion::SubRegion(region) => region
                                             .iter()
                                             .filter_map(|(inner_key, place)| {
                                                 let mut key = key.clone();
                                                 key.push('/');
                                                 key.push_str(&inner_key);
-                                                place.$metazones_name().map(|format| (key, format))
+                                                match bcp47_tzid_data.get(&key) {
+                                                    Some(bcp47) => place
+                                                        .$metazones_name()
+                                                        .map(|format| (bcp47.clone(), format)),
+                                                    None => {
+                                                        panic!("Cannot find bcp47 for {:?}.", key)
+                                                    }
+                                                }
                                             })
                                             .collect::<Vec<_>>(),
                                     }
@@ -239,15 +267,15 @@ macro_rules! long_short_impls {
 }
 
 long_short_impls!(
-    MetaZoneGenericNamesLongV1<'_>,
-    MetaZoneSpecificNamesLongV1<'_>,
+    MetaZoneGenericNamesLongV1<'static>,
+    MetaZoneSpecificNamesLongV1<'static>,
     long,
     long_metazone_names
 );
 
 long_short_impls!(
-    MetaZoneGenericNamesShortV1<'_>,
-    MetaZoneSpecificNamesShortV1<'_>,
+    MetaZoneGenericNamesShortV1<'static>,
+    MetaZoneSpecificNamesShortV1<'static>,
     short,
     short_metazone_names
 );
