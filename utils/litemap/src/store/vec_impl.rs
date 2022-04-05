@@ -109,9 +109,7 @@ impl<K, V> Store<K, V> for Vec<(K, V)> {
     }
 }
 
-impl<'a, K: 'a, V: 'a, T> StoreIterable<'a, K, V> for T
-where
-    T: Store<K, V>,
+impl<'a, K: 'a, V: 'a> StoreIterable<'a, K, V> for Vec<(K, V)>
 {
     type KeyValueIter = core::iter::Map<core::slice::Iter<'a, (K, V)>, MapF<'a, K, V>>;
     type KeyValueIterMut = core::iter::Map<core::slice::IterMut<'a, (K, V)>, MapFMut<'a, K, V>>;
