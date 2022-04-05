@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1648870600157,
+  "lastUpdate": 1649194987214,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -31415,6 +31415,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 18946,
             "range": "± 973",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "samchen61661@gmail.com",
+            "name": "samchen",
+            "username": "samchen61661"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "bdcc948fbc31672905c7e584c5b7960be0ee93b9",
+          "message": "Add and use BCP-47 time-zone identifiers in TimeZonesProvider (#1687)\n\n* add bcp47 json struct\r\n\r\n* fix parse error\r\n\r\n* serde flatten fix\r\n\r\n* Add CldrTimeZonesData struct\r\n\r\nThis struct is a single aggregate struct that will\r\nhold all of the CLDR time zones data that gets\r\ndeserialized from serde.\r\n\r\nAll of the conversion functions will utilize this struct,\r\nwhich will have all available CLDR information.\r\n\r\n* add replacement and trasform mapping data\r\n\r\n* cargo make testdata\r\n\r\n* fix rebase lifetime error\r\n\r\n* fix time zone tests\r\n\r\n* change to impl From<&CldrTimeZonesData<'_>> for ExemplarCitiesV1<'static>\r\n\r\nCo-authored-by: Manish Goregaokar <manishsmail@gmail.com>\r\nCo-authored-by: Erik Nordin <nordzilla@mozilla.com>",
+          "timestamp": "2022-04-05T14:33:27-07:00",
+          "tree_id": "c8b5247c53f0d6839363a3cdfa68cfe4e1854f76",
+          "url": "https://github.com/unicode-org/icu4x/commit/bdcc948fbc31672905c7e584c5b7960be0ee93b9"
+        },
+        "date": 1649194969560,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1126,
+            "range": "± 8",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 6586,
+            "range": "± 240",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 18608,
+            "range": "± 288",
             "unit": "ns/iter"
           }
         ]
