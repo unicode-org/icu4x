@@ -89,7 +89,11 @@ fn main() -> eyre::Result<()> {
 
             let parent = path.parent().expect("File must be in a folder");
             let parent = parent.display();
-            let file = path.file_stem().expect("We have already checked that this is a file").to_str().expect("Keys should be ASCII");
+            let file = path
+                .file_stem()
+                .expect("We have already checked that this is a file")
+                .to_str()
+                .expect("Keys should be ASCII");
 
             log::trace!("Hash for {parent}/{file} is {result:x}");
             writeln!(out, "{parent}/{file}: {result:x}")?;
