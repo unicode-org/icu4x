@@ -1,7 +1,7 @@
 # yoke [![crates.io](https://img.shields.io/crates/v/yoke)](https://crates.io/crates/yoke)
 
-This crate provides [`Yoke<Y, C>`][Yoke], which allows one to "yoke" a zero-copy deserialized
-object(say, a [`Cow<'a, str>`](alloc::borrow::Cow)) to the source it was deserialized from, (say, an [`Rc<[u8]>`](alloc::rc::Rc)),
+This crate provides [`Yoke<Y, C>`][Yoke], which allows one to "yoke" (attach) a zero-copy deserialized
+object (say, a [`Cow<'a, str>`](alloc::borrow::Cow)) to the source it was deserialized from, (say, an [`Rc<[u8]>`](alloc::rc::Rc)),
 known in this crate as a "cart", producing a type that looks like `Yoke<Cow<'static, str>, Rc<[u8]>>`
 and can be moved around with impunity.
 
