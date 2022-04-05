@@ -27,7 +27,7 @@ pub struct GenericsExample<T> {
 #[derive(Yokeable, Copy, Clone)]
 pub struct GenericsExampleWithDefault<T, U = usize> {
     x: T,
-    y: U
+    y: U,
 }
 
 #[derive(Yokeable)]
@@ -50,7 +50,6 @@ pub struct ZeroVecExampleWithGenerics<'a, T: AsULE> {
     vec: ZeroVec<'a, u16>,
     bare: T,
 }
-
 
 // Since ZeroMap has generic parameters, the Rust compiler cannot
 // prove the covariance of the lifetimes. To use derive(Yokeable)

@@ -22,7 +22,7 @@ pub struct GenericsExample<T> {
 #[derive(ZeroFrom, Copy, Clone)]
 pub struct GenericsExampleWithDefault<T, U = usize> {
     x: T,
-    y: U
+    y: U,
 }
 
 #[derive(ZeroFrom)]

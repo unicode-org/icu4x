@@ -34,13 +34,17 @@ pub fn yokeable_derive(input: TokenStream) -> TokenStream {
 }
 
 fn yokeable_derive_impl(input: &DeriveInput) -> TokenStream2 {
-    let tybounds = input.generics.type_params().map(|ty| {
-        // Strip out param defaults, we don't need them in the impl
-        let mut ty = ty.clone();
-        ty.eq_token = None;
-        ty.default = None;
-        ty
-    }).collect::<Vec<_>>();
+    let tybounds = input
+        .generics
+        .type_params()
+        .map(|ty| {
+            // Strip out param defaults, we don't need them in the impl
+            let mut ty = ty.clone();
+            ty.eq_token = None;
+            ty.default = None;
+            ty
+        })
+        .collect::<Vec<_>>();
     let typarams = tybounds
         .iter()
         .map(|ty| ty.ident.clone())
