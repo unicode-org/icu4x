@@ -84,8 +84,6 @@ where
 ///
 /// [data provider]: icu_provider
 pub struct TimeZoneFormat {
-    // The kind of time zone format.
-    pub(super) kind: TimeZoneFormatKind,
     pub(super) locale: Locale,
     pub(super) data_payloads: TimeZoneDataPayloads,
     pub(super) format_units: SmallVec<[TimeZoneFormatUnit; 3]>,
@@ -163,7 +161,6 @@ impl TimeZoneFormat {
             });
 
         let mut tz_format: TimeZoneFormat = Self {
-            kind: TimeZoneFormatKind::Pattern(patterns.clone()),
             data_payloads,
             locale,
             format_units,
@@ -397,7 +394,6 @@ impl TimeZoneFormat {
         };
 
         let mut tz_format: TimeZoneFormat = Self {
-            kind: TimeZoneFormatKind::Config(config),
             data_payloads,
             locale,
             format_units,
@@ -741,13 +737,6 @@ impl TimeZoneFormat {
             ZeroPadding::On,
         ))
     }
-}
-
-/// Determines which type of formats time zone uses. It can be either config or pattern.
-#[allow(clippy::large_enum_variant)]
-pub(super) enum TimeZoneFormatKind {
-    Config(TimeZoneFormatConfig),
-    Pattern(DataPayload<PatternPluralsFromPatternsV1Marker>),
 }
 
 /// Determines which ISO-8601 format should be used to format a [`GmtOffset`](crate::date::GmtOffset).

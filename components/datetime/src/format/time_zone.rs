@@ -5,14 +5,11 @@
 use core::fmt;
 
 use crate::error::DateTimeFormatError as Error;
-use crate::pattern::PatternItem;
-use crate::provider::calendar::patterns::PatternPluralsFromPatternsV1Marker;
 use crate::{
     date::TimeZoneInput,
-    time_zone::{FormatTimeZone, TimeZoneFormat, TimeZoneFormatKind, TimeZoneFormatUnit},
+    time_zone::{FormatTimeZone, TimeZoneFormat, TimeZoneFormatUnit},
     DateTimeFormatError,
 };
-use icu_provider::DataPayload;
 use writeable::Writeable;
 
 pub struct FormattedTimeZone<'l, T>
@@ -73,12 +70,7 @@ where
     T: TimeZoneInput,
 {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        match &self.time_zone_format.kind {
-            TimeZoneFormatKind::Pattern(patterns) => self
-                .write_pattern(patterns, f)
-                .map_err(|_| core::fmt::Error),
-            TimeZoneFormatKind::Config(_) => self.write_to(f),
-        }
+        self.write_to(f)
     }
 }
 
@@ -99,27 +91,5 @@ where
             }
         }
         Err(DateTimeFormatError::UnsupportedOptions)
-    }
-
-    fn write_pattern<W>(
-        &self,
-        patterns: &DataPayload<PatternPluralsFromPatternsV1Marker>,
-        w: &mut W,
-    ) -> Result<(), Error>
-    where
-        W: fmt::Write + ?Sized,
-    {
-        let pattern = patterns
-            .get()
-            .0
-            .clone()
-            .expect_pattern("Expected a single pattern");
-        for item in pattern.items.iter() {
-            match item {
-                PatternItem::Field(_) => self.write_to(w)?,
-                PatternItem::Literal(ch) => w.write_char(ch)?,
-            }
-        }
-        Ok(())
     }
 }
