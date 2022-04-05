@@ -6,7 +6,6 @@
 
 use crate::CloneableCart;
 
-
 use core::ops::Deref;
 use stable_deref_trait::StableDeref;
 

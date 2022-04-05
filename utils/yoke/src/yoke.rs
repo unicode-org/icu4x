@@ -2,11 +2,11 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::either::EitherCart;
 #[cfg(feature = "alloc")]
 use crate::erased::{ErasedBoxCart, ErasedRcCart};
 use crate::trait_hack::YokeTraitHack;
 use crate::IsCovariant;
-use crate::either::EitherCart;
 use crate::Yokeable;
 use core::marker::PhantomData;
 use core::ops::Deref;
@@ -952,7 +952,6 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
         }
     }
 }
-
 
 /// Safety docs for project()
 ///
