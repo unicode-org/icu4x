@@ -563,14 +563,14 @@
     }
   },
   "overrides": {
-    "Etc/UTC": {
-      "standard": "Koordinisano univerzalno vreme"
+    "gblon": {
+      "daylight": "Britanija, letnje vreme"
     },
-    "Europe/Dublin": {
+    "iedub": {
       "daylight": "Irska, standardno vreme"
     },
-    "Europe/London": {
-      "daylight": "Britanija, letnje vreme"
+    "utc": {
+      "standard": "Koordinisano univerzalno vreme"
     }
   }
 }

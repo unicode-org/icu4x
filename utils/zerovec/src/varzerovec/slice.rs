@@ -169,6 +169,35 @@ impl<T: VarULE + ?Sized> VarZeroSlice<T> {
         self.as_components().get(idx)
     }
 
+    /// Get one of this slice's elements
+    ///
+    /// # Safety
+    ///
+    /// `index` must be in range
+    ///
+    /// # Example
+    ///
+    /// ```rust
+    /// # use std::str::Utf8Error;
+    /// # use zerovec::ule::ZeroVecError;
+    /// # use zerovec::VarZeroVec;
+    ///
+    /// let strings = vec!["foo", "bar", "baz", "quux"];
+    /// let vec = VarZeroVec::<str>::from(&strings);
+    ///
+    /// let mut iter_results: Vec<&str> = vec.iter().collect();
+    /// unsafe {
+    ///     assert_eq!(vec.get_unchecked(0), "foo");
+    ///     assert_eq!(vec.get_unchecked(1), "bar");
+    ///     assert_eq!(vec.get_unchecked(2), "baz");
+    ///     assert_eq!(vec.get_unchecked(3), "quux");
+    /// }
+    /// # Ok::<(), ZeroVecError>(())
+    /// ```
+    pub unsafe fn get_unchecked(&self, idx: usize) -> &T {
+        self.as_components().get_unchecked(idx)
+    }
+
     /// Obtain an owned `Vec<Box<T>>` out of this
     pub fn to_vec(&self) -> Vec<Box<T>> {
         self.as_components().to_vec()
@@ -212,6 +241,21 @@ impl<T: VarULE + ?Sized> VarZeroSlice<T> {
     /// Slices of the right format can be obtained via [`VarZeroSlice::as_bytes()`]
     pub fn parse_byte_slice<'a>(slice: &'a [u8]) -> Result<&'a Self, ZeroVecError> {
         <Self as VarULE>::parse_byte_slice(slice)
+    }
+
+    /// Convert a `bytes` array known to represent a `VarZeroSlice` to a mutable reference to a `VarZeroSlice`
+    ///
+    /// # Safety
+    /// - `bytes` must be a valid sequence of bytes for this VarZeroVec
+    pub(crate) unsafe fn from_byte_slice_unchecked_mut(bytes: &mut [u8]) -> &mut Self {
+        // self is really just a wrapper around a byte slice
+        mem::transmute(bytes)
+    }
+
+    pub(crate) unsafe fn get_bytes_at_mut(&mut self, idx: usize) -> &mut [u8] {
+        let range = self.as_components().get_range(idx);
+        #[allow(clippy::indexing_slicing)] // get_range() is known to return in-bounds ranges
+        &mut self.entire_slice[range]
     }
 }
 

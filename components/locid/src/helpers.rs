@@ -119,14 +119,11 @@ macro_rules! impl_writeable_for_key_value {
         fn test_writeable() {
             writeable::assert_writeable_eq!(&$type::default(), "");
             writeable::assert_writeable_eq!(
-                &$type::from_vec_unchecked(vec![(
-                    $key1.parse().unwrap(),
-                    $value1.parse().unwrap()
-                )]),
+                &$type::from_tuple_vec(vec![($key1.parse().unwrap(), $value1.parse().unwrap())]),
                 core::concat!($key1, "-", $value1),
             );
             writeable::assert_writeable_eq!(
-                &$type::from_vec_unchecked(vec![
+                &$type::from_tuple_vec(vec![
                     ($key1.parse().unwrap(), $value1.parse().unwrap()),
                     ($key2.parse().unwrap(), "true".parse().unwrap())
                 ]),

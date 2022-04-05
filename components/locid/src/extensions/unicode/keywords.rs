@@ -2,9 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use alloc::vec::Vec;
 use core::borrow::Borrow;
-use core::ops::Deref;
+use core::iter::FromIterator;
+use litemap::LiteMap;
 
 use super::Key;
 use super::Value;
@@ -30,12 +30,12 @@ use super::Value;
 ///     .expect("Failed to parse a Key.");
 /// let value: Value = "h23".parse()
 ///     .expect("Failed to parse a Value.");
-/// let keywords = Keywords::from_vec_unchecked(vec![(key, value)]);
+/// let keywords: Keywords = vec![(key, value)].into_iter().collect();
 ///
 /// assert_eq!(&keywords.to_string(), "hc-h23");
 /// ```
 #[derive(Clone, PartialEq, Eq, Debug, Default, Hash, PartialOrd, Ord)]
-pub struct Keywords(Vec<(Key, Value)>);
+pub struct Keywords(LiteMap<Key, Value>);
 
 impl Keywords {
     /// Returns a new empty list of key-value pairs. Same as [`default()`](Default::default()), but is `const`.
@@ -49,27 +49,25 @@ impl Keywords {
     /// ```
     #[inline]
     pub const fn new() -> Self {
-        Self(Vec::new())
+        Self(LiteMap::new())
     }
 
-    /// A constructor which takes a pre-sorted list of `(`[`Key`]`, `[`Value`]`)` tuples.
-    ///
+    /// Returns `true` if there are no keywords.
     ///
     /// # Examples
     ///
     /// ```
-    /// use icu::locid::extensions::unicode::{Keywords, Key, Value};
+    /// use icu::locid::Locale;
+    /// use icu::locid::extensions::unicode::Keywords;
     ///
-    /// let key: Key = "ca".parse()
-    ///     .expect("Failed to parse a Key.");
-    /// let value: Value = "buddhist".parse()
-    ///     .expect("Failed to parse a Value.");
-    /// let keywords = Keywords::from_vec_unchecked(vec![(key, value)]);
+    /// let loc1 = Locale::from_bytes(b"und-t-h0-hybrid").unwrap();
+    /// let loc2 = Locale::from_bytes(b"und-u-ca-buddhist").unwrap();
     ///
-    /// assert_eq!(&keywords.to_string(), "ca-buddhist");
+    /// assert!(loc1.extensions.unicode.keywords.is_empty());
+    /// assert!(!loc2.extensions.unicode.keywords.is_empty());
     /// ```
-    pub fn from_vec_unchecked(input: Vec<(Key, Value)>) -> Self {
-        Self(input)
+    pub fn is_empty(&self) -> bool {
+        self.0.is_empty()
     }
 
     /// Returns `true` if the list contains a [`Value`] for the specified [`Key`].
@@ -79,23 +77,24 @@ impl Keywords {
     ///
     /// ```
     /// use icu::locid::extensions::unicode::{Keywords, Key, Value};
+    /// use litemap::LiteMap;
     ///
     /// let key: Key = "ca".parse()
     ///     .expect("Failed to parse a Key.");
     /// let value: Value = "gregory".parse()
     ///     .expect("Failed to parse a Value.");
-    /// let mut keywords = Keywords::from_vec_unchecked(vec![(key, value)]);
+    /// let keywords: Keywords = vec![(key, value)].into_iter().collect();
     ///
     /// let key: Key = "ca".parse()
     ///     .expect("Failed to parse a Key.");
     /// assert!(&keywords.contains_key(&key));
     /// ```
-    pub fn contains_key<Q>(&self, key: Q) -> bool
+    pub fn contains_key<Q>(&self, key: &Q) -> bool
     where
-        Q: Borrow<Key>,
+        Key: Borrow<Q>,
+        Q: Ord,
     {
-        self.binary_search_by_key(key.borrow(), |(key, _)| *key)
-            .is_ok()
+        self.0.contains_key(key)
     }
 
     /// Returns a reference to the [`Value`] corresponding to the [`Key`].
@@ -110,7 +109,7 @@ impl Keywords {
     ///     .expect("Failed to parse a Key.");
     /// let value: Value = "buddhist".parse()
     ///     .expect("Failed to parse a Value.");
-    /// let mut keywords = Keywords::from_vec_unchecked(vec![(key, value)]);
+    /// let keywords: Keywords = vec![(key, value)].into_iter().collect();
     ///
     /// let key: Key = "ca".parse()
     ///     .expect("Failed to parse a Key.");
@@ -119,15 +118,12 @@ impl Keywords {
     ///     Some("buddhist".to_string())
     /// );
     /// ```
-    pub fn get<Q>(&self, key: Q) -> Option<&Value>
+    pub fn get<Q>(&self, key: &Q) -> Option<&Value>
     where
-        Q: Borrow<Key>,
+        Key: Borrow<Q>,
+        Q: Ord,
     {
-        if let Ok(idx) = self.binary_search_by_key(key.borrow(), |(key, _)| *key) {
-            self.deref().get(idx).map(|(_, v)| v)
-        } else {
-            None
-        }
+        self.0.get(key)
     }
 
     /// Returns a mutable reference to the [`Value`] corresponding to the [`Key`].
@@ -144,11 +140,11 @@ impl Keywords {
     ///     .expect("Failed to parse a Key.");
     /// let value: Value = "buddhist".parse()
     ///     .expect("Failed to parse a Value.");
-    /// let mut keywords = Keywords::from_vec_unchecked(vec![(key, value)]);
+    /// let mut keywords: Keywords = vec![(key, value)].into_iter().collect();
     ///
     /// let key: Key = "ca".parse()
     ///     .expect("Failed to parse a Key.");
-    /// if let Some(value) = keywords.get_mut(key) {
+    /// if let Some(value) = keywords.get_mut(&key) {
     ///     *value = "gregory".parse()
     ///         .expect("Failed to parse a Value.");
     /// }
@@ -157,17 +153,12 @@ impl Keywords {
     ///     Some("gregory".to_string())
     /// );
     /// ```
-    pub fn get_mut<Q>(&mut self, key: Q) -> Option<&mut Value>
+    pub fn get_mut<Q>(&mut self, key: &Q) -> Option<&mut Value>
     where
-        Q: Borrow<Key>,
+        Key: Borrow<Q>,
+        Q: Ord,
     {
-        if let Ok(idx) = self.binary_search_by_key(key.borrow(), |(key, _)| *key) {
-            // Won't panic because the index was given to us by binary_search
-            #[allow(clippy::indexing_slicing)]
-            Some(&mut self.0[idx].1)
-        } else {
-            None
-        }
+        self.0.get_mut(key)
     }
 
     /// Clears all Unicode extension keywords, leaving Unicode attributes.
@@ -213,20 +204,30 @@ impl Keywords {
     where
         F: FnMut(&str) -> Result<(), E>,
     {
-        for (k, v) in self.iter() {
+        for (k, v) in self.0.iter() {
             f(k.as_str())?;
             v.for_each_subtag_str(f)?;
         }
         Ok(())
     }
-}
 
-impl_writeable_for_key_value!(Keywords, "ca", "islamic-civil", "aa", "aa");
-
-impl Deref for Keywords {
-    type Target = [(Key, Value)];
-
-    fn deref(&self) -> &Self::Target {
-        self.0.deref()
+    /// This needs to be its own method to help with type inference in helpers.rs
+    #[cfg(test)]
+    pub(crate) fn from_tuple_vec(v: Vec<(Key, Value)>) -> Self {
+        v.into_iter().collect()
     }
 }
+
+impl From<LiteMap<Key, Value>> for Keywords {
+    fn from(map: LiteMap<Key, Value>) -> Self {
+        Self(map)
+    }
+}
+
+impl FromIterator<(Key, Value)> for Keywords {
+    fn from_iter<I: IntoIterator<Item = (Key, Value)>>(iter: I) -> Self {
+        LiteMap::from_iter(iter).into()
+    }
+}
+
+impl_writeable_for_key_value!(Keywords, "ca", "islamic-civil", "mm", "mm");

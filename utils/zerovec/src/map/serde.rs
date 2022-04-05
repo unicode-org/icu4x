@@ -14,7 +14,7 @@ use serde::ser::{Serialize, SerializeMap, SerializeSeq, Serializer};
 #[cfg(feature = "serde_serialize")]
 impl<'a, K, V> Serialize for ZeroMap<'a, K, V>
 where
-    K: ZeroMapKV<'a> + Serialize + ?Sized,
+    K: ZeroMapKV<'a> + Serialize + ?Sized + Ord,
     V: ZeroMapKV<'a> + Serialize + ?Sized,
     K::Container: Serialize,
     V::Container: Serialize,
@@ -28,12 +28,12 @@ where
             // than numbers and strings as map keys. For them, we can serialize
             // as a vec of tuples instead
             if let Some(k) = self.iter_keys().next() {
-                let json = K::Container::t_with_ser(k, |k| serde_json::json!(k));
+                let json = K::Container::zvl_get_as_t(k, |k| serde_json::json!(k));
                 if !json.is_string() && !json.is_number() {
                     let mut seq = serializer.serialize_seq(Some(self.len()))?;
                     for (k, v) in self.iter() {
-                        K::Container::t_with_ser(k, |k| {
-                            V::Container::t_with_ser(v, |v| seq.serialize_element(&(k, v)))
+                        K::Container::zvl_get_as_t(k, |k| {
+                            V::Container::zvl_get_as_t(v, |v| seq.serialize_element(&(k, v)))
                         })?;
                     }
                     return seq.end();
@@ -41,8 +41,8 @@ where
             }
             let mut map = serializer.serialize_map(Some(self.len()))?;
             for (k, v) in self.iter() {
-                K::Container::t_with_ser(k, |k| map.serialize_key(k))?;
-                V::Container::t_with_ser(v, |v| map.serialize_value(v))?;
+                K::Container::zvl_get_as_t(k, |k| map.serialize_key(k))?;
+                V::Container::zvl_get_as_t(v, |v| map.serialize_value(v))?;
             }
             map.end()
         } else {
@@ -55,7 +55,7 @@ where
 #[cfg(feature = "serde_serialize")]
 impl<'a, K, V> Serialize for ZeroMapBorrowed<'a, K, V>
 where
-    K: ZeroMapKV<'a> + Serialize + ?Sized,
+    K: ZeroMapKV<'a> + Serialize + ?Sized + Ord,
     V: ZeroMapKV<'a> + Serialize + ?Sized,
     K::Container: Serialize,
     V::Container: Serialize,
@@ -71,7 +71,7 @@ where
 /// Modified example from https://serde.rs/deserialize-map.html
 struct ZeroMapMapVisitor<'a, K, V>
 where
-    K: ZeroMapKV<'a> + ?Sized,
+    K: ZeroMapKV<'a> + ?Sized + Ord,
     V: ZeroMapKV<'a> + ?Sized,
 {
     #[allow(clippy::type_complexity)] // it's a marker type, complexity doesn't matter
@@ -80,7 +80,7 @@ where
 
 impl<'a, K, V> ZeroMapMapVisitor<'a, K, V>
 where
-    K: ZeroMapKV<'a> + ?Sized,
+    K: ZeroMapKV<'a> + ?Sized + Ord,
     V: ZeroMapKV<'a> + ?Sized,
 {
     fn new() -> Self {

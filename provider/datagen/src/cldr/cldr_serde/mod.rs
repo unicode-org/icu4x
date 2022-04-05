@@ -15,5 +15,5 @@ pub mod list_patterns;
 pub mod numbering_systems;
 pub mod numbers;
 pub mod plurals;
-pub mod time_zone_names;
+pub mod time_zones;
 pub mod week_data;

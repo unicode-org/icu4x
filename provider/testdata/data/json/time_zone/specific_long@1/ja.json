@@ -566,14 +566,14 @@
     }
   },
   "overrides": {
-    "Etc/UTC": {
-      "standard": "協定世界時"
+    "gblon": {
+      "daylight": "英国夏時間"
     },
-    "Europe/Dublin": {
+    "iedub": {
       "daylight": "アイルランド標準時"
     },
-    "Europe/London": {
-      "daylight": "英国夏時間"
+    "utc": {
+      "standard": "協定世界時"
     }
   }
 }

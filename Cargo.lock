@@ -1380,6 +1380,7 @@ dependencies = [
  "displaydoc",
  "icu",
  "icu_benchmark_macros",
+ "litemap",
  "postcard",
  "serde",
  "serde_json",
