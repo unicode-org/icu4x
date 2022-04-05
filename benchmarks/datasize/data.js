@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1649194500171,
+  "lastUpdate": 1649194674110,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -12593,6 +12593,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/bdcc948fbc31672905c7e584c5b7960be0ee93b9"
         },
         "date": 1649194484789,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4470980,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "2cdcd0c777ef63accc95ca7b8881f61ea71ea600",
+          "message": "Add support for defaults in generics in ZeroFrom and Yokeable derives (#1774)\n\n* Add support for defaults in generics in ZeroFrom and Yokeable derives",
+          "timestamp": "2022-04-05T21:36:10Z",
+          "tree_id": "7f8b06c56b0607116b945761bbbf0ea813bac413",
+          "url": "https://github.com/unicode-org/icu4x/commit/2cdcd0c777ef63accc95ca7b8881f61ea71ea600"
+        },
+        "date": 1649194655676,
         "tool": "ndjson",
         "benches": [
           {
