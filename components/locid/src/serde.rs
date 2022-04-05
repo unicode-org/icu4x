@@ -65,7 +65,12 @@ impl<'de> Deserialize<'de> for Language {
             }
         }
 
-        deserializer.deserialize_string(LanguageVisitor)
+        if deserializer.is_human_readable() {
+            deserializer.deserialize_string(LanguageVisitor)
+        } else {
+            Self::try_from_raw(Deserialize::deserialize(deserializer)?)
+                .map_err(serde::de::Error::custom)
+        }
     }
 }
 
@@ -91,7 +96,12 @@ impl<'de> Deserialize<'de> for Script {
             }
         }
 
-        deserializer.deserialize_string(ScriptVisitor)
+        if deserializer.is_human_readable() {
+            deserializer.deserialize_string(ScriptVisitor)
+        } else {
+            Self::try_from_raw(Deserialize::deserialize(deserializer)?)
+                .map_err(serde::de::Error::custom)
+        }
     }
 }
 
@@ -117,37 +127,86 @@ impl<'de> Deserialize<'de> for Region {
             }
         }
 
-        deserializer.deserialize_string(RegionVisitor)
+        if deserializer.is_human_readable() {
+            deserializer.deserialize_string(RegionVisitor)
+        } else {
+            Self::try_from_raw(Deserialize::deserialize(deserializer)?)
+                .map_err(serde::de::Error::custom)
+        }
     }
 }
 
 #[test]
-fn serialize() -> Result<(), Box<dyn std::error::Error>> {
-    let fr = serde_json::json!("fr".parse::<LanguageIdentifier>()?);
-    let en = serde_json::json!("en-US".parse::<LanguageIdentifier>()?);
+fn json() {
+    use crate::{langid, language, region, script};
 
-    assert_eq!(serde_json::to_string(&fr)?, r#""fr""#);
-    assert_eq!(serde_json::to_string(&en)?, r#""en-US""#);
+    assert_eq!(
+        serde_json::to_string(&langid!("en-US")).unwrap(),
+        r#""en-US""#
+    );
+    assert_eq!(
+        serde_json::from_str::<LanguageIdentifier>(r#""en-US""#).unwrap(),
+        langid!("en-US")
+    );
+    assert!(serde_json::from_str::<LanguageIdentifier>(r#""2Xs""#).is_err());
 
-    Ok(())
+    assert_eq!(serde_json::to_string(&language!("fr")).unwrap(), r#""fr""#);
+    assert_eq!(
+        serde_json::from_str::<Language>(r#""fr""#).unwrap(),
+        language!("fr")
+    );
+    assert!(serde_json::from_str::<Language>(r#""2Xs""#).is_err());
+
+    assert_eq!(
+        serde_json::to_string(&script!("Latn")).unwrap(),
+        r#""Latn""#
+    );
+    assert_eq!(
+        serde_json::from_str::<Script>(r#""Latn""#).unwrap(),
+        script!("Latn")
+    );
+    assert!(serde_json::from_str::<Script>(r#""2Xs""#).is_err());
+
+    assert_eq!(serde_json::to_string(&region!("US")).unwrap(), r#""US""#);
+    assert_eq!(
+        serde_json::from_str::<Region>(r#""US""#).unwrap(),
+        region!("US")
+    );
+    assert!(serde_json::from_str::<Region>(r#""2Xs""#).is_err());
 }
 
 #[test]
-fn deserialize() -> Result<(), Box<dyn std::error::Error>> {
-    let fr = serde_json::from_str::<LanguageIdentifier>(r#""fr""#)?;
-    let en = serde_json::from_str::<LanguageIdentifier>(r#""en-US""#)?;
+fn postcard() {
+    use crate::{langid, language, region, script};
 
-    assert_eq!(fr, "fr".parse::<LanguageIdentifier>()?);
-    assert_eq!(en, "en-US".parse::<LanguageIdentifier>()?);
-
-    let failed = serde_json::from_str::<LanguageIdentifier>(r#""2Xs""#);
-    assert!(failed.is_err());
-    let err = failed.unwrap_err();
-    assert!(err.is_data());
     assert_eq!(
-        err.to_string(),
-        "The given language subtag is invalid at line 1 column 5".to_string()
+        postcard::to_stdvec(&langid!("en-US")).unwrap(),
+        &[5, b'e', b'n', b'-', b'U', b'S']
     );
+    assert_eq!(
+        postcard::from_bytes::<LanguageIdentifier>(&[5, b'e', b'n', b'-', b'U', b'S']).unwrap(),
+        langid!("en-US")
+    );
+    assert!(postcard::from_bytes::<LanguageIdentifier>(&[3, b'2', b'X', b's']).is_err());
 
-    Ok(())
+    assert_eq!(postcard::to_stdvec(&language!("fr")).unwrap(), b"fr\0");
+    assert_eq!(
+        postcard::from_bytes::<Language>(b"fr\0").unwrap(),
+        language!("fr")
+    );
+    assert!(postcard::from_bytes::<Language>(b"2Xs").is_err());
+
+    assert_eq!(postcard::to_stdvec(&script!("Latn")).unwrap(), b"Latn");
+    assert_eq!(
+        postcard::from_bytes::<Script>(b"Latn").unwrap(),
+        script!("Latn")
+    );
+    assert!(postcard::from_bytes::<Script>(b"2Xss").is_err());
+
+    assert_eq!(postcard::to_stdvec(&region!("US")).unwrap(), b"US\0");
+    assert_eq!(
+        postcard::from_bytes::<Region>(b"US\0").unwrap(),
+        region!("US")
+    );
+    assert!(postcard::from_bytes::<Region>(b"2Xs").is_err());
 }
