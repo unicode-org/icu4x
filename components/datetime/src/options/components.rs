@@ -198,9 +198,8 @@ impl Bag {
         }
 
         if let Some(day) = self.day {
-            // TODO(#591,#592) Unimplemented day fields:
+            // TODO(#591) Unimplemented day fields:
             // D - Day of year
-            // F - Day of week in month
             // g - Modified Julian day.
             fields.push(Field {
                 symbol: FieldSymbol::Day(match day {
@@ -582,9 +581,7 @@ impl<'data> From<&PatternPlurals<'data>> for Bag {
                             _ => Day::NumericDayOfMonth,
                         },
                         fields::Day::DayOfYear => unimplemented!("fields::Day::DayOfYear #591"),
-                        fields::Day::DayOfWeekInMonth => {
-                            unimplemented!("fields::Day::DayOfWeekInMonth #592")
-                        }
+                        fields::Day::DayOfWeekInMonth => Day::DayOfWeekInMonth,
                         fields::Day::ModifiedJulianDay => {
                             unimplemented!("fields::Day::ModifiedJulianDay")
                         }
