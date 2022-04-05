@@ -19,6 +19,12 @@ pub struct GenericsExample<T> {
     y: T,
 }
 
+#[derive(ZeroFrom, Copy, Clone)]
+pub struct GenericsExampleWithDefault<T, U = usize> {
+    x: T,
+    y: U
+}
+
 #[derive(ZeroFrom)]
 pub struct CowExample<'a> {
     x: u8,
