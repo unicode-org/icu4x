@@ -7,30 +7,21 @@ use core::fmt;
 use core::marker::PhantomData;
 use serde::de::{MapAccess, SeqAccess, Visitor};
 use serde::{Deserialize, Deserializer};
-use crate::store::{Store, StoreIterable};
 
 #[cfg(feature = "serde_serialize")]
 use serde::{ser::SerializeMap, Serialize, Serializer};
 
 #[cfg(feature = "serde_serialize")]
-impl<K, V, R> Serialize for LiteMap<K, V, R>
-where
-K: Serialize,
-V: Serialize,
-    R: Store<K, V> + Serialize
-{
-    fn serialize<'a, S>(&'a self, serializer: S) -> Result<S::Ok, S::Error>
+impl<K: Serialize, V: Serialize> Serialize for LiteMap<K, V> {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
         S: Serializer,
-        K: 'a,
-        V: 'a,
-        R: StoreIterable<'a, K, V>,
     {
         // Many human-readable formats don't support values other
         // than numbers and strings as map keys. For them, we can serialize
         // as a vec of tuples instead
         if serializer.is_human_readable() {
-            if let Some((ref k, _)) = self.values.lm_get(0) {
+            if let Some(&(ref k, _)) = self.values.get(0) {
                 let json = serde_json::json!(k);
                 if !json.is_string() && !json.is_number() {
                     return self.values.serialize(serializer);
@@ -39,7 +30,7 @@ V: Serialize,
             }
         }
         let mut map = serializer.serialize_map(Some(self.len()))?;
-        for (k, v) in self.values.lm_iter() {
+        for (k, v) in self.iter() {
             map.serialize_entry(k, v)?;
         }
         map.end()
