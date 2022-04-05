@@ -72,7 +72,7 @@ impl BlobDataProvider {
 
     #[cfg(feature = "export")]
     #[doc(hidden)] // See #1771, we don't want this to be a publicly visible API
-    pub fn get_map<'a>(&'a self) -> &'a ZeroMap2dBorrowed<'a, ResourceKeyHash, str, [u8]> {
+    pub fn get_map(&self) -> &ZeroMap2dBorrowed<ResourceKeyHash, str, [u8]> {
         self.data.get()
     }
 }
