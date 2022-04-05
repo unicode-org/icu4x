@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! ## `litemap`
+//! # `litemap`
 //!
 //! `litemap` is a crate providing [`LiteMap`], a highly simplistic "flat" key-value map
 //! based off of a single sorted vector.
@@ -15,6 +15,11 @@
 //! for your use case. It behaves very similarly to [`LiteMap`] for less than 12 elements,
 //! and upgrades itself gracefully for larger inputs.
 //!
+//! ## Pluggable Backends
+//!
+//! By default, [`LiteMap`] is backed by a [`Vec`]; however, it can be backed by any appropriate
+//! random-access data store, giving that data store a map-like interface. See the [`store`]
+//! module for more details.
 
 // https://github.com/unicode-org/icu4x/blob/main/docs/process/boilerplate.md#library-annotations
 #![cfg_attr(not(test), no_std)]
@@ -38,5 +43,7 @@ mod map;
 #[cfg(feature = "serde")]
 mod serde;
 pub mod store;
+
+pub mod testing;
 
 pub use map::LiteMap;

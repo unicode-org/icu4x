@@ -64,3 +64,4 @@ serde_serialize = ["serde", "serde_json"]
 [[bench]]
 name = "litemap"
 harness = false
+required-features = ["serde"]

@@ -13,7 +13,7 @@
 //! 2. Should support efficient append operations for deserialization
 //!
 //! To plug a custom data store into LiteMap, implement:
-//! 
+//!
 //! - [`Store`] for most of the methods
 //! - [`StoreIterable`] for methods that return iterators
 //! - [`StoreFromIterator`] to enable `FromIterator` for LiteMap
@@ -46,7 +46,9 @@ pub trait Store<K, V> {
     fn lm_len(&self) -> usize;
 
     /// Returns whether the store is empty (contains 0 elements).
-    fn lm_is_empty(&self) -> bool;
+    fn lm_is_empty(&self) -> bool {
+        self.lm_len() == 0
+    }
 
     /// Gets a key/value pair at the specified index.
     fn lm_get(&self, index: usize) -> Option<(&K, &V)>;
@@ -55,7 +57,14 @@ pub trait Store<K, V> {
     fn lm_get_mut(&mut self, index: usize) -> Option<(&K, &mut V)>;
 
     /// Gets the last element in the store, or None if the store is empty.
-    fn lm_last(&self) -> Option<(&K, &V)>;
+    fn lm_last(&self) -> Option<(&K, &V)> {
+        let len = self.lm_len();
+        if len == 0 {
+            None
+        } else {
+            self.lm_get(len - 1)
+        }
+    }
 
     /// Searches the store for a particular element with a comparator function.
     ///

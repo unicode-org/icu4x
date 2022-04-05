@@ -2,8 +2,14 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use super::*;
-use alloc::vec::Vec;
+use litemap::LiteMap;
+use litemap::testing::check_litemap;
+use litemap::store::{Store, StoreIterable, StoreFromIterator};
+use std::cmp::Ordering;
+
+/// A Vec wrapper that leverages the default function impls from `Store`
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+struct VecWithDefaults<T>(Vec<T>);
 
 type MapF<'a, K, V> = fn(&'a (K, V)) -> (&'a K, &'a V);
 
@@ -19,109 +25,103 @@ fn map_f_mut<'a, K, V>(input: &'a mut (K, V)) -> (&'a K, &'a mut V) {
     (&input.0, &mut input.1)
 }
 
-impl<K, V> Store<K, V> for Vec<(K, V)> {
-    type KeyValueIntoIter = alloc::vec::IntoIter<(K, V)>;
+impl<K, V> Store<K, V> for VecWithDefaults<(K, V)> {
+    type KeyValueIntoIter = std::vec::IntoIter<(K, V)>;
 
     #[inline]
     fn lm_with_capacity(capacity: usize) -> Self {
-        Self::with_capacity(capacity)
+        Self(Vec::with_capacity(capacity))
     }
 
     #[inline]
     fn lm_reserve(&mut self, additional: usize) {
-        self.reserve(additional)
+        self.0.reserve(additional)
     }
 
     #[inline]
     fn lm_len(&self) -> usize {
-        self.as_slice().len()
+        self.0.as_slice().len()
     }
 
-    #[inline]
-    fn lm_is_empty(&self) -> bool {
-        self.as_slice().is_empty()
-    }
+    // leave lm_is_empty as default
 
     #[inline]
     fn lm_get(&self, index: usize) -> Option<(&K, &V)> {
-        self.as_slice().get(index).map(map_f)
+        self.0.as_slice().get(index).map(map_f)
     }
 
     #[inline]
     fn lm_get_mut(&mut self, index: usize) -> Option<(&K, &mut V)> {
-        self.as_mut_slice().get_mut(index).map(map_f_mut)
+        self.0.as_mut_slice().get_mut(index).map(map_f_mut)
     }
 
-    #[inline]
-    fn lm_last(&self) -> Option<(&K, &V)> {
-        self.as_slice().last().map(map_f)
-    }
+    // leave lm_last as default
 
     #[inline]
     fn lm_binary_search_by<F>(&self, mut cmp: F) -> Result<usize, usize>
     where
         F: FnMut(&K) -> Ordering,
     {
-        self.as_slice().binary_search_by(|(k, _)| cmp(&k))
+        self.0.as_slice().binary_search_by(|(k, _)| cmp(&k))
     }
 
     #[inline]
     fn lm_push(&mut self, key: K, value: V) {
-        self.push((key, value))
+        self.0.push((key, value))
     }
 
     #[inline]
     fn lm_insert(&mut self, index: usize, key: K, value: V) {
-        self.insert(index, (key, value))
+        self.0.insert(index, (key, value))
     }
 
     #[inline]
     fn lm_remove(&mut self, index: usize) -> (K, V) {
-        self.remove(index)
+        self.0.remove(index)
     }
 
-    #[inline]
-    fn lm_extend_end(&mut self, other: Self) {
-        self.extend(other)
-    }
+    // leave lm_extend_end as default
 
-    #[inline]
-    fn lm_extend_start(&mut self, other: Self) {
-        self.splice(0..0, other);
-    }
+    // leave lm_extend_start as default
 
     #[inline]
     fn lm_clear(&mut self) {
-        self.clear()
+        self.0.clear()
     }
 
-    #[inline]
-    fn lm_retain<F>(&mut self, mut predicate: F)
-    where
-        F: FnMut(&K, &V) -> bool,
-    {
-        self.retain(|(k, v)| predicate(k, v))
-    }
+    // leave lm_retain as default
 
     #[inline]
     fn lm_into_iter(self) -> Self::KeyValueIntoIter {
-        IntoIterator::into_iter(self)
+        IntoIterator::into_iter(self.0)
     }
 }
 
-impl<'a, K: 'a, V: 'a> StoreIterable<'a, K, V> for Vec<(K, V)> {
+impl<'a, K: 'a, V: 'a> StoreIterable<'a, K, V> for VecWithDefaults<(K, V)> {
     type KeyValueIter = core::iter::Map<core::slice::Iter<'a, (K, V)>, MapF<'a, K, V>>;
     type KeyValueIterMut = core::iter::Map<core::slice::IterMut<'a, (K, V)>, MapFMut<'a, K, V>>;
 
     #[inline]
     fn lm_iter(&'a self) -> Self::KeyValueIter {
-        self.as_slice().iter().map(map_f)
+        self.0.as_slice().iter().map(map_f)
     }
 
     #[inline]
     fn lm_iter_mut(&'a mut self) -> Self::KeyValueIterMut {
-        self.as_mut_slice().iter_mut().map(map_f_mut)
+        self.0.as_mut_slice().iter_mut().map(map_f_mut)
     }
 }
 
-impl<K, V> StoreFromIterator<K, V> for Vec<(K, V)> {}
+impl<A> std::iter::FromIterator<A> for VecWithDefaults<A> {
+    fn from_iter<I: IntoIterator<Item = A>>(iter: I) -> Self {
+        Self(Vec::from_iter(iter))
+    }
+}
+
+impl<K, V> StoreFromIterator<K, V> for VecWithDefaults<(K, V)> {}
+
+#[test]
+fn test_default_impl() {
+    let litemap_test = LiteMap::<u32, u64, VecWithDefaults<(u32, u64)>>::with_capacity(0);
+    check_litemap(litemap_test);
+}
