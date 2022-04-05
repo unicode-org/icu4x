@@ -5,6 +5,20 @@
 use super::*;
 use alloc::vec::Vec;
 
+type MapF<'a, K, V> = fn(&'a (K, V)) -> (&'a K, &'a V);
+
+#[inline]
+fn map_f<'a, K, V>(input: &'a (K, V)) -> (&'a K, &'a V) {
+    (&input.0, &input.1)
+}
+
+type MapFMut<'a, K, V> = fn(&'a mut (K, V)) -> (&'a K, &'a mut V);
+
+#[inline]
+fn map_f_mut<'a, K, V>(input: &'a mut (K, V)) -> (&'a K, &'a mut V) {
+    (&input.0, &mut input.1)
+}
+
 impl<K, V> Store<K, V> for Vec<(K, V)> {
     type KeyValueIntoIter = alloc::vec::IntoIter<(K, V)>;
 
@@ -16,6 +30,39 @@ impl<K, V> Store<K, V> for Vec<(K, V)> {
     #[inline]
     fn lm_reserve(&mut self, additional: usize) {
         self.reserve(additional)
+    }
+
+    #[inline]
+    fn lm_len(&self) -> usize {
+        self.as_slice().len()
+    }
+
+    #[inline]
+    fn lm_is_empty(&self) -> bool {
+        self.as_slice().is_empty()
+    }
+
+    #[inline]
+    fn lm_get(&self, index: usize) -> Option<(&K, &V)> {
+        self.as_slice().get(index).map(map_f)
+    }
+
+    #[inline]
+    fn lm_get_mut(&mut self, index: usize) -> Option<(&K, &mut V)> {
+        self.as_mut_slice().get_mut(index).map(map_f_mut)
+    }
+
+    #[inline]
+    fn lm_last(&self) -> Option<(&K, &V)> {
+        self.as_slice().last().map(map_f)
+    }
+
+    #[inline]
+    fn lm_binary_search_by<F>(&self, mut cmp: F) -> Result<usize, usize>
+    where
+        F: FnMut(&K) -> Ordering,
+    {
+        self.as_slice().binary_search_by(|(k, _)| cmp(&k))
     }
 
     #[inline]
@@ -62,15 +109,21 @@ impl<K, V> Store<K, V> for Vec<(K, V)> {
     }
 }
 
-impl<K, V> StoreSlice<K, V> for Vec<(K, V)> {
+impl<'a, K: 'a, V: 'a, T> StoreIterable<'a, K, V> for T
+where
+    T: Store<K, V>,
+{
+    type KeyValueIter = core::iter::Map<core::slice::Iter<'a, (K, V)>, MapF<'a, K, V>>;
+    type KeyValueIterMut = core::iter::Map<core::slice::IterMut<'a, (K, V)>, MapFMut<'a, K, V>>;
+
     #[inline]
-    fn lm_as_slice(&self) -> &[(K, V)] {
-        self.as_slice()
+    fn lm_iter(&'a self) -> Self::KeyValueIter {
+        self.as_slice().iter().map(map_f)
     }
 
     #[inline]
-    fn lm_as_mut_slice(&mut self) -> &mut [(K, V)] {
-        self.as_mut_slice()
+    fn lm_iter_mut(&'a mut self) -> Self::KeyValueIterMut {
+        self.as_mut_slice().iter_mut().map(map_f_mut)
     }
 }
 
