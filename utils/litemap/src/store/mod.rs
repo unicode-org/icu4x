@@ -109,18 +109,12 @@ pub trait Store<K, V>: StoreBase<K, V> {
 /// Basic methods for the LiteMap store.
 ///
 /// This trait is auto-implemented on anything implementing [`StoreSlice`].
-///
-/// Some methods have default implementations provided for convenience; however, it is generally
-/// better to implement all methods that your data store supports.
 pub trait StoreBase<K, V> {
     /// Returns the number of elements in the store.
     fn lm_len(&self) -> usize;
 
     /// Returns whether the store is empty (contains 0 elements).
-    #[inline]
-    fn lm_is_empty(&self) -> bool {
-        self.lm_len() == 0
-    }
+    fn lm_is_empty(&self) -> bool;
 
     /// Gets a key/value pair at the specified index.
     fn lm_get(&self, index: usize) -> Option<(&K, &V)>;
@@ -129,15 +123,7 @@ pub trait StoreBase<K, V> {
     fn lm_get_mut(&mut self, index: usize) -> Option<(&K, &mut V)>;
 
     /// Gets the last element in the store, or None if the store is empty.
-    #[inline]
-    fn lm_last(&self) -> Option<(&K, &V)> {
-        let len = self.lm_len();
-        if len == 0 {
-            None
-        } else {
-            self.lm_get(len - 1)
-        }
-    }
+    fn lm_last(&self) -> Option<(&K, &V)>;
 
     /// Searches the store for a particular element with a comparator function.
     ///
