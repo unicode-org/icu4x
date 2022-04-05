@@ -57,7 +57,7 @@ bench = false  # This option is required for Benchmark CI
 std = ["icu_locid/std", "icu_provider/std"]
 default = ["serialize"]
 bench = []
-serialize = ["serde", "zerovec/serde"]
+serialize = ["serde", "zerovec/serde", "icu_locid/serialize"]
 datagen = ["serialize"]
 
 [[bench]]
