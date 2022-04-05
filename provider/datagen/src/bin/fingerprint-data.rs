@@ -38,7 +38,7 @@ fn main() -> eyre::Result<()> {
                 .takes_value(true)
                 .possible_value("dir")
                 .possible_value("blob")
-                .help("Output to a directory on the filesystem or a single blob.")
+                .help("Read from an fs-format directory on the filesystem or a blob input.")
                 .default_value("dir"),
         )
         .arg(
