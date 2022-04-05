@@ -34,23 +34,9 @@ extern crate std;
 
 extern crate alloc;
 
-use alloc::vec::Vec;
-use core::marker::PhantomData;
-
 mod map;
 #[cfg(feature = "serde")]
 mod serde;
 pub mod store;
 
-pub type LiteMap<K, V> = map::LiteMapWithStore<K, V, Vec<(K, V)>>;
-
-impl<K, V> LiteMap<K, V> {
-    /// Construct a new [`LiteMap`]
-    pub const fn new() -> Self {
-        Self {
-            values: Vec::new(),
-            _key_type: PhantomData,
-            _value_type: PhantomData,
-        }
-    }
-}
+pub use map::LiteMap;

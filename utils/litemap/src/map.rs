@@ -20,13 +20,24 @@ use crate::store::StoreIterable;
 /// requires `Ord` instead of `Hash`.
 #[derive(Clone, Debug, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[cfg_attr(feature = "yoke", derive(yoke::Yokeable))]
-pub struct LiteMapWithStore<K, V, S> {
+pub struct LiteMap<K, V, S = alloc::vec::Vec<(K, V)>> {
     pub(crate) values: S,
     pub(crate) _key_type: PhantomData<K>,
     pub(crate) _value_type: PhantomData<V>,
 }
 
-impl<K, V, S> LiteMapWithStore<K, V, S>
+impl<K, V> LiteMap<K, V> {
+    /// Construct a new [`LiteMap`]
+    pub const fn new() -> Self {
+        Self {
+            values: alloc::vec::Vec::new(),
+            _key_type: PhantomData,
+            _value_type: PhantomData,
+        }
+    }
+}
+
+impl<K, V, S> LiteMap<K, V, S>
 where
     S: Store<K, V>,
 {
@@ -91,7 +102,7 @@ where
     }
 }
 
-impl<K, V, S> LiteMapWithStore<K, V, S>
+impl<K, V, S> LiteMap<K, V, S>
 where
     K: Ord,
     S: Store<K, V>,
@@ -325,7 +336,7 @@ where
     }
 }
 
-impl<'a, K: 'a, V: 'a, S> LiteMapWithStore<K, V, S>
+impl<'a, K: 'a, V: 'a, S> LiteMap<K, V, S>
 where
     K: Ord,
     S: StoreIterable<'a, K, V> + StoreFromIterator<K, V>,
@@ -385,7 +396,7 @@ where
                 .lm_into_iter()
                 .filter_map(|(k, v)| self.insert_save_key(k, v))
                 .collect();
-            let ret = LiteMapWithStore {
+            let ret = LiteMap {
                 values: leftover_tuples,
                 _key_type: PhantomData,
                 _value_type: PhantomData,
@@ -399,7 +410,7 @@ where
     }
 }
 
-impl<K, V, S> LiteMapWithStore<K, V, S>
+impl<K, V, S> LiteMap<K, V, S>
 where
     K: Ord,
     S: Store<K, V>,
@@ -421,7 +432,7 @@ where
     }
 }
 
-impl<K, V, S> Default for LiteMapWithStore<K, V, S>
+impl<K, V, S> Default for LiteMap<K, V, S>
 where
     S: Store<K, V> + Default,
 {
@@ -433,7 +444,7 @@ where
         }
     }
 }
-impl<K, V, S> Index<&'_ K> for LiteMapWithStore<K, V, S>
+impl<K, V, S> Index<&'_ K> for LiteMap<K, V, S>
 where
     K: Ord,
     S: Store<K, V>,
@@ -444,7 +455,7 @@ where
         self.get(key).expect("LiteMap could not find key")
     }
 }
-impl<K, V, S> IndexMut<&'_ K> for LiteMapWithStore<K, V, S>
+impl<K, V, S> IndexMut<&'_ K> for LiteMap<K, V, S>
 where
     K: Ord,
     S: Store<K, V>,
@@ -454,7 +465,7 @@ where
         self.get_mut(key).expect("LiteMap could not find key")
     }
 }
-impl<K, V, S> FromIterator<(K, V)> for LiteMapWithStore<K, V, S>
+impl<K, V, S> FromIterator<(K, V)> for LiteMap<K, V, S>
 where
     K: Ord,
     S: Store<K, V>,
@@ -476,7 +487,7 @@ where
     }
 }
 
-impl<'a, K: 'a, V: 'a, S> LiteMapWithStore<K, V, S>
+impl<'a, K: 'a, V: 'a, S> LiteMap<K, V, S>
 where
     S: StoreIterable<'a, K, V>,
 {
@@ -503,7 +514,7 @@ where
     }
 }
 
-impl<K, V, S> LiteMapWithStore<K, V, S>
+impl<K, V, S> LiteMap<K, V, S>
 where
     S: Store<K, V>,
 {
