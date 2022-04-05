@@ -18,7 +18,7 @@ use stable_deref_trait::StableDeref;
 /// All relevant Cart traits are implemented for `EitherCart`, and carts can be
 /// safely wrapped in an `EitherCart`.
 ///
-/// Also see [`Yoke::erase_box_cart()`].
+/// Also see [`Yoke::erase_box_cart()`](crate::Yoke::erase_box_cart).
 ///
 /// # Examples
 ///
