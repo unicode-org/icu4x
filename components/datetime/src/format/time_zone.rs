@@ -43,7 +43,7 @@ where
                         Err(_e) => {
                             debug_assert!(false, "{:?}", _e);
                             Err(core::fmt::Error)
-                        },
+                        }
                     }
                 }
                 TimeZoneFormatUnit::Iso8601(fallback) => {
@@ -57,7 +57,7 @@ where
                         Err(_e) => {
                             debug_assert!(false, "{:?}", _e);
                             Err(core::fmt::Error)
-                        },
+                        }
                     }
                 }
                 _ => Err(core::fmt::Error),

@@ -177,7 +177,9 @@ impl TimeZoneFormat {
                 prev_symbol = Some(symbol);
             } else if prev_length != Some(length) && prev_symbol != Some(symbol) {
                 // We don't support the pattern that has multiple different timezone fields of different types.
-                return Err(DateTimeFormatError::Pattern(PatternError::UnsupportedPluralPivot));
+                return Err(DateTimeFormatError::Pattern(
+                    PatternError::UnsupportedPluralPivot,
+                ));
             }
 
             match symbol {
