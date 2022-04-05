@@ -170,7 +170,7 @@ fn test_basic() {
         .take_payload()
         .unwrap();
 
-    let entry = result.get().script.get(&(script!("Glag"))).unwrap();
+    let entry = result.get().script.get(&(script!("Glag").into())).unwrap();
     assert_eq!(entry.0, "cu");
     assert_eq!(entry.1, "BG");
 }

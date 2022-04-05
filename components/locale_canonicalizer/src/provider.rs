@@ -16,6 +16,10 @@ use litemap::LiteMap;
 use tinystr::TinyAsciiStr;
 use zerovec::{ZeroMap, ZeroSlice};
 
+// We use raw TinyAsciiStrs for map keys, as we then don't have to
+// validate them as subtags on deserialization. Map lookup can be
+// done even if they are not valid tags (an invalid key will just
+// become inaccessible).
 type UnvalidatedLanguage = TinyAsciiStr<3>;
 type UnvalidatedScript = TinyAsciiStr<4>;
 type UnvalidatedRegion = TinyAsciiStr<3>;
@@ -87,8 +91,7 @@ pub struct AliasesV1<'data> {
 /// based upon the rules in
 /// <https://www.unicode.org/reports/tr35/#Likely_Subtags>.
 ///
-/// The data is stored in sorted order, allowing for binary search to identify
-/// rules to apply. It is broken down into smaller vectors based upon the rules
+/// The data is stored is broken down into smaller vectors based upon the rules
 /// defined for the likely subtags maximize algorithm.
 ///
 /// For efficiency, only the relevant part of the LanguageIdentifier is stored
