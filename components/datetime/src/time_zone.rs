@@ -172,11 +172,12 @@ impl TimeZoneFormat {
         let mut prev_length = None;
         let mut prev_symbol = None;
         for (length, symbol) in zone_symbols {
-            if prev_length == None && prev_symbol == None {
+            if prev_length.is_none() && prev_symbol.is_none() {
                 prev_length = Some(length);
                 prev_symbol = Some(symbol);
             } else if prev_length != Some(length) && prev_symbol != Some(symbol) {
-                return Err(DateTimeFormatError::UnsupportedOptions);
+                // We don't support the pattern that has multiple different timezone fields of different types.
+                return Err(DateTimeFormatError::Pattern(PatternError::UnsupportedPluralPivot));
             }
 
             match symbol {
