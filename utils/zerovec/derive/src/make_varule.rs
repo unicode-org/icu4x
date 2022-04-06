@@ -24,11 +24,11 @@ pub fn make_varule_impl(attr: AttributeArgs, mut input: DeriveInput) -> TokenStr
         .to_compile_error();
     }
 
-    let (skip_kv, skip_ord, serde) =
-        match utils::extract_attributes_common(&mut input.attrs, "make_ule") {
-            Ok(val) => val,
-            Err(e) => return e.to_compile_error(),
-        };
+    let sp = input.span();
+    let attrs = match utils::extract_attributes_common(&mut input.attrs, sp, true) {
+        Ok(val) => val,
+        Err(e) => return e.to_compile_error(),
+    };
 
     let lt = input.generics.lifetimes().next();
 
@@ -145,7 +145,7 @@ pub fn make_varule_impl(attr: AttributeArgs, mut input: DeriveInput) -> TokenStr
     let zerofrom_fq_path =
         quote!(<#name as zerovec::__zerovec_internal_reexport::ZeroFrom<#ule_name>>);
 
-    let maybe_ord_impls = if skip_ord {
+    let maybe_ord_impls = if attrs.skip_ord {
         quote!()
     } else {
         quote!(
@@ -167,7 +167,7 @@ pub fn make_varule_impl(attr: AttributeArgs, mut input: DeriveInput) -> TokenStr
         )
     };
 
-    let zmkv = if skip_kv {
+    let zmkv = if attrs.skip_kv {
         quote!()
     } else {
         quote!(
@@ -179,7 +179,7 @@ pub fn make_varule_impl(attr: AttributeArgs, mut input: DeriveInput) -> TokenStr
         )
     };
 
-    let maybe_serde_impl = if serde {
+    let maybe_serde_impl = if attrs.serde {
         let serde_path = quote!(zerovec::__zerovec_internal_reexport::serde);
         quote!(
             impl #serde_path::Serialize for #ule_name {

@@ -36,32 +36,24 @@ pub fn make_ule_impl(attr: AttributeArgs, mut input: DeriveInput) -> TokenStream
     let arg = &attr[0];
     let ule_name: Ident = parse_quote!(#arg);
 
-    let (skip_kv, skip_ord, serde) =
-        match utils::extract_attributes_common(&mut input.attrs, "make_ule") {
-            Ok(val) => val,
-            Err(e) => return e.to_compile_error(),
-        };
-
-    if serde {
-        return Error::new(
-            input.span(),
-            "#[make_ule] does not support #[zerovec::serde]",
-        )
-        .to_compile_error();
-    }
+    let sp = input.span();
+    let attrs = match utils::extract_attributes_common(&mut input.attrs, sp, false) {
+        Ok(val) => val,
+        Err(e) => return e.to_compile_error(),
+    };
 
     let name = &input.ident;
 
     let ule_stuff = match input.data {
-        Data::Struct(ref s) => make_ule_struct_impl(name, &ule_name, &input, s, skip_ord),
-        Data::Enum(ref e) => make_ule_enum_impl(name, &ule_name, &input, e, skip_ord),
+        Data::Struct(ref s) => make_ule_struct_impl(name, &ule_name, &input, s, attrs.skip_ord),
+        Data::Enum(ref e) => make_ule_enum_impl(name, &ule_name, &input, e, attrs.skip_ord),
         _ => {
             return Error::new(input.span(), "#[make_ule] must be applied to a struct")
                 .to_compile_error();
         }
     };
 
-    let zmkv = if skip_kv {
+    let zmkv = if attrs.skip_kv {
         quote!()
     } else {
         quote!(

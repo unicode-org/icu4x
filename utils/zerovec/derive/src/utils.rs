@@ -83,7 +83,9 @@ pub(crate) fn generate_per_field_offsets<'a>(
     mut per_field_code: impl FnMut(&FieldInfo<'a>, &Ident, &Ident) -> TokenStream2, // (code, remaining_offset)
 ) -> (TokenStream2, syn::Ident) {
     let mut prev_offset_ident = Ident::new("ZERO", Span::call_site());
-    let mut code = quote!(const ZERO: usize = 0;);
+    let mut code = quote!(
+        const ZERO: usize = 0;
+    );
 
     for (i, field_info) in fields.iter().enumerate() {
         let field = &field_info.field;
@@ -199,17 +201,25 @@ pub fn check_attr_empty(attr: &Option<Attribute>, name: &str) -> Result<()> {
     Ok(())
 }
 
+pub struct ZeroVecAttrs {
+    pub skip_kv: bool,
+    pub skip_ord: bool,
+    pub serde: bool,
+}
+
 /// Removes all known zerovec:: attributes from attrs and validates them
-/// Returns (skip_kv, skip_ord, serde)
 pub fn extract_attributes_common(
     attrs: &mut Vec<Attribute>,
-    name: &str,
-) -> Result<(bool, bool, bool)> {
+    span: Span,
+    is_var: bool,
+) -> Result<ZeroVecAttrs> {
     let mut zerovec_attrs = extract_zerovec_attributes(attrs);
 
     let skip_kv = extract_zerovec_attribute_named(&mut zerovec_attrs, "skip_kv");
     let skip_ord = extract_zerovec_attribute_named(&mut zerovec_attrs, "skip_ord");
     let serde = extract_zerovec_attribute_named(&mut zerovec_attrs, "serde");
+
+    let name = if is_var { "make_varule" } else { "make_ule" };
 
     if let Some(attr) = zerovec_attrs.get(0) {
         return Err(Error::new(
@@ -226,5 +236,16 @@ pub fn extract_attributes_common(
     let skip_ord = skip_ord.is_some();
     let serde = serde.is_some();
 
-    Ok((skip_kv, skip_ord, serde))
+    if serde && !is_var {
+        return Err(Error::new(
+            span,
+            "#[make_ule] does not support #[zerovec::serde]",
+        ));
+    }
+
+    Ok(ZeroVecAttrs {
+        skip_kv,
+        skip_ord,
+        serde,
+    })
 }
