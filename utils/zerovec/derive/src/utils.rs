@@ -72,22 +72,30 @@ fn suffixed_ident(name: &str, suffix: usize, s: Span) -> Ident {
     Ident::new(&format!("{name}_{suffix}"), s)
 }
 
-/// Given an iterator over ULE struct fields, returns code that calculates field sizes and generates a line
+/// Given an iterator over ULE or AsULE struct fields, returns code that calculates field sizes and generates a line
 /// of code per field based on the per_field_code function (whose parameters are the field, the identifier of the const
 /// for the previous offset, the identifier for the const for the next offset, and the field index)
 pub(crate) fn generate_per_field_offsets<'a>(
-    iter: impl Iterator<Item = &'a Field>,
-    // (field, prev_offset_ident, size_ident, index)
-    mut per_field_code: impl FnMut(&Field, &Ident, &Ident, usize) -> TokenStream2, // (code, remaining_offset)
+    fields: &[FieldInfo<'a>],
+    // Whether the fields are ULE types or AsULE (and need conversion)
+    fields_are_asule: bool,
+    // (field, prev_offset_ident, size_ident)
+    mut per_field_code: impl FnMut(&FieldInfo<'a>, &Ident, &Ident) -> TokenStream2, // (code, remaining_offset)
 ) -> (TokenStream2, syn::Ident) {
     let mut prev_offset_ident = Ident::new("ZERO", Span::call_site());
     let mut code = quote!(const ZERO: usize = 0);
 
-    for (i, field) in iter.enumerate() {
+    for (i, field_info) in fields.iter().enumerate() {
+        let field = &field_info.field;
         let ty = &field.ty;
+        let ty = if fields_are_asule {
+            quote!(<#ty as zerovec::ule::AsULE>::ULE)
+        } else {
+            quote!(#ty)
+        };
         let new_offset_ident = suffixed_ident("OFFSET", i, field.span());
         let size_ident = suffixed_ident("SIZE", i, field.span());
-        let pf_code = per_field_code(field, &prev_offset_ident, &size_ident, i);
+        let pf_code = per_field_code(field_info, &prev_offset_ident, &size_ident);
         code = quote! {
             #code;
             const #size_ident: usize = ::core::mem::size_of::<#ty>();
@@ -101,20 +109,46 @@ pub(crate) fn generate_per_field_offsets<'a>(
     (code, prev_offset_ident)
 }
 
-pub fn field_accessor(f: &Field, index: usize) -> TokenStream2 {
-    if let Some(ref i) = f.ident {
-        quote!(#i)
-    } else {
-        let index = Index::from(index);
-        quote!(#index)
-    }
+#[derive(Clone, Debug)]
+pub(crate) struct FieldInfo<'a> {
+    pub accessor: TokenStream2,
+    pub field: &'a Field,
+    pub index: usize,
 }
 
-pub fn field_setter(f: &Field) -> TokenStream2 {
-    if let Some(ref i) = f.ident {
-        quote!(#i: )
-    } else {
-        quote!()
+impl<'a> FieldInfo<'a> {
+    pub fn make_list(iter: impl Iterator<Item = &'a Field>) -> Vec<Self> {
+        iter.enumerate()
+            .map(|(i, field)| Self::new_for_field(field, i))
+            .collect()
+    }
+
+    pub fn new_for_field(f: &'a Field, index: usize) -> Self {
+        if let Some(ref i) = f.ident {
+            FieldInfo {
+                accessor: quote!(#i),
+                field: f,
+                index,
+            }
+        } else {
+            let idx = Index::from(index);
+            FieldInfo {
+                accessor: quote!(#idx),
+                field: f,
+                index,
+            }
+        }
+    }
+
+    /// Get the code for setting this field in struct decl/brace syntax
+    ///
+    /// Use self.accessor for dot-notation accesses
+    pub fn setter(&self) -> TokenStream2 {
+        if let Some(ref i) = self.field.ident {
+            quote!(#i: )
+        } else {
+            quote!()
+        }
     }
 }
 

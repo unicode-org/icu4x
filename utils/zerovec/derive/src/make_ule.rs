@@ -5,7 +5,7 @@
 use proc_macro2::TokenStream as TokenStream2;
 use quote::quote;
 
-use crate::utils;
+use crate::utils::{self, FieldInfo};
 use syn::spanned::Spanned;
 use syn::{
     parse_quote, AttributeArgs, Data, DataEnum, DataStruct, DeriveInput, Error, Expr, Fields,
@@ -250,7 +250,8 @@ fn make_ule_struct_impl(
         )
         .to_compile_error();
     }
-    let field_inits = crate::ule::make_ule_fields(struc.fields.iter());
+    let sized_fields = FieldInfo::make_list(struc.fields.iter());
+    let field_inits = crate::ule::make_ule_fields(&sized_fields);
     let field_inits = utils::wrap_field_inits(&field_inits, &struc.fields);
 
     let semi = utils::semi_for(&struc.fields);

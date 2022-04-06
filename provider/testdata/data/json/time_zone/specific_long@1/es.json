@@ -559,14 +559,14 @@
     }
   },
   "overrides": {
-    "Etc/UTC": {
-      "standard": "tiempo universal coordinado"
+    "gblon": {
+      "daylight": "hora de verano británica"
     },
-    "Europe/Dublin": {
+    "iedub": {
       "daylight": "hora de verano de Irlanda"
     },
-    "Europe/London": {
-      "daylight": "hora de verano británica"
+    "utc": {
+      "standard": "tiempo universal coordinado"
     }
   }
 }

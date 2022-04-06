@@ -2,7 +2,7 @@
   {
     "locale": "en",
     "config": {
-      "time_zone_id": "America/Los_Angeles",
+      "time_zone_id": "uslax",
       "metazone_id": "America_Pacific",
       "time_variant": "daylight"
     },
@@ -156,7 +156,7 @@
   {
     "locale": "en",
     "config": {
-      "time_zone_id": "Europe/London",
+      "time_zone_id": "gblon",
       "metazone_id": "GMT",
       "time_variant": "daylight"
     },
@@ -261,7 +261,7 @@
   {
     "locale": "en",
     "config": {
-      "time_zone_id": "Europe/Dublin",
+      "time_zone_id": "iedub",
       "metazone_id": "GMT",
       "time_variant": "daylight"
     },
@@ -366,7 +366,7 @@
   {
     "locale": "ja",
     "config": {
-      "time_zone_id": "Asia/Tokyo",
+      "time_zone_id": "jptyo",
       "metazone_id": "Japan",
       "time_variant": null
     },
@@ -526,7 +526,7 @@
   {
     "locale": "ru",
     "config": {
-      "time_zone_id": "Antarctica/Troll",
+      "time_zone_id": "aqtrl",
       "metazone_id": "GMT",
       "time_variant": null
     },
@@ -728,7 +728,7 @@
   {
     "locale": "sr-Cyrl",
     "config": {
-      "time_zone_id": "Asia/Katmandu",
+      "time_zone_id": "npktm",
       "metazone_id": "Nepal",
       "time_variant": null
     },
