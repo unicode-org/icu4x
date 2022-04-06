@@ -88,7 +88,7 @@ where
         #[allow(clippy::single_match)] // for clarity
         match map.try_append(*k, *v) {
             Some(_) => (), // OK
-            None => panic!("appending sorted data: {:?} to {:?}", k, map)
+            None => panic!("appending sorted data: {:?} to {:?}", k, map),
         };
     }
     assert_eq!(10, map.len());
