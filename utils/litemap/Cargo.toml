@@ -47,6 +47,10 @@ criterion = "0.3.4"
 name = "serde"
 required-features = ["serde"]
 
+[[test]]
+name = "store"
+required-features = ["testing"]
+
 [[example]]
 name = "litemap_bincode"
 path = "benches/bin/litemap_bincode.rs"
@@ -60,6 +64,7 @@ required-features = ["serde"]
 [features]
 bench = []
 serde_serialize = ["serde", "serde_json"]
+testing = []
 
 [[bench]]
 name = "litemap"

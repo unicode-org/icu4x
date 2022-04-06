@@ -44,6 +44,7 @@ mod map;
 mod serde;
 pub mod store;
 
+#[cfg(feature = "testing")]
 pub mod testing;
 
 pub use map::LiteMap;
