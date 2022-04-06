@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1649206291015,
+  "lastUpdate": 1649207907985,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -12683,6 +12683,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/1193250b38d5ad227abd7578a89dc6dca9cae6b4"
         },
         "date": 1649206273291,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4470980,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "450e6bc6ae148e40d4938c81d7978a089b9c400a",
+          "message": "Add setters for Unicode Keywords and Transform Fields (#1768)",
+          "timestamp": "2022-04-05T18:16:44-07:00",
+          "tree_id": "d6bf6bd88c2ba346a71e3a319f34272dfc7eff5b",
+          "url": "https://github.com/unicode-org/icu4x/commit/450e6bc6ae148e40d4938c81d7978a089b9c400a"
+        },
+        "date": 1649207889678,
         "tool": "ndjson",
         "benches": [
           {
