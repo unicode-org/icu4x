@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1649206741372,
+  "lastUpdate": 1649208370221,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -31583,6 +31583,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 15025,
             "range": "± 1319",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "450e6bc6ae148e40d4938c81d7978a089b9c400a",
+          "message": "Add setters for Unicode Keywords and Transform Fields (#1768)",
+          "timestamp": "2022-04-05T18:16:44-07:00",
+          "tree_id": "d6bf6bd88c2ba346a71e3a319f34272dfc7eff5b",
+          "url": "https://github.com/unicode-org/icu4x/commit/450e6bc6ae148e40d4938c81d7978a089b9c400a"
+        },
+        "date": 1649208352116,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1030,
+            "range": "± 25",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 6865,
+            "range": "± 194",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 19414,
+            "range": "± 1107",
             "unit": "ns/iter"
           }
         ]
