@@ -57,6 +57,44 @@ args = [
     "--overwrite",
 ]
 
+[tasks.testdata-fingerprint-blob]
+description = "Generate a fingerprint for the ICU4X testdata.postcard file."
+category = "ICU4X Data"
+command = "cargo"
+args = [
+    "run",
+    "--bin=icu4x-fingerprint-data",
+    "--features=experimental",
+    "--",
+    "--format=blob",
+    "--data=provider/testdata/data/testdata.postcard",
+    "--out=provider/testdata/data/blob.fingerprint",
+]
+
+[tasks.testdata-fingerprint-json]
+description = "Generate a fingerprint for the ICU4X JSON testdata file."
+category = "ICU4X Data"
+command = "cargo"
+args = [
+    "run",
+    "--bin=icu4x-fingerprint-data",
+    "--features=experimental",
+    "--",
+    "--format=dir",
+    "--data=provider/testdata/data/json",
+    "--out=provider/testdata/data/json.fingerprint",
+]
+
+[tasks.testdata-fingerprint]
+description = "Generate a fingerprint for Postcard and JSON testdata."
+category = "ICU4X Data"
+dependencies = [
+    "testdata-fingerprint-json",
+    "testdata-fingerprint-blob",
+]
+
+
+
 [tasks.testdata-build-hello-world]
 description = "Build the Hello World postcard testdata file."
 category = "ICU4X Data"
