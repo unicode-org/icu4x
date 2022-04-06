@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1649209004684,
+  "lastUpdate": 1649211102427,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -27749,6 +27749,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 3615,
             "range": "± 18",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "62071621e203dc9587e97b6a41e27829c4805ac3",
+          "message": "ZeroCopy likely subtags (#1760)",
+          "timestamp": "2022-04-06T04:04:46+02:00",
+          "tree_id": "b4f50a837a6323af95cda18f18767c6c388b2db1",
+          "url": "https://github.com/unicode-org/icu4x/commit/62071621e203dc9587e97b6a41e27829c4805ac3"
+        },
+        "date": 1649211087113,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 1862,
+            "range": "± 67",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 3136,
+            "range": "± 64",
             "unit": "ns/iter"
           }
         ]
