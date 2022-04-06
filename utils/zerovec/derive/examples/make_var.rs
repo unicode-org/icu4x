@@ -9,7 +9,7 @@ use zerovec::*;
 
 #[make_varule(VarStructULE)]
 #[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Debug, serde::Serialize, serde::Deserialize)]
-#[zerovec::serde]
+#[zerovec::derive(Serialize, Deserialize)]
 struct VarStruct<'a> {
     a: u32,
     b: char,
@@ -19,7 +19,7 @@ struct VarStruct<'a> {
 
 #[make_varule(VarStructOutOfOrderULE)]
 #[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Debug, serde::Serialize, serde::Deserialize)]
-#[zerovec::serde]
+#[zerovec::derive(Serialize, Deserialize)]
 struct VarStructOutOfOrder<'a> {
     a: u32,
     #[serde(borrow)]
@@ -30,25 +30,24 @@ struct VarStructOutOfOrder<'a> {
 
 #[make_varule(VarTupleStructULE)]
 #[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Debug, serde::Serialize, serde::Deserialize)]
-#[zerovec::serde]
+#[zerovec::derive(Serialize, Deserialize)]
 struct VarTupleStruct<'a>(u32, char, #[serde(borrow)] VarZeroVec<'a, str>);
 
 #[make_varule(NoKVULE)]
 #[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Debug, serde::Serialize, serde::Deserialize)]
-#[zerovec::skip_kv]
-#[zerovec::serde]
+#[zerovec::skip_derive(ZeroMapKV)]
+#[zerovec::derive(Serialize, Deserialize)]
 struct NoKV<'a>(u32, char, #[serde(borrow)] VarZeroVec<'a, str>);
 
 #[make_varule(NoOrdULE)]
 #[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Debug, serde::Serialize, serde::Deserialize)]
-#[zerovec::skip_kv]
-#[zerovec::skip_ord]
-#[zerovec::serde]
+#[zerovec::skip_derive(ZeroMapKV, Ord)]
+#[zerovec::derive(Serialize, Deserialize)]
 struct NoOrd<'a>(u32, char, #[serde(borrow)] VarZeroVec<'a, str>);
 
 #[make_varule(MultiFieldStructULE)]
 #[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Debug, serde::Serialize, serde::Deserialize)]
-#[zerovec::serde]
+#[zerovec::derive(Serialize, Deserialize)]
 struct MultiFieldStruct<'a> {
     a: u32,
     b: char,
@@ -62,7 +61,7 @@ struct MultiFieldStruct<'a> {
 
 #[make_varule(MultiFieldTupleULE)]
 #[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Debug, serde::Serialize, serde::Deserialize)]
-#[zerovec::serde]
+#[zerovec::derive(Serialize, Deserialize)]
 struct MultiFieldTuple<'a>(
     u8,
     char,

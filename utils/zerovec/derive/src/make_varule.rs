@@ -179,8 +179,9 @@ pub fn make_varule_impl(attr: AttributeArgs, mut input: DeriveInput) -> TokenStr
         )
     };
 
-    let maybe_serde_impl = if attrs.serde {
-        let serde_path = quote!(zerovec::__zerovec_internal_reexport::serde);
+    let serde_path = quote!(zerovec::__zerovec_internal_reexport::serde);
+
+    let maybe_ser = if attrs.serialize {
         quote!(
             impl #serde_path::Serialize for #ule_name {
                 fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error> where S: #serde_path::Serializer {
@@ -188,6 +189,13 @@ pub fn make_varule_impl(attr: AttributeArgs, mut input: DeriveInput) -> TokenStr
                     <#name as #serde_path::Serialize>::serialize(&this, serializer)
                 }
             }
+        )
+    } else {
+        quote!()
+    };
+
+    let maybe_de = if attrs.deserialize {
+        quote!(
             impl<'de> #serde_path::Deserialize<'de> for zerovec::__zerovec_internal_reexport::boxed::Box<#ule_name> {
                 fn deserialize<D>(deserializer: D) -> Result<Self, D::Error> where D: #serde_path::Deserializer<'de> {
                     let this = <#name as #serde_path::Deserialize>::deserialize(deserializer)?;
@@ -214,7 +222,9 @@ pub fn make_varule_impl(attr: AttributeArgs, mut input: DeriveInput) -> TokenStr
 
         #zmkv
 
-        #maybe_serde_impl
+        #maybe_ser
+
+        #maybe_de
     )
 }
 
