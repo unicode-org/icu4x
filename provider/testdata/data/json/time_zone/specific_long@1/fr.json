@@ -552,14 +552,14 @@
     }
   },
   "overrides": {
-    "Etc/UTC": {
-      "standard": "temps universel coordonné"
+    "gblon": {
+      "daylight": "heure d’été britannique"
     },
-    "Europe/Dublin": {
+    "iedub": {
       "daylight": "heure d’été irlandaise"
     },
-    "Europe/London": {
-      "daylight": "heure d’été britannique"
+    "utc": {
+      "standard": "temps universel coordonné"
     }
   }
 }

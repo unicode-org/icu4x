@@ -534,14 +534,14 @@
     }
   },
   "overrides": {
-    "Etc/UTC": {
-      "standard": "স্থানাংকিত আন্তর্জাতিক সময়"
+    "gblon": {
+      "daylight": "ব্রিটিশ গ্রীষ্মকালীন সময়"
     },
-    "Europe/Dublin": {
+    "iedub": {
       "daylight": "আইরিশ মানক সময়"
     },
-    "Europe/London": {
-      "daylight": "ব্রিটিশ গ্রীষ্মকালীন সময়"
+    "utc": {
+      "standard": "স্থানাংকিত আন্তর্জাতিক সময়"
     }
   }
 }

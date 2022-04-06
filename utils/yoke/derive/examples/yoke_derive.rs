@@ -24,6 +24,12 @@ pub struct GenericsExample<T> {
     y: T,
 }
 
+#[derive(Yokeable, Copy, Clone)]
+pub struct GenericsExampleWithDefault<T, U = usize> {
+    x: T,
+    y: U,
+}
+
 #[derive(Yokeable)]
 pub struct CowExample<'a> {
     x: u8,
@@ -66,6 +72,8 @@ pub struct AssertYokeable {
     int: Yoke<IntExample, Box<[u8]>>,
     gen1: Yoke<GenericsExample<u32>, Box<[u8]>>,
     gen2: Yoke<GenericsExample<String>, Box<[u8]>>,
+    gen_default1: Yoke<GenericsExampleWithDefault<String>, Box<[u8]>>,
+    gen_default2: Yoke<GenericsExampleWithDefault<String, u8>, Box<[u8]>>,
     cow: Yoke<CowExample<'static>, Box<[u8]>>,
     zv: Yoke<ZeroVecExample<'static>, Box<[u8]>>,
     zv_gen1: Yoke<ZeroVecExampleWithGenerics<'static, u8>, Box<[u8]>>,

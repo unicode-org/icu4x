@@ -536,14 +536,14 @@
     }
   },
   "overrides": {
-    "Etc/UTC": {
-      "standard": "التوقيت العالمي المنسق"
+    "gblon": {
+      "daylight": "توقيت بريطانيا الصيفي"
     },
-    "Europe/Dublin": {
+    "iedub": {
       "daylight": "توقيت أيرلندا الرسمي"
     },
-    "Europe/London": {
-      "daylight": "توقيت بريطانيا الصيفي"
+    "utc": {
+      "standard": "التوقيت العالمي المنسق"
     }
   }
 }

@@ -3,6 +3,8 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::cldr::cldr_serde;
+use crate::cldr::cldr_serde::time_zones::time_zone_names::TimeZoneNames;
+use crate::cldr::cldr_serde::time_zones::CldrTimeZonesData;
 use crate::cldr::error::Error;
 use crate::cldr::reader::{get_langid_subdirectories, get_langid_subdirectory, open_reader};
 use crate::cldr::CldrPaths;
@@ -11,8 +13,10 @@ use icu_datetime::provider::time_zones::*;
 use icu_locid::LanguageIdentifier;
 use icu_provider::datagen::IterableResourceProvider;
 use icu_provider::prelude::*;
+use litemap::LiteMap;
 use std::convert::TryFrom;
 use std::path::PathBuf;
+use std::sync::RwLock;
 
 mod convert;
 
@@ -20,7 +24,9 @@ mod convert;
 #[derive(Debug)]
 pub struct TimeZonesProvider {
     path: PathBuf,
-    data: FrozenBTreeMap<LanguageIdentifier, Box<cldr_serde::time_zone_names::TimeZoneNames>>,
+    time_zone_names_data: FrozenBTreeMap<LanguageIdentifier, Box<TimeZoneNames>>,
+    bcp47_tzid_path: PathBuf,
+    bcp47_tzid_data: RwLock<LiteMap<String, String>>,
 }
 
 impl TryFrom<&dyn CldrPaths> for TimeZonesProvider {
@@ -28,7 +34,9 @@ impl TryFrom<&dyn CldrPaths> for TimeZonesProvider {
     fn try_from(cldr_paths: &dyn CldrPaths) -> Result<Self, Self::Error> {
         Ok(Self {
             path: cldr_paths.cldr_dates_gregorian()?.join("main"),
-            data: FrozenBTreeMap::new(),
+            time_zone_names_data: FrozenBTreeMap::new(),
+            bcp47_tzid_path: cldr_paths.cldr_bcp47()?.join("bcp47"),
+            bcp47_tzid_data: RwLock::new(LiteMap::new()),
         })
     }
 }
@@ -42,17 +50,16 @@ macro_rules! impl_resource_provider {
                         .get_langid()
                         .ok_or_else(|| DataErrorKind::NeedsLocale.with_req(<$marker>::KEY, req))?;
 
-                    let time_zones = if let Some(time_zones) = self.data.get(langid) {
-                        time_zones
+                    let time_zone_names = if let Some(time_zone_names) = self.time_zone_names_data.get(langid) {
+                        time_zone_names
                     } else {
                         let path = get_langid_subdirectory(&self.path, langid)?
                             .ok_or_else(|| DataErrorKind::MissingLocale.with_req(<$marker>::KEY, req))?
                             .join("timeZoneNames.json");
-
-                        let mut resource: cldr_serde::time_zone_names::Resource =
+                        let mut resource: cldr_serde::time_zones::time_zone_names::Resource =
                             serde_json::from_reader(open_reader(&path)?)
                                 .map_err(|e| Error::Json(e, Some(path)))?;
-                        self.data.insert(langid.clone(), Box::new(resource
+                        self.time_zone_names_data.insert(langid.clone(), Box::new(resource
                             .main
                             .0
                             .remove(langid)
@@ -61,11 +68,39 @@ macro_rules! impl_resource_provider {
                             .time_zone_names))
                     };
 
+                    if self.bcp47_tzid_data.read().unwrap().len() == 0 {
+                        let bcp47_time_zone_path = self.bcp47_tzid_path.join("timezone.json");
+
+                        let resource: cldr_serde::time_zones::bcp47_tzid::Resource =
+                            serde_json::from_reader(open_reader(&bcp47_time_zone_path)?)
+                                .map_err(|e| Error::Json(e, Some(bcp47_time_zone_path)))?;
+                         let r = resource
+                            .keyword
+                            .u
+                            .time_zones
+                            .values;
+
+                        let mut data_guard = self.bcp47_tzid_data.write().unwrap();
+                        for (bcp47_tzid, bcp47_tzid_data) in r.iter() {
+                            if let Some(alias) = &bcp47_tzid_data.alias {
+                                for data_value in alias.split(" ") {
+                                    data_guard.insert(data_value.to_string(), bcp47_tzid.to_string());
+                                }
+                            }
+                        }
+                    }
+                    let bcp47_tzids = self.bcp47_tzid_data.read().unwrap();
+
+                    let cldr_time_zones_data = CldrTimeZonesData {
+                        time_zone_names,
+                        bcp47_tzids: &bcp47_tzids,
+                    };
+
                     let metadata = DataResponseMetadata::default();
                     // TODO(#1109): Set metadata.data_langid correctly.
                     Ok(DataResponse {
                         metadata,
-                        payload: Some(DataPayload::from_owned(<$marker as DataMarker>::Yokeable::from(time_zones))),
+                        payload: Some(DataPayload::from_owned(<$marker as DataMarker>::Yokeable::from(&cldr_time_zones_data))),
                     })
                 }
             }
@@ -126,10 +161,7 @@ mod tests {
             .unwrap()
             .take_payload()
             .unwrap();
-        assert_eq!(
-            "Pohnpei",
-            exemplar_cities.get().0.get("Pacific/Ponape").unwrap()
-        );
+        assert_eq!("Pohnpei", exemplar_cities.get().0.get("fmpni").unwrap());
 
         let generic_names_long: DataPayload<MetaZoneGenericNamesLongV1Marker> = provider
             .load_resource(&DataRequest {
