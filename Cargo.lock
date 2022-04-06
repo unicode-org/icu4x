@@ -1381,6 +1381,7 @@ dependencies = [
  "icu",
  "icu_benchmark_macros",
  "litemap",
+ "postcard",
  "serde",
  "serde_json",
  "tinystr 0.5.0",

@@ -9,7 +9,7 @@ use crate::cldr::CldrPaths;
 use icu_locale_canonicalizer::provider::*;
 use icu_provider::datagen::IterableResourceProvider;
 use icu_provider::prelude::*;
-use litemap::LiteMap;
+use zerovec::ZeroMap;
 
 use std::convert::TryFrom;
 use std::path::PathBuf;
@@ -72,62 +72,77 @@ impl IterableResourceProvider<LikelySubtagsV1Marker> for LikelySubtagsProvider {
     }
 }
 
-impl From<&cldr_serde::likely_subtags::Resource> for LikelySubtagsV1 {
+impl From<&cldr_serde::likely_subtags::Resource> for LikelySubtagsV1<'static> {
     fn from(other: &cldr_serde::likely_subtags::Resource) -> Self {
-        use icu_locid::LanguageIdentifier;
+        use icu_locid::subtags::Language;
 
-        let mut language_script = LiteMap::new();
-        let mut language_region = LiteMap::new();
-        let mut language = LiteMap::new();
-        let mut script_region = LiteMap::new();
-        let mut script = LiteMap::new();
-        let mut region = LiteMap::new();
-        let mut und = LanguageIdentifier::default();
-
-        // Create a result LanguageIdentifier. We only need to store the delta
-        // between the search LanguageIdentifier and the result LanguageIdentifier.
-        let extract_result =
-            |entry: &(LanguageIdentifier, LanguageIdentifier)| -> LanguageIdentifier {
-                LanguageIdentifier {
-                    language: if entry.0.language != entry.1.language {
-                        entry.1.language
-                    } else {
-                        icu_locid::subtags::Language::UND
-                    },
-                    script: if entry.0.script != entry.1.script {
-                        entry.1.script
-                    } else {
-                        None
-                    },
-                    region: if entry.0.region != entry.1.region {
-                        entry.1.region
-                    } else {
-                        None
-                    },
-                    variants: icu_locid::subtags::Variants::default(),
-                }
-            };
+        let mut language_script = ZeroMap::new();
+        let mut language_region = ZeroMap::new();
+        let mut language = ZeroMap::new();
+        let mut script_region = ZeroMap::new();
+        let mut script = ZeroMap::new();
+        let mut region = ZeroMap::new();
+        let mut und = None;
 
         for entry in other.supplemental.likely_subtags.iter() {
+            // Computes the delta of the entry and assigns to the pattern.
+            // Errors if the delta is not assignable to the pattern.
+            macro_rules! with_diff {
+                ($pat:pat => $stmt:expr ) => {
+                    if let $pat = (
+                        if entry.0.language != entry.1.language {
+                            entry.1.language
+                        } else {
+                            Language::UND
+                        },
+                        if entry.0.script != entry.1.script {
+                            entry.1.script
+                        } else {
+                            None
+                        },
+                        if entry.0.region != entry.1.region {
+                            entry.1.region
+                        } else {
+                            None
+                        },
+                    ) {
+                        $stmt;
+                    } else {
+                        panic!(
+                            "The expansion {:?} -> {:?} can not be stored in the pattern {}",
+                            entry.0,
+                            entry.1,
+                            stringify!($pat)
+                        );
+                    }
+                };
+            }
+
             if !entry.0.language.is_empty() {
-                let lang = entry.0.language.into();
+                let lang = entry.0.language;
                 if let Some(script) = entry.0.script {
-                    language_script.insert((lang, script.into()), extract_result(entry));
+                    with_diff!((Language::UND, None, Some(region)) => language_script.insert(&(lang.into(), script.into()), &region));
                 } else if let Some(region) = entry.0.region {
-                    language_region.insert((lang, region.into()), extract_result(entry));
+                    with_diff!((Language::UND, Some(script), None) => language_region.insert(&(lang.into(), region.into()), &script));
                 } else {
-                    language.insert(lang, extract_result(entry));
+                    with_diff!((Language::UND, Some(script), Some(region)) => language.insert(&lang.into(), &(script, region)));
                 }
             } else if let Some(scr) = entry.0.script {
-                if let Some(reg) = entry.0.region {
-                    script_region.insert((scr.into(), reg.into()), extract_result(entry));
+                if let Some(region) = entry.0.region {
+                    with_diff!((language, None, None) => script_region.insert(&(scr.into(), region.into()), &language));
                 } else {
-                    script.insert(scr.into(), extract_result(entry));
+                    with_diff!((language, None, Some(region)) => script.insert(&scr.into(), &(language, region)));
                 }
             } else if let Some(reg) = entry.0.region {
-                region.insert(reg.into(), extract_result(entry));
+                // Some of the target regions here are not equal to the source, such as und-002 -> en-Latn-NG.
+                // However in the `maximize` method we do not replace tags, so we don't need to store the region.
+                with_diff!((language, Some(script), _) => region.insert(&reg.into(), &(language, script)));
             } else {
-                und = entry.1.clone();
+                und = Some((
+                    entry.1.language,
+                    entry.1.script.expect("targets are complete language codes"),
+                    entry.1.region.expect("targets are complete language codes"),
+                ));
             }
         }
 
@@ -138,7 +153,7 @@ impl From<&cldr_serde::likely_subtags::Resource> for LikelySubtagsV1 {
             script_region,
             script,
             region,
-            und,
+            und: und.expect("'und' has a mapping"),
         }
     }
 }
@@ -156,6 +171,6 @@ fn test_basic() {
         .unwrap();
 
     let entry = result.get().script.get(&(script!("Glag").into())).unwrap();
-    assert_eq!(entry.language, "cu");
-    assert_eq!(entry.region.unwrap(), "BG");
+    assert_eq!(entry.0, "cu");
+    assert_eq!(entry.1, "BG");
 }

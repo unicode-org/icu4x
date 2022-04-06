@@ -35,8 +35,6 @@ static EXPECTED_NET_VIOLATIONS: &[&str] = &[
     "datetime/skeletons@1",
     // https://github.com/unicode-org/icu4x/issues/1034
     "locale_canonicalizer/aliases@1",
-    // https://github.com/unicode-org/icu4x/issues/1034
-    "locale_canonicalizer/likelysubtags@1",
 ];
 
 // Types in this list can be zero-copy deserialized (and do not contain allocated data),

@@ -95,10 +95,8 @@ std = [
     "fixed_decimal/std"
 ]
 default = ["serialize"]
-serde = [
-    "icu_locid/serde"
-]
 serialize = [
+    "icu_locid/serialize",
     "icu_datetime/serialize",
     "icu_decimal/serialize",
     "icu_locale_canonicalizer/serialize",
