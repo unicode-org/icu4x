@@ -367,27 +367,19 @@ impl LocaleCanonicalizer {
                         variants: Variants::default(),
                     };
 
-                    let replacement =
-                        if self.maximize(&mut for_likely) == CanonicalizationResult::Modified {
-                            if let Some(likely_region) = for_likely.region {
-                                if rule.iter().find(|&x| x == likely_region).is_some() {
-                                    likely_region
-                                } else {
-                                    #[allow(clippy::unwrap_used)]
-                                    // TODO(#1668) Clippy exceptions need docs or fixing.
-                                    rule.get(0).unwrap()
-                                }
-                            } else {
+                    locale.id.region =
+                        Some(match (self.maximize(&mut for_likely), for_likely.region) {
+                            (CanonicalizationResult::Modified, Some(likely_region))
+                                if rule.iter().any(|x| x == likely_region) =>
+                            {
+                                likely_region
+                            }
+                            _ => {
                                 #[allow(clippy::unwrap_used)]
                                 // TODO(#1668) Clippy exceptions need docs or fixing.
                                 rule.get(0).unwrap()
                             }
-                        } else {
-                            #[allow(clippy::unwrap_used)]
-                            // TODO(#1668) Clippy exceptions need docs or fixing.
-                            rule.get(0).unwrap()
-                        };
-                    locale.id.region = Some(replacement);
+                        });
                     result = CanonicalizationResult::Modified;
                     continue;
                 }
