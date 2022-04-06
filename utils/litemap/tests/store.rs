@@ -11,17 +11,17 @@ use std::cmp::Ordering;
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 struct VecWithDefaults<T>(Vec<T>);
 
-type MapF<'a, K, V> = fn(&'a (K, V)) -> (&'a K, &'a V);
+type MapF<K, V> = fn(&(K, V)) -> (&K, &V);
 
 #[inline]
-fn map_f<'a, K, V>(input: &'a (K, V)) -> (&'a K, &'a V) {
+fn map_f<K, V>(input: &(K, V)) -> (&K, &V) {
     (&input.0, &input.1)
 }
 
-type MapFMut<'a, K, V> = fn(&'a mut (K, V)) -> (&'a K, &'a mut V);
+type MapFMut<K, V> = fn(&mut (K, V)) -> (&K, &mut V);
 
 #[inline]
-fn map_f_mut<'a, K, V>(input: &'a mut (K, V)) -> (&'a K, &'a mut V) {
+fn map_f_mut<K, V>(input: &mut (K, V)) -> (&K, &mut V) {
     (&input.0, &mut input.1)
 }
 
@@ -62,7 +62,7 @@ impl<K, V> Store<K, V> for VecWithDefaults<(K, V)> {
     where
         F: FnMut(&K) -> Ordering,
     {
-        self.0.as_slice().binary_search_by(|(k, _)| cmp(&k))
+        self.0.as_slice().binary_search_by(|(k, _)| cmp(k))
     }
 
     #[inline]
@@ -98,8 +98,8 @@ impl<K, V> Store<K, V> for VecWithDefaults<(K, V)> {
 }
 
 impl<'a, K: 'a, V: 'a> StoreIterable<'a, K, V> for VecWithDefaults<(K, V)> {
-    type KeyValueIter = core::iter::Map<core::slice::Iter<'a, (K, V)>, MapF<'a, K, V>>;
-    type KeyValueIterMut = core::iter::Map<core::slice::IterMut<'a, (K, V)>, MapFMut<'a, K, V>>;
+    type KeyValueIter = core::iter::Map<core::slice::Iter<'a, (K, V)>, MapF<K, V>>;
+    type KeyValueIterMut = core::iter::Map<core::slice::IterMut<'a, (K, V)>, MapFMut<K, V>>;
 
     #[inline]
     fn lm_iter(&'a self) -> Self::KeyValueIter {

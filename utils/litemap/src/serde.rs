@@ -38,7 +38,8 @@ where
         let mut map = serializer.serialize_map(Some(self.len()))?;
         let mut i = 0;
         while i < self.values.lm_len() {
-            let (k, v) = self.values.lm_get(i).expect("i is in range");
+            #[allow(clippy::unwrap_used)] // i is in range
+            let (k, v) = self.values.lm_get(i).unwrap();
             map.serialize_entry(k, v)?;
             i += 1;
         }
@@ -47,6 +48,7 @@ where
 }
 
 /// Modified example from https://serde.rs/deserialize-map.html
+#[allow(clippy::type_complexity)]
 struct LiteMapVisitor<K, V, R> {
     marker: PhantomData<fn() -> LiteMap<K, V, R>>,
 }

@@ -126,7 +126,7 @@ where
         Q: Ord,
     {
         match self.find_index(key) {
-            #[allow(clippy::unwrap)] // find_index returns a valid index
+            #[allow(clippy::unwrap_used)] // find_index returns a valid index
             Ok(found) => Some(self.values.lm_get(found).unwrap().1),
             Err(_) => None,
         }
@@ -170,7 +170,7 @@ where
         Q: Ord,
     {
         match self.find_index(key) {
-            #[allow(clippy::unwrap)] // find_index returns a valid index
+            #[allow(clippy::unwrap_used)] // find_index returns a valid index
             Ok(found) => Some(self.values.lm_get_mut(found).unwrap().1),
             Err(_) => None,
         }

@@ -6,10 +6,11 @@
 
 use crate::store::{Store, StoreFromIterator, StoreIterable};
 use crate::LiteMap;
-use alloc::format;
 use alloc::vec::Vec;
 use core::fmt::Debug;
 
+// Test code
+#[allow(clippy::expect_used)]
 fn check_equivalence<K, V, S0, S1>(mut a: S0, mut b: S1)
 where
     K: Ord + Debug + PartialEq,
@@ -34,7 +35,7 @@ where
         assert_eq!(a_kv_mut, b_kv_mut);
     }
     for j in 0..len {
-        let needle = a.lm_get(j).unwrap().0;
+        let needle = a.lm_get(j).expect("j is in range").0;
         let a_binary = a.lm_binary_search_by(|k| k.cmp(needle));
         let b_binary = a.lm_binary_search_by(|k| k.cmp(needle));
         assert_eq!(Ok(j), a_binary);
@@ -74,6 +75,9 @@ const RANDOM_DATA: &[(u32, u64)] = &[
     (704, 5359),
 ];
 
+// Test code
+#[allow(clippy::expect_used)]
+#[allow(clippy::panic)]
 fn populate_litemap<S>(map: &mut LiteMap<u32, u64, S>)
 where
     S: Store<u32, u64> + Debug,
@@ -81,14 +85,19 @@ where
     assert_eq!(0, map.len());
     assert!(map.is_empty());
     for (k, v) in SORTED_DATA.iter() {
-        map.try_append(*k, *v)
-            .ok_or(())
-            .expect_err(&format!("appending sorted data: {:?} to {:?}", k, map));
+        #[allow(clippy::single_match)] // for clarity
+        match map.try_append(*k, *v) {
+            Some(_) => (), // OK
+            None => panic!("appending sorted data: {:?} to {:?}", k, map)
+        };
     }
     assert_eq!(10, map.len());
     for (k, v) in RANDOM_DATA.iter() {
-        map.try_append(*k, *v)
-            .expect(&format!("cannot append random data: {:?} to{:?}", k, map));
+        #[allow(clippy::single_match)] // for clarity
+        match map.try_append(*k, *v) {
+            Some(_) => panic!("cannot append random data: {:?} to{:?}", k, map),
+            None => (), // OK
+        };
     }
     assert_eq!(10, map.len());
     for (k, v) in RANDOM_DATA.iter() {
@@ -100,6 +109,8 @@ where
 /// Tests that the given litemap instance has behavior consistent with the reference impl.
 ///
 /// Call this function in a test and pass it an empty instance of a `LiteMap` with a custom store.
+// Test code
+#[allow(clippy::expect_used)]
 pub fn check_litemap<'a, S>(mut litemap_test: LiteMap<u32, u64, S>)
 where
     S: Store<u32, u64>

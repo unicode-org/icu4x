@@ -110,10 +110,8 @@ pub trait Store<K, V> {
     where
         Self: Sized,
     {
-        let mut i = 0;
-        for item in other.lm_into_iter() {
+        for (i, item) in other.lm_into_iter().enumerate() {
             self.lm_insert(i, item.0, item.1);
-            i += 1;
         }
     }
 
@@ -127,7 +125,8 @@ pub trait Store<K, V> {
     {
         let mut i = 0;
         while i < self.lm_len() {
-            let (k, v) = self.lm_get(i).expect("i is in range");
+            #[allow(clippy::unwrap_used)] // i is in range
+            let (k, v) = self.lm_get(i).unwrap();
             if predicate(k, v) {
                 i += 1;
             } else {
