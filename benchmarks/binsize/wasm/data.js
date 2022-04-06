@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1649208148401,
+  "lastUpdate": 1649208907528,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -65920,6 +65920,180 @@ window.BENCHMARK_DATA = {
           {
             "name": "and_list+opt.wasm",
             "value": 1952192,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "litemap_bincode+opt.wasm",
+            "value": 17596,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "postcard+opt.wasm",
+            "value": 11729,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "unicode_bmp_blocks_selector+opt.wasm",
+            "value": 13942,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "a52b2f6c2fef2fbaf22aa3b3aec56ac97f3ac42d",
+          "message": "Bump yoke to 0.5.0 (#1776)",
+          "timestamp": "2022-04-06T01:29:35Z",
+          "tree_id": "249cf1a2e80a9e43d6bc9cc12e9e3bb82e8c3a24",
+          "url": "https://github.com/unicode-org/icu4x/commit/a52b2f6c2fef2fbaf22aa3b3aec56ac97f3ac42d"
+        },
+        "date": 1649208891030,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "work_log+opt.wasm",
+            "value": 2150624,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "unread_emails+opt.wasm",
+            "value": 1922191,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "derives+opt.wasm",
+            "value": 13731,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "litemap_postcard+opt.wasm",
+            "value": 9086,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "owned_pattern+opt.wasm",
+            "value": 16183,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "zf_derive+opt.wasm",
+            "value": 9649,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "elevator_floors+opt.wasm",
+            "value": 1922209,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "simple_static+opt.wasm",
+            "value": 1925723,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "zv_serde+opt.wasm",
+            "value": 237,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "borrowed_pattern+opt.wasm",
+            "value": 13915,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "language_names_hash_map+opt.wasm",
+            "value": 10071,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "permyriad+opt.wasm",
+            "value": 8536,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "language_names_lite_map+opt.wasm",
+            "value": 6867,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "filter_langids+opt.wasm",
+            "value": 13447,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "make+opt.wasm",
+            "value": 11176,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "syntatically_canonicalize_locales+opt.wasm",
+            "value": 29425,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "code_line_diff+opt.wasm",
+            "value": 1917524,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "writeable_message+opt.wasm",
+            "value": 21266,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "tui+opt.wasm",
+            "value": 2222808,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "yoke_derive+opt.wasm",
+            "value": 9649,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "make_var+opt.wasm",
+            "value": 86465,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "and_list+opt.wasm",
+            "value": 1951993,
             "unit": "bytes",
             "biggerIsBetter": false
           },
