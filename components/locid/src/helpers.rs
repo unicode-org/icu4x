@@ -2,6 +2,60 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use alloc::vec;
+use alloc::vec::Vec;
+
+/// Internal: A vector that supports no-allocation, constant values if length 0 or 1.
+#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+pub(crate) enum ShortVec<T> {
+    Empty,
+    Single(T),
+    Multi(Vec<T>),
+}
+
+impl<T> ShortVec<T> {
+    #[inline]
+    pub const fn new() -> Self {
+        Self::Empty
+    }
+
+    #[inline]
+    pub const fn new_single(item: T) -> Self {
+        Self::Single(item)
+    }
+
+    pub fn push(&mut self, item: T) {
+        *self = match core::mem::replace(self, Self::Empty) {
+            ShortVec::Empty => ShortVec::Single(item),
+            ShortVec::Single(prev_item) => ShortVec::Multi(vec![prev_item, item]),
+            ShortVec::Multi(mut items) => {
+                items.push(item);
+                ShortVec::Multi(items)
+            }
+        };
+    }
+
+    #[inline]
+    pub fn as_slice(&self) -> &[T] {
+        match self {
+            ShortVec::Empty => &[],
+            ShortVec::Single(v) => core::slice::from_ref(v),
+            ShortVec::Multi(v) => v.as_slice(),
+        }
+    }
+}
+
+impl<T> From<Vec<T>> for ShortVec<T> {
+    fn from(v: Vec<T>) -> Self {
+        match v.len() {
+            0 => ShortVec::Empty,
+            #[allow(clippy::unwrap_used)] // we know that the vec is not empty
+            1 => ShortVec::Single(v.into_iter().next().unwrap()),
+            _ => ShortVec::Multi(v),
+        }
+    }
+}
+
 macro_rules! impl_writeable_for_single_subtag {
     ($type:tt, $sample:literal) => {
         impl core::fmt::Display for $type {
