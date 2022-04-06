@@ -202,12 +202,13 @@ pub fn extract_zerovec_attributes(attrs: &mut Vec<Attribute>) -> Vec<Attribute> 
     ret
 }
 
-#[derive(Default)]
+#[derive(Default, Copy, Clone)]
 pub struct ZeroVecAttrs {
     pub skip_kv: bool,
     pub skip_ord: bool,
     pub serialize: bool,
     pub deserialize: bool,
+    pub debug: bool,
 }
 
 /// Removes all known zerovec:: attributes from attrs and validates them
@@ -237,6 +238,8 @@ pub fn extract_attributes_common(
             attrs.serialize = true;
         } else if ident == "Deserialize" {
             attrs.deserialize = true;
+        } else if ident == "Debug" {
+            attrs.debug = true;
         } else {
             return Err(Error::new(
                 ident.span(),

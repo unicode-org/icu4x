@@ -5,7 +5,7 @@
 use proc_macro2::TokenStream as TokenStream2;
 use quote::quote;
 
-use crate::utils::{self, FieldInfo};
+use crate::utils::{self, FieldInfo, ZeroVecAttrs};
 use syn::spanned::Spanned;
 use syn::{
     parse_quote, AttributeArgs, Data, DataEnum, DataStruct, DeriveInput, Error, Expr, Fields,
@@ -45,8 +45,8 @@ pub fn make_ule_impl(attr: AttributeArgs, mut input: DeriveInput) -> TokenStream
     let name = &input.ident;
 
     let ule_stuff = match input.data {
-        Data::Struct(ref s) => make_ule_struct_impl(name, &ule_name, &input, s, attrs.skip_ord),
-        Data::Enum(ref e) => make_ule_enum_impl(name, &ule_name, &input, e, attrs.skip_ord),
+        Data::Struct(ref s) => make_ule_struct_impl(name, &ule_name, &input, s, attrs),
+        Data::Enum(ref e) => make_ule_enum_impl(name, &ule_name, &input, e, attrs),
         _ => {
             return Error::new(input.span(), "#[make_ule] must be applied to a struct")
                 .to_compile_error();
@@ -79,7 +79,7 @@ fn make_ule_enum_impl(
     ule_name: &Ident,
     input: &DeriveInput,
     enu: &DataEnum,
-    skip_ord: bool,
+    attrs: ZeroVecAttrs,
 ) -> TokenStream2 {
     // We could support more int reprs in the future if needed
     if !utils::has_valid_repr(&input.attrs, |r| r == "u8") {
@@ -148,7 +148,7 @@ fn make_ule_enum_impl(
 
     let max = next as u8;
 
-    let maybe_ord_derives = if skip_ord {
+    let maybe_ord_derives = if attrs.skip_ord {
         quote!()
     } else {
         quote!(#[derive(Ord, PartialOrd)])
@@ -236,7 +236,7 @@ fn make_ule_struct_impl(
     ule_name: &Ident,
     input: &DeriveInput,
     struc: &DataStruct,
-    skip_ord: bool,
+    attrs: ZeroVecAttrs,
 ) -> TokenStream2 {
     if struc.fields.iter().next().is_none() {
         return Error::new(
@@ -296,7 +296,7 @@ fn make_ule_struct_impl(
         }
     );
 
-    let maybe_ord_impls = if skip_ord {
+    let maybe_ord_impls = if attrs.skip_ord {
         quote!()
     } else {
         quote!(
