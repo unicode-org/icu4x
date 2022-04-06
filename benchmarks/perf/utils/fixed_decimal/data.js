@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1649206625840,
+  "lastUpdate": 1649208181434,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -22499,6 +22499,36 @@ window.BENCHMARK_DATA = {
             "name": "fixed_decimal/overview",
             "value": 101521,
             "range": "± 3212",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "450e6bc6ae148e40d4938c81d7978a089b9c400a",
+          "message": "Add setters for Unicode Keywords and Transform Fields (#1768)",
+          "timestamp": "2022-04-05T18:16:44-07:00",
+          "tree_id": "d6bf6bd88c2ba346a71e3a319f34272dfc7eff5b",
+          "url": "https://github.com/unicode-org/icu4x/commit/450e6bc6ae148e40d4938c81d7978a089b9c400a"
+        },
+        "date": 1649208166749,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 109366,
+            "range": "± 556",
             "unit": "ns/iter"
           }
         ]
