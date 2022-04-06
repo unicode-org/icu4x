@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1649282343995,
+  "lastUpdate": 1649286955461,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -27929,6 +27929,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 3705,
             "range": "± 254",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "592fd86c4894d4e12f7b54730b6d754b06f0583c",
+          "message": "Add data fingerprint file (#1772)\n\n* Add fingerprint-data binary\r\n\r\n* Add CI jobs",
+          "timestamp": "2022-04-06T23:07:44Z",
+          "tree_id": "2424bcf49562af41b2ec1c1050e156c56156fc3b",
+          "url": "https://github.com/unicode-org/icu4x/commit/592fd86c4894d4e12f7b54730b6d754b06f0583c"
+        },
+        "date": 1649286938299,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 2342,
+            "range": "± 119",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 3971,
+            "range": "± 399",
             "unit": "ns/iter"
           }
         ]
