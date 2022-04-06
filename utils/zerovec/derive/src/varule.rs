@@ -60,7 +60,7 @@ pub fn derive_impl(
     } else {
         // no ULE subfields
         (
-            quote!(const ZERO: usize = 0),
+            quote!(const ZERO: usize = 0;),
             Ident::new("ZERO", Span::call_site()),
         )
     };

@@ -112,9 +112,11 @@ pub fn make_varule_impl(attr: AttributeArgs, mut input: DeriveInput) -> TokenStr
     let field_inits = utils::wrap_field_inits(&field_inits, fields);
     let vis = &input.vis;
 
+    let doc = format!("[`VarULE`](zerovec::ule::VarULE) type for {name}");
     let varule_struct: DeriveInput = parse_quote!(
         #[repr(#repr_attr)]
         #[derive(PartialEq, Eq)]
+        #[doc = #doc]
         #vis struct #ule_name #field_inits #semi
     );
 

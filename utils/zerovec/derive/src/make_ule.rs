@@ -164,6 +164,8 @@ fn make_ule_enum_impl(
 
     let vis = &input.vis;
 
+    let doc = format!("[`ULE`](zerovec::ule::ULE) type for {name}");
+
     // Safety (based on the safety checklist on the ULE trait):
     //  1. ULE type does not include any uninitialized or padding bytes.
     //     (achieved by `#[repr(transparent)]` on a type that satisfies this invariant
@@ -179,6 +181,7 @@ fn make_ule_enum_impl(
         #[repr(transparent)]
         #[derive(Copy, Clone, PartialEq, Eq)]
         #maybe_ord_derives
+        #[doc = #doc]
         #vis struct #ule_name(u8);
 
         unsafe impl zerovec::ule::ULE for #ule_name {
@@ -258,9 +261,12 @@ fn make_ule_struct_impl(
     let repr_attr = utils::repr_for(&struc.fields);
     let vis = &input.vis;
 
+    let doc = format!("[`ULE`](zerovec::ule::ULE) type for {name}");
+
     let ule_struct: DeriveInput = parse_quote!(
         #[repr(#repr_attr)]
         #[derive(Copy, Clone, PartialEq, Eq)]
+        #[doc = #doc]
         #vis struct #ule_name #field_inits #semi
     );
     let derived = crate::ule::derive_impl(&ule_struct);
