@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1649207907985,
+  "lastUpdate": 1649208669294,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -12713,6 +12713,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/450e6bc6ae148e40d4938c81d7978a089b9c400a"
         },
         "date": 1649207889678,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4470980,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "a52b2f6c2fef2fbaf22aa3b3aec56ac97f3ac42d",
+          "message": "Bump yoke to 0.5.0 (#1776)",
+          "timestamp": "2022-04-06T01:29:35Z",
+          "tree_id": "249cf1a2e80a9e43d6bc9cc12e9e3bb82e8c3a24",
+          "url": "https://github.com/unicode-org/icu4x/commit/a52b2f6c2fef2fbaf22aa3b3aec56ac97f3ac42d"
+        },
+        "date": 1649208652505,
         "tool": "ndjson",
         "benches": [
           {
