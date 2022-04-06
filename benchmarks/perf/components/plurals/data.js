@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1649227255685,
+  "lastUpdate": 1649253202888,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -31751,6 +31751,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 15823,
             "range": "± 869",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "pandusonu@google.com",
+            "name": "Gollapudi Vamsi Krishna",
+            "username": "pandusonu2"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "252ac244262a7dd2cb0bf5696dcb631e736e9373",
+          "message": "Add indian calendar (#1715)",
+          "timestamp": "2022-04-06T13:43:27Z",
+          "tree_id": "78f5dcaa3ebb153ec30f652de1c538196833049a",
+          "url": "https://github.com/unicode-org/icu4x/commit/252ac244262a7dd2cb0bf5696dcb631e736e9373"
+        },
+        "date": 1649253184303,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1000,
+            "range": "± 30",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 6719,
+            "range": "± 220",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 16918,
+            "range": "± 565",
             "unit": "ns/iter"
           }
         ]
