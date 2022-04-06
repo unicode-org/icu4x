@@ -171,7 +171,10 @@ pub fn extract_parenthetical_zerovec_attrs(
                 let list = match parse2::<IdentListAttribute>(a.tokens.clone()) {
                     Ok(l) => l,
                     Err(_) => {
-                        error = Some(Error::new(a.span(), format!("#[zerovec::name(..)] takes in a comma separated list of identifiers")));
+                        error = Some(Error::new(
+                            a.span(),
+                            "#[zerovec::name(..)] takes in a comma separated list of identifiers",
+                        ));
                         return false;
                     }
                 };

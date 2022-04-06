@@ -306,16 +306,23 @@ pub mod vecs {
 ///
 /// The type must be [`Copy`], [`PartialEq`], and [`Eq`].
 ///
-/// Certain custom derives can be inherited to the [`ULE`] type with `#[zerovec::derive(...)]`. For example, if the type has a `Debug` impl,
-/// `#[zerovec::derive(Debug)]` will generate one for the generated [`ULE`] type. Currently `Debug` is the only trait supported here.
+/// `#[make_ule]` will automatically derive the following traits on the [`ULE`] type:
 ///
-/// By default this attribute will also autogenerate a [`ZeroMapKV`] implementation, which requires
-/// [`Ord`] and [`PartialOrd`] on `Self`. You can opt out of this with `#[zerovec::skip_derive(ZeroMapKV)]`.
+/// - [`Ord`] and [`PartialOrd`]
+/// - [`ZeroMapKV`]
 ///
-/// This implementation will also by default autogenerate [`Ord`] and [`PartialOrd`] on the [`ULE`] type based on
-/// the implementation on `Self`. You can opt out of this with `#[zerovec::skip_derive(Ord)]`
+/// To disable one of the automatic derives, use `#[zerovec::skip_derive(...)]` like so: `#[zerovec::skip_derive(ZeroMapKV)]`.
+/// `Ord` and `PartialOrd` are implemented as a unit and can only be disabled as a group with `#[zerovec::skip_derive(Ord)]`.
 ///
-/// For enums, this implementation will generate a crate-public `fn new_from_u8(value: u8) -> Option<Self>`
+/// The following traits are available to derive, but not automatic:
+///
+/// - [`Debug`]
+///
+/// To enable one of these additional derives, use `#[zerovec::derive(...)]` like so: `#[zerovec::derive(Debug)]`.
+///
+/// In most cases these derives will defer to the impl of the same trait on the current type, so such impls must exist.
+///
+/// For enums, this attribute will generate a crate-public `fn new_from_u8(value: u8) -> Option<Self>`
 /// method on the main type that allows one to construct the value from a u8. If this method is desired
 /// to be more public, it should be wrapped.
 ///
@@ -374,16 +381,23 @@ pub use zerovec_derive::make_ule;
 /// to convert the [`VarULE`] type back to this type in a cheap, zero-copy way (see the example below
 /// for more details).
 ///
-/// Certain custom derives can be inherited to the [`VarULE`] type with `#[zerovec::derive(...)]`. For example, if the type has a `Debug` impl,
-/// `#[zerovec::derive(Debug)]` will generate one for the generated [`VarULE`] type.
+/// `#[make_varule]` will automatically derive the following traits on the [`VarULE`] type:
 ///
-/// Similarly, `#[zerovec::derive(Serialize, Deserialize)]` will add the appropriate [`serde::Serialize`](dep_serde::Serialize)
-/// and [`serde::Deserialize`](dep_serde::Deserialize) impls for the generated [`VarULE`] type, provided the type
-/// itself has these traits implemented. Such impls are required to support human-readable serialization of the VarZeroVec.
-/// This needs the `serde`/`serde_serialize` features to be enabled on the `zerovec` crate to work.
+/// - [`Ord`] and [`PartialOrd`]
+/// - [`ZeroMapKV`]
 ///
-/// By default this attribute will also autogenerate a [`ZeroMapKV`] implementation, which requires
-/// [`Ord`] and [`PartialOrd`] on the [`VarULE`] type. You can opt out of this with `#[zerovec::skip_derive(ZeroMapKV)]`.
+/// To disable one of the automatic derives, use `#[zerovec::skip_derive(...)]` like so: `#[zerovec::skip_derive(ZeroMapKV)]`.
+/// `Ord` and `PartialOrd` are implemented as a unit and can only be disabled as a group with `#[zerovec::skip_derive(Ord)]`.
+///
+/// The following traits are available to derive, but not automatic:
+///
+/// - [`Debug`]
+/// - [`Serialize`](dep_serde::Serialize)
+/// - [`Deserialize`](dep_serde::Deserialize)
+///
+/// To enable one of these additional derives, use `#[zerovec::derive(...)]` like so: `#[zerovec::derive(Debug)]`.
+///
+/// In most cases these derives will defer to the impl of the same trait on the current type, so such impls must exist.
 ///
 /// This implementation will also by default autogenerate [`Ord`] and [`PartialOrd`] on the [`VarULE`] type based on
 /// the implementation on `Self`. You can opt out of this with `#[zerovec::skip_derive(Ord)]`
