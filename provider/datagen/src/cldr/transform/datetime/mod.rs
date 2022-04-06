@@ -9,11 +9,11 @@ use crate::cldr::CldrPaths;
 use elsa::sync::FrozenBTreeMap;
 
 use icu_datetime::provider::calendar::*;
+use icu_locid::unicode_ext_key;
 use icu_provider::datagen::IterableResourceProvider;
 use icu_provider::prelude::*;
 use std::convert::TryFrom;
 use std::path::PathBuf;
-use icu_locid::unicode_ext_key;
 
 mod patterns;
 mod skeletons;

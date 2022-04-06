@@ -386,7 +386,6 @@ pub fn analyze_patterns(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use icu_locid::langid;
 
     #[test]
     #[cfg(feature = "serialize")]
@@ -397,7 +396,12 @@ mod tests {
         use icu_provider::prelude::*;
 
         let provider = icu_testdata::get_provider();
-        let locale = locale!("en").with_unicode_extension(unicode_ext_key!("ca"), unicode_ext_value!("gregory"));
+        let mut locale = locale!("en");
+        locale
+            .extensions
+            .unicode
+            .keywords
+            .set(unicode_ext_key!("ca"), unicode_ext_value!("gregory"));
         let data: DataPayload<DateSymbolsV1Marker> = provider
             .load_resource(&DataRequest {
                 options: locale.into(),
