@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1649195065074,
+  "lastUpdate": 1649205916393,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -25085,6 +25085,48 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 153734,
             "range": "± 316",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "e8e77d12f21331ddf210beab1335ffa92df08382",
+          "message": "Minor fixes to yoke docs; publish new yoke/yoke-derive (#1773)\n\n* Move eithercart functions to yoke module\r\n\r\n* Mention more explicitly that the cart type is C\r\n\r\n* Bump yoke to 0.4.1, yoke-derive to 0.4.2",
+          "timestamp": "2022-04-06T00:36:53Z",
+          "tree_id": "5b273b613c7b91e536f252b97e938a92ea200e59",
+          "url": "https://github.com/unicode-org/icu4x/commit/e8e77d12f21331ddf210beab1335ffa92df08382"
+        },
+        "date": 1649205894693,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 93932,
+            "range": "± 4414",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 945729,
+            "range": "± 29637",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 198192,
+            "range": "± 9460",
             "unit": "ns/iter"
           }
         ]
