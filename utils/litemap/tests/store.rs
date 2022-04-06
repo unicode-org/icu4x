@@ -2,9 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use litemap::LiteMap;
+use litemap::store::{Store, StoreFromIterator, StoreIterable};
 use litemap::testing::check_litemap;
-use litemap::store::{Store, StoreIterable, StoreFromIterator};
+use litemap::LiteMap;
 use std::cmp::Ordering;
 
 /// A Vec wrapper that leverages the default function impls from `Store`

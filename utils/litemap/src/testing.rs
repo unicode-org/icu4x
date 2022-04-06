@@ -4,6 +4,7 @@
 
 use crate::store::{Store, StoreFromIterator, StoreIterable};
 use crate::LiteMap;
+use alloc::format;
 use alloc::vec::Vec;
 use core::fmt::Debug;
 
@@ -73,18 +74,19 @@ const RANDOM_DATA: &[(u32, u64)] = &[
 
 fn populate_litemap<S>(map: &mut LiteMap<u32, u64, S>)
 where
-    S: Store<u32, u64>,
+    S: Store<u32, u64> + Debug,
 {
     assert_eq!(0, map.len());
     assert!(map.is_empty());
     for (k, v) in SORTED_DATA.iter() {
-        map.try_append(*k, *v).expect("appending sorted data");
+        map.try_append(*k, *v)
+            .ok_or(())
+            .expect_err(&format!("appending sorted data: {:?} to {:?}", k, map));
     }
     assert_eq!(10, map.len());
     for (k, v) in RANDOM_DATA.iter() {
         map.try_append(*k, *v)
-            .ok_or(())
-            .expect_err("cannot append random data");
+            .expect(&format!("cannot append random data: {:?} to{:?}", k, map));
     }
     assert_eq!(10, map.len());
     for (k, v) in RANDOM_DATA.iter() {
