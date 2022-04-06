@@ -5,7 +5,7 @@
 use proc_macro2::TokenStream as TokenStream2;
 use quote::quote;
 
-use crate::utils::{self, FieldInfo};
+use crate::utils::{self, FieldInfo, ZeroVecAttrs};
 use syn::spanned::Spanned;
 use syn::{
     parse_quote, AttributeArgs, Data, DataEnum, DataStruct, DeriveInput, Error, Expr, Fields,
@@ -36,32 +36,24 @@ pub fn make_ule_impl(attr: AttributeArgs, mut input: DeriveInput) -> TokenStream
     let arg = &attr[0];
     let ule_name: Ident = parse_quote!(#arg);
 
-    let (skip_kv, skip_ord, serde) =
-        match utils::extract_attributes_common(&mut input.attrs, "make_ule") {
-            Ok(val) => val,
-            Err(e) => return e.to_compile_error(),
-        };
-
-    if serde {
-        return Error::new(
-            input.span(),
-            "#[make_ule] does not support #[zerovec::serde]",
-        )
-        .to_compile_error();
-    }
+    let sp = input.span();
+    let attrs = match utils::extract_attributes_common(&mut input.attrs, sp, false) {
+        Ok(val) => val,
+        Err(e) => return e.to_compile_error(),
+    };
 
     let name = &input.ident;
 
     let ule_stuff = match input.data {
-        Data::Struct(ref s) => make_ule_struct_impl(name, &ule_name, &input, s, skip_ord),
-        Data::Enum(ref e) => make_ule_enum_impl(name, &ule_name, &input, e, skip_ord),
+        Data::Struct(ref s) => make_ule_struct_impl(name, &ule_name, &input, s, attrs),
+        Data::Enum(ref e) => make_ule_enum_impl(name, &ule_name, &input, e, attrs),
         _ => {
             return Error::new(input.span(), "#[make_ule] must be applied to a struct")
                 .to_compile_error();
         }
     };
 
-    let zmkv = if skip_kv {
+    let zmkv = if attrs.skip_kv {
         quote!()
     } else {
         quote!(
@@ -73,10 +65,25 @@ pub fn make_ule_impl(attr: AttributeArgs, mut input: DeriveInput) -> TokenStream
         )
     };
 
+    let maybe_debug = if attrs.debug {
+        quote!(
+            impl core::fmt::Debug for #ule_name {
+                fn fmt(&self, f: &mut core::fmt::Formatter) -> core::fmt::Result {
+                    let this = <#name as zerovec::ule::AsULE>::from_unaligned(*self);
+                    <#name as core::fmt::Debug>::fmt(&this, f)
+                }
+            }
+        )
+    } else {
+        quote!()
+    };
+
     quote!(
         #input
 
         #ule_stuff
+
+        #maybe_debug
 
         #zmkv
     )
@@ -87,7 +94,7 @@ fn make_ule_enum_impl(
     ule_name: &Ident,
     input: &DeriveInput,
     enu: &DataEnum,
-    skip_ord: bool,
+    attrs: ZeroVecAttrs,
 ) -> TokenStream2 {
     // We could support more int reprs in the future if needed
     if !utils::has_valid_repr(&input.attrs, |r| r == "u8") {
@@ -156,13 +163,15 @@ fn make_ule_enum_impl(
 
     let max = next as u8;
 
-    let maybe_ord_derives = if skip_ord {
+    let maybe_ord_derives = if attrs.skip_ord {
         quote!()
     } else {
         quote!(#[derive(Ord, PartialOrd)])
     };
 
     let vis = &input.vis;
+
+    let doc = format!("[`ULE`](zerovec::ule::ULE) type for {name}");
 
     // Safety (based on the safety checklist on the ULE trait):
     //  1. ULE type does not include any uninitialized or padding bytes.
@@ -179,6 +188,7 @@ fn make_ule_enum_impl(
         #[repr(transparent)]
         #[derive(Copy, Clone, PartialEq, Eq)]
         #maybe_ord_derives
+        #[doc = #doc]
         #vis struct #ule_name(u8);
 
         unsafe impl zerovec::ule::ULE for #ule_name {
@@ -241,7 +251,7 @@ fn make_ule_struct_impl(
     ule_name: &Ident,
     input: &DeriveInput,
     struc: &DataStruct,
-    skip_ord: bool,
+    attrs: ZeroVecAttrs,
 ) -> TokenStream2 {
     if struc.fields.iter().next().is_none() {
         return Error::new(
@@ -258,9 +268,12 @@ fn make_ule_struct_impl(
     let repr_attr = utils::repr_for(&struc.fields);
     let vis = &input.vis;
 
+    let doc = format!("[`ULE`](zerovec::ule::ULE) type for {name}");
+
     let ule_struct: DeriveInput = parse_quote!(
         #[repr(#repr_attr)]
         #[derive(Copy, Clone, PartialEq, Eq)]
+        #[doc = #doc]
         #vis struct #ule_name #field_inits #semi
     );
     let derived = crate::ule::derive_impl(&ule_struct);
@@ -298,7 +311,7 @@ fn make_ule_struct_impl(
         }
     );
 
-    let maybe_ord_impls = if skip_ord {
+    let maybe_ord_impls = if attrs.skip_ord {
         quote!()
     } else {
         quote!(
