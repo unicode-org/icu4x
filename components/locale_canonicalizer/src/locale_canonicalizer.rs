@@ -5,14 +5,15 @@
 //! The collection of code for locale canonicalization.
 
 use crate::provider::*;
-use alloc::string::ToString;
 use alloc::vec;
 use alloc::vec::Vec;
 use core::mem;
 use icu_locid::subtags::{Language, Region, Script};
 use icu_locid::{
-    extensions::unicode::{Key, Value},
-    subtags, LanguageIdentifier, Locale,
+    extensions::unicode::Key,
+    language,
+    subtags::{Variant, Variants},
+    LanguageIdentifier, Locale,
 };
 use icu_provider::prelude::*;
 use tinystr::{tinystr, TinyAsciiStr};
@@ -128,7 +129,7 @@ fn uts35_replacement(
     ruletype_has_language: bool,
     ruletype_has_script: bool,
     ruletype_has_region: bool,
-    ruletype_variants: Option<&subtags::Variants>,
+    ruletype_variants: Option<&Variants>,
     replacement: &LanguageIdentifier,
 ) {
     if ruletype_has_language || (source.id.language.is_empty() && !replacement.language.is_empty())
@@ -145,7 +146,7 @@ fn uts35_replacement(
         // The rule matches if the ruletype variants are a subset of the source variants.
         // This means ja-Latn-fonipa-hepburn-heploc matches against the rule for
         // hepburn-heploc and is canonicalized to ja-Latn-alalc97-fonipa
-        let mut variants: Vec<subtags::Variant> = source
+        let mut variants: Vec<Variant> = source
             .id
             .variants
             .iter()
@@ -157,7 +158,7 @@ fn uts35_replacement(
         }
         variants.sort();
         variants.dedup();
-        source.id.variants = subtags::Variants::from_vec_unchecked(variants);
+        source.id.variants = Variants::from_vec_unchecked(variants);
     }
 }
 
@@ -175,8 +176,10 @@ fn uts35_check_language_rules(
         };
 
         if let Some(replacement) = replacement {
-            uts35_replacement(locale, true, false, false, None, replacement);
-            return CanonicalizationResult::Modified;
+            if let Ok(langid) = replacement.parse() {
+                uts35_replacement(locale, true, false, false, None, &langid);
+                return CanonicalizationResult::Modified;
+            }
         }
     }
 
@@ -285,18 +288,29 @@ impl LocaleCanonicalizer {
             // time of this loop was negligible.
             let mut matched = false;
             for rule in language_aliases.iter() {
-                if uts35_rule_matches(locale, &rule.0) {
-                    uts35_replacement(
-                        locale,
-                        !rule.0.language.is_empty(),
-                        rule.0.script.is_some(),
-                        rule.0.region.is_some(),
-                        Some(&rule.0.variants),
-                        &rule.1,
-                    );
-                    result = CanonicalizationResult::Modified;
-                    matched = true;
-                    break;
+                // A rule is a string of the shape "aa-Bbbb-CC:dd-Eeee-FF"
+                let mut split = rule.splitn(2, ':');
+                #[allow(clippy::unwrap_used)]
+                // str::splitn returns an iterator with at least one element
+                let from = split.next().unwrap();
+                if let Some(to) = split.next() {
+                    if let Ok(from) = from.parse() {
+                        if uts35_rule_matches(locale, &from) {
+                            if let Ok(to) = to.parse() {
+                                uts35_replacement(
+                                    locale,
+                                    !from.language.is_empty(),
+                                    from.script.is_some(),
+                                    from.region.is_some(),
+                                    Some(&from.variants),
+                                    &to,
+                                );
+                                result = CanonicalizationResult::Modified;
+                                matched = true;
+                                break;
+                            }
+                        }
+                    }
                 }
             }
 
@@ -307,10 +321,9 @@ impl LocaleCanonicalizer {
             if !locale.id.language.is_empty() {
                 // If the region is specified, check sgn-region rules first
                 if let Some(region) = locale.id.region {
-                    if locale.id.language == "sgn" {
-                        if let Some(sgn_region) = self.aliases.get().sgn_region.get(&region.into())
-                        {
-                            uts35_replacement(locale, true, false, true, None, sgn_region);
+                    if locale.id.language == language!("sgn") {
+                        if let Some(&sgn_lang) = self.aliases.get().sgn_region.get(&region.into()) {
+                            uts35_replacement(locale, true, false, true, None, &sgn_lang.into());
                             result = CanonicalizationResult::Modified;
                             continue;
                         }
@@ -326,12 +339,10 @@ impl LocaleCanonicalizer {
             }
 
             if let Some(script) = locale.id.script {
-                if let Some(replacement) = self.aliases.get().script.get(&script.into()) {
-                    if let Ok(replacement) = replacement.parse() {
-                        locale.id.script = Some(replacement);
-                        result = CanonicalizationResult::Modified;
-                        continue;
-                    }
+                if let Some(&replacement) = self.aliases.get().script.get(&script.into()) {
+                    locale.id.script = Some(replacement);
+                    result = CanonicalizationResult::Modified;
+                    continue;
                 }
             }
 
@@ -342,12 +353,10 @@ impl LocaleCanonicalizer {
                 } else {
                     self.aliases.get().region_num.get(&region.into())
                 };
-                if let Some(replacement) = replacement {
-                    if let Ok(replacement) = replacement.parse() {
-                        locale.id.region = Some(replacement);
-                        result = CanonicalizationResult::Modified;
-                        continue;
-                    }
+                if let Some(&replacement) = replacement {
+                    locale.id.region = Some(replacement);
+                    result = CanonicalizationResult::Modified;
+                    continue;
                 }
 
                 if let Some(rule) = self.aliases.get().complex_region.get(&region.into()) {
@@ -355,17 +364,19 @@ impl LocaleCanonicalizer {
                         language: locale.id.language,
                         script: locale.id.script,
                         region: None,
-                        variants: subtags::Variants::default(),
+                        variants: Variants::default(),
                     };
 
-                    let replacement = if self.maximize(&mut for_likely)
-                        == CanonicalizationResult::Modified
-                    {
-                        if let Some(likely_region) = for_likely.region {
-                            let as_tinystr: TinyAsciiStr<3> = likely_region.into();
-                            if let Some(region) = rule.iter().find(|region| as_tinystr == **region)
-                            {
-                                region
+                    let replacement =
+                        if self.maximize(&mut for_likely) == CanonicalizationResult::Modified {
+                            if let Some(likely_region) = for_likely.region {
+                                if rule.iter().find(|&x| x == likely_region).is_some() {
+                                    likely_region
+                                } else {
+                                    #[allow(clippy::unwrap_used)]
+                                    // TODO(#1668) Clippy exceptions need docs or fixing.
+                                    rule.get(0).unwrap()
+                                }
                             } else {
                                 #[allow(clippy::unwrap_used)]
                                 // TODO(#1668) Clippy exceptions need docs or fixing.
@@ -375,29 +386,19 @@ impl LocaleCanonicalizer {
                             #[allow(clippy::unwrap_used)]
                             // TODO(#1668) Clippy exceptions need docs or fixing.
                             rule.get(0).unwrap()
-                        }
-                    } else {
-                        #[allow(clippy::unwrap_used)]
-                        // TODO(#1668) Clippy exceptions need docs or fixing.
-                        rule.get(0).unwrap()
-                    };
-                    if let Ok(replacement) = replacement.parse::<subtags::Region>() {
-                        locale.id.region = Some(replacement);
-                        result = CanonicalizationResult::Modified;
-                        continue;
-                    }
+                        };
+                    locale.id.region = Some(replacement);
+                    result = CanonicalizationResult::Modified;
+                    continue;
                 }
             }
 
             if !locale.id.variants.is_empty() {
                 let mut modified = Vec::new();
                 let mut unmodified = Vec::new();
-                for variant in locale.id.variants.iter() {
-                    let variant_as_tinystr: TinyAsciiStr<8> = (*variant).into();
-                    if let Some(updated) = self.aliases.get().variant.get(&variant_as_tinystr) {
-                        if let Ok(updated) = subtags::Variant::from_bytes(updated.as_bytes()) {
-                            modified.push(updated);
-                        }
+                for &variant in locale.id.variants.iter() {
+                    if let Some(&updated) = self.aliases.get().variant.get(&variant.into()) {
+                        modified.push(updated);
                     } else {
                         unmodified.push(variant);
                     }
@@ -405,11 +406,11 @@ impl LocaleCanonicalizer {
 
                 if !modified.is_empty() {
                     for variant in unmodified {
-                        modified.push(*variant);
+                        modified.push(variant);
                     }
                     modified.sort();
                     modified.dedup();
-                    locale.id.variants = subtags::Variants::from_vec_unchecked(modified);
+                    locale.id.variants = Variants::from_vec_unchecked(modified);
                     result = CanonicalizationResult::Modified;
                     continue;
                 }
@@ -443,11 +444,11 @@ impl LocaleCanonicalizer {
 
         for key in self.extension_keys.iter() {
             if let Some(value) = locale.extensions.unicode.keywords.get_mut(key) {
-                if let Ok(value_as_tinystr) = value.to_string().parse::<TinyAsciiStr<7>>() {
+                if let &[only_value] = value.as_tinystr_slice() {
                     if let Some(modified_value) =
-                        self.aliases.get().subdivision.get(&value_as_tinystr)
+                        self.aliases.get().subdivision.get(&only_value.resize())
                     {
-                        if let Ok(modified_value) = Value::from_bytes(modified_value.as_bytes()) {
+                        if let Ok(modified_value) = modified_value.parse() {
                             *value = modified_value;
                             result = CanonicalizationResult::Modified;
                         }

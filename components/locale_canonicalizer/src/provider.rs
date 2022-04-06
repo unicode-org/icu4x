@@ -6,15 +6,10 @@
 //!
 //! Read more about data providers: [`icu_provider`]
 
-use alloc::vec::Vec;
-use icu_locid::{
-    subtags::{Language, Region, Script},
-    LanguageIdentifier,
-};
+use icu_locid::subtags::{Language, Region, Script, Variant};
 use icu_provider::prelude::*;
-use litemap::LiteMap;
 use tinystr::TinyAsciiStr;
-use zerovec::{ZeroMap, ZeroSlice};
+use zerovec::{VarZeroVec, ZeroMap, ZeroSlice};
 
 // We use raw TinyAsciiStrs for map keys, as we then don't have to
 // validate them as subtags on deserialization. Map lookup can be
@@ -24,7 +19,15 @@ type UnvalidatedLanguage = TinyAsciiStr<3>;
 type UnvalidatedScript = TinyAsciiStr<4>;
 type UnvalidatedRegion = TinyAsciiStr<3>;
 type UnvalidatedVariant = TinyAsciiStr<8>;
-type UnvalidatedValue = TinyAsciiStr<7>;
+type UnvalidatedSubdivision = TinyAsciiStr<7>;
+
+// LanguageIdentifier doesn't have an AsULE implementation, so we have
+// to store strs and parse when needed (only for values, we can search
+// on strs).
+type UnvalidatedLanguageIdentifier = str;
+
+// We cannot create (str, str) pairs, so we join the two strings into one.
+type UnvalidatedLanguageIdentifierPair = str;
 
 #[icu_provider::data_struct(AliasesV1Marker = "locale_canonicalizer/aliases@1")]
 #[derive(Debug, PartialEq, Clone, Default)]
@@ -48,38 +51,38 @@ pub struct AliasesV1<'data> {
     /// Language data not covered by other rules, normally this will be empty.
     /// This is not a map as it's searched linearly according to the canonicalization rules.
     #[zerofrom(clone)]
-    pub language: Vec<(LanguageIdentifier, LanguageIdentifier)>,
+    pub language: VarZeroVec<'data, UnvalidatedLanguageIdentifierPair>,
     /// Language and variant.
     /// This is not a map as it's searched linearly according to the canonicalization rules.
     #[zerofrom(clone)]
-    pub language_variants: Vec<(LanguageIdentifier, LanguageIdentifier)>,
+    pub language_variants: VarZeroVec<'data, UnvalidatedLanguageIdentifierPair>,
     /// Sign language and region data.
-    #[zerofrom(clone)]
-    pub sgn_region: LiteMap<UnvalidatedLanguage, LanguageIdentifier>,
+    #[cfg_attr(feature = "serialize", serde(borrow))]
+    pub sgn_region: ZeroMap<'data, UnvalidatedRegion, Language>,
     /// Two character language codes.
-    #[zerofrom(clone)]
-    pub language_len2: LiteMap<TinyAsciiStr<2>, LanguageIdentifier>,
+    #[cfg_attr(feature = "serialize", serde(borrow))]
+    pub language_len2: ZeroMap<'data, TinyAsciiStr<2>, UnvalidatedLanguageIdentifier>,
     /// Three character language codes.
-    #[zerofrom(clone)]
-    pub language_len3: LiteMap<UnvalidatedLanguage, LanguageIdentifier>,
+    #[cfg_attr(feature = "serialize", serde(borrow))]
+    pub language_len3: ZeroMap<'data, UnvalidatedLanguage, UnvalidatedLanguageIdentifier>,
     /// Scripts.
     #[cfg_attr(feature = "serialize", serde(borrow))]
-    pub script: ZeroMap<'data, UnvalidatedScript, UnvalidatedScript>,
+    pub script: ZeroMap<'data, UnvalidatedScript, Script>,
     /// Alphabetical region codes.
     #[cfg_attr(feature = "serialize", serde(borrow))]
-    pub region_alpha: ZeroMap<'data, TinyAsciiStr<2>, UnvalidatedRegion>,
+    pub region_alpha: ZeroMap<'data, TinyAsciiStr<2>, Region>,
     /// Numeric region codes.
     #[cfg_attr(feature = "serialize", serde(borrow))]
-    pub region_num: ZeroMap<'data, UnvalidatedRegion, UnvalidatedRegion>,
+    pub region_num: ZeroMap<'data, UnvalidatedRegion, Region>,
     /// Old regions which map to more than one new region.
     #[cfg_attr(feature = "serialize", serde(borrow))]
-    pub complex_region: ZeroMap<'data, UnvalidatedRegion, ZeroSlice<UnvalidatedRegion>>,
+    pub complex_region: ZeroMap<'data, UnvalidatedRegion, ZeroSlice<Region>>,
     /// Variants.
     #[cfg_attr(feature = "serialize", serde(borrow))]
-    pub variant: ZeroMap<'data, UnvalidatedVariant, UnvalidatedVariant>,
+    pub variant: ZeroMap<'data, UnvalidatedVariant, Variant>,
     /// Subdivisions.
     #[cfg_attr(feature = "serialize", serde(borrow))]
-    pub subdivision: ZeroMap<'data, UnvalidatedValue, UnvalidatedValue>,
+    pub subdivision: ZeroMap<'data, UnvalidatedSubdivision, UnvalidatedSubdivision>,
 }
 
 #[icu_provider::data_struct(LikelySubtagsV1Marker = "locale_canonicalizer/likelysubtags@1")]

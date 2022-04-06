@@ -10,7 +10,6 @@ use icu_locale_canonicalizer::provider::*;
 use icu_locid::{subtags, LanguageIdentifier};
 use icu_provider::datagen::IterableResourceProvider;
 use icu_provider::prelude::*;
-use litemap::LiteMap;
 use std::convert::TryFrom;
 use std::path::PathBuf;
 use tinystr::TinyAsciiStr;
@@ -107,15 +106,15 @@ impl From<&cldr_serde::aliases::Resource> for AliasesV1<'_> {
         // customized CLDR data is used.
         let mut language = Vec::new();
         let mut language_variants = Vec::new();
-        let mut sgn_region = LiteMap::new();
-        let mut language_len2 = LiteMap::new();
-        let mut language_len3 = LiteMap::new();
+        let mut sgn_region = ZeroMap::new();
+        let mut language_len2 = ZeroMap::new();
+        let mut language_len3 = ZeroMap::new();
 
         let mut script = ZeroMap::new();
 
         // There are many more aliases for numeric region codes than for alphabetic,
         // so by storing them separately, we can minimize comparisons for alphabetic codes.
-        let mut region_alpha: ZeroMap<TinyAsciiStr<2>, TinyAsciiStr<3>> = ZeroMap::new();
+        let mut region_alpha = ZeroMap::new();
         let mut region_num = ZeroMap::new();
 
         // Complex regions are cases similar to the Soviet Union, where an old region
@@ -123,8 +122,7 @@ impl From<&cldr_serde::aliases::Resource> for AliasesV1<'_> {
         // likely subtags. Many implementations preprocess the complex regions into simple
         // regions as part of data import, but that would introduce a dependency between
         // CDLR providers that we're not currently set up to handle.
-        let mut complex_region: ZeroMap<TinyAsciiStr<3>, ZeroSlice<TinyAsciiStr<3>>> =
-            ZeroMap::new();
+        let mut complex_region = ZeroMap::new();
 
         let mut variant = ZeroMap::new();
         let mut subdivision = ZeroMap::new();
@@ -143,21 +141,24 @@ impl From<&cldr_serde::aliases::Resource> for AliasesV1<'_> {
                     }
 
                     if !langid.language.is_empty() {
-                        let lang: TinyAsciiStr<3> = langid.language.into();
                         if langid.region.is_none() && langid.variants.is_empty() {
                             // Relatively few aliases exist for two character language identifiers,
                             // so we store them separately to not slow down canonicalization of
                             // common identifiers.
+                            let lang: TinyAsciiStr<3> = langid.language.into();
                             if lang.len() == 2 {
-                                language_len2.insert(lang.resize(), replacement);
+                                language_len2
+                                    .insert(&lang.resize(), replacement.to_string().as_str());
                             } else {
-                                language_len3.insert(lang, replacement);
+                                language_len3.insert(&lang, replacement.to_string().as_str());
                             }
                         } else if let Some(region) = langid.region {
                             // All current language-region aliases are for "sgn", so we store them
                             // separately to not slow down canonicalization of common identifiers.
-                            if lang == "sgn" {
-                                sgn_region.insert(region.into(), replacement);
+                            if langid.language == icu_locid::language!("sgn")
+                                && !replacement.language.is_empty()
+                            {
+                                sgn_region.insert(&region.into(), &replacement.language);
                             } else {
                                 language.push((langid, replacement));
                             }
@@ -178,7 +179,9 @@ impl From<&cldr_serde::aliases::Resource> for AliasesV1<'_> {
                 continue;
             }
 
-            script.insert(from, &to.replacement);
+            if let Ok(to) = to.replacement.parse::<subtags::Script>() {
+                script.insert(from, &to);
+            }
         }
 
         for (from, to) in other.supplemental.metadata.alias.region_aliases.iter() {
@@ -188,7 +191,7 @@ impl From<&cldr_serde::aliases::Resource> for AliasesV1<'_> {
                 continue;
             }
 
-            if let Ok(replacement) = to.replacement.parse::<TinyAsciiStr<3>>() {
+            if let Ok(replacement) = to.replacement.parse::<subtags::Region>() {
                 if from.is_ascii_alphabetic() {
                     region_alpha.insert(&from.resize(), &replacement);
                 } else {
@@ -196,20 +199,23 @@ impl From<&cldr_serde::aliases::Resource> for AliasesV1<'_> {
                 }
             } else {
                 complex_region.insert(
-                    from,
-                    &ZeroSlice::from_boxed_slice(
+                    from.into(),
+                    ZeroSlice::from_boxed_slice(
                         to.replacement
                             .split(' ')
                             .into_iter()
-                            .filter_map(|r| r.parse::<TinyAsciiStr<3>>().ok())
+                            .filter_map(|r| r.parse::<subtags::Region>().ok())
                             .collect::<Box<[_]>>(),
-                    ),
+                    )
+                    .as_ref(),
                 );
             }
         }
 
         for (from, to) in other.supplemental.metadata.alias.variant_aliases.iter() {
-            variant.insert(from, &to.replacement);
+            if let Ok(to) = to.replacement.parse::<subtags::Variant>() {
+                variant.insert(from, &to);
+            }
         }
 
         for (from, to) in other.supplemental.metadata.alias.subdivision_aliases.iter() {
@@ -238,6 +244,15 @@ impl From<&cldr_serde::aliases::Resource> for AliasesV1<'_> {
         //      2. and then alphabetically by field.
         language.sort_unstable_by(|a, b| rules_cmp(&a.0, &b.0));
         language_variants.sort_unstable_by(|a, b| rules_cmp(&a.0, &b.0));
+
+        let language = language
+            .into_iter()
+            .map(|(from, to)| format!("{}:{}", from, to))
+            .collect();
+        let language_variants = language_variants
+            .into_iter()
+            .map(|(from, to)| format!("{}:{}", from, to))
+            .collect();
 
         Self {
             language,

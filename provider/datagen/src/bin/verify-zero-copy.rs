@@ -33,8 +33,6 @@ static ALLOC: dhat::Alloc = dhat::Alloc;
 static EXPECTED_NET_VIOLATIONS: &[&str] = &[
     // https://github.com/unicode-org/icu4x/issues/1678
     "datetime/skeletons@1",
-    // https://github.com/unicode-org/icu4x/issues/1034
-    "locale_canonicalizer/aliases@1",
 ];
 
 // Types in this list can be zero-copy deserialized (and do not contain allocated data),
