@@ -41,6 +41,7 @@ mod date;
 mod datetime;
 mod duration;
 mod error;
+pub mod ethiopic;
 pub mod gregorian;
 pub mod indian;
 pub mod iso;
