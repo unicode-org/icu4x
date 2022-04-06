@@ -65,10 +65,25 @@ pub fn make_ule_impl(attr: AttributeArgs, mut input: DeriveInput) -> TokenStream
         )
     };
 
+    let maybe_debug = if attrs.debug {
+        quote!(
+            impl core::fmt::Debug for #ule_name {
+                fn fmt(&self, f: &mut core::fmt::Formatter) -> core::fmt::Result {
+                    let this = <#name as zerovec::ule::AsULE>::from_unaligned(*self);
+                    <#name as core::fmt::Debug>::fmt(&this, f)
+                }
+            }
+        )
+    } else {
+        quote!()
+    };
+
     quote!(
         #input
 
         #ule_stuff
+
+        #maybe_debug
 
         #zmkv
     )

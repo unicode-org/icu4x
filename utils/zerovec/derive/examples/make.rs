@@ -20,6 +20,7 @@ struct TupleStruct(u8, char);
 #[make_ule(EnumULE)]
 #[repr(u8)]
 #[derive(Copy, Clone, PartialEq, Eq, Ord, PartialOrd, Debug)]
+#[zerovec::derive(Debug)]
 enum Enum {
     A = 0,
     B = 1,

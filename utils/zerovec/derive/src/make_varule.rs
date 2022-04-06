@@ -167,6 +167,19 @@ pub fn make_varule_impl(attr: AttributeArgs, mut input: DeriveInput) -> TokenStr
         )
     };
 
+    let maybe_debug = if attrs.debug {
+        quote!(
+            impl core::fmt::Debug for #ule_name {
+                fn fmt(&self, f: &mut core::fmt::Formatter) -> core::fmt::Result {
+                    let this = #zerofrom_fq_path::zero_from(self);
+                    <#name as core::fmt::Debug>::fmt(&this, f)
+                }
+            }
+        )
+    } else {
+        quote!()
+    };
+
     let zmkv = if attrs.skip_kv {
         quote!()
     } else {
@@ -225,6 +238,8 @@ pub fn make_varule_impl(attr: AttributeArgs, mut input: DeriveInput) -> TokenStr
         #maybe_ser
 
         #maybe_de
+
+        #maybe_debug
     )
 }
 
