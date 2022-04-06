@@ -5,8 +5,7 @@
 //! Types to enable polymorphic carts.
 
 use crate::CloneableCart;
-use crate::Yoke;
-use crate::Yokeable;
+
 use core::ops::Deref;
 use stable_deref_trait::StableDeref;
 
@@ -19,7 +18,7 @@ use stable_deref_trait::StableDeref;
 /// All relevant Cart traits are implemented for `EitherCart`, and carts can be
 /// safely wrapped in an `EitherCart`.
 ///
-/// Also see [`Yoke::erase_box_cart()`].
+/// Also see [`Yoke::erase_box_cart()`](crate::Yoke::erase_box_cart).
 ///
 /// # Examples
 ///
@@ -96,33 +95,4 @@ where
     C0: CloneableCart,
     C1: CloneableCart,
 {
-}
-
-impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
-    /// Helper function allowing one to wrap the cart type in an [`EitherCart`].
-    ///
-    /// This function wraps the cart into the `A` variant. To wrap it into the
-    /// `B` variant, use [`Self::wrap_cart_in_either_b()`].
-    ///
-    /// For an example, see [`EitherCart`].
-    #[inline]
-    pub fn wrap_cart_in_either_a<B>(self) -> Yoke<Y, EitherCart<C, B>> {
-        unsafe {
-            // safe because the cart is preserved, just wrapped
-            self.replace_cart(EitherCart::A)
-        }
-    }
-    /// Helper function allowing one to wrap the cart type in an [`EitherCart`].
-    ///
-    /// This function wraps the cart into the `B` variant. To wrap it into the
-    /// `A` variant, use [`Self::wrap_cart_in_either_a()`].
-    ///
-    /// For an example, see [`EitherCart`].
-    #[inline]
-    pub fn wrap_cart_in_either_b<A>(self) -> Yoke<Y, EitherCart<A, C>> {
-        unsafe {
-            // safe because the cart is preserved, just wrapped
-            self.replace_cart(EitherCart::B)
-        }
-    }
 }

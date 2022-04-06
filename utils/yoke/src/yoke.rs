@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::either::EitherCart;
 #[cfg(feature = "alloc")]
 use crate::erased::{ErasedBoxCart, ErasedRcCart};
 use crate::trait_hack::YokeTraitHack;
@@ -39,7 +40,7 @@ use alloc::sync::Arc;
 /// The key behind this type is [`Yoke::get()`], where calling [`.get()`][Yoke::get] on a type like
 /// `Yoke<Cow<'static, str>, _>` will get you a short-lived `&'a Cow<'a, str>`, restricted to the
 /// lifetime of the borrow used during `.get()`. This is entirely safe since the `Cow` borrows from
-/// the cart type, which cannot be interfered with as long as the `Yoke` is borrowed by `.get
+/// the cart type `C`, which cannot be interfered with as long as the `Yoke` is borrowed by `.get
 /// ()`. `.get()` protects access by essentially reifying the erased lifetime to a safe local one
 /// when necessary.
 ///
@@ -324,9 +325,9 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     ///
     /// - `f()` must not panic
     /// - References from the yokeable `Y` should still be valid for the lifetime of the
-    ///   returned cart type.
+    ///   returned cart type `C`.
     ///
-    /// Typically, this means implementing `f` as something which _wraps_ the inner cart type.
+    /// Typically, this means implementing `f` as something which _wraps_ the inner cart type `C`.
     /// `Yoke` only really cares about destructors for its carts so it's fine to erase other
     /// information about the cart, as long as the backing data will still be destroyed at the
     /// same time.
@@ -428,7 +429,7 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
         self.yokeable.transform_mut(f)
     }
 
-    /// Helper function allowing one to wrap the cart type in an `Option<T>`.
+    /// Helper function allowing one to wrap the cart type `C` in an `Option<T>`.
     #[inline]
     pub fn wrap_cart_in_option(self) -> Yoke<Y, Option<C>> {
         unsafe {
@@ -542,7 +543,7 @@ unsafe impl<T: CloneableCart> CloneableCart for Option<T> {}
 unsafe impl<'a, T: ?Sized> CloneableCart for &'a T {}
 unsafe impl CloneableCart for () {}
 
-/// Clone requires that the cart derefs to the same address after it is cloned. This works for
+/// Clone requires that the cart type `C` derefs to the same address after it is cloned. This works for
 /// Rc, Arc, and &'a T.
 ///
 /// For other cart types, clone `.backing_cart()` and re-use `.attach_to_cart()`; however, doing
@@ -810,14 +811,14 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
 impl<Y: for<'a> Yokeable<'a>, C: 'static + Sized> Yoke<Y, Rc<C>> {
     /// Allows type-erasing the cart in a `Yoke<Y, Rc<C>>`.
     ///
-    /// The yoke only carries around a cart type for its destructor,
+    /// The yoke only carries around a cart type `C` for its destructor,
     /// since it needs to be able to guarantee that its internal references
     /// are valid for the lifetime of the Yoke. As such, the actual type of the
     /// Cart is not very useful unless you wish to extract data out of it
     /// via [`Yoke::backing_cart()`]. Erasing the cart allows for one to mix
     /// [`Yoke`]s obtained from different sources.
     ///
-    /// In case the cart type is not already `Rc<T>`, you can use
+    /// In case the cart type `C` is not already an `Rc<T>`, you can use
     /// [`Yoke::wrap_cart_in_rc()`] to wrap it.
     ///
     /// # Example
@@ -855,14 +856,14 @@ impl<Y: for<'a> Yokeable<'a>, C: 'static + Sized> Yoke<Y, Rc<C>> {
 impl<Y: for<'a> Yokeable<'a>, C: 'static + Sized> Yoke<Y, Box<C>> {
     /// Allows type-erasing the cart in a `Yoke<Y, Box<C>>`.
     ///
-    /// The yoke only carries around a cart type for its destructor,
+    /// The yoke only carries around a cart type `C` for its destructor,
     /// since it needs to be able to guarantee that its internal references
     /// are valid for the lifetime of the Yoke. As such, the actual type of the
     /// Cart is not very useful unless you wish to extract data out of it
     /// via [`Yoke::backing_cart()`]. Erasing the cart allows for one to mix
     /// [`Yoke`]s obtained from different sources.
     ///
-    /// In case the cart type is not already `Box<T>`, you can use
+    /// In case the cart type `C` is not already `Box<T>`, you can use
     /// [`Yoke::wrap_cart_in_box()`] to wrap it.
     ///
     /// # Example
@@ -898,7 +899,7 @@ impl<Y: for<'a> Yokeable<'a>, C: 'static + Sized> Yoke<Y, Box<C>> {
 
 #[cfg(feature = "alloc")]
 impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
-    /// Helper function allowing one to wrap the cart type in a `Box<T>`.
+    /// Helper function allowing one to wrap the cart type `C` in a `Box<T>`.
     /// Can be paired with [`Yoke::erase_box_cart()`]
     ///
     /// Available with the `"alloc"` feature enabled.
@@ -909,7 +910,7 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
             self.replace_cart(Box::new)
         }
     }
-    /// Helper function allowing one to wrap the cart type in an `Rc<T>`.
+    /// Helper function allowing one to wrap the cart type `C` in an `Rc<T>`.
     /// Can be paired with [`Yoke::erase_rc_cart()`], or generally used
     /// to make the [`Yoke`] cloneable.
     ///
@@ -919,6 +920,35 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
         unsafe {
             // safe because the cart is preserved, just wrapped
             self.replace_cart(Rc::new)
+        }
+    }
+}
+
+impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
+    /// Helper function allowing one to wrap the cart type `C` in an [`EitherCart`].
+    ///
+    /// This function wraps the cart into the `A` variant. To wrap it into the
+    /// `B` variant, use [`Self::wrap_cart_in_either_b()`].
+    ///
+    /// For an example, see [`EitherCart`].
+    #[inline]
+    pub fn wrap_cart_in_either_a<B>(self) -> Yoke<Y, EitherCart<C, B>> {
+        unsafe {
+            // safe because the cart is preserved, just wrapped
+            self.replace_cart(EitherCart::A)
+        }
+    }
+    /// Helper function allowing one to wrap the cart type `C` in an [`EitherCart`].
+    ///
+    /// This function wraps the cart into the `B` variant. To wrap it into the
+    /// `A` variant, use [`Self::wrap_cart_in_either_a()`].
+    ///
+    /// For an example, see [`EitherCart`].
+    #[inline]
+    pub fn wrap_cart_in_either_b<A>(self) -> Yoke<Y, EitherCart<A, C>> {
+        unsafe {
+            // safe because the cart is preserved, just wrapped
+            self.replace_cart(EitherCart::B)
         }
     }
 }
