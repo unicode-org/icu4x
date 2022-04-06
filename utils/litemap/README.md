@@ -1,6 +1,6 @@
 # litemap [![crates.io](https://img.shields.io/crates/v/litemap)](https://crates.io/crates/litemap)
 
-### `litemap`
+## `litemap`
 
 `litemap` is a crate providing [`LiteMap`], a highly simplistic "flat" key-value map
 based off of a single sorted vector.
@@ -13,6 +13,13 @@ If binary size is not a concern, [`std::collections::BTreeMap`] may be a better 
 for your use case. It behaves very similarly to [`LiteMap`] for less than 12 elements,
 and upgrades itself gracefully for larger inputs.
 
+### Pluggable Backends
+
+By default, [`LiteMap`] is backed by a [`Vec`]; however, it can be backed by any appropriate
+random-access data store, giving that data store a map-like interface. See the [`store`]
+module for more details.
+
+[`Vec`]: alloc::vec::Vec
 
 ## More Information
 
