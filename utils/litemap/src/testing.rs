@@ -87,16 +87,16 @@ where
     for (k, v) in SORTED_DATA.iter() {
         #[allow(clippy::single_match)] // for clarity
         match map.try_append(*k, *v) {
-            Some(_) => (), // OK
-            None => panic!("appending sorted data: {:?} to {:?}", k, map),
+            Some(_) => panic!("appending sorted data: {:?} to {:?}", k, map),
+            None => (), // OK
         };
     }
     assert_eq!(10, map.len());
     for (k, v) in RANDOM_DATA.iter() {
         #[allow(clippy::single_match)] // for clarity
         match map.try_append(*k, *v) {
-            Some(_) => panic!("cannot append random data: {:?} to{:?}", k, map),
-            None => (), // OK
+            Some(_) => (), // OK
+            None => panic!("cannot append random data: {:?} to{:?}", k, map),
         };
     }
     assert_eq!(10, map.len());
