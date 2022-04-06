@@ -247,11 +247,11 @@ impl From<&cldr_serde::aliases::Resource> for AliasesV1<'_> {
 
         let language = language
             .into_iter()
-            .map(|(from, to)| format!("{}:{}", from, to))
+            .map(|(from, to)| StrStrPair(from.to_string().into(), to.to_string().into()))
             .collect();
         let language_variants = language_variants
             .into_iter()
-            .map(|(from, to)| format!("{}:{}", from, to))
+            .map(|(from, to)| StrStrPair(from.to_string().into(), to.to_string().into()))
             .collect();
 
         Self {

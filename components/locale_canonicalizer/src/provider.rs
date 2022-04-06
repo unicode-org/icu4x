@@ -6,6 +6,7 @@
 //!
 //! Read more about data providers: [`icu_provider`]
 
+use alloc::borrow::Cow;
 use icu_locid::subtags::{Language, Region, Script, Variant};
 use icu_provider::prelude::*;
 use tinystr::TinyAsciiStr;
@@ -22,12 +23,21 @@ type UnvalidatedVariant = TinyAsciiStr<8>;
 type UnvalidatedSubdivision = TinyAsciiStr<7>;
 
 // LanguageIdentifier doesn't have an AsULE implementation, so we have
-// to store strs and parse when needed (only for values, we can search
-// on strs).
+// to store strs and parse when needed.
 type UnvalidatedLanguageIdentifier = str;
+type UnvalidatedLanguageIdentifierPair<'data> = StrStrPair<'data>;
 
-// We cannot create (str, str) pairs, so we join the two strings into one.
-type UnvalidatedLanguageIdentifierPair = str;
+#[zerovec::make_varule(StrStrPairVarULE)]
+#[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Debug, zerofrom::ZeroFrom)]
+#[cfg_attr(
+    feature = "serialize",
+    derive(serde::Deserialize, serde::Deserialize),
+    zerovec::serde
+)]
+pub struct StrStrPair<'a>(
+    #[cfg_attr(feature = "serialize", serde(borrow))] pub Cow<'a, str>,
+    #[cfg_attr(feature = "serialize", serde(borrow))] pub Cow<'a, str>,
+);
 
 #[icu_provider::data_struct(AliasesV1Marker = "locale_canonicalizer/aliases@1")]
 #[derive(Debug, PartialEq, Clone, Default)]
@@ -50,12 +60,12 @@ type UnvalidatedLanguageIdentifierPair = str;
 pub struct AliasesV1<'data> {
     /// Language data not covered by other rules, normally this will be empty.
     /// This is not a map as it's searched linearly according to the canonicalization rules.
-    #[zerofrom(clone)]
-    pub language: VarZeroVec<'data, UnvalidatedLanguageIdentifierPair>,
+    #[cfg_attr(feature = "serialize", serde(borrow))]
+    pub language: VarZeroVec<'data, UnvalidatedLanguageIdentifierPair<'data>>,
     /// Language and variant.
     /// This is not a map as it's searched linearly according to the canonicalization rules.
-    #[zerofrom(clone)]
-    pub language_variants: VarZeroVec<'data, UnvalidatedLanguageIdentifierPair>,
+    #[cfg_attr(feature = "serialize", serde(borrow))]
+    pub language_variants: VarZeroVec<'data, UnvalidatedLanguageIdentifierPair<'data>>,
     /// Sign language and region data.
     #[cfg_attr(feature = "serialize", serde(borrow))]
     pub sgn_region: ZeroMap<'data, UnvalidatedRegion, Language>,

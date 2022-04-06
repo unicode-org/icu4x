@@ -288,27 +288,21 @@ impl LocaleCanonicalizer {
             // time of this loop was negligible.
             let mut matched = false;
             for rule in language_aliases.iter() {
-                // A rule is a string of the shape "aa-Bbbb-CC:dd-Eeee-FF"
-                let mut split = rule.splitn(2, ':');
                 #[allow(clippy::unwrap_used)]
-                // str::splitn returns an iterator with at least one element
-                let from = split.next().unwrap();
-                if let Some(to) = split.next() {
-                    if let Ok(from) = from.parse() {
-                        if uts35_rule_matches(locale, &from) {
-                            if let Ok(to) = to.parse() {
-                                uts35_replacement(
-                                    locale,
-                                    !from.language.is_empty(),
-                                    from.script.is_some(),
-                                    from.region.is_some(),
-                                    Some(&from.variants),
-                                    &to,
-                                );
-                                result = CanonicalizationResult::Modified;
-                                matched = true;
-                                break;
-                            }
+                if let Ok(from) = rule.0.parse() {
+                    if uts35_rule_matches(locale, &from) {
+                        if let Ok(to) = rule.1.parse() {
+                            uts35_replacement(
+                                locale,
+                                !from.language.is_empty(),
+                                from.script.is_some(),
+                                from.region.is_some(),
+                                Some(&from.variants),
+                                &to,
+                            );
+                            result = CanonicalizationResult::Modified;
+                            matched = true;
+                            break;
                         }
                     }
                 }
