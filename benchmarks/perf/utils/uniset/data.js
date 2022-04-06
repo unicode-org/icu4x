@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1649227105359,
+  "lastUpdate": 1649253036606,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -23669,6 +23669,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 40692851,
             "range": "± 84672",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "pandusonu@google.com",
+            "name": "Gollapudi Vamsi Krishna",
+            "username": "pandusonu2"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "252ac244262a7dd2cb0bf5696dcb631e736e9373",
+          "message": "Add indian calendar (#1715)",
+          "timestamp": "2022-04-06T13:43:27Z",
+          "tree_id": "78f5dcaa3ebb153ec30f652de1c538196833049a",
+          "url": "https://github.com/unicode-org/icu4x/commit/252ac244262a7dd2cb0bf5696dcb631e736e9373"
+        },
+        "date": 1649253021553,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 32597247,
+            "range": "± 1685759",
             "unit": "ns/iter"
           }
         ]
