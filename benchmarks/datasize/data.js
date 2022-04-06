@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1649226770832,
+  "lastUpdate": 1649252716048,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -12803,6 +12803,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/ea907ef79f513765a4986a2574599bb6ff747665"
         },
         "date": 1649226753872,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4463480,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "pandusonu@google.com",
+            "name": "Gollapudi Vamsi Krishna",
+            "username": "pandusonu2"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "252ac244262a7dd2cb0bf5696dcb631e736e9373",
+          "message": "Add indian calendar (#1715)",
+          "timestamp": "2022-04-06T13:43:27Z",
+          "tree_id": "78f5dcaa3ebb153ec30f652de1c538196833049a",
+          "url": "https://github.com/unicode-org/icu4x/commit/252ac244262a7dd2cb0bf5696dcb631e736e9373"
+        },
+        "date": 1649252696454,
         "tool": "ndjson",
         "benches": [
           {
