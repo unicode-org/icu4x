@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1649281950814,
+  "lastUpdate": 1649286572031,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -12893,6 +12893,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/248fbf581a09aff18f18f70c4faf73dc9de4a03a"
         },
         "date": 1649281935423,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4503155,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "592fd86c4894d4e12f7b54730b6d754b06f0583c",
+          "message": "Add data fingerprint file (#1772)\n\n* Add fingerprint-data binary\r\n\r\n* Add CI jobs",
+          "timestamp": "2022-04-06T23:07:44Z",
+          "tree_id": "2424bcf49562af41b2ec1c1050e156c56156fc3b",
+          "url": "https://github.com/unicode-org/icu4x/commit/592fd86c4894d4e12f7b54730b6d754b06f0583c"
+        },
+        "date": 1649286553866,
         "tool": "ndjson",
         "benches": [
           {
