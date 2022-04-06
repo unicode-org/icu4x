@@ -3191,7 +3191,7 @@ dependencies = [
 
 [[package]]
 name = "yoke"
-version = "0.4.1"
+version = "0.5.0"
 dependencies = [
  "bincode",
  "serde",
@@ -3202,7 +3202,7 @@ dependencies = [
 
 [[package]]
 name = "yoke-derive"
-version = "0.4.2"
+version = "0.5.0"
 dependencies = [
  "proc-macro2",
  "quote",

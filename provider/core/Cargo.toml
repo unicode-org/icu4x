@@ -55,7 +55,7 @@ icu_locid = { version = "0.5", path = "../../components/locid" }
 tinystr = { path = "../../utils/tinystr", version = "0.5.0", features = ["alloc"], default-features = false }
 writeable = { version = "0.3", path = "../../utils/writeable" }
 displaydoc = { version = "0.2.3", default-features = false }
-yoke = { version = "0.4.1", path = "../../utils/yoke", features = ["serde", "derive"] }
+yoke = { version = "0.5.0", path = "../../utils/yoke", features = ["serde", "derive"] }
 zerofrom = { version = "0.1.0", path = "../../utils/zerofrom", features = ["derive"] }
 zerovec = { version = "0.6.0", path = "../../utils/zerovec" , features = ["derive"]}
 litemap = { version = "0.3.0", path = "../../utils/litemap" }
