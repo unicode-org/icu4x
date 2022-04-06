@@ -130,7 +130,6 @@ impl Keywords {
     ///
     /// Returns `None` if the key doesn't exist or if the key has no value.
     ///
-    ///
     /// # Examples
     ///
     /// ```
@@ -159,6 +158,36 @@ impl Keywords {
         Q: Ord,
     {
         self.0.get_mut(key)
+    }
+
+    /// Sets the specified keyword, returning the old value if it already existed.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use std::str::FromStr;
+    /// use std::string::ToString;
+    /// use icu::locid::unicode_ext_key;
+    /// use icu::locid::Locale;
+    /// use icu::locid::extensions::unicode::Key;
+    /// use icu::locid::extensions::unicode::Value;
+    ///
+    /// const CA_KEY: Key = unicode_ext_key!("ca");
+    /// let japanese = Value::from_str("japanese").expect("valid extension subtag");
+    /// let buddhist = Value::from_str("buddhist").expect("valid extension subtag");
+    ///
+    /// let mut loc: Locale = "und-u-hello-ca-buddhist-hc-h12".parse()
+    ///     .expect("valid BCP-47 identifier");
+    /// let old_value = loc.extensions.unicode.keywords.set(
+    ///     CA_KEY,
+    ///     japanese
+    /// );
+    ///
+    /// assert_eq!(old_value, Some(buddhist));
+    /// assert_eq!(loc, "und-u-hello-ca-japanese-hc-h12");
+    /// ```
+    pub fn set(&mut self, key: Key, value: Value) -> Option<Value> {
+        self.0.insert(key, value)
     }
 
     /// Clears all Unicode extension keywords, leaving Unicode attributes.

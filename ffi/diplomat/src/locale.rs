@@ -80,7 +80,7 @@ pub mod ffi {
             write: &mut diplomat_runtime::DiplomatWriteable,
         ) -> DiplomatResult<(), ICU4XLocaleError> {
             if let Ok(key) = Key::from_bytes(bytes.as_bytes()) {
-                if let Some(value) = self.0.get_unicode_extension(&key) {
+                if let Some(value) = self.0.extensions.unicode.keywords.get(&key) {
                     #[allow(unused_variables)]
                     let result = value
                         .write_to(write)
