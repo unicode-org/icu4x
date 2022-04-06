@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1649208181434,
+  "lastUpdate": 1649208966022,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -22529,6 +22529,36 @@ window.BENCHMARK_DATA = {
             "name": "fixed_decimal/overview",
             "value": 109366,
             "range": "± 556",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "a52b2f6c2fef2fbaf22aa3b3aec56ac97f3ac42d",
+          "message": "Bump yoke to 0.5.0 (#1776)",
+          "timestamp": "2022-04-06T01:29:35Z",
+          "tree_id": "249cf1a2e80a9e43d6bc9cc12e9e3bb82e8c3a24",
+          "url": "https://github.com/unicode-org/icu4x/commit/a52b2f6c2fef2fbaf22aa3b3aec56ac97f3ac42d"
+        },
+        "date": 1649208950303,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 110522,
+            "range": "± 6156",
             "unit": "ns/iter"
           }
         ]
