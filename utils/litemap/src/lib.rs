@@ -20,6 +20,8 @@
 //! By default, [`LiteMap`] is backed by a [`Vec`]; however, it can be backed by any appropriate
 //! random-access data store, giving that data store a map-like interface. See the [`store`]
 //! module for more details.
+//!
+//! [`Vec`]: alloc::vec::Vec
 
 // https://github.com/unicode-org/icu4x/blob/main/docs/process/boilerplate.md#library-annotations
 #![cfg_attr(not(test), no_std)]

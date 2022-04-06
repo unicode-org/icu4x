@@ -4,7 +4,7 @@
 
 //! Traits for pluggable LiteMap backends.
 //!
-//! By default, LiteMap is backed by a [`Vec`]. However, in some environments, it may be desirable
+//! By default, LiteMap is backed by a `Vec`. However, in some environments, it may be desirable
 //! to use a different data store while still using LiteMap to manage proper ordering of items.
 //!
 //! The general guidelines for a performant data store are:
@@ -17,6 +17,11 @@
 //! - [`Store`] for most of the methods
 //! - [`StoreIterable`] for methods that return iterators
 //! - [`StoreFromIterator`] to enable `FromIterator` for LiteMap
+//!
+//! To test your implementation, enable the `"testing"` feature and then pass an empty instance
+//! of `LiteMap` with your store into [`check_litemap()`].
+//!
+//! [`check_litemap()`]: crate::testing::check_litemap
 
 mod vec_impl;
 

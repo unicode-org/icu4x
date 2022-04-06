@@ -64,6 +64,8 @@ required-features = ["serde"]
 [features]
 bench = []
 serde_serialize = ["serde", "serde_json"]
+
+# Enables the `testing` module with tools for testing custom stores.
 testing = []
 
 [[bench]]

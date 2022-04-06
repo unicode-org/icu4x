@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use super::LiteMap;
+use crate::store::{Store, StoreIterable};
 use core::fmt;
 use core::marker::PhantomData;
 use serde::de::{MapAccess, SeqAccess, Visitor};
@@ -12,7 +13,13 @@ use serde::{Deserialize, Deserializer};
 use serde::{ser::SerializeMap, Serialize, Serializer};
 
 #[cfg(feature = "serde_serialize")]
-impl<K: Serialize, V: Serialize> Serialize for LiteMap<K, V> {
+impl<K, V, R> Serialize for LiteMap<K, V, R>
+where
+    K: Serialize,
+    V: Serialize,
+    R: Store<K, V> + Serialize,
+    for<'a> R: StoreIterable<'a, K, V>,
+{
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
         S: Serializer,
@@ -21,7 +28,7 @@ impl<K: Serialize, V: Serialize> Serialize for LiteMap<K, V> {
         // than numbers and strings as map keys. For them, we can serialize
         // as a vec of tuples instead
         if serializer.is_human_readable() {
-            if let Some(&(ref k, _)) = self.values.get(0) {
+            if let Some((ref k, _)) = self.values.lm_get(0) {
                 let json = serde_json::json!(k);
                 if !json.is_string() && !json.is_number() {
                     return self.values.serialize(serializer);
@@ -30,7 +37,7 @@ impl<K: Serialize, V: Serialize> Serialize for LiteMap<K, V> {
             }
         }
         let mut map = serializer.serialize_map(Some(self.len()))?;
-        for (k, v) in self.iter() {
+        for (k, v) in self.values.lm_iter() {
             map.serialize_entry(k, v)?;
         }
         map.end()
@@ -38,11 +45,11 @@ impl<K: Serialize, V: Serialize> Serialize for LiteMap<K, V> {
 }
 
 /// Modified example from https://serde.rs/deserialize-map.html
-struct LiteMapVisitor<K, V> {
-    marker: PhantomData<fn() -> LiteMap<K, V>>,
+struct LiteMapVisitor<K, V, R> {
+    marker: PhantomData<fn() -> LiteMap<K, V, R>>,
 }
 
-impl<K, V> LiteMapVisitor<K, V> {
+impl<K, V, R> LiteMapVisitor<K, V, R> {
     fn new() -> Self {
         Self {
             marker: PhantomData,
@@ -50,12 +57,13 @@ impl<K, V> LiteMapVisitor<K, V> {
     }
 }
 
-impl<'de, K, V> Visitor<'de> for LiteMapVisitor<K, V>
+impl<'de, K, V, R> Visitor<'de> for LiteMapVisitor<K, V, R>
 where
     K: Deserialize<'de> + Ord,
     V: Deserialize<'de>,
+    R: Store<K, V>,
 {
-    type Value = LiteMap<K, V>;
+    type Value = LiteMap<K, V, R>;
 
     fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
         formatter.write_str("a map produced by LiteMap")
@@ -112,7 +120,12 @@ where
     }
 }
 
-impl<'de, K: Ord + Deserialize<'de>, V: Deserialize<'de>> Deserialize<'de> for LiteMap<K, V> {
+impl<'de, K, V, R> Deserialize<'de> for LiteMap<K, V, R>
+where
+    K: Ord + Deserialize<'de>,
+    V: Deserialize<'de>,
+    R: Store<K, V>,
+{
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where
         D: Deserializer<'de>,

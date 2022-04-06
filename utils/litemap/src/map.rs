@@ -69,6 +69,8 @@ where
     /// the [`LiteMap`] to avoid frequent reallocations.
     ///
     /// See [`Vec::reserve()`] for more information.
+    ///
+    /// [`Vec::reserve()`]: alloc::vec::Vec::reserve
     pub fn reserve(&mut self, additional: usize) {
         self.values.lm_reserve(additional)
     }

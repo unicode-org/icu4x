@@ -2,6 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+//! Test utilities, primarily targeted to custom LiteMap stores.
+
 use crate::store::{Store, StoreFromIterator, StoreIterable};
 use crate::LiteMap;
 use alloc::format;
@@ -95,6 +97,9 @@ where
     assert_eq!(20, map.len());
 }
 
+/// Tests that the given litemap instance has behavior consistent with the reference impl.
+///
+/// Call this function in a test and pass it an empty instance of a `LiteMap` with a custom store.
 pub fn check_litemap<'a, S>(mut litemap_test: LiteMap<u32, u64, S>)
 where
     S: Store<u32, u64>
@@ -133,8 +138,12 @@ where
         litemap_std.clone().into_tuple_vec(),
     );
 
-    let extras_test = litemap_test.extend_from_litemap(extras_test).expect("duplicates");
-    let extras_std = litemap_std.extend_from_litemap(extras_std).expect("duplicates");
+    let extras_test = litemap_test
+        .extend_from_litemap(extras_test)
+        .expect("duplicates");
+    let extras_std = litemap_std
+        .extend_from_litemap(extras_std)
+        .expect("duplicates");
     assert_eq!(11, extras_test.len());
     assert_eq!(11, extras_std.len());
     assert_eq!(20, litemap_test.len());
@@ -144,9 +153,15 @@ where
         litemap_std.clone().into_tuple_vec(),
     );
 
-    litemap_test.remove(&175).ok_or(()).expect_err("does not exist");
+    litemap_test
+        .remove(&175)
+        .ok_or(())
+        .expect_err("does not exist");
     litemap_test.remove(&176).ok_or(()).expect("exists");
-    litemap_std.remove(&175).ok_or(()).expect_err("does not exist");
+    litemap_std
+        .remove(&175)
+        .ok_or(())
+        .expect_err("does not exist");
     litemap_std.remove(&176).ok_or(()).expect("exists");
     assert_eq!(19, litemap_test.len());
     assert_eq!(19, litemap_std.len());
@@ -157,8 +172,5 @@ where
 
     litemap_test.clear();
     litemap_std.clear();
-    check_equivalence(
-        litemap_test.into_tuple_vec(),
-        litemap_std.into_tuple_vec(),
-    );
+    check_equivalence(litemap_test.into_tuple_vec(), litemap_std.into_tuple_vec());
 }
