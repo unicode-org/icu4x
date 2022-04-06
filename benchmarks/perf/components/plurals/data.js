@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1649253202888,
+  "lastUpdate": 1649267793044,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -31793,6 +31793,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 16918,
             "range": "± 565",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "pandusonu@google.com",
+            "name": "Gollapudi Vamsi Krishna",
+            "username": "pandusonu2"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "3ebc5b28ed38785f3d94dd6168490878e6a2084e",
+          "message": "Add Indian Calendar to cldr (#1757)\n\n* Add Indian calendar to cldr\r\n\r\n* rustfmt\r\n\r\n* Fix saka era name",
+          "timestamp": "2022-04-06T17:46:33Z",
+          "tree_id": "ad991859ccd33d697c32b44f270eef168e6c9f6f",
+          "url": "https://github.com/unicode-org/icu4x/commit/3ebc5b28ed38785f3d94dd6168490878e6a2084e"
+        },
+        "date": 1649267773361,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1004,
+            "range": "± 53",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 6210,
+            "range": "± 358",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 15430,
+            "range": "± 782",
             "unit": "ns/iter"
           }
         ]
