@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1649210791006,
+  "lastUpdate": 1649226770832,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -12773,6 +12773,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/62071621e203dc9587e97b6a41e27829c4805ac3"
         },
         "date": 1649210772479,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4463480,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "ea907ef79f513765a4986a2574599bb6ff747665",
+          "message": "Enable pluggable LiteMap backends (#1769)",
+          "timestamp": "2022-04-05T23:31:12-07:00",
+          "tree_id": "5fadd42ab1aebcac401ee2e590e3bcfbf8bbb72f",
+          "url": "https://github.com/unicode-org/icu4x/commit/ea907ef79f513765a4986a2574599bb6ff747665"
+        },
+        "date": 1649226753872,
         "tool": "ndjson",
         "benches": [
           {
