@@ -5,10 +5,8 @@
 use crate::ule::*;
 
 use alloc::vec::Vec;
-use core::borrow::Borrow;
 use core::cmp::{Ord, Ordering, PartialOrd};
 use core::fmt;
-use core::iter::FromIterator;
 use core::ops::Deref;
 
 use super::*;
@@ -400,28 +398,6 @@ where
     fn from(elements: &[A]) -> Self {
         #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
         VarZeroVecOwned::try_from_elements(elements).unwrap().into()
-    }
-}
-
-impl<B, T> FromIterator<B> for crate::VarZeroVec<'_, T>
-where
-    B: Borrow<T>,
-    T: ?Sized + VarULE,
-{
-    fn from_iter<I>(iter: I) -> Self
-    where
-        I: IntoIterator<Item = B>,
-    {
-        let iter = iter.into_iter();
-        let mut vec = crate::vecs::VarZeroVecOwned::with_capacity(match iter.size_hint() {
-            (_, Some(upper)) => upper,
-            (lower, None) => lower,
-        });
-
-        for t in iter {
-            vec.push(t.borrow());
-        }
-        Self::Owned(vec)
     }
 }
 

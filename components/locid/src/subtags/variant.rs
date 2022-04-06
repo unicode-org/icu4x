@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::parser::errors::ParserError;
+use core::cmp::Ordering;
 use core::ops::RangeInclusive;
 use core::str::FromStr;
 use tinystr::TinyAsciiStr;
@@ -182,6 +183,11 @@ impl_writeable_for_single_subtag!(Variant, "posix");
 impl PartialEq<&str> for Variant {
     fn eq(&self, other: &&str) -> bool {
         self.as_str() == *other
+    }
+}
+impl PartialOrd<&str> for Variant {
+    fn partial_cmp(&self, other: &&str) -> Option<Ordering> {
+        Some(self.as_str().cmp(*other))
     }
 }
 

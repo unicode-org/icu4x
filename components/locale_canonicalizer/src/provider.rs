@@ -25,13 +25,13 @@ type UnvalidatedSubdivision = TinyAsciiStr<7>;
 // LanguageIdentifier doesn't have an AsULE implementation, so we have
 // to store strs and parse when needed.
 type UnvalidatedLanguageIdentifier = str;
-type UnvalidatedLanguageIdentifierPair<'data> = StrStrPair<'data>;
+type UnvalidatedLanguageIdentifierPair<'data> = StrStrPairVarULE;
 
 #[zerovec::make_varule(StrStrPairVarULE)]
 #[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Debug, zerofrom::ZeroFrom)]
 #[cfg_attr(
     feature = "serialize",
-    derive(serde::Deserialize, serde::Deserialize),
+    derive(serde::Deserialize, serde::Serialize),
     zerovec::serde
 )]
 pub struct StrStrPair<'a>(
@@ -40,7 +40,7 @@ pub struct StrStrPair<'a>(
 );
 
 #[icu_provider::data_struct(AliasesV1Marker = "locale_canonicalizer/aliases@1")]
-#[derive(Debug, PartialEq, Clone, Default)]
+#[derive(PartialEq, Clone, Default)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize))]
 #[cfg_attr(feature = "serialize", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
@@ -58,39 +58,44 @@ pub struct StrStrPair<'a>(
 /// or modify aliases for use in this structure.
 // TODO: Use validated types as value types
 pub struct AliasesV1<'data> {
-    /// Language data not covered by other rules, normally this will be empty.
-    /// This is not a map as it's searched linearly according to the canonicalization rules.
-    #[cfg_attr(feature = "serialize", serde(borrow))]
-    pub language: VarZeroVec<'data, UnvalidatedLanguageIdentifierPair<'data>>,
-    /// Language and variant.
+    /// [language(-variant)+] -> [langid]
     /// This is not a map as it's searched linearly according to the canonicalization rules.
     #[cfg_attr(feature = "serialize", serde(borrow))]
     pub language_variants: VarZeroVec<'data, UnvalidatedLanguageIdentifierPair<'data>>,
-    /// Sign language and region data.
+    /// sgn-[region] -> [language]
     #[cfg_attr(feature = "serialize", serde(borrow))]
     pub sgn_region: ZeroMap<'data, UnvalidatedRegion, Language>,
-    /// Two character language codes.
+    /// [language{2}] -> [langid]
     #[cfg_attr(feature = "serialize", serde(borrow))]
     pub language_len2: ZeroMap<'data, TinyAsciiStr<2>, UnvalidatedLanguageIdentifier>,
-    /// Three character language codes.
+    /// [language{3}] -> [langid]
     #[cfg_attr(feature = "serialize", serde(borrow))]
     pub language_len3: ZeroMap<'data, UnvalidatedLanguage, UnvalidatedLanguageIdentifier>,
-    /// Scripts.
+    /// [langid] -> [langid]
+    /// This is not a map as it's searched linearly according to the canonicalization rules.
+    #[cfg_attr(feature = "serialize", serde(borrow))]
+    pub language: VarZeroVec<'data, UnvalidatedLanguageIdentifierPair<'data>>,
+
+    /// [script] -> [script]
     #[cfg_attr(feature = "serialize", serde(borrow))]
     pub script: ZeroMap<'data, UnvalidatedScript, Script>,
-    /// Alphabetical region codes.
+
+    /// [region{2}] -> [region]
     #[cfg_attr(feature = "serialize", serde(borrow))]
     pub region_alpha: ZeroMap<'data, TinyAsciiStr<2>, Region>,
-    /// Numeric region codes.
+    /// [region{3}] -> [region]
     #[cfg_attr(feature = "serialize", serde(borrow))]
     pub region_num: ZeroMap<'data, UnvalidatedRegion, Region>,
-    /// Old regions which map to more than one new region.
+
+    /// [region] -> [region]+
     #[cfg_attr(feature = "serialize", serde(borrow))]
     pub complex_region: ZeroMap<'data, UnvalidatedRegion, ZeroSlice<Region>>,
-    /// Variants.
+
+    /// [variant] -> [variant]
     #[cfg_attr(feature = "serialize", serde(borrow))]
     pub variant: ZeroMap<'data, UnvalidatedVariant, Variant>,
-    /// Subdivisions.
+
+    /// [value{7}] -> [value{7}]
     #[cfg_attr(feature = "serialize", serde(borrow))]
     pub subdivision: ZeroMap<'data, UnvalidatedSubdivision, UnvalidatedSubdivision>,
 }

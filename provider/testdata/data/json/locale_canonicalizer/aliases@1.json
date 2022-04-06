@@ -1,5 +1,4 @@
 {
-  "language": [],
   "language_variants": [
     [
       "aa-saaho",
@@ -522,6 +521,7 @@
     "zul": "zu",
     "zyb": "za"
   },
+  "language": [],
   "script": {
     "Qaai": "Zinh"
   },

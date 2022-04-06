@@ -7,7 +7,7 @@ use crate::cldr::error::Error;
 use crate::cldr::reader::open_reader;
 use crate::cldr::CldrPaths;
 use icu_locale_canonicalizer::provider::*;
-use icu_locid::{subtags, LanguageIdentifier};
+use icu_locid::{language, subtags, LanguageIdentifier};
 use icu_provider::datagen::IterableResourceProvider;
 use icu_provider::prelude::*;
 use std::convert::TryFrom;
@@ -104,11 +104,11 @@ impl From<&cldr_serde::aliases::Resource> for AliasesV1<'_> {
         // for commonly used languages. With the current CLDR data, all aliases end up in
         // a special case, but we retain the catchall language category in case new or
         // customized CLDR data is used.
-        let mut language = Vec::new();
         let mut language_variants = Vec::new();
         let mut sgn_region = ZeroMap::new();
         let mut language_len2 = ZeroMap::new();
         let mut language_len3 = ZeroMap::new();
+        let mut language = Vec::new();
 
         let mut script = ZeroMap::new();
 
@@ -125,6 +125,7 @@ impl From<&cldr_serde::aliases::Resource> for AliasesV1<'_> {
         let mut complex_region = ZeroMap::new();
 
         let mut variant = ZeroMap::new();
+
         let mut subdivision = ZeroMap::new();
 
         // Step 2. Capture all languageAlias rules where the type is an invalid languageId
@@ -133,43 +134,43 @@ impl From<&cldr_serde::aliases::Resource> for AliasesV1<'_> {
         for (from, to) in other.supplemental.metadata.alias.language_aliases.iter() {
             if let Ok(langid) = from.parse::<LanguageIdentifier>() {
                 if let Ok(replacement) = to.replacement.parse::<LanguageIdentifier>() {
-                    // Variants are stored separately to not slow down canonicalization
-                    // of locales without variants.
-                    if !langid.variants.is_empty() {
-                        language_variants.push((langid, replacement));
-                        continue;
-                    }
-
-                    if !langid.language.is_empty() {
-                        if langid.region.is_none() && langid.variants.is_empty() {
+                    match (
+                        langid.language,
+                        langid.script,
+                        langid.region,
+                        !langid.variants.is_empty(),
+                    ) {
+                        // Anything that has a variant needs to be parsed at runtime, so we isolate
+                        // these in their own map.
+                        (_, None, None, true) => language_variants.push((langid, replacement)),
+                        // <language> -> <language identifier>
+                        (lang, None, None, false) if !lang.is_empty() => {
                             // Relatively few aliases exist for two character language identifiers,
                             // so we store them separately to not slow down canonicalization of
                             // common identifiers.
                             let lang: TinyAsciiStr<3> = langid.language.into();
                             if lang.len() == 2 {
-                                language_len2
-                                    .insert(&lang.resize(), replacement.to_string().as_str());
+                                language_len2.insert(&lang.resize(), to.replacement.as_str());
                             } else {
-                                language_len3.insert(&lang, replacement.to_string().as_str());
+                                language_len3.insert(&lang, to.replacement.as_str());
                             }
-                        } else if let Some(region) = langid.region {
-                            // All current language-region aliases are for "sgn", so we store them
-                            // separately to not slow down canonicalization of common identifiers.
-                            if langid.language == icu_locid::language!("sgn")
-                                && !replacement.language.is_empty()
-                            {
-                                sgn_region.insert(&region.into(), &replacement.language);
-                            } else {
-                                language.push((langid, replacement));
-                            }
-                        } else {
-                            language.push((langid, replacement));
                         }
-                    } else {
-                        language.push((langid, replacement));
+                        // sgn-<region> -> <language>
+                        (language, None, Some(region), false)
+                            if language == language!("sgn")
+                                && !replacement.language.is_empty()
+                                && replacement == replacement.language.as_str() =>
+                        {
+                            sgn_region.insert(&region.into(), &replacement.language);
+                        }
+                        _ => language.push((langid, replacement)),
                     }
                 }
             }
+        }
+
+        if !language.is_empty() {
+            panic!("Aliases contain a non-special-cased rule. Remove this check if that is intended behaviour.")
         }
 
         for (from, to) in other.supplemental.metadata.alias.script_aliases.iter() {
@@ -242,29 +243,44 @@ impl From<&cldr_serde::aliases::Resource> for AliasesV1<'_> {
         // 5. Order the set of rules by
         //      1. the size of the union of all field value sets, with largest size first
         //      2. and then alphabetically by field.
-        language.sort_unstable_by(|a, b| rules_cmp(&a.0, &b.0));
         language_variants.sort_unstable_by(|a, b| rules_cmp(&a.0, &b.0));
+        language.sort_unstable_by(|a, b| rules_cmp(&a.0, &b.0));
 
-        let language = language
-            .into_iter()
-            .map(|(from, to)| StrStrPair(from.to_string().into(), to.to_string().into()))
-            .collect();
-        let language_variants = language_variants
-            .into_iter()
-            .map(|(from, to)| StrStrPair(from.to_string().into(), to.to_string().into()))
-            .collect();
+        let language_variants = zerovec::VarZeroVec::Owned(
+            zerovec::vecs::VarZeroVecOwned::try_from_elements(
+                &language_variants
+                    .into_iter()
+                    .map(|(from, to)| StrStrPair(from.to_string().into(), to.to_string().into()))
+                    .collect::<Vec<_>>(),
+            )
+            .unwrap(),
+        );
+
+        let language = zerovec::VarZeroVec::Owned(
+            zerovec::vecs::VarZeroVecOwned::try_from_elements(
+                &language
+                    .into_iter()
+                    .map(|(from, to)| StrStrPair(from.to_string().into(), to.to_string().into()))
+                    .collect::<Vec<_>>(),
+            )
+            .unwrap(),
+        );
 
         Self {
-            language,
             language_variants,
             sgn_region,
             language_len2,
             language_len3,
+            language,
+
             script,
+
             region_alpha,
             region_num,
             complex_region,
+
             variant,
+
             subdivision,
         }
     }

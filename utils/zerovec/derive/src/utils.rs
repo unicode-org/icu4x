@@ -83,7 +83,9 @@ pub(crate) fn generate_per_field_offsets<'a>(
     mut per_field_code: impl FnMut(&FieldInfo<'a>, &Ident, &Ident) -> TokenStream2, // (code, remaining_offset)
 ) -> (TokenStream2, syn::Ident) {
     let mut prev_offset_ident = Ident::new("ZERO", Span::call_site());
-    let mut code = quote!(const ZERO: usize = 0);
+    let mut code = quote!(
+        const ZERO: usize = 0;
+    );
 
     for (i, field_info) in fields.iter().enumerate() {
         let field = &field_info.field;
