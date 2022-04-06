@@ -110,7 +110,7 @@
 //!
 //! // custom variable sized VarULE type for VarZeroVec
 //! #[zerovec::make_varule(PersonULE)]
-//! #[zerovec::serde]
+//! #[zerovec::derive(Serialize, Deserialize)] // add Serde impls to PersonULE
 //! #[derive(Clone, PartialEq, Eq, Ord, PartialOrd, serde::Serialize, serde::Deserialize)]
 //! # #[serde(crate = "dep_serde")]
 //! struct Person<'a> {
@@ -306,11 +306,14 @@ pub mod vecs {
 ///
 /// The type must be [`Copy`], [`PartialEq`], and [`Eq`].
 ///
+/// Certain custom derives can be inherited to the [`ULE`] type with `#[zerovec::derive(...)]`. For example, if the type has a `Debug` impl,
+/// `#[zerovec::derive(Debug)]` will generate one for the generated [`ULE`] type. Currently `Debug` is the only trait supported here.
+///
 /// By default this attribute will also autogenerate a [`ZeroMapKV`] implementation, which requires
-/// [`Ord`] and [`PartialOrd`] on `Self`. You can opt out of this with `#[zerovec::skip_kv]`.
+/// [`Ord`] and [`PartialOrd`] on `Self`. You can opt out of this with `#[zerovec::skip_derive(ZeroMapKV)]`.
 ///
 /// This implementation will also by default autogenerate [`Ord`] and [`PartialOrd`] on the [`ULE`] type based on
-/// the implementation on `Self`. You can opt out of this with `#[zerovec::skip_ord]`
+/// the implementation on `Self`. You can opt out of this with `#[zerovec::skip_derive(Ord)]`
 ///
 /// For enums, this implementation will generate a crate-public `fn new_from_u8(value: u8) -> Option<Self>`
 /// method on the main type that allows one to construct the value from a u8. If this method is desired
@@ -371,16 +374,19 @@ pub use zerovec_derive::make_ule;
 /// to convert the [`VarULE`] type back to this type in a cheap, zero-copy way (see the example below
 /// for more details).
 ///
-/// Provided the type implements [`serde::Serialize`](dep_serde::Serialize) and [`serde::Deserialize`](dep_serde::Deserialize), this attribute can also generate
-/// the relevant serialize/deserialize implementations for the [`VarULE`] type if you apply the `#[zerovec::serde]`
-/// attribute. Those impls are required to support human-readable serialization of the VarZeroVec.
+/// Certain custom derives can be inherited to the [`VarULE`] type with `#[zerovec::derive(...)]`. For example, if the type has a `Debug` impl,
+/// `#[zerovec::derive(Debug)]` will generate one for the generated [`VarULE`] type.
+///
+/// Similarly, `#[zerovec::derive(Serialize, Deserialize)]` will add the appropriate [`serde::Serialize`](dep_serde::Serialize)
+/// and [`serde::Deserialize`](dep_serde::Deserialize) impls for the generated [`VarULE`] type, provided the type
+/// itself has these traits implemented. Such impls are required to support human-readable serialization of the VarZeroVec.
 /// This needs the `serde`/`serde_serialize` features to be enabled on the `zerovec` crate to work.
 ///
 /// By default this attribute will also autogenerate a [`ZeroMapKV`] implementation, which requires
-/// [`Ord`] and [`PartialOrd`] on the [`VarULE`] type. You can opt out of this with `#[zerovec::skip_kv]`.
+/// [`Ord`] and [`PartialOrd`] on the [`VarULE`] type. You can opt out of this with `#[zerovec::skip_derive(ZeroMapKV)]`.
 ///
 /// This implementation will also by default autogenerate [`Ord`] and [`PartialOrd`] on the [`VarULE`] type based on
-/// the implementation on `Self`. You can opt out of this with `#[zerovec::skip_ord]`
+/// the implementation on `Self`. You can opt out of this with `#[zerovec::skip_derive(Ord)]`
 ///
 /// Note that this implementation will autogenerate [`EncodeAsVarULE`] impls for _both_ `Self` and `&Self`
 /// for convenience. This allows for a little more flexibility encoding slices.
@@ -412,7 +418,7 @@ pub use zerovec_derive::make_ule;
 ///
 /// // custom variable sized VarULE type for VarZeroVec
 /// #[zerovec::make_varule(PersonULE)]
-/// #[zerovec::serde]
+/// #[zerovec::derive(Serialize, Deserialize)]
 /// #[derive(Clone, PartialEq, Eq, Ord, PartialOrd, serde::Serialize, serde::Deserialize)]
 /// # #[serde(crate = "dep_serde")]
 /// struct Person<'a> {
