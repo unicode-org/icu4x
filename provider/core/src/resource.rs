@@ -454,8 +454,10 @@ impl ResourceOptions {
     ///
     /// If you have ownership over the `ResourceOptions`, use [`ResourceOptions::into_locale()`].
     pub fn locale(&self) -> Locale {
-        let mut loc = Locale::default();
-        loc.id = self.langid.clone();
+        let mut loc = Locale {
+            id: self.langid.clone(),
+            ..Default::default()
+        };
         loc.extensions.unicode.keywords = self.keywords.clone();
         loc
     }
@@ -464,8 +466,10 @@ impl ResourceOptions {
     ///
     /// If you do not have ownership over the `ResourceOptions`, use [`ResourceOptions::locale()`].
     pub fn into_locale(self) -> Locale {
-        let mut loc = Locale::default();
-        loc.id = self.langid;
+        let mut loc = Locale {
+            id: self.langid,
+            ..Default::default()
+        };
         loc.extensions.unicode.keywords = self.keywords;
         loc
     }
