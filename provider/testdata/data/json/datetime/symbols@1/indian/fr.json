@@ -114,13 +114,13 @@
   },
   "eras": {
     "names": {
-      "bc": "ère Saka"
+      "saka": "ère Saka"
     },
     "abbr": {
-      "bc": "Saka"
+      "saka": "Saka"
     },
     "narrow": {
-      "bc": "Saka"
+      "saka": "Saka"
     }
   }
 }

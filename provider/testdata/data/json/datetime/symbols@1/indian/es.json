@@ -134,13 +134,13 @@
   },
   "eras": {
     "names": {
-      "bc": "saka"
+      "saka": "saka"
     },
     "abbr": {
-      "bc": "saka"
+      "saka": "saka"
     },
     "narrow": {
-      "bc": "saka"
+      "saka": "saka"
     }
   }
 }
