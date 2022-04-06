@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use super::LiteMap;
-use crate::store::{Store, StoreIterable};
+use crate::store::Store;
 use core::fmt;
 use core::marker::PhantomData;
 use serde::de::{MapAccess, SeqAccess, Visitor};
@@ -18,7 +18,6 @@ where
     K: Serialize,
     V: Serialize,
     R: Store<K, V> + Serialize,
-    for<'a> R: StoreIterable<'a, K, V>,
 {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
@@ -37,8 +36,11 @@ where
             }
         }
         let mut map = serializer.serialize_map(Some(self.len()))?;
-        for (k, v) in self.values.lm_iter() {
+        let mut i = 0;
+        while i < self.values.lm_len() {
+            let (k, v) = self.values.lm_get(i).expect("i is in range");
             map.serialize_entry(k, v)?;
+            i += 1;
         }
         map.end()
     }
