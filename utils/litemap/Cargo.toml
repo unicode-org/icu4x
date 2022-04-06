@@ -30,7 +30,7 @@ all-features = true
 [dependencies]
 serde = {version = "1", optional = true, default-features = false, features = ["alloc"]}
 serde_json = { version = "1", optional = true, default-features = false, features = ["alloc"]}
-yoke = { version = "0.4.1", path = "../yoke", features = ["derive"], optional = true }
+yoke = { version = "0.5.0", path = "../yoke", features = ["derive"], optional = true }
 
 [dev-dependencies]
 serde = "1"

@@ -33,7 +33,7 @@ serde = { version = "1.0", default-features = false, features = ["alloc"] }
 postcard = { version = "0.7.0", default-features = false }
 erased-serde = { version = "0.3", default-features = false, features = ["alloc"] }
 writeable = { version = "0.3", path = "../../utils/writeable" }
-yoke = { version = "0.4.1", path = "../../utils/yoke" }
+yoke = { version = "0.5.0", path = "../../utils/yoke" }
 zerovec = { version = "0.6", path = "../../utils/zerovec", features = ["serde", "yoke"] }
 
 # For the export feature

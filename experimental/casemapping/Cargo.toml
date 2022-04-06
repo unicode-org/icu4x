@@ -28,7 +28,7 @@ icu_codepointtrie = { version = "0.3", path = "../../utils/codepointtrie" }
 icu_locid = { version = "0.5", path = "../../components/locid" }
 icu_provider = { version = "0.5", path = "../../provider/core", features = ["macros"] }
 icu_uniset = { version = "0.4", path = "../../utils/uniset" }
-yoke = { path = "../../utils/yoke", version = "0.4", features = ["derive"] }
+yoke = { version = "0.5.0", path = "../../utils/yoke", features = ["derive"] }
 zerovec = { version = "0.6", path = "../../utils/zerovec", features = ["yoke"] }
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }
 
