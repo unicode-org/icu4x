@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1649205960854,
+  "lastUpdate": 1649206741372,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -31541,6 +31541,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 17769,
             "range": "± 916",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "1193250b38d5ad227abd7578a89dc6dca9cae6b4",
+          "message": "Add unicode_ext_value! macro, enabled by new helper ShortVec (#1767)",
+          "timestamp": "2022-04-05T17:49:53-07:00",
+          "tree_id": "23e15ce2ec1af33b8b344681cab7fecc44cf1131",
+          "url": "https://github.com/unicode-org/icu4x/commit/1193250b38d5ad227abd7578a89dc6dca9cae6b4"
+        },
+        "date": 1649206726133,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 835,
+            "range": "± 64",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 6070,
+            "range": "± 491",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 15025,
+            "range": "± 1319",
             "unit": "ns/iter"
           }
         ]
