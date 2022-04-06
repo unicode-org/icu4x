@@ -273,10 +273,10 @@ impl From<&cldr_serde::aliases::Resource> for AliasesV1<'_> {
 #[test]
 fn test_rules_cmp() {
     let mut rules: Vec<LanguageIdentifier> = vec![
-        "en-GB".parse().unwrap(),
-        "CA".parse().unwrap(),
+        icu_locid::langid!("en-GB"),
+        icu_locid::langid!("CA"),
         "und-hepburn-heploc".parse().unwrap(),
-        "fr-CA".parse().unwrap(),
+        icu_locid::langid!("fr-CA"),
     ];
 
     assert_eq!(union_size(&rules[0]), 2);
@@ -327,11 +327,13 @@ fn test_basic() {
 
     assert!(data.get().language_len3.get(&tinystr!(3, "iw")).is_none());
 
-    assert_eq!(data.get().script.iter().next().unwrap().0, "Qaai");
-    assert_eq!(data.get().script.iter().next().unwrap().1, "Zinh");
+    assert_eq!(
+        data.get().script.iter().next().unwrap(),
+        (&tinystr!(4, "Qaai"), &icu_locid::script!("Zinh"))
+    );
 
     assert_eq!(
         data.get().region_num.get(&tinystr!(3, "768")).unwrap(),
-        "TG"
+        &icu_locid::region!("TG")
     );
 }
