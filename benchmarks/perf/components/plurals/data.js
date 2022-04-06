@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1649211235385,
+  "lastUpdate": 1649227255685,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -31709,6 +31709,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 20080,
             "range": "± 1795",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "ea907ef79f513765a4986a2574599bb6ff747665",
+          "message": "Enable pluggable LiteMap backends (#1769)",
+          "timestamp": "2022-04-05T23:31:12-07:00",
+          "tree_id": "5fadd42ab1aebcac401ee2e590e3bcfbf8bbb72f",
+          "url": "https://github.com/unicode-org/icu4x/commit/ea907ef79f513765a4986a2574599bb6ff747665"
+        },
+        "date": 1649227237750,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 949,
+            "range": "± 62",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 6714,
+            "range": "± 261",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 15823,
+            "range": "± 869",
             "unit": "ns/iter"
           }
         ]
