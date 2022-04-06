@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1649267641870,
+  "lastUpdate": 1649282343995,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -27893,6 +27893,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 3195,
             "range": "± 8",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "248fbf581a09aff18f18f70c4faf73dc9de4a03a",
+          "message": "Various ZeroVec derive improvements (#1780)\n\n* add semicolon in encodeasvar impl\r\n\r\n* clean up derive\r\n\r\n* Add more extensible derive/skip framework, support splitting Serialize/Deserialize\r\n\r\n* pass in attrs, add debug parsing\r\n\r\n* Add support for debug\r\n\r\n* docs\r\n\r\n* address",
+          "timestamp": "2022-04-06T21:51:02Z",
+          "tree_id": "0a71121cd13c476ea807a72918a689139f2ab3a3",
+          "url": "https://github.com/unicode-org/icu4x/commit/248fbf581a09aff18f18f70c4faf73dc9de4a03a"
+        },
+        "date": 1649282327191,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 2176,
+            "range": "± 134",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 3705,
+            "range": "± 254",
             "unit": "ns/iter"
           }
         ]
