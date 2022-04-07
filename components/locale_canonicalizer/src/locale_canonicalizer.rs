@@ -132,9 +132,9 @@ where
         && {
             // Checks if variants are a subset of source variants.
             // As both iterators are sorted, this can be done linearly.
-            let source_variants = source.id.variants.iter();
+            let mut source_variants = source.id.variants.iter();
             'outer: for it in variants {
-                for cand in source_variants.as_ref() {
+                for cand in source_variants.by_ref() {
                     match cand.partial_cmp(&it) {
                         Some(Ordering::Equal) => {
                             continue 'outer;
