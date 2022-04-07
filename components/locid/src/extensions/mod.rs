@@ -61,6 +61,7 @@ use crate::parser::ParserError;
 use crate::parser::SubtagIterator;
 /// Defines the type of extension.
 #[derive(Debug, PartialEq, Eq, Clone, Hash, PartialOrd, Ord, Copy)]
+#[non_exhaustive]
 pub enum ExtensionType {
     /// Transform Extension Type marked as `t`.
     Transform,
@@ -89,6 +90,7 @@ impl ExtensionType {
 /// A map of extensions associated with a given [`Locale`](crate::Locale).
 #[derive(Debug, Default, PartialEq, Eq, Clone, Hash, PartialOrd, Ord)]
 #[allow(missing_docs)] // TODO(#1028) - Add missing docs.
+#[non_exhaustive]
 pub struct Extensions {
     pub unicode: Unicode,
     pub transform: Transform,

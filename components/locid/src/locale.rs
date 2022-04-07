@@ -70,6 +70,7 @@ use core::str::FromStr;
 /// [`Unicode Locale Identifier`]: https://unicode.org/reports/tr35/tr35.html#Unicode_locale_identifier
 #[derive(Default, PartialEq, Eq, Clone, Hash, PartialOrd, Ord)]
 #[allow(missing_docs)] // TODO(#1028) - Add missing docs.
+#[allow(clippy::exhaustive_structs)] // This struct is stable (and invoked by a macro)
 pub struct Locale {
     // Language component of the Locale
     pub id: LanguageIdentifier,

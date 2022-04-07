@@ -79,6 +79,7 @@ use litemap::LiteMap;
 /// [`Unicode Locale Identifier`]: https://unicode.org/reports/tr35/#Unicode_locale_identifier
 #[derive(Clone, PartialEq, Eq, Debug, Default, Hash, PartialOrd, Ord)]
 #[allow(missing_docs)] // TODO(#1028) - Add missing docs.
+#[non_exhaustive]
 pub struct Transform {
     pub lang: Option<LanguageIdentifier>,
     pub fields: Fields,
