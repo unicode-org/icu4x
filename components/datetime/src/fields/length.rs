@@ -6,6 +6,7 @@ use core::cmp::{Ord, PartialOrd};
 use displaydoc::Display;
 
 #[derive(Display, Debug, PartialEq, Copy, Clone)]
+#[non_exhaustive]
 pub enum LengthError {
     #[displaydoc("Invalid length")]
     InvalidLength,

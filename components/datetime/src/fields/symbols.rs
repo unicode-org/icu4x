@@ -8,6 +8,7 @@ use displaydoc::Display;
 use icu_provider::{yoke, zerofrom};
 
 #[derive(Display, Debug, PartialEq, Copy, Clone)]
+#[non_exhaustive]
 pub enum SymbolError {
     /// Invalid field symbol index.
     #[displaydoc("Invalid field symbol index: {0}")]

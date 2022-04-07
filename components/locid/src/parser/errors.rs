@@ -8,6 +8,7 @@ use displaydoc::Display;
 /// while parsing [`LanguageIdentifier`](crate::LanguageIdentifier), [`Locale`](crate::Locale),
 /// [`subtags`](crate::subtags) or [`extensions`](crate::extensions).
 #[derive(Display, Debug, PartialEq, Copy, Clone)]
+#[non_exhaustive]
 pub enum ParserError {
     /// Invalid language subtag.
     ///
