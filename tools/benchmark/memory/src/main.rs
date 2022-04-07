@@ -103,7 +103,7 @@ fn extract_bytes_from_log_line(preamble: &str, text: &str) -> u64 {
         .get(start..end)
         .expect("Unable to get a substring.")
         .trim()
-        .replace(",", "")
+        .replace(',', "")
         .parse::<u64>()
         .expect("Unable to parse the byte amount");
 }

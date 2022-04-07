@@ -339,7 +339,7 @@ mod test {
             a.iter()
                 .map(|x| x
                     .iter()
-                    .map(|y| y.iter().copied().collect::<Vec<u8>>())
+                    .map(|y| y.to_vec())
                     .collect::<Vec<Vec<u8>>>())
                 .collect::<Vec<Vec<Vec<u8>>>>(),
             u8_3d_vec
