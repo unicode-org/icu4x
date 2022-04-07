@@ -25,15 +25,16 @@ type UnvalidatedSubdivision = TinyAsciiStr<7>;
 // LanguageIdentifier doesn't have an AsULE implementation, so we have
 // to store strs and parse when needed.
 type UnvalidatedLanguageIdentifier = str;
-type UnvalidatedLanguageIdentifierPair<'data> = StrStrPairVarULE;
+type UnvalidatedLanguageIdentifierPair = StrStrPairVarULE;
 
 #[zerovec::make_varule(StrStrPairVarULE)]
-#[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Debug, zerofrom::ZeroFrom)]
+#[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Debug)]
 #[cfg_attr(
     feature = "serialize",
     derive(serde::Deserialize, serde::Serialize),
     zerovec::derive(Deserialize, Serialize)
 )]
+/// A pair of strings with a EncodeAsVarULE implementation.
 pub struct StrStrPair<'a>(
     #[cfg_attr(feature = "serialize", serde(borrow))] pub Cow<'a, str>,
     #[cfg_attr(feature = "serialize", serde(borrow))] pub Cow<'a, str>,
@@ -61,7 +62,7 @@ pub struct AliasesV1<'data> {
     /// [language(-variant)+] -> [langid]
     /// This is not a map as it's searched linearly according to the canonicalization rules.
     #[cfg_attr(feature = "serialize", serde(borrow))]
-    pub language_variants: VarZeroVec<'data, UnvalidatedLanguageIdentifierPair<'data>>,
+    pub language_variants: VarZeroVec<'data, UnvalidatedLanguageIdentifierPair>,
     /// sgn-[region] -> [language]
     #[cfg_attr(feature = "serialize", serde(borrow))]
     pub sgn_region: ZeroMap<'data, UnvalidatedRegion, Language>,
@@ -74,7 +75,7 @@ pub struct AliasesV1<'data> {
     /// [langid] -> [langid]
     /// This is not a map as it's searched linearly according to the canonicalization rules.
     #[cfg_attr(feature = "serialize", serde(borrow))]
-    pub language: VarZeroVec<'data, UnvalidatedLanguageIdentifierPair<'data>>,
+    pub language: VarZeroVec<'data, UnvalidatedLanguageIdentifierPair>,
 
     /// [script] -> [script]
     #[cfg_attr(feature = "serialize", serde(borrow))]
