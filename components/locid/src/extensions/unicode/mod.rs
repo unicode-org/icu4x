@@ -75,6 +75,7 @@ use litemap::LiteMap;
 /// ```
 #[derive(Clone, PartialEq, Eq, Debug, Default, Hash, PartialOrd, Ord)]
 #[allow(missing_docs)] // TODO(#1028) - Add missing docs.
+#[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct Unicode {
     pub keywords: Keywords,
     pub attributes: Attributes,

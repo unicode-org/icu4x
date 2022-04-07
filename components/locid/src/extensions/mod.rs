@@ -61,6 +61,7 @@ use crate::parser::ParserError;
 use crate::parser::SubtagIterator;
 /// Defines the type of extension.
 #[derive(Debug, PartialEq, Eq, Clone, Hash, PartialOrd, Ord, Copy)]
+#[allow(clippy::exhaustive_enums)] // this type is stable
 pub enum ExtensionType {
     /// Transform Extension Type marked as `t`.
     Transform,
@@ -89,6 +90,7 @@ impl ExtensionType {
 /// A map of extensions associated with a given [`Locale`](crate::Locale).
 #[derive(Debug, Default, PartialEq, Eq, Clone, Hash, PartialOrd, Ord)]
 #[allow(missing_docs)] // TODO(#1028) - Add missing docs.
+#[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct Extensions {
     pub unicode: Unicode,
     pub transform: Transform,
