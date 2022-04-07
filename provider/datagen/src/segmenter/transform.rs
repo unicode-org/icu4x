@@ -347,13 +347,12 @@ impl SegmenterRuleProvider {
         simple_properties_count += 1;
 
         for p in &segmenter.tables {
-            let property_index;
-            if !properties_names.contains(&p.name) {
+            let property_index = if !properties_names.contains(&p.name) {
                 properties_names.push(p.name.clone());
-                property_index = (properties_names.len() - 1) as u8;
+                (properties_names.len() - 1) as u8
             } else {
                 continue;
-            }
+            };
 
             if p.left.is_none() && p.right.is_none() && p.codepoint.is_none() {
                 // If any values aren't set, this is builtin type.
@@ -527,12 +526,11 @@ impl SegmenterRuleProvider {
         let mut break_state_table = vec![UNKNOWN_RULE; rule_size];
 
         for rule in &segmenter.rules {
-            let break_state;
-            if let Some(state) = rule.break_state {
-                break_state = if state { BREAK_RULE } else { KEEP_RULE };
+            let break_state = if let Some(state) = rule.break_state {
+                if state { BREAK_RULE } else { KEEP_RULE }
             } else {
-                break_state = NOT_MATCH_RULE;
-            }
+                NOT_MATCH_RULE
+            };
 
             for l in &rule.left {
                 if l == "Any" {
