@@ -25,6 +25,20 @@ impl BidiClassAdaptor {
 
 
 impl BidiDataSource for BidiClassAdaptor {
+
+    /// Return a [`DataSourceBidiClass`] given a unicode character.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu::properties::BidiClassAdaptor;
+    /// use crate::BidiClass as DataSourceBidiClass
+    ///
+    /// let adaptor = BidiClassAdaptor::new();
+    /// assert_eq!(adaptor.bidi_class('a' as u32), DataSourceBidiClass::R);  // U
+    /// ```
+    ///
+    /// [`CodePointTrie`]: icu_codepointtrie::CodePointTrie
 	pub fn bidi_class(&self, c: char) -> DataSourceBidiClass {
 		let bidi_class = self.code_point_trie.get(c as u32);
 		match bidi_class {
