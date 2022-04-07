@@ -160,7 +160,7 @@ fn uts35_replacement<I, V>(
     replacement: &LanguageIdentifier,
 ) where
     I: Iterator<Item = V>,
-    Variant: PartialOrd<V> + PartialOrd<Variant>,
+    Variant: PartialOrd<V>,
     V: Copy + core::fmt::Debug,
 {
     if ruletype_has_language || (source.id.language.is_empty() && !replacement.language.is_empty())
@@ -187,44 +187,28 @@ fn uts35_replacement<I, V>(
 
         let mut variants: Vec<Variant> = Vec::new();
 
-        'outer: while let Some(&source) = sources.peek() {
-            // Maybe skip source
-            while let Some(&skip) = skips.peek() {
-                match source.partial_cmp(&skip) {
-                    Some(Ordering::Greater) => {
-                        skips.next();
-                    }
-                    Some(Ordering::Equal) => {
-                        skips.next();
-                        sources.next();
-                        continue 'outer; // Don't have source anymore
-                    }
-                    _ => {
-                        break;
-                    }
+        while let Some(&source) = sources.peek() {
+            match (skips.peek(), replacements.peek()) {
+                (Some(&skip), _) if source > skip => {
+                    skips.next();
                 }
-            }
-
-            // Insert the smaller of source and replacement
-            if let Some(&replacement) = replacements.peek() {
-                match source.cmp(&replacement) {
-                    Ordering::Less => {
-                        variants.push(source);
-                        sources.next();
-                    }
-                    Ordering::Greater => {
-                        variants.push(replacement);
-                        replacements.next();
-                    }
-                    Ordering::Equal => {
-                        variants.push(replacement);
-                        sources.next();
-                        replacements.next();
-                    }
+                (Some(&skip), _) if source == skip => {
+                    skips.next();
+                    sources.next();
                 }
-            } else {
-                variants.push(source);
-                sources.next();
+                (_, Some(&replacement)) if replacement.cmp(&source) == Ordering::Less => {
+                    variants.push(replacement);
+                    replacements.next();
+                }
+                (_, Some(&replacement)) if &source == &replacement => {
+                    variants.push(source);
+                    sources.next();
+                    replacements.next();
+                }
+                _ => {
+                    variants.push(source);
+                    sources.next();
+                }
             }
         }
         variants.extend(replacements);
