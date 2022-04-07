@@ -1,13 +1,13 @@
 {
   "defaults": {
-    "Alaska": "AKT",
-    "America_Central": "CT",
-    "America_Eastern": "ET",
-    "America_Mountain": "MT",
-    "America_Pacific": "PT",
-    "Atlantic": "AT",
-    "GMT": "GMT",
-    "Hawaii_Aleutian": "HAT"
+    "alas": "AKT",
+    "amce": "CT",
+    "amea": "ET",
+    "ammo": "MT",
+    "ampa": "PT",
+    "atla": "AT",
+    "haal": "HAT",
+    "mgmt": "GMT"
   },
   "overrides": {
     "Etc/UTC": "UTC",

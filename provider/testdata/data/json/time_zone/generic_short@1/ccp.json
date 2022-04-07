@@ -1,6 +1,6 @@
 {
   "defaults": {
-    "India": "IST"
+    "indi": "IST"
   },
   "overrides": {
     "Etc/UTC": "UTC"

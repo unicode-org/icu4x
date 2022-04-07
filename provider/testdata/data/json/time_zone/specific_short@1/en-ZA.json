@@ -1,19 +1,19 @@
 {
   "defaults": {
-    "Africa_Central": {
+    "afce": {
       "standard": "CAT"
     },
-    "Africa_Eastern": {
+    "afea": {
       "standard": "EAT"
     },
-    "Africa_Southern": {
+    "afso": {
       "standard": "SAST"
     },
-    "Africa_Western": {
+    "afwe": {
       "daylight": "WAST",
       "standard": "WAT"
     },
-    "GMT": {
+    "mgmt": {
       "standard": "GMT"
     }
   },

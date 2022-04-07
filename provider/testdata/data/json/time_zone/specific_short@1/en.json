@@ -1,35 +1,35 @@
 {
   "defaults": {
-    "Alaska": {
+    "alas": {
       "daylight": "AKDT",
       "standard": "AKST"
     },
-    "America_Central": {
+    "amce": {
       "daylight": "CDT",
       "standard": "CST"
     },
-    "America_Eastern": {
+    "amea": {
       "daylight": "EDT",
       "standard": "EST"
     },
-    "America_Mountain": {
+    "ammo": {
       "daylight": "MDT",
       "standard": "MST"
     },
-    "America_Pacific": {
+    "ampa": {
       "daylight": "PDT",
       "standard": "PST"
     },
-    "Atlantic": {
+    "atla": {
       "daylight": "ADT",
       "standard": "AST"
     },
-    "GMT": {
-      "standard": "GMT"
-    },
-    "Hawaii_Aleutian": {
+    "haal": {
       "daylight": "HADT",
       "standard": "HAST"
+    },
+    "mgmt": {
+      "standard": "GMT"
     }
   },
   "overrides": {

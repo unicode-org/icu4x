@@ -37,11 +37,11 @@ pub trait CldrPaths: std::fmt::Debug + Sync {
     /// <https://github.com/unicode-cldr/cldr-numbers-full>
     fn cldr_numbers(&self) -> Result<PathBuf, Error>;
 
-    /// Path to checkout of cldr-misc
+    /// Path to checkout of cldr-misc:
     /// <https://github.com/unicode-cldr/cldr-misc-full>
     fn cldr_misc(&self) -> Result<PathBuf, Error>;
 
-    /// Path to checkout of cldr-bcp47
+    /// Path to checkout of cldr-bcp47:
     /// <https://github.com/unicode-org/cldr-json/tree/main/cldr-json/cldr-bcp47>
     fn cldr_bcp47(&self) -> Result<PathBuf, Error>;
 
