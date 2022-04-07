@@ -7,6 +7,7 @@
 /// A bag of options defining how numbers will be formatted by
 /// [`FixedDecimalFormat`](crate::FixedDecimalFormat).
 #[derive(Debug, Eq, PartialEq, Clone, Default)]
+#[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct FixedDecimalFormatOptions {
     /// When to render grouping separators.
     pub grouping_strategy: GroupingStrategy,
