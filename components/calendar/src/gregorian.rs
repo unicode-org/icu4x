@@ -10,6 +10,7 @@ use core::convert::TryInto;
 use tinystr::tinystr;
 
 #[derive(Copy, Clone, Debug, Default)]
+#[allow(clippy::exhaustive_structs)] // this type is stable
 /// The Gregorian Calendar
 pub struct Gregorian;
 

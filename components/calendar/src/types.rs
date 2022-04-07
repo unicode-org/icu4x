@@ -11,12 +11,13 @@ use core::ops::{Add, Sub};
 use core::str::FromStr;
 use tinystr::{TinyStr16, TinyStr8};
 
-/// TODO(#486): Implement era codes.
 #[derive(Copy, Clone, Debug, PartialEq)]
+#[allow(clippy::exhaustive_structs)] // this type is a stable wrapper
 pub struct Era(pub TinyStr16);
 
 /// Representation of a formattable year.
 #[derive(Clone, Debug, PartialEq)]
+#[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct Year {
     /// The era containing the year.
     pub era: Era,
@@ -31,10 +32,12 @@ pub struct Year {
 
 /// TODO(#486): Implement month codes.
 #[derive(Clone, Debug, PartialEq)]
+#[allow(clippy::exhaustive_structs)] // this type is a stable wrapper
 pub struct MonthCode(pub TinyStr8);
 
 /// Representation of a formattable month.
 #[derive(Clone, Debug, PartialEq)]
+#[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct Month {
     /// A month number in a year. In normal years, this is usually the 1-based month index. In leap
     /// years, this is what the month number would have been in a non-leap year.
@@ -56,6 +59,7 @@ pub struct Month {
 // by the [`day_of_year_info()`](trait.DateInput.html#tymethod.day_of_year_info) method of the
 // [`DateInput`] trait.
 #[derive(Clone, Debug, PartialEq)]
+#[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct DayOfYearInfo {
     /// The current day of the year, 1-based.
     pub day_of_year: u32,
@@ -70,18 +74,22 @@ pub struct DayOfYearInfo {
 }
 
 /// A day number in a month. Usually 1-based.
+#[allow(clippy::exhaustive_structs)] // this is stable
 pub struct DayOfMonth(pub u32);
 
 /// A week number in a month. Usually 1-based.
 #[derive(Clone, Copy, Debug, PartialEq)]
+#[allow(clippy::exhaustive_structs)] // this is stable
 pub struct WeekOfMonth(pub u32);
 
 /// A week number in a year. Usually 1-based.
 #[derive(Clone, Copy, Debug, PartialEq)]
+#[allow(clippy::exhaustive_structs)] // this is stable
 pub struct WeekOfYear(pub u32);
 
 /// A day of week in month. 1-based.
 #[derive(Clone, Copy, Debug, PartialEq)]
+#[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct DayOfWeekInMonth(pub u32);
 
 impl From<DayOfMonth> for DayOfWeekInMonth {
@@ -208,6 +216,7 @@ dt_unit!(
 );
 
 #[derive(Debug, Copy, Clone)]
+#[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct Time {
     /// 0-based hour.
     pub hour: IsoHour,
@@ -242,6 +251,7 @@ impl Time {
 /// A placeholder for fractional seconds support. See [Issue #485](https://github.com/unicode-org/icu4x/issues/485)
 /// for tracking the support of this feature.
 #[derive(Clone, Debug, PartialEq)]
+#[allow(clippy::exhaustive_enums)] // this type is stable
 pub enum FractionalSecond {
     /// The millisecond component of the fractional second.
     Millisecond(u16),
@@ -384,6 +394,7 @@ impl FromStr for GmtOffset {
 #[allow(missing_docs)] // The weekday variants should be self-obvious.
 #[repr(i8)]
 #[cfg_attr(feature = "serialize", derive(serde::Serialize, serde::Deserialize))]
+#[allow(clippy::exhaustive_enums)] // This is stable
 pub enum IsoWeekday {
     Monday = 1,
     Tuesday,

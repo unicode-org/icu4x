@@ -8,6 +8,9 @@
 
 #![allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
 
+// Provider structs must be stable
+#![allow(clippy::exhaustive_structs)]
+
 use core::str::FromStr;
 use icu_provider::{yoke, zerofrom};
 use tinystr::TinyStr16;

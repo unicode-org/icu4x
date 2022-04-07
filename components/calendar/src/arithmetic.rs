@@ -11,6 +11,7 @@ pub mod week_of {
     /// Information about how a given calendar assigns weeks to a year or month.
     #[derive(Clone, Copy, Debug)]
     #[cfg_attr(feature = "serialize", derive(serde::Serialize, serde::Deserialize))]
+    #[allow(clippy::exhaustive_structs)] // this type is stable
     pub struct CalendarInfo {
         /// The first day of a week.
         pub first_weekday: IsoWeekday,
@@ -119,6 +120,7 @@ pub mod week_of {
 
     /// The year or month that a calendar assigns a week to relative to the year/month that it is in.
     #[derive(Debug, PartialEq)]
+    #[allow(clippy::exhaustive_enums)] // this type is stable
     pub enum RelativeUnit {
         /// A week that is assigned to previous year/month. e.g. 2021-01-01 is week 54 of 2020 per the ISO calendar.
         Previous,
@@ -130,6 +132,7 @@ pub mod week_of {
 
     /// The week number assigned to a given week according to a calendar.
     #[derive(Debug, PartialEq)]
+    #[allow(clippy::exhaustive_structs)] // this type is stable
     pub struct WeekOf {
         /// Week of month/year. 1 based.
         pub week: u16,

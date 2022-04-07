@@ -18,7 +18,8 @@ use tinystr::tinystr;
 const JULIAN_EPOCH: i32 = -1;
 
 #[derive(Copy, Clone, Debug, Hash, Default, Eq, PartialEq)]
-// The Julian calendar
+#[allow(clippy::exhaustive_structs)] // this type is stable
+                                     // The Julian calendar
 pub struct Julian;
 
 #[derive(Copy, Clone, Debug, Hash, Eq, PartialEq)]

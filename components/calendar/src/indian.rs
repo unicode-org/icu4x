@@ -13,7 +13,8 @@ use core::marker::PhantomData;
 use tinystr::tinystr;
 
 #[derive(Copy, Clone, Debug, Hash, Default, Eq, PartialEq)]
-// The Indian national calendar
+#[allow(clippy::exhaustive_structs)] // this type is stable
+                                     // The Indian national calendar
 pub struct Indian;
 
 #[derive(Copy, Clone, Debug, Hash, Eq, PartialEq)]
