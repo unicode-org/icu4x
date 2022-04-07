@@ -154,10 +154,10 @@ jobs:
         rustup target add thumbv8m.main-none-eabihf --toolchain nightly-2022-01-31
         rustup target add x86_64-unknown-linux-gnu --toolchain nightly-2022-01-31
     - name: Set up Clang-13
-      uses: egor-tensin/setup-clang@v1
-      with:
-        version: 13
-        platform: x64
+      run: |
+        wget https://apt.llvm.org/llvm.sh
+        chmod +x llvm.sh
+        sudo ./llvm.sh 13
     - name: Get cargo-make version
       id: cargo-make-version
       run: |
