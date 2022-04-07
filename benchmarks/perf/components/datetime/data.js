@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1649353240853,
+  "lastUpdate": 1649374657044,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -25547,6 +25547,48 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 224249,
             "range": "± 10727",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "86a6f9ac02dc08e407f02e2577f5b2368d790f0d",
+          "message": "Update to latest stable Rust (#1783)\n\n* Bump to Rust 1.60\r\n\r\n* clippy: automatically applied fixes\r\n\r\n* clippy unwrap fixes\r\n\r\n* clippy: rename is_eof to check_eof since it is stateful\r\n\r\n* clippy: unneeded late initializations\r\n\r\n* nightly\r\n\r\n* Update to llvm-13\r\n\r\n* fmt\r\n\r\n* fix dep?\r\n\r\n* verbose test ci\r\n\r\n* lol\r\n\r\n* install llvm 13\r\n\r\n* try direct\r\n\r\n* try check-all-features",
+          "timestamp": "2022-04-07T23:29:18Z",
+          "tree_id": "51d990f7dee0d8d953dd1c53ad384c072728eabd",
+          "url": "https://github.com/unicode-org/icu4x/commit/86a6f9ac02dc08e407f02e2577f5b2368d790f0d"
+        },
+        "date": 1649374640353,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 75570,
+            "range": "± 161",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 779373,
+            "range": "± 2031",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 156440,
+            "range": "± 192",
             "unit": "ns/iter"
           }
         ]
