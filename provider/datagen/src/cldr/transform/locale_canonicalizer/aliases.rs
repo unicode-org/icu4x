@@ -200,7 +200,7 @@ impl From<&cldr_serde::aliases::Resource> for AliasesV1<'_> {
                 }
             } else {
                 complex_region.insert(
-                    from.into(),
+                    from,
                     ZeroSlice::from_boxed_slice(
                         to.replacement
                             .split(' ')
