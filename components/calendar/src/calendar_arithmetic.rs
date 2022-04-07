@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::{types, Calendar, DateDuration, DateDurationUnit};
+use core::convert::TryInto;
 use core::marker::PhantomData;
 
 #[derive(Copy, Clone, Debug, Hash, Eq, PartialEq)]
@@ -99,6 +100,31 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
             day_of_year += C::month_days(self.year, month) as u32;
         }
         day_of_year + (self.day as u32)
+    }
+
+    #[inline]
+    pub fn date_from_year_day(year: i32, year_day: u32) -> ArithmeticDate<C> {
+        let mut month = 1;
+        let mut day = year_day as i32;
+        while month <= C::months_for_every_year() {
+            let month_days = C::month_days(year, month) as i32;
+            if day <= month_days {
+                break;
+            } else {
+                day -= month_days;
+                month += 1;
+            }
+        }
+
+        debug_assert!(day <= C::month_days(year, month) as i32);
+        #[allow(clippy::unwrap_used)]
+        // The day is expected to be within the range of month_days of C
+        ArithmeticDate {
+            year,
+            month,
+            day: day.try_into().unwrap_or(0),
+            marker: PhantomData,
+        }
     }
 
     #[inline]

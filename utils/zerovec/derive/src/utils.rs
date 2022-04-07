@@ -17,23 +17,24 @@ pub fn has_valid_repr(attrs: &[Attribute], predicate: impl Fn(&Ident) -> bool + 
         .iter()
         .filter(|a| a.path.get_ident().map(|a| a == "repr").unwrap_or(false))
         .any(|a| {
-            parse2::<ReprAttribute>(a.tokens.clone())
+            parse2::<IdentListAttribute>(a.tokens.clone())
                 .ok()
-                .and_then(|s| s.reprs.iter().find(|s| predicate(s)).map(|_| ()))
+                .and_then(|s| s.idents.iter().find(|s| predicate(s)).map(|_| ()))
                 .is_some()
         })
 }
 
-struct ReprAttribute {
-    reprs: Punctuated<Ident, Token![,]>,
+// An attribute that is a list of idents
+struct IdentListAttribute {
+    idents: Punctuated<Ident, Token![,]>,
 }
 
-impl Parse for ReprAttribute {
+impl Parse for IdentListAttribute {
     fn parse(input: ParseStream) -> Result<Self> {
         let content;
         let _paren = parenthesized!(content in input);
-        Ok(ReprAttribute {
-            reprs: content.parse_terminated(Ident::parse)?,
+        Ok(IdentListAttribute {
+            idents: content.parse_terminated(Ident::parse)?,
         })
     }
 }
@@ -154,26 +155,41 @@ impl<'a> FieldInfo<'a> {
     }
 }
 
-/// Extracts a single `zerovec::name` attribute
-pub fn extract_zerovec_attribute_named(
+/// Extracts all `zerovec::name(..)` attribute
+pub fn extract_parenthetical_zerovec_attrs(
     attrs: &mut Vec<Attribute>,
     name: &str,
-) -> Option<Attribute> {
-    let mut ret = None;
+) -> Result<Vec<Ident>> {
+    let mut ret = vec![];
+    let mut error = None;
     attrs.retain(|a| {
         // skip the "zerovec" part
         let second_segment = a.path.segments.iter().nth(1);
 
         if let Some(second) = second_segment {
-            if second.ident == name && ret.is_none() {
-                ret = Some(a.clone());
+            if second.ident == name {
+                let list = match parse2::<IdentListAttribute>(a.tokens.clone()) {
+                    Ok(l) => l,
+                    Err(_) => {
+                        error = Some(Error::new(
+                            a.span(),
+                            "#[zerovec::name(..)] takes in a comma separated list of identifiers",
+                        ));
+                        return false;
+                    }
+                };
+                ret.extend(list.idents.iter().cloned());
                 return false;
             }
         }
 
         true
     });
-    ret
+
+    if let Some(error) = error {
+        return Err(error);
+    }
+    Ok(ret)
 }
 
 /// Removes all attributes with `zerovec` in the name and places them in a separate vector
@@ -189,29 +205,27 @@ pub fn extract_zerovec_attributes(attrs: &mut Vec<Attribute>) -> Vec<Attribute> 
     ret
 }
 
-pub fn check_attr_empty(attr: &Option<Attribute>, name: &str) -> Result<()> {
-    if let Some(ref attr) = *attr {
-        if !attr.tokens.is_empty() {
-            return Err(Error::new(
-                attr.span(),
-                format!("#[zerovec::{name}] does not support arguments"),
-            ));
-        }
-    }
-    Ok(())
+#[derive(Default, Copy, Clone)]
+pub struct ZeroVecAttrs {
+    pub skip_kv: bool,
+    pub skip_ord: bool,
+    pub serialize: bool,
+    pub deserialize: bool,
+    pub debug: bool,
 }
 
 /// Removes all known zerovec:: attributes from attrs and validates them
-/// Returns (skip_kv, skip_ord, serde)
 pub fn extract_attributes_common(
     attrs: &mut Vec<Attribute>,
-    name: &str,
-) -> Result<(bool, bool, bool)> {
+    span: Span,
+    is_var: bool,
+) -> Result<ZeroVecAttrs> {
     let mut zerovec_attrs = extract_zerovec_attributes(attrs);
 
-    let skip_kv = extract_zerovec_attribute_named(&mut zerovec_attrs, "skip_kv");
-    let skip_ord = extract_zerovec_attribute_named(&mut zerovec_attrs, "skip_ord");
-    let serde = extract_zerovec_attribute_named(&mut zerovec_attrs, "serde");
+    let derive = extract_parenthetical_zerovec_attrs(&mut zerovec_attrs, "derive")?;
+    let skip = extract_parenthetical_zerovec_attrs(&mut zerovec_attrs, "skip_derive")?;
+
+    let name = if is_var { "make_varule" } else { "make_ule" };
 
     if let Some(attr) = zerovec_attrs.get(0) {
         return Err(Error::new(
@@ -220,13 +234,44 @@ pub fn extract_attributes_common(
         ));
     }
 
-    check_attr_empty(&skip_kv, "skip_kv")?;
-    check_attr_empty(&skip_ord, "skip_ord")?;
-    check_attr_empty(&serde, "serde")?;
+    let mut attrs = ZeroVecAttrs::default();
 
-    let skip_kv = skip_kv.is_some();
-    let skip_ord = skip_ord.is_some();
-    let serde = serde.is_some();
+    for ident in derive {
+        if ident == "Serialize" {
+            attrs.serialize = true;
+        } else if ident == "Deserialize" {
+            attrs.deserialize = true;
+        } else if ident == "Debug" {
+            attrs.debug = true;
+        } else {
+            return Err(Error::new(
+                ident.span(),
+                format!(
+                    "Found unknown derive attribute for #[{name}]: #[zerovec::derive({ident})]"
+                ),
+            ));
+        }
+    }
 
-    Ok((skip_kv, skip_ord, serde))
+    for ident in skip {
+        if ident == "ZeroMapKV" {
+            attrs.skip_kv = true;
+        } else if ident == "Ord" {
+            attrs.skip_ord = true;
+        } else {
+            return Err(Error::new(
+                ident.span(),
+                format!("Found unknown derive attribute for #[{name}]: #[zerovec::skip_derive({ident})]"),
+            ));
+        }
+    }
+
+    if (attrs.serialize || attrs.deserialize) && !is_var {
+        return Err(Error::new(
+            span,
+            "#[make_ule] does not support #[zerovec::derive(Serialize, Deserialize)]",
+        ));
+    }
+
+    Ok(attrs)
 }

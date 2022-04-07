@@ -32,7 +32,7 @@ type UnvalidatedLanguageIdentifierPair<'data> = StrStrPairVarULE;
 #[cfg_attr(
     feature = "serialize",
     derive(serde::Deserialize, serde::Serialize),
-    zerovec::serde
+    zerovec::derive(Deserialize, Serialize)
 )]
 pub struct StrStrPair<'a>(
     #[cfg_attr(feature = "serialize", serde(borrow))] pub Cow<'a, str>,

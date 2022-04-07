@@ -101,7 +101,7 @@ struct Date {
 
 // custom variable sized VarULE type for VarZeroVec
 #[zerovec::make_varule(PersonULE)]
-#[zerovec::serde]
+#[zerovec::derive(Serialize, Deserialize)] // add Serde impls to PersonULE
 #[derive(Clone, PartialEq, Eq, Ord, PartialOrd, serde::Serialize, serde::Deserialize)]
 struct Person<'a> {
     birthday: Date,
