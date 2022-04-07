@@ -818,9 +818,9 @@ jobs:
 
     - name: Install prerequisites for wasm build
       run: |
-        rustup component add rust-src
         rustup toolchain list
         rustup toolchain install nightly-2021-01-31
+        rustup component add rust-src --toolchain nightly-2021-01-31
 
     - name: Setup output data directory
       run: |
