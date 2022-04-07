@@ -9,7 +9,7 @@ https://github.com/rust-lang/rust/issues/60059
 You also need to install the correct toolchains:
 
 ```bash
-$ rustup install nightly-2021-12-22
-$ rustup component add --toolchain nightly-2021-12-22 rust-src
-$ rustup target add x86_64-unknown-linux-gnu --toolchain nightly-2021-12-22
+$ rustup install nightly-2022-01-31
+$ rustup component add --toolchain nightly-2022-01-31 rust-src
+$ rustup target add x86_64-unknown-linux-gnu --toolchain nightly-2022-01-31
 ```

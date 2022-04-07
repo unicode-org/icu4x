@@ -337,10 +337,7 @@ mod test {
         let d: VZV<VZS<[u8]>> = VarZeroVec::from(u8_3d_vzv_brackets);
         assert_eq!(
             a.iter()
-                .map(|x| x
-                    .iter()
-                    .map(|y| y.iter().copied().collect::<Vec<u8>>())
-                    .collect::<Vec<Vec<u8>>>())
+                .map(|x| x.iter().map(|y| y.to_vec()).collect::<Vec<Vec<u8>>>())
                 .collect::<Vec<Vec<Vec<u8>>>>(),
             u8_3d_vec
         );

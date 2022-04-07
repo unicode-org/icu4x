@@ -149,8 +149,7 @@ impl TimeZoneFormat {
             .get()
             .0
             .patterns_iter()
-            .map(|pattern| pattern.items.iter())
-            .flatten()
+            .flat_map(|pattern| pattern.items.iter())
             .filter_map(|item| match item {
                 PatternItem::Field(field) => Some(field),
                 _ => None,
@@ -1106,7 +1105,7 @@ impl FormatTimeZone for LocalizedGmtFormat {
                     )
                     .replace("mm", &TimeZoneFormat::format_offset_minutes(time_zone))
                     .replace(
-                        "H",
+                        'H',
                         &TimeZoneFormat::format_offset_hours(time_zone, ZeroPadding::Off),
                     ),
             ))

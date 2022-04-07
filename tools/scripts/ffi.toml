@@ -140,7 +140,7 @@ exec --fail-on-error diplomat-tool cpp ./cpp/include --docs ./cpp/docs/source
 [tasks.build-wearos-ffi]
 description = "Build ICU4X CAPI for Cortex"
 category = "ICU4X FFI"
-toolchain = "nightly-2021-12-22"
+toolchain = "nightly-2022-01-31"
 env = { "RUSTFLAGS" = "-Ctarget-cpu=cortex-m33 -Cpanic=abort" }
 command = "cargo"
 args = ["build", "--package", "icu_freertos",
@@ -152,7 +152,7 @@ args = ["build", "--package", "icu_freertos",
 [tasks.test-nostd]
 description = "Ensure ICU4X core builds on no-std"
 category = "ICU4X FFI"
-toolchain = "nightly-2021-12-22"
+toolchain = "nightly-2022-01-31"
 command = "cargo"
 args = ["build", "--package", "icu", "--target", "thumbv7m-none-eabi"]
 

@@ -16,7 +16,7 @@ struct SkeletonFixtures {
 }
 
 fn get_skeleton_fixtures() -> Vec<String> {
-    let file = File::open("./tests/fixtures/tests/skeletons.json".to_string())
+    let file = File::open("./tests/fixtures/tests/skeletons.json")
         .expect("Unable to open ./tests/fixtures/tests/skeletons.json");
     let reader = BufReader::new(file);
     let fixtures: SkeletonFixtures =

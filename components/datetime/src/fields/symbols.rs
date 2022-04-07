@@ -236,7 +236,7 @@ impl TryFrom<char> for FieldSymbol {
         .or_else(|_| Weekday::try_from(ch).map(Self::Weekday))
         .or_else(|_| DayPeriod::try_from(ch).map(Self::DayPeriod))
         .or_else(|_| Hour::try_from(ch).map(Self::Hour))
-        .or_else(|_| {
+        .or({
             if ch == 'm' {
                 Ok(Self::Minute)
             } else {

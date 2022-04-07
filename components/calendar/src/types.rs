@@ -307,11 +307,10 @@ impl FromStr for GmtOffset {
     /// let offset3: GmtOffset = "-09:30".parse().expect("Failed to parse a GMT offset.");
     /// ```
     fn from_str(input: &str) -> Result<Self, Self::Err> {
-        let offset_sign;
-        match input.chars().next() {
-            Some('+') => offset_sign = 1,
-            /* ASCII  */ Some('-') => offset_sign = -1,
-            /* U+2212 */ Some('−') => offset_sign = -1,
+        let offset_sign = match input.chars().next() {
+            Some('+') => 1,
+            /* ASCII  */ Some('-') => -1,
+            /* U+2212 */ Some('−') => -1,
             Some('Z') => return Ok(Self(0)),
             _ => return Err(DateTimeError::InvalidTimeZoneOffset),
         };

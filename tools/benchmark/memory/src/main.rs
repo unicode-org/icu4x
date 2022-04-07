@@ -74,7 +74,7 @@ fn process_cli_args() -> ProcessedArgs {
 
         toolchain: matches
             .value_of("TOOLCHAIN")
-            .unwrap_or("nightly-2021-12-22")
+            .unwrap_or("nightly-2022-01-31")
             .to_string(),
     }
 }
@@ -103,7 +103,7 @@ fn extract_bytes_from_log_line(preamble: &str, text: &str) -> u64 {
         .get(start..end)
         .expect("Unable to get a substring.")
         .trim()
-        .replace(",", "")
+        .replace(',', "")
         .parse::<u64>()
         .expect("Unable to parse the byte amount");
 }
