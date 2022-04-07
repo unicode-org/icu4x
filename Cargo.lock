@@ -1421,6 +1421,7 @@ dependencies = [
  "icu_testdata",
  "icu_uniset",
  "serde",
+ "unicode-bidi",
  "zerovec",
 ]
 
