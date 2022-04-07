@@ -24,18 +24,26 @@ struct ICU4XCodePointSetDataDeleter {
     capi::ICU4XCodePointSetData_destroy(l);
   }
 };
+
+/**
+ * An ICU4X Unicode Set Property object, capable of querying whether a code point is contained in a set based on a Unicode property.
+ * 
+ * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu_properties/index.html) for more information.
+ */
 class ICU4XCodePointSetData {
  public:
 
   /**
    * Gets a set for Unicode property ascii_hex_digit from a [`ICU4XDataProvider`].
-   * See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu_properties/sets/fn.get_ascii_hex_digit.html) for more information.
+   * 
+   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu_properties/sets/fn.get_ascii_hex_digit.html) for more information.
    */
   static ICU4XCodePointSetDataResult try_get_ascii_hex_digit(const ICU4XDataProvider& provider);
 
   /**
    * Checks whether the code point is in the set.
-   * See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu_uniset/struct.UnicodeSet.html#method.contains) for more information.
+   * 
+   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu_uniset/struct.UnicodeSet.html#method.contains) for more information.
    */
   bool contains(char32_t cp) const;
   inline const capi::ICU4XCodePointSetData* AsFFI() const { return this->inner.get(); }

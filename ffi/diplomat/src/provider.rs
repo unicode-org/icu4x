@@ -22,7 +22,7 @@ pub mod ffi {
 
     #[diplomat::opaque]
     /// An ICU4X data provider, capable of loading ICU4X data keys from some source.
-    /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu_provider/prelude/trait.DataProvider.html) for more information.
+    #[diplomat::rust_link(icu_provider, Mod)]
     pub struct ICU4XDataProvider(pub Box<dyn BufferProvider + 'static>);
 
     /// A result type for `ICU4XDataProvider::create`.
@@ -35,7 +35,7 @@ pub mod ffi {
 
     impl ICU4XDataProvider {
         /// Constructs an `FsDataProvider` and returns it as an [`ICU4XDataProvider`].
-        /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu_provider_fs/struct.FsDataProvider.html) for more details.
+        #[diplomat::rust_link(icu_provider_fs::FsDataProvider, Struct)]
         #[allow(unused_variables)]
         pub fn create_fs(path: &str) -> ICU4XCreateDataProviderResult {
             #[cfg(all(
@@ -61,7 +61,7 @@ pub mod ffi {
         }
 
         /// Constructs an `StaticDataProvider` and returns it as an [`ICU4XDataProvider`].
-        /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu_provider_blob/struct.StaticDataProvider.html) for more details.
+        #[diplomat::rust_link(icu_provider_blob::StaticDataProvider, Struct)]
         pub fn create_static() -> ICU4XCreateDataProviderResult {
             #[cfg(not(feature = "provider_static"))]
             unimplemented!();
@@ -80,7 +80,7 @@ pub mod ffi {
         }
 
         /// Constructs a `BlobDataProvider` and returns it as an [`ICU4XDataProvider`].
-        /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu_provider_blob/struct.BlobDataProvider.html) for more details.
+        #[diplomat::rust_link(icu_provider_blob::BlobDataProvider, Struct)]
         pub fn create_from_byte_slice(blob: &[u8]) -> ICU4XCreateDataProviderResult {
             use alloc::rc::Rc;
             match BlobDataProvider::new_from_rc_blob(Rc::from(blob)) {
@@ -96,7 +96,7 @@ pub mod ffi {
         }
 
         /// Constructs an empty `StaticDataProvider` and returns it as an [`ICU4XDataProvider`].
-        /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu_provider_blob/struct.StaticDataProvider.html) for more details.
+        #[diplomat::rust_link(icu_provider_blob::StaticDataProvider, Struct)]
         pub fn create_empty() -> ICU4XCreateDataProviderResult {
             let provider = StaticDataProvider::new_empty();
             ICU4XCreateDataProviderResult {

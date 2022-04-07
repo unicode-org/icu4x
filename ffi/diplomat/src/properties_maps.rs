@@ -16,7 +16,7 @@ pub mod ffi {
 
     #[diplomat::opaque]
     /// An ICU4X Unicode Set Property object, capable of querying whether a code point is contained in a set based on a Unicode property. For properties whose values fit into 16 bits.
-    /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu_properties/index.html) for more information.
+    #[diplomat::rust_link(icu_properties, Mod)]
     pub struct ICU4XCodePointMapData16(DataPayload<UnicodePropertyMapV1Marker<u16>>);
 
     pub struct ICU4XCodePointMapData16Response {
@@ -28,7 +28,7 @@ pub mod ffi {
 
     impl ICU4XCodePointMapData16 {
         /// Gets a map for Unicode property Script from a [`ICU4XDataProvider`].
-        /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu_properties/maps/fn.get_script.html) for more information.
+        #[diplomat::rust_link(icu_properties::maps::get_script, Fn)]
         pub fn try_get_script(provider: &ICU4XDataProvider) -> ICU4XCodePointMapData16Response {
             use icu_provider::serde::AsDeserializingBufferProvider;
             let provider = provider.0.as_deserializing();
@@ -63,7 +63,7 @@ pub mod ffi {
         }
 
         /// Gets the value for a code point.
-        /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu_codepointtrie/codepointtrie/struct.CodePointTrie.html#method.get_u32) for more information.
+        #[diplomat::rust_link(icu_codepointtrie::codepointtrie::CodePointTrie::get_u32, FnInStruct)]
         pub fn get(&self, cp: char) -> u16 {
             self.0.get().code_point_trie.get(cp.into())
         }
