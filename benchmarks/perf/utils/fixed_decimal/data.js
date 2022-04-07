@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1649286878678,
+  "lastUpdate": 1649353142751,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -22739,6 +22739,36 @@ window.BENCHMARK_DATA = {
             "name": "fixed_decimal/overview",
             "value": 96102,
             "range": "± 364",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "samchen61661@gmail.com",
+            "name": "samchen",
+            "username": "samchen61661"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "be035bdf21bbc75ac85f8799f9d239e54e2703c8",
+          "message": "Specify Custom Fallbacking for TimeZoneFormat (#1591)\n\n* Specify Custom Fallbacking for TimeZoneFormat\r\n\r\n* fix rebase error\r\n\r\n* remove unrelated idea files\r\n\r\n* address comments and add test coverage\r\n\r\n* rename enum variant names\r\n\r\n* address comments\r\n\r\n* add format_no_fallback method\r\n\r\n* remove unrelated idea files\r\n\r\n* error handling\r\n\r\n* address majority comments\r\n\r\n* make fallback default to LocalizedGMT\r\n\r\n* check zone symbols and update api for format_offset_seconds\r\n\r\n* fix rebase error\r\n\r\n* address minor comments\r\n\r\n* run cargo fmt\r\n\r\n* remove write_pattern and TimeZoneFormatKind",
+          "timestamp": "2022-04-07T10:31:22-07:00",
+          "tree_id": "8ec16b59fdbe7251e7d61cd4f2f71f1fad861b15",
+          "url": "https://github.com/unicode-org/icu4x/commit/be035bdf21bbc75ac85f8799f9d239e54e2703c8"
+        },
+        "date": 1649353124656,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 131040,
+            "range": "± 836",
             "unit": "ns/iter"
           }
         ]
