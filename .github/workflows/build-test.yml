@@ -827,7 +827,7 @@ jobs:
         mkdir -p benchmarks/binsize/${{ matrix.type }}
 
     - name: Build wasm executables
-      run: cargo make wasm-examples
+      run: cargo make -v wasm-examples
 
     - name: gzip wasm executables if requested
       if: ${{ matrix.type == 'gz' }}
