@@ -148,7 +148,8 @@ impl TimeZoneFormat {
         let zone_symbols = patterns
             .get()
             .0
-            .patterns_iter().flat_map(|pattern| pattern.items.iter())
+            .patterns_iter()
+            .flat_map(|pattern| pattern.items.iter())
             .filter_map(|item| match item {
                 PatternItem::Field(field) => Some(field),
                 _ => None,

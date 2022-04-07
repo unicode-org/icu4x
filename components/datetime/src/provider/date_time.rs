@@ -271,9 +271,9 @@ impl<'data> DateTimeSymbols for provider::calendar::DateSymbolsV1<'data> {
                     let symbols = match length {
                         fields::FieldLength::Wide => widths.wide.as_ref(),
                         fields::FieldLength::Narrow => widths.narrow.as_ref(),
-                        fields::FieldLength::Six => widths
-                            .short
-                            .as_ref().or(widths.abbreviated.as_ref()),
+                        fields::FieldLength::Six => {
+                            widths.short.as_ref().or(widths.abbreviated.as_ref())
+                        }
                         _ => widths.abbreviated.as_ref(),
                     };
                     if let Some(symbols) = symbols {

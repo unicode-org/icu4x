@@ -527,7 +527,11 @@ impl SegmenterRuleProvider {
 
         for rule in &segmenter.rules {
             let break_state = if let Some(state) = rule.break_state {
-                if state { BREAK_RULE } else { KEEP_RULE }
+                if state {
+                    BREAK_RULE
+                } else {
+                    KEEP_RULE
+                }
             } else {
                 NOT_MATCH_RULE
             };
