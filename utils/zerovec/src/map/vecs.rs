@@ -362,8 +362,8 @@ where
     where
         T: Ord,
     {
-        if !self.is_empty() {
-            let mut prev = self.get(0).unwrap();
+        if let Some(first) = self.get(0) {
+            let mut prev = first;
             for element in self.iter().skip(1) {
                 if element.cmp(prev) != Ordering::Greater {
                     return false;
@@ -430,8 +430,8 @@ where
     where
         T: Ord,
     {
-        if !self.is_empty() {
-            let mut prev = self.get(0).unwrap();
+        if let Some(first) = self.get(0) {
+            let mut prev = first;
             for element in self.iter().skip(1) {
                 if element.cmp(prev) != Ordering::Greater {
                     return false;
