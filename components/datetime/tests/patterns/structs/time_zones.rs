@@ -28,7 +28,33 @@ pub struct TimeZoneTest {
 pub struct TimeZoneExpectation {
     pub patterns: Vec<String>,
     pub configs: Vec<TimeZoneFormatConfig>,
-    pub expected: String,
+    pub fallback_formats: Vec<FallbackFormat>,
+    pub expected: Vec<String>,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize)]
+pub enum FallbackFormat {
+    Iso8601(IsoFormat, IsoMinutes, IsoSeconds),
+    LocalizedGmt,
+}
+
+impl From<FallbackFormat> for time_zone::TimeZoneFormatOptions {
+    fn from(other: FallbackFormat) -> time_zone::TimeZoneFormatOptions {
+        match other {
+            FallbackFormat::Iso8601(iso_format, iso_minutes, iso_seconds) => {
+                time_zone::TimeZoneFormatOptions {
+                    fallback_format: time_zone::FallbackFormat::Iso8601(
+                        iso_format.into(),
+                        iso_minutes.into(),
+                        iso_seconds.into(),
+                    ),
+                }
+            }
+            FallbackFormat::LocalizedGmt => time_zone::TimeZoneFormatOptions {
+                fallback_format: time_zone::FallbackFormat::LocalizedGmt,
+            },
+        }
+    }
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize)]

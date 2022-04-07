@@ -21,7 +21,7 @@ use crate::{
         week_data::WeekDataV1Marker,
     },
     raw,
-    time_zone::TimeZoneFormat,
+    time_zone::{TimeZoneFormat, TimeZoneFormatOptions},
     DateTimeFormatError,
 };
 
@@ -44,7 +44,8 @@ impl ZonedDateTimeFormat {
         date_provider: &DP,
         zone_provider: &ZP,
         plural_provider: &PP,
-        options: &DateTimeFormatOptions,
+        date_time_format_options: &DateTimeFormatOptions,
+        time_zone_format_options: &TimeZoneFormatOptions,
         calendar: &'static str,
     ) -> Result<Self, DateTimeFormatError>
     where
@@ -68,7 +69,7 @@ impl ZonedDateTimeFormat {
         let patterns = provider::date_time::PatternSelector::for_options(
             date_provider,
             &locale,
-            options,
+            date_time_format_options,
             calendar,
         )?;
         let required = datetime::analyze_patterns(&patterns.get().0, true)
@@ -124,6 +125,7 @@ impl ZonedDateTimeFormat {
                 .patterns
                 .clone(),
             zone_provider,
+            time_zone_format_options,
         )?;
 
         Ok(Self {

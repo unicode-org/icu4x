@@ -11,6 +11,7 @@ use icu_calendar::{DateTime, Gregorian};
 use icu_datetime::DateTimeFormat;
 use icu_datetime::{
     mock::{parse_gregorian_from_str, zoned_datetime::MockZonedDateTime},
+    time_zone::TimeZoneFormatOptions,
     ZonedDateTimeFormat,
 };
 use icu_locid::Locale;
@@ -67,7 +68,12 @@ fn datetime_benches(c: &mut Criterion) {
                     let locale: Locale = setup.locale.parse().unwrap();
                     let options = fixtures::get_options(&setup.options);
                     let dtf = ZonedDateTimeFormat::<Gregorian>::try_new(
-                        locale, &provider, &provider, &provider, &options,
+                        locale,
+                        &provider,
+                        &provider,
+                        &provider,
+                        &options,
+                        &TimeZoneFormatOptions::default(),
                     )
                     .unwrap();
 
@@ -204,7 +210,12 @@ fn datetime_benches(c: &mut Criterion) {
                         let locale: Locale = setup.locale.parse().unwrap();
                         let options = fixtures::get_options(&setup.options);
                         let dtf = ZonedDateTimeFormat::<Gregorian>::try_new(
-                            locale, &provider, &provider, &provider, &options,
+                            locale,
+                            &provider,
+                            &provider,
+                            &provider,
+                            &options,
+                            &TimeZoneFormatOptions::default(),
                         )
                         .unwrap();
 
@@ -232,7 +243,12 @@ fn datetime_benches(c: &mut Criterion) {
                         let locale: Locale = setup.locale.parse().unwrap();
                         let options = fixtures::get_options(&setup.options);
                         let dtf = ZonedDateTimeFormat::<Gregorian>::try_new(
-                            locale, &provider, &provider, &provider, &options,
+                            locale,
+                            &provider,
+                            &provider,
+                            &provider,
+                            &options,
+                            &TimeZoneFormatOptions::default(),
                         )
                         .unwrap();
 
@@ -257,7 +273,12 @@ fn datetime_benches(c: &mut Criterion) {
                         let locale: Locale = setup.locale.parse().unwrap();
                         let options = fixtures::get_options(&setup.options);
                         let dtf = ZonedDateTimeFormat::<Gregorian>::try_new(
-                            locale, &provider, &provider, &provider, &options,
+                            locale,
+                            &provider,
+                            &provider,
+                            &provider,
+                            &options,
+                            &TimeZoneFormatOptions::default(),
                         )
                         .unwrap();
 
@@ -286,7 +307,12 @@ fn datetime_benches(c: &mut Criterion) {
                         let locale: Locale = setup.locale.parse().unwrap();
                         let options = fixtures::get_options(&setup.options);
                         let dtf = ZonedDateTimeFormat::<Gregorian>::try_new(
-                            locale, &provider, &provider, &provider, &options,
+                            locale,
+                            &provider,
+                            &provider,
+                            &provider,
+                            &options,
+                            &TimeZoneFormatOptions::default(),
                         )
                         .unwrap();
 

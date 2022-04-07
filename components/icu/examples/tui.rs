@@ -11,7 +11,9 @@ use icu::calendar::Gregorian;
 use icu::datetime::DateTimeFormatOptions;
 use icu::locid::{locale, Locale};
 use icu::plurals::{PluralCategory, PluralRules};
-use icu_datetime::{mock::zoned_datetime::MockZonedDateTime, ZonedDateTimeFormat};
+use icu_datetime::{
+    mock::zoned_datetime::MockZonedDateTime, TimeZoneFormatOptions, ZonedDateTimeFormat,
+};
 use icu_uniset::UnicodeSetBuilder;
 use std::env;
 
@@ -50,6 +52,7 @@ fn main(_argc: isize, _argv: *const *const u8) -> isize {
             &provider,
             &provider,
             &DateTimeFormatOptions::default(),
+            &TimeZoneFormatOptions::default(),
         )
         .expect("Failed to create DateTimeFormat.");
         let today: MockZonedDateTime = "2020-10-10T18:56:00Z"
