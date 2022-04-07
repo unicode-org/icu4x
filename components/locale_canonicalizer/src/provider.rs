@@ -59,44 +59,44 @@ pub struct StrStrPair<'a>(
 /// or modify aliases for use in this structure.
 // TODO: Use validated types as value types
 pub struct AliasesV1<'data> {
-    /// [language(-variant)+] -> [langid]
+    /// `[language(-variant)+\] -> [langid]`
     /// This is not a map as it's searched linearly according to the canonicalization rules.
     #[cfg_attr(feature = "serialize", serde(borrow))]
     pub language_variants: VarZeroVec<'data, UnvalidatedLanguageIdentifierPair>,
-    /// sgn-[region] -> [language]
+    /// `sgn-[region] -> [language]`
     #[cfg_attr(feature = "serialize", serde(borrow))]
     pub sgn_region: ZeroMap<'data, UnvalidatedRegion, Language>,
-    /// [language{2}] -> [langid]
+    /// `[language{2}] -> [langid]`
     #[cfg_attr(feature = "serialize", serde(borrow))]
     pub language_len2: ZeroMap<'data, TinyAsciiStr<2>, UnvalidatedLanguageIdentifier>,
-    /// [language{3}] -> [langid]
+    /// `[language{3}] -> [langid]`
     #[cfg_attr(feature = "serialize", serde(borrow))]
     pub language_len3: ZeroMap<'data, UnvalidatedLanguage, UnvalidatedLanguageIdentifier>,
-    /// [langid] -> [langid]
+    /// `[langid] -> [langid]`
     /// This is not a map as it's searched linearly according to the canonicalization rules.
     #[cfg_attr(feature = "serialize", serde(borrow))]
     pub language: VarZeroVec<'data, UnvalidatedLanguageIdentifierPair>,
 
-    /// [script] -> [script]
+    /// `[script] -> [script]`
     #[cfg_attr(feature = "serialize", serde(borrow))]
     pub script: ZeroMap<'data, UnvalidatedScript, Script>,
 
-    /// [region{2}] -> [region]
+    /// `[region{2}] -> [region]`
     #[cfg_attr(feature = "serialize", serde(borrow))]
     pub region_alpha: ZeroMap<'data, TinyAsciiStr<2>, Region>,
-    /// [region{3}] -> [region]
+    /// `[region{3}] -> [region]`
     #[cfg_attr(feature = "serialize", serde(borrow))]
     pub region_num: ZeroMap<'data, UnvalidatedRegion, Region>,
 
-    /// [region] -> [region]+
+    /// `[region] -> [region]+`
     #[cfg_attr(feature = "serialize", serde(borrow))]
     pub complex_region: ZeroMap<'data, UnvalidatedRegion, ZeroSlice<Region>>,
 
-    /// [variant] -> [variant]
+    /// `[variant] -> [variant]`
     #[cfg_attr(feature = "serialize", serde(borrow))]
     pub variant: ZeroMap<'data, UnvalidatedVariant, Variant>,
 
-    /// [value{7}] -> [value{7}]
+    /// `[value{7}] -> [value{7}]`
     #[cfg_attr(feature = "serialize", serde(borrow))]
     pub subdivision: ZeroMap<'data, UnvalidatedSubdivision, UnvalidatedSubdivision>,
 }
