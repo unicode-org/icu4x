@@ -161,7 +161,6 @@ fn uts35_replacement<I, V>(
 ) where
     I: Iterator<Item = V>,
     Variant: PartialOrd<V>,
-    V: Copy + core::fmt::Debug,
 {
     if ruletype_has_language || (source.id.language.is_empty() && !replacement.language.is_empty())
     {
@@ -187,31 +186,41 @@ fn uts35_replacement<I, V>(
 
         let mut variants: Vec<Variant> = Vec::new();
 
-        while let Some(&source) = sources.peek() {
-            match (skips.peek(), replacements.peek()) {
-                (Some(&skip), _) if source > skip => {
+        loop {
+            match (sources.peek(), skips.peek(), replacements.peek()) {
+                (Some(&source), Some(skip), _) if source > *skip => {
                     skips.next();
                 }
-                (Some(&skip), _) if source == skip => {
+                (Some(&source), Some(skip), _) if source == *skip => {
                     skips.next();
                     sources.next();
                 }
-                (_, Some(&replacement)) if replacement.cmp(&source) == Ordering::Less => {
+                (Some(&source), _, Some(&replacement))
+                    if replacement.cmp(&source) == Ordering::Less =>
+                {
                     variants.push(replacement);
                     replacements.next();
                 }
-                (_, Some(&replacement)) if &source == &replacement => {
+                (Some(&source), _, Some(&replacement))
+                    if replacement.cmp(&source) == Ordering::Equal =>
+                {
                     variants.push(source);
                     sources.next();
                     replacements.next();
                 }
-                _ => {
+                (Some(&source), _, _) => {
                     variants.push(source);
                     sources.next();
                 }
+                (None, _, Some(&replacement)) => {
+                    variants.push(replacement);
+                    replacements.next();
+                }
+                (None, _, None) => {
+                    break;
+                }
             }
         }
-        variants.extend(replacements);
         source.id.variants = Variants::from_vec_unchecked(variants);
     }
 }
