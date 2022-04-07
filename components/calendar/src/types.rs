@@ -11,7 +11,6 @@ use core::ops::{Add, Sub};
 use core::str::FromStr;
 use tinystr::{TinyStr16, TinyStr8};
 
-/// TODO(#486): Implement era codes.
 #[derive(Copy, Clone, Debug, PartialEq)]
 pub struct Era(pub TinyStr16);
 
@@ -397,6 +396,7 @@ impl FromStr for GmtOffset {
 #[allow(missing_docs)] // The weekday variants should be self-obvious.
 #[repr(i8)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+#[allow(clippy::exhaustive_enums)] // This is stable
 pub enum IsoWeekday {
     Monday = 1,
     Tuesday,

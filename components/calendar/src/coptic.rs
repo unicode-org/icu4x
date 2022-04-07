@@ -15,7 +15,8 @@ use core::marker::PhantomData;
 use tinystr::tinystr;
 
 #[derive(Copy, Clone, Debug, Hash, Default, Eq, PartialEq)]
-// The Coptic Calendar
+#[allow(clippy::exhaustive_structs)] // this type is stable
+                                     // The Coptic Calendar
 pub struct Coptic;
 
 #[derive(Copy, Clone, Debug, Hash, Eq, PartialEq)]

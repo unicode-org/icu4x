@@ -12,8 +12,9 @@ use crate::{
 use core::marker::PhantomData;
 use tinystr::tinystr;
 
+/// The Indian national calendar
 #[derive(Copy, Clone, Debug, Hash, Default, Eq, PartialEq)]
-// The Indian national calendar
+#[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct Indian;
 
 #[derive(Copy, Clone, Debug, Hash, Eq, PartialEq)]
