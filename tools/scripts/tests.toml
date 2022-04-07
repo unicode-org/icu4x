@@ -8,7 +8,7 @@
 description = "Build all permutations of all features"
 category = "ICU4X Development"
 install_crate = { crate_name = "cargo-all-features", binary = "cargo-check-all-features", test_arg = ["--help"] }
-install_crate_args = ["--version", "^1.4"]
+install_crate_args = ["--version", "^1.7"]
 command = "cargo"
 args = ["check-all-features"]
 
@@ -16,7 +16,7 @@ args = ["check-all-features"]
 description = "Build all permutations of all features"
 category = "ICU4X Development"
 install_crate = { crate_name = "cargo-all-features", binary = "cargo-build-all-features", test_arg = ["--help"] }
-install_crate_args = ["--version", "^1.4"]
+install_crate_args = ["--version", "^1.7"]
 command = "cargo"
 args = ["build-all-features"]
 
