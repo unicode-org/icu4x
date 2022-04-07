@@ -132,9 +132,9 @@ where
         && {
             // Checks if variants are a subset of source variants.
             // As both iterators are sorted, this can be done linearly.
-            let mut source_variants = source.id.variants.iter();
+            let source_variants = source.id.variants.iter();
             'outer: for it in variants {
-                while let Some(cand) = source_variants.next() {
+                for cand in source_variants.as_ref() {
                     match cand.partial_cmp(&it) {
                         Some(Ordering::Equal) => {
                             continue 'outer;
@@ -173,7 +173,7 @@ fn uts35_replacement<I, V>(
     if ruletype_has_region || (source.id.region.is_none() && replacement.region.is_some()) {
         source.id.region = replacement.region;
     }
-    if let Some(mut skips) = ruletype_variants {
+    if let Some(skips) = ruletype_variants {
         // The rule matches if the ruletype variants are a subset of the source variants.
         // This means ja-Latn-fonipa-hepburn-heploc matches against the rule for
         // hepburn-heploc and is canonicalized to ja-Latn-alalc97-fonipa
@@ -181,59 +181,53 @@ fn uts35_replacement<I, V>(
         // We're merging three sorted deduped iterators into a new sequence:
         // sources - skips + replacements
 
-        let mut sources = source.id.variants.iter().copied();
-        let mut replacements = replacement.variants.iter().copied();
-
-        let mut source_v: Option<Variant> = sources.next();
-        let mut replacement: Option<Variant> = replacements.next();
-        let mut skip: Option<V> = skips.next();
+        let mut sources = source.id.variants.iter().copied().peekable();
+        let mut replacements = replacement.variants.iter().copied().peekable();
+        let mut skips = skips.peekable();
 
         let mut variants: Vec<Variant> = Vec::new();
 
-        loop {
-            // Advance skip iterator until it is caught up to sources
-            while skip.is_some() && source_v.is_some() && source_v.unwrap() > skip.unwrap() {
-                skip = skips.next();
+        'outer: while let Some(&source) = sources.peek() {
+            // Maybe skip source
+            while let Some(&skip) = skips.peek() {
+                match source.partial_cmp(&skip) {
+                    Some(Ordering::Greater) => {
+                        skips.next();
+                    }
+                    Some(Ordering::Equal) => {
+                        skips.next();
+                        sources.next();
+                        continue 'outer; // Don't have source anymore
+                    }
+                    _ => {
+                        break;
+                    }
+                }
             }
 
-            // If sources and skips have the same value, advance both
-            if skip.is_some() && source_v.is_some() && source_v.unwrap() == skip.unwrap() {
-                source_v = sources.next();
-                skip = skips.next();
-                continue;
-            }
-
-            // Now merge sources and replacements
-            match (source_v, replacement) {
-                (Some(s), Some(r)) => match s.cmp(&r) {
+            // Insert the smaller of source and replacement
+            if let Some(&replacement) = replacements.peek() {
+                match source.cmp(&replacement) {
                     Ordering::Less => {
-                        variants.push(s);
-                        source_v = sources.next();
+                        variants.push(source);
+                        sources.next();
                     }
                     Ordering::Greater => {
-                        variants.push(r);
-                        replacement = replacements.next();
+                        variants.push(replacement);
+                        replacements.next();
                     }
                     Ordering::Equal => {
-                        variants.push(r);
-                        source_v = sources.next();
-                        replacement = replacements.next();
+                        variants.push(replacement);
+                        sources.next();
+                        replacements.next();
                     }
-                },
-                (Some(s), None) => {
-                    variants.push(s);
-                    source_v = sources.next();
                 }
-                (None, Some(r)) => {
-                    variants.push(r);
-                    variants.extend(sources);
-                    break;
-                }
-                (None, None) => {
-                    break;
-                }
+            } else {
+                variants.push(source);
+                sources.next();
             }
         }
+        variants.extend(replacements);
         source.id.variants = Variants::from_vec_unchecked(variants);
     }
 }
@@ -301,7 +295,7 @@ where
     T: PartialOrd,
 {
     if let Some(mut last) = iter.next() {
-        while let Some(curr) = iter.next() {
+        for curr in iter {
             if last > curr {
                 return false;
             }
