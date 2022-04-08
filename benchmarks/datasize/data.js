@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1649383146623,
+  "lastUpdate": 1649423976649,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -13013,6 +13013,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/967670b3e515ba1c37881959e867eb1e6d688b3a"
         },
         "date": 1649383130696,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4503155,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "10595307+mildgravitas@users.noreply.github.com",
+            "name": "mildgravitas",
+            "username": "mildgravitas"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "890bc54150807b859c88ed0ca298e98b752fe0c2",
+          "message": "Add support for day of week in month ('F') (#1770)\n\n* datetime(refactor): Use a dedicated Day enum in options::components::Bag.\r\n\r\n* feat: Add support for day of week in month ('F').\r\n\r\n* fix(datetime): cleanup #592 TODOs & add DayOfWeekInMonth support to `From<PatternPlurals> for Bag`.",
+          "timestamp": "2022-04-08T15:17:32+02:00",
+          "tree_id": "71c6957893398d6d0b02ffce2ddfeb7f5a9c2e50",
+          "url": "https://github.com/unicode-org/icu4x/commit/890bc54150807b859c88ed0ca298e98b752fe0c2"
+        },
+        "date": 1649423955757,
         "tool": "ndjson",
         "benches": [
           {
