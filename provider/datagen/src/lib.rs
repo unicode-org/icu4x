@@ -68,38 +68,78 @@ pub fn get_all_keys() -> Vec<ResourceKey> {
     v
 }
 
+/// Options for creating a datagen provider.
 pub struct DatagenOptions<'a> {
+    /// Paths to CLDR source data.
     pub cldr_paths: &'a dyn cldr::CldrPaths,
+    /// Paths to Unicode Properties source data.
     pub uprops_root: &'a Path,
+    /// Paths to segmentation source data.
     pub segmenter_data_root: &'a Path,
 }
 
+/// Create a data provider reading from source files that generates data for all,
+/// or a subset, of ICU4X.
+///
+/// To create a data provider for all of ICU4X:
+///
+/// ```no_run
+/// use icu_datagen::DatagenOptions;
+///
+/// // This data provider supports all keys required by ICU4X.
+/// let provider = icu_datagen::create_datagen_provider!(DatagenOptions {
+///     cldr_paths: todo!(),
+///     uprops_root: todo!(),
+///     segmenter_data_root: todo!(),
+/// });
+/// # Ok::<(), eyre::ErrReport>(())
+/// ```
+///
+/// To create a data provider for a subset:
+///
+/// ```no_run
+/// use icu_datagen::DatagenOptions;
+///
+/// // This data provider supports the keys for LocaleCanonicalizer.
+/// let provider = icu_datagen::create_datagen_provider!(DatagenOptions {
+///     cldr_paths: todo!(),
+///     uprops_root: todo!(),
+///     segmenter_data_root: todo!(),
+/// }, [
+///     icu_datagen::cldr::AliasesProvider,
+///     icu_datagen::cldr::LikelySubtagsProvider,
+/// ]);
+/// # Ok::<(), eyre::ErrReport>(())
+/// ```
 #[macro_export]
-macro_rules! create_omnibus_provider {
-    ($datagen_options:expr, $cldr_paths:expr, $uprops_root:expr, $segmenter_data_root:expr) => {{
+macro_rules! create_datagen_provider {
+    ($datagen_options:expr) => {
+        $crate::create_datagen_provider!(
+            $datagen_options,
+            [
+                $crate::cldr::AliasesProvider,
+                $crate::cldr::CommonDateProvider,
+                $crate::cldr::JapaneseErasProvider,
+                $crate::cldr::LikelySubtagsProvider,
+                $crate::cldr::NumbersProvider,
+                $crate::cldr::PluralsProvider,
+                $crate::cldr::TimeZonesProvider,
+                $crate::cldr::WeekDataProvider,
+                $crate::cldr::ListProvider,
+                $crate::uprops::EnumeratedPropertyCodePointTrieProvider,
+                $crate::uprops::ScriptWithExtensionsPropertyProvider,
+                $crate::uprops::EnumeratedPropertyUnicodeSetDataProvider,
+                $crate::uprops::BinaryPropertyUnicodeSetDataProvider,
+                $crate::segmenter::SegmenterRuleProvider,
+            ]
+        )
+    };
+    ($datagen_options:expr, [ $($constructor:path),+, ]) => {{
         use core::convert::TryFrom;
         icu_provider_adapters::make_forking_provider!(
             icu_provider_adapters::fork::by_key::ForkByKeyProvider,
             [
-                $crate::cldr::AliasesProvider::try_from(&$datagen_options)?,
-                $crate::cldr::CommonDateProvider::try_from(&$datagen_options)?,
-                $crate::cldr::JapaneseErasProvider::try_from(&$datagen_options)?,
-                $crate::cldr::LikelySubtagsProvider::try_from(&$datagen_options)?,
-                $crate::cldr::NumbersProvider::try_from(&$datagen_options)?,
-                $crate::cldr::PluralsProvider::try_from(&$datagen_options)?,
-                $crate::cldr::TimeZonesProvider::try_from(&$datagen_options)?,
-                $crate::cldr::WeekDataProvider::try_from(&$datagen_options)?,
-                $crate::cldr::ListProvider::try_from(&$datagen_options)?,
-                $crate::uprops::EnumeratedPropertyCodePointTrieProvider::try_from(
-                    &$datagen_options
-                )?,
-                $crate::uprops::ScriptWithExtensionsPropertyProvider::try_from(&$datagen_options)?,
-                $crate::uprops::EnumeratedPropertyUnicodeSetDataProvider::try_from(
-                    &$datagen_options
-                )?,
-                // Has to go last as it matches all props/ keys.
-                $crate::uprops::BinaryPropertyUnicodeSetDataProvider::try_from(&$datagen_options)?,
-                $crate::segmenter::SegmenterRuleProvider::try_from(&$datagen_options)?,
+                $(<$constructor>::try_from(&$datagen_options)?),+,
             ]
         )
     }};
