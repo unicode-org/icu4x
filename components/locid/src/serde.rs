@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::subtags::{Language, Region, Script};
+use crate::subtags::{Language, Region, Script, Variant};
 use crate::LanguageIdentifier;
 use alloc::string::ToString;
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
@@ -129,6 +129,37 @@ impl<'de> Deserialize<'de> for Region {
 
         if deserializer.is_human_readable() {
             deserializer.deserialize_string(RegionVisitor)
+        } else {
+            Self::try_from_raw(Deserialize::deserialize(deserializer)?)
+                .map_err(serde::de::Error::custom)
+        }
+    }
+}
+
+impl<'de> Deserialize<'de> for Variant {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        struct VariantVisitor;
+
+        impl<'de> serde::de::Visitor<'de> for VariantVisitor {
+            type Value = Variant;
+
+            fn expecting(&self, formatter: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+                write!(formatter, "a valid BCP-47 variant")
+            }
+
+            fn visit_str<E>(self, s: &str) -> Result<Self::Value, E>
+            where
+                E: serde::de::Error,
+            {
+                s.parse::<Variant>().map_err(serde::de::Error::custom)
+            }
+        }
+
+        if deserializer.is_human_readable() {
+            deserializer.deserialize_string(VariantVisitor)
         } else {
             Self::try_from_raw(Deserialize::deserialize(deserializer)?)
                 .map_err(serde::de::Error::custom)

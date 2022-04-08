@@ -7,10 +7,9 @@ use crate::cldr::error::Error;
 use crate::cldr::reader::open_reader;
 use crate::cldr::CldrPaths;
 use icu_locale_canonicalizer::provider::*;
-use icu_locid::{subtags, LanguageIdentifier};
+use icu_locid::{language, subtags, LanguageIdentifier};
 use icu_provider::datagen::IterableResourceProvider;
 use icu_provider::prelude::*;
-use litemap::LiteMap;
 use std::convert::TryFrom;
 use std::path::PathBuf;
 use tinystr::TinyAsciiStr;
@@ -105,17 +104,17 @@ impl From<&cldr_serde::aliases::Resource> for AliasesV1<'_> {
         // for commonly used languages. With the current CLDR data, all aliases end up in
         // a special case, but we retain the catchall language category in case new or
         // customized CLDR data is used.
-        let mut language = Vec::new();
         let mut language_variants = Vec::new();
-        let mut sgn_region = LiteMap::new();
-        let mut language_len2 = LiteMap::new();
-        let mut language_len3 = LiteMap::new();
+        let mut sgn_region = ZeroMap::new();
+        let mut language_len2 = ZeroMap::new();
+        let mut language_len3 = ZeroMap::new();
+        let mut language = Vec::new();
 
         let mut script = ZeroMap::new();
 
         // There are many more aliases for numeric region codes than for alphabetic,
         // so by storing them separately, we can minimize comparisons for alphabetic codes.
-        let mut region_alpha: ZeroMap<TinyAsciiStr<2>, TinyAsciiStr<3>> = ZeroMap::new();
+        let mut region_alpha = ZeroMap::new();
         let mut region_num = ZeroMap::new();
 
         // Complex regions are cases similar to the Soviet Union, where an old region
@@ -123,10 +122,10 @@ impl From<&cldr_serde::aliases::Resource> for AliasesV1<'_> {
         // likely subtags. Many implementations preprocess the complex regions into simple
         // regions as part of data import, but that would introduce a dependency between
         // CDLR providers that we're not currently set up to handle.
-        let mut complex_region: ZeroMap<TinyAsciiStr<3>, ZeroSlice<TinyAsciiStr<3>>> =
-            ZeroMap::new();
+        let mut complex_region = ZeroMap::new();
 
         let mut variant = ZeroMap::new();
+
         let mut subdivision = ZeroMap::new();
 
         // Step 2. Capture all languageAlias rules where the type is an invalid languageId
@@ -135,40 +134,43 @@ impl From<&cldr_serde::aliases::Resource> for AliasesV1<'_> {
         for (from, to) in other.supplemental.metadata.alias.language_aliases.iter() {
             if let Ok(langid) = from.parse::<LanguageIdentifier>() {
                 if let Ok(replacement) = to.replacement.parse::<LanguageIdentifier>() {
-                    // Variants are stored separately to not slow down canonicalization
-                    // of locales without variants.
-                    if !langid.variants.is_empty() {
-                        language_variants.push((langid, replacement));
-                        continue;
-                    }
-
-                    if !langid.language.is_empty() {
-                        let lang: TinyAsciiStr<3> = langid.language.into();
-                        if langid.region.is_none() && langid.variants.is_empty() {
+                    match (
+                        langid.language,
+                        langid.script,
+                        langid.region,
+                        !langid.variants.is_empty(),
+                    ) {
+                        // Anything that has a variant needs to be parsed at runtime, so we isolate
+                        // these in their own map.
+                        (_, None, None, true) => language_variants.push((langid, replacement)),
+                        // <language> -> <language identifier>
+                        (lang, None, None, false) if !lang.is_empty() => {
                             // Relatively few aliases exist for two character language identifiers,
                             // so we store them separately to not slow down canonicalization of
                             // common identifiers.
+                            let lang: TinyAsciiStr<3> = langid.language.into();
                             if lang.len() == 2 {
-                                language_len2.insert(lang.resize(), replacement);
+                                language_len2.insert(&lang.resize(), to.replacement.as_str());
                             } else {
-                                language_len3.insert(lang, replacement);
+                                language_len3.insert(&lang, to.replacement.as_str());
                             }
-                        } else if let Some(region) = langid.region {
-                            // All current language-region aliases are for "sgn", so we store them
-                            // separately to not slow down canonicalization of common identifiers.
-                            if lang == "sgn" {
-                                sgn_region.insert(region.into(), replacement);
-                            } else {
-                                language.push((langid, replacement));
-                            }
-                        } else {
-                            language.push((langid, replacement));
                         }
-                    } else {
-                        language.push((langid, replacement));
+                        // sgn-<region> -> <language>
+                        (language, None, Some(region), false)
+                            if language == language!("sgn")
+                                && !replacement.language.is_empty()
+                                && replacement == replacement.language.as_str() =>
+                        {
+                            sgn_region.insert(&region.into(), &replacement.language);
+                        }
+                        _ => language.push((langid, replacement)),
                     }
                 }
             }
+        }
+
+        if !language.is_empty() {
+            panic!("Aliases contain a non-special-cased rule. Remove this check if that is intended behaviour.")
         }
 
         for (from, to) in other.supplemental.metadata.alias.script_aliases.iter() {
@@ -178,7 +180,9 @@ impl From<&cldr_serde::aliases::Resource> for AliasesV1<'_> {
                 continue;
             }
 
-            script.insert(from, &to.replacement);
+            if let Ok(to) = to.replacement.parse::<subtags::Script>() {
+                script.insert(from, &to);
+            }
         }
 
         for (from, to) in other.supplemental.metadata.alias.region_aliases.iter() {
@@ -188,7 +192,7 @@ impl From<&cldr_serde::aliases::Resource> for AliasesV1<'_> {
                 continue;
             }
 
-            if let Ok(replacement) = to.replacement.parse::<TinyAsciiStr<3>>() {
+            if let Ok(replacement) = to.replacement.parse::<subtags::Region>() {
                 if from.is_ascii_alphabetic() {
                     region_alpha.insert(&from.resize(), &replacement);
                 } else {
@@ -197,19 +201,22 @@ impl From<&cldr_serde::aliases::Resource> for AliasesV1<'_> {
             } else {
                 complex_region.insert(
                     from,
-                    &ZeroSlice::from_boxed_slice(
+                    ZeroSlice::from_boxed_slice(
                         to.replacement
                             .split(' ')
                             .into_iter()
-                            .filter_map(|r| r.parse::<TinyAsciiStr<3>>().ok())
+                            .filter_map(|r| r.parse::<subtags::Region>().ok())
                             .collect::<Box<[_]>>(),
-                    ),
+                    )
+                    .as_ref(),
                 );
             }
         }
 
         for (from, to) in other.supplemental.metadata.alias.variant_aliases.iter() {
-            variant.insert(from, &to.replacement);
+            if let Ok(to) = to.replacement.parse::<subtags::Variant>() {
+                variant.insert(from, &to);
+            }
         }
 
         for (from, to) in other.supplemental.metadata.alias.subdivision_aliases.iter() {
@@ -236,20 +243,44 @@ impl From<&cldr_serde::aliases::Resource> for AliasesV1<'_> {
         // 5. Order the set of rules by
         //      1. the size of the union of all field value sets, with largest size first
         //      2. and then alphabetically by field.
-        language.sort_unstable_by(|a, b| rules_cmp(&a.0, &b.0));
         language_variants.sort_unstable_by(|a, b| rules_cmp(&a.0, &b.0));
+        language.sort_unstable_by(|a, b| rules_cmp(&a.0, &b.0));
+
+        let language_variants = zerovec::VarZeroVec::Owned(
+            zerovec::vecs::VarZeroVecOwned::try_from_elements(
+                &language_variants
+                    .into_iter()
+                    .map(|(from, to)| StrStrPair(from.to_string().into(), to.to_string().into()))
+                    .collect::<Vec<_>>(),
+            )
+            .unwrap(),
+        );
+
+        let language = zerovec::VarZeroVec::Owned(
+            zerovec::vecs::VarZeroVecOwned::try_from_elements(
+                &language
+                    .into_iter()
+                    .map(|(from, to)| StrStrPair(from.to_string().into(), to.to_string().into()))
+                    .collect::<Vec<_>>(),
+            )
+            .unwrap(),
+        );
 
         Self {
-            language,
             language_variants,
             sgn_region,
             language_len2,
             language_len3,
+            language,
+
             script,
+
             region_alpha,
             region_num,
             complex_region,
+
             variant,
+
             subdivision,
         }
     }
@@ -258,10 +289,10 @@ impl From<&cldr_serde::aliases::Resource> for AliasesV1<'_> {
 #[test]
 fn test_rules_cmp() {
     let mut rules: Vec<LanguageIdentifier> = vec![
-        "en-GB".parse().unwrap(),
-        "CA".parse().unwrap(),
+        icu_locid::langid!("en-GB"),
+        icu_locid::langid!("CA"),
         "und-hepburn-heploc".parse().unwrap(),
-        "fr-CA".parse().unwrap(),
+        icu_locid::langid!("fr-CA"),
     ];
 
     assert_eq!(union_size(&rules[0]), 2);
@@ -312,11 +343,13 @@ fn test_basic() {
 
     assert!(data.get().language_len3.get(&tinystr!(3, "iw")).is_none());
 
-    assert_eq!(data.get().script.iter().next().unwrap().0, "Qaai");
-    assert_eq!(data.get().script.iter().next().unwrap().1, "Zinh");
+    assert_eq!(
+        data.get().script.iter().next().unwrap(),
+        (&tinystr!(4, "Qaai"), &icu_locid::script!("Zinh"))
+    );
 
     assert_eq!(
         data.get().region_num.get(&tinystr!(3, "768")).unwrap(),
-        "TG"
+        &icu_locid::region!("TG")
     );
 }

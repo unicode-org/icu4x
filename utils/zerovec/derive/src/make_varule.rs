@@ -310,6 +310,7 @@ fn make_encode_impl(
             let ty = &field.field.ty;
             let accessor = &field.accessor;
             quote!(
+                #[allow(clippy::indexing_slicing)] // TODO explain
                 let out = &mut dst[#prev_offset_ident .. #prev_offset_ident + #size_ident];
                 let unaligned = zerovec::ule::AsULE::to_unaligned(self.#accessor);
                 let unaligned_slice = &[unaligned];
@@ -467,6 +468,7 @@ impl<'a> UnsizedFields<'a> {
 
             quote!(
                 let lengths = [#(#lengths),*];
+                #[allow(clippy::indexing_slicing)] // TODO explain
                 let mut multi = zerovec::ule::MultiFieldsULE::new_from_lengths_partially_initialized(&lengths, &mut #out);
                 unsafe {
                     #(#writers;)*
