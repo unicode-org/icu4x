@@ -54,7 +54,6 @@ pub mod segmenter;
 pub mod uprops;
 
 use cldr::CldrPaths;
-use icu_provider::datagen::OmnibusDatagenProvider;
 use icu_provider::serde::SerializeMarker;
 use icu_provider::ResourceKey;
 use icu_provider_adapters::fork::by_key::MultiForkByKeyProvider;
@@ -83,15 +82,6 @@ macro_rules! create_omnibus_provider {
             ]
         )
     }};
-}
-
-/// Get a registry that has the appropriate ConvertData and IterableDynProvider implementations
-pub fn get_registry(
-    cldr_paths: &impl CldrPaths,
-    uprops_root: &Path,
-    segmenter_data_root: &Path,
-) -> Result<impl OmnibusDatagenProvider<SerializeMarker>, eyre::Report> {
-    Ok(create_omnibus_provider!(cldr_paths, uprops_root, segmenter_data_root))
 }
 
 #[test]

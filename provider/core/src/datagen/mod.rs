@@ -14,27 +14,3 @@ mod iter;
 pub use data_conversion::{DataConverter, ReturnedPayloadError};
 pub use heap_measure::{HeapStats, HeapStatsMarker};
 pub use iter::{IterableDynProvider, IterableResourceProvider};
-
-use crate::any::AnyMarker;
-use crate::buf::BufferMarker;
-use crate::serde::SerializeMarker;
-use crate::DataMarker;
-
-/// A blanket-implemented trait that allows for all the datagen-relevant traits
-/// to be used in trait objects. The type parameter is the marker type needed for
-/// [`IterableDynProvider`].
-pub trait OmnibusDatagenProvider<M: DataMarker>:
-    DataConverter<AnyMarker, SerializeMarker>
-    + DataConverter<BufferMarker, HeapStatsMarker>
-    + IterableDynProvider<M>
-{
-}
-
-impl<M, P> OmnibusDatagenProvider<M> for P
-where
-    P: DataConverter<AnyMarker, SerializeMarker>
-        + DataConverter<BufferMarker, HeapStatsMarker>
-        + IterableDynProvider<M>,
-    M: DataMarker,
-{
-}

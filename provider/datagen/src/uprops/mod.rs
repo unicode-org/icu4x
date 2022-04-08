@@ -30,7 +30,6 @@ pub use enum_codepointtrie::EnumeratedPropertyCodePointTrieProvider;
 pub use enum_uniset::EnumeratedPropertyUnicodeSetDataProvider;
 pub use script::ScriptWithExtensionsPropertyProvider;
 
-use icu_provider::datagen::OmnibusDatagenProvider;
 use icu_provider::DataMarker;
 use icu_provider_adapters::fork::by_key::MultiForkByKeyProvider;
 use std::path::Path;
@@ -50,24 +49,4 @@ macro_rules! create_uprops_provider {
             ]
         )
     }};
-}
-
-pub fn create_exportable_provider<T: DataMarker>(
-    root_dir: &Path,
-) -> eyre::Result<MultiForkByKeyProvider<Box<dyn OmnibusDatagenProvider<T> + Sync>>>
-where
-    EnumeratedPropertyCodePointTrieProvider: OmnibusDatagenProvider<T>,
-    ScriptWithExtensionsPropertyProvider: OmnibusDatagenProvider<T>,
-    EnumeratedPropertyUnicodeSetDataProvider: OmnibusDatagenProvider<T>,
-    BinaryPropertyUnicodeSetDataProvider: OmnibusDatagenProvider<T>,
-{
-    Ok(MultiForkByKeyProvider {
-        providers: vec![
-            Box::new(EnumeratedPropertyCodePointTrieProvider::try_new(root_dir)?),
-            Box::new(ScriptWithExtensionsPropertyProvider::try_new(root_dir)?),
-            Box::new(EnumeratedPropertyUnicodeSetDataProvider::try_new(root_dir)?),
-            // Has to go last as it matches all props/ keys.
-            Box::new(BinaryPropertyUnicodeSetDataProvider::try_new(root_dir)?),
-        ],
-    })
 }

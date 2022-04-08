@@ -28,7 +28,6 @@ pub use cldr_paths::CldrPathsAllInOne;
 pub use cldr_paths::CldrPathsLocal;
 pub use error::Error as CldrError;
 
-use icu_provider::datagen::OmnibusDatagenProvider;
 use icu_provider::prelude::*;
 use icu_provider_adapters::fork::by_key::MultiForkByKeyProvider;
 use std::convert::TryFrom;
@@ -63,37 +62,6 @@ macro_rules! create_cldr_provider {
             ]
         )
     }};
-}
-
-pub fn create_exportable_provider<T: DataMarker>(
-    cldr_paths: &dyn CldrPaths,
-    _uprops_root: PathBuf,
-) -> Result<MultiForkByKeyProvider<Box<dyn OmnibusDatagenProvider<T> + Sync>>, CldrError>
-where
-    AliasesProvider: OmnibusDatagenProvider<T>,
-    CommonDateProvider: OmnibusDatagenProvider<T>,
-    JapaneseErasProvider: OmnibusDatagenProvider<T>,
-    LikelySubtagsProvider: OmnibusDatagenProvider<T>,
-    NumbersProvider: OmnibusDatagenProvider<T>,
-    PluralsProvider: OmnibusDatagenProvider<T>,
-    TimeZonesProvider: OmnibusDatagenProvider<T>,
-    ListProvider: OmnibusDatagenProvider<T>,
-    WeekDataProvider: OmnibusDatagenProvider<T>,
-{
-    #[allow(unused_variables)] // uprops_root is only used if icu_list
-    Ok(MultiForkByKeyProvider {
-        providers: vec![
-            Box::new(AliasesProvider::try_from(cldr_paths)?),
-            Box::new(CommonDateProvider::try_from(cldr_paths)?),
-            Box::new(JapaneseErasProvider::try_from(cldr_paths)?),
-            Box::new(LikelySubtagsProvider::try_from(cldr_paths)?),
-            Box::new(NumbersProvider::try_from(cldr_paths)?),
-            Box::new(PluralsProvider::try_from(cldr_paths)?),
-            Box::new(TimeZonesProvider::try_from(cldr_paths)?),
-            Box::new(WeekDataProvider::try_from(cldr_paths)?),
-            Box::new(ListProvider::try_from(cldr_paths, _uprops_root)?),
-        ],
-    })
 }
 
 pub const ALL_KEYS: [ResourceKey; 19] = [

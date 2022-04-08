@@ -29,7 +29,6 @@
 //! [UAX14]: https://www.unicode.org/reports/tr14/
 //! [UAX29]: https://www.unicode.org/reports/tr29/
 
-use icu_provider::datagen::OmnibusDatagenProvider;
 use icu_provider::prelude::*;
 use icu_provider_adapters::fork::by_key::MultiForkByKeyProvider;
 use std::path::{Path, PathBuf};
@@ -48,19 +47,4 @@ macro_rules! create_segmenter_provider {
     ($segmenter_data_root:expr, $uprops_root:expr) => {{
         $crate::segmenter::SegmenterRuleProvider::try_new($segmenter_data_root, $uprops_root)?
     }};
-}
-
-pub fn create_exportable_provider<T: DataMarker>(
-    segmenter_data_root: &Path,
-    uprops_root: &Path,
-) -> Result<MultiForkByKeyProvider<Box<dyn OmnibusDatagenProvider<T> + Sync>>, DataError>
-where
-    SegmenterRuleProvider: OmnibusDatagenProvider<T>,
-{
-    Ok(MultiForkByKeyProvider {
-        providers: vec![Box::new(SegmenterRuleProvider::try_new(
-            segmenter_data_root,
-            uprops_root,
-        )?)],
-    })
 }
