@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1649383551402,
+  "lastUpdate": 1649424375139,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -25631,6 +25631,48 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 175257,
             "range": "± 355",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "10595307+mildgravitas@users.noreply.github.com",
+            "name": "mildgravitas",
+            "username": "mildgravitas"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "890bc54150807b859c88ed0ca298e98b752fe0c2",
+          "message": "Add support for day of week in month ('F') (#1770)\n\n* datetime(refactor): Use a dedicated Day enum in options::components::Bag.\r\n\r\n* feat: Add support for day of week in month ('F').\r\n\r\n* fix(datetime): cleanup #592 TODOs & add DayOfWeekInMonth support to `From<PatternPlurals> for Bag`.",
+          "timestamp": "2022-04-08T15:17:32+02:00",
+          "tree_id": "71c6957893398d6d0b02ffce2ddfeb7f5a9c2e50",
+          "url": "https://github.com/unicode-org/icu4x/commit/890bc54150807b859c88ed0ca298e98b752fe0c2"
+        },
+        "date": 1649424355101,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 115222,
+            "range": "± 5075",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 1130109,
+            "range": "± 105705",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 246700,
+            "range": "± 17103",
             "unit": "ns/iter"
           }
         ]
