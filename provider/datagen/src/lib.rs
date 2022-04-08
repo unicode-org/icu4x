@@ -81,6 +81,16 @@ pub struct DatagenOptions<'a> {
 /// Create a data provider reading from source files that generates data for all,
 /// or a subset, of ICU4X.
 ///
+/// The macro behaves like a function that takes the following arguments:
+///
+/// 1. An instance of [`DatagenOptions`] (required)
+/// 2. A list of providers to instantiate (optional)
+///
+/// The return value is a complex type that implements all of the key data provider traits.
+///
+/// The macro expands to code that contains `?` operators. It is recommended to invoke this
+/// macro from a function that returns an `eyre::Result`.
+///
 /// To create a data provider for all of ICU4X:
 ///
 /// ```no_run
@@ -129,6 +139,7 @@ macro_rules! create_datagen_provider {
                 $crate::uprops::EnumeratedPropertyCodePointTrieProvider,
                 $crate::uprops::ScriptWithExtensionsPropertyProvider,
                 $crate::uprops::EnumeratedPropertyUnicodeSetDataProvider,
+                // Has to go last as it matches all props/ keys.
                 $crate::uprops::BinaryPropertyUnicodeSetDataProvider,
                 $crate::segmenter::SegmenterRuleProvider,
             ]
