@@ -29,7 +29,7 @@
 //! [UAX14]: https://www.unicode.org/reports/tr14/
 //! [UAX29]: https://www.unicode.org/reports/tr29/
 
-use std::path::{PathBuf};
+use std::path::PathBuf;
 
 mod transform;
 

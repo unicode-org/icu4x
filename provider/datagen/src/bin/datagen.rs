@@ -8,7 +8,6 @@ use eyre::WrapErr;
 use icu_datagen::cldr::CldrPathsAllInOne;
 use icu_datagen::{get_all_keys, DatagenOptions};
 
-
 use icu_locid::LanguageIdentifier;
 use icu_provider::datagen::IterableDynProvider;
 use icu_provider::export::DataExporter;
@@ -364,7 +363,12 @@ fn main() -> eyre::Result<()> {
             segmenter_data_root: &segmenter_data_root,
         };
 
-        let p = icu_datagen::create_omnibus_provider!(datagen_options, &cldr_paths, uprops_root, segmenter_data_root);
+        let p = icu_datagen::create_omnibus_provider!(
+            datagen_options,
+            &cldr_paths,
+            uprops_root,
+            segmenter_data_root
+        );
 
         Box::new(p)
     };

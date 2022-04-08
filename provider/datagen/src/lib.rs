@@ -90,9 +90,13 @@ macro_rules! create_omnibus_provider {
                 $crate::cldr::TimeZonesProvider::try_from(&$datagen_options)?,
                 $crate::cldr::WeekDataProvider::try_from(&$datagen_options)?,
                 $crate::cldr::ListProvider::try_from(&$datagen_options)?,
-                $crate::uprops::EnumeratedPropertyCodePointTrieProvider::try_from(&$datagen_options)?,
+                $crate::uprops::EnumeratedPropertyCodePointTrieProvider::try_from(
+                    &$datagen_options
+                )?,
                 $crate::uprops::ScriptWithExtensionsPropertyProvider::try_from(&$datagen_options)?,
-                $crate::uprops::EnumeratedPropertyUnicodeSetDataProvider::try_from(&$datagen_options)?,
+                $crate::uprops::EnumeratedPropertyUnicodeSetDataProvider::try_from(
+                    &$datagen_options
+                )?,
                 // Has to go last as it matches all props/ keys.
                 $crate::uprops::BinaryPropertyUnicodeSetDataProvider::try_from(&$datagen_options)?,
                 $crate::segmenter::SegmenterRuleProvider::try_from(&$datagen_options)?,

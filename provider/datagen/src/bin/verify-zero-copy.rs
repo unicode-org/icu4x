@@ -184,7 +184,12 @@ fn main() -> eyre::Result<()> {
         segmenter_data_root: &segmenter_data_root,
     };
 
-    let converter = icu_datagen::create_omnibus_provider!(datagen_options, &*cldr_paths, uprops_root, segmenter_data_root);
+    let converter = icu_datagen::create_omnibus_provider!(
+        datagen_options,
+        &*cldr_paths,
+        uprops_root,
+        segmenter_data_root
+    );
 
     let selected_locales = icu_testdata::metadata::load()?.package_metadata.locales;
 
