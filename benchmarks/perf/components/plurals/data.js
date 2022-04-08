@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1649383578330,
+  "lastUpdate": 1649424395483,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -32045,6 +32045,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 14516,
             "range": "± 9",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "10595307+mildgravitas@users.noreply.github.com",
+            "name": "mildgravitas",
+            "username": "mildgravitas"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "890bc54150807b859c88ed0ca298e98b752fe0c2",
+          "message": "Add support for day of week in month ('F') (#1770)\n\n* datetime(refactor): Use a dedicated Day enum in options::components::Bag.\r\n\r\n* feat: Add support for day of week in month ('F').\r\n\r\n* fix(datetime): cleanup #592 TODOs & add DayOfWeekInMonth support to `From<PatternPlurals> for Bag`.",
+          "timestamp": "2022-04-08T15:17:32+02:00",
+          "tree_id": "71c6957893398d6d0b02ffce2ddfeb7f5a9c2e50",
+          "url": "https://github.com/unicode-org/icu4x/commit/890bc54150807b859c88ed0ca298e98b752fe0c2"
+        },
+        "date": 1649424375769,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 818,
+            "range": "± 25",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 6451,
+            "range": "± 695",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 17226,
+            "range": "± 475",
             "unit": "ns/iter"
           }
         ]
