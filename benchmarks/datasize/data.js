@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1649374266781,
+  "lastUpdate": 1649383146623,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -12983,6 +12983,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/86a6f9ac02dc08e407f02e2577f5b2368d790f0d"
         },
         "date": 1649374246700,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4503155,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "967670b3e515ba1c37881959e867eb1e6d688b3a",
+          "message": "update cargo-all-features dep to ^1.7 (#1785)",
+          "timestamp": "2022-04-07T18:57:37-07:00",
+          "tree_id": "70f44ebd4c9aac510fe2a5c39bedc23830620661",
+          "url": "https://github.com/unicode-org/icu4x/commit/967670b3e515ba1c37881959e867eb1e6d688b3a"
+        },
+        "date": 1649383130696,
         "tool": "ndjson",
         "benches": [
           {
