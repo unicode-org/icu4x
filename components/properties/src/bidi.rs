@@ -7,40 +7,39 @@ use crate::BidiClass as DataSourceBidiClass
 use icu::properties::{maps, BidiClass};
 use icu_codepointtrie::CodePointTrie;
 
-pub struct BidiClassAdaptor {
-	code_point_trie: CodePointTrie;
-
+pub struct BidiClassAdapter {
+	bidi_trie: CodePointTrie,
 }
 
-impl BidiClassAdaptor {
-	pub fn new() -> BidiClassAdaptor {
+impl BidiClassAdapter {
+	pub fn new() -> BidiClassAdapter {
 		 let provider = icu_testdata::get_provider();
 		 let payload =
 		     maps::get_bidi_class(&provider)
 		         .expect("The data should be valid");
 		 let data_struct = payload.get();
-		 BidiClassAdaptor{ data_struct.code_point_trie }
+		 BidiClassAdapter{ data_struct.code_point_trie }
 	}
 }
 
 
-impl BidiDataSource for BidiClassAdaptor {
+impl BidiDataSource for BidiClassAdapter {
 
-    /// Return a [`DataSourceBidiClass`] given a unicode character.
+    /// Returns a [`DataSourceBidiClass`] given a unicode character.
     ///
     /// # Example
     ///
     /// ```
-    /// use icu::properties::BidiClassAdaptor;
+    /// use icu::properties::BidiClassAdapter;
     /// use crate::BidiClass as DataSourceBidiClass
     ///
-    /// let adaptor = BidiClassAdaptor::new();
-    /// assert_eq!(adaptor.bidi_class('a' as u32), DataSourceBidiClass::R);  // U
+    /// let Adapter = BidiClassAdapter::new();
+    /// assert_eq!(Adapter.bidi_class('a' as u32), DataSourceBidiClass::R);  // U
     /// ```
     ///
     /// [`CodePointTrie`]: icu_codepointtrie::CodePointTrie
 	pub fn bidi_class(&self, c: char) -> DataSourceBidiClass {
-		let bidi_class = self.code_point_trie.get(c as u32);
+		let bidi_class = self.bidi_trie.get(c as u32);
 		match bidi_class {
             BidiClass::LeftToRight => DataSourceBidiClass::L,
             BidiClass::RightToLeft => DataSourceBidiClass::R,
