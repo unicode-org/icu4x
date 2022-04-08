@@ -79,6 +79,7 @@ use serde::{Deserialize, Serialize};
 /// [`Element dateFormats`]: https://unicode.org/reports/tr35/tr35-dates.html#dateFormats
 #[derive(Debug, Clone, PartialEq, Copy)]
 #[cfg_attr(feature = "serialize", derive(Serialize, Deserialize))]
+#[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct Bag {
     /// Configure the date part of the datetime.
     pub date: Option<Date>,
@@ -126,6 +127,7 @@ impl Default for Bag {
 /// [`Element dateFormats`]: https://unicode.org/reports/tr35/tr35-dates.html#dateFormats
 /// [`DateTimeFormat`]: super::super::DateTimeFormat
 #[derive(Debug, Clone, Copy, PartialEq)]
+#[allow(clippy::exhaustive_enums)] // this type is stable
 #[cfg_attr(feature = "serialize", derive(Serialize, Deserialize))]
 pub enum Date {
     /// Full length, usually with weekday name.
@@ -211,6 +213,7 @@ pub enum Date {
 /// [`DateTimeFormat`]: super::super::DateTimeFormat
 #[derive(Debug, Clone, Copy, PartialEq)]
 #[cfg_attr(feature = "serialize", derive(Serialize, Deserialize))]
+#[allow(clippy::exhaustive_enums)] // this type is stable
 pub enum Time {
     /// Full length, with spelled out time zone name.
     ///

@@ -42,6 +42,7 @@ use serde::{Deserialize, Serialize};
 /// ```
 #[derive(Debug, Clone, PartialEq, Copy)]
 #[cfg_attr(feature = "serialize", derive(Serialize, Deserialize))]
+#[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct Bag {
     /// The hour cycle can be adjusts according to user preferences, for instance at the OS-level.
     /// That preference can be applied here to change the hour cycle from the default for the
@@ -53,6 +54,7 @@ pub struct Bag {
 /// A user preference for adjusting how the hour component is displayed.
 #[derive(Debug, Clone, Copy, PartialEq)]
 #[cfg_attr(feature = "serialize", derive(Serialize, Deserialize))]
+#[allow(clippy::exhaustive_enums)] // this type is stable
 pub enum HourCycle {
     /// Hour is formatted to be in range 1-24 where midnight is 24:00.
     ///

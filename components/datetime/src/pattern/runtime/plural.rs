@@ -129,6 +129,7 @@ impl<'data> PluralPattern<'data> {
 /// Either a single Pattern or a collection of pattern when there are plural variants.
 #[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[allow(clippy::large_enum_variant)]
+#[allow(clippy::exhaustive_enums)] // this type is stable
 pub enum PatternPlurals<'data> {
     /// A collection of pattern variants for when plurals differ.
     MultipleVariants(PluralPattern<'data>),

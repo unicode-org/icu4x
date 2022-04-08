@@ -34,6 +34,7 @@ use core::str::FromStr;
 ///     .expect("Failed to parse a time zone.");
 /// ```
 #[derive(Debug, Default)]
+#[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct MockTimeZone {
     /// The GMT offset in seconds.
     pub gmt_offset: GmtOffset,
