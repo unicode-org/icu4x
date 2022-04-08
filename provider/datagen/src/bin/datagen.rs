@@ -358,19 +358,9 @@ fn main() -> eyre::Result<()> {
 
         let segmenter_data_root = icu_datagen::segmenter::segmenter_data_root();
 
-        Box::new(MultiForkByKeyProvider {
-            providers: vec![
-                Box::new(cldr::create_exportable_provider(
-                    &cldr_paths,
-                    uprops_root.clone(),
-                )?),
-                Box::new(uprops::create_exportable_provider(&uprops_root)?),
-                Box::new(segmenter::create_exportable_provider(
-                    &segmenter_data_root,
-                    &uprops_root,
-                )?),
-            ],
-        })
+        let p = icu_datagen::create_omnibus_provider!(&cldr_paths, uprops_root, segmenter_data_root);
+
+        Box::new(p)
     };
 
     if let Some(locales) = selected_locales.as_ref() {

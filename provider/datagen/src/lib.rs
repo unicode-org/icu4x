@@ -71,25 +71,27 @@ pub fn get_all_keys() -> Vec<ResourceKey> {
     v
 }
 
+#[macro_export]
+macro_rules! create_omnibus_provider {
+    ($cldr_paths:expr, $uprops_root:expr, $segmenter_data_root:expr) => {{
+        icu_provider_adapters::make_forking_provider!(
+            icu_provider_adapters::fork::by_key::ForkByKeyProvider,
+            [
+                $crate::create_cldr_provider!($cldr_paths, $uprops_root.to_path_buf()),
+                $crate::create_uprops_provider!(&$uprops_root),
+                $crate::create_segmenter_provider!(&$segmenter_data_root, &$uprops_root),
+            ]
+        )
+    }};
+}
+
 /// Get a registry that has the appropriate ConvertData and IterableDynProvider implementations
 pub fn get_registry(
     cldr_paths: &impl CldrPaths,
     uprops_root: &Path,
     segmenter_data_root: &Path,
 ) -> Result<impl OmnibusDatagenProvider<SerializeMarker>, eyre::Report> {
-    Ok(MultiForkByKeyProvider {
-        providers: vec![
-            Box::new(cldr::create_exportable_provider(
-                cldr_paths,
-                uprops_root.into(),
-            )?),
-            Box::new(uprops::create_exportable_provider(uprops_root)?),
-            Box::new(segmenter::create_exportable_provider(
-                segmenter_data_root,
-                uprops_root,
-            )?),
-        ],
-    })
+    Ok(create_omnibus_provider!(cldr_paths, uprops_root, segmenter_data_root))
 }
 
 #[test]

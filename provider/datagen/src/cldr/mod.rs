@@ -33,15 +33,37 @@ use icu_provider::prelude::*;
 use icu_provider_adapters::fork::by_key::MultiForkByKeyProvider;
 use std::convert::TryFrom;
 use std::path::PathBuf;
-use transform::calendar::japanese::JapaneseErasProvider;
-use transform::datetime::week_data::WeekDataProvider;
-use transform::datetime::CommonDateProvider;
-use transform::decimal::NumbersProvider;
-use transform::list::ListProvider;
-use transform::locale_canonicalizer::aliases::AliasesProvider;
-use transform::locale_canonicalizer::likely_subtags::LikelySubtagsProvider;
-use transform::plurals::PluralsProvider;
-use transform::time_zones::TimeZonesProvider;
+
+pub use transform::calendar::japanese::JapaneseErasProvider;
+pub use transform::datetime::week_data::WeekDataProvider;
+pub use transform::datetime::CommonDateProvider;
+pub use transform::decimal::NumbersProvider;
+pub use transform::list::ListProvider;
+pub use transform::locale_canonicalizer::aliases::AliasesProvider;
+pub use transform::locale_canonicalizer::likely_subtags::LikelySubtagsProvider;
+pub use transform::plurals::PluralsProvider;
+pub use transform::time_zones::TimeZonesProvider;
+
+#[macro_export]
+macro_rules! create_cldr_provider {
+    ($cldr_paths:expr, $uprops_root:expr) => {{
+        use core::convert::TryFrom;
+        icu_provider_adapters::make_forking_provider!(
+            icu_provider_adapters::fork::by_key::ForkByKeyProvider,
+            [
+                $crate::cldr::AliasesProvider::try_from($cldr_paths as &dyn $crate::cldr::CldrPaths)?,
+                $crate::cldr::CommonDateProvider::try_from($cldr_paths as &dyn $crate::cldr::CldrPaths)?,
+                $crate::cldr::JapaneseErasProvider::try_from($cldr_paths as &dyn $crate::cldr::CldrPaths)?,
+                $crate::cldr::LikelySubtagsProvider::try_from($cldr_paths as &dyn $crate::cldr::CldrPaths)?,
+                $crate::cldr::NumbersProvider::try_from($cldr_paths as &dyn $crate::cldr::CldrPaths)?,
+                $crate::cldr::PluralsProvider::try_from($cldr_paths as &dyn $crate::cldr::CldrPaths)?,
+                $crate::cldr::TimeZonesProvider::try_from($cldr_paths as &dyn $crate::cldr::CldrPaths)?,
+                $crate::cldr::WeekDataProvider::try_from($cldr_paths as &dyn $crate::cldr::CldrPaths)?,
+                $crate::cldr::ListProvider::try_from($cldr_paths as &dyn $crate::cldr::CldrPaths, $uprops_root)?,
+            ]
+        )
+    }};
+}
 
 pub fn create_exportable_provider<T: DataMarker>(
     cldr_paths: &dyn CldrPaths,
