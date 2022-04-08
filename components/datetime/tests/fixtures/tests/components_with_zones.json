@@ -7,7 +7,7 @@
                 "components": {
                     "weekday": "long",
                     "month": "long",
-                    "day": "numeric",
+                    "day": "numeric-day-of-month",
                     "year": "numeric",
                     "hour": "two-digit",
                     "minute": "two-digit",
@@ -30,7 +30,7 @@
                 "components": {
                     "weekday": "long",
                     "month": "long",
-                    "day": "numeric",
+                    "day": "numeric-day-of-month",
                     "year": "numeric",
                     "hour": "two-digit",
                     "minute": "two-digit",
@@ -53,7 +53,7 @@
                 "components": {
                     "weekday": "long",
                     "month": "long",
-                    "day": "numeric",
+                    "day": "numeric-day-of-month",
                     "year": "numeric",
                     "hour": "two-digit",
                     "minute": "two-digit",
@@ -76,7 +76,7 @@
                 "components": {
                     "weekday": "long",
                     "month": "long",
-                    "day": "numeric",
+                    "day": "numeric-day-of-month",
                     "year": "numeric",
                     "hour": "two-digit",
                     "minute": "two-digit",
@@ -99,7 +99,7 @@
                 "components": {
                     "weekday": "long",
                     "month": "long",
-                    "day": "numeric",
+                    "day": "numeric-day-of-month",
                     "year": "numeric",
                     "hour": "two-digit",
                     "minute": "two-digit",

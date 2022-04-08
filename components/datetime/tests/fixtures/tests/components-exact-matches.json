@@ -40,7 +40,7 @@
                 "components": {
                     "year": "numeric",
                     "month": "numeric",
-                    "day": "numeric"
+                    "day": "numeric-day-of-month"
                 }
             }
         },
@@ -58,7 +58,7 @@
                 "components": {
                     "year": "numeric",
                     "month": "numeric",
-                    "day": "numeric",
+                    "day": "numeric-day-of-month",
                     "weekday": "short"
                 }
             }
@@ -94,7 +94,7 @@
                 "components": {
                     "year": "numeric",
                     "month": "short",
-                    "day": "numeric"
+                    "day": "numeric-day-of-month"
                 }
             }
         },
@@ -112,7 +112,7 @@
                 "components": {
                     "year": "numeric",
                     "month": "short",
-                    "day": "numeric",
+                    "day": "numeric-day-of-month",
                     "weekday": "short"
                 }
             }
@@ -163,7 +163,7 @@
             "options": {
                 "components": {
                     "month": "numeric",
-                    "day": "numeric"
+                    "day": "numeric-day-of-month"
                 }
             }
         },
@@ -180,7 +180,7 @@
             "options": {
                 "components": {
                     "month": "numeric",
-                    "day": "numeric",
+                    "day": "numeric-day-of-month",
                     "weekday": "short"
                 }
             }
@@ -214,7 +214,7 @@
             "options": {
                 "components": {
                     "month": "short",
-                    "day": "numeric"
+                    "day": "numeric-day-of-month"
                 }
             }
         },
@@ -231,7 +231,7 @@
             "options": {
                 "components": {
                     "month": "short",
-                    "day": "numeric",
+                    "day": "numeric-day-of-month",
                     "weekday": "short"
                 }
             }
@@ -249,7 +249,7 @@
             "options": {
                 "components": {
                     "month": "long",
-                    "day": "numeric"
+                    "day": "numeric-day-of-month"
                 }
             }
         },
@@ -265,7 +265,7 @@
             "value": "2020-01-07T08:25:07.000",
             "options": {
                 "components": {
-                    "day": "numeric"
+                    "day": "numeric-day-of-month"
                 }
             }
         },
@@ -281,7 +281,7 @@
             "value": "2020-01-07T08:25:07.000",
             "options": {
                 "components": {
-                    "day": "numeric",
+                    "day": "numeric-day-of-month",
                     "weekday": "short"
                 }
             }

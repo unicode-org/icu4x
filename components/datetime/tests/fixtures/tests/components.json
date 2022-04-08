@@ -6,7 +6,7 @@
                 "components": {
                     "weekday": "long",
                     "month": "long",
-                    "day": "two-digit",
+                    "day": "two-digit-day-of-month",
                     "era": "long",
                     "year": "numeric",
                     "hour": "numeric",

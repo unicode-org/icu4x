@@ -79,7 +79,7 @@
                 "components": {
                     "year": "numeric",
                     "month": "numeric",
-                    "day": "numeric"
+                    "day": "numeric-day-of-month"
                 }
             }
         },
@@ -101,7 +101,7 @@
                 "components": {
                     "year": "numeric",
                     "month": "two-digit",
-                    "day": "numeric"
+                    "day": "numeric-day-of-month"
                 }
             }
         },
@@ -123,7 +123,7 @@
                 "components": {
                     "year": "numeric",
                     "month": "short",
-                    "day": "numeric"
+                    "day": "numeric-day-of-month"
                 }
             }
         },
@@ -145,7 +145,7 @@
                 "components": {
                     "year": "numeric",
                     "month": "long",
-                    "day": "numeric"
+                    "day": "numeric-day-of-month"
                 }
             }
         },
@@ -167,7 +167,7 @@
                 "components": {
                     "year": "numeric",
                     "month": "narrow",
-                    "day": "numeric"
+                    "day": "numeric-day-of-month"
                 }
             }
         },
