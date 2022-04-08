@@ -38,7 +38,7 @@ icu_provider = { version = "0.5", path = "../../provider/core", features = ["mac
 icu_uniset = { version = "0.4.1", path = "../../utils/uniset"}
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }
 zerovec = { version = "0.6", path = "../../utils/zerovec", features = ["derive"] }
-unicode-bidi = { version = "0.3.7", optional = true }
+unicode-bidi = { version = "0.3.7"}
 
 [dev-dependencies]
 icu = { path = "../icu", default-features = false }

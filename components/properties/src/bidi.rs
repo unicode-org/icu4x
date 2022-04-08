@@ -2,10 +2,12 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::BidiDataSource;
-use crate::BidiClass as DataSourceBidiClass
-use icu::properties::{maps, BidiClass};
+use unicode_bidi::data_source::BidiDataSource;
+use unicode_bidi::BidiClass as DataSourceBidiClass;
+use crate::maps;
 use icu_codepointtrie::CodePointTrie;
+use crate::props::BidiClass;
+
 
 pub struct BidiClassAdapter {
 	bidi_trie: CodePointTrie,
@@ -17,8 +19,8 @@ impl BidiClassAdapter {
 		 let payload =
 		     maps::get_bidi_class(&provider)
 		         .expect("The data should be valid");
-		 let data_struct = payload.get();
-		 BidiClassAdapter{ data_struct.code_point_trie }
+		 let code_point_trie = payload.get().code_point_trie;
+		 BidiClassAdapter{ code_point_trie }
 	}
 }
 
@@ -38,7 +40,7 @@ impl BidiDataSource for BidiClassAdapter {
     /// ```
     ///
     /// [`CodePointTrie`]: icu_codepointtrie::CodePointTrie
-	pub fn bidi_class(&self, c: char) -> DataSourceBidiClass {
+	fn bidi_class(&self, c: char) -> DataSourceBidiClass {
 		let bidi_class = self.bidi_trie.get(c as u32);
 		match bidi_class {
             BidiClass::LeftToRight => DataSourceBidiClass::L,
