@@ -18,6 +18,7 @@ use core::{
 };
 
 #[derive(Display, Debug, Copy, Clone)]
+#[non_exhaustive]
 pub enum Error {
     #[displaydoc("Field {0:?} is not a valid length")]
     InvalidLength(FieldSymbol),

@@ -42,6 +42,7 @@ use icu_calendar::{DateTime, Gregorian};
 /// ```
 /// [`ZonedDateTimeFormat`]: crate::zoned_datetime::ZonedDateTimeFormat
 #[derive(Debug)]
+#[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct MockZonedDateTime {
     /// The datetime component.
     pub datetime: DateTime<Gregorian>,

@@ -22,11 +22,9 @@
 //! let provider = icu_testdata::get_provider();
 //!
 //! // See the next code example for a more ergonomic example with .into().
-//! let options = DateTimeFormatOptions::Length(length::Bag {
-//!     date: Some(length::Date::Medium),
-//!     time: Some(length::Time::Short),
-//!     ..Default::default()
-//! });
+//! let options = DateTimeFormatOptions::Length(length::Bag::from_date_time_style(
+//!     Some(length::Date::Medium), Some(length::Time::Short),
+//! ));
 //!
 //! let dtf = DateTimeFormat::<Gregorian>::try_new(locale!("en"), &provider, &options)
 //!     .expect("Failed to create DateTimeFormat instance.");
@@ -47,11 +45,7 @@
 //! use icu::datetime::{DateTimeFormat, DateTimeFormatOptions, options::length};
 //! # let provider = icu_testdata::get_provider();
 //! # let locale = icu::locid::locale!("en");
-//! let options = length::Bag {
-//!     date: Some(length::Date::Medium),
-//!     time: Some(length::Time::Short),
-//!     ..Default::default()
-//! }.into();
+//! let options = length::Bag::from_date_time_style(Some(length::Date::Medium), Some(length::Time::Short)).into();
 //!
 //! let dtf = DateTimeFormat::<Gregorian>::try_new(locale, &provider, &options);
 //! ```
@@ -78,7 +72,9 @@
         clippy::indexing_slicing,
         clippy::unwrap_used,
         clippy::expect_used,
-        clippy::panic
+        clippy::panic,
+        clippy::exhaustive_structs,
+        clippy::exhaustive_enums
     )
 )]
 

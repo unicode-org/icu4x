@@ -53,11 +53,7 @@ use icu::datetime::{DateTimeFormat, options::length, mock::parse_gregorian_from_
 
 let provider = icu_testdata::get_provider();
 
-let options = length::Bag {
-    date: Some(length::Date::Long),
-    time: Some(length::Time::Medium),
-    ..Default::default()
-}.into();
+let options = length::Bag::from_date_time_style(Some(length::Date::Long), Some(length::Time::Medium)).into();
 
 let dtf = DateTimeFormat::try_new(locale!("en"), &provider, &options)
     .expect("Failed to create DateTimeFormat instance.");
