@@ -40,7 +40,7 @@ pub mod ffi {
         KeepAll,
     }
 
-    #[diplomat::rust_link(icu_segmenter::LineBreakOptions, Enum)]
+    #[diplomat::rust_link(icu_segmenter::LineBreakOptions, Struct)]
     pub struct ICU4XLineBreakOptions {
         pub line_break_rule: ICU4XLineBreakRule,
         pub word_break_rule: ICU4XWordBreakRule,

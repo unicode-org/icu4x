@@ -28,7 +28,7 @@ struct ICU4XLineBreakOptionsDeleter {
 /**
  * 
  * 
- * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu_segmenter/enum.LineBreakOptions.html) for more information.
+ * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu_segmenter/struct.LineBreakOptions.html) for more information.
  */
 struct ICU4XLineBreakOptions {
  public:

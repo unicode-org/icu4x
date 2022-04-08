@@ -73,7 +73,7 @@ pub mod ffi {
         }
 
         /// Write a string representation of the unicode extension to `write`
-        #[diplomat::rust_link(icu::locid::Locale::extension, StructField)]
+        #[diplomat::rust_link(icu::locid::Locale::extensions, StructField)]
         pub fn get_unicode_extension(
             &self,
             bytes: &str,

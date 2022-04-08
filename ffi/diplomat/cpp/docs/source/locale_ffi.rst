@@ -41,12 +41,12 @@
     .. cpp:function:: template<typename W> diplomat::result<std::monostate, ICU4XLocaleError> get_unicode_extension_to_writeable(const std::string_view bytes, W& write) const
 
         Write a string representation of the unicode extension to ``write``
-        See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#structfield.extension>`__ for more information.
+        See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#structfield.extensions>`__ for more information.
 
     .. cpp:function:: diplomat::result<std::string, ICU4XLocaleError> get_unicode_extension(const std::string_view bytes) const
 
         Write a string representation of the unicode extension to ``write``
-        See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#structfield.extension>`__ for more information.
+        See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#structfield.extensions>`__ for more information.
 
     .. cpp:function:: template<typename W> diplomat::result<std::monostate, ICU4XLocaleError> language_to_writeable(W& write) const
 

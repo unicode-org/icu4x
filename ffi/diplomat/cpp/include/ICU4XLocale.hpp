@@ -81,14 +81,14 @@ class ICU4XLocale {
   /**
    * Write a string representation of the unicode extension to `write`
    * 
-   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#structfield.extension) for more information.
+   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#structfield.extensions) for more information.
    */
   template<typename W> diplomat::result<std::monostate, ICU4XLocaleError> get_unicode_extension_to_writeable(const std::string_view bytes, W& write) const;
 
   /**
    * Write a string representation of the unicode extension to `write`
    * 
-   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#structfield.extension) for more information.
+   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#structfield.extensions) for more information.
    */
   diplomat::result<std::string, ICU4XLocaleError> get_unicode_extension(const std::string_view bytes) const;
 

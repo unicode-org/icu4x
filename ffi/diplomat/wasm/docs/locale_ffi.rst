@@ -36,7 +36,7 @@
     .. js:function:: get_unicode_extension(bytes)
 
         Write a string representation of the unicode extension to ``write``
-        See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#structfield.extension>`__ for more information.
+        See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#structfield.extensions>`__ for more information.
 
     .. js:function:: language()
 

@@ -21,7 +21,7 @@
 
 .. cpp:struct:: ICU4XLineBreakOptions
 
-    See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/icu_segmenter/enum.LineBreakOptions.html>`__ for more information.
+    See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/icu_segmenter/struct.LineBreakOptions.html>`__ for more information.
 
     .. cpp:member:: ICU4XLineBreakRule line_break_rule
 
