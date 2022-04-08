@@ -38,6 +38,7 @@ const SCRIPT_X_SCRIPT_VAL: u16 = (1 << SCRIPT_VAL_LENGTH) - 1;
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[repr(transparent)]
 #[doc(hidden)] // `ScriptWithExt` not intended as public-facing but for `ScriptWithExtensions` constructor
+#[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct ScriptWithExt(pub u16);
 
 #[allow(missing_docs)] // These constants don't need individual documentation.
