@@ -73,12 +73,25 @@ pub fn get_all_keys() -> Vec<ResourceKey> {
 #[macro_export]
 macro_rules! create_omnibus_provider {
     ($cldr_paths:expr, $uprops_root:expr, $segmenter_data_root:expr) => {{
+        use core::convert::TryFrom;
         icu_provider_adapters::make_forking_provider!(
             icu_provider_adapters::fork::by_key::ForkByKeyProvider,
             [
-                $crate::create_cldr_provider!($cldr_paths, $uprops_root.to_path_buf()),
-                $crate::create_uprops_provider!(&$uprops_root),
-                $crate::create_segmenter_provider!(&$segmenter_data_root, &$uprops_root),
+                $crate::cldr::AliasesProvider::try_from(&*$cldr_paths as &dyn $crate::cldr::CldrPaths)?,
+                $crate::cldr::CommonDateProvider::try_from(&*$cldr_paths as &dyn $crate::cldr::CldrPaths)?,
+                $crate::cldr::JapaneseErasProvider::try_from(&*$cldr_paths as &dyn $crate::cldr::CldrPaths)?,
+                $crate::cldr::LikelySubtagsProvider::try_from(&*$cldr_paths as &dyn $crate::cldr::CldrPaths)?,
+                $crate::cldr::NumbersProvider::try_from(&*$cldr_paths as &dyn $crate::cldr::CldrPaths)?,
+                $crate::cldr::PluralsProvider::try_from(&*$cldr_paths as &dyn $crate::cldr::CldrPaths)?,
+                $crate::cldr::TimeZonesProvider::try_from(&*$cldr_paths as &dyn $crate::cldr::CldrPaths)?,
+                $crate::cldr::WeekDataProvider::try_from(&*$cldr_paths as &dyn $crate::cldr::CldrPaths)?,
+                $crate::cldr::ListProvider::try_from(&*$cldr_paths as &dyn $crate::cldr::CldrPaths, $uprops_root.clone())?,
+                $crate::uprops::EnumeratedPropertyCodePointTrieProvider::try_new(&$uprops_root)?,
+                $crate::uprops::ScriptWithExtensionsPropertyProvider::try_new(&$uprops_root)?,
+                $crate::uprops::EnumeratedPropertyUnicodeSetDataProvider::try_new(&$uprops_root)?,
+                // Has to go last as it matches all props/ keys.
+                $crate::uprops::BinaryPropertyUnicodeSetDataProvider::try_new(&$uprops_root)?,
+                $crate::segmenter::SegmenterRuleProvider::try_new(&$segmenter_data_root, &$uprops_root)?,
             ]
         )
     }};

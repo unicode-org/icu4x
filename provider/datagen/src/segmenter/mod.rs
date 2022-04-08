@@ -41,10 +41,3 @@ pub use transform::SegmenterRuleProvider;
 pub fn segmenter_data_root() -> PathBuf {
     PathBuf::from(std::env!("CARGO_MANIFEST_DIR")).join("data")
 }
-
-#[macro_export]
-macro_rules! create_segmenter_provider {
-    ($segmenter_data_root:expr, $uprops_root:expr) => {{
-        $crate::segmenter::SegmenterRuleProvider::try_new($segmenter_data_root, $uprops_root)?
-    }};
-}

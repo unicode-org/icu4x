@@ -33,20 +33,3 @@ pub use script::ScriptWithExtensionsPropertyProvider;
 use icu_provider::DataMarker;
 use icu_provider_adapters::fork::by_key::MultiForkByKeyProvider;
 use std::path::Path;
-
-#[macro_export]
-macro_rules! create_uprops_provider {
-    ($uprops_root:expr) => {{
-        use core::convert::TryFrom;
-        icu_provider_adapters::make_forking_provider!(
-            icu_provider_adapters::fork::by_key::ForkByKeyProvider,
-            [
-                $crate::uprops::EnumeratedPropertyCodePointTrieProvider::try_new($uprops_root)?,
-                $crate::uprops::ScriptWithExtensionsPropertyProvider::try_new($uprops_root)?,
-                $crate::uprops::EnumeratedPropertyUnicodeSetDataProvider::try_new($uprops_root)?,
-                // Has to go last as it matches all props/ keys.
-                $crate::uprops::BinaryPropertyUnicodeSetDataProvider::try_new($uprops_root)?,
-            ]
-        )
-    }};
-}
