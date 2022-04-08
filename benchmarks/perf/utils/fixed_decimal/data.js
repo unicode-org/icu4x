@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1649374609461,
+  "lastUpdate": 1649383485218,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -22799,6 +22799,36 @@ window.BENCHMARK_DATA = {
             "name": "fixed_decimal/overview",
             "value": 105174,
             "range": "± 3916",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "967670b3e515ba1c37881959e867eb1e6d688b3a",
+          "message": "update cargo-all-features dep to ^1.7 (#1785)",
+          "timestamp": "2022-04-07T18:57:37-07:00",
+          "tree_id": "70f44ebd4c9aac510fe2a5c39bedc23830620661",
+          "url": "https://github.com/unicode-org/icu4x/commit/967670b3e515ba1c37881959e867eb1e6d688b3a"
+        },
+        "date": 1649383469312,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 93615,
+            "range": "± 444",
             "unit": "ns/iter"
           }
         ]
