@@ -71,11 +71,19 @@ pub fn get_all_keys() -> Vec<ResourceKey> {
 /// Options for creating a datagen provider.
 pub struct DatagenOptions<'a> {
     /// Paths to CLDR source data.
-    pub cldr_paths: &'a dyn cldr::CldrPaths,
-    /// Paths to Unicode Properties source data.
-    pub uprops_root: &'a Path,
-    /// Paths to segmentation source data.
-    pub segmenter_data_root: &'a Path,
+    ///
+    /// If `None`, providers that need CLDR source data cannot be constructed.
+    pub cldr_paths: Option<&'a dyn cldr::CldrPaths>,
+
+    /// Path to Unicode Properties source data.
+    ///
+    /// If `None`, providers that need Unicode Properties source data cannot be constructed.
+    pub uprops_root: Option<&'a Path>,
+
+    /// Path to segmentation source data.
+    ///
+    /// If `None`, providers that need segmentation source data cannot be constructed.
+    pub segmenter_data_root: Option<&'a Path>,
 }
 
 /// Create a data provider reading from source files that generates data for all,

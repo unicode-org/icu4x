@@ -22,7 +22,11 @@ pub struct ListProvider {
 }
 
 impl ListProvider {
-    pub fn try_new(cldr_paths: &dyn CldrPaths, uprops_root: PathBuf) -> Result<Self, Error> {
+    /// Constructs an instance from paths to source data.
+    pub fn try_new(
+        cldr_paths: &(impl CldrPaths + ?Sized),
+        uprops_root: PathBuf,
+    ) -> eyre::Result<Self> {
         Ok(Self {
             cldr_misc: cldr_paths.cldr_misc()?,
             uprops_root,
@@ -31,9 +35,17 @@ impl ListProvider {
 }
 
 impl TryFrom<&crate::DatagenOptions<'_>> for ListProvider {
-    type Error = Error;
-    fn try_from(options: &crate::DatagenOptions) -> Result<Self, Error> {
-        ListProvider::try_new(options.cldr_paths, options.uprops_root.to_path_buf())
+    type Error = eyre::ErrReport;
+    fn try_from(options: &crate::DatagenOptions) -> eyre::Result<Self> {
+        ListProvider::try_new(
+            options
+                .cldr_paths
+                .ok_or_else(|| eyre::eyre!("ListProvider requires cldr_paths"))?,
+            options
+                .uprops_root
+                .ok_or_else(|| eyre::eyre!("ListProvider requires uprops_root"))?
+                .to_path_buf(),
+        )
     }
 }
 
@@ -182,7 +194,7 @@ mod tests {
         ($locale:literal, $type:ident, $(($input:expr, $output:literal),)+) => {
             let cldr_paths = crate::cldr::cldr_paths::for_test();
             let provider = ListProvider::try_new(
-                &cldr_paths as &dyn CldrPaths, icu_testdata::paths::uprops_toml_root()).unwrap();
+                &cldr_paths, icu_testdata::paths::uprops_toml_root()).unwrap();
             let f = ListFormatter::$type(locale!($locale), &provider, ListStyle::Wide).unwrap();
             $(
                 assert_writeable_eq!(f.format($input.iter()), $output);

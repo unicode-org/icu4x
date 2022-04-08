@@ -29,9 +29,9 @@ pub struct TimeZonesProvider {
     bcp47_tzid_data: RwLock<LiteMap<String, String>>,
 }
 
-impl TryFrom<&dyn CldrPaths> for TimeZonesProvider {
-    type Error = Error;
-    fn try_from(cldr_paths: &dyn CldrPaths) -> Result<Self, Self::Error> {
+impl TimeZonesProvider {
+    /// Constructs an instance from paths to source data.
+    pub fn try_new(cldr_paths: &(impl CldrPaths + ?Sized)) -> eyre::Result<Self> {
         Ok(Self {
             path: cldr_paths.cldr_dates_gregorian()?.join("main"),
             time_zone_names_data: FrozenBTreeMap::new(),
@@ -42,9 +42,13 @@ impl TryFrom<&dyn CldrPaths> for TimeZonesProvider {
 }
 
 impl TryFrom<&crate::DatagenOptions<'_>> for TimeZonesProvider {
-    type Error = Error;
-    fn try_from(options: &crate::DatagenOptions) -> Result<Self, Error> {
-        TimeZonesProvider::try_from(options.cldr_paths)
+    type Error = eyre::ErrReport;
+    fn try_from(options: &crate::DatagenOptions) -> eyre::Result<Self> {
+        TimeZonesProvider::try_new(
+            options
+                .cldr_paths
+                .ok_or_else(|| eyre::eyre!("TimeZonesProvider requires cldr_paths"))?,
+        )
     }
 }
 
@@ -148,7 +152,7 @@ mod tests {
         use icu_locid::langid;
 
         let cldr_paths = crate::cldr::cldr_paths::for_test();
-        let provider = TimeZonesProvider::try_from(&cldr_paths as &dyn CldrPaths).unwrap();
+        let provider = TimeZonesProvider::try_new(&cldr_paths).unwrap();
 
         let time_zone_formats: DataPayload<TimeZoneFormatsV1Marker> = provider
             .load_resource(&DataRequest {

@@ -22,9 +22,9 @@ pub struct PluralsProvider {
     ordinal_rules: RwLock<Option<Option<cldr_serde::plurals::Rules>>>,
 }
 
-impl TryFrom<&dyn CldrPaths> for PluralsProvider {
-    type Error = Error;
-    fn try_from(cldr_paths: &dyn CldrPaths) -> Result<Self, Self::Error> {
+impl PluralsProvider {
+    /// Constructs an instance from paths to source data.
+    pub fn try_new(cldr_paths: &(impl CldrPaths + ?Sized)) -> eyre::Result<Self> {
         Ok(PluralsProvider {
             cldr_core: cldr_paths.cldr_core()?,
             cardinal_rules: RwLock::new(None),
@@ -34,9 +34,13 @@ impl TryFrom<&dyn CldrPaths> for PluralsProvider {
 }
 
 impl TryFrom<&crate::DatagenOptions<'_>> for PluralsProvider {
-    type Error = Error;
-    fn try_from(options: &crate::DatagenOptions) -> Result<Self, Error> {
-        PluralsProvider::try_from(options.cldr_paths)
+    type Error = eyre::ErrReport;
+    fn try_from(options: &crate::DatagenOptions) -> eyre::Result<Self> {
+        PluralsProvider::try_new(
+            options
+                .cldr_paths
+                .ok_or_else(|| eyre::eyre!("PluralsProvider requires cldr_paths"))?,
+        )
     }
 }
 
@@ -170,7 +174,7 @@ fn test_basic() {
     use icu_locid::langid;
 
     let cldr_paths = crate::cldr::cldr_paths::for_test();
-    let provider = PluralsProvider::try_from(&cldr_paths as &dyn CldrPaths).unwrap();
+    let provider = PluralsProvider::try_new(&cldr_paths).unwrap();
 
     // Spot-check locale 'cs' since it has some interesting entries
     let cs_rules: DataPayload<CardinalV1Marker> = provider

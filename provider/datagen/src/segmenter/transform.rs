@@ -234,10 +234,7 @@ pub struct SegmenterRuleProvider {
 impl SegmenterRuleProvider {
     /// Create a new [`Self`] given a filesystem directory. See [module-level documentation](crate)
     /// for its usage.
-    pub fn try_new<P: Into<PathBuf>>(
-        segmenter_data_root: P,
-        uprops_root: P,
-    ) -> Result<Self, DataError> {
+    pub fn try_new<P: Into<PathBuf>>(segmenter_data_root: P, uprops_root: P) -> eyre::Result<Self> {
         let segmenter_data_root = segmenter_data_root.into();
         let uprops_root = uprops_root.into();
 
@@ -644,9 +641,16 @@ impl SegmenterRuleProvider {
 }
 
 impl TryFrom<&crate::DatagenOptions<'_>> for SegmenterRuleProvider {
-    type Error = DataError;
+    type Error = eyre::ErrReport;
     fn try_from(options: &crate::DatagenOptions) -> Result<Self, Self::Error> {
-        SegmenterRuleProvider::try_new(options.segmenter_data_root, options.uprops_root)
+        SegmenterRuleProvider::try_new(
+            options
+                .segmenter_data_root
+                .ok_or_else(|| eyre::eyre!("SegmenterRuleProvider requires segmenter_data_root"))?,
+            options
+                .uprops_root
+                .ok_or_else(|| eyre::eyre!("SegmenterRuleProvider requires uprops_root"))?,
+        )
     }
 }
 

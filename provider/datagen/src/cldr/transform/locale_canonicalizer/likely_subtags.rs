@@ -20,9 +20,9 @@ pub struct LikelySubtagsProvider {
     path: PathBuf,
 }
 
-impl TryFrom<&dyn CldrPaths> for LikelySubtagsProvider {
-    type Error = Error;
-    fn try_from(cldr_paths: &dyn CldrPaths) -> Result<Self, Self::Error> {
+impl LikelySubtagsProvider {
+    /// Constructs an instance from paths to source data.
+    pub fn try_new(cldr_paths: &(impl CldrPaths + ?Sized)) -> eyre::Result<Self> {
         Ok(Self {
             path: cldr_paths
                 .cldr_core()?
@@ -33,9 +33,13 @@ impl TryFrom<&dyn CldrPaths> for LikelySubtagsProvider {
 }
 
 impl TryFrom<&crate::DatagenOptions<'_>> for LikelySubtagsProvider {
-    type Error = Error;
-    fn try_from(options: &crate::DatagenOptions) -> Result<Self, Error> {
-        LikelySubtagsProvider::try_from(options.cldr_paths)
+    type Error = eyre::ErrReport;
+    fn try_from(options: &crate::DatagenOptions) -> eyre::Result<Self> {
+        LikelySubtagsProvider::try_new(
+            options
+                .cldr_paths
+                .ok_or_else(|| eyre::eyre!("LikelySubtagsProvider requires cldr_paths"))?,
+        )
     }
 }
 
@@ -170,7 +174,7 @@ fn test_basic() {
     use icu_locid::script;
 
     let cldr_paths = crate::cldr::cldr_paths::for_test();
-    let provider = LikelySubtagsProvider::try_from(&cldr_paths as &dyn CldrPaths).unwrap();
+    let provider = LikelySubtagsProvider::try_new(&cldr_paths).unwrap();
     let result: DataPayload<LikelySubtagsV1Marker> = provider
         .load_resource(&Default::default())
         .unwrap()

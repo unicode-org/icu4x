@@ -37,7 +37,9 @@ impl EnumeratedPropertyCodePointTrieProvider {
 impl TryFrom<&crate::DatagenOptions<'_>> for EnumeratedPropertyCodePointTrieProvider {
     type Error = eyre::ErrReport;
     fn try_from(options: &crate::DatagenOptions) -> eyre::Result<Self> {
-        EnumeratedPropertyCodePointTrieProvider::try_new(options.uprops_root)
+        EnumeratedPropertyCodePointTrieProvider::try_new(options.uprops_root.ok_or_else(|| {
+            eyre::eyre!("EnumeratedPropertyCodePointTrieProvider requires uprops_root")
+        })?)
     }
 }
 

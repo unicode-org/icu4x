@@ -27,7 +27,9 @@ impl BinaryPropertyUnicodeSetDataProvider {
 impl TryFrom<&crate::DatagenOptions<'_>> for BinaryPropertyUnicodeSetDataProvider {
     type Error = eyre::ErrReport;
     fn try_from(options: &crate::DatagenOptions) -> eyre::Result<Self> {
-        BinaryPropertyUnicodeSetDataProvider::try_new(options.uprops_root)
+        BinaryPropertyUnicodeSetDataProvider::try_new(options.uprops_root.ok_or_else(|| {
+            eyre::eyre!("BinaryPropertyUnicodeSetDataProvider requires uprops_root")
+        })?)
     }
 }
 
