@@ -33,28 +33,28 @@ use fixed_decimal::FixedDecimal;
 ///
 /// ```
 /// use icu::plurals::PluralOperands;
-/// assert_eq!(PluralOperands {
-///    i: 2,
-///    v: 0,
-///    w: 0,
-///    f: 0,
-///    t: 0,
-///    c: 0,
-/// }, PluralOperands::from(2_usize))
+/// assert_eq!(PluralOperands::new(
+///    2, // i
+///    0, // v
+///    0, // w
+///    0, // f
+///    0, // t
+///    0, // c
+/// ), PluralOperands::from(2_usize))
 /// ```
 ///
 /// From &str
 ///
 /// ```
 /// use icu::plurals::PluralOperands;
-/// assert_eq!(Ok(PluralOperands {
-///    i: 123,
-///    v: 2,
-///    w: 2,
-///    f: 45,
-///    t: 45,
-///    c: 0,
-/// }), "123.45".parse())
+/// assert_eq!(Ok(PluralOperands::new(
+///    123, // i
+///    2, // v
+///    2, // w
+///    45, // f
+///    45, // t
+///    0, // c
+/// )), "123.45".parse())
 /// ```
 ///
 /// From [`FixedDecimal`]
@@ -62,16 +62,17 @@ use fixed_decimal::FixedDecimal;
 /// ```
 /// use fixed_decimal::FixedDecimal;
 /// use icu::plurals::PluralOperands;
-/// assert_eq!(Ok(PluralOperands {
-///    i: 123,
-///    v: 2,
-///    w: 2,
-///    f: 45,
-///    t: 45,
-///    c: 0,
-/// }), FixedDecimal::from(12345).multiplied_pow10(-2).map(|d| (&d).into()))
+/// assert_eq!(Ok(PluralOperands::new(
+///    123, // i
+///    2, // v
+///    2, // w
+///    45, // f
+///    45, // t
+///    0, // c
+/// )), FixedDecimal::from(12345).multiplied_pow10(-2).map(|d| (&d).into()))
 /// ```
-#[derive(Debug, Clone, Copy, PartialEq)]
+#[derive(Debug, Clone, Copy, PartialEq, Default)]
+#[non_exhaustive]
 pub struct PluralOperands {
     /// Integer value of input
     pub i: u64,
@@ -88,6 +89,10 @@ pub struct PluralOperands {
 }
 
 impl PluralOperands {
+    /// Construct a new [`PluralOperands`] given its various fields (documented on the struct)
+    pub fn new(i: u64, v: usize, w: usize, f: u64, t: u64, c: usize) -> Self {
+        Self { i, v, w, f, t, c }
+    }
     /// Returns the number represented by this [`PluralOperands`] as floating point.
     /// The precision of the number returned is up to the representation accuracy
     /// of a double.

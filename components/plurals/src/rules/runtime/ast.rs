@@ -14,10 +14,12 @@ use zerovec::{
 };
 
 #[derive(yoke::Yokeable, zerofrom::ZeroFrom, Clone, PartialEq, Debug)]
+#[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct Rule<'data>(pub VarZeroVec<'data, RelationULE>);
 
 #[derive(Copy, Clone, Eq, PartialEq, Ord, PartialOrd, Debug)]
 #[repr(u8)]
+#[allow(clippy::exhaustive_enums)] // this type is stable
 pub enum AndOr {
     Or,
     And,
@@ -25,6 +27,7 @@ pub enum AndOr {
 
 #[derive(Copy, Clone, Eq, PartialEq, Ord, PartialOrd, Debug)]
 #[repr(u8)]
+#[allow(clippy::exhaustive_enums)] // this type is stable
 pub enum Polarity {
     Negative,
     Positive,
@@ -33,6 +36,7 @@ pub enum Polarity {
 #[derive(Copy, Clone, Debug, PartialEq, Eq, Ord, PartialOrd)]
 #[repr(u8)]
 #[zerovec::make_ule(OperandULE)]
+#[non_exhaustive]
 pub enum Operand {
     N = 0,
     I = 1,
@@ -45,6 +49,7 @@ pub enum Operand {
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Ord, PartialOrd)]
+#[allow(clippy::exhaustive_enums)] // this type is stable
 pub enum RangeOrValue {
     Range(u32, u32),
     Value(u32),

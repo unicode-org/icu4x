@@ -211,14 +211,7 @@ pub(crate) mod internal {
                     minimum_significant_digits: 3,
                     maximum_significant_digits: 4,
                 },
-                expected: PluralOperands {
-                    i: 1,
-                    v: 2,
-                    w: 1,
-                    f: 50,
-                    t: 5,
-                    c: 0,
-                },
+                expected: PluralOperands::new(1, 2, 1, 50, 5, 0),
             }];
             for test in tests {
                 let actual = to_icu4x_operands(test.n, test.opts.clone());

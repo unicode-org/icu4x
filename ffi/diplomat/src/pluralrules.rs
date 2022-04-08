@@ -77,14 +77,9 @@ pub mod ffi {
         /// FFI version of `PluralRules::select()`.
         /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu_plurals/struct.PluralRules.html#method.select) for more details.
         pub fn select(&self, op: ICU4XPluralOperands) -> ICU4XPluralCategory {
-            let res = self.0.select(PluralOperands {
-                i: op.i,
-                v: op.v,
-                w: op.w,
-                f: op.f,
-                t: op.t,
-                c: op.c,
-            });
+            let res = self
+                .0
+                .select(PluralOperands::new(op.i, op.v, op.w, op.f, op.t, op.c));
 
             match res {
                 PluralCategory::Zero => ICU4XPluralCategory::Zero,
