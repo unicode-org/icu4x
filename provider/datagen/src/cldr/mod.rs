@@ -3,8 +3,10 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 //! `icu_datagen::cldr` contains implementations of the [`ICU4X`] [data provider] interface
-//! based on the JSON files shipped by CLDR. Create a [`CldrPaths`] and then pass it into
-//! [`create_exportable_provider`].
+//! based on the JSON files shipped by CLDR.
+//!
+//! This module exports feature-specific providers. Use [`crate::create_datagen_provider`]
+//! for an all-inclusive provider.
 //!
 //! This crate contains two implementations of [`CldrPaths`]:
 //!

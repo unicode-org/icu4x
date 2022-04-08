@@ -6,6 +6,9 @@
 //! based on Unicode properties and TOML files implementing [Unicode Standard Annex #14][UAX14] and
 //! [Unicode Standard Annex #29][UAX29] breaking rules.
 //!
+//! This module exports feature-specific providers. Use [`crate::create_datagen_provider`]
+//! for an all-inclusive provider.
+//!
 //! **Important:** This data provider implementation is not optimized
 //! for production use. Read more in the [data provider] docs.
 //!

@@ -8,6 +8,9 @@
 //! the necessary Unicode properties and then pass the path to the desired
 //! provider.
 //!
+//! This module exports feature-specific providers. Use [`crate::create_datagen_provider`]
+//! for an all-inclusive provider.
+//!
 //! **Important:** This data provider implementation is not optimized
 //! for production use. Read more in the [data provider] docs.
 //!
