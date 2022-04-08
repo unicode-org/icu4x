@@ -48,6 +48,13 @@ impl TryFrom<&dyn CldrPaths> for JapaneseErasProvider {
     }
 }
 
+impl TryFrom<&crate::DatagenOptions<'_>> for JapaneseErasProvider {
+    type Error = Error;
+    fn try_from(options: &crate::DatagenOptions) -> Result<Self, Error> {
+        JapaneseErasProvider::try_from(options.cldr_paths)
+    }
+}
+
 impl ResourceProvider<JapaneseErasV1Marker> for JapaneseErasProvider {
     fn load_resource(
         &self,

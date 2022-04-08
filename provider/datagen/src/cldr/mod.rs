@@ -30,9 +30,6 @@ pub use error::Error as CldrError;
 
 use icu_provider::prelude::*;
 
-
-
-
 pub use transform::calendar::japanese::JapaneseErasProvider;
 pub use transform::datetime::week_data::WeekDataProvider;
 pub use transform::datetime::CommonDateProvider;

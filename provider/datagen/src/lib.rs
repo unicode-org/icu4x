@@ -53,11 +53,9 @@ pub mod cldr;
 pub mod segmenter;
 pub mod uprops;
 
-
+use std::path::Path;
 
 use icu_provider::ResourceKey;
-
-
 
 /// List of all supported keys
 pub fn get_all_keys() -> Vec<ResourceKey> {
@@ -70,28 +68,34 @@ pub fn get_all_keys() -> Vec<ResourceKey> {
     v
 }
 
+pub struct DatagenOptions<'a> {
+    pub cldr_paths: &'a dyn cldr::CldrPaths,
+    pub uprops_root: &'a Path,
+    pub segmenter_data_root: &'a Path,
+}
+
 #[macro_export]
 macro_rules! create_omnibus_provider {
-    ($cldr_paths:expr, $uprops_root:expr, $segmenter_data_root:expr) => {{
+    ($datagen_options:expr, $cldr_paths:expr, $uprops_root:expr, $segmenter_data_root:expr) => {{
         use core::convert::TryFrom;
         icu_provider_adapters::make_forking_provider!(
             icu_provider_adapters::fork::by_key::ForkByKeyProvider,
             [
-                $crate::cldr::AliasesProvider::try_from(&*$cldr_paths as &dyn $crate::cldr::CldrPaths)?,
-                $crate::cldr::CommonDateProvider::try_from(&*$cldr_paths as &dyn $crate::cldr::CldrPaths)?,
-                $crate::cldr::JapaneseErasProvider::try_from(&*$cldr_paths as &dyn $crate::cldr::CldrPaths)?,
-                $crate::cldr::LikelySubtagsProvider::try_from(&*$cldr_paths as &dyn $crate::cldr::CldrPaths)?,
-                $crate::cldr::NumbersProvider::try_from(&*$cldr_paths as &dyn $crate::cldr::CldrPaths)?,
-                $crate::cldr::PluralsProvider::try_from(&*$cldr_paths as &dyn $crate::cldr::CldrPaths)?,
-                $crate::cldr::TimeZonesProvider::try_from(&*$cldr_paths as &dyn $crate::cldr::CldrPaths)?,
-                $crate::cldr::WeekDataProvider::try_from(&*$cldr_paths as &dyn $crate::cldr::CldrPaths)?,
-                $crate::cldr::ListProvider::try_from(&*$cldr_paths as &dyn $crate::cldr::CldrPaths, $uprops_root.clone())?,
-                $crate::uprops::EnumeratedPropertyCodePointTrieProvider::try_new(&$uprops_root)?,
-                $crate::uprops::ScriptWithExtensionsPropertyProvider::try_new(&$uprops_root)?,
-                $crate::uprops::EnumeratedPropertyUnicodeSetDataProvider::try_new(&$uprops_root)?,
+                $crate::cldr::AliasesProvider::try_from(&$datagen_options)?,
+                $crate::cldr::CommonDateProvider::try_from(&$datagen_options)?,
+                $crate::cldr::JapaneseErasProvider::try_from(&$datagen_options)?,
+                $crate::cldr::LikelySubtagsProvider::try_from(&$datagen_options)?,
+                $crate::cldr::NumbersProvider::try_from(&$datagen_options)?,
+                $crate::cldr::PluralsProvider::try_from(&$datagen_options)?,
+                $crate::cldr::TimeZonesProvider::try_from(&$datagen_options)?,
+                $crate::cldr::WeekDataProvider::try_from(&$datagen_options)?,
+                $crate::cldr::ListProvider::try_from(&$datagen_options)?,
+                $crate::uprops::EnumeratedPropertyCodePointTrieProvider::try_from(&$datagen_options)?,
+                $crate::uprops::ScriptWithExtensionsPropertyProvider::try_from(&$datagen_options)?,
+                $crate::uprops::EnumeratedPropertyUnicodeSetDataProvider::try_from(&$datagen_options)?,
                 // Has to go last as it matches all props/ keys.
-                $crate::uprops::BinaryPropertyUnicodeSetDataProvider::try_new(&$uprops_root)?,
-                $crate::segmenter::SegmenterRuleProvider::try_new(&$segmenter_data_root, &$uprops_root)?,
+                $crate::uprops::BinaryPropertyUnicodeSetDataProvider::try_from(&$datagen_options)?,
+                $crate::segmenter::SegmenterRuleProvider::try_from(&$datagen_options)?,
             ]
         )
     }};

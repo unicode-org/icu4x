@@ -9,6 +9,7 @@ use icu_properties::provider::UnicodePropertyV1Marker;
 use icu_provider::datagen::IterableDynProvider;
 use icu_provider::prelude::*;
 use icu_uniset::UnicodeSetBuilder;
+use std::convert::TryFrom;
 use std::path::Path;
 
 pub struct BinaryPropertyUnicodeSetDataProvider {
@@ -20,6 +21,13 @@ impl BinaryPropertyUnicodeSetDataProvider {
     pub fn try_new(root_dir: &Path) -> eyre::Result<Self> {
         let data = uprops_helpers::load_binary_from_dir(root_dir)?;
         Ok(Self { data })
+    }
+}
+
+impl TryFrom<&crate::DatagenOptions<'_>> for BinaryPropertyUnicodeSetDataProvider {
+    type Error = eyre::ErrReport;
+    fn try_from(options: &crate::DatagenOptions) -> eyre::Result<Self> {
+        BinaryPropertyUnicodeSetDataProvider::try_new(options.uprops_root)
     }
 }
 

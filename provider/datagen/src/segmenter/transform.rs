@@ -14,6 +14,7 @@ use icu_provider::datagen::IterableResourceProvider;
 use icu_provider::prelude::*;
 use icu_segmenter::symbols::*;
 use icu_segmenter::*;
+use std::convert::TryFrom;
 use std::fs::File;
 use std::io::Read;
 use std::path::PathBuf;
@@ -639,6 +640,13 @@ impl SegmenterRuleProvider {
             eot_property: (property_length - 1) as u8,
             complex_property: complex_property as u8,
         })
+    }
+}
+
+impl TryFrom<&crate::DatagenOptions<'_>> for SegmenterRuleProvider {
+    type Error = DataError;
+    fn try_from(options: &crate::DatagenOptions) -> Result<Self, Self::Error> {
+        SegmenterRuleProvider::try_new(options.segmenter_data_root, options.uprops_root)
     }
 }
 

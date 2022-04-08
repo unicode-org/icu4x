@@ -41,6 +41,13 @@ impl TryFrom<&dyn CldrPaths> for NumbersProvider {
     }
 }
 
+impl TryFrom<&crate::DatagenOptions<'_>> for NumbersProvider {
+    type Error = Error;
+    fn try_from(options: &crate::DatagenOptions) -> Result<Self, Error> {
+        NumbersProvider::try_from(options.cldr_paths)
+    }
+}
+
 impl NumbersProvider {
     /// Returns the digits for the given numbering system name.
     fn get_digits_for_numbering_system(&self, nsname: TinyStr8) -> Option<[char; 10]> {

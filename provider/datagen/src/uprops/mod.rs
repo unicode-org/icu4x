@@ -29,7 +29,3 @@ pub use bin_uniset::BinaryPropertyUnicodeSetDataProvider;
 pub use enum_codepointtrie::EnumeratedPropertyCodePointTrieProvider;
 pub use enum_uniset::EnumeratedPropertyUnicodeSetDataProvider;
 pub use script::ScriptWithExtensionsPropertyProvider;
-
-
-
-

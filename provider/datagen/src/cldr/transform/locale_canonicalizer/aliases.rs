@@ -34,6 +34,13 @@ impl TryFrom<&dyn CldrPaths> for AliasesProvider {
     }
 }
 
+impl TryFrom<&crate::DatagenOptions<'_>> for AliasesProvider {
+    type Error = Error;
+    fn try_from(options: &crate::DatagenOptions) -> Result<Self, Error> {
+        AliasesProvider::try_from(options.cldr_paths)
+    }
+}
+
 impl ResourceProvider<AliasesV1Marker> for AliasesProvider {
     fn load_resource(&self, req: &DataRequest) -> Result<DataResponse<AliasesV1Marker>, DataError> {
         let langid = &req.options.langid;

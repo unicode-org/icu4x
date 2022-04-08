@@ -32,6 +32,13 @@ impl TryFrom<&dyn CldrPaths> for LikelySubtagsProvider {
     }
 }
 
+impl TryFrom<&crate::DatagenOptions<'_>> for LikelySubtagsProvider {
+    type Error = Error;
+    fn try_from(options: &crate::DatagenOptions) -> Result<Self, Error> {
+        LikelySubtagsProvider::try_from(options.cldr_paths)
+    }
+}
+
 impl ResourceProvider<LikelySubtagsV1Marker> for LikelySubtagsProvider {
     fn load_resource(
         &self,

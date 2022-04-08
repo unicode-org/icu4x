@@ -61,6 +61,13 @@ impl TryFrom<&dyn CldrPaths> for WeekDataProvider {
     }
 }
 
+impl TryFrom<&crate::DatagenOptions<'_>> for WeekDataProvider {
+    type Error = Error;
+    fn try_from(options: &crate::DatagenOptions) -> Result<Self, Error> {
+        WeekDataProvider::try_from(options.cldr_paths)
+    }
+}
+
 impl IterableResourceProvider<WeekDataV1Marker> for WeekDataProvider {
     #[allow(clippy::needless_collect)] // https://github.com/rust-lang/rust-clippy/issues/7526
     fn supported_options(&self) -> Result<Box<dyn Iterator<Item = ResourceOptions>>, DataError> {

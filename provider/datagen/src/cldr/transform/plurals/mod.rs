@@ -33,6 +33,13 @@ impl TryFrom<&dyn CldrPaths> for PluralsProvider {
     }
 }
 
+impl TryFrom<&crate::DatagenOptions<'_>> for PluralsProvider {
+    type Error = Error;
+    fn try_from(options: &crate::DatagenOptions) -> Result<Self, Error> {
+        PluralsProvider::try_from(options.cldr_paths)
+    }
+}
+
 impl PluralsProvider {
     fn get_rules_for(
         &self,

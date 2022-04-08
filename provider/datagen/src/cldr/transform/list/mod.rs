@@ -11,6 +11,7 @@ use icu_list::provider::*;
 use icu_locid::language;
 use icu_provider::datagen::IterableResourceProvider;
 use icu_provider::prelude::*;
+use std::convert::TryFrom;
 use std::path::PathBuf;
 
 /// A data provider reading from CLDR JSON list rule files.
@@ -21,11 +22,18 @@ pub struct ListProvider {
 }
 
 impl ListProvider {
-    pub fn try_from(cldr_paths: &dyn CldrPaths, uprops_root: PathBuf) -> Result<Self, Error> {
+    pub fn try_new(cldr_paths: &dyn CldrPaths, uprops_root: PathBuf) -> Result<Self, Error> {
         Ok(Self {
             cldr_misc: cldr_paths.cldr_misc()?,
             uprops_root,
         })
+    }
+}
+
+impl TryFrom<&crate::DatagenOptions<'_>> for ListProvider {
+    type Error = Error;
+    fn try_from(options: &crate::DatagenOptions) -> Result<Self, Error> {
+        ListProvider::try_new(options.cldr_paths, options.uprops_root.to_path_buf())
     }
 }
 
@@ -173,7 +181,7 @@ mod tests {
     macro_rules! test {
         ($locale:literal, $type:ident, $(($input:expr, $output:literal),)+) => {
             let cldr_paths = crate::cldr::cldr_paths::for_test();
-            let provider = ListProvider::try_from(
+            let provider = ListProvider::try_new(
                 &cldr_paths as &dyn CldrPaths, icu_testdata::paths::uprops_toml_root()).unwrap();
             let f = ListFormatter::$type(locale!($locale), &provider, ListStyle::Wide).unwrap();
             $(

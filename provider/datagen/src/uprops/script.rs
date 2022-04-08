@@ -35,6 +35,13 @@ impl ScriptWithExtensionsPropertyProvider {
     }
 }
 
+impl TryFrom<&crate::DatagenOptions<'_>> for ScriptWithExtensionsPropertyProvider {
+    type Error = eyre::ErrReport;
+    fn try_from(options: &crate::DatagenOptions) -> eyre::Result<Self> {
+        ScriptWithExtensionsPropertyProvider::try_new(options.uprops_root)
+    }
+}
+
 // source data to ICU4X plain/raw/utility data structure
 impl TryFrom<&ScriptWithExtensionsProperty> for ScriptWithExtensions<'static> {
     type Error = DataError;

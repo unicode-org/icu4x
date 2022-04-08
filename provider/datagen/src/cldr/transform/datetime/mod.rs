@@ -36,6 +36,13 @@ impl TryFrom<&dyn CldrPaths> for CommonDateProvider {
     }
 }
 
+impl TryFrom<&crate::DatagenOptions<'_>> for CommonDateProvider {
+    type Error = Error;
+    fn try_from(options: &crate::DatagenOptions) -> Result<Self, Error> {
+        CommonDateProvider::try_from(options.cldr_paths)
+    }
+}
+
 macro_rules! impl_resource_provider {
     ($(($marker:ident, $expr:expr)),+) => {
         $(
