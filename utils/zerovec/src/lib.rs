@@ -217,6 +217,7 @@
 extern crate alloc;
 
 mod error;
+mod flexzerovec;
 mod map;
 mod map2d;
 #[cfg(test)]
