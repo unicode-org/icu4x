@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1649435856339,
+  "lastUpdate": 1649463356956,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -13073,6 +13073,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/6590b5ddaabab6666592224037f3eb2cab2c4ccb"
         },
         "date": 1649435839534,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4504680,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "ebf0a95ec52e69d0fbbbcb3682396dbd8c597051",
+          "message": "Add note about Copy Error types to style guide (#1787)",
+          "timestamp": "2022-04-08T17:14:13-07:00",
+          "tree_id": "42000b85cd05045468dc930570c784e2113c6a08",
+          "url": "https://github.com/unicode-org/icu4x/commit/ebf0a95ec52e69d0fbbbcb3682396dbd8c597051"
+        },
+        "date": 1649463337897,
         "tool": "ndjson",
         "benches": [
           {
