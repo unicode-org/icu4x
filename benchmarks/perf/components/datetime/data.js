@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1649436255565,
+  "lastUpdate": 1649463816841,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -25715,6 +25715,48 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 171861,
             "range": "± 165",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "ebf0a95ec52e69d0fbbbcb3682396dbd8c597051",
+          "message": "Add note about Copy Error types to style guide (#1787)",
+          "timestamp": "2022-04-08T17:14:13-07:00",
+          "tree_id": "42000b85cd05045468dc930570c784e2113c6a08",
+          "url": "https://github.com/unicode-org/icu4x/commit/ebf0a95ec52e69d0fbbbcb3682396dbd8c597051"
+        },
+        "date": 1649463797741,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 107505,
+            "range": "± 5504",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 1067352,
+            "range": "± 84445",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 234160,
+            "range": "± 8740",
             "unit": "ns/iter"
           }
         ]
