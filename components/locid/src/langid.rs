@@ -317,21 +317,21 @@ impl_writeable_for_each_subtag_str_no_test!(LanguageIdentifier);
 fn test_writeable() {
     use writeable::assert_writeable_eq;
     assert_writeable_eq!(LanguageIdentifier::UND, "und");
-    assert_writeable_eq!(LanguageIdentifier::from_str("und-001").unwrap(), "und-001");
+    assert_writeable_eq!("und-001".parse::<LanguageIdentifier>().unwrap(), "und-001");
     assert_writeable_eq!(
-        LanguageIdentifier::from_str("und-Mymr").unwrap(),
+        "und-Mymr".parse::<LanguageIdentifier>().unwrap(),
         "und-Mymr",
     );
     assert_writeable_eq!(
-        LanguageIdentifier::from_str("my-Mymr-MM").unwrap(),
+        "my-Mymr-MM".parse::<LanguageIdentifier>().unwrap(),
         "my-Mymr-MM",
     );
     assert_writeable_eq!(
-        LanguageIdentifier::from_str("my-Mymr-MM-posix").unwrap(),
+        "my-Mymr-MM-posix".parse::<LanguageIdentifier>().unwrap(),
         "my-Mymr-MM-posix",
     );
     assert_writeable_eq!(
-        LanguageIdentifier::from_str("zh-macos-posix").unwrap(),
+        "zh-macos-posix".parse::<LanguageIdentifier>().unwrap(),
         "zh-macos-posix",
     );
 }
@@ -466,4 +466,55 @@ impl From<&LanguageIdentifier>
     fn from(langid: &LanguageIdentifier) -> Self {
         (langid.language, langid.script, langid.region)
     }
+}
+
+/// A macro allowing for compile-time construction of valid [`LanguageIdentifier`]s.
+///
+/// The macro will perform syntax canonicalization of the tag.
+///
+/// # Examples
+///
+/// ```
+/// use icu::locid::{langid, LanguageIdentifier};
+///
+/// const DE_AT: LanguageIdentifier = langid!("de_at");
+///
+/// let de_at: LanguageIdentifier = "de_at".parse().unwrap();
+///
+/// assert_eq!(DE_AT, de_at);
+/// ```
+///
+/// *Note*: The macro cannot produce language identifiers with variants due to const
+/// limitations (see [`Heap Allocations in Constants`]):
+///
+/// ```compile_fail
+/// icu::locid::langid("de_at-foobar");
+/// ```
+///
+/// Use runtime parsing instead:
+/// ```
+/// "de_at-foobar"
+///     .parse::<icu::locid::LanguageIdentifier>()
+///     .unwrap();
+/// ```
+///
+/// [`LanguageIdentifier`]: crate::LanguageIdentifier
+/// [`Heap Allocations in Constants`]: https://github.com/rust-lang/const-eval/issues/20
+#[macro_export]
+macro_rules! langid {
+    ($langid:literal) => {{
+        const R: $crate::LanguageIdentifier =
+            match $crate::LanguageIdentifier::from_bytes_without_variants($langid.as_bytes()) {
+                Ok((language, script, region)) => $crate::LanguageIdentifier {
+                    language,
+                    script,
+                    region,
+                    variants: $crate::subtags::Variants::new(),
+                },
+                #[allow(clippy::panic)] // const context
+                _ => panic!(concat!("Invalid language code: ", $langid, " . Note that variant tags are not \
+                                        supported by the langid! macro, use runtime parsing instead.")),
+            };
+        R
+    }};
 }

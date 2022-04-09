@@ -102,19 +102,24 @@ impl<const N: usize> TinyAsciiStr<N> {
     }
 
     #[inline]
-    pub fn as_str(&self) -> &str {
-        &*self
+    pub const fn as_str(&self) -> &str {
+        unsafe { str::from_utf8_unchecked(self.as_bytes()) }
     }
 
     #[inline]
     #[must_use]
-    pub fn len(&self) -> usize {
+    pub const fn len(&self) -> usize {
         if N <= 4 {
             Aligned4::from_bytes(&self.bytes).len()
         } else if N <= 8 {
             Aligned8::from_bytes(&self.bytes).len()
         } else {
-            self.bytes.iter().position(|x| *x == 0).unwrap_or(N)
+            let mut i = 0;
+            #[allow(clippy::indexing_slicing)]
+            while i < N && self.bytes[i] > 0 {
+                i += 1
+            }
+            i
         }
     }
 
@@ -126,8 +131,13 @@ impl<const N: usize> TinyAsciiStr<N> {
 
     #[inline]
     #[must_use]
-    pub fn as_bytes(&self) -> &[u8] {
-        &self.bytes[0..self.len()]
+    pub const fn as_bytes(&self) -> &[u8] {
+        // Should be `&self.bytes[0..self.len()]` but that's not const.
+        unsafe {
+            let slice = self.bytes.as_slice();
+            let (data, _): (usize, usize) = core::mem::transmute(slice);
+            core::mem::transmute((data, self.len()))
+        }
     }
 
     #[inline]
@@ -590,7 +600,7 @@ impl<const N: usize> Deref for TinyAsciiStr<N> {
     type Target = str;
     #[inline]
     fn deref(&self) -> &str {
-        unsafe { str::from_utf8_unchecked(self.as_bytes()) }
+        self.as_str()
     }
 }
 

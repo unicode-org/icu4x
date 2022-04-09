@@ -97,7 +97,6 @@ impl Other {
     ///
     /// ```
     /// use icu::locid::Locale;
-    /// use std::str::FromStr;
     ///
     /// let loc: Locale = "und-a-hello-world".parse().unwrap();
     /// let other_ext = &loc.extensions.other[0];
@@ -113,7 +112,6 @@ impl Other {
     ///
     /// ```
     /// use icu::locid::Locale;
-    /// use std::str::FromStr;
     ///
     /// let loc: Locale = "und-a-hello-world".parse().unwrap();
     /// let other_ext = &loc.extensions.other[0];

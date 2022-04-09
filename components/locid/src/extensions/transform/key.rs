@@ -2,87 +2,30 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::parser::errors::ParserError;
-use core::str::FromStr;
-use tinystr::TinyAsciiStr;
-
-/// A key used in a list of [`Fields`](super::Fields).
-///
-/// The key has to be a two ASCII characters long, with the first
-/// character being alphabetic, and the second being a number.
-///
-///
-/// # Examples
-///
-/// ```
-/// use icu::locid::extensions::transform::Key;
-///
-/// let key1: Key = "k0".parse().expect("Failed to parse a Key.");
-///
-/// assert_eq!(key1.as_str(), "k0");
-/// ```
-#[derive(Debug, PartialEq, Eq, Clone, Hash, PartialOrd, Ord, Copy)]
-pub struct Key(TinyAsciiStr<KEY_LENGTH>);
-
-const KEY_LENGTH: usize = 2;
-
-impl Key {
-    /// A constructor which takes a utf8 slice, parses it and
-    /// produces a well-formed [`Key`].
+impl_tinystr_subtag!(
+    /// A key used in a list of [`Fields`](super::Fields).
+    ///
+    /// The key has to be a two ASCII characters long, with the first
+    /// character being alphabetic, and the second being a number.
     ///
     /// # Examples
     ///
     /// ```
     /// use icu::locid::extensions::transform::Key;
     ///
-    /// let key = Key::from_bytes(b"i0").expect("Parsing failed.");
+    /// let key1: Key = "k0".parse().expect("Failed to parse a Key.");
     ///
-    /// assert_eq!(key.as_str(), "i0");
+    /// assert_eq!(key1.as_str(), "k0");
     /// ```
-    pub const fn from_bytes(key: &[u8]) -> Result<Self, ParserError> {
-        #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
-        if key.len() != KEY_LENGTH || !key[0].is_ascii_alphabetic() || !key[1].is_ascii_digit() {
-            return Err(ParserError::InvalidExtension);
-        }
-        let tkey = match TinyAsciiStr::from_bytes(key) {
-            Ok(k) => k,
-            Err(_) => return Err(ParserError::InvalidSubtag),
-        };
-        Ok(Self(tkey.to_ascii_lowercase()))
-    }
-
-    /// A helper function for displaying
-    /// a [`Key`] as a `&`[`str`].
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use icu::locid::extensions::transform::Key;
-    ///
-    /// let key: Key = "s0".parse().expect("Parsing failed.");
-    ///
-    /// assert_eq!(key.as_str(), "s0");
-    /// ```
-    ///
-    /// `Notice`: For many use cases, such as comparison,
-    /// [`Key`] implements [`PartialEq`]`<&`[`str`]`>` which allows for direct comparisons.
-    pub fn as_str(&self) -> &str {
-        self.0.as_str()
-    }
-}
-
-impl FromStr for Key {
-    type Err = ParserError;
-
-    fn from_str(source: &str) -> Result<Self, Self::Err> {
-        Self::from_bytes(source.as_bytes())
-    }
-}
-
-impl_writeable_for_single_subtag!(Key, "k0");
-
-impl PartialEq<str> for Key {
-    fn eq(&self, other: &str) -> bool {
-        self.as_str() == other
-    }
-}
+    Key,
+    extensions::transform::Key,
+    extensions_transform_key,
+    2..=2,
+    s,
+    s.all_bytes()[0].is_ascii_alphabetic() && s.all_bytes()[1].is_ascii_digit(),
+    s.to_ascii_lowercase(),
+    s.all_bytes()[0].is_ascii_lowercase() && s.all_bytes()[1].is_ascii_digit(),
+    InvalidExtension,
+    ["k0"],
+    ["", "k", "0k", "k12"],
+);

@@ -148,3 +148,44 @@ impl FromStr for Value {
 }
 
 impl_writeable_for_tinystr_list!(Value, "", "islamic", "civil");
+
+/// A macro allowing for compile-time construction of valid Unicode [`Value`] subtag.
+///
+/// The macro only supports single-subtag values.
+///
+/// # Examples
+///
+/// ```
+/// use icu::locid::Locale;
+/// use icu::locid::{extensions_unicode_key as key, extensions_unicode_value as value};
+///
+/// let loc: Locale = "de-u-ca-buddhist".parse().unwrap();
+///
+/// assert_eq!(
+///     loc.extensions.unicode.keywords.get(&key!("ca")),
+///     Some(&value!("buddhist"))
+/// );
+/// ```
+///
+/// [`Value`]: crate::extensions::unicode::Value
+#[macro_export]
+macro_rules! extensions_unicode_value {
+    ($value:literal) => {{
+        // What we want:
+        // const R: $crate::extensions::unicode::Value =
+        //     match $crate::extensions::unicode::Value::try_from_single_subtag($value.as_bytes()) {
+        //         Ok(r) => r,
+        //         #[allow(clippy::panic)] // const context
+        //         _ => panic!(concat!("Invalid Unicode extension value: ", $value)),
+        //     };
+        // Workaround until https://github.com/rust-lang/rust/issues/73255 lands:
+        const R: $crate::extensions::unicode::Value =
+            $crate::extensions::unicode::Value::from_tinystr(
+                match $crate::extensions::unicode::Value::subtag_from_bytes($value.as_bytes()) {
+                    Ok(r) => r,
+                    _ => panic!(concat!("Invalid Unicode extension value: ", $value)),
+                },
+            );
+        R
+    }};
+}

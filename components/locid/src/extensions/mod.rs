@@ -142,7 +142,6 @@ impl Extensions {
     /// ```
     /// use icu::locid::extensions::ExtensionType;
     /// use icu::locid::Locale;
-    /// use std::str::FromStr;
     ///
     /// let loc: Locale = "und-a-hello-t-mul-u-world-z-zzz-x-extra".parse().unwrap();
     ///
@@ -253,29 +252,30 @@ impl_writeable_for_each_subtag_str_no_test!(Extensions);
 #[test]
 fn test_writeable() {
     use crate::Locale;
-    use core::str::FromStr;
     use writeable::assert_writeable_eq;
     assert_writeable_eq!(Extensions::new(), "",);
     assert_writeable_eq!(
-        Locale::from_str("my-t-my-d0-zawgyi").unwrap().extensions,
+        "my-t-my-d0-zawgyi".parse::<Locale>().unwrap().extensions,
         "t-my-d0-zawgyi",
     );
     assert_writeable_eq!(
-        Locale::from_str("ar-SA-u-ca-islamic-civil")
+        "ar-SA-u-ca-islamic-civil"
+            .parse::<Locale>()
             .unwrap()
             .extensions,
         "u-ca-islamic-civil",
     );
     assert_writeable_eq!(
-        Locale::from_str("en-001-x-foo-bar").unwrap().extensions,
+        "en-001-x-foo-bar".parse::<Locale>().unwrap().extensions,
         "x-foo-bar",
     );
     assert_writeable_eq!(
-        Locale::from_str("und-t-m0-true").unwrap().extensions,
+        "und-t-m0-true".parse::<Locale>().unwrap().extensions,
         "t-m0-true",
     );
     assert_writeable_eq!(
-        Locale::from_str("und-a-foo-t-foo-u-foo-w-foo-z-foo-x-foo")
+        "und-a-foo-t-foo-u-foo-w-foo-z-foo-x-foo"
+            .parse::<Locale>()
             .unwrap()
             .extensions,
         "a-foo-t-foo-u-foo-w-foo-z-foo-x-foo",

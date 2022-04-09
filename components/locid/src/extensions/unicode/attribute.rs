@@ -2,87 +2,32 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use core::ops::RangeInclusive;
-use core::str::FromStr;
-
-use crate::parser::errors::ParserError;
-use tinystr::TinyAsciiStr;
-
-/// An attribute used in a set of [`Attributes`](super::Attributes).
-///
-/// An attribute has to be a sequence of alphanumerical characters no
-/// shorter than three and no longer than eight characters.
-///
-///
-/// # Examples
-///
-/// ```
-/// use icu::locid::extensions::unicode::Attribute;
-///
-/// let attr: Attribute = "Buddhist".parse().expect("Failed to parse an Attribute.");
-///
-/// assert_eq!(attr.as_str(), "buddhist");
-/// ```
-#[derive(Debug, PartialEq, Eq, Clone, Hash, PartialOrd, Ord, Copy)]
-pub struct Attribute(TinyAsciiStr<{ *ATTR_LENGTH.end() }>);
-
-const ATTR_LENGTH: RangeInclusive<usize> = 3..=8;
-
-impl Attribute {
-    /// A constructor which takes a utf8 slice, parses it and
-    /// produces a well-formed [`Attribute`].
+impl_tinystr_subtag!(
+    /// An attribute used in a set of [`Attributes`](super::Attributes).
+    ///
+    /// An attribute has to be a sequence of alphanumerical characters no
+    /// shorter than three and no longer than eight characters.
+    ///
     ///
     /// # Examples
     ///
     /// ```
     /// use icu::locid::extensions::unicode::Attribute;
+    /// use icu::locid::extensions_unicode_attribute as attribute;
     ///
-    /// let attribute = Attribute::from_bytes(b"fooBar").expect("Parsing failed.");
+    /// let attr: Attribute = "buddhist".parse().expect("Failed to parse an Attribute.");
     ///
-    /// assert_eq!(attribute.as_str(), "foobar");
+    /// assert_eq!(attr, attribute!("buddhist"));
     /// ```
-    ///
-    /// Notice: No attribute subtags are defined by the current CLDR specification.
-    pub fn from_bytes(v: &[u8]) -> Result<Self, ParserError> {
-        if !ATTR_LENGTH.contains(&v.len()) {
-            return Err(ParserError::InvalidExtension);
-        }
-
-        let s = TinyAsciiStr::from_bytes(v).map_err(|_| ParserError::InvalidExtension)?;
-
-        if !s.is_ascii_alphanumeric() {
-            return Err(ParserError::InvalidExtension);
-        }
-
-        Ok(Self(s.to_ascii_lowercase()))
-    }
-
-    /// A helper function for displaying
-    /// a [`Attribute`] subtag as a `&`[`str`].
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use icu::locid::extensions::unicode::Attribute;
-    ///
-    /// let attribute = Attribute::from_bytes(b"foobar").expect("Parsing failed.");
-    ///
-    /// assert_eq!(attribute.as_str(), "foobar");
-    /// ```
-    ///
-    /// `Notice`: For many use cases, such as comparison,
-    /// [`Attribute`] implements [`PartialEq`]`<&`[`str`]`>` which allows for direct comparisons.
-    pub fn as_str(&self) -> &str {
-        self.0.as_str()
-    }
-}
-
-impl FromStr for Attribute {
-    type Err = ParserError;
-
-    fn from_str(source: &str) -> Result<Self, Self::Err> {
-        Self::from_bytes(source.as_bytes())
-    }
-}
-
-impl_writeable_for_single_subtag!(Attribute, "buddhist");
+    Attribute,
+    extensions::unicode::Attribute,
+    extensions_unicode_attribute,
+    3..=8,
+    s,
+    s.is_ascii_alphanumeric(),
+    s.to_ascii_lowercase(),
+    s.is_ascii_alphanumeric() && s.is_ascii_lowercase(),
+    InvalidExtension,
+    ["foo12"],
+    ["no", "toolooong"],
+);

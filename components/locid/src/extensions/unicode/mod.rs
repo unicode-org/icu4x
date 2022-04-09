@@ -115,7 +115,6 @@ impl Unicode {
     ///
     /// ```
     /// use icu::locid::Locale;
-    /// use std::str::FromStr;
     ///
     /// let mut loc: Locale = "und-t-mul-u-hello-ca-buddhist-hc-h12".parse().unwrap();
     /// loc.extensions.unicode.clear();

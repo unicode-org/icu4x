@@ -312,30 +312,30 @@ impl_writeable_for_each_subtag_str_no_test!(Locale);
 fn test_writeable() {
     use writeable::assert_writeable_eq;
     assert_writeable_eq!(Locale::UND, "und");
-    assert_writeable_eq!(Locale::from_str("und-001").unwrap(), "und-001");
-    assert_writeable_eq!(Locale::from_str("und-Mymr").unwrap(), "und-Mymr");
-    assert_writeable_eq!(Locale::from_str("my-Mymr-MM").unwrap(), "my-Mymr-MM");
+    assert_writeable_eq!("und-001".parse::<Locale>().unwrap(), "und-001");
+    assert_writeable_eq!("und-Mymr".parse::<Locale>().unwrap(), "und-Mymr");
+    assert_writeable_eq!("my-Mymr-MM".parse::<Locale>().unwrap(), "my-Mymr-MM");
     assert_writeable_eq!(
-        Locale::from_str("my-Mymr-MM-posix").unwrap(),
+        "my-Mymr-MM-posix".parse::<Locale>().unwrap(),
         "my-Mymr-MM-posix",
     );
     assert_writeable_eq!(
-        Locale::from_str("zh-macos-posix").unwrap(),
+        "zh-macos-posix".parse::<Locale>().unwrap(),
         "zh-macos-posix",
     );
     assert_writeable_eq!(
-        Locale::from_str("my-t-my-d0-zawgyi").unwrap(),
+        "my-t-my-d0-zawgyi".parse::<Locale>().unwrap(),
         "my-t-my-d0-zawgyi",
     );
     assert_writeable_eq!(
-        Locale::from_str("ar-SA-u-ca-islamic-civil").unwrap(),
+        "ar-SA-u-ca-islamic-civil".parse::<Locale>().unwrap(),
         "ar-SA-u-ca-islamic-civil",
     );
     assert_writeable_eq!(
-        Locale::from_str("en-001-x-foo-bar").unwrap(),
+        "en-001-x-foo-bar".parse::<Locale>().unwrap(),
         "en-001-x-foo-bar",
     );
-    assert_writeable_eq!(Locale::from_str("und-t-m0-true").unwrap(), "und-t-m0-true",);
+    assert_writeable_eq!("und-t-m0-true".parse::<Locale>().unwrap(), "und-t-m0-true",);
 }
 
 /// # Examples
@@ -437,4 +437,56 @@ impl
             ..Default::default()
         }
     }
+}
+
+/// A macro allowing for compile-time construction of valid [`Locale`]s.
+///
+/// The macro will perform syntax canonicalization of the tag.
+///
+/// # Examples
+///
+/// ```
+/// use icu::locid::{locale, Locale};
+///
+/// const DE_AT: Locale = locale!("de_at");
+///
+/// let de_at: Locale = "de_at".parse().unwrap();
+///
+/// assert_eq!(DE_AT, de_at);
+/// ```
+///
+/// *Note*: The macro cannot produce locales with variants or extensions due to
+/// const limitations (see [`Heap Allocations in Constants`]):
+///
+/// ```compile_fail
+/// icu::locid::locale!("en-US-u-ca-ja");
+/// ```
+/// Use runtime parsing instead:
+/// ```
+/// "en-US-u-ca-ja".parse::<icu::locid::Locale>().unwrap();
+/// ```
+///
+/// [`Locale`]: crate::Locale
+/// [`Heap Allocations in Constants`]: https://github.com/rust-lang/const-eval/issues/20
+#[macro_export]
+macro_rules! locale {
+    ($locale:literal) => {{
+        const R: $crate::Locale =
+            match $crate::LanguageIdentifier::from_bytes_without_variants($locale.as_bytes()) {
+                Ok((language, script, region)) => $crate::Locale {
+                    id: $crate::LanguageIdentifier {
+                        language,
+                        script,
+                        region,
+                        variants: $crate::subtags::Variants::new(),
+                    },
+                    extensions: $crate::extensions::Extensions::new(),
+                },
+                #[allow(clippy::panic)] // const context
+                _ => panic!(concat!("Invalid language code: ", $locale, " . Note that variant tags and \
+                                        Unicode extensions are not supported by the locale! macro, use \
+                                        runtime parsing instead.")),
+            };
+        R
+    }};
 }

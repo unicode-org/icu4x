@@ -5,18 +5,16 @@
 //! The collection of code for locale canonicalization.
 
 use crate::provider::*;
-use alloc::vec;
 use alloc::vec::Vec;
 use core::cmp::Ordering;
 use core::mem;
 use icu_locid::subtags::{Language, Region, Script};
 use icu_locid::{
-    extensions::unicode::Key,
     subtags::{Variant, Variants},
     subtags_language as language, LanguageIdentifier, Locale,
 };
 use icu_provider::prelude::*;
-use tinystr::{tinystr, TinyAsciiStr};
+use tinystr::TinyAsciiStr;
 
 /// Used to track the result of a canonicalization operation that potentially modifies its argument in place.
 #[derive(Debug, PartialEq)]
@@ -106,8 +104,6 @@ pub struct LocaleCanonicalizer {
     aliases: DataPayload<AliasesV1Marker>,
     /// Data to support likely subtags maximize and minimize.
     likely_subtags: DataPayload<LikelySubtagsV1Marker>,
-    /// Extension keys that require canonicalization.
-    extension_keys: Vec<Key>,
 }
 
 #[inline]
@@ -302,12 +298,6 @@ impl LocaleCanonicalizer {
     where
         P: ResourceProvider<AliasesV1Marker> + ResourceProvider<LikelySubtagsV1Marker> + ?Sized,
     {
-        // The `rg` region override and `sd` regional subdivision keys may contain
-        // language codes that require canonicalization.
-        let extension_keys = vec![
-            Key::from_tinystr_unchecked(tinystr!(2, "rg")),
-            Key::from_tinystr_unchecked(tinystr!(2, "sd")),
-        ];
         let aliases: DataPayload<AliasesV1Marker> = provider
             .load_resource(&DataRequest::default())?
             .take_payload()?;
@@ -319,7 +309,6 @@ impl LocaleCanonicalizer {
         Ok(LocaleCanonicalizer {
             aliases,
             likely_subtags,
-            extension_keys,
         })
     }
 
@@ -553,8 +542,13 @@ impl LocaleCanonicalizer {
             }
         }
 
-        for key in self.extension_keys.iter() {
-            if let Some(value) = locale.extensions.unicode.keywords.get_mut(key) {
+        // The `rg` region override and `sd` regional subdivision keys may contain
+        // language codes that require canonicalization.
+        for key in [
+            icu_locid::extensions_unicode_key!("rg"),
+            icu_locid::extensions_unicode_key!("sd"),
+        ] {
+            if let Some(value) = locale.extensions.unicode.keywords.get_mut(&key) {
                 if let &[only_value] = value.as_tinystr_slice() {
                     if let Some(modified_value) =
                         self.aliases.get().subdivision.get(&only_value.resize())

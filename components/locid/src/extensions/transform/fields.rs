@@ -147,19 +147,16 @@ impl Fields {
     /// ```
     /// use icu::locid::extensions::transform::Key;
     /// use icu::locid::extensions::transform::Value;
-    /// use icu::locid::extensions_transform_key as transform_key;
+    /// use icu::locid::extensions_transform_key as key;
     /// use icu::locid::Locale;
-    /// use std::str::FromStr;
-    /// use std::string::ToString;
     ///
-    /// const D0_KEY: Key = transform_key!("d0");
-    /// let lower = Value::from_str("lower").expect("valid extension subtag");
-    /// let casefold = Value::from_str("casefold").expect("valid extension subtag");
+    /// let lower = "lower".parse::<Value>().expect("valid extension subtag");
+    /// let casefold = "casefold".parse::<Value>().expect("valid extension subtag");
     ///
     /// let mut loc: Locale = "en-t-hi-d0-casefold"
     ///     .parse()
     ///     .expect("valid BCP-47 identifier");
-    /// let old_value = loc.extensions.transform.fields.set(D0_KEY, lower);
+    /// let old_value = loc.extensions.transform.fields.set(key!("d0"), lower);
     ///
     /// assert_eq!(old_value, Some(casefold));
     /// assert_eq!(loc, "en-t-hi-d0-lower".parse().unwrap());
@@ -174,14 +171,14 @@ impl Fields {
     ///
     /// ```
     /// use icu::locid::Locale;
-    /// use std::str::FromStr;
+    /// use icu::locid::extensions_transform_key as key;
     ///
     /// let mut loc: Locale = "und-t-h0-hybrid-d0-hex-m0-xml".parse().unwrap();
     ///
-    /// loc.extensions.transform.fields.retain_by_key(|k| k == "h0");
+    /// loc.extensions.transform.fields.retain_by_key(|&k| k == key!("h0"));
     /// assert_eq!(loc, "und-t-h0-hybrid".parse().unwrap());
     ///
-    /// loc.extensions.transform.fields.retain_by_key(|k| k == "d0");
+    /// loc.extensions.transform.fields.retain_by_key(|&k| k == key!("d0"));
     /// assert_eq!(loc, Locale::UND);
     /// ```
     pub fn retain_by_key<F>(&mut self, mut predicate: F)

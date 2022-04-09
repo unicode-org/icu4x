@@ -182,21 +182,15 @@ impl Keywords {
     /// ```
     /// use icu::locid::extensions::unicode::Key;
     /// use icu::locid::extensions::unicode::Value;
-    /// use icu::locid::extensions_unicode_key as key;
+    /// use icu::locid::{extensions_unicode_key as key, extensions_unicode_value as value};
     /// use icu::locid::Locale;
-    /// use std::str::FromStr;
-    /// use std::string::ToString;
-    ///
-    /// const CA_KEY: Key = key!("ca");
-    /// let japanese = Value::from_str("japanese").expect("valid extension subtag");
-    /// let buddhist = Value::from_str("buddhist").expect("valid extension subtag");
     ///
     /// let mut loc: Locale = "und-u-hello-ca-buddhist-hc-h12"
     ///     .parse()
     ///     .expect("valid BCP-47 identifier");
-    /// let old_value = loc.extensions.unicode.keywords.set(CA_KEY, japanese);
+    /// let old_value = loc.extensions.unicode.keywords.set(key!("ca"), value!("japanese"));
     ///
-    /// assert_eq!(old_value, Some(buddhist));
+    /// assert_eq!(old_value, Some(value!("buddhist")));
     /// assert_eq!(loc, "und-u-hello-ca-japanese-hc-h12".parse().unwrap());
     /// ```
     pub fn set(&mut self, key: Key, value: Value) -> Option<Value> {
@@ -211,22 +205,15 @@ impl Keywords {
     /// use icu::locid::extensions::unicode::Key;
     /// use icu::locid::extensions_unicode_key as key;
     /// use icu::locid::Locale;
-    /// use std::str::FromStr;
-    ///
-    /// const CA_KEY: Key = key!("ca");
     ///
     /// let mut loc: Locale = "und-u-hello-ca-buddhist-hc-h12"
     ///     .parse()
     ///     .expect("valid BCP-47 identifier");
-    /// loc.extensions.unicode.keywords.remove(&CA_KEY);
+    /// loc.extensions.unicode.keywords.remove(key!("ca"));
     /// assert_eq!(loc, "und-u-hello-hc-h12".parse().unwrap());
     /// ```
-    pub fn remove<Q>(&mut self, key: &Q) -> Option<Value>
-    where
-        Key: Borrow<Q>,
-        Q: Ord,
-    {
-        self.0.remove(key)
+    pub fn remove<Q: Borrow<Key>>(&mut self, key: Q) -> Option<Value> {
+        self.0.remove(key.borrow())
     }
 
     /// Clears all Unicode extension keywords, leaving Unicode attributes.
@@ -237,7 +224,6 @@ impl Keywords {
     ///
     /// ```
     /// use icu::locid::Locale;
-    /// use std::str::FromStr;
     ///
     /// let mut loc: Locale = "und-u-hello-ca-buddhist-hc-h12".parse().unwrap();
     /// loc.extensions.unicode.keywords.clear();
@@ -253,14 +239,14 @@ impl Keywords {
     ///
     /// ```
     /// use icu::locid::Locale;
-    /// use std::str::FromStr;
+    /// use icu::locid::extensions_unicode_key as key;
     ///
     /// let mut loc: Locale = "und-u-ca-buddhist-hc-h12-ms-metric".parse().unwrap();
     ///
-    /// loc.extensions.unicode.keywords.retain_by_key(|k| k == "hc");
+    /// loc.extensions.unicode.keywords.retain_by_key(|&k| k == key!("hc"));
     /// assert_eq!(loc, "und-u-hc-h12".parse().unwrap());
     ///
-    /// loc.extensions.unicode.keywords.retain_by_key(|k| k == "ms");
+    /// loc.extensions.unicode.keywords.retain_by_key(|&k| k == key!("ms"));
     /// assert_eq!(loc, Locale::UND);
     /// ```
     pub fn retain_by_key<F>(&mut self, mut predicate: F)
