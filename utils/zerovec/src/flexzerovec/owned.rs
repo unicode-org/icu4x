@@ -70,3 +70,19 @@ impl Deref for FlexZeroVecOwned {
         self.as_slice()
     }
 }
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    #[test]
+    fn test_basic() {
+        let mut fzv = FlexZeroVecOwned::new_empty();
+        assert_eq!(fzv.get_width(), 1);
+        assert_eq!(fzv.len(), 0);
+        assert_eq!(fzv.is_empty(), true);
+        assert_eq!(fzv.get(0), None);
+        assert_eq!(fzv.first(), None);
+        assert_eq!(fzv.last(), None);
+    }
+}
