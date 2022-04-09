@@ -304,6 +304,14 @@ This could be slightly annoying for users who want to put ICU4X types into other
 
 Note: A type which has **neither Copy or Clone** can still be passed by value or returned from a function, but only when that operation can be determined to always be a "move" of the data (i.e. where only one instance is needed). Copy and Clone are needed when duplicate instances need to be created.
 
+### Implement Copy on Error types and log details :: suggested
+
+An "error type" is an enum or struct that is usually returned in the `Err` variant of a `Result`.
+
+In ICU4X, we have a convention of making error types implement `Copy`. This is primarily because highly complex error types carry a code size burden: the `Drop` impls of such types are complex and significantly impact on binary size.
+
+To associate additional metadata with errors, such as file paths, use the `log!` macro.
+
 ### Implement Eq / PartialEq, Ord / PartialOrd only as needed :: suggested
 
 Which types implement these traits should be carefully considered and documented.
