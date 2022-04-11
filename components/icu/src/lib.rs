@@ -55,7 +55,7 @@
 //!
 //! let provider = icu_testdata::get_provider();
 //!
-//! let options = length::Bag::from_date_time_style(Some(length::Date::Medium), Some(length::Time::Short)).into();
+//! let options = length::Bag::from_date_time_style(Some(length::Date::Long), Some(length::Time::Medium)).into();
 //!
 //! let dtf = DateTimeFormat::try_new(locale!("en"), &provider, &options)
 //!     .expect("Failed to create DateTimeFormat instance.");
