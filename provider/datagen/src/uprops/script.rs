@@ -38,9 +38,9 @@ impl ScriptWithExtensionsPropertyProvider {
 impl TryFrom<&crate::DatagenOptions> for ScriptWithExtensionsPropertyProvider {
     type Error = eyre::ErrReport;
     fn try_from(options: &crate::DatagenOptions) -> eyre::Result<Self> {
-        ScriptWithExtensionsPropertyProvider::try_new(options.uprops_root.as_ref().ok_or_else(|| {
-            eyre::eyre!("ScriptWithExtensionsPropertyProvider requires uprops_root")
-        })?)
+        ScriptWithExtensionsPropertyProvider::try_new(options.uprops_root.as_ref().ok_or_else(
+            || eyre::eyre!("ScriptWithExtensionsPropertyProvider requires uprops_root"),
+        )?)
     }
 }
 
