@@ -86,6 +86,20 @@ pub struct DatagenOptions {
     pub segmenter_data_root: Option<PathBuf>,
 }
 
+impl DatagenOptions {
+    /// Create a DatagenOptions pointing to test data.
+    pub fn for_test() -> Self {
+        Self {
+            cldr_paths: Some(Box::new(cldr::CldrPathsAllInOne {
+                cldr_json_root: icu_testdata::paths::cldr_json_root(),
+                locale_subset: "full".to_string(),
+            })),
+            uprops_root: Some(icu_testdata::paths::uprops_toml_root()),
+            segmenter_data_root: Some(segmenter::segmenter_data_root()),
+        }
+    }
+}
+
 /// Create a data provider reading from source files that generates data for all,
 /// or a subset, of ICU4X.
 ///
