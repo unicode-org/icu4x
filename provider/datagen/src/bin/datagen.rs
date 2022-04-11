@@ -260,7 +260,7 @@ fn main() -> eyre::Result<()> {
                 .collect::<Result<Vec<LanguageIdentifier>, eyre::Error>>()?,
         )
     } else if matches.is_present("TEST_LOCALES") {
-        Some(icu_testdata::metadata::load()?.package_metadata.locales)
+        Some(Vec::from(icu_testdata::LOCALES))
     } else {
         None
     };

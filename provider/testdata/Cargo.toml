@@ -29,113 +29,6 @@ include = [
 [package.metadata.docs.rs]
 all-features = true
 
-# icu4x_testdata metadata: schema defined in ./src/metadata.rs
-[package.metadata.icu4x_testdata]
-
-# Locales to include in testdata. Keep this list somewhat short, but cover all features.
-# We use 10 base languages with a small number of variants to allow for 10 languages to be
-# used in microbenchmarks.
-locales = [
-    # Arabic:
-    # - Good example for RTL
-    # - Non-latin numerals in Egypt
-    "ar",
-    "ar-EG",
-
-    # Bangla:
-    # - Uses non-Latin numerals
-    "bn",
-
-    # Chakma:
-    # - High-coverage language that uses non-BMP code points
-    "ccp",
-
-    # English:
-    # - Widely understood language in software engineering
-    # - Includes regional variants to test similar-data fallbacks
-    "en",
-    "en-001",
-    "en-ZA",
-
-    # Spanish:
-    #  - Most popular Romance language
-    #  - South American dialect
-    #  - Has context dependent list fragments 
-    "es",
-    "es-AR",
-
-    # French:
-    # - Often the first non-English locale to receive new data in CLDR
-    "fr",
-
-    # Filipino:
-    # - Week of month/year have plural variants.
-    "fil",
-
-    # Japanese:
-    # - Four scripts
-    # - Complex date patterns
-    "ja",
-
-    # Russian:
-    # - Cyrillic script
-    # - Interesting plural rules
-    # - Hightly inflected, many gramatical cases
-    "ru",
-
-    # Serbian:
-    # - Multiple scripts
-    # - Southern Europe
-    # - Hightly inflected, many gramatical cases
-    "sr",
-    "sr-Cyrl",
-    "sr-Latn",
-
-    # Thai:
-    # - Complex word breaking
-    "th",
-
-    # Turkish:
-    # - Interesting case-mappings
-    "tr",
-
-    # Root data
-    "und",
-]
-
-# Paths from CLDR JSON to copy into testdata. Uses gitignore-like syntax.
-# The variable "$LOCALES" is replaced with the list of locales from above.
-cldr_json_glob = [
-    "cldr-core/supplemental/aliases.json",
-    "cldr-core/supplemental/calendarData.json",
-    "cldr-core/supplemental/likelySubtags.json",
-    "cldr-core/supplemental/numberingSystems.json",
-    "cldr-core/supplemental/metaZones.json",
-    "cldr-core/supplemental/ordinals.json",
-    "cldr-core/supplemental/plurals.json",
-    "cldr-core/supplemental/weekData.json",
-    "cldr-dates-full/main/$LOCALES/ca-gregorian.json",
-    "cldr-numbers-full/main/$LOCALES/numbers.json",
-    "cldr-dates-full/main/$LOCALES/timeZoneNames.json",
-    "cldr-misc-full/main/$LOCALES/listPatterns.json",
-    "cldr-cal-buddhist-full/main/$LOCALES/ca-buddhist.json",
-    "cldr-cal-japanese-full/main/$LOCALES/ca-japanese.json",
-    "cldr-cal-coptic-full/main/$LOCALES/ca-coptic.json",
-    "cldr-cal-indian-full/main/$LOCALES/ca-indian.json",
-    "cldr-bcp47/bcp47/timezone.json",
-    # Extra data for feature coverage in provider_cldr tests:
-    "cldr-dates-full/main/cs/ca-gregorian.json",
-    "cldr-dates-full/main/cs/timeZoneNames.json",
-    "cldr-dates-full/main/haw/ca-gregorian.json",
-    "cldr-dates-full/main/haw/timeZoneNames.json",
-    "cldr-dates-full/main/en-CA/ca-gregorian.json", # alt-variant in skeletons
-    "cldr-dates-full/main/en-CA/timeZoneNames.json", # required by en-CA/ca-gregorian.json
-    "cldr-misc-full/main/he/listPatterns.json", # required for list transformer test
-]
-
-# Git tag or sha1 for the CLDR data used to generate the testdata.
-gitref = "40.0.0"
-
 [package.metadata.cargo-all-features]
 # Omit most optional dependency features from permutation testing
 skip_optional_dependencies = true
@@ -148,29 +41,26 @@ icu_provider_blob = { version = "0.5", path = "../../provider/blob", optional = 
 icu_provider_fs = { version = "0.5", path = "../../provider/fs", optional = true }
 icu_locid = { version = "0.5", path = "../../components/locid" }
 
-# Dependencies for the "metadata" feature
-cargo_metadata = { version = "0.13", optional = true }
-serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }
-serde_json = { version = "1.0", optional = true, default-features = false, features = ["alloc"] }
-displaydoc = { version = "0.2.3", default-features = false, optional = true }
-writeable = { version = "0.3", path = "../../utils/writeable", optional = true }
+# Bin features
+clap = { version = "2.33", optional = true }
+eyre = { version = "0.6", optional = true }
+futures = { version = "0.3", optional = true }
+log = { version = "0.4", optional = true }
+reqwest = { version = "0.11", features = ["stream"], optional = true }
+simple_logger = { version = "1.12", optional = true }
+tokio = { version = "1.5", features = ["rt-multi-thread", "macros", "fs"], optional = true }
 
 [dev-dependencies]
 icu_plurals = { version = "0.5", path = "../../components/plurals" }
 
 [features]
 default = ["fs", "std"]
-# Enables programmatic access to this Cargo.toml file
-metadata = [
-    "cargo_metadata",
-    "icu_locid/serde",
-    "serde_json",
-    "serde",
-    "displaydoc",
-    "writeable",
-    "std"
-]
-
 fs = ["icu_provider/deserialize_json", "icu_provider_fs", "std"]
-static = ["icu_provider/deserialize_postcard_07", "icu_provider_blob"]
+static = ["icu_provider_blob"]
 std = []
+bin = ["clap", "eyre", "simple_logger", "log", "reqwest", "tokio", "futures"]
+
+[[bin]]
+name = "icu4x-testdata-download-sources"
+path = "src/bin/download-sources.rs"
+required-features = ["bin"]

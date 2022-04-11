@@ -6,9 +6,8 @@
 //!
 //! The tools include:
 //!
-//! 1. `icu4x-datagen`: Read source data (CLDR JSON) and dump ICU4X-format data.
-//! 2. `icu4x-testdata-download`: Download fresh CLDR JSON for testdata.
-//! 3. `icu4x-key-extract`: Extract `ResourceKey` objects present in a compiled executable.
+//! * `icu4x-datagen`: Read source data (CLDR JSON) and dump ICU4X-format data.
+//! * `icu4x-key-extract`: Extract `ResourceKey` objects present in a compiled executable.
 //!
 //! More details on each tool can be found by running `--help`.
 //!

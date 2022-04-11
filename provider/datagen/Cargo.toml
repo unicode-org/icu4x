@@ -50,7 +50,7 @@ icu_provider = { version = "0.5", path = "../core", features = ["std", "log_erro
 icu_provider_adapters = { path = "../adapters", features = ["datagen"] }
 icu_provider_blob = { version = "0.5", path = "../blob", features = ["export"] }
 icu_provider_fs = { version = "0.5", path = "../fs", features = ["export"] }
-icu_testdata = { version = "0.5", path = "../testdata", features = ["metadata"] }
+icu_testdata = { version = "0.5", path = "../testdata" }
 icu_uniset = { version = "0.4.1", path = "../../utils/uniset", features = ["serde"] }
 itertools = "0.10"
 json = "0.12"
@@ -74,25 +74,14 @@ zerovec = { version = "0.6", path = "../../utils/zerovec", features = ["serde_se
 icu_casemapping = { version = "0.1", path = "../../experimental/casemapping", features = ["datagen"], optional = true }
 icu_segmenter = { version = "0.1", path = "../../experimental/segmenter", features = ["datagen"], optional = true }
 
-# Dependencies for the "download-testdata" feature
-reqwest = { version = "0.11", features = ["stream"], optional = true }
-tokio = { version = "1.5", features = ["rt-multi-thread", "macros", "fs"], optional = true }
-futures = { version = "0.3", optional = true }
-
 [features]
 experimental = ["icu_casemapping", "icu_segmenter"]
 # Automatically download CLDR and uprops data
 download = ["cached-path"]
-download-testdata = ["reqwest", "icu_testdata/metadata", "tokio", "futures"]
 
 [[bin]]
 name = "icu4x-datagen"
 path = "src/bin/datagen.rs"
-
-[[bin]]
-name = "icu4x-testdata-download"
-path = "src/bin/testdata-download.rs"
-required-features = ["download-testdata"]
 
 [[bin]]
 name = "icu4x-verify-zero-copy"

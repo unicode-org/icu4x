@@ -127,12 +127,10 @@ fn main() -> eyre::Result<()> {
 
     let converter = icu_datagen::create_datagen_provider!(SourceData::for_test());
 
-    let selected_locales = icu_testdata::metadata::load()?.package_metadata.locales;
-
     let converter = Box::new(
         converter
             .filterable("icu4x-datagen locales")
-            .filter_by_langid_allowlist_strict(&selected_locales),
+            .filter_by_langid_allowlist_strict(icu_testdata::LOCALES),
     );
 
     let postcard_file = icu_testdata::paths::data_root().join("testdata.postcard");

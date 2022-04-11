@@ -2,13 +2,42 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use clap::{value_t, App, Arg, ArgMatches};
+use clap::{value_t, App, Arg};
 use eyre::WrapErr;
 use futures::stream::{self, StreamExt, TryStreamExt};
-use icu_testdata::metadata::{self, PackageInfo};
 use simple_logger::SimpleLogger;
 use std::path::PathBuf;
 use tokio::fs;
+
+// Paths from CLDR JSON to copy into testdata. Uses gitignore-like syntax.
+// The variable "$LOCALES" is replaced with the list of locales in
+// icu_testdata::LOCALES.
+const CLDR_JSON_GLOB: &[&str] = &[
+    "cldr-core/supplemental/aliases.json",
+    "cldr-core/supplemental/calendarData.json",
+    "cldr-core/supplemental/likelySubtags.json",
+    "cldr-core/supplemental/numberingSystems.json",
+    "cldr-core/supplemental/ordinals.json",
+    "cldr-core/supplemental/plurals.json",
+    "cldr-core/supplemental/weekData.json",
+    "cldr-dates-full/main/$LOCALES/ca-gregorian.json",
+    "cldr-numbers-full/main/$LOCALES/numbers.json",
+    "cldr-dates-full/main/$LOCALES/timeZoneNames.json",
+    "cldr-misc-full/main/$LOCALES/listPatterns.json",
+    "cldr-cal-buddhist-full/main/$LOCALES/ca-buddhist.json",
+    "cldr-cal-japanese-full/main/$LOCALES/ca-japanese.json",
+    "cldr-cal-coptic-full/main/$LOCALES/ca-coptic.json",
+    "cldr-cal-indian-full/main/$LOCALES/ca-indian.json",
+    "cldr-bcp47/bcp47/timezone.json",
+    // Extra data for feature coverage in cldr tests:
+    "cldr-dates-full/main/cs/ca-gregorian.json",
+    "cldr-dates-full/main/cs/timeZoneNames.json",
+    "cldr-dates-full/main/haw/ca-gregorian.json",
+    "cldr-dates-full/main/haw/timeZoneNames.json",
+    "cldr-dates-full/main/en-CA/ca-gregorian.json", // alt-variant in skeletons
+    "cldr-dates-full/main/en-CA/timeZoneNames.json", // required by en-CA/ca-gregorian.json
+    "cldr-misc-full/main/he/listPatterns.json",     // required for list transformer test
+];
 
 #[derive(Clone)]
 struct CldrJsonDownloader<'a> {
@@ -118,29 +147,21 @@ async fn main() -> eyre::Result<()> {
         _ => eyre::bail!("Only -v, -vv, and -vvv are supported"),
     }
 
-    let metadata = metadata::load()?;
-    log::debug!("Package metadata: {:?}", metadata);
-
-    fs::remove_dir_all(&cldr_json_root)
-        .await
-        .with_context(|| format!("Failed to delete directory: {:?}", &cldr_json_root))?;
-
-    download_cldr(&args, &metadata).await?;
-
-    Ok(())
-}
-
-async fn download_cldr(args: &ArgMatches<'_>, metadata: &PackageInfo) -> eyre::Result<()> {
     let output_path = PathBuf::from(
         args.value_of_os("OUTPUT")
             .expect("Option has a default value"),
     );
+
+    fs::remove_dir_all(&output_path)
+        .await
+        .with_context(|| format!("Failed to delete directory: {:?}", &output_path))?;
+
     let http_concurrency: usize =
         value_t!(args, "HTTP_CONCURRENCY", usize).expect("Option has a default value");
 
     let downloader = &CldrJsonDownloader {
         repo_owner_and_name: "unicode-org/cldr-json",
-        tag: &metadata.package_metadata.gitref,
+        tag: icu_testdata::CLDR_GITREF,
         root_dir: output_path,
         client: reqwest::ClientBuilder::new()
             .user_agent(concat!(
@@ -151,7 +172,20 @@ async fn download_cldr(args: &ArgMatches<'_>, metadata: &PackageInfo) -> eyre::R
             .build()?,
     };
 
-    let all_paths = metadata.package_metadata.get_all_cldr_paths();
+    let mut all_paths = vec![];
+    for pattern in CLDR_JSON_GLOB.iter() {
+        if pattern.contains("$LOCALES") {
+            for locale in icu_testdata::LOCALES.iter() {
+                all_paths.push(pattern.replace("$LOCALES", &locale.to_string()));
+            }
+            // Also add "root" for older CLDRs
+            all_paths.push(pattern.replace("$LOCALES", "root"));
+        } else {
+            // No variable in pattern
+            all_paths.push(pattern.to_string())
+        }
+    }
+
     stream::iter(all_paths)
         .map(Ok)
         .try_for_each_concurrent(http_concurrency, |path| async move {
