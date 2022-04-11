@@ -44,18 +44,13 @@
 //! use icu::datetime::DateTimeFormatOptions;
 //! use icu::datetime::options::components;
 //!
-//! let bag = components::Bag {
-//!     year: Some(components::Year::Numeric),
-//!     month: Some(components::Month::Long),
-//!     day: Some(components::Day::NumericDayOfMonth),
+//! let mut bag = components::Bag::default();
+//! bag.year = Some(components::Year::Numeric);
+//! bag.month = Some(components::Month::Long);
+//! bag.day = Some(components::Day::NumericDayOfMonth);
 //!
-//!     hour: Some(components::Numeric::TwoDigit),
-//!     minute: Some(components::Numeric::TwoDigit),
-//!
-//!     preferences: None,
-//!
-//!     ..Default::default()
-//! };
+//! bag.hour = Some(components::Numeric::TwoDigit);
+//! bag.minute = Some(components::Numeric::TwoDigit);
 //!
 //! // The options can be created manually.
 //! let options = DateTimeFormatOptions::Components(bag);
@@ -86,7 +81,7 @@ use serde::{Deserialize, Serialize};
 /// See the [module-level](./index.html) docs for more information.
 #[derive(Debug, Clone, PartialEq, Default, Copy)]
 #[cfg_attr(feature = "serialize", derive(Serialize, Deserialize))]
-#[allow(clippy::exhaustive_structs)] // this type is stable
+#[non_exhaustive]
 pub struct Bag {
     /// Include the era, such as "AD" or "CE".
     pub era: Option<Text>,
@@ -116,6 +111,13 @@ pub struct Bag {
 }
 
 impl Bag {
+    /// Creates an empty components bag
+    ///
+    /// Has the same behavior as the [`Default`] implementation on this type.
+    pub fn empty() -> Self {
+        Self::default()
+    }
+
     #[allow(clippy::wrong_self_convention)]
     /// Converts the components::Bag into a Vec<Field>. The fields will be ordered in from most
     /// significant field to least significant. This is the order the fields are listed in
@@ -342,7 +344,7 @@ impl Bag {
     derive(Serialize, Deserialize),
     serde(rename_all = "kebab-case")
 )]
-#[allow(clippy::exhaustive_enums)] // this type is stable
+#[non_exhaustive]
 pub enum Numeric {
     /// Display the numeric value. For instance in a year this would be "1970".
     Numeric,
@@ -357,7 +359,7 @@ pub enum Numeric {
     derive(Serialize, Deserialize),
     serde(rename_all = "kebab-case")
 )]
-#[allow(clippy::exhaustive_enums)] // this type is stable
+#[non_exhaustive]
 pub enum Text {
     /// Display the long form of the text, such as "Wednesday" for the weekday.
     Long,
@@ -374,7 +376,7 @@ pub enum Text {
     derive(Serialize, Deserialize),
     serde(rename_all = "kebab-case")
 )]
-#[allow(clippy::exhaustive_enums)] // this type is stable
+#[non_exhaustive]
 pub enum Year {
     /// The numeric value of the year, such as "2018" for 2018-12-31.
     Numeric,
@@ -395,7 +397,7 @@ pub enum Year {
     derive(Serialize, Deserialize),
     serde(rename_all = "kebab-case")
 )]
-#[allow(clippy::exhaustive_enums)] // this type is stable
+#[non_exhaustive]
 pub enum Month {
     /// The numeric value of the month, such as "4".
     Numeric,
@@ -421,7 +423,7 @@ pub enum Month {
     derive(Serialize, Deserialize),
     serde(rename_all = "kebab-case")
 )]
-#[allow(clippy::exhaustive_enums)] // this type is stable
+#[non_exhaustive]
 pub enum Week {
     /// The week of the month, such as the "3" in "week 3 of January".
     WeekOfMonth,
@@ -438,7 +440,7 @@ pub enum Week {
     derive(Serialize, Deserialize),
     serde(rename_all = "kebab-case")
 )]
-#[allow(clippy::exhaustive_enums)] // this type is stable
+#[non_exhaustive]
 pub enum Day {
     /// The numeric value of the day of month, such as the "2" in July 2 1984.
     NumericDayOfMonth,
@@ -458,7 +460,7 @@ pub enum Day {
     derive(Serialize, Deserialize),
     serde(rename_all = "kebab-case")
 )]
-#[allow(clippy::exhaustive_enums)] // this type is stable
+#[non_exhaustive]
 pub enum TimeZoneName {
     // UTS-35 fields: z..zzz
     //

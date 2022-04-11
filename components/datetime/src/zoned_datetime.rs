@@ -49,11 +49,7 @@ use crate::{
 /// let zone_provider = InvariantDataProvider;
 /// let plural_provider = InvariantDataProvider;
 ///
-/// let options = length::Bag {
-///     date: Some(length::Date::Medium),
-///     time: Some(length::Time::Short),
-///     ..Default::default()
-/// };
+/// let options = length::Bag::new(Some(length::Date::Medium), Some(length::Time::Short));
 /// let zdtf = ZonedDateTimeFormat::<Gregorian>::try_new(locale!("en"), &date_provider, &zone_provider, &plural_provider, &options.into(), &TimeZoneFormatOptions::default())
 ///     .expect("Failed to create DateTimeFormat instance.");
 ///

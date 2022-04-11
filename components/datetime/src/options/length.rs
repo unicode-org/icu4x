@@ -21,11 +21,10 @@
 //! use icu::datetime::DateTimeFormatOptions;
 //! use icu::datetime::options::length;
 //!
-//! let bag = length::Bag {
-//!      date: Some(length::Date::Medium), // `Medium` length connector will be used
-//!      time: Some(length::Time::Short),
-//!      preferences: None,
-//! };
+//! let bag = length::Bag::new(
+//!     Some(length::Date::Medium), // "medium" date connector will be used
+//!     Some(length::Time::Short)
+//! );
 //!
 //! let options = DateTimeFormatOptions::Length(bag);
 //! ```
@@ -58,11 +57,11 @@ use serde::{Deserialize, Serialize};
 /// use icu::datetime::DateTimeFormatOptions;
 /// use icu::datetime::options::length;
 ///
-/// let bag = length::Bag {
-///      date: Some(length::Date::Medium),
-///      time: Some(length::Time::Short),
-///      preferences: None,
-/// };
+/// let bag = length::Bag::new(
+///     Some(length::Date::Medium),
+///     Some(length::Time::Short)
+/// );
+///
 ///
 /// let options = DateTimeFormatOptions::Length(bag);
 /// ```
@@ -79,7 +78,7 @@ use serde::{Deserialize, Serialize};
 /// [`Element dateFormats`]: https://unicode.org/reports/tr35/tr35-dates.html#dateFormats
 #[derive(Debug, Clone, PartialEq, Copy)]
 #[cfg_attr(feature = "serialize", derive(Serialize, Deserialize))]
-#[allow(clippy::exhaustive_structs)] // this type is stable
+#[non_exhaustive]
 pub struct Bag {
     /// Configure the date part of the datetime.
     pub date: Option<Date>,
@@ -90,6 +89,7 @@ pub struct Bag {
 }
 
 impl Default for Bag {
+    /// Constructs a Bag with long date and time options
     fn default() -> Self {
         Self {
             date: Some(Date::Long),
@@ -99,6 +99,27 @@ impl Default for Bag {
     }
 }
 
+impl Bag {
+    /// Constructs a Bag with all fields set to None
+    ///
+    /// Note that the [`Default`] implementation returns long date and time options
+    pub fn empty() -> Self {
+        Self {
+            date: None,
+            time: None,
+            preferences: None,
+        }
+    }
+
+    /// Constructs a Bag given a date and time field (preferences set to None)
+    pub fn new(date: Option<Date>, time: Option<Time>) -> Self {
+        Self {
+            date,
+            time,
+            preferences: None,
+        }
+    }
+}
 /// Represents different lengths a [`DateTimeInput`] implementer can be formatted into.
 /// Each length has associated best pattern for it for a given locale.
 ///
@@ -109,12 +130,7 @@ impl Default for Bag {
 /// ```
 /// use icu::datetime::options::length;
 ///
-/// let bag = length::Bag {
-///     date: Some(length::Date::Long),
-///     time: None,
-///
-///     preferences: None,
-/// };
+/// let bag = length::Bag::new(Some(length::Date::Long), None);
 /// ```
 ///
 /// The available lengths correspond to [`UTS #35: Unicode LDML 4. Dates`], section 2.4 [`Element dateFormats`].
@@ -127,8 +143,8 @@ impl Default for Bag {
 /// [`Element dateFormats`]: https://unicode.org/reports/tr35/tr35-dates.html#dateFormats
 /// [`DateTimeFormat`]: super::super::DateTimeFormat
 #[derive(Debug, Clone, Copy, PartialEq)]
-#[allow(clippy::exhaustive_enums)] // this type is stable
 #[cfg_attr(feature = "serialize", derive(Serialize, Deserialize))]
+#[non_exhaustive]
 pub enum Date {
     /// Full length, usually with weekday name.
     ///
@@ -194,12 +210,7 @@ pub enum Date {
 /// ```
 /// use icu::datetime::options::length;
 ///
-/// let bag = length::Bag {
-///     date: None,
-///     time: Some(length::Time::Medium),
-///
-///     preferences: None,
-/// };
+/// let bag = length::Bag::new(None, Some(length::Time::Medium));
 /// ```
 ///
 /// The available lengths correspond to [`UTS #35: Unicode LDML 4. Dates`], section 2.4 [`Element timeFormats`].
@@ -213,7 +224,7 @@ pub enum Date {
 /// [`DateTimeFormat`]: super::super::DateTimeFormat
 #[derive(Debug, Clone, Copy, PartialEq)]
 #[cfg_attr(feature = "serialize", derive(Serialize, Deserialize))]
-#[allow(clippy::exhaustive_enums)] // this type is stable
+#[non_exhaustive]
 pub enum Time {
     /// Full length, with spelled out time zone name.
     ///
