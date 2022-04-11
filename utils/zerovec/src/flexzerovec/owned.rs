@@ -40,6 +40,10 @@ impl FlexZeroVecOwned {
         self.0.extend_from_slice(bytes_to_append);
     }
 
+    pub fn remove(&mut self, item: usize) {
+        todo!("If the item being removed has max width, need to check if we need to scale down");
+    }
+
     fn scale_up(&mut self, new_width: usize) {
         let count = self.len();
         let old_width = self.get_width();
@@ -47,20 +51,28 @@ impl FlexZeroVecOwned {
         let new_byte_len = ((old_byte_len - 1) / old_width) * new_width + 1;
         debug_assert!(new_byte_len > old_byte_len);
         self.0.resize(new_byte_len, 0);
-        // Copy elements starting from the end into the new empty section of the vector
+        // Copy elements starting from the end into the new empty section of the vector.
+        // Note: We could copy fully in place, but we need to set 0 bytes for the high bytes,
+        // so we stage the new value on the stack.
         for i in (0..count).rev() {
-            // Safety: The vector previously held `count` items at `old_width` and now has the
-            // capacity for `count` items at `new_width`.
+            // Safety: The item at index i has not been changed since we are walking backwards.
+            let usize_bytes = unsafe { self.get_unchecked(i).to_le_bytes() };
+            // Safety: The vector has capacity for `new_width` items at the new index, which is
+            // later in the array than the bytes that we read above.
             unsafe {
-                core::ptr::copy(
-                    self.0.as_ptr().add(1).add(old_width * i),
+                core::ptr::copy_nonoverlapping(
+                    usize_bytes.as_ptr(),
                     self.0.as_mut_ptr().add(1).add(new_width * i),
-                    old_width
+                    new_width
                 );
             }
         }
         // Safety: The vector always has at least 1 element.
         unsafe { *self.0.as_mut_slice().get_unchecked_mut(0) = new_width as u8 };
+    }
+
+    fn scale_down(&mut self, new_width: usize) {
+        todo!("Similar to scale_up, but walk forward instead of backward");
     }
 }
 
@@ -76,7 +88,7 @@ mod test {
     use super::*;
 
     #[test]
-    fn test_basic() {
+    fn test_basic_push() {
         let mut fzv = FlexZeroVecOwned::new_empty();
         assert_eq!(fzv.get_width(), 1);
         assert_eq!(fzv.len(), 0);
@@ -84,5 +96,36 @@ mod test {
         assert_eq!(fzv.get(0), None);
         assert_eq!(fzv.first(), None);
         assert_eq!(fzv.last(), None);
+
+        fzv.push(42);
+        assert_eq!(fzv.get_width(), 1);
+        assert_eq!(fzv.len(), 1);
+        assert_eq!(fzv.is_empty(), false);
+        assert_eq!(fzv.get(0), Some(42));
+        assert_eq!(fzv.get(1), None);
+        assert_eq!(fzv.first(), Some(42));
+        assert_eq!(fzv.last(), Some(42));
+
+        fzv.push(77);
+        assert_eq!(fzv.get_width(), 1);
+        assert_eq!(fzv.len(), 2);
+        assert_eq!(fzv.is_empty(), false);
+        assert_eq!(fzv.get(0), Some(42));
+        assert_eq!(fzv.get(1), Some(77));
+        assert_eq!(fzv.get(2), None);
+        assert_eq!(fzv.first(), Some(42));
+        assert_eq!(fzv.last(), Some(77));
+
+        // Scale up
+        fzv.push(300);
+        assert_eq!(fzv.get_width(), 2);
+        assert_eq!(fzv.len(), 3);
+        assert_eq!(fzv.is_empty(), false);
+        assert_eq!(fzv.get(0), Some(42));
+        assert_eq!(fzv.get(1), Some(77));
+        assert_eq!(fzv.get(2), Some(300));
+        assert_eq!(fzv.get(3), None);
+        assert_eq!(fzv.first(), Some(42));
+        assert_eq!(fzv.last(), Some(300));
     }
 }

@@ -39,7 +39,7 @@ impl FlexZeroSlice {
 
     #[inline]
     pub unsafe fn from_byte_slice_unchecked(bytes: &[u8]) -> &Self {
-        mem::transmute(bytes)
+        &*(&bytes[..bytes.len() - 1] as *const [u8] as *const Self)
     }
 
     #[inline]
@@ -49,7 +49,7 @@ impl FlexZeroSlice {
 
     #[inline]
     pub fn is_empty(&self) -> bool {
-        self.data.len() == 1
+        self.data.len() == 0
     }
 
     #[inline]
@@ -76,11 +76,15 @@ impl FlexZeroSlice {
 
     #[inline]
     pub fn last(&self) -> Option<usize> {
-        let w = self.get_width();
         let l = self.data.len();
-        self.data
-            .get(l - w..l)
-            .map(|chunk| chunk_to_usize(chunk, w))
+        if l == 0 {
+            None
+        } else {
+            let w = self.get_width();
+            self.data
+                .get(l - w..l)
+                .map(|chunk| chunk_to_usize(chunk, w))
+        }
     }
 
     #[inline]
