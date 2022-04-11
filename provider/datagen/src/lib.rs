@@ -53,7 +53,7 @@ pub mod cldr;
 pub mod segmenter;
 pub mod uprops;
 
-use std::path::Path;
+use std::path::PathBuf;
 
 use icu_provider::ResourceKey;
 
@@ -69,21 +69,21 @@ pub fn get_all_keys() -> Vec<ResourceKey> {
 }
 
 /// Options for creating a datagen provider.
-pub struct DatagenOptions<'a> {
+pub struct DatagenOptions {
     /// Paths to CLDR source data.
     ///
     /// If `None`, providers that need CLDR source data cannot be constructed.
-    pub cldr_paths: Option<&'a dyn cldr::CldrPaths>,
+    pub cldr_paths: Option<Box<dyn cldr::CldrPaths>>,
 
     /// Path to Unicode Properties source data.
     ///
     /// If `None`, providers that need Unicode Properties source data cannot be constructed.
-    pub uprops_root: Option<&'a Path>,
+    pub uprops_root: Option<PathBuf>,
 
     /// Path to segmentation source data.
     ///
     /// If `None`, providers that need segmentation source data cannot be constructed.
-    pub segmenter_data_root: Option<&'a Path>,
+    pub segmenter_data_root: Option<PathBuf>,
 }
 
 /// Create a data provider reading from source files that generates data for all,

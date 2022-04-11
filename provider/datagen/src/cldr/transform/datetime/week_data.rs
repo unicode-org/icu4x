@@ -62,12 +62,13 @@ impl WeekDataProvider {
     }
 }
 
-impl TryFrom<&crate::DatagenOptions<'_>> for WeekDataProvider {
+impl TryFrom<&crate::DatagenOptions> for WeekDataProvider {
     type Error = eyre::ErrReport;
     fn try_from(options: &crate::DatagenOptions) -> eyre::Result<Self> {
         WeekDataProvider::try_new(
-            options
+            &**options
                 .cldr_paths
+                .as_ref()
                 .ok_or_else(|| eyre::eyre!("WeekDataProvider requires cldr_paths"))?,
         )
     }

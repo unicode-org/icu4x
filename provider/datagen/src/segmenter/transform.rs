@@ -640,15 +640,17 @@ impl SegmenterRuleProvider {
     }
 }
 
-impl TryFrom<&crate::DatagenOptions<'_>> for SegmenterRuleProvider {
+impl TryFrom<&crate::DatagenOptions> for SegmenterRuleProvider {
     type Error = eyre::ErrReport;
     fn try_from(options: &crate::DatagenOptions) -> Result<Self, Self::Error> {
         SegmenterRuleProvider::try_new(
             options
                 .segmenter_data_root
+                .as_ref()
                 .ok_or_else(|| eyre::eyre!("SegmenterRuleProvider requires segmenter_data_root"))?,
             options
                 .uprops_root
+                .as_ref()
                 .ok_or_else(|| eyre::eyre!("SegmenterRuleProvider requires uprops_root"))?,
         )
     }

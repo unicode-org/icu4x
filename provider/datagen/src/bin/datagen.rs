@@ -357,11 +357,12 @@ fn main() -> eyre::Result<()> {
 
         let segmenter_data_root = icu_datagen::segmenter::segmenter_data_root();
 
-        let p = icu_datagen::create_datagen_provider!(DatagenOptions {
-            cldr_paths: Some(&cldr_paths),
-            uprops_root: Some(&uprops_root),
-            segmenter_data_root: Some(&segmenter_data_root),
-        });
+        let options = DatagenOptions {
+            cldr_paths: Some(Box::new(cldr_paths)),
+            uprops_root: Some(uprops_root),
+            segmenter_data_root: Some(segmenter_data_root),
+        };
+        let p = icu_datagen::create_datagen_provider!(options);
 
         Box::new(p)
     };

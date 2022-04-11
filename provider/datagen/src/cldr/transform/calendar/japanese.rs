@@ -48,12 +48,13 @@ impl JapaneseErasProvider {
     }
 }
 
-impl TryFrom<&crate::DatagenOptions<'_>> for JapaneseErasProvider {
+impl TryFrom<&crate::DatagenOptions> for JapaneseErasProvider {
     type Error = eyre::ErrReport;
     fn try_from(options: &crate::DatagenOptions) -> eyre::Result<Self> {
         JapaneseErasProvider::try_new(
-            options
+            &**options
                 .cldr_paths
+                .as_ref()
                 .ok_or_else(|| eyre::eyre!("JapaneseErasProvider requires cldr_paths"))?,
         )
     }

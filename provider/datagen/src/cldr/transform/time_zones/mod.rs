@@ -41,12 +41,13 @@ impl TimeZonesProvider {
     }
 }
 
-impl TryFrom<&crate::DatagenOptions<'_>> for TimeZonesProvider {
+impl TryFrom<&crate::DatagenOptions> for TimeZonesProvider {
     type Error = eyre::ErrReport;
     fn try_from(options: &crate::DatagenOptions) -> eyre::Result<Self> {
         TimeZonesProvider::try_new(
-            options
+            &**options
                 .cldr_paths
+                .as_ref()
                 .ok_or_else(|| eyre::eyre!("TimeZonesProvider requires cldr_paths"))?,
         )
     }

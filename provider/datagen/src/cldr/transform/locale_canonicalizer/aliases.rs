@@ -34,12 +34,13 @@ impl AliasesProvider {
     }
 }
 
-impl TryFrom<&crate::DatagenOptions<'_>> for AliasesProvider {
+impl TryFrom<&crate::DatagenOptions> for AliasesProvider {
     type Error = eyre::ErrReport;
     fn try_from(options: &crate::DatagenOptions) -> eyre::Result<Self> {
         AliasesProvider::try_new(
-            options
+            &**options
                 .cldr_paths
+                .as_ref()
                 .ok_or_else(|| eyre::eyre!("AliasesProvider requires cldr_paths"))?,
         )
     }

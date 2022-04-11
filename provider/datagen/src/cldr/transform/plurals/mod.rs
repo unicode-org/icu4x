@@ -33,12 +33,13 @@ impl PluralsProvider {
     }
 }
 
-impl TryFrom<&crate::DatagenOptions<'_>> for PluralsProvider {
+impl TryFrom<&crate::DatagenOptions> for PluralsProvider {
     type Error = eyre::ErrReport;
     fn try_from(options: &crate::DatagenOptions) -> eyre::Result<Self> {
         PluralsProvider::try_new(
-            options
+            &**options
                 .cldr_paths
+                .as_ref()
                 .ok_or_else(|| eyre::eyre!("PluralsProvider requires cldr_paths"))?,
         )
     }

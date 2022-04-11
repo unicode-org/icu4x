@@ -36,12 +36,13 @@ impl CommonDateProvider {
     }
 }
 
-impl TryFrom<&crate::DatagenOptions<'_>> for CommonDateProvider {
+impl TryFrom<&crate::DatagenOptions> for CommonDateProvider {
     type Error = eyre::ErrReport;
     fn try_from(options: &crate::DatagenOptions) -> eyre::Result<Self> {
         CommonDateProvider::try_new(
-            options
+            &**options
                 .cldr_paths
+                .as_ref()
                 .ok_or_else(|| eyre::eyre!("CommonDateProvider requires cldr_paths"))?,
         )
     }

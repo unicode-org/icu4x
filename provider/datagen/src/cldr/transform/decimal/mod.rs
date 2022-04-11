@@ -41,12 +41,13 @@ impl NumbersProvider {
     }
 }
 
-impl TryFrom<&crate::DatagenOptions<'_>> for NumbersProvider {
+impl TryFrom<&crate::DatagenOptions> for NumbersProvider {
     type Error = eyre::ErrReport;
     fn try_from(options: &crate::DatagenOptions) -> eyre::Result<Self> {
         NumbersProvider::try_new(
-            options
+            &**options
                 .cldr_paths
+                .as_ref()
                 .ok_or_else(|| eyre::eyre!("NumbersProvider requires cldr_paths"))?,
         )
     }

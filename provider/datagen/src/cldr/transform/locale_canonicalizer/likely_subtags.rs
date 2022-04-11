@@ -32,12 +32,13 @@ impl LikelySubtagsProvider {
     }
 }
 
-impl TryFrom<&crate::DatagenOptions<'_>> for LikelySubtagsProvider {
+impl TryFrom<&crate::DatagenOptions> for LikelySubtagsProvider {
     type Error = eyre::ErrReport;
     fn try_from(options: &crate::DatagenOptions) -> eyre::Result<Self> {
         LikelySubtagsProvider::try_new(
-            options
+            &**options
                 .cldr_paths
+                .as_ref()
                 .ok_or_else(|| eyre::eyre!("LikelySubtagsProvider requires cldr_paths"))?,
         )
     }

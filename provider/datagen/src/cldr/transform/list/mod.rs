@@ -34,15 +34,17 @@ impl ListProvider {
     }
 }
 
-impl TryFrom<&crate::DatagenOptions<'_>> for ListProvider {
+impl TryFrom<&crate::DatagenOptions> for ListProvider {
     type Error = eyre::ErrReport;
     fn try_from(options: &crate::DatagenOptions) -> eyre::Result<Self> {
         ListProvider::try_new(
-            options
+            &**options
                 .cldr_paths
+                .as_ref()
                 .ok_or_else(|| eyre::eyre!("ListProvider requires cldr_paths"))?,
             options
                 .uprops_root
+                .as_ref()
                 .ok_or_else(|| eyre::eyre!("ListProvider requires uprops_root"))?
                 .to_path_buf(),
         )

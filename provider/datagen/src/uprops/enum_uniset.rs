@@ -24,10 +24,10 @@ impl EnumeratedPropertyUnicodeSetDataProvider {
     }
 }
 
-impl TryFrom<&crate::DatagenOptions<'_>> for EnumeratedPropertyUnicodeSetDataProvider {
+impl TryFrom<&crate::DatagenOptions> for EnumeratedPropertyUnicodeSetDataProvider {
     type Error = eyre::ErrReport;
     fn try_from(options: &crate::DatagenOptions) -> eyre::Result<Self> {
-        EnumeratedPropertyUnicodeSetDataProvider::try_new(options.uprops_root.ok_or_else(|| {
+        EnumeratedPropertyUnicodeSetDataProvider::try_new(options.uprops_root.as_ref().ok_or_else(|| {
             eyre::eyre!("EnumeratedPropertyUnicodeSetDataProvider requires uprops_root")
         })?)
     }
