@@ -24,16 +24,16 @@
 
 pub mod borrow_de_utils;
 mod de;
-#[cfg(feature = "serde")]
+#[cfg(feature = "datagen")]
 mod ser;
 
 pub use de::check_format_supported;
 pub use de::AsDeserializingBufferProvider;
 pub use de::DeserializingBufferProvider;
 
-#[cfg(feature = "serde")]
+#[cfg(feature = "datagen")]
 pub use ser::SerializeBox;
-#[cfg(feature = "serde")]
+#[cfg(feature = "datagen")]
 pub use ser::SerializeMarker;
 
 use crate::buf::BufferFormat;

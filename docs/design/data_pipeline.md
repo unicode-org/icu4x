@@ -93,7 +93,7 @@ pub mod key {
 
 /// This is a sample data struct.
 #[derive(Debug, PartialEq, Clone)]
-#[cfg_attr(feature = "serialize", derive(Deserialize))]
+#[cfg_attr(feature = "serde", derive(Deserialize))]
 #[cfg_attr(feature = "datagen", derive(Serialize))]
 pub struct SampleDataStructV1<'data> {
     /// This field is always present, and it may be borrowed or owned.

@@ -82,7 +82,7 @@
 //!
 //! ### `DataProvider<SerializeMarker>`
 //!
-//! *Enabled with the "serde" feature*
+//! *Enabled with the "datagen" feature*
 //!
 //! Data providers capable of returning opaque `erased_serde::Serialize` trait objects can be use
 //! as input to a data exporter, such as when writing data to the filesystem.
