@@ -22,7 +22,7 @@
 //! let provider = icu_testdata::get_provider();
 //!
 //! // See the next code example for a more ergonomic example with .into().
-//! let options = DateTimeFormatOptions::Length(length::Bag::new(
+//! let options = DateTimeFormatOptions::Length(length::Bag::from_date_time_style(
 //!     Some(length::Date::Medium), Some(length::Time::Short),
 //! ));
 //!
@@ -45,7 +45,7 @@
 //! use icu::datetime::{DateTimeFormat, DateTimeFormatOptions, options::length};
 //! # let provider = icu_testdata::get_provider();
 //! # let locale = icu::locid::locale!("en");
-//! let options = length::Bag::new(Some(length::Date::Medium), Some(length::Time::Short)).into();
+//! let options = length::Bag::from_date_time_style(Some(length::Date::Medium), Some(length::Time::Short)).into();
 //!
 //! let dtf = DateTimeFormat::<Gregorian>::try_new(locale, &provider, &options);
 //! ```

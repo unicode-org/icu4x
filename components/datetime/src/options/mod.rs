@@ -18,7 +18,7 @@
 //! use icu::datetime::{DateTimeFormatOptions, options::length};
 //!
 //! let options = DateTimeFormatOptions::Length(
-//!     length::Bag::new(Some(length::Date::Medium), Some(length::Time::Short)));
+//!     length::Bag::from_date_time_style(Some(length::Date::Medium), Some(length::Time::Short)));
 //! ```
 //!
 //! At the moment only the [`length::Bag`] works, and we plan to extend that to support
@@ -40,7 +40,7 @@ pub mod preferences;
 /// use icu::datetime::{DateTimeFormatOptions, options::length};
 ///
 /// let options = DateTimeFormatOptions::Length(
-///     length::Bag::new(Some(length::Date::Medium), Some(length::Time::Short)));
+///     length::Bag::from_date_time_style(Some(length::Date::Medium), Some(length::Time::Short)));
 /// ```
 ///
 /// At the moment only the [`length::Bag`] works, and we plan to extend that to support

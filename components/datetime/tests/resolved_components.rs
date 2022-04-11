@@ -72,7 +72,7 @@ fn test_components_bag() {
     input_bag.minute = Some(components::Numeric::TwoDigit);
     input_bag.second = Some(components::Numeric::TwoDigit);
     input_bag.preferences = None;
-    let mut output_bag = input_bag.clone();
+    let mut output_bag = input_bag; // make a copy
     output_bag.month = Some(components::Month::Short);
     output_bag.preferences = Some(preferences::Bag {
         hour_cycle: Some(preferences::HourCycle::H23),

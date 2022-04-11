@@ -18,7 +18,7 @@ use icu::datetime::{DateTimeFormat, DateTimeFormatOptions, mock::parse_gregorian
 let provider = icu_testdata::get_provider();
 
 // See the next code example for a more ergonomic example with .into().
-let options = DateTimeFormatOptions::Length(length::Bag::new(
+let options = DateTimeFormatOptions::Length(length::Bag::from_date_time_style(
     Some(length::Date::Medium), Some(length::Time::Short),
 ));
 
@@ -39,7 +39,7 @@ convert a [`options::length::Bag`] into a [`DateTimeFormatOptions::Length`].
 ```rust
 use icu::calendar::Gregorian;
 use icu::datetime::{DateTimeFormat, DateTimeFormatOptions, options::length};
-let options = length::Bag::new(Some(length::Date::Medium), Some(length::Time::Short)).into();
+let options = length::Bag::from_date_time_style(Some(length::Date::Medium), Some(length::Time::Short)).into();
 
 let dtf = DateTimeFormat::<Gregorian>::try_new(locale, &provider, &options);
 ```

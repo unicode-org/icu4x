@@ -21,7 +21,7 @@
 //! use icu::datetime::DateTimeFormatOptions;
 //! use icu::datetime::options::length;
 //!
-//! let bag = length::Bag::new(
+//! let bag = length::Bag::from_date_time_style(
 //!     Some(length::Date::Medium), // "medium" date connector will be used
 //!     Some(length::Time::Short)
 //! );
@@ -57,7 +57,7 @@ use serde::{Deserialize, Serialize};
 /// use icu::datetime::DateTimeFormatOptions;
 /// use icu::datetime::options::length;
 ///
-/// let bag = length::Bag::new(
+/// let bag = length::Bag::from_date_time_style(
 ///     Some(length::Date::Medium),
 ///     Some(length::Time::Short)
 /// );
@@ -112,7 +112,7 @@ impl Bag {
     }
 
     /// Constructs a Bag given a date and time field (preferences set to None)
-    pub fn new(date: Option<Date>, time: Option<Time>) -> Self {
+    pub fn from_date_time_style(date: Option<Date>, time: Option<Time>) -> Self {
         Self {
             date,
             time,
@@ -130,7 +130,7 @@ impl Bag {
 /// ```
 /// use icu::datetime::options::length;
 ///
-/// let bag = length::Bag::new(Some(length::Date::Long), None);
+/// let bag = length::Bag::from_date_time_style(Some(length::Date::Long), None);
 /// ```
 ///
 /// The available lengths correspond to [`UTS #35: Unicode LDML 4. Dates`], section 2.4 [`Element dateFormats`].
@@ -210,7 +210,7 @@ pub enum Date {
 /// ```
 /// use icu::datetime::options::length;
 ///
-/// let bag = length::Bag::new(None, Some(length::Time::Medium));
+/// let bag = length::Bag::from_date_time_style(None, Some(length::Time::Medium));
 /// ```
 ///
 /// The available lengths correspond to [`UTS #35: Unicode LDML 4. Dates`], section 2.4 [`Element timeFormats`].
