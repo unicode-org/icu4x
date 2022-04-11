@@ -174,12 +174,11 @@ fn main() -> eyre::Result<()> {
             .to_string(),
     });
 
-    let segmenter_data_root = icu_datagen::segmenter::segmenter_data_root();
-
     let options = DatagenOptions {
         cldr_paths: Some(cldr_paths),
         uprops_root: Some(uprops_root),
-        segmenter_data_root: Some(segmenter_data_root),
+        #[cfg(feature = "experimental")]
+        segmenter_data_root: Some(icu_datagen::segmenter::segmenter_data_root()),
     };
     let converter = icu_datagen::create_datagen_provider!(options);
 

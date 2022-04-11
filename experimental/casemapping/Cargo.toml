@@ -40,4 +40,4 @@ bench = false  # This option is required for Benchmark CI
 std = ["icu_provider/std"]
 default = []
 serde = ["dep:serde", "zerovec/serde", "icu_codepointtrie/serde"]
-datagen = ["std", "zerovec/serde_serialize", "icu_codepointtrie/serde_serialize"]
+datagen = ["serde", "std", "zerovec/serde_serialize", "icu_codepointtrie/serde_serialize"]
