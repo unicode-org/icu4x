@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use alloc::borrow::Cow;
-#[cfg(any(feature = "icu4x_human_readable_de", feature = "datagen"))]
+#[cfg(any(feature = "serde_human", feature = "datagen"))]
 use alloc::string::ToString;
 use icu_provider::{yoke, zerofrom};
 use regex_automata::dfa::sparse::DFA;
@@ -52,12 +52,15 @@ impl<'de: 'data, 'data> serde::Deserialize<'de> for StringMatcher<'data> {
     {
         use icu_provider::serde::borrow_de_utils::CowBytesWrap;
 
-        #[cfg(feature = "icu4x_human_readable_de")]
         if deserializer.is_human_readable() {
-            return StringMatcher::new(<&str>::deserialize(deserializer)?).map_err(|e| {
-                use serde::de::Error;
-                D::Error::custom(e.to_string())
-            });
+            use serde::de::Error;
+            #[cfg(not(feature = "serde_human"))]
+            return Err(D::Error::custom(
+                "Deserializing human-readable data formats requires the serde_human feature",
+            ));
+            #[cfg(feature = "serde_human")]
+            return StringMatcher::new(<&str>::deserialize(deserializer)?)
+                .map_err(|e| D::Error::custom(e.to_string()));
         }
 
         if cfg!(target_endian = "big") {
@@ -85,7 +88,7 @@ impl<'de: 'data, 'data> serde::Deserialize<'de> for StringMatcher<'data> {
 }
 
 impl<'data> StringMatcher<'data> {
-    #[cfg(any(feature = "datagen", feature = "icu4x_human_readable_de",))]
+    #[cfg(any(feature = "datagen", feature = "serde_human",))]
     pub fn new(pattern: &str) -> Result<Self, icu_provider::DataError> {
         use regex_automata::{
             dfa::dense::{Builder, Config},
@@ -160,7 +163,7 @@ mod test {
     }
 
     #[test]
-    #[cfg(feature = "icu4x_human_readable_de")]
+    #[cfg(feature = "serde_human")]
     fn test_json_serialization() {
         let matcher = StringMatcher::new("abc*").unwrap();
 
