@@ -36,7 +36,7 @@ pub enum Polarity {
 #[derive(Copy, Clone, Debug, PartialEq, Eq, Ord, PartialOrd)]
 #[repr(u8)]
 #[zerovec::make_ule(OperandULE)]
-#[allow(clippy::exhaustive_enums)] // this type is stable
+#[non_exhaustive]
 pub enum Operand {
     N = 0,
     I = 1,

@@ -31,14 +31,14 @@
 //!
 //! ```
 //! use icu::plurals::PluralOperands;
-//! PluralOperands {
-//!     i: 1,
-//!     v: 0,
-//!     w: 0,
-//!     f: 0,
-//!     t: 0,
-//!     c: 0,
-//! };
+//! PluralOperands::new(
+//!     1, // i
+//!     0, // v
+//!     0, // w
+//!     0, // f
+//!     0, // t
+//!     0, // c
+//! );
 //! ```
 //!
 //! Now, the system will parse the first rule, assigned to [`PluralCategory::One`], and
