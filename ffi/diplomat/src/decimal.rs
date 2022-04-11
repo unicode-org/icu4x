@@ -100,25 +100,22 @@ pub mod ffi {
         {
             let langid = locale.0.as_ref().clone();
 
-            if let Result::Ok(fdf) = FixedDecimalFormat::try_new(
-                langid,
-                provider,
-                FixedDecimalFormatOptions {
-                    grouping_strategy: match options.grouping_strategy {
-                        ICU4XFixedDecimalGroupingStrategy::Auto => GroupingStrategy::Auto,
-                        ICU4XFixedDecimalGroupingStrategy::Never => GroupingStrategy::Never,
-                        ICU4XFixedDecimalGroupingStrategy::Always => GroupingStrategy::Always,
-                        ICU4XFixedDecimalGroupingStrategy::Min2 => GroupingStrategy::Min2,
-                    },
-                    sign_display: match options.sign_display {
-                        ICU4XFixedDecimalSignDisplay::Auto => SignDisplay::Auto,
-                        ICU4XFixedDecimalSignDisplay::Never => SignDisplay::Never,
-                        ICU4XFixedDecimalSignDisplay::Always => SignDisplay::Always,
-                        ICU4XFixedDecimalSignDisplay::ExceptZero => SignDisplay::ExceptZero,
-                        ICU4XFixedDecimalSignDisplay::Negative => SignDisplay::Negative,
-                    },
-                },
-            ) {
+            let grouping_strategy = match options.grouping_strategy {
+                ICU4XFixedDecimalGroupingStrategy::Auto => GroupingStrategy::Auto,
+                ICU4XFixedDecimalGroupingStrategy::Never => GroupingStrategy::Never,
+                ICU4XFixedDecimalGroupingStrategy::Always => GroupingStrategy::Always,
+                ICU4XFixedDecimalGroupingStrategy::Min2 => GroupingStrategy::Min2,
+            };
+            let sign_display = match options.sign_display {
+                ICU4XFixedDecimalSignDisplay::Auto => SignDisplay::Auto,
+                ICU4XFixedDecimalSignDisplay::Never => SignDisplay::Never,
+                ICU4XFixedDecimalSignDisplay::Always => SignDisplay::Always,
+                ICU4XFixedDecimalSignDisplay::ExceptZero => SignDisplay::ExceptZero,
+                ICU4XFixedDecimalSignDisplay::Negative => SignDisplay::Negative,
+            };
+            let options = FixedDecimalFormatOptions::new(grouping_strategy, sign_display);
+
+            if let Result::Ok(fdf) = FixedDecimalFormat::try_new(langid, provider, options) {
                 Ok(Box::new(ICU4XFixedDecimalFormat(fdf))).into()
             } else {
                 Err(()).into()

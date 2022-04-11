@@ -7,12 +7,22 @@
 /// A bag of options defining how numbers will be formatted by
 /// [`FixedDecimalFormat`](crate::FixedDecimalFormat).
 #[derive(Debug, Eq, PartialEq, Clone, Default)]
-#[allow(clippy::exhaustive_structs)] // this type is stable
+#[non_exhaustive]
 pub struct FixedDecimalFormatOptions {
     /// When to render grouping separators.
     pub grouping_strategy: GroupingStrategy,
     /// When to render the sign.
     pub sign_display: SignDisplay,
+}
+
+impl FixedDecimalFormatOptions {
+    /// Construct a new [`FixedDecimalFormatOptions`] from its components
+    pub fn new(grouping_strategy: GroupingStrategy, sign_display: SignDisplay) -> Self {
+        Self {
+            grouping_strategy,
+            sign_display,
+        }
+    }
 }
 
 /// Configuration for how often to render grouping separators.
