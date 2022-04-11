@@ -18,14 +18,12 @@ pub struct Iso;
 
 /// A 1-indexed representation of an ISO day
 #[derive(Copy, Clone, Debug, Hash, Eq, PartialEq, Ord, PartialOrd)]
-#[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct IsoDay(u8);
 /// A 1-indexed representation of an ISO month
 #[derive(Copy, Clone, Debug, Hash, Eq, PartialEq, Ord, PartialOrd)]
-#[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct IsoMonth(u8);
 #[derive(Copy, Clone, Debug, Hash, Eq, PartialEq, Ord, PartialOrd)]
-#[allow(clippy::exhaustive_structs)] // this type is stable
+#[allow(clippy::exhaustive_structs)] // newtype
 /// An ISO year. Year 0 == 1 BCE
 pub struct IsoYear(pub i32);
 

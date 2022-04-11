@@ -32,7 +32,7 @@ pub struct Year {
 
 /// TODO(#486): Implement month codes.
 #[derive(Clone, Debug, PartialEq)]
-#[allow(clippy::exhaustive_structs)] // this type is a stable wrapper
+#[allow(clippy::exhaustive_structs)] // newtype
 pub struct MonthCode(pub TinyStr8);
 
 /// Representation of a formattable month.
@@ -74,22 +74,22 @@ pub struct DayOfYearInfo {
 }
 
 /// A day number in a month. Usually 1-based.
-#[allow(clippy::exhaustive_structs)] // this is stable
+#[allow(clippy::exhaustive_structs)] // newtype
 pub struct DayOfMonth(pub u32);
 
 /// A week number in a month. Usually 1-based.
 #[derive(Clone, Copy, Debug, PartialEq)]
-#[allow(clippy::exhaustive_structs)] // this is stable
+#[allow(clippy::exhaustive_structs)] // newtype
 pub struct WeekOfMonth(pub u32);
 
 /// A week number in a year. Usually 1-based.
 #[derive(Clone, Copy, Debug, PartialEq)]
-#[allow(clippy::exhaustive_structs)] // this is stable
+#[allow(clippy::exhaustive_structs)] // newtype
 pub struct WeekOfYear(pub u32);
 
 /// A day of week in month. 1-based.
 #[derive(Clone, Copy, Debug, PartialEq)]
-#[allow(clippy::exhaustive_structs)] // this type is stable
+#[allow(clippy::exhaustive_structs)] // newtype
 pub struct DayOfWeekInMonth(pub u32);
 
 impl From<DayOfMonth> for DayOfWeekInMonth {
