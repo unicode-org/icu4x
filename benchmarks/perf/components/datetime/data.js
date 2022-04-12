@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1649463816841,
+  "lastUpdate": 1649791002855,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -25757,6 +25757,48 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 234160,
             "range": "± 8740",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "samchen61661@gmail.com",
+            "name": "samchen",
+            "username": "samchen61661"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "d05b102ea5530c87da04178f942f002cfe10042d",
+          "message": "Replace metazones with a more compact identifier (#1782)\n\n* Replace metazones with a more compact identifier\r\n\r\n* fix tests",
+          "timestamp": "2022-04-12T12:07:25-07:00",
+          "tree_id": "6a43c1200ee7c98dd00fcba3c6a95d105e6a770d",
+          "url": "https://github.com/unicode-org/icu4x/commit/d05b102ea5530c87da04178f942f002cfe10042d"
+        },
+        "date": 1649790982538,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 95732,
+            "range": "± 3704",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 999820,
+            "range": "± 27490",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 211827,
+            "range": "± 18583",
             "unit": "ns/iter"
           }
         ]
