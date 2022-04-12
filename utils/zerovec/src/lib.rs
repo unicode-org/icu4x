@@ -238,6 +238,7 @@ pub mod __zerovec_internal_reexport {
 
     pub use alloc::boxed;
 
+    #[cfg(feature = "serde")]
     pub use serde;
 }
 
