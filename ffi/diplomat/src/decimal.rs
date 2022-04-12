@@ -113,7 +113,9 @@ pub mod ffi {
                 ICU4XFixedDecimalSignDisplay::ExceptZero => SignDisplay::ExceptZero,
                 ICU4XFixedDecimalSignDisplay::Negative => SignDisplay::Negative,
             };
-            let options = FixedDecimalFormatOptions::new(grouping_strategy, sign_display);
+            let mut options = FixedDecimalFormatOptions::default();
+            options.grouping_strategy = grouping_strategy;
+            options.sign_display = sign_display;
 
             if let Result::Ok(fdf) = FixedDecimalFormat::try_new(langid, provider, options) {
                 Ok(Box::new(ICU4XFixedDecimalFormat(fdf))).into()

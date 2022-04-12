@@ -15,16 +15,6 @@ pub struct FixedDecimalFormatOptions {
     pub sign_display: SignDisplay,
 }
 
-impl FixedDecimalFormatOptions {
-    /// Construct a new [`FixedDecimalFormatOptions`] from its components
-    pub fn new(grouping_strategy: GroupingStrategy, sign_display: SignDisplay) -> Self {
-        Self {
-            grouping_strategy,
-            sign_display,
-        }
-    }
-}
-
 /// Configuration for how often to render grouping separators.
 ///
 /// # Examples
