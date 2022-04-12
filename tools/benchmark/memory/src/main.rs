@@ -242,8 +242,7 @@ fn main() {
             .arg(&package.manifest_path)
             .arg("--features")
             .arg("icu_benchmark_macros/benchmark_memory")
-            .arg("--features")
-            .arg("serde")
+            .arg("--all-features")
             .stderr(Stdio::piped())
             .spawn()
             .unwrap_or_else(|err| {
