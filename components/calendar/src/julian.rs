@@ -233,7 +233,7 @@ impl DateTime<Julian> {
     ) -> Result<DateTime<Julian>, DateTimeError> {
         Ok(DateTime {
             date: Date::new_julian_date_from_integers(year, month, day)?,
-            time: types::Time::try_new(hour, minute, second)?,
+            time: types::Time::try_new(hour, minute, second, 0)?,
         })
     }
 }

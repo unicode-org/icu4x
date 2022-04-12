@@ -25,6 +25,17 @@ pub mod zoned_datetime;
 /// let date: DateTime<Gregorian> = parse_gregorian_from_str("2020-10-14T13:21:00")
 ///     .expect("Failed to parse a datetime.");
 /// ```
+///
+/// Optionally, fractional seconds can be specified: `YYYY-MM-DDThh:mm:ss.SSSS`.
+///
+/// ```
+/// use icu::datetime::mock::parse_gregorian_from_str;
+/// use icu_calendar::{DateTime, Gregorian};
+///
+/// let date: DateTime<Gregorian> = parse_gregorian_from_str("2020-10-14T13:21:00.101")
+///     .expect("Failed to parse a datetime.");
+/// assert_eq!(u32::from(date.time.fraction), 101);
+/// ```
 pub fn parse_gregorian_from_str(input: &str) -> Result<DateTime<Gregorian>, DateTimeError> {
     #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
     let year: i32 = input[0..4].parse()?;
@@ -38,5 +49,14 @@ pub fn parse_gregorian_from_str(input: &str) -> Result<DateTime<Gregorian>, Date
     let minute: u8 = input[14..16].parse()?;
     #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
     let second: u8 = input[17..19].parse()?;
-    DateTime::new_gregorian_datetime_from_integers(year, month, day, hour, minute, second)
+    #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
+    let fraction: u32 = if input.len() > 20 {
+        match input[20..].parse() {
+            Ok(fraction) => fraction,
+            Err(_) => 0,
+        }
+    } else {
+        0
+    };
+    DateTime::new_gregorian_datetime_from_integers(year, month, day, hour, minute, second, fraction)
 }
