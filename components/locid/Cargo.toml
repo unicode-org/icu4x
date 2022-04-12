@@ -57,7 +57,7 @@ bench = false  # This option is required for Benchmark CI
 default = []
 std = []
 bench = []
-serialize = ["serde", "tinystr/serde"]
+serde = ["dep:serde", "tinystr/serde"]
 
 [[bench]]
 name = "subtags"
