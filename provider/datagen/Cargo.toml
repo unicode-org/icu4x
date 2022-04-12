@@ -38,7 +38,7 @@ displaydoc = { version = "0.2.3", default-features = false }
 elsa = "1.7"
 eyre = "0.6"
 icu_calendar = { version = "0.5", path = "../../components/calendar", features = ["datagen"] }
-icu_casemapping = { version = "0.1", path = "../../experimental/casemapping", features = ["serialize", "datagen"], optional = true }
+icu_casemapping = { version = "0.1", path = "../../experimental/casemapping", features = ["serde", "datagen"], optional = true }
 icu_codepointtrie = { version = "0.3.3", path = "../../utils/codepointtrie", features = ["serde_serialize"] }
 icu_datetime = { version = "0.5", path = "../../components/datetime", features = ["datagen"] }
 icu_decimal = { version = "0.5", path = "../../components/decimal", features = ["datagen"] }
