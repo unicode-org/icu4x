@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1649791002855,
+  "lastUpdate": 1649800978001,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -25799,6 +25799,102 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 211827,
             "range": "± 18583",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "1ae9151bfc8170936dff367617102914921811fb",
+          "message": "Rename \"serialize\" feature to \"serde\", use \"dep:serde\" syntax (#1797)\n\n* Move to dep:serde for zerovec\r\n\r\n* Move to dep:serde for other utils\r\n\r\n* replace feature=serialize with feature=serde\r\n\r\n* Move to dep:serde for components\r\n\r\n* Move to dep:serde for provider\r\n\r\n* Move to dep:serde for experimental\r\n\r\n* use --features bench in memory/binsize",
+          "timestamp": "2022-04-12T21:53:06Z",
+          "tree_id": "fb05f24168b836e2884ea2c9e16f5864dffcdc55",
+          "url": "https://github.com/unicode-org/icu4x/commit/1ae9151bfc8170936dff367617102914921811fb"
+        },
+        "date": 1649800961417,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 79372,
+            "range": "± 166",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 819392,
+            "range": "± 1051",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 173818,
+            "range": "± 214",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/DateTimeFormat/format_to_write",
+            "value": 74633,
+            "range": "± 143",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/DateTimeFormat/format_to_string",
+            "value": 82656,
+            "range": "± 192",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/format",
+            "value": 78993,
+            "range": "± 880",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/to_string",
+            "value": 85746,
+            "range": "± 128",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/ZonedDateTimeFormat/format_to_write",
+            "value": 169403,
+            "range": "± 191",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/ZonedDateTimeFormat/format_to_string",
+            "value": 182701,
+            "range": "± 245",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/format",
+            "value": 173894,
+            "range": "± 149",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/to_string",
+            "value": 185954,
+            "range": "± 311",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "pattern/parse",
+            "value": 4917,
+            "range": "± 9",
             "unit": "ns/iter"
           }
         ]
