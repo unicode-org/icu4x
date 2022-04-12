@@ -27,6 +27,8 @@ pub struct TimeZonesProvider {
     time_zone_names_data: FrozenBTreeMap<LanguageIdentifier, Box<TimeZoneNames>>,
     bcp47_tzid_path: PathBuf,
     bcp47_tzid_data: RwLock<LiteMap<String, String>>,
+    meta_zone_id_path: PathBuf,
+    meta_zone_id_data: RwLock<LiteMap<String, String>>,
 }
 
 impl TryFrom<&dyn CldrPaths> for TimeZonesProvider {
@@ -37,6 +39,8 @@ impl TryFrom<&dyn CldrPaths> for TimeZonesProvider {
             time_zone_names_data: FrozenBTreeMap::new(),
             bcp47_tzid_path: cldr_paths.cldr_bcp47()?.join("bcp47"),
             bcp47_tzid_data: RwLock::new(LiteMap::new()),
+            meta_zone_id_path: cldr_paths.cldr_core()?.join("supplemental"),
+            meta_zone_id_data: RwLock::new(LiteMap::new()),
         })
     }
 }
@@ -89,11 +93,29 @@ macro_rules! impl_resource_provider {
                             }
                         }
                     }
-                    let bcp47_tzids = self.bcp47_tzid_data.read().unwrap();
+
+                    if self.meta_zone_id_data.read().unwrap().len() == 0 {
+                        let meta_zone_id_path = self.meta_zone_id_path.join("metaZones.json");
+
+                        let resource: cldr_serde::time_zones::meta_zones::Resource =
+                            serde_json::from_reader(open_reader(&meta_zone_id_path)?)
+                                .map_err(|e| Error::Json(e, Some(meta_zone_id_path)))?;
+                         let r = resource
+                            .supplemental
+                            .meta_zones
+                            .meta_zone_ids
+                            .0;
+
+                        let mut data_guard = self.meta_zone_id_data.write().unwrap();
+                        for (meta_zone_id, meta_zone_id_data) in r.iter() {
+                            data_guard.insert(meta_zone_id_data.long_id.to_string(), meta_zone_id.to_string());
+                        }
+                    }
 
                     let cldr_time_zones_data = CldrTimeZonesData {
                         time_zone_names,
-                        bcp47_tzids: &bcp47_tzids,
+                        bcp47_tzids: &self.bcp47_tzid_data.read().unwrap(),
+                        meta_zone_ids: &self.meta_zone_id_data.read().unwrap(),
                     };
 
                     let metadata = DataResponseMetadata::default();
@@ -173,11 +195,7 @@ mod tests {
             .unwrap();
         assert_eq!(
             "Australian Central Western Time",
-            generic_names_long
-                .get()
-                .defaults
-                .get("Australia_CentralWestern")
-                .unwrap()
+            generic_names_long.get().defaults.get("aucw").unwrap()
         );
 
         let specific_names_long: DataPayload<MetaZoneSpecificNamesLongV1Marker> = provider
@@ -193,7 +211,7 @@ mod tests {
             specific_names_long
                 .get()
                 .defaults
-                .get("Australia_CentralWestern", &tinystr!(8, "standard"))
+                .get("aucw", &tinystr!(8, "standard"))
                 .unwrap()
         );
 
@@ -207,11 +225,7 @@ mod tests {
             .unwrap();
         assert_eq!(
             "PT",
-            generic_names_short
-                .get()
-                .defaults
-                .get("America_Pacific")
-                .unwrap()
+            generic_names_short.get().defaults.get("ampa").unwrap()
         );
 
         let specific_names_short: DataPayload<MetaZoneSpecificNamesShortV1Marker> = provider
@@ -227,7 +241,7 @@ mod tests {
             specific_names_short
                 .get()
                 .defaults
-                .get("America_Pacific", &tinystr!(8, "daylight"))
+                .get("ampa", &tinystr!(8, "daylight"))
                 .unwrap()
         );
     }

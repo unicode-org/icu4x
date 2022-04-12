@@ -1,18 +1,18 @@
 {
   "defaults": {
-    "Europe_Central": {
+    "euce": {
       "daylight": "CEST",
       "standard": "CET"
     },
-    "Europe_Eastern": {
+    "euea": {
       "daylight": "EEST",
       "standard": "EET"
     },
-    "Europe_Western": {
+    "euwe": {
       "daylight": "WEST",
       "standard": "WET"
     },
-    "GMT": {
+    "mgmt": {
       "standard": "GMT"
     }
   },

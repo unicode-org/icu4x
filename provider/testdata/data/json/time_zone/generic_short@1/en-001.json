@@ -1,6 +1,6 @@
 {
   "defaults": {
-    "GMT": "GMT"
+    "mgmt": "GMT"
   },
   "overrides": {
     "Etc/UTC": "UTC"

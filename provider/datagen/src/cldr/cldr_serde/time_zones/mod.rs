@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 pub mod bcp47_tzid;
+pub mod meta_zones;
 pub mod time_zone_names;
 
 use litemap::LiteMap;
@@ -12,4 +13,5 @@ use time_zone_names::TimeZoneNames;
 pub struct CldrTimeZonesData<'a> {
     pub time_zone_names: &'a TimeZoneNames,
     pub bcp47_tzids: &'a LiteMap<String, String>,
+    pub meta_zone_ids: &'a LiteMap<String, String>,
 }

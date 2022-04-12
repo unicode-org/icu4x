@@ -1,6 +1,6 @@
 {
   "defaults": {
-    "Japan": "JST"
+    "japa": "JST"
   },
   "overrides": {
     "Etc/UTC": "UTC"
