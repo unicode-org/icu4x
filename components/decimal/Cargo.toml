@@ -52,7 +52,7 @@ getrandom = { version = "0.2", features = ["js"] }
 [features]
 std = ["icu_locid/std", "icu_provider/std", "fixed_decimal/std"]
 default = []
-bench = []
+bench = ["serde"]
 serde = ["dep:serde"]
 datagen = ["serde"]
 

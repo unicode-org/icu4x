@@ -50,7 +50,7 @@ path = "src/lib.rs"
 
 [features]
 default = []
-bench = []
+bench = ["serde"]
 serde = ["dep:serde", "icu_locid/serde", "litemap/serde", "tinystr/serde", "zerovec/serde"]
 datagen = ["serde", "litemap/serde_serialize", "zerovec/serde_serialize"]
 
