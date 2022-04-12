@@ -37,9 +37,9 @@ fn test_length_time() {
     components_bag.hour = Some(components::Numeric::Numeric);
     components_bag.minute = Some(components::Numeric::TwoDigit);
     components_bag.second = Some(components::Numeric::TwoDigit);
-    components_bag.preferences = Some(preferences::Bag {
-        hour_cycle: Some(preferences::HourCycle::H12),
-    });
+    components_bag.preferences = Some(preferences::Bag::from_hour_cycle(
+        preferences::HourCycle::H12,
+    ));
     assert_resolved_components(&DateTimeFormatOptions::Length(length_bag), &components_bag);
 }
 
@@ -47,16 +47,18 @@ fn test_length_time() {
 fn test_length_time_preferences() {
     let mut length_bag = length::Bag::empty();
     length_bag.time = Some(length::Time::Medium);
-    length_bag.preferences = Some(preferences::Bag {
-        hour_cycle: Some(preferences::HourCycle::H24),
-    });
+    length_bag.preferences = Some(preferences::Bag::from_hour_cycle(
+        preferences::HourCycle::H24,
+    ));
+
     let mut components_bag = components::Bag::default();
     components_bag.hour = Some(components::Numeric::TwoDigit);
     components_bag.minute = Some(components::Numeric::TwoDigit);
     components_bag.second = Some(components::Numeric::TwoDigit);
-    components_bag.preferences = Some(preferences::Bag {
-        hour_cycle: Some(preferences::HourCycle::H24),
-    });
+    components_bag.preferences = Some(preferences::Bag::from_hour_cycle(
+        preferences::HourCycle::H24,
+    ));
+
     assert_resolved_components(&DateTimeFormatOptions::Length(length_bag), &components_bag);
 }
 
@@ -74,8 +76,9 @@ fn test_components_bag() {
     input_bag.preferences = None;
     let mut output_bag = input_bag; // make a copy
     output_bag.month = Some(components::Month::Short);
-    output_bag.preferences = Some(preferences::Bag {
-        hour_cycle: Some(preferences::HourCycle::H23),
-    });
+    output_bag.preferences = Some(preferences::Bag::from_hour_cycle(
+        preferences::HourCycle::H23,
+    ));
+
     assert_resolved_components(&DateTimeFormatOptions::Components(input_bag), &output_bag);
 }

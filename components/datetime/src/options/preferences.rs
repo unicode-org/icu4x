@@ -20,9 +20,7 @@
 //! ```
 //! use icu::datetime::options::preferences;
 //!
-//! let prefs = preferences::Bag {
-//!     hour_cycle: Some(preferences::HourCycle::H23)
-//! };
+//! let prefs = preferences::Bag::from_hour_cycle(preferences::HourCycle::H23);
 //! ```
 use crate::fields;
 
@@ -36,19 +34,26 @@ use serde::{Deserialize, Serialize};
 /// ```
 /// use icu::datetime::options::preferences;
 ///
-/// let prefs = preferences::Bag {
-///     hour_cycle: Some(preferences::HourCycle::H23)
-/// };
+/// let prefs = preferences::Bag::from_hour_cycle(preferences::HourCycle::H23);
 /// ```
 #[derive(Debug, Clone, PartialEq, Copy)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
-#[allow(clippy::exhaustive_structs)] // this type is stable
+#[non_exhaustive]
 pub struct Bag {
     /// The hour cycle can be adjusts according to user preferences, for instance at the OS-level.
     /// That preference can be applied here to change the hour cycle from the default for the
     /// given locale.
     #[cfg_attr(feature = "serde", serde(rename = "hourCycle"))]
     pub hour_cycle: Option<HourCycle>,
+}
+
+impl Bag {
+    /// Construct a [`Bag`] with a given [`HourCycle`]
+    pub fn from_hour_cycle(h: HourCycle) -> Self {
+        Self {
+            hour_cycle: Some(h),
+        }
+    }
 }
 
 /// A user preference for adjusting how the hour component is displayed.
