@@ -43,12 +43,29 @@ impl FlexZeroVecOwned {
         self.as_mut_slice().insert_impl(insert_info, insert_index);
     }
 
-    pub fn remove(&mut self, item: usize) {
-        todo!("If the item being removed has max width, need to check if we need to scale down");
+    /// # Panics
+    ///
+    /// Panics if `index > len`.
+    pub fn insert(&mut self, index: usize, item: usize) {
+        if index > self.len() {
+            panic!("index {} out of range {}", index, self.len());
+        }
+        let insert_info = self.get_insert_info(item);
+        self.0.resize(insert_info.new_data_len + 1, 0);
+        self.as_mut_slice().insert_impl(insert_info, index);
     }
 
-    fn scale_down(&mut self, new_width: usize) {
-        todo!("Similar to scale_up, but walk forward instead of backward");
+    /// # Panics
+    /// 
+    /// Panics if `index >= len`.
+    pub fn remove(&mut self, index: usize) {
+        if index >= self.len() {
+            panic!("index {} out of range {}", index, self.len());
+        }
+        let remove_info = self.get_remove_info(index);
+        let new_bytes_len = remove_info.new_data_len + 1;
+        self.as_mut_slice().remove_impl(remove_info);
+        self.0.truncate(new_bytes_len);
     }
 }
 
@@ -63,45 +80,47 @@ impl Deref for FlexZeroVecOwned {
 mod test {
     use super::*;
 
+    fn check_contents(fzv: &FlexZeroSlice, expected: &[usize]) {
+        assert_eq!(fzv.len(), expected.len(), "len: {:?} != {:?}", fzv, expected);
+        assert_eq!(fzv.is_empty(), expected.is_empty(), "is_empty: {:?} != {:?}", fzv, expected);
+        assert_eq!(fzv.first(), expected.first().copied(), "first: {:?} != {:?}", fzv, expected);
+        assert_eq!(fzv.last(), expected.last().copied(), "last:  {:?} != {:?}", fzv, expected);
+        for i in 0..(expected.len() + 1) {
+            assert_eq!(fzv.get(i), expected.get(i).copied(), "@{}: {:?} != {:?}", i, fzv, expected);
+        }
+    }
+
     #[test]
-    fn test_basic_push() {
+    fn test_basic() {
         let mut fzv = FlexZeroVecOwned::new_empty();
         assert_eq!(fzv.get_width(), 1);
-        assert_eq!(fzv.len(), 0);
-        assert_eq!(fzv.is_empty(), true);
-        assert_eq!(fzv.get(0), None);
-        assert_eq!(fzv.first(), None);
-        assert_eq!(fzv.last(), None);
+        check_contents(&fzv, &[]);
 
         fzv.push(42);
         assert_eq!(fzv.get_width(), 1);
-        assert_eq!(fzv.len(), 1);
-        assert_eq!(fzv.is_empty(), false);
-        assert_eq!(fzv.get(0), Some(42));
-        assert_eq!(fzv.get(1), None);
-        assert_eq!(fzv.first(), Some(42));
-        assert_eq!(fzv.last(), Some(42));
+        check_contents(&fzv, &[42]);
 
         fzv.push(77);
         assert_eq!(fzv.get_width(), 1);
-        assert_eq!(fzv.len(), 2);
-        assert_eq!(fzv.is_empty(), false);
-        assert_eq!(fzv.get(0), Some(42));
-        assert_eq!(fzv.get(1), Some(77));
-        assert_eq!(fzv.get(2), None);
-        assert_eq!(fzv.first(), Some(42));
-        assert_eq!(fzv.last(), Some(77));
+        check_contents(&fzv, &[42, 77]);
 
         // Scale up
         fzv.push(300);
         assert_eq!(fzv.get_width(), 2);
-        assert_eq!(fzv.len(), 3);
-        assert_eq!(fzv.is_empty(), false);
-        assert_eq!(fzv.get(0), Some(42));
-        assert_eq!(fzv.get(1), Some(77));
-        assert_eq!(fzv.get(2), Some(300));
-        assert_eq!(fzv.get(3), None);
-        assert_eq!(fzv.first(), Some(42));
-        assert_eq!(fzv.last(), Some(300));
+        check_contents(&fzv, &[42, 77, 300]);
+
+        // Does not need to be sorted
+        fzv.insert(1, 325);
+        assert_eq!(fzv.get_width(), 2);
+        check_contents(&fzv, &[42, 325, 77, 300]);
+
+        fzv.remove(3);
+        assert_eq!(fzv.get_width(), 2);
+        check_contents(&fzv, &[42, 325, 77]);
+
+        // Scale down
+        fzv.remove(1);
+        assert_eq!(fzv.get_width(), 1);
+        check_contents(&fzv, &[42, 77]);
     }
 }
