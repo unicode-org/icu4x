@@ -4,12 +4,9 @@
 
 use alloc::vec;
 use alloc::vec::Vec;
-use core::mem;
 use core::ops::Deref;
 
 use super::slice::FlexZeroSlice;
-
-const USIZE_WIDTH: usize = mem::size_of::<usize>();
 
 pub struct FlexZeroVecOwned(Vec<u8>);
 

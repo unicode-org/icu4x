@@ -292,6 +292,8 @@ pub mod vecs {
     pub use crate::varzerovec::{VarZeroSlice, VarZeroVec};
 
     pub use crate::varzerovec::VarZeroVecOwned;
+
+    pub use crate::flexzerovec::{FlexZeroSlice, FlexZeroVec, FlexZeroVecOwned};
 }
 
 // Proc macro reexports

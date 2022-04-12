@@ -245,7 +245,7 @@ impl FlexZeroSlice {
         } = remove_info;
         debug_assert!(new_width <= self.get_width());
         debug_assert!(new_count < self.len());
-        for i in (0..new_count) {
+        for i in 0..new_count {
             let j = if i < remove_index { i } else { i + 1 };
             // Safety: j is in range because j <= new_count < self.len()
             let bytes_to_write = unsafe { self.get_unchecked(j).to_le_bytes() };

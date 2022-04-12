@@ -5,3 +5,7 @@
 pub(crate) mod owned;
 pub(crate) mod slice;
 pub(crate) mod vec;
+
+pub use owned::FlexZeroVecOwned;
+pub use slice::FlexZeroSlice;
+pub use vec::FlexZeroVec;
