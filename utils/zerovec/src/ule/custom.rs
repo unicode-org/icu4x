@@ -19,9 +19,7 @@
 //! use zerovec::ule::*;
 //! use zerofrom::ZeroFrom;
 //!
-//! # pub use dep_serde as serde;
 //! #[derive(serde::Serialize, serde::Deserialize)]
-//! # #[serde(crate = "dep_serde")]
 //! struct Foo<'a> {
 //!    field1: char,
 //!    field2: u32,
@@ -41,9 +39,7 @@
 //! use zerofrom::ZeroFrom;
 //! use core::mem;
 //!
-//! # pub use dep_serde as serde;
 //! # #[derive(serde::Serialize, serde::Deserialize)]
-//! # #[serde(crate = "dep_serde")]
 //!# struct Foo<'a> {
 //!#    field1: char,
 //!#    field2: u32,

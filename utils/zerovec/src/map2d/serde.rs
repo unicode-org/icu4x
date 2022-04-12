@@ -8,7 +8,6 @@ use crate::ZeroVec;
 use alloc::vec::Vec;
 use core::fmt;
 use core::marker::PhantomData;
-use dep_serde as serde;
 use serde::de::{self, Deserialize, Deserializer, MapAccess, Visitor};
 #[cfg(feature = "serde_serialize")]
 use serde::ser::{Serialize, SerializeMap, Serializer};
@@ -364,17 +363,15 @@ where
 #[cfg(test)]
 #[allow(non_camel_case_types)]
 mod test {
-    use super::super::*;
+    use crate::map2d::{ZeroMap2d, ZeroMap2dBorrowed};
 
-    #[derive(dep_serde::Serialize, dep_serde::Deserialize)]
-    #[serde(crate = "dep_serde")]
+    #[derive(serde::Serialize, serde::Deserialize)]
     struct DeriveTest_ZeroMap2d<'data> {
         #[serde(borrow)]
         _data: ZeroMap2d<'data, u16, str, [u8]>,
     }
 
-    #[derive(dep_serde::Serialize, dep_serde::Deserialize)]
-    #[serde(crate = "dep_serde")]
+    #[derive(serde::Serialize, serde::Deserialize)]
     struct DeriveTest_ZeroMap2dBorrowed<'data> {
         #[serde(borrow)]
         _data: ZeroMap2dBorrowed<'data, u16, str, [u8]>,
