@@ -52,7 +52,7 @@ path = "src/lib.rs"
 
 [features]
 bench = []
-serialize = ["serde", "zerovec/serde"]
+serde = ["dep:serde", "zerovec/serde"]
 serde_serialize = ["serde", "zerovec/serde_serialize"]
 
 [[bench]]

@@ -20,7 +20,7 @@ use zerovec::ZeroVecError;
 /// would make it small or fast.
 /// See [`UCPTrieType`](https://unicode-org.github.io/icu-docs/apidoc/dev/icu4c/ucptrie_8h.html) in ICU4C.
 #[derive(Clone, Copy, PartialEq, Debug, Eq)]
-#[cfg_attr(feature = "serialize", derive(serde::Deserialize))]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(feature = "serde_serialize", derive(serde::Serialize))]
 pub enum TrieType {
     /// Represents the "fast" type code point tries for the
@@ -104,19 +104,19 @@ fn maybe_filter_value<T: TrieValue>(value: T, trie_null_value: T, null_value: T)
 /// For more information:
 /// - [ICU Site design doc](http://site.icu-project.org/design/struct/utrie)
 /// - [ICU User Guide section on Properties lookup](https://unicode-org.github.io/icu/userguide/strings/properties.html#lookup)
-#[cfg_attr(feature = "serialize", derive(serde::Deserialize))]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(feature = "serde_serialize", derive(serde::Serialize))]
 #[derive(Debug, Eq, PartialEq, Yokeable, ZeroFrom)]
 pub struct CodePointTrie<'trie, T: TrieValue> {
     header: CodePointTrieHeader,
-    #[cfg_attr(feature = "serialize", serde(borrow))]
+    #[cfg_attr(feature = "serde", serde(borrow))]
     index: ZeroVec<'trie, u16>,
-    #[cfg_attr(feature = "serialize", serde(borrow))]
+    #[cfg_attr(feature = "serde", serde(borrow))]
     data: ZeroVec<'trie, T>,
 }
 
 /// This struct contains the fixed-length header fields of a [`CodePointTrie`].
-#[cfg_attr(feature = "serialize", derive(serde::Deserialize))]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(feature = "serde_serialize", derive(serde::Serialize))]
 #[derive(Copy, Clone, Debug, Eq, PartialEq, Yokeable, ZeroFrom)]
 pub struct CodePointTrieHeader {

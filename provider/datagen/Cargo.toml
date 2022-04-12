@@ -53,7 +53,7 @@ icu_provider_blob = { version = "0.5", path = "../blob", features = ["export"] }
 icu_provider_fs = { version = "0.5", path = "../fs", features = ["export"] }
 icu_segmenter = { version = "0.1", path = "../../experimental/segmenter", features = ["datagen"] }
 icu_testdata = { version = "0.5", path = "../testdata", features = ["metadata"] }
-icu_uniset = { version = "0.4.1", path = "../../utils/uniset", features = ["serialize"] }
+icu_uniset = { version = "0.4.1", path = "../../utils/uniset", features = ["serde"] }
 itertools = "0.10"
 json = "0.12"
 litemap = { version = "0.3.0", path = "../../utils/litemap" }
