@@ -4,8 +4,8 @@
 
 use alloc::vec;
 use alloc::vec::Vec;
-use core::ops::Deref;
 use core::mem;
+use core::ops::Deref;
 
 use super::slice::FlexZeroSlice;
 
@@ -56,7 +56,7 @@ impl FlexZeroVecOwned {
     }
 
     /// # Panics
-    /// 
+    ///
     /// Panics if `index >= len`.
     pub fn remove(&mut self, index: usize) {
         if index >= self.len() {
@@ -81,12 +81,43 @@ mod test {
     use super::*;
 
     fn check_contents(fzv: &FlexZeroSlice, expected: &[usize]) {
-        assert_eq!(fzv.len(), expected.len(), "len: {:?} != {:?}", fzv, expected);
-        assert_eq!(fzv.is_empty(), expected.is_empty(), "is_empty: {:?} != {:?}", fzv, expected);
-        assert_eq!(fzv.first(), expected.first().copied(), "first: {:?} != {:?}", fzv, expected);
-        assert_eq!(fzv.last(), expected.last().copied(), "last:  {:?} != {:?}", fzv, expected);
+        assert_eq!(
+            fzv.len(),
+            expected.len(),
+            "len: {:?} != {:?}",
+            fzv,
+            expected
+        );
+        assert_eq!(
+            fzv.is_empty(),
+            expected.is_empty(),
+            "is_empty: {:?} != {:?}",
+            fzv,
+            expected
+        );
+        assert_eq!(
+            fzv.first(),
+            expected.first().copied(),
+            "first: {:?} != {:?}",
+            fzv,
+            expected
+        );
+        assert_eq!(
+            fzv.last(),
+            expected.last().copied(),
+            "last:  {:?} != {:?}",
+            fzv,
+            expected
+        );
         for i in 0..(expected.len() + 1) {
-            assert_eq!(fzv.get(i), expected.get(i).copied(), "@{}: {:?} != {:?}", i, fzv, expected);
+            assert_eq!(
+                fzv.get(i),
+                expected.get(i).copied(),
+                "@{}: {:?} != {:?}",
+                i,
+                fzv,
+                expected
+            );
         }
     }
 

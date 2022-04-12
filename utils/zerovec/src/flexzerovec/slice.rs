@@ -102,10 +102,7 @@ impl FlexZeroSlice {
     }
 
     /// Binary searches a sorted `FlexZeroSlice` for the given `usize` value.
-    pub fn binary_search(
-        &self,
-        needle: usize
-    ) -> Result<usize, usize> {
+    pub fn binary_search(&self, needle: usize) -> Result<usize, usize> {
         // See comments in components.rs regarding the following code.
 
         let zero_index = self.data.as_ptr() as *const _ as usize;
@@ -153,10 +150,15 @@ impl FlexZeroSlice {
 
     /// This function should be called on a slice with a data array `new_data_len` long
     /// which previously held `new_count - 1` elements.
-    /// 
+    ///
     /// After calling this function, all bytes in the slice will have been written.
     pub(crate) fn insert_impl(&mut self, insert_info: InsertInfo, insert_index: usize) {
-        let InsertInfo { item_bytes, new_width, new_count, new_data_len } = insert_info;
+        let InsertInfo {
+            item_bytes,
+            new_width,
+            new_count,
+            new_data_len,
+        } = insert_info;
         debug_assert!(new_width <= USIZE_WIDTH);
         debug_assert!(new_width >= self.get_width());
         debug_assert!(insert_index < new_count);
@@ -181,7 +183,7 @@ impl FlexZeroSlice {
                 core::ptr::copy_nonoverlapping(
                     bytes_to_write.as_ptr(),
                     self.data.as_mut_ptr().add(new_width * i),
-                    new_width
+                    new_width,
                 );
             }
         }
@@ -235,15 +237,16 @@ impl FlexZeroSlice {
     ///
     /// After calling this function, the slice data should be truncated to `new_data_len` bytes.
     pub(crate) fn remove_impl(&mut self, remove_info: RemoveInfo) {
-        let RemoveInfo { remove_index, new_width, new_count, .. } = remove_info;
+        let RemoveInfo {
+            remove_index,
+            new_width,
+            new_count,
+            ..
+        } = remove_info;
         debug_assert!(new_width <= self.get_width());
         debug_assert!(new_count < self.len());
         for i in (0..new_count) {
-            let j = if i < remove_index {
-                i
-            } else {
-                i + 1
-            };
+            let j = if i < remove_index { i } else { i + 1 };
             // Safety: j is in range because j <= new_count < self.len()
             let bytes_to_write = unsafe { self.get_unchecked(j).to_le_bytes() };
             // Safety: The bytes are being copied to a section of the array that is not after
@@ -252,7 +255,7 @@ impl FlexZeroSlice {
                 core::ptr::copy_nonoverlapping(
                     bytes_to_write.as_ptr(),
                     self.data.as_mut_ptr().add(new_width * i),
-                    new_width
+                    new_width,
                 );
             }
         }
