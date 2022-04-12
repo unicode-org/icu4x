@@ -70,11 +70,17 @@ impl From<(FieldSymbol, FieldLength)> for Field {
 impl TryFrom<(FieldSymbol, usize)> for Field {
     type Error = Error;
     fn try_from(input: (FieldSymbol, usize)) -> Result<Self, Self::Error> {
-        let (symbol, length) = (
-            input.0,
-            FieldLength::from_idx(input.1 as u8)
-                .map_err(|_| Self::Error::InvalidLength(input.0))?,
-        );
-        Ok(Self { symbol, length })
+        let length = if input.0 != FieldSymbol::Second(crate::fields::Second::FractionalSecond) {
+            FieldLength::from_idx(input.1 as u8).map_err(|_| Self::Error::InvalidLength(input.0))?
+        } else if input.1 <= 127 {
+            FieldLength::from_idx(128 + input.1 as u8)
+                .map_err(|_| Self::Error::InvalidLength(input.0))?
+        } else {
+            return Err(Self::Error::InvalidLength(input.0));
+        };
+        Ok(Self {
+            symbol: input.0,
+            length,
+        })
     }
 }

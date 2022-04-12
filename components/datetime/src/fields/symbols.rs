@@ -298,6 +298,9 @@ impl LengthType for Month {
             FieldLength::Wide => TextOrNumeric::Text,
             FieldLength::Narrow => TextOrNumeric::Text,
             FieldLength::Six => TextOrNumeric::Text,
+            FieldLength::Fixed(_) => {
+                unimplemented!("Fixed field length is only supported for seconds")
+            }
         }
     }
 }

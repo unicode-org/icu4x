@@ -27,6 +27,7 @@ pub(crate) enum TimeGranularity {
     Hours,
     Minutes,
     Seconds,
+    Nanoseconds,
 }
 
 impl Default for TimeGranularity {
@@ -40,11 +41,12 @@ impl TimeGranularity {
     /// the top of the hour, otherwise returns [`false`].
     /// e.g. `12:00:00` is at the top of the hour for any display granularity.
     /// e.g. `12:00:05` is only at the top of the hour if the seconds are not displayed.
-    pub fn is_top_of_hour(self, minute: u8, second: u8) -> bool {
+    pub fn is_top_of_hour(self, minute: u8, second: u8, nanosecond: u32) -> bool {
         match self {
             Self::None | Self::Hours => true,
             Self::Minutes => minute == 0,
             Self::Seconds => minute + second == 0,
+            Self::Nanoseconds => minute as u32 + second as u32 + nanosecond == 0,
         }
     }
 }
@@ -57,7 +59,13 @@ impl From<&PatternItem> for TimeGranularity {
             PatternItem::Field(field) => match field.symbol {
                 fields::FieldSymbol::Hour(_) => Self::Hours,
                 fields::FieldSymbol::Minute => Self::Minutes,
-                fields::FieldSymbol::Second(_) => Self::Seconds,
+                fields::FieldSymbol::Second(s) => match s {
+                    fields::Second::FractionalSecond => Self::Nanoseconds,
+                    fields::Second::Millisecond => {
+                        unimplemented!("Support for millisecond is not implemented");
+                    }
+                    fields::Second::Second => Self::Seconds,
+                },
                 _ => Self::None,
             },
             _ => Self::None,

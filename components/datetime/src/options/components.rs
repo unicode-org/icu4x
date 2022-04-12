@@ -550,6 +550,9 @@ impl<'data> From<&PatternPlurals<'data>> for Bag {
                         }
                         FieldLength::Wide => Text::Long,
                         FieldLength::Narrow | FieldLength::Six => Text::Narrow,
+                        FieldLength::Fixed(_) => {
+                            unimplemented!("Fixed field length is only supported for seconds")
+                        }
                     });
                 }
                 FieldSymbol::Year(year) => {
@@ -573,6 +576,9 @@ impl<'data> From<&PatternPlurals<'data>> for Bag {
                         FieldLength::Abbreviated => Month::Short,
                         FieldLength::Wide => Month::Long,
                         FieldLength::Narrow | FieldLength::Six => Month::Narrow,
+                        FieldLength::Fixed(_) => {
+                            unimplemented!("Fixed field length is only supported for seconds")
+                        }
                     });
                 }
                 FieldSymbol::Week(week) => {
@@ -634,6 +640,9 @@ impl<'data> From<&PatternPlurals<'data>> for Bag {
                             FieldLength::Abbreviated => Text::Short,
                             FieldLength::Wide => Text::Long,
                             FieldLength::Narrow | FieldLength::Six => Text::Narrow,
+                            FieldLength::Fixed(_) => {
+                                unimplemented!("Fixed field length is only supported for seconds")
+                            }
                         },
                         fields::Weekday::Local => unimplemented!("fields::Weekday::Local"),
                     });

@@ -390,6 +390,6 @@ impl<A: AsCalendar> IsoTimeInput for DateTime<A> {
 
     /// Gets the fractional second input.
     fn nanosecond(&self) -> Option<NanoSecond> {
-        None
+        Some(self.time.nanosecond)
     }
 }

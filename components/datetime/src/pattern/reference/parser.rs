@@ -290,6 +290,22 @@ mod tests {
                     '日'.into(),
                 ],
             ),
+            (
+                "HH:mm:ss.SS",
+                vec![
+                    (fields::Hour::H23.into(), FieldLength::TwoDigit).into(),
+                    ':'.into(),
+                    (FieldSymbol::Minute, FieldLength::TwoDigit).into(),
+                    ':'.into(),
+                    (fields::Second::Second.into(), FieldLength::TwoDigit).into(),
+                    '.'.into(),
+                    (
+                        fields::Second::FractionalSecond.into(),
+                        FieldLength::Fixed(2),
+                    )
+                        .into(),
+                ],
+            ),
         ];
 
         for (string, items) in samples {

@@ -82,7 +82,7 @@ impl fmt::Display for Pattern {
                     dump_buffer_into_formatter(&buffer, formatter)?;
                     buffer.clear();
                     let ch: char = field.symbol.into();
-                    for _ in 0..field.length as usize {
+                    for _ in 0..field.length.to_len() {
                         formatter.write_char(ch)?;
                     }
                 }
