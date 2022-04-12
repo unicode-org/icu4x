@@ -27,48 +27,24 @@ impl FlexZeroVecOwned {
         }
     }
 
-    pub fn push(&mut self, item: usize) {
-        let mut w = self.get_width();
-        let bytes = item.to_le_bytes();
-        let required_width = USIZE_WIDTH - bytes.iter().rev().take_while(|b| **b == 0).count();
-        if required_width > w {
-            self.scale_up(required_width);
-            w = required_width;
+    /// Mutably obtain this `FlexZeroVecOwned` as a [`FlexZeroSlice`]
+    pub(crate) fn as_mut_slice(&mut self) -> &mut FlexZeroSlice {
+        let slice: &mut [u8] = &mut *self.0;
+        unsafe {
+            // safety: the slice is known to come from a valid parsed FlexZeroSlice
+            FlexZeroSlice::from_byte_slice_mut_unchecked(slice)
         }
-        // Safety: w <= required_width <= USIZE_WIDTH
-        let bytes_to_append = unsafe { bytes.get_unchecked(0..w) };
-        self.0.extend_from_slice(bytes_to_append);
+    }
+
+    pub fn push(&mut self, item: usize) {
+        let insert_info = self.get_insert_info(item);
+        self.0.resize(insert_info.new_data_len + 1, 0);
+        let insert_index = insert_info.new_count - 1;
+        self.as_mut_slice().insert_impl(insert_info, insert_index);
     }
 
     pub fn remove(&mut self, item: usize) {
         todo!("If the item being removed has max width, need to check if we need to scale down");
-    }
-
-    fn scale_up(&mut self, new_width: usize) {
-        let count = self.len();
-        let old_width = self.get_width();
-        let old_byte_len = self.0.len();
-        let new_byte_len = ((old_byte_len - 1) / old_width) * new_width + 1;
-        debug_assert!(new_byte_len > old_byte_len);
-        self.0.resize(new_byte_len, 0);
-        // Copy elements starting from the end into the new empty section of the vector.
-        // Note: We could copy fully in place, but we need to set 0 bytes for the high bytes,
-        // so we stage the new value on the stack.
-        for i in (0..count).rev() {
-            // Safety: The item at index i has not been changed since we are walking backwards.
-            let usize_bytes = unsafe { self.get_unchecked(i).to_le_bytes() };
-            // Safety: The vector has capacity for `new_width` items at the new index, which is
-            // later in the array than the bytes that we read above.
-            unsafe {
-                core::ptr::copy_nonoverlapping(
-                    usize_bytes.as_ptr(),
-                    self.0.as_mut_ptr().add(1).add(new_width * i),
-                    new_width
-                );
-            }
-        }
-        // Safety: The vector always has at least 1 element.
-        unsafe { *self.0.as_mut_slice().get_unchecked_mut(0) = new_width as u8 };
     }
 
     fn scale_down(&mut self, new_width: usize) {
