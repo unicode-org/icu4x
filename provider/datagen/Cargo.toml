@@ -66,12 +66,9 @@ serde-aux = "2.1.1"
 serde-tuple-vec-map = "1.0"
 sha2 = "0.10.2"
 simple_logger = "1.12"
-smallstr = { version = "0.2", features = ["serde"] }
-smallvec = "1.6"
 tinystr = { path = "../../utils/tinystr", version = "0.5.0", features = ["alloc", "serde", "zerovec"], default-features = false }
 toml = { version = "0.5" }
 walkdir = "2.3.2"
-writeable = { version = "0.3", path = "../../utils/writeable" }
 zerovec = { version = "0.6", path = "../../utils/zerovec", features = ["serde_serialize", "yoke"] }
 
 # Dependencies for the "download-testdata" feature

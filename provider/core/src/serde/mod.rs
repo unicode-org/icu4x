@@ -63,8 +63,8 @@ pub enum Error {
     UnavailableFormat(BufferFormat),
 
     /// An error originating in [`erased_serde`].
-    #[cfg(feature = "erased-serde")]
     #[displaydoc("{0}")]
+    #[cfg(feature = "datagen")]
     Serde(erased_serde::Error),
 
     /// An error indicating that the buffer format could not be deduced. This is usually
@@ -94,7 +94,7 @@ impl From<postcard::Error> for Error {
     }
 }
 
-#[cfg(feature = "erased-serde")]
+#[cfg(feature = "datagen")]
 impl From<erased_serde::Error> for Error {
     fn from(e: erased_serde::Error) -> Self {
         Error::Serde(e)

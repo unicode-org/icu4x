@@ -1275,8 +1275,6 @@ dependencies = [
  "serde_json",
  "sha2",
  "simple_logger",
- "smallstr",
- "smallvec",
  "tinystr 0.5.0",
  "tokio",
  "toml",
@@ -1449,7 +1447,6 @@ dependencies = [
  "serde",
  "serde_json",
  "static_assertions",
- "tinystr 0.5.0",
  "writeable",
  "yoke",
  "zerofrom",
@@ -1500,7 +1497,6 @@ dependencies = [
  "serde",
  "serde-json-core",
  "serde_json",
- "static_assertions",
  "writeable",
 ]
 
@@ -2587,16 +2583,6 @@ name = "slab"
 version = "0.4.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "9def91fd1e018fe007022791f865d0ccc9b3a0d5001e01aabb8b40e46000afb5"
-
-[[package]]
-name = "smallstr"
-version = "0.2.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1e922794d168678729ffc7e07182721a14219c65814e66e91b839a272fe5ae4f"
-dependencies = [
- "serde",
- "smallvec",
-]
 
 [[package]]
 name = "smallvec"

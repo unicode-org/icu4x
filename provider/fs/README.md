@@ -82,8 +82,8 @@ cargo run             \
   -s bincode
 ```
 
-*Notice:* In order to use `bincode` encoded data in production, [`icu_provider_fs`](crate) has to be
-added with `bincode` feature.
+*Notice:* In order to use `bincode` encoded data in production, [`icu_provider`](crate) has to be
+added with `deserialize_bincode_1` feature.
 
 [`ICU4X`]: ../icu/index.html
 

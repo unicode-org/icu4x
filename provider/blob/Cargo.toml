@@ -28,10 +28,8 @@ all-features = true
 
 [dependencies]
 icu_provider = { version = "0.5", path = "../core", features = ["deserialize_postcard_07", "serde"] }
-icu_locid = { version = "0.5", path = "../../components/locid", features = ["serde"] }
 serde = { version = "1.0", default-features = false, features = ["alloc"] }
 postcard = { version = "0.7.0", default-features = false }
-erased-serde = { version = "0.3", default-features = false, features = ["alloc"] }
 writeable = { version = "0.3", path = "../../utils/writeable" }
 yoke = { version = "0.5.0", path = "../../utils/yoke" }
 zerovec = { version = "0.6", path = "../../utils/zerovec", features = ["serde", "yoke"] }
@@ -39,8 +37,10 @@ zerovec = { version = "0.6", path = "../../utils/zerovec", features = ["serde", 
 # For the export feature
 log = { version = "0.4", optional = true }
 litemap = { version = "0.3.0", path = "../../utils/litemap/", optional = true }
+erased-serde = { version = "0.3", default-features = false, features = ["alloc"], optional = true }
 
 [dev-dependencies]
+icu_locid = { version = "0.5", path = "../../components/locid", features = ["serde"] }
 icu = { version = "0.5", path = "../../components/icu" }
 icu_testdata = { version = "0.5", path = "../testdata", features = ["static"] }
 
@@ -48,5 +48,13 @@ icu_testdata = { version = "0.5", path = "../testdata", features = ["static"] }
 path = "src/lib.rs"
 
 [features]
-export = ["log", "postcard/alloc", "std", "litemap", "icu_provider/serde", "zerovec/serde_serialize"]
-std = ["icu_locid/std", "icu_provider/std"]
+export = [
+    "log",
+    "postcard/alloc",
+    "std", 
+    "litemap",
+    "icu_provider/datagen",
+    "zerovec/serde_serialize",
+    "erased-serde",
+]
+std = ["icu_provider/std"]
