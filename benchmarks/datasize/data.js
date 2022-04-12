@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1649463356956,
+  "lastUpdate": 1649790541489,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -13108,6 +13108,36 @@ window.BENCHMARK_DATA = {
           {
             "name": "provider/testdata/data/testdata.postcard",
             "value": 4504680,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "samchen61661@gmail.com",
+            "name": "samchen",
+            "username": "samchen61661"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "d05b102ea5530c87da04178f942f002cfe10042d",
+          "message": "Replace metazones with a more compact identifier (#1782)\n\n* Replace metazones with a more compact identifier\r\n\r\n* fix tests",
+          "timestamp": "2022-04-12T12:07:25-07:00",
+          "tree_id": "6a43c1200ee7c98dd00fcba3c6a95d105e6a770d",
+          "url": "https://github.com/unicode-org/icu4x/commit/d05b102ea5530c87da04178f942f002cfe10042d"
+        },
+        "date": 1649790524274,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4474764,
             "unit": "bytes",
             "biggerIsBetter": false
           }
