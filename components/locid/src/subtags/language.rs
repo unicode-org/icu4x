@@ -39,7 +39,7 @@ use tinystr::TinyAsciiStr;
 ///
 /// [`unicode_language_id`]: https://unicode.org/reports/tr35/#unicode_language_id
 #[derive(Debug, PartialEq, Eq, Clone, Hash, PartialOrd, Ord, Copy)]
-#[cfg_attr(feature = "serialize", derive(serde::Serialize))]
+#[cfg_attr(feature = "serde", derive(serde::Serialize))]
 #[repr(transparent)]
 pub struct Language(TinyAsciiStr<{ *LANGUAGE_LENGTH.end() }>);
 

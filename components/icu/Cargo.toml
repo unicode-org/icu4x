@@ -94,16 +94,20 @@ std = [
     "icu_properties/std",
     "fixed_decimal/std"
 ]
-default = ["serialize"]
-serialize = [
-    "icu_locid/serialize",
-    "icu_datetime/serialize",
-    "icu_decimal/serialize",
-    "icu_locale_canonicalizer/serialize",
-    "icu_plurals/serialize",
-    "icu_properties/serialize",
-    "icu_list/serialize",
+default = []
+serde = [
+    "icu_locid/serde",
+    "icu_datetime/serde",
+    "icu_decimal/serde",
+    "icu_locale_canonicalizer/serde",
+    "icu_plurals/serde",
+    "icu_properties/serde",
+    "icu_list/serde",
 ]
 icu4x_human_readable_de = [
     "icu_list/icu4x_human_readable_de"
 ]
+
+[[example]]
+name = "tui"
+required-features = ["serde"]

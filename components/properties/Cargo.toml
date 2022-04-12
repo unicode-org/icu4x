@@ -49,6 +49,6 @@ path = "src/lib.rs"
 
 [features]
 std = ["icu_provider/std"]
-default = ["serialize"]
-serialize = ["serde", "zerovec/serde", "icu_uniset/serialize", "icu_codepointtrie/serialize"]
-datagen = ["serialize", "zerovec/serde_serialize", "icu_uniset/serde_serialize", "icu_codepointtrie/serde_serialize"]
+default = []
+serde = ["dep:serde", "zerovec/serde", "icu_uniset/serde", "icu_codepointtrie/serde"]
+datagen = ["serde", "zerovec/serde_serialize", "icu_uniset/serde_serialize", "icu_codepointtrie/serde_serialize"]

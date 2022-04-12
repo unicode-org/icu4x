@@ -30,20 +30,20 @@ type UnvalidatedLanguageIdentifierPair = StrStrPairVarULE;
 #[zerovec::make_varule(StrStrPairVarULE)]
 #[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Debug)]
 #[cfg_attr(
-    feature = "serialize",
+    feature = "serde",
     derive(serde::Deserialize, serde::Serialize),
     zerovec::derive(Deserialize, Serialize)
 )]
 /// A pair of strings with a EncodeAsVarULE implementation.
 pub struct StrStrPair<'a>(
-    #[cfg_attr(feature = "serialize", serde(borrow))] pub Cow<'a, str>,
-    #[cfg_attr(feature = "serialize", serde(borrow))] pub Cow<'a, str>,
+    #[cfg_attr(feature = "serde", serde(borrow))] pub Cow<'a, str>,
+    #[cfg_attr(feature = "serde", serde(borrow))] pub Cow<'a, str>,
 );
 
 #[icu_provider::data_struct(AliasesV1Marker = "locale_canonicalizer/aliases@1")]
 #[derive(PartialEq, Clone, Default)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize))]
-#[cfg_attr(feature = "serialize", derive(serde::Deserialize))]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
 /// This alias data is used for locale canonicalization. Each field defines a
 /// mapping from an old identifier to a new identifier, based upon the rules in
@@ -61,50 +61,50 @@ pub struct StrStrPair<'a>(
 pub struct AliasesV1<'data> {
     /// `[language(-variant)+\] -> [langid]`
     /// This is not a map as it's searched linearly according to the canonicalization rules.
-    #[cfg_attr(feature = "serialize", serde(borrow))]
+    #[cfg_attr(feature = "serde", serde(borrow))]
     pub language_variants: VarZeroVec<'data, UnvalidatedLanguageIdentifierPair>,
     /// `sgn-[region] -> [language]`
-    #[cfg_attr(feature = "serialize", serde(borrow))]
+    #[cfg_attr(feature = "serde", serde(borrow))]
     pub sgn_region: ZeroMap<'data, UnvalidatedRegion, Language>,
     /// `[language{2}] -> [langid]`
-    #[cfg_attr(feature = "serialize", serde(borrow))]
+    #[cfg_attr(feature = "serde", serde(borrow))]
     pub language_len2: ZeroMap<'data, TinyAsciiStr<2>, UnvalidatedLanguageIdentifier>,
     /// `[language{3}] -> [langid]`
-    #[cfg_attr(feature = "serialize", serde(borrow))]
+    #[cfg_attr(feature = "serde", serde(borrow))]
     pub language_len3: ZeroMap<'data, UnvalidatedLanguage, UnvalidatedLanguageIdentifier>,
     /// `[langid] -> [langid]`
     /// This is not a map as it's searched linearly according to the canonicalization rules.
-    #[cfg_attr(feature = "serialize", serde(borrow))]
+    #[cfg_attr(feature = "serde", serde(borrow))]
     pub language: VarZeroVec<'data, UnvalidatedLanguageIdentifierPair>,
 
     /// `[script] -> [script]`
-    #[cfg_attr(feature = "serialize", serde(borrow))]
+    #[cfg_attr(feature = "serde", serde(borrow))]
     pub script: ZeroMap<'data, UnvalidatedScript, Script>,
 
     /// `[region{2}] -> [region]`
-    #[cfg_attr(feature = "serialize", serde(borrow))]
+    #[cfg_attr(feature = "serde", serde(borrow))]
     pub region_alpha: ZeroMap<'data, TinyAsciiStr<2>, Region>,
     /// `[region{3}] -> [region]`
-    #[cfg_attr(feature = "serialize", serde(borrow))]
+    #[cfg_attr(feature = "serde", serde(borrow))]
     pub region_num: ZeroMap<'data, UnvalidatedRegion, Region>,
 
     /// `[region] -> [region]+`
-    #[cfg_attr(feature = "serialize", serde(borrow))]
+    #[cfg_attr(feature = "serde", serde(borrow))]
     pub complex_region: ZeroMap<'data, UnvalidatedRegion, ZeroSlice<Region>>,
 
     /// `[variant] -> [variant]`
-    #[cfg_attr(feature = "serialize", serde(borrow))]
+    #[cfg_attr(feature = "serde", serde(borrow))]
     pub variant: ZeroMap<'data, UnvalidatedVariant, Variant>,
 
     /// `[value{7}] -> [value{7}]`
-    #[cfg_attr(feature = "serialize", serde(borrow))]
+    #[cfg_attr(feature = "serde", serde(borrow))]
     pub subdivision: ZeroMap<'data, UnvalidatedSubdivision, UnvalidatedSubdivision>,
 }
 
 #[icu_provider::data_struct(LikelySubtagsV1Marker = "locale_canonicalizer/likelysubtags@1")]
 #[derive(Debug, PartialEq, Clone)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize))]
-#[cfg_attr(feature = "serialize", derive(serde::Deserialize))]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 /// This likely subtags data is used for the minimize and maximize operations.
 /// Each field defines a mapping from an old identifier to a new identifier,
 /// based upon the rules in
@@ -120,22 +120,22 @@ pub struct AliasesV1<'data> {
 #[yoke(prove_covariance_manually)]
 pub struct LikelySubtagsV1<'data> {
     /// Language and script.
-    #[cfg_attr(feature = "serialize", serde(borrow))]
+    #[cfg_attr(feature = "serde", serde(borrow))]
     pub language_script: ZeroMap<'data, (UnvalidatedLanguage, UnvalidatedScript), Region>,
     /// Language and region.
-    #[cfg_attr(feature = "serialize", serde(borrow))]
+    #[cfg_attr(feature = "serde", serde(borrow))]
     pub language_region: ZeroMap<'data, (UnvalidatedLanguage, UnvalidatedRegion), Script>,
     /// Just language.
-    #[cfg_attr(feature = "serialize", serde(borrow))]
+    #[cfg_attr(feature = "serde", serde(borrow))]
     pub language: ZeroMap<'data, UnvalidatedLanguage, (Script, Region)>,
     /// Script and region.
-    #[cfg_attr(feature = "serialize", serde(borrow))]
+    #[cfg_attr(feature = "serde", serde(borrow))]
     pub script_region: ZeroMap<'data, (UnvalidatedScript, UnvalidatedRegion), Language>,
     /// Just script.
-    #[cfg_attr(feature = "serialize", serde(borrow))]
+    #[cfg_attr(feature = "serde", serde(borrow))]
     pub script: ZeroMap<'data, UnvalidatedScript, (Language, Region)>,
     /// Just region.
-    #[cfg_attr(feature = "serialize", serde(borrow))]
+    #[cfg_attr(feature = "serde", serde(borrow))]
     pub region: ZeroMap<'data, UnvalidatedRegion, (Language, Script)>,
     /// Undefined.
     pub und: (Language, Script, Region),

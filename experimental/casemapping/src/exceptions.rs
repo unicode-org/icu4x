@@ -53,13 +53,13 @@ use crate::internals::{ClosureSet, DotType, MappingKind};
 // of those strings. To avoid the need for allocations when converting from UTF-16 to
 // UTF-8, we instead store strings encoded as UTF-8 in a side table. The full mapping and
 // closure slots contain indices into that side table.
-#[cfg_attr(feature = "serialize", derive(serde::Deserialize))]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(feature = "serde_serialize", derive(serde::Serialize))]
 #[derive(Debug, Eq, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
 pub(crate) struct CaseMappingExceptions<'data> {
-    #[cfg_attr(feature = "serialize", serde(borrow))]
+    #[cfg_attr(feature = "serde", serde(borrow))]
     pub(crate) slots: ZeroVec<'data, u16>,
-    #[cfg_attr(feature = "serialize", serde(borrow))]
+    #[cfg_attr(feature = "serde", serde(borrow))]
     pub(crate) strings: VarZeroVec<'data, str>,
 }
 

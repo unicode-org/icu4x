@@ -163,7 +163,7 @@ default = ["fs", "std"]
 # Enables programmatic access to this Cargo.toml file
 metadata = [
     "cargo_metadata",
-    "icu_locid/serialize",
+    "icu_locid/serde",
     "serde_json",
     "serde",
     "displaydoc",

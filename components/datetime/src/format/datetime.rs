@@ -393,7 +393,7 @@ pub fn analyze_patterns(
 mod tests {
     use super::*;
     #[test]
-    #[cfg(feature = "serialize")]
+    #[cfg(feature = "serde")]
     fn test_basic() {
         use crate::provider::calendar::DateSymbolsV1Marker;
         use icu_calendar::DateTime;

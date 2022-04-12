@@ -85,7 +85,7 @@ mod langid;
 mod locale;
 mod macros;
 mod parser;
-#[cfg(feature = "serialize")]
+#[cfg(feature = "serde")]
 mod serde;
 pub mod subtags;
 #[cfg(feature = "zerovec")]

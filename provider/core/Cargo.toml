@@ -36,7 +36,7 @@ all-features = true
 
 [features]
 std = ["icu_locid/std"]
-serialize = ["serde", "erased-serde"]
+serde = ["dep:serde", "erased-serde"]
 macros = ["icu_provider_macros"]
 
 # Enable logging of additional context of data errors
@@ -48,7 +48,7 @@ deserialize_bincode_1 = ["serde", "bincode", "std"]
 deserialize_postcard_07 = ["serde", "postcard"]
 
 # Dependencies for running data generation
-datagen = ["deserialize_postcard_07", "postcard/alloc", "dhat", "serialize"]
+datagen = ["deserialize_postcard_07", "postcard/alloc", "dhat", "serde"]
 
 [dependencies]
 icu_locid = { version = "0.5", path = "../../components/locid" }
@@ -63,7 +63,7 @@ log = { version = "0.4", optional = true }
 
 icu_provider_macros = { version = "0.5", path = "../macros", optional = true }
 
-# For "serialize" feature
+# For "serde" feature
 erased-serde = { version = "0.3", optional = true, default-features = false, features = ["alloc"] }
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }
 

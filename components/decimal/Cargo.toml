@@ -51,10 +51,10 @@ getrandom = { version = "0.2", features = ["js"] }
 
 [features]
 std = ["icu_locid/std", "icu_provider/std", "fixed_decimal/std"]
-default = ["serialize"]
-bench = []
-serialize = ["serde"]
-datagen = ["serialize"]
+default = []
+bench = ["serde"]
+serde = ["dep:serde"]
+datagen = ["serde"]
 
 [[bench]]
 name = "fixed_decimal_format"
@@ -62,4 +62,4 @@ harness = false
 
 [[example]]
 name = "code_line_diff"
-required-features = ["serialize"]
+required-features = ["serde"]

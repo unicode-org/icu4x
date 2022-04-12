@@ -26,8 +26,7 @@ include = [
 all-features = true
 
 [dependencies]
-# TODO(1708): Rename this back to "serde"
-dep_serde = { version = "1.0", optional = true, default-features = false, features = ["alloc"], package = "serde" }
+serde = { version = "1.0", optional = true, default-features = false, features = ["alloc"] }
 serde_json = { version = "1", optional = true, default-features = false, features = ["alloc"]}
 yoke = { version = "0.5.0", path = "../yoke", optional = true }
 zerofrom = { version = "0.1.0", path = "../zerofrom" }
@@ -37,8 +36,7 @@ zerovec-derive = {version = "0.6.0", path = "./derive", optional = true}
 icu_benchmark_macros = { version = "0.5", path = "../../tools/benchmark/macros" }
 criterion = "0.3.4"
 iai = "0.1"
-# TODO(1708): Rename this back to "serde"
-dep_serde = { version = "1.0", features = ["derive"], package = "serde" }
+serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 bincode = "1.3"
 postcard = { version = "0.7", features = ["use-std"] }
@@ -53,7 +51,7 @@ zerofrom = { version = "0.1.0", path = "../zerofrom", features = ["derive"] }
 bench = []
 std = []
 derive = ["zerovec-derive"]
-serde = ["dep_serde"]
+serde = ["dep:serde"]
 serde_serialize = ["serde", "serde_json"]
 
 [[bench]]

@@ -43,15 +43,15 @@ smaller_static = ["provider_static"]
 
 [dependencies]
 fixed_decimal = { path = "../../utils/fixed_decimal", features = ["ryu"] }
-icu_decimal = { path = "../../components/decimal/" }
-icu_locale_canonicalizer = { path = "../../components/locale_canonicalizer" }
-icu_locid = { path = "../../components/locid" }
-icu_plurals = { path = "../../components/plurals/" }
-icu_properties = { path = "../../components/properties/" }
+icu_decimal = { path = "../../components/decimal/", features = ["serde"] }
+icu_locale_canonicalizer = { path = "../../components/locale_canonicalizer", features = ["serde"] }
+icu_locid = { path = "../../components/locid", features = ["serde"] }
+icu_plurals = { path = "../../components/plurals/", features = ["serde"] }
+icu_properties = { path = "../../components/properties/", features = ["serde"] }
 icu_provider = { path = "../../provider/core", features = ["serde"] }
 icu_provider_adapters = { path = "../../provider/adapters" }
 icu_provider_blob = { path = "../../provider/blob" }
-icu_segmenter = { path = "../../experimental/segmenter" }
+icu_segmenter = { path = "../../experimental/segmenter", features = ["serde"] }
 tinystr = { path = "../../utils/tinystr", version = "0.5.0", features = ["alloc"], default-features = false }
 writeable = { path = "../../utils/writeable/" }
 

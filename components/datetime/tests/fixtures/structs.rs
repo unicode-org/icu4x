@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-#![cfg(feature = "serialize")]
+#![cfg(feature = "serde")]
 
 //! This file contains the serde representaitons of the JSON files located in
 //! components/datetime/tests/fixtures/tests

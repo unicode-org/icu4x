@@ -80,7 +80,7 @@ structs to borrow zero-copy data.
 
 #### `DataProvider<SerializeMarker>`
 
-*Enabled with the "serialize" feature*
+*Enabled with the "serde" feature*
 
 Data providers capable of returning opaque `erased_serde::Serialize` trait objects can be use
 as input to a data exporter, such as when writing data to the filesystem.
