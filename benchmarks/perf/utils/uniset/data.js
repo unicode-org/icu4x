@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1649790866565,
+  "lastUpdate": 1649800815520,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -23999,6 +23999,60 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 53949392,
             "range": "± 722608",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "1ae9151bfc8170936dff367617102914921811fb",
+          "message": "Rename \"serialize\" feature to \"serde\", use \"dep:serde\" syntax (#1797)\n\n* Move to dep:serde for zerovec\r\n\r\n* Move to dep:serde for other utils\r\n\r\n* replace feature=serialize with feature=serde\r\n\r\n* Move to dep:serde for components\r\n\r\n* Move to dep:serde for provider\r\n\r\n* Move to dep:serde for experimental\r\n\r\n* use --features bench in memory/binsize",
+          "timestamp": "2022-04-12T21:53:06Z",
+          "tree_id": "fb05f24168b836e2884ea2c9e16f5864dffcdc55",
+          "url": "https://github.com/unicode-org/icu4x/commit/1ae9151bfc8170936dff367617102914921811fb"
+        },
+        "date": 1649800798831,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 55272942,
+            "range": "± 709323",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/worst",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/worst",
+            "value": 2,
+            "range": "± 0",
             "unit": "ns/iter"
           }
         ]
