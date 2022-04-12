@@ -36,7 +36,7 @@ extra_features = [
 all-features = true
 
 [dependencies]
-icu_provider = { version = "0.5", path = "../core", features = ["serialize", "std"] }
+icu_provider = { version = "0.5", path = "../core", features = ["serde", "std"] }
 icu_locid = { version = "0.5", path = "../../components/locid", features = ["serde"] }
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"] }
 erased-serde = { version = "0.3", default-features = false, features = ["alloc"] }
@@ -64,7 +64,7 @@ criterion = "0.3.3"
 deserialize_json = ["icu_provider/deserialize_json"]
 deserialize_bincode_1 = ["icu_provider/deserialize_bincode_1"]
 # Enables the "export" module and FilesystemExporter
-export = ["static_assertions", "log", "serde_json", "bincode", "postcard", "icu_provider/serialize"]
+export = ["static_assertions", "log", "serde_json", "bincode", "postcard", "icu_provider/serde"]
 bench = []
 
 [lib]
