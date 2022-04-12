@@ -190,7 +190,7 @@ macro_rules! impl_dyn_provider {
         );
     };
     ($provider:ty, { $($pat:pat $(if $guard:expr)? => $struct_m:ty),+, }, SERDE_SE) => {
-        // If this fails to compile, enable the "serialize" feature on this crate.
+        // If this fails to compile, enable the "serde" feature on this crate.
         $crate::impl_dyn_provider!(
             $provider,
             { $($pat $(if $guard)? => $struct_m),+, },
@@ -198,7 +198,7 @@ macro_rules! impl_dyn_provider {
         );
     };
     ($provider:ty, [ $($struct_m:ty),+, ], SERDE_SE) => {
-        // If this fails to compile, enable the "serialize" feature on this crate.
+        // If this fails to compile, enable the "serde" feature on this crate.
         $crate::impl_dyn_provider!(
             $provider,
             [ $($struct_m),+, ],
