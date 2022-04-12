@@ -21,6 +21,7 @@ use tinystr::{tinystr, TinyAsciiStr};
 
 /// Used to track the result of a canonicalization operation that potentially modifies its argument in place.
 #[derive(Debug, PartialEq)]
+#[allow(clippy::exhaustive_enums)] // this enum is stable
 pub enum CanonicalizationResult {
     /// The canonicalization operation modified the locale.
     Modified,
