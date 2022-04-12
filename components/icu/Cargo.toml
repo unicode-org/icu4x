@@ -94,7 +94,7 @@ std = [
     "icu_properties/std",
     "fixed_decimal/std"
 ]
-default = ["serde"]
+default = []
 serde = [
     "icu_locid/serde",
     "icu_datetime/serde",
