@@ -8,7 +8,7 @@ mod error;
 mod helpers;
 pub mod reference;
 pub mod runtime;
-#[cfg(feature = "serialize")]
+#[cfg(feature = "serde")]
 mod serde;
 pub use error::*;
 pub use helpers::*;
@@ -340,7 +340,7 @@ mod test {
     /// trusted, test that the bincode gets validated correctly.
     struct TestInvalidSkeleton(Vec<Field>);
 
-    #[cfg(feature = "serialize")]
+    #[cfg(feature = "serde")]
     impl Serialize for TestInvalidSkeleton {
         fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
         where

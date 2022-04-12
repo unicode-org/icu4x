@@ -357,7 +357,7 @@ impl AsULE for RangeOrValue {
     }
 }
 
-#[cfg(feature = "serialize")]
+#[cfg(feature = "serde")]
 mod serde {
     use super::*;
     use ::serde::{de, ser, Deserialize, Deserializer, Serialize};

@@ -22,7 +22,7 @@ use tinystr::TinyAsciiStr;
 ///
 /// [`unicode_script_id`]: https://unicode.org/reports/tr35/#unicode_script_id
 #[derive(Debug, PartialEq, Eq, Clone, Hash, PartialOrd, Ord, Copy)]
-#[cfg_attr(feature = "serialize", derive(serde::Serialize))]
+#[cfg_attr(feature = "serde", derive(serde::Serialize))]
 #[repr(transparent)]
 pub struct Script(TinyAsciiStr<SCRIPT_LENGTH>);
 

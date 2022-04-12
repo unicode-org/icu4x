@@ -25,7 +25,7 @@ use tinystr::TinyAsciiStr;
 /// [`unicode_variant_id`]: https://unicode.org/reports/tr35/#unicode_variant_id
 #[derive(Debug, PartialEq, Eq, Clone, Hash, PartialOrd, Ord, Copy)]
 #[repr(transparent)]
-#[cfg_attr(feature = "serialize", derive(serde::Serialize))]
+#[cfg_attr(feature = "serde", derive(serde::Serialize))]
 pub struct Variant(TinyAsciiStr<{ *VARIANT_LENGTH.end() }>);
 
 const VARIANT_LENGTH: RangeInclusive<usize> = 4..=8;
