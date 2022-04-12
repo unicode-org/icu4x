@@ -14,6 +14,7 @@ use core::convert::TryInto;
 use core::marker::PhantomData;
 use tinystr::tinystr;
 
+/// The Coptic calendar
 #[derive(Copy, Clone, Debug, Hash, Default, Eq, PartialEq)]
 #[non_exhaustive]
 pub struct Coptic;
