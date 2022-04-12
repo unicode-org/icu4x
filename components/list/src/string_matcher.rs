@@ -22,7 +22,7 @@ impl PartialEq for StringMatcher<'_> {
     }
 }
 
-#[cfg(feature = "serde")]
+#[cfg(feature = "datagen")]
 impl serde::Serialize for StringMatcher<'_> {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
