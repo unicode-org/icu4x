@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1649463795901,
+  "lastUpdate": 1649790982645,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -32171,6 +32171,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 14349,
             "range": "± 1089",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "samchen61661@gmail.com",
+            "name": "samchen",
+            "username": "samchen61661"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "d05b102ea5530c87da04178f942f002cfe10042d",
+          "message": "Replace metazones with a more compact identifier (#1782)\n\n* Replace metazones with a more compact identifier\r\n\r\n* fix tests",
+          "timestamp": "2022-04-12T12:07:25-07:00",
+          "tree_id": "6a43c1200ee7c98dd00fcba3c6a95d105e6a770d",
+          "url": "https://github.com/unicode-org/icu4x/commit/d05b102ea5530c87da04178f942f002cfe10042d"
+        },
+        "date": 1649790966689,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 758,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 5088,
+            "range": "± 14",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 13740,
+            "range": "± 63",
             "unit": "ns/iter"
           }
         ]
