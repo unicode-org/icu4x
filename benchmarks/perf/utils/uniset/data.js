@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1649800815520,
+  "lastUpdate": 1649865665775,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -24029,6 +24029,60 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 55272942,
             "range": "± 709323",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/worst",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/worst",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "7d75be3ddb6d10fd178aa2a0651cfde65f40edbe",
+          "message": "Replace OmnibusDataProvider with make_forking_provider (#1788)",
+          "timestamp": "2022-04-13T10:53:57-05:00",
+          "tree_id": "68252a7fb07e2a11298760b6340b69aab5e332f1",
+          "url": "https://github.com/unicode-org/icu4x/commit/7d75be3ddb6d10fd178aa2a0651cfde65f40edbe"
+        },
+        "date": 1649865649346,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 47668240,
+            "range": "± 149448",
             "unit": "ns/iter"
           },
           {
