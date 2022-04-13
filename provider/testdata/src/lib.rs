@@ -2,43 +2,32 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! `icu_testdata` is a unit testing package for [`ICU4X`].
+//! `icu_testdata` is a unit testing crate for [`ICU4X`].
 //!
-//! The package exposes a `DataProvider` with stable data useful for unit testing. The data is
+//! The crate exposes a data provider with stable data useful for unit testing. The data is
 //! based on a CLDR tag and a short list of locales that, together, cover a range of scenarios.
 //!
-//! The list of locales and the current CLDR tag can be found in [Cargo.toml](./Cargo.toml).
+//! There are four modes of operation, enabled by features:
+//! * `fs` (default) exposes [`get_json_provider`] with alias [`get_provider`]. In this mode you
+//!   can optionally specify your own test data with the `ICU4X_TESTDATA_DIR` environment variable.
+//! * `static` exposes [`get_postcard_provider`] with alias [`get_provider`] (unless `fs` is
+//!   also enabled).
+//! * `metadata` exposes the [`metadata`] module which contains information such as the CLDR Gitref
+//!   and the list of included locales.
 //!
-//! The output data can be found in the [data](./data/) subdirectory. There, you will find:
+//! # Re-generating the data
 //!
-//! - `json` for the ICU4X JSON test data
-//! - `cldr` for the source CLDR JSON
-//! - `uprops` for the source Unicode properties data
-//!
-//! ## Pointing to custom test data
-//!
-//! If you wish to run ICU4X tests with custom test data, you may do so by setting the "ICU4X_TESTDATA_DIR" environment variable:
-//!
-//! ```bash
-//! $ ICU4X_TESTDATA_DIR=/path/to/custom/testdata cargo test
-//! ```
-//!
-//! Note: this does not work with [`get_static_provider`](crate::get_static_provider).
-//!
-//! ## Re-generating the data
-//!
-//! From the top level directory of the `icu4x` metapackage, run:
+//! ## Downloading fresh CLDR data
 //!
 //! ```bash
-//! $ cargo make testdata
+//! $ cargo run --bin --features=bin icu4x-testdata-download-sources
 //! ```
 //!
-//! The following commands are also available:
+//! ## Regenerating JSON and postcard data
 //!
-//! - `cargo make testdata-download-sources` downloads fresh CLDR JSON
-//! - `cargo make testdata-build-json` re-generates the ICU4X JSON
-//! - `cargo make testdata-build-blob` re-generates the ICU4X blob file
-//! - `cargo make testdata-build-bincode` re-generates Bincode filesystem testdata
+//! ```bash
+//! $ cargo run --bin --features=bin icu4x-testdata-datagen
+//! ```
 //!
 //! # Examples
 //!
@@ -84,12 +73,56 @@ pub mod metadata;
 #[cfg(feature = "std")]
 pub mod paths;
 
-#[cfg(feature = "static")]
-mod blob;
+/// Get a data, loading from the test data JSON directory.
+///
+/// # Panics
+///
+/// Panics if unable to load the data.
+// The function is documented to allow panics.
+#[allow(clippy::panic)]
 #[cfg(feature = "fs")]
-mod fs;
+pub fn get_json_provider() -> icu_provider_fs::FsDataProvider {
+    let path = match std::env::var_os("ICU4X_TESTDATA_DIR") {
+        Some(val) => val.into(),
+        None => paths::data_root().join("json"),
+    };
+    icu_provider_fs::FsDataProvider::try_new(&path).unwrap_or_else(|err| {
+        panic!(
+            "The test data directory was unable to be opened: {}: {:?}",
+            err, path
+        )
+    })
+}
 
+/// Get a data provider, loading from the statically initialized postcard blob.
 #[cfg(feature = "static")]
-pub use blob::{get_smaller_static_provider, get_static_provider};
+pub fn get_postcard_provider() -> icu_provider_blob::StaticDataProvider {
+    // The statically compiled data file is valid.
+    #[allow(clippy::unwrap_used)]
+    icu_provider_blob::StaticDataProvider::new_from_static_blob(include_bytes!(concat!(
+        env!("CARGO_MANIFEST_DIR"),
+        "/data/testdata.postcard"
+    )))
+    .unwrap()
+}
+
+/// Get a small data provider that only contains the `decimal/symbols@1` key for `en` and `bn`.
+#[cfg(feature = "static")]
+pub fn get_smaller_postcard_provider() -> icu_provider_blob::StaticDataProvider {
+    // THe statically compiled data file is valid.
+    #[allow(clippy::unwrap_used)]
+    icu_provider_blob::StaticDataProvider::new_from_static_blob(include_bytes!(concat!(
+        env!("CARGO_MANIFEST_DIR"),
+        "/data/decimal-bn-en.postcard"
+    )))
+    .unwrap()
+}
+
 #[cfg(feature = "fs")]
-pub use fs::get_provider;
+pub use get_json_provider as get_provider;
+#[cfg(all(feature = "static", not(feature = "fs")))]
+pub use get_postcard_provider as get_provider;
+#[cfg(feature = "static")]
+pub use get_postcard_provider as get_static_provider;
+#[cfg(feature = "static")]
+pub use get_smaller_postcard_provider as get_smaller_static_provider;

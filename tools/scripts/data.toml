@@ -22,41 +22,6 @@ category = "ICU4X Data"
 script_runner = "bash"
 script = '''strings ${1} | grep -e "icu4x_key_tag\w" | sed s/icu4x_key_tag// | sort > ${2}'''
 
-[tasks.testdata-build-json]
-description = "Build ICU4X JSON from the downloaded CLDR JSON, overwriting the existing ICU4X JSON."
-category = "ICU4X Data"
-command = "cargo"
-args = [
-    "run",
-    "--bin=icu4x-datagen",
-    "--features=experimental,bin",
-    "--",
-    "--input-from-testdata",
-    "--out-testdata",
-    "--test-keys",
-    "--test-locales",
-    "--syntax=json",
-    "--pretty",
-    "--overwrite",
-]
-
-[tasks.testdata-build-blob]
-description = "Build ICU4X data as a Bincode blob, overwriting the existing Bincode blob."
-category = "ICU4X Data"
-command = "cargo"
-args = [
-    "run",
-    "--bin=icu4x-datagen",
-    "--features=experimental,bin",
-    "--",
-    "--format=blob",
-    "--input-from-testdata",
-    "--out-testdata",
-    "--test-keys",
-    "--test-locales",
-    "--overwrite",
-]
-
 [tasks.testdata-fingerprint-blob]
 description = "Generate a fingerprint for the ICU4X testdata.postcard file."
 category = "ICU4X Data"
@@ -111,31 +76,14 @@ args = [
     "--overwrite",
 ]
 
-[tasks.testdata-build-blob-smaller]
-description = "Build a small subset of ICU4X data as a Postcard blob."
+[tasks.testdata]
+description = "Rebuild all ICU4X testdata from source data checked into the repository"
 category = "ICU4X Data"
 command = "cargo"
 args = [
     "run",
-    "--bin=icu4x-datagen",
-    "--features=experimental,bin",
-    "--",
-    "--format=blob",
-    "--input-from-testdata",
-    "--out=provider/testdata/data/decimal-bn-en.postcard",
-    "--keys=decimal/symbols@1",
-    "--locales=bn",
-    "--locales=en",
-    "--overwrite",
-]
-
-[tasks.testdata]
-description = "Rebuild all ICU4X testdata from source data checked into the repository"
-category = "ICU4X Data"
-dependencies = [
-    "testdata-build-json",
-    "testdata-build-blob",
-    "testdata-build-blob-smaller",
+    "--bin=icu4x-testdata-datagen",
+    "--features=bin",
 ]
 
 [tasks.testdata-check-unchanged]
@@ -165,73 +113,4 @@ description = "Rebuild ICU4X testdata and perform various checks pertaining to i
 category = "ICU4X Data"
 dependencies = [
     "testdata-check-unchanged",
-]
-
-[tasks.testdata-build-bincode]
-description = "Build ICU4X Bincode filesystem structure from the downloaded CLDR JSON, overwriting the existing ICU4X Bincode if present."
-category = "ICU4X Data"
-command = "cargo"
-args = [
-    "run",
-    "--bin=icu4x-datagen",
-    "--features=experimental,bin",
-    "--",
-    "--input-from-testdata",
-    "--out-testdata",
-    "--test-keys",
-    "--test-locales",
-    "--syntax=bincode",
-    "--overwrite",
-]
-
-[tasks.testdata-build-postcard-tree]
-description = "Build ICU4X Postcard data to a filesystem structure at provider/testdata/data/postcard, overwriting if already present. Useful for breaking out the postcard data into individual files for debugging."
-category = "ICU4X Data"
-command = "cargo"
-args = [
-    "run",
-    "--bin=icu4x-datagen",
-    "--features=experimental,bin",
-    "--",
-    "--input-from-testdata",
-    "--out-testdata",
-    "--test-keys",
-    "--test-locales",
-    "--syntax=postcard",
-    "--overwrite",
-]
-
-[tasks.testdata-build-bincode-all]
-description = "Build ICU4X Bincode filesystem structure from the downloaded CLDR JSON, testing all available locales, and overwriting the existing ICU4X Bincode if present."
-category = "ICU4X Data"
-command = "cargo"
-args = [
-    "run",
-    "--bin=icu4x-datagen",
-    "--features=experimental,bin",
-    "--",
-    "--input-from-testdata",
-    "--out-testdata",
-    "--test-keys",
-    "--all-locales",
-    "--syntax=bincode",
-    "--overwrite",
-]
-
-[tasks.testdata-build-worklog-bincode]
-description = "Build Bincode files for the work_log example"
-category = "ICU4X Data"
-command = "cargo"
-args = [
-    "run",
-    "--bin=icu4x-datagen",
-    "--features=experimental,bin",
-    "--",
-    "--input-from-testdata",
-    "--out=provider/datagen/tests/testdata/work_log_bincode",
-    "--key-file=provider/datagen/tests/testdata/work_log+keys.txt",
-    "--locales=de",
-    "--locales=es",
-    "--syntax=bincode",
-    "--overwrite",
 ]

@@ -10,12 +10,9 @@ use icu_provider_adapters::filter::Filterable;
 use icu_provider::prelude::*;
 
 use icu_datagen::SourceData;
-use icu_provider_blob::BlobDataProvider;
 use litemap::LiteMap;
 use std::cmp;
-use std::fs;
 use std::mem::ManuallyDrop;
-use std::rc::Rc;
 
 #[global_allocator]
 static ALLOC: dhat::Alloc = dhat::Alloc;
@@ -53,15 +50,13 @@ fn main() {
         .package_metadata
         .locales;
 
-    let converter = icu_datagen::create_datagen_provider!(SourceData::for_test())
-        .filterable("icu4x-datagen locales")
-        .filter_by_langid_allowlist_strict(&selected_locales);
+    let converter = icu_datagen::create_datagen_provider!(SourceData::default()
+        .with_cldr(icu_testdata::paths::cldr_json_root(), "full".to_string())
+        .with_uprops(icu_testdata::paths::uprops_toml_root()))
+    .filterable("icu4x-datagen locales")
+    .filter_by_langid_allowlist_strict(&selected_locales);
 
-    let blob = fs::read(icu_testdata::paths::data_root().join("testdata.postcard"))
-        .expect("Reading pre-computed postcard buffer");
-    // Create a DataProvider from it:
-    let provider =
-        BlobDataProvider::new_from_rc_blob(Rc::from(blob)).expect("Deserialization should succeed");
+    let provider = icu_testdata::get_postcard_provider();
 
     // Litemap keeps it sorted, convenient
 

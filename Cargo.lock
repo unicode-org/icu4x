@@ -1538,6 +1538,7 @@ dependencies = [
  "displaydoc",
  "eyre",
  "futures",
+ "icu_datagen",
  "icu_locid",
  "icu_plurals",
  "icu_provider",

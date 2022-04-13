@@ -224,3 +224,32 @@ pub fn datagen(
 
     Ok(())
 }
+
+#[test]
+fn test_keys() {
+    assert_eq!(
+        keys(&["list/and@1", "datetime/lengths@1", "trash",]),
+        vec![
+            icu_datetime::provider::calendar::DatePatternsV1Marker::KEY,
+            icu_list::provider::AndListV1Marker::KEY,
+        ]
+    );
+}
+
+#[test]
+fn test_keys_from_file() {
+    let file = std::fs::File::open(
+        PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("tests/testdata/work_log+keys.txt"),
+    )
+    .unwrap();
+    assert_eq!(
+        keys_from_file(file).unwrap(),
+        vec![
+            icu_datetime::provider::calendar::DatePatternsV1Marker::KEY,
+            icu_datetime::provider::calendar::DateSkeletonPatternsV1Marker::KEY,
+            icu_datetime::provider::calendar::DateSymbolsV1Marker::KEY,
+            icu_datetime::provider::week_data::WeekDataV1Marker::KEY,
+            icu_plurals::provider::OrdinalV1Marker::KEY,
+        ]
+    );
+}

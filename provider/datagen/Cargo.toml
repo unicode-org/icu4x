@@ -50,7 +50,6 @@ icu_provider = { version = "0.5", path = "../core", features = ["std", "log_erro
 icu_provider_adapters = { path = "../adapters", features = ["datagen"] }
 icu_provider_blob = { version = "0.5", path = "../blob", features = ["export"] }
 icu_provider_fs = { version = "0.5", path = "../fs", features = ["export"] }
-icu_testdata = { version = "0.5", path = "../testdata", features = ["metadata"] }
 
 # Other
 displaydoc = { version = "0.2.3", default-features = false }
@@ -81,6 +80,7 @@ walkdir = { version = "2.3.2", optional = true }
 [dev-dependencies]
 dhat = "0.3.0"
 writeable = { path = "../../utils/writeable" }
+icu_testdata = { path = "../testdata", features = ["metadata", "static"] }
 
 [features]
 experimental = ["icu_casemapping", "icu_segmenter"]

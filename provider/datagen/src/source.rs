@@ -39,8 +39,9 @@ impl SourceData {
         }
     }
 
+    #[cfg(test)]
     /// Create `SourceData` pointing to test data.
-    pub fn for_test() -> Self {
+    pub(crate) fn for_test() -> Self {
         Self::default()
             .with_cldr(icu_testdata::paths::cldr_json_root(), "full".to_string())
             .with_uprops(icu_testdata::paths::uprops_toml_root())

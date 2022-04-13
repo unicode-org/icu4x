@@ -53,7 +53,7 @@ pub fn get_all_keys() -> Vec<ResourceKey> {
 /// use icu_datagen::SourceData;
 ///
 /// // This data provider supports all keys required by ICU4X.
-/// let provider = icu_datagen::create_datagen_provider!(SourceData::for_test());
+/// let provider = icu_datagen::create_datagen_provider!(SourceData::default());
 /// ```
 ///
 /// To create a data provider for a subset:
@@ -62,7 +62,7 @@ pub fn get_all_keys() -> Vec<ResourceKey> {
 /// use icu_datagen::SourceData;
 ///
 /// // This data provider supports the keys for LocaleCanonicalizer.
-/// let provider = icu_datagen::create_datagen_provider!(SourceData::for_test(),
+/// let provider = icu_datagen::create_datagen_provider!(SourceData::default(),
 /// [
 ///     icu_datagen::transform::cldr::AliasesProvider,
 ///     icu_datagen::transform::cldr::LikelySubtagsProvider,
@@ -119,7 +119,7 @@ macro_rules! create_datagen_provider {
 /// use icu_datagen::SourceData;
 ///
 /// // This data provider supports all keys required by ICU4X.
-/// let provider = icu_datagen::create_datagen_provider!(SourceData::for_test());
+/// let provider = icu_datagen::create_datagen_provider!(SourceData::default());
 /// ```
 ///
 /// To create a data provider for a subset:
@@ -128,7 +128,7 @@ macro_rules! create_datagen_provider {
 /// use icu_datagen::SourceData;
 ///
 /// // This data provider supports the keys for LocaleCanonicalizer.
-/// let provider = icu_datagen::create_datagen_provider!(SourceData::for_test(), [
+/// let provider = icu_datagen::create_datagen_provider!(SourceData::default(), [
 ///     icu_datagen::transform::cldr::AliasesProvider,
 ///     icu_datagen::transform::cldr::LikelySubtagsProvider,
 /// ]);

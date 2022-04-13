@@ -143,15 +143,16 @@ skip_optional_dependencies = true
 denylist = ["bench"]
 
 [dependencies]
-icu_provider = { version = "0.5", path = "../../provider/core" }
-icu_provider_blob = { version = "0.5", path = "../../provider/blob", optional = true }
-icu_provider_fs = { version = "0.5", path = "../../provider/fs", optional = true }
-icu_locid = { version = "0.5", path = "../../components/locid" }
+icu_provider = { version = "0.5", path = "../core" }
+icu_provider_blob = { version = "0.5", path = "../blob", optional = true }
+icu_provider_fs = { version = "0.5", path = "../fs", optional = true }
 
-# Bin features
+# bin feature
 clap = { version = "2.33", optional = true }
 eyre = { version = "0.6", optional = true }
 futures = { version = "0.3", optional = true }
+icu_datagen = { version = "0.5", path = "../datagen", features = ["experimental"], optional = true }
+icu_locid = { version = "0.5", path = "../../components/locid", optional = true }
 log = { version = "0.4", optional = true }
 reqwest = { version = "0.11", features = ["stream"], optional = true }
 simple_logger = { version = "1.12", optional = true }
@@ -182,9 +183,27 @@ metadata = [
 fs = ["icu_provider/deserialize_json", "icu_provider_fs", "std"]
 static = ["icu_provider_blob"]
 std = []
-bin = ["clap", "eyre", "simple_logger", "log", "reqwest", "tokio", "futures", "std", "metadata"]
+bin = [
+    "clap",
+    "eyre",
+    "simple_logger",
+    "log",
+    "reqwest",
+    "tokio",
+    "futures",
+    "std",
+    "metadata",
+    "icu_datagen",
+    "icu_locid",
+    "fs",
+]
 
 [[bin]]
 name = "icu4x-testdata-download-sources"
 path = "src/bin/download-sources.rs"
+required-features = ["bin"]
+
+[[bin]]
+name = "icu4x-testdata-datagen"
+path = "src/bin/datagen.rs"
 required-features = ["bin"]
