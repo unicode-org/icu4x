@@ -71,7 +71,10 @@ impl DateTimeFormat {
         };
 
         let ordinal_rules = if let PatternPlurals::MultipleVariants(_) = &patterns.get().0 {
-            Some(PluralRules::try_new_ordinal(locale.clone(), data_provider)?)
+            // TODO(#1109): Implement proper vertical fallback
+            let mut locale_no_extensions = locale.clone();
+            locale_no_extensions.extensions.unicode.clear();
+            Some(PluralRules::try_new_ordinal(locale_no_extensions, data_provider)?)
         } else {
             None
         };
