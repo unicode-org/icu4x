@@ -21,7 +21,7 @@ use icu_datetime::{
     time_zone::{TimeZoneFormat, TimeZoneFormatOptions},
     CldrCalendar, DateTimeFormat, DateTimeFormatOptions, ZonedDateTimeFormat,
 };
-use icu_locid::{LanguageIdentifier, Locale};
+use icu_locid::{LanguageIdentifier, Locale, unicode_ext_key, unicode_ext_value};
 use icu_plurals::provider::OrdinalV1Marker;
 use icu_provider::prelude::*;
 use icu_provider_adapters::fork::by_key::MultiForkByKeyProvider;
@@ -204,10 +204,11 @@ fn test_dayperiod_patterns() {
     let provider = icu_testdata::get_provider();
     let format_options = DateTimeFormatOptions::default();
     for test in get_dayperiod_tests("dayperiods").unwrap().0 {
-        let langid: LanguageIdentifier = test.locale.parse().unwrap();
+        let mut locale: Locale = test.locale.parse().unwrap();
+        locale.extensions.unicode.keywords.set(unicode_ext_key!("ca"), unicode_ext_value!("gregory"));
         let mut patterns_data: DataPayload<DatePatternsV1Marker> = provider
             .load_resource(&DataRequest {
-                options: ResourceOptions::temp_with_unicode_ext(langid.clone(), "ca", "gregory"),
+                options: locale.clone().into(),
                 metadata: Default::default(),
             })
             .unwrap()
@@ -218,7 +219,7 @@ fn test_dayperiod_patterns() {
         });
         let symbols_data: DataPayload<DateSymbolsV1Marker> = provider
             .load_resource(&DataRequest {
-                options: ResourceOptions::temp_with_unicode_ext(langid.clone(), "ca", "gregory"),
+                options: locale.clone().into(),
                 metadata: Default::default(),
             })
             .unwrap()
@@ -226,7 +227,7 @@ fn test_dayperiod_patterns() {
             .unwrap();
         let skeleton_data: DataPayload<DateSkeletonPatternsV1Marker> = provider
             .load_resource(&DataRequest {
-                options: ResourceOptions::temp_with_unicode_ext(langid.clone(), "ca", "gregory"),
+                options: locale.clone().into(),
                 metadata: Default::default(),
             })
             .unwrap()
@@ -234,7 +235,7 @@ fn test_dayperiod_patterns() {
             .unwrap();
         let week_data: DataPayload<WeekDataV1Marker> = provider
             .load_resource(&DataRequest {
-                options: ResourceOptions::temp_for_region(langid.region),
+                options: ResourceOptions::temp_for_region(locale.id.region),
                 metadata: Default::default(),
             })
             .unwrap()
@@ -272,7 +273,7 @@ fn test_dayperiod_patterns() {
                             ],
                         };
                         let dtf = DateTimeFormat::<Gregorian>::try_new(
-                            langid.clone(),
+                            locale.clone(),
                             &local_provider.as_downcasting(),
                             &format_options,
                         )
@@ -284,7 +285,7 @@ fn test_dayperiod_patterns() {
                             locale:   `{}`,\n\
                             datetime: `{}`,\n\
                             pattern:  `{}`",
-                            langid,
+                            locale,
                             dt_input,
                             pattern_input,
                         );
@@ -352,7 +353,8 @@ fn test_time_zone_patterns() {
     let format_options = DateTimeFormatOptions::default();
 
     for test in get_time_zone_tests("time_zones").unwrap().0 {
-        let langid: LanguageIdentifier = test.locale.parse().unwrap();
+        let mut locale: Locale = test.locale.parse().unwrap();
+        locale.extensions.unicode.keywords.set(unicode_ext_key!("ca"), unicode_ext_value!("gregory"));
         let mut config = test.config;
         let mut datetime: MockZonedDateTime = test.datetime.parse().unwrap();
         datetime.time_zone.time_zone_id = config.time_zone_id.take();
@@ -361,7 +363,7 @@ fn test_time_zone_patterns() {
 
         let mut patterns_data: DataPayload<DatePatternsV1Marker> = date_provider
             .load_resource(&DataRequest {
-                options: ResourceOptions::temp_with_unicode_ext(langid.clone(), "ca", "gregory"),
+                options: locale.clone().into(),
                 metadata: Default::default(),
             })
             .unwrap()
@@ -369,7 +371,7 @@ fn test_time_zone_patterns() {
             .unwrap();
         let skeleton_data: DataPayload<DateSkeletonPatternsV1Marker> = date_provider
             .load_resource(&DataRequest {
-                options: ResourceOptions::temp_with_unicode_ext(langid.clone(), "ca", "gregory"),
+                options: locale.clone().into(),
                 metadata: Default::default(),
             })
             .unwrap()
@@ -377,7 +379,7 @@ fn test_time_zone_patterns() {
             .unwrap();
         let symbols_data: DataPayload<DateSymbolsV1Marker> = date_provider
             .load_resource(&DataRequest {
-                options: ResourceOptions::temp_with_unicode_ext(langid.clone(), "ca", "gregory"),
+                options: locale.clone().into(),
                 metadata: Default::default(),
             })
             .unwrap()
@@ -385,7 +387,7 @@ fn test_time_zone_patterns() {
             .unwrap();
         let week_data: DataPayload<WeekDataV1Marker> = date_provider
             .load_resource(&DataRequest {
-                options: ResourceOptions::temp_for_region(langid.region),
+                options: ResourceOptions::temp_for_region(locale.id.region),
                 metadata: Default::default(),
             })
             .unwrap()
@@ -433,7 +435,7 @@ fn test_time_zone_patterns() {
 
                 for (&fallback_format, expect) in fallback_formats.iter().zip(expected.iter()) {
                     let dtf = ZonedDateTimeFormat::<Gregorian>::try_new(
-                        langid.clone(),
+                        locale.clone(),
                         &local_provider.as_downcasting(),
                         &zone_provider,
                         &plural_provider,
@@ -450,7 +452,7 @@ fn test_time_zone_patterns() {
                     datetime: `{}`,\n\
                     pattern:  `{}`\n
                     fallback: `{:?}`\n",
-                        langid,
+                        locale,
                         test.datetime,
                         pattern_input,
                         fallback_format,

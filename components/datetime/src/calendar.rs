@@ -5,6 +5,8 @@
 use icu_calendar::{
     buddhist::Buddhist, coptic::Coptic, indian::Indian, japanese::Japanese, Gregorian,
 };
+use icu_locid::unicode_ext_value;
+use icu_locid::extensions::unicode::Value;
 
 /// A calendar that can be found in CLDR
 ///
@@ -12,25 +14,25 @@ use icu_calendar::{
 /// in the CLDR transformer to support any new era maps.
 pub trait CldrCalendar {
     /// The Unicode BCP 47 identifier for the calendar
-    const IDENTIFIER: &'static str;
+    const IDENTIFIER: Value;
 }
 
 impl CldrCalendar for Gregorian {
-    const IDENTIFIER: &'static str = "gregory";
+    const IDENTIFIER: Value = unicode_ext_value!("gregory");
 }
 
 impl CldrCalendar for Buddhist {
-    const IDENTIFIER: &'static str = "buddhist";
+    const IDENTIFIER: Value = unicode_ext_value!("buddhist");
 }
 
 impl CldrCalendar for Japanese {
-    const IDENTIFIER: &'static str = "japanese";
+    const IDENTIFIER: Value = unicode_ext_value!("japanese");
 }
 
 impl CldrCalendar for Coptic {
-    const IDENTIFIER: &'static str = "coptic";
+    const IDENTIFIER: Value = unicode_ext_value!("coptic");
 }
 
 impl CldrCalendar for Indian {
-    const IDENTIFIER: &'static str = "indian";
+    const IDENTIFIER: Value = unicode_ext_value!("indian");
 }

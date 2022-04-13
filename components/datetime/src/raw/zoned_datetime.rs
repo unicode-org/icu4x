@@ -39,17 +39,15 @@ impl ZonedDateTimeFormat {
     ///
     /// The "calendar" argument should be a Unicode BCP47 calendar identifier
     #[inline(never)]
-    pub fn try_new<L, DP, ZP, PP>(
-        locale: L,
+    pub fn try_new<DP, ZP, PP>(
+        locale: Locale,
         date_provider: &DP,
         zone_provider: &ZP,
         plural_provider: &PP,
         date_time_format_options: &DateTimeFormatOptions,
         time_zone_format_options: &TimeZoneFormatOptions,
-        calendar: &'static str,
     ) -> Result<Self, DateTimeFormatError>
     where
-        L: Into<Locale>,
         DP: ResourceProvider<DateSymbolsV1Marker>
             + ResourceProvider<DatePatternsV1Marker>
             + ResourceProvider<DateSkeletonPatternsV1Marker>
@@ -63,13 +61,10 @@ impl ZonedDateTimeFormat {
             + ?Sized,
         PP: ResourceProvider<OrdinalV1Marker>,
     {
-        let locale = locale.into();
-
         let patterns = provider::date_time::PatternSelector::for_options(
             date_provider,
             &locale,
             date_time_format_options,
-            calendar,
         )?;
         let required = datetime::analyze_patterns(&patterns.get().0, true)
             .map_err(|field| DateTimeFormatError::UnsupportedField(field.symbol))?;
@@ -100,11 +95,7 @@ impl ZonedDateTimeFormat {
             Some(
                 date_provider
                     .load_resource(&DataRequest {
-                        options: ResourceOptions::temp_with_unicode_ext(
-                            locale.id.clone(),
-                            "ca",
-                            calendar,
-                        ),
+                        options: locale.clone().into(),
                         metadata: Default::default(),
                     })?
                     .take_payload()?,

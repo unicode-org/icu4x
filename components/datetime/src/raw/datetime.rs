@@ -39,11 +39,10 @@ impl DateTimeFormat {
     ///
     /// The "calendar" argument should be a Unicode BCP47 calendar identifier
     #[inline(never)]
-    pub fn try_new<T: Into<Locale>, D>(
-        locale: T,
+    pub fn try_new<D>(
+        locale: Locale,
         data_provider: &D,
         options: &DateTimeFormatOptions,
-        calendar: &'static str,
     ) -> Result<Self, DateTimeFormatError>
     where
         D: ResourceProvider<DateSymbolsV1Marker>
@@ -52,13 +51,11 @@ impl DateTimeFormat {
             + ResourceProvider<OrdinalV1Marker>
             + ResourceProvider<WeekDataV1Marker>,
     {
-        let locale = locale.into();
 
         let patterns = provider::date_time::PatternSelector::for_options(
             data_provider,
             &locale,
             options,
-            calendar,
         )?;
 
         let required = datetime::analyze_patterns(&patterns.get().0, false)
@@ -87,11 +84,7 @@ impl DateTimeFormat {
             Some(
                 data_provider
                     .load_resource(&DataRequest {
-                        options: ResourceOptions::temp_with_unicode_ext(
-                            locale.id.clone(),
-                            "ca",
-                            calendar,
-                        ),
+                        options: locale.clone().into(),
                         metadata: Default::default(),
                     })?
                     .take_payload()?,
@@ -110,15 +103,13 @@ impl DateTimeFormat {
     }
 
     /// Creates a new [`DateTimeFormat`] regardless of whether there are time-zone symbols in the pattern.
-    pub fn new<T: Into<Locale>>(
-        locale: T,
+    pub fn new(
+        locale: Locale,
         patterns: DataPayload<PatternPluralsFromPatternsV1Marker>,
         symbols: Option<DataPayload<DateSymbolsV1Marker>>,
         week_data: Option<DataPayload<WeekDataV1Marker>>,
         ordinal_rules: Option<PluralRules>,
     ) -> Self {
-        let locale = locale.into();
-
         Self {
             locale,
             patterns,

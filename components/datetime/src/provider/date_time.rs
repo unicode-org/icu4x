@@ -67,7 +67,6 @@ fn pattern_for_date_length_inner(data: DatePatternsV1, length: length::Date) -> 
 pub struct PatternSelector<'a, D> {
     data_provider: &'a D,
     locale: &'a Locale,
-    calendar: &'static str,
 }
 
 // Manual impls needed since `derive(Copy)` inserts
@@ -87,12 +86,10 @@ where
         data_provider: &'a D,
         locale: &'a Locale,
         options: &DateTimeFormatOptions,
-        calendar: &'static str,
     ) -> Result<DataPayload<PatternPluralsFromPatternsV1Marker>> {
         let selector = PatternSelector {
             data_provider,
             locale,
-            calendar,
         };
         match options {
             DateTimeFormatOptions::Length(bag) => selector.pattern_for_length_bag(bag),
@@ -209,11 +206,7 @@ where
         let data = self
             .data_provider
             .load_resource(&DataRequest {
-                options: ResourceOptions::temp_with_unicode_ext(
-                    self.locale.id.clone(),
-                    "ca",
-                    self.calendar,
-                ),
+                options: self.locale.clone().into(),
                 metadata: Default::default(),
             })?
             .take_payload()?;
@@ -224,11 +217,7 @@ where
         let data = self
             .data_provider
             .load_resource(&DataRequest {
-                options: ResourceOptions::temp_with_unicode_ext(
-                    self.locale.id.clone(),
-                    "ca",
-                    self.calendar,
-                ),
+                options: self.locale.clone().into(),
                 metadata: Default::default(),
             })?
             .take_payload()?;
