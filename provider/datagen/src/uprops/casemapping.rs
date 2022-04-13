@@ -97,7 +97,7 @@ mod tests {
 
     #[test]
     fn test_simple_mappings() {
-        let provider = CaseMappingDataProvider::try_new(&icu_testdata::paths::uprops_toml_root())
+        let provider = CaseMappingDataProvider::try_from(&icu_testdata::paths::uprops_toml_root())
             .expect("Loading was successful");
         let case_mapping = CaseMapping::try_new(&provider).expect("Loading was successful");
 
