@@ -117,9 +117,10 @@ fn main() -> eyre::Result<()> {
                     let result = hasher.finalize();
                     let slash = if locale.is_empty() { "" } else { "/" };
                     let path = key.get_path();
+                    let locale_str = std::str::from_utf8(locale).expect("Locales in the data provider should be valid strings");
 
-                    log::trace!("Hash for {path}{slash}{locale} is {result:x}");
-                    writeln!(out, "{path}{slash}{locale}: {result:x}")?;
+                    log::trace!("Hash for {path}{slash}{locale_str} is {result:x}");
+                    writeln!(out, "{path}{slash}{locale_str}: {result:x}")?;
                 }
             }
         }
