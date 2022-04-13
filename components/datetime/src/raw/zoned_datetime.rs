@@ -109,8 +109,12 @@ impl ZonedDateTimeFormat {
 
         let datetime_format =
             raw::DateTimeFormat::new(locale, patterns, symbols_data, week_data, ordinal_rules);
+
+        // TODO(#1109): Implement proper vertical fallback
+        let mut locale_no_extensions = datetime_format.locale.clone();
+        locale_no_extensions.extensions.unicode.clear();
         let time_zone_format = TimeZoneFormat::try_new(
-            datetime_format.locale.clone(),
+            locale_no_extensions,
             datetime_format
                 // Only dates have plural variants so we can use any of the patterns for the time segment.
                 .patterns
