@@ -4,32 +4,25 @@
 
 use crate::uprops::uprops_helpers::{self, get_last_component_no_version, TomlEnumerated};
 
+use crate::SourceData;
 use icu_properties::provider::UnicodePropertyV1;
 use icu_properties::provider::UnicodePropertyV1Marker;
 use icu_provider::datagen::IterableDynProvider;
 use icu_provider::prelude::*;
 use icu_uniset::UnicodeSetBuilder;
-use std::convert::TryFrom;
-use std::path::Path;
+use std::sync::RwLock;
 
 pub struct EnumeratedPropertyUnicodeSetDataProvider {
-    data: TomlEnumerated,
+    source: SourceData,
+    data: RwLock<Option<TomlEnumerated>>,
 }
 
-/// A data provider reading from .toml files produced by the ICU4C icuwriteuprops tool.
-impl EnumeratedPropertyUnicodeSetDataProvider {
-    pub fn try_new(root_dir: &Path) -> eyre::Result<Self> {
-        let data = uprops_helpers::load_enumerated_from_dir(root_dir)?;
-        Ok(Self { data })
-    }
-}
-
-impl TryFrom<&crate::DatagenOptions> for EnumeratedPropertyUnicodeSetDataProvider {
-    type Error = eyre::ErrReport;
-    fn try_from(options: &crate::DatagenOptions) -> eyre::Result<Self> {
-        EnumeratedPropertyUnicodeSetDataProvider::try_new(options.uprops_root.as_ref().ok_or_else(
-            || eyre::eyre!("EnumeratedPropertyUnicodeSetDataProvider requires uprops_root"),
-        )?)
+impl From<&SourceData> for EnumeratedPropertyUnicodeSetDataProvider {
+    fn from(source: &SourceData) -> Self {
+        Self {
+            source: source.clone(),
+            data: RwLock::new(None),
+        }
     }
 }
 
@@ -70,7 +63,7 @@ impl DynProvider<UnicodePropertyV1Marker> for EnumeratedPropertyUnicodeSetDataPr
     fn load_payload(
         &self,
         key: ResourceKey,
-        req: &DataRequest,
+        _: &DataRequest,
     ) -> Result<DataResponse<UnicodePropertyV1Marker>, DataError> {
         let key_str = get_last_component_no_version(key);
 
@@ -79,16 +72,24 @@ impl DynProvider<UnicodePropertyV1Marker> for EnumeratedPropertyUnicodeSetDataPr
         let (prop_name, prop_value) = {
             let parts = key_str.split('=').collect::<Vec<_>>();
             if parts.len() != 2 {
-                return Err(DataErrorKind::MissingResourceKey.with_req(key, req));
+                return Err(DataErrorKind::MissingResourceKey.into_error());
             }
             #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
             (parts[0], parts[1])
         };
 
-        let toml_data = &self
-            .data
+        if self.data.read().unwrap().is_none() {
+            let data = uprops_helpers::load_enumerated_from_dir(self.source.get_uprops_root()?)?;
+            *self.data.write().unwrap() = Some(data);
+        }
+
+        let guard = self.data.read().unwrap();
+
+        let toml_data = &guard
+            .as_ref()
+            .unwrap()
             .get(prop_name)
-            .ok_or_else(|| DataErrorKind::MissingResourceKey.with_req(key, req))?;
+            .ok_or_else(|| DataErrorKind::MissingResourceKey.into_error())?;
 
         let valid_names = expand_groupings(prop_name, prop_value);
 

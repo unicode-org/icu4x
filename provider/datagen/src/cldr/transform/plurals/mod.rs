@@ -3,45 +3,30 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::cldr::cldr_serde;
-use crate::cldr::error::Error;
 use crate::cldr::reader::open_reader;
-use crate::cldr::CldrPaths;
+use crate::error::DatagenError;
+use crate::SourceData;
 use icu_plurals::provider::*;
 use icu_plurals::rules::runtime::ast::Rule;
 use icu_provider::datagen::IterableResourceProvider;
 use icu_provider::prelude::*;
-use std::convert::TryFrom;
-use std::path::PathBuf;
 use std::sync::RwLock;
 
 /// A data provider reading from CLDR JSON plural rule files.
 #[derive(Debug)]
 pub struct PluralsProvider {
-    cldr_core: PathBuf,
+    source: SourceData,
     cardinal_rules: RwLock<Option<Option<cldr_serde::plurals::Rules>>>,
     ordinal_rules: RwLock<Option<Option<cldr_serde::plurals::Rules>>>,
 }
 
-impl PluralsProvider {
-    /// Constructs an instance from paths to source data.
-    pub fn try_new(cldr_paths: &(impl CldrPaths + ?Sized)) -> eyre::Result<Self> {
-        Ok(PluralsProvider {
-            cldr_core: cldr_paths.cldr_core()?,
+impl From<&SourceData> for PluralsProvider {
+    fn from(source: &SourceData) -> Self {
+        PluralsProvider {
+            source: source.clone(),
             cardinal_rules: RwLock::new(None),
             ordinal_rules: RwLock::new(None),
-        })
-    }
-}
-
-impl TryFrom<&crate::DatagenOptions> for PluralsProvider {
-    type Error = eyre::ErrReport;
-    fn try_from(options: &crate::DatagenOptions) -> eyre::Result<Self> {
-        PluralsProvider::try_new(
-            &**options
-                .cldr_paths
-                .as_ref()
-                .ok_or_else(|| eyre::eyre!("PluralsProvider requires cldr_paths"))?,
-        )
+        }
     }
 }
 
@@ -56,10 +41,15 @@ impl PluralsProvider {
                 #[allow(clippy::unwrap_used)]
                 // TODO(#1668) Clippy exceptions need docs or fixing.
                 if self.cardinal_rules.read().unwrap().is_none() {
-                    let path = self.cldr_core.join("supplemental").join("plurals.json");
+                    let path = self
+                        .source
+                        .get_cldr_paths()?
+                        .cldr_core()
+                        .join("supplemental")
+                        .join("plurals.json");
                     let data: cldr_serde::plurals::Resource =
                         serde_json::from_reader(open_reader(&path)?)
-                            .map_err(|e| Error::from((e, path)))?;
+                            .map_err(|e| DatagenError::from((e, path)))?;
                     let _ = self
                         .cardinal_rules
                         .write()
@@ -74,10 +64,15 @@ impl PluralsProvider {
                 #[allow(clippy::unwrap_used)]
                 // TODO(#1668) Clippy exceptions need docs or fixing.
                 if self.ordinal_rules.read().unwrap().is_none() {
-                    let path = self.cldr_core.join("supplemental").join("ordinals.json");
+                    let path = self
+                        .source
+                        .get_cldr_paths()?
+                        .cldr_core()
+                        .join("supplemental")
+                        .join("ordinals.json");
                     let data: cldr_serde::plurals::Resource =
                         serde_json::from_reader(open_reader(&path)?)
-                            .map_err(|e| Error::from((e, path)))?;
+                            .map_err(|e| DatagenError::from((e, path)))?;
                     let _ = self
                         .ordinal_rules
                         .write()
@@ -88,7 +83,7 @@ impl PluralsProvider {
                 // TODO(#1668) Clippy exceptions need docs or fixing.
                 self.ordinal_rules.read().unwrap()
             }
-            _ => return Err(DataError::custom("Unknown key for PluralRulesV1").with_key(key)),
+            _ => return Err(DataError::custom("Unknown key for PluralRulesV1")),
         })
     }
 }
@@ -105,10 +100,10 @@ impl<M: ResourceMarker<Yokeable = PluralRulesV1<'static>>> ResourceProvider<M> f
                     .as_ref()
                     .unwrap()
                     .as_ref()
-                    .ok_or_else(|| DataErrorKind::MissingResourceKey.with_key(M::KEY))?
+                    .ok_or(DataErrorKind::MissingResourceKey.into_error())?
                     .0
                     .get(&req.options.get_langid())
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(M::KEY, req))?,
+                    .ok_or(DataErrorKind::MissingLocale.into_error())?,
             ))),
         })
     }
@@ -134,7 +129,7 @@ impl<M: ResourceMarker<Yokeable = PluralRulesV1<'static>>> IterableResourceProvi
                 .as_ref()
                 .unwrap()
                 .as_ref()
-                .ok_or_else(|| DataErrorKind::MissingResourceKey.with_key(M::KEY))?
+                .ok_or(DataErrorKind::MissingResourceKey.into_error())?
                 .0
                 .iter_keys()
                 // TODO(#568): Avoid the clone
@@ -169,8 +164,7 @@ impl From<&cldr_serde::plurals::LocalePluralRules> for PluralRulesV1<'static> {
 fn test_basic() {
     use icu_locid::langid;
 
-    let cldr_paths = crate::cldr::cldr_paths::for_test();
-    let provider = PluralsProvider::try_new(&cldr_paths).unwrap();
+    let provider = PluralsProvider::from(&SourceData::for_test());
 
     // Spot-check locale 'cs' since it has some interesting entries
     let cs_rules: DataPayload<CardinalV1Marker> = provider

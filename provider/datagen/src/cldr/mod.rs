@@ -8,11 +8,6 @@
 //! This module exports feature-specific providers. Use [`crate::create_datagen_provider`]
 //! for an all-inclusive provider.
 //!
-//! This crate contains two implementations of [`CldrPaths`]:
-//!
-//! - [`CldrPathsLocal`] which points directly to each local CLDR file, and
-//! - [`CldrPathsAllInOne`] which points to a local CLDR tree.
-//!
 //! **Important:** This data provider implementation is not optimized
 //! for production use. Read more in the [data provider] docs.
 //!
@@ -21,16 +16,10 @@
 
 mod cldr_paths;
 mod cldr_serde;
-mod error;
 mod reader;
 mod transform;
 
 pub use cldr_paths::CldrPaths;
-pub use cldr_paths::CldrPathsAllInOne;
-pub use cldr_paths::CldrPathsLocal;
-pub use error::Error as CldrError;
-
-use icu_provider::prelude::*;
 
 pub use transform::calendar::japanese::JapaneseErasProvider;
 pub use transform::datetime::week_data::WeekDataProvider;
@@ -41,6 +30,8 @@ pub use transform::locale_canonicalizer::aliases::AliasesProvider;
 pub use transform::locale_canonicalizer::likely_subtags::LikelySubtagsProvider;
 pub use transform::plurals::PluralsProvider;
 pub use transform::time_zones::TimeZonesProvider;
+
+use icu_provider::{ResourceKey, ResourceMarker};
 
 pub const ALL_KEYS: [ResourceKey; 19] = [
     icu_calendar::provider::JapaneseErasV1Marker::KEY,

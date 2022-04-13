@@ -50,13 +50,14 @@
 //! ```
 
 pub mod cldr;
+pub mod error;
 #[cfg(feature = "experimental")]
 pub mod segmenter;
 pub mod uprops;
 
+use icu_provider::prelude::*;
+use std::path::Path;
 use std::path::PathBuf;
-
-use icu_provider::ResourceKey;
 
 /// List of all supported keys
 pub fn get_all_keys() -> Vec<ResourceKey> {
@@ -67,44 +68,69 @@ pub fn get_all_keys() -> Vec<ResourceKey> {
     v.extend(icu_properties::provider::key::ALL_SET_KEYS);
     #[cfg(feature = "experimental")]
     {
-        use icu_provider::ResourceMarker;
         v.extend(icu_segmenter::ALL_KEYS);
         v.push(icu_casemapping::provider::CaseMappingV1Marker::KEY);
     }
     v
 }
 
-/// Options for creating a datagen provider.
-pub struct DatagenOptions {
-    /// Paths to CLDR source data.
-    ///
-    /// If `None`, providers that need CLDR source data cannot be constructed.
-    pub cldr_paths: Option<Box<dyn cldr::CldrPaths>>,
-
-    /// Path to Unicode Properties source data.
-    ///
-    /// If `None`, providers that need Unicode Properties source data cannot be constructed.
-    pub uprops_root: Option<PathBuf>,
-
-    #[cfg(feature = "experimental")]
-    /// Path to segmentation source data.
-    ///
-    /// If `None`, providers that need segmentation source data cannot be constructed.
-    pub segmenter_data_root: Option<PathBuf>,
+/// Bag of options for datagen source data.
+#[derive(Clone, Debug, Default)]
+pub struct SourceData {
+    cldr_paths: Option<cldr::CldrPaths>,
+    uprops_root: Option<PathBuf>,
 }
 
-impl DatagenOptions {
-    /// Create a DatagenOptions pointing to test data.
-    pub fn for_test() -> Self {
+impl SourceData {
+    /// Adds CLDR data to this `DataSource`. The `CldrPaths` should point to
+    /// a local `cldr-{version}-json-full.zip` directory (see
+    /// https://github.com/unicode-org/cldr-json/releases).
+    pub fn with_cldr(self, cldr_paths: cldr::CldrPaths) -> Self {
         Self {
-            cldr_paths: Some(Box::new(cldr::CldrPathsAllInOne {
+            cldr_paths: Some(cldr_paths),
+            uprops_root: self.uprops_root,
+        }
+    }
+
+    /// Adds Unicode Properties data to this `DataSource`. The path should
+    /// point to a local `icuexportdata_uprops_full` directory (see
+    /// https://github.com/unicode-org/icu/releases).
+    pub fn with_uprops(self, uprops_root: PathBuf) -> Self {
+        Self {
+            cldr_paths: self.cldr_paths,
+            uprops_root: Some(uprops_root),
+        }
+    }
+
+    /// Create `SourceData` pointing to test data.
+    pub fn for_test() -> Self {
+        Self::default()
+            .with_cldr(cldr::CldrPaths {
                 cldr_json_root: icu_testdata::paths::cldr_json_root(),
                 locale_subset: "full".to_string(),
-            })),
-            uprops_root: Some(icu_testdata::paths::uprops_toml_root()),
-            #[cfg(feature = "experimental")]
-            segmenter_data_root: Some(segmenter::segmenter_data_root()),
-        }
+            })
+            .with_uprops(icu_testdata::paths::uprops_toml_root())
+    }
+
+    /// Paths to CLDR source data.
+    pub fn get_cldr_paths(&self) -> Result<&cldr::CldrPaths, DataError> {
+        Ok(self
+            .cldr_paths
+            .as_ref()
+            .ok_or(error::DatagenError::MissingCldrPaths)?)
+    }
+
+    /// Path to Unicode Properties source data.
+    pub fn get_uprops_root(&self) -> Result<&Path, DataError> {
+        Ok(self
+            .uprops_root
+            .as_deref()
+            .ok_or(error::DatagenError::MissingUpropsPath)?)
+    }
+
+    /// Path to segmenter data.
+    pub fn get_segmenter_data_root(&self) -> Result<PathBuf, DataError> {
+        Ok(PathBuf::from(std::env!("CARGO_MANIFEST_DIR")).join("data"))
     }
 }
 
@@ -113,42 +139,38 @@ impl DatagenOptions {
 ///
 /// The macro behaves like a function that takes the following arguments:
 ///
-/// 1. An instance of [`DatagenOptions`] (required)
+/// 1. An instance of [`SourceData`] (required)
 /// 2. A list of providers to instantiate (optional)
 ///
 /// The return value is a complex type that implements all of the key data provider traits.
 ///
-/// The macro expands to code that contains `?` operators. It is recommended to invoke this
-/// macro from a function that returns an `eyre::Result`.
-///
 /// To create a data provider for all of ICU4X:
 ///
 /// ```no_run
-/// use icu_datagen::DatagenOptions;
+/// use icu_datagen::SourceData;
 ///
 /// // This data provider supports all keys required by ICU4X.
-/// let provider = icu_datagen::create_datagen_provider!(DatagenOptions::for_test());
-/// # Ok::<(), eyre::ErrReport>(())
+/// let provider = icu_datagen::create_datagen_provider!(SourceData::for_test());
 /// ```
 ///
 /// To create a data provider for a subset:
 ///
 /// ```no_run
-/// use icu_datagen::DatagenOptions;
+/// use icu_datagen::SourceData;
 ///
 /// // This data provider supports the keys for LocaleCanonicalizer.
-/// let provider = icu_datagen::create_datagen_provider!(DatagenOptions::for_test(), [
+/// let provider = icu_datagen::create_datagen_provider!(SourceData::for_test(),
+/// [
 ///     icu_datagen::cldr::AliasesProvider,
 ///     icu_datagen::cldr::LikelySubtagsProvider,
 /// ]);
-/// # Ok::<(), eyre::ErrReport>(())
 /// ```
 #[macro_export]
 #[cfg(not(feature = "experimental"))]
 macro_rules! create_datagen_provider {
-    ($datagen_options:expr) => {
+    ($source_data:expr) => {
         $crate::create_datagen_provider!(
-            $datagen_options,
+            $source_data,
             [
                 $crate::cldr::AliasesProvider,
                 $crate::cldr::CommonDateProvider,
@@ -167,12 +189,12 @@ macro_rules! create_datagen_provider {
             ]
         )
     };
-    ($datagen_options:expr, [ $($constructor:path),+, ]) => {{
-        use core::convert::TryFrom;
+    ($source_data:expr, [ $($constructor:path),+, ]) => {{
+        let __source = $source_data;
         icu_provider_adapters::make_forking_provider!(
             icu_provider_adapters::fork::by_key::ForkByKeyProvider,
             [
-                $(<$constructor>::try_from(&$datagen_options)?),+,
+                $(<$constructor>::from(&__source)),+,
             ]
         )
     }};
@@ -188,37 +210,32 @@ macro_rules! create_datagen_provider {
 ///
 /// The return value is a complex type that implements all of the key data provider traits.
 ///
-/// The macro expands to code that contains `?` operators. It is recommended to invoke this
-/// macro from a function that returns an `eyre::Result`.
-///
 /// To create a data provider for all of ICU4X:
 ///
 /// ```no_run
-/// use icu_datagen::DatagenOptions;
+/// use icu_datagen::SourceData;
 ///
 /// // This data provider supports all keys required by ICU4X.
-/// let provider = icu_datagen::create_datagen_provider!(DatagenOptions::for_test());
-/// # Ok::<(), eyre::ErrReport>(())
+/// let provider = icu_datagen::create_datagen_provider!(SourceData::for_test());
 /// ```
 ///
 /// To create a data provider for a subset:
 ///
 /// ```no_run
-/// use icu_datagen::DatagenOptions;
+/// use icu_datagen::SourceData;
 ///
 /// // This data provider supports the keys for LocaleCanonicalizer.
-/// let provider = icu_datagen::create_datagen_provider!(DatagenOptions::for_test(), [
+/// let provider = icu_datagen::create_datagen_provider!(SourceData::for_test(), [
 ///     icu_datagen::cldr::AliasesProvider,
 ///     icu_datagen::cldr::LikelySubtagsProvider,
 /// ]);
-/// # Ok::<(), eyre::ErrReport>(())
 /// ```
 #[macro_export]
 #[cfg(feature = "experimental")]
 macro_rules! create_datagen_provider {
-    ($datagen_options:expr) => {
+    ($source_data:expr) => {
         $crate::create_datagen_provider!(
-            $datagen_options,
+            $source_data,
             [
                 $crate::cldr::AliasesProvider,
                 $crate::cldr::CommonDateProvider,
@@ -239,12 +256,14 @@ macro_rules! create_datagen_provider {
             ]
         )
     };
-    ($datagen_options:expr, [ $($constructor:path),+, ]) => {{
-        use core::convert::TryFrom;
+    ($source_data:expr, [ $($constructor:path),+, ]) => {{
+        let __source = $source_data;
         icu_provider_adapters::make_forking_provider!(
             icu_provider_adapters::fork::by_key::ForkByKeyProvider,
             [
-                $(<$constructor>::try_from(&$datagen_options)?),+,
+                icu_provider::hello_world::HelloWorldProvider::new_with_placeholder_data(),
+
+                $(<$constructor>::from(&__source)),+,
             ]
         )
     }};

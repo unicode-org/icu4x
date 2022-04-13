@@ -195,11 +195,10 @@ struct FooProvider {
     // ...
 }
 
-impl TryFrom<&dyn CldrPaths> for FooProvider {
-    type Error = Error;
-    fn try_from(cldr_paths: &dyn CldrPaths) -> Result<Self, Self::Error> {
+impl From<&SourceData> for FooProvider {
+    fn from(source: &SourceData) -> Self {
         // Don't do any heavy lifting here. Ideally you just want to save
-        // the paths you need.
+        // the paths you need. In particular, you cannot error here.
     }
 }
 

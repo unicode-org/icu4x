@@ -15,12 +15,9 @@
 //! # Examples
 //!
 //! ```
+//! # use icu_datagen::SourceData;
 //! use icu_datagen::segmenter::SegmenterRuleProvider;
-//! let provider = SegmenterRuleProvider::try_new(
-//!     "/path/to/segmenter/data/directory",
-//!     "/path/to/uprops/data/directory",
-//! )
-//! .expect_err("Specify a real directory in the line above");
+//! let provider = SegmenterRuleProvider::from(&SourceData::for_test());
 //! ```
 //!
 //! # Exporting data
@@ -32,13 +29,6 @@
 //! [UAX14]: https://www.unicode.org/reports/tr14/
 //! [UAX29]: https://www.unicode.org/reports/tr29/
 
-use std::path::PathBuf;
-
 mod transform;
 
 pub use transform::SegmenterRuleProvider;
-
-/// Returns the absolute path to the directory containing the segmenter raw data.
-pub fn segmenter_data_root() -> PathBuf {
-    PathBuf::from(std::env!("CARGO_MANIFEST_DIR")).join("data")
-}

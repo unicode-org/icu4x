@@ -13,7 +13,7 @@ use displaydoc::Display;
 #[non_exhaustive]
 pub enum DataErrorKind {
     /// No data for the provided resource key.
-    #[displaydoc("Missing resource key")]
+    #[displaydoc("Missing data for key")]
     MissingResourceKey,
 
     /// There is data for the key, but not for this particular variant.

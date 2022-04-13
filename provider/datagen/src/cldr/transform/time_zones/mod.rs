@@ -5,17 +5,15 @@
 use crate::cldr::cldr_serde;
 use crate::cldr::cldr_serde::time_zones::time_zone_names::TimeZoneNames;
 use crate::cldr::cldr_serde::time_zones::CldrTimeZonesData;
-use crate::cldr::error::Error;
 use crate::cldr::reader::{get_langid_subdirectories, get_langid_subdirectory, open_reader};
-use crate::cldr::CldrPaths;
+use crate::error::DatagenError;
+use crate::SourceData;
 use elsa::sync::FrozenBTreeMap;
 use icu_datetime::provider::time_zones::*;
 use icu_locid::LanguageIdentifier;
 use icu_provider::datagen::IterableResourceProvider;
 use icu_provider::prelude::*;
 use litemap::LiteMap;
-use std::convert::TryFrom;
-use std::path::PathBuf;
 use std::sync::RwLock;
 
 mod convert;
@@ -23,37 +21,20 @@ mod convert;
 /// A data provider reading from CLDR JSON zones files.
 #[derive(Debug)]
 pub struct TimeZonesProvider {
-    path: PathBuf,
+    source: SourceData,
     time_zone_names_data: FrozenBTreeMap<LanguageIdentifier, Box<TimeZoneNames>>,
-    bcp47_tzid_path: PathBuf,
     bcp47_tzid_data: RwLock<LiteMap<String, String>>,
-    meta_zone_id_path: PathBuf,
     meta_zone_id_data: RwLock<LiteMap<String, String>>,
 }
 
-impl TimeZonesProvider {
-    /// Constructs an instance from paths to source data.
-    pub fn try_new(cldr_paths: &(impl CldrPaths + ?Sized)) -> eyre::Result<Self> {
-        Ok(Self {
-            path: cldr_paths.cldr_dates_gregorian()?.join("main"),
+impl From<&SourceData> for TimeZonesProvider {
+    fn from(source: &SourceData) -> Self {
+        Self {
+            source: source.clone(),
             time_zone_names_data: FrozenBTreeMap::new(),
-            bcp47_tzid_path: cldr_paths.cldr_bcp47()?.join("bcp47"),
             bcp47_tzid_data: RwLock::new(LiteMap::new()),
-            meta_zone_id_path: cldr_paths.cldr_core()?.join("supplemental"),
             meta_zone_id_data: RwLock::new(LiteMap::new()),
-        })
-    }
-}
-
-impl TryFrom<&crate::DatagenOptions> for TimeZonesProvider {
-    type Error = eyre::ErrReport;
-    fn try_from(options: &crate::DatagenOptions) -> eyre::Result<Self> {
-        TimeZonesProvider::try_new(
-            &**options
-                .cldr_paths
-                .as_ref()
-                .ok_or_else(|| eyre::eyre!("TimeZonesProvider requires cldr_paths"))?,
-        )
+        }
     }
 }
 
@@ -67,12 +48,12 @@ macro_rules! impl_resource_provider {
                     let time_zone_names = if let Some(time_zone_names) = self.time_zone_names_data.get(&langid) {
                         time_zone_names
                     } else {
-                        let path = get_langid_subdirectory(&self.path, &langid)?
-                            .ok_or_else(|| DataErrorKind::MissingLocale.with_req(<$marker>::KEY, req))?
+                        let path = get_langid_subdirectory(&self.source.get_cldr_paths()?.cldr_dates_gregorian().join("main"), &langid)?
+                            .ok_or_else(|| DataErrorKind::MissingLocale.into_error())?
                             .join("timeZoneNames.json");
                         let mut resource: cldr_serde::time_zones::time_zone_names::Resource =
                             serde_json::from_reader(open_reader(&path)?)
-                                .map_err(|e| Error::Json(e, Some(path)))?;
+                                .map_err(|e| DatagenError::from((e, path)))?;
                         self.time_zone_names_data.insert(langid.clone(), Box::new(resource
                             .main
                             .0
@@ -83,11 +64,11 @@ macro_rules! impl_resource_provider {
                     };
 
                     if self.bcp47_tzid_data.read().unwrap().len() == 0 {
-                        let bcp47_time_zone_path = self.bcp47_tzid_path.join("timezone.json");
+                        let bcp47_time_zone_path = self.source.get_cldr_paths()?.cldr_bcp47().join("bcp47").join("timezone.json");
 
                         let resource: cldr_serde::time_zones::bcp47_tzid::Resource =
                             serde_json::from_reader(open_reader(&bcp47_time_zone_path)?)
-                                .map_err(|e| Error::Json(e, Some(bcp47_time_zone_path)))?;
+                                .map_err(|e| DatagenError::from((e, bcp47_time_zone_path)))?;
                          let r = resource
                             .keyword
                             .u
@@ -105,11 +86,11 @@ macro_rules! impl_resource_provider {
                     }
 
                     if self.meta_zone_id_data.read().unwrap().len() == 0 {
-                        let meta_zone_id_path = self.meta_zone_id_path.join("metaZones.json");
+                        let meta_zone_id_path = self.source.get_cldr_paths()?.cldr_core().join("supplemental").join("metaZones.json");
 
                         let resource: cldr_serde::time_zones::meta_zones::Resource =
                             serde_json::from_reader(open_reader(&meta_zone_id_path)?)
-                                .map_err(|e| Error::Json(e, Some(meta_zone_id_path)))?;
+                                .map_err(|e| DatagenError::from((e, meta_zone_id_path)))?;
                          let r = resource
                             .supplemental
                             .meta_zones
@@ -142,7 +123,7 @@ macro_rules! impl_resource_provider {
                     &self,
                 ) -> Result<Box<dyn Iterator<Item = ResourceOptions> + '_>, DataError> {
                     Ok(Box::new(
-                        get_langid_subdirectories(&self.path)?
+                        get_langid_subdirectories(&self.source.get_cldr_paths()?.cldr_dates_gregorian().join("main"))?
                             .map(Into::<ResourceOptions>::into),
                     ))
                 }
@@ -172,8 +153,7 @@ mod tests {
     fn basic_cldr_time_zones() {
         use icu_locid::langid;
 
-        let cldr_paths = crate::cldr::cldr_paths::for_test();
-        let provider = TimeZonesProvider::try_new(&cldr_paths).unwrap();
+        let provider = TimeZonesProvider::from(&SourceData::for_test());
 
         let time_zone_formats: DataPayload<TimeZoneFormatsV1Marker> = provider
             .load_resource(&DataRequest {

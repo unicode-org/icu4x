@@ -3,51 +3,26 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::cldr::cldr_serde;
-use crate::cldr::error::Error;
 use crate::cldr::reader::{get_langid_subdirectories, get_langid_subdirectory, open_reader};
-use crate::cldr::CldrPaths;
+use crate::error::DatagenError;
 use crate::uprops::EnumeratedPropertyCodePointTrieProvider;
+use crate::SourceData;
 use icu_list::provider::*;
 use icu_locid::language;
 use icu_provider::datagen::IterableResourceProvider;
 use icu_provider::prelude::*;
-use std::convert::TryFrom;
-use std::path::PathBuf;
 
 /// A data provider reading from CLDR JSON list rule files.
 #[derive(Debug)]
 pub struct ListProvider {
-    cldr_misc: PathBuf,
-    uprops_root: PathBuf,
+    source: SourceData,
 }
 
-impl ListProvider {
-    /// Constructs an instance from paths to source data.
-    pub fn try_new(
-        cldr_paths: &(impl CldrPaths + ?Sized),
-        uprops_root: PathBuf,
-    ) -> eyre::Result<Self> {
-        Ok(Self {
-            cldr_misc: cldr_paths.cldr_misc()?,
-            uprops_root,
-        })
-    }
-}
-
-impl TryFrom<&crate::DatagenOptions> for ListProvider {
-    type Error = eyre::ErrReport;
-    fn try_from(options: &crate::DatagenOptions) -> eyre::Result<Self> {
-        ListProvider::try_new(
-            &**options
-                .cldr_paths
-                .as_ref()
-                .ok_or_else(|| eyre::eyre!("ListProvider requires cldr_paths"))?,
-            options
-                .uprops_root
-                .as_ref()
-                .ok_or_else(|| eyre::eyre!("ListProvider requires uprops_root"))?
-                .to_path_buf(),
-        )
+impl From<&SourceData> for ListProvider {
+    fn from(source: &SourceData) -> Self {
+        ListProvider {
+            source: source.clone(),
+        }
     }
 }
 
@@ -58,10 +33,14 @@ impl<M: ResourceMarker<Yokeable = ListFormatterPatternsV1<'static>>> ResourcePro
         let langid = req.options.get_langid();
 
         let resource: cldr_serde::list_patterns::Resource = {
-            let path = get_langid_subdirectory(&self.cldr_misc.join("main"), &langid)?
-                .ok_or_else(|| DataErrorKind::MissingLocale.with_req(M::KEY, req))?
-                .join("listPatterns.json");
-            serde_json::from_reader(open_reader(&path)?).map_err(|e| Error::Json(e, Some(path)))?
+            let path = get_langid_subdirectory(
+                &self.source.get_cldr_paths()?.cldr_misc().join("main"),
+                &langid,
+            )?
+            .ok_or_else(|| DataErrorKind::MissingLocale.into_error())?
+            .join("listPatterns.json");
+            serde_json::from_reader(open_reader(&path)?)
+                .map_err(|e| DatagenError::from((e, path)))?
         };
 
         let data = &resource
@@ -75,11 +54,7 @@ impl<M: ResourceMarker<Yokeable = ListFormatterPatternsV1<'static>>> ResourcePro
             AndListV1Marker::KEY => (&data.standard, &data.standard_short, &data.standard_narrow),
             OrListV1Marker::KEY => (&data.or, &data.or_short, &data.or_narrow),
             UnitListV1Marker::KEY => (&data.unit, &data.unit_short, &data.unit_narrow),
-            _ => {
-                return Err(
-                    DataError::custom("Unknown key for ListFormatterPatternsV1").with_key(M::KEY)
-                )
-            }
+            _ => return Err(DataError::custom("Unknown key for ListFormatterPatternsV1")),
         };
 
         let mut patterns = ListFormatterPatternsV1::try_new([
@@ -95,8 +70,7 @@ impl<M: ResourceMarker<Yokeable = ListFormatterPatternsV1<'static>>> ResourcePro
             &narrow.middle,
             &narrow.end,
             &narrow.pair,
-        ])
-        .map_err(|e| e.with_req(M::KEY, req))?;
+        ])?;
 
         if langid.language == language!("es") {
             match M::KEY {
@@ -135,9 +109,7 @@ impl<M: ResourceMarker<Yokeable = ListFormatterPatternsV1<'static>>> ResourcePro
                     &format!(
                         "[^{}]",
                         icu_properties::maps::get_script(
-                            &EnumeratedPropertyCodePointTrieProvider::try_new(&self.uprops_root)
-                                .map_err(|e| DataError::custom("Properties data provider error")
-                                    .with_display_context(&e))?
+                            &EnumeratedPropertyCodePointTrieProvider::from(&self.source)
                         )
                         .map_err(|e| DataError::custom("data for CodePointTrie of Script")
                             .with_display_context(&e))?
@@ -177,7 +149,7 @@ impl<M: ResourceMarker<Yokeable = ListFormatterPatternsV1<'static>>> IterableRes
         &self,
     ) -> Result<Box<dyn Iterator<Item = ResourceOptions> + '_>, DataError> {
         Ok(Box::new(
-            get_langid_subdirectories(&self.cldr_misc.join("main"))?
+            get_langid_subdirectories(&self.source.get_cldr_paths()?.cldr_misc().join("main"))?
                 .map(Into::<ResourceOptions>::into),
         ))
     }
@@ -192,9 +164,7 @@ mod tests {
 
     macro_rules! test {
         ($locale:literal, $type:ident, $(($input:expr, $output:literal),)+) => {
-            let cldr_paths = crate::cldr::cldr_paths::for_test();
-            let provider = ListProvider::try_new(
-                &cldr_paths, icu_testdata::paths::uprops_toml_root()).unwrap();
+            let provider = ListProvider::from(&SourceData::for_test());
             let f = ListFormatter::$type(locale!($locale), &provider, ListStyle::Wide).unwrap();
             $(
                 assert_writeable_eq!(f.format($input.iter()), $output);

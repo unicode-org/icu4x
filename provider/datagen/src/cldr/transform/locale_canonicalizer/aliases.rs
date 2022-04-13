@@ -3,65 +3,53 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::cldr::cldr_serde;
-use crate::cldr::error::Error;
 use crate::cldr::reader::open_reader;
-use crate::cldr::CldrPaths;
+use crate::error::DatagenError;
+use crate::SourceData;
 use icu_locale_canonicalizer::provider::*;
 use icu_locid::{language, subtags, LanguageIdentifier};
 use icu_provider::datagen::IterableResourceProvider;
 use icu_provider::prelude::*;
-use std::convert::TryFrom;
-use std::path::PathBuf;
 use tinystr::TinyAsciiStr;
 use zerovec::{ZeroMap, ZeroSlice};
 
 /// A data provider reading from CLDR JSON likely subtags rule files.
 #[derive(Debug)]
 pub struct AliasesProvider {
-    path: PathBuf,
+    source: SourceData,
 }
 
-impl AliasesProvider {
-    /// Constructs an instance from paths to source data.
-    pub fn try_new(cldr_paths: &(impl CldrPaths + ?Sized)) -> eyre::Result<Self> {
-        Ok(Self {
-            path: cldr_paths
-                .cldr_core()?
-                .join("supplemental")
-                .join("aliases.json"),
-        })
-    }
-}
-
-impl TryFrom<&crate::DatagenOptions> for AliasesProvider {
-    type Error = eyre::ErrReport;
-    fn try_from(options: &crate::DatagenOptions) -> eyre::Result<Self> {
-        AliasesProvider::try_new(
-            &**options
-                .cldr_paths
-                .as_ref()
-                .ok_or_else(|| eyre::eyre!("AliasesProvider requires cldr_paths"))?,
-        )
+impl From<&SourceData> for AliasesProvider {
+    fn from(source: &SourceData) -> Self {
+        AliasesProvider {
+            source: source.clone(),
+        }
     }
 }
 
 impl ResourceProvider<AliasesV1Marker> for AliasesProvider {
     fn load_resource(&self, req: &DataRequest) -> Result<DataResponse<AliasesV1Marker>, DataError> {
-        let data: cldr_serde::aliases::Resource = serde_json::from_reader(open_reader(&self.path)?)
-            .map_err(|e| Error::Json(e, Some(self.path.clone())))?;
-
         // We treat searching for `und` as a request for all data. Other requests
         // are not currently supported.
-        if req.options.is_empty() {
-            let metadata = DataResponseMetadata::default();
-            // TODO(#1109): Set metadata.data_langid correctly.
-            Ok(DataResponse {
-                metadata,
-                payload: Some(DataPayload::from_owned(AliasesV1::from(&data))),
-            })
-        } else {
-            Err(DataErrorKind::ExtraneousResourceOptions.with_req(AliasesV1Marker::KEY, req))
+        if !req.options.is_empty() {
+            return Err(DataErrorKind::ExtraneousResourceOptions.into_error());
         }
+
+        let path = self
+            .source
+            .get_cldr_paths()?
+            .cldr_core()
+            .join("supplemental")
+            .join("aliases.json");
+        let data: cldr_serde::aliases::Resource = serde_json::from_reader(open_reader(&path)?)
+            .map_err(|e| DatagenError::from((e, path)))?;
+
+        let metadata = DataResponseMetadata::default();
+        // TODO(#1109): Set metadata.data_langid correctly.
+        Ok(DataResponse {
+            metadata,
+            payload: Some(DataPayload::from_owned(AliasesV1::from(&data))),
+        })
     }
 }
 
@@ -321,8 +309,7 @@ fn test_rules_cmp() {
 fn test_basic() {
     use tinystr::tinystr;
 
-    let cldr_paths = crate::cldr::cldr_paths::for_test();
-    let provider = AliasesProvider::try_new(&cldr_paths).unwrap();
+    let provider = AliasesProvider::from(&SourceData::for_test());
     let data: DataPayload<AliasesV1Marker> = provider
         .load_resource(&DataRequest::default())
         .unwrap()

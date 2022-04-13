@@ -3,16 +3,15 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::cldr::cldr_serde;
-use crate::cldr::error::Error;
 use crate::cldr::reader::{get_langid_subdirectories, get_langid_subdirectory, open_reader};
-use crate::cldr::CldrPaths;
+use crate::error::DatagenError;
+use crate::SourceData;
 use icu_decimal::provider::*;
 use icu_provider::datagen::IterableResourceProvider;
 use icu_provider::prelude::*;
 use litemap::LiteMap;
 use std::borrow::Cow;
 use std::convert::TryFrom;
-use std::path::PathBuf;
 use std::sync::RwLock;
 use tinystr::TinyStr8;
 
@@ -21,35 +20,17 @@ mod decimal_pattern;
 /// A data provider reading from CLDR JSON plural rule files.
 #[derive(Debug)]
 pub struct NumbersProvider {
-    numbers_path: PathBuf,
-    numbering_systems_path: PathBuf,
+    source: SourceData,
     cldr_numbering_systems_data:
         RwLock<Option<LiteMap<TinyStr8, cldr_serde::numbering_systems::NumberingSystem>>>,
 }
 
-impl NumbersProvider {
-    /// Constructs an instance from paths to source data.
-    pub fn try_new(cldr_paths: &(impl CldrPaths + ?Sized)) -> eyre::Result<Self> {
-        Ok(Self {
-            numbers_path: cldr_paths.cldr_numbers()?.join("main"),
-            numbering_systems_path: cldr_paths
-                .cldr_core()?
-                .join("supplemental")
-                .join("numberingSystems.json"),
+impl From<&SourceData> for NumbersProvider {
+    fn from(source: &SourceData) -> Self {
+        NumbersProvider {
+            source: source.clone(),
             cldr_numbering_systems_data: RwLock::new(None),
-        })
-    }
-}
-
-impl TryFrom<&crate::DatagenOptions> for NumbersProvider {
-    type Error = eyre::ErrReport;
-    fn try_from(options: &crate::DatagenOptions) -> eyre::Result<Self> {
-        NumbersProvider::try_new(
-            &**options
-                .cldr_paths
-                .as_ref()
-                .ok_or_else(|| eyre::eyre!("NumbersProvider requires cldr_paths"))?,
-        )
+        }
     }
 }
 
@@ -96,12 +77,14 @@ impl ResourceProvider<DecimalSymbolsV1Marker> for NumbersProvider {
         let langid = req.options.get_langid();
 
         let resource: cldr_serde::numbers::Resource = {
-            let path = get_langid_subdirectory(&self.numbers_path, &langid)?
-                .ok_or_else(|| {
-                    DataErrorKind::MissingLocale.with_req(DecimalSymbolsV1Marker::KEY, req)
-                })?
-                .join("numbers.json");
-            serde_json::from_reader(open_reader(&path)?).map_err(|e| Error::Json(e, Some(path)))?
+            let path = get_langid_subdirectory(
+                &self.source.get_cldr_paths()?.cldr_numbers().join("main"),
+                &langid,
+            )?
+            .ok_or_else(|| DataErrorKind::MissingLocale.into_error())?
+            .join("numbers.json");
+            serde_json::from_reader(open_reader(&path)?)
+                .map_err(|e| DatagenError::from((e, path)))?
         };
 
         #[allow(clippy::expect_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
@@ -114,13 +97,19 @@ impl ResourceProvider<DecimalSymbolsV1Marker> for NumbersProvider {
         let nsname = numbers.default_numbering_system;
 
         let mut result = DecimalSymbolsV1::try_from(numbers)
-            .map_err(|s| Error::Custom(s.to_string(), Some(langid.clone())))?;
+            .map_err(|s| DatagenError::Custom(s.to_string(), Some(langid.clone())))?;
 
         #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
         if self.cldr_numbering_systems_data.read().unwrap().is_none() {
+            let path = self
+                .source
+                .get_cldr_paths()?
+                .cldr_core()
+                .join("supplemental")
+                .join("numberingSystems.json");
             let resource: cldr_serde::numbering_systems::Resource =
-                serde_json::from_reader(open_reader(&self.numbering_systems_path)?)
-                    .map_err(|e| Error::Json(e, None))?;
+                serde_json::from_reader(open_reader(&path)?)
+                    .map_err(|e| DatagenError::from((e, path)))?;
             let _ = self
                 .cldr_numbering_systems_data
                 .write()
@@ -131,7 +120,7 @@ impl ResourceProvider<DecimalSymbolsV1Marker> for NumbersProvider {
         result.digits = self
             .get_digits_for_numbering_system(nsname)
             .ok_or_else(|| {
-                Error::Custom(
+                DatagenError::Custom(
                     format!("Could not process numbering system: {:?}", nsname),
                     Some(langid.clone()),
                 )
@@ -159,7 +148,8 @@ impl IterableResourceProvider<DecimalSymbolsV1Marker> for NumbersProvider {
         &self,
     ) -> Result<Box<dyn Iterator<Item = ResourceOptions> + '_>, DataError> {
         Ok(Box::new(
-            get_langid_subdirectories(&self.numbers_path)?.map(Into::<ResourceOptions>::into),
+            get_langid_subdirectories(&self.source.get_cldr_paths()?.cldr_numbers().join("main"))?
+                .map(Into::<ResourceOptions>::into),
         ))
     }
 }
@@ -203,8 +193,7 @@ impl TryFrom<&cldr_serde::numbers::Numbers> for DecimalSymbolsV1<'static> {
 fn test_basic() {
     use icu_locid::locale;
 
-    let cldr_paths = crate::cldr::cldr_paths::for_test();
-    let provider = NumbersProvider::try_new(&cldr_paths).unwrap();
+    let provider = NumbersProvider::from(&SourceData::for_test());
 
     let ar_decimal: DataPayload<DecimalSymbolsV1Marker> = provider
         .load_resource(&DataRequest {

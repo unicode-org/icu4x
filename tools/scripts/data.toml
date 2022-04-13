@@ -138,7 +138,6 @@ args = [
     "--bin=icu4x-verify-zero-copy",
     "--features=experimental",
     "--",
-    "--input-from-testdata",
     "--test-keys",
     "--check",
 ]

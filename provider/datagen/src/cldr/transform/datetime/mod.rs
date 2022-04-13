@@ -3,17 +3,14 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::cldr::cldr_serde;
-use crate::cldr::error::Error;
 use crate::cldr::reader::{get_langid_subdirectories, get_langid_subdirectory, open_reader};
-use crate::cldr::CldrPaths;
+use crate::error::DatagenError;
+use crate::SourceData;
 use elsa::sync::FrozenBTreeMap;
-
 use icu_datetime::provider::calendar::*;
 use icu_locid::{unicode_ext_key, Locale};
 use icu_provider::datagen::IterableResourceProvider;
 use icu_provider::prelude::*;
-use std::convert::TryFrom;
-use std::path::PathBuf;
 use std::str::FromStr;
 
 mod patterns;
@@ -24,29 +21,16 @@ pub mod week_data;
 /// Common code for a data provider reading from CLDR JSON dates files.
 #[derive(Debug)]
 pub struct CommonDateProvider {
-    paths: Vec<(&'static str, &'static str, PathBuf)>,
+    source: SourceData,
     data: FrozenBTreeMap<ResourceOptions, Box<cldr_serde::ca::Dates>>,
 }
 
-impl CommonDateProvider {
-    /// Constructs an instance from paths to source data.
-    pub fn try_new(cldr_paths: &(impl CldrPaths + ?Sized)) -> eyre::Result<Self> {
-        Ok(Self {
-            paths: cldr_paths.cldr_dates_all(),
+impl From<&SourceData> for CommonDateProvider {
+    fn from(source: &SourceData) -> Self {
+        CommonDateProvider {
+            source: source.clone(),
             data: FrozenBTreeMap::new(),
-        })
-    }
-}
-
-impl TryFrom<&crate::DatagenOptions> for CommonDateProvider {
-    type Error = eyre::ErrReport;
-    fn try_from(options: &crate::DatagenOptions) -> eyre::Result<Self> {
-        CommonDateProvider::try_new(
-            &**options
-                .cldr_paths
-                .as_ref()
-                .ok_or_else(|| eyre::eyre!("CommonDateProvider requires cldr_paths"))?,
-        )
+        }
     }
 }
 
@@ -60,27 +44,27 @@ macro_rules! impl_resource_provider {
                 ) -> Result<DataResponse<$marker>, DataError> {
                     let langid = req.options.get_langid();
                     let calendar = req.options.get_unicode_ext(&unicode_ext_key!("ca"))
-                        .ok_or_else(|| DataErrorKind::NeedsVariant.with_req(<$marker>::KEY, req))?
+                        .ok_or_else(|| DataErrorKind::NeedsVariant.into_error())?
                         .to_string();
 
                     let dates = if let Some(dates) = self.data.get(&req.options) {
                         dates
                     } else {
-                        let (cldr_cal, _, path) = self
-                            .paths
+                        let cldr_dates_all = self.source.get_cldr_paths()?.cldr_dates_all();
+                        let (cldr_cal, _, path) = cldr_dates_all
                             .iter()
                             .find(|(_, bcp_cal, _)| bcp_cal == &calendar)
-                            .ok_or_else(|| DataErrorKind::MissingVariant.with_req(<$marker>::KEY, req))?;
+                            .ok_or_else(|| DataErrorKind::MissingVariant.into_error())?;
 
                         let locale_dir = get_langid_subdirectory(&path.join("main"), &langid)?
-                            .ok_or_else(|| DataErrorKind::MissingLocale.with_req(<$marker>::KEY, req))?;
+                            .ok_or_else(|| DataErrorKind::MissingLocale.into_error())?;
 
                         let cal_file = format!("ca-{}.json", cldr_cal);
                         let path = locale_dir.join(&cal_file);
 
                         let mut resource: cldr_serde::ca::Resource =
                             serde_json::from_reader(open_reader(&path)?)
-                                .map_err(|e| Error::Json(e, Some(path)))?;
+                                .map_err(|e| DatagenError::from((e, path)))?;
 
                         self.data.insert(req.options.clone(), Box::new(resource
                             .main
@@ -91,7 +75,7 @@ macro_rules! impl_resource_provider {
                             .calendars
                             .remove(*cldr_cal)
                             .ok_or_else(|| {
-                                Error::Custom(
+                                DatagenError::Custom(
                                     format!("{} does not have {} field", cal_file, cldr_cal),
                                     None,
                                 )
@@ -112,16 +96,8 @@ macro_rules! impl_resource_provider {
                 fn supported_options(
                     &self,
                 ) -> Result<Box<dyn Iterator<Item = ResourceOptions> + '_>, DataError> {
-                    // Raise an error if Gregorian paths are not available
-                    self.paths
-                        .iter()
-                        .find(|(_, cal, _)| cal == &"gregory")
-                        .ok_or(Error::MissingSource(crate::cldr::error::MissingSourceError {
-                            src: "cldr-dates/gregory",
-                        }))?;
-
                     let mut r = Vec::new();
-                    for (_, cal, path) in &self.paths {
+                    for (_, cal, path) in &self.source.get_cldr_paths()?.cldr_dates_all() {
                         let cal_value = icu_locid::extensions::unicode::Value::from_str(cal)
                             .map_err(|e| DataError::custom(
                                 "could not parse calendar identifier"
@@ -160,9 +136,7 @@ mod test {
 
     #[test]
     fn test_basic_patterns() {
-        let cldr_paths = crate::cldr::cldr_paths::for_test();
-        let provider =
-            CommonDateProvider::try_new(&cldr_paths).expect("Failed to retrieve provider");
+        let provider = CommonDateProvider::from(&SourceData::for_test());
 
         let locale: Locale = "cs-u-ca-gregory".parse().unwrap();
         let cs_dates: DataPayload<DatePatternsV1Marker> = provider
@@ -179,9 +153,7 @@ mod test {
 
     #[test]
     fn test_with_numbering_system() {
-        let cldr_paths = crate::cldr::cldr_paths::for_test();
-        let provider =
-            CommonDateProvider::try_new(&cldr_paths).expect("Failed to retrieve provider");
+        let provider = CommonDateProvider::from(&SourceData::for_test());
 
         let locale: Locale = "haw-u-ca-gregory".parse().unwrap();
         let cs_dates: DataPayload<DatePatternsV1Marker> = provider
@@ -200,9 +172,9 @@ mod test {
 
     #[test]
     fn test_datetime_skeletons() {
-        let cldr_paths = crate::cldr::cldr_paths::for_test();
-        let provider =
-            CommonDateProvider::try_new(&cldr_paths).expect("Failed to retrieve provider");
+        use std::convert::TryFrom;
+
+        let provider = CommonDateProvider::from(&SourceData::for_test());
 
         let locale: Locale = "fil-u-ca-gregory".parse().unwrap();
         let skeletons: DataPayload<DateSkeletonPatternsV1Marker> = provider
@@ -244,8 +216,7 @@ mod test {
 
     #[test]
     fn test_basic_symbols() {
-        let cldr_paths = crate::cldr::cldr_paths::for_test();
-        let provider = CommonDateProvider::try_new(&cldr_paths).unwrap();
+        let provider = CommonDateProvider::from(&SourceData::for_test());
 
         let locale: Locale = "cs-u-ca-gregory".parse().unwrap();
         let cs_dates: DataPayload<DateSymbolsV1Marker> = provider
@@ -267,8 +238,7 @@ mod test {
 
     #[test]
     fn unalias_contexts() {
-        let cldr_paths = crate::cldr::cldr_paths::for_test();
-        let provider = CommonDateProvider::try_new(&cldr_paths).unwrap();
+        let provider = CommonDateProvider::from(&SourceData::for_test());
 
         let locale: Locale = "cs-u-ca-gregory".parse().unwrap();
         let cs_dates: DataPayload<DateSymbolsV1Marker> = provider
