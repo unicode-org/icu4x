@@ -5,196 +5,196 @@
         "arc",
         "Nbat"
       ],
-      "und-JO"
+      "JO"
     ],
     [
       [
         "arc",
         "Palm"
       ],
-      "und-SY"
+      "SY"
     ],
     [
       [
         "az",
         "Arab"
       ],
-      "und-IR"
+      "IR"
     ],
     [
       [
         "cu",
         "Glag"
       ],
-      "und-BG"
+      "BG"
     ],
     [
       [
         "en",
         "Shaw"
       ],
-      "und-GB"
+      "GB"
     ],
     [
       [
         "ff",
         "Adlm"
       ],
-      "und-GN"
+      "GN"
     ],
     [
       [
         "grc",
         "Linb"
       ],
-      "und-GR"
+      "GR"
     ],
     [
       [
         "kk",
         "Arab"
       ],
-      "und-CN"
+      "CN"
     ],
     [
       [
         "ku",
         "Arab"
       ],
-      "und-IQ"
+      "IQ"
     ],
     [
       [
         "ku",
         "Yezi"
       ],
-      "und-GE"
+      "GE"
     ],
     [
       [
         "ky",
         "Arab"
       ],
-      "und-CN"
+      "CN"
     ],
     [
       [
         "ky",
         "Latn"
       ],
-      "und-TR"
+      "TR"
     ],
     [
       [
         "lif",
         "Limb"
       ],
-      "und-IN"
+      "IN"
     ],
     [
       [
         "man",
         "Nkoo"
       ],
-      "und-GN"
+      "GN"
     ],
     [
       [
         "mn",
         "Mong"
       ],
-      "und-CN"
+      "CN"
     ],
     [
       [
         "pa",
         "Arab"
       ],
-      "und-PK"
+      "PK"
     ],
     [
       [
         "pal",
         "Phlp"
       ],
-      "und-CN"
+      "CN"
     ],
     [
       [
         "sd",
         "Deva"
       ],
-      "und-IN"
+      "IN"
     ],
     [
       [
         "sd",
         "Khoj"
       ],
-      "und-IN"
+      "IN"
     ],
     [
       [
         "sd",
         "Sind"
       ],
-      "und-IN"
+      "IN"
     ],
     [
       [
         "tg",
         "Arab"
       ],
-      "und-PK"
+      "PK"
     ],
     [
       [
         "ug",
         "Cyrl"
       ],
-      "und-KZ"
+      "KZ"
     ],
     [
       [
         "unr",
         "Deva"
       ],
-      "und-NP"
+      "NP"
     ],
     [
       [
         "uz",
         "Arab"
       ],
-      "und-AF"
+      "AF"
     ],
     [
       [
         "yue",
         "Hans"
       ],
-      "und-CN"
+      "CN"
     ],
     [
       [
         "zh",
         "Bopo"
       ],
-      "und-TW"
+      "TW"
     ],
     [
       [
         "zh",
         "Hanb"
       ],
-      "und-TW"
+      "TW"
     ],
     [
       [
         "zh",
         "Hant"
       ],
-      "und-TW"
+      "TW"
     ]
   ],
   "language_region": [
@@ -203,1649 +203,5684 @@
         "az",
         "IQ"
       ],
-      "und-Arab"
+      "Arab"
     ],
     [
       [
         "az",
         "IR"
       ],
-      "und-Arab"
+      "Arab"
     ],
     [
       [
         "az",
         "RU"
       ],
-      "und-Cyrl"
+      "Cyrl"
     ],
     [
       [
         "ha",
         "CM"
       ],
-      "und-Arab"
+      "Arab"
     ],
     [
       [
         "ha",
         "SD"
       ],
-      "und-Arab"
+      "Arab"
     ],
     [
       [
         "kk",
         "AF"
       ],
-      "und-Arab"
+      "Arab"
     ],
     [
       [
         "kk",
         "CN"
       ],
-      "und-Arab"
+      "Arab"
     ],
     [
       [
         "kk",
         "IR"
       ],
-      "und-Arab"
+      "Arab"
     ],
     [
       [
         "kk",
         "MN"
       ],
-      "und-Arab"
+      "Arab"
     ],
     [
       [
         "ku",
         "LB"
       ],
-      "und-Arab"
+      "Arab"
     ],
     [
       [
         "ky",
         "CN"
       ],
-      "und-Arab"
+      "Arab"
     ],
     [
       [
         "ky",
         "TR"
       ],
-      "und-Latn"
+      "Latn"
     ],
     [
       [
         "man",
         "GN"
       ],
-      "und-Nkoo"
+      "Nkoo"
     ],
     [
       [
         "mn",
         "CN"
       ],
-      "und-Mong"
+      "Mong"
     ],
     [
       [
         "ms",
         "CC"
       ],
-      "und-Arab"
+      "Arab"
     ],
     [
       [
         "pa",
         "PK"
       ],
-      "und-Arab"
+      "Arab"
     ],
     [
       [
         "rif",
         "NL"
       ],
-      "und-Latn"
+      "Latn"
     ],
     [
       [
         "sr",
         "ME"
       ],
-      "und-Latn"
+      "Latn"
     ],
     [
       [
         "sr",
         "RO"
       ],
-      "und-Latn"
+      "Latn"
     ],
     [
       [
         "sr",
         "RU"
       ],
-      "und-Latn"
+      "Latn"
     ],
     [
       [
         "sr",
         "TR"
       ],
-      "und-Latn"
+      "Latn"
     ],
     [
       [
         "tg",
         "PK"
       ],
-      "und-Arab"
+      "Arab"
     ],
     [
       [
         "ug",
         "KZ"
       ],
-      "und-Cyrl"
+      "Cyrl"
     ],
     [
       [
         "ug",
         "MN"
       ],
-      "und-Cyrl"
+      "Cyrl"
     ],
     [
       [
         "unr",
         "NP"
       ],
-      "und-Deva"
+      "Deva"
     ],
     [
       [
         "uz",
         "AF"
       ],
-      "und-Arab"
+      "Arab"
     ],
     [
       [
         "uz",
         "CN"
       ],
-      "und-Cyrl"
+      "Cyrl"
     ],
     [
       [
         "yue",
         "CN"
       ],
-      "und-Hans"
+      "Hans"
     ],
     [
       [
         "zh",
         "AU"
       ],
-      "und-Hant"
+      "Hant"
     ],
     [
       [
         "zh",
         "BN"
       ],
-      "und-Hant"
+      "Hant"
     ],
     [
       [
         "zh",
         "GB"
       ],
-      "und-Hant"
+      "Hant"
     ],
     [
       [
         "zh",
         "GF"
       ],
-      "und-Hant"
+      "Hant"
     ],
     [
       [
         "zh",
         "HK"
       ],
-      "und-Hant"
+      "Hant"
     ],
     [
       [
         "zh",
         "ID"
       ],
-      "und-Hant"
+      "Hant"
     ],
     [
       [
         "zh",
         "MO"
       ],
-      "und-Hant"
+      "Hant"
     ],
     [
       [
         "zh",
         "PA"
       ],
-      "und-Hant"
+      "Hant"
     ],
     [
       [
         "zh",
         "PF"
       ],
-      "und-Hant"
+      "Hant"
     ],
     [
       [
         "zh",
         "PH"
       ],
-      "und-Hant"
+      "Hant"
     ],
     [
       [
         "zh",
         "SR"
       ],
-      "und-Hant"
+      "Hant"
     ],
     [
       [
         "zh",
         "TH"
       ],
-      "und-Hant"
+      "Hant"
     ],
     [
       [
         "zh",
         "TW"
       ],
-      "und-Hant"
+      "Hant"
     ],
     [
       [
         "zh",
         "US"
       ],
-      "und-Hant"
+      "Hant"
     ],
     [
       [
         "zh",
         "VN"
       ],
-      "und-Hant"
+      "Hant"
     ]
   ],
   "language": {
-    "aa": "und-Latn-ET",
-    "aai": "und-Latn-ZZ",
-    "aak": "und-Latn-ZZ",
-    "aau": "und-Latn-ZZ",
-    "ab": "und-Cyrl-GE",
-    "abi": "und-Latn-ZZ",
-    "abq": "und-Cyrl-ZZ",
-    "abr": "und-Latn-GH",
-    "abt": "und-Latn-ZZ",
-    "aby": "und-Latn-ZZ",
-    "acd": "und-Latn-ZZ",
-    "ace": "und-Latn-ID",
-    "ach": "und-Latn-UG",
-    "ada": "und-Latn-GH",
-    "ade": "und-Latn-ZZ",
-    "adj": "und-Latn-ZZ",
-    "adp": "und-Tibt-BT",
-    "ady": "und-Cyrl-RU",
-    "adz": "und-Latn-ZZ",
-    "ae": "und-Avst-IR",
-    "aeb": "und-Arab-TN",
-    "aey": "und-Latn-ZZ",
-    "af": "und-Latn-ZA",
-    "agc": "und-Latn-ZZ",
-    "agd": "und-Latn-ZZ",
-    "agg": "und-Latn-ZZ",
-    "agm": "und-Latn-ZZ",
-    "ago": "und-Latn-ZZ",
-    "agq": "und-Latn-CM",
-    "aha": "und-Latn-ZZ",
-    "ahl": "und-Latn-ZZ",
-    "aho": "und-Ahom-IN",
-    "ajg": "und-Latn-ZZ",
-    "ak": "und-Latn-GH",
-    "akk": "und-Xsux-IQ",
-    "ala": "und-Latn-ZZ",
-    "ali": "und-Latn-ZZ",
-    "aln": "und-Latn-XK",
-    "alt": "und-Cyrl-RU",
-    "am": "und-Ethi-ET",
-    "amm": "und-Latn-ZZ",
-    "amn": "und-Latn-ZZ",
-    "amo": "und-Latn-NG",
-    "amp": "und-Latn-ZZ",
-    "an": "und-Latn-ES",
-    "anc": "und-Latn-ZZ",
-    "ank": "und-Latn-ZZ",
-    "ann": "und-Latn-ZZ",
-    "any": "und-Latn-ZZ",
-    "aoj": "und-Latn-ZZ",
-    "aom": "und-Latn-ZZ",
-    "aoz": "und-Latn-ID",
-    "apc": "und-Arab-ZZ",
-    "apd": "und-Arab-TG",
-    "ape": "und-Latn-ZZ",
-    "apr": "und-Latn-ZZ",
-    "aps": "und-Latn-ZZ",
-    "apz": "und-Latn-ZZ",
-    "ar": "und-Arab-EG",
-    "arc": "und-Armi-IR",
-    "arh": "und-Latn-ZZ",
-    "arn": "und-Latn-CL",
-    "aro": "und-Latn-BO",
-    "arq": "und-Arab-DZ",
-    "ars": "und-Arab-SA",
-    "ary": "und-Arab-MA",
-    "arz": "und-Arab-EG",
-    "as": "und-Beng-IN",
-    "asa": "und-Latn-TZ",
-    "ase": "und-Sgnw-US",
-    "asg": "und-Latn-ZZ",
-    "aso": "und-Latn-ZZ",
-    "ast": "und-Latn-ES",
-    "ata": "und-Latn-ZZ",
-    "atg": "und-Latn-ZZ",
-    "atj": "und-Latn-CA",
-    "auy": "und-Latn-ZZ",
-    "av": "und-Cyrl-RU",
-    "avl": "und-Arab-ZZ",
-    "avn": "und-Latn-ZZ",
-    "avt": "und-Latn-ZZ",
-    "avu": "und-Latn-ZZ",
-    "awa": "und-Deva-IN",
-    "awb": "und-Latn-ZZ",
-    "awo": "und-Latn-ZZ",
-    "awx": "und-Latn-ZZ",
-    "ay": "und-Latn-BO",
-    "ayb": "und-Latn-ZZ",
-    "az": "und-Latn-AZ",
-    "ba": "und-Cyrl-RU",
-    "bal": "und-Arab-PK",
-    "ban": "und-Latn-ID",
-    "bap": "und-Deva-NP",
-    "bar": "und-Latn-AT",
-    "bas": "und-Latn-CM",
-    "bav": "und-Latn-ZZ",
-    "bax": "und-Bamu-CM",
-    "bba": "und-Latn-ZZ",
-    "bbb": "und-Latn-ZZ",
-    "bbc": "und-Latn-ID",
-    "bbd": "und-Latn-ZZ",
-    "bbj": "und-Latn-CM",
-    "bbp": "und-Latn-ZZ",
-    "bbr": "und-Latn-ZZ",
-    "bcf": "und-Latn-ZZ",
-    "bch": "und-Latn-ZZ",
-    "bci": "und-Latn-CI",
-    "bcm": "und-Latn-ZZ",
-    "bcn": "und-Latn-ZZ",
-    "bco": "und-Latn-ZZ",
-    "bcq": "und-Ethi-ZZ",
-    "bcu": "und-Latn-ZZ",
-    "bdd": "und-Latn-ZZ",
-    "be": "und-Cyrl-BY",
-    "bef": "und-Latn-ZZ",
-    "beh": "und-Latn-ZZ",
-    "bej": "und-Arab-SD",
-    "bem": "und-Latn-ZM",
-    "bet": "und-Latn-ZZ",
-    "bew": "und-Latn-ID",
-    "bex": "und-Latn-ZZ",
-    "bez": "und-Latn-TZ",
-    "bfd": "und-Latn-CM",
-    "bfq": "und-Taml-IN",
-    "bft": "und-Arab-PK",
-    "bfy": "und-Deva-IN",
-    "bg": "und-Cyrl-BG",
-    "bgc": "und-Deva-IN",
-    "bgn": "und-Arab-PK",
-    "bgx": "und-Grek-TR",
-    "bhb": "und-Deva-IN",
-    "bhg": "und-Latn-ZZ",
-    "bhi": "und-Deva-IN",
-    "bhl": "und-Latn-ZZ",
-    "bho": "und-Deva-IN",
-    "bhy": "und-Latn-ZZ",
-    "bi": "und-Latn-VU",
-    "bib": "und-Latn-ZZ",
-    "big": "und-Latn-ZZ",
-    "bik": "und-Latn-PH",
-    "bim": "und-Latn-ZZ",
-    "bin": "und-Latn-NG",
-    "bio": "und-Latn-ZZ",
-    "biq": "und-Latn-ZZ",
-    "bjh": "und-Latn-ZZ",
-    "bji": "und-Ethi-ZZ",
-    "bjj": "und-Deva-IN",
-    "bjn": "und-Latn-ID",
-    "bjo": "und-Latn-ZZ",
-    "bjr": "und-Latn-ZZ",
-    "bjt": "und-Latn-SN",
-    "bjz": "und-Latn-ZZ",
-    "bkc": "und-Latn-ZZ",
-    "bkm": "und-Latn-CM",
-    "bkq": "und-Latn-ZZ",
-    "bku": "und-Latn-PH",
-    "bkv": "und-Latn-ZZ",
-    "blg": "und-Latn-MY",
-    "blt": "und-Tavt-VN",
-    "bm": "und-Latn-ML",
-    "bmh": "und-Latn-ZZ",
-    "bmk": "und-Latn-ZZ",
-    "bmq": "und-Latn-ML",
-    "bmu": "und-Latn-ZZ",
-    "bn": "und-Beng-BD",
-    "bng": "und-Latn-ZZ",
-    "bnm": "und-Latn-ZZ",
-    "bnp": "und-Latn-ZZ",
-    "bo": "und-Tibt-CN",
-    "boj": "und-Latn-ZZ",
-    "bom": "und-Latn-ZZ",
-    "bon": "und-Latn-ZZ",
-    "bpy": "und-Beng-IN",
-    "bqc": "und-Latn-ZZ",
-    "bqi": "und-Arab-IR",
-    "bqp": "und-Latn-ZZ",
-    "bqv": "und-Latn-CI",
-    "br": "und-Latn-FR",
-    "bra": "und-Deva-IN",
-    "brh": "und-Arab-PK",
-    "brx": "und-Deva-IN",
-    "brz": "und-Latn-ZZ",
-    "bs": "und-Latn-BA",
-    "bsj": "und-Latn-ZZ",
-    "bsq": "und-Bass-LR",
-    "bss": "und-Latn-CM",
-    "bst": "und-Ethi-ZZ",
-    "bto": "und-Latn-PH",
-    "btt": "und-Latn-ZZ",
-    "btv": "und-Deva-PK",
-    "bua": "und-Cyrl-RU",
-    "buc": "und-Latn-YT",
-    "bud": "und-Latn-ZZ",
-    "bug": "und-Latn-ID",
-    "buk": "und-Latn-ZZ",
-    "bum": "und-Latn-CM",
-    "buo": "und-Latn-ZZ",
-    "bus": "und-Latn-ZZ",
-    "buu": "und-Latn-ZZ",
-    "bvb": "und-Latn-GQ",
-    "bwd": "und-Latn-ZZ",
-    "bwr": "und-Latn-ZZ",
-    "bxh": "und-Latn-ZZ",
-    "bye": "und-Latn-ZZ",
-    "byn": "und-Ethi-ER",
-    "byr": "und-Latn-ZZ",
-    "bys": "und-Latn-ZZ",
-    "byv": "und-Latn-CM",
-    "byx": "und-Latn-ZZ",
-    "bza": "und-Latn-ZZ",
-    "bze": "und-Latn-ML",
-    "bzf": "und-Latn-ZZ",
-    "bzh": "und-Latn-ZZ",
-    "bzw": "und-Latn-ZZ",
-    "ca": "und-Latn-ES",
-    "cad": "und-Latn-US",
-    "can": "und-Latn-ZZ",
-    "cbj": "und-Latn-ZZ",
-    "cch": "und-Latn-NG",
-    "ccp": "und-Cakm-BD",
-    "ce": "und-Cyrl-RU",
-    "ceb": "und-Latn-PH",
-    "cfa": "und-Latn-ZZ",
-    "cgg": "und-Latn-UG",
-    "ch": "und-Latn-GU",
-    "chk": "und-Latn-FM",
-    "chm": "und-Cyrl-RU",
-    "cho": "und-Latn-US",
-    "chp": "und-Latn-CA",
-    "chr": "und-Cher-US",
-    "cic": "und-Latn-US",
-    "cja": "und-Arab-KH",
-    "cjm": "und-Cham-VN",
-    "cjv": "und-Latn-ZZ",
-    "ckb": "und-Arab-IQ",
-    "ckl": "und-Latn-ZZ",
-    "cko": "und-Latn-ZZ",
-    "cky": "und-Latn-ZZ",
-    "cla": "und-Latn-ZZ",
-    "cme": "und-Latn-ZZ",
-    "cmg": "und-Soyo-MN",
-    "co": "und-Latn-FR",
-    "cop": "und-Copt-EG",
-    "cps": "und-Latn-PH",
-    "cr": "und-Cans-CA",
-    "crh": "und-Cyrl-UA",
-    "crj": "und-Cans-CA",
-    "crk": "und-Cans-CA",
-    "crl": "und-Cans-CA",
-    "crm": "und-Cans-CA",
-    "crs": "und-Latn-SC",
-    "cs": "und-Latn-CZ",
-    "csb": "und-Latn-PL",
-    "csw": "und-Cans-CA",
-    "ctd": "und-Pauc-MM",
-    "cu": "und-Cyrl-RU",
-    "cv": "und-Cyrl-RU",
-    "cy": "und-Latn-GB",
-    "da": "und-Latn-DK",
-    "dad": "und-Latn-ZZ",
-    "daf": "und-Latn-CI",
-    "dag": "und-Latn-ZZ",
-    "dah": "und-Latn-ZZ",
-    "dak": "und-Latn-US",
-    "dar": "und-Cyrl-RU",
-    "dav": "und-Latn-KE",
-    "dbd": "und-Latn-ZZ",
-    "dbq": "und-Latn-ZZ",
-    "dcc": "und-Arab-IN",
-    "ddn": "und-Latn-ZZ",
-    "de": "und-Latn-DE",
-    "ded": "und-Latn-ZZ",
-    "den": "und-Latn-CA",
-    "dga": "und-Latn-ZZ",
-    "dgh": "und-Latn-ZZ",
-    "dgi": "und-Latn-ZZ",
-    "dgl": "und-Arab-ZZ",
-    "dgr": "und-Latn-CA",
-    "dgz": "und-Latn-ZZ",
-    "dia": "und-Latn-ZZ",
-    "dje": "und-Latn-NE",
-    "dmf": "und-Medf-NG",
-    "dnj": "und-Latn-CI",
-    "dob": "und-Latn-ZZ",
-    "doi": "und-Deva-IN",
-    "dop": "und-Latn-ZZ",
-    "dow": "und-Latn-ZZ",
-    "drh": "und-Mong-CN",
-    "dri": "und-Latn-ZZ",
-    "drs": "und-Ethi-ZZ",
-    "dsb": "und-Latn-DE",
-    "dtm": "und-Latn-ML",
-    "dtp": "und-Latn-MY",
-    "dts": "und-Latn-ZZ",
-    "dty": "und-Deva-NP",
-    "dua": "und-Latn-CM",
-    "duc": "und-Latn-ZZ",
-    "dud": "und-Latn-ZZ",
-    "dug": "und-Latn-ZZ",
-    "dv": "und-Thaa-MV",
-    "dva": "und-Latn-ZZ",
-    "dww": "und-Latn-ZZ",
-    "dyo": "und-Latn-SN",
-    "dyu": "und-Latn-BF",
-    "dz": "und-Tibt-BT",
-    "dzg": "und-Latn-ZZ",
-    "ebu": "und-Latn-KE",
-    "ee": "und-Latn-GH",
-    "efi": "und-Latn-NG",
-    "egl": "und-Latn-IT",
-    "egy": "und-Egyp-EG",
-    "eka": "und-Latn-ZZ",
-    "eky": "und-Kali-MM",
-    "el": "und-Grek-GR",
-    "ema": "und-Latn-ZZ",
-    "emi": "und-Latn-ZZ",
-    "en": "und-Latn-US",
-    "enn": "und-Latn-ZZ",
-    "enq": "und-Latn-ZZ",
-    "eo": "und-Latn-001",
-    "eri": "und-Latn-ZZ",
-    "es": "und-Latn-ES",
-    "esg": "und-Gonm-IN",
-    "esu": "und-Latn-US",
-    "et": "und-Latn-EE",
-    "etr": "und-Latn-ZZ",
-    "ett": "und-Ital-IT",
-    "etu": "und-Latn-ZZ",
-    "etx": "und-Latn-ZZ",
-    "eu": "und-Latn-ES",
-    "ewo": "und-Latn-CM",
-    "ext": "und-Latn-ES",
-    "eza": "und-Latn-ZZ",
-    "fa": "und-Arab-IR",
-    "faa": "und-Latn-ZZ",
-    "fab": "und-Latn-ZZ",
-    "fag": "und-Latn-ZZ",
-    "fai": "und-Latn-ZZ",
-    "fan": "und-Latn-GQ",
-    "ff": "und-Latn-SN",
-    "ffi": "und-Latn-ZZ",
-    "ffm": "und-Latn-ML",
-    "fi": "und-Latn-FI",
-    "fia": "und-Arab-SD",
-    "fil": "und-Latn-PH",
-    "fit": "und-Latn-SE",
-    "fj": "und-Latn-FJ",
-    "flr": "und-Latn-ZZ",
-    "fmp": "und-Latn-ZZ",
-    "fo": "und-Latn-FO",
-    "fod": "und-Latn-ZZ",
-    "fon": "und-Latn-BJ",
-    "for": "und-Latn-ZZ",
-    "fpe": "und-Latn-ZZ",
-    "fqs": "und-Latn-ZZ",
-    "fr": "und-Latn-FR",
-    "frc": "und-Latn-US",
-    "frp": "und-Latn-FR",
-    "frr": "und-Latn-DE",
-    "frs": "und-Latn-DE",
-    "fub": "und-Arab-CM",
-    "fud": "und-Latn-WF",
-    "fue": "und-Latn-ZZ",
-    "fuf": "und-Latn-GN",
-    "fuh": "und-Latn-ZZ",
-    "fuq": "und-Latn-NE",
-    "fur": "und-Latn-IT",
-    "fuv": "und-Latn-NG",
-    "fuy": "und-Latn-ZZ",
-    "fvr": "und-Latn-SD",
-    "fy": "und-Latn-NL",
-    "ga": "und-Latn-IE",
-    "gaa": "und-Latn-GH",
-    "gaf": "und-Latn-ZZ",
-    "gag": "und-Latn-MD",
-    "gah": "und-Latn-ZZ",
-    "gaj": "und-Latn-ZZ",
-    "gam": "und-Latn-ZZ",
-    "gan": "und-Hans-CN",
-    "gaw": "und-Latn-ZZ",
-    "gay": "und-Latn-ID",
-    "gba": "und-Latn-ZZ",
-    "gbf": "und-Latn-ZZ",
-    "gbm": "und-Deva-IN",
-    "gby": "und-Latn-ZZ",
-    "gbz": "und-Arab-IR",
-    "gcr": "und-Latn-GF",
-    "gd": "und-Latn-GB",
-    "gde": "und-Latn-ZZ",
-    "gdn": "und-Latn-ZZ",
-    "gdr": "und-Latn-ZZ",
-    "geb": "und-Latn-ZZ",
-    "gej": "und-Latn-ZZ",
-    "gel": "und-Latn-ZZ",
-    "gez": "und-Ethi-ET",
-    "gfk": "und-Latn-ZZ",
-    "ggn": "und-Deva-NP",
-    "ghs": "und-Latn-ZZ",
-    "gil": "und-Latn-KI",
-    "gim": "und-Latn-ZZ",
-    "gjk": "und-Arab-PK",
-    "gjn": "und-Latn-ZZ",
-    "gju": "und-Arab-PK",
-    "gkn": "und-Latn-ZZ",
-    "gkp": "und-Latn-ZZ",
-    "gl": "und-Latn-ES",
-    "glk": "und-Arab-IR",
-    "gmm": "und-Latn-ZZ",
-    "gmv": "und-Ethi-ZZ",
-    "gn": "und-Latn-PY",
-    "gnd": "und-Latn-ZZ",
-    "gng": "und-Latn-ZZ",
-    "god": "und-Latn-ZZ",
-    "gof": "und-Ethi-ZZ",
-    "goi": "und-Latn-ZZ",
-    "gom": "und-Deva-IN",
-    "gon": "und-Telu-IN",
-    "gor": "und-Latn-ID",
-    "gos": "und-Latn-NL",
-    "got": "und-Goth-UA",
-    "grb": "und-Latn-ZZ",
-    "grc": "und-Cprt-CY",
-    "grt": "und-Beng-IN",
-    "grw": "und-Latn-ZZ",
-    "gsw": "und-Latn-CH",
-    "gu": "und-Gujr-IN",
-    "gub": "und-Latn-BR",
-    "guc": "und-Latn-CO",
-    "gud": "und-Latn-ZZ",
-    "gur": "und-Latn-GH",
-    "guw": "und-Latn-ZZ",
-    "gux": "und-Latn-ZZ",
-    "guz": "und-Latn-KE",
-    "gv": "und-Latn-IM",
-    "gvf": "und-Latn-ZZ",
-    "gvr": "und-Deva-NP",
-    "gvs": "und-Latn-ZZ",
-    "gwc": "und-Arab-ZZ",
-    "gwi": "und-Latn-CA",
-    "gwt": "und-Arab-ZZ",
-    "gyi": "und-Latn-ZZ",
-    "ha": "und-Latn-NG",
-    "hag": "und-Latn-ZZ",
-    "hak": "und-Hans-CN",
-    "ham": "und-Latn-ZZ",
-    "haw": "und-Latn-US",
-    "haz": "und-Arab-AF",
-    "hbb": "und-Latn-ZZ",
-    "hdy": "und-Ethi-ZZ",
-    "he": "und-Hebr-IL",
-    "hhy": "und-Latn-ZZ",
-    "hi": "und-Deva-IN",
-    "hia": "und-Latn-ZZ",
-    "hif": "und-Latn-FJ",
-    "hig": "und-Latn-ZZ",
-    "hih": "und-Latn-ZZ",
-    "hil": "und-Latn-PH",
-    "hla": "und-Latn-ZZ",
-    "hlu": "und-Hluw-TR",
-    "hmd": "und-Plrd-CN",
-    "hmt": "und-Latn-ZZ",
-    "hnd": "und-Arab-PK",
-    "hne": "und-Deva-IN",
-    "hnj": "und-Hmnp-US",
-    "hnn": "und-Latn-PH",
-    "hno": "und-Arab-PK",
-    "ho": "und-Latn-PG",
-    "hoc": "und-Deva-IN",
-    "hoj": "und-Deva-IN",
-    "hot": "und-Latn-ZZ",
-    "hr": "und-Latn-HR",
-    "hsb": "und-Latn-DE",
-    "hsn": "und-Hans-CN",
-    "ht": "und-Latn-HT",
-    "hu": "und-Latn-HU",
-    "hui": "und-Latn-ZZ",
-    "hy": "und-Armn-AM",
-    "hz": "und-Latn-NA",
-    "ia": "und-Latn-001",
-    "ian": "und-Latn-ZZ",
-    "iar": "und-Latn-ZZ",
-    "iba": "und-Latn-MY",
-    "ibb": "und-Latn-NG",
-    "iby": "und-Latn-ZZ",
-    "ica": "und-Latn-ZZ",
-    "ich": "und-Latn-ZZ",
-    "id": "und-Latn-ID",
-    "idd": "und-Latn-ZZ",
-    "idi": "und-Latn-ZZ",
-    "idu": "und-Latn-ZZ",
-    "ife": "und-Latn-TG",
-    "ig": "und-Latn-NG",
-    "igb": "und-Latn-ZZ",
-    "ige": "und-Latn-ZZ",
-    "ii": "und-Yiii-CN",
-    "ijj": "und-Latn-ZZ",
-    "ik": "und-Latn-US",
-    "ikk": "und-Latn-ZZ",
-    "ikt": "und-Latn-CA",
-    "ikw": "und-Latn-ZZ",
-    "ikx": "und-Latn-ZZ",
-    "ilo": "und-Latn-PH",
-    "imo": "und-Latn-ZZ",
-    "in": "und-Latn-ID",
-    "inh": "und-Cyrl-RU",
-    "io": "und-Latn-001",
-    "iou": "und-Latn-ZZ",
-    "iri": "und-Latn-ZZ",
-    "is": "und-Latn-IS",
-    "it": "und-Latn-IT",
-    "iu": "und-Cans-CA",
-    "iw": "und-Hebr-IL",
-    "iwm": "und-Latn-ZZ",
-    "iws": "und-Latn-ZZ",
-    "izh": "und-Latn-RU",
-    "izi": "und-Latn-ZZ",
-    "ja": "und-Jpan-JP",
-    "jab": "und-Latn-ZZ",
-    "jam": "und-Latn-JM",
-    "jar": "und-Latn-ZZ",
-    "jbo": "und-Latn-001",
-    "jbu": "und-Latn-ZZ",
-    "jen": "und-Latn-ZZ",
-    "jgk": "und-Latn-ZZ",
-    "jgo": "und-Latn-CM",
-    "ji": "und-Hebr-UA",
-    "jib": "und-Latn-ZZ",
-    "jmc": "und-Latn-TZ",
-    "jml": "und-Deva-NP",
-    "jra": "und-Latn-ZZ",
-    "jut": "und-Latn-DK",
-    "jv": "und-Latn-ID",
-    "jw": "und-Latn-ID",
-    "ka": "und-Geor-GE",
-    "kaa": "und-Cyrl-UZ",
-    "kab": "und-Latn-DZ",
-    "kac": "und-Latn-MM",
-    "kad": "und-Latn-ZZ",
-    "kai": "und-Latn-ZZ",
-    "kaj": "und-Latn-NG",
-    "kam": "und-Latn-KE",
-    "kao": "und-Latn-ML",
-    "kbd": "und-Cyrl-RU",
-    "kbm": "und-Latn-ZZ",
-    "kbp": "und-Latn-ZZ",
-    "kbq": "und-Latn-ZZ",
-    "kbx": "und-Latn-ZZ",
-    "kby": "und-Arab-NE",
-    "kcg": "und-Latn-NG",
-    "kck": "und-Latn-ZW",
-    "kcl": "und-Latn-ZZ",
-    "kct": "und-Latn-ZZ",
-    "kde": "und-Latn-TZ",
-    "kdh": "und-Latn-TG",
-    "kdl": "und-Latn-ZZ",
-    "kdt": "und-Thai-TH",
-    "kea": "und-Latn-CV",
-    "ken": "und-Latn-CM",
-    "kez": "und-Latn-ZZ",
-    "kfo": "und-Latn-CI",
-    "kfr": "und-Deva-IN",
-    "kfy": "und-Deva-IN",
-    "kg": "und-Latn-CD",
-    "kge": "und-Latn-ID",
-    "kgf": "und-Latn-ZZ",
-    "kgp": "und-Latn-BR",
-    "kha": "und-Latn-IN",
-    "khb": "und-Talu-CN",
-    "khn": "und-Deva-IN",
-    "khq": "und-Latn-ML",
-    "khs": "und-Latn-ZZ",
-    "kht": "und-Mymr-IN",
-    "khw": "und-Arab-PK",
-    "khz": "und-Latn-ZZ",
-    "ki": "und-Latn-KE",
-    "kij": "und-Latn-ZZ",
-    "kiu": "und-Latn-TR",
-    "kiw": "und-Latn-ZZ",
-    "kj": "und-Latn-NA",
-    "kjd": "und-Latn-ZZ",
-    "kjg": "und-Laoo-LA",
-    "kjs": "und-Latn-ZZ",
-    "kjy": "und-Latn-ZZ",
-    "kk": "und-Cyrl-KZ",
-    "kkc": "und-Latn-ZZ",
-    "kkj": "und-Latn-CM",
-    "kl": "und-Latn-GL",
-    "kln": "und-Latn-KE",
-    "klq": "und-Latn-ZZ",
-    "klt": "und-Latn-ZZ",
-    "klx": "und-Latn-ZZ",
-    "km": "und-Khmr-KH",
-    "kmb": "und-Latn-AO",
-    "kmh": "und-Latn-ZZ",
-    "kmo": "und-Latn-ZZ",
-    "kms": "und-Latn-ZZ",
-    "kmu": "und-Latn-ZZ",
-    "kmw": "und-Latn-ZZ",
-    "kn": "und-Knda-IN",
-    "knf": "und-Latn-GW",
-    "knp": "und-Latn-ZZ",
-    "ko": "und-Kore-KR",
-    "koi": "und-Cyrl-RU",
-    "kok": "und-Deva-IN",
-    "kol": "und-Latn-ZZ",
-    "kos": "und-Latn-FM",
-    "koz": "und-Latn-ZZ",
-    "kpe": "und-Latn-LR",
-    "kpf": "und-Latn-ZZ",
-    "kpo": "und-Latn-ZZ",
-    "kpr": "und-Latn-ZZ",
-    "kpx": "und-Latn-ZZ",
-    "kqb": "und-Latn-ZZ",
-    "kqf": "und-Latn-ZZ",
-    "kqs": "und-Latn-ZZ",
-    "kqy": "und-Ethi-ZZ",
-    "kr": "und-Latn-ZZ",
-    "krc": "und-Cyrl-RU",
-    "kri": "und-Latn-SL",
-    "krj": "und-Latn-PH",
-    "krl": "und-Latn-RU",
-    "krs": "und-Latn-ZZ",
-    "kru": "und-Deva-IN",
-    "ks": "und-Arab-IN",
-    "ksb": "und-Latn-TZ",
-    "ksd": "und-Latn-ZZ",
-    "ksf": "und-Latn-CM",
-    "ksh": "und-Latn-DE",
-    "ksj": "und-Latn-ZZ",
-    "ksr": "und-Latn-ZZ",
-    "ktb": "und-Ethi-ZZ",
-    "ktm": "und-Latn-ZZ",
-    "kto": "und-Latn-ZZ",
-    "ktr": "und-Latn-MY",
-    "ku": "und-Latn-TR",
-    "kub": "und-Latn-ZZ",
-    "kud": "und-Latn-ZZ",
-    "kue": "und-Latn-ZZ",
-    "kuj": "und-Latn-ZZ",
-    "kum": "und-Cyrl-RU",
-    "kun": "und-Latn-ZZ",
-    "kup": "und-Latn-ZZ",
-    "kus": "und-Latn-ZZ",
-    "kv": "und-Cyrl-RU",
-    "kvg": "und-Latn-ZZ",
-    "kvr": "und-Latn-ID",
-    "kvx": "und-Arab-PK",
-    "kw": "und-Latn-GB",
-    "kwj": "und-Latn-ZZ",
-    "kwo": "und-Latn-ZZ",
-    "kwq": "und-Latn-ZZ",
-    "kxa": "und-Latn-ZZ",
-    "kxc": "und-Ethi-ZZ",
-    "kxe": "und-Latn-ZZ",
-    "kxl": "und-Deva-IN",
-    "kxm": "und-Thai-TH",
-    "kxp": "und-Arab-PK",
-    "kxw": "und-Latn-ZZ",
-    "kxz": "und-Latn-ZZ",
-    "ky": "und-Cyrl-KG",
-    "kye": "und-Latn-ZZ",
-    "kyx": "und-Latn-ZZ",
-    "kzh": "und-Arab-ZZ",
-    "kzj": "und-Latn-MY",
-    "kzr": "und-Latn-ZZ",
-    "kzt": "und-Latn-MY",
-    "la": "und-Latn-VA",
-    "lab": "und-Lina-GR",
-    "lad": "und-Hebr-IL",
-    "lag": "und-Latn-TZ",
-    "lah": "und-Arab-PK",
-    "laj": "und-Latn-UG",
-    "las": "und-Latn-ZZ",
-    "lb": "und-Latn-LU",
-    "lbe": "und-Cyrl-RU",
-    "lbu": "und-Latn-ZZ",
-    "lbw": "und-Latn-ID",
-    "lcm": "und-Latn-ZZ",
-    "lcp": "und-Thai-CN",
-    "ldb": "und-Latn-ZZ",
-    "led": "und-Latn-ZZ",
-    "lee": "und-Latn-ZZ",
-    "lem": "und-Latn-ZZ",
-    "lep": "und-Lepc-IN",
-    "leq": "und-Latn-ZZ",
-    "leu": "und-Latn-ZZ",
-    "lez": "und-Cyrl-RU",
-    "lg": "und-Latn-UG",
-    "lgg": "und-Latn-ZZ",
-    "li": "und-Latn-NL",
-    "lia": "und-Latn-ZZ",
-    "lid": "und-Latn-ZZ",
-    "lif": "und-Deva-NP",
-    "lig": "und-Latn-ZZ",
-    "lih": "und-Latn-ZZ",
-    "lij": "und-Latn-IT",
-    "lis": "und-Lisu-CN",
-    "ljp": "und-Latn-ID",
-    "lki": "und-Arab-IR",
-    "lkt": "und-Latn-US",
-    "lle": "und-Latn-ZZ",
-    "lln": "und-Latn-ZZ",
-    "lmn": "und-Telu-IN",
-    "lmo": "und-Latn-IT",
-    "lmp": "und-Latn-ZZ",
-    "ln": "und-Latn-CD",
-    "lns": "und-Latn-ZZ",
-    "lnu": "und-Latn-ZZ",
-    "lo": "und-Laoo-LA",
-    "loj": "und-Latn-ZZ",
-    "lok": "und-Latn-ZZ",
-    "lol": "und-Latn-CD",
-    "lor": "und-Latn-ZZ",
-    "los": "und-Latn-ZZ",
-    "loz": "und-Latn-ZM",
-    "lrc": "und-Arab-IR",
-    "lt": "und-Latn-LT",
-    "ltg": "und-Latn-LV",
-    "lu": "und-Latn-CD",
-    "lua": "und-Latn-CD",
-    "luo": "und-Latn-KE",
-    "luy": "und-Latn-KE",
-    "luz": "und-Arab-IR",
-    "lv": "und-Latn-LV",
-    "lwl": "und-Thai-TH",
-    "lzh": "und-Hans-CN",
-    "lzz": "und-Latn-TR",
-    "mad": "und-Latn-ID",
-    "maf": "und-Latn-CM",
-    "mag": "und-Deva-IN",
-    "mai": "und-Deva-IN",
-    "mak": "und-Latn-ID",
-    "man": "und-Latn-GM",
-    "mas": "und-Latn-KE",
-    "maw": "und-Latn-ZZ",
-    "maz": "und-Latn-MX",
-    "mbh": "und-Latn-ZZ",
-    "mbo": "und-Latn-ZZ",
-    "mbq": "und-Latn-ZZ",
-    "mbu": "und-Latn-ZZ",
-    "mbw": "und-Latn-ZZ",
-    "mci": "und-Latn-ZZ",
-    "mcp": "und-Latn-ZZ",
-    "mcq": "und-Latn-ZZ",
-    "mcr": "und-Latn-ZZ",
-    "mcu": "und-Latn-ZZ",
-    "mda": "und-Latn-ZZ",
-    "mde": "und-Arab-ZZ",
-    "mdf": "und-Cyrl-RU",
-    "mdh": "und-Latn-PH",
-    "mdj": "und-Latn-ZZ",
-    "mdr": "und-Latn-ID",
-    "mdx": "und-Ethi-ZZ",
-    "med": "und-Latn-ZZ",
-    "mee": "und-Latn-ZZ",
-    "mek": "und-Latn-ZZ",
-    "men": "und-Latn-SL",
-    "mer": "und-Latn-KE",
-    "met": "und-Latn-ZZ",
-    "meu": "und-Latn-ZZ",
-    "mfa": "und-Arab-TH",
-    "mfe": "und-Latn-MU",
-    "mfn": "und-Latn-ZZ",
-    "mfo": "und-Latn-ZZ",
-    "mfq": "und-Latn-ZZ",
-    "mg": "und-Latn-MG",
-    "mgh": "und-Latn-MZ",
-    "mgl": "und-Latn-ZZ",
-    "mgo": "und-Latn-CM",
-    "mgp": "und-Deva-NP",
-    "mgy": "und-Latn-TZ",
-    "mh": "und-Latn-MH",
-    "mhi": "und-Latn-ZZ",
-    "mhl": "und-Latn-ZZ",
-    "mi": "und-Latn-NZ",
-    "mif": "und-Latn-ZZ",
-    "min": "und-Latn-ID",
-    "miw": "und-Latn-ZZ",
-    "mk": "und-Cyrl-MK",
-    "mki": "und-Arab-ZZ",
-    "mkl": "und-Latn-ZZ",
-    "mkp": "und-Latn-ZZ",
-    "mkw": "und-Latn-ZZ",
-    "ml": "und-Mlym-IN",
-    "mle": "und-Latn-ZZ",
-    "mlp": "und-Latn-ZZ",
-    "mls": "und-Latn-SD",
-    "mmo": "und-Latn-ZZ",
-    "mmu": "und-Latn-ZZ",
-    "mmx": "und-Latn-ZZ",
-    "mn": "und-Cyrl-MN",
-    "mna": "und-Latn-ZZ",
-    "mnf": "und-Latn-ZZ",
-    "mni": "und-Beng-IN",
-    "mnw": "und-Mymr-MM",
-    "mo": "und-Latn-RO",
-    "moa": "und-Latn-ZZ",
-    "moe": "und-Latn-CA",
-    "moh": "und-Latn-CA",
-    "mos": "und-Latn-BF",
-    "mox": "und-Latn-ZZ",
-    "mpp": "und-Latn-ZZ",
-    "mps": "und-Latn-ZZ",
-    "mpt": "und-Latn-ZZ",
-    "mpx": "und-Latn-ZZ",
-    "mql": "und-Latn-ZZ",
-    "mr": "und-Deva-IN",
-    "mrd": "und-Deva-NP",
-    "mrj": "und-Cyrl-RU",
-    "mro": "und-Mroo-BD",
-    "ms": "und-Latn-MY",
-    "mt": "und-Latn-MT",
-    "mtc": "und-Latn-ZZ",
-    "mtf": "und-Latn-ZZ",
-    "mti": "und-Latn-ZZ",
-    "mtr": "und-Deva-IN",
-    "mua": "und-Latn-CM",
-    "mur": "und-Latn-ZZ",
-    "mus": "und-Latn-US",
-    "mva": "und-Latn-ZZ",
-    "mvn": "und-Latn-ZZ",
-    "mvy": "und-Arab-PK",
-    "mwk": "und-Latn-ML",
-    "mwr": "und-Deva-IN",
-    "mwv": "und-Latn-ID",
-    "mww": "und-Hmnp-US",
-    "mxc": "und-Latn-ZW",
-    "mxm": "und-Latn-ZZ",
-    "my": "und-Mymr-MM",
-    "myk": "und-Latn-ZZ",
-    "mym": "und-Ethi-ZZ",
-    "myv": "und-Cyrl-RU",
-    "myw": "und-Latn-ZZ",
-    "myx": "und-Latn-UG",
-    "myz": "und-Mand-IR",
-    "mzk": "und-Latn-ZZ",
-    "mzm": "und-Latn-ZZ",
-    "mzn": "und-Arab-IR",
-    "mzp": "und-Latn-ZZ",
-    "mzw": "und-Latn-ZZ",
-    "mzz": "und-Latn-ZZ",
-    "na": "und-Latn-NR",
-    "nac": "und-Latn-ZZ",
-    "naf": "und-Latn-ZZ",
-    "nak": "und-Latn-ZZ",
-    "nan": "und-Hans-CN",
-    "nap": "und-Latn-IT",
-    "naq": "und-Latn-NA",
-    "nas": "und-Latn-ZZ",
-    "nb": "und-Latn-NO",
-    "nca": "und-Latn-ZZ",
-    "nce": "und-Latn-ZZ",
-    "ncf": "und-Latn-ZZ",
-    "nch": "und-Latn-MX",
-    "nco": "und-Latn-ZZ",
-    "ncu": "und-Latn-ZZ",
-    "nd": "und-Latn-ZW",
-    "ndc": "und-Latn-MZ",
-    "nds": "und-Latn-DE",
-    "ne": "und-Deva-NP",
-    "neb": "und-Latn-ZZ",
-    "new": "und-Deva-NP",
-    "nex": "und-Latn-ZZ",
-    "nfr": "und-Latn-ZZ",
-    "ng": "und-Latn-NA",
-    "nga": "und-Latn-ZZ",
-    "ngb": "und-Latn-ZZ",
-    "ngl": "und-Latn-MZ",
-    "nhb": "und-Latn-ZZ",
-    "nhe": "und-Latn-MX",
-    "nhw": "und-Latn-MX",
-    "nif": "und-Latn-ZZ",
-    "nii": "und-Latn-ZZ",
-    "nij": "und-Latn-ID",
-    "nin": "und-Latn-ZZ",
-    "niu": "und-Latn-NU",
-    "niy": "und-Latn-ZZ",
-    "niz": "und-Latn-ZZ",
-    "njo": "und-Latn-IN",
-    "nkg": "und-Latn-ZZ",
-    "nko": "und-Latn-ZZ",
-    "nl": "und-Latn-NL",
-    "nmg": "und-Latn-CM",
-    "nmz": "und-Latn-ZZ",
-    "nn": "und-Latn-NO",
-    "nnf": "und-Latn-ZZ",
-    "nnh": "und-Latn-CM",
-    "nnk": "und-Latn-ZZ",
-    "nnm": "und-Latn-ZZ",
-    "nnp": "und-Wcho-IN",
-    "no": "und-Latn-NO",
-    "nod": "und-Lana-TH",
-    "noe": "und-Deva-IN",
-    "non": "und-Runr-SE",
-    "nop": "und-Latn-ZZ",
-    "nou": "und-Latn-ZZ",
-    "nqo": "und-Nkoo-GN",
-    "nr": "und-Latn-ZA",
-    "nrb": "und-Latn-ZZ",
-    "nsk": "und-Cans-CA",
-    "nsn": "und-Latn-ZZ",
-    "nso": "und-Latn-ZA",
-    "nss": "und-Latn-ZZ",
-    "nst": "und-Tnsa-IN",
-    "ntm": "und-Latn-ZZ",
-    "ntr": "und-Latn-ZZ",
-    "nui": "und-Latn-ZZ",
-    "nup": "und-Latn-ZZ",
-    "nus": "und-Latn-SS",
-    "nuv": "und-Latn-ZZ",
-    "nux": "und-Latn-ZZ",
-    "nv": "und-Latn-US",
-    "nwb": "und-Latn-ZZ",
-    "nxq": "und-Latn-CN",
-    "nxr": "und-Latn-ZZ",
-    "ny": "und-Latn-MW",
-    "nym": "und-Latn-TZ",
-    "nyn": "und-Latn-UG",
-    "nzi": "und-Latn-GH",
-    "oc": "und-Latn-FR",
-    "ogc": "und-Latn-ZZ",
-    "okr": "und-Latn-ZZ",
-    "okv": "und-Latn-ZZ",
-    "om": "und-Latn-ET",
-    "ong": "und-Latn-ZZ",
-    "onn": "und-Latn-ZZ",
-    "ons": "und-Latn-ZZ",
-    "opm": "und-Latn-ZZ",
-    "or": "und-Orya-IN",
-    "oro": "und-Latn-ZZ",
-    "oru": "und-Arab-ZZ",
-    "os": "und-Cyrl-GE",
-    "osa": "und-Osge-US",
-    "ota": "und-Arab-ZZ",
-    "otk": "und-Orkh-MN",
-    "oui": "und-Ougr-143",
-    "ozm": "und-Latn-ZZ",
-    "pa": "und-Guru-IN",
-    "pag": "und-Latn-PH",
-    "pal": "und-Phli-IR",
-    "pam": "und-Latn-PH",
-    "pap": "und-Latn-AW",
-    "pau": "und-Latn-PW",
-    "pbi": "und-Latn-ZZ",
-    "pcd": "und-Latn-FR",
-    "pcm": "und-Latn-NG",
-    "pdc": "und-Latn-US",
-    "pdt": "und-Latn-CA",
-    "ped": "und-Latn-ZZ",
-    "peo": "und-Xpeo-IR",
-    "pex": "und-Latn-ZZ",
-    "pfl": "und-Latn-DE",
-    "phl": "und-Arab-ZZ",
-    "phn": "und-Phnx-LB",
-    "pil": "und-Latn-ZZ",
-    "pip": "und-Latn-ZZ",
-    "pka": "und-Brah-IN",
-    "pko": "und-Latn-KE",
-    "pl": "und-Latn-PL",
-    "pla": "und-Latn-ZZ",
-    "pms": "und-Latn-IT",
-    "png": "und-Latn-ZZ",
-    "pnn": "und-Latn-ZZ",
-    "pnt": "und-Grek-GR",
-    "pon": "und-Latn-FM",
-    "ppa": "und-Deva-IN",
-    "ppo": "und-Latn-ZZ",
-    "pra": "und-Khar-PK",
-    "prd": "und-Arab-IR",
-    "prg": "und-Latn-001",
-    "ps": "und-Arab-AF",
-    "pss": "und-Latn-ZZ",
-    "pt": "und-Latn-BR",
-    "ptp": "und-Latn-ZZ",
-    "puu": "und-Latn-GA",
-    "pwa": "und-Latn-ZZ",
-    "qu": "und-Latn-PE",
-    "quc": "und-Latn-GT",
-    "qug": "und-Latn-EC",
-    "rai": "und-Latn-ZZ",
-    "raj": "und-Deva-IN",
-    "rao": "und-Latn-ZZ",
-    "rcf": "und-Latn-RE",
-    "rej": "und-Latn-ID",
-    "rel": "und-Latn-ZZ",
-    "res": "und-Latn-ZZ",
-    "rgn": "und-Latn-IT",
-    "rhg": "und-Rohg-MM",
-    "ria": "und-Latn-IN",
-    "rif": "und-Tfng-MA",
-    "rjs": "und-Deva-NP",
-    "rkt": "und-Beng-BD",
-    "rm": "und-Latn-CH",
-    "rmf": "und-Latn-FI",
-    "rmo": "und-Latn-CH",
-    "rmt": "und-Arab-IR",
-    "rmu": "und-Latn-SE",
-    "rn": "und-Latn-BI",
-    "rna": "und-Latn-ZZ",
-    "rng": "und-Latn-MZ",
-    "ro": "und-Latn-RO",
-    "rob": "und-Latn-ID",
-    "rof": "und-Latn-TZ",
-    "roo": "und-Latn-ZZ",
-    "rro": "und-Latn-ZZ",
-    "rtm": "und-Latn-FJ",
-    "ru": "und-Cyrl-RU",
-    "rue": "und-Cyrl-UA",
-    "rug": "und-Latn-SB",
-    "rw": "und-Latn-RW",
-    "rwk": "und-Latn-TZ",
-    "rwo": "und-Latn-ZZ",
-    "ryu": "und-Kana-JP",
-    "sa": "und-Deva-IN",
-    "saf": "und-Latn-GH",
-    "sah": "und-Cyrl-RU",
-    "saq": "und-Latn-KE",
-    "sas": "und-Latn-ID",
-    "sat": "und-Olck-IN",
-    "sav": "und-Latn-SN",
-    "saz": "und-Saur-IN",
-    "sba": "und-Latn-ZZ",
-    "sbe": "und-Latn-ZZ",
-    "sbp": "und-Latn-TZ",
-    "sc": "und-Latn-IT",
-    "sck": "und-Deva-IN",
-    "scl": "und-Arab-ZZ",
-    "scn": "und-Latn-IT",
-    "sco": "und-Latn-GB",
-    "scs": "und-Latn-CA",
-    "sd": "und-Arab-PK",
-    "sdc": "und-Latn-IT",
-    "sdh": "und-Arab-IR",
-    "se": "und-Latn-NO",
-    "sef": "und-Latn-CI",
-    "seh": "und-Latn-MZ",
-    "sei": "und-Latn-MX",
-    "ses": "und-Latn-ML",
-    "sg": "und-Latn-CF",
-    "sga": "und-Ogam-IE",
-    "sgs": "und-Latn-LT",
-    "sgw": "und-Ethi-ZZ",
-    "sgz": "und-Latn-ZZ",
-    "shi": "und-Tfng-MA",
-    "shk": "und-Latn-ZZ",
-    "shn": "und-Mymr-MM",
-    "shu": "und-Arab-ZZ",
-    "si": "und-Sinh-LK",
-    "sid": "und-Latn-ET",
-    "sig": "und-Latn-ZZ",
-    "sil": "und-Latn-ZZ",
-    "sim": "und-Latn-ZZ",
-    "sjr": "und-Latn-ZZ",
-    "sk": "und-Latn-SK",
-    "skc": "und-Latn-ZZ",
-    "skr": "und-Arab-PK",
-    "sks": "und-Latn-ZZ",
-    "sl": "und-Latn-SI",
-    "sld": "und-Latn-ZZ",
-    "sli": "und-Latn-PL",
-    "sll": "und-Latn-ZZ",
-    "sly": "und-Latn-ID",
-    "sm": "und-Latn-WS",
-    "sma": "und-Latn-SE",
-    "smj": "und-Latn-SE",
-    "smn": "und-Latn-FI",
-    "smp": "und-Samr-IL",
-    "smq": "und-Latn-ZZ",
-    "sms": "und-Latn-FI",
-    "sn": "und-Latn-ZW",
-    "snc": "und-Latn-ZZ",
-    "snk": "und-Latn-ML",
-    "snp": "und-Latn-ZZ",
-    "snx": "und-Latn-ZZ",
-    "sny": "und-Latn-ZZ",
-    "so": "und-Latn-SO",
-    "sog": "und-Sogd-UZ",
-    "sok": "und-Latn-ZZ",
-    "soq": "und-Latn-ZZ",
-    "sou": "und-Thai-TH",
-    "soy": "und-Latn-ZZ",
-    "spd": "und-Latn-ZZ",
-    "spl": "und-Latn-ZZ",
-    "sps": "und-Latn-ZZ",
-    "sq": "und-Latn-AL",
-    "sr": "und-Cyrl-RS",
-    "srb": "und-Sora-IN",
-    "srn": "und-Latn-SR",
-    "srr": "und-Latn-SN",
-    "srx": "und-Deva-IN",
-    "ss": "und-Latn-ZA",
-    "ssd": "und-Latn-ZZ",
-    "ssg": "und-Latn-ZZ",
-    "ssy": "und-Latn-ER",
-    "st": "und-Latn-ZA",
-    "stk": "und-Latn-ZZ",
-    "stq": "und-Latn-DE",
-    "su": "und-Latn-ID",
-    "sua": "und-Latn-ZZ",
-    "sue": "und-Latn-ZZ",
-    "suk": "und-Latn-TZ",
-    "sur": "und-Latn-ZZ",
-    "sus": "und-Latn-GN",
-    "sv": "und-Latn-SE",
-    "sw": "und-Latn-TZ",
-    "swb": "und-Arab-YT",
-    "swc": "und-Latn-CD",
-    "swg": "und-Latn-DE",
-    "swp": "und-Latn-ZZ",
-    "swv": "und-Deva-IN",
-    "sxn": "und-Latn-ID",
-    "sxw": "und-Latn-ZZ",
-    "syl": "und-Beng-BD",
-    "syr": "und-Syrc-IQ",
-    "szl": "und-Latn-PL",
-    "ta": "und-Taml-IN",
-    "taj": "und-Deva-NP",
-    "tal": "und-Latn-ZZ",
-    "tan": "und-Latn-ZZ",
-    "taq": "und-Latn-ZZ",
-    "tbc": "und-Latn-ZZ",
-    "tbd": "und-Latn-ZZ",
-    "tbf": "und-Latn-ZZ",
-    "tbg": "und-Latn-ZZ",
-    "tbo": "und-Latn-ZZ",
-    "tbw": "und-Latn-PH",
-    "tbz": "und-Latn-ZZ",
-    "tci": "und-Latn-ZZ",
-    "tcy": "und-Knda-IN",
-    "tdd": "und-Tale-CN",
-    "tdg": "und-Deva-NP",
-    "tdh": "und-Deva-NP",
-    "tdu": "und-Latn-MY",
-    "te": "und-Telu-IN",
-    "ted": "und-Latn-ZZ",
-    "tem": "und-Latn-SL",
-    "teo": "und-Latn-UG",
-    "tet": "und-Latn-TL",
-    "tfi": "und-Latn-ZZ",
-    "tg": "und-Cyrl-TJ",
-    "tgc": "und-Latn-ZZ",
-    "tgo": "und-Latn-ZZ",
-    "tgu": "und-Latn-ZZ",
-    "th": "und-Thai-TH",
-    "thl": "und-Deva-NP",
-    "thq": "und-Deva-NP",
-    "thr": "und-Deva-NP",
-    "ti": "und-Ethi-ET",
-    "tif": "und-Latn-ZZ",
-    "tig": "und-Ethi-ER",
-    "tik": "und-Latn-ZZ",
-    "tim": "und-Latn-ZZ",
-    "tio": "und-Latn-ZZ",
-    "tiv": "und-Latn-NG",
-    "tk": "und-Latn-TM",
-    "tkl": "und-Latn-TK",
-    "tkr": "und-Latn-AZ",
-    "tkt": "und-Deva-NP",
-    "tl": "und-Latn-PH",
-    "tlf": "und-Latn-ZZ",
-    "tlx": "und-Latn-ZZ",
-    "tly": "und-Latn-AZ",
-    "tmh": "und-Latn-NE",
-    "tmy": "und-Latn-ZZ",
-    "tn": "und-Latn-ZA",
-    "tnh": "und-Latn-ZZ",
-    "to": "und-Latn-TO",
-    "tof": "und-Latn-ZZ",
-    "tog": "und-Latn-MW",
-    "toq": "und-Latn-ZZ",
-    "tpi": "und-Latn-PG",
-    "tpm": "und-Latn-ZZ",
-    "tpz": "und-Latn-ZZ",
-    "tqo": "und-Latn-ZZ",
-    "tr": "und-Latn-TR",
-    "tru": "und-Latn-TR",
-    "trv": "und-Latn-TW",
-    "trw": "und-Arab-PK",
-    "ts": "und-Latn-ZA",
-    "tsd": "und-Grek-GR",
-    "tsf": "und-Deva-NP",
-    "tsg": "und-Latn-PH",
-    "tsj": "und-Tibt-BT",
-    "tsw": "und-Latn-ZZ",
-    "tt": "und-Cyrl-RU",
-    "ttd": "und-Latn-ZZ",
-    "tte": "und-Latn-ZZ",
-    "ttj": "und-Latn-UG",
-    "ttr": "und-Latn-ZZ",
-    "tts": "und-Thai-TH",
-    "ttt": "und-Latn-AZ",
-    "tuh": "und-Latn-ZZ",
-    "tul": "und-Latn-ZZ",
-    "tum": "und-Latn-MW",
-    "tuq": "und-Latn-ZZ",
-    "tvd": "und-Latn-ZZ",
-    "tvl": "und-Latn-TV",
-    "tvu": "und-Latn-ZZ",
-    "twh": "und-Latn-ZZ",
-    "twq": "und-Latn-NE",
-    "txg": "und-Tang-CN",
-    "txo": "und-Toto-IN",
-    "ty": "und-Latn-PF",
-    "tya": "und-Latn-ZZ",
-    "tyv": "und-Cyrl-RU",
-    "tzm": "und-Latn-MA",
-    "ubu": "und-Latn-ZZ",
-    "udi": "und-Aghb-RU",
-    "udm": "und-Cyrl-RU",
-    "ug": "und-Arab-CN",
-    "uga": "und-Ugar-SY",
-    "uk": "und-Cyrl-UA",
-    "uli": "und-Latn-FM",
-    "umb": "und-Latn-AO",
-    "unr": "und-Beng-IN",
-    "unx": "und-Beng-IN",
-    "uok": "und-Latn-ZZ",
-    "ur": "und-Arab-PK",
-    "uri": "und-Latn-ZZ",
-    "urt": "und-Latn-ZZ",
-    "urw": "und-Latn-ZZ",
-    "usa": "und-Latn-ZZ",
-    "uth": "und-Latn-ZZ",
-    "utr": "und-Latn-ZZ",
-    "uvh": "und-Latn-ZZ",
-    "uvl": "und-Latn-ZZ",
-    "uz": "und-Latn-UZ",
-    "vag": "und-Latn-ZZ",
-    "vai": "und-Vaii-LR",
-    "van": "und-Latn-ZZ",
-    "ve": "und-Latn-ZA",
-    "vec": "und-Latn-IT",
-    "vep": "und-Latn-RU",
-    "vi": "und-Latn-VN",
-    "vic": "und-Latn-SX",
-    "viv": "und-Latn-ZZ",
-    "vls": "und-Latn-BE",
-    "vmf": "und-Latn-DE",
-    "vmw": "und-Latn-MZ",
-    "vo": "und-Latn-001",
-    "vot": "und-Latn-RU",
-    "vro": "und-Latn-EE",
-    "vun": "und-Latn-TZ",
-    "vut": "und-Latn-ZZ",
-    "wa": "und-Latn-BE",
-    "wae": "und-Latn-CH",
-    "waj": "und-Latn-ZZ",
-    "wal": "und-Ethi-ET",
-    "wan": "und-Latn-ZZ",
-    "war": "und-Latn-PH",
-    "wbp": "und-Latn-AU",
-    "wbq": "und-Telu-IN",
-    "wbr": "und-Deva-IN",
-    "wci": "und-Latn-ZZ",
-    "wer": "und-Latn-ZZ",
-    "wgi": "und-Latn-ZZ",
-    "whg": "und-Latn-ZZ",
-    "wib": "und-Latn-ZZ",
-    "wiu": "und-Latn-ZZ",
-    "wiv": "und-Latn-ZZ",
-    "wja": "und-Latn-ZZ",
-    "wji": "und-Latn-ZZ",
-    "wls": "und-Latn-WF",
-    "wmo": "und-Latn-ZZ",
-    "wnc": "und-Latn-ZZ",
-    "wni": "und-Arab-KM",
-    "wnu": "und-Latn-ZZ",
-    "wo": "und-Latn-SN",
-    "wob": "und-Latn-ZZ",
-    "wos": "und-Latn-ZZ",
-    "wrs": "und-Latn-ZZ",
-    "wsg": "und-Gong-IN",
-    "wsk": "und-Latn-ZZ",
-    "wtm": "und-Deva-IN",
-    "wuu": "und-Hans-CN",
-    "wuv": "und-Latn-ZZ",
-    "wwa": "und-Latn-ZZ",
-    "xav": "und-Latn-BR",
-    "xbi": "und-Latn-ZZ",
-    "xco": "und-Chrs-UZ",
-    "xcr": "und-Cari-TR",
-    "xes": "und-Latn-ZZ",
-    "xh": "und-Latn-ZA",
-    "xla": "und-Latn-ZZ",
-    "xlc": "und-Lyci-TR",
-    "xld": "und-Lydi-TR",
-    "xmf": "und-Geor-GE",
-    "xmn": "und-Mani-CN",
-    "xmr": "und-Merc-SD",
-    "xna": "und-Narb-SA",
-    "xnr": "und-Deva-IN",
-    "xog": "und-Latn-UG",
-    "xon": "und-Latn-ZZ",
-    "xpr": "und-Prti-IR",
-    "xrb": "und-Latn-ZZ",
-    "xsa": "und-Sarb-YE",
-    "xsi": "und-Latn-ZZ",
-    "xsm": "und-Latn-ZZ",
-    "xsr": "und-Deva-NP",
-    "xwe": "und-Latn-ZZ",
-    "yam": "und-Latn-ZZ",
-    "yao": "und-Latn-MZ",
-    "yap": "und-Latn-FM",
-    "yas": "und-Latn-ZZ",
-    "yat": "und-Latn-ZZ",
-    "yav": "und-Latn-CM",
-    "yay": "und-Latn-ZZ",
-    "yaz": "und-Latn-ZZ",
-    "yba": "und-Latn-ZZ",
-    "ybb": "und-Latn-CM",
-    "yby": "und-Latn-ZZ",
-    "yer": "und-Latn-ZZ",
-    "ygr": "und-Latn-ZZ",
-    "ygw": "und-Latn-ZZ",
-    "yi": "und-Hebr-001",
-    "yko": "und-Latn-ZZ",
-    "yle": "und-Latn-ZZ",
-    "ylg": "und-Latn-ZZ",
-    "yll": "und-Latn-ZZ",
-    "yml": "und-Latn-ZZ",
-    "yo": "und-Latn-NG",
-    "yon": "und-Latn-ZZ",
-    "yrb": "und-Latn-ZZ",
-    "yre": "und-Latn-ZZ",
-    "yrl": "und-Latn-BR",
-    "yss": "und-Latn-ZZ",
-    "yua": "und-Latn-MX",
-    "yue": "und-Hant-HK",
-    "yuj": "und-Latn-ZZ",
-    "yut": "und-Latn-ZZ",
-    "yuw": "und-Latn-ZZ",
-    "za": "und-Latn-CN",
-    "zag": "und-Latn-SD",
-    "zdj": "und-Arab-KM",
-    "zea": "und-Latn-NL",
-    "zgh": "und-Tfng-MA",
-    "zh": "und-Hans-CN",
-    "zhx": "und-Nshu-CN",
-    "zia": "und-Latn-ZZ",
-    "zkt": "und-Kits-CN",
-    "zlm": "und-Latn-TG",
-    "zmi": "und-Latn-MY",
-    "zne": "und-Latn-ZZ",
-    "zu": "und-Latn-ZA",
-    "zza": "und-Latn-TR"
+    "aa": [
+      "Latn",
+      "ET"
+    ],
+    "aai": [
+      "Latn",
+      "ZZ"
+    ],
+    "aak": [
+      "Latn",
+      "ZZ"
+    ],
+    "aau": [
+      "Latn",
+      "ZZ"
+    ],
+    "ab": [
+      "Cyrl",
+      "GE"
+    ],
+    "abi": [
+      "Latn",
+      "ZZ"
+    ],
+    "abq": [
+      "Cyrl",
+      "ZZ"
+    ],
+    "abr": [
+      "Latn",
+      "GH"
+    ],
+    "abt": [
+      "Latn",
+      "ZZ"
+    ],
+    "aby": [
+      "Latn",
+      "ZZ"
+    ],
+    "acd": [
+      "Latn",
+      "ZZ"
+    ],
+    "ace": [
+      "Latn",
+      "ID"
+    ],
+    "ach": [
+      "Latn",
+      "UG"
+    ],
+    "ada": [
+      "Latn",
+      "GH"
+    ],
+    "ade": [
+      "Latn",
+      "ZZ"
+    ],
+    "adj": [
+      "Latn",
+      "ZZ"
+    ],
+    "adp": [
+      "Tibt",
+      "BT"
+    ],
+    "ady": [
+      "Cyrl",
+      "RU"
+    ],
+    "adz": [
+      "Latn",
+      "ZZ"
+    ],
+    "ae": [
+      "Avst",
+      "IR"
+    ],
+    "aeb": [
+      "Arab",
+      "TN"
+    ],
+    "aey": [
+      "Latn",
+      "ZZ"
+    ],
+    "af": [
+      "Latn",
+      "ZA"
+    ],
+    "agc": [
+      "Latn",
+      "ZZ"
+    ],
+    "agd": [
+      "Latn",
+      "ZZ"
+    ],
+    "agg": [
+      "Latn",
+      "ZZ"
+    ],
+    "agm": [
+      "Latn",
+      "ZZ"
+    ],
+    "ago": [
+      "Latn",
+      "ZZ"
+    ],
+    "agq": [
+      "Latn",
+      "CM"
+    ],
+    "aha": [
+      "Latn",
+      "ZZ"
+    ],
+    "ahl": [
+      "Latn",
+      "ZZ"
+    ],
+    "aho": [
+      "Ahom",
+      "IN"
+    ],
+    "ajg": [
+      "Latn",
+      "ZZ"
+    ],
+    "ak": [
+      "Latn",
+      "GH"
+    ],
+    "akk": [
+      "Xsux",
+      "IQ"
+    ],
+    "ala": [
+      "Latn",
+      "ZZ"
+    ],
+    "ali": [
+      "Latn",
+      "ZZ"
+    ],
+    "aln": [
+      "Latn",
+      "XK"
+    ],
+    "alt": [
+      "Cyrl",
+      "RU"
+    ],
+    "am": [
+      "Ethi",
+      "ET"
+    ],
+    "amm": [
+      "Latn",
+      "ZZ"
+    ],
+    "amn": [
+      "Latn",
+      "ZZ"
+    ],
+    "amo": [
+      "Latn",
+      "NG"
+    ],
+    "amp": [
+      "Latn",
+      "ZZ"
+    ],
+    "an": [
+      "Latn",
+      "ES"
+    ],
+    "anc": [
+      "Latn",
+      "ZZ"
+    ],
+    "ank": [
+      "Latn",
+      "ZZ"
+    ],
+    "ann": [
+      "Latn",
+      "ZZ"
+    ],
+    "any": [
+      "Latn",
+      "ZZ"
+    ],
+    "aoj": [
+      "Latn",
+      "ZZ"
+    ],
+    "aom": [
+      "Latn",
+      "ZZ"
+    ],
+    "aoz": [
+      "Latn",
+      "ID"
+    ],
+    "apc": [
+      "Arab",
+      "ZZ"
+    ],
+    "apd": [
+      "Arab",
+      "TG"
+    ],
+    "ape": [
+      "Latn",
+      "ZZ"
+    ],
+    "apr": [
+      "Latn",
+      "ZZ"
+    ],
+    "aps": [
+      "Latn",
+      "ZZ"
+    ],
+    "apz": [
+      "Latn",
+      "ZZ"
+    ],
+    "ar": [
+      "Arab",
+      "EG"
+    ],
+    "arc": [
+      "Armi",
+      "IR"
+    ],
+    "arh": [
+      "Latn",
+      "ZZ"
+    ],
+    "arn": [
+      "Latn",
+      "CL"
+    ],
+    "aro": [
+      "Latn",
+      "BO"
+    ],
+    "arq": [
+      "Arab",
+      "DZ"
+    ],
+    "ars": [
+      "Arab",
+      "SA"
+    ],
+    "ary": [
+      "Arab",
+      "MA"
+    ],
+    "arz": [
+      "Arab",
+      "EG"
+    ],
+    "as": [
+      "Beng",
+      "IN"
+    ],
+    "asa": [
+      "Latn",
+      "TZ"
+    ],
+    "ase": [
+      "Sgnw",
+      "US"
+    ],
+    "asg": [
+      "Latn",
+      "ZZ"
+    ],
+    "aso": [
+      "Latn",
+      "ZZ"
+    ],
+    "ast": [
+      "Latn",
+      "ES"
+    ],
+    "ata": [
+      "Latn",
+      "ZZ"
+    ],
+    "atg": [
+      "Latn",
+      "ZZ"
+    ],
+    "atj": [
+      "Latn",
+      "CA"
+    ],
+    "auy": [
+      "Latn",
+      "ZZ"
+    ],
+    "av": [
+      "Cyrl",
+      "RU"
+    ],
+    "avl": [
+      "Arab",
+      "ZZ"
+    ],
+    "avn": [
+      "Latn",
+      "ZZ"
+    ],
+    "avt": [
+      "Latn",
+      "ZZ"
+    ],
+    "avu": [
+      "Latn",
+      "ZZ"
+    ],
+    "awa": [
+      "Deva",
+      "IN"
+    ],
+    "awb": [
+      "Latn",
+      "ZZ"
+    ],
+    "awo": [
+      "Latn",
+      "ZZ"
+    ],
+    "awx": [
+      "Latn",
+      "ZZ"
+    ],
+    "ay": [
+      "Latn",
+      "BO"
+    ],
+    "ayb": [
+      "Latn",
+      "ZZ"
+    ],
+    "az": [
+      "Latn",
+      "AZ"
+    ],
+    "ba": [
+      "Cyrl",
+      "RU"
+    ],
+    "bal": [
+      "Arab",
+      "PK"
+    ],
+    "ban": [
+      "Latn",
+      "ID"
+    ],
+    "bap": [
+      "Deva",
+      "NP"
+    ],
+    "bar": [
+      "Latn",
+      "AT"
+    ],
+    "bas": [
+      "Latn",
+      "CM"
+    ],
+    "bav": [
+      "Latn",
+      "ZZ"
+    ],
+    "bax": [
+      "Bamu",
+      "CM"
+    ],
+    "bba": [
+      "Latn",
+      "ZZ"
+    ],
+    "bbb": [
+      "Latn",
+      "ZZ"
+    ],
+    "bbc": [
+      "Latn",
+      "ID"
+    ],
+    "bbd": [
+      "Latn",
+      "ZZ"
+    ],
+    "bbj": [
+      "Latn",
+      "CM"
+    ],
+    "bbp": [
+      "Latn",
+      "ZZ"
+    ],
+    "bbr": [
+      "Latn",
+      "ZZ"
+    ],
+    "bcf": [
+      "Latn",
+      "ZZ"
+    ],
+    "bch": [
+      "Latn",
+      "ZZ"
+    ],
+    "bci": [
+      "Latn",
+      "CI"
+    ],
+    "bcm": [
+      "Latn",
+      "ZZ"
+    ],
+    "bcn": [
+      "Latn",
+      "ZZ"
+    ],
+    "bco": [
+      "Latn",
+      "ZZ"
+    ],
+    "bcq": [
+      "Ethi",
+      "ZZ"
+    ],
+    "bcu": [
+      "Latn",
+      "ZZ"
+    ],
+    "bdd": [
+      "Latn",
+      "ZZ"
+    ],
+    "be": [
+      "Cyrl",
+      "BY"
+    ],
+    "bef": [
+      "Latn",
+      "ZZ"
+    ],
+    "beh": [
+      "Latn",
+      "ZZ"
+    ],
+    "bej": [
+      "Arab",
+      "SD"
+    ],
+    "bem": [
+      "Latn",
+      "ZM"
+    ],
+    "bet": [
+      "Latn",
+      "ZZ"
+    ],
+    "bew": [
+      "Latn",
+      "ID"
+    ],
+    "bex": [
+      "Latn",
+      "ZZ"
+    ],
+    "bez": [
+      "Latn",
+      "TZ"
+    ],
+    "bfd": [
+      "Latn",
+      "CM"
+    ],
+    "bfq": [
+      "Taml",
+      "IN"
+    ],
+    "bft": [
+      "Arab",
+      "PK"
+    ],
+    "bfy": [
+      "Deva",
+      "IN"
+    ],
+    "bg": [
+      "Cyrl",
+      "BG"
+    ],
+    "bgc": [
+      "Deva",
+      "IN"
+    ],
+    "bgn": [
+      "Arab",
+      "PK"
+    ],
+    "bgx": [
+      "Grek",
+      "TR"
+    ],
+    "bhb": [
+      "Deva",
+      "IN"
+    ],
+    "bhg": [
+      "Latn",
+      "ZZ"
+    ],
+    "bhi": [
+      "Deva",
+      "IN"
+    ],
+    "bhl": [
+      "Latn",
+      "ZZ"
+    ],
+    "bho": [
+      "Deva",
+      "IN"
+    ],
+    "bhy": [
+      "Latn",
+      "ZZ"
+    ],
+    "bi": [
+      "Latn",
+      "VU"
+    ],
+    "bib": [
+      "Latn",
+      "ZZ"
+    ],
+    "big": [
+      "Latn",
+      "ZZ"
+    ],
+    "bik": [
+      "Latn",
+      "PH"
+    ],
+    "bim": [
+      "Latn",
+      "ZZ"
+    ],
+    "bin": [
+      "Latn",
+      "NG"
+    ],
+    "bio": [
+      "Latn",
+      "ZZ"
+    ],
+    "biq": [
+      "Latn",
+      "ZZ"
+    ],
+    "bjh": [
+      "Latn",
+      "ZZ"
+    ],
+    "bji": [
+      "Ethi",
+      "ZZ"
+    ],
+    "bjj": [
+      "Deva",
+      "IN"
+    ],
+    "bjn": [
+      "Latn",
+      "ID"
+    ],
+    "bjo": [
+      "Latn",
+      "ZZ"
+    ],
+    "bjr": [
+      "Latn",
+      "ZZ"
+    ],
+    "bjt": [
+      "Latn",
+      "SN"
+    ],
+    "bjz": [
+      "Latn",
+      "ZZ"
+    ],
+    "bkc": [
+      "Latn",
+      "ZZ"
+    ],
+    "bkm": [
+      "Latn",
+      "CM"
+    ],
+    "bkq": [
+      "Latn",
+      "ZZ"
+    ],
+    "bku": [
+      "Latn",
+      "PH"
+    ],
+    "bkv": [
+      "Latn",
+      "ZZ"
+    ],
+    "blg": [
+      "Latn",
+      "MY"
+    ],
+    "blt": [
+      "Tavt",
+      "VN"
+    ],
+    "bm": [
+      "Latn",
+      "ML"
+    ],
+    "bmh": [
+      "Latn",
+      "ZZ"
+    ],
+    "bmk": [
+      "Latn",
+      "ZZ"
+    ],
+    "bmq": [
+      "Latn",
+      "ML"
+    ],
+    "bmu": [
+      "Latn",
+      "ZZ"
+    ],
+    "bn": [
+      "Beng",
+      "BD"
+    ],
+    "bng": [
+      "Latn",
+      "ZZ"
+    ],
+    "bnm": [
+      "Latn",
+      "ZZ"
+    ],
+    "bnp": [
+      "Latn",
+      "ZZ"
+    ],
+    "bo": [
+      "Tibt",
+      "CN"
+    ],
+    "boj": [
+      "Latn",
+      "ZZ"
+    ],
+    "bom": [
+      "Latn",
+      "ZZ"
+    ],
+    "bon": [
+      "Latn",
+      "ZZ"
+    ],
+    "bpy": [
+      "Beng",
+      "IN"
+    ],
+    "bqc": [
+      "Latn",
+      "ZZ"
+    ],
+    "bqi": [
+      "Arab",
+      "IR"
+    ],
+    "bqp": [
+      "Latn",
+      "ZZ"
+    ],
+    "bqv": [
+      "Latn",
+      "CI"
+    ],
+    "br": [
+      "Latn",
+      "FR"
+    ],
+    "bra": [
+      "Deva",
+      "IN"
+    ],
+    "brh": [
+      "Arab",
+      "PK"
+    ],
+    "brx": [
+      "Deva",
+      "IN"
+    ],
+    "brz": [
+      "Latn",
+      "ZZ"
+    ],
+    "bs": [
+      "Latn",
+      "BA"
+    ],
+    "bsj": [
+      "Latn",
+      "ZZ"
+    ],
+    "bsq": [
+      "Bass",
+      "LR"
+    ],
+    "bss": [
+      "Latn",
+      "CM"
+    ],
+    "bst": [
+      "Ethi",
+      "ZZ"
+    ],
+    "bto": [
+      "Latn",
+      "PH"
+    ],
+    "btt": [
+      "Latn",
+      "ZZ"
+    ],
+    "btv": [
+      "Deva",
+      "PK"
+    ],
+    "bua": [
+      "Cyrl",
+      "RU"
+    ],
+    "buc": [
+      "Latn",
+      "YT"
+    ],
+    "bud": [
+      "Latn",
+      "ZZ"
+    ],
+    "bug": [
+      "Latn",
+      "ID"
+    ],
+    "buk": [
+      "Latn",
+      "ZZ"
+    ],
+    "bum": [
+      "Latn",
+      "CM"
+    ],
+    "buo": [
+      "Latn",
+      "ZZ"
+    ],
+    "bus": [
+      "Latn",
+      "ZZ"
+    ],
+    "buu": [
+      "Latn",
+      "ZZ"
+    ],
+    "bvb": [
+      "Latn",
+      "GQ"
+    ],
+    "bwd": [
+      "Latn",
+      "ZZ"
+    ],
+    "bwr": [
+      "Latn",
+      "ZZ"
+    ],
+    "bxh": [
+      "Latn",
+      "ZZ"
+    ],
+    "bye": [
+      "Latn",
+      "ZZ"
+    ],
+    "byn": [
+      "Ethi",
+      "ER"
+    ],
+    "byr": [
+      "Latn",
+      "ZZ"
+    ],
+    "bys": [
+      "Latn",
+      "ZZ"
+    ],
+    "byv": [
+      "Latn",
+      "CM"
+    ],
+    "byx": [
+      "Latn",
+      "ZZ"
+    ],
+    "bza": [
+      "Latn",
+      "ZZ"
+    ],
+    "bze": [
+      "Latn",
+      "ML"
+    ],
+    "bzf": [
+      "Latn",
+      "ZZ"
+    ],
+    "bzh": [
+      "Latn",
+      "ZZ"
+    ],
+    "bzw": [
+      "Latn",
+      "ZZ"
+    ],
+    "ca": [
+      "Latn",
+      "ES"
+    ],
+    "cad": [
+      "Latn",
+      "US"
+    ],
+    "can": [
+      "Latn",
+      "ZZ"
+    ],
+    "cbj": [
+      "Latn",
+      "ZZ"
+    ],
+    "cch": [
+      "Latn",
+      "NG"
+    ],
+    "ccp": [
+      "Cakm",
+      "BD"
+    ],
+    "ce": [
+      "Cyrl",
+      "RU"
+    ],
+    "ceb": [
+      "Latn",
+      "PH"
+    ],
+    "cfa": [
+      "Latn",
+      "ZZ"
+    ],
+    "cgg": [
+      "Latn",
+      "UG"
+    ],
+    "ch": [
+      "Latn",
+      "GU"
+    ],
+    "chk": [
+      "Latn",
+      "FM"
+    ],
+    "chm": [
+      "Cyrl",
+      "RU"
+    ],
+    "cho": [
+      "Latn",
+      "US"
+    ],
+    "chp": [
+      "Latn",
+      "CA"
+    ],
+    "chr": [
+      "Cher",
+      "US"
+    ],
+    "cic": [
+      "Latn",
+      "US"
+    ],
+    "cja": [
+      "Arab",
+      "KH"
+    ],
+    "cjm": [
+      "Cham",
+      "VN"
+    ],
+    "cjv": [
+      "Latn",
+      "ZZ"
+    ],
+    "ckb": [
+      "Arab",
+      "IQ"
+    ],
+    "ckl": [
+      "Latn",
+      "ZZ"
+    ],
+    "cko": [
+      "Latn",
+      "ZZ"
+    ],
+    "cky": [
+      "Latn",
+      "ZZ"
+    ],
+    "cla": [
+      "Latn",
+      "ZZ"
+    ],
+    "cme": [
+      "Latn",
+      "ZZ"
+    ],
+    "cmg": [
+      "Soyo",
+      "MN"
+    ],
+    "co": [
+      "Latn",
+      "FR"
+    ],
+    "cop": [
+      "Copt",
+      "EG"
+    ],
+    "cps": [
+      "Latn",
+      "PH"
+    ],
+    "cr": [
+      "Cans",
+      "CA"
+    ],
+    "crh": [
+      "Cyrl",
+      "UA"
+    ],
+    "crj": [
+      "Cans",
+      "CA"
+    ],
+    "crk": [
+      "Cans",
+      "CA"
+    ],
+    "crl": [
+      "Cans",
+      "CA"
+    ],
+    "crm": [
+      "Cans",
+      "CA"
+    ],
+    "crs": [
+      "Latn",
+      "SC"
+    ],
+    "cs": [
+      "Latn",
+      "CZ"
+    ],
+    "csb": [
+      "Latn",
+      "PL"
+    ],
+    "csw": [
+      "Cans",
+      "CA"
+    ],
+    "ctd": [
+      "Pauc",
+      "MM"
+    ],
+    "cu": [
+      "Cyrl",
+      "RU"
+    ],
+    "cv": [
+      "Cyrl",
+      "RU"
+    ],
+    "cy": [
+      "Latn",
+      "GB"
+    ],
+    "da": [
+      "Latn",
+      "DK"
+    ],
+    "dad": [
+      "Latn",
+      "ZZ"
+    ],
+    "daf": [
+      "Latn",
+      "CI"
+    ],
+    "dag": [
+      "Latn",
+      "ZZ"
+    ],
+    "dah": [
+      "Latn",
+      "ZZ"
+    ],
+    "dak": [
+      "Latn",
+      "US"
+    ],
+    "dar": [
+      "Cyrl",
+      "RU"
+    ],
+    "dav": [
+      "Latn",
+      "KE"
+    ],
+    "dbd": [
+      "Latn",
+      "ZZ"
+    ],
+    "dbq": [
+      "Latn",
+      "ZZ"
+    ],
+    "dcc": [
+      "Arab",
+      "IN"
+    ],
+    "ddn": [
+      "Latn",
+      "ZZ"
+    ],
+    "de": [
+      "Latn",
+      "DE"
+    ],
+    "ded": [
+      "Latn",
+      "ZZ"
+    ],
+    "den": [
+      "Latn",
+      "CA"
+    ],
+    "dga": [
+      "Latn",
+      "ZZ"
+    ],
+    "dgh": [
+      "Latn",
+      "ZZ"
+    ],
+    "dgi": [
+      "Latn",
+      "ZZ"
+    ],
+    "dgl": [
+      "Arab",
+      "ZZ"
+    ],
+    "dgr": [
+      "Latn",
+      "CA"
+    ],
+    "dgz": [
+      "Latn",
+      "ZZ"
+    ],
+    "dia": [
+      "Latn",
+      "ZZ"
+    ],
+    "dje": [
+      "Latn",
+      "NE"
+    ],
+    "dmf": [
+      "Medf",
+      "NG"
+    ],
+    "dnj": [
+      "Latn",
+      "CI"
+    ],
+    "dob": [
+      "Latn",
+      "ZZ"
+    ],
+    "doi": [
+      "Deva",
+      "IN"
+    ],
+    "dop": [
+      "Latn",
+      "ZZ"
+    ],
+    "dow": [
+      "Latn",
+      "ZZ"
+    ],
+    "drh": [
+      "Mong",
+      "CN"
+    ],
+    "dri": [
+      "Latn",
+      "ZZ"
+    ],
+    "drs": [
+      "Ethi",
+      "ZZ"
+    ],
+    "dsb": [
+      "Latn",
+      "DE"
+    ],
+    "dtm": [
+      "Latn",
+      "ML"
+    ],
+    "dtp": [
+      "Latn",
+      "MY"
+    ],
+    "dts": [
+      "Latn",
+      "ZZ"
+    ],
+    "dty": [
+      "Deva",
+      "NP"
+    ],
+    "dua": [
+      "Latn",
+      "CM"
+    ],
+    "duc": [
+      "Latn",
+      "ZZ"
+    ],
+    "dud": [
+      "Latn",
+      "ZZ"
+    ],
+    "dug": [
+      "Latn",
+      "ZZ"
+    ],
+    "dv": [
+      "Thaa",
+      "MV"
+    ],
+    "dva": [
+      "Latn",
+      "ZZ"
+    ],
+    "dww": [
+      "Latn",
+      "ZZ"
+    ],
+    "dyo": [
+      "Latn",
+      "SN"
+    ],
+    "dyu": [
+      "Latn",
+      "BF"
+    ],
+    "dz": [
+      "Tibt",
+      "BT"
+    ],
+    "dzg": [
+      "Latn",
+      "ZZ"
+    ],
+    "ebu": [
+      "Latn",
+      "KE"
+    ],
+    "ee": [
+      "Latn",
+      "GH"
+    ],
+    "efi": [
+      "Latn",
+      "NG"
+    ],
+    "egl": [
+      "Latn",
+      "IT"
+    ],
+    "egy": [
+      "Egyp",
+      "EG"
+    ],
+    "eka": [
+      "Latn",
+      "ZZ"
+    ],
+    "eky": [
+      "Kali",
+      "MM"
+    ],
+    "el": [
+      "Grek",
+      "GR"
+    ],
+    "ema": [
+      "Latn",
+      "ZZ"
+    ],
+    "emi": [
+      "Latn",
+      "ZZ"
+    ],
+    "en": [
+      "Latn",
+      "US"
+    ],
+    "enn": [
+      "Latn",
+      "ZZ"
+    ],
+    "enq": [
+      "Latn",
+      "ZZ"
+    ],
+    "eo": [
+      "Latn",
+      "001"
+    ],
+    "eri": [
+      "Latn",
+      "ZZ"
+    ],
+    "es": [
+      "Latn",
+      "ES"
+    ],
+    "esg": [
+      "Gonm",
+      "IN"
+    ],
+    "esu": [
+      "Latn",
+      "US"
+    ],
+    "et": [
+      "Latn",
+      "EE"
+    ],
+    "etr": [
+      "Latn",
+      "ZZ"
+    ],
+    "ett": [
+      "Ital",
+      "IT"
+    ],
+    "etu": [
+      "Latn",
+      "ZZ"
+    ],
+    "etx": [
+      "Latn",
+      "ZZ"
+    ],
+    "eu": [
+      "Latn",
+      "ES"
+    ],
+    "ewo": [
+      "Latn",
+      "CM"
+    ],
+    "ext": [
+      "Latn",
+      "ES"
+    ],
+    "eza": [
+      "Latn",
+      "ZZ"
+    ],
+    "fa": [
+      "Arab",
+      "IR"
+    ],
+    "faa": [
+      "Latn",
+      "ZZ"
+    ],
+    "fab": [
+      "Latn",
+      "ZZ"
+    ],
+    "fag": [
+      "Latn",
+      "ZZ"
+    ],
+    "fai": [
+      "Latn",
+      "ZZ"
+    ],
+    "fan": [
+      "Latn",
+      "GQ"
+    ],
+    "ff": [
+      "Latn",
+      "SN"
+    ],
+    "ffi": [
+      "Latn",
+      "ZZ"
+    ],
+    "ffm": [
+      "Latn",
+      "ML"
+    ],
+    "fi": [
+      "Latn",
+      "FI"
+    ],
+    "fia": [
+      "Arab",
+      "SD"
+    ],
+    "fil": [
+      "Latn",
+      "PH"
+    ],
+    "fit": [
+      "Latn",
+      "SE"
+    ],
+    "fj": [
+      "Latn",
+      "FJ"
+    ],
+    "flr": [
+      "Latn",
+      "ZZ"
+    ],
+    "fmp": [
+      "Latn",
+      "ZZ"
+    ],
+    "fo": [
+      "Latn",
+      "FO"
+    ],
+    "fod": [
+      "Latn",
+      "ZZ"
+    ],
+    "fon": [
+      "Latn",
+      "BJ"
+    ],
+    "for": [
+      "Latn",
+      "ZZ"
+    ],
+    "fpe": [
+      "Latn",
+      "ZZ"
+    ],
+    "fqs": [
+      "Latn",
+      "ZZ"
+    ],
+    "fr": [
+      "Latn",
+      "FR"
+    ],
+    "frc": [
+      "Latn",
+      "US"
+    ],
+    "frp": [
+      "Latn",
+      "FR"
+    ],
+    "frr": [
+      "Latn",
+      "DE"
+    ],
+    "frs": [
+      "Latn",
+      "DE"
+    ],
+    "fub": [
+      "Arab",
+      "CM"
+    ],
+    "fud": [
+      "Latn",
+      "WF"
+    ],
+    "fue": [
+      "Latn",
+      "ZZ"
+    ],
+    "fuf": [
+      "Latn",
+      "GN"
+    ],
+    "fuh": [
+      "Latn",
+      "ZZ"
+    ],
+    "fuq": [
+      "Latn",
+      "NE"
+    ],
+    "fur": [
+      "Latn",
+      "IT"
+    ],
+    "fuv": [
+      "Latn",
+      "NG"
+    ],
+    "fuy": [
+      "Latn",
+      "ZZ"
+    ],
+    "fvr": [
+      "Latn",
+      "SD"
+    ],
+    "fy": [
+      "Latn",
+      "NL"
+    ],
+    "ga": [
+      "Latn",
+      "IE"
+    ],
+    "gaa": [
+      "Latn",
+      "GH"
+    ],
+    "gaf": [
+      "Latn",
+      "ZZ"
+    ],
+    "gag": [
+      "Latn",
+      "MD"
+    ],
+    "gah": [
+      "Latn",
+      "ZZ"
+    ],
+    "gaj": [
+      "Latn",
+      "ZZ"
+    ],
+    "gam": [
+      "Latn",
+      "ZZ"
+    ],
+    "gan": [
+      "Hans",
+      "CN"
+    ],
+    "gaw": [
+      "Latn",
+      "ZZ"
+    ],
+    "gay": [
+      "Latn",
+      "ID"
+    ],
+    "gba": [
+      "Latn",
+      "ZZ"
+    ],
+    "gbf": [
+      "Latn",
+      "ZZ"
+    ],
+    "gbm": [
+      "Deva",
+      "IN"
+    ],
+    "gby": [
+      "Latn",
+      "ZZ"
+    ],
+    "gbz": [
+      "Arab",
+      "IR"
+    ],
+    "gcr": [
+      "Latn",
+      "GF"
+    ],
+    "gd": [
+      "Latn",
+      "GB"
+    ],
+    "gde": [
+      "Latn",
+      "ZZ"
+    ],
+    "gdn": [
+      "Latn",
+      "ZZ"
+    ],
+    "gdr": [
+      "Latn",
+      "ZZ"
+    ],
+    "geb": [
+      "Latn",
+      "ZZ"
+    ],
+    "gej": [
+      "Latn",
+      "ZZ"
+    ],
+    "gel": [
+      "Latn",
+      "ZZ"
+    ],
+    "gez": [
+      "Ethi",
+      "ET"
+    ],
+    "gfk": [
+      "Latn",
+      "ZZ"
+    ],
+    "ggn": [
+      "Deva",
+      "NP"
+    ],
+    "ghs": [
+      "Latn",
+      "ZZ"
+    ],
+    "gil": [
+      "Latn",
+      "KI"
+    ],
+    "gim": [
+      "Latn",
+      "ZZ"
+    ],
+    "gjk": [
+      "Arab",
+      "PK"
+    ],
+    "gjn": [
+      "Latn",
+      "ZZ"
+    ],
+    "gju": [
+      "Arab",
+      "PK"
+    ],
+    "gkn": [
+      "Latn",
+      "ZZ"
+    ],
+    "gkp": [
+      "Latn",
+      "ZZ"
+    ],
+    "gl": [
+      "Latn",
+      "ES"
+    ],
+    "glk": [
+      "Arab",
+      "IR"
+    ],
+    "gmm": [
+      "Latn",
+      "ZZ"
+    ],
+    "gmv": [
+      "Ethi",
+      "ZZ"
+    ],
+    "gn": [
+      "Latn",
+      "PY"
+    ],
+    "gnd": [
+      "Latn",
+      "ZZ"
+    ],
+    "gng": [
+      "Latn",
+      "ZZ"
+    ],
+    "god": [
+      "Latn",
+      "ZZ"
+    ],
+    "gof": [
+      "Ethi",
+      "ZZ"
+    ],
+    "goi": [
+      "Latn",
+      "ZZ"
+    ],
+    "gom": [
+      "Deva",
+      "IN"
+    ],
+    "gon": [
+      "Telu",
+      "IN"
+    ],
+    "gor": [
+      "Latn",
+      "ID"
+    ],
+    "gos": [
+      "Latn",
+      "NL"
+    ],
+    "got": [
+      "Goth",
+      "UA"
+    ],
+    "grb": [
+      "Latn",
+      "ZZ"
+    ],
+    "grc": [
+      "Cprt",
+      "CY"
+    ],
+    "grt": [
+      "Beng",
+      "IN"
+    ],
+    "grw": [
+      "Latn",
+      "ZZ"
+    ],
+    "gsw": [
+      "Latn",
+      "CH"
+    ],
+    "gu": [
+      "Gujr",
+      "IN"
+    ],
+    "gub": [
+      "Latn",
+      "BR"
+    ],
+    "guc": [
+      "Latn",
+      "CO"
+    ],
+    "gud": [
+      "Latn",
+      "ZZ"
+    ],
+    "gur": [
+      "Latn",
+      "GH"
+    ],
+    "guw": [
+      "Latn",
+      "ZZ"
+    ],
+    "gux": [
+      "Latn",
+      "ZZ"
+    ],
+    "guz": [
+      "Latn",
+      "KE"
+    ],
+    "gv": [
+      "Latn",
+      "IM"
+    ],
+    "gvf": [
+      "Latn",
+      "ZZ"
+    ],
+    "gvr": [
+      "Deva",
+      "NP"
+    ],
+    "gvs": [
+      "Latn",
+      "ZZ"
+    ],
+    "gwc": [
+      "Arab",
+      "ZZ"
+    ],
+    "gwi": [
+      "Latn",
+      "CA"
+    ],
+    "gwt": [
+      "Arab",
+      "ZZ"
+    ],
+    "gyi": [
+      "Latn",
+      "ZZ"
+    ],
+    "ha": [
+      "Latn",
+      "NG"
+    ],
+    "hag": [
+      "Latn",
+      "ZZ"
+    ],
+    "hak": [
+      "Hans",
+      "CN"
+    ],
+    "ham": [
+      "Latn",
+      "ZZ"
+    ],
+    "haw": [
+      "Latn",
+      "US"
+    ],
+    "haz": [
+      "Arab",
+      "AF"
+    ],
+    "hbb": [
+      "Latn",
+      "ZZ"
+    ],
+    "hdy": [
+      "Ethi",
+      "ZZ"
+    ],
+    "he": [
+      "Hebr",
+      "IL"
+    ],
+    "hhy": [
+      "Latn",
+      "ZZ"
+    ],
+    "hi": [
+      "Deva",
+      "IN"
+    ],
+    "hia": [
+      "Latn",
+      "ZZ"
+    ],
+    "hif": [
+      "Latn",
+      "FJ"
+    ],
+    "hig": [
+      "Latn",
+      "ZZ"
+    ],
+    "hih": [
+      "Latn",
+      "ZZ"
+    ],
+    "hil": [
+      "Latn",
+      "PH"
+    ],
+    "hla": [
+      "Latn",
+      "ZZ"
+    ],
+    "hlu": [
+      "Hluw",
+      "TR"
+    ],
+    "hmd": [
+      "Plrd",
+      "CN"
+    ],
+    "hmt": [
+      "Latn",
+      "ZZ"
+    ],
+    "hnd": [
+      "Arab",
+      "PK"
+    ],
+    "hne": [
+      "Deva",
+      "IN"
+    ],
+    "hnj": [
+      "Hmnp",
+      "US"
+    ],
+    "hnn": [
+      "Latn",
+      "PH"
+    ],
+    "hno": [
+      "Arab",
+      "PK"
+    ],
+    "ho": [
+      "Latn",
+      "PG"
+    ],
+    "hoc": [
+      "Deva",
+      "IN"
+    ],
+    "hoj": [
+      "Deva",
+      "IN"
+    ],
+    "hot": [
+      "Latn",
+      "ZZ"
+    ],
+    "hr": [
+      "Latn",
+      "HR"
+    ],
+    "hsb": [
+      "Latn",
+      "DE"
+    ],
+    "hsn": [
+      "Hans",
+      "CN"
+    ],
+    "ht": [
+      "Latn",
+      "HT"
+    ],
+    "hu": [
+      "Latn",
+      "HU"
+    ],
+    "hui": [
+      "Latn",
+      "ZZ"
+    ],
+    "hy": [
+      "Armn",
+      "AM"
+    ],
+    "hz": [
+      "Latn",
+      "NA"
+    ],
+    "ia": [
+      "Latn",
+      "001"
+    ],
+    "ian": [
+      "Latn",
+      "ZZ"
+    ],
+    "iar": [
+      "Latn",
+      "ZZ"
+    ],
+    "iba": [
+      "Latn",
+      "MY"
+    ],
+    "ibb": [
+      "Latn",
+      "NG"
+    ],
+    "iby": [
+      "Latn",
+      "ZZ"
+    ],
+    "ica": [
+      "Latn",
+      "ZZ"
+    ],
+    "ich": [
+      "Latn",
+      "ZZ"
+    ],
+    "id": [
+      "Latn",
+      "ID"
+    ],
+    "idd": [
+      "Latn",
+      "ZZ"
+    ],
+    "idi": [
+      "Latn",
+      "ZZ"
+    ],
+    "idu": [
+      "Latn",
+      "ZZ"
+    ],
+    "ife": [
+      "Latn",
+      "TG"
+    ],
+    "ig": [
+      "Latn",
+      "NG"
+    ],
+    "igb": [
+      "Latn",
+      "ZZ"
+    ],
+    "ige": [
+      "Latn",
+      "ZZ"
+    ],
+    "ii": [
+      "Yiii",
+      "CN"
+    ],
+    "ijj": [
+      "Latn",
+      "ZZ"
+    ],
+    "ik": [
+      "Latn",
+      "US"
+    ],
+    "ikk": [
+      "Latn",
+      "ZZ"
+    ],
+    "ikt": [
+      "Latn",
+      "CA"
+    ],
+    "ikw": [
+      "Latn",
+      "ZZ"
+    ],
+    "ikx": [
+      "Latn",
+      "ZZ"
+    ],
+    "ilo": [
+      "Latn",
+      "PH"
+    ],
+    "imo": [
+      "Latn",
+      "ZZ"
+    ],
+    "in": [
+      "Latn",
+      "ID"
+    ],
+    "inh": [
+      "Cyrl",
+      "RU"
+    ],
+    "io": [
+      "Latn",
+      "001"
+    ],
+    "iou": [
+      "Latn",
+      "ZZ"
+    ],
+    "iri": [
+      "Latn",
+      "ZZ"
+    ],
+    "is": [
+      "Latn",
+      "IS"
+    ],
+    "it": [
+      "Latn",
+      "IT"
+    ],
+    "iu": [
+      "Cans",
+      "CA"
+    ],
+    "iw": [
+      "Hebr",
+      "IL"
+    ],
+    "iwm": [
+      "Latn",
+      "ZZ"
+    ],
+    "iws": [
+      "Latn",
+      "ZZ"
+    ],
+    "izh": [
+      "Latn",
+      "RU"
+    ],
+    "izi": [
+      "Latn",
+      "ZZ"
+    ],
+    "ja": [
+      "Jpan",
+      "JP"
+    ],
+    "jab": [
+      "Latn",
+      "ZZ"
+    ],
+    "jam": [
+      "Latn",
+      "JM"
+    ],
+    "jar": [
+      "Latn",
+      "ZZ"
+    ],
+    "jbo": [
+      "Latn",
+      "001"
+    ],
+    "jbu": [
+      "Latn",
+      "ZZ"
+    ],
+    "jen": [
+      "Latn",
+      "ZZ"
+    ],
+    "jgk": [
+      "Latn",
+      "ZZ"
+    ],
+    "jgo": [
+      "Latn",
+      "CM"
+    ],
+    "ji": [
+      "Hebr",
+      "UA"
+    ],
+    "jib": [
+      "Latn",
+      "ZZ"
+    ],
+    "jmc": [
+      "Latn",
+      "TZ"
+    ],
+    "jml": [
+      "Deva",
+      "NP"
+    ],
+    "jra": [
+      "Latn",
+      "ZZ"
+    ],
+    "jut": [
+      "Latn",
+      "DK"
+    ],
+    "jv": [
+      "Latn",
+      "ID"
+    ],
+    "jw": [
+      "Latn",
+      "ID"
+    ],
+    "ka": [
+      "Geor",
+      "GE"
+    ],
+    "kaa": [
+      "Cyrl",
+      "UZ"
+    ],
+    "kab": [
+      "Latn",
+      "DZ"
+    ],
+    "kac": [
+      "Latn",
+      "MM"
+    ],
+    "kad": [
+      "Latn",
+      "ZZ"
+    ],
+    "kai": [
+      "Latn",
+      "ZZ"
+    ],
+    "kaj": [
+      "Latn",
+      "NG"
+    ],
+    "kam": [
+      "Latn",
+      "KE"
+    ],
+    "kao": [
+      "Latn",
+      "ML"
+    ],
+    "kbd": [
+      "Cyrl",
+      "RU"
+    ],
+    "kbm": [
+      "Latn",
+      "ZZ"
+    ],
+    "kbp": [
+      "Latn",
+      "ZZ"
+    ],
+    "kbq": [
+      "Latn",
+      "ZZ"
+    ],
+    "kbx": [
+      "Latn",
+      "ZZ"
+    ],
+    "kby": [
+      "Arab",
+      "NE"
+    ],
+    "kcg": [
+      "Latn",
+      "NG"
+    ],
+    "kck": [
+      "Latn",
+      "ZW"
+    ],
+    "kcl": [
+      "Latn",
+      "ZZ"
+    ],
+    "kct": [
+      "Latn",
+      "ZZ"
+    ],
+    "kde": [
+      "Latn",
+      "TZ"
+    ],
+    "kdh": [
+      "Latn",
+      "TG"
+    ],
+    "kdl": [
+      "Latn",
+      "ZZ"
+    ],
+    "kdt": [
+      "Thai",
+      "TH"
+    ],
+    "kea": [
+      "Latn",
+      "CV"
+    ],
+    "ken": [
+      "Latn",
+      "CM"
+    ],
+    "kez": [
+      "Latn",
+      "ZZ"
+    ],
+    "kfo": [
+      "Latn",
+      "CI"
+    ],
+    "kfr": [
+      "Deva",
+      "IN"
+    ],
+    "kfy": [
+      "Deva",
+      "IN"
+    ],
+    "kg": [
+      "Latn",
+      "CD"
+    ],
+    "kge": [
+      "Latn",
+      "ID"
+    ],
+    "kgf": [
+      "Latn",
+      "ZZ"
+    ],
+    "kgp": [
+      "Latn",
+      "BR"
+    ],
+    "kha": [
+      "Latn",
+      "IN"
+    ],
+    "khb": [
+      "Talu",
+      "CN"
+    ],
+    "khn": [
+      "Deva",
+      "IN"
+    ],
+    "khq": [
+      "Latn",
+      "ML"
+    ],
+    "khs": [
+      "Latn",
+      "ZZ"
+    ],
+    "kht": [
+      "Mymr",
+      "IN"
+    ],
+    "khw": [
+      "Arab",
+      "PK"
+    ],
+    "khz": [
+      "Latn",
+      "ZZ"
+    ],
+    "ki": [
+      "Latn",
+      "KE"
+    ],
+    "kij": [
+      "Latn",
+      "ZZ"
+    ],
+    "kiu": [
+      "Latn",
+      "TR"
+    ],
+    "kiw": [
+      "Latn",
+      "ZZ"
+    ],
+    "kj": [
+      "Latn",
+      "NA"
+    ],
+    "kjd": [
+      "Latn",
+      "ZZ"
+    ],
+    "kjg": [
+      "Laoo",
+      "LA"
+    ],
+    "kjs": [
+      "Latn",
+      "ZZ"
+    ],
+    "kjy": [
+      "Latn",
+      "ZZ"
+    ],
+    "kk": [
+      "Cyrl",
+      "KZ"
+    ],
+    "kkc": [
+      "Latn",
+      "ZZ"
+    ],
+    "kkj": [
+      "Latn",
+      "CM"
+    ],
+    "kl": [
+      "Latn",
+      "GL"
+    ],
+    "kln": [
+      "Latn",
+      "KE"
+    ],
+    "klq": [
+      "Latn",
+      "ZZ"
+    ],
+    "klt": [
+      "Latn",
+      "ZZ"
+    ],
+    "klx": [
+      "Latn",
+      "ZZ"
+    ],
+    "km": [
+      "Khmr",
+      "KH"
+    ],
+    "kmb": [
+      "Latn",
+      "AO"
+    ],
+    "kmh": [
+      "Latn",
+      "ZZ"
+    ],
+    "kmo": [
+      "Latn",
+      "ZZ"
+    ],
+    "kms": [
+      "Latn",
+      "ZZ"
+    ],
+    "kmu": [
+      "Latn",
+      "ZZ"
+    ],
+    "kmw": [
+      "Latn",
+      "ZZ"
+    ],
+    "kn": [
+      "Knda",
+      "IN"
+    ],
+    "knf": [
+      "Latn",
+      "GW"
+    ],
+    "knp": [
+      "Latn",
+      "ZZ"
+    ],
+    "ko": [
+      "Kore",
+      "KR"
+    ],
+    "koi": [
+      "Cyrl",
+      "RU"
+    ],
+    "kok": [
+      "Deva",
+      "IN"
+    ],
+    "kol": [
+      "Latn",
+      "ZZ"
+    ],
+    "kos": [
+      "Latn",
+      "FM"
+    ],
+    "koz": [
+      "Latn",
+      "ZZ"
+    ],
+    "kpe": [
+      "Latn",
+      "LR"
+    ],
+    "kpf": [
+      "Latn",
+      "ZZ"
+    ],
+    "kpo": [
+      "Latn",
+      "ZZ"
+    ],
+    "kpr": [
+      "Latn",
+      "ZZ"
+    ],
+    "kpx": [
+      "Latn",
+      "ZZ"
+    ],
+    "kqb": [
+      "Latn",
+      "ZZ"
+    ],
+    "kqf": [
+      "Latn",
+      "ZZ"
+    ],
+    "kqs": [
+      "Latn",
+      "ZZ"
+    ],
+    "kqy": [
+      "Ethi",
+      "ZZ"
+    ],
+    "kr": [
+      "Latn",
+      "ZZ"
+    ],
+    "krc": [
+      "Cyrl",
+      "RU"
+    ],
+    "kri": [
+      "Latn",
+      "SL"
+    ],
+    "krj": [
+      "Latn",
+      "PH"
+    ],
+    "krl": [
+      "Latn",
+      "RU"
+    ],
+    "krs": [
+      "Latn",
+      "ZZ"
+    ],
+    "kru": [
+      "Deva",
+      "IN"
+    ],
+    "ks": [
+      "Arab",
+      "IN"
+    ],
+    "ksb": [
+      "Latn",
+      "TZ"
+    ],
+    "ksd": [
+      "Latn",
+      "ZZ"
+    ],
+    "ksf": [
+      "Latn",
+      "CM"
+    ],
+    "ksh": [
+      "Latn",
+      "DE"
+    ],
+    "ksj": [
+      "Latn",
+      "ZZ"
+    ],
+    "ksr": [
+      "Latn",
+      "ZZ"
+    ],
+    "ktb": [
+      "Ethi",
+      "ZZ"
+    ],
+    "ktm": [
+      "Latn",
+      "ZZ"
+    ],
+    "kto": [
+      "Latn",
+      "ZZ"
+    ],
+    "ktr": [
+      "Latn",
+      "MY"
+    ],
+    "ku": [
+      "Latn",
+      "TR"
+    ],
+    "kub": [
+      "Latn",
+      "ZZ"
+    ],
+    "kud": [
+      "Latn",
+      "ZZ"
+    ],
+    "kue": [
+      "Latn",
+      "ZZ"
+    ],
+    "kuj": [
+      "Latn",
+      "ZZ"
+    ],
+    "kum": [
+      "Cyrl",
+      "RU"
+    ],
+    "kun": [
+      "Latn",
+      "ZZ"
+    ],
+    "kup": [
+      "Latn",
+      "ZZ"
+    ],
+    "kus": [
+      "Latn",
+      "ZZ"
+    ],
+    "kv": [
+      "Cyrl",
+      "RU"
+    ],
+    "kvg": [
+      "Latn",
+      "ZZ"
+    ],
+    "kvr": [
+      "Latn",
+      "ID"
+    ],
+    "kvx": [
+      "Arab",
+      "PK"
+    ],
+    "kw": [
+      "Latn",
+      "GB"
+    ],
+    "kwj": [
+      "Latn",
+      "ZZ"
+    ],
+    "kwo": [
+      "Latn",
+      "ZZ"
+    ],
+    "kwq": [
+      "Latn",
+      "ZZ"
+    ],
+    "kxa": [
+      "Latn",
+      "ZZ"
+    ],
+    "kxc": [
+      "Ethi",
+      "ZZ"
+    ],
+    "kxe": [
+      "Latn",
+      "ZZ"
+    ],
+    "kxl": [
+      "Deva",
+      "IN"
+    ],
+    "kxm": [
+      "Thai",
+      "TH"
+    ],
+    "kxp": [
+      "Arab",
+      "PK"
+    ],
+    "kxw": [
+      "Latn",
+      "ZZ"
+    ],
+    "kxz": [
+      "Latn",
+      "ZZ"
+    ],
+    "ky": [
+      "Cyrl",
+      "KG"
+    ],
+    "kye": [
+      "Latn",
+      "ZZ"
+    ],
+    "kyx": [
+      "Latn",
+      "ZZ"
+    ],
+    "kzh": [
+      "Arab",
+      "ZZ"
+    ],
+    "kzj": [
+      "Latn",
+      "MY"
+    ],
+    "kzr": [
+      "Latn",
+      "ZZ"
+    ],
+    "kzt": [
+      "Latn",
+      "MY"
+    ],
+    "la": [
+      "Latn",
+      "VA"
+    ],
+    "lab": [
+      "Lina",
+      "GR"
+    ],
+    "lad": [
+      "Hebr",
+      "IL"
+    ],
+    "lag": [
+      "Latn",
+      "TZ"
+    ],
+    "lah": [
+      "Arab",
+      "PK"
+    ],
+    "laj": [
+      "Latn",
+      "UG"
+    ],
+    "las": [
+      "Latn",
+      "ZZ"
+    ],
+    "lb": [
+      "Latn",
+      "LU"
+    ],
+    "lbe": [
+      "Cyrl",
+      "RU"
+    ],
+    "lbu": [
+      "Latn",
+      "ZZ"
+    ],
+    "lbw": [
+      "Latn",
+      "ID"
+    ],
+    "lcm": [
+      "Latn",
+      "ZZ"
+    ],
+    "lcp": [
+      "Thai",
+      "CN"
+    ],
+    "ldb": [
+      "Latn",
+      "ZZ"
+    ],
+    "led": [
+      "Latn",
+      "ZZ"
+    ],
+    "lee": [
+      "Latn",
+      "ZZ"
+    ],
+    "lem": [
+      "Latn",
+      "ZZ"
+    ],
+    "lep": [
+      "Lepc",
+      "IN"
+    ],
+    "leq": [
+      "Latn",
+      "ZZ"
+    ],
+    "leu": [
+      "Latn",
+      "ZZ"
+    ],
+    "lez": [
+      "Cyrl",
+      "RU"
+    ],
+    "lg": [
+      "Latn",
+      "UG"
+    ],
+    "lgg": [
+      "Latn",
+      "ZZ"
+    ],
+    "li": [
+      "Latn",
+      "NL"
+    ],
+    "lia": [
+      "Latn",
+      "ZZ"
+    ],
+    "lid": [
+      "Latn",
+      "ZZ"
+    ],
+    "lif": [
+      "Deva",
+      "NP"
+    ],
+    "lig": [
+      "Latn",
+      "ZZ"
+    ],
+    "lih": [
+      "Latn",
+      "ZZ"
+    ],
+    "lij": [
+      "Latn",
+      "IT"
+    ],
+    "lis": [
+      "Lisu",
+      "CN"
+    ],
+    "ljp": [
+      "Latn",
+      "ID"
+    ],
+    "lki": [
+      "Arab",
+      "IR"
+    ],
+    "lkt": [
+      "Latn",
+      "US"
+    ],
+    "lle": [
+      "Latn",
+      "ZZ"
+    ],
+    "lln": [
+      "Latn",
+      "ZZ"
+    ],
+    "lmn": [
+      "Telu",
+      "IN"
+    ],
+    "lmo": [
+      "Latn",
+      "IT"
+    ],
+    "lmp": [
+      "Latn",
+      "ZZ"
+    ],
+    "ln": [
+      "Latn",
+      "CD"
+    ],
+    "lns": [
+      "Latn",
+      "ZZ"
+    ],
+    "lnu": [
+      "Latn",
+      "ZZ"
+    ],
+    "lo": [
+      "Laoo",
+      "LA"
+    ],
+    "loj": [
+      "Latn",
+      "ZZ"
+    ],
+    "lok": [
+      "Latn",
+      "ZZ"
+    ],
+    "lol": [
+      "Latn",
+      "CD"
+    ],
+    "lor": [
+      "Latn",
+      "ZZ"
+    ],
+    "los": [
+      "Latn",
+      "ZZ"
+    ],
+    "loz": [
+      "Latn",
+      "ZM"
+    ],
+    "lrc": [
+      "Arab",
+      "IR"
+    ],
+    "lt": [
+      "Latn",
+      "LT"
+    ],
+    "ltg": [
+      "Latn",
+      "LV"
+    ],
+    "lu": [
+      "Latn",
+      "CD"
+    ],
+    "lua": [
+      "Latn",
+      "CD"
+    ],
+    "luo": [
+      "Latn",
+      "KE"
+    ],
+    "luy": [
+      "Latn",
+      "KE"
+    ],
+    "luz": [
+      "Arab",
+      "IR"
+    ],
+    "lv": [
+      "Latn",
+      "LV"
+    ],
+    "lwl": [
+      "Thai",
+      "TH"
+    ],
+    "lzh": [
+      "Hans",
+      "CN"
+    ],
+    "lzz": [
+      "Latn",
+      "TR"
+    ],
+    "mad": [
+      "Latn",
+      "ID"
+    ],
+    "maf": [
+      "Latn",
+      "CM"
+    ],
+    "mag": [
+      "Deva",
+      "IN"
+    ],
+    "mai": [
+      "Deva",
+      "IN"
+    ],
+    "mak": [
+      "Latn",
+      "ID"
+    ],
+    "man": [
+      "Latn",
+      "GM"
+    ],
+    "mas": [
+      "Latn",
+      "KE"
+    ],
+    "maw": [
+      "Latn",
+      "ZZ"
+    ],
+    "maz": [
+      "Latn",
+      "MX"
+    ],
+    "mbh": [
+      "Latn",
+      "ZZ"
+    ],
+    "mbo": [
+      "Latn",
+      "ZZ"
+    ],
+    "mbq": [
+      "Latn",
+      "ZZ"
+    ],
+    "mbu": [
+      "Latn",
+      "ZZ"
+    ],
+    "mbw": [
+      "Latn",
+      "ZZ"
+    ],
+    "mci": [
+      "Latn",
+      "ZZ"
+    ],
+    "mcp": [
+      "Latn",
+      "ZZ"
+    ],
+    "mcq": [
+      "Latn",
+      "ZZ"
+    ],
+    "mcr": [
+      "Latn",
+      "ZZ"
+    ],
+    "mcu": [
+      "Latn",
+      "ZZ"
+    ],
+    "mda": [
+      "Latn",
+      "ZZ"
+    ],
+    "mde": [
+      "Arab",
+      "ZZ"
+    ],
+    "mdf": [
+      "Cyrl",
+      "RU"
+    ],
+    "mdh": [
+      "Latn",
+      "PH"
+    ],
+    "mdj": [
+      "Latn",
+      "ZZ"
+    ],
+    "mdr": [
+      "Latn",
+      "ID"
+    ],
+    "mdx": [
+      "Ethi",
+      "ZZ"
+    ],
+    "med": [
+      "Latn",
+      "ZZ"
+    ],
+    "mee": [
+      "Latn",
+      "ZZ"
+    ],
+    "mek": [
+      "Latn",
+      "ZZ"
+    ],
+    "men": [
+      "Latn",
+      "SL"
+    ],
+    "mer": [
+      "Latn",
+      "KE"
+    ],
+    "met": [
+      "Latn",
+      "ZZ"
+    ],
+    "meu": [
+      "Latn",
+      "ZZ"
+    ],
+    "mfa": [
+      "Arab",
+      "TH"
+    ],
+    "mfe": [
+      "Latn",
+      "MU"
+    ],
+    "mfn": [
+      "Latn",
+      "ZZ"
+    ],
+    "mfo": [
+      "Latn",
+      "ZZ"
+    ],
+    "mfq": [
+      "Latn",
+      "ZZ"
+    ],
+    "mg": [
+      "Latn",
+      "MG"
+    ],
+    "mgh": [
+      "Latn",
+      "MZ"
+    ],
+    "mgl": [
+      "Latn",
+      "ZZ"
+    ],
+    "mgo": [
+      "Latn",
+      "CM"
+    ],
+    "mgp": [
+      "Deva",
+      "NP"
+    ],
+    "mgy": [
+      "Latn",
+      "TZ"
+    ],
+    "mh": [
+      "Latn",
+      "MH"
+    ],
+    "mhi": [
+      "Latn",
+      "ZZ"
+    ],
+    "mhl": [
+      "Latn",
+      "ZZ"
+    ],
+    "mi": [
+      "Latn",
+      "NZ"
+    ],
+    "mif": [
+      "Latn",
+      "ZZ"
+    ],
+    "min": [
+      "Latn",
+      "ID"
+    ],
+    "miw": [
+      "Latn",
+      "ZZ"
+    ],
+    "mk": [
+      "Cyrl",
+      "MK"
+    ],
+    "mki": [
+      "Arab",
+      "ZZ"
+    ],
+    "mkl": [
+      "Latn",
+      "ZZ"
+    ],
+    "mkp": [
+      "Latn",
+      "ZZ"
+    ],
+    "mkw": [
+      "Latn",
+      "ZZ"
+    ],
+    "ml": [
+      "Mlym",
+      "IN"
+    ],
+    "mle": [
+      "Latn",
+      "ZZ"
+    ],
+    "mlp": [
+      "Latn",
+      "ZZ"
+    ],
+    "mls": [
+      "Latn",
+      "SD"
+    ],
+    "mmo": [
+      "Latn",
+      "ZZ"
+    ],
+    "mmu": [
+      "Latn",
+      "ZZ"
+    ],
+    "mmx": [
+      "Latn",
+      "ZZ"
+    ],
+    "mn": [
+      "Cyrl",
+      "MN"
+    ],
+    "mna": [
+      "Latn",
+      "ZZ"
+    ],
+    "mnf": [
+      "Latn",
+      "ZZ"
+    ],
+    "mni": [
+      "Beng",
+      "IN"
+    ],
+    "mnw": [
+      "Mymr",
+      "MM"
+    ],
+    "mo": [
+      "Latn",
+      "RO"
+    ],
+    "moa": [
+      "Latn",
+      "ZZ"
+    ],
+    "moe": [
+      "Latn",
+      "CA"
+    ],
+    "moh": [
+      "Latn",
+      "CA"
+    ],
+    "mos": [
+      "Latn",
+      "BF"
+    ],
+    "mox": [
+      "Latn",
+      "ZZ"
+    ],
+    "mpp": [
+      "Latn",
+      "ZZ"
+    ],
+    "mps": [
+      "Latn",
+      "ZZ"
+    ],
+    "mpt": [
+      "Latn",
+      "ZZ"
+    ],
+    "mpx": [
+      "Latn",
+      "ZZ"
+    ],
+    "mql": [
+      "Latn",
+      "ZZ"
+    ],
+    "mr": [
+      "Deva",
+      "IN"
+    ],
+    "mrd": [
+      "Deva",
+      "NP"
+    ],
+    "mrj": [
+      "Cyrl",
+      "RU"
+    ],
+    "mro": [
+      "Mroo",
+      "BD"
+    ],
+    "ms": [
+      "Latn",
+      "MY"
+    ],
+    "mt": [
+      "Latn",
+      "MT"
+    ],
+    "mtc": [
+      "Latn",
+      "ZZ"
+    ],
+    "mtf": [
+      "Latn",
+      "ZZ"
+    ],
+    "mti": [
+      "Latn",
+      "ZZ"
+    ],
+    "mtr": [
+      "Deva",
+      "IN"
+    ],
+    "mua": [
+      "Latn",
+      "CM"
+    ],
+    "mur": [
+      "Latn",
+      "ZZ"
+    ],
+    "mus": [
+      "Latn",
+      "US"
+    ],
+    "mva": [
+      "Latn",
+      "ZZ"
+    ],
+    "mvn": [
+      "Latn",
+      "ZZ"
+    ],
+    "mvy": [
+      "Arab",
+      "PK"
+    ],
+    "mwk": [
+      "Latn",
+      "ML"
+    ],
+    "mwr": [
+      "Deva",
+      "IN"
+    ],
+    "mwv": [
+      "Latn",
+      "ID"
+    ],
+    "mww": [
+      "Hmnp",
+      "US"
+    ],
+    "mxc": [
+      "Latn",
+      "ZW"
+    ],
+    "mxm": [
+      "Latn",
+      "ZZ"
+    ],
+    "my": [
+      "Mymr",
+      "MM"
+    ],
+    "myk": [
+      "Latn",
+      "ZZ"
+    ],
+    "mym": [
+      "Ethi",
+      "ZZ"
+    ],
+    "myv": [
+      "Cyrl",
+      "RU"
+    ],
+    "myw": [
+      "Latn",
+      "ZZ"
+    ],
+    "myx": [
+      "Latn",
+      "UG"
+    ],
+    "myz": [
+      "Mand",
+      "IR"
+    ],
+    "mzk": [
+      "Latn",
+      "ZZ"
+    ],
+    "mzm": [
+      "Latn",
+      "ZZ"
+    ],
+    "mzn": [
+      "Arab",
+      "IR"
+    ],
+    "mzp": [
+      "Latn",
+      "ZZ"
+    ],
+    "mzw": [
+      "Latn",
+      "ZZ"
+    ],
+    "mzz": [
+      "Latn",
+      "ZZ"
+    ],
+    "na": [
+      "Latn",
+      "NR"
+    ],
+    "nac": [
+      "Latn",
+      "ZZ"
+    ],
+    "naf": [
+      "Latn",
+      "ZZ"
+    ],
+    "nak": [
+      "Latn",
+      "ZZ"
+    ],
+    "nan": [
+      "Hans",
+      "CN"
+    ],
+    "nap": [
+      "Latn",
+      "IT"
+    ],
+    "naq": [
+      "Latn",
+      "NA"
+    ],
+    "nas": [
+      "Latn",
+      "ZZ"
+    ],
+    "nb": [
+      "Latn",
+      "NO"
+    ],
+    "nca": [
+      "Latn",
+      "ZZ"
+    ],
+    "nce": [
+      "Latn",
+      "ZZ"
+    ],
+    "ncf": [
+      "Latn",
+      "ZZ"
+    ],
+    "nch": [
+      "Latn",
+      "MX"
+    ],
+    "nco": [
+      "Latn",
+      "ZZ"
+    ],
+    "ncu": [
+      "Latn",
+      "ZZ"
+    ],
+    "nd": [
+      "Latn",
+      "ZW"
+    ],
+    "ndc": [
+      "Latn",
+      "MZ"
+    ],
+    "nds": [
+      "Latn",
+      "DE"
+    ],
+    "ne": [
+      "Deva",
+      "NP"
+    ],
+    "neb": [
+      "Latn",
+      "ZZ"
+    ],
+    "new": [
+      "Deva",
+      "NP"
+    ],
+    "nex": [
+      "Latn",
+      "ZZ"
+    ],
+    "nfr": [
+      "Latn",
+      "ZZ"
+    ],
+    "ng": [
+      "Latn",
+      "NA"
+    ],
+    "nga": [
+      "Latn",
+      "ZZ"
+    ],
+    "ngb": [
+      "Latn",
+      "ZZ"
+    ],
+    "ngl": [
+      "Latn",
+      "MZ"
+    ],
+    "nhb": [
+      "Latn",
+      "ZZ"
+    ],
+    "nhe": [
+      "Latn",
+      "MX"
+    ],
+    "nhw": [
+      "Latn",
+      "MX"
+    ],
+    "nif": [
+      "Latn",
+      "ZZ"
+    ],
+    "nii": [
+      "Latn",
+      "ZZ"
+    ],
+    "nij": [
+      "Latn",
+      "ID"
+    ],
+    "nin": [
+      "Latn",
+      "ZZ"
+    ],
+    "niu": [
+      "Latn",
+      "NU"
+    ],
+    "niy": [
+      "Latn",
+      "ZZ"
+    ],
+    "niz": [
+      "Latn",
+      "ZZ"
+    ],
+    "njo": [
+      "Latn",
+      "IN"
+    ],
+    "nkg": [
+      "Latn",
+      "ZZ"
+    ],
+    "nko": [
+      "Latn",
+      "ZZ"
+    ],
+    "nl": [
+      "Latn",
+      "NL"
+    ],
+    "nmg": [
+      "Latn",
+      "CM"
+    ],
+    "nmz": [
+      "Latn",
+      "ZZ"
+    ],
+    "nn": [
+      "Latn",
+      "NO"
+    ],
+    "nnf": [
+      "Latn",
+      "ZZ"
+    ],
+    "nnh": [
+      "Latn",
+      "CM"
+    ],
+    "nnk": [
+      "Latn",
+      "ZZ"
+    ],
+    "nnm": [
+      "Latn",
+      "ZZ"
+    ],
+    "nnp": [
+      "Wcho",
+      "IN"
+    ],
+    "no": [
+      "Latn",
+      "NO"
+    ],
+    "nod": [
+      "Lana",
+      "TH"
+    ],
+    "noe": [
+      "Deva",
+      "IN"
+    ],
+    "non": [
+      "Runr",
+      "SE"
+    ],
+    "nop": [
+      "Latn",
+      "ZZ"
+    ],
+    "nou": [
+      "Latn",
+      "ZZ"
+    ],
+    "nqo": [
+      "Nkoo",
+      "GN"
+    ],
+    "nr": [
+      "Latn",
+      "ZA"
+    ],
+    "nrb": [
+      "Latn",
+      "ZZ"
+    ],
+    "nsk": [
+      "Cans",
+      "CA"
+    ],
+    "nsn": [
+      "Latn",
+      "ZZ"
+    ],
+    "nso": [
+      "Latn",
+      "ZA"
+    ],
+    "nss": [
+      "Latn",
+      "ZZ"
+    ],
+    "nst": [
+      "Tnsa",
+      "IN"
+    ],
+    "ntm": [
+      "Latn",
+      "ZZ"
+    ],
+    "ntr": [
+      "Latn",
+      "ZZ"
+    ],
+    "nui": [
+      "Latn",
+      "ZZ"
+    ],
+    "nup": [
+      "Latn",
+      "ZZ"
+    ],
+    "nus": [
+      "Latn",
+      "SS"
+    ],
+    "nuv": [
+      "Latn",
+      "ZZ"
+    ],
+    "nux": [
+      "Latn",
+      "ZZ"
+    ],
+    "nv": [
+      "Latn",
+      "US"
+    ],
+    "nwb": [
+      "Latn",
+      "ZZ"
+    ],
+    "nxq": [
+      "Latn",
+      "CN"
+    ],
+    "nxr": [
+      "Latn",
+      "ZZ"
+    ],
+    "ny": [
+      "Latn",
+      "MW"
+    ],
+    "nym": [
+      "Latn",
+      "TZ"
+    ],
+    "nyn": [
+      "Latn",
+      "UG"
+    ],
+    "nzi": [
+      "Latn",
+      "GH"
+    ],
+    "oc": [
+      "Latn",
+      "FR"
+    ],
+    "ogc": [
+      "Latn",
+      "ZZ"
+    ],
+    "okr": [
+      "Latn",
+      "ZZ"
+    ],
+    "okv": [
+      "Latn",
+      "ZZ"
+    ],
+    "om": [
+      "Latn",
+      "ET"
+    ],
+    "ong": [
+      "Latn",
+      "ZZ"
+    ],
+    "onn": [
+      "Latn",
+      "ZZ"
+    ],
+    "ons": [
+      "Latn",
+      "ZZ"
+    ],
+    "opm": [
+      "Latn",
+      "ZZ"
+    ],
+    "or": [
+      "Orya",
+      "IN"
+    ],
+    "oro": [
+      "Latn",
+      "ZZ"
+    ],
+    "oru": [
+      "Arab",
+      "ZZ"
+    ],
+    "os": [
+      "Cyrl",
+      "GE"
+    ],
+    "osa": [
+      "Osge",
+      "US"
+    ],
+    "ota": [
+      "Arab",
+      "ZZ"
+    ],
+    "otk": [
+      "Orkh",
+      "MN"
+    ],
+    "oui": [
+      "Ougr",
+      "143"
+    ],
+    "ozm": [
+      "Latn",
+      "ZZ"
+    ],
+    "pa": [
+      "Guru",
+      "IN"
+    ],
+    "pag": [
+      "Latn",
+      "PH"
+    ],
+    "pal": [
+      "Phli",
+      "IR"
+    ],
+    "pam": [
+      "Latn",
+      "PH"
+    ],
+    "pap": [
+      "Latn",
+      "AW"
+    ],
+    "pau": [
+      "Latn",
+      "PW"
+    ],
+    "pbi": [
+      "Latn",
+      "ZZ"
+    ],
+    "pcd": [
+      "Latn",
+      "FR"
+    ],
+    "pcm": [
+      "Latn",
+      "NG"
+    ],
+    "pdc": [
+      "Latn",
+      "US"
+    ],
+    "pdt": [
+      "Latn",
+      "CA"
+    ],
+    "ped": [
+      "Latn",
+      "ZZ"
+    ],
+    "peo": [
+      "Xpeo",
+      "IR"
+    ],
+    "pex": [
+      "Latn",
+      "ZZ"
+    ],
+    "pfl": [
+      "Latn",
+      "DE"
+    ],
+    "phl": [
+      "Arab",
+      "ZZ"
+    ],
+    "phn": [
+      "Phnx",
+      "LB"
+    ],
+    "pil": [
+      "Latn",
+      "ZZ"
+    ],
+    "pip": [
+      "Latn",
+      "ZZ"
+    ],
+    "pka": [
+      "Brah",
+      "IN"
+    ],
+    "pko": [
+      "Latn",
+      "KE"
+    ],
+    "pl": [
+      "Latn",
+      "PL"
+    ],
+    "pla": [
+      "Latn",
+      "ZZ"
+    ],
+    "pms": [
+      "Latn",
+      "IT"
+    ],
+    "png": [
+      "Latn",
+      "ZZ"
+    ],
+    "pnn": [
+      "Latn",
+      "ZZ"
+    ],
+    "pnt": [
+      "Grek",
+      "GR"
+    ],
+    "pon": [
+      "Latn",
+      "FM"
+    ],
+    "ppa": [
+      "Deva",
+      "IN"
+    ],
+    "ppo": [
+      "Latn",
+      "ZZ"
+    ],
+    "pra": [
+      "Khar",
+      "PK"
+    ],
+    "prd": [
+      "Arab",
+      "IR"
+    ],
+    "prg": [
+      "Latn",
+      "001"
+    ],
+    "ps": [
+      "Arab",
+      "AF"
+    ],
+    "pss": [
+      "Latn",
+      "ZZ"
+    ],
+    "pt": [
+      "Latn",
+      "BR"
+    ],
+    "ptp": [
+      "Latn",
+      "ZZ"
+    ],
+    "puu": [
+      "Latn",
+      "GA"
+    ],
+    "pwa": [
+      "Latn",
+      "ZZ"
+    ],
+    "qu": [
+      "Latn",
+      "PE"
+    ],
+    "quc": [
+      "Latn",
+      "GT"
+    ],
+    "qug": [
+      "Latn",
+      "EC"
+    ],
+    "rai": [
+      "Latn",
+      "ZZ"
+    ],
+    "raj": [
+      "Deva",
+      "IN"
+    ],
+    "rao": [
+      "Latn",
+      "ZZ"
+    ],
+    "rcf": [
+      "Latn",
+      "RE"
+    ],
+    "rej": [
+      "Latn",
+      "ID"
+    ],
+    "rel": [
+      "Latn",
+      "ZZ"
+    ],
+    "res": [
+      "Latn",
+      "ZZ"
+    ],
+    "rgn": [
+      "Latn",
+      "IT"
+    ],
+    "rhg": [
+      "Rohg",
+      "MM"
+    ],
+    "ria": [
+      "Latn",
+      "IN"
+    ],
+    "rif": [
+      "Tfng",
+      "MA"
+    ],
+    "rjs": [
+      "Deva",
+      "NP"
+    ],
+    "rkt": [
+      "Beng",
+      "BD"
+    ],
+    "rm": [
+      "Latn",
+      "CH"
+    ],
+    "rmf": [
+      "Latn",
+      "FI"
+    ],
+    "rmo": [
+      "Latn",
+      "CH"
+    ],
+    "rmt": [
+      "Arab",
+      "IR"
+    ],
+    "rmu": [
+      "Latn",
+      "SE"
+    ],
+    "rn": [
+      "Latn",
+      "BI"
+    ],
+    "rna": [
+      "Latn",
+      "ZZ"
+    ],
+    "rng": [
+      "Latn",
+      "MZ"
+    ],
+    "ro": [
+      "Latn",
+      "RO"
+    ],
+    "rob": [
+      "Latn",
+      "ID"
+    ],
+    "rof": [
+      "Latn",
+      "TZ"
+    ],
+    "roo": [
+      "Latn",
+      "ZZ"
+    ],
+    "rro": [
+      "Latn",
+      "ZZ"
+    ],
+    "rtm": [
+      "Latn",
+      "FJ"
+    ],
+    "ru": [
+      "Cyrl",
+      "RU"
+    ],
+    "rue": [
+      "Cyrl",
+      "UA"
+    ],
+    "rug": [
+      "Latn",
+      "SB"
+    ],
+    "rw": [
+      "Latn",
+      "RW"
+    ],
+    "rwk": [
+      "Latn",
+      "TZ"
+    ],
+    "rwo": [
+      "Latn",
+      "ZZ"
+    ],
+    "ryu": [
+      "Kana",
+      "JP"
+    ],
+    "sa": [
+      "Deva",
+      "IN"
+    ],
+    "saf": [
+      "Latn",
+      "GH"
+    ],
+    "sah": [
+      "Cyrl",
+      "RU"
+    ],
+    "saq": [
+      "Latn",
+      "KE"
+    ],
+    "sas": [
+      "Latn",
+      "ID"
+    ],
+    "sat": [
+      "Olck",
+      "IN"
+    ],
+    "sav": [
+      "Latn",
+      "SN"
+    ],
+    "saz": [
+      "Saur",
+      "IN"
+    ],
+    "sba": [
+      "Latn",
+      "ZZ"
+    ],
+    "sbe": [
+      "Latn",
+      "ZZ"
+    ],
+    "sbp": [
+      "Latn",
+      "TZ"
+    ],
+    "sc": [
+      "Latn",
+      "IT"
+    ],
+    "sck": [
+      "Deva",
+      "IN"
+    ],
+    "scl": [
+      "Arab",
+      "ZZ"
+    ],
+    "scn": [
+      "Latn",
+      "IT"
+    ],
+    "sco": [
+      "Latn",
+      "GB"
+    ],
+    "scs": [
+      "Latn",
+      "CA"
+    ],
+    "sd": [
+      "Arab",
+      "PK"
+    ],
+    "sdc": [
+      "Latn",
+      "IT"
+    ],
+    "sdh": [
+      "Arab",
+      "IR"
+    ],
+    "se": [
+      "Latn",
+      "NO"
+    ],
+    "sef": [
+      "Latn",
+      "CI"
+    ],
+    "seh": [
+      "Latn",
+      "MZ"
+    ],
+    "sei": [
+      "Latn",
+      "MX"
+    ],
+    "ses": [
+      "Latn",
+      "ML"
+    ],
+    "sg": [
+      "Latn",
+      "CF"
+    ],
+    "sga": [
+      "Ogam",
+      "IE"
+    ],
+    "sgs": [
+      "Latn",
+      "LT"
+    ],
+    "sgw": [
+      "Ethi",
+      "ZZ"
+    ],
+    "sgz": [
+      "Latn",
+      "ZZ"
+    ],
+    "shi": [
+      "Tfng",
+      "MA"
+    ],
+    "shk": [
+      "Latn",
+      "ZZ"
+    ],
+    "shn": [
+      "Mymr",
+      "MM"
+    ],
+    "shu": [
+      "Arab",
+      "ZZ"
+    ],
+    "si": [
+      "Sinh",
+      "LK"
+    ],
+    "sid": [
+      "Latn",
+      "ET"
+    ],
+    "sig": [
+      "Latn",
+      "ZZ"
+    ],
+    "sil": [
+      "Latn",
+      "ZZ"
+    ],
+    "sim": [
+      "Latn",
+      "ZZ"
+    ],
+    "sjr": [
+      "Latn",
+      "ZZ"
+    ],
+    "sk": [
+      "Latn",
+      "SK"
+    ],
+    "skc": [
+      "Latn",
+      "ZZ"
+    ],
+    "skr": [
+      "Arab",
+      "PK"
+    ],
+    "sks": [
+      "Latn",
+      "ZZ"
+    ],
+    "sl": [
+      "Latn",
+      "SI"
+    ],
+    "sld": [
+      "Latn",
+      "ZZ"
+    ],
+    "sli": [
+      "Latn",
+      "PL"
+    ],
+    "sll": [
+      "Latn",
+      "ZZ"
+    ],
+    "sly": [
+      "Latn",
+      "ID"
+    ],
+    "sm": [
+      "Latn",
+      "WS"
+    ],
+    "sma": [
+      "Latn",
+      "SE"
+    ],
+    "smj": [
+      "Latn",
+      "SE"
+    ],
+    "smn": [
+      "Latn",
+      "FI"
+    ],
+    "smp": [
+      "Samr",
+      "IL"
+    ],
+    "smq": [
+      "Latn",
+      "ZZ"
+    ],
+    "sms": [
+      "Latn",
+      "FI"
+    ],
+    "sn": [
+      "Latn",
+      "ZW"
+    ],
+    "snc": [
+      "Latn",
+      "ZZ"
+    ],
+    "snk": [
+      "Latn",
+      "ML"
+    ],
+    "snp": [
+      "Latn",
+      "ZZ"
+    ],
+    "snx": [
+      "Latn",
+      "ZZ"
+    ],
+    "sny": [
+      "Latn",
+      "ZZ"
+    ],
+    "so": [
+      "Latn",
+      "SO"
+    ],
+    "sog": [
+      "Sogd",
+      "UZ"
+    ],
+    "sok": [
+      "Latn",
+      "ZZ"
+    ],
+    "soq": [
+      "Latn",
+      "ZZ"
+    ],
+    "sou": [
+      "Thai",
+      "TH"
+    ],
+    "soy": [
+      "Latn",
+      "ZZ"
+    ],
+    "spd": [
+      "Latn",
+      "ZZ"
+    ],
+    "spl": [
+      "Latn",
+      "ZZ"
+    ],
+    "sps": [
+      "Latn",
+      "ZZ"
+    ],
+    "sq": [
+      "Latn",
+      "AL"
+    ],
+    "sr": [
+      "Cyrl",
+      "RS"
+    ],
+    "srb": [
+      "Sora",
+      "IN"
+    ],
+    "srn": [
+      "Latn",
+      "SR"
+    ],
+    "srr": [
+      "Latn",
+      "SN"
+    ],
+    "srx": [
+      "Deva",
+      "IN"
+    ],
+    "ss": [
+      "Latn",
+      "ZA"
+    ],
+    "ssd": [
+      "Latn",
+      "ZZ"
+    ],
+    "ssg": [
+      "Latn",
+      "ZZ"
+    ],
+    "ssy": [
+      "Latn",
+      "ER"
+    ],
+    "st": [
+      "Latn",
+      "ZA"
+    ],
+    "stk": [
+      "Latn",
+      "ZZ"
+    ],
+    "stq": [
+      "Latn",
+      "DE"
+    ],
+    "su": [
+      "Latn",
+      "ID"
+    ],
+    "sua": [
+      "Latn",
+      "ZZ"
+    ],
+    "sue": [
+      "Latn",
+      "ZZ"
+    ],
+    "suk": [
+      "Latn",
+      "TZ"
+    ],
+    "sur": [
+      "Latn",
+      "ZZ"
+    ],
+    "sus": [
+      "Latn",
+      "GN"
+    ],
+    "sv": [
+      "Latn",
+      "SE"
+    ],
+    "sw": [
+      "Latn",
+      "TZ"
+    ],
+    "swb": [
+      "Arab",
+      "YT"
+    ],
+    "swc": [
+      "Latn",
+      "CD"
+    ],
+    "swg": [
+      "Latn",
+      "DE"
+    ],
+    "swp": [
+      "Latn",
+      "ZZ"
+    ],
+    "swv": [
+      "Deva",
+      "IN"
+    ],
+    "sxn": [
+      "Latn",
+      "ID"
+    ],
+    "sxw": [
+      "Latn",
+      "ZZ"
+    ],
+    "syl": [
+      "Beng",
+      "BD"
+    ],
+    "syr": [
+      "Syrc",
+      "IQ"
+    ],
+    "szl": [
+      "Latn",
+      "PL"
+    ],
+    "ta": [
+      "Taml",
+      "IN"
+    ],
+    "taj": [
+      "Deva",
+      "NP"
+    ],
+    "tal": [
+      "Latn",
+      "ZZ"
+    ],
+    "tan": [
+      "Latn",
+      "ZZ"
+    ],
+    "taq": [
+      "Latn",
+      "ZZ"
+    ],
+    "tbc": [
+      "Latn",
+      "ZZ"
+    ],
+    "tbd": [
+      "Latn",
+      "ZZ"
+    ],
+    "tbf": [
+      "Latn",
+      "ZZ"
+    ],
+    "tbg": [
+      "Latn",
+      "ZZ"
+    ],
+    "tbo": [
+      "Latn",
+      "ZZ"
+    ],
+    "tbw": [
+      "Latn",
+      "PH"
+    ],
+    "tbz": [
+      "Latn",
+      "ZZ"
+    ],
+    "tci": [
+      "Latn",
+      "ZZ"
+    ],
+    "tcy": [
+      "Knda",
+      "IN"
+    ],
+    "tdd": [
+      "Tale",
+      "CN"
+    ],
+    "tdg": [
+      "Deva",
+      "NP"
+    ],
+    "tdh": [
+      "Deva",
+      "NP"
+    ],
+    "tdu": [
+      "Latn",
+      "MY"
+    ],
+    "te": [
+      "Telu",
+      "IN"
+    ],
+    "ted": [
+      "Latn",
+      "ZZ"
+    ],
+    "tem": [
+      "Latn",
+      "SL"
+    ],
+    "teo": [
+      "Latn",
+      "UG"
+    ],
+    "tet": [
+      "Latn",
+      "TL"
+    ],
+    "tfi": [
+      "Latn",
+      "ZZ"
+    ],
+    "tg": [
+      "Cyrl",
+      "TJ"
+    ],
+    "tgc": [
+      "Latn",
+      "ZZ"
+    ],
+    "tgo": [
+      "Latn",
+      "ZZ"
+    ],
+    "tgu": [
+      "Latn",
+      "ZZ"
+    ],
+    "th": [
+      "Thai",
+      "TH"
+    ],
+    "thl": [
+      "Deva",
+      "NP"
+    ],
+    "thq": [
+      "Deva",
+      "NP"
+    ],
+    "thr": [
+      "Deva",
+      "NP"
+    ],
+    "ti": [
+      "Ethi",
+      "ET"
+    ],
+    "tif": [
+      "Latn",
+      "ZZ"
+    ],
+    "tig": [
+      "Ethi",
+      "ER"
+    ],
+    "tik": [
+      "Latn",
+      "ZZ"
+    ],
+    "tim": [
+      "Latn",
+      "ZZ"
+    ],
+    "tio": [
+      "Latn",
+      "ZZ"
+    ],
+    "tiv": [
+      "Latn",
+      "NG"
+    ],
+    "tk": [
+      "Latn",
+      "TM"
+    ],
+    "tkl": [
+      "Latn",
+      "TK"
+    ],
+    "tkr": [
+      "Latn",
+      "AZ"
+    ],
+    "tkt": [
+      "Deva",
+      "NP"
+    ],
+    "tl": [
+      "Latn",
+      "PH"
+    ],
+    "tlf": [
+      "Latn",
+      "ZZ"
+    ],
+    "tlx": [
+      "Latn",
+      "ZZ"
+    ],
+    "tly": [
+      "Latn",
+      "AZ"
+    ],
+    "tmh": [
+      "Latn",
+      "NE"
+    ],
+    "tmy": [
+      "Latn",
+      "ZZ"
+    ],
+    "tn": [
+      "Latn",
+      "ZA"
+    ],
+    "tnh": [
+      "Latn",
+      "ZZ"
+    ],
+    "to": [
+      "Latn",
+      "TO"
+    ],
+    "tof": [
+      "Latn",
+      "ZZ"
+    ],
+    "tog": [
+      "Latn",
+      "MW"
+    ],
+    "toq": [
+      "Latn",
+      "ZZ"
+    ],
+    "tpi": [
+      "Latn",
+      "PG"
+    ],
+    "tpm": [
+      "Latn",
+      "ZZ"
+    ],
+    "tpz": [
+      "Latn",
+      "ZZ"
+    ],
+    "tqo": [
+      "Latn",
+      "ZZ"
+    ],
+    "tr": [
+      "Latn",
+      "TR"
+    ],
+    "tru": [
+      "Latn",
+      "TR"
+    ],
+    "trv": [
+      "Latn",
+      "TW"
+    ],
+    "trw": [
+      "Arab",
+      "PK"
+    ],
+    "ts": [
+      "Latn",
+      "ZA"
+    ],
+    "tsd": [
+      "Grek",
+      "GR"
+    ],
+    "tsf": [
+      "Deva",
+      "NP"
+    ],
+    "tsg": [
+      "Latn",
+      "PH"
+    ],
+    "tsj": [
+      "Tibt",
+      "BT"
+    ],
+    "tsw": [
+      "Latn",
+      "ZZ"
+    ],
+    "tt": [
+      "Cyrl",
+      "RU"
+    ],
+    "ttd": [
+      "Latn",
+      "ZZ"
+    ],
+    "tte": [
+      "Latn",
+      "ZZ"
+    ],
+    "ttj": [
+      "Latn",
+      "UG"
+    ],
+    "ttr": [
+      "Latn",
+      "ZZ"
+    ],
+    "tts": [
+      "Thai",
+      "TH"
+    ],
+    "ttt": [
+      "Latn",
+      "AZ"
+    ],
+    "tuh": [
+      "Latn",
+      "ZZ"
+    ],
+    "tul": [
+      "Latn",
+      "ZZ"
+    ],
+    "tum": [
+      "Latn",
+      "MW"
+    ],
+    "tuq": [
+      "Latn",
+      "ZZ"
+    ],
+    "tvd": [
+      "Latn",
+      "ZZ"
+    ],
+    "tvl": [
+      "Latn",
+      "TV"
+    ],
+    "tvu": [
+      "Latn",
+      "ZZ"
+    ],
+    "twh": [
+      "Latn",
+      "ZZ"
+    ],
+    "twq": [
+      "Latn",
+      "NE"
+    ],
+    "txg": [
+      "Tang",
+      "CN"
+    ],
+    "txo": [
+      "Toto",
+      "IN"
+    ],
+    "ty": [
+      "Latn",
+      "PF"
+    ],
+    "tya": [
+      "Latn",
+      "ZZ"
+    ],
+    "tyv": [
+      "Cyrl",
+      "RU"
+    ],
+    "tzm": [
+      "Latn",
+      "MA"
+    ],
+    "ubu": [
+      "Latn",
+      "ZZ"
+    ],
+    "udi": [
+      "Aghb",
+      "RU"
+    ],
+    "udm": [
+      "Cyrl",
+      "RU"
+    ],
+    "ug": [
+      "Arab",
+      "CN"
+    ],
+    "uga": [
+      "Ugar",
+      "SY"
+    ],
+    "uk": [
+      "Cyrl",
+      "UA"
+    ],
+    "uli": [
+      "Latn",
+      "FM"
+    ],
+    "umb": [
+      "Latn",
+      "AO"
+    ],
+    "unr": [
+      "Beng",
+      "IN"
+    ],
+    "unx": [
+      "Beng",
+      "IN"
+    ],
+    "uok": [
+      "Latn",
+      "ZZ"
+    ],
+    "ur": [
+      "Arab",
+      "PK"
+    ],
+    "uri": [
+      "Latn",
+      "ZZ"
+    ],
+    "urt": [
+      "Latn",
+      "ZZ"
+    ],
+    "urw": [
+      "Latn",
+      "ZZ"
+    ],
+    "usa": [
+      "Latn",
+      "ZZ"
+    ],
+    "uth": [
+      "Latn",
+      "ZZ"
+    ],
+    "utr": [
+      "Latn",
+      "ZZ"
+    ],
+    "uvh": [
+      "Latn",
+      "ZZ"
+    ],
+    "uvl": [
+      "Latn",
+      "ZZ"
+    ],
+    "uz": [
+      "Latn",
+      "UZ"
+    ],
+    "vag": [
+      "Latn",
+      "ZZ"
+    ],
+    "vai": [
+      "Vaii",
+      "LR"
+    ],
+    "van": [
+      "Latn",
+      "ZZ"
+    ],
+    "ve": [
+      "Latn",
+      "ZA"
+    ],
+    "vec": [
+      "Latn",
+      "IT"
+    ],
+    "vep": [
+      "Latn",
+      "RU"
+    ],
+    "vi": [
+      "Latn",
+      "VN"
+    ],
+    "vic": [
+      "Latn",
+      "SX"
+    ],
+    "viv": [
+      "Latn",
+      "ZZ"
+    ],
+    "vls": [
+      "Latn",
+      "BE"
+    ],
+    "vmf": [
+      "Latn",
+      "DE"
+    ],
+    "vmw": [
+      "Latn",
+      "MZ"
+    ],
+    "vo": [
+      "Latn",
+      "001"
+    ],
+    "vot": [
+      "Latn",
+      "RU"
+    ],
+    "vro": [
+      "Latn",
+      "EE"
+    ],
+    "vun": [
+      "Latn",
+      "TZ"
+    ],
+    "vut": [
+      "Latn",
+      "ZZ"
+    ],
+    "wa": [
+      "Latn",
+      "BE"
+    ],
+    "wae": [
+      "Latn",
+      "CH"
+    ],
+    "waj": [
+      "Latn",
+      "ZZ"
+    ],
+    "wal": [
+      "Ethi",
+      "ET"
+    ],
+    "wan": [
+      "Latn",
+      "ZZ"
+    ],
+    "war": [
+      "Latn",
+      "PH"
+    ],
+    "wbp": [
+      "Latn",
+      "AU"
+    ],
+    "wbq": [
+      "Telu",
+      "IN"
+    ],
+    "wbr": [
+      "Deva",
+      "IN"
+    ],
+    "wci": [
+      "Latn",
+      "ZZ"
+    ],
+    "wer": [
+      "Latn",
+      "ZZ"
+    ],
+    "wgi": [
+      "Latn",
+      "ZZ"
+    ],
+    "whg": [
+      "Latn",
+      "ZZ"
+    ],
+    "wib": [
+      "Latn",
+      "ZZ"
+    ],
+    "wiu": [
+      "Latn",
+      "ZZ"
+    ],
+    "wiv": [
+      "Latn",
+      "ZZ"
+    ],
+    "wja": [
+      "Latn",
+      "ZZ"
+    ],
+    "wji": [
+      "Latn",
+      "ZZ"
+    ],
+    "wls": [
+      "Latn",
+      "WF"
+    ],
+    "wmo": [
+      "Latn",
+      "ZZ"
+    ],
+    "wnc": [
+      "Latn",
+      "ZZ"
+    ],
+    "wni": [
+      "Arab",
+      "KM"
+    ],
+    "wnu": [
+      "Latn",
+      "ZZ"
+    ],
+    "wo": [
+      "Latn",
+      "SN"
+    ],
+    "wob": [
+      "Latn",
+      "ZZ"
+    ],
+    "wos": [
+      "Latn",
+      "ZZ"
+    ],
+    "wrs": [
+      "Latn",
+      "ZZ"
+    ],
+    "wsg": [
+      "Gong",
+      "IN"
+    ],
+    "wsk": [
+      "Latn",
+      "ZZ"
+    ],
+    "wtm": [
+      "Deva",
+      "IN"
+    ],
+    "wuu": [
+      "Hans",
+      "CN"
+    ],
+    "wuv": [
+      "Latn",
+      "ZZ"
+    ],
+    "wwa": [
+      "Latn",
+      "ZZ"
+    ],
+    "xav": [
+      "Latn",
+      "BR"
+    ],
+    "xbi": [
+      "Latn",
+      "ZZ"
+    ],
+    "xco": [
+      "Chrs",
+      "UZ"
+    ],
+    "xcr": [
+      "Cari",
+      "TR"
+    ],
+    "xes": [
+      "Latn",
+      "ZZ"
+    ],
+    "xh": [
+      "Latn",
+      "ZA"
+    ],
+    "xla": [
+      "Latn",
+      "ZZ"
+    ],
+    "xlc": [
+      "Lyci",
+      "TR"
+    ],
+    "xld": [
+      "Lydi",
+      "TR"
+    ],
+    "xmf": [
+      "Geor",
+      "GE"
+    ],
+    "xmn": [
+      "Mani",
+      "CN"
+    ],
+    "xmr": [
+      "Merc",
+      "SD"
+    ],
+    "xna": [
+      "Narb",
+      "SA"
+    ],
+    "xnr": [
+      "Deva",
+      "IN"
+    ],
+    "xog": [
+      "Latn",
+      "UG"
+    ],
+    "xon": [
+      "Latn",
+      "ZZ"
+    ],
+    "xpr": [
+      "Prti",
+      "IR"
+    ],
+    "xrb": [
+      "Latn",
+      "ZZ"
+    ],
+    "xsa": [
+      "Sarb",
+      "YE"
+    ],
+    "xsi": [
+      "Latn",
+      "ZZ"
+    ],
+    "xsm": [
+      "Latn",
+      "ZZ"
+    ],
+    "xsr": [
+      "Deva",
+      "NP"
+    ],
+    "xwe": [
+      "Latn",
+      "ZZ"
+    ],
+    "yam": [
+      "Latn",
+      "ZZ"
+    ],
+    "yao": [
+      "Latn",
+      "MZ"
+    ],
+    "yap": [
+      "Latn",
+      "FM"
+    ],
+    "yas": [
+      "Latn",
+      "ZZ"
+    ],
+    "yat": [
+      "Latn",
+      "ZZ"
+    ],
+    "yav": [
+      "Latn",
+      "CM"
+    ],
+    "yay": [
+      "Latn",
+      "ZZ"
+    ],
+    "yaz": [
+      "Latn",
+      "ZZ"
+    ],
+    "yba": [
+      "Latn",
+      "ZZ"
+    ],
+    "ybb": [
+      "Latn",
+      "CM"
+    ],
+    "yby": [
+      "Latn",
+      "ZZ"
+    ],
+    "yer": [
+      "Latn",
+      "ZZ"
+    ],
+    "ygr": [
+      "Latn",
+      "ZZ"
+    ],
+    "ygw": [
+      "Latn",
+      "ZZ"
+    ],
+    "yi": [
+      "Hebr",
+      "001"
+    ],
+    "yko": [
+      "Latn",
+      "ZZ"
+    ],
+    "yle": [
+      "Latn",
+      "ZZ"
+    ],
+    "ylg": [
+      "Latn",
+      "ZZ"
+    ],
+    "yll": [
+      "Latn",
+      "ZZ"
+    ],
+    "yml": [
+      "Latn",
+      "ZZ"
+    ],
+    "yo": [
+      "Latn",
+      "NG"
+    ],
+    "yon": [
+      "Latn",
+      "ZZ"
+    ],
+    "yrb": [
+      "Latn",
+      "ZZ"
+    ],
+    "yre": [
+      "Latn",
+      "ZZ"
+    ],
+    "yrl": [
+      "Latn",
+      "BR"
+    ],
+    "yss": [
+      "Latn",
+      "ZZ"
+    ],
+    "yua": [
+      "Latn",
+      "MX"
+    ],
+    "yue": [
+      "Hant",
+      "HK"
+    ],
+    "yuj": [
+      "Latn",
+      "ZZ"
+    ],
+    "yut": [
+      "Latn",
+      "ZZ"
+    ],
+    "yuw": [
+      "Latn",
+      "ZZ"
+    ],
+    "za": [
+      "Latn",
+      "CN"
+    ],
+    "zag": [
+      "Latn",
+      "SD"
+    ],
+    "zdj": [
+      "Arab",
+      "KM"
+    ],
+    "zea": [
+      "Latn",
+      "NL"
+    ],
+    "zgh": [
+      "Tfng",
+      "MA"
+    ],
+    "zh": [
+      "Hans",
+      "CN"
+    ],
+    "zhx": [
+      "Nshu",
+      "CN"
+    ],
+    "zia": [
+      "Latn",
+      "ZZ"
+    ],
+    "zkt": [
+      "Kits",
+      "CN"
+    ],
+    "zlm": [
+      "Latn",
+      "TG"
+    ],
+    "zmi": [
+      "Latn",
+      "MY"
+    ],
+    "zne": [
+      "Latn",
+      "ZZ"
+    ],
+    "zu": [
+      "Latn",
+      "ZA"
+    ],
+    "zza": [
+      "Latn",
+      "TR"
+    ]
   },
   "script_region": [
     [
@@ -2270,397 +6305,1568 @@
     ]
   ],
   "script": {
-    "Adlm": "ff-GN",
-    "Aghb": "udi-RU",
-    "Ahom": "aho-IN",
-    "Arab": "ar-EG",
-    "Armi": "arc-IR",
-    "Armn": "hy-AM",
-    "Avst": "ae-IR",
-    "Bali": "ban-ID",
-    "Bamu": "bax-CM",
-    "Bass": "bsq-LR",
-    "Batk": "bbc-ID",
-    "Beng": "bn-BD",
-    "Bhks": "sa-IN",
-    "Bopo": "zh-TW",
-    "Brah": "pka-IN",
-    "Brai": "fr-FR",
-    "Bugi": "bug-ID",
-    "Buhd": "bku-PH",
-    "Cakm": "ccp-BD",
-    "Cans": "cr-CA",
-    "Cari": "xcr-TR",
-    "Cham": "cjm-VN",
-    "Cher": "chr-US",
-    "Chrs": "xco-UZ",
-    "Copt": "cop-EG",
-    "Cpmn": "und-CY",
-    "Cprt": "grc-CY",
-    "Cyrl": "ru-RU",
-    "Deva": "hi-IN",
-    "Diak": "dv-MV",
-    "Dogr": "doi-IN",
-    "Dupl": "fr-FR",
-    "Egyp": "egy-EG",
-    "Elba": "sq-AL",
-    "Elym": "arc-IR",
-    "Ethi": "am-ET",
-    "Geor": "ka-GE",
-    "Glag": "cu-BG",
-    "Gong": "wsg-IN",
-    "Gonm": "esg-IN",
-    "Goth": "got-UA",
-    "Gran": "sa-IN",
-    "Grek": "el-GR",
-    "Gujr": "gu-IN",
-    "Guru": "pa-IN",
-    "Hanb": "zh-TW",
-    "Hang": "ko-KR",
-    "Hani": "zh-CN",
-    "Hano": "hnn-PH",
-    "Hans": "zh-CN",
-    "Hant": "zh-TW",
-    "Hebr": "he-IL",
-    "Hira": "ja-JP",
-    "Hluw": "hlu-TR",
-    "Hmng": "hnj-LA",
-    "Hmnp": "hnj-US",
-    "Hung": "hu-HU",
-    "Ital": "ett-IT",
-    "Jamo": "ko-KR",
-    "Java": "jv-ID",
-    "Jpan": "ja-JP",
-    "Kali": "eky-MM",
-    "Kana": "ja-JP",
-    "Khar": "pra-PK",
-    "Khmr": "km-KH",
-    "Khoj": "sd-IN",
-    "Kits": "zkt-CN",
-    "Knda": "kn-IN",
-    "Kore": "ko-KR",
-    "Kthi": "bho-IN",
-    "Lana": "nod-TH",
-    "Laoo": "lo-LA",
-    "Lepc": "lep-IN",
-    "Limb": "lif-IN",
-    "Lina": "lab-GR",
-    "Linb": "grc-GR",
-    "Lisu": "lis-CN",
-    "Lyci": "xlc-TR",
-    "Lydi": "xld-TR",
-    "Mahj": "hi-IN",
-    "Maka": "mak-ID",
-    "Mand": "myz-IR",
-    "Mani": "xmn-CN",
-    "Marc": "bo-CN",
-    "Medf": "dmf-NG",
-    "Mend": "men-SL",
-    "Merc": "xmr-SD",
-    "Mero": "xmr-SD",
-    "Mlym": "ml-IN",
-    "Modi": "mr-IN",
-    "Mong": "mn-CN",
-    "Mroo": "mro-BD",
-    "Mtei": "mni-IN",
-    "Mult": "skr-PK",
-    "Mymr": "my-MM",
-    "Nand": "sa-IN",
-    "Narb": "xna-SA",
-    "Nbat": "arc-JO",
-    "Newa": "new-NP",
-    "Nkoo": "man-GN",
-    "Nshu": "zhx-CN",
-    "Ogam": "sga-IE",
-    "Olck": "sat-IN",
-    "Orkh": "otk-MN",
-    "Orya": "or-IN",
-    "Osge": "osa-US",
-    "Osma": "so-SO",
-    "Ougr": "oui-143",
-    "Palm": "arc-SY",
-    "Pauc": "ctd-MM",
-    "Perm": "kv-RU",
-    "Phag": "lzh-CN",
-    "Phli": "pal-IR",
-    "Phlp": "pal-CN",
-    "Phnx": "phn-LB",
-    "Plrd": "hmd-CN",
-    "Prti": "xpr-IR",
-    "Rjng": "rej-ID",
-    "Rohg": "rhg-MM",
-    "Runr": "non-SE",
-    "Samr": "smp-IL",
-    "Sarb": "xsa-YE",
-    "Saur": "saz-IN",
-    "Sgnw": "ase-US",
-    "Shaw": "en-GB",
-    "Shrd": "sa-IN",
-    "Sidd": "sa-IN",
-    "Sind": "sd-IN",
-    "Sinh": "si-LK",
-    "Sogd": "sog-UZ",
-    "Sogo": "sog-UZ",
-    "Sora": "srb-IN",
-    "Soyo": "cmg-MN",
-    "Sund": "su-ID",
-    "Sylo": "syl-BD",
-    "Syrc": "syr-IQ",
-    "Tagb": "tbw-PH",
-    "Takr": "doi-IN",
-    "Tale": "tdd-CN",
-    "Talu": "khb-CN",
-    "Taml": "ta-IN",
-    "Tang": "txg-CN",
-    "Tavt": "blt-VN",
-    "Telu": "te-IN",
-    "Tfng": "zgh-MA",
-    "Tglg": "fil-PH",
-    "Thaa": "dv-MV",
-    "Thai": "th-TH",
-    "Tibt": "bo-CN",
-    "Tirh": "mai-IN",
-    "Tnsa": "nst-IN",
-    "Toto": "txo-IN",
-    "Ugar": "uga-SY",
-    "Vaii": "vai-LR",
-    "Vith": "sq-AL",
-    "Wara": "hoc-IN",
-    "Wcho": "nnp-IN",
-    "Xpeo": "peo-IR",
-    "Xsux": "akk-IQ",
-    "Yezi": "ku-GE",
-    "Yiii": "ii-CN",
-    "Zanb": "cmg-MN"
+    "Adlm": [
+      "ff",
+      "GN"
+    ],
+    "Aghb": [
+      "udi",
+      "RU"
+    ],
+    "Ahom": [
+      "aho",
+      "IN"
+    ],
+    "Arab": [
+      "ar",
+      "EG"
+    ],
+    "Armi": [
+      "arc",
+      "IR"
+    ],
+    "Armn": [
+      "hy",
+      "AM"
+    ],
+    "Avst": [
+      "ae",
+      "IR"
+    ],
+    "Bali": [
+      "ban",
+      "ID"
+    ],
+    "Bamu": [
+      "bax",
+      "CM"
+    ],
+    "Bass": [
+      "bsq",
+      "LR"
+    ],
+    "Batk": [
+      "bbc",
+      "ID"
+    ],
+    "Beng": [
+      "bn",
+      "BD"
+    ],
+    "Bhks": [
+      "sa",
+      "IN"
+    ],
+    "Bopo": [
+      "zh",
+      "TW"
+    ],
+    "Brah": [
+      "pka",
+      "IN"
+    ],
+    "Brai": [
+      "fr",
+      "FR"
+    ],
+    "Bugi": [
+      "bug",
+      "ID"
+    ],
+    "Buhd": [
+      "bku",
+      "PH"
+    ],
+    "Cakm": [
+      "ccp",
+      "BD"
+    ],
+    "Cans": [
+      "cr",
+      "CA"
+    ],
+    "Cari": [
+      "xcr",
+      "TR"
+    ],
+    "Cham": [
+      "cjm",
+      "VN"
+    ],
+    "Cher": [
+      "chr",
+      "US"
+    ],
+    "Chrs": [
+      "xco",
+      "UZ"
+    ],
+    "Copt": [
+      "cop",
+      "EG"
+    ],
+    "Cpmn": [
+      "und",
+      "CY"
+    ],
+    "Cprt": [
+      "grc",
+      "CY"
+    ],
+    "Cyrl": [
+      "ru",
+      "RU"
+    ],
+    "Deva": [
+      "hi",
+      "IN"
+    ],
+    "Diak": [
+      "dv",
+      "MV"
+    ],
+    "Dogr": [
+      "doi",
+      "IN"
+    ],
+    "Dupl": [
+      "fr",
+      "FR"
+    ],
+    "Egyp": [
+      "egy",
+      "EG"
+    ],
+    "Elba": [
+      "sq",
+      "AL"
+    ],
+    "Elym": [
+      "arc",
+      "IR"
+    ],
+    "Ethi": [
+      "am",
+      "ET"
+    ],
+    "Geor": [
+      "ka",
+      "GE"
+    ],
+    "Glag": [
+      "cu",
+      "BG"
+    ],
+    "Gong": [
+      "wsg",
+      "IN"
+    ],
+    "Gonm": [
+      "esg",
+      "IN"
+    ],
+    "Goth": [
+      "got",
+      "UA"
+    ],
+    "Gran": [
+      "sa",
+      "IN"
+    ],
+    "Grek": [
+      "el",
+      "GR"
+    ],
+    "Gujr": [
+      "gu",
+      "IN"
+    ],
+    "Guru": [
+      "pa",
+      "IN"
+    ],
+    "Hanb": [
+      "zh",
+      "TW"
+    ],
+    "Hang": [
+      "ko",
+      "KR"
+    ],
+    "Hani": [
+      "zh",
+      "CN"
+    ],
+    "Hano": [
+      "hnn",
+      "PH"
+    ],
+    "Hans": [
+      "zh",
+      "CN"
+    ],
+    "Hant": [
+      "zh",
+      "TW"
+    ],
+    "Hebr": [
+      "he",
+      "IL"
+    ],
+    "Hira": [
+      "ja",
+      "JP"
+    ],
+    "Hluw": [
+      "hlu",
+      "TR"
+    ],
+    "Hmng": [
+      "hnj",
+      "LA"
+    ],
+    "Hmnp": [
+      "hnj",
+      "US"
+    ],
+    "Hung": [
+      "hu",
+      "HU"
+    ],
+    "Ital": [
+      "ett",
+      "IT"
+    ],
+    "Jamo": [
+      "ko",
+      "KR"
+    ],
+    "Java": [
+      "jv",
+      "ID"
+    ],
+    "Jpan": [
+      "ja",
+      "JP"
+    ],
+    "Kali": [
+      "eky",
+      "MM"
+    ],
+    "Kana": [
+      "ja",
+      "JP"
+    ],
+    "Khar": [
+      "pra",
+      "PK"
+    ],
+    "Khmr": [
+      "km",
+      "KH"
+    ],
+    "Khoj": [
+      "sd",
+      "IN"
+    ],
+    "Kits": [
+      "zkt",
+      "CN"
+    ],
+    "Knda": [
+      "kn",
+      "IN"
+    ],
+    "Kore": [
+      "ko",
+      "KR"
+    ],
+    "Kthi": [
+      "bho",
+      "IN"
+    ],
+    "Lana": [
+      "nod",
+      "TH"
+    ],
+    "Laoo": [
+      "lo",
+      "LA"
+    ],
+    "Lepc": [
+      "lep",
+      "IN"
+    ],
+    "Limb": [
+      "lif",
+      "IN"
+    ],
+    "Lina": [
+      "lab",
+      "GR"
+    ],
+    "Linb": [
+      "grc",
+      "GR"
+    ],
+    "Lisu": [
+      "lis",
+      "CN"
+    ],
+    "Lyci": [
+      "xlc",
+      "TR"
+    ],
+    "Lydi": [
+      "xld",
+      "TR"
+    ],
+    "Mahj": [
+      "hi",
+      "IN"
+    ],
+    "Maka": [
+      "mak",
+      "ID"
+    ],
+    "Mand": [
+      "myz",
+      "IR"
+    ],
+    "Mani": [
+      "xmn",
+      "CN"
+    ],
+    "Marc": [
+      "bo",
+      "CN"
+    ],
+    "Medf": [
+      "dmf",
+      "NG"
+    ],
+    "Mend": [
+      "men",
+      "SL"
+    ],
+    "Merc": [
+      "xmr",
+      "SD"
+    ],
+    "Mero": [
+      "xmr",
+      "SD"
+    ],
+    "Mlym": [
+      "ml",
+      "IN"
+    ],
+    "Modi": [
+      "mr",
+      "IN"
+    ],
+    "Mong": [
+      "mn",
+      "CN"
+    ],
+    "Mroo": [
+      "mro",
+      "BD"
+    ],
+    "Mtei": [
+      "mni",
+      "IN"
+    ],
+    "Mult": [
+      "skr",
+      "PK"
+    ],
+    "Mymr": [
+      "my",
+      "MM"
+    ],
+    "Nand": [
+      "sa",
+      "IN"
+    ],
+    "Narb": [
+      "xna",
+      "SA"
+    ],
+    "Nbat": [
+      "arc",
+      "JO"
+    ],
+    "Newa": [
+      "new",
+      "NP"
+    ],
+    "Nkoo": [
+      "man",
+      "GN"
+    ],
+    "Nshu": [
+      "zhx",
+      "CN"
+    ],
+    "Ogam": [
+      "sga",
+      "IE"
+    ],
+    "Olck": [
+      "sat",
+      "IN"
+    ],
+    "Orkh": [
+      "otk",
+      "MN"
+    ],
+    "Orya": [
+      "or",
+      "IN"
+    ],
+    "Osge": [
+      "osa",
+      "US"
+    ],
+    "Osma": [
+      "so",
+      "SO"
+    ],
+    "Ougr": [
+      "oui",
+      "143"
+    ],
+    "Palm": [
+      "arc",
+      "SY"
+    ],
+    "Pauc": [
+      "ctd",
+      "MM"
+    ],
+    "Perm": [
+      "kv",
+      "RU"
+    ],
+    "Phag": [
+      "lzh",
+      "CN"
+    ],
+    "Phli": [
+      "pal",
+      "IR"
+    ],
+    "Phlp": [
+      "pal",
+      "CN"
+    ],
+    "Phnx": [
+      "phn",
+      "LB"
+    ],
+    "Plrd": [
+      "hmd",
+      "CN"
+    ],
+    "Prti": [
+      "xpr",
+      "IR"
+    ],
+    "Rjng": [
+      "rej",
+      "ID"
+    ],
+    "Rohg": [
+      "rhg",
+      "MM"
+    ],
+    "Runr": [
+      "non",
+      "SE"
+    ],
+    "Samr": [
+      "smp",
+      "IL"
+    ],
+    "Sarb": [
+      "xsa",
+      "YE"
+    ],
+    "Saur": [
+      "saz",
+      "IN"
+    ],
+    "Sgnw": [
+      "ase",
+      "US"
+    ],
+    "Shaw": [
+      "en",
+      "GB"
+    ],
+    "Shrd": [
+      "sa",
+      "IN"
+    ],
+    "Sidd": [
+      "sa",
+      "IN"
+    ],
+    "Sind": [
+      "sd",
+      "IN"
+    ],
+    "Sinh": [
+      "si",
+      "LK"
+    ],
+    "Sogd": [
+      "sog",
+      "UZ"
+    ],
+    "Sogo": [
+      "sog",
+      "UZ"
+    ],
+    "Sora": [
+      "srb",
+      "IN"
+    ],
+    "Soyo": [
+      "cmg",
+      "MN"
+    ],
+    "Sund": [
+      "su",
+      "ID"
+    ],
+    "Sylo": [
+      "syl",
+      "BD"
+    ],
+    "Syrc": [
+      "syr",
+      "IQ"
+    ],
+    "Tagb": [
+      "tbw",
+      "PH"
+    ],
+    "Takr": [
+      "doi",
+      "IN"
+    ],
+    "Tale": [
+      "tdd",
+      "CN"
+    ],
+    "Talu": [
+      "khb",
+      "CN"
+    ],
+    "Taml": [
+      "ta",
+      "IN"
+    ],
+    "Tang": [
+      "txg",
+      "CN"
+    ],
+    "Tavt": [
+      "blt",
+      "VN"
+    ],
+    "Telu": [
+      "te",
+      "IN"
+    ],
+    "Tfng": [
+      "zgh",
+      "MA"
+    ],
+    "Tglg": [
+      "fil",
+      "PH"
+    ],
+    "Thaa": [
+      "dv",
+      "MV"
+    ],
+    "Thai": [
+      "th",
+      "TH"
+    ],
+    "Tibt": [
+      "bo",
+      "CN"
+    ],
+    "Tirh": [
+      "mai",
+      "IN"
+    ],
+    "Tnsa": [
+      "nst",
+      "IN"
+    ],
+    "Toto": [
+      "txo",
+      "IN"
+    ],
+    "Ugar": [
+      "uga",
+      "SY"
+    ],
+    "Vaii": [
+      "vai",
+      "LR"
+    ],
+    "Vith": [
+      "sq",
+      "AL"
+    ],
+    "Wara": [
+      "hoc",
+      "IN"
+    ],
+    "Wcho": [
+      "nnp",
+      "IN"
+    ],
+    "Xpeo": [
+      "peo",
+      "IR"
+    ],
+    "Xsux": [
+      "akk",
+      "IQ"
+    ],
+    "Yezi": [
+      "ku",
+      "GE"
+    ],
+    "Yiii": [
+      "ii",
+      "CN"
+    ],
+    "Zanb": [
+      "cmg",
+      "MN"
+    ]
   },
   "region": {
-    "002": "en-Latn-NG",
-    "003": "en-Latn-US",
-    "005": "pt-Latn-BR",
-    "009": "en-Latn-AU",
-    "011": "en-Latn-NG",
-    "013": "es-Latn-MX",
-    "014": "sw-Latn-TZ",
-    "015": "ar-Arab-EG",
-    "017": "sw-Latn-CD",
-    "018": "en-Latn-ZA",
-    "019": "en-Latn-US",
-    "021": "en-Latn-US",
-    "029": "es-Latn-CU",
-    "030": "zh-Hans-CN",
-    "034": "hi-Deva-IN",
-    "035": "id-Latn-ID",
-    "039": "it-Latn-IT",
-    "053": "en-Latn-AU",
-    "054": "en-Latn-PG",
-    "057": "en-Latn-GU",
-    "061": "sm-Latn-WS",
-    "142": "zh-Hans-CN",
-    "143": "uz-Latn-UZ",
-    "145": "ar-Arab-SA",
-    "150": "ru-Cyrl-RU",
-    "151": "ru-Cyrl-RU",
-    "154": "en-Latn-GB",
-    "155": "de-Latn-DE",
-    "202": "en-Latn-NG",
-    "419": "es-Latn",
-    "AD": "ca-Latn",
-    "AE": "ar-Arab",
-    "AF": "fa-Arab",
-    "AL": "sq-Latn",
-    "AM": "hy-Armn",
-    "AO": "pt-Latn",
-    "AQ": "und-Latn",
-    "AR": "es-Latn",
-    "AS": "sm-Latn",
-    "AT": "de-Latn",
-    "AW": "nl-Latn",
-    "AX": "sv-Latn",
-    "AZ": "az-Latn",
-    "BA": "bs-Latn",
-    "BD": "bn-Beng",
-    "BE": "nl-Latn",
-    "BF": "fr-Latn",
-    "BG": "bg-Cyrl",
-    "BH": "ar-Arab",
-    "BI": "rn-Latn",
-    "BJ": "fr-Latn",
-    "BL": "fr-Latn",
-    "BN": "ms-Latn",
-    "BO": "es-Latn",
-    "BQ": "pap-Latn",
-    "BR": "pt-Latn",
-    "BT": "dz-Tibt",
-    "BV": "und-Latn",
-    "BY": "be-Cyrl",
-    "CD": "sw-Latn",
-    "CF": "fr-Latn",
-    "CG": "fr-Latn",
-    "CH": "de-Latn",
-    "CI": "fr-Latn",
-    "CL": "es-Latn",
-    "CM": "fr-Latn",
-    "CN": "zh-Hans",
-    "CO": "es-Latn",
-    "CP": "und-Latn",
-    "CR": "es-Latn",
-    "CU": "es-Latn",
-    "CV": "pt-Latn",
-    "CW": "pap-Latn",
-    "CY": "el-Grek",
-    "CZ": "cs-Latn",
-    "DE": "de-Latn",
-    "DJ": "aa-Latn",
-    "DK": "da-Latn",
-    "DO": "es-Latn",
-    "DZ": "ar-Arab",
-    "EA": "es-Latn",
-    "EC": "es-Latn",
-    "EE": "et-Latn",
-    "EG": "ar-Arab",
-    "EH": "ar-Arab",
-    "ER": "ti-Ethi",
-    "ES": "es-Latn",
-    "ET": "am-Ethi",
-    "EU": "en-Latn-IE",
-    "EZ": "de-Latn",
-    "FI": "fi-Latn",
-    "FO": "fo-Latn",
-    "FR": "fr-Latn",
-    "GA": "fr-Latn",
-    "GE": "ka-Geor",
-    "GF": "fr-Latn",
-    "GH": "ak-Latn",
-    "GL": "kl-Latn",
-    "GN": "fr-Latn",
-    "GP": "fr-Latn",
-    "GQ": "es-Latn",
-    "GR": "el-Grek",
-    "GS": "und-Latn",
-    "GT": "es-Latn",
-    "GW": "pt-Latn",
-    "HK": "zh-Hant",
-    "HM": "und-Latn",
-    "HN": "es-Latn",
-    "HR": "hr-Latn",
-    "HT": "ht-Latn",
-    "HU": "hu-Latn",
-    "IC": "es-Latn",
-    "ID": "id-Latn",
-    "IL": "he-Hebr",
-    "IN": "hi-Deva",
-    "IQ": "ar-Arab",
-    "IR": "fa-Arab",
-    "IS": "is-Latn",
-    "IT": "it-Latn",
-    "JO": "ar-Arab",
-    "JP": "ja-Jpan",
-    "KE": "sw-Latn",
-    "KG": "ky-Cyrl",
-    "KH": "km-Khmr",
-    "KM": "ar-Arab",
-    "KP": "ko-Kore",
-    "KR": "ko-Kore",
-    "KW": "ar-Arab",
-    "KZ": "ru-Cyrl",
-    "LA": "lo-Laoo",
-    "LB": "ar-Arab",
-    "LI": "de-Latn",
-    "LK": "si-Sinh",
-    "LS": "st-Latn",
-    "LT": "lt-Latn",
-    "LU": "fr-Latn",
-    "LV": "lv-Latn",
-    "LY": "ar-Arab",
-    "MA": "ar-Arab",
-    "MC": "fr-Latn",
-    "MD": "ro-Latn",
-    "ME": "sr-Latn",
-    "MF": "fr-Latn",
-    "MG": "mg-Latn",
-    "MK": "mk-Cyrl",
-    "ML": "bm-Latn",
-    "MM": "my-Mymr",
-    "MN": "mn-Cyrl",
-    "MO": "zh-Hant",
-    "MQ": "fr-Latn",
-    "MR": "ar-Arab",
-    "MT": "mt-Latn",
-    "MU": "mfe-Latn",
-    "MV": "dv-Thaa",
-    "MX": "es-Latn",
-    "MY": "ms-Latn",
-    "MZ": "pt-Latn",
-    "NA": "af-Latn",
-    "NC": "fr-Latn",
-    "NE": "ha-Latn",
-    "NI": "es-Latn",
-    "NL": "nl-Latn",
-    "NO": "nb-Latn",
-    "NP": "ne-Deva",
-    "OM": "ar-Arab",
-    "PA": "es-Latn",
-    "PE": "es-Latn",
-    "PF": "fr-Latn",
-    "PG": "tpi-Latn",
-    "PH": "fil-Latn",
-    "PK": "ur-Arab",
-    "PL": "pl-Latn",
-    "PM": "fr-Latn",
-    "PR": "es-Latn",
-    "PS": "ar-Arab",
-    "PT": "pt-Latn",
-    "PW": "pau-Latn",
-    "PY": "gn-Latn",
-    "QA": "ar-Arab",
-    "QO": "en-Latn-DG",
-    "RE": "fr-Latn",
-    "RO": "ro-Latn",
-    "RS": "sr-Cyrl",
-    "RU": "ru-Cyrl",
-    "RW": "rw-Latn",
-    "SA": "ar-Arab",
-    "SC": "fr-Latn",
-    "SD": "ar-Arab",
-    "SE": "sv-Latn",
-    "SI": "sl-Latn",
-    "SJ": "nb-Latn",
-    "SK": "sk-Latn",
-    "SM": "it-Latn",
-    "SN": "fr-Latn",
-    "SO": "so-Latn",
-    "SR": "nl-Latn",
-    "ST": "pt-Latn",
-    "SV": "es-Latn",
-    "SY": "ar-Arab",
-    "TD": "fr-Latn",
-    "TF": "fr-Latn",
-    "TG": "fr-Latn",
-    "TH": "th-Thai",
-    "TJ": "tg-Cyrl",
-    "TK": "tkl-Latn",
-    "TL": "pt-Latn",
-    "TM": "tk-Latn",
-    "TN": "ar-Arab",
-    "TO": "to-Latn",
-    "TR": "tr-Latn",
-    "TV": "tvl-Latn",
-    "TW": "zh-Hant",
-    "TZ": "sw-Latn",
-    "UA": "uk-Cyrl",
-    "UG": "sw-Latn",
-    "UY": "es-Latn",
-    "UZ": "uz-Latn",
-    "VA": "it-Latn",
-    "VE": "es-Latn",
-    "VN": "vi-Latn",
-    "VU": "bi-Latn",
-    "WF": "fr-Latn",
-    "WS": "sm-Latn",
-    "XK": "sq-Latn",
-    "YE": "ar-Arab",
-    "YT": "fr-Latn",
-    "ZW": "sn-Latn"
+    "002": [
+      "en",
+      "Latn"
+    ],
+    "003": [
+      "en",
+      "Latn"
+    ],
+    "005": [
+      "pt",
+      "Latn"
+    ],
+    "009": [
+      "en",
+      "Latn"
+    ],
+    "011": [
+      "en",
+      "Latn"
+    ],
+    "013": [
+      "es",
+      "Latn"
+    ],
+    "014": [
+      "sw",
+      "Latn"
+    ],
+    "015": [
+      "ar",
+      "Arab"
+    ],
+    "017": [
+      "sw",
+      "Latn"
+    ],
+    "018": [
+      "en",
+      "Latn"
+    ],
+    "019": [
+      "en",
+      "Latn"
+    ],
+    "021": [
+      "en",
+      "Latn"
+    ],
+    "029": [
+      "es",
+      "Latn"
+    ],
+    "030": [
+      "zh",
+      "Hans"
+    ],
+    "034": [
+      "hi",
+      "Deva"
+    ],
+    "035": [
+      "id",
+      "Latn"
+    ],
+    "039": [
+      "it",
+      "Latn"
+    ],
+    "053": [
+      "en",
+      "Latn"
+    ],
+    "054": [
+      "en",
+      "Latn"
+    ],
+    "057": [
+      "en",
+      "Latn"
+    ],
+    "061": [
+      "sm",
+      "Latn"
+    ],
+    "142": [
+      "zh",
+      "Hans"
+    ],
+    "143": [
+      "uz",
+      "Latn"
+    ],
+    "145": [
+      "ar",
+      "Arab"
+    ],
+    "150": [
+      "ru",
+      "Cyrl"
+    ],
+    "151": [
+      "ru",
+      "Cyrl"
+    ],
+    "154": [
+      "en",
+      "Latn"
+    ],
+    "155": [
+      "de",
+      "Latn"
+    ],
+    "202": [
+      "en",
+      "Latn"
+    ],
+    "419": [
+      "es",
+      "Latn"
+    ],
+    "AD": [
+      "ca",
+      "Latn"
+    ],
+    "AE": [
+      "ar",
+      "Arab"
+    ],
+    "AF": [
+      "fa",
+      "Arab"
+    ],
+    "AL": [
+      "sq",
+      "Latn"
+    ],
+    "AM": [
+      "hy",
+      "Armn"
+    ],
+    "AO": [
+      "pt",
+      "Latn"
+    ],
+    "AQ": [
+      "und",
+      "Latn"
+    ],
+    "AR": [
+      "es",
+      "Latn"
+    ],
+    "AS": [
+      "sm",
+      "Latn"
+    ],
+    "AT": [
+      "de",
+      "Latn"
+    ],
+    "AW": [
+      "nl",
+      "Latn"
+    ],
+    "AX": [
+      "sv",
+      "Latn"
+    ],
+    "AZ": [
+      "az",
+      "Latn"
+    ],
+    "BA": [
+      "bs",
+      "Latn"
+    ],
+    "BD": [
+      "bn",
+      "Beng"
+    ],
+    "BE": [
+      "nl",
+      "Latn"
+    ],
+    "BF": [
+      "fr",
+      "Latn"
+    ],
+    "BG": [
+      "bg",
+      "Cyrl"
+    ],
+    "BH": [
+      "ar",
+      "Arab"
+    ],
+    "BI": [
+      "rn",
+      "Latn"
+    ],
+    "BJ": [
+      "fr",
+      "Latn"
+    ],
+    "BL": [
+      "fr",
+      "Latn"
+    ],
+    "BN": [
+      "ms",
+      "Latn"
+    ],
+    "BO": [
+      "es",
+      "Latn"
+    ],
+    "BQ": [
+      "pap",
+      "Latn"
+    ],
+    "BR": [
+      "pt",
+      "Latn"
+    ],
+    "BT": [
+      "dz",
+      "Tibt"
+    ],
+    "BV": [
+      "und",
+      "Latn"
+    ],
+    "BY": [
+      "be",
+      "Cyrl"
+    ],
+    "CD": [
+      "sw",
+      "Latn"
+    ],
+    "CF": [
+      "fr",
+      "Latn"
+    ],
+    "CG": [
+      "fr",
+      "Latn"
+    ],
+    "CH": [
+      "de",
+      "Latn"
+    ],
+    "CI": [
+      "fr",
+      "Latn"
+    ],
+    "CL": [
+      "es",
+      "Latn"
+    ],
+    "CM": [
+      "fr",
+      "Latn"
+    ],
+    "CN": [
+      "zh",
+      "Hans"
+    ],
+    "CO": [
+      "es",
+      "Latn"
+    ],
+    "CP": [
+      "und",
+      "Latn"
+    ],
+    "CR": [
+      "es",
+      "Latn"
+    ],
+    "CU": [
+      "es",
+      "Latn"
+    ],
+    "CV": [
+      "pt",
+      "Latn"
+    ],
+    "CW": [
+      "pap",
+      "Latn"
+    ],
+    "CY": [
+      "el",
+      "Grek"
+    ],
+    "CZ": [
+      "cs",
+      "Latn"
+    ],
+    "DE": [
+      "de",
+      "Latn"
+    ],
+    "DJ": [
+      "aa",
+      "Latn"
+    ],
+    "DK": [
+      "da",
+      "Latn"
+    ],
+    "DO": [
+      "es",
+      "Latn"
+    ],
+    "DZ": [
+      "ar",
+      "Arab"
+    ],
+    "EA": [
+      "es",
+      "Latn"
+    ],
+    "EC": [
+      "es",
+      "Latn"
+    ],
+    "EE": [
+      "et",
+      "Latn"
+    ],
+    "EG": [
+      "ar",
+      "Arab"
+    ],
+    "EH": [
+      "ar",
+      "Arab"
+    ],
+    "ER": [
+      "ti",
+      "Ethi"
+    ],
+    "ES": [
+      "es",
+      "Latn"
+    ],
+    "ET": [
+      "am",
+      "Ethi"
+    ],
+    "EU": [
+      "en",
+      "Latn"
+    ],
+    "EZ": [
+      "de",
+      "Latn"
+    ],
+    "FI": [
+      "fi",
+      "Latn"
+    ],
+    "FO": [
+      "fo",
+      "Latn"
+    ],
+    "FR": [
+      "fr",
+      "Latn"
+    ],
+    "GA": [
+      "fr",
+      "Latn"
+    ],
+    "GE": [
+      "ka",
+      "Geor"
+    ],
+    "GF": [
+      "fr",
+      "Latn"
+    ],
+    "GH": [
+      "ak",
+      "Latn"
+    ],
+    "GL": [
+      "kl",
+      "Latn"
+    ],
+    "GN": [
+      "fr",
+      "Latn"
+    ],
+    "GP": [
+      "fr",
+      "Latn"
+    ],
+    "GQ": [
+      "es",
+      "Latn"
+    ],
+    "GR": [
+      "el",
+      "Grek"
+    ],
+    "GS": [
+      "und",
+      "Latn"
+    ],
+    "GT": [
+      "es",
+      "Latn"
+    ],
+    "GW": [
+      "pt",
+      "Latn"
+    ],
+    "HK": [
+      "zh",
+      "Hant"
+    ],
+    "HM": [
+      "und",
+      "Latn"
+    ],
+    "HN": [
+      "es",
+      "Latn"
+    ],
+    "HR": [
+      "hr",
+      "Latn"
+    ],
+    "HT": [
+      "ht",
+      "Latn"
+    ],
+    "HU": [
+      "hu",
+      "Latn"
+    ],
+    "IC": [
+      "es",
+      "Latn"
+    ],
+    "ID": [
+      "id",
+      "Latn"
+    ],
+    "IL": [
+      "he",
+      "Hebr"
+    ],
+    "IN": [
+      "hi",
+      "Deva"
+    ],
+    "IQ": [
+      "ar",
+      "Arab"
+    ],
+    "IR": [
+      "fa",
+      "Arab"
+    ],
+    "IS": [
+      "is",
+      "Latn"
+    ],
+    "IT": [
+      "it",
+      "Latn"
+    ],
+    "JO": [
+      "ar",
+      "Arab"
+    ],
+    "JP": [
+      "ja",
+      "Jpan"
+    ],
+    "KE": [
+      "sw",
+      "Latn"
+    ],
+    "KG": [
+      "ky",
+      "Cyrl"
+    ],
+    "KH": [
+      "km",
+      "Khmr"
+    ],
+    "KM": [
+      "ar",
+      "Arab"
+    ],
+    "KP": [
+      "ko",
+      "Kore"
+    ],
+    "KR": [
+      "ko",
+      "Kore"
+    ],
+    "KW": [
+      "ar",
+      "Arab"
+    ],
+    "KZ": [
+      "ru",
+      "Cyrl"
+    ],
+    "LA": [
+      "lo",
+      "Laoo"
+    ],
+    "LB": [
+      "ar",
+      "Arab"
+    ],
+    "LI": [
+      "de",
+      "Latn"
+    ],
+    "LK": [
+      "si",
+      "Sinh"
+    ],
+    "LS": [
+      "st",
+      "Latn"
+    ],
+    "LT": [
+      "lt",
+      "Latn"
+    ],
+    "LU": [
+      "fr",
+      "Latn"
+    ],
+    "LV": [
+      "lv",
+      "Latn"
+    ],
+    "LY": [
+      "ar",
+      "Arab"
+    ],
+    "MA": [
+      "ar",
+      "Arab"
+    ],
+    "MC": [
+      "fr",
+      "Latn"
+    ],
+    "MD": [
+      "ro",
+      "Latn"
+    ],
+    "ME": [
+      "sr",
+      "Latn"
+    ],
+    "MF": [
+      "fr",
+      "Latn"
+    ],
+    "MG": [
+      "mg",
+      "Latn"
+    ],
+    "MK": [
+      "mk",
+      "Cyrl"
+    ],
+    "ML": [
+      "bm",
+      "Latn"
+    ],
+    "MM": [
+      "my",
+      "Mymr"
+    ],
+    "MN": [
+      "mn",
+      "Cyrl"
+    ],
+    "MO": [
+      "zh",
+      "Hant"
+    ],
+    "MQ": [
+      "fr",
+      "Latn"
+    ],
+    "MR": [
+      "ar",
+      "Arab"
+    ],
+    "MT": [
+      "mt",
+      "Latn"
+    ],
+    "MU": [
+      "mfe",
+      "Latn"
+    ],
+    "MV": [
+      "dv",
+      "Thaa"
+    ],
+    "MX": [
+      "es",
+      "Latn"
+    ],
+    "MY": [
+      "ms",
+      "Latn"
+    ],
+    "MZ": [
+      "pt",
+      "Latn"
+    ],
+    "NA": [
+      "af",
+      "Latn"
+    ],
+    "NC": [
+      "fr",
+      "Latn"
+    ],
+    "NE": [
+      "ha",
+      "Latn"
+    ],
+    "NI": [
+      "es",
+      "Latn"
+    ],
+    "NL": [
+      "nl",
+      "Latn"
+    ],
+    "NO": [
+      "nb",
+      "Latn"
+    ],
+    "NP": [
+      "ne",
+      "Deva"
+    ],
+    "OM": [
+      "ar",
+      "Arab"
+    ],
+    "PA": [
+      "es",
+      "Latn"
+    ],
+    "PE": [
+      "es",
+      "Latn"
+    ],
+    "PF": [
+      "fr",
+      "Latn"
+    ],
+    "PG": [
+      "tpi",
+      "Latn"
+    ],
+    "PH": [
+      "fil",
+      "Latn"
+    ],
+    "PK": [
+      "ur",
+      "Arab"
+    ],
+    "PL": [
+      "pl",
+      "Latn"
+    ],
+    "PM": [
+      "fr",
+      "Latn"
+    ],
+    "PR": [
+      "es",
+      "Latn"
+    ],
+    "PS": [
+      "ar",
+      "Arab"
+    ],
+    "PT": [
+      "pt",
+      "Latn"
+    ],
+    "PW": [
+      "pau",
+      "Latn"
+    ],
+    "PY": [
+      "gn",
+      "Latn"
+    ],
+    "QA": [
+      "ar",
+      "Arab"
+    ],
+    "QO": [
+      "en",
+      "Latn"
+    ],
+    "RE": [
+      "fr",
+      "Latn"
+    ],
+    "RO": [
+      "ro",
+      "Latn"
+    ],
+    "RS": [
+      "sr",
+      "Cyrl"
+    ],
+    "RU": [
+      "ru",
+      "Cyrl"
+    ],
+    "RW": [
+      "rw",
+      "Latn"
+    ],
+    "SA": [
+      "ar",
+      "Arab"
+    ],
+    "SC": [
+      "fr",
+      "Latn"
+    ],
+    "SD": [
+      "ar",
+      "Arab"
+    ],
+    "SE": [
+      "sv",
+      "Latn"
+    ],
+    "SI": [
+      "sl",
+      "Latn"
+    ],
+    "SJ": [
+      "nb",
+      "Latn"
+    ],
+    "SK": [
+      "sk",
+      "Latn"
+    ],
+    "SM": [
+      "it",
+      "Latn"
+    ],
+    "SN": [
+      "fr",
+      "Latn"
+    ],
+    "SO": [
+      "so",
+      "Latn"
+    ],
+    "SR": [
+      "nl",
+      "Latn"
+    ],
+    "ST": [
+      "pt",
+      "Latn"
+    ],
+    "SV": [
+      "es",
+      "Latn"
+    ],
+    "SY": [
+      "ar",
+      "Arab"
+    ],
+    "TD": [
+      "fr",
+      "Latn"
+    ],
+    "TF": [
+      "fr",
+      "Latn"
+    ],
+    "TG": [
+      "fr",
+      "Latn"
+    ],
+    "TH": [
+      "th",
+      "Thai"
+    ],
+    "TJ": [
+      "tg",
+      "Cyrl"
+    ],
+    "TK": [
+      "tkl",
+      "Latn"
+    ],
+    "TL": [
+      "pt",
+      "Latn"
+    ],
+    "TM": [
+      "tk",
+      "Latn"
+    ],
+    "TN": [
+      "ar",
+      "Arab"
+    ],
+    "TO": [
+      "to",
+      "Latn"
+    ],
+    "TR": [
+      "tr",
+      "Latn"
+    ],
+    "TV": [
+      "tvl",
+      "Latn"
+    ],
+    "TW": [
+      "zh",
+      "Hant"
+    ],
+    "TZ": [
+      "sw",
+      "Latn"
+    ],
+    "UA": [
+      "uk",
+      "Cyrl"
+    ],
+    "UG": [
+      "sw",
+      "Latn"
+    ],
+    "UY": [
+      "es",
+      "Latn"
+    ],
+    "UZ": [
+      "uz",
+      "Latn"
+    ],
+    "VA": [
+      "it",
+      "Latn"
+    ],
+    "VE": [
+      "es",
+      "Latn"
+    ],
+    "VN": [
+      "vi",
+      "Latn"
+    ],
+    "VU": [
+      "bi",
+      "Latn"
+    ],
+    "WF": [
+      "fr",
+      "Latn"
+    ],
+    "WS": [
+      "sm",
+      "Latn"
+    ],
+    "XK": [
+      "sq",
+      "Latn"
+    ],
+    "YE": [
+      "ar",
+      "Arab"
+    ],
+    "YT": [
+      "fr",
+      "Latn"
+    ],
+    "ZW": [
+      "sn",
+      "Latn"
+    ]
   },
-  "und": "en-Latn-US"
+  "und": [
+    "en",
+    "Latn",
+    "US"
+  ]
 }

@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 #[cfg(test)]
-#[cfg(all(feature = "serialize", feature = "datagen"))]
+#[cfg(feature = "datagen")]
 mod test;
 
 use crate::buf::BufferMarker;

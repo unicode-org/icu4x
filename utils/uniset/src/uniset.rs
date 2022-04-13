@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-#[cfg(feature = "serialize")]
+#[cfg(feature = "serde")]
 use alloc::format;
 use alloc::vec::Vec;
 use core::{char, ops::RangeBounds, ops::RangeInclusive};
@@ -42,7 +42,7 @@ pub struct UnicodeSet<'data> {
     size: usize,
 }
 
-#[cfg(any(feature = "serialize", test))]
+#[cfg(any(feature = "serde", test))]
 impl<'de: 'a, 'a> serde::Deserialize<'de> for UnicodeSet<'a> {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where

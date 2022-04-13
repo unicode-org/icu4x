@@ -235,13 +235,19 @@ where
                 .get_symbol_for_weekday(weekday, field.length, dow)?;
             w.write_str(symbol)?
         }
-        FieldSymbol::Day(..) => format_number(
+        symbol @ FieldSymbol::Day(day) => format_number(
             w,
-            datetime
-                .datetime()
-                .day_of_month()
-                .ok_or(Error::MissingInputField)?
-                .0 as isize,
+            match day {
+                fields::Day::DayOfMonth => {
+                    datetime
+                        .datetime()
+                        .day_of_month()
+                        .ok_or(Error::MissingInputField)?
+                        .0 as isize
+                }
+                fields::Day::DayOfWeekInMonth => datetime.day_of_week_in_month()?.0 as isize,
+                _ => return Err(Error::UnsupportedField(symbol)),
+            },
             field.length,
         )?,
         FieldSymbol::Hour(hour) => {
@@ -388,7 +394,7 @@ mod tests {
     use super::*;
 
     #[test]
-    #[cfg(feature = "serialize")]
+    #[cfg(feature = "serde")]
     fn test_basic() {
         use crate::provider::calendar::DateSymbolsV1Marker;
         use icu_calendar::DateTime;

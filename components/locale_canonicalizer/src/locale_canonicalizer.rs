@@ -5,13 +5,16 @@
 //! The collection of code for locale canonicalization.
 
 use crate::provider::*;
-use alloc::string::ToString;
 use alloc::vec;
 use alloc::vec::Vec;
+use core::cmp::Ordering;
 use core::mem;
+use icu_locid::subtags::{Language, Region, Script};
 use icu_locid::{
-    extensions::unicode::{Key, Value},
-    subtags, LanguageIdentifier, Locale,
+    extensions::unicode::Key,
+    language,
+    subtags::{Variant, Variants},
+    LanguageIdentifier, Locale,
 };
 use icu_provider::prelude::*;
 use tinystr::{tinystr, TinyAsciiStr};
@@ -111,25 +114,54 @@ pub struct LocaleCanonicalizer {
 }
 
 #[inline]
-fn uts35_rule_matches(source: &Locale, ruletype: &LanguageIdentifier) -> bool {
-    (ruletype.language.is_empty() || ruletype.language == source.id.language)
-        && (ruletype.script.is_none() || ruletype.script == source.id.script)
-        && (ruletype.region.is_none() || ruletype.region == source.id.region)
-        && (ruletype.variants.is_empty()
-            || ruletype
-                .variants
-                .iter()
-                .all(|v| source.id.variants.contains(v)))
+fn uts35_rule_matches<I, V, L>(
+    source: &Locale,
+    language: L,
+    script: Option<Script>,
+    region: Option<Region>,
+    variants: I,
+) -> bool
+where
+    I: Iterator<Item = V>,
+    Variant: PartialOrd<V>,
+    Language: PartialEq<L>,
+{
+    (Language::UND == language || source.id.language == language)
+        && (script.is_none() || script == source.id.script)
+        && (region.is_none() || region == source.id.region)
+        && {
+            // Checks if variants are a subset of source variants.
+            // As both iterators are sorted, this can be done linearly.
+            let mut source_variants = source.id.variants.iter();
+            'outer: for it in variants {
+                for cand in source_variants.by_ref() {
+                    match cand.partial_cmp(&it) {
+                        Some(Ordering::Equal) => {
+                            continue 'outer;
+                        }
+                        Some(Ordering::Less) => {}
+                        _ => {
+                            return false;
+                        }
+                    }
+                }
+                return false;
+            }
+            true
+        }
 }
 
-fn uts35_replacement(
+fn uts35_replacement<I, V>(
     source: &mut Locale,
     ruletype_has_language: bool,
     ruletype_has_script: bool,
     ruletype_has_region: bool,
-    ruletype_variants: Option<&subtags::Variants>,
+    ruletype_variants: Option<I>,
     replacement: &LanguageIdentifier,
-) {
+) where
+    I: Iterator<Item = V>,
+    Variant: PartialOrd<V>,
+{
     if ruletype_has_language || (source.id.language.is_empty() && !replacement.language.is_empty())
     {
         source.id.language = replacement.language;
@@ -140,23 +172,56 @@ fn uts35_replacement(
     if ruletype_has_region || (source.id.region.is_none() && replacement.region.is_some()) {
         source.id.region = replacement.region;
     }
-    if let Some(ruletype_variants) = ruletype_variants {
+    if let Some(skips) = ruletype_variants {
         // The rule matches if the ruletype variants are a subset of the source variants.
         // This means ja-Latn-fonipa-hepburn-heploc matches against the rule for
         // hepburn-heploc and is canonicalized to ja-Latn-alalc97-fonipa
-        let mut variants: Vec<subtags::Variant> = source
-            .id
-            .variants
-            .iter()
-            .filter(|x| !ruletype_variants.contains(x))
-            .copied()
-            .collect();
-        for variant in replacement.variants.iter() {
-            variants.push(*variant);
+
+        // We're merging three sorted deduped iterators into a new sequence:
+        // sources - skips + replacements
+
+        let mut sources = source.id.variants.iter().copied().peekable();
+        let mut replacements = replacement.variants.iter().copied().peekable();
+        let mut skips = skips.peekable();
+
+        let mut variants: Vec<Variant> = Vec::new();
+
+        loop {
+            match (sources.peek(), skips.peek(), replacements.peek()) {
+                (Some(&source), Some(skip), _) if source > *skip => {
+                    skips.next();
+                }
+                (Some(&source), Some(skip), _) if source == *skip => {
+                    skips.next();
+                    sources.next();
+                }
+                (Some(&source), _, Some(&replacement))
+                    if replacement.cmp(&source) == Ordering::Less =>
+                {
+                    variants.push(replacement);
+                    replacements.next();
+                }
+                (Some(&source), _, Some(&replacement))
+                    if replacement.cmp(&source) == Ordering::Equal =>
+                {
+                    variants.push(source);
+                    sources.next();
+                    replacements.next();
+                }
+                (Some(&source), _, _) => {
+                    variants.push(source);
+                    sources.next();
+                }
+                (None, _, Some(&replacement)) => {
+                    variants.push(replacement);
+                    replacements.next();
+                }
+                (None, _, None) => {
+                    break;
+                }
+            }
         }
-        variants.sort();
-        variants.dedup();
-        source.id.variants = subtags::Variants::from_vec_unchecked(variants);
+        source.id.variants = Variants::from_vec_unchecked(variants);
     }
 }
 
@@ -174,8 +239,12 @@ fn uts35_check_language_rules(
         };
 
         if let Some(replacement) = replacement {
-            uts35_replacement(locale, true, false, false, None, replacement);
-            return CanonicalizationResult::Modified;
+            if let Ok(langid) = replacement.parse() {
+                uts35_replacement::<core::iter::Empty<Variant>, Variant>(
+                    locale, true, false, false, None, &langid,
+                );
+                return CanonicalizationResult::Modified;
+            }
         }
     }
 
@@ -184,23 +253,25 @@ fn uts35_check_language_rules(
 
 #[inline]
 fn update_langid(
-    entry: &LanguageIdentifier,
+    language: Language,
+    script: Option<Script>,
+    region: Option<Region>,
     langid: &mut LanguageIdentifier,
 ) -> CanonicalizationResult {
     let mut modified = false;
 
-    if langid.language.is_empty() && !entry.language.is_empty() {
-        langid.language = entry.language;
+    if langid.language.is_empty() && !language.is_empty() {
+        langid.language = language;
         modified = true;
     }
 
-    if langid.script.is_none() && entry.script.is_some() {
-        langid.script = entry.script;
+    if langid.script.is_none() && script.is_some() {
+        langid.script = script;
         modified = true;
     }
 
-    if langid.region.is_none() && entry.region.is_some() {
-        langid.region = entry.region;
+    if langid.region.is_none() && region.is_some() {
+        langid.region = region;
         modified = true;
     }
 
@@ -211,17 +282,20 @@ fn update_langid(
     }
 }
 
-macro_rules! maximize_locale {
-    ( $langid:ident, $table:expr, $key:expr ) => {{
-        if let Some(language_identifier) = $table.get(&&$key) {
-            return update_langid(language_identifier, $langid);
+fn is_iter_sorted<I, T>(mut iter: I) -> bool
+where
+    I: Iterator<Item = T>,
+    T: PartialOrd,
+{
+    if let Some(mut last) = iter.next() {
+        for curr in iter {
+            if last > curr {
+                return false;
+            }
+            last = curr;
         }
-    }};
-    ( $langid:ident, $table:expr, $key1:expr, $key2:expr ) => {{
-        if let Some(language_identifier) = $table.get(&($key1, $key2)) {
-            return update_langid(language_identifier, $langid);
-        }
-    }};
+    }
+    true
 }
 
 impl LocaleCanonicalizer {
@@ -281,46 +355,88 @@ impl LocaleCanonicalizer {
 
         // This loops until we get a 'fixed point', where applying the rules do not
         // result in any more changes.
-        loop {
-            let language_aliases = if locale.id.variants.is_empty() {
-                &self.aliases.get().language
-            } else {
-                &self.aliases.get().language_variants
-            };
-
-            // This is a linear search due to the ordering imposed by the canonicalization
+        'outer: loop {
+            // These are linear searches due to the ordering imposed by the canonicalization
             // rules, where rules with more variants should be considered first. With the
             // current data in CLDR, we will only do this for locales which have variants,
-            // and there are fewer than 20 rules to consider. In benchmarking, the run
-            // time of this loop was negligible.
-            let mut matched = false;
-            for rule in language_aliases.iter() {
-                if uts35_rule_matches(locale, &rule.0) {
-                    uts35_replacement(
-                        locale,
-                        !rule.0.language.is_empty(),
-                        rule.0.script.is_some(),
-                        rule.0.region.is_some(),
-                        Some(&rule.0.variants),
-                        &rule.1,
-                    );
-                    result = CanonicalizationResult::Modified;
-                    matched = true;
-                    break;
+            // or new rules which we haven't special-cased yet (of which there are fewer
+            // than 20).
+            if !locale.id.variants.is_empty() {
+                // These language/variant comibnations have around 20 rules
+                for StrStrPair(raw_lang_variants, raw_to) in self
+                    .aliases
+                    .get()
+                    .language_variants
+                    .iter()
+                    .map(zerofrom::ZeroFrom::zero_from)
+                {
+                    let mut subtags = raw_lang_variants.split('-');
+                    if let Some(raw_lang) = subtags.next() {
+                        if is_iter_sorted(subtags.clone())
+                            && uts35_rule_matches(locale, raw_lang, None, None, subtags.clone())
+                        {
+                            if let Ok(to) = raw_to.parse() {
+                                uts35_replacement(
+                                    locale,
+                                    Language::UND != raw_lang,
+                                    false,
+                                    false,
+                                    Some(subtags),
+                                    &to,
+                                );
+                                result = CanonicalizationResult::Modified;
+                                continue 'outer;
+                            }
+                        }
+                    }
                 }
-            }
-
-            if matched {
-                continue;
+            } else {
+                // These are absolute fallbacks, and currently empty.
+                for StrStrPair(raw_from, raw_to) in self
+                    .aliases
+                    .get()
+                    .language
+                    .iter()
+                    .map(zerofrom::ZeroFrom::zero_from)
+                {
+                    if let Ok(from) = raw_from.parse::<LanguageIdentifier>() {
+                        if uts35_rule_matches(
+                            locale,
+                            from.language,
+                            from.script,
+                            from.region,
+                            from.variants.iter().copied(),
+                        ) {
+                            if let Ok(to) = raw_to.parse() {
+                                uts35_replacement(
+                                    locale,
+                                    !from.language.is_empty(),
+                                    from.script.is_some(),
+                                    from.region.is_some(),
+                                    Some(from.variants.iter().copied()),
+                                    &to,
+                                );
+                                result = CanonicalizationResult::Modified;
+                                continue 'outer;
+                            }
+                        }
+                    }
+                }
             }
 
             if !locale.id.language.is_empty() {
                 // If the region is specified, check sgn-region rules first
                 if let Some(region) = locale.id.region {
-                    if locale.id.language == "sgn" {
-                        if let Some(sgn_region) = self.aliases.get().sgn_region.get(&region.into())
-                        {
-                            uts35_replacement(locale, true, false, true, None, sgn_region);
+                    if locale.id.language == language!("sgn") {
+                        if let Some(&sgn_lang) = self.aliases.get().sgn_region.get(&region.into()) {
+                            uts35_replacement::<core::iter::Empty<Variant>, Variant>(
+                                locale,
+                                true,
+                                false,
+                                true,
+                                None,
+                                &sgn_lang.into(),
+                            );
                             result = CanonicalizationResult::Modified;
                             continue;
                         }
@@ -336,12 +452,10 @@ impl LocaleCanonicalizer {
             }
 
             if let Some(script) = locale.id.script {
-                if let Some(replacement) = self.aliases.get().script.get(&script.into()) {
-                    if let Ok(replacement) = replacement.parse() {
-                        locale.id.script = Some(replacement);
-                        result = CanonicalizationResult::Modified;
-                        continue;
-                    }
+                if let Some(&replacement) = self.aliases.get().script.get(&script.into()) {
+                    locale.id.script = Some(replacement);
+                    result = CanonicalizationResult::Modified;
+                    continue;
                 }
             }
 
@@ -352,47 +466,31 @@ impl LocaleCanonicalizer {
                 } else {
                     self.aliases.get().region_num.get(&region.into())
                 };
-                if let Some(replacement) = replacement {
-                    if let Ok(replacement) = replacement.parse() {
-                        locale.id.region = Some(replacement);
-                        result = CanonicalizationResult::Modified;
-                        continue;
-                    }
+                if let Some(&replacement) = replacement {
+                    locale.id.region = Some(replacement);
+                    result = CanonicalizationResult::Modified;
+                    continue;
                 }
 
-                if let Some(rule) = self.aliases.get().complex_region.get(&region.into()) {
-                    let mut for_likely = LanguageIdentifier {
-                        language: locale.id.language,
-                        script: locale.id.script,
-                        region: None,
-                        variants: subtags::Variants::default(),
-                    };
+                if let Some(regions) = self.aliases.get().complex_region.get(&region.into()) {
+                    // Skip if regions are empty
+                    if let Some(default_region) = regions.get(0) {
+                        let mut maximized = LanguageIdentifier {
+                            language: locale.id.language,
+                            script: locale.id.script,
+                            region: None,
+                            variants: Variants::default(),
+                        };
 
-                    let replacement = if self.maximize(&mut for_likely)
-                        == CanonicalizationResult::Modified
-                    {
-                        if let Some(likely_region) = for_likely.region {
-                            let as_tinystr: TinyAsciiStr<3> = likely_region.into();
-                            if let Some(region) = rule.iter().find(|region| as_tinystr == **region)
-                            {
-                                region
-                            } else {
-                                #[allow(clippy::unwrap_used)]
-                                // TODO(#1668) Clippy exceptions need docs or fixing.
-                                rule.get(0).unwrap()
-                            }
-                        } else {
-                            #[allow(clippy::unwrap_used)]
-                            // TODO(#1668) Clippy exceptions need docs or fixing.
-                            rule.get(0).unwrap()
-                        }
-                    } else {
-                        #[allow(clippy::unwrap_used)]
-                        // TODO(#1668) Clippy exceptions need docs or fixing.
-                        rule.get(0).unwrap()
-                    };
-                    if let Ok(replacement) = replacement.parse::<subtags::Region>() {
-                        locale.id.region = Some(replacement);
+                        locale.id.region =
+                            Some(match (self.maximize(&mut maximized), maximized.region) {
+                                (CanonicalizationResult::Modified, Some(candidate))
+                                    if regions.iter().any(|x| x == candidate) =>
+                                {
+                                    candidate
+                                }
+                                _ => default_region,
+                            });
                         result = CanonicalizationResult::Modified;
                         continue;
                     }
@@ -402,12 +500,9 @@ impl LocaleCanonicalizer {
             if !locale.id.variants.is_empty() {
                 let mut modified = Vec::new();
                 let mut unmodified = Vec::new();
-                for variant in locale.id.variants.iter() {
-                    let variant_as_tinystr: TinyAsciiStr<8> = (*variant).into();
-                    if let Some(updated) = self.aliases.get().variant.get(&variant_as_tinystr) {
-                        if let Ok(updated) = subtags::Variant::from_bytes(updated.as_bytes()) {
-                            modified.push(updated);
-                        }
+                for &variant in locale.id.variants.iter() {
+                    if let Some(&updated) = self.aliases.get().variant.get(&variant.into()) {
+                        modified.push(updated);
                     } else {
                         unmodified.push(variant);
                     }
@@ -415,11 +510,11 @@ impl LocaleCanonicalizer {
 
                 if !modified.is_empty() {
                     for variant in unmodified {
-                        modified.push(*variant);
+                        modified.push(variant);
                     }
                     modified.sort();
                     modified.dedup();
-                    locale.id.variants = subtags::Variants::from_vec_unchecked(modified);
+                    locale.id.variants = Variants::from_vec_unchecked(modified);
                     result = CanonicalizationResult::Modified;
                     continue;
                 }
@@ -453,11 +548,11 @@ impl LocaleCanonicalizer {
 
         for key in self.extension_keys.iter() {
             if let Some(value) = locale.extensions.unicode.keywords.get_mut(key) {
-                if let Ok(value_as_tinystr) = value.to_string().parse::<TinyAsciiStr<7>>() {
+                if let &[only_value] = value.as_tinystr_slice() {
                     if let Some(modified_value) =
-                        self.aliases.get().subdivision.get(&value_as_tinystr)
+                        self.aliases.get().subdivision.get(&only_value.resize())
                     {
-                        if let Ok(modified_value) = Value::from_bytes(modified_value.as_bytes()) {
+                        if let Ok(modified_value) = modified_value.parse() {
                             *value = modified_value;
                             result = CanonicalizationResult::Modified;
                         }
@@ -509,33 +604,60 @@ impl LocaleCanonicalizer {
 
         if !langid.language.is_empty() {
             if let Some(region) = langid.region {
-                maximize_locale!(
-                    langid,
-                    data.language_region,
-                    langid.language.into(),
-                    region.into()
-                );
+                if let Some(script) = data
+                    .language_region
+                    .get(&(langid.language.into(), region.into()))
+                    .copied()
+                {
+                    return update_langid(Language::UND, Some(script), None, langid);
+                }
             }
             if let Some(script) = langid.script {
-                maximize_locale!(
-                    langid,
-                    data.language_script,
-                    langid.language.into(),
-                    script.into()
-                );
+                if let Some(region) = data
+                    .language_script
+                    .get(&(langid.language.into(), script.into()))
+                    .copied()
+                {
+                    return update_langid(Language::UND, None, Some(region), langid);
+                }
             }
-            maximize_locale!(langid, data.language, langid.language.into());
+            if let Some((script, region)) = data
+                .language
+                .get(&langid.language.into())
+                .map(|u| zerovec::ule::AsULE::from_unaligned(*u))
+            {
+                return update_langid(Language::UND, Some(script), Some(region), langid);
+            }
         }
         if let Some(script) = langid.script {
             if let Some(region) = langid.region {
-                maximize_locale!(langid, data.script_region, script.into(), region.into());
+                if let Some(language) = data
+                    .script_region
+                    .get(&(script.into(), region.into()))
+                    .copied()
+                {
+                    return update_langid(language, None, None, langid);
+                }
             }
-            maximize_locale!(langid, data.script, script.into());
+            if let Some((language, region)) = data
+                .script
+                .get(&script.into())
+                .map(|u| zerovec::ule::AsULE::from_unaligned(*u))
+            {
+                return update_langid(language, None, Some(region), langid);
+            }
         }
         if let Some(region) = langid.region {
-            maximize_locale!(langid, data.region, region.into());
+            if let Some((language, script)) = data
+                .region
+                .get(&region.into())
+                .map(|u| zerovec::ule::AsULE::from_unaligned(*u))
+            {
+                return update_langid(language, Some(script), None, langid);
+            }
         }
-        update_langid(&data.und, langid)
+
+        update_langid(data.und.0, Some(data.und.1), Some(data.und.2), langid)
     }
 
     /// This returns a new Locale that is the result of running the
@@ -669,62 +791,53 @@ impl LocaleCanonicalizer {
 
 #[test]
 fn test_uts35_rule_matches() {
-    assert!(uts35_rule_matches(
-        &"ja".parse().unwrap(),
-        &LanguageIdentifier::UND
-    ));
-
-    assert!(uts35_rule_matches(
-        &"und-heploc-hepburn".parse().unwrap(),
-        &"und-hepburn".parse().unwrap()
-    ));
-
-    assert!(uts35_rule_matches(
-        &"ja-heploc-hepburn".parse().unwrap(),
-        &"und-hepburn".parse().unwrap()
-    ));
-
-    assert!(!uts35_rule_matches(
-        &"ja-hepburn".parse().unwrap(),
-        &"und-hepburn-heploc".parse().unwrap()
-    ));
+    for (source, rule, result) in [
+        ("ja", "und", true),
+        ("und-heploc-hepburn", "und-hepburn", true),
+        ("ja-heploc-hepburn", "und-hepburn", true),
+        ("ja-hepburn", "und-hepburn-heploc", false),
+    ] {
+        let source = source.parse().unwrap();
+        let rule = rule.parse::<LanguageIdentifier>().unwrap();
+        assert_eq!(
+            uts35_rule_matches(
+                &source,
+                rule.language,
+                rule.script,
+                rule.region,
+                rule.variants.iter().copied(),
+            ),
+            result,
+            "{}",
+            source
+        );
+    }
 }
 
 #[test]
 fn test_uts35_replacement() {
-    let mut locale = "ja-Latn-fonipa-hepburn-heploc".parse().unwrap();
-    let ruletype: LanguageIdentifier = "und-hepburn-heploc".parse().unwrap();
-    uts35_replacement(
-        &mut locale,
-        !ruletype.language.is_empty(),
-        ruletype.script.is_some(),
-        ruletype.region.is_some(),
-        Some(&ruletype.variants),
-        &"und-alalc97".parse().unwrap(),
-    );
-    assert_eq!(locale, "ja-Latn-alalc97-fonipa".parse::<Locale>().unwrap());
-
-    let mut locale = "sgn-DD".parse().unwrap();
-    let ruletype: LanguageIdentifier = "und-DD".parse().unwrap();
-    uts35_replacement(
-        &mut locale,
-        !ruletype.language.is_empty(),
-        ruletype.script.is_some(),
-        ruletype.region.is_some(),
-        Some(&ruletype.variants),
-        &"und-DE".parse().unwrap(),
-    );
-    assert_eq!(locale, "sgn-DE".parse::<Locale>().unwrap());
-
-    let mut locale = "sgn-DE".parse().unwrap();
-    let ruletype: LanguageIdentifier = "sgn-DE".parse().unwrap();
-    uts35_replacement(
-        &mut locale,
-        !ruletype.language.is_empty(),
-        ruletype.script.is_some(),
-        ruletype.region.is_some(),
-        None,
-        &"gsg".parse().unwrap(),
-    );
-    assert_eq!(locale, "gsg".parse::<Locale>().unwrap());
+    for (locale, rule_0, rule_1, result) in [
+        (
+            "ja-Latn-fonipa-hepburn-heploc",
+            "und-hepburn-heploc",
+            "und-alalc97",
+            "ja-Latn-alalc97-fonipa",
+        ),
+        ("sgn-DD", "und-DD", "und-DE", "sgn-DE"),
+        ("sgn-DE", "sgn-DE", "gsg", "gsg"),
+    ] {
+        let mut locale = locale.parse().unwrap();
+        let rule_0 = rule_0.parse::<LanguageIdentifier>().unwrap();
+        let rule_1 = rule_1.parse().unwrap();
+        let result = result.parse::<Locale>().unwrap();
+        uts35_replacement(
+            &mut locale,
+            !rule_0.language.is_empty(),
+            rule_0.script.is_some(),
+            rule_0.region.is_some(),
+            Some(rule_0.variants.iter().copied()),
+            &rule_1,
+        );
+        assert_eq!(result, locale);
+    }
 }

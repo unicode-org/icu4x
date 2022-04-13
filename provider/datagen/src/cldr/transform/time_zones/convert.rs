@@ -141,6 +141,7 @@ macro_rules! long_short_impls {
         impl From<&CldrTimeZonesData<'_>> for $generic {
             fn from(other: &CldrTimeZonesData) -> Self {
                 let data = &other.time_zone_names;
+                let meta_zone_id_data = &other.meta_zone_ids;
                 Self {
                     defaults: match &data.metazone {
                         None => ZeroMap::new(),
@@ -148,11 +149,26 @@ macro_rules! long_short_impls {
                             .0
                             .iter()
                             .filter_map(|(key, metazone)| {
-                                metazone
-                                    .$field
-                                    .as_ref()
-                                    .and_then(type_fallback)
-                                    .map(|format| (key.clone(), format.clone()))
+                                match meta_zone_id_data.get(key) {
+                                    Some(meta_zone_short_id) => {
+                                        metazone.$field.as_ref().and_then(type_fallback).map(
+                                            |format| (meta_zone_short_id.clone(), format.clone()),
+                                        )
+                                    }
+                                    None => {
+                                        // TODO(#1781): Remove this special case once the short id is updated in CLDR
+                                        if key == "Yukon" {
+                                            metazone.$field.as_ref().and_then(type_fallback).map(
+                                                |format| (String::from("yuko"), format.clone()),
+                                            )
+                                        } else {
+                                            panic!(
+                                                "Cannot find short id of meta zone for {:?}.",
+                                                key
+                                            )
+                                        }
+                                    }
+                                }
                             })
                             .collect(),
                     },
@@ -198,6 +214,7 @@ macro_rules! long_short_impls {
             fn from(other: &CldrTimeZonesData) -> Self {
                 let data = &other.time_zone_names;
                 let bcp47_tzid_data = &other.bcp47_tzids;
+                let meta_zone_id_data = &other.meta_zone_ids;
                 Self {
                     defaults: match &data.metazone {
                         None => ZeroMap2d::new(),
@@ -205,10 +222,26 @@ macro_rules! long_short_impls {
                             .0
                             .iter()
                             .filter_map(|(key, metazone)| {
-                                metazone
-                                    .$field
-                                    .as_ref()
-                                    .map(|value| (key.clone(), value.clone()))
+                                match meta_zone_id_data.get(key) {
+                                    Some(meta_zone_short_id) => metazone
+                                        .$field
+                                        .as_ref()
+                                        .map(|value| (meta_zone_short_id.clone(), value.clone())),
+                                    None => {
+                                        // TODO(#1781): Remove this special case once the short id is updated in CLDR
+                                        if key == "Yukon" {
+                                            metazone
+                                                .$field
+                                                .as_ref()
+                                                .map(|value| (String::from("yuko"), value.clone()))
+                                        } else {
+                                            panic!(
+                                                "Cannot find short id of meta zone for {:?}.",
+                                                key
+                                            )
+                                        }
+                                    }
+                                }
                             })
                             .flat_map(iterate_zone_format)
                             .collect(),

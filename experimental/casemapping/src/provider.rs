@@ -11,13 +11,13 @@ use icu_provider::{yoke, zerofrom};
 
 #[icu_provider::data_struct(CaseMappingV1Marker = "props/casemap@1")]
 #[derive(Debug, PartialEq, Clone)]
-#[cfg_attr(feature = "serialize", derive(serde::Deserialize))]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(feature = "serde_serialize", derive(serde::Serialize))]
 #[yoke(prove_covariance_manually)]
 /// CaseMapping provides low-level access to the data necessary to
 /// convert characters and strings to upper, lower, or title case.
 pub struct CaseMappingV1<'data> {
     /// Case mapping data
-    #[cfg_attr(feature = "serialize", serde(borrow))]
+    #[cfg_attr(feature = "serde", serde(borrow))]
     pub casemap: CaseMappingInternals<'data>,
 }

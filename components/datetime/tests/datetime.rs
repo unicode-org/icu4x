@@ -2,13 +2,14 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-#![cfg(feature = "serialize")]
+#![cfg(feature = "serde")]
 
 mod fixtures;
 mod patterns;
 
 use icu_calendar::{
-    buddhist::Buddhist, coptic::Coptic, japanese::Japanese, AsCalendar, DateTime, Gregorian,
+    buddhist::Buddhist, coptic::Coptic, indian::Indian, japanese::Japanese, AsCalendar, DateTime,
+    Gregorian,
 };
 use icu_datetime::{
     mock::{parse_gregorian_from_str, zoned_datetime::MockZonedDateTime},
@@ -17,7 +18,7 @@ use icu_datetime::{
         calendar::{DatePatternsV1Marker, DateSkeletonPatternsV1Marker, DateSymbolsV1Marker},
         week_data::WeekDataV1Marker,
     },
-    time_zone::TimeZoneFormat,
+    time_zone::{TimeZoneFormat, TimeZoneFormatOptions},
     CldrCalendar, DateTimeFormat, DateTimeFormatOptions, ZonedDateTimeFormat,
 };
 use icu_locid::{LanguageIdentifier, Locale};
@@ -48,6 +49,7 @@ fn test_fixture(fixture_name: &str) {
         let input_buddhist = input_value.to_calendar(Buddhist);
         let input_japanese = input_value.to_calendar(japanese);
         let input_coptic = input_value.to_calendar(Coptic);
+        let input_indian = input_value.to_calendar(Indian);
 
         let description = match fx.description {
             Some(description) => {
@@ -81,6 +83,15 @@ fn test_fixture(fixture_name: &str) {
                 assert_fixture_element(
                     locale,
                     &input_coptic,
+                    &output_value,
+                    &provider,
+                    &options,
+                    &description,
+                )
+            } else if let Some(locale) = locale.strip_prefix("indian/") {
+                assert_fixture_element(
+                    locale,
+                    &input_indian,
                     &output_value,
                     &provider,
                     &options,
@@ -161,7 +172,12 @@ fn test_fixture_with_time_zones(fixture_name: &str, config: TimeZoneConfig) {
         for (locale, output_value) in fx.output.values.into_iter() {
             let locale: Locale = locale.parse().unwrap();
             let dtf = ZonedDateTimeFormat::<Gregorian>::try_new(
-                locale, &provider, &provider, &provider, &options,
+                locale,
+                &provider,
+                &provider,
+                &provider,
+                &options,
+                &TimeZoneFormatOptions::default(),
             )
             .unwrap();
             let result = dtf.format_to_string(&input_value);
@@ -293,30 +309,36 @@ fn test_time_zone_format_configs() {
         for TimeZoneExpectation {
             patterns: _,
             configs,
+            fallback_formats,
             expected,
         } in &test.expectations
         {
             for &config_input in configs {
-                let tzf = TimeZoneFormat::try_from_config(
-                    langid.clone(),
-                    config_input.into(),
-                    &zone_provider,
-                )
-                .unwrap();
-                let mut buffer = String::new();
-                tzf.format_to_write(&mut buffer, &datetime).unwrap();
-                assert_eq!(
-                    buffer.to_string(),
-                    *expected,
-                    "\n\
+                for (&fallback_format, expect) in fallback_formats.iter().zip(expected.iter()) {
+                    let tzf = TimeZoneFormat::try_from_config(
+                        langid.clone(),
+                        config_input.into(),
+                        &zone_provider,
+                        &fallback_format.into(),
+                    )
+                    .unwrap();
+                    let mut buffer = String::new();
+                    tzf.format_to_write(&mut buffer, &datetime).unwrap();
+                    assert_eq!(
+                        buffer.to_string(),
+                        *expect,
+                        "\n\
                     locale:   `{}`,\n\
                     datetime: `{}`,\n\
                     config: `{:?}`,\n\
+                    fallback: `{:?}`\n
                     ",
-                    langid,
-                    test.datetime,
-                    config_input
-                );
+                        langid,
+                        test.datetime,
+                        config_input,
+                        fallback_format
+                    );
+                }
             }
         }
     }
@@ -377,6 +399,7 @@ fn test_time_zone_patterns() {
         for TimeZoneExpectation {
             patterns,
             configs: _,
+            fallback_formats,
             expected,
         } in &test.expectations
         {
@@ -408,26 +431,31 @@ fn test_time_zone_patterns() {
                     ],
                 };
 
-                let dtf = ZonedDateTimeFormat::<Gregorian>::try_new(
-                    langid.clone(),
-                    &local_provider.as_downcasting(),
-                    &zone_provider,
-                    &plural_provider,
-                    &format_options,
-                )
-                .unwrap();
+                for (&fallback_format, expect) in fallback_formats.iter().zip(expected.iter()) {
+                    let dtf = ZonedDateTimeFormat::<Gregorian>::try_new(
+                        langid.clone(),
+                        &local_provider.as_downcasting(),
+                        &zone_provider,
+                        &plural_provider,
+                        &format_options,
+                        &fallback_format.into(),
+                    )
+                    .unwrap();
 
-                assert_eq!(
-                    dtf.format(&datetime).to_string(),
-                    *expected,
-                    "\n\
+                    assert_eq!(
+                        dtf.format(&datetime).to_string(),
+                        *expect,
+                        "\n\
                     locale:   `{}`,\n\
                     datetime: `{}`,\n\
-                    pattern:  `{}`",
-                    langid,
-                    test.datetime,
-                    pattern_input,
-                );
+                    pattern:  `{}`\n
+                    fallback: `{:?}`\n",
+                        langid,
+                        test.datetime,
+                        pattern_input,
+                        fallback_format,
+                    );
+                }
             }
         }
     }
@@ -441,7 +469,7 @@ fn test_length_fixtures() {
     test_fixture_with_time_zones(
         "lengths_with_zones_from_pdt",
         TimeZoneConfig {
-            metazone_id: Some(String::from("America_Pacific")),
+            metazone_id: Some(String::from("ampa")),
             time_variant: Some(tinystr!(8, "daylight")),
             ..TimeZoneConfig::default()
         },

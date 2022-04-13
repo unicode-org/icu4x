@@ -1,6 +1,6 @@
 {
   "defaults": {
-    "Japan": {
+    "japa": {
       "daylight": "JDT",
       "standard": "JST"
     }

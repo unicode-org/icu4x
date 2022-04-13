@@ -23,7 +23,7 @@ pub enum SymbolError {
 impl std::error::Error for SymbolError {}
 
 #[derive(Debug, Eq, PartialEq, Clone, Copy)]
-#[cfg_attr(feature = "serialize", derive(serde::Serialize, serde::Deserialize))]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub enum FieldSymbol {
     Era,
     Year(Year),
@@ -236,7 +236,7 @@ impl TryFrom<char> for FieldSymbol {
         .or_else(|_| Weekday::try_from(ch).map(Self::Weekday))
         .or_else(|_| DayPeriod::try_from(ch).map(Self::DayPeriod))
         .or_else(|_| Hour::try_from(ch).map(Self::Hour))
-        .or_else(|_| {
+        .or({
             if ch == 'm' {
                 Ok(Self::Minute)
             } else {

@@ -24,11 +24,11 @@ pub fn make_varule_impl(attr: AttributeArgs, mut input: DeriveInput) -> TokenStr
         .to_compile_error();
     }
 
-    let (skip_kv, skip_ord, serde) =
-        match utils::extract_attributes_common(&mut input.attrs, "make_ule") {
-            Ok(val) => val,
-            Err(e) => return e.to_compile_error(),
-        };
+    let sp = input.span();
+    let attrs = match utils::extract_attributes_common(&mut input.attrs, sp, true) {
+        Ok(val) => val,
+        Err(e) => return e.to_compile_error(),
+    };
 
     let lt = input.generics.lifetimes().next();
 
@@ -112,9 +112,11 @@ pub fn make_varule_impl(attr: AttributeArgs, mut input: DeriveInput) -> TokenStr
     let field_inits = utils::wrap_field_inits(&field_inits, fields);
     let vis = &input.vis;
 
+    let doc = format!("[`VarULE`](zerovec::ule::VarULE) type for {name}");
     let varule_struct: DeriveInput = parse_quote!(
         #[repr(#repr_attr)]
         #[derive(PartialEq, Eq)]
+        #[doc = #doc]
         #vis struct #ule_name #field_inits #semi
     );
 
@@ -143,7 +145,7 @@ pub fn make_varule_impl(attr: AttributeArgs, mut input: DeriveInput) -> TokenStr
     let zerofrom_fq_path =
         quote!(<#name as zerovec::__zerovec_internal_reexport::ZeroFrom<#ule_name>>);
 
-    let maybe_ord_impls = if skip_ord {
+    let maybe_ord_impls = if attrs.skip_ord {
         quote!()
     } else {
         quote!(
@@ -165,7 +167,20 @@ pub fn make_varule_impl(attr: AttributeArgs, mut input: DeriveInput) -> TokenStr
         )
     };
 
-    let zmkv = if skip_kv {
+    let maybe_debug = if attrs.debug {
+        quote!(
+            impl core::fmt::Debug for #ule_name {
+                fn fmt(&self, f: &mut core::fmt::Formatter) -> core::fmt::Result {
+                    let this = #zerofrom_fq_path::zero_from(self);
+                    <#name as core::fmt::Debug>::fmt(&this, f)
+                }
+            }
+        )
+    } else {
+        quote!()
+    };
+
+    let zmkv = if attrs.skip_kv {
         quote!()
     } else {
         quote!(
@@ -177,8 +192,9 @@ pub fn make_varule_impl(attr: AttributeArgs, mut input: DeriveInput) -> TokenStr
         )
     };
 
-    let maybe_serde_impl = if serde {
-        let serde_path = quote!(zerovec::__zerovec_internal_reexport::serde);
+    let serde_path = quote!(zerovec::__zerovec_internal_reexport::serde);
+
+    let maybe_ser = if attrs.serialize {
         quote!(
             impl #serde_path::Serialize for #ule_name {
                 fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error> where S: #serde_path::Serializer {
@@ -186,6 +202,13 @@ pub fn make_varule_impl(attr: AttributeArgs, mut input: DeriveInput) -> TokenStr
                     <#name as #serde_path::Serialize>::serialize(&this, serializer)
                 }
             }
+        )
+    } else {
+        quote!()
+    };
+
+    let maybe_de = if attrs.deserialize {
+        quote!(
             impl<'de> #serde_path::Deserialize<'de> for zerovec::__zerovec_internal_reexport::boxed::Box<#ule_name> {
                 fn deserialize<D>(deserializer: D) -> Result<Self, D::Error> where D: #serde_path::Deserializer<'de> {
                     let this = <#name as #serde_path::Deserialize>::deserialize(deserializer)?;
@@ -212,7 +235,11 @@ pub fn make_varule_impl(attr: AttributeArgs, mut input: DeriveInput) -> TokenStr
 
         #zmkv
 
-        #maybe_serde_impl
+        #maybe_ser
+
+        #maybe_de
+
+        #maybe_debug
     )
 }
 
@@ -283,6 +310,7 @@ fn make_encode_impl(
             let ty = &field.field.ty;
             let accessor = &field.accessor;
             quote!(
+                #[allow(clippy::indexing_slicing)] // TODO explain
                 let out = &mut dst[#prev_offset_ident .. #prev_offset_ident + #size_ident];
                 let unaligned = zerovec::ule::AsULE::to_unaligned(self.#accessor);
                 let unaligned_slice = &[unaligned];
@@ -440,6 +468,7 @@ impl<'a> UnsizedFields<'a> {
 
             quote!(
                 let lengths = [#(#lengths),*];
+                #[allow(clippy::indexing_slicing)] // TODO explain
                 let mut multi = zerovec::ule::MultiFieldsULE::new_from_lengths_partially_initialized(&lengths, &mut #out);
                 unsafe {
                     #(#writers;)*

@@ -21,6 +21,6 @@ serde = { version = "1.0", features = ["derive"] }
 path = "src/lib.rs"
 
 [features]
-default = ["serialize"]
-serialize = ["serde", "zerovec/serde"]
-serde_serialize = ["serialize", "zerovec/serde_serialize"]
+default = []
+serde = ["dep:serde", "zerovec/serde"]
+serde_serialize = ["serde", "zerovec/serde_serialize"]

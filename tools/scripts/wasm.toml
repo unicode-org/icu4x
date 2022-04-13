@@ -8,7 +8,7 @@
 description = "Build WASM FFI into the target directory (dev mode)"
 category = "ICU4X WASM"
 install_crate = { rustup_component_name = "rust-src" }
-toolchain = "nightly-2021-12-22"
+toolchain = "nightly-2022-01-31"
 command = "cargo"
 args = ["wasm-build-dev", "--package", "icu_capi_cdylib"]
 
@@ -16,7 +16,7 @@ args = ["wasm-build-dev", "--package", "icu_capi_cdylib"]
 description = "Build WASM FFI into the target directory (release mode)"
 category = "ICU4X WASM"
 install_crate = { rustup_component_name = "rust-src" }
-toolchain = "nightly-2021-12-22"
+toolchain = "nightly-2022-01-31"
 # We don't care about panics in release mode because most incorrect inputs are handled by result types.
 env = { "RUSTFLAGS" = "-C panic=abort -C opt-level=s" }
 command = "cargo"
@@ -26,14 +26,14 @@ args = ["wasm-build-release", "--package", "icu_capi_cdylib"]
 description = "Build WASM examples into the target directory"
 category = "ICU4X WASM"
 install_crate = { rustup_component_name = "rust-src" }
-toolchain = "nightly-2021-12-22"
+toolchain = "nightly-2022-01-31"
 # We don't care about panics in release mode because most incorrect inputs are handled by result types.
 env = { "RUSTFLAGS" = "-C panic=abort -C opt-level=s" }
 command = "cargo"
 # Add features here and below if a desired example is not being built
 args = [
     "wasm-build-release", "--examples", "--workspace",
-    "--features", "zerovec/serde",
+    "--features", "serde",
     "--exclude", "icu_datagen"
 ]
 
@@ -77,7 +77,7 @@ exit_on_error true
 
 # Re-run the build command only to generate the JSON output (--message-format=json)
 set_env RUSTFLAGS "-C panic=abort -C opt-level=s"
-output = exec cargo +nightly-2021-12-22 wasm-build-release --message-format=json --examples --workspace --features zerovec/serde --exclude icu_datagen
+output = exec cargo +nightly-2022-01-31 wasm-build-release --message-format=json --examples --workspace --features serde --exclude icu_datagen
 if ${output.code}
     echo ${output.stderr}
     trigger_error "Build failed! See output above."

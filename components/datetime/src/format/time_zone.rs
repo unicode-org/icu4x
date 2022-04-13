@@ -5,16 +5,11 @@
 use core::fmt;
 
 use crate::error::DateTimeFormatError as Error;
-use crate::fields::{self, FieldSymbol};
-use crate::pattern::{PatternError, PatternItem};
-use crate::provider::calendar::patterns::PatternPluralsFromPatternsV1Marker;
 use crate::{
     date::TimeZoneInput,
-    time_zone::{
-        IsoFormat, IsoMinutes, IsoSeconds, TimeZoneFormat, TimeZoneFormatConfig, TimeZoneFormatKind,
-    },
+    time_zone::{FormatTimeZone, TimeZoneFormat, TimeZoneFormatUnit},
+    DateTimeFormatError,
 };
-use icu_provider::DataPayload;
 use writeable::Writeable;
 
 pub struct FormattedTimeZone<'l, T>
@@ -29,8 +24,42 @@ impl<'l, T> Writeable for FormattedTimeZone<'l, T>
 where
     T: TimeZoneInput,
 {
+    /// Format time zone with fallbacks.
     fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
-        write_zone(self.time_zone_format, self.time_zone, sink).map_err(|_| core::fmt::Error)
+        match self.write_no_fallback(sink) {
+            Ok(Ok(r)) => Ok(r),
+            _ => match self.time_zone_format.fallback_unit {
+                TimeZoneFormatUnit::LocalizedGmt(fallback) => {
+                    match fallback.format(
+                        sink,
+                        self.time_zone,
+                        &self.time_zone_format.data_payloads,
+                    ) {
+                        Ok(Ok(r)) => Ok(r),
+                        Ok(Err(e)) => Err(e),
+                        Err(_e) => {
+                            debug_assert!(false, "{:?}", _e);
+                            Err(core::fmt::Error)
+                        }
+                    }
+                }
+                TimeZoneFormatUnit::Iso8601(fallback) => {
+                    match fallback.format(
+                        sink,
+                        self.time_zone,
+                        &self.time_zone_format.data_payloads,
+                    ) {
+                        Ok(Ok(r)) => Ok(r),
+                        Ok(Err(e)) => Err(e),
+                        Err(_e) => {
+                            debug_assert!(false, "{:?}", _e);
+                            Err(core::fmt::Error)
+                        }
+                    }
+                }
+                _ => Err(core::fmt::Error),
+            },
+        }
     }
 
     // TODO(#489): Implement write_len
@@ -41,271 +70,26 @@ where
     T: TimeZoneInput,
 {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write_zone(self.time_zone_format, self.time_zone, f).map_err(|_| core::fmt::Error)
+        self.write_to(f)
     }
 }
 
-pub(crate) fn write_zone<T, W>(
-    time_zone_format: &TimeZoneFormat,
-    time_zone: &T,
-    w: &mut W,
-) -> Result<(), Error>
+impl<'l, T> FormattedTimeZone<'l, T>
 where
     T: TimeZoneInput,
-    W: fmt::Write + ?Sized,
 {
-    match &time_zone_format.kind {
-        TimeZoneFormatKind::Pattern(patterns) => {
-            write_pattern(time_zone_format, time_zone, patterns, w)
+    /// Write time zone with no fallback.
+    pub fn write_no_fallback<W>(&self, w: &mut W) -> Result<fmt::Result, Error>
+    where
+        W: core::fmt::Write + ?Sized,
+    {
+        for unit in self.time_zone_format.format_units.iter() {
+            match unit.format(w, self.time_zone, &self.time_zone_format.data_payloads) {
+                Ok(r) => return Ok(r),
+                Err(DateTimeFormatError::UnsupportedOptions) => continue,
+                Err(e) => return Err(e),
+            }
         }
-        TimeZoneFormatKind::Config(config) => write_config(time_zone_format, time_zone, *config, w),
+        Err(DateTimeFormatError::UnsupportedOptions)
     }
-}
-
-fn write_config<T, W>(
-    time_zone_format: &TimeZoneFormat,
-    time_zone: &T,
-    config: TimeZoneFormatConfig,
-    w: &mut W,
-) -> Result<(), Error>
-where
-    T: TimeZoneInput,
-    W: fmt::Write + ?Sized,
-{
-    match config {
-        TimeZoneFormatConfig::GenericNonLocationLong => {
-            time_zone_format
-                .long_generic_non_location_format(w, time_zone)
-                .or_else(|_| time_zone_format.generic_location_format(w, time_zone))
-                .or_else(|_| time_zone_format.localized_gmt_format(w, time_zone))?;
-        }
-        TimeZoneFormatConfig::GenericNonLocationShort => {
-            time_zone_format
-                .short_generic_non_location_format(w, time_zone)
-                .or_else(|_| time_zone_format.generic_location_format(w, time_zone))
-                .or_else(|_| time_zone_format.localized_gmt_format(w, time_zone))?;
-        }
-        TimeZoneFormatConfig::GenericLocation => {
-            time_zone_format
-                .generic_location_format(w, time_zone)
-                .or_else(|_| time_zone_format.localized_gmt_format(w, time_zone))?;
-        }
-        TimeZoneFormatConfig::SpecificNonLocationLong => {
-            time_zone_format
-                .long_specific_non_location_format(w, time_zone)
-                .or_else(|_| time_zone_format.localized_gmt_format(w, time_zone))?;
-        }
-        TimeZoneFormatConfig::SpecificNonLocationShort => {
-            time_zone_format
-                .short_specific_non_location_format(w, time_zone)
-                .or_else(|_| time_zone_format.localized_gmt_format(w, time_zone))?;
-        }
-        TimeZoneFormatConfig::LocalizedGMT => {
-            time_zone_format.localized_gmt_format(w, time_zone)?;
-        }
-        TimeZoneFormatConfig::Iso8601(iso_format, iso_minutes, iso_seconds) => {
-            time_zone_format.iso8601_format(w, time_zone, iso_format, iso_minutes, iso_seconds)?;
-        }
-    }
-    Ok(())
-}
-
-fn write_pattern<T, W>(
-    time_zone_format: &TimeZoneFormat,
-    time_zone: &T,
-    patterns: &DataPayload<PatternPluralsFromPatternsV1Marker>,
-    w: &mut W,
-) -> Result<(), Error>
-where
-    T: TimeZoneInput,
-    W: fmt::Write + ?Sized,
-{
-    let pattern = patterns
-        .get()
-        .0
-        .clone()
-        .expect_pattern("Expected a single pattern");
-    for item in pattern.items.iter() {
-        match item {
-            PatternItem::Field(field) => write_field(field, time_zone_format, time_zone, w)?,
-            PatternItem::Literal(ch) => w.write_char(ch)?,
-        }
-    }
-    Ok(())
-}
-
-/// Write fields according to the UTS-35 specification.
-/// https://unicode.org/reports/tr35/tr35-dates.html#dfst-zone
-pub(super) fn write_field<T, W>(
-    field: fields::Field,
-    time_zone_format: &TimeZoneFormat,
-    time_zone: &T,
-    w: &mut W,
-) -> Result<(), Error>
-where
-    T: TimeZoneInput,
-    W: fmt::Write + ?Sized,
-{
-    if let FieldSymbol::TimeZone(zone_symbol) = field.symbol {
-        match zone_symbol {
-            fields::TimeZone::LowerZ => match field.length.idx() {
-                1..=3 => time_zone_format
-                    .short_specific_non_location_format(w, time_zone)
-                    .or_else(|_| time_zone_format.localized_gmt_format(w, time_zone))?,
-                4 => time_zone_format
-                    .long_specific_non_location_format(w, time_zone)
-                    .or_else(|_| time_zone_format.localized_gmt_format(w, time_zone))?,
-                _ => {
-                    return Err(Error::Pattern(PatternError::FieldLengthInvalid(
-                        FieldSymbol::TimeZone(zone_symbol),
-                    )))
-                }
-            },
-            fields::TimeZone::UpperZ => match field.length.idx() {
-                1..=3 => time_zone_format.iso8601_format(
-                    w,
-                    time_zone,
-                    IsoFormat::Basic,
-                    IsoMinutes::Required,
-                    IsoSeconds::Optional,
-                )?,
-                4 => time_zone_format.localized_gmt_format(w, time_zone)?,
-                5 => time_zone_format.iso8601_format(
-                    w,
-                    time_zone,
-                    IsoFormat::UtcExtended,
-                    IsoMinutes::Required,
-                    IsoSeconds::Optional,
-                )?,
-                _ => {
-                    return Err(Error::Pattern(PatternError::FieldLengthInvalid(
-                        FieldSymbol::TimeZone(zone_symbol),
-                    )))
-                }
-            },
-            fields::TimeZone::UpperO => match field.length.idx() {
-                1..=4 => time_zone_format.localized_gmt_format(w, time_zone)?,
-                _ => {
-                    return Err(Error::Pattern(PatternError::FieldLengthInvalid(
-                        FieldSymbol::TimeZone(zone_symbol),
-                    )))
-                }
-            },
-            fields::TimeZone::LowerV => match field.length.idx() {
-                1 => time_zone_format
-                    .short_generic_non_location_format(w, time_zone)
-                    .or_else(|_| time_zone_format.generic_location_format(w, time_zone))
-                    .or_else(|_| time_zone_format.localized_gmt_format(w, time_zone))?,
-                4 => time_zone_format
-                    .long_generic_non_location_format(w, time_zone)
-                    .or_else(|_| time_zone_format.generic_location_format(w, time_zone))
-                    .or_else(|_| time_zone_format.localized_gmt_format(w, time_zone))?,
-                _ => {
-                    return Err(Error::Pattern(PatternError::FieldLengthInvalid(
-                        FieldSymbol::TimeZone(zone_symbol),
-                    )))
-                }
-            },
-            fields::TimeZone::UpperV => match field.length.idx() {
-                1 => todo!("#606 (BCP-47 identifiers)"),
-                2 => todo!("#606 (BCP-47 identifiers)"),
-                3 => time_zone_format
-                    .exemplar_city(w, time_zone)
-                    .or_else(|_| time_zone_format.unknown_city(w))?,
-                4 => time_zone_format
-                    .generic_location_format(w, time_zone)
-                    .or_else(|_| time_zone_format.localized_gmt_format(w, time_zone))?,
-                _ => {
-                    return Err(Error::Pattern(PatternError::FieldLengthInvalid(
-                        FieldSymbol::TimeZone(zone_symbol),
-                    )))
-                }
-            },
-            fields::TimeZone::LowerX => match field.length.idx() {
-                1 => time_zone_format.iso8601_format(
-                    w,
-                    time_zone,
-                    IsoFormat::UtcBasic,
-                    IsoMinutes::Optional,
-                    IsoSeconds::Never,
-                )?,
-                2 => time_zone_format.iso8601_format(
-                    w,
-                    time_zone,
-                    IsoFormat::UtcBasic,
-                    IsoMinutes::Required,
-                    IsoSeconds::Never,
-                )?,
-                3 => time_zone_format.iso8601_format(
-                    w,
-                    time_zone,
-                    IsoFormat::UtcExtended,
-                    IsoMinutes::Required,
-                    IsoSeconds::Never,
-                )?,
-                4 => time_zone_format.iso8601_format(
-                    w,
-                    time_zone,
-                    IsoFormat::UtcBasic,
-                    IsoMinutes::Required,
-                    IsoSeconds::Optional,
-                )?,
-                5 => time_zone_format.iso8601_format(
-                    w,
-                    time_zone,
-                    IsoFormat::UtcExtended,
-                    IsoMinutes::Required,
-                    IsoSeconds::Optional,
-                )?,
-                _ => {
-                    return Err(Error::Pattern(PatternError::FieldLengthInvalid(
-                        FieldSymbol::TimeZone(zone_symbol),
-                    )))
-                }
-            },
-            fields::TimeZone::UpperX => match field.length.idx() {
-                1 => time_zone_format.iso8601_format(
-                    w,
-                    time_zone,
-                    IsoFormat::Basic,
-                    IsoMinutes::Optional,
-                    IsoSeconds::Never,
-                )?,
-                2 => time_zone_format.iso8601_format(
-                    w,
-                    time_zone,
-                    IsoFormat::Basic,
-                    IsoMinutes::Required,
-                    IsoSeconds::Never,
-                )?,
-                3 => time_zone_format.iso8601_format(
-                    w,
-                    time_zone,
-                    IsoFormat::Extended,
-                    IsoMinutes::Required,
-                    IsoSeconds::Never,
-                )?,
-                4 => time_zone_format.iso8601_format(
-                    w,
-                    time_zone,
-                    IsoFormat::Basic,
-                    IsoMinutes::Required,
-                    IsoSeconds::Optional,
-                )?,
-                5 => time_zone_format.iso8601_format(
-                    w,
-                    time_zone,
-                    IsoFormat::Extended,
-                    IsoMinutes::Required,
-                    IsoSeconds::Optional,
-                )?,
-                _ => {
-                    return Err(Error::Pattern(PatternError::FieldLengthInvalid(
-                        FieldSymbol::TimeZone(zone_symbol),
-                    )))
-                }
-            },
-        }
-    }
-    Ok(())
 }

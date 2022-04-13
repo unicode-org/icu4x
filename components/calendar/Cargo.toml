@@ -25,8 +25,8 @@ include = [
 
 [features]
 std = []
-serialize = ["serde", "zerovec/serde", "tinystr/serde"]
-datagen = ["serialize", "zerovec/serde_serialize"]
+serde = ["dep:serde", "zerovec/serde", "tinystr/serde"]
+datagen = ["serde", "zerovec/serde_serialize"]
 
 [package.metadata.docs.rs]
 all-features = true

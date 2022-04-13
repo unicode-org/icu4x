@@ -8,7 +8,6 @@ use alloc::boxed::Box;
 use alloc::vec::Vec;
 use core::fmt;
 use core::marker::PhantomData;
-use dep_serde as serde;
 use serde::de::{self, Deserialize, Deserializer, SeqAccess, Visitor};
 #[cfg(feature = "serde_serialize")]
 use serde::ser::{Serialize, SerializeSeq, Serializer};
@@ -147,17 +146,15 @@ where
 #[cfg(test)]
 #[allow(non_camel_case_types)]
 mod test {
-    use super::super::*;
+    use crate::{VarZeroSlice, VarZeroVec};
 
-    #[derive(dep_serde::Serialize, dep_serde::Deserialize)]
-    #[serde(crate = "dep_serde")]
+    #[derive(serde::Serialize, serde::Deserialize)]
     struct DeriveTest_VarZeroVec<'data> {
         #[serde(borrow)]
         _data: VarZeroVec<'data, str>,
     }
 
-    #[derive(dep_serde::Serialize, dep_serde::Deserialize)]
-    #[serde(crate = "dep_serde")]
+    #[derive(serde::Serialize, serde::Deserialize)]
     struct DeriveTest_VarZeroSlice<'data> {
         #[serde(borrow)]
         _data: &'data VarZeroSlice<str>,

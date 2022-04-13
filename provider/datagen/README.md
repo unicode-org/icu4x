@@ -28,7 +28,7 @@ Extract the keys used by an executable into a key file:
 
 ```bash
 # Run from the icu4x project folder
-$ cargo build --example work_log --release
+$ cargo build --example work_log --release --features serde
 $ cargo make icu4x-key-extract \
     target/release/examples/work_log \
     /tmp/icu4x_data/work_log+keys.txt

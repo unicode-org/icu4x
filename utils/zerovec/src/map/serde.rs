@@ -5,7 +5,6 @@
 use super::{MutableZeroVecLike, ZeroMap, ZeroMapBorrowed, ZeroMapKV, ZeroVecLike};
 use core::fmt;
 use core::marker::PhantomData;
-use dep_serde as serde;
 use serde::de::{self, Deserialize, Deserializer, MapAccess, SeqAccess, Visitor};
 #[cfg(feature = "serde_serialize")]
 use serde::ser::{Serialize, SerializeMap, SerializeSeq, Serializer};
@@ -235,17 +234,15 @@ where
 #[cfg(test)]
 #[allow(non_camel_case_types)]
 mod test {
-    use super::super::*;
+    use crate::{map::ZeroMapBorrowed, ZeroMap};
 
-    #[derive(dep_serde::Serialize, dep_serde::Deserialize)]
-    #[serde(crate = "dep_serde")]
+    #[derive(serde::Serialize, serde::Deserialize)]
     struct DeriveTest_ZeroMap<'data> {
         #[serde(borrow)]
         _data: ZeroMap<'data, str, [u8]>,
     }
 
-    #[derive(dep_serde::Serialize, dep_serde::Deserialize)]
-    #[serde(crate = "dep_serde")]
+    #[derive(serde::Serialize, serde::Deserialize)]
     struct DeriveTest_ZeroMapBorrowed<'data> {
         #[serde(borrow)]
         _data: ZeroMapBorrowed<'data, str, [u8]>,

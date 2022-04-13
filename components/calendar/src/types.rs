@@ -80,6 +80,23 @@ pub struct WeekOfMonth(pub u32);
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct WeekOfYear(pub u32);
 
+/// A day of week in month. 1-based.
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct DayOfWeekInMonth(pub u32);
+
+impl From<DayOfMonth> for DayOfWeekInMonth {
+    fn from(day_of_month: DayOfMonth) -> Self {
+        DayOfWeekInMonth(1 + ((day_of_month.0 - 1) / 7))
+    }
+}
+
+#[test]
+fn test_day_of_week_in_month() {
+    assert_eq!(DayOfWeekInMonth::from(DayOfMonth(1)).0, 1);
+    assert_eq!(DayOfWeekInMonth::from(DayOfMonth(7)).0, 1);
+    assert_eq!(DayOfWeekInMonth::from(DayOfMonth(8)).0, 2);
+}
+
 /// This macro defines a struct for 0-based date fields: hours, minutes, and seconds. Each
 /// unit is bounded by a range. The traits implemented here will return a Result on
 /// whether or not the unit is in range from the given input.
@@ -307,11 +324,10 @@ impl FromStr for GmtOffset {
     /// let offset3: GmtOffset = "-09:30".parse().expect("Failed to parse a GMT offset.");
     /// ```
     fn from_str(input: &str) -> Result<Self, Self::Err> {
-        let offset_sign;
-        match input.chars().next() {
-            Some('+') => offset_sign = 1,
-            /* ASCII  */ Some('-') => offset_sign = -1,
-            /* U+2212 */ Some('−') => offset_sign = -1,
+        let offset_sign = match input.chars().next() {
+            Some('+') => 1,
+            /* ASCII  */ Some('-') => -1,
+            /* U+2212 */ Some('−') => -1,
             Some('Z') => return Ok(Self(0)),
             _ => return Err(DateTimeError::InvalidTimeZoneOffset),
         };
@@ -367,7 +383,7 @@ impl FromStr for GmtOffset {
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 #[allow(missing_docs)] // The weekday variants should be self-obvious.
 #[repr(i8)]
-#[cfg_attr(feature = "serialize", derive(serde::Serialize, serde::Deserialize))]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub enum IsoWeekday {
     Monday = 1,
     Tuesday,

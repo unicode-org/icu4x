@@ -3,11 +3,14 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use alloc::borrow::Borrow;
-use alloc::vec;
-use alloc::vec::Vec;
 use core::iter::FromIterator;
+use core::marker::PhantomData;
 use core::mem;
 use core::ops::{Index, IndexMut};
+
+use crate::store::Store;
+use crate::store::StoreFromIterator;
+use crate::store::StoreIterable;
 
 /// A simple "flat" map based on a sorted vector
 ///
@@ -17,44 +20,59 @@ use core::ops::{Index, IndexMut};
 /// requires `Ord` instead of `Hash`.
 #[derive(Clone, Debug, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[cfg_attr(feature = "yoke", derive(yoke::Yokeable))]
-pub struct LiteMap<K, V> {
-    pub(crate) values: Vec<(K, V)>,
+pub struct LiteMap<K, V, S = alloc::vec::Vec<(K, V)>> {
+    pub(crate) values: S,
+    pub(crate) _key_type: PhantomData<K>,
+    pub(crate) _value_type: PhantomData<V>,
 }
 
 impl<K, V> LiteMap<K, V> {
     /// Construct a new [`LiteMap`]
     pub const fn new() -> Self {
-        Self { values: Vec::new() }
+        Self {
+            values: alloc::vec::Vec::new(),
+            _key_type: PhantomData,
+            _value_type: PhantomData,
+        }
     }
+}
 
+impl<K, V, S> LiteMap<K, V, S>
+where
+    S: Store<K, V>,
+{
     /// Construct a new [`LiteMap`] with a given capacity
     pub fn with_capacity(capacity: usize) -> Self {
         Self {
-            values: Vec::with_capacity(capacity),
+            values: S::lm_with_capacity(capacity),
+            _key_type: PhantomData,
+            _value_type: PhantomData,
         }
     }
 
     /// The number of elements in the [`LiteMap`]
     pub fn len(&self) -> usize {
-        self.values.len()
+        self.values.lm_len()
     }
 
     /// Whether the [`LiteMap`] is empty
     pub fn is_empty(&self) -> bool {
-        self.values.is_empty()
+        self.values.lm_is_empty()
     }
 
     /// Remove all elements from the [`LiteMap`]
     pub fn clear(&mut self) {
-        self.values.clear()
+        self.values.lm_clear()
     }
 
     /// Reserve capacity for `additional` more elements to be inserted into
     /// the [`LiteMap`] to avoid frequent reallocations.
     ///
     /// See [`Vec::reserve()`] for more information.
+    ///
+    /// [`Vec::reserve()`]: alloc::vec::Vec::reserve
     pub fn reserve(&mut self, additional: usize) {
-        self.values.reserve(additional)
+        self.values.lm_reserve(additional)
     }
 
     /// Convert a `Vec<(K, V)>` into a [`LiteMap`].
@@ -63,13 +81,17 @@ impl<K, V> LiteMap<K, V> {
     ///
     /// The vec must be sorted and have no duplicate keys.
     #[inline]
-    pub unsafe fn from_tuple_vec_unchecked(values: Vec<(K, V)>) -> Self {
-        Self { values }
+    pub unsafe fn from_tuple_vec_unchecked(values: S) -> Self {
+        Self {
+            values,
+            _key_type: PhantomData,
+            _value_type: PhantomData,
+        }
     }
 
     /// Convert a [`LiteMap`] into a `Vec<(K, V)>`.
     #[inline]
-    pub fn into_tuple_vec(self) -> Vec<(K, V)> {
+    pub fn into_tuple_vec(self) -> S {
         self.values
     }
 
@@ -78,11 +100,15 @@ impl<K, V> LiteMap<K, V> {
     /// In most cases, prefer [`LiteMap::get()`] over this method.
     #[inline]
     pub fn get_indexed(&self, index: usize) -> Option<(&K, &V)> {
-        self.values.get(index).map(|(ref k, ref v)| (k, v))
+        self.values.lm_get(index)
     }
 }
 
-impl<K: Ord, V> LiteMap<K, V> {
+impl<K, V, S> LiteMap<K, V, S>
+where
+    K: Ord,
+    S: Store<K, V>,
+{
     /// Get the value associated with `key`, if it exists.
     ///
     /// ```rust
@@ -100,8 +126,8 @@ impl<K: Ord, V> LiteMap<K, V> {
         Q: Ord,
     {
         match self.find_index(key) {
-            #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
-            Ok(found) => Some(&self.values[found].1),
+            #[allow(clippy::unwrap_used)] // find_index returns a valid index
+            Ok(found) => Some(self.values.lm_get(found).unwrap().1),
             Err(_) => None,
         }
     }
@@ -144,8 +170,8 @@ impl<K: Ord, V> LiteMap<K, V> {
         Q: Ord,
     {
         match self.find_index(key) {
-            #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
-            Ok(found) => Some(&mut self.values[found].1),
+            #[allow(clippy::unwrap_used)] // find_index returns a valid index
+            Ok(found) => Some(self.values.lm_get_mut(found).unwrap().1),
             Err(_) => None,
         }
     }
@@ -165,7 +191,7 @@ impl<K: Ord, V> LiteMap<K, V> {
     /// ```
     #[inline]
     pub fn first(&self) -> Option<(&K, &V)> {
-        self.values.get(0).map(|(k, v)| (k, v))
+        self.values.lm_get(0).map(|(k, v)| (k, v))
     }
 
     /// Get the highest-rank key/value pair from the `LiteMap`, if it exists.
@@ -183,7 +209,7 @@ impl<K: Ord, V> LiteMap<K, V> {
     /// ```
     #[inline]
     pub fn last(&self) -> Option<(&K, &V)> {
-        self.values.get(self.len() - 1).map(|(k, v)| (k, v))
+        self.values.lm_get(self.len() - 1).map(|(k, v)| (k, v))
     }
 
     /// Appends `value` with `key` to the end of the underlying vector, returning
@@ -216,13 +242,13 @@ impl<K: Ord, V> LiteMap<K, V> {
     /// ```
     #[must_use]
     pub fn try_append(&mut self, key: K, value: V) -> Option<(K, V)> {
-        if let Some(last) = self.values.last() {
-            if last.0 >= key {
+        if let Some(last) = self.values.lm_last() {
+            if last.0 >= &key {
                 return Some((key, value));
             }
         }
 
-        self.values.push((key, value));
+        self.values.lm_push(key, value);
         None
     }
 
@@ -243,11 +269,14 @@ impl<K: Ord, V> LiteMap<K, V> {
 
     /// Version of [`Self::insert()`] that returns both the key and the old value.
     fn insert_save_key(&mut self, key: K, value: V) -> Option<(K, V)> {
-        match self.values.binary_search_by(|k| k.0.cmp(&key)) {
-            #[allow(clippy::indexing_slicing)] // Index came from binary_search
-            Ok(found) => Some((key, mem::replace(&mut self.values[found].1, value))),
+        match self.values.lm_binary_search_by(|k| k.cmp(&key)) {
+            #[allow(clippy::unwrap_used)] // Index came from binary_search
+            Ok(found) => Some((
+                key,
+                mem::replace(self.values.lm_get_mut(found).unwrap().1, value),
+            )),
             Err(ins) => {
-                self.values.insert(ins, (key, value));
+                self.values.lm_insert(ins, key, value);
                 None
             }
         }
@@ -277,11 +306,10 @@ impl<K: Ord, V> LiteMap<K, V> {
     /// assert_eq!(map.len(), 3);
     /// ```
     pub fn try_insert(&mut self, key: K, value: V) -> Option<(K, V)> {
-        match self.values.binary_search_by(|k| k.0.cmp(&key)) {
-            #[allow(clippy::indexing_slicing)] // Index came from binary_search
+        match self.values.lm_binary_search_by(|k| k.cmp(&key)) {
             Ok(_) => Some((key, value)),
             Err(ins) => {
-                self.values.insert(ins, (key, value));
+                self.values.lm_insert(ins, key, value);
                 None
             }
         }
@@ -303,12 +331,18 @@ impl<K: Ord, V> LiteMap<K, V> {
         K: Borrow<Q>,
         Q: Ord,
     {
-        match self.values.binary_search_by(|k| k.0.borrow().cmp(key)) {
-            Ok(found) => Some(self.values.remove(found).1),
+        match self.values.lm_binary_search_by(|k| k.borrow().cmp(key)) {
+            Ok(found) => Some(self.values.lm_remove(found).1),
             Err(_) => None,
         }
     }
+}
 
+impl<'a, K: 'a, V: 'a, S> LiteMap<K, V, S>
+where
+    K: Ord,
+    S: StoreIterable<'a, K, V> + StoreFromIterator<K, V>,
+{
     /// Insert all elements from `other` into this `LiteMap`.
     ///
     /// If `other` contains keys that already exist in `self`, the values in `other` replace the
@@ -341,7 +375,7 @@ impl<K: Ord, V> LiteMap<K, V> {
     /// assert_eq!(map3.len(), 1);
     /// assert_eq!(map3.get(&2), Some("two").as_ref());
     /// ```
-    pub fn extend_from_litemap(&mut self, other: LiteMap<K, V>) -> Option<LiteMap<K, V>> {
+    pub fn extend_from_litemap(&mut self, other: Self) -> Option<Self> {
         if self.is_empty() {
             self.values = other.values;
             return None;
@@ -351,21 +385,23 @@ impl<K: Ord, V> LiteMap<K, V> {
         }
         if self.last().map(|(k, _)| k) < other.first().map(|(k, _)| k) {
             // append other to self
-            self.values.extend(other.values);
+            self.values.lm_extend_end(other.values);
             None
         } else if self.first().map(|(k, _)| k) > other.last().map(|(k, _)| k) {
             // prepend other to self
-            self.values.splice(0..0, other.values);
+            self.values.lm_extend_start(other.values);
             None
         } else {
             // insert every element
             let leftover_tuples = other
                 .values
-                .into_iter()
+                .lm_into_iter()
                 .filter_map(|(k, v)| self.insert_save_key(k, v))
                 .collect();
             let ret = LiteMap {
                 values: leftover_tuples,
+                _key_type: PhantomData,
+                _value_type: PhantomData,
             };
             if ret.is_empty() {
                 None
@@ -374,7 +410,13 @@ impl<K: Ord, V> LiteMap<K, V> {
             }
         }
     }
+}
 
+impl<K, V, S> LiteMap<K, V, S>
+where
+    K: Ord,
+    S: Store<K, V>,
+{
     /// Obtain the index for a given key, or if the key is not found, the index
     /// at which it would be inserted.
     ///
@@ -388,29 +430,48 @@ impl<K: Ord, V> LiteMap<K, V> {
         K: Borrow<Q>,
         Q: Ord,
     {
-        self.values.binary_search_by(|k| k.0.borrow().cmp(key))
+        self.values.lm_binary_search_by(|k| k.borrow().cmp(key))
     }
 }
 
-impl<K, V> Default for LiteMap<K, V> {
+impl<K, V, S> Default for LiteMap<K, V, S>
+where
+    S: Store<K, V> + Default,
+{
     fn default() -> Self {
-        Self { values: vec![] }
+        Self {
+            values: S::default(),
+            _key_type: PhantomData,
+            _value_type: PhantomData,
+        }
     }
 }
-impl<K: Ord, V> Index<&'_ K> for LiteMap<K, V> {
+impl<K, V, S> Index<&'_ K> for LiteMap<K, V, S>
+where
+    K: Ord,
+    S: Store<K, V>,
+{
     type Output = V;
     fn index(&self, key: &K) -> &V {
         #[allow(clippy::expect_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
         self.get(key).expect("LiteMap could not find key")
     }
 }
-impl<K: Ord, V> IndexMut<&'_ K> for LiteMap<K, V> {
+impl<K, V, S> IndexMut<&'_ K> for LiteMap<K, V, S>
+where
+    K: Ord,
+    S: Store<K, V>,
+{
     fn index_mut(&mut self, key: &K) -> &mut V {
         #[allow(clippy::expect_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
         self.get_mut(key).expect("LiteMap could not find key")
     }
 }
-impl<K: Ord, V> FromIterator<(K, V)> for LiteMap<K, V> {
+impl<K, V, S> FromIterator<(K, V)> for LiteMap<K, V, S>
+where
+    K: Ord,
+    S: Store<K, V>,
+{
     fn from_iter<I: IntoIterator<Item = (K, V)>>(iter: I) -> Self {
         let iter = iter.into_iter();
         let mut map = match iter.size_hint() {
@@ -428,27 +489,37 @@ impl<K: Ord, V> FromIterator<(K, V)> for LiteMap<K, V> {
     }
 }
 
-impl<K, V> LiteMap<K, V> {
+impl<'a, K: 'a, V: 'a, S> LiteMap<K, V, S>
+where
+    S: StoreIterable<'a, K, V>,
+{
     /// Produce an ordered iterator over key-value pairs
-    pub fn iter(&self) -> impl Iterator<Item = (&K, &V)> + DoubleEndedIterator {
-        self.values.iter().map(|val| (&val.0, &val.1))
+    pub fn iter(&'a self) -> impl Iterator<Item = (&'a K, &'a V)> + DoubleEndedIterator {
+        self.values.lm_iter()
     }
 
     /// Produce an ordered iterator over keys
-    pub fn iter_keys(&self) -> impl Iterator<Item = &K> + DoubleEndedIterator {
-        self.values.iter().map(|val| &val.0)
+    pub fn iter_keys(&'a self) -> impl Iterator<Item = &'a K> + DoubleEndedIterator {
+        self.values.lm_iter().map(|val| val.0)
     }
 
     /// Produce an iterator over values, ordered by their keys
-    pub fn iter_values(&self) -> impl Iterator<Item = &V> + DoubleEndedIterator {
-        self.values.iter().map(|val| &val.1)
+    pub fn iter_values(&'a self) -> impl Iterator<Item = &'a V> + DoubleEndedIterator {
+        self.values.lm_iter().map(|val| val.1)
     }
 
     /// Produce an ordered mutable iterator over key-value pairs
-    pub fn iter_mut(&mut self) -> impl Iterator<Item = (&K, &mut V)> + DoubleEndedIterator {
-        self.values.iter_mut().map(|val| (&val.0, &mut val.1))
+    pub fn iter_mut(
+        &'a mut self,
+    ) -> impl Iterator<Item = (&'a K, &'a mut V)> + DoubleEndedIterator {
+        self.values.lm_iter_mut()
     }
+}
 
+impl<K, V, S> LiteMap<K, V, S>
+where
+    S: Store<K, V>,
+{
     /// Retains only the elements specified by the predicate.
     ///
     /// In other words, remove all elements such that `f((&k, &v))` returns `false`.
@@ -464,23 +535,23 @@ impl<K, V> LiteMap<K, V> {
     /// map.insert(3, "three");
     ///
     /// // Retain elements with odd keys
-    /// map.retain(|(k, _)| k % 2 == 1);
+    /// map.retain(|k, _| k % 2 == 1);
     ///
     /// assert_eq!(map.get(&1), Some(&"one"));
     /// assert_eq!(map.get(&2), None);
     /// ```
     #[inline]
-    pub fn retain<F>(&mut self, mut predicate: F)
+    pub fn retain<F>(&mut self, predicate: F)
     where
-        F: FnMut((&K, &V)) -> bool,
+        F: FnMut(&K, &V) -> bool,
     {
-        self.values.retain(|(ref k, ref v)| predicate((k, v)))
+        self.values.lm_retain(predicate)
     }
 }
 
 #[cfg(test)]
 mod test {
-    use super::*;
+    use crate::LiteMap;
 
     #[test]
     fn from_iterator() {

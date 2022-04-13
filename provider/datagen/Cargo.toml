@@ -38,7 +38,7 @@ displaydoc = { version = "0.2.3", default-features = false }
 elsa = "1.7"
 eyre = "0.6"
 icu_calendar = { version = "0.5", path = "../../components/calendar", features = ["datagen"] }
-icu_casemapping = { version = "0.1", path = "../../experimental/casemapping", features = ["serialize", "datagen"], optional = true }
+icu_casemapping = { version = "0.1", path = "../../experimental/casemapping", features = ["serde", "datagen"], optional = true }
 icu_codepointtrie = { version = "0.3.3", path = "../../utils/codepointtrie", features = ["serde_serialize"] }
 icu_datetime = { version = "0.5", path = "../../components/datetime", features = ["datagen"] }
 icu_decimal = { version = "0.5", path = "../../components/decimal", features = ["datagen"] }
@@ -53,21 +53,24 @@ icu_provider_blob = { version = "0.5", path = "../blob", features = ["export"] }
 icu_provider_fs = { version = "0.5", path = "../fs", features = ["export"] }
 icu_segmenter = { version = "0.1", path = "../../experimental/segmenter", features = ["datagen"] }
 icu_testdata = { version = "0.5", path = "../testdata", features = ["metadata"] }
-icu_uniset = { version = "0.4.1", path = "../../utils/uniset", features = ["serialize"] }
+icu_uniset = { version = "0.4.1", path = "../../utils/uniset", features = ["serde"] }
 itertools = "0.10"
 json = "0.12"
 litemap = { version = "0.3.0", path = "../../utils/litemap" }
 log = { version = "0.4" }
+pathdiff = "0.2.1"
 rayon = "1.5"
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"] }
 serde_json = { version = "1.0", default-features = false, features = ["alloc"] }
 serde-aux = "2.1.1"
 serde-tuple-vec-map = "1.0"
+sha2 = "0.10.2"
 simple_logger = "1.12"
 smallstr = { version = "0.2", features = ["serde"] }
 smallvec = "1.6"
 tinystr = { path = "../../utils/tinystr", version = "0.5.0", features = ["alloc", "serde", "zerovec"], default-features = false }
 toml = { version = "0.5" }
+walkdir = "2.3.2"
 writeable = { version = "0.3", path = "../../utils/writeable" }
 zerovec = { version = "0.6", path = "../../utils/zerovec", features = ["serde_serialize", "yoke"] }
 
@@ -101,3 +104,7 @@ required-features = ["download-testdata"]
 [[bin]]
 name = "icu4x-verify-zero-copy"
 path = "src/bin/verify-zero-copy.rs"
+
+[[bin]]
+name = "icu4x-fingerprint-data"
+path = "src/bin/fingerprint-data.rs"

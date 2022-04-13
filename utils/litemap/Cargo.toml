@@ -30,7 +30,7 @@ all-features = true
 [dependencies]
 serde = {version = "1", optional = true, default-features = false, features = ["alloc"]}
 serde_json = { version = "1", optional = true, default-features = false, features = ["alloc"]}
-yoke = { version = "0.4.1", path = "../yoke", features = ["derive"], optional = true }
+yoke = { version = "0.5.0", path = "../yoke", features = ["derive"], optional = true }
 
 [dev-dependencies]
 serde = "1"
@@ -47,6 +47,10 @@ criterion = "0.3.4"
 name = "serde"
 required-features = ["serde"]
 
+[[test]]
+name = "store"
+required-features = ["testing"]
+
 [[example]]
 name = "litemap_bincode"
 path = "benches/bin/litemap_bincode.rs"
@@ -61,6 +65,10 @@ required-features = ["serde"]
 bench = []
 serde_serialize = ["serde", "serde_json"]
 
+# Enables the `testing` module with tools for testing custom stores.
+testing = []
+
 [[bench]]
 name = "litemap"
 harness = false
+required-features = ["serde"]

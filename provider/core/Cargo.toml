@@ -36,7 +36,7 @@ all-features = true
 
 [features]
 std = ["icu_locid/std"]
-serialize = ["serde", "erased-serde"]
+serde = ["dep:serde", "erased-serde"]
 macros = ["icu_provider_macros"]
 
 # Enable logging of additional context of data errors
@@ -48,14 +48,14 @@ deserialize_bincode_1 = ["serde", "bincode", "std"]
 deserialize_postcard_07 = ["serde", "postcard"]
 
 # Dependencies for running data generation
-datagen = ["deserialize_postcard_07", "postcard/alloc", "dhat", "serialize"]
+datagen = ["deserialize_postcard_07", "postcard/alloc", "dhat", "serde"]
 
 [dependencies]
 icu_locid = { version = "0.5", path = "../../components/locid" }
 tinystr = { path = "../../utils/tinystr", version = "0.5.0", features = ["alloc"], default-features = false }
 writeable = { version = "0.3", path = "../../utils/writeable" }
 displaydoc = { version = "0.2.3", default-features = false }
-yoke = { version = "0.4.1", path = "../../utils/yoke", features = ["serde", "derive"] }
+yoke = { version = "0.5.0", path = "../../utils/yoke", features = ["serde", "derive"] }
 zerofrom = { version = "0.1.0", path = "../../utils/zerofrom", features = ["derive"] }
 zerovec = { version = "0.6.0", path = "../../utils/zerovec" , features = ["derive"]}
 litemap = { version = "0.3.0", path = "../../utils/litemap" }
@@ -63,7 +63,7 @@ log = { version = "0.4", optional = true }
 
 icu_provider_macros = { version = "0.5", path = "../macros", optional = true }
 
-# For "serialize" feature
+# For "serde" feature
 erased-serde = { version = "0.3", optional = true, default-features = false, features = ["alloc"] }
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }
 

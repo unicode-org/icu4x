@@ -20,7 +20,7 @@ struct PatternFixtures {
 }
 
 fn get_pattern_fixtures() -> PatternFixtures {
-    let file = File::open("./tests/fixtures/tests/patterns.json".to_string())
+    let file = File::open("./tests/fixtures/tests/patterns.json")
         .expect("Unable to open ./tests/fixtures/tests/patterns.json");
     let reader = BufReader::new(file);
     serde_json::from_reader(reader).expect("Unable to deserialize pattern fixtures.")

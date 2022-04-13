@@ -26,16 +26,15 @@ pub fn parse_language_identifier_from_iter(
     iter: &mut SubtagIterator,
     mode: ParserMode,
 ) -> Result<LanguageIdentifier, ParserError> {
-    let language;
     let mut script = None;
     let mut region = None;
     let mut variants = Vec::new();
 
-    if let Some(subtag) = iter.next() {
-        language = subtags::Language::from_bytes(subtag)?;
+    let language = if let Some(subtag) = iter.next() {
+        subtags::Language::from_bytes(subtag)?
     } else {
         return Err(ParserError::InvalidLanguage);
-    }
+    };
 
     let mut position = ParserPosition::Script;
 

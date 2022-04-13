@@ -60,7 +60,9 @@ pub fn derive_impl(
     } else {
         // no ULE subfields
         (
-            quote!(const ZERO: usize = 0),
+            quote!(
+                const ZERO: usize = 0;
+            ),
             Ident::new("ZERO", Span::call_site()),
         )
     };
@@ -106,6 +108,7 @@ pub fn derive_impl(
                 }
                 #validators
                 debug_assert_eq!(#remaining_offset, #ule_size);
+                #[allow(clippy::indexing_slicing)] // TODO explain
                 let last_field_bytes = &bytes[#remaining_offset..];
                 #last_field_validator
                 Ok(())
@@ -113,6 +116,7 @@ pub fn derive_impl(
             #[inline]
             unsafe fn from_byte_slice_unchecked(bytes: &[u8]) -> &Self {
                 // just the unsized part
+                #[allow(clippy::indexing_slicing)] // TODO explain
                 let unsized_bytes = &bytes[#ule_size..];
                 let unsized_ref = <#unsized_field as zerovec::ule::VarULE>::from_byte_slice_unchecked(unsized_bytes);
                 // We should use the pointer metadata APIs here when they are stable: https://github.com/rust-lang/rust/issues/81513

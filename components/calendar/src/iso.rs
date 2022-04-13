@@ -449,6 +449,23 @@ impl Iso {
         Date::new_iso_date_from_integers(year, month as u8, day as u8).unwrap()
     }
 
+    pub(crate) fn iso_from_year_day(year: i32, year_day: u32) -> Date<Iso> {
+        let mut month = 1;
+        let mut day = year_day as i32;
+        while month <= 12 {
+            let month_days = Self::days_in_month(IsoYear(year), IsoMonth(month)) as i32;
+            if day <= month_days {
+                break;
+            } else {
+                day -= month_days;
+                month += 1;
+            }
+        }
+
+        #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
+        Date::new_iso_date_from_integers(year, month, day.try_into().unwrap()).unwrap()
+    }
+
     pub(crate) fn day_of_year(date: IsoDateInner) -> u32 {
         // Cumulatively how much are dates in each month
         // offset from "30 days in each month" (in non leap years)

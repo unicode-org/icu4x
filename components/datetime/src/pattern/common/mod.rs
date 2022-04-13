@@ -4,5 +4,5 @@
 
 //! Code paths that are shared between `reference` and `runtime`
 //! `Pattern` modules.
-#[cfg(feature = "serialize")]
+#[cfg(feature = "serde")]
 mod serde;

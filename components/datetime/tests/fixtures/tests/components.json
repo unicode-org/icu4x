@@ -6,7 +6,7 @@
                 "components": {
                     "weekday": "long",
                     "month": "long",
-                    "day": "two-digit",
+                    "day": "two-digit-day-of-month",
                     "era": "long",
                     "year": "numeric",
                     "hour": "numeric",
@@ -22,7 +22,8 @@
                 "japanese/en": "Tuesday, January 21, 2 Reiwa at 08:25:07",
                 "japanese/ja": "令和2年1月21日火曜日 8:25:07",
                 "coptic/en": "Tuesday, Toba 12, 1736 ERA1 at 08:25:07",
-                "coptic/fr": "mardi 12 toubah 1736 après Dioclétien à 08:25:07"
+                "coptic/fr": "mardi 12 toubah 1736 après Dioclétien à 08:25:07",
+                "indian/en": "Tuesday, Chaitra 21, 1942 Saka at 08:25:07"
             }
         }
     }

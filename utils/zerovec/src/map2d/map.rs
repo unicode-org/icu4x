@@ -476,9 +476,11 @@ where
             0
         } else {
             // The unwrap is protected by the debug_assert above
+            #[allow(clippy::unwrap_used)]
             self.joiner.get(key0_index - 1).unwrap()
         };
         // The unwrap is protected by the debug_assert above
+        #[allow(clippy::unwrap_used)]
         let limit = self.joiner.get(key0_index).unwrap();
         (start as usize)..(limit as usize)
     }
@@ -494,6 +496,7 @@ where
                 } else {
                     debug_assert!(key0_index <= self.joiner.len());
                     // The unwrap is protected by the debug_assert above and key0_index != 0
+                    #[allow(clippy::unwrap_used)]
                     self.joiner.get(key0_index - 1).unwrap()
                 };
                 self.keys0.zvl_insert(key0_index, key0);
@@ -545,6 +548,7 @@ where
     }
 
     #[cfg(debug_assertions)]
+    #[allow(clippy::unwrap_used)] // this is an assertion function
     pub(crate) fn check_invariants(&self) {
         debug_assert_eq!(self.keys0.zvl_len(), self.joiner.len());
         debug_assert_eq!(self.keys1.zvl_len(), self.values.zvl_len());
@@ -561,7 +565,6 @@ where
             };
             let j1 = self.joiner.get(i).unwrap() as usize;
             debug_assert_ne!(j0, j1);
-            #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
             for j in (j0 + 1)..j1 {
                 let m0 = self.keys1.zvl_get(j - 1).unwrap();
                 let m1 = self.keys1.zvl_get(j).unwrap();

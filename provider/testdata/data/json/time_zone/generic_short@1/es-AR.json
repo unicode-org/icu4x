@@ -1,7 +1,7 @@
 {
   "defaults": {
-    "Argentina": "ART",
-    "Argentina_Western": "WART"
+    "arge": "ART",
+    "arwe": "WART"
   },
   "overrides": {
     "Etc/UTC": "UTC"

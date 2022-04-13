@@ -24,7 +24,7 @@
                     "components": {
                         "year": "numeric",
                         "month": "numeric",
-                        "day": "numeric"
+                        "day": "numeric-day-of-month"
                     }
                 }
             },
@@ -34,7 +34,7 @@
                     "components": {
                         "year": "numeric",
                         "month": "numeric",
-                        "day": "numeric",
+                        "day": "numeric-day-of-month",
                         "weekday": "short"
                     }
                 }
@@ -54,7 +54,7 @@
                     "components": {
                         "year": "numeric",
                         "month": "short",
-                        "day": "numeric"
+                        "day": "numeric-day-of-month"
                     }
                 }
             },
@@ -64,7 +64,7 @@
                     "components": {
                         "year": "numeric",
                         "month": "short",
-                        "day": "numeric",
+                        "day": "numeric-day-of-month",
                         "weekday": "short"
                     }
                 }
@@ -91,7 +91,7 @@
                 "options": {
                     "components": {
                         "month": "numeric",
-                        "day": "numeric"
+                        "day": "numeric-day-of-month"
                     }
                 }
             },
@@ -100,7 +100,7 @@
                 "options": {
                     "components": {
                         "month": "numeric",
-                        "day": "numeric",
+                        "day": "numeric-day-of-month",
                         "weekday": "short"
                     }
                 }
@@ -118,7 +118,7 @@
                 "options": {
                     "components": {
                         "month": "short",
-                        "day": "numeric"
+                        "day": "numeric-day-of-month"
                     }
                 }
             },
@@ -127,7 +127,7 @@
                 "options": {
                     "components": {
                         "month": "short",
-                        "day": "numeric",
+                        "day": "numeric-day-of-month",
                         "weekday": "short"
                     }
                 }
@@ -137,7 +137,7 @@
                 "options": {
                     "components": {
                         "month": "long",
-                        "day": "numeric"
+                        "day": "numeric-day-of-month"
                     }
                 }
             },
@@ -145,7 +145,7 @@
                 "locale": "en",
                 "options": {
                     "components": {
-                        "day": "numeric"
+                        "day": "numeric-day-of-month"
                     }
                 }
             },
@@ -153,7 +153,7 @@
                 "locale": "en",
                 "options": {
                     "components": {
-                        "day": "numeric",
+                        "day": "numeric-day-of-month",
                         "weekday": "short"
                     }
                 }
@@ -295,7 +295,7 @@
                     "components": {
                         "year": "numeric",
                         "month": "numeric",
-                        "day": "numeric"
+                        "day": "numeric-day-of-month"
                     }
                 }
             },
@@ -305,7 +305,7 @@
                     "components": {
                         "year": "numeric",
                         "month": "two-digit",
-                        "day": "numeric"
+                        "day": "numeric-day-of-month"
                     }
                 }
             },
@@ -315,7 +315,7 @@
                     "components": {
                         "year": "numeric",
                         "month": "short",
-                        "day": "numeric"
+                        "day": "numeric-day-of-month"
                     }
                 }
             },
@@ -325,7 +325,7 @@
                     "components": {
                         "year": "numeric",
                         "month": "long",
-                        "day": "numeric"
+                        "day": "numeric-day-of-month"
                     }
                 }
             },
@@ -335,7 +335,7 @@
                     "components": {
                         "year": "numeric",
                         "month": "narrow",
-                        "day": "numeric"
+                        "day": "numeric-day-of-month"
                     }
                 }
             },
@@ -345,7 +345,7 @@
                     "components": {
                         "year": "numeric",
                         "month": "short",
-                        "day": "numeric",
+                        "day": "numeric-day-of-month",
 
                         "weekday": "short",
                         "hour": "numeric",
@@ -360,7 +360,7 @@
                     "components": {
                         "year": "numeric",
                         "month": "long",
-                        "day": "numeric",
+                        "day": "numeric-day-of-month",
 
                         "weekday": "long",
                         "hour": "numeric",

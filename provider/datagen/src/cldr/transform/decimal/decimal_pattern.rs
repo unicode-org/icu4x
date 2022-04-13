@@ -50,7 +50,7 @@ impl FromStr for DecimalSubPattern {
         #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
         let j = subpattern[i..]
             .find(|c: char| !matches!(c, '#' | '0' | ',' | '.'))
-            .unwrap_or_else(|| subpattern.len() - i)
+            .unwrap_or(subpattern.len() - i)
             + i;
         #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
         let prefix = &subpattern[..i];
@@ -112,8 +112,8 @@ impl DecimalPattern {
             .map(|subpattern| (subpattern.prefix.as_str(), subpattern.suffix.as_str()))
             .unwrap_or_else(|| ("-", ""));
         AffixesV1 {
-            prefix: Cow::Owned(signed_affixes.0.replace("-", sign_str)),
-            suffix: Cow::Owned(signed_affixes.1.replace("-", sign_str)),
+            prefix: Cow::Owned(signed_affixes.0.replace('-', sign_str)),
+            suffix: Cow::Owned(signed_affixes.1.replace('-', sign_str)),
         }
     }
 }

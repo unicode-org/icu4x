@@ -144,10 +144,10 @@ pub mod key {
 #[icu_provider::data_struct(UnicodePropertyV1Marker)]
 #[derive(Debug, Eq, PartialEq, Clone)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize))]
-#[cfg_attr(feature = "serialize", derive(serde::Deserialize))]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct UnicodePropertyV1<'data> {
     /// The set of characters, represented as an inversion list
-    #[cfg_attr(feature = "serialize", serde(borrow))]
+    #[cfg_attr(feature = "serde", serde(borrow))]
     pub inv_list: UnicodeSet<'data>,
 }
 
@@ -180,10 +180,10 @@ impl<'data> From<UnicodePropertyV1<'data>> for UnicodeSet<'data> {
 /// A map efficiently storing data about individual characters.
 #[derive(Debug, Eq, PartialEq, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize))]
-#[cfg_attr(feature = "serialize", derive(serde::Deserialize))]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct UnicodePropertyMapV1<'data, T: TrieValue> {
     /// A codepoint trie storing the data
-    #[cfg_attr(feature = "serialize", serde(borrow))]
+    #[cfg_attr(feature = "serde", serde(borrow))]
     pub code_point_trie: CodePointTrie<'data, T>,
 }
 
@@ -216,9 +216,9 @@ impl<T: TrieValue> icu_provider::DataMarker for UnicodePropertyMapV1Marker<T> {
 #[icu_provider::data_struct(ScriptWithExtensionsPropertyV1Marker)]
 #[derive(Debug, Eq, PartialEq, Clone)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize))]
-#[cfg_attr(feature = "serialize", derive(serde::Deserialize))]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct ScriptWithExtensionsPropertyV1<'data> {
     /// A special data structure for `Script` and `Script_Extensions`.
-    #[cfg_attr(feature = "serialize", serde(borrow))]
+    #[cfg_attr(feature = "serde", serde(borrow))]
     pub data: ScriptWithExtensions<'data>,
 }

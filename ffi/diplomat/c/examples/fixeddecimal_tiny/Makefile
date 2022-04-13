@@ -13,18 +13,18 @@ $(ALL_RUST):
 $(ALL_HEADERS):
 
 GCC := gcc
-CLANG := clang-12
-LLD := lld-12
+CLANG := clang-13
+LLD := lld-13
 
 
 ../../../../../target/debug/libicu_capi_staticlib.a: $(ALL_RUST)
 	cargo build -p icu_capi_staticlib
 
 ../../../../../target/x86_64-unknown-linux-gnu/debug/libicu_capi_staticlib.a: $(ALL_RUST)
-	RUSTFLAGS="-Clinker-plugin-lto -Clinker=$(CLANG) -Ccodegen-units=1 -Clink-arg=-flto -Cpanic=abort" cargo +nightly-2021-12-22 panic-abort-build -p icu_capi_staticlib --target x86_64-unknown-linux-gnu --no-default-features --features x86tiny
+	RUSTFLAGS="-Clinker-plugin-lto -Clinker=$(CLANG) -Ccodegen-units=1 -Clink-arg=-flto -Cpanic=abort" cargo +nightly-2022-01-31 panic-abort-build -p icu_capi_staticlib --target x86_64-unknown-linux-gnu --no-default-features --features x86tiny
 
 ../../../../../target/x86_64-unknown-linux-gnu/release/libicu_capi_staticlib.a: $(ALL_RUST)
-	RUSTFLAGS="-Clinker-plugin-lto -Clinker=$(CLANG) -Ccodegen-units=1 -Clink-arg=-flto -Cpanic=abort" cargo +nightly-2021-12-22 panic-abort-build -p icu_capi_staticlib --target x86_64-unknown-linux-gnu --no-default-features --features x86tiny --features smaller_static --release
+	RUSTFLAGS="-Clinker-plugin-lto -Clinker=$(CLANG) -Ccodegen-units=1 -Clink-arg=-flto -Cpanic=abort" cargo +nightly-2022-01-31 panic-abort-build -p icu_capi_staticlib --target x86_64-unknown-linux-gnu --no-default-features --features x86tiny --features smaller_static --release
 
 # Naive target: no optimizations, full std
 optim0.elf: ../../../../../target/debug/libicu_capi_staticlib.a $(ALL_HEADERS) test.c

@@ -1,567 +1,567 @@
 {
   "defaults": {
-    "Acre": {
+    "acre": {
       "daylight": "アクレ夏時間",
       "standard": "アクレ標準時"
     },
-    "Afghanistan": {
-      "standard": "アフガニスタン時間"
-    },
-    "Africa_Central": {
+    "afce": {
       "standard": "中央アフリカ時間"
     },
-    "Africa_Eastern": {
+    "afea": {
       "standard": "東アフリカ時間"
     },
-    "Africa_Southern": {
+    "afgh": {
+      "standard": "アフガニスタン時間"
+    },
+    "afso": {
       "standard": "南アフリカ標準時"
     },
-    "Africa_Western": {
+    "afwe": {
       "daylight": "西アフリカ夏時間",
       "standard": "西アフリカ標準時"
     },
-    "Alaska": {
-      "daylight": "アラスカ夏時間",
-      "standard": "アラスカ標準時"
-    },
-    "Almaty": {
+    "alam": {
       "daylight": "アルマトイ夏時間",
       "standard": "アルトマイ標準時"
     },
-    "Amazon": {
+    "alas": {
+      "daylight": "アラスカ夏時間",
+      "standard": "アラスカ標準時"
+    },
+    "amaz": {
       "daylight": "アマゾン夏時間",
       "standard": "アマゾン標準時"
     },
-    "America_Central": {
+    "amce": {
       "daylight": "アメリカ中部夏時間",
       "standard": "アメリカ中部標準時"
     },
-    "America_Eastern": {
+    "amea": {
       "daylight": "アメリカ東部夏時間",
       "standard": "アメリカ東部標準時"
     },
-    "America_Mountain": {
+    "ammo": {
       "daylight": "アメリカ山地夏時間",
       "standard": "アメリカ山地標準時"
     },
-    "America_Pacific": {
+    "ampa": {
       "daylight": "アメリカ太平洋夏時間",
       "standard": "アメリカ太平洋標準時"
     },
-    "Anadyr": {
+    "anad": {
       "daylight": "アナディリ夏時間",
       "standard": "アナディリ標準時"
     },
-    "Apia": {
+    "apia": {
       "daylight": "アピア夏時間",
       "standard": "アピア標準時"
     },
-    "Aqtau": {
+    "aqta": {
       "daylight": "アクタウ夏時間",
       "standard": "アクタウ標準時"
     },
-    "Aqtobe": {
+    "aqto": {
       "daylight": "アクトベ夏時間",
       "standard": "アクトベ標準時"
     },
-    "Arabian": {
+    "arab": {
       "daylight": "アラビア夏時間",
       "standard": "アラビア標準時"
     },
-    "Argentina": {
+    "arge": {
       "daylight": "アルゼンチン夏時間",
       "standard": "アルゼンチン標準時"
     },
-    "Argentina_Western": {
-      "daylight": "西部アルゼンチン夏時間",
-      "standard": "西部アルゼンチン標準時"
-    },
-    "Armenia": {
+    "arme": {
       "daylight": "アルメニア夏時間",
       "standard": "アルメニア標準時"
     },
-    "Atlantic": {
+    "arwe": {
+      "daylight": "西部アルゼンチン夏時間",
+      "standard": "西部アルゼンチン標準時"
+    },
+    "atla": {
       "daylight": "大西洋夏時間",
       "standard": "大西洋標準時"
     },
-    "Australia_Central": {
+    "auce": {
       "daylight": "オーストラリア中部夏時間",
       "standard": "オーストラリア中部標準時"
     },
-    "Australia_CentralWestern": {
+    "aucw": {
       "daylight": "オーストラリア中西部夏時間",
       "standard": "オーストラリア中西部標準時"
     },
-    "Australia_Eastern": {
+    "auea": {
       "daylight": "オーストラリア東部夏時間",
       "standard": "オーストラリア東部標準時"
     },
-    "Australia_Western": {
+    "auwe": {
       "daylight": "オーストラリア西部夏時間",
       "standard": "オーストラリア西部標準時"
     },
-    "Azerbaijan": {
+    "azer": {
       "daylight": "アゼルバイジャン夏時間",
       "standard": "アゼルバイジャン標準時"
     },
-    "Azores": {
+    "azor": {
       "daylight": "アゾレス夏時間",
       "standard": "アゾレス標準時"
     },
-    "Bangladesh": {
+    "bang": {
       "daylight": "バングラデシュ夏時間",
       "standard": "バングラデシュ標準時"
     },
-    "Bhutan": {
+    "bhut": {
       "standard": "ブータン時間"
     },
-    "Bolivia": {
+    "boli": {
       "standard": "ボリビア時間"
     },
-    "Brasilia": {
+    "bras": {
       "daylight": "ブラジリア夏時間",
       "standard": "ブラジリア標準時"
     },
-    "Brunei": {
+    "brun": {
       "standard": "ブルネイ・ダルサラーム時間"
     },
-    "Cape_Verde": {
+    "case": {
+      "standard": "ケイシー基地時間"
+    },
+    "cave": {
       "daylight": "カーボベルデ夏時間",
       "standard": "カーボベルデ標準時"
     },
-    "Casey": {
-      "standard": "ケイシー基地時間"
-    },
-    "Chamorro": {
+    "cham": {
       "standard": "チャモロ時間"
     },
-    "Chatham": {
+    "chat": {
       "daylight": "チャタム夏時間",
       "standard": "チャタム標準時"
     },
-    "Chile": {
+    "chil": {
       "daylight": "チリ夏時間",
       "standard": "チリ標準時"
     },
-    "China": {
+    "chin": {
       "daylight": "中国夏時間",
       "standard": "中国標準時"
     },
-    "Choibalsan": {
+    "choi": {
       "daylight": "チョイバルサン夏時間",
       "standard": "チョイバルサン標準時"
     },
-    "Christmas": {
+    "chri": {
       "standard": "クリスマス島時間"
     },
-    "Cocos": {
+    "coco": {
       "standard": "ココス諸島時間"
     },
-    "Colombia": {
+    "colo": {
       "daylight": "コロンビア夏時間",
       "standard": "コロンビア標準時"
     },
-    "Cook": {
+    "cook": {
       "daylight": "クック諸島夏時間",
       "standard": "クック諸島標準時"
     },
-    "Cuba": {
+    "cuba": {
       "daylight": "キューバ夏時間",
       "standard": "キューバ標準時"
     },
-    "Davis": {
+    "davi": {
       "standard": "デービス基地時間"
     },
-    "DumontDUrville": {
+    "dumo": {
       "standard": "デュモン・デュルヴィル基地時間"
     },
-    "East_Timor": {
-      "standard": "東ティモール時間"
-    },
-    "Easter": {
+    "east": {
       "daylight": "イースター島夏時間",
       "standard": "イースター島標準時"
     },
-    "Ecuador": {
+    "eati": {
+      "standard": "東ティモール時間"
+    },
+    "ecua": {
       "standard": "エクアドル時間"
     },
-    "Europe_Central": {
+    "euce": {
       "daylight": "中央ヨーロッパ夏時間",
       "standard": "中央ヨーロッパ標準時"
     },
-    "Europe_Eastern": {
+    "euea": {
       "daylight": "東ヨーロッパ夏時間",
       "standard": "東ヨーロッパ標準時"
     },
-    "Europe_Further_Eastern": {
+    "eufe": {
       "standard": "極東ヨーロッパ時間"
     },
-    "Europe_Western": {
+    "euwe": {
       "daylight": "西ヨーロッパ夏時間",
       "standard": "西ヨーロッパ標準時"
     },
-    "Falkland": {
+    "falk": {
       "daylight": "フォークランド諸島夏時間",
       "standard": "フォークランド諸島標準時"
     },
-    "Fiji": {
+    "fiji": {
       "daylight": "フィジー夏時間",
       "standard": "フィジー標準時"
     },
-    "French_Guiana": {
+    "frgu": {
       "standard": "仏領ギアナ時間"
     },
-    "French_Southern": {
+    "frso": {
       "standard": "仏領南方南極時間"
     },
-    "GMT": {
-      "standard": "グリニッジ標準時"
-    },
-    "Galapagos": {
+    "gala": {
       "standard": "ガラパゴス時間"
     },
-    "Gambier": {
+    "gamb": {
       "standard": "ガンビエ諸島時間"
     },
-    "Georgia": {
+    "geor": {
       "daylight": "ジョージア夏時間",
       "standard": "ジョージア標準時"
     },
-    "Gilbert_Islands": {
+    "giis": {
       "standard": "ギルバート諸島時間"
     },
-    "Greenland_Eastern": {
+    "grea": {
       "daylight": "グリーンランド東部夏時間",
       "standard": "グリーンランド東部標準時"
     },
-    "Greenland_Western": {
+    "grwe": {
       "daylight": "グリーンランド西部夏時間",
       "standard": "グリーンランド西部標準時"
     },
-    "Guam": {
+    "guam": {
       "standard": "グアム時間"
     },
-    "Gulf": {
+    "gulf": {
       "standard": "湾岸標準時"
     },
-    "Guyana": {
+    "guya": {
       "standard": "ガイアナ時間"
     },
-    "Hawaii_Aleutian": {
+    "haal": {
       "daylight": "ハワイ・アリューシャン夏時間",
       "standard": "ハワイ・アリューシャン標準時"
     },
-    "Hong_Kong": {
+    "hoko": {
       "daylight": "香港夏時間",
       "standard": "香港標準時"
     },
-    "Hovd": {
+    "hovd": {
       "daylight": "ホブド夏時間",
       "standard": "ホブド標準時"
     },
-    "India": {
-      "standard": "インド標準時"
-    },
-    "Indian_Ocean": {
-      "standard": "インド洋時間"
-    },
-    "Indochina": {
-      "standard": "インドシナ時間"
-    },
-    "Indonesia_Central": {
+    "ince": {
       "standard": "インドネシア中部時間"
     },
-    "Indonesia_Eastern": {
+    "indi": {
+      "standard": "インド標準時"
+    },
+    "indo": {
+      "standard": "インドシナ時間"
+    },
+    "inea": {
       "standard": "インドネシア東部時間"
     },
-    "Indonesia_Western": {
+    "inoc": {
+      "standard": "インド洋時間"
+    },
+    "inwe": {
       "standard": "インドネシア西部時間"
     },
-    "Iran": {
+    "iran": {
       "daylight": "イラン夏時間",
       "standard": "イラン標準時"
     },
-    "Irkutsk": {
+    "irku": {
       "daylight": "イルクーツク夏時間",
       "standard": "イルクーツク標準時"
     },
-    "Israel": {
+    "isra": {
       "daylight": "イスラエル夏時間",
       "standard": "イスラエル標準時"
     },
-    "Japan": {
+    "japa": {
       "daylight": "日本夏時間",
       "standard": "日本標準時"
     },
-    "Kamchatka": {
+    "kaea": {
+      "standard": "東カザフスタン時間"
+    },
+    "kamc": {
       "daylight": "ペトロパブロフスク・カムチャツキー夏時間",
       "standard": "ペトロパブロフスク・カムチャツキー標準時"
     },
-    "Kazakhstan_Eastern": {
-      "standard": "東カザフスタン時間"
-    },
-    "Kazakhstan_Western": {
+    "kawe": {
       "standard": "西カザフスタン時間"
     },
-    "Korea": {
+    "kore": {
       "daylight": "韓国夏時間",
       "standard": "韓国標準時"
     },
-    "Kosrae": {
+    "kosr": {
       "standard": "コスラエ時間"
     },
-    "Krasnoyarsk": {
+    "kras": {
       "daylight": "クラスノヤルスク夏時間",
       "standard": "クラスノヤルスク標準時"
     },
-    "Kyrgystan": {
+    "kyrg": {
       "standard": "キルギス時間"
     },
-    "Lanka": {
+    "lank": {
       "standard": "ランカ時間"
     },
-    "Line_Islands": {
+    "liis": {
       "standard": "ライン諸島時間"
     },
-    "Lord_Howe": {
+    "loho": {
       "daylight": "ロードハウ夏時間",
       "standard": "ロードハウ標準時"
     },
-    "Macau": {
+    "maca": {
       "daylight": "マカオ夏時間",
       "standard": "マカオ標準時"
     },
-    "Macquarie": {
+    "macq": {
       "standard": "マッコーリー島時間"
     },
-    "Magadan": {
+    "maga": {
       "daylight": "マガダン夏時間",
       "standard": "マガダン標準時"
     },
-    "Malaysia": {
-      "standard": "マレーシア時間"
-    },
-    "Maldives": {
-      "standard": "モルディブ時間"
-    },
-    "Marquesas": {
-      "standard": "マルキーズ時間"
-    },
-    "Marshall_Islands": {
+    "mais": {
       "standard": "マーシャル諸島時間"
     },
-    "Mauritius": {
+    "mala": {
+      "standard": "マレーシア時間"
+    },
+    "mald": {
+      "standard": "モルディブ時間"
+    },
+    "marq": {
+      "standard": "マルキーズ時間"
+    },
+    "maur": {
       "daylight": "モーリシャス夏時間",
       "standard": "モーリシャス標準時"
     },
-    "Mawson": {
+    "maws": {
       "standard": "モーソン基地時間"
     },
-    "Mexico_Northwest": {
+    "meno": {
       "daylight": "メキシコ北西部夏時間",
       "standard": "メキシコ北西部標準時"
     },
-    "Mexico_Pacific": {
+    "mepa": {
       "daylight": "メキシコ太平洋夏時間",
       "standard": "メキシコ太平洋標準時"
     },
-    "Mongolia": {
+    "mgmt": {
+      "standard": "グリニッジ標準時"
+    },
+    "mong": {
       "daylight": "ウランバートル夏時間",
       "standard": "ウランバートル標準時"
     },
-    "Moscow": {
+    "mosc": {
       "daylight": "モスクワ夏時間",
       "standard": "モスクワ標準時"
     },
-    "Myanmar": {
+    "myan": {
       "standard": "ミャンマー時間"
     },
-    "Nauru": {
+    "naur": {
       "standard": "ナウル時間"
     },
-    "Nepal": {
-      "standard": "ネパール時間"
-    },
-    "New_Caledonia": {
+    "neca": {
       "daylight": "ニューカレドニア夏時間",
       "standard": "ニューカレドニア標準時"
     },
-    "New_Zealand": {
-      "daylight": "ニュージーランド夏時間",
-      "standard": "ニュージーランド標準時"
+    "nepa": {
+      "standard": "ネパール時間"
     },
-    "Newfoundland": {
+    "newf": {
       "daylight": "ニューファンドランド夏時間",
       "standard": "ニューファンドランド標準時"
     },
-    "Niue": {
+    "neze": {
+      "daylight": "ニュージーランド夏時間",
+      "standard": "ニュージーランド標準時"
+    },
+    "niue": {
       "standard": "ニウエ時間"
     },
-    "Norfolk": {
+    "noma": {
+      "standard": "北マリアナ諸島時間"
+    },
+    "norf": {
       "daylight": "ノーフォーク島夏時間",
       "standard": "ノーフォーク島標準時"
     },
-    "Noronha": {
+    "noro": {
       "daylight": "フェルナンド・デ・ノローニャ夏時間",
       "standard": "フェルナンド・デ・ノローニャ標準時"
     },
-    "North_Mariana": {
-      "standard": "北マリアナ諸島時間"
-    },
-    "Novosibirsk": {
+    "novo": {
       "daylight": "ノヴォシビルスク夏時間",
       "standard": "ノヴォシビルスク標準時"
     },
-    "Omsk": {
+    "omsk": {
       "daylight": "オムスク夏時間",
       "standard": "オムスク標準時"
     },
-    "Pakistan": {
+    "paki": {
       "daylight": "パキスタン夏時間",
       "standard": "パキスタン標準時"
     },
-    "Palau": {
+    "pala": {
       "standard": "パラオ時間"
     },
-    "Papua_New_Guinea": {
+    "pang": {
       "standard": "パプアニューギニア時間"
     },
-    "Paraguay": {
+    "para": {
       "daylight": "パラグアイ夏時間",
       "standard": "パラグアイ標準時"
     },
-    "Peru": {
+    "peru": {
       "daylight": "ペルー夏時間",
       "standard": "ペルー標準時"
     },
-    "Philippines": {
+    "phil": {
       "daylight": "フィリピン夏時間",
       "standard": "フィリピン標準時"
     },
-    "Phoenix_Islands": {
+    "phis": {
       "standard": "フェニックス諸島時間"
     },
-    "Pierre_Miquelon": {
+    "pimi": {
       "daylight": "サンピエール島・ミクロン島夏時間",
       "standard": "サンピエール島・ミクロン島標準時"
     },
-    "Pitcairn": {
+    "pitc": {
       "standard": "ピトケアン時間"
     },
-    "Ponape": {
+    "pona": {
       "standard": "ポナペ時間"
     },
-    "Pyongyang": {
+    "pyon": {
       "standard": "平壌時間"
     },
-    "Qyzylorda": {
+    "qyzy": {
       "daylight": "クズロルダ夏時間",
       "standard": "クズロルダ標準時"
     },
-    "Reunion": {
+    "reun": {
       "standard": "レユニオン時間"
     },
-    "Rothera": {
+    "roth": {
       "standard": "ロゼラ基地時間"
     },
-    "Sakhalin": {
+    "sakh": {
       "daylight": "サハリン夏時間",
       "standard": "サハリン標準時"
     },
-    "Samara": {
+    "sama": {
       "daylight": "サマラ夏時間",
       "standard": "サマラ標準時"
     },
-    "Samoa": {
+    "samo": {
       "daylight": "サモア夏時間",
       "standard": "サモア標準時"
     },
-    "Seychelles": {
+    "seyc": {
       "standard": "セーシェル時間"
     },
-    "Singapore": {
+    "sing": {
       "standard": "シンガポール標準時"
     },
-    "Solomon": {
-      "standard": "ソロモン諸島時間"
-    },
-    "South_Georgia": {
+    "soge": {
       "standard": "サウスジョージア時間"
     },
-    "Suriname": {
+    "solo": {
+      "standard": "ソロモン諸島時間"
+    },
+    "suri": {
       "standard": "スリナム時間"
     },
-    "Syowa": {
+    "syow": {
       "standard": "昭和基地時間"
     },
-    "Tahiti": {
+    "tahi": {
       "standard": "タヒチ時間"
     },
-    "Taipei": {
+    "taip": {
       "daylight": "台北夏時間",
       "standard": "台北標準時"
     },
-    "Tajikistan": {
+    "taji": {
       "standard": "タジキスタン時間"
     },
-    "Tokelau": {
+    "toke": {
       "standard": "トケラウ時間"
     },
-    "Tonga": {
+    "tong": {
       "daylight": "トンガ夏時間",
       "standard": "トンガ標準時"
     },
-    "Truk": {
+    "truk": {
       "standard": "チューク時間"
     },
-    "Turkmenistan": {
+    "turk": {
       "daylight": "トルクメニスタン夏時間",
       "standard": "トルクメニスタン標準時"
     },
-    "Tuvalu": {
+    "tuva": {
       "standard": "ツバル時間"
     },
-    "Uruguay": {
+    "urug": {
       "daylight": "ウルグアイ夏時間",
       "standard": "ウルグアイ標準時"
     },
-    "Uzbekistan": {
+    "uzbe": {
       "daylight": "ウズベキスタン夏時間",
       "standard": "ウズベキスタン標準時"
     },
-    "Vanuatu": {
+    "vanu": {
       "daylight": "バヌアツ夏時間",
       "standard": "バヌアツ標準時"
     },
-    "Venezuela": {
+    "vene": {
       "standard": "ベネズエラ時間"
     },
-    "Vladivostok": {
+    "vlad": {
       "daylight": "ウラジオストク夏時間",
       "standard": "ウラジオストク標準時"
     },
-    "Volgograd": {
+    "volg": {
       "daylight": "ボルゴグラード夏時間",
       "standard": "ボルゴグラード標準時"
     },
-    "Vostok": {
+    "vost": {
       "standard": "ボストーク基地時間"
     },
-    "Wake": {
+    "wake": {
       "standard": "ウェーク島時間"
     },
-    "Wallis": {
+    "wall": {
       "standard": "ウォリス・フツナ時間"
     },
-    "Yakutsk": {
+    "yaku": {
       "daylight": "ヤクーツク夏時間",
       "standard": "ヤクーツク標準時"
     },
-    "Yekaterinburg": {
+    "yeka": {
       "daylight": "エカテリンブルグ夏時間",
       "standard": "エカテリンブルグ標準時"
     },
-    "Yukon": {
+    "yuko": {
       "standard": "ユーコン時間"
     }
   },

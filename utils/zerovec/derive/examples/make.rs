@@ -20,6 +20,7 @@ struct TupleStruct(u8, char);
 #[make_ule(EnumULE)]
 #[repr(u8)]
 #[derive(Copy, Clone, PartialEq, Eq, Ord, PartialOrd, Debug)]
+#[zerovec::derive(Debug)]
 enum Enum {
     A = 0,
     B = 1,
@@ -44,13 +45,12 @@ enum OutOfOrderEnum {
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Ord, PartialOrd)]
 #[make_ule(NoKVULE)]
-#[zerovec::skip_kv]
+#[zerovec::skip_derive(ZeroMapKV)]
 struct NoKV(u8, char);
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 #[make_ule(NoOrdULE)]
-#[zerovec::skip_ord]
-#[zerovec::skip_kv]
+#[zerovec::skip_derive(ZeroMapKV, Ord)]
 struct NoOrd(u8, char);
 
 fn test_zerovec<T: ule::AsULE + Debug + PartialEq>(slice: &[T]) {

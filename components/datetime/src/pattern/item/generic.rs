@@ -4,7 +4,7 @@
 
 #[derive(Debug, PartialEq, Clone, Copy)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize))]
-#[cfg_attr(feature = "serialize", derive(serde::Deserialize))]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub enum GenericPatternItem {
     Placeholder(u8),
     Literal(char),

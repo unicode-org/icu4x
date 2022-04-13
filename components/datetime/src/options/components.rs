@@ -47,7 +47,7 @@
 //! let bag = components::Bag {
 //!     year: Some(components::Year::Numeric),
 //!     month: Some(components::Month::Long),
-//!     day: Some(components::Numeric::Numeric),
+//!     day: Some(components::Day::NumericDayOfMonth),
 //!
 //!     hour: Some(components::Numeric::TwoDigit),
 //!     minute: Some(components::Numeric::TwoDigit),
@@ -80,12 +80,12 @@ use crate::{
 use alloc::vec::Vec;
 
 use super::preferences;
-#[cfg(feature = "serialize")]
+#[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 
 /// See the [module-level](./index.html) docs for more information.
 #[derive(Debug, Clone, PartialEq, Default, Copy)]
-#[cfg_attr(feature = "serialize", derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub struct Bag {
     /// Include the era, such as "AD" or "CE".
     pub era: Option<Text>,
@@ -95,8 +95,8 @@ pub struct Bag {
     pub month: Option<Month>,
     /// Include the week number, such as "51st" or "51" for week 51.
     pub week: Option<Week>,
-    /// Include the day, such as "07" or "7".
-    pub day: Option<Numeric>,
+    /// Include the day of the month/year, such as "07" or "7".
+    pub day: Option<Day>,
     /// Include the weekday, such as "Wednesday" or "Wed".
     pub weekday: Option<Text>,
 
@@ -198,18 +198,20 @@ impl Bag {
         }
 
         if let Some(day) = self.day {
-            // TODO(#591,#592) Unimplemented day fields:
+            // TODO(#591) Unimplemented day fields:
             // D - Day of year
-            // F - Day of week in month
             // g - Modified Julian day.
             fields.push(Field {
-                symbol: FieldSymbol::Day(fields::Day::DayOfMonth),
+                symbol: FieldSymbol::Day(match day {
+                    Day::NumericDayOfMonth | Day::TwoDigitDayOfMonth => fields::Day::DayOfMonth,
+                    Day::DayOfWeekInMonth => fields::Day::DayOfWeekInMonth,
+                }),
                 length: match day {
-                    // Day of month (numeric).
-                    // d    1 	  Numeric: minimum digits
-                    // dd   01 	  Numeric: 2 digits, zero pad if needed
-                    Numeric::Numeric => FieldLength::One,
-                    Numeric::TwoDigit => FieldLength::TwoDigit,
+                    // d    1 	  Numeric day of month: minimum digits
+                    // dd   01 	  Numeric day of month: 2 digits, zero pad if needed
+                    // F    1  	  Numeric day of week in month: minimum digits
+                    Day::NumericDayOfMonth | Day::DayOfWeekInMonth => FieldLength::One,
+                    Day::TwoDigitDayOfMonth => FieldLength::TwoDigit,
                 },
             });
         }
@@ -335,7 +337,7 @@ impl Bag {
 /// and second.
 #[derive(Debug, Clone, Copy, PartialEq)]
 #[cfg_attr(
-    feature = "serialize",
+    feature = "serde",
     derive(Serialize, Deserialize),
     serde(rename_all = "kebab-case")
 )]
@@ -349,7 +351,7 @@ pub enum Numeric {
 /// A text component for the `components::`[`Bag`]. It is used for the era and weekday.
 #[derive(Debug, Clone, Copy, PartialEq)]
 #[cfg_attr(
-    feature = "serialize",
+    feature = "serde",
     derive(Serialize, Deserialize),
     serde(rename_all = "kebab-case")
 )]
@@ -365,7 +367,7 @@ pub enum Text {
 /// Options for displaying a Year for the `components::`[`Bag`].
 #[derive(Debug, Clone, Copy, PartialEq)]
 #[cfg_attr(
-    feature = "serialize",
+    feature = "serde",
     derive(Serialize, Deserialize),
     serde(rename_all = "kebab-case")
 )]
@@ -385,7 +387,7 @@ pub enum Year {
 /// Options for displaying a Month for the `components::`[`Bag`].
 #[derive(Debug, Clone, Copy, PartialEq)]
 #[cfg_attr(
-    feature = "serialize",
+    feature = "serde",
     derive(Serialize, Deserialize),
     serde(rename_all = "kebab-case")
 )]
@@ -410,7 +412,7 @@ pub enum Month {
 /// Week numbers are relative to either a month or year, e.g. 'week 3 of January' or 'week 40 of 2000'.
 #[derive(Debug, Clone, Copy, PartialEq)]
 #[cfg_attr(
-    feature = "serialize",
+    feature = "serde",
     derive(Serialize, Deserialize),
     serde(rename_all = "kebab-case")
 )]
@@ -423,13 +425,29 @@ pub enum Week {
     TwoDigitWeekOfYear,
 }
 
+/// Options for displaying the current day of the month or year.
+#[derive(Debug, Clone, PartialEq, Copy)]
+#[cfg_attr(
+    feature = "serde",
+    derive(Serialize, Deserialize),
+    serde(rename_all = "kebab-case")
+)]
+pub enum Day {
+    /// The numeric value of the day of month, such as the "2" in July 2 1984.
+    NumericDayOfMonth,
+    /// The two digit value of the day of month, such as the "02" in 1984-07-02.
+    TwoDigitDayOfMonth,
+    /// The day of week in this month, such as the "2" in 2nd Wednesday of July.
+    DayOfWeekInMonth,
+}
+
 /// Options for displaying a time zone for the `components::`[`Bag`].
 ///
 /// Note that the initial implementation is focusing on only supporting ECMA-402 compatible
 /// options.
 #[derive(Debug, Clone, Copy, PartialEq)]
 #[cfg_attr(
-    feature = "serialize",
+    feature = "serde",
     derive(Serialize, Deserialize),
     serde(rename_all = "kebab-case")
 )]
@@ -559,13 +577,11 @@ impl<'data> From<&PatternPlurals<'data>> for Bag {
                 FieldSymbol::Day(day) => {
                     bag.day = Some(match day {
                         fields::Day::DayOfMonth => match field.length {
-                            FieldLength::TwoDigit => Numeric::TwoDigit,
-                            _ => Numeric::Numeric,
+                            FieldLength::TwoDigit => Day::TwoDigitDayOfMonth,
+                            _ => Day::NumericDayOfMonth,
                         },
                         fields::Day::DayOfYear => unimplemented!("fields::Day::DayOfYear #591"),
-                        fields::Day::DayOfWeekInMonth => {
-                            unimplemented!("fields::Day::DayOfWeekInMonth #592")
-                        }
+                        fields::Day::DayOfWeekInMonth => Day::DayOfWeekInMonth,
                         fields::Day::ModifiedJulianDay => {
                             unimplemented!("fields::Day::ModifiedJulianDay")
                         }
@@ -687,7 +703,7 @@ mod test {
             year: Some(Year::Numeric),
             month: Some(Month::Long),
             week: Some(Week::WeekOfMonth),
-            day: Some(Numeric::Numeric),
+            day: Some(Day::NumericDayOfMonth),
 
             hour: Some(Numeric::Numeric),
             minute: Some(Numeric::Numeric),
@@ -714,7 +730,7 @@ mod test {
         let bag = Bag {
             year: Some(Year::Numeric),
             month: Some(Month::TwoDigit),
-            day: Some(Numeric::Numeric),
+            day: Some(Day::NumericDayOfMonth),
             ..Default::default()
         };
         assert_eq!(

@@ -443,7 +443,7 @@ impl<'l, 's, Y: LineBreakType<'l, 's>> Iterator for LineBreakIterator<'l, 's, Y>
     type Item = usize;
 
     fn next(&mut self) -> Option<Self::Item> {
-        if self.is_eof() {
+        if self.check_eof() {
             return None;
         }
 
@@ -582,7 +582,7 @@ impl<'l, 's, Y: LineBreakType<'l, 's>> Iterator for LineBreakIterator<'l, 's, Y>
 
 impl<'l, 's, Y: LineBreakType<'l, 's>> LineBreakIterator<'l, 's, Y> {
     #[inline]
-    fn is_eof(&mut self) -> bool {
+    fn check_eof(&mut self) -> bool {
         if self.current_pos_data.is_none() {
             self.current_pos_data = self.iter.next();
             if self.current_pos_data.is_none() {

@@ -113,4 +113,5 @@ pub use format::zoned_datetime::FormattedZonedDateTime;
 pub use options::DateTimeFormatOptions;
 pub use time_zone::TimeZoneFormat;
 pub use time_zone::TimeZoneFormatConfig;
+pub use time_zone::TimeZoneFormatOptions;
 pub use zoned_datetime::ZonedDateTimeFormat;

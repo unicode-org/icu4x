@@ -30,7 +30,7 @@ dependencies = [
 ]
 
 [tasks.check-no-features]
-description = "Check ICU4X build with no features (covered in CI via cargo build-all-features)"
+description = "Check ICU4X build with no features (covered in CI via cargo check-all-features)"
 category = "ICU4X Development"
 command = "cargo"
 args = ["check", "--all-targets", "--no-default-features"]
@@ -69,7 +69,7 @@ dependencies = [
 description = "Run all tests for the CI 'features' job"
 category = "CI"
 dependencies = [
-    "build-all-features",
+    "check-all-features",
 ]
 
 [tasks.ci-job-fmt]

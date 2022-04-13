@@ -1,10 +1,10 @@
 {
   "defaults": {
-    "Argentina": {
+    "arge": {
       "daylight": "ARST",
       "standard": "ART"
     },
-    "Argentina_Western": {
+    "arwe": {
       "daylight": "WARST",
       "standard": "WART"
     }
