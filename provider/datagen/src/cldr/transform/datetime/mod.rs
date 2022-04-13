@@ -9,10 +9,11 @@ use crate::cldr::CldrPaths;
 use elsa::sync::FrozenBTreeMap;
 
 use icu_datetime::provider::calendar::*;
-use icu_locid::unicode_ext_key;
+use icu_locid::{Locale, unicode_ext_key};
 use icu_provider::datagen::IterableResourceProvider;
 use icu_provider::prelude::*;
 use std::convert::TryFrom;
+use std::str::FromStr;
 use std::path::PathBuf;
 
 mod patterns;
@@ -109,9 +110,14 @@ macro_rules! impl_resource_provider {
 
                     let mut r = Vec::new();
                     for (_, cal, path) in &self.paths {
+                        let cal_value = icu_locid::extensions::unicode::Value::from_str(cal).map_err(|e| DataError::custom("could not parse calendar identifier").with_error_context(&e))?;
                         r.extend(
                             get_langid_subdirectories(&path.join("main"))?
-                                .map(|lid| ResourceOptions::temp_with_unicode_ext(lid, "ca", cal))
+                                .map(|lid| {
+                                    let mut locale: Locale = lid.into();
+                                    locale.extensions.unicode.keywords.set(unicode_ext_key!("ca"), cal_value.clone());
+                                    ResourceOptions::from(locale)
+                                })
                         );
                     }
                     Ok(Box::new(r.into_iter()))
