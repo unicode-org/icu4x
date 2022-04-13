@@ -164,14 +164,18 @@ impl Calendar for AnyCalendar {
             ) => c1
                 .until(d1, d2, c2, largest_unit, smallest_unit)
                 .cast_unit(),
-            // TODO: convert date 2 if it's from the wrong calendar
-            _ => panic!(
-                "Found AnyCalendar with mixed calendar types {},{} and date types {},{}!",
-                self.calendar_name(),
-                calendar2.calendar_name(),
-                date1.calendar_name(),
-                date2.calendar_name()
-            ),
+            _ => {
+                // attempt to convert
+                let iso = calendar2.date_to_iso(&date2);
+
+                match_cal_and_date!(match (self, date1):
+                    (c1, d1) => {
+                        let d2 = c1.date_from_iso(iso);
+                        let until = c1.until(d1, &d2, &c1, largest_unit, smallest_unit);
+                        until.cast_unit::<AnyCalendar>()
+                    }
+                )
+            }
         }
     }
 
