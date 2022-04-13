@@ -235,7 +235,12 @@ pub struct Time {
 
 impl Time {
     /// Do not validate the numeric input for this component.
-    pub const fn new(hour: IsoHour, minute: IsoMinute, second: IsoSecond, fraction: FractionalSecond) -> Self {
+    pub const fn new(
+        hour: IsoHour,
+        minute: IsoMinute,
+        second: IsoSecond,
+        fraction: FractionalSecond,
+    ) -> Self {
         Self {
             hour,
             minute,

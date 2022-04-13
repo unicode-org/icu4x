@@ -51,10 +51,7 @@ pub fn parse_gregorian_from_str(input: &str) -> Result<DateTime<Gregorian>, Date
     let second: u8 = input[17..19].parse()?;
     #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
     let fraction: u32 = if input.len() > 20 {
-        match input[20..].parse() {
-            Ok(fraction) => fraction,
-            Err(_) => 0,
-        }
+        input[20..].parse().unwrap_or(0)
     } else {
         0
     };
