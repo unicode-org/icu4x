@@ -39,8 +39,8 @@ impl FlexZeroSlice {
     /// ```
     #[inline]
     pub const fn new_empty() -> &'static Self {
-        const ADD: &'static [u8] = &[1u8];
-        unsafe { mem::transmute(ADD) }
+        const ARR: &'static [u8] = &[1u8];
+        unsafe { Self::from_byte_slice_unchecked(ARR) }
     }
 
     #[inline]
@@ -48,9 +48,20 @@ impl FlexZeroSlice {
         usize::from(self.width)
     }
 
+    /// # Panics
+    ///
+    /// Panics if bytes is empty.
+    ///
+    /// # Safety
+    ///
+    /// Must be called on a valid [`FlexZeroSlice`] byte array.
     #[inline]
-    pub unsafe fn from_byte_slice_unchecked(bytes: &[u8]) -> &Self {
-        &*(&bytes[..bytes.len() - 1] as *const [u8] as *const Self)
+    pub const unsafe fn from_byte_slice_unchecked(bytes: &[u8]) -> &Self {
+        let (_, remainder) = match bytes.split_last(){
+            Some(v) => v,
+            None => panic!("slice should be non-empty"),
+        };
+        &*(remainder as *const [u8] as *const Self)
     }
 
     #[inline]
