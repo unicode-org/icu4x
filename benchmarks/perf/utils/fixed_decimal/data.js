@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1649801000136,
+  "lastUpdate": 1649865787965,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -23009,6 +23009,66 @@ window.BENCHMARK_DATA = {
             "name": "from_string/1000000001",
             "value": 91,
             "range": "± 4",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "7d75be3ddb6d10fd178aa2a0651cfde65f40edbe",
+          "message": "Replace OmnibusDataProvider with make_forking_provider (#1788)",
+          "timestamp": "2022-04-13T10:53:57-05:00",
+          "tree_id": "68252a7fb07e2a11298760b6340b69aab5e332f1",
+          "url": "https://github.com/unicode-org/icu4x/commit/7d75be3ddb6d10fd178aa2a0651cfde65f40edbe"
+        },
+        "date": 1649865771501,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 92858,
+            "range": "± 1072",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 18413,
+            "range": "± 209",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 50948,
+            "range": "± 521",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 186,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 78,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 77,
+            "range": "± 0",
             "unit": "ns/iter"
           }
         ]
