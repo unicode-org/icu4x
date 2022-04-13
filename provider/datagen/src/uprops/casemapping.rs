@@ -90,7 +90,7 @@ icu_provider::impl_dyn_provider!(
 
 #[cfg(test)]
 mod tests {
-    use crate::uprops::casemapping::CaseMappingDataProvider;
+    use super::*;
     use core::str::FromStr;
     use icu_casemapping::CaseMapping;
     use icu_locid::Locale;
