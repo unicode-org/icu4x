@@ -26,10 +26,21 @@ fn chunk_to_usize(chunk: &[u8], width: usize) -> usize {
 
 impl FlexZeroSlice {
     /// Construct a new empty FlexZeroSlice
+    ///
+    /// ```
+    /// use zerovec::vecs::FlexZeroSlice;
+    ///
+    /// const EMPTY_SLICE: &FlexZeroSlice = FlexZeroSlice::new_empty();
+    ///
+    /// assert!(EMPTY_SLICE.is_empty());
+    /// assert_eq!(EMPTY_SLICE.len(), 0);
+    /// assert_eq!(EMPTY_SLICE.get_width(), 1);
+    /// assert_eq!(EMPTY_SLICE.first(), None);
+    /// ```
     #[inline]
-    pub fn new_empty() -> &'static Self {
-        let arr: &[u8] = &[1u8];
-        unsafe { mem::transmute(arr) }
+    pub const fn new_empty() -> &'static Self {
+        const ADD: &'static [u8] = &[1u8];
+        unsafe { mem::transmute(ADD) }
     }
 
     #[inline]
