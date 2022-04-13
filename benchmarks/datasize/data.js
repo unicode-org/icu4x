@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1649800475852,
+  "lastUpdate": 1649865342872,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -13163,6 +13163,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/1ae9151bfc8170936dff367617102914921811fb"
         },
         "date": 1649800460906,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4474764,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "7d75be3ddb6d10fd178aa2a0651cfde65f40edbe",
+          "message": "Replace OmnibusDataProvider with make_forking_provider (#1788)",
+          "timestamp": "2022-04-13T10:53:57-05:00",
+          "tree_id": "68252a7fb07e2a11298760b6340b69aab5e332f1",
+          "url": "https://github.com/unicode-org/icu4x/commit/7d75be3ddb6d10fd178aa2a0651cfde65f40edbe"
+        },
+        "date": 1649865326135,
         "tool": "ndjson",
         "benches": [
           {
