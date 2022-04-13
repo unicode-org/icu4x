@@ -1,50 +1,42 @@
 # icu_datagen [![crates.io](https://img.shields.io/crates/v/icu_datagen)](https://crates.io/crates/icu_datagen)
 
-`icu_datagen` contains command-line tools to generate and process ICU4X data.
+`icu_datagen` is a library to generate data files that can be used in ICU4X data providers.
 
-The tools include:
-
-* `icu4x-datagen`: Read source data (CLDR JSON, uprops files) and dump ICU4X-format data.
-* `icu4x-key-extract`: Extract `ResourceKey` objects present in a compiled executable.
-
-More details on each tool can be found by running `--help`.
+Data files can be generated either programmatically (i.e. in `build.rs`), or through a
+command-line utility.
 
 ## Examples
 
-Generate ICU4X Postcard blob (single file) for all keys and all locales:
+### `build.rs`
 
+```rust
+use icu_datagen::*;
+use icu_locid::langid;
+use std::fs::File;
+use std::path::PathBuf;
+
+fn main() {
+    datagen(
+        Some(&[langid!("de"), langid!("en-AU")]),
+        &get_all_keys(),
+        &SourceData::default().with_uprops(PathBuf::from("/path/to/uprops/root")),
+        Out::Blob(Box::new(File::create("data.postcard").unwrap())),
+        false,
+    ).unwrap();
+}
+```
+
+### Command line
+The command line interface is available with the `bin` feature.
 ```bash
-# Run from the icu4x project folder
-$ cargo run --bin icu4x-datagen -- \
-    --cldr-tag 39.0.0 \
+cargo run --features bin -- \
+    --uprops-root /path/to/uprops/root \
     --all-keys \
-    --all-locales \
+    --locales de,en-AU \
     --format blob \
-    --out /tmp/icu4x_data/icu4x_data.postcard
+    --out data.postcard
 ```
-
-Extract the keys used by an executable into a key file:
-
-```bash
-# Run from the icu4x project folder
-$ cargo build --example work_log --release --features serde
-$ cargo make icu4x-key-extract \
-    target/release/examples/work_log \
-    /tmp/icu4x_data/work_log+keys.txt
-$ cat /tmp/icu4x_data/work_log+keys.txt
-```
-
-Generate ICU4X JSON file tree from the key file for Spanish and German:
-
-```bash
-# Run from the icu4x project folder
-$ cargo run --bin icu4x-datagen -- \
-    --cldr-tag 39.0.0 \
-    --key-file /tmp/icu4x_data/work_log+keys.txt \
-    --locales es \
-    --locales de \
-    --out /tmp/icu4x_data/work_log_json
-```
+More details can be found by running `--help`.
 
 ## More Information
 

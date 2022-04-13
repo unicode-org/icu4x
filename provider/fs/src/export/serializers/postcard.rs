@@ -39,3 +39,9 @@ impl Serializer {
         Self {}
     }
 }
+
+impl Default for Serializer {
+    fn default() -> Self {
+        Self::new(Default::default())
+    }
+}

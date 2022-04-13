@@ -97,6 +97,9 @@ impl From<DatagenError> for DataError {
 const UPROPS_SOURCE_MARKER: &str = "Uprops";
 const CLDR_SOURCE_MARKER: &str = "CLDR";
 
+/// Identifies errors that are due to missing CLDR data.
+///
+/// See [`datagen`](crate::datagen).
 pub fn is_missing_cldr_error(e: DataError) -> bool {
     matches!(
         e,
@@ -108,6 +111,9 @@ pub fn is_missing_cldr_error(e: DataError) -> bool {
     )
 }
 
+/// Identifies errors that are due to missing Unicode properties data.
+///
+/// See [`datagen`](crate::datagen).
 pub fn is_missing_uprops_error(e: DataError) -> bool {
     matches!(
         e,

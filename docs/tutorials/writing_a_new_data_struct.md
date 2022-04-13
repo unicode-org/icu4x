@@ -39,13 +39,11 @@ In general, data structs should be annotated with `#[icu_provider::data_struct]`
 
 As explained in *data_pipeline.md*, the data struct should support zero-copy deserialization. The `#[icu_provider::data_struct]` annotation will enforce this for you. **See more information in [style_guide.md](https://github.com/unicode-org/icu4x/blob/main/docs/process/style_guide.md#zero-copy-in-dataprovider-structs--required),** as well as the example below in this tutorial.
 
-If adding a new crate, you may need to add a new data category to the [`ResourceCategory` enum](https://unicode-org.github.io/icu4x-docs/doc/icu_provider/prelude/enum.ResourceCategory.html) in `icu_provider`. This may change in the future.
-
 ### Data Download
 
 The first step to introduce data into the ICU4X pipeline is to download it from an external source. This corresponds to step 1 above.
 
-When clients use ICU4X, this is generally a manual step, although we may provide tooling to assist with it. For the purpose of ICU4X test data, the tool [`icu4x-testdata-download`](https://unicode-org.github.io/icu4x-docs/doc/icu_datagen/index.html) should automatically download data from the external source and save it in the ICU4X tree. `icu4x-testdata-download` should not do anything other than downloading the raw source data.
+When clients use ICU4X, this is generally a manual step, although we may provide tooling to assist with it. For the purpose of ICU4X test data, the tool [`icu4x-testdata-download-source`](https://unicode-org.github.io/icu4x-docs/doc/icu_datagen/index.html) should automatically download data from the external source and save it in the ICU4X tree. `icu4x-testdata-download-source` should not do anything other than downloading the raw source data.
 
 ### Source Data Providers
 
@@ -55,13 +53,9 @@ Although they may share common code, source data providers are implemented speci
 
 Examples of source data providers include:
 
-- [`CldrJsonDataProvider`](https://unicode-org.github.io/icu4x-docs/doc/icu_datagen/cldr/transform/struct.CldrJsonDataProvider.html#)
-    - [`NumbersProvider`](https://unicode-org.github.io/icu4x-docs/doc/icu_datagen/cldr/transform/struct.NumbersProvider.html)
-    - [`PluralsProvider`](https://unicode-org.github.io/icu4x-docs/doc/icu_datagen/cldr/transform/struct.PluralsProvider.html)
-    - [`DateSymbolsProvider`](https://unicode-org.github.io/icu4x-docs/doc/icu_datagen/cldr/transform/struct.DateSymbolsProvider.html)
-    - [&hellip; more examples](https://unicode-org.github.io/icu4x-docs/doc/icu_datagen/cldr/transform/index.html)
-- `BinaryPropertyUnicodeSetDataProvider`
-- [`HelloWorldProvider`](https://unicode-org.github.io/icu4x-docs/doc/icu_provider/hello_world/struct.HelloWorldProvider.html)
+- [`NumbersProvider`](https://unicode-org.github.io/icu4x-docs/doc/icu_datagen/transform/cldr/struct.NumbersProvider.html)
+- [`BinaryPropertyUnicodeSetDataProvider`](https://unicode-org.github.io/icu4x-docs/doc/icu_datagen/transform/uprops/struct.BinaryPropertyUnicodeSetDataProvider.html)
+- [&hellip; more examples](https://unicode-org.github.io/icu4x-docs/doc/icu_datagen/transform/index.html)
 
 Source data providers must implement the following traits:
 
@@ -73,7 +67,7 @@ Source data providers are often complex to write. Rules of thumb:
 
 - Optimize for readability and maintainability. The source data providers are not used in production, so performance is not a driving concern; however, we want the transformer to be fast enough to make a good developer experience.
 - If the data source is similar to an existing data source (e.g., importing new data from CLDR JSON), try to share code with existing data providers for that source.
-- If the data source is novel, feel free to add a new crate under `/provider`.
+- If the data source is novel, feel free to add a new module under `icu_datagen::transform`.
 
 ### Data Exporters and Runtime Data Providers
 
@@ -95,18 +89,30 @@ Examples of runtime data providers include:
 
 ### Data Generation Tool (`icu4x-datagen`)
 
-The [data generation tool, i.e., `icu4x-datagen`](https://unicode-org.github.io/icu4x-docs/doc/icu_datagen/index.html), ties together the source data providers with a data exporters.
+The [data generation tool, i.e., `icu4x-datagen`](https://unicode-org.github.io/icu4x-docs/doc/icu_datagen/index.html), ties together the source data providers with a data exporter.
 
-When adding new data structs, it may be necessary to make `icu4x-datagen` aware of your source data provider. This is *not* necessary for CLDR JSON providers, so long as they are properly hooked up into `CldrJsonDataProvider`.
+When adding new data structs, it is necessary to make `icu4x-datagen` aware of your source data provider. To do this, edit 
+[*provider/datagen/src/registry.rs*](https://github.com/unicode-org/icu4x/blob/main/provider/datagen/src/registry.rs) and add your data provider to the macro
 
-1. Add a dependency from `icu_datagen` to the crate containing your source data provider.
-2. Edit the code in `icu_datagen` to support your new source provider. You may choose to add a new command-line flag if relevant.
+```rust
+macro_rules! create_datagen_provider {
+    // ...
+    FooProvider,
+}
+```
+as well as to the list of keys 
+
+```rust
+pub fn get_all_keys() -> Vec<ResourceKey> {
+    // ...
+    v.push(FooV1Marker::KEY)
+}
+```
 
 When finished, run from the top level:
 
 ```bash
-$ cargo make testdata-build-json
-$ cargo make testdata-build-blob
+$ cargo make testdata
 ```
 
 If everything is hooked together properly, JSON files for your new data struct should appear under *provider/testdata/data/json*, and the file *provider/testdata/data/testdata.postcard* should have changed.
@@ -145,7 +151,7 @@ The above example is an abridged definition for `DecimalSymbolsV1`. Note how the
 
 ### CLDR JSON Deserialize
 
-[*provider/cldr/src/transform/numbers/cldr_serde.rs*](https://github.com/unicode-org/icu4x/blob/main/provider/cldr/src/transform/numbers/cldr_serde.rs)
+[*provider/datagen/src/transform/cldr/serde/numbers.rs*](https://github.com/unicode-org/icu4x/blob/main/provider/datagen/src/transform/cldr/serde/numbers.rs)
 
 ```rust
 pub mod numbers_json {
@@ -188,7 +194,7 @@ The above example is an abridged definition of the Serde structure corresponding
 
 ### Transformer
 
-[*provider/cldr/src/transform/numbers/mod.rs*](https://github.com/unicode-org/icu4x/blob/main/provider/cldr/src/transform/numbers/mod.rs)
+[*provider/datagen/src/transform/cldr/numbers/mod.rs*](https://github.com/unicode-org/icu4x/blob/main/provider/datagen/src/transform/cldr/numbers/mod.rs)
 
 ```rust
 struct FooProvider {
@@ -230,14 +236,3 @@ icu_provider::impl_dyn_provider!(FooProvider, [
 ```
 
 The above example is an abridged snippet of code illustrating the most important boilerplate for implementing and ICU4X data transform.
-
-### `CldrJsonDataProvider`
-
-New CLDR JSON transformers need to be discoverable from `CldrJsonDataProvider`. To do this, edit [*provider/cldr/src/transform/mod.rs*](https://github.com/unicode-org/icu4x/blob/main/provider/cldr/src/transform/mod.rs) and add your data provider to the macro at the bottom of the file:
-
-```rust
-cldr_json_data_provider!(
-    // ...
-    foo: FooProvider,
-);
-```
