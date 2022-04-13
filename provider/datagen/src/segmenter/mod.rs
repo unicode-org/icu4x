@@ -6,6 +6,9 @@
 //! based on Unicode properties and TOML files implementing [Unicode Standard Annex #14][UAX14] and
 //! [Unicode Standard Annex #29][UAX29] breaking rules.
 //!
+//! This module exports feature-specific providers. Use [`crate::create_datagen_provider`]
+//! for an all-inclusive provider.
+//!
 //! **Important:** This data provider implementation is not optimized
 //! for production use. Read more in the [data provider] docs.
 //!
@@ -29,10 +32,7 @@
 //! [UAX14]: https://www.unicode.org/reports/tr14/
 //! [UAX29]: https://www.unicode.org/reports/tr29/
 
-use icu_provider::datagen::OmnibusDatagenProvider;
-use icu_provider::prelude::*;
-use icu_provider_adapters::fork::by_key::MultiForkByKeyProvider;
-use std::path::{Path, PathBuf};
+use std::path::PathBuf;
 
 mod transform;
 
@@ -41,19 +41,4 @@ pub use transform::SegmenterRuleProvider;
 /// Returns the absolute path to the directory containing the segmenter raw data.
 pub fn segmenter_data_root() -> PathBuf {
     PathBuf::from(std::env!("CARGO_MANIFEST_DIR")).join("data")
-}
-
-pub fn create_exportable_provider<T: DataMarker>(
-    segmenter_data_root: &Path,
-    uprops_root: &Path,
-) -> Result<MultiForkByKeyProvider<Box<dyn OmnibusDatagenProvider<T> + Sync>>, DataError>
-where
-    SegmenterRuleProvider: OmnibusDatagenProvider<T>,
-{
-    Ok(MultiForkByKeyProvider {
-        providers: vec![Box::new(SegmenterRuleProvider::try_new(
-            segmenter_data_root,
-            uprops_root,
-        )?)],
-    })
 }

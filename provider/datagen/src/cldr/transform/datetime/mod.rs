@@ -26,13 +26,25 @@ pub struct CommonDateProvider {
     data: FrozenBTreeMap<ResourceOptions, Box<cldr_serde::ca::Dates>>,
 }
 
-impl TryFrom<&dyn CldrPaths> for CommonDateProvider {
-    type Error = Error;
-    fn try_from(cldr_paths: &dyn CldrPaths) -> Result<Self, Self::Error> {
+impl CommonDateProvider {
+    /// Constructs an instance from paths to source data.
+    pub fn try_new(cldr_paths: &(impl CldrPaths + ?Sized)) -> eyre::Result<Self> {
         Ok(Self {
             paths: cldr_paths.cldr_dates_all(),
             data: FrozenBTreeMap::new(),
         })
+    }
+}
+
+impl TryFrom<&crate::DatagenOptions> for CommonDateProvider {
+    type Error = eyre::ErrReport;
+    fn try_from(options: &crate::DatagenOptions) -> eyre::Result<Self> {
+        CommonDateProvider::try_new(
+            &**options
+                .cldr_paths
+                .as_ref()
+                .ok_or_else(|| eyre::eyre!("CommonDateProvider requires cldr_paths"))?,
+        )
     }
 }
 
@@ -149,8 +161,8 @@ mod test {
     #[test]
     fn test_basic_patterns() {
         let cldr_paths = crate::cldr::cldr_paths::for_test();
-        let provider = CommonDateProvider::try_from(&cldr_paths as &dyn CldrPaths)
-            .expect("Failed to retrieve provider");
+        let provider =
+            CommonDateProvider::try_new(&cldr_paths).expect("Failed to retrieve provider");
 
         let cs_dates: DataPayload<DatePatternsV1Marker> = provider
             .load_resource(&DataRequest {
@@ -170,8 +182,8 @@ mod test {
     #[test]
     fn test_with_numbering_system() {
         let cldr_paths = crate::cldr::cldr_paths::for_test();
-        let provider = CommonDateProvider::try_from(&cldr_paths as &dyn CldrPaths)
-            .expect("Failed to retrieve provider");
+        let provider =
+            CommonDateProvider::try_new(&cldr_paths).expect("Failed to retrieve provider");
 
         let cs_dates: DataPayload<DatePatternsV1Marker> = provider
             .load_resource(&DataRequest {
@@ -193,8 +205,8 @@ mod test {
     #[test]
     fn test_datetime_skeletons() {
         let cldr_paths = crate::cldr::cldr_paths::for_test();
-        let provider = CommonDateProvider::try_from(&cldr_paths as &dyn CldrPaths)
-            .expect("Failed to retrieve provider");
+        let provider =
+            CommonDateProvider::try_new(&cldr_paths).expect("Failed to retrieve provider");
 
         let skeletons: DataPayload<DateSkeletonPatternsV1Marker> = provider
             .load_resource(&DataRequest {
@@ -239,7 +251,7 @@ mod test {
     #[test]
     fn test_basic_symbols() {
         let cldr_paths = crate::cldr::cldr_paths::for_test();
-        let provider = CommonDateProvider::try_from(&cldr_paths as &dyn CldrPaths).unwrap();
+        let provider = CommonDateProvider::try_new(&cldr_paths).unwrap();
 
         let cs_dates: DataPayload<DateSymbolsV1Marker> = provider
             .load_resource(&DataRequest {
@@ -264,7 +276,7 @@ mod test {
     #[test]
     fn unalias_contexts() {
         let cldr_paths = crate::cldr::cldr_paths::for_test();
-        let provider = CommonDateProvider::try_from(&cldr_paths as &dyn CldrPaths).unwrap();
+        let provider = CommonDateProvider::try_new(&cldr_paths).unwrap();
 
         let cs_dates: DataPayload<DateSymbolsV1Marker> = provider
             .load_resource(&DataRequest {

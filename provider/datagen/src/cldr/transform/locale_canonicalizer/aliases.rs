@@ -21,15 +21,27 @@ pub struct AliasesProvider {
     path: PathBuf,
 }
 
-impl TryFrom<&dyn CldrPaths> for AliasesProvider {
-    type Error = Error;
-    fn try_from(cldr_paths: &dyn CldrPaths) -> Result<Self, Self::Error> {
+impl AliasesProvider {
+    /// Constructs an instance from paths to source data.
+    pub fn try_new(cldr_paths: &(impl CldrPaths + ?Sized)) -> eyre::Result<Self> {
         Ok(Self {
             path: cldr_paths
                 .cldr_core()?
                 .join("supplemental")
                 .join("aliases.json"),
         })
+    }
+}
+
+impl TryFrom<&crate::DatagenOptions> for AliasesProvider {
+    type Error = eyre::ErrReport;
+    fn try_from(options: &crate::DatagenOptions) -> eyre::Result<Self> {
+        AliasesProvider::try_new(
+            &**options
+                .cldr_paths
+                .as_ref()
+                .ok_or_else(|| eyre::eyre!("AliasesProvider requires cldr_paths"))?,
+        )
     }
 }
 
@@ -312,7 +324,7 @@ fn test_basic() {
     use tinystr::tinystr;
 
     let cldr_paths = crate::cldr::cldr_paths::for_test();
-    let provider = AliasesProvider::try_from(&cldr_paths as &dyn CldrPaths).unwrap();
+    let provider = AliasesProvider::try_new(&cldr_paths).unwrap();
     let data: DataPayload<AliasesV1Marker> = provider
         .load_resource(&DataRequest::default())
         .unwrap()

@@ -9,6 +9,7 @@ use crate::cldr::cldr_serde::{
 use crate::cldr::error::Error;
 use crate::cldr::reader::open_reader;
 use crate::cldr::CldrPaths;
+use eyre::Context;
 use icu_calendar::arithmetic::week_of::CalendarInfo;
 use icu_datetime::provider::week_data::*;
 use icu_provider::datagen::IterableResourceProvider;
@@ -25,13 +26,13 @@ pub struct WeekDataProvider {
     week_data: cldr_serde::week_data::WeekData,
 }
 
-impl TryFrom<&dyn CldrPaths> for WeekDataProvider {
-    type Error = Error;
-    fn try_from(cldr_paths: &dyn CldrPaths) -> Result<Self, Self::Error> {
+impl WeekDataProvider {
+    /// Constructs an instance from paths to source data.
+    pub fn try_new(cldr_paths: &(impl CldrPaths + ?Sized)) -> eyre::Result<Self> {
         let path = cldr_paths.cldr_core()?.join("supplemental/weekData.json");
 
         let resource: cldr_serde::week_data::Resource =
-            serde_json::from_reader(open_reader(&path)?).map_err(|e| (e, path))?;
+            serde_json::from_reader(open_reader(&path)?).with_context(|| format!("{:?}", path))?;
         let week_data = resource.supplemental.week_data;
 
         let default = CalendarInfo {
@@ -58,6 +59,18 @@ impl TryFrom<&dyn CldrPaths> for WeekDataProvider {
         };
 
         Ok(Self { default, week_data })
+    }
+}
+
+impl TryFrom<&crate::DatagenOptions> for WeekDataProvider {
+    type Error = eyre::ErrReport;
+    fn try_from(options: &crate::DatagenOptions) -> eyre::Result<Self> {
+        WeekDataProvider::try_new(
+            &**options
+                .cldr_paths
+                .as_ref()
+                .ok_or_else(|| eyre::eyre!("WeekDataProvider requires cldr_paths"))?,
+        )
     }
 }
 
@@ -137,7 +150,7 @@ fn basic_cldr_week_data() {
     use icu_locid::langid;
 
     let cldr_paths = crate::cldr::cldr_paths::for_test();
-    let provider = WeekDataProvider::try_from(&cldr_paths as &dyn CldrPaths).unwrap();
+    let provider = WeekDataProvider::try_new(&cldr_paths).unwrap();
 
     let default_week_data: DataPayload<WeekDataV1Marker> = provider
         .load_resource(&DataRequest {

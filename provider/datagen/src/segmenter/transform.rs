@@ -14,6 +14,7 @@ use icu_provider::datagen::IterableResourceProvider;
 use icu_provider::prelude::*;
 use icu_segmenter::symbols::*;
 use icu_segmenter::*;
+use std::convert::TryFrom;
 use std::fs::File;
 use std::io::Read;
 use std::path::PathBuf;
@@ -233,10 +234,7 @@ pub struct SegmenterRuleProvider {
 impl SegmenterRuleProvider {
     /// Create a new [`Self`] given a filesystem directory. See [module-level documentation](crate)
     /// for its usage.
-    pub fn try_new<P: Into<PathBuf>>(
-        segmenter_data_root: P,
-        uprops_root: P,
-    ) -> Result<Self, DataError> {
+    pub fn try_new<P: Into<PathBuf>>(segmenter_data_root: P, uprops_root: P) -> eyre::Result<Self> {
         let segmenter_data_root = segmenter_data_root.into();
         let uprops_root = uprops_root.into();
 
@@ -641,6 +639,22 @@ impl SegmenterRuleProvider {
             eot_property: (property_length - 1) as u8,
             complex_property: complex_property as u8,
         })
+    }
+}
+
+impl TryFrom<&crate::DatagenOptions> for SegmenterRuleProvider {
+    type Error = eyre::ErrReport;
+    fn try_from(options: &crate::DatagenOptions) -> Result<Self, Self::Error> {
+        SegmenterRuleProvider::try_new(
+            options
+                .segmenter_data_root
+                .as_ref()
+                .ok_or_else(|| eyre::eyre!("SegmenterRuleProvider requires segmenter_data_root"))?,
+            options
+                .uprops_root
+                .as_ref()
+                .ok_or_else(|| eyre::eyre!("SegmenterRuleProvider requires uprops_root"))?,
+        )
     }
 }
 

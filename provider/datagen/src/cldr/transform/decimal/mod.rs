@@ -27,9 +27,9 @@ pub struct NumbersProvider {
         RwLock<Option<LiteMap<TinyStr8, cldr_serde::numbering_systems::NumberingSystem>>>,
 }
 
-impl TryFrom<&dyn CldrPaths> for NumbersProvider {
-    type Error = Error;
-    fn try_from(cldr_paths: &dyn CldrPaths) -> Result<Self, Self::Error> {
+impl NumbersProvider {
+    /// Constructs an instance from paths to source data.
+    pub fn try_new(cldr_paths: &(impl CldrPaths + ?Sized)) -> eyre::Result<Self> {
         Ok(Self {
             numbers_path: cldr_paths.cldr_numbers()?.join("main"),
             numbering_systems_path: cldr_paths
@@ -38,6 +38,18 @@ impl TryFrom<&dyn CldrPaths> for NumbersProvider {
                 .join("numberingSystems.json"),
             cldr_numbering_systems_data: RwLock::new(None),
         })
+    }
+}
+
+impl TryFrom<&crate::DatagenOptions> for NumbersProvider {
+    type Error = eyre::ErrReport;
+    fn try_from(options: &crate::DatagenOptions) -> eyre::Result<Self> {
+        NumbersProvider::try_new(
+            &**options
+                .cldr_paths
+                .as_ref()
+                .ok_or_else(|| eyre::eyre!("NumbersProvider requires cldr_paths"))?,
+        )
     }
 }
 
@@ -194,7 +206,7 @@ fn test_basic() {
     use icu_locid::locale;
 
     let cldr_paths = crate::cldr::cldr_paths::for_test();
-    let provider = NumbersProvider::try_from(&cldr_paths as &dyn CldrPaths).unwrap();
+    let provider = NumbersProvider::try_new(&cldr_paths).unwrap();
 
     let ar_decimal: DataPayload<DecimalSymbolsV1Marker> = provider
         .load_resource(&DataRequest {

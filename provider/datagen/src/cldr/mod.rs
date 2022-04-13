@@ -3,8 +3,10 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 //! `icu_datagen::cldr` contains implementations of the [`ICU4X`] [data provider] interface
-//! based on the JSON files shipped by CLDR. Create a [`CldrPaths`] and then pass it into
-//! [`create_exportable_provider`].
+//! based on the JSON files shipped by CLDR.
+//!
+//! This module exports feature-specific providers. Use [`crate::create_datagen_provider`]
+//! for an all-inclusive provider.
 //!
 //! This crate contains two implementations of [`CldrPaths`]:
 //!
@@ -28,51 +30,17 @@ pub use cldr_paths::CldrPathsAllInOne;
 pub use cldr_paths::CldrPathsLocal;
 pub use error::Error as CldrError;
 
-use icu_provider::datagen::OmnibusDatagenProvider;
 use icu_provider::prelude::*;
-use icu_provider_adapters::fork::by_key::MultiForkByKeyProvider;
-use std::convert::TryFrom;
-use std::path::PathBuf;
-use transform::calendar::japanese::JapaneseErasProvider;
-use transform::datetime::week_data::WeekDataProvider;
-use transform::datetime::CommonDateProvider;
-use transform::decimal::NumbersProvider;
-use transform::list::ListProvider;
-use transform::locale_canonicalizer::aliases::AliasesProvider;
-use transform::locale_canonicalizer::likely_subtags::LikelySubtagsProvider;
-use transform::plurals::PluralsProvider;
-use transform::time_zones::TimeZonesProvider;
 
-pub fn create_exportable_provider<T: DataMarker>(
-    cldr_paths: &dyn CldrPaths,
-    _uprops_root: PathBuf,
-) -> Result<MultiForkByKeyProvider<Box<dyn OmnibusDatagenProvider<T> + Sync>>, CldrError>
-where
-    AliasesProvider: OmnibusDatagenProvider<T>,
-    CommonDateProvider: OmnibusDatagenProvider<T>,
-    JapaneseErasProvider: OmnibusDatagenProvider<T>,
-    LikelySubtagsProvider: OmnibusDatagenProvider<T>,
-    NumbersProvider: OmnibusDatagenProvider<T>,
-    PluralsProvider: OmnibusDatagenProvider<T>,
-    TimeZonesProvider: OmnibusDatagenProvider<T>,
-    ListProvider: OmnibusDatagenProvider<T>,
-    WeekDataProvider: OmnibusDatagenProvider<T>,
-{
-    #[allow(unused_variables)] // uprops_root is only used if icu_list
-    Ok(MultiForkByKeyProvider {
-        providers: vec![
-            Box::new(AliasesProvider::try_from(cldr_paths)?),
-            Box::new(CommonDateProvider::try_from(cldr_paths)?),
-            Box::new(JapaneseErasProvider::try_from(cldr_paths)?),
-            Box::new(LikelySubtagsProvider::try_from(cldr_paths)?),
-            Box::new(NumbersProvider::try_from(cldr_paths)?),
-            Box::new(PluralsProvider::try_from(cldr_paths)?),
-            Box::new(TimeZonesProvider::try_from(cldr_paths)?),
-            Box::new(WeekDataProvider::try_from(cldr_paths)?),
-            Box::new(ListProvider::try_from(cldr_paths, _uprops_root)?),
-        ],
-    })
-}
+pub use transform::calendar::japanese::JapaneseErasProvider;
+pub use transform::datetime::week_data::WeekDataProvider;
+pub use transform::datetime::CommonDateProvider;
+pub use transform::decimal::NumbersProvider;
+pub use transform::list::ListProvider;
+pub use transform::locale_canonicalizer::aliases::AliasesProvider;
+pub use transform::locale_canonicalizer::likely_subtags::LikelySubtagsProvider;
+pub use transform::plurals::PluralsProvider;
+pub use transform::time_zones::TimeZonesProvider;
 
 pub const ALL_KEYS: [ResourceKey; 19] = [
     icu_calendar::provider::JapaneseErasV1Marker::KEY,

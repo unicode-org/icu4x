@@ -4,11 +4,10 @@
 
 use clap::{App, Arg, ArgGroup, ArgMatches};
 use eyre::WrapErr;
-use icu_datagen::cldr;
+
 use icu_datagen::cldr::CldrPathsAllInOne;
-use icu_datagen::get_all_keys;
-use icu_datagen::segmenter;
-use icu_datagen::uprops;
+use icu_datagen::{get_all_keys, DatagenOptions};
+
 use icu_locid::LanguageIdentifier;
 use icu_provider::datagen::IterableDynProvider;
 use icu_provider::export::DataExporter;
@@ -16,7 +15,7 @@ use icu_provider::hello_world::{HelloWorldProvider, HelloWorldV1Marker};
 use icu_provider::prelude::*;
 use icu_provider::serde::SerializeMarker;
 use icu_provider_adapters::filter::Filterable;
-use icu_provider_adapters::fork::by_key::MultiForkByKeyProvider;
+
 use icu_provider_blob::export::BlobExporter;
 use icu_provider_fs::export::fs_exporter;
 use icu_provider_fs::export::serializers;
@@ -358,19 +357,14 @@ fn main() -> eyre::Result<()> {
 
         let segmenter_data_root = icu_datagen::segmenter::segmenter_data_root();
 
-        Box::new(MultiForkByKeyProvider {
-            providers: vec![
-                Box::new(cldr::create_exportable_provider(
-                    &cldr_paths,
-                    uprops_root.clone(),
-                )?),
-                Box::new(uprops::create_exportable_provider(&uprops_root)?),
-                Box::new(segmenter::create_exportable_provider(
-                    &segmenter_data_root,
-                    &uprops_root,
-                )?),
-            ],
-        })
+        let options = DatagenOptions {
+            cldr_paths: Some(Box::new(cldr_paths)),
+            uprops_root: Some(uprops_root),
+            segmenter_data_root: Some(segmenter_data_root),
+        };
+        let p = icu_datagen::create_datagen_provider!(options);
+
+        Box::new(p)
     };
 
     if let Some(locales) = selected_locales.as_ref() {

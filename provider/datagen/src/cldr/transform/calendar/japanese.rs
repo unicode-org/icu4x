@@ -28,9 +28,9 @@ pub struct JapaneseErasProvider {
     era_dates_path: PathBuf,
 }
 
-impl TryFrom<&dyn CldrPaths> for JapaneseErasProvider {
-    type Error = Error;
-    fn try_from(cldr_paths: &dyn CldrPaths) -> Result<Self, Self::Error> {
+impl JapaneseErasProvider {
+    /// Constructs an instance from paths to source data.
+    pub fn try_new(cldr_paths: &(impl CldrPaths + ?Sized)) -> eyre::Result<Self> {
         // The era codes depend on the Latin romanizations of the eras, found
         // in the `en` locale. We load this data to construct era codes but
         // actual user code only needs to load the data for the locales it cares about.
@@ -45,6 +45,18 @@ impl TryFrom<&dyn CldrPaths> for JapaneseErasProvider {
                 .join("supplemental")
                 .join("calendarData.json"),
         })
+    }
+}
+
+impl TryFrom<&crate::DatagenOptions> for JapaneseErasProvider {
+    type Error = eyre::ErrReport;
+    fn try_from(options: &crate::DatagenOptions) -> eyre::Result<Self> {
+        JapaneseErasProvider::try_new(
+            &**options
+                .cldr_paths
+                .as_ref()
+                .ok_or_else(|| eyre::eyre!("JapaneseErasProvider requires cldr_paths"))?,
+        )
     }
 }
 
