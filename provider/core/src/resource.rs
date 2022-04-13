@@ -353,7 +353,7 @@ impl Writeable for ResourceKey {
 /// A variant and language identifier, used for requesting data from a data provider.
 ///
 /// The fields in a [`ResourceOptions`] are not generally known until runtime.
-#[derive(PartialEq, Clone, Default, PartialOrd, Eq, Ord)]
+#[derive(PartialEq, Clone, Default, PartialOrd, Eq, Ord, Hash)]
 pub struct ResourceOptions {
     langid: LanguageIdentifier,
     keywords: unicode_ext::Keywords,

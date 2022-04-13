@@ -63,8 +63,8 @@ where
     /// ```
     pub fn filter_by_langid<'a>(
         self,
-        predicate: impl Fn(&LanguageIdentifier) -> bool + 'a,
-    ) -> RequestFilterDataProvider<D, Box<dyn Fn(&DataRequest) -> bool + 'a>>
+        predicate: impl Fn(&LanguageIdentifier) -> bool + Sync + 'a,
+    ) -> RequestFilterDataProvider<D, Box<dyn Fn(&DataRequest) -> bool + Sync + 'a>>
     where
         F: 'a,
     {
@@ -185,7 +185,7 @@ where
     /// ```
     pub fn require_langid<'a>(
         self,
-    ) -> RequestFilterDataProvider<D, Box<dyn Fn(&DataRequest) -> bool + 'a>>
+    ) -> RequestFilterDataProvider<D, Box<dyn Fn(&DataRequest) -> bool + Sync + 'a>>
     where
         F: 'a,
     {

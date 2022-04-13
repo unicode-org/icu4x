@@ -22,11 +22,11 @@ use core::fmt::Debug;
 use core::marker::PhantomData;
 use icu_locid::LanguageIdentifier;
 
-#[derive(Default)]
+#[derive(Default, Debug, PartialEq, Eq, PartialOrd, Ord)]
 #[non_exhaustive]
 pub struct DataRequestMetadata;
 
-#[derive(Default)]
+#[derive(Default, Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub struct DataRequest {
     pub options: ResourceOptions,
     pub metadata: DataRequestMetadata,
