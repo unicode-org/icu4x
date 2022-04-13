@@ -1,0 +1,166 @@
+// This file is part of ICU4X. For terms of use, please see the file
+// called LICENSE at the top level of the ICU4X source tree
+// (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
+
+//! Module for working with multiple calendars at once
+
+use crate::buddhist::Buddhist;
+use crate::coptic::Coptic;
+use crate::gregorian::Gregorian;
+use crate::indian::Indian;
+use crate::iso::Iso;
+use crate::japanese::Japanese;
+
+use crate::{types, Calendar, Date, DateDuration, DateDurationUnit};
+
+pub enum AnyCalendar {
+    Gregorian(Gregorian),
+    Buddhist(Buddhist),
+    Japanese(Japanese),
+    Indian(Indian),
+    Coptic(Coptic),
+    Iso(Iso),
+}
+
+#[derive(Clone, PartialEq, Eq, Debug)]
+pub enum AnyDateInner {
+    Gregorian(<Gregorian as Calendar>::DateInner),
+    Buddhist(<Buddhist as Calendar>::DateInner),
+    Japanese(<Japanese as Calendar>::DateInner),
+    Indian(<Indian as Calendar>::DateInner),
+    Coptic(<Coptic as Calendar>::DateInner),
+    Iso(<Iso as Calendar>::DateInner),
+}
+
+macro_rules! match_cal_and_date {
+    (match ($cal:ident, $date:ident): ($cal_matched:ident, $date_matched:ident) => $e:expr) => {
+        match ($cal, $date) {
+            (&Self::Gregorian(ref $cal_matched), &AnyDateInner::Gregorian(ref $date_matched)) => $e,
+            (&Self::Buddhist(ref $cal_matched), &AnyDateInner::Buddhist(ref $date_matched)) => $e,
+            (&Self::Japanese(ref $cal_matched), &AnyDateInner::Japanese(ref $date_matched)) => $e,
+            (&Self::Indian(ref $cal_matched), &AnyDateInner::Indian(ref $date_matched)) => $e,
+            (&Self::Coptic(ref $cal_matched), &AnyDateInner::Coptic(ref $date_matched)) => $e,
+            (&Self::Iso(ref $cal_matched), &AnyDateInner::Iso(ref $date_matched)) => $e,
+            _ => panic!("Mixed date and calendar types!"),
+        }
+    };
+}
+
+impl Calendar for AnyCalendar {
+    type DateInner = AnyDateInner;
+    fn date_from_iso(&self, iso: Date<Iso>) -> AnyDateInner {
+        match *self {
+            Self::Gregorian(ref c) => AnyDateInner::Gregorian(c.date_from_iso(iso)),
+            Self::Buddhist(ref c) => AnyDateInner::Buddhist(c.date_from_iso(iso)),
+            Self::Japanese(ref c) => AnyDateInner::Japanese(c.date_from_iso(iso)),
+            Self::Indian(ref c) => AnyDateInner::Indian(c.date_from_iso(iso)),
+            Self::Coptic(ref c) => AnyDateInner::Coptic(c.date_from_iso(iso)),
+            Self::Iso(ref c) => AnyDateInner::Iso(c.date_from_iso(iso)),
+        }
+    }
+
+    fn date_to_iso(&self, date: &Self::DateInner) -> Date<Iso> {
+        match_cal_and_date!(match (self, date): (c, d) => c.date_to_iso(d))
+    }
+
+    fn months_in_year(&self, date: &Self::DateInner) -> u8 {
+        match_cal_and_date!(match (self, date): (c, d) => c.months_in_year(d))
+    }
+
+    fn days_in_year(&self, date: &Self::DateInner) -> u32 {
+        match_cal_and_date!(match (self, date): (c, d) => c.days_in_year(d))
+    }
+
+    fn days_in_month(&self, date: &Self::DateInner) -> u8 {
+        match_cal_and_date!(match (self, date): (c, d) => c.days_in_month(d))
+    }
+
+    fn offset_date(&self, date: &mut Self::DateInner, offset: DateDuration<Self>) {
+        match (self, date) {
+            (&Self::Gregorian(ref c), &mut AnyDateInner::Gregorian(ref mut d)) => {
+                c.offset_date(d, offset.cast_unit())
+            }
+            (&Self::Buddhist(ref c), &mut AnyDateInner::Buddhist(ref mut d)) => {
+                c.offset_date(d, offset.cast_unit())
+            }
+            (&Self::Japanese(ref c), &mut AnyDateInner::Japanese(ref mut d)) => {
+                c.offset_date(d, offset.cast_unit())
+            }
+            (&Self::Indian(ref c), &mut AnyDateInner::Indian(ref mut d)) => {
+                c.offset_date(d, offset.cast_unit())
+            }
+            (&Self::Coptic(ref c), &mut AnyDateInner::Coptic(ref mut d)) => {
+                c.offset_date(d, offset.cast_unit())
+            }
+            (&Self::Iso(ref c), &mut AnyDateInner::Iso(ref mut d)) => {
+                c.offset_date(d, offset.cast_unit())
+            }
+            _ => panic!("Mixed date and calendar types!"),
+        }
+    }
+
+    fn until(
+        &self,
+        date1: &Self::DateInner,
+        date2: &Self::DateInner,
+        largest_unit: DateDurationUnit,
+        smallest_unit: DateDurationUnit,
+    ) -> DateDuration<Self> {
+        match (self, date1, date2) {
+            (
+                &Self::Gregorian(ref c),
+                &AnyDateInner::Gregorian(ref d1),
+                &AnyDateInner::Gregorian(ref d2),
+            ) => c.until(d1, d2, largest_unit, smallest_unit).cast_unit(),
+            (
+                &Self::Buddhist(ref c),
+                &AnyDateInner::Buddhist(ref d1),
+                &AnyDateInner::Buddhist(ref d2),
+            ) => c.until(d1, d2, largest_unit, smallest_unit).cast_unit(),
+            (
+                &Self::Japanese(ref c),
+                &AnyDateInner::Japanese(ref d1),
+                &AnyDateInner::Japanese(ref d2),
+            ) => c.until(d1, d2, largest_unit, smallest_unit).cast_unit(),
+            (
+                &Self::Indian(ref c),
+                &AnyDateInner::Indian(ref d1),
+                &AnyDateInner::Indian(ref d2),
+            ) => c.until(d1, d2, largest_unit, smallest_unit).cast_unit(),
+            (
+                &Self::Coptic(ref c),
+                &AnyDateInner::Coptic(ref d1),
+                &AnyDateInner::Coptic(ref d2),
+            ) => c.until(d1, d2, largest_unit, smallest_unit).cast_unit(),
+            (&Self::Iso(ref c), &AnyDateInner::Iso(ref d1), &AnyDateInner::Iso(ref d2)) => {
+                c.until(d1, d2, largest_unit, smallest_unit).cast_unit()
+            }
+            // TODO: convert date 2 if it's from the wrong calendar
+            _ => panic!("Mixed date and calendar types!"),
+        }
+    }
+
+    /// The calendar-specific year represented by `date`
+    fn year(&self, date: &Self::DateInner) -> types::Year {
+        match_cal_and_date!(match (self, date): (c, d) => c.year(d))
+    }
+
+    /// The calendar-specific month represented by `date`
+    fn month(&self, date: &Self::DateInner) -> types::Month {
+        match_cal_and_date!(match (self, date): (c, d) => c.month(d))
+    }
+
+    /// The calendar-specific day-of-month represented by `date`
+    fn day_of_month(&self, date: &Self::DateInner) -> types::DayOfMonth {
+        match_cal_and_date!(match (self, date): (c, d) => c.day_of_month(d))
+    }
+
+    /// Information of the day of the year
+    fn day_of_year_info(&self, date: &Self::DateInner) -> types::DayOfYearInfo {
+        match_cal_and_date!(match (self, date): (c, d) => c.day_of_year_info(d))
+    }
+
+    fn debug_name() -> &'static str {
+        "AnyCalendar"
+    }
+}
