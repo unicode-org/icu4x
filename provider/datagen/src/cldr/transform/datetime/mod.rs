@@ -144,7 +144,7 @@ impl_resource_provider!(
 mod test {
     use super::*;
     use icu_datetime::pattern::runtime::{Pattern, PluralPattern};
-    use icu_locid::langid;
+    use icu_locid::{locale, unicode_ext_key, unicode_ext_value};
     use icu_plurals::PluralCategory;
 
     #[test]
@@ -153,9 +153,15 @@ mod test {
         let provider = CommonDateProvider::try_from(&cldr_paths as &dyn CldrPaths)
             .expect("Failed to retrieve provider");
 
+        let mut locale = locale!("cs");
+        locale
+            .extensions
+            .unicode
+            .keywords
+            .set(unicode_ext_key!("ca"), unicode_ext_value!("gregory"));
         let cs_dates: DataPayload<DatePatternsV1Marker> = provider
             .load_resource(&DataRequest {
-                options: ResourceOptions::temp_with_unicode_ext(langid!("cs"), "ca", "gregory"),
+                options: locale.into(),
                 metadata: Default::default(),
             })
             .expect("Failed to load payload")
@@ -171,9 +177,15 @@ mod test {
         let provider = CommonDateProvider::try_from(&cldr_paths as &dyn CldrPaths)
             .expect("Failed to retrieve provider");
 
+        let mut locale = locale!("haw");
+        locale
+            .extensions
+            .unicode
+            .keywords
+            .set(unicode_ext_key!("ca"), unicode_ext_value!("gregory"));
         let cs_dates: DataPayload<DatePatternsV1Marker> = provider
             .load_resource(&DataRequest {
-                options: ResourceOptions::temp_with_unicode_ext(langid!("haw"), "ca", "gregory"),
+                options: locale.into(),
                 metadata: Default::default(),
             })
             .expect("Failed to load payload")
@@ -191,9 +203,15 @@ mod test {
         let provider = CommonDateProvider::try_from(&cldr_paths as &dyn CldrPaths)
             .expect("Failed to retrieve provider");
 
+        let mut locale = locale!("fil");
+        locale
+            .extensions
+            .unicode
+            .keywords
+            .set(unicode_ext_key!("ca"), unicode_ext_value!("gregory"));
         let skeletons: DataPayload<DateSkeletonPatternsV1Marker> = provider
             .load_resource(&DataRequest {
-                options: ResourceOptions::temp_with_unicode_ext(langid!("fil"), "ca", "gregory"),
+                options: locale.into(),
                 metadata: Default::default(),
             })
             .expect("Failed to load payload")
@@ -233,9 +251,15 @@ mod test {
         let cldr_paths = crate::cldr::cldr_paths::for_test();
         let provider = CommonDateProvider::try_from(&cldr_paths as &dyn CldrPaths).unwrap();
 
+        let mut locale = locale!("cs");
+        locale
+            .extensions
+            .unicode
+            .keywords
+            .set(unicode_ext_key!("ca"), unicode_ext_value!("gregory"));
         let cs_dates: DataPayload<DateSymbolsV1Marker> = provider
             .load_resource(&DataRequest {
-                options: ResourceOptions::temp_with_unicode_ext(langid!("cs"), "ca", "gregory"),
+                options: locale.into(),
                 metadata: Default::default(),
             })
             .unwrap()
@@ -255,9 +279,15 @@ mod test {
         let cldr_paths = crate::cldr::cldr_paths::for_test();
         let provider = CommonDateProvider::try_from(&cldr_paths as &dyn CldrPaths).unwrap();
 
+        let mut locale = locale!("cs");
+        locale
+            .extensions
+            .unicode
+            .keywords
+            .set(unicode_ext_key!("ca"), unicode_ext_value!("gregory"));
         let cs_dates: DataPayload<DateSymbolsV1Marker> = provider
             .load_resource(&DataRequest {
-                options: ResourceOptions::temp_with_unicode_ext(langid!("cs"), "ca", "gregory"),
+                options: locale.into(),
                 metadata: Default::default(),
             })
             .unwrap()

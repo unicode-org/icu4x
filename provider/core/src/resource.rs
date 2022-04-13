@@ -418,17 +418,6 @@ impl ResourceOptions {
         }
     }
 
-    // TODO(#1109): Delete this function and use vertical fallback instead
-    #[allow(clippy::unwrap_used)] // temporary function
-    pub fn temp_with_unicode_ext(langid: LanguageIdentifier, key: &str, value: &str) -> Self {
-        let key = unicode_ext::Key::from_bytes(key.as_bytes()).unwrap();
-        let value = unicode_ext::Value::from_bytes(value.as_bytes()).unwrap();
-        Self {
-            langid,
-            keywords: vec![(key, value)].into_iter().collect(),
-        }
-    }
-
     /// Returns whether this [`ResourceOptions`] has all empty fields (no components).
     pub fn is_empty(&self) -> bool {
         self == &Self::default()
