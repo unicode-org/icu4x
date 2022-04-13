@@ -74,7 +74,10 @@ impl DateTimeFormat {
             // TODO(#1109): Implement proper vertical fallback
             let mut locale_no_extensions = locale.clone();
             locale_no_extensions.extensions.unicode.clear();
-            Some(PluralRules::try_new_ordinal(locale_no_extensions, data_provider)?)
+            Some(PluralRules::try_new_ordinal(
+                locale_no_extensions,
+                data_provider,
+            )?)
         } else {
             None
         };

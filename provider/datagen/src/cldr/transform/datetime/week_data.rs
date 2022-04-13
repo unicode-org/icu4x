@@ -75,9 +75,7 @@ impl IterableResourceProvider<WeekDataV1Marker> for WeekDataProvider {
             })
             .map(ResourceOptions::temp_for_region)
             .collect();
-        Ok(Box::new(
-            regions.into_iter(),
-        ))
+        Ok(Box::new(regions.into_iter()))
     }
 }
 
