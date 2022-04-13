@@ -8,7 +8,6 @@ use alloc::borrow::Cow;
 
 use crate::error::{DataError, DataErrorKind};
 use crate::helpers;
-use alloc::vec;
 use core::default::Default;
 use core::fmt;
 use core::fmt::Write;
@@ -401,7 +400,6 @@ impl From<LanguageIdentifier> for ResourceOptions {
 impl From<Locale> for ResourceOptions {
     fn from(locale: Locale) -> Self {
         // TODO(#1109): Implement proper vertical fallback
-        debug_assert!(locale.extensions.is_empty());
         Self {
             langid: locale.id,
             keywords: locale.extensions.unicode.keywords,
