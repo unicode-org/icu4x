@@ -132,7 +132,7 @@ impl Calendar for Indian {
         }
     }
 
-    fn debug_name() -> &'static str {
+    fn debug_name(&self) -> &'static str {
         "Indian"
     }
 }

@@ -117,7 +117,7 @@ impl Calendar for Coptic {
         }
     }
 
-    fn debug_name() -> &'static str {
+    fn debug_name(&self) -> &'static str {
         "Coptic"
     }
 }

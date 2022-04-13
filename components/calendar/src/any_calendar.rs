@@ -41,7 +41,11 @@ macro_rules! match_cal_and_date {
             (&Self::Indian(ref $cal_matched), &AnyDateInner::Indian(ref $date_matched)) => $e,
             (&Self::Coptic(ref $cal_matched), &AnyDateInner::Coptic(ref $date_matched)) => $e,
             (&Self::Iso(ref $cal_matched), &AnyDateInner::Iso(ref $date_matched)) => $e,
-            _ => panic!("Mixed date and calendar types!"),
+            _ => panic!(
+                "Found AnyCalendar with mixed calendar type {} and date type {}!",
+                $cal.calendar_name(),
+                $date.calendar_name()
+            ),
         }
     };
 }
@@ -95,7 +99,11 @@ impl Calendar for AnyCalendar {
             (&Self::Iso(ref c), &mut AnyDateInner::Iso(ref mut d)) => {
                 c.offset_date(d, offset.cast_unit())
             }
-            _ => panic!("Mixed date and calendar types!"),
+            (_, d) => panic!(
+                "Found AnyCalendar with mixed calendar type {} and date type {}!",
+                self.calendar_name(),
+                d.calendar_name()
+            ),
         }
     }
 
@@ -157,7 +165,13 @@ impl Calendar for AnyCalendar {
                 .until(d1, d2, c2, largest_unit, smallest_unit)
                 .cast_unit(),
             // TODO: convert date 2 if it's from the wrong calendar
-            _ => panic!("Mixed date and calendar types!"),
+            _ => panic!(
+                "Found AnyCalendar with mixed calendar types {},{} and date types {},{}!",
+                self.calendar_name(),
+                calendar2.calendar_name(),
+                date1.calendar_name(),
+                date2.calendar_name()
+            ),
         }
     }
 
@@ -181,7 +195,40 @@ impl Calendar for AnyCalendar {
         match_cal_and_date!(match (self, date): (c, d) => c.day_of_year_info(d))
     }
 
-    fn debug_name() -> &'static str {
-        "AnyCalendar"
+    fn debug_name(&self) -> &'static str {
+        match *self {
+            Self::Gregorian(_) => "AnyCalendar (Gregorian)",
+            Self::Buddhist(_) => "AnyCalendar (Buddhist)",
+            Self::Japanese(_) => "AnyCalendar (Japanese)",
+            Self::Indian(_) => "AnyCalendar (Indian)",
+            Self::Coptic(_) => "AnyCalendar (Coptic)",
+            Self::Iso(_) => "AnyCalendar (Iso)",
+        }
+    }
+}
+
+impl AnyCalendar {
+    fn calendar_name(&self) -> &'static str {
+        match *self {
+            Self::Gregorian(_) => "Gregorian",
+            Self::Buddhist(_) => "Buddhist",
+            Self::Japanese(_) => "Japanese",
+            Self::Indian(_) => "Indian",
+            Self::Coptic(_) => "Coptic",
+            Self::Iso(_) => "Iso",
+        }
+    }
+}
+
+impl AnyDateInner {
+    fn calendar_name(&self) -> &'static str {
+        match *self {
+            AnyDateInner::Gregorian(_) => "Gregorian",
+            AnyDateInner::Buddhist(_) => "Buddhist",
+            AnyDateInner::Japanese(_) => "Japanese",
+            AnyDateInner::Indian(_) => "Indian",
+            AnyDateInner::Coptic(_) => "Coptic",
+            AnyDateInner::Iso(_) => "Iso",
+        }
     }
 }

@@ -296,7 +296,7 @@ impl Calendar for Iso {
         }
     }
 
-    fn debug_name() -> &'static str {
+    fn debug_name(&self) -> &'static str {
         "ISO"
     }
 }

@@ -91,7 +91,7 @@ impl Calendar for Buddhist {
         }
     }
 
-    fn debug_name() -> &'static str {
+    fn debug_name(&self) -> &'static str {
         "Buddhist"
     }
 }

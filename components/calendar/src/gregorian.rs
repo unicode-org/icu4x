@@ -85,7 +85,7 @@ impl Calendar for Gregorian {
         }
     }
 
-    fn debug_name() -> &'static str {
+    fn debug_name(&self) -> &'static str {
         "Gregorian"
     }
 }

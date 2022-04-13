@@ -180,7 +180,7 @@ impl<A: AsCalendar> fmt::Debug for Date<A> {
             f,
             "Date({:?}, for calendar {})",
             self.inner,
-            A::Calendar::debug_name()
+            self.calendar.as_calendar().debug_name()
         )
     }
 }

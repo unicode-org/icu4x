@@ -121,7 +121,7 @@ impl Calendar for Japanese {
         }
     }
 
-    fn debug_name() -> &'static str {
+    fn debug_name(&self) -> &'static str {
         "Japanese"
     }
 }

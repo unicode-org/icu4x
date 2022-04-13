@@ -52,7 +52,7 @@ pub trait Calendar {
     ) -> DateDuration<Self>;
 
     /// Obtain a name for the calendar for debug printing
-    fn debug_name() -> &'static str;
+    fn debug_name(&self) -> &'static str;
     // fn since(&self, from: &Date<Self>, to: &Date<Self>) -> Duration<Self>, Error;
 
     /// The calendar-specific year represented by `date`
