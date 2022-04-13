@@ -11,7 +11,6 @@ use crate::cldr::reader::open_reader;
 use crate::cldr::CldrPaths;
 use icu_calendar::arithmetic::week_of::CalendarInfo;
 use icu_datetime::provider::week_data::*;
-use icu_locid::subtags::Region;
 use icu_provider::datagen::IterableResourceProvider;
 use icu_provider::prelude::*;
 use std::collections::HashSet;
