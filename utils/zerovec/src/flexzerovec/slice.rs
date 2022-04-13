@@ -4,13 +4,15 @@
 
 use core::mem;
 
+use crate::ZeroVecError;
+
 const USIZE_WIDTH: usize = mem::size_of::<usize>();
 
 /// A zero-copy "slice" that efficiently represents `[usize]`.
 #[repr(packed)]
 #[derive(Debug, Eq, PartialEq)]
 pub struct FlexZeroSlice {
-    // Invariant: width is <= USIZE_WIDTH (which is target_pointer_width)
+    // Invariant: 1 <= width <= USIZE_WIDTH (which is target_pointer_width)
     width: u8,
     // Invariant: data.len() % width == 0
     data: [u8],
@@ -40,6 +42,7 @@ impl FlexZeroSlice {
     #[inline]
     pub const fn new_empty() -> &'static Self {
         const ARR: &'static [u8] = &[1u8];
+        // Safety: The slice is a valid empty `FlexZeroSlice`
         unsafe { Self::from_byte_slice_unchecked(ARR) }
     }
 
@@ -48,9 +51,25 @@ impl FlexZeroSlice {
         usize::from(self.width)
     }
 
+    pub const fn parse_byte_slice(bytes: &[u8]) -> Result<&Self, ZeroVecError> {
+        let (width_u8, data) = match bytes.split_first() {
+            Some(v) => v,
+            None => return Err(ZeroVecError::parse::<Self>())
+        };
+        let width = usize::from(*width_u8);
+        if width < 1 || width > USIZE_WIDTH {
+            return Err(ZeroVecError::parse::<Self>());
+        }
+        if data.len() % width != 0 {
+            return Err(ZeroVecError::length::<Self>(bytes.len()));
+        }
+        // Safety: All invariants have been checked
+        Ok(unsafe { Self::from_byte_slice_unchecked(bytes) })
+    }
+
     /// # Panics
     ///
-    /// Panics if bytes is empty.
+    /// Panics if `bytes` is empty.
     ///
     /// # Safety
     ///
