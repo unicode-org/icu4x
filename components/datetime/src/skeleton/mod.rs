@@ -43,7 +43,11 @@ mod test {
     ) {
         let provider = icu_testdata::get_provider();
         let mut locale = locale!("en");
-        locale.extensions.unicode.keywords.set(unicode_ext_key!("ca"), unicode_ext_value!("gregory"));
+        locale
+            .extensions
+            .unicode
+            .keywords
+            .set(unicode_ext_key!("ca"), unicode_ext_value!("gregory"));
         let patterns = provider
             .load_resource(&DataRequest {
                 options: locale.clone().into(),

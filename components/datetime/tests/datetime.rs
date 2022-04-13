@@ -21,7 +21,7 @@ use icu_datetime::{
     time_zone::{TimeZoneFormat, TimeZoneFormatOptions},
     CldrCalendar, DateTimeFormat, DateTimeFormatOptions, ZonedDateTimeFormat,
 };
-use icu_locid::{LanguageIdentifier, Locale, unicode_ext_key, unicode_ext_value};
+use icu_locid::{unicode_ext_key, unicode_ext_value, LanguageIdentifier, Locale};
 use icu_plurals::provider::OrdinalV1Marker;
 use icu_provider::prelude::*;
 use icu_provider_adapters::fork::by_key::MultiForkByKeyProvider;
@@ -205,7 +205,11 @@ fn test_dayperiod_patterns() {
     let format_options = DateTimeFormatOptions::default();
     for test in get_dayperiod_tests("dayperiods").unwrap().0 {
         let mut locale: Locale = test.locale.parse().unwrap();
-        locale.extensions.unicode.keywords.set(unicode_ext_key!("ca"), unicode_ext_value!("gregory"));
+        locale
+            .extensions
+            .unicode
+            .keywords
+            .set(unicode_ext_key!("ca"), unicode_ext_value!("gregory"));
         let mut patterns_data: DataPayload<DatePatternsV1Marker> = provider
             .load_resource(&DataRequest {
                 options: locale.clone().into(),
@@ -354,7 +358,11 @@ fn test_time_zone_patterns() {
 
     for test in get_time_zone_tests("time_zones").unwrap().0 {
         let mut locale: Locale = test.locale.parse().unwrap();
-        locale.extensions.unicode.keywords.set(unicode_ext_key!("ca"), unicode_ext_value!("gregory"));
+        locale
+            .extensions
+            .unicode
+            .keywords
+            .set(unicode_ext_key!("ca"), unicode_ext_value!("gregory"));
         let mut config = test.config;
         let mut datetime: MockZonedDateTime = test.datetime.parse().unwrap();
         datetime.time_zone.time_zone_id = config.time_zone_id.take();

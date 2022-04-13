@@ -51,12 +51,8 @@ impl DateTimeFormat {
             + ResourceProvider<OrdinalV1Marker>
             + ResourceProvider<WeekDataV1Marker>,
     {
-
-        let patterns = provider::date_time::PatternSelector::for_options(
-            data_provider,
-            &locale,
-            options,
-        )?;
+        let patterns =
+            provider::date_time::PatternSelector::for_options(data_provider, &locale, options)?;
 
         let required = datetime::analyze_patterns(&patterns.get().0, false)
             .map_err(|field| DateTimeFormatError::UnsupportedField(field.symbol))?;
