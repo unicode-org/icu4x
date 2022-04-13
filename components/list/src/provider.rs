@@ -21,13 +21,32 @@ use writeable::{LengthHint, Writeable};
 )]
 #[derive(Clone, Debug)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize))]
-#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct ListFormatterPatternsV1<'data>(
-    #[cfg_attr(feature = "serde", serde(borrow, with = "deduplicating_array"))]
+    #[cfg_attr(feature = "datagen", serde(with = "deduplicating_array"))]
     /// The patterns in the order start, middle, end, pair, short_start, short_middle,
     /// short_end, short_pair, narrow_start, narrow_middle, narrow_end, narrow_pair,
     [ConditionalListJoinerPattern<'data>; 12],
 );
+
+#[cfg(feature = "serde")]
+impl<'de> serde::Deserialize<'de> for ListFormatterPatternsV1<'de> {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::de::Deserializer<'de>,
+    {
+        #[cfg(not(feature = "serde_human"))]
+        if deserializer.is_human_readable() {
+            use serde::de::Error;
+            return Err(D::Error::custom(
+                    "Deserializing human-readable ListFormatter data requires the 'serde_human' feature",
+                ));
+        }
+
+        Ok(ListFormatterPatternsV1(deduplicating_array::deserialize(
+            deserializer,
+        )?))
+    }
+}
 
 pub(crate) struct ErasedListV1Marker;
 

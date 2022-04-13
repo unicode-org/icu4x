@@ -52,13 +52,9 @@ impl<'de: 'data, 'data> serde::Deserialize<'de> for StringMatcher<'data> {
     {
         use icu_provider::serde::borrow_de_utils::CowBytesWrap;
 
+        #[cfg(feature = "serde_human")]
         if deserializer.is_human_readable() {
             use serde::de::Error;
-            #[cfg(not(feature = "serde_human"))]
-            return Err(D::Error::custom(
-                "Deserializing human-readable data formats requires the serde_human feature",
-            ));
-            #[cfg(feature = "serde_human")]
             return StringMatcher::new(<&str>::deserialize(deserializer)?)
                 .map_err(|e| D::Error::custom(e.to_string()));
         }
