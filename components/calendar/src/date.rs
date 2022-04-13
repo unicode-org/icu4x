@@ -111,9 +111,13 @@ impl<A: AsCalendar> Date<A> {
         largest_unit: DateDurationUnit,
         smallest_unit: DateDurationUnit,
     ) -> DateDuration<A::Calendar> {
-        self.calendar
-            .as_calendar()
-            .until(self.inner(), other.inner(), largest_unit, smallest_unit)
+        self.calendar.as_calendar().until(
+            self.inner(),
+            other.inner(),
+            other.calendar.as_calendar(),
+            largest_unit,
+            smallest_unit,
+        )
     }
 
     /// The calendar-specific year represented by `self`

@@ -46,6 +46,7 @@ pub trait Calendar {
         &self,
         date1: &Self::DateInner,
         date2: &Self::DateInner,
+        calendar2: &Self,
         largest_unit: DateDurationUnit,
         smallest_unit: DateDurationUnit,
     ) -> DateDuration<Self>;

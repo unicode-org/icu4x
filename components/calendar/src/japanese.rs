@@ -72,11 +72,18 @@ impl Calendar for Japanese {
         &self,
         date1: &Self::DateInner,
         date2: &Self::DateInner,
+        _calendar2: &Self,
         largest_unit: DateDurationUnit,
         smallest_unit: DateDurationUnit,
     ) -> DateDuration<Self> {
-        Iso.until(&date1.inner, &date2.inner, largest_unit, smallest_unit)
-            .cast_unit()
+        Iso.until(
+            &date1.inner,
+            &date2.inner,
+            &Iso,
+            largest_unit,
+            smallest_unit,
+        )
+        .cast_unit()
     }
 
     /// The calendar-specific year represented by `date`

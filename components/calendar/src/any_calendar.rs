@@ -103,38 +103,59 @@ impl Calendar for AnyCalendar {
         &self,
         date1: &Self::DateInner,
         date2: &Self::DateInner,
+        calendar2: &Self,
         largest_unit: DateDurationUnit,
         smallest_unit: DateDurationUnit,
     ) -> DateDuration<Self> {
-        match (self, date1, date2) {
+        match (self, calendar2, date1, date2) {
             (
-                &Self::Gregorian(ref c),
+                &Self::Gregorian(ref c1),
+                &Self::Gregorian(ref c2),
                 &AnyDateInner::Gregorian(ref d1),
                 &AnyDateInner::Gregorian(ref d2),
-            ) => c.until(d1, d2, largest_unit, smallest_unit).cast_unit(),
+            ) => c1
+                .until(d1, d2, c2, largest_unit, smallest_unit)
+                .cast_unit(),
             (
-                &Self::Buddhist(ref c),
+                &Self::Buddhist(ref c1),
+                &Self::Buddhist(ref c2),
                 &AnyDateInner::Buddhist(ref d1),
                 &AnyDateInner::Buddhist(ref d2),
-            ) => c.until(d1, d2, largest_unit, smallest_unit).cast_unit(),
+            ) => c1
+                .until(d1, d2, c2, largest_unit, smallest_unit)
+                .cast_unit(),
             (
-                &Self::Japanese(ref c),
+                &Self::Japanese(ref c1),
+                &Self::Japanese(ref c2),
                 &AnyDateInner::Japanese(ref d1),
                 &AnyDateInner::Japanese(ref d2),
-            ) => c.until(d1, d2, largest_unit, smallest_unit).cast_unit(),
+            ) => c1
+                .until(d1, d2, c2, largest_unit, smallest_unit)
+                .cast_unit(),
             (
-                &Self::Indian(ref c),
+                &Self::Indian(ref c1),
+                &Self::Indian(ref c2),
                 &AnyDateInner::Indian(ref d1),
                 &AnyDateInner::Indian(ref d2),
-            ) => c.until(d1, d2, largest_unit, smallest_unit).cast_unit(),
+            ) => c1
+                .until(d1, d2, c2, largest_unit, smallest_unit)
+                .cast_unit(),
             (
-                &Self::Coptic(ref c),
+                &Self::Coptic(ref c1),
+                &Self::Coptic(ref c2),
                 &AnyDateInner::Coptic(ref d1),
                 &AnyDateInner::Coptic(ref d2),
-            ) => c.until(d1, d2, largest_unit, smallest_unit).cast_unit(),
-            (&Self::Iso(ref c), &AnyDateInner::Iso(ref d1), &AnyDateInner::Iso(ref d2)) => {
-                c.until(d1, d2, largest_unit, smallest_unit).cast_unit()
-            }
+            ) => c1
+                .until(d1, d2, c2, largest_unit, smallest_unit)
+                .cast_unit(),
+            (
+                &Self::Iso(ref c1),
+                &Self::Iso(ref c2),
+                &AnyDateInner::Iso(ref d1),
+                &AnyDateInner::Iso(ref d2),
+            ) => c1
+                .until(d1, d2, c2, largest_unit, smallest_unit)
+                .cast_unit(),
             // TODO: convert date 2 if it's from the wrong calendar
             _ => panic!("Mixed date and calendar types!"),
         }

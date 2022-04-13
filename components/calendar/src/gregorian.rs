@@ -49,10 +49,11 @@ impl Calendar for Gregorian {
         &self,
         date1: &Self::DateInner,
         date2: &Self::DateInner,
+        _calendar2: &Self,
         largest_unit: DateDurationUnit,
         smallest_unit: DateDurationUnit,
     ) -> DateDuration<Self> {
-        Iso.until(&date1.0, &date2.0, largest_unit, smallest_unit)
+        Iso.until(&date1.0, &date2.0, &Iso, largest_unit, smallest_unit)
             .cast_unit()
     }
 
