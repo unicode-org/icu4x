@@ -42,6 +42,9 @@ pub trait Calendar {
     fn offset_date(&self, date: &mut Self::DateInner, offset: DateDuration<Self>);
 
     /// Calculate `date2 - date` as a duration
+    ///
+    /// `calendar2` is the calendar object associated with `date2`. In case the specific calendar objects
+    /// differ on data, the data for the first calendar is used, and `date2` may be converted if necessary.
     fn until(
         &self,
         date1: &Self::DateInner,

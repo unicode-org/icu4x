@@ -267,6 +267,9 @@ pub trait IncludedInAnyCalendar: Calendar + Sized {
 }
 
 impl IncludedInAnyCalendar for Gregorian {
+    fn to_any(self) -> AnyCalendar {
+        AnyCalendar::Gregorian(Gregorian)
+    }
     fn to_any_cloned(&self) -> AnyCalendar {
         AnyCalendar::Gregorian(Gregorian)
     }
@@ -276,6 +279,9 @@ impl IncludedInAnyCalendar for Gregorian {
 }
 
 impl IncludedInAnyCalendar for Buddhist {
+    fn to_any(self) -> AnyCalendar {
+        AnyCalendar::Buddhist(Buddhist)
+    }
     fn to_any_cloned(&self) -> AnyCalendar {
         AnyCalendar::Buddhist(Buddhist)
     }
@@ -297,6 +303,9 @@ impl IncludedInAnyCalendar for Japanese {
 }
 
 impl IncludedInAnyCalendar for Indian {
+    fn to_any(self) -> AnyCalendar {
+        AnyCalendar::Indian(Indian)
+    }
     fn to_any_cloned(&self) -> AnyCalendar {
         AnyCalendar::Indian(Indian)
     }
@@ -306,6 +315,9 @@ impl IncludedInAnyCalendar for Indian {
 }
 
 impl IncludedInAnyCalendar for Coptic {
+    fn to_any(self) -> AnyCalendar {
+        AnyCalendar::Coptic(Coptic)
+    }
     fn to_any_cloned(&self) -> AnyCalendar {
         AnyCalendar::Coptic(Coptic)
     }
@@ -315,6 +327,9 @@ impl IncludedInAnyCalendar for Coptic {
 }
 
 impl IncludedInAnyCalendar for Iso {
+    fn to_any(self) -> AnyCalendar {
+        AnyCalendar::Iso(Iso)
+    }
     fn to_any_cloned(&self) -> AnyCalendar {
         AnyCalendar::Iso(Iso)
     }
