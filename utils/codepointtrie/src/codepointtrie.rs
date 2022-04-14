@@ -51,7 +51,7 @@ pub trait TrieValue: Copy + Eq + PartialEq + zerovec::ule::AsULE + 'static {
 }
 
 impl TrieValue for u8 {
-    const DATA_GET_ERROR_VALUE: u8 = u8::MAX;
+    const DATA_GET_ERROR_VALUE: u8 = 0;
     type TryFromU32Error = TryFromIntError;
     fn try_from_u32(i: u32) -> Result<Self, Self::TryFromU32Error> {
         Self::try_from(i)
@@ -59,7 +59,7 @@ impl TrieValue for u8 {
 }
 
 impl TrieValue for u16 {
-    const DATA_GET_ERROR_VALUE: u16 = u16::MAX;
+    const DATA_GET_ERROR_VALUE: u16 = 0;
     type TryFromU32Error = TryFromIntError;
     fn try_from_u32(i: u32) -> Result<Self, Self::TryFromU32Error> {
         Self::try_from(i)
@@ -67,7 +67,7 @@ impl TrieValue for u16 {
 }
 
 impl TrieValue for u32 {
-    const DATA_GET_ERROR_VALUE: u32 = u32::MAX;
+    const DATA_GET_ERROR_VALUE: u32 = 0;
     type TryFromU32Error = TryFromIntError;
     fn try_from_u32(i: u32) -> Result<Self, Self::TryFromU32Error> {
         Ok(i)
