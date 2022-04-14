@@ -9,6 +9,7 @@ use icu_provider::DataError;
 impl std::error::Error for PropertiesError {}
 
 #[derive(Display, Debug, Copy, Clone)]
+#[non_exhaustive]
 pub enum PropertiesError {
     /// An error occurred while loading data
     #[displaydoc("{0}")]
