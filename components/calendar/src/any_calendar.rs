@@ -13,6 +13,9 @@ use crate::japanese::Japanese;
 
 use crate::{types, Calendar, Date, DateDuration, DateDurationUnit};
 
+/// This is a calendar that encompasses all formattable calendars supported by this crate
+///
+/// This allows for the construction of [`Date`] objects that have their calendar known at runtime.
 pub enum AnyCalendar {
     Gregorian(Gregorian),
     Buddhist(Buddhist),
@@ -22,6 +25,7 @@ pub enum AnyCalendar {
     Iso(Iso),
 }
 
+/// The inner date type for [`AnyCalendar`]
 #[derive(Clone, PartialEq, Eq, Debug)]
 pub enum AnyDateInner {
     Gregorian(<Gregorian as Calendar>::DateInner),
@@ -234,5 +238,87 @@ impl AnyDateInner {
             AnyDateInner::Coptic(_) => "Coptic",
             AnyDateInner::Iso(_) => "Iso",
         }
+    }
+}
+
+impl<C: IncludedInAnyCalendar> From<C> for AnyCalendar {
+    fn from(c: C) -> AnyCalendar {
+        c.to_any()
+    }
+}
+
+/// Trait for calendars that may be converted to [`AnyCalendar`]
+pub trait IncludedInAnyCalendar: Calendar + Sized {
+    /// Convert this calendar into an [`AnyCalendar`], moving it
+    ///
+    /// You should not need to call this method directly
+    fn to_any(self) -> AnyCalendar {
+        self.to_any_cloned()
+    }
+
+    /// Convert this calendar into an [`AnyCalendar`], cloning it
+    ///
+    /// You should not need to call this method directly
+    fn to_any_cloned(&self) -> AnyCalendar;
+    /// Convert a date for this calendar into an [`AnyDateInner`]
+    ///
+    /// You should not need to call this method directly
+    fn date_to_any(d: &Self::DateInner) -> AnyDateInner;
+}
+
+impl IncludedInAnyCalendar for Gregorian {
+    fn to_any_cloned(&self) -> AnyCalendar {
+        AnyCalendar::Gregorian(Gregorian)
+    }
+    fn date_to_any(d: &Self::DateInner) -> AnyDateInner {
+        AnyDateInner::Gregorian(*d)
+    }
+}
+
+impl IncludedInAnyCalendar for Buddhist {
+    fn to_any_cloned(&self) -> AnyCalendar {
+        AnyCalendar::Buddhist(Buddhist)
+    }
+    fn date_to_any(d: &Self::DateInner) -> AnyDateInner {
+        AnyDateInner::Buddhist(*d)
+    }
+}
+
+impl IncludedInAnyCalendar for Japanese {
+    fn to_any(self) -> AnyCalendar {
+        AnyCalendar::Japanese(self)
+    }
+    fn to_any_cloned(&self) -> AnyCalendar {
+        AnyCalendar::Japanese(self.clone())
+    }
+    fn date_to_any(d: &Self::DateInner) -> AnyDateInner {
+        AnyDateInner::Japanese(*d)
+    }
+}
+
+impl IncludedInAnyCalendar for Indian {
+    fn to_any_cloned(&self) -> AnyCalendar {
+        AnyCalendar::Indian(Indian)
+    }
+    fn date_to_any(d: &Self::DateInner) -> AnyDateInner {
+        AnyDateInner::Indian(*d)
+    }
+}
+
+impl IncludedInAnyCalendar for Coptic {
+    fn to_any_cloned(&self) -> AnyCalendar {
+        AnyCalendar::Coptic(Coptic)
+    }
+    fn date_to_any(d: &Self::DateInner) -> AnyDateInner {
+        AnyDateInner::Coptic(*d)
+    }
+}
+
+impl IncludedInAnyCalendar for Iso {
+    fn to_any_cloned(&self) -> AnyCalendar {
+        AnyCalendar::Iso(Iso)
+    }
+    fn date_to_any(d: &Self::DateInner) -> AnyDateInner {
+        AnyDateInner::Iso(*d)
     }
 }
