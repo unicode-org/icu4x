@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1649865342872,
+  "lastUpdate": 1649968216038,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -13193,6 +13193,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/7d75be3ddb6d10fd178aa2a0651cfde65f40edbe"
         },
         "date": 1649865326135,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4474764,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "elango@unicode.org",
+            "name": "Elango",
+            "username": "echeran"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "d91697c2760e65fff815ef2a5f968a6cd5d3d25f",
+          "message": "Use 0 for error value for Rust out-of-bounds in CPT for primitive trie value types (#1804)",
+          "timestamp": "2022-04-14T13:28:37-07:00",
+          "tree_id": "504b9e45f25db269e01b99a027aed1f86a8855c7",
+          "url": "https://github.com/unicode-org/icu4x/commit/d91697c2760e65fff815ef2a5f968a6cd5d3d25f"
+        },
+        "date": 1649968198365,
         "tool": "ndjson",
         "benches": [
           {
