@@ -39,7 +39,7 @@ use crate::{date::DateTimeInput, CldrCalendar, DateTimeFormatError, FormattedDat
 ///
 /// let provider = InvariantDataProvider;
 ///
-/// let mut options = length::Bag::from_date_time_style(Some(length::Date::Medium), Some(length::Time::Short));
+/// let mut options = length::Bag::from_date_time_style(length::Date::Medium, length::Time::Short);
 ///
 /// let dtf = DateTimeFormat::<Gregorian>::try_new(locale!("en"), &provider, &options.into())
 ///     .expect("Failed to create DateTimeFormat instance.");
@@ -203,7 +203,9 @@ impl<C: CldrCalendar> DateTimeFormat<C> {
     /// };
     /// use icu::locid::locale;
     ///
-    /// let options = DateTimeFormatOptions::Length(length::Bag::from_date_time_style(Some(length::Date::Medium), None));
+    /// let mut bag = length::Bag::empty();
+    /// bag.date = Some(length::Date::Medium);
+    /// let options = DateTimeFormatOptions::Length(bag);
     ///
     /// let provider = icu_testdata::get_provider();
     /// let dtf = DateTimeFormat::<Gregorian>::try_new(locale!("en"), &provider, &options)
