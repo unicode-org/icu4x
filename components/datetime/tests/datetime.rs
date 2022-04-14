@@ -569,7 +569,7 @@ fn constructing_datetime_format_with_time_zone_pattern_symbols_is_err() {
     use icu_locid::locale;
 
     let mut length_bag = Bag::default();
-    length_bag.time = Some(Time::Full);
+    length_bag.time = Some(Time::Full); // Full has timezone symbols
     let options = DateTimeFormatOptions::Length(length_bag);
 
     let provider = icu_testdata::get_provider();
