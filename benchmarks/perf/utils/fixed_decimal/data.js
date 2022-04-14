@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1649865787965,
+  "lastUpdate": 1649968728347,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -23068,6 +23068,66 @@ window.BENCHMARK_DATA = {
           {
             "name": "from_string/1000000001",
             "value": 77,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "elango@unicode.org",
+            "name": "Elango",
+            "username": "echeran"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "d91697c2760e65fff815ef2a5f968a6cd5d3d25f",
+          "message": "Use 0 for error value for Rust out-of-bounds in CPT for primitive trie value types (#1804)",
+          "timestamp": "2022-04-14T13:28:37-07:00",
+          "tree_id": "504b9e45f25db269e01b99a027aed1f86a8855c7",
+          "url": "https://github.com/unicode-org/icu4x/commit/d91697c2760e65fff815ef2a5f968a6cd5d3d25f"
+        },
+        "date": 1649968711086,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 99777,
+            "range": "± 645",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 20508,
+            "range": "± 104",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 64965,
+            "range": "± 189",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 171,
+            "range": "± 2",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 64,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 75,
             "range": "± 0",
             "unit": "ns/iter"
           }
