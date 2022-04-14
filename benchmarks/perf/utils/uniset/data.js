@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1649865665775,
+  "lastUpdate": 1649968618884,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -24083,6 +24083,60 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 47668240,
             "range": "± 149448",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/worst",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/worst",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "elango@unicode.org",
+            "name": "Elango",
+            "username": "echeran"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "d91697c2760e65fff815ef2a5f968a6cd5d3d25f",
+          "message": "Use 0 for error value for Rust out-of-bounds in CPT for primitive trie value types (#1804)",
+          "timestamp": "2022-04-14T13:28:37-07:00",
+          "tree_id": "504b9e45f25db269e01b99a027aed1f86a8855c7",
+          "url": "https://github.com/unicode-org/icu4x/commit/d91697c2760e65fff815ef2a5f968a6cd5d3d25f"
+        },
+        "date": 1649968602391,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 48063434,
+            "range": "± 165144",
             "unit": "ns/iter"
           },
           {
