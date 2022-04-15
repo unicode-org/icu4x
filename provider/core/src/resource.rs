@@ -383,8 +383,11 @@ impl Writeable for ResourceOptions {
 
     fn write_len(&self) -> LengthHint {
         self.langid.write_len()
-            + if !self.keywords.is_empty() { 3 } else { 0 }
-            + self.keywords.write_len()
+            + if !self.keywords.is_empty() {
+                self.keywords.write_len() + 3
+            } else {
+                LengthHint::exact(0)
+            }
     }
 }
 
