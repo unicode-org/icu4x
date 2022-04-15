@@ -57,7 +57,7 @@ macro_rules! impl_resource_provider {
                         let (cldr_cal, _, path) = self
                             .paths
                             .iter()
-                            .find(|(_, bcp_cal, _)| bcp_cal == &&*calendar)
+                            .find(|(_, bcp_cal, _)| bcp_cal == &calendar)
                             .ok_or_else(|| DataErrorKind::MissingVariant.with_req(<$marker>::KEY, req))?;
 
                         let locale_dir = get_langid_subdirectory(&path.join("main"), &langid)?
