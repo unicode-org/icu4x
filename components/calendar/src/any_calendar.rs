@@ -103,6 +103,7 @@ impl Calendar for AnyCalendar {
             (&Self::Iso(ref c), &mut AnyDateInner::Iso(ref mut d)) => {
                 c.offset_date(d, offset.cast_unit())
             }
+            #[allow(clippy::panic)] // This is only reached from misuse of from_raw, a semi-internal api
             (_, d) => panic!(
                 "Found AnyCalendar with mixed calendar type {} and date type {}!",
                 self.calendar_name(),
@@ -170,12 +171,12 @@ impl Calendar for AnyCalendar {
                 .cast_unit(),
             _ => {
                 // attempt to convert
-                let iso = calendar2.date_to_iso(&date2);
+                let iso = calendar2.date_to_iso(date2);
 
                 match_cal_and_date!(match (self, date1):
                     (c1, d1) => {
                         let d2 = c1.date_from_iso(iso);
-                        let until = c1.until(d1, &d2, &c1, largest_unit, smallest_unit);
+                        let until = c1.until(d1, &d2, c1, largest_unit, smallest_unit);
                         until.cast_unit::<AnyCalendar>()
                     }
                 )
