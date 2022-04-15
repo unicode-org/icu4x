@@ -103,7 +103,8 @@ impl Calendar for AnyCalendar {
             (&Self::Iso(ref c), &mut AnyDateInner::Iso(ref mut d)) => {
                 c.offset_date(d, offset.cast_unit())
             }
-            #[allow(clippy::panic)] // This is only reached from misuse of from_raw, a semi-internal api
+            // This is only reached from misuse of from_raw, a semi-internal api
+            #[allow(clippy::panic)]
             (_, d) => panic!(
                 "Found AnyCalendar with mixed calendar type {} and date type {}!",
                 self.calendar_name(),
