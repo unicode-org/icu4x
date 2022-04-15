@@ -75,7 +75,7 @@ use litemap::LiteMap;
 /// ```
 #[derive(Clone, PartialEq, Eq, Debug, Default, Hash, PartialOrd, Ord)]
 #[allow(missing_docs)] // TODO(#1028) - Add missing docs.
-#[non_exhaustive]
+#[allow(exhaustive_structs)] // spec-backed stable datastructure
 pub struct Unicode {
     pub keywords: Keywords,
     pub attributes: Attributes,
