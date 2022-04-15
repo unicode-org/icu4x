@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1649977288736,
+  "lastUpdate": 1650034002615,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -13253,6 +13253,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/3699de6575f74007da07c3cefeacb00e4853f7a2"
         },
         "date": 1649977271718,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4474764,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "149f172e7a0cf1ef39002d206a6a6357da7b9731",
+          "message": "Feature cleanup (#1799)",
+          "timestamp": "2022-04-15T16:45:05+02:00",
+          "tree_id": "3e66e26435c17789fa12cf6fb763316b2cd36d79",
+          "url": "https://github.com/unicode-org/icu4x/commit/149f172e7a0cf1ef39002d206a6a6357da7b9731"
+        },
+        "date": 1650033985632,
         "tool": "ndjson",
         "benches": [
           {
