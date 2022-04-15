@@ -203,9 +203,7 @@ impl<C: CldrCalendar> DateTimeFormat<C> {
     /// };
     /// use icu::locid::locale;
     ///
-    /// let mut bag = length::Bag::empty();
-    /// bag.date = Some(length::Date::Medium);
-    /// let options = DateTimeFormatOptions::Length(bag);
+    /// let options = length::Bag::from_date_style(length::Date::Medium).into();
     ///
     /// let provider = icu_testdata::get_provider();
     /// let dtf = DateTimeFormat::<Gregorian>::try_new(locale!("en"), &provider, &options)

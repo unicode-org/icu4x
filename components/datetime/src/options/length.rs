@@ -115,6 +115,24 @@ impl Bag {
             preferences: None,
         }
     }
+
+    /// Constructs a Bag given a date field (preferences and time set to None)
+    pub fn from_date_style(date: Date) -> Self {
+        Self {
+            date: Some(date),
+            time: None,
+            preferences: None,
+        }
+    }
+
+    /// Constructs a Bag given a time field (preferences and date set to None)
+    pub fn from_time_style(time: Time) -> Self {
+        Self {
+            date: None,
+            time: Some(time),
+            preferences: None,
+        }
+    }
 }
 /// Represents different lengths a [`DateTimeInput`] implementer can be formatted into.
 /// Each length has associated best pattern for it for a given locale.
@@ -126,8 +144,7 @@ impl Bag {
 /// ```
 /// use icu::datetime::options::length;
 ///
-/// let mut bag = length::Bag::empty();
-/// bag.date = Some(length::Date::Long);
+/// let bag = length::Bag::from_date_style(length::Date::Long);
 /// ```
 ///
 /// The available lengths correspond to [`UTS #35: Unicode LDML 4. Dates`], section 2.4 [`Element dateFormats`].
@@ -207,8 +224,7 @@ pub enum Date {
 /// ```
 /// use icu::datetime::options::length;
 ///
-/// let mut bag = length::Bag::empty();
-/// bag.time = Some(length::Time::Medium);
+/// let bag = length::Bag::from_time_style(length::Time::Medium);
 /// ```
 ///
 /// The available lengths correspond to [`UTS #35: Unicode LDML 4. Dates`], section 2.4 [`Element timeFormats`].
