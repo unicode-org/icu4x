@@ -17,7 +17,7 @@ pub use helpers::*;
 mod test {
     use super::reference::Skeleton;
     use super::*;
-    use icu_locid::{locale, unicode_ext_key, unicode_ext_value};
+    use icu_locid::Locale;
     use icu_provider::prelude::*;
 
     use crate::{
@@ -42,12 +42,7 @@ mod test {
         DataPayload<DateSkeletonPatternsV1Marker>,
     ) {
         let provider = icu_testdata::get_provider();
-        let mut locale = locale!("en");
-        locale
-            .extensions
-            .unicode
-            .keywords
-            .set(unicode_ext_key!("ca"), unicode_ext_value!("gregory"));
+        let locale: Locale = "en-u-ca-gregory".parse().unwrap();
         let patterns = provider
             .load_resource(&DataRequest {
                 options: ResourceOptions::from(&locale),
