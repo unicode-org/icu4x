@@ -100,7 +100,7 @@ impl<C: CldrCalendar> DateTimeFormat<C> {
             .extensions
             .unicode
             .keywords
-            .set(unicode_ext_key!("ca"), C::IDENTIFIER);
+            .set(unicode_ext_key!("ca"), C::BCP_47_IDENTIFIER);
         Ok(Self(
             raw::DateTimeFormat::try_new(locale, data_provider, options)?,
             PhantomData,

@@ -123,7 +123,7 @@ impl<C: CldrCalendar> ZonedDateTimeFormat<C> {
             .extensions
             .unicode
             .keywords
-            .set(unicode_ext_key!("ca"), C::IDENTIFIER);
+            .set(unicode_ext_key!("ca"), C::BCP_47_IDENTIFIER);
         Ok(Self(
             raw::ZonedDateTimeFormat::try_new(
                 locale,

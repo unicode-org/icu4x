@@ -14,25 +14,25 @@ use icu_locid::unicode_ext_value;
 /// in the CLDR transformer to support any new era maps.
 pub trait CldrCalendar {
     /// The Unicode BCP 47 identifier for the calendar
-    const IDENTIFIER: Value;
+    const BCP_47_IDENTIFIER: Value;
 }
 
 impl CldrCalendar for Gregorian {
-    const IDENTIFIER: Value = unicode_ext_value!("gregory");
+    const BCP_47_IDENTIFIER: Value = unicode_ext_value!("gregory");
 }
 
 impl CldrCalendar for Buddhist {
-    const IDENTIFIER: Value = unicode_ext_value!("buddhist");
+    const BCP_47_IDENTIFIER: Value = unicode_ext_value!("buddhist");
 }
 
 impl CldrCalendar for Japanese {
-    const IDENTIFIER: Value = unicode_ext_value!("japanese");
+    const BCP_47_IDENTIFIER: Value = unicode_ext_value!("japanese");
 }
 
 impl CldrCalendar for Coptic {
-    const IDENTIFIER: Value = unicode_ext_value!("coptic");
+    const BCP_47_IDENTIFIER: Value = unicode_ext_value!("coptic");
 }
 
 impl CldrCalendar for Indian {
-    const IDENTIFIER: Value = unicode_ext_value!("indian");
+    const BCP_47_IDENTIFIER: Value = unicode_ext_value!("indian");
 }
