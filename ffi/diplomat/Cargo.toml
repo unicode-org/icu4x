@@ -37,7 +37,7 @@ denylist = ["bench", "smaller_static"]
 # Please keep the features list in sync with the icu_capi_staticlib crate
 [features]
 default = ["provider_fs", "provider_static"]
-provider_fs = ["icu_provider_fs", "icu_provider_fs/deserialize_json"]
+provider_fs = ["icu_provider_fs"]
 provider_static = ["icu_testdata"]
 smaller_static = ["provider_static"]
 

@@ -110,6 +110,9 @@ pub struct ResourceKey {
     hash: ResourceKeyHash,
 }
 
+#[cfg(test)]
+static_assertions::const_assert_eq!(24, core::mem::size_of::<ResourceKey>());
+
 impl ResourceKey {
     /// Gets a human-readable representation of a [`ResourceKey`].
     ///

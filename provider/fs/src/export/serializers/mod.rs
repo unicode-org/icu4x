@@ -2,12 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-pub mod json;
-
-#[cfg(feature = "bincode")]
 pub mod bincode;
-
-#[cfg(feature = "postcard")]
+pub mod json;
 pub mod postcard;
 
 use displaydoc::Display;
