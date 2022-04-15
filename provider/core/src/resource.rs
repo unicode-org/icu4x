@@ -410,6 +410,16 @@ impl From<Locale> for ResourceOptions {
     }
 }
 
+impl From<&Locale> for ResourceOptions {
+    fn from(locale: &Locale) -> Self {
+        // TODO(#1109): Implement proper vertical fallback
+        Self {
+            langid: locale.id.clone(),
+            keywords: locale.extensions.unicode.keywords.clone(),
+        }
+    }
+}
+
 impl ResourceOptions {
     /// TODO(#1109): Delete this function and use vertical fallback instead
     pub fn temp_for_region(region: Option<Region>) -> Self {

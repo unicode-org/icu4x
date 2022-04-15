@@ -86,7 +86,7 @@ impl DateTimeFormat {
             Some(
                 data_provider
                     .load_resource(&DataRequest {
-                        options: locale.clone().into(),
+                        options: ResourceOptions::from(&locale),
                         metadata: Default::default(),
                     })?
                     .take_payload()?,

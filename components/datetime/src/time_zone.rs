@@ -132,7 +132,7 @@ impl TimeZoneFormat {
         let data_payloads = TimeZoneDataPayloads {
             zone_formats: zone_provider
                 .load_resource(&DataRequest {
-                    options: locale.clone().into(),
+                    options: ResourceOptions::from(&locale),
                     metadata: Default::default(),
                 })?
                 .take_payload()?,
@@ -379,7 +379,7 @@ impl TimeZoneFormat {
         let data_payloads = TimeZoneDataPayloads {
             zone_formats: zone_provider
                 .load_resource(&DataRequest {
-                    options: locale.clone().into(),
+                    options: ResourceOptions::from(&locale),
                     metadata: Default::default(),
                 })?
                 .take_payload()?,

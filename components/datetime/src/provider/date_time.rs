@@ -206,7 +206,7 @@ where
         let data = self
             .data_provider
             .load_resource(&DataRequest {
-                options: self.locale.clone().into(),
+                options: ResourceOptions::from(self.locale),
                 metadata: Default::default(),
             })?
             .take_payload()?;
@@ -217,7 +217,7 @@ where
         let data = self
             .data_provider
             .load_resource(&DataRequest {
-                options: self.locale.clone().into(),
+                options: ResourceOptions::from(self.locale),
                 metadata: Default::default(),
             })?
             .take_payload()?;

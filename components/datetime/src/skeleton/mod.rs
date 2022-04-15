@@ -50,7 +50,7 @@ mod test {
             .set(unicode_ext_key!("ca"), unicode_ext_value!("gregory"));
         let patterns = provider
             .load_resource(&DataRequest {
-                options: locale.clone().into(),
+                options: ResourceOptions::from(&locale),
                 metadata: Default::default(),
             })
             .expect("Failed to load payload")
