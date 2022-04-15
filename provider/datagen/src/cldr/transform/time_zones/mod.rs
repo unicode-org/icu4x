@@ -50,7 +50,7 @@ macro_rules! impl_resource_provider {
         $(
             impl ResourceProvider<$marker> for TimeZonesProvider {
                 fn load_resource(&self, req: &DataRequest) -> Result<DataResponse<$marker>, DataError> {
-                    let langid = req.langid();
+                    let langid = req.options.langid();
 
                     let time_zone_names = if let Some(time_zone_names) = self.time_zone_names_data.get(&langid) {
                         time_zone_names

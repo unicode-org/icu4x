@@ -95,7 +95,7 @@ impl<M: ResourceMarker<Yokeable = PluralRulesV1<'static>>> ResourceProvider<M> f
                     .as_ref()
                     .ok_or_else(|| DataErrorKind::MissingResourceKey.with_key(M::KEY))?
                     .0
-                    .get(&req.langid())
+                    .get(&req.options.langid())
                     .ok_or_else(|| DataErrorKind::MissingLocale.with_req(M::KEY, req))?,
             ))),
         })

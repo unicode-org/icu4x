@@ -81,7 +81,7 @@ impl ResourceProvider<DecimalSymbolsV1Marker> for NumbersProvider {
         &self,
         req: &DataRequest,
     ) -> Result<DataResponse<DecimalSymbolsV1Marker>, DataError> {
-        let langid = req.langid();
+        let langid = req.options.langid();
 
         let resource: cldr_serde::numbers::Resource = {
             let path = get_langid_subdirectory(&self.numbers_path, &langid)?

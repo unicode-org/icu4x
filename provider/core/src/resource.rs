@@ -446,6 +446,28 @@ impl ResourceOptions {
     ///
     /// If you have ownership over the `ResourceOptions`, use [`ResourceOptions::into_locale()`]
     /// and then access the `id` field.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu_provider::prelude::*;
+    /// use icu_locid::locale;
+    ///
+    /// const FOO_BAR: ResourceKey = icu_provider::resource_key!("foo/bar@1");
+    ///
+    /// let req_no_langid = DataRequest {
+    ///     options: ResourceOptions::default(),
+    ///     metadata: Default::default(),
+    /// };
+    ///
+    /// let req_with_langid = DataRequest {
+    ///     options: locale!("ar-EG").into(),
+    ///     metadata: Default::default(),
+    /// };
+    ///
+    /// assert_eq!(req_no_langid.options.langid(), langid!("und"));
+    /// assert_eq!(req_with_langid.options.langid(), langid!("ar-EG"));
+    /// ```
     pub fn langid(&self) -> LanguageIdentifier {
         self.langid.clone()
     }

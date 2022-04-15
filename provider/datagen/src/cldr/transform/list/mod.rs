@@ -33,7 +33,7 @@ impl<M: ResourceMarker<Yokeable = ListFormatterPatternsV1<'static>>> ResourcePro
     for ListProvider
 {
     fn load_resource(&self, req: &DataRequest) -> Result<DataResponse<M>, DataError> {
-        let langid = req.langid();
+        let langid = req.options.langid();
 
         let resource: cldr_serde::list_patterns::Resource = {
             let path = get_langid_subdirectory(&self.cldr_misc.join("main"), &langid)?

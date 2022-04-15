@@ -38,35 +38,6 @@ impl fmt::Display for DataRequest {
     }
 }
 
-impl DataRequest {
-    /// Returns the [`LanguageIdentifier`] for this [`DataRequest`].
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use icu_provider::prelude::*;
-    /// use icu_locid::locale;
-    ///
-    /// const FOO_BAR: ResourceKey = icu_provider::resource_key!("foo/bar@1");
-    ///
-    /// let req_no_langid = DataRequest {
-    ///     options: ResourceOptions::default(),
-    ///     metadata: Default::default(),
-    /// };
-    ///
-    /// let req_with_langid = DataRequest {
-    ///     options: locale!("ar-EG").into(),
-    ///     metadata: Default::default(),
-    /// };
-    ///
-    /// assert_eq!(req_no_langid.langid(), langid!("und"));
-    /// assert_eq!(req_with_langid.langid(), langid!("ar-EG"));
-    /// ```
-    pub fn langid(&self) -> LanguageIdentifier {
-        self.options.langid()
-    }
-}
-
 /// A response object containing metadata about the returned data.
 #[derive(Debug, Clone, PartialEq, Default)]
 #[non_exhaustive]
