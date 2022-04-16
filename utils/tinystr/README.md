@@ -12,7 +12,7 @@ use tinystr::TinyAsciiStr;
 use tinystr::tinystr;
 
 let ex_1 = TinyAsciiStr::<3>::try_from_raw(*b"USD");
-let ex_2 = TinyAsciiStr::<4> = "test".parse().expect("Failed to parse.");
+let ex_2: TinyAsciiStr::<4> = "test".parse().expect("Failed to parse.");
 
 assert_eq!(
     ex_1,
