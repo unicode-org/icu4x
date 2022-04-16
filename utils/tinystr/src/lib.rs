@@ -2,6 +2,29 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+//! `tinystr` is a utility crate of the [`ICU4X`] project.
+//!
+//! It includes [`TinyAsciiStr`], a core API for representing small ASCII-only bounded length strings.
+//! It is optimized for operations on strings of size 8 or smaller.
+//!
+//! # Examples
+//!
+//! ```rust
+//! use tinystr::TinyAsciiStr;
+//! use tinystr::tinystr;
+//!
+//! let ex_1 = TinyAsciiStr::<3>::try_from_raw(*b"USD");
+//! let ex_2 = TinyAsciiStr::<4> = "test".parse().expect("Failed to parse.");
+//!
+//! assert_eq!(
+//!     ex_1,
+//!     Ok(tinystr!(3, "USD"))
+//! );
+//! assert!(ex_2.is_ascii_lowercase());
+//! ```
+//!
+//! [`ICU4X`]: ../icu/index.html
+
 // https://github.com/unicode-org/icu4x/blob/main/docs/process/boilerplate.md#library-annotations
 #![cfg_attr(not(test), no_std)]
 #![cfg_attr(

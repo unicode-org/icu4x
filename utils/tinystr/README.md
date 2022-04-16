@@ -2,7 +2,7 @@
 
 `tinystr` is a utility crate of the [`ICU4X`] project.
 
-It includes [`TinyAsciiStr`], a core API for representing small ASCII-only bounded length strings. 
+It includes [`TinyAsciiStr`], a core API for representing small ASCII-only bounded length strings.
 It is optimized for operations on strings of size 8 or smaller.
 
 ## Examples
@@ -22,7 +22,6 @@ assert!(ex_2.is_ascii_lowercase());
 ```
 
 [`ICU4X`]: ../icu/index.html
-
 
 ## More Information
 
