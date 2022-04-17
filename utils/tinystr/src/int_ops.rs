@@ -106,8 +106,6 @@ impl Aligned4 {
         let alpha = !(lower + 0x1f1f_1f1f) | (lower + 0x0505_0505);
         // See explanatory comments in is_ascii_lowercase
         let invalid_case = !(word + 0x3f3f_3f3f) | (word + 0x2525_2525);
-        // (alpha & mask)  == 0
-        // (invalid_case & 0x8080_8080) == 0x8080_8080
         (alpha & mask) ^ (invalid_case & 0x8080_8080) == 0x8080_8080
     }
 
