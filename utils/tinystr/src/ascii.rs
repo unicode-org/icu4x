@@ -473,7 +473,7 @@ impl<const N: usize> TinyAsciiStr<N> {
         )
     }
 
-    /// Checks if the value is composed of ASCII alphabetic upper  case characters:
+    /// Checks if the value is composed of ASCII alphabetic upper case characters:
     ///
     ///  * U+0041 'A' ..= U+005A 'Z',
     ///
