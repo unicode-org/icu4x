@@ -98,6 +98,45 @@ impl Aligned4 {
         (invalid_case & 0x8080_8080) == 0x8080_8080
     }
 
+    pub const fn is_ascii_alphabetic_lowercase(&self) -> bool {
+        let word = self.0;
+        // See explanatory comments in is_ascii_alphabetic
+        let mask = (word + 0x7f7f_7f7f) & 0x8080_8080;
+        let lower = word | 0x2020_2020;
+        let alpha = !(lower + 0x1f1f_1f1f) | (lower + 0x0505_0505);
+        // See explanatory comments in is_ascii_lowercase
+        let invalid_case = !(word + 0x3f3f_3f3f) | (word + 0x2525_2525);
+        // (alpha & mask)  == 0
+        // (invalid_case & 0x8080_8080) == 0x8080_8080
+        (alpha & mask) ^ (invalid_case & 0x8080_8080) == 0x8080_8080
+    }
+
+    pub const fn is_ascii_alphabetic_titlecase(&self) -> bool {
+        let word = self.0;
+        // See explanatory comments in is_ascii_alphabetic
+        let mask = (word + 0x7f7f_7f7f) & 0x8080_8080;
+        let lower = word | 0x2020_2020;
+        let alpha = !(lower + 0x1f1f_1f1f) | (lower + 0x0505_0505);
+        // See explanatory comments in is_ascii_lowercase
+        let invalid_case = if cfg!(target_endian = "little") {
+            !(word + 0x3f3f_3f1f) | (word + 0x2525_2505)
+        } else {
+            !(word + 0x1f3f_3f3f) | (word + 0x0525_2525)
+        };
+        (alpha & mask) ^ (invalid_case & 0x8080_8080) == 0x8080_8080
+    }
+
+    pub const fn is_ascii_alphabetic_uppercase(&self) -> bool {
+        let word = self.0;
+        // See explanatory comments in is_ascii_alphabetic
+        let mask = (word + 0x7f7f_7f7f) & 0x8080_8080;
+        let lower = word | 0x2020_2020;
+        let alpha = !(lower + 0x1f1f_1f1f) | (lower + 0x0505_0505);
+        // See explanatory comments in is_ascii_lowercase
+        let invalid_case = !(word + 0x1f1f_1f1f) | (word + 0x0505_0505);
+        (alpha & mask) ^ (invalid_case & 0x8080_8080) == 0x8080_8080
+    }
+
     pub const fn to_ascii_lowercase(&self) -> Self {
         let word = self.0;
         let result = word | (((word + 0x3f3f_3f3f) & !(word + 0x2525_2525) & 0x8080_8080) >> 2);
@@ -197,6 +236,40 @@ impl Aligned8 {
         let word = self.0;
         let invalid_case = !(word + 0x1f1f_1f1f_1f1f_1f1f) | (word + 0x0505_0505_0505_0505);
         (invalid_case & 0x8080_8080_8080_8080) == 0x8080_8080_8080_8080
+    }
+
+    pub const fn is_ascii_alphabetic_lowercase(&self) -> bool {
+        let word = self.0;
+        let mask = (word + 0x7f7f_7f7f_7f7f_7f7f) & 0x8080_8080_8080_8080;
+        let lower = word | 0x2020_2020_2020_2020;
+        let alpha = !(lower + 0x1f1f_1f1f_1f1f_1f1f) | (lower + 0x0505_0505_0505_0505);
+
+        let invalid_case = !(word + 0x3f3f_3f3f_3f3f_3f3f) | (word + 0x2525_2525_2525_2525);
+        (alpha & mask) ^ (invalid_case & 0x8080_8080_8080_8080) == 0x8080_8080_8080_8080
+    }
+
+    pub const fn is_ascii_alphabetic_titlecase(&self) -> bool {
+        let word = self.0;
+        let mask = (word + 0x7f7f_7f7f_7f7f_7f7f) & 0x8080_8080_8080_8080;
+        let lower = word | 0x2020_2020_2020_2020;
+        let alpha = !(lower + 0x1f1f_1f1f_1f1f_1f1f) | (lower + 0x0505_0505_0505_0505);
+
+        let invalid_case = if cfg!(target_endian = "little") {
+            !(word + 0x3f3f_3f3f_3f3f_3f1f) | (word + 0x2525_2525_2525_2505)
+        } else {
+            !(word + 0x1f3f_3f3f_3f3f_3f3f) | (word + 0x0525_2525_2525_2525)
+        };
+        (alpha & mask) ^ (invalid_case & 0x8080_8080_8080_8080) == 0x8080_8080_8080_8080
+    }
+
+    pub const fn is_ascii_alphabetic_uppercase(&self) -> bool {
+        let word = self.0;
+        let mask = (word + 0x7f7f_7f7f_7f7f_7f7f) & 0x8080_8080_8080_8080;
+        let lower = word | 0x2020_2020_2020_2020;
+        let alpha = !(lower + 0x1f1f_1f1f_1f1f_1f1f) | (lower + 0x0505_0505_0505_0505);
+
+        let invalid_case = !(word + 0x1f1f_1f1f_1f1f_1f1f) | (word + 0x0505_0505_0505_0505);
+        (alpha & mask) ^ (invalid_case & 0x8080_8080_8080_8080) == 0x8080_8080_8080_8080
     }
 
     pub const fn to_ascii_lowercase(&self) -> Self {
