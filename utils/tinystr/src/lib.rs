@@ -6,7 +6,9 @@
 //!
 //! It includes [`TinyAsciiStr`], a core API for representing small ASCII-only bounded length strings.
 //!
-//! It is optimized for operations on strings of size 8 or smaller. When use cases involve comparison and conversion of strings for lowercase/uppercase/titlecase, or checking numeric/alphabetic/alphanumeric, `TinyAsciiStr` is the edge performance library.
+//! It is optimized for operations on strings of size 8 or smaller. When use cases involve comparison
+//! and conversion of strings for lowercase/uppercase/titlecase, or checking
+//! numeric/alphabetic/alphanumeric, `TinyAsciiStr` is the edge performance library.
 //!
 //! # Examples
 //!
@@ -33,7 +35,8 @@
 //!
 //! # Details
 //!
-//! When strings are of size 8 or smaller, the struct transforms the strings as `u32`/`u64` and uses bitmasking to provide basic string manipulation operations:
+//! When strings are of size 8 or smaller, the struct transforms the strings as `u32`/`u64` and uses
+//! bitmasking to provide basic string manipulation operations:
 //! * `is_ascii_numeric`
 //! * `is_ascii_alphabetic`
 //! * `is_ascii_alphanumeric`
