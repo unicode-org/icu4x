@@ -49,6 +49,14 @@ const_assert!(core::mem::size_of::<usize>() >= core::mem::size_of::<u16>());
 ///
 /// dec.multiply_pow10(-2);
 /// assert_eq!("2.50", dec.to_string());
+///
+/// // IEEE 754 for floating point defines the sign bit separate
+/// // from the mantissa and exponent, allowing for -0.
+/// let zero = FixedDecimal::from(0);
+/// let negative_zero = FixedDecimal::from(0).negated();
+/// assert_eq!("0", zero.to_string());
+/// assert_eq!("-0", negative_zero.to_string());
+/// assert_ne!(zero, negative_zero)
 /// ```
 #[derive(Debug, Clone, PartialEq)]
 pub struct FixedDecimal {
