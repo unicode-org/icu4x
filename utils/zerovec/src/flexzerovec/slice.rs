@@ -128,7 +128,7 @@ impl FlexZeroSlice {
 
     #[inline]
     pub fn len(&self) -> usize {
-        self.data.len() / usize::from(self.width)
+        self.data.len() / self.get_width()
     }
 
     #[inline]
