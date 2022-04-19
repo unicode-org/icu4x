@@ -171,6 +171,6 @@ metadata = [
     "std"
 ]
 
-fs = ["icu_provider_fs", "icu_provider_fs/deserialize_json", "std"]
-static = ["icu_provider_blob"]
+fs = ["icu_provider/deserialize_json", "icu_provider_fs", "std"]
+static = ["icu_provider/deserialize_postcard_07", "icu_provider_blob"]
 std = []

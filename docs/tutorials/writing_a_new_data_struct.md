@@ -122,19 +122,19 @@ The following example shows all the pieces that make up the data pipeline for `D
 ```rust
 #[icu_provider::data_struct]
 #[derive(Debug, PartialEq, Clone)]
-#[cfg_attr(feature = "serialize", derive(Deserialize))]
+#[cfg_attr(feature = "serde", derive(Deserialize))]
 #[cfg_attr(feature = "datagen", derive(Serialize))]
 pub struct DecimalSymbolsV1<'data> {
     /// Prefix and suffix to apply when a negative sign is needed.
-    #[cfg_attr(feature = "serialize", serde(borrow))]
+    #[cfg_attr(feature = "serde", serde(borrow))]
     pub minus_sign_affixes: AffixesV1<'data>,
 
     /// Prefix and suffix to apply when a plus sign is needed.
-    #[cfg_attr(feature = "serialize", serde(borrow))]
+    #[cfg_attr(feature = "serde", serde(borrow))]
     pub plus_sign_affixes: AffixesV1<'data>,
 
     /// Character used to separate the integer and fraction parts of the number.
-    #[cfg_attr(feature = "serialize", serde(borrow))]
+    #[cfg_attr(feature = "serde", serde(borrow))]
     pub decimal_separator: Cow<'data, str>,
 
     // ...

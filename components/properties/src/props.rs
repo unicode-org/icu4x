@@ -48,6 +48,7 @@ pub enum EnumeratedProperty {
 /// For more information, see [Unicode Standard Annex #9](https://unicode.org/reports/tr41/tr41-28.html#UAX9).
 #[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[allow(clippy::exhaustive_structs)] // newtype
 #[repr(transparent)]
 #[zerovec::make_ule(BidiClassULE)]
 pub struct BidiClass(pub u8);
@@ -89,6 +90,7 @@ impl BidiClass {
 /// It does not support grouped categories (eg `Letter`). For grouped categories, use [`GeneralCategoryGroup`].
 #[derive(Copy, Clone, PartialEq, Eq, Debug, Ord, PartialOrd)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[allow(clippy::exhaustive_enums)] // this type is stable
 #[zerovec::make_ule(GeneralCategoryULE)]
 #[repr(u8)]
 pub enum GeneralCategory {
@@ -177,6 +179,7 @@ pub enum GeneralCategory {
 ///
 /// See `UCharCategory` and `U_GET_GC_MASK` in ICU4C.
 #[derive(Copy, Clone, PartialEq, Debug, Eq)]
+#[allow(clippy::exhaustive_structs)] // newtype
 #[repr(transparent)]
 pub struct GeneralCategoryGroup(pub(crate) u32);
 
@@ -365,6 +368,7 @@ impl From<GeneralCategory> for GeneralCategoryGroup {
 /// See `UScriptCode` in ICU4C.
 #[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[allow(clippy::exhaustive_structs)] // newtype
 #[repr(transparent)]
 #[zerovec::make_ule(ScriptULE)]
 pub struct Script(pub u16);
@@ -544,6 +548,7 @@ impl Script {
 /// The numeric value is compatible with `UEastAsianWidth` in ICU4C.
 #[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[allow(clippy::exhaustive_structs)] // newtype
 #[repr(transparent)]
 #[zerovec::make_ule(EastAsianWidthULE)]
 pub struct EastAsianWidth(pub u8);
@@ -567,6 +572,7 @@ impl EastAsianWidth {
 /// The numeric value is compatible with `ULineBreak` in ICU4C.
 #[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[allow(clippy::exhaustive_structs)] // newtype
 #[repr(transparent)]
 #[zerovec::make_ule(LineBreakULE)]
 pub struct LineBreak(pub u8);
@@ -628,6 +634,7 @@ impl LineBreak {
 /// The numeric value is compatible with `UGraphemeClusterBreak` in ICU4C.
 #[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[allow(clippy::exhaustive_structs)] // this type is stable
 #[repr(transparent)]
 #[zerovec::make_ule(GraphemeClusterBreakULE)]
 pub struct GraphemeClusterBreak(pub u8);
@@ -668,6 +675,7 @@ impl GraphemeClusterBreak {
 /// The numeric value is compatible with `UWordBreakValues` in ICU4C.
 #[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[allow(clippy::exhaustive_structs)] // newtype
 #[repr(transparent)]
 #[zerovec::make_ule(WordBreakULE)]
 pub struct WordBreak(pub u8);
@@ -712,6 +720,7 @@ impl WordBreak {
 /// The numeric value is compatible with `USentenceBreak` in ICU4C.
 #[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[allow(clippy::exhaustive_structs)] // newtype
 #[repr(transparent)]
 #[zerovec::make_ule(SentenceBreakULE)]
 pub struct SentenceBreak(pub u8);
@@ -741,6 +750,7 @@ impl SentenceBreak {
 /// <https://www.unicode.org/reports/tr15/>.
 #[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[allow(clippy::exhaustive_structs)] // newtype
 #[repr(transparent)]
 #[zerovec::make_ule(CanonicalCombiningClassULE)]
 pub struct CanonicalCombiningClass(pub u8);
