@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1650034556170,
+  "lastUpdate": 1650334087490,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -26279,6 +26279,102 @@ window.BENCHMARK_DATA = {
             "name": "pattern/parse",
             "value": 5834,
             "range": "± 170",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "andrewpkq@gmail.com",
+            "name": "andrewpollack",
+            "username": "andrewpollack"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "1ab22f3ee30fbabcf2bcd4c939cc33c59860c832",
+          "message": "Adding to README of tinystr/TinyAsciiStr (#1805)",
+          "timestamp": "2022-04-19T01:56:57Z",
+          "tree_id": "87f5d500cd8c4ca852a529139afe0061047f7423",
+          "url": "https://github.com/unicode-org/icu4x/commit/1ab22f3ee30fbabcf2bcd4c939cc33c59860c832"
+        },
+        "date": 1650334070015,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 94319,
+            "range": "± 5139",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 934698,
+            "range": "± 40305",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 190439,
+            "range": "± 7279",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/DateTimeFormat/format_to_write",
+            "value": 87835,
+            "range": "± 3237",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/DateTimeFormat/format_to_string",
+            "value": 99337,
+            "range": "± 6210",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/format",
+            "value": 92037,
+            "range": "± 2894",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/to_string",
+            "value": 99433,
+            "range": "± 5576",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/ZonedDateTimeFormat/format_to_write",
+            "value": 182294,
+            "range": "± 9789",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/ZonedDateTimeFormat/format_to_string",
+            "value": 195678,
+            "range": "± 7357",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/format",
+            "value": 187937,
+            "range": "± 9334",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/to_string",
+            "value": 200325,
+            "range": "± 10545",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "pattern/parse",
+            "value": 5066,
+            "range": "± 156",
             "unit": "ns/iter"
           }
         ]
