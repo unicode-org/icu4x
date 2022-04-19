@@ -861,9 +861,9 @@ mod test {
         fn check<const N: usize>() {
             check_operation(
                 |s| {
-                    // Convert alphabetic
+                    // Check alphabetic
                     s.chars().all(|c| c.is_ascii_alphabetic()) &&
-                    // Convert lowercase
+                    // Check lowercase
                     s == TinyAsciiStr::<16>::from_str(s)
                         .unwrap()
                         .to_ascii_lowercase()
@@ -885,9 +885,9 @@ mod test {
         fn check<const N: usize>() {
             check_operation(
                 |s| {
-                    // Convert alphabetic
+                    // Check alphabetic
                     s.chars().all(|c| c.is_ascii_alphabetic()) &&
-                    // Convert titlecase
+                    // Check titlecase
                     s == TinyAsciiStr::<16>::from_str(s)
                         .unwrap()
                         .to_ascii_titlecase()
@@ -909,9 +909,9 @@ mod test {
         fn check<const N: usize>() {
             check_operation(
                 |s| {
-                    // Convert alphabetic
+                    // Check alphabetic
                     s.chars().all(|c| c.is_ascii_alphabetic()) &&
-                    // Convert uppercase
+                    // Check uppercase
                     s == TinyAsciiStr::<16>::from_str(s)
                         .unwrap()
                         .to_ascii_uppercase()

@@ -100,39 +100,33 @@ impl Aligned4 {
 
     pub const fn is_ascii_alphabetic_lowercase(&self) -> bool {
         let word = self.0;
-        // See explanatory comments in is_ascii_alphabetic
+        // `mask` sets all NUL bytes to 0.
         let mask = (word + 0x7f7f_7f7f) & 0x8080_8080;
-        let lower = word | 0x2020_2020;
-        let alpha = !(lower + 0x1f1f_1f1f) | (lower + 0x0505_0505);
-        // See explanatory comments in is_ascii_lowercase
-        let invalid_case = !(word + 0x3f3f_3f3f) | (word + 0x2525_2525);
-        (alpha & mask) ^ (invalid_case & 0x8080_8080) == 0x8080_8080
+        // `lower_alpha` sets all lowercase ASCII characters to 0 and all others to 1.
+        let lower_alpha = !(word + 0x1f1f_1f1f) | (word + 0x0505_0505);
+        // The overall string is valid if every character passes at least one test.
+        // We performed two tests here: non-NUL (`mask`) and lowercase ASCII character (`alpha`).
+        (lower_alpha & mask) == 0
     }
 
     pub const fn is_ascii_alphabetic_titlecase(&self) -> bool {
         let word = self.0;
-        // See explanatory comments in is_ascii_alphabetic
+        // See explanatory comments in is_ascii_alphabetic_lowercase
         let mask = (word + 0x7f7f_7f7f) & 0x8080_8080;
-        let lower = word | 0x2020_2020;
-        let alpha = !(lower + 0x1f1f_1f1f) | (lower + 0x0505_0505);
-        // See explanatory comments in is_ascii_lowercase
-        let invalid_case = if cfg!(target_endian = "little") {
-            !(word + 0x3f3f_3f1f) | (word + 0x2525_2505)
+        let title_case = if cfg!(target_endian = "little") {
+            !(word + 0x1f1f_1f3f) | (word + 0x0505_0525)
         } else {
-            !(word + 0x1f3f_3f3f) | (word + 0x0525_2525)
+            !(word + 0x3f1f_1f1f) | (word + 0x2505_0505)
         };
-        (alpha & mask) ^ (invalid_case & 0x8080_8080) == 0x8080_8080
+        (title_case & mask) == 0
     }
 
     pub const fn is_ascii_alphabetic_uppercase(&self) -> bool {
         let word = self.0;
-        // See explanatory comments in is_ascii_alphabetic
+        // See explanatory comments in is_ascii_alphabetic_lowercase
         let mask = (word + 0x7f7f_7f7f) & 0x8080_8080;
-        let lower = word | 0x2020_2020;
-        let alpha = !(lower + 0x1f1f_1f1f) | (lower + 0x0505_0505);
-        // See explanatory comments in is_ascii_lowercase
-        let invalid_case = !(word + 0x1f1f_1f1f) | (word + 0x0505_0505);
-        (alpha & mask) ^ (invalid_case & 0x8080_8080) == 0x8080_8080
+        let upper_alpha = !(word + 0x3f3f_3f3f) | (word + 0x2525_2525);
+        (upper_alpha & mask) == 0
     }
 
     pub const fn to_ascii_lowercase(&self) -> Self {
@@ -238,36 +232,33 @@ impl Aligned8 {
 
     pub const fn is_ascii_alphabetic_lowercase(&self) -> bool {
         let word = self.0;
+        // `mask` sets all NUL bytes to 0.
         let mask = (word + 0x7f7f_7f7f_7f7f_7f7f) & 0x8080_8080_8080_8080;
-        let lower = word | 0x2020_2020_2020_2020;
-        let alpha = !(lower + 0x1f1f_1f1f_1f1f_1f1f) | (lower + 0x0505_0505_0505_0505);
-
-        let invalid_case = !(word + 0x3f3f_3f3f_3f3f_3f3f) | (word + 0x2525_2525_2525_2525);
-        (alpha & mask) ^ (invalid_case & 0x8080_8080_8080_8080) == 0x8080_8080_8080_8080
+        // `lower_alpha` sets all lowercase ASCII characters to 0 and all others to 1.
+        let lower_alpha = !(word + 0x1f1f_1f1f_1f1f_1f1f) | (word + 0x0505_0505_0505_0505);
+        // The overall string is valid if every character passes at least one test.
+        // We performed two tests here: non-NUL (`mask`) and lowercase ASCII character (`alpha`).
+        (lower_alpha & mask) == 0
     }
 
     pub const fn is_ascii_alphabetic_titlecase(&self) -> bool {
         let word = self.0;
+        // See explanatory comments in is_ascii_alphabetic_lowercase
         let mask = (word + 0x7f7f_7f7f_7f7f_7f7f) & 0x8080_8080_8080_8080;
-        let lower = word | 0x2020_2020_2020_2020;
-        let alpha = !(lower + 0x1f1f_1f1f_1f1f_1f1f) | (lower + 0x0505_0505_0505_0505);
-
-        let invalid_case = if cfg!(target_endian = "little") {
-            !(word + 0x3f3f_3f3f_3f3f_3f1f) | (word + 0x2525_2525_2525_2505)
+        let title_case = if cfg!(target_endian = "little") {
+            !(word + 0x1f1f_1f1f_1f1f_1f3f) | (word + 0x0505_0505_0505_0525)
         } else {
-            !(word + 0x1f3f_3f3f_3f3f_3f3f) | (word + 0x0525_2525_2525_2525)
+            !(word + 0x3f1f_1f1f_1f1f_1f1f) | (word + 0x2505_0505_0505_0505)
         };
-        (alpha & mask) ^ (invalid_case & 0x8080_8080_8080_8080) == 0x8080_8080_8080_8080
+        (title_case & mask) == 0
     }
 
     pub const fn is_ascii_alphabetic_uppercase(&self) -> bool {
         let word = self.0;
+        // See explanatory comments in is_ascii_alphabetic_lowercase
         let mask = (word + 0x7f7f_7f7f_7f7f_7f7f) & 0x8080_8080_8080_8080;
-        let lower = word | 0x2020_2020_2020_2020;
-        let alpha = !(lower + 0x1f1f_1f1f_1f1f_1f1f) | (lower + 0x0505_0505_0505_0505);
-
-        let invalid_case = !(word + 0x1f1f_1f1f_1f1f_1f1f) | (word + 0x0505_0505_0505_0505);
-        (alpha & mask) ^ (invalid_case & 0x8080_8080_8080_8080) == 0x8080_8080_8080_8080
+        let upper_alpha = !(word + 0x3f3f_3f3f_3f3f_3f3f) | (word + 0x2525_2525_2525_2525);
+        (upper_alpha & mask) == 0
     }
 
     pub const fn to_ascii_lowercase(&self) -> Self {
