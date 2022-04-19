@@ -47,7 +47,7 @@ macro_rules! impl_resource_provider {
                     req: &DataRequest,
                 ) -> Result<DataResponse<$marker>, DataError> {
                     let langid = req.options.get_langid();
-                    let calendar = req.options.unicode_ext(&unicode_ext_key!("ca"))
+                    let calendar = req.options.get_unicode_ext(&unicode_ext_key!("ca"))
                         .ok_or_else(|| DataErrorKind::NeedsVariant.with_req(<$marker>::KEY, req))?
                         .to_string();
 

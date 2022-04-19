@@ -526,9 +526,15 @@ impl ResourceOptions {
         self.langid.region
     }
 
-    /// Returns the value of the specified Unicode extension keyword for this [`ResourceOptions`].
-    pub fn unicode_ext(&self, key: &unicode_ext::Key) -> Option<&unicode_ext::Value> {
-        self.keywords.get(key)
+    /// Gets the value of the specified Unicode extension keyword for this [`ResourceOptions`].
+    pub fn get_unicode_ext(&self, key: &unicode_ext::Key) -> Option<unicode_ext::Value> {
+        self.keywords.get(key).cloned()
+    }
+
+    /// Returns whether this [`ResourceOptions`] contains a Unicode extension keyword
+    /// with the specified key and value.
+    pub fn matches_unicode_ext(&self, key: &unicode_ext::Key, value: &unicode_ext::Value) -> bool {
+        self.keywords.get(key) == Some(value)
     }
 }
 
