@@ -533,6 +533,30 @@ impl ResourceOptions {
 
     /// Returns whether this [`ResourceOptions`] contains a Unicode extension keyword
     /// with the specified key and value.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu_provider::prelude::*;
+    /// use icu_locid::{Locale, unicode_ext_key, unicode_ext_value};
+    ///
+    /// let locale: Locale = "it-IT-u-ca-coptic".parse()
+    ///     .expect("Valid BCP-47");
+    /// let options: ResourceOptions = locale.into();
+    ///
+    /// assert_eq!(
+    ///     options.get_unicode_ext(&unicode_ext_key!("hc")),
+    ///     None
+    /// );
+    /// assert_eq!(
+    ///     options.get_unicode_ext(&unicode_ext_key!("ca")),
+    ///     Some(unicode_ext_value!("coptic"))
+    /// );
+    /// assert!(options.matches_unicode_ext(
+    ///     &unicode_ext_key!("ca"),
+    ///     &unicode_ext_value!("coptic"),
+    /// ));
+    /// ```
     pub fn matches_unicode_ext(&self, key: &unicode_ext::Key, value: &unicode_ext::Value) -> bool {
         self.keywords.get(key) == Some(value)
     }
