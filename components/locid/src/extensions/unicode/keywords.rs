@@ -23,6 +23,8 @@ use super::Value;
 ///
 /// # Examples
 ///
+/// Manually build up a [`Keywords`] object:
+///
 /// ```
 /// use icu::locid::extensions::unicode::{Keywords, Key, Value};
 ///
@@ -34,6 +36,35 @@ use super::Value;
 ///
 /// assert_eq!(&keywords.to_string(), "hc-h23");
 /// ```
+///
+/// Access a [`Keywords`] object from a [`Locale`]:
+///
+/// ```
+/// use icu::locid::{Locale, unicode_ext_key, unicode_ext_value};
+///
+/// let loc: Locale = "und-u-hc-h23-kc-true".parse()
+///     .expect("Valid BCP-47");
+///
+/// assert_eq!(
+///     loc.extensions.unicode.keywords.get(&unicode_ext_key!("ca")),
+///     None
+/// );
+/// assert_eq!(
+///     loc.extensions.unicode.keywords.get(&unicode_ext_key!("hc")),
+///     Some(&unicode_ext_value!("h23"))
+/// );
+/// assert_eq!(
+///     loc.extensions.unicode.keywords.get(&unicode_ext_key!("kc")),
+///     Some(&unicode_ext_value!("true"))
+/// );
+///
+/// assert_eq!(
+///     loc.extensions.unicode.keywords.to_string(),
+///     "hc-h23-kc"
+/// );
+/// ```
+///
+/// [`Locale`]: crate::Locale
 #[derive(Clone, PartialEq, Eq, Debug, Default, Hash, PartialOrd, Ord)]
 pub struct Keywords(LiteMap<Key, Value>);
 
