@@ -2,8 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use alloc::string::{String, ToString};
-use icu_locid::{LanguageIdentifier, Locale};
+use alloc::string::String;
+use icu_locid::Locale;
 use icu_plurals::{provider::OrdinalV1Marker, PluralRules};
 use icu_provider::prelude::*;
 
@@ -39,17 +39,15 @@ impl ZonedDateTimeFormat {
     ///
     /// The "calendar" argument should be a Unicode BCP47 calendar identifier
     #[inline(never)]
-    pub fn try_new<L, DP, ZP, PP>(
-        locale: L,
+    pub fn try_new<DP, ZP, PP>(
+        locale: Locale,
         date_provider: &DP,
         zone_provider: &ZP,
         plural_provider: &PP,
         date_time_format_options: &DateTimeFormatOptions,
         time_zone_format_options: &TimeZoneFormatOptions,
-        calendar: &'static str,
     ) -> Result<Self, DateTimeFormatError>
     where
-        L: Into<Locale>,
         DP: ResourceProvider<DateSymbolsV1Marker>
             + ResourceProvider<DatePatternsV1Marker>
             + ResourceProvider<DateSkeletonPatternsV1Marker>
@@ -63,14 +61,10 @@ impl ZonedDateTimeFormat {
             + ?Sized,
         PP: ResourceProvider<OrdinalV1Marker>,
     {
-        let locale = locale.into();
-        let langid: LanguageIdentifier = locale.clone().into();
-
         let patterns = provider::date_time::PatternSelector::for_options(
             date_provider,
             &locale,
             date_time_format_options,
-            calendar,
         )?;
         let required = datetime::analyze_patterns(&patterns.get().0, true)
             .map_err(|field| DateTimeFormatError::UnsupportedField(field.symbol))?;
@@ -79,10 +73,7 @@ impl ZonedDateTimeFormat {
             Some(
                 date_provider
                     .load_resource(&DataRequest {
-                        options: ResourceOptions {
-                            variant: langid.region.map(|r| r.as_str().to_string().into()),
-                            langid: None,
-                        },
+                        options: ResourceOptions::temp_for_region(locale.id.region),
                         metadata: Default::default(),
                     })?
                     .take_payload()?,
@@ -92,8 +83,11 @@ impl ZonedDateTimeFormat {
         };
 
         let ordinal_rules = if let PatternPlurals::MultipleVariants(_) = &patterns.get().0 {
+            // TODO(#1109): Implement proper vertical fallback
+            let mut locale_no_extensions = locale.clone();
+            locale_no_extensions.extensions.unicode.clear();
             Some(PluralRules::try_new_ordinal(
-                locale.clone(),
+                locale_no_extensions,
                 plural_provider,
             )?)
         } else {
@@ -104,10 +98,7 @@ impl ZonedDateTimeFormat {
             Some(
                 date_provider
                     .load_resource(&DataRequest {
-                        options: ResourceOptions {
-                            variant: Some(calendar.into()),
-                            langid: Some(langid),
-                        },
+                        options: ResourceOptions::from(&locale),
                         metadata: Default::default(),
                     })?
                     .take_payload()?,
@@ -118,8 +109,12 @@ impl ZonedDateTimeFormat {
 
         let datetime_format =
             raw::DateTimeFormat::new(locale, patterns, symbols_data, week_data, ordinal_rules);
+
+        // TODO(#1109): Implement proper vertical fallback
+        let mut locale_no_extensions = datetime_format.locale.clone();
+        locale_no_extensions.extensions.unicode.clear();
         let time_zone_format = TimeZoneFormat::try_new(
-            datetime_format.locale.clone(),
+            locale_no_extensions,
             datetime_format
                 // Only dates have plural variants so we can use any of the patterns for the time segment.
                 .patterns

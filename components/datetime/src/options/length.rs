@@ -21,11 +21,10 @@
 //! use icu::datetime::DateTimeFormatOptions;
 //! use icu::datetime::options::length;
 //!
-//! let bag = length::Bag {
-//!      date: Some(length::Date::Medium), // `Medium` length connector will be used
-//!      time: Some(length::Time::Short),
-//!      preferences: None,
-//! };
+//! let bag = length::Bag::from_date_time_style(
+//!     length::Date::Medium, // "medium" date connector will be used
+//!     length::Time::Short
+//! );
 //!
 //! let options = DateTimeFormatOptions::Length(bag);
 //! ```
@@ -58,11 +57,7 @@ use serde::{Deserialize, Serialize};
 /// use icu::datetime::DateTimeFormatOptions;
 /// use icu::datetime::options::length;
 ///
-/// let bag = length::Bag {
-///      date: Some(length::Date::Medium),
-///      time: Some(length::Time::Short),
-///      preferences: None,
-/// };
+/// let bag = length::Bag::from_date_time_style(length::Date::Medium, length::Time::Short);
 ///
 /// let options = DateTimeFormatOptions::Length(bag);
 /// ```
@@ -79,6 +74,7 @@ use serde::{Deserialize, Serialize};
 /// [`Element dateFormats`]: https://unicode.org/reports/tr35/tr35-dates.html#dateFormats
 #[derive(Debug, Clone, PartialEq, Copy)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[non_exhaustive]
 pub struct Bag {
     /// Configure the date part of the datetime.
     pub date: Option<Date>,
@@ -89,6 +85,7 @@ pub struct Bag {
 }
 
 impl Default for Bag {
+    /// Constructs a Bag with long date and time options
     fn default() -> Self {
         Self {
             date: Some(Date::Long),
@@ -98,6 +95,45 @@ impl Default for Bag {
     }
 }
 
+impl Bag {
+    /// Constructs a Bag with all fields set to None
+    ///
+    /// Note that the [`Default`] implementation returns long date and time options
+    pub fn empty() -> Self {
+        Self {
+            date: None,
+            time: None,
+            preferences: None,
+        }
+    }
+
+    /// Constructs a Bag given a date and time field (preferences set to None)
+    pub fn from_date_time_style(date: Date, time: Time) -> Self {
+        Self {
+            date: Some(date),
+            time: Some(time),
+            preferences: None,
+        }
+    }
+
+    /// Constructs a Bag given a date field (preferences and time set to None)
+    pub fn from_date_style(date: Date) -> Self {
+        Self {
+            date: Some(date),
+            time: None,
+            preferences: None,
+        }
+    }
+
+    /// Constructs a Bag given a time field (preferences and date set to None)
+    pub fn from_time_style(time: Time) -> Self {
+        Self {
+            date: None,
+            time: Some(time),
+            preferences: None,
+        }
+    }
+}
 /// Represents different lengths a [`DateTimeInput`] implementer can be formatted into.
 /// Each length has associated best pattern for it for a given locale.
 ///
@@ -108,12 +144,7 @@ impl Default for Bag {
 /// ```
 /// use icu::datetime::options::length;
 ///
-/// let bag = length::Bag {
-///     date: Some(length::Date::Long),
-///     time: None,
-///
-///     preferences: None,
-/// };
+/// let bag = length::Bag::from_date_style(length::Date::Long);
 /// ```
 ///
 /// The available lengths correspond to [`UTS #35: Unicode LDML 4. Dates`], section 2.4 [`Element dateFormats`].
@@ -127,6 +158,7 @@ impl Default for Bag {
 /// [`DateTimeFormat`]: super::super::DateTimeFormat
 #[derive(Debug, Clone, Copy, PartialEq)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[non_exhaustive]
 pub enum Date {
     /// Full length, usually with weekday name.
     ///
@@ -192,12 +224,7 @@ pub enum Date {
 /// ```
 /// use icu::datetime::options::length;
 ///
-/// let bag = length::Bag {
-///     date: None,
-///     time: Some(length::Time::Medium),
-///
-///     preferences: None,
-/// };
+/// let bag = length::Bag::from_time_style(length::Time::Medium);
 /// ```
 ///
 /// The available lengths correspond to [`UTS #35: Unicode LDML 4. Dates`], section 2.4 [`Element timeFormats`].
@@ -211,6 +238,7 @@ pub enum Date {
 /// [`DateTimeFormat`]: super::super::DateTimeFormat
 #[derive(Debug, Clone, Copy, PartialEq)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[non_exhaustive]
 pub enum Time {
     /// Full length, with spelled out time zone name.
     ///

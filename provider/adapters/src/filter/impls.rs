@@ -56,15 +56,15 @@ where
     /// // English should not appear in the iterator result:
     /// let supported_langids = provider.supported_options()
     ///     .expect("Should successfully make an iterator of supported locales")
-    ///     .filter_map(|options| options.langid)
+    ///     .map(|options| options.get_langid())
     ///     .collect::<Vec<LanguageIdentifier>>();
     /// assert!(supported_langids.contains(&langid!("de")));
     /// assert!(!supported_langids.contains(&langid!("en")));
     /// ```
     pub fn filter_by_langid<'a>(
         self,
-        predicate: impl Fn(&LanguageIdentifier) -> bool + 'a,
-    ) -> RequestFilterDataProvider<D, Box<dyn Fn(&DataRequest) -> bool + 'a>>
+        predicate: impl Fn(&LanguageIdentifier) -> bool + Sync + 'a,
+    ) -> RequestFilterDataProvider<D, Box<dyn Fn(&DataRequest) -> bool + Sync + 'a>>
     where
         F: 'a,
     {
@@ -75,10 +75,7 @@ where
                 if !(old_predicate)(request) {
                     return false;
                 }
-                match &request.options.langid {
-                    Some(langid) => predicate(langid),
-                    None => true,
-                }
+                predicate(&request.options.get_langid())
             }),
             filter_name: self.filter_name,
         }
@@ -145,10 +142,7 @@ where
                 if !(old_predicate)(request) {
                     return false;
                 }
-                match &request.options.langid {
-                    Some(langid) => allowlist.contains(langid),
-                    None => true,
-                }
+                request.options.is_langid_und() || allowlist.contains(&request.options.get_langid())
             }),
             filter_name: self.filter_name,
         }
@@ -191,7 +185,7 @@ where
     /// ```
     pub fn require_langid<'a>(
         self,
-    ) -> RequestFilterDataProvider<D, Box<dyn Fn(&DataRequest) -> bool + 'a>>
+    ) -> RequestFilterDataProvider<D, Box<dyn Fn(&DataRequest) -> bool + Sync + 'a>>
     where
         F: 'a,
     {
@@ -202,7 +196,7 @@ where
                 if !(old_predicate)(request) {
                     return false;
                 }
-                request.options.langid.is_some()
+                !request.options.is_langid_und()
             }),
             filter_name: self.filter_name,
         }

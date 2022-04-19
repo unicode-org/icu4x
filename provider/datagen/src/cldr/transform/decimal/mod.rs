@@ -93,12 +93,10 @@ impl ResourceProvider<DecimalSymbolsV1Marker> for NumbersProvider {
         &self,
         req: &DataRequest,
     ) -> Result<DataResponse<DecimalSymbolsV1Marker>, DataError> {
-        let langid = req
-            .get_langid()
-            .ok_or_else(|| DataErrorKind::NeedsLocale.with_req(DecimalSymbolsV1Marker::KEY, req))?;
+        let langid = req.options.get_langid();
 
         let resource: cldr_serde::numbers::Resource = {
-            let path = get_langid_subdirectory(&self.numbers_path, langid)?
+            let path = get_langid_subdirectory(&self.numbers_path, &langid)?
                 .ok_or_else(|| {
                     DataErrorKind::MissingLocale.with_req(DecimalSymbolsV1Marker::KEY, req)
                 })?
@@ -110,7 +108,7 @@ impl ResourceProvider<DecimalSymbolsV1Marker> for NumbersProvider {
         let numbers = &resource
             .main
             .0
-            .get(langid)
+            .get(&langid)
             .expect("CLDR file contains the expected language")
             .numbers;
         let nsname = numbers.default_numbering_system;

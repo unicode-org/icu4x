@@ -121,7 +121,7 @@ impl ResourceProvider<HelloWorldV1Marker> for HelloWorldProvider {
             .map(|s| HelloWorldV1 { message: s.clone() })
             .ok_or_else(|| DataErrorKind::MissingLocale.with_key(HelloWorldV1Marker::KEY))?;
         let metadata = DataResponseMetadata {
-            data_langid: req.get_langid().cloned(),
+            data_langid: Some(req.options.get_langid()),
             ..Default::default()
         };
         Ok(DataResponse {

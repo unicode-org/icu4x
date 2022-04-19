@@ -13,6 +13,7 @@ use icu_provider::{yoke, zerofrom};
 /// hour cycles as H12 or H23.
 #[derive(Debug, PartialEq, Clone, Copy, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+#[allow(clippy::exhaustive_enums)] // this type is stable
 pub enum CoarseHourCycle {
     /// Can either be fields::Hour::H11 or fields::Hour::H12
     H11H12,

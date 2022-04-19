@@ -17,7 +17,7 @@ pub use helpers::*;
 mod test {
     use super::reference::Skeleton;
     use super::*;
-    use icu_locid::langid;
+    use icu_locid::Locale;
     use icu_provider::prelude::*;
 
     use crate::{
@@ -42,13 +42,10 @@ mod test {
         DataPayload<DateSkeletonPatternsV1Marker>,
     ) {
         let provider = icu_testdata::get_provider();
-        let langid = langid!("en");
+        let locale: Locale = "en-u-ca-gregory".parse().unwrap();
         let patterns = provider
             .load_resource(&DataRequest {
-                options: ResourceOptions {
-                    variant: Some("gregory".into()),
-                    langid: Some(langid.clone()),
-                },
+                options: ResourceOptions::from(&locale),
                 metadata: Default::default(),
             })
             .expect("Failed to load payload")
@@ -56,10 +53,7 @@ mod test {
             .expect("Failed to retrieve payload");
         let skeletons = provider
             .load_resource(&DataRequest {
-                options: ResourceOptions {
-                    variant: Some("gregory".into()),
-                    langid: Some(langid),
-                },
+                options: locale.into(),
                 metadata: Default::default(),
             })
             .expect("Failed to load payload")

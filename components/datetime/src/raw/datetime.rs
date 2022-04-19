@@ -13,7 +13,7 @@ use crate::{
     provider::calendar::{DatePatternsV1Marker, DateSkeletonPatternsV1Marker, DateSymbolsV1Marker},
     provider::week_data::WeekDataV1Marker,
 };
-use alloc::string::{String, ToString};
+use alloc::string::String;
 use icu_locid::Locale;
 use icu_plurals::{provider::OrdinalV1Marker, PluralRules};
 use icu_provider::prelude::*;
@@ -39,11 +39,10 @@ impl DateTimeFormat {
     ///
     /// The "calendar" argument should be a Unicode BCP47 calendar identifier
     #[inline(never)]
-    pub fn try_new<T: Into<Locale>, D>(
-        locale: T,
+    pub fn try_new<D>(
+        locale: Locale,
         data_provider: &D,
         options: &DateTimeFormatOptions,
-        calendar: &'static str,
     ) -> Result<Self, DateTimeFormatError>
     where
         D: ResourceProvider<DateSymbolsV1Marker>
@@ -52,28 +51,17 @@ impl DateTimeFormat {
             + ResourceProvider<OrdinalV1Marker>
             + ResourceProvider<WeekDataV1Marker>,
     {
-        let locale = locale.into();
-
-        let patterns = provider::date_time::PatternSelector::for_options(
-            data_provider,
-            &locale,
-            options,
-            calendar,
-        )?;
+        let patterns =
+            provider::date_time::PatternSelector::for_options(data_provider, &locale, options)?;
 
         let required = datetime::analyze_patterns(&patterns.get().0, false)
             .map_err(|field| DateTimeFormatError::UnsupportedField(field.symbol))?;
-
-        let langid: icu_locid::LanguageIdentifier = locale.clone().into();
 
         let week_data = if required.week_data {
             Some(
                 data_provider
                     .load_resource(&DataRequest {
-                        options: ResourceOptions {
-                            variant: langid.region.map(|r| r.as_str().to_string().into()),
-                            langid: None,
-                        },
+                        options: ResourceOptions::temp_for_region(locale.id.region),
                         metadata: Default::default(),
                     })?
                     .take_payload()?,
@@ -83,7 +71,13 @@ impl DateTimeFormat {
         };
 
         let ordinal_rules = if let PatternPlurals::MultipleVariants(_) = &patterns.get().0 {
-            Some(PluralRules::try_new_ordinal(locale.clone(), data_provider)?)
+            // TODO(#1109): Implement proper vertical fallback
+            let mut locale_no_extensions = locale.clone();
+            locale_no_extensions.extensions.unicode.clear();
+            Some(PluralRules::try_new_ordinal(
+                locale_no_extensions,
+                data_provider,
+            )?)
         } else {
             None
         };
@@ -92,10 +86,7 @@ impl DateTimeFormat {
             Some(
                 data_provider
                     .load_resource(&DataRequest {
-                        options: ResourceOptions {
-                            variant: Some(calendar.into()),
-                            langid: Some(langid),
-                        },
+                        options: ResourceOptions::from(&locale),
                         metadata: Default::default(),
                     })?
                     .take_payload()?,
@@ -114,15 +105,13 @@ impl DateTimeFormat {
     }
 
     /// Creates a new [`DateTimeFormat`] regardless of whether there are time-zone symbols in the pattern.
-    pub fn new<T: Into<Locale>>(
-        locale: T,
+    pub fn new(
+        locale: Locale,
         patterns: DataPayload<PatternPluralsFromPatternsV1Marker>,
         symbols: Option<DataPayload<DateSymbolsV1Marker>>,
         week_data: Option<DataPayload<WeekDataV1Marker>>,
         ordinal_rules: Option<PluralRules>,
     ) -> Self {
-        let locale = locale.into();
-
         Self {
             locale,
             patterns,

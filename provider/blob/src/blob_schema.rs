@@ -17,6 +17,7 @@ pub enum BlobSchema<'data> {
 #[derive(serde::Deserialize)]
 #[cfg_attr(feature = "export", derive(serde::Serialize))]
 pub struct BlobSchemaV1<'data> {
+    /// Map from key hash and locale to buffer
     #[serde(borrow)]
-    pub resources: ZeroMap2dBorrowed<'data, ResourceKeyHash, str, [u8]>,
+    pub resources: ZeroMap2dBorrowed<'data, ResourceKeyHash, [u8], [u8]>,
 }

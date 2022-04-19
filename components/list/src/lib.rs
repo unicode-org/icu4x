@@ -43,6 +43,18 @@
 //! [`ListFormatter`]: ListFormatter
 
 #![cfg_attr(not(feature = "std"), no_std)]
+#![cfg_attr(
+    not(test),
+    deny(
+        // TODO(#1668) Clippy exceptions need docs or fixing
+        // clippy::indexing_slicing,
+        // clippy::unwrap_used,
+        // clippy::expect_used,
+        // clippy::panic,
+        clippy::exhaustive_structs,
+        clippy::exhaustive_enums
+    )
+)]
 
 extern crate alloc;
 
@@ -57,6 +69,7 @@ pub use list_formatter::*;
 /// [CLDR spec](https://unicode.org/reports/tr35/tr35-general.html#ListPatterns)
 /// for an explanation of the different styles.
 #[derive(Copy, Clone, PartialEq, Debug)]
+#[non_exhaustive]
 pub enum ListStyle {
     /// A typical list
     Wide,
