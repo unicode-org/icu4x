@@ -56,7 +56,7 @@ const_assert!(core::mem::size_of::<usize>() >= core::mem::size_of::<u16>());
 /// let negative_zero = FixedDecimal::from(0).negated();
 /// assert_eq!("0", zero.to_string());
 /// assert_eq!("-0", negative_zero.to_string());
-/// assert_ne!(zero, negative_zero)
+/// assert_ne!(zero, negative_zero);
 /// ```
 #[derive(Debug, Clone, PartialEq)]
 pub struct FixedDecimal {
@@ -956,6 +956,14 @@ impl FixedDecimal {
     /// )
     /// .expect("Finite, integer-valued quantity");
     /// assert_eq!(decimal.write_to_string(), "12345678000");
+    ///
+    /// // IEEE 754 for floating point defines the sign bit separate
+    /// // from the mantissa and exponent, allowing for -0.
+    /// let negative_zero = FixedDecimal::try_from_f64(
+    ///     -0.0,
+    ///      DoublePrecision::Integer
+    /// ).expect("Negative zero");
+    /// assert_eq!(negative_zero.write_to_string(), "-0");
     /// ```
     pub fn try_from_f64(float: f64, precision: DoublePrecision) -> Result<Self, Error> {
         let mut decimal = Self::new_from_f64_raw(float)?;
