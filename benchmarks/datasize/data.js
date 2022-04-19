@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1650333510247,
+  "lastUpdate": 1650384741608,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -13313,6 +13313,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/1ab22f3ee30fbabcf2bcd4c939cc33c59860c832"
         },
         "date": 1650333494956,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4474764,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "510946afc20c9f2547d06bfbc8e3883348d829e0",
+          "message": "non_exhaustive for list and locale_canonicalizer (#1798)\n\n* non_exhaustive locale_canonicalizer\r\n\r\n* non_exhaustive list",
+          "timestamp": "2022-04-19T16:10:43Z",
+          "tree_id": "ccfba6b80687ea459eb6fe2f238a00c9552832f6",
+          "url": "https://github.com/unicode-org/icu4x/commit/510946afc20c9f2547d06bfbc8e3883348d829e0"
+        },
+        "date": 1650384725725,
         "tool": "ndjson",
         "benches": [
           {
