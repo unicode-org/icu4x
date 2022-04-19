@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1650386916052,
+  "lastUpdate": 1650407720122,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -13378,6 +13378,36 @@ window.BENCHMARK_DATA = {
           {
             "name": "provider/testdata/data/testdata.postcard",
             "value": 4474764,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "74cce874f6f6bfa7f78c9d0b52a44ccee9f3e0b9",
+          "message": "Store Unicode keywords in ResourceOptions (#1750)",
+          "timestamp": "2022-04-19T17:33:34-05:00",
+          "tree_id": "728480c006d9429708a6c954fa378a15742859e7",
+          "url": "https://github.com/unicode-org/icu4x/commit/74cce874f6f6bfa7f78c9d0b52a44ccee9f3e0b9"
+        },
+        "date": 1650407702426,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4477006,
             "unit": "bytes",
             "biggerIsBetter": false
           }
