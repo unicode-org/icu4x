@@ -9,10 +9,12 @@ use crate::cldr::CldrPaths;
 use elsa::sync::FrozenBTreeMap;
 
 use icu_datetime::provider::calendar::*;
+use icu_locid::{unicode_ext_key, Locale};
 use icu_provider::datagen::IterableResourceProvider;
 use icu_provider::prelude::*;
 use std::convert::TryFrom;
 use std::path::PathBuf;
+use std::str::FromStr;
 
 mod patterns;
 mod skeletons;
@@ -56,14 +58,10 @@ macro_rules! impl_resource_provider {
                     &self,
                     req: &DataRequest,
                 ) -> Result<DataResponse<$marker>, DataError> {
-                    let langid = req
-                        .get_langid()
-                        .ok_or_else(|| DataErrorKind::NeedsLocale.with_req(<$marker>::KEY, req))?;
-                    let variant = req
-                        .options
-                        .variant
-                        .as_ref()
-                        .ok_or_else(|| DataErrorKind::NeedsVariant.with_req(<$marker>::KEY, req))?;
+                    let langid = req.options.get_langid();
+                    let calendar = req.options.get_unicode_ext(&unicode_ext_key!("ca"))
+                        .ok_or_else(|| DataErrorKind::NeedsVariant.with_req(<$marker>::KEY, req))?
+                        .to_string();
 
                     let dates = if let Some(dates) = self.data.get(&req.options) {
                         dates
@@ -71,10 +69,10 @@ macro_rules! impl_resource_provider {
                         let (cldr_cal, _, path) = self
                             .paths
                             .iter()
-                            .find(|(_, bcp_cal, _)| bcp_cal == &&**variant)
+                            .find(|(_, bcp_cal, _)| bcp_cal == &calendar)
                             .ok_or_else(|| DataErrorKind::MissingVariant.with_req(<$marker>::KEY, req))?;
 
-                        let locale_dir = get_langid_subdirectory(&path.join("main"), langid)?
+                        let locale_dir = get_langid_subdirectory(&path.join("main"), &langid)?
                             .ok_or_else(|| DataErrorKind::MissingLocale.with_req(<$marker>::KEY, req))?;
 
                         let cal_file = format!("ca-{}.json", cldr_cal);
@@ -87,7 +85,7 @@ macro_rules! impl_resource_provider {
                         self.data.insert(req.options.clone(), Box::new(resource
                             .main
                             .0
-                            .remove(langid)
+                            .remove(&langid)
                             .expect("CLDR file contains the expected language")
                             .dates
                             .calendars
@@ -105,7 +103,7 @@ macro_rules! impl_resource_provider {
                     Ok(DataResponse {
                         metadata,
                         #[allow(clippy::redundant_closure_call)]
-                        payload: Some(DataPayload::from_owned(($expr)(dates, variant))),
+                        payload: Some(DataPayload::from_owned(($expr)(dates, &calendar))),
                     })
                 }
             }
@@ -124,14 +122,17 @@ macro_rules! impl_resource_provider {
 
                     let mut r = Vec::new();
                     for (_, cal, path) in &self.paths {
-                        let cal = Some((*cal).into());
+                        let cal_value = icu_locid::extensions::unicode::Value::from_str(cal)
+                            .map_err(|e| DataError::custom(
+                                "could not parse calendar identifier"
+                            ).with_error_context(&e))?;
                         r.extend(
                             get_langid_subdirectories(&path.join("main"))?
-                                .map(Into::<ResourceOptions>::into)
-                                .map(move |mut r| {
-                                    r.variant = cal.clone();
-                                    r
-                                }),
+                                .map(|lid| {
+                                    let mut locale: Locale = lid.into();
+                                    locale.extensions.unicode.keywords.set(unicode_ext_key!("ca"), cal_value.clone());
+                                    ResourceOptions::from(locale)
+                                })
                         );
                     }
                     Ok(Box::new(r.into_iter()))
@@ -155,7 +156,6 @@ impl_resource_provider!(
 mod test {
     use super::*;
     use icu_datetime::pattern::runtime::{Pattern, PluralPattern};
-    use icu_locid::langid;
     use icu_plurals::PluralCategory;
 
     #[test]
@@ -164,12 +164,10 @@ mod test {
         let provider =
             CommonDateProvider::try_new(&cldr_paths).expect("Failed to retrieve provider");
 
+        let locale: Locale = "cs-u-ca-gregory".parse().unwrap();
         let cs_dates: DataPayload<DatePatternsV1Marker> = provider
             .load_resource(&DataRequest {
-                options: ResourceOptions {
-                    variant: Some("gregory".into()),
-                    langid: Some(langid!("cs")),
-                },
+                options: locale.into(),
                 metadata: Default::default(),
             })
             .expect("Failed to load payload")
@@ -185,12 +183,10 @@ mod test {
         let provider =
             CommonDateProvider::try_new(&cldr_paths).expect("Failed to retrieve provider");
 
+        let locale: Locale = "haw-u-ca-gregory".parse().unwrap();
         let cs_dates: DataPayload<DatePatternsV1Marker> = provider
             .load_resource(&DataRequest {
-                options: ResourceOptions {
-                    variant: Some("gregory".into()),
-                    langid: Some(langid!("haw")),
-                },
+                options: locale.into(),
                 metadata: Default::default(),
             })
             .expect("Failed to load payload")
@@ -208,12 +204,10 @@ mod test {
         let provider =
             CommonDateProvider::try_new(&cldr_paths).expect("Failed to retrieve provider");
 
+        let locale: Locale = "fil-u-ca-gregory".parse().unwrap();
         let skeletons: DataPayload<DateSkeletonPatternsV1Marker> = provider
             .load_resource(&DataRequest {
-                options: ResourceOptions {
-                    variant: Some("gregory".into()),
-                    langid: Some(langid!("fil")),
-                },
+                options: locale.into(),
                 metadata: Default::default(),
             })
             .expect("Failed to load payload")
@@ -253,12 +247,10 @@ mod test {
         let cldr_paths = crate::cldr::cldr_paths::for_test();
         let provider = CommonDateProvider::try_new(&cldr_paths).unwrap();
 
+        let locale: Locale = "cs-u-ca-gregory".parse().unwrap();
         let cs_dates: DataPayload<DateSymbolsV1Marker> = provider
             .load_resource(&DataRequest {
-                options: ResourceOptions {
-                    variant: Some("gregory".into()),
-                    langid: Some(langid!("cs")),
-                },
+                options: locale.into(),
                 metadata: Default::default(),
             })
             .unwrap()
@@ -278,12 +270,10 @@ mod test {
         let cldr_paths = crate::cldr::cldr_paths::for_test();
         let provider = CommonDateProvider::try_new(&cldr_paths).unwrap();
 
+        let locale: Locale = "cs-u-ca-gregory".parse().unwrap();
         let cs_dates: DataPayload<DateSymbolsV1Marker> = provider
             .load_resource(&DataRequest {
-                options: ResourceOptions {
-                    variant: Some("gregory".into()),
-                    langid: Some(langid!("cs")),
-                },
+                options: locale.into(),
                 metadata: Default::default(),
             })
             .unwrap()

@@ -11,6 +11,8 @@ use crate::helpers;
 use core::default::Default;
 use core::fmt;
 use core::fmt::Write;
+use icu_locid::extensions::unicode as unicode_ext;
+use icu_locid::subtags::{Language, Region, Script};
 use icu_locid::{LanguageIdentifier, Locale};
 use writeable::{LengthHint, Writeable};
 use zerovec::ule::*;
@@ -354,11 +356,10 @@ impl Writeable for ResourceKey {
 /// A variant and language identifier, used for requesting data from a data provider.
 ///
 /// The fields in a [`ResourceOptions`] are not generally known until runtime.
-#[derive(PartialEq, Clone, Default, PartialOrd, Eq, Ord)]
+#[derive(PartialEq, Clone, Default, PartialOrd, Eq, Ord, Hash)]
 pub struct ResourceOptions {
-    // TODO: Consider making multiple variant fields.
-    pub variant: Option<Cow<'static, str>>,
-    pub langid: Option<LanguageIdentifier>,
+    langid: LanguageIdentifier,
+    keywords: unicode_ext::Keywords,
 }
 
 impl fmt::Debug for ResourceOptions {
@@ -375,61 +376,192 @@ impl fmt::Display for ResourceOptions {
 
 impl Writeable for ResourceOptions {
     fn write_to<W: core::fmt::Write + ?Sized>(&self, sink: &mut W) -> core::fmt::Result {
-        let mut initial = true;
-        if let Some(variant) = &self.variant {
-            variant.write_to(sink)?;
-            initial = false;
-        }
-        if let Some(langid) = &self.langid {
-            if !initial {
-                sink.write_char('/')?;
-            }
-            langid.write_to(sink)?;
+        self.langid.write_to(sink)?;
+        if !self.keywords.is_empty() {
+            sink.write_str("-u-")?;
+            self.keywords.write_to(sink)?;
         }
         Ok(())
     }
 
     fn write_len(&self) -> LengthHint {
-        let mut length_hint = LengthHint::exact(0);
-        let mut initial = true;
-        if let Some(variant) = &self.variant {
-            length_hint += variant.write_len();
-            initial = false;
-        }
-        if let Some(langid) = &self.langid {
-            if !initial {
-                length_hint += 1;
+        self.langid.write_len()
+            + if !self.keywords.is_empty() {
+                self.keywords.write_len() + 3
+            } else {
+                LengthHint::exact(0)
             }
-            length_hint += langid.write_len();
-        }
-        length_hint
     }
 }
 
 impl From<LanguageIdentifier> for ResourceOptions {
-    /// Create a ResourceOptions with the given language identifier and an empty variant field.
     fn from(langid: LanguageIdentifier) -> Self {
         Self {
-            langid: Some(langid),
-            variant: None,
+            langid,
+            keywords: unicode_ext::Keywords::new(),
         }
     }
 }
 
 impl From<Locale> for ResourceOptions {
-    /// Create a ResourceOptions with the given language identifier and an empty variant field.
     fn from(locale: Locale) -> Self {
+        // TODO(#1109): Implement proper vertical fallback
         Self {
-            langid: Some(locale.id),
-            variant: None,
+            langid: locale.id,
+            keywords: locale.extensions.unicode.keywords,
+        }
+    }
+}
+
+impl From<&Locale> for ResourceOptions {
+    fn from(locale: &Locale) -> Self {
+        // TODO(#1109): Implement proper vertical fallback
+        Self {
+            langid: locale.id.clone(),
+            keywords: locale.extensions.unicode.keywords.clone(),
         }
     }
 }
 
 impl ResourceOptions {
+    /// TODO(#1109): Delete this function and use vertical fallback instead
+    pub fn temp_for_region(region: Option<Region>) -> Self {
+        Self {
+            langid: LanguageIdentifier::from(region),
+            keywords: unicode_ext::Keywords::new(),
+        }
+    }
+
     /// Returns whether this [`ResourceOptions`] has all empty fields (no components).
     pub fn is_empty(&self) -> bool {
         self == &Self::default()
+    }
+
+    /// Returns whether the [`LanguageIdentifier`] associated with this request is `und`.
+    ///
+    /// Note that this only checks the language identifier; extension keywords may also be set.
+    /// To check the entire `ResourceOptions`, use [`ResourceOptions::is_empty()`].
+    pub fn is_langid_und(&self) -> bool {
+        self.langid == LanguageIdentifier::UND
+    }
+
+    /// Gets the [`LanguageIdentifier`] for this [`ResourceOptions`].
+    ///
+    /// This may allocate memory if there are variant subtags. If you need only the language,
+    /// script, and/or region subtag, use the specific getters for those subtags:
+    ///
+    /// - [`ResourceOptions::language()`]
+    /// - [`ResourceOptions::script()`]
+    /// - [`ResourceOptions::region()`]
+    ///
+    /// If you have ownership over the `ResourceOptions`, use [`ResourceOptions::into_locale()`]
+    /// and then access the `id` field.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu_provider::prelude::*;
+    /// use icu_locid::langid;
+    ///
+    /// const FOO_BAR: ResourceKey = icu_provider::resource_key!("foo/bar@1");
+    ///
+    /// let req_no_langid = DataRequest {
+    ///     options: ResourceOptions::default(),
+    ///     metadata: Default::default(),
+    /// };
+    ///
+    /// let req_with_langid = DataRequest {
+    ///     options: langid!("ar-EG").into(),
+    ///     metadata: Default::default(),
+    /// };
+    ///
+    /// assert_eq!(req_no_langid.options.get_langid(), langid!("und"));
+    /// assert_eq!(req_with_langid.options.get_langid(), langid!("ar-EG"));
+    /// ```
+    pub fn get_langid(&self) -> LanguageIdentifier {
+        self.langid.clone()
+    }
+
+    /// Converts this [`ResourceOptions`] into a [`Locale`].
+    ///
+    /// See also [`ResourceOptions::get_langid()`].
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu_provider::prelude::*;
+    /// use icu_locid::{langid, language, region, Locale};
+    ///
+    /// let locale: Locale = "it-IT-u-ca-coptic".parse()
+    ///     .expect("Valid BCP-47");
+    /// let options: ResourceOptions = locale.into();
+    ///
+    /// assert_eq!(options.to_string(), "it-IT-u-ca-coptic");
+    /// assert_eq!(options.get_langid(), langid!("it-IT"));
+    /// assert_eq!(options.language(), language!("it"));
+    /// assert_eq!(options.script(), None);
+    /// assert_eq!(options.region(), Some(region!("IT")));
+    ///
+    /// let locale = options.into_locale();
+    /// assert_eq!(locale.to_string(), "it-IT-u-ca-coptic");
+    /// ```
+    pub fn into_locale(self) -> Locale {
+        let mut loc = Locale {
+            id: self.langid,
+            ..Default::default()
+        };
+        loc.extensions.unicode.keywords = self.keywords;
+        loc
+    }
+
+    /// Returns the [`Language`] for this [`ResourceOptions`].
+    pub fn language(&self) -> Language {
+        self.langid.language
+    }
+
+    /// Returns the [`Script`] for this [`ResourceOptions`].
+    pub fn script(&self) -> Option<Script> {
+        self.langid.script
+    }
+
+    /// Returns the [`Region`] for this [`ResourceOptions`].
+    pub fn region(&self) -> Option<Region> {
+        self.langid.region
+    }
+
+    /// Gets the value of the specified Unicode extension keyword for this [`ResourceOptions`].
+    pub fn get_unicode_ext(&self, key: &unicode_ext::Key) -> Option<unicode_ext::Value> {
+        self.keywords.get(key).cloned()
+    }
+
+    /// Returns whether this [`ResourceOptions`] contains a Unicode extension keyword
+    /// with the specified key and value.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu_provider::prelude::*;
+    /// use icu_locid::{Locale, unicode_ext_key, unicode_ext_value};
+    ///
+    /// let locale: Locale = "it-IT-u-ca-coptic".parse()
+    ///     .expect("Valid BCP-47");
+    /// let options: ResourceOptions = locale.into();
+    ///
+    /// assert_eq!(
+    ///     options.get_unicode_ext(&unicode_ext_key!("hc")),
+    ///     None
+    /// );
+    /// assert_eq!(
+    ///     options.get_unicode_ext(&unicode_ext_key!("ca")),
+    ///     Some(unicode_ext_value!("coptic"))
+    /// );
+    /// assert!(options.matches_unicode_ext(
+    ///     &unicode_ext_key!("ca"),
+    ///     &unicode_ext_value!("coptic"),
+    /// ));
+    /// ```
+    pub fn matches_unicode_ext(&self, key: &unicode_ext::Key, value: &unicode_ext::Value) -> bool {
+        self.keywords.get(key) == Some(value)
     }
 }
 
@@ -473,28 +605,19 @@ mod tests {
     }
 
     fn get_options_test_cases() -> [OptionsTestCase; 3] {
-        use icu_locid::langid;
+        use std::str::FromStr;
         [
             OptionsTestCase {
-                options: ResourceOptions {
-                    variant: None,
-                    langid: Some(LanguageIdentifier::UND),
-                },
+                options: Locale::UND.into(),
                 expected: "und",
             },
             OptionsTestCase {
-                options: ResourceOptions {
-                    variant: Some(Cow::Borrowed("GBP")),
-                    langid: Some(LanguageIdentifier::UND),
-                },
-                expected: "GBP/und",
+                options: Locale::from_str("und-u-cu-gbp").unwrap().into(),
+                expected: "und-u-cu-gbp",
             },
             OptionsTestCase {
-                options: ResourceOptions {
-                    variant: Some(Cow::Borrowed("GBP")),
-                    langid: Some(langid!("en-ZA")),
-                },
-                expected: "GBP/en-ZA",
+                options: Locale::from_str("en-ZA-u-cu-gbp").unwrap().into(),
+                expected: "en-ZA-u-cu-gbp",
             },
         ]
     }

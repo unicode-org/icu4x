@@ -22,11 +22,11 @@ use core::fmt::Debug;
 use core::marker::PhantomData;
 use icu_locid::LanguageIdentifier;
 
-#[derive(Default)]
+#[derive(Default, Debug, PartialEq, Eq, PartialOrd, Ord)]
 #[non_exhaustive]
 pub struct DataRequestMetadata;
 
-#[derive(Default)]
+#[derive(Default, Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub struct DataRequest {
     pub options: ResourceOptions,
     pub metadata: DataRequestMetadata,
@@ -35,41 +35,6 @@ pub struct DataRequest {
 impl fmt::Display for DataRequest {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         fmt::Display::fmt(&self.options, f)
-    }
-}
-
-impl DataRequest {
-    /// Returns the [`LanguageIdentifier`] for this [`DataRequest`], or `None` if it is not present.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use icu_provider::prelude::*;
-    /// use icu_locid::locale;
-    ///
-    /// const FOO_BAR: ResourceKey = icu_provider::resource_key!("foo/bar@1");
-    ///
-    /// let req_no_langid = DataRequest {
-    ///     options: ResourceOptions::default(),
-    ///     metadata: Default::default(),
-    /// };
-    ///
-    /// let req_with_langid = DataRequest {
-    ///     options: locale!("ar-EG").into(),
-    ///     metadata: Default::default(),
-    /// };
-    ///
-    /// assert!(matches!(
-    ///     req_no_langid.get_langid(),
-    ///     None
-    /// ));
-    /// assert!(matches!(
-    ///     req_with_langid.get_langid(),
-    ///     Some(_)
-    /// ));
-    /// ```
-    pub fn get_langid(&self) -> Option<&LanguageIdentifier> {
-        self.options.langid.as_ref()
     }
 }
 

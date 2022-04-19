@@ -4,7 +4,7 @@
 
 use alloc::string::String;
 use core::marker::PhantomData;
-use icu_locid::Locale;
+use icu_locid::{unicode_ext_key, Locale};
 use icu_plurals::provider::OrdinalV1Marker;
 use icu_provider::prelude::*;
 
@@ -113,6 +113,13 @@ impl<C: CldrCalendar> ZonedDateTimeFormat<C> {
             + ?Sized,
         PP: ResourceProvider<OrdinalV1Marker>,
     {
+        let mut locale = locale.into();
+        // TODO(#419): Resolve the locale calendar with the API calendar.
+        locale
+            .extensions
+            .unicode
+            .keywords
+            .set(unicode_ext_key!("ca"), C::BCP_47_IDENTIFIER);
         Ok(Self(
             raw::ZonedDateTimeFormat::try_new(
                 locale,
@@ -121,7 +128,6 @@ impl<C: CldrCalendar> ZonedDateTimeFormat<C> {
                 plural_provider,
                 date_time_format_options,
                 time_zone_format_options,
-                C::IDENTIFIER,
             )?,
             PhantomData,
         ))

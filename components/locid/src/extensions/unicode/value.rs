@@ -26,9 +26,14 @@ use tinystr::TinyAsciiStr;
 ///     .expect("Failed to parse a Value.");
 /// let value2: Value = "islamic-civil".parse()
 ///     .expect("Failed to parse a Value.");
+/// let value3: Value = "true".parse()
+///     .expect("Failed to parse a Value.");
 ///
 /// assert_eq!(&value1.to_string(), "gregory");
 /// assert_eq!(&value2.to_string(), "islamic-civil");
+///
+/// // The value "true" is special-cased to an empty value
+/// assert_eq!(&value3.to_string(), "");
 /// ```
 #[derive(Debug, PartialEq, Eq, Clone, Hash, PartialOrd, Ord)]
 pub struct Value(ShortVec<TinyAsciiStr<{ *VALUE_LENGTH.end() }>>);

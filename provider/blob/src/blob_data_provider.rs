@@ -52,7 +52,8 @@ use zerovec::maps::{KeyError, ZeroMap2dBorrowed};
 ///
 /// [`StaticDataProvider`]: crate::StaticDataProvider
 pub struct BlobDataProvider {
-    data: Yoke<ZeroMap2dBorrowed<'static, ResourceKeyHash, str, [u8]>, Rc<[u8]>>,
+    #[allow(clippy::type_complexity)]
+    data: Yoke<ZeroMap2dBorrowed<'static, ResourceKeyHash, [u8], [u8]>, Rc<[u8]>>,
 }
 
 impl BlobDataProvider {
@@ -72,7 +73,7 @@ impl BlobDataProvider {
 
     #[cfg(feature = "export")]
     #[doc(hidden)] // See #1771, we don't want this to be a publicly visible API
-    pub fn get_map(&self) -> &ZeroMap2dBorrowed<ResourceKeyHash, str, [u8]> {
+    pub fn get_map(&self) -> &ZeroMap2dBorrowed<ResourceKeyHash, [u8], [u8]> {
         self.data.get()
     }
 }
@@ -91,7 +92,7 @@ impl BufferProvider for BlobDataProvider {
             payload: Some(DataPayload::from_yoked_buffer(
                 self.data
                     .try_project_cloned_with_capture((key, req), |zm, (key, req), _| {
-                        zm.get(&key.get_hash(), &req.options.write_to_string())
+                        zm.get(&key.get_hash(), req.options.write_to_string().as_bytes())
                             .map_err(|e| {
                                 match e {
                                     KeyError::K0 => DataErrorKind::MissingResourceKey,

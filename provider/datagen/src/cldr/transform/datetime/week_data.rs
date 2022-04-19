@@ -14,10 +14,8 @@ use icu_calendar::arithmetic::week_of::CalendarInfo;
 use icu_datetime::provider::week_data::*;
 use icu_provider::datagen::IterableResourceProvider;
 use icu_provider::prelude::*;
-use std::borrow::Cow;
 use std::collections::HashSet;
 use std::convert::TryFrom;
-use tinystr::TinyStr4;
 
 /// A data provider reading from CLDR JSON weekData files.
 #[derive(Debug)]
@@ -77,7 +75,7 @@ impl TryFrom<&crate::DatagenOptions> for WeekDataProvider {
 impl IterableResourceProvider<WeekDataV1Marker> for WeekDataProvider {
     #[allow(clippy::needless_collect)] // https://github.com/rust-lang/rust-clippy/issues/7526
     fn supported_options(&self) -> Result<Box<dyn Iterator<Item = ResourceOptions>>, DataError> {
-        let regions: HashSet<Option<TinyStr4>> = self
+        let regions: HashSet<ResourceOptions> = self
             .week_data
             .min_days
             .keys()
@@ -87,11 +85,9 @@ impl IterableResourceProvider<WeekDataV1Marker> for WeekDataProvider {
                 Territory::Region(r) => Some(Some(*r)),
                 _ => None,
             })
+            .map(ResourceOptions::temp_for_region)
             .collect();
-        Ok(Box::new(regions.into_iter().map(|r| ResourceOptions {
-            variant: r.map(|r| Cow::Owned(r.to_string())),
-            langid: None,
-        })))
+        Ok(Box::new(regions.into_iter()))
     }
 }
 
@@ -104,15 +100,8 @@ impl ResourceProvider<WeekDataV1Marker> for WeekDataProvider {
         // TODO(#1109): Set metadata.data_langid correctly.
         let territory = req
             .options
-            .variant
-            .as_ref()
-            .map(|v| -> Result<Territory, DataError> {
-                Ok(Territory::Region(
-                    TinyStr4::from_bytes(v.as_bytes()).map_err(|_| {
-                        DataErrorKind::MissingVariant.with_req(WeekDataV1Marker::KEY, req)
-                    })?,
-                ))
-            })
+            .region()
+            .map(|v| -> Result<Territory, DataError> { Ok(Territory::Region(v)) })
             .transpose()?
             .unwrap_or_else(|| DEFAULT_TERRITORY.clone());
 
@@ -147,17 +136,14 @@ icu_provider::impl_dyn_provider!(
 #[test]
 fn basic_cldr_week_data() {
     use icu_calendar::types::IsoWeekday;
-    use icu_locid::langid;
+    use icu_locid::region;
 
     let cldr_paths = crate::cldr::cldr_paths::for_test();
     let provider = WeekDataProvider::try_new(&cldr_paths).unwrap();
 
     let default_week_data: DataPayload<WeekDataV1Marker> = provider
         .load_resource(&DataRequest {
-            options: ResourceOptions {
-                variant: None,
-                langid: Some(langid!("en")), // We don't actually care about langid.
-            },
+            options: ResourceOptions::default(),
             metadata: Default::default(),
         })
         .unwrap()
@@ -168,10 +154,7 @@ fn basic_cldr_week_data() {
 
     let fr_week_data: DataPayload<WeekDataV1Marker> = provider
         .load_resource(&DataRequest {
-            options: ResourceOptions {
-                variant: Some("FR".into()),
-                langid: None,
-            },
+            options: ResourceOptions::temp_for_region(Some(region!("FR"))),
             metadata: Default::default(),
         })
         .unwrap()
@@ -182,10 +165,7 @@ fn basic_cldr_week_data() {
 
     let iq_week_data: DataPayload<WeekDataV1Marker> = provider
         .load_resource(&DataRequest {
-            options: ResourceOptions {
-                variant: Some("IQ".into()),
-                langid: Some(langid!("fr-FR")),
-            },
+            options: ResourceOptions::temp_for_region(Some(region!("IQ"))),
             metadata: Default::default(),
         })
         .unwrap()
@@ -200,10 +180,7 @@ fn basic_cldr_week_data() {
 
     let gg_week_data: DataPayload<WeekDataV1Marker> = provider
         .load_resource(&DataRequest {
-            options: ResourceOptions {
-                variant: Some("GG".into()),
-                langid: None,
-            },
+            options: ResourceOptions::temp_for_region(Some(region!("GG"))),
             metadata: Default::default(),
         })
         .unwrap()

@@ -55,12 +55,10 @@ impl<M: ResourceMarker<Yokeable = ListFormatterPatternsV1<'static>>> ResourcePro
     for ListProvider
 {
     fn load_resource(&self, req: &DataRequest) -> Result<DataResponse<M>, DataError> {
-        let langid = req
-            .get_langid()
-            .ok_or_else(|| DataErrorKind::NeedsLocale.with_req(M::KEY, req))?;
+        let langid = req.options.get_langid();
 
         let resource: cldr_serde::list_patterns::Resource = {
-            let path = get_langid_subdirectory(&self.cldr_misc.join("main"), langid)?
+            let path = get_langid_subdirectory(&self.cldr_misc.join("main"), &langid)?
                 .ok_or_else(|| DataErrorKind::MissingLocale.with_req(M::KEY, req))?
                 .join("listPatterns.json");
             serde_json::from_reader(open_reader(&path)?).map_err(|e| Error::Json(e, Some(path)))?
@@ -69,7 +67,7 @@ impl<M: ResourceMarker<Yokeable = ListFormatterPatternsV1<'static>>> ResourcePro
         let data = &resource
             .main
             .0
-            .get(langid)
+            .get(&langid)
             .expect("CLDR file contains the expected language")
             .list_patterns;
 

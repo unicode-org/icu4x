@@ -392,6 +392,7 @@ pub fn analyze_patterns(
 #[cfg(test)]
 mod tests {
     use super::*;
+
     #[test]
     #[cfg(feature = "serde")]
     fn test_basic() {
@@ -400,12 +401,10 @@ mod tests {
         use icu_provider::prelude::*;
 
         let provider = icu_testdata::get_provider();
+        let locale: Locale = "en-u-ca-gregory".parse().unwrap();
         let data: DataPayload<DateSymbolsV1Marker> = provider
             .load_resource(&DataRequest {
-                options: ResourceOptions {
-                    variant: Some("gregory".into()),
-                    langid: Some("en".parse().unwrap()),
-                },
+                options: locale.into(),
                 metadata: Default::default(),
             })
             .unwrap()

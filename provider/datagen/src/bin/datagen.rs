@@ -371,7 +371,7 @@ fn main() -> eyre::Result<()> {
         provider = Box::new(
             provider
                 .filterable("icu4x-datagen locales")
-                .filter_by_langid_allowlist_strict(locales),
+                .filter_by_langid(move |lid| lid.language.is_empty() || locales.contains(lid)),
         );
     }
 
