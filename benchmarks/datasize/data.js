@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1650034002615,
+  "lastUpdate": 1650333510247,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -13283,6 +13283,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/149f172e7a0cf1ef39002d206a6a6357da7b9731"
         },
         "date": 1650033985632,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4474764,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "andrewpkq@gmail.com",
+            "name": "andrewpollack",
+            "username": "andrewpollack"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "1ab22f3ee30fbabcf2bcd4c939cc33c59860c832",
+          "message": "Adding to README of tinystr/TinyAsciiStr (#1805)",
+          "timestamp": "2022-04-19T01:56:57Z",
+          "tree_id": "87f5d500cd8c4ca852a529139afe0061047f7423",
+          "url": "https://github.com/unicode-org/icu4x/commit/1ab22f3ee30fbabcf2bcd4c939cc33c59860c832"
+        },
+        "date": 1650333494956,
         "tool": "ndjson",
         "benches": [
           {
