@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1650385227476,
+  "lastUpdate": 1650387249600,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -24376,6 +24376,60 @@ window.BENCHMARK_DATA = {
           {
             "name": "uniset/contains_range/worst",
             "value": 3,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "0b67df1d805adb8c0a3338fa1a4a07ee076355f5",
+          "message": "non_exhaustive datetime (#1795)\n\n* non_exhaustive datetime\r\n\r\n* preferences::Bag\r\n\r\n* change constructor to accept types directly\r\n\r\n* address comments\r\n\r\n* add more ctors\r\n\r\n* fixes",
+          "timestamp": "2022-04-19T16:46:48Z",
+          "tree_id": "323a5eaa8267b004b2a8c37015d6426eaa0298e7",
+          "url": "https://github.com/unicode-org/icu4x/commit/0b67df1d805adb8c0a3338fa1a4a07ee076355f5"
+        },
+        "date": 1650387234525,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 42326883,
+            "range": "± 336050",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/worst",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/worst",
+            "value": 2,
             "range": "± 0",
             "unit": "ns/iter"
           }
