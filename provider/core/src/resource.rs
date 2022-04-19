@@ -451,7 +451,7 @@ impl ResourceOptions {
     ///
     /// ```
     /// use icu_provider::prelude::*;
-    /// use icu_locid::locale;
+    /// use icu_locid::langid;
     ///
     /// const FOO_BAR: ResourceKey = icu_provider::resource_key!("foo/bar@1");
     ///
@@ -461,7 +461,7 @@ impl ResourceOptions {
     /// };
     ///
     /// let req_with_langid = DataRequest {
-    ///     options: locale!("ar-EG").into(),
+    ///     options: langid!("ar-EG").into(),
     ///     metadata: Default::default(),
     /// };
     ///
