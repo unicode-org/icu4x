@@ -113,6 +113,9 @@ impl FlexZeroSlice {
     /// Must be called on a valid [`FlexZeroSlice`] byte array.
     #[inline]
     pub const unsafe fn from_byte_slice_unchecked(bytes: &[u8]) -> &Self {
+        // Safety: The DST of FlexZeroSlice is a pointer to the `width` element and has a metadata
+        // equal to the length of the `data` field, which will be one less than the length of the
+        // overall array.
         let (_, remainder) = match bytes.split_last() {
             Some(v) => v,
             None => panic!("slice should be non-empty"),
