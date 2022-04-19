@@ -27,7 +27,7 @@ fn chunk_to_usize(chunk: &[u8], width: usize) -> usize {
 }
 
 impl FlexZeroSlice {
-    /// Construct a new empty FlexZeroSlice
+    /// Construct a new empty [`FlexZeroSlice`].
     ///
     /// ```
     /// use zerovec::vecs::FlexZeroSlice;
@@ -51,22 +51,59 @@ impl FlexZeroSlice {
         usize::from(self.width)
     }
 
+    /// Safely construct a [`FlexZeroSlice`] from a byte array.
+    ///
+    /// ```
+    /// use zerovec::vecs::FlexZeroSlice;
+    ///
+    /// const FZS: &FlexZeroSlice = match FlexZeroSlice::parse_byte_slice(&[
+    ///     2, // width
+    ///     0x42, 0x00, // first value
+    ///     0x07, 0x09, // second value
+    ///     0xFF, 0xFF, // third value
+    /// ]) {
+    ///     Ok(v) => v,
+    ///     Err(_) => panic!("invalid bytes")
+    /// };
+    ///
+    /// assert!(!FZS.is_empty());
+    /// assert_eq!(FZS.len(), 3);
+    /// assert_eq!(FZS.get_width(), 2);
+    /// assert_eq!(FZS.first(), Some(0x0042));
+    /// assert_eq!(FZS.get(0), Some(0x0042));
+    /// assert_eq!(FZS.get(1), Some(0x0907));
+    /// assert_eq!(FZS.get(2), Some(0xFFFF));
+    /// assert_eq!(FZS.get(3), None);
+    /// assert_eq!(FZS.last(), Some(0xFFFF));
+    /// ```
     pub const fn parse_byte_slice(bytes: &[u8]) -> Result<&Self, ZeroVecError> {
         let (width_u8, data) = match bytes.split_first() {
             Some(v) => v,
-            None => return Err(ZeroVecError::parse::<Self>())
+            None => {
+                return Err(ZeroVecError::InvalidLength {
+                    ty: "FlexZeroSlice",
+                    len: 0,
+                })
+            }
         };
-        let width = usize::from(*width_u8);
+        let width = *width_u8 as usize;
         if width < 1 || width > USIZE_WIDTH {
-            return Err(ZeroVecError::parse::<Self>());
+            return Err(ZeroVecError::ParseError {
+                ty: "FlexZeroSlice",
+            });
         }
         if data.len() % width != 0 {
-            return Err(ZeroVecError::length::<Self>(bytes.len()));
+            return Err(ZeroVecError::InvalidLength {
+                ty: "FlexZeroSlice",
+                len: bytes.len(),
+            });
         }
         // Safety: All invariants have been checked
         Ok(unsafe { Self::from_byte_slice_unchecked(bytes) })
     }
 
+    /// Construct a [`FlexZeroSlice`] without checking invariants.
+    ///
     /// # Panics
     ///
     /// Panics if `bytes` is empty.
@@ -76,7 +113,7 @@ impl FlexZeroSlice {
     /// Must be called on a valid [`FlexZeroSlice`] byte array.
     #[inline]
     pub const unsafe fn from_byte_slice_unchecked(bytes: &[u8]) -> &Self {
-        let (_, remainder) = match bytes.split_last(){
+        let (_, remainder) = match bytes.split_last() {
             Some(v) => v,
             None => panic!("slice should be non-empty"),
         };
