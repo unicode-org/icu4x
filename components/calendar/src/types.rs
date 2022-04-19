@@ -212,9 +212,9 @@ dt_unit!(
 );
 
 dt_unit!(
-    FractionalSecond,
+    NanoSecond,
     u32,
-    1_000_000,
+    999_999_999,
     "A fractional second component, stored as nanoseconds."
 );
 
@@ -230,7 +230,7 @@ pub struct Time {
     pub second: IsoSecond,
 
     /// Fractional second
-    pub fraction: FractionalSecond,
+    pub nanosecond: NanoSecond,
 }
 
 impl Time {
@@ -239,22 +239,27 @@ impl Time {
         hour: IsoHour,
         minute: IsoMinute,
         second: IsoSecond,
-        fraction: FractionalSecond,
+        nanosecond: NanoSecond,
     ) -> Self {
         Self {
             hour,
             minute,
             second,
-            fraction,
+            nanosecond,
         }
     }
 
-    pub fn try_new(hour: u8, minute: u8, second: u8, fraction: u32) -> Result<Self, DateTimeError> {
+    pub fn try_new(
+        hour: u8,
+        minute: u8,
+        second: u8,
+        nanosecond: u32,
+    ) -> Result<Self, DateTimeError> {
         Ok(Self {
             hour: hour.try_into()?,
             minute: minute.try_into()?,
             second: second.try_into()?,
-            fraction: fraction.try_into()?,
+            nanosecond: nanosecond.try_into()?,
         })
     }
 }

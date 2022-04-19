@@ -58,8 +58,8 @@ pub trait IsoTimeInput {
     /// Gets the second input.
     fn second(&self) -> Option<IsoSecond>;
 
-    /// Gets the fractional second input.
-    fn fraction(&self) -> Option<FractionalSecond>;
+    /// Gets the nanosecond input.
+    fn nanosecond(&self) -> Option<NanoSecond>;
 }
 
 /// Representation of a formattable time zone.
@@ -389,7 +389,7 @@ impl<A: AsCalendar> IsoTimeInput for DateTime<A> {
     }
 
     /// Gets the fractional second input.
-    fn fraction(&self) -> Option<FractionalSecond> {
+    fn nanosecond(&self) -> Option<NanoSecond> {
         None
     }
 }

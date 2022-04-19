@@ -131,8 +131,8 @@ impl IsoTimeInput for MockZonedDateTime {
         self.datetime.second()
     }
 
-    fn fraction(&self) -> Option<FractionalSecond> {
-        self.datetime.fraction()
+    fn nanosecond(&self) -> Option<NanoSecond> {
+        self.datetime.nanosecond()
     }
 }
 
