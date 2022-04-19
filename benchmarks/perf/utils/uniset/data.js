@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1650034381652,
+  "lastUpdate": 1650333914295,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -24245,6 +24245,60 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 47991775,
             "range": "± 87983",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/worst",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/worst",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "andrewpkq@gmail.com",
+            "name": "andrewpollack",
+            "username": "andrewpollack"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "1ab22f3ee30fbabcf2bcd4c939cc33c59860c832",
+          "message": "Adding to README of tinystr/TinyAsciiStr (#1805)",
+          "timestamp": "2022-04-19T01:56:57Z",
+          "tree_id": "87f5d500cd8c4ca852a529139afe0061047f7423",
+          "url": "https://github.com/unicode-org/icu4x/commit/1ab22f3ee30fbabcf2bcd4c939cc33c59860c832"
+        },
+        "date": 1650333898526,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 47883977,
+            "range": "± 78530",
             "unit": "ns/iter"
           },
           {
