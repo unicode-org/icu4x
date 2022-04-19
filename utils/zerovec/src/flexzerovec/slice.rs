@@ -242,10 +242,16 @@ impl FlexZeroSlice {
         debug_assert!(insert_index < new_count);
         debug_assert_eq!(new_data_len, new_count * new_width);
         debug_assert_eq!(new_data_len, self.data.len());
+        // For efficiency, calculate how many items we can skip copying.
+        let lower_i = if new_width == self.get_width() {
+            insert_index
+        } else {
+            0
+        };
         // Copy elements starting from the end into the new empty section of the vector.
         // Note: We could copy fully in place, but we need to set 0 bytes for the high bytes,
         // so we stage the new value on the stack.
-        for i in (0..new_count).rev() {
+        for i in (lower_i..new_count).rev() {
             let bytes_to_write = if i == insert_index {
                 item_bytes
             } else {
@@ -323,7 +329,14 @@ impl FlexZeroSlice {
         } = remove_info;
         debug_assert!(new_width <= self.get_width());
         debug_assert!(new_count < self.len());
-        for i in 0..new_count {
+        // For efficiency, calculate how many items we can skip copying.
+        let lower_i = if new_width == self.get_width() {
+            remove_index
+        } else {
+            0
+        };
+        // Copy elements starting from the beginning to compress the vector to fewer bytes.
+        for i in lower_i..new_count {
             let j = if i < remove_index { i } else { i + 1 };
             // Safety: j is in range because j <= new_count < self.len()
             let bytes_to_write = unsafe { self.get_unchecked(j).to_le_bytes() };
