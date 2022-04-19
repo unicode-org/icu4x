@@ -442,7 +442,14 @@ impl ResourceOptions {
         self.langid == LanguageIdentifier::UND
     }
 
-    /// Returns the [`LanguageIdentifier`] for this [`ResourceOptions`].
+    /// Gets the [`LanguageIdentifier`] for this [`ResourceOptions`].
+    ///
+    /// This may allocate memory if there are variant subtags. If you need only the language,
+    /// script, and/or region subtag, use the specific getters for those subtags:
+    ///
+    /// - [`ResourceOptions::language()`]
+    /// - [`ResourceOptions::script()`]
+    /// - [`ResourceOptions::region()`]
     ///
     /// If you have ownership over the `ResourceOptions`, use [`ResourceOptions::into_locale()`]
     /// and then access the `id` field.
@@ -465,28 +472,36 @@ impl ResourceOptions {
     ///     metadata: Default::default(),
     /// };
     ///
-    /// assert_eq!(req_no_langid.options.langid(), langid!("und"));
-    /// assert_eq!(req_with_langid.options.langid(), langid!("ar-EG"));
+    /// assert_eq!(req_no_langid.options.get_langid(), langid!("und"));
+    /// assert_eq!(req_with_langid.options.get_langid(), langid!("ar-EG"));
     /// ```
-    pub fn langid(&self) -> LanguageIdentifier {
+    pub fn get_langid(&self) -> LanguageIdentifier {
         self.langid.clone()
-    }
-
-    /// Returns the [`Locale`] for this [`ResourceOptions`].
-    ///
-    /// If you have ownership over the `ResourceOptions`, use [`ResourceOptions::into_locale()`].
-    pub fn locale(&self) -> Locale {
-        let mut loc = Locale {
-            id: self.langid.clone(),
-            ..Default::default()
-        };
-        loc.extensions.unicode.keywords = self.keywords.clone();
-        loc
     }
 
     /// Converts this [`ResourceOptions`] into a [`Locale`].
     ///
-    /// If you do not have ownership over the `ResourceOptions`, use [`ResourceOptions::locale()`].
+    /// See also [`ResourceOptions::get_langid()`].
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu_provider::prelude::*;
+    /// use icu_locid::{langid, language, region, Locale};
+    ///
+    /// let locale: Locale = "it-IT-u-ca-coptic".parse()
+    ///     .expect("Valid BCP-47");
+    /// let options: ResourceOptions = locale.into();
+    ///
+    /// assert_eq!(options.to_string(), "it-IT-u-ca-coptic");
+    /// assert_eq!(options.get_langid(), langid!("it-IT"));
+    /// assert_eq!(options.language(), language!("it"));
+    /// assert_eq!(options.script(), None);
+    /// assert_eq!(options.region(), Some(region!("IT")));
+    ///
+    /// let locale = options.into_locale();
+    /// assert_eq!(locale.to_string(), "it-IT-u-ca-coptic");
+    /// ```
     pub fn into_locale(self) -> Locale {
         let mut loc = Locale {
             id: self.langid,
