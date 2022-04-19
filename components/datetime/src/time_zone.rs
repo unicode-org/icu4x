@@ -740,6 +740,7 @@ impl TimeZoneFormat {
 
 /// Determines which ISO-8601 format should be used to format a [`GmtOffset`](crate::date::GmtOffset).
 #[derive(Debug, Clone, Copy, PartialEq)]
+#[allow(clippy::exhaustive_enums)] // this type is stable
 pub enum IsoFormat {
     /// ISO-8601 Basic Format.
     /// Formats zero-offset numerically.
@@ -764,6 +765,7 @@ pub enum IsoFormat {
 
 /// Whether the minutes field should be optional or required in ISO-8601 format.
 #[derive(Debug, Clone, Copy, PartialEq)]
+#[allow(clippy::exhaustive_enums)] // this type is stable
 pub enum IsoMinutes {
     /// Minutes are always displayed.
     Required,
@@ -774,6 +776,7 @@ pub enum IsoMinutes {
 
 /// Whether the seconds field should be optional or excluded in ISO-8601 format.
 #[derive(Debug, Clone, Copy, PartialEq)]
+#[allow(clippy::exhaustive_enums)] // this type is stable
 pub enum IsoSeconds {
     /// Seconds are displayed only if they are non-zero.
     Optional,
@@ -784,6 +787,7 @@ pub enum IsoSeconds {
 
 /// Whether a field should be zero-padded in ISO-8601 format.
 #[derive(Debug, Clone, Copy, PartialEq)]
+#[allow(clippy::exhaustive_enums)] // this type is stable
 pub enum ZeroPadding {
     /// Add zero-padding.
     On,
@@ -794,6 +798,7 @@ pub enum ZeroPadding {
 
 /// A config enum for initializing TimeZoneFormat.
 #[derive(Debug, Clone, Copy, PartialEq)]
+#[non_exhaustive]
 pub enum TimeZoneFormatConfig {
     GenericNonLocationLong,                     // Pacific Time
     GenericNonLocationShort,                    // PT
@@ -806,6 +811,7 @@ pub enum TimeZoneFormatConfig {
 
 /// An enum for fallback formats.
 #[derive(Debug, Clone, Copy, PartialEq)]
+#[non_exhaustive]
 pub enum FallbackFormat {
     Iso8601(IsoFormat, IsoMinutes, IsoSeconds),
     LocalizedGmt,
@@ -819,6 +825,7 @@ impl Default for FallbackFormat {
 
 /// A bag of options to define how time zone will be formatted.
 #[derive(Default, Debug, Clone, Copy, PartialEq)]
+#[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct TimeZoneFormatOptions {
     pub fallback_format: FallbackFormat,
 }

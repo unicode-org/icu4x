@@ -13,6 +13,7 @@ use icu_provider::{yoke, zerofrom};
 use zerovec::ZeroVec;
 
 #[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
+#[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct GenericPattern<'data> {
     pub items: ZeroVec<'data, GenericPatternItem>,
 }

@@ -568,11 +568,9 @@ fn constructing_datetime_format_with_time_zone_pattern_symbols_is_err() {
     };
     use icu_locid::locale;
 
-    let options = DateTimeFormatOptions::Length(Bag {
-        // Full has time-zone symbols.
-        time: Some(Time::Full),
-        ..Default::default()
-    });
+    let mut length_bag = Bag::default();
+    length_bag.time = Some(Time::Full); // Full has timezone symbols
+    let options = DateTimeFormatOptions::Length(length_bag);
 
     let provider = icu_testdata::get_provider();
     let result = DateTimeFormat::<Gregorian>::try_new(locale!("en"), &provider, &options);

@@ -17,13 +17,7 @@
 //! ```
 //! use icu::datetime::{DateTimeFormatOptions, options::length};
 //!
-//! let options = DateTimeFormatOptions::Length(
-//!     length::Bag {
-//!          date: Some(length::Date::Medium),
-//!          time: Some(length::Time::Short),
-//!         ..Default::default()
-//!     }
-//! );
+//! let bag = length::Bag::from_date_time_style(length::Date::Medium, length::Time::Short);
 //! ```
 //!
 //! At the moment only the [`length::Bag`] works, and we plan to extend that to support
@@ -44,18 +38,13 @@ pub mod preferences;
 /// ```
 /// use icu::datetime::{DateTimeFormatOptions, options::length};
 ///
-/// let options = DateTimeFormatOptions::Length(
-///     length::Bag {
-///          date: Some(length::Date::Medium),
-///          time: Some(length::Time::Short),
-///         ..Default::default()
-///     }
-/// );
+/// let bag = length::Bag::from_date_time_style(length::Date::Medium, length::Time::Short);
 /// ```
 ///
 /// At the moment only the [`length::Bag`] works, and we plan to extend that to support
 /// `ECMA402` like components bag later.
 #[derive(Debug, Clone)]
+#[non_exhaustive]
 pub enum DateTimeFormatOptions {
     /// Bag of lengths for date and time.
     Length(length::Bag),

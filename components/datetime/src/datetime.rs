@@ -39,11 +39,8 @@ use crate::{date::DateTimeInput, CldrCalendar, DateTimeFormatError, FormattedDat
 ///
 /// let provider = InvariantDataProvider;
 ///
-/// let options = length::Bag {
-///     date: Some(length::Date::Medium),
-///     time: Some(length::Time::Short),
-///     ..Default::default()
-/// };
+/// let mut options = length::Bag::from_date_time_style(length::Date::Medium, length::Time::Short);
+///
 /// let dtf = DateTimeFormat::<Gregorian>::try_new(locale!("en"), &provider, &options.into())
 ///     .expect("Failed to create DateTimeFormat instance.");
 ///
@@ -206,24 +203,20 @@ impl<C: CldrCalendar> DateTimeFormat<C> {
     /// };
     /// use icu::locid::locale;
     ///
-    /// let options = DateTimeFormatOptions::Length(length::Bag {
-    ///     date: Some(length::Date::Medium),
-    ///     time: None,
-    ///     preferences: None,
-    /// });
+    /// let options = length::Bag::from_date_style(length::Date::Medium).into();
     ///
     /// let provider = icu_testdata::get_provider();
     /// let dtf = DateTimeFormat::<Gregorian>::try_new(locale!("en"), &provider, &options)
     ///     .expect("Failed to create DateTimeFormat instance.");
     ///
+    /// let mut expected_components_bag = components::Bag::default();
+    /// expected_components_bag.year = Some(components::Year::Numeric);
+    /// expected_components_bag.month = Some(components::Month::Short);
+    /// expected_components_bag.day = Some(components::Day::NumericDayOfMonth);
+    ///
     /// assert_eq!(
     ///     dtf.resolve_components(),
-    ///     components::Bag {
-    ///         year: Some(components::Year::Numeric),
-    ///         month: Some(components::Month::Short),
-    ///         day: Some(components::Day::NumericDayOfMonth),
-    ///         ..Default::default()
-    ///     }
+    ///     expected_components_bag
     /// );
     /// ```
     pub fn resolve_components(&self) -> components::Bag {
