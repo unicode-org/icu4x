@@ -52,6 +52,31 @@ impl FlexZeroVecOwned {
         self.as_mut_slice().insert_impl(insert_info, index);
     }
 
+    /// Inserts an element into a sorted vector at a position that keeps the vector sorted.
+    ///
+    /// ```
+    /// use zerovec::vecs::FlexZeroVecOwned;
+    ///
+    /// let mut fzv = FlexZeroVecOwned::new_empty();
+    /// fzv.insert_sorted(10);
+    /// fzv.insert_sorted(5);
+    /// fzv.insert_sorted(8);
+    ///
+    /// assert!(Iterator::eq(
+    ///     fzv.iter(),
+    ///     [5, 8, 10].iter().copied()
+    /// ));
+    /// ```
+    pub fn insert_sorted(&mut self, item: usize) {
+        let index = match self.binary_search(item) {
+            Ok(i) => i,
+            Err(i) => i,
+        };
+        let insert_info = self.get_insert_info(item);
+        self.0.resize(insert_info.new_data_len + 1, 0);
+        self.as_mut_slice().insert_impl(insert_info, index);
+    }
+
     /// # Panics
     ///
     /// Panics if `index >= len`.
@@ -150,5 +175,24 @@ mod test {
         fzv.remove(1);
         assert_eq!(fzv.get_width(), 1);
         check_contents(&fzv, &[42, 77]);
+    }
+
+    #[test]
+    fn test_build_sorted() {
+        let nums: &[usize] = &[0, 50, 0, 77, 831, 29, 89182, 931, 0, 77, 712381];
+        let mut fzv = FlexZeroVecOwned::new_empty();
+
+        for num in nums {
+            fzv.insert_sorted(*num);
+        }
+        assert_eq!(fzv.get_width(), 3);
+        check_contents(&fzv, &[0, 0, 0, 29, 50, 77, 77, 831, 931, 89182, 712381]);
+
+        for num in nums {
+            let index = fzv.binary_search(*num).unwrap();
+            fzv.remove(index);
+        }
+        assert_eq!(fzv.get_width(), 1);
+        check_contents(&fzv, &[]);
     }
 }
