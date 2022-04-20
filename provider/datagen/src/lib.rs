@@ -84,7 +84,7 @@ pub struct SourceData {
 impl SourceData {
     /// Adds CLDR data to this `DataSource`. The `CldrPaths` should point to
     /// a local `cldr-{version}-json-full.zip` directory (see
-    /// https://github.com/unicode-org/cldr-json/releases).
+    /// <https://github.com/unicode-org/cldr-json/releases>).
     pub fn with_cldr(self, cldr_paths: cldr::CldrPaths) -> Self {
         Self {
             cldr_paths: Some(cldr_paths),
@@ -94,7 +94,7 @@ impl SourceData {
 
     /// Adds Unicode Properties data to this `DataSource`. The path should
     /// point to a local `icuexportdata_uprops_full` directory (see
-    /// https://github.com/unicode-org/icu/releases).
+    /// <https://github.com/unicode-org/icu/releases>).
     pub fn with_uprops(self, uprops_root: PathBuf) -> Self {
         Self {
             cldr_paths: self.cldr_paths,
@@ -205,7 +205,7 @@ macro_rules! create_datagen_provider {
 ///
 /// The macro behaves like a function that takes the following arguments:
 ///
-/// 1. An instance of [`DatagenOptions`] (required)
+/// 1. An instance of [`SourceData`] (required)
 /// 2. A list of providers to instantiate (optional)
 ///
 /// The return value is a complex type that implements all of the key data provider traits.
