@@ -1590,7 +1590,6 @@ make_set_property! {
     pub fn get_xid_start();
 }
 
-
 //
 // Enumerated property getter fns
 //

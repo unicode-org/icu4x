@@ -15,9 +15,9 @@
 use crate::error::PropertiesError;
 use crate::provider::*;
 use crate::*;
-use BidiClass;
 use icu_codepointtrie::TrieValue;
 use icu_provider::prelude::*;
+use BidiClass;
 
 /// TODO(#1239): Finalize this API.
 pub type CodePointMapResult<T> =
