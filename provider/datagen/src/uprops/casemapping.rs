@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::uprops::uprops_serde;
+use crate::DatagenOptions;
 use icu_casemapping::provider::{CaseMappingV1, CaseMappingV1Marker};
 use icu_casemapping::CaseMappingInternals;
 use icu_codepointtrie::CodePointTrieHeader;
@@ -10,17 +11,24 @@ use icu_provider::prelude::*;
 
 use std::convert::TryFrom;
 use std::fs;
-use std::path::PathBuf;
 
 pub struct CaseMappingDataProvider {
     case_mapping: CaseMappingInternals<'static>,
 }
 
 /// A data provider reading from .toml files produced by the ICU4C icuwriteuprops tool.
-impl CaseMappingDataProvider {
-    pub fn try_new(path: PathBuf) -> Result<Self, DataError> {
+impl TryFrom<&DatagenOptions> for CaseMappingDataProvider {
+    type Error = DataError;
+    fn try_from(options: &DatagenOptions) -> Result<Self, Self::Error> {
         #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
-        let toml_str = fs::read_to_string(&path).unwrap();
+        let toml_str = fs::read_to_string(
+            options
+                .uprops_root
+                .as_ref()
+                .ok_or_else(|| DataError::custom("CaseMappingDataProvider requires uprops root"))?
+                .join("ucase.toml"),
+        )
+        .unwrap();
         #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
         let toml: uprops_serde::case::Main = toml::from_str(&toml_str).unwrap();
 
@@ -62,17 +70,35 @@ impl ResourceProvider<CaseMappingV1Marker> for CaseMappingDataProvider {
     }
 }
 
+impl icu_provider::datagen::IterableResourceProvider<CaseMappingV1Marker>
+    for CaseMappingDataProvider
+{
+    fn supported_options(
+        &self,
+    ) -> Result<Box<dyn Iterator<Item = ResourceOptions> + '_>, DataError> {
+        Ok(Box::new(core::iter::once(Default::default())))
+    }
+}
+
+icu_provider::impl_dyn_provider!(
+    CaseMappingDataProvider,
+    [CaseMappingV1Marker,],
+    SERDE_SE,
+    ITERABLE_SERDE_SE,
+    DATA_CONVERTER
+);
+
 #[cfg(test)]
 mod tests {
-    use crate::uprops::casemapping::CaseMappingDataProvider;
+    use super::*;
     use core::str::FromStr;
     use icu_casemapping::CaseMapping;
     use icu_locid::Locale;
 
     #[test]
     fn test_simple_mappings() {
-        let root_dir = icu_testdata::paths::uprops_toml_root().join("ucase.toml");
-        let provider = CaseMappingDataProvider::try_new(root_dir).expect("Loading was successful");
+        let provider = CaseMappingDataProvider::try_from(&DatagenOptions::for_test())
+            .expect("Loading was successful");
         let case_mapping = CaseMapping::try_new(&provider).expect("Loading was successful");
 
         // Basic case mapping
@@ -116,8 +142,8 @@ mod tests {
     // These tests are taken from StringCaseTest::TestCaseConversion in ICU4C.
     #[test]
     fn test_full_mappings() {
-        let root_dir = icu_testdata::paths::uprops_toml_root().join("ucase.toml");
-        let provider = CaseMappingDataProvider::try_new(root_dir).expect("Loading was successful");
+        let provider = CaseMappingDataProvider::try_from(&DatagenOptions::for_test())
+            .expect("Loading was successful");
 
         let case_mapping = CaseMapping::try_new(&provider).expect("Loading was successful");
 

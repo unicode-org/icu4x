@@ -54,7 +54,7 @@ use crate::internals::{ClosureSet, DotType, MappingKind};
 // UTF-8, we instead store strings encoded as UTF-8 in a side table. The full mapping and
 // closure slots contain indices into that side table.
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-#[cfg_attr(feature = "serde_serialize", derive(serde::Serialize))]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize))]
 #[derive(Debug, Eq, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
 pub(crate) struct CaseMappingExceptions<'data> {
     #[cfg_attr(feature = "serde", serde(borrow))]

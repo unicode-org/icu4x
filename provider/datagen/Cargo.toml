@@ -38,7 +38,6 @@ displaydoc = { version = "0.2.3", default-features = false }
 elsa = "1.7"
 eyre = "0.6"
 icu_calendar = { version = "0.5", path = "../../components/calendar", features = ["datagen"] }
-icu_casemapping = { version = "0.1", path = "../../experimental/casemapping", features = ["serde", "datagen"], optional = true }
 icu_codepointtrie = { version = "0.3.3", path = "../../utils/codepointtrie", features = ["serde_serialize"] }
 icu_datetime = { version = "0.5", path = "../../components/datetime", features = ["datagen"] }
 icu_decimal = { version = "0.5", path = "../../components/decimal", features = ["datagen"] }
@@ -51,13 +50,12 @@ icu_provider = { version = "0.5", path = "../core", features = ["std", "log_erro
 icu_provider_adapters = { path = "../adapters", features = ["datagen"] }
 icu_provider_blob = { version = "0.5", path = "../blob", features = ["export"] }
 icu_provider_fs = { version = "0.5", path = "../fs", features = ["export"] }
-icu_segmenter = { version = "0.1", path = "../../experimental/segmenter", features = ["datagen"] }
 icu_testdata = { version = "0.5", path = "../testdata", features = ["metadata"] }
 icu_uniset = { version = "0.4.1", path = "../../utils/uniset", features = ["serde"] }
 itertools = "0.10"
 json = "0.12"
 litemap = { version = "0.3.0", path = "../../utils/litemap" }
-log = { version = "0.4" }
+log = "0.4"
 pathdiff = "0.2.1"
 rayon = "1.5"
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"] }
@@ -67,27 +65,25 @@ serde-tuple-vec-map = "1.0"
 sha2 = "0.10.2"
 simple_logger = "1.12"
 tinystr = { path = "../../utils/tinystr", version = "0.5.0", features = ["alloc", "serde", "zerovec"], default-features = false }
-toml = { version = "0.5" }
+toml = "0.5"
 walkdir = "2.3.2"
+writeable = { path = "../../utils/writeable" }
 zerovec = { version = "0.6", path = "../../utils/zerovec", features = ["serde_serialize", "yoke"] }
+
+# Experimental crates
+icu_casemapping = { version = "0.1", path = "../../experimental/casemapping", features = ["datagen"], optional = true }
+icu_segmenter = { version = "0.1", path = "../../experimental/segmenter", features = ["datagen"], optional = true }
 
 # Dependencies for the "download-testdata" feature
 reqwest = { version = "0.11", features = ["stream"], optional = true }
 tokio = { version = "1.5", features = ["rt-multi-thread", "macros", "fs"], optional = true }
 futures = { version = "0.3", optional = true }
 
-[dev-dependencies]
-mktemp = "0.4"
-icu_testdata = { version = "0.5", path = "../testdata" }
-writeable = { version = "0.3", path = "../../utils/writeable" }
-
 [features]
-experimental = []
-casemapping = ["icu_casemapping"]
+experimental = ["icu_casemapping", "icu_segmenter"]
 # Automatically download CLDR and uprops data
 download = ["cached-path"]
 download-testdata = ["reqwest", "icu_testdata/metadata", "tokio", "futures"]
-default = ["casemapping"]
 
 [[bin]]
 name = "icu4x-datagen"

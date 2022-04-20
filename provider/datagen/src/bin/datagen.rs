@@ -7,11 +7,10 @@ use eyre::WrapErr;
 
 use icu_datagen::cldr::CldrPathsAllInOne;
 use icu_datagen::{get_all_keys, DatagenOptions};
-
 use icu_locid::LanguageIdentifier;
 use icu_provider::datagen::IterableDynProvider;
 use icu_provider::export::DataExporter;
-use icu_provider::hello_world::{HelloWorldProvider, HelloWorldV1Marker};
+use icu_provider::hello_world::HelloWorldV1Marker;
 use icu_provider::prelude::*;
 use icu_provider::serde::SerializeMarker;
 use icu_provider_adapters::filter::Filterable;
@@ -302,70 +301,59 @@ fn main() -> eyre::Result<()> {
         filtered
     };
 
-    let mut provider: Box<dyn IterableDynProvider<SerializeMarker> + Sync> = if matches
-        .is_present("HELLO_WORLD")
-    {
-        Box::new(HelloWorldProvider::new_with_placeholder_data())
+    let options = if matches.is_present("INPUT_FROM_TESTDATA") {
+        DatagenOptions::for_test()
     } else {
-        let cldr_paths = CldrPathsAllInOne {
-            cldr_json_root: if let Some(_tag) = matches.value_of("CLDR_TAG") {
+        DatagenOptions {
+            cldr_paths: Some(Box::new(CldrPathsAllInOne {
+                cldr_json_root: if let Some(_tag) = matches.value_of("CLDR_TAG") {
+                    #[cfg(not(feature = "download"))]
+                    eyre::bail!("--cldr-tag requires the download feature");
+                    #[cfg(feature = "download")]
+                    cached_path::CacheBuilder::new().freshness_lifetime(u64::MAX).build()?
+                        .cached_path_with_options(
+                            &format!(
+                                "https://github.com/unicode-org/cldr-json/releases/download/{}/cldr-{}-json-{}.zip",
+                                _tag, _tag, matches.value_of("CLDR_LOCALE_SUBSET").unwrap_or("full")),
+                            &cached_path::Options::default().extract(),
+                        )?
+                } else if let Some(path) = matches.value_of("CLDR_ROOT") {
+                    PathBuf::from(path)
+                } else {
+                    eyre::bail!(
+                        "Either --cldr-tag or --cldr-root or --input-from-testdata must be specified",
+                    )
+                },
+                locale_subset: matches
+                    .value_of("CLDR_LOCALE_SUBSET")
+                    .unwrap_or("full")
+                    .to_string(),
+            })),
+            uprops_root: Some(if let Some(_tag) = matches.value_of("UPROPS_TAG") {
                 #[cfg(not(feature = "download"))]
-                eyre::bail!("--cldr-tag requires the download feature");
+                eyre::bail!("--uprops-tag requires the download feature");
                 #[cfg(feature = "download")]
                 cached_path::CacheBuilder::new().freshness_lifetime(u64::MAX).build()?
                     .cached_path_with_options(
-                        &format!(
-                            "https://github.com/unicode-org/cldr-json/releases/download/{}/cldr-{}-json-{}.zip",
-                            _tag, _tag, matches.value_of("CLDR_LOCALE_SUBSET").unwrap_or("full")),
-                        &cached_path::Options::default().extract(),
+                        &format!("https://github.com/unicode-org/icu/releases/download/{}/icuexportdata_uprops_full.zip", _tag),
+                        &cached_path::Options::default().extract()
                     )?
-            } else if let Some(path) = matches.value_of("CLDR_ROOT") {
+                    .join("icuexportdata_uprops_full")
+                    .join(matches.value_of("UPROPS_MODE").unwrap())
+            } else if let Some(path) = matches.value_of("UPROPS_ROOT") {
                 PathBuf::from(path)
-            } else if matches.is_present("INPUT_FROM_TESTDATA") {
-                icu_testdata::paths::cldr_json_root()
             } else {
                 eyre::bail!(
-                    "Either --cldr-tag or --cldr-root or --input-from-testdata must be specified",
+                    "Either --uprops-tag or --uprops-root or --input-from-testdata must be specified",
                 )
-            },
-            locale_subset: matches
-                .value_of("CLDR_LOCALE_SUBSET")
-                .unwrap_or("full")
-                .to_string(),
-        };
-
-        let uprops_root = if let Some(_tag) = matches.value_of("UPROPS_TAG") {
-            #[cfg(not(feature = "download"))]
-            eyre::bail!("--uprops-tag requires the download feature");
-            #[cfg(feature = "download")]
-            cached_path::CacheBuilder::new().freshness_lifetime(u64::MAX).build()?
-                .cached_path_with_options(
-                    &format!("https://github.com/unicode-org/icu/releases/download/{}/icuexportdata_uprops_full.zip", _tag),
-                    &cached_path::Options::default().extract()
-                )?
-                .join("icuexportdata_uprops_full")
-                .join(matches.value_of("UPROPS_MODE").unwrap())
-        } else if let Some(path) = matches.value_of("UPROPS_ROOT") {
-            PathBuf::from(path)
-        } else if matches.is_present("INPUT_FROM_TESTDATA") {
-            icu_testdata::paths::uprops_toml_root()
-        } else {
-            eyre::bail!(
-                "Either --uprops-tag or --uprops-root or --input-from-testdata must be specified",
-            )
-        };
-
-        let segmenter_data_root = icu_datagen::segmenter::segmenter_data_root();
-
-        let options = DatagenOptions {
-            cldr_paths: Some(Box::new(cldr_paths)),
-            uprops_root: Some(uprops_root),
-            segmenter_data_root: Some(segmenter_data_root),
-        };
-        let p = icu_datagen::create_datagen_provider!(options);
-
-        Box::new(p)
+            }),
+            #[cfg(feature = "experimental")]
+            segmenter_data_root: Some(icu_datagen::segmenter::segmenter_data_root()),
+        }
     };
+
+    let mut provider: Box<dyn IterableDynProvider<SerializeMarker> + Sync> =
+        Box::new(icu_datagen::create_datagen_provider!(options));
 
     if let Some(locales) = selected_locales.as_ref() {
         provider = Box::new(

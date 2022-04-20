@@ -50,6 +50,7 @@
 //! ```
 
 pub mod cldr;
+#[cfg(feature = "experimental")]
 pub mod segmenter;
 pub mod uprops;
 
@@ -64,7 +65,12 @@ pub fn get_all_keys() -> Vec<ResourceKey> {
     v.extend(icu_properties::provider::key::ALL_MAP_KEYS);
     v.extend(icu_properties::provider::key::ALL_SCRIPT_EXTENSIONS_KEYS);
     v.extend(icu_properties::provider::key::ALL_SET_KEYS);
-    v.extend(icu_segmenter::ALL_KEYS);
+    #[cfg(feature = "experimental")]
+    {
+        use icu_provider::ResourceMarker;
+        v.extend(icu_segmenter::ALL_KEYS);
+        v.push(icu_casemapping::provider::CaseMappingV1Marker::KEY);
+    }
     v
 }
 
@@ -80,6 +86,7 @@ pub struct DatagenOptions {
     /// If `None`, providers that need Unicode Properties source data cannot be constructed.
     pub uprops_root: Option<PathBuf>,
 
+    #[cfg(feature = "experimental")]
     /// Path to segmentation source data.
     ///
     /// If `None`, providers that need segmentation source data cannot be constructed.
@@ -95,6 +102,7 @@ impl DatagenOptions {
                 locale_subset: "full".to_string(),
             })),
             uprops_root: Some(icu_testdata::paths::uprops_toml_root()),
+            #[cfg(feature = "experimental")]
             segmenter_data_root: Some(segmenter::segmenter_data_root()),
         }
     }
@@ -119,11 +127,7 @@ impl DatagenOptions {
 /// use icu_datagen::DatagenOptions;
 ///
 /// // This data provider supports all keys required by ICU4X.
-/// let provider = icu_datagen::create_datagen_provider!(DatagenOptions {
-///     cldr_paths: todo!(),
-///     uprops_root: todo!(),
-///     segmenter_data_root: todo!(),
-/// });
+/// let provider = icu_datagen::create_datagen_provider!(DatagenOptions::for_test());
 /// # Ok::<(), eyre::ErrReport>(())
 /// ```
 ///
@@ -133,17 +137,14 @@ impl DatagenOptions {
 /// use icu_datagen::DatagenOptions;
 ///
 /// // This data provider supports the keys for LocaleCanonicalizer.
-/// let provider = icu_datagen::create_datagen_provider!(DatagenOptions {
-///     cldr_paths: todo!(),
-///     uprops_root: todo!(),
-///     segmenter_data_root: todo!(),
-/// }, [
+/// let provider = icu_datagen::create_datagen_provider!(DatagenOptions::for_test(), [
 ///     icu_datagen::cldr::AliasesProvider,
 ///     icu_datagen::cldr::LikelySubtagsProvider,
 /// ]);
 /// # Ok::<(), eyre::ErrReport>(())
 /// ```
 #[macro_export]
+#[cfg(not(feature = "experimental"))]
 macro_rules! create_datagen_provider {
     ($datagen_options:expr) => {
         $crate::create_datagen_provider!(
@@ -158,6 +159,77 @@ macro_rules! create_datagen_provider {
                 $crate::cldr::TimeZonesProvider,
                 $crate::cldr::WeekDataProvider,
                 $crate::cldr::ListProvider,
+                $crate::uprops::EnumeratedPropertyCodePointTrieProvider,
+                $crate::uprops::ScriptWithExtensionsPropertyProvider,
+                $crate::uprops::EnumeratedPropertyUnicodeSetDataProvider,
+                // Has to go last as it matches all props/ keys.
+                $crate::uprops::BinaryPropertyUnicodeSetDataProvider,
+            ]
+        )
+    };
+    ($datagen_options:expr, [ $($constructor:path),+, ]) => {{
+        use core::convert::TryFrom;
+        icu_provider_adapters::make_forking_provider!(
+            icu_provider_adapters::fork::by_key::ForkByKeyProvider,
+            [
+                $(<$constructor>::try_from(&$datagen_options)?),+,
+            ]
+        )
+    }};
+}
+
+/// Create a data provider reading from source files that generates data for all,
+/// or a subset, of ICU4X.
+///
+/// The macro behaves like a function that takes the following arguments:
+///
+/// 1. An instance of [`DatagenOptions`] (required)
+/// 2. A list of providers to instantiate (optional)
+///
+/// The return value is a complex type that implements all of the key data provider traits.
+///
+/// The macro expands to code that contains `?` operators. It is recommended to invoke this
+/// macro from a function that returns an `eyre::Result`.
+///
+/// To create a data provider for all of ICU4X:
+///
+/// ```no_run
+/// use icu_datagen::DatagenOptions;
+///
+/// // This data provider supports all keys required by ICU4X.
+/// let provider = icu_datagen::create_datagen_provider!(DatagenOptions::for_test());
+/// # Ok::<(), eyre::ErrReport>(())
+/// ```
+///
+/// To create a data provider for a subset:
+///
+/// ```no_run
+/// use icu_datagen::DatagenOptions;
+///
+/// // This data provider supports the keys for LocaleCanonicalizer.
+/// let provider = icu_datagen::create_datagen_provider!(DatagenOptions::for_test(), [
+///     icu_datagen::cldr::AliasesProvider,
+///     icu_datagen::cldr::LikelySubtagsProvider,
+/// ]);
+/// # Ok::<(), eyre::ErrReport>(())
+/// ```
+#[macro_export]
+#[cfg(feature = "experimental")]
+macro_rules! create_datagen_provider {
+    ($datagen_options:expr) => {
+        $crate::create_datagen_provider!(
+            $datagen_options,
+            [
+                $crate::cldr::AliasesProvider,
+                $crate::cldr::CommonDateProvider,
+                $crate::cldr::JapaneseErasProvider,
+                $crate::cldr::LikelySubtagsProvider,
+                $crate::cldr::NumbersProvider,
+                $crate::cldr::PluralsProvider,
+                $crate::cldr::TimeZonesProvider,
+                $crate::cldr::WeekDataProvider,
+                $crate::cldr::ListProvider,
+                $crate::uprops::CaseMappingDataProvider,
                 $crate::uprops::EnumeratedPropertyCodePointTrieProvider,
                 $crate::uprops::ScriptWithExtensionsPropertyProvider,
                 $crate::uprops::EnumeratedPropertyUnicodeSetDataProvider,

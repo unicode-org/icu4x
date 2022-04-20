@@ -98,7 +98,7 @@ impl DotType {
 // The datatype stored in the codepoint trie for casemapping.
 #[derive(Copy, Clone, Debug, Eq, PartialEq)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-#[cfg_attr(feature = "serde_serialize", derive(serde::Serialize))]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize))]
 struct CaseMappingData(u16);
 
 impl CaseMappingData {
@@ -248,7 +248,7 @@ impl TrieValue for CaseMappingData {
 // Reverse case folding data. Maps from multi-character strings back
 // to code-points that fold to those strings.
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-#[cfg_attr(feature = "serde_serialize", derive(serde::Serialize))]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize))]
 #[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[yoke(prove_covariance_manually)]
 struct CaseMappingUnfoldData<'data> {
@@ -338,7 +338,7 @@ impl FoldOptions {
 /// CaseMappingInternals provides low-level access to the data necessary to
 /// convert characters and strings to upper, lower, or title case.
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-#[cfg_attr(feature = "serde_serialize", derive(serde::Serialize))]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize))]
 #[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[yoke(prove_covariance_manually)]
 pub struct CaseMappingInternals<'data> {
