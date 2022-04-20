@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1650470030028,
+  "lastUpdate": 1650472358702,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -13433,6 +13433,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/a97175b3b5af030024384e9472db4fc970a300a4"
         },
         "date": 1650470013420,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4507258,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "c3f7bd897f81592dc986ddce5010246b6b70f9b2",
+          "message": "Macroify properties (#1810)\n\n* Macroify properties\r\n\r\n* fix doc\r\n\r\n* fmt",
+          "timestamp": "2022-04-20T16:30:47Z",
+          "tree_id": "3ca6b70f3fe5e16a5ad513a26c848c3c2bfa1164",
+          "url": "https://github.com/unicode-org/icu4x/commit/c3f7bd897f81592dc986ddce5010246b6b70f9b2"
+        },
+        "date": 1650472340120,
         "tool": "ndjson",
         "benches": [
           {
