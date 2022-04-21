@@ -7,10 +7,12 @@ use icu_codepointtrie::CodePointTrie;
 use unicode_bidi::data_source::BidiDataSource;
 use unicode_bidi::BidiClass as DataSourceBidiClass;
 
+/// An adapter to convert from icu4x `BidiClass` to `unicode_bidi::BidiClass`.
 pub struct BidiClassAdapter<'a> {
     bidi_trie: &'a CodePointTrie<'a, BidiClass>,
 }
 
+#[allow(dead_code)]
 impl<'a> BidiClassAdapter<'a> {
     pub fn new(bidi_trie: &'a CodePointTrie<'a, BidiClass>) -> BidiClassAdapter<'a> {
         BidiClassAdapter { bidi_trie }
