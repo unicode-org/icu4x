@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1650472358702,
+  "lastUpdate": 1650561438512,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -13463,6 +13463,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/c3f7bd897f81592dc986ddce5010246b6b70f9b2"
         },
         "date": 1650472340120,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4507258,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "andrewpkq@gmail.com",
+            "name": "andrewpollack",
+            "username": "andrewpollack"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "b49d84ef82e31f0779837ba5b9662a6c181bb014",
+          "message": "1712: add TinyAsciStr::is_ascii_alphabetic_lowercase, TinyAsciStr::is_ascii_alphabetic_titlecase, TinyAsciStr::is_ascii_alphabetic_uppercase (#1806)\n\n* Implementing is_ascii_alphabetic_lowercase, titlecase, uppercase\r\n\r\n* Minor adjustment to doc\r\n\r\n* Remove unnecessary comment\r\n\r\n* Optimizing bitops, adjusting comments",
+          "timestamp": "2022-04-21T17:15:37Z",
+          "tree_id": "804b6d435025cb386cc8083a6ec24aeeb22eb6c8",
+          "url": "https://github.com/unicode-org/icu4x/commit/b49d84ef82e31f0779837ba5b9662a6c181bb014"
+        },
+        "date": 1650561420424,
         "tool": "ndjson",
         "benches": [
           {
