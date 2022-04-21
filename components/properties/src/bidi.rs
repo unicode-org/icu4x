@@ -2,31 +2,24 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::maps;
+use crate::props::BidiClass;
+use icu_provider_fs::FsDataProvider;
 use unicode_bidi::data_source::BidiDataSource;
 use unicode_bidi::BidiClass as DataSourceBidiClass;
-use crate::maps;
-use icu_codepointtrie::CodePointTrie;
-use crate::props::BidiClass;
 
-
-pub struct BidiClassAdapter {
-	bidi_trie: CodePointTrie,
+pub struct BidiClassAdapter<'a> {
+    provider: &'a FsDataProvider,
 }
 
-impl BidiClassAdapter {
-	pub fn new() -> BidiClassAdapter {
-		 let provider = icu_testdata::get_provider();
-		 let payload =
-		     maps::get_bidi_class(&provider)
-		         .expect("The data should be valid");
-		 let code_point_trie = payload.get().code_point_trie;
-		 BidiClassAdapter{ code_point_trie }
-	}
+impl<'a> BidiClassAdapter<'a> {
+    pub fn new(provider: &'a FsDataProvider) -> BidiClassAdapter<'a> {
+        // let payload = maps::get_bidi_class(provider).expect("The data should be valid");
+        BidiClassAdapter { provider }
+    }
 }
 
-
-impl BidiDataSource for BidiClassAdapter {
-
+impl<'a> BidiDataSource for BidiClassAdapter<'a> {
     /// Returns a [`DataSourceBidiClass`] given a unicode character.
     ///
     /// # Example
@@ -40,9 +33,11 @@ impl BidiDataSource for BidiClassAdapter {
     /// ```
     ///
     /// [`CodePointTrie`]: icu_codepointtrie::CodePointTrie
-	fn bidi_class(&self, c: char) -> DataSourceBidiClass {
-		let bidi_class = self.bidi_trie.get(c as u32);
-		match bidi_class {
+    fn bidi_class(&self, c: char) -> DataSourceBidiClass {
+        let payload = maps::get_bidi_class(self.provider).expect("The data should be valid");
+        let trie = &payload.get().code_point_trie;
+        let bidi_class = trie.get(c as u32);
+        match bidi_class {
             BidiClass::LeftToRight => DataSourceBidiClass::L,
             BidiClass::RightToLeft => DataSourceBidiClass::R,
             BidiClass::EuropeanNumber => DataSourceBidiClass::EN,
@@ -66,7 +61,10 @@ impl BidiDataSource for BidiClassAdapter {
             BidiClass::LeftToRightIsolate => DataSourceBidiClass::LRI,
             BidiClass::RightToLeftIsolate => DataSourceBidiClass::RLI,
             BidiClass::PopDirectionalIsolate => DataSourceBidiClass::PDI,
-		}
-	}
-
+            _ => panic!(
+                "this must happen, this means this value: {:?} is not supported",
+                bidi_class
+            ),
+        }
+    }
 }

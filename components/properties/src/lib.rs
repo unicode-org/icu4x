@@ -82,10 +82,10 @@
     )
 )]
 
+mod bidi;
 mod error;
 pub mod maps;
 mod props;
-mod bidi;
 pub mod provider;
 pub mod script;
 pub mod sets;

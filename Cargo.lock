@@ -1418,10 +1418,11 @@ dependencies = [
  "icu",
  "icu_codepointtrie",
  "icu_provider",
+ "icu_provider_fs",
  "icu_testdata",
  "icu_uniset",
  "serde",
- "unicode-bidi",
+ "unicode-bidi 0.3.7 (git+https://github.com/servo/unicode-bidi)",
  "zerovec",
 ]
 
@@ -1573,7 +1574,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "418a0a6fab821475f634efe3ccc45c013f742efe03d853e8d3355d5cb850ecf8"
 dependencies = [
  "matches",
- "unicode-bidi",
+ "unicode-bidi 0.3.7 (registry+https://github.com/rust-lang/crates.io-index)",
  "unicode-normalization",
 ]
 
@@ -2910,6 +2911,11 @@ name = "unicode-bidi"
 version = "0.3.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "1a01404663e3db436ed2746d9fefef640d868edae3cceb81c3b8d5732fda678f"
+
+[[package]]
+name = "unicode-bidi"
+version = "0.3.7"
+source = "git+https://github.com/servo/unicode-bidi#f3e6ed754c2531de4306861da4a4a8c0b2ca5dc0"
 
 [[package]]
 name = "unicode-normalization"
