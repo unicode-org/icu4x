@@ -185,7 +185,7 @@ impl DateTime<Indian> {
     ) -> Result<DateTime<Indian>, DateTimeError> {
         Ok(DateTime {
             date: Date::new_indian_date_from_integers(year, month, day)?,
-            time: types::Time::try_new(hour, minute, second)?,
+            time: types::Time::try_new(hour, minute, second, 0)?,
         })
     }
 }

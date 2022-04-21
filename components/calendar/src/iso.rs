@@ -337,7 +337,7 @@ impl DateTime<Iso> {
     ) -> Result<DateTime<Iso>, DateTimeError> {
         Ok(DateTime {
             date: Date::new_iso_date_from_integers(year, month, day)?,
-            time: types::Time::try_new(hour, minute, second)?,
+            time: types::Time::try_new(hour, minute, second, 0)?,
         })
     }
 }

@@ -120,7 +120,7 @@ impl DateTime<Buddhist> {
         let iso_year = year - BUDDHIST_ERA_OFFSET;
         Ok(DateTime {
             date: Date::new_buddhist_date(iso_year.into(), month.try_into()?, day.try_into()?)?,
-            time: types::Time::try_new(hour, minute, second)?,
+            time: types::Time::try_new(hour, minute, second, 0)?,
         })
     }
 }

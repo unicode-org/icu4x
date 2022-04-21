@@ -207,7 +207,7 @@ impl DateTime<Coptic> {
     ) -> Result<DateTime<Coptic>, DateTimeError> {
         Ok(DateTime {
             date: Date::new_coptic_date_from_integers(year, month, day)?,
-            time: types::Time::try_new(hour, minute, second)?,
+            time: types::Time::try_new(hour, minute, second, 0)?,
         })
     }
 }

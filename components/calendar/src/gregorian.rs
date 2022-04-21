@@ -110,10 +110,11 @@ impl DateTime<Gregorian> {
         hour: u8,
         minute: u8,
         second: u8,
+        fraction: u32,
     ) -> Result<DateTime<Gregorian>, DateTimeError> {
         Ok(DateTime {
             date: Date::new_gregorian_date(year.into(), month.try_into()?, day.try_into()?)?,
-            time: types::Time::try_new(hour, minute, second)?,
+            time: types::Time::try_new(hour, minute, second, fraction)?,
         })
     }
 }
