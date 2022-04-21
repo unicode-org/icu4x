@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1650561783751,
+  "lastUpdate": 1650568096470,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -24623,6 +24623,60 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 47720055,
             "range": "± 177444",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/worst",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/worst",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "dminor@mozilla.com",
+            "name": "Dan Minor",
+            "username": "dminor"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "2397c6d1a29085459a57cb1420a8337abc8fc2a6",
+          "message": "Add FractionalSecond to Time (#1801)\n\n* Add FractionalSecond to Time\r\n\r\n* Fix fmt and clippy\r\n\r\n* Address review feedback",
+          "timestamp": "2022-04-21T14:30:34-04:00",
+          "tree_id": "8d3d97c97b936550ded375b955256297a0afd7de",
+          "url": "https://github.com/unicode-org/icu4x/commit/2397c6d1a29085459a57cb1420a8337abc8fc2a6"
+        },
+        "date": 1650568032132,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 82329314,
+            "range": "± 5105594",
             "unit": "ns/iter"
           },
           {
