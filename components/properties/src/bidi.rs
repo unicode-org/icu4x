@@ -70,13 +70,10 @@ impl<'a> BidiDataSource for BidiClassAdapter<'a> {
             BidiClass::LeftToRightIsolate => DataSourceBidiClass::LRI,
             BidiClass::RightToLeftIsolate => DataSourceBidiClass::RLI,
             BidiClass::PopDirectionalIsolate => DataSourceBidiClass::PDI,
-            _ => {
-                // we need to log
-                //eprintln!(
-                //     "this must not happen, this means this value: {:?} is not supported",
-                //     bidi_class
-                // );
-                DataSourceBidiClass::L
+            _ =>
+            // This must not happen.
+            {
+                DataSourceBidiClass::ON
             }
         }
     }
