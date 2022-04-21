@@ -35,11 +35,11 @@ all-features = true
 displaydoc = { version = "0.2.3", default-features = false }
 icu_codepointtrie = { version = "0.3.3", path = "../../utils/codepointtrie"}
 icu_provider = { version = "0.5", path = "../../provider/core", features = ["macros"] }
-icu_provider_fs = {version = "0.5.0", path = "../../provider/fs"}
+icu_provider_fs = {version = "0.5.0", path = "../../provider/fs" }
 icu_uniset = { version = "0.4.1", path = "../../utils/uniset"}
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }
 zerovec = { version = "0.6", path = "../../utils/zerovec", features = ["derive"] }
-unicode-bidi = { git = "https://github.com/servo/unicode-bidi"}
+unicode-bidi = { git = "https://github.com/servo/unicode-bidi", optional = true }
 
 [dev-dependencies]
 icu = { path = "../icu", default-features = false }
