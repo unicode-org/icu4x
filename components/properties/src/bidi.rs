@@ -2,20 +2,18 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::maps;
 use crate::props::BidiClass;
-use icu_provider_fs::FsDataProvider;
+use icu_codepointtrie::CodePointTrie;
 use unicode_bidi::data_source::BidiDataSource;
 use unicode_bidi::BidiClass as DataSourceBidiClass;
 
 pub struct BidiClassAdapter<'a> {
-    provider: &'a FsDataProvider,
+    bidi_trie: &'a CodePointTrie<'a, BidiClass>,
 }
 
 impl<'a> BidiClassAdapter<'a> {
-    pub fn new(provider: &'a FsDataProvider) -> BidiClassAdapter<'a> {
-        // let payload = maps::get_bidi_class(provider).expect("The data should be valid");
-        BidiClassAdapter { provider }
+    pub fn new(bidi_trie: &'a CodePointTrie<'a, BidiClass>) -> BidiClassAdapter<'a> {
+        BidiClassAdapter { bidi_trie }
     }
 }
 
@@ -26,17 +24,26 @@ impl<'a> BidiDataSource for BidiClassAdapter<'a> {
     ///
     /// ```
     /// use icu::properties::BidiClassAdapter;
-    /// use crate::BidiClass as DataSourceBidiClass
+    /// use icu::properties::{maps, BidiClass};
+    /// use icu_codepointtrie::CodePointTrie;
+    /// use unicode_bidi::BidiClass as DataSourceBidiClass;
+    /// use unicode_bidi::BidiDataSource;
     ///
-    /// let Adapter = BidiClassAdapter::new();
-    /// assert_eq!(Adapter.bidi_class('a' as u32), DataSourceBidiClass::R);  // U
+    /// let provider = icu_testdata::get_provider();
+    ///
+    /// let payload =
+    ///     maps::get_bidi_class(&provider)
+    ///         .expect("The data should be valid");
+    /// let data_struct = payload.get();
+    /// let bc = &data_struct.code_point_trie;
+    ///
+    /// let adapter = BidiClassAdapter::new(&bc);
+    /// assert_eq!(adapter.bidi_class('a'), DataSourceBidiClass::L);
     /// ```
     ///
     /// [`CodePointTrie`]: icu_codepointtrie::CodePointTrie
     fn bidi_class(&self, c: char) -> DataSourceBidiClass {
-        let payload = maps::get_bidi_class(self.provider).expect("The data should be valid");
-        let trie = &payload.get().code_point_trie;
-        let bidi_class = trie.get(c as u32);
+        let bidi_class = self.bidi_trie.get(c as u32);
         match bidi_class {
             BidiClass::LeftToRight => DataSourceBidiClass::L,
             BidiClass::RightToLeft => DataSourceBidiClass::R,
@@ -61,10 +68,14 @@ impl<'a> BidiDataSource for BidiClassAdapter<'a> {
             BidiClass::LeftToRightIsolate => DataSourceBidiClass::LRI,
             BidiClass::RightToLeftIsolate => DataSourceBidiClass::RLI,
             BidiClass::PopDirectionalIsolate => DataSourceBidiClass::PDI,
-            _ => panic!(
-                "this must happen, this means this value: {:?} is not supported",
-                bidi_class
-            ),
+            _ => {
+                // we need to log
+                //eprintln!(
+                //     "this must not happen, this means this value: {:?} is not supported",
+                //     bidi_class
+                // );
+                DataSourceBidiClass::L
+            }
         }
     }
 }
