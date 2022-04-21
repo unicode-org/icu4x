@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1650562158726,
+  "lastUpdate": 1650566699585,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -33941,6 +33941,150 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/select/fs",
             "value": 2727,
             "range": "± 42",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "dminor@mozilla.com",
+            "name": "Dan Minor",
+            "username": "dminor"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "2397c6d1a29085459a57cb1420a8337abc8fc2a6",
+          "message": "Add FractionalSecond to Time (#1801)\n\n* Add FractionalSecond to Time\r\n\r\n* Fix fmt and clippy\r\n\r\n* Address review feedback",
+          "timestamp": "2022-04-21T14:30:34-04:00",
+          "tree_id": "8d3d97c97b936550ded375b955256297a0afd7de",
+          "url": "https://github.com/unicode-org/icu4x/commit/2397c6d1a29085459a57cb1420a8337abc8fc2a6"
+        },
+        "date": 1650566680240,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1325,
+            "range": "± 2",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/operands/create/usize",
+            "value": 22,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/operands/create/isize",
+            "value": 25,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/operands/create/string",
+            "value": 1155,
+            "range": "± 11",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/operands/create/string/samples/0",
+            "value": 21,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/operands/create/string/samples/10",
+            "value": 23,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/operands/create/string/samples/200",
+            "value": 27,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/operands/create/string/samples/3000",
+            "value": 29,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/operands/create/string/samples/40000",
+            "value": 33,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/operands/create/string/samples/500000",
+            "value": 35,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/operands/create/string/samples/6000000",
+            "value": 38,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/operands/create/string/samples/70000000",
+            "value": 41,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/operands/eq/mostly_unequal",
+            "value": 199,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/operands/eq/mostly_equal",
+            "value": 199,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/operands/create/from_fixed_decimal",
+            "value": 174,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 6229,
+            "range": "± 5",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/lex",
+            "value": 2029,
+            "range": "± 12",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 18064,
+            "range": "± 58",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/construct/fs",
+            "value": 6492,
+            "range": "± 5",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/select/fs",
+            "value": 2778,
+            "range": "± 4",
             "unit": "ns/iter"
           }
         ]
