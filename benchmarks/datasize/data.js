@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1650561438512,
+  "lastUpdate": 1650565935621,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -13493,6 +13493,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/b49d84ef82e31f0779837ba5b9662a6c181bb014"
         },
         "date": 1650561420424,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4507258,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "dminor@mozilla.com",
+            "name": "Dan Minor",
+            "username": "dminor"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "2397c6d1a29085459a57cb1420a8337abc8fc2a6",
+          "message": "Add FractionalSecond to Time (#1801)\n\n* Add FractionalSecond to Time\r\n\r\n* Fix fmt and clippy\r\n\r\n* Address review feedback",
+          "timestamp": "2022-04-21T14:30:34-04:00",
+          "tree_id": "8d3d97c97b936550ded375b955256297a0afd7de",
+          "url": "https://github.com/unicode-org/icu4x/commit/2397c6d1a29085459a57cb1420a8337abc8fc2a6"
+        },
+        "date": 1650565918397,
         "tool": "ndjson",
         "benches": [
           {
