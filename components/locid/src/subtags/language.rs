@@ -102,7 +102,7 @@ impl Language {
             .map_err(|_| ParserError::InvalidSubtag)?;
         let is_valid = match s.len() {
             // LANGUAGE_LENGTH
-            2..=3 => s.is_ascii_alphabetic() && s.is_ascii_lowercase(),
+            2..=3 => s.is_ascii_alphabetic_lowercase(),
             _ => false,
         };
         if is_valid {
