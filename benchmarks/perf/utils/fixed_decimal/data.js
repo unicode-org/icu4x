@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1650561954955,
+  "lastUpdate": 1650566421439,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -23669,6 +23669,66 @@ window.BENCHMARK_DATA = {
             "name": "from_string/1000000001",
             "value": 88,
             "range": "± 3",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "dminor@mozilla.com",
+            "name": "Dan Minor",
+            "username": "dminor"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "2397c6d1a29085459a57cb1420a8337abc8fc2a6",
+          "message": "Add FractionalSecond to Time (#1801)\n\n* Add FractionalSecond to Time\r\n\r\n* Fix fmt and clippy\r\n\r\n* Address review feedback",
+          "timestamp": "2022-04-21T14:30:34-04:00",
+          "tree_id": "8d3d97c97b936550ded375b955256297a0afd7de",
+          "url": "https://github.com/unicode-org/icu4x/commit/2397c6d1a29085459a57cb1420a8337abc8fc2a6"
+        },
+        "date": 1650566404885,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 106911,
+            "range": "± 320",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 21129,
+            "range": "± 114",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 59613,
+            "range": "± 133",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 183,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 78,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 77,
+            "range": "± 0",
             "unit": "ns/iter"
           }
         ]
