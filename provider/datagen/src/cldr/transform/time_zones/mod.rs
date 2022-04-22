@@ -48,32 +48,45 @@ macro_rules! impl_resource_provider {
                     let time_zone_names = if let Some(time_zone_names) = self.time_zone_names_data.get(&langid) {
                         time_zone_names
                     } else {
-                        let path = get_langid_subdirectory(&self.source.get_cldr_paths()?.cldr_dates_gregorian().join("main"), &langid)?
-                            .ok_or_else(|| DataErrorKind::MissingLocale.into_error())?
-                            .join("timeZoneNames.json");
+                        let path = get_langid_subdirectory(
+                            &self
+                                .source
+                                .get_cldr_paths()?
+                                .cldr_dates("gregorian")
+                                .join("main"),
+                            &langid,
+                        )?
+                        .ok_or_else(|| DataErrorKind::MissingLocale.into_error())?
+                        .join("timeZoneNames.json");
                         let mut resource: cldr_serde::time_zones::time_zone_names::Resource =
                             serde_json::from_reader(open_reader(&path)?)
                                 .map_err(|e| DatagenError::from((e, path)))?;
-                        self.time_zone_names_data.insert(langid.clone(), Box::new(resource
-                            .main
-                            .0
-                            .remove(&langid)
-                            .expect("CLDR file contains the expected language")
-                            .dates
-                            .time_zone_names))
+                        self.time_zone_names_data.insert(
+                            langid.clone(),
+                            Box::new(
+                                resource
+                                    .main
+                                    .0
+                                    .remove(&langid)
+                                    .expect("CLDR file contains the expected language")
+                                    .dates
+                                    .time_zone_names,
+                            ),
+                        )
                     };
 
                     if self.bcp47_tzid_data.read().unwrap().len() == 0 {
-                        let bcp47_time_zone_path = self.source.get_cldr_paths()?.cldr_bcp47().join("bcp47").join("timezone.json");
+                        let bcp47_time_zone_path = self
+                            .source
+                            .get_cldr_paths()?
+                            .cldr_bcp47()
+                            .join("bcp47")
+                            .join("timezone.json");
 
                         let resource: cldr_serde::time_zones::bcp47_tzid::Resource =
                             serde_json::from_reader(open_reader(&bcp47_time_zone_path)?)
                                 .map_err(|e| DatagenError::from((e, bcp47_time_zone_path)))?;
-                         let r = resource
-                            .keyword
-                            .u
-                            .time_zones
-                            .values;
+                        let r = resource.keyword.u.time_zones.values;
 
                         let mut data_guard = self.bcp47_tzid_data.write().unwrap();
                         for (bcp47_tzid, bcp47_tzid_data) in r.iter() {
@@ -86,20 +99,24 @@ macro_rules! impl_resource_provider {
                     }
 
                     if self.meta_zone_id_data.read().unwrap().len() == 0 {
-                        let meta_zone_id_path = self.source.get_cldr_paths()?.cldr_core().join("supplemental").join("metaZones.json");
+                        let meta_zone_id_path = self
+                            .source
+                            .get_cldr_paths()?
+                            .cldr_core()
+                            .join("supplemental")
+                            .join("metaZones.json");
 
                         let resource: cldr_serde::time_zones::meta_zones::Resource =
                             serde_json::from_reader(open_reader(&meta_zone_id_path)?)
                                 .map_err(|e| DatagenError::from((e, meta_zone_id_path)))?;
-                         let r = resource
-                            .supplemental
-                            .meta_zones
-                            .meta_zone_ids
-                            .0;
+                        let r = resource.supplemental.meta_zones.meta_zone_ids.0;
 
                         let mut data_guard = self.meta_zone_id_data.write().unwrap();
                         for (meta_zone_id, meta_zone_id_data) in r.iter() {
-                            data_guard.insert(meta_zone_id_data.long_id.to_string(), meta_zone_id.to_string());
+                            data_guard.insert(
+                                meta_zone_id_data.long_id.to_string(),
+                                meta_zone_id.to_string(),
+                            );
                         }
                     }
 
@@ -119,12 +136,16 @@ macro_rules! impl_resource_provider {
             }
 
             impl IterableResourceProvider<$marker> for TimeZonesProvider {
-                fn supported_options(
-                    &self,
-                ) -> Result<Box<dyn Iterator<Item = ResourceOptions> + '_>, DataError> {
+                fn supported_options(&self) -> Result<Box<dyn Iterator<Item = ResourceOptions> + '_>, DataError> {
                     Ok(Box::new(
-                        get_langid_subdirectories(&self.source.get_cldr_paths()?.cldr_dates_gregorian().join("main"))?
-                            .map(Into::<ResourceOptions>::into),
+                        get_langid_subdirectories(
+                            &self
+                                .source
+                                .get_cldr_paths()?
+                                .cldr_dates("gregorian")
+                                .join("main"),
+                        )?
+                        .map(Into::<ResourceOptions>::into),
                     ))
                 }
             }

@@ -48,7 +48,7 @@ impl ResourceProvider<JapaneseErasV1Marker> for JapaneseErasProvider {
         let era_names_path = self
             .source
             .get_cldr_paths()?
-            .cldr_dates_japanese()
+            .cldr_dates("japanese")
             .join("main")
             .join("en")
             .join("ca-japanese.json");
