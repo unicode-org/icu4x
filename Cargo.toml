@@ -75,6 +75,7 @@ members = [
     "utils/litemap",
     "utils/pattern",
     "utils/resb",
+    "utils/preferences",
     "utils/tinystr",
     "utils/tzif",
     "utils/writeable",

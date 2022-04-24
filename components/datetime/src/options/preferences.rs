@@ -34,6 +34,8 @@
 //! let prefs = preferences::Bag::from_hour_cycle(preferences::HourCycle::H23);
 //! ```
 use crate::fields;
+use icu_locid::{extensions_unicode_value, extensions::unicode};
+use core::convert::TryFrom;
 
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
@@ -169,6 +171,25 @@ impl HourCycle {
             Self::H12 => fields::Hour::H12,
             Self::H23 => fields::Hour::H23,
             Self::H24 => fields::Hour::H24,
+        }
+    }
+}
+
+const H11: unicode::Value = extensions_unicode_value!("h11");
+const H12: unicode::Value = extensions_unicode_value!("h12");
+const H23: unicode::Value = extensions_unicode_value!("h23");
+const H24: unicode::Value = extensions_unicode_value!("h24");
+
+impl TryFrom<&unicode::Value> for HourCycle {
+    type Error = ();
+
+    fn try_from(value: &unicode::Value) -> Result<Self, Self::Error> {
+        match value {
+            _ if value == &H11 => Ok(Self::H11),
+            _ if value == &H12 => Ok(Self::H12),
+            _ if value == &H23 => Ok(Self::H23),
+            _ if value == &H24 => Ok(Self::H24),
+            _ => Err(())
         }
     }
 }

@@ -1847,6 +1847,14 @@ name = "icu_plurals_data"
 version = "1.4.0"
 
 [[package]]
+name = "icu_preferences"
+version = "0.0.1"
+dependencies = [
+ "icu_datetime",
+ "icu_locid",
+]
+
+[[package]]
 name = "icu_properties"
 version = "1.4.0"
 dependencies = [
