@@ -411,7 +411,7 @@ fn main() -> eyre::Result<()> {
                 )
             } else if icu_datagen::error::is_missing_uprops_error(e) {
                 eyre::eyre!(
-                "Either --uprops-tag or --uprops-root or --input-from-testdata must be specified"
+                    "Either --uprops-tag or --uprops-root or --input-from-testdata must be specified"
             )
             } else {
                 e.into()
