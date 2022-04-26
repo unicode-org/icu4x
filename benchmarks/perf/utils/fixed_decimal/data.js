@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1650974527010,
+  "lastUpdate": 1651014469326,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -23909,6 +23909,66 @@ window.BENCHMARK_DATA = {
             "name": "from_string/1000000001",
             "value": 78,
             "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "dminor@mozilla.com",
+            "name": "Dan Minor",
+            "username": "dminor"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "b79bf0c4ef8079badd137fc9594334f1fd671f71",
+          "message": "Implement formatting for fractional seconds (#1813)\n\n* Implement formatting for fractional seconds\r\n\r\n* Fix skeleton::test::test_pattern_to_skeleton\r\n\r\n* Address review feedback\r\n\r\n* Update expectations for test_pattern_bincode_serialization_roundtrip",
+          "timestamp": "2022-04-26T18:57:21-04:00",
+          "tree_id": "8b61cc7a4001797081e62da0d19f68005469cc50",
+          "url": "https://github.com/unicode-org/icu4x/commit/b79bf0c4ef8079badd137fc9594334f1fd671f71"
+        },
+        "date": 1651014449268,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 121028,
+            "range": "± 9091",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 26187,
+            "range": "± 1547",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 69877,
+            "range": "± 4889",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 251,
+            "range": "± 17",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 101,
+            "range": "± 6",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 88,
+            "range": "± 6",
             "unit": "ns/iter"
           }
         ]
