@@ -140,7 +140,7 @@ pub const LOCALES: &[LanguageIdentifier] = &[
     LanguageIdentifier::UND,
 ];
 
-#[cfg(any(feature = "bin", feature = "fs"))]
+#[cfg(any(feature = "std", feature = "fs"))]
 pub mod paths;
 
 #[cfg(feature = "static")]

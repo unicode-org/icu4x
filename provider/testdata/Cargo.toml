@@ -58,7 +58,7 @@ default = ["fs", "std"]
 fs = ["icu_provider/deserialize_json", "icu_provider_fs", "std"]
 static = ["icu_provider_blob"]
 std = []
-bin = ["clap", "eyre", "simple_logger", "log", "reqwest", "tokio", "futures"]
+bin = ["clap", "eyre", "simple_logger", "log", "reqwest", "tokio", "futures", "std"]
 
 [[bin]]
 name = "icu4x-testdata-download-sources"
