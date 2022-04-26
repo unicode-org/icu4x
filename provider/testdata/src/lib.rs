@@ -7,6 +7,8 @@
 //! The package exposes a `DataProvider` with stable data useful for unit testing. The data is
 //! based on a CLDR tag and a short list of locales that, together, cover a range of scenarios.
 //!
+//! The list of locales and the current CLDR tag can be found in [Cargo.toml](./Cargo.toml).
+//!
 //! The output data can be found in the [data](./data/) subdirectory. There, you will find:
 //!
 //! - `json` for the ICU4X JSON test data
@@ -76,69 +78,8 @@
 
 extern crate alloc;
 
-use icu_locid::{langid, LanguageIdentifier};
-
-/// Git tag or sha1 for the CLDR data used to generate the testdata.
-pub const CLDR_GITREF: &str = "40.0.0";
-
-/// Locales included in testdata. We use 10 base languages with a small number
-/// of variants to allow for 10 languages to be used in microbenchmarks.
-// Keep this list somewhat short, but cover all features.
-pub const LOCALES: &[LanguageIdentifier] = &[
-    // Arabic:
-    // - Good example for RTL
-    // - Non-latin numerals in Egypt
-    langid!("ar"),
-    langid!("ar-EG"),
-    // Bangla:
-    // - Uses non-Latin numerals
-    langid!("bn"),
-    // Chakma:
-    // - High-coverage language that uses non-BMP code points
-    langid!("ccp"),
-    // English:
-    // - Widely understood language in software engineering
-    // - Includes regional variants to test similar-data fallbacks
-    langid!("en"),
-    langid!("en-001"),
-    langid!("en-ZA"),
-    // Spanish:
-    //  - Most popular Romance language
-    //  - South American dialect
-    //  - Has context dependent list fragments
-    langid!("es"),
-    langid!("es-AR"),
-    // French:
-    // - Often the first non-English locale to receive new data in CLDR
-    langid!("fr"),
-    // Filipino:
-    // - Week of month/year have plural variants.
-    langid!("fil"),
-    // Japanese:
-    // - Four scripts
-    // - Complex date patterns
-    langid!("ja"),
-    // Russian:
-    // - Cyrillic script
-    // - Interesting plural rules
-    // - Hightly inflected, many gramatical cases
-    langid!("ru"),
-    // Serbian:
-    // - Multiple scripts
-    // - Southern Europe
-    // - Hightly inflected, many gramatical cases
-    langid!("sr"),
-    langid!("sr-Cyrl"),
-    langid!("sr-Latn"),
-    // Thai:
-    // - Complex word breaking
-    langid!("th"),
-    // Turkish:
-    // - Interesting case-mappings
-    langid!("tr"),
-    // Root data
-    LanguageIdentifier::UND,
-];
+#[cfg(feature = "metadata")]
+pub mod metadata;
 
 #[cfg(any(feature = "std", feature = "fs"))]
 pub mod paths;

@@ -1534,7 +1534,9 @@ dependencies = [
 name = "icu_testdata"
 version = "0.5.0"
 dependencies = [
+ "cargo_metadata",
  "clap",
+ "displaydoc",
  "eyre",
  "futures",
  "icu_locid",
@@ -1544,8 +1546,11 @@ dependencies = [
  "icu_provider_fs",
  "log",
  "reqwest",
+ "serde",
+ "serde_json",
  "simple_logger",
  "tokio",
+ "writeable",
 ]
 
 [[package]]

@@ -9,37 +9,6 @@ use simple_logger::SimpleLogger;
 use std::path::PathBuf;
 use tokio::fs;
 
-// Paths from CLDR JSON to copy into testdata. Uses gitignore-like syntax.
-// The variable "$LOCALES" is replaced with the list of locales in
-// icu_testdata::LOCALES.
-const CLDR_JSON_GLOB: &[&str] = &[
-    "cldr-core/supplemental/aliases.json",
-    "cldr-core/supplemental/calendarData.json",
-    "cldr-core/supplemental/likelySubtags.json",
-    "cldr-core/supplemental/metaZones.json",
-    "cldr-core/supplemental/numberingSystems.json",
-    "cldr-core/supplemental/ordinals.json",
-    "cldr-core/supplemental/plurals.json",
-    "cldr-core/supplemental/weekData.json",
-    "cldr-dates-full/main/$LOCALES/ca-gregorian.json",
-    "cldr-numbers-full/main/$LOCALES/numbers.json",
-    "cldr-dates-full/main/$LOCALES/timeZoneNames.json",
-    "cldr-misc-full/main/$LOCALES/listPatterns.json",
-    "cldr-cal-buddhist-full/main/$LOCALES/ca-buddhist.json",
-    "cldr-cal-japanese-full/main/$LOCALES/ca-japanese.json",
-    "cldr-cal-coptic-full/main/$LOCALES/ca-coptic.json",
-    "cldr-cal-indian-full/main/$LOCALES/ca-indian.json",
-    "cldr-bcp47/bcp47/timezone.json",
-    // Extra data for feature coverage in cldr tests:
-    "cldr-dates-full/main/cs/ca-gregorian.json",
-    "cldr-dates-full/main/cs/timeZoneNames.json",
-    "cldr-dates-full/main/haw/ca-gregorian.json",
-    "cldr-dates-full/main/haw/timeZoneNames.json",
-    "cldr-dates-full/main/en-CA/ca-gregorian.json", // alt-variant in skeletons
-    "cldr-dates-full/main/en-CA/timeZoneNames.json", // required by en-CA/ca-gregorian.json
-    "cldr-misc-full/main/he/listPatterns.json",     // required for list transformer test
-];
-
 #[derive(Clone)]
 struct CldrJsonDownloader<'a> {
     /// Repo owner and name, like "unicode-org/cldr-json"
@@ -160,9 +129,12 @@ async fn main() -> eyre::Result<()> {
     let http_concurrency: usize =
         value_t!(args, "HTTP_CONCURRENCY", usize).expect("Option has a default value");
 
+    let metadata = icu_testdata::metadata::load()?;
+    log::debug!("Package metadata: {:?}", metadata);
+
     let downloader = &CldrJsonDownloader {
         repo_owner_and_name: "unicode-org/cldr-json",
-        tag: icu_testdata::CLDR_GITREF,
+        tag: &metadata.package_metadata.gitref,
         root_dir: output_path,
         client: reqwest::ClientBuilder::new()
             .user_agent(concat!(
@@ -173,19 +145,7 @@ async fn main() -> eyre::Result<()> {
             .build()?,
     };
 
-    let mut all_paths = vec![];
-    for pattern in CLDR_JSON_GLOB.iter() {
-        if pattern.contains("$LOCALES") {
-            for locale in icu_testdata::LOCALES.iter() {
-                all_paths.push(pattern.replace("$LOCALES", &locale.to_string()));
-            }
-            // Also add "root" for older CLDRs
-            all_paths.push(pattern.replace("$LOCALES", "root"));
-        } else {
-            // No variable in pattern
-            all_paths.push(pattern.to_string())
-        }
-    }
+    let all_paths = metadata.package_metadata.get_all_cldr_paths();
 
     stream::iter(all_paths)
         .map(Ok)
