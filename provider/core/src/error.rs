@@ -73,6 +73,10 @@ pub enum DataErrorKind {
     #[displaydoc("I/O error: {0:?}")]
     #[cfg(feature = "std")]
     Io(std::io::ErrorKind),
+
+    #[displaydoc("Missing source data")]
+    #[cfg(feature = "datagen")]
+    MissingSourceData,
 }
 
 /// The error type for ICU4X data provider operations.

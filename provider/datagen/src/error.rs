@@ -84,18 +84,25 @@ impl From<DatagenError> for DataError {
                 .with_display_context(&s)
                 .with_display_context(&langid),
             Custom(s, None) => DataError::custom("").with_display_context(&s),
-            MissingCldrPaths => DataError::custom("CLDR data not specified."),
-            MissingUpropsPath => DataError::custom("Uprops data not specified."),
+            MissingCldrPaths => {
+                DataErrorKind::MissingSourceData.with_str_context(CLDR_SOURCE_MARKER)
+            }
+            MissingUpropsPath => {
+                DataErrorKind::MissingSourceData.with_str_context(UPROPS_SOURCE_MARKER)
+            }
         }
     }
 }
+
+const UPROPS_SOURCE_MARKER: &str = "Uprops";
+const CLDR_SOURCE_MARKER: &str = "CLDR";
 
 pub fn is_missing_cldr_error(e: DataError) -> bool {
     matches!(
         e,
         DataError {
-            kind: DataErrorKind::Custom,
-            str_context: Some("CLDR data not specified."),
+            kind: DataErrorKind::MissingSourceData,
+            str_context: Some(CLDR_SOURCE_MARKER),
             ..
         }
     )
@@ -105,8 +112,8 @@ pub fn is_missing_uprops_error(e: DataError) -> bool {
     matches!(
         e,
         DataError {
-            kind: DataErrorKind::Custom,
-            str_context: Some("Uprops data not specified."),
+            kind: DataErrorKind::MissingSourceData,
+            str_context: Some(UPROPS_SOURCE_MARKER),
             ..
         }
     )

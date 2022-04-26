@@ -313,12 +313,12 @@ fn main() -> eyre::Result<()> {
             {
                 source_data = source_data.with_cldr(CldrPaths {
                 cldr_json_root: cached_path::CacheBuilder::new().freshness_lifetime(u64::MAX).build()?
-                .cached_path_with_options(
-                    &format!(
-                        "https://github.com/unicode-org/cldr-json/releases/download/{}/cldr-{}-json-{}.zip",
-                        _tag, _tag, matches.value_of("CLDR_LOCALE_SUBSET").unwrap_or("full")),
-                    &cached_path::Options::default().extract(),
-                )?,
+                    .cached_path_with_options(
+                        &format!(
+                            "https://github.com/unicode-org/cldr-json/releases/download/{}/cldr-{}-json-{}.zip",
+                            _tag, _tag, matches.value_of("CLDR_LOCALE_SUBSET").unwrap_or("full")),
+                        &cached_path::Options::default().extract(),
+                    )?,
                 locale_subset: matches
                     .value_of("CLDR_LOCALE_SUBSET")
                     .unwrap_or("full")
@@ -341,12 +341,12 @@ fn main() -> eyre::Result<()> {
             #[cfg(feature = "download")]
             {
                 source_data = source_data.with_uprops(cached_path::CacheBuilder::new().freshness_lifetime(u64::MAX).build()?
-                .cached_path_with_options(
-                    &format!("https://github.com/unicode-org/icu/releases/download/{}/icuexportdata_uprops_full.zip", _tag),
-                    &cached_path::Options::default().extract()
-                )?
-                .join("icuexportdata_uprops_full")
-                .join(matches.value_of("UPROPS_MODE").unwrap()));
+                    .cached_path_with_options(
+                        &format!("https://github.com/unicode-org/icu/releases/download/{}/icuexportdata_uprops_full.zip", _tag),
+                        &cached_path::Options::default().extract()
+                    )?
+                    .join("icuexportdata_uprops_full")
+                    .join(matches.value_of("UPROPS_MODE").unwrap()));
             }
         } else if let Some(path) = matches.value_of("UPROPS_ROOT") {
             source_data = source_data.with_uprops(PathBuf::from(path));
@@ -385,8 +385,7 @@ fn main() -> eyre::Result<()> {
                 };
                 let payload = provider
                     .load_payload(key, &req)
-                    .map_err(|e| e.with_req(key, &req))?
-                    .take_payload()
+                    .and_then(DataResponse::take_payload)
                     .map_err(|e| e.with_req(key, &req))?;
                 exporter.put_payload(key, options, payload)
             });
