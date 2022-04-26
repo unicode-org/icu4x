@@ -51,6 +51,13 @@
     ],
     [
       [
+        "hi",
+        "Latn"
+      ],
+      "IN"
+    ],
+    [
+      [
         "kk",
         "Arab"
       ],
@@ -316,6 +323,13 @@
         "NL"
       ],
       "Latn"
+    ],
+    [
+      [
+        "sd",
+        "IN"
+      ],
+      "Deva"
     ],
     [
       [
@@ -1129,6 +1143,10 @@
       "Latn",
       "ZZ"
     ],
+    "bla": [
+      "Latn",
+      "CA"
+    ],
     "blg": [
       "Latn",
       "MY"
@@ -1457,6 +1475,10 @@
       "Latn",
       "ZZ"
     ],
+    "clc": [
+      "Latn",
+      "CA"
+    ],
     "cme": [
       "Latn",
       "ZZ"
@@ -1481,23 +1503,19 @@
       "Cans",
       "CA"
     ],
+    "crg": [
+      "Latn",
+      "CA"
+    ],
     "crh": [
       "Cyrl",
       "UA"
-    ],
-    "crj": [
-      "Cans",
-      "CA"
     ],
     "crk": [
       "Cans",
       "CA"
     ],
     "crl": [
-      "Cans",
-      "CA"
-    ],
-    "crm": [
       "Cans",
       "CA"
     ],
@@ -2405,6 +2423,10 @@
       "Latn",
       "ZZ"
     ],
+    "hur": [
+      "Latn",
+      "CA"
+    ],
     "hy": [
       "Armn",
       "AM"
@@ -2492,10 +2514,6 @@
     "ikk": [
       "Latn",
       "ZZ"
-    ],
-    "ikt": [
-      "Latn",
-      "CA"
     ],
     "ikw": [
       "Latn",
@@ -2668,6 +2686,10 @@
     "kao": [
       "Latn",
       "ML"
+    ],
+    "kaw": [
+      "Kawi",
+      "ID"
     ],
     "kbd": [
       "Cyrl",
@@ -3097,6 +3119,10 @@
       "Latn",
       "ZZ"
     ],
+    "kwk": [
+      "Latn",
+      "CA"
+    ],
     "kwo": [
       "Latn",
       "ZZ"
@@ -3284,6 +3310,10 @@
     "lij": [
       "Latn",
       "IT"
+    ],
+    "lil": [
+      "Latn",
+      "CA"
     ],
     "lis": [
       "Lisu",
@@ -3600,6 +3630,10 @@
     "mi": [
       "Latn",
       "NZ"
+    ],
+    "mic": [
+      "Latn",
+      "CA"
     ],
     "mif": [
       "Latn",
@@ -4185,6 +4219,18 @@
       "Latn",
       "ZZ"
     ],
+    "oj": [
+      "Cans",
+      "CA"
+    ],
+    "ojs": [
+      "Cans",
+      "CA"
+    ],
+    "oka": [
+      "Latn",
+      "CA"
+    ],
     "okr": [
       "Latn",
       "ZZ"
@@ -4368,6 +4414,10 @@
     "ppo": [
       "Latn",
       "ZZ"
+    ],
+    "pqm": [
+      "Latn",
+      "CA"
     ],
     "pra": [
       "Khar",
@@ -4616,10 +4666,6 @@
     "sco": [
       "Latn",
       "GB"
-    ],
-    "scs": [
-      "Latn",
-      "CA"
     ],
     "sd": [
       "Arab",
@@ -5902,7 +5948,7 @@
         "Arab",
         "GB"
       ],
-      "ks"
+      "ur"
     ],
     [
       [
@@ -6021,7 +6067,7 @@
         "Cyrl",
         "GE"
       ],
-      "os"
+      "ab"
     ],
     [
       [
@@ -6102,17 +6148,10 @@
     ],
     [
       [
-        "Hebr",
+        "Hant",
         "CA"
       ],
-      "yi"
-    ],
-    [
-      [
-        "Hebr",
-        "GB"
-      ],
-      "yi"
+      "yue"
     ],
     [
       [
@@ -6382,7 +6421,7 @@
       "BD"
     ],
     "Cans": [
-      "cr",
+      "iu",
       "CA"
     ],
     "Cari": [
@@ -6557,6 +6596,10 @@
       "ja",
       "JP"
     ],
+    "Kawi": [
+      "kaw",
+      "ID"
+    ],
     "Khar": [
       "pra",
       "PK"
@@ -6684,6 +6727,10 @@
     "Mymr": [
       "my",
       "MM"
+    ],
+    "Nagm": [
+      "unr",
+      "IN"
     ],
     "Nand": [
       "sa",
