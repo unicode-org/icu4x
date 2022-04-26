@@ -36,10 +36,13 @@ denylist = ["bench", "smaller_static"]
 
 # Please keep the features list in sync with the icu_capi_staticlib crate
 [features]
-default = ["provider_fs", "provider_static"]
+default = ["provider_fs", "provider_static", "deserialize_postcard_07", "deserialize_json"]
 provider_fs = ["icu_provider_fs"]
 provider_static = ["icu_testdata"]
 smaller_static = ["provider_static"]
+deserialize_json = ["icu_provider/deserialize_json"]
+deserialize_postcard_07 = ["icu_provider/deserialize_postcard_07"]
+deserialize_bincode_1 = ["icu_provider/deserialize_bincode_1"]
 
 [dependencies]
 fixed_decimal = { path = "../../utils/fixed_decimal", features = ["ryu"] }
@@ -48,7 +51,7 @@ icu_locale_canonicalizer = { path = "../../components/locale_canonicalizer", fea
 icu_locid = { path = "../../components/locid", features = ["serde"] }
 icu_plurals = { path = "../../components/plurals/", features = ["serde"] }
 icu_properties = { path = "../../components/properties/", features = ["serde"] }
-icu_provider = { path = "../../provider/core", features = ["serde", "deserialize_json", "deserialize_bincode_1", "deserialize_postcard_07"] }
+icu_provider = { path = "../../provider/core", features = ["serde"] }
 icu_provider_adapters = { path = "../../provider/adapters" }
 icu_provider_blob = { path = "../../provider/blob" }
 icu_segmenter = { path = "../../experimental/segmenter", features = ["serde"] }

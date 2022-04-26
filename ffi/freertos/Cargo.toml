@@ -32,11 +32,12 @@ crate-type = ["staticlib", "rlib"]
 path = "src/lib.rs"
 
 [dependencies]
-icu_capi = { version = "0.1", path = "../diplomat" }
+icu_capi = { version = "0.1", path = "../diplomat", default-features = false }
 
 [target.'cfg(target_os = "none")'.dependencies]
 freertos-rust = { version = "0.1.2" }
 cortex-m = { version = "0.7.3" }
 
 [features]
-wearos = ["icu_capi/smaller_static"]
+# Currently we don't enable anything here as WearOS loads data manually, but the feature remains for future use
+wearos = []

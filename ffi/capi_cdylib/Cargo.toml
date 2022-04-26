@@ -37,10 +37,13 @@ icu_capi = { version = "0.1", path = "../diplomat", default-features = false }
 
 # Please keep features/cargo-all-features lists in sync with the icu_capi crate
 [features]
-default = ["provider_fs", "provider_static"]
+default = ["provider_fs", "provider_static", "deserialize_postcard_07", "deserialize_json"]
 provider_fs = ["icu_capi/provider_fs"]
 provider_static = ["icu_capi/provider_static"]
 smaller_static = ["icu_capi/smaller_static"]
+deserialize_json = ["icu_capi/deserialize_json"]
+deserialize_postcard_07 = ["icu_capi/deserialize_postcard_07"]
+deserialize_bincode_1 = ["icu_capi/deserialize_bincode_1"]
 
 [package.metadata.cargo-all-features]
 # Omit most optional dependency features from permutation testing
