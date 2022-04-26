@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1650974036095,
+  "lastUpdate": 1651013960594,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -13613,6 +13613,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/1000b6cac1ac3d61f3f5c5c30c13cff456909170"
         },
         "date": 1650974017943,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4507258,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "dminor@mozilla.com",
+            "name": "Dan Minor",
+            "username": "dminor"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "b79bf0c4ef8079badd137fc9594334f1fd671f71",
+          "message": "Implement formatting for fractional seconds (#1813)\n\n* Implement formatting for fractional seconds\r\n\r\n* Fix skeleton::test::test_pattern_to_skeleton\r\n\r\n* Address review feedback\r\n\r\n* Update expectations for test_pattern_bincode_serialization_roundtrip",
+          "timestamp": "2022-04-26T18:57:21-04:00",
+          "tree_id": "8b61cc7a4001797081e62da0d19f68005469cc50",
+          "url": "https://github.com/unicode-org/icu4x/commit/b79bf0c4ef8079badd137fc9594334f1fd671f71"
+        },
+        "date": 1651013939619,
         "tool": "ndjson",
         "benches": [
           {
