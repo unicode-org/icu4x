@@ -14,7 +14,7 @@ We should think about various approaches outside of plain Rust->Wasm and Clojure
 * Comparison of pros/cons of each proposed approach.
 
 ***
-*NOTE*: Current decision is to develop Rust based library to fulfill immediate Mozilla and Fuchsia needs. Next steps involve Wasm compilation, and potential transpilation for parts of library that requires high preformance.
+*NOTE*: Current decision is to develop Rust based library to fulfill immediate Mozilla and Fuchsia needs. Next steps involve Wasm compilation, and potential transpilation for parts of library that requires high performance.
 ***
 
 ### Comparison of basic approaches
