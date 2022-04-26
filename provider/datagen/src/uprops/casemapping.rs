@@ -3,34 +3,36 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::uprops::uprops_serde;
-use crate::DatagenOptions;
+use crate::{error::DatagenError, SourceData};
 use icu_casemapping::provider::{CaseMappingV1, CaseMappingV1Marker};
 use icu_casemapping::CaseMappingInternals;
 use icu_codepointtrie::CodePointTrieHeader;
 use icu_provider::prelude::*;
-
 use std::convert::TryFrom;
 use std::fs;
 
 pub struct CaseMappingDataProvider {
-    case_mapping: CaseMappingInternals<'static>,
+    source: SourceData,
 }
 
 /// A data provider reading from .toml files produced by the ICU4C icuwriteuprops tool.
-impl TryFrom<&DatagenOptions> for CaseMappingDataProvider {
-    type Error = DataError;
-    fn try_from(options: &DatagenOptions) -> Result<Self, Self::Error> {
-        #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
-        let toml_str = fs::read_to_string(
-            options
-                .uprops_root
-                .as_ref()
-                .ok_or_else(|| DataError::custom("CaseMappingDataProvider requires uprops root"))?
-                .join("ucase.toml"),
-        )
-        .unwrap();
-        #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
-        let toml: uprops_serde::case::Main = toml::from_str(&toml_str).unwrap();
+impl From<&SourceData> for CaseMappingDataProvider {
+    fn from(source: &SourceData) -> Self {
+        Self {
+            source: source.clone(),
+        }
+    }
+}
+
+impl ResourceProvider<CaseMappingV1Marker> for CaseMappingDataProvider {
+    fn load_resource(
+        &self,
+        _req: &DataRequest,
+    ) -> Result<DataResponse<CaseMappingV1Marker>, DataError> {
+        let path = self.source.get_uprops_root()?.join("ucase.toml");
+        let toml_str = fs::read_to_string(&path).map_err(|e| DatagenError::from((e, &path)))?;
+        let toml: uprops_serde::case::Main =
+            toml::from_str(&toml_str).map_err(|e| DatagenError::from((e, &path)))?;
 
         let trie_data = &toml.ucase.code_point_trie;
         let trie_header = CodePointTrieHeader::try_from(trie_data)?;
@@ -51,20 +53,10 @@ impl TryFrom<&DatagenOptions> for CaseMappingDataProvider {
         .map_err(|e| {
             DataError::custom("Could not create CaseMappingInternals").with_display_context(&e)
         })?;
-
-        Ok(Self { case_mapping })
-    }
-}
-
-impl ResourceProvider<CaseMappingV1Marker> for CaseMappingDataProvider {
-    fn load_resource(
-        &self,
-        _req: &DataRequest,
-    ) -> Result<DataResponse<CaseMappingV1Marker>, DataError> {
         Ok(DataResponse {
             metadata: DataResponseMetadata::default(),
             payload: Some(DataPayload::from_owned(CaseMappingV1 {
-                casemap: self.case_mapping.clone(),
+                casemap: case_mapping,
             })),
         })
     }
@@ -97,8 +89,7 @@ mod tests {
 
     #[test]
     fn test_simple_mappings() {
-        let provider = CaseMappingDataProvider::try_from(&DatagenOptions::for_test())
-            .expect("Loading was successful");
+        let provider = CaseMappingDataProvider::from(&SourceData::for_test());
         let case_mapping = CaseMapping::try_new(&provider).expect("Loading was successful");
 
         // Basic case mapping
@@ -142,8 +133,7 @@ mod tests {
     // These tests are taken from StringCaseTest::TestCaseConversion in ICU4C.
     #[test]
     fn test_full_mappings() {
-        let provider = CaseMappingDataProvider::try_from(&DatagenOptions::for_test())
-            .expect("Loading was successful");
+        let provider = CaseMappingDataProvider::from(&SourceData::for_test());
 
         let case_mapping = CaseMapping::try_new(&provider).expect("Loading was successful");
 

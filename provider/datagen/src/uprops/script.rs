@@ -4,6 +4,7 @@
 
 use crate::uprops::uprops_helpers;
 use crate::uprops::uprops_serde::script_extensions::ScriptWithExtensionsProperty;
+use crate::SourceData;
 use icu_codepointtrie::CodePointTrie;
 use icu_properties::provider::{
     key, ScriptWithExtensionsPropertyV1, ScriptWithExtensionsPropertyV1Marker,
@@ -13,7 +14,6 @@ use icu_properties::Script;
 use icu_provider::datagen::IterableDynProvider;
 use icu_provider::prelude::*;
 use std::convert::TryFrom;
-use std::path::Path;
 use zerovec::{VarZeroVec, ZeroSlice, ZeroVec};
 
 /// This data provider returns a [`ScriptWithExtensions`] instance,
@@ -22,25 +22,14 @@ use zerovec::{VarZeroVec, ZeroSlice, ZeroVec};
 /// providers, which is a TOML file of data for the property(-ies) desired,
 /// as given by the ICU4C property data exporter tool.
 pub struct ScriptWithExtensionsPropertyProvider {
-    data: ScriptWithExtensionsProperty,
+    source: SourceData,
 }
 
-/// A data provider reading from .toml files produced by the ICU4C icuexportdata tool.
-/// In particular, it expects a file `scx.toml` for the specially-exported data
-/// structure that represents the combined data for Script / Script_Extensions.
-impl ScriptWithExtensionsPropertyProvider {
-    pub fn try_new(root_dir: &Path) -> eyre::Result<Self> {
-        let data = uprops_helpers::load_script_extensions_from_dir(root_dir)?;
-        Ok(Self { data })
-    }
-}
-
-impl TryFrom<&crate::DatagenOptions> for ScriptWithExtensionsPropertyProvider {
-    type Error = eyre::ErrReport;
-    fn try_from(options: &crate::DatagenOptions) -> eyre::Result<Self> {
-        ScriptWithExtensionsPropertyProvider::try_new(options.uprops_root.as_ref().ok_or_else(
-            || eyre::eyre!("ScriptWithExtensionsPropertyProvider requires uprops_root"),
-        )?)
+impl From<&SourceData> for ScriptWithExtensionsPropertyProvider {
+    fn from(source: &SourceData) -> Self {
+        Self {
+            source: source.clone(),
+        }
     }
 }
 
@@ -87,15 +76,16 @@ impl DynProvider<ScriptWithExtensionsPropertyV1Marker> for ScriptWithExtensionsP
     fn load_payload(
         &self,
         key: ResourceKey,
-        req: &DataRequest,
+        _: &DataRequest,
     ) -> Result<DataResponse<ScriptWithExtensionsPropertyV1Marker>, DataError> {
         if uprops_helpers::get_last_component_no_version(key) != "scx" {
-            return Err(DataErrorKind::MissingResourceKey.with_req(key, req));
+            return Err(DataErrorKind::MissingResourceKey.into_error());
         }
 
-        let source_scx_data = &self.data;
+        let source_scx_data =
+            uprops_helpers::load_script_extensions_from_dir(self.source.get_uprops_root()?)?;
 
-        let data_struct = ScriptWithExtensionsPropertyV1::try_from(source_scx_data)?;
+        let data_struct = ScriptWithExtensionsPropertyV1::try_from(&source_scx_data)?;
 
         Ok(DataResponse {
             metadata: DataResponseMetadata::default(),
@@ -126,9 +116,7 @@ mod tests {
 
     #[test]
     fn test_script_val_from_script_extensions() {
-        let root_dir = icu_testdata::paths::uprops_toml_root();
-        let provider = ScriptWithExtensionsPropertyProvider::try_new(&root_dir)
-            .expect("TOML should load successfully");
+        let provider = ScriptWithExtensionsPropertyProvider::from(&SourceData::for_test());
 
         let payload: DataPayload<ScriptWithExtensionsPropertyV1Marker> = provider
             .load_payload(
@@ -156,9 +144,7 @@ mod tests {
     fn test_scx_array_from_script_extensions() {
         use zerovec::ZeroVec;
 
-        let root_dir = icu_testdata::paths::uprops_toml_root();
-        let provider = ScriptWithExtensionsPropertyProvider::try_new(&root_dir)
-            .expect("TOML should load successfully");
+        let provider = ScriptWithExtensionsPropertyProvider::from(&SourceData::for_test());
 
         let payload: DataPayload<ScriptWithExtensionsPropertyV1Marker> = provider
             .load_payload(
@@ -208,9 +194,7 @@ mod tests {
 
     #[test]
     fn test_has_script() {
-        let root_dir = icu_testdata::paths::uprops_toml_root();
-        let provider = ScriptWithExtensionsPropertyProvider::try_new(&root_dir)
-            .expect("TOML should load successfully");
+        let provider = ScriptWithExtensionsPropertyProvider::from(&SourceData::for_test());
 
         let payload: DataPayload<ScriptWithExtensionsPropertyV1Marker> = provider
             .load_payload(key::SCRIPT_EXTENSIONS_V1, &DataRequest::default())
@@ -289,9 +273,7 @@ mod tests {
 
     #[test]
     fn test_get_script_extensions_set() {
-        let root_dir = icu_testdata::paths::uprops_toml_root();
-        let provider = ScriptWithExtensionsPropertyProvider::try_new(&root_dir)
-            .expect("TOML should load successfully");
+        let provider = ScriptWithExtensionsPropertyProvider::from(&SourceData::for_test());
 
         let payload: DataPayload<ScriptWithExtensionsPropertyV1Marker> = provider
             .load_payload(key::SCRIPT_EXTENSIONS_V1, &DataRequest::default())

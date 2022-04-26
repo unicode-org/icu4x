@@ -3,44 +3,25 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::cldr::cldr_serde;
-use crate::cldr::error::Error;
 use crate::cldr::reader::open_reader;
-use crate::cldr::CldrPaths;
+use crate::error::DatagenError;
+use crate::SourceData;
 use icu_locale_canonicalizer::provider::*;
 use icu_provider::datagen::IterableResourceProvider;
 use icu_provider::prelude::*;
 use zerovec::ZeroMap;
 
-use std::convert::TryFrom;
-use std::path::PathBuf;
-
 /// A data provider reading from CLDR JSON likely subtags rule files.
 #[derive(Debug)]
 pub struct LikelySubtagsProvider {
-    path: PathBuf,
+    source: SourceData,
 }
 
-impl LikelySubtagsProvider {
-    /// Constructs an instance from paths to source data.
-    pub fn try_new(cldr_paths: &(impl CldrPaths + ?Sized)) -> eyre::Result<Self> {
-        Ok(Self {
-            path: cldr_paths
-                .cldr_core()?
-                .join("supplemental")
-                .join("likelySubtags.json"),
-        })
-    }
-}
-
-impl TryFrom<&crate::DatagenOptions> for LikelySubtagsProvider {
-    type Error = eyre::ErrReport;
-    fn try_from(options: &crate::DatagenOptions) -> eyre::Result<Self> {
-        LikelySubtagsProvider::try_new(
-            &**options
-                .cldr_paths
-                .as_ref()
-                .ok_or_else(|| eyre::eyre!("LikelySubtagsProvider requires cldr_paths"))?,
-        )
+impl From<&SourceData> for LikelySubtagsProvider {
+    fn from(source: &SourceData) -> Self {
+        LikelySubtagsProvider {
+            source: source.clone(),
+        }
     }
 }
 
@@ -49,22 +30,28 @@ impl ResourceProvider<LikelySubtagsV1Marker> for LikelySubtagsProvider {
         &self,
         req: &DataRequest,
     ) -> Result<DataResponse<LikelySubtagsV1Marker>, DataError> {
-        let data: cldr_serde::likely_subtags::Resource =
-            serde_json::from_reader(open_reader(&self.path)?)
-                .map_err(|e| Error::Json(e, Some(self.path.clone())))?;
-
         // We treat searching for und as a request for all data. Other requests
         // are not currently supported.
-        if req.options.is_empty() {
-            let metadata = DataResponseMetadata::default();
-            // TODO(#1109): Set metadata.data_langid correctly.
-            Ok(DataResponse {
-                metadata,
-                payload: Some(DataPayload::from_owned(LikelySubtagsV1::from(&data))),
-            })
-        } else {
-            Err(DataErrorKind::ExtraneousResourceOptions.with_req(LikelySubtagsV1Marker::KEY, req))
+        if !req.options.is_empty() {
+            return Err(DataErrorKind::ExtraneousResourceOptions.into_error());
         }
+
+        let path = self
+            .source
+            .get_cldr_paths()?
+            .cldr_core()
+            .join("supplemental")
+            .join("likelySubtags.json");
+        let data: cldr_serde::likely_subtags::Resource =
+            serde_json::from_reader(open_reader(&path)?)
+                .map_err(|e| DatagenError::from((e, path)))?;
+
+        let metadata = DataResponseMetadata::default();
+        // TODO(#1109): Set metadata.data_langid correctly.
+        Ok(DataResponse {
+            metadata,
+            payload: Some(DataPayload::from_owned(LikelySubtagsV1::from(&data))),
+        })
     }
 }
 
@@ -172,8 +159,7 @@ impl From<&cldr_serde::likely_subtags::Resource> for LikelySubtagsV1<'static> {
 fn test_basic() {
     use icu_locid::script;
 
-    let cldr_paths = crate::cldr::cldr_paths::for_test();
-    let provider = LikelySubtagsProvider::try_new(&cldr_paths).unwrap();
+    let provider = LikelySubtagsProvider::from(&SourceData::for_test());
     let result: DataPayload<LikelySubtagsV1Marker> = provider
         .load_resource(&Default::default())
         .unwrap()

@@ -3,14 +3,13 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use clap::{App, Arg, ArgGroup};
-use icu_datagen::{get_all_keys, DatagenOptions};
+use icu_datagen::{get_all_keys, SourceData};
 use icu_provider::datagen::IterableDynProvider;
 use icu_provider::datagen::{DataConverter, HeapStatsMarker};
 use icu_provider_adapters::filter::Filterable;
 
 use icu_provider::prelude::*;
 
-use icu_datagen::cldr::CldrPathsAllInOne;
 use icu_provider_blob::BlobDataProvider;
 use litemap::LiteMap;
 use simple_logger::SimpleLogger;
@@ -19,7 +18,6 @@ use std::cmp;
 use std::collections::HashSet;
 use std::fs;
 use std::mem::ManuallyDrop;
-use std::path::PathBuf;
 use std::rc::Rc;
 
 #[global_allocator]
@@ -61,31 +59,6 @@ fn main() -> eyre::Result<()> {
                 .short("v")
                 .long("verbose")
                 .help("Requests verbose output"),
-        )
-        .arg(
-            Arg::with_name("POSTCARD_FILE")
-                .long("postcard-file")
-                .takes_value(true)
-                .help("Path to .postcard file with all of the data."),
-        )
-        .arg(
-            Arg::with_name("CLDR_ROOT")
-                .long("cldr-root")
-                .value_name("PATH")
-                .help("Path to the CLDR JSON root directory.")
-                .takes_value(true),
-        )
-        .arg(
-            Arg::with_name("UPROPS_PATH")
-                .long("uprops-path")
-                .value_name("PATH")
-                .help("Path to the uprops directory.")
-                .takes_value(true),
-        )
-        .arg(
-            Arg::with_name("INPUT_FROM_TESTDATA")
-                .long("input-from-testdata")
-                .help("Load input data from the icu_testdata project."),
         )
         .arg(
             Arg::with_name("CHECK")
@@ -152,35 +125,7 @@ fn main() -> eyre::Result<()> {
         filtered
     };
 
-    let cldr_json_root = if let Some(cldr) = matches.value_of("CLDR_ROOT") {
-        PathBuf::from(cldr)
-    } else if matches.is_present("INPUT_FROM_TESTDATA") {
-        icu_testdata::paths::cldr_json_root()
-    } else {
-        eyre::bail!("Value for --cldr--root must be specified (or --input-from-testdata)",)
-    };
-    let uprops_root = if let Some(uprops) = matches.value_of("UPROPS_PATH") {
-        PathBuf::from(uprops)
-    } else if matches.is_present("INPUT_FROM_TESTDATA") {
-        icu_testdata::paths::uprops_toml_root()
-    } else {
-        eyre::bail!("Value for --uprops-path must be specified (or --input-from-testdata)",)
-    };
-    let cldr_paths = Box::new(CldrPathsAllInOne {
-        cldr_json_root,
-        locale_subset: matches
-            .value_of("CLDR_LOCALE_SUBSET")
-            .unwrap_or("full")
-            .to_string(),
-    });
-
-    let options = DatagenOptions {
-        cldr_paths: Some(cldr_paths),
-        uprops_root: Some(uprops_root),
-        #[cfg(feature = "experimental")]
-        segmenter_data_root: Some(icu_datagen::segmenter::segmenter_data_root()),
-    };
-    let converter = icu_datagen::create_datagen_provider!(options);
+    let converter = icu_datagen::create_datagen_provider!(SourceData::for_test());
 
     let selected_locales = icu_testdata::metadata::load()?.package_metadata.locales;
 
@@ -190,13 +135,7 @@ fn main() -> eyre::Result<()> {
             .filter_by_langid_allowlist_strict(&selected_locales),
     );
 
-    let postcard_file = if let Some(file) = matches.value_of("POSTCARD_FILE") {
-        PathBuf::from(file)
-    } else if matches.is_present("INPUT_FROM_TESTDATA") {
-        icu_testdata::paths::data_root().join("testdata.postcard")
-    } else {
-        eyre::bail!("Value for --postcard-file must be specified (or --input-from-testdata)",)
-    };
+    let postcard_file = icu_testdata::paths::data_root().join("testdata.postcard");
     let blob: Vec<u8> = fs::read(postcard_file).expect("Reading pre-computed postcard buffer");
     // Create a DataProvider from it:
     let provider =

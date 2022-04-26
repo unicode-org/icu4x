@@ -4,32 +4,26 @@
 
 use crate::uprops::uprops_helpers::{self, get_last_component_no_version, TomlBinary};
 
+use crate::SourceData;
 use icu_properties::provider::UnicodePropertyV1;
 use icu_properties::provider::UnicodePropertyV1Marker;
 use icu_provider::datagen::IterableDynProvider;
 use icu_provider::prelude::*;
 use icu_uniset::UnicodeSetBuilder;
-use std::convert::TryFrom;
-use std::path::Path;
-
-pub struct BinaryPropertyUnicodeSetDataProvider {
-    data: TomlBinary,
-}
+use std::sync::RwLock;
 
 /// A data provider reading from .toml files produced by the ICU4C icuwriteuprops tool.
-impl BinaryPropertyUnicodeSetDataProvider {
-    pub fn try_new(root_dir: &Path) -> eyre::Result<Self> {
-        let data = uprops_helpers::load_binary_from_dir(root_dir)?;
-        Ok(Self { data })
-    }
+pub struct BinaryPropertyUnicodeSetDataProvider {
+    source: SourceData,
+    data: RwLock<Option<TomlBinary>>,
 }
 
-impl TryFrom<&crate::DatagenOptions> for BinaryPropertyUnicodeSetDataProvider {
-    type Error = eyre::ErrReport;
-    fn try_from(options: &crate::DatagenOptions) -> eyre::Result<Self> {
-        BinaryPropertyUnicodeSetDataProvider::try_new(options.uprops_root.as_ref().ok_or_else(
-            || eyre::eyre!("BinaryPropertyUnicodeSetDataProvider requires uprops_root"),
-        )?)
+impl From<&SourceData> for BinaryPropertyUnicodeSetDataProvider {
+    fn from(source: &SourceData) -> Self {
+        Self {
+            source: source.clone(),
+            data: RwLock::new(None),
+        }
     }
 }
 
@@ -37,12 +31,20 @@ impl DynProvider<UnicodePropertyV1Marker> for BinaryPropertyUnicodeSetDataProvid
     fn load_payload(
         &self,
         key: ResourceKey,
-        req: &DataRequest,
+        _: &DataRequest,
     ) -> Result<DataResponse<UnicodePropertyV1Marker>, DataError> {
-        let data = &self
-            .data
+        if self.data.read().unwrap().is_none() {
+            let data = uprops_helpers::load_binary_from_dir(self.source.get_uprops_root()?)?;
+            *self.data.write().unwrap() = Some(data);
+        }
+
+        let guard = self.data.read().unwrap();
+
+        let data = guard
+            .as_ref()
+            .unwrap()
             .get(get_last_component_no_version(key))
-            .ok_or_else(|| DataErrorKind::MissingResourceKey.with_req(key, req))?;
+            .ok_or_else(|| DataErrorKind::MissingResourceKey.into_error())?;
 
         let mut builder = UnicodeSetBuilder::new();
         for (start, end) in &data.ranges {
@@ -78,9 +80,7 @@ fn test_basic() {
     use icu_uniset::UnicodeSet;
     use std::convert::TryInto;
 
-    let root_dir = icu_testdata::paths::uprops_toml_root();
-    let provider = BinaryPropertyUnicodeSetDataProvider::try_new(&root_dir)
-        .expect("TOML should load successfully");
+    let provider = BinaryPropertyUnicodeSetDataProvider::from(&SourceData::for_test());
 
     let payload: DataPayload<UnicodePropertyV1Marker> = provider
         .load_payload(key::WHITE_SPACE_V1, &DataRequest::default())

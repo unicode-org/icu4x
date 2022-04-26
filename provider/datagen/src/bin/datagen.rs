@@ -5,8 +5,8 @@
 use clap::{App, Arg, ArgGroup, ArgMatches};
 use eyre::WrapErr;
 
-use icu_datagen::cldr::CldrPathsAllInOne;
-use icu_datagen::{get_all_keys, DatagenOptions};
+use icu_datagen::cldr::CldrPaths;
+use icu_datagen::{get_all_keys, SourceData};
 use icu_locid::LanguageIdentifier;
 use icu_provider::datagen::IterableDynProvider;
 use icu_provider::export::DataExporter;
@@ -301,59 +301,60 @@ fn main() -> eyre::Result<()> {
         filtered
     };
 
-    let options = if matches.is_present("INPUT_FROM_TESTDATA") {
-        DatagenOptions::for_test()
+    let mut source_data = SourceData::default();
+
+    if matches.is_present("INPUT_FROM_TESTDATA") {
+        source_data = SourceData::for_test();
     } else {
-        DatagenOptions {
-            cldr_paths: Some(Box::new(CldrPathsAllInOne {
-                cldr_json_root: if let Some(_tag) = matches.value_of("CLDR_TAG") {
-                    #[cfg(not(feature = "download"))]
-                    eyre::bail!("--cldr-tag requires the download feature");
-                    #[cfg(feature = "download")]
-                    cached_path::CacheBuilder::new().freshness_lifetime(u64::MAX).build()?
-                        .cached_path_with_options(
-                            &format!(
-                                "https://github.com/unicode-org/cldr-json/releases/download/{}/cldr-{}-json-{}.zip",
-                                _tag, _tag, matches.value_of("CLDR_LOCALE_SUBSET").unwrap_or("full")),
-                            &cached_path::Options::default().extract(),
-                        )?
-                } else if let Some(path) = matches.value_of("CLDR_ROOT") {
-                    PathBuf::from(path)
-                } else {
-                    eyre::bail!(
-                        "Either --cldr-tag or --cldr-root or --input-from-testdata must be specified",
-                    )
-                },
+        if let Some(_tag) = matches.value_of("CLDR_TAG") {
+            #[cfg(not(feature = "download"))]
+            eyre::bail!("--cldr-tag requires the download feature");
+            #[cfg(feature = "download")]
+            {
+                source_data = source_data.with_cldr(CldrPaths {
+                cldr_json_root: cached_path::CacheBuilder::new().freshness_lifetime(u64::MAX).build()?
+                    .cached_path_with_options(
+                        &format!(
+                            "https://github.com/unicode-org/cldr-json/releases/download/{}/cldr-{}-json-{}.zip",
+                            _tag, _tag, matches.value_of("CLDR_LOCALE_SUBSET").unwrap_or("full")),
+                        &cached_path::Options::default().extract(),
+                    )?,
+                locale_subset: matches
+                    .value_of("CLDR_LOCALE_SUBSET")
+                    .unwrap_or("full")
+                    .to_string()
+            });
+            }
+        } else if let Some(path) = matches.value_of("CLDR_ROOT") {
+            source_data = source_data.with_cldr(CldrPaths {
+                cldr_json_root: PathBuf::from(path),
                 locale_subset: matches
                     .value_of("CLDR_LOCALE_SUBSET")
                     .unwrap_or("full")
                     .to_string(),
-            })),
-            uprops_root: Some(if let Some(_tag) = matches.value_of("UPROPS_TAG") {
-                #[cfg(not(feature = "download"))]
-                eyre::bail!("--uprops-tag requires the download feature");
-                #[cfg(feature = "download")]
-                cached_path::CacheBuilder::new().freshness_lifetime(u64::MAX).build()?
+            });
+        }
+
+        if let Some(_tag) = matches.value_of("UPROPS_TAG") {
+            #[cfg(not(feature = "download"))]
+            eyre::bail!("--uprops-tag requires the download feature");
+            #[cfg(feature = "download")]
+            {
+                source_data = source_data.with_uprops(cached_path::CacheBuilder::new().freshness_lifetime(u64::MAX).build()?
                     .cached_path_with_options(
                         &format!("https://github.com/unicode-org/icu/releases/download/{}/icuexportdata_uprops_full.zip", _tag),
                         &cached_path::Options::default().extract()
                     )?
                     .join("icuexportdata_uprops_full")
-                    .join(matches.value_of("UPROPS_MODE").unwrap())
-            } else if let Some(path) = matches.value_of("UPROPS_ROOT") {
-                PathBuf::from(path)
-            } else {
-                eyre::bail!(
-                    "Either --uprops-tag or --uprops-root or --input-from-testdata must be specified",
-                )
-            }),
-            #[cfg(feature = "experimental")]
-            segmenter_data_root: Some(icu_datagen::segmenter::segmenter_data_root()),
+                    .join(matches.value_of("UPROPS_MODE").unwrap()));
+            }
+        } else if let Some(path) = matches.value_of("UPROPS_ROOT") {
+            source_data = source_data.with_uprops(PathBuf::from(path));
         }
-    };
+    }
 
     let mut provider: Box<dyn IterableDynProvider<SerializeMarker> + Sync> =
-        Box::new(icu_datagen::create_datagen_provider!(options));
+        Box::new(icu_datagen::create_datagen_provider!(source_data));
 
     if let Some(locales) = selected_locales.as_ref() {
         provider = Box::new(
@@ -378,28 +379,42 @@ fn main() -> eyre::Result<()> {
             .collect::<Vec<_>>()
             .into_par_iter()
             .try_for_each(|options| {
+                let req = DataRequest {
+                    options: options.clone(),
+                    metadata: Default::default(),
+                };
                 let payload = provider
-                    .load_payload(
-                        key,
-                        &DataRequest {
-                            options: options.clone(),
-                            metadata: Default::default(),
-                        },
-                    )?
-                    .take_payload()?;
+                    .load_payload(key, &req)
+                    .and_then(DataResponse::take_payload)
+                    .map_err(|e| e.with_req(key, &req))?;
                 exporter.put_payload(key, options, payload)
             });
 
         exporter.flush(key)?;
 
-        if matches.is_present("TEST_KEYS")
-            && matches!(result, Err(e) if e.kind == DataErrorKind::MissingResourceKey)
-        {
-            log::trace!("Skipping key: {}", key);
-            Ok(())
-        } else {
-            log::info!("Writing key: {}", key);
-            result
+        match result {
+            Ok(_) => {
+                log::info!("Writing key: {}", key);
+                Ok(())
+            }
+            Err(e)
+                if e.kind == DataErrorKind::MissingResourceKey
+                    && matches.is_present("TEST_KEYS") =>
+            {
+                log::trace!("Skipping key: {}", key);
+                Ok(())
+            }
+            Err(e) => Err(if icu_datagen::error::is_missing_cldr_error(e) {
+                eyre::eyre!(
+                    "Either --cldr-tag or --cldr-root or --input-from-testdata must be specified"
+                )
+            } else if icu_datagen::error::is_missing_uprops_error(e) {
+                eyre::eyre!(
+                    "Either --uprops-tag or --uprops-root or --input-from-testdata must be specified"
+            )
+            } else {
+                e.into()
+            }),
         }
     })?;
 

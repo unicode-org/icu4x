@@ -3,17 +3,15 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::cldr::cldr_serde;
-use crate::cldr::error::Error;
 use crate::cldr::reader::open_reader;
-use crate::cldr::CldrPaths;
+use crate::error::DatagenError;
+use crate::SourceData;
 use icu_calendar::provider::*;
 use icu_locid::langid;
 use icu_provider::datagen::IterableResourceProvider;
 use icu_provider::prelude::*;
 use std::collections::BTreeMap;
-use std::convert::TryFrom;
 use std::env;
-use std::path::PathBuf;
 use std::str::FromStr;
 use tinystr::TinyStr16;
 use zerovec::ule::AsULE;
@@ -24,39 +22,14 @@ const JAPANESE_FILE: &str = include_str!("./snapshot-japanese@1.json");
 /// Common code for a data provider reading from CLDR JSON dates files.
 #[derive(Debug)]
 pub struct JapaneseErasProvider {
-    era_names_path: PathBuf,
-    era_dates_path: PathBuf,
+    source: SourceData,
 }
 
-impl JapaneseErasProvider {
-    /// Constructs an instance from paths to source data.
-    pub fn try_new(cldr_paths: &(impl CldrPaths + ?Sized)) -> eyre::Result<Self> {
-        // The era codes depend on the Latin romanizations of the eras, found
-        // in the `en` locale. We load this data to construct era codes but
-        // actual user code only needs to load the data for the locales it cares about.
-        Ok(Self {
-            era_names_path: cldr_paths
-                .cldr_dates_japanese()?
-                .join("main")
-                .join("en")
-                .join("ca-japanese.json"),
-            era_dates_path: cldr_paths
-                .cldr_core()?
-                .join("supplemental")
-                .join("calendarData.json"),
-        })
-    }
-}
-
-impl TryFrom<&crate::DatagenOptions> for JapaneseErasProvider {
-    type Error = eyre::ErrReport;
-    fn try_from(options: &crate::DatagenOptions) -> eyre::Result<Self> {
-        JapaneseErasProvider::try_new(
-            &**options
-                .cldr_paths
-                .as_ref()
-                .ok_or_else(|| eyre::eyre!("JapaneseErasProvider requires cldr_paths"))?,
-        )
+impl From<&SourceData> for JapaneseErasProvider {
+    fn from(source: &SourceData) -> Self {
+        Self {
+            source: source.clone(),
+        }
     }
 }
 
@@ -66,37 +39,46 @@ impl ResourceProvider<JapaneseErasV1Marker> for JapaneseErasProvider {
         req: &DataRequest,
     ) -> Result<DataResponse<JapaneseErasV1Marker>, DataError> {
         if !req.options.is_empty() {
-            return Err(
-                DataErrorKind::ExtraneousResourceOptions.with_req(JapaneseErasV1Marker::KEY, req)
-            );
+            return Err(DataErrorKind::ExtraneousResourceOptions.into_error());
         }
 
+        // The era codes depend on the Latin romanizations of the eras, found
+        // in the `en` locale. We load this data to construct era codes but
+        // actual user code only needs to load the data for the locales it cares about.
+        let era_names_path = self
+            .source
+            .get_cldr_paths()?
+            .cldr_dates("japanese")
+            .join("main")
+            .join("en")
+            .join("ca-japanese.json");
+        let era_dates_path = self
+            .source
+            .get_cldr_paths()?
+            .cldr_core()
+            .join("supplemental")
+            .join("calendarData.json");
+
         let era_names: cldr_serde::ca::Resource =
-            serde_json::from_reader(open_reader(&self.era_names_path)?)
-                .map_err(|e| Error::from((e, self.era_names_path.clone())))?;
+            serde_json::from_reader(open_reader(&era_names_path)?)
+                .map_err(|e| DatagenError::from((e, era_names_path)))?;
         let era_dates: cldr_serde::japanese::Resource =
-            serde_json::from_reader(open_reader(&self.era_dates_path)?)
-                .map_err(|e| Error::from((e, self.era_dates_path.clone())))?;
+            serde_json::from_reader(open_reader(&era_dates_path)?)
+                .map_err(|e| DatagenError::from((e, era_dates_path)))?;
 
         let era_name_map = &era_names
             .main
             .0
             .get(&langid!("en"))
-            .ok_or_else(|| {
-                Error::Custom(
-                    String::from("ca-japanese.json does not have en locale"),
-                    None,
-                )
-            })?
+            .ok_or(DataError::custom(
+                "ca-japanese.json does not have en locale",
+            ))?
             .dates
             .calendars
             .get("japanese")
-            .ok_or_else(|| {
-                Error::Custom(
-                    String::from("ca-japanese.json does not contain 'japanese' calendar"),
-                    None,
-                )
-            })?
+            .ok_or(DataError::custom(
+                "ca-japanese.json does not contain 'japanese' calendar",
+            ))?
             .eras
             .abbr;
         let era_dates_map = &era_dates.supplemental.calendar_data.japanese.eras;
@@ -114,7 +96,7 @@ impl ResourceProvider<JapaneseErasV1Marker> for JapaneseErasProvider {
             let date = &era_dates_map
                 .get(era_id)
                 .ok_or_else(|| {
-                    Error::Custom(
+                    DatagenError::Custom(
                         format!(
                             "calendarData.json contains no data for japanese era index {}",
                             era_id
@@ -125,7 +107,7 @@ impl ResourceProvider<JapaneseErasV1Marker> for JapaneseErasProvider {
                 .start;
 
             let start_date = EraStartDate::from_str(date).map_err(|_| {
-                Error::Custom(
+                DatagenError::Custom(
                     format!(
                         "calendarData.json contains unparseable data for japanese era index {}",
                         era_id
@@ -134,8 +116,8 @@ impl ResourceProvider<JapaneseErasV1Marker> for JapaneseErasProvider {
                 )
             })?;
 
-            let code =
-                era_to_code(era_name, start_date.year).map_err(|e| Error::Custom(e, None))?;
+            let code = era_to_code(era_name, start_date.year)
+                .map_err(|e| DatagenError::Custom(e, None))?;
             if start_date.year >= 1868 {
                 ret.dates_to_eras
                     .to_mut()

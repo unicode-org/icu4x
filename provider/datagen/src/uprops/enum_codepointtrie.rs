@@ -5,6 +5,7 @@
 use crate::uprops::uprops_helpers::{self, get_last_component_no_version, TomlEnumerated};
 use crate::uprops::uprops_serde::SerializedCodePointTrie;
 
+use crate::SourceData;
 use icu_codepointtrie::{CodePointTrie, CodePointTrieHeader, TrieType, TrieValue};
 use icu_properties::provider::*;
 use icu_properties::provider::{UnicodePropertyMapV1, UnicodePropertyMapV1Marker};
@@ -15,7 +16,7 @@ use icu_properties::{
 use icu_provider::datagen::IterableDynProvider;
 use icu_provider::prelude::*;
 use std::convert::TryFrom;
-use std::path::Path;
+use std::sync::RwLock;
 use zerovec::ZeroVec;
 
 /// This data provider returns `CodePointTrie` data inside a
@@ -24,22 +25,16 @@ use zerovec::ZeroVec;
 /// for the property(-ies) desired, as given by the ICU4C property data
 /// exporter tool.
 pub struct EnumeratedPropertyCodePointTrieProvider {
-    data: TomlEnumerated,
+    source: SourceData,
+    data: RwLock<Option<TomlEnumerated>>,
 }
 
-impl EnumeratedPropertyCodePointTrieProvider {
-    pub fn try_new(root_dir: &Path) -> eyre::Result<Self> {
-        let data = uprops_helpers::load_enumerated_from_dir(root_dir)?;
-        Ok(Self { data })
-    }
-}
-
-impl TryFrom<&crate::DatagenOptions> for EnumeratedPropertyCodePointTrieProvider {
-    type Error = eyre::ErrReport;
-    fn try_from(options: &crate::DatagenOptions) -> eyre::Result<Self> {
-        EnumeratedPropertyCodePointTrieProvider::try_new(options.uprops_root.as_ref().ok_or_else(
-            || eyre::eyre!("EnumeratedPropertyCodePointTrieProvider requires uprops_root"),
-        )?)
+impl From<&SourceData> for EnumeratedPropertyCodePointTrieProvider {
+    fn from(source: &SourceData) -> Self {
+        Self {
+            source: source.clone(),
+            data: RwLock::new(None),
+        }
     }
 }
 
@@ -115,16 +110,25 @@ impl<T: TrieValue> DynProvider<UnicodePropertyMapV1Marker<T>>
     fn load_payload(
         &self,
         key: ResourceKey,
-        req: &DataRequest,
+        _: &DataRequest,
     ) -> Result<DataResponse<UnicodePropertyMapV1Marker<T>>, DataError> {
         // For data resource keys that represent the CodePointTrie data for an enumerated
         // property, the ResourceKey sub-category string will just be the short alias
         // for the property.
         let prop_name = get_last_component_no_version(key);
-        let source_cpt_data = &self
-            .data
+
+        if self.data.read().unwrap().is_none() {
+            let data = uprops_helpers::load_enumerated_from_dir(self.source.get_uprops_root()?)?;
+            *self.data.write().unwrap() = Some(data);
+        }
+
+        let guard = self.data.read().unwrap();
+
+        let source_cpt_data = &guard
+            .as_ref()
+            .unwrap()
             .get(prop_name)
-            .ok_or_else(|| DataErrorKind::MissingResourceKey.with_req(key, req))?
+            .ok_or(DataErrorKind::MissingResourceKey.into_error())?
             .code_point_trie;
 
         let code_point_trie = CodePointTrie::try_from(source_cpt_data)?;
@@ -173,9 +177,7 @@ mod tests {
     // the ICU CodePointTrie that ICU4X is reading from.
     #[test]
     fn test_general_category() {
-        let root_dir = icu_testdata::paths::uprops_toml_root();
-        let provider = EnumeratedPropertyCodePointTrieProvider::try_new(&root_dir)
-            .expect("TOML should load successfully");
+        let provider = EnumeratedPropertyCodePointTrieProvider::from(&SourceData::for_test());
 
         let payload: DataPayload<UnicodePropertyMapV1Marker<GeneralCategory>> = provider
             .load_payload(key::GENERAL_CATEGORY_V1, &DataRequest::default())
@@ -191,9 +193,7 @@ mod tests {
 
     #[test]
     fn test_script() {
-        let root_dir = icu_testdata::paths::uprops_toml_root();
-        let provider = EnumeratedPropertyCodePointTrieProvider::try_new(&root_dir)
-            .expect("TOML should load successfully");
+        let provider = EnumeratedPropertyCodePointTrieProvider::from(&SourceData::for_test());
 
         let payload: DataPayload<UnicodePropertyMapV1Marker<Script>> = provider
             .load_payload(key::SCRIPT_V1, &DataRequest::default())

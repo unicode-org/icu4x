@@ -5,6 +5,7 @@
 use crate::uprops::{
     BinaryPropertyUnicodeSetDataProvider, EnumeratedPropertyCodePointTrieProvider,
 };
+use crate::SourceData;
 use icu_codepointtrie::CodePointTrie;
 use icu_properties::{
     maps, sets, EastAsianWidth, GeneralCategory, GraphemeClusterBreak, LineBreak, SentenceBreak,
@@ -14,7 +15,6 @@ use icu_provider::datagen::IterableResourceProvider;
 use icu_provider::prelude::*;
 use icu_segmenter::symbols::*;
 use icu_segmenter::*;
-use std::convert::TryFrom;
 use std::fs::File;
 use std::io::Read;
 use std::path::PathBuf;
@@ -224,43 +224,31 @@ fn is_cjk_fullwidth(eaw: &CodePointTrie<EastAsianWidth>, codepoint: u32) -> bool
 /// A data provider reading from segmenter rule files.
 #[derive(Debug)]
 pub struct SegmenterRuleProvider {
-    /// The path to the segmenter rule break TOML files.
-    segmenter_data_root: PathBuf,
+    source: SourceData,
+}
 
-    /// The path to the uprops TOML files that segmenter rule break data depends on.
-    uprops_root: PathBuf,
+impl From<&SourceData> for SegmenterRuleProvider {
+    fn from(source: &SourceData) -> Self {
+        Self {
+            source: source.clone(),
+        }
+    }
 }
 
 impl SegmenterRuleProvider {
-    /// Create a new [`Self`] given a filesystem directory. See [module-level documentation](crate)
-    /// for its usage.
-    pub fn try_new<P: Into<PathBuf>>(segmenter_data_root: P, uprops_root: P) -> eyre::Result<Self> {
-        let segmenter_data_root = segmenter_data_root.into();
-        let uprops_root = uprops_root.into();
-
-        // Check if the paths exist.
-        segmenter_data_root.metadata()?;
-        uprops_root.metadata()?;
-
-        Ok(Self {
-            segmenter_data_root,
-            uprops_root,
-        })
-    }
-
-    fn build_rule_data_path(&self, key: ResourceKey) -> PathBuf {
+    fn build_rule_data_path(&self, key: ResourceKey) -> Result<PathBuf, DataError> {
         let file_name = key
             .get_path()
             .split(&['/', '@'])
             .nth(1)
             .expect("ResourceKey format should be valid!");
-        let mut data_path = self.segmenter_data_root.join(file_name);
+        let mut data_path = self.source.get_segmenter_data_root()?.join(file_name);
         data_path.set_extension("toml");
-        data_path
+        Ok(data_path)
     }
 
     fn load_rule_data(&self, key: ResourceKey) -> Result<SegmenterRuleTable, DataError> {
-        let path = self.build_rule_data_path(key);
+        let path = self.build_rule_data_path(key)?;
         let mut file = File::open(&path).map_err(|e| {
             DataErrorKind::Io(e.kind())
                 .with_key(key)
@@ -286,8 +274,7 @@ impl SegmenterRuleProvider {
         let segmenter = self.load_rule_data(key)?;
 
         // Load enumerate Unicode property dependencies.
-        let cp_map_provider = EnumeratedPropertyCodePointTrieProvider::try_new(&self.uprops_root)
-            .expect("The data should be valid!");
+        let cp_map_provider = EnumeratedPropertyCodePointTrieProvider::from(&self.source);
 
         let payload = maps::get_word_break(&cp_map_provider).expect("The data should be valid!");
         let wb = &payload.get().code_point_trie;
@@ -312,8 +299,7 @@ impl SegmenterRuleProvider {
         let gc = &payload.get().code_point_trie;
 
         // Load binary Unicode property dependencies.
-        let uniset_provider = BinaryPropertyUnicodeSetDataProvider::try_new(&self.uprops_root)
-            .expect("The data should be valid!");
+        let uniset_provider = BinaryPropertyUnicodeSetDataProvider::from(&self.source);
 
         let payload =
             sets::get_extended_pictographic(&uniset_provider).expect("The data should be valid!");
@@ -642,22 +628,6 @@ impl SegmenterRuleProvider {
     }
 }
 
-impl TryFrom<&crate::DatagenOptions> for SegmenterRuleProvider {
-    type Error = eyre::ErrReport;
-    fn try_from(options: &crate::DatagenOptions) -> Result<Self, Self::Error> {
-        SegmenterRuleProvider::try_new(
-            options
-                .segmenter_data_root
-                .as_ref()
-                .ok_or_else(|| eyre::eyre!("SegmenterRuleProvider requires segmenter_data_root"))?,
-            options
-                .uprops_root
-                .as_ref()
-                .ok_or_else(|| eyre::eyre!("SegmenterRuleProvider requires uprops_root"))?,
-        )
-    }
-}
-
 impl ResourceProvider<LineBreakDataV1Marker> for SegmenterRuleProvider {
     fn load_resource(
         &self,
@@ -757,11 +727,7 @@ mod tests {
 
     #[test]
     fn load_grapheme_cluster_data() {
-        let provider = SegmenterRuleProvider::try_new(
-            &crate::segmenter::segmenter_data_root(),
-            &icu_testdata::paths::uprops_toml_root(),
-        )
-        .expect("Rule break data should exists!");
+        let provider = SegmenterRuleProvider::from(&SourceData::for_test());
         let payload: DataPayload<GraphemeClusterBreakDataV1Marker> = provider
             .load_resource(&DataRequest::default())
             .expect("Loading should succeed!")
