@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1650566451387,
+  "lastUpdate": 1650961378049,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -27047,6 +27047,102 @@ window.BENCHMARK_DATA = {
             "name": "pattern/parse",
             "value": 4930,
             "range": "± 8",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "devoncarew@google.com",
+            "name": "Devon Carew",
+            "username": "devoncarew"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "cb6683966fc45641cd340731981a3b3429525d7e",
+          "message": "Update wasm_vs_transpiler.md (#1815)",
+          "timestamp": "2022-04-26T08:08:29Z",
+          "tree_id": "9ef96e4954ec2351188c90b67c6934775d0336b1",
+          "url": "https://github.com/unicode-org/icu4x/commit/cb6683966fc45641cd340731981a3b3429525d7e"
+        },
+        "date": 1650961361259,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 73885,
+            "range": "± 64",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 802537,
+            "range": "± 585",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 168559,
+            "range": "± 1081",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/DateTimeFormat/format_to_write",
+            "value": 70053,
+            "range": "± 76",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/DateTimeFormat/format_to_string",
+            "value": 78018,
+            "range": "± 528",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/format",
+            "value": 73201,
+            "range": "± 1197",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/to_string",
+            "value": 80334,
+            "range": "± 131",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/ZonedDateTimeFormat/format_to_write",
+            "value": 164589,
+            "range": "± 137",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/ZonedDateTimeFormat/format_to_string",
+            "value": 175263,
+            "range": "± 162",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/format",
+            "value": 168443,
+            "range": "± 189",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/to_string",
+            "value": 180060,
+            "range": "± 190",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "pattern/parse",
+            "value": 4930,
+            "range": "± 21",
             "unit": "ns/iter"
           }
         ]
