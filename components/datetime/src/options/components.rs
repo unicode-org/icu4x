@@ -549,9 +549,8 @@ impl<'data> From<&PatternPlurals<'data>> for Bag {
                             Text::Short
                         }
                         FieldLength::Wide => Text::Long,
-                        FieldLength::Narrow | FieldLength::Six => Text::Narrow,
-                        FieldLength::Fixed(_) => {
-                            unimplemented!("Fixed field length is only supported for seconds")
+                        FieldLength::Narrow | FieldLength::Six | FieldLength::Fixed(_) => {
+                            Text::Narrow
                         }
                     });
                 }
@@ -575,9 +574,8 @@ impl<'data> From<&PatternPlurals<'data>> for Bag {
                         FieldLength::TwoDigit => Month::TwoDigit,
                         FieldLength::Abbreviated => Month::Short,
                         FieldLength::Wide => Month::Long,
-                        FieldLength::Narrow | FieldLength::Six => Month::Narrow,
-                        FieldLength::Fixed(_) => {
-                            unimplemented!("Fixed field length is only supported for seconds")
+                        FieldLength::Narrow | FieldLength::Six | FieldLength::Fixed(_) => {
+                            Month::Narrow
                         }
                     });
                 }
@@ -639,9 +637,8 @@ impl<'data> From<&PatternPlurals<'data>> for Bag {
                             }
                             FieldLength::Abbreviated => Text::Short,
                             FieldLength::Wide => Text::Long,
-                            FieldLength::Narrow | FieldLength::Six => Text::Narrow,
-                            FieldLength::Fixed(_) => {
-                                unimplemented!("Fixed field length is only supported for seconds")
+                            FieldLength::Narrow | FieldLength::Six | FieldLength::Fixed(_) => {
+                                Text::Narrow
                             }
                         },
                         fields::Weekday::Local => unimplemented!("fields::Weekday::Local"),

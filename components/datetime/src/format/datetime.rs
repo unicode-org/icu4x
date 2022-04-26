@@ -100,8 +100,8 @@ where
             } else {
                 let buffer = num.to_string();
                 let len = buffer.len();
+                // Safe because we've handled the case where len < 2 above
                 #[allow(clippy::indexing_slicing)]
-                // TODO(#1668) Clippy exceptions need docs or fixing.
                 result.write_str(&buffer[len - 2..])
             }
         }
@@ -115,8 +115,8 @@ where
             if len < p.into() {
                 write!(result, "{:0<width$}", num, width = p as usize)
             } else {
+                // Safe because we've handled the case where len < p above
                 #[allow(clippy::indexing_slicing)]
-                // TODO(#1668) Clippy exceptions need docs or fixing.
                 result.write_str(&buffer[0..p as usize])
             }
         }

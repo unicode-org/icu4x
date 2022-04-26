@@ -545,10 +545,16 @@ mod tests {
             );
         }
 
-        let broken = vec![(
-            "yyyyyyy",
-            PatternError::FieldLengthInvalid(FieldSymbol::Year(fields::Year::Calendar)),
-        )];
+        let broken = vec![
+            (
+                "yyyyyyy",
+                PatternError::FieldLengthInvalid(FieldSymbol::Year(fields::Year::Calendar)),
+            ),
+            (
+                "hh:mm:ss.SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS",
+                PatternError::FieldLengthInvalid(FieldSymbol::Second(fields::Second::FractionalSecond)),
+            ),
+        ];
 
         for (string, error) in broken {
             assert_eq!(Parser::new(string).parse(), Err(error),);

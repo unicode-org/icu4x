@@ -61,8 +61,7 @@ impl From<&PatternItem> for TimeGranularity {
                 fields::FieldSymbol::Minute => Self::Minutes,
                 fields::FieldSymbol::Second(s) => match s {
                     fields::Second::FractionalSecond => Self::Nanoseconds,
-                    fields::Second::Millisecond
-                    | fields::Second::Second => Self::Seconds,
+                    fields::Second::Millisecond | fields::Second::Second => Self::Seconds,
                 },
                 _ => Self::None,
             },
