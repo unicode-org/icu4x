@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1650960631738,
+  "lastUpdate": 1650965777547,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -13553,6 +13553,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/cb6683966fc45641cd340731981a3b3429525d7e"
         },
         "date": 1650960614905,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4507258,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "ccf3747495b7922c4e63c51902caae4d45781f9b",
+          "message": "non_exhaustive errors, locid, and decimal (#1792)\n\n* non-exhaustive errors\r\n\r\n* non_exhaustive decimal\r\n\r\n* non_exhaustive locid\r\n\r\n* non_exhaustive calendar",
+          "timestamp": "2022-04-26T09:34:13Z",
+          "tree_id": "a1994a6be2a2c89e1dd66d6f0c386cbf948e2db1",
+          "url": "https://github.com/unicode-org/icu4x/commit/ccf3747495b7922c4e63c51902caae4d45781f9b"
+        },
+        "date": 1650965759036,
         "tool": "ndjson",
         "benches": [
           {
