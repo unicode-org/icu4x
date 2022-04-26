@@ -146,7 +146,6 @@ async fn main() -> eyre::Result<()> {
     };
 
     let all_paths = metadata.package_metadata.get_all_cldr_paths();
-
     stream::iter(all_paths)
         .map(Ok)
         .try_for_each_concurrent(http_concurrency, |path| async move {

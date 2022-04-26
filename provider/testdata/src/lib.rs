@@ -81,7 +81,7 @@ extern crate alloc;
 #[cfg(feature = "metadata")]
 pub mod metadata;
 
-#[cfg(any(feature = "std", feature = "fs"))]
+#[cfg(feature = "std"))]
 pub mod paths;
 
 #[cfg(feature = "static")]
