@@ -48,7 +48,7 @@ icu_locale_canonicalizer = { path = "../../components/locale_canonicalizer", fea
 icu_locid = { path = "../../components/locid", features = ["serde"] }
 icu_plurals = { path = "../../components/plurals/", features = ["serde"] }
 icu_properties = { path = "../../components/properties/", features = ["serde"] }
-icu_provider = { path = "../../provider/core", features = ["serde"] }
+icu_provider = { path = "../../provider/core", features = ["serde", "deserialize_json", "deserialize_bincode_1", "deserialize_postcard_07"] }
 icu_provider_adapters = { path = "../../provider/adapters" }
 icu_provider_blob = { path = "../../provider/blob" }
 icu_segmenter = { path = "../../experimental/segmenter", features = ["serde"] }
