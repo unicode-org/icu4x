@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use tinystr::TinyStr8;
+use tinystr::{TinyStr4, TinyStr8};
 
 use crate::date::*;
 use core::str::FromStr;
@@ -142,11 +142,11 @@ impl TimeZoneInput for MockZonedDateTime {
         self.time_zone.gmt_offset()
     }
 
-    fn time_zone_id(&self) -> Option<&str> {
+    fn time_zone_id(&self) -> Option<&TinyStr8> {
         self.time_zone.time_zone_id()
     }
 
-    fn metazone_id(&self) -> Option<&str> {
+    fn metazone_id(&self) -> Option<&TinyStr4> {
         self.time_zone.metazone_id()
     }
 

@@ -9,7 +9,7 @@ use crate::calendar::CldrCalendar;
 
 use icu_calendar::{arithmetic::week_of, AsCalendar, Date, DateTime};
 use icu_locid::Locale;
-use tinystr::TinyStr8;
+use tinystr::{TinyStr4, TinyStr8};
 
 // TODO (Manishearth) fix up imports to directly import from icu_calendar
 pub use icu_calendar::types::*;
@@ -72,15 +72,12 @@ pub trait TimeZoneInput {
     fn gmt_offset(&self) -> GmtOffset;
 
     /// The IANA time-zone identifier.
-    /// TODO(#606) switch this to BCP-47 identifier.
-    fn time_zone_id(&self) -> Option<&str>;
+    fn time_zone_id(&self) -> Option<&TinyStr8>;
 
     /// The metazone identifier.
-    /// TODO(#528) switch to a compact, stable ID.
-    fn metazone_id(&self) -> Option<&str>;
+    fn metazone_id(&self) -> Option<&TinyStr4>;
 
     /// The time variant (e.g. "daylight", "standard")
-    /// TODO(#619) use TinyStr for time variants.
     fn time_variant(&self) -> Option<&TinyStr8>;
 }
 

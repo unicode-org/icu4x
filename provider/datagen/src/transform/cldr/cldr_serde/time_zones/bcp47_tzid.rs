@@ -9,6 +9,7 @@
 
 use litemap::LiteMap;
 use serde::Deserialize;
+use tinystr::TinyStr8;
 
 #[derive(PartialEq, Debug, Clone, Deserialize)]
 pub struct Bcp47TzidAliasData {
@@ -29,7 +30,7 @@ pub struct Bcp47TimeZoneIds {
     pub _alias: String,
     pub _description: String,
     #[serde(flatten)]
-    pub values: LiteMap<String, Bcp47TzidAliasData>,
+    pub values: LiteMap<TinyStr8, Bcp47TzidAliasData>,
 }
 
 #[derive(PartialEq, Debug, Deserialize)]

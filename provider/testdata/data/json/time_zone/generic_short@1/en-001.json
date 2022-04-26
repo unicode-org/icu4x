@@ -3,6 +3,6 @@
     "mgmt": "GMT"
   },
   "overrides": {
-    "Etc/UTC": "UTC"
+    "utc": "UTC"
   }
 }

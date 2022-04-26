@@ -9,6 +9,7 @@
 
 use litemap::LiteMap;
 use serde::Deserialize;
+use tinystr::TinyStr4;
 
 #[derive(PartialEq, Debug, Clone, Deserialize)]
 pub struct MetaZoneAliasData {
@@ -19,7 +20,7 @@ pub struct MetaZoneAliasData {
 }
 
 #[derive(PartialEq, Debug, Deserialize)]
-pub struct MetaZoneIds(pub LiteMap<String, MetaZoneAliasData>);
+pub struct MetaZoneIds(pub LiteMap<TinyStr4, MetaZoneAliasData>);
 
 #[derive(PartialEq, Debug, Deserialize)]
 pub struct MetaZones {

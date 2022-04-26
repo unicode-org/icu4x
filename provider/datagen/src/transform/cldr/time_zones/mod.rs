@@ -17,6 +17,7 @@ use icu_provider::datagen::IterableResourceProvider;
 use icu_provider::prelude::*;
 use litemap::LiteMap;
 use std::sync::RwLock;
+use tinystr::{TinyStr4, TinyStr8};
 
 mod convert;
 
@@ -25,8 +26,8 @@ mod convert;
 pub struct TimeZonesProvider {
     source: SourceData,
     time_zone_names_data: FrozenBTreeMap<LanguageIdentifier, Box<TimeZoneNames>>,
-    bcp47_tzid_data: RwLock<LiteMap<String, String>>,
-    meta_zone_id_data: RwLock<LiteMap<String, String>>,
+    bcp47_tzid_data: RwLock<LiteMap<String, TinyStr8>>,
+    meta_zone_id_data: RwLock<LiteMap<String, TinyStr4>>,
 }
 
 impl From<&SourceData> for TimeZonesProvider {
@@ -94,7 +95,10 @@ macro_rules! impl_resource_provider {
                         for (bcp47_tzid, bcp47_tzid_data) in r.iter() {
                             if let Some(alias) = &bcp47_tzid_data.alias {
                                 for data_value in alias.split(" ") {
-                                    data_guard.insert(data_value.to_string(), bcp47_tzid.to_string());
+                                    match TinyStr8::from_str(bcp47_tzid) {
+                                        Ok(value) => {data_guard.insert(data_value.to_string(), value);}
+                                        Err(_) => {}
+                                    }
                                 }
                             }
                         }
@@ -115,10 +119,12 @@ macro_rules! impl_resource_provider {
 
                         let mut data_guard = self.meta_zone_id_data.write().unwrap();
                         for (meta_zone_id, meta_zone_id_data) in r.iter() {
-                            data_guard.insert(
-                                meta_zone_id_data.long_id.to_string(),
-                                meta_zone_id.to_string(),
-                            );
+                            match TinyStr4::from_str(meta_zone_id) {
+                                Ok(value) => {
+                                    data_guard.insert(meta_zone_id_data.long_id.to_string(), value);
+                                }
+                                Err(_) => {}
+                            }
                         }
                     }
 
@@ -196,7 +202,10 @@ mod tests {
             .unwrap()
             .take_payload()
             .unwrap();
-        assert_eq!("Pohnpei", exemplar_cities.get().0.get("fmpni").unwrap());
+        assert_eq!(
+            "Pohnpei",
+            exemplar_cities.get().0.get(&tinystr!(8, "fmpni")).unwrap()
+        );
 
         let generic_names_long: DataPayload<MetaZoneGenericNamesLongV1Marker> = provider
             .load_resource(&DataRequest {
@@ -208,7 +217,11 @@ mod tests {
             .unwrap();
         assert_eq!(
             "Australian Central Western Time",
-            generic_names_long.get().defaults.get("aucw").unwrap()
+            generic_names_long
+                .get()
+                .defaults
+                .get(&tinystr!(4, "aucw"))
+                .unwrap()
         );
 
         let specific_names_long: DataPayload<MetaZoneSpecificNamesLongV1Marker> = provider
@@ -224,7 +237,7 @@ mod tests {
             specific_names_long
                 .get()
                 .defaults
-                .get("aucw", &tinystr!(8, "standard"))
+                .get(&tinystr!(4, "aucw"), &tinystr!(8, "standard"))
                 .unwrap()
         );
 
@@ -238,7 +251,11 @@ mod tests {
             .unwrap();
         assert_eq!(
             "PT",
-            generic_names_short.get().defaults.get("ampa").unwrap()
+            generic_names_short
+                .get()
+                .defaults
+                .get(&tinystr!(4, "ampa"))
+                .unwrap()
         );
 
         let specific_names_short: DataPayload<MetaZoneSpecificNamesShortV1Marker> = provider
@@ -254,7 +271,7 @@ mod tests {
             specific_names_short
                 .get()
                 .defaults
-                .get("ampa", &tinystr!(8, "daylight"))
+                .get(&tinystr!(4, "ampa"), &tinystr!(8, "daylight"))
                 .unwrap()
         );
     }

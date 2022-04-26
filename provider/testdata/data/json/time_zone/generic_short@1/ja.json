@@ -3,6 +3,6 @@
     "japa": "JST"
   },
   "overrides": {
-    "Etc/UTC": "UTC"
+    "utc": "UTC"
   }
 }

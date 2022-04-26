@@ -156,8 +156,8 @@ fn test_fixture_with_time_zones(fixture_name: &str, config: TimeZoneConfig) {
         let options = fixtures::get_options(&fx.input.options);
 
         let mut input_value: MockZonedDateTime = fx.input.value.parse().unwrap();
-        input_value.time_zone.time_zone_id = config.time_zone_id.clone();
-        input_value.time_zone.metazone_id = config.metazone_id.clone();
+        input_value.time_zone.time_zone_id = config.time_zone_id;
+        input_value.time_zone.metazone_id = config.metazone_id;
         input_value.time_zone.time_variant = config.time_variant;
 
         let description = match fx.description {
@@ -479,7 +479,7 @@ fn test_length_fixtures() {
     test_fixture_with_time_zones(
         "lengths_with_zones_from_pdt",
         TimeZoneConfig {
-            metazone_id: Some(String::from("ampa")),
+            metazone_id: Some(tinystr!(4, "ampa")),
             time_variant: Some(tinystr!(8, "daylight")),
             ..TimeZoneConfig::default()
         },

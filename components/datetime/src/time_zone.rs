@@ -7,6 +7,7 @@ use alloc::format;
 use alloc::string::String;
 use core::fmt;
 use smallvec::SmallVec;
+use tinystr::tinystr;
 
 use crate::{
     date::TimeZoneInput,
@@ -1257,7 +1258,7 @@ impl FormatTimeZone for ExemplarCityFormat {
                     .exemplar_cities
                     .as_ref()
                     .map(|p| p.get())
-                    .and_then(|cities| cities.0.get("Etc/Unknown"))
+                    .and_then(|cities| cities.0.get(&tinystr!(8, "unk")))
                     .unwrap_or(&Cow::Borrowed("Unknown"));
                 Ok(sink.write_str(formatted_unknown_city))
             }
