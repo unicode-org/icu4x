@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1650566421439,
+  "lastUpdate": 1650961336772,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -23728,6 +23728,66 @@ window.BENCHMARK_DATA = {
           {
             "name": "from_string/1000000001",
             "value": 77,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "devoncarew@google.com",
+            "name": "Devon Carew",
+            "username": "devoncarew"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "cb6683966fc45641cd340731981a3b3429525d7e",
+          "message": "Update wasm_vs_transpiler.md (#1815)",
+          "timestamp": "2022-04-26T08:08:29Z",
+          "tree_id": "9ef96e4954ec2351188c90b67c6934775d0336b1",
+          "url": "https://github.com/unicode-org/icu4x/commit/cb6683966fc45641cd340731981a3b3429525d7e"
+        },
+        "date": 1650961319742,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 107199,
+            "range": "± 342",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 21222,
+            "range": "± 159",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 58780,
+            "range": "± 117",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 185,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 78,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 78,
             "range": "± 0",
             "unit": "ns/iter"
           }
