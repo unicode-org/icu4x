@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1650568096470,
+  "lastUpdate": 1650961215312,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -24677,6 +24677,60 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 82329314,
             "range": "± 5105594",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/worst",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/worst",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "devoncarew@google.com",
+            "name": "Devon Carew",
+            "username": "devoncarew"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "cb6683966fc45641cd340731981a3b3429525d7e",
+          "message": "Update wasm_vs_transpiler.md (#1815)",
+          "timestamp": "2022-04-26T08:08:29Z",
+          "tree_id": "9ef96e4954ec2351188c90b67c6934775d0336b1",
+          "url": "https://github.com/unicode-org/icu4x/commit/cb6683966fc45641cd340731981a3b3429525d7e"
+        },
+        "date": 1650961199006,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 42199988,
+            "range": "± 135301",
             "unit": "ns/iter"
           },
           {
