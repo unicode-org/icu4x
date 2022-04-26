@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1650974398383,
+  "lastUpdate": 1651014330157,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -24862,6 +24862,60 @@ window.BENCHMARK_DATA = {
           {
             "name": "uniset/contains_range/worst",
             "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "dminor@mozilla.com",
+            "name": "Dan Minor",
+            "username": "dminor"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "b79bf0c4ef8079badd137fc9594334f1fd671f71",
+          "message": "Implement formatting for fractional seconds (#1813)\n\n* Implement formatting for fractional seconds\r\n\r\n* Fix skeleton::test::test_pattern_to_skeleton\r\n\r\n* Address review feedback\r\n\r\n* Update expectations for test_pattern_bincode_serialization_roundtrip",
+          "timestamp": "2022-04-26T18:57:21-04:00",
+          "tree_id": "8b61cc7a4001797081e62da0d19f68005469cc50",
+          "url": "https://github.com/unicode-org/icu4x/commit/b79bf0c4ef8079badd137fc9594334f1fd671f71"
+        },
+        "date": 1651014310463,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 44044076,
+            "range": "± 697227",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/worst",
+            "value": 3,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/worst",
+            "value": 3,
             "range": "± 0",
             "unit": "ns/iter"
           }
