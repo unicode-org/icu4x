@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1650965777547,
+  "lastUpdate": 1650974036095,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -13583,6 +13583,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/ccf3747495b7922c4e63c51902caae4d45781f9b"
         },
         "date": 1650965759036,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4507258,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "1000b6cac1ac3d61f3f5c5c30c13cff456909170",
+          "message": "Lazy datagen (#1811)",
+          "timestamp": "2022-04-26T13:52:06+02:00",
+          "tree_id": "161005f8df695b14049c613e698da95bc8aaeba1",
+          "url": "https://github.com/unicode-org/icu4x/commit/1000b6cac1ac3d61f3f5c5c30c13cff456909170"
+        },
+        "date": 1650974017943,
         "tool": "ndjson",
         "benches": [
           {
