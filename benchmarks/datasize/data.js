@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1650565935621,
+  "lastUpdate": 1650960631738,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -13523,6 +13523,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/2397c6d1a29085459a57cb1420a8337abc8fc2a6"
         },
         "date": 1650565918397,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4507258,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "devoncarew@google.com",
+            "name": "Devon Carew",
+            "username": "devoncarew"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "cb6683966fc45641cd340731981a3b3429525d7e",
+          "message": "Update wasm_vs_transpiler.md (#1815)",
+          "timestamp": "2022-04-26T08:08:29Z",
+          "tree_id": "9ef96e4954ec2351188c90b67c6934775d0336b1",
+          "url": "https://github.com/unicode-org/icu4x/commit/cb6683966fc45641cd340731981a3b3429525d7e"
+        },
+        "date": 1650960614905,
         "tool": "ndjson",
         "benches": [
           {
