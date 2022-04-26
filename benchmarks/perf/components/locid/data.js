@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1650974840987,
+  "lastUpdate": 1651014738982,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -31193,6 +31193,192 @@ window.BENCHMARK_DATA = {
             "name": "subtags/variant/parse",
             "value": 184,
             "range": "± 14",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "dminor@mozilla.com",
+            "name": "Dan Minor",
+            "username": "dminor"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "b79bf0c4ef8079badd137fc9594334f1fd671f71",
+          "message": "Implement formatting for fractional seconds (#1813)\n\n* Implement formatting for fractional seconds\r\n\r\n* Fix skeleton::test::test_pattern_to_skeleton\r\n\r\n* Address review feedback\r\n\r\n* Update expectations for test_pattern_bincode_serialization_roundtrip",
+          "timestamp": "2022-04-26T18:57:21-04:00",
+          "tree_id": "8b61cc7a4001797081e62da0d19f68005469cc50",
+          "url": "https://github.com/unicode-org/icu4x/commit/b79bf0c4ef8079badd137fc9594334f1fd671f71"
+        },
+        "date": 1651014718119,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 3487,
+            "range": "± 87",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/construct/langid",
+            "value": 1040,
+            "range": "± 35",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/construct/locale",
+            "value": 1541,
+            "range": "± 147",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/to_string/langid",
+            "value": 1264,
+            "range": "± 31",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/to_string/langid/writeable",
+            "value": 678,
+            "range": "± 22",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/to_string/locale",
+            "value": 1288,
+            "range": "± 42",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/to_string/locale/writeable",
+            "value": 671,
+            "range": "± 25",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/compare/struct/langid",
+            "value": 88,
+            "range": "± 2",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/compare/struct/locale",
+            "value": 89,
+            "range": "± 4",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/compare/str/langid",
+            "value": 904,
+            "range": "± 42",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/compare/cmp_bytes/langid",
+            "value": 382,
+            "range": "± 20",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/compare/str/locale",
+            "value": 902,
+            "range": "± 26",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/compare/cmp_bytes/locale",
+            "value": 372,
+            "range": "± 13",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/canonicalize/langid",
+            "value": 3044,
+            "range": "± 93",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/canonicalize/locale",
+            "value": 4250,
+            "range": "± 183",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 4812,
+            "range": "± 230",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/construct/locale",
+            "value": 2134,
+            "range": "± 60",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/to_string/locale",
+            "value": 1593,
+            "range": "± 55",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/to_string/locale/writeable",
+            "value": 1099,
+            "range": "± 27",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/compare/struct/locale",
+            "value": 138,
+            "range": "± 5",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/compare/str/locale",
+            "value": 2245,
+            "range": "± 71",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/compare/cmp_bytes/locale",
+            "value": 624,
+            "range": "± 25",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/canonicalize/locale",
+            "value": 4520,
+            "range": "± 133",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "subtags/language/parse",
+            "value": 196,
+            "range": "± 7",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "subtags/script/parse",
+            "value": 139,
+            "range": "± 11",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "subtags/region/parse",
+            "value": 204,
+            "range": "± 9",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "subtags/variant/parse",
+            "value": 196,
+            "range": "± 7",
             "unit": "ns/iter"
           }
         ]
