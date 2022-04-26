@@ -39,7 +39,7 @@ icu_provider_fs = {version = "0.5.0", path = "../../provider/fs" }
 icu_uniset = { version = "0.4.1", path = "../../utils/uniset"}
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }
 zerovec = { version = "0.6", path = "../../utils/zerovec", features = ["derive"] }
-unicode-bidi = { git = "https://github.com/servo/unicode-bidi", optional = true , hardcoded-data = true, std = false }
+unicode-bidi = { git = "https://github.com/servo/unicode-bidi", optional = true , deafault-features = false }
 
 [dev-dependencies]
 icu = { path = "../icu", default-features = false }
