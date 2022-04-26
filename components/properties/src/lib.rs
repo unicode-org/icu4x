@@ -83,7 +83,6 @@
 )]
 
 #[cfg(feature = "bidi")]
-#[cfg(no_std)]
 pub mod bidi;
 
 mod error;
