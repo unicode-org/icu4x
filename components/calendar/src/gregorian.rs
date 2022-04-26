@@ -9,8 +9,9 @@ use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, DateTime, Dat
 use core::convert::TryInto;
 use tinystr::tinystr;
 
-#[derive(Copy, Clone, Debug, Default)]
 /// The Gregorian Calendar
+#[derive(Copy, Clone, Debug, Default)]
+#[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct Gregorian;
 
 #[derive(Copy, Clone, Debug, Hash, Eq, PartialEq)]

@@ -10,8 +10,8 @@ use crate::{types, Calendar, Date, DateDuration, DateDurationUnit};
 use icu_provider::prelude::*;
 use tinystr::{tinystr, TinyStr16};
 
-#[derive(Clone, Debug, Default)]
 /// The Japanese Calendar
+#[derive(Clone, Debug, Default)]
 pub struct Japanese {
     eras: DataPayload<provider::JapaneseErasV1Marker>,
 }

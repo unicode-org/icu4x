@@ -8,6 +8,7 @@ use core::marker::PhantomData;
 
 #[derive(Copy, Clone, Eq, PartialEq)]
 /// A duration between two dates
+#[allow(clippy::exhaustive_structs)] // this type should be stable (and is intended to be constructed manually)
 pub struct DateDuration<C: Calendar + ?Sized> {
     /// The number of years
     pub years: i32,
@@ -24,6 +25,7 @@ pub struct DateDuration<C: Calendar + ?Sized> {
 /// A "duration unit" used to specify the minimum or maximum duration of time to
 /// care about
 #[derive(Copy, Clone, Eq, PartialEq, Debug)]
+#[allow(clippy::exhaustive_enums)] // this type should be stable
 pub enum DateDurationUnit {
     /// Duration in years
     Years,

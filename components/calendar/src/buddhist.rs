@@ -21,6 +21,7 @@ const BUDDHIST_ERA_OFFSET: i32 = 543;
 /// however it has a different zero year: 1 AD = 544 BE
 ///
 /// [cal]: https://en.wikipedia.org/wiki/Thai_solar_calendar
+#[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct Buddhist;
 
 impl Calendar for Buddhist {

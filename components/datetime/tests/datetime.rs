@@ -48,7 +48,7 @@ fn test_fixture(fixture_name: &str) {
         let input_value = parse_gregorian_from_str(&fx.input.value).unwrap();
         let input_buddhist = input_value.to_calendar(Buddhist);
         let input_japanese = input_value.to_calendar(japanese);
-        let input_coptic = input_value.to_calendar(Coptic);
+        let input_coptic = input_value.to_calendar(Coptic::new());
         let input_indian = input_value.to_calendar(Indian);
 
         let description = match fx.description {
