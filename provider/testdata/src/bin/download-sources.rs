@@ -16,6 +16,7 @@ const CLDR_JSON_GLOB: &[&str] = &[
     "cldr-core/supplemental/aliases.json",
     "cldr-core/supplemental/calendarData.json",
     "cldr-core/supplemental/likelySubtags.json",
+    "cldr-core/supplemental/metaZones.json",
     "cldr-core/supplemental/numberingSystems.json",
     "cldr-core/supplemental/ordinals.json",
     "cldr-core/supplemental/plurals.json",
