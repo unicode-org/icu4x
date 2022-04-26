@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1650974557880,
+  "lastUpdate": 1651014509388,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -27335,6 +27335,102 @@ window.BENCHMARK_DATA = {
             "name": "pattern/parse",
             "value": 4910,
             "range": "± 7",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "dminor@mozilla.com",
+            "name": "Dan Minor",
+            "username": "dminor"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "b79bf0c4ef8079badd137fc9594334f1fd671f71",
+          "message": "Implement formatting for fractional seconds (#1813)\n\n* Implement formatting for fractional seconds\r\n\r\n* Fix skeleton::test::test_pattern_to_skeleton\r\n\r\n* Address review feedback\r\n\r\n* Update expectations for test_pattern_bincode_serialization_roundtrip",
+          "timestamp": "2022-04-26T18:57:21-04:00",
+          "tree_id": "8b61cc7a4001797081e62da0d19f68005469cc50",
+          "url": "https://github.com/unicode-org/icu4x/commit/b79bf0c4ef8079badd137fc9594334f1fd671f71"
+        },
+        "date": 1651014488657,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 114969,
+            "range": "± 7364",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 1068130,
+            "range": "± 53955",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 229516,
+            "range": "± 11111",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/DateTimeFormat/format_to_write",
+            "value": 103388,
+            "range": "± 4086",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/DateTimeFormat/format_to_string",
+            "value": 115467,
+            "range": "± 3447",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/format",
+            "value": 107483,
+            "range": "± 4069",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/to_string",
+            "value": 122845,
+            "range": "± 4667",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/ZonedDateTimeFormat/format_to_write",
+            "value": 224105,
+            "range": "± 11565",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/ZonedDateTimeFormat/format_to_string",
+            "value": 240831,
+            "range": "± 9030",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/format",
+            "value": 229810,
+            "range": "± 11895",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/to_string",
+            "value": 247309,
+            "range": "± 7921",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "pattern/parse",
+            "value": 6137,
+            "range": "± 268",
             "unit": "ns/iter"
           }
         ]
