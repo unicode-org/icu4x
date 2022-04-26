@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1650961378049,
+  "lastUpdate": 1650966296963,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -27143,6 +27143,102 @@ window.BENCHMARK_DATA = {
             "name": "pattern/parse",
             "value": 4930,
             "range": "± 21",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "ccf3747495b7922c4e63c51902caae4d45781f9b",
+          "message": "non_exhaustive errors, locid, and decimal (#1792)\n\n* non-exhaustive errors\r\n\r\n* non_exhaustive decimal\r\n\r\n* non_exhaustive locid\r\n\r\n* non_exhaustive calendar",
+          "timestamp": "2022-04-26T09:34:13Z",
+          "tree_id": "a1994a6be2a2c89e1dd66d6f0c386cbf948e2db1",
+          "url": "https://github.com/unicode-org/icu4x/commit/ccf3747495b7922c4e63c51902caae4d45781f9b"
+        },
+        "date": 1650966279021,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 73163,
+            "range": "± 409",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 794880,
+            "range": "± 724",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 170249,
+            "range": "± 796",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/DateTimeFormat/format_to_write",
+            "value": 69896,
+            "range": "± 106",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/DateTimeFormat/format_to_string",
+            "value": 79140,
+            "range": "± 63",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/format",
+            "value": 74165,
+            "range": "± 95",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/to_string",
+            "value": 80720,
+            "range": "± 134",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/ZonedDateTimeFormat/format_to_write",
+            "value": 165084,
+            "range": "± 4316",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/ZonedDateTimeFormat/format_to_string",
+            "value": 177366,
+            "range": "± 166",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/format",
+            "value": 169588,
+            "range": "± 2493",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/to_string",
+            "value": 182511,
+            "range": "± 6567",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "pattern/parse",
+            "value": 4943,
+            "range": "± 9",
             "unit": "ns/iter"
           }
         ]
