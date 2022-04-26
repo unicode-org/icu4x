@@ -4,7 +4,7 @@
 
 use crate::date::{DateTimeInput, DateTimeInputWithLocale, LocalizedDateTimeInput};
 use crate::error::DateTimeFormatError as Error;
-use crate::fields::{self, Field, FieldLength, FieldSymbol, Week, Year};
+use crate::fields::{self, Field, FieldLength, FieldSymbol, Second, Week, Year};
 use crate::pattern::{
     runtime::{Pattern, PatternPlurals},
     PatternItem,
@@ -100,12 +100,26 @@ where
             } else {
                 let buffer = num.to_string();
                 let len = buffer.len();
+                // Safe because we've handled the case where len < 2 above
                 #[allow(clippy::indexing_slicing)]
-                // TODO(#1668) Clippy exceptions need docs or fixing.
                 result.write_str(&buffer[len - 2..])
             }
         }
-        length => write!(result, "{:0>width$}", num, width = length as usize),
+        FieldLength::Abbreviated => write!(result, "{:0>width$}", num, width = 3),
+        FieldLength::Wide => write!(result, "{:0>width$}", num, width = 4),
+        FieldLength::Narrow => write!(result, "{:0>width$}", num, width = 5),
+        FieldLength::Six => write!(result, "{:0>width$}", num, width = 6),
+        FieldLength::Fixed(p) => {
+            let buffer = num.to_string();
+            let len = buffer.len();
+            if len < p.into() {
+                write!(result, "{:0<width$}", num, width = p as usize)
+            } else {
+                // Safe because we've handled the case where len < p above
+                #[allow(clippy::indexing_slicing)]
+                result.write_str(&buffer[0..p as usize])
+            }
+        }
     }
 }
 
@@ -284,7 +298,7 @@ where
             ) as isize,
             field.length,
         )?,
-        FieldSymbol::Second(..) => format_number(
+        FieldSymbol::Second(Second::Second) => format_number(
             w,
             usize::from(
                 datetime
@@ -294,6 +308,19 @@ where
             ) as isize,
             field.length,
         )?,
+        FieldSymbol::Second(Second::FractionalSecond) => format_number(
+            w,
+            usize::from(
+                datetime
+                    .datetime()
+                    .nanosecond()
+                    .ok_or(Error::MissingInputField)?,
+            ) as isize,
+            field.length,
+        )?,
+        field @ FieldSymbol::Second(Second::Millisecond) => {
+            return Err(Error::UnsupportedField(field))
+        }
         FieldSymbol::DayPeriod(period) => {
             #[allow(clippy::expect_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
             let symbol = symbols
@@ -305,6 +332,7 @@ where
                     pattern.time_granularity.is_top_of_hour(
                         datetime.datetime().minute().map(u8::from).unwrap_or(0),
                         datetime.datetime().second().map(u8::from).unwrap_or(0),
+                        datetime.datetime().nanosecond().map(u32::from).unwrap_or(0),
                     ),
                 )?;
             w.write_str(symbol)?
