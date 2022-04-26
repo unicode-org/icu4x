@@ -2,8 +2,11 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! `unicode-bidi` is a crate that implements the [unicode bidi algorithm](https://unicode.org/reports/tr9/)
-//! by using the data from ICU4X through `BidiClassAdapter`
+//! This module exposes tooling for running the [unicode bidi algorithm](https://unicode.org/reports/tr9/) using ICU4X data.
+//!
+//! `BidiClassAdapter` enables ICU4X to provide data to [`unicode-bidi`].
+//!
+//! # Examples
 //!
 //!```
 //! use icu_properties::bidi::BidiClassAdapter;
