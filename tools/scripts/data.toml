@@ -165,7 +165,6 @@ description = "Rebuild ICU4X testdata and perform various checks pertaining to i
 category = "ICU4X Data"
 dependencies = [
     "testdata-check-unchanged",
-    "testdata-verify-zero-copy",
 ]
 
 [tasks.testdata-build-bincode]
