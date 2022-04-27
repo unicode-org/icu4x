@@ -19,9 +19,9 @@
 //! use std::path::PathBuf;
 //!
 //! fn main() {
-//!     datagen(
+//!     icu_datagen::datagen(
 //!         Some(&[langid!("de"), langid!("en-AU")]),
-//!         &get_all_keys(),
+//!         &icu_datagen::keys(&["list/and@1"]),
 //!         &SourceData::default().with_uprops(PathBuf::from("/path/to/uprops/root")),
 //!         Out::Blob(Box::new(File::create("data.postcard").unwrap())),
 //!         false,
@@ -148,7 +148,7 @@ pub enum Out {
 /// * `sources`: The underlying source data. CLDR and/or uprops data can be missing if no
 ///   requested key requires them. Otherwise a error will be returned that can be identified
 ///   with [`is_missing_cldr_error`] or [`is_missing_uprops_error`].
-/// * `out`: See the documentation on [`Out`]
+/// * `out`: The output format and location. See the documentation on [`Out`]
 /// * `ignore_missing_resource_keys`: some keys are not supported by datagen yet. Using
 ///   all keys will not work unless this option is set.
 pub fn datagen(

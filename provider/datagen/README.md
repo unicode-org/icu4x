@@ -16,9 +16,9 @@ use std::fs::File;
 use std::path::PathBuf;
 
 fn main() {
-    datagen(
+    icu_datagen::datagen(
         Some(&[langid!("de"), langid!("en-AU")]),
-        &get_all_keys(),
+        &icu_datagen::keys(&["list/and@1"]),
         &SourceData::default().with_uprops(PathBuf::from("/path/to/uprops/root")),
         Out::Blob(Box::new(File::create("data.postcard").unwrap())),
         false,
