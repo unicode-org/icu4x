@@ -1418,7 +1418,6 @@ dependencies = [
  "icu",
  "icu_codepointtrie",
  "icu_provider",
- "icu_provider_fs",
  "icu_testdata",
  "icu_uniset",
  "serde",
