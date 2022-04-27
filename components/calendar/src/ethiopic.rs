@@ -208,8 +208,8 @@ impl Date<Ethiopic> {
         Ok(Date::from_raw(EthiopicDateInner(inner, false), Ethiopic))
     }
 
-    pub fn set_amete_alem(&self, value: bool) -> Date<Ethiopic> {
-        Date::from_raw(EthiopicDateInner(self.inner().0, value), Ethiopic)
+    pub fn set_amete_alem(&mut self, value: bool) {
+        self.inner_mut.set_amete_alem(value);
     }
 }
 
@@ -230,11 +230,8 @@ impl DateTime<Ethiopic> {
         })
     }
 
-    pub fn set_amete_alem(&self, value: bool) -> DateTime<Ethiopic> {
-        DateTime {
-            date: self.date.set_amete_alem(value),
-            time: self.time,
-        }
+    pub fn set_amete_alem(&mut self, value: bool) {
+        self.date.inner.set_amete_alem(value);
     }
 }
 

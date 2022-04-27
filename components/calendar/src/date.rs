@@ -38,7 +38,7 @@ impl<C: Calendar> AsCalendar for Rc<C> {
 /// This can work with wrappers arount [`Calendar`] types,
 /// e.g. `Rc<C>`, via the [`AsCalendar`] trait
 pub struct Date<A: AsCalendar> {
-    inner: <A::Calendar as Calendar>::DateInner,
+    pub(crate) inner: <A::Calendar as Calendar>::DateInner,
     calendar: A,
 }
 
