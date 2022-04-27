@@ -206,23 +206,21 @@ macro_rules! check_is {
             true
         }
     };
-    ($self:ident, $check_int:ident, $check_u8_comp:ident, !$check_u8_0_inv:ident, !$check_u8_1_inv:ident) => {
+    ($self:ident, $check_int:ident, $check_u8_0_inv:ident, $check_u8_1_inv:ident) => {
         if N <= 4 {
             Aligned4::from_bytes(&$self.bytes).$check_int()
         } else if N <= 8 {
             Aligned8::from_bytes(&$self.bytes).$check_int()
         } else {
-            // For cases of needing to check case AND composition
             // Won't panic because N is > 8
-            if $self.bytes[0].$check_u8_0_inv() || !$self.bytes[0].$check_u8_comp() {
-                // Checking first character. Necessary for titlecase
+            if !$self.bytes[0].$check_u8_0_inv() {
                 return false;
             }
             let mut i = 1;
             // Won't panic because self.bytes has length N
             #[allow(clippy::indexing_slicing)]
             while i < N && $self.bytes[i] != 0 {
-                if $self.bytes[i].$check_u8_1_inv() || !$self.bytes[i].$check_u8_comp() {
+                if !$self.bytes[i].$check_u8_1_inv() {
                     return false;
                 }
                 i += 1;
@@ -431,9 +429,8 @@ impl<const N: usize> TinyAsciiStr<N> {
         check_is!(
             self,
             is_ascii_alphabetic_lowercase,
-            is_ascii_alphabetic,
-            !is_ascii_uppercase,
-            !is_ascii_uppercase
+            is_ascii_lowercase,
+            is_ascii_lowercase
         )
     }
 
@@ -467,9 +464,8 @@ impl<const N: usize> TinyAsciiStr<N> {
         check_is!(
             self,
             is_ascii_alphabetic_titlecase,
-            is_ascii_alphabetic,
-            !is_ascii_lowercase,
-            !is_ascii_uppercase
+            is_ascii_uppercase,
+            is_ascii_lowercase
         )
     }
 
@@ -505,9 +501,8 @@ impl<const N: usize> TinyAsciiStr<N> {
         check_is!(
             self,
             is_ascii_alphabetic_uppercase,
-            is_ascii_alphabetic,
-            !is_ascii_lowercase,
-            !is_ascii_lowercase
+            is_ascii_uppercase,
+            is_ascii_uppercase
         )
     }
 }
