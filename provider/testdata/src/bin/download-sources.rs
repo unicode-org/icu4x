@@ -2,10 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use clap::{value_t, App, Arg, ArgMatches};
+use clap::{value_t, App, Arg};
 use eyre::WrapErr;
 use futures::stream::{self, StreamExt, TryStreamExt};
-use icu_testdata::metadata::{self, PackageInfo};
 use simple_logger::SimpleLogger;
 use std::path::PathBuf;
 use tokio::fs;
@@ -118,25 +117,20 @@ async fn main() -> eyre::Result<()> {
         _ => eyre::bail!("Only -v, -vv, and -vvv are supported"),
     }
 
-    let metadata = metadata::load()?;
-    log::debug!("Package metadata: {:?}", metadata);
-
-    fs::remove_dir_all(&cldr_json_root)
-        .await
-        .with_context(|| format!("Failed to delete directory: {:?}", &cldr_json_root))?;
-
-    download_cldr(&args, &metadata).await?;
-
-    Ok(())
-}
-
-async fn download_cldr(args: &ArgMatches<'_>, metadata: &PackageInfo) -> eyre::Result<()> {
     let output_path = PathBuf::from(
         args.value_of_os("OUTPUT")
             .expect("Option has a default value"),
     );
+
+    fs::remove_dir_all(&output_path)
+        .await
+        .with_context(|| format!("Failed to delete directory: {:?}", &output_path))?;
+
     let http_concurrency: usize =
         value_t!(args, "HTTP_CONCURRENCY", usize).expect("Option has a default value");
+
+    let metadata = icu_testdata::metadata::load()?;
+    log::debug!("Package metadata: {:?}", metadata);
 
     let downloader = &CldrJsonDownloader {
         repo_owner_and_name: "unicode-org/cldr-json",

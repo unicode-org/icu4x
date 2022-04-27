@@ -11,6 +11,7 @@ The output data can be found in the [data](./data/) subdirectory. There, you wil
 
 - `json` for the ICU4X JSON test data
 - `cldr` for the source CLDR JSON
+- `uprops` for the source Unicode properties data
 
 ### Pointing to custom test data
 
@@ -19,6 +20,8 @@ If you wish to run ICU4X tests with custom test data, you may do so by setting t
 ```bash
 $ ICU4X_TESTDATA_DIR=/path/to/custom/testdata cargo test
 ```
+
+Note: this does not work with [`get_static_provider`](crate::get_static_provider).
 
 ### Re-generating the data
 
@@ -30,7 +33,7 @@ $ cargo make testdata
 
 The following commands are also available:
 
-- `cargo make testdata-download` downloads fresh CLDR JSON
+- `cargo make testdata-download-sources` downloads fresh CLDR JSON
 - `cargo make testdata-build-json` re-generates the ICU4X JSON
 - `cargo make testdata-build-blob` re-generates the ICU4X blob file
 - `cargo make testdata-build-bincode` re-generates Bincode filesystem testdata

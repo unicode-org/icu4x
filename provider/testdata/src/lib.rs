@@ -13,6 +13,7 @@
 //!
 //! - `json` for the ICU4X JSON test data
 //! - `cldr` for the source CLDR JSON
+//! - `uprops` for the source Unicode properties data
 //!
 //! ## Pointing to custom test data
 //!
@@ -21,6 +22,8 @@
 //! ```bash
 //! $ ICU4X_TESTDATA_DIR=/path/to/custom/testdata cargo test
 //! ```
+//!
+//! Note: this does not work with [`get_static_provider`](crate::get_static_provider).
 //!
 //! ## Re-generating the data
 //!
@@ -32,7 +35,7 @@
 //!
 //! The following commands are also available:
 //!
-//! - `cargo make testdata-download` downloads fresh CLDR JSON
+//! - `cargo make testdata-download-sources` downloads fresh CLDR JSON
 //! - `cargo make testdata-build-json` re-generates the ICU4X JSON
 //! - `cargo make testdata-build-blob` re-generates the ICU4X blob file
 //! - `cargo make testdata-build-bincode` re-generates Bincode filesystem testdata
@@ -77,7 +80,8 @@ extern crate alloc;
 
 #[cfg(feature = "metadata")]
 pub mod metadata;
-#[cfg(feature = "fs")]
+
+#[cfg(feature = "std")]
 pub mod paths;
 
 #[cfg(feature = "static")]

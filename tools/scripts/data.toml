@@ -4,14 +4,14 @@
 
 # This is a cargo-make file included in the toplevel Makefile.toml
 
-[tasks.testdata-download]
+[tasks.testdata-download-sources]
 description = "Download fresh CLDR JSON, overwriting the existing CLDR JSON."
 category = "ICU4X Data"
 command = "cargo"
 args = [
     "run",
-    "--bin=icu4x-testdata-download",
-    "--features=download-testdata",
+    "--bin=icu4x-testdata-download-sources",
+    "--features=bin",
     "--",
     "-v",
 ]
