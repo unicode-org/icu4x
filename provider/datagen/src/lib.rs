@@ -62,7 +62,7 @@ use icu_provider_adapters::filter::Filterable;
 use icu_provider_fs::export::serializers;
 use rayon::prelude::*;
 use std::collections::HashSet;
-use std::io::{Read, BufRead, BufReader};
+use std::io::{BufRead, BufReader, Read};
 use std::path::PathBuf;
 
 /// Parses a list of human-readable key identifiers and returns a
@@ -72,7 +72,7 @@ use std::path::PathBuf;
 /// ```
 /// # use icu_provider::ResourceMarker;
 /// assert_eq!(
-///     icu_datagen::keys(&["list/and@1", "list/or@1"]), 
+///     icu_datagen::keys(&["list/and@1", "list/or@1"]),
 ///     vec![
 ///         icu_list::provider::AndListV1Marker::KEY,
 ///         icu_list::provider::OrListV1Marker::KEY,
@@ -91,7 +91,7 @@ pub fn keys<S: AsRef<str>>(strings: &[S]) -> Vec<ResourceKey> {
 /// list of [`ResourceKey`]s. Invalid key names are ignored.
 ///
 /// # Example
-/// 
+///
 /// #### keys.txt
 /// ```text
 /// list/and@1
@@ -103,7 +103,7 @@ pub fn keys<S: AsRef<str>>(strings: &[S]) -> Vec<ResourceKey> {
 /// # use std::fs::File;
 /// # fn main() -> std::io::Result<()> {
 /// assert_eq!(
-///     icu_datagen::keys_from_file(File::open("keys.txt")?)?, 
+///     icu_datagen::keys_from_file(File::open("keys.txt")?)?,
 ///     vec![
 ///         icu_list::provider::AndListV1Marker::KEY,
 ///         icu_list::provider::OrListV1Marker::KEY,
@@ -113,7 +113,11 @@ pub fn keys<S: AsRef<str>>(strings: &[S]) -> Vec<ResourceKey> {
 /// # }
 /// ```
 pub fn keys_from_file<R: Read>(file: R) -> std::io::Result<Vec<ResourceKey>> {
-    Ok(keys(&BufReader::new(file).lines().collect::<std::io::Result<Vec<String>>>()?))
+    Ok(keys(
+        &BufReader::new(file)
+            .lines()
+            .collect::<std::io::Result<Vec<String>>>()?,
+    ))
 }
 
 /// The output format.
