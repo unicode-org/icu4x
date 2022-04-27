@@ -26,7 +26,8 @@ struct ICU4XPluralOperandsDeleter {
 
 /**
  * FFI version of `PluralOperands`.
- * See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu_plurals/struct.PluralOperands.html) for more details.
+ * 
+ * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu_plurals/struct.PluralOperands.html) for more information.
  */
 struct ICU4XPluralOperands {
  public:
@@ -39,7 +40,8 @@ struct ICU4XPluralOperands {
 
   /**
    * FFI version of `PluralOperands::from_str()`.
-   * See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu_plurals/struct.PluralOperands.html#method.from_str) for more details.
+   * 
+   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu_plurals/struct.PluralOperands.html#method.from_str) for more information.
    */
   static ICU4XCreatePluralOperandsResult create(const std::string_view s);
 };

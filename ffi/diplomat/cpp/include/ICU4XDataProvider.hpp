@@ -23,30 +23,40 @@ struct ICU4XDataProviderDeleter {
     capi::ICU4XDataProvider_destroy(l);
   }
 };
+
+/**
+ * An ICU4X data provider, capable of loading ICU4X data keys from some source.
+ * 
+ * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu_provider/index.html) for more information.
+ */
 class ICU4XDataProvider {
  public:
 
   /**
    * Constructs an `FsDataProvider` and returns it as an [`ICU4XDataProvider`].
-   * See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu_provider_fs/struct.FsDataProvider.html) for more details.
+   * 
+   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu_provider_fs/struct.FsDataProvider.html) for more information.
    */
   static ICU4XCreateDataProviderResult create_fs(const std::string_view path);
 
   /**
    * Constructs an `StaticDataProvider` and returns it as an [`ICU4XDataProvider`].
-   * See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu_provider_blob/struct.StaticDataProvider.html) for more details.
+   * 
+   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu_provider_blob/struct.StaticDataProvider.html) for more information.
    */
   static ICU4XCreateDataProviderResult create_static();
 
   /**
    * Constructs a `BlobDataProvider` and returns it as an [`ICU4XDataProvider`].
-   * See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu_provider_blob/struct.BlobDataProvider.html) for more details.
+   * 
+   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu_provider_blob/struct.BlobDataProvider.html) for more information.
    */
   static ICU4XCreateDataProviderResult create_from_byte_slice(const diplomat::span<uint8_t> blob);
 
   /**
    * Constructs an empty `StaticDataProvider` and returns it as an [`ICU4XDataProvider`].
-   * See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu_provider_blob/struct.StaticDataProvider.html) for more details.
+   * 
+   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu_provider_blob/struct.StaticDataProvider.html) for more information.
    */
   static ICU4XCreateDataProviderResult create_empty();
   inline const capi::ICU4XDataProvider* AsFFI() const { return this->inner.get(); }

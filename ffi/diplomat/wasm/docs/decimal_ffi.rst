@@ -3,11 +3,13 @@
 
 .. js:class:: ICU4XFixedDecimalFormat
 
-    An ICU4X Fixed Decimal Format object, capable of formatting a :js:class:`ICU4XFixedDecimal` as a string. See `the Rust docs <https://unicode-org.github.io/icu4x-docs/doc/icu/decimal/struct.FixedDecimalFormat.html>`__ for more information.
+    An ICU4X Fixed Decimal Format object, capable of formatting a :js:class:`ICU4XFixedDecimal` as a string.
+    See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/icu/decimal/struct.FixedDecimalFormat.html>`__ for more information.
 
     .. js:staticfunction:: try_new(locale, provider, options)
 
-        Creates a new :js:class:`ICU4XFixedDecimalFormat` from locale data. See `the Rust docs <https://unicode-org.github.io/icu4x-docs/doc/icu/decimal/struct.FixedDecimalFormat.html#method.try_new>`__ for more information.
+        Creates a new :js:class:`ICU4XFixedDecimalFormat` from locale data.
+        See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/icu/decimal/struct.FixedDecimalFormat.html#method.try_new>`__ for more information.
 
     .. js:staticfunction:: try_new_from_decimal_symbols_v1(data_struct, options)
 
@@ -16,7 +18,8 @@
 
     .. js:function:: format(value)
 
-        Formats a :js:class:`ICU4XFixedDecimal` to a string. See `the Rust docs <https://unicode-org.github.io/icu4x-docs/doc/icu/decimal/struct.FixedDecimalFormat.html#method.format>`__ for more information.
+        Formats a :js:class:`ICU4XFixedDecimal` to a string.
+        See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/icu/decimal/struct.FixedDecimalFormat.html#method.format>`__ for more information.
 
 .. js:class:: ICU4XFixedDecimalFormatOptions
 

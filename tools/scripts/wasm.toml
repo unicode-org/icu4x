@@ -445,7 +445,7 @@ rm ./wasm/lib/diplomat-runtime.mjs
 rm -r ./wasm/docs/
 mkdir ./wasm/docs
 
-exec --fail-on-error diplomat-tool js ./wasm/lib/ --docs ./wasm/docs
+exec --fail-on-error diplomat-tool js ./wasm/lib/ --docs ./wasm/docs --docs-base-urls=*:https://unicode-org.github.io/icu4x-docs/doc/
 '''
 
 [tasks.wasm-clean]

@@ -134,7 +134,7 @@ mkdir ./cpp/include
 rm -r ./cpp/docs/source
 mkdir ./cpp/docs/source
 writefile ./cpp/docs/source/conf.py ${conf_py}
-exec --fail-on-error diplomat-tool cpp ./cpp/include --docs ./cpp/docs/source
+exec --fail-on-error diplomat-tool cpp ./cpp/include --docs ./cpp/docs/source --docs-base-urls=*:https://unicode-org.github.io/icu4x-docs/doc/ 
 '''
 
 [tasks.build-wearos-ffi]

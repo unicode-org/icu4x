@@ -18,7 +18,7 @@ pub mod ffi {
     }
 
     /// FFI version of `PluralCategory`.
-    /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu_plurals/enum.PluralCategory.html) for more details.
+    #[diplomat::rust_link(icu_plurals::PluralCategory, Enum)]
     pub enum ICU4XPluralCategory {
         Zero,
         One,
@@ -29,13 +29,13 @@ pub mod ffi {
     }
 
     /// FFI version of `PluralRules`.
-    /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu_plurals/struct.PluralRules.html) for more details.
+    #[diplomat::rust_link(icu_plurals::PluralRules, Struct)]
     #[diplomat::opaque]
     pub struct ICU4XPluralRules(PluralRules);
 
     impl ICU4XPluralRules {
         /// FFI version of `PluralRules::try_new_cardinal()`.
-        /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu_plurals/struct.PluralRules.html#method.try_new) for more details.
+        #[diplomat::rust_link(icu_plurals::PluralRules::try_new, FnInStruct)]
         pub fn try_new_cardinal(
             locale: &ICU4XLocale,
             provider: &ICU4XDataProvider,
@@ -55,7 +55,7 @@ pub mod ffi {
         }
 
         /// FFI version of `PluralRules::try_new_ordinal()`.
-        /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu_plurals/struct.PluralRules.html#method.try_new) for more details.
+        #[diplomat::rust_link(icu_plurals::PluralRules::try_new, FnInStruct)]
         pub fn try_new_ordinal(
             locale: &ICU4XLocale,
             provider: &ICU4XDataProvider,
@@ -75,7 +75,7 @@ pub mod ffi {
         }
 
         /// FFI version of `PluralRules::select()`.
-        /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu_plurals/struct.PluralRules.html#method.select) for more details.
+        #[diplomat::rust_link(icu_plurals::PluralRules::select, FnInStruct)]
         pub fn select(&self, op: ICU4XPluralOperands) -> ICU4XPluralCategory {
             let res = self.0.select(PluralOperands {
                 i: op.i,
@@ -97,7 +97,7 @@ pub mod ffi {
         }
 
         /// FFI version of `PluralRules::categories()`.
-        /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu_plurals/struct.PluralRules.html#method.categories) for more details.
+        #[diplomat::rust_link(icu_plurals::PluralRules::categories, FnInStruct)]
         pub fn categories(&self) -> ICU4XPluralCategories {
             self.0.categories().fold(
                 ICU4XPluralCategories {
@@ -124,14 +124,14 @@ pub mod ffi {
     }
 
     /// This is the result returned by `ICU4XPluralOperands::create()`
-    /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu_plurals/struct.PluralOperands.html) for more details.
+    #[diplomat::rust_link(icu_plurals::PluralOperands, Struct)]
     pub struct ICU4XCreatePluralOperandsResult {
         pub operands: ICU4XPluralOperands,
         pub success: bool,
     }
 
     /// FFI version of `PluralOperands`.
-    /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu_plurals/struct.PluralOperands.html) for more details.
+    #[diplomat::rust_link(icu_plurals::PluralOperands, Struct)]
     pub struct ICU4XPluralOperands {
         pub i: u64,
         pub v: usize,
@@ -143,7 +143,7 @@ pub mod ffi {
 
     impl ICU4XPluralOperands {
         /// FFI version of `PluralOperands::from_str()`.
-        /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu_plurals/struct.PluralOperands.html#method.from_str) for more details.
+        #[diplomat::rust_link(icu_plurals::PluralOperands::from_str, FnInStruct)]
         pub fn create(s: &str) -> ICU4XCreatePluralOperandsResult {
             PluralOperands::from_str(s)
                 .ok()

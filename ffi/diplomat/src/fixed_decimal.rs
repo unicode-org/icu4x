@@ -11,7 +11,7 @@ pub mod ffi {
     use writeable::Writeable;
 
     #[diplomat::opaque]
-    /// A decimal number. See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html) for more information.
+    #[diplomat::rust_link(fixed_decimal::decimal::FixedDecimal, Struct)]
     pub struct ICU4XFixedDecimal(pub FixedDecimal);
 
     pub struct ICU4XCreateFixedDecimalResult {
@@ -33,7 +33,7 @@ pub mod ffi {
     impl ICU4XFixedDecimal {
         /// Construct an [`ICU4XFixedDecimal`] from an integer.
         ///
-        /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html) for more information.
+        #[diplomat::rust_link(fixed_decimal::decimal::FixedDecimal, Struct)]
         pub fn create(v: i32) -> Box<ICU4XFixedDecimal> {
             Box::new(ICU4XFixedDecimal(FixedDecimal::from(v)))
         }
@@ -41,7 +41,7 @@ pub mod ffi {
         /// Construct an [`ICU4XFixedDecimal`] from an float, with enough digits to recover
         /// the original floating point in IEEE 754 without needing trailing zeros
         ///
-        /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.from_f64) for more information.
+        #[diplomat::rust_link(fixed_decimal::decimal::FixedDecimal::from_f64, FnInStruct)]
         pub fn create_from_f64_with_max_precision(f: f64) -> Option<Box<ICU4XFixedDecimal>> {
             Some(Box::new(ICU4XFixedDecimal(
                 FixedDecimal::try_from_f64(f, DoublePrecision::Floating).ok()?,
@@ -50,7 +50,7 @@ pub mod ffi {
 
         /// Construct an [`ICU4XFixedDecimal`] from an float, with a given power of 10 for the lower magnitude
         ///
-        /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.from_f64) for more information.
+        #[diplomat::rust_link(fixed_decimal::decimal::FixedDecimal::from_f64, FnInStruct)]
         pub fn create_from_f64_with_lower_magnitude(
             f: f64,
             precision: i16,
@@ -67,7 +67,7 @@ pub mod ffi {
 
         /// Construct an [`ICU4XFixedDecimal`] from an float, for a given number of significant digits
         ///
-        /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.from_f64) for more information.
+        #[diplomat::rust_link(fixed_decimal::decimal::FixedDecimal::from_f64, FnInStruct)]
         pub fn create_from_f64_with_significant_digits(
             f: f64,
             digits: u8,
@@ -83,7 +83,7 @@ pub mod ffi {
         }
 
         /// Construct an [`ICU4XFixedDecimal`] from a string.
-        /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html) for more information.
+        #[diplomat::rust_link(fixed_decimal::decimal::FixedDecimal, Struct)]
         pub fn create_fromstr(v: &str) -> ICU4XCreateFixedDecimalResult {
             v.parse::<FixedDecimal>()
                 .map(|v| ICU4XCreateFixedDecimalResult {
@@ -97,38 +97,38 @@ pub mod ffi {
         }
 
         /// Multiply the [`ICU4XFixedDecimal`] by a given power of ten.
-        /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.multiply_pow10) for more information.
+        #[diplomat::rust_link(fixed_decimal::decimal::FixedDecimal::multiply_pow10, FnInStruct)]
         pub fn multiply_pow10(&mut self, power: i16) -> bool {
             self.0.multiply_pow10(power).is_ok()
         }
 
         /// Invert the sign of the [`ICU4XFixedDecimal`].
-        /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.negate) for more information.
+        #[diplomat::rust_link(fixed_decimal::decimal::FixedDecimal::negate, FnInStruct)]
         pub fn negate(&mut self) {
             self.0.negate()
         }
 
         /// Zero-pad the [`ICU4XFixedDecimal`] on the left to a particular number of integer digits
-        /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.pad_left) for more information.
+        #[diplomat::rust_link(fixed_decimal::decimal::FixedDecimal::pad_left, FnInStruct)]
         pub fn pad_left(&mut self, digits: u16) {
             self.0.pad_left(digits)
         }
 
         /// Truncate the [`ICU4XFixedDecimal`] on the left to a particular magnitude, deleting digits if necessary. This is useful for, e.g. abbreviating years
         /// ("2022" -> "22")
-        /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.truncate_left) for more information.
+        #[diplomat::rust_link(fixed_decimal::decimal::FixedDecimal::truncate_left, FnInStruct)]
         pub fn truncate_left(&mut self, magnitude: i16) {
             self.0.truncate_left(magnitude)
         }
 
         /// Zero-pad the [`ICU4XFixedDecimal`] on the right to a particular (negative) magnitude
-        /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.pad_right) for more information.
+        #[diplomat::rust_link(fixed_decimal::decimal::FixedDecimal::pad_right, FnInStruct)]
         pub fn pad_right(&mut self, negative_magnitude: u16) {
             self.0.pad_right(negative_magnitude)
         }
 
         /// Format the [`ICU4XFixedDecimal`] as a string.
-        /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.write_to) for more information.
+        #[diplomat::rust_link(fixed_decimal::decimal::FixedDecimal::write_to, FnInStruct)]
         pub fn to_string(&self, to: &mut diplomat_runtime::DiplomatWriteable) {
             #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
             self.0.write_to(to).unwrap();
