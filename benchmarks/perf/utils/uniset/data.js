@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1651060114031,
+  "lastUpdate": 1651067169847,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -25001,6 +25001,60 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 47802188,
             "range": "± 250862",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/worst",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/worst",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "younies.mahmoud@gmail.com",
+            "name": "Younies Mahmoud",
+            "username": "younies"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "f6a56a1b9f9d2127dcdc7c0a93219c98c93ec9ff",
+          "message": "Bidi Data Adapter (#1784)\n\nAdd Bidi Data Adapter",
+          "timestamp": "2022-04-27T15:38:36+02:00",
+          "tree_id": "ae90fed5621cbc01dda79296dbeffd29032c7bbe",
+          "url": "https://github.com/unicode-org/icu4x/commit/f6a56a1b9f9d2127dcdc7c0a93219c98c93ec9ff"
+        },
+        "date": 1651067153305,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 47910642,
+            "range": "± 240159",
             "unit": "ns/iter"
           },
           {
