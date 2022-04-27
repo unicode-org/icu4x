@@ -7,6 +7,7 @@
 //! Sample file:
 //! <https://github.com/unicode-org/cldr-json/blob/main/cldr-json/cldr-core/supplemental/aliases.json>
 
+use litemap::LiteMap;
 use serde::Deserialize;
 use tinystr::TinyAsciiStr;
 
@@ -18,16 +19,16 @@ pub struct Replacement<T> {
 
 #[derive(PartialEq, Debug, Deserialize)]
 pub struct Alias {
-    #[serde(with = "tuple_vec_map", rename = "languageAlias")]
-    pub language_aliases: Vec<(String, Replacement<String>)>,
-    #[serde(with = "tuple_vec_map", rename = "scriptAlias")]
-    pub script_aliases: Vec<(TinyAsciiStr<4>, Replacement<TinyAsciiStr<4>>)>,
-    #[serde(with = "tuple_vec_map", rename = "territoryAlias")]
-    pub region_aliases: Vec<(TinyAsciiStr<3>, Replacement<String>)>,
-    #[serde(with = "tuple_vec_map", rename = "variantAlias")]
-    pub variant_aliases: Vec<(TinyAsciiStr<8>, Replacement<TinyAsciiStr<8>>)>,
-    #[serde(with = "tuple_vec_map", rename = "subdivisionAlias")]
-    pub subdivision_aliases: Vec<(TinyAsciiStr<7>, Replacement<String>)>,
+    #[serde(rename = "languageAlias")]
+    pub language_aliases: LiteMap<String, Replacement<String>>,
+    #[serde(rename = "scriptAlias")]
+    pub script_aliases: LiteMap<TinyAsciiStr<4>, Replacement<TinyAsciiStr<4>>>,
+    #[serde(rename = "territoryAlias")]
+    pub region_aliases: LiteMap<TinyAsciiStr<3>, Replacement<String>>,
+    #[serde(rename = "variantAlias")]
+    pub variant_aliases: LiteMap<TinyAsciiStr<8>, Replacement<TinyAsciiStr<8>>>,
+    #[serde(rename = "subdivisionAlias")]
+    pub subdivision_aliases: LiteMap<TinyAsciiStr<7>, Replacement<String>>,
 }
 
 #[derive(PartialEq, Debug, Deserialize)]

@@ -8,12 +8,13 @@
 //! <https://github.com/unicode-org/cldr-json/blob/main/cldr-json/cldr-core/supplemental/likelySubtags.json>
 
 use icu_locid::LanguageIdentifier;
+use litemap::LiteMap;
 use serde::Deserialize;
 
 #[derive(PartialEq, Debug, Deserialize)]
 pub struct Supplemental {
-    #[serde(with = "tuple_vec_map", rename = "likelySubtags")]
-    pub likely_subtags: Vec<(LanguageIdentifier, LanguageIdentifier)>,
+    #[serde(rename = "likelySubtags")]
+    pub likely_subtags: LiteMap<LanguageIdentifier, LanguageIdentifier>,
 }
 
 #[derive(PartialEq, Debug, Deserialize)]

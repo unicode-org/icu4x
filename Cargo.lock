@@ -1262,7 +1262,6 @@ dependencies = [
  "rayon",
  "serde",
  "serde-aux",
- "serde-tuple-vec-map",
  "serde_json",
  "sha2",
  "simple_logger",

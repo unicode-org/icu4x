@@ -12,7 +12,6 @@ use itertools::Itertools;
 use litemap::LiteMap;
 use serde::de::{Deserializer, Error, MapAccess, Unexpected, Visitor};
 use serde::Deserialize;
-use serde_aux::prelude::*;
 use tinystr::TinyStr8;
 
 #[derive(PartialEq, Debug, Deserialize)]
@@ -96,7 +95,7 @@ pub struct Numbers {
     #[serde(rename = "defaultNumberingSystem")]
     pub default_numbering_system: TinyStr8,
     #[serde(rename = "minimumGroupingDigits")]
-    #[serde(deserialize_with = "deserialize_number_from_string")]
+    #[serde(deserialize_with = "serde_aux::prelude::deserialize_number_from_string")]
     pub minimum_grouping_digits: u8,
     #[serde(flatten)]
     pub numsys_data: NumberingSystemData,
