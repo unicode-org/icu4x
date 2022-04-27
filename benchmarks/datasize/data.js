@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1651013960594,
+  "lastUpdate": 1651054171495,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -13643,6 +13643,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/b79bf0c4ef8079badd137fc9594334f1fd671f71"
         },
         "date": 1651013939619,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4507258,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "54c2538c75476b6087f000a0bfd3f0aedebb22d5",
+          "message": "Using rust_link in FFI (#1786)",
+          "timestamp": "2022-04-27T12:07:48+02:00",
+          "tree_id": "7e03b8196701b7c1673aca912d4e3de447b770f1",
+          "url": "https://github.com/unicode-org/icu4x/commit/54c2538c75476b6087f000a0bfd3f0aedebb22d5"
+        },
+        "date": 1651054155348,
         "tool": "ndjson",
         "benches": [
           {
