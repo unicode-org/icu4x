@@ -7,7 +7,7 @@ import test from 'ava';
 import { ICU4XFixedDecimal, ICU4XLocale, ICU4XDataProvider, ICU4XFixedDecimalFormat, ICU4XFixedDecimalFormatOptions } from "../lib/api.mjs"
 
 const locale = ICU4XLocale.create("bn");
-const dataProvider = ICU4XDataProvider.create_static().provider;
+const dataProvider = ICU4XDataProvider.create_test().provider;
 const format = ICU4XFixedDecimalFormat.try_new(locale, dataProvider, ICU4XFixedDecimalFormatOptions.default());
 
 test("format a simple decimal", t => {

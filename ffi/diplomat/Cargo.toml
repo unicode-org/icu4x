@@ -31,15 +31,15 @@ all-features = true
 # Omit most optional dependency features from permutation testing
 skip_optional_dependencies = true
 # Bench feature gets tested separately and is only relevant for CI.
-# smaller_static gets tested on the FFI job anyway
-denylist = ["bench", "smaller_static"]
+# smaller_test gets tested on the FFI job anyway
+denylist = ["bench", "smaller_test"]
 
 # Please keep the features list in sync with the icu_capi_staticlib crate
 [features]
-default = ["provider_fs", "provider_static", "deserialize_postcard_07", "deserialize_json"]
+default = ["provider_fs", "deserialize_postcard_07", "deserialize_json"]
 provider_fs = ["icu_provider_fs"]
-provider_static = ["icu_testdata"]
-smaller_static = ["provider_static"]
+provider_test = ["icu_testdata", "deserialize_postcard_07"]
+smaller_test = ["provider_test"]
 deserialize_json = ["icu_provider/deserialize_json"]
 deserialize_postcard_07 = ["icu_provider/deserialize_postcard_07"]
 deserialize_bincode_1 = ["icu_provider/deserialize_bincode_1"]

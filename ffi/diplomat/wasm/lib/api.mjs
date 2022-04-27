@@ -255,10 +255,10 @@ export class ICU4XDataProvider {
     return diplomat_out;
   }
 
-  static create_static() {
+  static create_test() {
     const diplomat_out = (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-      wasm.ICU4XDataProvider_create_static(diplomat_receive_buffer);
+      wasm.ICU4XDataProvider_create_test(diplomat_receive_buffer);
       const out = new ICU4XCreateDataProviderResult(diplomat_receive_buffer);
       if (out.provider.underlying !== 0) {
         const out_provider_value = out.provider;
