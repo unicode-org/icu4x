@@ -18,7 +18,7 @@
 //! ```bash
 //! # Run from the icu4x project folder
 //! $ cargo run --bin icu4x-datagen -- \
-//!     --cldr-tag 39.0.0 \
+//!     --cldr-tag 41.0.0 \
 //!     --all-keys \
 //!     --all-locales \
 //!     --format blob \
@@ -41,7 +41,7 @@
 //! ```bash
 //! # Run from the icu4x project folder
 //! $ cargo run --bin icu4x-datagen -- \
-//!     --cldr-tag 39.0.0 \
+//!     --cldr-tag 41.0.0 \
 //!     --key-file /tmp/icu4x_data/work_log+keys.txt \
 //!     --locales es \
 //!     --locales de \

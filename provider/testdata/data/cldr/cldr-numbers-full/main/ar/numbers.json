@@ -3,7 +3,7 @@
     "ar": {
       "identity": {
         "version": {
-          "_cldrVersion": "40"
+          "_cldrVersion": "41"
         },
         "language": "ar"
       },
@@ -499,7 +499,7 @@
           "range": "{0}–{1}"
         },
         "minimalPairs": {
-          "pluralMinimalPairs-count-zero": "{0} كتاب",
+          "pluralMinimalPairs-count-zero": "{0} ولد حضر",
           "pluralMinimalPairs-count-one": "ولد واحد حضر",
           "pluralMinimalPairs-count-two": "ولدان حضرا",
           "pluralMinimalPairs-count-few": "{0} أولاد حضروا",

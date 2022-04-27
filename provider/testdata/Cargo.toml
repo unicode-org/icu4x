@@ -134,7 +134,7 @@ cldr_json_glob = [
 ]
 
 # Git tag or sha1 for the CLDR data used to generate the testdata.
-gitref = "40.0.0"
+gitref = "41.0.0"
 
 [package.metadata.cargo-all-features]
 # Omit most optional dependency features from permutation testing
