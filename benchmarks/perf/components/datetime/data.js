@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1651067335948,
+  "lastUpdate": 1651071462227,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -27719,6 +27719,102 @@ window.BENCHMARK_DATA = {
             "name": "pattern/parse",
             "value": 4960,
             "range": "± 8",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "180e64610ae774cb51cb1d0839f90c2683f4f486",
+          "message": "Fixup FFI features (#1818)\n\n* Fix local running of FFI job\r\n\r\n* Add format features\r\n\r\n* fixup freertos build",
+          "timestamp": "2022-04-27T14:47:00Z",
+          "tree_id": "d94de59085d6a4e1b645ef67561ee6d897f39db4",
+          "url": "https://github.com/unicode-org/icu4x/commit/180e64610ae774cb51cb1d0839f90c2683f4f486"
+        },
+        "date": 1651071444862,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 74015,
+            "range": "± 349",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 795773,
+            "range": "± 10074",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 168646,
+            "range": "± 365",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/DateTimeFormat/format_to_write",
+            "value": 69892,
+            "range": "± 473",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/DateTimeFormat/format_to_string",
+            "value": 79123,
+            "range": "± 254",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/format",
+            "value": 74796,
+            "range": "± 245",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/to_string",
+            "value": 82113,
+            "range": "± 206",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/ZonedDateTimeFormat/format_to_write",
+            "value": 165172,
+            "range": "± 762",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/ZonedDateTimeFormat/format_to_string",
+            "value": 176677,
+            "range": "± 664",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/format",
+            "value": 168599,
+            "range": "± 1283",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/to_string",
+            "value": 180861,
+            "range": "± 396",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "pattern/parse",
+            "value": 5003,
+            "range": "± 6",
             "unit": "ns/iter"
           }
         ]
