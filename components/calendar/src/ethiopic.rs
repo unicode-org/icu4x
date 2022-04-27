@@ -14,8 +14,9 @@ use crate::{
 use core::marker::PhantomData;
 use tinystr::tinystr;
 
-#[derive(Copy, Clone, Debug, Hash, Default, Eq, PartialEq)]
 // The Ethiopic Calendar
+#[derive(Copy, Clone, Debug, Hash, Default, Eq, PartialEq)]
+#[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct Ethiopic;
 
 #[derive(Copy, Clone, Debug, Hash, Eq, PartialEq)]
@@ -215,6 +216,7 @@ impl Date<Ethiopic> {
 
 impl DateTime<Ethiopic> {
     /// Construct a new Ethiopic datetime from integers
+    #[allow(clippy::too_many_arguments)]
     pub fn new_ethiopic_datetime_from_integers(
         year: i32,
         month: u8,
