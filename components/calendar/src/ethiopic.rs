@@ -23,8 +23,8 @@ pub struct Ethiopic;
 pub struct EthiopicDateInner(ArithmeticDate<Ethiopic>, bool);
 
 impl EthiopicDateInner {
-    pub fn set_amete_alem(&self, date: &mut Self, amete_alem: bool) {
-        date.1 = amete_alem;
+    pub fn set_amete_alem(&mut self, amete_alem: bool) {
+        self.1 = amete_alem;
     }
 }
 
@@ -172,7 +172,6 @@ impl Ethiopic {
             coptic_date.0.year,
             coptic_date.0.month,
             coptic_date.0.day,
-            false,
         )
         .unwrap()
         .inner()
@@ -193,7 +192,6 @@ impl Date<Ethiopic> {
         year: i32,
         month: u8,
         day: u8,
-        amete_alem: bool,
     ) -> Result<Date<Ethiopic>, DateTimeError> {
         let inner = ArithmeticDate {
             year,
@@ -207,8 +205,12 @@ impl Date<Ethiopic> {
             return Err(DateTimeError::OutOfRange);
         }
 
+        Ok(Date::from_raw(EthiopicDateInner(inner, false), Ethiopic))
+    }
+
+    pub fn set_amete_alem(&self, value: bool) -> Result<Date<Ethiopic>, DateTimeError> {
         Ok(Date::from_raw(
-            EthiopicDateInner(inner, amete_alem),
+            EthiopicDateInner(self.inner().0, value),
             Ethiopic,
         ))
     }
@@ -216,7 +218,6 @@ impl Date<Ethiopic> {
 
 impl DateTime<Ethiopic> {
     /// Construct a new Ethiopic datetime from integers
-    #[allow(clippy::too_many_arguments)]
     pub fn new_ethiopic_datetime_from_integers(
         year: i32,
         month: u8,
@@ -225,11 +226,17 @@ impl DateTime<Ethiopic> {
         minute: u8,
         second: u8,
         fraction: u32,
-        amete_alem: bool,
     ) -> Result<DateTime<Ethiopic>, DateTimeError> {
         Ok(DateTime {
-            date: Date::new_ethiopic_date_from_integers(year, month, day, amete_alem)?,
+            date: Date::new_ethiopic_date_from_integers(year, month, day)?,
             time: types::Time::try_new(hour, minute, second, fraction)?,
+        })
+    }
+
+    pub fn set_amete_alem(&self, value: bool) -> Result<DateTime<Ethiopic>, DateTimeError> {
+        Ok(DateTime {
+            date: self.date.set_amete_alem(value).unwrap(),
+            time: self.time,
         })
     }
 }
