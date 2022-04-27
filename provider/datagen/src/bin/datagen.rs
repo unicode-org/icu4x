@@ -10,11 +10,7 @@ use icu_locid::LanguageIdentifier;
 use icu_provider::hello_world::HelloWorldV1Marker;
 use icu_provider::prelude::*;
 use simple_logger::SimpleLogger;
-use std::borrow::Cow;
-use std::collections::HashSet;
 use std::fs::File;
-use std::io;
-use std::io::BufRead;
 use std::path::PathBuf;
 use std::str::FromStr;
 
@@ -254,31 +250,19 @@ fn main() -> eyre::Result<()> {
         all_keys
     } else if matches.is_present("HELLO_WORLD") {
         vec![HelloWorldV1Marker::KEY]
+    } else if let Some(paths) = matches.values_of("KEYS") {
+        icu_datagen::keys(&paths.collect::<Vec<_>>())
+    } else if let Some(key_file_path) = matches.value_of_os("KEY_FILE") {
+        File::open(key_file_path)
+            .and_then(icu_datagen::keys_from_file)
+            .with_context(|| key_file_path.to_string_lossy().into_owned())?
     } else {
-        let mut keys = HashSet::new();
-
-        if let Some(paths) = matches.values_of("KEYS") {
-            keys.extend(paths.map(Cow::Borrowed));
-        } else if let Some(key_file_path) = matches.value_of_os("KEY_FILE") {
-            let file = File::open(key_file_path)
-                .with_context(|| key_file_path.to_string_lossy().into_owned())?;
-            for line in io::BufReader::new(file).lines() {
-                let path = line.with_context(|| key_file_path.to_string_lossy().into_owned())?;
-                keys.insert(Cow::Owned(path));
-            }
-        }
-
-        let filtered: Vec<_> = all_keys
-            .into_iter()
-            .filter(|k| keys.contains(k.get_path()))
-            .collect();
-
-        if filtered.is_empty() {
-            eyre::bail!("No keys selected");
-        }
-
-        filtered
+        unreachable!();
     };
+
+    if selected_keys.is_empty() {
+        eyre::bail!("No keys selected");
+    }
 
     let mut source_data = SourceData::default();
 
