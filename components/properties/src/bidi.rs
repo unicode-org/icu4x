@@ -96,7 +96,7 @@ pub struct BidiClassAdapter<'a> {
 }
 
 impl<'a> BidiClassAdapter<'a> {
-    /// Creates new instants of `BidiClassAdapter`.
+    /// Creates new instance of `BidiClassAdapter`.
     pub fn new(bidi_trie: &'a CodePointTrie<'a, BidiClass>) -> BidiClassAdapter<'a> {
         BidiClassAdapter { bidi_trie }
     }
