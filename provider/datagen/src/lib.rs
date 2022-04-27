@@ -113,11 +113,13 @@ pub fn keys<S: AsRef<str>>(strings: &[S]) -> Vec<ResourceKey> {
 /// # }
 /// ```
 pub fn keys_from_file<R: Read>(file: R) -> std::io::Result<Vec<ResourceKey>> {
-    Ok(keys(
-        &BufReader::new(file)
-            .lines()
-            .collect::<std::io::Result<Vec<String>>>()?,
-    ))
+    let keys = BufReader::new(file)
+        .lines()
+        .collect::<std::io::Result<HashSet<String>>>()?;
+    Ok(get_all_keys()
+        .into_iter()
+        .filter(|k| keys.contains(k.get_path()))
+        .collect())
 }
 
 /// The output format.
