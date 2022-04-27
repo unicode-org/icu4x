@@ -209,7 +209,7 @@ impl Date<Ethiopic> {
     }
 
     pub fn set_amete_alem(&mut self, value: bool) {
-        self.inner_mut.set_amete_alem(value);
+        self.inner.set_amete_alem(value);
     }
 }
 
