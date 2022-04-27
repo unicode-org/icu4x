@@ -232,7 +232,7 @@ impl DateTime<Ethiopic> {
 
     pub fn set_amete_alem(&self, value: bool) -> DateTime<Ethiopic> {
         DateTime {
-            date: self.date.set_amete_alem(value).unwrap(),
+            date: self.date.set_amete_alem(value),
             time: self.time,
         }
     }
