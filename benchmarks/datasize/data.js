@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1651059745296,
+  "lastUpdate": 1651066818510,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -13703,6 +13703,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/f5e2eec969e8546ec04edf4fe566360e61197e20"
         },
         "date": 1651059724140,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4507258,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "younies.mahmoud@gmail.com",
+            "name": "Younies Mahmoud",
+            "username": "younies"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "f6a56a1b9f9d2127dcdc7c0a93219c98c93ec9ff",
+          "message": "Bidi Data Adapter (#1784)\n\nAdd Bidi Data Adapter",
+          "timestamp": "2022-04-27T15:38:36+02:00",
+          "tree_id": "ae90fed5621cbc01dda79296dbeffd29032c7bbe",
+          "url": "https://github.com/unicode-org/icu4x/commit/f6a56a1b9f9d2127dcdc7c0a93219c98c93ec9ff"
+        },
+        "date": 1651066801175,
         "tool": "ndjson",
         "benches": [
           {
