@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1651071284745,
+  "lastUpdate": 1651077249081,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -25109,6 +25109,60 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 55140017,
             "range": "± 631621",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/worst",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/worst",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "a47d4f52c91f88d6484f688a7c4941f894d5f567",
+          "message": "CLDR 41 (#1816)",
+          "timestamp": "2022-04-27T18:26:15+02:00",
+          "tree_id": "98ff93a64e0c1e035b0fd7d889f89cc08d7a3d7b",
+          "url": "https://github.com/unicode-org/icu4x/commit/a47d4f52c91f88d6484f688a7c4941f894d5f567"
+        },
+        "date": 1651077231291,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 55190998,
+            "range": "± 676277",
             "unit": "ns/iter"
           },
           {
