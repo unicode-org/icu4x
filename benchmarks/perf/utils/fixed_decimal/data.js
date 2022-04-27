@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1651060266979,
+  "lastUpdate": 1651067329101,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -24089,6 +24089,66 @@ window.BENCHMARK_DATA = {
             "name": "from_string/1000000001",
             "value": 84,
             "range": "± 3",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "younies.mahmoud@gmail.com",
+            "name": "Younies Mahmoud",
+            "username": "younies"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "f6a56a1b9f9d2127dcdc7c0a93219c98c93ec9ff",
+          "message": "Bidi Data Adapter (#1784)\n\nAdd Bidi Data Adapter",
+          "timestamp": "2022-04-27T15:38:36+02:00",
+          "tree_id": "ae90fed5621cbc01dda79296dbeffd29032c7bbe",
+          "url": "https://github.com/unicode-org/icu4x/commit/f6a56a1b9f9d2127dcdc7c0a93219c98c93ec9ff"
+        },
+        "date": 1651067308843,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 122558,
+            "range": "± 10648",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 23749,
+            "range": "± 871",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 68498,
+            "range": "± 2060",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 216,
+            "range": "± 12",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 91,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 92,
+            "range": "± 4",
             "unit": "ns/iter"
           }
         ]
