@@ -11,7 +11,6 @@
 //!```
 //! use icu_properties::bidi::BidiClassAdapter;
 //! use icu_properties::{maps, BidiClass};
-//! use icu_codepointtrie::CodePointTrie;
 //! use unicode_bidi::BidiClass as DataSourceBidiClass;
 //! use unicode_bidi::BidiDataSource;
 //! use unicode_bidi::BidiInfo;
@@ -29,13 +28,7 @@
 //! // Create an adapter to provide the data to `BidiInfo`.
 //! let provider = icu_testdata::get_provider();
 //!
-//! let payload =
-//!     maps::get_bidi_class(&provider)
-//!         .expect("The data should be valid");
-//! let data_struct = payload.get();
-//! let bc = &data_struct.code_point_trie;
-//!
-//! let adapter = BidiClassAdapter::new(&bc);
+//!  let adapter = BidiClassAdapter::try_new(&provider).expect("Loading data failed");
 //! // Resolve embedding levels within the text.  Pass `None` to detect the
 //! // paragraph level automatically.
 //!
@@ -63,8 +56,11 @@
 //! ]);
 //! ```
 
+use crate::error::PropertiesError;
+use crate::maps;
 use crate::props::BidiClass;
-use icu_codepointtrie::CodePointTrie;
+use crate::provider::*;
+use icu_provider::prelude::*;
 use unicode_bidi::data_source::BidiDataSource;
 use unicode_bidi::BidiClass as DataSourceBidiClass;
 
@@ -75,34 +71,32 @@ use unicode_bidi::BidiClass as DataSourceBidiClass;
 /// ```
 /// use icu_properties::bidi::BidiClassAdapter;
 /// use icu_properties::{maps, BidiClass};
-/// use icu_codepointtrie::CodePointTrie;
 /// use unicode_bidi::BidiClass as DataSourceBidiClass;
 /// use unicode_bidi::BidiDataSource;
 ///
 /// let provider = icu_testdata::get_provider();
 ///
-/// let payload =
-///     maps::get_bidi_class(&provider)
-///         .expect("The data should be valid");
-/// let data_struct = payload.get();
-/// let bc = &data_struct.code_point_trie;
-///
-/// let adapter = BidiClassAdapter::new(&bc);
+/// let adapter = BidiClassAdapter::try_new(&provider).expect("Loading data failed");
 /// assert_eq!(adapter.bidi_class('a'), DataSourceBidiClass::L);
 /// assert_eq!(adapter.bidi_class('ع'), DataSourceBidiClass::AL);
 /// ```
-pub struct BidiClassAdapter<'a> {
-    bidi_trie: &'a CodePointTrie<'a, BidiClass>,
+pub struct BidiClassAdapter {
+    bidi_trie: DataPayload<UnicodePropertyMapV1Marker<BidiClass>>,
 }
 
-impl<'a> BidiClassAdapter<'a> {
+impl BidiClassAdapter {
     /// Creates new instance of `BidiClassAdapter`.
-    pub fn new(bidi_trie: &'a CodePointTrie<'a, BidiClass>) -> BidiClassAdapter<'a> {
-        BidiClassAdapter { bidi_trie }
+    pub fn try_new<D>(provider: &D) -> Result<Self, PropertiesError>
+    where
+        D: DynProvider<UnicodePropertyMapV1Marker<BidiClass>> + ?Sized,
+    {
+        Ok(Self {
+            bidi_trie: maps::get_bidi_class(provider)?,
+        })
     }
 }
 
-impl<'a> BidiDataSource for BidiClassAdapter<'a> {
+impl BidiDataSource for BidiClassAdapter {
     /// Returns a [`DataSourceBidiClass`] given a unicode character.
     ///
     /// # Example
@@ -110,25 +104,18 @@ impl<'a> BidiDataSource for BidiClassAdapter<'a> {
     /// ```
     /// use icu_properties::bidi::BidiClassAdapter;
     /// use icu_properties::{maps, BidiClass};
-    /// use icu_codepointtrie::CodePointTrie;
     /// use unicode_bidi::BidiClass as DataSourceBidiClass;
     /// use unicode_bidi::BidiDataSource;
     ///
     /// let provider = icu_testdata::get_provider();
     ///
-    /// let payload =
-    ///     maps::get_bidi_class(&provider)
-    ///         .expect("The data should be valid");
-    /// let data_struct = payload.get();
-    /// let bc = &data_struct.code_point_trie;
-    ///
-    /// let adapter = BidiClassAdapter::new(&bc);
+    /// let adapter = BidiClassAdapter::try_new(&provider).expect("Loading data failed");
     /// assert_eq!(adapter.bidi_class('a'), DataSourceBidiClass::L);
     /// ```
     ///
     /// [`CodePointTrie`]: icu_codepointtrie::CodePointTrie
     fn bidi_class(&self, c: char) -> DataSourceBidiClass {
-        let bidi_class = self.bidi_trie.get(c as u32);
+        let bidi_class = self.bidi_trie.get().code_point_trie.get(c as u32);
         match bidi_class {
             BidiClass::LeftToRight => DataSourceBidiClass::L,
             BidiClass::RightToLeft => DataSourceBidiClass::R,
