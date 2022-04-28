@@ -16,13 +16,13 @@
 //!
 
 mod calendar;
+mod cldr_serde;
 mod datetime;
 mod decimal;
 mod list;
 mod locale_canonicalizer;
 mod plurals;
 mod reader;
-mod serde;
 mod time_zones;
 
 pub use calendar::japanese::JapaneseErasProvider;

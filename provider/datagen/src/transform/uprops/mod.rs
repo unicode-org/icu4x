@@ -4,7 +4,7 @@
 
 //! This module contains implementations of the [`ICU4X`]
 //! [data provider] interface backed by TOML files exported by the
-//! ICU4C icuwriteuprops tool.
+//! ICU4C icuexportdata tool.
 //!
 //! Create a directory containing TOML files for
 //! the necessary Unicode properties and then pass the path to the desired

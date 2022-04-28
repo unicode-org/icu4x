@@ -12,7 +12,7 @@ use icu_provider::prelude::*;
 use icu_uniset::UnicodeSetBuilder;
 use std::sync::RwLock;
 
-/// A data provider reading from TOML files produced by the ICU4C icuwriteuprops tool.
+/// A data provider reading from TOML files produced by the ICU4C icuexportdata tool.
 pub struct BinaryPropertyUnicodeSetDataProvider {
     source: SourceData,
     data: RwLock<Option<TomlBinary>>,

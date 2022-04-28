@@ -3,10 +3,10 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::error::DatagenError;
+use crate::transform::cldr::cldr_serde;
 use crate::transform::cldr::reader::{
     get_langid_subdirectories, get_langid_subdirectory, open_reader,
 };
-use crate::transform::cldr::serde;
 use crate::SourceData;
 use elsa::sync::FrozenBTreeMap;
 use icu_datetime::provider::calendar::*;
@@ -26,7 +26,7 @@ pub struct CommonDateProvider {
     source: SourceData,
     // BCP-47 value -> CLDR identifier
     supported_cals: LiteMap<icu_locid::extensions::unicode::Value, &'static str>,
-    data: FrozenBTreeMap<ResourceOptions, Box<serde::ca::Dates>>,
+    data: FrozenBTreeMap<ResourceOptions, Box<cldr_serde::ca::Dates>>,
 }
 
 impl From<&SourceData> for CommonDateProvider {
@@ -80,7 +80,7 @@ macro_rules! impl_resource_provider {
                         .ok_or_else(|| DataErrorKind::MissingLocale.into_error())?
                         .join(&format!("ca-{}.json", cldr_cal));
 
-                        let mut resource: serde::ca::Resource =
+                        let mut resource: cldr_serde::ca::Resource =
                             serde_json::from_reader(open_reader(&path)?)
                                 .map_err(|e| DatagenError::from((e, path)))?;
 
@@ -110,31 +110,31 @@ macro_rules! impl_resource_provider {
                 }
             }
 
-                impl IterableResourceProvider<$marker> for CommonDateProvider {
-                    fn supported_options(&self) -> Result<Box<dyn Iterator<Item = ResourceOptions> + '_>, DataError> {
-                        let mut r = Vec::new();
-                        for (cal_value, cldr_cal) in self.supported_cals.iter() {
-                            r.extend(get_langid_subdirectories(
-                                    &self
-                                        .source
-                                        .get_cldr_paths()?
-                                        .cldr_dates(cldr_cal)
-                                        .join("main"),
-                                )?
-                                .map(|lid| {
-                                    let mut locale: Locale = lid.into();
-                                    locale
-                                        .extensions
-                                        .unicode
-                                        .keywords
-                                        .set(unicode_ext_key!("ca"), cal_value.clone());
-                                    ResourceOptions::from(locale)
-                                }));
-                        }
-                        Ok(Box::new(r.into_iter()))
+            impl IterableResourceProvider<$marker> for CommonDateProvider {
+                fn supported_options(&self) -> Result<Box<dyn Iterator<Item = ResourceOptions> + '_>, DataError> {
+                    let mut r = Vec::new();
+                    for (cal_value, cldr_cal) in self.supported_cals.iter() {
+                        r.extend(get_langid_subdirectories(
+                                &self
+                                    .source
+                                    .get_cldr_paths()?
+                                    .cldr_dates(cldr_cal)
+                                    .join("main"),
+                            )?
+                            .map(|lid| {
+                                let mut locale: Locale = lid.into();
+                                locale
+                                    .extensions
+                                    .unicode
+                                    .keywords
+                                    .set(unicode_ext_key!("ca"), cal_value.clone());
+                                ResourceOptions::from(locale)
+                            }));
                     }
+                    Ok(Box::new(r.into_iter()))
                 }
-            )+
+            }
+        )+
 
         icu_provider::impl_dyn_provider!(CommonDateProvider, [$($marker),+,], SERDE_SE, ITERABLE_SERDE_SE, DATA_CONVERTER);
     };

@@ -21,7 +21,7 @@ use std::convert::TryFrom;
 use std::sync::RwLock;
 use zerovec::ZeroVec;
 
-/// A data provider reading from TOML files produced by the ICU4C icuwriteuprops tool.
+/// A data provider reading from TOML files produced by the ICU4C icuexportdata tool.
 ///
 /// This data provider returns `CodePointTrie` data inside a `UnicodePropertyMap` data struct.
 pub struct EnumeratedPropertyCodePointTrieProvider {

@@ -2,15 +2,15 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::transform::cldr::serde;
+use crate::transform::cldr::cldr_serde;
 use icu_datetime::provider::calendar::*;
 use icu_datetime::skeleton::SkeletonError;
 
 use icu_plurals::PluralCategory;
 use std::convert::TryFrom;
 
-impl From<&serde::ca::Dates> for DateSkeletonPatternsV1<'_> {
-    fn from(other: &serde::ca::Dates) -> Self {
+impl From<&cldr_serde::ca::Dates> for DateSkeletonPatternsV1<'_> {
+    fn from(other: &cldr_serde::ca::Dates) -> Self {
         use icu_datetime::{
             pattern::runtime::{PatternPlurals, PluralPattern},
             skeleton::reference::Skeleton,

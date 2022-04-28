@@ -3,8 +3,8 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::error::DatagenError;
+use crate::transform::cldr::cldr_serde;
 use crate::transform::cldr::reader::open_reader;
-use crate::transform::cldr::serde;
 use crate::SourceData;
 use icu_plurals::provider::*;
 use icu_plurals::rules::runtime::ast::Rule;
@@ -16,8 +16,8 @@ use std::sync::RwLock;
 #[derive(Debug)]
 pub struct PluralsProvider {
     source: SourceData,
-    cardinal_rules: RwLock<Option<Option<serde::plurals::Rules>>>,
-    ordinal_rules: RwLock<Option<Option<serde::plurals::Rules>>>,
+    cardinal_rules: RwLock<Option<Option<cldr_serde::plurals::Rules>>>,
+    ordinal_rules: RwLock<Option<Option<cldr_serde::plurals::Rules>>>,
 }
 
 impl From<&SourceData> for PluralsProvider {
@@ -34,7 +34,8 @@ impl PluralsProvider {
     fn get_rules_for(
         &self,
         key: ResourceKey,
-    ) -> Result<std::sync::RwLockReadGuard<Option<Option<serde::plurals::Rules>>>, DataError> {
+    ) -> Result<std::sync::RwLockReadGuard<Option<Option<cldr_serde::plurals::Rules>>>, DataError>
+    {
         Ok(match key {
             CardinalV1Marker::KEY => {
                 #[allow(clippy::unwrap_used)]
@@ -46,7 +47,7 @@ impl PluralsProvider {
                         .cldr_core()
                         .join("supplemental")
                         .join("plurals.json");
-                    let data: serde::plurals::Resource =
+                    let data: cldr_serde::plurals::Resource =
                         serde_json::from_reader(open_reader(&path)?)
                             .map_err(|e| DatagenError::from((e, path)))?;
                     let _ = self
@@ -69,7 +70,7 @@ impl PluralsProvider {
                         .cldr_core()
                         .join("supplemental")
                         .join("ordinals.json");
-                    let data: serde::plurals::Resource =
+                    let data: cldr_serde::plurals::Resource =
                         serde_json::from_reader(open_reader(&path)?)
                             .map_err(|e| DatagenError::from((e, path)))?;
                     let _ = self
@@ -140,8 +141,8 @@ impl<M: ResourceMarker<Yokeable = PluralRulesV1<'static>>> IterableResourceProvi
     }
 }
 
-impl From<&serde::plurals::LocalePluralRules> for PluralRulesV1<'static> {
-    fn from(other: &serde::plurals::LocalePluralRules) -> Self {
+impl From<&cldr_serde::plurals::LocalePluralRules> for PluralRulesV1<'static> {
+    fn from(other: &cldr_serde::plurals::LocalePluralRules) -> Self {
         /// Removes samples from plural rule strings. Takes an owned [`String`] reference and
         /// returns a new [`String`] in a [`Cow::Owned`].
         #[allow(clippy::ptr_arg)]

@@ -3,10 +3,10 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::error::DatagenError;
+use crate::transform::cldr::cldr_serde;
 use crate::transform::cldr::reader::{
     get_langid_subdirectories, get_langid_subdirectory, open_reader,
 };
-use crate::transform::cldr::serde;
 use crate::SourceData;
 use icu_decimal::provider::*;
 use icu_provider::datagen::IterableResourceProvider;
@@ -24,7 +24,7 @@ mod decimal_pattern;
 pub struct NumbersProvider {
     source: SourceData,
     cldr_numbering_systems_data:
-        RwLock<Option<LiteMap<TinyStr8, serde::numbering_systems::NumberingSystem>>>,
+        RwLock<Option<LiteMap<TinyStr8, cldr_serde::numbering_systems::NumberingSystem>>>,
 }
 
 impl From<&SourceData> for NumbersProvider {
@@ -78,7 +78,7 @@ impl ResourceProvider<DecimalSymbolsV1Marker> for NumbersProvider {
     ) -> Result<DataResponse<DecimalSymbolsV1Marker>, DataError> {
         let langid = req.options.get_langid();
 
-        let resource: serde::numbers::Resource = {
+        let resource: cldr_serde::numbers::Resource = {
             let path = get_langid_subdirectory(
                 &self.source.get_cldr_paths()?.cldr_numbers().join("main"),
                 &langid,
@@ -109,7 +109,7 @@ impl ResourceProvider<DecimalSymbolsV1Marker> for NumbersProvider {
                 .cldr_core()
                 .join("supplemental")
                 .join("numberingSystems.json");
-            let resource: serde::numbering_systems::Resource =
+            let resource: cldr_serde::numbering_systems::Resource =
                 serde_json::from_reader(open_reader(&path)?)
                     .map_err(|e| DatagenError::from((e, path)))?;
             let _ = self
@@ -156,10 +156,10 @@ impl IterableResourceProvider<DecimalSymbolsV1Marker> for NumbersProvider {
     }
 }
 
-impl TryFrom<&serde::numbers::Numbers> for DecimalSymbolsV1<'static> {
+impl TryFrom<&cldr_serde::numbers::Numbers> for DecimalSymbolsV1<'static> {
     type Error = Cow<'static, str>;
 
-    fn try_from(other: &serde::numbers::Numbers) -> Result<Self, Self::Error> {
+    fn try_from(other: &cldr_serde::numbers::Numbers) -> Result<Self, Self::Error> {
         // TODO(#510): Select from non-default numbering systems
         let symbols = other
             .numsys_data

@@ -3,8 +3,8 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::error::DatagenError;
+use crate::transform::cldr::cldr_serde;
 use crate::transform::cldr::reader::open_reader;
-use crate::transform::cldr::serde;
 use crate::SourceData;
 use icu_locale_canonicalizer::provider::*;
 use icu_locid::{language, subtags, LanguageIdentifier};
@@ -41,7 +41,7 @@ impl ResourceProvider<AliasesV1Marker> for AliasesProvider {
             .cldr_core()
             .join("supplemental")
             .join("aliases.json");
-        let data: serde::aliases::Resource = serde_json::from_reader(open_reader(&path)?)
+        let data: cldr_serde::aliases::Resource = serde_json::from_reader(open_reader(&path)?)
             .map_err(|e| DatagenError::from((e, path)))?;
 
         let metadata = DataResponseMetadata::default();
@@ -94,9 +94,9 @@ fn rules_cmp(a: &LanguageIdentifier, b: &LanguageIdentifier) -> std::cmp::Orderi
     }
 }
 
-impl From<&serde::aliases::Resource> for AliasesV1<'_> {
+impl From<&cldr_serde::aliases::Resource> for AliasesV1<'_> {
     // Step 1. Load the rules from aliases.json
-    fn from(other: &serde::aliases::Resource) -> Self {
+    fn from(other: &cldr_serde::aliases::Resource) -> Self {
         // These all correspond to language aliases in the CLDR data. By storing known
         // special cases in the CLDR data, we can minimize the number of comparisons done
         // for commonly used languages. With the current CLDR data, all aliases end up in

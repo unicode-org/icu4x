@@ -2,13 +2,13 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::transform::cldr::serde;
+use crate::transform::cldr::cldr_serde;
 use icu_datetime::pattern;
 use icu_datetime::pattern::CoarseHourCycle;
 use icu_datetime::provider::calendar::*;
 
-impl From<&serde::ca::LengthPatterns> for patterns::LengthPatternsV1<'_> {
-    fn from(other: &serde::ca::LengthPatterns) -> Self {
+impl From<&cldr_serde::ca::LengthPatterns> for patterns::LengthPatternsV1<'_> {
+    fn from(other: &cldr_serde::ca::LengthPatterns) -> Self {
         // TODO(#308): Support numbering system variations. We currently throw them away.
         #[allow(clippy::expect_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
         Self {
@@ -36,8 +36,8 @@ impl From<&serde::ca::LengthPatterns> for patterns::LengthPatternsV1<'_> {
     }
 }
 
-impl From<&serde::ca::DateTimeFormats> for patterns::LengthPatternsV1<'_> {
-    fn from(other: &serde::ca::DateTimeFormats) -> Self {
+impl From<&cldr_serde::ca::DateTimeFormats> for patterns::LengthPatternsV1<'_> {
+    fn from(other: &cldr_serde::ca::DateTimeFormats) -> Self {
         // TODO(#308): Support numbering system variations. We currently throw them away.
         #[allow(clippy::expect_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
         Self {
@@ -65,8 +65,8 @@ impl From<&serde::ca::DateTimeFormats> for patterns::LengthPatternsV1<'_> {
     }
 }
 
-impl From<&serde::ca::DateTimeFormats> for patterns::GenericLengthPatternsV1<'_> {
-    fn from(other: &serde::ca::DateTimeFormats) -> Self {
+impl From<&cldr_serde::ca::DateTimeFormats> for patterns::GenericLengthPatternsV1<'_> {
+    fn from(other: &cldr_serde::ca::DateTimeFormats) -> Self {
         // TODO(#308): Support numbering system variations. We currently throw them away.
         #[allow(clippy::expect_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
         Self {
@@ -94,8 +94,8 @@ impl From<&serde::ca::DateTimeFormats> for patterns::GenericLengthPatternsV1<'_>
     }
 }
 
-impl From<&serde::ca::Dates> for DatePatternsV1<'_> {
-    fn from(other: &serde::ca::Dates) -> Self {
+impl From<&cldr_serde::ca::Dates> for DatePatternsV1<'_> {
+    fn from(other: &cldr_serde::ca::Dates) -> Self {
         let length_combinations_v1 =
             patterns::GenericLengthPatternsV1::from(&other.datetime_formats);
         let skeletons_v1 = DateSkeletonPatternsV1::from(other);

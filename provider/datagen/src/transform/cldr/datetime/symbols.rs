@@ -2,13 +2,13 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::transform::cldr::serde;
+use crate::transform::cldr::cldr_serde;
 use icu_datetime::provider::calendar::*;
 use std::borrow::Cow;
 use std::collections::BTreeMap;
 use tinystr::{tinystr, TinyStr16};
 
-pub fn convert_dates(other: &serde::ca::Dates, calendar: &str) -> DateSymbolsV1<'static> {
+pub fn convert_dates(other: &cldr_serde::ca::Dates, calendar: &str) -> DateSymbolsV1<'static> {
     DateSymbolsV1 {
         months: (&other.months).into(),
         weekdays: (&other.days).into(),
@@ -17,7 +17,7 @@ pub fn convert_dates(other: &serde::ca::Dates, calendar: &str) -> DateSymbolsV1<
     }
 }
 
-fn convert_eras(eras: &serde::ca::Eras, calendar: &str) -> Eras<'static> {
+fn convert_eras(eras: &cldr_serde::ca::Eras, calendar: &str) -> Eras<'static> {
     let map = get_era_code_map(calendar);
     let mut out_eras = Eras::default();
 
@@ -63,8 +63,8 @@ fn get_era_code_map(calendar: &str) -> BTreeMap<String, TinyStr16> {
 
 macro_rules! symbols_from {
     ([$name: ident, $name2: ident $(,)?], [ $($element: ident),+ $(,)? ] $(,)?) => {
-        impl From<&serde::ca::$name::Symbols> for $name2::SymbolsV1<'static> {
-            fn from(other: &serde::ca::$name::Symbols) -> Self {
+        impl From<&cldr_serde::ca::$name::Symbols> for $name2::SymbolsV1<'static> {
+            fn from(other: &cldr_serde::ca::$name::Symbols) -> Self {
                 Self([
                     $(
                         Cow::Owned(other.$element.clone()),
@@ -75,8 +75,8 @@ macro_rules! symbols_from {
         symbols_from!([$name, $name2]);
     };
     ([$name: ident, $name2: ident $(,)?], { $($element: ident),+ $(,)? } $(,)?) => {
-        impl From<&serde::ca::$name::Symbols> for $name2::SymbolsV1<'static> {
-            fn from(other: &serde::ca::$name::Symbols) -> Self {
+        impl From<&cldr_serde::ca::$name::Symbols> for $name2::SymbolsV1<'static> {
+            fn from(other: &cldr_serde::ca::$name::Symbols) -> Self {
                 Self {
                     $(
                         $element: other.$element.clone(),
@@ -87,7 +87,7 @@ macro_rules! symbols_from {
         symbols_from!([$name, $name]);
     };
     ([$name: ident, $name2: ident]) => {
-        impl serde::ca::$name::Symbols {
+        impl cldr_serde::ca::$name::Symbols {
             // Helper function which returns None if the two groups of symbols overlap.
             pub fn get_unaliased(&self, other: &Self) -> Option<Self> {
                 if self == other {
@@ -98,8 +98,8 @@ macro_rules! symbols_from {
             }
         }
 
-        impl From<&serde::ca::$name::Contexts> for $name2::ContextsV1<'static> {
-            fn from(other: &serde::ca::$name::Contexts) -> Self {
+        impl From<&cldr_serde::ca::$name::Contexts> for $name2::ContextsV1<'static> {
+            fn from(other: &cldr_serde::ca::$name::Contexts) -> Self {
                 Self {
                     format: (&other.format).into(),
                     stand_alone: other.stand_alone.as_ref().and_then(|stand_alone| {
@@ -109,9 +109,9 @@ macro_rules! symbols_from {
             }
         }
 
-        impl serde::ca::$name::StandAloneWidths {
+        impl cldr_serde::ca::$name::StandAloneWidths {
             // Helper function which returns None if the two groups of symbols overlap.
-            pub fn get_unaliased(&self, other: &serde::ca::$name::FormatWidths) -> Option<Self> {
+            pub fn get_unaliased(&self, other: &cldr_serde::ca::$name::FormatWidths) -> Option<Self> {
                 let abbreviated = self.abbreviated.as_ref().and_then(|v| v.get_unaliased(&other.abbreviated));
                 let narrow = self.narrow.as_ref().and_then(|v| v.get_unaliased(&other.narrow));
                 let short = if self.short == other.short {
@@ -134,8 +134,8 @@ macro_rules! symbols_from {
             }
         }
 
-        impl From<&serde::ca::$name::FormatWidths> for $name2::FormatWidthsV1<'static> {
-            fn from(other: &serde::ca::$name::FormatWidths) -> Self {
+        impl From<&cldr_serde::ca::$name::FormatWidths> for $name2::FormatWidthsV1<'static> {
+            fn from(other: &cldr_serde::ca::$name::FormatWidths) -> Self {
                 Self {
                     abbreviated: (&other.abbreviated).into(),
                     narrow: (&other.narrow).into(),
@@ -145,8 +145,8 @@ macro_rules! symbols_from {
             }
         }
 
-        impl From<&serde::ca::$name::StandAloneWidths> for $name2::StandAloneWidthsV1<'static> {
-            fn from(other: &serde::ca::$name::StandAloneWidths) -> Self {
+        impl From<&cldr_serde::ca::$name::StandAloneWidths> for $name2::StandAloneWidthsV1<'static> {
+            fn from(other: &cldr_serde::ca::$name::StandAloneWidths) -> Self {
                 Self {
                     abbreviated: other.abbreviated.as_ref().map(|width| width.into()),
                     narrow: other.narrow.as_ref().map(|width| width.into()),

@@ -3,12 +3,12 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::error::DatagenError;
+use crate::transform::cldr::cldr_serde;
+use crate::transform::cldr::cldr_serde::time_zones::time_zone_names::TimeZoneNames;
+use crate::transform::cldr::cldr_serde::time_zones::CldrTimeZonesData;
 use crate::transform::cldr::reader::{
     get_langid_subdirectories, get_langid_subdirectory, open_reader,
 };
-use crate::transform::cldr::serde;
-use crate::transform::cldr::serde::time_zones::time_zone_names::TimeZoneNames;
-use crate::transform::cldr::serde::time_zones::CldrTimeZonesData;
 use crate::SourceData;
 use elsa::sync::FrozenBTreeMap;
 use icu_datetime::provider::time_zones::*;
@@ -60,7 +60,7 @@ macro_rules! impl_resource_provider {
                         )?
                         .ok_or_else(|| DataErrorKind::MissingLocale.into_error())?
                         .join("timeZoneNames.json");
-                        let mut resource: serde::time_zones::time_zone_names::Resource =
+                        let mut resource: cldr_serde::time_zones::time_zone_names::Resource =
                             serde_json::from_reader(open_reader(&path)?)
                                 .map_err(|e| DatagenError::from((e, path)))?;
                         self.time_zone_names_data.insert(
@@ -85,7 +85,7 @@ macro_rules! impl_resource_provider {
                             .join("bcp47")
                             .join("timezone.json");
 
-                        let resource: serde::time_zones::bcp47_tzid::Resource =
+                        let resource: cldr_serde::time_zones::bcp47_tzid::Resource =
                             serde_json::from_reader(open_reader(&bcp47_time_zone_path)?)
                                 .map_err(|e| DatagenError::from((e, bcp47_time_zone_path)))?;
                         let r = resource.keyword.u.time_zones.values;
@@ -108,7 +108,7 @@ macro_rules! impl_resource_provider {
                             .join("supplemental")
                             .join("metaZones.json");
 
-                        let resource: serde::time_zones::meta_zones::Resource =
+                        let resource: cldr_serde::time_zones::meta_zones::Resource =
                             serde_json::from_reader(open_reader(&meta_zone_id_path)?)
                                 .map_err(|e| DatagenError::from((e, meta_zone_id_path)))?;
                         let r = resource.supplemental.meta_zones.meta_zone_ids.0;

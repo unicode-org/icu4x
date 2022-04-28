@@ -3,8 +3,8 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::error::DatagenError;
+use crate::transform::cldr::cldr_serde;
 use crate::transform::cldr::reader::open_reader;
-use crate::transform::cldr::serde;
 use crate::SourceData;
 use icu_calendar::provider::*;
 use icu_locid::langid;
@@ -59,9 +59,10 @@ impl ResourceProvider<JapaneseErasV1Marker> for JapaneseErasProvider {
             .join("supplemental")
             .join("calendarData.json");
 
-        let era_names: serde::ca::Resource = serde_json::from_reader(open_reader(&era_names_path)?)
-            .map_err(|e| DatagenError::from((e, era_names_path)))?;
-        let era_dates: serde::japanese::Resource =
+        let era_names: cldr_serde::ca::Resource =
+            serde_json::from_reader(open_reader(&era_names_path)?)
+                .map_err(|e| DatagenError::from((e, era_names_path)))?;
+        let era_dates: cldr_serde::japanese::Resource =
             serde_json::from_reader(open_reader(&era_dates_path)?)
                 .map_err(|e| DatagenError::from((e, era_dates_path)))?;
 

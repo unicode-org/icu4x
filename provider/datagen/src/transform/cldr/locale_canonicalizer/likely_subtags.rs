@@ -3,8 +3,8 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::error::DatagenError;
+use crate::transform::cldr::cldr_serde;
 use crate::transform::cldr::reader::open_reader;
-use crate::transform::cldr::serde;
 use crate::SourceData;
 use icu_locale_canonicalizer::provider::*;
 use icu_provider::datagen::IterableResourceProvider;
@@ -42,8 +42,9 @@ impl ResourceProvider<LikelySubtagsV1Marker> for LikelySubtagsProvider {
             .cldr_core()
             .join("supplemental")
             .join("likelySubtags.json");
-        let data: serde::likely_subtags::Resource = serde_json::from_reader(open_reader(&path)?)
-            .map_err(|e| DatagenError::from((e, path)))?;
+        let data: cldr_serde::likely_subtags::Resource =
+            serde_json::from_reader(open_reader(&path)?)
+                .map_err(|e| DatagenError::from((e, path)))?;
 
         let metadata = DataResponseMetadata::default();
         // TODO(#1109): Set metadata.data_langid correctly.
@@ -68,8 +69,8 @@ impl IterableResourceProvider<LikelySubtagsV1Marker> for LikelySubtagsProvider {
     }
 }
 
-impl From<&serde::likely_subtags::Resource> for LikelySubtagsV1<'static> {
-    fn from(other: &serde::likely_subtags::Resource) -> Self {
+impl From<&cldr_serde::likely_subtags::Resource> for LikelySubtagsV1<'static> {
+    fn from(other: &cldr_serde::likely_subtags::Resource) -> Self {
         use icu_locid::subtags::Language;
 
         let mut language_script = ZeroMap::new();

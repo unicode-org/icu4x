@@ -3,10 +3,10 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::error::DatagenError;
+use crate::transform::cldr::cldr_serde;
 use crate::transform::cldr::reader::{
     get_langid_subdirectories, get_langid_subdirectory, open_reader,
 };
-use crate::transform::cldr::serde;
 use crate::transform::uprops::EnumeratedPropertyCodePointTrieProvider;
 use crate::SourceData;
 use icu_list::provider::*;
@@ -34,7 +34,7 @@ impl<M: ResourceMarker<Yokeable = ListFormatterPatternsV1<'static>>> ResourcePro
     fn load_resource(&self, req: &DataRequest) -> Result<DataResponse<M>, DataError> {
         let langid = req.options.get_langid();
 
-        let resource: serde::list_patterns::Resource = {
+        let resource: cldr_serde::list_patterns::Resource = {
             let path = get_langid_subdirectory(
                 &self.source.get_cldr_paths()?.cldr_misc().join("main"),
                 &langid,

@@ -3,11 +3,11 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::error::DatagenError;
-use crate::transform::cldr::reader::open_reader;
-use crate::transform::cldr::serde::{
+use crate::transform::cldr::cldr_serde::{
     self,
     week_data::{Territory, DEFAULT_TERRITORY},
 };
+use crate::transform::cldr::reader::open_reader;
 use crate::SourceData;
 use icu_calendar::arithmetic::week_of::CalendarInfo;
 use icu_datetime::provider::week_data::*;
@@ -20,7 +20,7 @@ use std::sync::RwLock;
 #[derive(Debug)]
 pub struct WeekDataProvider {
     source: SourceData,
-    data: RwLock<Option<(CalendarInfo, serde::week_data::WeekData)>>,
+    data: RwLock<Option<(CalendarInfo, cldr_serde::week_data::WeekData)>>,
 }
 
 impl From<&SourceData> for WeekDataProvider {
@@ -40,8 +40,9 @@ impl WeekDataProvider {
                 .get_cldr_paths()?
                 .cldr_core()
                 .join("supplemental/weekData.json");
-            let resource: serde::week_data::Resource = serde_json::from_reader(open_reader(&path)?)
-                .map_err(|e| DatagenError::from((e, path)))?;
+            let resource: cldr_serde::week_data::Resource =
+                serde_json::from_reader(open_reader(&path)?)
+                    .map_err(|e| DatagenError::from((e, path)))?;
             let week_data = resource.supplemental.week_data;
             *self.data.write().unwrap() = Some((
                 CalendarInfo {

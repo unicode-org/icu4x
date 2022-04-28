@@ -10,7 +10,7 @@ use std::borrow::Cow;
 use tinystr::TinyStr8;
 use zerovec::{ZeroMap, ZeroMap2d};
 
-use crate::transform::cldr::serde::{
+use crate::transform::cldr::cldr_serde::{
     time_zones::time_zone_names::*, time_zones::CldrTimeZonesData,
 };
 

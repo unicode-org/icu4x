@@ -16,7 +16,7 @@ use icu_provider::prelude::*;
 use std::convert::TryFrom;
 use zerovec::{VarZeroVec, ZeroSlice, ZeroVec};
 
-/// A data provider reading from TOML files produced by the ICU4C icuwriteuprops tool.
+/// A data provider reading from TOML files produced by the ICU4C icuexportdata tool.
 ///
 /// This data provider returns a [`ScriptWithExtensions`] instance,
 /// which efficiently represents data for the Script and Script_Extensions

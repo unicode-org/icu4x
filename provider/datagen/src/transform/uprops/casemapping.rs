@@ -11,7 +11,7 @@ use icu_provider::prelude::*;
 use std::convert::TryFrom;
 use std::fs;
 
-/// A data provider reading from TOML files produced by the ICU4C icuwriteuprops tool.
+/// A data provider reading from TOML files produced by the ICU4C icuexportdata tool.
 pub struct CaseMappingDataProvider {
     source: SourceData,
 }
