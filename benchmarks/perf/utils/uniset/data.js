@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1651138646561,
+  "lastUpdate": 1651142323995,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -25271,6 +25271,60 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 47885533,
             "range": "± 97963",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/worst",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/worst",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "f2fb74f82982f83c378054009141635283f91f33",
+          "message": "Add AnyCalendar (#1802)",
+          "timestamp": "2022-04-28T10:30:28Z",
+          "tree_id": "dc2ab780e22f4d86b4388ca53c5020b483b9b53b",
+          "url": "https://github.com/unicode-org/icu4x/commit/f2fb74f82982f83c378054009141635283f91f33"
+        },
+        "date": 1651142307652,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 47922154,
+            "range": "± 81624",
             "unit": "ns/iter"
           },
           {
