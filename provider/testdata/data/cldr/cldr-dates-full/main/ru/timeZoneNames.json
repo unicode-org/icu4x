@@ -3,7 +3,7 @@
     "ru": {
       "identity": {
         "version": {
-          "_cldrVersion": "40"
+          "_cldrVersion": "41"
         },
         "language": "ru"
       },
@@ -1221,6 +1221,9 @@
               },
               "Johnston": {
                 "exemplarCity": "Джонстон"
+              },
+              "Kanton": {
+                "exemplarCity": "Кантон"
               },
               "Kiritimati": {
                 "exemplarCity": "Киритимати"

@@ -65,7 +65,7 @@
 //! cargo run             \
 //!   --bin icu4x-datagen \
 //!   --                  \
-//!   --cldr-tag 39.0.0   \
+//!   --cldr-tag 41.0.0   \
 //!   --out ./icu4x-data  \
 //!   --all-keys          \
 //!   --all-locales
@@ -77,7 +77,7 @@
 //! cargo run             \
 //!   --bin icu4x-datagen \
 //!   --                  \
-//!   --cldr-tag 39.0.0   \
+//!   --cldr-tag 41.0.0   \
 //!   --out ./icu4x-data  \
 //!   --all-keys          \
 //!   --all-locales       \

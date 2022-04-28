@@ -222,7 +222,7 @@ git clone https://github.com/unicode-org/icu4x
 cd icu4x
 git checkout icu@0.5.0
 cargo run --bin icu4x-datagen --features download -- \
-    --cldr-tag 40.0.0 \
+    --cldr-tag 41.0.0 \
     --uprops-tag release-71-1 \
     --out ~/projects/icu/icu4x-data \
     --all-keys --all-locales

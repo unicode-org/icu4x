@@ -3,7 +3,7 @@
     "haw": {
       "identity": {
         "version": {
-          "_cldrVersion": "40"
+          "_cldrVersion": "41"
         },
         "language": "haw"
       },
@@ -565,7 +565,7 @@
                 "exemplarCity": "Kaliningrad"
               },
               "Kiev": {
-                "exemplarCity": "Kiev"
+                "exemplarCity": "Kyiv"
               },
               "Kirov": {
                 "exemplarCity": "Kirov"
@@ -1180,9 +1180,6 @@
               "Efate": {
                 "exemplarCity": "Efate"
               },
-              "Enderbury": {
-                "exemplarCity": "Enderbury"
-              },
               "Fakaofo": {
                 "exemplarCity": "Fakaofo"
               },
@@ -1213,6 +1210,9 @@
               },
               "Johnston": {
                 "exemplarCity": "Johnston"
+              },
+              "Kanton": {
+                "exemplarCity": "Kanton"
               },
               "Kiritimati": {
                 "exemplarCity": "Kiritimati"
