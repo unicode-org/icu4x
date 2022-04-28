@@ -5,8 +5,8 @@
 use icu_datagen::{Out, SourceData};
 use icu_locid::langid;
 use icu_provider_fs::export::serializers::json;
+use icu_testdata::{metadata, paths};
 use std::fs::File;
-use icu_testdata::{paths, metadata};
 
 fn main() {
     simple_logger::SimpleLogger::new()
@@ -18,10 +18,7 @@ fn main() {
     let source_data = SourceData::default()
         .with_cldr(paths::cldr_json_root(), "full".to_string())
         .with_uprops(paths::uprops_toml_root());
-    let locales = metadata::load()
-        .unwrap()
-        .package_metadata
-        .locales;
+    let locales = metadata::load().unwrap().package_metadata.locales;
 
     let json_out = Out::Fs {
         output_path: paths::data_root().join("json"),
@@ -34,7 +31,14 @@ fn main() {
     ));
 
     for out in [json_out, blob_out] {
-        icu_datagen::datagen(Some(&locales), &icu_datagen::get_all_keys(), &source_data, out, true).unwrap();
+        icu_datagen::datagen(
+            Some(&locales),
+            &icu_datagen::get_all_keys(),
+            &source_data,
+            out,
+            true,
+        )
+        .unwrap();
     }
 
     icu_datagen::datagen(
