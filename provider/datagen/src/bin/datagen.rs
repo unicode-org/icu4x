@@ -102,6 +102,7 @@ fn main() -> eyre::Result<()> {
         )
         .arg(
             Arg::with_name("UPROPS_MODE")
+                .long("uprops-mode")
                 .takes_value(true)
                 .possible_values(&["small", "fast"])
                 .help("Whether to optimize Unicode property data structures for size (\"small\") or speed (\"fast\")")

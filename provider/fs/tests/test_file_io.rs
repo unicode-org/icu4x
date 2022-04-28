@@ -56,7 +56,7 @@ fn test_json_errors() {
     }
 
     assert!(matches!(
-        (&provider as dyn ResourceProvider<HelloWorldV1Marker>).load_resource(&DataRequest {
+        (&provider as &dyn ResourceProvider<HelloWorldV1Marker>).load_resource(&DataRequest {
             options: langid!("ru").into(),
             metadata: Default::default(),
         },),
@@ -64,7 +64,7 @@ fn test_json_errors() {
     ));
 
     assert!(matches!(
-        (&provider as dyn ResourceProvider<HelloWorldV1Marker>).load_resource(&DataRequest {
+        (&provider as &dyn ResourceProvider<HelloWorldV1Marker>).load_resource(&DataRequest {
             options: langid!("sr").into(),
             metadata: Default::default(),
         },),
@@ -75,7 +75,7 @@ fn test_json_errors() {
     ));
 
     assert!(matches!(
-        (&provider as dyn ResourceProvider<WrongV1Marker>).load_resource(&DataRequest {
+        (&provider as &dyn ResourceProvider<WrongV1Marker>).load_resource(&DataRequest {
             options: langid!("ru").into(),
             metadata: Default::default(),
         },),
@@ -86,7 +86,7 @@ fn test_json_errors() {
     ));
 
     assert!(matches!(
-        (&provider as dyn ResourceProvider<WrongV1Marker>).load_resource(&DataRequest {
+        (&provider as &dyn ResourceProvider<WrongV1Marker>).load_resource(&DataRequest {
             options: langid!("ru").into(),
             metadata: Default::default(),
         },),

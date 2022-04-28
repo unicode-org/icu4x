@@ -68,7 +68,7 @@ args = [
     "--features=bin",
 ]
 
-[tasks.testdata-check-unchanged]
+[tasks.testdata-check]
 description = "Rebuild ICU4X testdata and ensure that the working copy is clean"
 category = "ICU4X Data"
 dependencies = [
@@ -89,13 +89,6 @@ if greater_than ${output_length} 0
     trigger_error ${msg}
 end
 '''
-
-[tasks.testdata-check]
-description = "Rebuild ICU4X testdata and perform various checks pertaining to it"
-category = "ICU4X Data"
-dependencies = [
-    "testdata-check-unchanged",
-]
 
 [tasks.testdata-build-hello-world-json]
 description = "Build the Hello World JSON tree."
@@ -151,4 +144,23 @@ dependencies = [
     "testdata-build-hello-world-json",
     "testdata-build-hello-world-bincode",
     "testdata-build-hello-world-postcard",
+]
+
+[tasks.full-data]
+description = "Builds a complete postcard file from latest CLDR and icu_exportdata."
+category = "ICU4X Data"
+command = "cargo"
+args = [
+    "run",
+    "--bin=icu4x-datagen",
+    "--features=bin",
+    "--",
+    "--cldr-tag=41.0.0",
+    "--uprops-tag=release-71-1",
+    "--format=blob",
+    "--syntax=postcard",
+    "--all-keys",
+    "--all-locales",
+    "--out=/dev/null",
+    "--overwrite",
 ]
