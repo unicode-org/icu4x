@@ -6,13 +6,13 @@ pub mod bcp47_tzid;
 pub mod meta_zones;
 pub mod time_zone_names;
 
+use icu_datetime::provider::time_zones::{MetaZoneId, TimeZoneBcp47Id};
 use litemap::LiteMap;
 use time_zone_names::TimeZoneNames;
-use tinystr::{TinyStr4, TinyStr8};
 
 #[derive(Debug)]
 pub struct CldrTimeZonesData<'a> {
     pub time_zone_names: &'a TimeZoneNames,
-    pub bcp47_tzids: &'a LiteMap<String, TinyStr8>,
-    pub meta_zone_ids: &'a LiteMap<String, TinyStr4>,
+    pub bcp47_tzids: &'a LiteMap<String, TimeZoneBcp47Id>,
+    pub meta_zone_ids: &'a LiteMap<String, MetaZoneId>,
 }

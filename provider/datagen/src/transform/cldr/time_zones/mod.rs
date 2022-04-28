@@ -12,12 +12,12 @@ use crate::transform::cldr::reader::{
 use crate::SourceData;
 use elsa::sync::FrozenBTreeMap;
 use icu_datetime::provider::time_zones::*;
+use icu_datetime::provider::time_zones::{MetaZoneId, TimeZoneBcp47Id};
 use icu_locid::LanguageIdentifier;
 use icu_provider::datagen::IterableResourceProvider;
 use icu_provider::prelude::*;
 use litemap::LiteMap;
 use std::sync::RwLock;
-use tinystr::{TinyStr4, TinyStr8};
 
 mod convert;
 
@@ -26,8 +26,8 @@ mod convert;
 pub struct TimeZonesProvider {
     source: SourceData,
     time_zone_names_data: FrozenBTreeMap<LanguageIdentifier, Box<TimeZoneNames>>,
-    bcp47_tzid_data: RwLock<LiteMap<String, TinyStr8>>,
-    meta_zone_id_data: RwLock<LiteMap<String, TinyStr4>>,
+    bcp47_tzid_data: RwLock<LiteMap<String, TimeZoneBcp47Id>>,
+    meta_zone_id_data: RwLock<LiteMap<String, MetaZoneId>>,
 }
 
 impl From<&SourceData> for TimeZonesProvider {
@@ -95,10 +95,8 @@ macro_rules! impl_resource_provider {
                         for (bcp47_tzid, bcp47_tzid_data) in r.iter() {
                             if let Some(alias) = &bcp47_tzid_data.alias {
                                 for data_value in alias.split(" ") {
-                                    match TinyStr8::from_str(bcp47_tzid) {
-                                        Ok(value) => {data_guard.insert(data_value.to_string(), value);}
-                                        Err(_) => {}
-                                    }
+                                    const TINYSTR_VALUE: tinystr::TinyAsciiStr<8> = tinystr::tinystr!(8, bcp47_tzid);
+                                    data_guard.insert(data_value.to_string(), TimeZoneBcp47Id(TINYSTR_VALUE));
                                 }
                             }
                         }
@@ -119,12 +117,8 @@ macro_rules! impl_resource_provider {
 
                         let mut data_guard = self.meta_zone_id_data.write().unwrap();
                         for (meta_zone_id, meta_zone_id_data) in r.iter() {
-                            match TinyStr4::from_str(meta_zone_id) {
-                                Ok(value) => {
-                                    data_guard.insert(meta_zone_id_data.long_id.to_string(), value);
-                                }
-                                Err(_) => {}
-                            }
+                            const TINYSTR_VALUE: tinystr::TinyAsciiStr<4> = tinystr::tinystr!(4, meta_zone_id);
+                            data_guard.insert(meta_zone_id_data.long_id.to_string(), MetaZoneId(TINYSTR_VALUE));
                         }
                     }
 

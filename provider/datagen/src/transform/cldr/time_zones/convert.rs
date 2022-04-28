@@ -3,11 +3,11 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use icu_datetime::provider::time_zones::{
-    ExemplarCitiesV1, MetaZoneGenericNamesLongV1, MetaZoneGenericNamesShortV1,
-    MetaZoneSpecificNamesLongV1, MetaZoneSpecificNamesShortV1, TimeZoneFormatsV1,
+    ExemplarCitiesV1, MetaZoneGenericNamesLongV1, MetaZoneGenericNamesShortV1, MetaZoneId,
+    MetaZoneSpecificNamesLongV1, MetaZoneSpecificNamesShortV1, TimeZoneBcp47Id, TimeZoneFormatsV1,
 };
 use std::borrow::Cow;
-use tinystr::{TinyStr4, TinyStr8};
+use tinystr::TinyStr8;
 use zerovec::{ZeroMap, ZeroMap2d};
 
 use crate::transform::cldr::cldr_serde::{
@@ -162,10 +162,11 @@ macro_rules! long_short_impls {
                                         // TODO(#1781): Remove this special case once the short id is updated in CLDR
                                         if key == "Yukon" {
                                             metazone.$field.as_ref().and_then(type_fallback).map(
-                                                |format| (match TinyStr4::from_bytes(b"yuko") {
-                                                    Ok(s) => s,
-                                                    Err(_) => panic!("Failed to construct tinystr from yuko"),
-                                            }, format.clone()),
+                                                |format| {
+                                                    const TINYSTR_YUKO: tinystr::TinyAsciiStr<4> =
+                                                        tinystr::tinystr!(4, "yuko");
+                                                    (MetaZoneId(TINYSTR_YUKO), format.clone())
+                                                },
                                             )
                                         } else {
                                             panic!(
@@ -246,13 +247,11 @@ macro_rules! long_short_impls {
                                     None => {
                                         // TODO(#1781): Remove this special case once the short id is updated in CLDR
                                         if key == "Yukon" {
-                                            metazone
-                                                .$field
-                                                .as_ref()
-                                                .map(|value| (match TinyStr4::from_bytes(b"yuko") {
-                                                    Ok(s) => s,
-                                                    Err(_) => panic!("Failed to construct tinystr from yuko"),
-                                                }, value.clone()))
+                                            metazone.$field.as_ref().map(|value| {
+                                                const TINYSTR_YUKO: tinystr::TinyAsciiStr<4> =
+                                                    tinystr::tinystr!(4, "yuko");
+                                                (MetaZoneId(TINYSTR_YUKO), value.clone())
+                                            })
                                         } else {
                                             panic!(
                                                 "Cannot find short id of meta zone for {:?}.",
@@ -262,7 +261,7 @@ macro_rules! long_short_impls {
                                     }
                                 }
                             })
-                            .flat_map(iterate_zone_format_for_tinystr4)
+                            .flat_map(iterate_zone_format_for_meta_zone_id)
                             .collect(),
                     },
                     overrides: data
@@ -310,7 +309,7 @@ macro_rules! long_short_impls {
                                     }
                                 })
                         })
-                        .flat_map(iterate_zone_format_for_tinystr8)
+                        .flat_map(iterate_zone_format_for_time_zone_id)
                         .collect(),
                 }
             }
@@ -332,9 +331,9 @@ long_short_impls!(
     short_metazone_names
 );
 
-fn iterate_zone_format_for_tinystr4(
-    pair: (TinyStr4, ZoneFormat),
-) -> impl Iterator<Item = (TinyStr4, TinyStr8, String)> {
+fn iterate_zone_format_for_meta_zone_id(
+    pair: (MetaZoneId, ZoneFormat),
+) -> impl Iterator<Item = (MetaZoneId, TinyStr8, String)> {
     let (key1, zf) = pair;
     zf.0.into_tuple_vec()
         .into_iter()
@@ -351,9 +350,9 @@ fn iterate_zone_format_for_tinystr4(
         })
 }
 
-fn iterate_zone_format_for_tinystr8(
-    pair: (TinyStr8, ZoneFormat),
-) -> impl Iterator<Item = (TinyStr8, TinyStr8, String)> {
+fn iterate_zone_format_for_time_zone_id(
+    pair: (TimeZoneBcp47Id, ZoneFormat),
+) -> impl Iterator<Item = (TimeZoneBcp47Id, TinyStr8, String)> {
     let (key1, zf) = pair;
     zf.0.into_tuple_vec()
         .into_iter()

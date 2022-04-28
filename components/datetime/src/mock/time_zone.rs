@@ -2,7 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use tinystr::{TinyStr4, TinyStr8};
+use crate::provider::time_zones::{MetaZoneId, TimeZoneBcp47Id};
+use tinystr::TinyStr8;
 
 use crate::date::*;
 use core::str::FromStr;
@@ -38,9 +39,9 @@ pub struct MockTimeZone {
     /// The GMT offset in seconds.
     pub gmt_offset: GmtOffset,
     /// The IANA time-zone identifier
-    pub time_zone_id: Option<TinyStr8>,
+    pub time_zone_id: Option<TimeZoneBcp47Id>,
     /// The CLDR metazone identifier
-    pub metazone_id: Option<TinyStr4>,
+    pub metazone_id: Option<MetaZoneId>,
     /// The time variant e.g. "daylight" or "standard"
     pub time_variant: Option<TinyStr8>,
 }
@@ -51,8 +52,8 @@ impl MockTimeZone {
     /// The other arguments optionally allow access to more robust formats.
     pub const fn new(
         gmt_offset: GmtOffset,
-        time_zone_id: Option<TinyStr8>,
-        metazone_id: Option<TinyStr4>,
+        time_zone_id: Option<TimeZoneBcp47Id>,
+        metazone_id: Option<MetaZoneId>,
         time_variant: Option<TinyStr8>,
     ) -> Self {
         Self {
@@ -104,11 +105,11 @@ impl TimeZoneInput for MockTimeZone {
         self.gmt_offset
     }
 
-    fn time_zone_id(&self) -> Option<&TinyStr8> {
+    fn time_zone_id(&self) -> Option<&TimeZoneBcp47Id> {
         self.time_zone_id.as_ref()
     }
 
-    fn metazone_id(&self) -> Option<&TinyStr4> {
+    fn metazone_id(&self) -> Option<&MetaZoneId> {
         self.metazone_id.as_ref()
     }
 

@@ -4,8 +4,9 @@
 
 use alloc::borrow::Cow;
 use icu_provider::{yoke, zerofrom};
-use tinystr::{TinyStr4, TinyStr8};
-use zerovec::{ZeroMap, ZeroMap2d};
+use tinystr::{TinyAsciiStr, TinyStr8};
+use zerovec::ule::{AsULE, ULE};
+use zerovec::{ZeroMap, ZeroMap2d, ZeroVec};
 
 /// An ICU4X mapping to the CLDR timeZoneNames format strings.
 /// See CLDR-JSON timeZoneNames.json for more context.
@@ -40,6 +41,82 @@ pub struct TimeZoneFormatsV1<'data> {
     pub fallback_format: Cow<'data, str>,
 }
 
+/// TimeZone ID in BCP47 format
+#[repr(transparent)]
+#[derive(
+    Debug,
+    Clone,
+    Copy,
+    Eq,
+    Ord,
+    PartialEq,
+    PartialOrd,
+    yoke::Yokeable,
+    ULE,
+    serde::Deserialize,
+    serde::Serialize,
+)] // feature-gated
+#[serde(transparent)] // feature-gated
+pub struct TimeZoneBcp47Id(pub TinyAsciiStr<8>);
+
+impl AsULE for TimeZoneBcp47Id {
+    type ULE = Self;
+
+    #[inline]
+    fn to_unaligned(self) -> Self::ULE {
+        self
+    }
+
+    #[inline]
+    fn from_unaligned(unaligned: Self::ULE) -> Self {
+        unaligned
+    }
+}
+
+impl<'a> zerovec::maps::ZeroMapKV<'a> for TimeZoneBcp47Id {
+    type Container = ZeroVec<'a, TimeZoneBcp47Id>;
+    type GetType = TimeZoneBcp47Id;
+    type OwnedType = TimeZoneBcp47Id;
+}
+
+/// MetaZone ID in a compact format
+#[repr(transparent)]
+#[derive(
+    Debug,
+    Clone,
+    Copy,
+    Eq,
+    Ord,
+    PartialEq,
+    PartialOrd,
+    yoke::Yokeable,
+    ULE,
+    serde::Deserialize,
+    serde::Serialize,
+)] // feature-gated
+#[serde(transparent)] // feature-gated
+pub struct MetaZoneId(pub TinyAsciiStr<4>);
+
+impl AsULE for MetaZoneId {
+    type ULE = Self;
+
+    #[inline]
+    fn to_unaligned(self) -> Self::ULE {
+        self
+    }
+
+    #[inline]
+    fn from_unaligned(unaligned: Self::ULE) -> Self {
+        unaligned
+    }
+}
+
+impl<'a> zerovec::maps::ZeroMapKV<'a> for MetaZoneId {
+    type Container = ZeroVec<'a, MetaZoneId>;
+    type GetType = MetaZoneId;
+    type OwnedType = MetaZoneId;
+}
+
 /// An ICU4X mapping to the CLDR timeZoneNames exemplar cities.
 /// See CLDR-JSON timeZoneNames.json for more context.
 #[icu_provider::data_struct(ExemplarCitiesV1Marker = "time_zone/exemplar_cities@1")]
@@ -48,7 +125,7 @@ pub struct TimeZoneFormatsV1<'data> {
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
 pub struct ExemplarCitiesV1<'data>(
-    #[cfg_attr(feature = "serde", serde(borrow))] pub ZeroMap<'data, TinyStr8, str>,
+    #[cfg_attr(feature = "serde", serde(borrow))] pub ZeroMap<'data, TimeZoneBcp47Id, str>,
 );
 
 /// An ICU4X mapping to the long-form generic metazone names.
@@ -61,10 +138,10 @@ pub struct ExemplarCitiesV1<'data>(
 pub struct MetaZoneGenericNamesLongV1<'data> {
     /// The default mapping between metazone id and localized metazone name.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub defaults: ZeroMap<'data, TinyStr4, str>,
+    pub defaults: ZeroMap<'data, MetaZoneId, str>,
     /// The override mapping between timezone id and localized metazone name.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub overrides: ZeroMap<'data, TinyStr8, str>,
+    pub overrides: ZeroMap<'data, TimeZoneBcp47Id, str>,
 }
 
 /// An ICU4X mapping to the short-form generic metazone names.
@@ -77,10 +154,10 @@ pub struct MetaZoneGenericNamesLongV1<'data> {
 pub struct MetaZoneGenericNamesShortV1<'data> {
     /// The default mapping between metazone id and localized metazone name.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub defaults: ZeroMap<'data, TinyStr4, str>,
+    pub defaults: ZeroMap<'data, MetaZoneId, str>,
     /// The override mapping between timezone id and localized metazone name.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub overrides: ZeroMap<'data, TinyStr8, str>,
+    pub overrides: ZeroMap<'data, TimeZoneBcp47Id, str>,
 }
 
 /// An ICU4X mapping to the long-form specific metazone names.
@@ -94,10 +171,10 @@ pub struct MetaZoneGenericNamesShortV1<'data> {
 pub struct MetaZoneSpecificNamesLongV1<'data> {
     /// The default mapping between metazone id and localized metazone name.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub defaults: ZeroMap2d<'data, TinyStr4, TinyStr8, str>,
+    pub defaults: ZeroMap2d<'data, MetaZoneId, TinyStr8, str>,
     /// The override mapping between timezone id and localized metazone name.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub overrides: ZeroMap2d<'data, TinyStr8, TinyStr8, str>,
+    pub overrides: ZeroMap2d<'data, TimeZoneBcp47Id, TinyStr8, str>,
 }
 
 /// An ICU4X mapping to the short-form specific metazone names.
@@ -111,8 +188,8 @@ pub struct MetaZoneSpecificNamesLongV1<'data> {
 pub struct MetaZoneSpecificNamesShortV1<'data> {
     /// The default mapping between metazone id and localized metazone name.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub defaults: ZeroMap2d<'data, TinyStr4, TinyStr8, str>,
+    pub defaults: ZeroMap2d<'data, MetaZoneId, TinyStr8, str>,
     /// The override mapping between timezone id and localized metazone name.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub overrides: ZeroMap2d<'data, TinyStr8, TinyStr8, str>,
+    pub overrides: ZeroMap2d<'data, TimeZoneBcp47Id, TinyStr8, str>,
 }
