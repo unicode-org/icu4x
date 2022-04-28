@@ -10,8 +10,13 @@ use crate::gregorian::Gregorian;
 use crate::indian::Indian;
 use crate::iso::Iso;
 use crate::japanese::Japanese;
-
 use crate::{types, Calendar, Date, DateDuration, DateDurationUnit};
+
+use alloc::string::ToString;
+use icu_locid::{unicode_ext_key, Locale};
+
+use crate::provider;
+use icu_provider::prelude::*;
 
 /// This is a calendar that encompasses all formattable calendars supported by this crate
 ///
@@ -220,6 +225,77 @@ impl Calendar for AnyCalendar {
 }
 
 impl AnyCalendar {
+    /// Constructs an AnyCalendar for a given calendar kind and [`AnyProvider`] data source
+    ///
+    /// For calendars that need data, will attempt to load the appropriate data from the source
+    pub fn try_new_with_any_provider<P>(
+        kind: AnyCalendarKind,
+        provider: &P,
+    ) -> Result<Self, DataError>
+    where
+        P: AnyProvider,
+    {
+        Ok(match kind {
+            AnyCalendarKind::Gregorian => AnyCalendar::Gregorian(Gregorian),
+            AnyCalendarKind::Buddhist => AnyCalendar::Buddhist(Buddhist),
+            AnyCalendarKind::Japanese => {
+                let p = provider.as_downcasting();
+                AnyCalendar::Japanese(Japanese::try_new(&p)?)
+            }
+            AnyCalendarKind::Indian => AnyCalendar::Indian(Indian),
+            AnyCalendarKind::Coptic => AnyCalendar::Coptic(Coptic),
+            AnyCalendarKind::Iso => AnyCalendar::Iso(Iso),
+        })
+    }
+
+    /// Constructs an AnyCalendar for a given calendar kind and [`BufferProvider`] data source
+    ///
+    /// For calendars that need data, will attempt to load the appropriate data from the source
+    ///
+    /// This needs the `"serde"` feature to be enabled to be used
+    #[cfg(feature = "serde")]
+    pub fn try_new_with_buffer_provider<P>(
+        kind: AnyCalendarKind,
+        provider: &P,
+    ) -> Result<Self, DataError>
+    where
+        P: BufferProvider,
+    {
+        Ok(match kind {
+            AnyCalendarKind::Gregorian => AnyCalendar::Gregorian(Gregorian),
+            AnyCalendarKind::Buddhist => AnyCalendar::Buddhist(Buddhist),
+            AnyCalendarKind::Japanese => {
+                let p = provider.as_deserializing();
+                AnyCalendar::Japanese(Japanese::try_new(&p)?)
+            }
+            AnyCalendarKind::Indian => AnyCalendar::Indian(Indian),
+            AnyCalendarKind::Coptic => AnyCalendar::Coptic(Coptic),
+            AnyCalendarKind::Iso => AnyCalendar::Iso(Iso),
+        })
+    }
+
+    /// Constructs an AnyCalendar for a given calendar kind and data source.
+    ///
+    /// **This method is unstable; the bounds on `P` might expand over time as more calendars are added**
+    ///
+    /// For calendars that need data, will attempt to load the appropriate data from the source
+    ///
+    /// This needs the `"serde"` feature to be enabled to be used
+    #[cfg(feature = "serde")]
+    pub fn try_new_unstable<P>(kind: AnyCalendarKind, provider: &P) -> Result<Self, DataError>
+    where
+        P: ResourceProvider<provider::JapaneseErasV1Marker>,
+    {
+        Ok(match kind {
+            AnyCalendarKind::Gregorian => AnyCalendar::Gregorian(Gregorian),
+            AnyCalendarKind::Buddhist => AnyCalendar::Buddhist(Buddhist),
+            AnyCalendarKind::Japanese => AnyCalendar::Japanese(Japanese::try_new(&p)?),
+            AnyCalendarKind::Indian => AnyCalendar::Indian(Indian),
+            AnyCalendarKind::Coptic => AnyCalendar::Coptic(Coptic),
+            AnyCalendarKind::Iso => AnyCalendar::Iso(Iso),
+        })
+    }
+
     fn calendar_name(&self) -> &'static str {
         match *self {
             Self::Gregorian(_) => "Gregorian",
@@ -242,6 +318,50 @@ impl AnyDateInner {
             AnyDateInner::Coptic(_) => "Coptic",
             AnyDateInner::Iso(_) => "Iso",
         }
+    }
+}
+
+/// Convenient type for selecting the kind of AnyCalendar to construct
+#[non_exhaustive]
+#[derive(Copy, Clone, Eq, PartialEq, Ord, PartialOrd, Hash)]
+pub enum AnyCalendarKind {
+    Gregorian,
+    Buddhist,
+    Japanese,
+    Indian,
+    Coptic,
+    Iso,
+}
+
+impl AnyCalendarKind {
+    pub fn from_bcp47(x: &str) -> Option<Self> {
+        Some(match x {
+            "gregory" => AnyCalendarKind::Gregorian,
+            "buddhist" => AnyCalendarKind::Buddhist,
+            "indian" => AnyCalendarKind::Indian,
+            "coptic" => AnyCalendarKind::Coptic,
+            "iso" => AnyCalendarKind::Iso,
+            _ => return None,
+        })
+    }
+
+    pub fn as_bcp47(&self) -> &'static str {
+        match *self {
+            AnyCalendarKind::Gregorian => "gregory",
+            AnyCalendarKind::Buddhist => "buddhist",
+            AnyCalendarKind::Japanese => "japanese",
+            AnyCalendarKind::Indian => "indian",
+            AnyCalendarKind::Coptic => "coptic",
+            AnyCalendarKind::Iso => "iso",
+        }
+    }
+
+    pub fn from_locale(l: &Locale) -> Option<Self> {
+        l.extensions
+            .unicode
+            .keywords
+            .get(&unicode_ext_key!("ca"))
+            .and_then(|cal| Self::from_bcp47(&cal.to_string()))
     }
 }
 
