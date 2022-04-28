@@ -188,6 +188,11 @@ fn main() -> eyre::Result<()> {
                 )
                 .takes_value(true),
         )
+        .arg(
+            Arg::with_name("IGNORE_MISSING_DATA")
+                .long("ignore-missing-data")
+                .help("Skips missing data errors")
+        )
         .get_matches();
 
     if matches.is_present("VERBOSE") {
@@ -303,7 +308,7 @@ fn main() -> eyre::Result<()> {
         &selected_keys,
         &source_data,
         out,
-        false,
+        matches.is_present("IGNORE_MISSING_DATA"),
     )
     .map_err(|e| -> eyre::ErrReport {
         if icu_datagen::is_missing_cldr_error(e) {

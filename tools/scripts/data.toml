@@ -4,23 +4,7 @@
 
 # This is a cargo-make file included in the toplevel Makefile.toml
 
-[tasks.testdata-download-sources]
-description = "Download fresh CLDR JSON, overwriting the existing CLDR JSON."
-category = "ICU4X Data"
-command = "cargo"
-args = [
-    "run",
-    "--bin=icu4x-testdata-download-sources",
-    "--features=bin",
-    "--",
-    "-v",
-]
-
-[tasks.icu4x-key-extract]
-description = "Extracts ICU4X resource keys used by a binary."
-category = "ICU4X Data"
-script_runner = "bash"
-script = '''strings ${1} | grep -e "icu4x_key_tag\w" | sed s/icu4x_key_tag// | sort > ${2}'''
+###### CI TASKS
 
 [tasks.testdata-fingerprint-blob]
 description = "Generate a fingerprint for the ICU4X testdata.postcard file."
@@ -146,6 +130,9 @@ dependencies = [
     "testdata-build-hello-world-postcard",
 ]
 
+###### END CI TASKS
+
+
 [tasks.full-data]
 description = "Builds a complete postcard file from latest CLDR and icu_exportdata."
 category = "ICU4X Data"
@@ -164,3 +151,58 @@ args = [
     "--out=/dev/null",
     "--overwrite",
 ]
+
+[tasks.testdata-download-sources]
+description = "Download fresh CLDR JSON, overwriting the existing CLDR JSON."
+category = "ICU4X Data"
+command = "cargo"
+args = [
+    "run",
+    "--bin=icu4x-testdata-download-sources",
+    "--features=bin",
+    "--",
+    "-v",
+]
+
+[tasks.testdata-build-postcard-tree]
+description = "Build ICU4X Postcard data to a filesystem structure at provider/testdata/data/postcard, overwriting if already present. Useful for breaking out the postcard data into individual files for debugging."
+category = "ICU4X Data"
+command = "cargo"
+args = [
+    "run",
+    "--bin=icu4x-datagen",
+    "--features=experimental,bin",
+    "--",
+    "--cldr-root=provider/testdata/data/cldr",
+    "--uprops-root=provider/testdata/data/uprops",
+    "--out=provider/testdata/data/postcard",
+    "--syntax=postcard",
+    "--overwrite",
+    "--all-keys",
+    "--ignore-missing-data",
+    "--locales=ar",
+    "--locales=ar-EG",
+    "--locales=bn",
+    "--locales=ccp",
+    "--locales=en",
+    "--locales=en-001",
+    "--locales=en-ZA",
+    "--locales=es",
+    "--locales=es-AR",
+    "--locales=fr",
+    "--locales=fil",
+    "--locales=ja",
+    "--locales=ru",
+    "--locales=sr",
+    "--locales=sr-Cyrl",
+    "--locales=sr-Latn",
+    "--locales=th",
+    "--locales=tr",
+    "--locales=und",
+]
+
+[tasks.icu4x-key-extract]
+description = "Extracts ICU4X resource keys used by a binary."
+category = "ICU4X Data"
+script_runner = "bash"
+script = '''strings ${1} | grep -e "icu4x_key_tag\w" | sed s/icu4x_key_tag// | sort > ${2}'''
