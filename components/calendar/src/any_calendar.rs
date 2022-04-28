@@ -254,9 +254,7 @@ pub trait IncludedInAnyCalendar: Calendar + Sized {
     /// Convert this calendar into an [`AnyCalendar`], moving it
     ///
     /// You should not need to call this method directly
-    fn to_any(self) -> AnyCalendar {
-        self.to_any_cloned()
-    }
+    fn to_any(self) -> AnyCalendar;
 
     /// Convert this calendar into an [`AnyCalendar`], cloning it
     ///
