@@ -83,6 +83,7 @@ writeable = { path = "../../utils/writeable" }
 icu_testdata = { path = "../testdata", features = ["metadata", "static"] }
 
 [features]
+default = []
 experimental = ["icu_casemapping", "icu_segmenter"]
 bin = ["clap", "cached-path", "eyre", "pathdiff","sha2", "simple_logger", "walkdir"]
 
