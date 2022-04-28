@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1651077249081,
+  "lastUpdate": 1651115964419,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -25186,6 +25186,60 @@ window.BENCHMARK_DATA = {
           {
             "name": "uniset/contains_range/worst",
             "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "pandusonu@google.com",
+            "name": "Gollapudi Vamsi Krishna",
+            "username": "pandusonu2"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "c0dc998de3dac8318c1e126bd7f4caa4a258bac1",
+          "message": "Add Ethiopic calendar (#1779)\n\n* Add ethiopic calendar\n\n* Fix clippy\n\n* Add method to set amete alem in Date and DateTime\n\n* avoid using result\n\n* Fix prev commit\n\n* Make inner of date pub\n\n* Fix prev commit",
+          "timestamp": "2022-04-27T20:11:00-07:00",
+          "tree_id": "dd66d4cb6a26dfdc40284bdf7323551351f3d97d",
+          "url": "https://github.com/unicode-org/icu4x/commit/c0dc998de3dac8318c1e126bd7f4caa4a258bac1"
+        },
+        "date": 1651115943844,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 45421034,
+            "range": "± 1133360",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/worst",
+            "value": 3,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/worst",
+            "value": 3,
             "range": "± 0",
             "unit": "ns/iter"
           }
