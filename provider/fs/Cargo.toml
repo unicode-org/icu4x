@@ -49,7 +49,6 @@ erased-serde = { version = "0.3", default-features = false, features = ["alloc"]
 [dev-dependencies]
 icu_locid = { version = "0.5", path = "../../components/locid", features = ["serde"] }
 icu_benchmark_macros = { version = "0.5", path = "../../tools/benchmark/macros" }
-icu_plurals = { version = "0.5", path = "../../components/plurals", features = ["serde"] }
 icu_provider = { version = "0.5", path = "../core", features = ["deserialize_json", "deserialize_bincode_1"] }
 criterion = "0.3.3"
 

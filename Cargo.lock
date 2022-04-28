@@ -1480,7 +1480,6 @@ dependencies = [
  "erased-serde",
  "icu_benchmark_macros",
  "icu_locid",
- "icu_plurals",
  "icu_provider",
  "log",
  "postcard",
