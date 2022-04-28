@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1651142454770,
+  "lastUpdate": 1651152454774,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -24448,6 +24448,66 @@ window.BENCHMARK_DATA = {
           {
             "name": "from_string/1000000001",
             "value": 78,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "egg.robin.leroy@gmail.com",
+            "name": "Robin Leroy",
+            "username": "eggrobin"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "32d23bc6dc23ef395df19501a975fe7024782803",
+          "message": "Include --all-features when recommending cargo test. (#1823)",
+          "timestamp": "2022-04-28T13:17:39Z",
+          "tree_id": "34894790f3a442ab841ff8fca111de118c87e088",
+          "url": "https://github.com/unicode-org/icu4x/commit/32d23bc6dc23ef395df19501a975fe7024782803"
+        },
+        "date": 1651152435777,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 98878,
+            "range": "± 626",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 20764,
+            "range": "± 170",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 65213,
+            "range": "± 476",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 169,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 63,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 74,
             "range": "± 0",
             "unit": "ns/iter"
           }
