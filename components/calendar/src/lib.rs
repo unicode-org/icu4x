@@ -32,6 +32,7 @@
 //! with associated Lisp code found at <https://github.com/EdReingold/calendar-code2>.
 extern crate alloc;
 
+pub mod any_calendar;
 pub mod arithmetic;
 pub mod buddhist;
 mod calendar;

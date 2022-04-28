@@ -89,6 +89,7 @@ impl Calendar for Ethiopic {
         &self,
         date1: &Self::DateInner,
         date2: &Self::DateInner,
+        _calendar2: &Self,
         _largest_unit: DateDurationUnit,
         _smallest_unit: DateDurationUnit,
     ) -> DateDuration<Self> {
@@ -138,7 +139,7 @@ impl Calendar for Ethiopic {
         }
     }
 
-    fn debug_name() -> &'static str {
+    fn debug_name(&self) -> &'static str {
         "Ethiopic"
     }
 }
