@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1651077370367,
+  "lastUpdate": 1651116050244,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -24269,6 +24269,66 @@ window.BENCHMARK_DATA = {
             "name": "from_string/1000000001",
             "value": 77,
             "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "pandusonu@google.com",
+            "name": "Gollapudi Vamsi Krishna",
+            "username": "pandusonu2"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "c0dc998de3dac8318c1e126bd7f4caa4a258bac1",
+          "message": "Add Ethiopic calendar (#1779)\n\n* Add ethiopic calendar\n\n* Fix clippy\n\n* Add method to set amete alem in Date and DateTime\n\n* avoid using result\n\n* Fix prev commit\n\n* Make inner of date pub\n\n* Fix prev commit",
+          "timestamp": "2022-04-27T20:11:00-07:00",
+          "tree_id": "dd66d4cb6a26dfdc40284bdf7323551351f3d97d",
+          "url": "https://github.com/unicode-org/icu4x/commit/c0dc998de3dac8318c1e126bd7f4caa4a258bac1"
+        },
+        "date": 1651116032393,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 103798,
+            "range": "± 9043",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 19959,
+            "range": "± 1083",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 56034,
+            "range": "± 4447",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 199,
+            "range": "± 15",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 77,
+            "range": "± 4",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 72,
+            "range": "± 3",
             "unit": "ns/iter"
           }
         ]
