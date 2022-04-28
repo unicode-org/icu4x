@@ -16,6 +16,7 @@ use crate::{types, Calendar, Date, DateDuration, DateDurationUnit};
 /// This is a calendar that encompasses all formattable calendars supported by this crate
 ///
 /// This allows for the construction of [`Date`] objects that have their calendar known at runtime.
+#[non_exhaustive]
 pub enum AnyCalendar {
     Gregorian(Gregorian),
     Buddhist(Buddhist),
@@ -27,6 +28,7 @@ pub enum AnyCalendar {
 
 /// The inner date type for [`AnyCalendar`]
 #[derive(Clone, PartialEq, Eq, Debug)]
+#[non_exhaustive]
 pub enum AnyDateInner {
     Gregorian(<Gregorian as Calendar>::DateInner),
     Buddhist(<Buddhist as Calendar>::DateInner),
