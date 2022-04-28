@@ -197,9 +197,6 @@ impl DataExporter<CrabbakeMarker> for ConstExporter {
         let data = quote! {
             #![no_std]
 
-            #[cfg(not(any(#(#i_features),*)))]
-            core::compile_error!("Activate at least one component to include data.");
-
             extern crate alloc;
             #[allow(unused_imports)]
             use writeable::Writeable;

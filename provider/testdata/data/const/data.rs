@@ -1,8 +1,6 @@
 // GENERATED CRATE. DO NOT EDIT
 
 #![no_std]
-#[cfg(not(any(feature = "icu_list")))]
-core::compile_error!("Activate at least one component to include data.");
 extern crate alloc;
 #[cfg(feature = "icu_list")]
 use icu_list::provider::*;
