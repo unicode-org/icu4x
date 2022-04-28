@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1651077399061,
+  "lastUpdate": 1651116126225,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -27911,6 +27911,102 @@ window.BENCHMARK_DATA = {
             "name": "pattern/parse",
             "value": 4287,
             "range": "± 14",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "pandusonu@google.com",
+            "name": "Gollapudi Vamsi Krishna",
+            "username": "pandusonu2"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "c0dc998de3dac8318c1e126bd7f4caa4a258bac1",
+          "message": "Add Ethiopic calendar (#1779)\n\n* Add ethiopic calendar\n\n* Fix clippy\n\n* Add method to set amete alem in Date and DateTime\n\n* avoid using result\n\n* Fix prev commit\n\n* Make inner of date pub\n\n* Fix prev commit",
+          "timestamp": "2022-04-27T20:11:00-07:00",
+          "tree_id": "dd66d4cb6a26dfdc40284bdf7323551351f3d97d",
+          "url": "https://github.com/unicode-org/icu4x/commit/c0dc998de3dac8318c1e126bd7f4caa4a258bac1"
+        },
+        "date": 1651116104605,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 101108,
+            "range": "± 7224",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 1018170,
+            "range": "± 82752",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 215530,
+            "range": "± 18897",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/DateTimeFormat/format_to_write",
+            "value": 96493,
+            "range": "± 3541",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/DateTimeFormat/format_to_string",
+            "value": 108419,
+            "range": "± 5516",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/format",
+            "value": 102072,
+            "range": "± 5899",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/to_string",
+            "value": 111031,
+            "range": "± 5951",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/ZonedDateTimeFormat/format_to_write",
+            "value": 206989,
+            "range": "± 12724",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/ZonedDateTimeFormat/format_to_string",
+            "value": 224277,
+            "range": "± 16178",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/format",
+            "value": 215035,
+            "range": "± 14917",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/to_string",
+            "value": 226489,
+            "range": "± 8366",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "pattern/parse",
+            "value": 6073,
+            "range": "± 255",
             "unit": "ns/iter"
           }
         ]
