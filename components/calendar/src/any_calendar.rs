@@ -21,6 +21,13 @@ use icu_provider::prelude::*;
 /// This is a calendar that encompasses all formattable calendars supported by this crate
 ///
 /// This allows for the construction of [`Date`] objects that have their calendar known at runtime.
+///
+/// This can be constructed by calling `.into()` on a concrete calendar type if the calendar type is known at
+/// compile time. When the type is known at runtime, the [`AnyCalendar::try_new_with_any_provider()`],
+/// [`AnyCalendar::try_new_with_buffer_provider()`], and [`AnyCalendar::try_new_unstable()`] methods may be used.
+///
+/// [`Date`](crate::Date) can also be converted to [`AnyCalendar`]-compatible ones
+/// via [`Date::to_any()`](crate::Date::to_any()).
 #[non_exhaustive]
 pub enum AnyCalendar {
     Gregorian(Gregorian),
