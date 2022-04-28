@@ -18,8 +18,3 @@ pub fn cldr_json_root() -> PathBuf {
 pub fn uprops_toml_root() -> PathBuf {
     data_root().join("uprops")
 }
-
-/// Returns the absolute path to the ICU4X JSON root directory.
-pub fn icu4x_json_root() -> PathBuf {
-    data_root().join("json")
-}

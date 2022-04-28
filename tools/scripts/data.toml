@@ -4,58 +4,7 @@
 
 # This is a cargo-make file included in the toplevel Makefile.toml
 
-[tasks.testdata-download-sources]
-description = "Download fresh CLDR JSON, overwriting the existing CLDR JSON."
-category = "ICU4X Data"
-command = "cargo"
-args = [
-    "run",
-    "--bin=icu4x-testdata-download-sources",
-    "--features=bin",
-    "--",
-    "-v",
-]
-
-[tasks.icu4x-key-extract]
-description = "Extracts ICU4X resource keys used by a binary."
-category = "ICU4X Data"
-script_runner = "bash"
-script = '''strings ${1} | grep -e "icu4x_key_tag\w" | sed s/icu4x_key_tag// | sort > ${2}'''
-
-[tasks.testdata-build-json]
-description = "Build ICU4X JSON from the downloaded CLDR JSON, overwriting the existing ICU4X JSON."
-category = "ICU4X Data"
-command = "cargo"
-args = [
-    "run",
-    "--bin=icu4x-datagen",
-    "--features=experimental,bin",
-    "--",
-    "--input-from-testdata",
-    "--out-testdata",
-    "--test-keys",
-    "--test-locales",
-    "--syntax=json",
-    "--pretty",
-    "--overwrite",
-]
-
-[tasks.testdata-build-blob]
-description = "Build ICU4X data as a Bincode blob, overwriting the existing Bincode blob."
-category = "ICU4X Data"
-command = "cargo"
-args = [
-    "run",
-    "--bin=icu4x-datagen",
-    "--features=experimental,bin",
-    "--",
-    "--format=blob",
-    "--input-from-testdata",
-    "--out-testdata",
-    "--test-keys",
-    "--test-locales",
-    "--overwrite",
-]
+###### CI TASKS
 
 [tasks.testdata-fingerprint-blob]
 description = "Generate a fingerprint for the ICU4X testdata.postcard file."
@@ -93,52 +42,17 @@ dependencies = [
     "testdata-fingerprint-blob",
 ]
 
-
-
-[tasks.testdata-build-hello-world]
-description = "Build the Hello World postcard testdata file."
-category = "ICU4X Data"
-command = "cargo"
-args = [
-    "run",
-    "--bin=icu4x-datagen",
-    "--features=experimental,bin",
-    "--",
-    "--format=blob",
-    "--hello-world-key",
-    "--all-locales",
-    "--out=provider/blob/tests/data/hello_world.postcard",
-    "--overwrite",
-]
-
-[tasks.testdata-build-blob-smaller]
-description = "Build a small subset of ICU4X data as a Postcard blob."
-category = "ICU4X Data"
-command = "cargo"
-args = [
-    "run",
-    "--bin=icu4x-datagen",
-    "--features=experimental,bin",
-    "--",
-    "--format=blob",
-    "--input-from-testdata",
-    "--out=provider/testdata/data/decimal-bn-en.postcard",
-    "--keys=decimal/symbols@1",
-    "--locales=bn",
-    "--locales=en",
-    "--overwrite",
-]
-
 [tasks.testdata]
 description = "Rebuild all ICU4X testdata from source data checked into the repository"
 category = "ICU4X Data"
-dependencies = [
-    "testdata-build-json",
-    "testdata-build-blob",
-    "testdata-build-blob-smaller",
+command = "cargo"
+args = [
+    "run",
+    "--bin=icu4x-testdata-datagen",
+    "--features=bin",
 ]
 
-[tasks.testdata-check-unchanged]
+[tasks.testdata-check]
 description = "Rebuild ICU4X testdata and ensure that the working copy is clean"
 category = "ICU4X Data"
 dependencies = [
@@ -160,15 +74,8 @@ if greater_than ${output_length} 0
 end
 '''
 
-[tasks.testdata-check]
-description = "Rebuild ICU4X testdata and perform various checks pertaining to it"
-category = "ICU4X Data"
-dependencies = [
-    "testdata-check-unchanged",
-]
-
-[tasks.testdata-build-bincode]
-description = "Build ICU4X Bincode filesystem structure from the downloaded CLDR JSON, overwriting the existing ICU4X Bincode if present."
+[tasks.testdata-build-hello-world-json]
+description = "Build the Hello World JSON tree."
 category = "ICU4X Data"
 command = "cargo"
 args = [
@@ -176,12 +83,85 @@ args = [
     "--bin=icu4x-datagen",
     "--features=experimental,bin",
     "--",
-    "--input-from-testdata",
-    "--out-testdata",
-    "--test-keys",
-    "--test-locales",
-    "--syntax=bincode",
+    "--hello-world-key",
+    "--all-locales",
+    "--out=provider/fs/tests/data/json",
     "--overwrite",
+]
+
+[tasks.testdata-build-hello-world-bincode]
+description = "Build the Hello World bincode tree."
+category = "ICU4X Data"
+command = "cargo"
+args = [
+    "run",
+    "--bin=icu4x-datagen",
+    "--features=experimental,bin",
+    "--",
+    "--syntax=bincode",
+    "--hello-world-key",
+    "--all-locales",
+    "--out=provider/fs/tests/data/bincode",
+    "--overwrite",
+]
+
+[tasks.testdata-build-hello-world-postcard]
+description = "Build the Hello World postcard testdata file."
+category = "ICU4X Data"
+command = "cargo"
+args = [
+    "run",
+    "--bin=icu4x-datagen",
+    "--features=experimental,bin",
+    "--",
+    "--format=blob",
+    "--hello-world-key",
+    "--all-locales",
+    "--out=provider/blob/tests/data/hello_world.postcard",
+    "--overwrite",
+]
+
+[tasks.testdata-build-hello-world]
+description = "Build all three the Hello World outputs."
+category = "ICU4X Data"
+dependencies = [
+    "testdata-build-hello-world-json",
+    "testdata-build-hello-world-bincode",
+    "testdata-build-hello-world-postcard",
+]
+
+###### END CI TASKS
+
+
+[tasks.full-data]
+description = "Builds a complete postcard file from latest CLDR and icu_exportdata."
+category = "ICU4X Data"
+command = "cargo"
+args = [
+    "run",
+    "--bin=icu4x-datagen",
+    "--features=bin",
+    "--",
+    "--cldr-tag=41.0.0",
+    "--uprops-tag=release-71-1",
+    "--format=blob",
+    "--syntax=postcard",
+    "--all-keys",
+    "--all-locales",
+    "--out=/dev/null",
+    "--overwrite",
+]
+
+[tasks.testdata-download-sources]
+description = "Download fresh CLDR JSON, overwriting the existing CLDR JSON."
+category = "ICU4X Data"
+command = "cargo"
+args = [
+    "run",
+    "--bin=icu4x-testdata-download-sources",
+    "--features=bin",
+    "--",
+    "-v",
 ]
 
 [tasks.testdata-build-postcard-tree]
@@ -193,45 +173,18 @@ args = [
     "--bin=icu4x-datagen",
     "--features=experimental,bin",
     "--",
-    "--input-from-testdata",
-    "--out-testdata",
-    "--test-keys",
-    "--test-locales",
+    "--cldr-root=provider/testdata/data/cldr",
+    "--uprops-root=provider/testdata/data/uprops",
+    "--out=provider/testdata/data/postcard",
     "--syntax=postcard",
     "--overwrite",
-]
-
-[tasks.testdata-build-bincode-all]
-description = "Build ICU4X Bincode filesystem structure from the downloaded CLDR JSON, testing all available locales, and overwriting the existing ICU4X Bincode if present."
-category = "ICU4X Data"
-command = "cargo"
-args = [
-    "run",
-    "--bin=icu4x-datagen",
-    "--features=experimental,bin",
-    "--",
-    "--input-from-testdata",
-    "--out-testdata",
-    "--test-keys",
+    "--all-keys",
     "--all-locales",
-    "--syntax=bincode",
-    "--overwrite",
+    "--ignore-missing-data",
 ]
 
-[tasks.testdata-build-worklog-bincode]
-description = "Build Bincode files for the work_log example"
+[tasks.icu4x-key-extract]
+description = "Extracts ICU4X resource keys used by a binary."
 category = "ICU4X Data"
-command = "cargo"
-args = [
-    "run",
-    "--bin=icu4x-datagen",
-    "--features=experimental,bin",
-    "--",
-    "--input-from-testdata",
-    "--out=provider/datagen/tests/testdata/work_log_bincode",
-    "--key-file=provider/datagen/tests/testdata/work_log+keys.txt",
-    "--locales=de",
-    "--locales=es",
-    "--syntax=bincode",
-    "--overwrite",
-]
+script_runner = "bash"
+script = '''strings ${1} | grep -e "icu4x_key_tag\w" | sed s/icu4x_key_tag// | sort > ${2}'''

@@ -191,21 +191,21 @@ pub fn datagen(
     };
 
     keys.into_par_iter().try_for_each(|&key| {
-        let result = provider
-            .supported_options_for_key(key)?
-            .collect::<Vec<_>>()
-            .into_par_iter()
-            .try_for_each(|options| {
-                let req = DataRequest {
-                    options: options.clone(),
-                    metadata: Default::default(),
-                };
-                let payload = provider
-                    .load_payload(key, &req)
-                    .and_then(DataResponse::take_payload)
-                    .map_err(|e| e.with_req(key, &req))?;
-                exporter.put_payload(key, options, payload)
-            });
+        let result = provider.supported_options_for_key(key).and_then(|iter| {
+            iter.collect::<Vec<_>>()
+                .into_par_iter()
+                .try_for_each(|options| {
+                    let req = DataRequest {
+                        options: options.clone(),
+                        metadata: Default::default(),
+                    };
+                    let payload = provider
+                        .load_payload(key, &req)
+                        .and_then(DataResponse::take_payload)
+                        .map_err(|e| e.with_req(key, &req))?;
+                    exporter.put_payload(key, options, payload)
+                })
+        });
 
         exporter.flush(key)?;
 
@@ -223,4 +223,33 @@ pub fn datagen(
     exporter.close()?;
 
     Ok(())
+}
+
+#[test]
+fn test_keys() {
+    assert_eq!(
+        keys(&["list/and@1", "datetime/lengths@1", "trash",]),
+        vec![
+            icu_datetime::provider::calendar::DatePatternsV1Marker::KEY,
+            icu_list::provider::AndListV1Marker::KEY,
+        ]
+    );
+}
+
+#[test]
+fn test_keys_from_file() {
+    let file = std::fs::File::open(
+        PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("tests/testdata/work_log+keys.txt"),
+    )
+    .unwrap();
+    assert_eq!(
+        keys_from_file(file).unwrap(),
+        vec![
+            icu_datetime::provider::calendar::DatePatternsV1Marker::KEY,
+            icu_datetime::provider::calendar::DateSkeletonPatternsV1Marker::KEY,
+            icu_datetime::provider::calendar::DateSymbolsV1Marker::KEY,
+            icu_datetime::provider::week_data::WeekDataV1Marker::KEY,
+            icu_plurals::provider::OrdinalV1Marker::KEY,
+        ]
+    );
 }
