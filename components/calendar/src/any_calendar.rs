@@ -289,7 +289,7 @@ impl AnyCalendar {
         Ok(match kind {
             AnyCalendarKind::Gregorian => AnyCalendar::Gregorian(Gregorian),
             AnyCalendarKind::Buddhist => AnyCalendar::Buddhist(Buddhist),
-            AnyCalendarKind::Japanese => AnyCalendar::Japanese(Japanese::try_new(&provider)?),
+            AnyCalendarKind::Japanese => AnyCalendar::Japanese(Japanese::try_new(provider)?),
             AnyCalendarKind::Indian => AnyCalendar::Indian(Indian),
             AnyCalendarKind::Coptic => AnyCalendar::Coptic(Coptic),
             AnyCalendarKind::Iso => AnyCalendar::Iso(Iso),
