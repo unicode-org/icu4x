@@ -13,15 +13,36 @@ pub use quote::quote;
 #[cfg(feature = "derive")]
 pub use crabbake_derive::Bakeable;
 
+use std::collections::HashSet;
+use std::sync::Mutex;
+
+#[derive(Default)]
+pub struct CrateEnv(Mutex<HashSet<&'static str>>);
+
+impl CrateEnv {
+    pub fn insert(&self, krate: &'static str) {
+        self.0.lock().expect("poison").insert(krate);
+    }
+}
+
+impl IntoIterator for CrateEnv {
+    type Item = &'static str;
+    type IntoIter = <HashSet<&'static str> as IntoIterator>::IntoIter;
+
+    fn into_iter(self) -> Self::IntoIter {
+        self.0.into_inner().expect("poison").into_iter()
+    }
+}
+
 pub trait Bakeable {
-    fn bake(&self) -> TokenStream;
+    fn bake(&self, ctx: &CrateEnv) -> TokenStream;
 }
 
 macro_rules! literal {
     ($($type:ty),*) => {
         $(
             impl Bakeable for $type {
-                fn bake(&self) -> TokenStream {
+                fn bake(&self, _: &CrateEnv) -> TokenStream {
                     quote! {
                         #self
                     }
@@ -37,8 +58,8 @@ impl<'a, T> Bakeable for &'a [T]
 where
     T: Bakeable,
 {
-    fn bake(&self) -> TokenStream {
-        let data = self.iter().map(|d| d.bake());
+    fn bake(&self, ctx: &CrateEnv) -> TokenStream {
+        let data = self.iter().map(|d| d.bake(ctx));
         quote! {
             &[#(#data),*]
         }
@@ -49,8 +70,8 @@ impl<'a, T, const N: usize> Bakeable for [T; N]
 where
     T: Bakeable,
 {
-    fn bake(&self) -> TokenStream {
-        let data = self.iter().map(|d| d.bake());
+    fn bake(&self, ctx: &CrateEnv) -> TokenStream {
+        let data = self.iter().map(|d| d.bake(ctx));
         quote! {
             [#(#data),*]
         }
@@ -61,11 +82,11 @@ impl<T> Bakeable for Option<T>
 where
     T: Bakeable,
 {
-    fn bake(&self) -> TokenStream {
+    fn bake(&self, ctx: &CrateEnv) -> TokenStream {
         match self {
             None => quote! { None },
             Some(t) => {
-                let t = t.bake();
+                let t = t.bake(ctx);
                 quote! {
                     Some(#t)
                 }
@@ -77,10 +98,10 @@ where
 macro_rules! tuple {
     ($($ty:ident, $ident:ident),*) => {
         impl<$($ty),*> Bakeable for ($($ty),*) where $($ty: Bakeable),* {
-            fn bake(&self) -> TokenStream {
+            fn bake(&self, ctx: &CrateEnv) -> TokenStream {
                 let ($($ident),*) = self;
                 $(
-                    let $ident = $ident.bake();
+                    let $ident = $ident.bake(ctx);
                 )*
                 quote! {
                     ($(#$ident),*)
@@ -99,10 +120,11 @@ impl<T: ?Sized + ToOwned> Bakeable for Cow<'_, T>
 where
     for<'a> &'a T: Bakeable,
 {
-    fn bake(&self) -> TokenStream {
-        let t = <&T as Bakeable>::bake(&&**self);
+    fn bake(&self, ctx: &CrateEnv) -> TokenStream {
+        ctx.insert("alloc");
+        let t = <&T as Bakeable>::bake(&&**self, ctx);
         quote! {
-            alloc::borrow::Cow::Borrowed(#t)
+            ::alloc::borrow::Cow::Borrowed(#t)
         }
     }
 }
@@ -111,8 +133,8 @@ impl<'a, T> Bakeable for &'a T
 where
     T: Bakeable,
 {
-    fn bake(&self) -> TokenStream {
-        let t = <T as Bakeable>::bake(*self);
+    fn bake(&self, ctx: &CrateEnv) -> TokenStream {
+        let t = <T as Bakeable>::bake(*self, ctx);
         quote! {
             &#t
         }
@@ -122,11 +144,13 @@ where
 #[test]
 fn test_primitives() {
     let val = &[Some((18, Cow::Borrowed("hi")))][..];
+    let ctx = CrateEnv::default();
     assert_eq!(
-        val.bake().to_string(),
+        val.bake(&ctx).to_string(),
         quote! {
             &[Some((18i32, alloc::borrow::Cow::Borrowed("hi")))]
         }
         .to_string()
     );
+    assert_eq!(ctx.into_iter().collect(), vec!["alloc"]);
 }

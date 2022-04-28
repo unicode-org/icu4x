@@ -1,14 +1,13 @@
-# GENERATED CRATE, DO NOT EDIT
 [package]
-name = "const"
+name = "baked"
 version = "1.0.0"
 edition = "2021"
-include = ["data.rs", "Cargo.toml"]
+include = ["src/**/*.rs", "Cargo.toml"]
 
 [lib]
-path = "data.rs"
+path = "src/lib.rs"
 
 [dependencies]
 icu_provider = { path = "../../../../provider/core"}
 writeable = { path = "../../../../utils/writeable"}
-icu_list = { path = "../../../../components/list", optional = true }
+icu_list = { path = "../../../../components/list" }

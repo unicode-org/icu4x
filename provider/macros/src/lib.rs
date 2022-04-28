@@ -19,7 +19,9 @@ use proc_macro2::TokenStream as TokenStream2;
 use quote::quote;
 use syn::parse_macro_input;
 use syn::spanned::Spanned;
+use syn::Attribute;
 use syn::AttributeArgs;
+use syn::DeriveInput;
 use syn::ItemStruct;
 use syn::Meta;
 use syn::NestedMeta;
@@ -56,14 +58,23 @@ mod tests;
 /// assert_eq!(BarV1Marker::KEY.get_path(), "demo/bar@1");
 /// assert_eq!(BazV1Marker::KEY.get_path(), "demo/baz@1");
 /// ```
+///
+/// If the `#[crabbake(path = ...)]` attribute is present on the data struct, this will also
+/// implement it on the markers.
 pub fn data_struct(attr: TokenStream, item: TokenStream) -> TokenStream {
-    let attr = parse_macro_input!(attr as AttributeArgs);
-    let item = parse_macro_input!(item as ItemStruct);
-
-    TokenStream::from(data_struct_impl(attr, item))
+    let item2 = item.clone();
+    TokenStream::from(data_struct_impl(
+        parse_macro_input!(attr as AttributeArgs),
+        parse_macro_input!(item as ItemStruct),
+        parse_macro_input!(item2 as DeriveInput).attrs,
+    ))
 }
 
-fn data_struct_impl(attr: AttributeArgs, item: ItemStruct) -> TokenStream2 {
+fn data_struct_impl(
+    attr: AttributeArgs,
+    item: ItemStruct,
+    other_attrs: Vec<Attribute>,
+) -> TokenStream2 {
     if item.generics.type_params().count() > 0 {
         return syn::Error::new(
             item.generics.span(),
@@ -89,6 +100,17 @@ fn data_struct_impl(attr: AttributeArgs, item: ItemStruct) -> TokenStream2 {
         .to_compile_error();
     }
 
+    let crabbake_derive = other_attrs
+        .into_iter()
+        .find(|a| a.path.is_ident("crabbake"))
+        .map(|a| {
+            quote! {
+                #[derive(Default, crabbake::Bakeable)]
+                #a
+            }
+        })
+        .unwrap_or_else(|| quote! {});
+
     let mut result = TokenStream2::new();
 
     for single_attr in attr.into_iter() {
@@ -105,6 +127,7 @@ fn data_struct_impl(attr: AttributeArgs, item: ItemStruct) -> TokenStream2 {
                 let docs = format!("Marker type for [`{}`]: \"{}\"", name, key_str);
                 result.extend(quote!(
                     #[doc = #docs]
+                    #crabbake_derive
                     pub struct #marker_name;
                     impl icu_provider::DataMarker for #marker_name {
                         type Yokeable = #name_with_lt;
@@ -118,6 +141,7 @@ fn data_struct_impl(attr: AttributeArgs, item: ItemStruct) -> TokenStream2 {
                 let docs = format!("Marker type for [`{}`]", name);
                 result.extend(quote!(
                     #[doc = #docs]
+                    #crabbake_derive
                     pub struct #marker_name;
                     impl icu_provider::DataMarker for #marker_name {
                         type Yokeable = #name_with_lt;

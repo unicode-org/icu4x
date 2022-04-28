@@ -136,8 +136,13 @@ pub enum Out {
     },
     /// Output as a postcard blob to the given sink.
     Blob(Box<dyn std::io::Write + Sync>),
-    /// Output a Rust crate to the given directory.
-    Crate(PathBuf),
+    /// Output a module at the given location.
+    Module {
+        /// The directory of the generated module.
+        mod_directory: PathBuf,
+        /// Whether to run `rustfmt` on the generated files.
+        pretty: bool,
+    },
 }
 
 /// Runs ICU4X datagen.
@@ -191,7 +196,10 @@ pub fn datagen(
                 write,
             )),
         ),
-        Out::Crate(dir) => datagen_internal(
+        Out::Module {
+            mod_directory,
+            pretty,
+        } => datagen_internal(
             locales,
             keys,
             ignore_missing_resource_keys,
@@ -199,7 +207,7 @@ pub fn datagen(
                 *sources,
                 [crate::transform::cldr::ListProvider,]
             )),
-            Box::new(crabbake::ConstExporter::new(dir)?),
+            Box::new(crabbake::ConstExporter::new(mod_directory, pretty)),
         ),
     }
 }

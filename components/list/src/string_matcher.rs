@@ -11,6 +11,7 @@ use regex_automata::dfa::Automaton;
 
 #[derive(Clone, Debug, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(feature = "datagen", derive(crabbake::Bakeable))]
+#[cfg_attr(feature = "datagen", crabbake(path = icu_list::provider))]
 #[doc(hidden)]
 #[allow(clippy::exhaustive_structs)] // not a public API
 pub struct StringMatcher<'data> {

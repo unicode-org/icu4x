@@ -6,33 +6,32 @@ use crate::dynutil::UpcastDataPayload;
 use crate::prelude::*;
 use crate::yoke::*;
 use alloc::boxed::Box;
-use core::ops::Deref;
-use crabbake::{Bakeable, TokenStream};
+use crabbake::{Bakeable, CrateEnv, TokenStream};
 
 #[derive(yoke::Yokeable)]
-pub struct CrabbakeBox(Box<dyn Bakeable>);
-
-impl Deref for CrabbakeBox {
-    type Target = dyn Bakeable;
-    fn deref(&self) -> &Self::Target {
-        self.0.deref()
-    }
+pub struct CrabbakeBox {
+    payload: Box<dyn Bakeable>,
+    marker: Box<dyn Bakeable>,
 }
 
 impl<M> UpcastDataPayload<M> for CrabbakeMarker
 where
-    M: DataMarker,
+    M: DataMarker + Default + Bakeable + 'static,
     for<'a> <M::Yokeable as Yokeable<'a>>::Output: Bakeable,
 {
     fn upcast(other: DataPayload<M>) -> DataPayload<CrabbakeMarker> {
-        let owned: Box<dyn Bakeable> = Box::new(other.yoke);
-        DataPayload::from_owned(CrabbakeBox(owned))
+        DataPayload::from_owned(CrabbakeBox {
+            payload: Box::new(other.yoke),
+            // This is a bit naughty, we need the marker's type, but we're actually
+            // baking its value. This works as long as all markers are unit structs.
+            marker: Box::new(M::default()),
+        })
     }
 }
 
 impl<M> DataPayload<M>
 where
-    M: DataMarker,
+    M: DataMarker + Default + Bakeable + 'static,
     for<'a> <M::Yokeable as Yokeable<'a>>::Output: Bakeable,
 {
     /// Converts a [`DataPayload`] into something that can be baked.
@@ -56,12 +55,14 @@ impl DataPayload<CrabbakeMarker> {
     /// // Create an example DataPayload
     /// let payload: DataPayload<HelloWorldV1Marker> = Default::default();
     ///
-    /// // Serialize the payload to a JSON string
-    /// let tokens = payload.into_bakeable().tokenize().expect("Tokenization should succeed");
-    /// assert_eq!("HelloWorldV1 { message: \"(und) Hello World\" }", tokens.to_string());
+    /// let env = crabbake::CrateEnv::default();
+    /// let (tokens, marker) = payload.into_bakeable().tokenize(&env);
+    /// assert_eq!("::icu_provider::hello_world::HelloWorldV1 { message: \"(und) Hello World\" }", tokens.to_string());
+    /// assert_eq!("::icu_provider::hello_world::HelloWorldV1Marker", marker.to_string());
+    /// assert_eq!(env.into_iter().collect::<Vec<_>>(), vec!["icu_provider"]);
     /// ```
-    pub fn tokenize(&self) -> TokenStream {
-        self.get().bake()
+    pub fn tokenize(&self, env: &CrateEnv) -> (TokenStream, TokenStream) {
+        (self.get().payload.bake(env), self.get().marker.bake(env))
     }
 }
 

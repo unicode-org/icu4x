@@ -146,7 +146,7 @@ denylist = ["bench"]
 icu_provider = { version = "0.5", path = "../core" }
 icu_provider_blob = { version = "0.5", path = "../blob", optional = true }
 icu_provider_fs = { version = "0.5", path = "../fs", optional = true }
-const = { path = "./data/const", optional = true, features = ["icu_list"] }
+baked = { path = "./data/baked", optional = true }
 
 # bin feature
 clap = { version = "2.33", optional = true }

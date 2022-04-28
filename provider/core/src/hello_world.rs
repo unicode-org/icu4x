@@ -23,6 +23,7 @@ use litemap::LiteMap;
 #[derive(Debug, PartialEq, Clone, Yokeable, ZeroFrom)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, crabbake::Bakeable))]
+#[cfg_attr(feature = "datagen", crabbake(path = icu_provider::hello_world))]
 pub struct HelloWorldV1<'data> {
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub message: Cow<'data, str>,
@@ -37,6 +38,8 @@ impl Default for HelloWorldV1<'_> {
 }
 
 /// Marker type for [`HelloWorldV1`].
+#[cfg_attr(feature = "datagen", derive(Default, crabbake::Bakeable))]
+#[cfg_attr(feature = "datagen", crabbake(path = icu_provider::hello_world))]
 pub struct HelloWorldV1Marker;
 
 impl DataMarker for HelloWorldV1Marker {

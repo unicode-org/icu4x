@@ -26,6 +26,7 @@ pub use crate::string_matcher::StringMatcher;
 )]
 #[derive(Clone, Debug)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, crabbake::Bakeable))]
+#[cfg_attr(feature = "datagen", crabbake(path = icu_list::provider))]
 pub struct ListFormatterPatternsV1<'data>(
     #[cfg_attr(feature = "datagen", serde(with = "deduplicating_array"))]
     /// The patterns in the order start, middle, end, pair, short_start, short_middle,
@@ -94,6 +95,7 @@ impl<'data> ListFormatterPatternsV1<'data> {
 /// A pattern that can behave conditionally on the next element.
 #[derive(Clone, Debug, PartialEq, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, crabbake::Bakeable))]
+#[cfg_attr(feature = "datagen", crabbake(path = icu_list::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[doc(hidden)]
 pub struct ConditionalListJoinerPattern<'data> {
@@ -105,6 +107,7 @@ pub struct ConditionalListJoinerPattern<'data> {
 
 #[derive(Clone, Debug, PartialEq, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, crabbake::Bakeable))]
+#[cfg_attr(feature = "datagen", crabbake(path = icu_list::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[doc(hidden)]
 pub struct SpecialCasePattern<'data> {
@@ -117,6 +120,7 @@ pub struct SpecialCasePattern<'data> {
 /// A pattern containing two numeric placeholders ("{0}, and {1}.")
 #[derive(Clone, Debug, PartialEq, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, crabbake::Bakeable))]
+#[cfg_attr(feature = "datagen", crabbake(path = icu_list::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[doc(hidden)]
 pub struct ListJoinerPattern<'data> {

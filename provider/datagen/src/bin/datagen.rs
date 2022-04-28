@@ -32,8 +32,8 @@ fn main() -> eyre::Result<()> {
                 .takes_value(true)
                 .possible_value("dir")
                 .possible_value("blob")
-                .possible_value("crate")
-                .help("Output to a directory on the filesystem, a single blob, or a Rust crate.")
+                .possible_value("mod")
+                .help("Output to a directory on the filesystem, a single blob, or a Rust module.")
                 .default_value("dir"),
         )
         .arg(
@@ -56,7 +56,7 @@ fn main() -> eyre::Result<()> {
             Arg::with_name("PRETTY")
                 .short("p")
                 .long("pretty")
-                .help("Whether to pretty-print the output JSON files. Ignored for Bincode."),
+                .help("Whether to pretty-print the output files. Only affects JSON and Rust modules."),
         )
         .arg(
             Arg::with_name("CLDR_TAG")
@@ -301,12 +301,13 @@ fn main() -> eyre::Result<()> {
         } else {
             Box::new(std::io::stdout())
         }),
-        "crate" => icu_datagen::Out::Crate(
-            matches
+        "mod" => icu_datagen::Out::Module {
+            mod_directory: matches
                 .value_of_os("OUTPUT")
                 .map(PathBuf::from)
                 .ok_or_else(|| eyre::eyre!("--out must be specified for --format=mod"))?,
-        ),
+            pretty: matches.is_present("PRETTY"),
+        },
         _ => unreachable!(),
     };
 

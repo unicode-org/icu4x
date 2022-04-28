@@ -4,14 +4,14 @@
 
 use crate::Yoke;
 use crate::Yokeable;
-use crabbake::{Bakeable, TokenStream};
+use crabbake::{Bakeable, CrateEnv, TokenStream};
 
 impl<Y, C> Bakeable for Yoke<Y, C>
 where
     Y: for<'a> Yokeable<'a>,
     for<'a> <Y as Yokeable<'a>>::Output: Bakeable,
 {
-    fn bake<'a>(&'a self) -> TokenStream {
-        self.get().bake()
+    fn bake<'a>(&'a self, ctx: &CrateEnv) -> TokenStream {
+        self.get().bake(ctx)
     }
 }

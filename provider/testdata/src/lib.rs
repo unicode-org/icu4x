@@ -12,7 +12,7 @@
 //!   can optionally specify your own test data with the `ICU4X_TESTDATA_DIR` environment variable.
 //! * `static` exposes [`get_postcard_provider`] with alias [`get_provider`] (unless `fs` is
 //!   also enabled).
-//! * `const` exposes [`get_const_provider`] with alias [`get_provider`] (unless `fs` or `static are
+//! * `baked` exposes [`get_baked_provider`] with alias [`get_provider`] (unless `fs` or `static are
 //!   also enabled).
 //! * `metadata` exposes the [`metadata`] module which contains information such as the CLDR Gitref
 //!   and the list of included locales.
@@ -120,9 +120,9 @@ pub fn get_smaller_postcard_provider() -> icu_provider_blob::StaticDataProvider 
     .unwrap()
 }
 
-#[cfg(feature = "const")]
-pub const fn get_const_provider() -> r#const::ConstProvider {
-    r#const::PROVIDER
+#[cfg(feature = "baked")]
+pub fn get_baked_provider() -> &'static baked::StaticDataProvider {
+    baked::PROVIDER
 }
 
 // get_provider is the first of get_json_provider, get_postcard_provider, get_const_provider
@@ -136,8 +136,8 @@ pub use get_postcard_provider as get_provider;
 
 // get_static_provider is the first of get_postcard_provider, get_const_provider
 // This might change in the future.
-#[cfg(all(feature = "const", not(feature = "static")))]
-pub use get_const_provider as get_static_provider;
+#[cfg(all(feature = "baked", not(feature = "static")))]
+pub use get_baked_provider as get_static_provider;
 #[cfg(feature = "static")]
 pub use get_postcard_provider as get_static_provider;
 
