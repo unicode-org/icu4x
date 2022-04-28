@@ -29,7 +29,7 @@ command = "cargo"
 args = [
     "run",
     "--bin=icu4x-datagen",
-    "--features=experimental",
+    "--features=experimental,bin",
     "--",
     "--input-from-testdata",
     "--out-testdata",
@@ -47,7 +47,7 @@ command = "cargo"
 args = [
     "run",
     "--bin=icu4x-datagen",
-    "--features=experimental",
+    "--features=experimental,bin",
     "--",
     "--format=blob",
     "--input-from-testdata",
@@ -64,7 +64,7 @@ command = "cargo"
 args = [
     "run",
     "--bin=icu4x-fingerprint-data",
-    "--features=experimental",
+    "--features=experimental,bin",
     "--",
     "--format=blob",
     "--data=provider/testdata/data/testdata.postcard",
@@ -78,7 +78,7 @@ command = "cargo"
 args = [
     "run",
     "--bin=icu4x-fingerprint-data",
-    "--features=experimental",
+    "--features=experimental,bin",
     "--",
     "--format=dir",
     "--data=provider/testdata/data/json",
@@ -102,7 +102,7 @@ command = "cargo"
 args = [
     "run",
     "--bin=icu4x-datagen",
-    "--features=experimental",
+    "--features=experimental,bin",
     "--",
     "--format=blob",
     "--hello-world-key",
@@ -118,7 +118,7 @@ command = "cargo"
 args = [
     "run",
     "--bin=icu4x-datagen",
-    "--features=experimental",
+    "--features=experimental,bin",
     "--",
     "--format=blob",
     "--input-from-testdata",
@@ -127,19 +127,6 @@ args = [
     "--locales=bn",
     "--locales=en",
     "--overwrite",
-]
-
-[tasks.testdata-verify-zero-copy]
-description = "Verify that testdata is zero-copy for all known keys."
-category = "ICU4X Data"
-command = "cargo"
-args = [
-    "run",
-    "--bin=icu4x-verify-zero-copy",
-    "--features=experimental",
-    "--",
-    "--test-keys",
-    "--check",
 ]
 
 [tasks.testdata]
@@ -178,7 +165,6 @@ description = "Rebuild ICU4X testdata and perform various checks pertaining to i
 category = "ICU4X Data"
 dependencies = [
     "testdata-check-unchanged",
-    "testdata-verify-zero-copy",
 ]
 
 [tasks.testdata-build-bincode]
@@ -188,7 +174,7 @@ command = "cargo"
 args = [
     "run",
     "--bin=icu4x-datagen",
-    "--features=experimental",
+    "--features=experimental,bin",
     "--",
     "--input-from-testdata",
     "--out-testdata",
@@ -205,7 +191,7 @@ command = "cargo"
 args = [
     "run",
     "--bin=icu4x-datagen",
-    "--features=experimental",
+    "--features=experimental,bin",
     "--",
     "--input-from-testdata",
     "--out-testdata",
@@ -222,7 +208,7 @@ command = "cargo"
 args = [
     "run",
     "--bin=icu4x-datagen",
-    "--features=experimental",
+    "--features=experimental,bin",
     "--",
     "--input-from-testdata",
     "--out-testdata",
@@ -239,7 +225,7 @@ command = "cargo"
 args = [
     "run",
     "--bin=icu4x-datagen",
-    "--features=experimental",
+    "--features=experimental,bin",
     "--",
     "--input-from-testdata",
     "--out=provider/datagen/tests/testdata/work_log_bincode",

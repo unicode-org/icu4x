@@ -5,27 +5,12 @@
 use clap::{App, Arg, ArgGroup, ArgMatches};
 use eyre::WrapErr;
 
-use icu_datagen::cldr::CldrPaths;
 use icu_datagen::{get_all_keys, SourceData};
 use icu_locid::LanguageIdentifier;
-use icu_provider::datagen::IterableDynProvider;
-use icu_provider::export::DataExporter;
 use icu_provider::hello_world::HelloWorldV1Marker;
 use icu_provider::prelude::*;
-use icu_provider::serde::SerializeMarker;
-use icu_provider_adapters::filter::Filterable;
-
-use icu_provider_blob::export::BlobExporter;
-use icu_provider_fs::export::fs_exporter;
-use icu_provider_fs::export::serializers;
-use icu_provider_fs::export::FilesystemExporter;
-use rayon::prelude::*;
 use simple_logger::SimpleLogger;
-use std::borrow::Cow;
-use std::collections::HashSet;
 use std::fs::File;
-use std::io;
-use std::io::BufRead;
 use std::path::PathBuf;
 use std::str::FromStr;
 
@@ -39,12 +24,6 @@ fn main() -> eyre::Result<()> {
                 .short("v")
                 .long("verbose")
                 .help("Requests verbose output"),
-        )
-        .arg(
-            Arg::with_name("DRY_RUN")
-                .short("n")
-                .long("dry-run")
-                .help("Do not touch the filesystem (consider using with -v)."),
         )
         .arg(
             Arg::with_name("FORMAT")
@@ -249,10 +228,6 @@ fn main() -> eyre::Result<()> {
             .unwrap()
     }
 
-    if matches.is_present("DRY_RUN") {
-        eyre::bail!("Dry-run is not yet supported");
-    }
-
     let selected_locales = if let Some(locale_strs) = matches.values_of("LOCALES") {
         Some(
             locale_strs
@@ -275,31 +250,19 @@ fn main() -> eyre::Result<()> {
         all_keys
     } else if matches.is_present("HELLO_WORLD") {
         vec![HelloWorldV1Marker::KEY]
+    } else if let Some(paths) = matches.values_of("KEYS") {
+        icu_datagen::keys(&paths.collect::<Vec<_>>())
+    } else if let Some(key_file_path) = matches.value_of_os("KEY_FILE") {
+        File::open(key_file_path)
+            .and_then(icu_datagen::keys_from_file)
+            .with_context(|| key_file_path.to_string_lossy().into_owned())?
     } else {
-        let mut keys = HashSet::new();
-
-        if let Some(paths) = matches.values_of("KEYS") {
-            keys.extend(paths.map(Cow::Borrowed));
-        } else if let Some(key_file_path) = matches.value_of_os("KEY_FILE") {
-            let file = File::open(key_file_path)
-                .with_context(|| key_file_path.to_string_lossy().into_owned())?;
-            for line in io::BufReader::new(file).lines() {
-                let path = line.with_context(|| key_file_path.to_string_lossy().into_owned())?;
-                keys.insert(Cow::Owned(path));
-            }
-        }
-
-        let filtered: Vec<_> = all_keys
-            .into_iter()
-            .filter(|k| keys.contains(k.get_path()))
-            .collect();
-
-        if filtered.is_empty() {
-            eyre::bail!("No keys selected");
-        }
-
-        filtered
+        unreachable!();
     };
+
+    if selected_keys.is_empty() {
+        eyre::bail!("No keys selected");
+    }
 
     let mut source_data = SourceData::default();
 
@@ -307,123 +270,74 @@ fn main() -> eyre::Result<()> {
         source_data = SourceData::for_test();
     } else {
         if let Some(_tag) = matches.value_of("CLDR_TAG") {
-            #[cfg(not(feature = "download"))]
-            eyre::bail!("--cldr-tag requires the download feature");
-            #[cfg(feature = "download")]
-            {
-                source_data = source_data.with_cldr(CldrPaths {
-                cldr_json_root: cached_path::CacheBuilder::new().freshness_lifetime(u64::MAX).build()?
+            source_data = source_data.with_cldr(
+                cached_path::CacheBuilder::new().freshness_lifetime(u64::MAX).build()?
                     .cached_path_with_options(
                         &format!(
                             "https://github.com/unicode-org/cldr-json/releases/download/{}/cldr-{}-json-{}.zip",
                             _tag, _tag, matches.value_of("CLDR_LOCALE_SUBSET").unwrap_or("full")),
                         &cached_path::Options::default().extract(),
                     )?,
-                locale_subset: matches
+                matches
                     .value_of("CLDR_LOCALE_SUBSET")
                     .unwrap_or("full")
                     .to_string()
-            });
-            }
+             );
         } else if let Some(path) = matches.value_of("CLDR_ROOT") {
-            source_data = source_data.with_cldr(CldrPaths {
-                cldr_json_root: PathBuf::from(path),
-                locale_subset: matches
+            source_data = source_data.with_cldr(
+                PathBuf::from(path),
+                matches
                     .value_of("CLDR_LOCALE_SUBSET")
                     .unwrap_or("full")
                     .to_string(),
-            });
+            );
         }
 
         if let Some(_tag) = matches.value_of("UPROPS_TAG") {
-            #[cfg(not(feature = "download"))]
-            eyre::bail!("--uprops-tag requires the download feature");
-            #[cfg(feature = "download")]
-            {
-                source_data = source_data.with_uprops(cached_path::CacheBuilder::new().freshness_lifetime(u64::MAX).build()?
-                    .cached_path_with_options(
-                        &format!("https://github.com/unicode-org/icu/releases/download/{}/icuexportdata_uprops_full.zip", _tag),
-                        &cached_path::Options::default().extract()
-                    )?
-                    .join("icuexportdata_uprops_full")
-                    .join(matches.value_of("UPROPS_MODE").unwrap()));
-            }
+            source_data = source_data.with_uprops(cached_path::CacheBuilder::new().freshness_lifetime(u64::MAX).build()?
+                .cached_path_with_options(
+                    &format!("https://github.com/unicode-org/icu/releases/download/{}/icuexportdata_uprops_full.zip", _tag),
+                    &cached_path::Options::default().extract()
+                )?
+                .join("icuexportdata_uprops_full")
+                .join(matches.value_of("UPROPS_MODE").unwrap()));
         } else if let Some(path) = matches.value_of("UPROPS_ROOT") {
             source_data = source_data.with_uprops(PathBuf::from(path));
         }
     }
 
-    let mut provider: Box<dyn IterableDynProvider<SerializeMarker> + Sync> =
-        Box::new(icu_datagen::create_datagen_provider!(source_data));
-
-    if let Some(locales) = selected_locales.as_ref() {
-        provider = Box::new(
-            provider
-                .filterable("icu4x-datagen locales")
-                .filter_by_langid(move |lid| lid.language.is_empty() || locales.contains(lid)),
-        );
-    }
-
-    let mut exporter: Box<dyn DataExporter<_>> = match matches
+    let out = match matches
         .value_of("FORMAT")
         .expect("Option has default value")
     {
-        "dir" => Box::new(get_fs_exporter(&matches)?),
-        "blob" => Box::new(get_blob_exporter(&matches)?),
+        "dir" => get_fs_out(&matches)?,
+        "blob" => get_blob_out(&matches)?,
         _ => unreachable!(),
     };
 
-    selected_keys.into_par_iter().try_for_each(|key| {
-        let result = provider
-            .supported_options_for_key(key)?
-            .collect::<Vec<_>>()
-            .into_par_iter()
-            .try_for_each(|options| {
-                let req = DataRequest {
-                    options: options.clone(),
-                    metadata: Default::default(),
-                };
-                let payload = provider
-                    .load_payload(key, &req)
-                    .and_then(DataResponse::take_payload)
-                    .map_err(|e| e.with_req(key, &req))?;
-                exporter.put_payload(key, options, payload)
-            });
-
-        exporter.flush(key)?;
-
-        match result {
-            Ok(_) => {
-                log::info!("Writing key: {}", key);
-                Ok(())
-            }
-            Err(e)
-                if e.kind == DataErrorKind::MissingResourceKey
-                    && matches.is_present("TEST_KEYS") =>
-            {
-                log::trace!("Skipping key: {}", key);
-                Ok(())
-            }
-            Err(e) => Err(if icu_datagen::error::is_missing_cldr_error(e) {
-                eyre::eyre!(
-                    "Either --cldr-tag or --cldr-root or --input-from-testdata must be specified"
-                )
-            } else if icu_datagen::error::is_missing_uprops_error(e) {
-                eyre::eyre!(
-                    "Either --uprops-tag or --uprops-root or --input-from-testdata must be specified"
+    icu_datagen::datagen(
+        selected_locales.as_deref(),
+        &selected_keys,
+        &source_data,
+        out,
+        matches.is_present("TEST_KEYS"),
+    )
+    .map_err(|e| -> eyre::ErrReport {
+        if icu_datagen::is_missing_cldr_error(e) {
+            eyre::eyre!(
+                "Either --cldr-tag or --cldr-root or --input-from-testdata must be specified"
             )
-            } else {
-                e.into()
-            }),
+        } else if icu_datagen::is_missing_uprops_error(e) {
+            eyre::eyre!(
+                "Either --uprops-tag or --uprops-root or --input-from-testdata must be specified"
+            )
+        } else {
+            e.into()
         }
-    })?;
-
-    exporter.close()?;
-
-    Ok(())
+    })
 }
 
-fn get_fs_exporter(matches: &ArgMatches) -> eyre::Result<FilesystemExporter> {
+fn get_fs_out(matches: &ArgMatches) -> eyre::Result<icu_datagen::Out> {
     let syntax = matches.value_of("SYNTAX").unwrap_or("json");
 
     let output_path: PathBuf = if matches.is_present("OUTPUT_TESTDATA") {
@@ -436,37 +350,23 @@ fn get_fs_exporter(matches: &ArgMatches) -> eyre::Result<FilesystemExporter> {
 
     log::info!("Writing to filesystem tree at: {}", output_path.display());
 
+    use icu_provider_fs::export::serializers;
+
     let serializer: Box<dyn serializers::AbstractSerializer + Sync> =
         match matches.value_of("SYNTAX") {
-            Some("json") | None => {
-                let mut options = serializers::json::Options::default();
-                if matches.is_present("PRETTY") {
-                    options.style = serializers::json::StyleOption::Pretty;
-                }
-                Box::new(serializers::json::Serializer::new(options))
-            }
-            Some("bincode") => {
-                let options = serializers::bincode::Options::default();
-                Box::new(serializers::bincode::Serializer::new(options))
-            }
-            Some("postcard") => {
-                let options = serializers::postcard::Options::default();
-                Box::new(serializers::postcard::Serializer::new(options))
-            }
-            _ => unreachable!(),
+            Some("bincode") => Box::new(serializers::bincode::Serializer::default()),
+            Some("postcard") => Box::new(serializers::postcard::Serializer::default()),
+            _ if matches.is_present("PRETTY") => Box::new(serializers::json::Serializer::pretty()),
+            _ => Box::new(serializers::json::Serializer::default()),
         };
-
-    let mut options = fs_exporter::ExporterOptions::default();
-    options.root = output_path;
-    if matches.is_present("OVERWRITE") {
-        options.overwrite = fs_exporter::OverwriteOption::RemoveAndReplace
-    }
-
-    let exporter = FilesystemExporter::try_new(serializer, options)?;
-    Ok(exporter)
+    Ok(icu_datagen::Out::Fs {
+        output_path,
+        serializer,
+        overwrite: matches.is_present("OVERWRITE"),
+    })
 }
 
-fn get_blob_exporter(matches: &ArgMatches) -> eyre::Result<BlobExporter<'static>> {
+fn get_blob_out(matches: &ArgMatches) -> eyre::Result<icu_datagen::Out> {
     if matches.value_of("SYNTAX") == Some("json") {
         eyre::bail!("Cannot use --format=blob with --syntax=json");
     }
@@ -494,5 +394,5 @@ fn get_blob_exporter(matches: &ArgMatches) -> eyre::Result<BlobExporter<'static>
         Box::new(temp)
     };
 
-    Ok(BlobExporter::new_with_sink(sink))
+    Ok(icu_datagen::Out::Blob(sink))
 }
