@@ -1,42 +1,31 @@
 # icu_testdata [![crates.io](https://img.shields.io/crates/v/icu_testdata)](https://crates.io/crates/icu_testdata)
 
-`icu_testdata` is a unit testing package for [`ICU4X`].
+`icu_testdata` is a unit testing crate for [`ICU4X`].
 
-The package exposes a `DataProvider` with stable data useful for unit testing. The data is
+The crate exposes a data provider with stable data useful for unit testing. The data is
 based on a CLDR tag and a short list of locales that, together, cover a range of scenarios.
 
-The list of locales and the current CLDR tag can be found in [Cargo.toml](./Cargo.toml).
+There are three modes of operation, enabled by features:
+* `fs` (default) exposes [`get_json_provider`] with alias [`get_provider`]. In this mode you
+  can optionally specify your own test data with the `ICU4X_TESTDATA_DIR` environment variable.
+* `static` exposes [`get_postcard_provider`] with alias [`get_provider`] (unless `fs` is
+  also enabled).
+* `metadata` exposes the [`metadata`] module which contains information such as the CLDR Gitref
+  and the list of included locales.
 
-The output data can be found in the [data](./data/) subdirectory. There, you will find:
+## Re-generating the data
 
-- `json` for the ICU4X JSON test data
-- `cldr` for the source CLDR JSON
-- `uprops` for the source Unicode properties data
-
-### Pointing to custom test data
-
-If you wish to run ICU4X tests with custom test data, you may do so by setting the "ICU4X_TESTDATA_DIR" environment variable:
-
-```bash
-$ ICU4X_TESTDATA_DIR=/path/to/custom/testdata cargo test
-```
-
-Note: this does not work with [`get_static_provider`](crate::get_static_provider).
-
-### Re-generating the data
-
-From the top level directory of the `icu4x` metapackage, run:
+### Downloading fresh CLDR data
 
 ```bash
-$ cargo make testdata
+$ cargo run --bin --features=bin icu4x-testdata-download-sources
 ```
 
-The following commands are also available:
+### Regenerating JSON and postcard data
 
-- `cargo make testdata-download-sources` downloads fresh CLDR JSON
-- `cargo make testdata-build-json` re-generates the ICU4X JSON
-- `cargo make testdata-build-blob` re-generates the ICU4X blob file
-- `cargo make testdata-build-bincode` re-generates Bincode filesystem testdata
+```bash
+$ cargo run --bin --features=bin icu4x-testdata-datagen
+```
 
 ## Examples
 

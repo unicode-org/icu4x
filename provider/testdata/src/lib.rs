@@ -7,7 +7,7 @@
 //! The crate exposes a data provider with stable data useful for unit testing. The data is
 //! based on a CLDR tag and a short list of locales that, together, cover a range of scenarios.
 //!
-//! There are four modes of operation, enabled by features:
+//! There are three modes of operation, enabled by features:
 //! * `fs` (default) exposes [`get_json_provider`] with alias [`get_provider`]. In this mode you
 //!   can optionally specify your own test data with the `ICU4X_TESTDATA_DIR` environment variable.
 //! * `static` exposes [`get_postcard_provider`] with alias [`get_provider`] (unless `fs` is
