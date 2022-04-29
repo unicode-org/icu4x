@@ -38,7 +38,7 @@ The result is a new directory `~/projects/icu/myapp` with a file `./src/main.rs`
 
 # 3. Vendoring in ICU4X
 
-`ICU4X`'s main meta pacakge is called `icu`, so to start using it, all one has to do it edit their `~/projects/icu/myapp/Cargo.toml`, locate the `[dependencies]` section and add:
+`ICU4X`'s main meta package is called `icu`, so to start using it, all one has to do it edit their `~/projects/icu/myapp/Cargo.toml`, locate the `[dependencies]` section and add:
 
 ```toml
 [dependencies]
@@ -127,7 +127,7 @@ In this tutorial we are going to use ICU4X's "test" data provider and then move 
 
 ## Test data
 
-ICU4X's repository comes with pre-generated test data that covers all of its keys for a select set of locales. For production use it is recommended one use the steps in [Generating Data](#Generating Data) to generate a JSON directory tree or postcard blob and feed it to `FsDataProvider` or `BlobDataProvider` respectively, but for the purposes of trying stuff out, it is sufficient to use the data providers exported by `icu_testdata`.
+ICU4X's repository comes with pre-generated test data that covers all of its keys for a select set of locales. For production use it is recommended one use the steps in [Generating Data](#generating-data) to generate a JSON directory tree or postcard blob and feed it to `FsDataProvider` or `BlobDataProvider` respectively, but for the purposes of trying stuff out, it is sufficient to use the data providers exported by `icu_testdata`.
 
 
 ## Using test data
