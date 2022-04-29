@@ -2,8 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! # icu_char16trie [![crates.io](https://img.shields.io/crates/v/icu_char16trie)](https://crates.io/crates/icu_char16trie)
-//!
 //! `icu_char16trie` is a utility crate of the [`ICU4X`] project.
 //!
 //! This component provides a data structure for a space-efficient and time-efficient lookup of
