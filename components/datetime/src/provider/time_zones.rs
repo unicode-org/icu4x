@@ -53,10 +53,9 @@ pub struct TimeZoneFormatsV1<'data> {
     PartialOrd,
     yoke::Yokeable,
     ULE,
-    serde::Deserialize,
-    serde::Serialize,
-)] // feature-gated
-#[serde(transparent)] // feature-gated
+)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize))]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct TimeZoneBcp47Id(pub TinyAsciiStr<8>);
 
 impl AsULE for TimeZoneBcp47Id {
@@ -91,10 +90,9 @@ impl<'a> zerovec::maps::ZeroMapKV<'a> for TimeZoneBcp47Id {
     PartialOrd,
     yoke::Yokeable,
     ULE,
-    serde::Deserialize,
-    serde::Serialize,
-)] // feature-gated
-#[serde(transparent)] // feature-gated
+)] 
+#[cfg_attr(feature = "datagen", derive(serde::Serialize))]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct MetaZoneId(pub TinyAsciiStr<4>);
 
 impl AsULE for MetaZoneId {
