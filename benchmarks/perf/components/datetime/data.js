@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1651237940916,
+  "lastUpdate": 1651243466015,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -28679,6 +28679,102 @@ window.BENCHMARK_DATA = {
             "name": "pattern/parse",
             "value": 5031,
             "range": "± 4",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "egg.robin.leroy@gmail.com",
+            "name": "Robin Leroy",
+            "username": "eggrobin"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "78a148d4cdb625a8e9206fe5911c012abf1fe73e",
+          "message": "Add tests for FixedDecimal padding near large magnitudes (#1828)",
+          "timestamp": "2022-04-29T14:32:54Z",
+          "tree_id": "126e240bd8ee8cd148fac1ad327b01c6c7242878",
+          "url": "https://github.com/unicode-org/icu4x/commit/78a148d4cdb625a8e9206fe5911c012abf1fe73e"
+        },
+        "date": 1651243445193,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 91428,
+            "range": "± 4564",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 956199,
+            "range": "± 33777",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 201594,
+            "range": "± 7913",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/DateTimeFormat/format_to_write",
+            "value": 85800,
+            "range": "± 3277",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/DateTimeFormat/format_to_string",
+            "value": 96998,
+            "range": "± 5025",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/format",
+            "value": 90730,
+            "range": "± 2916",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/to_string",
+            "value": 98039,
+            "range": "± 3936",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/ZonedDateTimeFormat/format_to_write",
+            "value": 192146,
+            "range": "± 8124",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/ZonedDateTimeFormat/format_to_string",
+            "value": 202397,
+            "range": "± 10393",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/format",
+            "value": 202370,
+            "range": "± 10626",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/to_string",
+            "value": 207465,
+            "range": "± 8945",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "pattern/parse",
+            "value": 5835,
+            "range": "± 245",
             "unit": "ns/iter"
           }
         ]
