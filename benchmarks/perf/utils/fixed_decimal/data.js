@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1651247005209,
+  "lastUpdate": 1651254557521,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -24868,6 +24868,66 @@ window.BENCHMARK_DATA = {
           {
             "name": "from_string/1000000001",
             "value": 68,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "e1db7536ae5109f4f6fef8f72f198d37fbc8ffcf",
+          "message": "Update diplomat dep to 0.3 (#1829)\n\n* Support versions in diplomat-get-rev and diplomat-install\r\n\r\n* Add release docs\r\n\r\n* Update diplomat rev\r\n\r\n* Update versions for ffi crates\r\n\r\n* Update more versions",
+          "timestamp": "2022-04-29T17:39:03Z",
+          "tree_id": "c6313d51c5708174987ebdde70ab5e2f5754b46f",
+          "url": "https://github.com/unicode-org/icu4x/commit/e1db7536ae5109f4f6fef8f72f198d37fbc8ffcf"
+        },
+        "date": 1651254539169,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 106898,
+            "range": "± 422",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 21147,
+            "range": "± 147",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 58697,
+            "range": "± 283",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 186,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 78,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 77,
             "range": "± 0",
             "unit": "ns/iter"
           }
