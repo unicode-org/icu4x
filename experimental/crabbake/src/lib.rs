@@ -148,9 +148,9 @@ fn test_primitives() {
     assert_eq!(
         val.bake(&ctx).to_string(),
         quote! {
-            &[Some((18i32, alloc::borrow::Cow::Borrowed("hi")))]
+            &[Some((18i32, ::alloc::borrow::Cow::Borrowed("hi")))]
         }
         .to_string()
     );
-    assert_eq!(ctx.into_iter().collect(), vec!["alloc"]);
+    assert_eq!(ctx.into_iter().collect::<Vec<_>>(), vec!["alloc"]);
 }
