@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1651242886217,
+  "lastUpdate": 1651246531781,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -14063,6 +14063,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/78a148d4cdb625a8e9206fe5911c012abf1fe73e"
         },
         "date": 1651242866165,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4507203,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "andrewpkq@gmail.com",
+            "name": "andrewpollack",
+            "username": "andrewpollack"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "7c351ec3359b1591e467501d427808e517c74c53",
+          "message": "Updates to intro.md (#1830)\n\n* Fixing \"package\" typo\r\n* Fixing markdown link",
+          "timestamp": "2022-04-29T15:33:43Z",
+          "tree_id": "20776928333a681f6997459c8ce3a64a635c81b9",
+          "url": "https://github.com/unicode-org/icu4x/commit/7c351ec3359b1591e467501d427808e517c74c53"
+        },
+        "date": 1651246512582,
         "tool": "ndjson",
         "benches": [
           {
