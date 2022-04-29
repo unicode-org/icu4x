@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1651168254816,
+  "lastUpdate": 1651235603181,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -25487,6 +25487,60 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 45830515,
             "range": "± 1204982",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/worst",
+            "value": 3,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/worst",
+            "value": 3,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "alextouchet@outlook.com",
+            "name": "Alex Touchet",
+            "username": "atouchet"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "392149faf593b8c7da21c8416ed7275df143cd31",
+          "message": "Fix broken crates.io badges (#1738)\n\n* Fix broken crates.io badges\r\n\r\n* generate-readme\r\n\r\n* fix\r\n\r\nCo-authored-by: Manish Goregaokar <manishsmail@gmail.com>",
+          "timestamp": "2022-04-29T12:24:33Z",
+          "tree_id": "0b6eda577b94694a8d6d755288060a68104e381b",
+          "url": "https://github.com/unicode-org/icu4x/commit/392149faf593b8c7da21c8416ed7275df143cd31"
+        },
+        "date": 1651235582852,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 46398210,
+            "range": "± 2003629",
             "unit": "ns/iter"
           },
           {
