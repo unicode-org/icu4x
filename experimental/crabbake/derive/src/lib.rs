@@ -7,7 +7,12 @@
 use proc_macro::TokenStream;
 use proc_macro2::TokenStream as TokenStream2;
 use quote::quote;
-use syn::{parse_macro_input, DeriveInput, Path};
+use syn::{
+    parse::{Parse, ParseStream},
+    parse_macro_input,
+    punctuated::Punctuated,
+    DeriveInput, Ident, Path, PathSegment, Token,
+};
 use synstructure::{AddBounds, Structure};
 
 #[proc_macro_derive(Bakeable, attributes(crabbake))]
@@ -18,18 +23,29 @@ pub fn bakeable_derive(input: TokenStream) -> TokenStream {
 
 fn bakeable_derive_impl(input: &DeriveInput) -> TokenStream2 {
     let mut structure = Structure::new(input);
-    let path_attr = input
+
+    struct PathAttr(Punctuated<PathSegment, Token![::]>);
+
+    impl Parse for PathAttr {
+        fn parse(input: ParseStream<'_>) -> syn::parse::Result<Self> {
+            let i: Ident = input.parse()?;
+            if i != "path" {
+                return Err(input.error(format!("expected token \"path\", found {:?}", i)));
+            }
+            input.parse::<Token![=]>()?;
+            Ok(Self(input.parse::<Path>()?.segments))
+        }
+    }
+
+    let path = input
         .attrs
         .iter()
         .find(|a| a.path.is_ident("crabbake"))
-        .expect("missing crabbake(path = ...) attribute");
-    let path_str = path_attr.tokens.to_string(); // "( path = crate :: ... :: mod )"
-    assert_eq!(
-        &path_str[0..8],
-        "(path = ",
-        "missing crabbake(path = ...) attribute"
-    );
-    let path: Path = syn::parse_str(&path_str[8..path_str.len() - 1]).unwrap();
+        .expect("missing crabbake(path = ...) attribute")
+        .parse_args::<PathAttr>()
+        .unwrap()
+        .0;
+
     let body = structure.each_variant(|vi| {
         let recursive_bakes = vi.bindings().iter().map(|b| {
             let ident = b.binding.clone();
@@ -49,7 +65,7 @@ fn bakeable_derive_impl(input: &DeriveInput) -> TokenStream2 {
 
     structure.add_bounds(AddBounds::Fields);
 
-    let crate_name = path.segments.iter().next().unwrap();
+    let crate_name = path.iter().next().unwrap();
     let crate_name = quote!(#crate_name).to_string();
 
     structure.gen_impl(quote! {
