@@ -737,8 +737,8 @@ pub static VALUES: &[(
                     index_1: 3u8,
                 },
                 special_case: Some(::icu_list::provider::SpecialCasePattern {
-                    condition: ::icu_list::provider::StringMatcher {
-                        dfa_bytes: ::alloc::borrow::Cow::Borrowed(&[
+                    condition: unsafe {
+                        ::icu_list::provider::StringMatcher::from_dfa_bytes_unchecked(&[
                             114u8, 117u8, 115u8, 116u8, 45u8, 114u8, 101u8, 103u8, 101u8, 120u8,
                             45u8, 97u8, 117u8, 116u8, 111u8, 109u8, 97u8, 116u8, 97u8, 45u8, 100u8,
                             102u8, 97u8, 45u8, 115u8, 112u8, 97u8, 114u8, 115u8, 101u8, 0u8, 0u8,
@@ -791,8 +791,7 @@ pub static VALUES: &[(
                             0u8, 0u8, 0u8, 35u8, 0u8, 0u8, 0u8, 9u8, 0u8, 0u8, 0u8, 18u8, 0u8, 0u8,
                             0u8, 18u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 35u8,
                             0u8, 0u8, 0u8, 35u8, 0u8, 0u8, 0u8,
-                        ]),
-                        pattern: Some(::alloc::borrow::Cow::Borrowed("i|hi([^ae]|$)")),
+                        ])
                     },
                     pattern: ::icu_list::provider::ListJoinerPattern {
                         string: ::alloc::borrow::Cow::Borrowed(" e "),
@@ -808,8 +807,8 @@ pub static VALUES: &[(
                     index_1: 3u8,
                 },
                 special_case: Some(::icu_list::provider::SpecialCasePattern {
-                    condition: ::icu_list::provider::StringMatcher {
-                        dfa_bytes: ::alloc::borrow::Cow::Borrowed(&[
+                    condition: unsafe {
+                        ::icu_list::provider::StringMatcher::from_dfa_bytes_unchecked(&[
                             114u8, 117u8, 115u8, 116u8, 45u8, 114u8, 101u8, 103u8, 101u8, 120u8,
                             45u8, 97u8, 117u8, 116u8, 111u8, 109u8, 97u8, 116u8, 97u8, 45u8, 100u8,
                             102u8, 97u8, 45u8, 115u8, 112u8, 97u8, 114u8, 115u8, 101u8, 0u8, 0u8,
@@ -862,8 +861,7 @@ pub static VALUES: &[(
                             0u8, 0u8, 0u8, 35u8, 0u8, 0u8, 0u8, 9u8, 0u8, 0u8, 0u8, 18u8, 0u8, 0u8,
                             0u8, 18u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 35u8,
                             0u8, 0u8, 0u8, 35u8, 0u8, 0u8, 0u8,
-                        ]),
-                        pattern: Some(::alloc::borrow::Cow::Borrowed("i|hi([^ae]|$)")),
+                        ])
                     },
                     pattern: ::icu_list::provider::ListJoinerPattern {
                         string: ::alloc::borrow::Cow::Borrowed(" e "),
@@ -903,8 +901,8 @@ pub static VALUES: &[(
                     index_1: 3u8,
                 },
                 special_case: Some(::icu_list::provider::SpecialCasePattern {
-                    condition: ::icu_list::provider::StringMatcher {
-                        dfa_bytes: ::alloc::borrow::Cow::Borrowed(&[
+                    condition: unsafe {
+                        ::icu_list::provider::StringMatcher::from_dfa_bytes_unchecked(&[
                             114u8, 117u8, 115u8, 116u8, 45u8, 114u8, 101u8, 103u8, 101u8, 120u8,
                             45u8, 97u8, 117u8, 116u8, 111u8, 109u8, 97u8, 116u8, 97u8, 45u8, 100u8,
                             102u8, 97u8, 45u8, 115u8, 112u8, 97u8, 114u8, 115u8, 101u8, 0u8, 0u8,
@@ -957,8 +955,7 @@ pub static VALUES: &[(
                             0u8, 0u8, 0u8, 35u8, 0u8, 0u8, 0u8, 9u8, 0u8, 0u8, 0u8, 18u8, 0u8, 0u8,
                             0u8, 18u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 35u8,
                             0u8, 0u8, 0u8, 35u8, 0u8, 0u8, 0u8,
-                        ]),
-                        pattern: Some(::alloc::borrow::Cow::Borrowed("i|hi([^ae]|$)")),
+                        ])
                     },
                     pattern: ::icu_list::provider::ListJoinerPattern {
                         string: ::alloc::borrow::Cow::Borrowed(" e "),
@@ -1027,8 +1024,8 @@ pub static VALUES: &[(
                     index_1: 3u8,
                 },
                 special_case: Some(::icu_list::provider::SpecialCasePattern {
-                    condition: ::icu_list::provider::StringMatcher {
-                        dfa_bytes: ::alloc::borrow::Cow::Borrowed(&[
+                    condition: unsafe {
+                        ::icu_list::provider::StringMatcher::from_dfa_bytes_unchecked(&[
                             114u8, 117u8, 115u8, 116u8, 45u8, 114u8, 101u8, 103u8, 101u8, 120u8,
                             45u8, 97u8, 117u8, 116u8, 111u8, 109u8, 97u8, 116u8, 97u8, 45u8, 100u8,
                             102u8, 97u8, 45u8, 115u8, 112u8, 97u8, 114u8, 115u8, 101u8, 0u8, 0u8,
@@ -1081,8 +1078,7 @@ pub static VALUES: &[(
                             0u8, 0u8, 0u8, 35u8, 0u8, 0u8, 0u8, 9u8, 0u8, 0u8, 0u8, 18u8, 0u8, 0u8,
                             0u8, 18u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 35u8,
                             0u8, 0u8, 0u8, 35u8, 0u8, 0u8, 0u8,
-                        ]),
-                        pattern: Some(::alloc::borrow::Cow::Borrowed("i|hi([^ae]|$)")),
+                        ])
                     },
                     pattern: ::icu_list::provider::ListJoinerPattern {
                         string: ::alloc::borrow::Cow::Borrowed(" e "),
@@ -1098,8 +1094,8 @@ pub static VALUES: &[(
                     index_1: 3u8,
                 },
                 special_case: Some(::icu_list::provider::SpecialCasePattern {
-                    condition: ::icu_list::provider::StringMatcher {
-                        dfa_bytes: ::alloc::borrow::Cow::Borrowed(&[
+                    condition: unsafe {
+                        ::icu_list::provider::StringMatcher::from_dfa_bytes_unchecked(&[
                             114u8, 117u8, 115u8, 116u8, 45u8, 114u8, 101u8, 103u8, 101u8, 120u8,
                             45u8, 97u8, 117u8, 116u8, 111u8, 109u8, 97u8, 116u8, 97u8, 45u8, 100u8,
                             102u8, 97u8, 45u8, 115u8, 112u8, 97u8, 114u8, 115u8, 101u8, 0u8, 0u8,
@@ -1152,8 +1148,7 @@ pub static VALUES: &[(
                             0u8, 0u8, 0u8, 35u8, 0u8, 0u8, 0u8, 9u8, 0u8, 0u8, 0u8, 18u8, 0u8, 0u8,
                             0u8, 18u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 35u8,
                             0u8, 0u8, 0u8, 35u8, 0u8, 0u8, 0u8,
-                        ]),
-                        pattern: Some(::alloc::borrow::Cow::Borrowed("i|hi([^ae]|$)")),
+                        ])
                     },
                     pattern: ::icu_list::provider::ListJoinerPattern {
                         string: ::alloc::borrow::Cow::Borrowed(" e "),
@@ -1193,8 +1188,8 @@ pub static VALUES: &[(
                     index_1: 3u8,
                 },
                 special_case: Some(::icu_list::provider::SpecialCasePattern {
-                    condition: ::icu_list::provider::StringMatcher {
-                        dfa_bytes: ::alloc::borrow::Cow::Borrowed(&[
+                    condition: unsafe {
+                        ::icu_list::provider::StringMatcher::from_dfa_bytes_unchecked(&[
                             114u8, 117u8, 115u8, 116u8, 45u8, 114u8, 101u8, 103u8, 101u8, 120u8,
                             45u8, 97u8, 117u8, 116u8, 111u8, 109u8, 97u8, 116u8, 97u8, 45u8, 100u8,
                             102u8, 97u8, 45u8, 115u8, 112u8, 97u8, 114u8, 115u8, 101u8, 0u8, 0u8,
@@ -1247,8 +1242,7 @@ pub static VALUES: &[(
                             0u8, 0u8, 0u8, 35u8, 0u8, 0u8, 0u8, 9u8, 0u8, 0u8, 0u8, 18u8, 0u8, 0u8,
                             0u8, 18u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 35u8,
                             0u8, 0u8, 0u8, 35u8, 0u8, 0u8, 0u8,
-                        ]),
-                        pattern: Some(::alloc::borrow::Cow::Borrowed("i|hi([^ae]|$)")),
+                        ])
                     },
                     pattern: ::icu_list::provider::ListJoinerPattern {
                         string: ::alloc::borrow::Cow::Borrowed(" e "),

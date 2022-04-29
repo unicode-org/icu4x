@@ -10,19 +10,28 @@ use regex_automata::dfa::sparse::DFA;
 use regex_automata::dfa::Automaton;
 
 #[derive(Clone, Debug, yoke::Yokeable, zerofrom::ZeroFrom)]
-#[cfg_attr(feature = "datagen", derive(crabbake::Bakeable))]
-#[cfg_attr(feature = "datagen", crabbake(path = icu_list::provider))]
 #[doc(hidden)]
 #[allow(clippy::exhaustive_structs)] // not a public API
 pub struct StringMatcher<'data> {
     // Safety: These always represent a valid DFA (DFA::from_bytes(dfa_bytes).is_ok())
-    pub dfa_bytes: Cow<'data, [u8]>,
-    pub pattern: Option<Cow<'data, str>>,
+    dfa_bytes: Cow<'data, [u8]>,
+    pattern: Option<Cow<'data, str>>,
 }
 
 impl PartialEq for StringMatcher<'_> {
     fn eq(&self, other: &Self) -> bool {
         self.dfa_bytes == other.dfa_bytes
+    }
+}
+
+#[cfg(feature = "datagen")]
+impl crabbake::Bakeable for StringMatcher<'_> {
+    fn bake(&self, ctx: &crabbake::CrateEnv) -> crabbake::TokenStream {
+        ctx.insert("icu_list");
+        let bytes = (&*self.dfa_bytes).bake(ctx);
+        crabbake::quote! {
+            unsafe { ::icu_list::provider::StringMatcher::from_dfa_bytes_unchecked(#bytes) }
+        }
     }
 }
 
@@ -88,6 +97,15 @@ impl<'de: 'data, 'data> serde::Deserialize<'de> for StringMatcher<'data> {
 }
 
 impl<'data> StringMatcher<'data> {
+    /// # Safety
+    /// `dfa_bytes` has to be a valid DFA (regex_automata::dfa::sparse::DFA::from_bytes(dfa_bytes).is_ok())
+    pub const unsafe fn from_dfa_bytes_unchecked(dfa_bytes: &'data [u8]) -> Self {
+        Self {
+            dfa_bytes: Cow::Borrowed(dfa_bytes),
+            pattern: None,
+        }
+    }
+
     #[cfg(any(feature = "datagen", feature = "serde_human",))]
     pub fn new(pattern: &str) -> Result<Self, icu_provider::DataError> {
         use regex_automata::{

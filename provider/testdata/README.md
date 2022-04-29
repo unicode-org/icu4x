@@ -10,7 +10,7 @@ There are four modes of operation, enabled by features:
   can optionally specify your own test data with the `ICU4X_TESTDATA_DIR` environment variable.
 * `static` exposes [`get_postcard_provider`] with alias [`get_provider`] (unless `fs` is
   also enabled).
-* `const` exposes [`get_const_provider`] with alias [`get_provider`] (unless `fs` or `static are
+* `baked` exposes [`get_baked_provider`] with alias [`get_provider`] (unless `fs` or `static are
   also enabled).
 * `metadata` exposes the [`metadata`] module which contains information such as the CLDR Gitref
   and the list of included locales.

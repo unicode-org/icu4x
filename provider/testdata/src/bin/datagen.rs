@@ -20,22 +20,22 @@ fn main() {
         .with_uprops(paths::uprops_toml_root());
     let locales = metadata::load().unwrap().package_metadata.locales;
 
-    // let json_out = Out::Fs {
-    //     output_path: paths::data_root().join("json"),
-    //     serializer: Box::new(json::Serializer::pretty()),
-    //     overwrite: true,
-    // };
+    let json_out = Out::Fs {
+        output_path: paths::data_root().join("json"),
+        serializer: Box::new(json::Serializer::pretty()),
+        overwrite: true,
+    };
 
-    // let blob_out = Out::Blob(Box::new(
-    //     File::create(paths::data_root().join("testdata.postcard")).unwrap(),
-    // ));
+    let blob_out = Out::Blob(Box::new(
+        File::create(paths::data_root().join("testdata.postcard")).unwrap(),
+    ));
 
     let mod_out = icu_datagen::Out::Module {
         mod_directory: paths::data_root().join("baked/src/data"),
         pretty: true,
     };
 
-    for out in [mod_out] {
+    for out in [json_out, blob_out, mod_out] {
         icu_datagen::datagen(
             Some(&locales),
             &icu_datagen::get_all_keys(),

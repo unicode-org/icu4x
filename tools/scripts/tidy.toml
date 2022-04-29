@@ -107,7 +107,7 @@ script = '''
 exit_on_error true
 
 glob_pattern = set "./**/Cargo.toml"
-skip_paths = set_new "provider/testdata/data/const/Cargo.toml"
+skip_paths = set_new "provider/testdata/data/baked/Cargo.toml"
 
 template = canonicalize README.tpl
 

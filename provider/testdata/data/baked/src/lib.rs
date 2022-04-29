@@ -8,4 +8,6 @@
 
 extern crate alloc;
 
-pub mod data;
+mod data;
+
+pub use data::*;

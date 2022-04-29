@@ -125,7 +125,7 @@ pub fn get_baked_provider() -> &'static baked::StaticDataProvider {
     baked::PROVIDER
 }
 
-// get_provider is the first of get_json_provider, get_postcard_provider, get_const_provider
+// get_provider is the first of get_json_provider, get_postcard_provider, get_baked_provider
 // This might change in the future.
 #[cfg(all(feature = "const", all(not(feature = "static"), not(feature = "fs"))))]
 pub use get_const_provider as get_provider;
@@ -134,7 +134,7 @@ pub use get_json_provider as get_provider;
 #[cfg(all(feature = "static", not(feature = "fs")))]
 pub use get_postcard_provider as get_provider;
 
-// get_static_provider is the first of get_postcard_provider, get_const_provider
+// get_static_provider is the first of get_postcard_provider, get_baked_provider
 // This might change in the future.
 #[cfg(all(feature = "baked", not(feature = "static")))]
 pub use get_baked_provider as get_static_provider;
