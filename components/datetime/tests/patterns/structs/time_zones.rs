@@ -2,14 +2,15 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use icu_datetime::provider::time_zones::{MetaZoneId, TimeZoneBcp47Id};
 use icu_datetime::time_zone;
 use serde::{Deserialize, Serialize};
-use tinystr::{TinyStr4, TinyStr8};
+use tinystr::TinyStr8;
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct TimeZoneConfig {
-    pub time_zone_id: Option<TinyStr8>,
-    pub metazone_id: Option<TinyStr4>,
+    pub time_zone_id: Option<TimeZoneBcp47Id>,
+    pub metazone_id: Option<MetaZoneId>,
     pub time_variant: Option<TinyStr8>,
 }
 

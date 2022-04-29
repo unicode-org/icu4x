@@ -11,6 +11,7 @@ use icu_calendar::{
     buddhist::Buddhist, coptic::Coptic, indian::Indian, japanese::Japanese, AsCalendar, DateTime,
     Gregorian,
 };
+use icu_datetime::provider::time_zones::MetaZoneId;
 use icu_datetime::{
     mock::{parse_gregorian_from_str, zoned_datetime::MockZonedDateTime},
     pattern::runtime::Pattern,
@@ -479,7 +480,7 @@ fn test_length_fixtures() {
     test_fixture_with_time_zones(
         "lengths_with_zones_from_pdt",
         TimeZoneConfig {
-            metazone_id: Some(tinystr!(4, "ampa")),
+            metazone_id: Some(MetaZoneId(tinystr!(4, "ampa"))),
             time_variant: Some(tinystr!(8, "daylight")),
             ..TimeZoneConfig::default()
         },
