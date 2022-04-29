@@ -1888,3 +1888,51 @@ fn test_truncate() {
     dec.truncate_left(1);
     assert_eq!("00.01", dec.to_string());
 }
+
+#[test]
+fn test_pad_left_bounds() {
+    let mut dec = FixedDecimal::from_str("299792.458").unwrap();
+    let max_integer_digits = core::i16::MAX as usize + 1;
+
+    dec.pad_left(core::u16::MAX);
+    assert_eq!(
+        max_integer_digits,
+        dec.to_string().split_once('.').unwrap().0.len()
+    );
+
+    dec.pad_left(core::i16::MAX as u16 + 1);
+    assert_eq!(
+        max_integer_digits,
+        dec.to_string().split_once('.').unwrap().0.len()
+    );
+
+    dec.pad_left(core::i16::MAX as u16);
+    assert_eq!(
+        max_integer_digits - 1,
+        dec.to_string().split_once('.').unwrap().0.len()
+    );
+}
+
+#[test]
+fn test_pad_right_bounds() {
+    let mut dec = FixedDecimal::from_str("299792.458").unwrap();
+    let max_fractional_digits = -(core::i16::MIN as isize) as usize;
+
+    dec.pad_right(core::u16::MAX);
+    assert_eq!(
+        max_fractional_digits,
+        dec.to_string().split_once('.').unwrap().1.len()
+    );
+
+    dec.pad_right(core::i16::MAX as u16 + 1);
+    assert_eq!(
+        max_fractional_digits,
+        dec.to_string().split_once('.').unwrap().1.len()
+    );
+
+    dec.pad_right(core::i16::MAX as u16);
+    assert_eq!(
+        max_fractional_digits - 1,
+        dec.to_string().split_once('.').unwrap().1.len()
+    );
+}
