@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1651167816241,
+  "lastUpdate": 1651235171735,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -13973,6 +13973,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/2194094f391f8e9ad421bbde41fedb8a578ad0cf"
         },
         "date": 1651167795866,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4507203,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "alextouchet@outlook.com",
+            "name": "Alex Touchet",
+            "username": "atouchet"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "392149faf593b8c7da21c8416ed7275df143cd31",
+          "message": "Fix broken crates.io badges (#1738)\n\n* Fix broken crates.io badges\r\n\r\n* generate-readme\r\n\r\n* fix\r\n\r\nCo-authored-by: Manish Goregaokar <manishsmail@gmail.com>",
+          "timestamp": "2022-04-29T12:24:33Z",
+          "tree_id": "0b6eda577b94694a8d6d755288060a68104e381b",
+          "url": "https://github.com/unicode-org/icu4x/commit/392149faf593b8c7da21c8416ed7275df143cd31"
+        },
+        "date": 1651235155420,
         "tool": "ndjson",
         "benches": [
           {
