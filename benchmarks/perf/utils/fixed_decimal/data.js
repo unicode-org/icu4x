@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1651243381844,
+  "lastUpdate": 1651247005209,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -24808,6 +24808,66 @@ window.BENCHMARK_DATA = {
           {
             "name": "from_string/1000000001",
             "value": 78,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "andrewpkq@gmail.com",
+            "name": "andrewpollack",
+            "username": "andrewpollack"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "7c351ec3359b1591e467501d427808e517c74c53",
+          "message": "Updates to intro.md (#1830)\n\n* Fixing \"package\" typo\r\n* Fixing markdown link",
+          "timestamp": "2022-04-29T15:33:43Z",
+          "tree_id": "20776928333a681f6997459c8ce3a64a635c81b9",
+          "url": "https://github.com/unicode-org/icu4x/commit/7c351ec3359b1591e467501d427808e517c74c53"
+        },
+        "date": 1651246987147,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 106793,
+            "range": "± 424",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 18616,
+            "range": "± 149",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 51795,
+            "range": "± 100",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 164,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 78,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 68,
             "range": "± 0",
             "unit": "ns/iter"
           }
