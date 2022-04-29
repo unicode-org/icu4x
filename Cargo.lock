@@ -1104,7 +1104,7 @@ version = "0.1.0"
 
 [[package]]
 name = "icu4x_ecma402"
-version = "0.4.0"
+version = "0.5.0"
 dependencies = [
  "criterion",
  "ecma402_traits",
@@ -1155,7 +1155,7 @@ dependencies = [
 
 [[package]]
 name = "icu_capi"
-version = "0.1.0"
+version = "0.5.0"
 dependencies = [
  "diplomat",
  "diplomat-runtime",
@@ -1178,14 +1178,14 @@ dependencies = [
 
 [[package]]
 name = "icu_capi_cdylib"
-version = "0.1.0"
+version = "0.5.0"
 dependencies = [
  "icu_capi",
 ]
 
 [[package]]
 name = "icu_capi_staticlib"
-version = "0.1.0"
+version = "0.5.0"
 dependencies = [
  "dlmalloc",
  "icu_capi",
@@ -1321,7 +1321,7 @@ dependencies = [
 
 [[package]]
 name = "icu_freertos"
-version = "0.1.0"
+version = "0.5.0"
 dependencies = [
  "cortex-m",
  "freertos-rust",
