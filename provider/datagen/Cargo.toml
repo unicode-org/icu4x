@@ -43,7 +43,7 @@ icu_plurals = { version = "0.5", path = "../../components/plurals", features = [
 icu_properties = { version = "0.5", path = "../../components/properties", features = ["datagen"]}
 # (experimental)
 icu_casemapping = { version = "0.1", path = "../../experimental/casemapping", features = ["datagen"], optional = true }
-icu_segmenter = { version = "0.1", path = "../../experimental/segmenter", features = ["datagen"], optional = true }
+icu_segmenter = { version = "0.5", path = "../../experimental/segmenter", features = ["datagen"], optional = true }
 
 # ICU provider infrastructure
 icu_provider = { version = "0.5", path = "../core", features = ["std", "log_error_context"]}

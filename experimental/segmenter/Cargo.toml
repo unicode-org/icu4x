@@ -5,7 +5,7 @@
 [package]
 name = "icu_segmenter"
 description = "Unicode line breaking and text segmentation algorithms for text boundaries analysis"
-version = "0.1.0"
+version = "0.5.0"
 authors = ["The ICU4X Project Developers"]
 edition = "2018"
 readme = "README.md"

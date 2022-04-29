@@ -10,6 +10,7 @@ Once the release is complete, the assigned release driver will:
 
 * Verify that the milestone and checklist are complete
 * Verify with component owners that they're ready for release
+* Verify that `ffi/diplomat` depends on a released (not Git) version of Diplomat. Get it published (ask manishearth or sffc) otherwise.
 * Take a bird-eye view at:
   * READMEs
   * Documentation
@@ -20,6 +21,7 @@ Once the release is complete, the assigned release driver will:
 * [Tag the Release](https://github.com/unicode-org/icu4x/releases)
 * `cargo publish` each `util/` as necessary (See [Publishing utils](#Publishing utils))
 * `cargo publish` each component and meta component
+* `cargo publish` all crates under `ffi/`, starting with `ffi/diplomat`.
 * Add `icu4x-release` group as owners to each new component you're publishing
   * `cargo owner -a github:unicode-org:icu4x-release`
 * Ensure that the steps in `docs/tutorials/intro.md` still work with updated version numbers
