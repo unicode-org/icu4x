@@ -203,13 +203,19 @@ jobs:
           ~/.cargo/bin/diplomat-tool.exe
         key: ${{ runner.os }}-diplomat-${{ steps.diplomat-version.outputs.rev }}
 
-    - name: Install Diplomat
-      if: steps.diplomat-cache.outputs.cache-hit != 'true'
+    - name: Install Diplomat (git hash)
+      if: steps.diplomat-cache.outputs.cache-hit != 'true' && !contains(steps.diplomat-version.outputs.rev, '.')
       uses: actions-rs/cargo@v1.0.1
       with:
         command: install
-        # Keep this in sync with ffi/capi/Cargo.toml
         args: --git https://github.com/rust-diplomat/diplomat.git --rev ${{ steps.diplomat-version.outputs.rev }} diplomat-tool
+
+    - name: Install Diplomat (versioned)
+      if: steps.diplomat-cache.outputs.cache-hit != 'true' && contains(steps.diplomat-version.outputs.rev, '.')
+      uses: actions-rs/cargo@v1.0.1
+      with:
+        command: install
+        args: --git https://github.com/rust-diplomat/diplomat.git --version ${{ steps.diplomat-version.outputs.rev }} diplomat-tool
 
     - name: Build
       uses: actions-rs/cargo@v1.0.1
