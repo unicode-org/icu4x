@@ -6,6 +6,7 @@
 
 use crate::buddhist::Buddhist;
 use crate::coptic::Coptic;
+use crate::ethiopic::Ethiopic;
 use crate::gregorian::Gregorian;
 use crate::indian::Indian;
 use crate::iso::Iso;
@@ -33,6 +34,7 @@ pub enum AnyCalendar {
     Gregorian(Gregorian),
     Buddhist(Buddhist),
     Japanese(Japanese),
+    Ethiopic(Ethiopic),
     Indian(Indian),
     Coptic(Coptic),
     Iso(Iso),
@@ -45,6 +47,7 @@ pub enum AnyDateInner {
     Gregorian(<Gregorian as Calendar>::DateInner),
     Buddhist(<Buddhist as Calendar>::DateInner),
     Japanese(<Japanese as Calendar>::DateInner),
+    Ethiopic(<Ethiopic as Calendar>::DateInner),
     Indian(<Indian as Calendar>::DateInner),
     Coptic(<Coptic as Calendar>::DateInner),
     Iso(<Iso as Calendar>::DateInner),
@@ -56,6 +59,7 @@ macro_rules! match_cal_and_date {
             (&Self::Gregorian(ref $cal_matched), &AnyDateInner::Gregorian(ref $date_matched)) => $e,
             (&Self::Buddhist(ref $cal_matched), &AnyDateInner::Buddhist(ref $date_matched)) => $e,
             (&Self::Japanese(ref $cal_matched), &AnyDateInner::Japanese(ref $date_matched)) => $e,
+            (&Self::Ethiopic(ref $cal_matched), &AnyDateInner::Ethiopic(ref $date_matched)) => $e,
             (&Self::Indian(ref $cal_matched), &AnyDateInner::Indian(ref $date_matched)) => $e,
             (&Self::Coptic(ref $cal_matched), &AnyDateInner::Coptic(ref $date_matched)) => $e,
             (&Self::Iso(ref $cal_matched), &AnyDateInner::Iso(ref $date_matched)) => $e,
@@ -75,6 +79,7 @@ impl Calendar for AnyCalendar {
             Self::Gregorian(ref c) => AnyDateInner::Gregorian(c.date_from_iso(iso)),
             Self::Buddhist(ref c) => AnyDateInner::Buddhist(c.date_from_iso(iso)),
             Self::Japanese(ref c) => AnyDateInner::Japanese(c.date_from_iso(iso)),
+            Self::Ethiopic(ref c) => AnyDateInner::Ethiopic(c.date_from_iso(iso)),
             Self::Indian(ref c) => AnyDateInner::Indian(c.date_from_iso(iso)),
             Self::Coptic(ref c) => AnyDateInner::Coptic(c.date_from_iso(iso)),
             Self::Iso(ref c) => AnyDateInner::Iso(c.date_from_iso(iso)),
@@ -106,6 +111,9 @@ impl Calendar for AnyCalendar {
                 c.offset_date(d, offset.cast_unit())
             }
             (&Self::Japanese(ref c), &mut AnyDateInner::Japanese(ref mut d)) => {
+                c.offset_date(d, offset.cast_unit())
+            }
+            (&Self::Ethiopic(ref c), &mut AnyDateInner::Ethiopic(ref mut d)) => {
                 c.offset_date(d, offset.cast_unit())
             }
             (&Self::Indian(ref c), &mut AnyDateInner::Indian(ref mut d)) => {
@@ -157,6 +165,14 @@ impl Calendar for AnyCalendar {
                 &Self::Japanese(ref c2),
                 &AnyDateInner::Japanese(ref d1),
                 &AnyDateInner::Japanese(ref d2),
+            ) => c1
+                .until(d1, d2, c2, largest_unit, smallest_unit)
+                .cast_unit(),
+            (
+                &Self::Ethiopic(ref c1),
+                &Self::Ethiopic(ref c2),
+                &AnyDateInner::Ethiopic(ref d1),
+                &AnyDateInner::Ethiopic(ref d2),
             ) => c1
                 .until(d1, d2, c2, largest_unit, smallest_unit)
                 .cast_unit(),
@@ -224,6 +240,7 @@ impl Calendar for AnyCalendar {
             Self::Gregorian(_) => "AnyCalendar (Gregorian)",
             Self::Buddhist(_) => "AnyCalendar (Buddhist)",
             Self::Japanese(_) => "AnyCalendar (Japanese)",
+            Self::Ethiopic(_) => "AnyCalendar (Ethiopic)",
             Self::Indian(_) => "AnyCalendar (Indian)",
             Self::Coptic(_) => "AnyCalendar (Coptic)",
             Self::Iso(_) => "AnyCalendar (Iso)",
@@ -308,6 +325,7 @@ impl AnyCalendar {
             Self::Gregorian(_) => "Gregorian",
             Self::Buddhist(_) => "Buddhist",
             Self::Japanese(_) => "Japanese",
+            Self::Ethiopic(_) => "Ethiopic",
             Self::Indian(_) => "Indian",
             Self::Coptic(_) => "Coptic",
             Self::Iso(_) => "Iso",
@@ -321,6 +339,7 @@ impl AnyDateInner {
             AnyDateInner::Gregorian(_) => "Gregorian",
             AnyDateInner::Buddhist(_) => "Buddhist",
             AnyDateInner::Japanese(_) => "Japanese",
+            AnyDateInner::Ethiopic(_) => "Ethiopic",
             AnyDateInner::Indian(_) => "Indian",
             AnyDateInner::Coptic(_) => "Coptic",
             AnyDateInner::Iso(_) => "Iso",
@@ -444,6 +463,18 @@ impl IncludedInAnyCalendar for Japanese {
     }
     fn date_to_any(d: &Self::DateInner) -> AnyDateInner {
         AnyDateInner::Japanese(*d)
+    }
+}
+
+impl IncludedInAnyCalendar for Ethiopic {
+    fn to_any(self) -> AnyCalendar {
+        AnyCalendar::Ethiopic(self)
+    }
+    fn to_any_cloned(&self) -> AnyCalendar {
+        AnyCalendar::Ethiopic(self.clone())
+    }
+    fn date_to_any(d: &Self::DateInner) -> AnyDateInner {
+        AnyDateInner::Ethiopic(*d)
     }
 }
 

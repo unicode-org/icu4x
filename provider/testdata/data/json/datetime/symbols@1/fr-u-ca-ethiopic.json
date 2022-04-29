@@ -1,0 +1,129 @@
+{
+  "months": {
+    "format": {
+      "abbreviated": [
+        "mäs.",
+        "teq.",
+        "hed.",
+        "tah.",
+        "ter",
+        "yäk.",
+        "mäg.",
+        "miy.",
+        "gue.",
+        "sän.",
+        "ham.",
+        "näh."
+      ],
+      "narrow": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12"
+      ],
+      "short": null,
+      "wide": [
+        "mäskäräm",
+        "teqemt",
+        "hedar",
+        "tahesas",
+        "ter",
+        "yäkatit",
+        "mägabit",
+        "miyazya",
+        "guenbot",
+        "säné",
+        "hamlé",
+        "nähasé"
+      ]
+    },
+    "stand_alone": null
+  },
+  "weekdays": {
+    "format": {
+      "abbreviated": [
+        "dim.",
+        "lun.",
+        "mar.",
+        "mer.",
+        "jeu.",
+        "ven.",
+        "sam."
+      ],
+      "narrow": [
+        "D",
+        "L",
+        "M",
+        "M",
+        "J",
+        "V",
+        "S"
+      ],
+      "short": [
+        "di",
+        "lu",
+        "ma",
+        "me",
+        "je",
+        "ve",
+        "sa"
+      ],
+      "wide": [
+        "dimanche",
+        "lundi",
+        "mardi",
+        "mercredi",
+        "jeudi",
+        "vendredi",
+        "samedi"
+      ]
+    },
+    "stand_alone": null
+  },
+  "day_periods": {
+    "format": {
+      "abbreviated": {
+        "am": "AM",
+        "pm": "PM",
+        "noon": "midi",
+        "midnight": "minuit"
+      },
+      "narrow": {
+        "am": "AM",
+        "pm": "PM",
+        "noon": "midi",
+        "midnight": "minuit"
+      },
+      "short": null,
+      "wide": {
+        "am": "AM",
+        "pm": "PM",
+        "noon": "midi",
+        "midnight": "minuit"
+      }
+    },
+    "stand_alone": null
+  },
+  "eras": {
+    "names": {
+      "before-incar": "après l’Incarnation",
+      "incarnation": "avant l’Incarnation"
+    },
+    "abbr": {
+      "before-incar": "ap. Inc.",
+      "incarnation": "av. Inc."
+    },
+    "narrow": {
+      "before-incar": "ap. Inc.",
+      "incarnation": "av. Inc."
+    }
+  }
+}

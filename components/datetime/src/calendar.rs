@@ -3,7 +3,8 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use icu_calendar::{
-    buddhist::Buddhist, coptic::Coptic, indian::Indian, japanese::Japanese, Gregorian,
+    buddhist::Buddhist, coptic::Coptic, ethiopic::Ethiopic, indian::Indian, japanese::Japanese,
+    Gregorian,
 };
 use icu_locid::extensions::unicode::Value;
 use icu_locid::unicode_ext_value;
@@ -35,4 +36,8 @@ impl CldrCalendar for Coptic {
 
 impl CldrCalendar for Indian {
     const BCP_47_IDENTIFIER: Value = unicode_ext_value!("indian");
+}
+
+impl CldrCalendar for Ethiopic {
+    const BCP_47_IDENTIFIER: Value = unicode_ext_value!("ethiopic");
 }
