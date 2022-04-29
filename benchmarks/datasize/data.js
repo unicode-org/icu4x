@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1651237448483,
+  "lastUpdate": 1651242886217,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -14033,6 +14033,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/671bf57fe9ccd61fb4b962475a5724c1cb85cc5c"
         },
         "date": 1651237429566,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4507203,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "egg.robin.leroy@gmail.com",
+            "name": "Robin Leroy",
+            "username": "eggrobin"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "78a148d4cdb625a8e9206fe5911c012abf1fe73e",
+          "message": "Add tests for FixedDecimal padding near large magnitudes (#1828)",
+          "timestamp": "2022-04-29T14:32:54Z",
+          "tree_id": "126e240bd8ee8cd148fac1ad327b01c6c7242878",
+          "url": "https://github.com/unicode-org/icu4x/commit/78a148d4cdb625a8e9206fe5911c012abf1fe73e"
+        },
+        "date": 1651242866165,
         "tool": "ndjson",
         "benches": [
           {
