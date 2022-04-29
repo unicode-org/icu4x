@@ -59,8 +59,8 @@ tinystr = { path = "../../utils/tinystr", version = "0.5.0", features = ["alloc"
 writeable = { path = "../../utils/writeable/" }
 
 # Run `cargo make diplomat-install` to get the right diplomat binary installed
-diplomat = { git = "https://github.com/rust-diplomat/diplomat", version = "0.2.0" }
-diplomat-runtime = { git = "https://github.com/rust-diplomat/diplomat", version = "0.2.0" }
+diplomat = { git = "https://github.com/rust-diplomat/diplomat", version = "0.3.0" }
+diplomat-runtime = { git = "https://github.com/rust-diplomat/diplomat", version = "0.3.0" }
 icu_testdata = { version = "0.5", path = "../../provider/testdata", default-features = false, features = ["static"], optional = true }
 
 [target.'cfg(target_arch = "wasm32")'.dependencies]
