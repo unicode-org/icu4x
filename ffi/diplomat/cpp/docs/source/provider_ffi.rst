@@ -18,13 +18,13 @@
 
     .. cpp:function:: static ICU4XCreateDataProviderResult create_fs(const std::string_view path)
 
-        Constructs an ``FsDataProvider`` and returns it as an :cpp:class:`ICU4XDataProvider`.
+        Constructs an ``FsDataProvider`` and returns it as an :cpp:class:`ICU4XDataProvider`. Requires the ``provider_fs`` feature. Not supported in WASM.
         See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/icu_provider_fs/struct.FsDataProvider.html>`__ for more information.
 
-    .. cpp:function:: static ICU4XCreateDataProviderResult create_static()
+    .. cpp:function:: static ICU4XCreateDataProviderResult create_test()
 
-        Constructs an ``StaticDataProvider`` and returns it as an :cpp:class:`ICU4XDataProvider`.
-        See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/icu_provider_blob/struct.StaticDataProvider.html>`__ for more information.
+        Constructs a testdata provider and returns it as an :cpp:class:`ICU4XDataProvider`. Requires the ``provider_test`` feature.
+        See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/icu_testdata/index.html>`__ for more information.
 
     .. cpp:function:: static ICU4XCreateDataProviderResult create_from_byte_slice(const diplomat::span<uint8_t> blob)
 

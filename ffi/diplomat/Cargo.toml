@@ -31,15 +31,15 @@ all-features = true
 # Omit most optional dependency features from permutation testing
 skip_optional_dependencies = true
 # Bench feature gets tested separately and is only relevant for CI.
-# smaller_static gets tested on the FFI job anyway
-denylist = ["bench", "smaller_static"]
+# smaller_test gets tested on the FFI job anyway
+denylist = ["bench", "smaller_test"]
 
 # Please keep the features list in sync with the icu_capi_staticlib crate
 [features]
-default = ["provider_fs", "provider_static", "deserialize_postcard_07", "deserialize_json"]
+default = ["provider_fs", "deserialize_postcard_07", "deserialize_json"]
 provider_fs = ["icu_provider_fs"]
-provider_static = ["icu_testdata"]
-smaller_static = ["provider_static"]
+provider_test = ["icu_testdata", "deserialize_postcard_07"]
+smaller_test = ["provider_test"]
 deserialize_json = ["icu_provider/deserialize_json"]
 deserialize_postcard_07 = ["icu_provider/deserialize_postcard_07"]
 deserialize_bincode_1 = ["icu_provider/deserialize_bincode_1"]
@@ -59,8 +59,8 @@ tinystr = { path = "../../utils/tinystr", version = "0.5.0", features = ["alloc"
 writeable = { path = "../../utils/writeable/" }
 
 # Run `cargo make diplomat-install` to get the right diplomat binary installed
-diplomat = { git = "https://github.com/rust-diplomat/diplomat", rev = "976dbd8aabecd36dfc6a7bafb0787446e07e2a25" }
-diplomat-runtime = { git = "https://github.com/rust-diplomat/diplomat", rev = "976dbd8aabecd36dfc6a7bafb0787446e07e2a25" }
+diplomat = { git = "https://github.com/rust-diplomat/diplomat", rev = "3c75d805e61c0e1b378a7c7aae1523c2db202398" }
+diplomat-runtime = { git = "https://github.com/rust-diplomat/diplomat", rev = "3c75d805e61c0e1b378a7c7aae1523c2db202398" }
 icu_testdata = { version = "0.5", path = "../../provider/testdata", default-features = false, features = ["static"], optional = true }
 
 [target.'cfg(target_arch = "wasm32")'.dependencies]

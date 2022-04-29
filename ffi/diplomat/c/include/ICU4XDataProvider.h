@@ -15,7 +15,7 @@ typedef struct ICU4XDataProvider ICU4XDataProvider;
 
 ICU4XCreateDataProviderResult ICU4XDataProvider_create_fs(const char* path_data, size_t path_len);
 
-ICU4XCreateDataProviderResult ICU4XDataProvider_create_static();
+ICU4XCreateDataProviderResult ICU4XDataProvider_create_test();
 
 ICU4XCreateDataProviderResult ICU4XDataProvider_create_from_byte_slice(const uint8_t* blob_data, size_t blob_len);
 

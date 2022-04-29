@@ -37,10 +37,9 @@ icu_capi = { version = "0.1", path = "../diplomat", default-features = false }
 
 # Please keep features/cargo-all-features lists in sync with the icu_capi crate
 [features]
-default = ["provider_fs", "provider_static", "deserialize_postcard_07", "deserialize_json"]
-provider_fs = ["icu_capi/provider_fs"]
-provider_static = ["icu_capi/provider_static"]
-smaller_static = ["icu_capi/smaller_static"]
+default = ["icu_capi/default"]
+provider_test = ["icu_capi/provider_test"]
+smaller_test = ["icu_capi/smaller_test"]
 deserialize_json = ["icu_capi/deserialize_json"]
 deserialize_postcard_07 = ["icu_capi/deserialize_postcard_07"]
 deserialize_bincode_1 = ["icu_capi/deserialize_bincode_1"]
@@ -56,8 +55,8 @@ internal_all_features_hack = []
 skip_optional_dependencies = true
 # Bench feature gets tested separately and is only relevant for CI.
 # x86tiny is not relevant in normal environments,
-# smaller_static gets tested on the FFI job anyway
-denylist = ["bench", "x86tiny", "smaller_static", "internal_all_features_hack"]
+# smaller_test gets tested on the FFI job anyway
+denylist = ["bench", "x86tiny", "smaller_test", "internal_all_features_hack"]
 
 # This cfg originates in dlmalloc/lib.rs
 [target.'cfg(any(target_os = "linux", target_os = "macos", target_arch = "wasm32"))'.dependencies]

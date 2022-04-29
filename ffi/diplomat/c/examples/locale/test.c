@@ -35,7 +35,6 @@ ICU4XLocale* get_locale(const char* localeText) {
 }
 
 
-const char* path = "../../../../../provider/testdata/data/json/";
 int main() {
     char output[40];
 
@@ -170,9 +169,9 @@ int main() {
     ICU4XLocale_destroy(locale);
 
     // Create a LocaleCanonicalizer.
-    ICU4XCreateDataProviderResult provider_result = ICU4XDataProvider_create_fs(path, strlen(path));
+    ICU4XCreateDataProviderResult provider_result = ICU4XDataProvider_create_test();
     if (!provider_result.success) {
-        printf("Failed to create FsDataProvider\n");
+        printf("Failed to create test data provider\n");
         return 1;
     }
     ICU4XDataProvider* provider = provider_result.provider;

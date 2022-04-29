@@ -8,8 +8,6 @@
 
 #include <iostream>
 
-const std::string_view path = "../../../../../provider/testdata/data/json/";
-
 int test_set_property(ICU4XCodePointSetDataResult result, char32_t included, char32_t excluded) {
     if (!result.success) {
         std::cout << "Failed to create ICU4XCodePointSetData" << std::endl;
@@ -44,7 +42,7 @@ int test_map_16_property(ICU4XCodePointMapData16Response result, char32_t sample
 }
 
 int main() {
-    ICU4XDataProvider dp = ICU4XDataProvider::create_fs(path).provider.value();
+    ICU4XDataProvider dp = ICU4XDataProvider::create_test().provider.value();
     int result;
 
     result = test_set_property(

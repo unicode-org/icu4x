@@ -18,13 +18,13 @@
 
     .. js:staticfunction:: create_fs(path)
 
-        Constructs an ``FsDataProvider`` and returns it as an :js:class:`ICU4XDataProvider`.
+        Constructs an ``FsDataProvider`` and returns it as an :js:class:`ICU4XDataProvider`. Requires the ``provider_fs`` feature. Not supported in WASM.
         See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/icu_provider_fs/struct.FsDataProvider.html>`__ for more information.
 
-    .. js:staticfunction:: create_static()
+    .. js:staticfunction:: create_test()
 
-        Constructs an ``StaticDataProvider`` and returns it as an :js:class:`ICU4XDataProvider`.
-        See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/icu_provider_blob/struct.StaticDataProvider.html>`__ for more information.
+        Constructs a testdata provider and returns it as an :js:class:`ICU4XDataProvider`. Requires the ``provider_test`` feature.
+        See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/icu_testdata/index.html>`__ for more information.
 
     .. js:staticfunction:: create_from_byte_slice(blob)
 

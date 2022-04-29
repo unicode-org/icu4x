@@ -8,10 +8,8 @@
 #include <iostream>
 #include <string_view>
 
-const std::string_view path = "../../../../../provider/testdata/data/json/";
-
 int main(int argc, char* argv[]) {
-    ICU4XDataProvider provider = ICU4XDataProvider::create_fs(path).provider.value();
+    ICU4XDataProvider provider = ICU4XDataProvider::create_test().provider.value();
     ICU4XLineBreakSegmenter segmenter = ICU4XLineBreakSegmenter::try_new(provider).ok().value();
 
     std::string_view str;
