@@ -43,23 +43,38 @@ where
 }
 
 impl DataPayload<CrabbakeMarker> {
-    /// Serializes this [`DataPayload`] into a [`TokenStream`] using its
-    /// [`Bakeable`] implementation.
+    /// Serializes this [`DataPayload`]'s value and marker type into [`TokenStream`]s
+    /// using their [`Bakeable`] implementations.
     ///
     /// # Examples
     ///
     /// ```
     /// use icu_provider::prelude::*;
     /// use icu_provider::hello_world::HelloWorldV1Marker;
+    /// # use crabbake::quote;
+    /// # use std::collections::BTreeSet;
     ///
     /// // Create an example DataPayload
     /// let payload: DataPayload<HelloWorldV1Marker> = Default::default();
     ///
     /// let env = crabbake::CrateEnv::default();
     /// let (tokens, marker) = payload.into_bakeable().tokenize(&env);
-    /// assert_eq!("::icu_provider::hello_world::HelloWorldV1 { message: \"(und) Hello World\" }", tokens.to_string());
-    /// assert_eq!("::icu_provider::hello_world::HelloWorldV1Marker", marker.to_string());
-    /// assert_eq!(env.into_iter().collect::<Vec<_>>(), vec!["icu_provider"]);
+    /// assert_eq!(
+    ///     quote!{ 
+    ///         ::icu_provider::hello_world::HelloWorldV1 {
+    ///             message: ::alloc::borrow::Cow::Borrowed("(und) Hello World"),
+    ///         }
+    ///     }.to_string(),
+    ///     tokens.to_string()
+    /// );
+    /// assert_eq!(
+    ///     quote!{ ::icu_provider::hello_world::HelloWorldV1Marker }.to_string(),
+    ///     marker.to_string()
+    /// );
+    /// assert_eq!(
+    ///     env.into_iter().collect::<BTreeSet<_>>(), 
+    ///     ["icu_provider", "alloc"].into_iter().collect::<BTreeSet<_>>()
+    /// );
     /// ```
     pub fn tokenize(&self, env: &CrateEnv) -> (TokenStream, TokenStream) {
         (self.get().payload.bake(env), self.get().marker.bake(env))
