@@ -5,7 +5,7 @@
 use crate::data_struct_impl;
 use proc_macro2::TokenStream as TokenStream2;
 use quote::quote;
-use syn::NestedMeta;
+use syn::{DeriveInput, NestedMeta};
 
 fn check(attr: Vec<TokenStream2>, item: TokenStream2, expected: TokenStream2) {
     let actual = data_struct_impl(
@@ -13,7 +13,7 @@ fn check(attr: Vec<TokenStream2>, item: TokenStream2, expected: TokenStream2) {
             .map(syn::parse2)
             .collect::<syn::parse::Result<Vec<NestedMeta>>>()
             .unwrap(),
-        syn::parse2(item).unwrap(),
+        syn::parse2::<DeriveInput>(item).unwrap(),
     );
     assert_eq!(expected.to_string(), actual.to_string());
 }
@@ -112,6 +112,32 @@ fn test_multi_named_resource_marker() {
             }
             #[derive(yoke::Yokeable, zerofrom::ZeroFrom)]
             pub struct FooV1<'data>;
+        ),
+    );
+}
+
+#[test]
+fn test_crabbake() {
+    check(
+        vec![quote!(BarV1Marker = "demo/bar@1")],
+        quote!(
+            #[crabbake(path = test::path)]
+            pub struct FooV1;
+        ),
+        quote!(
+            #[doc = "Marker type for [`FooV1`]: \"demo/bar@1\""]
+            #[derive(Default, crabbake::Bakeable)]
+            #[crabbake(path = test::path)]
+            pub struct BarV1Marker;
+            impl icu_provider::DataMarker for BarV1Marker {
+                type Yokeable = FooV1;
+            }
+            impl icu_provider::ResourceMarker for BarV1Marker {
+                const KEY: icu_provider::ResourceKey = icu_provider::resource_key!("demo/bar@1");
+            }
+            #[derive(yoke::Yokeable, zerofrom::ZeroFrom)]
+            #[crabbake(path = test::path)]
+            pub struct FooV1;
         ),
     );
 }

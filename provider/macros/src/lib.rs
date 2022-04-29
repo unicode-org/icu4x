@@ -19,10 +19,8 @@ use proc_macro2::TokenStream as TokenStream2;
 use quote::quote;
 use syn::parse_macro_input;
 use syn::spanned::Spanned;
-use syn::Attribute;
 use syn::AttributeArgs;
 use syn::DeriveInput;
-use syn::ItemStruct;
 use syn::Meta;
 use syn::NestedMeta;
 
@@ -62,29 +60,23 @@ mod tests;
 /// If the `#[crabbake(path = ...)]` attribute is present on the data struct, this will also
 /// implement it on the markers.
 pub fn data_struct(attr: TokenStream, item: TokenStream) -> TokenStream {
-    let item2 = item.clone();
     TokenStream::from(data_struct_impl(
         parse_macro_input!(attr as AttributeArgs),
-        parse_macro_input!(item as ItemStruct),
-        parse_macro_input!(item2 as DeriveInput).attrs,
+        parse_macro_input!(item as DeriveInput),
     ))
 }
 
-fn data_struct_impl(
-    attr: AttributeArgs,
-    item: ItemStruct,
-    other_attrs: Vec<Attribute>,
-) -> TokenStream2 {
-    if item.generics.type_params().count() > 0 {
+fn data_struct_impl(attr: AttributeArgs, input: DeriveInput) -> TokenStream2 {
+    if input.generics.type_params().count() > 0 {
         return syn::Error::new(
-            item.generics.span(),
+            input.generics.span(),
             "#[data_struct] does not support type parameters",
         )
         .to_compile_error();
     }
-    let lifetimes = item.generics.lifetimes().collect::<Vec<_>>();
+    let lifetimes = input.generics.lifetimes().collect::<Vec<_>>();
 
-    let name = &item.ident;
+    let name = &input.ident;
 
     let name_with_lt = if lifetimes.get(0).is_some() {
         quote!(#name<'static>)
@@ -94,14 +86,15 @@ fn data_struct_impl(
 
     if lifetimes.len() > 1 {
         return syn::Error::new(
-            item.generics.span(),
+            input.generics.span(),
             "#[data_struct] does not support more than one lifetime parameter",
         )
         .to_compile_error();
     }
 
-    let crabbake_derive = other_attrs
-        .into_iter()
+    let crabbake_derive = input
+        .attrs
+        .iter()
         .find(|a| a.path.is_ident("crabbake"))
         .map(|a| {
             quote! {
@@ -157,7 +150,7 @@ fn data_struct_impl(
 
     result.extend(quote!(
         #[derive(yoke::Yokeable, zerofrom::ZeroFrom)]
-        #item
+        #input
     ));
 
     result
