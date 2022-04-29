@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1651246531781,
+  "lastUpdate": 1651254061252,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -14093,6 +14093,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/7c351ec3359b1591e467501d427808e517c74c53"
         },
         "date": 1651246512582,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4507203,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "e1db7536ae5109f4f6fef8f72f198d37fbc8ffcf",
+          "message": "Update diplomat dep to 0.3 (#1829)\n\n* Support versions in diplomat-get-rev and diplomat-install\r\n\r\n* Add release docs\r\n\r\n* Update diplomat rev\r\n\r\n* Update versions for ffi crates\r\n\r\n* Update more versions",
+          "timestamp": "2022-04-29T17:39:03Z",
+          "tree_id": "c6313d51c5708174987ebdde70ab5e2f5754b46f",
+          "url": "https://github.com/unicode-org/icu4x/commit/e1db7536ae5109f4f6fef8f72f198d37fbc8ffcf"
+        },
+        "date": 1651254042746,
         "tool": "ndjson",
         "benches": [
           {
