@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1651247022383,
+  "lastUpdate": 1651254577561,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -28871,6 +28871,102 @@ window.BENCHMARK_DATA = {
             "name": "pattern/parse",
             "value": 4991,
             "range": "± 8",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "e1db7536ae5109f4f6fef8f72f198d37fbc8ffcf",
+          "message": "Update diplomat dep to 0.3 (#1829)\n\n* Support versions in diplomat-get-rev and diplomat-install\r\n\r\n* Add release docs\r\n\r\n* Update diplomat rev\r\n\r\n* Update versions for ffi crates\r\n\r\n* Update more versions",
+          "timestamp": "2022-04-29T17:39:03Z",
+          "tree_id": "c6313d51c5708174987ebdde70ab5e2f5754b46f",
+          "url": "https://github.com/unicode-org/icu4x/commit/e1db7536ae5109f4f6fef8f72f198d37fbc8ffcf"
+        },
+        "date": 1651254559191,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 73943,
+            "range": "± 279",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 791187,
+            "range": "± 717",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 165989,
+            "range": "± 423",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/DateTimeFormat/format_to_write",
+            "value": 70906,
+            "range": "± 182",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/DateTimeFormat/format_to_string",
+            "value": 77948,
+            "range": "± 70",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/format",
+            "value": 73512,
+            "range": "± 104",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/to_string",
+            "value": 80538,
+            "range": "± 686",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/ZonedDateTimeFormat/format_to_write",
+            "value": 161456,
+            "range": "± 133",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/ZonedDateTimeFormat/format_to_string",
+            "value": 173114,
+            "range": "± 179",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/format",
+            "value": 165159,
+            "range": "± 2226",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/to_string",
+            "value": 177496,
+            "range": "± 274",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "pattern/parse",
+            "value": 5029,
+            "range": "± 6",
             "unit": "ns/iter"
           }
         ]
