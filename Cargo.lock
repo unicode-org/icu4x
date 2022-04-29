@@ -94,7 +94,6 @@ version = "1.0.0"
 dependencies = [
  "icu_list",
  "icu_provider",
- "writeable",
 ]
 
 [[package]]

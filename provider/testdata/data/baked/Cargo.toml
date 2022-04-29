@@ -9,5 +9,4 @@ path = "src/lib.rs"
 
 [dependencies]
 icu_provider = { path = "../../../../provider/core"}
-writeable = { path = "../../../../utils/writeable"}
 icu_list = { path = "../../../../components/list" }

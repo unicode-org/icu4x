@@ -2,14 +2,14 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crabbake::{CrateEnv, TokenStream};
+use crabbake::{quote, CrateEnv, TokenStream};
 use icu_provider::datagen::CrabbakeMarker;
 use icu_provider::export::DataExporter;
 use icu_provider::prelude::*;
 use litemap::LiteMap;
-use quote::{format_ident, quote};
 use std::fs::File;
 use std::io::Write;
+use std::path::Path;
 use std::path::PathBuf;
 use std::sync::Mutex;
 
@@ -21,9 +21,13 @@ macro_rules! move_out {
     }};
 }
 
+// TokenStream isn't Send/Sync
+type SyncTokenStream = String;
+
 #[allow(clippy::type_complexity)]
 pub(crate) struct ConstExporter {
-    data: Mutex<LiteMap<ResourceKey, (String, LiteMap<String, String>)>>,
+    data: Mutex<LiteMap<ResourceKey, (SyncTokenStream, LiteMap<ResourceOptions, SyncTokenStream>)>>,
+    fields: Mutex<Vec<(String, SyncTokenStream)>>,
     dependencies: CrateEnv,
     mod_directory: PathBuf,
     pretty: bool,
@@ -34,14 +38,21 @@ impl ConstExporter {
         let _ = std::fs::remove_dir_all(&mod_directory);
         Self {
             data: Mutex::new(LiteMap::new()),
+            fields: Mutex::new(Vec::new()),
             dependencies: Default::default(),
             mod_directory,
             pretty,
         }
     }
 
-    fn write_to_file(&self, mut file: File, data: TokenStream) -> Result<(), DataError> {
-        file.write_all(b"// GENERATED MODULE. DO NOT EDIT\n\n")?;
+    fn write_to_file(&self, path: &Path, data: TokenStream) -> Result<(), DataError> {
+        std::fs::create_dir_all(&path.parent().unwrap())?;
+        let mut file = File::create(path)?;
+
+        file.write_all(
+            b"// GENERATED MODULE. DO NOT EDIT\n\n\
+              use ::icu_provider::prelude::*;\n\n",
+        )?;
 
         if self.pretty {
             let mut child = std::process::Command::new("rustfmt")
@@ -69,48 +80,50 @@ impl DataExporter<CrabbakeMarker> for ConstExporter {
         options: ResourceOptions,
         payload: DataPayload<CrabbakeMarker>,
     ) -> Result<(), DataError> {
-        // TokenStream isn't Send/Sync, so we need to stringify and later parse again
         let (payload, marker_type) = payload.tokenize(&self.dependencies);
         let mut map = self.data.lock().expect("poison");
         if !map.contains_key(&key) {
             map.insert(key, (marker_type.to_string(), LiteMap::new()));
         }
-        let (existing_marker, data) = map.get_mut(&key).unwrap();
-        debug_assert_eq!(&marker_type.to_string(), existing_marker);
-        // We bake the options as a string because we can compare them in that shape
-        data.insert(options.to_string(), payload.to_string());
+        map.get_mut(&key)
+            .unwrap()
+            .1
+            .insert(options, payload.to_string());
+        Ok(())
+    }
+
+    fn flush(&self, key: ResourceKey) -> Result<(), DataError> {
+        if let Some((marker, raw)) = self.data.lock().expect("poison").remove(&key) {
+            let baked = raw
+                .into_tuple_vec()
+                .into_iter()
+                .map(|(options, payload_bake_string)| {
+                    // We bake the options as a string because we can compare them in that shape
+                    let options_bake: TokenStream = format!(r#""{}""#, options).parse().unwrap();
+                    let payload_bake: TokenStream = payload_bake_string.parse().unwrap();
+                    // We bake references to the data structs so that the compiler can deduplicate
+                    // them.
+                    quote! { (#options_bake, &#payload_bake) }
+                });
+
+            let ident = key.get_path().to_string().replace(&['/', '@', '='], "_");
+            let marker = marker.parse::<TokenStream>().unwrap();
+
+            self.write_to_file(&self.mod_directory.join(&ident).with_extension("rs"), 
+                quote! {
+                    pub static VALUES: &[(&str, &<#marker as DataMarker>::Yokeable)] = &[#(#baked),*];
+                }
+            )?;
+            self.fields
+                .lock()
+                .expect("poison")
+                .push((ident, marker.to_string()));
+        }
         Ok(())
     }
 
     fn close(&mut self) -> Result<(), DataError> {
-        let raw_values = move_out!(self.data).into_inner().expect("poison");
-
-        let mut field_names = Vec::new();
-        let mut resource_markers = Vec::new();
-        let mut values = Vec::new();
-
-        for (key, (marker, raw)) in raw_values.into_tuple_vec().into_iter() {
-            values.push(
-                raw.into_tuple_vec()
-                    .into_iter()
-                    .map(|(options_bake, payload_bake_string)| {
-                        let payload_bake: TokenStream = payload_bake_string.parse().unwrap();
-                        // Ref the payload so that LLVM can deduplicate them.
-                        quote! { (#options_bake, &#payload_bake)}
-                    })
-                    .collect::<Vec<_>>(),
-            );
-            field_names.push(format_ident!(
-                "{}",
-                key.get_path().to_string().replace(&['/', '@', '='], "_")
-            ));
-            resource_markers.push(marker.parse::<TokenStream>().unwrap());
-        }
-
-        std::fs::create_dir(&self.mod_directory)?;
-
         self.dependencies.insert("icu_provider");
-        self.dependencies.insert("writeable"); // TODO remove .to_string()s and compare ResourceOptions directly
         let mut deps = move_out!(self.dependencies).into_iter().collect::<Vec<_>>();
         deps.sort_unstable();
         log::info!("The generated module requires the following crates:");
@@ -118,56 +131,58 @@ impl DataExporter<CrabbakeMarker> for ConstExporter {
             log::info!("{}", crate_name);
         }
 
-        self.write_to_file(File::create(self.mod_directory.join("mod.rs"))?, quote! {
-            use writeable::Writeable;
-            use icu_provider::prelude::*;
+        let mut fields = self.fields.lock().expect("poison");
+        fields.sort_unstable();
+        let (idents, markers): (Vec<TokenStream>, Vec<TokenStream>) = fields
+            .iter()
+            .map(|(ident, marker)| (ident.parse().unwrap(), marker.parse().unwrap()))
+            .unzip();
 
+        self.write_to_file(&self.mod_directory.join("mod.rs"), quote! {
             pub struct StaticDataProvider {
                 #(
-                    #field_names: &'static [(&'static str, &'static <#resource_markers as DataMarker>::Yokeable)],
+                    #idents: &'static [(&'static str, &'static <#markers as DataMarker>::Yokeable)],
                 )*
             }
 
             #(
-                mod #field_names;
+                mod #idents;
             )*
 
             pub static PROVIDER: &StaticDataProvider = &StaticDataProvider {
                 #(
-                    #field_names: #field_names::VALUES,
+                    #idents: #idents::VALUES,
                 )*
             };
 
-            #(
-                impl ResourceProvider<#resource_markers> for &'static StaticDataProvider {
-                    fn load_resource(&self, req: &DataRequest) -> Result<DataResponse<#resource_markers>, DataError> {
-                        let index = self
-                            .#field_names
-                            .binary_search_by_key(&&*req.options.write_to_string(), |(k,_)| k)
-                            .map_err(|_| DataErrorKind::MissingResourceOptions.into_error())?;
-                        Ok(DataResponse {
-                            metadata: DataResponseMetadata::default(),
-                            payload: Some(DataPayload::from_owned(zerofrom::ZeroFrom::zero_from(
-                                self.#field_names[index].1,
-                            ))),
-                        })
+            macro_rules! provider_impl {
+                ($ marker : ty , $ field_name : ident) => {
+                    impl ResourceProvider<$marker> for &'static StaticDataProvider {
+                        fn load_resource(
+                            &self,
+                            req: &DataRequest,
+                        ) -> Result<DataResponse<$marker>, DataError> {
+                            let value = self
+                                .$field_name
+                                .binary_search_by(|(k, _)| req.options.cmp_bytes(k.as_bytes()).reverse())
+                                .map(|i| self.$field_name.get(i).unwrap().1)
+                                .map_err(|_| {
+                                    DataErrorKind::MissingResourceOptions.with_req(<$marker>::KEY, req)
+                                })?;
+                            Ok(DataResponse {
+                                metadata: DataResponseMetadata::default(),
+                                payload: Some(DataPayload::from_owned(zerofrom::ZeroFrom::zero_from(value))),
+                            })
+                        }
                     }
-                }
+                };
+            }
+
+            #(
+                provider_impl!(#markers, #idents);
             )*
         })?;
 
-        for ((field_name, resource_marker), values) in field_names
-            .iter()
-            .zip(resource_markers.iter())
-            .zip(values.iter())
-        {
-            self.write_to_file(
-                File::create(self.mod_directory.join(field_name.to_string()).with_extension("rs"))?, 
-                quote! {
-                    pub static VALUES: &[(&str, &<#resource_marker as ::icu_provider::DataMarker>::Yokeable)] = &[#(#values),*];
-                }
-            )?;
-        }
         Ok(())
     }
 }

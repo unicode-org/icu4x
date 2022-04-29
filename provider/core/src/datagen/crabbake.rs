@@ -60,7 +60,7 @@ impl DataPayload<CrabbakeMarker> {
     /// let env = crabbake::CrateEnv::default();
     /// let (tokens, marker) = payload.into_bakeable().tokenize(&env);
     /// assert_eq!(
-    ///     quote!{ 
+    ///     quote!{
     ///         ::icu_provider::hello_world::HelloWorldV1 {
     ///             message: ::alloc::borrow::Cow::Borrowed("(und) Hello World"),
     ///         }
@@ -72,7 +72,7 @@ impl DataPayload<CrabbakeMarker> {
     ///     marker.to_string()
     /// );
     /// assert_eq!(
-    ///     env.into_iter().collect::<BTreeSet<_>>(), 
+    ///     env.into_iter().collect::<BTreeSet<_>>(),
     ///     ["icu_provider", "alloc"].into_iter().collect::<BTreeSet<_>>()
     /// );
     /// ```

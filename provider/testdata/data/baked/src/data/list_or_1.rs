@@ -1,8 +1,10 @@
 // GENERATED MODULE. DO NOT EDIT
 
+use ::icu_provider::prelude::*;
+
 pub static VALUES: &[(
     &str,
-    &<::icu_list::provider::OrListV1Marker as ::icu_provider::DataMarker>::Yokeable,
+    &<::icu_list::provider::OrListV1Marker as DataMarker>::Yokeable,
 )] = &[
     (
         "ar",

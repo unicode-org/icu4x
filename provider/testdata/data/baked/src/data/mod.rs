@@ -1,7 +1,7 @@
 // GENERATED MODULE. DO NOT EDIT
 
-use icu_provider::prelude::*;
-use writeable::Writeable;
+use ::icu_provider::prelude::*;
+
 pub struct StaticDataProvider {
     list_and_1: &'static [(
         &'static str,
@@ -24,54 +24,27 @@ pub static PROVIDER: &StaticDataProvider = &StaticDataProvider {
     list_or_1: list_or_1::VALUES,
     list_unit_1: list_unit_1::VALUES,
 };
-impl ResourceProvider<::icu_list::provider::AndListV1Marker> for &'static StaticDataProvider {
-    fn load_resource(
-        &self,
-        req: &DataRequest,
-    ) -> Result<DataResponse<::icu_list::provider::AndListV1Marker>, DataError> {
-        let index = self
-            .list_and_1
-            .binary_search_by_key(&&*req.options.write_to_string(), |(k, _)| k)
-            .map_err(|_| DataErrorKind::MissingResourceOptions.into_error())?;
-        Ok(DataResponse {
-            metadata: DataResponseMetadata::default(),
-            payload: Some(DataPayload::from_owned(zerofrom::ZeroFrom::zero_from(
-                self.list_and_1[index].1,
-            ))),
-        })
-    }
+macro_rules! provider_impl {
+    ($ marker : ty , $ field_name : ident) => {
+        impl ResourceProvider<$marker> for &'static StaticDataProvider {
+            fn load_resource(&self, req: &DataRequest) -> Result<DataResponse<$marker>, DataError> {
+                let value = self
+                    .$field_name
+                    .binary_search_by(|(k, _)| req.options.cmp_bytes(k.as_bytes()).reverse())
+                    .map(|i| self.$field_name.get(i).unwrap().1)
+                    .map_err(|_| {
+                        DataErrorKind::MissingResourceOptions.with_req(<$marker>::KEY, req)
+                    })?;
+                Ok(DataResponse {
+                    metadata: DataResponseMetadata::default(),
+                    payload: Some(DataPayload::from_owned(zerofrom::ZeroFrom::zero_from(
+                        value,
+                    ))),
+                })
+            }
+        }
+    };
 }
-impl ResourceProvider<::icu_list::provider::OrListV1Marker> for &'static StaticDataProvider {
-    fn load_resource(
-        &self,
-        req: &DataRequest,
-    ) -> Result<DataResponse<::icu_list::provider::OrListV1Marker>, DataError> {
-        let index = self
-            .list_or_1
-            .binary_search_by_key(&&*req.options.write_to_string(), |(k, _)| k)
-            .map_err(|_| DataErrorKind::MissingResourceOptions.into_error())?;
-        Ok(DataResponse {
-            metadata: DataResponseMetadata::default(),
-            payload: Some(DataPayload::from_owned(zerofrom::ZeroFrom::zero_from(
-                self.list_or_1[index].1,
-            ))),
-        })
-    }
-}
-impl ResourceProvider<::icu_list::provider::UnitListV1Marker> for &'static StaticDataProvider {
-    fn load_resource(
-        &self,
-        req: &DataRequest,
-    ) -> Result<DataResponse<::icu_list::provider::UnitListV1Marker>, DataError> {
-        let index = self
-            .list_unit_1
-            .binary_search_by_key(&&*req.options.write_to_string(), |(k, _)| k)
-            .map_err(|_| DataErrorKind::MissingResourceOptions.into_error())?;
-        Ok(DataResponse {
-            metadata: DataResponseMetadata::default(),
-            payload: Some(DataPayload::from_owned(zerofrom::ZeroFrom::zero_from(
-                self.list_unit_1[index].1,
-            ))),
-        })
-    }
-}
+provider_impl!(::icu_list::provider::AndListV1Marker, list_and_1);
+provider_impl!(::icu_list::provider::OrListV1Marker, list_or_1);
+provider_impl!(::icu_list::provider::UnitListV1Marker, list_unit_1);
