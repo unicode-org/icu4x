@@ -45,22 +45,22 @@ deserialize_postcard_07 = ["icu_provider/deserialize_postcard_07"]
 deserialize_bincode_1 = ["icu_provider/deserialize_bincode_1"]
 
 [dependencies]
-fixed_decimal = { path = "../../utils/fixed_decimal", features = ["ryu"] }
-icu_decimal = { path = "../../components/decimal/", features = ["serde"] }
-icu_locale_canonicalizer = { path = "../../components/locale_canonicalizer", features = ["serde"] }
-icu_locid = { path = "../../components/locid", features = ["serde"] }
-icu_plurals = { path = "../../components/plurals/", features = ["serde"] }
-icu_properties = { path = "../../components/properties/", features = ["serde"] }
-icu_provider = { path = "../../provider/core", features = ["serde"] }
-icu_provider_adapters = { path = "../../provider/adapters" }
-icu_provider_blob = { path = "../../provider/blob" }
-icu_segmenter = { path = "../../experimental/segmenter", features = ["serde"] }
+fixed_decimal = { version = "0.2.2", path = "../../utils/fixed_decimal", features = ["ryu"] }
+icu_decimal = { version = "0.5", path = "../../components/decimal/", features = ["serde"] }
+icu_locale_canonicalizer = { version = "0.5", path = "../../components/locale_canonicalizer", features = ["serde"] }
+icu_locid = { version = "0.5", path = "../../components/locid", features = ["serde"] }
+icu_plurals = { version = "0.5", path = "../../components/plurals/", features = ["serde"] }
+icu_properties = { version = "0.5", path = "../../components/properties/", features = ["serde"] }
+icu_provider = { version = "0.5", path = "../../provider/core", features = ["serde"] }
+icu_provider_adapters = { version = "0.5", path = "../../provider/adapters" }
+icu_provider_blob = { version = "0.5", path = "../../provider/blob" }
+icu_segmenter = { version = "0.5", path = "../../experimental/segmenter", features = ["serde"] }
 tinystr = { path = "../../utils/tinystr", version = "0.5.0", features = ["alloc"], default-features = false }
-writeable = { path = "../../utils/writeable/" }
+writeable = { version = "0.3", path = "../../utils/writeable/" }
 
 # Run `cargo make diplomat-install` to get the right diplomat binary installed
-diplomat = { git = "https://github.com/rust-diplomat/diplomat", version = "0.3.0" }
-diplomat-runtime = { git = "https://github.com/rust-diplomat/diplomat", version = "0.3.0" }
+diplomat = { version = "0.3.0" }
+diplomat-runtime = { version = "0.3.0" }
 icu_testdata = { version = "0.5", path = "../../provider/testdata", default-features = false, features = ["static"], optional = true }
 
 [target.'cfg(target_arch = "wasm32")'.dependencies]

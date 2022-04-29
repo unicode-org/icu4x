@@ -604,7 +604,8 @@ dependencies = [
 [[package]]
 name = "diplomat"
 version = "0.3.0"
-source = "git+https://github.com/rust-diplomat/diplomat#aed274f13926629e789030fa82c1c204a5c83009"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b827d7e3428372b0b3d98c243e7d53526b1ddc264586536644e86a3e2ec176f3"
 dependencies = [
  "diplomat_core",
  "proc-macro2",
@@ -615,12 +616,14 @@ dependencies = [
 [[package]]
 name = "diplomat-runtime"
 version = "0.3.0"
-source = "git+https://github.com/rust-diplomat/diplomat#aed274f13926629e789030fa82c1c204a5c83009"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e55ba854b349be22d95ff1f0d7ceec5bd11a68d6389f4e9a673f7e117f0170f4"
 
 [[package]]
 name = "diplomat_core"
 version = "0.3.0"
-source = "git+https://github.com/rust-diplomat/diplomat#aed274f13926629e789030fa82c1c204a5c83009"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "bbde4faa50fdeda288168cc7f85db22a1f63baecd088fb4a78ca7b5ce7a1f847"
 dependencies = [
  "impls",
  "lazy_static",
@@ -1501,7 +1504,7 @@ dependencies = [
 
 [[package]]
 name = "icu_segmenter"
-version = "0.1.0"
+version = "0.5.0"
 dependencies = [
  "criterion",
  "icu_char16trie",
