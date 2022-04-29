@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1651235171735,
+  "lastUpdate": 1651237448483,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -14003,6 +14003,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/392149faf593b8c7da21c8416ed7275df143cd31"
         },
         "date": 1651235155420,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4507203,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "671bf57fe9ccd61fb4b962475a5724c1cb85cc5c",
+          "message": "Making testdata an optional FFI dep (#1820)",
+          "timestamp": "2022-04-29T15:02:24+02:00",
+          "tree_id": "0b35e7481bba1ab0e64fbadeb2d6ccf99dca4850",
+          "url": "https://github.com/unicode-org/icu4x/commit/671bf57fe9ccd61fb4b962475a5724c1cb85cc5c"
+        },
+        "date": 1651237429566,
         "tool": "ndjson",
         "benches": [
           {
