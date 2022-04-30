@@ -2,18 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-// https://github.com/unicode-org/icu4x/blob/main/docs/process/boilerplate.md#library-annotations
-#![cfg_attr(not(any(test, feature = "std")), no_std)]
-#![cfg_attr(
-    not(test),
-    deny(
-        clippy::indexing_slicing,
-        clippy::unwrap_used,
-        clippy::expect_used,
-        clippy::panic
-    )
-)]
-
 //! The `icu_calendar` crate contains the core types used by ICU4X for dealing
 //! with dates, times, and custom calendars.
 //!
@@ -28,6 +16,27 @@
 //! Some of the algorithms implemented here are based on
 //! Dershowitz, Nachum, and Edward M. Reingold. _Calendrical calculations_. Cambridge University Press, 2008.
 //! with associated Lisp code found at <https://github.com/EdReingold/calendar-code2>.
+//!
+//! # Examples
+//!
+//! ```rust
+//! use icu_calendar::Calendar;
+//! ```
+
+//! [`ICU4X`]: ../icu/index.html
+
+// https://github.com/unicode-org/icu4x/blob/main/docs/process/boilerplate.md#library-annotations
+#![cfg_attr(not(any(test, feature = "std")), no_std)]
+#![cfg_attr(
+    not(test),
+    deny(
+        clippy::indexing_slicing,
+        clippy::unwrap_used,
+        clippy::expect_used,
+        clippy::panic
+    )
+)]
+
 extern crate alloc;
 
 pub mod arithmetic;
