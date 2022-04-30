@@ -17,8 +17,9 @@ use tinystr::tinystr;
 // 1st Jan of 1st year Julian is equivalent to December 30th of 0th year of ISO year
 const JULIAN_EPOCH: i32 = -1;
 
+/// The Julian calendar
 #[derive(Copy, Clone, Debug, Hash, Default, Eq, PartialEq)]
-// The Julian calendar
+#[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct Julian;
 
 #[derive(Copy, Clone, Debug, Hash, Eq, PartialEq)]
@@ -82,6 +83,7 @@ impl Calendar for Julian {
         &self,
         date1: &Self::DateInner,
         date2: &Self::DateInner,
+        _calendar2: &Self,
         _largest_unit: DateDurationUnit,
         _smallest_unit: DateDurationUnit,
     ) -> DateDuration<Self> {
@@ -119,7 +121,7 @@ impl Calendar for Julian {
         }
     }
 
-    fn debug_name() -> &'static str {
+    fn debug_name(&self) -> &'static str {
         "Julian"
     }
 }
@@ -233,7 +235,7 @@ impl DateTime<Julian> {
     ) -> Result<DateTime<Julian>, DateTimeError> {
         Ok(DateTime {
             date: Date::new_julian_date_from_integers(year, month, day)?,
-            time: types::Time::try_new(hour, minute, second)?,
+            time: types::Time::try_new(hour, minute, second, 0)?,
         })
     }
 }

@@ -115,4 +115,17 @@ impl Serializer {
             style: options.style,
         }
     }
+
+    pub fn pretty() -> Self {
+        Self::new(Options {
+            style: StyleOption::Pretty,
+            ..Default::default()
+        })
+    }
+}
+
+impl Default for Serializer {
+    fn default() -> Self {
+        Self::new(Default::default())
+    }
 }

@@ -21,6 +21,7 @@ const BUDDHIST_ERA_OFFSET: i32 = 543;
 /// however it has a different zero year: 1 AD = 544 BE
 ///
 /// [cal]: https://en.wikipedia.org/wiki/Thai_solar_calendar
+#[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct Buddhist;
 
 impl Calendar for Buddhist {
@@ -54,10 +55,11 @@ impl Calendar for Buddhist {
         &self,
         date1: &Self::DateInner,
         date2: &Self::DateInner,
+        _calendar2: &Self,
         largest_unit: DateDurationUnit,
         smallest_unit: DateDurationUnit,
     ) -> DateDuration<Self> {
-        Iso.until(date1, date2, largest_unit, smallest_unit)
+        Iso.until(date1, date2, &Iso, largest_unit, smallest_unit)
             .cast_unit()
     }
 
@@ -89,7 +91,7 @@ impl Calendar for Buddhist {
         }
     }
 
-    fn debug_name() -> &'static str {
+    fn debug_name(&self) -> &'static str {
         "Buddhist"
     }
 }
@@ -120,7 +122,7 @@ impl DateTime<Buddhist> {
         let iso_year = year - BUDDHIST_ERA_OFFSET;
         Ok(DateTime {
             date: Date::new_buddhist_date(iso_year.into(), month.try_into()?, day.try_into()?)?,
-            time: types::Time::try_new(hour, minute, second)?,
+            time: types::Time::try_new(hour, minute, second, 0)?,
         })
     }
 }

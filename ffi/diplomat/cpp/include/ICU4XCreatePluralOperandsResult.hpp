@@ -26,7 +26,8 @@ struct ICU4XCreatePluralOperandsResultDeleter {
 
 /**
  * This is the result returned by `ICU4XPluralOperands::create()`
- * See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu_plurals/struct.PluralOperands.html) for more details.
+ * 
+ * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu_plurals/struct.PluralOperands.html) for more information.
  */
 struct ICU4XCreatePluralOperandsResult {
  public:

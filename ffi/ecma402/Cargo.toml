@@ -5,7 +5,7 @@
 [package]
 name = "icu4x_ecma402"
 description = "ECMA-402 API functionality backed by the ICU4X library"
-version = "0.4.0"
+version = "0.5.0"
 authors = ["The ICU4X Project Developers"]
 edition = "2018"
 readme = "README.md"
@@ -28,7 +28,7 @@ all-features = true
 
 [dependencies]
 ecma402_traits = { version = "0.2.0" }
-icu = { path = "../../components/icu", default-features = false }
+icu = { version = "0.5", path = "../../components/icu", default-features = false }
 icu_provider = { version = "0.5", path = "../../provider/core" }
 icu_plurals = { version = "0.5", path = "../../components/plurals", features = ["std"] }
 

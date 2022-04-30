@@ -9,8 +9,9 @@ use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, DateTime, Dat
 use core::convert::TryInto;
 use tinystr::tinystr;
 
-#[derive(Copy, Clone, Debug, Default)]
 /// The Gregorian Calendar
+#[derive(Copy, Clone, Debug, Default)]
+#[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct Gregorian;
 
 #[derive(Copy, Clone, Debug, Hash, Eq, PartialEq)]
@@ -48,10 +49,11 @@ impl Calendar for Gregorian {
         &self,
         date1: &Self::DateInner,
         date2: &Self::DateInner,
+        _calendar2: &Self,
         largest_unit: DateDurationUnit,
         smallest_unit: DateDurationUnit,
     ) -> DateDuration<Self> {
-        Iso.until(&date1.0, &date2.0, largest_unit, smallest_unit)
+        Iso.until(&date1.0, &date2.0, &Iso, largest_unit, smallest_unit)
             .cast_unit()
     }
 
@@ -83,7 +85,7 @@ impl Calendar for Gregorian {
         }
     }
 
-    fn debug_name() -> &'static str {
+    fn debug_name(&self) -> &'static str {
         "Gregorian"
     }
 }
@@ -110,10 +112,11 @@ impl DateTime<Gregorian> {
         hour: u8,
         minute: u8,
         second: u8,
+        fraction: u32,
     ) -> Result<DateTime<Gregorian>, DateTimeError> {
         Ok(DateTime {
             date: Date::new_gregorian_date(year.into(), month.try_into()?, day.try_into()?)?,
-            time: types::Time::try_new(hour, minute, second)?,
+            time: types::Time::try_new(hour, minute, second, fraction)?,
         })
     }
 }

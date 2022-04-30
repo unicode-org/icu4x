@@ -11,6 +11,7 @@ use crate::{AsCalendar, Date, Iso};
 /// e.g. `Rc<C>`, via the [`AsCalendar`] trait, much like
 /// [`Date`]
 #[derive(Debug)]
+#[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct DateTime<A: AsCalendar> {
     pub date: Date<A>,
     pub time: Time,

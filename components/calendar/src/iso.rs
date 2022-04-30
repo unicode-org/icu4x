@@ -12,6 +12,7 @@ use tinystr::tinystr;
 const EPOCH: i32 = 1;
 
 #[derive(Copy, Clone, Debug, Default)]
+#[allow(clippy::exhaustive_structs)] // this type is stable
 /// The ISO Calendar
 pub struct Iso;
 
@@ -22,6 +23,7 @@ pub struct IsoDay(u8);
 #[derive(Copy, Clone, Debug, Hash, Eq, PartialEq, Ord, PartialOrd)]
 pub struct IsoMonth(u8);
 #[derive(Copy, Clone, Debug, Hash, Eq, PartialEq, Ord, PartialOrd)]
+#[allow(clippy::exhaustive_structs)] // newtype
 /// An ISO year. Year 0 == 1 BCE
 pub struct IsoYear(pub i32);
 
@@ -252,6 +254,7 @@ impl Calendar for Iso {
         &self,
         date1: &Self::DateInner,
         date2: &Self::DateInner,
+        _calendar2: &Self,
         _largest_unit: DateDurationUnit,
         _smallest_unit: DateDurationUnit,
     ) -> DateDuration<Self> {
@@ -293,7 +296,7 @@ impl Calendar for Iso {
         }
     }
 
-    fn debug_name() -> &'static str {
+    fn debug_name(&self) -> &'static str {
         "ISO"
     }
 }
@@ -337,7 +340,7 @@ impl DateTime<Iso> {
     ) -> Result<DateTime<Iso>, DateTimeError> {
         Ok(DateTime {
             date: Date::new_iso_date_from_integers(year, month, day)?,
-            time: types::Time::try_new(hour, minute, second)?,
+            time: types::Time::try_new(hour, minute, second, 0)?,
         })
     }
 }

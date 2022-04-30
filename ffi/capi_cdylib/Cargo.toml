@@ -5,7 +5,7 @@
 [package]
 name = "icu_capi_cdylib"
 description = "C interface to ICU4X"
-version = "0.1.0"
+version = "0.5.0"
 authors = ["The ICU4X Project Developers"]
 edition = "2018"
 resolver = "2"
@@ -32,20 +32,23 @@ crate-type = ["cdylib", "rlib"]
 path = "src/lib.rs"
 
 [dependencies]
-icu_capi = { version = "0.1", path = "../diplomat", default-features = false }
+icu_capi = { version = "0.5", path = "../diplomat", default-features = false }
 
 
 # Please keep features/cargo-all-features lists in sync with the icu_capi crate
 [features]
-default = ["provider_fs", "provider_static"]
+default = ["icu_capi/default"]
 provider_fs = ["icu_capi/provider_fs"]
-provider_static = ["icu_capi/provider_static"]
-smaller_static = ["icu_capi/smaller_static"]
+provider_test = ["icu_capi/provider_test"]
+smaller_test = ["icu_capi/smaller_test"]
+deserialize_json = ["icu_capi/deserialize_json"]
+deserialize_postcard_07 = ["icu_capi/deserialize_postcard_07"]
+deserialize_bincode_1 = ["icu_capi/deserialize_bincode_1"]
 
 [package.metadata.cargo-all-features]
 # Omit most optional dependency features from permutation testing
 skip_optional_dependencies = true
 # Bench feature gets tested separately and is only relevant for CI.
 # x86tiny is not relevant in normal environments,
-# smaller_static gets tested on the FFI job anyway
-denylist = ["bench", "smaller_static"]
+# smaller_test gets tested on the FFI job anyway
+denylist = ["bench", "smaller_test"]

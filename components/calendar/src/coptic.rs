@@ -14,12 +14,13 @@ use core::convert::TryInto;
 use core::marker::PhantomData;
 use tinystr::tinystr;
 
+/// The Coptic calendar
 #[derive(Copy, Clone, Debug, Hash, Default, Eq, PartialEq)]
-// The Coptic Calendar
+#[non_exhaustive]
 pub struct Coptic;
 
 #[derive(Copy, Clone, Debug, Hash, Eq, PartialEq)]
-pub struct CopticDateInner(ArithmeticDate<Coptic>);
+pub struct CopticDateInner(pub(crate) ArithmeticDate<Coptic>);
 
 impl CalendarArithmetic for Coptic {
     fn month_days(year: i32, month: u8) -> u8 {
@@ -82,6 +83,7 @@ impl Calendar for Coptic {
         &self,
         date1: &Self::DateInner,
         date2: &Self::DateInner,
+        _calendar2: &Self,
         _largest_unit: DateDurationUnit,
         _smallest_unit: DateDurationUnit,
     ) -> DateDuration<Self> {
@@ -115,7 +117,7 @@ impl Calendar for Coptic {
         }
     }
 
-    fn debug_name() -> &'static str {
+    fn debug_name(&self) -> &'static str {
         "Coptic"
     }
 }
@@ -140,7 +142,7 @@ impl Coptic {
             + date.day as i32
     }
 
-    fn fixed_from_coptic_integers(year: i32, month: i32, day: i32) -> i32 {
+    pub(crate) fn fixed_from_coptic_integers(year: i32, month: i32, day: i32) -> i32 {
         #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
         Self::fixed_from_coptic(ArithmeticDate {
             year,
@@ -151,7 +153,7 @@ impl Coptic {
     }
 
     // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/1ee51ecfaae6f856b0d7de3e36e9042100b4f424/calendar.l#L1990
-    fn coptic_from_fixed(date: i32) -> CopticDateInner {
+    pub(crate) fn coptic_from_fixed(date: i32) -> CopticDateInner {
         let coptic_epoch = Julian::fixed_from_julian_integers(284, 8, 29);
         let year = (4 * (date - coptic_epoch) + 1463) / 1461;
         let month = (date - Self::fixed_from_coptic_integers(year, 1, 1)) / 30 + 1;
@@ -207,7 +209,7 @@ impl DateTime<Coptic> {
     ) -> Result<DateTime<Coptic>, DateTimeError> {
         Ok(DateTime {
             date: Date::new_coptic_date_from_integers(year, month, day)?,
-            time: types::Time::try_new(hour, minute, second)?,
+            time: types::Time::try_new(hour, minute, second, 0)?,
         })
     }
 }

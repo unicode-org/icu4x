@@ -10,8 +10,8 @@ use crate::{types, Calendar, Date, DateDuration, DateDurationUnit};
 use icu_provider::prelude::*;
 use tinystr::{tinystr, TinyStr16};
 
-#[derive(Clone, Debug, Default)]
 /// The Japanese Calendar
+#[derive(Clone, Debug, Default)]
 pub struct Japanese {
     eras: DataPayload<provider::JapaneseErasV1Marker>,
 }
@@ -72,11 +72,18 @@ impl Calendar for Japanese {
         &self,
         date1: &Self::DateInner,
         date2: &Self::DateInner,
+        _calendar2: &Self,
         largest_unit: DateDurationUnit,
         smallest_unit: DateDurationUnit,
     ) -> DateDuration<Self> {
-        Iso.until(&date1.inner, &date2.inner, largest_unit, smallest_unit)
-            .cast_unit()
+        Iso.until(
+            &date1.inner,
+            &date2.inner,
+            &Iso,
+            largest_unit,
+            smallest_unit,
+        )
+        .cast_unit()
     }
 
     /// The calendar-specific year represented by `date`
@@ -114,7 +121,7 @@ impl Calendar for Japanese {
         }
     }
 
-    fn debug_name() -> &'static str {
+    fn debug_name(&self) -> &'static str {
         "Japanese"
     }
 }

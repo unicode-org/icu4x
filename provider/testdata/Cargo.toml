@@ -134,7 +134,7 @@ cldr_json_glob = [
 ]
 
 # Git tag or sha1 for the CLDR data used to generate the testdata.
-gitref = "40.0.0"
+gitref = "41.0.0"
 
 [package.metadata.cargo-all-features]
 # Omit most optional dependency features from permutation testing
@@ -143,12 +143,22 @@ skip_optional_dependencies = true
 denylist = ["bench"]
 
 [dependencies]
-icu_provider = { version = "0.5", path = "../../provider/core" }
-icu_provider_blob = { version = "0.5", path = "../../provider/blob", optional = true }
-icu_provider_fs = { version = "0.5", path = "../../provider/fs", optional = true }
-icu_locid = { version = "0.5", path = "../../components/locid" }
+icu_provider = { version = "0.5", path = "../core" }
+icu_provider_blob = { version = "0.5", path = "../blob", optional = true }
+icu_provider_fs = { version = "0.5", path = "../fs", optional = true }
 
-# Dependencies for the "metadata" feature
+# bin feature
+clap = { version = "2.33", optional = true }
+eyre = { version = "0.6", optional = true }
+futures = { version = "0.3", optional = true }
+icu_datagen = { version = "0.5", path = "../datagen", features = ["experimental"], optional = true }
+icu_locid = { version = "0.5", path = "../../components/locid", optional = true }
+log = { version = "0.4", optional = true }
+reqwest = { version = "0.11", features = ["stream"], optional = true }
+simple_logger = { version = "1.12", optional = true }
+tokio = { version = "1.5", features = ["rt-multi-thread", "macros", "fs"], optional = true }
+
+# metadata feature
 cargo_metadata = { version = "0.13", optional = true }
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }
 serde_json = { version = "1.0", optional = true, default-features = false, features = ["alloc"] }
@@ -170,7 +180,30 @@ metadata = [
     "writeable",
     "std"
 ]
-
 fs = ["icu_provider/deserialize_json", "icu_provider_fs", "std"]
-static = ["icu_provider/deserialize_postcard_07", "icu_provider_blob"]
+static = ["icu_provider_blob"]
 std = []
+bin = [
+    "clap",
+    "eyre",
+    "simple_logger",
+    "log",
+    "reqwest",
+    "tokio",
+    "futures",
+    "std",
+    "metadata",
+    "icu_datagen",
+    "icu_locid",
+    "fs",
+]
+
+[[bin]]
+name = "icu4x-testdata-download-sources"
+path = "src/bin/download-sources.rs"
+required-features = ["bin"]
+
+[[bin]]
+name = "icu4x-testdata-datagen"
+path = "src/bin/datagen.rs"
+required-features = ["bin"]

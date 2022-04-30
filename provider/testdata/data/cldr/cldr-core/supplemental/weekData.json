@@ -2,7 +2,7 @@
   "supplemental": {
     "version": {
       "_unicodeVersion": "14.0.0",
-      "_cldrVersion": "40"
+      "_cldrVersion": "41"
     },
     "weekData": {
       "minDays": {
@@ -211,7 +211,6 @@
       },
       "weekendStart": {
         "001": "sat",
-        "AE": "fri",
         "AF": "thu",
         "BH": "fri",
         "DZ": "fri",
@@ -233,7 +232,6 @@
       },
       "weekendEnd": {
         "001": "sun",
-        "AE": "sat",
         "AF": "fri",
         "BH": "sat",
         "DZ": "sat",

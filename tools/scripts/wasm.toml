@@ -10,7 +10,7 @@ category = "ICU4X WASM"
 install_crate = { rustup_component_name = "rust-src" }
 toolchain = "nightly-2022-01-31"
 command = "cargo"
-args = ["wasm-build-dev", "--package", "icu_capi_cdylib"]
+args = ["wasm-build-dev", "--package", "icu_capi_cdylib", "--features", "provider_test"]
 
 [tasks.wasm-build-release]
 description = "Build WASM FFI into the target directory (release mode)"
@@ -20,7 +20,7 @@ toolchain = "nightly-2022-01-31"
 # We don't care about panics in release mode because most incorrect inputs are handled by result types.
 env = { "RUSTFLAGS" = "-C panic=abort -C opt-level=s" }
 command = "cargo"
-args = ["wasm-build-release", "--package", "icu_capi_cdylib"]
+args = ["wasm-build-release", "--package", "icu_capi_cdylib", "--features", "provider_test,smaller_test"]
 
 [tasks.wasm-build-examples]
 description = "Build WASM examples into the target directory"
@@ -445,7 +445,7 @@ rm ./wasm/lib/diplomat-runtime.mjs
 rm -r ./wasm/docs/
 mkdir ./wasm/docs
 
-exec --fail-on-error diplomat-tool js ./wasm/lib/ --docs ./wasm/docs
+exec --fail-on-error diplomat-tool js ./wasm/lib/ --docs ./wasm/docs --docs-base-urls=*:https://unicode-org.github.io/icu4x-docs/doc/
 '''
 
 [tasks.wasm-clean]

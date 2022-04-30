@@ -15,7 +15,7 @@ pub mod ffi {
 
     #[diplomat::opaque]
     /// An ICU4X Unicode Set Property object, capable of querying whether a code point is contained in a set based on a Unicode property.
-    /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu_properties/index.html) for more information.
+    #[diplomat::rust_link(icu_properties, Mod)]
     pub struct ICU4XCodePointSetData(DataPayload<UnicodePropertyV1Marker>);
 
     pub struct ICU4XCodePointSetDataResult {
@@ -27,7 +27,7 @@ pub mod ffi {
 
     impl ICU4XCodePointSetData {
         /// Gets a set for Unicode property ascii_hex_digit from a [`ICU4XDataProvider`].
-        /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu_properties/sets/fn.get_ascii_hex_digit.html) for more information.
+        #[diplomat::rust_link(icu_properties::sets::get_ascii_hex_digit, Fn)]
         pub fn try_get_ascii_hex_digit(
             provider: &ICU4XDataProvider,
         ) -> ICU4XCodePointSetDataResult {
@@ -50,7 +50,7 @@ pub mod ffi {
         }
 
         /// Checks whether the code point is in the set.
-        /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu_uniset/struct.UnicodeSet.html#method.contains) for more information.
+        #[diplomat::rust_link(icu_uniset::UnicodeSet::contains, FnInStruct)]
         pub fn contains(&self, cp: char) -> bool {
             self.0.get().inv_list.contains(cp)
         }

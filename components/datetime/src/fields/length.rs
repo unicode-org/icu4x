@@ -18,23 +18,32 @@ impl std::error::Error for LengthError {}
 #[derive(Debug, Eq, PartialEq, Clone, Copy, Ord, PartialOrd)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub enum FieldLength {
-    One = 1,
-    TwoDigit = 2,
-    Abbreviated = 3,
-    Wide = 4,
-    Narrow = 5,
-    Six = 6,
+    One,
+    TwoDigit,
+    Abbreviated,
+    Wide,
+    Narrow,
+    Six,
+    Fixed(u8),
 }
 
 impl FieldLength {
     #[inline]
     pub(crate) fn idx_in_range(v: &u8) -> bool {
-        (1..=6).contains(v)
+        (1..=6).contains(v) || *v >= 128
     }
 
     #[inline]
     pub(crate) fn idx(&self) -> u8 {
-        *self as usize as u8
+        match self {
+            FieldLength::One => 1,
+            FieldLength::TwoDigit => 2,
+            FieldLength::Abbreviated => 3,
+            FieldLength::Wide => 4,
+            FieldLength::Narrow => 5,
+            FieldLength::Six => 6,
+            FieldLength::Fixed(p) => 128 + p.min(&127), // truncate to at most 127 digits to avoid overflow
+        }
     }
 
     #[inline]
@@ -46,7 +55,25 @@ impl FieldLength {
             4 => Self::Wide,
             5 => Self::Narrow,
             6 => Self::Six,
-            _ => return Err(LengthError::InvalidLength),
+            idx => {
+                if idx < 128 {
+                    return Err(LengthError::InvalidLength);
+                }
+                Self::Fixed(idx - 128)
+            }
         })
+    }
+
+    #[inline]
+    pub(crate) fn to_len(self) -> usize {
+        match self {
+            FieldLength::One => 1,
+            FieldLength::TwoDigit => 2,
+            FieldLength::Abbreviated => 3,
+            FieldLength::Wide => 4,
+            FieldLength::Narrow => 5,
+            FieldLength::Six => 6,
+            FieldLength::Fixed(p) => p as usize,
+        }
     }
 }

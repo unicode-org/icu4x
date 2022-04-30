@@ -8,9 +8,9 @@
 
 int main() {
     ICU4XLocale* locale = ICU4XLocale_create_bn();
-    ICU4XCreateDataProviderResult result = ICU4XDataProvider_create_static();
+    ICU4XCreateDataProviderResult result = ICU4XDataProvider_create_test();
     if (!result.success) {
-        printf("Failed to create StaticDataProvider\n");
+        printf("Failed to create test data provider\n");
         return 1;
     }
     ICU4XDataProvider* provider = result.provider;

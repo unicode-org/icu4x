@@ -7,6 +7,7 @@
 /// A bag of options defining how numbers will be formatted by
 /// [`FixedDecimalFormat`](crate::FixedDecimalFormat).
 #[derive(Debug, Eq, PartialEq, Clone, Default)]
+#[non_exhaustive]
 pub struct FixedDecimalFormatOptions {
     /// When to render grouping separators.
     pub grouping_strategy: GroupingStrategy,

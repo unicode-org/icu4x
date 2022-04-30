@@ -6,6 +6,9 @@
 //!
 //! Read more about data providers: [`icu_provider`]
 
+// Provider structs must be stable
+#![allow(clippy::exhaustive_structs)]
+
 use alloc::borrow::Cow;
 use icu_provider::{yoke, zerofrom};
 

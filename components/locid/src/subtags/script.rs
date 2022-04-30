@@ -82,7 +82,7 @@ impl Script {
         let s = TinyAsciiStr::<{ core::mem::size_of::<Self>() }>::try_from_raw(v)
             .map_err(|_| ParserError::InvalidSubtag)?;
         let is_valid = match s.len() {
-            SCRIPT_LENGTH => s.is_ascii_alphabetic() && s.is_ascii_titlecase(),
+            SCRIPT_LENGTH => s.is_ascii_alphabetic_titlecase(),
             _ => false,
         };
         if is_valid {

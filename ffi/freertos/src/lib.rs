@@ -44,3 +44,9 @@ mod stuff {
         loop {}
     }
 }
+
+// Needed for rust runtime stuff
+//
+// renamed so you can't accidentally use it
+#[cfg(not(target_os = "none"))]
+extern crate std as rust_std;

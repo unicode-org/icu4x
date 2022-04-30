@@ -46,7 +46,6 @@ description = "Run all tests for the CI 'test' job"
 category = "CI"
 dependencies = [
     "test-all-features",
-    "testdata-build-worklog-bincode",
     "testdata-check",
 ]
 

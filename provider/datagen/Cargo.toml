@@ -7,7 +7,7 @@ name = "icu_datagen"
 description = "Generate data for ICU4X DataProvider"
 version = "0.5.0"
 authors = ["The ICU4X Project Developers"]
-edition = "2018"
+edition = "2021"
 readme = "README.md"
 repository = "https://github.com/unicode-org/icu4x"
 license-file = "LICENSE"
@@ -22,6 +22,7 @@ include = [
     "LICENSE",
     "README.md",
 ]
+default-run = "icu4x-datagen"
 
 [package.metadata.cargo-all-features]
 # Omit most optional dependency features from permutation testing
@@ -31,77 +32,71 @@ skip_optional_dependencies = true
 all-features = true
 
 [dependencies]
-cached-path = { version = "0.5", optional = true }
-clap = "2.33"
-dhat = "0.3.0"
-displaydoc = { version = "0.2.3", default-features = false }
-elsa = "1.7"
-eyre = "0.6"
+
+# ICU components
 icu_calendar = { version = "0.5", path = "../../components/calendar", features = ["datagen"] }
-icu_casemapping = { version = "0.1", path = "../../experimental/casemapping", features = ["serde", "datagen"], optional = true }
-icu_codepointtrie = { version = "0.3.3", path = "../../utils/codepointtrie", features = ["serde_serialize"] }
 icu_datetime = { version = "0.5", path = "../../components/datetime", features = ["datagen"] }
 icu_decimal = { version = "0.5", path = "../../components/decimal", features = ["datagen"] }
 icu_list = { version = "0.5", path = "../../components/list", features = ["datagen"]}
 icu_locale_canonicalizer = { version = "0.5", path = "../../components/locale_canonicalizer", features = ["datagen"] }
-icu_locid = { version = "0.5", path = "../../components/locid", features = ["std"]}
 icu_plurals = { version = "0.5", path = "../../components/plurals", features = ["datagen"] }
-icu_properties = { version = "0.5", path = "../../components/properties", features = ["std", "datagen"]}
+icu_properties = { version = "0.5", path = "../../components/properties", features = ["datagen"]}
+# (experimental)
+icu_casemapping = { version = "0.1", path = "../../experimental/casemapping", features = ["datagen"], optional = true }
+icu_segmenter = { version = "0.5", path = "../../experimental/segmenter", features = ["datagen"], optional = true }
+
+# ICU provider infrastructure
 icu_provider = { version = "0.5", path = "../core", features = ["std", "log_error_context"]}
 icu_provider_adapters = { path = "../adapters", features = ["datagen"] }
 icu_provider_blob = { version = "0.5", path = "../blob", features = ["export"] }
 icu_provider_fs = { version = "0.5", path = "../fs", features = ["export"] }
-icu_segmenter = { version = "0.1", path = "../../experimental/segmenter", features = ["datagen"] }
-icu_testdata = { version = "0.5", path = "../testdata", features = ["metadata"] }
+
+# Other
+displaydoc = { version = "0.2.3", default-features = false }
+elsa = "1.7"
+icu_codepointtrie = { version = "0.3.3", path = "../../utils/codepointtrie", features = ["serde_serialize"] }
+icu_locid = { version = "0.5", path = "../../components/locid", features = ["std"]}
 icu_uniset = { version = "0.4.1", path = "../../utils/uniset", features = ["serde"] }
 itertools = "0.10"
-json = "0.12"
 litemap = { version = "0.3.0", path = "../../utils/litemap" }
-log = { version = "0.4" }
-pathdiff = "0.2.1"
+log = "0.4"
 rayon = "1.5"
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"] }
 serde_json = { version = "1.0", default-features = false, features = ["alloc"] }
 serde-aux = "2.1.1"
-serde-tuple-vec-map = "1.0"
-sha2 = "0.10.2"
-simple_logger = "1.12"
 tinystr = { path = "../../utils/tinystr", version = "0.5.0", features = ["alloc", "serde", "zerovec"], default-features = false }
-toml = { version = "0.5" }
-walkdir = "2.3.2"
+toml = "0.5"
 zerovec = { version = "0.6", path = "../../utils/zerovec", features = ["serde_serialize", "yoke"] }
 
-# Dependencies for the "download-testdata" feature
-reqwest = { version = "0.11", features = ["stream"], optional = true }
-tokio = { version = "1.5", features = ["rt-multi-thread", "macros", "fs"], optional = true }
-futures = { version = "0.3", optional = true }
+# Dependencies for "bin" feature
+clap = { version = "2.33", optional = true }
+eyre = { version = "0.6", optional = true }
+simple_logger = { version = "1.12", optional = true }
+cached-path = { version = "0.5", optional = true }
+sha2 = { version = "0.10.2", optional = true }
+pathdiff = { version = "0.2.1", optional = true }
+walkdir = { version = "2.3.2", optional = true }
 
 [dev-dependencies]
-mktemp = "0.4"
-icu_testdata = { version = "0.5", path = "../testdata" }
-writeable = { version = "0.3", path = "../../utils/writeable" }
+dhat = "0.3.0"
+writeable = { path = "../../utils/writeable" }
+icu_testdata = { path = "../testdata", features = ["metadata", "static"] }
 
 [features]
-experimental = []
-casemapping = ["icu_casemapping"]
-# Automatically download CLDR and uprops data
-download = ["cached-path"]
-download-testdata = ["reqwest", "icu_testdata/metadata", "tokio", "futures"]
-default = ["casemapping"]
+default = []
+experimental = ["icu_casemapping", "icu_segmenter"]
+bin = ["clap", "cached-path", "eyre", "pathdiff","sha2", "simple_logger", "walkdir"]
 
 [[bin]]
 name = "icu4x-datagen"
 path = "src/bin/datagen.rs"
+required-features = ["bin"]
 
-[[bin]]
-name = "icu4x-testdata-download"
-path = "src/bin/testdata-download.rs"
-required-features = ["download-testdata"]
-
-[[bin]]
+[[test]]
 name = "icu4x-verify-zero-copy"
-path = "src/bin/verify-zero-copy.rs"
+path = "tests/verify-zero-copy.rs"
 
 [[bin]]
 name = "icu4x-fingerprint-data"
 path = "src/bin/fingerprint-data.rs"
+required-features = ["bin"]

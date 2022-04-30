@@ -290,6 +290,22 @@ mod tests {
                     '日'.into(),
                 ],
             ),
+            (
+                "HH:mm:ss.SS",
+                vec![
+                    (fields::Hour::H23.into(), FieldLength::TwoDigit).into(),
+                    ':'.into(),
+                    (FieldSymbol::Minute, FieldLength::TwoDigit).into(),
+                    ':'.into(),
+                    (fields::Second::Second.into(), FieldLength::TwoDigit).into(),
+                    '.'.into(),
+                    (
+                        fields::Second::FractionalSecond.into(),
+                        FieldLength::Fixed(2),
+                    )
+                        .into(),
+                ],
+            ),
         ];
 
         for (string, items) in samples {
@@ -529,10 +545,16 @@ mod tests {
             );
         }
 
-        let broken = vec![(
-            "yyyyyyy",
-            PatternError::FieldLengthInvalid(FieldSymbol::Year(fields::Year::Calendar)),
-        )];
+        let broken = vec![
+            (
+                "yyyyyyy",
+                PatternError::FieldLengthInvalid(FieldSymbol::Year(fields::Year::Calendar)),
+            ),
+            (
+                "hh:mm:ss.SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS",
+                PatternError::FieldLengthInvalid(FieldSymbol::Second(fields::Second::FractionalSecond)),
+            ),
+        ];
 
         for (string, error) in broken {
             assert_eq!(Parser::new(string).parse(), Err(error),);

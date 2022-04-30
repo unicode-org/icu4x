@@ -87,7 +87,7 @@ impl Region {
         let s = TinyAsciiStr::<{ core::mem::size_of::<Self>() }>::try_from_raw(v)
             .map_err(|_| ParserError::InvalidSubtag)?;
         let is_valid = match s.len() {
-            REGION_ALPHA_LENGTH => s.is_ascii_alphabetic() && s.is_ascii_uppercase(),
+            REGION_ALPHA_LENGTH => s.is_ascii_alphabetic_uppercase(),
             REGION_NUM_LENGTH => s.is_ascii_numeric(),
             _ => false,
         };

@@ -11,12 +11,13 @@ use core::ops::{Add, Sub};
 use core::str::FromStr;
 use tinystr::{TinyStr16, TinyStr8};
 
-/// TODO(#486): Implement era codes.
 #[derive(Copy, Clone, Debug, PartialEq)]
+#[allow(clippy::exhaustive_structs)] // this is a newtype
 pub struct Era(pub TinyStr16);
 
 /// Representation of a formattable year.
 #[derive(Clone, Debug, PartialEq)]
+#[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct Year {
     /// The era containing the year.
     pub era: Era,
@@ -31,10 +32,12 @@ pub struct Year {
 
 /// TODO(#486): Implement month codes.
 #[derive(Clone, Debug, PartialEq)]
+#[allow(clippy::exhaustive_structs)] // this is a newtype
 pub struct MonthCode(pub TinyStr8);
 
 /// Representation of a formattable month.
 #[derive(Clone, Debug, PartialEq)]
+#[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct Month {
     /// A month number in a year. In normal years, this is usually the 1-based month index. In leap
     /// years, this is what the month number would have been in a non-leap year.
@@ -56,6 +59,7 @@ pub struct Month {
 // by the [`day_of_year_info()`](trait.DateInput.html#tymethod.day_of_year_info) method of the
 // [`DateInput`] trait.
 #[derive(Clone, Debug, PartialEq)]
+#[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct DayOfYearInfo {
     /// The current day of the year, 1-based.
     pub day_of_year: u32,
@@ -70,18 +74,22 @@ pub struct DayOfYearInfo {
 }
 
 /// A day number in a month. Usually 1-based.
+#[allow(clippy::exhaustive_structs)] // this is a newtype
 pub struct DayOfMonth(pub u32);
 
 /// A week number in a month. Usually 1-based.
 #[derive(Clone, Copy, Debug, PartialEq)]
+#[allow(clippy::exhaustive_structs)] // this is a newtype
 pub struct WeekOfMonth(pub u32);
 
 /// A week number in a year. Usually 1-based.
 #[derive(Clone, Copy, Debug, PartialEq)]
+#[allow(clippy::exhaustive_structs)] // this is a newtype
 pub struct WeekOfYear(pub u32);
 
 /// A day of week in month. 1-based.
 #[derive(Clone, Copy, Debug, PartialEq)]
+#[allow(clippy::exhaustive_structs)] // this is a newtype
 pub struct DayOfWeekInMonth(pub u32);
 
 impl From<DayOfMonth> for DayOfWeekInMonth {
@@ -97,18 +105,19 @@ fn test_day_of_week_in_month() {
     assert_eq!(DayOfWeekInMonth::from(DayOfMonth(8)).0, 2);
 }
 
-/// This macro defines a struct for 0-based date fields: hours, minutes, and seconds. Each
-/// unit is bounded by a range. The traits implemented here will return a Result on
-/// whether or not the unit is in range from the given input.
+/// This macro defines a struct for 0-based date fields: hours, minutes, seconds
+/// and fractional seconds. Each unit is bounded by a range. The traits implemented
+/// here will return a Result on whether or not the unit is in range from the given
+/// input.
 macro_rules! dt_unit {
-    ($name:ident, $value:expr, $docs:expr) => {
+    ($name:ident, $storage:ident, $value:expr, $docs:expr) => {
         #[doc=$docs]
         #[derive(Debug, Default, Clone, Copy, PartialEq, Hash)]
-        pub struct $name(u8);
+        pub struct $name($storage);
 
         impl $name {
             /// Do not validate the numeric input for this component.
-            pub const fn new_unchecked(input: u8) -> Self {
+            pub const fn new_unchecked(input: $storage) -> Self {
                 Self(input)
             }
         }
@@ -117,7 +126,7 @@ macro_rules! dt_unit {
             type Err = DateTimeError;
 
             fn from_str(input: &str) -> Result<Self, Self::Err> {
-                let val: u8 = input.parse()?;
+                let val: $storage = input.parse()?;
                 if val > $value {
                     Err(DateTimeError::Overflow {
                         field: "$name",
@@ -129,10 +138,10 @@ macro_rules! dt_unit {
             }
         }
 
-        impl TryFrom<u8> for $name {
+        impl TryFrom<$storage> for $name {
             type Error = DateTimeError;
 
-            fn try_from(input: u8) -> Result<Self, Self::Error> {
+            fn try_from(input: $storage) -> Result<Self, Self::Error> {
                 if input > $value {
                     Err(DateTimeError::Overflow {
                         field: "$name",
@@ -154,12 +163,12 @@ macro_rules! dt_unit {
                         max: $value,
                     })
                 } else {
-                    Ok(Self(input as u8))
+                    Ok(Self(input as $storage))
                 }
             }
         }
 
-        impl From<$name> for u8 {
+        impl From<$name> for $storage {
             fn from(input: $name) -> Self {
                 input.0
             }
@@ -171,18 +180,18 @@ macro_rules! dt_unit {
             }
         }
 
-        impl Add<u8> for $name {
+        impl Add<$storage> for $name {
             type Output = Self;
 
-            fn add(self, other: u8) -> Self {
+            fn add(self, other: $storage) -> Self {
                 Self(self.0 + other)
             }
         }
 
-        impl Sub<u8> for $name {
+        impl Sub<$storage> for $name {
             type Output = Self;
 
-            fn sub(self, other: u8) -> Self {
+            fn sub(self, other: $storage) -> Self {
                 Self(self.0 - other)
             }
         }
@@ -191,23 +200,34 @@ macro_rules! dt_unit {
 
 dt_unit!(
     IsoHour,
+    u8,
     24,
     "An ISO-8601 hour component, for use with ISO calendars."
 );
 
 dt_unit!(
     IsoMinute,
+    u8,
     60,
     "An ISO-8601 minute component, for use with ISO calendars."
 );
 
 dt_unit!(
     IsoSecond,
+    u8,
     61,
     "An ISO-8601 second component, for use with ISO calendars."
 );
 
+dt_unit!(
+    NanoSecond,
+    u32,
+    999_999_999,
+    "A fractional second component, stored as nanoseconds."
+);
+
 #[derive(Debug, Copy, Clone)]
+#[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct Time {
     /// 0-based hour.
     pub hour: IsoHour,
@@ -217,38 +237,40 @@ pub struct Time {
 
     /// 0-based second.
     pub second: IsoSecond,
+
+    /// Fractional second
+    pub nanosecond: NanoSecond,
 }
 
 impl Time {
     /// Do not validate the numeric input for this component.
-    pub const fn new(hour: IsoHour, minute: IsoMinute, second: IsoSecond) -> Self {
+    pub const fn new(
+        hour: IsoHour,
+        minute: IsoMinute,
+        second: IsoSecond,
+        nanosecond: NanoSecond,
+    ) -> Self {
         Self {
             hour,
             minute,
             second,
+            nanosecond,
         }
     }
 
-    pub fn try_new(hour: u8, minute: u8, second: u8) -> Result<Self, DateTimeError> {
+    pub fn try_new(
+        hour: u8,
+        minute: u8,
+        second: u8,
+        nanosecond: u32,
+    ) -> Result<Self, DateTimeError> {
         Ok(Self {
             hour: hour.try_into()?,
             minute: minute.try_into()?,
             second: second.try_into()?,
+            nanosecond: nanosecond.try_into()?,
         })
     }
-}
-
-// TODO(#485): Improve FractionalSecond.
-/// A placeholder for fractional seconds support. See [Issue #485](https://github.com/unicode-org/icu4x/issues/485)
-/// for tracking the support of this feature.
-#[derive(Clone, Debug, PartialEq)]
-pub enum FractionalSecond {
-    /// The millisecond component of the fractional second.
-    Millisecond(u16),
-    /// The microsecond component of the fractional second.
-    Microsecond(u32),
-    /// The nanosecond component of the fractional second.
-    Nanosecond(u32),
 }
 
 /// The GMT offset in seconds for a mock time zone
@@ -384,6 +406,7 @@ impl FromStr for GmtOffset {
 #[allow(missing_docs)] // The weekday variants should be self-obvious.
 #[repr(i8)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+#[allow(clippy::exhaustive_enums)] // This is stable
 pub enum IsoWeekday {
     Monday = 1,
     Tuesday,

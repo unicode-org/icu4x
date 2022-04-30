@@ -82,6 +82,9 @@
     )
 )]
 
+#[cfg(feature = "bidi")]
+pub mod bidi;
+
 mod error;
 pub mod maps;
 mod props;

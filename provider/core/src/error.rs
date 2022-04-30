@@ -13,7 +13,7 @@ use displaydoc::Display;
 #[non_exhaustive]
 pub enum DataErrorKind {
     /// No data for the provided resource key.
-    #[displaydoc("Missing resource key")]
+    #[displaydoc("Missing data for key")]
     MissingResourceKey,
 
     /// There is data for the key, but not for this particular variant.
@@ -73,6 +73,10 @@ pub enum DataErrorKind {
     #[displaydoc("I/O error: {0:?}")]
     #[cfg(feature = "std")]
     Io(std::io::ErrorKind),
+
+    #[displaydoc("Missing source data")]
+    #[cfg(feature = "datagen")]
+    MissingSourceData,
 }
 
 /// The error type for ICU4X data provider operations.

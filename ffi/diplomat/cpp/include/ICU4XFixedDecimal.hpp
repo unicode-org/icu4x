@@ -25,13 +25,20 @@ struct ICU4XFixedDecimalDeleter {
     capi::ICU4XFixedDecimal_destroy(l);
   }
 };
+
+/**
+ * 
+ * 
+ * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html) for more information.
+ */
 class ICU4XFixedDecimal {
  public:
 
   /**
    * Construct an [`ICU4XFixedDecimal`] from an integer.
    * 
-   * See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html) for more information.
+   * 
+   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html) for more information.
    */
   static ICU4XFixedDecimal create(int32_t v);
 
@@ -39,70 +46,81 @@ class ICU4XFixedDecimal {
    * Construct an [`ICU4XFixedDecimal`] from an float, with enough digits to recover
    * the original floating point in IEEE 754 without needing trailing zeros
    * 
-   * See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.from_f64) for more information.
+   * 
+   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.from_f64) for more information.
    */
   static std::optional<ICU4XFixedDecimal> create_from_f64_with_max_precision(double f);
 
   /**
    * Construct an [`ICU4XFixedDecimal`] from an float, with a given power of 10 for the lower magnitude
    * 
-   * See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.from_f64) for more information.
+   * 
+   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.from_f64) for more information.
    */
   static std::optional<ICU4XFixedDecimal> create_from_f64_with_lower_magnitude(double f, int16_t precision, ICU4XFixedDecimalRoundingMode rounding_mode);
 
   /**
    * Construct an [`ICU4XFixedDecimal`] from an float, for a given number of significant digits
    * 
-   * See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.from_f64) for more information.
+   * 
+   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.from_f64) for more information.
    */
   static std::optional<ICU4XFixedDecimal> create_from_f64_with_significant_digits(double f, uint8_t digits, ICU4XFixedDecimalRoundingMode rounding_mode);
 
   /**
    * Construct an [`ICU4XFixedDecimal`] from a string.
-   * See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html) for more information.
+   * 
+   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html) for more information.
    */
   static ICU4XCreateFixedDecimalResult create_fromstr(const std::string_view v);
 
   /**
    * Multiply the [`ICU4XFixedDecimal`] by a given power of ten.
-   * See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.multiply_pow10) for more information.
+   * 
+   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.multiply_pow10) for more information.
    */
   bool multiply_pow10(int16_t power);
 
   /**
    * Invert the sign of the [`ICU4XFixedDecimal`].
-   * See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.negate) for more information.
+   * 
+   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.negate) for more information.
    */
   void negate();
 
   /**
    * Zero-pad the [`ICU4XFixedDecimal`] on the left to a particular number of integer digits
-   * See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.pad_left) for more information.
+   * 
+   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.pad_left) for more information.
    */
   void pad_left(uint16_t digits);
 
   /**
    * Truncate the [`ICU4XFixedDecimal`] on the left to a particular magnitude, deleting digits if necessary. This is useful for, e.g. abbreviating years
    * ("2022" -> "22")
-   * See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.truncate_left) for more information.
+   * 
+   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.truncate_left) for more information.
    */
   void truncate_left(int16_t magnitude);
 
   /**
    * Zero-pad the [`ICU4XFixedDecimal`] on the right to a particular (negative) magnitude
-   * See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.pad_right) for more information.
+   * 
+   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.pad_right) for more information.
    */
   void pad_right(uint16_t negative_magnitude);
 
   /**
    * Format the [`ICU4XFixedDecimal`] as a string.
-   * See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.write_to) for more information.
+   * 
+   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.write_to) for more information.
    */
   template<typename W> void to_string_to_writeable(W& to) const;
 
   /**
    * Format the [`ICU4XFixedDecimal`] as a string.
-   * See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.write_to) for more information.
+   * 
+   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.write_to) for more information.
    */
   std::string to_string() const;
   inline const capi::ICU4XFixedDecimal* AsFFI() const { return this->inner.get(); }

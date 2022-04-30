@@ -33,12 +33,15 @@
         clippy::indexing_slicing,
         clippy::unwrap_used,
         clippy::expect_used,
-        clippy::panic
+        clippy::panic,
+        clippy::exhaustive_structs,
+        clippy::exhaustive_enums
     )
 )]
 
 extern crate alloc;
 
+pub mod any_calendar;
 pub mod arithmetic;
 pub mod buddhist;
 mod calendar;
@@ -48,6 +51,7 @@ mod date;
 mod datetime;
 mod duration;
 mod error;
+pub mod ethiopic;
 pub mod gregorian;
 pub mod indian;
 pub mod iso;

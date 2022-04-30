@@ -2,31 +2,16 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use clap::{App, Arg, ArgGroup, ArgMatches};
+use clap::{App, Arg, ArgGroup};
 use eyre::WrapErr;
 
-use icu_datagen::cldr::CldrPathsAllInOne;
-use icu_datagen::{get_all_keys, DatagenOptions};
-
+use icu_datagen::{get_all_keys, SourceData};
 use icu_locid::LanguageIdentifier;
-use icu_provider::datagen::IterableDynProvider;
-use icu_provider::export::DataExporter;
-use icu_provider::hello_world::{HelloWorldProvider, HelloWorldV1Marker};
+use icu_provider::hello_world::HelloWorldV1Marker;
 use icu_provider::prelude::*;
-use icu_provider::serde::SerializeMarker;
-use icu_provider_adapters::filter::Filterable;
-
-use icu_provider_blob::export::BlobExporter;
-use icu_provider_fs::export::fs_exporter;
-use icu_provider_fs::export::serializers;
-use icu_provider_fs::export::FilesystemExporter;
-use rayon::prelude::*;
+use icu_provider_fs::export::serializers::{bincode, json, postcard};
 use simple_logger::SimpleLogger;
-use std::borrow::Cow;
-use std::collections::HashSet;
 use std::fs::File;
-use std::io;
-use std::io::BufRead;
 use std::path::PathBuf;
 use std::str::FromStr;
 
@@ -40,12 +25,6 @@ fn main() -> eyre::Result<()> {
                 .short("v")
                 .long("verbose")
                 .help("Requests verbose output"),
-        )
-        .arg(
-            Arg::with_name("DRY_RUN")
-                .short("n")
-                .long("dry-run")
-                .help("Do not touch the filesystem (consider using with -v)."),
         )
         .arg(
             Arg::with_name("FORMAT")
@@ -123,15 +102,11 @@ fn main() -> eyre::Result<()> {
         )
         .arg(
             Arg::with_name("UPROPS_MODE")
+                .long("uprops-mode")
                 .takes_value(true)
                 .possible_values(&["small", "fast"])
                 .help("Whether to optimize Unicode property data structures for size (\"small\") or speed (\"fast\")")
                 .default_value("small"),
-        )
-        .arg(
-            Arg::with_name("INPUT_FROM_TESTDATA")
-                .long("input-from-testdata")
-                .help("Load input data from the icu_testdata project."),
         )
         .arg(
             Arg::with_name("CLDR_LOCALE_SUBSET")
@@ -172,18 +147,12 @@ fn main() -> eyre::Result<()> {
                 .long("all-keys")
                 .help("Include all keys known to ICU4X."),
         )
-        .arg(
-            Arg::with_name("TEST_KEYS")
-                .long("test-keys")
-                .help("Include all keys supported by testdata."),
-        )
         .group(
             ArgGroup::with_name("KEY_MODE")
                 .arg("KEYS")
                 .arg("KEY_FILE")
                 .arg("HELLO_WORLD")
                 .arg("ALL_KEYS")
-                .arg("TEST_KEYS")
                 .required(true),
         )
         .arg(
@@ -198,11 +167,6 @@ fn main() -> eyre::Result<()> {
                 ),
         )
         .arg(
-            Arg::with_name("TEST_LOCALES")
-                .long("test-locales")
-                .help("Include only test locales, as discussed in icu_testdata."),
-        )
-        .arg(
             Arg::with_name("ALL_LOCALES")
                 .long("all-locales")
                 .help("Include all locales present in the input CLDR JSON."),
@@ -210,7 +174,6 @@ fn main() -> eyre::Result<()> {
         .group(
             ArgGroup::with_name("LOCALE_MODE")
                 .arg("LOCALES")
-                .arg("TEST_LOCALES")
                 .arg("ALL_LOCALES")
                 .required(true),
         )
@@ -226,14 +189,9 @@ fn main() -> eyre::Result<()> {
                 .takes_value(true),
         )
         .arg(
-            Arg::with_name("OUTPUT_TESTDATA")
-                .long("out-testdata")
-                .help("Write output to the ICU4X testdata tree."),
-        )
-        .group(
-            ArgGroup::with_name("OUTPUT_MODE")
-                .arg("OUTPUT")
-                .arg("OUTPUT_TESTDATA"),
+            Arg::with_name("IGNORE_MISSING_DATA")
+                .long("ignore-missing-data")
+                .help("Skips missing data errors")
         )
         .get_matches();
 
@@ -250,246 +208,119 @@ fn main() -> eyre::Result<()> {
             .unwrap()
     }
 
-    if matches.is_present("DRY_RUN") {
-        eyre::bail!("Dry-run is not yet supported");
-    }
+    let selected_locales = matches
+        .values_of("LOCALES")
+        .map(|ls| {
+            ls.map(|s| LanguageIdentifier::from_str(s).with_context(|| s.to_string()))
+                .collect::<Result<Vec<LanguageIdentifier>, eyre::Error>>()
+        })
+        .transpose()?;
 
-    let selected_locales = if let Some(locale_strs) = matches.values_of("LOCALES") {
-        Some(
-            locale_strs
-                .map(|s| LanguageIdentifier::from_str(s).with_context(|| s.to_string()))
-                .collect::<Result<Vec<LanguageIdentifier>, eyre::Error>>()?,
-        )
-    } else if matches.is_present("TEST_LOCALES") {
-        Some(icu_testdata::metadata::load()?.package_metadata.locales)
-    } else {
-        None
-    };
-
-    let all_keys = get_all_keys();
-
-    #[allow(clippy::if_same_then_else)]
     let selected_keys = if matches.is_present("ALL_KEYS") {
-        all_keys
-    } else if matches.is_present("TEST_KEYS") {
-        // We go with all keys now and later ignore key errors.
-        all_keys
+        get_all_keys()
     } else if matches.is_present("HELLO_WORLD") {
         vec![HelloWorldV1Marker::KEY]
+    } else if let Some(paths) = matches.values_of("KEYS") {
+        icu_datagen::keys(&paths.collect::<Vec<_>>())
+    } else if let Some(key_file_path) = matches.value_of_os("KEY_FILE") {
+        File::open(key_file_path)
+            .and_then(icu_datagen::keys_from_file)
+            .with_context(|| key_file_path.to_string_lossy().into_owned())?
     } else {
-        let mut keys = HashSet::new();
-
-        if let Some(paths) = matches.values_of("KEYS") {
-            keys.extend(paths.map(Cow::Borrowed));
-        } else if let Some(key_file_path) = matches.value_of_os("KEY_FILE") {
-            let file = File::open(key_file_path)
-                .with_context(|| key_file_path.to_string_lossy().into_owned())?;
-            for line in io::BufReader::new(file).lines() {
-                let path = line.with_context(|| key_file_path.to_string_lossy().into_owned())?;
-                keys.insert(Cow::Owned(path));
-            }
-        }
-
-        let filtered: Vec<_> = all_keys
-            .into_iter()
-            .filter(|k| keys.contains(k.get_path()))
-            .collect();
-
-        if filtered.is_empty() {
-            eyre::bail!("No keys selected");
-        }
-
-        filtered
+        unreachable!();
     };
 
-    let mut provider: Box<dyn IterableDynProvider<SerializeMarker> + Sync> = if matches
-        .is_present("HELLO_WORLD")
-    {
-        Box::new(HelloWorldProvider::new_with_placeholder_data())
-    } else {
-        let cldr_paths = CldrPathsAllInOne {
-            cldr_json_root: if let Some(_tag) = matches.value_of("CLDR_TAG") {
-                #[cfg(not(feature = "download"))]
-                eyre::bail!("--cldr-tag requires the download feature");
-                #[cfg(feature = "download")]
-                cached_path::CacheBuilder::new().freshness_lifetime(u64::MAX).build()?
-                    .cached_path_with_options(
-                        &format!(
-                            "https://github.com/unicode-org/cldr-json/releases/download/{}/cldr-{}-json-{}.zip",
-                            _tag, _tag, matches.value_of("CLDR_LOCALE_SUBSET").unwrap_or("full")),
-                        &cached_path::Options::default().extract(),
-                    )?
-            } else if let Some(path) = matches.value_of("CLDR_ROOT") {
-                PathBuf::from(path)
-            } else if matches.is_present("INPUT_FROM_TESTDATA") {
-                icu_testdata::paths::cldr_json_root()
-            } else {
-                eyre::bail!(
-                    "Either --cldr-tag or --cldr-root or --input-from-testdata must be specified",
-                )
-            },
-            locale_subset: matches
+    if selected_keys.is_empty() {
+        eyre::bail!("No keys selected");
+    }
+
+    let mut source_data = SourceData::default();
+    if let Some(_tag) = matches.value_of("CLDR_TAG") {
+        source_data = source_data.with_cldr(
+            cached_path::CacheBuilder::new().freshness_lifetime(u64::MAX).build()?
+                .cached_path_with_options(
+                    &format!(
+                        "https://github.com/unicode-org/cldr-json/releases/download/{}/cldr-{}-json-{}.zip",
+                        _tag, _tag, matches.value_of("CLDR_LOCALE_SUBSET").unwrap_or("full")),
+                    &cached_path::Options::default().extract(),
+                )?,
+            matches
+                .value_of("CLDR_LOCALE_SUBSET")
+                .unwrap_or("full")
+                .to_string()
+            );
+    } else if let Some(path) = matches.value_of("CLDR_ROOT") {
+        source_data = source_data.with_cldr(
+            PathBuf::from(path),
+            matches
                 .value_of("CLDR_LOCALE_SUBSET")
                 .unwrap_or("full")
                 .to_string(),
-        };
-
-        let uprops_root = if let Some(_tag) = matches.value_of("UPROPS_TAG") {
-            #[cfg(not(feature = "download"))]
-            eyre::bail!("--uprops-tag requires the download feature");
-            #[cfg(feature = "download")]
-            cached_path::CacheBuilder::new().freshness_lifetime(u64::MAX).build()?
-                .cached_path_with_options(
-                    &format!("https://github.com/unicode-org/icu/releases/download/{}/icuexportdata_uprops_full.zip", _tag),
-                    &cached_path::Options::default().extract()
-                )?
-                .join("icuexportdata_uprops_full")
-                .join(matches.value_of("UPROPS_MODE").unwrap())
-        } else if let Some(path) = matches.value_of("UPROPS_ROOT") {
-            PathBuf::from(path)
-        } else if matches.is_present("INPUT_FROM_TESTDATA") {
-            icu_testdata::paths::uprops_toml_root()
-        } else {
-            eyre::bail!(
-                "Either --uprops-tag or --uprops-root or --input-from-testdata must be specified",
-            )
-        };
-
-        let segmenter_data_root = icu_datagen::segmenter::segmenter_data_root();
-
-        let options = DatagenOptions {
-            cldr_paths: Some(Box::new(cldr_paths)),
-            uprops_root: Some(uprops_root),
-            segmenter_data_root: Some(segmenter_data_root),
-        };
-        let p = icu_datagen::create_datagen_provider!(options);
-
-        Box::new(p)
-    };
-
-    if let Some(locales) = selected_locales.as_ref() {
-        provider = Box::new(
-            provider
-                .filterable("icu4x-datagen locales")
-                .filter_by_langid(move |lid| lid.language.is_empty() || locales.contains(lid)),
         );
     }
 
-    let mut exporter: Box<dyn DataExporter<_>> = match matches
+    if let Some(_tag) = matches.value_of("UPROPS_TAG") {
+        source_data = source_data.with_uprops(cached_path::CacheBuilder::new().freshness_lifetime(u64::MAX).build()?
+            .cached_path_with_options(
+                &format!("https://github.com/unicode-org/icu/releases/download/{}/icuexportdata_uprops_full.zip", _tag),
+                &cached_path::Options::default().extract()
+            )?
+            .join("icuexportdata_uprops_full")
+            .join(matches.value_of("UPROPS_MODE").unwrap()));
+    } else if let Some(path) = matches.value_of("UPROPS_ROOT") {
+        source_data = source_data.with_uprops(PathBuf::from(path));
+    }
+
+    let out = match matches
         .value_of("FORMAT")
         .expect("Option has default value")
     {
-        "dir" => Box::new(get_fs_exporter(&matches)?),
-        "blob" => Box::new(get_blob_exporter(&matches)?),
+        "dir" => icu_datagen::Out::Fs {
+            output_path: matches
+                .value_of_os("OUTPUT")
+                .map(PathBuf::from)
+                .ok_or_else(|| eyre::eyre!("--out must be specified for --format=dir"))?,
+            serializer: match matches.value_of("SYNTAX") {
+                Some("bincode") => Box::new(bincode::Serializer::default()),
+                Some("postcard") => Box::new(postcard::Serializer::default()),
+                _ if matches.is_present("PRETTY") => Box::new(json::Serializer::pretty()),
+                _ => Box::new(json::Serializer::default()),
+            },
+            overwrite: matches.is_present("OVERWRITE"),
+        },
+        "blob" => icu_datagen::Out::Blob(if let Some(path) = matches.value_of_os("OUTPUT") {
+            let path_buf = PathBuf::from(path);
+            if !matches.is_present("OVERWRITE") && path_buf.exists() {
+                eyre::bail!("Output path is present: {:?}", path_buf);
+            }
+            Box::new(
+                std::fs::File::create(&path_buf)
+                    .with_context(|| path_buf.to_string_lossy().to_string())?,
+            )
+        } else {
+            Box::new(std::io::stdout())
+        }),
         _ => unreachable!(),
     };
 
-    selected_keys.into_par_iter().try_for_each(|key| {
-        let result = provider
-            .supported_options_for_key(key)?
-            .collect::<Vec<_>>()
-            .into_par_iter()
-            .try_for_each(|options| {
-                let payload = provider
-                    .load_payload(
-                        key,
-                        &DataRequest {
-                            options: options.clone(),
-                            metadata: Default::default(),
-                        },
-                    )?
-                    .take_payload()?;
-                exporter.put_payload(key, options, payload)
-            });
-
-        exporter.flush(key)?;
-
-        if matches.is_present("TEST_KEYS")
-            && matches!(result, Err(e) if e.kind == DataErrorKind::MissingResourceKey)
-        {
-            log::trace!("Skipping key: {}", key);
-            Ok(())
+    icu_datagen::datagen(
+        selected_locales.as_deref(),
+        &selected_keys,
+        &source_data,
+        out,
+        matches.is_present("IGNORE_MISSING_DATA"),
+    )
+    .map_err(|e| -> eyre::ErrReport {
+        if icu_datagen::is_missing_cldr_error(e) {
+            eyre::eyre!(
+                "Either --cldr-tag or --cldr-root or --input-from-testdata must be specified"
+            )
+        } else if icu_datagen::is_missing_uprops_error(e) {
+            eyre::eyre!(
+                "Either --uprops-tag or --uprops-root or --input-from-testdata must be specified"
+            )
         } else {
-            log::info!("Writing key: {}", key);
-            result
+            e.into()
         }
-    })?;
-
-    exporter.close()?;
-
-    Ok(())
-}
-
-fn get_fs_exporter(matches: &ArgMatches) -> eyre::Result<FilesystemExporter> {
-    let syntax = matches.value_of("SYNTAX").unwrap_or("json");
-
-    let output_path: PathBuf = if matches.is_present("OUTPUT_TESTDATA") {
-        icu_testdata::paths::data_root().join(syntax)
-    } else if let Some(v) = matches.value_of_os("OUTPUT") {
-        PathBuf::from(v)
-    } else {
-        eyre::bail!("--out must be specified for --format=dir");
-    };
-
-    log::info!("Writing to filesystem tree at: {}", output_path.display());
-
-    let serializer: Box<dyn serializers::AbstractSerializer + Sync> =
-        match matches.value_of("SYNTAX") {
-            Some("json") | None => {
-                let mut options = serializers::json::Options::default();
-                if matches.is_present("PRETTY") {
-                    options.style = serializers::json::StyleOption::Pretty;
-                }
-                Box::new(serializers::json::Serializer::new(options))
-            }
-            Some("bincode") => {
-                let options = serializers::bincode::Options::default();
-                Box::new(serializers::bincode::Serializer::new(options))
-            }
-            Some("postcard") => {
-                let options = serializers::postcard::Options::default();
-                Box::new(serializers::postcard::Serializer::new(options))
-            }
-            _ => unreachable!(),
-        };
-
-    let mut options = fs_exporter::ExporterOptions::default();
-    options.root = output_path;
-    if matches.is_present("OVERWRITE") {
-        options.overwrite = fs_exporter::OverwriteOption::RemoveAndReplace
-    }
-
-    let exporter = FilesystemExporter::try_new(serializer, options)?;
-    Ok(exporter)
-}
-
-fn get_blob_exporter(matches: &ArgMatches) -> eyre::Result<BlobExporter<'static>> {
-    if matches.value_of("SYNTAX") == Some("json") {
-        eyre::bail!("Cannot use --format=blob with --syntax=json");
-    }
-
-    let output_path: Option<PathBuf> = if matches.is_present("OUTPUT_TESTDATA") {
-        Some(icu_testdata::paths::data_root().join("testdata.postcard"))
-    } else {
-        matches.value_of_os("OUTPUT").map(PathBuf::from)
-    };
-
-    match output_path {
-        Some(ref p) => log::info!("Writing blob to filesystem at: {}", p.display()),
-        None => log::info!("Writing blob to standard out"),
-    };
-
-    let sink: Box<dyn std::io::Write + Sync> = if let Some(path_buf) = output_path {
-        if !matches.is_present("OVERWRITE") && path_buf.exists() {
-            eyre::bail!("Output path is present: {:?}", path_buf);
-        }
-        let context = path_buf.to_string_lossy().to_string();
-        let temp = std::fs::File::create(path_buf).with_context(|| context)?;
-        Box::new(temp)
-    } else {
-        let temp = std::io::stdout();
-        Box::new(temp)
-    };
-
-    Ok(BlobExporter::new_with_sink(sink))
+    })
 }

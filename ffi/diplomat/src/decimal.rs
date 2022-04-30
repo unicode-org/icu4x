@@ -24,7 +24,7 @@ pub mod ffi {
 
     #[diplomat::opaque]
     /// An ICU4X Fixed Decimal Format object, capable of formatting a [`ICU4XFixedDecimal`] as a string.
-    /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu/decimal/struct.FixedDecimalFormat.html) for more information.
+    #[diplomat::rust_link(icu::decimal::FixedDecimalFormat, Struct)]
     pub struct ICU4XFixedDecimalFormat(pub FixedDecimalFormat);
 
     pub enum ICU4XFixedDecimalGroupingStrategy {
@@ -57,7 +57,8 @@ pub mod ffi {
     }
 
     impl ICU4XFixedDecimalFormat {
-        /// Creates a new [`ICU4XFixedDecimalFormat`] from locale data. See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu/decimal/struct.FixedDecimalFormat.html#method.try_new) for more information.
+        /// Creates a new [`ICU4XFixedDecimalFormat`] from locale data.
+        #[diplomat::rust_link(icu::decimal::FixedDecimalFormat::try_new, FnInStruct)]
         pub fn try_new(
             locale: &ICU4XLocale,
             provider: &ICU4XDataProvider,
@@ -100,32 +101,32 @@ pub mod ffi {
         {
             let langid = locale.0.as_ref().clone();
 
-            if let Result::Ok(fdf) = FixedDecimalFormat::try_new(
-                langid,
-                provider,
-                FixedDecimalFormatOptions {
-                    grouping_strategy: match options.grouping_strategy {
-                        ICU4XFixedDecimalGroupingStrategy::Auto => GroupingStrategy::Auto,
-                        ICU4XFixedDecimalGroupingStrategy::Never => GroupingStrategy::Never,
-                        ICU4XFixedDecimalGroupingStrategy::Always => GroupingStrategy::Always,
-                        ICU4XFixedDecimalGroupingStrategy::Min2 => GroupingStrategy::Min2,
-                    },
-                    sign_display: match options.sign_display {
-                        ICU4XFixedDecimalSignDisplay::Auto => SignDisplay::Auto,
-                        ICU4XFixedDecimalSignDisplay::Never => SignDisplay::Never,
-                        ICU4XFixedDecimalSignDisplay::Always => SignDisplay::Always,
-                        ICU4XFixedDecimalSignDisplay::ExceptZero => SignDisplay::ExceptZero,
-                        ICU4XFixedDecimalSignDisplay::Negative => SignDisplay::Negative,
-                    },
-                },
-            ) {
+            let grouping_strategy = match options.grouping_strategy {
+                ICU4XFixedDecimalGroupingStrategy::Auto => GroupingStrategy::Auto,
+                ICU4XFixedDecimalGroupingStrategy::Never => GroupingStrategy::Never,
+                ICU4XFixedDecimalGroupingStrategy::Always => GroupingStrategy::Always,
+                ICU4XFixedDecimalGroupingStrategy::Min2 => GroupingStrategy::Min2,
+            };
+            let sign_display = match options.sign_display {
+                ICU4XFixedDecimalSignDisplay::Auto => SignDisplay::Auto,
+                ICU4XFixedDecimalSignDisplay::Never => SignDisplay::Never,
+                ICU4XFixedDecimalSignDisplay::Always => SignDisplay::Always,
+                ICU4XFixedDecimalSignDisplay::ExceptZero => SignDisplay::ExceptZero,
+                ICU4XFixedDecimalSignDisplay::Negative => SignDisplay::Negative,
+            };
+            let mut options = FixedDecimalFormatOptions::default();
+            options.grouping_strategy = grouping_strategy;
+            options.sign_display = sign_display;
+
+            if let Result::Ok(fdf) = FixedDecimalFormat::try_new(langid, provider, options) {
                 Ok(Box::new(ICU4XFixedDecimalFormat(fdf))).into()
             } else {
                 Err(()).into()
             }
         }
 
-        /// Formats a [`ICU4XFixedDecimal`] to a string. See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu/decimal/struct.FixedDecimalFormat.html#method.format) for more information.
+        /// Formats a [`ICU4XFixedDecimal`] to a string.
+        #[diplomat::rust_link(icu::decimal::FixedDecimalFormat::format, FnInStruct)]
         pub fn format(
             &self,
             value: &ICU4XFixedDecimal,

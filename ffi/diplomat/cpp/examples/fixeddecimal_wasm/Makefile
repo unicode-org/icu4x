@@ -15,20 +15,22 @@ $(ALL_RUST):
 
 $(ALL_HEADERS):
 
-../../../../../target/debug/libicu_capi_staticlib.a: $(ALL_RUST)
-	cargo build -p icu_capi_staticlib -p icu_capi_staticlib
+../../../../../target/debug/libicu_capi_staticlib_test.a: $(ALL_RUST)
+	cargo build -p icu_capi_staticlib -p icu_capi_staticlib --features provider_test
+	mv ../../../../../target/debug/libicu_capi_staticlib.a ../../../../../target/debug/libicu_capi_staticlib_test.a
 
-a.out: ../../../../../target/debug/libicu_capi_staticlib.a $(ALL_HEADERS) test.cpp
-	$(CXX) -std=c++17 test.cpp ../../../../../target/debug/libicu_capi_staticlib.a -ldl -lpthread -lm -g
+a.out: ../../../../../target/debug/libicu_capi_staticlib_test.a $(ALL_HEADERS) test.cpp
+	$(CXX) -std=c++17 test.cpp ../../../../../target/debug/libicu_capi_staticlib_test.a -ldl -lpthread -lm -g
 
-../../../../../target/wasm32-unknown-emscripten/release/libicu_capi_staticlib.a: $(ALL_RUST)
-	RUSTFLAGS="-Cpanic=abort" cargo +nightly-2022-01-31 build --release -p icu_capi_staticlib --target wasm32-unknown-emscripten -Z build-std=std,panic_abort -Z build-std-features=panic_immediate_abort
+../../../../../target/wasm32-unknown-emscripten/release/libicu_capi_staticlib_test.a: $(ALL_RUST)
+	RUSTFLAGS="-Cpanic=abort" cargo +nightly-2022-01-31 build --release -p icu_capi_staticlib --features provider_test --target wasm32-unknown-emscripten -Z build-std=std,panic_abort -Z build-std-features=panic_immediate_abort
+	mv ../../../../../target/wasm32-unknown-emscripten/release/libicu_capi_staticlib.a ../../../../../target/wasm32-unknown-emscripten/release/libicu_capi_staticlib_test.a
 
-web-version.html: ../../../../../target/wasm32-unknown-emscripten/release/libicu_capi_staticlib.a $(ALL_HEADERS) test.cpp
-	$(EMCC) -std=c++17 test.cpp ../../../../../target/wasm32-unknown-emscripten/release/libicu_capi_staticlib.a -ldl -lpthread -lm -g  -o web-version.html --bind --emrun -sENVIRONMENT=web -sWASM=1 -sEXPORT_ES6=1 -sMODULARIZE=1
+web-version.html: ../../../../../target/wasm32-unknown-emscripten/release/libicu_capi_staticlib_test.a $(ALL_HEADERS) test.cpp
+	$(EMCC) -std=c++17 test.cpp ../../../../../target/wasm32-unknown-emscripten/release/libicu_capi_staticlib_test.a -ldl -lpthread -lm -g  -o web-version.html --bind --emrun -sENVIRONMENT=web -sWASM=1 -sEXPORT_ES6=1 -sMODULARIZE=1
 
-node-version.js: ../../../../../target/wasm32-unknown-emscripten/release/libicu_capi_staticlib.a $(ALL_HEADERS) test.cpp
-	$(EMCC) -std=c++17 test.cpp ../../../../../target/wasm32-unknown-emscripten/release/libicu_capi_staticlib.a -ldl -lpthread -lm -g  -o node-version.js --bind -sWASM=1 -sENVIRONMENT=node -sWASM_ASYNC_COMPILATION=0 -DNOMAIN
+node-version.js: ../../../../../target/wasm32-unknown-emscripten/release/libicu_capi_staticlib_test.a $(ALL_HEADERS) test.cpp
+	$(EMCC) -std=c++17 test.cpp ../../../../../target/wasm32-unknown-emscripten/release/libicu_capi_staticlib_test.a -ldl -lpthread -lm -g  -o node-version.js --bind -sWASM=1 -sENVIRONMENT=node -sWASM_ASYNC_COMPILATION=0 -DNOMAIN
 
 build: web-version.html node-version.js
 
@@ -51,6 +53,6 @@ clean:
 	rm -f web-version.js
 	rm -f node-version.js
 	rm -f node-version.wasm
-	rm -f ../../../../../target/wasm32-unknown-emscripten/release/libicu_capi_staticlib.a
-	rm -f ../../../../../target/debug/libicu_capi_staticlib.a
+	rm -f ../../../../../target/wasm32-unknown-emscripten/release/libicu_capi_staticlib_test.a
+	rm -f ../../../../../target/debug/libicu_capi_staticlib_test.a
 	rm -f a.out

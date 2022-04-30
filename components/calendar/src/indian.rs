@@ -12,8 +12,9 @@ use crate::{
 use core::marker::PhantomData;
 use tinystr::tinystr;
 
+/// The Indian national calendar
 #[derive(Copy, Clone, Debug, Hash, Default, Eq, PartialEq)]
-// The Indian national calendar
+#[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct Indian;
 
 #[derive(Copy, Clone, Debug, Hash, Eq, PartialEq)]
@@ -85,6 +86,7 @@ impl Calendar for Indian {
         &self,
         date1: &Self::DateInner,
         date2: &Self::DateInner,
+        _calendar2: &Self,
         _largest_unit: DateDurationUnit,
         _smallest_unit: DateDurationUnit,
     ) -> DateDuration<Self> {
@@ -130,7 +132,7 @@ impl Calendar for Indian {
         }
     }
 
-    fn debug_name() -> &'static str {
+    fn debug_name(&self) -> &'static str {
         "Indian"
     }
 }
@@ -185,7 +187,7 @@ impl DateTime<Indian> {
     ) -> Result<DateTime<Indian>, DateTimeError> {
         Ok(DateTime {
             date: Date::new_indian_date_from_integers(year, month, day)?,
-            time: types::Time::try_new(hour, minute, second)?,
+            time: types::Time::try_new(hour, minute, second, 0)?,
         })
     }
 }
