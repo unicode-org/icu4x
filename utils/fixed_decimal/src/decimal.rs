@@ -972,6 +972,7 @@ impl FixedDecimal {
     ///     -0.0,
     ///      DoublePrecision::Integer
     /// ).expect("Negative zero");
+    /// assert_eq!(negative_zero.write_to_string(), "-0");
     /// ```
     pub fn try_from_f64(float: f64, precision: DoublePrecision) -> Result<Self, Error> {
         let mut decimal = Self::new_from_f64_raw(float)?;
