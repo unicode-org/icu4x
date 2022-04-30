@@ -348,7 +348,6 @@ impl FixedDecimal {
     /// use fixed_decimal::FixedDecimal;
     ///
     /// assert_eq!(FixedDecimal::from(-42), FixedDecimal::from(42).negated());
-    /// assert_ne!(FixedDecimal::from(0), FixedDecimal::from(0).negated());
     /// ```
     pub fn negated(mut self) -> Self {
         self.negate();
