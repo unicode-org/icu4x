@@ -194,6 +194,10 @@ fn main() -> eyre::Result<()> {
                 .long("ignore-missing-data")
                 .help("Skips missing data errors")
         )
+        .arg(Arg::with_name("INSERT_FEATURE_GATES")
+            .long("insert-feature_gates")
+            .help("Module-mode only: Insert per-key feature gates for each key's crate.")
+    )
         .get_matches();
 
     if matches.is_present("VERBOSE") {
@@ -307,6 +311,7 @@ fn main() -> eyre::Result<()> {
                 .map(PathBuf::from)
                 .ok_or_else(|| eyre::eyre!("--out must be specified for --format=mod"))?,
             pretty: matches.is_present("PRETTY"),
+            insert_feature_gates: matches.is_present("INSERT_FEATURE_GATES"),
         },
         _ => unreachable!(),
     };
