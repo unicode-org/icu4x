@@ -121,7 +121,7 @@ pub fn get_smaller_postcard_provider() -> icu_provider_blob::StaticDataProvider 
 }
 
 #[cfg(feature = "baked")]
-pub fn get_baked_provider() -> &'static baked::StaticDataProvider {
+pub fn get_baked_provider() -> &'static baked::BakedDataProvider {
     baked::PROVIDER
 }
 
