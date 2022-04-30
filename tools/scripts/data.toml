@@ -70,6 +70,7 @@ if greater_than ${output_length} 0
     array_push ${msg} ""
     array_push ${msg} "${output.stdout}"
     msg = array_join ${msg} "\n"
+    exec git diff
     trigger_error ${msg}
 end
 '''
