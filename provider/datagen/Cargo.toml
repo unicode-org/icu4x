@@ -69,6 +69,7 @@ toml = "0.5"
 zerovec = { version = "0.6", path = "../../utils/zerovec", features = ["serde_serialize", "yoke"] }
 quote = "1.0.9"
 crabbake = { path = "../../experimental/crabbake"}
+proc-macro2 = "1.0"
 
 # Dependencies for "bin" feature
 clap = { version = "2.33", optional = true }

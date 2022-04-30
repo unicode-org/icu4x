@@ -142,6 +142,9 @@ pub enum Out {
         mod_directory: PathBuf,
         /// Whether to run `rustfmt` on the generated files.
         pretty: bool,
+        /// Whether to gate each key on its crate name. This allows using the module
+        /// even if some keys are not required and their dependencies are not included.
+        insert_feature_gates: bool,
     },
 }
 
@@ -199,6 +202,7 @@ pub fn datagen(
         Out::Module {
             mod_directory,
             pretty,
+            insert_feature_gates,
         } => datagen_internal(
             locales,
             keys,
@@ -207,7 +211,11 @@ pub fn datagen(
                 *sources,
                 [crate::transform::cldr::ListProvider,]
             )),
-            Box::new(crabbake::ConstExporter::new(mod_directory, pretty)),
+            Box::new(crabbake::ConstExporter::new(
+                mod_directory,
+                pretty,
+                insert_feature_gates,
+            )),
         ),
     }
 }

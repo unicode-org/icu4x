@@ -31,10 +31,11 @@ pub(crate) struct ConstExporter {
     dependencies: CrateEnv,
     mod_directory: PathBuf,
     pretty: bool,
+    insert_feature_gates: bool,
 }
 
 impl ConstExporter {
-    pub fn new(mod_directory: PathBuf, pretty: bool) -> Self {
+    pub fn new(mod_directory: PathBuf, pretty: bool, insert_feature_gates: bool) -> Self {
         let _ = std::fs::remove_dir_all(&mod_directory);
         Self {
             data: Mutex::new(LiteMap::new()),
@@ -42,6 +43,7 @@ impl ConstExporter {
             dependencies: Default::default(),
             mod_directory,
             pretty,
+            insert_feature_gates,
         }
     }
 
@@ -95,8 +97,8 @@ impl DataExporter<CrabbakeMarker> for ConstExporter {
             let marker = marker.parse::<TokenStream>().unwrap();
 
             let mut sorted = raw.into_tuple_vec();
-            // Sort by payload bake so we can deduplicate
-            sorted.sort_unstable_by(|(_, a), (_, b)| a.cmp(b));
+            // Sort by payload bake so we can deduplicate.
+            sorted.sort_by(|(_, a), (_, b)| a.cmp(b));
 
             let mut statics = Vec::new();
             let mut all_options = Vec::new();
@@ -106,6 +108,7 @@ impl DataExporter<CrabbakeMarker> for ConstExporter {
                     payload_bake_string.clone()
                 })
             {
+                // These are sorted because we stably sorted earlier.
                 let options = group
                     .map(|(options, _)| options.to_string())
                     .collect::<Vec<_>>();
@@ -135,17 +138,13 @@ impl DataExporter<CrabbakeMarker> for ConstExporter {
                     let ident = ident_string.parse::<TokenStream>().unwrap();
                     let payload_bake = payload_bake_string.parse::<TokenStream>().unwrap();
                     quote! { static #ident: super::DataStruct<#marker> = &#payload_bake; }
-                })
-                .collect::<Vec<_>>();
+                });
 
             all_options.sort_unstable_by(|(a, _), (b, _)| a.cmp(b));
-            let all_options = all_options
-                .into_iter()
-                .map(|(options, ident_string)| {
-                    let ident = ident_string.parse::<TokenStream>().unwrap();
-                    quote! { (#options, #ident) }
-                })
-                .collect::<Vec<_>>();
+            let all_options = all_options.into_iter().map(|(options, ident_string)| {
+                let ident = ident_string.parse::<TokenStream>().unwrap();
+                quote! { (#options, #ident) }
+            });
 
             self.write_to_file(
                 &self.mod_directory.join(&ident).with_extension("rs"),
@@ -172,11 +171,33 @@ impl DataExporter<CrabbakeMarker> for ConstExporter {
         }
 
         let mut fields = self.fields.lock().expect("poison");
+        // Fields is populated concurrently, so this is required for stability.
         fields.sort_unstable();
         let (idents, markers): (Vec<TokenStream>, Vec<TokenStream>) = fields
             .iter()
             .map(|(ident, marker)| (ident.parse().unwrap(), marker.parse().unwrap()))
             .unzip();
+        let feature_gates = if self.insert_feature_gates {
+            markers
+                .iter()
+                .map(|marker| {
+                    // The first identifier in the marker type is the crate
+                    let crate_name = marker
+                        .clone()
+                        .into_iter()
+                        .filter_map(|tt| match tt {
+                            proc_macro2::TokenTree::Ident(ident) => Some(ident),
+                            _ => None,
+                        })
+                        .next()
+                        .unwrap()
+                        .to_string();
+                    quote! { #[cfg(feature = #crate_name)] }
+                })
+                .collect::<Vec<_>>()
+        } else {
+            vec![quote!(); markers.len()]
+        };
 
         self.write_to_file(&self.mod_directory.join("mod.rs"), quote! {
             type DataStruct<M> = &'static <M as ::icu_provider::DataMarker>::Yokeable;
@@ -185,16 +206,19 @@ impl DataExporter<CrabbakeMarker> for ConstExporter {
 
             pub struct BakedDataProvider {
                 #(
+                    #feature_gates
                     #idents: Data<#markers>,
                 )*
             }
 
             #(
+                #feature_gates
                 mod #idents;
             )*
 
             pub static PROVIDER: &BakedDataProvider = &BakedDataProvider {
                 #(
+                    #feature_gates
                     #idents: #idents::VALUES,
                 )*
             };
@@ -224,6 +248,7 @@ impl DataExporter<CrabbakeMarker> for ConstExporter {
             }
 
             #(
+                #feature_gates
                 provider_impl!(#markers, #idents);
             )*
         })?;

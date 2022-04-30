@@ -33,6 +33,7 @@ fn main() {
     let mod_out = icu_datagen::Out::Module {
         mod_directory: paths::data_root().join("baked/src/data"),
         pretty: true,
+        insert_feature_gates: false,
     };
 
     for out in [json_out, blob_out, mod_out] {
