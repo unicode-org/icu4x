@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1651254061252,
+  "lastUpdate": 1651316529221,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -14123,6 +14123,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/e1db7536ae5109f4f6fef8f72f198d37fbc8ffcf"
         },
         "date": 1651254042746,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4507203,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "andrewpkq@gmail.com",
+            "name": "andrewpollack",
+            "username": "andrewpollack"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "1199f96c2f4a00467e2bdb8bfa788c05755b0195",
+          "message": "Add negative 0 examples (#1807)",
+          "timestamp": "2022-04-30T06:00:23-05:00",
+          "tree_id": "940903d2e21960a637941d1d87a61479f757c1ad",
+          "url": "https://github.com/unicode-org/icu4x/commit/1199f96c2f4a00467e2bdb8bfa788c05755b0195"
+        },
+        "date": 1651316510081,
         "tool": "ndjson",
         "benches": [
           {
