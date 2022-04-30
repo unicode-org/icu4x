@@ -325,12 +325,12 @@ impl FixedDecimal {
     ///
     /// dec.negate();
     /// assert_eq!("42", dec.to_string());
-    /// 
+    ///
     /// // Negative zero example
     /// let zero = FixedDecimal::from(0);
     /// let mut negative_zero = FixedDecimal::from(0);
     /// negative_zero.negate();
-    /// 
+    ///
     /// assert_eq!("0", zero.to_string());
     /// assert_eq!("-0", negative_zero.to_string());
     /// assert_ne!(zero, negative_zero);
@@ -966,7 +966,7 @@ impl FixedDecimal {
     /// ```rust
     /// use fixed_decimal::{DoublePrecision, FixedDecimal};
     /// use writeable::Writeable;
-    /// 
+    ///
     /// // IEEE 754 for floating point defines the sign bit separate
     /// // from the mantissa and exponent, allowing for -0.
     /// let negative_zero = FixedDecimal::try_from_f64(
