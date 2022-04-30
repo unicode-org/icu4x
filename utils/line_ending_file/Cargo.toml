@@ -1,0 +1,22 @@
+# This file is part of ICU4X. For terms of use, please see the file
+# called LICENSE at the top level of the ICU4X source tree
+# (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
+
+[package]
+name = "line_ending_file"
+version = "1.0.0"
+authors = ["The ICU4X Project Developers"]
+repository = "https://github.com/unicode-org/icu4x"
+edition = "2021"
+license-file = "LICENSE"
+keywords = ["io"]
+description = "A std::io::Write wrapper that replaces \n with \r\n on Windows."
+documentation = "https://docs.rs/litemap"
+readme = "./README.md"
+# Keep this in sync with other crates unless there are exceptions
+include = [
+    "src/**/*",
+    "Cargo.toml",
+    "LICENSE",
+    "README.md"
+]

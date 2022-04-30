@@ -7,49 +7,6 @@ use super::Error;
 use icu_provider::buf::BufferFormat;
 use std::io::{self, Write};
 
-/// A small helper class to convert LF to CRLF on Windows.
-/// Workaround for https://github.com/serde-rs/json/issues/535
-struct BufWriterWithLineEndingFix<W: io::Write>(io::BufWriter<W>);
-
-impl<W: io::Write> BufWriterWithLineEndingFix<W> {
-    pub fn new(inner: W) -> Self {
-        Self(io::BufWriter::with_capacity(4096, inner))
-    }
-}
-
-impl<W: io::Write> io::Write for BufWriterWithLineEndingFix<W> {
-    #[cfg(windows)]
-    fn write(&mut self, buf: &[u8]) -> io::Result<usize> {
-        if buf.contains(&b'\n') {
-            for b in buf.iter() {
-                if *b == b'\n' {
-                    // Note: Since we need to emit the \r, we are adding extra bytes than were in
-                    // the input buffer. BufWriter helps because short writes (less than 4096 B)
-                    // will always write or fail in their entirety.
-                    self.0.write(b"\r\n")
-                } else {
-                    self.0.write(&[*b])
-                }?;
-            }
-            // The return value is the number of *input* bytes that were written.
-            Ok(buf.len())
-        } else {
-            self.0.write(buf)
-        }
-    }
-
-    #[cfg(not(windows))]
-    #[inline]
-    fn write(&mut self, buf: &[u8]) -> io::Result<usize> {
-        self.0.write(buf)
-    }
-
-    #[inline]
-    fn flush(&mut self) -> io::Result<()> {
-        self.0.flush()
-    }
-}
-
 #[non_exhaustive]
 #[derive(Copy, Clone, Debug, PartialEq)]
 pub enum StyleOption {
@@ -86,7 +43,7 @@ impl AbstractSerializer for Serializer {
         obj: &dyn erased_serde::Serialize,
         sink: &mut dyn io::Write,
     ) -> Result<(), Error> {
-        let mut sink = BufWriterWithLineEndingFix::new(sink);
+        let mut sink = line_ending_file::BufWriterWithLineEndingFix::new(sink);
         match self.style {
             StyleOption::Compact => {
                 obj.erased_serialize(&mut <dyn erased_serde::Serializer>::erase(

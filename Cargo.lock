@@ -1263,6 +1263,7 @@ dependencies = [
  "icu_testdata",
  "icu_uniset",
  "itertools",
+ "line_ending_file",
  "litemap",
  "log",
  "pathdiff",
@@ -1492,6 +1493,7 @@ dependencies = [
  "icu_benchmark_macros",
  "icu_locid",
  "icu_provider",
+ "line_ending_file",
  "log",
  "postcard",
  "serde",
@@ -1684,6 +1686,10 @@ name = "libm"
 version = "0.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c7d73b3f436185384286bd8098d17ec07c9a7d2388a6599f824d8502b529702a"
+
+[[package]]
+name = "line_ending_file"
+version = "1.0.0"
 
 [[package]]
 name = "litemap"

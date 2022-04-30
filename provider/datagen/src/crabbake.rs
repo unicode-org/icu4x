@@ -9,7 +9,6 @@ use icu_provider::prelude::*;
 use litemap::LiteMap;
 use std::fs::File;
 use std::io::Write;
-use std::path::Path;
 use std::path::PathBuf;
 use std::sync::Mutex;
 
@@ -47,26 +46,22 @@ impl ConstExporter {
         }
     }
 
-    fn write_to_file(&self, path: &Path, data: TokenStream) -> Result<(), DataError> {
+    fn write_to_file(&self, path: &str, data: TokenStream) -> Result<(), DataError> {
+        let path = self.mod_directory.join(path).with_extension("rs");
         std::fs::create_dir_all(&path.parent().unwrap())?;
-        let mut file = File::create(path)?;
 
-        file.write_all(b"// GENERATED MODULE. DO NOT EDIT\n")?;
+        {
+            let mut file = line_ending_file::BufWriterWithLineEndingFix::new(File::create(&path)?);
+            writeln!(file, "// GENERATED MODULE. DO NOT EDIT")?;
+            writeln!(file, "{}", data)?;
+        }
 
         if self.pretty {
-            let mut child = std::process::Command::new("rustfmt")
-                .stdin(std::process::Stdio::piped())
-                .stdout(std::process::Stdio::from(file))
+            std::process::Command::new("rustfmt")
+                .arg(path)
                 .spawn()
-                .unwrap();
-            child
-                .stdin
-                .take()
                 .unwrap()
-                .write_all(data.to_string().as_bytes())?;
-            child.wait()?;
-        } else {
-            file.write_all(data.to_string().as_bytes())?;
+                .wait()?;
         }
         Ok(())
     }
@@ -147,7 +142,7 @@ impl DataExporter<CrabbakeMarker> for ConstExporter {
             });
 
             self.write_to_file(
-                &self.mod_directory.join(&ident).with_extension("rs"),
+                &ident,
                 quote! {
                     pub static VALUES: super::Data<#marker> = &[#(#all_options),*];
                     #(#statics)*
@@ -199,7 +194,7 @@ impl DataExporter<CrabbakeMarker> for ConstExporter {
             vec![quote!(); markers.len()]
         };
 
-        self.write_to_file(&self.mod_directory.join("mod.rs"), quote! {
+        self.write_to_file("mod", quote! {
             type DataStruct<M> = &'static <M as ::icu_provider::DataMarker>::Yokeable;
             type Options = &'static str;
             type Data<M> = &'static [(Options, DataStruct<M>)];

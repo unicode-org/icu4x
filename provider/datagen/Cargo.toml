@@ -70,6 +70,7 @@ zerovec = { version = "0.6", path = "../../utils/zerovec", features = ["serde_se
 quote = "1.0.9"
 crabbake = { path = "../../experimental/crabbake"}
 proc-macro2 = "1.0"
+line_ending_file = { version = "1", path = "../../utils/line_ending_file"}
 
 # Dependencies for "bin" feature
 clap = { version = "2.33", optional = true }
