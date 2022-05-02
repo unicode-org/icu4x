@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1651317214556,
+  "lastUpdate": 1651487090543,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -29063,6 +29063,102 @@ window.BENCHMARK_DATA = {
             "name": "pattern/parse",
             "value": 4984,
             "range": "± 10",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "andrewpkq@gmail.com",
+            "name": "andrewpollack",
+            "username": "andrewpollack"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "41da5c411fbad1afc91e5f8236a98c5611552a5a",
+          "message": "Adding vscode git ignore (#1832)\n\n* Adding vscode git ignore\r\n\r\n* PR followups\r\n\r\n* PR followups\r\n\r\n* Restoring blank space",
+          "timestamp": "2022-05-02T10:14:21Z",
+          "tree_id": "10f424f07375cb8281b5c64d0e9feb04974c3062",
+          "url": "https://github.com/unicode-org/icu4x/commit/41da5c411fbad1afc91e5f8236a98c5611552a5a"
+        },
+        "date": 1651487073647,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 73511,
+            "range": "± 355",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 790292,
+            "range": "± 1037",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 165986,
+            "range": "± 1649",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/DateTimeFormat/format_to_write",
+            "value": 69904,
+            "range": "± 144",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/DateTimeFormat/format_to_string",
+            "value": 68888,
+            "range": "± 148",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/format",
+            "value": 66011,
+            "range": "± 158",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/to_string",
+            "value": 71782,
+            "range": "± 484",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/ZonedDateTimeFormat/format_to_write",
+            "value": 141881,
+            "range": "± 783",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/ZonedDateTimeFormat/format_to_string",
+            "value": 153069,
+            "range": "± 687",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/format",
+            "value": 145653,
+            "range": "± 585",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/to_string",
+            "value": 154204,
+            "range": "± 514",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "pattern/parse",
+            "value": 4415,
+            "range": "± 15",
             "unit": "ns/iter"
           }
         ]
