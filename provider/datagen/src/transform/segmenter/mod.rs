@@ -34,7 +34,7 @@ use icu_segmenter::symbols::*;
 use icu_segmenter::*;
 use std::fmt::Debug;
 use std::fs::File;
-use std::io::{Read, Write, BufWriter};
+use std::io::{BufWriter, Read, Write};
 use std::path::PathBuf;
 use zerovec::ZeroVec;
 
