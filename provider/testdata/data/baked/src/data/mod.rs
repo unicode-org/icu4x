@@ -9,9 +9,9 @@ pub struct BakedDataProvider {
 }
 mod list;
 pub static PROVIDER: &BakedDataProvider = &BakedDataProvider {
-    list_and_1: list::and_1::VALUES,
-    list_or_1: list::or_1::VALUES,
-    list_unit_1: list::unit_1::VALUES,
+    list_and_1: list::and_v1::VALUES,
+    list_or_1: list::or_v1::VALUES,
+    list_unit_1: list::unit_v1::VALUES,
 };
 use icu_provider::prelude::*;
 macro_rules! provider_impl {
