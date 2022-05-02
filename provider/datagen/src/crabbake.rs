@@ -183,7 +183,7 @@ impl DataExporter<CrabbakeMarker> for ConstExporter {
             }
 
             path = path
-                .join(module_path.segments[depth-1].ident.to_string())
+                .join(module_path.segments[depth - 1].ident.to_string())
                 .with_extension("rs");
 
             let depth = vec![TokenStream::new(); depth];
