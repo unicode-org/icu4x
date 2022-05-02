@@ -24,10 +24,10 @@ mod bin_uniset;
 mod casemapping;
 mod enum_codepointtrie;
 mod enum_uniset;
-mod reader;
+pub(crate) mod reader;
 mod script;
 mod uprops_helpers;
-mod uprops_serde;
+pub(crate) mod uprops_serde;
 
 pub use bin_uniset::BinaryPropertyUnicodeSetDataProvider;
 #[cfg(feature = "experimental")]

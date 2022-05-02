@@ -17,6 +17,8 @@
 //! [UAX14]: https://www.unicode.org/reports/tr14/
 //! [UAX29]: https://www.unicode.org/reports/tr29/
 
+use crate::transform::uprops::reader::read_path_to_string;
+use crate::transform::uprops::uprops_serde::SerializedCodePointTrie;
 use crate::transform::uprops::{
     BinaryPropertyUnicodeSetDataProvider, EnumeratedPropertyCodePointTrieProvider,
 };
@@ -257,6 +259,18 @@ impl SegmenterRuleProvider {
             .split(&['/', '@'])
             .nth(1)
             .expect("ResourceKey format should be valid!");
+        let mut data_path = self.source.get_segmenter_data_root()?.join(file_name);
+        data_path.set_extension("toml");
+        Ok(data_path)
+    }
+
+    fn toml_data_path(&self, key: ResourceKey) -> Result<PathBuf, DataError> {
+        let break_type = key
+            .get_path()
+            .split(&['/', '@'])
+            .nth(1)
+            .expect("ResourceKey format should be valid!");
+        let file_name = format!("{}_cptrie", break_type);
         let mut data_path = self.source.get_segmenter_data_root()?.join(file_name);
         data_path.set_extension("toml");
         Ok(data_path)
@@ -631,8 +645,31 @@ impl SegmenterRuleProvider {
         // Return 127 if the complex language isn't handled.
         let complex_property = get_index_from_name(&properties_names, "SA").unwrap_or(127);
 
+        // Load the CodePointTrie and ensure it is consistent with the generated data
+        // TODO(#1837): Build the CodePointTrie on the fly
+        let property_trie_toml_path = self.toml_data_path(key).map_err(|e| {
+            DataError::custom("could not get toml data path").with_error_context(&e)
+        })?;
+        let property_trie_toml_str = read_path_to_string(&property_trie_toml_path)?;
+        let property_trie_toml: SerializedCodePointTrie = toml::from_str(&property_trie_toml_str)
+            .map_err(|e| {
+            DataError::custom("could not deserialize code point trie")
+                .with_path(&property_trie_toml_path)
+                .with_error_context(&e)
+        })?;
+        let property_trie = CodePointTrie::<u8>::try_from(&property_trie_toml)?;
+        for (cp, actual_value) in properties_map.iter().enumerate() {
+            let expected_value = property_trie.get(cp.try_into().unwrap());
+            if expected_value != *actual_value {
+                return Err(
+                    DataError::custom("Segmenter CodePointTrie out of sync with data")
+                        .with_display_context(&cp),
+                );
+            }
+        }
+
         Ok(RuleBreakDataV1 {
-            property_table: RuleBreakPropertyTable(ZeroVec::Owned(properties_map)),
+            property_table: RuleBreakPropertyTable(property_trie),
             break_state_table: RuleBreakStateTable(ZeroVec::Owned(break_state_table)),
             property_count: property_length as u8,
             last_codepoint_property: (simple_properties_count - 1) as i8,

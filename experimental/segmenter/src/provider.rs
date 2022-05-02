@@ -6,6 +6,7 @@
 //!
 //! Read more about data providers: [`icu_provider`]
 
+use icu_codepointtrie::CodePointTrie;
 use icu_provider::prelude::*;
 use zerovec::{ZeroSlice, ZeroVec};
 
@@ -42,7 +43,7 @@ pub struct RuleBreakDataV1<'data> {
 #[cfg_attr(feature = "datagen", derive(serde::Serialize))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct RuleBreakPropertyTable<'data>(
-    #[cfg_attr(feature = "serde", serde(borrow))] pub ZeroVec<'data, u8>,
+    #[cfg_attr(feature = "serde", serde(borrow))] pub CodePointTrie<'data, u8>,
 );
 
 /// Break state table for rule-based breaking.
