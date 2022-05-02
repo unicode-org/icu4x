@@ -3,15 +3,15 @@ type DataStruct<M> = &'static <M as ::icu_provider::DataMarker>::Yokeable;
 type Options = &'static str;
 type Data<M> = &'static [(Options, DataStruct<M>)];
 pub struct BakedDataProvider {
-    list_and_1: Data<::icu_list::provider::AndListV1Marker>,
-    list_or_1: Data<::icu_list::provider::OrListV1Marker>,
-    list_unit_1: Data<::icu_list::provider::UnitListV1Marker>,
+    list_and_v1: Data<::icu_list::provider::AndListV1Marker>,
+    list_or_v1: Data<::icu_list::provider::OrListV1Marker>,
+    list_unit_v1: Data<::icu_list::provider::UnitListV1Marker>,
 }
 mod list;
 pub static PROVIDER: &BakedDataProvider = &BakedDataProvider {
-    list_and_1: list::and_v1::VALUES,
-    list_or_1: list::or_v1::VALUES,
-    list_unit_1: list::unit_v1::VALUES,
+    list_and_v1: list::and_v1::VALUES,
+    list_or_v1: list::or_v1::VALUES,
+    list_unit_v1: list::unit_v1::VALUES,
 };
 use icu_provider::prelude::*;
 macro_rules! provider_impl {
@@ -35,6 +35,6 @@ macro_rules! provider_impl {
         }
     };
 }
-provider_impl!(::icu_list::provider::AndListV1Marker, list_and_1);
-provider_impl!(::icu_list::provider::OrListV1Marker, list_or_1);
-provider_impl!(::icu_list::provider::UnitListV1Marker, list_unit_1);
+provider_impl!(::icu_list::provider::AndListV1Marker, list_and_v1);
+provider_impl!(::icu_list::provider::OrListV1Marker, list_or_v1);
+provider_impl!(::icu_list::provider::UnitListV1Marker, list_unit_v1);
