@@ -75,6 +75,7 @@ impl DataPayload<SerializeMarker> {
 }
 
 /// Marker type for [`SerializeBox`].
+#[allow(clippy::exhaustive_structs)] // marker type
 pub struct SerializeMarker {}
 
 impl DataMarker for SerializeMarker {

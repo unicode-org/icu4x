@@ -42,6 +42,7 @@ pub struct AnyPayload {
 }
 
 /// The [`DataMarker`] marker type for [`AnyPayload`].
+#[allow(clippy::exhaustive_structs)] // marker type
 pub struct AnyMarker;
 
 impl DataMarker for AnyMarker {
@@ -203,6 +204,7 @@ impl DataPayload<AnyMarker> {
 /// A [`DataResponse`] for type-erased values.
 ///
 /// Convertible to and from `DataResponse<AnyMarker>`.
+#[allow(clippy::exhaustive_structs)] // this type is stable (the metadata is allowed to grow)
 pub struct AnyResponse {
     /// Metadata about the returned object.
     pub metadata: DataResponseMetadata,
@@ -289,6 +291,7 @@ pub trait AnyProvider {
 }
 
 /// A wrapper over `DynProvider<AnyMarker>` that implements `AnyProvider`
+#[allow(clippy::exhaustive_structs)] // newtype
 pub struct DynProviderAnyMarkerWrap<'a, P: ?Sized>(pub &'a P);
 
 pub trait AsDynProviderAnyMarkerWrap {
@@ -317,6 +320,7 @@ where
 }
 
 /// A wrapper over `AnyProvider` that implements `DynProvider<M>` via downcasting
+#[allow(clippy::exhaustive_structs)] // newtype
 pub struct DowncastingAnyProvider<'a, P: ?Sized>(pub &'a P);
 
 pub trait AsDowncastingAnyProvider {

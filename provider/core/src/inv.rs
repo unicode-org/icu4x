@@ -33,6 +33,7 @@ use alloc::boxed::Box;
 ///
 /// assert_eq!("(und) Hello World", result.get().message);
 /// ```
+#[allow(clippy::exhaustive_structs)] // stable type
 pub struct InvariantDataProvider;
 
 impl<M> ResourceProvider<M> for InvariantDataProvider
