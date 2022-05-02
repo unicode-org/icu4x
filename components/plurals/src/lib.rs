@@ -97,7 +97,7 @@ use rules::runtime::test_rule;
 /// A type of a plural rule which can be associated with the [`PluralRules`] struct.
 ///
 #[derive(Debug, PartialEq, Eq, Clone, Copy, Hash)]
-#[allow(clippy::exhaustive_enums)] // this type is stable
+#[non_exhaustive]
 pub enum PluralRuleType {
     /// Cardinal plural forms express quantities of units such as time, currency or distance,
     /// used in conjunction with a number expressed in decimal digits (i.e. "2", not "two").
@@ -150,7 +150,8 @@ pub enum PluralRuleType {
 #[derive(Debug, PartialEq, Eq, Clone, Copy, Hash, Ord, PartialOrd)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-#[allow(clippy::exhaustive_enums)] // this type is stable
+#[allow(clippy::exhaustive_enums)] // this type is mostly stable. new categories may potentially be added in the future,
+                                   // but at a cadence slower than the ICU4X release cycle
 pub enum PluralCategory {
     /// CLDR "zero" plural category. Used in Arabic and Latvian, among others.
     ///
