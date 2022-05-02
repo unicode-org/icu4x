@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1651316529221,
+  "lastUpdate": 1651486583118,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -14153,6 +14153,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/1199f96c2f4a00467e2bdb8bfa788c05755b0195"
         },
         "date": 1651316510081,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4507203,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "andrewpkq@gmail.com",
+            "name": "andrewpollack",
+            "username": "andrewpollack"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "41da5c411fbad1afc91e5f8236a98c5611552a5a",
+          "message": "Adding vscode git ignore (#1832)\n\n* Adding vscode git ignore\r\n\r\n* PR followups\r\n\r\n* PR followups\r\n\r\n* Restoring blank space",
+          "timestamp": "2022-05-02T10:14:21Z",
+          "tree_id": "10f424f07375cb8281b5c64d0e9feb04974c3062",
+          "url": "https://github.com/unicode-org/icu4x/commit/41da5c411fbad1afc91e5f8236a98c5611552a5a"
+        },
+        "date": 1651486561983,
         "tool": "ndjson",
         "benches": [
           {
