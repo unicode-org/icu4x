@@ -183,7 +183,7 @@ impl DataExporter<CrabbakeMarker> for ConstExporter {
                 .with_extension("rs");
 
             let supers = std::iter::repeat("super::")
-                .take(depth)
+                .take(depth + 1)
                 .collect::<String>()
                 .parse::<TokenStream>()
                 .unwrap();
@@ -229,7 +229,7 @@ impl DataExporter<CrabbakeMarker> for ConstExporter {
                 &path,
                 quote! {
                     #(
-                        mod #mods;
+                        pub mod #mods;
                     )*
                 },
             )?;
