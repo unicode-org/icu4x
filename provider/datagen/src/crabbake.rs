@@ -162,7 +162,10 @@ impl DataExporter<CrabbakeMarker> for ConstExporter {
             // Replace non-ident-allowed tokens. This can still fail if a segment starts with
             // a token that is not allowed in an initial position.
             let module_path = syn::parse_str::<syn::Path>(
-                &key.get_path().replace('=', "_").replace('@', "_v").replace('/', "::"),
+                &key.get_path()
+                    .replace('=', "_")
+                    .replace('@', "_v")
+                    .replace('/', "::"),
             )
             .map_err(|_| {
                 DataError::custom("Key component is not a valid Rust identifier").with_key(key)
