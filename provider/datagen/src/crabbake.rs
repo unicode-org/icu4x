@@ -77,7 +77,7 @@ impl ConstExporter {
                 .arg(path)
                 // The default, "auto", is meant to detect the existing line endings and preserve them.
                 // However, this seems to be broken and generates Unix line endings on Windows, which
-                // introduces Git diffs diffs when regenerating on Windows.
+                // introduces Git diffs when regenerating.
                 .args(&["--config", "newline_style=native"])
                 .spawn()
                 .unwrap()
