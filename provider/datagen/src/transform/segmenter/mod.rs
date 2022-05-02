@@ -32,8 +32,9 @@ use icu_provider::datagen::IterableResourceProvider;
 use icu_provider::prelude::*;
 use icu_segmenter::symbols::*;
 use icu_segmenter::*;
+use std::fmt::Debug;
 use std::fs::File;
-use std::io::Read;
+use std::io::{Read, Write, BufWriter};
 use std::path::PathBuf;
 use zerovec::ZeroVec;
 
@@ -661,9 +662,18 @@ impl SegmenterRuleProvider {
         for (cp, actual_value) in properties_map.iter().enumerate() {
             let expected_value = property_trie.get(cp.try_into().unwrap());
             if expected_value != *actual_value {
+                let mut prop_int_path = property_trie_toml_path.clone();
+                prop_int_path.set_extension("txt");
+                let f = File::create(&prop_int_path).expect("Unable to create file");
+                let mut f = BufWriter::new(f);
+                for value in properties_map.iter() {
+                    writeln!(&mut f, "{}", value).expect("Unable to write data");
+                }
                 return Err(
-                    DataError::custom("Segmenter CodePointTrie out of sync with data")
-                        .with_display_context(&cp),
+                    DataError::custom("Segmenter CodePointTrie out of sync with data! Re-run list_to_ucptrie using data printed to .txt file")
+                        .with_display_context(&cp)
+                        .with_path(&prop_int_path)
+                        .with_key(key),
                 );
             }
         }
