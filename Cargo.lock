@@ -1275,6 +1275,7 @@ dependencies = [
  "serde_json",
  "sha2",
  "simple_logger",
+ "syn",
  "tinystr 0.5.0",
  "toml",
  "walkdir",

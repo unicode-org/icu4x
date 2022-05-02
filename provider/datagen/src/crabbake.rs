@@ -6,7 +6,9 @@ use crabbake::{quote, CrateEnv, TokenStream};
 use icu_provider::datagen::CrabbakeMarker;
 use icu_provider::export::DataExporter;
 use icu_provider::prelude::*;
+use itertools::Itertools;
 use litemap::LiteMap;
+use std::collections::HashMap;
 use std::fs::File;
 use std::io::Write;
 use std::path::PathBuf;
@@ -22,31 +24,45 @@ macro_rules! move_out {
 
 // TokenStream isn't Send/Sync
 type SyncTokenStream = String;
+// syn::Path also isn't Send/Sync
+type Path = Vec<String>;
 
 #[allow(clippy::type_complexity)]
 pub(crate) struct ConstExporter {
-    data: Mutex<LiteMap<ResourceKey, (SyncTokenStream, LiteMap<ResourceOptions, SyncTokenStream>)>>,
-    fields: Mutex<Vec<(String, SyncTokenStream)>>,
-    dependencies: CrateEnv,
+    // Input arguments
     mod_directory: PathBuf,
     pretty: bool,
     insert_feature_gates: bool,
+    // Temporary storage for put_payload: key -> (marker path, options -> bake)
+    data: Mutex<LiteMap<ResourceKey, (SyncTokenStream, LiteMap<ResourceOptions, SyncTokenStream>)>>,
+    // (field, module path, marker path) after flushing each key
+    per_key_data: Mutex<Vec<(String, Path, Path)>>,
+    // All mod.rs files in the module tree. Because generation is parallel,
+    // this will be non-deterministic and have to be sorted later.
+    mod_files: Mutex<HashMap<PathBuf, Vec<String>>>,
+    // List of dependencies used by baking.
+    dependencies: CrateEnv,
 }
 
 impl ConstExporter {
     pub fn new(mod_directory: PathBuf, pretty: bool, insert_feature_gates: bool) -> Self {
         let _ = std::fs::remove_dir_all(&mod_directory);
         Self {
-            data: Mutex::new(LiteMap::new()),
-            fields: Mutex::new(Vec::new()),
-            dependencies: Default::default(),
             mod_directory,
             pretty,
             insert_feature_gates,
+            data: Default::default(),
+            per_key_data: Default::default(),
+            mod_files: Default::default(),
+            dependencies: Default::default(),
         }
     }
 
-    fn write_to_file(&self, path: &str, data: TokenStream) -> Result<(), DataError> {
+    fn write_to_file<P: AsRef<std::path::Path>>(
+        &self,
+        path: P,
+        data: TokenStream,
+    ) -> Result<(), DataError> {
         let path = self.mod_directory.join(path).with_extension("rs");
         std::fs::create_dir_all(&path.parent().unwrap())?;
 
@@ -88,8 +104,7 @@ impl DataExporter<CrabbakeMarker> for ConstExporter {
 
     fn flush(&self, key: ResourceKey) -> Result<(), DataError> {
         if let Some((marker, raw)) = self.data.lock().expect("poison").remove(&key) {
-            let ident = key.get_path().to_string().replace(&['/', '@', '='], "_");
-            let marker = marker.parse::<TokenStream>().unwrap();
+            let marker = syn::parse_str::<syn::Path>(&marker).unwrap();
 
             let mut sorted = raw.into_tuple_vec();
             // Sort by payload bake so we can deduplicate.
@@ -98,10 +113,9 @@ impl DataExporter<CrabbakeMarker> for ConstExporter {
             let mut statics = Vec::new();
             let mut all_options = Vec::new();
 
-            for (payload_bake_string, group) in
-                &itertools::Itertools::group_by(sorted.into_iter(), |(_, payload_bake_string)| {
-                    payload_bake_string.clone()
-                })
+            for (payload_bake_string, group) in &sorted
+                .into_iter()
+                .group_by(|(_, payload_bake_string)| payload_bake_string.clone())
             {
                 // These are sorted because we stably sorted earlier.
                 let options = group
@@ -132,7 +146,7 @@ impl DataExporter<CrabbakeMarker> for ConstExporter {
                 .map(|(ident_string, payload_bake_string)| {
                     let ident = ident_string.parse::<TokenStream>().unwrap();
                     let payload_bake = payload_bake_string.parse::<TokenStream>().unwrap();
-                    quote! { static #ident: super::DataStruct<#marker> = &#payload_bake; }
+                    quote! { static #ident: DataStruct<#marker> = &#payload_bake; }
                 });
 
             all_options.sort_unstable_by(|(a, _), (b, _)| a.cmp(b));
@@ -141,17 +155,61 @@ impl DataExporter<CrabbakeMarker> for ConstExporter {
                 quote! { (#options, #ident) }
             });
 
+            let module_path = syn::parse_str::<syn::Path>(
+                &key.get_path().replace(&['=', '@'], "_").replace('/', "::"),
+            )
+            .map_err(|_| {
+                DataError::custom("Key component is not a valid Rust identifier").with_key(key)
+            })?;
+
+            // Intialise intermediate "mod.rs"s.
+            let mut path = PathBuf::new();
+            let depth = module_path.segments.len() - 1;
+            for i in 1..=depth {
+                path = path.join(module_path.segments[i - 1].ident.to_string());
+
+                let mod_path = path.join("mod.rs");
+                let mut map = self.mod_files.lock().expect("poison");
+                if !map.contains_key(&mod_path) {
+                    map.insert(mod_path.clone(), Vec::new());
+                }
+                map.get_mut(&mod_path)
+                    .unwrap()
+                    .push(module_path.segments[i].ident.to_string());
+            }
+
+            path = path
+                .join(module_path.segments[depth].ident.to_string())
+                .with_extension("rs");
+
+            let supers = std::iter::repeat("super::")
+                .take(depth)
+                .collect::<String>()
+                .parse::<TokenStream>()
+                .unwrap();
+
             self.write_to_file(
-                &ident,
+                &path,
                 quote! {
-                    pub static VALUES: super::Data<#marker> = &[#(#all_options),*];
+                    use #supers Data;
+                    use #supers DataStruct;
+                    pub static VALUES: Data<#marker> = &[#(#all_options),*];
                     #(#statics)*
                 },
             )?;
-            self.fields
-                .lock()
-                .expect("poison")
-                .push((ident, marker.to_string()));
+            self.per_key_data.lock().expect("poison").push((
+                key.get_path().replace(&['=', '@', '/'], "_"),
+                module_path
+                    .segments
+                    .into_iter()
+                    .map(|i| i.ident.to_string())
+                    .collect(),
+                marker
+                    .segments
+                    .into_iter()
+                    .map(|i| i.ident.to_string())
+                    .collect(),
+            ));
         }
         Ok(())
     }
@@ -165,34 +223,59 @@ impl DataExporter<CrabbakeMarker> for ConstExporter {
             log::info!("{}", crate_name);
         }
 
-        let mut fields = self.fields.lock().expect("poison");
-        // Fields is populated concurrently, so this is required for stability.
-        fields.sort_unstable();
-        let (idents, markers): (Vec<TokenStream>, Vec<TokenStream>) = fields
-            .iter()
-            .map(|(ident, marker)| (ident.parse().unwrap(), marker.parse().unwrap()))
-            .unzip();
-        let feature_gates = if self.insert_feature_gates {
-            markers
-                .iter()
-                .map(|marker| {
-                    // The first identifier in the marker type is the crate
-                    let crate_name = marker
-                        .clone()
-                        .into_iter()
-                        .filter_map(|tt| match tt {
-                            proc_macro2::TokenTree::Ident(ident) => Some(ident),
-                            _ => None,
-                        })
-                        .next()
-                        .unwrap()
-                        .to_string();
-                    quote! { #[cfg(feature = #crate_name)] }
-                })
-                .collect::<Vec<_>>()
-        } else {
-            vec![quote!(); markers.len()]
-        };
+        for (path, mods) in self.mod_files.lock().expect("poison").drain() {
+            let mods = mods.into_iter().map(|p| p.parse::<TokenStream>().unwrap());
+            self.write_to_file(
+                &path,
+                quote! {
+                    #(
+                        mod #mods;
+                    )*
+                },
+            )?;
+        }
+
+        let mut data = self.per_key_data.lock().expect("poison");
+        // data is populated concurrently, so this is required for stability.
+        data.sort_unstable();
+
+        // One per key
+        let mut module_paths = Vec::new();
+        let mut fields = Vec::new();
+        let mut markers = Vec::new();
+        let mut feature_gates = Vec::new();
+
+        // One per submodule
+        let mut mods = Vec::new();
+
+        for (field, module_path, marker) in data.iter() {
+            let module_path = module_path
+                .into_iter()
+                .map(|p| syn::parse_str::<syn::Ident>(p).unwrap())
+                .collect::<Vec<_>>();
+            let marker = marker
+                .into_iter()
+                .map(|m| syn::parse_str::<syn::Ident>(m).unwrap())
+                .collect::<Vec<_>>();
+            module_paths.push(quote! {#(#module_path)::*});
+            fields.push(syn::parse_str::<syn::Ident>(field).unwrap());
+            markers.push(quote! {#(::#marker)*});
+            feature_gates.push(if self.insert_feature_gates {
+                let feature = marker[0].to_string();
+                quote! { #[cfg(feature = #feature)] }
+            } else {
+                quote!()
+            });
+            mods.push(module_path.into_iter().next().unwrap());
+        }
+
+        let mods = mods
+            .into_iter()
+            .zip(feature_gates.iter())
+            .unique_by(|(modd, _)| modd.to_string())
+            .map(|(modd, feature)| {
+                quote! { #feature mod #modd; }
+            });
 
         self.write_to_file("mod", quote! {
             type DataStruct<M> = &'static <M as ::icu_provider::DataMarker>::Yokeable;
@@ -202,19 +285,16 @@ impl DataExporter<CrabbakeMarker> for ConstExporter {
             pub struct BakedDataProvider {
                 #(
                     #feature_gates
-                    #idents: Data<#markers>,
+                    #fields: Data<#markers>,
                 )*
             }
 
-            #(
-                #feature_gates
-                mod #idents;
-            )*
+            #(#mods)*
 
             pub static PROVIDER: &BakedDataProvider = &BakedDataProvider {
                 #(
                     #feature_gates
-                    #idents: #idents::VALUES,
+                    #fields: #module_paths::VALUES,
                 )*
             };
 
@@ -244,7 +324,7 @@ impl DataExporter<CrabbakeMarker> for ConstExporter {
 
             #(
                 #feature_gates
-                provider_impl!(#markers, #idents);
+                provider_impl!(#markers, #fields);
             )*
         })?;
 

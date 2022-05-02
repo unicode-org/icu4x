@@ -71,6 +71,7 @@ quote = "1.0.9"
 crabbake = { path = "../../experimental/crabbake"}
 proc-macro2 = "1.0"
 line_ending_file = { version = "1", path = "../../utils/line_ending_file"}
+syn = {version = "1.0", features = ["parsing"] }
 
 # Dependencies for "bin" feature
 clap = { version = "2.33", optional = true }

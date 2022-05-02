@@ -7,13 +7,11 @@ pub struct BakedDataProvider {
     list_or_1: Data<::icu_list::provider::OrListV1Marker>,
     list_unit_1: Data<::icu_list::provider::UnitListV1Marker>,
 }
-mod list_and_1;
-mod list_or_1;
-mod list_unit_1;
+mod list;
 pub static PROVIDER: &BakedDataProvider = &BakedDataProvider {
-    list_and_1: list_and_1::VALUES,
-    list_or_1: list_or_1::VALUES,
-    list_unit_1: list_unit_1::VALUES,
+    list_and_1: list::and_1::VALUES,
+    list_or_1: list::or_1::VALUES,
+    list_unit_1: list::unit_1::VALUES,
 };
 use icu_provider::prelude::*;
 macro_rules! provider_impl {

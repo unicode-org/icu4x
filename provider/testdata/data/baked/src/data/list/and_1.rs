@@ -1,5 +1,7 @@
 // GENERATED MODULE. DO NOT EDIT
-pub static VALUES: super::Data<::icu_list::provider::AndListV1Marker> = &[
+use super::Data;
+use super::DataStruct;
+pub static VALUES: Data<::icu_list::provider::AndListV1Marker> = &[
     ("ar", AR_AR_EG),
     ("ar-EG", AR_AR_EG),
     ("bn", BN),
@@ -20,7 +22,7 @@ pub static VALUES: super::Data<::icu_list::provider::AndListV1Marker> = &[
     ("tr", TR),
     ("und", UND),
 ];
-static AR_AR_EG: super::DataStruct<::icu_list::provider::AndListV1Marker> =
+static AR_AR_EG: DataStruct<::icu_list::provider::AndListV1Marker> =
     &::icu_list::provider::ListFormatterPatternsV1([
         ::icu_list::provider::ConditionalListJoinerPattern {
             default: ::icu_list::provider::ListJoinerPattern {
@@ -119,7 +121,7 @@ static AR_AR_EG: super::DataStruct<::icu_list::provider::AndListV1Marker> =
             special_case: None,
         },
     ]);
-static BN: super::DataStruct<::icu_list::provider::AndListV1Marker> =
+static BN: DataStruct<::icu_list::provider::AndListV1Marker> =
     &::icu_list::provider::ListFormatterPatternsV1([
         ::icu_list::provider::ConditionalListJoinerPattern {
             default: ::icu_list::provider::ListJoinerPattern {
@@ -218,7 +220,7 @@ static BN: super::DataStruct<::icu_list::provider::AndListV1Marker> =
             special_case: None,
         },
     ]);
-static CCP: super::DataStruct<::icu_list::provider::AndListV1Marker> =
+static CCP: DataStruct<::icu_list::provider::AndListV1Marker> =
     &::icu_list::provider::ListFormatterPatternsV1([
         ::icu_list::provider::ConditionalListJoinerPattern {
             default: ::icu_list::provider::ListJoinerPattern {
@@ -317,7 +319,7 @@ static CCP: super::DataStruct<::icu_list::provider::AndListV1Marker> =
             special_case: None,
         },
     ]);
-static EN: super::DataStruct<::icu_list::provider::AndListV1Marker> =
+static EN: DataStruct<::icu_list::provider::AndListV1Marker> =
     &::icu_list::provider::ListFormatterPatternsV1([
         ::icu_list::provider::ConditionalListJoinerPattern {
             default: ::icu_list::provider::ListJoinerPattern {
@@ -416,7 +418,7 @@ static EN: super::DataStruct<::icu_list::provider::AndListV1Marker> =
             special_case: None,
         },
     ]);
-static EN_001_EN_ZA: super::DataStruct<::icu_list::provider::AndListV1Marker> =
+static EN_001_EN_ZA: DataStruct<::icu_list::provider::AndListV1Marker> =
     &::icu_list::provider::ListFormatterPatternsV1([
         ::icu_list::provider::ConditionalListJoinerPattern {
             default: ::icu_list::provider::ListJoinerPattern {
@@ -515,7 +517,7 @@ static EN_001_EN_ZA: super::DataStruct<::icu_list::provider::AndListV1Marker> =
             special_case: None,
         },
     ]);
-static ES_ES_AR: super::DataStruct<::icu_list::provider::AndListV1Marker> =
+static ES_ES_AR: DataStruct<::icu_list::provider::AndListV1Marker> =
     &::icu_list::provider::ListFormatterPatternsV1([
         ::icu_list::provider::ConditionalListJoinerPattern {
             default: ::icu_list::provider::ListJoinerPattern {
@@ -974,7 +976,7 @@ static ES_ES_AR: super::DataStruct<::icu_list::provider::AndListV1Marker> =
             }),
         },
     ]);
-static FIL: super::DataStruct<::icu_list::provider::AndListV1Marker> =
+static FIL: DataStruct<::icu_list::provider::AndListV1Marker> =
     &::icu_list::provider::ListFormatterPatternsV1([
         ::icu_list::provider::ConditionalListJoinerPattern {
             default: ::icu_list::provider::ListJoinerPattern {
@@ -1073,7 +1075,7 @@ static FIL: super::DataStruct<::icu_list::provider::AndListV1Marker> =
             special_case: None,
         },
     ]);
-static FR: super::DataStruct<::icu_list::provider::AndListV1Marker> =
+static FR: DataStruct<::icu_list::provider::AndListV1Marker> =
     &::icu_list::provider::ListFormatterPatternsV1([
         ::icu_list::provider::ConditionalListJoinerPattern {
             default: ::icu_list::provider::ListJoinerPattern {
@@ -1172,7 +1174,7 @@ static FR: super::DataStruct<::icu_list::provider::AndListV1Marker> =
             special_case: None,
         },
     ]);
-static JA: super::DataStruct<::icu_list::provider::AndListV1Marker> =
+static JA: DataStruct<::icu_list::provider::AndListV1Marker> =
     &::icu_list::provider::ListFormatterPatternsV1([
         ::icu_list::provider::ConditionalListJoinerPattern {
             default: ::icu_list::provider::ListJoinerPattern {
@@ -1271,7 +1273,7 @@ static JA: super::DataStruct<::icu_list::provider::AndListV1Marker> =
             special_case: None,
         },
     ]);
-static RU: super::DataStruct<::icu_list::provider::AndListV1Marker> =
+static RU: DataStruct<::icu_list::provider::AndListV1Marker> =
     &::icu_list::provider::ListFormatterPatternsV1([
         ::icu_list::provider::ConditionalListJoinerPattern {
             default: ::icu_list::provider::ListJoinerPattern {
@@ -1370,7 +1372,7 @@ static RU: super::DataStruct<::icu_list::provider::AndListV1Marker> =
             special_case: None,
         },
     ]);
-static SR_LATN: super::DataStruct<::icu_list::provider::AndListV1Marker> =
+static SR_LATN: DataStruct<::icu_list::provider::AndListV1Marker> =
     &::icu_list::provider::ListFormatterPatternsV1([
         ::icu_list::provider::ConditionalListJoinerPattern {
             default: ::icu_list::provider::ListJoinerPattern {
@@ -1469,7 +1471,7 @@ static SR_LATN: super::DataStruct<::icu_list::provider::AndListV1Marker> =
             special_case: None,
         },
     ]);
-static SR_SR_CYRL: super::DataStruct<::icu_list::provider::AndListV1Marker> =
+static SR_SR_CYRL: DataStruct<::icu_list::provider::AndListV1Marker> =
     &::icu_list::provider::ListFormatterPatternsV1([
         ::icu_list::provider::ConditionalListJoinerPattern {
             default: ::icu_list::provider::ListJoinerPattern {
@@ -1568,7 +1570,7 @@ static SR_SR_CYRL: super::DataStruct<::icu_list::provider::AndListV1Marker> =
             special_case: None,
         },
     ]);
-static TH: super::DataStruct<::icu_list::provider::AndListV1Marker> =
+static TH: DataStruct<::icu_list::provider::AndListV1Marker> =
     &::icu_list::provider::ListFormatterPatternsV1([
         ::icu_list::provider::ConditionalListJoinerPattern {
             default: ::icu_list::provider::ListJoinerPattern {
@@ -1667,7 +1669,7 @@ static TH: super::DataStruct<::icu_list::provider::AndListV1Marker> =
             special_case: None,
         },
     ]);
-static TR: super::DataStruct<::icu_list::provider::AndListV1Marker> =
+static TR: DataStruct<::icu_list::provider::AndListV1Marker> =
     &::icu_list::provider::ListFormatterPatternsV1([
         ::icu_list::provider::ConditionalListJoinerPattern {
             default: ::icu_list::provider::ListJoinerPattern {
@@ -1766,7 +1768,7 @@ static TR: super::DataStruct<::icu_list::provider::AndListV1Marker> =
             special_case: None,
         },
     ]);
-static UND: super::DataStruct<::icu_list::provider::AndListV1Marker> =
+static UND: DataStruct<::icu_list::provider::AndListV1Marker> =
     &::icu_list::provider::ListFormatterPatternsV1([
         ::icu_list::provider::ConditionalListJoinerPattern {
             default: ::icu_list::provider::ListJoinerPattern {
