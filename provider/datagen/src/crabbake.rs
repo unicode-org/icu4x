@@ -75,6 +75,7 @@ impl ConstExporter {
         if self.pretty {
             std::process::Command::new("rustfmt")
                 .arg(path)
+                .args(&["newline_style", "native"])
                 .spawn()
                 .unwrap()
                 .wait()?;
@@ -164,8 +165,8 @@ impl DataExporter<CrabbakeMarker> for ConstExporter {
 
             // Intialise intermediate "mod.rs"s.
             let mut path = PathBuf::new();
-            let depth = module_path.segments.len() - 1;
-            for i in 1..=depth {
+            let depth = module_path.segments.len();
+            for i in 1..depth {
                 path = path.join(module_path.segments[i - 1].ident.to_string());
 
                 let mod_path = path.join("mod.rs");
@@ -179,12 +180,11 @@ impl DataExporter<CrabbakeMarker> for ConstExporter {
             }
 
             path = path
-                .join(module_path.segments[depth].ident.to_string())
+                .join(module_path.segments[depth-1].ident.to_string())
                 .with_extension("rs");
 
-            let supers = std::iter::repeat("super::")
-                .take(depth + 1)
-                .collect::<String>()
+            let supers = "super::"
+                .repeat(depth)
                 .parse::<TokenStream>()
                 .unwrap();
 
@@ -251,11 +251,11 @@ impl DataExporter<CrabbakeMarker> for ConstExporter {
 
         for (field, module_path, marker) in data.iter() {
             let module_path = module_path
-                .into_iter()
+                .iter()
                 .map(|p| syn::parse_str::<syn::Ident>(p).unwrap())
                 .collect::<Vec<_>>();
             let marker = marker
-                .into_iter()
+                .iter()
                 .map(|m| syn::parse_str::<syn::Ident>(m).unwrap())
                 .collect::<Vec<_>>();
             module_paths.push(quote! {#(#module_path)::*});
