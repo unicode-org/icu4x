@@ -52,6 +52,7 @@ use icu_provider::prelude::*;
 ///
 /// Although this struct can be created directly, the traits in this module provide helper
 /// functions for common filtering patterns.
+#[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct RequestFilterDataProvider<D, F>
 where
     F: Fn(&DataRequest) -> bool,

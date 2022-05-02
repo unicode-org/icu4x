@@ -108,6 +108,7 @@ use crate::helpers::result_is_err_missing_resource_key;
 /// # }
 /// ```
 #[derive(Debug, PartialEq, Eq)]
+#[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct ForkByKeyProvider<P0, P1>(pub P0, pub P1);
 
 impl<P0, P1> BufferProvider for ForkByKeyProvider<P0, P1>
@@ -237,6 +238,7 @@ where
 ///     .expect_err("Should stop at the first provider, even though the second has data");
 /// # }
 /// ```
+#[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct MultiForkByKeyProvider<P> {
     pub providers: Vec<P>,
 }
