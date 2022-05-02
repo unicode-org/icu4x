@@ -662,7 +662,7 @@ impl SegmenterRuleProvider {
         for (cp, actual_value) in properties_map.iter().enumerate() {
             let expected_value = property_trie.get(cp.try_into().unwrap());
             if expected_value != *actual_value {
-                let mut prop_int_path = property_trie_toml_path.clone();
+                let mut prop_int_path = property_trie_toml_path;
                 prop_int_path.set_extension("txt");
                 let f = File::create(&prop_int_path).expect("Unable to create file");
                 let mut f = BufWriter::new(f);

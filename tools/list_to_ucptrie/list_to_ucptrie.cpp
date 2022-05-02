@@ -75,7 +75,7 @@ int main(int argc, char const *argv[]) {
     std::cout << "# This file is part of ICU4X. For terms of use, please see the file\n";
     std::cout << "# called LICENSE at the top level of the ICU4X source tree\n";
     std::cout << "# (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).\n";
-    std::cout << "#\n";
+    std::cout << "\n";
     std::cout << "# This file is auto-generated. Instructions: tools/list_to_ucptrie/README.md\n";
     std::cout << "\n";
     usrc_writeUCPTrie(stdout, "<unused>", utrie.getAlias(), UPRV_TARGET_SYNTAX_TOML);
