@@ -32,7 +32,7 @@ fn main() {
 
     let mod_out = icu_datagen::Out::Module {
         mod_directory: paths::data_root().join("baked/src/data"),
-        pretty: true,
+        pretty: false,
         insert_feature_gates: false,
     };
 
