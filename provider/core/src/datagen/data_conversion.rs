@@ -41,7 +41,7 @@ where
     }
 }
 
-#[allow(clippy::exhaustive_structs)] // stable
+#[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct ReturnedPayloadError<M: DataMarker>(pub DataPayload<M>, pub DataError);
 
 impl<M: DataMarker> From<ReturnedPayloadError<M>> for DataError {
