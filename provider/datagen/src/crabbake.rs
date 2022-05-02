@@ -75,7 +75,10 @@ impl ConstExporter {
         if self.pretty {
             std::process::Command::new("rustfmt")
                 .arg(path)
-                .args(&["newline_style", "native"])
+                // The default, "auto", is meant to detect the existing line endings and preserve them.
+                // However, this seems to be broken and generates Unix line endings on Windows, which
+                // introduces Git diffs diffs when regenerating on Windows.
+                .args(&["--config", "newline_style=native"])
                 .spawn()
                 .unwrap()
                 .wait()?;
@@ -183,16 +186,13 @@ impl DataExporter<CrabbakeMarker> for ConstExporter {
                 .join(module_path.segments[depth-1].ident.to_string())
                 .with_extension("rs");
 
-            let supers = "super::"
-                .repeat(depth)
-                .parse::<TokenStream>()
-                .unwrap();
+            let depth = vec![TokenStream::new(); depth];
 
             self.write_to_file(
                 &path,
                 quote! {
-                    use #supers Data;
-                    use #supers DataStruct;
+                    use #(super:: #depth)* Data;
+                    use #(super:: #depth)* DataStruct;
                     pub static VALUES: Data<#marker> = &[#(#all_options),*];
                     #(#statics)*
                 },
