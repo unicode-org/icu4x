@@ -309,7 +309,10 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
     /// assert_eq!(0, trie.get(0x13E0));  // 'Ꮰ' as u32
     /// assert_eq!(1, trie.get(0x10044));  // '𐁄' as u32
     /// ```
+    #[inline]
     pub fn get(&self, code_point: u32) -> T {
+        // If we cannot read from the data array, then return the associated constant
+        // DATA_GET_ERROR_VALUE for the instance type for T: TrieValue.
         self.get_ule(code_point)
             .map(|t| T::from_unaligned(*t))
             .unwrap_or(T::DATA_GET_ERROR_VALUE)
@@ -344,8 +347,6 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
             self.trie_error_val_index()
         };
         // Returns the trie value (or trie's error value).
-        // If we cannot read from the data array, then return the associated constant
-        // DATA_GET_ERROR_VALUE for the instance type for T: TrieValue.
         self.data.as_ule_slice().get(data_pos as usize)
     }
 
