@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1651317207388,
+  "lastUpdate": 1651487077583,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -24989,6 +24989,66 @@ window.BENCHMARK_DATA = {
             "name": "from_string/1000000001",
             "value": 89,
             "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "andrewpkq@gmail.com",
+            "name": "andrewpollack",
+            "username": "andrewpollack"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "41da5c411fbad1afc91e5f8236a98c5611552a5a",
+          "message": "Adding vscode git ignore (#1832)\n\n* Adding vscode git ignore\r\n\r\n* PR followups\r\n\r\n* PR followups\r\n\r\n* Restoring blank space",
+          "timestamp": "2022-05-02T10:14:21Z",
+          "tree_id": "10f424f07375cb8281b5c64d0e9feb04974c3062",
+          "url": "https://github.com/unicode-org/icu4x/commit/41da5c411fbad1afc91e5f8236a98c5611552a5a"
+        },
+        "date": 1651487059399,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 89892,
+            "range": "± 5317",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 18909,
+            "range": "± 799",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 51161,
+            "range": "± 7115",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 174,
+            "range": "± 6",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 73,
+            "range": "± 5",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 68,
+            "range": "± 3",
             "unit": "ns/iter"
           }
         ]
