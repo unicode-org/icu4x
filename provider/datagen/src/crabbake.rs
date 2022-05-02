@@ -203,7 +203,7 @@ impl DataExporter<CrabbakeMarker> for ConstExporter {
                 },
             )?;
             self.per_key_data.lock().expect("poison").push((
-                key.get_path().replace(&['=', '@', '/'], "_"),
+                key.get_path().replace(&['=', '/'], "_").replace('@', "_v"),
                 module_path
                     .segments
                     .into_iter()
