@@ -42,6 +42,18 @@
 
 //! More details can be found by running `--help`.
 
+#![cfg_attr(
+    not(test),
+    deny(
+        // This is a tool, and as such we don't care about panics too much
+        // clippy::indexing_slicing,
+        // clippy::unwrap_used,
+        // clippy::expect_used,
+        // clippy::panic,
+        clippy::exhaustive_structs,
+        clippy::exhaustive_enums
+    )
+)]
 #![warn(missing_docs)]
 
 mod crabbake;
