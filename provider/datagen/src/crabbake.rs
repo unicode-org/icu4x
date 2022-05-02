@@ -223,7 +223,8 @@ impl DataExporter<CrabbakeMarker> for ConstExporter {
             log::info!("{}", crate_name);
         }
 
-        for (path, mods) in self.mod_files.lock().expect("poison").drain() {
+        for (path, mut mods) in self.mod_files.lock().expect("poison").drain() {
+            mods.sort();
             let mods = mods.into_iter().map(|p| p.parse::<TokenStream>().unwrap());
             self.write_to_file(
                 &path,

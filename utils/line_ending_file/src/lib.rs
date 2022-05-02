@@ -7,7 +7,7 @@
 use std::io::{BufWriter, Result, Write};
 
 /// A small helper class to convert LF to CRLF on Windows.
-/// Workaround for https://github.com/serde-rs/json/issues/535
+/// Workaround for <https://github.com/serde-rs/json/issues/535>
 pub struct BufWriterWithLineEndingFix<W: Write>(BufWriter<W>);
 
 impl<W: Write> BufWriterWithLineEndingFix<W> {
