@@ -96,10 +96,8 @@ macro_rules! impl_resource_provider {
                         for (bcp47_tzid, bcp47_tzid_data) in r.iter() {
                             if let Some(alias) = &bcp47_tzid_data.alias {
                                 for data_value in alias.split(" ") {
-                                    match TinyAsciiStr::<8>::from_str(bcp47_tzid) {
-                                        Ok(value) => {data_guard.insert(data_value.to_string(), TimeZoneBcp47Id(value));}
-                                        Err(_) => {}
-                                    }
+                                    let tzid = TinyAsciiStr::<8>::from_str(bcp47_tzid).expect("Failed to convert bcp47 tzid into TinyAsciiStr<8>");
+                                    data_guard.insert(data_value.to_string(), TimeZoneBcp47Id(tzid));
                                 }
                             }
                         }
@@ -120,12 +118,8 @@ macro_rules! impl_resource_provider {
 
                         let mut data_guard = self.meta_zone_id_data.write().unwrap();
                         for (meta_zone_id, meta_zone_id_data) in r.iter() {
-                            match TinyAsciiStr::<4>::from_str(meta_zone_id) {
-                                Ok(value) => {
-                                    data_guard.insert(meta_zone_id_data.long_id.to_string(), MetaZoneId(value));
-                                }
-                                Err(_) => {}
-                            }
+                            let mzid = TinyAsciiStr::<4>::from_str(meta_zone_id).expect("Failed to convert metazone id into TinyAsciiStr<4>");
+                            data_guard.insert(meta_zone_id_data.long_id.to_string(), MetaZoneId(mzid));
                         }
                     }
 
