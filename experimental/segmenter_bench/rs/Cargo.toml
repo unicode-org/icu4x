@@ -1,0 +1,8 @@
+[package]
+name = "run_icu4x_segmenter"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+icu_segmenter = { path = "../../segmenter", features = ["serde"] }
+icu_testdata = { path = "../../../provider/testdata", features = ["static"] }

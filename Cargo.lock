@@ -2314,6 +2314,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "run_icu4x_segmenter"
+version = "0.1.0"
+dependencies = [
+ "icu_segmenter",
+ "icu_testdata",
+]
+
+[[package]]
 name = "rustc-demangle"
 version = "0.1.21"
 source = "registry+https://github.com/rust-lang/crates.io-index"
