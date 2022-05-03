@@ -43,17 +43,7 @@ pub struct TimeZoneFormatsV1<'data> {
 
 /// TimeZone ID in BCP47 format
 #[repr(transparent)]
-#[derive(
-    Debug,
-    Clone,
-    Copy,
-    Eq,
-    Ord,
-    PartialEq,
-    PartialOrd,
-    yoke::Yokeable,
-    ULE,
-)]
+#[derive(Debug, Clone, Copy, Eq, Ord, PartialEq, PartialOrd, yoke::Yokeable, ULE)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct TimeZoneBcp47Id(pub TinyAsciiStr<8>);
@@ -80,17 +70,7 @@ impl<'a> zerovec::maps::ZeroMapKV<'a> for TimeZoneBcp47Id {
 
 /// MetaZone ID in a compact format
 #[repr(transparent)]
-#[derive(
-    Debug,
-    Clone,
-    Copy,
-    Eq,
-    Ord,
-    PartialEq,
-    PartialOrd,
-    yoke::Yokeable,
-    ULE,
-)] 
+#[derive(Debug, Clone, Copy, Eq, Ord, PartialEq, PartialOrd, yoke::Yokeable, ULE)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct MetaZoneId(pub TinyAsciiStr<4>);
