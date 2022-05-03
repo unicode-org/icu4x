@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1651487077583,
+  "lastUpdate": 1651568301962,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -25049,6 +25049,66 @@ window.BENCHMARK_DATA = {
             "name": "from_string/1000000001",
             "value": 68,
             "range": "± 3",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "andrewpkq@gmail.com",
+            "name": "andrewpollack",
+            "username": "andrewpollack"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "45d6792948644b5b9c99da10c0e1e1400f99f667",
+          "message": "Add `new_X_(date|datetime)_from_integers` examples (#1842)\n\n* Adding examples for add-new-date-from-integers and add-new-datetime-from-integers for each calendar type\r\n\r\n* Adjusting example days",
+          "timestamp": "2022-05-03T08:48:00Z",
+          "tree_id": "6c0f31fa366e364668f2a34415df8969c7926afd",
+          "url": "https://github.com/unicode-org/icu4x/commit/45d6792948644b5b9c99da10c0e1e1400f99f667"
+        },
+        "date": 1651568282724,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 106455,
+            "range": "± 601",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 21182,
+            "range": "± 113",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 58718,
+            "range": "± 500",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 186,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 78,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 77,
+            "range": "± 0",
             "unit": "ns/iter"
           }
         ]
