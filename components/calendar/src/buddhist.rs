@@ -97,7 +97,28 @@ impl Calendar for Buddhist {
 }
 
 impl Date<Buddhist> {
-    /// Construct a new Buddhist Date
+    /// Construct a new Buddhist Date.
+    ///
+    /// Years are specified as BE years.
+    ///
+    /// ```rust
+    /// use icu::calendar::{Date,
+    ///                     iso::IsoYear,
+    ///                     iso::IsoMonth,
+    ///                     iso::IsoDay};
+    /// use std::convert::TryFrom;
+    ///
+    /// let iso_year = IsoYear(1736);
+    /// let iso_month = IsoMonth::try_from(2).unwrap();
+    /// let iso_day = IsoDay::try_from(3).unwrap();
+    ///
+    /// // Conversion from ISO to Buddhist
+    /// let date_buddhist = Date::new_buddhist_date(iso_year, iso_month, iso_day).unwrap();
+    ///
+    /// assert_eq!(date_buddhist.year().number, 2279);
+    /// assert_eq!(date_buddhist.month().number, 2);
+    /// assert_eq!(date_buddhist.day_of_month().0, 3);
+    /// ```
     pub fn new_buddhist_date(
         year: IsoYear,
         month: IsoMonth,
@@ -108,9 +129,25 @@ impl Date<Buddhist> {
 }
 
 impl DateTime<Buddhist> {
-    /// Construct a new Buddhist datetime from integers
+    /// Construct a new Buddhist datetime from integers.
     ///
-    /// Years are specified as BE years
+    /// Years are specified as BE years.
+    /// 
+    /// ```rust
+    /// use icu::calendar::{DateTime,
+    ///                     types::IsoHour,
+    ///                     types::IsoMinute,
+    ///                     types::IsoSecond};
+    /// 
+    /// let datetime_buddhist = DateTime::new_buddhist_datetime_from_integers(2279, 2, 3, 13, 1, 0).unwrap();
+    ///
+    /// assert_eq!(datetime_buddhist.date.year().number, 2279);
+    /// assert_eq!(datetime_buddhist.date.month().number, 2);
+    /// assert_eq!(datetime_buddhist.date.day_of_month().0, 3);
+    /// assert_eq!(datetime_buddhist.time.hour, IsoHour::new_unchecked(13));
+    /// assert_eq!(datetime_buddhist.time.minute, IsoMinute::new_unchecked(1));
+    /// assert_eq!(datetime_buddhist.time.second, IsoSecond::new_unchecked(0));
+    /// ```
     pub fn new_buddhist_datetime_from_integers(
         year: i32,
         month: u8,

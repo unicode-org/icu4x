@@ -175,7 +175,17 @@ impl Coptic {
 }
 
 impl Date<Coptic> {
-    /// Construct new Coptic Date
+    /// Construct new Coptic Date.
+    ///
+    /// ```rust
+    /// use icu::calendar::Date;
+    ///
+    /// let date_coptic = Date::new_coptic_date_from_integers(1736, 2, 3).unwrap();
+    ///
+    /// assert_eq!(date_coptic.year().number, 1736);
+    /// assert_eq!(date_coptic.month().number, 2);
+    /// assert_eq!(date_coptic.day_of_month().0, 3);
+    /// ```
     pub fn new_coptic_date_from_integers(
         year: i32,
         month: u8,
@@ -198,7 +208,22 @@ impl Date<Coptic> {
 }
 
 impl DateTime<Coptic> {
-    /// Construct a new Coptic datetime from integers
+    /// Construct a new Coptic datetime from integers.
+    ///
+    /// ```rust
+    /// use icu::calendar::{DateTime,
+    ///                     types::IsoHour,
+    ///                     types::IsoMinute,
+    ///                     types::IsoSecond};
+    /// 
+    /// let datetime_coptic = DateTime::new_coptic_datetime_from_integers(1736, 2, 3, 13, 1, 0).unwrap();
+    /// assert_eq!(datetime_coptic.date.year().number, 1736);
+    /// assert_eq!(datetime_coptic.date.month().number, 2);
+    /// assert_eq!(datetime_coptic.date.day_of_month().0, 3);
+    /// assert_eq!(datetime_coptic.time.hour, IsoHour::new_unchecked(13));
+    /// assert_eq!(datetime_coptic.time.minute, IsoMinute::new_unchecked(1));
+    /// assert_eq!(datetime_coptic.time.second, IsoSecond::new_unchecked(0));
+    /// ```
     pub fn new_coptic_datetime_from_integers(
         year: i32,
         month: u8,

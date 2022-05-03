@@ -188,7 +188,17 @@ impl Ethiopic {
 }
 
 impl Date<Ethiopic> {
-    /// Construct new Ethiopic Date
+    /// Construct new Ethiopic Date.
+    ///
+    /// ```rust
+    /// use icu::calendar::Date;
+    ///
+    /// let date_ethiopic = Date::new_ethiopic_date_from_integers(1736, 2, 3).unwrap();
+    ///
+    /// assert_eq!(date_ethiopic.year().number, 1736);
+    /// assert_eq!(date_ethiopic.month().number, 2);
+    /// assert_eq!(date_ethiopic.day_of_month().0, 3);
+    /// ```
     pub fn new_ethiopic_date_from_integers(
         year: i32,
         month: u8,
@@ -215,7 +225,22 @@ impl Date<Ethiopic> {
 }
 
 impl DateTime<Ethiopic> {
-    /// Construct a new Ethiopic datetime from integers
+    /// Construct a new Ethiopic datetime from integers.
+    /// 
+    /// ```rust
+    /// use icu::calendar::{DateTime,
+    ///                     types::IsoHour,
+    ///                     types::IsoMinute,
+    ///                     types::IsoSecond};
+    /// 
+    /// let datetime_ethiopic = DateTime::new_ethiopic_datetime_from_integers(1736, 2, 3, 13, 1, 0, 0).unwrap();
+    /// assert_eq!(datetime_ethiopic.date.year().number, 1736);
+    /// assert_eq!(datetime_ethiopic.date.month().number, 2);
+    /// assert_eq!(datetime_ethiopic.date.day_of_month().0, 3);
+    /// assert_eq!(datetime_ethiopic.time.hour, IsoHour::new_unchecked(13));
+    /// assert_eq!(datetime_ethiopic.time.minute, IsoMinute::new_unchecked(1));
+    /// assert_eq!(datetime_ethiopic.time.second, IsoSecond::new_unchecked(0));
+    /// ```
     pub fn new_ethiopic_datetime_from_integers(
         year: i32,
         month: u8,

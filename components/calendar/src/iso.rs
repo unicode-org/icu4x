@@ -302,7 +302,26 @@ impl Calendar for Iso {
 }
 
 impl Date<Iso> {
-    /// Construct a new ISO Date
+    /// Construct a new ISO Date.
+    ///
+    /// ```rust
+    /// use icu::calendar::{Date,
+    ///                     iso::IsoYear,
+    ///                     iso::IsoMonth,
+    ///                     iso::IsoDay};
+    /// use std::convert::TryFrom;
+    ///
+    /// let iso_year = IsoYear(1996);
+    /// let iso_month = IsoMonth::try_from(2).unwrap();
+    /// let iso_day = IsoDay::try_from(3).unwrap();
+    ///
+    /// // Creation of ISO date
+    /// let date_iso = Date::new_iso_date(iso_year, iso_month, iso_day).unwrap();
+    ///
+    /// assert_eq!(date_iso.year().number, 1996);
+    /// assert_eq!(date_iso.month().number, 2);
+    /// assert_eq!(date_iso.day_of_month().0, 3);
+    /// ```
     pub fn new_iso_date(
         year: IsoYear,
         month: IsoMonth,
@@ -318,7 +337,17 @@ impl Date<Iso> {
         Ok(Date::from_raw(IsoDateInner { day, month, year }, Iso))
     }
 
-    /// Construct a new ISO date from integers
+    /// Construct a new ISO date from integers.
+    ///
+    /// ```rust
+    /// use icu::calendar::Date;
+    ///
+    /// let date_iso = Date::new_iso_date_from_integers(1996, 2, 3).unwrap();
+    ///
+    /// assert_eq!(date_iso.year().number, 1996);
+    /// assert_eq!(date_iso.month().number, 2);
+    /// assert_eq!(date_iso.day_of_month().0, 3);
+    /// ```
     pub fn new_iso_date_from_integers(
         year: i32,
         month: u8,
@@ -329,7 +358,23 @@ impl Date<Iso> {
 }
 
 impl DateTime<Iso> {
-    /// Construct a new ISO date from integers
+    /// Construct a new ISO date from integers.
+    ///
+    /// ```rust
+    /// use icu::calendar::{DateTime,
+    ///                     types::IsoHour,
+    ///                     types::IsoMinute,
+    ///                     types::IsoSecond};
+    ///
+    /// let datetime_iso = DateTime::new_iso_datetime_from_integers(1736, 2, 3, 13, 1, 0).unwrap();
+    ///
+    /// assert_eq!(datetime_iso.date.year().number, 1736);
+    /// assert_eq!(datetime_iso.date.month().number, 2);
+    /// assert_eq!(datetime_iso.date.day_of_month().0, 3);
+    /// assert_eq!(datetime_iso.time.hour, IsoHour::new_unchecked(13));
+    /// assert_eq!(datetime_iso.time.minute, IsoMinute::new_unchecked(1));
+    /// assert_eq!(datetime_iso.time.second, IsoSecond::new_unchecked(0));
+    /// ```
     pub fn new_iso_datetime_from_integers(
         year: i32,
         month: u8,
