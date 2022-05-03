@@ -19,7 +19,6 @@ int main(int argc, char const *argv[]) {
     auto text = icu::UnicodeString();
     while (std::getline(std::cin, buffer)) {
         text.append(icu::UnicodeString::fromUTF8(buffer));
-        text.append(u"\n");
     }
 
     std::cerr << "Segmenting string with " << text.length() << " UTF-16 code units" << std::endl;

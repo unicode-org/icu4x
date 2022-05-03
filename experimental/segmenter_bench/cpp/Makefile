@@ -5,4 +5,4 @@
 ICU4C_SRC:=$(HOME)/icu/icu4c/source
 
 run_icu_breakiterator: run_icu_breakiterator.cpp
-	clang++-12 -g -o run_icu_breakiterator -lpthread -ldl -I$(ICU4C_SRC)/common run_icu_breakiterator.cpp $(ICU4C_SRC)/lib/libicuuc.a $(ICU4C_SRC)/lib/libicudata.a
+	clang++-12 -o run_icu_breakiterator -lpthread -ldl -I$(ICU4C_SRC)/common run_icu_breakiterator.cpp $(ICU4C_SRC)/lib/libicuuc.a $(ICU4C_SRC)/lib/libicudata.a
