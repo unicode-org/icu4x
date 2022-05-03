@@ -173,7 +173,7 @@ impl<'de: 'data, 'data> serde::Deserialize<'de> for ListJoinerPattern<'data> {
 
 impl<'a> ListJoinerPattern<'a> {
     /// Constructs a [`ListJoinerPattern`] from raw parts.
-    /// 
+    ///
     /// # Safety
     /// index_0 <= index_1 <= string.len()
     pub const unsafe fn from_parts_unchecked(string: &'a str, index_0: u8, index_1: u8) -> Self {
