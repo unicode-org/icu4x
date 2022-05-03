@@ -169,13 +169,9 @@ impl Ethiopic {
         let coptic_date = Coptic::coptic_from_fixed(date + coptic_epoch - ethiopic_epoch);
 
         #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
-        *Date::new_ethiopic_date(
-            coptic_date.0.year,
-            coptic_date.0.month,
-            coptic_date.0.day,
-        )
-        .unwrap()
-        .inner()
+        *Date::new_ethiopic_date(coptic_date.0.year, coptic_date.0.month, coptic_date.0.day)
+            .unwrap()
+            .inner()
     }
 
     fn days_in_year_direct(year: i32) -> u32 {
