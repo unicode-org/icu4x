@@ -16,8 +16,8 @@ use tinystr::tinystr;
 
 /// The Coptic calendar
 #[derive(Copy, Clone, Debug, Hash, Default, Eq, PartialEq)]
-#[non_exhaustive]
 pub struct Coptic;
+
 
 #[derive(Copy, Clone, Debug, Hash, Eq, PartialEq)]
 pub struct CopticDateInner(pub(crate) ArithmeticDate<Coptic>);
@@ -123,11 +123,6 @@ impl Calendar for Coptic {
 }
 
 impl Coptic {
-    /// Construct a new Coptic Calendar
-    pub fn new() -> Self {
-        Self
-    }
-
     // "Fixed" is a day count representation of calendars staring from Jan 1st of year 1 of the Georgian Calendar.
     // The fixed date algorithms are from
     // Dershowitz, Nachum, and Edward M. Reingold. _Calendrical calculations_. Cambridge University Press, 2008.
