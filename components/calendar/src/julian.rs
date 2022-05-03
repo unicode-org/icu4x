@@ -234,7 +234,7 @@ impl Date<Julian> {
 }
 
 impl DateTime<Julian> {
-    /// Constrict a new Julian datetime form integers.
+    /// Construct a new Julian datetime from integers.
     ///
     /// ```rust
     /// use icu::calendar::{DateTime,
