@@ -16,6 +16,7 @@ use tinystr::tinystr;
 
 /// The Coptic calendar
 #[derive(Copy, Clone, Debug, Hash, Default, Eq, PartialEq)]
+#[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct Coptic;
 
 
