@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1651568301962,
+  "lastUpdate": 1651568887963,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -25091,6 +25091,66 @@ window.BENCHMARK_DATA = {
             "name": "isize/larger",
             "value": 58718,
             "range": "± 500",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 186,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 78,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 77,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "andrewpkq@gmail.com",
+            "name": "andrewpollack",
+            "username": "andrewpollack"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "44140782e416514d6b16394850faf148278421ab",
+          "message": "Adding Date, DateTime, Calendar examples to components/calendar/src/lib.rs (#1841)\n\n* Initial changes\r\n\r\n* Adding high level Date, DateTime examples to lib.rs file",
+          "timestamp": "2022-05-03T08:58:08Z",
+          "tree_id": "c59ff0461058dec9b46570aeef07e46efa48cc5c",
+          "url": "https://github.com/unicode-org/icu4x/commit/44140782e416514d6b16394850faf148278421ab"
+        },
+        "date": 1651568869419,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 106398,
+            "range": "± 388",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 21130,
+            "range": "± 183",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 58693,
+            "range": "± 279",
             "unit": "ns/iter"
           },
           {
