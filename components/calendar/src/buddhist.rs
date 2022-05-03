@@ -4,9 +4,8 @@
 
 //! This module contains types and implementations for the Buddhist calendar
 
-use crate::iso::{Iso, IsoDateInner, IsoDay, IsoMonth, IsoYear};
+use crate::iso::{Iso, IsoDateInner, IsoYear};
 use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, DateTime, DateTimeError};
-use core::convert::TryInto;
 use tinystr::tinystr;
 
 /// The number of years the Buddhist Era is ahead of C.E. by
@@ -102,29 +101,22 @@ impl Date<Buddhist> {
     /// Years are specified as BE years.
     ///
     /// ```rust
-    /// use icu::calendar::{Date,
-    ///                     iso::IsoYear,
-    ///                     iso::IsoMonth,
-    ///                     iso::IsoDay};
+    /// use icu::calendar::Date;
     /// use std::convert::TryFrom;
     ///
-    /// let iso_year = IsoYear(1970);
-    /// let iso_month = IsoMonth::try_from(1).unwrap();
-    /// let iso_day = IsoDay::try_from(2).unwrap();
+    /// let date_buddhist = Date::new_buddhist_date(1970, 1, 2).unwrap();
     ///
-    /// // Conversion from ISO to Buddhist
-    /// let date_buddhist = Date::new_buddhist_date(iso_year, iso_month, iso_day).unwrap();
-    ///
-    /// assert_eq!(date_buddhist.year().number, 2513);
+    /// assert_eq!(date_buddhist.year().number, 1970);
     /// assert_eq!(date_buddhist.month().number, 1);
     /// assert_eq!(date_buddhist.day_of_month().0, 2);
     /// ```
     pub fn new_buddhist_date(
-        year: IsoYear,
-        month: IsoMonth,
-        day: IsoDay,
+        year: i32,
+        month: u8,
+        day: u8,
     ) -> Result<Date<Buddhist>, DateTimeError> {
-        Date::new_iso_date(year, month, day).map(|d| Date::new_from_iso(d, Buddhist))
+        Date::new_iso_date_from_integers(year - BUDDHIST_ERA_OFFSET, month, day)
+            .map(|d| Date::new_from_iso(d, Buddhist))
     }
 }
 
@@ -139,9 +131,9 @@ impl DateTime<Buddhist> {
     ///                     types::IsoMinute,
     ///                     types::IsoSecond};
     ///
-    /// let datetime_buddhist = DateTime::new_buddhist_datetime_from_integers(2513, 1, 2, 13, 1, 0).unwrap();
+    /// let datetime_buddhist = DateTime::new_buddhist_datetime_from_integers(1970, 1, 2, 13, 1, 0).unwrap();
     ///
-    /// assert_eq!(datetime_buddhist.date.year().number, 2513);
+    /// assert_eq!(datetime_buddhist.date.year().number, 1970);
     /// assert_eq!(datetime_buddhist.date.month().number, 1);
     /// assert_eq!(datetime_buddhist.date.day_of_month().0, 2);
     /// assert_eq!(datetime_buddhist.time.hour, IsoHour::new_unchecked(13));
@@ -156,9 +148,8 @@ impl DateTime<Buddhist> {
         minute: u8,
         second: u8,
     ) -> Result<DateTime<Buddhist>, DateTimeError> {
-        let iso_year = year - BUDDHIST_ERA_OFFSET;
         Ok(DateTime {
-            date: Date::new_buddhist_date(iso_year.into(), month.try_into()?, day.try_into()?)?,
+            date: Date::new_buddhist_date(year, month, day)?,
             time: types::Time::try_new(hour, minute, second, 0)?,
         })
     }
