@@ -204,11 +204,11 @@ impl Date<Julian> {
     /// ```rust
     /// use icu::calendar::Date;
     ///
-    /// let date_julian = Date::new_julian_date_from_integers(1996, 2, 3).unwrap();
+    /// let date_julian = Date::new_julian_date_from_integers(1969, 12, 20).unwrap();
     ///
-    /// assert_eq!(date_julian.year().number, 1996);
-    /// assert_eq!(date_julian.month().number, 2);
-    /// assert_eq!(date_julian.day_of_month().0, 3);
+    /// assert_eq!(date_julian.year().number, 1969);
+    /// assert_eq!(date_julian.month().number, 12);
+    /// assert_eq!(date_julian.day_of_month().0, 20);
     /// ```
     pub fn new_julian_date_from_integers(
         year: i32,
@@ -242,11 +242,11 @@ impl DateTime<Julian> {
     ///                     types::IsoMinute,
     ///                     types::IsoSecond};
     ///
-    /// let datetime_julian = DateTime::new_julian_datetime_from_integers(1996, 2, 3, 13, 1, 0).unwrap();
+    /// let datetime_julian = DateTime::new_julian_datetime_from_integers(1969, 12, 20, 13, 1, 0).unwrap();
     ///
-    /// assert_eq!(datetime_julian.date.year().number, 1996);
-    /// assert_eq!(datetime_julian.date.month().number, 2);
-    /// assert_eq!(datetime_julian.date.day_of_month().0, 3);
+    /// assert_eq!(datetime_julian.date.year().number, 1969);
+    /// assert_eq!(datetime_julian.date.month().number, 12);
+    /// assert_eq!(datetime_julian.date.day_of_month().0, 20);
     /// assert_eq!(datetime_julian.time.hour, IsoHour::new_unchecked(13));
     /// assert_eq!(datetime_julian.time.minute, IsoMinute::new_unchecked(1));
     /// assert_eq!(datetime_julian.time.second, IsoSecond::new_unchecked(0));

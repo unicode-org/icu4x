@@ -158,11 +158,11 @@ impl Date<Indian> {
     /// ```rust
     /// use icu::calendar::Date;
     ///
-    /// let date_indian = Date::new_indian_date_from_integers(1996, 2, 3).unwrap();
+    /// let date_indian = Date::new_indian_date_from_integers(1891, 10, 12).unwrap();
     ///
-    /// assert_eq!(date_indian.year().number, 1996);
-    /// assert_eq!(date_indian.month().number, 2);
-    /// assert_eq!(date_indian.day_of_month().0, 3);
+    /// assert_eq!(date_indian.year().number, 1891);
+    /// assert_eq!(date_indian.month().number, 10);
+    /// assert_eq!(date_indian.day_of_month().0, 12);
     /// ```
     pub fn new_indian_date_from_integers(
         year: i32,
@@ -194,11 +194,11 @@ impl DateTime<Indian> {
     ///                     types::IsoMinute,
     ///                     types::IsoSecond};
     ///
-    /// let datetime_indian = DateTime::new_indian_datetime_from_integers(1736, 2, 3, 13, 1, 0).unwrap();
+    /// let datetime_indian = DateTime::new_indian_datetime_from_integers(1891, 10, 12, 13, 1, 0).unwrap();
     ///
-    /// assert_eq!(datetime_indian.date.year().number, 1736);
-    /// assert_eq!(datetime_indian.date.month().number, 2);
-    /// assert_eq!(datetime_indian.date.day_of_month().0, 3);
+    /// assert_eq!(datetime_indian.date.year().number, 1891);
+    /// assert_eq!(datetime_indian.date.month().number, 10);
+    /// assert_eq!(datetime_indian.date.day_of_month().0, 12);
     /// assert_eq!(datetime_indian.time.hour, IsoHour::new_unchecked(13));
     /// assert_eq!(datetime_indian.time.minute, IsoMinute::new_unchecked(1));
     /// assert_eq!(datetime_indian.time.second, IsoSecond::new_unchecked(0));

@@ -342,11 +342,11 @@ impl Date<Iso> {
     /// ```rust
     /// use icu::calendar::Date;
     ///
-    /// let date_iso = Date::new_iso_date_from_integers(1996, 2, 3).unwrap();
+    /// let date_iso = Date::new_iso_date_from_integers(1970, 1, 2).unwrap();
     ///
-    /// assert_eq!(date_iso.year().number, 1996);
-    /// assert_eq!(date_iso.month().number, 2);
-    /// assert_eq!(date_iso.day_of_month().0, 3);
+    /// assert_eq!(date_iso.year().number, 1970);
+    /// assert_eq!(date_iso.month().number, 1);
+    /// assert_eq!(date_iso.day_of_month().0, 2);
     /// ```
     pub fn new_iso_date_from_integers(
         year: i32,
@@ -366,11 +366,11 @@ impl DateTime<Iso> {
     ///                     types::IsoMinute,
     ///                     types::IsoSecond};
     ///
-    /// let datetime_iso = DateTime::new_iso_datetime_from_integers(1736, 2, 3, 13, 1, 0).unwrap();
+    /// let datetime_iso = DateTime::new_iso_datetime_from_integers(1970, 1, 2, 13, 1, 0).unwrap();
     ///
-    /// assert_eq!(datetime_iso.date.year().number, 1736);
-    /// assert_eq!(datetime_iso.date.month().number, 2);
-    /// assert_eq!(datetime_iso.date.day_of_month().0, 3);
+    /// assert_eq!(datetime_iso.date.year().number, 1970);
+    /// assert_eq!(datetime_iso.date.month().number, 1);
+    /// assert_eq!(datetime_iso.date.day_of_month().0, 2);
     /// assert_eq!(datetime_iso.time.hour, IsoHour::new_unchecked(13));
     /// assert_eq!(datetime_iso.time.minute, IsoMinute::new_unchecked(1));
     /// assert_eq!(datetime_iso.time.second, IsoSecond::new_unchecked(0));

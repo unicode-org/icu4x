@@ -102,16 +102,16 @@ impl Date<Gregorian> {
     ///                     iso::IsoDay};
     /// use std::convert::TryFrom;
     ///
-    /// let iso_year = IsoYear(1996);
-    /// let iso_month = IsoMonth::try_from(2).unwrap();
-    /// let iso_day = IsoDay::try_from(3).unwrap();
+    /// let iso_year = IsoYear(1970);
+    /// let iso_month = IsoMonth::try_from(1).unwrap();
+    /// let iso_day = IsoDay::try_from(2).unwrap();
     ///
     /// // Conversion from ISO to Gregorian
     /// let date_gregorian = Date::new_gregorian_date(iso_year, iso_month, iso_day).unwrap();
     ///
-    /// assert_eq!(date_gregorian.year().number, 1996);
-    /// assert_eq!(date_gregorian.month().number, 2);
-    /// assert_eq!(date_gregorian.day_of_month().0, 3);
+    /// assert_eq!(date_gregorian.year().number, 1970);
+    /// assert_eq!(date_gregorian.month().number, 1);
+    /// assert_eq!(date_gregorian.day_of_month().0, 2);
     /// ```
     pub fn new_gregorian_date(
         year: IsoYear,
@@ -133,10 +133,11 @@ impl DateTime<Gregorian> {
     ///                     types::IsoMinute,
     ///                     types::IsoSecond};
     ///
-    /// let datetime_gregorian = DateTime::new_gregorian_datetime_from_integers(1996, 2, 3, 13, 1, 0, 0).unwrap();
-    /// assert_eq!(datetime_gregorian.date.year().number, 1996);
-    /// assert_eq!(datetime_gregorian.date.month().number, 2);
-    /// assert_eq!(datetime_gregorian.date.day_of_month().0, 3);
+    /// let datetime_gregorian = DateTime::new_gregorian_datetime_from_integers(1970, 1, 2, 13, 1, 0, 0).unwrap();
+    ///
+    /// assert_eq!(datetime_gregorian.date.year().number, 1970);
+    /// assert_eq!(datetime_gregorian.date.month().number, 1);
+    /// assert_eq!(datetime_gregorian.date.day_of_month().0, 2);
     /// assert_eq!(datetime_gregorian.time.hour, IsoHour::new_unchecked(13));
     /// assert_eq!(datetime_gregorian.time.minute, IsoMinute::new_unchecked(1));
     /// assert_eq!(datetime_gregorian.time.second, IsoSecond::new_unchecked(0));
