@@ -1318,6 +1318,7 @@ dependencies = [
  "diplomat",
  "diplomat-runtime",
  "fixed_decimal",
+ "icu_codepointtrie",
  "icu_decimal",
  "icu_locale_canonicalizer",
  "icu_locid",
@@ -1331,6 +1332,7 @@ dependencies = [
  "icu_testdata",
  "log",
  "tinystr 0.6.0",
+ "unicode-bidi",
  "writeable",
 ]
 
