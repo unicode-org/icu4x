@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1651486978079,
+  "lastUpdate": 1651568217771,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -25865,6 +25865,60 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 40664512,
             "range": "± 2583621",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/worst",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/worst",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "andrewpkq@gmail.com",
+            "name": "andrewpollack",
+            "username": "andrewpollack"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "45d6792948644b5b9c99da10c0e1e1400f99f667",
+          "message": "Add `new_X_(date|datetime)_from_integers` examples (#1842)\n\n* Adding examples for add-new-date-from-integers and add-new-datetime-from-integers for each calendar type\r\n\r\n* Adjusting example days",
+          "timestamp": "2022-05-03T08:48:00Z",
+          "tree_id": "6c0f31fa366e364668f2a34415df8969c7926afd",
+          "url": "https://github.com/unicode-org/icu4x/commit/45d6792948644b5b9c99da10c0e1e1400f99f667"
+        },
+        "date": 1651568197148,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 41523497,
+            "range": "± 1515331",
             "unit": "ns/iter"
           },
           {
