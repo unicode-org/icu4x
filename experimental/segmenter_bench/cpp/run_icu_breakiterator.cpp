@@ -26,6 +26,13 @@ int main(int argc, char const *argv[]) {
     auto brkitr = icu::LocalPointer<icu::BreakIterator>(
         icu::BreakIterator::createWordInstance("de", status), status);
 
+    brkitr->setText(text);
+    while (true) {
+        auto c = brkitr->next();
+        if (c == icu::BreakIterator::DONE) break;
+        std::cout << c << std::endl;
+    }
+
     for (size_t i=0; i<10000; i++) {
         brkitr->setText(text);
         while (brkitr->next() != icu::BreakIterator::DONE) {}

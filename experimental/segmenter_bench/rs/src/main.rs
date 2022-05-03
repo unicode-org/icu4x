@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use std::io::BufRead;
+use std::fmt::Write;
 
 fn main() {
     let provider = icu_testdata::get_static_provider();
@@ -19,6 +20,14 @@ fn main() {
     eprintln!("Segmenting string with {} UTF-16 code units", text.len());
 
     let segmenter = icu_segmenter::WordBreakSegmenter::try_new(&provider).unwrap();
+
+    let mut brkitr = segmenter.segment_utf16(&text);
+    loop {
+        match brkitr.next() {
+            Some(p) => println!("{}", p),
+            None => break
+        };
+    }
 
     for _ in 0..10000 {
         let mut brkitr = segmenter.segment_utf16(&text);
