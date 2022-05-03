@@ -169,7 +169,7 @@ impl Ethiopic {
         let coptic_date = Coptic::coptic_from_fixed(date + coptic_epoch - ethiopic_epoch);
 
         #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
-        *Date::new_ethiopic_date_from_integers(
+        *Date::new_ethiopic_date(
             coptic_date.0.year,
             coptic_date.0.month,
             coptic_date.0.day,
@@ -193,13 +193,13 @@ impl Date<Ethiopic> {
     /// ```rust
     /// use icu::calendar::Date;
     ///
-    /// let date_ethiopic = Date::new_ethiopic_date_from_integers(2014, 8, 25).unwrap();
+    /// let date_ethiopic = Date::new_ethiopic_date(2014, 8, 25).unwrap();
     ///
     /// assert_eq!(date_ethiopic.year().number, 2014);
     /// assert_eq!(date_ethiopic.month().number, 8);
     /// assert_eq!(date_ethiopic.day_of_month().0, 25);
     /// ```
-    pub fn new_ethiopic_date_from_integers(
+    pub fn new_ethiopic_date(
         year: i32,
         month: u8,
         day: u8,
@@ -233,7 +233,7 @@ impl DateTime<Ethiopic> {
     ///                     types::IsoMinute,
     ///                     types::IsoSecond};
     ///
-    /// let datetime_ethiopic = DateTime::new_ethiopic_datetime_from_integers(2014, 8, 25, 13, 1, 0, 0).unwrap();
+    /// let datetime_ethiopic = DateTime::new_ethiopic_datetime(2014, 8, 25, 13, 1, 0, 0).unwrap();
     ///
     /// assert_eq!(datetime_ethiopic.date.year().number, 2014);
     /// assert_eq!(datetime_ethiopic.date.month().number, 8);
@@ -242,7 +242,7 @@ impl DateTime<Ethiopic> {
     /// assert_eq!(datetime_ethiopic.time.minute, IsoMinute::new_unchecked(1));
     /// assert_eq!(datetime_ethiopic.time.second, IsoSecond::new_unchecked(0));
     /// ```
-    pub fn new_ethiopic_datetime_from_integers(
+    pub fn new_ethiopic_datetime(
         year: i32,
         month: u8,
         day: u8,
@@ -252,7 +252,7 @@ impl DateTime<Ethiopic> {
         fraction: u32,
     ) -> Result<DateTime<Ethiopic>, DateTimeError> {
         Ok(DateTime {
-            date: Date::new_ethiopic_date_from_integers(year, month, day)?,
+            date: Date::new_ethiopic_date(year, month, day)?,
             time: types::Time::try_new(hour, minute, second, fraction)?,
         })
     }

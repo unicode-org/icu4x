@@ -158,13 +158,13 @@ impl Date<Indian> {
     /// ```rust
     /// use icu::calendar::Date;
     ///
-    /// let date_indian = Date::new_indian_date_from_integers(1891, 10, 12).unwrap();
+    /// let date_indian = Date::new_indian_date(1891, 10, 12).unwrap();
     ///
     /// assert_eq!(date_indian.year().number, 1891);
     /// assert_eq!(date_indian.month().number, 10);
     /// assert_eq!(date_indian.day_of_month().0, 12);
     /// ```
-    pub fn new_indian_date_from_integers(
+    pub fn new_indian_date(
         year: i32,
         month: u8,
         day: u8,
@@ -194,7 +194,7 @@ impl DateTime<Indian> {
     ///                     types::IsoMinute,
     ///                     types::IsoSecond};
     ///
-    /// let datetime_indian = DateTime::new_indian_datetime_from_integers(1891, 10, 12, 13, 1, 0).unwrap();
+    /// let datetime_indian = DateTime::new_indian_datetime(1891, 10, 12, 13, 1, 0).unwrap();
     ///
     /// assert_eq!(datetime_indian.date.year().number, 1891);
     /// assert_eq!(datetime_indian.date.month().number, 10);
@@ -203,7 +203,7 @@ impl DateTime<Indian> {
     /// assert_eq!(datetime_indian.time.minute, IsoMinute::new_unchecked(1));
     /// assert_eq!(datetime_indian.time.second, IsoSecond::new_unchecked(0));
     /// ```
-    pub fn new_indian_datetime_from_integers(
+    pub fn new_indian_datetime(
         year: i32,
         month: u8,
         day: u8,
@@ -212,7 +212,7 @@ impl DateTime<Indian> {
         second: u8,
     ) -> Result<DateTime<Indian>, DateTimeError> {
         Ok(DateTime {
-            date: Date::new_indian_date_from_integers(year, month, day)?,
+            date: Date::new_indian_date(year, month, day)?,
             time: types::Time::try_new(hour, minute, second, 0)?,
         })
     }

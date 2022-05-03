@@ -131,7 +131,7 @@ impl DateTime<Buddhist> {
     ///                     types::IsoMinute,
     ///                     types::IsoSecond};
     ///
-    /// let datetime_buddhist = DateTime::new_buddhist_datetime_from_integers(1970, 1, 2, 13, 1, 0).unwrap();
+    /// let datetime_buddhist = DateTime::new_buddhist_datetime(1970, 1, 2, 13, 1, 0).unwrap();
     ///
     /// assert_eq!(datetime_buddhist.date.year().number, 1970);
     /// assert_eq!(datetime_buddhist.date.month().number, 1);
@@ -140,7 +140,7 @@ impl DateTime<Buddhist> {
     /// assert_eq!(datetime_buddhist.time.minute, IsoMinute::new_unchecked(1));
     /// assert_eq!(datetime_buddhist.time.second, IsoSecond::new_unchecked(0));
     /// ```
-    pub fn new_buddhist_datetime_from_integers(
+    pub fn new_buddhist_datetime(
         year: i32,
         month: u8,
         day: u8,

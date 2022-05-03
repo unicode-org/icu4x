@@ -192,7 +192,7 @@ impl Julian {
         let day = date - Self::fixed_from_julian_integers(year, month, 1) + 1;
 
         #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
-        *Date::new_julian_date_from_integers(year, month as u8, day as u8)
+        *Date::new_julian_date(year, month as u8, day as u8)
             .unwrap()
             .inner()
     }
@@ -204,13 +204,13 @@ impl Date<Julian> {
     /// ```rust
     /// use icu::calendar::Date;
     ///
-    /// let date_julian = Date::new_julian_date_from_integers(1969, 12, 20).unwrap();
+    /// let date_julian = Date::new_julian_date(1969, 12, 20).unwrap();
     ///
     /// assert_eq!(date_julian.year().number, 1969);
     /// assert_eq!(date_julian.month().number, 12);
     /// assert_eq!(date_julian.day_of_month().0, 20);
     /// ```
-    pub fn new_julian_date_from_integers(
+    pub fn new_julian_date(
         year: i32,
         month: u8,
         day: u8,
@@ -242,7 +242,7 @@ impl DateTime<Julian> {
     ///                     types::IsoMinute,
     ///                     types::IsoSecond};
     ///
-    /// let datetime_julian = DateTime::new_julian_datetime_from_integers(1969, 12, 20, 13, 1, 0).unwrap();
+    /// let datetime_julian = DateTime::new_julian_datetime(1969, 12, 20, 13, 1, 0).unwrap();
     ///
     /// assert_eq!(datetime_julian.date.year().number, 1969);
     /// assert_eq!(datetime_julian.date.month().number, 12);
@@ -251,7 +251,7 @@ impl DateTime<Julian> {
     /// assert_eq!(datetime_julian.time.minute, IsoMinute::new_unchecked(1));
     /// assert_eq!(datetime_julian.time.second, IsoSecond::new_unchecked(0));
     /// ```
-    pub fn new_julian_datetime_from_integers(
+    pub fn new_julian_datetime(
         year: i32,
         month: u8,
         day: u8,
@@ -260,7 +260,7 @@ impl DateTime<Julian> {
         second: u8,
     ) -> Result<DateTime<Julian>, DateTimeError> {
         Ok(DateTime {
-            date: Date::new_julian_date_from_integers(year, month, day)?,
+            date: Date::new_julian_date(year, month, day)?,
             time: types::Time::try_new(hour, minute, second, 0)?,
         })
     }
@@ -304,31 +304,31 @@ mod test {
     #[test]
     fn test_day_julian_to_iso() {
         // March 1st 200 is same on both calendars
-        let julian_date = Date::new_julian_date_from_integers(200, 3, 1).unwrap();
+        let julian_date = Date::new_julian_date(200, 3, 1).unwrap();
         let iso_date = Julian.date_to_iso(julian_date.inner());
         let iso_expected_date = Date::new_iso_date_from_integers(200, 3, 1).unwrap();
         assert_eq!(iso_date, iso_expected_date);
 
         // Feb 28th, 200 (iso) = Feb 29th, 200 (julian)
-        let julian_date = Date::new_julian_date_from_integers(200, 2, 29).unwrap();
+        let julian_date = Date::new_julian_date(200, 2, 29).unwrap();
         let iso_date = Julian.date_to_iso(julian_date.inner());
         let iso_expected_date = Date::new_iso_date_from_integers(200, 2, 28).unwrap();
         assert_eq!(iso_date, iso_expected_date);
 
         // March 1st 400 (iso) = Feb 29th, 400 (julian)
-        let julian_date = Date::new_julian_date_from_integers(400, 2, 29).unwrap();
+        let julian_date = Date::new_julian_date(400, 2, 29).unwrap();
         let iso_date = Julian.date_to_iso(julian_date.inner());
         let iso_expected_date = Date::new_iso_date_from_integers(400, 3, 1).unwrap();
         assert_eq!(iso_date, iso_expected_date);
 
         // Jan 1st, 2022 (iso) = Dec 19, 2021 (julian)
-        let julian_date = Date::new_julian_date_from_integers(2021, 12, 19).unwrap();
+        let julian_date = Date::new_julian_date(2021, 12, 19).unwrap();
         let iso_date = Julian.date_to_iso(julian_date.inner());
         let iso_expected_date = Date::new_iso_date_from_integers(2022, 1, 1).unwrap();
         assert_eq!(iso_date, iso_expected_date);
 
         // March 1st, 2022 (iso) = Feb 16, 2022 (julian)
-        let julian_date = Date::new_julian_date_from_integers(2022, 2, 16).unwrap();
+        let julian_date = Date::new_julian_date(2022, 2, 16).unwrap();
         let iso_date = Julian.date_to_iso(julian_date.inner());
         let iso_expected_date = Date::new_iso_date_from_integers(2022, 3, 1).unwrap();
         assert_eq!(iso_date, iso_expected_date);
