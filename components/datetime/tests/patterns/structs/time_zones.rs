@@ -5,12 +5,12 @@
 use icu_datetime::provider::time_zones::{MetaZoneId, TimeZoneBcp47Id};
 use icu_datetime::time_zone;
 use serde::{Deserialize, Serialize};
-use tinystr::TinyStr8;
+use tinystr::{TinyAsciiStr, TinyStr8};
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct TimeZoneConfig {
-    pub time_zone_id: Option<TimeZoneBcp47Id>,
-    pub metazone_id: Option<MetaZoneId>,
+    pub time_zone_id: Option<TinyAsciiStr<8>>,
+    pub metazone_id: Option<TinyAsciiStr<4>>,
     pub time_variant: Option<TinyStr8>,
 }
 
