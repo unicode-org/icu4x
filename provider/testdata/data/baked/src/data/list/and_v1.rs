@@ -25,98 +25,74 @@ pub static VALUES: Data<::icu_list::provider::AndListV1Marker> = &[
 static AR_AR_EG: DataStruct<::icu_list::provider::AndListV1Marker> =
     &::icu_list::provider::ListFormatterPatternsV1([
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(" و"),
-                index_0: 0u8,
-                index_1: 3u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" و", 0u8, 3u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(" و"),
-                index_0: 0u8,
-                index_1: 3u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" و", 0u8, 3u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(" و"),
-                index_0: 0u8,
-                index_1: 3u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" و", 0u8, 3u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(" و"),
-                index_0: 0u8,
-                index_1: 3u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" و", 0u8, 3u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(" و"),
-                index_0: 0u8,
-                index_1: 3u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" و", 0u8, 3u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(" و"),
-                index_0: 0u8,
-                index_1: 3u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" و", 0u8, 3u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(" و"),
-                index_0: 0u8,
-                index_1: 3u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" و", 0u8, 3u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(" و"),
-                index_0: 0u8,
-                index_1: 3u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" و", 0u8, 3u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(" و"),
-                index_0: 0u8,
-                index_1: 3u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" و", 0u8, 3u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(" و"),
-                index_0: 0u8,
-                index_1: 3u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" و", 0u8, 3u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(" و"),
-                index_0: 0u8,
-                index_1: 3u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" و", 0u8, 3u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(" و"),
-                index_0: 0u8,
-                index_1: 3u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" و", 0u8, 3u8)
             },
             special_case: None,
         },
@@ -124,98 +100,74 @@ static AR_AR_EG: DataStruct<::icu_list::provider::AndListV1Marker> =
 static BN: DataStruct<::icu_list::provider::AndListV1Marker> =
     &::icu_list::provider::ListFormatterPatternsV1([
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(", "),
-                index_0: 0u8,
-                index_1: 2u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 0u8, 2u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(", "),
-                index_0: 0u8,
-                index_1: 2u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 0u8, 2u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(" এবং "),
-                index_0: 0u8,
-                index_1: 11u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" এবং ", 0u8, 11u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(" এবং "),
-                index_0: 0u8,
-                index_1: 11u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" এবং ", 0u8, 11u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(", "),
-                index_0: 0u8,
-                index_1: 2u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 0u8, 2u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(", "),
-                index_0: 0u8,
-                index_1: 2u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 0u8, 2u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(" এবং "),
-                index_0: 0u8,
-                index_1: 11u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" এবং ", 0u8, 11u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(" এবং "),
-                index_0: 0u8,
-                index_1: 11u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" এবং ", 0u8, 11u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(", "),
-                index_0: 0u8,
-                index_1: 2u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 0u8, 2u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(", "),
-                index_0: 0u8,
-                index_1: 2u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 0u8, 2u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(", "),
-                index_0: 0u8,
-                index_1: 2u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 0u8, 2u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(", "),
-                index_0: 0u8,
-                index_1: 2u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 0u8, 2u8)
             },
             special_case: None,
         },
@@ -223,98 +175,98 @@ static BN: DataStruct<::icu_list::provider::AndListV1Marker> =
 static CCP: DataStruct<::icu_list::provider::AndListV1Marker> =
     &::icu_list::provider::ListFormatterPatternsV1([
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(", "),
-                index_0: 0u8,
-                index_1: 2u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 0u8, 2u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(", "),
-                index_0: 0u8,
-                index_1: 2u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 0u8, 2u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(" 𑄃\u{11133}𑄃 "),
-                index_0: 0u8,
-                index_1: 14u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(
+                    " 𑄃\u{11133}𑄃 ",
+                    0u8,
+                    14u8,
+                )
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(" 𑄃\u{11133}𑄃 "),
-                index_0: 0u8,
-                index_1: 14u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(
+                    " 𑄃\u{11133}𑄃 ",
+                    0u8,
+                    14u8,
+                )
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(", "),
-                index_0: 0u8,
-                index_1: 2u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 0u8, 2u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(", "),
-                index_0: 0u8,
-                index_1: 2u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 0u8, 2u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(" 𑄃\u{11133}𑄃 "),
-                index_0: 0u8,
-                index_1: 14u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(
+                    " 𑄃\u{11133}𑄃 ",
+                    0u8,
+                    14u8,
+                )
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(" 𑄃\u{11133}𑄃 "),
-                index_0: 0u8,
-                index_1: 14u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(
+                    " 𑄃\u{11133}𑄃 ",
+                    0u8,
+                    14u8,
+                )
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(", "),
-                index_0: 0u8,
-                index_1: 2u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 0u8, 2u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(", "),
-                index_0: 0u8,
-                index_1: 2u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 0u8, 2u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(" 𑄃\u{11133}𑄃 "),
-                index_0: 0u8,
-                index_1: 14u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(
+                    " 𑄃\u{11133}𑄃 ",
+                    0u8,
+                    14u8,
+                )
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(" 𑄃\u{11133}𑄃 "),
-                index_0: 0u8,
-                index_1: 14u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(
+                    " 𑄃\u{11133}𑄃 ",
+                    0u8,
+                    14u8,
+                )
             },
             special_case: None,
         },
@@ -322,98 +274,74 @@ static CCP: DataStruct<::icu_list::provider::AndListV1Marker> =
 static EN: DataStruct<::icu_list::provider::AndListV1Marker> =
     &::icu_list::provider::ListFormatterPatternsV1([
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(", "),
-                index_0: 0u8,
-                index_1: 2u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 0u8, 2u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(", "),
-                index_0: 0u8,
-                index_1: 2u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 0u8, 2u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(", and "),
-                index_0: 0u8,
-                index_1: 6u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", and ", 0u8, 6u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(" and "),
-                index_0: 0u8,
-                index_1: 5u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" and ", 0u8, 5u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(", "),
-                index_0: 0u8,
-                index_1: 2u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 0u8, 2u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(", "),
-                index_0: 0u8,
-                index_1: 2u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 0u8, 2u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(", & "),
-                index_0: 0u8,
-                index_1: 4u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", & ", 0u8, 4u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(" & "),
-                index_0: 0u8,
-                index_1: 3u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" & ", 0u8, 3u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(", "),
-                index_0: 0u8,
-                index_1: 2u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 0u8, 2u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(", "),
-                index_0: 0u8,
-                index_1: 2u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 0u8, 2u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(", "),
-                index_0: 0u8,
-                index_1: 2u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 0u8, 2u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(", "),
-                index_0: 0u8,
-                index_1: 2u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 0u8, 2u8)
             },
             special_case: None,
         },
@@ -421,98 +349,74 @@ static EN: DataStruct<::icu_list::provider::AndListV1Marker> =
 static EN_001_EN_ZA: DataStruct<::icu_list::provider::AndListV1Marker> =
     &::icu_list::provider::ListFormatterPatternsV1([
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(", "),
-                index_0: 0u8,
-                index_1: 2u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 0u8, 2u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(", "),
-                index_0: 0u8,
-                index_1: 2u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 0u8, 2u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(" and "),
-                index_0: 0u8,
-                index_1: 5u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" and ", 0u8, 5u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(" and "),
-                index_0: 0u8,
-                index_1: 5u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" and ", 0u8, 5u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(", "),
-                index_0: 0u8,
-                index_1: 2u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 0u8, 2u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(", "),
-                index_0: 0u8,
-                index_1: 2u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 0u8, 2u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(" and "),
-                index_0: 0u8,
-                index_1: 5u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" and ", 0u8, 5u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(" and "),
-                index_0: 0u8,
-                index_1: 5u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" and ", 0u8, 5u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(", "),
-                index_0: 0u8,
-                index_1: 2u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 0u8, 2u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(", "),
-                index_0: 0u8,
-                index_1: 2u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 0u8, 2u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(", "),
-                index_0: 0u8,
-                index_1: 2u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 0u8, 2u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(", "),
-                index_0: 0u8,
-                index_1: 2u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 0u8, 2u8)
             },
             special_case: None,
         },
@@ -520,26 +424,20 @@ static EN_001_EN_ZA: DataStruct<::icu_list::provider::AndListV1Marker> =
 static ES_ES_AR: DataStruct<::icu_list::provider::AndListV1Marker> =
     &::icu_list::provider::ListFormatterPatternsV1([
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(", "),
-                index_0: 0u8,
-                index_1: 2u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 0u8, 2u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(", "),
-                index_0: 0u8,
-                index_1: 2u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 0u8, 2u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(" y "),
-                index_0: 0u8,
-                index_1: 3u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" y ", 0u8, 3u8)
             },
             special_case: Some(::icu_list::provider::SpecialCasePattern {
                 condition: unsafe {
@@ -596,18 +494,14 @@ static ES_ES_AR: DataStruct<::icu_list::provider::AndListV1Marker> =
                         35u8, 0u8, 0u8, 0u8,
                     ])
                 },
-                pattern: ::icu_list::provider::ListJoinerPattern {
-                    string: ::alloc::borrow::Cow::Borrowed(" e "),
-                    index_0: 0u8,
-                    index_1: 3u8,
+                pattern: unsafe {
+                    ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" e ", 0u8, 3u8)
                 },
             }),
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(" y "),
-                index_0: 0u8,
-                index_1: 3u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" y ", 0u8, 3u8)
             },
             special_case: Some(::icu_list::provider::SpecialCasePattern {
                 condition: unsafe {
@@ -664,34 +558,26 @@ static ES_ES_AR: DataStruct<::icu_list::provider::AndListV1Marker> =
                         35u8, 0u8, 0u8, 0u8,
                     ])
                 },
-                pattern: ::icu_list::provider::ListJoinerPattern {
-                    string: ::alloc::borrow::Cow::Borrowed(" e "),
-                    index_0: 0u8,
-                    index_1: 3u8,
+                pattern: unsafe {
+                    ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" e ", 0u8, 3u8)
                 },
             }),
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(", "),
-                index_0: 0u8,
-                index_1: 2u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 0u8, 2u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(", "),
-                index_0: 0u8,
-                index_1: 2u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 0u8, 2u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(" y "),
-                index_0: 0u8,
-                index_1: 3u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" y ", 0u8, 3u8)
             },
             special_case: Some(::icu_list::provider::SpecialCasePattern {
                 condition: unsafe {
@@ -748,18 +634,14 @@ static ES_ES_AR: DataStruct<::icu_list::provider::AndListV1Marker> =
                         35u8, 0u8, 0u8, 0u8,
                     ])
                 },
-                pattern: ::icu_list::provider::ListJoinerPattern {
-                    string: ::alloc::borrow::Cow::Borrowed(" e "),
-                    index_0: 0u8,
-                    index_1: 3u8,
+                pattern: unsafe {
+                    ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" e ", 0u8, 3u8)
                 },
             }),
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(" y "),
-                index_0: 0u8,
-                index_1: 3u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" y ", 0u8, 3u8)
             },
             special_case: Some(::icu_list::provider::SpecialCasePattern {
                 condition: unsafe {
@@ -816,34 +698,26 @@ static ES_ES_AR: DataStruct<::icu_list::provider::AndListV1Marker> =
                         35u8, 0u8, 0u8, 0u8,
                     ])
                 },
-                pattern: ::icu_list::provider::ListJoinerPattern {
-                    string: ::alloc::borrow::Cow::Borrowed(" e "),
-                    index_0: 0u8,
-                    index_1: 3u8,
+                pattern: unsafe {
+                    ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" e ", 0u8, 3u8)
                 },
             }),
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(", "),
-                index_0: 0u8,
-                index_1: 2u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 0u8, 2u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(", "),
-                index_0: 0u8,
-                index_1: 2u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 0u8, 2u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(" y "),
-                index_0: 0u8,
-                index_1: 3u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" y ", 0u8, 3u8)
             },
             special_case: Some(::icu_list::provider::SpecialCasePattern {
                 condition: unsafe {
@@ -900,18 +774,14 @@ static ES_ES_AR: DataStruct<::icu_list::provider::AndListV1Marker> =
                         35u8, 0u8, 0u8, 0u8,
                     ])
                 },
-                pattern: ::icu_list::provider::ListJoinerPattern {
-                    string: ::alloc::borrow::Cow::Borrowed(" e "),
-                    index_0: 0u8,
-                    index_1: 3u8,
+                pattern: unsafe {
+                    ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" e ", 0u8, 3u8)
                 },
             }),
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(" y "),
-                index_0: 0u8,
-                index_1: 3u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" y ", 0u8, 3u8)
             },
             special_case: Some(::icu_list::provider::SpecialCasePattern {
                 condition: unsafe {
@@ -968,10 +838,8 @@ static ES_ES_AR: DataStruct<::icu_list::provider::AndListV1Marker> =
                         35u8, 0u8, 0u8, 0u8,
                     ])
                 },
-                pattern: ::icu_list::provider::ListJoinerPattern {
-                    string: ::alloc::borrow::Cow::Borrowed(" e "),
-                    index_0: 0u8,
-                    index_1: 3u8,
+                pattern: unsafe {
+                    ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" e ", 0u8, 3u8)
                 },
             }),
         },
@@ -979,98 +847,74 @@ static ES_ES_AR: DataStruct<::icu_list::provider::AndListV1Marker> =
 static FIL: DataStruct<::icu_list::provider::AndListV1Marker> =
     &::icu_list::provider::ListFormatterPatternsV1([
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(", "),
-                index_0: 0u8,
-                index_1: 2u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 0u8, 2u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(", "),
-                index_0: 0u8,
-                index_1: 2u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 0u8, 2u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(", at "),
-                index_0: 0u8,
-                index_1: 5u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", at ", 0u8, 5u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(" at "),
-                index_0: 0u8,
-                index_1: 4u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" at ", 0u8, 4u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(", "),
-                index_0: 0u8,
-                index_1: 2u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 0u8, 2u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(", "),
-                index_0: 0u8,
-                index_1: 2u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 0u8, 2u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(", at "),
-                index_0: 0u8,
-                index_1: 5u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", at ", 0u8, 5u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(" at "),
-                index_0: 0u8,
-                index_1: 4u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" at ", 0u8, 4u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(", "),
-                index_0: 0u8,
-                index_1: 2u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 0u8, 2u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(", "),
-                index_0: 0u8,
-                index_1: 2u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 0u8, 2u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(", "),
-                index_0: 0u8,
-                index_1: 2u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 0u8, 2u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(", "),
-                index_0: 0u8,
-                index_1: 2u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 0u8, 2u8)
             },
             special_case: None,
         },
@@ -1078,98 +922,74 @@ static FIL: DataStruct<::icu_list::provider::AndListV1Marker> =
 static FR: DataStruct<::icu_list::provider::AndListV1Marker> =
     &::icu_list::provider::ListFormatterPatternsV1([
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(", "),
-                index_0: 0u8,
-                index_1: 2u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 0u8, 2u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(", "),
-                index_0: 0u8,
-                index_1: 2u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 0u8, 2u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(" et "),
-                index_0: 0u8,
-                index_1: 4u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" et ", 0u8, 4u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(" et "),
-                index_0: 0u8,
-                index_1: 4u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" et ", 0u8, 4u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(", "),
-                index_0: 0u8,
-                index_1: 2u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 0u8, 2u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(", "),
-                index_0: 0u8,
-                index_1: 2u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 0u8, 2u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(" et "),
-                index_0: 0u8,
-                index_1: 4u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" et ", 0u8, 4u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(" et "),
-                index_0: 0u8,
-                index_1: 4u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" et ", 0u8, 4u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(", "),
-                index_0: 0u8,
-                index_1: 2u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 0u8, 2u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(", "),
-                index_0: 0u8,
-                index_1: 2u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 0u8, 2u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(", "),
-                index_0: 0u8,
-                index_1: 2u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 0u8, 2u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(", "),
-                index_0: 0u8,
-                index_1: 2u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 0u8, 2u8)
             },
             special_case: None,
         },
@@ -1177,98 +997,74 @@ static FR: DataStruct<::icu_list::provider::AndListV1Marker> =
 static JA: DataStruct<::icu_list::provider::AndListV1Marker> =
     &::icu_list::provider::ListFormatterPatternsV1([
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed("、"),
-                index_0: 0u8,
-                index_1: 3u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked("、", 0u8, 3u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed("、"),
-                index_0: 0u8,
-                index_1: 3u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked("、", 0u8, 3u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed("、"),
-                index_0: 0u8,
-                index_1: 3u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked("、", 0u8, 3u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed("、"),
-                index_0: 0u8,
-                index_1: 3u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked("、", 0u8, 3u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed("、"),
-                index_0: 0u8,
-                index_1: 3u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked("、", 0u8, 3u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed("、"),
-                index_0: 0u8,
-                index_1: 3u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked("、", 0u8, 3u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed("、"),
-                index_0: 0u8,
-                index_1: 3u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked("、", 0u8, 3u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed("、"),
-                index_0: 0u8,
-                index_1: 3u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked("、", 0u8, 3u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed("、"),
-                index_0: 0u8,
-                index_1: 3u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked("、", 0u8, 3u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed("、"),
-                index_0: 0u8,
-                index_1: 3u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked("、", 0u8, 3u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed("、"),
-                index_0: 0u8,
-                index_1: 3u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked("、", 0u8, 3u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed("、"),
-                index_0: 0u8,
-                index_1: 3u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked("、", 0u8, 3u8)
             },
             special_case: None,
         },
@@ -1276,98 +1072,74 @@ static JA: DataStruct<::icu_list::provider::AndListV1Marker> =
 static RU: DataStruct<::icu_list::provider::AndListV1Marker> =
     &::icu_list::provider::ListFormatterPatternsV1([
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(", "),
-                index_0: 0u8,
-                index_1: 2u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 0u8, 2u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(", "),
-                index_0: 0u8,
-                index_1: 2u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 0u8, 2u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(" и "),
-                index_0: 0u8,
-                index_1: 4u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" и ", 0u8, 4u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(" и "),
-                index_0: 0u8,
-                index_1: 4u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" и ", 0u8, 4u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(", "),
-                index_0: 0u8,
-                index_1: 2u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 0u8, 2u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(", "),
-                index_0: 0u8,
-                index_1: 2u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 0u8, 2u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(" и "),
-                index_0: 0u8,
-                index_1: 4u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" и ", 0u8, 4u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(" и "),
-                index_0: 0u8,
-                index_1: 4u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" и ", 0u8, 4u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(", "),
-                index_0: 0u8,
-                index_1: 2u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 0u8, 2u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(", "),
-                index_0: 0u8,
-                index_1: 2u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 0u8, 2u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(", "),
-                index_0: 0u8,
-                index_1: 2u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 0u8, 2u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(", "),
-                index_0: 0u8,
-                index_1: 2u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 0u8, 2u8)
             },
             special_case: None,
         },
@@ -1375,98 +1147,74 @@ static RU: DataStruct<::icu_list::provider::AndListV1Marker> =
 static SR_LATN: DataStruct<::icu_list::provider::AndListV1Marker> =
     &::icu_list::provider::ListFormatterPatternsV1([
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(", "),
-                index_0: 0u8,
-                index_1: 2u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 0u8, 2u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(", "),
-                index_0: 0u8,
-                index_1: 2u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 0u8, 2u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(" i "),
-                index_0: 0u8,
-                index_1: 3u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" i ", 0u8, 3u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(" i "),
-                index_0: 0u8,
-                index_1: 3u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" i ", 0u8, 3u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(", "),
-                index_0: 0u8,
-                index_1: 2u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 0u8, 2u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(", "),
-                index_0: 0u8,
-                index_1: 2u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 0u8, 2u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(" i "),
-                index_0: 0u8,
-                index_1: 3u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" i ", 0u8, 3u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(" i "),
-                index_0: 0u8,
-                index_1: 3u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" i ", 0u8, 3u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(", "),
-                index_0: 0u8,
-                index_1: 2u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 0u8, 2u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(", "),
-                index_0: 0u8,
-                index_1: 2u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 0u8, 2u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(" i "),
-                index_0: 0u8,
-                index_1: 3u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" i ", 0u8, 3u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(" i "),
-                index_0: 0u8,
-                index_1: 3u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" i ", 0u8, 3u8)
             },
             special_case: None,
         },
@@ -1474,98 +1222,74 @@ static SR_LATN: DataStruct<::icu_list::provider::AndListV1Marker> =
 static SR_SR_CYRL: DataStruct<::icu_list::provider::AndListV1Marker> =
     &::icu_list::provider::ListFormatterPatternsV1([
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(", "),
-                index_0: 0u8,
-                index_1: 2u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 0u8, 2u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(", "),
-                index_0: 0u8,
-                index_1: 2u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 0u8, 2u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(" и "),
-                index_0: 0u8,
-                index_1: 4u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" и ", 0u8, 4u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(" и "),
-                index_0: 0u8,
-                index_1: 4u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" и ", 0u8, 4u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(", "),
-                index_0: 0u8,
-                index_1: 2u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 0u8, 2u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(", "),
-                index_0: 0u8,
-                index_1: 2u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 0u8, 2u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(" и "),
-                index_0: 0u8,
-                index_1: 4u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" и ", 0u8, 4u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(" и "),
-                index_0: 0u8,
-                index_1: 4u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" и ", 0u8, 4u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(", "),
-                index_0: 0u8,
-                index_1: 2u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 0u8, 2u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(", "),
-                index_0: 0u8,
-                index_1: 2u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 0u8, 2u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(" и "),
-                index_0: 0u8,
-                index_1: 4u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" и ", 0u8, 4u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(" и "),
-                index_0: 0u8,
-                index_1: 4u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" и ", 0u8, 4u8)
             },
             special_case: None,
         },
@@ -1573,98 +1297,74 @@ static SR_SR_CYRL: DataStruct<::icu_list::provider::AndListV1Marker> =
 static TH: DataStruct<::icu_list::provider::AndListV1Marker> =
     &::icu_list::provider::ListFormatterPatternsV1([
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(" "),
-                index_0: 0u8,
-                index_1: 1u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" ", 0u8, 1u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(" "),
-                index_0: 0u8,
-                index_1: 1u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" ", 0u8, 1u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(" และ"),
-                index_0: 0u8,
-                index_1: 10u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" และ", 0u8, 10u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed("และ"),
-                index_0: 0u8,
-                index_1: 9u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked("และ", 0u8, 9u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(" "),
-                index_0: 0u8,
-                index_1: 1u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" ", 0u8, 1u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(" "),
-                index_0: 0u8,
-                index_1: 1u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" ", 0u8, 1u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(" และ"),
-                index_0: 0u8,
-                index_1: 10u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" และ", 0u8, 10u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed("และ"),
-                index_0: 0u8,
-                index_1: 9u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked("และ", 0u8, 9u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(" "),
-                index_0: 0u8,
-                index_1: 1u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" ", 0u8, 1u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(" "),
-                index_0: 0u8,
-                index_1: 1u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" ", 0u8, 1u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(" และ"),
-                index_0: 0u8,
-                index_1: 10u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" และ", 0u8, 10u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed("และ"),
-                index_0: 0u8,
-                index_1: 9u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked("และ", 0u8, 9u8)
             },
             special_case: None,
         },
@@ -1672,98 +1372,74 @@ static TH: DataStruct<::icu_list::provider::AndListV1Marker> =
 static TR: DataStruct<::icu_list::provider::AndListV1Marker> =
     &::icu_list::provider::ListFormatterPatternsV1([
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(", "),
-                index_0: 0u8,
-                index_1: 2u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 0u8, 2u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(", "),
-                index_0: 0u8,
-                index_1: 2u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 0u8, 2u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(" ve "),
-                index_0: 0u8,
-                index_1: 4u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" ve ", 0u8, 4u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(" ve "),
-                index_0: 0u8,
-                index_1: 4u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" ve ", 0u8, 4u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(", "),
-                index_0: 0u8,
-                index_1: 2u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 0u8, 2u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(", "),
-                index_0: 0u8,
-                index_1: 2u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 0u8, 2u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(" ve "),
-                index_0: 0u8,
-                index_1: 4u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" ve ", 0u8, 4u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(" ve "),
-                index_0: 0u8,
-                index_1: 4u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" ve ", 0u8, 4u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(", "),
-                index_0: 0u8,
-                index_1: 2u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 0u8, 2u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(", "),
-                index_0: 0u8,
-                index_1: 2u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 0u8, 2u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(", "),
-                index_0: 0u8,
-                index_1: 2u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 0u8, 2u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(", "),
-                index_0: 0u8,
-                index_1: 2u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 0u8, 2u8)
             },
             special_case: None,
         },
@@ -1771,98 +1447,74 @@ static TR: DataStruct<::icu_list::provider::AndListV1Marker> =
 static UND: DataStruct<::icu_list::provider::AndListV1Marker> =
     &::icu_list::provider::ListFormatterPatternsV1([
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(", "),
-                index_0: 0u8,
-                index_1: 2u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 0u8, 2u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(", "),
-                index_0: 0u8,
-                index_1: 2u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 0u8, 2u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(", "),
-                index_0: 0u8,
-                index_1: 2u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 0u8, 2u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(", "),
-                index_0: 0u8,
-                index_1: 2u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 0u8, 2u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(", "),
-                index_0: 0u8,
-                index_1: 2u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 0u8, 2u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(", "),
-                index_0: 0u8,
-                index_1: 2u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 0u8, 2u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(", "),
-                index_0: 0u8,
-                index_1: 2u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 0u8, 2u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(", "),
-                index_0: 0u8,
-                index_1: 2u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 0u8, 2u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(", "),
-                index_0: 0u8,
-                index_1: 2u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 0u8, 2u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(", "),
-                index_0: 0u8,
-                index_1: 2u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 0u8, 2u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(", "),
-                index_0: 0u8,
-                index_1: 2u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 0u8, 2u8)
             },
             special_case: None,
         },
         ::icu_list::provider::ConditionalListJoinerPattern {
-            default: ::icu_list::provider::ListJoinerPattern {
-                string: ::alloc::borrow::Cow::Borrowed(", "),
-                index_0: 0u8,
-                index_1: 2u8,
+            default: unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 0u8, 2u8)
             },
             special_case: None,
         },

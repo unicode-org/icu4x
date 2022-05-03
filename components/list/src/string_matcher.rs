@@ -9,8 +9,8 @@ use icu_provider::{yoke, zerofrom};
 use regex_automata::dfa::sparse::DFA;
 use regex_automata::dfa::Automaton;
 
+/// A precompiled regex
 #[derive(Clone, Debug, yoke::Yokeable, zerofrom::ZeroFrom)]
-#[doc(hidden)]
 #[allow(clippy::exhaustive_structs)] // not a public API
 pub struct StringMatcher<'data> {
     // Safety: These always represent a valid DFA (DFA::from_bytes(dfa_bytes).is_ok())
@@ -29,6 +29,7 @@ impl crabbake::Bakeable for StringMatcher<'_> {
     fn bake(&self, ctx: &crabbake::CrateEnv) -> crabbake::TokenStream {
         ctx.insert("icu_list");
         let bytes = (&*self.dfa_bytes).bake(ctx);
+        // Safe because our own data is safe
         crabbake::quote! {
             unsafe { ::icu_list::provider::StringMatcher::from_dfa_bytes_unchecked(#bytes) }
         }
@@ -97,7 +98,10 @@ impl<'de: 'data, 'data> serde::Deserialize<'de> for StringMatcher<'data> {
 }
 
 impl<'data> StringMatcher<'data> {
+    /// Creates a `StringMatcher` from a serialized DFA. Used internally by Crabbake.
+    ///
     /// # Safety
+    ///
     /// `dfa_bytes` has to be a valid DFA (regex_automata::dfa::sparse::DFA::from_bytes(dfa_bytes).is_ok())
     pub const unsafe fn from_dfa_bytes_unchecked(dfa_bytes: &'data [u8]) -> Self {
         Self {
@@ -106,6 +110,7 @@ impl<'data> StringMatcher<'data> {
         }
     }
 
+    /// Creates a `StringMatcher` from regex.
     #[cfg(any(feature = "datagen", feature = "serde_human",))]
     pub fn new(pattern: &str) -> Result<Self, icu_provider::DataError> {
         use regex_automata::{
@@ -133,7 +138,7 @@ impl<'data> StringMatcher<'data> {
         })
     }
 
-    pub fn test(&self, string: &str) -> bool {
+    pub(crate) fn test(&self, string: &str) -> bool {
         cfg!(target_endian = "little")
             && matches!(
                 // Safe due to struct invariant.
