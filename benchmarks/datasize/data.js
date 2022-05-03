@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1651567815167,
+  "lastUpdate": 1651568401462,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -14213,6 +14213,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/45d6792948644b5b9c99da10c0e1e1400f99f667"
         },
         "date": 1651567791835,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4507203,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "andrewpkq@gmail.com",
+            "name": "andrewpollack",
+            "username": "andrewpollack"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "44140782e416514d6b16394850faf148278421ab",
+          "message": "Adding Date, DateTime, Calendar examples to components/calendar/src/lib.rs (#1841)\n\n* Initial changes\r\n\r\n* Adding high level Date, DateTime examples to lib.rs file",
+          "timestamp": "2022-05-03T08:58:08Z",
+          "tree_id": "c59ff0461058dec9b46570aeef07e46efa48cc5c",
+          "url": "https://github.com/unicode-org/icu4x/commit/44140782e416514d6b16394850faf148278421ab"
+        },
+        "date": 1651568380698,
         "tool": "ndjson",
         "benches": [
           {
