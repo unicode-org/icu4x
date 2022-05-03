@@ -2,7 +2,31 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! This module contains types and implementations for the ISO calendar
+//! This module contains types and implementations for the ISO calendar.
+//!
+//! ```rust
+//! use icu::calendar::{Date, DateTime,
+//!                     types::IsoHour, types::IsoMinute, types::IsoSecond};
+//!
+//! // `Date` type
+//! let date_iso = Date::new_iso_date_from_integers(1970, 1, 2).unwrap();
+//!
+//! // `DateTime` type
+//! let datetime_iso = DateTime::new_iso_datetime_from_integers(1970, 1, 2, 13, 1, 0).unwrap();
+//!
+//! // `Date` checks
+//! assert_eq!(date_iso.year().number, 1970);
+//! assert_eq!(date_iso.month().number, 1);
+//! assert_eq!(date_iso.day_of_month().0, 2);
+//!
+//! // `DateTime` type
+//! assert_eq!(datetime_iso.date.year().number, 1970);
+//! assert_eq!(datetime_iso.date.month().number, 1);
+//! assert_eq!(datetime_iso.date.day_of_month().0, 2);
+//! assert_eq!(datetime_iso.time.hour, IsoHour::new_unchecked(13));
+//! assert_eq!(datetime_iso.time.minute, IsoMinute::new_unchecked(1));
+//! assert_eq!(datetime_iso.time.second, IsoSecond::new_unchecked(0));
+//! ```
 
 use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, DateTime, DateTimeError};
 use core::convert::{TryFrom, TryInto};

@@ -2,7 +2,34 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! This module contains types and implementations for the Ethiopic calendar
+//! This module contains types and implementations for the Ethiopic calendar.
+//!
+//! ```rust
+//! use icu::calendar::{Date, DateTime,
+//!                     types::IsoHour, types::IsoMinute, types::IsoSecond,
+//!                     ethiopic::Ethiopic};
+//!
+//! // `Date` type
+//! let date_iso = Date::new_iso_date_from_integers(1970, 1, 2).unwrap();
+//! let date_ethiopic = Date::new_from_iso(date_iso, Ethiopic);
+//!
+//! // `DateTime` type
+//! let datetime_iso = DateTime::new_iso_datetime_from_integers(1970, 1, 2, 13, 1, 0).unwrap();
+//! let datetime_ethiopic = DateTime::new_from_iso(datetime_iso, Ethiopic);
+//!
+//! // `Date` checks
+//! assert_eq!(date_ethiopic.year().number, 1962);
+//! assert_eq!(date_ethiopic.month().number, 4);
+//! assert_eq!(date_ethiopic.day_of_month().0, 24);
+//!
+//! // `DateTime` type
+//! assert_eq!(datetime_ethiopic.date.year().number, 1962);
+//! assert_eq!(datetime_ethiopic.date.month().number, 4);
+//! assert_eq!(datetime_ethiopic.date.day_of_month().0, 24);
+//! assert_eq!(datetime_ethiopic.time.hour, IsoHour::new_unchecked(13));
+//! assert_eq!(datetime_ethiopic.time.minute, IsoMinute::new_unchecked(1));
+//! assert_eq!(datetime_ethiopic.time.second, IsoSecond::new_unchecked(0));
+//! ```
 
 use crate::coptic::Coptic;
 use crate::iso::{Iso, IsoYear};

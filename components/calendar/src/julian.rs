@@ -2,7 +2,34 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! This module contains types and implementations for the Julian calendar
+//! This module contains types and implementations for the Julian calendar.
+//!
+//! ```rust
+//! use icu::calendar::{Date, DateTime,
+//!                     types::IsoHour, types::IsoMinute, types::IsoSecond,
+//!                     julian::Julian};
+//!
+//! // `Date` type
+//! let date_iso = Date::new_iso_date_from_integers(1970, 1, 2).unwrap();
+//! let date_julian = Date::new_from_iso(date_iso, Julian);
+//!
+//! // `DateTime` type
+//! let datetime_iso = DateTime::new_iso_datetime_from_integers(1970, 1, 2, 13, 1, 0).unwrap();
+//! let datetime_julian = DateTime::new_from_iso(datetime_iso, Julian);
+//!
+//! // `Date` checks
+//! assert_eq!(date_julian.year().number, 1969);
+//! assert_eq!(date_julian.month().number, 12);
+//! assert_eq!(date_julian.day_of_month().0, 20);
+//!
+//! // `DateTime` type
+//! assert_eq!(datetime_julian.date.year().number, 1969);
+//! assert_eq!(datetime_julian.date.month().number, 12);
+//! assert_eq!(datetime_julian.date.day_of_month().0, 20);
+//! assert_eq!(datetime_julian.time.hour, IsoHour::new_unchecked(13));
+//! assert_eq!(datetime_julian.time.minute, IsoMinute::new_unchecked(1));
+//! assert_eq!(datetime_julian.time.second, IsoSecond::new_unchecked(0));
+//! ```
 
 use crate::iso::{Iso, IsoYear};
 use crate::{
