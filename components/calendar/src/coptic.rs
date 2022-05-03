@@ -19,7 +19,6 @@ use tinystr::tinystr;
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct Coptic;
 
-
 #[derive(Copy, Clone, Debug, Hash, Eq, PartialEq)]
 pub struct CopticDateInner(pub(crate) ArithmeticDate<Coptic>);
 
