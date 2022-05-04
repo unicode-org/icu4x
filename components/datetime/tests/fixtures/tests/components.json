@@ -26,5 +26,23 @@
                 "indian/en": "Tuesday, Chaitra 21, 1942 Saka at 08:25:07"
             }
         }
+    },
+    {
+        "input": {
+            "value": "2022-05-03T14:15:07.123",
+            "options": {
+                "components": {
+                    "hour": "numeric",
+                    "minute": "numeric",
+                    "second": "two-digit",
+                    "fractional_second": 8
+                }
+            }
+        },
+        "output": {
+            "values": {
+                "en": "14:15:07.12300000"
+            }
+        }
     }
 ]
