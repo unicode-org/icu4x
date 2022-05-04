@@ -3170,7 +3170,6 @@ name = "yoke"
 version = "0.5.0"
 dependencies = [
  "bincode",
- "crabbake",
  "serde",
  "stable_deref_trait",
  "yoke-derive",

@@ -133,15 +133,15 @@ pub struct SpecialCasePattern<'data> {
 #[cfg_attr(feature = "datagen", derive(serde::Serialize))]
 pub struct ListJoinerPattern<'data> {
     /// The pattern string without the placeholders
-    pub string: Cow<'data, str>,
+    string: Cow<'data, str>,
     /// The index of the first placeholder.
     // Always 0 for CLDR data, so we don't need to serialize it.
     // In-memory we have free space for it as index_1 doesn't
     // fill a word.
     #[cfg_attr(feature = "datagen", serde(skip))]
-    pub index_0: u8,
+    index_0: u8,
     /// The index of the second placeholder
-    pub index_1: u8,
+    index_1: u8,
 }
 
 #[cfg(feature = "serde")]
@@ -172,14 +172,14 @@ impl<'de: 'data, 'data> serde::Deserialize<'de> for ListJoinerPattern<'data> {
 }
 
 impl<'a> ListJoinerPattern<'a> {
-    /// Constructs a [`ListJoinerPattern`] from raw parts.
+    /// Constructs a [`ListJoinerPattern`] from raw parts. Used by crabbake.
     ///
     /// # Safety
-    /// index_0 <= index_1 <= string.len()
-    pub const unsafe fn from_parts_unchecked(string: &'a str, index_0: u8, index_1: u8) -> Self {
+    /// index_1 may be at most string.len()
+    pub const unsafe fn from_parts_unchecked(string: &'a str, index_1: u8) -> Self {
         Self {
             string: Cow::Borrowed(string),
-            index_0,
+            index_0: 0,
             index_1,
         }
     }
@@ -329,11 +329,10 @@ mod datagen {
     impl crabbake::Bakeable for ListJoinerPattern<'_> {
         fn bake(&self, env: &crabbake::CrateEnv) -> crabbake::TokenStream {
             let string = (&*self.string).bake(env);
-            let index_0 = self.index_0.bake(env);
             let index_1 = self.index_1.bake(env);
             // Safe because our own data is safe
             crabbake::quote! { unsafe {
-                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(#string, #index_0, #index_1)
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(#string, #index_1)
             }}
         }
     }
