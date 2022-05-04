@@ -8,23 +8,23 @@ use crate::yoke::*;
 use alloc::boxed::Box;
 use crabbake::{Bakeable, CrateEnv, TokenStream};
 
-trait MyBakeable {
-    fn bake(&self, env: &CrateEnv) -> TokenStream;
+trait BakeableYoke {
+    fn bake_yoke(&self, env: &CrateEnv) -> TokenStream;
 }
 
-impl<Y, C> MyBakeable for Yoke<Y, C>
+impl<Y, C> BakeableYoke for Yoke<Y, C>
 where
     Y: for<'a> Yokeable<'a>,
     for<'a> <Y as Yokeable<'a>>::Output: Bakeable,
 {
-    fn bake(&self, ctx: &CrateEnv) -> TokenStream {
+    fn bake_yoke(&self, ctx: &CrateEnv) -> TokenStream {
         self.get().bake(ctx)
     }
 }
 
 #[derive(yoke::Yokeable)]
 pub struct CrabbakeBox {
-    payload: Box<dyn MyBakeable>,
+    payload: Box<dyn BakeableYoke>,
     marker: Box<dyn Bakeable>,
 }
 
@@ -91,7 +91,10 @@ impl DataPayload<CrabbakeMarker> {
     /// );
     /// ```
     pub fn tokenize(&self, env: &CrateEnv) -> (TokenStream, TokenStream) {
-        (self.get().payload.bake(env), self.get().marker.bake(env))
+        (
+            self.get().payload.bake_yoke(env),
+            self.get().marker.bake(env),
+        )
     }
 }
 
