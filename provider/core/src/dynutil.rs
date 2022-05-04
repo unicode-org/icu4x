@@ -205,6 +205,22 @@ macro_rules! impl_dyn_provider {
             $crate::serde::SerializeMarker
         );
     };
+    ($provider:ty, { $($pat:pat $(if $guard:expr)? => $struct_m:ty),+, }, CRABBAKE) => {
+        // If this fails to compile, enable the "datagen" feature on this crate.
+        $crate::impl_dyn_provider!(
+            $provider,
+            { $($pat $(if $guard)? => $struct_m),+, },
+            $crate::datagen::CrabbakeMarker
+        );
+    };
+    ($provider:ty, [ $($struct_m:ty),+, ], CRABBAKE) => {
+        // If this fails to compile, enable the "datagen" feature on this crate.
+        $crate::impl_dyn_provider!(
+            $provider,
+            [ $($struct_m),+, ],
+            $crate::datagen::CrabbakeMarker
+        );
+    };
 
     // DataConverter stuff
     ($provider:ty, [ $($struct_m:ty),+, ], DATA_CONVERTER) => {
@@ -267,6 +283,38 @@ macro_rules! impl_dyn_provider {
     ($provider:ty, { $($pat:pat $(if $guard:expr)? => $struct_m:ty),+, }, ITERABLE_SERDE_SE) => {
 
         impl $crate::datagen::IterableDynProvider<$crate::serde::SerializeMarker> for $provider {
+            fn supported_options_for_key(&self, key: $crate::ResourceKey) -> Result<Box<dyn Iterator<Item = $crate::ResourceOptions> + '_>, $crate::DataError> {
+                match key {
+                    $(
+                        $pat $(if $guard)? => {
+                            $crate::datagen::IterableDynProvider::<$struct_m>::supported_options_for_key(self, key)
+                        }
+                    )+,
+                    _ => Err($crate::DataErrorKind::MissingResourceKey.with_key(key))
+                }
+            }
+        }
+    };
+
+    ($provider:ty, [ $($struct_m:ty),+, ], ITERABLE_CRABBAKE) => {
+
+         impl $crate::datagen::IterableDynProvider<$crate::datagen::CrabbakeMarker> for $provider
+         {
+             fn supported_options_for_key(&self, key: $crate::ResourceKey) -> Result<Box<dyn Iterator<Item = $crate::ResourceOptions> + '_>, $crate::DataError> {
+                 match key {
+                     $(
+                         <$struct_m as $crate::ResourceMarker>::KEY => {
+                             $crate::datagen::IterableResourceProvider::<$struct_m>::supported_options(self)
+                         }
+                     )+,
+                     _ => Err($crate::DataErrorKind::MissingResourceKey.with_key(key))
+                 }
+             }
+         }
+    };
+    ($provider:ty, { $($pat:pat $(if $guard:expr)? => $struct_m:ty),+, }, ITERABLE_CRABBAKE) => {
+
+        impl $crate::datagen::IterableDynProvider<$crate::datagen::CrabbakeMarker> for $provider {
             fn supported_options_for_key(&self, key: $crate::ResourceKey) -> Result<Box<dyn Iterator<Item = $crate::ResourceOptions> + '_>, $crate::DataError> {
                 match key {
                     $(

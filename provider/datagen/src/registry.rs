@@ -97,6 +97,7 @@ macro_rules! create_datagen_provider {
         icu_provider_adapters::make_forking_provider!(
             icu_provider_adapters::fork::by_key::ForkByKeyProvider,
             [
+                icu_provider::hello_world::HelloWorldProvider::new_with_placeholder_data(),
                 $(<$constructor>::from(__source)),+,
             ]
         )
@@ -165,7 +166,6 @@ macro_rules! create_datagen_provider {
             icu_provider_adapters::fork::by_key::ForkByKeyProvider,
             [
                 icu_provider::hello_world::HelloWorldProvider::new_with_placeholder_data(),
-
                 $(<$constructor>::from(__source)),+,
             ]
         )

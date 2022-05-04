@@ -89,6 +89,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "baked"
+version = "1.0.0"
+dependencies = [
+ "icu_list",
+ "icu_provider",
+]
+
+[[package]]
 name = "bare-metal"
 version = "0.2.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -402,11 +410,9 @@ name = "crabbake"
 version = "0.4.0"
 dependencies = [
  "crabbake-derive",
- "icu_provider",
  "proc-macro2",
  "quote",
  "syn",
- "tinystr 0.5.0",
 ]
 
 [[package]]
@@ -476,6 +482,10 @@ dependencies = [
  "cortex-m",
  "riscv",
 ]
+
+[[package]]
+name = "crlify"
+version = "1.0.0"
 
 [[package]]
 name = "crossbeam-channel"
@@ -1237,6 +1247,8 @@ version = "0.5.0"
 dependencies = [
  "cached-path",
  "clap",
+ "crabbake",
+ "crlify",
  "dhat 0.3.0",
  "displaydoc",
  "elsa",
@@ -1262,12 +1274,15 @@ dependencies = [
  "litemap",
  "log",
  "pathdiff",
+ "proc-macro2",
+ "quote",
  "rayon",
  "serde",
  "serde-aux",
  "serde_json",
  "sha2",
  "simple_logger",
+ "syn",
  "tinystr 0.5.0",
  "toml",
  "walkdir",
@@ -1335,6 +1350,7 @@ dependencies = [
 name = "icu_list"
 version = "0.5.0"
 dependencies = [
+ "crabbake",
  "criterion",
  "deduplicating_array",
  "displaydoc",
@@ -1428,6 +1444,7 @@ name = "icu_provider"
 version = "0.5.0"
 dependencies = [
  "bincode",
+ "crabbake",
  "dhat 0.3.0",
  "displaydoc",
  "erased-serde",
@@ -1479,6 +1496,7 @@ version = "0.5.0"
 dependencies = [
  "bincode",
  "criterion",
+ "crlify",
  "displaydoc",
  "erased-serde",
  "icu_benchmark_macros",
@@ -1535,6 +1553,7 @@ dependencies = [
 name = "icu_testdata"
 version = "0.5.0"
 dependencies = [
+ "baked",
  "cargo_metadata",
  "clap",
  "displaydoc",

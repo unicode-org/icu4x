@@ -8,6 +8,7 @@ use alloc::borrow::Cow;
 
 use crate::error::{DataError, DataErrorKind};
 use crate::helpers;
+use core::cmp::Ordering;
 use core::default::Default;
 use core::fmt;
 use core::fmt::Write;
@@ -104,7 +105,7 @@ unsafe impl EqULE for ResourceKeyHash {}
 /// # use icu_provider::prelude::ResourceKey;
 /// const K: ResourceKey = icu_provider::resource_key!("foo/../bar@1");
 /// ```
-#[derive(PartialEq, Eq, Copy, Clone)]
+#[derive(PartialEq, Eq, Copy, Clone, PartialOrd, Ord)]
 pub struct ResourceKey {
     // This string literal is wrapped in leading_tag!() and trailing_tag!() to make it detectable
     // in a compiled binary.
@@ -419,6 +420,17 @@ impl From<&Locale> for ResourceOptions {
         Self {
             langid: locale.id.clone(),
             keywords: locale.extensions.unicode.keywords.clone(),
+        }
+    }
+}
+
+impl ResourceOptions {
+    pub fn cmp_bytes(&self, other: &[u8]) -> Ordering {
+        if self.keywords.is_empty() {
+            self.langid.cmp_bytes(other)
+        } else {
+            // TODO: Avoid the allocation
+            self.write_to_string().as_bytes().cmp(other)
         }
     }
 }
