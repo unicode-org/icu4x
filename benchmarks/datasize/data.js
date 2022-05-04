@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1651592884329,
+  "lastUpdate": 1651669430854,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -14273,6 +14273,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/d4a02e706fdbbe15e021689404401b27b91701a4"
         },
         "date": 1651592865934,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4507203,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "7dc38085d9fda17eae4074dd5ed6713cfb7b0a86",
+          "message": "Move SerializedCodePointTrie to the library (#1850)",
+          "timestamp": "2022-05-04T06:01:43-07:00",
+          "tree_id": "d6544b4576fbf88fc6322e44892129b9482fdc4a",
+          "url": "https://github.com/unicode-org/icu4x/commit/7dc38085d9fda17eae4074dd5ed6713cfb7b0a86"
+        },
+        "date": 1651669408612,
         "tool": "ndjson",
         "benches": [
           {
