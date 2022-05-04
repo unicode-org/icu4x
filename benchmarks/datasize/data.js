@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1651669430854,
+  "lastUpdate": 1651678405547,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -14303,6 +14303,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/7dc38085d9fda17eae4074dd5ed6713cfb7b0a86"
         },
         "date": 1651669408612,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4507203,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "99852f37ce5651de3296cb55d9961457ee4916e5",
+          "message": "BakedDataProvider (#1825)",
+          "timestamp": "2022-05-04T17:31:24+02:00",
+          "tree_id": "c46a2a96f98e19d5f603cf5312045198d1fbb277",
+          "url": "https://github.com/unicode-org/icu4x/commit/99852f37ce5651de3296cb55d9961457ee4916e5"
+        },
+        "date": 1651678384358,
         "tool": "ndjson",
         "benches": [
           {
