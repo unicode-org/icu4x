@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1651669787145,
+  "lastUpdate": 1651678813682,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -26081,6 +26081,60 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 41726498,
             "range": "± 1582591",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/worst",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/worst",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "99852f37ce5651de3296cb55d9961457ee4916e5",
+          "message": "BakedDataProvider (#1825)",
+          "timestamp": "2022-05-04T17:31:24+02:00",
+          "tree_id": "c46a2a96f98e19d5f603cf5312045198d1fbb277",
+          "url": "https://github.com/unicode-org/icu4x/commit/99852f37ce5651de3296cb55d9961457ee4916e5"
+        },
+        "date": 1651678793038,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 39536094,
+            "range": "± 1369958",
             "unit": "ns/iter"
           },
           {
