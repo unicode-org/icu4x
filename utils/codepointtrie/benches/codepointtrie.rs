@@ -9,11 +9,14 @@ use icu_codepointtrie::CodePointTrie;
 use std::convert::TryInto;
 use std::fs;
 
-const SAMPLE_STRING_ENG: &str = "Universal Declaration of Human Rights";
-const SAMPLE_STRING_PCD: &str = "Dèclaråcion dès dreûts d' l'ome po tos lès payîs dè monde";
-const SAMPLE_STRING_UKR: &str = "ЗАГАЛЬНА ДЕКЛАРАЦІЯ ПРАВ ЛЮДИНІ";
-const SAMPLE_STRING_YUE: &str = "世界人权宣言";
-const SAMPLE_STRING_CCP: &str = "𑄟𑄚𑄬𑄭𑄃𑄇𑄴𑄇𑄥𑄧𑄁𑄢𑄴 𑄝𑄬𑄇𑄴𑄅𑄚𑄮𑄢𑄴 𑄟𑄧𑄚𑄳𑄢𑄧𑄧𑄇𑄉𑄮𑄌𑄴";
+#[cfg(feature = "bench")]
+mod sample_str_lng {
+    pub const ENG: &str = "Universal Declaration of Human Rights";
+    pub const PCD: &str = "Dèclaråcion dès dreûts d' l'ome po tos lès payîs dè monde";
+    pub const UKR: &str = "ЗАГАЛЬНА ДЕКЛАРАЦІЯ ПРАВ ЛЮДИНІ";
+    pub const YUE: &str = "世界人权宣言";
+    pub const CCP: &str = "𑄟𑄚𑄬𑄭𑄃𑄇𑄴𑄇𑄥𑄧𑄁𑄢𑄴 𑄝𑄬𑄇𑄴𑄅𑄚𑄮𑄢𑄴 𑄟𑄧𑄚𑄳𑄢𑄧𑄧𑄇𑄉𑄮𑄌𑄴";
+}
 
 const SAMPLE_STRING_MIXED: &str = "Dèclaråcion ЗАГАЛЬНА 世界人权宣言 𑄟𑄚𑄬𑄭𑄃𑄇𑄴𑄇𑄥𑄧𑄁𑄢𑄴";
 
@@ -48,11 +51,11 @@ fn overview_bench(c: &mut Criterion) {
 
     #[cfg(feature = "bench")]
     {
-        lang_bench(c, "eng", SAMPLE_STRING_ENG);
-        lang_bench(c, "pcd", SAMPLE_STRING_PCD);
-        lang_bench(c, "ukr", SAMPLE_STRING_UKR);
-        lang_bench(c, "yue", SAMPLE_STRING_YUE);
-        lang_bench(c, "ccp", SAMPLE_STRING_CCP);
+        lang_bench(c, "eng", sample_str_lng::ENG);
+        lang_bench(c, "pcd", sample_str_lng::PCD);
+        lang_bench(c, "ukr", sample_str_lng::UKR);
+        lang_bench(c, "yue", sample_str_lng::YUE);
+        lang_bench(c, "ccp", sample_str_lng::CCP);
     }
 }
 

@@ -54,3 +54,8 @@ default = []
 serde = ["dep:serde", "zerovec/serde", "icu_uniset/serde"]
 serde_serialize = ["serde", "zerovec/serde_serialize", "icu_uniset/serde_serialize"]
 bench = []
+
+[[bench]]
+name = "codepointtrie"
+harness = false
+required-features = ["serde"]
