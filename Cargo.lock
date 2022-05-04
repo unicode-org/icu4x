@@ -1223,8 +1223,6 @@ version = "0.3.3"
 dependencies = [
  "criterion",
  "displaydoc",
- "icu_locid",
- "icu_provider",
  "icu_uniset",
  "postcard",
  "serde",

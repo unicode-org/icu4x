@@ -6,33 +6,20 @@ use criterion::{black_box, criterion_group, criterion_main, Criterion};
 
 use icu_codepointtrie::toml::CodePointTrieToml;
 use icu_codepointtrie::CodePointTrie;
-use icu_locid::{langid, LanguageIdentifier};
-use icu_provider::hello_world::{HelloWorldProvider, HelloWorldV1Marker};
-use icu_provider::prelude::*;
 use std::convert::TryInto;
 use std::fs;
 
-/// A function that returns 50 code points in the desired language
-fn fifty_code_points(langid: LanguageIdentifier) -> String {
-    let mut payload: Option<DataPayload<HelloWorldV1Marker>> = None;
-    let sample_str = if langid == langid!("ccp") {
-        // Special case for Chakma so that we can cover BMP code points
-        "𑄟𑄚𑄬𑄭𑄃𑄇𑄴𑄇𑄥𑄧𑄁𑄢𑄴 𑄝𑄬𑄇𑄴𑄅𑄚𑄮𑄢𑄴 𑄟𑄧𑄚𑄳𑄢𑄧𑄧𑄇𑄉𑄮𑄌𑄴"
-    } else {
-        // For all other languages, get the Hello World
-        let provider = HelloWorldProvider::new_with_placeholder_data();
-        let payload_local = provider
-            .load_resource(&DataRequest {
-                options: langid.into(),
-                metadata: Default::default(),
-            })
-            .expect("expected language to be present")
-            .take_payload()
-            .expect("expected payload to be present");
-        payload.replace(payload_local);
-        &payload.as_ref().unwrap().get().message
-    };
-    sample_str.chars().cycle().take(50).collect()
+const SAMPLE_STRING_ENG: &str = "Universal Declaration of Human Rights";
+const SAMPLE_STRING_PCD: &str = "Dèclaråcion dès dreûts d' l'ome po tos lès payîs dè monde";
+const SAMPLE_STRING_UKR: &str = "ЗАГАЛЬНА ДЕКЛАРАЦІЯ ПРАВ ЛЮДИНІ";
+const SAMPLE_STRING_YUE: &str = "世界人权宣言";
+const SAMPLE_STRING_CCP: &str = "𑄟𑄚𑄬𑄭𑄃𑄇𑄴𑄇𑄥𑄧𑄁𑄢𑄴 𑄝𑄬𑄇𑄴𑄅𑄚𑄮𑄢𑄴 𑄟𑄧𑄚𑄳𑄢𑄧𑄧𑄇𑄉𑄮𑄌𑄴";
+
+const SAMPLE_STRING_MIXED: &str = "Dèclaråcion ЗАГАЛЬНА 世界人权宣言 𑄟𑄚𑄬𑄭𑄃𑄇𑄴𑄇𑄥𑄧𑄁𑄢𑄴";
+
+/// A function that returns 100 code points in the desired language
+fn one_hundred_code_points(sample_str: &str) -> String {
+    sample_str.chars().cycle().take(100).collect()
 }
 
 fn load_code_point_trie(buffer: &mut Vec<u8>) -> CodePointTrie<u8> {
@@ -46,7 +33,7 @@ fn load_code_point_trie(buffer: &mut Vec<u8>) -> CodePointTrie<u8> {
 }
 
 fn overview_bench(c: &mut Criterion) {
-    let s = fifty_code_points(langid!("en"));
+    let s = one_hundred_code_points(SAMPLE_STRING_MIXED);
     let mut buffer = Vec::<u8>::new();
     let cpt = load_code_point_trie(&mut buffer);
 
@@ -61,18 +48,18 @@ fn overview_bench(c: &mut Criterion) {
 
     #[cfg(feature = "bench")]
     {
-        lang_bench(c, langid!("en"));
-        lang_bench(c, langid!("de"));
-        lang_bench(c, langid!("el"));
-        lang_bench(c, langid!("zh"));
-        lang_bench(c, langid!("en"));
+        lang_bench(c, "eng", SAMPLE_STRING_ENG);
+        lang_bench(c, "pcd", SAMPLE_STRING_PCD);
+        lang_bench(c, "ukr", SAMPLE_STRING_UKR);
+        lang_bench(c, "yue", SAMPLE_STRING_YUE);
+        lang_bench(c, "ccp", SAMPLE_STRING_CCP);
     }
 }
 
 #[cfg(feature = "bench")]
-fn lang_bench(c: &mut Criterion, lid: LanguageIdentifier) {
+fn lang_bench(c: &mut Criterion, lid: &str, sample_str: &str) {
     let bench_name = format!("cpt/get/{}", lid);
-    let s = fifty_code_points(lid);
+    let s = one_hundred_code_points(sample_str);
     let mut buffer = Vec::<u8>::new();
     let cpt = load_code_point_trie(&mut buffer);
 
