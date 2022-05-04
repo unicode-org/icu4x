@@ -5,10 +5,9 @@
 use crate::transform::uprops::uprops_helpers::{
     self, get_last_component_no_version, TomlEnumerated,
 };
-use crate::transform::uprops::uprops_serde::SerializedCodePointTrie;
 
 use crate::SourceData;
-use icu_codepointtrie::{CodePointTrie, CodePointTrieHeader, TrieType, TrieValue};
+use icu_codepointtrie::{CodePointTrie, TrieValue};
 use icu_properties::provider::*;
 use icu_properties::provider::{UnicodePropertyMapV1, UnicodePropertyMapV1Marker};
 use icu_properties::{
@@ -19,7 +18,6 @@ use icu_provider::datagen::IterableDynProvider;
 use icu_provider::prelude::*;
 use std::convert::TryFrom;
 use std::sync::RwLock;
-use zerovec::ZeroVec;
 
 /// A data provider reading from TOML files produced by the ICU4C icuexportdata tool.
 ///
@@ -35,71 +33,6 @@ impl From<&SourceData> for EnumeratedPropertyCodePointTrieProvider {
             source: source.clone(),
             data: RwLock::new(None),
         }
-    }
-}
-
-// public helper function for doing the TOML->CodePointTrie conversion within
-// the source data -> data struct conversion
-impl TryFrom<&SerializedCodePointTrie> for CodePointTrieHeader {
-    type Error = DataError;
-
-    fn try_from(cpt_data: &SerializedCodePointTrie) -> Result<Self, Self::Error> {
-        let trie_type_enum: TrieType =
-            TrieType::try_from(cpt_data.trie_type_enum_val).map_err(|e| {
-                DataError::custom("Could not parse TrieType in TOML").with_display_context(&e)
-            })?;
-        Ok(CodePointTrieHeader {
-            high_start: cpt_data.high_start,
-            shifted12_high_start: cpt_data.shifted12_high_start,
-            index3_null_offset: cpt_data.index3_null_offset,
-            data_null_offset: cpt_data.data_null_offset,
-            null_value: cpt_data.null_value,
-            trie_type: trie_type_enum,
-        })
-    }
-}
-
-impl<T: TrieValue> TryFrom<&SerializedCodePointTrie> for CodePointTrie<'static, T> {
-    type Error = DataError;
-
-    fn try_from(
-        cpt_data: &SerializedCodePointTrie,
-    ) -> Result<CodePointTrie<'static, T>, DataError> {
-        let header = CodePointTrieHeader::try_from(cpt_data)?;
-        let index: ZeroVec<u16> = ZeroVec::alloc_from_slice(&cpt_data.index);
-        let data: Result<ZeroVec<'static, T>, T::TryFromU32Error> =
-            if let Some(data_8) = &cpt_data.data_8 {
-                data_8.iter().map(|i| T::try_from_u32(*i as u32)).collect()
-            } else if let Some(data_16) = &cpt_data.data_16 {
-                data_16.iter().map(|i| T::try_from_u32(*i as u32)).collect()
-            } else if let Some(data_32) = &cpt_data.data_32 {
-                data_32.iter().map(|i| T::try_from_u32(*i as u32)).collect()
-            } else {
-                return Err(DataError::custom(
-                    "Did not find data array for CodePointTrie in TOML",
-                ));
-            };
-
-        let data = data.map_err(|e| {
-            DataError::custom("Could not parse data array in TOML").with_display_context(&e)
-        })?;
-
-        CodePointTrie::<T>::try_new(header, index, data).map_err(|e| {
-            DataError::custom("Could not create CodePointTrie from header/index/data array in TOML")
-                .with_display_context(&e)
-        })
-    }
-}
-
-// source data to ICU4X data struct conversion
-impl<T: TrieValue> TryFrom<&SerializedCodePointTrie> for UnicodePropertyMapV1<'static, T> {
-    type Error = DataError;
-
-    fn try_from(
-        cpt_data: &SerializedCodePointTrie,
-    ) -> Result<UnicodePropertyMapV1<'static, T>, DataError> {
-        let trie = CodePointTrie::<T>::try_from(cpt_data);
-        trie.map(|t| UnicodePropertyMapV1 { code_point_trie: t })
     }
 }
 
@@ -131,7 +64,9 @@ impl<T: TrieValue> DynProvider<UnicodePropertyMapV1Marker<T>>
             .ok_or(DataErrorKind::MissingResourceKey.into_error())?
             .code_point_trie;
 
-        let code_point_trie = CodePointTrie::try_from(source_cpt_data)?;
+        let code_point_trie = CodePointTrie::try_from(source_cpt_data).map_err(|e| {
+            DataError::custom("Could not parse CodePointTrie TOML").with_display_context(&e)
+        })?;
         let data_struct = UnicodePropertyMapV1 { code_point_trie };
 
         Ok(DataResponse {

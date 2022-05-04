@@ -210,7 +210,7 @@ pub fn run_deserialize_test_from_test_data(test_file_path: &str) {
         panic!("couldn't read {}: {}", display, err)
     }
 
-    let test_file: TestFile = toml::from_str(&toml_str).unwrap();
+    let test_file: TestFile = ::toml::from_str(&toml_str).unwrap();
     let test_struct = test_file.code_point_trie.trie_struct;
 
     println!(
