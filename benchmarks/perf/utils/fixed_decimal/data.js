@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1651593350099,
+  "lastUpdate": 1651669862011,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -25228,6 +25228,66 @@ window.BENCHMARK_DATA = {
           {
             "name": "from_string/1000000001",
             "value": 77,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "7dc38085d9fda17eae4074dd5ed6713cfb7b0a86",
+          "message": "Move SerializedCodePointTrie to the library (#1850)",
+          "timestamp": "2022-05-04T06:01:43-07:00",
+          "tree_id": "d6544b4576fbf88fc6322e44892129b9482fdc4a",
+          "url": "https://github.com/unicode-org/icu4x/commit/7dc38085d9fda17eae4074dd5ed6713cfb7b0a86"
+        },
+        "date": 1651669843857,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 106557,
+            "range": "± 373",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 21227,
+            "range": "± 154",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 58602,
+            "range": "± 312",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 185,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 78,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 78,
             "range": "± 0",
             "unit": "ns/iter"
           }
