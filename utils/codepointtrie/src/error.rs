@@ -4,7 +4,8 @@
 
 use displaydoc::Display;
 
-#[derive(Clone, Display, Debug, PartialEq)]
+#[derive(Copy, Clone, Display, Debug, PartialEq)]
+#[non_exhaustive]
 pub enum Error {
     #[displaydoc("Could not construct CodePointTrie from deserialized values: {reason}")]
     FromDeserialized { reason: &'static str },

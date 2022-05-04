@@ -43,7 +43,9 @@ impl TryFrom<&ScriptWithExtensionsProperty> for ScriptWithExtensions<'static> {
         let cpt_data = &scx_data.code_point_trie;
         let scx_array_data = &scx_data.script_code_array;
 
-        let trie = CodePointTrie::<ScriptWithExt>::try_from(cpt_data)?;
+        let trie = CodePointTrie::<ScriptWithExt>::try_from(cpt_data).map_err(|e| {
+            DataError::custom("Could not parse CodePointTrie TOML").with_display_context(&e)
+        })?;
 
         // Convert the input from Vec<Vec<u16>> to Vec<ZeroVec<Script>> so that
         // we can go through the VarZeroVec construction process for a desired result
