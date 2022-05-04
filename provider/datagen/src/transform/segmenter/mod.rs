@@ -18,11 +18,11 @@
 //! [UAX29]: https://www.unicode.org/reports/tr29/
 
 use crate::transform::uprops::reader::read_path_to_string;
-use crate::transform::uprops::uprops_serde::SerializedCodePointTrie;
 use crate::transform::uprops::{
     BinaryPropertyUnicodeSetDataProvider, EnumeratedPropertyCodePointTrieProvider,
 };
 use crate::SourceData;
+use icu_codepointtrie::toml::CodePointTrieToml;
 use icu_codepointtrie::CodePointTrie;
 use icu_properties::{
     maps, sets, EastAsianWidth, GeneralCategory, GraphemeClusterBreak, LineBreak, SentenceBreak,
@@ -652,13 +652,17 @@ impl SegmenterRuleProvider {
             DataError::custom("could not get toml data path").with_error_context(&e)
         })?;
         let property_trie_toml_str = read_path_to_string(&property_trie_toml_path)?;
-        let property_trie_toml: SerializedCodePointTrie = toml::from_str(&property_trie_toml_str)
+        let property_trie_toml: CodePointTrieToml = toml::from_str(&property_trie_toml_str)
             .map_err(|e| {
-            DataError::custom("could not deserialize code point trie")
+                DataError::custom("could not deserialize code point trie")
+                    .with_path(&property_trie_toml_path)
+                    .with_error_context(&e)
+            })?;
+        let property_trie = CodePointTrie::<u8>::try_from(&property_trie_toml).map_err(|e| {
+            DataError::custom("could not convert TOML to code point trie")
                 .with_path(&property_trie_toml_path)
-                .with_error_context(&e)
+                .with_display_context(&e)
         })?;
-        let property_trie = CodePointTrie::<u8>::try_from(&property_trie_toml)?;
         for (cp, actual_value) in properties_map.iter().enumerate() {
             let expected_value = property_trie.get(cp.try_into().unwrap());
             if expected_value != *actual_value {
