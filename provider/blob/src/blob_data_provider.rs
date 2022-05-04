@@ -10,20 +10,6 @@ use writeable::Writeable;
 use yoke::*;
 use zerovec::maps::{KeyError, ZeroMap2dBorrowed};
 
-#[cfg(not(feature = "sync"))]
-macro_rules! rc_type {
-    () => {
-        alloc::rc::Rc<[u8]>
-    };
-}
-
-#[cfg(feature = "sync")]
-macro_rules! rc_type {
-    () => {
-        alloc::sync::Arc<[u8]>
-    };
-}
-
 /// A data provider loading data from blobs dynamically created at runtime.
 ///
 /// This enables data blobs to be read from the filesystem or from an HTTP request dynamically
@@ -31,11 +17,10 @@ macro_rules! rc_type {
 ///
 /// If you prefer to bake the data into your binary, see [`StaticDataProvider`].
 ///
-/// # `sync` feature
+/// # `Sync + Send`
 /// 
-/// By default, the provider uses an `Arc<[u8]>` to keep track of its backing buffer. If `Sync + Send`
-/// are not required, this can be changed to an `Rc<[u8]>` by disabling the `sync` feature. This will
-/// also change all APIs on this type that mention `Arc<[u8]>`.
+/// This provider uses a [`icu_provider::RcWrap`] internally, which can be made `Sync + Send` with the
+/// `sync` feature on the [`icu_provider`] crate.
 /// 
 /// # Examples
 ///
@@ -72,12 +57,12 @@ macro_rules! rc_type {
 /// [`StaticDataProvider`]: crate::StaticDataProvider
 pub struct BlobDataProvider {
     #[allow(clippy::type_complexity)]
-    data: Yoke<ZeroMap2dBorrowed<'static, ResourceKeyHash, [u8], [u8]>, rc_type!()>,
+    data: Yoke<ZeroMap2dBorrowed<'static, ResourceKeyHash, [u8], [u8]>, RcWrap>,
 }
 
 impl BlobDataProvider {
     /// Create a [`BlobDataProvider`] from a blob of ICU4X data.
-    pub fn new_from_blob<B: Into<rc_type!()>>(blob: B) -> Result<Self, DataError> {
+    pub fn new_from_blob<B: Into<RcWrap>>(blob: B) -> Result<Self, DataError> {
         Ok(BlobDataProvider {
             data: Yoke::try_attach_to_cart_badly(blob.into(), |bytes| {
                 BlobSchema::deserialize(&mut postcard::Deserializer::from_bytes(bytes)).map(

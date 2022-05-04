@@ -14,19 +14,6 @@ use crate::resource::ResourceOptions;
 use crate::yoke::trait_hack::YokeTraitHack;
 use crate::yoke::*;
 
-#[cfg(not(feature = "sync"))]
-macro_rules! rc_type {
-    () => {
-        alloc::rc::Rc<[u8]>
-    };
-}
-
-#[cfg(feature = "sync")]
-macro_rules! rc_type {
-    () => {
-        alloc::sync::Arc<[u8]>
-    };
-}
 
 use core::convert::TryFrom;
 use core::fmt;
@@ -110,7 +97,7 @@ pub struct DataPayload<M>
 where
     M: DataMarker,
 {
-    pub(crate) yoke: Yoke<M::Yokeable, Option<rc_type!()>>,
+    pub(crate) yoke: Yoke<M::Yokeable, Option<RcWrap>>,
 }
 
 impl<M> Debug for DataPayload<M>
@@ -164,6 +151,41 @@ where
 {
 }
 
+/// A wrapper type that wraps either an [`Rc`](alloc::rc::Rc) or an
+/// [`Arc`](alloc::sync::Arc), depending on the "sync" feature. Create
+/// this from a `&[u8]`.
+#[derive(Clone)]
+pub struct RcWrap(
+    #[cfg(not(feature = "sync"))]
+    alloc::rc::Rc<[u8]>,
+    #[cfg(feature = "sync")]
+    alloc::sync::Arc<[u8]>,
+);
+
+impl core::ops::Deref for RcWrap {
+    type Target = [u8];
+    fn deref(&self) -> &Self::Target {
+        self.0.deref()
+    }
+}
+
+unsafe impl CloneableCart for RcWrap {}
+unsafe impl stable_deref_trait::StableDeref for RcWrap {}
+
+impl From<alloc::vec::Vec<u8>> for RcWrap {
+    fn from(other: alloc::vec::Vec<u8>) -> Self {
+        Self(other.into())
+    }
+}
+
+// Constructing from `Box<[u8]>` copies the whole slice, so we might
+// as well define this on a slice directly.
+impl From<&[u8]> for RcWrap {
+    fn from(other: &[u8]) -> Self {
+        Self(other.into())
+    }
+}
+
 #[test]
 fn test_clone_eq() {
     use crate::marker::CowStrMarker;
@@ -185,11 +207,11 @@ where
     /// for this function may not compile; if this happens, use
     /// [`try_from_buffer_badly()`](Self::try_from_buffer_badly) instead.
     #[inline]
-    pub fn try_from_buffer<B: Into<rc_type!()>, E>(
-        buffer: B,
+    pub fn try_from_rc_buffer<E>(
+        buffer: RcWrap,
         f: impl for<'de> FnOnce(&'de [u8]) -> Result<<M::Yokeable as Yokeable<'de>>::Output, E>,
     ) -> Result<Self, E> {
-        let yoke = Yoke::try_attach_to_cart(buffer.into(), f)?.wrap_cart_in_option();
+        let yoke = Yoke::try_attach_to_cart(buffer, f)?.wrap_cart_in_option();
         Ok(Self { yoke })
     }
 
@@ -209,7 +231,7 @@ where
     /// use icu_provider::hello_world::*;
     ///
     /// let payload = DataPayload::<HelloWorldV1Marker>::try_from_buffer_badly(
-    ///     "{\"message\":\"Hello World\"}".as_bytes(),
+    ///     "{\"message\":\"Hello World\"}".as_bytes().into(),
     ///     |bytes| {
     ///         serde_json::from_slice(bytes)
     ///     }
@@ -220,8 +242,8 @@ where
     /// # } // feature = "serde_json"
     /// ```
     #[allow(clippy::type_complexity)]
-    pub fn try_from_buffer_badly<B: Into<rc_type!()>, E>(
-        buffer: B,
+    pub fn try_from_buffer_badly<E>(
+        buffer: RcWrap,
         f: for<'de> fn(&'de [u8]) -> Result<<M::Yokeable as Yokeable<'de>>::Output, E>,
     ) -> Result<Self, E> {
         let yoke = Yoke::try_attach_to_cart(buffer.into(), f)?.wrap_cart_in_option();
@@ -243,7 +265,7 @@ where
     /// use icu_provider::yoke::Yoke;
     ///
     /// let payload = DataPayload::<HelloWorldV1Marker>::try_from_yoked_buffer(
-    ///     Yoke::attach_to_zero_copy_cart("{\"message\":\"Hello World\"}".as_bytes().into()),
+    ///     Yoke::attach_to_cart_badly("{\"message\":\"Hello World\"}".as_bytes().into(), |b| b),
     ///     (),
     ///     |bytes, _, _| serde_json::from_slice(bytes)
     /// )
@@ -254,7 +276,7 @@ where
     /// ```
     #[allow(clippy::type_complexity)]
     pub fn try_from_yoked_buffer<T, E>(
-        yoked_buffer: Yoke<&'static [u8], rc_type!()>,
+        yoked_buffer: Yoke<&'static [u8], RcWrap>,
         capture: T,
         f: for<'de> fn(
             <&'static [u8] as yoke::Yokeable<'de>>::Output,
@@ -691,17 +713,16 @@ where
 }
 
 impl DataPayload<BufferMarker> {
-    /// Converts a byte buffer into a `DataPayload<BufferMarker>`. If the byte buffer already
-    /// exists as an `Arc<[u8]>`, this is cheap, however other `Into<Arc<[u8]>>` implementations
-    /// currently require reallocations (`Vec<u8>`, `Box<[u8]>`, `Rc<[u8]>`, and of course `&[u8]`).
-    pub fn from_buffer<B: Into<rc_type!()>>(buffer: B) -> Self {
+    /// Converts an [`RcWrap`] into a `DataPayload<BufferMarker>`. The [`RcWrap`]
+    /// can be obtained from a `&[u8]`.
+    pub fn from_rc_buffer(buffer: RcWrap) -> Self {
         Self {
-            yoke: Yoke::attach_to_zero_copy_cart(buffer.into()).wrap_cart_in_option(),
+            yoke: Yoke::attach_to_cart_badly(buffer, |b| b).wrap_cart_in_option(),
         }
     }
 
     /// Converts a yoked byte buffer into a `DataPayload<BufferMarker>`.
-    pub fn from_yoked_buffer(yoked_buffer: Yoke<&'static [u8], rc_type!()>) -> Self {
+    pub fn from_yoked_buffer(yoked_buffer: Yoke<&'static [u8], RcWrap>) -> Self {
         Self {
             yoke: yoked_buffer.wrap_cart_in_option(),
         }

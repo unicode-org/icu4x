@@ -159,7 +159,7 @@ impl BufferProvider for HelloWorldJsonProvider {
         buffer.push_str("\"}");
         Ok(DataResponse {
             metadata,
-            payload: Some(DataPayload::from_buffer(buffer.into_bytes())),
+            payload: Some(DataPayload::from_rc_buffer(buffer.as_bytes().into())),
         })
     }
 }

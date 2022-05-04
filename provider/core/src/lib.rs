@@ -168,6 +168,7 @@ pub mod prelude {
     pub use crate::data_provider::DataResponseMetadata;
     pub use crate::data_provider::DynProvider;
     pub use crate::data_provider::ResourceProvider;
+    pub use crate::data_provider::RcWrap;
     pub use crate::error::DataError;
     pub use crate::error::DataErrorKind;
     pub use crate::marker::DataMarker;
@@ -182,13 +183,10 @@ pub mod prelude {
     #[cfg(feature = "serde")]
     pub use crate::serde::AsDeserializingBufferProvider;
 
+    /// Re-export of the yoke and zerofrom crates for convenience of downstream implementors.
     pub use yoke;
     pub use zerofrom;
 }
-
-/// Re-export of the yoke and zerofrom crates for convenience of downstream implementors.
-pub use yoke;
-pub use zerofrom;
 
 // Also include the same symbols at the top level for selective inclusion
 pub use prelude::*;
