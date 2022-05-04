@@ -24,7 +24,6 @@ mod bin_uniset;
 mod casemapping;
 mod enum_codepointtrie;
 mod enum_uniset;
-mod reader;
 mod script;
 mod uprops_helpers;
 mod uprops_serde;
