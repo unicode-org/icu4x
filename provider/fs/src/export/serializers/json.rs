@@ -43,7 +43,7 @@ impl AbstractSerializer for Serializer {
         obj: &dyn erased_serde::Serialize,
         sink: &mut dyn io::Write,
     ) -> Result<(), Error> {
-        let mut sink = line_ending_file::BufWriterWithLineEndingFix::new(sink);
+        let mut sink = crlify::BufWriterWithLineEndingFix::new(sink);
         match self.style {
             StyleOption::Compact => {
                 obj.erased_serialize(&mut <dyn erased_serde::Serializer>::erase(

@@ -67,7 +67,7 @@ impl ConstExporter {
         std::fs::create_dir_all(&path.parent().unwrap())?;
 
         {
-            let mut file = line_ending_file::BufWriterWithLineEndingFix::new(File::create(&path)?);
+            let mut file = crlify::BufWriterWithLineEndingFix::new(File::create(&path)?);
             writeln!(file, "// GENERATED MODULE. DO NOT EDIT")?;
             writeln!(file, "{}", data)?;
         }

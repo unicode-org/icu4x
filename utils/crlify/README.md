@@ -1,4 +1,4 @@
-# line_ending_file [![crates.io](https://img.shields.io/crates/v/line_ending_file)](https://crates.io/crates/line_ending_file)
+# crlify [![crates.io](https://img.shields.io/crates/v/crlify)](https://crates.io/crates/crlify)
 
 [`BufWriterWithLineEndingFix`].
 
