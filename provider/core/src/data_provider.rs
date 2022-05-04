@@ -14,7 +14,19 @@ use crate::resource::ResourceOptions;
 use crate::yoke::trait_hack::YokeTraitHack;
 use crate::yoke::*;
 
-use alloc::rc::Rc;
+#[cfg(not(feature = "sync"))]
+macro_rules! rc_type {
+    () => {
+        alloc::rc::Rc<[u8]>
+    };
+}
+
+#[cfg(feature = "sync")]
+macro_rules! rc_type {
+    () => {
+        alloc::sync::Arc<[u8]>
+    };
+}
 
 use core::convert::TryFrom;
 use core::fmt;
@@ -55,7 +67,7 @@ pub struct DataResponseMetadata {
 /// several data stores ("carts"):
 ///
 /// 1. Fully-owned structured data ([`DataPayload::from_owned()`])
-/// 2. A reference-counted byte buffer ([`DataPayload::try_from_rc_buffer()`])
+/// 2. A reference-counted byte buffer ([`DataPayload::try_from_buffer()`])
 ///
 /// The type of the data stored in [`DataPayload`], and the type of the structured data store
 /// (cart), is determined by the [`DataMarker`] type parameter.
@@ -75,6 +87,12 @@ pub struct DataResponseMetadata {
 /// To transform a [`DataPayload`] to a different type backed by the same data store (cart), use
 /// [`DataPayload::map_project()`] or one of its sister methods.
 ///
+/// # `sync` feature
+/// 
+/// By default, the payload uses an [`Arc<[u8]>`] for its backing buffer. If [`Sync`]` + `[`Send`]
+/// are not required, this can be changed to an [`Rc<[u8]>`] by disabling the `sync` feature. This
+/// will also change all APIs on this type that mention [`Arc<[u8]>`].
+///
 /// # Examples
 ///
 /// Basic usage, using the `CowStrMarker` marker:
@@ -92,7 +110,7 @@ pub struct DataPayload<M>
 where
     M: DataMarker,
 {
-    pub(crate) yoke: Yoke<M::Yokeable, Option<Rc<[u8]>>>,
+    pub(crate) yoke: Yoke<M::Yokeable, Option<rc_type!()>>,
 }
 
 impl<M> Debug for DataPayload<M>
@@ -165,13 +183,13 @@ where
     ///
     /// Due to [compiler bug #84937](https://github.com/rust-lang/rust/issues/84937), call sites
     /// for this function may not compile; if this happens, use
-    /// [`try_from_rc_buffer_badly()`](Self::try_from_rc_buffer_badly) instead.
+    /// [`try_from_buffer_badly()`](Self::try_from_buffer_badly) instead.
     #[inline]
-    pub fn try_from_rc_buffer<E>(
-        rc_buffer: Rc<[u8]>,
+    pub fn try_from_buffer<B: Into<rc_type!()>, E>(
+        buffer: B,
         f: impl for<'de> FnOnce(&'de [u8]) -> Result<<M::Yokeable as Yokeable<'de>>::Output, E>,
     ) -> Result<Self, E> {
-        let yoke = Yoke::try_attach_to_cart(rc_buffer, f)?.wrap_cart_in_option();
+        let yoke = Yoke::try_attach_to_cart(buffer.into(), f)?.wrap_cart_in_option();
         Ok(Self { yoke })
     }
 
@@ -181,7 +199,7 @@ where
     /// This constructor creates `'static` payloads; borrowing is handled by [`Yoke`].
     ///
     /// For a version of this function that takes a `FnOnce` instead of a raw function pointer,
-    /// see [`try_from_rc_buffer()`](Self::try_from_rc_buffer).
+    /// see [`try_from_buffer()`](Self::try_from_buffer).
     ///
     /// # Examples
     ///
@@ -189,13 +207,9 @@ where
     /// # #[cfg(feature = "serde_json")] {
     /// use icu_provider::prelude::*;
     /// use icu_provider::hello_world::*;
-    /// use std::rc::Rc;
     ///
-    /// let json_text = "{\"message\":\"Hello World\"}";
-    /// let json_rc_buffer: Rc<[u8]> = json_text.as_bytes().into();
-    ///
-    /// let payload = DataPayload::<HelloWorldV1Marker>::try_from_rc_buffer_badly(
-    ///     json_rc_buffer.clone(),
+    /// let payload = DataPayload::<HelloWorldV1Marker>::try_from_buffer_badly(
+    ///     "{\"message\":\"Hello World\"}".as_bytes(),
     ///     |bytes| {
     ///         serde_json::from_slice(bytes)
     ///     }
@@ -206,19 +220,19 @@ where
     /// # } // feature = "serde_json"
     /// ```
     #[allow(clippy::type_complexity)]
-    pub fn try_from_rc_buffer_badly<E>(
-        rc_buffer: Rc<[u8]>,
+    pub fn try_from_buffer_badly<B: Into<rc_type!()>, E>(
+        buffer: B,
         f: for<'de> fn(&'de [u8]) -> Result<<M::Yokeable as Yokeable<'de>>::Output, E>,
     ) -> Result<Self, E> {
-        let yoke = Yoke::try_attach_to_cart(rc_buffer, f)?.wrap_cart_in_option();
+        let yoke = Yoke::try_attach_to_cart(buffer.into(), f)?.wrap_cart_in_option();
         Ok(Self { yoke })
     }
 
     /// Convert a byte buffer into a [`DataPayload`]. A function must be provided to perform the
     /// conversion. This can often be a Serde deserialization operation.
     ///
-    /// This function is similar to [`DataPayload::try_from_rc_buffer`], but it accepts a buffer
-    /// that is already yoked to an Rc buffer cart.
+    /// This function is similar to [`DataPayload::try_from_buffer`], but it accepts a buffer
+    /// that is already yoked.
     ///
     /// # Examples
     ///
@@ -226,18 +240,12 @@ where
     /// # #[cfg(feature = "serde_json")] {
     /// use icu_provider::prelude::*;
     /// use icu_provider::hello_world::*;
-    /// use std::rc::Rc;
     /// use icu_provider::yoke::Yoke;
     ///
-    /// let json_text = "{\"message\":\"Hello World\"}";
-    /// let json_rc_buffer: Rc<[u8]> = json_text.as_bytes().into();
-    ///
     /// let payload = DataPayload::<HelloWorldV1Marker>::try_from_yoked_buffer(
-    ///     Yoke::attach_to_zero_copy_cart(json_rc_buffer),
+    ///     Yoke::attach_to_zero_copy_cart("{\"message\":\"Hello World\"}".as_bytes().into()),
     ///     (),
-    ///     |bytes, _, _| {
-    ///         serde_json::from_slice(bytes)
-    ///     }
+    ///     |bytes, _, _| serde_json::from_slice(bytes)
     /// )
     /// .expect("JSON is valid");
     ///
@@ -246,7 +254,7 @@ where
     /// ```
     #[allow(clippy::type_complexity)]
     pub fn try_from_yoked_buffer<T, E>(
-        yoked_buffer: Yoke<&'static [u8], Rc<[u8]>>,
+        yoked_buffer: Yoke<&'static [u8], rc_type!()>,
         capture: T,
         f: for<'de> fn(
             <&'static [u8] as yoke::Yokeable<'de>>::Output,
@@ -683,15 +691,17 @@ where
 }
 
 impl DataPayload<BufferMarker> {
-    /// Converts a reference-counted byte buffer into a `DataPayload<BufferMarker>`.
-    pub fn from_rc_buffer(buffer: Rc<[u8]>) -> Self {
+    /// Converts a byte buffer into a `DataPayload<BufferMarker>`. If the byte buffer already
+    /// exists as an `Arc<[u8]>`, this is cheap, however other `Into<Arc<[u8]>>` implementations
+    /// currently require reallocations (`Vec<u8>`, `Box<[u8]>`, `Rc<[u8]>`, and of course `&[u8]`).
+    pub fn from_buffer<B: Into<rc_type!()>>(buffer: B) -> Self {
         Self {
-            yoke: Yoke::attach_to_zero_copy_cart(buffer).wrap_cart_in_option(),
+            yoke: Yoke::attach_to_zero_copy_cart(buffer.into()).wrap_cart_in_option(),
         }
     }
 
     /// Converts a yoked byte buffer into a `DataPayload<BufferMarker>`.
-    pub fn from_yoked_buffer(yoked_buffer: Yoke<&'static [u8], Rc<[u8]>>) -> Self {
+    pub fn from_yoked_buffer(yoked_buffer: Yoke<&'static [u8], rc_type!()>) -> Self {
         Self {
             yoke: yoked_buffer.wrap_cart_in_option(),
         }

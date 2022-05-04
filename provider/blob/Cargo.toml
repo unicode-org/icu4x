@@ -48,6 +48,8 @@ icu_testdata = { version = "0.5", path = "../testdata", features = ["static"] }
 path = "src/lib.rs"
 
 [features]
+default = ["sync"]
+sync = ["icu_provider/sync"]
 export = [
     "log",
     "postcard/alloc",

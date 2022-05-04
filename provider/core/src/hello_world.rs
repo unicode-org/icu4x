@@ -12,8 +12,6 @@ use crate::prelude::*;
 use crate::yoke::{self, *};
 use crate::zerofrom::{self, *};
 use alloc::borrow::Cow;
-use alloc::boxed::Box;
-use alloc::rc::Rc;
 use alloc::string::String;
 use core::fmt::Debug;
 use icu_locid::locale;
@@ -159,10 +157,9 @@ impl BufferProvider for HelloWorldJsonProvider {
         buffer.push_str("{\"message\":\"");
         helpers::escape_for_json(&old_payload.get().message, &mut buffer);
         buffer.push_str("\"}");
-        let boxed_u8: Box<[u8]> = buffer.into_boxed_str().into();
         Ok(DataResponse {
             metadata,
-            payload: Some(DataPayload::from_rc_buffer(Rc::from(boxed_u8))),
+            payload: Some(DataPayload::from_buffer(buffer.into_bytes())),
         })
     }
 }

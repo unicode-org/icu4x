@@ -75,7 +75,7 @@ pub mod ffi {
         /// Constructs a `BlobDataProvider` and returns it as an [`ICU4XDataProvider`].
         #[diplomat::rust_link(icu_provider_blob::BlobDataProvider, Struct)]
         pub fn create_from_byte_slice(blob: &[u8]) -> ICU4XCreateDataProviderResult {
-            make_result!(BlobDataProvider::new_from_rc_blob(alloc::rc::Rc::from(blob)).ok())
+            make_result!(BlobDataProvider::new_from_blob(blob).ok())
         }
 
         /// Constructs an empty `StaticDataProvider` and returns it as an [`ICU4XDataProvider`].
