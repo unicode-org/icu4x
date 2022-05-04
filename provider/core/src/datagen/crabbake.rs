@@ -17,7 +17,7 @@ where
     Y: for<'a> Yokeable<'a>,
     for<'a> <Y as Yokeable<'a>>::Output: Bakeable,
 {
-    fn bake<'a>(&'a self, ctx: &CrateEnv) -> TokenStream {
+    fn bake(&self, ctx: &CrateEnv) -> TokenStream {
         self.get().bake(ctx)
     }
 }
