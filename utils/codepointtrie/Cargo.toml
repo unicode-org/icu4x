@@ -43,6 +43,9 @@ zerovec = { version = "0.6", path = "../zerovec", features = ["yoke"] }
 postcard = { version = "0.7", features = ["alloc"] }
 toml = "0.5"
 serde = { version = "1.0", features = ["derive"] }
+criterion = "0.3.4"
+icu_provider = { path = "../../provider/core" }
+icu_locid = { path = "../../components/locid" }
 
 [lib]
 bench = false  # This option is required for Benchmark CI
@@ -52,3 +55,4 @@ path = "src/lib.rs"
 default = []
 serde = ["dep:serde", "zerovec/serde", "icu_uniset/serde"]
 serde_serialize = ["serde", "zerovec/serde_serialize", "icu_uniset/serde_serialize"]
+bench = []
