@@ -7,6 +7,7 @@
 //! Sample file:
 //! <https://github.com/unicode-org/cldr-json/blob/main/cldr-json/cldr-core/supplemental/metaZones.json>
 
+use icu_datetime::provider::time_zones::MetaZoneId;
 use litemap::LiteMap;
 use serde::Deserialize;
 
@@ -19,7 +20,7 @@ pub struct MetaZoneAliasData {
 }
 
 #[derive(PartialEq, Debug, Deserialize)]
-pub struct MetaZoneIds(pub LiteMap<String, MetaZoneAliasData>);
+pub struct MetaZoneIds(pub LiteMap<MetaZoneId, MetaZoneAliasData>);
 
 #[derive(PartialEq, Debug, Deserialize)]
 pub struct MetaZones {

@@ -2,11 +2,13 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::provider::time_zones::TimeZoneBcp47Id;
 use alloc::borrow::Cow;
 use alloc::format;
 use alloc::string::String;
 use core::fmt;
 use smallvec::SmallVec;
+use tinystr::tinystr;
 
 use crate::{
     date::TimeZoneInput,
@@ -1257,7 +1259,7 @@ impl FormatTimeZone for ExemplarCityFormat {
                     .exemplar_cities
                     .as_ref()
                     .map(|p| p.get())
-                    .and_then(|cities| cities.0.get("Etc/Unknown"))
+                    .and_then(|cities| cities.0.get(&TimeZoneBcp47Id(tinystr!(8, "unk"))))
                     .unwrap_or(&Cow::Borrowed("Unknown"));
                 Ok(sink.write_str(formatted_unknown_city))
             }

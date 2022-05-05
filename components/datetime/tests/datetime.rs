@@ -11,6 +11,7 @@ use icu_calendar::{
     buddhist::Buddhist, coptic::Coptic, indian::Indian, japanese::Japanese, AsCalendar, DateTime,
     Gregorian,
 };
+use icu_datetime::provider::time_zones::{MetaZoneId, TimeZoneBcp47Id};
 use icu_datetime::{
     mock::{parse_gregorian_from_str, zoned_datetime::MockZonedDateTime},
     pattern::runtime::Pattern,
@@ -156,8 +157,8 @@ fn test_fixture_with_time_zones(fixture_name: &str, config: TimeZoneConfig) {
         let options = fixtures::get_options(&fx.input.options);
 
         let mut input_value: MockZonedDateTime = fx.input.value.parse().unwrap();
-        input_value.time_zone.time_zone_id = config.time_zone_id.clone();
-        input_value.time_zone.metazone_id = config.metazone_id.clone();
+        input_value.time_zone.time_zone_id = config.time_zone_id.map(TimeZoneBcp47Id);
+        input_value.time_zone.metazone_id = config.metazone_id.map(MetaZoneId);
         input_value.time_zone.time_variant = config.time_variant;
 
         let description = match fx.description {
@@ -308,8 +309,8 @@ fn test_time_zone_format_configs() {
         let langid: LanguageIdentifier = test.locale.parse().unwrap();
         let mut config = test.config;
         let mut datetime: MockZonedDateTime = test.datetime.parse().unwrap();
-        datetime.time_zone.time_zone_id = config.time_zone_id.take();
-        datetime.time_zone.metazone_id = config.metazone_id.take();
+        datetime.time_zone.time_zone_id = config.time_zone_id.take().map(TimeZoneBcp47Id);
+        datetime.time_zone.metazone_id = config.metazone_id.take().map(MetaZoneId);
         datetime.time_zone.time_variant = config.time_variant.take();
         for TimeZoneExpectation {
             patterns: _,
@@ -365,8 +366,8 @@ fn test_time_zone_patterns() {
             .set(unicode_ext_key!("ca"), unicode_ext_value!("gregory"));
         let mut config = test.config;
         let mut datetime: MockZonedDateTime = test.datetime.parse().unwrap();
-        datetime.time_zone.time_zone_id = config.time_zone_id.take();
-        datetime.time_zone.metazone_id = config.metazone_id.take();
+        datetime.time_zone.time_zone_id = config.time_zone_id.take().map(TimeZoneBcp47Id);
+        datetime.time_zone.metazone_id = config.metazone_id.take().map(MetaZoneId);
         datetime.time_zone.time_variant = config.time_variant.take();
 
         let mut patterns_data: DataPayload<DatePatternsV1Marker> = date_provider
@@ -479,7 +480,7 @@ fn test_length_fixtures() {
     test_fixture_with_time_zones(
         "lengths_with_zones_from_pdt",
         TimeZoneConfig {
-            metazone_id: Some(String::from("ampa")),
+            metazone_id: Some(tinystr!(4, "ampa")),
             time_variant: Some(tinystr!(8, "daylight")),
             ..TimeZoneConfig::default()
         },

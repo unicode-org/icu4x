@@ -151,6 +151,6 @@
     "yuko": "Yukon Time"
   },
   "overrides": {
-    "Etc/UTC": "Coordinated Universal Time"
+    "utc": "Coordinated Universal Time"
   }
 }

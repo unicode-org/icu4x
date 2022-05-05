@@ -10,7 +10,7 @@
     "mgmt": "GMT"
   },
   "overrides": {
-    "Etc/UTC": "UTC",
-    "Pacific/Honolulu": "HST"
+    "ushnl": "HST",
+    "utc": "UTC"
   }
 }

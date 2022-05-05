@@ -12,6 +12,7 @@ use crate::transform::cldr::reader::{
 use crate::SourceData;
 use elsa::sync::FrozenBTreeMap;
 use icu_datetime::provider::time_zones::*;
+use icu_datetime::provider::time_zones::{MetaZoneId, TimeZoneBcp47Id};
 use icu_locid::LanguageIdentifier;
 use icu_provider::datagen::IterableResourceProvider;
 use icu_provider::prelude::*;
@@ -25,8 +26,8 @@ mod convert;
 pub struct TimeZonesProvider {
     source: SourceData,
     time_zone_names_data: FrozenBTreeMap<LanguageIdentifier, Box<TimeZoneNames>>,
-    bcp47_tzid_data: RwLock<LiteMap<String, String>>,
-    meta_zone_id_data: RwLock<LiteMap<String, String>>,
+    bcp47_tzid_data: RwLock<LiteMap<String, TimeZoneBcp47Id>>,
+    meta_zone_id_data: RwLock<LiteMap<String, MetaZoneId>>,
 }
 
 impl From<&SourceData> for TimeZonesProvider {
@@ -94,7 +95,7 @@ macro_rules! impl_resource_provider {
                         for (bcp47_tzid, bcp47_tzid_data) in r.iter() {
                             if let Some(alias) = &bcp47_tzid_data.alias {
                                 for data_value in alias.split(" ") {
-                                    data_guard.insert(data_value.to_string(), bcp47_tzid.to_string());
+                                    data_guard.insert(data_value.to_string(), *bcp47_tzid);
                                 }
                             }
                         }
@@ -115,10 +116,7 @@ macro_rules! impl_resource_provider {
 
                         let mut data_guard = self.meta_zone_id_data.write().unwrap();
                         for (meta_zone_id, meta_zone_id_data) in r.iter() {
-                            data_guard.insert(
-                                meta_zone_id_data.long_id.to_string(),
-                                meta_zone_id.to_string(),
-                            );
+                            data_guard.insert(meta_zone_id_data.long_id.to_string(), *meta_zone_id);
                         }
                     }
 
@@ -196,7 +194,14 @@ mod tests {
             .unwrap()
             .take_payload()
             .unwrap();
-        assert_eq!("Pohnpei", exemplar_cities.get().0.get("fmpni").unwrap());
+        assert_eq!(
+            "Pohnpei",
+            exemplar_cities
+                .get()
+                .0
+                .get(&TimeZoneBcp47Id(tinystr!(8, "fmpni")))
+                .unwrap()
+        );
 
         let generic_names_long: DataPayload<MetaZoneGenericNamesLongV1Marker> = provider
             .load_resource(&DataRequest {
@@ -208,7 +213,19 @@ mod tests {
             .unwrap();
         assert_eq!(
             "Australian Central Western Time",
-            generic_names_long.get().defaults.get("aucw").unwrap()
+            generic_names_long
+                .get()
+                .defaults
+                .get(&MetaZoneId(tinystr!(4, "aucw")))
+                .unwrap()
+        );
+        assert_eq!(
+            "Coordinated Universal Time",
+            generic_names_long
+                .get()
+                .overrides
+                .get(&TimeZoneBcp47Id(tinystr!(8, "utc")))
+                .unwrap()
         );
 
         let specific_names_long: DataPayload<MetaZoneSpecificNamesLongV1Marker> = provider
@@ -224,7 +241,18 @@ mod tests {
             specific_names_long
                 .get()
                 .defaults
-                .get("aucw", &tinystr!(8, "standard"))
+                .get(&MetaZoneId(tinystr!(4, "aucw")), &tinystr!(8, "standard"))
+                .unwrap()
+        );
+        assert_eq!(
+            "Coordinated Universal Time",
+            specific_names_long
+                .get()
+                .overrides
+                .get(
+                    &TimeZoneBcp47Id(tinystr!(8, "utc")),
+                    &tinystr!(8, "standard")
+                )
                 .unwrap()
         );
 
@@ -238,7 +266,19 @@ mod tests {
             .unwrap();
         assert_eq!(
             "PT",
-            generic_names_short.get().defaults.get("ampa").unwrap()
+            generic_names_short
+                .get()
+                .defaults
+                .get(&MetaZoneId(tinystr!(4, "ampa")))
+                .unwrap()
+        );
+        assert_eq!(
+            "UTC",
+            generic_names_short
+                .get()
+                .overrides
+                .get(&TimeZoneBcp47Id(tinystr!(8, "utc")))
+                .unwrap()
         );
 
         let specific_names_short: DataPayload<MetaZoneSpecificNamesShortV1Marker> = provider
@@ -254,7 +294,18 @@ mod tests {
             specific_names_short
                 .get()
                 .defaults
-                .get("ampa", &tinystr!(8, "daylight"))
+                .get(&MetaZoneId(tinystr!(4, "ampa")), &tinystr!(8, "daylight"))
+                .unwrap()
+        );
+        assert_eq!(
+            "UTC",
+            specific_names_short
+                .get()
+                .overrides
+                .get(
+                    &TimeZoneBcp47Id(tinystr!(8, "utc")),
+                    &tinystr!(8, "standard")
+                )
                 .unwrap()
         );
     }

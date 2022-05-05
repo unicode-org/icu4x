@@ -3,6 +3,6 @@
     "indi": "IST"
   },
   "overrides": {
-    "Etc/UTC": "UTC"
+    "utc": "UTC"
   }
 }
