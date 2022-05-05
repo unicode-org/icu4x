@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1651713045181,
+  "lastUpdate": 1651717291061,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -14363,6 +14363,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/59eead134f2fe56918bb6b13444df3cbd3037616"
         },
         "date": 1651713023436,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4475179,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "dc8587a3855111ed2829b557097840d56d2c71be",
+          "message": "Improve calendar-specific date/datetime constructors (#1845)\n\n* Fix Buddhist ctors\r\n\r\n* Remove _from_integers for unambiguous methods\r\n\r\n* fmt\r\n\r\n* remove non_exhaustive from coptic\r\n\r\n* allow\r\n\r\n* fix\r\n\r\n* calendar",
+          "timestamp": "2022-05-04T19:19:48-07:00",
+          "tree_id": "eef66719e4c542254f750be62f9c9251a78e8d66",
+          "url": "https://github.com/unicode-org/icu4x/commit/dc8587a3855111ed2829b557097840d56d2c71be"
+        },
+        "date": 1651717273742,
         "tool": "ndjson",
         "benches": [
           {
