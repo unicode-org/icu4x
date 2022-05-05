@@ -6,9 +6,7 @@ use crate::error::DatagenError;
 use crate::transform::cldr::cldr_serde;
 use crate::transform::cldr::cldr_serde::time_zones::time_zone_names::TimeZoneNames;
 use crate::transform::cldr::cldr_serde::time_zones::CldrTimeZonesData;
-use crate::transform::cldr::reader::{
-    get_langid_subdirectories, get_langid_subdirectory, open_reader,
-};
+use crate::transform::reader::{get_langid_subdirectories, get_langid_subdirectory, open_reader};
 use crate::SourceData;
 use elsa::sync::FrozenBTreeMap;
 use icu_datetime::provider::time_zones::*;

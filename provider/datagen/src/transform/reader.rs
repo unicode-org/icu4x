@@ -7,6 +7,7 @@ use icu_locid::LanguageIdentifier;
 use std::fs;
 use std::fs::File;
 use std::io::BufReader;
+use std::io::Read;
 use std::path::{Path, PathBuf};
 use std::str::FromStr;
 
@@ -16,6 +17,25 @@ pub fn open_reader(path: &Path) -> Result<BufReader<File>, DatagenError> {
     File::open(&path)
         .map(BufReader::new)
         .map_err(|e| (e, path).into())
+}
+
+/// Read the contents of the file at `path` and return it as a `String`.
+pub fn read_path_to_string(path: &Path) -> Result<String, DatagenError> {
+    let mut reader = open_reader(path)?;
+    let mut buffer = String::new();
+    reader.read_to_string(&mut buffer).map_err(|e| (e, path))?;
+    Ok(buffer)
+}
+
+/// Helper function which returns a sorted list of the contents of a directory.
+pub fn get_dir_contents(root: &Path) -> Result<Vec<PathBuf>, DatagenError> {
+    let mut result = vec![];
+    for entry in fs::read_dir(root).map_err(|e| (e, root))? {
+        let path = entry.map_err(|e| (e, root))?.path();
+        result.push(path);
+    }
+    result.sort();
+    Ok(result)
 }
 
 fn get_langid_subdirectories_internal(

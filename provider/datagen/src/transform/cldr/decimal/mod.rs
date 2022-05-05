@@ -4,9 +4,7 @@
 
 use crate::error::DatagenError;
 use crate::transform::cldr::cldr_serde;
-use crate::transform::cldr::reader::{
-    get_langid_subdirectories, get_langid_subdirectory, open_reader,
-};
+use crate::transform::reader::{get_langid_subdirectories, get_langid_subdirectory, open_reader};
 use crate::SourceData;
 use icu_decimal::provider::*;
 use icu_provider::datagen::IterableResourceProvider;
