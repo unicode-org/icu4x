@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1651765843453,
+  "lastUpdate": 1651766217235,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -30023,6 +30023,102 @@ window.BENCHMARK_DATA = {
             "name": "pattern/parse",
             "value": 6211,
             "range": "± 220",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "andrewpkq@gmail.com",
+            "name": "andrewpollack",
+            "username": "andrewpollack"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "8cd78d9fc38c44fca80884d87d5efc1c133cc381",
+          "message": "Add `Date::new_from_iso(date_iso, X)` example for each calendar X (#1844)\n\n* Fixing typo\r\n\r\n* adding examples to top level calendars\r\n\r\n* Adding coptic example\r\n\r\n* Adding Buddhist Date example\r\n\r\n* Bringing up-to-date to main. Fixing Coptic",
+          "timestamp": "2022-05-05T08:45:14-07:00",
+          "tree_id": "bb304a9e88eeff5960b37a50a8498085c0490d6d",
+          "url": "https://github.com/unicode-org/icu4x/commit/8cd78d9fc38c44fca80884d87d5efc1c133cc381"
+        },
+        "date": 1651766194746,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 103051,
+            "range": "± 5476",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 1011966,
+            "range": "± 96198",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 213452,
+            "range": "± 14382",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/DateTimeFormat/format_to_write",
+            "value": 96757,
+            "range": "± 3975",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/DateTimeFormat/format_to_string",
+            "value": 99923,
+            "range": "± 7855",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/format",
+            "value": 92765,
+            "range": "± 4709",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/to_string",
+            "value": 101680,
+            "range": "± 5201",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/ZonedDateTimeFormat/format_to_write",
+            "value": 186634,
+            "range": "± 11639",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/ZonedDateTimeFormat/format_to_string",
+            "value": 206031,
+            "range": "± 15645",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/format",
+            "value": 190944,
+            "range": "± 10865",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/to_string",
+            "value": 217198,
+            "range": "± 17539",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "pattern/parse",
+            "value": 5974,
+            "range": "± 430",
             "unit": "ns/iter"
           }
         ]
