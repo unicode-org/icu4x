@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1651713522274,
+  "lastUpdate": 1651717856204,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -29735,6 +29735,102 @@ window.BENCHMARK_DATA = {
             "name": "pattern/parse",
             "value": 4465,
             "range": "± 16",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "dc8587a3855111ed2829b557097840d56d2c71be",
+          "message": "Improve calendar-specific date/datetime constructors (#1845)\n\n* Fix Buddhist ctors\r\n\r\n* Remove _from_integers for unambiguous methods\r\n\r\n* fmt\r\n\r\n* remove non_exhaustive from coptic\r\n\r\n* allow\r\n\r\n* fix\r\n\r\n* calendar",
+          "timestamp": "2022-05-04T19:19:48-07:00",
+          "tree_id": "eef66719e4c542254f750be62f9c9251a78e8d66",
+          "url": "https://github.com/unicode-org/icu4x/commit/dc8587a3855111ed2829b557097840d56d2c71be"
+        },
+        "date": 1651717837265,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 74622,
+            "range": "± 405",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 791726,
+            "range": "± 576",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 165079,
+            "range": "± 244",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/DateTimeFormat/format_to_write",
+            "value": 71063,
+            "range": "± 95",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/DateTimeFormat/format_to_string",
+            "value": 79846,
+            "range": "± 57",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/format",
+            "value": 75554,
+            "range": "± 142",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/to_string",
+            "value": 82688,
+            "range": "± 76",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/ZonedDateTimeFormat/format_to_write",
+            "value": 161223,
+            "range": "± 169",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/ZonedDateTimeFormat/format_to_string",
+            "value": 172714,
+            "range": "± 171",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/format",
+            "value": 165730,
+            "range": "± 2801",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/to_string",
+            "value": 177907,
+            "range": "± 204",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "pattern/parse",
+            "value": 5050,
+            "range": "± 8",
             "unit": "ns/iter"
           }
         ]
