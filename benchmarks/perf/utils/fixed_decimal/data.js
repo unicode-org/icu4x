@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1651713549491,
+  "lastUpdate": 1651717852222,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -25409,6 +25409,66 @@ window.BENCHMARK_DATA = {
             "name": "from_string/1000000001",
             "value": 93,
             "range": "± 10",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "dc8587a3855111ed2829b557097840d56d2c71be",
+          "message": "Improve calendar-specific date/datetime constructors (#1845)\n\n* Fix Buddhist ctors\r\n\r\n* Remove _from_integers for unambiguous methods\r\n\r\n* fmt\r\n\r\n* remove non_exhaustive from coptic\r\n\r\n* allow\r\n\r\n* fix\r\n\r\n* calendar",
+          "timestamp": "2022-05-04T19:19:48-07:00",
+          "tree_id": "eef66719e4c542254f750be62f9c9251a78e8d66",
+          "url": "https://github.com/unicode-org/icu4x/commit/dc8587a3855111ed2829b557097840d56d2c71be"
+        },
+        "date": 1651717831886,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 104962,
+            "range": "± 5850",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 22821,
+            "range": "± 1081",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 59196,
+            "range": "± 3073",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 202,
+            "range": "± 9",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 83,
+            "range": "± 4",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 77,
+            "range": "± 3",
             "unit": "ns/iter"
           }
         ]
