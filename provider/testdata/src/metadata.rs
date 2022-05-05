@@ -35,7 +35,7 @@ impl From<serde_json::Error> for Error {
 }
 
 #[derive(Debug, Deserialize)]
-#[allow(clippy::exhaustive_structs)] // this type is stable
+#[non_exhaustive]
 pub struct PackageMetadata {
     pub locales: Vec<LanguageIdentifier>,
     pub cldr_json_glob: Vec<String>,
