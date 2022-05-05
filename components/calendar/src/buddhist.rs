@@ -2,7 +2,34 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! This module contains types and implementations for the Buddhist calendar
+//! This module contains types and implementations for the Buddhist calendar.
+//!
+//! ```rust
+//! use icu::calendar::{Date, DateTime,
+//!                     types::IsoHour, types::IsoMinute, types::IsoSecond,
+//!                     buddhist::Buddhist};
+//!
+//! // `Date` type
+//! let date_iso = Date::new_iso_date_from_integers(1970, 1, 2).unwrap();
+//! let date_buddhist = Date::new_from_iso(date_iso, Buddhist);
+//!
+//! // `DateTime` type
+//! let datetime_iso = DateTime::new_iso_datetime_from_integers(1970, 1, 2, 13, 1, 0).unwrap();
+//! let datetime_buddhist = DateTime::new_from_iso(datetime_iso, Buddhist);
+//!
+//! // `Date` checks
+//! assert_eq!(date_buddhist.year().number, 2513);
+//! assert_eq!(date_buddhist.month().number, 1);
+//! assert_eq!(date_buddhist.day_of_month().0, 2);
+//!
+//! // `DateTime` type
+//! assert_eq!(datetime_buddhist.date.year().number, 2513);
+//! assert_eq!(datetime_buddhist.date.month().number, 1);
+//! assert_eq!(datetime_buddhist.date.day_of_month().0, 2);
+//! assert_eq!(datetime_buddhist.time.hour, IsoHour::new_unchecked(13));
+//! assert_eq!(datetime_buddhist.time.minute, IsoMinute::new_unchecked(1));
+//! assert_eq!(datetime_buddhist.time.second, IsoSecond::new_unchecked(0));
+//! ```
 
 use crate::iso::{Iso, IsoDateInner, IsoYear};
 use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, DateTime, DateTimeError};
