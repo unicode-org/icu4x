@@ -7,9 +7,9 @@
 //! Sample file:
 //! <https://github.com/unicode-org/cldr-json/blob/main/cldr-json/cldr-bcp47/bcp47/timezone.json>
 
+use icu_datetime::provider::time_zones::TimeZoneBcp47Id;
 use litemap::LiteMap;
 use serde::Deserialize;
-use tinystr::TinyStr8;
 
 #[derive(PartialEq, Debug, Clone, Deserialize)]
 pub struct Bcp47TzidAliasData {
@@ -30,7 +30,7 @@ pub struct Bcp47TimeZoneIds {
     pub _alias: String,
     pub _description: String,
     #[serde(flatten)]
-    pub values: LiteMap<TinyStr8, Bcp47TzidAliasData>,
+    pub values: LiteMap<TimeZoneBcp47Id, Bcp47TzidAliasData>,
 }
 
 #[derive(PartialEq, Debug, Deserialize)]

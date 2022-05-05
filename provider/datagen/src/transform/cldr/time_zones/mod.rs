@@ -18,7 +18,6 @@ use icu_provider::datagen::IterableResourceProvider;
 use icu_provider::prelude::*;
 use litemap::LiteMap;
 use std::sync::RwLock;
-use tinystr::TinyAsciiStr;
 
 mod convert;
 
@@ -96,8 +95,7 @@ macro_rules! impl_resource_provider {
                         for (bcp47_tzid, bcp47_tzid_data) in r.iter() {
                             if let Some(alias) = &bcp47_tzid_data.alias {
                                 for data_value in alias.split(" ") {
-                                    let tzid = TinyAsciiStr::<8>::from_str(bcp47_tzid).expect("Failed to convert bcp47 tzid into TinyAsciiStr<8>");
-                                    data_guard.insert(data_value.to_string(), TimeZoneBcp47Id(tzid));
+                                    data_guard.insert(data_value.to_string(), *bcp47_tzid);
                                 }
                             }
                         }
@@ -118,8 +116,7 @@ macro_rules! impl_resource_provider {
 
                         let mut data_guard = self.meta_zone_id_data.write().unwrap();
                         for (meta_zone_id, meta_zone_id_data) in r.iter() {
-                            let mzid = TinyAsciiStr::<4>::from_str(meta_zone_id).expect("Failed to convert metazone id into TinyAsciiStr<4>");
-                            data_guard.insert(meta_zone_id_data.long_id.to_string(), MetaZoneId(mzid));
+                            data_guard.insert(meta_zone_id_data.long_id.to_string(), *meta_zone_id);
                         }
                     }
 
@@ -222,6 +219,14 @@ mod tests {
                 .get(&MetaZoneId(tinystr!(4, "aucw")))
                 .unwrap()
         );
+        assert_eq!(
+            "Coordinated Universal Time",
+            generic_names_long
+                .get()
+                .overrides
+                .get(&TimeZoneBcp47Id(tinystr!(8, "utc")))
+                .unwrap()
+        );
 
         let specific_names_long: DataPayload<MetaZoneSpecificNamesLongV1Marker> = provider
             .load_resource(&DataRequest {
@@ -237,6 +242,17 @@ mod tests {
                 .get()
                 .defaults
                 .get(&MetaZoneId(tinystr!(4, "aucw")), &tinystr!(8, "standard"))
+                .unwrap()
+        );
+        assert_eq!(
+            "Coordinated Universal Time",
+            specific_names_long
+                .get()
+                .overrides
+                .get(
+                    &TimeZoneBcp47Id(tinystr!(8, "utc")),
+                    &tinystr!(8, "standard")
+                )
                 .unwrap()
         );
 
@@ -256,6 +272,14 @@ mod tests {
                 .get(&MetaZoneId(tinystr!(4, "ampa")))
                 .unwrap()
         );
+        assert_eq!(
+            "UTC",
+            generic_names_short
+                .get()
+                .overrides
+                .get(&TimeZoneBcp47Id(tinystr!(8, "utc")))
+                .unwrap()
+        );
 
         let specific_names_short: DataPayload<MetaZoneSpecificNamesShortV1Marker> = provider
             .load_resource(&DataRequest {
@@ -271,6 +295,17 @@ mod tests {
                 .get()
                 .defaults
                 .get(&MetaZoneId(tinystr!(4, "ampa")), &tinystr!(8, "daylight"))
+                .unwrap()
+        );
+        assert_eq!(
+            "UTC",
+            specific_names_short
+                .get()
+                .overrides
+                .get(
+                    &TimeZoneBcp47Id(tinystr!(8, "utc")),
+                    &tinystr!(8, "standard")
+                )
                 .unwrap()
         );
     }
