@@ -50,6 +50,9 @@ pub mod error;
 mod impl_const;
 pub mod planes;
 
+#[cfg(feature = "serde")]
+pub mod toml;
+
 pub use codepointtrie::CodePointMapRange;
 pub use codepointtrie::CodePointMapRangeIterator;
 pub use codepointtrie::CodePointTrie;

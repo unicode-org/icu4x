@@ -4,6 +4,6 @@
     "arwe": "WART"
   },
   "overrides": {
-    "Etc/UTC": "UTC"
+    "utc": "UTC"
   }
 }

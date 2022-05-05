@@ -3,8 +3,8 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use icu_datetime::provider::time_zones::{
-    ExemplarCitiesV1, MetaZoneGenericNamesLongV1, MetaZoneGenericNamesShortV1,
-    MetaZoneSpecificNamesLongV1, MetaZoneSpecificNamesShortV1, TimeZoneFormatsV1,
+    ExemplarCitiesV1, MetaZoneGenericNamesLongV1, MetaZoneGenericNamesShortV1, MetaZoneId,
+    MetaZoneSpecificNamesLongV1, MetaZoneSpecificNamesShortV1, TimeZoneBcp47Id, TimeZoneFormatsV1,
 };
 use std::borrow::Cow;
 use tinystr::TinyStr8;
@@ -111,7 +111,7 @@ impl From<&CldrTimeZonesData<'_>> for ExemplarCitiesV1<'static> {
                                     match bcp47_tzid_data.get(&key) {
                                         Some(bcp47) => place
                                             .exemplar_city()
-                                            .map(|city| vec![(bcp47.clone(), city)])
+                                            .map(|city| vec![(bcp47, city)])
                                             .unwrap_or_default(),
                                         None => panic!("Cannot find bcp47 for {:?}.", key),
                                     }
@@ -123,9 +123,9 @@ impl From<&CldrTimeZonesData<'_>> for ExemplarCitiesV1<'static> {
                                         key.push('/');
                                         key.push_str(inner_key);
                                         match bcp47_tzid_data.get(&key) {
-                                            Some(bcp47) => place
-                                                .exemplar_city()
-                                                .map(|city| (bcp47.clone(), city)),
+                                            Some(bcp47) => {
+                                                place.exemplar_city().map(|city| (bcp47, city))
+                                            }
                                             None => panic!("Cannot find bcp47 for {:?}.", key),
                                         }
                                     })
@@ -143,6 +143,7 @@ macro_rules! long_short_impls {
         impl From<&CldrTimeZonesData<'_>> for $generic {
             fn from(other: &CldrTimeZonesData) -> Self {
                 let data = &other.time_zone_names;
+                let bcp47_tzid_data = &other.bcp47_tzids;
                 let meta_zone_id_data = &other.meta_zone_ids;
                 Self {
                     defaults: match &data.metazone {
@@ -161,7 +162,11 @@ macro_rules! long_short_impls {
                                         // TODO(#1781): Remove this special case once the short id is updated in CLDR
                                         if key == "Yukon" {
                                             metazone.$field.as_ref().and_then(type_fallback).map(
-                                                |format| (String::from("yuko"), format.clone()),
+                                                |format| {
+                                                    const TINYSTR_YUKO: tinystr::TinyAsciiStr<4> =
+                                                        tinystr::tinystr!(4, "yuko");
+                                                    (MetaZoneId(TINYSTR_YUKO), format.clone())
+                                                },
                                             )
                                         } else {
                                             panic!(
@@ -187,21 +192,31 @@ macro_rules! long_short_impls {
                                     key.push('/');
                                     key.push_str(&inner_key);
                                     match place_or_region {
-                                        LocationOrSubRegion::Location(place) => place
-                                            .$metazones_name()
-                                            .and_then(|zf| type_fallback(&zf).cloned())
-                                            .map(|format| vec![(key, format)])
-                                            .unwrap_or_default(),
+                                        LocationOrSubRegion::Location(place) => {
+                                            match bcp47_tzid_data.get(&key) {
+                                                Some(bcp47) => place
+                                                    .$metazones_name()
+                                                    .and_then(|zf| type_fallback(&zf).cloned())
+                                                    .map(|format| vec![(bcp47, format)])
+                                                    .unwrap_or_default(),
+                                                None => panic!("Cannot find bcp47 for {:?}.", key),
+                                            }
+                                        }
                                         LocationOrSubRegion::SubRegion(region) => region
                                             .iter()
                                             .filter_map(|(inner_key, place)| {
                                                 let mut key = key.clone();
                                                 key.push('/');
                                                 key.push_str(&inner_key);
-                                                place
-                                                    .$metazones_name()
-                                                    .and_then(|zf| type_fallback(&zf).cloned())
-                                                    .map(|format| (key, format))
+                                                match bcp47_tzid_data.get(&key) {
+                                                    Some(bcp47) => place
+                                                        .$metazones_name()
+                                                        .and_then(|zf| type_fallback(&zf).cloned())
+                                                        .map(|format| (bcp47, format)),
+                                                    None => {
+                                                        panic!("Cannot find bcp47 for {:?}.", key)
+                                                    }
+                                                }
                                             })
                                             .collect::<Vec<_>>(),
                                     }
@@ -232,10 +247,11 @@ macro_rules! long_short_impls {
                                     None => {
                                         // TODO(#1781): Remove this special case once the short id is updated in CLDR
                                         if key == "Yukon" {
-                                            metazone
-                                                .$field
-                                                .as_ref()
-                                                .map(|value| (String::from("yuko"), value.clone()))
+                                            metazone.$field.as_ref().map(|value| {
+                                                const TINYSTR_YUKO: tinystr::TinyAsciiStr<4> =
+                                                    tinystr::tinystr!(4, "yuko");
+                                                (MetaZoneId(TINYSTR_YUKO), value.clone())
+                                            })
                                         } else {
                                             panic!(
                                                 "Cannot find short id of meta zone for {:?}.",
@@ -245,7 +261,7 @@ macro_rules! long_short_impls {
                                     }
                                 }
                             })
-                            .flat_map(iterate_zone_format)
+                            .flat_map(iterate_zone_format_for_meta_zone_id)
                             .collect(),
                     },
                     overrides: data
@@ -293,7 +309,7 @@ macro_rules! long_short_impls {
                                     }
                                 })
                         })
-                        .flat_map(iterate_zone_format)
+                        .flat_map(iterate_zone_format_for_time_zone_id)
                         .collect(),
                 }
             }
@@ -315,16 +331,35 @@ long_short_impls!(
     short_metazone_names
 );
 
-fn iterate_zone_format(
-    pair: (String, ZoneFormat),
-) -> impl Iterator<Item = (String, TinyStr8, String)> {
+fn iterate_zone_format_for_meta_zone_id(
+    pair: (MetaZoneId, ZoneFormat),
+) -> impl Iterator<Item = (MetaZoneId, TinyStr8, String)> {
     let (key1, zf) = pair;
     zf.0.into_tuple_vec()
         .into_iter()
         .filter(|(key, _)| !key.eq("generic"))
         .map(move |(key, value)| {
             (
-                key1.clone(),
+                key1,
+                #[allow(clippy::expect_used)]
+                // TODO(#1668) Clippy exceptions need docs or fixing.
+                key.parse::<TinyStr8>()
+                    .expect("Time-zone variant was not compatible with TinyStr8"),
+                value,
+            )
+        })
+}
+
+fn iterate_zone_format_for_time_zone_id(
+    pair: (TimeZoneBcp47Id, ZoneFormat),
+) -> impl Iterator<Item = (TimeZoneBcp47Id, TinyStr8, String)> {
+    let (key1, zf) = pair;
+    zf.0.into_tuple_vec()
+        .into_iter()
+        .filter(|(key, _)| !key.eq("generic"))
+        .map(move |(key, value)| {
+            (
+                key1,
                 #[allow(clippy::expect_used)]
                 // TODO(#1668) Clippy exceptions need docs or fixing.
                 key.parse::<TinyStr8>()
