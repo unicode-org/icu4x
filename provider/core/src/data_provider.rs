@@ -14,7 +14,6 @@ use crate::resource::ResourceOptions;
 use crate::yoke::trait_hack::YokeTraitHack;
 use crate::yoke::*;
 
-
 use core::convert::TryFrom;
 use core::fmt;
 use core::fmt::Debug;
@@ -75,7 +74,7 @@ pub struct DataResponseMetadata {
 /// [`DataPayload::map_project()`] or one of its sister methods.
 ///
 /// # `sync` feature
-/// 
+///
 /// By default, the payload uses an [`Arc<[u8]>`] for its backing buffer. If [`Sync`]` + `[`Send`]
 /// are not required, this can be changed to an [`Rc<[u8]>`] by disabling the `sync` feature. This
 /// will also change all APIs on this type that mention [`Arc<[u8]>`].
@@ -156,10 +155,8 @@ where
 /// this from a `&[u8]`.
 #[derive(Clone)]
 pub struct RcWrap(
-    #[cfg(not(feature = "sync"))]
-    alloc::rc::Rc<[u8]>,
-    #[cfg(feature = "sync")]
-    alloc::sync::Arc<[u8]>,
+    #[cfg(not(feature = "sync"))] alloc::rc::Rc<[u8]>,
+    #[cfg(feature = "sync")] alloc::sync::Arc<[u8]>,
 );
 
 impl core::ops::Deref for RcWrap {

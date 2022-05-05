@@ -35,7 +35,7 @@ extra_features = ["serde"]
 all-features = true
 
 [features]
-default = ["sync"]
+default = []
 sync = []
 std = ["icu_locid/std"]
 serde = ["dep:serde", "yoke/serde"]

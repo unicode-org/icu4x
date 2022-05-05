@@ -18,10 +18,10 @@ use zerovec::maps::{KeyError, ZeroMap2dBorrowed};
 /// If you prefer to bake the data into your binary, see [`StaticDataProvider`].
 ///
 /// # `Sync + Send`
-/// 
+///
 /// This provider uses a [`icu_provider::RcWrap`] internally, which can be made `Sync + Send` with the
 /// `sync` feature on the [`icu_provider`] crate.
-/// 
+///
 /// # Examples
 ///
 /// ```
@@ -38,7 +38,7 @@ use zerovec::maps::{KeyError, ZeroMap2dBorrowed};
 /// )).expect("Reading pre-computed postcard buffer");
 ///
 /// // Create a DataProvider from it:
-/// let provider = BlobDataProvider::new_from_rc_blob(blob.into())
+/// let provider = BlobDataProvider::new_from_blob(blob)
 ///     .expect("Deserialization should succeed");
 ///
 /// // Check that it works:

@@ -168,8 +168,8 @@ impl BufferProvider for HelloWorldJsonProvider {
 impl IterableResourceProvider<HelloWorldV1Marker> for HelloWorldProvider {
     fn supported_options(
         &self,
-    ) -> Result<Box<dyn Iterator<Item = ResourceOptions> + '_>, DataError> {
-        Ok(Box::new(
+    ) -> Result<alloc::boxed::Box<dyn Iterator<Item = ResourceOptions> + '_>, DataError> {
+        Ok(alloc::boxed::Box::new(
             self.map
                 .iter_keys()
                 .cloned()
