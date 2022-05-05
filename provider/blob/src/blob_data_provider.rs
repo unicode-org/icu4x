@@ -5,6 +5,7 @@
 use crate::blob_schema::BlobSchema;
 use icu_provider::buf::BufferFormat;
 use icu_provider::prelude::*;
+use icu_provider::RcWrap;
 use serde::de::Deserialize;
 use writeable::Writeable;
 use yoke::*;
