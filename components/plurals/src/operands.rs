@@ -71,7 +71,8 @@ use fixed_decimal::FixedDecimal;
 ///    c: 0,
 /// }), FixedDecimal::from(12345).multiplied_pow10(-2).map(|d| (&d).into()))
 /// ```
-#[derive(Debug, Clone, Copy, PartialEq)]
+#[derive(Debug, Clone, Copy, PartialEq, Default)]
+#[allow(clippy::exhaustive_structs)] // mostly stable, new operands may be added at the cadence of ICU's release cycle
 pub struct PluralOperands {
     /// Integer value of input
     pub i: u64,

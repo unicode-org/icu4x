@@ -3,12 +3,8 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use icu_locid::locale;
-use icu_plurals::{
-    provider::CardinalV1Marker, rules::runtime::ast::Rule, PluralCategory, PluralRuleType,
-    PluralRules,
-};
+use icu_plurals::{provider::CardinalV1Marker, PluralCategory, PluralRuleType, PluralRules};
 use icu_provider::prelude::*;
-use zerovec::VarZeroVec;
 
 #[test]
 fn test_plural_rules() {
@@ -20,10 +16,10 @@ fn test_plural_rules() {
 }
 
 #[test]
-fn test_static_provider_borrowed_rules() {
+fn test_static_load_works() {
     let provider = icu_testdata::get_static_provider();
 
-    let rules: DataPayload<CardinalV1Marker> = provider
+    let _rules: DataPayload<CardinalV1Marker> = provider
         .load_resource(&DataRequest {
             options: locale!("en").into(),
             metadata: Default::default(),
@@ -31,8 +27,6 @@ fn test_static_provider_borrowed_rules() {
         .expect("Failed to load payload")
         .take_payload()
         .expect("Failed to retrieve payload");
-    let rules = rules.get();
-    assert!(matches!(rules.one, Some(Rule(VarZeroVec::Borrowed(_)))));
 }
 
 #[test]

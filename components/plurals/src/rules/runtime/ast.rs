@@ -14,18 +14,18 @@ use zerovec::{
 };
 
 #[derive(yoke::Yokeable, zerofrom::ZeroFrom, Clone, PartialEq, Debug)]
-pub struct Rule<'data>(pub VarZeroVec<'data, RelationULE>);
+pub struct Rule<'data>(pub(crate) VarZeroVec<'data, RelationULE>);
 
 #[derive(Copy, Clone, Eq, PartialEq, Ord, PartialOrd, Debug)]
 #[repr(u8)]
-pub enum AndOr {
+pub(crate) enum AndOr {
     Or,
     And,
 }
 
 #[derive(Copy, Clone, Eq, PartialEq, Ord, PartialOrd, Debug)]
 #[repr(u8)]
-pub enum Polarity {
+pub(crate) enum Polarity {
     Negative,
     Positive,
 }
@@ -33,7 +33,7 @@ pub enum Polarity {
 #[derive(Copy, Clone, Debug, PartialEq, Eq, Ord, PartialOrd)]
 #[repr(u8)]
 #[zerovec::make_ule(OperandULE)]
-pub enum Operand {
+pub(crate) enum Operand {
     N = 0,
     I = 1,
     V = 2,
@@ -45,14 +45,14 @@ pub enum Operand {
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Ord, PartialOrd)]
-pub enum RangeOrValue {
+pub(crate) enum RangeOrValue {
     Range(u32, u32),
     Value(u32),
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Ord, PartialOrd)]
 #[zerovec::make_varule(RelationULE)]
-pub struct Relation<'data> {
+pub(crate) struct Relation<'data> {
     pub(crate) aopo: AndOrPolarityOperand,
     pub(crate) modulo: u32,
     pub(crate) range_list: ZeroVec<'data, RangeOrValue>,

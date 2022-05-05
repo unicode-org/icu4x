@@ -65,7 +65,7 @@ pub enum PluralOperandsInput {
 impl From<PluralOperandsInput> for PluralOperands {
     fn from(input: PluralOperandsInput) -> Self {
         match input {
-            PluralOperandsInput::List(operands) => Self {
+            PluralOperandsInput::List(operands) => PluralOperands {
                 i: operands.1,
                 v: operands.2,
                 w: operands.3,
@@ -81,7 +81,7 @@ impl From<PluralOperandsInput> for PluralOperands {
                 f,
                 t,
                 c,
-            } => Self {
+            } => PluralOperands {
                 i: i.unwrap_or_else(|| n.unwrap_or(0_f64) as u64),
                 v: v.unwrap_or(0),
                 w: w.unwrap_or(0),
