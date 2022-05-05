@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1651678946766,
+  "lastUpdate": 1651713549491,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -25349,6 +25349,66 @@ window.BENCHMARK_DATA = {
             "name": "from_string/1000000001",
             "value": 77,
             "range": "± 3",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "samchen61661@gmail.com",
+            "name": "samchen",
+            "username": "samchen61661"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "59eead134f2fe56918bb6b13444df3cbd3037616",
+          "message": "change to tinystr for timezone/metazone id identifiers (#1814)\n\n* change to tinystr for timezone/metazone id identifiers\r\n\r\n* first iteration of creating new types\r\n\r\n* remove unrelated .idea/ files\r\n\r\n* resolve more type errors\r\n\r\n* fix serde\r\n\r\n* Run cargo fmt\r\n\r\n* Fix tests to run with --features serde\r\n\r\n* Remove unused use-declarations\r\n\r\n* Panic on failed conversion to TinyAsciiStr\r\n\r\n* address comments and add more tests\r\n\r\nCo-authored-by: Erik Nordin <nordzilla@mozilla.com>",
+          "timestamp": "2022-05-04T18:08:39-07:00",
+          "tree_id": "5fc37bec704ecd199d8dbf726a9fc4704e9217e8",
+          "url": "https://github.com/unicode-org/icu4x/commit/59eead134f2fe56918bb6b13444df3cbd3037616"
+        },
+        "date": 1651713526536,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 128747,
+            "range": "± 759",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 26083,
+            "range": "± 1802",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 70475,
+            "range": "± 181",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 223,
+            "range": "± 2",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 93,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 93,
+            "range": "± 10",
             "unit": "ns/iter"
           }
         ]
