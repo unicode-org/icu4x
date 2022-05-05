@@ -12,10 +12,9 @@ use crate::iso::Iso;
 use crate::japanese::Japanese;
 use crate::{types, Calendar, Date, DateDuration, DateDurationUnit};
 
-use alloc::string::ToString;
-use icu_locid::{unicode_ext_key, Locale};
+use icu_locid::{unicode_ext_key, unicode_ext_value, Locale};
+use icu_locid::extensions::unicode::Value;
 
-use crate::provider;
 use icu_provider::prelude::*;
 
 /// This is a calendar that encompasses all formattable calendars supported by this crate
@@ -341,7 +340,7 @@ pub enum AnyCalendarKind {
 }
 
 impl AnyCalendarKind {
-    pub fn from_bcp47(x: &str) -> Option<Self> {
+    pub fn from_bcp47_string(x: &str) -> Option<Self> {
         Some(match x {
             "gregory" => AnyCalendarKind::Gregorian,
             "buddhist" => AnyCalendarKind::Buddhist,
@@ -349,6 +348,22 @@ impl AnyCalendarKind {
             "coptic" => AnyCalendarKind::Coptic,
             "iso" => AnyCalendarKind::Iso,
             _ => return None,
+        })
+    }
+
+    pub fn from_bcp47(x: &Value) -> Option<Self> {
+        Some(if *x == unicode_ext_value!("gregory") {
+            AnyCalendarKind::Gregorian
+        } else if *x == unicode_ext_value!("buddhist") {
+            AnyCalendarKind::Buddhist
+        } else if *x == unicode_ext_value!("indian") {
+            AnyCalendarKind::Indian
+        } else if *x == unicode_ext_value!("coptic") {
+            AnyCalendarKind::Coptic
+        } else if *x == unicode_ext_value!("iso") {
+            AnyCalendarKind::Iso
+        } else {
+            return None
         })
     }
 
@@ -368,7 +383,7 @@ impl AnyCalendarKind {
             .unicode
             .keywords
             .get(&unicode_ext_key!("ca"))
-            .and_then(|cal| Self::from_bcp47(&cal.to_string()))
+            .and_then(Self::from_bcp47)
     }
 }
 
