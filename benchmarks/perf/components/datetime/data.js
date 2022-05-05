@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1651678943387,
+  "lastUpdate": 1651713522274,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -29639,6 +29639,102 @@ window.BENCHMARK_DATA = {
             "name": "pattern/parse",
             "value": 5021,
             "range": "± 27",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "samchen61661@gmail.com",
+            "name": "samchen",
+            "username": "samchen61661"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "59eead134f2fe56918bb6b13444df3cbd3037616",
+          "message": "change to tinystr for timezone/metazone id identifiers (#1814)\n\n* change to tinystr for timezone/metazone id identifiers\r\n\r\n* first iteration of creating new types\r\n\r\n* remove unrelated .idea/ files\r\n\r\n* resolve more type errors\r\n\r\n* fix serde\r\n\r\n* Run cargo fmt\r\n\r\n* Fix tests to run with --features serde\r\n\r\n* Remove unused use-declarations\r\n\r\n* Panic on failed conversion to TinyAsciiStr\r\n\r\n* address comments and add more tests\r\n\r\nCo-authored-by: Erik Nordin <nordzilla@mozilla.com>",
+          "timestamp": "2022-05-04T18:08:39-07:00",
+          "tree_id": "5fc37bec704ecd199d8dbf726a9fc4704e9217e8",
+          "url": "https://github.com/unicode-org/icu4x/commit/59eead134f2fe56918bb6b13444df3cbd3037616"
+        },
+        "date": 1651713504775,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 66506,
+            "range": "± 144",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 702292,
+            "range": "± 3126",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 146267,
+            "range": "± 397",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/DateTimeFormat/format_to_write",
+            "value": 63744,
+            "range": "± 142",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/DateTimeFormat/format_to_string",
+            "value": 79602,
+            "range": "± 812",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/format",
+            "value": 66311,
+            "range": "± 205",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/to_string",
+            "value": 72390,
+            "range": "± 116",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/ZonedDateTimeFormat/format_to_write",
+            "value": 142524,
+            "range": "± 444",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/ZonedDateTimeFormat/format_to_string",
+            "value": 152141,
+            "range": "± 515",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/format",
+            "value": 146068,
+            "range": "± 598",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/to_string",
+            "value": 155714,
+            "range": "± 437",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "pattern/parse",
+            "value": 4465,
+            "range": "± 16",
             "unit": "ns/iter"
           }
         ]
