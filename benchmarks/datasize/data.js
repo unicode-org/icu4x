@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1651717291061,
+  "lastUpdate": 1651751061398,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -14393,6 +14393,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/dc8587a3855111ed2829b557097840d56d2c71be"
         },
         "date": 1651717273742,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4475179,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "aef2aa3ea45c5161f1045b418362ff9ac42eae4e",
+          "message": "Merge datagen \"reader\" modules (#1854)",
+          "timestamp": "2022-05-05T04:42:11-07:00",
+          "tree_id": "a0aadf9399fc7d3c9000502fab3f68f66764a3e6",
+          "url": "https://github.com/unicode-org/icu4x/commit/aef2aa3ea45c5161f1045b418362ff9ac42eae4e"
+        },
+        "date": 1651751037798,
         "tool": "ndjson",
         "benches": [
           {
