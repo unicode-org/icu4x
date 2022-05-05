@@ -168,7 +168,6 @@ pub mod prelude {
     pub use crate::data_provider::DataResponseMetadata;
     pub use crate::data_provider::DynProvider;
     pub use crate::data_provider::ResourceProvider;
-    pub use crate::data_provider::RcWrap;
     pub use crate::error::DataError;
     pub use crate::error::DataErrorKind;
     pub use crate::marker::DataMarker;
@@ -190,3 +189,6 @@ pub mod prelude {
 
 // Also include the same symbols at the top level for selective inclusion
 pub use prelude::*;
+
+// Less important non-prelude item
+pub use crate::data_provider::RcWrap;

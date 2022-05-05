@@ -169,7 +169,10 @@ impl core::ops::Deref for RcWrap {
     }
 }
 
+// Safe because both Rc and Arc are CloneableCart
 unsafe impl CloneableCart for RcWrap {}
+
+// Safe because both Rc and Arc are StableDeref
 unsafe impl stable_deref_trait::StableDeref for RcWrap {}
 
 impl From<alloc::vec::Vec<u8>> for RcWrap {
@@ -205,7 +208,7 @@ where
     ///
     /// Due to [compiler bug #84937](https://github.com/rust-lang/rust/issues/84937), call sites
     /// for this function may not compile; if this happens, use
-    /// [`try_from_buffer_badly()`](Self::try_from_buffer_badly) instead.
+    /// [`try_from_rc_buffer_badly()`](Self::try_from_rc_buffer_badly) instead.
     #[inline]
     pub fn try_from_rc_buffer<E>(
         buffer: RcWrap,
@@ -230,7 +233,7 @@ where
     /// use icu_provider::prelude::*;
     /// use icu_provider::hello_world::*;
     ///
-    /// let payload = DataPayload::<HelloWorldV1Marker>::try_from_buffer_badly(
+    /// let payload = DataPayload::<HelloWorldV1Marker>::try_from_rc_buffer_badly(
     ///     "{\"message\":\"Hello World\"}".as_bytes().into(),
     ///     |bytes| {
     ///         serde_json::from_slice(bytes)
@@ -242,11 +245,11 @@ where
     /// # } // feature = "serde_json"
     /// ```
     #[allow(clippy::type_complexity)]
-    pub fn try_from_buffer_badly<E>(
+    pub fn try_from_rc_buffer_badly<E>(
         buffer: RcWrap,
         f: for<'de> fn(&'de [u8]) -> Result<<M::Yokeable as Yokeable<'de>>::Output, E>,
     ) -> Result<Self, E> {
-        let yoke = Yoke::try_attach_to_cart(buffer.into(), f)?.wrap_cart_in_option();
+        let yoke = Yoke::try_attach_to_cart(buffer, f)?.wrap_cart_in_option();
         Ok(Self { yoke })
     }
 
