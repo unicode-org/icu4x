@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1651678405547,
+  "lastUpdate": 1651713045181,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -14338,6 +14338,36 @@ window.BENCHMARK_DATA = {
           {
             "name": "provider/testdata/data/testdata.postcard",
             "value": 4507203,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "samchen61661@gmail.com",
+            "name": "samchen",
+            "username": "samchen61661"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "59eead134f2fe56918bb6b13444df3cbd3037616",
+          "message": "change to tinystr for timezone/metazone id identifiers (#1814)\n\n* change to tinystr for timezone/metazone id identifiers\r\n\r\n* first iteration of creating new types\r\n\r\n* remove unrelated .idea/ files\r\n\r\n* resolve more type errors\r\n\r\n* fix serde\r\n\r\n* Run cargo fmt\r\n\r\n* Fix tests to run with --features serde\r\n\r\n* Remove unused use-declarations\r\n\r\n* Panic on failed conversion to TinyAsciiStr\r\n\r\n* address comments and add more tests\r\n\r\nCo-authored-by: Erik Nordin <nordzilla@mozilla.com>",
+          "timestamp": "2022-05-04T18:08:39-07:00",
+          "tree_id": "5fc37bec704ecd199d8dbf726a9fc4704e9217e8",
+          "url": "https://github.com/unicode-org/icu4x/commit/59eead134f2fe56918bb6b13444df3cbd3037616"
+        },
+        "date": 1651713023436,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4475179,
             "unit": "bytes",
             "biggerIsBetter": false
           }
