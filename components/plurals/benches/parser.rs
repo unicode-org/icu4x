@@ -14,7 +14,7 @@ fn parser(c: &mut Criterion) {
 
     let fixture_data = helpers::get_plurals_data();
 
-    let provider = icu_testdata::get_static_provider();
+    let provider = icu_testdata::get_provider();
 
     let mut rules = vec![];
 

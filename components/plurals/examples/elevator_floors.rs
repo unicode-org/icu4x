@@ -27,7 +27,7 @@ fn print(_input: &str, _value: Option<usize>) {
 fn main(_argc: isize, _argv: *const *const u8) -> isize {
     icu_benchmark_macros::main_setup!();
 
-    let provider = icu_testdata::get_static_provider();
+    let provider = icu_testdata::get_provider();
 
     {
         print("\n====== Elevator Floor (en) example ============", None);

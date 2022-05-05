@@ -24,7 +24,7 @@ $ cargo run --bin=icu4x-datagen -- \
 Create a [`StaticDataProvider`] from pre-built test data:
 
 ```rust
-let _ = icu_testdata::get_static_provider();
+let _ = icu_testdata::get_provider();
 ```
 
 For more examples, see the specific data providers.

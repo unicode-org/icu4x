@@ -8,14 +8,14 @@
 //! based on a CLDR tag and a short list of locales that, together, cover a range of scenarios.
 //!
 //! There are four modes of operation, enabled by features:
-//! * `fs` (default) exposes [`get_json_provider`] with alias [`get_provider`]. In this mode you
-//!   can optionally specify your own test data with the `ICU4X_TESTDATA_DIR` environment variable.
-//! * `static` exposes [`get_postcard_provider`] with alias [`get_provider`] (unless `fs` is
-//!   also enabled).
-//! * `baked` exposes [`get_baked_provider`] with alias [`get_provider`] (unless `fs` or `static` are
-//!   also enabled).
+//! * `static` (default) exposes [`get_postcard_provider`].
+//! * `fs` exposes [`get_json_provider`]
+//! * `baked` exposes [`get_baked_provider`].
 //! * `metadata` exposes the [`metadata`] module which contains information such as the CLDR Gitref
 //!   and the list of included locales.
+//! 
+//! However, clients should not generally choose a specific provider, but rather use [`get_provider`].
+//! This is currently an alias for [`get_postcard_provider`], as it is fast and has few dependencies.
 //!
 //! # Re-generating the data
 //!
@@ -75,7 +75,10 @@ pub mod metadata;
 #[cfg(feature = "std")]
 pub mod paths;
 
-/// Get a data, loading from the test data JSON directory.
+/// Get a data, loading from the test data JSON directory. 
+/// 
+/// You can optionally specify your own test data with the 
+/// `ICU4X_TESTDATA_DIR` environment variable.
 ///
 /// # Panics
 ///
@@ -125,21 +128,5 @@ pub fn get_baked_provider() -> &'static baked::BakedDataProvider {
     baked::PROVIDER
 }
 
-// get_provider is the first of get_json_provider, get_postcard_provider, get_baked_provider
-// This might change in the future.
-#[cfg(all(feature = "const", all(not(feature = "static"), not(feature = "fs"))))]
-pub use get_const_provider as get_provider;
-#[cfg(feature = "fs")]
-pub use get_json_provider as get_provider;
-#[cfg(all(feature = "static", not(feature = "fs")))]
+#[cfg(feature = "static")]
 pub use get_postcard_provider as get_provider;
-
-// get_static_provider is the first of get_postcard_provider, get_baked_provider
-// This might change in the future.
-#[cfg(all(feature = "baked", not(feature = "static")))]
-pub use get_baked_provider as get_static_provider;
-#[cfg(feature = "static")]
-pub use get_postcard_provider as get_static_provider;
-
-#[cfg(feature = "static")]
-pub use get_smaller_postcard_provider as get_smaller_static_provider;

@@ -17,7 +17,7 @@ fn test_plural_rules() {
 
 #[test]
 fn test_static_load_works() {
-    let provider = icu_testdata::get_static_provider();
+    let provider = icu_testdata::get_provider();
 
     let _rules: DataPayload<CardinalV1Marker> = provider
         .load_resource(&DataRequest {

@@ -170,7 +170,7 @@ writeable = { version = "0.3", path = "../../utils/writeable", optional = true }
 icu_plurals = { version = "0.5", path = "../../components/plurals" }
 
 [features]
-default = ["fs", "std"]
+default = ["static"]
 # Enables programmatic access to this Cargo.toml file
 metadata = [
     "cargo_metadata",
@@ -183,6 +183,7 @@ metadata = [
 ]
 fs = ["icu_provider/deserialize_json", "icu_provider_fs", "std"]
 static = ["icu_provider_blob"]
+baked = ["dep:baked"]
 std = []
 bin = [
     "clap",

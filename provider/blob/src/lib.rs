@@ -23,10 +23,12 @@
 //!
 //! # Example
 //!
-//! Create a [`StaticDataProvider`] from pre-built test data:
+//! Create a [`StaticDataProvider`] from a Postcard data file:
 //!
-//! ```
-//! let _ = icu_testdata::get_static_provider();
+//! ```no_run
+//! StaticDataProvider::new_from_static_blob(
+//!     include_bytes!("path/to/data.postcard")
+//! );
 //! ```
 //!
 //! For more examples, see the specific data providers.

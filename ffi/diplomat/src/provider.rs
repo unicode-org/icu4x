@@ -66,9 +66,9 @@ pub mod ffi {
 
             #[cfg(feature = "provider_test")]
             make_result!(Some(if cfg!(feature = "smaller_test") {
-                icu_testdata::get_smaller_static_provider()
+                icu_testdata::get_smaller_postcard_provider()
             } else {
-                icu_testdata::get_static_provider()
+                icu_testdata::get_postcard_provider()
             }))
         }
 
