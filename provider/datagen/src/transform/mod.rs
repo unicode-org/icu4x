@@ -9,4 +9,4 @@ pub mod cldr;
 pub mod segmenter;
 pub mod uprops;
 
-mod reader;
+pub(crate) mod reader;

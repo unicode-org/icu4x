@@ -34,7 +34,7 @@ impl DynProvider<UnicodePropertyV1Marker> for BinaryPropertyUnicodeSetDataProvid
         _: &DataRequest,
     ) -> Result<DataResponse<UnicodePropertyV1Marker>, DataError> {
         if self.data.read().unwrap().is_none() {
-            let data = uprops_helpers::load_binary_from_dir(self.source.get_uprops_root()?)?;
+            let data = uprops_helpers::load_binary_from_uprops_root(&self.source)?;
             *self.data.write().unwrap() = Some(data);
         }
 

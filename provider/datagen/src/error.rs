@@ -16,6 +16,10 @@ pub enum DatagenError {
     Json(serde_json::error::Error, Option<PathBuf>),
     #[displaydoc("TOML error: {0}: {1:?}")]
     Toml(toml::de::Error, Option<PathBuf>),
+    #[displaydoc("Mismatched type: {0:?}")]
+    MismatchedType(&'static str, Option<PathBuf>),
+    #[displaydoc("{0}")]
+    Data(DataError),
     #[displaydoc("{0}: {1:?}")]
     Custom(String, Option<LanguageIdentifier>),
     #[displaydoc("Missing CLDR data")]
@@ -66,6 +70,12 @@ impl<L: AsRef<LanguageIdentifier>> From<(&'static str, L)> for DatagenError {
     }
 }
 
+impl From<DataError> for DatagenError {
+    fn from(err: DataError) -> Self {
+        DatagenError::Data(err)
+    }
+}
+
 impl From<DatagenError> for DataError {
     fn from(err: DatagenError) -> Self {
         use DatagenError::*;
@@ -79,7 +89,12 @@ impl From<DatagenError> for DataError {
             Toml(e, Some(path_buf)) => DataError::custom("TOML Parse Error")
                 .with_error_context(&e)
                 .with_path(&path_buf),
+            MismatchedType(name, None) => DataErrorKind::MismatchedType(name).into_error(),
+            MismatchedType(name, Some(path_buf)) => DataErrorKind::MismatchedType(name)
+                .into_error()
+                .with_path(&path_buf),
             Toml(e, None) => DataError::custom("TOML Parse Error").with_error_context(&e),
+            Data(e) => e,
             Custom(s, Some(langid)) => DataError::custom("")
                 .with_display_context(&s)
                 .with_display_context(&langid),

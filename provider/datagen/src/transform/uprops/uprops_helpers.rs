@@ -6,25 +6,27 @@ use crate::transform::reader::*;
 
 use crate::error::DatagenError;
 use crate::transform::uprops::uprops_serde;
+use crate::SourceData;
 use std::collections::HashMap;
 use std::path::Path;
 
 pub type TomlEnumerated = HashMap<String, uprops_serde::enumerated::EnumeratedPropertyMap>;
 pub type TomlBinary = HashMap<String, uprops_serde::binary::BinaryProperty>;
 
-pub fn load_binary_from_dir(root_dir: &Path) -> Result<TomlBinary, DatagenError> {
+pub fn load_binary_from_uprops_root(source_data: &SourceData) -> Result<TomlBinary, DatagenError> {
     let mut result = HashMap::new();
-    for path in get_dir_contents(root_dir)? {
+    for path in source_data.get_uprops_dir_contents()? {
         let key: String = path
             .file_stem()
             .and_then(|p| p.to_str())
             .ok_or_else(|| DatagenError::Custom(format!("Invalid file name: {:?}", path), None))?
             .to_string();
-        let toml_str = read_path_to_string(&path)?;
-        let toml_obj: uprops_serde::binary::Main =
-            toml::from_str(&toml_str).map_err(|e| (e, path))?;
-        if let Some(v) = toml_obj.binary_property.into_iter().next() {
-            result.insert(key, v);
+        let arc_toml_obj = source_data.load(&path, |bytes| {
+            toml::from_slice::<uprops_serde::binary::Main>(&bytes)
+                .map_err(|e| DatagenError::from((e, path.clone())))
+        })?;
+        if let Some(v) = arc_toml_obj.binary_property.iter().next() {
+            result.insert(key, (*v).clone());
         }
     }
     Ok(result)

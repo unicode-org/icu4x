@@ -5,7 +5,7 @@
 use icu_codepointtrie::toml::CodePointTrieToml;
 
 pub mod binary {
-    #[derive(serde::Deserialize)]
+    #[derive(serde::Deserialize, Clone)]
     pub struct BinaryProperty {
         pub long_name: String,
         #[serde(skip)]

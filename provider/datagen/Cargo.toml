@@ -60,6 +60,7 @@ icu_uniset = { version = "0.4.1", path = "../../utils/uniset", features = ["serd
 itertools = "0.10"
 litemap = { version = "0.3.0", path = "../../utils/litemap" }
 log = "0.4"
+moka = "0.8.2"
 rayon = "1.5"
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"] }
 serde_json = { version = "1.0", default-features = false, features = ["alloc"] }

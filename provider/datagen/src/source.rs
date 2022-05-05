@@ -3,15 +3,41 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::error::DatagenError;
-use icu_provider::DataError;
+use crate::transform::reader;
+use icu_provider::prelude::*;
+use std::any::Any;
+use std::fmt::Debug;
 use std::path::{Path, PathBuf};
+use std::sync::Arc;
 
 /// Bag of options for datagen source data.
-#[derive(Clone, Debug, Default)]
+#[derive(Clone)]
 #[non_exhaustive]
 pub struct SourceData {
     cldr_paths: Option<CldrPaths>,
     uprops_root: Option<PathBuf>,
+    cache: moka::sync::Cache<PathBuf, Arc<dyn Any + Send + Sync>>,
+}
+
+impl Debug for SourceData {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("SourceData")
+            .field("cldr_paths", &self.cldr_paths)
+            .field("uprops_root", &self.uprops_root)
+            // skip formatting the cache
+            .finish()
+    }
+}
+
+impl Default for SourceData {
+    fn default() -> Self {
+        let cache = moka::sync::Cache::builder().max_capacity(1000).build();
+        SourceData {
+            cldr_paths: None,
+            uprops_root: None,
+            cache,
+        }
+    }
 }
 
 impl SourceData {
@@ -19,24 +45,20 @@ impl SourceData {
     /// a local `cldr-{version}-json-full.zip` directory (see [GitHub downloads](
     /// https://github.com/unicode-org/cldr-json/releases)), and `locale_subset`
     /// is a valid locale subset (currently either "full" or "modern").
-    pub fn with_cldr(self, root: PathBuf, locale_subset: String) -> Self {
-        Self {
-            cldr_paths: Some(CldrPaths {
-                root,
-                locale_subset,
-            }),
-            uprops_root: self.uprops_root,
-        }
+    pub fn with_cldr(mut self, root: PathBuf, locale_subset: String) -> Self {
+        self.cldr_paths = Some(CldrPaths {
+            root,
+            locale_subset,
+        });
+        self
     }
 
     /// Adds Unicode Properties data to this `DataSource`. The path should
     /// point to a local `icuexportdata_uprops_full` directory (see
     /// [GitHub downloads](https://github.com/unicode-org/icu/releases)).
-    pub fn with_uprops(self, uprops_root: PathBuf) -> Self {
-        Self {
-            cldr_paths: self.cldr_paths,
-            uprops_root: Some(uprops_root),
-        }
+    pub fn with_uprops(mut self, uprops_root: PathBuf) -> Self {
+        self.uprops_root = Some(uprops_root);
+        self
     }
 
     #[cfg(test)]
@@ -67,6 +89,37 @@ impl SourceData {
     #[cfg(feature = "experimental")]
     pub(crate) fn get_segmenter_data_root(&self) -> Result<PathBuf, DataError> {
         Ok(PathBuf::from(std::env!("CARGO_MANIFEST_DIR")).join("data"))
+    }
+
+    pub(crate) fn get_uprops_dir_contents(&self) -> Result<Vec<PathBuf>, DatagenError> {
+        let root = self.get_uprops_root()?;
+        reader::get_dir_contents(root)
+    }
+
+    pub(crate) fn load<T>(
+        &self,
+        path: &Path,
+        init: impl FnOnce(&[u8]) -> Result<T, DatagenError>,
+    ) -> Result<Arc<T>, DatagenError>
+    where
+        T: Any + Send + Sync,
+    {
+        self.cache
+            .try_get_with::<_, DatagenError>(path.to_path_buf(), move || {
+                let contents = reader::read_path_to_string(path)?;
+                let t = init(contents.as_bytes())?;
+                Ok(Arc::new(t))
+            })
+            .map_err(|arc_err| DatagenError::Custom(arc_err.to_string(), None))
+            .map(Arc::downcast)
+            .and_then(|result| {
+                result.map_err(|_| {
+                    DatagenError::MismatchedType(
+                        std::any::type_name::<T>(),
+                        Some(path.to_path_buf()),
+                    )
+                })
+            })
     }
 }
 
