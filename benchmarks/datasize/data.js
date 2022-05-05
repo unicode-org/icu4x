@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1651751061398,
+  "lastUpdate": 1651765304781,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -14423,6 +14423,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/aef2aa3ea45c5161f1045b418362ff9ac42eae4e"
         },
         "date": 1651751037798,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4475179,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "3d904fd1aeaa0dcf51d23b249c6e662d99eef078",
+          "message": "Non_exhaustive for plurals (#1793)\n\n* non_exhaustive errors\r\n\r\n* non_exhaustive plurals\r\n\r\nNote: this assumes operands will be stable\r\n\r\n* pub-crate ast itnernals\r\n\r\n* review fixes\r\n\r\n* fix",
+          "timestamp": "2022-05-05T08:39:32-07:00",
+          "tree_id": "03df9fa8f4d98b4bb28ef9287997b2a492bdebe4",
+          "url": "https://github.com/unicode-org/icu4x/commit/3d904fd1aeaa0dcf51d23b249c6e662d99eef078"
+        },
+        "date": 1651765281552,
         "tool": "ndjson",
         "benches": [
           {
