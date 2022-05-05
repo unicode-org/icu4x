@@ -12,8 +12,8 @@ use crate::iso::Iso;
 use crate::japanese::Japanese;
 use crate::{types, Calendar, Date, DateDuration, DateDurationUnit};
 
-use icu_locid::{unicode_ext_key, unicode_ext_value, Locale};
 use icu_locid::extensions::unicode::Value;
+use icu_locid::{unicode_ext_key, unicode_ext_value, Locale};
 
 use icu_provider::prelude::*;
 
@@ -363,7 +363,7 @@ impl AnyCalendarKind {
         } else if *x == unicode_ext_value!("iso") {
             AnyCalendarKind::Iso
         } else {
-            return None
+            return None;
         })
     }
 
