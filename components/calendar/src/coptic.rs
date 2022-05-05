@@ -11,11 +11,11 @@
 //!
 //! // `Date` type
 //! let date_iso = Date::new_iso_date_from_integers(1970, 1, 2).unwrap();
-//! let date_coptic = Date::new_from_iso(date_iso, Coptic::new());
+//! let date_coptic = Date::new_from_iso(date_iso, Coptic);
 //!
 //! // `DateTime` type
 //! let datetime_iso = DateTime::new_iso_datetime_from_integers(1970, 1, 2, 13, 1, 0).unwrap();
-//! let datetime_coptic = DateTime::new_from_iso(datetime_iso, Coptic::new());
+//! let datetime_coptic = DateTime::new_from_iso(datetime_iso, Coptic);
 //!
 //! // `Date` checks
 //! assert_eq!(date_coptic.year().number, 1686);
