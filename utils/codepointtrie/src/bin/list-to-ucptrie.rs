@@ -4,51 +4,35 @@
 
 use wasmer::{Instance, Module, Store};
 use wasmer_wasi::{Pipe, WasiState};
-use std::path::PathBuf;
-use wasmer_cache::{Cache, FileSystemCache, Hash};
+use lazy_static::lazy_static;
 
-fn get_module() -> Module {
-    let cache_path = PathBuf::from(std::env!("CARGO_MANIFEST_DIR")).join("wasmcache");
-    let mut fs_cache = FileSystemCache::new(cache_path).unwrap();
+const WASM_BYTES: &[u8] = include_bytes!("../../list_to_ucptrie.wasm");
 
-    let wasm_path = PathBuf::from(std::env!("CARGO_MANIFEST_DIR")).join("list_to_ucptrie").with_extension("wasm");
-    let wasm_bytes = std::fs::read(wasm_path).unwrap();
-
-    // Compute a key for a given WebAssembly binary
-    let key = Hash::generate(&wasm_bytes);
-
-    let store = Store::default();
-
-    let maybe_module = unsafe { fs_cache.load(&store, key) };
-    if let Ok(module) = maybe_module {
-        println!("Loaded module from cache");
-        return module;
-    }
-
-    println!("Compiling module...");
-    let module = Module::new(&store, &wasm_bytes).unwrap();
-    fs_cache.store(key, &module).unwrap();
-    return module;
+lazy_static! {
+    static ref STORE: Store = Store::default();
+    static ref MODULE: Module = Module::new(&STORE, &WASM_BYTES).expect("valid WASM");
 }
 
 fn main() {
-    let module = get_module();
+    run();
+    run();
+}
 
+fn run() {
     println!("Creating `WasiEnv`...");
     // First, we create the `WasiEnv` with the stdio pipes
-    let input = Pipe::new();
-    let output = Pipe::new();
     let mut wasi_env = WasiState::new("hello")
-        .stdin(Box::new(input))
-        .stdout(Box::new(output))
+        .stdin(Box::new(Pipe::new()))
+        .stdout(Box::new(Pipe::new()))
         .args(&["0", "0", "fast"])
-        .finalize().unwrap();
+        .finalize()
+        .unwrap();
 
     println!("Instantiating module with WASI imports...");
     // Then, we get the import object related to our WASI
     // and attach it to the Wasm instance.
-    let import_object = wasi_env.import_object(&module).unwrap();
-    let instance = Instance::new(&module, &import_object).unwrap();
+    let import_object = wasi_env.import_object(&MODULE).unwrap();
+    let instance = Instance::new(&MODULE, &import_object).unwrap();
 
     let msg = "2\n3\n4";
     println!("Writing \"{}\" to the WASI stdin...", msg);
