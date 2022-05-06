@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1651855337876,
+  "lastUpdate": 1651857721933,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -25829,6 +25829,66 @@ window.BENCHMARK_DATA = {
             "name": "from_string/1000000001",
             "value": 87,
             "range": "± 5",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "5714448bb9145bb21e6355f469aa18f8d3e59c1e",
+          "message": "non_exhaustive for provider crates (#1838)\n\n* icu_provider non_exhaustive\r\n\r\n* adapters non_exhaustive\r\n\r\n* blob, fs non_exhaustive\r\n\r\n* testdata non_exhaustive\r\n\r\n* datagen non_exhaustive\r\n\r\n* fixes\r\n\r\n* fixup\r\n\r\n* fixup after rebase",
+          "timestamp": "2022-05-06T17:11:46Z",
+          "tree_id": "e21b0508a738142726c76e61ca2713e258e45ebf",
+          "url": "https://github.com/unicode-org/icu4x/commit/5714448bb9145bb21e6355f469aa18f8d3e59c1e"
+        },
+        "date": 1651857700222,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 119814,
+            "range": "± 4855",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 23984,
+            "range": "± 1040",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 68368,
+            "range": "± 1948",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 217,
+            "range": "± 11",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 90,
+            "range": "± 3",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 92,
+            "range": "± 6",
             "unit": "ns/iter"
           }
         ]
