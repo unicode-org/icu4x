@@ -22,19 +22,7 @@ use icu_provider::prelude::*;
 use icu_uniset::UnicodeSet;
 
 /// TODO(#1239): Finalize this API.
-pub type UnisetResult = Result<DataPayload<UnicodePropertyV1Marker>, PropertiesError>;
-
-// helper fn
-fn get_uniset<D>(provider: &D, key: ResourceKey) -> UnisetResult
-where
-    D: DynProvider<UnicodePropertyV1Marker> + ?Sized,
-{
-    let resp: DataResponse<UnicodePropertyV1Marker> =
-        provider.load_payload(key, &Default::default())?;
-
-    let property_payload: DataPayload<UnicodePropertyV1Marker> = resp.take_payload()?;
-    Ok(property_payload)
-}
+pub type UnisetResult<M> = Result<DataPayload<M>, PropertiesError>;
 
 //
 // Binary property getter fns
@@ -43,20 +31,19 @@ where
 macro_rules! make_set_property {
     (
         // currently unused
-        property: $prop_name:expr;
+        property: $property:expr;
         // currently unused
         marker: $marker_name:ident;
-        key: $key_name:expr;
+        resource_marker: $resource_marker:ty;
         func:
         $(#[$attr:meta])*
-        pub fn $funcname:ident();
+        $vis:vis fn $funcname:ident();
     ) => {
         $(#[$attr])*
-        pub fn $funcname<D>(provider: &D) -> UnisetResult
-        where
-            D: DynProvider<UnicodePropertyV1Marker> + ?Sized,
-        {
-            get_uniset(provider, $key_name)
+        $vis fn $funcname(
+            provider: &(impl ResourceProvider<$resource_marker> + ?Sized)
+        ) -> UnisetResult<$resource_marker> {
+            Ok(provider.load_resource(&Default::default()).and_then(DataResponse::take_payload)?)
         }
     }
 }
@@ -64,7 +51,7 @@ macro_rules! make_set_property {
 make_set_property! {
     property: "ASCII_Hex_Digit";
     marker: AsciiHexDigitProperty;
-    key: crate::provider::key::ASCII_HEX_DIGIT_V1;
+    resource_marker: AsciiHexDigitV1Marker;
     func:
     /// ASCII characters commonly used for the representation of hexadecimal numbers
     ///
@@ -91,7 +78,7 @@ make_set_property! {
 make_set_property! {
     property: "Alnum";
     marker: AlnumProperty;
-    key: crate::provider::key::ALNUM_V1;
+    resource_marker: AlnumV1Marker;
     func:
     /// Characters with the Alphabetic or Decimal_Number property
     /// This is defined for POSIX compatibility.
@@ -102,7 +89,7 @@ make_set_property! {
 make_set_property! {
     property: "Alphabetic";
     marker: AlphabeticProperty;
-    key: crate::provider::key::ALPHABETIC_V1;
+    resource_marker: AlphabeticV1Marker;
     func:
     /// Alphabetic characters
     ///
@@ -130,7 +117,7 @@ make_set_property! {
 make_set_property! {
     property: "Bidi_Control";
     marker: BidiControlProperty;
-    key: crate::provider::key::BIDI_CONTROL_V1;
+    resource_marker: BidiControlV1Marker;
     func:
     /// Format control characters which have specific functions in the Unicode Bidirectional
     /// Algorithm
@@ -157,7 +144,7 @@ make_set_property! {
 make_set_property! {
     property: "Bidi_Mirrored";
     marker: BidiMirroredProperty;
-    key: crate::provider::key::BIDI_MIRRORED_V1;
+    resource_marker: BidiMirroredV1Marker;
     func:
     /// Characters that are mirrored in bidirectional text
     ///
@@ -185,7 +172,7 @@ make_set_property! {
 make_set_property! {
     property: "Blank";
     marker: BlankProperty;
-    key: crate::provider::key::BLANK_V1;
+    resource_marker: BlankV1Marker;
     func:
     /// Horizontal whitespace characters
 
@@ -195,7 +182,7 @@ make_set_property! {
 make_set_property! {
     property: "Cased";
     marker: CasedProperty;
-    key: crate::provider::key::CASED_V1;
+    resource_marker: CasedV1Marker;
     func:
     /// Uppercase, lowercase, and titlecase characters
     ///
@@ -221,7 +208,7 @@ make_set_property! {
 make_set_property! {
     property: "Case_Ignorable";
     marker: CaseIgnorableProperty;
-    key: crate::provider::key::CASE_IGNORABLE_V1;
+    resource_marker: CaseIgnorableV1Marker;
     func:
     /// Characters which are ignored for casing purposes
     ///
@@ -247,7 +234,7 @@ make_set_property! {
 make_set_property! {
     property: "Full_Composition_Exclusion";
     marker: FullCompositionExclusionProperty;
-    key: crate::provider::key::FULL_COMPOSITION_EXCLUSION_V1;
+    resource_marker: FullCompositionExclusionV1Marker;
     func:
     /// Characters that are excluded from composition
     /// See <https://unicode.org/Public/UNIDATA/CompositionExclusions.txt>
@@ -258,7 +245,7 @@ make_set_property! {
 make_set_property! {
     property: "Changes_When_Casefolded";
     marker: ChangesWhenCasefoldedProperty;
-    key: crate::provider::key::CHANGES_WHEN_CASEFOLDED_V1;
+    resource_marker: ChangesWhenCasefoldedV1Marker;
     func:
     /// Characters whose normalized forms are not stable under case folding
     ///
@@ -284,7 +271,7 @@ make_set_property! {
 make_set_property! {
     property: "Changes_When_Casemapped";
     marker: ChangesWhenCasemappedProperty;
-    key: crate::provider::key::CHANGES_WHEN_CASEMAPPED_V1;
+    resource_marker: ChangesWhenCasemappedV1Marker;
     func:
     /// Characters which may change when they undergo case mapping
 
@@ -294,7 +281,7 @@ make_set_property! {
 make_set_property! {
     property: "Changes_When_NFKC_Casefolded";
     marker: ChangesWhenNfkcCasefoldedProperty;
-    key: crate::provider::key::CHANGES_WHEN_NFKC_CASEFOLDED_V1;
+    resource_marker: ChangesWhenNfkcCasefoldedV1Marker;
     func:
     /// Characters which are not identical to their NFKC_Casefold mapping
     ///
@@ -320,7 +307,7 @@ make_set_property! {
 make_set_property! {
     property: "Changes_When_Lowercased";
     marker: ChangesWhenLowercasedProperty;
-    key: crate::provider::key::CHANGES_WHEN_LOWERCASED_V1;
+    resource_marker: ChangesWhenLowercasedV1Marker;
     func:
     /// Characters whose normalized forms are not stable under a toLowercase mapping
     ///
@@ -346,7 +333,7 @@ make_set_property! {
 make_set_property! {
     property: "Changes_When_Titlecased";
     marker: ChangesWhenTitlecasedProperty;
-    key: crate::provider::key::CHANGES_WHEN_TITLECASED_V1;
+    resource_marker: ChangesWhenTitlecasedV1Marker;
     func:
     /// Characters whose normalized forms are not stable under a toTitlecase mapping
     ///
@@ -372,7 +359,7 @@ make_set_property! {
 make_set_property! {
     property: "Changes_When_Uppercased";
     marker: ChangesWhenUppercasedProperty;
-    key: crate::provider::key::CHANGES_WHEN_UPPERCASED_V1;
+    resource_marker: ChangesWhenUppercasedV1Marker;
     func:
     /// Characters whose normalized forms are not stable under a toUppercase mapping
     ///
@@ -398,7 +385,7 @@ make_set_property! {
 make_set_property! {
     property: "Dash";
     marker: DashProperty;
-    key: crate::provider::key::DASH_V1;
+    resource_marker: DashV1Marker;
     func:
     /// Punctuation characters explicitly called out as dashes in the Unicode Standard, plus
     /// their compatibility equivalents
@@ -426,7 +413,7 @@ make_set_property! {
 make_set_property! {
     property: "Deprecated";
     marker: DeprecatedProperty;
-    key: crate::provider::key::DEPRECATED_V1;
+    resource_marker: DeprecatedV1Marker;
     func:
     /// Deprecated characters. No characters will ever be removed from the standard, but the
     /// usage of deprecated characters is strongly discouraged.
@@ -453,7 +440,7 @@ make_set_property! {
 make_set_property! {
     property: "Default_Ignorable_Code_Point";
     marker: DefaultIgnorableCodePointProperty;
-    key: crate::provider::key::DEFAULT_IGNORABLE_CODE_POINT_V1;
+    resource_marker: DefaultIgnorableCodePointV1Marker;
     func:
     /// For programmatic determination of default ignorable code points.  New characters that
     /// should be ignored in rendering (unless explicitly supported) will be assigned in these
@@ -482,7 +469,7 @@ make_set_property! {
 make_set_property! {
     property: "Diacritic";
     marker: DiacriticProperty;
-    key: crate::provider::key::DIACRITIC_V1;
+    resource_marker: DiacriticV1Marker;
     func:
     /// Characters that linguistically modify the meaning of another character to which they apply
     ///
@@ -508,7 +495,7 @@ make_set_property! {
 make_set_property! {
     property: "Emoji_Modifier_Base";
     marker: EmojiModifierBaseProperty;
-    key: crate::provider::key::EMOJI_MODIFIER_BASE_V1;
+    resource_marker: EmojiModifierBaseV1Marker;
     func:
     /// Characters that can serve as a base for emoji modifiers
     ///
@@ -534,7 +521,7 @@ make_set_property! {
 make_set_property! {
     property: "Emoji_Component";
     marker: EmojiComponentProperty;
-    key: crate::provider::key::EMOJI_COMPONENT_V1;
+    resource_marker: EmojiComponentV1Marker;
     func:
     /// Characters used in emoji sequences that normally do not appear on emoji keyboards as
     /// separate choices, such as base characters for emoji keycaps
@@ -563,7 +550,7 @@ make_set_property! {
 make_set_property! {
     property: "Emoji_Modifier";
     marker: EmojiModifierProperty;
-    key: crate::provider::key::EMOJI_MODIFIER_V1;
+    resource_marker: EmojiModifierV1Marker;
     func:
     /// Characters that are emoji modifiers
     ///
@@ -589,7 +576,7 @@ make_set_property! {
 make_set_property! {
     property: "Emoji";
     marker: EmojiProperty;
-    key: crate::provider::key::EMOJI_V1;
+    resource_marker: EmojiV1Marker;
     func:
     /// Characters that are emoji
     ///
@@ -615,7 +602,7 @@ make_set_property! {
 make_set_property! {
     property: "Emoji_Presentation";
     marker: EmojiPresentationProperty;
-    key: crate::provider::key::EMOJI_PRESENTATION_V1;
+    resource_marker: EmojiPresentationV1Marker;
     func:
     /// Characters that have emoji presentation by default
     ///
@@ -641,7 +628,7 @@ make_set_property! {
 make_set_property! {
     property: "Extender";
     marker: ExtenderProperty;
-    key: crate::provider::key::EXTENDER_V1;
+    resource_marker: ExtenderV1Marker;
     func:
     /// Characters whose principal function is to extend the value of a preceding alphabetic
     /// character or to extend the shape of adjacent characters.
@@ -669,7 +656,7 @@ make_set_property! {
 make_set_property! {
     property: "Extended_Pictographic";
     marker: ExtendedPictographicProperty;
-    key: crate::provider::key::EXTENDED_PICTOGRAPHIC_V1;
+    resource_marker: ExtendedPictographicV1Marker;
     func:
     /// Pictographic symbols, as well as reserved ranges in blocks largely associated with
     /// emoji characters
@@ -696,7 +683,7 @@ make_set_property! {
 make_set_property! {
     property: "Graph";
     marker: GraphProperty;
-    key: crate::provider::key::GRAPH_V1;
+    resource_marker: GraphV1Marker;
     func:
     /// Visible characters.
     /// This is defined for POSIX compatibility.
@@ -707,7 +694,7 @@ make_set_property! {
 make_set_property! {
     property: "Grapheme_Base";
     marker: GraphemeBaseProperty;
-    key: crate::provider::key::GRAPHEME_BASE_V1;
+    resource_marker: GraphemeBaseV1Marker;
     func:
     /// Property used together with the definition of Standard Korean Syllable Block to define
     /// "Grapheme base". See D58 in Chapter 3, Conformance in the Unicode Standard.
@@ -735,7 +722,7 @@ make_set_property! {
 make_set_property! {
     property: "Grapheme_Extend";
     marker: GraphemeExtendProperty;
-    key: crate::provider::key::GRAPHEME_EXTEND_V1;
+    resource_marker: GraphemeExtendV1Marker;
     func:
     /// Property used to define "Grapheme extender". See D59 in Chapter 3, Conformance in the
     /// Unicode Standard.
@@ -763,7 +750,7 @@ make_set_property! {
 make_set_property! {
     property: "Grapheme_Link";
     marker: GraphemeLinkProperty;
-    key: crate::provider::key::GRAPHEME_LINK_V1;
+    resource_marker: GraphemeLinkV1Marker;
     func:
     /// Deprecated property. Formerly proposed for programmatic determination of grapheme
     /// cluster boundaries.
@@ -774,7 +761,7 @@ make_set_property! {
 make_set_property! {
     property: "Hex_Digit";
     marker: HexDigitProperty;
-    key: crate::provider::key::HEX_DIGIT_V1;
+    resource_marker: HexDigitV1Marker;
     func:
     /// Characters commonly used for the representation of hexadecimal numbers, plus their
     /// compatibility equivalents
@@ -805,7 +792,7 @@ make_set_property! {
 make_set_property! {
     property: "Hyphen";
     marker: HyphenProperty;
-    key: crate::provider::key::HYPHEN_V1;
+    resource_marker: HyphenV1Marker;
     func:
     /// Deprecated property. Dashes which are used to mark connections between pieces of
     /// words, plus the Katakana middle dot.
@@ -816,7 +803,7 @@ make_set_property! {
 make_set_property! {
     property: "Id_Continue";
     marker: IdContinueProperty;
-    key: crate::provider::key::ID_CONTINUE_V1;
+    resource_marker: IdContinueV1Marker;
     func:
     /// Characters that can come after the first character in an identifier. If using NFKC to
     /// fold differences between characters, use [`get_xid_continue`] instead.  See
@@ -849,7 +836,7 @@ make_set_property! {
 make_set_property! {
     property: "Ideographic";
     marker: IdeographicProperty;
-    key: crate::provider::key::IDEOGRAPHIC_V1;
+    resource_marker: IdeographicV1Marker;
     func:
     /// Characters considered to be CJKV (Chinese, Japanese, Korean, and Vietnamese)
     /// ideographs, or related siniform ideographs
@@ -876,7 +863,7 @@ make_set_property! {
 make_set_property! {
     property: "Id_Start";
     marker: IdStartProperty;
-    key: crate::provider::key::ID_START_V1;
+    resource_marker: IdStartV1Marker;
     func:
     /// Characters that can begin an identifier. If using NFKC to fold differences between
     /// characters, use [`get_xid_start`] instead.  See [`Unicode Standard Annex
@@ -908,7 +895,7 @@ make_set_property! {
 make_set_property! {
     property: "Ids_Binary_Operator";
     marker: IdsBinaryOperatorProperty;
-    key: crate::provider::key::IDS_BINARY_OPERATOR_V1;
+    resource_marker: IdsBinaryOperatorV1Marker;
     func:
     /// Characters used in Ideographic Description Sequences
     ///
@@ -934,7 +921,7 @@ make_set_property! {
 make_set_property! {
     property: "Ids_Trinary_Operator";
     marker: IdsTrinaryOperatorProperty;
-    key: crate::provider::key::IDS_TRINARY_OPERATOR_V1;
+    resource_marker: IdsTrinaryOperatorV1Marker;
     func:
     /// Characters used in Ideographic Description Sequences
     ///
@@ -963,7 +950,7 @@ make_set_property! {
 make_set_property! {
     property: "Join_Control";
     marker: JoinControlProperty;
-    key: crate::provider::key::JOIN_CONTROL_V1;
+    resource_marker: JoinControlV1Marker;
     func:
     /// Format control characters which have specific functions for control of cursive joining
     /// and ligation
@@ -991,7 +978,7 @@ make_set_property! {
 make_set_property! {
     property: "Logical_Order_Exception";
     marker: LogicalOrderExceptionProperty;
-    key: crate::provider::key::LOGICAL_ORDER_EXCEPTION_V1;
+    resource_marker: LogicalOrderExceptionV1Marker;
     func:
     /// A small number of spacing vowel letters occurring in certain Southeast Asian scripts such as Thai and Lao
     ///
@@ -1017,7 +1004,7 @@ make_set_property! {
 make_set_property! {
     property: "Lowercase";
     marker: LowercaseProperty;
-    key: crate::provider::key::LOWERCASE_V1;
+    resource_marker: LowercaseV1Marker;
     func:
     /// Lowercase characters
     ///
@@ -1043,7 +1030,7 @@ make_set_property! {
 make_set_property! {
     property: "Math";
     marker: MathProperty;
-    key: crate::provider::key::MATH_V1;
+    resource_marker: MathV1Marker;
     func:
     /// Characters used in mathematical notation
     ///
@@ -1073,7 +1060,7 @@ make_set_property! {
 make_set_property! {
     property: "Noncharacter_Code_Point";
     marker: NoncharacterCodePointProperty;
-    key: crate::provider::key::NONCHARACTER_CODE_POINT_V1;
+    resource_marker: NoncharacterCodePointV1Marker;
     func:
     /// Code points permanently reserved for internal use
     ///
@@ -1100,7 +1087,7 @@ make_set_property! {
 make_set_property! {
     property: "NFC_Inert";
     marker: NfcInertProperty;
-    key: crate::provider::key::NFC_INERT_V1;
+    resource_marker: NfcInertV1Marker;
     func:
     /// Characters that are inert under NFC, i.e., they do not interact with adjacent characters
 
@@ -1110,7 +1097,7 @@ make_set_property! {
 make_set_property! {
     property: "NFD_Inert";
     marker: NfdInertProperty;
-    key: crate::provider::key::NFD_INERT_V1;
+    resource_marker: NfdInertV1Marker;
     func:
     /// Characters that are inert under NFD, i.e., they do not interact with adjacent characters
 
@@ -1120,7 +1107,7 @@ make_set_property! {
 make_set_property! {
     property: "NFKC_Inert";
     marker: NfkcInertProperty;
-    key: crate::provider::key::NFKC_INERT_V1;
+    resource_marker: NfkcInertV1Marker;
     func:
     /// Characters that are inert under NFKC, i.e., they do not interact with adjacent characters
 
@@ -1130,7 +1117,7 @@ make_set_property! {
 make_set_property! {
     property: "NFKD_Inert";
     marker: NfkdInertProperty;
-    key: crate::provider::key::NFKD_INERT_V1;
+    resource_marker: NfkdInertV1Marker;
     func:
     /// Characters that are inert under NFKD, i.e., they do not interact with adjacent characters
 
@@ -1140,7 +1127,7 @@ make_set_property! {
 make_set_property! {
     property: "Pattern_Syntax";
     marker: PatternSyntaxProperty;
-    key: crate::provider::key::PATTERN_SYNTAX_V1;
+    resource_marker: PatternSyntaxV1Marker;
     func:
     /// Characters used as syntax in patterns (such as regular expressions). See [`Unicode
     /// Standard Annex #31`](https://www.unicode.org/reports/tr31/tr31-35.html) for more
@@ -1169,7 +1156,7 @@ make_set_property! {
 make_set_property! {
     property: "Pattern_White_Space";
     marker: PatternWhiteSpaceProperty;
-    key: crate::provider::key::PATTERN_WHITE_SPACE_V1;
+    resource_marker: PatternWhiteSpaceV1Marker;
     func:
     /// Characters used as whitespace in patterns (such as regular expressions).  See
     /// [`Unicode Standard Annex #31`](https://www.unicode.org/reports/tr31/tr31-35.html) for
@@ -1199,7 +1186,7 @@ make_set_property! {
 make_set_property! {
     property: "Prepended_Concatenation_Mark";
     marker: PrependedConcatenationMarkProperty;
-    key: crate::provider::key::PREPENDED_CONCATENATION_MARK_V1;
+    resource_marker: PrependedConcatenationMarkV1Marker;
     func:
     /// A small class of visible format controls, which precede and then span a sequence of
     /// other characters, usually digits.
@@ -1210,7 +1197,7 @@ make_set_property! {
 make_set_property! {
     property: "Print";
     marker: PrintProperty;
-    key: crate::provider::key::PRINT_V1;
+    resource_marker: PrintV1Marker;
     func:
     /// Printable characters (visible characters and whitespace).
     /// This is defined for POSIX compatibility.
@@ -1221,7 +1208,7 @@ make_set_property! {
 make_set_property! {
     property: "Quotation_Mark";
     marker: QuotationMarkProperty;
-    key: crate::provider::key::QUOTATION_MARK_V1;
+    resource_marker: QuotationMarkV1Marker;
     func:
     /// Punctuation characters that function as quotation marks.
     ///
@@ -1248,7 +1235,7 @@ make_set_property! {
 make_set_property! {
     property: "Radical";
     marker: RadicalProperty;
-    key: crate::provider::key::RADICAL_V1;
+    resource_marker: RadicalV1Marker;
     func:
     /// Characters used in the definition of Ideographic Description Sequences
     ///
@@ -1274,7 +1261,7 @@ make_set_property! {
 make_set_property! {
     property: "Regional_Indicator";
     marker: RegionalIndicatorProperty;
-    key: crate::provider::key::REGIONAL_INDICATOR_V1;
+    resource_marker: RegionalIndicatorV1Marker;
     func:
     /// Regional indicator characters, U+1F1E6..U+1F1FF
     ///
@@ -1301,7 +1288,7 @@ make_set_property! {
 make_set_property! {
     property: "Soft_Dotted";
     marker: SoftDottedProperty;
-    key: crate::provider::key::SOFT_DOTTED_V1;
+    resource_marker: SoftDottedV1Marker;
     func:
     /// Characters with a "soft dot", like i or j. An accent placed on these characters causes
     /// the dot to disappear.
@@ -1328,7 +1315,7 @@ make_set_property! {
 make_set_property! {
     property: "Segment_Starter";
     marker: SegmentStarterProperty;
-    key: crate::provider::key::SEGMENT_STARTER_V1;
+    resource_marker: SegmentStarterV1Marker;
     func:
     /// Characters that are starters in terms of Unicode normalization and combining character
     /// sequences
@@ -1339,7 +1326,7 @@ make_set_property! {
 make_set_property! {
     property: "Case_Sensitive";
     marker: CaseSensitiveProperty;
-    key: crate::provider::key::CASE_SENSITIVE_V1;
+    resource_marker: CaseSensitiveV1Marker;
     func:
     /// Characters that are either the source of a case mapping or in the target of a case
     /// mapping
@@ -1350,7 +1337,7 @@ make_set_property! {
 make_set_property! {
     property: "Sentence_Terminal";
     marker: SentenceTerminalProperty;
-    key: crate::provider::key::SENTENCE_TERMINAL_V1;
+    resource_marker: SentenceTerminalV1Marker;
     func:
     /// Punctuation characters that generally mark the end of sentences
     ///
@@ -1379,7 +1366,7 @@ make_set_property! {
 make_set_property! {
     property: "Terminal_Punctuation";
     marker: TerminalPunctuationProperty;
-    key: crate::provider::key::TERMINAL_PUNCTUATION_V1;
+    resource_marker: TerminalPunctuationV1Marker;
     func:
     /// Punctuation characters that generally mark the end of textual units
     ///
@@ -1408,7 +1395,7 @@ make_set_property! {
 make_set_property! {
     property: "Unified_Ideograph";
     marker: UnifiedIdeographProperty;
-    key: crate::provider::key::UNIFIED_IDEOGRAPH_V1;
+    resource_marker: UnifiedIdeographV1Marker;
     func:
     /// A property which specifies the exact set of Unified CJK Ideographs in the standard
     ///
@@ -1435,7 +1422,7 @@ make_set_property! {
 make_set_property! {
     property: "Uppercase";
     marker: UppercaseProperty;
-    key: crate::provider::key::UPPERCASE_V1;
+    resource_marker: UppercaseV1Marker;
     func:
     /// Uppercase characters
     ///
@@ -1461,7 +1448,7 @@ make_set_property! {
 make_set_property! {
     property: "Variation_Selector";
     marker: VariationSelectorProperty;
-    key: crate::provider::key::VARIATION_SELECTOR_V1;
+    resource_marker: VariationSelectorV1Marker;
     func:
     /// Characters that are Variation Selectors.
     ///
@@ -1490,7 +1477,7 @@ make_set_property! {
 make_set_property! {
     property: "White_Space";
     marker: WhiteSpaceProperty;
-    key: crate::provider::key::WHITE_SPACE_V1;
+    resource_marker: WhiteSpaceV1Marker;
     func:
     /// Spaces, separator characters and other control characters which should be treated by
     /// programming languages as "white space" for the purpose of parsing elements
@@ -1519,7 +1506,7 @@ make_set_property! {
 make_set_property! {
     property: "Xdigit";
     marker: XdigitProperty;
-    key: crate::provider::key::XDIGIT_V1;
+    resource_marker: XdigitV1Marker;
     func:
     /// Hexadecimal digits
     /// This is defined for POSIX compatibility.
@@ -1530,7 +1517,7 @@ make_set_property! {
 make_set_property! {
     property: "XID_Continue";
     marker: XidContinueProperty;
-    key: crate::provider::key::XID_CONTINUE_V1;
+    resource_marker: XidContinueV1Marker;
     func:
     /// Characters that can begin an identifier.  See [`Unicode Standard Annex
     /// #31`](https://www.unicode.org/reports/tr31/tr31-35.html) for more details.
@@ -1561,7 +1548,7 @@ make_set_property! {
 make_set_property! {
     property: "XID_Start";
     marker: XidStartProperty;
-    key: crate::provider::key::XID_START_V1;
+    resource_marker: XidStartV1Marker;
     func:
     /// Characters that can come after the first character in an identifier. See [`Unicode
     /// Standard Annex #31`](https://www.unicode.org/reports/tr31/tr31-35.html) for more
@@ -1597,18 +1584,14 @@ make_set_property! {
 /// Return a [`UnicodeSet`] for a value or a grouping of values of the General_Category property. See [`GeneralCategoryGroup`].
 ///
 /// [`UnicodeSet`]: icu_uniset::UnicodeSet
-pub fn get_for_general_category_group<D>(
-    provider: &D,
+pub fn get_for_general_category_group(
+    provider: &(impl ResourceProvider<GeneralCategoryV1Marker> + ?Sized),
     enum_val: GeneralCategoryGroup,
-) -> Result<UnicodeSet<'static>, PropertiesError>
-where
-    D: DynProvider<UnicodePropertyMapV1Marker<GeneralCategory>> + ?Sized,
-{
-    let gc_map_payload: DataPayload<UnicodePropertyMapV1Marker<GeneralCategory>> =
-        maps::get_general_category(provider)?;
-    let gc_data_struct = gc_map_payload.get();
-    let gc = &gc_data_struct.code_point_trie;
-    let matching_gc_ranges = gc
+) -> Result<UnicodeSet<'static>, PropertiesError> {
+    let gc_map_payload = maps::get_general_category(provider)?;
+    let matching_gc_ranges = gc_map_payload
+        .get()
+        .code_point_trie
         .iter_ranges()
         .filter(|cpm_range| (1 << cpm_range.value as u32) & enum_val.0 != 0)
         .map(|cpm_range| cpm_range.range);
