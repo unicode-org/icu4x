@@ -38,7 +38,7 @@ impl TestText {
 }
 
 fn load_lstm_data(filename: &str) -> DataPayload<structs::LstmDataMarker> {
-    DataPayload::<structs::LstmDataMarker>::try_from_buffer_badly(
+    DataPayload::<structs::LstmDataMarker>::try_from_rc_buffer_badly(
         std::fs::read(filename)
             .expect("File can read to end")
             .into(),
