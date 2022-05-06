@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1651846862149,
+  "lastUpdate": 1651850459295,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -14513,6 +14513,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/2db0dedaa783626b1e52adee62ba01f9178c7958"
         },
         "date": 1651846839685,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4475179,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "10a15af6238d37207d36e2150724da153d18a09f",
+          "message": "Cleaning up testdata features (#1860)",
+          "timestamp": "2022-05-06T17:18:49+02:00",
+          "tree_id": "99c394b938fc94337e706a0e7ff2d525a735670a",
+          "url": "https://github.com/unicode-org/icu4x/commit/10a15af6238d37207d36e2150724da153d18a09f"
+        },
+        "date": 1651850436217,
         "tool": "ndjson",
         "benches": [
           {
