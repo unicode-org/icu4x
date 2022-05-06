@@ -1477,10 +1477,8 @@ name = "icu_provider_blob"
 version = "0.5.0"
 dependencies = [
  "erased-serde",
- "icu",
  "icu_locid",
  "icu_provider",
- "icu_testdata",
  "litemap",
  "log",
  "postcard",

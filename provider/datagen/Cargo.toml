@@ -85,7 +85,7 @@ walkdir = { version = "2.3.2", optional = true }
 [dev-dependencies]
 dhat = "0.3.0"
 writeable = { path = "../../utils/writeable" }
-icu_testdata = { path = "../testdata", features = ["metadata", "static"] }
+icu_testdata = { path = "../testdata", features = ["metadata"] }
 
 [features]
 default = []

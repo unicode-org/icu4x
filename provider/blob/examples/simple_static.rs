@@ -2,14 +2,24 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use icu::locid::locale;
-use icu::plurals::{PluralCategory, PluralRuleType, PluralRules};
+use icu_locid::locale;
+use icu_provider::{hello_world::*, prelude::*};
 
 fn main() {
-    let dp = icu_testdata::get_static_provider();
+    let dp = icu_provider_blob::StaticDataProvider::new_from_static_blob(include_bytes!(concat!(
+        env!("CARGO_MANIFEST_DIR"),
+        "/tests/data/hello_world.postcard"
+    )))
+    .unwrap();
 
-    let pr = PluralRules::try_new(locale!("en"), &dp, PluralRuleType::Cardinal)
-        .expect("Failed to construct a PluralRules struct.");
+    let hello: DataPayload<HelloWorldV1Marker> = dp
+        .load_resource(&DataRequest {
+            options: locale!("zh").into(),
+            metadata: Default::default(),
+        })
+        .unwrap()
+        .take_payload()
+        .unwrap();
 
-    assert_eq!(pr.select(5_usize), PluralCategory::Other);
+    println!("{}", hello.get().message);
 }

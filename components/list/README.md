@@ -14,7 +14,7 @@ use writeable::Writeable;
 
 let list_formatter = ListFormatter::try_new_and(
     locale!("es"),
-    &icu_testdata::get_static_provider(),
+    &icu_testdata::get_provider(),
     ListStyle::Wide,
 )
 .expect("Data should load successfully");

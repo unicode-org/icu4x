@@ -16,7 +16,7 @@ fn main(_argc: isize, _argv: *const *const u8) -> isize {
 
     let list_formatter = ListFormatter::try_new_and(
         locale!("es"),
-        &icu_testdata::get_static_provider(),
+        &icu_testdata::get_provider(),
         ListStyle::Wide,
     )
     .unwrap();

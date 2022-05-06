@@ -39,4 +39,4 @@ serde = { version = "1.0", default-features = false, features = ["derive", "allo
 serde_json = {version = "1.0" }
 icu_locid = { version = "0.5", path = "../../components/locid" }
 icu_provider = { version = "0.5", path = "../../provider/core" }
-icu_testdata = { version = "0.5", path = "../../provider/testdata"  }
+icu_testdata = { version = "0.5", path = "../../provider/testdata" }
