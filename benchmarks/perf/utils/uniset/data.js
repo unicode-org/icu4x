@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1651855153385,
+  "lastUpdate": 1651857618822,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -26590,6 +26590,60 @@ window.BENCHMARK_DATA = {
           {
             "name": "uniset/contains_range/worst",
             "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "5714448bb9145bb21e6355f469aa18f8d3e59c1e",
+          "message": "non_exhaustive for provider crates (#1838)\n\n* icu_provider non_exhaustive\r\n\r\n* adapters non_exhaustive\r\n\r\n* blob, fs non_exhaustive\r\n\r\n* testdata non_exhaustive\r\n\r\n* datagen non_exhaustive\r\n\r\n* fixes\r\n\r\n* fixup\r\n\r\n* fixup after rebase",
+          "timestamp": "2022-05-06T17:11:46Z",
+          "tree_id": "e21b0508a738142726c76e61ca2713e258e45ebf",
+          "url": "https://github.com/unicode-org/icu4x/commit/5714448bb9145bb21e6355f469aa18f8d3e59c1e"
+        },
+        "date": 1651857594155,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 44748962,
+            "range": "± 2312154",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/worst",
+            "value": 3,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/worst",
+            "value": 3,
             "range": "± 0",
             "unit": "ns/iter"
           }
