@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1651850937590,
+  "lastUpdate": 1651855349853,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -30311,6 +30311,102 @@ window.BENCHMARK_DATA = {
             "name": "pattern/parse",
             "value": 5136,
             "range": "± 10",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "ad0793ce9fa374adb9f87869506203290fdad890",
+          "message": "Add ability to construct AnyCalendars (#1827)\n\n* Add ability to construct AnyCalendars\r\n\r\n* fix\r\n\r\n* fix\r\n\r\n* docs\r\n\r\n* Add match over values\r\n\r\n* fmt\r\n\r\n* re-add import",
+          "timestamp": "2022-05-06T16:31:57Z",
+          "tree_id": "b3b6703da326a5233089b9a2ed40dbccd2b7e7b1",
+          "url": "https://github.com/unicode-org/icu4x/commit/ad0793ce9fa374adb9f87869506203290fdad890"
+        },
+        "date": 1651855327081,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 106822,
+            "range": "± 6195",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 989629,
+            "range": "± 29892",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 222067,
+            "range": "± 18140",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/DateTimeFormat/format_to_write",
+            "value": 103470,
+            "range": "± 4834",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/DateTimeFormat/format_to_string",
+            "value": 113477,
+            "range": "± 3047",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/format",
+            "value": 107822,
+            "range": "± 3610",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/to_string",
+            "value": 117941,
+            "range": "± 5961",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/ZonedDateTimeFormat/format_to_write",
+            "value": 213457,
+            "range": "± 10518",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/ZonedDateTimeFormat/format_to_string",
+            "value": 229713,
+            "range": "± 9608",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/format",
+            "value": 221451,
+            "range": "± 7906",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/to_string",
+            "value": 237201,
+            "range": "± 6336",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "pattern/parse",
+            "value": 6064,
+            "range": "± 382",
             "unit": "ns/iter"
           }
         ]
