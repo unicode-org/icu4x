@@ -4,7 +4,6 @@
 
 use crate::error::DatagenError;
 use crate::transform::cldr::cldr_serde;
-use crate::transform::reader::{get_langid_subdirectories, get_langid_subdirectory, open_reader};
 use crate::SourceData;
 use icu_decimal::provider::*;
 use icu_provider::datagen::IterableResourceProvider;
@@ -76,16 +75,11 @@ impl ResourceProvider<DecimalSymbolsV1Marker> for NumbersProvider {
     ) -> Result<DataResponse<DecimalSymbolsV1Marker>, DataError> {
         let langid = req.options.get_langid();
 
-        let resource: cldr_serde::numbers::Resource = {
-            let path = get_langid_subdirectory(
-                &self.source.get_cldr_paths()?.cldr_numbers().join("main"),
-                &langid,
-            )?
-            .ok_or_else(|| DataErrorKind::MissingLocale.into_error())?
-            .join("numbers.json");
-            serde_json::from_reader(open_reader(&path)?)
-                .map_err(|e| DatagenError::from((e, path)))?
-        };
+        let resource: &cldr_serde::numbers::Resource = self
+            .source
+            .get_cldr_paths()?
+            .cldr_numbers()
+            .read_and_parse(&langid, "numbers.json")?;
 
         #[allow(clippy::expect_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
         let numbers = &resource
@@ -101,20 +95,16 @@ impl ResourceProvider<DecimalSymbolsV1Marker> for NumbersProvider {
 
         #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
         if self.cldr_numbering_systems_data.read().unwrap().is_none() {
-            let path = self
+            let resource: &cldr_serde::numbering_systems::Resource = self
                 .source
                 .get_cldr_paths()?
                 .cldr_core()
-                .join("supplemental")
-                .join("numberingSystems.json");
-            let resource: cldr_serde::numbering_systems::Resource =
-                serde_json::from_reader(open_reader(&path)?)
-                    .map_err(|e| DatagenError::from((e, path)))?;
+                .read_and_parse("supplemental/numberingSystems.json")?;
             let _ = self
                 .cldr_numbering_systems_data
                 .write()
                 .unwrap()
-                .get_or_insert(resource.supplemental.numbering_systems);
+                .get_or_insert(resource.supplemental.numbering_systems.clone());
         }
 
         result.digits = self
@@ -148,7 +138,10 @@ impl IterableResourceProvider<DecimalSymbolsV1Marker> for NumbersProvider {
         &self,
     ) -> Result<Box<dyn Iterator<Item = ResourceOptions> + '_>, DataError> {
         Ok(Box::new(
-            get_langid_subdirectories(&self.source.get_cldr_paths()?.cldr_numbers().join("main"))?
+            self.source
+                .get_cldr_paths()?
+                .cldr_numbers()
+                .list_langs()?
                 .map(Into::<ResourceOptions>::into),
         ))
     }

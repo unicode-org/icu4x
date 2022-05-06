@@ -14,7 +14,7 @@ use std::collections::BTreeMap;
 use std::num::ParseIntError;
 use std::str::FromStr;
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Clone)]
 #[serde(rename_all = "camelCase")]
 pub enum Weekday {
     Mon,
@@ -101,7 +101,7 @@ impl<'de> Deserialize<'de> for Territory {
 }
 
 /// Wrapper used to deserialize json string keys as u8s.
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Clone)]
 #[serde(try_from = "String")]
 pub struct U8(pub u8);
 
@@ -113,7 +113,7 @@ impl TryFrom<String> for U8 {
     }
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct WeekData {
     pub min_days: BTreeMap<Territory, U8>,

@@ -4,15 +4,19 @@
 
 use crate::error::DatagenError;
 use icu_codepointtrie::TrieType;
+use crate::transform::cldr::source::CldrPaths;
+use crate::transform::uprops::source::UpropsPaths;
 use icu_provider::DataError;
-use std::path::{Path, PathBuf};
+use std::fmt::Debug;
+use std::path::PathBuf;
+use std::sync::Arc;
 
 /// Bag of options for datagen source data.
 #[derive(Clone, Debug)]
 #[non_exhaustive]
 pub struct SourceData {
-    cldr_paths: Option<CldrPaths>,
-    uprops_root: Option<PathBuf>,
+    cldr_paths: Option<Arc<CldrPaths>>,
+    uprops_paths: Option<Arc<UpropsPaths>>,
     trie_type: TrieType,
 }
 
@@ -20,7 +24,7 @@ impl Default for SourceData {
     fn default() -> Self {
         Self {
             cldr_paths: None,
-            uprops_root: None,
+            uprops_paths: None,
             trie_type: TrieType::Small,
         }
     }
@@ -33,10 +37,7 @@ impl SourceData {
     /// is a valid locale subset (currently either "full" or "modern").
     pub fn with_cldr(self, root: PathBuf, locale_subset: String) -> Self {
         Self {
-            cldr_paths: Some(CldrPaths {
-                root,
-                locale_subset,
-            }),
+            cldr_paths: Some(Arc::new(CldrPaths::new(root, locale_subset))),
             ..self
         }
     }
@@ -44,9 +45,9 @@ impl SourceData {
     /// Adds Unicode Properties data to this `DataSource`. The path should
     /// point to a local `icuexportdata_uprops_full` directory (see
     /// [GitHub downloads](https://github.com/unicode-org/icu/releases)).
-    pub fn with_uprops(self, uprops_root: PathBuf) -> Self {
+    pub fn with_uprops(self, root: PathBuf) -> Self {
         Self {
-            uprops_root: Some(uprops_root),
+            uprops_paths: Some(Arc::new(UpropsPaths::new(root))),
             ..self
         }
     }
@@ -77,10 +78,10 @@ impl SourceData {
     }
 
     /// Path to Unicode Properties source data.
-    pub(crate) fn get_uprops_root(&self) -> Result<&Path, DataError> {
+    pub(crate) fn get_uprops_paths(&self) -> Result<&UpropsPaths, DataError> {
         Ok(self
-            .uprops_root
-            .as_deref()
+            .uprops_paths
+            .as_ref()
             .ok_or(DatagenError::MissingUpropsPath)?)
     }
 
@@ -93,39 +94,5 @@ impl SourceData {
     #[cfg_attr(not(feature = "experimental"), allow(dead_code))]
     pub(crate) fn trie_type(&self) -> TrieType {
         self.trie_type
-    }
-}
-
-#[derive(Debug, PartialEq, Clone)]
-pub(crate) struct CldrPaths {
-    pub root: PathBuf,
-    pub locale_subset: String,
-}
-
-impl CldrPaths {
-    pub(crate) fn cldr_core(&self) -> PathBuf {
-        self.root.join("cldr-core")
-    }
-
-    pub(crate) fn cldr_numbers(&self) -> PathBuf {
-        self.root
-            .join(format!("cldr-numbers-{}", self.locale_subset))
-    }
-
-    pub(crate) fn cldr_misc(&self) -> PathBuf {
-        self.root.join(format!("cldr-misc-{}", self.locale_subset))
-    }
-
-    pub(crate) fn cldr_bcp47(&self) -> PathBuf {
-        self.root.join("cldr-bcp47")
-    }
-
-    pub(crate) fn cldr_dates(&self, cal: &str) -> PathBuf {
-        if cal == "gregorian" {
-            self.root.join(format!("cldr-dates-{}", self.locale_subset))
-        } else {
-            self.root
-                .join(format!("cldr-cal-{}-{}", cal, self.locale_subset))
-        }
     }
 }

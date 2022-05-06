@@ -2,38 +2,22 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::transform::uprops::uprops_helpers::{self, TomlBinary};
-
 use crate::SourceData;
 use icu_properties::provider::*;
 use icu_provider::datagen::*;
 use icu_provider::prelude::*;
 use icu_uniset::UnicodeSetBuilder;
-use std::sync::{RwLock, RwLockReadGuard};
 
 /// A data provider reading from TOML files produced by the ICU4C icuexportdata tool.
 pub struct BinaryPropertyUnicodeSetDataProvider {
     source: SourceData,
-    data: RwLock<Option<TomlBinary>>,
 }
 
 impl From<&SourceData> for BinaryPropertyUnicodeSetDataProvider {
     fn from(source: &SourceData) -> Self {
         Self {
             source: source.clone(),
-            data: RwLock::new(None),
         }
-    }
-}
-
-impl BinaryPropertyUnicodeSetDataProvider {
-    fn init(&self) -> Result<RwLockReadGuard<Option<TomlBinary>>, DataError> {
-        if self.data.read().unwrap().is_none() {
-            let data = uprops_helpers::load_binary_from_dir(self.source.get_uprops_root()?)?;
-            *self.data.write().unwrap() = Some(data);
-        }
-
-        Ok(self.data.read().expect("poison"))
     }
 }
 
@@ -45,13 +29,11 @@ macro_rules! expand {
                     &self,
                     _: &DataRequest,
                 ) -> Result<DataResponse<$marker>, DataError> {
-                    let guard = self.init()?;
-
-                    let data = guard
-                        .as_ref()
-                        .unwrap()
-                        .get($prop_name)
-                        .ok_or_else(|| DataErrorKind::MissingResourceKey.into_error())?;
+                    let data = self
+                        .source
+                        .get_uprops_paths()?
+                        .get_binary($prop_name)
+                        .map_err(|_| DataErrorKind::MissingResourceKey.into_error())?;
 
                     let mut builder = UnicodeSetBuilder::new();
                     for (start, end) in &data.ranges {
@@ -72,9 +54,11 @@ macro_rules! expand {
                 fn supported_options(
                     &self,
                 ) -> Result<Box<dyn Iterator<Item = ResourceOptions>>, DataError> {
-                    if !self.init()?.as_ref().unwrap().contains_key($prop_name) {
-                        return Err(DataErrorKind::MissingResourceKey.into_error())
-                    }
+                    self
+                        .source
+                        .get_uprops_paths()?
+                        .get_binary($prop_name)
+                        .map_err(|_| DataErrorKind::MissingResourceKey.into_error())?;
 
                     Ok(Box::new(core::iter::once(ResourceOptions::default())))
                 }

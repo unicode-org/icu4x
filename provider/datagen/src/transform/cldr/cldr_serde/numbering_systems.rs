@@ -11,14 +11,14 @@ use litemap::LiteMap;
 use serde::Deserialize;
 use tinystr::TinyStr8;
 
-#[derive(PartialEq, Debug, Deserialize)]
+#[derive(PartialEq, Debug, Deserialize, Clone)]
 #[serde(rename_all = "lowercase")]
 pub enum NumberingSystemType {
     Numeric,
     Algorithmic,
 }
 
-#[derive(PartialEq, Debug, Deserialize)]
+#[derive(PartialEq, Debug, Deserialize, Clone)]
 pub struct NumberingSystem {
     #[serde(rename = "_type")]
     pub nstype: NumberingSystemType,
@@ -28,13 +28,13 @@ pub struct NumberingSystem {
     pub rules: Option<String>,
 }
 
-#[derive(PartialEq, Debug, Deserialize)]
+#[derive(PartialEq, Debug, Deserialize, Clone)]
 pub struct SupplementalData {
     #[serde(rename = "numberingSystems")]
     pub numbering_systems: LiteMap<TinyStr8, NumberingSystem>,
 }
 
-#[derive(PartialEq, Debug, Deserialize)]
+#[derive(PartialEq, Debug, Deserialize, Clone)]
 pub struct Resource {
     pub supplemental: SupplementalData,
 }

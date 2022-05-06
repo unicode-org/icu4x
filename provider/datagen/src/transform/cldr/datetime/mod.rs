@@ -2,9 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::error::DatagenError;
 use crate::transform::cldr::cldr_serde;
-use crate::transform::reader::{get_langid_subdirectories, get_langid_subdirectory, open_reader};
 use crate::SourceData;
 use elsa::sync::FrozenBTreeMap;
 use icu_datetime::provider::calendar::*;
@@ -68,20 +66,11 @@ macro_rules! impl_resource_provider {
                             .get(&calendar)
                             .ok_or_else(|| DataErrorKind::MissingVariant.into_error())?;
 
-                        let path = get_langid_subdirectory(
-                            &self
-                                .source
-                                .get_cldr_paths()?
-                                .cldr_dates(cldr_cal)
-                                .join("main"),
-                            &langid,
-                        )?
-                        .ok_or_else(|| DataErrorKind::MissingLocale.into_error())?
-                        .join(&format!("ca-{}.json", cldr_cal));
-
-                        let mut resource: cldr_serde::ca::Resource =
-                            serde_json::from_reader(open_reader(&path)?)
-                                .map_err(|e| DatagenError::from((e, path)))?;
+                        let resource: &cldr_serde::ca::Resource =
+                        self
+                        .source
+                        .get_cldr_paths()?
+                        .cldr_dates(cldr_cal).read_and_parse(&langid, &format!("ca-{}.json", cldr_cal))?;
 
                         self.data.insert(
                             req.options.clone(),
@@ -89,12 +78,13 @@ macro_rules! impl_resource_provider {
                                 resource
                                     .main
                                     .0
-                                    .remove(&langid)
+                                    .get(&langid)
                                     .expect("CLDR file contains the expected language")
                                     .dates
                                     .calendars
-                                    .remove(*cldr_cal)
-                                    .expect("CLDR file contains the expected calendar"),
+                                    .get(*cldr_cal)
+                                    .expect("CLDR file contains the expected calendar")
+                                    .clone(),
                             ),
                         )
                     };
@@ -113,13 +103,10 @@ macro_rules! impl_resource_provider {
                 fn supported_options(&self) -> Result<Box<dyn Iterator<Item = ResourceOptions> + '_>, DataError> {
                     let mut r = Vec::new();
                     for (cal_value, cldr_cal) in self.supported_cals.iter() {
-                        r.extend(get_langid_subdirectories(
-                                &self
+                        r.extend(self
                                     .source
                                     .get_cldr_paths()?
-                                    .cldr_dates(cldr_cal)
-                                    .join("main"),
-                            )?
+                                    .cldr_dates(cldr_cal).list_langs()?
                             .map(|lid| {
                                 let mut locale: Locale = lid.into();
                                 locale

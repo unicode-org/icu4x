@@ -2,11 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::error::DatagenError;
 use crate::transform::cldr::cldr_serde;
 use crate::transform::cldr::cldr_serde::time_zones::time_zone_names::TimeZoneNames;
 use crate::transform::cldr::cldr_serde::time_zones::CldrTimeZonesData;
-use crate::transform::reader::{get_langid_subdirectories, get_langid_subdirectory, open_reader};
 use crate::SourceData;
 use elsa::sync::FrozenBTreeMap;
 use icu_datetime::provider::time_zones::*;
@@ -49,48 +47,32 @@ macro_rules! impl_resource_provider {
                     let time_zone_names = if let Some(time_zone_names) = self.time_zone_names_data.get(&langid) {
                         time_zone_names
                     } else {
-                        let path = get_langid_subdirectory(
-                            &self
-                                .source
-                                .get_cldr_paths()?
-                                .cldr_dates("gregorian")
-                                .join("main"),
-                            &langid,
-                        )?
-                        .ok_or_else(|| DataErrorKind::MissingLocale.into_error())?
-                        .join("timeZoneNames.json");
-                        let mut resource: cldr_serde::time_zones::time_zone_names::Resource =
-                            serde_json::from_reader(open_reader(&path)?)
-                                .map_err(|e| DatagenError::from((e, path)))?;
+                        let resource: &cldr_serde::time_zones::time_zone_names::Resource =
+                        self
+                        .source
+                        .get_cldr_paths()?
+                        .cldr_dates("gregorian").read_and_parse(&langid, "timeZoneNames.json")?;
                         self.time_zone_names_data.insert(
                             langid.clone(),
                             Box::new(
                                 resource
                                     .main
                                     .0
-                                    .remove(&langid)
+                                    .get(&langid)
                                     .expect("CLDR file contains the expected language")
                                     .dates
-                                    .time_zone_names,
+                                    .time_zone_names
+                                    .clone(),
                             ),
                         )
                     };
 
                     if self.bcp47_tzid_data.read().unwrap().len() == 0 {
-                        let bcp47_time_zone_path = self
-                            .source
-                            .get_cldr_paths()?
-                            .cldr_bcp47()
-                            .join("bcp47")
-                            .join("timezone.json");
-
-                        let resource: cldr_serde::time_zones::bcp47_tzid::Resource =
-                            serde_json::from_reader(open_reader(&bcp47_time_zone_path)?)
-                                .map_err(|e| DatagenError::from((e, bcp47_time_zone_path)))?;
-                        let r = resource.keyword.u.time_zones.values;
+                        let resource: &cldr_serde::time_zones::bcp47_tzid::Resource =
+                            self.source.get_cldr_paths()?.cldr_bcp47().read_and_parse("timezone.json")?;
 
                         let mut data_guard = self.bcp47_tzid_data.write().unwrap();
-                        for (bcp47_tzid, bcp47_tzid_data) in r.iter() {
+                        for (bcp47_tzid, bcp47_tzid_data) in resource.keyword.u.time_zones.values.iter() {
                             if let Some(alias) = &bcp47_tzid_data.alias {
                                 for data_value in alias.split(" ") {
                                     data_guard.insert(data_value.to_string(), *bcp47_tzid);
@@ -100,21 +82,15 @@ macro_rules! impl_resource_provider {
                     }
 
                     if self.meta_zone_id_data.read().unwrap().len() == 0 {
-                        let meta_zone_id_path = self
-                            .source
-                            .get_cldr_paths()?
-                            .cldr_core()
-                            .join("supplemental")
-                            .join("metaZones.json");
-
-                        let resource: cldr_serde::time_zones::meta_zones::Resource =
-                            serde_json::from_reader(open_reader(&meta_zone_id_path)?)
-                                .map_err(|e| DatagenError::from((e, meta_zone_id_path)))?;
-                        let r = resource.supplemental.meta_zones.meta_zone_ids.0;
+                        let resource: &cldr_serde::time_zones::meta_zones::Resource =
+                            self.source.get_cldr_paths()?.cldr_core().read_and_parse("supplemental/metaZones.json")?;
 
                         let mut data_guard = self.meta_zone_id_data.write().unwrap();
-                        for (meta_zone_id, meta_zone_id_data) in r.iter() {
-                            data_guard.insert(meta_zone_id_data.long_id.to_string(), *meta_zone_id);
+                        for (meta_zone_id, meta_zone_id_data) in resource.supplemental.meta_zones.meta_zone_ids.0.iter() {
+                            data_guard.insert(
+                                meta_zone_id_data.long_id.to_string(),
+                                meta_zone_id.clone(),
+                            );
                         }
                     }
 
@@ -136,13 +112,10 @@ macro_rules! impl_resource_provider {
             impl IterableResourceProvider<$marker> for TimeZonesProvider {
                 fn supported_options(&self) -> Result<Box<dyn Iterator<Item = ResourceOptions> + '_>, DataError> {
                     Ok(Box::new(
-                        get_langid_subdirectories(
-                            &self
+                            self
                                 .source
                                 .get_cldr_paths()?
-                                .cldr_dates("gregorian")
-                                .join("main"),
-                        )?
+                                .cldr_dates("gregorian").list_langs()?
                         .map(Into::<ResourceOptions>::into),
                     ))
                 }

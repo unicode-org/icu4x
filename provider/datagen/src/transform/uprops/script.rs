@@ -2,7 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::transform::uprops::uprops_helpers;
 use crate::SourceData;
 use icu_codepointtrie::CodePointTrie;
 use icu_properties::provider::{
@@ -40,8 +39,7 @@ impl ResourceProvider<ScriptWithExtensionsPropertyV1Marker>
         &self,
         _: &DataRequest,
     ) -> Result<DataResponse<ScriptWithExtensionsPropertyV1Marker>, DataError> {
-        let scx_data =
-            uprops_helpers::load_script_extensions_from_dir(self.source.get_uprops_root()?)?;
+        let scx_data = self.source.get_uprops_paths()?.get_script_extensions()?;
 
         let cpt_data = &scx_data.code_point_trie;
         let scx_array_data = &scx_data.script_code_array;

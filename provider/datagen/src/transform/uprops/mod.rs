@@ -24,7 +24,7 @@ mod bin_uniset;
 mod casemapping;
 mod enum_codepointtrie;
 mod script;
-mod uprops_helpers;
+pub(crate) mod source;
 mod uprops_serde;
 
 pub use bin_uniset::BinaryPropertyUnicodeSetDataProvider;

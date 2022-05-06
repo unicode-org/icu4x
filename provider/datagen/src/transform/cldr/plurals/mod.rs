@@ -2,9 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::error::DatagenError;
 use crate::transform::cldr::cldr_serde;
-use crate::transform::reader::open_reader;
 use crate::SourceData;
 use icu_plurals::provider::*;
 use icu_plurals::rules::runtime::ast::Rule;
@@ -41,20 +39,16 @@ impl PluralsProvider {
                 #[allow(clippy::unwrap_used)]
                 // TODO(#1668) Clippy exceptions need docs or fixing.
                 if self.cardinal_rules.read().unwrap().is_none() {
-                    let path = self
+                    let data: &cldr_serde::plurals::Resource = self
                         .source
                         .get_cldr_paths()?
                         .cldr_core()
-                        .join("supplemental")
-                        .join("plurals.json");
-                    let data: cldr_serde::plurals::Resource =
-                        serde_json::from_reader(open_reader(&path)?)
-                            .map_err(|e| DatagenError::from((e, path)))?;
+                        .read_and_parse("supplemental/plurals.json")?;
                     let _ = self
                         .cardinal_rules
                         .write()
                         .unwrap()
-                        .get_or_insert(data.supplemental.plurals_type_cardinal);
+                        .get_or_insert(data.supplemental.plurals_type_cardinal.clone());
                 }
                 #[allow(clippy::unwrap_used)]
                 // TODO(#1668) Clippy exceptions need docs or fixing.
@@ -64,20 +58,16 @@ impl PluralsProvider {
                 #[allow(clippy::unwrap_used)]
                 // TODO(#1668) Clippy exceptions need docs or fixing.
                 if self.ordinal_rules.read().unwrap().is_none() {
-                    let path = self
+                    let data: &cldr_serde::plurals::Resource = self
                         .source
                         .get_cldr_paths()?
                         .cldr_core()
-                        .join("supplemental")
-                        .join("ordinals.json");
-                    let data: cldr_serde::plurals::Resource =
-                        serde_json::from_reader(open_reader(&path)?)
-                            .map_err(|e| DatagenError::from((e, path)))?;
+                        .read_and_parse("supplemental/ordinals.json")?;
                     let _ = self
                         .ordinal_rules
                         .write()
                         .unwrap()
-                        .get_or_insert(data.supplemental.plurals_type_ordinal);
+                        .get_or_insert(data.supplemental.plurals_type_ordinal.clone());
                 }
                 #[allow(clippy::unwrap_used)]
                 // TODO(#1668) Clippy exceptions need docs or fixing.
