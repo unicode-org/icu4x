@@ -8,6 +8,7 @@ use icu_locid::LanguageIdentifier;
 use serde::Deserialize;
 
 #[derive(Display, Debug)]
+#[non_exhaustive]
 pub enum Error {
     #[displaydoc("Cargo Error: {0}")]
     Cargo(cargo_metadata::Error),
@@ -34,6 +35,7 @@ impl From<serde_json::Error> for Error {
 }
 
 #[derive(Debug, Deserialize)]
+#[non_exhaustive]
 pub struct PackageMetadata {
     pub locales: Vec<LanguageIdentifier>,
     pub cldr_json_glob: Vec<String>,
@@ -63,6 +65,7 @@ impl PackageMetadata {
 }
 
 #[derive(Debug)]
+#[non_exhaustive]
 pub struct PackageInfo {
     pub target_directory: Utf8PathBuf,
     pub package_metadata: PackageMetadata,

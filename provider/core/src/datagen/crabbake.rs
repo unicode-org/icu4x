@@ -99,6 +99,7 @@ impl DataPayload<CrabbakeMarker> {
 }
 
 /// Marker type for [`CrabbakeBox`].
+#[allow(clippy::exhaustive_structs)] // marker type
 pub struct CrabbakeMarker {}
 
 impl DataMarker for CrabbakeMarker {
