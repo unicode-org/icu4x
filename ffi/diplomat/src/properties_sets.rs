@@ -6,7 +6,7 @@
 pub mod ffi {
     use alloc::boxed::Box;
     use icu_properties::{
-        provider::UnicodePropertyV1Marker,
+        provider::AsciiHexDigitV1Marker,
         sets::{self, UnisetResult},
     };
     use icu_provider::prelude::DataPayload;
@@ -16,7 +16,7 @@ pub mod ffi {
     #[diplomat::opaque]
     /// An ICU4X Unicode Set Property object, capable of querying whether a code point is contained in a set based on a Unicode property.
     #[diplomat::rust_link(icu_properties, Mod)]
-    pub struct ICU4XCodePointSetData(DataPayload<UnicodePropertyV1Marker>);
+    pub struct ICU4XCodePointSetData(DataPayload<AsciiHexDigitV1Marker>);
 
     pub struct ICU4XCodePointSetDataResult {
         /// The [`ICU4XCodePointSetData`], if creation was successful.
@@ -36,7 +36,9 @@ pub mod ffi {
             Self::prepare_result(sets::get_ascii_hex_digit(&provider))
         }
 
-        fn prepare_result(result: UnisetResult) -> ICU4XCodePointSetDataResult {
+        fn prepare_result(
+            result: UnisetResult<AsciiHexDigitV1Marker>,
+        ) -> ICU4XCodePointSetDataResult {
             match result {
                 Ok(data) => ICU4XCodePointSetDataResult {
                     data: Some(Box::new(ICU4XCodePointSetData(data))),
