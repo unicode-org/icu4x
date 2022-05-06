@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1651766174466,
+  "lastUpdate": 1651847559273,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -25649,6 +25649,66 @@ window.BENCHMARK_DATA = {
             "name": "from_string/1000000001",
             "value": 91,
             "range": "± 2",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "2db0dedaa783626b1e52adee62ba01f9178c7958",
+          "message": "Migrating properties to `ResourceProvider` (#1862)",
+          "timestamp": "2022-05-06T16:18:57+02:00",
+          "tree_id": "c6bf41b8ab3a7679c7c632afe253fcd47571f2bf",
+          "url": "https://github.com/unicode-org/icu4x/commit/2db0dedaa783626b1e52adee62ba01f9178c7958"
+        },
+        "date": 1651847539928,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 107132,
+            "range": "± 472",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 21263,
+            "range": "± 166",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 58784,
+            "range": "± 245",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 185,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 78,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 77,
+            "range": "± 0",
             "unit": "ns/iter"
           }
         ]
