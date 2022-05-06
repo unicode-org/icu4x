@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1651850459295,
+  "lastUpdate": 1651854852280,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -14543,6 +14543,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/10a15af6238d37207d36e2150724da153d18a09f"
         },
         "date": 1651850436217,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4475179,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "ad0793ce9fa374adb9f87869506203290fdad890",
+          "message": "Add ability to construct AnyCalendars (#1827)\n\n* Add ability to construct AnyCalendars\r\n\r\n* fix\r\n\r\n* fix\r\n\r\n* docs\r\n\r\n* Add match over values\r\n\r\n* fmt\r\n\r\n* re-add import",
+          "timestamp": "2022-05-06T16:31:57Z",
+          "tree_id": "b3b6703da326a5233089b9a2ed40dbccd2b7e7b1",
+          "url": "https://github.com/unicode-org/icu4x/commit/ad0793ce9fa374adb9f87869506203290fdad890"
+        },
+        "date": 1651854827798,
         "tool": "ndjson",
         "benches": [
           {
