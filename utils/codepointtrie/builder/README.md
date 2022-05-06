@@ -7,7 +7,8 @@ Because it is normally expected for CodePointTrie data to be pre-compiled, this 
 optimized for speed; it should be used during a build phase.
 
 Under the hood, this crate uses the CodePointTrie builder code from ICU4C, [`UMutableCPTrie`],
-shipped as a WebAssembly module and then JIT-compiled at runtime.
+shipped as a WebAssembly module and then JIT-compiled at runtime. For more context, see
+<https://github.com/unicode-org/icu4x/issues/1837>.
 
 ## Examples
 
