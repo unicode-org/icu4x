@@ -6,3 +6,6 @@ ICU4C_SRC:=$(HOME)/icu/icu4c/source
 
 list_to_ucptrie: list_to_ucptrie.cpp
 	clang++-12 -o list_to_ucptrie -ldl -I$(ICU4C_SRC)/common -I$(ICU4C_SRC)/tools/toolutil list_to_ucptrie.cpp $(ICU4C_SRC)/lib/libicutu.a $(ICU4C_SRC)/lib/libicuuc.a
+
+list_to_ucptrie.wasm: list_to_ucptrie.cpp
+	wasic++ -I$(ICU4C_SRC)/common -I$(ICU4C_SRC)/tools/toolutil list_to_ucptrie.cpp $(ICU4C_SRC)/build_wasm32/umutablecptrie.o $(ICU4C_SRC)/build_wasm32/cmemory.o $(ICU4C_SRC)/build_wasm32/errorcode.o $(ICU4C_SRC)/build_wasm32/writesrc.o $(ICU4C_SRC)/build_wasm32/ucptrie.o $(ICU4C_SRC)/build_wasm32/utypes.o $(ICU4C_SRC)/build_wasm32/uobject.o -o list_to_ucptrie.wasm
