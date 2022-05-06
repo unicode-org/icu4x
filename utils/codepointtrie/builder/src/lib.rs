@@ -42,6 +42,21 @@
 //! [`ICU4X`]: ../icu/index.html
 //! [`UMutableCPTrie`]: (https://unicode-org.github.io/icu-docs/apidoc/dev/icu4c/umutablecptrie_8h.html#ad8945cf34ca9d40596a66a1395baa19b)
 
+#![cfg_attr(
+    not(test),
+    deny(
+        clippy::indexing_slicing,
+        clippy::unwrap_used,
+        clippy::expect_used,
+        clippy::panic,
+        clippy::exhaustive_structs,
+        clippy::exhaustive_enums
+    )
+)]
+
+// This is a build tool with many invariants being enforced
+#![allow(clippy::expect_used)]
+
 use icu_codepointtrie::toml::CodePointTrieToml;
 use icu_codepointtrie::CodePointTrie;
 use icu_codepointtrie::TrieType;
@@ -84,7 +99,10 @@ where
     /// Under the hood, this function runs ICU4C code compiled into WASM.
     pub fn build(self) -> CodePointTrie<'static, T> {
         let toml_str = wasm::run_wasm(&self);
-        let toml_obj: CodePointTrieToml = toml::from_str(&toml_str).unwrap();
-        (&toml_obj).try_into().unwrap()
+        let toml_obj: CodePointTrieToml =
+            toml::from_str(&toml_str).expect("the tool should produce valid TOML");
+        (&toml_obj)
+            .try_into()
+            .expect("the toml should be a valid CPT")
     }
 }
