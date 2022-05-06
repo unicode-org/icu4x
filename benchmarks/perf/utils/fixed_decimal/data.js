@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1651850964465,
+  "lastUpdate": 1651855337876,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -25769,6 +25769,66 @@ window.BENCHMARK_DATA = {
             "name": "from_string/1000000001",
             "value": 86,
             "range": "± 4",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "ad0793ce9fa374adb9f87869506203290fdad890",
+          "message": "Add ability to construct AnyCalendars (#1827)\n\n* Add ability to construct AnyCalendars\r\n\r\n* fix\r\n\r\n* fix\r\n\r\n* docs\r\n\r\n* Add match over values\r\n\r\n* fmt\r\n\r\n* re-add import",
+          "timestamp": "2022-05-06T16:31:57Z",
+          "tree_id": "b3b6703da326a5233089b9a2ed40dbccd2b7e7b1",
+          "url": "https://github.com/unicode-org/icu4x/commit/ad0793ce9fa374adb9f87869506203290fdad890"
+        },
+        "date": 1651855313111,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 119349,
+            "range": "± 7311",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 25084,
+            "range": "± 1055",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 67739,
+            "range": "± 3487",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 219,
+            "range": "± 8",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 97,
+            "range": "± 6",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 87,
+            "range": "± 5",
             "unit": "ns/iter"
           }
         ]
