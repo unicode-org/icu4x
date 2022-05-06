@@ -21,9 +21,8 @@ pub(crate) fn run_wasm<T>(builder: &CodePointTrieBuilder<T>) -> String
 where
     T: TrieValue + Into<u32>,
 {
-    println!("Creating `WasiEnv`...");
-    // First, we create the `WasiEnv` with the stdio pipes
-    let mut wasi_env = WasiState::new("hello")
+    // Set up the execution environment with a WasiState
+    let mut wasi_env = WasiState::new("list_to_ucptrie")
         .stdin(Box::new(Pipe::new()))
         .stdout(Box::new(Pipe::new()))
         .args(&[
@@ -35,43 +34,53 @@ where
             },
         ])
         .finalize()
-        .unwrap();
+        .expect("valid arguments + in-memory filesystem");
 
-    println!("Instantiating module with WASI imports...");
-    // Then, we get the import object related to our WASI
-    // and attach it to the Wasm instance.
-    let import_object = wasi_env.import_object(&MODULE).unwrap();
-    let instance = Instance::new(&MODULE, &import_object).unwrap();
+    // Create the WebAssembly instance with the module and the WasiState
+    let import_object = wasi_env.import_object(&MODULE).expect("walid wasm file");
+    let instance = Instance::new(&MODULE, &import_object).expect("valid wasm file");
 
-    println!("Writing to the WASI stdin...");
     // To write to the stdin, we need a mutable reference to the pipe
     //
     // We access WasiState in a nested scope to ensure we're not holding
     // the mutex after we need it.
     {
         let mut state = wasi_env.state();
-        let wasi_stdin = state.fs.stdin_mut().unwrap().as_mut().unwrap();
-        // Then we can write to it!
+        let wasi_stdin = state
+            .fs
+            .stdin_mut()
+            .expect("valid pipe")
+            .as_mut()
+            .expect("valid pipe");
+        // Write each value to the pipe
         let CodePointTrieBuilderData::ValuesByCodePoint(values) = builder.data;
         for value in values {
             let num: u32 = (*value).into();
-            writeln!(wasi_stdin, "{}", num).unwrap();
+            writeln!(wasi_stdin, "{}", num).expect("valid pipe");
         }
     }
 
-    println!("Call WASI `_start` function...");
-    // And we just call the `_start` function!
-    let start = instance.exports.get_function("_start").unwrap();
-    start.call(&[]).unwrap();
+    // Call the `_start` function to run the tool
+    let start = instance
+        .exports
+        .get_function("_start")
+        .expect("function exists");
+    start.call(&[]).expect("function should run to completion");
 
-    println!("Reading from the WASI stdout...");
     // To read from the stdout, we again need a mutable reference to the pipe
     let mut state = wasi_env.state();
-    let wasi_stdout = state.fs.stdout_mut().unwrap().as_mut().unwrap();
-    // Then we can read from it!
-    let mut buf = String::new();
-    wasi_stdout.read_to_string(&mut buf).unwrap();
-    println!("Read \"{}\" from the WASI stdout!", buf.trim());
+    let wasi_stdout = state
+        .fs
+        .stdout_mut()
+        .expect("valid pipe")
+        .as_mut()
+        .expect("valid pipe");
 
-    return buf;
+    // The output is a TOML blob, which we can save in a string
+    let mut buf = String::new();
+    wasi_stdout
+        .read_to_string(&mut buf)
+        .expect("pipe contains valid utf-8");
+
+    buf
 }
