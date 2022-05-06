@@ -13,7 +13,7 @@
 //! * `baked` exposes [`get_baked_provider`].
 //! * `metadata` exposes the [`metadata`] module which contains information such as the CLDR Gitref
 //!   and the list of included locales.
-//! 
+//!
 //! However, clients should not generally choose a specific provider, but rather use [`get_provider`].
 //! This is currently an alias for [`get_postcard_provider`], as it is fast and has few dependencies.
 //!
@@ -75,9 +75,9 @@ pub mod metadata;
 #[cfg(feature = "std")]
 pub mod paths;
 
-/// Get a data, loading from the test data JSON directory. 
-/// 
-/// You can optionally specify your own test data with the 
+/// Get a data, loading from the test data JSON directory.
+///
+/// You can optionally specify your own test data with the
 /// `ICU4X_TESTDATA_DIR` environment variable.
 ///
 /// # Panics
