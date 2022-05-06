@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1651765622975,
+  "lastUpdate": 1651846862149,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -14483,6 +14483,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/8cd78d9fc38c44fca80884d87d5efc1c133cc381"
         },
         "date": 1651765604904,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4475179,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "2db0dedaa783626b1e52adee62ba01f9178c7958",
+          "message": "Migrating properties to `ResourceProvider` (#1862)",
+          "timestamp": "2022-05-06T16:18:57+02:00",
+          "tree_id": "c6bf41b8ab3a7679c7c632afe253fcd47571f2bf",
+          "url": "https://github.com/unicode-org/icu4x/commit/2db0dedaa783626b1e52adee62ba01f9178c7958"
+        },
+        "date": 1651846839685,
         "tool": "ndjson",
         "benches": [
           {
