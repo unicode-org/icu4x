@@ -1369,7 +1369,9 @@ dependencies = [
 name = "icu_codepointtrie_builder"
 version = "0.3.3"
 dependencies = [
+ "icu_codepointtrie",
  "lazy_static",
+ "toml",
  "wasmer",
  "wasmer-wasi",
 ]

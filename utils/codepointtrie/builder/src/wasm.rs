@@ -2,29 +2,38 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::CodePointTrieBuilder;
+use crate::CodePointTrieBuilderData;
+use icu_codepointtrie::TrieType;
+use icu_codepointtrie::TrieValue;
+use lazy_static::lazy_static;
 use wasmer::{Instance, Module, Store};
 use wasmer_wasi::{Pipe, WasiState};
-use lazy_static::lazy_static;
 
-const WASM_BYTES: &[u8] = include_bytes!("../../list_to_ucptrie.wasm");
+const WASM_BYTES: &[u8] = include_bytes!("../list_to_ucptrie.wasm");
 
 lazy_static! {
     static ref STORE: Store = Store::default();
     static ref MODULE: Module = Module::new(&STORE, &WASM_BYTES).expect("valid WASM");
 }
 
-fn main() {
-    run();
-    run();
-}
-
-fn run() {
+pub(crate) fn run_wasm<T>(builder: &CodePointTrieBuilder<T>) -> String
+where
+    T: TrieValue + Into<u32>,
+{
     println!("Creating `WasiEnv`...");
     // First, we create the `WasiEnv` with the stdio pipes
     let mut wasi_env = WasiState::new("hello")
         .stdin(Box::new(Pipe::new()))
         .stdout(Box::new(Pipe::new()))
-        .args(&["0", "0", "fast"])
+        .args(&[
+            format!("{}", builder.default_value.into()).as_str(),
+            format!("{}", builder.error_value.into()).as_str(),
+            match builder.trie_type {
+                TrieType::Fast => "fast",
+                TrieType::Small => "small",
+            },
+        ])
         .finalize()
         .unwrap();
 
@@ -34,8 +43,7 @@ fn run() {
     let import_object = wasi_env.import_object(&MODULE).unwrap();
     let instance = Instance::new(&MODULE, &import_object).unwrap();
 
-    let msg = "2\n3\n4";
-    println!("Writing \"{}\" to the WASI stdin...", msg);
+    println!("Writing to the WASI stdin...");
     // To write to the stdin, we need a mutable reference to the pipe
     //
     // We access WasiState in a nested scope to ensure we're not holding
@@ -44,7 +52,11 @@ fn run() {
         let mut state = wasi_env.state();
         let wasi_stdin = state.fs.stdin_mut().unwrap().as_mut().unwrap();
         // Then we can write to it!
-        writeln!(wasi_stdin, "{}", msg).unwrap();
+        let CodePointTrieBuilderData::ValuesByCodePoint(values) = builder.data;
+        for value in values {
+            let num: u32 = (*value).into();
+            writeln!(wasi_stdin, "{}", num).unwrap();
+        }
     }
 
     println!("Call WASI `_start` function...");
@@ -60,4 +72,6 @@ fn run() {
     let mut buf = String::new();
     wasi_stdout.read_to_string(&mut buf).unwrap();
     println!("Read \"{}\" from the WASI stdout!", buf.trim());
+
+    return buf;
 }

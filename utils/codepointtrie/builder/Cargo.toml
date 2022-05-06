@@ -24,7 +24,9 @@ include = [
 ]
 
 [dependencies]
+icu_codepointtrie = { path = "..", features = ["serde"] }
 lazy_static = { version = "1.4.0" }
+toml = "0.5"
 
 [dependencies.wasmer]
 version = "2.2.1"
@@ -47,7 +49,3 @@ features = [
     # We don't need real filesystem access, so use mem-fs
     "mem-fs"
 ]
-
-[[bin]]
-name = "list-to-ucptrie"
-path = "src/bin/list-to-ucptrie.rs"
