@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1651854852280,
+  "lastUpdate": 1651857231015,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -14573,6 +14573,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/ad0793ce9fa374adb9f87869506203290fdad890"
         },
         "date": 1651854827798,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4475179,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "5714448bb9145bb21e6355f469aa18f8d3e59c1e",
+          "message": "non_exhaustive for provider crates (#1838)\n\n* icu_provider non_exhaustive\r\n\r\n* adapters non_exhaustive\r\n\r\n* blob, fs non_exhaustive\r\n\r\n* testdata non_exhaustive\r\n\r\n* datagen non_exhaustive\r\n\r\n* fixes\r\n\r\n* fixup\r\n\r\n* fixup after rebase",
+          "timestamp": "2022-05-06T17:11:46Z",
+          "tree_id": "e21b0508a738142726c76e61ca2713e258e45ebf",
+          "url": "https://github.com/unicode-org/icu4x/commit/5714448bb9145bb21e6355f469aa18f8d3e59c1e"
+        },
+        "date": 1651857208465,
         "tool": "ndjson",
         "benches": [
           {
