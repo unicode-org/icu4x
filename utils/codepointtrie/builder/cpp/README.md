@@ -1,24 +1,11 @@
 # CodePointTrie Builder Tool
 
-This tool is intended as a temporary mechanism for building CodePointTrie data until ICU4X supports it natively in Rust: [#1837](https://github.com/unicode-org/icu4x/issues/1837).
+This directory contains C++ bindings to the ICU4C CodePointTrie builder in the form of an executable named `list_to_ucptrie`. There are two ways to run this tool:
 
-## Installation
+1. As a WebAssembly module
+2. As a native executable
 
-Get a local checkout of ICU4C and build it:
-
-```bash
-$ cd icu4c/source
-$ ./runConfigureICU Linux --enable-static
-$ make -j6
-```
-
-In this directory, build the tool:
-
-```bash
-$ make ICU4C_SRC=/path/to/icu4c/source
-```
-
-You now have a binary `list_to_ucptrie` with ICU4C built-in that you can run.
+The WebAssembly module is checked into tree and made available to Rust library clients.
 
 ## Usage
 
@@ -30,9 +17,52 @@ It takes three positional arguments:
 2. Error value for out-of-range code points (integer)
 3. TrieType: `fast` or `small`
 
-## Example: Manual Invocation
+## WebAssembly Module
 
-Invoke the command:
+To build the WebAssembly module, you need:
+
+- Local copy of the ICU4C sources
+- [wasienv](https://github.com/wasienv/wasienv)
+
+Once you have these two tools installed, from this directory, simply run:
+
+```bash
+$ make ICU4C_SOURCE=/path/to/icu4c/source list_to_ucptrie.wasm
+```
+
+To test the WASM file, you can use `wasirun`:
+
+```bash
+$ wasirun list_to_ucptrie.wasm
+Takes 3 positional arguments: default value, error value, and trie type
+```
+
+You can then copy the wasm file up one directory in order to update the version shipped with ICU4X.
+
+## Native Executable
+
+To build the native executable, you need:
+
+- Local copy of the ICU4C sources
+- ICU4C built as a static library
+
+For example, to build ICU:
+
+```bash
+$ cd icu4c/source
+$ ./runConfigureICU Linux --enable-static
+$ make -j6
+```
+
+Then, from this directory, simply run:
+
+```bash
+$ make ICU4C_SOURCE=/path/to/icu4c/source list_to_ucptrie
+```
+
+If you have an out-of-source build of ICU4C, set both `ICU4C_SOURCE` (for header file includes) and `ICU4C_BUILD` (for linking with .a files).
+
+You now have a binary `list_to_ucptrie` with ICU4C built-in that you can run:
 
 ```bash
 $ ./list_to_ucptrie 0 0 small
@@ -75,12 +105,4 @@ valueWidth = 2
 index3NullOffset = 0x7fff
 dataNullOffset = 0x40
 nullValue = 0x0
-```
-
-## Example: From Value File
-
-To re-generate code point tries in datagen input, run from the icu4x directory (e.g. for grapheme):
-
-```bash
-$ ./tools/list_to_ucptrie/list_to_ucptrie 0 0 small < provider/datagen/data/grapheme_cptrie.txt > provider/datagen/data/grapheme_cptrie.toml
 ```
