@@ -237,33 +237,35 @@ fn datagen_internal<M: DataMarker + 'static>(
     }
 
     keys.into_par_iter().try_for_each(|&key| {
-        let result = provider.supported_options_for_key(key).and_then(|iter| {
-            iter.collect::<Vec<_>>()
-                .into_par_iter()
-                .try_for_each(|options| {
-                    let req = DataRequest {
-                        options: options.clone(),
-                        metadata: Default::default(),
-                    };
-                    let payload = provider
-                        .load_payload(key, &req)
-                        .and_then(DataResponse::take_payload)
-                        .map_err(|e| e.with_req(key, &req))?;
-                    exporter.put_payload(key, options, payload)
-                })
-        });
+        let res = match provider.supported_options_for_key(key) {
+            Ok(iter) => {
+                log::info!("Writing key: {}", key);
+                iter.collect::<Vec<_>>()
+                    .into_par_iter()
+                    .try_for_each(|options| {
+                        let req = DataRequest {
+                            options: options.clone(),
+                            metadata: Default::default(),
+                        };
+                        let payload = provider
+                            .load_payload(key, &req)
+                            .and_then(DataResponse::take_payload)
+                            .map_err(|e| e.with_req(key, &req))?;
+                        exporter.put_payload(key, options, payload)
+                    })
+            }
+            Err(e)
+                if ignore_missing_resource_keys && e.kind == DataErrorKind::MissingResourceKey =>
+            {
+                log::trace!("Skipped key: {}", key);
+                Ok(())
+            }
+            Err(e) => Err(e),
+        };
 
         exporter.flush(key)?;
 
-        if ignore_missing_resource_keys
-            && matches!(result, Err(e) if e.kind == DataErrorKind::MissingResourceKey)
-        {
-            log::trace!("Skipping key: {}", key);
-            Ok(())
-        } else {
-            log::info!("Writing key: {}", key);
-            result
-        }
+        res
     })?;
 
     exporter.close()?;

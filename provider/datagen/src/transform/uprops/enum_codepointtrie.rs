@@ -2,19 +2,12 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::transform::uprops::uprops_helpers::{
-    self, get_last_component_no_version, TomlEnumerated,
-};
+use crate::transform::uprops::uprops_helpers::{self, TomlEnumerated};
 
 use crate::SourceData;
-use icu_codepointtrie::{CodePointTrie, TrieValue};
+use icu_codepointtrie::CodePointTrie;
 use icu_properties::provider::*;
-use icu_properties::provider::{UnicodePropertyMapV1, UnicodePropertyMapV1Marker};
-use icu_properties::{
-    BidiClass, CanonicalCombiningClass, EastAsianWidth, GeneralCategory, GraphemeClusterBreak,
-    LineBreak, Script, SentenceBreak, WordBreak,
-};
-use icu_provider::datagen::IterableDynProvider;
+use icu_provider::datagen::*;
 use icu_provider::prelude::*;
 use std::convert::TryFrom;
 use std::sync::RwLock;
@@ -36,74 +29,67 @@ impl From<&SourceData> for EnumeratedPropertyCodePointTrieProvider {
     }
 }
 
-// implement data provider
-impl<T: TrieValue> DynProvider<UnicodePropertyMapV1Marker<T>>
-    for EnumeratedPropertyCodePointTrieProvider
-{
-    fn load_payload(
-        &self,
-        key: ResourceKey,
-        _: &DataRequest,
-    ) -> Result<DataResponse<UnicodePropertyMapV1Marker<T>>, DataError> {
-        // For data resource keys that represent the CodePointTrie data for an enumerated
-        // property, the ResourceKey sub-category string will just be the short alias
-        // for the property.
-        let prop_name = get_last_component_no_version(key);
+macro_rules! expand {
+    ($(($marker:ident, $prop_name:literal)),+,) => {
+        $(
+            impl ResourceProvider<$marker> for EnumeratedPropertyCodePointTrieProvider
+            {
+                fn load_resource(&self, _: &DataRequest) -> Result<DataResponse<$marker>, DataError> {
+                    if self.data.read().unwrap().is_none() {
+                        let data = uprops_helpers::load_enumerated_from_dir(self.source.get_uprops_root()?)?;
+                        *self.data.write().unwrap() = Some(data);
+                    }
 
-        if self.data.read().unwrap().is_none() {
-            let data = uprops_helpers::load_enumerated_from_dir(self.source.get_uprops_root()?)?;
-            *self.data.write().unwrap() = Some(data);
-        }
+                    let guard = self.data.read().unwrap();
 
-        let guard = self.data.read().unwrap();
+                    let source_cpt_data = &guard
+                        .as_ref()
+                        .unwrap()
+                        .get($prop_name)
+                        .ok_or(DataErrorKind::MissingResourceKey.into_error())?
+                        .code_point_trie;
 
-        let source_cpt_data = &guard
-            .as_ref()
-            .unwrap()
-            .get(prop_name)
-            .ok_or(DataErrorKind::MissingResourceKey.into_error())?
-            .code_point_trie;
+                    let code_point_trie = CodePointTrie::try_from(source_cpt_data).map_err(|e| {
+                        DataError::custom("Could not parse CodePointTrie TOML").with_display_context(&e)
+                    })?;
+                    let data_struct = UnicodePropertyMapV1 { code_point_trie };
+                    Ok(DataResponse {
+                        metadata: DataResponseMetadata::default(),
+                        payload: Some(DataPayload::from_owned(data_struct)),
+                    })
+                }
+            }
 
-        let code_point_trie = CodePointTrie::try_from(source_cpt_data).map_err(|e| {
-            DataError::custom("Could not parse CodePointTrie TOML").with_display_context(&e)
-        })?;
-        let data_struct = UnicodePropertyMapV1 { code_point_trie };
+            impl IterableResourceProvider<$marker> for EnumeratedPropertyCodePointTrieProvider {
+                fn supported_options(
+                    &self,
+                ) -> Result<Box<dyn Iterator<Item = ResourceOptions>>, DataError> {
+                    Ok(Box::new(core::iter::once(ResourceOptions::default())))
+                }
+            }
+        )+
 
-        Ok(DataResponse {
-            metadata: DataResponseMetadata::default(),
-            payload: Some(DataPayload::from_owned(data_struct)),
-        })
-    }
+        icu_provider::impl_dyn_provider!(EnumeratedPropertyCodePointTrieProvider, [$($marker),+,], SERDE_SE, ITERABLE_SERDE_SE, DATA_CONVERTER);
+    };
 }
 
-icu_provider::impl_dyn_provider!(EnumeratedPropertyCodePointTrieProvider, {
-    key::CANONICAL_COMBINING_CLASS_V1 => UnicodePropertyMapV1Marker<CanonicalCombiningClass>,
-    key::GENERAL_CATEGORY_V1 => UnicodePropertyMapV1Marker<GeneralCategory>,
-    key::BIDI_CLASS => UnicodePropertyMapV1Marker<BidiClass>,
-    key::SCRIPT_V1 => UnicodePropertyMapV1Marker<Script>,
-    key::EAST_ASIAN_WIDTH_V1 => UnicodePropertyMapV1Marker<EastAsianWidth>,
-    key::LINE_BREAK_V1 => UnicodePropertyMapV1Marker<LineBreak>,
-    key::GRAPHEME_CLUSTER_BREAK_V1 => UnicodePropertyMapV1Marker<GraphemeClusterBreak>,
-    key::WORD_BREAK_V1 => UnicodePropertyMapV1Marker<WordBreak>,
-    key::SENTENCE_BREAK_V1 => UnicodePropertyMapV1Marker<SentenceBreak>,
-}, SERDE_SE, ITERABLE_SERDE_SE, DATA_CONVERTER);
-
-impl<T: TrieValue> IterableDynProvider<UnicodePropertyMapV1Marker<T>>
-    for EnumeratedPropertyCodePointTrieProvider
-{
-    fn supported_options_for_key(
-        &self,
-        _: ResourceKey,
-    ) -> Result<Box<dyn Iterator<Item = ResourceOptions>>, DataError> {
-        Ok(Box::new(core::iter::once(ResourceOptions::default())))
-    }
-}
+expand!(
+    (CanonicalCombiningClassV1Marker, "ccc"),
+    (GeneralCategoryV1Marker, "gc"),
+    (BidiClassV1Marker, "bc"),
+    (ScriptV1Marker, "sc"),
+    (EastAsianWidthV1Marker, "ea"),
+    (LineBreakV1Marker, "lb"),
+    (GraphemeClusterBreakV1Marker, "GCB"),
+    (WordBreakV1Marker, "WB"),
+    (SentenceBreakV1Marker, "SB"),
+);
 
 #[cfg(test)]
 mod tests {
     use super::*;
     use icu_codepointtrie::CodePointTrie;
-    use icu_properties::provider::key;
+    use icu_properties::provider::{GeneralCategoryV1Marker, ScriptV1Marker};
     use icu_properties::{GeneralCategory, Script};
 
     // A test of the UnicodeProperty General_Category is truly a test of the
@@ -114,10 +100,9 @@ mod tests {
     fn test_general_category() {
         let provider = EnumeratedPropertyCodePointTrieProvider::from(&SourceData::for_test());
 
-        let payload: DataPayload<UnicodePropertyMapV1Marker<GeneralCategory>> = provider
-            .load_payload(key::GENERAL_CATEGORY_V1, &DataRequest::default())
-            .expect("The data should be valid")
-            .take_payload()
+        let payload: DataPayload<GeneralCategoryV1Marker> = provider
+            .load_resource(&DataRequest::default())
+            .and_then(DataResponse::take_payload)
             .expect("Loading was successful");
 
         let trie: &CodePointTrie<GeneralCategory> = &payload.get().code_point_trie;
@@ -130,10 +115,9 @@ mod tests {
     fn test_script() {
         let provider = EnumeratedPropertyCodePointTrieProvider::from(&SourceData::for_test());
 
-        let payload: DataPayload<UnicodePropertyMapV1Marker<Script>> = provider
-            .load_payload(key::SCRIPT_V1, &DataRequest::default())
-            .expect("The data should be valid")
-            .take_payload()
+        let payload: DataPayload<ScriptV1Marker> = provider
+            .load_resource(&DataRequest::default())
+            .and_then(DataResponse::take_payload)
             .expect("Loading was successful");
 
         let trie: &CodePointTrie<Script> = &payload.get().code_point_trie;
