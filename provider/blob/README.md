@@ -23,7 +23,7 @@ For examples, see the specific data providers.
 
 [`ICU4X`]: ../icu/index.html
 [`BufferProvider`]: icu_provider::BufferProvider
-[`icu4x-datagen`]: https://github.com/unicode-org/icu4x/tree/main/provider/datagen#readme
+[`icu_datagen`]: ../icu_datagen/index.html
 
 ## More Information
 
