@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1651850851129,
+  "lastUpdate": 1651855153385,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -26536,6 +26536,60 @@ window.BENCHMARK_DATA = {
           {
             "name": "uniset/contains_range/worst",
             "value": 3,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "ad0793ce9fa374adb9f87869506203290fdad890",
+          "message": "Add ability to construct AnyCalendars (#1827)\n\n* Add ability to construct AnyCalendars\r\n\r\n* fix\r\n\r\n* fix\r\n\r\n* docs\r\n\r\n* Add match over values\r\n\r\n* fmt\r\n\r\n* re-add import",
+          "timestamp": "2022-05-06T16:31:57Z",
+          "tree_id": "b3b6703da326a5233089b9a2ed40dbccd2b7e7b1",
+          "url": "https://github.com/unicode-org/icu4x/commit/ad0793ce9fa374adb9f87869506203290fdad890"
+        },
+        "date": 1651855134589,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 47881864,
+            "range": "± 71927",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/worst",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/worst",
+            "value": 2,
             "range": "± 0",
             "unit": "ns/iter"
           }
