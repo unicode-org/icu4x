@@ -11,7 +11,7 @@
 //! Under the hood, this crate uses the CodePointTrie builder code from ICU4C, [`UMutableCPTrie`],
 //! shipped as a WebAssembly module and then JIT-compiled at runtime.
 //!
-//! # Exapmles
+//! # Examples
 //!
 //! ```
 //! use icu_codepointtrie::CodePointTrie;

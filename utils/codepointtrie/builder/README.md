@@ -9,7 +9,7 @@ optimized for speed; it should be used during a build phase.
 Under the hood, this crate uses the CodePointTrie builder code from ICU4C, [`UMutableCPTrie`],
 shipped as a WebAssembly module and then JIT-compiled at runtime.
 
-## Exapmles
+## Examples
 
 ```rust
 use icu_codepointtrie::CodePointTrie;
