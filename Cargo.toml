@@ -38,6 +38,7 @@ members = [
     "tools/benchmark/memory",
     "tools/benchmark/binsize",
     "utils/codepointtrie",
+    "utils/codepointtrie/builder",
     "utils/deduplicating_array",
     "utils/fixed_decimal",
     "utils/litemap",

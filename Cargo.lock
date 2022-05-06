@@ -1357,15 +1357,21 @@ version = "0.3.3"
 dependencies = [
  "displaydoc",
  "icu_uniset",
- "lazy_static",
  "postcard",
  "serde",
  "toml",
- "wasmer",
- "wasmer-wasi",
  "yoke",
  "zerofrom",
  "zerovec",
+]
+
+[[package]]
+name = "icu_codepointtrie_builder"
+version = "0.3.3"
+dependencies = [
+ "lazy_static",
+ "wasmer",
+ "wasmer-wasi",
 ]
 
 [[package]]

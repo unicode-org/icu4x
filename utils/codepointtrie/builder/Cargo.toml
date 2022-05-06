@@ -1,0 +1,53 @@
+# This file is part of ICU4X. For terms of use, please see the file
+# called LICENSE at the top level of the ICU4X source tree
+# (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
+
+[package]
+name = "icu_codepointtrie_builder"
+description = "Runtime builder for CodePointTrie"
+version = "0.3.3"
+authors = ["The ICU4X Project Developers"]
+edition = "2018"
+readme = "README.md"
+repository = "https://github.com/unicode-org/icu4x"
+license-file = "LICENSE"
+categories = ["internationalization"]
+# Keep this in sync with other crates unless there are exceptions
+include = [
+    "src/**/*",
+    "examples/**/*",
+    "benches/**/*",
+    "tests/**/*",
+    "Cargo.toml",
+    "LICENSE",
+    "README.md"
+]
+
+[dependencies]
+lazy_static = { version = "1.4.0" }
+
+[dependencies.wasmer]
+version = "2.2.1"
+default-features = false
+features = [
+    # We are running on the local system (as opposed to JavaScript)
+    "sys",
+    # By default, use the Singlepass compiler for faster startup time
+    "default-singlepass",
+    # By default, use the Universal engine for in-memory compiled code
+    "default-universal"
+]
+
+[dependencies.wasmer-wasi]
+version = "2.2.1"
+default-features = false
+features = [
+    # We are running on the local system (as opposed to JavaScript)
+    "sys",
+    # We don't need real filesystem access, so use mem-fs
+    "mem-fs"
+]
+
+[[bin]]
+name = "list-to-ucptrie"
+path = "src/bin/list-to-ucptrie.rs"

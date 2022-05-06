@@ -38,31 +38,6 @@ serde = { version = "1.0", default-features = false, features = ["derive", "allo
 yoke = { version = "0.5.0", path = "../yoke", features = ["derive"] }
 zerofrom = { version = "0.1.0", path = "../zerofrom", features = ["derive"] }
 zerovec = { version = "0.6", path = "../zerovec", features = ["yoke"] }
-lazy_static = { version = "1.4.0", optional = true }
-
-[dependencies.wasmer]
-version = "2.2.1"
-default-features = false
-features = [
-    # We are running on the local system (as opposed to JavaScript)
-    "sys",
-    # By default, use the Singlepass compiler for faster startup time
-    "default-singlepass",
-    # By default, use the Universal engine for in-memory compiled code
-    "default-universal"
-]
-optional = true
-
-[dependencies.wasmer-wasi]
-version = "2.2.1"
-default-features = false
-features = [
-    # We are running on the local system (as opposed to JavaScript)
-    "sys",
-    # We don't need real filesystem access, so use mem-fs
-    "mem-fs"
-]
-optional = true
 
 [dev-dependencies]
 postcard = { version = "0.7", features = ["alloc"] }
@@ -73,13 +48,7 @@ serde = { version = "1.0", features = ["derive"] }
 bench = false  # This option is required for Benchmark CI
 path = "src/lib.rs"
 
-[[bin]]
-name = "list-to-ucptrie"
-path = "src/bin/list-to-ucptrie.rs"
-required-features = ["wasm"]
-
 [features]
 default = []
 serde = ["dep:serde", "zerovec/serde", "icu_uniset/serde"]
 serde_serialize = ["serde", "zerovec/serde_serialize", "icu_uniset/serde_serialize"]
-wasm = ["wasmer", "wasmer-wasi", "lazy_static" ]
