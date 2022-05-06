@@ -9,12 +9,10 @@
 #include <iostream>
 
 /**
+ * list_to_ucptrie: converts a stream of integers to a UCPTrie
+ *
  * - standard input should be a stream of integers, in order of each code point.
  * - standard output is the build UCPTrie as a TOML file
- *
- * Usage:
- *
- * python3 -c 'import json; print("\n".join(str(l) for l in json.load(open("provider/testdata/data/json/segmenter/line@1/und.json"))["property_table"]))' | tools/umutablecptrie/list_to_ucptrie 0 0 1> provider/datagen/data/line_cptrie.toml
  */
 int main(int argc, char const *argv[]) {
     if (argc != 4) {
