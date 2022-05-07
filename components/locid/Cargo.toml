@@ -48,6 +48,7 @@ icu_benchmark_macros = { version = "0.5", path = "../../tools/benchmark/macros" 
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 postcard = { version = "0.7.0", default-features = false, features = ["use-std"] }
+iai = { version = "0.1.1", default-features = false, features = ["macro"] }
 
 [lib]
 path = "src/lib.rs"
@@ -71,6 +72,11 @@ harness = false
 [[bench]]
 name = "locale"
 harness = false
+
+[[bench]]
+name = "iai_langid"
+harness = false
+required-features = ["bench"]
 
 [[example]]
 name = "filter_langids"
