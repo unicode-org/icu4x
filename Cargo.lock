@@ -1090,19 +1090,6 @@ name = "iai"
 version = "0.1.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "71a816c97c42258aa5834d07590b718b4c9a598944cd39a52dc25b351185d678"
-dependencies = [
- "iai_macro",
-]
-
-[[package]]
-name = "iai_macro"
-version = "0.1.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "25527f85bec406de3d16b9059f1122cb55bc21fc82edd868870d90232c46bd8b"
-dependencies = [
- "proc-macro2",
- "quote",
-]
 
 [[package]]
 name = "icu"
