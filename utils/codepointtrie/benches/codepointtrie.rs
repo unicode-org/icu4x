@@ -4,10 +4,7 @@
 
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
 
-use icu_codepointtrie::toml::CodePointTrieToml;
 use icu_codepointtrie::CodePointTrie;
-use std::convert::TryInto;
-use std::fs;
 
 #[path = "tries/mod.rs"]
 mod tries;
@@ -28,14 +25,18 @@ fn one_hundred_code_points(sample_str: &str) -> String {
     sample_str.chars().cycle().take(100).collect()
 }
 
-fn load_code_point_trie(buffer: &mut Vec<u8>) -> CodePointTrie<u8> {
-    CodePointTrie::try_new(tries::gc_small::HEADER, tries::gc_small::INDEX.as_zerovec(), tries::gc_small::DATA.as_zerovec()).unwrap()
+fn load_code_point_trie() -> CodePointTrie<'static, u8> {
+    CodePointTrie::try_new(
+        tries::gc_small::HEADER,
+        tries::gc_small::INDEX.as_zerovec(),
+        tries::gc_small::DATA.as_zerovec(),
+    )
+    .unwrap()
 }
 
 fn overview_bench(c: &mut Criterion) {
     let s = one_hundred_code_points(SAMPLE_STRING_MIXED);
-    let mut buffer = Vec::<u8>::new();
-    let cpt = load_code_point_trie(&mut buffer);
+    let cpt = load_code_point_trie();
 
     c.bench_function("cpt/overview", |b| {
         b.iter(|| {
@@ -60,8 +61,7 @@ fn overview_bench(c: &mut Criterion) {
 fn lang_bench(c: &mut Criterion, lid: &str, sample_str: &str) {
     let bench_name = format!("cpt/get/{}", lid);
     let s = one_hundred_code_points(sample_str);
-    let mut buffer = Vec::<u8>::new();
-    let cpt = load_code_point_trie(&mut buffer);
+    let cpt = load_code_point_trie();
 
     c.bench_function(&bench_name, |b| {
         b.iter(|| {
