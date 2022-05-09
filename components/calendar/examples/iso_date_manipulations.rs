@@ -12,9 +12,9 @@ icu_benchmark_macros::static_setup!();
 use icu_calendar::{Date, DateTimeError, Iso};
 
 const DATES_ISO: &[(i32, u8, u8)] = &[
-    (1970, 1, 1), 
-    (1982, 3, 11), 
-    (1999, 2, 21), 
+    (1970, 1, 1),
+    (1982, 3, 11),
+    (1999, 2, 21),
     (2000, 12, 29),
     (2001, 9, 8),
     (2017, 7, 12),
@@ -46,12 +46,14 @@ fn main(_argc: isize, _argv: *const *const u8) -> isize {
         .map(tuple_to_iso_date)
         .collect::<Result<Vec<Date<Iso>>, _>>()
         .expect("Failed to parse dates.");
-    
+
     for date in dates.iter() {
-        let formatted_date = format!("Year: {}, Month: {}, Day: {}", 
-                                      date.year().number.to_string(),
-                                      date.month().number.to_string(),
-                                      date.day_of_month().0.to_string());
+        let formatted_date = format!(
+            "Year: {}, Month: {}, Day: {}",
+            date.year().number.to_string(),
+            date.month().number.to_string(),
+            date.day_of_month().0.to_string()
+        );
         print(&formatted_date);
     }
 
