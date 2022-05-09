@@ -30,13 +30,13 @@ all-features = true
 icu_provider = { version = "0.5", path = "../core", features = ["deserialize_postcard_07", "serde"] }
 serde = { version = "1.0", default-features = false, features = ["alloc"] }
 postcard = { version = "0.7.0", default-features = false }
-writeable = { version = "0.3", path = "../../utils/writeable" }
+writeable = { version = "0.4", path = "../../utils/writeable" }
 yoke = { version = "0.5.0", path = "../../utils/yoke" }
-zerovec = { version = "0.6", path = "../../utils/zerovec", features = ["serde", "yoke"] }
+zerovec = { version = "0.7", path = "../../utils/zerovec", features = ["serde", "yoke"] }
 
 # For the export feature
 log = { version = "0.4", optional = true }
-litemap = { version = "0.3.0", path = "../../utils/litemap/", optional = true }
+litemap = { version = "0.4", path = "../../utils/litemap/", optional = true }
 erased-serde = { version = "0.3", default-features = false, features = ["alloc"], optional = true }
 
 [dev-dependencies]

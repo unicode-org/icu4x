@@ -37,7 +37,7 @@ icu_provider = { version = "0.5", path = "../core", features = ["serde", "std"] 
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"] }
 displaydoc = { version = "0.2.3", default-features = false }
 serde-json-core = { version = "0.4", features = ["std"] }
-writeable = { version = "0.3", path = "../../utils/writeable" }
+writeable = { version = "0.4", path = "../../utils/writeable" }
 
 # Dependencies for the export feature
 log = { version = "0.4", optional = true }
