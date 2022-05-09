@@ -72,18 +72,18 @@ path = "../list"
 default-features = false
 
 [dependencies.fixed_decimal]
-version = "0.2"
+version = "0.3"
 path = "../../utils/fixed_decimal"
 default-features = false
 
 [dev-dependencies]
-icu_codepointtrie = { version = "0.3.3", path = "../../utils/codepointtrie" }
+icu_codepointtrie = { version = "0.4.0", path = "../../utils/codepointtrie" }
 icu_provider = { version = "0.5", path = "../../provider/core" }
 icu_testdata = { version = "0.5", path = "../../provider/testdata" }
-icu_uniset = { version = "0.4.1", path = "../../utils/uniset" }
+icu_uniset = { version = "0.5", path = "../../utils/uniset" }
 
 [dependencies]
-writeable = { version = "0.3", path = "../../utils/writeable" } # required for icu::list doc
+writeable = { version = "0.4", path = "../../utils/writeable" } # required for icu::list doc
 
 [features]
 std = [
