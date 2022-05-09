@@ -50,7 +50,7 @@ deserialize_bincode_1 = ["serde", "bincode", "std"]
 deserialize_postcard_07 = ["serde", "postcard"]
 
 # Dependencies for running data generation
-datagen = ["dhat", "serde", "erased-serde"]
+datagen = ["dhat", "serde", "erased-serde", "std"]
 
 [dependencies]
 icu_locid = { version = "0.5", path = "../../components/locid" }

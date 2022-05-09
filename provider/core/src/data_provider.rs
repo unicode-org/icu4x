@@ -53,7 +53,7 @@ pub struct DataResponseMetadata {
 /// several data stores ("carts"):
 ///
 /// 1. Fully-owned structured data ([`DataPayload::from_owned()`])
-/// 2. A reference-counted byte buffer ([`DataPayload::try_from_buffer()`])
+/// 2. A reference-counted byte buffer ([`DataPayload::try_from_rc_buffer()`])
 ///
 /// The type of the data stored in [`DataPayload`], and the type of the structured data store
 /// (cart), is determined by the [`DataMarker`] type parameter.
@@ -221,7 +221,7 @@ where
     /// This constructor creates `'static` payloads; borrowing is handled by [`Yoke`].
     ///
     /// For a version of this function that takes a `FnOnce` instead of a raw function pointer,
-    /// see [`try_from_buffer()`](Self::try_from_buffer).
+    /// see [`try_from_rc_buffer()`](Self::try_from_rc_buffer).
     ///
     /// # Examples
     ///
@@ -253,7 +253,7 @@ where
     /// Convert a byte buffer into a [`DataPayload`]. A function must be provided to perform the
     /// conversion. This can often be a Serde deserialization operation.
     ///
-    /// This function is similar to [`DataPayload::try_from_buffer`], but it accepts a buffer
+    /// This function is similar to [`DataPayload::try_from_rc_buffer`], but it accepts a buffer
     /// that is already yoked.
     ///
     /// # Examples
