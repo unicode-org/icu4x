@@ -77,7 +77,7 @@ pub struct DataResponseMetadata {
 /// # `sync` feature
 ///
 /// By default, the payload uses an [`Rc<[u8]>`] internally and hence is neither [`Sync`] nor [`Send`].
-/// If these traits are required, the `sync` feature can be enabled to use an [`Arc<u8>`] instead.
+/// If these traits are required, the `sync` feature can be enabled to use an [`Arc<[u8]>`] instead.
 ///
 /// # Examples
 ///
