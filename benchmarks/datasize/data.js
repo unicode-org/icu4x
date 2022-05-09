@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1652128444526,
+  "lastUpdate": 1652130500221,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -14633,6 +14633,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/0e99bd581ab4d4f0d809cf2317fb46e90a6c1af2"
         },
         "date": 1652128420570,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4475179,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "dminor@mozilla.com",
+            "name": "Dan Minor",
+            "username": "dminor"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "0740a0e682ac8d8ff22ddc7e0457417faa844dcb",
+          "message": "Issue 1861 icu4x 0.6 (#1871)\n\n* Update Changelog for 0.6\r\n\r\n* Publish 0.6",
+          "timestamp": "2022-05-09T17:06:14-04:00",
+          "tree_id": "2a2886185271df97114b433e2de36ee1a1be442f",
+          "url": "https://github.com/unicode-org/icu4x/commit/0740a0e682ac8d8ff22ddc7e0457417faa844dcb"
+        },
+        "date": 1652130478059,
         "tool": "ndjson",
         "benches": [
           {
