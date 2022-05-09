@@ -3,6 +3,73 @@
 
 ## Unreleased
 
+## icu4x 0.6.0 (May 9, 2022)
+
+  - General data model
+    - Non-exhaustive errors for locid, calendar, decimal, plurals (#1792, #1793)
+    - Rename "serialize" feature to "serde" (#1797)
+    - Turn all errors into Copy types (#1657)
+  - Components
+    - `calendar`:
+      - Coptic, Indian and Ethiopic calendars (#1660, #1715, #1779)
+      - Calendar arithmetic (#1614)
+    - `datetime`:
+      - Formatting for fractional seconds (#1813, #1801)
+      - Support for day of week in month ('F') (#1770)
+      - Custom fallbacking for TimeZoneFormat (#1591)
+      - Support for week-of-month (#1468)
+      - Bug fix to get_best_available_format_pattern skeleton matching logic (#1549)
+    - `decimal`: No updates
+    - `locale_canonicalizer`:
+      - ZeroCopy support (#1760, #1777)
+    - `locid`:
+      - Simplified language representation (#1695)
+      - Region, Script and Variant subtags ULE (#1696)
+    - `plurals`:
+      - Update data model to use `ZeroVec` (#1240)
+    - `properties`:
+      - Bidi support (#1716, #1784)
+  - Utilities
+    - `codepointtrie`:
+      - Use 0 for error value for Rust out-of-bounds for primitive trie value types (#1804)
+    - `crlify`: New util for line ending conversions
+    - `deduplicating_array`: No updates
+    - `fixed_decimal`:
+      - Improvements to FixedDecimal f64 APIs (#1718)
+    - `litemap`:
+      - Pluggable LiteMap backends (#1769)
+    - `pattern`: No updates
+    - `uniset`: No updates
+    - `writeable`: No updates
+    - `yoke`: No updates
+    - `zerofrom`: No updates
+    - `zerovec`:
+      - ZeroVec derive improvements (#1780)
+      - Support non-Ord values in ZeroMap (#1743)
+      - Add OptionULE and OptionVarULE (#1736)
+      - Rename ZeroVec::from_slice and add new method for const-constructed ZeroSlice (#1728)
+      - Treat ZeroMap sort order as an optional invariant (#1727)
+      - Add ZeroMap::get_copied_by (#1722)
+      - Generalize PairULE to support longer tuples (#1721)
+      - Add more AsULE impls for primitives (#1672)
+      - Add cast methods to ZeroVec and ZeroSlice (#1651)
+      - Add RawBytesULE::slice_from_byte_slice (#1648)
+      - Create façades for ZeroVec types, hide internal code organization modules (#1629)
+      - Add zerovec::skip_kv and zerovec::skip_ord attributes, as well as generalized attribute handling framework (#1613)
+      - Rename as_unaligned to to_unaligned (#1619)
+  - FFI:
+    - Updating to Diplomat 0.3
+    - Making testdata an optional FFI dep (#1820)
+    - Split out capi targets: make separate freertos, staticlib, and cdylib crates as targets (#1747)
+  - Experimental:
+    - `crabbake`: Initial version of baked data provider (#1825)
+    - `segmenter`:
+      - Support production-ready data provider for segmenters (#1652)
+      - Implement dictionary based segmenter for line segmenter. (#1644)
+      - Wire DataProvider into UAX29 segmenters (#1627)
+      - Move UAX#14 defines to line.toml (#1568)
+      - Add segmenter factories to generate UAX29 iterators (#1602)
+
 
 ## icu4x 0.5.0 (Jan 31, 2022)
 

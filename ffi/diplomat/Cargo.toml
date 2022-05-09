@@ -5,7 +5,7 @@
 [package]
 name = "icu_capi"
 description = "C interface to ICU4X"
-version = "0.5.0"
+version = "0.6.0"
 authors = ["The ICU4X Project Developers"]
 edition = "2018"
 resolver = "2"
@@ -46,22 +46,22 @@ deserialize_bincode_1 = ["icu_provider/deserialize_bincode_1"]
 
 [dependencies]
 fixed_decimal = { version = "0.3", path = "../../utils/fixed_decimal", features = ["ryu"] }
-icu_decimal = { version = "0.5", path = "../../components/decimal/", features = ["serde"] }
-icu_locale_canonicalizer = { version = "0.5", path = "../../components/locale_canonicalizer", features = ["serde"] }
-icu_locid = { version = "0.5", path = "../../components/locid", features = ["serde"] }
-icu_plurals = { version = "0.5", path = "../../components/plurals/", features = ["serde"] }
-icu_properties = { version = "0.5", path = "../../components/properties/", features = ["serde"] }
-icu_provider = { version = "0.5", path = "../../provider/core", features = ["serde"] }
-icu_provider_adapters = { version = "0.5", path = "../../provider/adapters" }
-icu_provider_blob = { version = "0.5", path = "../../provider/blob" }
-icu_segmenter = { version = "0.5", path = "../../experimental/segmenter", features = ["serde"] }
+icu_decimal = { version = "0.6", path = "../../components/decimal/", features = ["serde"] }
+icu_locale_canonicalizer = { version = "0.6", path = "../../components/locale_canonicalizer", features = ["serde"] }
+icu_locid = { version = "0.6", path = "../../components/locid", features = ["serde"] }
+icu_plurals = { version = "0.6", path = "../../components/plurals/", features = ["serde"] }
+icu_properties = { version = "0.6", path = "../../components/properties/", features = ["serde"] }
+icu_provider = { version = "0.6", path = "../../provider/core", features = ["serde"] }
+icu_provider_adapters = { version = "0.6", path = "../../provider/adapters" }
+icu_provider_blob = { version = "0.6", path = "../../provider/blob" }
+icu_segmenter = { version = "0.6", path = "../../experimental/segmenter", features = ["serde"] }
 tinystr = { path = "../../utils/tinystr", version = "0.6", features = ["alloc"], default-features = false }
 writeable = { version = "0.4", path = "../../utils/writeable/" }
 
 # Run `cargo make diplomat-install` to get the right diplomat binary installed
 diplomat = { version = "0.3.0" }
 diplomat-runtime = { version = "0.3.0" }
-icu_testdata = { version = "0.5", path = "../../provider/testdata", optional = true }
+icu_testdata = { version = "0.6", path = "../../provider/testdata", optional = true }
 
 [target.'cfg(target_arch = "wasm32")'.dependencies]
 log = { version = "0.4" }
