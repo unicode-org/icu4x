@@ -58,4 +58,3 @@ bench = []
 [[bench]]
 name = "codepointtrie"
 harness = false
-required-features = ["serde"]

@@ -9,6 +9,9 @@ use icu_codepointtrie::CodePointTrie;
 use std::convert::TryInto;
 use std::fs;
 
+#[path = "tries/mod.rs"]
+mod tries;
+
 #[cfg(feature = "bench")]
 mod sample_str_lng {
     pub const ENG: &str = "Universal Declaration of Human Rights";
@@ -26,13 +29,7 @@ fn one_hundred_code_points(sample_str: &str) -> String {
 }
 
 fn load_code_point_trie(buffer: &mut Vec<u8>) -> CodePointTrie<u8> {
-    let path = concat!(
-        env!("CARGO_MANIFEST_DIR"),
-        "/benches/testdata/gc_for_test.toml"
-    );
-    *buffer = fs::read(path).unwrap();
-    let toml: CodePointTrieToml = toml::from_slice(buffer.as_slice()).unwrap();
-    (&toml).try_into().unwrap()
+    CodePointTrie::try_new(tries::gc_small::HEADER, tries::gc_small::INDEX.as_zerovec(), tries::gc_small::DATA.as_zerovec()).unwrap()
 }
 
 fn overview_bench(c: &mut Criterion) {
