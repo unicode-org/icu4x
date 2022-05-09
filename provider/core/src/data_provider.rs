@@ -76,9 +76,8 @@ pub struct DataResponseMetadata {
 ///
 /// # `sync` feature
 ///
-/// By default, the payload uses an [`Arc<[u8]>`] for its backing buffer. If [`Sync`]` + `[`Send`]
-/// are not required, this can be changed to an [`Rc<[u8]>`] by disabling the `sync` feature. This
-/// will also change all APIs on this type that mention [`Arc<[u8]>`].
+/// By default, the payload uses an [`Rc<[u8]>`] internally and hence is neither [`Sync`] nor [`Send`].
+/// If these traits are required, the `sync` feature can be enabled to use an [`Arc<u8>`] instead.
 ///
 /// # Examples
 ///
