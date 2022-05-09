@@ -5,7 +5,7 @@
 [package]
 name = "icu"
 description = "International Components for Unicode"
-version = "0.5.0"
+version = "0.6.0"
 authors = ["The ICU4X Project Developers"]
 edition = "2018"
 readme = "README.md"
@@ -32,42 +32,42 @@ denylist = ["bench"]
 all-features = true
 
 [dependencies.icu_calendar]
-version = "0.5"
+version = "0.6"
 path = "../calendar"
 default-features = false
 
 [dependencies.icu_datetime]
-version = "0.5"
+version = "0.6"
 path = "../datetime"
 default-features = false
 
 [dependencies.icu_decimal]
-version = "0.5"
+version = "0.6"
 path = "../decimal"
 default-features = false
 
 [dependencies.icu_locid]
-version = "0.5"
+version = "0.6"
 path = "../locid"
 default-features = false
 
 [dependencies.icu_locale_canonicalizer]
-version = "0.5"
+version = "0.6"
 path = "../locale_canonicalizer"
 default-features = false
 
 [dependencies.icu_plurals]
-version = "0.5"
+version = "0.6"
 path = "../plurals"
 default-features = false
 
 [dependencies.icu_properties]
-version = "0.5"
+version = "0.6"
 path = "../properties"
 default-features = false
 
 [dependencies.icu_list]
-version = "0.5"
+version = "0.6"
 path = "../list"
 default-features = false
 
@@ -78,8 +78,8 @@ default-features = false
 
 [dev-dependencies]
 icu_codepointtrie = { version = "0.4.0", path = "../../utils/codepointtrie" }
-icu_provider = { version = "0.5", path = "../../provider/core" }
-icu_testdata = { version = "0.5", path = "../../provider/testdata" }
+icu_provider = { version = "0.6", path = "../../provider/core" }
+icu_testdata = { version = "0.6", path = "../../provider/testdata" }
 icu_uniset = { version = "0.5", path = "../../utils/uniset" }
 
 [dependencies]

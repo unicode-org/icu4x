@@ -5,7 +5,7 @@
 [package]
 name = "icu_provider_fs"
 description = "ICU4X data provider that reads from structured data files"
-version = "0.5.0"
+version = "0.6.0"
 authors = ["The ICU4X Project Developers"]
 edition = "2018"
 readme = "README.md"
@@ -33,7 +33,7 @@ denylist = ["bench"]
 all-features = true
 
 [dependencies]
-icu_provider = { version = "0.5", path = "../core", features = ["serde", "std"] }
+icu_provider = { version = "0.6", path = "../core", features = ["serde", "std"] }
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"] }
 displaydoc = { version = "0.2.3", default-features = false }
 serde-json-core = { version = "0.4", features = ["std"] }
@@ -48,9 +48,9 @@ erased-serde = { version = "0.3", default-features = false, features = ["alloc"]
 crlify = { version = "1", path = "../../utils/crlify", optional = true }
 
 [dev-dependencies]
-icu_locid = { version = "0.5", path = "../../components/locid", features = ["serde"] }
-icu_benchmark_macros = { version = "0.5", path = "../../tools/benchmark/macros" }
-icu_provider = { version = "0.5", path = "../core", features = ["deserialize_json", "deserialize_bincode_1"] }
+icu_locid = { version = "0.6", path = "../../components/locid", features = ["serde"] }
+icu_benchmark_macros = { version = "0.6", path = "../../tools/benchmark/macros" }
+icu_provider = { version = "0.6", path = "../core", features = ["deserialize_json", "deserialize_bincode_1"] }
 criterion = "0.3.3"
 
 [features]
