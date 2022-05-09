@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1651857231015,
+  "lastUpdate": 1652128444526,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -14603,6 +14603,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/5714448bb9145bb21e6355f469aa18f8d3e59c1e"
         },
         "date": 1651857208465,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4475179,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "dminor@mozilla.com",
+            "name": "Dan Minor",
+            "username": "dminor"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "0e99bd581ab4d4f0d809cf2317fb46e90a6c1af2",
+          "message": "Bump utils in preparation for ICU4X 0.6 (#1869)",
+          "timestamp": "2022-05-09T16:31:45-04:00",
+          "tree_id": "61c8824b5b139534c4701b7895793afd5d0db4ef",
+          "url": "https://github.com/unicode-org/icu4x/commit/0e99bd581ab4d4f0d809cf2317fb46e90a6c1af2"
+        },
+        "date": 1652128420570,
         "tool": "ndjson",
         "benches": [
           {
