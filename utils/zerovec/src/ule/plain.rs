@@ -94,6 +94,7 @@ macro_rules! impl_const_constructors {
             /// See [`ZeroSlice::cast()`] for an example.
             pub const fn try_from_bytes(bytes: &[u8]) -> Result<&Self, ZeroVecError> {
                 let len = bytes.len();
+                #[allow(clippy::modulo_one)]
                 if len % $size == 0 {
                     unsafe {
                         // Most of the slice manipulation functions are not yet const-stable,
