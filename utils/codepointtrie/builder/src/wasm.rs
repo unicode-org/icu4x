@@ -28,7 +28,8 @@ where
         match builder.trie_type {
             TrieType::Fast => "fast",
             TrieType::Small => "small",
-        }.to_string(),
+        }
+        .to_string(),
         format!("{}", std::mem::size_of::<T::ULE>() * 8),
     ];
     let mut wasi_env = WasiState::new("list_to_ucptrie")
@@ -70,7 +71,10 @@ where
     let exit_result = start.call(&[]);
 
     if let Err(e) = exit_result {
-        panic!("list_to_ucptrie failed in C++: args were: {:?}: {}", args, e);
+        panic!(
+            "list_to_ucptrie failed in C++: args were: {:?}: {}",
+            args, e
+        );
     }
 
     // To read from the stdout/stderr, we again need a mutable reference to the pipe

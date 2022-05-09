@@ -53,7 +53,6 @@
         clippy::exhaustive_enums
     )
 )]
-
 // This is a build tool with many invariants being enforced
 #![allow(clippy::expect_used)]
 
