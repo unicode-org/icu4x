@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1651857618822,
+  "lastUpdate": 1652128823453,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -26626,6 +26626,60 @@ window.BENCHMARK_DATA = {
           {
             "name": "uniset/contains/best",
             "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/worst",
+            "value": 3,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/worst",
+            "value": 3,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "dminor@mozilla.com",
+            "name": "Dan Minor",
+            "username": "dminor"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "0e99bd581ab4d4f0d809cf2317fb46e90a6c1af2",
+          "message": "Bump utils in preparation for ICU4X 0.6 (#1869)",
+          "timestamp": "2022-05-09T16:31:45-04:00",
+          "tree_id": "61c8824b5b139534c4701b7895793afd5d0db4ef",
+          "url": "https://github.com/unicode-org/icu4x/commit/0e99bd581ab4d4f0d809cf2317fb46e90a6c1af2"
+        },
+        "date": 1652128800419,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 48751613,
+            "range": "± 1732018",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/best",
+            "value": 3,
             "range": "± 0",
             "unit": "ns/iter"
           },
