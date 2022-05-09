@@ -11,7 +11,8 @@
 /**
  * list_to_ucptrie: converts a stream of integers to a UCPTrie
  *
- * - standard input should be a stream of integers, in order of each code point.
+ * - standard input should be a stream of integers, each integer represents the value for 
+     consecutive code points, starting from code point 0.
  * - standard output is the build UCPTrie as a TOML file
  */
 int main(int argc, char const *argv[]) {
