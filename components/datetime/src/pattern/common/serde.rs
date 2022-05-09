@@ -129,23 +129,14 @@ mod runtime {
     struct PatternForSerde<'data> {
         #[serde(borrow)]
         pub items: ZeroVec<'data, PatternItem>,
-        pub(crate) time_granularity: TimeGranularity,
+        pub time_granularity_unchecked: TimeGranularity,
     }
 
     impl<'data> From<PatternForSerde<'data>> for Pattern<'data> {
         fn from(pfs: PatternForSerde<'data>) -> Self {
             Self {
                 items: pfs.items,
-                time_granularity: pfs.time_granularity,
-            }
-        }
-    }
-
-    impl<'data> From<&Pattern<'data>> for PatternForSerde<'data> {
-        fn from(pfs: &Pattern<'data>) -> Self {
-            Self {
-                items: pfs.items.clone(),
-                time_granularity: pfs.time_granularity,
+                time_granularity_unchecked: pfs.time_granularity_unchecked,
             }
         }
     }
@@ -195,7 +186,10 @@ mod runtime {
             if serializer.is_human_readable() {
                 serializer.serialize_str(&self.to_string())
             } else {
-                let pfs = PatternForSerde::from(self);
+                let pfs = PatternForSerde {
+                    items: self.items.clone(),
+                    time_granularity_unchecked: self.time_granularity_unchecked,
+                };
                 pfs.serialize(serializer)
             }
         }

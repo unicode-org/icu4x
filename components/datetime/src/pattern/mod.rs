@@ -22,7 +22,8 @@ pub use item::{GenericPatternItem, PatternItem};
 )]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-pub(crate) enum TimeGranularity {
+#[non_exhaustive]
+pub enum TimeGranularity {
     None,
     Hours,
     Minutes,

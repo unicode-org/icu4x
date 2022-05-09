@@ -11,14 +11,16 @@ use zerovec::ZeroVec;
 #[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
 pub struct Pattern<'data> {
     pub items: ZeroVec<'data, PatternItem>,
-    pub(crate) time_granularity: TimeGranularity,
+    // This field should contain the smallest time unit from the `items` vec.
+    // If it doesn't, unexpected results for day periods may be encountered.
+    pub time_granularity_unchecked: TimeGranularity,
 }
 
 impl<'data> Pattern<'data> {
     pub fn into_owned(self) -> Pattern<'static> {
         Pattern {
             items: self.items.into_owned(),
-            time_granularity: self.time_granularity,
+            time_granularity_unchecked: self.time_granularity_unchecked,
         }
     }
 }
@@ -26,7 +28,7 @@ impl<'data> Pattern<'data> {
 impl From<Vec<PatternItem>> for Pattern<'_> {
     fn from(items: Vec<PatternItem>) -> Self {
         Self {
-            time_granularity: items.iter().map(Into::into).max().unwrap_or_default(),
+            time_granularity_unchecked: items.iter().map(Into::into).max().unwrap_or_default(),
             items: ZeroVec::alloc_from_slice(&items),
         }
     }
@@ -36,7 +38,7 @@ impl From<&reference::Pattern> for Pattern<'_> {
     fn from(input: &reference::Pattern) -> Self {
         Self {
             items: ZeroVec::alloc_from_slice(&input.items),
-            time_granularity: input.time_granularity,
+            time_granularity_unchecked: input.time_granularity,
         }
     }
 }
@@ -45,7 +47,7 @@ impl From<&Pattern<'_>> for reference::Pattern {
     fn from(input: &Pattern<'_>) -> Self {
         Self {
             items: input.items.to_vec(),
-            time_granularity: input.time_granularity,
+            time_granularity: input.time_granularity_unchecked,
         }
     }
 }
@@ -63,7 +65,7 @@ impl Default for Pattern<'_> {
     fn default() -> Self {
         Self {
             items: ZeroVec::Owned(Vec::new()),
-            time_granularity: TimeGranularity::default(),
+            time_granularity_unchecked: TimeGranularity::default(),
         }
     }
 }

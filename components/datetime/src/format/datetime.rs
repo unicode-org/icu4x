@@ -329,7 +329,7 @@ where
                     period,
                     field.length,
                     datetime.datetime().hour().ok_or(Error::MissingInputField)?,
-                    pattern.time_granularity.is_top_of_hour(
+                    pattern.time_granularity_unchecked.is_top_of_hour(
                         datetime.datetime().minute().map(u8::from).unwrap_or(0),
                         datetime.datetime().second().map(u8::from).unwrap_or(0),
                         datetime.datetime().nanosecond().map(u32::from).unwrap_or(0),
