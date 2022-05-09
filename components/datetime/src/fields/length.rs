@@ -92,7 +92,9 @@ impl AsULE for FieldLength {
 impl FieldLengthULE {
     #[inline]
     pub(crate) fn validate_byte(byte: u8) -> Result<(), ZeroVecError> {
-        FieldLength::from_idx(byte).map(|_| ()).map_err(|_| ZeroVecError::parse::<FieldLength>())
+        FieldLength::from_idx(byte)
+            .map(|_| ())
+            .map_err(|_| ZeroVecError::parse::<FieldLength>())
     }
 }
 

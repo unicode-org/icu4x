@@ -159,7 +159,9 @@ impl AsULE for FieldSymbol {
 impl FieldSymbolULE {
     #[inline]
     pub(crate) fn validate_byte(byte: u8) -> Result<(), ZeroVecError> {
-        FieldSymbol::from_idx(byte).map(|_| ()).map_err(|_| ZeroVecError::parse::<FieldSymbol>())
+        FieldSymbol::from_idx(byte)
+            .map(|_| ())
+            .map_err(|_| ZeroVecError::parse::<FieldSymbol>())
     }
 }
 
