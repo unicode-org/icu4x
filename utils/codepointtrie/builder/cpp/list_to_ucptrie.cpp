@@ -16,8 +16,8 @@
  * - standard output is the build UCPTrie as a TOML file
  */
 int main(int argc, char const *argv[]) {
-    if (argc != 4) {
-        std::cerr << "Takes 3 positional arguments: default value, error value, and trie type" << std::endl;
+    if (argc != 5) {
+        std::cerr << "Takes 4 positional arguments: default value, error value, trie type, and value width" << std::endl;
         return 1;
     }
 
@@ -32,6 +32,19 @@ int main(int argc, char const *argv[]) {
         trieType = UCPTRIE_TYPE_FAST;
     } else {
         std::cerr << "Expected 'small' or 'fast' for 3rd argument" << std::endl;
+        return 1;
+    }
+
+    UCPTrieValueWidth valueWidth;
+    int32_t valueWidthInt = atoi(argv[4]);
+    if (valueWidthInt == 8) {
+        valueWidth = UCPTRIE_VALUE_BITS_8;
+    } else if (valueWidthInt == 16) {
+        valueWidth = UCPTRIE_VALUE_BITS_16;
+    } else if (valueWidthInt == 32) {
+        valueWidth = UCPTRIE_VALUE_BITS_32;
+    } else {
+        std::cerr << "Expected '8', '16', or '32' for 4th argument" << std::endl;
         return 1;
     }
 
@@ -50,7 +63,6 @@ int main(int argc, char const *argv[]) {
     std::string line;
     while (std::getline(std::cin, line)) {
         int32_t value = atoi(line.data());
-        // std::cerr << cp << " => " << value << std::endl;
         umutablecptrie_set(builder.getAlias(), cp, value, status);
         if (status.isFailure()) {
             std::cerr << status.errorName() << std::endl;
@@ -63,7 +75,7 @@ int main(int argc, char const *argv[]) {
     icu::LocalUCPTriePointer utrie(umutablecptrie_buildImmutable(
         builder.getAlias(),
         trieType,
-        UCPTRIE_VALUE_BITS_8, // TODO: Auto-compute
+        valueWidth,
         status));
     if (status.isFailure()) {
         std::cerr << status.errorName() << std::endl;

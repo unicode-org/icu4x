@@ -22,17 +22,19 @@ where
     T: TrieValue + Into<u32>,
 {
     // Set up the execution environment with a WasiState
+    let args = &[
+        format!("{}", builder.default_value.into()),
+        format!("{}", builder.error_value.into()),
+        match builder.trie_type {
+            TrieType::Fast => "fast",
+            TrieType::Small => "small",
+        }.to_string(),
+        format!("{}", std::mem::size_of::<T::ULE>() * 8),
+    ];
     let mut wasi_env = WasiState::new("list_to_ucptrie")
         .stdin(Box::new(Pipe::new()))
         .stdout(Box::new(Pipe::new()))
-        .args(&[
-            format!("{}", builder.default_value.into()).as_str(),
-            format!("{}", builder.error_value.into()).as_str(),
-            match builder.trie_type {
-                TrieType::Fast => "fast",
-                TrieType::Small => "small",
-            },
-        ])
+        .args(args)
         .finalize()
         .expect("valid arguments + in-memory filesystem");
 
@@ -65,9 +67,13 @@ where
         .exports
         .get_function("_start")
         .expect("function exists");
-    start.call(&[]).expect("function should run to completion");
+    let exit_result = start.call(&[]);
 
-    // To read from the stdout, we again need a mutable reference to the pipe
+    if let Err(e) = exit_result {
+        panic!("list_to_ucptrie failed in C++: args were: {:?}: {}", args, e);
+    }
+
+    // To read from the stdout/stderr, we again need a mutable reference to the pipe
     let mut state = wasi_env.state();
     let wasi_stdout = state
         .fs
