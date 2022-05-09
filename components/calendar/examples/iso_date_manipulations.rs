@@ -50,9 +50,9 @@ fn main(_argc: isize, _argv: *const *const u8) -> isize {
     for date in dates.iter() {
         let formatted_date = format!(
             "Year: {}, Month: {}, Day: {}",
-            date.year().number.to_string(),
-            date.month().number.to_string(),
-            date.day_of_month().0.to_string()
+            date.year().number,
+            date.month().number,
+            date.day_of_month().0
         );
         print(&formatted_date);
     }
