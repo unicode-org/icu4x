@@ -34,6 +34,7 @@ fn get_trie_small() -> CodePointTrie<'static, u8> {
     .unwrap()
 }
 
+#[cfg(feature = "bench")]
 fn get_trie_fast() -> CodePointTrie<'static, u8> {
     CodePointTrie::try_new(
         tries::gc_fast::HEADER,
@@ -46,7 +47,6 @@ fn get_trie_fast() -> CodePointTrie<'static, u8> {
 fn overview_bench(c: &mut Criterion) {
     let s = one_hundred_code_points(SAMPLE_STRING_MIXED);
     let cpt_small = get_trie_small();
-    let cpt_fast = get_trie_fast();
 
     c.bench_function("cpt/overview", |b| {
         b.iter(|| {
@@ -59,6 +59,7 @@ fn overview_bench(c: &mut Criterion) {
 
     #[cfg(feature = "bench")]
     {
+        let cpt_fast = get_trie_fast();
         lang_bench(c, &cpt_small, "small/eng", sample_str_lng::ENG);
         lang_bench(c, &cpt_small, "small/pcd", sample_str_lng::PCD);
         lang_bench(c, &cpt_small, "small/ukr", sample_str_lng::UKR);
