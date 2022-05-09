@@ -21,7 +21,7 @@ It takes three positional arguments:
 
 To build the WebAssembly module, you need:
 
-- Local copy of the ICU4C sources
+- Local copy of the ICU4C sources (May 6, 2022 or later: [eea7985](https://github.com/unicode-org/icu/commit/eea7985e5a7108d00f1224ed36f0220fa9441cdc))
 - [wasienv](https://github.com/wasienv/wasienv)
 
 Once you have these two tools installed, from this directory, simply run:
