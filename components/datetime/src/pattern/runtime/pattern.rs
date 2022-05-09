@@ -12,8 +12,8 @@ use zerovec::ZeroVec;
 #[allow(clippy::exhaustive_structs)] // part of data struct
 pub struct Pattern<'data> {
     pub items: ZeroVec<'data, PatternItem>,
-    // This field should contain the smallest time unit from the `items` vec.
-    // If it doesn't, unexpected results for day periods may be encountered.
+    /// This field should contain the smallest time unit from the `items` vec.
+    /// If it doesn't, unexpected results for day periods may be encountered.
     pub time_granularity_unchecked: TimeGranularity,
 }
 
