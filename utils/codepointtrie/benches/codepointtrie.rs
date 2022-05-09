@@ -11,10 +11,15 @@ mod tries;
 
 #[cfg(feature = "bench")]
 mod sample_str_lng {
+    // "eng" is all ASCII
     pub const ENG: &str = "Universal Declaration of Human Rights";
+    // "pcd" has ASCII mixed with low-BMP code points
     pub const PCD: &str = "Dèclaråcion dès dreûts d' l'ome po tos lès payîs dè monde";
+    // "ukr" uses low-BMP code points (less than U+1000)
     pub const UKR: &str = "ЗАГАЛЬНА ДЕКЛАРАЦІЯ ПРАВ ЛЮДИНІ";
+    // "yue" uses high-BMP code points (greater than U+1000), so it benefits from fast mode
     pub const YUE: &str = "世界人权宣言";
+    // "ccp" exercises supplementary code points
     pub const CCP: &str = "𑄟𑄚𑄬𑄭𑄃𑄇𑄴𑄇𑄥𑄧𑄁𑄢𑄴 𑄝𑄬𑄇𑄴𑄅𑄚𑄮𑄢𑄴 𑄟𑄧𑄚𑄳𑄢𑄧𑄧𑄇𑄉𑄮𑄌𑄴";
 }
 
