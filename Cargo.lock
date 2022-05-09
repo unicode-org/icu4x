@@ -565,7 +565,7 @@ dependencies = [
 
 [[package]]
 name = "deduplicating_array"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "postcard",
  "serde",
@@ -742,7 +742,7 @@ dependencies = [
 
 [[package]]
 name = "fixed_decimal"
-version = "0.2.2"
+version = "0.3.0"
 dependencies = [
  "criterion",
  "displaydoc",
@@ -1093,7 +1093,7 @@ checksum = "71a816c97c42258aa5834d07590b718b4c9a598944cd39a52dc25b351185d678"
 
 [[package]]
 name = "icu"
-version = "0.5.0"
+version = "0.6.0"
 dependencies = [
  "fixed_decimal",
  "icu_calendar",
@@ -1117,7 +1117,7 @@ version = "0.1.0"
 
 [[package]]
 name = "icu4x_ecma402"
-version = "0.5.0"
+version = "0.6.0"
 dependencies = [
  "criterion",
  "ecma402_traits",
@@ -1139,7 +1139,7 @@ dependencies = [
 
 [[package]]
 name = "icu_benchmark_macros"
-version = "0.5.0"
+version = "0.6.0"
 dependencies = [
  "dhat 0.2.2",
  "dlmalloc",
@@ -1156,20 +1156,21 @@ dependencies = [
 
 [[package]]
 name = "icu_calendar"
-version = "0.5.0"
+version = "0.6.0"
 dependencies = [
  "displaydoc",
  "icu",
  "icu_benchmark_macros",
+ "icu_locid",
  "icu_provider",
  "serde",
- "tinystr 0.5.0",
+ "tinystr 0.6.0",
  "zerovec",
 ]
 
 [[package]]
 name = "icu_capi"
-version = "0.5.0"
+version = "0.6.0"
 dependencies = [
  "diplomat",
  "diplomat-runtime",
@@ -1186,20 +1187,20 @@ dependencies = [
  "icu_segmenter",
  "icu_testdata",
  "log",
- "tinystr 0.5.0",
+ "tinystr 0.6.0",
  "writeable",
 ]
 
 [[package]]
 name = "icu_capi_cdylib"
-version = "0.5.0"
+version = "0.6.0"
 dependencies = [
  "icu_capi",
 ]
 
 [[package]]
 name = "icu_capi_staticlib"
-version = "0.5.0"
+version = "0.6.0"
 dependencies = [
  "dlmalloc",
  "icu_capi",
@@ -1230,7 +1231,7 @@ dependencies = [
 
 [[package]]
 name = "icu_codepointtrie"
-version = "0.3.3"
+version = "0.4.0"
 dependencies = [
  "displaydoc",
  "icu_uniset",
@@ -1244,7 +1245,7 @@ dependencies = [
 
 [[package]]
 name = "icu_datagen"
-version = "0.5.0"
+version = "0.6.0"
 dependencies = [
  "cached-path",
  "clap",
@@ -1284,7 +1285,7 @@ dependencies = [
  "sha2",
  "simple_logger",
  "syn",
- "tinystr 0.5.0",
+ "tinystr 0.6.0",
  "toml",
  "walkdir",
  "writeable",
@@ -1293,7 +1294,7 @@ dependencies = [
 
 [[package]]
 name = "icu_datetime"
-version = "0.5.0"
+version = "0.6.0"
 dependencies = [
  "bincode",
  "criterion",
@@ -1312,14 +1313,14 @@ dependencies = [
  "serde-tuple-vec-map",
  "serde_json",
  "smallvec",
- "tinystr 0.5.0",
+ "tinystr 0.6.0",
  "writeable",
  "zerovec",
 ]
 
 [[package]]
 name = "icu_decimal"
-version = "0.5.0"
+version = "0.6.0"
 dependencies = [
  "criterion",
  "displaydoc",
@@ -1340,7 +1341,7 @@ dependencies = [
 
 [[package]]
 name = "icu_freertos"
-version = "0.5.0"
+version = "0.6.0"
 dependencies = [
  "cortex-m",
  "freertos-rust",
@@ -1349,7 +1350,7 @@ dependencies = [
 
 [[package]]
 name = "icu_list"
-version = "0.5.0"
+version = "0.6.0"
 dependencies = [
  "crabbake",
  "criterion",
@@ -1369,7 +1370,7 @@ dependencies = [
 
 [[package]]
 name = "icu_locale_canonicalizer"
-version = "0.5.0"
+version = "0.6.0"
 dependencies = [
  "criterion",
  "icu_locid",
@@ -1378,13 +1379,13 @@ dependencies = [
  "litemap",
  "serde",
  "serde_json",
- "tinystr 0.5.0",
+ "tinystr 0.6.0",
  "zerovec",
 ]
 
 [[package]]
 name = "icu_locid"
-version = "0.5.0"
+version = "0.6.0"
 dependencies = [
  "criterion",
  "displaydoc",
@@ -1394,14 +1395,14 @@ dependencies = [
  "postcard",
  "serde",
  "serde_json",
- "tinystr 0.5.0",
+ "tinystr 0.6.0",
  "writeable",
  "zerovec",
 ]
 
 [[package]]
 name = "icu_pattern"
-version = "0.1.1"
+version = "0.1.2"
 dependencies = [
  "displaydoc",
  "iai",
@@ -1410,7 +1411,7 @@ dependencies = [
 
 [[package]]
 name = "icu_plurals"
-version = "0.5.0"
+version = "0.6.0"
 dependencies = [
  "criterion",
  "displaydoc",
@@ -1427,7 +1428,7 @@ dependencies = [
 
 [[package]]
 name = "icu_properties"
-version = "0.5.0"
+version = "0.6.0"
 dependencies = [
  "displaydoc",
  "icu",
@@ -1442,7 +1443,7 @@ dependencies = [
 
 [[package]]
 name = "icu_provider"
-version = "0.5.0"
+version = "0.6.0"
 dependencies = [
  "bincode",
  "crabbake",
@@ -1466,7 +1467,7 @@ dependencies = [
 
 [[package]]
 name = "icu_provider_adapters"
-version = "0.5.0"
+version = "0.6.0"
 dependencies = [
  "icu_locid",
  "icu_provider",
@@ -1475,13 +1476,11 @@ dependencies = [
 
 [[package]]
 name = "icu_provider_blob"
-version = "0.5.0"
+version = "0.6.0"
 dependencies = [
  "erased-serde",
- "icu",
  "icu_locid",
  "icu_provider",
- "icu_testdata",
  "litemap",
  "log",
  "postcard",
@@ -1493,7 +1492,7 @@ dependencies = [
 
 [[package]]
 name = "icu_provider_fs"
-version = "0.5.0"
+version = "0.6.0"
 dependencies = [
  "bincode",
  "criterion",
@@ -1513,7 +1512,7 @@ dependencies = [
 
 [[package]]
 name = "icu_provider_macros"
-version = "0.5.0"
+version = "0.6.0"
 dependencies = [
  "icu_provider",
  "proc-macro2",
@@ -1523,7 +1522,7 @@ dependencies = [
 
 [[package]]
 name = "icu_segmenter"
-version = "0.5.0"
+version = "0.6.0"
 dependencies = [
  "criterion",
  "icu_char16trie",
@@ -1552,7 +1551,7 @@ dependencies = [
 
 [[package]]
 name = "icu_testdata"
-version = "0.5.0"
+version = "0.6.0"
 dependencies = [
  "baked",
  "cargo_metadata",
@@ -1577,7 +1576,7 @@ dependencies = [
 
 [[package]]
 name = "icu_uniset"
-version = "0.4.1"
+version = "0.5.0"
 dependencies = [
  "criterion",
  "displaydoc",
@@ -1585,7 +1584,7 @@ dependencies = [
  "postcard",
  "serde",
  "serde_json",
- "tinystr 0.5.0",
+ "tinystr 0.6.0",
  "yoke",
  "zerofrom",
  "zerovec",
@@ -1698,7 +1697,7 @@ checksum = "c7d73b3f436185384286bd8098d17ec07c9a7d2388a6599f824d8502b529702a"
 
 [[package]]
 name = "litemap"
-version = "0.3.0"
+version = "0.4.0"
 dependencies = [
  "bincode",
  "bytecheck",
@@ -2766,7 +2765,7 @@ dependencies = [
 
 [[package]]
 name = "tinystr"
-version = "0.5.0"
+version = "0.6.0"
 dependencies = [
  "bincode",
  "criterion",
@@ -3153,7 +3152,7 @@ dependencies = [
 
 [[package]]
 name = "writeable"
-version = "0.3.0"
+version = "0.4.0"
 dependencies = [
  "criterion",
  "icu_benchmark_macros",
@@ -3213,7 +3212,7 @@ dependencies = [
 
 [[package]]
 name = "zerovec"
-version = "0.6.0"
+version = "0.7.0"
 dependencies = [
  "bincode",
  "criterion",

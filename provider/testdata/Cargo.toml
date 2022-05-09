@@ -5,7 +5,7 @@
 [package]
 name = "icu_testdata"
 description = "Pre-built test data for ICU4X"
-version = "0.5.0"
+version = "0.6.0"
 authors = ["The ICU4X Project Developers"]
 edition = "2018"
 readme = "README.md"
@@ -143,17 +143,17 @@ skip_optional_dependencies = true
 denylist = ["bench"]
 
 [dependencies]
-icu_provider = { version = "0.5", path = "../core" }
-icu_provider_blob = { version = "0.5", path = "../blob", optional = true }
-icu_provider_fs = { version = "0.5", path = "../fs", optional = true }
+icu_provider = { version = "0.6", path = "../core" }
+icu_provider_blob = { version = "0.6", path = "../blob", optional = true }
+icu_provider_fs = { version = "0.6", path = "../fs", optional = true }
 baked = { path = "./data/baked", optional = true }
 
 # bin feature
 clap = { version = "2.33", optional = true }
 eyre = { version = "0.6", optional = true }
 futures = { version = "0.3", optional = true }
-icu_datagen = { version = "0.5", path = "../datagen", features = ["experimental"], optional = true }
-icu_locid = { version = "0.5", path = "../../components/locid", optional = true }
+icu_datagen = { version = "0.6", path = "../datagen", features = ["experimental"], optional = true }
+icu_locid = { version = "0.6", path = "../../components/locid", optional = true }
 log = { version = "0.4", optional = true }
 reqwest = { version = "0.11", features = ["stream"], optional = true }
 simple_logger = { version = "1.12", optional = true }
@@ -164,13 +164,13 @@ cargo_metadata = { version = "0.13", optional = true }
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }
 serde_json = { version = "1.0", optional = true, default-features = false, features = ["alloc"] }
 displaydoc = { version = "0.2.3", default-features = false, optional = true }
-writeable = { version = "0.3", path = "../../utils/writeable", optional = true }
+writeable = { version = "0.4", path = "../../utils/writeable", optional = true }
 
 [dev-dependencies]
-icu_plurals = { version = "0.5", path = "../../components/plurals" }
+icu_plurals = { version = "0.6", path = "../../components/plurals" }
 
 [features]
-default = ["fs", "std"]
+default = ["static"]
 # Enables programmatic access to this Cargo.toml file
 metadata = [
     "cargo_metadata",
@@ -183,6 +183,7 @@ metadata = [
 ]
 fs = ["icu_provider/deserialize_json", "icu_provider_fs", "std"]
 static = ["icu_provider_blob"]
+baked = ["dep:baked"]
 std = []
 bin = [
     "clap",

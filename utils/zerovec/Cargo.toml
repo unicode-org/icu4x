@@ -5,7 +5,7 @@
 [package]
 name = "zerovec"
 description = "Zero-copy vector backed by a byte array"
-version = "0.6.0"
+version = "0.7.0"
 authors = ["The ICU4X Project Developers"]
 edition = "2018"
 readme = "README.md"
@@ -33,7 +33,7 @@ zerofrom = { version = "0.1.0", path = "../zerofrom" }
 zerovec-derive = {version = "0.6.0", path = "./derive", optional = true}
 
 [dev-dependencies]
-icu_benchmark_macros = { version = "0.5", path = "../../tools/benchmark/macros" }
+icu_benchmark_macros = { version = "0.6", path = "../../tools/benchmark/macros" }
 criterion = "0.3.4"
 iai = "0.1"
 serde = { version = "1.0", features = ["derive"] }

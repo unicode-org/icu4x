@@ -9,6 +9,7 @@ use yoke::trait_hack::YokeTraitHack;
 /// Stats on the heap size needed when attempting to zero-copy-deserialize
 /// a postcard-formatted data struct.
 #[derive(Debug, Copy, Clone, yoke::Yokeable, Default)]
+#[non_exhaustive]
 pub struct HeapStats {
     // Total bytes allocated during deserialization
     pub total_bytes_allocated: u64,
@@ -17,6 +18,7 @@ pub struct HeapStats {
 }
 
 /// The [`DataMarker`] marker type for [`HeapStats`].
+#[allow(clippy::exhaustive_structs)] // marker type
 pub struct HeapStatsMarker;
 
 impl DataMarker for HeapStatsMarker {

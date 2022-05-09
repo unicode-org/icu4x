@@ -27,6 +27,7 @@ use icu_locid::LanguageIdentifier;
 pub struct DataRequestMetadata;
 
 #[derive(Default, Debug, PartialEq, Eq, PartialOrd, Ord)]
+#[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct DataRequest {
     pub options: ResourceOptions,
     pub metadata: DataRequestMetadata,
@@ -716,6 +717,7 @@ where
 }
 
 /// A response object containing an object as payload and metadata about it.
+#[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct DataResponse<M>
 where
     M: DataMarker,
