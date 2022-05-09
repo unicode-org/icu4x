@@ -78,7 +78,7 @@ macro_rules! impl_byte_slice_size {
                 result
             }
         }
-    }
+    };
 }
 
 macro_rules! impl_const_constructors {
