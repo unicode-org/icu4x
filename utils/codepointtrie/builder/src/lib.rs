@@ -54,6 +54,7 @@
     )
 )]
 // This is a build tool with many invariants being enforced
+#![allow(clippy::panic)]
 #![allow(clippy::expect_used)]
 
 use icu_codepointtrie::toml::CodePointTrieToml;
