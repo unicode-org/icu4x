@@ -6,6 +6,7 @@ use crate::fields::FieldLength;
 use core::{cmp::Ordering, convert::TryFrom};
 use displaydoc::Display;
 use icu_provider::{yoke, zerofrom};
+use zerovec::ule::{AsULE, ZeroVecError, ULE};
 
 #[derive(Display, Debug, PartialEq, Copy, Clone)]
 #[non_exhaustive]
@@ -75,26 +76,6 @@ impl FieldSymbol {
     /// This model limits the available number of possible types and symbols to 16 each.
 
     #[inline]
-    pub(crate) fn idx_in_range(kv: &u8) -> bool {
-        let symbol = kv & 0b0000_1111;
-        let field_type = kv >> 4;
-        match field_type {
-            0 => true, // eras
-            1 => Year::idx_in_range(&symbol),
-            2 => Month::idx_in_range(&symbol),
-            3 => Week::idx_in_range(&symbol),
-            4 => Day::idx_in_range(&symbol),
-            5 => Weekday::idx_in_range(&symbol),
-            6 => DayPeriod::idx_in_range(&symbol),
-            7 => Hour::idx_in_range(&symbol),
-            8 => symbol == 0,
-            9 => Second::idx_in_range(&symbol),
-            10 => TimeZone::idx_in_range(&symbol),
-            _ => false,
-        }
-    }
-
-    #[inline]
     pub(crate) fn idx(&self) -> u8 {
         let (high, low) = match self {
             FieldSymbol::Era => (0, 0),
@@ -157,6 +138,46 @@ impl FieldSymbol {
     /// ignoring the enum's data.
     pub(crate) fn discriminant_cmp(&self, other: &Self) -> Ordering {
         self.discriminant_idx().cmp(&other.discriminant_idx())
+    }
+}
+
+#[repr(transparent)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq)]
+pub struct FieldSymbolULE(u8);
+
+impl AsULE for FieldSymbol {
+    type ULE = FieldSymbolULE;
+    fn to_unaligned(self) -> Self::ULE {
+        FieldSymbolULE(self.idx())
+    }
+    fn from_unaligned(unaligned: Self::ULE) -> Self {
+        #[allow(clippy::unwrap_used)] // OK because the ULE is pre-validated
+        Self::from_idx(unaligned.0).unwrap()
+    }
+}
+
+impl FieldSymbolULE {
+    #[inline]
+    pub(crate) fn validate_byte(byte: u8) -> Result<(), ZeroVecError> {
+        FieldSymbol::from_idx(byte).map(|_| ()).map_err(|_| ZeroVecError::parse::<FieldSymbol>())
+    }
+}
+
+// Safety checklist for ULE:
+//
+// 1. Must not include any uninitialized or padding bytes (true since transparent over a ULE).
+// 2. Must have an alignment of 1 byte (true since transparent over a ULE).
+// 3. ULE::validate_byte_slice() checks that the given byte slice represents a valid slice.
+// 4. ULE::validate_byte_slice() checks that the given byte slice has a valid length
+//    (true since transparent over a type of size 1).
+// 5. All other methods must be left with their default impl.
+// 6. Byte equality is semantic equality.
+unsafe impl ULE for FieldSymbolULE {
+    fn validate_byte_slice(bytes: &[u8]) -> Result<(), ZeroVecError> {
+        for byte in bytes {
+            Self::validate_byte(*byte)?;
+        }
+        Ok(())
     }
 }
 

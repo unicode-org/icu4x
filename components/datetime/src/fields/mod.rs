@@ -6,7 +6,6 @@
 mod macros;
 mod length;
 pub(crate) mod symbols;
-mod ule;
 
 use displaydoc::Display;
 pub use length::{FieldLength, LengthError};
@@ -30,6 +29,7 @@ impl std::error::Error for Error {}
 #[derive(Debug, Eq, PartialEq, Clone, Copy, Ord, PartialOrd)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[zerovec::make_ule(FieldULE)]
 pub struct Field {
     pub symbol: FieldSymbol,
     pub length: FieldLength,
@@ -51,10 +51,14 @@ impl Field {
             FieldSymbol::TimeZone(zone) => zone.get_length_type(self.length),
         }
     }
+}
 
+impl FieldULE {
     #[inline]
-    pub(crate) fn bytes_in_range(symbol: &u8, length: &u8) -> bool {
-        FieldSymbol::idx_in_range(symbol) && FieldLength::idx_in_range(length)
+    pub(crate) fn validate_bytes(bytes: (u8, u8)) -> Result<(), zerovec::ZeroVecError> {
+        symbols::FieldSymbolULE::validate_byte(bytes.0)?;
+        length::FieldLengthULE::validate_byte(bytes.1)?;
+        Ok(())
     }
 }
 
@@ -82,5 +86,86 @@ impl TryFrom<(FieldSymbol, usize)> for Field {
             symbol: input.0,
             length,
         })
+    }
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+    use crate::fields::{Field, FieldLength, FieldSymbol, Second, Year};
+    use zerovec::ule::{AsULE, ULE};
+
+    #[test]
+    fn test_field_as_ule() {
+        let samples = &[
+            (
+                Field::from((FieldSymbol::Minute, FieldLength::TwoDigit)),
+                &[FieldSymbol::Minute.idx(), FieldLength::TwoDigit.idx()],
+            ),
+            (
+                Field::from((FieldSymbol::Year(Year::Calendar), FieldLength::Wide)),
+                &[
+                    FieldSymbol::Year(Year::Calendar).idx(),
+                    FieldLength::Wide.idx(),
+                ],
+            ),
+            (
+                Field::from((FieldSymbol::Year(Year::WeekOf), FieldLength::Wide)),
+                &[
+                    FieldSymbol::Year(Year::WeekOf).idx(),
+                    FieldLength::Wide.idx(),
+                ],
+            ),
+            (
+                Field::from((FieldSymbol::Second(Second::Millisecond), FieldLength::One)),
+                &[
+                    FieldSymbol::Second(Second::Millisecond).idx(),
+                    FieldLength::One.idx(),
+                ],
+            ),
+        ];
+
+        for (ref_field, ref_bytes) in samples {
+            let ule = ref_field.to_unaligned();
+            assert_eq!(ULE::as_byte_slice(&[ule]), *ref_bytes);
+            let field = Field::from_unaligned(ule);
+            assert_eq!(field, *ref_field);
+        }
+    }
+
+    #[test]
+    fn test_field_ule() {
+        let samples = &[(
+            &[
+                Field::from((FieldSymbol::Year(Year::Calendar), FieldLength::Wide)),
+                Field::from((FieldSymbol::Second(Second::Millisecond), FieldLength::One)),
+            ],
+            &[
+                &[
+                    FieldSymbol::Year(Year::Calendar).idx(),
+                    FieldLength::Wide.idx(),
+                ],
+                &[
+                    FieldSymbol::Second(Second::Millisecond).idx(),
+                    FieldLength::One.idx(),
+                ],
+            ],
+        )];
+
+        for (ref_field, ref_bytes) in samples {
+            let mut bytes: Vec<u8> = vec![];
+            for item in ref_field.iter() {
+                let ule = item.to_unaligned();
+                bytes.extend(ULE::as_byte_slice(&[ule]));
+            }
+
+            let mut bytes2: Vec<u8> = vec![];
+            for seq in ref_bytes.iter() {
+                bytes2.extend_from_slice(*seq);
+            }
+
+            assert!(FieldULE::validate_byte_slice(&bytes).is_ok());
+            assert_eq!(bytes, bytes2);
+        }
     }
 }
