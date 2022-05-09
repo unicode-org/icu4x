@@ -10,12 +10,24 @@ use crate::gregorian::Gregorian;
 use crate::indian::Indian;
 use crate::iso::Iso;
 use crate::japanese::Japanese;
-
 use crate::{types, Calendar, Date, DateDuration, DateDurationUnit};
+
+use icu_locid::extensions::unicode::Value;
+use icu_locid::{unicode_ext_key, unicode_ext_value, Locale};
+
+use crate::provider;
+use icu_provider::prelude::*;
 
 /// This is a calendar that encompasses all formattable calendars supported by this crate
 ///
 /// This allows for the construction of [`Date`] objects that have their calendar known at runtime.
+///
+/// This can be constructed by calling `.into()` on a concrete calendar type if the calendar type is known at
+/// compile time. When the type is known at runtime, the [`AnyCalendar::try_new_with_any_provider()`],
+/// [`AnyCalendar::try_new_with_buffer_provider()`], and [`AnyCalendar::try_new_unstable()`] methods may be used.
+///
+/// [`Date`](crate::Date) can also be converted to [`AnyCalendar`]-compatible ones
+/// via [`Date::to_any()`](crate::Date::to_any()).
 #[non_exhaustive]
 pub enum AnyCalendar {
     Gregorian(Gregorian),
@@ -220,6 +232,77 @@ impl Calendar for AnyCalendar {
 }
 
 impl AnyCalendar {
+    /// Constructs an AnyCalendar for a given calendar kind and [`AnyProvider`] data source
+    ///
+    /// For calendars that need data, will attempt to load the appropriate data from the source
+    pub fn try_new_with_any_provider<P>(
+        kind: AnyCalendarKind,
+        provider: &P,
+    ) -> Result<Self, DataError>
+    where
+        P: AnyProvider,
+    {
+        Ok(match kind {
+            AnyCalendarKind::Gregorian => AnyCalendar::Gregorian(Gregorian),
+            AnyCalendarKind::Buddhist => AnyCalendar::Buddhist(Buddhist),
+            AnyCalendarKind::Japanese => {
+                let p = provider.as_downcasting();
+                AnyCalendar::Japanese(Japanese::try_new(&p)?)
+            }
+            AnyCalendarKind::Indian => AnyCalendar::Indian(Indian),
+            AnyCalendarKind::Coptic => AnyCalendar::Coptic(Coptic),
+            AnyCalendarKind::Iso => AnyCalendar::Iso(Iso),
+        })
+    }
+
+    /// Constructs an AnyCalendar for a given calendar kind and [`BufferProvider`] data source
+    ///
+    /// For calendars that need data, will attempt to load the appropriate data from the source
+    ///
+    /// This needs the `"serde"` feature to be enabled to be used
+    #[cfg(feature = "serde")]
+    pub fn try_new_with_buffer_provider<P>(
+        kind: AnyCalendarKind,
+        provider: &P,
+    ) -> Result<Self, DataError>
+    where
+        P: BufferProvider,
+    {
+        Ok(match kind {
+            AnyCalendarKind::Gregorian => AnyCalendar::Gregorian(Gregorian),
+            AnyCalendarKind::Buddhist => AnyCalendar::Buddhist(Buddhist),
+            AnyCalendarKind::Japanese => {
+                let p = provider.as_deserializing();
+                AnyCalendar::Japanese(Japanese::try_new(&p)?)
+            }
+            AnyCalendarKind::Indian => AnyCalendar::Indian(Indian),
+            AnyCalendarKind::Coptic => AnyCalendar::Coptic(Coptic),
+            AnyCalendarKind::Iso => AnyCalendar::Iso(Iso),
+        })
+    }
+
+    /// Constructs an AnyCalendar for a given calendar kind and data source.
+    ///
+    /// **This method is unstable; the bounds on `P` might expand over time as more calendars are added**
+    ///
+    /// For calendars that need data, will attempt to load the appropriate data from the source
+    ///
+    /// This needs the `"serde"` feature to be enabled to be used
+    #[cfg(feature = "serde")]
+    pub fn try_new_unstable<P>(kind: AnyCalendarKind, provider: &P) -> Result<Self, DataError>
+    where
+        P: ResourceProvider<provider::JapaneseErasV1Marker>,
+    {
+        Ok(match kind {
+            AnyCalendarKind::Gregorian => AnyCalendar::Gregorian(Gregorian),
+            AnyCalendarKind::Buddhist => AnyCalendar::Buddhist(Buddhist),
+            AnyCalendarKind::Japanese => AnyCalendar::Japanese(Japanese::try_new(provider)?),
+            AnyCalendarKind::Indian => AnyCalendar::Indian(Indian),
+            AnyCalendarKind::Coptic => AnyCalendar::Coptic(Coptic),
+            AnyCalendarKind::Iso => AnyCalendar::Iso(Iso),
+        })
+    }
+
     fn calendar_name(&self) -> &'static str {
         match *self {
             Self::Gregorian(_) => "Gregorian",
@@ -242,6 +325,66 @@ impl AnyDateInner {
             AnyDateInner::Coptic(_) => "Coptic",
             AnyDateInner::Iso(_) => "Iso",
         }
+    }
+}
+
+/// Convenient type for selecting the kind of AnyCalendar to construct
+#[non_exhaustive]
+#[derive(Copy, Clone, Eq, PartialEq, Ord, PartialOrd, Hash)]
+pub enum AnyCalendarKind {
+    Gregorian,
+    Buddhist,
+    Japanese,
+    Indian,
+    Coptic,
+    Iso,
+}
+
+impl AnyCalendarKind {
+    pub fn from_bcp47_string(x: &str) -> Option<Self> {
+        Some(match x {
+            "gregory" => AnyCalendarKind::Gregorian,
+            "buddhist" => AnyCalendarKind::Buddhist,
+            "indian" => AnyCalendarKind::Indian,
+            "coptic" => AnyCalendarKind::Coptic,
+            "iso" => AnyCalendarKind::Iso,
+            _ => return None,
+        })
+    }
+
+    pub fn from_bcp47(x: &Value) -> Option<Self> {
+        Some(if *x == unicode_ext_value!("gregory") {
+            AnyCalendarKind::Gregorian
+        } else if *x == unicode_ext_value!("buddhist") {
+            AnyCalendarKind::Buddhist
+        } else if *x == unicode_ext_value!("indian") {
+            AnyCalendarKind::Indian
+        } else if *x == unicode_ext_value!("coptic") {
+            AnyCalendarKind::Coptic
+        } else if *x == unicode_ext_value!("iso") {
+            AnyCalendarKind::Iso
+        } else {
+            return None;
+        })
+    }
+
+    pub fn as_bcp47(&self) -> &'static str {
+        match *self {
+            AnyCalendarKind::Gregorian => "gregory",
+            AnyCalendarKind::Buddhist => "buddhist",
+            AnyCalendarKind::Japanese => "japanese",
+            AnyCalendarKind::Indian => "indian",
+            AnyCalendarKind::Coptic => "coptic",
+            AnyCalendarKind::Iso => "iso",
+        }
+    }
+
+    pub fn from_locale(l: &Locale) -> Option<Self> {
+        l.extensions
+            .unicode
+            .keywords
+            .get(&unicode_ext_key!("ca"))
+            .and_then(Self::from_bcp47)
     }
 }
 

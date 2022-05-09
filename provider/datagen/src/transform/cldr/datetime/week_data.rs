@@ -7,7 +7,7 @@ use crate::transform::cldr::cldr_serde::{
     self,
     week_data::{Territory, DEFAULT_TERRITORY},
 };
-use crate::transform::cldr::reader::open_reader;
+use crate::transform::reader::open_reader;
 use crate::SourceData;
 use icu_calendar::arithmetic::week_of::CalendarInfo;
 use icu_datetime::provider::week_data::*;

@@ -79,7 +79,7 @@ default-features = false
 [dev-dependencies]
 icu_codepointtrie = { version = "0.3.3", path = "../../utils/codepointtrie" }
 icu_provider = { version = "0.5", path = "../../provider/core" }
-icu_testdata = { version = "0.5", path = "../../provider/testdata", features = ["static"] }
+icu_testdata = { version = "0.5", path = "../../provider/testdata" }
 icu_uniset = { version = "0.4.1", path = "../../utils/uniset" }
 
 [dependencies]

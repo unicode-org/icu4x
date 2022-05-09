@@ -9,7 +9,9 @@ use icu_provider::{yoke, zerofrom};
 use regex_automata::dfa::sparse::DFA;
 use regex_automata::dfa::Automaton;
 
+/// A precompiled regex
 #[derive(Clone, Debug, yoke::Yokeable, zerofrom::ZeroFrom)]
+#[allow(clippy::exhaustive_structs)] // not a public API
 pub struct StringMatcher<'data> {
     // Safety: These always represent a valid DFA (DFA::from_bytes(dfa_bytes).is_ok())
     dfa_bytes: Cow<'data, [u8]>,
@@ -19,6 +21,18 @@ pub struct StringMatcher<'data> {
 impl PartialEq for StringMatcher<'_> {
     fn eq(&self, other: &Self) -> bool {
         self.dfa_bytes == other.dfa_bytes
+    }
+}
+
+#[cfg(feature = "datagen")]
+impl crabbake::Bakeable for StringMatcher<'_> {
+    fn bake(&self, ctx: &crabbake::CrateEnv) -> crabbake::TokenStream {
+        ctx.insert("icu_list");
+        let bytes = (&*self.dfa_bytes).bake(ctx);
+        // Safe because our own data is safe
+        crabbake::quote! {
+            unsafe { ::icu_list::provider::StringMatcher::from_dfa_bytes_unchecked(#bytes) }
+        }
     }
 }
 
@@ -84,6 +98,19 @@ impl<'de: 'data, 'data> serde::Deserialize<'de> for StringMatcher<'data> {
 }
 
 impl<'data> StringMatcher<'data> {
+    /// Creates a `StringMatcher` from a serialized DFA. Used internally by Crabbake.
+    ///
+    /// # Safety
+    ///
+    /// `dfa_bytes` has to be a valid DFA (regex_automata::dfa::sparse::DFA::from_bytes(dfa_bytes).is_ok())
+    pub const unsafe fn from_dfa_bytes_unchecked(dfa_bytes: &'data [u8]) -> Self {
+        Self {
+            dfa_bytes: Cow::Borrowed(dfa_bytes),
+            pattern: None,
+        }
+    }
+
+    /// Creates a `StringMatcher` from regex.
     #[cfg(any(feature = "datagen", feature = "serde_human",))]
     pub fn new(pattern: &str) -> Result<Self, icu_provider::DataError> {
         use regex_automata::{
@@ -111,7 +138,7 @@ impl<'data> StringMatcher<'data> {
         })
     }
 
-    pub fn test(&self, string: &str) -> bool {
+    pub(crate) fn test(&self, string: &str) -> bool {
         cfg!(target_endian = "little")
             && matches!(
                 // Safe due to struct invariant.

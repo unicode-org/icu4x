@@ -12,6 +12,7 @@ use std::io;
 
 /// An Error type specifically for the [`Serializer`](serde::Serializer) that doesn't carry filenames
 #[derive(Display, Debug)]
+#[non_exhaustive]
 pub enum Error {
     #[displaydoc("{0}")]
     Io(io::Error),

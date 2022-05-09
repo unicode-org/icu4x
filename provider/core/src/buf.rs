@@ -6,6 +6,7 @@
 
 use crate::prelude::*;
 
+#[allow(clippy::exhaustive_structs)] // marker type
 pub struct BufferMarker;
 
 impl DataMarker for BufferMarker {

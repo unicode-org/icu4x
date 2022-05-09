@@ -37,7 +37,7 @@ fn planes_trie_deserialize_check_test() {
         panic!("couldn't read {}: {}", display, why)
     }
 
-    let planes_enum_prop: UnicodeEnumeratedProperty = toml::from_str(&toml_str).unwrap();
+    let planes_enum_prop: UnicodeEnumeratedProperty = ::toml::from_str(&toml_str).unwrap();
 
     let code_point_trie_struct = planes_enum_prop.code_point_trie.trie_struct;
 

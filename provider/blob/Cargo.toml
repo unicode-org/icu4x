@@ -41,8 +41,6 @@ erased-serde = { version = "0.3", default-features = false, features = ["alloc"]
 
 [dev-dependencies]
 icu_locid = { version = "0.5", path = "../../components/locid", features = ["serde"] }
-icu = { version = "0.5", path = "../../components/icu" }
-icu_testdata = { version = "0.5", path = "../testdata", features = ["static"] }
 
 [lib]
 path = "src/lib.rs"

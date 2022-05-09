@@ -2,7 +2,34 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! This module contains types and implementations for the Gregorian calendar
+//! This module contains types and implementations for the Gregorian calendar.
+//!
+//! ```rust
+//! use icu::calendar::{Date, DateTime,
+//!                     types::IsoHour, types::IsoMinute, types::IsoSecond,
+//!                     gregorian::Gregorian};
+//!
+//! // `Date` type
+//! let date_iso = Date::new_iso_date_from_integers(1970, 1, 2).unwrap();
+//! let date_gregorian = Date::new_from_iso(date_iso, Gregorian);
+//!
+//! // `DateTime` type
+//! let datetime_iso = DateTime::new_iso_datetime_from_integers(1970, 1, 2, 13, 1, 0).unwrap();
+//! let datetime_gregorian = DateTime::new_from_iso(datetime_iso, Gregorian);
+//!
+//! // `Date` checks
+//! assert_eq!(date_gregorian.year().number, 1970);
+//! assert_eq!(date_gregorian.month().number, 1);
+//! assert_eq!(date_gregorian.day_of_month().0, 2);
+//!
+//! // `DateTime` type
+//! assert_eq!(datetime_gregorian.date.year().number, 1970);
+//! assert_eq!(datetime_gregorian.date.month().number, 1);
+//! assert_eq!(datetime_gregorian.date.day_of_month().0, 2);
+//! assert_eq!(datetime_gregorian.time.hour, IsoHour::new_unchecked(13));
+//! assert_eq!(datetime_gregorian.time.minute, IsoMinute::new_unchecked(1));
+//! assert_eq!(datetime_gregorian.time.second, IsoSecond::new_unchecked(0));
+//! ```
 
 use crate::iso::{Iso, IsoDateInner, IsoDay, IsoMonth, IsoYear};
 use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, DateTime, DateTimeError};

@@ -586,14 +586,10 @@ pub type ScriptWithExtensionsResult =
 /// assert!(syriac.contains_u32(0x0700)); // SYRIAC END OF PARAGRAPH
 /// assert!(syriac.contains_u32(0x074A)); // SYRIAC BARREKH
 /// ```
-pub fn get_script_with_extensions<D>(provider: &D) -> ScriptWithExtensionsResult
-where
-    D: DynProvider<ScriptWithExtensionsPropertyV1Marker> + ?Sized,
-{
-    let resp: DataResponse<ScriptWithExtensionsPropertyV1Marker> =
-        provider.load_payload(key::SCRIPT_EXTENSIONS_V1, &Default::default())?;
-
-    let property_payload: DataPayload<ScriptWithExtensionsPropertyV1Marker> =
-        resp.take_payload()?;
-    Ok(property_payload)
+pub fn get_script_with_extensions(
+    provider: &(impl ResourceProvider<ScriptWithExtensionsPropertyV1Marker> + ?Sized),
+) -> ScriptWithExtensionsResult {
+    Ok(provider
+        .load_resource(&Default::default())
+        .and_then(DataResponse::take_payload)?)
 }

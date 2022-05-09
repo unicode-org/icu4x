@@ -13,7 +13,7 @@ fn pluralrules(c: &mut Criterion) {
     let plurals_data = helpers::get_plurals_data();
     let numbers_data = helpers::get_numbers_data();
 
-    let provider = icu_testdata::get_static_provider();
+    let provider = icu_testdata::get_provider();
 
     c.bench_function("plurals/pluralrules/overview", |b| {
         b.iter(|| {

@@ -29,9 +29,7 @@ pub fn get_all_keys() -> Vec<ResourceKey> {
         #[cfg(feature = "experimental")]
         icu_casemapping::provider::CaseMappingV1Marker::KEY,
     ];
-    v.extend(icu_properties::provider::key::ALL_MAP_KEYS);
-    v.extend(icu_properties::provider::key::ALL_SCRIPT_EXTENSIONS_KEYS);
-    v.extend(icu_properties::provider::key::ALL_SET_KEYS);
+    v.extend(icu_properties::provider::ALL_KEYS);
     #[cfg(feature = "experimental")]
     v.extend(icu_segmenter::ALL_KEYS);
     v
@@ -86,8 +84,6 @@ macro_rules! create_datagen_provider {
                 $crate::transform::cldr::ListProvider,
                 $crate::transform::uprops::EnumeratedPropertyCodePointTrieProvider,
                 $crate::transform::uprops::ScriptWithExtensionsPropertyProvider,
-                $crate::transform::uprops::EnumeratedPropertyUnicodeSetDataProvider,
-                // Has to go last as it matches all props/ keys.
                 $crate::transform::uprops::BinaryPropertyUnicodeSetDataProvider,
             ]
         )
@@ -97,6 +93,7 @@ macro_rules! create_datagen_provider {
         icu_provider_adapters::make_forking_provider!(
             icu_provider_adapters::fork::by_key::ForkByKeyProvider,
             [
+                icu_provider::hello_world::HelloWorldProvider::new_with_placeholder_data(),
                 $(<$constructor>::from(__source)),+,
             ]
         )
@@ -152,8 +149,6 @@ macro_rules! create_datagen_provider {
                 $crate::transform::uprops::CaseMappingDataProvider,
                 $crate::transform::uprops::EnumeratedPropertyCodePointTrieProvider,
                 $crate::transform::uprops::ScriptWithExtensionsPropertyProvider,
-                $crate::transform::uprops::EnumeratedPropertyUnicodeSetDataProvider,
-                // Has to go last as it matches all props/ keys.
                 $crate::transform::uprops::BinaryPropertyUnicodeSetDataProvider,
                 $crate::transform::segmenter::SegmenterRuleProvider,
             ]
@@ -165,7 +160,6 @@ macro_rules! create_datagen_provider {
             icu_provider_adapters::fork::by_key::ForkByKeyProvider,
             [
                 icu_provider::hello_world::HelloWorldProvider::new_with_placeholder_data(),
-
                 $(<$constructor>::from(__source)),+,
             ]
         )

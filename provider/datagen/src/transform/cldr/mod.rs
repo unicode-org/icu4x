@@ -22,7 +22,6 @@ mod decimal;
 mod list;
 mod locale_canonicalizer;
 mod plurals;
-mod reader;
 mod time_zones;
 
 pub use calendar::japanese::JapaneseErasProvider;

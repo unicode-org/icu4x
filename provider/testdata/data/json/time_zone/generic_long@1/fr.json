@@ -157,6 +157,6 @@
     "yuko": "heure normale du Yukon"
   },
   "overrides": {
-    "Etc/UTC": "temps universel coordonné"
+    "utc": "temps universel coordonné"
   }
 }

@@ -86,6 +86,7 @@ use core::ops::RangeInclusive;
 /// [`AndConditions`]: AndCondition
 #[derive(Debug, Clone, PartialEq)]
 #[allow(missing_docs)] // TODO(#1029) - Add missing docs.
+#[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct Rule {
     pub condition: Condition,
     pub samples: Option<Samples>,
@@ -127,6 +128,7 @@ pub struct Rule {
 ///
 /// [`AndConditions`]: AndCondition
 #[derive(Debug, Clone, PartialEq)]
+#[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct Condition(pub Vec<AndCondition>);
 
 /// An incomplete AST representation of a plural rule. Comprises a vector of [`Relations`].
@@ -168,6 +170,7 @@ pub struct Condition(pub Vec<AndCondition>);
 ///
 /// [`Relations`]: Relation
 #[derive(Debug, Clone, PartialEq)]
+#[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct AndCondition(pub Vec<Relation>);
 
 /// An incomplete AST representation of a plural rule. Comprises an [`Expression`], an [`Operator`], and a [`RangeList`].
@@ -198,6 +201,7 @@ pub struct AndCondition(pub Vec<Relation>);
 /// ```
 #[derive(Debug, Clone, PartialEq)]
 #[allow(missing_docs)] // TODO(#1029) - Add missing docs.
+#[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct Relation {
     pub expression: Expression,
     pub operator: Operator,
@@ -215,6 +219,7 @@ pub struct Relation {
 ///
 #[derive(Debug, Clone, Copy, PartialEq)]
 #[allow(missing_docs)] // TODO(#1029) - Add missing docs.
+#[allow(clippy::exhaustive_enums)] // this type is stable
 pub enum Operator {
     Eq,
     NotEq,
@@ -244,6 +249,7 @@ pub enum Operator {
 /// ```
 #[derive(Debug, Clone, PartialEq)]
 #[allow(missing_docs)] // TODO(#1029) - Add missing docs.
+#[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct Expression {
     pub operand: Operand,
     pub modulus: Option<Value>,
@@ -269,6 +275,7 @@ pub struct Expression {
 /// ```
 #[derive(Debug, Clone, Copy, PartialEq)]
 #[allow(missing_docs)] // TODO(#1029) - Add missing docs.
+#[allow(clippy::exhaustive_enums)] // this type is stable
 pub enum Operand {
     /// Absolute value of input
     N,
@@ -314,6 +321,7 @@ pub enum Operand {
 ///
 /// [`RangeListItems`]: RangeListItem
 #[derive(Debug, Clone, PartialEq)]
+#[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct RangeList(pub Vec<RangeListItem>);
 
 /// An enum of items that appear in a [`RangeList`]: `Range` or a `Value`.
@@ -338,6 +346,7 @@ pub struct RangeList(pub Vec<RangeListItem>);
 /// ```
 #[derive(Debug, Clone, PartialEq)]
 #[allow(missing_docs)] // TODO(#1029) - Add missing docs.
+#[allow(clippy::exhaustive_enums)] // this type is stable
 pub enum RangeListItem {
     Range(RangeInclusive<Value>),
     Value(Value),
@@ -362,6 +371,7 @@ pub enum RangeListItem {
 /// RangeListItem::Value(Value(99));
 /// ```
 #[derive(Debug, Clone, PartialEq, PartialOrd)]
+#[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct Value(pub u64);
 
 /// A sample of example values that match the given rule.
@@ -393,6 +403,7 @@ pub struct Value(pub u64);
 /// ```
 #[derive(Debug, Clone, PartialEq)]
 #[allow(missing_docs)] // TODO(#1029) - Add missing docs.
+#[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct Samples {
     pub integer: Option<SampleList>,
     pub decimal: Option<SampleList>,
@@ -420,6 +431,7 @@ pub struct Samples {
 /// ```
 #[derive(Debug, Clone, PartialEq)]
 #[allow(missing_docs)] // TODO(#1029) - Add missing docs.
+#[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct SampleList {
     pub sample_ranges: Vec<SampleRange>,
     pub ellipsis: bool,
@@ -442,6 +454,7 @@ pub struct SampleList {
 /// ```
 #[derive(Debug, Clone, PartialEq)]
 #[allow(missing_docs)] // TODO(#1029) - Add missing docs.
+#[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct SampleRange {
     pub lower_val: DecimalValue,
     pub upper_val: Option<DecimalValue>,
@@ -460,4 +473,5 @@ pub struct SampleRange {
 /// DecimalValue("1.00".to_string());
 /// ```
 #[derive(Debug, Clone, PartialEq)]
+#[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct DecimalValue(pub String);

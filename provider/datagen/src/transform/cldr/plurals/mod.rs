@@ -4,7 +4,7 @@
 
 use crate::error::DatagenError;
 use crate::transform::cldr::cldr_serde;
-use crate::transform::cldr::reader::open_reader;
+use crate::transform::reader::open_reader;
 use crate::SourceData;
 use icu_plurals::provider::*;
 use icu_plurals::rules::runtime::ast::Rule;

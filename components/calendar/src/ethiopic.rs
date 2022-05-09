@@ -2,7 +2,34 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! This module contains types and implementations for the Ethiopic calendar
+//! This module contains types and implementations for the Ethiopic calendar.
+//!
+//! ```rust
+//! use icu::calendar::{Date, DateTime,
+//!                     types::IsoHour, types::IsoMinute, types::IsoSecond,
+//!                     ethiopic::Ethiopic};
+//!
+//! // `Date` type
+//! let date_iso = Date::new_iso_date_from_integers(1970, 1, 2).unwrap();
+//! let date_ethiopic = Date::new_from_iso(date_iso, Ethiopic);
+//!
+//! // `DateTime` type
+//! let datetime_iso = DateTime::new_iso_datetime_from_integers(1970, 1, 2, 13, 1, 0).unwrap();
+//! let datetime_ethiopic = DateTime::new_from_iso(datetime_iso, Ethiopic);
+//!
+//! // `Date` checks
+//! assert_eq!(date_ethiopic.year().number, 1962);
+//! assert_eq!(date_ethiopic.month().number, 4);
+//! assert_eq!(date_ethiopic.day_of_month().0, 24);
+//!
+//! // `DateTime` type
+//! assert_eq!(datetime_ethiopic.date.year().number, 1962);
+//! assert_eq!(datetime_ethiopic.date.month().number, 4);
+//! assert_eq!(datetime_ethiopic.date.day_of_month().0, 24);
+//! assert_eq!(datetime_ethiopic.time.hour, IsoHour::new_unchecked(13));
+//! assert_eq!(datetime_ethiopic.time.minute, IsoMinute::new_unchecked(1));
+//! assert_eq!(datetime_ethiopic.time.second, IsoSecond::new_unchecked(0));
+//! ```
 
 use crate::coptic::Coptic;
 use crate::iso::{Iso, IsoYear};
@@ -169,13 +196,9 @@ impl Ethiopic {
         let coptic_date = Coptic::coptic_from_fixed(date + coptic_epoch - ethiopic_epoch);
 
         #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
-        *Date::new_ethiopic_date_from_integers(
-            coptic_date.0.year,
-            coptic_date.0.month,
-            coptic_date.0.day,
-        )
-        .unwrap()
-        .inner()
+        *Date::new_ethiopic_date(coptic_date.0.year, coptic_date.0.month, coptic_date.0.day)
+            .unwrap()
+            .inner()
     }
 
     fn days_in_year_direct(year: i32) -> u32 {
@@ -193,13 +216,13 @@ impl Date<Ethiopic> {
     /// ```rust
     /// use icu::calendar::Date;
     ///
-    /// let date_ethiopic = Date::new_ethiopic_date_from_integers(2014, 8, 25).unwrap();
+    /// let date_ethiopic = Date::new_ethiopic_date(2014, 8, 25).unwrap();
     ///
     /// assert_eq!(date_ethiopic.year().number, 2014);
     /// assert_eq!(date_ethiopic.month().number, 8);
     /// assert_eq!(date_ethiopic.day_of_month().0, 25);
     /// ```
-    pub fn new_ethiopic_date_from_integers(
+    pub fn new_ethiopic_date(
         year: i32,
         month: u8,
         day: u8,
@@ -233,7 +256,7 @@ impl DateTime<Ethiopic> {
     ///                     types::IsoMinute,
     ///                     types::IsoSecond};
     ///
-    /// let datetime_ethiopic = DateTime::new_ethiopic_datetime_from_integers(2014, 8, 25, 13, 1, 0, 0).unwrap();
+    /// let datetime_ethiopic = DateTime::new_ethiopic_datetime(2014, 8, 25, 13, 1, 0, 0).unwrap();
     ///
     /// assert_eq!(datetime_ethiopic.date.year().number, 2014);
     /// assert_eq!(datetime_ethiopic.date.month().number, 8);
@@ -242,7 +265,7 @@ impl DateTime<Ethiopic> {
     /// assert_eq!(datetime_ethiopic.time.minute, IsoMinute::new_unchecked(1));
     /// assert_eq!(datetime_ethiopic.time.second, IsoSecond::new_unchecked(0));
     /// ```
-    pub fn new_ethiopic_datetime_from_integers(
+    pub fn new_ethiopic_datetime(
         year: i32,
         month: u8,
         day: u8,
@@ -252,7 +275,7 @@ impl DateTime<Ethiopic> {
         fraction: u32,
     ) -> Result<DateTime<Ethiopic>, DateTimeError> {
         Ok(DateTime {
-            date: Date::new_ethiopic_date_from_integers(year, month, day)?,
+            date: Date::new_ethiopic_date(year, month, day)?,
             time: types::Time::try_new(hour, minute, second, fraction)?,
         })
     }

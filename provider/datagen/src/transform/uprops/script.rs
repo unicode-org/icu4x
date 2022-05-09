@@ -3,15 +3,14 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::transform::uprops::uprops_helpers;
-use crate::transform::uprops::uprops_serde::script_extensions::ScriptWithExtensionsProperty;
 use crate::SourceData;
 use icu_codepointtrie::CodePointTrie;
 use icu_properties::provider::{
-    key, ScriptWithExtensionsPropertyV1, ScriptWithExtensionsPropertyV1Marker,
+    ScriptWithExtensionsPropertyV1, ScriptWithExtensionsPropertyV1Marker,
 };
 use icu_properties::script::{ScriptWithExt, ScriptWithExtensions};
 use icu_properties::Script;
-use icu_provider::datagen::IterableDynProvider;
+use icu_provider::datagen::*;
 use icu_provider::prelude::*;
 use std::convert::TryFrom;
 use zerovec::{VarZeroVec, ZeroSlice, ZeroVec};
@@ -33,17 +32,23 @@ impl From<&SourceData> for ScriptWithExtensionsPropertyProvider {
     }
 }
 
-// source data to ICU4X plain/raw/utility data structure
-impl TryFrom<&ScriptWithExtensionsProperty> for ScriptWithExtensions<'static> {
-    type Error = DataError;
+// implement data provider
+impl ResourceProvider<ScriptWithExtensionsPropertyV1Marker>
+    for ScriptWithExtensionsPropertyProvider
+{
+    fn load_resource(
+        &self,
+        _: &DataRequest,
+    ) -> Result<DataResponse<ScriptWithExtensionsPropertyV1Marker>, DataError> {
+        let scx_data =
+            uprops_helpers::load_script_extensions_from_dir(self.source.get_uprops_root()?)?;
 
-    fn try_from(
-        scx_data: &ScriptWithExtensionsProperty,
-    ) -> Result<ScriptWithExtensions<'static>, DataError> {
         let cpt_data = &scx_data.code_point_trie;
         let scx_array_data = &scx_data.script_code_array;
 
-        let trie = CodePointTrie::<ScriptWithExt>::try_from(cpt_data)?;
+        let trie = CodePointTrie::<ScriptWithExt>::try_from(cpt_data).map_err(|e| {
+            DataError::custom("Could not parse CodePointTrie TOML").with_display_context(&e)
+        })?;
 
         // Convert the input from Vec<Vec<u16>> to Vec<ZeroVec<Script>> so that
         // we can go through the VarZeroVec construction process for a desired result
@@ -55,37 +60,9 @@ impl TryFrom<&ScriptWithExtensionsProperty> for ScriptWithExtensions<'static> {
         let scx_vzv: VarZeroVec<ZeroSlice<Script>> =
             VarZeroVec::from(ule_scx_array_data.as_slice());
 
-        Ok(ScriptWithExtensions::new(trie, scx_vzv))
-    }
-}
-
-// source data to ICU4X provider data struct conversion
-impl TryFrom<&ScriptWithExtensionsProperty> for ScriptWithExtensionsPropertyV1<'static> {
-    type Error = DataError;
-
-    fn try_from(
-        scx_data: &ScriptWithExtensionsProperty,
-    ) -> Result<ScriptWithExtensionsPropertyV1<'static>, DataError> {
-        let swe = ScriptWithExtensions::try_from(scx_data);
-        swe.map(|s| ScriptWithExtensionsPropertyV1 { data: s })
-    }
-}
-
-// implement data provider
-impl DynProvider<ScriptWithExtensionsPropertyV1Marker> for ScriptWithExtensionsPropertyProvider {
-    fn load_payload(
-        &self,
-        key: ResourceKey,
-        _: &DataRequest,
-    ) -> Result<DataResponse<ScriptWithExtensionsPropertyV1Marker>, DataError> {
-        if uprops_helpers::get_last_component_no_version(key) != "scx" {
-            return Err(DataErrorKind::MissingResourceKey.into_error());
-        }
-
-        let source_scx_data =
-            uprops_helpers::load_script_extensions_from_dir(self.source.get_uprops_root()?)?;
-
-        let data_struct = ScriptWithExtensionsPropertyV1::try_from(&source_scx_data)?;
+        let data_struct = ScriptWithExtensionsPropertyV1 {
+            data: ScriptWithExtensions::new(trie, scx_vzv),
+        };
 
         Ok(DataResponse {
             metadata: DataResponseMetadata::default(),
@@ -94,40 +71,33 @@ impl DynProvider<ScriptWithExtensionsPropertyV1Marker> for ScriptWithExtensionsP
     }
 }
 
-icu_provider::impl_dyn_provider!(ScriptWithExtensionsPropertyProvider, {
-    key::SCRIPT_EXTENSIONS_V1 => ScriptWithExtensionsPropertyV1Marker,
-}, SERDE_SE, ITERABLE_SERDE_SE, DATA_CONVERTER);
-
-impl IterableDynProvider<ScriptWithExtensionsPropertyV1Marker>
+impl IterableResourceProvider<ScriptWithExtensionsPropertyV1Marker>
     for ScriptWithExtensionsPropertyProvider
 {
-    fn supported_options_for_key(
-        &self,
-        _: ResourceKey,
-    ) -> Result<Box<dyn Iterator<Item = ResourceOptions>>, DataError> {
+    fn supported_options(&self) -> Result<Box<dyn Iterator<Item = ResourceOptions>>, DataError> {
         Ok(Box::new(core::iter::once(ResourceOptions::default())))
     }
 }
 
+icu_provider::impl_dyn_provider!(
+    ScriptWithExtensionsPropertyProvider,
+    [ScriptWithExtensionsPropertyV1Marker,],
+    SERDE_SE,
+    ITERABLE_SERDE_SE,
+    DATA_CONVERTER
+);
+
 #[cfg(test)]
 mod tests {
     use super::*;
-    use icu_properties::provider::key;
 
     #[test]
     fn test_script_val_from_script_extensions() {
         let provider = ScriptWithExtensionsPropertyProvider::from(&SourceData::for_test());
 
         let payload: DataPayload<ScriptWithExtensionsPropertyV1Marker> = provider
-            .load_payload(
-                key::SCRIPT_EXTENSIONS_V1,
-                &DataRequest {
-                    options: ResourceOptions::default(),
-                    metadata: Default::default(),
-                },
-            )
-            .expect("The data should be valid")
-            .take_payload()
+            .load_resource(&Default::default())
+            .and_then(DataResponse::take_payload)
             .expect("Loading was successful");
 
         let swe: &ScriptWithExtensions = &payload.get().data;
@@ -147,13 +117,10 @@ mod tests {
         let provider = ScriptWithExtensionsPropertyProvider::from(&SourceData::for_test());
 
         let payload: DataPayload<ScriptWithExtensionsPropertyV1Marker> = provider
-            .load_payload(
-                key::SCRIPT_EXTENSIONS_V1,
-                &DataRequest {
-                    options: ResourceOptions::default(),
-                    metadata: Default::default(),
-                },
-            )
+            .load_resource(&DataRequest {
+                options: ResourceOptions::default(),
+                metadata: Default::default(),
+            })
             .expect("The data should be valid")
             .take_payload()
             .expect("Loading was successful");
@@ -197,7 +164,7 @@ mod tests {
         let provider = ScriptWithExtensionsPropertyProvider::from(&SourceData::for_test());
 
         let payload: DataPayload<ScriptWithExtensionsPropertyV1Marker> = provider
-            .load_payload(key::SCRIPT_EXTENSIONS_V1, &DataRequest::default())
+            .load_resource(&DataRequest::default())
             .expect("The data should be valid")
             .take_payload()
             .expect("Loading was successful");
@@ -276,7 +243,7 @@ mod tests {
         let provider = ScriptWithExtensionsPropertyProvider::from(&SourceData::for_test());
 
         let payload: DataPayload<ScriptWithExtensionsPropertyV1Marker> = provider
-            .load_payload(key::SCRIPT_EXTENSIONS_V1, &DataRequest::default())
+            .load_resource(&DataRequest::default())
             .expect("The data should be valid")
             .take_payload()
             .expect("Loading was successful");

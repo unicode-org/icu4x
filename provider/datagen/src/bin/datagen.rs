@@ -32,7 +32,8 @@ fn main() -> eyre::Result<()> {
                 .takes_value(true)
                 .possible_value("dir")
                 .possible_value("blob")
-                .help("Output to a directory on the filesystem or a single blob.")
+                .possible_value("mod")
+                .help("Output to a directory on the filesystem, a single blob, or a Rust module.")
                 .default_value("dir"),
         )
         .arg(
@@ -55,7 +56,7 @@ fn main() -> eyre::Result<()> {
             Arg::with_name("PRETTY")
                 .short("p")
                 .long("pretty")
-                .help("Whether to pretty-print the output JSON files. Ignored for Bincode."),
+                .help("Whether to pretty-print the output files. Only affects JSON and Rust modules."),
         )
         .arg(
             Arg::with_name("CLDR_TAG")
@@ -193,6 +194,10 @@ fn main() -> eyre::Result<()> {
                 .long("ignore-missing-data")
                 .help("Skips missing data errors")
         )
+        .arg(Arg::with_name("INSERT_FEATURE_GATES")
+            .long("insert-feature_gates")
+            .help("Module-mode only: Insert per-key feature gates for each key's crate.")
+    )
         .get_matches();
 
     if matches.is_present("VERBOSE") {
@@ -300,6 +305,14 @@ fn main() -> eyre::Result<()> {
         } else {
             Box::new(std::io::stdout())
         }),
+        "mod" => icu_datagen::Out::Module {
+            mod_directory: matches
+                .value_of_os("OUTPUT")
+                .map(PathBuf::from)
+                .ok_or_else(|| eyre::eyre!("--out must be specified for --format=mod"))?,
+            pretty: matches.is_present("PRETTY"),
+            insert_feature_gates: matches.is_present("INSERT_FEATURE_GATES"),
+        },
         _ => unreachable!(),
     };
 

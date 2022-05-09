@@ -40,6 +40,7 @@ use crate::buf::BufferFormat;
 
 /// Error type for deserialization.
 #[derive(displaydoc::Display, Debug)]
+#[non_exhaustive]
 pub enum Error {
     /// An error originating in [`serde_json`].
     #[cfg(feature = "deserialize_json")]

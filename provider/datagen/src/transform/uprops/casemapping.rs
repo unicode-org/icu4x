@@ -6,6 +6,7 @@ use crate::transform::uprops::uprops_serde;
 use crate::{error::DatagenError, SourceData};
 use icu_casemapping::provider::{CaseMappingV1, CaseMappingV1Marker};
 use icu_casemapping::CaseMappingInternals;
+use icu_codepointtrie::toml::CodePointDataSlice;
 use icu_codepointtrie::CodePointTrieHeader;
 use icu_provider::prelude::*;
 use std::convert::TryFrom;
@@ -35,11 +36,17 @@ impl ResourceProvider<CaseMappingV1Marker> for CaseMappingDataProvider {
             toml::from_str(&toml_str).map_err(|e| DatagenError::from((e, &path)))?;
 
         let trie_data = &toml.ucase.code_point_trie;
-        let trie_header = CodePointTrieHeader::try_from(trie_data)?;
-        let trie_index = &trie_data.index;
-        let trie_data = &trie_data.data_16.as_ref().ok_or_else(|| {
-            DataError::custom("Did not find 16-bit data array for case mapping in TOML")
+        let trie_header = CodePointTrieHeader::try_from(trie_data).map_err(|e| {
+            DataError::custom("Could not parse CodePointTrie TOML").with_display_context(&e)
         })?;
+        let trie_index = trie_data.index_slice();
+        let trie_data = if let Ok(CodePointDataSlice::U16(s)) = trie_data.data_slice() {
+            s
+        } else {
+            return Err(DataError::custom(
+                "Did not find 16-bit data array for case mapping in TOML",
+            ));
+        };
         let exceptions = &toml.ucase.exceptions.exceptions;
         let unfold = &toml.ucase.unfold.unfold;
 

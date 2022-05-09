@@ -69,21 +69,24 @@ fn main() {
         let mut max_total_violation = 0;
         let mut max_net_violation = 0;
 
-        for options in converter.supported_options_for_key(key).unwrap() {
-            let result = provider.load_buffer(
+        for options in
+            match IterableDynProvider::<icu_provider::serde::SerializeMarker>::supported_options_for_key(
+                &converter, key,
+            ) {
+                Err(_) if key.get_path().starts_with("props/") => {
+                    // uprops keys currently don't all get loaded into the testdata
+                    continue;
+                }
+                r => r.unwrap(),
+            }
+        {
+            let payload = provider.load_buffer(
                 key,
                 &DataRequest {
                     options: options.clone(),
                     metadata: Default::default(),
                 },
-            );
-            let payload = match result {
-                Err(_) if key.get_path().starts_with("props/") => {
-                    // uprops keys currently don't all get loaded into the testdata
-                    continue;
-                }
-                r => r.unwrap().take_payload().unwrap(),
-            };
+            ).unwrap().take_payload().unwrap();
 
             let stats: DataPayload<HeapStatsMarker> =
                 converter.convert(key, payload).map_err(|e| e.1).unwrap();

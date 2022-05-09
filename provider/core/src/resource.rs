@@ -8,6 +8,7 @@ use alloc::borrow::Cow;
 
 use crate::error::{DataError, DataErrorKind};
 use crate::helpers;
+use core::cmp::Ordering;
 use core::default::Default;
 use core::fmt;
 use core::fmt::Write;
@@ -96,7 +97,7 @@ unsafe impl EqULE for ResourceKeyHash {}
 /// ```
 ///
 /// The human-readable path string ends with `@` followed by one or more digits (the version
-/// number). Paths do not contain characters other than ASCII letters and digits, `_`, `/`, `=`.
+/// number). Paths do not contain characters other than ASCII letters and digits, `_`, `/`.
 ///
 /// Invalid paths are compile-time errors (as [`resource_key!`] uses `const`).
 ///
@@ -104,7 +105,7 @@ unsafe impl EqULE for ResourceKeyHash {}
 /// # use icu_provider::prelude::ResourceKey;
 /// const K: ResourceKey = icu_provider::resource_key!("foo/../bar@1");
 /// ```
-#[derive(PartialEq, Eq, Copy, Clone)]
+#[derive(PartialEq, Eq, Copy, Clone, PartialOrd, Ord)]
 pub struct ResourceKey {
     // This string literal is wrapped in leading_tag!() and trailing_tag!() to make it detectable
     // in a compiled binary.
@@ -119,7 +120,7 @@ impl ResourceKey {
     /// Gets a human-readable representation of a [`ResourceKey`].
     ///
     /// The human-readable path string ends with `@` followed by one or more digits (the version
-    /// number). Paths do not contain characters other than ASCII letters and digits, `_`, `/`, `=`.
+    /// number). Paths do not contain characters other than ASCII letters and digits, `_`, `/`.
     ///
     /// Useful for reading and writing data to a file system.
     #[inline]
@@ -172,7 +173,7 @@ impl ResourceKey {
             i += 1;
         }
 
-        // Regex: [a-zA-Z0-9=_][a-zA-Z0-9=_/]*@[0-9]+
+        // Regex: [a-zA-Z0-9_][a-zA-Z0-9_/]*@[0-9]+
         enum State {
             Empty,
             Body,
@@ -189,7 +190,7 @@ impl ResourceKey {
                 None
             };
             state = match (state, byte) {
-                (Empty | Body, Some(b'a'..=b'z' | b'A'..=b'Z' | b'0'..=b'9' | b'_' | b'=')) => Body,
+                (Empty | Body, Some(b'a'..=b'z' | b'A'..=b'Z' | b'0'..=b'9' | b'_')) => Body,
                 (Body, Some(b'/')) => Body,
                 (Body, Some(b'@')) => At,
                 (At | Version, Some(b'0'..=b'9')) => Version,
@@ -201,8 +202,8 @@ impl ResourceKey {
                     })
                 }
 
-                (Empty, _) => return Err(("[a-zA-Z0-9=_]", i)),
-                (Body, _) => return Err(("[a-zA-z0-9=_/@]", i)),
+                (Empty, _) => return Err(("[a-zA-Z0-9_]", i)),
+                (Body, _) => return Err(("[a-zA-z0-9_/@]", i)),
                 (At | Version, _) => return Err(("[0-9]", i)),
             };
             i += 1;
@@ -263,7 +264,7 @@ fn test_path_syntax() {
     // No version:
     assert_eq!(
         ResourceKey::construct_internal(tagged!("hello/world")),
-        Err(("[a-zA-z0-9=_/@]", 25))
+        Err(("[a-zA-z0-9_/@]", 25))
     );
 
     assert_eq!(
@@ -282,7 +283,7 @@ fn test_path_syntax() {
     // Invalid characters:
     assert_eq!(
         ResourceKey::construct_internal(tagged!("你好/世界@1")),
-        Err(("[a-zA-Z0-9=_]", 14))
+        Err(("[a-zA-Z0-9_]", 14))
     );
 
     // Invalid tag:
@@ -419,6 +420,17 @@ impl From<&Locale> for ResourceOptions {
         Self {
             langid: locale.id.clone(),
             keywords: locale.extensions.unicode.keywords.clone(),
+        }
+    }
+}
+
+impl ResourceOptions {
+    pub fn cmp_bytes(&self, other: &[u8]) -> Ordering {
+        if self.keywords.is_empty() {
+            self.langid.cmp_bytes(other)
+        } else {
+            // TODO: Avoid the allocation
+            self.write_to_string().as_bytes().cmp(other)
         }
     }
 }
