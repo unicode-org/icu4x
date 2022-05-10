@@ -4,12 +4,14 @@
 
 use alloc::vec;
 use alloc::vec::Vec;
+use core::fmt;
 use core::iter::FromIterator;
 use core::ops::Deref;
-use core::fmt;
 
-use super::slice::FlexZeroSlice;
+use super::FlexZeroSlice;
+use super::FlexZeroVec;
 
+/// The fully-owned variant of [`FlexZeroVec`]. Contains all mutation methods.
 // Safety invariant: the inner bytes must deref to a valid `FlexZeroSlice`
 #[derive(Clone, PartialEq, Eq)]
 pub struct FlexZeroVecOwned(Vec<u8>);
@@ -44,6 +46,23 @@ impl FlexZeroVecOwned {
         }
     }
 
+    /// Converts this `FlexZeroVecOwned` into a [`FlexZeroVec::Owned`].
+    #[inline]
+    pub fn into_flexzerovec(self) -> FlexZeroVec<'static> {
+        FlexZeroVec::Owned(self)
+    }
+
+    /// Appends an item to the end of the vector.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use zerovec::vecs::FlexZeroVec;
+    ///
+    /// let mut zv: FlexZeroVec = [22, 44, 66].iter().copied().collect();
+    /// zv.to_mut().push(33);
+    /// assert_eq!(zv.to_vec(), vec![22, 44, 66, 33]);
+    /// ```
     pub fn push(&mut self, item: usize) {
         let insert_info = self.get_insert_info(item);
         self.0.resize(insert_info.new_data_len + 1, 0);
@@ -51,9 +70,24 @@ impl FlexZeroVecOwned {
         self.as_mut_slice().insert_impl(insert_info, insert_index);
     }
 
+    /// Inserts an element into the middle of the vector.
+    ///
+    /// Caution: Both arguments to this function are of type `usize`. Please be careful to pass
+    /// the index first followed by the value second.
+    ///
     /// # Panics
     ///
     /// Panics if `index > len`.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use zerovec::vecs::FlexZeroVec;
+    ///
+    /// let mut zv: FlexZeroVec = [22, 44, 66].iter().copied().collect();
+    /// zv.to_mut().insert(2, 33);
+    /// assert_eq!(zv.to_vec(), vec![22, 44, 33, 66]);
+    /// ```
     pub fn insert(&mut self, index: usize, item: usize) {
         if index > self.len() {
             panic!("index {} out of range {}", index, self.len());
@@ -63,7 +97,10 @@ impl FlexZeroVecOwned {
         self.as_mut_slice().insert_impl(insert_info, index);
     }
 
-    /// Inserts an element into a sorted vector at a position that keeps the vector sorted.
+    /// Inserts an element into an ascending sorted vector
+    /// at a position that keeps the vector sorted.
+    ///
+    /// # Examples
     ///
     /// ```
     /// use zerovec::vecs::FlexZeroVecOwned;
@@ -88,22 +125,68 @@ impl FlexZeroVecOwned {
         self.as_mut_slice().insert_impl(insert_info, index);
     }
 
+    /// Removes and returns the element at the specified index.
+    ///
     /// # Panics
     ///
     /// Panics if `index >= len`.
-    pub fn remove(&mut self, index: usize) {
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use zerovec::vecs::FlexZeroVec;
+    ///
+    /// let mut zv: FlexZeroVec = [22, 44, 66].iter().copied().collect();
+    /// let removed_item = zv.to_mut().remove(1);
+    /// assert_eq!(44, removed_item);
+    /// assert_eq!(zv.to_vec(), vec![22, 66]);
+    /// ```
+    pub fn remove(&mut self, index: usize) -> usize {
         if index >= self.len() {
             panic!("index {} out of range {}", index, self.len());
         }
         let remove_info = self.get_remove_info(index);
+        // Safety: `remove_index` is a valid index
+        let item = unsafe { self.get_unchecked(remove_info.remove_index) };
         let new_bytes_len = remove_info.new_data_len + 1;
         self.as_mut_slice().remove_impl(remove_info);
         self.0.truncate(new_bytes_len);
+        item
     }
 
+    /// Removes and returns the last element from an ascending sorted vector.
+    ///
+    /// If the vector is not sorted, use [`FlexZeroVecOwned::remove()`] instead. Calling this
+    /// function would leave the FlexZeroVec in a safe, well-defined state; however, information
+    /// may be lost and/or the equality invariant might not hold.
+    ///
     /// # Panics
     ///
-    /// Panics if `self.is_empty()`
+    /// Panics if `self.is_empty()`.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use zerovec::vecs::FlexZeroVec;
+    ///
+    /// let mut zv: FlexZeroVec = [22, 44, 66].iter().copied().collect();
+    /// let popped_item = zv.to_mut().pop_sorted();
+    /// assert_eq!(66, popped_item);
+    /// assert_eq!(zv.to_vec(), vec![22, 44]);
+    /// ```
+    ///
+    /// Calling this function on a non-ascending vector could cause surprising results:
+    ///
+    /// ```
+    /// use zerovec::vecs::FlexZeroVec;
+    ///
+    /// let mut zv1: FlexZeroVec = [444, 222, 111].iter().copied().collect();
+    /// let popped_item = zv1.to_mut().pop_sorted();
+    /// assert_eq!(111, popped_item);
+    ///
+    /// // Oops!
+    /// assert_eq!(zv1.to_vec(), vec![188, 222]);
+    /// ```
     pub fn pop_sorted(&mut self) -> usize {
         if self.is_empty() {
             panic!("cannot pop from an empty vector");

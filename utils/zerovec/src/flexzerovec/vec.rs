@@ -18,6 +18,31 @@ use core::ops::Deref;
 /// The maximum value that can be stored in `FlexZeroVec` is `usize::MAX` on the current platform.
 ///
 /// `FlexZeroVec` is the data structure for storing `usize` in a `ZeroMap`.
+///
+/// `FlexZeroVec` derefs to [`FlexZeroSlice`], which contains most of the methods.
+///
+/// # Examples
+///
+/// ```
+/// use zerovec::vecs::FlexZeroVec;
+///
+/// // Create a FlexZeroVec and add a few numbers to it
+/// let mut zv1 = FlexZeroVec::new();
+/// zv1.to_mut().push(55);
+/// zv1.to_mut().push(33);
+/// zv1.to_mut().push(999);
+/// assert_eq!(zv1.to_vec(), vec![55, 33, 999]);
+///
+/// // Convert it to bytes and back
+/// let bytes = zv1.as_bytes();
+/// let zv2 = FlexZeroVec::parse_byte_slice(bytes)
+///     .expect("bytes should round-trip");
+/// assert_eq!(zv2.to_vec(), vec![55, 33, 999]);
+///
+/// // Verify the compact storage
+/// assert_eq!(7, bytes.len());
+/// assert!(matches!(zv2, FlexZeroVec::Borrowed(_)));
+/// ```
 #[derive(Debug)]
 pub enum FlexZeroVec<'a> {
     Owned(FlexZeroVecOwned),
@@ -93,16 +118,22 @@ impl<'a> FlexZeroVec<'a> {
     /// The byte buffer must be encoded in little-endian, even if running in a big-endian
     /// environment. This ensures a consistent representation of data across platforms.
     ///
+    /// # Max Value
+    ///
+    /// The bytes will fail to parse if the high value is greater than the capacity of `usize`
+    /// on this platform. For example, a `FlexZeroVec` created on a 64-bit platform might fail
+    /// to deserialize on a 32-bit platform.
+    ///
     /// # Example
     ///
     /// ```
     /// use zerovec::vecs::FlexZeroVec;
     ///
     /// let bytes: &[u8] = &[2, 0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x01];
-    /// let fzv = FlexZeroVec::parse_byte_slice(bytes).expect("valid slice");
+    /// let zv = FlexZeroVec::parse_byte_slice(bytes).expect("valid slice");
     ///
-    /// assert!(matches!(fzv, FlexZeroVec::Borrowed(_)));
-    /// assert_eq!(fzv.get(2), Some(421));
+    /// assert!(matches!(zv, FlexZeroVec::Borrowed(_)));
+    /// assert_eq!(zv.get(2), Some(421));
     /// ```
     pub fn parse_byte_slice(bytes: &'a [u8]) -> Result<Self, ZeroVecError> {
         let slice: &'a FlexZeroSlice = FlexZeroSlice::parse_byte_slice(bytes)?;
@@ -117,10 +148,10 @@ impl<'a> FlexZeroVec<'a> {
     /// use zerovec::vecs::FlexZeroVec;
     ///
     /// let bytes: &[u8] = &[2, 0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x01];
-    /// let fzv = FlexZeroVec::parse_byte_slice(bytes).expect("valid bytes");
-    /// assert!(matches!(fzv, FlexZeroVec::Borrowed(_)));
+    /// let zv = FlexZeroVec::parse_byte_slice(bytes).expect("valid bytes");
+    /// assert!(matches!(zv, FlexZeroVec::Borrowed(_)));
     ///
-    /// let owned = fzv.into_owned();
+    /// let owned = zv.into_owned();
     /// assert!(matches!(owned, FlexZeroVec::Owned(_)));
     /// ```
     pub fn into_owned(self) -> FlexZeroVec<'static> {
@@ -139,12 +170,12 @@ impl<'a> FlexZeroVec<'a> {
     /// use zerovec::vecs::FlexZeroVec;
     ///
     /// let bytes: &[u8] = &[2, 0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x01];
-    /// let mut fzv = FlexZeroVec::parse_byte_slice(bytes).expect("valid bytes");
-    /// assert!(matches!(fzv, FlexZeroVec::Borrowed(_)));
+    /// let mut zv = FlexZeroVec::parse_byte_slice(bytes).expect("valid bytes");
+    /// assert!(matches!(zv, FlexZeroVec::Borrowed(_)));
     ///
-    /// fzv.to_mut().push(12);
-    /// assert!(matches!(fzv, FlexZeroVec::Owned(_)));
-    /// assert_eq!(fzv.get(4), Some(12));
+    /// zv.to_mut().push(12);
+    /// assert!(matches!(zv, FlexZeroVec::Owned(_)));
+    /// assert_eq!(zv.get(4), Some(12));
     /// ```
     pub fn to_mut(&mut self) -> &mut FlexZeroVecOwned {
         match self {
@@ -158,6 +189,17 @@ impl<'a> FlexZeroVec<'a> {
     }
 
     /// Remove all elements from this FlexZeroVec and reset it to an empty borrowed state.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use zerovec::vecs::FlexZeroVec;
+    ///
+    /// let mut zv: FlexZeroVec = [1, 2, 3].iter().copied().collect();
+    /// assert!(!zv.is_empty());
+    /// zv.clear();
+    /// assert!(zv.is_empty());
+    /// ```
     pub fn clear(&mut self) {
         *self = Self::Borrowed(FlexZeroSlice::new_empty())
     }
@@ -169,6 +211,6 @@ impl FromIterator<usize> for FlexZeroVec<'_> {
     where
         I: IntoIterator<Item = usize>,
     {
-        FlexZeroVec::Owned(FlexZeroVecOwned::from_iter(iter))
+        FlexZeroVecOwned::from_iter(iter).into_flexzerovec()
     }
 }

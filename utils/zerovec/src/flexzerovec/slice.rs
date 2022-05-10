@@ -2,10 +2,10 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use core::mem;
-use core::fmt;
-
+use super::FlexZeroVec;
 use crate::ZeroVecError;
+use core::fmt;
+use core::mem;
 
 const USIZE_WIDTH: usize = mem::size_of::<usize>();
 
@@ -20,6 +20,9 @@ pub struct FlexZeroSlice {
     data: [u8],
 }
 
+/// Helper function to decode a little-endian "chunk" (byte slice of a specific length)
+/// into a `usize`. We cannot call `usize::from_le_bytes` directly because that function
+/// requires the high bits to be set to 0.
 #[inline]
 fn chunk_to_usize(chunk: &[u8], width: usize) -> usize {
     debug_assert_eq!(chunk.len(), width);
@@ -29,7 +32,7 @@ fn chunk_to_usize(chunk: &[u8], width: usize) -> usize {
 }
 
 impl FlexZeroSlice {
-    /// Construct a new empty [`FlexZeroSlice`].
+    /// Constructs a new empty [`FlexZeroSlice`].
     ///
     /// ```
     /// use zerovec::vecs::FlexZeroSlice;
@@ -38,7 +41,6 @@ impl FlexZeroSlice {
     ///
     /// assert!(EMPTY_SLICE.is_empty());
     /// assert_eq!(EMPTY_SLICE.len(), 0);
-    /// assert_eq!(EMPTY_SLICE.get_width(), 1);
     /// assert_eq!(EMPTY_SLICE.first(), None);
     /// ```
     #[inline]
@@ -48,7 +50,7 @@ impl FlexZeroSlice {
         unsafe { Self::from_byte_slice_unchecked(ARR) }
     }
 
-    /// Safely construct a [`FlexZeroSlice`] from a byte array.
+    /// Safely constructs a [`FlexZeroSlice`] from a byte array.
     ///
     /// # Examples
     ///
@@ -67,7 +69,6 @@ impl FlexZeroSlice {
     ///
     /// assert!(!FZS.is_empty());
     /// assert_eq!(FZS.len(), 3);
-    /// assert_eq!(FZS.get_width(), 2);
     /// assert_eq!(FZS.first(), Some(0x0042));
     /// assert_eq!(FZS.get(0), Some(0x0042));
     /// assert_eq!(FZS.get(1), Some(0x0907));
@@ -102,7 +103,7 @@ impl FlexZeroSlice {
         Ok(unsafe { Self::from_byte_slice_unchecked(bytes) })
     }
 
-    /// Construct a [`FlexZeroSlice`] without checking invariants.
+    /// Constructs a [`FlexZeroSlice`] without checking invariants.
     ///
     /// # Panics
     ///
@@ -152,6 +153,13 @@ impl FlexZeroSlice {
         }
     }
 
+    /// Borrows this `FlexZeroSlice` as a [`FlexZeroVec::Borrowed`].
+    #[inline]
+    pub fn as_flexzerovec(&self) -> FlexZeroVec {
+        FlexZeroVec::Borrowed(self)
+    }
+
+    /// Returns the number of elements in the `FlexZeroSlice`.
     #[inline]
     pub fn len(&self) -> usize {
         self.data.len() / self.get_width()
@@ -162,11 +170,24 @@ impl FlexZeroSlice {
         usize::from(self.width)
     }
 
+    /// Returns whether there are zero elements in the `FlexZeroSlice`.
     #[inline]
     pub fn is_empty(&self) -> bool {
         self.data.len() == 0
     }
 
+    /// Gets the element at `index`, or `None` if `index >= self.len()`.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use zerovec::vecs::FlexZeroVec;
+    ///
+    /// let fzv: FlexZeroVec = [22, 33].iter().copied().collect();
+    /// assert_eq!(fzv.get(0), Some(22));
+    /// assert_eq!(fzv.get(1), Some(33));
+    /// assert_eq!(fzv.get(2), None);
+    /// ```
     #[inline]
     pub fn get(&self, index: usize) -> Option<usize> {
         let w = self.get_width();
@@ -175,6 +196,11 @@ impl FlexZeroSlice {
             .map(|chunk| chunk_to_usize(chunk, w))
     }
 
+    /// Gets the element at `index` without checking bounds.
+    ///
+    /// # Safety
+    ///
+    /// `index` must be in-range.
     #[inline]
     pub unsafe fn get_unchecked(&self, index: usize) -> usize {
         let w = self.get_width();
@@ -183,12 +209,14 @@ impl FlexZeroSlice {
         usize::from_le_bytes(bytes)
     }
 
+    /// Gets the first element of the slice, or `None` if the slice is empty.
     #[inline]
     pub fn first(&self) -> Option<usize> {
         let w = self.get_width();
         self.data.get(0..w).map(|chunk| chunk_to_usize(chunk, w))
     }
 
+    /// Gets the last element of the slice, or `None` if the slice is empty.
     #[inline]
     pub fn last(&self) -> Option<usize> {
         let l = self.data.len();
@@ -202,6 +230,7 @@ impl FlexZeroSlice {
         }
     }
 
+    /// Gets an iterator over the elements of the slice as `usize`.
     #[inline]
     pub fn iter(&self) -> impl DoubleEndedIterator<Item = usize> + '_ {
         let w = self.get_width();
