@@ -96,6 +96,22 @@ impl FlexZeroVecOwned {
         self.as_mut_slice().remove_impl(remove_info);
         self.0.truncate(new_bytes_len);
     }
+
+    /// # Panics
+    ///
+    /// Panics if `self.is_empty()`
+    pub fn pop_sorted(&mut self) -> usize {
+        if self.is_empty() {
+            panic!("cannot pop from an empty vector");
+        }
+        let remove_info = self.get_sorted_pop_info();
+        // Safety: `remove_index` is a valid index
+        let item = unsafe { self.get_unchecked(remove_info.remove_index) };
+        let new_bytes_len = remove_info.new_data_len + 1;
+        self.as_mut_slice().remove_impl(remove_info);
+        self.0.truncate(new_bytes_len);
+        item
+    }
 }
 
 impl Deref for FlexZeroVecOwned {

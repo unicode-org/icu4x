@@ -108,7 +108,7 @@ impl<'a> FlexZeroVec<'a> {
     /// ```
     /// use zerovec::vecs::FlexZeroVec;
     ///
-    /// let bytes: &[u8] = &[0x02, 0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x01];
+    /// let bytes: &[u8] = &[2, 0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x01];
     /// let fzv = FlexZeroVec::parse_byte_slice(bytes).expect("valid slice");
     ///
     /// assert!(matches!(fzv, FlexZeroVec::Borrowed(_)));
@@ -144,7 +144,7 @@ impl<'a> FlexZeroVec<'a> {
     /// ```
     /// use zerovec::vecs::FlexZeroVec;
     ///
-    /// let bytes: &[u8] = &[0x02, 0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x01];
+    /// let bytes: &[u8] = &[2, 0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x01];
     /// let fzv = FlexZeroVec::parse_byte_slice(bytes).expect("valid bytes");
     /// assert!(matches!(fzv, FlexZeroVec::Borrowed(_)));
     ///
@@ -166,7 +166,7 @@ impl<'a> FlexZeroVec<'a> {
     /// ```
     /// use zerovec::vecs::FlexZeroVec;
     ///
-    /// let bytes: &[u8] = &[0x02, 0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x01];
+    /// let bytes: &[u8] = &[2, 0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x01];
     /// let mut fzv = FlexZeroVec::parse_byte_slice(bytes).expect("valid bytes");
     /// assert!(matches!(fzv, FlexZeroVec::Borrowed(_)));
     ///

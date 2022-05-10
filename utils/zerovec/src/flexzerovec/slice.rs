@@ -12,9 +12,10 @@ const USIZE_WIDTH: usize = mem::size_of::<usize>();
 #[repr(packed)]
 #[derive(Debug, Eq, PartialEq)]
 pub struct FlexZeroSlice {
-    // Invariant: 1 <= width <= USIZE_WIDTH (which is target_pointer_width)
+    // Hard Invariant: 1 <= width <= USIZE_WIDTH (which is target_pointer_width)
+    // Soft Invariant: width == the width of the largest element
     width: u8,
-    // Invariant: data.len() % width == 0
+    // Hard Invariant: data.len() % width == 0
     data: [u8],
 }
 
@@ -95,7 +96,8 @@ impl FlexZeroSlice {
                 len: bytes.len(),
             });
         }
-        // Safety: All invariants have been checked
+        // Safety: All hard invariants have been checked.
+        // Note: The soft invariant requires a linear search that we don't do here.
         Ok(unsafe { Self::from_byte_slice_unchecked(bytes) })
     }
 
@@ -122,8 +124,9 @@ impl FlexZeroSlice {
 
     #[inline]
     pub(crate) unsafe fn from_byte_slice_mut_unchecked(bytes: &mut [u8]) -> &mut Self {
-        let len = bytes.len();
-        &mut *(&mut bytes[..len - 1] as *mut [u8] as *mut Self)
+        // Safety: See comments in `from_byte_slice_unchecked`
+        let remainder = core::slice::from_raw_parts_mut(bytes.as_mut_ptr(), bytes.len() - 1);
+        &mut *(remainder as *mut [u8] as *mut Self)
     }
 
     /// Returns this slice as its underlying `&[u8]` byte buffer representation.
@@ -135,14 +138,17 @@ impl FlexZeroSlice {
     /// ```
     /// use zerovec::vecs::FlexZeroSlice;
     ///
-    /// let bytes: &[u8] = &[0x02, 0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x80];
-    /// let fzv = FlexZeroVec::parse_byte_slice(bytes).expect("valid bytes");
+    /// let bytes: &[u8] = &[2, 0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x80];
+    /// let fzv = FlexZeroSlice::parse_byte_slice(bytes).expect("valid bytes");
     ///
     /// assert_eq!(bytes, fzv.as_bytes());
     /// ```
     #[inline]
     pub fn as_bytes(&self) -> &[u8] {
-        todo!()
+        // Safety: See comments in `from_byte_slice_unchecked`
+        unsafe {
+            core::slice::from_raw_parts(self as *const Self as *const u8, self.data.len() + 1)
+        }
     }
 
     #[inline]
@@ -330,6 +336,29 @@ impl FlexZeroSlice {
                 largest_width = core::cmp::max(curr_width, largest_width);
             }
             largest_width
+        };
+        let new_count = old_count - 1;
+        let new_data_len = new_count * new_width;
+        RemoveInfo {
+            remove_index,
+            new_width,
+            new_count,
+            new_data_len,
+        }
+    }
+
+    /// Returns the [`RemoveInfo`] for removing the last element. Should be called
+    /// on a sorted slice.
+    pub(crate) fn get_sorted_pop_info(&self) -> RemoveInfo {
+        debug_assert!(self.len() > 0);
+        // Safety: the FlexZeroSlice has at least one element (assertion on previous line)
+        let remove_index = self.len() - 1;
+        let old_count = self.len();
+        let new_width = if old_count == 1 {
+            1
+        } else {
+            let largest_item = unsafe { self.get_unchecked(remove_index - 1).to_le_bytes() };
+            get_item_width(&largest_item)
         };
         let new_count = old_count - 1;
         let new_data_len = new_count * new_width;
