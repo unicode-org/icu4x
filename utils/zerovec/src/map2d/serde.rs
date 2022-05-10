@@ -30,8 +30,8 @@ where
         if serializer.is_human_readable() {
             let mut values_it = self.iter_values();
             let mut serde_map = serializer.serialize_map(None)?;
-            for (key0_index, key0) in self.iter_keys0().enumerate() {
-                K0::Container::zvl_get_as_t(key0, |k| serde_map.serialize_key(k))?;
+            for (key0_index, cursor) in self.iter0().enumerate() {
+                K0::Container::zvl_get_as_t(cursor.key0(), |k| serde_map.serialize_key(k))?;
                 let inner_map = ZeroMap2dInnerMapSerialize {
                     key0_index,
                     map: self,

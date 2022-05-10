@@ -11,7 +11,7 @@ use core::fmt;
 use core::iter::FromIterator;
 use core::ops::Range;
 
-use super::ZeroMap2dBorrowed;
+use super::*;
 use crate::map::ZeroMapKV;
 use crate::map::{MutableZeroVecLike, ZeroVecLike};
 
@@ -199,6 +199,40 @@ where
         self.keys1.zvl_reserve(additional);
         self.values.zvl_reserve(additional);
     }
+
+    /// Produce an ordered iterator over keys0, which can then be used to get an iterator
+    /// over keys1 for a particular key0.
+    ///
+    /// # Example
+    ///
+    /// Loop over all elements of a ZeroMap2d:
+    ///
+    /// ```
+    /// use zerovec::ZeroMap2d;
+    ///
+    /// let mut map: ZeroMap2d<u16, u16, str> = ZeroMap2d::new();
+    /// map.insert(&1, &1, "foo");
+    /// map.insert(&2, &3, "bar");
+    /// map.insert(&2, &4, "baz");
+    ///
+    /// let mut total_value = 0;
+    ///
+    /// for cursor in map.iter0() {
+    ///     for (key1, value) in cursor.iter1() {
+    ///         // This code runs for every (key0, key1) pair
+    ///         total_value += key0.as_unsigned_int() as usize;
+    ///         total_value += key1.as_unsigned_int() as usize;
+    ///         total_value += value.len();
+    ///     }
+    /// }
+    ///
+    /// assert_eq!(total_value, 22);
+    /// ```
+    pub fn iter0<'l>(
+        &'l self,
+    ) -> impl Iterator<Item = ZeroMap2dCursorBorrowed<'l, 'a, K0, K1, V>> + 'l {
+        (0..self.keys0.zvl_len()).map(move |idx| ZeroMap2dCursorBorrowed::from_cow(self, idx))
+    }
 }
 
 impl<'a, K0, K1, V> ZeroMap2d<'a, K0, K1, V>
@@ -227,36 +261,10 @@ where
     /// assert_eq!(map.get(&3, "three"), Err(KeyError::K0));
     /// ```
     pub fn get(&self, key0: &K0, key1: &K1) -> Result<&V::GetType, KeyError> {
-        let (_, range) = self.get_range_for_key0(key0).ok_or(KeyError::K0)?;
-        debug_assert!(range.start < range.end); // '<' because every key0 should have a key1
-        debug_assert!(range.end <= self.keys1.zvl_len());
-        // The above debug_assert! protects the unwrap() below
-        #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
-        let index = range.start
-            + self
-                .keys1
-                .zvl_binary_search_in_range(key1, range)
-                .unwrap()
-                .map_err(|_| KeyError::K1)?;
-        // This unwrap is protected by the invariant keys1.len() == values.len(),
-        // the above debug_assert!, and the contract of zvl_binary_search_in_range.
-        #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
-        Ok(self.values.zvl_get(index).unwrap())
-    }
-
-    /// Returns whether `key0` is contained in this map
-    ///
-    /// ```rust
-    /// use zerovec::ZeroMap2d;
-    ///
-    /// let mut map = ZeroMap2d::new();
-    /// map.insert(&1, "one", "foo");
-    /// map.insert(&2, "two", "bar");
-    /// assert_eq!(map.contains_key0(&1), true);
-    /// assert_eq!(map.contains_key0(&3), false);
-    /// ```
-    pub fn contains_key0(&self, key0: &K0) -> bool {
-        self.keys0.zvl_binary_search(key0).is_ok()
+        self.get0(key0)
+            .ok_or(KeyError::K0)?
+            .get1(key1)
+            .ok_or(KeyError::K1)
     }
 
     /// Insert `value` with `key`, returning the existing value if it exists.
@@ -406,69 +414,6 @@ where
         None
     }
 
-    /// Produce an ordered iterator over keys0.
-    pub fn iter_keys0<'b>(&'b self) -> impl Iterator<Item = &'b <K0 as ZeroMapKV<'a>>::GetType> {
-        // The unwrap is protected because we are looping over the range of indices in the vec
-        #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
-        (0..self.keys0.zvl_len()).map(move |idx| self.keys0.zvl_get(idx).unwrap())
-    }
-
-    /// Produce an ordered iterator over keys1 for a particular key0, if key0 exists.
-    pub fn iter_keys1<'b>(
-        &'b self,
-        key0: &K0,
-    ) -> Option<impl Iterator<Item = &'b <K1 as ZeroMapKV<'a>>::GetType>> {
-        let (_, range) = self.get_range_for_key0(key0)?;
-        // The unwrap is protected because all ranges are valid according to invariants 1-4
-        #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
-        Some(range.map(move |idx| self.keys1.zvl_get(idx).unwrap()))
-    }
-
-    /// Produce an ordered iterator over keys1 for a particular key0_index, if key0_index exists.
-    ///
-    /// This method is designed to interoperate with the enumerated key of `iter_keys0`.
-    ///
-    /// # Panics
-    ///
-    /// Panics if `key0_index` is out of range.
-    ///
-    /// # Example
-    ///
-    /// Loop over all elements of a ZeroMap2d:
-    ///
-    /// ```
-    /// use zerovec::ZeroMap2d;
-    ///
-    /// let mut map: ZeroMap2d<u16, u16, str> = ZeroMap2d::new();
-    /// map.insert(&1, &1, "foo");
-    /// map.insert(&2, &3, "bar");
-    /// map.insert(&2, &4, "baz");
-    ///
-    /// let mut total_value = 0;
-    ///
-    /// let mut values_it = map.iter_values();
-    /// for (key0_index, key0) in map.iter_keys0().enumerate() {
-    ///     for key1 in map.iter_keys1_by_index(key0_index).unwrap() {
-    ///         // This code runs for every (key0, key1) pair
-    ///         total_value += key0.as_unsigned_int() as usize;
-    ///         total_value += key1.as_unsigned_int() as usize;
-    ///         total_value += values_it.next().unwrap().len();
-    ///     }
-    /// }
-    ///
-    /// assert_eq!(total_value, 22);
-    /// ```
-    pub fn iter_keys1_by_index<'b>(
-        &'b self,
-        key0_index: usize,
-    ) -> Option<impl Iterator<Item = &'b <K1 as ZeroMapKV<'a>>::GetType>> {
-        assert!(key0_index < self.keys0.zvl_len());
-        let range = self.get_range_for_key0_index(key0_index);
-        // The unwrap is protected because all ranges are valid according to invariants 1-4
-        #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
-        Some(range.map(move |idx| self.keys1.zvl_get(idx).unwrap()))
-    }
-
     /// Produce an iterator over values, ordered by the pair (key0,key1)
     pub fn iter_values<'b>(&'b self) -> impl Iterator<Item = &'b <V as ZeroMapKV<'a>>::GetType> {
         // The unwrap is protected because we are looping over the range of indices in the vec
@@ -591,10 +536,41 @@ where
 
 impl<'a, K0, K1, V> ZeroMap2d<'a, K0, K1, V>
 where
+    K0: ZeroMapKV<'a> + Ord,
+    K1: ZeroMapKV<'a>,
+    V: ZeroMapKV<'a>,
+    K0: ?Sized,
+    K1: ?Sized,
+    V: ?Sized,
+{
+    #[inline]
+    pub fn get0<'l>(&'l self, key0: &K0) -> Option<ZeroMap2dCursorBorrowed<'l, 'a, K0, K1, V>> {
+        let key0_index = self.keys0.zvl_binary_search(key0).ok()?;
+        Some(ZeroMap2dCursorBorrowed::from_cow(self, key0_index))
+    }
+
+    /// Returns whether `key0` is contained in this map
+    ///
+    /// ```rust
+    /// use zerovec::ZeroMap2d;
+    ///
+    /// let mut map = ZeroMap2d::new();
+    /// map.insert(&1, "one", "foo");
+    /// map.insert(&2, "two", "bar");
+    /// assert_eq!(map.contains_key0(&1), true);
+    /// assert_eq!(map.contains_key0(&3), false);
+    /// ```
+    pub fn contains_key0(&self, key0: &K0) -> bool {
+        self.keys0.zvl_binary_search(key0).is_ok()
+    }
+}
+
+impl<'a, K0, K1, V> ZeroMap2d<'a, K0, K1, V>
+where
     K0: ZeroMapKV<'a> + ?Sized + Ord,
     K1: ZeroMapKV<'a> + ?Sized + Ord,
-    V: ZeroMapKV<'a, Container = ZeroVec<'a, V>> + ?Sized,
-    V: AsULE + Copy,
+    V: ZeroMapKV<'a, Container = ZeroVec<'a, V>>,
+    V: AsULE + Copy + 'static,
 {
     /// For cases when `V` is fixed-size, obtain a direct copy of `V` instead of `V::ULE`
     ///
@@ -609,19 +585,11 @@ where
     ///
     /// assert_eq!(map.get_copied(&6, &7), Some(8));
     /// ```
-    pub fn get_copied(&self, key0: &K0, key1: &K1) -> Option<V> {
-        let (_, range) = self.get_range_for_key0(key0)?;
-        debug_assert!(range.start < range.end); // '<' because every key0 should have a key1
-        debug_assert!(range.end <= self.keys1.zvl_len());
-        // The above debug_assert! protects the unwrap() below
-        #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
-        let index = range.start
-            + self
-                .keys1
-                .zvl_binary_search_in_range(key1, range)
-                .unwrap()
-                .ok()?;
-        self.values.get(index)
+    pub fn get_copied(&self, key0: &K0, key1: &K1) -> Result<V, KeyError> {
+        self.get0(key0)
+            .ok_or(KeyError::K0)?
+            .get1_copied(key1)
+            .ok_or(KeyError::K1)
     }
 }
 
