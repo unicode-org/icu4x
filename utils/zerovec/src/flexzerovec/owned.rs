@@ -4,15 +4,22 @@
 
 use alloc::vec;
 use alloc::vec::Vec;
+use core::iter::FromIterator;
 use core::ops::Deref;
 
 use super::slice::FlexZeroSlice;
 
+// Safety invariant: the inner bytes must deref to a valid `FlexZeroSlice`
 pub struct FlexZeroVecOwned(Vec<u8>);
 
 impl FlexZeroVecOwned {
     pub fn new_empty() -> Self {
         Self(vec![1])
+    }
+
+    pub fn from_slice(other: &FlexZeroSlice) -> FlexZeroVecOwned {
+        // safety: the bytes originate from a valid FlexZeroSlice
+        Self(other.as_bytes().iter().copied().collect())
     }
 
     /// Obtain this `FlexZeroVecOwned` as a [`FlexZeroSlice`]
@@ -95,6 +102,26 @@ impl Deref for FlexZeroVecOwned {
     type Target = FlexZeroSlice;
     fn deref(&self) -> &Self::Target {
         self.as_slice()
+    }
+}
+
+impl From<&FlexZeroSlice> for FlexZeroVecOwned {
+    fn from(other: &FlexZeroSlice) -> Self {
+        Self::from_slice(other)
+    }
+}
+
+impl FromIterator<usize> for FlexZeroVecOwned {
+    /// Creates a [`FlexZeroVecOwned`] from an iterator of `usize`.
+    fn from_iter<I>(iter: I) -> Self
+    where
+        I: IntoIterator<Item = usize>,
+    {
+        let mut result = FlexZeroVecOwned::new_empty();
+        for item in iter {
+            result.push(item);
+        }
+        result
     }
 }
 

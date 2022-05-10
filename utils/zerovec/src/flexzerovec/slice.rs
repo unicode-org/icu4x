@@ -46,12 +46,9 @@ impl FlexZeroSlice {
         unsafe { Self::from_byte_slice_unchecked(ARR) }
     }
 
-    #[inline]
-    pub fn get_width(&self) -> usize {
-        usize::from(self.width)
-    }
-
     /// Safely construct a [`FlexZeroSlice`] from a byte array.
+    ///
+    /// # Examples
     ///
     /// ```
     /// use zerovec::vecs::FlexZeroSlice;
@@ -129,9 +126,33 @@ impl FlexZeroSlice {
         &mut *(&mut bytes[..len - 1] as *mut [u8] as *mut Self)
     }
 
+    /// Returns this slice as its underlying `&[u8]` byte buffer representation.
+    ///
+    /// Useful for serialization.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use zerovec::vecs::FlexZeroSlice;
+    ///
+    /// let bytes: &[u8] = &[0x02, 0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x80];
+    /// let fzv = FlexZeroVec::parse_byte_slice(bytes).expect("valid bytes");
+    ///
+    /// assert_eq!(bytes, fzv.as_bytes());
+    /// ```
+    #[inline]
+    pub fn as_bytes(&self) -> &[u8] {
+        todo!()
+    }
+
     #[inline]
     pub fn len(&self) -> usize {
         self.data.len() / self.get_width()
+    }
+
+    #[inline]
+    pub(crate) fn get_width(&self) -> usize {
+        usize::from(self.width)
     }
 
     #[inline]
