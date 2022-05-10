@@ -5,9 +5,7 @@
 use super::FlexZeroSlice;
 use super::FlexZeroVecOwned;
 use crate::ZeroVecError;
-use alloc::vec::Vec;
 use core::cmp::Ordering;
-use core::fmt;
 use core::iter::FromIterator;
 use core::ops::Deref;
 
@@ -20,6 +18,7 @@ use core::ops::Deref;
 /// The maximum value that can be stored in `FlexZeroVec` is `usize::MAX` on the current platform.
 ///
 /// `FlexZeroVec` is the data structure for storing `usize` in a `ZeroMap`.
+#[derive(Debug)]
 pub enum FlexZeroVec<'a> {
     Owned(FlexZeroVecOwned),
     Borrowed(&'a FlexZeroSlice),
@@ -38,15 +37,6 @@ impl<'a> Deref for FlexZeroVec<'a> {
 impl<'a> AsRef<FlexZeroSlice> for FlexZeroVec<'a> {
     fn as_ref(&self) -> &FlexZeroSlice {
         self.deref()
-    }
-}
-
-impl fmt::Debug for FlexZeroVec<'_> {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        match self {
-            Self::Owned(_) => write!(f, "FlexZeroVec::Owned({:?})", self.to_vec()),
-            Self::Borrowed(_) => write!(f, "FlexZeroVec::Borrowed({:?})", self.to_vec()),
-        }
     }
 }
 
@@ -117,24 +107,6 @@ impl<'a> FlexZeroVec<'a> {
     pub fn parse_byte_slice(bytes: &'a [u8]) -> Result<Self, ZeroVecError> {
         let slice: &'a FlexZeroSlice = FlexZeroSlice::parse_byte_slice(bytes)?;
         Ok(Self::Borrowed(slice))
-    }
-
-    /// Creates a `Vec<usize>` from a `FlexZeroVec`.
-    ///
-    /// # Example
-    ///
-    /// ```
-    /// use zerovec::vecs::FlexZeroVec;
-    ///
-    /// let nums: &[usize] = &[211, 281, 421, 461];
-    /// let fzv: FlexZeroVec = nums.iter().copied().collect();
-    /// let vec: Vec<usize> = fzv.to_vec();
-    ///
-    /// assert_eq!(nums, vec.as_slice());
-    /// ```
-    #[inline]
-    pub fn to_vec(&self) -> Vec<usize> {
-        self.iter().collect()
     }
 
     /// Converts a borrowed FlexZeroVec to an owned FlexZeroVec. No-op if already owned.

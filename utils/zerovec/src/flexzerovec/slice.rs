@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use core::mem;
+use core::fmt;
 
 use crate::ZeroVecError;
 
@@ -10,7 +11,7 @@ const USIZE_WIDTH: usize = mem::size_of::<usize>();
 
 /// A zero-copy "slice" that efficiently represents `[usize]`.
 #[repr(packed)]
-#[derive(Debug, Eq, PartialEq)]
+#[derive(Eq, PartialEq)]
 pub struct FlexZeroSlice {
     // Hard Invariant: 1 <= width <= USIZE_WIDTH (which is target_pointer_width)
     // Soft Invariant: width == the width of the largest element
@@ -209,6 +210,24 @@ impl FlexZeroSlice {
             .map(move |chunk| chunk_to_usize(chunk, w))
     }
 
+    /// Creates a `Vec<usize>` from a [`FlexZeroSlice`] (or `FlexZeroVec`).
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use zerovec::vecs::FlexZeroVec;
+    ///
+    /// let nums: &[usize] = &[211, 281, 421, 461];
+    /// let fzv: FlexZeroVec = nums.iter().copied().collect();
+    /// let vec: Vec<usize> = fzv.to_vec();
+    ///
+    /// assert_eq!(nums, vec.as_slice());
+    /// ```
+    #[inline]
+    pub fn to_vec(&self) -> Vec<usize> {
+        self.iter().collect()
+    }
+
     /// Binary searches a sorted `FlexZeroSlice` for the given `usize` value.
     pub fn binary_search(&self, needle: usize) -> Result<usize, usize> {
         // See comments in components.rs regarding the following code.
@@ -225,6 +244,12 @@ impl FlexZeroSlice {
             let actual_probe = unsafe { self.get_unchecked(index) };
             <usize as Ord>::cmp(&actual_probe, &needle)
         })
+    }
+}
+
+impl fmt::Debug for &FlexZeroSlice {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "{:?}", self.to_vec())
     }
 }
 
