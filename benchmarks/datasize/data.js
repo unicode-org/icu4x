@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1652298050964,
+  "lastUpdate": 1652298056681,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -14723,6 +14723,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/af933312db94c47f1c7a89a7fe435267d77f99e8"
         },
         "date": 1652298029807,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4475179,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "61be44e09280c40812f0ce4a403ebc8212838362",
+          "message": "Add CodePointTrie builder based on WASM (#1864)",
+          "timestamp": "2022-05-11T12:39:06-07:00",
+          "tree_id": "b4fd544dbc0192d5a3b4ec7f8b41475f91aa7072",
+          "url": "https://github.com/unicode-org/icu4x/commit/61be44e09280c40812f0ce4a403ebc8212838362"
+        },
+        "date": 1652298037108,
         "tool": "ndjson",
         "benches": [
           {
