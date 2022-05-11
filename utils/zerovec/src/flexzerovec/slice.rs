@@ -4,6 +4,7 @@
 
 use super::FlexZeroVec;
 use crate::ZeroVecError;
+use alloc::vec::Vec;
 use core::fmt;
 use core::mem;
 
@@ -27,6 +28,7 @@ pub struct FlexZeroSlice {
 fn chunk_to_usize(chunk: &[u8], width: usize) -> usize {
     debug_assert_eq!(chunk.len(), width);
     let mut bytes = [0; USIZE_WIDTH];
+    #[allow(clippy::indexing_slicing)] // protected by debug_assert above
     bytes[0..width].copy_from_slice(chunk);
     usize::from_le_bytes(bytes)
 }
@@ -45,7 +47,7 @@ impl FlexZeroSlice {
     /// ```
     #[inline]
     pub const fn new_empty() -> &'static Self {
-        const ARR: &'static [u8] = &[1u8];
+        const ARR: &[u8] = &[1u8];
         // Safety: The slice is a valid empty `FlexZeroSlice`
         unsafe { Self::from_byte_slice_unchecked(ARR) }
     }
@@ -117,6 +119,7 @@ impl FlexZeroSlice {
         // Safety: The DST of FlexZeroSlice is a pointer to the `width` element and has a metadata
         // equal to the length of the `data` field, which will be one less than the length of the
         // overall array.
+        #[allow(clippy::panic)] // panic is documented in function contract
         let (_, remainder) = match bytes.split_last() {
             Some(v) => v,
             None => panic!("slice should be non-empty"),
@@ -404,13 +407,13 @@ impl FlexZeroSlice {
     /// Returns the [`RemoveInfo`] for removing the last element. Should be called
     /// on a sorted slice.
     pub(crate) fn get_sorted_pop_info(&self) -> RemoveInfo {
-        debug_assert!(self.len() > 0);
-        // Safety: the FlexZeroSlice has at least one element (assertion on previous line)
+        debug_assert!(!self.is_empty());
         let remove_index = self.len() - 1;
         let old_count = self.len();
         let new_width = if old_count == 1 {
             1
         } else {
+            // Safety: the FlexZeroSlice has at least two elements
             let largest_item = unsafe { self.get_unchecked(remove_index - 1).to_le_bytes() };
             get_item_width(&largest_item)
         };

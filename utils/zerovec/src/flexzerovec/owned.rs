@@ -25,7 +25,7 @@ impl FlexZeroVecOwned {
     /// Creates a [`FlexZeroVecOwned`] from a [`FlexZeroSlice`].
     pub fn from_slice(other: &FlexZeroSlice) -> FlexZeroVecOwned {
         // safety: the bytes originate from a valid FlexZeroSlice
-        Self(other.as_bytes().iter().copied().collect())
+        Self(other.as_bytes().to_vec())
     }
 
     /// Obtains this [`FlexZeroVecOwned`] as a [`FlexZeroSlice`].
@@ -89,6 +89,7 @@ impl FlexZeroVecOwned {
     /// assert_eq!(zv.to_vec(), vec![22, 44, 33, 66]);
     /// ```
     pub fn insert(&mut self, index: usize, item: usize) {
+        #[allow(clippy::panic)] // panic is documented in function contract
         if index > self.len() {
             panic!("index {} out of range {}", index, self.len());
         }
@@ -142,6 +143,7 @@ impl FlexZeroVecOwned {
     /// assert_eq!(zv.to_vec(), vec![22, 66]);
     /// ```
     pub fn remove(&mut self, index: usize) -> usize {
+        #[allow(clippy::panic)] // panic is documented in function contract
         if index >= self.len() {
             panic!("index {} out of range {}", index, self.len());
         }
@@ -188,6 +190,7 @@ impl FlexZeroVecOwned {
     /// assert_eq!(zv1.to_vec(), vec![188, 222]);
     /// ```
     pub fn pop_sorted(&mut self) -> usize {
+        #[allow(clippy::panic)] // panic is documented in function contract
         if self.is_empty() {
             panic!("cannot pop from an empty vector");
         }
