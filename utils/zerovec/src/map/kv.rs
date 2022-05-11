@@ -58,7 +58,7 @@ impl_sized_kv!(f64);
 
 impl<'a, T> ZeroMapKV<'a> for Option<T>
 where
-    T: AsULE + 'static
+    T: AsULE + 'static,
 {
     type Container = ZeroVec<'a, Option<T>>;
     type GetType = <Option<T> as AsULE>::ULE;
@@ -100,7 +100,7 @@ where
 
 impl<'a, T> ZeroMapKV<'a> for ZeroSlice<T>
 where
-    T: AsULE + 'static
+    T: AsULE + 'static,
 {
     type Container = VarZeroVec<'a, ZeroSlice<T>>;
     type GetType = ZeroSlice<T>;
