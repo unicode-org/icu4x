@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1652298547917,
+  "lastUpdate": 1652298612392,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -26069,6 +26069,66 @@ window.BENCHMARK_DATA = {
             "name": "from_string/1000000001",
             "value": 80,
             "range": "± 4",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "b6dc8afb75c43be69489dc1f957359fe35a43cda",
+          "message": "Add array impl for ZeroMapKV (#1875)",
+          "timestamp": "2022-05-11T12:38:38-07:00",
+          "tree_id": "816f02e0591df53aa741c2938bb6e612e23007fb",
+          "url": "https://github.com/unicode-org/icu4x/commit/b6dc8afb75c43be69489dc1f957359fe35a43cda"
+        },
+        "date": 1652298589073,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 120782,
+            "range": "± 5097",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 25130,
+            "range": "± 1017",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 67684,
+            "range": "± 3127",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 214,
+            "range": "± 12",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 96,
+            "range": "± 3",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 86,
+            "range": "± 6",
             "unit": "ns/iter"
           }
         ]
