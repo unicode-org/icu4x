@@ -5,7 +5,7 @@
 [package]
 name = "icu_datagen"
 description = "Generate data for ICU4X DataProvider"
-version = "0.5.0"
+version = "0.6.0"
 authors = ["The ICU4X Project Developers"]
 edition = "2021"
 readme = "README.md"
@@ -34,39 +34,39 @@ all-features = true
 [dependencies]
 
 # ICU components
-icu_calendar = { version = "0.5", path = "../../components/calendar", features = ["datagen"] }
-icu_datetime = { version = "0.5", path = "../../components/datetime", features = ["datagen"] }
-icu_decimal = { version = "0.5", path = "../../components/decimal", features = ["datagen"] }
-icu_list = { version = "0.5", path = "../../components/list", features = ["datagen"]}
-icu_locale_canonicalizer = { version = "0.5", path = "../../components/locale_canonicalizer", features = ["datagen"] }
-icu_plurals = { version = "0.5", path = "../../components/plurals", features = ["datagen"] }
-icu_properties = { version = "0.5", path = "../../components/properties", features = ["datagen"]}
+icu_calendar = { version = "0.6", path = "../../components/calendar", features = ["datagen"] }
+icu_datetime = { version = "0.6", path = "../../components/datetime", features = ["datagen"] }
+icu_decimal = { version = "0.6", path = "../../components/decimal", features = ["datagen"] }
+icu_list = { version = "0.6", path = "../../components/list", features = ["datagen"]}
+icu_locale_canonicalizer = { version = "0.6", path = "../../components/locale_canonicalizer", features = ["datagen"] }
+icu_plurals = { version = "0.6", path = "../../components/plurals", features = ["datagen"] }
+icu_properties = { version = "0.6", path = "../../components/properties", features = ["datagen"]}
 # (experimental)
 icu_casemapping = { version = "0.1", path = "../../experimental/casemapping", features = ["datagen"], optional = true }
-icu_segmenter = { version = "0.5", path = "../../experimental/segmenter", features = ["datagen"], optional = true }
+icu_segmenter = { version = "0.6", path = "../../experimental/segmenter", features = ["datagen"], optional = true }
 
 # ICU provider infrastructure
-icu_provider = { version = "0.5", path = "../core", features = ["std", "log_error_context"]}
+icu_provider = { version = "0.6", path = "../core", features = ["std", "log_error_context"]}
 icu_provider_adapters = { path = "../adapters", features = ["datagen"] }
-icu_provider_blob = { version = "0.5", path = "../blob", features = ["export"] }
-icu_provider_fs = { version = "0.5", path = "../fs", features = ["export"] }
+icu_provider_blob = { version = "0.6", path = "../blob", features = ["export"] }
+icu_provider_fs = { version = "0.6", path = "../fs", features = ["export"] }
 
 # Other
 displaydoc = { version = "0.2.3", default-features = false }
 elsa = "1.7"
-icu_codepointtrie = { version = "0.3.3", path = "../../utils/codepointtrie", features = ["serde_serialize"] }
-icu_locid = { version = "0.5", path = "../../components/locid", features = ["std"]}
-icu_uniset = { version = "0.4.1", path = "../../utils/uniset", features = ["serde"] }
+icu_codepointtrie = { version = "0.4", path = "../../utils/codepointtrie", features = ["serde_serialize"] }
+icu_locid = { version = "0.6", path = "../../components/locid", features = ["std"]}
+icu_uniset = { version = "0.5", path = "../../utils/uniset", features = ["serde"] }
 itertools = "0.10"
-litemap = { version = "0.3.0", path = "../../utils/litemap" }
+litemap = { version = "0.4.0", path = "../../utils/litemap" }
 log = "0.4"
 rayon = "1.5"
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"] }
 serde_json = { version = "1.0", default-features = false, features = ["alloc"] }
 serde-aux = "2.1.1"
-tinystr = { path = "../../utils/tinystr", version = "0.5.0", features = ["alloc", "serde", "zerovec"], default-features = false }
+tinystr = { path = "../../utils/tinystr", version = "0.6", features = ["alloc", "serde", "zerovec"], default-features = false }
 toml = "0.5"
-zerovec = { version = "0.6", path = "../../utils/zerovec", features = ["serde_serialize", "yoke"] }
+zerovec = { version = "0.7", path = "../../utils/zerovec", features = ["serde_serialize", "yoke"] }
 quote = "1.0.9"
 crabbake = { path = "../../experimental/crabbake"}
 proc-macro2 = "1.0"
