@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! See [`FlexZeroVec`](crate::FlexZeroVec) for details.
+//! See [`FlexZeroVec`](crate::vecs::FlexZeroVec) for details.
 
 pub(crate) mod owned;
 pub(crate) mod slice;
