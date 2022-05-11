@@ -54,6 +54,10 @@ impl FlexZeroVecOwned {
 
     /// Appends an item to the end of the vector.
     ///
+    /// # Panics
+    ///
+    /// Panics if inserting the element would require allocating more than `usize::MAX` bytes.
+    ///
     /// # Examples
     ///
     /// ```
@@ -65,7 +69,7 @@ impl FlexZeroVecOwned {
     /// ```
     pub fn push(&mut self, item: usize) {
         let insert_info = self.get_insert_info(item);
-        self.0.resize(insert_info.new_data_len + 1, 0);
+        self.0.resize(insert_info.new_bytes_len, 0);
         let insert_index = insert_info.new_count - 1;
         self.as_mut_slice().insert_impl(insert_info, insert_index);
     }
@@ -78,6 +82,8 @@ impl FlexZeroVecOwned {
     /// # Panics
     ///
     /// Panics if `index > len`.
+    ///
+    /// Panics if inserting the element would require allocating more than `usize::MAX` bytes.
     ///
     /// # Examples
     ///
@@ -94,12 +100,16 @@ impl FlexZeroVecOwned {
             panic!("index {} out of range {}", index, self.len());
         }
         let insert_info = self.get_insert_info(item);
-        self.0.resize(insert_info.new_data_len + 1, 0);
+        self.0.resize(insert_info.new_bytes_len, 0);
         self.as_mut_slice().insert_impl(insert_info, index);
     }
 
     /// Inserts an element into an ascending sorted vector
     /// at a position that keeps the vector sorted.
+    ///
+    /// # Panics
+    ///
+    /// Panics if inserting the element would require allocating more than `usize::MAX` bytes.
     ///
     /// # Examples
     ///
@@ -122,7 +132,7 @@ impl FlexZeroVecOwned {
             Err(i) => i,
         };
         let insert_info = self.get_insert_info(item);
-        self.0.resize(insert_info.new_data_len + 1, 0);
+        self.0.resize(insert_info.new_bytes_len, 0);
         self.as_mut_slice().insert_impl(insert_info, index);
     }
 
@@ -150,7 +160,7 @@ impl FlexZeroVecOwned {
         let remove_info = self.get_remove_info(index);
         // Safety: `remove_index` is a valid index
         let item = unsafe { self.get_unchecked(remove_info.remove_index) };
-        let new_bytes_len = remove_info.new_data_len + 1;
+        let new_bytes_len = remove_info.new_bytes_len;
         self.as_mut_slice().remove_impl(remove_info);
         self.0.truncate(new_bytes_len);
         item
@@ -197,7 +207,7 @@ impl FlexZeroVecOwned {
         let remove_info = self.get_sorted_pop_info();
         // Safety: `remove_index` is a valid index
         let item = unsafe { self.get_unchecked(remove_info.remove_index) };
-        let new_bytes_len = remove_info.new_data_len + 1;
+        let new_bytes_len = remove_info.new_bytes_len;
         self.as_mut_slice().remove_impl(remove_info);
         self.0.truncate(new_bytes_len);
         item

@@ -290,26 +290,43 @@ fn get_item_width(item_bytes: &[u8; USIZE_WIDTH]) -> usize {
     USIZE_WIDTH - item_bytes.iter().rev().take_while(|b| **b == 0).count()
 }
 
+/// Pre-computed information about a pending insertion operation.
+///
+/// Do not create one of these directly; call `get_insert_info()`.
 pub(crate) struct InsertInfo {
+    /// The bytes to be inserted, with zero-fill.
     pub item_bytes: [u8; USIZE_WIDTH],
+    /// The new item width after insertion.
     pub new_width: usize,
+    /// The new number of items in the vector: self.len() after insertion.
     pub new_count: usize,
-    pub new_data_len: usize,
+    /// The new number of bytes required for the entire slice (self.data.len() + 1).
+    pub new_bytes_len: usize,
 }
 
 impl FlexZeroSlice {
+    /// Compute the [`InsertInfo`] for inserting the specified item anywhere into the vector.
+    ///
+    /// # Panics
+    ///
+    /// Panics if inserting the element would require allocating more than `usize::MAX` bytes.
     pub(crate) fn get_insert_info(&self, new_item: usize) -> InsertInfo {
         let item_bytes = new_item.to_le_bytes();
         let item_width = get_item_width(&item_bytes);
         let old_width = self.get_width();
         let new_width = core::cmp::max(old_width, item_width);
         let new_count = 1 + (self.data.len() / old_width);
-        let new_data_len = new_count * new_width;
+        #[allow(clippy::unwrap_used)] // panic is documented in function contract
+        let new_bytes_len = new_count
+            .checked_mul(new_width)
+            .unwrap()
+            .checked_add(1)
+            .unwrap();
         InsertInfo {
             item_bytes,
             new_width,
             new_count,
-            new_data_len,
+            new_bytes_len,
         }
     }
 
@@ -322,13 +339,13 @@ impl FlexZeroSlice {
             item_bytes,
             new_width,
             new_count,
-            new_data_len,
+            new_bytes_len,
         } = insert_info;
         debug_assert!(new_width <= USIZE_WIDTH);
         debug_assert!(new_width >= self.get_width());
         debug_assert!(insert_index < new_count);
-        debug_assert_eq!(new_data_len, new_count * new_width);
-        debug_assert_eq!(new_data_len, self.data.len());
+        debug_assert_eq!(new_bytes_len, new_count * new_width + 1);
+        debug_assert_eq!(new_bytes_len, self.data.len() + 1);
         // For efficiency, calculate how many items we can skip copying.
         let lower_i = if new_width == self.get_width() {
             insert_index
@@ -362,14 +379,22 @@ impl FlexZeroSlice {
     }
 }
 
+/// Pre-computed information about a pending removal operation.
+///
+/// Do not create one of these directly; call `get_remove_info()` or `get_sorted_pop_info()`.
 pub(crate) struct RemoveInfo {
+    /// The index of the item to be removed.
     pub remove_index: usize,
+    /// The new item width after insertion.
     pub new_width: usize,
+    /// The new number of items in the vector: self.len() after insertion.
     pub new_count: usize,
-    pub new_data_len: usize,
+    /// The new number of bytes required for the entire slice (self.data.len() + 1).
+    pub new_bytes_len: usize,
 }
 
 impl FlexZeroSlice {
+    /// Compute the [`RemoveInfo`] for removing the item at the specified index.
     pub(crate) fn get_remove_info(&self, remove_index: usize) -> RemoveInfo {
         debug_assert!(remove_index < self.len());
         // Safety: remove_index is in range (assertion on previous line)
@@ -395,17 +420,21 @@ impl FlexZeroSlice {
             largest_width
         };
         let new_count = old_count - 1;
-        let new_data_len = new_count * new_width;
+        // Note: the following line won't overflow because we are making the slice shorter.
+        let new_bytes_len = new_count * new_width + 1;
         RemoveInfo {
             remove_index,
             new_width,
             new_count,
-            new_data_len,
+            new_bytes_len,
         }
     }
 
     /// Returns the [`RemoveInfo`] for removing the last element. Should be called
-    /// on a sorted slice.
+    /// on a slice sorted in ascending order.
+    ///
+    /// This is more efficient than `get_remove_info()` because it doesn't require a
+    /// linear traversal of the vector in order to calculate `new_width`.
     pub(crate) fn get_sorted_pop_info(&self) -> RemoveInfo {
         debug_assert!(!self.is_empty());
         let remove_index = self.len() - 1;
@@ -418,12 +447,13 @@ impl FlexZeroSlice {
             get_item_width(&largest_item)
         };
         let new_count = old_count - 1;
-        let new_data_len = new_count * new_width;
+        // Note: the following line won't overflow because we are making the slice shorter.
+        let new_bytes_len = new_count * new_width + 1;
         RemoveInfo {
             remove_index,
             new_width,
             new_count,
-            new_data_len,
+            new_bytes_len,
         }
     }
 
