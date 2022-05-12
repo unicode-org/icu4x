@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1652377544144,
+  "lastUpdate": 1652386009352,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -14848,6 +14848,36 @@ window.BENCHMARK_DATA = {
           {
             "name": "provider/testdata/data/testdata.postcard",
             "value": 4475179,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "6b0ece669ba5c12cd35405ff1d0d8ed9699b521b",
+          "message": "Use CodePointTrie in Segmenter (#1839)",
+          "timestamp": "2022-05-12T13:05:00-07:00",
+          "tree_id": "c09284f5792d1b98a4eb08931358b1394fa8277e",
+          "url": "https://github.com/unicode-org/icu4x/commit/6b0ece669ba5c12cd35405ff1d0d8ed9699b521b"
+        },
+        "date": 1652385990659,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 1627470,
             "unit": "bytes",
             "biggerIsBetter": false
           }
