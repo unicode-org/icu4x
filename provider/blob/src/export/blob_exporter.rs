@@ -3,9 +3,8 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::blob_schema::*;
-use icu_provider::export::DataExporter;
+use icu_provider::datagen::*;
 use icu_provider::prelude::*;
-use icu_provider::serde::SerializeMarker;
 use std::sync::Mutex;
 use writeable::Writeable;
 use zerovec::ZeroMap2d;
@@ -28,13 +27,13 @@ impl<'w> BlobExporter<'w> {
     }
 }
 
-impl DataExporter<SerializeMarker> for BlobExporter<'_> {
+impl DataExporter for BlobExporter<'_> {
     #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
     fn put_payload(
         &self,
         key: ResourceKey,
-        options: ResourceOptions,
-        payload: DataPayload<SerializeMarker>,
+        options: &ResourceOptions,
+        payload: &DataPayload<ExportMarker>,
     ) -> Result<(), DataError> {
         log::trace!("Adding: {}/{}", key, options);
         let mut serializer = postcard::Serializer {

@@ -39,8 +39,6 @@ mod impls;
 pub use impls::*;
 
 #[cfg(feature = "datagen")]
-use alloc::boxed::Box;
-#[cfg(feature = "datagen")]
 use icu_provider::datagen;
 use icu_provider::prelude::*;
 
@@ -152,23 +150,22 @@ where
     fn supported_options_for_key(
         &self,
         key: ResourceKey,
-    ) -> Result<Box<dyn Iterator<Item = ResourceOptions> + '_>, DataError> {
-        self.inner.supported_options_for_key(key).map(|iter| {
+    ) -> Result<std::vec::Vec<ResourceOptions>, DataError> {
+        self.inner.supported_options_for_key(key).map(|vec| {
             // Use filter_map instead of filter to avoid cloning the options
-            let filtered_iter = iter.filter_map(move |options| {
-                let request = DataRequest {
-                    options,
-                    metadata: Default::default(),
-                };
-                if (self.predicate)(&request) {
-                    Some(request.options)
-                } else {
-                    None
-                }
-            });
-            let boxed_filtered_iter: Box<dyn Iterator<Item = ResourceOptions>> =
-                Box::new(filtered_iter);
-            boxed_filtered_iter
+            vec.into_iter()
+                .filter_map(move |options| {
+                    let request = DataRequest {
+                        options,
+                        metadata: Default::default(),
+                    };
+                    if (self.predicate)(&request) {
+                        Some(request.options)
+                    } else {
+                        None
+                    }
+                })
+                .collect()
         })
     }
 }
@@ -180,25 +177,22 @@ where
     F: Fn(&DataRequest) -> bool,
     D: datagen::IterableResourceProvider<M>,
 {
-    fn supported_options(
-        &self,
-    ) -> Result<Box<dyn Iterator<Item = ResourceOptions> + '_>, DataError> {
-        self.inner.supported_options().map(|iter| {
+    fn supported_options(&self) -> Result<std::vec::Vec<ResourceOptions>, DataError> {
+        self.inner.supported_options().map(|vec| {
             // Use filter_map instead of filter to avoid cloning the options
-            let filtered_iter = iter.filter_map(move |options| {
-                let request = DataRequest {
-                    options,
-                    metadata: Default::default(),
-                };
-                if (self.predicate)(&request) {
-                    Some(request.options)
-                } else {
-                    None
-                }
-            });
-            let boxed_filtered_iter: Box<dyn Iterator<Item = ResourceOptions>> =
-                Box::new(filtered_iter);
-            boxed_filtered_iter
+            vec.into_iter()
+                .filter_map(move |options| {
+                    let request = DataRequest {
+                        options,
+                        metadata: Default::default(),
+                    };
+                    if (self.predicate)(&request) {
+                        Some(request.options)
+                    } else {
+                        None
+                    }
+                })
+                .collect()
         })
     }
 }

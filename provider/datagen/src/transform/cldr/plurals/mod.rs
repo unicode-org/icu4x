@@ -108,23 +108,13 @@ impl<M: ResourceMarker<Yokeable = PluralRulesV1<'static>>> ResourceProvider<M> f
     }
 }
 
-icu_provider::impl_dyn_provider!(
-    PluralsProvider,
-    [OrdinalV1Marker, CardinalV1Marker,],
-    CRABBAKE,
-    SERDE_SE,
-    ITERABLE_CRABBAKE,
-    ITERABLE_SERDE_SE,
-    DATA_CONVERTER
-);
+icu_provider::make_exportable_provider!(PluralsProvider, [OrdinalV1Marker, CardinalV1Marker,]);
 
 impl<M: ResourceMarker<Yokeable = PluralRulesV1<'static>>> IterableResourceProvider<M>
     for PluralsProvider
 {
-    fn supported_options(
-        &self,
-    ) -> Result<Box<dyn Iterator<Item = ResourceOptions> + '_>, DataError> {
-        Ok(Box::new(
+    fn supported_options(&self) -> Result<Vec<ResourceOptions>, DataError> {
+        Ok(
             #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
             self.get_rules_for(M::KEY)?
                 .as_ref()
@@ -135,10 +125,9 @@ impl<M: ResourceMarker<Yokeable = PluralRulesV1<'static>>> IterableResourceProvi
                 .iter_keys()
                 // TODO(#568): Avoid the clone
                 .cloned()
-                .collect::<Vec<_>>()
-                .into_iter()
-                .map(Into::<ResourceOptions>::into),
-        ))
+                .map(ResourceOptions::from)
+                .collect(),
+        )
     }
 }
 

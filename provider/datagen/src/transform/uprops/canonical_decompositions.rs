@@ -74,20 +74,15 @@ impl ResourceProvider<CanonicalDecompositionDataV1Marker> for CanonicalDecomposi
     }
 }
 
-icu_provider::impl_dyn_provider!(
+icu_provider::make_exportable_provider!(
     CanonicalDecompositionDataProvider,
-    [CanonicalDecompositionDataV1Marker,],
-    CRABBAKE,
-    SERDE_SE,
-    ITERABLE_CRABBAKE,
-    ITERABLE_SERDE_SE,
-    DATA_CONVERTER
+    [CanonicalDecompositionDataV1Marker,]
 );
 
 impl IterableResourceProvider<CanonicalDecompositionDataV1Marker>
     for CanonicalDecompositionDataProvider
 {
-    fn supported_options(&self) -> Result<Box<dyn Iterator<Item = ResourceOptions>>, DataError> {
-        Ok(Box::new(core::iter::once(ResourceOptions::default())))
+    fn supported_options(&self) -> Result<Vec<ResourceOptions>, DataError> {
+        Ok(vec![ResourceOptions::default()])
     }
 }

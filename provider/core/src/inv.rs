@@ -4,11 +4,7 @@
 
 //! Locale-invariant data provider that requires no I/O.
 
-#[cfg(feature = "datagen")]
-use crate::datagen::IterableDynProvider;
 use crate::prelude::*;
-#[cfg(feature = "datagen")]
-use alloc::boxed::Box;
 
 /// A locale-invariant data provider. Sometimes useful for testing. Not intended to be used in
 /// production environments.
@@ -59,19 +55,5 @@ where
             metadata: DataResponseMetadata::default(),
             payload: Some(DataPayload::from_owned(M::Yokeable::default())),
         })
-    }
-}
-
-#[cfg(feature = "datagen")]
-impl<M> IterableDynProvider<M> for InvariantDataProvider
-where
-    M: DataMarker,
-    M::Yokeable: Default,
-{
-    fn supported_options_for_key(
-        &self,
-        _: ResourceKey,
-    ) -> Result<Box<dyn Iterator<Item = ResourceOptions>>, DataError> {
-        Ok(Box::new(core::iter::once(ResourceOptions::default())))
     }
 }

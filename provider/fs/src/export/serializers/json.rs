@@ -4,8 +4,8 @@
 
 use super::AbstractSerializer;
 use icu_provider::buf::BufferFormat;
+use icu_provider::datagen::*;
 use icu_provider::prelude::*;
-use icu_provider::serde::SerializeMarker;
 use std::io::{self, Write};
 
 #[non_exhaustive]
@@ -41,14 +41,15 @@ impl Default for Options {
 impl AbstractSerializer for Serializer {
     fn serialize(
         &self,
-        obj: DataPayload<SerializeMarker>,
+        obj: &DataPayload<ExportMarker>,
         sink: &mut dyn io::Write,
     ) -> Result<(), DataError> {
         let mut sink = crlify::BufWriterWithLineEndingFix::new(sink);
         match self.style {
             StyleOption::Compact => obj.serialize(&mut serde_json::Serializer::new(&mut sink)),
             StyleOption::Pretty => obj.serialize(&mut serde_json::Serializer::pretty(&mut sink)),
-        }?;
+        }
+        .map_err(|e| DataError::custom("JSON serialize").with_display_context(&e))?;
         // Write an empty line at the end of the document
         writeln!(sink)?;
         Ok(())

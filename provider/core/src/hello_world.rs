@@ -135,18 +135,10 @@ impl ResourceProvider<HelloWorldV1Marker> for HelloWorldProvider {
     }
 }
 
-impl_dyn_provider!(HelloWorldProvider, [HelloWorldV1Marker,], ANY);
+impl_dyn_provider!(HelloWorldProvider, [HelloWorldV1Marker,], AnyMarker);
 
 #[cfg(feature = "datagen")]
-impl_dyn_provider!(
-    HelloWorldProvider,
-    [HelloWorldV1Marker,],
-    SERDE_SE,
-    CRABBAKE,
-    ITERABLE_SERDE_SE,
-    ITERABLE_CRABBAKE,
-    DATA_CONVERTER
-);
+make_exportable_provider!(HelloWorldProvider, [HelloWorldV1Marker,]);
 
 pub struct HelloWorldJsonProvider(HelloWorldProvider);
 
@@ -174,15 +166,13 @@ impl BufferProvider for HelloWorldJsonProvider {
 
 #[cfg(feature = "datagen")]
 impl IterableResourceProvider<HelloWorldV1Marker> for HelloWorldProvider {
-    fn supported_options(
-        &self,
-    ) -> Result<alloc::boxed::Box<dyn Iterator<Item = ResourceOptions> + '_>, DataError> {
-        Ok(alloc::boxed::Box::new(
-            self.map
-                .iter_keys()
-                .cloned()
-                .map(Into::<ResourceOptions>::into),
-        ))
+    fn supported_options(&self) -> Result<Vec<ResourceOptions>, DataError> {
+        Ok(self
+            .map
+            .iter_keys()
+            .cloned()
+            .map(ResourceOptions::from)
+            .collect())
     }
 }
 
