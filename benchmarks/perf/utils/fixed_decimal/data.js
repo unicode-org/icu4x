@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1652386540260,
+  "lastUpdate": 1652395580690,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -26428,6 +26428,66 @@ window.BENCHMARK_DATA = {
           {
             "name": "from_string/1000000001",
             "value": 77,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "5915ba25a6e27d97902f1c632195cfa39cc0ecaf",
+          "message": "Update roadmap.md",
+          "timestamp": "2022-05-12T15:36:07-07:00",
+          "tree_id": "521a8933d1f905362f7e46b5c43b55a487d39916",
+          "url": "https://github.com/unicode-org/icu4x/commit/5915ba25a6e27d97902f1c632195cfa39cc0ecaf"
+        },
+        "date": 1652395561907,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 110124,
+            "range": "± 743",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 23354,
+            "range": "± 46",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 69359,
+            "range": "± 420",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 186,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 95,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 76,
             "range": "± 0",
             "unit": "ns/iter"
           }
