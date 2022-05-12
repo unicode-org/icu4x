@@ -28,7 +28,9 @@ use icu_calendar::{Date,
                    types::IsoWeekday};
 
 // Creating ISO date: 1992-09-02.
-let mut date_iso = Date::new_iso_date_from_integers(1992, 9, 2).unwrap();
+let mut date_iso = Date::new_iso_date_from_integers(1992, 9, 2)
+    .expect("Failed to initialize ISO Date instance.");
+
 assert_eq!(date_iso.day_of_week(), IsoWeekday::Wednesday);
 assert_eq!(date_iso.year().number, 1992);
 assert_eq!(date_iso.month().number, 9);
@@ -51,7 +53,8 @@ assert_eq!(date_iso.month().number, 9);
 assert_eq!(date_iso.day_of_month().0, 2);
 
 // Creating ISO date: 2022-01-30.
-let newer_date_iso = Date::new_iso_date_from_integers(2022, 1, 30).unwrap();
+let newer_date_iso = Date::new_iso_date_from_integers(2022, 1, 30)
+    .expect("Failed to initialize ISO Date instance.");
 
 // Comparing dates: 2022-01-30 and 1992-09-02.
 let duration = newer_date_iso.until(&date_iso, DateDurationUnit::Years, DateDurationUnit::Days);
@@ -74,7 +77,9 @@ use icu_calendar::{Date,
                    indian::Indian};
 
 // Creating ISO date: 1992-09-02.
-let mut date_iso = Date::new_iso_date_from_integers(1992, 9, 2).unwrap();
+let mut date_iso = Date::new_iso_date_from_integers(1992, 9, 2)
+    .expect("Failed to initialize ISO Date instance.");
+
 assert_eq!(date_iso.year().number, 1992);
 assert_eq!(date_iso.month().number, 9);
 assert_eq!(date_iso.day_of_month().0, 2);
@@ -108,7 +113,9 @@ use icu_calendar::{DateTime,
                    types::Time};
 
 // Creating ISO date: 1992-09-02 8:59
-let mut datetime_iso = DateTime::new_iso_datetime_from_integers(1992, 9, 2, 8, 59, 0).unwrap();
+let mut datetime_iso = DateTime::new_iso_datetime_from_integers(1992, 9, 2, 8, 59, 0)
+    .expect("Failed to initialize ISO DateTime instance.");
+
 assert_eq!(datetime_iso.date.day_of_week(), IsoWeekday::Wednesday);
 assert_eq!(datetime_iso.date.year().number, 1992);
 assert_eq!(datetime_iso.date.month().number, 9);
@@ -121,7 +128,8 @@ assert_eq!(datetime_iso.time.nanosecond, NanoSecond::new_unchecked(0));
 // Advancing date by 1 year, 2 months, 3 weeks, 4 days.
 datetime_iso.date.add(DateDuration::new(1, 2, 3, 4));
 // New time of 14:30
-datetime_iso.time = Time::try_new(14, 30, 0, 0).unwrap();
+datetime_iso.time = Time::try_new(14, 30, 0, 0)
+    .expect("Failed to initialize Time instance.");
 
 assert_eq!(datetime_iso.date.year().number, 1993);
 assert_eq!(datetime_iso.date.month().number, 11);
