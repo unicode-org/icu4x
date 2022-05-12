@@ -1403,6 +1403,7 @@ dependencies = [
  "icu_calendar",
  "icu_casemapping",
  "icu_codepointtrie",
+ "icu_codepointtrie_builder",
  "icu_datetime",
  "icu_decimal",
  "icu_list",

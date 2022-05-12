@@ -17,13 +17,12 @@
 //! [UAX14]: https://www.unicode.org/reports/tr14/
 //! [UAX29]: https://www.unicode.org/reports/tr29/
 
-use crate::transform::reader::read_path_to_string;
 use crate::transform::uprops::{
     BinaryPropertyUnicodeSetDataProvider, EnumeratedPropertyCodePointTrieProvider,
 };
 use crate::SourceData;
-use icu_codepointtrie::toml::CodePointTrieToml;
-use icu_codepointtrie::CodePointTrie;
+use icu_codepointtrie::{CodePointTrie, TrieType};
+use icu_codepointtrie_builder::{CodePointTrieBuilder, CodePointTrieBuilderData};
 use icu_properties::{
     maps, sets, EastAsianWidth, GeneralCategory, GraphemeClusterBreak, LineBreak, SentenceBreak,
     WordBreak,
@@ -34,7 +33,7 @@ use icu_segmenter::symbols::*;
 use icu_segmenter::*;
 use std::fmt::Debug;
 use std::fs::File;
-use std::io::{BufWriter, Read, Write};
+use std::io::Read;
 use std::path::PathBuf;
 use zerovec::ZeroVec;
 
@@ -260,18 +259,6 @@ impl SegmenterRuleProvider {
             .split(&['/', '@'])
             .nth(1)
             .expect("ResourceKey format should be valid!");
-        let mut data_path = self.source.get_segmenter_data_root()?.join(file_name);
-        data_path.set_extension("toml");
-        Ok(data_path)
-    }
-
-    fn toml_data_path(&self, key: ResourceKey) -> Result<PathBuf, DataError> {
-        let break_type = key
-            .get_path()
-            .split(&['/', '@'])
-            .nth(1)
-            .expect("ResourceKey format should be valid!");
-        let file_name = format!("{}_cptrie", break_type);
         let mut data_path = self.source.get_segmenter_data_root()?.join(file_name);
         data_path.set_extension("toml");
         Ok(data_path)
@@ -646,41 +633,13 @@ impl SegmenterRuleProvider {
         // Return 127 if the complex language isn't handled.
         let complex_property = get_index_from_name(&properties_names, "SA").unwrap_or(127);
 
-        // Load the CodePointTrie and ensure it is consistent with the generated data
-        // TODO(#1837): Build the CodePointTrie on the fly
-        let property_trie_toml_path = self.toml_data_path(key).map_err(|e| {
-            DataError::custom("could not get toml data path").with_error_context(&e)
-        })?;
-        let property_trie_toml_str = read_path_to_string(&property_trie_toml_path)?;
-        let property_trie_toml: CodePointTrieToml = toml::from_str(&property_trie_toml_str)
-            .map_err(|e| {
-                DataError::custom("could not deserialize code point trie")
-                    .with_path(&property_trie_toml_path)
-                    .with_error_context(&e)
-            })?;
-        let property_trie = CodePointTrie::<u8>::try_from(&property_trie_toml).map_err(|e| {
-            DataError::custom("could not convert TOML to code point trie")
-                .with_path(&property_trie_toml_path)
-                .with_display_context(&e)
-        })?;
-        for (cp, actual_value) in properties_map.iter().enumerate() {
-            let expected_value = property_trie.get(cp.try_into().unwrap());
-            if expected_value != *actual_value {
-                let mut prop_int_path = property_trie_toml_path;
-                prop_int_path.set_extension("txt");
-                let f = File::create(&prop_int_path).expect("Unable to create file");
-                let mut f = BufWriter::new(f);
-                for value in properties_map.iter() {
-                    writeln!(&mut f, "{}", value).expect("Unable to write data");
-                }
-                return Err(
-                    DataError::custom("Segmenter CodePointTrie out of sync with data! Re-run list_to_ucptrie using data printed to .txt file")
-                        .with_display_context(&cp)
-                        .with_path(&prop_int_path)
-                        .with_key(key),
-                );
-            }
-        }
+        // Generate a CodePointTrie from properties_map
+        let property_trie: CodePointTrie<u8> = CodePointTrieBuilder {
+            data: CodePointTrieBuilderData::ValuesByCodePoint(&properties_map),
+            default_value: 0,
+            error_value: 0,
+            trie_type: TrieType::Small
+        }.build();
 
         Ok(RuleBreakDataV1 {
             property_table: RuleBreakPropertyTable(property_trie),
