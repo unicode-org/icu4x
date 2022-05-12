@@ -167,12 +167,13 @@ impl<'l, 's, Y: RuleBreakType<'l, 's>> RuleBreakIterator<'l, 's, Y> {
     }
 
     fn get_break_property(&self, codepoint: Y::CharType) -> u8 {
-        let codepoint = codepoint.into() as usize;
+        let codepoint = codepoint.into();
         if codepoint >= 897 * 1024 {
             // Unknown
             return 0;
         }
-        self.data.property_table.0.get(codepoint).unwrap_or(0)
+        // Note: Default value is 0 == UNKNOWN
+        self.data.property_table.0.get(codepoint)
     }
 
     fn get_break_state_from_table(&self, left: u8, right: u8) -> i8 {

@@ -1403,6 +1403,7 @@ dependencies = [
  "icu_calendar",
  "icu_casemapping",
  "icu_codepointtrie",
+ "icu_codepointtrie_builder",
  "icu_datetime",
  "icu_decimal",
  "icu_list",
@@ -1672,6 +1673,7 @@ version = "0.6.0"
 dependencies = [
  "criterion",
  "icu_char16trie",
+ "icu_codepointtrie",
  "icu_provider",
  "icu_segmenter_lstm",
  "icu_testdata",

@@ -22,6 +22,7 @@ use crate::transform::uprops::{
 };
 use crate::SourceData;
 use icu_codepointtrie::CodePointTrie;
+use icu_codepointtrie_builder::{CodePointTrieBuilder, CodePointTrieBuilderData};
 use icu_properties::{
     maps, sets, EastAsianWidth, GeneralCategory, GraphemeClusterBreak, LineBreak, SentenceBreak,
     WordBreak,
@@ -30,6 +31,7 @@ use icu_provider::datagen::IterableResourceProvider;
 use icu_provider::prelude::*;
 use icu_segmenter::symbols::*;
 use icu_segmenter::*;
+use std::fmt::Debug;
 use std::fs::File;
 use std::io::Read;
 use std::path::PathBuf;
@@ -631,8 +633,17 @@ impl SegmenterRuleProvider {
         // Return 127 if the complex language isn't handled.
         let complex_property = get_index_from_name(&properties_names, "SA").unwrap_or(127);
 
+        // Generate a CodePointTrie from properties_map
+        let property_trie: CodePointTrie<u8> = CodePointTrieBuilder {
+            data: CodePointTrieBuilderData::ValuesByCodePoint(&properties_map),
+            default_value: 0,
+            error_value: 0,
+            trie_type: self.source.trie_type(),
+        }
+        .build();
+
         Ok(RuleBreakDataV1 {
-            property_table: RuleBreakPropertyTable(ZeroVec::Owned(properties_map)),
+            property_table: RuleBreakPropertyTable(property_trie),
             break_state_table: RuleBreakStateTable(ZeroVec::Owned(break_state_table)),
             property_count: property_length as u8,
             last_codepoint_property: (simple_properties_count - 1) as i8,
