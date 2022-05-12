@@ -31,7 +31,7 @@ The following timeline is derived from [ICU4X 1.0 PRD](./prd.md) and is optimize
 		* [x] Data provider productionization ([#873](https://github.com/unicode-org/icu4x/issues/873))
 		* [x] Enable core components on `#![no_std]` ([#812](https://github.com/unicode-org/icu4x/issues/812))
 		* [x] Static Data Provider (#78)
-	* [ ] October-December
+	* [x] October-December
 		* [x] 0.4 Release ([Milestone](https://github.com/unicode-org/icu4x/milestone/11))
 			* [x] DateTime performance (#603)
 			* [x] Finish full-stack enumerated Unicode properties ([#936](https://github.com/unicode-org/icu4x/issues/936))([#1160](https://github.com/unicode-org/icu4x/issues/1160))([#1159](https://github.com/unicode-org/icu4x/issues/1159))([#1158](https://github.com/unicode-org/icu4x/issues/1158))([#1074](https://github.com/unicode-org/icu4x/issues/1074))([#1073](https://github.com/unicode-org/icu4x/issues/1073))
@@ -44,19 +44,26 @@ The following timeline is derived from [ICU4X 1.0 PRD](./prd.md) and is optimize
 * [ ] 2022
 	* [ ] January-March
 		* [ ] 0.6 (1.0 RC) Release ([Milestone](https://github.com/unicode-org/icu4x/milestone/15))
-			* [ ] Data + API stability
-			* [ ] Finish full-stack Script_Extensions property ([#1577](https://github.com/unicode-org/icu4x/issues/1577))
-			* [ ] Implement full-stack properties of strings
-			* [ ] User-Friendly Data Slicing([#1110](https://github.com/unicode-org/icu4x/issues/1110))
-			* [ ] User-friendly data tooling (multi-blob, source data downloader)([#1110](https://github.com/unicode-org/icu4x/issues/1110))
-			* [ ] Implement locale fallbacking in data loading([#1109](https://github.com/unicode-org/icu4x/issues/1109))
-			* [ ] Normalizer ([#972](https://github.com/unicode-org/icu4x/issues/972))
-			* [ ] Novel DateTime Pattern Selection Algorithm ([#645](https://github.com/unicode-org/icu4x/issues/645))
-			* [ ] Collator ([#971](https://github.com/unicode-org/icu4x/issues/971))
-			* [ ] Calendrical calculations and formatting for Coptic, Japanese, and Indian National ([#534](https://github.com/unicode-org/icu4x/issues/534))
+			* [x] Finish full-stack Script_Extensions property ([#1577](https://github.com/unicode-org/icu4x/issues/1577))
+			* [x] User-Friendly Data Slicing (part of [#1110](https://github.com/unicode-org/icu4x/issues/1110))
+			* [x] Add Coptic, Indian, and Ethiopic calendars
+			* [x] Fully zero-copy data
+			* [x] Bi-di support in Rust
+			* [x] TimeZoneFormat
 	* [ ] April-June
 		* [ ] 1.0 Release ([Milestone](https://github.com/unicode-org/icu4x/milestone/16))
-			* [ ] UnicodeSet L3b ([#168](https://github.com/unicode-org/icu4x/issues/533))
-			* [ ] Time Zone Calculations ([#533](https://github.com/unicode-org/icu4x/issues/533))
+			* [ ] Data + API stability
+			* [ ] Full FFI coverage
 			* [ ] Segmenter ([#109](https://github.com/unicode-org/icu4x/issues/109)) 
+			* [ ] Time Zone Calculations ([#533](https://github.com/unicode-org/icu4x/issues/533))
+			* [ ] User-friendly data tooling (multi-blob, source data downloader) (part of [#1110](https://github.com/unicode-org/icu4x/issues/1110))
+			* [ ] Implement locale fallbacking in data loading([#1109](https://github.com/unicode-org/icu4x/issues/1109))
+			* [ ] Collator ([#971](https://github.com/unicode-org/icu4x/issues/971))
+			* [ ] Calendrical calculations and formatting for Coptic, Japanese, and Indian National ([#534](https://github.com/unicode-org/icu4x/issues/534))
+	* [ ] July-December
+		* [ ] 1.1 Release ([Milestone](https://github.com/unicode-org/icu4x/milestone/32))
+			* [ ] Implement full-stack properties of strings
+			* [ ] Normalizer ([#972](https://github.com/unicode-org/icu4x/issues/972))
+			* [ ] Novel DateTime Pattern Selection Algorithm ([#645](https://github.com/unicode-org/icu4x/issues/645))
+			* [ ] UnicodeSet L3b ([#168](https://github.com/unicode-org/icu4x/issues/533))
 		
