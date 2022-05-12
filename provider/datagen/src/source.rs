@@ -3,15 +3,27 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::error::DatagenError;
+use icu_codepointtrie::TrieType;
 use icu_provider::DataError;
 use std::path::{Path, PathBuf};
 
 /// Bag of options for datagen source data.
-#[derive(Clone, Debug, Default)]
+#[derive(Clone, Debug)]
 #[non_exhaustive]
 pub struct SourceData {
     cldr_paths: Option<CldrPaths>,
     uprops_root: Option<PathBuf>,
+    trie_type: TrieType,
+}
+
+impl Default for SourceData {
+    fn default() -> Self {
+        Self {
+            cldr_paths: None,
+            uprops_root: None,
+            trie_type: TrieType::Small,
+        }
+    }
 }
 
 impl SourceData {
@@ -25,7 +37,7 @@ impl SourceData {
                 root,
                 locale_subset,
             }),
-            uprops_root: self.uprops_root,
+            ..self
         }
     }
 
@@ -34,8 +46,19 @@ impl SourceData {
     /// [GitHub downloads](https://github.com/unicode-org/icu/releases)).
     pub fn with_uprops(self, uprops_root: PathBuf) -> Self {
         Self {
-            cldr_paths: self.cldr_paths,
             uprops_root: Some(uprops_root),
+            ..self
+        }
+    }
+
+    /// Sets the [`TrieType`] to be used when generating data.
+    ///
+    /// For Unicode Properties data, the TrieType is implicitly set when selecting the
+    /// root directory (either "small" or "fast").
+    pub fn with_trie_type(self, trie_type: TrieType) -> Self {
+        Self {
+            trie_type,
+            ..self
         }
     }
 
@@ -67,6 +90,10 @@ impl SourceData {
     #[cfg(feature = "experimental")]
     pub(crate) fn get_segmenter_data_root(&self) -> Result<PathBuf, DataError> {
         Ok(PathBuf::from(std::env!("CARGO_MANIFEST_DIR")).join("data"))
+    }
+
+    pub(crate) fn trie_type(&self) -> TrieType {
+        self.trie_type
     }
 }
 

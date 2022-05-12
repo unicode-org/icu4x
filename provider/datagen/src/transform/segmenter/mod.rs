@@ -21,7 +21,7 @@ use crate::transform::uprops::{
     BinaryPropertyUnicodeSetDataProvider, EnumeratedPropertyCodePointTrieProvider,
 };
 use crate::SourceData;
-use icu_codepointtrie::{CodePointTrie, TrieType};
+use icu_codepointtrie::CodePointTrie;
 use icu_codepointtrie_builder::{CodePointTrieBuilder, CodePointTrieBuilderData};
 use icu_properties::{
     maps, sets, EastAsianWidth, GeneralCategory, GraphemeClusterBreak, LineBreak, SentenceBreak,
@@ -638,7 +638,7 @@ impl SegmenterRuleProvider {
             data: CodePointTrieBuilderData::ValuesByCodePoint(&properties_map),
             default_value: 0,
             error_value: 0,
-            trie_type: TrieType::Small
+            trie_type: self.source.trie_type(),
         }.build();
 
         Ok(RuleBreakDataV1 {

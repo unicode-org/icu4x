@@ -14,6 +14,7 @@ use simple_logger::SimpleLogger;
 use std::fs::File;
 use std::path::PathBuf;
 use std::str::FromStr;
+use icu_codepointtrie::TrieType;
 
 fn main() -> eyre::Result<()> {
     let matches = App::new("ICU4X Data Exporter")
@@ -102,11 +103,15 @@ fn main() -> eyre::Result<()> {
                 .takes_value(true),
         )
         .arg(
-            Arg::with_name("UPROPS_MODE")
-                .long("uprops-mode")
+            Arg::with_name("TRIE_TYPE")
+                .long("trie-type")
                 .takes_value(true)
                 .possible_values(&["small", "fast"])
-                .help("Whether to optimize Unicode property data structures for size (\"small\") or speed (\"fast\")")
+                .help(
+                    "Whether to optimize CodePointTrie data structures for size (\"small\") or speed (\"fast\").\n\
+                    Using \"fast\" mode increases performance of CJK text processing and segmentation. For more\n\
+                    information, see the TrieType enum."
+                )
                 .default_value("small"),
         )
         .arg(
@@ -271,10 +276,16 @@ fn main() -> eyre::Result<()> {
                 &cached_path::Options::default().extract()
             )?
             .join("icuexportdata_uprops_full")
-            .join(matches.value_of("UPROPS_MODE").unwrap()));
+            .join(matches.value_of("TRIE_TYPE").unwrap()));
     } else if let Some(path) = matches.value_of("UPROPS_ROOT") {
         source_data = source_data.with_uprops(PathBuf::from(path));
     }
+
+    source_data = source_data.with_trie_type(match matches.value_of("TRIE_TYPE") {
+        Some("small") => TrieType::Small,
+        Some("fast") => TrieType::Fast,
+        _ => unreachable!()
+    });
 
     let out = match matches
         .value_of("FORMAT")
