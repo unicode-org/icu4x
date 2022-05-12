@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1652378142895,
+  "lastUpdate": 1652386540260,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -26368,6 +26368,66 @@ window.BENCHMARK_DATA = {
           {
             "name": "from_string/1000000001",
             "value": 76,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "6b0ece669ba5c12cd35405ff1d0d8ed9699b521b",
+          "message": "Use CodePointTrie in Segmenter (#1839)",
+          "timestamp": "2022-05-12T13:05:00-07:00",
+          "tree_id": "c09284f5792d1b98a4eb08931358b1394fa8277e",
+          "url": "https://github.com/unicode-org/icu4x/commit/6b0ece669ba5c12cd35405ff1d0d8ed9699b521b"
+        },
+        "date": 1652386519705,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 97406,
+            "range": "± 368",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 20173,
+            "range": "± 86",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 62378,
+            "range": "± 471",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 174,
+            "range": "± 2",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 64,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 77,
             "range": "± 0",
             "unit": "ns/iter"
           }
