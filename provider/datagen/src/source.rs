@@ -56,10 +56,7 @@ impl SourceData {
     /// For Unicode Properties data, the TrieType is implicitly set when selecting the
     /// root directory (either "small" or "fast").
     pub fn with_trie_type(self, trie_type: TrieType) -> Self {
-        Self {
-            trie_type,
-            ..self
-        }
+        Self { trie_type, ..self }
     }
 
     #[cfg(test)]

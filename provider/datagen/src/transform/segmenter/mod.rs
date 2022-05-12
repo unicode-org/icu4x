@@ -639,7 +639,8 @@ impl SegmenterRuleProvider {
             default_value: 0,
             error_value: 0,
             trie_type: self.source.trie_type(),
-        }.build();
+        }
+        .build();
 
         Ok(RuleBreakDataV1 {
             property_table: RuleBreakPropertyTable(property_trie),

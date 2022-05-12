@@ -5,6 +5,7 @@
 use clap::{App, Arg, ArgGroup};
 use eyre::WrapErr;
 
+use icu_codepointtrie::TrieType;
 use icu_datagen::{get_all_keys, SourceData};
 use icu_locid::LanguageIdentifier;
 use icu_provider::hello_world::HelloWorldV1Marker;
@@ -14,7 +15,6 @@ use simple_logger::SimpleLogger;
 use std::fs::File;
 use std::path::PathBuf;
 use std::str::FromStr;
-use icu_codepointtrie::TrieType;
 
 fn main() -> eyre::Result<()> {
     let matches = App::new("ICU4X Data Exporter")
@@ -284,7 +284,7 @@ fn main() -> eyre::Result<()> {
     source_data = source_data.with_trie_type(match matches.value_of("TRIE_TYPE") {
         Some("small") => TrieType::Small,
         Some("fast") => TrieType::Fast,
-        _ => unreachable!()
+        _ => unreachable!(),
     });
 
     let out = match matches
