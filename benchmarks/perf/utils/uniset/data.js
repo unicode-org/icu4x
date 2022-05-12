@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1652378059754,
+  "lastUpdate": 1652386459619,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -27058,6 +27058,60 @@ window.BENCHMARK_DATA = {
           {
             "name": "uniset/contains/best",
             "value": 3,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/worst",
+            "value": 3,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/worst",
+            "value": 3,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "6b0ece669ba5c12cd35405ff1d0d8ed9699b521b",
+          "message": "Use CodePointTrie in Segmenter (#1839)",
+          "timestamp": "2022-05-12T13:05:00-07:00",
+          "tree_id": "c09284f5792d1b98a4eb08931358b1394fa8277e",
+          "url": "https://github.com/unicode-org/icu4x/commit/6b0ece669ba5c12cd35405ff1d0d8ed9699b521b"
+        },
+        "date": 1652386436704,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 46783062,
+            "range": "± 1183488",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/best",
+            "value": 2,
             "range": "± 0",
             "unit": "ns/iter"
           },
