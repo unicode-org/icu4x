@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1652369438350,
+  "lastUpdate": 1652378142895,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -26291,6 +26291,66 @@ window.BENCHMARK_DATA = {
             "name": "isize/larger",
             "value": 69397,
             "range": "± 101",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 186,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 95,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 76,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "1092f1f7ada610f68cdd020be8ebce63b1fe78b1",
+          "message": "Improve check_is macro for new combined functions (#1821)",
+          "timestamp": "2022-05-12T10:43:50-07:00",
+          "tree_id": "3c6008f26f887b25382ab29931f92aaf8f3093c6",
+          "url": "https://github.com/unicode-org/icu4x/commit/1092f1f7ada610f68cdd020be8ebce63b1fe78b1"
+        },
+        "date": 1652378123079,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 110222,
+            "range": "± 306",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 23297,
+            "range": "± 51",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 69457,
+            "range": "± 244",
             "unit": "ns/iter"
           },
           {
