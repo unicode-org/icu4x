@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1652298148234,
+  "lastUpdate": 1652368878678,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -14783,6 +14783,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/7fc81cce12d5af5f40b91904a77accd9d476cd9d"
         },
         "date": 1652298124787,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4475179,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "zibi@unicode.org",
+            "name": "Zibi Braniecki",
+            "username": "zbraniecki"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "7fce7de5a698e50c9acf2c7fb864375a5528ab9f",
+          "message": "Add LanguageIdentifier iai benches (#1865)\n\n* Add LanguageIdentifier iai benches\r\n\r\n* Add license header\r\n\r\n* Dont use iai macro\r\n\r\n* Add cmp_bytes",
+          "timestamp": "2022-05-12T08:19:16-07:00",
+          "tree_id": "af69b53a62ad0571ee75eaa21bb81c231f5d6469",
+          "url": "https://github.com/unicode-org/icu4x/commit/7fce7de5a698e50c9acf2c7fb864375a5528ab9f"
+        },
+        "date": 1652368856902,
         "tool": "ndjson",
         "benches": [
           {
