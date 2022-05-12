@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1652298715965,
+  "lastUpdate": 1652369354682,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -26968,6 +26968,60 @@ window.BENCHMARK_DATA = {
           {
             "name": "uniset/contains_range/worst",
             "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "zibi@unicode.org",
+            "name": "Zibi Braniecki",
+            "username": "zbraniecki"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "7fce7de5a698e50c9acf2c7fb864375a5528ab9f",
+          "message": "Add LanguageIdentifier iai benches (#1865)\n\n* Add LanguageIdentifier iai benches\r\n\r\n* Add license header\r\n\r\n* Dont use iai macro\r\n\r\n* Add cmp_bytes",
+          "timestamp": "2022-05-12T08:19:16-07:00",
+          "tree_id": "af69b53a62ad0571ee75eaa21bb81c231f5d6469",
+          "url": "https://github.com/unicode-org/icu4x/commit/7fce7de5a698e50c9acf2c7fb864375a5528ab9f"
+        },
+        "date": 1652369332577,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 49150326,
+            "range": "± 463444",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/best",
+            "value": 3,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/worst",
+            "value": 3,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/best",
+            "value": 3,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/worst",
+            "value": 3,
             "range": "± 0",
             "unit": "ns/iter"
           }
