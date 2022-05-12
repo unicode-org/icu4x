@@ -89,7 +89,7 @@ impl SourceData {
         Ok(PathBuf::from(std::env!("CARGO_MANIFEST_DIR")).join("data"))
     }
 
-    #[allow(dead_code)] // used only with the "experimental" feature for now
+    #[cfg_attr(not(feature = "experimental"), allow(dead_code))]
     pub(crate) fn trie_type(&self) -> TrieType {
         self.trie_type
     }
