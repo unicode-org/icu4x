@@ -86,7 +86,7 @@ fn main() {
                     options: options.clone(),
                     metadata: Default::default(),
                 },
-            ).unwrap().take_payload().unwrap();
+            ).unwrap().0.take_payload().unwrap();
 
             let stats: DataPayload<HeapStatsMarker> =
                 converter.convert(key, payload).map_err(|e| e.1).unwrap();
