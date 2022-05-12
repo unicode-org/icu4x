@@ -27,7 +27,6 @@ mod de;
 #[cfg(feature = "datagen")]
 mod ser;
 
-pub use de::check_format_supported;
 pub use de::AsDeserializingBufferProvider;
 pub use de::DeserializingBufferProvider;
 
@@ -35,69 +34,3 @@ pub use de::DeserializingBufferProvider;
 pub use ser::SerializeBox;
 #[cfg(feature = "datagen")]
 pub use ser::SerializeMarker;
-
-use crate::buf::BufferFormat;
-
-/// Error type for deserialization.
-#[derive(displaydoc::Display, Debug)]
-#[non_exhaustive]
-pub enum Error {
-    /// An error originating in [`serde_json`].
-    #[cfg(feature = "deserialize_json")]
-    #[displaydoc("{0}")]
-    Json(serde_json::error::Error),
-
-    /// An error originating in [`bincode`].
-    #[cfg(feature = "deserialize_bincode_1")]
-    #[displaydoc("{0}")]
-    Bincode1(bincode::Error),
-
-    /// An error originating in [`postcard`].
-    #[cfg(feature = "deserialize_postcard_07")]
-    #[displaydoc("{0}")]
-    Postcard07(postcard::Error),
-
-    /// An error indicating that the desired buffer format is not available. This usually
-    /// means that a required feature was not enabled
-    #[allow(dead_code)]
-    #[displaydoc("Unavailable buffer format: {0:?} (does icu4x need to be compiled with an additional feature?)")]
-    UnavailableFormat(BufferFormat),
-
-    /// An error originating in [`erased_serde`].
-    #[displaydoc("{0}")]
-    #[cfg(feature = "datagen")]
-    Serde(erased_serde::Error),
-
-    /// An error indicating that the buffer format could not be deduced. This is usually
-    /// unexpected and could indicate a problem with the data pipeline setup.
-    #[displaydoc("Buffer format not specified")]
-    FormatNotSpecified,
-}
-
-#[cfg(feature = "deserialize_json")]
-impl From<serde_json::error::Error> for Error {
-    fn from(e: serde_json::error::Error) -> Self {
-        Error::Json(e)
-    }
-}
-
-#[cfg(feature = "deserialize_bincode_1")]
-impl From<bincode::Error> for Error {
-    fn from(e: bincode::Error) -> Self {
-        Error::Bincode1(e)
-    }
-}
-
-#[cfg(feature = "deserialize_postcard_07")]
-impl From<postcard::Error> for Error {
-    fn from(e: postcard::Error) -> Self {
-        Error::Postcard07(e)
-    }
-}
-
-#[cfg(feature = "datagen")]
-impl From<erased_serde::Error> for Error {
-    fn from(e: erased_serde::Error) -> Self {
-        Error::Serde(e)
-    }
-}

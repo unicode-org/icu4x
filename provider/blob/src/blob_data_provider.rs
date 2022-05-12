@@ -4,7 +4,6 @@
 
 use crate::blob_schema::BlobSchema;
 use alloc::rc::Rc;
-use icu_provider::buf::BufferFormat;
 use icu_provider::prelude::*;
 use serde::de::Deserialize;
 use writeable::Writeable;
@@ -67,7 +66,8 @@ impl BlobDataProvider {
                         blob.resources
                     },
                 )
-            })?,
+            })
+            .map_err(|e| DataError::custom("Postcard error").with_error_context(&e))?,
         })
     }
 
@@ -83,26 +83,29 @@ impl BufferProvider for BlobDataProvider {
         &self,
         key: ResourceKey,
         req: &DataRequest,
-    ) -> Result<DataResponse<BufferMarker>, DataError> {
-        let mut metadata = DataResponseMetadata::default();
-        // TODO(#1109): Set metadata.data_langid correctly.
-        metadata.buffer_format = Some(BufferFormat::Postcard07);
-        Ok(DataResponse {
-            metadata,
-            payload: Some(DataPayload::from_yoked_buffer(
-                self.data
-                    .try_project_cloned_with_capture((key, req), |zm, (key, req), _| {
-                        zm.get(&key.get_hash(), req.options.write_to_string().as_bytes())
-                            .map_err(|e| {
-                                match e {
-                                    KeyError::K0 => DataErrorKind::MissingResourceKey,
-                                    KeyError::K1 => DataErrorKind::MissingResourceOptions,
-                                }
-                                .with_req(key, req)
-                            })
-                    })?,
-            )),
-        })
+    ) -> Result<(DataResponse<BufferMarker>, BufferFormat), DataError> {
+        Ok((
+            DataResponse {
+                // TODO(#1109): Set metadata.data_langid correctly.
+                metadata: Default::default(),
+                payload: Some(DataPayload::from_yoked_buffer(
+                    self.data.try_project_cloned_with_capture(
+                        (key, req),
+                        |zm, (key, req), _| {
+                            zm.get(&key.get_hash(), req.options.write_to_string().as_bytes())
+                                .map_err(|e| {
+                                    match e {
+                                        KeyError::K0 => DataErrorKind::MissingResourceKey,
+                                        KeyError::K1 => DataErrorKind::MissingResourceOptions,
+                                    }
+                                    .with_req(key, req)
+                                })
+                        },
+                    )?,
+                )),
+            },
+            BufferFormat::Postcard07,
+        ))
     }
 }
 

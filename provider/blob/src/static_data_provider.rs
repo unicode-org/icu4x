@@ -56,12 +56,12 @@ impl StaticDataProvider {
     /// Create a [`StaticDataProvider`] from a `'static` blob of ICU4X data.
     pub fn new_from_static_blob(blob: &'static [u8]) -> Result<Self, DataError> {
         Ok(StaticDataProvider {
-            data: BlobSchema::deserialize(&mut postcard::Deserializer::from_bytes(blob)).map(
-                |blob| {
+            data: BlobSchema::deserialize(&mut postcard::Deserializer::from_bytes(blob))
+                .map(|blob| {
                     let BlobSchema::V001(blob) = blob;
                     blob.resources
-                },
-            )?,
+                })
+                .map_err(|e| DataError::custom("Postcard error").with_error_context(&e))?,
         })
     }
 
@@ -100,24 +100,26 @@ impl BufferProvider for StaticDataProvider {
         &self,
         key: ResourceKey,
         req: &DataRequest,
-    ) -> Result<DataResponse<BufferMarker>, DataError> {
-        let mut metadata = DataResponseMetadata::default();
-        // TODO(#1109): Set metadata.data_langid correctly.
-        metadata.buffer_format = Some(BufferFormat::Postcard07);
-        Ok(DataResponse {
-            metadata,
-            payload: Some(DataPayload::from_static_buffer(
-                self.data
-                    .get(&key.get_hash(), req.options.write_to_string().as_bytes())
-                    .map_err(|e| {
-                        match e {
-                            KeyError::K0 => DataErrorKind::MissingResourceKey,
-                            KeyError::K1 => DataErrorKind::MissingResourceOptions,
-                        }
-                        .with_req(key, req)
-                    })?,
-            )),
-        })
+    ) -> Result<(DataResponse<BufferMarker>, BufferFormat), DataError> {
+        Ok((
+            DataResponse {
+                // TODO(#1109): Set metadata.data_langid correctly.
+                metadata: Default::default(),
+                payload: Some(DataPayload::from_static_buffer(
+                    self.data
+                        .get(&key.get_hash(), req.options.write_to_string().as_bytes())
+                        .map_err(|e| {
+                            match e {
+                                KeyError::K0 => DataErrorKind::MissingResourceKey,
+                                KeyError::K1 => DataErrorKind::MissingResourceOptions,
+                            }
+                            .with_req(key, req)
+                        })
+                        .map_err(|e| DataError::custom("Postcard error").with_error_context(&e))?,
+                )),
+            },
+            BufferFormat::Postcard07,
+        ))
     }
 }
 

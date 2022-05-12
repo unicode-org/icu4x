@@ -6,7 +6,6 @@
 
 #![allow(clippy::exhaustive_structs)] // data struct module
 
-use crate::buf::BufferFormat;
 #[cfg(feature = "datagen")]
 use crate::datagen::IterableResourceProvider;
 use crate::helpers;
@@ -157,21 +156,23 @@ impl BufferProvider for HelloWorldJsonProvider {
         &self,
         key: ResourceKey,
         req: &DataRequest,
-    ) -> Result<DataResponse<BufferMarker>, DataError> {
+    ) -> Result<(DataResponse<BufferMarker>, BufferFormat), DataError> {
         key.match_key(HelloWorldV1Marker::KEY)?;
         let result = self.0.load_resource(req)?;
-        let (mut metadata, old_payload) =
+        let (metadata, old_payload) =
             DataResponse::<HelloWorldV1Marker>::take_metadata_and_payload(result)?;
-        metadata.buffer_format = Some(BufferFormat::Json);
         let mut buffer = String::new();
         buffer.push_str("{\"message\":\"");
         helpers::escape_for_json(&old_payload.get().message, &mut buffer);
         buffer.push_str("\"}");
         let boxed_u8: Box<[u8]> = buffer.into_boxed_str().into();
-        Ok(DataResponse {
-            metadata,
-            payload: Some(DataPayload::from_rc_buffer(Rc::from(boxed_u8))),
-        })
+        Ok((
+            DataResponse {
+                metadata,
+                payload: Some(DataPayload::from_rc_buffer(Rc::from(boxed_u8))),
+            },
+            BufferFormat::Json,
+        ))
     }
 }
 

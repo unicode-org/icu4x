@@ -3,9 +3,9 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use super::AbstractSerializer;
-use super::Error;
 use bincode::config::Options as _;
 use icu_provider::buf::BufferFormat;
+use icu_provider::DataError;
 use std::io;
 
 /// A serializer for Bincode.
@@ -22,13 +22,14 @@ impl AbstractSerializer for Serializer {
         &self,
         obj: &dyn erased_serde::Serialize,
         mut sink: &mut dyn io::Write,
-    ) -> Result<(), Error> {
+    ) -> Result<(), DataError> {
         obj.erased_serialize(&mut <dyn erased_serde::Serializer>::erase(
             &mut bincode::Serializer::new(
                 &mut sink,
                 bincode::config::DefaultOptions::new().with_fixint_encoding(),
             ),
-        ))?;
+        ))
+        .map_err(|e| DataError::custom("Bincode serialize").with_error_context(&e))?;
         Ok(())
     }
 

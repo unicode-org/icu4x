@@ -2,7 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use super::Error;
 use crate::dynutil::UpcastDataPayload;
 use crate::prelude::*;
 use crate::yoke::*;
@@ -68,7 +67,7 @@ impl DataPayload<SerializeMarker> {
     pub fn serialize(
         &self,
         mut serializer: &mut dyn erased_serde::Serializer,
-    ) -> Result<(), Error> {
+    ) -> Result<(), erased_serde::Error> {
         self.get().erased_serialize(&mut serializer)?;
         Ok(())
     }

@@ -102,12 +102,10 @@
     )
 )]
 
-mod error;
 mod fs_data_provider;
-pub mod manifest;
+mod manifest;
 
 #[cfg(feature = "export")]
 pub mod export;
 
-pub use error::Error as FsDataError;
 pub use fs_data_provider::FsDataProvider;

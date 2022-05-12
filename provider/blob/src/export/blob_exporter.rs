@@ -40,7 +40,9 @@ impl DataExporter<SerializeMarker> for BlobExporter<'_> {
         let mut serializer = postcard::Serializer {
             output: postcard::flavors::AllocVec(Vec::new()),
         };
-        payload.serialize(&mut <dyn erased_serde::Serializer>::erase(&mut serializer))?;
+        payload
+            .serialize(&mut <dyn erased_serde::Serializer>::erase(&mut serializer))
+            .map_err(|e| DataError::custom("Postcard export").with_error_context(&e))?;
         self.resources.lock().unwrap().push((
             key.get_hash(),
             options.write_to_string().into_owned().into_bytes(),
@@ -66,7 +68,8 @@ impl DataExporter<SerializeMarker> for BlobExporter<'_> {
             let mut serializer = postcard::Serializer {
                 output: postcard::flavors::AllocVec(Vec::new()),
             };
-            serde::Serialize::serialize(&blob, &mut serializer)?;
+            serde::Serialize::serialize(&blob, &mut serializer)
+                .map_err(|e| DataError::custom("Postcard export").with_error_context(&e))?;
             self.sink.write_all(&serializer.output.0)?;
         }
         Ok(())

@@ -2,16 +2,12 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::error::Error;
 use crate::manifest::Manifest;
-use crate::manifest::MANIFEST_FILE;
 use icu_provider::prelude::*;
-use icu_provider::serde::*;
-use writeable::Writeable;
-
 use std::fmt::Debug;
 use std::fs;
 use std::path::PathBuf;
+use writeable::Writeable;
 
 /// A data provider that reads ICU4X data from a filesystem directory.
 ///
@@ -40,14 +36,19 @@ impl FsDataProvider {
     /// let provider = FsDataProvider::try_new("/path/to/data/directory")
     ///     .expect_err("Specify a real directory in the line above");
     /// ```
-    pub fn try_new<T: Into<PathBuf>>(root: T) -> Result<Self, Error> {
+    pub fn try_new<T: Into<PathBuf>>(root: T) -> Result<Self, DataError> {
         let root_path_buf: PathBuf = root.into();
-        let manifest_path = root_path_buf.join(MANIFEST_FILE);
-        let manifest_str = fs::read_to_string(&manifest_path).map_err(|e| (e, &manifest_path))?;
+        let manifest_path = root_path_buf.join(Manifest::NAME);
+        let manifest_str = fs::read_to_string(&manifest_path)
+            .map_err(|e| DataError::from(e).with_path(&manifest_path))?;
         let manifest: Manifest = serde_json_core::from_str(&manifest_str)
-            .map(|(obj, _)| obj)
-            .map_err(|e| (e, &manifest_path))?;
-        check_format_supported(manifest.buffer_format)?;
+            .map_err(|e| {
+                DataError::custom("Invalid FsDataProvider manifest")
+                    .with_path(&manifest_path)
+                    .with_error_context(&e)
+            })?
+            .0;
+        manifest.buffer_format.check_available()?;
         Ok(Self {
             res_root: root_path_buf,
             manifest,
@@ -60,25 +61,26 @@ impl BufferProvider for FsDataProvider {
         &self,
         key: ResourceKey,
         req: &DataRequest,
-    ) -> Result<DataResponse<BufferMarker>, DataError> {
+    ) -> Result<(DataResponse<BufferMarker>, BufferFormat), DataError> {
         let mut path_buf = self.res_root.clone();
         path_buf.push(&*key.write_to_string());
         if !path_buf.exists() {
             return Err(DataErrorKind::MissingResourceKey.with_req(key, req));
         }
         path_buf.push(&*req.options.write_to_string());
-        path_buf.set_extension(self.manifest.get_file_extension());
+        path_buf.set_extension(self.manifest.get_file_extension()?);
         if !path_buf.exists() {
             return Err(DataErrorKind::MissingResourceOptions.with_req(key, req));
         }
         let buffer = fs::read(&path_buf).map_err(|e| DataError::from(e).with_path(&path_buf))?;
-        let mut metadata = DataResponseMetadata::default();
-        // TODO(#1109): Set metadata.data_langid correctly.
-        metadata.buffer_format = Some(self.manifest.buffer_format);
-        Ok(DataResponse {
-            metadata,
-            payload: Some(DataPayload::from_rc_buffer(buffer.into())),
-        })
+        Ok((
+            DataResponse {
+                // TODO(#1109): Set metadata.data_langid correctly.
+                metadata: Default::default(),
+                payload: Some(DataPayload::from_rc_buffer(buffer.into())),
+            },
+            self.manifest.buffer_format,
+        ))
     }
 }
 

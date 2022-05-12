@@ -77,6 +77,11 @@ pub enum DataErrorKind {
     #[displaydoc("Missing source data")]
     #[cfg(feature = "datagen")]
     MissingSourceData,
+
+    /// An error indicating that the desired buffer format is not available. This usually
+    /// means that a required feature was not enabled
+    #[displaydoc("Unavailable buffer format: {0:?} (does icu_provider need to be compiled with an additional feature?)")]
+    UnavailableBufferFormat(BufferFormat),
 }
 
 /// The error type for ICU4X data provider operations.
@@ -279,26 +284,6 @@ impl DataError {
 
 #[cfg(feature = "std")]
 impl std::error::Error for DataError {}
-
-#[cfg(feature = "serde")]
-impl From<crate::serde::Error> for DataError {
-    #[cfg_attr(not(feature = "log_error_context"), allow(unused_variables))]
-    fn from(e: crate::serde::Error) -> Self {
-        #[cfg(feature = "log_error_context")]
-        log::warn!("Serde error: {}", e);
-        DataError::custom("Serde error")
-    }
-}
-
-#[cfg(feature = "postcard")]
-impl From<postcard::Error> for DataError {
-    #[cfg_attr(not(feature = "log_error_context"), allow(unused_variables))]
-    fn from(e: postcard::Error) -> Self {
-        #[cfg(feature = "log_error_context")]
-        log::warn!("Postcard error: {}", e);
-        DataError::custom("Postcard error")
-    }
-}
 
 #[cfg(feature = "std")]
 impl From<std::io::Error> for DataError {
