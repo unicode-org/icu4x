@@ -293,8 +293,9 @@ impl SegmenterRuleProvider {
         // The table length should be large enough to contain all codepoints.
         const UAX29_CODEPOINT_TABLE_LEN: usize = 0xE1000;
 
-        // The property values of codepoints >= U+0x20000 are built into the line segmenter.
-        const UAX14_CODEPOINT_TABLE_LEN: usize = 0x20000;
+        // The property values of codepoints >= U+0x20000 could be built into the line segmenter,
+        // but we instead store them compactly in the CodePointTrie.
+        const UAX14_CODEPOINT_TABLE_LEN: usize = 0xE1000;
 
         let mut properties_map = if segmenter.segmenter_type == "line" {
             vec![0; UAX14_CODEPOINT_TABLE_LEN]
@@ -395,7 +396,7 @@ impl SegmenterRuleProvider {
                             || p.name == "PO_EAW"
                             || p.name == "PR_EAW"
                         {
-                            for i in 0..0x20000 {
+                            for i in 0..(UAX14_CODEPOINT_TABLE_LEN as u32) {
                                 match lb.get_u32(i) {
                                     LineBreak::OpenPunctuation => {
                                         if (p.name == "OP_OP30"
@@ -453,7 +454,7 @@ impl SegmenterRuleProvider {
                         }
 
                         let prop = get_line_segmenter_value_from_name(&*p.name);
-                        for c in 0..0x20000 {
+                        for c in 0..(UAX14_CODEPOINT_TABLE_LEN as u32) {
                             if lb.get_u32(c) == prop {
                                 properties_map[c as usize] = property_index;
                             }
@@ -601,6 +602,24 @@ impl SegmenterRuleProvider {
             trie_type: self.source.trie_type().to_internal(),
         }
         .build();
+
+        if segmenter.segmenter_type == "line" {
+            // Note: The following match statement had been used in line.rs:
+            //
+            // match codepoint {
+            //     0x20000..=0x2fffd => ID,
+            //     0x30000..=0x3fffd => ID,
+            //     0xe0001 => CM,
+            //     0xe0020..=0xe007f => CM,
+            //     0xe0100..=0xe01ef => CM,
+            //     _ => XX,
+            // }
+            debug_assert_eq!(property_trie.get(0x20000), ID);
+            debug_assert_eq!(property_trie.get(0x3fffd), ID);
+            debug_assert_eq!(property_trie.get(0xd0000), XX);
+            debug_assert_eq!(property_trie.get(0xe0001), CM);
+            debug_assert_eq!(property_trie.get(0xe0020), CM);
+        }
 
         Ok(RuleBreakDataV1 {
             property_table: RuleBreakPropertyTable(property_trie),
