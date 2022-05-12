@@ -43,7 +43,7 @@ The following timeline is derived from [ICU4X 1.0 PRD](./prd.md) and is optimize
 			* [x] Improved data model
 * [ ] 2022
 	* [x] January-March
-		* [x] 0.6 (1.0 RC) Release ([Milestone](https://github.com/unicode-org/icu4x/milestone/15))
+		* [x] 0.6 Release ([Milestone](https://github.com/unicode-org/icu4x/milestone/15))
 			* [x] Finish full-stack Script_Extensions property ([#1577](https://github.com/unicode-org/icu4x/issues/1577))
 			* [x] User-Friendly Data Slicing (part of [#1110](https://github.com/unicode-org/icu4x/issues/1110))
 			* [x] Add Coptic, Indian, and Ethiopic calendars
@@ -60,6 +60,7 @@ The following timeline is derived from [ICU4X 1.0 PRD](./prd.md) and is optimize
 			* [ ] Implement locale fallbacking in data loading([#1109](https://github.com/unicode-org/icu4x/issues/1109))
 			* [ ] Collator ([#971](https://github.com/unicode-org/icu4x/issues/971))
 			* [ ] Calendrical calculations and formatting for Coptic, Japanese, and Indian National ([#534](https://github.com/unicode-org/icu4x/issues/534))
+			* [ ] DateTimeFormat modularity / API
 	* [ ] July-December
 		* [ ] 1.1 Release ([Milestone](https://github.com/unicode-org/icu4x/milestone/32))
 			* [ ] Implement full-stack properties of strings
