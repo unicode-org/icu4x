@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1652386009352,
+  "lastUpdate": 1652395092589,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -14873,6 +14873,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/6b0ece669ba5c12cd35405ff1d0d8ed9699b521b"
         },
         "date": 1652385990659,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 1627470,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "5915ba25a6e27d97902f1c632195cfa39cc0ecaf",
+          "message": "Update roadmap.md",
+          "timestamp": "2022-05-12T15:36:07-07:00",
+          "tree_id": "521a8933d1f905362f7e46b5c43b55a487d39916",
+          "url": "https://github.com/unicode-org/icu4x/commit/5915ba25a6e27d97902f1c632195cfa39cc0ecaf"
+        },
+        "date": 1652395069766,
         "tool": "ndjson",
         "benches": [
           {
