@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1652368878678,
+  "lastUpdate": 1652377544144,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -14813,6 +14813,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/7fce7de5a698e50c9acf2c7fb864375a5528ab9f"
         },
         "date": 1652368856902,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4475179,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "1092f1f7ada610f68cdd020be8ebce63b1fe78b1",
+          "message": "Improve check_is macro for new combined functions (#1821)",
+          "timestamp": "2022-05-12T10:43:50-07:00",
+          "tree_id": "3c6008f26f887b25382ab29931f92aaf8f3093c6",
+          "url": "https://github.com/unicode-org/icu4x/commit/1092f1f7ada610f68cdd020be8ebce63b1fe78b1"
+        },
+        "date": 1652377523385,
         "tool": "ndjson",
         "benches": [
           {
