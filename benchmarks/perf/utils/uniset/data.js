@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1652395470812,
+  "lastUpdate": 1652395584545,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -27161,6 +27161,60 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 41452567,
             "range": "± 374823",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/worst",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/worst",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "32080c3fddb5020e909499944fb85fce80ae4ca7",
+          "message": "Update roadmap.md",
+          "timestamp": "2022-05-12T15:37:00-07:00",
+          "tree_id": "f8311e6344bd63467dbbb14eaaca4eb1cb8be11f",
+          "url": "https://github.com/unicode-org/icu4x/commit/32080c3fddb5020e909499944fb85fce80ae4ca7"
+        },
+        "date": 1652395565558,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 41419660,
+            "range": "± 62321",
             "unit": "ns/iter"
           },
           {
