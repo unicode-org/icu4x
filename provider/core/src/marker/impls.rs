@@ -7,6 +7,7 @@ use crate::prelude::*;
 use alloc::borrow::Cow;
 
 /// Marker type for [`Cow`]`<str>` where the backing cart is `str`.
+#[allow(clippy::exhaustive_structs)] // marker type
 pub struct CowStrMarker;
 
 impl DataMarker for CowStrMarker {

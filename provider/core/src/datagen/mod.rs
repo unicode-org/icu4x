@@ -8,9 +8,11 @@
 //!
 //! This module can be enabled with the `datagen` feature on `icu4x-provider-core`.
 
+mod crabbake;
 mod data_conversion;
 mod heap_measure;
 mod iter;
+pub use self::crabbake::{CrabbakeBox, CrabbakeMarker};
 pub use data_conversion::{DataConverter, ReturnedPayloadError};
 pub use heap_measure::{HeapStats, HeapStatsMarker};
 pub use iter::{IterableDynProvider, IterableResourceProvider};

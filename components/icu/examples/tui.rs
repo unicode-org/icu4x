@@ -24,7 +24,7 @@ fn print<T: AsRef<str>>(_input: T) {
 
 #[no_mangle]
 fn main(_argc: isize, _argv: *const *const u8) -> isize {
-    let provider = icu_testdata::get_static_provider();
+    let provider = icu_testdata::get_provider();
 
     let args: Vec<String> = env::args().collect();
 

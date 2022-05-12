@@ -17,7 +17,7 @@
 //! [UAX14]: https://www.unicode.org/reports/tr14/
 //! [UAX29]: https://www.unicode.org/reports/tr29/
 
-use crate::transform::uprops::reader::read_path_to_string;
+use crate::transform::reader::read_path_to_string;
 use crate::transform::uprops::{
     BinaryPropertyUnicodeSetDataProvider, EnumeratedPropertyCodePointTrieProvider,
 };

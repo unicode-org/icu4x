@@ -30,7 +30,13 @@ fn main() {
         File::create(paths::data_root().join("testdata.postcard")).unwrap(),
     ));
 
-    for out in [json_out, blob_out] {
+    let mod_out = icu_datagen::Out::Module {
+        mod_directory: paths::data_root().join("baked/src/data"),
+        pretty: true,
+        insert_feature_gates: false,
+    };
+
+    for out in [json_out, blob_out, mod_out] {
         icu_datagen::datagen(
             Some(&locales),
             &icu_datagen::get_all_keys(),

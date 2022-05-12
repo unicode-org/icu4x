@@ -160,6 +160,6 @@
     "yuko": "Jukon"
   },
   "overrides": {
-    "Etc/UTC": "Koordinisano univerzalno vreme"
+    "utc": "Koordinisano univerzalno vreme"
   }
 }

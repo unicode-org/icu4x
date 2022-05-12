@@ -161,6 +161,6 @@
     "yuko": "Yukon Saati"
   },
   "overrides": {
-    "Etc/UTC": "Eş Güdümlü Evrensel Zaman"
+    "utc": "Eş Güdümlü Evrensel Zaman"
   }
 }

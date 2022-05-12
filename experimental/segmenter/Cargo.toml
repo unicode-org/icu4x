@@ -5,7 +5,7 @@
 [package]
 name = "icu_segmenter"
 description = "Unicode line breaking and text segmentation algorithms for text boundaries analysis"
-version = "0.5.0"
+version = "0.6.0"
 authors = ["The ICU4X Project Developers"]
 edition = "2018"
 readme = "README.md"
@@ -30,7 +30,7 @@ skip_optional_dependencies = true
 [dependencies]
 icu_char16trie = { version = "0.1", path = "../char16trie" }
 icu_codepointtrie = { path = "../../utils/codepointtrie", features = ["serde"] }
-icu_provider = { version = "0.5", path = "../../provider/core", features = ["macros"] }
+icu_provider = { version = "0.6", path = "../../provider/core", features = ["macros"] }
 icu_segmenter_lstm = { version = "0.1", path = "../segmenter_lstm", optional = true }
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }
 serde_json = { version = "1.0", default-features = false, features = ["alloc"] }
@@ -39,7 +39,7 @@ zerovec = { path = "../../utils/zerovec", features = ["yoke"] }
 
 [dev-dependencies]
 criterion = "0.3"
-icu_testdata = { version = "0.5", path = "../../provider/testdata", features = ["static"] }
+icu_testdata = { version = "0.6", path = "../../provider/testdata" }
 serde-json-core = { version = "0.4", features = ["std"] }
 
 [lib]

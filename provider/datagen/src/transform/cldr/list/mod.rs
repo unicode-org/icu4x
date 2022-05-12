@@ -4,9 +4,7 @@
 
 use crate::error::DatagenError;
 use crate::transform::cldr::cldr_serde;
-use crate::transform::cldr::reader::{
-    get_langid_subdirectories, get_langid_subdirectory, open_reader,
-};
+use crate::transform::reader::{get_langid_subdirectories, get_langid_subdirectory, open_reader};
 use crate::transform::uprops::EnumeratedPropertyCodePointTrieProvider;
 use crate::SourceData;
 use icu_list::provider::*;
@@ -140,7 +138,9 @@ icu_provider::impl_dyn_provider!(
     ListProvider,
     [AndListV1Marker, OrListV1Marker, UnitListV1Marker,],
     SERDE_SE,
+    CRABBAKE,
     ITERABLE_SERDE_SE,
+    ITERABLE_CRABBAKE,
     DATA_CONVERTER
 );
 

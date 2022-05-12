@@ -23,8 +23,6 @@ mod bin_uniset;
 #[cfg(feature = "experimental")]
 mod casemapping;
 mod enum_codepointtrie;
-mod enum_uniset;
-pub(crate) mod reader;
 mod script;
 mod uprops_helpers;
 mod uprops_serde;
@@ -33,5 +31,4 @@ pub use bin_uniset::BinaryPropertyUnicodeSetDataProvider;
 #[cfg(feature = "experimental")]
 pub use casemapping::CaseMappingDataProvider;
 pub use enum_codepointtrie::EnumeratedPropertyCodePointTrieProvider;
-pub use enum_uniset::EnumeratedPropertyUnicodeSetDataProvider;
 pub use script::ScriptWithExtensionsPropertyProvider;

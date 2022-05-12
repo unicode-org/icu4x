@@ -9,6 +9,7 @@ use icu_provider::buf::BufferFormat;
 use std::io;
 
 /// A serializer for Bincode.
+#[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct Serializer;
 
 /// Options bag for initializing a [`bincode::Serializer`].

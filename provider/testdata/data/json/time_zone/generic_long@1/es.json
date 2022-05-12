@@ -159,6 +159,6 @@
     "yuko": "hora de Yukón"
   },
   "overrides": {
-    "Etc/UTC": "tiempo universal coordinado"
+    "utc": "tiempo universal coordinado"
   }
 }

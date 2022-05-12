@@ -9,7 +9,7 @@ use icu_locale_canonicalizer::LocaleCanonicalizer;
 use icu_locid::Locale;
 
 fn canonicalize_bench(c: &mut Criterion) {
-    let provider = icu_testdata::get_static_provider();
+    let provider = icu_testdata::get_provider();
     let lc = LocaleCanonicalizer::new(&provider).unwrap();
 
     let mut group = c.benchmark_group("canonicalize");
@@ -36,7 +36,7 @@ fn canonicalize_bench(c: &mut Criterion) {
 }
 
 fn canonicalize_noop_bench(c: &mut Criterion) {
-    let provider = icu_testdata::get_static_provider();
+    let provider = icu_testdata::get_provider();
     let lc = LocaleCanonicalizer::new(&provider).unwrap();
 
     let mut group = c.benchmark_group("canonicalize-noop");
@@ -65,7 +65,7 @@ fn canonicalize_noop_bench(c: &mut Criterion) {
 }
 
 fn maximize_bench(c: &mut Criterion) {
-    let provider = icu_testdata::get_static_provider();
+    let provider = icu_testdata::get_provider();
     let lc = LocaleCanonicalizer::new(&provider).unwrap();
 
     let mut group = c.benchmark_group("likelysubtags");

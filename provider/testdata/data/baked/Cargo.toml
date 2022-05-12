@@ -1,0 +1,12 @@
+[package]
+name = "baked"
+version = "1.0.0"
+edition = "2021"
+include = ["src/**/*.rs", "Cargo.toml"]
+
+[lib]
+path = "src/lib.rs"
+
+[dependencies]
+icu_provider = { path = "../../../../provider/core"}
+icu_list = { path = "../../../../components/list" }

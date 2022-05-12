@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::transform::uprops::reader::*;
+use crate::transform::reader::*;
 
 use crate::error::DatagenError;
 use crate::transform::uprops::uprops_serde;
@@ -70,15 +70,4 @@ pub fn load_script_extensions_from_dir(
                 None,
             )
         })
-}
-
-pub fn get_last_component_no_version(key: icu_provider::ResourceKey) -> &'static str {
-    #[allow(clippy::expect_used)] // TODO(#1668) Clippy exceptions need docs or fixingw.
-    key.get_path()
-        .split('/')
-        .last()
-        .expect("str::split doesn't return empty iterators")
-        .split('@')
-        .next()
-        .expect("str::split doesn't return empty iterators")
 }

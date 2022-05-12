@@ -8,30 +8,22 @@ There are two exports:
 1. [`BlobDataProvider`] supports data blobs loaded dynamically at runtime.
 2. [`StaticDataProvider`] supports data blobs baked into the binary at compile time.
 
-To build blob data, use the `--format blob` option of [`icu4x-datagen`]. For example, to build
+To build blob data, use the `--format blob` option of [`icu_datagen`]. For example, to build
 "hello world" data, run:
 
 ```bash
-$ cargo run --bin=icu4x-datagen -- \
+$ cargo run --features bin -p icu_datagen -- \
     --format blob \
     --hello-world-key \
     --all-locales \
     --out hello_world.postcard
 ```
 
-## Example
-
-Create a [`StaticDataProvider`] from pre-built test data:
-
-```rust
-let _ = icu_testdata::get_static_provider();
-```
-
-For more examples, see the specific data providers.
+For examples, see the specific data providers.
 
 [`ICU4X`]: ../icu/index.html
 [`BufferProvider`]: icu_provider::BufferProvider
-[`icu4x-datagen`]: https://github.com/unicode-org/icu4x/tree/main/provider/datagen#readme
+[`icu_datagen`]: ../icu_datagen/index.html
 
 ## More Information
 
