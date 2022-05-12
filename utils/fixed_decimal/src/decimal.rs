@@ -912,12 +912,26 @@ pub enum RoundingMode {
     /// Return an error if the number has trailing nonzero digits that need to be rounded.
     Unnecessary,
 
+    /// Round to ceil
+    Ceil,
+
+    Floor,
+
+    Expand,
+
     /// Round toward zero (remove, or truncate, all trailing digits).
     Truncate,
 
+    HalfCeil,
+
+    HalfFloor,
+
     /// Round ties away from zero.
     HalfExpand,
-    // TODO(#1177): Add more rounding modes.
+
+    HalfTruncate,
+
+    HalfEven,
 }
 
 #[cfg(feature = "ryu")]
@@ -1054,6 +1068,89 @@ impl FixedDecimal {
         Self::from_str(formatted)
     }
 
+    /// Rounds the number according to the power (`n`) of 10 position.
+    ///
+    /// NOTE: This may end up adding a digit to the left!
+    ///
+    /// NOTE: This will not change the number of significant digits, it simply exists
+    /// to *round* them (and will typically reduce the size of `self.digits`)
+    ///
+    /// This function is responsible for fixing `digits`, `magnitude`, and `upper_magnitude`.
+    /// It will only modify upper_magnitude when it is not large enough to fit the rounded number.
+    /// The caller may fix up `lower_magnitude` by whatever scheme it desires
+    pub fn round(&mut self, n: u16, mode: RoundingMode) -> Result<(), Error> {
+
+                /// For incrementing the FixedDecimal absolutely by 1.
+        fn increment_abs_by_one(dec: &mut FixedDecimal) {
+            if dec.magnitude < 0 {
+                return;
+            }
+
+            for i in 0..dec.digits.len() {
+                dec.digits[i] += 1;
+                if dec.digits[i] >= 10 {
+                    dec.digits[i] = 0;
+                    continue;
+                } else {
+                    return;
+                }
+            }
+
+            dec.digits.push(1);
+            dec.upper_magnitude += 1;
+        }
+
+        fn ceil(dec: &mut FixedDecimal, n: u16) -> Result<(), Error> {
+            Ok(())
+        }
+        fn floor(dec: &mut FixedDecimal, n: u16) -> Result<(), Error> {
+            Ok(())
+        }
+        fn expand(dec: &mut FixedDecimal, n: u16) -> Result<(), Error> {
+            Ok(())
+        }
+        fn truncate(dec: &mut FixedDecimal, n: u16) -> Result<(), Error> {
+            Ok(())
+        }
+        fn half_ceil(dec: &mut FixedDecimal, n: u16) -> Result<(), Error> {
+            Ok(())
+        }
+        fn half_floor(dec: &mut FixedDecimal, n: u16) -> Result<(), Error> {
+            Ok(())
+        }
+        fn half_expand(dec: &mut FixedDecimal, n: u16) -> Result<(), Error> {
+            Ok(())
+        }
+        fn half_truncate(dec: &mut FixedDecimal, n: u16) -> Result<(), Error> {
+            Ok(())
+        }
+        fn half_even(dec: &mut FixedDecimal, n: u16) -> Result<(), Error> {
+            Ok(())
+        }
+
+        match mode {
+            RoundingMode::Unnecessary => Err(Error::Limit),
+
+            RoundingMode::Ceil => ceil(self, n),
+
+            RoundingMode::Floor => floor(self, n),
+
+            RoundingMode::Expand => expand(self, n),
+
+            RoundingMode::Truncate => truncate(self, n),
+
+            RoundingMode::HalfCeil => half_ceil(self, n),
+
+            RoundingMode::HalfFloor => half_floor(self, n),
+
+            RoundingMode::HalfExpand => half_expand(self, n),
+
+            RoundingMode::HalfTruncate => half_truncate(self, n),
+
+            RoundingMode::HalfEven => half_even(self, n),
+        }
+    }
+
     /// Internal function to round off `n` digits
     /// from the right
     ///
@@ -1157,55 +1254,62 @@ impl FixedDecimal {
 
 #[cfg(feature = "ryu")]
 #[test]
-fn test_round() {
+fn test_round_half_expand() {
     #[derive(Debug)]
     struct TestCase {
         pub input: f64,
         pub round: u16,
+        pub mode: RoundingMode,
         pub expected: &'static str,
     }
     let cases = [
         TestCase {
             input: 1.234567,
             round: 2,
+            mode: RoundingMode::HalfExpand,
             expected: "1.234600",
         },
         TestCase {
             input: 1.23456789,
             round: 2,
+            mode: RoundingMode::HalfExpand,
             expected: "1.23456800",
         },
         TestCase {
             input: 88899971.,
             round: 2,
+            mode: RoundingMode::HalfExpand,
             expected: "88900000.0",
         },
         TestCase {
             input: 999988.,
             round: 2,
+            mode: RoundingMode::HalfExpand,
             expected: "1000000.0",
         },
         TestCase {
             input: 0.9,
             round: 1,
+            mode: RoundingMode::HalfExpand,
             expected: "1.0",
         },
         TestCase {
             input: 9.9,
             round: 1,
+            mode: RoundingMode::HalfExpand,
             expected: "10.0",
         },
         TestCase {
             input: 9.9,
             round: 2,
+            mode: RoundingMode::HalfExpand,
             expected: "10.0",
         },
     ];
 
     for case in &cases {
         let mut dec = FixedDecimal::new_from_f64_raw(case.input).unwrap();
-        dec.round_trailing_digits(case.round, RoundingMode::HalfExpand)
-            .unwrap();
+        dec.round_trailing_digits(case.round, case.mode).unwrap();
         writeable::assert_writeable_eq!(dec, case.expected, "{:?}", case);
     }
 }
