@@ -51,7 +51,8 @@ impl SourceData {
         }
     }
 
-    /// Sets the [`TrieType`] to be used when generating data.
+    /// Sets the [`TrieType`] to be used when generating data, including rule-based
+    /// segmentation data.
     ///
     /// For Unicode Properties data, the TrieType is implicitly set when selecting the
     /// root directory (either "small" or "fast").
