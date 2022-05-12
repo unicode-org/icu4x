@@ -42,8 +42,8 @@ The following timeline is derived from [ICU4X 1.0 PRD](./prd.md) and is optimize
 			* [x] Calendrical calculations and formatting for Japanese
 			* [x] Improved data model
 * [ ] 2022
-	* [ ] January-March
-		* [ ] 0.6 (1.0 RC) Release ([Milestone](https://github.com/unicode-org/icu4x/milestone/15))
+	* [x] January-March
+		* [x] 0.6 (1.0 RC) Release ([Milestone](https://github.com/unicode-org/icu4x/milestone/15))
 			* [x] Finish full-stack Script_Extensions property ([#1577](https://github.com/unicode-org/icu4x/issues/1577))
 			* [x] User-Friendly Data Slicing (part of [#1110](https://github.com/unicode-org/icu4x/issues/1110))
 			* [x] Add Coptic, Indian, and Ethiopic calendars
