@@ -43,7 +43,8 @@ impl<C: Calendar> AsCalendar for Rc<C> {
 /// use icu::calendar::Date;
 ///
 /// // Example: creation of ISO date from integers.
-/// let date_iso = Date::new_iso_date_from_integers(1970, 1, 2).unwrap();
+/// let date_iso = Date::new_iso_date_from_integers(1970, 1, 2)
+///     .expect("Failed to initialize Date instance.");
 ///
 /// assert_eq!(date_iso.year().number, 1970);
 /// assert_eq!(date_iso.month().number, 1);
