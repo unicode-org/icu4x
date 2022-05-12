@@ -239,19 +239,6 @@ impl DataError {
     ///
     /// This does not modify the error, but if the "log_error_context" feature is enabled,
     /// it will print out the context.
-    #[cfg(feature = "std")]
-    #[cfg_attr(not(feature = "log_error_context"), allow(unused_variables))]
-    #[inline]
-    pub fn with_error_context<E: std::error::Error + ?Sized>(self, err: &E) -> Self {
-        #[cfg(feature = "log_error_context")]
-        log::warn!("{}: {}", self, err);
-        self
-    }
-
-    /// Logs the data error with the given context, then return self.
-    ///
-    /// This does not modify the error, but if the "log_error_context" feature is enabled,
-    /// it will print out the context.
     #[cfg_attr(not(feature = "log_error_context"), allow(unused_variables))]
     #[inline]
     pub fn with_display_context<D: core::fmt::Display + ?Sized>(self, context: &D) -> Self {

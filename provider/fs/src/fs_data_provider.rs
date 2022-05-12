@@ -45,7 +45,7 @@ impl FsDataProvider {
             .map_err(|e| {
                 DataError::custom("Invalid FsDataProvider manifest")
                     .with_path(&manifest_path)
-                    .with_error_context(&e)
+                    .with_display_context(&e)
             })?
             .0;
         manifest.buffer_format.check_available()?;

@@ -47,7 +47,7 @@ impl DataPayload<BufferMarker> {
                     let data =
                         YokeTraitHack::<<M::Yokeable as Yokeable>::Output>::deserialize(&mut d)
                             .map_err(|e| {
-                                DataError::custom("JSON deserialize error").with_error_context(&e)
+                                DataError::custom("JSON deserialize error").with_display_context(&e)
                             })?;
                     Ok(data.0)
                 }
@@ -63,7 +63,7 @@ impl DataPayload<BufferMarker> {
                         YokeTraitHack::<<M::Yokeable as Yokeable>::Output>::deserialize(&mut d)
                             .map_err(|e| {
                                 DataError::custom("Bincode deserialize error")
-                                    .with_error_context(&e)
+                                    .with_display_context(&e)
                             })?;
                     Ok(data.0)
                 }
@@ -75,7 +75,7 @@ impl DataPayload<BufferMarker> {
                         YokeTraitHack::<<M::Yokeable as Yokeable>::Output>::deserialize(&mut d)
                             .map_err(|e| {
                                 DataError::custom("Postcard deserialize error")
-                                    .with_error_context(&e)
+                                    .with_display_context(&e)
                             })?;
                     Ok(data.0)
                 }

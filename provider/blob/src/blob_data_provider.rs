@@ -67,7 +67,7 @@ impl BlobDataProvider {
                     },
                 )
             })
-            .map_err(|e| DataError::custom("Postcard error").with_error_context(&e))?,
+            .map_err(|e| DataError::custom("Postcard error").with_display_context(&e))?,
         })
     }
 

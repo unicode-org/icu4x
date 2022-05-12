@@ -29,7 +29,7 @@ impl AbstractSerializer for Serializer {
                 bincode::config::DefaultOptions::new().with_fixint_encoding(),
             ),
         ))
-        .map_err(|e| DataError::custom("Bincode serialize").with_error_context(&e))?;
+        .map_err(|e| DataError::custom("Bincode serialize").with_display_context(&e))?;
         Ok(())
     }
 

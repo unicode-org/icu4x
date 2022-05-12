@@ -56,7 +56,7 @@ impl AbstractSerializer for Serializer {
                 ))
             }
         }
-        .map_err(|e| DataError::custom("JSON serialize").with_error_context(&e))?;
+        .map_err(|e| DataError::custom("JSON serialize").with_display_context(&e))?;
         // Write an empty line at the end of the document
         writeln!(sink)?;
         Ok(())

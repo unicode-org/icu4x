@@ -61,7 +61,7 @@ impl StaticDataProvider {
                     let BlobSchema::V001(blob) = blob;
                     blob.resources
                 })
-                .map_err(|e| DataError::custom("Postcard error").with_error_context(&e))?,
+                .map_err(|e| DataError::custom("Postcard error").with_display_context(&e))?,
         })
     }
 
@@ -115,7 +115,9 @@ impl BufferProvider for StaticDataProvider {
                             }
                             .with_req(key, req)
                         })
-                        .map_err(|e| DataError::custom("Postcard error").with_error_context(&e))?,
+                        .map_err(|e| {
+                            DataError::custom("Postcard error").with_display_context(&e)
+                        })?,
                 )),
             },
             BufferFormat::Postcard07,

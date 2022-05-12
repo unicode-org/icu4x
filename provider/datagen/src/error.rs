@@ -73,13 +73,13 @@ impl From<DatagenError> for DataError {
             Io(e, Some(path_buf)) => DataError::from(e).with_path(&path_buf),
             Io(e, None) => DataError::from(e),
             Json(e, Some(path_buf)) => DataError::custom("JSON Parse Error")
-                .with_error_context(&e)
+                .with_display_context(&e)
                 .with_path(&path_buf),
-            Json(e, None) => DataError::custom("JSON Parse Error").with_error_context(&e),
+            Json(e, None) => DataError::custom("JSON Parse Error").with_display_context(&e),
             Toml(e, Some(path_buf)) => DataError::custom("TOML Parse Error")
-                .with_error_context(&e)
+                .with_display_context(&e)
                 .with_path(&path_buf),
-            Toml(e, None) => DataError::custom("TOML Parse Error").with_error_context(&e),
+            Toml(e, None) => DataError::custom("TOML Parse Error").with_display_context(&e),
             Custom(s, Some(langid)) => DataError::custom("")
                 .with_display_context(&s)
                 .with_display_context(&langid),

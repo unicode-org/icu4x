@@ -26,7 +26,7 @@ impl AbstractSerializer for Serializer {
             output: postcard::flavors::StdVec(Vec::new()),
         };
         obj.erased_serialize(&mut <dyn erased_serde::Serializer>::erase(&mut serializer))
-            .map_err(|e| DataError::custom("Postcard serialize").with_error_context(&e))?;
+            .map_err(|e| DataError::custom("Postcard serialize").with_display_context(&e))?;
         sink.write_all(&serializer.output.0)?;
         Ok(())
     }
