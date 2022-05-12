@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1652395612744,
+  "lastUpdate": 1652395752601,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -31463,6 +31463,102 @@ window.BENCHMARK_DATA = {
             "name": "pattern/parse",
             "value": 5439,
             "range": "± 352",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "32080c3fddb5020e909499944fb85fce80ae4ca7",
+          "message": "Update roadmap.md",
+          "timestamp": "2022-05-12T15:37:00-07:00",
+          "tree_id": "f8311e6344bd63467dbbb14eaaca4eb1cb8be11f",
+          "url": "https://github.com/unicode-org/icu4x/commit/32080c3fddb5020e909499944fb85fce80ae4ca7"
+        },
+        "date": 1652395730342,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 93927,
+            "range": "± 592",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 939309,
+            "range": "± 3418",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 202462,
+            "range": "± 793",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/DateTimeFormat/format_to_write",
+            "value": 90020,
+            "range": "± 179",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/DateTimeFormat/format_to_string",
+            "value": 99254,
+            "range": "± 422",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/format",
+            "value": 94386,
+            "range": "± 194",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/to_string",
+            "value": 102974,
+            "range": "± 763",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/ZonedDateTimeFormat/format_to_write",
+            "value": 197885,
+            "range": "± 927",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/ZonedDateTimeFormat/format_to_string",
+            "value": 212246,
+            "range": "± 879",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/format",
+            "value": 202440,
+            "range": "± 1025",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/to_string",
+            "value": 215947,
+            "range": "± 527",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "pattern/parse",
+            "value": 5974,
+            "range": "± 14",
             "unit": "ns/iter"
           }
         ]
