@@ -477,42 +477,6 @@
             "expected": "1 AM"
           }
         ]
-      },      {
-        "datetimes": [
-          "2021-01-11T01:00:00.10101"
-        ],
-        "expectations": [
-          {
-            "patterns": [
-              "h:mm:ss.S"
-            ],
-            "expected": "1:00:00.1"
-          },
-          {
-            "patterns": [
-              "h:mm:ss.SSS"
-            ],
-            "expected": "1:00:00.101"
-          },
-          {
-            "patterns": [
-              "h:mm:ss.SSSSSSSS"
-            ],
-            "expected": "1:00:00.10101000"
-          },
-          {
-            "patterns": [
-              "h:mm:ss.SSSSSSSSSSS"
-            ],
-            "expected": "1:00:00.10101000000"
-          },
-          {
-            "patterns": [
-              "h:mm:ss.SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS"
-            ],
-            "expected": "1:00:00.1010100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
-          }
-        ]
       }
     ]
   }

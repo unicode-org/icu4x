@@ -32,6 +32,7 @@ denylist = ["bench"]
 all-features = true
 
 [dependencies]
+icu_decimal = { version = "0.6", path = "../decimal" }
 icu_locid = { version = "0.6", path = "../locid" }
 icu_plurals = { version = "0.6", path = "../plurals" }
 icu_provider = { version = "0.6", path = "../../provider/core", features = ["macros"] }
@@ -46,6 +47,7 @@ smallvec = "1.6"
 displaydoc = { version = "0.2.3", default-features = false }
 either = { version = "1.6.1", default-features = false }
 crabbake = { path = "../../experimental/crabbake", optional = true, features = ["derive"]}
+fixed_decimal = { version = "0.3", path = "../../utils/fixed_decimal" }
 
 [dev-dependencies]
 criterion = "0.3"

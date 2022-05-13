@@ -72,6 +72,7 @@ fn datetime_benches(c: &mut Criterion) {
                         &provider,
                         &provider,
                         &provider,
+                        &provider,
                         &options,
                         &TimeZoneFormatOptions::default(),
                     )
