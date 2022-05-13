@@ -129,14 +129,14 @@ mod runtime {
     struct PatternForSerde<'data> {
         #[serde(borrow)]
         pub items: ZeroVec<'data, PatternItem>,
-        pub time_granularity_unchecked: TimeGranularity,
+        pub time_granularity: TimeGranularity,
     }
 
     impl<'data> From<PatternForSerde<'data>> for Pattern<'data> {
         fn from(pfs: PatternForSerde<'data>) -> Self {
             Self {
                 items: pfs.items,
-                time_granularity_unchecked: pfs.time_granularity_unchecked,
+                time_granularity: pfs.time_granularity,
             }
         }
     }
@@ -188,7 +188,7 @@ mod runtime {
             } else {
                 let pfs = PatternForSerde {
                     items: self.items.clone(),
-                    time_granularity_unchecked: self.time_granularity_unchecked,
+                    time_granularity: self.time_granularity,
                 };
                 pfs.serialize(serializer)
             }
