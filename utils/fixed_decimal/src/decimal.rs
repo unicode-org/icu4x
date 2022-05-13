@@ -7,7 +7,7 @@ use smallvec::SmallVec;
 use core::cmp;
 use core::cmp::Ordering;
 use core::fmt;
-use core::ops::RangeInclusive;
+use core::ops::{RangeInclusive, Sub};
 
 use core::str::FromStr;
 
@@ -1079,8 +1079,7 @@ impl FixedDecimal {
     /// It will only modify upper_magnitude when it is not large enough to fit the rounded number.
     /// The caller may fix up `lower_magnitude` by whatever scheme it desires
     pub fn round(&mut self, n: u16, mode: RoundingMode) -> Result<(), Error> {
-
-                /// For incrementing the FixedDecimal absolutely by 1.
+        /// For incrementing the FixedDecimal absolutely by 1.
         fn increment_abs_by_one(dec: &mut FixedDecimal) {
             if dec.magnitude < 0 {
                 return;
@@ -1100,9 +1099,34 @@ impl FixedDecimal {
             dec.upper_magnitude += 1;
         }
 
-        fn ceil(dec: &mut FixedDecimal, n: u16) -> Result<(), Error> {
-            Ok(())
+        fn ceil(dec: &mut FixedDecimal, n: i16) -> Result<(), Error> {
+            let n_magnitude = dec.magnitude.checked_sub(dec.digits.len() as i16);
+            if n_magnitude.is_none() {
+                return Err(Error::Limit);
+            }
+            let n_magnitude = n_magnitude.unwrap_unchecked();
+
+            if n <= n_magnitude {
+                dec.lower_magnitude = {
+                    if dec.lower_magnitude < n {
+                        n
+                    } else {
+                        dec.lower_magnitude
+                    }
+                };
+                return Ok(());
+            } else if n <= dec.magnitude {
+                dec.truncate_left(dec.digits.len() as i16 - (dec.magnitude - n));
+                increment_abs_by_one(dec);
+                return Ok(());
+            } else {
+                // TODO: case of dec.to_str() == "0"
+                dec.truncate_left(dec.digits.len() as i16);
+                increment_abs_by_one(dec);
+                return Ok(());
+            }
         }
+
         fn floor(dec: &mut FixedDecimal, n: u16) -> Result<(), Error> {
             Ok(())
         }
