@@ -1294,8 +1294,10 @@ version = "0.6.0"
 dependencies = [
  "displaydoc",
  "icu",
+ "icu_calendar",
  "icu_locid",
  "icu_provider",
+ "icu_testdata",
  "serde",
  "tinystr 0.6.0",
  "zerovec",

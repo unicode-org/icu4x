@@ -2,7 +2,44 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! This module contains types and implementations for the Japanese calendar
+//! This module contains types and implementations for the Japanese calendar.
+//!
+//! ```rust
+//! use icu::calendar::{Date, DateTime,
+//!                     types::IsoHour, types::IsoMinute, types::IsoSecond, types::Era,
+//!                     japanese::Japanese};
+//! use tinystr::tinystr;
+//!
+//! // `icu_testdata::get_provider` contains information specifying era dates.
+//! let provider = icu_testdata::get_provider();
+//! let japanese_calendar = Japanese::try_new(&provider)
+//!     .expect("Cannot load japanese data");
+//!
+//! // `Date` type
+//! let date_iso = Date::new_iso_date_from_integers(1970, 1, 2)
+//!     .expect("Failed to initialize ISO Date instance.");
+//! let date_japanese = Date::new_from_iso(date_iso, japanese_calendar.clone());
+//!
+//! // `DateTime` type
+//! let datetime_iso = DateTime::new_iso_datetime_from_integers(1970, 1, 2, 13, 1, 0)
+//!     .expect("Failed to initialize ISO DateTime instance.");
+//! let datetime_japanese = DateTime::new_from_iso(datetime_iso, japanese_calendar.clone());
+//!
+//! // `Date` checks
+//! assert_eq!(date_japanese.year().number, 45);
+//! assert_eq!(date_japanese.month().number, 1);
+//! assert_eq!(date_japanese.day_of_month().0, 2);
+//! assert_eq!(date_japanese.year().era, Era(tinystr!(16, "showa")));
+//!
+//! // `DateTime` type
+//! assert_eq!(datetime_japanese.date.year().number, 45);
+//! assert_eq!(datetime_japanese.date.month().number, 1);
+//! assert_eq!(datetime_japanese.date.day_of_month().0, 2);
+//! assert_eq!(date_japanese.year().era, Era(tinystr!(16, "showa")));
+//! assert_eq!(datetime_japanese.time.hour, IsoHour::new_unchecked(13));
+//! assert_eq!(datetime_japanese.time.minute, IsoMinute::new_unchecked(1));
+//! assert_eq!(datetime_japanese.time.second, IsoSecond::new_unchecked(0));
+//! ```
 
 use crate::iso::{Iso, IsoDateInner};
 use crate::provider::{self, EraStartDate};
