@@ -23,6 +23,6 @@ include = [
     "README.md"
 ]
 
-[dev-dependencies]
+[dependencies]
 icu_locid = { workspace = true }
 icu_datetime = { workspace = true }

@@ -1,32 +1,80 @@
-#[macro_use]
-mod macros;
+mod dtf;
+mod preferences;
+
+pub use dtf::{DTFPreferencesBag, DateTimeFormat};
+pub use preferences::Preferences;
 
 #[cfg(test)]
 mod tests {
     use super::*;
     use icu_datetime::options::preferences::HourCycle;
-    use icu_locid::{unicode_ext_key, Locale};
-
-    preferences!(
-        Preferences,
-        ResolvedPreferences,
-        {
-            hour_cycle => Option<HourCycle>, HourCycle, Some(unicode_ext_key!("hc"))
-        }
-    );
+    use icu_locid::{language, locale, Locale};
 
     #[test]
     fn it_works() {
-        let l: Locale = "en-US-u-hc-h23".parse().unwrap();
+        {
+            // Default locale, no prefs
+            let loc = locale!("en-US");
+            let dtf = DateTimeFormat::try_new(&loc);
+            assert_eq!(dtf.format().as_str(), "05/13/2022 3:00pm");
+        }
 
-        let prefs = Preferences { hour_cycle: None };
+        {
+            // Prefs, no locale
+            let p = DTFPreferencesBag {
+                hour_cycle: Some(HourCycle::H12),
+                ..Default::default()
+            };
+            let dtf = DateTimeFormat::try_new(&p);
+            assert_eq!(dtf.format().as_str(), "ISO DATE 3:00pm");
+        }
 
-        let defaults = ResolvedPreferences {
-            hour_cycle: HourCycle::H12,
-        };
+        {
+            // Prefs and locale
+            let mut p = DTFPreferencesBag {
+                hour_cycle: Some(HourCycle::H24),
+                ..Default::default()
+            };
+            p.merge_locale(&locale!("fr-CA")).unwrap();
 
-        let resolved_prefs = ResolvedPreferences::try_from((&prefs, &l, &defaults)).unwrap();
+            let dtf = DateTimeFormat::try_new(&p);
+            assert_eq!(dtf.format().as_str(), "13/05/2022 15:00");
+        }
 
-        assert_eq!(resolved_prefs.hour_cycle, HourCycle::H23);
+        {
+            // Prefs and locale, override language
+            let mut p = DTFPreferencesBag {
+                language: Some(language!("en")),
+                ..Default::default()
+            };
+            p.merge_locale(&locale!("fr-CA")).unwrap();
+
+            let dtf = DateTimeFormat::try_new(&p);
+            assert_eq!(dtf.format().as_str(), "05/13/2022 3:00pm");
+        }
+
+        {
+            // Prefs and locale, override language and set hour_cycle
+            let mut p = DTFPreferencesBag {
+                language: Some(language!("en")),
+                hour_cycle: Some(HourCycle::H24),
+                ..Default::default()
+            };
+            p.merge_locale(&locale!("fr-CA")).unwrap();
+
+            let dtf = DateTimeFormat::try_new(&p);
+            assert_eq!(dtf.format().as_str(), "05/13/2022 15:00");
+        }
+
+        {
+            let mut p = DTFPreferencesBag {
+                ..Default::default()
+            };
+            let loc: Locale = "fr-CA-u-hc-h12".parse().unwrap();
+            p.merge_locale(&loc).unwrap();
+
+            let dtf = DateTimeFormat::try_new(&p);
+            assert_eq!(dtf.format().as_str(), "13/05/2022 3:00pm");
+        }
     }
 }
