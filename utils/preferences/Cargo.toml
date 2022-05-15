@@ -25,4 +25,6 @@ include = [
 
 [dependencies]
 icu_locid = { workspace = true }
+
+[dev-dependencies]
 icu_datetime = { workspace = true }
