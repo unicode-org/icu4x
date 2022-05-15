@@ -35,7 +35,7 @@
 //! assert_eq!(datetime_japanese.date.year().number, 45);
 //! assert_eq!(datetime_japanese.date.month().number, 1);
 //! assert_eq!(datetime_japanese.date.day_of_month().0, 2);
-//! assert_eq!(date_japanese.year().era, Era(tinystr!(16, "showa")));
+//! assert_eq!(datetime_japanese.year().era, Era(tinystr!(16, "showa")));
 //! assert_eq!(datetime_japanese.time.hour, IsoHour::new_unchecked(13));
 //! assert_eq!(datetime_japanese.time.minute, IsoMinute::new_unchecked(1));
 //! assert_eq!(datetime_japanese.time.second, IsoSecond::new_unchecked(0));
