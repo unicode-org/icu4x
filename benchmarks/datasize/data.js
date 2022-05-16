@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1652395286291,
+  "lastUpdate": 1652715496145,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -14963,6 +14963,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/681ddadc0c5e5b09997f9c011cdd9b7ce7fb0d5a"
         },
         "date": 1652395262654,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 1627470,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "m_kato@ga2.so-net.ne.jp",
+            "name": "Makoto Kato",
+            "username": "makotokato"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "fcdca71a2b126ed127e87a55c8c2bbf07573496d",
+          "message": "Move language detection to language.rs (#1689)\n\n* Move language detection to language.rs\r\n\r\n* Fix cargo clippy",
+          "timestamp": "2022-05-17T00:36:21+09:00",
+          "tree_id": "3bc0850403fd909f2b118c147540dd4541e1dce2",
+          "url": "https://github.com/unicode-org/icu4x/commit/fcdca71a2b126ed127e87a55c8c2bbf07573496d"
+        },
+        "date": 1652715477017,
         "tool": "ndjson",
         "benches": [
           {
