@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1652719175304,
+  "lastUpdate": 1652728252170,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -26729,6 +26729,66 @@ window.BENCHMARK_DATA = {
             "name": "from_string/1000000001",
             "value": 81,
             "range": "± 3",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "andrewpkq@gmail.com",
+            "name": "andrewpollack",
+            "username": "andrewpollack"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "cd0066f506863b2a5d5b256c6d659d7f56c83932",
+          "message": "Adding Japanese date/datetime example (#1886)\n\n* Adding Japanese date/datetime example\r\n\r\n* Slight change\r\n\r\n* Fixing missing date call\r\n\r\n* Update components/calendar/src/japanese.rs\r\n\r\nCo-authored-by: Manish Goregaokar <manishsmail@gmail.com>",
+          "timestamp": "2022-05-16T19:00:38Z",
+          "tree_id": "b8340beb0ef194aba896802422349be24a85bce5",
+          "url": "https://github.com/unicode-org/icu4x/commit/cd0066f506863b2a5d5b256c6d659d7f56c83932"
+        },
+        "date": 1652728232996,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 110252,
+            "range": "± 314",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 23436,
+            "range": "± 119",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 69421,
+            "range": "± 386",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 187,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 95,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 76,
+            "range": "± 0",
             "unit": "ns/iter"
           }
         ]
