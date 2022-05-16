@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1652395789791,
+  "lastUpdate": 1652716066235,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -26608,6 +26608,66 @@ window.BENCHMARK_DATA = {
           {
             "name": "from_string/1000000001",
             "value": 77,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "m_kato@ga2.so-net.ne.jp",
+            "name": "Makoto Kato",
+            "username": "makotokato"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "fcdca71a2b126ed127e87a55c8c2bbf07573496d",
+          "message": "Move language detection to language.rs (#1689)\n\n* Move language detection to language.rs\r\n\r\n* Fix cargo clippy",
+          "timestamp": "2022-05-17T00:36:21+09:00",
+          "tree_id": "3bc0850403fd909f2b118c147540dd4541e1dce2",
+          "url": "https://github.com/unicode-org/icu4x/commit/fcdca71a2b126ed127e87a55c8c2bbf07573496d"
+        },
+        "date": 1652716047280,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 110006,
+            "range": "± 579",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 20631,
+            "range": "± 111",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 69468,
+            "range": "± 594",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 187,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 84,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 67,
             "range": "± 0",
             "unit": "ns/iter"
           }
