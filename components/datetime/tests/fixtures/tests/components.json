@@ -35,6 +35,24 @@
                     "hour": "numeric",
                     "minute": "numeric",
                     "second": "two-digit",
+                    "fractional_second": 0
+                }
+            }
+        },
+        "output": {
+            "values": {
+                "en": "14:15:07"
+            }
+        }
+    },
+    {
+        "input": {
+            "value": "2022-05-03T14:15:07.123",
+            "options": {
+                "components": {
+                    "hour": "numeric",
+                    "minute": "numeric",
+                    "second": "two-digit",
                     "fractional_second": 8
                 }
             }
@@ -42,6 +60,24 @@
         "output": {
             "values": {
                 "en": "14:15:07.12300000"
+            }
+        }
+    },
+    {
+        "input": {
+            "value": "2022-05-03T14:15:07.123",
+            "options": {
+                "components": {
+                    "hour": "numeric",
+                    "minute": "numeric",
+                    "second": "two-digit",
+                    "fractional_second": 255
+                }
+            }
+        },
+        "output": {
+            "values": {
+                "en": "14:15:07.1230000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
             }
         }
     }

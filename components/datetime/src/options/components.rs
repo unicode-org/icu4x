@@ -677,17 +677,24 @@ impl<'data> From<&PatternPlurals<'data>> for Bag {
                     });
                 }
                 FieldSymbol::Second(second) => {
-                    if let fields::Second::Second = second {
-                        bag.second = Some(match field.length {
-                            FieldLength::TwoDigit => Numeric::TwoDigit,
-                            _ => Numeric::Numeric,
-                        });
-                    } else if let fields::Second::FractionalSecond = second {
-                        if let FieldLength::Fixed(p) = field.length {
-                            bag.fractional_second = Some(p);
+                    match second {
+                        fields::Second::Second => {
+                            bag.second = Some(match field.length {
+                                FieldLength::TwoDigit => Numeric::TwoDigit,
+                                _ => Numeric::Numeric,
+                            });
+                        }
+                        fields::Second::FractionalSecond => {
+                            if let FieldLength::Fixed(p) = field.length {
+                                if p > 0 {
+                                    bag.fractional_second = Some(p);
+                                }
+                            }
+                        }
+                        fields::Second::Millisecond => {
+                            // fields::Second::Millisecond is not implemented (#1834)
                         }
                     }
-                    // fields::Second::Millisecond is not implemented (#1834)
                 }
                 FieldSymbol::TimeZone(time_zone_name) => {
                     bag.time_zone_name = Some(match time_zone_name {
