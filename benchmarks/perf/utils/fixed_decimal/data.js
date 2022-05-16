@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1652716066235,
+  "lastUpdate": 1652719175304,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -26669,6 +26669,66 @@ window.BENCHMARK_DATA = {
             "name": "from_string/1000000001",
             "value": 67,
             "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "andrewpkq@gmail.com",
+            "name": "andrewpollack",
+            "username": "andrewpollack"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "4aa663ba332d39d18b2bf0552ffcad641800aee3",
+          "message": "Substituting unwrap() for expect() in examples (#1882)",
+          "timestamp": "2022-05-16T16:26:48Z",
+          "tree_id": "1ae706367f75941766fc5adc9dc1f86cd8218ace",
+          "url": "https://github.com/unicode-org/icu4x/commit/4aa663ba332d39d18b2bf0552ffcad641800aee3"
+        },
+        "date": 1652719152237,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 112777,
+            "range": "± 4447",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 24174,
+            "range": "± 896",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 64710,
+            "range": "± 2359",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 204,
+            "range": "± 4",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 93,
+            "range": "± 4",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 81,
+            "range": "± 3",
             "unit": "ns/iter"
           }
         ]
