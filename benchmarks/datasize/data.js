@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1652715496145,
+  "lastUpdate": 1652718537541,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -14993,6 +14993,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/fcdca71a2b126ed127e87a55c8c2bbf07573496d"
         },
         "date": 1652715477017,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 1627470,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "andrewpkq@gmail.com",
+            "name": "andrewpollack",
+            "username": "andrewpollack"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "4aa663ba332d39d18b2bf0552ffcad641800aee3",
+          "message": "Substituting unwrap() for expect() in examples (#1882)",
+          "timestamp": "2022-05-16T16:26:48Z",
+          "tree_id": "1ae706367f75941766fc5adc9dc1f86cd8218ace",
+          "url": "https://github.com/unicode-org/icu4x/commit/4aa663ba332d39d18b2bf0552ffcad641800aee3"
+        },
+        "date": 1652718511730,
         "tool": "ndjson",
         "benches": [
           {
