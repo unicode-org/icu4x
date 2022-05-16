@@ -11,6 +11,7 @@
 //! use tinystr::tinystr;
 //!
 //! // `icu_testdata::get_provider` contains information specifying era dates.
+//! // Production code should probably use its own data provider
 //! let provider = icu_testdata::get_provider();
 //! let japanese_calendar = Japanese::try_new(&provider)
 //!     .expect("Cannot load japanese data");
