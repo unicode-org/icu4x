@@ -9,10 +9,12 @@
 //!                     types::IsoHour, types::IsoMinute, types::IsoSecond};
 //!
 //! // `Date` type
-//! let date_iso = Date::new_iso_date_from_integers(1970, 1, 2).unwrap();
+//! let date_iso = Date::new_iso_date_from_integers(1970, 1, 2)
+//!     .expect("Failed to initialize ISO Date instance.");
 //!
 //! // `DateTime` type
-//! let datetime_iso = DateTime::new_iso_datetime_from_integers(1970, 1, 2, 13, 1, 0).unwrap();
+//! let datetime_iso = DateTime::new_iso_datetime_from_integers(1970, 1, 2, 13, 1, 0)
+//!     .expect("Failed to initialize ISO DateTime instance.");
 //!
 //! // `Date` checks
 //! assert_eq!(date_iso.year().number, 1970);
@@ -330,17 +332,18 @@ impl Date<Iso> {
     ///
     /// ```rust
     /// use icu::calendar::{Date,
-    ///                     iso::IsoYear,
-    ///                     iso::IsoMonth,
-    ///                     iso::IsoDay};
+    ///                     iso::IsoYear, iso::IsoMonth, iso::IsoDay};
     /// use std::convert::TryFrom;
     ///
     /// let iso_year = IsoYear(1996);
-    /// let iso_month = IsoMonth::try_from(2).unwrap();
-    /// let iso_day = IsoDay::try_from(3).unwrap();
+    /// let iso_month = IsoMonth::try_from(2)
+    ///     .expect("Failed to initialize IsoMonth instance.");
+    /// let iso_day = IsoDay::try_from(3)
+    ///     .expect("Failed to initialize IsoDay instance.");
     ///
     /// // Creation of ISO date
-    /// let date_iso = Date::new_iso_date(iso_year, iso_month, iso_day).unwrap();
+    /// let date_iso = Date::new_iso_date(iso_year, iso_month, iso_day)
+    ///     .expect("Failed to initialize ISO Date instance.");
     ///
     /// assert_eq!(date_iso.year().number, 1996);
     /// assert_eq!(date_iso.month().number, 2);
@@ -366,7 +369,8 @@ impl Date<Iso> {
     /// ```rust
     /// use icu::calendar::Date;
     ///
-    /// let date_iso = Date::new_iso_date_from_integers(1970, 1, 2).unwrap();
+    /// let date_iso = Date::new_iso_date_from_integers(1970, 1, 2)
+    ///     .expect("Failed to initialize ISO Date instance.");
     ///
     /// assert_eq!(date_iso.year().number, 1970);
     /// assert_eq!(date_iso.month().number, 1);
@@ -386,11 +390,10 @@ impl DateTime<Iso> {
     ///
     /// ```rust
     /// use icu::calendar::{DateTime,
-    ///                     types::IsoHour,
-    ///                     types::IsoMinute,
-    ///                     types::IsoSecond};
+    ///                     types::IsoHour, types::IsoMinute, types::IsoSecond};
     ///
-    /// let datetime_iso = DateTime::new_iso_datetime_from_integers(1970, 1, 2, 13, 1, 0).unwrap();
+    /// let datetime_iso = DateTime::new_iso_datetime_from_integers(1970, 1, 2, 13, 1, 0)
+    ///     .expect("Failed to initialize ISO DateTime instance.");
     ///
     /// assert_eq!(datetime_iso.date.year().number, 1970);
     /// assert_eq!(datetime_iso.date.month().number, 1);
