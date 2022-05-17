@@ -38,8 +38,9 @@ pub const ALL_KEYS: [ResourceKey; 6] = [
     CollationSpecialPrimariesV1Marker::KEY,
 ];
 
+/// Serde counterpart for `CollationDataV1`.
 #[derive(serde::Deserialize)]
-pub struct CollationData {
+struct CollationData {
     pub trie: CodePointTrieToml,
     pub contexts: Vec<u16>,
     pub ce32s: Vec<u32>,
@@ -47,30 +48,35 @@ pub struct CollationData {
     pub ces: Vec<i64>,
 }
 
+/// Serde counterpart for `CollationDiacriticsV1`.
 #[derive(serde::Deserialize)]
-pub struct CollationDiacritics {
+struct CollationDiacritics {
     pub ce32s: Vec<u32>,
 }
 
+/// Serde counterpart for `CollationJamoV1`.
 #[derive(serde::Deserialize)]
-pub struct CollationJamo {
+struct CollationJamo {
     pub ce32s: Vec<u32>,
 }
 
+/// Serde counterpart for `CollationMetadataV1`.
 #[derive(serde::Deserialize)]
-pub struct CollationMetadata {
+struct CollationMetadata {
     pub bits: u32,
 }
 
+/// Serde counterpart for `CollationReorderingV1`.
 #[derive(serde::Deserialize)]
-pub struct CollationReordering {
+struct CollationReordering {
     pub min_high_no_reorder: u32,
     pub reorder_table: Vec<u8>,
     pub reorder_ranges: Vec<u32>,
 }
 
+/// Serde counterpart for `CollationSpecialPrimariesV1`.
 #[derive(serde::Deserialize)]
-pub struct CollationSpecialPrimaries {
+struct CollationSpecialPrimaries {
     pub last_primaries: Vec<u16>, // length always supposed to be 4
     pub numeric_primary: u8,
 }
