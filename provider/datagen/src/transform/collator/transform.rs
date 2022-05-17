@@ -140,17 +140,14 @@ macro_rules! collation_provider {
                 }
 
                 let langid = req.options.get_langid();
-                let mut s = String::new();
-                langid.write_to(&mut s).map_err(|_| {
-                    DataErrorKind::MissingResourceOptions.with_req($marker::KEY, req)
-                })?;
-                if &s == "und" {
-                    s = String::from("root");
+                let mut s = if langid == LanguageIdentifier::UND {
+                    String::from("root")
                 } else {
-                    // No safe method for in-place replacement.
-                    s = s.replace('-', "_");
-                    s.make_ascii_lowercase();
-                }
+                    langid
+                        .write_to_string()
+                        .replace('-', "_")
+                        .to_ascii_lowercase()
+                };
                 if let Some(extension) = &req.options.get_unicode_ext(&unicode_ext_key!("co")) {
                     let extension_string = extension.to_string();
                     let extension_str = &extension_string[..];
