@@ -115,7 +115,7 @@ impl SourceData {
         Ok(self
             .coll_root
             .as_deref()
-            .ok_or(DatagenError::MissingUpropsPath)?)
+            .ok_or(DatagenError::MissingCollPath)?)
     }
 }
 

@@ -22,6 +22,8 @@ pub enum DatagenError {
     MissingCldrPaths,
     #[displaydoc("Missing Unicode properties data")]
     MissingUpropsPath,
+    #[displaydoc("Missing collation data")]
+    MissingCollPath,
 }
 
 impl std::error::Error for DatagenError {}
@@ -90,12 +92,16 @@ impl From<DatagenError> for DataError {
             MissingUpropsPath => {
                 DataErrorKind::MissingSourceData.with_str_context(UPROPS_SOURCE_MARKER)
             }
+            MissingCollPath => {
+                DataErrorKind::MissingSourceData.with_str_context(COLLATION_SOURCE_MARKER)
+            }
         }
     }
 }
 
 const UPROPS_SOURCE_MARKER: &str = "Uprops";
 const CLDR_SOURCE_MARKER: &str = "CLDR";
+const COLLATION_SOURCE_MARKER: &str = "Collation";
 
 /// Identifies errors that are due to missing CLDR data.
 ///
