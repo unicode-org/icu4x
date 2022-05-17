@@ -13,7 +13,10 @@ use std::path::{Path, PathBuf};
 pub struct SourceData {
     cldr_paths: Option<CldrPaths>,
     uprops_root: Option<PathBuf>,
-    #[cfg(feature = "experimental")]
+    /// Only used in experimental context, but compiling this
+    /// out in non-experimental context would unnecessarily
+    /// complicate things.
+    #[allow(dead_code)]
     coll_root: Option<PathBuf>,
     trie_type: TrieType,
 }
@@ -23,7 +26,6 @@ impl Default for SourceData {
         Self {
             cldr_paths: None,
             uprops_root: None,
-            #[cfg(feature = "experimental")]
             coll_root: None,
             trie_type: TrieType::Small,
         }
@@ -55,7 +57,6 @@ impl SourceData {
         }
     }
 
-    #[cfg(feature = "experimental")]
     /// Adds collation data to this `DataSource`.
     pub fn with_coll(self, coll_root: PathBuf) -> Self {
         Self {
