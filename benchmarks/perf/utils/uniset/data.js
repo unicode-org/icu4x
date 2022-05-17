@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1652728131167,
+  "lastUpdate": 1652798986786,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -27431,6 +27431,60 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 41216479,
             "range": "± 161971",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/worst",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/worst",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "ab1f91f6e78273e538c202aa5720150b789d95a3",
+          "message": "Making `time_granularity` public (#1867)",
+          "timestamp": "2022-05-17T16:41:08+02:00",
+          "tree_id": "7f09042c3eba53e981fa6056b9767d3c9edfae46",
+          "url": "https://github.com/unicode-org/icu4x/commit/ab1f91f6e78273e538c202aa5720150b789d95a3"
+        },
+        "date": 1652798967083,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 36540587,
+            "range": "± 2562362",
             "unit": "ns/iter"
           },
           {
