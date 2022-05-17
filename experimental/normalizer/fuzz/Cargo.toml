@@ -14,7 +14,7 @@ rust_icu_unorm2 = { path = "../../../../rust_icu/rust_icu_unorm2", features = ["
 rust_icu_sys = { path = "../../../../rust_icu/rust_icu_sys", features = ["use-bindgen", "icu_config"] }
 rust_icu_ustring = { path = "../../../../rust_icu/rust_icu_ustring", features = ["use-bindgen", "icu_config"] }
 encoding_rs = "0.8.31"
-icu_testdata = { version = "0.6", path = "../../../provider/testdata", features = ["static"] }
+icu_testdata = { version = "0.6", path = "../../../provider/testdata" }
 icu_normalizer = { path = "..", features = ["serde"] }
 
 # Prevent this from interfering with workspaces

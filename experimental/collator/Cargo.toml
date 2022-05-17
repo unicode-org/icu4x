@@ -46,7 +46,7 @@ postcard = { version = "0.7", features = ["use-std"] }
 utf8_iter = "1.0"
 
 [dev-dependencies]
-icu_testdata = { version = "0.6", path = "../../provider/testdata", features = ["static"] }
+icu_testdata = { version = "0.6", path = "../../provider/testdata" }
 atoi = "1.0.0"
 arraystring = "0.3.0"
 

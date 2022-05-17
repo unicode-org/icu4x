@@ -43,7 +43,7 @@ icu_properties = { version = "0.6", path = "../../components/properties" }
 utf8_iter = "1.0"
 
 [dev-dependencies]
-icu_testdata = { version = "0.6", path = "../../provider/testdata", features = ["static"] }
+icu_testdata = { version = "0.6", path = "../../provider/testdata" }
 
 [lib]
 path = "src/lib.rs"
