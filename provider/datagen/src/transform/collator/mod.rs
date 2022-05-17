@@ -158,10 +158,9 @@ macro_rules! collation_provider {
                         .to_ascii_lowercase()
                 };
                 if let Some(extension) = &req.options.get_unicode_ext(&unicode_ext_key!("co")) {
-                    let extension_string = extension.to_string();
-                    let extension_str = &extension_string[..];
                     s.push('_');
-                    match extension_str {
+                    let extension_string = extension.to_string();
+                    match &extension_string[..] {
                         "trad" => {
                             s.push_str("traditional");
                         }
@@ -175,7 +174,7 @@ macro_rules! collation_provider {
                             s.push_str("gb2312han");
                         }
                         _ => {
-                            s.push_str(extension_str);
+                            s.push_str(&extension_string);
                         }
                     }
                 } else {
