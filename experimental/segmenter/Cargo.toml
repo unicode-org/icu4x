@@ -29,6 +29,7 @@ skip_optional_dependencies = true
 
 [dependencies]
 icu_char16trie = { version = "0.1", path = "../char16trie" }
+icu_codepointtrie = { path = "../../utils/codepointtrie" }
 icu_provider = { version = "0.6", path = "../../provider/core", features = ["macros"] }
 icu_segmenter_lstm = { version = "0.1", path = "../segmenter_lstm", optional = true }
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }
@@ -56,5 +57,5 @@ required-features = ["lstm"]
 [features]
 default = []
 lstm = ["icu_segmenter_lstm"]
-serde = ["dep:serde", "zerovec/serde", "icu_char16trie/serde"]
-datagen = ["serde", "zerovec/serde_serialize", "icu_char16trie/serde_serialize"]
+serde = ["dep:serde", "zerovec/serde", "icu_char16trie/serde", "icu_codepointtrie/serde"]
+datagen = ["serde", "zerovec/serde_serialize", "icu_char16trie/serde_serialize", "icu_codepointtrie/serde_serialize"]

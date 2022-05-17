@@ -3,8 +3,9 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::blob_schema::BlobSchema;
-use alloc::rc::Rc;
+use icu_provider::buf::BufferFormat;
 use icu_provider::prelude::*;
+use icu_provider::RcWrap;
 use serde::de::Deserialize;
 use writeable::Writeable;
 use yoke::*;
@@ -16,6 +17,11 @@ use zerovec::maps::{KeyError, ZeroMap2dBorrowed};
 /// at runtime, so that the code and data can be shipped separately.
 ///
 /// If you prefer to bake the data into your binary, see [`StaticDataProvider`].
+///
+/// # `Sync + Send`
+///
+/// This provider uses a [`icu_provider::RcWrap`] internally, which can be made `Sync + Send` with the
+/// `sync` feature on the [`icu_provider`] crate.
 ///
 /// # Examples
 ///
@@ -33,7 +39,7 @@ use zerovec::maps::{KeyError, ZeroMap2dBorrowed};
 /// )).expect("Reading pre-computed postcard buffer");
 ///
 /// // Create a DataProvider from it:
-/// let provider = BlobDataProvider::new_from_rc_blob(blob.into())
+/// let provider = BlobDataProvider::new_from_blob(blob)
 ///     .expect("Deserialization should succeed");
 ///
 /// // Check that it works:
@@ -52,14 +58,14 @@ use zerovec::maps::{KeyError, ZeroMap2dBorrowed};
 /// [`StaticDataProvider`]: crate::StaticDataProvider
 pub struct BlobDataProvider {
     #[allow(clippy::type_complexity)]
-    data: Yoke<ZeroMap2dBorrowed<'static, ResourceKeyHash, [u8], [u8]>, Rc<[u8]>>,
+    data: Yoke<ZeroMap2dBorrowed<'static, ResourceKeyHash, [u8], [u8]>, RcWrap>,
 }
 
 impl BlobDataProvider {
-    /// Create a [`BlobDataProvider`] from an `Rc` blob of ICU4X data.
-    pub fn new_from_rc_blob(blob: Rc<[u8]>) -> Result<Self, DataError> {
+    /// Create a [`BlobDataProvider`] from a blob of ICU4X data.
+    pub fn new_from_blob<B: Into<RcWrap>>(blob: B) -> Result<Self, DataError> {
         Ok(BlobDataProvider {
-            data: Yoke::try_attach_to_cart_badly(blob, |bytes| {
+            data: Yoke::try_attach_to_cart_badly(blob.into(), |bytes| {
                 BlobSchema::deserialize(&mut postcard::Deserializer::from_bytes(bytes)).map(
                     |blob| {
                         let BlobSchema::V001(blob) = blob;

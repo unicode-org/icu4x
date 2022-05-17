@@ -14,8 +14,6 @@ use crate::resource::ResourceOptions;
 use crate::yoke::trait_hack::YokeTraitHack;
 use crate::yoke::*;
 
-use alloc::rc::Rc;
-
 use core::convert::TryFrom;
 use core::fmt;
 use core::fmt::Debug;
@@ -74,6 +72,11 @@ pub struct DataResponseMetadata {
 /// To transform a [`DataPayload`] to a different type backed by the same data store (cart), use
 /// [`DataPayload::map_project()`] or one of its sister methods.
 ///
+/// # `sync` feature
+///
+/// By default, the payload uses an [`Rc<[u8]>`] internally and hence is neither [`Sync`] nor [`Send`].
+/// If these traits are required, the `sync` feature can be enabled to use an [`Arc<[u8]>`] instead.
+///
 /// # Examples
 ///
 /// Basic usage, using the `CowStrMarker` marker:
@@ -91,7 +94,7 @@ pub struct DataPayload<M>
 where
     M: DataMarker,
 {
-    pub(crate) yoke: Yoke<M::Yokeable, Option<Rc<[u8]>>>,
+    pub(crate) yoke: Yoke<M::Yokeable, Option<RcWrap>>,
 }
 
 impl<M> Debug for DataPayload<M>
@@ -145,6 +148,42 @@ where
 {
 }
 
+/// A wrapper type that wraps either an [`Rc`](alloc::rc::Rc) or an
+/// [`Arc`](alloc::sync::Arc), depending on the "sync" feature. Create
+/// this from a `&[u8]`.
+#[derive(Clone)]
+pub struct RcWrap(
+    #[cfg(not(feature = "sync"))] alloc::rc::Rc<[u8]>,
+    #[cfg(feature = "sync")] alloc::sync::Arc<[u8]>,
+);
+
+impl core::ops::Deref for RcWrap {
+    type Target = [u8];
+    fn deref(&self) -> &Self::Target {
+        self.0.deref()
+    }
+}
+
+// Safe because both Rc and Arc are CloneableCart
+unsafe impl CloneableCart for RcWrap {}
+
+// Safe because both Rc and Arc are StableDeref
+unsafe impl stable_deref_trait::StableDeref for RcWrap {}
+
+impl From<alloc::vec::Vec<u8>> for RcWrap {
+    fn from(other: alloc::vec::Vec<u8>) -> Self {
+        Self(other.into())
+    }
+}
+
+// Constructing from `Box<[u8]>` copies the whole slice, so we might
+// as well define this on a slice directly.
+impl From<&[u8]> for RcWrap {
+    fn from(other: &[u8]) -> Self {
+        Self(other.into())
+    }
+}
+
 #[test]
 fn test_clone_eq() {
     use crate::marker::CowStrMarker;
@@ -167,10 +206,10 @@ where
     /// [`try_from_rc_buffer_badly()`](Self::try_from_rc_buffer_badly) instead.
     #[inline]
     pub fn try_from_rc_buffer<E>(
-        rc_buffer: Rc<[u8]>,
+        buffer: RcWrap,
         f: impl for<'de> FnOnce(&'de [u8]) -> Result<<M::Yokeable as Yokeable<'de>>::Output, E>,
     ) -> Result<Self, E> {
-        let yoke = Yoke::try_attach_to_cart(rc_buffer, f)?.wrap_cart_in_option();
+        let yoke = Yoke::try_attach_to_cart(buffer, f)?.wrap_cart_in_option();
         Ok(Self { yoke })
     }
 
@@ -188,13 +227,9 @@ where
     /// # #[cfg(feature = "serde_json")] {
     /// use icu_provider::prelude::*;
     /// use icu_provider::hello_world::*;
-    /// use std::rc::Rc;
-    ///
-    /// let json_text = "{\"message\":\"Hello World\"}";
-    /// let json_rc_buffer: Rc<[u8]> = json_text.as_bytes().into();
     ///
     /// let payload = DataPayload::<HelloWorldV1Marker>::try_from_rc_buffer_badly(
-    ///     json_rc_buffer.clone(),
+    ///     "{\"message\":\"Hello World\"}".as_bytes().into(),
     ///     |bytes| {
     ///         serde_json::from_slice(bytes)
     ///     }
@@ -206,10 +241,10 @@ where
     /// ```
     #[allow(clippy::type_complexity)]
     pub fn try_from_rc_buffer_badly<E>(
-        rc_buffer: Rc<[u8]>,
+        buffer: RcWrap,
         f: for<'de> fn(&'de [u8]) -> Result<<M::Yokeable as Yokeable<'de>>::Output, E>,
     ) -> Result<Self, E> {
-        let yoke = Yoke::try_attach_to_cart(rc_buffer, f)?.wrap_cart_in_option();
+        let yoke = Yoke::try_attach_to_cart(buffer, f)?.wrap_cart_in_option();
         Ok(Self { yoke })
     }
 
@@ -217,7 +252,7 @@ where
     /// conversion. This can often be a Serde deserialization operation.
     ///
     /// This function is similar to [`DataPayload::try_from_rc_buffer`], but it accepts a buffer
-    /// that is already yoked to an Rc buffer cart.
+    /// that is already yoked.
     ///
     /// # Examples
     ///
@@ -225,18 +260,12 @@ where
     /// # #[cfg(feature = "serde_json")] {
     /// use icu_provider::prelude::*;
     /// use icu_provider::hello_world::*;
-    /// use std::rc::Rc;
     /// use icu_provider::yoke::Yoke;
     ///
-    /// let json_text = "{\"message\":\"Hello World\"}";
-    /// let json_rc_buffer: Rc<[u8]> = json_text.as_bytes().into();
-    ///
     /// let payload = DataPayload::<HelloWorldV1Marker>::try_from_yoked_buffer(
-    ///     Yoke::attach_to_zero_copy_cart(json_rc_buffer),
+    ///     Yoke::attach_to_cart_badly("{\"message\":\"Hello World\"}".as_bytes().into(), |b| b),
     ///     (),
-    ///     |bytes, _, _| {
-    ///         serde_json::from_slice(bytes)
-    ///     }
+    ///     |bytes, _, _| serde_json::from_slice(bytes)
     /// )
     /// .expect("JSON is valid");
     ///
@@ -245,7 +274,7 @@ where
     /// ```
     #[allow(clippy::type_complexity)]
     pub fn try_from_yoked_buffer<T, E>(
-        yoked_buffer: Yoke<&'static [u8], Rc<[u8]>>,
+        yoked_buffer: Yoke<&'static [u8], RcWrap>,
         capture: T,
         f: for<'de> fn(
             <&'static [u8] as yoke::Yokeable<'de>>::Output,
@@ -682,15 +711,16 @@ where
 }
 
 impl DataPayload<BufferMarker> {
-    /// Converts a reference-counted byte buffer into a `DataPayload<BufferMarker>`.
-    pub fn from_rc_buffer(buffer: Rc<[u8]>) -> Self {
+    /// Converts an [`RcWrap`] into a `DataPayload<BufferMarker>`. The [`RcWrap`]
+    /// can be obtained from a `&[u8]`.
+    pub fn from_rc_buffer(buffer: RcWrap) -> Self {
         Self {
-            yoke: Yoke::attach_to_zero_copy_cart(buffer).wrap_cart_in_option(),
+            yoke: Yoke::attach_to_cart_badly(buffer, |b| b).wrap_cart_in_option(),
         }
     }
 
     /// Converts a yoked byte buffer into a `DataPayload<BufferMarker>`.
-    pub fn from_yoked_buffer(yoked_buffer: Yoke<&'static [u8], Rc<[u8]>>) -> Self {
+    pub fn from_yoked_buffer(yoked_buffer: Yoke<&'static [u8], RcWrap>) -> Self {
         Self {
             yoke: yoked_buffer.wrap_cart_in_option(),
         }

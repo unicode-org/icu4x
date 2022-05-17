@@ -4,6 +4,7 @@
 
 use core::cmp::{Ord, PartialOrd};
 use displaydoc::Display;
+use zerovec::ule::{AsULE, ZeroVecError, ULE};
 
 #[derive(Display, Debug, PartialEq, Copy, Clone)]
 #[non_exhaustive]
@@ -28,11 +29,6 @@ pub enum FieldLength {
 }
 
 impl FieldLength {
-    #[inline]
-    pub(crate) fn idx_in_range(v: &u8) -> bool {
-        (1..=6).contains(v) || *v >= 128
-    }
-
     #[inline]
     pub(crate) fn idx(&self) -> u8 {
         match self {
@@ -75,5 +71,47 @@ impl FieldLength {
             FieldLength::Six => 6,
             FieldLength::Fixed(p) => p as usize,
         }
+    }
+}
+
+#[repr(transparent)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq)]
+pub struct FieldLengthULE(u8);
+
+impl AsULE for FieldLength {
+    type ULE = FieldLengthULE;
+    fn to_unaligned(self) -> Self::ULE {
+        FieldLengthULE(self.idx())
+    }
+    fn from_unaligned(unaligned: Self::ULE) -> Self {
+        #[allow(clippy::unwrap_used)] // OK because the ULE is pre-validated
+        Self::from_idx(unaligned.0).unwrap()
+    }
+}
+
+impl FieldLengthULE {
+    #[inline]
+    pub(crate) fn validate_byte(byte: u8) -> Result<(), ZeroVecError> {
+        FieldLength::from_idx(byte)
+            .map(|_| ())
+            .map_err(|_| ZeroVecError::parse::<FieldLength>())
+    }
+}
+
+// Safety checklist for ULE:
+//
+// 1. Must not include any uninitialized or padding bytes (true since transparent over a ULE).
+// 2. Must have an alignment of 1 byte (true since transparent over a ULE).
+// 3. ULE::validate_byte_slice() checks that the given byte slice represents a valid slice.
+// 4. ULE::validate_byte_slice() checks that the given byte slice has a valid length
+//    (true since transparent over a type of size 1).
+// 5. All other methods must be left with their default impl.
+// 6. Byte equality is semantic equality.
+unsafe impl ULE for FieldLengthULE {
+    fn validate_byte_slice(bytes: &[u8]) -> Result<(), ZeroVecError> {
+        for byte in bytes {
+            Self::validate_byte(*byte)?;
+        }
+        Ok(())
     }
 }

@@ -10,11 +10,13 @@
 //!                     gregorian::Gregorian};
 //!
 //! // `Date` type
-//! let date_iso = Date::new_iso_date_from_integers(1970, 1, 2).unwrap();
+//! let date_iso = Date::new_iso_date_from_integers(1970, 1, 2)
+//!     .expect("Failed to initialize ISO Date instance.");
 //! let date_gregorian = Date::new_from_iso(date_iso, Gregorian);
 //!
 //! // `DateTime` type
-//! let datetime_iso = DateTime::new_iso_datetime_from_integers(1970, 1, 2, 13, 1, 0).unwrap();
+//! let datetime_iso = DateTime::new_iso_datetime_from_integers(1970, 1, 2, 13, 1, 0)
+//!     .expect("Failed to initialize ISO DateTime instance.");
 //! let datetime_gregorian = DateTime::new_from_iso(datetime_iso, Gregorian);
 //!
 //! // `Date` checks
@@ -130,11 +132,14 @@ impl Date<Gregorian> {
     /// use std::convert::TryFrom;
     ///
     /// let iso_year = IsoYear(1970);
-    /// let iso_month = IsoMonth::try_from(1).unwrap();
-    /// let iso_day = IsoDay::try_from(2).unwrap();
+    /// let iso_month = IsoMonth::try_from(1)
+    ///     .expect("Failed to initialize IsoMonth instance.");
+    /// let iso_day = IsoDay::try_from(2)
+    ///     .expect("Failed to initialize IsoDay instance.");
     ///
     /// // Conversion from ISO to Gregorian
-    /// let date_gregorian = Date::new_gregorian_date(iso_year, iso_month, iso_day).unwrap();
+    /// let date_gregorian = Date::new_gregorian_date(iso_year, iso_month, iso_day)
+    ///     .expect("Failed to initialize Gregorian Date instance.");
     ///
     /// assert_eq!(date_gregorian.year().number, 1970);
     /// assert_eq!(date_gregorian.month().number, 1);
@@ -160,7 +165,8 @@ impl DateTime<Gregorian> {
     ///                     types::IsoMinute,
     ///                     types::IsoSecond};
     ///
-    /// let datetime_gregorian = DateTime::new_gregorian_datetime_from_integers(1970, 1, 2, 13, 1, 0, 0).unwrap();
+    /// let datetime_gregorian = DateTime::new_gregorian_datetime_from_integers(1970, 1, 2, 13, 1, 0, 0)
+    ///     .expect("Failed to initialize Gregorian DateTime instance.");
     ///
     /// assert_eq!(datetime_gregorian.date.year().number, 1970);
     /// assert_eq!(datetime_gregorian.date.month().number, 1);
