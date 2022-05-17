@@ -32,7 +32,7 @@ fn date_benches(c: &mut Criterion) {
     let fxs = fixtures::get_dates_fixture().unwrap();
 
     // General overview is dealing in just ISO.
-    group.bench_function("calendar/date/overview", |b| {
+    group.bench_function("calendar/overview", |b| {
         use icu::calendar::{iso::IsoDay, iso::IsoMonth, iso::IsoYear};
         use std::convert::TryFrom;
 
@@ -58,7 +58,7 @@ fn date_benches(c: &mut Criterion) {
     });
 
     #[cfg(feature = "bench")]
-    group.bench_function("calendar/date/buddhist", |b| {
+    group.bench_function("calendar/buddhist", |b| {
         use icu::calendar::buddhist::Buddhist;
 
         b.iter(|| {
@@ -80,7 +80,7 @@ fn date_benches(c: &mut Criterion) {
     });
 
     #[cfg(feature = "bench")]
-    group.bench_function("calendar/date/coptic", |b| {
+    group.bench_function("calendar/coptic", |b| {
         use icu::calendar::coptic::Coptic;
 
         b.iter(|| {
@@ -94,15 +94,15 @@ fn date_benches(c: &mut Criterion) {
                 let mut converted_date_coptic = Date::new_from_iso(date_iso, Coptic);
 
                 run_calendar_benches(vec![
-                     &mut instantiated_date_coptic,
-                     &mut converted_date_coptic,
+                    &mut instantiated_date_coptic,
+                    &mut converted_date_coptic,
                 ]);
             }
         })
     });
 
     #[cfg(feature = "bench")]
-    group.bench_function("calendar/date/ethiopic", |b| {
+    group.bench_function("calendar/ethiopic", |b| {
         use icu::calendar::ethiopic::Ethiopic;
 
         b.iter(|| {
@@ -124,7 +124,7 @@ fn date_benches(c: &mut Criterion) {
     });
 
     #[cfg(feature = "bench")]
-    group.bench_function("calendar/date/gregorian", |b| {
+    group.bench_function("calendar/gregorian", |b| {
         use icu::calendar::gregorian::Gregorian;
         use icu::calendar::{iso::IsoDay, iso::IsoMonth, iso::IsoYear};
         use std::convert::TryFrom;
@@ -151,7 +151,7 @@ fn date_benches(c: &mut Criterion) {
     });
 
     #[cfg(feature = "bench")]
-    group.bench_function("calendar/date/indian", |b| {
+    group.bench_function("calendar/indian", |b| {
         use icu::calendar::indian::Indian;
 
         b.iter(|| {
@@ -173,7 +173,7 @@ fn date_benches(c: &mut Criterion) {
     });
 
     #[cfg(feature = "bench")]
-    group.bench_function("calendar/date/julian", |b| {
+    group.bench_function("calendar/julian", |b| {
         use icu::calendar::julian::Julian;
 
         b.iter(|| {
