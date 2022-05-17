@@ -222,12 +222,12 @@ macro_rules! collation_provider {
                     .as_ref()
                     .unwrap()
                     .keys()
-                    .map(|k| {
+                    .filter_map(|k| {
                         let (language, variant) = k.rsplit_once('_').unwrap();
                         let langid = if language == "root" {
                             LanguageIdentifier::default()
                         } else {
-                            language.parse().unwrap()
+                            language.parse().ok()?
                         };
                         let mut locale = Locale::from(langid);
                         // See above for the two special cases.
@@ -247,7 +247,7 @@ macro_rules! collation_provider {
                                 Value::from_str(shortened).expect("valid extension subtag"),
                             );
                         };
-                        ResourceOptions::from(locale)
+                        Some(ResourceOptions::from(locale))
                     })
                     .collect();
                 Ok(Box::new(list.into_iter()))
