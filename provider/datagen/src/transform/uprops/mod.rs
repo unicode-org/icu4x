@@ -29,7 +29,7 @@ mod decompositions_serde;
 mod enum_codepointtrie;
 mod script;
 mod uprops_helpers;
-pub(crate) mod uprops_serde;
+mod uprops_serde;
 
 pub use bin_uniset::BinaryPropertyUnicodeSetDataProvider;
 #[cfg(feature = "experimental")]
