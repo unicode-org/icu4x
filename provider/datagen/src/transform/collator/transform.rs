@@ -95,13 +95,6 @@ macro_rules! collation_provider {
 
         /// A data provider reading from .toml files produced by the ICU4C genrb tool.
         impl $provider {
-            // pub fn try_new(root_dir: &Path) -> Result<Self, DataError> {
-            //     let data = $provider::load_data(root_dir).map_err(|e| {
-            //         DataError::custom("Could not create provider").with_display_context(&e)
-            //     })?;
-            //     Ok(Self { data })
-            // }
-
             fn load_data(root_dir: &Path) -> Result<HashMap<String, $serde_struct>, DatagenError> {
                 let mut result = HashMap::new();
                 for path in get_dir_contents(&root_dir)? {
