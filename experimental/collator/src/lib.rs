@@ -8,7 +8,7 @@
 
 #![cfg_attr(not(any(test, feature = "std")), no_std)]
 
-//! `icu_collation` is one of the [`ICU4X`] components.
+//! `icu_collation` is one of the ICU4X components.
 //!
 //! This API provides necessary functionality for comparing strings according to language-dependent
 //! conventions.
