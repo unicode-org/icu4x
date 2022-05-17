@@ -162,6 +162,21 @@ where
     }
 }
 
+// TODO(#1893): Instead of going through DynProvider, this should only implement ResourceProvider
+// for the ResourceProviders that P0 and P1 implement. I haven't figured out a way to do this though
+// as we'll need two blanket implementations that could conflict.
+#[cfg(feature = "datagen")] // this is not production-ready
+impl<M, P0, P1> ResourceProvider<M> for ForkByKeyProvider<P0, P1>
+where
+    M: ResourceMarker,
+    P0: DynProvider<M>,
+    P1: DynProvider<M>,
+{
+    fn load_resource(&self, req: &DataRequest) -> Result<DataResponse<M>, DataError> {
+        self.load_payload(<M as ResourceMarker>::KEY, req)
+    }
+}
+
 #[cfg(feature = "datagen")]
 impl<M, P0, P1> datagen::IterableDynProvider<M> for ForkByKeyProvider<P0, P1>
 where
