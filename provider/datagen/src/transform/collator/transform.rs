@@ -9,7 +9,6 @@ use crate::SourceData;
 use icu_codepointtrie::CodePointTrie;
 use std::collections::HashMap;
 use std::convert::TryFrom;
-use std::path::Path;
 use std::str::FromStr;
 use std::sync::RwLock;
 use writeable::Writeable;
@@ -95,8 +94,21 @@ macro_rules! collation_provider {
 
         /// A data provider reading from .toml files produced by the ICU4C genrb tool.
         impl $provider {
-            fn load_data(root_dir: &Path) -> Result<HashMap<String, $serde_struct>, DatagenError> {
-                let mut result = HashMap::new();
+            fn load_data_if_not_loaded(&self) -> Result<(), DatagenError> {
+                if self.data.read().unwrap().is_some() {
+                    return Ok(());
+                }
+                let guard = self.data.write();
+                if guard.as_ref().unwrap().is_some() {
+                    return Ok(());
+                }
+
+                let root_dir = self
+                    .source
+                    .get_coll_root()
+                    .map_err(|e| DatagenError::Custom(e.to_string(), None))?;
+
+                let mut data: HashMap<String, $serde_struct> = HashMap::new();
                 for path in get_dir_contents(&root_dir)? {
                     let stem_bytes = if let Some(stem_bytes) = path
                         .file_stem()
@@ -116,21 +128,16 @@ macro_rules! collation_provider {
                     let toml_obj: $serde_struct = toml::from_str(&toml_str)
                         .map_err(|e| DatagenError::Custom(e.to_string(), None))?;
                     key.make_ascii_lowercase();
-                    result.insert(key, toml_obj);
+                    data.insert(key, toml_obj);
                 }
-                Ok(result)
+                *guard.unwrap() = Some(data);
+                Ok(())
             }
         }
 
         impl ResourceProvider<$marker> for $provider {
             fn load_resource(&self, req: &DataRequest) -> Result<DataResponse<$marker>, DataError> {
-                if self.data.read().unwrap().is_none() {
-                    let root_dir = self.source.get_coll_root()?;
-                    let data = $provider::load_data(root_dir).map_err(|e| {
-                        DataError::custom("Could not create provider").with_display_context(&e)
-                    })?;
-                    *self.data.write().unwrap() = Some(data);
-                }
+                self.load_data_if_not_loaded()?;
 
                 let langid = req.options.get_langid();
                 let mut s = if langid == LanguageIdentifier::UND {
@@ -207,13 +214,7 @@ macro_rules! collation_provider {
             fn supported_options(
                 &self,
             ) -> Result<Box<dyn Iterator<Item = ResourceOptions>>, DataError> {
-                if self.data.read().unwrap().is_none() {
-                    let root_dir = self.source.get_coll_root()?;
-                    let data = $provider::load_data(root_dir).map_err(|e| {
-                        DataError::custom("Could not create provider").with_display_context(&e)
-                    })?;
-                    *self.data.write().unwrap() = Some(data);
-                }
+                self.load_data_if_not_loaded()?;
 
                 let guard = self.data.read().unwrap();
 
