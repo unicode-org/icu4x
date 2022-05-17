@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use displaydoc::Display;
-use icu_properties::error::PropertiesError;
+use icu_properties::PropertiesError;
 use icu_provider::prelude::DataError;
 
 #[derive(Display, Debug)]

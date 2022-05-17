@@ -85,7 +85,7 @@
 #[cfg(feature = "bidi")]
 pub mod bidi;
 
-pub mod error;
+mod error;
 pub mod maps;
 mod props;
 pub mod provider;
@@ -97,3 +97,5 @@ pub use props::{
     BidiClass, CanonicalCombiningClass, EastAsianWidth, EnumeratedProperty, GeneralCategory,
     GeneralCategoryGroup, GraphemeClusterBreak, LineBreak, Script, SentenceBreak, WordBreak,
 };
+
+pub use error::PropertiesError;
