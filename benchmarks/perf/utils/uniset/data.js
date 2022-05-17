@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1652798986786,
+  "lastUpdate": 1652799004267,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -27485,6 +27485,60 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 36540587,
             "range": "± 2562362",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/worst",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/worst",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "2fa1b05423b87cd1206266157f877ccd4baa7396",
+          "message": "Making `DataProvider: Sync + Send` (#1853)",
+          "timestamp": "2022-05-17T16:39:35+02:00",
+          "tree_id": "1cd94410e1313134956d2d118066b97e9a5613db",
+          "url": "https://github.com/unicode-org/icu4x/commit/2fa1b05423b87cd1206266157f877ccd4baa7396"
+        },
+        "date": 1652798972199,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 36410313,
+            "range": "± 338399",
             "unit": "ns/iter"
           },
           {
