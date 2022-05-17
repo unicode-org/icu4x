@@ -119,7 +119,8 @@ mod tests {
                 return Some(buf);
             }
             match hexes[offset] {
-                b';' => {
+                // '\r' is for git on Windows touching the line ends
+                b';' | b'\r' => {
                     return Some(buf);
                 }
                 b' ' => {
