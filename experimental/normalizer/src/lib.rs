@@ -177,14 +177,14 @@ where
         ccc: &'data CodePointTrie<'data, CanonicalCombiningClass>,
     ) -> Self {
         let mut ret = Decomposition::<I> {
-            delegate: delegate,
+            delegate,
             buffer: SmallVec::new(), // Normalized
             buffer_pos: 0,
             // Initialize with a placeholder starter in case
             // the real stream starts with a non-starter.
             pending_unnormalized_starter: Some('\u{FFFF}'),
-            decompositions: decompositions,
-            ccc: ccc,
+            decompositions,
+            ccc,
         };
         let _ = ret.next(); // Remove the U+FFFF placeholder
         ret
@@ -208,11 +208,7 @@ where
             return Some(ret);
         }
         debug_assert_eq!(self.buffer_pos, 0);
-        let c = if let Some(c) = self.pending_unnormalized_starter.take() {
-            c
-        } else {
-            return None;
-        };
+        let c = self.pending_unnormalized_starter.take()?;
         let (starter, combining_start) = {
             let hangul_offset = u32::from(c).wrapping_sub(HANGUL_S_BASE); // SIndex in the spec
             if hangul_offset >= HANGUL_S_COUNT {
@@ -271,8 +267,7 @@ where
                             } else {
                                 let mut i = 0;
                                 let mut combining_start = 0;
-                                let mut it = tail.iter();
-                                while let Some(&ule) = it.next() {
+                                for &ule in tail.iter() {
                                     let ch =
                                         core::char::from_u32(u32::from(u16::from_unaligned(ule)))
                                             .unwrap();
@@ -305,8 +300,7 @@ where
                             } else {
                                 let mut i = 0;
                                 let mut combining_start = 0;
-                                let mut it = tail.iter();
-                                while let Some(&ule) = it.next() {
+                                for &ule in tail.iter() {
                                     let ch =
                                         core::char::from_u32(u32::from_unaligned(ule)).unwrap();
                                     self.buffer.push(CharacterAndClass::new(ch));
@@ -346,7 +340,7 @@ where
             }
         };
         debug_assert_eq!(self.pending_unnormalized_starter, None);
-        while let Some(ch) = self.delegate.next() {
+        for ch in self.delegate.by_ref() {
             if self
                 .decompositions
                 .decomposition_starts_with_non_starter
@@ -434,17 +428,14 @@ impl DecomposingNormalizer {
             icu_properties::maps::get_canonical_combining_class(data_provider)?;
 
         Ok(DecomposingNormalizer {
-            decompositions: decompositions,
-            ccc: ccc,
+            decompositions,
+            ccc,
         })
     }
 
     /// Wraps a delegate iterator into a decomposing iterator
     /// adapter by using the data already held by this normalizer.
-    pub fn normalize_iter<'data, I: Iterator<Item = char>>(
-        &'data self,
-        iter: I,
-    ) -> Decomposition<'data, I> {
+    pub fn normalize_iter<I: Iterator<Item = char>>(&self, iter: I) -> Decomposition<I> {
         Decomposition::new(
             iter,
             self.decompositions.get(),

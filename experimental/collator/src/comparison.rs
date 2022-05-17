@@ -179,7 +179,7 @@ impl<'data> Collator {
         let diacritics: DataPayload<CollationDiacriticsV1Marker> = data_provider
             .load_resource(&DataRequest {
                 options: if metadata.tailored_diacritics() {
-                    resource_options.clone()
+                    resource_options
                 } else {
                     ResourceOptions::default()
                 },
@@ -215,7 +215,7 @@ impl<'data> Collator {
         altered_defaults.set_case_first(Some(metadata.case_first()));
         altered_defaults.set_max_variable(Some(metadata.max_variable()));
 
-        let mut merged_options = options.clone();
+        let mut merged_options = options;
         merged_options.set_defaults(altered_defaults);
 
         let special_primaries = if merged_options.alternate_handling() == AlternateHandling::Shifted
@@ -230,15 +230,15 @@ impl<'data> Collator {
         };
 
         Ok(Collator {
-            special_primaries: special_primaries,
-            root: root,
-            tailoring: tailoring,
-            jamo: jamo,
-            diacritics: diacritics,
+            special_primaries,
+            root,
+            tailoring,
+            jamo,
+            diacritics,
             options: merged_options,
-            reordering: reordering,
-            decompositions: decompositions,
-            ccc: ccc,
+            reordering,
+            decompositions,
+            ccc,
             lithuanian_dot_above: metadata.lithuanian_dot_above(),
         })
     }

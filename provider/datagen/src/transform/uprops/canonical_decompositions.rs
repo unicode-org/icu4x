@@ -44,7 +44,7 @@ impl ResourceProvider<CanonicalDecompositionDataV1Marker> for CanonicalDecomposi
         if self.data.read().unwrap().is_none() {
             let path_buf = self.source.get_uprops_root()?.join("decompositions.toml");
             let path: &Path = &path_buf;
-            let toml_str = read_path_to_string(&path)?;
+            let toml_str = read_path_to_string(path)?;
             let toml_obj: CanonicalDecompositionData =
                 toml::from_str(&toml_str).map_err(|e| DatagenError::from((e, path)))?;
             *self.data.write().unwrap() = Some(toml_obj);

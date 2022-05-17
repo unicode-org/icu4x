@@ -99,33 +99,33 @@ pub(crate) enum Tag {
     /// Fall back to the base collator.
     /// This is the tag value in SPECIAL_CE32_LOW_BYTE and FALLBACK_CE32.
     /// Bits 31..8: Unused, 0.
-    FallbackTag = 0,
+    Fallback = 0,
     /// Long-primary CE with COMMON_SEC_AND_TER_CE.
     /// Bits 31..8: Three-byte primary.
-    LongPrimaryTag = 1,
+    LongPrimary = 1,
     /// Long-secondary CE with zero primary.
     /// Bits 31..16: Secondary weight.
     /// Bits 15.. 8: Tertiary weight.
-    LongSecondaryTag = 2,
+    LongSecondary = 2,
     /// Unused.
     /// May be used in the future for single-byte secondary CEs (SHORT_SECONDARY_TAG),
     /// storing the secondary in bits 31..24, the ccc in bits 23..16,
     /// and the tertiary in bits 15..8.
-    ReservedTag3 = 3,
+    Reserved3 = 3,
     /// Latin mini expansions of two simple CEs [pp, 05, tt] [00, ss, 05].
     /// Bits 31..24: Single-byte primary weight pp of the first CE.
     /// Bits 23..16: Tertiary weight tt of the first CE.
     /// Bits 15.. 8: Secondary weight ss of the second CE.
     /// Unused by ICU4X, may get repurposed for jamo expansions is Korean search.
-    LatinExpansionTag = 4,
+    LatinExpansion = 4,
     /// Points to one or more simple/long-primary/long-secondary 32-bit CE32s.
     /// Bits 31..13: Index into uint32_t table.
     /// Bits 12.. 8: Length=1..31.
-    Expansion32Tag = 5,
+    Expansion32 = 5,
     /// Points to one or more 64-bit CEs.
     /// Bits 31..13: Index into CE table.
     /// Bits 12.. 8: Length=1..31.
-    ExpansionTag = 6,
+    Expansion = 6,
     /// Builder data, used only in the CollationDataBuilder, not in runtime data.
     ///
     /// If bit 8 is 0: Builder context, points to a list of context-sensitive mappings.
@@ -136,33 +136,33 @@ pub(crate) enum Tag {
     /// The builder fetches the Jamo CE32 from the trie.
     /// Bits 31..13: Jamo code point.
     /// Bits 12.. 9: Unused, 0.
-    BuilderDataTag = 7,
+    BuilderData = 7,
     /// Points to prefix trie.
     /// Bits 31..13: Index into prefix/contraction data.
     /// Bits 12.. 8: Unused, 0.
-    PrefixTag = 8,
+    Prefix = 8,
     /// Points to contraction data.
     /// Bits 31..13: Index into prefix/contraction data.
     /// Bits 12..11: Unused, 0.
     /// Bit      10: CONTRACT_TRAILING_CCC flag.
     /// Bit       9: CONTRACT_NEXT_CCC flag.
     /// Bit       8: CONTRACT_SINGLE_CP_NO_MATCH flag.
-    ContractionTag = 9,
+    Contraction = 9,
     /// Decimal digit.
     /// Bits 31..13: Index into uint32_t table for non-numeric-collation CE32.
     /// Bit      12: Unused, 0.
     /// Bits 11.. 8: Digit value 0..9.
-    DigitTag = 10,
+    Digit = 10,
     /// Tag for U+0000, for moving the NUL-termination handling
     /// from the regular fastpath into specials-handling code.
     /// Bits 31..8: Unused, 0.
     /// Not used by ICU4X.
-    U0000Tag = 11,
+    U0000 = 11,
     /// Tag for a Hangul syllable.
     /// Bits 31..9: Unused, 0.
     /// Bit      8: HANGUL_NO_SPECIAL_JAMO flag.
     /// Not used by ICU4X, may get reused for compressing Hanja expansions.
-    HangulTag = 12,
+    Hangul = 12,
     /// Tag for a lead surrogate code unit.
     /// Optional optimization for UTF-16 string processing.
     /// Bits 31..10: Unused, 0.
@@ -170,7 +170,7 @@ pub(crate) enum Tag {
     ///              =1: All associated supplementary code points fall back to the base data.
     ///              else: (Normally 2) Look up the data for the supplementary code point.
     /// Not used by ICU4X.
-    LeadSurrogateTag = 13,
+    LeadSurrogate = 13,
     /// Tag for CEs with primary weights in code point order.
     /// Bits 31..13: Index into CE table, for one data "CE".
     /// Bits 12.. 8: Unused, 0.
@@ -180,10 +180,10 @@ pub(crate) enum Tag {
     ///      31.. 8: Start/base code point of the in-order range.
     ///           7: Flag isCompressible primary.
     ///       6.. 0: Per-code point primary-weight increment.
-    OffsetTag = 14,
+    Offset = 14,
     /// Implicit CE tag. Compute an unassigned-implicit CE.
     /// All bits are set (UNASSIGNED_CE32=0xffffffff).
-    ImplicitTag = 15,
+    Implicit = 15,
 }
 
 /// A compressed form of a collation element as stored in the collation
@@ -236,7 +236,7 @@ impl CollationElement32 {
     /// Expands to 64 bits if the expansion is to a single 64-bit collation
     /// element and is not a long-secondary expansion.
     #[inline(always)]
-    pub fn to_ce_simple_or_long_primary(&self) -> Option<CollationElement> {
+    pub fn to_ce_simple_or_long_primary(self) -> Option<CollationElement> {
         let t = self.low_byte();
         if t < SPECIAL_CE32_LOW_BYTE {
             // Not special
@@ -259,12 +259,12 @@ impl CollationElement32 {
     /// Expands to 64 bits if the expansion is to a single 64-bit collation
     /// element.
     #[inline(always)]
-    pub fn to_ce_self_contained(&self) -> Option<CollationElement> {
+    pub fn to_ce_self_contained(self) -> Option<CollationElement> {
         if let Some(ce) = self.to_ce_simple_or_long_primary() {
             return Some(ce);
         }
-        if self.tag() == Tag::LongSecondaryTag {
-            return Some(CollationElement::new(u64::from(self.0 & 0xffffff00)));
+        if self.tag() == Tag::LongSecondary {
+            Some(CollationElement::new(u64::from(self.0 & 0xffffff00)))
         } else {
             None
         }
@@ -277,7 +277,7 @@ impl CollationElement32 {
     /// In debug builds if this element doesn't have a length.
     #[inline(always)]
     pub fn len(&self) -> usize {
-        debug_assert!(self.tag() == Tag::Expansion32Tag || self.tag() == Tag::ExpansionTag);
+        debug_assert!(self.tag() == Tag::Expansion32 || self.tag() == Tag::Expansion);
         ((self.0 >> 8) & 31) as usize
     }
 
@@ -289,35 +289,35 @@ impl CollationElement32 {
     #[inline(always)]
     pub fn index(&self) -> usize {
         debug_assert!(
-            self.tag() == Tag::Expansion32Tag
-                || self.tag() == Tag::ExpansionTag
-                || self.tag() == Tag::ContractionTag
-                || self.tag() == Tag::DigitTag
-                || self.tag() == Tag::PrefixTag
-                || self.tag() == Tag::OffsetTag
+            self.tag() == Tag::Expansion32
+                || self.tag() == Tag::Expansion
+                || self.tag() == Tag::Contraction
+                || self.tag() == Tag::Digit
+                || self.tag() == Tag::Prefix
+                || self.tag() == Tag::Offset
         );
         (self.0 >> 13) as usize
     }
 
     #[inline(always)]
     pub fn digit(&self) -> u8 {
-        debug_assert!(self.tag() == Tag::DigitTag);
+        debug_assert!(self.tag() == Tag::Digit);
         ((self.0 >> 8) & 0xF) as u8
     }
 
     #[inline(always)]
     pub fn every_suffix_starts_with_combining(&self) -> bool {
-        debug_assert!(self.tag() == Tag::ContractionTag);
+        debug_assert!(self.tag() == Tag::Contraction);
         (self.0 & CONTRACT_NEXT_CCC) != 0
     }
     #[inline(always)]
     pub fn at_least_one_suffix_contains_starter(&self) -> bool {
-        debug_assert!(self.tag() == Tag::ContractionTag);
+        debug_assert!(self.tag() == Tag::Contraction);
         (self.0 & CONTRACT_HAS_STARTER) != 0
     }
     #[inline(always)]
     pub fn at_least_one_suffix_ends_with_non_starter(&self) -> bool {
-        debug_assert!(self.tag() == Tag::ContractionTag);
+        debug_assert!(self.tag() == Tag::Contraction);
         (self.0 & CONTRACT_TRAILING_CCC) != 0
     }
 }
@@ -602,6 +602,7 @@ impl<'data, I> CollationElements<'data, I>
 where
     I: Iterator<Item = char>,
 {
+    #[allow(clippy::too_many_arguments)]
     pub fn new(
         delegate: I,
         root: &'data CollationDataV1,
@@ -621,14 +622,14 @@ where
             pending_pos: 0,
             prefix: ['\u{FFFF}'; 2],
             upcoming: u,
-            root: root,
-            tailoring: tailoring,
-            jamo: jamo,
-            diacritics: diacritics,
-            decompositions: decompositions,
-            ccc: ccc,
-            numeric_primary: numeric_primary,
-            lithuanian_dot_above: lithuanian_dot_above,
+            root,
+            tailoring,
+            jamo,
+            diacritics,
+            decompositions,
+            ccc,
+            numeric_primary,
+            lithuanian_dot_above,
             #[cfg(debug_assertions)]
             iter_exhausted: false,
         };
@@ -1038,7 +1039,7 @@ where
                         if let Some(ce) = ce32.to_ce_simple_or_long_primary() {
                             self.prefix_push(c);
                             return ce;
-                        } else if ce32.tag() == Tag::ContractionTag
+                        } else if ce32.tag() == Tag::Contraction
                             && ce32.every_suffix_starts_with_combining()
                         {
                             // Avoid falling onto the slow path e.g. that letters that
@@ -1082,7 +1083,7 @@ where
                                     self.mark_prefix_unmatchable();
                                     return ce;
                                 }
-                                if ce32.tag() == Tag::ContractionTag
+                                if ce32.tag() == Tag::Contraction
                                     && ce32.every_suffix_starts_with_combining()
                                 {
                                     let (default, mut trie) =
@@ -1335,7 +1336,7 @@ where
                         break 'ce32loop;
                     } else {
                         match ce32.tag() {
-                            Tag::Expansion32Tag => {
+                            Tag::Expansion32 => {
                                 let ce32s = data.get_ce32s(ce32.index(), ce32.len());
                                 for &ce32_ule in ce32s {
                                     self.pending.push(
@@ -1346,14 +1347,14 @@ where
                                 }
                                 break 'ce32loop;
                             }
-                            Tag::ExpansionTag => {
+                            Tag::Expansion => {
                                 let ces = data.get_ces(ce32.index(), ce32.len());
                                 for &ce_ule in ces {
                                     self.pending.push(CollationElement::new_from_ule(ce_ule));
                                 }
                                 break 'ce32loop;
                             }
-                            Tag::PrefixTag => {
+                            Tag::Prefix => {
                                 let (default, mut trie) = data.get_default_and_trie(ce32.index());
                                 ce32 = default;
                                 for &ch in self.prefix.iter() {
@@ -1373,7 +1374,7 @@ where
                                 }
                                 continue 'ce32loop;
                             }
-                            Tag::ContractionTag => {
+                            Tag::Contraction => {
                                 let every_suffix_starts_with_combining =
                                     ce32.every_suffix_starts_with_combining();
                                 let at_least_one_suffix_contains_starter =
@@ -1568,7 +1569,7 @@ where
                                 }
                                 // Unreachable
                             }
-                            Tag::DigitTag => {
+                            Tag::Digit => {
                                 if let Some(high_bits) = self.numeric_primary {
                                     let mut digits: SmallVec<[u8; 8]> = SmallVec::new(); // XXX figure out proper size
                                     digits.push(ce32.digit());
@@ -1584,7 +1585,7 @@ where
                                             if ce32 == FALLBACK_CE32 {
                                                 ce32 = self.root.ce32_for_char(upcoming);
                                             }
-                                            if ce32.tag_checked() != Some(Tag::DigitTag) {
+                                            if ce32.tag_checked() != Some(Tag::Digit) {
                                                 break;
                                             }
                                             drain_from_suffix = looked_ahead;
@@ -1619,7 +1620,7 @@ where
                                             // Unwrap succeeds, because we always have at least one
                                             // digit to even start numeric processing.
                                             let mut value = u32::from(*digit_iter.next().unwrap());
-                                            while let Some(&digit) = digit_iter.next() {
+                                            for &digit in digit_iter {
                                                 value *= 10;
                                                 value += u32::from(digit);
                                             }
@@ -1698,12 +1699,9 @@ where
                                         };
                                         pair = 11 + 2 * pair;
                                         let mut shift = 8u32;
-                                        loop {
-                                            let (left, right) =
-                                                match (digit_iter.next(), digit_iter.next()) {
-                                                    (Some(&left), Some(&right)) => (left, right),
-                                                    _ => break,
-                                                };
+                                        while let (Some(&left), Some(&right)) =
+                                            (digit_iter.next(), digit_iter.next())
+                                        {
                                             if shift == 0 {
                                                 primary |= pair;
                                                 self.pending.push(
@@ -1730,24 +1728,24 @@ where
                             }
                             // XXX how common are the following two cases? Should these
                             // be baked into the fast path, since they yield a single CE?
-                            Tag::OffsetTag => {
+                            Tag::Offset => {
                                 self.pending.push(data.ce_from_offset_ce32(c, ce32));
                                 break 'ce32loop;
                             }
-                            Tag::ImplicitTag => {
+                            Tag::Implicit => {
                                 self.pending
                                     .push(CollationElement::new_implicit_from_char(c));
                                 break 'ce32loop;
                             }
-                            Tag::FallbackTag
-                            | Tag::ReservedTag3
-                            | Tag::LongPrimaryTag
-                            | Tag::LongSecondaryTag
-                            | Tag::BuilderDataTag
-                            | Tag::LeadSurrogateTag
-                            | Tag::LatinExpansionTag
-                            | Tag::U0000Tag
-                            | Tag::HangulTag => {
+                            Tag::Fallback
+                            | Tag::Reserved3
+                            | Tag::LongPrimary
+                            | Tag::LongSecondary
+                            | Tag::BuilderData
+                            | Tag::LeadSurrogate
+                            | Tag::LatinExpansion
+                            | Tag::U0000
+                            | Tag::Hangul => {
                                 unreachable!();
                             }
                         }

@@ -98,7 +98,7 @@ impl<'data> CollationDataV1<'data> {
         c: char,
         ce32: CollationElement32,
     ) -> CollationElement {
-        debug_assert!(ce32.tag() == Tag::OffsetTag);
+        debug_assert!(ce32.tag() == Tag::Offset);
         let data_ce = u64::from_unaligned(self.ces.as_ule_slice()[ce32.index()]);
         CollationElement::new_from_primary(data_ce_to_primary(data_ce, c))
     }
