@@ -34,3 +34,26 @@ pub use de::DeserializingBufferProvider;
 pub use ser::SerializeBox;
 #[cfg(feature = "datagen")]
 pub use ser::SerializeMarker;
+
+use crate::DataError;
+
+#[cfg(feature = "serde_json")]
+impl From<serde_json::error::Error> for DataError {
+    fn from(e: serde_json::error::Error) -> Self {
+        DataError::custom("JSON deserialize").with_display_context(&e)
+    }
+}
+
+#[cfg(feature = "bincode")]
+impl From<bincode::Error> for DataError {
+    fn from(e: bincode::Error) -> Self {
+        DataError::custom("Bincode deserialize").with_display_context(&e)
+    }
+}
+
+#[cfg(feature = "postcard")]
+impl From<postcard::Error> for DataError {
+    fn from(e: postcard::Error) -> Self {
+        DataError::custom("Postcard deserialize").with_display_context(&e)
+    }
+}

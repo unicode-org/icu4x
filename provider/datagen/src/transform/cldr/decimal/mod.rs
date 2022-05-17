@@ -2,7 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::error::DatagenError;
 use crate::transform::cldr::cldr_serde;
 use crate::transform::reader::{get_langid_subdirectories, get_langid_subdirectory, open_reader};
 use crate::SourceData;
@@ -84,7 +83,7 @@ impl ResourceProvider<DecimalSymbolsV1Marker> for NumbersProvider {
             .ok_or_else(|| DataErrorKind::MissingLocale.into_error())?
             .join("numbers.json");
             serde_json::from_reader(open_reader(&path)?)
-                .map_err(|e| DatagenError::from((e, path)))?
+                .map_err(|e| DataError::from(e).with_path(&path))?
         };
 
         #[allow(clippy::expect_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
@@ -97,7 +96,7 @@ impl ResourceProvider<DecimalSymbolsV1Marker> for NumbersProvider {
         let nsname = numbers.default_numbering_system;
 
         let mut result = DecimalSymbolsV1::try_from(numbers)
-            .map_err(|s| DatagenError::Custom(s.to_string(), Some(langid.clone())))?;
+            .map_err(|s| DataError::custom("").with_display_context(&s))?;
 
         #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
         if self.cldr_numbering_systems_data.read().unwrap().is_none() {
@@ -109,7 +108,7 @@ impl ResourceProvider<DecimalSymbolsV1Marker> for NumbersProvider {
                 .join("numberingSystems.json");
             let resource: cldr_serde::numbering_systems::Resource =
                 serde_json::from_reader(open_reader(&path)?)
-                    .map_err(|e| DatagenError::from((e, path)))?;
+                    .map_err(|e| DataError::from(e).with_path(&path))?;
             let _ = self
                 .cldr_numbering_systems_data
                 .write()
@@ -120,10 +119,8 @@ impl ResourceProvider<DecimalSymbolsV1Marker> for NumbersProvider {
         result.digits = self
             .get_digits_for_numbering_system(nsname)
             .ok_or_else(|| {
-                DatagenError::Custom(
-                    format!("Could not process numbering system: {:?}", nsname),
-                    Some(langid.clone()),
-                )
+                DataError::custom("Could not process numbering system")
+                    .with_display_context(&nsname)
             })?;
 
         let metadata = DataResponseMetadata::default();

@@ -2,8 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::error::DatagenError;
 use icu_locid::LanguageIdentifier;
+use icu_provider::DataError;
 use std::fs;
 use std::fs::File;
 use std::io::BufReader;
@@ -12,26 +12,30 @@ use std::path::{Path, PathBuf};
 use std::str::FromStr;
 
 /// Helper function to open a file and return failures as a crate error.
-pub fn open_reader(path: &Path) -> Result<BufReader<File>, DatagenError> {
+pub fn open_reader(path: &Path) -> Result<BufReader<File>, DataError> {
     log::trace!("Reading: {:?}", path);
     File::open(&path)
         .map(BufReader::new)
-        .map_err(|e| (e, path).into())
+        .map_err(|e| DataError::from(e).with_path(path))
 }
 
 /// Read the contents of the file at `path` and return it as a `String`.
-pub fn read_path_to_string(path: &Path) -> Result<String, DatagenError> {
+pub fn read_path_to_string(path: &Path) -> Result<String, DataError> {
     let mut reader = open_reader(path)?;
     let mut buffer = String::new();
-    reader.read_to_string(&mut buffer).map_err(|e| (e, path))?;
+    reader
+        .read_to_string(&mut buffer)
+        .map_err(|e| DataError::from(e).with_path(path))?;
     Ok(buffer)
 }
 
 /// Helper function which returns a sorted list of the contents of a directory.
-pub fn get_dir_contents(root: &Path) -> Result<Vec<PathBuf>, DatagenError> {
+pub fn get_dir_contents(root: &Path) -> Result<Vec<PathBuf>, DataError> {
     let mut result = vec![];
-    for entry in fs::read_dir(root).map_err(|e| (e, root))? {
-        let path = entry.map_err(|e| (e, root))?.path();
+    for entry in fs::read_dir(root).map_err(|e| DataError::from(e).with_path(root))? {
+        let path = entry
+            .map_err(|e| DataError::from(e).with_path(&root))?
+            .path();
         result.push(path);
     }
     result.sort();
@@ -40,10 +44,10 @@ pub fn get_dir_contents(root: &Path) -> Result<Vec<PathBuf>, DatagenError> {
 
 fn get_langid_subdirectories_internal(
     root: &Path,
-) -> Result<impl Iterator<Item = (LanguageIdentifier, PathBuf)>, DatagenError> {
+) -> Result<impl Iterator<Item = (LanguageIdentifier, PathBuf)>, DataError> {
     let mut result = vec![];
-    for entry in fs::read_dir(root).map_err(|e| (e, root))? {
-        let entry = entry.map_err(|e| (e, root))?;
+    for entry in fs::read_dir(root).map_err(|e| DataError::from(e).with_path(&root))? {
+        let entry = entry.map_err(|e| DataError::from(e).with_path(&root))?;
         let path = entry.path();
         result.push(path);
     }
@@ -59,7 +63,7 @@ fn get_langid_subdirectories_internal(
 /// Helper function which returns an unsorted list of langids for which subdirectories exist.
 pub fn get_langid_subdirectories(
     root: &Path,
-) -> Result<impl Iterator<Item = LanguageIdentifier>, DatagenError> {
+) -> Result<impl Iterator<Item = LanguageIdentifier>, DataError> {
     get_langid_subdirectories_internal(root).map(|iter| iter.map(|(l, _)| l))
 }
 
@@ -67,7 +71,7 @@ pub fn get_langid_subdirectories(
 pub fn get_langid_subdirectory(
     root: &Path,
     langid: &LanguageIdentifier,
-) -> Result<Option<PathBuf>, DatagenError> {
+) -> Result<Option<PathBuf>, DataError> {
     get_langid_subdirectories_internal(root).map(|mut iter| {
         iter.find(|(langid2, _)| langid2 == langid)
             .map(|(_, path)| path)

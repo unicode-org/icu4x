@@ -2,7 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::error::DatagenError;
 use crate::transform::cldr::cldr_serde;
 use crate::transform::reader::open_reader;
 use crate::SourceData;
@@ -61,10 +60,10 @@ impl ResourceProvider<JapaneseErasV1Marker> for JapaneseErasProvider {
 
         let era_names: cldr_serde::ca::Resource =
             serde_json::from_reader(open_reader(&era_names_path)?)
-                .map_err(|e| DatagenError::from((e, era_names_path)))?;
+                .map_err(|e| DataError::from(e).with_path(&era_names_path))?;
         let era_dates: cldr_serde::japanese::Resource =
             serde_json::from_reader(open_reader(&era_dates_path)?)
-                .map_err(|e| DatagenError::from((e, era_dates_path)))?;
+                .map_err(|e| DataError::from(e).with_path(&era_dates_path))?;
 
         let era_name_map = &era_names
             .main
@@ -96,28 +95,20 @@ impl ResourceProvider<JapaneseErasV1Marker> for JapaneseErasProvider {
             let date = &era_dates_map
                 .get(era_id)
                 .ok_or_else(|| {
-                    DatagenError::Custom(
-                        format!(
-                            "calendarData.json contains no data for japanese era index {}",
-                            era_id
-                        ),
-                        None,
-                    )
+                    DataError::custom("calendarData.json")
+                        .with_display_context(&format!("no data for japanese era index {}", era_id))
                 })?
                 .start;
 
             let start_date = EraStartDate::from_str(date).map_err(|_| {
-                DatagenError::Custom(
-                    format!(
-                        "calendarData.json contains unparseable data for japanese era index {}",
-                        era_id
-                    ),
-                    None,
-                )
+                DataError::custom("calendarData.json").with_display_context(&format!(
+                    "unparseable data for japanese era index {}",
+                    era_id
+                ))
             })?;
 
             let code = era_to_code(era_name, start_date.year)
-                .map_err(|e| DatagenError::Custom(e, None))?;
+                .map_err(|e| DataError::custom("Era codes").with_display_context(&e))?;
             if start_date.year >= 1868 {
                 ret.dates_to_eras
                     .to_mut()

@@ -62,7 +62,7 @@ mod registry;
 mod source;
 pub mod transform;
 
-pub use error::{is_missing_cldr_error, is_missing_uprops_error};
+pub use error::{MISSING_CLDR_ERROR, MISSING_UPROPS_ERROR};
 pub use registry::get_all_keys;
 pub use source::SourceData;
 

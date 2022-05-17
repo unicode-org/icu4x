@@ -2,7 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::error::DatagenError;
 use icu_codepointtrie::TrieType;
 use icu_provider::DataError;
 use std::path::{Path, PathBuf};
@@ -73,7 +72,7 @@ impl SourceData {
         Ok(self
             .cldr_paths
             .as_ref()
-            .ok_or(DatagenError::MissingCldrPaths)?)
+            .ok_or(crate::error::MISSING_CLDR_ERROR)?)
     }
 
     /// Path to Unicode Properties source data.
@@ -81,7 +80,7 @@ impl SourceData {
         Ok(self
             .uprops_root
             .as_deref()
-            .ok_or(DatagenError::MissingUpropsPath)?)
+            .ok_or(crate::error::MISSING_UPROPS_ERROR)?)
     }
 
     /// Path to segmenter data.

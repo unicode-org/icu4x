@@ -45,10 +45,7 @@ impl DataPayload<BufferMarker> {
                 BufferFormat::Json => {
                     let mut d = serde_json::Deserializer::from_slice(bytes);
                     let data =
-                        YokeTraitHack::<<M::Yokeable as Yokeable>::Output>::deserialize(&mut d)
-                            .map_err(|e| {
-                                DataError::custom("JSON deserialize error").with_display_context(&e)
-                            })?;
+                        YokeTraitHack::<<M::Yokeable as Yokeable>::Output>::deserialize(&mut d)?;
                     Ok(data.0)
                 }
 
@@ -60,11 +57,7 @@ impl DataPayload<BufferMarker> {
                         .allow_trailing_bytes();
                     let mut d = bincode::de::Deserializer::from_slice(bytes, options);
                     let data =
-                        YokeTraitHack::<<M::Yokeable as Yokeable>::Output>::deserialize(&mut d)
-                            .map_err(|e| {
-                                DataError::custom("Bincode deserialize error")
-                                    .with_display_context(&e)
-                            })?;
+                        YokeTraitHack::<<M::Yokeable as Yokeable>::Output>::deserialize(&mut d)?;
                     Ok(data.0)
                 }
 
@@ -72,11 +65,7 @@ impl DataPayload<BufferMarker> {
                 BufferFormat::Postcard07 => {
                     let mut d = postcard::Deserializer::from_bytes(bytes);
                     let data =
-                        YokeTraitHack::<<M::Yokeable as Yokeable>::Output>::deserialize(&mut d)
-                            .map_err(|e| {
-                                DataError::custom("Postcard deserialize error")
-                                    .with_display_context(&e)
-                            })?;
+                        YokeTraitHack::<<M::Yokeable as Yokeable>::Output>::deserialize(&mut d)?;
                     Ok(data.0)
                 }
 

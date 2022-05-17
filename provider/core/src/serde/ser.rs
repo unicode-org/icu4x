@@ -67,8 +67,10 @@ impl DataPayload<SerializeMarker> {
     pub fn serialize(
         &self,
         mut serializer: &mut dyn erased_serde::Serializer,
-    ) -> Result<(), erased_serde::Error> {
-        self.get().erased_serialize(&mut serializer)?;
+    ) -> Result<(), DataError> {
+        self.get()
+            .erased_serialize(&mut serializer)
+            .map_err(|e| DataError::custom("Serde export").with_display_context(&e))?;
         Ok(())
     }
 }

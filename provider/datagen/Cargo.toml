@@ -46,7 +46,7 @@ icu_casemapping = { version = "0.1", path = "../../experimental/casemapping", fe
 icu_segmenter = { version = "0.6", path = "../../experimental/segmenter", features = ["datagen"], optional = true }
 
 # ICU provider infrastructure
-icu_provider = { version = "0.6", path = "../core", features = ["std", "log_error_context"]}
+icu_provider = { version = "0.6", path = "../core", features = ["std", "log_error_context", "datagen"]}
 icu_provider_adapters = { path = "../adapters", features = ["datagen"] }
 icu_provider_blob = { version = "0.6", path = "../blob", features = ["export"] }
 icu_provider_fs = { version = "0.6", path = "../fs", features = ["export"] }
