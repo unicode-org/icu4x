@@ -1607,6 +1607,7 @@ dependencies = [
  "postcard",
  "serde",
  "serde_json",
+ "stable_deref_trait",
  "static_assertions",
  "writeable",
  "yoke",
