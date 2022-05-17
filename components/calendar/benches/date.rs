@@ -7,7 +7,7 @@ mod fixtures;
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
 use icu_calendar::{AsCalendar, Date, DateDuration};
 
-fn run_calendar_tests<A: AsCalendar>(dates: Vec<&mut Date<A>>) {
+fn run_calendar_benches<A: AsCalendar>(dates: Vec<&mut Date<A>>) {
     for date in dates {
         // Arithmetic. black_box used to avoid compiler optimization.
         date.add(DateDuration::new(
@@ -42,14 +42,14 @@ fn date_benches(c: &mut Criterion) {
                 let mut int_instantiated_date_iso =
                     Date::new_iso_date_from_integers(fx.year, fx.month, fx.day).unwrap();
 
-                // Instantion from Iso
+                // Instantion from ISO
                 let iso_year = IsoYear(fx.year);
                 let iso_month = IsoMonth::try_from(fx.month).unwrap();
                 let iso_day = IsoDay::try_from(fx.day).unwrap();
                 let mut iso_insantiated_date_iso =
                     Date::new_iso_date(iso_year, iso_month, iso_day).unwrap();
 
-                run_calendar_tests(vec![
+                run_calendar_benches(vec![
                     &mut iso_insantiated_date_iso,
                     &mut int_instantiated_date_iso,
                 ]);
@@ -71,7 +71,7 @@ fn date_benches(c: &mut Criterion) {
                 let date_iso = Date::new_iso_date_from_integers(fx.year, fx.month, fx.day).unwrap();
                 let mut converted_date_buddhist = Date::new_from_iso(date_iso, Buddhist);
 
-                run_calendar_tests(vec![
+                run_calendar_benches(vec![
                     &mut instantiated_date_buddhist,
                     &mut converted_date_buddhist,
                 ]);
@@ -93,7 +93,7 @@ fn date_benches(c: &mut Criterion) {
                 let date_iso = Date::new_iso_date_from_integers(fx.year, fx.month, fx.day).unwrap();
                 let mut converted_date_julian = Date::new_from_iso(date_iso, Julian);
 
-                run_calendar_tests(vec![
+                run_calendar_benches(vec![
                     &mut instantiated_date_julian,
                     &mut converted_date_julian,
                 ]);
