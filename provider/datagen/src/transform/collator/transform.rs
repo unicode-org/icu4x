@@ -78,7 +78,7 @@ macro_rules! collation_provider {
         use icu_collator::provider::$marker;
 
         /// The provider struct holding the `SourceData` and the `RWLock`-wrapped
-        /// `HashMap` tolding the TOML data.
+        /// `HashMap` holding the TOML data.
         pub struct $provider {
             source: SourceData,
             data: RwLock<Option<HashMap<String, $serde_struct>>>,
