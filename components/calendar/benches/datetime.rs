@@ -4,12 +4,16 @@
 
 mod fixtures;
 
-use criterion::{black_box, criterion_group, criterion_main, Criterion};
-use icu_calendar::{types::Time, AsCalendar, DateDuration, DateTime};
+use crate::fixtures::structs::DateFixture;
+use criterion::{
+    black_box, criterion_group, criterion_main, measurement::WallTime, BenchmarkGroup, Criterion,
+};
+use icu_calendar::{types::Time, AsCalendar, Calendar, DateDuration, DateTime};
 
-fn run_calendar_benches<A: AsCalendar>(datetimes: Vec<&mut DateTime<A>>) {
+fn bench_datetimes<A: AsCalendar>(datetimes: Vec<&mut DateTime<A>>) {
     for datetime in datetimes {
-        // Arithmetic. black_box used to avoid compiler optimization.
+        // black_box used to avoid compiler optimization.
+        // Arithmetic.
         datetime.date.add(DateDuration::new(
             black_box(1),
             black_box(2),
@@ -20,16 +24,82 @@ fn run_calendar_benches<A: AsCalendar>(datetimes: Vec<&mut DateTime<A>>) {
             .expect("Failed to initialize Time instance.");
 
         // Retrieving vals
-        let _ = datetime.date.year().number;
-        let _ = datetime.date.month().number;
-        let _ = datetime.date.day_of_month().0;
-        let _ = datetime.time.hour;
-        let _ = datetime.time.minute;
-        let _ = datetime.time.second;
+        let _ = black_box(datetime.date.year().number);
+        let _ = black_box(datetime.date.month().number);
+        let _ = black_box(datetime.date.day_of_month().0);
+        let _ = black_box(datetime.time.hour);
+        let _ = black_box(datetime.time.minute);
+        let _ = black_box(datetime.time.second);
 
         // Conversion to ISO.
-        // let _ = datetime.to_iso();
+        let _ = black_box(datetime.to_iso());
     }
+}
+
+#[allow(dead_code)]
+fn bench_calendar_nano<C: Clone + Calendar>(
+    group: &mut BenchmarkGroup<WallTime>,
+    name: &str,
+    fxs: &DateFixture,
+    calendar: C,
+    calendar_datetime_init: impl Fn(i32, u8, u8, u8, u8, u8, u32) -> DateTime<C>,
+) {
+    group.bench_function(name, |b| {
+        b.iter(|| {
+            for fx in &fxs.0 {
+                // Instantion from int. Nanosecond value set to 0.
+                let mut instantiated_datetime_calendar = calendar_datetime_init(
+                    fx.year, fx.month, fx.day, fx.hour, fx.minute, fx.second, 0,
+                );
+
+                // Conversion from ISO
+                let datetime_iso = DateTime::new_iso_datetime_from_integers(
+                    fx.year, fx.month, fx.day, fx.hour, fx.minute, fx.second,
+                )
+                .unwrap();
+                let mut converted_datetime_calendar =
+                    DateTime::new_from_iso(datetime_iso, calendar.clone());
+
+                bench_datetimes(vec![
+                    &mut instantiated_datetime_calendar,
+                    &mut converted_datetime_calendar,
+                ]);
+            }
+        })
+    });
+}
+
+#[allow(dead_code)]
+fn bench_calendar<C: Clone + Calendar>(
+    group: &mut BenchmarkGroup<WallTime>,
+    name: &str,
+    fxs: &DateFixture,
+    calendar: C,
+    calendar_datetime_init: impl Fn(i32, u8, u8, u8, u8, u8) -> DateTime<C>,
+) {
+    group.bench_function(name, |b| {
+        b.iter(|| {
+            for fx in &fxs.0 {
+                // Instantion from int
+                let mut instantiated_datetime_calendar = calendar_datetime_init(
+                    fx.year, fx.month, fx.day, fx.hour, fx.minute, fx.second,
+                );
+
+                // Conversion from ISO
+                let datetime_iso = DateTime::new_iso_datetime_from_integers(
+                    fx.year, fx.month, fx.day, fx.hour, fx.minute, fx.second,
+                )
+                .unwrap();
+                let mut converted_datetime_calendar =
+                    DateTime::new_from_iso(datetime_iso, calendar.clone());
+
+                bench_datetimes(vec![
+                    &mut instantiated_datetime_calendar,
+                    &mut converted_datetime_calendar,
+                ]);
+            }
+        })
+    });
 }
 
 fn datetime_benches(c: &mut Criterion) {
@@ -46,176 +116,68 @@ fn datetime_benches(c: &mut Criterion) {
                 )
                 .unwrap();
 
-                run_calendar_benches(vec![&mut int_instantiated_datetime_iso]);
+                bench_datetimes(vec![&mut int_instantiated_datetime_iso]);
             }
         })
     });
 
     #[cfg(feature = "bench")]
-    group.bench_function("calendar/buddhist", |b| {
-        use icu::calendar::buddhist::Buddhist;
-
-        b.iter(|| {
-            for fx in &fxs.0 {
-                // Instantion from int
-                let mut instantiated_datetime_buddhist = DateTime::new_buddhist_datetime(
-                    fx.year, fx.month, fx.day, fx.hour, fx.minute, fx.second,
-                )
-                .unwrap();
-
-                // Conversion from ISO
-                let datetime_iso = DateTime::new_iso_datetime_from_integers(
-                    fx.year, fx.month, fx.day, fx.hour, fx.minute, fx.second,
-                )
-                .unwrap();
-                let mut converted_datetime_buddhist =
-                    DateTime::new_from_iso(datetime_iso, Buddhist);
-
-                run_calendar_benches(vec![
-                    &mut instantiated_datetime_buddhist,
-                    &mut converted_datetime_buddhist,
-                ]);
-            }
-        })
-    });
+    bench_calendar(
+        &mut group,
+        "calendar/buddhist",
+        &fxs,
+        icu::calendar::buddhist::Buddhist,
+        |y, m, d, h, min, s| DateTime::new_buddhist_datetime(y, m, d, h, min, s).unwrap(),
+    );
 
     #[cfg(feature = "bench")]
-    group.bench_function("calendar/coptic", |b| {
-        use icu::calendar::coptic::Coptic;
-
-        b.iter(|| {
-            for fx in &fxs.0 {
-                // Instantion from int
-                let mut instantiated_datetime_coptic = DateTime::new_coptic_datetime(
-                    fx.year, fx.month, fx.day, fx.hour, fx.minute, fx.second,
-                )
-                .unwrap();
-
-                // Conversion from ISO
-                let datetime_iso = DateTime::new_iso_datetime_from_integers(
-                    fx.year, fx.month, fx.day, fx.hour, fx.minute, fx.second,
-                )
-                .unwrap();
-                let mut converted_datetime_coptic = DateTime::new_from_iso(datetime_iso, Coptic);
-
-                run_calendar_benches(vec![
-                    &mut instantiated_datetime_coptic,
-                    &mut converted_datetime_coptic,
-                ]);
-            }
-        })
-    });
+    bench_calendar(
+        &mut group,
+        "calendar/coptic",
+        &fxs,
+        icu::calendar::coptic::Coptic,
+        |y, m, d, h, min, s| DateTime::new_coptic_datetime(y, m, d, h, min, s).unwrap(),
+    );
 
     #[cfg(feature = "bench")]
-    group.bench_function("calendar/ethiopic", |b| {
-        use icu::calendar::ethiopic::Ethiopic;
-
-        b.iter(|| {
-            for fx in &fxs.0 {
-                // Instantion from int. Version with nanoseconds, so supplying nanosecond
-                let mut instantiated_datetime_ethiopic = DateTime::new_ethiopic_datetime(
-                    fx.year, fx.month, fx.day, fx.hour, fx.minute, fx.second, 0,
-                )
-                .unwrap();
-
-                // Conversion from ISO
-                let datetime_iso = DateTime::new_iso_datetime_from_integers(
-                    fx.year, fx.month, fx.day, fx.hour, fx.minute, fx.second,
-                )
-                .unwrap();
-                let mut converted_datetime_ethiopic =
-                    DateTime::new_from_iso(datetime_iso, Ethiopic);
-
-                run_calendar_benches(vec![
-                    &mut instantiated_datetime_ethiopic,
-                    &mut converted_datetime_ethiopic,
-                ]);
-            }
-        })
-    });
+    bench_calendar_nano(
+        &mut group,
+        "calendar/ethiopic",
+        &fxs,
+        icu::calendar::ethiopic::Ethiopic,
+        |y, m, d, h, min, s, nano| {
+            DateTime::new_ethiopic_datetime(y, m, d, h, min, s, nano).unwrap()
+        },
+    );
 
     #[cfg(feature = "bench")]
-    group.bench_function("calendar/gregorian", |b| {
-        use icu::calendar::gregorian::Gregorian;
-
-        b.iter(|| {
-            for fx in &fxs.0 {
-                // Instantion from int. Version with nanoseconds, so supplying nanosecond
-                let mut instantiated_datetime_gregorian =
-                    DateTime::new_gregorian_datetime_from_integers(
-                        fx.year, fx.month, fx.day, fx.hour, fx.minute, fx.second, 0
-                    )
-                    .unwrap();
-
-                // Conversion from ISO
-                let datetime_iso = DateTime::new_iso_datetime_from_integers(
-                    fx.year, fx.month, fx.day, fx.hour, fx.minute, fx.second
-                )
-                .unwrap();
-                let mut converted_datetime_gregorian =
-                    DateTime::new_from_iso(datetime_iso, Gregorian);
-
-                run_calendar_benches(vec![
-                    &mut instantiated_datetime_gregorian,
-                    &mut converted_datetime_gregorian,
-                ]);
-            }
-        })
-    });
+    bench_calendar_nano(
+        &mut group,
+        "calendar/gregorian",
+        &fxs,
+        icu::calendar::gregorian::Gregorian,
+        |y, m, d, h, min, s, nano| {
+            DateTime::new_gregorian_datetime_from_integers(y, m, d, h, min, s, nano).unwrap()
+        },
+    );
 
     #[cfg(feature = "bench")]
-    group.bench_function("calendar/indian", |b| {
-        use icu::calendar::indian::Indian;
-
-        b.iter(|| {
-            for fx in &fxs.0 {
-                // Instantion from int
-                let mut instantiated_datetime_indian = DateTime::new_indian_datetime(
-                    fx.year, fx.month, fx.day, fx.hour, fx.minute, fx.second,
-                )
-                .unwrap();
-
-                // Conversion from ISO
-                let datetime_iso = DateTime::new_iso_datetime_from_integers(
-                    fx.year, fx.month, fx.day, fx.hour, fx.minute, fx.second,
-                )
-                .unwrap();
-                let mut converted_datetime_indian = DateTime::new_from_iso(datetime_iso, Indian);
-
-                run_calendar_benches(vec![
-                    &mut instantiated_datetime_indian,
-                    &mut converted_datetime_indian,
-                ]);
-            }
-        })
-    });
+    bench_calendar(
+        &mut group,
+        "calendar/indian",
+        &fxs,
+        icu::calendar::indian::Indian,
+        |y, m, d, h, min, s| DateTime::new_indian_datetime(y, m, d, h, min, s).unwrap(),
+    );
 
     #[cfg(feature = "bench")]
-    group.bench_function("calendar/julian", |b| {
-        use icu::calendar::julian::Julian;
-
-        b.iter(|| {
-            for fx in &fxs.0 {
-                // Instantion from int
-                let mut instantiated_datetime_julian = DateTime::new_julian_datetime(
-                    fx.year, fx.month, fx.day, fx.hour, fx.minute, fx.second,
-                )
-                .unwrap();
-
-                // Conversion from ISO
-                let datetime_iso = DateTime::new_iso_datetime_from_integers(
-                    fx.year, fx.month, fx.day, fx.hour, fx.minute, fx.second,
-                )
-                .unwrap();
-                let mut converted_datetime_julian = DateTime::new_from_iso(datetime_iso, Julian);
-
-                run_calendar_benches(vec![
-                    &mut instantiated_datetime_julian,
-                    &mut converted_datetime_julian,
-                ]);
-            }
-        })
-    });
+    bench_calendar(
+        &mut group,
+        "calendar/julian",
+        &fxs,
+        icu::calendar::julian::Julian,
+        |y, m, d, h, min, s| DateTime::new_julian_datetime(y, m, d, h, min, s).unwrap(),
+    );
 
     group.finish();
 }
