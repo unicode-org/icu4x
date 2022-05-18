@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1652892113001,
+  "lastUpdate": 1652916473706,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -15203,6 +15203,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/14597792fcd9d00e2732fe20e9c44e96fab4b1b5"
         },
         "date": 1652892092408,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 1668916,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "dminor@mozilla.com",
+            "name": "Dan Minor",
+            "username": "dminor"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "a35b98986eddf987bc83416726b67e365cb013ee",
+          "message": "Post 0.6 release fixes (#1895)\n\n* Updates to Cargo.toml files to fix problems found during 0.6 release\r\n\r\n* Update release.md\r\n\r\n* Update intro.md\r\n\r\n* Address review suggestions",
+          "timestamp": "2022-05-18T19:25:42-04:00",
+          "tree_id": "5ebefa108e6408eb7da83ee2da8f01cf4f7c5aa4",
+          "url": "https://github.com/unicode-org/icu4x/commit/a35b98986eddf987bc83416726b67e365cb013ee"
+        },
+        "date": 1652916450651,
         "tool": "ndjson",
         "benches": [
           {
