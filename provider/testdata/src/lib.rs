@@ -127,6 +127,7 @@ pub fn get_smaller_postcard_provider() -> icu_provider_blob::StaticDataProvider 
 
 #[cfg(feature = "baked")]
 mod baked {
+    #![allow(clippy::unwrap_used, clippy::exhaustive_structs)]
     include!(concat!(env!("CARGO_MANIFEST_DIR"), "/data/baked/mod.rs"));
 }
 
