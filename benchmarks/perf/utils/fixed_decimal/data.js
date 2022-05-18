@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1652892703161,
+  "lastUpdate": 1652916960882,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -27089,6 +27089,66 @@ window.BENCHMARK_DATA = {
             "name": "from_string/1000000001",
             "value": 86,
             "range": "± 2",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "dminor@mozilla.com",
+            "name": "Dan Minor",
+            "username": "dminor"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "a35b98986eddf987bc83416726b67e365cb013ee",
+          "message": "Post 0.6 release fixes (#1895)\n\n* Updates to Cargo.toml files to fix problems found during 0.6 release\r\n\r\n* Update release.md\r\n\r\n* Update intro.md\r\n\r\n* Address review suggestions",
+          "timestamp": "2022-05-18T19:25:42-04:00",
+          "tree_id": "5ebefa108e6408eb7da83ee2da8f01cf4f7c5aa4",
+          "url": "https://github.com/unicode-org/icu4x/commit/a35b98986eddf987bc83416726b67e365cb013ee"
+        },
+        "date": 1652916941198,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 109923,
+            "range": "± 593",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 23577,
+            "range": "± 48",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 69460,
+            "range": "± 403",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 186,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 95,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 76,
+            "range": "± 0",
             "unit": "ns/iter"
           }
         ]
