@@ -8,8 +8,8 @@ mod fixtures;
 mod patterns;
 
 use icu_calendar::{
-    buddhist::Buddhist, coptic::Coptic, indian::Indian, japanese::Japanese, AsCalendar, DateTime,
-    Gregorian,
+    buddhist::Buddhist, coptic::Coptic, ethiopic::Ethiopic, indian::Indian, japanese::Japanese,
+    AsCalendar, DateTime, Gregorian,
 };
 use icu_datetime::provider::time_zones::{MetaZoneId, TimeZoneBcp47Id};
 use icu_datetime::{
@@ -51,6 +51,7 @@ fn test_fixture(fixture_name: &str) {
         let input_japanese = input_value.to_calendar(japanese);
         let input_coptic = input_value.to_calendar(Coptic);
         let input_indian = input_value.to_calendar(Indian);
+        let input_ethiopic = input_value.to_calendar(Ethiopic);
 
         let description = match fx.description {
             Some(description) => {
@@ -93,6 +94,15 @@ fn test_fixture(fixture_name: &str) {
                 assert_fixture_element(
                     locale,
                     &input_indian,
+                    &output_value,
+                    &provider,
+                    &options,
+                    &description,
+                )
+            } else if let Some(locale) = locale.strip_prefix("ethiopic/") {
+                assert_fixture_element(
+                    locale,
+                    &input_ethiopic,
                     &output_value,
                     &provider,
                     &options,
