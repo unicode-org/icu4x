@@ -14,8 +14,6 @@ use crate::prelude::*;
 use crate::yoke::{self, *};
 use crate::zerofrom::{self, *};
 use alloc::borrow::Cow;
-use alloc::boxed::Box;
-use alloc::rc::Rc;
 use alloc::string::String;
 use core::fmt::Debug;
 use icu_locid::locale;
@@ -167,10 +165,9 @@ impl BufferProvider for HelloWorldJsonProvider {
         buffer.push_str("{\"message\":\"");
         helpers::escape_for_json(&old_payload.get().message, &mut buffer);
         buffer.push_str("\"}");
-        let boxed_u8: Box<[u8]> = buffer.into_boxed_str().into();
         Ok(DataResponse {
             metadata,
-            payload: Some(DataPayload::from_rc_buffer(Rc::from(boxed_u8))),
+            payload: Some(DataPayload::from_rc_buffer(buffer.as_bytes().into())),
         })
     }
 }
@@ -179,8 +176,8 @@ impl BufferProvider for HelloWorldJsonProvider {
 impl IterableResourceProvider<HelloWorldV1Marker> for HelloWorldProvider {
     fn supported_options(
         &self,
-    ) -> Result<Box<dyn Iterator<Item = ResourceOptions> + '_>, DataError> {
-        Ok(Box::new(
+    ) -> Result<alloc::boxed::Box<dyn Iterator<Item = ResourceOptions> + '_>, DataError> {
+        Ok(alloc::boxed::Box::new(
             self.map
                 .iter_keys()
                 .cloned()

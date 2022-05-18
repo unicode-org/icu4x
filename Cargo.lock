@@ -107,14 +107,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "baked"
-version = "1.0.0"
-dependencies = [
- "icu_list",
- "icu_provider",
-]
-
-[[package]]
 name = "bare-metal"
 version = "0.2.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1312,8 +1304,10 @@ version = "0.6.0"
 dependencies = [
  "displaydoc",
  "icu",
+ "icu_calendar",
  "icu_locid",
  "icu_provider",
+ "icu_testdata",
  "serde",
  "tinystr 0.6.0",
  "zerovec",
@@ -1662,6 +1656,7 @@ dependencies = [
  "postcard",
  "serde",
  "serde_json",
+ "stable_deref_trait",
  "static_assertions",
  "writeable",
  "yoke",
@@ -1758,13 +1753,13 @@ dependencies = [
 name = "icu_testdata"
 version = "0.6.0"
 dependencies = [
- "baked",
  "cargo_metadata",
  "clap",
  "displaydoc",
  "eyre",
  "futures",
  "icu_datagen",
+ "icu_list",
  "icu_locid",
  "icu_plurals",
  "icu_provider",

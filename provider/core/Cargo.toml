@@ -35,6 +35,8 @@ extra_features = ["serde"]
 all-features = true
 
 [features]
+default = []
+sync = []
 std = ["icu_locid/std"]
 serde = ["dep:serde", "yoke/serde"]
 macros = ["icu_provider_macros"]
@@ -48,7 +50,7 @@ deserialize_bincode_1 = ["serde", "bincode", "std"]
 deserialize_postcard_07 = ["serde", "postcard"]
 
 # Dependencies for running data generation
-datagen = ["dhat", "serde", "erased-serde", "crabbake"]
+datagen = ["dhat", "serde", "erased-serde", "crabbake", "std"]
 
 [dependencies]
 icu_locid = { version = "0.6", path = "../../components/locid" }
@@ -58,6 +60,7 @@ yoke = { version = "0.5.0", path = "../../utils/yoke", features = ["derive"] }
 zerofrom = { version = "0.1.0", path = "../../utils/zerofrom", features = ["derive"] }
 zerovec = { version = "0.7.0", path = "../../utils/zerovec", features = ["derive"]}
 litemap = { version = "0.4.0", path = "../../utils/litemap" }
+stable_deref_trait = { version = "1.2.0", default-features = false }
 
 log = { version = "0.4", optional = true }
 icu_provider_macros = { version = "0.6", path = "../macros", optional = true }
