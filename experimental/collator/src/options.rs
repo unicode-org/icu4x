@@ -414,7 +414,7 @@ impl CollatorOptions {
     /// `Strength::Primary` corresponds to the ECMA-402 sensitivity
     /// "case".
     ///
-    /// See https://unicode-org.github.io/icu/userguide/collation/concepts.html#caselevel
+    /// See [the ICU guide](https://unicode-org.github.io/icu/userguide/collation/concepts.html#caselevel).
     ///
     /// ```
     /// use icu_collator::*;

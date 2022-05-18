@@ -28,7 +28,7 @@ exit_on_error true
 glob_pattern_array = array "./**/*.rs" "./**/*.yml" "./**/*.toml" "./**/*.rst" "./**/*.bat"
 
 # Skip the files matching these patterns.
-glob_skip_pattern_array = array "target/**/*.rs" "ffi/diplomat/cpp/docs/**/*" "ffi/diplomat/wasm/docs/**/*" "**/node_modules/**/*" "provider/testdata/data/**/*"
+glob_skip_pattern_array = array "**/target/**/*.rs" "ffi/diplomat/cpp/docs/**/*" "ffi/diplomat/wasm/docs/**/*" "**/node_modules/**/*" "provider/testdata/data/**/*"
 
 blank_line = set ""
 
@@ -107,7 +107,7 @@ script = '''
 exit_on_error true
 
 glob_pattern = set "./**/Cargo.toml"
-skip_paths = set_new "provider/testdata/data/baked/Cargo.toml"
+skip_paths = set_new "provider/testdata/data/baked/Cargo.toml" "experimental/collator/fuzz/Cargo.toml" "experimental/normalizer/fuzz/Cargo.toml"
 
 template = canonicalize README.tpl
 
