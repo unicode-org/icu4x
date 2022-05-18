@@ -228,7 +228,7 @@ pub enum MaxVariable {
 
 /// Options settable by the user of the API.
 ///
-/// See https://www.unicode.org/reports/tr35/tr35-collation.html#Setting_Options
+/// See the [spec](https://www.unicode.org/reports/tr35/tr35-collation.html#Setting_Options).
 ///
 /// The setters take an `Option` so that `None` can be used to go back to default.
 ///
@@ -246,12 +246,12 @@ pub enum MaxVariable {
 ///
 /// ## Case Level
 ///
-/// See https://www.unicode.org/reports/tr35/tr35-collation.html#Case_Parameters
+/// See the [spec](https://www.unicode.org/reports/tr35/tr35-collation.html#Case_Parameters).
 /// This is the BCP47 key `kc`. The default is `false` (off).
 ///
 /// ## Case First
 ///
-/// See https://www.unicode.org/reports/tr35/tr35-collation.html#Case_Parameters
+/// See the [spec](https://www.unicode.org/reports/tr35/tr35-collation.html#Case_Parameters).
 /// This is the BCP47 key `kf`. Three possibilities: `CaseFirst::Off` (default,
 /// except for Danish and Maltese), `CaseFirst::Lower`, and `CaseFirst::Upper`
 /// (default for Danish and Maltese).

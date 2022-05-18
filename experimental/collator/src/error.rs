@@ -12,7 +12,7 @@ pub enum CollatorError {
     NotFound,
     /// Requested data was found but was malformed
     MalformedData,
-    /// An error originating inside of the [`DataProvider`](icu_provider::DataProvider).
+    /// An error originating inside of the data provider.
     #[displaydoc("{0}")]
     DataProvider(DataError),
 }

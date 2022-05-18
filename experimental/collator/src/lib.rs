@@ -21,7 +21,7 @@
 //!   - `Tag::LatinExpansionTag` might be reallocated to search expansions for archaic jamo
 //!     in the future.
 //!   - `Tag::HangulTag` might be reallocated to compressed hanja expansions in the future.
-//!     See https://github.com/unicode-org/icu4x/issues/1315
+//!     See [issue 1315](https://github.com/unicode-org/icu4x/issues/1315).
 //! * The key design difference between ICU4C and ICU4X is that ICU4C puts the canonical
 //!   closure in the data (larger data) to enable lookup directly by precomposed characters
 //!   while ICU4X always omits the canonical closure and always normalizes to NFD on the fly.
@@ -74,11 +74,7 @@
 //!
 //!     "searchjl" is even more problematic than "search", since "searchjl" uses
 //!     prefixes matches with jamo, and currently Hangul is assumed not to participate
-//!     in prefix or contraction matching. Before putting too much effort into "searchjl"
-//!     it would be good to research its usage. The CLDR issue that introduced it,
-//!     https://unicode-org.atlassian.net/browse/CLDR-3560 , said that it was for
-//!     contact search on phones. As of 2022-05-11, I have been unable to find evidence
-//!     of any Open Source app, including Android Contacts, enabling "searchjl".
+//!     in prefix or contraction matching.
 
 mod comparison;
 mod elements;
