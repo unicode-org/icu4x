@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1652892779554,
+  "lastUpdate": 1652916988786,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -32423,6 +32423,102 @@ window.BENCHMARK_DATA = {
             "name": "pattern/parse",
             "value": 6488,
             "range": "± 323",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "dminor@mozilla.com",
+            "name": "Dan Minor",
+            "username": "dminor"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "a35b98986eddf987bc83416726b67e365cb013ee",
+          "message": "Post 0.6 release fixes (#1895)\n\n* Updates to Cargo.toml files to fix problems found during 0.6 release\r\n\r\n* Update release.md\r\n\r\n* Update intro.md\r\n\r\n* Address review suggestions",
+          "timestamp": "2022-05-18T19:25:42-04:00",
+          "tree_id": "5ebefa108e6408eb7da83ee2da8f01cf4f7c5aa4",
+          "url": "https://github.com/unicode-org/icu4x/commit/a35b98986eddf987bc83416726b67e365cb013ee"
+        },
+        "date": 1652916967159,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 79015,
+            "range": "± 1520",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 749563,
+            "range": "± 730",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 159051,
+            "range": "± 181",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/DateTimeFormat/format_to_write",
+            "value": 75943,
+            "range": "± 285",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/DateTimeFormat/format_to_string",
+            "value": 84476,
+            "range": "± 104",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/format",
+            "value": 79961,
+            "range": "± 196",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/to_string",
+            "value": 87654,
+            "range": "± 114",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/ZonedDateTimeFormat/format_to_write",
+            "value": 156403,
+            "range": "± 213",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/ZonedDateTimeFormat/format_to_string",
+            "value": 167941,
+            "range": "± 460",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/format",
+            "value": 159623,
+            "range": "± 238",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/to_string",
+            "value": 171651,
+            "range": "± 282",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "pattern/parse",
+            "value": 4451,
+            "range": "± 17",
             "unit": "ns/iter"
           }
         ]
