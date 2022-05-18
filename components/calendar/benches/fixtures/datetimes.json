@@ -5,7 +5,8 @@
         "day": 20,
         "hour": 14,
         "minute": 12,
-        "second": 1
+        "second": 1,
+        "nanosecond": 0
     },
     {
         "year": 1996,
@@ -13,7 +14,8 @@
         "day": 20,
         "hour": 2,
         "minute": 55,
-        "second": 12
+        "second": 12,
+        "nanosecond": 0
     },
     {
         "year": 2000,
@@ -21,7 +23,8 @@
         "day": 23,
         "hour": 1,
         "minute": 34,
-        "second": 35
+        "second": 35,
+        "nanosecond": 0
     },
     {
         "year": 2010,
@@ -29,7 +32,8 @@
         "day": 10,
         "hour": 9,
         "minute": 31,
-        "second": 12
+        "second": 12,
+        "nanosecond": 0
     },
     {
         "year": 2020,
@@ -37,7 +41,8 @@
         "day": 13,
         "hour": 23,
         "minute": 1,
-        "second": 12
+        "second": 12,
+        "nanosecond": 0
     },
     {
         "year": 1881,
@@ -45,7 +50,8 @@
         "day": 22,
         "hour": 3,
         "minute": 27,
-        "second": 59
+        "second": 59,
+        "nanosecond": 0
     },
     {
         "year": 1720,
@@ -53,7 +59,8 @@
         "day": 1,
         "hour": 13,
         "minute": 24,
-        "second": 13
+        "second": 13,
+        "nanosecond": 0
     },
     {
         "year": 1630,
@@ -61,7 +68,8 @@
         "day": 4,
         "hour": 3,
         "minute": 1,
-        "second": 1
+        "second": 1,
+        "nanosecond": 0
     },
     {
         "year": 1540,
@@ -69,7 +77,8 @@
         "day": 8,
         "hour": 8,
         "minute": 2,
-        "second": 12
+        "second": 12,
+        "nanosecond": 0
     },
     {
         "year": 1024,
@@ -77,6 +86,7 @@
         "day": 16,
         "hour": 19,
         "minute": 31,
-        "second": 2
+        "second": 2,
+        "nanosecond": 0
     }
 ]

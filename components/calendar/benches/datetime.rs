@@ -83,7 +83,13 @@ fn bench_calendar_nano<C: Clone + Calendar>(
             for fx in &fxs.0 {
                 // Instantion from int. Nanosecond value set to 0.
                 let mut instantiated_datetime_calendar = calendar_datetime_init(
-                    fx.year, fx.month, fx.day, fx.hour, fx.minute, fx.second, 0,
+                    fx.year,
+                    fx.month,
+                    fx.day,
+                    fx.hour,
+                    fx.minute,
+                    fx.second,
+                    fx.nanosecond,
                 );
 
                 // Conversion from ISO
