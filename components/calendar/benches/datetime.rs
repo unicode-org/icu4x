@@ -44,6 +44,7 @@ fn bench_calendar_nano<C: Clone + Calendar>(
     calendar: C,
     calendar_datetime_init: impl Fn(i32, u8, u8, u8, u8, u8, u32) -> DateTime<C>,
 ) {
+    // Version of `bench_calendar` that uses nanoseconds.
     group.bench_function(name, |b| {
         b.iter(|| {
             for fx in &fxs.0 {
@@ -106,8 +107,9 @@ fn datetime_benches(c: &mut Criterion) {
     let mut group = c.benchmark_group("datetime");
     let fxs = fixtures::get_dates_fixture().unwrap();
 
-    // General overview is dealing in just ISO.
     group.bench_function("calendar/overview", |b| {
+        // General overview is dealing in just ISO. Abstracted away from `bench_calendar` due
+        // to lack of conversion case and use of iso types.
         b.iter(|| {
             for fx in &fxs.0 {
                 // Instantiation from int

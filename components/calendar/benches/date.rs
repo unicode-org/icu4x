@@ -61,8 +61,9 @@ fn date_benches(c: &mut Criterion) {
     let mut group = c.benchmark_group("date");
     let fxs = fixtures::get_dates_fixture().unwrap();
 
-    // General overview is dealing in just ISO.
     group.bench_function("calendar/overview", |b| {
+        // General overview is dealing in just ISO. Abstracted away from `bench_calendar` due
+        // to lack of conversion case and use of iso types.
         use icu::calendar::{iso::IsoDay, iso::IsoMonth, iso::IsoYear};
         use std::convert::TryFrom;
 
@@ -87,7 +88,7 @@ fn date_benches(c: &mut Criterion) {
         })
     });
 
-    //#[cfg(feature = "bench")]
+    #[cfg(feature = "bench")]
     bench_calendar(
         &mut group,
         "calendar/buddhist",
@@ -96,7 +97,7 @@ fn date_benches(c: &mut Criterion) {
         |y, m, d| Date::new_buddhist_date(y, m, d).unwrap(),
     );
 
-    //#[cfg(feature = "bench")]
+    #[cfg(feature = "bench")]
     bench_calendar(
         &mut group,
         "calendar/coptic",
@@ -105,7 +106,7 @@ fn date_benches(c: &mut Criterion) {
         |y, m, d| Date::new_coptic_date(y, m, d).unwrap(),
     );
 
-    //#[cfg(feature = "bench")]
+    #[cfg(feature = "bench")]
     bench_calendar(
         &mut group,
         "calendar/ethiopic",
@@ -114,7 +115,7 @@ fn date_benches(c: &mut Criterion) {
         |y, m, d| Date::new_ethiopic_date(y, m, d).unwrap(),
     );
 
-    //#[cfg(feature = "bench")]
+    #[cfg(feature = "bench")]
     bench_calendar(
         &mut group,
         "calendar/indian",
@@ -123,7 +124,7 @@ fn date_benches(c: &mut Criterion) {
         |y, m, d| Date::new_indian_date(y, m, d).unwrap(),
     );
 
-    //#[cfg(feature = "bench")]
+    #[cfg(feature = "bench")]
     bench_calendar(
         &mut group,
         "calendar/julian",
@@ -132,8 +133,9 @@ fn date_benches(c: &mut Criterion) {
         |y, m, d| Date::new_julian_date(y, m, d).unwrap(),
     );
 
-    // //#[cfg(feature = "bench")]
+    #[cfg(feature = "bench")]
     group.bench_function("calendar/gregorian", |b| {
+        // Abstracted away from `bench_calendar` due to use of iso types.
         use icu::calendar::gregorian::Gregorian;
         use icu::calendar::{iso::IsoDay, iso::IsoMonth, iso::IsoYear};
         use std::convert::TryFrom;
