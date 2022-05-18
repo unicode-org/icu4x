@@ -35,25 +35,23 @@ pub use ser::SerializeBox;
 #[cfg(feature = "datagen")]
 pub use ser::SerializeMarker;
 
-use crate::DataError;
-
 #[cfg(feature = "serde_json")]
-impl From<serde_json::error::Error> for DataError {
+impl From<serde_json::error::Error> for crate::DataError {
     fn from(e: serde_json::error::Error) -> Self {
-        DataError::custom("JSON deserialize").with_display_context(&e)
+        crate::DataError::custom("JSON deserialize").with_display_context(&e)
     }
 }
 
 #[cfg(feature = "bincode")]
-impl From<bincode::Error> for DataError {
+impl From<bincode::Error> for crate::DataError {
     fn from(e: bincode::Error) -> Self {
-        DataError::custom("Bincode deserialize").with_display_context(&e)
+        crate::DataError::custom("Bincode deserialize").with_display_context(&e)
     }
 }
 
 #[cfg(feature = "postcard")]
-impl From<postcard::Error> for DataError {
+impl From<postcard::Error> for crate::DataError {
     fn from(e: postcard::Error) -> Self {
-        DataError::custom("Postcard deserialize").with_display_context(&e)
+        crate::DataError::custom("Postcard deserialize").with_display_context(&e)
     }
 }

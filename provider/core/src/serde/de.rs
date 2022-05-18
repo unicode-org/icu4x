@@ -32,7 +32,7 @@ fn deserialize_impl<'data, M>(
     #[allow(unused_variables)] bytes: &'data [u8],
     buffer_format: BufferFormat,
     _: PhantomData<&'data ()>,
-) -> Result<<M::Yokeable as Yokeable<'data>>::Output, Error>
+) -> Result<<M::Yokeable as Yokeable<'data>>::Output, DataError>
 where
     M: DataMarker,
     // Actual bound:
