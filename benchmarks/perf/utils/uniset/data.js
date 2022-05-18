@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1652799004267,
+  "lastUpdate": 1652892123936,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -27562,6 +27562,60 @@ window.BENCHMARK_DATA = {
           {
             "name": "uniset/contains_range/worst",
             "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "pandusonu@google.com",
+            "name": "Gollapudi Vamsi Krishna",
+            "username": "pandusonu2"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "319d2f46f8566cfe74e94fc39c7c8c19f43b9b82",
+          "message": "Fix iso fixed conversion (#1898)",
+          "timestamp": "2022-05-18T16:32:38Z",
+          "tree_id": "e926f394b51c013b70d0d012a6677469e520e054",
+          "url": "https://github.com/unicode-org/icu4x/commit/319d2f46f8566cfe74e94fc39c7c8c19f43b9b82"
+        },
+        "date": 1652892099049,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 51637562,
+            "range": "± 2139622",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/best",
+            "value": 3,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/worst",
+            "value": 3,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/best",
+            "value": 3,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/worst",
+            "value": 3,
             "range": "± 0",
             "unit": "ns/iter"
           }
