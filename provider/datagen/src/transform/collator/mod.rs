@@ -159,24 +159,13 @@ macro_rules! collation_provider {
                 };
                 if let Some(extension) = &req.options.get_unicode_ext(&unicode_ext_key!("co")) {
                     s.push('_');
-                    let extension_string = extension.to_string();
-                    match &extension_string[..] {
-                        "trad" => {
-                            s.push_str("traditional");
-                        }
-                        "phonebk" => {
-                            s.push_str("phonebook");
-                        }
-                        "dict" => {
-                            s.push_str("dictionary");
-                        }
-                        "gb2312" => {
-                            s.push_str("gb2312han");
-                        }
-                        _ => {
-                            s.push_str(&extension_string);
-                        }
-                    }
+                    s.push_str(match extension.to_string().as_str() {
+                        "trad" => "traditional",
+                        "phonebk" => "phonebook",
+                        "dict" => "dictionary",
+                        "gb2312" => "gb2312han",
+                        extension => extension,
+                    });
                 } else {
                     // "standard" is the default for all but two languages: sv and zh.
                     // Since there are only two special cases, hard-coding them
