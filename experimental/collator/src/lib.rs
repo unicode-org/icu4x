@@ -21,7 +21,7 @@
 //!
 //! These notes assume that ICU4X itself has been cloned to `$PROJECTS/icu4x`.
 //!
-//! Clone ICU4C from https://github.com/hsivonen/icu to `$PROJECTS/icu` and switch
+//! Clone ICU4C from <https://github.com/hsivonen/icu> to `$PROJECTS/icu` and switch
 //! to the branch `icu4x-collator`.
 //!
 //! Create a directory `$PROJECTS/localicu`
@@ -44,7 +44,7 @@
 //!
 //! `cargo install cargo-fuzz`
 //!
-//! Clone `rust_icu` from https://github.com/google/rust_icu to `$PROJECTS/rust_icu`.
+//! Clone `rust_icu` from <https://github.com/google/rust_icu> to `$PROJECTS/rust_icu`.
 //!
 //! In `$PROJECTS/icu-build` run `make install`.
 //!
