@@ -1,17 +1,13 @@
 # icu_collator [![crates.io](https://img.shields.io/crates/v/icu_collator)](https://crates.io/crates/icu_collator)
 
-`icu_collator` is one of the [`ICU4X`] components.
+`icu_collator` is one of the ICU4X components.
 
 This API provides necessary functionality for comparing strings according to
 language-dependent conventions.
 
-[`Collator`] is the main structure of the component. It accepts a set of arguments
-which allow it to collect necessary data from the [data provider], and once
+`Collator` is the main structure of the component. It accepts a set of arguments
+which allow it to collect necessary data from the data provider, and once
 instantiated, can be used to compare strings.
-
-[data provider]: icu_provider
-[`ICU4X`]: ../icu/index.html
-[`Collator`]: icu_collator::Collator
 
 ## Development environment (on Linux) for fuzzing and generating data
 
