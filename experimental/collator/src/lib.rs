@@ -744,138 +744,138 @@ mod tests {
         }
     }
 
-    #[test]
-    fn test_fi() {
-        // Adapted from ficoll.cpp in ICU4C
-        // Testing that w and v behave as in the root collation is for checking
-        // that the sorting collation doesn't exhibit the behavior of the search
-        // collation, which (somewhat questionably) treats w and v as primary-equal.
-        let left = [
-            "wat",
-            "vat",
-            "a\u{FC}beck",
-            "L\u{E5}vi",
-            // ICU4C has a duplicate of the first case below.
-            // The duplicate is omitted here.
-            // Instead, the subsequent tests are added for ICU4X.
-            "\u{E4}",
-            "a\u{0308}",
-        ];
-        let right = [
-            "vat",
-            "way",
-            "axbeck",
-            "L\u{E4}we",
-            // ICU4C has a duplicate of the first case below.
-            // The duplicate is omitted here.
-            // Instead, the subsequent tests are added for ICU4X.
-            "o",
-            "\u{E4}",
-        ];
-        let expectations = [
-            Ordering::Greater,
-            Ordering::Less,
-            Ordering::Greater,
-            Ordering::Less,
-            Ordering::Greater,
-            Ordering::Equal,
-        ];
-        let locale: Locale = langid!("fi").into();
-        let data_provider = icu_testdata::get_provider();
+    // #[test]
+    // fn test_fi() {
+    //     // Adapted from ficoll.cpp in ICU4C
+    //     // Testing that w and v behave as in the root collation is for checking
+    //     // that the sorting collation doesn't exhibit the behavior of the search
+    //     // collation, which (somewhat questionably) treats w and v as primary-equal.
+    //     let left = [
+    //         "wat",
+    //         "vat",
+    //         "a\u{FC}beck",
+    //         "L\u{E5}vi",
+    //         // ICU4C has a duplicate of the first case below.
+    //         // The duplicate is omitted here.
+    //         // Instead, the subsequent tests are added for ICU4X.
+    //         "\u{E4}",
+    //         "a\u{0308}",
+    //     ];
+    //     let right = [
+    //         "vat",
+    //         "way",
+    //         "axbeck",
+    //         "L\u{E4}we",
+    //         // ICU4C has a duplicate of the first case below.
+    //         // The duplicate is omitted here.
+    //         // Instead, the subsequent tests are added for ICU4X.
+    //         "o",
+    //         "\u{E4}",
+    //     ];
+    //     let expectations = [
+    //         Ordering::Greater,
+    //         Ordering::Less,
+    //         Ordering::Greater,
+    //         Ordering::Less,
+    //         Ordering::Greater,
+    //         Ordering::Equal,
+    //     ];
+    //     let locale: Locale = langid!("fi").into();
+    //     let data_provider = icu_testdata::get_provider();
 
-        let mut options = CollatorOptions::new();
-        options.set_strength(Some(Strength::Tertiary));
+    //     let mut options = CollatorOptions::new();
+    //     options.set_strength(Some(Strength::Tertiary));
 
-        {
-            let collator: Collator =
-                Collator::try_new(locale.clone(), &data_provider, options).unwrap();
-            check_expectations(&collator, &left, &right, &expectations);
-        }
+    //     {
+    //         let collator: Collator =
+    //             Collator::try_new(locale.clone(), &data_provider, options).unwrap();
+    //         check_expectations(&collator, &left, &right, &expectations);
+    //     }
 
-        options.set_strength(Some(Strength::Primary));
+    //     options.set_strength(Some(Strength::Primary));
 
-        {
-            let collator: Collator = Collator::try_new(locale, &data_provider, options).unwrap();
-            check_expectations(&collator, &left, &right, &expectations);
-        }
-    }
+    //     {
+    //         let collator: Collator = Collator::try_new(locale, &data_provider, options).unwrap();
+    //         check_expectations(&collator, &left, &right, &expectations);
+    //     }
+    // }
 
-    #[test]
-    fn test_sv() {
-        // This is the same as test_fi. The purpose of this copy is to test that
-        // Swedish defaults to "reformed", which behaves like Finnish "standard",
-        // and not to "standard", which behaves like Finnash "traditional".
+    // #[test]
+    // fn test_sv() {
+    //     // This is the same as test_fi. The purpose of this copy is to test that
+    //     // Swedish defaults to "reformed", which behaves like Finnish "standard",
+    //     // and not to "standard", which behaves like Finnash "traditional".
 
-        // Adapted from ficoll.cpp in ICU4C
-        // Testing that w and v behave as in the root collation is for checking
-        // that the sorting collation doesn't exhibit the behavior of the search
-        // collation, which (somewhat questionably) treats w and v as primary-equal.
-        let left = [
-            "wat",
-            "vat",
-            "a\u{FC}beck",
-            "L\u{E5}vi",
-            // ICU4C has a duplicate of the first case below.
-            // The duplicate is omitted here.
-            // Instead, the subsequent tests are added for ICU4X.
-            "\u{E4}",
-            "a\u{0308}",
-        ];
-        let right = [
-            "vat",
-            "way",
-            "axbeck",
-            "L\u{E4}we",
-            // ICU4C has a duplicate of the first case below.
-            // The duplicate is omitted here.
-            // Instead, the subsequent tests are added for ICU4X.
-            "o",
-            "\u{E4}",
-        ];
-        let expectations = [
-            Ordering::Greater,
-            Ordering::Less,
-            Ordering::Greater,
-            Ordering::Less,
-            Ordering::Greater,
-            Ordering::Equal,
-        ];
-        let locale: Locale = langid!("sv").into();
-        let data_provider = icu_testdata::get_provider();
+    //     // Adapted from ficoll.cpp in ICU4C
+    //     // Testing that w and v behave as in the root collation is for checking
+    //     // that the sorting collation doesn't exhibit the behavior of the search
+    //     // collation, which (somewhat questionably) treats w and v as primary-equal.
+    //     let left = [
+    //         "wat",
+    //         "vat",
+    //         "a\u{FC}beck",
+    //         "L\u{E5}vi",
+    //         // ICU4C has a duplicate of the first case below.
+    //         // The duplicate is omitted here.
+    //         // Instead, the subsequent tests are added for ICU4X.
+    //         "\u{E4}",
+    //         "a\u{0308}",
+    //     ];
+    //     let right = [
+    //         "vat",
+    //         "way",
+    //         "axbeck",
+    //         "L\u{E4}we",
+    //         // ICU4C has a duplicate of the first case below.
+    //         // The duplicate is omitted here.
+    //         // Instead, the subsequent tests are added for ICU4X.
+    //         "o",
+    //         "\u{E4}",
+    //     ];
+    //     let expectations = [
+    //         Ordering::Greater,
+    //         Ordering::Less,
+    //         Ordering::Greater,
+    //         Ordering::Less,
+    //         Ordering::Greater,
+    //         Ordering::Equal,
+    //     ];
+    //     let locale: Locale = langid!("sv").into();
+    //     let data_provider = icu_testdata::get_provider();
 
-        let mut options = CollatorOptions::new();
-        options.set_strength(Some(Strength::Tertiary));
+    //     let mut options = CollatorOptions::new();
+    //     options.set_strength(Some(Strength::Tertiary));
 
-        {
-            let collator: Collator =
-                Collator::try_new(locale.clone(), &data_provider, options).unwrap();
-            check_expectations(&collator, &left, &right, &expectations);
-        }
+    //     {
+    //         let collator: Collator =
+    //             Collator::try_new(locale.clone(), &data_provider, options).unwrap();
+    //         check_expectations(&collator, &left, &right, &expectations);
+    //     }
 
-        options.set_strength(Some(Strength::Primary));
+    //     options.set_strength(Some(Strength::Primary));
 
-        {
-            let collator: Collator = Collator::try_new(locale, &data_provider, options).unwrap();
-            check_expectations(&collator, &left, &right, &expectations);
-        }
-    }
+    //     {
+    //         let collator: Collator = Collator::try_new(locale, &data_provider, options).unwrap();
+    //         check_expectations(&collator, &left, &right, &expectations);
+    //     }
+    // }
 
-    // TODO: This test should eventually test fallback
-    // TODO: Test Swedish and Chinese also, since they have unusual
-    // variant defaults. (But are currently not part of the test data.)
-    #[test]
-    fn test_region_fallback() {
-        // There's no explicit fi-FI data.
-        let locale: Locale = "fi-u-co-standard".parse().unwrap();
+    // // TODO: This test should eventually test fallback
+    // // TODO: Test Swedish and Chinese also, since they have unusual
+    // // variant defaults. (But are currently not part of the test data.)
+    // #[test]
+    // fn test_region_fallback() {
+    //     // There's no explicit fi-FI data.
+    //     let locale: Locale = "fi-u-co-standard".parse().unwrap();
 
-        // let locale: Locale = langid!("fi-FI").into();
+    //     // let locale: Locale = langid!("fi-FI").into();
 
-        let data_provider = icu_testdata::get_provider();
+    //     let data_provider = icu_testdata::get_provider();
 
-        let collator: Collator =
-            Collator::try_new(locale, &data_provider, CollatorOptions::new()).unwrap();
-        assert_eq!(collator.compare("ä", "z"), Ordering::Greater);
-    }
+    //     let collator: Collator =
+    //         Collator::try_new(locale, &data_provider, CollatorOptions::new()).unwrap();
+    //     assert_eq!(collator.compare("ä", "z"), Ordering::Greater);
+    // }
 
     #[test]
     fn test_reordering() {
@@ -900,120 +900,120 @@ mod tests {
         }
     }
 
-    #[test]
-    fn test_zh() {
-        let data_provider = icu_testdata::get_provider();
+    // #[test]
+    // fn test_zh() {
+    //     let data_provider = icu_testdata::get_provider();
 
-        // Note: ㄅ is Bopomofo.
+    //     // Note: ㄅ is Bopomofo.
 
-        {
-            let collator: Collator =
-                Collator::try_new(Locale::default(), &data_provider, CollatorOptions::new())
-                    .unwrap();
-            assert_eq!(collator.compare("艾", "a"), Ordering::Greater);
-            assert_eq!(collator.compare("佰", "a"), Ordering::Greater);
-            assert_eq!(collator.compare("ㄅ", "a"), Ordering::Greater);
-            assert_eq!(collator.compare("ㄅ", "ж"), Ordering::Greater);
-            assert_eq!(collator.compare("艾", "佰"), Ordering::Greater);
-            assert_eq!(collator.compare("艾", "ㄅ"), Ordering::Greater);
-            assert_eq!(collator.compare("佰", "ㄅ"), Ordering::Greater);
-            assert_eq!(collator.compare("不", "把"), Ordering::Less);
-        }
-        {
-            let locale: Locale = langid!("zh").into(); // Defaults to -u-co-pinyin
-            let collator: Collator =
-                Collator::try_new(locale, &data_provider, CollatorOptions::new()).unwrap();
-            assert_eq!(collator.compare("艾", "a"), Ordering::Less);
-            assert_eq!(collator.compare("佰", "a"), Ordering::Less);
-            assert_eq!(collator.compare("ㄅ", "a"), Ordering::Greater);
-            assert_eq!(collator.compare("ㄅ", "ж"), Ordering::Greater);
-            assert_eq!(collator.compare("艾", "佰"), Ordering::Less);
-            assert_eq!(collator.compare("艾", "ㄅ"), Ordering::Less);
-            assert_eq!(collator.compare("佰", "ㄅ"), Ordering::Less);
-            assert_eq!(collator.compare("不", "把"), Ordering::Greater);
-        }
-        {
-            let locale: Locale = "zh-u-co-pinyin".parse().unwrap();
-            let collator: Collator =
-                Collator::try_new(locale, &data_provider, CollatorOptions::new()).unwrap();
-            assert_eq!(collator.compare("艾", "a"), Ordering::Less);
-            assert_eq!(collator.compare("佰", "a"), Ordering::Less);
-            assert_eq!(collator.compare("ㄅ", "a"), Ordering::Greater);
-            assert_eq!(collator.compare("ㄅ", "ж"), Ordering::Greater);
-            assert_eq!(collator.compare("艾", "佰"), Ordering::Less);
-            assert_eq!(collator.compare("艾", "ㄅ"), Ordering::Less);
-            assert_eq!(collator.compare("佰", "ㄅ"), Ordering::Less);
-            assert_eq!(collator.compare("不", "把"), Ordering::Greater);
-        }
-        {
-            let locale: Locale = "zh-u-co-gb2312".parse().unwrap();
-            let collator: Collator =
-                Collator::try_new(locale, &data_provider, CollatorOptions::new()).unwrap();
-            assert_eq!(collator.compare("艾", "a"), Ordering::Greater);
-            assert_eq!(collator.compare("佰", "a"), Ordering::Greater);
-            assert_eq!(collator.compare("ㄅ", "a"), Ordering::Greater);
-            assert_eq!(collator.compare("ㄅ", "ж"), Ordering::Greater);
-            assert_eq!(collator.compare("艾", "佰"), Ordering::Less);
-            // In GB2312 proper, Bopomofo comes before Han, but the
-            // collation leaves Bopomofo unreordered, so it comes after.
-            assert_eq!(collator.compare("艾", "ㄅ"), Ordering::Less);
-            assert_eq!(collator.compare("佰", "ㄅ"), Ordering::Less);
-            assert_eq!(collator.compare("不", "把"), Ordering::Greater);
-        }
-        {
-            let locale: Locale = "zh-u-co-stroke".parse().unwrap();
-            let collator: Collator =
-                Collator::try_new(locale, &data_provider, CollatorOptions::new()).unwrap();
-            assert_eq!(collator.compare("艾", "a"), Ordering::Less);
-            assert_eq!(collator.compare("佰", "a"), Ordering::Less);
-            assert_eq!(collator.compare("ㄅ", "a"), Ordering::Less);
-            assert_eq!(collator.compare("ㄅ", "ж"), Ordering::Less);
-            assert_eq!(collator.compare("艾", "佰"), Ordering::Less);
-            assert_eq!(collator.compare("艾", "ㄅ"), Ordering::Less);
-            assert_eq!(collator.compare("佰", "ㄅ"), Ordering::Less);
-            assert_eq!(collator.compare("不", "把"), Ordering::Less);
-        }
-        {
-            let locale: Locale = "zh-u-co-zhuyin".parse().unwrap();
-            let collator: Collator =
-                Collator::try_new(locale, &data_provider, CollatorOptions::new()).unwrap();
-            assert_eq!(collator.compare("艾", "a"), Ordering::Less);
-            assert_eq!(collator.compare("佰", "a"), Ordering::Less);
-            assert_eq!(collator.compare("ㄅ", "a"), Ordering::Less);
-            assert_eq!(collator.compare("ㄅ", "ж"), Ordering::Less);
-            assert_eq!(collator.compare("艾", "佰"), Ordering::Greater);
-            assert_eq!(collator.compare("艾", "ㄅ"), Ordering::Less);
-            assert_eq!(collator.compare("佰", "ㄅ"), Ordering::Less);
-            assert_eq!(collator.compare("不", "把"), Ordering::Greater);
-        }
-        {
-            let locale: Locale = "zh-u-co-unihan".parse().unwrap();
-            let collator: Collator =
-                Collator::try_new(locale, &data_provider, CollatorOptions::new()).unwrap();
-            assert_eq!(collator.compare("艾", "a"), Ordering::Less);
-            assert_eq!(collator.compare("佰", "a"), Ordering::Less);
-            assert_eq!(collator.compare("ㄅ", "a"), Ordering::Less);
-            assert_eq!(collator.compare("ㄅ", "ж"), Ordering::Less);
-            assert_eq!(collator.compare("艾", "佰"), Ordering::Greater);
-            assert_eq!(collator.compare("艾", "ㄅ"), Ordering::Less);
-            assert_eq!(collator.compare("佰", "ㄅ"), Ordering::Less);
-            assert_eq!(collator.compare("不", "把"), Ordering::Less);
-        }
-        {
-            let locale: Locale = "zh-u-co-big5han".parse().unwrap();
-            let collator: Collator =
-                Collator::try_new(locale, &data_provider, CollatorOptions::new()).unwrap();
-            assert_eq!(collator.compare("艾", "a"), Ordering::Greater);
-            assert_eq!(collator.compare("佰", "a"), Ordering::Greater);
-            assert_eq!(collator.compare("ㄅ", "a"), Ordering::Greater);
-            assert_eq!(collator.compare("ㄅ", "ж"), Ordering::Less);
-            assert_eq!(collator.compare("艾", "佰"), Ordering::Less);
-            assert_eq!(collator.compare("艾", "ㄅ"), Ordering::Less);
-            assert_eq!(collator.compare("佰", "ㄅ"), Ordering::Less);
-            assert_eq!(collator.compare("不", "把"), Ordering::Less);
-        }
-        // TODO: Test script and region aliases
-    }
+    //     {
+    //         let collator: Collator =
+    //             Collator::try_new(Locale::default(), &data_provider, CollatorOptions::new())
+    //                 .unwrap();
+    //         assert_eq!(collator.compare("艾", "a"), Ordering::Greater);
+    //         assert_eq!(collator.compare("佰", "a"), Ordering::Greater);
+    //         assert_eq!(collator.compare("ㄅ", "a"), Ordering::Greater);
+    //         assert_eq!(collator.compare("ㄅ", "ж"), Ordering::Greater);
+    //         assert_eq!(collator.compare("艾", "佰"), Ordering::Greater);
+    //         assert_eq!(collator.compare("艾", "ㄅ"), Ordering::Greater);
+    //         assert_eq!(collator.compare("佰", "ㄅ"), Ordering::Greater);
+    //         assert_eq!(collator.compare("不", "把"), Ordering::Less);
+    //     }
+    //     {
+    //         let locale: Locale = langid!("zh").into(); // Defaults to -u-co-pinyin
+    //         let collator: Collator =
+    //             Collator::try_new(locale, &data_provider, CollatorOptions::new()).unwrap();
+    //         assert_eq!(collator.compare("艾", "a"), Ordering::Less);
+    //         assert_eq!(collator.compare("佰", "a"), Ordering::Less);
+    //         assert_eq!(collator.compare("ㄅ", "a"), Ordering::Greater);
+    //         assert_eq!(collator.compare("ㄅ", "ж"), Ordering::Greater);
+    //         assert_eq!(collator.compare("艾", "佰"), Ordering::Less);
+    //         assert_eq!(collator.compare("艾", "ㄅ"), Ordering::Less);
+    //         assert_eq!(collator.compare("佰", "ㄅ"), Ordering::Less);
+    //         assert_eq!(collator.compare("不", "把"), Ordering::Greater);
+    //     }
+    //     {
+    //         let locale: Locale = "zh-u-co-pinyin".parse().unwrap();
+    //         let collator: Collator =
+    //             Collator::try_new(locale, &data_provider, CollatorOptions::new()).unwrap();
+    //         assert_eq!(collator.compare("艾", "a"), Ordering::Less);
+    //         assert_eq!(collator.compare("佰", "a"), Ordering::Less);
+    //         assert_eq!(collator.compare("ㄅ", "a"), Ordering::Greater);
+    //         assert_eq!(collator.compare("ㄅ", "ж"), Ordering::Greater);
+    //         assert_eq!(collator.compare("艾", "佰"), Ordering::Less);
+    //         assert_eq!(collator.compare("艾", "ㄅ"), Ordering::Less);
+    //         assert_eq!(collator.compare("佰", "ㄅ"), Ordering::Less);
+    //         assert_eq!(collator.compare("不", "把"), Ordering::Greater);
+    //     }
+    //     {
+    //         let locale: Locale = "zh-u-co-gb2312".parse().unwrap();
+    //         let collator: Collator =
+    //             Collator::try_new(locale, &data_provider, CollatorOptions::new()).unwrap();
+    //         assert_eq!(collator.compare("艾", "a"), Ordering::Greater);
+    //         assert_eq!(collator.compare("佰", "a"), Ordering::Greater);
+    //         assert_eq!(collator.compare("ㄅ", "a"), Ordering::Greater);
+    //         assert_eq!(collator.compare("ㄅ", "ж"), Ordering::Greater);
+    //         assert_eq!(collator.compare("艾", "佰"), Ordering::Less);
+    //         // In GB2312 proper, Bopomofo comes before Han, but the
+    //         // collation leaves Bopomofo unreordered, so it comes after.
+    //         assert_eq!(collator.compare("艾", "ㄅ"), Ordering::Less);
+    //         assert_eq!(collator.compare("佰", "ㄅ"), Ordering::Less);
+    //         assert_eq!(collator.compare("不", "把"), Ordering::Greater);
+    //     }
+    //     {
+    //         let locale: Locale = "zh-u-co-stroke".parse().unwrap();
+    //         let collator: Collator =
+    //             Collator::try_new(locale, &data_provider, CollatorOptions::new()).unwrap();
+    //         assert_eq!(collator.compare("艾", "a"), Ordering::Less);
+    //         assert_eq!(collator.compare("佰", "a"), Ordering::Less);
+    //         assert_eq!(collator.compare("ㄅ", "a"), Ordering::Less);
+    //         assert_eq!(collator.compare("ㄅ", "ж"), Ordering::Less);
+    //         assert_eq!(collator.compare("艾", "佰"), Ordering::Less);
+    //         assert_eq!(collator.compare("艾", "ㄅ"), Ordering::Less);
+    //         assert_eq!(collator.compare("佰", "ㄅ"), Ordering::Less);
+    //         assert_eq!(collator.compare("不", "把"), Ordering::Less);
+    //     }
+    //     {
+    //         let locale: Locale = "zh-u-co-zhuyin".parse().unwrap();
+    //         let collator: Collator =
+    //             Collator::try_new(locale, &data_provider, CollatorOptions::new()).unwrap();
+    //         assert_eq!(collator.compare("艾", "a"), Ordering::Less);
+    //         assert_eq!(collator.compare("佰", "a"), Ordering::Less);
+    //         assert_eq!(collator.compare("ㄅ", "a"), Ordering::Less);
+    //         assert_eq!(collator.compare("ㄅ", "ж"), Ordering::Less);
+    //         assert_eq!(collator.compare("艾", "佰"), Ordering::Greater);
+    //         assert_eq!(collator.compare("艾", "ㄅ"), Ordering::Less);
+    //         assert_eq!(collator.compare("佰", "ㄅ"), Ordering::Less);
+    //         assert_eq!(collator.compare("不", "把"), Ordering::Greater);
+    //     }
+    //     {
+    //         let locale: Locale = "zh-u-co-unihan".parse().unwrap();
+    //         let collator: Collator =
+    //             Collator::try_new(locale, &data_provider, CollatorOptions::new()).unwrap();
+    //         assert_eq!(collator.compare("艾", "a"), Ordering::Less);
+    //         assert_eq!(collator.compare("佰", "a"), Ordering::Less);
+    //         assert_eq!(collator.compare("ㄅ", "a"), Ordering::Less);
+    //         assert_eq!(collator.compare("ㄅ", "ж"), Ordering::Less);
+    //         assert_eq!(collator.compare("艾", "佰"), Ordering::Greater);
+    //         assert_eq!(collator.compare("艾", "ㄅ"), Ordering::Less);
+    //         assert_eq!(collator.compare("佰", "ㄅ"), Ordering::Less);
+    //         assert_eq!(collator.compare("不", "把"), Ordering::Less);
+    //     }
+    //     {
+    //         let locale: Locale = "zh-u-co-big5han".parse().unwrap();
+    //         let collator: Collator =
+    //             Collator::try_new(locale, &data_provider, CollatorOptions::new()).unwrap();
+    //         assert_eq!(collator.compare("艾", "a"), Ordering::Greater);
+    //         assert_eq!(collator.compare("佰", "a"), Ordering::Greater);
+    //         assert_eq!(collator.compare("ㄅ", "a"), Ordering::Greater);
+    //         assert_eq!(collator.compare("ㄅ", "ж"), Ordering::Less);
+    //         assert_eq!(collator.compare("艾", "佰"), Ordering::Less);
+    //         assert_eq!(collator.compare("艾", "ㄅ"), Ordering::Less);
+    //         assert_eq!(collator.compare("佰", "ㄅ"), Ordering::Less);
+    //         assert_eq!(collator.compare("不", "把"), Ordering::Less);
+    //     }
+    //     // TODO: Test script and region aliases
+    // }
 
     // TODO: frcoll requires support for fr-CA
 
@@ -1316,57 +1316,57 @@ mod tests {
         }
     }
 
-    #[test]
-    fn test_lt_tertiary() {
-        let left = [
-            "a\u{0307}\u{0300}a",
-            "a\u{0307}\u{0301}a",
-            "a\u{0307}\u{0302}a",
-            "a\u{0307}\u{0303}a",
-            "ž",
-        ];
-        let right = [
-            "a\u{0300}a",
-            "a\u{0301}a",
-            "a\u{0302}a",
-            "a\u{0303}a",
-            "z\u{033F}",
-        ];
-        let expectations = [
-            Ordering::Equal,
-            Ordering::Equal,
-            Ordering::Greater,
-            Ordering::Equal,
-            Ordering::Greater,
-        ];
-        let locale: Locale = langid!("lt").into();
-        let data_provider = icu_testdata::get_provider();
+    // #[test]
+    // fn test_lt_tertiary() {
+    //     let left = [
+    //         "a\u{0307}\u{0300}a",
+    //         "a\u{0307}\u{0301}a",
+    //         "a\u{0307}\u{0302}a",
+    //         "a\u{0307}\u{0303}a",
+    //         "ž",
+    //     ];
+    //     let right = [
+    //         "a\u{0300}a",
+    //         "a\u{0301}a",
+    //         "a\u{0302}a",
+    //         "a\u{0303}a",
+    //         "z\u{033F}",
+    //     ];
+    //     let expectations = [
+    //         Ordering::Equal,
+    //         Ordering::Equal,
+    //         Ordering::Greater,
+    //         Ordering::Equal,
+    //         Ordering::Greater,
+    //     ];
+    //     let locale: Locale = langid!("lt").into();
+    //     let data_provider = icu_testdata::get_provider();
 
-        let mut options = CollatorOptions::new();
-        options.set_strength(Some(Strength::Tertiary));
+    //     let mut options = CollatorOptions::new();
+    //     options.set_strength(Some(Strength::Tertiary));
 
-        {
-            let collator: Collator = Collator::try_new(locale, &data_provider, options).unwrap();
-            check_expectations(&collator, &left, &right, &expectations);
-        }
-    }
+    //     {
+    //         let collator: Collator = Collator::try_new(locale, &data_provider, options).unwrap();
+    //         check_expectations(&collator, &left, &right, &expectations);
+    //     }
+    // }
 
-    #[test]
-    fn test_lt_primary() {
-        let left = ["ž"];
-        let right = ["z"];
-        let expectations = [Ordering::Greater];
-        let locale: Locale = langid!("lt").into();
-        let data_provider = icu_testdata::get_provider();
+    // #[test]
+    // fn test_lt_primary() {
+    //     let left = ["ž"];
+    //     let right = ["z"];
+    //     let expectations = [Ordering::Greater];
+    //     let locale: Locale = langid!("lt").into();
+    //     let data_provider = icu_testdata::get_provider();
 
-        let mut options = CollatorOptions::new();
-        options.set_strength(Some(Strength::Primary));
+    //     let mut options = CollatorOptions::new();
+    //     options.set_strength(Some(Strength::Primary));
 
-        {
-            let collator: Collator = Collator::try_new(locale, &data_provider, options).unwrap();
-            check_expectations(&collator, &left, &right, &expectations);
-        }
-    }
+    //     {
+    //         let collator: Collator = Collator::try_new(locale, &data_provider, options).unwrap();
+    //         check_expectations(&collator, &left, &right, &expectations);
+    //     }
+    // }
 
     #[test]
     fn test_basics() {
