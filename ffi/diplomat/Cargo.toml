@@ -67,4 +67,4 @@ icu_testdata = { version = "0.6", path = "../../provider/testdata", optional = t
 log = { version = "0.4" }
 
 [target.'cfg(not(any(target_arch = "wasm32", target_os = "none")))'.dependencies]
-icu_provider_fs = { path = "../../provider/fs/", optional = true }
+icu_provider_fs = { version = "0.6", path = "../../provider/fs/", optional = true }
