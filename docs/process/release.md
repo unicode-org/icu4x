@@ -17,7 +17,8 @@ Once the release is complete, the assigned release driver will:
   * Coverage
   * Performance / Memory / Size benchmarks
   * Cargo.toml files
-    * Cargo.toml files need to specify versions for each dependency.
+    * Cargo.toml files need to specify versions for each entry in `dependencies`.
+    * Cargo.toml should not specify versions for each entry in `dev-dependencies`.
     * Ensure that any new packages have suitable version numbers.
     * Ensure that the Cargo.toml file includes a set of fields consistent with other ICU4X packages.
 * Build a changelog for the release
