@@ -9,7 +9,6 @@ use icu_segmenter_lstm::structs;
 use serde::{Deserialize, Serialize};
 use std::fs::File;
 use std::io::BufReader;
-use std::rc::Rc;
 
 /// `TestCase` is a struct used to store a single test case.
 /// Each test case has two attributs: `unseg` which denots the unsegmented line, and `true_bies` which indicates the Bies
@@ -39,10 +38,12 @@ impl TestText {
 }
 
 fn load_lstm_data(filename: &str) -> DataPayload<structs::LstmDataMarker> {
-    let buf = std::fs::read(filename).expect("File can read to end");
-    DataPayload::<structs::LstmDataMarker>::try_from_rc_buffer_badly(Rc::from(buf), |bytes| {
-        serde_json::from_slice(bytes)
-    })
+    DataPayload::<structs::LstmDataMarker>::try_from_rc_buffer_badly(
+        std::fs::read(filename)
+            .expect("File can read to end")
+            .into(),
+        |bytes| serde_json::from_slice(bytes),
+    )
     .expect("JSON syntax error")
 }
 

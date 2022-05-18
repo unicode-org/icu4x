@@ -10,11 +10,13 @@
 //!                     julian::Julian};
 //!
 //! // `Date` type
-//! let date_iso = Date::new_iso_date_from_integers(1970, 1, 2).unwrap();
+//! let date_iso = Date::new_iso_date_from_integers(1970, 1, 2)
+//!     .expect("Failed to initialize ISO Date instance.");
 //! let date_julian = Date::new_from_iso(date_iso, Julian);
 //!
 //! // `DateTime` type
-//! let datetime_iso = DateTime::new_iso_datetime_from_integers(1970, 1, 2, 13, 1, 0).unwrap();
+//! let datetime_iso = DateTime::new_iso_datetime_from_integers(1970, 1, 2, 13, 1, 0)
+//!     .expect("Failed to initialize ISO DateTime instance.");
 //! let datetime_julian = DateTime::new_from_iso(datetime_iso, Julian);
 //!
 //! // `Date` checks
@@ -231,7 +233,8 @@ impl Date<Julian> {
     /// ```rust
     /// use icu::calendar::Date;
     ///
-    /// let date_julian = Date::new_julian_date(1969, 12, 20).unwrap();
+    /// let date_julian = Date::new_julian_date(1969, 12, 20)
+    ///     .expect("Failed to initialize Julian Date instance.");
     ///
     /// assert_eq!(date_julian.year().number, 1969);
     /// assert_eq!(date_julian.month().number, 12);
@@ -265,7 +268,8 @@ impl DateTime<Julian> {
     ///                     types::IsoMinute,
     ///                     types::IsoSecond};
     ///
-    /// let datetime_julian = DateTime::new_julian_datetime(1969, 12, 20, 13, 1, 0).unwrap();
+    /// let datetime_julian = DateTime::new_julian_datetime(1969, 12, 20, 13, 1, 0)
+    ///     .expect("Failed to initialize Julian DateTime instance.");
     ///
     /// assert_eq!(datetime_julian.date.year().number, 1969);
     /// assert_eq!(datetime_julian.date.month().number, 12);

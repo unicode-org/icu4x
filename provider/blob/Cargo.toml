@@ -46,6 +46,7 @@ icu_locid = { version = "0.6", path = "../../components/locid", features = ["ser
 path = "src/lib.rs"
 
 [features]
+default = []
 export = [
     "log",
     "postcard/alloc",
