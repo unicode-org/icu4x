@@ -42,8 +42,8 @@ where
     K: ?Sized,
     V: ?Sized,
 {
-    pub(crate) keys: <<K as ZeroMapKV<'a>>::Container as ZeroVecLike<'a, K>>::BorrowedVariant,
-    pub(crate) values: <<V as ZeroMapKV<'a>>::Container as ZeroVecLike<'a, V>>::BorrowedVariant,
+    pub(crate) keys: &'a <<K as ZeroMapKV<'a>>::Container as ZeroVecLike<K>>::BorrowedVariant,
+    pub(crate) values: &'a <<V as ZeroMapKV<'a>>::Container as ZeroVecLike<V>>::BorrowedVariant,
 }
 
 impl<'a, K, V> Copy for ZeroMapBorrowed<'a, K, V>
@@ -73,6 +73,8 @@ impl<'a, K, V> Default for ZeroMapBorrowed<'a, K, V>
 where
     K: ZeroMapKV<'a>,
     V: ZeroMapKV<'a>,
+    <<K as ZeroMapKV<'a>>::Container as ZeroVecLike<K>>::BorrowedVariant: 'static,
+    <<V as ZeroMapKV<'a>>::Container as ZeroVecLike<V>>::BorrowedVariant: 'static,
     K: ?Sized,
     V: ?Sized,
 {
@@ -85,6 +87,8 @@ impl<'a, K, V> ZeroMapBorrowed<'a, K, V>
 where
     K: ZeroMapKV<'a>,
     V: ZeroMapKV<'a>,
+    <<K as ZeroMapKV<'a>>::Container as ZeroVecLike<K>>::BorrowedVariant: 'static,
+    <<V as ZeroMapKV<'a>>::Container as ZeroVecLike<V>>::BorrowedVariant: 'static,
     K: ?Sized,
     V: ?Sized,
 {
@@ -103,10 +107,10 @@ where
     /// ```
     pub fn new() -> Self {
         Self {
-            keys: <<K as ZeroMapKV<'a>>::Container as ZeroVecLike<'a, K>>::BorrowedVariant::zvl_new(
+            keys: <<K as ZeroMapKV<'a>>::Container as ZeroVecLike<K>>::BorrowedVariant::zvl_new_borrowed(
             ),
             values:
-                <<V as ZeroMapKV<'a>>::Container as ZeroVecLike<'a, V>>::BorrowedVariant::zvl_new(),
+                <<V as ZeroMapKV<'a>>::Container as ZeroVecLike<V>>::BorrowedVariant::zvl_new_borrowed(),
         }
     }
 
@@ -152,7 +156,7 @@ where
     /// ```
     pub fn get(&self, key: &K) -> Option<&'a V::GetType> {
         let index = self.keys.zvl_binary_search(key).ok()?;
-        self.values.zvl_get_borrowed(index)
+        self.values.zvl_get(index)
     }
 
     /// Binary search the map with `predicate` to find a key, returning the value.
@@ -179,7 +183,7 @@ where
     /// ```
     pub fn get_by(&self, predicate: impl FnMut(&K) -> Ordering) -> Option<&'a V::GetType> {
         let index = self.keys.zvl_binary_search_by(predicate).ok()?;
-        self.values.zvl_get_borrowed(index)
+        self.values.zvl_get(index)
     }
 
     /// Returns whether `key` is contained in this map
@@ -219,9 +223,9 @@ where
         (0..self.keys.zvl_len()).map(move |idx| {
             (
                 #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
-                self.keys.zvl_get_borrowed(idx).unwrap(),
+                self.keys.zvl_get(idx).unwrap(),
                 #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
-                self.values.zvl_get_borrowed(idx).unwrap(),
+                self.values.zvl_get(idx).unwrap(),
             )
         })
     }
@@ -229,7 +233,7 @@ where
     /// Produce an ordered iterator over keys
     pub fn iter_keys<'b>(&'b self) -> impl Iterator<Item = &'a <K as ZeroMapKV<'a>>::GetType> + 'b {
         #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
-        (0..self.keys.zvl_len()).map(move |idx| self.keys.zvl_get_borrowed(idx).unwrap())
+        (0..self.keys.zvl_len()).map(move |idx| self.keys.zvl_get(idx).unwrap())
     }
 
     /// Produce an iterator over values, ordered by keys
@@ -237,7 +241,7 @@ where
         &'b self,
     ) -> impl Iterator<Item = &'a <V as ZeroMapKV<'a>>::GetType> + 'b {
         #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
-        (0..self.values.zvl_len()).map(move |idx| self.values.zvl_get_borrowed(idx).unwrap())
+        (0..self.values.zvl_len()).map(move |idx| self.values.zvl_get(idx).unwrap())
     }
 }
 
@@ -301,10 +305,10 @@ impl<'a, 'b, K, V> PartialEq<ZeroMapBorrowed<'b, K, V>> for ZeroMapBorrowed<'a, 
 where
     K: for<'c> ZeroMapKV<'c> + ?Sized,
     V: for<'c> ZeroMapKV<'c> + ?Sized,
-    <<K as ZeroMapKV<'a>>::Container as ZeroVecLike<'a, K>>::BorrowedVariant:
-        PartialEq<<<K as ZeroMapKV<'b>>::Container as ZeroVecLike<'b, K>>::BorrowedVariant>,
-    <<V as ZeroMapKV<'a>>::Container as ZeroVecLike<'a, V>>::BorrowedVariant:
-        PartialEq<<<V as ZeroMapKV<'b>>::Container as ZeroVecLike<'b, V>>::BorrowedVariant>,
+    <<K as ZeroMapKV<'a>>::Container as ZeroVecLike<K>>::BorrowedVariant:
+        PartialEq<<<K as ZeroMapKV<'b>>::Container as ZeroVecLike<K>>::BorrowedVariant>,
+    <<V as ZeroMapKV<'a>>::Container as ZeroVecLike<V>>::BorrowedVariant:
+        PartialEq<<<V as ZeroMapKV<'b>>::Container as ZeroVecLike<V>>::BorrowedVariant>,
 {
     fn eq(&self, other: &ZeroMapBorrowed<'b, K, V>) -> bool {
         self.keys.eq(&other.keys) && self.values.eq(&other.values)
@@ -315,8 +319,8 @@ impl<'a, K, V> fmt::Debug for ZeroMapBorrowed<'a, K, V>
 where
     K: ZeroMapKV<'a> + ?Sized,
     V: ZeroMapKV<'a> + ?Sized,
-    <<K as ZeroMapKV<'a>>::Container as ZeroVecLike<'a, K>>::BorrowedVariant: fmt::Debug,
-    <<V as ZeroMapKV<'a>>::Container as ZeroVecLike<'a, V>>::BorrowedVariant: fmt::Debug,
+    <<K as ZeroMapKV<'a>>::Container as ZeroVecLike<K>>::BorrowedVariant: fmt::Debug,
+    <<V as ZeroMapKV<'a>>::Container as ZeroVecLike<V>>::BorrowedVariant: fmt::Debug,
 {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> Result<(), fmt::Error> {
         f.debug_struct("ZeroMapBorrowed")
