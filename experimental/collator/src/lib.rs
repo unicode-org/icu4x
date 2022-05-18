@@ -212,8 +212,8 @@ mod tests {
         let mut higher_buf = [0u8; 4];
         let mut chars = currencies.chars();
         while let Some(lower) = chars.next() {
-            let mut tail = chars.clone();
-            while let Some(higher) = tail.next() {
+            let tail = chars.clone();
+            for higher in tail {
                 let lower_str = lower.encode_utf8(&mut lower_buf);
                 let higher_str = higher.encode_utf8(&mut higher_buf);
                 assert_eq!(collator.compare(lower_str, higher_str), Ordering::Less);
@@ -300,8 +300,7 @@ mod tests {
         options.set_strength(Some(Strength::Tertiary));
 
         {
-            let collator: Collator =
-                Collator::try_new(locale.clone(), &data_provider, options).unwrap();
+            let collator: Collator = Collator::try_new(locale, &data_provider, options).unwrap();
             check_expectations(&collator, &left, &right, &expect_tertiary);
         }
     }
@@ -499,8 +498,7 @@ mod tests {
         options.set_strength(Some(Strength::Secondary));
 
         {
-            let collator: Collator =
-                Collator::try_new(locale.clone(), &data_provider, options).unwrap();
+            let collator: Collator = Collator::try_new(locale, &data_provider, options).unwrap();
             check_expectations(&collator, &left[43..], &right[43..], &expectations[43..]);
         }
     }
@@ -528,12 +526,11 @@ mod tests {
         options.set_strength(Some(Strength::Tertiary));
 
         {
-            let collator: Collator =
-                Collator::try_new(locale.clone(), &data_provider, options).unwrap();
+            let collator: Collator = Collator::try_new(locale, &data_provider, options).unwrap();
             let mut outer = bugs.iter();
             while let Some(left) = outer.next() {
-                let mut inner = outer.clone();
-                while let Some(right) = inner.next() {
+                let inner = outer.clone();
+                for right in inner {
                     assert_eq!(collator.compare(left, right), Ordering::Less);
                 }
             }
@@ -575,8 +572,7 @@ mod tests {
         options.set_case_level(Some(true));
 
         {
-            let collator: Collator =
-                Collator::try_new(locale.clone(), &data_provider, options).unwrap();
+            let collator: Collator = Collator::try_new(locale, &data_provider, options).unwrap();
             check_expectations(&collator, &left, &right, &expectations);
         }
     }
@@ -597,12 +593,11 @@ mod tests {
         let mut options = CollatorOptions::new();
         options.set_strength(Some(Strength::Primary));
 
-        let collator: Collator =
-            Collator::try_new(locale.clone(), &data_provider, options).unwrap();
+        let collator: Collator = Collator::try_new(locale, &data_provider, options).unwrap();
         let mut case_iter = cases.iter();
         while let Some(lower) = case_iter.next() {
-            let mut tail = case_iter.clone();
-            while let Some(higher) = tail.next() {
+            let tail = case_iter.clone();
+            for higher in tail {
                 assert_eq!(collator.compare(lower, higher), Ordering::Less);
             }
         }
@@ -624,12 +619,11 @@ mod tests {
         let mut options = CollatorOptions::new();
         options.set_strength(Some(Strength::Secondary));
 
-        let collator: Collator =
-            Collator::try_new(locale.clone(), &data_provider, options).unwrap();
+        let collator: Collator = Collator::try_new(locale, &data_provider, options).unwrap();
         let mut case_iter = cases.iter();
         while let Some(lower) = case_iter.next() {
-            let mut tail = case_iter.clone();
-            while let Some(higher) = tail.next() {
+            let tail = case_iter.clone();
+            for higher in tail {
                 assert_eq!(collator.compare(lower, higher), Ordering::Less);
             }
         }
@@ -652,12 +646,11 @@ mod tests {
         options.set_strength(Some(Strength::Tertiary));
         options.set_case_level(Some(true));
 
-        let collator: Collator =
-            Collator::try_new(locale.clone(), &data_provider, options).unwrap();
+        let collator: Collator = Collator::try_new(locale, &data_provider, options).unwrap();
         let mut case_iter = cases.iter();
         while let Some(lower) = case_iter.next() {
-            let mut tail = case_iter.clone();
-            while let Some(higher) = tail.next() {
+            let tail = case_iter.clone();
+            for higher in tail {
                 assert_eq!(collator.compare(lower, higher), Ordering::Less);
             }
         }
@@ -680,12 +673,11 @@ mod tests {
         options.set_strength(Some(Strength::Quaternary));
         options.set_case_level(Some(true));
 
-        let collator: Collator =
-            Collator::try_new(locale.clone(), &data_provider, options).unwrap();
+        let collator: Collator = Collator::try_new(locale, &data_provider, options).unwrap();
         let mut case_iter = cases.iter();
         while let Some(lower) = case_iter.next() {
-            let mut tail = case_iter.clone();
-            while let Some(higher) = tail.next() {
+            let tail = case_iter.clone();
+            for higher in tail {
                 assert_eq!(collator.compare(lower, higher), Ordering::Less);
             }
         }
@@ -708,12 +700,11 @@ mod tests {
         options.set_strength(Some(Strength::Quaternary));
         options.set_case_level(Some(true));
 
-        let collator: Collator =
-            Collator::try_new(locale.clone(), &data_provider, options).unwrap();
+        let collator: Collator = Collator::try_new(locale, &data_provider, options).unwrap();
         let mut case_iter = cases.iter();
         while let Some(lower) = case_iter.next() {
-            let mut tail = case_iter.clone();
-            while let Some(higher) = tail.next() {
+            let tail = case_iter.clone();
+            for higher in tail {
                 assert_eq!(
                     collator.compare_utf16(&lower[..], &higher[..]),
                     Ordering::Less
@@ -743,12 +734,11 @@ mod tests {
         options.set_strength(Some(Strength::Quaternary));
         options.set_case_level(Some(true));
 
-        let collator: Collator =
-            Collator::try_new(locale.clone(), &data_provider, options).unwrap();
+        let collator: Collator = Collator::try_new(locale, &data_provider, options).unwrap();
         let mut case_iter = cases.iter();
         while let Some(lower) = case_iter.next() {
-            let mut tail = case_iter.clone();
-            while let Some(higher) = tail.next() {
+            let tail = case_iter.clone();
+            for higher in tail {
                 assert_eq!(collator.compare(lower, higher), Ordering::Less);
             }
         }
@@ -805,8 +795,7 @@ mod tests {
         options.set_strength(Some(Strength::Primary));
 
         {
-            let collator: Collator =
-                Collator::try_new(locale.clone(), &data_provider, options).unwrap();
+            let collator: Collator = Collator::try_new(locale, &data_provider, options).unwrap();
             check_expectations(&collator, &left, &right, &expectations);
         }
     }
@@ -866,8 +855,7 @@ mod tests {
         options.set_strength(Some(Strength::Primary));
 
         {
-            let collator: Collator =
-                Collator::try_new(locale.clone(), &data_provider, options).unwrap();
+            let collator: Collator = Collator::try_new(locale, &data_provider, options).unwrap();
             check_expectations(&collator, &left, &right, &expectations);
         }
     }
@@ -1062,8 +1050,7 @@ mod tests {
         options.set_strength(Some(Strength::Tertiary));
 
         {
-            let collator: Collator =
-                Collator::try_new(locale.clone(), &data_provider, options).unwrap();
+            let collator: Collator = Collator::try_new(locale, &data_provider, options).unwrap();
             check_expectations(&collator, &left, &right, &expectations);
         }
     }
@@ -1096,8 +1083,7 @@ mod tests {
         options.set_strength(Some(Strength::Primary));
 
         {
-            let collator: Collator =
-                Collator::try_new(locale.clone(), &data_provider, options).unwrap();
+            let collator: Collator = Collator::try_new(locale, &data_provider, options).unwrap();
             check_expectations(&collator, &left, &right, &expectations);
         }
     }
@@ -1111,8 +1097,7 @@ mod tests {
         let mut options = CollatorOptions::new();
         options.set_strength(Some(Strength::Secondary));
 
-        let collator: Collator =
-            Collator::try_new(locale.clone(), &data_provider, options).unwrap();
+        let collator: Collator = Collator::try_new(locale, &data_provider, options).unwrap();
         assert_eq!(collator.compare("\u{03D4}", "\u{03AB}"), Ordering::Equal);
     }
 
@@ -1128,8 +1113,7 @@ mod tests {
         let mut options = CollatorOptions::new();
         options.set_strength(Some(Strength::Quaternary));
 
-        let collator: Collator =
-            Collator::try_new(locale.clone(), &data_provider, options).unwrap();
+        let collator: Collator = Collator::try_new(locale, &data_provider, options).unwrap();
         let mut lines = dict.lines();
         let mut prev = loop {
             if let Some(line) = lines.next() {
@@ -1142,7 +1126,7 @@ mod tests {
             }
         };
 
-        while let Some(line) = lines.next() {
+        for line in lines {
             assert_eq!(collator.compare(prev, line), Ordering::Less);
             prev = line;
         }
@@ -1214,7 +1198,7 @@ mod tests {
         {
             // XXX TODO: Check why the commented-out cases fail
             let collator: Collator =
-                Collator::try_new(locale.clone(), &data_provider, CollatorOptions::new()).unwrap();
+                Collator::try_new(locale, &data_provider, CollatorOptions::new()).unwrap();
             check_expectations(&collator, &left, &right, &expectations);
         }
     }
@@ -1256,9 +1240,7 @@ mod tests {
         options.set_strength(Some(Strength::Secondary));
 
         {
-            // XXX TODO: Thai requires shifted alternate handling
-            let collator: Collator =
-                Collator::try_new(locale.clone(), &data_provider, options).unwrap();
+            let collator: Collator = Collator::try_new(locale, &data_provider, options).unwrap();
             check_expectations(&collator, &left, &right, &expectations);
         }
     }
@@ -1303,8 +1285,7 @@ mod tests {
         options.set_strength(Some(Strength::Tertiary));
 
         {
-            let collator: Collator =
-                Collator::try_new(locale.clone(), &data_provider, options).unwrap();
+            let collator: Collator = Collator::try_new(locale, &data_provider, options).unwrap();
             check_expectations(&collator, &left, &right, &expectations);
         }
     }
@@ -1330,8 +1311,7 @@ mod tests {
         options.set_strength(Some(Strength::Tertiary));
 
         {
-            let collator: Collator =
-                Collator::try_new(locale.clone(), &data_provider, options).unwrap();
+            let collator: Collator = Collator::try_new(locale, &data_provider, options).unwrap();
             check_expectations(&collator, &left, &right, &expectations);
         }
     }
@@ -1366,8 +1346,7 @@ mod tests {
         options.set_strength(Some(Strength::Tertiary));
 
         {
-            let collator: Collator =
-                Collator::try_new(locale.clone(), &data_provider, options).unwrap();
+            let collator: Collator = Collator::try_new(locale, &data_provider, options).unwrap();
             check_expectations(&collator, &left, &right, &expectations);
         }
     }
@@ -1384,8 +1363,7 @@ mod tests {
         options.set_strength(Some(Strength::Primary));
 
         {
-            let collator: Collator =
-                Collator::try_new(locale.clone(), &data_provider, options).unwrap();
+            let collator: Collator = Collator::try_new(locale, &data_provider, options).unwrap();
             check_expectations(&collator, &left, &right, &expectations);
         }
     }
@@ -1518,8 +1496,8 @@ mod tests {
             let cases = ["cote", "coté", "côte", "côté"];
             let mut case_iter = cases.iter();
             while let Some(lower) = case_iter.next() {
-                let mut tail = case_iter.clone();
-                while let Some(higher) = tail.next() {
+                let tail = case_iter.clone();
+                for higher in tail {
                     assert_eq!(collator.compare(lower, higher), Ordering::Less);
                 }
             }
@@ -1535,8 +1513,8 @@ mod tests {
                 let cases = ["cote", "côte", "coté", "côté"];
                 let mut case_iter = cases.iter();
                 while let Some(lower) = case_iter.next() {
-                    let mut tail = case_iter.clone();
-                    while let Some(higher) = tail.next() {
+                    let tail = case_iter.clone();
+                    for higher in tail {
                         assert_eq!(collator.compare(lower, higher), Ordering::Less);
                     }
                 }
@@ -1545,8 +1523,8 @@ mod tests {
                 let cases = ["cote\u{FFFE}coté", "côte\u{FFFE}cote"];
                 let mut case_iter = cases.iter();
                 while let Some(lower) = case_iter.next() {
-                    let mut tail = case_iter.clone();
-                    while let Some(higher) = tail.next() {
+                    let tail = case_iter.clone();
+                    for higher in tail {
                         assert_eq!(collator.compare(lower, higher), Ordering::Less);
                     }
                 }
@@ -1577,8 +1555,7 @@ mod tests {
         options.set_strength(Some(Strength::Identical));
 
         {
-            let collator: Collator =
-                Collator::try_new(locale.clone(), &data_provider, options).unwrap();
+            let collator: Collator = Collator::try_new(locale, &data_provider, options).unwrap();
             assert_eq!(
                 collator.compare(
                     "\u{05D3}\u{05D7}\u{05D9}\u{05AD}",
@@ -1612,8 +1589,7 @@ mod tests {
         options.set_strength(Some(Strength::Identical));
 
         {
-            let collator: Collator =
-                Collator::try_new(locale.clone(), &data_provider, options).unwrap();
+            let collator: Collator = Collator::try_new(locale, &data_provider, options).unwrap();
             assert_eq!(
                 collator.compare(
                     "\u{05D3}\u{05D7}\u{05D9}\u{05AD}",
@@ -1654,15 +1630,15 @@ mod tests {
             }
         };
 
-        while let Some(line) = lines.next() {
+        for line in lines {
             if line.is_empty() {
                 continue;
             }
             if let Some(parsed) = parse_hex(line) {
-                if !bugs.contains(&parsed.as_str()) {
-                    if collator.compare(&prev, &parsed) == Ordering::Greater {
-                        assert_eq!(&prev[..], &parsed[..]);
-                    }
+                if !bugs.contains(&parsed.as_str())
+                    && collator.compare(&prev, &parsed) == Ordering::Greater
+                {
+                    assert_eq!(&prev[..], &parsed[..]);
                 }
                 prev = parsed;
             }
@@ -1699,15 +1675,15 @@ mod tests {
             }
         };
 
-        while let Some(line) = lines.next() {
+        for line in lines {
             if line.is_empty() {
                 continue;
             }
             if let Some(parsed) = parse_hex(line) {
-                if !bugs.contains(&parsed.as_str()) {
-                    if collator.compare(&prev, &parsed) == Ordering::Greater {
-                        assert_eq!(&prev[..], &parsed[..]);
-                    }
+                if !bugs.contains(&parsed.as_str())
+                    && collator.compare(&prev, &parsed) == Ordering::Greater
+                {
+                    assert_eq!(&prev[..], &parsed[..]);
                 }
                 prev = parsed;
             }

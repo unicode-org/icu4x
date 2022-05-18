@@ -76,7 +76,7 @@ pub struct Collator {
     lithuanian_dot_above: bool,
 }
 
-impl<'data> Collator {
+impl Collator {
     pub fn try_new<T: Into<Locale>, D>(
         locale: T,
         data_provider: &D,
