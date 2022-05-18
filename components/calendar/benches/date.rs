@@ -8,7 +8,9 @@ use crate::fixtures::structs::DateFixture;
 use criterion::{
     black_box, criterion_group, criterion_main, measurement::WallTime, BenchmarkGroup, Criterion,
 };
-use icu_calendar::{AsCalendar, Calendar, Date, DateDuration};
+use icu_calendar::{
+    iso::IsoDay, iso::IsoMonth, iso::IsoYear, AsCalendar, Calendar, Date, DateDuration,
+};
 
 fn bench_dates<A: AsCalendar>(dates: Vec<&mut Date<A>>) {
     for date in dates {
@@ -31,6 +33,7 @@ fn bench_dates<A: AsCalendar>(dates: Vec<&mut Date<A>>) {
     }
 }
 
+#[allow(dead_code)]
 fn bench_calendar<C: Clone + Calendar>(
     group: &mut BenchmarkGroup<WallTime>,
     name: &str,
@@ -57,36 +60,49 @@ fn bench_calendar<C: Clone + Calendar>(
     });
 }
 
-fn date_benches(c: &mut Criterion) {
-    let mut group = c.benchmark_group("date");
-    let fxs = fixtures::get_dates_fixture().unwrap();
+fn bench_calendar_iso_types<C: Clone + Calendar>(
+    group: &mut BenchmarkGroup<WallTime>,
+    name: &str,
+    fxs: &DateFixture,
+    calendar: C,
+    calendar_date_init: impl Fn(IsoYear, IsoMonth, IsoDay) -> Date<C>,
+) {
+    use std::convert::TryFrom;
 
-    group.bench_function("calendar/overview", |b| {
-        // General overview is dealing in just ISO. Abstracted away from `bench_calendar` due
-        // to lack of conversion case and use of iso types.
-        use icu::calendar::{iso::IsoDay, iso::IsoMonth, iso::IsoYear};
-        use std::convert::TryFrom;
-
+    group.bench_function(name, |b| {
         b.iter(|| {
             for fx in &fxs.0 {
-                // Instantiation from int
-                let mut int_instantiated_date_iso =
-                    Date::new_iso_date_from_integers(fx.year, fx.month, fx.day).unwrap();
+                // Conversion from ISO
+                let date_iso = Date::new_iso_date_from_integers(fx.year, fx.month, fx.day).unwrap();
+                let mut converted_date_calendar = Date::new_from_iso(date_iso, calendar.clone());
 
                 // Instantion from ISO
                 let iso_year = IsoYear(fx.year);
                 let iso_month = IsoMonth::try_from(fx.month).unwrap();
                 let iso_day = IsoDay::try_from(fx.day).unwrap();
-                let mut iso_insantiated_date_iso =
-                    Date::new_iso_date(iso_year, iso_month, iso_day).unwrap();
+                let mut iso_insantiated_date_calendar =
+                    calendar_date_init(iso_year, iso_month, iso_day);
 
                 bench_dates(vec![
-                    &mut iso_insantiated_date_iso,
-                    &mut int_instantiated_date_iso,
+                    &mut iso_insantiated_date_calendar,
+                    &mut converted_date_calendar,
                 ]);
             }
         })
     });
+}
+
+fn date_benches(c: &mut Criterion) {
+    let mut group = c.benchmark_group("date");
+    let fxs = fixtures::get_dates_fixture().unwrap();
+
+    bench_calendar_iso_types(
+        &mut group,
+        "calendar/overview",
+        &fxs,
+        icu::calendar::iso::Iso,
+        |y, m, d| Date::new_iso_date(y, m, d).unwrap(),
+    );
 
     #[cfg(feature = "bench")]
     bench_calendar(
@@ -134,32 +150,13 @@ fn date_benches(c: &mut Criterion) {
     );
 
     #[cfg(feature = "bench")]
-    group.bench_function("calendar/gregorian", |b| {
-        // Abstracted away from `bench_calendar` due to use of iso types.
-        use icu::calendar::gregorian::Gregorian;
-        use icu::calendar::{iso::IsoDay, iso::IsoMonth, iso::IsoYear};
-        use std::convert::TryFrom;
-
-        b.iter(|| {
-            for fx in &fxs.0 {
-                // Conversion from ISO
-                let date_iso = Date::new_iso_date_from_integers(fx.year, fx.month, fx.day).unwrap();
-                let mut converted_date_gregorian = Date::new_from_iso(date_iso, Gregorian);
-
-                // Instantion from ISO
-                let iso_year = IsoYear(fx.year);
-                let iso_month = IsoMonth::try_from(fx.month).unwrap();
-                let iso_day = IsoDay::try_from(fx.day).unwrap();
-                let mut iso_insantiated_date_gregorian =
-                    Date::new_gregorian_date(iso_year, iso_month, iso_day).unwrap();
-
-                bench_dates(vec![
-                    &mut iso_insantiated_date_gregorian,
-                    &mut converted_date_gregorian,
-                ]);
-            }
-        })
-    });
+    bench_calendar_iso_types(
+        &mut group,
+        "calendar/gregorian",
+        &fxs,
+        icu::calendar::gregorian::Gregorian,
+        |y, m, d| Date::new_gregorian_date(y, m, d).unwrap(),
+    );
 
     group.finish();
 }

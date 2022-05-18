@@ -37,6 +37,39 @@ fn bench_datetimes<A: AsCalendar>(datetimes: Vec<&mut DateTime<A>>) {
 }
 
 #[allow(dead_code)]
+fn bench_calendar<C: Clone + Calendar>(
+    group: &mut BenchmarkGroup<WallTime>,
+    name: &str,
+    fxs: &DateFixture,
+    calendar: C,
+    calendar_datetime_init: impl Fn(i32, u8, u8, u8, u8, u8) -> DateTime<C>,
+) {
+    group.bench_function(name, |b| {
+        b.iter(|| {
+            for fx in &fxs.0 {
+                // Instantion from int
+                let mut instantiated_datetime_calendar = calendar_datetime_init(
+                    fx.year, fx.month, fx.day, fx.hour, fx.minute, fx.second,
+                );
+
+                // Conversion from ISO
+                let datetime_iso = DateTime::new_iso_datetime_from_integers(
+                    fx.year, fx.month, fx.day, fx.hour, fx.minute, fx.second,
+                )
+                .unwrap();
+                let mut converted_datetime_calendar =
+                    DateTime::new_from_iso(datetime_iso, calendar.clone());
+
+                bench_datetimes(vec![
+                    &mut instantiated_datetime_calendar,
+                    &mut converted_datetime_calendar,
+                ]);
+            }
+        })
+    });
+}
+
+#[allow(dead_code)]
 fn bench_calendar_nano<C: Clone + Calendar>(
     group: &mut BenchmarkGroup<WallTime>,
     name: &str,
@@ -70,58 +103,17 @@ fn bench_calendar_nano<C: Clone + Calendar>(
     });
 }
 
-#[allow(dead_code)]
-fn bench_calendar<C: Clone + Calendar>(
-    group: &mut BenchmarkGroup<WallTime>,
-    name: &str,
-    fxs: &DateFixture,
-    calendar: C,
-    calendar_datetime_init: impl Fn(i32, u8, u8, u8, u8, u8) -> DateTime<C>,
-) {
-    group.bench_function(name, |b| {
-        b.iter(|| {
-            for fx in &fxs.0 {
-                // Instantion from int
-                let mut instantiated_datetime_calendar = calendar_datetime_init(
-                    fx.year, fx.month, fx.day, fx.hour, fx.minute, fx.second,
-                );
-
-                // Conversion from ISO
-                let datetime_iso = DateTime::new_iso_datetime_from_integers(
-                    fx.year, fx.month, fx.day, fx.hour, fx.minute, fx.second,
-                )
-                .unwrap();
-                let mut converted_datetime_calendar =
-                    DateTime::new_from_iso(datetime_iso, calendar.clone());
-
-                bench_datetimes(vec![
-                    &mut instantiated_datetime_calendar,
-                    &mut converted_datetime_calendar,
-                ]);
-            }
-        })
-    });
-}
-
 fn datetime_benches(c: &mut Criterion) {
     let mut group = c.benchmark_group("datetime");
     let fxs = fixtures::get_dates_fixture().unwrap();
 
-    group.bench_function("calendar/overview", |b| {
-        // General overview is dealing in just ISO. Abstracted away from `bench_calendar` due
-        // to lack of conversion case and use of iso types.
-        b.iter(|| {
-            for fx in &fxs.0 {
-                // Instantiation from int
-                let mut int_instantiated_datetime_iso = DateTime::new_iso_datetime_from_integers(
-                    fx.year, fx.month, fx.day, fx.hour, fx.minute, fx.second,
-                )
-                .unwrap();
-
-                bench_datetimes(vec![&mut int_instantiated_datetime_iso]);
-            }
-        })
-    });
+    bench_calendar(
+        &mut group,
+        "calendar/overview",
+        &fxs,
+        icu::calendar::iso::Iso,
+        |y, m, d, h, min, s| DateTime::new_iso_datetime_from_integers(y, m, d, h, min, s).unwrap(),
+    );
 
     #[cfg(feature = "bench")]
     bench_calendar(
