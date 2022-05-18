@@ -32,12 +32,12 @@
 //! # Examples
 //!
 //! ```
-//! use writeable::Writeable;
-//! use writeable::LengthHint;
-//! use writeable::assert_writeable_eq;
 //! use std::fmt;
+//! use writeable::assert_writeable_eq;
+//! use writeable::LengthHint;
+//! use writeable::Writeable;
 //!
-//! struct WelcomeMessage<'s>{
+//! struct WelcomeMessage<'s> {
 //!     pub name: &'s str,
 //! }
 //!
@@ -211,8 +211,8 @@ pub trait Writeable {
     /// Inspect a `Writeable` before writing it to the sink:
     ///
     /// ```
+    /// use core::fmt::{Result, Write};
     /// use writeable::Writeable;
-    /// use core::fmt::{Write, Result};
     ///
     /// fn write_if_ascii<W, S>(w: &W, sink: &mut S) -> Result
     /// where
@@ -263,7 +263,10 @@ pub trait Writeable {
 /// # use writeable::assert_writeable_parts_eq;
 /// # use std::fmt::{self, Write};
 ///
-/// const WORD: Part = Part { category: "foo", value: "word" };
+/// const WORD: Part = Part {
+///     category: "foo",
+///     value: "word",
+/// };
 ///
 /// struct Demo;
 /// impl Writeable for Demo {

@@ -24,14 +24,16 @@
 //! .expect("Data should load successfully");
 //!
 //! assert_eq!(
-//!     list_formatter.format(["España", "Suiza"].iter())
+//!     list_formatter
+//!         .format(["España", "Suiza"].iter())
 //!         .write_to_string(),
 //!     "España y Suiza"
 //! );
 //!
 //! // The Spanish 'y' sometimes becomes an 'e':
 //! assert_eq!(
-//!     list_formatter.format(["España", "Suiza", "Italia"].iter())
+//!     list_formatter
+//!         .format(["España", "Suiza", "Italia"].iter())
 //!         .write_to_string(),
 //!     "España, Suiza e Italia"
 //! );
@@ -41,7 +43,7 @@
 //!     list_formatter.format(1..=10).write_to_string(),
 //!     "1, 2, 3, 4, 5, 6, 7, 8, 9 y 10"
 //! );
-//!```
+//! ```
 //!
 //! [`ListFormatter`]: ListFormatter
 

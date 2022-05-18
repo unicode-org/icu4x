@@ -31,10 +31,7 @@
 /// // This is equivalent to:
 /// let forking2 = ForkByKeyProvider(
 ///     Provider1::default(),
-///     ForkByKeyProvider(
-///         Provider2::default(),
-///         Provider3::default()
-///     )
+///     ForkByKeyProvider(Provider2::default(), Provider3::default()),
 /// );
 ///
 /// assert_eq!(forking1, forking2);

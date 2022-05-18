@@ -67,9 +67,12 @@ pub struct ParserOptions {
 ///
 /// let input = "{0}, {1}";
 ///
-/// let mut parser = Parser::new(input, ParserOptions {
-///    allow_raw_letters: false
-/// });
+/// let mut parser = Parser::new(
+///     input,
+///     ParserOptions {
+///         allow_raw_letters: false,
+///     },
+/// );
 ///
 /// let mut result = vec![];
 ///
@@ -77,11 +80,17 @@ pub struct ParserOptions {
 ///     result.push(element);
 /// }
 ///
-/// assert_eq!(result, &[
-///     PatternToken::Placeholder(0),
-///     PatternToken::Literal { content: ", ".into(), quoted: false },
-///     PatternToken::Placeholder(1),
-/// ]);
+/// assert_eq!(
+///     result,
+///     &[
+///         PatternToken::Placeholder(0),
+///         PatternToken::Literal {
+///             content: ", ".into(),
+///             quoted: false
+///         },
+///         PatternToken::Placeholder(1),
+///     ]
+/// );
 /// ```
 ///
 /// # Named placeholders
@@ -94,9 +103,12 @@ pub struct ParserOptions {
 ///
 /// let input = "{start}, {end}";
 ///
-/// let mut parser = Parser::new(input, ParserOptions {
-///     allow_raw_letters: false,
-/// });
+/// let mut parser = Parser::new(
+///     input,
+///     ParserOptions {
+///         allow_raw_letters: false,
+///     },
+/// );
 ///
 /// let mut result = vec![];
 ///
@@ -104,11 +116,17 @@ pub struct ParserOptions {
 ///     result.push(element);
 /// }
 ///
-/// assert_eq!(result, &[
-///     PatternToken::Placeholder("start".to_string()),
-///     PatternToken::Literal { content: ", ".into(), quoted: false },
-///     PatternToken::Placeholder("end".to_string()),
-/// ]);
+/// assert_eq!(
+///     result,
+///     &[
+///         PatternToken::Placeholder("start".to_string()),
+///         PatternToken::Literal {
+///             content: ", ".into(),
+///             quoted: false
+///         },
+///         PatternToken::Placeholder("end".to_string()),
+///     ]
+/// );
 /// ```
 ///
 /// # Type parameters
@@ -151,9 +169,12 @@ pub struct ParserOptions {
 ///
 /// let input = "{0} 'and' {1}";
 ///
-/// let mut parser = Parser::new(input, ParserOptions {
-///     allow_raw_letters: false
-/// });
+/// let mut parser = Parser::new(
+///     input,
+///     ParserOptions {
+///         allow_raw_letters: false,
+///     },
+/// );
 ///
 /// let mut result = vec![];
 ///
@@ -161,13 +182,25 @@ pub struct ParserOptions {
 ///     result.push(element);
 /// }
 ///
-/// assert_eq!(result, &[
-///     PatternToken::Placeholder(0),
-///     PatternToken::Literal { content: " ".into(), quoted: false },
-///     PatternToken::Literal { content: "and".into(), quoted: true },
-///     PatternToken::Literal { content: " ".into(), quoted: false },
-///     PatternToken::Placeholder(1),
-/// ]);
+/// assert_eq!(
+///     result,
+///     &[
+///         PatternToken::Placeholder(0),
+///         PatternToken::Literal {
+///             content: " ".into(),
+///             quoted: false
+///         },
+///         PatternToken::Literal {
+///             content: "and".into(),
+///             quoted: true
+///         },
+///         PatternToken::Literal {
+///             content: " ".into(),
+///             quoted: false
+///         },
+///         PatternToken::Placeholder(1),
+///     ]
+/// );
 /// ```
 ///
 /// ## Fallible Iterator
@@ -227,9 +260,12 @@ impl<'p, P> Parser<'p, P> {
     /// # Examples
     /// ```
     /// use icu_pattern::{Parser, ParserOptions};
-    /// let mut parser = Parser::<usize>::new("{0}, {1}", ParserOptions {
-    ///     allow_raw_letters: false
-    /// });
+    /// let mut parser = Parser::<usize>::new(
+    ///     "{0}, {1}",
+    ///     ParserOptions {
+    ///         allow_raw_letters: false,
+    ///     },
+    /// );
     /// ```
     pub fn new(input: &'p str, options: ParserOptions) -> Self {
         Self {
@@ -253,13 +289,22 @@ impl<'p, P> Parser<'p, P> {
     /// ```
     /// use icu_pattern::{Parser, ParserOptions, PatternToken};
     ///
-    /// let mut parser = Parser::<usize>::new("{0}, {1}", ParserOptions {
-    ///     allow_raw_letters: false
-    /// });
+    /// let mut parser = Parser::<usize>::new(
+    ///     "{0}, {1}",
+    ///     ParserOptions {
+    ///         allow_raw_letters: false,
+    ///     },
+    /// );
     ///
     /// // A call to try_next() returns the next value…
     /// assert_eq!(Ok(Some(PatternToken::Placeholder(0))), parser.try_next());
-    /// assert_eq!(Ok(Some(PatternToken::Literal { content: ", ".into(), quoted: false})), parser.try_next());
+    /// assert_eq!(
+    ///     Ok(Some(PatternToken::Literal {
+    ///         content: ", ".into(),
+    ///         quoted: false
+    ///     })),
+    ///     parser.try_next()
+    /// );
     /// assert_eq!(Ok(Some(PatternToken::Placeholder(1))), parser.try_next());
     ///
     /// // … and then None once it's over.

@@ -12,19 +12,15 @@
 //! # Examples
 //!
 //! ```
+//! use icu::locid::extensions::transform::{Fields, Key, Transform, Value};
 //! use icu::locid::{LanguageIdentifier, Locale};
-//! use icu::locid::extensions::transform::{Transform, Fields, Key, Value};
 //!
-//! let mut loc: Locale = "en-US-t-es-AR-h0-hybrid".parse()
-//!     .expect("Parsing failed.");
+//! let mut loc: Locale = "en-US-t-es-AR-h0-hybrid".parse().expect("Parsing failed.");
 //!
-//! let lang: LanguageIdentifier = "es-AR".parse()
-//!     .expect("Parsing LanguageIdentifier failed.");
+//! let lang: LanguageIdentifier = "es-AR".parse().expect("Parsing LanguageIdentifier failed.");
 //!
-//! let key: Key = "h0".parse()
-//!     .expect("Parsing key failed.");
-//! let value: Value = "hybrid".parse()
-//!     .expect("Parsing value failed.");
+//! let key: Key = "h0".parse().expect("Parsing key failed.");
+//! let value: Value = "hybrid".parse().expect("Parsing value failed.");
 //!
 //! assert_eq!(loc.extensions.transform.lang, Some(lang));
 //! assert!(loc.extensions.transform.fields.contains_key(&key));
@@ -57,22 +53,17 @@ use litemap::LiteMap;
 /// # Examples
 ///
 /// ```
-/// use icu::locid::{Locale, LanguageIdentifier};
 /// use icu::locid::extensions::transform::{Key, Value};
+/// use icu::locid::{LanguageIdentifier, Locale};
 ///
-/// let mut loc: Locale = "de-t-en-US-h0-hybrid".parse()
-///     .expect("Parsing failed.");
+/// let mut loc: Locale = "de-t-en-US-h0-hybrid".parse().expect("Parsing failed.");
 ///
-/// let en_us: LanguageIdentifier = "en-US".parse()
-///     .expect("Parsing failed.");
+/// let en_us: LanguageIdentifier = "en-US".parse().expect("Parsing failed.");
 ///
 /// assert_eq!(loc.extensions.transform.lang, Some(en_us));
 /// let key: Key = "h0".parse().expect("Parsing key failed.");
 /// let value: Value = "hybrid".parse().expect("Parsing value failed.");
-/// assert_eq!(
-///     loc.extensions.transform.fields.get(&key),
-///     Some(&value)
-/// );
+/// assert_eq!(loc.extensions.transform.fields.get(&key), Some(&value));
 /// ```
 /// [`Unicode BCP47 T Extensions`]: https://unicode.org/reports/tr35/#t_Extension
 /// [`RFC 6497`]: https://www.ietf.org/rfc/rfc6497.txt
@@ -110,8 +101,7 @@ impl Transform {
     /// ```
     /// use icu::locid::Locale;
     ///
-    /// let mut loc: Locale = "en-US-t-es-AR".parse()
-    ///     .expect("Parsing failed.");
+    /// let mut loc: Locale = "en-US-t-es-AR".parse().expect("Parsing failed.");
     ///
     /// assert_eq!(loc.extensions.transform.is_empty(), false);
     /// ```

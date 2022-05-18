@@ -24,13 +24,13 @@ pub use super::vecs::{BorrowedZeroVecLike, MutableZeroVecLike, ZeroVecLike};
 ///
 /// // Example byte buffer representing the map { 1: "one" }
 /// let BINCODE_BYTES: &[u8; 31] = &[
-///     4, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 11, 0, 0, 0, 0, 0, 0, 0,
-///     1, 0, 0, 0, 0, 0, 0, 0, 111, 110, 101
+///     4, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 11, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 111,
+///     110, 101,
 /// ];
 ///
 /// // Deserializing to ZeroMap requires no heap allocations.
-/// let zero_map: ZeroMapBorrowed<u32, str> = bincode::deserialize(BINCODE_BYTES)
-///     .expect("Should deserialize successfully");
+/// let zero_map: ZeroMapBorrowed<u32, str> =
+///     bincode::deserialize(BINCODE_BYTES).expect("Should deserialize successfully");
 /// assert_eq!(zero_map.get(&1), Some("one"));
 /// ```
 ///
@@ -135,8 +135,8 @@ where
     /// primary advantage of using [`ZeroMapBorrowed`](super::ZeroMapBorrowed) over [`ZeroMap`](super::ZeroMap).
     ///
     /// ```rust
-    /// use zerovec::ZeroMap;
     /// use zerovec::maps::ZeroMapBorrowed;
+    /// use zerovec::ZeroMap;
     ///
     /// let mut map = ZeroMap::new();
     /// map.insert(&1, "one");
@@ -162,8 +162,8 @@ where
     /// primary advantage of using [`ZeroMapBorrowed`](super::ZeroMapBorrowed) over [`ZeroMap`](super::ZeroMap).
     ///
     /// ```rust
-    /// use zerovec::ZeroMap;
     /// use zerovec::maps::ZeroMapBorrowed;
+    /// use zerovec::ZeroMap;
     ///
     /// let mut map = ZeroMap::new();
     /// map.insert(&1, "one");
@@ -185,8 +185,8 @@ where
     /// Returns whether `key` is contained in this map
     ///
     /// ```rust
-    /// use zerovec::ZeroMap;
     /// use zerovec::maps::ZeroMapBorrowed;
+    /// use zerovec::ZeroMap;
     ///
     /// let mut map = ZeroMap::new();
     /// map.insert(&1, "one");

@@ -18,11 +18,9 @@ use core::ops::Deref;
 /// ```
 /// use icu::locid::subtags::{Variant, Variants};
 ///
-/// let variant1: Variant = "posix".parse()
-///     .expect("Failed to parse a variant subtag.");
+/// let variant1: Variant = "posix".parse().expect("Failed to parse a variant subtag.");
 ///
-/// let variant2: Variant = "macos".parse()
-///     .expect("Failed to parse a variant subtag.");
+/// let variant2: Variant = "macos".parse().expect("Failed to parse a variant subtag.");
 /// let mut v = vec![variant1, variant2];
 /// v.sort();
 /// v.dedup();
@@ -30,7 +28,6 @@ use core::ops::Deref;
 /// let variants: Variants = Variants::from_vec_unchecked(v);
 /// assert_eq!(variants.to_string(), "macos-posix");
 /// ```
-///
 #[derive(Default, Debug, PartialEq, Eq, Clone, Hash, PartialOrd, Ord)]
 pub struct Variants(Option<Box<[Variant]>>);
 
@@ -58,10 +55,8 @@ impl Variants {
     /// ```
     /// use icu::locid::subtags::{Variant, Variants};
     ///
-    /// let variant1: Variant = "posix".parse()
-    ///     .expect("Parsing failed.");
-    /// let variant2: Variant = "macos".parse()
-    ///     .expect("Parsing failed.");
+    /// let variant1: Variant = "posix".parse().expect("Parsing failed.");
+    /// let variant2: Variant = "macos".parse().expect("Parsing failed.");
     /// let mut v = vec![variant1, variant2];
     /// v.sort();
     /// v.dedup();
@@ -88,10 +83,8 @@ impl Variants {
     /// ```
     /// use icu::locid::subtags::{Variant, Variants};
     ///
-    /// let variant1: Variant = "posix".parse()
-    ///     .expect("Parsing failed.");
-    /// let variant2: Variant = "macos".parse()
-    ///     .expect("Parsing failed.");
+    /// let variant1: Variant = "posix".parse().expect("Parsing failed.");
+    /// let variant2: Variant = "macos".parse().expect("Parsing failed.");
     /// let mut v = vec![variant1, variant2];
     /// v.sort();
     /// v.dedup();
@@ -113,10 +106,8 @@ impl Variants {
     /// ```
     /// use icu::locid::subtags::{Variant, Variants};
     ///
-    /// let variant1: Variant = "posix".parse()
-    ///     .expect("Parsing failed.");
-    /// let variant2: Variant = "macos".parse()
-    ///     .expect("Parsing failed.");
+    /// let variant1: Variant = "posix".parse().expect("Parsing failed.");
+    /// let variant2: Variant = "macos".parse().expect("Parsing failed.");
     /// let mut v = vec![variant1, variant2];
     /// v.sort();
     /// v.dedup();
@@ -147,10 +138,8 @@ impl Variants {
     /// ```
     /// use icu::locid::subtags::{Variant, Variants};
     ///
-    /// let variant1: Variant = "posix".parse()
-    ///     .expect("Parsing failed.");
-    /// let variant2: Variant = "macos".parse()
-    ///     .expect("Parsing failed.");
+    /// let variant1: Variant = "posix".parse().expect("Parsing failed.");
+    /// let variant2: Variant = "macos".parse().expect("Parsing failed.");
     /// let mut v = vec![variant1, variant2];
     /// v.sort();
     /// v.dedup();

@@ -50,7 +50,6 @@ use core::mem;
 /// The safety invariants of [`Self::encode_var_ule_write()`] are:
 /// - The slice written to `dst` must be a valid instance of the `T` [`VarULE`] type
 ///
-///
 pub unsafe trait EncodeAsVarULE<T: VarULE + ?Sized> {
     /// Calls `cb` with a piecewise list of byte slices that when concatenated
     /// produce the memory pattern of the corresponding instance of `T`.

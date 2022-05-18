@@ -18,12 +18,12 @@
 //! # Examples
 //!
 //! ```
-//! use icu::datetime::DateTimeFormatOptions;
 //! use icu::datetime::options::length;
+//! use icu::datetime::DateTimeFormatOptions;
 //!
 //! let bag = length::Bag::from_date_time_style(
 //!     length::Date::Medium, // "medium" date connector will be used
-//!     length::Time::Short
+//!     length::Time::Short,
 //! );
 //!
 //! let options = DateTimeFormatOptions::Length(bag);
@@ -32,8 +32,8 @@
 //! Or the options can be inferred through the [`Into`] trait.
 //!
 //! ```
-//! use icu::datetime::DateTimeFormatOptions;
 //! use icu::datetime::options::length;
+//! use icu::datetime::DateTimeFormatOptions;
 //! let options: DateTimeFormatOptions = length::Bag::default().into();
 //! ```
 //!
@@ -54,8 +54,8 @@ use serde::{Deserialize, Serialize};
 /// # Examples
 ///
 /// ```
-/// use icu::datetime::DateTimeFormatOptions;
 /// use icu::datetime::options::length;
+/// use icu::datetime::DateTimeFormatOptions;
 ///
 /// let bag = length::Bag::from_date_time_style(length::Date::Medium, length::Time::Short);
 ///
@@ -65,8 +65,8 @@ use serde::{Deserialize, Serialize};
 /// Or the options can be inferred through the [`Into`] trait.
 ///
 /// ```
-/// use icu::datetime::DateTimeFormatOptions;
 /// use icu::datetime::options::length;
+/// use icu::datetime::DateTimeFormatOptions;
 /// let options: DateTimeFormatOptions = length::Bag::default().into();
 /// ```
 ///
@@ -165,11 +165,11 @@ pub enum Date {
     /// # Examples
     ///
     /// ```
-    /// "Tuesday, January 21, 2020";       // en-US
-    /// "wtorek, 21 stycznia, 2020";       // pl
-    /// "الثلاثاء، ٢١ يناير ٢٠٢٠";          // ar
-    /// "вторник, 21 января 2020 г.";      // ru
-    /// "2020年1月21日火曜日";               // ja
+    /// "Tuesday, January 21, 2020"; // en-US
+    /// "wtorek, 21 stycznia, 2020"; // pl
+    /// "الثلاثاء، ٢١ يناير ٢٠٢٠"; // ar
+    /// "вторник, 21 января 2020 г."; // ru
+    /// "2020年1月21日火曜日"; // ja
     /// ```
     #[cfg_attr(feature = "serde", serde(rename = "full"))]
     Full,
@@ -178,11 +178,11 @@ pub enum Date {
     /// # Examples
     ///
     /// ```
-    /// "September 10, 2020";     // en-US
-    /// "10 września 2020";       // pl
-    /// "١٠ سبتمبر ٢٠٢٠";         // ar
-    /// "10 сентября 2020 г.";    // ru
-    /// "2020年9月10日";           // ja
+    /// "September 10, 2020"; // en-US
+    /// "10 września 2020"; // pl
+    /// "١٠ سبتمبر ٢٠٢٠"; // ar
+    /// "10 сентября 2020 г."; // ru
+    /// "2020年9月10日"; // ja
     /// ```
     #[cfg_attr(feature = "serde", serde(rename = "long"))]
     Long,
@@ -191,11 +191,11 @@ pub enum Date {
     /// # Examples
     ///
     /// ```
-    /// "Feb 20, 2020";        // en-US
-    /// "20 lut 2020";         // pl
-    /// "٢٠‏/٠٢‏/٢٠٢٠";          // ar
-    /// "20 февр. 2020 г.";    // ru
-    /// "2020/02/20";          // ja
+    /// "Feb 20, 2020"; // en-US
+    /// "20 lut 2020"; // pl
+    /// "٢٠‏/٠٢‏/٢٠٢٠"; // ar
+    /// "20 февр. 2020 г."; // ru
+    /// "2020/02/20"; // ja
     /// ```
     #[cfg_attr(feature = "serde", serde(rename = "medium"))]
     Medium,
@@ -204,11 +204,11 @@ pub enum Date {
     /// # Examples
     ///
     /// ```
-    /// "1/30/20";      // en-US
-    /// "30.01.2020";   // pl
-    /// "٣٠‏/١‏/٢٠٢٠";    // ar
-    /// "30.01.2020";   // ru
-    /// "2020/01/30";   // ja
+    /// "1/30/20"; // en-US
+    /// "30.01.2020"; // pl
+    /// "٣٠‏/١‏/٢٠٢٠"; // ar
+    /// "30.01.2020"; // ru
+    /// "2020/01/30"; // ja
     /// ```
     #[cfg_attr(feature = "serde", serde(rename = "short"))]
     Short,
@@ -245,11 +245,11 @@ pub enum Time {
     /// # Examples
     ///
     /// ```
-    /// "8:25:07 AM Pacific Standard Time";              // en-US
-    /// "08:25:07 czas pacyficzny standardowy";          // pl
-    /// "٨:٢٥:٠٧ ص توقيت المحيط الهادي الرسمي";          // ar
-    /// "08:25:07 Тихоокеанское стандартное время";      // ru
-    /// "8時25分07秒 アメリカ太平洋標準時";                  // ja
+    /// "8:25:07 AM Pacific Standard Time"; // en-US
+    /// "08:25:07 czas pacyficzny standardowy"; // pl
+    /// "٨:٢٥:٠٧ ص توقيت المحيط الهادي الرسمي"; // ar
+    /// "08:25:07 Тихоокеанское стандартное время"; // ru
+    /// "8時25分07秒 アメリカ太平洋標準時"; // ja
     /// ```
     #[cfg_attr(feature = "serde", serde(rename = "full"))]
     Full,
@@ -258,11 +258,11 @@ pub enum Time {
     /// # Examples
     ///
     /// ```
-    /// "8:25:07 AM PST";       // en-US
-    /// "08:25:07 GMT-8";       // pl
-    /// "٨:٢٥:٠٧ ص غرينتش-٨";   // ar
-    /// "08:25:07 GMT-8";       // ru
-    /// "8:25:07 GMT-8";        // ja
+    /// "8:25:07 AM PST"; // en-US
+    /// "08:25:07 GMT-8"; // pl
+    /// "٨:٢٥:٠٧ ص غرينتش-٨"; // ar
+    /// "08:25:07 GMT-8"; // ru
+    /// "8:25:07 GMT-8"; // ja
     /// ```
     #[cfg_attr(feature = "serde", serde(rename = "long"))]
     Long,
@@ -271,11 +271,11 @@ pub enum Time {
     /// # Examples
     ///
     /// ```
-    /// "8:25:07 AM";   // en-US
-    /// "08:25:07";     // pl
-    /// "٨:٢٥:٠٧ ص";    // ar
-    /// "08:25:07";     // ru
-    /// "8:25:07";      // ja
+    /// "8:25:07 AM"; // en-US
+    /// "08:25:07"; // pl
+    /// "٨:٢٥:٠٧ ص"; // ar
+    /// "08:25:07"; // ru
+    /// "8:25:07"; // ja
     /// ```
     #[cfg_attr(feature = "serde", serde(rename = "medium"))]
     Medium,
@@ -284,11 +284,11 @@ pub enum Time {
     /// # Examples
     ///
     /// ```
-    /// "8:25 AM";   // en-US
-    /// "08:25";     // pl
-    /// "٨:٢٥ ص";    // ar
-    /// "08:25";     // ru
-    /// "8:25";      // ja
+    /// "8:25 AM"; // en-US
+    /// "08:25"; // pl
+    /// "٨:٢٥ ص"; // ar
+    /// "08:25"; // ru
+    /// "8:25"; // ja
     /// ```
     #[cfg_attr(feature = "serde", serde(rename = "short"))]
     Short,

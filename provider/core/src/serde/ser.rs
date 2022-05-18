@@ -50,19 +50,20 @@ impl DataPayload<SerializeMarker> {
     /// # Examples
     ///
     /// ```
-    /// use icu_provider::prelude::*;
     /// use icu_provider::hello_world::HelloWorldV1Marker;
+    /// use icu_provider::prelude::*;
     ///
     /// // Create an example DataPayload
     /// let payload: DataPayload<HelloWorldV1Marker> = Default::default();
     ///
     /// // Serialize the payload to a JSON string
     /// let mut buffer: Vec<u8> = vec![];
-    /// payload.into_serializable().serialize(
-    ///     &mut <dyn erased_serde::Serializer>::erase(
-    ///         &mut serde_json::Serializer::new(&mut buffer)
-    ///     )
-    /// ).expect("Serialization should succeed");
+    /// payload
+    ///     .into_serializable()
+    ///     .serialize(&mut <dyn erased_serde::Serializer>::erase(
+    ///         &mut serde_json::Serializer::new(&mut buffer),
+    ///     ))
+    ///     .expect("Serialization should succeed");
     /// assert_eq!("{\"message\":\"(und) Hello World\"}".as_bytes(), buffer);
     /// ```
     pub fn serialize(

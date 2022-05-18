@@ -30,8 +30,8 @@ use core::ops::Range;
 /// example the following code constructs the conceptual zero-copy equivalent of `Vec<Vec<Vec<str>>>`
 ///
 /// ```rust
-/// use zerovec::{ZeroVec, VarZeroSlice, VarZeroVec};
 /// use zerovec::ule::*;
+/// use zerovec::{VarZeroSlice, VarZeroVec, ZeroVec};
 /// let strings_1: Vec<&str> = vec!["foo", "bar", "baz"];
 /// let strings_2: Vec<&str> = vec!["twelve", "seventeen", "forty two"];
 /// let strings_3: Vec<&str> = vec!["我", "喜歡", "烏龍茶"];
@@ -48,15 +48,24 @@ use core::ops::Range;
 /// let vzv_34 = VarZeroVec::from(&[vzv_3.as_slice(), vzv_4.as_slice()]);
 /// let vzv_all = VarZeroVec::from(&[vzv_12.as_slice(), vzv_34.as_slice()]);
 ///
-/// let reconstructed: Vec<Vec<Vec<String>>> = vzv_all.iter()
-///        .map(|v: &VarZeroSlice<VarZeroSlice<str>>| {
-///             v.iter().map(|x: &VarZeroSlice<_>| x.as_varzerovec().iter().map(|s| s.to_owned()).collect::<Vec<String>>())
-///              .collect::<Vec<_>>()
-///         }).collect::<Vec<_>>();
+/// let reconstructed: Vec<Vec<Vec<String>>> = vzv_all
+///     .iter()
+///     .map(|v: &VarZeroSlice<VarZeroSlice<str>>| {
+///         v.iter()
+///             .map(|x: &VarZeroSlice<_>| {
+///                 x.as_varzerovec()
+///                     .iter()
+///                     .map(|s| s.to_owned())
+///                     .collect::<Vec<String>>()
+///             })
+///             .collect::<Vec<_>>()
+///     })
+///     .collect::<Vec<_>>();
 /// assert_eq!(reconstructed, all_strings);
 ///
 /// let bytes = vzv_all.as_bytes();
-/// let vzv_from_bytes: VarZeroVec<VarZeroSlice<VarZeroSlice<str>>> = VarZeroVec::parse_byte_slice(bytes).unwrap();
+/// let vzv_from_bytes: VarZeroVec<VarZeroSlice<VarZeroSlice<str>>> =
+///     VarZeroVec::parse_byte_slice(bytes).unwrap();
 /// assert_eq!(vzv_from_bytes, vzv_all);
 /// ```
 //

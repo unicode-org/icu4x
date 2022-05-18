@@ -20,10 +20,11 @@
 //! # Examples
 //!
 //! ```
-//! use icu::locid::Locale;
 //! use icu::locid::extensions::unicode::{Key, Value};
+//! use icu::locid::Locale;
 //!
-//! let loc: Locale = "en-US-u-ca-buddhist-t-en-US-h0-hybrid-x-foo".parse()
+//! let loc: Locale = "en-US-u-ca-buddhist-t-en-US-h0-hybrid-x-foo"
+//!     .parse()
 //!     .expect("Failed to parse.");
 //!
 //! assert_eq!(loc.id.language, "en");
@@ -31,11 +32,9 @@
 //! assert_eq!(loc.id.region, Some("US".parse().unwrap()));
 //! assert_eq!(loc.id.variants.len(), 0);
 //!
-//!
 //! let key: Key = "ca".parse().expect("Parsing key failed.");
 //! let value: Value = "buddhist".parse().expect("Parsing value failed.");
-//! assert_eq!(loc.extensions.unicode.keywords.get(&key),
-//!            Some(&value));
+//! assert_eq!(loc.extensions.unicode.keywords.get(&key), Some(&value));
 //! ```
 //!
 //! [`LanguageIdentifier`]: super::LanguageIdentifier
@@ -125,8 +124,7 @@ impl Extensions {
     /// ```
     /// use icu::locid::Locale;
     ///
-    /// let loc: Locale = "en-US-u-foo".parse()
-    ///     .expect("Parsing failed.");
+    /// let loc: Locale = "en-US-u-foo".parse().expect("Parsing failed.");
     ///
     /// assert_eq!(loc.extensions.is_empty(), false);
     /// ```
@@ -142,21 +140,22 @@ impl Extensions {
     /// # Examples
     ///
     /// ```
-    /// use std::str::FromStr;
-    /// use icu::locid::Locale;
     /// use icu::locid::extensions::ExtensionType;
+    /// use icu::locid::Locale;
+    /// use std::str::FromStr;
     ///
     /// let loc: Locale = "und-a-hello-t-mul-u-world-z-zzz-x-extra".parse().unwrap();
     ///
     /// let mut only_unicode = loc.clone();
-    /// only_unicode.extensions.retain_by_type(|t| t == ExtensionType::Unicode);
+    /// only_unicode
+    ///     .extensions
+    ///     .retain_by_type(|t| t == ExtensionType::Unicode);
     /// assert_eq!(only_unicode, "und-u-world");
     ///
     /// let mut only_t_z = loc.clone();
-    /// only_t_z.extensions.retain_by_type(|t| {
-    ///     t == ExtensionType::Transform
-    ///         || t == ExtensionType::Other(b'z')
-    /// });
+    /// only_t_z
+    ///     .extensions
+    ///     .retain_by_type(|t| t == ExtensionType::Transform || t == ExtensionType::Other(b'z'));
     /// assert_eq!(only_t_z, "und-t-mul-z-zzz");
     /// ```
     pub fn retain_by_type<F>(&mut self, mut predicate: F)

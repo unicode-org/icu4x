@@ -11,21 +11,19 @@ use core::ops::RangeInclusive;
 /// # Examples
 ///
 /// ```
-/// use icu::plurals::rules::reference::parse;
 /// use icu::plurals::rules::reference::ast;
+/// use icu::plurals::rules::reference::parse;
 /// use icu::plurals::rules::reference::serialize;
 ///
 /// let input = "i = 0 or n = 1 @integer 0, 1 @decimal 0.0~1.0, 0.00~0.04";
 ///
-/// let ast = parse(input.as_bytes())
-///     .expect("Parsing failed.");
+/// let ast = parse(input.as_bytes()).expect("Parsing failed.");
 ///
 /// assert_eq!(ast.condition.0[0].0[0].expression.operand, ast::Operand::I);
 /// assert_eq!(ast.condition.0[1].0[0].expression.operand, ast::Operand::N);
 ///
 /// let mut result = String::new();
-/// serialize(&ast, &mut result)
-///     .expect("Serialization failed.");
+/// serialize(&ast, &mut result).expect("Serialization failed.");
 ///
 /// assert_eq!(input, result);
 /// ```

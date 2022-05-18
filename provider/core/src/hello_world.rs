@@ -57,9 +57,9 @@ impl ResourceMarker for HelloWorldV1Marker {
 /// # Examples
 ///
 /// ```
+/// use icu_locid::locale;
 /// use icu_provider::hello_world::*;
 /// use icu_provider::prelude::*;
-/// use icu_locid::locale;
 ///
 /// let provider = HelloWorldProvider::new_with_placeholder_data();
 ///

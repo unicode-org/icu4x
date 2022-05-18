@@ -38,7 +38,7 @@ impl FieldLength {
             FieldLength::Wide => 4,
             FieldLength::Narrow => 5,
             FieldLength::Six => 6,
-            FieldLength::Fixed(p) => 128 + p.min(&127), // truncate to at most 127 digits to avoid overflow
+            FieldLength::Fixed(p) => 128 + p.min(&127), /* truncate to at most 127 digits to avoid overflow */
         }
     }
 

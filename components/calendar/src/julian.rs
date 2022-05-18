@@ -5,9 +5,9 @@
 //! This module contains types and implementations for the Julian calendar.
 //!
 //! ```rust
-//! use icu::calendar::{Date, DateTime,
-//!                     types::IsoHour, types::IsoMinute, types::IsoSecond,
-//!                     julian::Julian};
+//! use icu::calendar::{
+//!     julian::Julian, types::IsoHour, types::IsoMinute, types::IsoSecond, Date, DateTime,
+//! };
 //!
 //! // `Date` type
 //! let date_iso = Date::new_iso_date_from_integers(1970, 1, 2)
@@ -233,8 +233,8 @@ impl Date<Julian> {
     /// ```rust
     /// use icu::calendar::Date;
     ///
-    /// let date_julian = Date::new_julian_date(1969, 12, 20)
-    ///     .expect("Failed to initialize Julian Date instance.");
+    /// let date_julian =
+    ///     Date::new_julian_date(1969, 12, 20).expect("Failed to initialize Julian Date instance.");
     ///
     /// assert_eq!(date_julian.year().number, 1969);
     /// assert_eq!(date_julian.month().number, 12);
@@ -263,10 +263,7 @@ impl DateTime<Julian> {
     /// Construct a new Julian datetime from integers.
     ///
     /// ```rust
-    /// use icu::calendar::{DateTime,
-    ///                     types::IsoHour,
-    ///                     types::IsoMinute,
-    ///                     types::IsoSecond};
+    /// use icu::calendar::{types::IsoHour, types::IsoMinute, types::IsoSecond, DateTime};
     ///
     /// let datetime_julian = DateTime::new_julian_datetime(1969, 12, 20, 13, 1, 0)
     ///     .expect("Failed to initialize Julian DateTime instance.");

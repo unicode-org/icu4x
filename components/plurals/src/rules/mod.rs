@@ -55,26 +55,22 @@
 //! When parsed, the resulting [`AST`] will look like this:
 //!
 //! ```
-//! use icu::plurals::rules::reference::parse_condition;
 //! use icu::plurals::rules::reference::ast::*;
+//! use icu::plurals::rules::reference::parse_condition;
 //!
 //! let input = "i = 1 and v = 0 @integer 1";
 //!
-//! let ast = parse_condition(input.as_bytes())
-//!     .expect("Parsing failed.");
-//! assert_eq!(ast, Condition(vec![
-//!     AndCondition(vec![
+//! let ast = parse_condition(input.as_bytes()).expect("Parsing failed.");
+//! assert_eq!(
+//!     ast,
+//!     Condition(vec![AndCondition(vec![
 //!         Relation {
 //!             expression: Expression {
 //!                 operand: Operand::I,
 //!                 modulus: None,
 //!             },
 //!             operator: Operator::Eq,
-//!             range_list: RangeList(vec![
-//!                 RangeListItem::Value(
-//!                     Value(1)
-//!                 )
-//!             ])
+//!             range_list: RangeList(vec![RangeListItem::Value(Value(1))])
 //!         },
 //!         Relation {
 //!             expression: Expression {
@@ -82,14 +78,10 @@
 //!                 modulus: None,
 //!             },
 //!             operator: Operator::Eq,
-//!             range_list: RangeList(vec![
-//!                 RangeListItem::Value(
-//!                     Value(0)
-//!                 )
-//!             ])
+//!             range_list: RangeList(vec![RangeListItem::Value(Value(0))])
 //!         },
-//!     ]),
-//! ]));
+//!     ]),])
+//! );
 //! ```
 //!
 //! Finally, we can pass this [`AST`] (in fact, just the [`Condition`] node),
@@ -97,16 +89,15 @@
 //! matches:
 //!
 //! ```
-//! use icu::plurals::rules::reference::test_condition;
 //! use icu::plurals::rules::reference::parse_condition;
+//! use icu::plurals::rules::reference::test_condition;
 //! use icu::plurals::PluralOperands;
 //!
 //! let input = "i = 1 and v = 0 @integer 1";
 //!
 //! let operands = PluralOperands::from(1_u32);
 //!
-//! let ast = parse_condition(input.as_bytes())
-//!     .expect("Parsing failed.");
+//! let ast = parse_condition(input.as_bytes()).expect("Parsing failed.");
 //!
 //! assert!(test_condition(&ast, &operands));
 //! ```

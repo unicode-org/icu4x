@@ -41,8 +41,8 @@
 //! # Examples
 //!
 //! ```
-//! use icu::datetime::DateTimeFormatOptions;
 //! use icu::datetime::options::components;
+//! use icu::datetime::DateTimeFormatOptions;
 //!
 //! let mut bag = components::Bag::default();
 //! bag.year = Some(components::Year::Numeric);
@@ -59,8 +59,8 @@
 //! Or the options can be inferred through the `.into()` trait.
 //!
 //! ```
-//! use icu::datetime::DateTimeFormatOptions;
 //! use icu::datetime::options::components;
+//! use icu::datetime::DateTimeFormatOptions;
 //! let options: DateTimeFormatOptions = components::Bag::default().into();
 //! ```
 //!
@@ -463,13 +463,11 @@ pub enum Day {
 #[non_exhaustive]
 pub enum TimeZoneName {
     // UTS-35 fields: z..zzz
-    //
     /// Short localized form, without the location. (e.g.: PST, GMT-8)
     ShortSpecific,
 
     // UTS-35 fields: zzzz
     // Per UTS-35: [long form] specific non-location (falling back to long localized GMT)
-    //
     /// Long localized form, without the location (e.g., Pacific Standard Time, Nordamerikanische Westküsten-Normalzeit)
     LongSpecific,
 
@@ -480,7 +478,6 @@ pub enum TimeZoneName {
     // hour-format for the locale, and ICU4X uses the preferred one.
     //   e.g.
     //   https://github.com/unicode-org/cldr-json/blob/c23635f13946292e40077fd62aee6a8e122e7689/cldr-json/cldr-dates-full/main/es-MX/timeZoneNames.json#L13
-    //
     /// Localized GMT format, in the locale's preferred hour format. (e.g., GMT-0800),
     GmtOffset,
 

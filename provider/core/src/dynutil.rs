@@ -22,9 +22,9 @@ where
     /// [`AnyPayload`](crate::any::AnyPayload):
     ///
     /// ```
-    /// use icu_provider::prelude::*;
     /// use icu_provider::dynutil::UpcastDataPayload;
     /// use icu_provider::marker::CowStrMarker;
+    /// use icu_provider::prelude::*;
     /// use std::borrow::Cow;
     ///
     /// let data = "foo".to_string();
@@ -56,32 +56,33 @@ where
 /// matches or else returns [`DataErrorKind::MissingResourceKey`].
 ///
 /// ```
-/// use icu_provider::prelude::*;
 /// use icu_provider::datagen::*;
 /// use icu_provider::hello_world::*;
 /// use icu_provider::inv::InvariantDataProvider;
+/// use icu_provider::prelude::*;
 ///
 /// // Example struct that implements ResourceProvider<HelloWorldV1Marker>
 /// struct MyProvider;
 /// impl ResourceProvider<HelloWorldV1Marker> for MyProvider {
-///     fn load_resource(&self, req: &DataRequest)
-///             -> Result<DataResponse<HelloWorldV1Marker>, DataError> {
+///     fn load_resource(
+///         &self,
+///         req: &DataRequest,
+///     ) -> Result<DataResponse<HelloWorldV1Marker>, DataError> {
 ///         let provider = InvariantDataProvider;
 ///         provider.load_resource(req)
 ///     }
 /// }
 ///
 /// impl IterableResourceProvider<HelloWorldV1Marker> for MyProvider {
-///     fn supported_options(&self)
-///         -> Result<Box<dyn Iterator<Item = ResourceOptions> + '_>, DataError> {
+///     fn supported_options(
+///         &self,
+///     ) -> Result<Box<dyn Iterator<Item = ResourceOptions> + '_>, DataError> {
 ///         Ok(Box::new(core::iter::once(Default::default())))
 ///     }
 /// }
 ///
 /// // Implement DataProvider<AnyMarker> on this struct
-/// icu_provider::impl_dyn_provider!(MyProvider, [
-///     HelloWorldV1Marker,
-/// ], ANY);
+/// icu_provider::impl_dyn_provider!(MyProvider, [HelloWorldV1Marker,], ANY);
 ///
 /// let provider = MyProvider;
 ///
@@ -95,7 +96,10 @@ where
 /// let DUMMY_KEY = icu_provider::resource_key!("dummy@1");
 /// assert!(matches!(
 ///     provider.load_payload(DUMMY_KEY, &Default::default()),
-///     Err(DataError { kind: DataErrorKind::MissingResourceKey, .. })
+///     Err(DataError {
+///         kind: DataErrorKind::MissingResourceKey,
+///         ..
+///     })
 /// ));
 /// ```
 ///

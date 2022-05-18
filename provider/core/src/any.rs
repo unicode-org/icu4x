@@ -96,18 +96,17 @@ impl AnyPayload {
     /// # Examples
     ///
     /// ```
-    /// use icu_provider::prelude::*;
     /// use icu_provider::hello_world::*;
+    /// use icu_provider::prelude::*;
     /// use std::borrow::Cow;
     ///
     /// const HELLO_DATA: HelloWorldV1<'static> = HelloWorldV1 {
-    ///     message: Cow::Borrowed("Custom Hello World")
+    ///     message: Cow::Borrowed("Custom Hello World"),
     /// };
     ///
     /// let any_payload = AnyPayload::from_static_ref(&HELLO_DATA);
     ///
-    /// let payload: DataPayload<HelloWorldV1Marker> = any_payload.downcast()
-    ///     .expect("TypeId matches");
+    /// let payload: DataPayload<HelloWorldV1Marker> = any_payload.downcast().expect("TypeId matches");
     /// assert_eq!("Custom Hello World", payload.get().message);
     /// ```
     pub fn from_static_ref<Y>(static_ref: &'static Y) -> Self
@@ -127,21 +126,19 @@ impl AnyPayload {
     /// # Examples
     ///
     /// ```
-    /// use icu_provider::prelude::*;
     /// use icu_provider::hello_world::*;
+    /// use icu_provider::prelude::*;
     /// use std::borrow::Cow;
     /// use std::rc::Rc;
     ///
-    /// let payload: DataPayload<HelloWorldV1Marker> =
-    ///     DataPayload::from_owned(HelloWorldV1 {
-    ///         message: Cow::Borrowed("Custom Hello World")
-    ///     });
+    /// let payload: DataPayload<HelloWorldV1Marker> = DataPayload::from_owned(HelloWorldV1 {
+    ///     message: Cow::Borrowed("Custom Hello World"),
+    /// });
     /// let rc_payload = Rc::from(payload);
     ///
     /// let any_payload = AnyPayload::from_rc_payload(rc_payload);
     ///
-    /// let payload: DataPayload<HelloWorldV1Marker> = any_payload.downcast()
-    ///     .expect("TypeId matches");
+    /// let payload: DataPayload<HelloWorldV1Marker> = any_payload.downcast().expect("TypeId matches");
     /// assert_eq!("Custom Hello World", payload.get().message);
     /// ```
     pub fn from_rc_payload<M>(rc_payload: Rc<DataPayload<M>>) -> Self
@@ -164,20 +161,18 @@ where
     /// # Examples
     ///
     /// ```
-    /// use icu_provider::prelude::*;
     /// use icu_provider::hello_world::*;
+    /// use icu_provider::prelude::*;
     /// use std::borrow::Cow;
     /// use std::rc::Rc;
     ///
-    /// let payload: DataPayload<HelloWorldV1Marker> =
-    ///     DataPayload::from_owned(HelloWorldV1 {
-    ///         message: Cow::Borrowed("Custom Hello World")
-    ///     });
+    /// let payload: DataPayload<HelloWorldV1Marker> = DataPayload::from_owned(HelloWorldV1 {
+    ///     message: Cow::Borrowed("Custom Hello World"),
+    /// });
     ///
     /// let any_payload = payload.wrap_into_any_payload();
     ///
-    /// let payload: DataPayload<HelloWorldV1Marker> = any_payload.downcast()
-    ///     .expect("TypeId matches");
+    /// let payload: DataPayload<HelloWorldV1Marker> = any_payload.downcast().expect("TypeId matches");
     /// assert_eq!("Custom Hello World", payload.get().message);
     /// ```
     pub fn wrap_into_any_payload(self) -> AnyPayload {
@@ -257,8 +252,8 @@ impl AnyResponse {
 /// [`AnyPayloadProvider`] implements `AnyProvider`.
 ///
 /// ```
-/// use icu_provider::prelude::*;
 /// use icu_provider::hello_world::*;
+/// use icu_provider::prelude::*;
 /// use icu_provider_adapters::struct_provider::AnyPayloadProvider;
 /// use std::borrow::Cow;
 ///
@@ -276,11 +271,9 @@ impl AnyResponse {
 ///     .expect("Load should succeed");
 ///
 /// // Downcast to something useful
-/// let response: DataResponse<HelloWorldV1Marker> = any_response.downcast()
-///     .expect("Types match");
+/// let response: DataResponse<HelloWorldV1Marker> = any_response.downcast().expect("Types match");
 ///
-/// let payload = response.take_payload()
-///     .expect("Data should be present");
+/// let payload = response.take_payload().expect("Data should be present");
 ///
 /// assert_eq!(payload.get().message, "Custom Hello World");
 /// ```

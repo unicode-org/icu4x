@@ -76,7 +76,6 @@ use alloc::sync::Arc;
 /// assert_eq!(&**yoke.get(), "hello");
 /// assert!(matches!(yoke.get(), &Cow::Borrowed(_)));
 /// ```
-///
 pub struct Yoke<Y: for<'a> Yokeable<'a>, C> {
     // must be the first field for drop order
     // this will have a 'static lifetime parameter, that parameter is a lie
@@ -202,9 +201,7 @@ impl<Y: for<'a> Yokeable<'a>, C: StableDeref> Yoke<Y, C> {
     /// let rc = Rc::new([0xb, 0xa, 0xd]);
     ///
     /// let yoke_result: Result<Yoke<Cow<str>, Rc<[u8]>>, _> =
-    ///     Yoke::try_attach_to_cart_badly(rc, |data: &[u8]| {
-    ///         bincode::deserialize(data)
-    ///     });
+    ///     Yoke::try_attach_to_cart_badly(rc, |data: &[u8]| bincode::deserialize(data));
     ///
     /// assert!(matches!(yoke_result, Err(_)));
     /// ```
@@ -277,10 +274,7 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     /// use yoke::Yoke;
     ///
     /// let local_data = "foo".to_string();
-    /// let yoke = Yoke::<
-    ///     &'static str,
-    ///     Box<String>
-    /// >::attach_to_zero_copy_cart(Box::new(local_data));
+    /// let yoke = Yoke::<&'static str, Box<String>>::attach_to_zero_copy_cart(Box::new(local_data));
     /// assert_eq!(*yoke.get(), "foo");
     ///
     /// // Get back the cart
@@ -291,14 +285,12 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     /// Bad example: information specified in `.with_mut()` is lost.
     ///
     /// ```
-    /// use yoke::Yoke;
     /// use std::borrow::Cow;
+    /// use yoke::Yoke;
     ///
     /// let local_data = "foo".to_string();
-    /// let mut yoke = Yoke::<
-    ///     Cow<'static, str>,
-    ///     Box<String>
-    /// >::attach_to_zero_copy_cart(Box::new(local_data));
+    /// let mut yoke =
+    ///     Yoke::<Cow<'static, str>, Box<String>>::attach_to_zero_copy_cart(Box::new(local_data));
     /// assert_eq!(yoke.get(), "foo");
     ///
     /// // Override data in the cart
@@ -387,7 +379,7 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     ///
     /// bar.with_mut(|bar| {
     ///     bar.string.to_mut().push_str(" world");
-    ///     bar.owned.extend_from_slice(&[1, 4, 1, 5, 9]);   
+    ///     bar.owned.extend_from_slice(&[1, 4, 1, 5, 9]);
     /// });
     ///
     /// assert_eq!(bar.get().string, "hello world");
@@ -621,9 +613,8 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     /// # use yoke::Yoke;
     /// #
     /// fn slice(y: Yoke<&'static str, Rc<[u8]>>) -> Yoke<&'static [u8], Rc<[u8]>> {
-    ///    y.project(move |yk, _| yk.as_bytes())
+    ///     y.project(move |yk, _| yk.as_bytes())
     /// }
-    ///
     /// ```
     ///
     /// This can also be used to create a yoke for a subfield
@@ -641,7 +632,7 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     /// }
     ///
     /// fn project_string_1(bar: Yoke<Bar<'static>, Rc<[u8]>>) -> Yoke<&'static str, Rc<[u8]>> {
-    ///     bar.project(|bar, _| bar.string_1)   
+    ///     bar.project(|bar, _| bar.string_1)
     /// }
     ///
     /// #
@@ -824,16 +815,15 @@ impl<Y: for<'a> Yokeable<'a>, C: 'static + Sized> Yoke<Y, Rc<C>> {
     /// # Example
     ///
     /// ```rust
-    /// use yoke::Yoke;
-    /// use yoke::erased::ErasedRcCart;
     /// use std::rc::Rc;
+    /// use yoke::erased::ErasedRcCart;
+    /// use yoke::Yoke;
     ///
     /// let buffer1: Rc<String> = Rc::new("   foo bar baz  ".into());
     /// let buffer2: Box<String> = Box::new("  baz quux  ".into());
     ///
     /// let yoke1 = Yoke::<&'static str, _>::attach_to_cart_badly(buffer1, |rc| rc.trim());
     /// let yoke2 = Yoke::<&'static str, _>::attach_to_cart_badly(buffer2, |b| b.trim());
-    ///
     ///
     /// let erased1: Yoke<_, ErasedRcCart> = yoke1.erase_rc_cart();
     /// // Wrap the Box in an Rc to make it compatible
@@ -869,16 +859,15 @@ impl<Y: for<'a> Yokeable<'a>, C: 'static + Sized> Yoke<Y, Box<C>> {
     /// # Example
     ///
     /// ```rust
-    /// use yoke::Yoke;
-    /// use yoke::erased::ErasedBoxCart;
     /// use std::rc::Rc;
+    /// use yoke::erased::ErasedBoxCart;
+    /// use yoke::Yoke;
     ///
     /// let buffer1: Rc<String> = Rc::new("   foo bar baz  ".into());
     /// let buffer2: Box<String> = Box::new("  baz quux  ".into());
     ///
     /// let yoke1 = Yoke::<&'static str, _>::attach_to_cart_badly(buffer1, |rc| rc.trim());
     /// let yoke2 = Yoke::<&'static str, _>::attach_to_cart_badly(buffer2, |b| b.trim());
-    ///
     ///
     /// // Wrap the Rc in an Box to make it compatible
     /// let erased1: Yoke<_, ErasedBoxCart> = yoke1.wrap_cart_in_box().erase_box_cart();

@@ -5,8 +5,7 @@
 //! This module contains types and implementations for the ISO calendar.
 //!
 //! ```rust
-//! use icu::calendar::{Date, DateTime,
-//!                     types::IsoHour, types::IsoMinute, types::IsoSecond};
+//! use icu::calendar::{types::IsoHour, types::IsoMinute, types::IsoSecond, Date, DateTime};
 //!
 //! // `Date` type
 //! let date_iso = Date::new_iso_date_from_integers(1970, 1, 2)
@@ -331,15 +330,12 @@ impl Date<Iso> {
     /// Construct a new ISO Date.
     ///
     /// ```rust
-    /// use icu::calendar::{Date,
-    ///                     iso::IsoYear, iso::IsoMonth, iso::IsoDay};
+    /// use icu::calendar::{iso::IsoDay, iso::IsoMonth, iso::IsoYear, Date};
     /// use std::convert::TryFrom;
     ///
     /// let iso_year = IsoYear(1996);
-    /// let iso_month = IsoMonth::try_from(2)
-    ///     .expect("Failed to initialize IsoMonth instance.");
-    /// let iso_day = IsoDay::try_from(3)
-    ///     .expect("Failed to initialize IsoDay instance.");
+    /// let iso_month = IsoMonth::try_from(2).expect("Failed to initialize IsoMonth instance.");
+    /// let iso_day = IsoDay::try_from(3).expect("Failed to initialize IsoDay instance.");
     ///
     /// // Creation of ISO date
     /// let date_iso = Date::new_iso_date(iso_year, iso_month, iso_day)
@@ -389,8 +385,7 @@ impl DateTime<Iso> {
     /// Construct a new ISO date from integers.
     ///
     /// ```rust
-    /// use icu::calendar::{DateTime,
-    ///                     types::IsoHour, types::IsoMinute, types::IsoSecond};
+    /// use icu::calendar::{types::IsoHour, types::IsoMinute, types::IsoSecond, DateTime};
     ///
     /// let datetime_iso = DateTime::new_iso_datetime_from_integers(1970, 1, 2, 13, 1, 0)
     ///     .expect("Failed to initialize ISO DateTime instance.");

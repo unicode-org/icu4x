@@ -5,16 +5,16 @@
 //! This module contains types and implementations for the Japanese calendar.
 //!
 //! ```rust
-//! use icu::calendar::{Date, DateTime,
-//!                     types::IsoHour, types::IsoMinute, types::IsoSecond, types::Era,
-//!                     japanese::Japanese};
+//! use icu::calendar::{
+//!     japanese::Japanese, types::Era, types::IsoHour, types::IsoMinute, types::IsoSecond, Date,
+//!     DateTime,
+//! };
 //! use tinystr::tinystr;
 //!
 //! // `icu_testdata::get_provider` contains information specifying era dates.
 //! // Production code should probably use its own data provider
 //! let provider = icu_testdata::get_provider();
-//! let japanese_calendar = Japanese::try_new(&provider)
-//!     .expect("Cannot load japanese data");
+//! let japanese_calendar = Japanese::try_new(&provider).expect("Cannot load japanese data");
 //!
 //! // `Date` type
 //! let date_iso = Date::new_iso_date_from_integers(1970, 1, 2)
@@ -36,7 +36,10 @@
 //! assert_eq!(datetime_japanese.date.year().number, 45);
 //! assert_eq!(datetime_japanese.date.month().number, 1);
 //! assert_eq!(datetime_japanese.date.day_of_month().0, 2);
-//! assert_eq!(datetime_japanese.date.year().era, Era(tinystr!(16, "showa")));
+//! assert_eq!(
+//!     datetime_japanese.date.year().era,
+//!     Era(tinystr!(16, "showa"))
+//! );
 //! assert_eq!(datetime_japanese.time.hour, IsoHour::new_unchecked(13));
 //! assert_eq!(datetime_japanese.time.minute, IsoMinute::new_unchecked(1));
 //! assert_eq!(datetime_japanese.time.second, IsoSecond::new_unchecked(0));

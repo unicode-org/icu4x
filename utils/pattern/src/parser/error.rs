@@ -9,11 +9,14 @@ use std::fmt::Debug;
 ///
 /// # Examples
 /// ```
-/// use icu_pattern::{Parser, ParserOptions, ParserError};
+/// use icu_pattern::{Parser, ParserError, ParserOptions};
 ///
-/// let mut parser = Parser::<usize>::new("{0", ParserOptions {
-///     allow_raw_letters: false,
-/// });
+/// let mut parser = Parser::<usize>::new(
+///     "{0",
+///     ParserOptions {
+///         allow_raw_letters: false,
+///     },
+/// );
 /// assert_eq!(Err(ParserError::UnclosedPlaceholder), parser.try_next());
 /// ```
 ///
