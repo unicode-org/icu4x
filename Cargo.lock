@@ -1370,6 +1370,7 @@ version = "0.4.0"
 dependencies = [
  "criterion",
  "displaydoc",
+ "iai",
  "icu_uniset",
  "postcard",
  "serde",
