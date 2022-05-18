@@ -69,18 +69,16 @@ impl SourceData {
 
     /// Paths to CLDR source data.
     pub(crate) fn get_cldr_paths(&self) -> Result<&CldrPaths, DataError> {
-        Ok(self
-            .cldr_paths
+        self.cldr_paths
             .as_ref()
-            .ok_or(crate::error::MISSING_CLDR_ERROR)?)
+            .ok_or(crate::error::MISSING_CLDR_ERROR)
     }
 
     /// Path to Unicode Properties source data.
     pub(crate) fn get_uprops_root(&self) -> Result<&Path, DataError> {
-        Ok(self
-            .uprops_root
+        self.uprops_root
             .as_deref()
-            .ok_or(crate::error::MISSING_UPROPS_ERROR)?)
+            .ok_or(crate::error::MISSING_UPROPS_ERROR)
     }
 
     /// Path to segmenter data.
