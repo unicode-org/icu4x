@@ -26,8 +26,9 @@ let cpt: CodePointTrie<u8> = CodePointTrieBuilder {
     data: CodePointTrieBuilderData::ValuesByCodePoint(values_by_code_point),
     default_value,
     error_value,
-    trie_type: TrieType::Small
-}.build();
+    trie_type: TrieType::Small,
+}
+.build();
 
 assert_eq!(cpt.get(0), 3);
 assert_eq!(cpt.get(1), 4);

@@ -52,7 +52,7 @@ This crate has five optional features:
 Serialize and deserialize a struct with ZeroVec and VarZeroVec with Bincode:
 
 ```rust
-use zerovec::{ZeroVec, VarZeroVec};
+use zerovec::{VarZeroVec, ZeroVec};
 
 // This example requires the "serde" feature
 #[derive(serde::Serialize, serde::Deserialize)]
@@ -70,12 +70,11 @@ let data = DataStruct {
     chars: ZeroVec::from_slice_or_alloc(&['ö', '冇', 'म']),
     strs: VarZeroVec::from(&["hello", "world"]),
 };
-let bincode_bytes = bincode::serialize(&data)
-    .expect("Serialization should be successful");
+let bincode_bytes = bincode::serialize(&data).expect("Serialization should be successful");
 assert_eq!(bincode_bytes.len(), 74);
 
-let deserialized: DataStruct = bincode::deserialize(&bincode_bytes)
-    .expect("Deserialization should be successful");
+let deserialized: DataStruct =
+    bincode::deserialize(&bincode_bytes).expect("Deserialization should be successful");
 assert_eq!(deserialized.nums.first(), Some(211));
 assert_eq!(deserialized.chars.get(1), Some('冇'));
 assert_eq!(deserialized.strs.get(1), Some("world"));
