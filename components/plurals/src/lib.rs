@@ -423,9 +423,7 @@ impl PluralRules {
     /// match pr.select(1_usize) {
     ///     PluralCategory::One => "One item",
     ///     PluralCategory::Other => "Many items",
-    ///     _ => {
-    ///         unreachable!();
-    ///     }
+    ///     _ => unreachable!(),
     /// };
     /// ```
     ///
