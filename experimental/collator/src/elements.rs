@@ -1817,7 +1817,11 @@ where
                     // kana voicing marks, shouldn't be participating in Brahmic contractions.
                     let _ = self.upcoming.drain(..drain_from_suffix);
                     if self.upcoming.is_empty() {
-                        debug_assert!(self.iter_exhausted || may_have_contracted_starter);
+                        // Wrap the assertion in a conditional block to make CI happy.
+                        #[cfg(debug_assertions)]
+                        {
+                            debug_assert!(self.iter_exhausted || may_have_contracted_starter);
+                        }
                         if let Some(c) = self.iter.next() {
                             self.upcoming.push(c);
                         } else {
