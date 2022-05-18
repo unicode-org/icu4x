@@ -126,6 +126,11 @@ pub fn get_smaller_postcard_provider() -> icu_provider_blob::StaticDataProvider 
 }
 
 #[cfg(feature = "baked")]
+mod baked {
+    include!(concat!(env!("CARGO_MANIFEST_DIR"), "/data/baked/mod.rs"));
+}
+
+#[cfg(feature = "baked")]
 pub fn get_baked_provider() -> &'static baked::BakedDataProvider {
     baked::PROVIDER
 }
