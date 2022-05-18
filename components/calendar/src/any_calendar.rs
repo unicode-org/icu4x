@@ -471,7 +471,7 @@ impl IncludedInAnyCalendar for Ethiopic {
         AnyCalendar::Ethiopic(self)
     }
     fn to_any_cloned(&self) -> AnyCalendar {
-        AnyCalendar::Ethiopic(self.clone())
+        AnyCalendar::Ethiopic(Ethiopic)
     }
     fn date_to_any(d: &Self::DateInner) -> AnyDateInner {
         AnyDateInner::Ethiopic(*d)
