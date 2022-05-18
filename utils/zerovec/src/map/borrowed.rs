@@ -113,7 +113,15 @@ where
                 <<V as ZeroMapKV<'a>>::Container as ZeroVecLike<V>>::BorrowedVariant::zvl_new_borrowed(),
         }
     }
+}
 
+impl<'a, K, V> ZeroMapBorrowed<'a, K, V>
+where
+    K: ZeroMapKV<'a>,
+    V: ZeroMapKV<'a>,
+    K: ?Sized,
+    V: ?Sized,
+{
     /// The number of elements in the [`ZeroMapBorrowed`]
     pub fn len(&self) -> usize {
         self.values.zvl_len()
@@ -311,7 +319,7 @@ where
         PartialEq<<<V as ZeroMapKV<'b>>::Container as ZeroVecLike<V>>::BorrowedVariant>,
 {
     fn eq(&self, other: &ZeroMapBorrowed<'b, K, V>) -> bool {
-        self.keys.eq(&other.keys) && self.values.eq(&other.values)
+        self.keys.eq(other.keys) && self.values.eq(other.values)
     }
 }
 
