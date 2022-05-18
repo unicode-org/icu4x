@@ -32,9 +32,9 @@ impl ResourceProvider<CaseMappingV1Marker> for CaseMappingDataProvider {
     ) -> Result<DataResponse<CaseMappingV1Marker>, DataError> {
         let path = self.source.get_uprops_root()?.join("ucase.toml");
         let toml_str =
-            fs::read_to_string(&path).map_err(|e| DataError::from(e).with_path(&path))?;
-        let toml: uprops_serde::case::Main =
-            toml::from_str(&toml_str).map_err(|e| crate::error::data_error_from_toml(e).with_path(&path))?;
+            fs::read_to_string(&path).map_err(|e| DataError::from(e).with_path_context(&path))?;
+        let toml: uprops_serde::case::Main = toml::from_str(&toml_str)
+            .map_err(|e| crate::error::data_error_from_toml(e).with_path_context(&path))?;
 
         let trie_data = &toml.ucase.code_point_trie;
         let trie_header = CodePointTrieHeader::try_from(trie_data).map_err(|e| {

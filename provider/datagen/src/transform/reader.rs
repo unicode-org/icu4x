@@ -16,7 +16,7 @@ pub fn open_reader(path: &Path) -> Result<BufReader<File>, DataError> {
     log::trace!("Reading: {:?}", path);
     File::open(&path)
         .map(BufReader::new)
-        .map_err(|e| DataError::from(e).with_path(path))
+        .map_err(|e| DataError::from(e).with_path_context(path))
 }
 
 /// Read the contents of the file at `path` and return it as a `String`.
@@ -25,16 +25,16 @@ pub fn read_path_to_string(path: &Path) -> Result<String, DataError> {
     let mut buffer = String::new();
     reader
         .read_to_string(&mut buffer)
-        .map_err(|e| DataError::from(e).with_path(path))?;
+        .map_err(|e| DataError::from(e).with_path_context(path))?;
     Ok(buffer)
 }
 
 /// Helper function which returns a sorted list of the contents of a directory.
 pub fn get_dir_contents(root: &Path) -> Result<Vec<PathBuf>, DataError> {
     let mut result = vec![];
-    for entry in fs::read_dir(root).map_err(|e| DataError::from(e).with_path(root))? {
+    for entry in fs::read_dir(root).map_err(|e| DataError::from(e).with_path_context(root))? {
         let path = entry
-            .map_err(|e| DataError::from(e).with_path(&root))?
+            .map_err(|e| DataError::from(e).with_path_context(&root))?
             .path();
         result.push(path);
     }
@@ -46,8 +46,8 @@ fn get_langid_subdirectories_internal(
     root: &Path,
 ) -> Result<impl Iterator<Item = (LanguageIdentifier, PathBuf)>, DataError> {
     let mut result = vec![];
-    for entry in fs::read_dir(root).map_err(|e| DataError::from(e).with_path(&root))? {
-        let entry = entry.map_err(|e| DataError::from(e).with_path(&root))?;
+    for entry in fs::read_dir(root).map_err(|e| DataError::from(e).with_path_context(&root))? {
+        let entry = entry.map_err(|e| DataError::from(e).with_path_context(&root))?;
         let path = entry.path();
         result.push(path);
     }

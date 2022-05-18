@@ -78,7 +78,7 @@ macro_rules! impl_resource_provider {
                         .join(&format!("ca-{}.json", cldr_cal));
 
                         let mut resource: cldr_serde::ca::Resource =
-                            serde_json::from_reader(open_reader(&path)?).map_err(|e| DataError::from(e).with_path(&path))?;
+                            serde_json::from_reader(open_reader(&path)?).map_err(|e| DataError::from(e).with_path_context(&path))?;
 
                         self.data.insert(
                             req.options.clone(),

@@ -41,7 +41,7 @@ impl ResourceProvider<AliasesV1Marker> for AliasesProvider {
             .join("supplemental")
             .join("aliases.json");
         let data: cldr_serde::aliases::Resource = serde_json::from_reader(open_reader(&path)?)
-            .map_err(|e| DataError::from(e).with_path(&path))?;
+            .map_err(|e| DataError::from(e).with_path_context(&path))?;
 
         let metadata = DataResponseMetadata::default();
         // TODO(#1109): Set metadata.data_langid correctly.

@@ -39,7 +39,7 @@ impl<M: ResourceMarker<Yokeable = ListFormatterPatternsV1<'static>>> ResourcePro
             .ok_or_else(|| DataErrorKind::MissingLocale.into_error())?
             .join("listPatterns.json");
             serde_json::from_reader(open_reader(&path)?)
-                .map_err(|e| DataError::from(e).with_path(&path))?
+                .map_err(|e| DataError::from(e).with_path_context(&path))?
         };
 
         let data = &resource

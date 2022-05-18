@@ -60,7 +60,7 @@ macro_rules! impl_resource_provider {
                         .join("timeZoneNames.json");
                         let mut resource: cldr_serde::time_zones::time_zone_names::Resource =
                             serde_json::from_reader(open_reader(&path)?)
-                                .map_err(|e| DataError::from(e).with_path(&path))?;
+                                .map_err(|e| DataError::from(e).with_path_context(&path))?;
                         self.time_zone_names_data.insert(
                             langid.clone(),
                             Box::new(
@@ -85,7 +85,7 @@ macro_rules! impl_resource_provider {
 
                         let resource: cldr_serde::time_zones::bcp47_tzid::Resource =
                             serde_json::from_reader(open_reader(&bcp47_time_zone_path)?)
-                                .map_err(|e| DataError::from(e).with_path(&bcp47_time_zone_path))?;
+                                .map_err(|e| DataError::from(e).with_path_context(&bcp47_time_zone_path))?;
                         let r = resource.keyword.u.time_zones.values;
 
                         let mut data_guard = self.bcp47_tzid_data.write().unwrap();
@@ -108,7 +108,7 @@ macro_rules! impl_resource_provider {
 
                         let resource: cldr_serde::time_zones::meta_zones::Resource =
                             serde_json::from_reader(open_reader(&meta_zone_id_path)?)
-                                .map_err(|e| DataError::from(e).with_path(&meta_zone_id_path))?;
+                                .map_err(|e| DataError::from(e).with_path_context(&meta_zone_id_path))?;
                         let r = resource.supplemental.meta_zones.meta_zone_ids.0;
 
                         let mut data_guard = self.meta_zone_id_data.write().unwrap();

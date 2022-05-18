@@ -4,6 +4,7 @@
 
 use crate::buf::BufferProvider;
 use crate::prelude::*;
+use core::marker::PhantomData;
 use serde::de::Deserialize;
 use yoke::trait_hack::YokeTraitHack;
 use yoke::Yokeable;
@@ -25,6 +26,52 @@ where
         DeserializingBufferProvider(self)
     }
 }
+
+fn deserialize_impl<'data, M>(
+    // Allow `bytes` to be unused in case all buffer formats are disabled
+    #[allow(unused_variables)] bytes: &'data [u8],
+    buffer_format: BufferFormat,
+    _: PhantomData<&'data ()>,
+) -> Result<<M::Yokeable as Yokeable<'data>>::Output, Error>
+where
+    M: DataMarker,
+    // Actual bound:
+    //     for<'de> <M::Yokeable as Yokeable<'de>>::Output: Deserialize<'de>,
+    // Necessary workaround bound (see `yoke::trait_hack` docs):
+    for<'de> YokeTraitHack<<M::Yokeable as Yokeable<'de>>::Output>: Deserialize<'de>,
+{
+    match buffer_format {
+        #[cfg(feature = "deserialize_json")]
+        BufferFormat::Json => {
+            let mut d = serde_json::Deserializer::from_slice(bytes);
+            let data = YokeTraitHack::<<M::Yokeable as Yokeable>::Output>::deserialize(&mut d)?;
+            Ok(data.0)
+        }
+
+        #[cfg(feature = "deserialize_bincode_1")]
+        BufferFormat::Bincode1 => {
+            use bincode::Options;
+            let options = bincode::DefaultOptions::new()
+                .with_fixint_encoding()
+                .allow_trailing_bytes();
+            let mut d = bincode::de::Deserializer::from_slice(bytes, options);
+            let data = YokeTraitHack::<<M::Yokeable as Yokeable>::Output>::deserialize(&mut d)?;
+            Ok(data.0)
+        }
+
+        #[cfg(feature = "deserialize_postcard_07")]
+        BufferFormat::Postcard07 => {
+            let mut d = postcard::Deserializer::from_bytes(bytes);
+            let data = YokeTraitHack::<<M::Yokeable as Yokeable>::Output>::deserialize(&mut d)?;
+            Ok(data.0)
+        }
+
+        // Allowed for cases in which all features are enabled
+        #[allow(unreachable_patterns)]
+        _ => Err(DataErrorKind::UnavailableBufferFormat(buffer_format).into_error()),
+    }
+}
+
 impl DataPayload<BufferMarker> {
     pub fn into_deserialized<M>(
         self,
@@ -37,43 +84,7 @@ impl DataPayload<BufferMarker> {
         // Necessary workaround bound (see `yoke::trait_hack` docs):
         for<'de> YokeTraitHack<<M::Yokeable as Yokeable<'de>>::Output>: Deserialize<'de>,
     {
-        // Allow `bytes` to be unused in case all buffer formats are disabled
-        #[allow(unused_variables)]
-        self.try_map_project_with_capture(buffer_format, |bytes, buffer_format, _| {
-            match buffer_format {
-                #[cfg(feature = "deserialize_json")]
-                BufferFormat::Json => {
-                    let mut d = serde_json::Deserializer::from_slice(bytes);
-                    let data =
-                        YokeTraitHack::<<M::Yokeable as Yokeable>::Output>::deserialize(&mut d)?;
-                    Ok(data.0)
-                }
-
-                #[cfg(feature = "deserialize_bincode_1")]
-                BufferFormat::Bincode1 => {
-                    use bincode::Options;
-                    let options = bincode::DefaultOptions::new()
-                        .with_fixint_encoding()
-                        .allow_trailing_bytes();
-                    let mut d = bincode::de::Deserializer::from_slice(bytes, options);
-                    let data =
-                        YokeTraitHack::<<M::Yokeable as Yokeable>::Output>::deserialize(&mut d)?;
-                    Ok(data.0)
-                }
-
-                #[cfg(feature = "deserialize_postcard_07")]
-                BufferFormat::Postcard07 => {
-                    let mut d = postcard::Deserializer::from_bytes(bytes);
-                    let data =
-                        YokeTraitHack::<<M::Yokeable as Yokeable>::Output>::deserialize(&mut d)?;
-                    Ok(data.0)
-                }
-
-                // Allowed for cases in which all features are enabled
-                #[allow(unreachable_patterns)]
-                _ => Err(DataErrorKind::UnavailableBufferFormat(buffer_format).into_error()),
-            }
-        })
+        self.try_map_project_with_capture(buffer_format, deserialize_impl::<M>)
     }
 }
 

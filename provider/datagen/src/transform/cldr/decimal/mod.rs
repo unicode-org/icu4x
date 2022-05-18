@@ -83,7 +83,7 @@ impl ResourceProvider<DecimalSymbolsV1Marker> for NumbersProvider {
             .ok_or_else(|| DataErrorKind::MissingLocale.into_error())?
             .join("numbers.json");
             serde_json::from_reader(open_reader(&path)?)
-                .map_err(|e| DataError::from(e).with_path(&path))?
+                .map_err(|e| DataError::from(e).with_path_context(&path))?
         };
 
         #[allow(clippy::expect_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
@@ -95,8 +95,9 @@ impl ResourceProvider<DecimalSymbolsV1Marker> for NumbersProvider {
             .numbers;
         let nsname = numbers.default_numbering_system;
 
-        let mut result = DecimalSymbolsV1::try_from(numbers)
-            .map_err(|s| DataError::custom("").with_display_context(&s))?;
+        let mut result = DecimalSymbolsV1::try_from(numbers).map_err(|s| {
+            DataError::custom("Could not create decimal symbols").with_display_context(&s)
+        })?;
 
         #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
         if self.cldr_numbering_systems_data.read().unwrap().is_none() {
@@ -108,7 +109,7 @@ impl ResourceProvider<DecimalSymbolsV1Marker> for NumbersProvider {
                 .join("numberingSystems.json");
             let resource: cldr_serde::numbering_systems::Resource =
                 serde_json::from_reader(open_reader(&path)?)
-                    .map_err(|e| DataError::from(e).with_path(&path))?;
+                    .map_err(|e| DataError::from(e).with_path_context(&path))?;
             let _ = self
                 .cldr_numbering_systems_data
                 .write()

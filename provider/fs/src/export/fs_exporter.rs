@@ -72,17 +72,17 @@ impl FilesystemExporter {
             _ => Ok(()),
         }
         .and_then(|_| fs::create_dir_all(&result.root))
-        .map_err(|e| DataError::from(e).with_path(&result.root))?;
+        .map_err(|e| DataError::from(e).with_path_context(&result.root))?;
 
         let manifest_path = result.root.join(Manifest::NAME);
         let mut manifest_file = fs::File::create(&manifest_path)
-            .map_err(|e| DataError::from(e).with_path(&manifest_path))?;
+            .map_err(|e| DataError::from(e).with_path_context(&manifest_path))?;
         let manifest_serializer = json::Serializer::new(json::Options {
             style: json::StyleOption::Pretty,
         });
         manifest_serializer
             .serialize(&result.manifest, &mut manifest_file)
-            .map_err(|e| e.with_path(&manifest_path))?;
+            .map_err(|e| e.with_path_context(&manifest_path))?;
         Ok(result)
     }
 }
@@ -103,13 +103,13 @@ impl DataExporter<SerializeMarker> for FilesystemExporter {
 
         if let Some(parent_dir) = path_buf.parent() {
             fs::create_dir_all(&parent_dir)
-                .map_err(|e| DataError::from(e).with_path(&parent_dir))?;
+                .map_err(|e| DataError::from(e).with_path_context(&parent_dir))?;
         }
-        let mut file =
-            fs::File::create(&path_buf).map_err(|e| DataError::from(e).with_path(&path_buf))?;
+        let mut file = fs::File::create(&path_buf)
+            .map_err(|e| DataError::from(e).with_path_context(&path_buf))?;
         self.serializer
             .serialize(obj.get().deref(), &mut file)
-            .map_err(|e| e.with_path(&path_buf))?;
+            .map_err(|e| e.with_path_context(&path_buf))?;
         Ok(())
     }
 }

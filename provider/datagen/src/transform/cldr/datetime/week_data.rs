@@ -41,7 +41,7 @@ impl WeekDataProvider {
                 .join("supplemental/weekData.json");
             let resource: cldr_serde::week_data::Resource =
                 serde_json::from_reader(open_reader(&path)?)
-                    .map_err(|e| DataError::from(e).with_path(&path))?;
+                    .map_err(|e| DataError::from(e).with_path_context(&path))?;
             let week_data = resource.supplemental.week_data;
             *self.data.write().unwrap() = Some((
                 CalendarInfo {

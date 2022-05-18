@@ -229,7 +229,7 @@ impl DataError {
     /// it will print out the context.
     #[cfg(feature = "std")]
     #[cfg_attr(not(feature = "log_error_context"), allow(unused_variables))]
-    pub fn with_path<P: AsRef<std::path::Path> + ?Sized>(self, path: &P) -> Self {
+    pub fn with_path_context<P: AsRef<std::path::Path> + ?Sized>(self, path: &P) -> Self {
         #[cfg(feature = "log_error_context")]
         log::warn!("{} (path: {:?})", self, path.as_ref());
         self

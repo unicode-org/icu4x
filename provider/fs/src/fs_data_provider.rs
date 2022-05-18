@@ -40,11 +40,11 @@ impl FsDataProvider {
         let root_path_buf: PathBuf = root.into();
         let manifest_path = root_path_buf.join(Manifest::NAME);
         let manifest_str = fs::read_to_string(&manifest_path)
-            .map_err(|e| DataError::from(e).with_path(&manifest_path))?;
+            .map_err(|e| DataError::from(e).with_path_context(&manifest_path))?;
         let manifest: Manifest = serde_json_core::from_str(&manifest_str)
             .map_err(|e| {
                 DataError::custom("Invalid FsDataProvider manifest")
-                    .with_path(&manifest_path)
+                    .with_path_context(&manifest_path)
                     .with_display_context(&e)
             })?
             .0;
@@ -72,7 +72,8 @@ impl BufferProvider for FsDataProvider {
         if !path_buf.exists() {
             return Err(DataErrorKind::MissingResourceOptions.with_req(key, req));
         }
-        let buffer = fs::read(&path_buf).map_err(|e| DataError::from(e).with_path(&path_buf))?;
+        let buffer =
+            fs::read(&path_buf).map_err(|e| DataError::from(e).with_path_context(&path_buf))?;
         Ok((
             DataResponse {
                 // TODO(#1109): Set metadata.data_langid correctly.

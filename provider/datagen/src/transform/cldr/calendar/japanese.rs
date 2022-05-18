@@ -60,10 +60,10 @@ impl ResourceProvider<JapaneseErasV1Marker> for JapaneseErasProvider {
 
         let era_names: cldr_serde::ca::Resource =
             serde_json::from_reader(open_reader(&era_names_path)?)
-                .map_err(|e| DataError::from(e).with_path(&era_names_path))?;
+                .map_err(|e| DataError::from(e).with_path_context(&era_names_path))?;
         let era_dates: cldr_serde::japanese::Resource =
             serde_json::from_reader(open_reader(&era_dates_path)?)
-                .map_err(|e| DataError::from(e).with_path(&era_dates_path))?;
+                .map_err(|e| DataError::from(e).with_path_context(&era_dates_path))?;
 
         let era_name_map = &era_names
             .main
@@ -95,16 +95,14 @@ impl ResourceProvider<JapaneseErasV1Marker> for JapaneseErasProvider {
             let date = &era_dates_map
                 .get(era_id)
                 .ok_or_else(|| {
-                    DataError::custom("calendarData.json")
-                        .with_display_context(&format!("no data for japanese era index {}", era_id))
+                    DataError::custom("calendarData.json is missing data for a japanese era")
+                        .with_display_context(&format!("era index {}", era_id))
                 })?
                 .start;
 
             let start_date = EraStartDate::from_str(date).map_err(|_| {
-                DataError::custom("calendarData.json").with_display_context(&format!(
-                    "unparseable data for japanese era index {}",
-                    era_id
-                ))
+                DataError::custom("calendarData.json contains unparseable data for a japanese era")
+                    .with_display_context(&format!("era index {}", era_id))
             })?;
 
             let code = era_to_code(era_name, start_date.year)

@@ -18,7 +18,6 @@ pub const MISSING_UPROPS_ERROR: DataError = DataErrorKind::MissingSourceData
     .into_error()
     .with_str_context("Uprops");
 
-
-pub fn data_error_from_toml(other: toml::de::Error) -> DataError {
+pub(crate) fn data_error_from_toml(other: toml::de::Error) -> DataError {
     DataError::custom("Toml deserialize").with_display_context(&other)
 }
