@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1652916473706,
+  "lastUpdate": 1652969725457,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -15233,6 +15233,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/a35b98986eddf987bc83416726b67e365cb013ee"
         },
         "date": 1652916450651,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 1668916,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "dminor@mozilla.com",
+            "name": "Dan Minor",
+            "username": "dminor"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "a2eb5a3baf26e3624f824d6d4357ce952eaadd7b",
+          "message": "Add fractional seconds support components bag (#1873)\n\n* Add fractional seconds support components bag\r\n\r\n* Address review comments",
+          "timestamp": "2022-05-19T10:12:49-04:00",
+          "tree_id": "7e84839db6b948caea4399f8b212249015085d1d",
+          "url": "https://github.com/unicode-org/icu4x/commit/a2eb5a3baf26e3624f824d6d4357ce952eaadd7b"
+        },
+        "date": 1652969692642,
         "tool": "ndjson",
         "benches": [
           {
