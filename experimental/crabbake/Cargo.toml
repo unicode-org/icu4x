@@ -34,4 +34,4 @@ derive = ["crabbake-derive"]
 proc-macro2 = "1.0.27"
 quote = "1.0.9"
 syn = { version = "1.0.73", features = ["derive", "fold"] }
-crabbake-derive = { path = "./derive", optional = true}
+crabbake-derive = { version = "0.4.0", path = "./derive", optional = true}

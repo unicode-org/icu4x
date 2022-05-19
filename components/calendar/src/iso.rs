@@ -491,7 +491,7 @@ impl Iso {
 
         let year = 400 * n_400 + 100 * n_100 + 4 * n_4 + n_1;
 
-        if n_400 == 4 || n_4 == 1 {
+        if n_100 == 4 || n_1 == 4 {
             year
         } else {
             year + 1

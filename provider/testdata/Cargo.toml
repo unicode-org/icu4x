@@ -122,6 +122,7 @@ cldr_json_glob = [
     "cldr-cal-japanese-full/main/$LOCALES/ca-japanese.json",
     "cldr-cal-coptic-full/main/$LOCALES/ca-coptic.json",
     "cldr-cal-indian-full/main/$LOCALES/ca-indian.json",
+    "cldr-cal-ethiopic-full/main/$LOCALES/ca-ethiopic.json",
     "cldr-bcp47/bcp47/timezone.json",
     # Extra data for feature coverage in provider_cldr tests:
     "cldr-dates-full/main/cs/ca-gregorian.json",
@@ -146,7 +147,6 @@ denylist = ["bench"]
 icu_provider = { version = "0.6", path = "../core" }
 icu_provider_blob = { version = "0.6", path = "../blob", optional = true }
 icu_provider_fs = { version = "0.6", path = "../fs", optional = true }
-baked = { path = "./data/baked", optional = true }
 
 # bin feature
 clap = { version = "2.33", optional = true }
@@ -166,6 +166,9 @@ serde_json = { version = "1.0", optional = true, default-features = false, featu
 displaydoc = { version = "0.2.3", default-features = false, optional = true }
 writeable = { version = "0.4", path = "../../utils/writeable", optional = true }
 
+# crabbake deps
+icu_list = { version = "0.6", path = "../../components/list", optional = true }
+
 [dev-dependencies]
 icu_plurals = { version = "0.6", path = "../../components/plurals" }
 
@@ -183,7 +186,7 @@ metadata = [
 ]
 fs = ["icu_provider/deserialize_json", "icu_provider_fs", "std"]
 static = ["icu_provider_blob"]
-baked = ["dep:baked"]
+baked = ["icu_list"]
 std = []
 bin = [
     "clap",

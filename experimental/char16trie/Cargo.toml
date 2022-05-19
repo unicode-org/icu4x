@@ -4,8 +4,24 @@
 
 [package]
 name = "icu_char16trie"
+description = "Implementation of ICU UCharTrie"
+authors = ["The ICU4X Project Developers"]
+repository = "https://github.com/unicode-org/icu4x"
+license-file = "LICENSE"
 version = "0.1.0"
 edition = "2021"
+categories = ["internationalization"]
+# Keep this in sync with other crates unless there are exceptions
+include = [
+    "data/*",
+    "src/**/*",
+    "examples/**/*",
+    "benches/**/*",
+    "tests/**/*",
+    "Cargo.toml",
+    "LICENSE",
+    "README.md"
+]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 

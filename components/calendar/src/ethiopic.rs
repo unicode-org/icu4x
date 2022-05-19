@@ -299,4 +299,19 @@ mod test {
         assert_eq!(ethiopic_date.0.month, 13);
         assert_eq!(ethiopic_date.0.day, 6);
     }
+
+    #[test]
+    fn test_iso_to_ethiopic_conversion_and_back() {
+        let iso_date = Date::new_iso_date_from_integers(1970, 1, 2).unwrap();
+        let date_ethiopic = Date::new_from_iso(iso_date, Ethiopic);
+
+        assert_eq!(date_ethiopic.inner.0.year, 1962);
+        assert_eq!(date_ethiopic.inner.0.month, 4);
+        assert_eq!(date_ethiopic.inner.0.day, 24);
+
+        assert_eq!(
+            date_ethiopic.to_iso(),
+            Date::new_iso_date_from_integers(1970, 1, 2).unwrap()
+        );
+    }
 }
