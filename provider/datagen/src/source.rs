@@ -3,9 +3,9 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::error::DatagenError;
-use icu_codepointtrie::TrieType;
 use crate::transform::cldr::source::CldrPaths;
 use crate::transform::uprops::source::UpropsPaths;
+use icu_codepointtrie::TrieType;
 use icu_provider::DataError;
 use std::fmt::Debug;
 use std::path::PathBuf;

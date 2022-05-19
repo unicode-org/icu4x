@@ -39,11 +39,11 @@ impl CldrPaths {
         }
     }
 
-    pub(crate) fn cldr_core<'a>(&'a self) -> CldrDirNoLang<'a> {
+    pub(crate) fn cldr_core(&self) -> CldrDirNoLang<'_> {
         CldrDirNoLang(self.root.join("cldr-core"), self.cache.as_ref())
     }
 
-    pub(crate) fn cldr_numbers<'a>(&'a self) -> CldrDirLang<'a> {
+    pub(crate) fn cldr_numbers(&self) -> CldrDirLang<'_> {
         CldrDirLang(
             self.root
                 .join(format!("cldr-numbers-{}", self.locale_subset))
@@ -52,7 +52,7 @@ impl CldrPaths {
         )
     }
 
-    pub(crate) fn cldr_misc<'a>(&'a self) -> CldrDirLang<'a> {
+    pub(crate) fn cldr_misc(&self) -> CldrDirLang<'_> {
         CldrDirLang(
             self.root
                 .join(format!("cldr-misc-{}", self.locale_subset))
@@ -61,14 +61,14 @@ impl CldrPaths {
         )
     }
 
-    pub(crate) fn cldr_bcp47<'a>(&'a self) -> CldrDirNoLang<'a> {
+    pub(crate) fn cldr_bcp47(&self) -> CldrDirNoLang<'_> {
         CldrDirNoLang(
             self.root.join("cldr-bcp47").join("bcp47"),
             self.cache.as_ref(),
         )
     }
 
-    pub(crate) fn cldr_dates<'a>(&'a self, cal: &str) -> CldrDirLang<'a> {
+    pub(crate) fn cldr_dates(&self, cal: &str) -> CldrDirLang<'_> {
         CldrDirLang(
             if cal == "gregorian" {
                 self.root.join(format!("cldr-dates-{}", self.locale_subset))
@@ -89,7 +89,7 @@ impl<'a> CldrDirNoLang<'a> {
     where
         for<'de> S: serde::Deserialize<'de> + 'static + Send + Sync,
     {
-        read_and_parse_json(&self.0.join(file_name), &self.1)
+        read_and_parse_json(&self.0.join(file_name), self.1)
     }
 }
 
@@ -104,7 +104,7 @@ impl<'a> CldrDirLang<'a> {
     where
         for<'de> S: serde::Deserialize<'de> + 'static + Send + Sync,
     {
-        read_and_parse_json(&self.0.join(lang.to_string()).join(file_name), &self.1)
+        read_and_parse_json(&self.0.join(lang.to_string()).join(file_name), self.1)
     }
 
     pub(crate) fn list_langs(
@@ -131,8 +131,8 @@ where
 {
     if cache.get(path).is_none() {
         log::trace!("Reading: {:?}", path);
-        let file = File::open(path).map_err(|e| (e, path.clone()))?;
-        let file: S = serde_json::from_reader(BufReader::new(file)).map_err(|e| (e, path.clone()))?;
+        let file = File::open(path).map_err(|e| (e, path))?;
+        let file: S = serde_json::from_reader(BufReader::new(file)).map_err(|e| (e, path))?;
         cache.insert(path.to_path_buf(), Box::new(file));
     }
     cache

@@ -87,16 +87,17 @@ impl UpropsPaths {
             })
     }
 
+    #[cfg(feature = "experimental")]
     pub fn get_case(&self) -> Result<uprops_serde::case::Main, DatagenError> {
         self.read_and_parse_toml(&self.root.join("ucase.toml"))
     }
 
-    fn read_and_parse_toml<'a, D>(&self, path: &Path) -> Result<D, DatagenError>
+    fn read_and_parse_toml<D>(&self, path: &Path) -> Result<D, DatagenError>
     where
         for<'de> D: serde::Deserialize<'de> + 'static,
     {
         log::trace!("Reading: {:?}", path);
-        let file = std::fs::read_to_string(path).map_err(|e| (e, path.clone()))?;
-        toml::from_str(&file).map_err(|e| (e, path.clone()).into())
+        let file = std::fs::read_to_string(path).map_err(|e| (e, path))?;
+        toml::from_str(&file).map_err(|e| (e, path).into())
     }
 }
