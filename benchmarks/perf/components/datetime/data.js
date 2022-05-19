@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1652916988786,
+  "lastUpdate": 1652970246270,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -32519,6 +32519,102 @@ window.BENCHMARK_DATA = {
             "name": "pattern/parse",
             "value": 4451,
             "range": "± 17",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "dminor@mozilla.com",
+            "name": "Dan Minor",
+            "username": "dminor"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "a2eb5a3baf26e3624f824d6d4357ce952eaadd7b",
+          "message": "Add fractional seconds support components bag (#1873)\n\n* Add fractional seconds support components bag\r\n\r\n* Address review comments",
+          "timestamp": "2022-05-19T10:12:49-04:00",
+          "tree_id": "7e84839db6b948caea4399f8b212249015085d1d",
+          "url": "https://github.com/unicode-org/icu4x/commit/a2eb5a3baf26e3624f824d6d4357ce952eaadd7b"
+        },
+        "date": 1652970224388,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 78392,
+            "range": "± 96",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 750573,
+            "range": "± 1027",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 155210,
+            "range": "± 415",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/DateTimeFormat/format_to_write",
+            "value": 76320,
+            "range": "± 65",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/DateTimeFormat/format_to_string",
+            "value": 85513,
+            "range": "± 389",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/format",
+            "value": 79076,
+            "range": "± 74",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/to_string",
+            "value": 87226,
+            "range": "± 74",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/ZonedDateTimeFormat/format_to_write",
+            "value": 153837,
+            "range": "± 238",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/ZonedDateTimeFormat/format_to_string",
+            "value": 164468,
+            "range": "± 217",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/format",
+            "value": 155787,
+            "range": "± 256",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/to_string",
+            "value": 168808,
+            "range": "± 291",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "pattern/parse",
+            "value": 4412,
+            "range": "± 5",
             "unit": "ns/iter"
           }
         ]
