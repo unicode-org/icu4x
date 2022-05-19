@@ -16,7 +16,6 @@ use crate::{types, Calendar, Date, DateDuration, DateDurationUnit};
 use icu_locid::extensions::unicode::Value;
 use icu_locid::{unicode_ext_key, unicode_ext_value, Locale};
 
-use crate::provider;
 use icu_provider::prelude::*;
 
 /// This is a calendar that encompasses all formattable calendars supported by this crate
@@ -320,7 +319,7 @@ impl AnyCalendar {
     #[cfg(feature = "serde")]
     pub fn try_new_unstable<P>(kind: AnyCalendarKind, provider: &P) -> Result<Self, DataError>
     where
-        P: ResourceProvider<provider::JapaneseErasV1Marker> + ?Sized,
+        P: ResourceProvider<crate::provider::JapaneseErasV1Marker> + ?Sized,
     {
         Ok(match kind {
             AnyCalendarKind::Gregorian => AnyCalendar::Gregorian(Gregorian),
