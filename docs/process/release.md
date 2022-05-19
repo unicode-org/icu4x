@@ -16,15 +16,21 @@ Once the release is complete, the assigned release driver will:
   * Documentation
   * Coverage
   * Performance / Memory / Size benchmarks
+  * Cargo.toml files
+    * Cargo.toml files need to specify versions for each entry in `dependencies`.
+    * Cargo.toml should not specify versions for each entry in `dev-dependencies`.
+    * Ensure that any new packages have suitable version numbers.
+    * Ensure that the Cargo.toml file includes a set of fields consistent with other ICU4X packages.
 * Build a changelog for the release
   * You can use commands like `git log icu@0.4.1..@ -- components/plurals/src/` to figure out what has changed in each component since the last release
-* [Tag the Release](https://github.com/unicode-org/icu4x/releases)
 * `cargo publish` each `util/` as necessary (See [Publishing utils](#Publishing utils))
+  * Note that you may have circular dependencies involving dev-dependencies. In this case, comment out the problematic dependency and use `cargo publish --allow-dirty`
 * `cargo publish` each component and meta component
 * `cargo publish` all crates under `ffi/`, starting with `ffi/diplomat`.
 * Add `icu4x-release` group as owners to each new component you're publishing
   * `cargo owner -a github:unicode-org:icu4x-release`
 * Ensure that the steps in `docs/tutorials/intro.md` still work with updated version numbers
+* [Tag the Release](https://github.com/unicode-org/icu4x/releases)
 * Announce the release to public
 
 

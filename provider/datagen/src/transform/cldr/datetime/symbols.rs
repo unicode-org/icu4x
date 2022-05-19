@@ -56,6 +56,12 @@ fn get_era_code_map(calendar: &str) -> BTreeMap<String, TinyStr16> {
         "indian" => vec![("0".to_string(), tinystr!(16, "saka"))]
             .into_iter()
             .collect(),
+        "ethiopic" => vec![
+            ("0".to_string(), tinystr!(16, "incarnation")),
+            ("1".to_string(), tinystr!(16, "before-incar")),
+        ]
+        .into_iter()
+        .collect(),
         #[allow(clippy::panic)] // TODO(#1668) Clippy exceptions need docs or fixing.
         _ => panic!("Era map unknown for {}", calendar),
     }

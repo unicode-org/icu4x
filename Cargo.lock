@@ -89,14 +89,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "baked"
-version = "1.0.0"
-dependencies = [
- "icu_list",
- "icu_provider",
-]
-
-[[package]]
 name = "bare-metal"
 version = "0.2.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1702,13 +1694,13 @@ dependencies = [
 name = "icu_testdata"
 version = "0.6.0"
 dependencies = [
- "baked",
  "cargo_metadata",
  "clap",
  "displaydoc",
  "eyre",
  "futures",
  "icu_datagen",
+ "icu_list",
  "icu_locid",
  "icu_plurals",
  "icu_provider",

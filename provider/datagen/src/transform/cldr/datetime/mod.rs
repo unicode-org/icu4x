@@ -36,6 +36,7 @@ impl From<&SourceData> for CommonDateProvider {
                 (icu_locid::unicode_ext_value!("japanese"), "japanese"),
                 (icu_locid::unicode_ext_value!("coptic"), "coptic"),
                 (icu_locid::unicode_ext_value!("indian"), "indian"),
+                (icu_locid::unicode_ext_value!("ethiopic"), "ethiopic"),
             ]
             .into_iter()
             .collect(),

@@ -42,7 +42,7 @@ The result is a new directory `~/projects/icu/myapp` with a file `./src/main.rs`
 
 ```toml
 [dependencies]
-icu = "0.2"
+icu = "0.6"
 ```
 
 After saving the changes, calling `cargo check` should vendor in `ICU4X` dependency.
@@ -136,8 +136,8 @@ First, we need to register our choice of the provider in `~/projects/icu/myapp/C
 
 ```
 [dependencies]
-icu = "0.5"
-icu_testdata = "0.5"
+icu = "0.6"
+icu_testdata = "0.6"
 ```
 
 and then we can use it in our code:
@@ -152,7 +152,7 @@ While this app doesn't do anything on its own yet, we now have a loaded data pro
 
 ```rust
 use icu::locid::locale;
-use icu::datetime::{DateTimeFormat, mock::parse_gregorian_from_str, options::length};
+use icu::datetime::{DateTimeFormat, DateTimeFormatOptions, mock::parse_gregorian_from_str, options::length};
 
 fn main() {
     let date = parse_gregorian_from_str("2020-10-14T13:21:00")
@@ -192,8 +192,8 @@ If you have ICU4X data on the file system in a JSON format, it can be loaded via
 
 ```toml
 [dependencies]
-icu = "0.5"
-icu_provider_fs = {version = "0.5" , features = ["deserialize_json"]}
+icu = "0.6"
+icu_provider_fs = {version = "0.6" , features = ["deserialize_json"]}
 ```
 
 ```rs
@@ -220,8 +220,8 @@ The `datagen` component has a binary application which will fetch the CLDR data 
 ```
 git clone https://github.com/unicode-org/icu4x
 cd icu4x
-git checkout icu@0.5.0
-cargo run --bin icu4x-datagen --features download -- \
+git checkout icu@0.6.0
+cargo run --bin icu4x-datagen --features bin -- \
     --cldr-tag 41.0.0 \
     --uprops-tag release-71-1 \
     --out ~/projects/icu/icu4x-data \
@@ -247,7 +247,7 @@ After that step, it should be possible to navigate to `~/projects/icu/icu4x-data
 
 # 6. Summary
 
-This concludes this introduction tutorial. 
+This concludes this introduction tutorial.
 
 With the help of `DateTimeFormat`, `Locale` and `DataProvider` we formatted a date to Japanese, but that's just a start.
 
