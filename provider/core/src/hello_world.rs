@@ -6,6 +6,7 @@
 
 #![allow(clippy::exhaustive_structs)] // data struct module
 
+use crate::buf::BufferFormat;
 #[cfg(feature = "datagen")]
 use crate::datagen::IterableResourceProvider;
 use crate::helpers;

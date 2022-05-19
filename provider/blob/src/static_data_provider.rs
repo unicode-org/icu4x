@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::blob_schema::*;
+use icu_provider::buf::BufferFormat;
 use icu_provider::prelude::*;
 use serde::de::Deserialize;
 use writeable::Writeable;
@@ -100,9 +101,11 @@ impl BufferProvider for StaticDataProvider {
         key: ResourceKey,
         req: &DataRequest,
     ) -> Result<DataResponse<BufferMarker>, DataError> {
+        let mut metadata = DataResponseMetadata::default();
+        // TODO(#1109): Set metadata.data_langid correctly.
+        metadata.buffer_format = Some(BufferFormat::Postcard07);
         Ok(DataResponse {
-            // TODO(#1109): Set metadata.data_langid correctly.
-            metadata: Default::default(),
+            metadata,
             payload: Some(DataPayload::from_static_buffer(
                 self.data
                     .get(&key.get_hash(), req.options.write_to_string().as_bytes())
