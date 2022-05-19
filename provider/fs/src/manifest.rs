@@ -54,7 +54,7 @@ impl Manifest {
                 .with_display_context(&e)
         })?
         .0;
-        Ok(Self::for_format(result.buffer_format)?)
+        Self::for_format(result.buffer_format)
     }
 
     #[cfg(feature = "export")]
@@ -74,8 +74,6 @@ impl Manifest {
                 .with_display_context(&e)
         })?;
         use std::io::Write;
-        writeln!(&mut file)
-            .map_err(|e| DataError::from(e).with_path_context(&path))
-            .into()
+        writeln!(&mut file).map_err(|e| DataError::from(e).with_path_context(&path))
     }
 }
