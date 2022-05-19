@@ -165,7 +165,7 @@ impl DateTime<Gregorian> {
     ///                     types::IsoMinute,
     ///                     types::IsoSecond};
     ///
-    /// let datetime_gregorian = DateTime::new_gregorian_datetime_from_integers(1970, 1, 2, 13, 1, 0, 0)
+    /// let datetime_gregorian = DateTime::new_gregorian_datetime(1970, 1, 2, 13, 1, 0)
     ///     .expect("Failed to initialize Gregorian DateTime instance.");
     ///
     /// assert_eq!(datetime_gregorian.date.year().number, 1970);
@@ -175,18 +175,17 @@ impl DateTime<Gregorian> {
     /// assert_eq!(datetime_gregorian.time.minute, IsoMinute::new_unchecked(1));
     /// assert_eq!(datetime_gregorian.time.second, IsoSecond::new_unchecked(0));
     /// ```
-    pub fn new_gregorian_datetime_from_integers(
+    pub fn new_gregorian_datetime(
         year: i32,
         month: u8,
         day: u8,
         hour: u8,
         minute: u8,
         second: u8,
-        fraction: u32,
     ) -> Result<DateTime<Gregorian>, DateTimeError> {
         Ok(DateTime {
             date: Date::new_gregorian_date(year.into(), month.try_into()?, day.try_into()?)?,
-            time: types::Time::try_new(hour, minute, second, fraction)?,
+            time: types::Time::try_new(hour, minute, second, 0)?,
         })
     }
 }

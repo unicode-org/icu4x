@@ -69,40 +69,6 @@ fn bench_calendar<C: Clone + Calendar>(
     });
 }
 
-#[allow(dead_code)]
-fn bench_calendar_nano<C: Clone + Calendar>(
-    group: &mut BenchmarkGroup<WallTime>,
-    name: &str,
-    fxs: &DateFixture,
-    calendar: C,
-    calendar_datetime_init: impl Fn(i32, u8, u8, u8, u8, u8, u32) -> DateTime<C>,
-) {
-    // Version of `bench_calendar` that uses nanoseconds.
-    group.bench_function(name, |b| {
-        b.iter(|| {
-            for fx in &fxs.0 {
-                // Instantion from int. Nanosecond value set to 0.
-                let mut instantiated_datetime_calendar = calendar_datetime_init(
-                    fx.year, fx.month, fx.day, fx.hour, fx.minute, fx.second, 0,
-                );
-
-                // Conversion from ISO
-                let datetime_iso = DateTime::new_iso_datetime_from_integers(
-                    fx.year, fx.month, fx.day, fx.hour, fx.minute, fx.second,
-                )
-                .unwrap();
-                let mut converted_datetime_calendar =
-                    DateTime::new_from_iso(datetime_iso, calendar.clone());
-
-                bench_datetimes(vec![
-                    &mut instantiated_datetime_calendar,
-                    &mut converted_datetime_calendar,
-                ]);
-            }
-        })
-    });
-}
-
 fn datetime_benches(c: &mut Criterion) {
     let mut group = c.benchmark_group("datetime");
     let fxs = fixtures::get_dates_fixture().unwrap();
@@ -143,12 +109,12 @@ fn datetime_benches(c: &mut Criterion) {
     );
 
     #[cfg(feature = "bench")]
-    bench_calendar_nano(
+    bench_calendar(
         &mut group,
         "calendar/gregorian",
         &fxs,
         icu::calendar::gregorian::Gregorian,
-        |y, m, d, h, min, s, n| DateTime::new_gregorian_datetime_from_integers(y, m, d, h, min, s, n).unwrap(),
+        |y, m, d, h, min, s| DateTime::new_gregorian_datetime(y, m, d, h, min, s).unwrap(),
     );
 
     #[cfg(feature = "bench")]
