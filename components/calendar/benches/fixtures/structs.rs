@@ -15,5 +15,4 @@ pub struct Test {
     pub hour: u8,
     pub minute: u8,
     pub second: u8,
-    pub nanosecond: u32,
 }

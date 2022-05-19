@@ -83,13 +83,7 @@ fn bench_calendar_nano<C: Clone + Calendar>(
             for fx in &fxs.0 {
                 // Instantion from int. Nanosecond value set to 0.
                 let mut instantiated_datetime_calendar = calendar_datetime_init(
-                    fx.year,
-                    fx.month,
-                    fx.day,
-                    fx.hour,
-                    fx.minute,
-                    fx.second,
-                    fx.nanosecond,
+                    fx.year, fx.month, fx.day, fx.hour, fx.minute, fx.second, 0,
                 );
 
                 // Conversion from ISO
@@ -140,14 +134,12 @@ fn datetime_benches(c: &mut Criterion) {
     );
 
     #[cfg(feature = "bench")]
-    bench_calendar_nano(
+    bench_calendar(
         &mut group,
         "calendar/ethiopic",
         &fxs,
         icu::calendar::ethiopic::Ethiopic,
-        |y, m, d, h, min, s, nano| {
-            DateTime::new_ethiopic_datetime(y, m, d, h, min, s, nano).unwrap()
-        },
+        |y, m, d, h, min, s| DateTime::new_ethiopic_datetime(y, m, d, h, min, s).unwrap(),
     );
 
     #[cfg(feature = "bench")]
@@ -156,9 +148,7 @@ fn datetime_benches(c: &mut Criterion) {
         "calendar/gregorian",
         &fxs,
         icu::calendar::gregorian::Gregorian,
-        |y, m, d, h, min, s, nano| {
-            DateTime::new_gregorian_datetime_from_integers(y, m, d, h, min, s, nano).unwrap()
-        },
+        |y, m, d, h, min, s, n| DateTime::new_gregorian_datetime_from_integers(y, m, d, h, min, s, n).unwrap(),
     );
 
     #[cfg(feature = "bench")]
