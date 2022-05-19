@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::types::Time;
-use crate::{AsCalendar, Date, Iso};
+use crate::{AsCalendar, Calendar, Date, Iso};
 
 /// A date+time for a given calendar.
 ///
@@ -62,6 +62,28 @@ impl<A: AsCalendar> DateTime<A> {
         DateTime {
             date: self.date.to_calendar(calendar),
             time: self.time,
+        }
+    }
+}
+
+impl<C, A, B> PartialEq<DateTime<B>> for DateTime<A>
+where
+    C: Calendar,
+    A: AsCalendar<Calendar = C>,
+    B: AsCalendar<Calendar = C>,
+{
+    fn eq(&self, other: &DateTime<B>) -> bool {
+        self.date == other.date && self.time == other.time
+    }
+}
+
+impl<A: AsCalendar> Eq for DateTime<A> {}
+
+impl<A: AsCalendar + Clone> Clone for DateTime<A> {
+    fn clone(&self) -> Self {
+        Self {
+            date: self.date.clone(),
+            time: self.time.clone(),
         }
     }
 }
