@@ -12,7 +12,7 @@ use crate::{
     pattern::{
         hour_cycle, runtime,
         runtime::{Pattern, PatternPlurals},
-        PatternItem,
+        PatternItem, TimeGranularity,
     },
     provider::calendar::{patterns::GenericLengthPatternsV1, DateSkeletonPatternsV1},
 };
@@ -155,6 +155,7 @@ pub fn create_best_pattern_for_fields<'data>(
                     pattern_plurals.for_each_mut(|pattern| {
                         hour_cycle::naively_apply_preferences(pattern, &components.preferences);
                         naively_apply_time_zone_name(pattern, &components.time_zone_name);
+                        append_fractional_seconds(pattern, &time);
                     });
                 }
                 BestSkeleton::MissingOrExtraFields(pattern_plurals)
@@ -183,6 +184,7 @@ pub fn create_best_pattern_for_fields<'data>(
             pattern_plurals.expect_pattern("Only date patterns can contain plural variants");
         hour_cycle::naively_apply_preferences(&mut pattern, &components.preferences);
         naively_apply_time_zone_name(&mut pattern, &components.time_zone_name);
+        append_fractional_seconds(&mut pattern, &time);
         pattern
     });
 
@@ -317,6 +319,38 @@ fn adjust_pattern_field_lengths(fields: &[Field], pattern: &mut Pattern) {
     })
 }
 
+/// Alters given Pattern so that it will have a fractional second field if it was requested.
+///
+/// If the requested skeleton included both seconds and fractional seconds and the dateFormatItem
+/// skeleton included seconds but not fractional seconds, then the seconds field of the corresponding
+/// pattern should be adjusted by appending the locale’s decimal separator, followed by the sequence
+/// of ‘S’ characters from the requested skeleton.
+/// (see https://unicode.org/reports/tr35/tr35-dates.html#Matching_Skeletons)
+fn append_fractional_seconds(pattern: &mut Pattern, fields: &[Field]) {
+    if let Some(requested_field) = fields
+        .iter()
+        .find(|field| field.symbol == FieldSymbol::Second(fields::Second::FractionalSecond))
+    {
+        let mut items = pattern.items.to_vec();
+        if let Some(pos) = items.iter().position(|&item| match item {
+            PatternItem::Field(field) => {
+                matches!(field.symbol, FieldSymbol::Second(fields::Second::Second))
+            }
+            _ => false,
+        }) {
+            if let FieldLength::Fixed(p) = requested_field.length {
+                if p > 0 {
+                    // TODO: Use locale appropriate decimal separator (issue #597)
+                    items.insert(pos + 1, PatternItem::Literal('.'));
+                    items.insert(pos + 2, PatternItem::Field(*requested_field));
+                }
+            }
+        }
+        *pattern = Pattern::from(items);
+        pattern.time_granularity = TimeGranularity::Nanoseconds;
+    }
+}
+
 /// A partial implementation of the [UTS 35 skeleton matching algorithm](https://unicode.org/reports/tr35/tr35-dates.html#Matching_Skeletons).
 ///
 /// The following is implemented:
@@ -353,6 +387,8 @@ pub fn get_best_available_format_pattern<'data>(
 
         let mut requested_fields = fields.iter().peekable();
         let mut skeleton_fields = skeleton.0.fields_iter().peekable();
+
+        let mut matched_seconds = false;
         loop {
             let next = (requested_fields.peek(), skeleton_fields.peek());
 
@@ -378,13 +414,29 @@ pub fn get_best_available_format_pattern<'data>(
                             continue;
                         }
                         Ordering::Greater => {
-                            // The requested field symbol is missing from the skeleton.
-                            distance += REQUESTED_SYMBOL_MISSING;
-                            missing_fields += 1;
-                            requested_fields.next();
-                            continue;
+                            // https://unicode.org/reports/tr35/tr35-dates.html#Matching_Skeletons
+                            // A requested skeleton that includes both seconds and fractional seconds (e.g. “mmssSSS”) is allowed
+                            // to match a dateFormatItem skeleton that includes seconds but not fractional seconds (e.g. “ms”).
+                            if !(matched_seconds
+                                && requested_field.symbol
+                                    == FieldSymbol::Second(fields::Second::FractionalSecond))
+                            {
+                                // The requested field symbol is missing from the skeleton.
+                                distance += REQUESTED_SYMBOL_MISSING;
+                                missing_fields += 1;
+                                requested_fields.next();
+                                continue;
+                            }
                         }
                         _ => (),
+                    }
+
+                    if requested_field.symbol
+                        == FieldSymbol::Second(fields::Second::FractionalSecond)
+                        && skeleton_field.symbol
+                            == FieldSymbol::Second(fields::Second::FractionalSecond)
+                    {
+                        matched_seconds = true;
                     }
 
                     distance += if requested_field == skeleton_field {
