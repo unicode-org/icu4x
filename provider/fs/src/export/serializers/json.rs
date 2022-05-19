@@ -46,12 +46,8 @@ impl AbstractSerializer for Serializer {
     ) -> Result<(), DataError> {
         let mut sink = crlify::BufWriterWithLineEndingFix::new(sink);
         match self.style {
-            StyleOption::Compact => obj.serialize(&mut <dyn erased_serde::Serializer>::erase(
-                &mut serde_json::Serializer::new(&mut sink),
-            )),
-            StyleOption::Pretty => obj.serialize(&mut <dyn erased_serde::Serializer>::erase(
-                &mut serde_json::Serializer::pretty(&mut sink),
-            )),
+            StyleOption::Compact => obj.serialize(&mut serde_json::Serializer::new(&mut sink)),
+            StyleOption::Pretty => obj.serialize(&mut serde_json::Serializer::pretty(&mut sink)),
         }?;
         // Write an empty line at the end of the document
         writeln!(sink)?;

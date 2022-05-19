@@ -56,13 +56,14 @@ impl DataPayload<SerializeMarker> {
     /// ).expect("Serialization should succeed");
     /// assert_eq!("{\"message\":\"(und) Hello World\"}".as_bytes(), buffer);
     /// ```
-    pub fn serialize(
-        &self,
-        mut serializer: &mut dyn erased_serde::Serializer,
-    ) -> Result<(), DataError> {
+    pub fn serialize<S>(&self, serializer: S) -> Result<(), DataError>
+    where
+        S: serde::Serializer,
+        S::Ok: 'static, // erased_serde requirement
+    {
         self.get()
             .0
-            .erased_serialize(&mut serializer)
+            .erased_serialize(&mut <dyn erased_serde::Serializer>::erase(serializer))
             .map_err(|e| DataError::custom("Serde export").with_display_context(&e))?;
         Ok(())
     }

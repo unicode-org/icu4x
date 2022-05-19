@@ -1628,7 +1628,6 @@ dependencies = [
 name = "icu_provider_blob"
 version = "0.6.0"
 dependencies = [
- "erased-serde",
  "icu_locid",
  "icu_provider",
  "litemap",
@@ -1648,7 +1647,6 @@ dependencies = [
  "criterion",
  "crlify",
  "displaydoc",
- "erased-serde",
  "icu_benchmark_macros",
  "icu_locid",
  "icu_provider",

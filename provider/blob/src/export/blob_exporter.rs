@@ -40,7 +40,7 @@ impl DataExporter<SerializeMarker> for BlobExporter<'_> {
         let mut serializer = postcard::Serializer {
             output: postcard::flavors::AllocVec(Vec::new()),
         };
-        payload.serialize(&mut <dyn erased_serde::Serializer>::erase(&mut serializer))?;
+        payload.serialize(&mut serializer)?;
         self.resources.lock().unwrap().push((
             key.get_hash(),
             options.write_to_string().into_owned().into_bytes(),

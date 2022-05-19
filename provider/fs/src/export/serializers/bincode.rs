@@ -24,11 +24,9 @@ impl AbstractSerializer for Serializer {
         obj: DataPayload<SerializeMarker>,
         mut sink: &mut dyn io::Write,
     ) -> Result<(), DataError> {
-        obj.serialize(&mut <dyn erased_serde::Serializer>::erase(
-            &mut bincode::Serializer::new(
-                &mut sink,
-                bincode::config::DefaultOptions::new().with_fixint_encoding(),
-            ),
+        obj.serialize(&mut bincode::Serializer::new(
+            &mut sink,
+            bincode::config::DefaultOptions::new().with_fixint_encoding(),
         ))?;
         Ok(())
     }

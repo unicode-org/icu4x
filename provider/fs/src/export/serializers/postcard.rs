@@ -26,7 +26,7 @@ impl AbstractSerializer for Serializer {
         let mut serializer = postcard::Serializer {
             output: postcard::flavors::StdVec(Vec::new()),
         };
-        obj.serialize(&mut <dyn erased_serde::Serializer>::erase(&mut serializer))?;
+        obj.serialize(&mut serializer)?;
         sink.write_all(&serializer.output.0)?;
         Ok(())
     }
