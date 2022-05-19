@@ -61,7 +61,7 @@ impl BufferProvider for FsDataProvider {
         &self,
         key: ResourceKey,
         req: &DataRequest,
-    ) -> Result<(DataResponse<BufferMarker>, BufferFormat), DataError> {
+    ) -> Result<DataResponse<BufferMarker>, DataError> {
         let mut path_buf = self.res_root.clone();
         path_buf.push(&*key.write_to_string());
         if !path_buf.exists() {
@@ -74,14 +74,13 @@ impl BufferProvider for FsDataProvider {
         }
         let buffer =
             fs::read(&path_buf).map_err(|e| DataError::from(e).with_path_context(&path_buf))?;
-        Ok((
-            DataResponse {
-                // TODO(#1109): Set metadata.data_langid correctly.
-                metadata: Default::default(),
-                payload: Some(DataPayload::from_rc_buffer(buffer.into())),
-            },
-            self.manifest.buffer_format,
-        ))
+        let mut metadata = DataResponseMetadata::default();
+        // TODO(#1109): Set metadata.data_langid correctly.
+        metadata.buffer_format = Some(self.manifest.buffer_format);
+        Ok(DataResponse {
+            metadata,
+            payload: Some(DataPayload::from_rc_buffer(buffer.into())),
+        })
     }
 }
 

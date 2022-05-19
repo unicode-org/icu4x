@@ -117,7 +117,11 @@ where
         key: ResourceKey,
         req: &DataRequest,
     ) -> Result<DataResponse<M>, DataError> {
-        let (buffer_response, buffer_format) = BufferProvider::load_buffer(self.0, key, req)?;
+        let buffer_response = BufferProvider::load_buffer(self.0, key, req)?;
+        let buffer_format = buffer_response
+            .metadata
+            .buffer_format
+            .ok_or_else(|| DataError::custom("BufferProvider didn't set BufferFormat"))?;
         Ok(DataResponse {
             metadata: buffer_response.metadata,
             payload: buffer_response

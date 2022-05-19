@@ -154,22 +154,20 @@ impl BufferProvider for HelloWorldJsonProvider {
         &self,
         key: ResourceKey,
         req: &DataRequest,
-    ) -> Result<(DataResponse<BufferMarker>, BufferFormat), DataError> {
+    ) -> Result<DataResponse<BufferMarker>, DataError> {
         key.match_key(HelloWorldV1Marker::KEY)?;
         let result = self.0.load_resource(req)?;
-        let (metadata, old_payload) =
+        let (mut metadata, old_payload) =
             DataResponse::<HelloWorldV1Marker>::take_metadata_and_payload(result)?;
+        metadata.buffer_format = Some(BufferFormat::Json);
         let mut buffer = String::new();
         buffer.push_str("{\"message\":\"");
         helpers::escape_for_json(&old_payload.get().message, &mut buffer);
         buffer.push_str("\"}");
-        Ok((
-            DataResponse {
-                metadata,
-                payload: Some(DataPayload::from_rc_buffer(buffer.as_bytes().into())),
-            },
-            BufferFormat::Json,
-        ))
+        Ok(DataResponse {
+            metadata,
+            payload: Some(DataPayload::from_rc_buffer(buffer.as_bytes().into())),
+        })
     }
 }
 

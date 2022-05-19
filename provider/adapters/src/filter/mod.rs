@@ -115,7 +115,7 @@ where
         &self,
         key: ResourceKey,
         req: &DataRequest,
-    ) -> Result<(DataResponse<BufferMarker>, BufferFormat), DataError> {
+    ) -> Result<DataResponse<BufferMarker>, DataError> {
         if (self.predicate)(req) {
             self.inner.load_buffer(key, req)
         } else {

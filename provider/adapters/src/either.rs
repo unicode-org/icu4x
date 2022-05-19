@@ -38,7 +38,7 @@ impl<P0: BufferProvider, P1: BufferProvider> BufferProvider for EitherProvider<P
         &self,
         key: ResourceKey,
         req: &DataRequest,
-    ) -> Result<(DataResponse<BufferMarker>, BufferFormat), DataError> {
+    ) -> Result<DataResponse<BufferMarker>, DataError> {
         use EitherProvider::*;
         match self {
             A(p) => p.load_buffer(key, req),

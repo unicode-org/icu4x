@@ -119,7 +119,7 @@ where
         &self,
         key: ResourceKey,
         req: &DataRequest,
-    ) -> Result<(DataResponse<BufferMarker>, BufferFormat), DataError> {
+    ) -> Result<DataResponse<BufferMarker>, DataError> {
         let result = self.0.load_buffer(key, req);
         if !result_is_err_missing_resource_key(&result) {
             return result;
@@ -250,7 +250,7 @@ where
         &self,
         key: ResourceKey,
         req: &DataRequest,
-    ) -> Result<(DataResponse<BufferMarker>, BufferFormat), DataError> {
+    ) -> Result<DataResponse<BufferMarker>, DataError> {
         for provider in self.providers.iter() {
             let result = provider.load_buffer(key, req);
             if !result_is_err_missing_resource_key(&result) {

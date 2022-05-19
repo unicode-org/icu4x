@@ -3,7 +3,6 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::blob_schema::BlobSchema;
-use icu_provider::buf::BufferFormat;
 use icu_provider::prelude::*;
 use icu_provider::RcWrap;
 use serde::de::Deserialize;
@@ -89,29 +88,24 @@ impl BufferProvider for BlobDataProvider {
         &self,
         key: ResourceKey,
         req: &DataRequest,
-    ) -> Result<(DataResponse<BufferMarker>, BufferFormat), DataError> {
-        Ok((
-            DataResponse {
-                // TODO(#1109): Set metadata.data_langid correctly.
-                metadata: Default::default(),
-                payload: Some(DataPayload::from_yoked_buffer(
-                    self.data.try_project_cloned_with_capture(
-                        (key, req),
-                        |zm, (key, req), _| {
-                            zm.get(&key.get_hash(), req.options.write_to_string().as_bytes())
-                                .map_err(|e| {
-                                    match e {
-                                        KeyError::K0 => DataErrorKind::MissingResourceKey,
-                                        KeyError::K1 => DataErrorKind::MissingResourceOptions,
-                                    }
-                                    .with_req(key, req)
-                                })
-                        },
-                    )?,
-                )),
-            },
-            BufferFormat::Postcard07,
-        ))
+    ) -> Result<DataResponse<BufferMarker>, DataError> {
+        Ok(DataResponse {
+            // TODO(#1109): Set metadata.data_langid correctly.
+            metadata: Default::default(),
+            payload: Some(DataPayload::from_yoked_buffer(
+                self.data
+                    .try_project_cloned_with_capture((key, req), |zm, (key, req), _| {
+                        zm.get(&key.get_hash(), req.options.write_to_string().as_bytes())
+                            .map_err(|e| {
+                                match e {
+                                    KeyError::K0 => DataErrorKind::MissingResourceKey,
+                                    KeyError::K1 => DataErrorKind::MissingResourceOptions,
+                                }
+                                .with_req(key, req)
+                            })
+                    })?,
+            )),
+        })
     }
 }
 

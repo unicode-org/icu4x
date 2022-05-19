@@ -53,7 +53,7 @@ pub trait BufferProvider {
         &self,
         key: ResourceKey,
         req: &DataRequest,
-    ) -> Result<(DataResponse<BufferMarker>, BufferFormat), DataError>;
+    ) -> Result<DataResponse<BufferMarker>, DataError>;
 }
 
 /// An enum expressing all Serde formats known to ICU4X.
