@@ -57,9 +57,7 @@ impl FilesystemExporter {
     ) -> Result<Self, DataError> {
         let result = FilesystemExporter {
             root: options.root,
-            manifest: Manifest {
-                buffer_format: serializer.get_buffer_format(),
-            },
+            manifest: Manifest::for_format(serializer.get_buffer_format())?,
             serializer,
         };
 
@@ -73,17 +71,7 @@ impl FilesystemExporter {
         .and_then(|_| fs::create_dir_all(&result.root))
         .map_err(|e| DataError::from(e).with_path_context(&result.root))?;
 
-        let manifest_path = result.root.join(Manifest::NAME);
-        let mut manifest_file = fs::File::create(&manifest_path)
-            .map_err(|e| DataError::from(e).with_path_context(&manifest_path))?;
-        result
-            .manifest
-            .serialize(&mut serde_json::Serializer::pretty(&mut manifest_file))
-            .map_err(|e| {
-                DataError::custom("FsDataProvider manifest serialization")
-                    .with_path_context(&manifest_path)
-                    .with_display_context(&e)
-            })?;
+        result.manifest.write(&result.root)?;
         Ok(result)
     }
 }
@@ -100,7 +88,7 @@ impl DataExporter<SerializeMarker> for FilesystemExporter {
         let mut path_buf = self.root.clone();
         path_buf.push(&*key.write_to_string());
         path_buf.push(&*options.write_to_string());
-        path_buf.set_extension(self.manifest.get_file_extension()?);
+        path_buf.set_extension(self.manifest.file_extension);
 
         if let Some(parent_dir) = path_buf.parent() {
             fs::create_dir_all(&parent_dir)
