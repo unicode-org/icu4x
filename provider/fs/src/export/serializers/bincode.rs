@@ -5,7 +5,8 @@
 use super::AbstractSerializer;
 use bincode::config::Options as _;
 use icu_provider::buf::BufferFormat;
-use icu_provider::DataError;
+use icu_provider::prelude::*;
+use icu_provider::serde::SerializeMarker;
 use std::io;
 
 /// A serializer for Bincode.
@@ -20,16 +21,15 @@ pub struct Options;
 impl AbstractSerializer for Serializer {
     fn serialize(
         &self,
-        obj: &dyn erased_serde::Serialize,
+        obj: DataPayload<SerializeMarker>,
         mut sink: &mut dyn io::Write,
     ) -> Result<(), DataError> {
-        obj.erased_serialize(&mut <dyn erased_serde::Serializer>::erase(
+        obj.serialize(&mut <dyn erased_serde::Serializer>::erase(
             &mut bincode::Serializer::new(
                 &mut sink,
                 bincode::config::DefaultOptions::new().with_fixint_encoding(),
             ),
-        ))
-        .map_err(|e| DataError::custom("Bincode serialize").with_display_context(&e))?;
+        ))?;
         Ok(())
     }
 

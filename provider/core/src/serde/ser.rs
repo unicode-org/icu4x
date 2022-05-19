@@ -6,18 +6,10 @@ use crate::dynutil::UpcastDataPayload;
 use crate::prelude::*;
 use crate::yoke::*;
 use alloc::boxed::Box;
-use core::ops::Deref;
 
 /// A wrapper around `Box<erased_serde::Serialize>` for integration with DataProvider.
 #[derive(yoke::Yokeable)]
 pub struct SerializeBox(Box<dyn erased_serde::Serialize>);
-
-impl Deref for SerializeBox {
-    type Target = dyn erased_serde::Serialize;
-    fn deref(&self) -> &Self::Target {
-        self.0.deref()
-    }
-}
 
 impl<M> UpcastDataPayload<M> for SerializeMarker
 where
@@ -69,6 +61,7 @@ impl DataPayload<SerializeMarker> {
         mut serializer: &mut dyn erased_serde::Serializer,
     ) -> Result<(), DataError> {
         self.get()
+            .0
             .erased_serialize(&mut serializer)
             .map_err(|e| DataError::custom("Serde export").with_display_context(&e))?;
         Ok(())

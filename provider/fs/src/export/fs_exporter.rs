@@ -2,14 +2,13 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use super::serializers::{json, AbstractSerializer};
+use super::serializers::AbstractSerializer;
 use crate::manifest::Manifest;
 use icu_provider::export::DataExporter;
 use icu_provider::prelude::*;
 use icu_provider::serde::SerializeMarker;
 use serde::{Deserialize, Serialize};
 use std::fs;
-use std::ops::Deref;
 use std::path::PathBuf;
 use writeable::Writeable;
 
@@ -77,12 +76,14 @@ impl FilesystemExporter {
         let manifest_path = result.root.join(Manifest::NAME);
         let mut manifest_file = fs::File::create(&manifest_path)
             .map_err(|e| DataError::from(e).with_path_context(&manifest_path))?;
-        let manifest_serializer = json::Serializer::new(json::Options {
-            style: json::StyleOption::Pretty,
-        });
-        manifest_serializer
-            .serialize(&result.manifest, &mut manifest_file)
-            .map_err(|e| e.with_path_context(&manifest_path))?;
+        result
+            .manifest
+            .serialize(&mut serde_json::Serializer::pretty(&mut manifest_file))
+            .map_err(|e| {
+                DataError::custom("FsDataProvider manifest serialization")
+                    .with_path_context(&manifest_path)
+                    .with_display_context(&e)
+            })?;
         Ok(result)
     }
 }
@@ -108,7 +109,7 @@ impl DataExporter<SerializeMarker> for FilesystemExporter {
         let mut file = fs::File::create(&path_buf)
             .map_err(|e| DataError::from(e).with_path_context(&path_buf))?;
         self.serializer
-            .serialize(obj.get().deref(), &mut file)
+            .serialize(obj, &mut file)
             .map_err(|e| e.with_path_context(&path_buf))?;
         Ok(())
     }

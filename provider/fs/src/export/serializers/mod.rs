@@ -7,7 +7,8 @@ pub mod json;
 pub mod postcard;
 
 use icu_provider::buf::BufferFormat;
-use icu_provider::DataError;
+use icu_provider::prelude::*;
+use icu_provider::serde::SerializeMarker;
 use std::io;
 
 /// A simple serializer trait that works on whole objects.
@@ -15,7 +16,7 @@ pub trait AbstractSerializer {
     /// Serializes an object to a sink.
     fn serialize(
         &self,
-        obj: &dyn erased_serde::Serialize,
+        obj: DataPayload<SerializeMarker>,
         sink: &mut dyn io::Write,
     ) -> Result<(), DataError>;
 

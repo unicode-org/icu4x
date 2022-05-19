@@ -43,7 +43,7 @@ impl FsDataProvider {
             .map_err(|e| DataError::from(e).with_path_context(&manifest_path))?;
         let manifest: Manifest = serde_json_core::from_str(&manifest_str)
             .map_err(|e| {
-                DataError::custom("Invalid FsDataProvider manifest")
+                DataError::custom("FsDataProvider manifest deserialization")
                     .with_path_context(&manifest_path)
                     .with_display_context(&e)
             })?
