@@ -60,8 +60,9 @@ impl Manifest {
     #[cfg(feature = "export")]
     pub fn write(&self, root: &Path) -> Result<(), DataError> {
         let path = root.join(Self::NAME);
-        let mut file =
-            fs::File::create(&path).map_err(|e| DataError::from(e).with_path_context(&path))?;
+        let mut file = crlify::BufWriterWithLineEndingFix::new(
+            fs::File::create(&path).map_err(|e| DataError::from(e).with_path_context(&path))?,
+        );
         serde::Serialize::serialize(
             &JsonManifest {
                 buffer_format: self.buffer_format,
