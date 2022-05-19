@@ -49,17 +49,14 @@ impl DataPayload<SerializeMarker> {
     ///
     /// // Serialize the payload to a JSON string
     /// let mut buffer: Vec<u8> = vec![];
-    /// payload.into_serializable().serialize(
-    ///     &mut <dyn erased_serde::Serializer>::erase(
-    ///         &mut serde_json::Serializer::new(&mut buffer)
-    ///     )
-    /// ).expect("Serialization should succeed");
+    /// payload.into_serializable().serialize(&mut serde_json::Serializer::new(&mut buffer))
+    ///     .expect("Serialization should succeed");
     /// assert_eq!("{\"message\":\"(und) Hello World\"}".as_bytes(), buffer);
     /// ```
     pub fn serialize<S>(&self, serializer: S) -> Result<(), DataError>
     where
         S: serde::Serializer,
-        S::Ok: 'static, // erased_serde requirement
+        S::Ok: 'static, // erased_serde requirement, cannot return values in `Ok`
     {
         self.get()
             .0
