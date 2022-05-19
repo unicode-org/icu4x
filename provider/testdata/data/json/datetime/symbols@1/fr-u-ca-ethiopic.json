@@ -115,15 +115,18 @@
   "eras": {
     "names": {
       "before-incar": "après l’Incarnation",
-      "incarnation": "avant l’Incarnation"
+      "incarnation": "avant l’Incarnation",
+      "mundi": "ERA0"
     },
     "abbr": {
       "before-incar": "ap. Inc.",
-      "incarnation": "av. Inc."
+      "incarnation": "av. Inc.",
+      "mundi": "ERA0"
     },
     "narrow": {
       "before-incar": "ap. Inc.",
-      "incarnation": "av. Inc."
+      "incarnation": "av. Inc.",
+      "mundi": "ERA0"
     }
   }
 }
