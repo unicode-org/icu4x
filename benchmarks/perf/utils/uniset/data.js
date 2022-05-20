@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1653072294396,
+  "lastUpdate": 1653073983648,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -27971,6 +27971,60 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 41194682,
             "range": "± 60828",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/worst",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/worst",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "8fc8f5c95449127b6ad0e0323de836e29592c5ec",
+          "message": "Format code in doc comments (#1899)",
+          "timestamp": "2022-05-20T21:01:22+02:00",
+          "tree_id": "ee33b56669d838efe39a4b099254d1c399496fcc",
+          "url": "https://github.com/unicode-org/icu4x/commit/8fc8f5c95449127b6ad0e0323de836e29592c5ec"
+        },
+        "date": 1653073963969,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 41374771,
+            "range": "± 60063",
             "unit": "ns/iter"
           },
           {
