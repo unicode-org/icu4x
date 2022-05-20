@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1653065942984,
+  "lastUpdate": 1653071875854,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -15323,6 +15323,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/19bfd93689b3f34dc4f5b798dd03181d6a2d7454"
         },
         "date": 1653065919962,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 2220821,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "andrewpkq@gmail.com",
+            "name": "andrewpollack",
+            "username": "andrewpollack"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "26acf4fd2cfc629a091ba91ac70eac3fe001c946",
+          "message": "Adding high level date and datetime example to base structs, fixing typo (#1866)\n\n* Adding high level date and datetime example to base structs\r\n\r\n* Substituting unwrap for expect\r\n\r\n* Substituting unwrap for expect\r\n\r\n* Adding ISO to message",
+          "timestamp": "2022-05-20T18:35:41Z",
+          "tree_id": "b467867d93bae3ee59b6b0b09a8386a695c232ac",
+          "url": "https://github.com/unicode-org/icu4x/commit/26acf4fd2cfc629a091ba91ac70eac3fe001c946"
+        },
+        "date": 1653071852357,
         "tool": "ndjson",
         "benches": [
           {
