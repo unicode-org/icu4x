@@ -51,3 +51,6 @@ icu_benchmark_macros = { version = "0.6", path = "../../tools/benchmark/macros" 
 
 [[example]]
 name = "iso_date_manipulations"
+
+[[example]]
+name = "iso_datetime_manipulations"
