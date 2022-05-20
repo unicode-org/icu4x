@@ -5,7 +5,6 @@
 //! This module transforms collation-related TOML files created by
 //! `genrb -X` in the ICU4C repo to ICU4X-internal data structures.
 
-use crate::error::DatagenError;
 use crate::transform::reader::get_dir_contents;
 use crate::transform::reader::read_path_to_string;
 use crate::SourceData;
@@ -103,7 +102,7 @@ macro_rules! collation_provider {
 
         /// A data provider reading from .toml files produced by the ICU4C genrb tool.
         impl $provider {
-            fn load_data_if_not_loaded(&self) -> Result<(), DatagenError> {
+            fn load_data_if_not_loaded(&self) -> Result<(), DataError> {
                 if self.data.read().unwrap().is_some() {
                     return Ok(());
                 }
@@ -112,17 +111,14 @@ macro_rules! collation_provider {
                     return Ok(());
                 }
 
-                let root_dir = self
-                    .source
-                    .get_coll_root()
-                    .map_err(|e| DatagenError::Custom(e.to_string(), None))?;
+                let root_dir = self.source.get_coll_root()?;
 
                 let mut data: HashMap<String, $serde_struct> = HashMap::new();
                 for path in get_dir_contents(&root_dir)? {
                     let stem_bytes = if let Some(stem_bytes) = path
                         .file_stem()
                         .and_then(|p| p.to_str())
-                        .ok_or_else(|| DatagenError::Custom("Invalid file name".to_string(), None))?
+                        .ok_or_else(|| DataError::custom("Invalid file name"))?
                         .as_bytes()
                         .strip_suffix($suffix)
                     {
@@ -130,12 +126,12 @@ macro_rules! collation_provider {
                     } else {
                         continue;
                     };
-                    let mut key = String::from_utf8(stem_bytes.to_vec()).map_err(|_| {
-                        DatagenError::Custom("Non-UTF-8 file name".to_string(), None)
-                    })?;
+                    let mut key = String::from_utf8(stem_bytes.to_vec())
+                        .map_err(|_| DataError::custom("Non-UTF-8 file name"))?;
                     let toml_str = read_path_to_string(&path)?;
-                    let toml_obj: $serde_struct = toml::from_str(&toml_str)
-                        .map_err(|e| DatagenError::Custom(e.to_string(), None))?;
+                    let toml_obj: $serde_struct = toml::from_str(&toml_str).map_err(|e| {
+                        crate::error::data_error_from_toml(e).with_path_context(&path)
+                    })?;
                     key.make_ascii_lowercase();
                     data.insert(key, toml_obj);
                 }
@@ -260,7 +256,7 @@ collation_provider!(
     b"_data",
     icu_collator::provider::CollationDataV1 {
         trie: CodePointTrie::<u32>::try_from(&toml_data.trie)
-            .map_err(|e| DatagenError::Custom(e.to_string(), None))?,
+            .map_err(|e| DataError::custom("trie conversion").with_display_context(&e))?,
         contexts: ZeroVec::alloc_from_slice(&toml_data.contexts),
         ce32s: ZeroVec::alloc_from_slice(&toml_data.ce32s),
         ces: toml_data.ces.iter().map(|i| *i as u64).collect(),

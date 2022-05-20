@@ -110,10 +110,9 @@ impl SourceData {
     /// Path to collation data.
     #[cfg(feature = "experimental")]
     pub(crate) fn get_coll_root(&self) -> Result<&Path, DataError> {
-        Ok(self
-            .coll_root
+        self.coll_root
             .as_deref()
-            .ok_or(DatagenError::MissingCollPath)?)
+            .ok_or(crate::error::MISSING_COLLATION_ERROR)
     }
 }
 
