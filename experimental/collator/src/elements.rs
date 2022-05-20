@@ -188,6 +188,28 @@ pub(crate) enum Tag {
 
 /// A compressed form of a collation element as stored in the collation
 /// data.
+///
+/// A `CollationElement32` can be "normal" or "special".
+/// Bits 7 and 6 are case bits for the "normal" case and setting
+/// both is an impossible case bit combination. Hence, "special"
+/// `CollationElement32`s are marked by setting both case bits
+/// to 1. This is equivalent with the low byte being less than
+/// `SPECIAL_CE32_LOW_BYTE` (0xC0, i.e. 0b11000000) in the "normal"
+/// case and equal to or greater in the "special" case.
+///
+/// For the normal case:
+/// Bits: 31..16: Primary weight
+/// Bits: 15..8: Secondary weight
+/// Bits:  7..6: Case bits (cannot both be 1 simultaneously)
+/// Bits:  5..0: The high part of the discontiguous tertiary weight
+/// (The quaternary weight and the low part of the discontiguous
+/// tertiary weight are zero.)
+///
+/// For the special case:
+/// Bits 31..8: tag-specific; see the documention for `Tag`.
+/// Bits  7..6: The specialness marker; both bits set to 1
+/// Bits  5..4: Reserved. May be used in the future to indicate lccc!=0 and tccc!=0.
+/// Bits  3..0: the tag (bit-compatible with `Tag`)
 #[derive(Copy, Clone, PartialEq, Debug)]
 pub(crate) struct CollationElement32(u32);
 
