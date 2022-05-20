@@ -171,11 +171,15 @@ impl<'data> CollationReorderingV1<'data> {
 #[cfg_attr(feature = "datagen", derive(serde::Serialize))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct CollationMetadataV1 {
-    /// 8 highest bits for numeric primary.
-    /// The low 2 bits are the default strength - 1,
-    /// i.e. 0 for primary, 1 for secondary.
-    /// The rest for various flags, some of the space
-    /// being unused.
+    /// See the mask constants in the `impl` block for the
+    /// bit layout. The other bits are ignored: They could
+    /// be from the future if their semantics such that
+    /// old code may ignore them.
+    ///
+    /// Note: At present, it's bogus for the bit for "upper
+    /// first" to be set if "case first" isn't also set.
+    /// However, the methods handle this case gracefully,
+    /// so there is no need for invariant validation.
     pub bits: u32,
 }
 
@@ -183,6 +187,7 @@ impl CollationMetadataV1 {
     const MAX_VARIABLE_MASK: u32 = 0b11;
     const TAILORED_MASK: u32 = 1 << 3;
     const TAILORED_DIACRITICS_MASK: u32 = 1 << 4;
+    #[allow(dead_code)]
     const TAILORED_JAMO_MASK: u32 = 1 << 5;
     const REORDERING_MASK: u32 = 1 << 6;
     const LITHUANIAN_DOT_ABOVE_MASK: u32 = 1 << 7;
@@ -192,57 +197,56 @@ impl CollationMetadataV1 {
     const UPPER_FIRST_MASK: u32 = 1 << 11;
 
     #[inline(always)]
-    pub fn max_variable(&self) -> MaxVariable {
+    pub(crate) fn max_variable(&self) -> MaxVariable {
+        // Safe, because the possible numeric values for `MaxVariable` are from 0 to 3, inclusive,
+        // and we take the two low bits.
         unsafe { core::mem::transmute((self.bits & CollationMetadataV1::MAX_VARIABLE_MASK) as u8) }
     }
 
     #[inline(always)]
-    pub fn numeric_primary(&self) -> u32 {
-        self.bits & 0xFF000000
-    }
-
-    #[inline(always)]
-    pub fn tailored(&self) -> bool {
+    pub(crate) fn tailored(&self) -> bool {
         self.bits & CollationMetadataV1::TAILORED_MASK != 0
     }
 
     /// Vietnamese and Ewe
     #[inline(always)]
-    pub fn tailored_diacritics(&self) -> bool {
+    pub(crate) fn tailored_diacritics(&self) -> bool {
         self.bits & CollationMetadataV1::TAILORED_DIACRITICS_MASK != 0
     }
 
     /// Korean search
+    /// XXX: Currently ignored and being redesigned
+    #[allow(dead_code)]
     #[inline(always)]
-    pub fn tailored_jamo(&self) -> bool {
+    pub(crate) fn tailored_jamo(&self) -> bool {
         self.bits & CollationMetadataV1::TAILORED_JAMO_MASK != 0
     }
 
     /// Lithuanian
     #[inline(always)]
-    pub fn lithuanian_dot_above(&self) -> bool {
+    pub(crate) fn lithuanian_dot_above(&self) -> bool {
         self.bits & CollationMetadataV1::LITHUANIAN_DOT_ABOVE_MASK != 0
     }
 
     /// Canadian French
     #[inline(always)]
-    pub fn backward_second_level(&self) -> bool {
+    pub(crate) fn backward_second_level(&self) -> bool {
         self.bits & CollationMetadataV1::BACWARD_SECOND_LEVEL_MASK != 0
     }
 
     #[inline(always)]
-    pub fn reordering(&self) -> bool {
+    pub(crate) fn reordering(&self) -> bool {
         self.bits & CollationMetadataV1::REORDERING_MASK != 0
     }
 
     /// Thai
     #[inline(always)]
-    pub fn alternate_shifted(&self) -> bool {
+    pub(crate) fn alternate_shifted(&self) -> bool {
         self.bits & CollationMetadataV1::ALTERNATE_SHIFTED_MASK != 0
     }
 
     #[inline(always)]
-    pub fn case_first(&self) -> CaseFirst {
+    pub(crate) fn case_first(&self) -> CaseFirst {
         if self.bits & CollationMetadataV1::CASE_FIRST_MASK != 0 {
             if self.bits & CollationMetadataV1::UPPER_FIRST_MASK != 0 {
                 CaseFirst::UpperFirst
@@ -253,8 +257,6 @@ impl CollationMetadataV1 {
             CaseFirst::Off
         }
     }
-
-    // XXX alternate_non_ignorable Doesn't exist in current CLDR
 }
 
 #[icu_provider::data_struct(CollationSpecialPrimariesV1Marker = "collator/prim@1")]

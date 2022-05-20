@@ -192,7 +192,7 @@ impl Collator {
         }
 
         let jamo: DataPayload<CollationJamoV1Marker> = data_provider
-            .load_resource(&DataRequest::default())? // TODO: load other jamo tables
+            .load_resource(&DataRequest::default())? // TODO: redesign Korean search collation handling
             .take_payload()?;
 
         if jamo.get().ce32s.len() != JAMO_COUNT {
@@ -210,6 +210,9 @@ impl Collator {
 
         if metadata.alternate_shifted() {
             altered_defaults.set_alternate_handling(Some(AlternateHandling::Shifted));
+        }
+        if metadata.backward_second_level() {
+            altered_defaults.set_backward_second_level(Some(true));
         }
 
         altered_defaults.set_case_first(Some(metadata.case_first()));
