@@ -26,12 +26,10 @@ use super::Value;
 /// Manually build up a [`Keywords`] object:
 ///
 /// ```
-/// use icu::locid::extensions::unicode::{Keywords, Key, Value};
+/// use icu::locid::extensions::unicode::{Key, Keywords, Value};
 ///
-/// let key: Key = "hc".parse()
-///     .expect("Failed to parse a Key.");
-/// let value: Value = "h23".parse()
-///     .expect("Failed to parse a Value.");
+/// let key: Key = "hc".parse().expect("Failed to parse a Key.");
+/// let value: Value = "h23".parse().expect("Failed to parse a Value.");
 /// let keywords: Keywords = vec![(key, value)].into_iter().collect();
 ///
 /// assert_eq!(&keywords.to_string(), "hc-h23");
@@ -40,10 +38,9 @@ use super::Value;
 /// Access a [`Keywords`] object from a [`Locale`]:
 ///
 /// ```
-/// use icu::locid::{Locale, unicode_ext_key, unicode_ext_value};
+/// use icu::locid::{unicode_ext_key, unicode_ext_value, Locale};
 ///
-/// let loc: Locale = "und-u-hc-h23-kc-true".parse()
-///     .expect("Valid BCP-47");
+/// let loc: Locale = "und-u-hc-h23-kc-true".parse().expect("Valid BCP-47");
 ///
 /// assert_eq!(
 ///     loc.extensions.unicode.keywords.get(&unicode_ext_key!("ca")),
@@ -58,10 +55,7 @@ use super::Value;
 ///     Some(&unicode_ext_value!("true"))
 /// );
 ///
-/// assert_eq!(
-///     loc.extensions.unicode.keywords.to_string(),
-///     "hc-h23-kc"
-/// );
+/// assert_eq!(loc.extensions.unicode.keywords.to_string(), "hc-h23-kc");
 /// ```
 ///
 /// [`Locale`]: crate::Locale
@@ -88,8 +82,8 @@ impl Keywords {
     /// # Examples
     ///
     /// ```
-    /// use icu::locid::Locale;
     /// use icu::locid::extensions::unicode::Keywords;
+    /// use icu::locid::Locale;
     ///
     /// let loc1 = Locale::from_bytes(b"und-t-h0-hybrid").unwrap();
     /// let loc2 = Locale::from_bytes(b"und-u-ca-buddhist").unwrap();
@@ -107,17 +101,14 @@ impl Keywords {
     /// # Examples
     ///
     /// ```
-    /// use icu::locid::extensions::unicode::{Keywords, Key, Value};
+    /// use icu::locid::extensions::unicode::{Key, Keywords, Value};
     /// use litemap::LiteMap;
     ///
-    /// let key: Key = "ca".parse()
-    ///     .expect("Failed to parse a Key.");
-    /// let value: Value = "gregory".parse()
-    ///     .expect("Failed to parse a Value.");
+    /// let key: Key = "ca".parse().expect("Failed to parse a Key.");
+    /// let value: Value = "gregory".parse().expect("Failed to parse a Value.");
     /// let keywords: Keywords = vec![(key, value)].into_iter().collect();
     ///
-    /// let key: Key = "ca".parse()
-    ///     .expect("Failed to parse a Key.");
+    /// let key: Key = "ca".parse().expect("Failed to parse a Key.");
     /// assert!(&keywords.contains_key(&key));
     /// ```
     pub fn contains_key<Q>(&self, key: &Q) -> bool
@@ -134,16 +125,13 @@ impl Keywords {
     /// # Examples
     ///
     /// ```
-    /// use icu::locid::extensions::unicode::{Keywords, Key, Value};
+    /// use icu::locid::extensions::unicode::{Key, Keywords, Value};
     ///
-    /// let key: Key = "ca".parse()
-    ///     .expect("Failed to parse a Key.");
-    /// let value: Value = "buddhist".parse()
-    ///     .expect("Failed to parse a Value.");
+    /// let key: Key = "ca".parse().expect("Failed to parse a Key.");
+    /// let value: Value = "buddhist".parse().expect("Failed to parse a Value.");
     /// let keywords: Keywords = vec![(key, value)].into_iter().collect();
     ///
-    /// let key: Key = "ca".parse()
-    ///     .expect("Failed to parse a Key.");
+    /// let key: Key = "ca".parse().expect("Failed to parse a Key.");
     /// assert_eq!(
     ///     keywords.get(&key).map(|v| v.to_string()),
     ///     Some("buddhist".to_string())
@@ -164,19 +152,15 @@ impl Keywords {
     /// # Examples
     ///
     /// ```
-    /// use icu::locid::extensions::unicode::{Keywords, Key, Value};
+    /// use icu::locid::extensions::unicode::{Key, Keywords, Value};
     ///
-    /// let key: Key = "ca".parse()
-    ///     .expect("Failed to parse a Key.");
-    /// let value: Value = "buddhist".parse()
-    ///     .expect("Failed to parse a Value.");
+    /// let key: Key = "ca".parse().expect("Failed to parse a Key.");
+    /// let value: Value = "buddhist".parse().expect("Failed to parse a Value.");
     /// let mut keywords: Keywords = vec![(key, value)].into_iter().collect();
     ///
-    /// let key: Key = "ca".parse()
-    ///     .expect("Failed to parse a Key.");
+    /// let key: Key = "ca".parse().expect("Failed to parse a Key.");
     /// if let Some(value) = keywords.get_mut(&key) {
-    ///     *value = "gregory".parse()
-    ///         .expect("Failed to parse a Value.");
+    ///     *value = "gregory".parse().expect("Failed to parse a Value.");
     /// }
     /// assert_eq!(
     ///     keywords.get(&key).map(|v| v.to_string()),
@@ -196,23 +180,21 @@ impl Keywords {
     /// # Examples
     ///
     /// ```
-    /// use std::str::FromStr;
-    /// use std::string::ToString;
-    /// use icu::locid::unicode_ext_key;
-    /// use icu::locid::Locale;
     /// use icu::locid::extensions::unicode::Key;
     /// use icu::locid::extensions::unicode::Value;
+    /// use icu::locid::unicode_ext_key;
+    /// use icu::locid::Locale;
+    /// use std::str::FromStr;
+    /// use std::string::ToString;
     ///
     /// const CA_KEY: Key = unicode_ext_key!("ca");
     /// let japanese = Value::from_str("japanese").expect("valid extension subtag");
     /// let buddhist = Value::from_str("buddhist").expect("valid extension subtag");
     ///
-    /// let mut loc: Locale = "und-u-hello-ca-buddhist-hc-h12".parse()
+    /// let mut loc: Locale = "und-u-hello-ca-buddhist-hc-h12"
+    ///     .parse()
     ///     .expect("valid BCP-47 identifier");
-    /// let old_value = loc.extensions.unicode.keywords.set(
-    ///     CA_KEY,
-    ///     japanese
-    /// );
+    /// let old_value = loc.extensions.unicode.keywords.set(CA_KEY, japanese);
     ///
     /// assert_eq!(old_value, Some(buddhist));
     /// assert_eq!(loc, "und-u-hello-ca-japanese-hc-h12");
@@ -226,8 +208,8 @@ impl Keywords {
     /// # Example
     ///
     /// ```
-    /// use std::str::FromStr;
     /// use icu::locid::Locale;
+    /// use std::str::FromStr;
     ///
     /// let mut loc: Locale = "und-u-hello-ca-buddhist-hc-h12".parse().unwrap();
     /// loc.extensions.unicode.keywords.clear();

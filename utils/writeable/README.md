@@ -18,12 +18,12 @@ to wrap `write_to_string`.
 ## Examples
 
 ```rust
-use writeable::Writeable;
-use writeable::LengthHint;
-use writeable::assert_writeable_eq;
 use std::fmt;
+use writeable::assert_writeable_eq;
+use writeable::LengthHint;
+use writeable::Writeable;
 
-struct WelcomeMessage<'s>{
+struct WelcomeMessage<'s> {
     pub name: &'s str,
 }
 

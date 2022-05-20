@@ -28,18 +28,18 @@ impl<const N: usize> TinyAsciiStr<N> {
     /// # Example
     ///
     /// ```
-    /// use tinystr::TinyAsciiStr;
     /// use tinystr::tinystr;
+    /// use tinystr::TinyAsciiStr;
     ///
     /// assert_eq!(
     ///     TinyAsciiStr::<3>::try_from_raw(*b"GB\0"),
-    ///     Ok(tinystr!(3, "GB")));
+    ///     Ok(tinystr!(3, "GB"))
+    /// );
     /// assert_eq!(
     ///     TinyAsciiStr::<3>::try_from_raw(*b"USD"),
-    ///     Ok(tinystr!(3, "USD")));
-    /// assert!(matches!(
-    ///     TinyAsciiStr::<3>::try_from_raw(*b"\0A\0"),
-    ///     Err(_)));
+    ///     Ok(tinystr!(3, "USD"))
+    /// );
+    /// assert!(matches!(TinyAsciiStr::<3>::try_from_raw(*b"\0A\0"), Err(_)));
     /// ```
     pub const fn try_from_raw(raw: [u8; N]) -> Result<Self, TinyStrError> {
         Self::from_bytes_inner(&raw, 0, N, true)
@@ -241,10 +241,8 @@ impl<const N: usize> TinyAsciiStr<N> {
     /// ```
     /// use tinystr::TinyAsciiStr;
     ///
-    /// let s1: TinyAsciiStr<4> = "Test".parse()
-    ///     .expect("Failed to parse.");
-    /// let s2: TinyAsciiStr<4> = "Te3t".parse()
-    ///     .expect("Failed to parse.");
+    /// let s1: TinyAsciiStr<4> = "Test".parse().expect("Failed to parse.");
+    /// let s2: TinyAsciiStr<4> = "Te3t".parse().expect("Failed to parse.");
     ///
     /// assert!(s1.is_ascii_alphabetic());
     /// assert!(!s2.is_ascii_alphabetic());
@@ -266,10 +264,8 @@ impl<const N: usize> TinyAsciiStr<N> {
     /// ```
     /// use tinystr::TinyAsciiStr;
     ///
-    /// let s1: TinyAsciiStr<4> = "A15b".parse()
-    ///     .expect("Failed to parse.");
-    /// let s2: TinyAsciiStr<4> = "[3@w".parse()
-    ///     .expect("Failed to parse.");
+    /// let s1: TinyAsciiStr<4> = "A15b".parse().expect("Failed to parse.");
+    /// let s2: TinyAsciiStr<4> = "[3@w".parse().expect("Failed to parse.");
     ///
     /// assert!(s1.is_ascii_alphanumeric());
     /// assert!(!s2.is_ascii_alphanumeric());
@@ -289,10 +285,8 @@ impl<const N: usize> TinyAsciiStr<N> {
     /// ```
     /// use tinystr::TinyAsciiStr;
     ///
-    /// let s1: TinyAsciiStr<4> = "312".parse()
-    ///     .expect("Failed to parse.");
-    /// let s2: TinyAsciiStr<4> = "3d".parse()
-    ///     .expect("Failed to parse.");
+    /// let s1: TinyAsciiStr<4> = "312".parse().expect("Failed to parse.");
+    /// let s2: TinyAsciiStr<4> = "3d".parse().expect("Failed to parse.");
     ///
     /// assert!(s1.is_ascii_numeric());
     /// assert!(!s2.is_ascii_numeric());
@@ -312,12 +306,9 @@ impl<const N: usize> TinyAsciiStr<N> {
     /// ```
     /// use tinystr::TinyAsciiStr;
     ///
-    /// let s1: TinyAsciiStr<4> = "teSt".parse()
-    ///     .expect("Failed to parse.");
-    /// let s2: TinyAsciiStr<4> = "test".parse()
-    ///     .expect("Failed to parse.");
-    /// let s3: TinyAsciiStr<4> = "001z".parse()
-    ///     .expect("Failed to parse.");
+    /// let s1: TinyAsciiStr<4> = "teSt".parse().expect("Failed to parse.");
+    /// let s2: TinyAsciiStr<4> = "test".parse().expect("Failed to parse.");
+    /// let s3: TinyAsciiStr<4> = "001z".parse().expect("Failed to parse.");
     ///
     /// assert!(!s1.is_ascii_lowercase());
     /// assert!(s2.is_ascii_lowercase());
@@ -344,12 +335,9 @@ impl<const N: usize> TinyAsciiStr<N> {
     /// ```
     /// use tinystr::TinyAsciiStr;
     ///
-    /// let s1: TinyAsciiStr<4> = "teSt".parse()
-    ///     .expect("Failed to parse.");
-    /// let s2: TinyAsciiStr<4> = "Test".parse()
-    ///     .expect("Failed to parse.");
-    /// let s3: TinyAsciiStr<4> = "001z".parse()
-    ///     .expect("Failed to parse.");
+    /// let s1: TinyAsciiStr<4> = "teSt".parse().expect("Failed to parse.");
+    /// let s2: TinyAsciiStr<4> = "Test".parse().expect("Failed to parse.");
+    /// let s3: TinyAsciiStr<4> = "001z".parse().expect("Failed to parse.");
     ///
     /// assert!(!s1.is_ascii_titlecase());
     /// assert!(s2.is_ascii_titlecase());
@@ -375,12 +363,9 @@ impl<const N: usize> TinyAsciiStr<N> {
     /// ```
     /// use tinystr::TinyAsciiStr;
     ///
-    /// let s1: TinyAsciiStr<4> = "teSt".parse()
-    ///     .expect("Failed to parse.");
-    /// let s2: TinyAsciiStr<4> = "TEST".parse()
-    ///     .expect("Failed to parse.");
-    /// let s3: TinyAsciiStr<4> = "001z".parse()
-    ///     .expect("Failed to parse.");
+    /// let s1: TinyAsciiStr<4> = "teSt".parse().expect("Failed to parse.");
+    /// let s2: TinyAsciiStr<4> = "TEST".parse().expect("Failed to parse.");
+    /// let s3: TinyAsciiStr<4> = "001z".parse().expect("Failed to parse.");
     ///
     /// assert!(!s1.is_ascii_uppercase());
     /// assert!(s2.is_ascii_uppercase());
@@ -406,16 +391,11 @@ impl<const N: usize> TinyAsciiStr<N> {
     /// ```
     /// use tinystr::TinyAsciiStr;
     ///
-    /// let s1: TinyAsciiStr<4> = "Test".parse()
-    ///     .expect("Failed to parse.");
-    /// let s2: TinyAsciiStr<4> = "Te3t".parse()
-    ///     .expect("Failed to parse.");
-    /// let s3: TinyAsciiStr<4> = "teSt".parse()
-    ///     .expect("Failed to parse.");
-    /// let s4: TinyAsciiStr<4> = "test".parse()
-    ///     .expect("Failed to parse.");
-    /// let s5: TinyAsciiStr<4> = "001z".parse()
-    ///     .expect("Failed to parse.");
+    /// let s1: TinyAsciiStr<4> = "Test".parse().expect("Failed to parse.");
+    /// let s2: TinyAsciiStr<4> = "Te3t".parse().expect("Failed to parse.");
+    /// let s3: TinyAsciiStr<4> = "teSt".parse().expect("Failed to parse.");
+    /// let s4: TinyAsciiStr<4> = "test".parse().expect("Failed to parse.");
+    /// let s5: TinyAsciiStr<4> = "001z".parse().expect("Failed to parse.");
     ///
     /// assert!(!s1.is_ascii_alphabetic_lowercase());
     /// assert!(!s2.is_ascii_alphabetic_lowercase());
@@ -441,16 +421,11 @@ impl<const N: usize> TinyAsciiStr<N> {
     /// ```
     /// use tinystr::TinyAsciiStr;
     ///
-    /// let s1: TinyAsciiStr<4> = "Test".parse()
-    ///     .expect("Failed to parse.");
-    /// let s2: TinyAsciiStr<4> = "Te3t".parse()
-    ///     .expect("Failed to parse.");
-    /// let s3: TinyAsciiStr<4> = "teSt".parse()
-    ///     .expect("Failed to parse.");
-    /// let s4: TinyAsciiStr<4> = "test".parse()
-    ///     .expect("Failed to parse.");
-    /// let s5: TinyAsciiStr<4> = "001z".parse()
-    ///     .expect("Failed to parse.");
+    /// let s1: TinyAsciiStr<4> = "Test".parse().expect("Failed to parse.");
+    /// let s2: TinyAsciiStr<4> = "Te3t".parse().expect("Failed to parse.");
+    /// let s3: TinyAsciiStr<4> = "teSt".parse().expect("Failed to parse.");
+    /// let s4: TinyAsciiStr<4> = "test".parse().expect("Failed to parse.");
+    /// let s5: TinyAsciiStr<4> = "001z".parse().expect("Failed to parse.");
     ///
     /// assert!(s1.is_ascii_alphabetic_titlecase());
     /// assert!(!s2.is_ascii_alphabetic_titlecase());
@@ -478,16 +453,11 @@ impl<const N: usize> TinyAsciiStr<N> {
     /// ```
     /// use tinystr::TinyAsciiStr;
     ///
-    /// let s1: TinyAsciiStr<4> = "Test".parse()
-    ///     .expect("Failed to parse.");
-    /// let s2: TinyAsciiStr<4> = "Te3t".parse()
-    ///     .expect("Failed to parse.");
-    /// let s3: TinyAsciiStr<4> = "teSt".parse()
-    ///     .expect("Failed to parse.");
-    /// let s4: TinyAsciiStr<4> = "TEST".parse()
-    ///     .expect("Failed to parse.");
-    /// let s5: TinyAsciiStr<4> = "001z".parse()
-    ///     .expect("Failed to parse.");
+    /// let s1: TinyAsciiStr<4> = "Test".parse().expect("Failed to parse.");
+    /// let s2: TinyAsciiStr<4> = "Te3t".parse().expect("Failed to parse.");
+    /// let s3: TinyAsciiStr<4> = "teSt".parse().expect("Failed to parse.");
+    /// let s4: TinyAsciiStr<4> = "TEST".parse().expect("Failed to parse.");
+    /// let s5: TinyAsciiStr<4> = "001z".parse().expect("Failed to parse.");
     ///
     /// assert!(!s1.is_ascii_alphabetic_uppercase());
     /// assert!(!s2.is_ascii_alphabetic_uppercase());
@@ -549,8 +519,7 @@ impl<const N: usize> TinyAsciiStr<N> {
     /// ```
     /// use tinystr::TinyAsciiStr;
     ///
-    /// let s1: TinyAsciiStr<4> = "TeS3".parse()
-    ///     .expect("Failed to parse.");
+    /// let s1: TinyAsciiStr<4> = "TeS3".parse().expect("Failed to parse.");
     ///
     /// assert_eq!(&*s1.to_ascii_lowercase(), "tes3");
     /// ```
@@ -570,8 +539,7 @@ impl<const N: usize> TinyAsciiStr<N> {
     /// ```
     /// use tinystr::TinyAsciiStr;
     ///
-    /// let s1: TinyAsciiStr<4> = "teSt".parse()
-    ///     .expect("Failed to parse.");
+    /// let s1: TinyAsciiStr<4> = "teSt".parse().expect("Failed to parse.");
     ///
     /// assert_eq!(&*s1.to_ascii_titlecase(), "Test");
     /// ```
@@ -595,8 +563,7 @@ impl<const N: usize> TinyAsciiStr<N> {
     /// ```
     /// use tinystr::TinyAsciiStr;
     ///
-    /// let s1: TinyAsciiStr<4> = "Tes3".parse()
-    ///     .expect("Failed to parse.");
+    /// let s1: TinyAsciiStr<4> = "Tes3".parse().expect("Failed to parse.");
     ///
     /// assert_eq!(&*s1.to_ascii_uppercase(), "TES3");
     /// ```

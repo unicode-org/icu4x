@@ -27,11 +27,7 @@
 //!
 //! ```
 //! use icu_pattern::Pattern;
-//! use std::{
-//!     convert::TryInto,
-//!     borrow::Cow,
-//!     fmt::Display,
-//! };
+//! use std::{borrow::Cow, convert::TryInto, fmt::Display};
 //!
 //! #[derive(Debug, PartialEq)]
 //! enum ExampleToken {
@@ -39,7 +35,7 @@
 //!     Month,
 //!     Day,
 //!     Hour,
-//!     Minute
+//!     Minute,
 //! }
 //!
 //! impl Display for ExampleToken {
@@ -63,8 +59,7 @@
 //!     }
 //! }
 //!
-//! let pattern: Pattern<usize> = "{0}, {1}".try_into()
-//!     .expect("Failed to parse a pattern.");
+//! let pattern: Pattern<usize> = "{0}, {1}".try_into().expect("Failed to parse a pattern.");
 //!
 //! let replacements = vec![
 //!     vec![
@@ -82,9 +77,9 @@
 //! ];
 //!
 //! assert_eq!(
-//!     pattern.interpolate_to_string::<ExampleElement, _>(&replacements)
+//!     pattern
+//!         .interpolate_to_string::<ExampleElement, _>(&replacements)
 //!         .expect("Failed to interpolate a pattern."),
-//!
 //!     "[Year]-[Month]-[Day], [Hour]:[Minute]"
 //! );
 //! ```

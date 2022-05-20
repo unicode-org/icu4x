@@ -348,7 +348,7 @@ impl FromStr for GmtOffset {
     fn from_str(input: &str) -> Result<Self, Self::Err> {
         let offset_sign = match input.chars().next() {
             Some('+') => 1,
-            /* ASCII  */ Some('-') => -1,
+            /* ASCII */ Some('-') => -1,
             /* U+2212 */ Some('−') => -1,
             Some('Z') => return Ok(Self(0)),
             _ => return Err(DateTimeError::InvalidTimeZoneOffset),

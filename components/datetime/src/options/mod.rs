@@ -15,7 +15,7 @@
 //! # Examples
 //!
 //! ```
-//! use icu::datetime::{DateTimeFormatOptions, options::length};
+//! use icu::datetime::{options::length, DateTimeFormatOptions};
 //!
 //! let bag = length::Bag::from_date_time_style(length::Date::Medium, length::Time::Short);
 //! ```
@@ -36,7 +36,7 @@ pub mod preferences;
 /// # Examples
 ///
 /// ```
-/// use icu::datetime::{DateTimeFormatOptions, options::length};
+/// use icu::datetime::{options::length, DateTimeFormatOptions};
 ///
 /// let bag = length::Bag::from_date_time_style(length::Date::Medium, length::Time::Short);
 /// ```

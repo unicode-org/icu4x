@@ -27,8 +27,8 @@ use zerovec::maps::{KeyError, ZeroMap2dBorrowed};
 ///
 /// ```
 /// use icu_locid::locale;
-/// use icu_provider::prelude::*;
 /// use icu_provider::hello_world::*;
+/// use icu_provider::prelude::*;
 /// use icu_provider_blob::BlobDataProvider;
 /// use std::fs;
 ///
@@ -36,11 +36,11 @@ use zerovec::maps::{KeyError, ZeroMap2dBorrowed};
 /// let blob = fs::read(concat!(
 ///     env!("CARGO_MANIFEST_DIR"),
 ///     "/tests/data/hello_world.postcard",
-/// )).expect("Reading pre-computed postcard buffer");
+/// ))
+/// .expect("Reading pre-computed postcard buffer");
 ///
 /// // Create a DataProvider from it:
-/// let provider = BlobDataProvider::new_from_blob(blob)
-///     .expect("Deserialization should succeed");
+/// let provider = BlobDataProvider::new_from_blob(blob).expect("Deserialization should succeed");
 ///
 /// // Check that it works:
 /// let response: DataPayload<HelloWorldV1Marker> = provider

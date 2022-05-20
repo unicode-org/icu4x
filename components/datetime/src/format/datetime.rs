@@ -31,9 +31,9 @@ use writeable::Writeable;
 /// # Examples
 ///
 /// ```
-/// use icu::locid::locale;
-/// use icu::datetime::DateTimeFormat;
 /// use icu::calendar::{DateTime, Gregorian};
+/// use icu::datetime::DateTimeFormat;
+/// use icu::locid::locale;
 /// # let provider = icu_provider::inv::InvariantDataProvider;
 /// # let options = icu::datetime::DateTimeFormatOptions::default();
 /// let dtf = DateTimeFormat::<Gregorian>::try_new(locale!("en"), &provider, &options)

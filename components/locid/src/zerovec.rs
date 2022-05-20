@@ -20,8 +20,8 @@
 //! and then use [`Locale::cmp_bytes()`] to perform an efficient, zero-allocation lookup.
 //!
 //! ```
-//! use std::str::FromStr;
 //! use icu_locid::Locale;
+//! use std::str::FromStr;
 //! use zerovec::ZeroMap;
 //!
 //! // ZeroMap from locales to integers
@@ -55,9 +55,9 @@
 //! tuple, and then construct the [`LanguageIdentifier`] externally.
 //!
 //! ```
+//! use icu_locid::subtags::{Language, Region, Script};
 //! use icu_locid::LanguageIdentifier;
-//! use icu_locid::subtags::{Language, Script, Region};
-//! use icu_locid::{language, script, region, langid};
+//! use icu_locid::{langid, language, region, script};
 //! use zerovec::ZeroMap;
 //!
 //! // ZeroMap from integer to LSR (language-script-region)
@@ -65,16 +65,17 @@
 //!     (5, (language!("de"), None, Some(region!("DE")))),
 //!     (10, (language!("en"), None, Some(region!("US")))),
 //!     (15, (language!("my"), None, Some(region!("MM")))),
-//!     (20, (language!("sr"), Some(script!("Cyrl")), Some(region!("ME")))),
+//!     (
+//!         20,
+//!         (language!("sr"), Some(script!("Cyrl")), Some(region!("ME"))),
+//!     ),
 //!     (25, (language!("zh"), None, Some(region!("TW")))),
 //! ];
 //! let zm: ZeroMap<u32, (Language, Option<Script>, Option<Region>)> =
 //!     data.iter().copied().collect();
 //!
 //! // Construct a LanguageIdentifier from a tuple entry
-//! let lid: LanguageIdentifier = zm.get_copied(&25)
-//!     .expect("element is present")
-//!     .into();
+//! let lid: LanguageIdentifier = zm.get_copied(&25).expect("element is present").into();
 //!
 //! assert_eq!(lid, langid!("zh-TW"));
 //! ```
@@ -90,8 +91,8 @@
 //! deserialization.
 //!
 //! ```
-//! use icu_locid::Locale;
 //! use icu_locid::langid;
+//! use icu_locid::Locale;
 //! use zerovec::ZeroMap;
 //!
 //! // ZeroMap from integer to locale string
@@ -156,16 +157,15 @@ unsafe impl ULE for Language {
 /// # Example
 ///
 /// ```
-/// use icu::locid::subtags::Language;
 /// use icu::locid::language;
+/// use icu::locid::subtags::Language;
 /// use zerovec::ZeroVec;
 ///
-/// let zv = ZeroVec::<Language>::parse_byte_slice(b"de\0fr\0arsar\0")
-///     .expect("Valid language subtags");
+/// let zv =
+///     ZeroVec::<Language>::parse_byte_slice(b"de\0fr\0arsar\0").expect("Valid language subtags");
 /// assert_eq!(zv.get(1), Some(language!("fr")));
 ///
-/// ZeroVec::<Language>::parse_byte_slice(b"invalid")
-///     .expect_err("Invalid byte slice");
+/// ZeroVec::<Language>::parse_byte_slice(b"invalid").expect_err("Invalid byte slice");
 /// ```
 ///
 /// [`ZeroVec`]: zerovec::ZeroVec
@@ -216,16 +216,15 @@ unsafe impl ULE for Script {
 /// # Example
 ///
 /// ```
-/// use icu::locid::subtags::Script;
 /// use icu::locid::script;
+/// use icu::locid::subtags::Script;
 /// use zerovec::ZeroVec;
 ///
-/// let zv = ZeroVec::<Script>::parse_byte_slice(b"LatnAdlmMymrLatnLatn")
-///     .expect("Valid script subtags");
+/// let zv =
+///     ZeroVec::<Script>::parse_byte_slice(b"LatnAdlmMymrLatnLatn").expect("Valid script subtags");
 /// assert_eq!(zv.get(1), Some(script!("Adlm")));
 ///
-/// ZeroVec::<Script>::parse_byte_slice(b"invalid")
-///     .expect_err("Invalid byte slice");
+/// ZeroVec::<Script>::parse_byte_slice(b"invalid").expect_err("Invalid byte slice");
 /// ```
 ///
 /// [`ZeroVec`]: zerovec::ZeroVec
@@ -276,16 +275,14 @@ unsafe impl ULE for Region {
 /// # Example
 ///
 /// ```
-/// use icu::locid::subtags::Region;
 /// use icu::locid::region;
+/// use icu::locid::subtags::Region;
 /// use zerovec::ZeroVec;
 ///
-/// let zv = ZeroVec::<Region>::parse_byte_slice(b"GB\0419001DE\0")
-///     .expect("Valid region subtags");
+/// let zv = ZeroVec::<Region>::parse_byte_slice(b"GB\0419001DE\0").expect("Valid region subtags");
 /// assert_eq!(zv.get(1), Some(region!("419")));
 ///
-/// ZeroVec::<Region>::parse_byte_slice(b"invalid")
-///     .expect_err("Invalid byte slice");
+/// ZeroVec::<Region>::parse_byte_slice(b"invalid").expect_err("Invalid byte slice");
 /// ```
 ///
 /// [`ZeroVec`]: zerovec::ZeroVec
@@ -344,8 +341,7 @@ unsafe impl ULE for Variant {
 ///     .expect("Valid variant subtags");
 /// assert_eq!(zv.get(1), Some(variant!("1992")));
 ///
-/// ZeroVec::<Variant>::parse_byte_slice(b"invalid")
-///     .expect_err("Invalid byte slice");
+/// ZeroVec::<Variant>::parse_byte_slice(b"invalid").expect_err("Invalid byte slice");
 /// ```
 ///
 /// [`ZeroVec`]: zerovec::ZeroVec

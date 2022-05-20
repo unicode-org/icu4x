@@ -22,12 +22,9 @@ use tinystr::TinyAsciiStr;
 /// ```
 /// use icu::locid::extensions::unicode::Value;
 ///
-/// let value1: Value = "gregory".parse()
-///     .expect("Failed to parse a Value.");
-/// let value2: Value = "islamic-civil".parse()
-///     .expect("Failed to parse a Value.");
-/// let value3: Value = "true".parse()
-///     .expect("Failed to parse a Value.");
+/// let value1: Value = "gregory".parse().expect("Failed to parse a Value.");
+/// let value2: Value = "islamic-civil".parse().expect("Failed to parse a Value.");
+/// let value3: Value = "true".parse().expect("Failed to parse a Value.");
 ///
 /// assert_eq!(&value1.to_string(), "gregory");
 /// assert_eq!(&value2.to_string(), "islamic-civil");
@@ -50,8 +47,7 @@ impl Value {
     /// ```
     /// use icu::locid::extensions::unicode::Value;
     ///
-    /// let value = Value::from_bytes(b"buddhist")
-    ///     .expect("Parsing failed.");
+    /// let value = Value::from_bytes(b"buddhist").expect("Parsing failed.");
     ///
     /// assert_eq!(&value.to_string(), "buddhist");
     /// ```
