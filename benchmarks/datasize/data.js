@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1653073684773,
+  "lastUpdate": 1653077028149,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -15383,6 +15383,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/8fc8f5c95449127b6ad0e0323de836e29592c5ec"
         },
         "date": 1653073665169,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 2220821,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "21674b720fd7563102ddb47b3161d72fdab6e8f3",
+          "message": "Cleaning up error types (#1878)",
+          "timestamp": "2022-05-20T22:01:49+02:00",
+          "tree_id": "3fd5bb066560a211059fa566b3f8c91a224de546",
+          "url": "https://github.com/unicode-org/icu4x/commit/21674b720fd7563102ddb47b3161d72fdab6e8f3"
+        },
+        "date": 1653077006200,
         "tool": "ndjson",
         "benches": [
           {
