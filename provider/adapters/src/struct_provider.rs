@@ -14,8 +14,8 @@ use zerofrom::ZeroFrom;
 /// # Examples
 ///
 /// ```
-/// use icu_provider::prelude::*;
 /// use icu_provider::hello_world::*;
+/// use icu_provider::prelude::*;
 /// use icu_provider_adapters::struct_provider::AnyPayloadProvider;
 /// use std::borrow::Cow;
 ///

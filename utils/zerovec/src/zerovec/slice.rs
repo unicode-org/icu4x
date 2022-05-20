@@ -21,12 +21,13 @@ use core::ops::Range;
 /// Const-construct a ZeroSlice of u16:
 ///
 /// ```
-/// use zerovec::ZeroSlice;
 /// use zerovec::ule::AsULE;
+/// use zerovec::ZeroSlice;
 ///
-/// const DATA: &ZeroSlice<u16> = ZeroSlice::<u16>::from_ule_slice_const(
-///     &<u16 as AsULE>::ULE::from_array([211, 281, 421, 32973])
-/// );
+/// const DATA: &ZeroSlice<u16> =
+///     ZeroSlice::<u16>::from_ule_slice_const(&<u16 as AsULE>::ULE::from_array([
+///         211, 281, 421, 32973,
+///     ]));
 ///
 /// assert_eq!(DATA.get(1), Some(281));
 /// ```
@@ -101,8 +102,8 @@ where
     /// # Example
     ///
     /// ```
-    /// use zerovec::ZeroVec;
     /// use zerovec::ule::AsULE;
+    /// use zerovec::ZeroVec;
     ///
     /// let bytes: &[u8] = &[0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x80];
     /// let zerovec: ZeroVec<u16> = ZeroVec::parse_byte_slice(bytes).expect("infallible");
@@ -208,7 +209,7 @@ where
     /// const zs_u16: &ZeroSlice<u16> = {
     ///     match ZeroSlice::<u16>::try_from_bytes(bytes) {
     ///         Ok(s) => s,
-    ///         Err(_) => unreachable!()
+    ///         Err(_) => unreachable!(),
     ///     }
     /// };
     ///
@@ -241,12 +242,11 @@ where
     /// const zs_u32: &ZeroSlice<u32> = {
     ///     match ZeroSlice::<u32>::try_from_bytes(bytes) {
     ///         Ok(s) => s,
-    ///         Err(_) => unreachable!()
+    ///         Err(_) => unreachable!(),
     ///     }
     /// };
     ///
-    /// let zs_char: &ZeroSlice<char> = zs_u32.try_as_converted()
-    ///     .expect("valid code points");
+    /// let zs_char: &ZeroSlice<char> = zs_u32.try_as_converted().expect("valid code points");
     ///
     /// assert_eq!(zs_u32.get(0), Some(u32::from('🍿')));
     /// assert_eq!(zs_char.get(0), Some('🍿'));

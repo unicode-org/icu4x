@@ -223,24 +223,24 @@ impl ResourceKey {
     /// const FOO_BAZ: ResourceKey = icu_provider::resource_key!("foo/baz@1");
     /// const BAR_BAZ: ResourceKey = icu_provider::resource_key!("bar/baz@1");
     ///
-    /// assert!(matches!(
-    ///     FOO_BAR.match_key(FOO_BAR),
-    ///     Ok(())
-    /// ));
+    /// assert!(matches!(FOO_BAR.match_key(FOO_BAR), Ok(())));
     /// assert!(matches!(
     ///     FOO_BAR.match_key(FOO_BAZ),
-    ///     Err(DataError { kind: DataErrorKind::MissingResourceKey, .. })
+    ///     Err(DataError {
+    ///         kind: DataErrorKind::MissingResourceKey,
+    ///         ..
+    ///     })
     /// ));
     /// assert!(matches!(
     ///     FOO_BAR.match_key(BAR_BAZ),
-    ///     Err(DataError { kind: DataErrorKind::MissingResourceKey, .. })
+    ///     Err(DataError {
+    ///         kind: DataErrorKind::MissingResourceKey,
+    ///         ..
+    ///     })
     /// ));
     ///
     /// // The error context contains the argument:
-    /// assert_eq!(
-    ///     FOO_BAR.match_key(BAR_BAZ).unwrap_err().key,
-    ///     Some(BAR_BAZ)
-    /// );
+    /// assert_eq!(FOO_BAR.match_key(BAR_BAZ).unwrap_err().key, Some(BAR_BAZ));
     /// ```
     pub fn match_key(&self, key: Self) -> Result<(), DataError> {
         if *self == key {
@@ -472,8 +472,8 @@ impl ResourceOptions {
     /// # Examples
     ///
     /// ```
-    /// use icu_provider::prelude::*;
     /// use icu_locid::langid;
+    /// use icu_provider::prelude::*;
     ///
     /// const FOO_BAR: ResourceKey = icu_provider::resource_key!("foo/bar@1");
     ///
@@ -501,11 +501,10 @@ impl ResourceOptions {
     /// # Examples
     ///
     /// ```
-    /// use icu_provider::prelude::*;
     /// use icu_locid::{langid, language, region, Locale};
+    /// use icu_provider::prelude::*;
     ///
-    /// let locale: Locale = "it-IT-u-ca-coptic".parse()
-    ///     .expect("Valid BCP-47");
+    /// let locale: Locale = "it-IT-u-ca-coptic".parse().expect("Valid BCP-47");
     /// let options: ResourceOptions = locale.into();
     ///
     /// assert_eq!(options.to_string(), "it-IT-u-ca-coptic");
@@ -552,25 +551,18 @@ impl ResourceOptions {
     /// # Examples
     ///
     /// ```
+    /// use icu_locid::{unicode_ext_key, unicode_ext_value, Locale};
     /// use icu_provider::prelude::*;
-    /// use icu_locid::{Locale, unicode_ext_key, unicode_ext_value};
     ///
-    /// let locale: Locale = "it-IT-u-ca-coptic".parse()
-    ///     .expect("Valid BCP-47");
+    /// let locale: Locale = "it-IT-u-ca-coptic".parse().expect("Valid BCP-47");
     /// let options: ResourceOptions = locale.into();
     ///
-    /// assert_eq!(
-    ///     options.get_unicode_ext(&unicode_ext_key!("hc")),
-    ///     None
-    /// );
+    /// assert_eq!(options.get_unicode_ext(&unicode_ext_key!("hc")), None);
     /// assert_eq!(
     ///     options.get_unicode_ext(&unicode_ext_key!("ca")),
     ///     Some(unicode_ext_value!("coptic"))
     /// );
-    /// assert!(options.matches_unicode_ext(
-    ///     &unicode_ext_key!("ca"),
-    ///     &unicode_ext_value!("coptic"),
-    /// ));
+    /// assert!(options.matches_unicode_ext(&unicode_ext_key!("ca"), &unicode_ext_value!("coptic"),));
     /// ```
     pub fn matches_unicode_ext(&self, key: &unicode_ext::Key, value: &unicode_ext::Value) -> bool {
         self.keywords.get(key) == Some(value)

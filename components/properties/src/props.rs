@@ -304,9 +304,7 @@ impl GeneralCategoryGroup {
     /// use icu_codepointtrie::CodePointTrie;
     ///
     /// let provider = icu_testdata::get_provider();
-    /// let payload =
-    ///     maps::get_general_category(&provider)
-    ///         .expect("The data should be valid");
+    /// let payload = maps::get_general_category(&provider).expect("The data should be valid");
     /// let data_struct = payload.get();
     /// let gc = &data_struct.code_point_trie;
     ///

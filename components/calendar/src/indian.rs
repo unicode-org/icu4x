@@ -5,9 +5,9 @@
 //! This module contains types and implementations for the Indian national calendar.
 //!
 //! ```rust
-//! use icu::calendar::{Date, DateTime,
-//!                     types::IsoHour, types::IsoMinute, types::IsoSecond,
-//!                     indian::Indian};
+//! use icu::calendar::{
+//!     indian::Indian, types::IsoHour, types::IsoMinute, types::IsoSecond, Date, DateTime,
+//! };
 //!
 //! // `Date` type
 //! let date_iso = Date::new_iso_date_from_integers(1970, 1, 2)
@@ -187,8 +187,8 @@ impl Date<Indian> {
     /// ```rust
     /// use icu::calendar::Date;
     ///
-    /// let date_indian = Date::new_indian_date(1891, 10, 12)
-    ///     .expect("Failed to initialize Indian Date instance.");
+    /// let date_indian =
+    ///     Date::new_indian_date(1891, 10, 12).expect("Failed to initialize Indian Date instance.");
     ///
     /// assert_eq!(date_indian.year().number, 1891);
     /// assert_eq!(date_indian.month().number, 10);
@@ -215,10 +215,7 @@ impl DateTime<Indian> {
     /// Construct a new Indian datetime from integers.
     ///
     /// ```rust
-    /// use icu::calendar::{DateTime,
-    ///                     types::IsoHour,
-    ///                     types::IsoMinute,
-    ///                     types::IsoSecond};
+    /// use icu::calendar::{types::IsoHour, types::IsoMinute, types::IsoSecond, DateTime};
     ///
     /// let datetime_indian = DateTime::new_indian_datetime(1891, 10, 12, 13, 1, 0)
     ///     .expect("Failed to initialize Indian DateTime instance.");

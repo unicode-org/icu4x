@@ -163,8 +163,7 @@ impl<'data> UnicodeSet<'data> {
     /// use std::vec::Vec;
     ///
     /// fn inv_list_to_owned_unicodeset(inv_list: &[u32]) -> UnicodeSet {
-    ///     UnicodeSet::clone_from_inversion_list_slice(inv_list)
-    ///         .unwrap()
+    ///     UnicodeSet::clone_from_inversion_list_slice(inv_list).unwrap()
     /// }
     ///
     /// let bmp_list: [u32; 2] = [0x0, 0x10000];
@@ -172,10 +171,10 @@ impl<'data> UnicodeSet<'data> {
     /// let sip_list: &[u32] = &vec![0x20000, 0x30000];
     ///
     /// let inv_lists: [&[u32]; 3] = [&bmp_list, &smp_list, sip_list];
-    /// let unicodesets: Vec<UnicodeSet> =
-    ///     inv_lists.iter()
-    ///         .map(|il| inv_list_to_owned_unicodeset(il))
-    ///         .collect();
+    /// let unicodesets: Vec<UnicodeSet> = inv_lists
+    ///     .iter()
+    ///     .map(|il| inv_list_to_owned_unicodeset(il))
+    ///     .collect();
     ///
     /// let bmp = &unicodesets.get(0).unwrap();
     /// assert!(bmp.contains_u32(0xFFFF));
@@ -424,7 +423,7 @@ impl<'data> UnicodeSet<'data> {
     /// ```
     /// use icu_uniset::UnicodeSet;
     /// use std::char;
-    /// let check = char::from_u32(0xD7FE).unwrap() .. char::from_u32(0xE001).unwrap();
+    /// let check = char::from_u32(0xD7FE).unwrap()..char::from_u32(0xE001).unwrap();
     /// let example_list = [0xD7FE, 0xD7FF, 0xE000, 0xE001];
     /// let example = UnicodeSet::from_inversion_list_slice(&example_list).unwrap();
     /// assert!(!example.contains_range(&(check)));

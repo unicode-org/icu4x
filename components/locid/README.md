@@ -20,16 +20,13 @@ If in doubt, use [`Locale`].
 ## Examples
 
 ```rust
-use icu::locid::Locale;
 use icu::locid::subtags::{Language, Region};
+use icu::locid::Locale;
 
-let mut loc: Locale = "en-US".parse()
-    .expect("Parsing failed.");
+let mut loc: Locale = "en-US".parse().expect("Parsing failed.");
 
-let lang: Language = "en".parse()
-    .expect("Parsing failed.");
-let region: Region = "US".parse()
-    .expect("Parsing failed.");
+let lang: Language = "en".parse().expect("Parsing failed.");
+let region: Region = "US".parse().expect("Parsing failed.");
 
 assert_eq!(loc.id.language, lang);
 assert_eq!(loc.id.script, None);
@@ -45,7 +42,7 @@ assert_eq!(loc.to_string(), "en-GB");
 ### Macros
 
 ```rust
-use icu::locid::{language, region, langid};
+use icu::locid::{langid, language, region};
 
 let lid = langid!("EN_US");
 

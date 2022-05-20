@@ -22,9 +22,9 @@ for the [`CodePointTrie`](crate::codepointtrie::CodePointTrie) struct.
 use icu_codepointtrie::planes;
 let trie = planes::get_planes_trie();
 
-assert_eq!(0, trie.get(0x41));  // 'A' as u32
-assert_eq!(0, trie.get(0x13E0));  // 'Ꮰ' as u32
-assert_eq!(1, trie.get(0x10044));  // '𐁄' as u32
+assert_eq!(0, trie.get(0x41)); // 'A' as u32
+assert_eq!(0, trie.get(0x13E0)); // 'Ꮰ' as u32
+assert_eq!(1, trie.get(0x10044)); // '𐁄' as u32
 ```
 
 [`ICU4X`]: ../icu/index.html

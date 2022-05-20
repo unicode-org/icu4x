@@ -7,7 +7,6 @@ use displaydoc::Display;
 use icu_provider::prelude::DataError;
 
 /// A list of possible error outcomes for the [`PluralRules`](crate::PluralRules) struct.
-///
 #[derive(Display, Debug, Clone, Copy)]
 #[non_exhaustive]
 pub enum PluralRulesError {

@@ -11,13 +11,12 @@ use crate::rules::reference::ast;
 /// # Examples
 ///
 /// ```
-/// use icu::plurals::PluralOperands;
 /// use icu::plurals::rules::reference::parse_condition;
 /// use icu::plurals::rules::reference::test_condition;
+/// use icu::plurals::PluralOperands;
 ///
 /// let operands = PluralOperands::from(5_usize);
-/// let condition = parse_condition(b"i = 4..6")
-///     .expect("Failde to parse a rule.");
+/// let condition = parse_condition(b"i = 4..6").expect("Failde to parse a rule.");
 ///
 /// assert_eq!(test_condition(&condition, &operands), true);
 /// ```

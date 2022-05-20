@@ -20,9 +20,9 @@ pub struct FixedDecimalFormatOptions {
 /// # Examples
 ///
 /// ```
+/// use icu_decimal::options;
 /// use icu_decimal::FixedDecimalFormat;
 /// use icu_decimal::FormattedFixedDecimal;
-/// use icu_decimal::options;
 /// use icu_locid::Locale;
 /// use writeable::Writeable;
 ///
@@ -71,9 +71,9 @@ impl Default for GroupingStrategy {
 /// # Examples
 ///
 /// ```
+/// use icu_decimal::options;
 /// use icu_decimal::FixedDecimalFormat;
 /// use icu_decimal::FormattedFixedDecimal;
-/// use icu_decimal::options;
 /// use icu_locid::Locale;
 /// use writeable::Writeable;
 ///

@@ -5,11 +5,26 @@
 use crate::types::Time;
 use crate::{AsCalendar, Date, Iso};
 
-/// A date+time for a given calendar
+/// A date+time for a given calendar.
 ///
-/// This can work with wrappers arount [`Calendar`](crate::Calendar) types,
+/// This can work with wrappers around [`Calendar`](crate::Calendar) types,
 /// e.g. `Rc<C>`, via the [`AsCalendar`] trait, much like
-/// [`Date`]
+/// [`Date`].
+///
+/// ```rust
+/// use icu::calendar::{DateTime, types::IsoHour, types::IsoMinute, types::IsoSecond};
+///
+/// // Example: Construction of ISO datetime from integers.
+/// let datetime_iso = DateTime::new_iso_datetime_from_integers(1970, 1, 2, 13, 1, 0)
+///     .expect("Failed to initialize ISO DateTime instance.");
+///
+/// assert_eq!(datetime_iso.date.year().number, 1970);
+/// assert_eq!(datetime_iso.date.month().number, 1);
+/// assert_eq!(datetime_iso.date.day_of_month().0, 2);
+/// assert_eq!(datetime_iso.time.hour, IsoHour::new_unchecked(13));
+/// assert_eq!(datetime_iso.time.minute, IsoMinute::new_unchecked(1));
+/// assert_eq!(datetime_iso.time.second, IsoSecond::new_unchecked(0));
+/// ```
 #[derive(Debug)]
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct DateTime<A: AsCalendar> {

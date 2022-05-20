@@ -44,7 +44,6 @@ The following algorithms are implemented:
 
 **3a:** Exhaustively check the probabilities of all possible BIES for the string. This algorithm has exponential runtime.
 
-
 ## More Information
 
 For more information on development, authorship, contributing etc. please visit [`ICU4X home page`](https://github.com/unicode-org/icu4x).

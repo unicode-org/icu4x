@@ -41,8 +41,8 @@
 //! # Examples
 //!
 //! ```
-//! use icu::datetime::DateTimeFormatOptions;
 //! use icu::datetime::options::components;
+//! use icu::datetime::DateTimeFormatOptions;
 //!
 //! let mut bag = components::Bag::default();
 //! bag.year = Some(components::Year::Numeric);
@@ -59,8 +59,8 @@
 //! Or the options can be inferred through the `.into()` trait.
 //!
 //! ```
-//! use icu::datetime::DateTimeFormatOptions;
 //! use icu::datetime::options::components;
+//! use icu::datetime::DateTimeFormatOptions;
 //! let options: DateTimeFormatOptions = components::Bag::default().into();
 //! ```
 //!
@@ -102,6 +102,8 @@ pub struct Bag {
     pub minute: Option<Numeric>,
     /// Include the second such as "3" or "03".
     pub second: Option<Numeric>,
+    /// Specify the number of fractional second digits such as 1 (".3") or 3 (".003").
+    pub fractional_second: Option<u8>,
 
     /// Include the time zone, such as "GMT+05:00".
     pub time_zone_name: Option<TimeZoneName>,
@@ -309,8 +311,15 @@ impl Bag {
                     Numeric::TwoDigit => FieldLength::TwoDigit,
                 },
             });
-            // S - Not used in skeletons.
             // A - Milliseconds in day. Not used in skeletons.
+        }
+
+        if let Some(precision) = self.fractional_second {
+            // S - Fractional seconds.
+            fields.push(Field {
+                symbol: FieldSymbol::Second(fields::Second::FractionalSecond),
+                length: FieldLength::Fixed(precision),
+            });
         }
 
         if self.time_zone_name.is_some() {
@@ -463,13 +472,11 @@ pub enum Day {
 #[non_exhaustive]
 pub enum TimeZoneName {
     // UTS-35 fields: z..zzz
-    //
     /// Short localized form, without the location. (e.g.: PST, GMT-8)
     ShortSpecific,
 
     // UTS-35 fields: zzzz
     // Per UTS-35: [long form] specific non-location (falling back to long localized GMT)
-    //
     /// Long localized form, without the location (e.g., Pacific Standard Time, Nordamerikanische Westküsten-Normalzeit)
     LongSpecific,
 
@@ -480,7 +487,6 @@ pub enum TimeZoneName {
     // hour-format for the locale, and ICU4X uses the preferred one.
     //   e.g.
     //   https://github.com/unicode-org/cldr-json/blob/c23635f13946292e40077fd62aee6a8e122e7689/cldr-json/cldr-dates-full/main/es-MX/timeZoneNames.json#L13
-    //
     /// Localized GMT format, in the locale's preferred hour format. (e.g., GMT-0800),
     GmtOffset,
 
@@ -668,18 +674,24 @@ impl<'data> From<&PatternPlurals<'data>> for Bag {
                     });
                 }
                 FieldSymbol::Second(second) => {
-                    bag.second = Some(match second {
-                        fields::Second::Second => match field.length {
-                            FieldLength::TwoDigit => Numeric::TwoDigit,
-                            _ => Numeric::Numeric,
-                        },
+                    match second {
+                        fields::Second::Second => {
+                            bag.second = Some(match field.length {
+                                FieldLength::TwoDigit => Numeric::TwoDigit,
+                                _ => Numeric::Numeric,
+                            });
+                        }
                         fields::Second::FractionalSecond => {
-                            unimplemented!("fields::Second::FractionalSecond. #1360")
+                            if let FieldLength::Fixed(p) = field.length {
+                                if p > 0 {
+                                    bag.fractional_second = Some(p);
+                                }
+                            }
                         }
                         fields::Second::Millisecond => {
-                            unimplemented!("fields::Second::Millisecond")
+                            // fields::Second::Millisecond is not implemented (#1834)
                         }
-                    });
+                    }
                 }
                 FieldSymbol::TimeZone(time_zone_name) => {
                     bag.time_zone_name = Some(match time_zone_name {
@@ -724,6 +736,7 @@ mod test {
             hour: Some(Numeric::Numeric),
             minute: Some(Numeric::Numeric),
             second: Some(Numeric::Numeric),
+            fractional_second: Some(3),
 
             ..Default::default()
         };
@@ -737,6 +750,11 @@ mod test {
                 (Symbol::Hour(fields::Hour::H23), Length::One).into(),
                 (Symbol::Minute, Length::One).into(),
                 (Symbol::Second(fields::Second::Second), Length::One).into(),
+                (
+                    Symbol::Second(fields::Second::FractionalSecond),
+                    Length::Fixed(3)
+                )
+                    .into(),
             ]
         );
     }

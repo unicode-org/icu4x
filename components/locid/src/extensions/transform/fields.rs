@@ -26,10 +26,8 @@ use super::Value;
 /// ```
 /// use icu::locid::extensions::transform::{Fields, Key, Value};
 ///
-/// let key: Key = "h0".parse()
-///     .expect("Failed to parse a Key.");
-/// let value: Value = "hybrid".parse()
-///     .expect("Failed to parse a Value.");
+/// let key: Key = "h0".parse().expect("Failed to parse a Key.");
+/// let value: Value = "hybrid".parse().expect("Failed to parse a Value.");
 /// let fields: Fields = vec![(key, value)].into_iter().collect();
 ///
 /// assert_eq!(&fields.to_string(), "h0-hybrid");
@@ -57,8 +55,8 @@ impl Fields {
     /// # Examples
     ///
     /// ```
-    /// use icu::locid::Locale;
     /// use icu::locid::extensions::transform::Fields;
+    /// use icu::locid::Locale;
     ///
     /// let loc1 = Locale::from_bytes(b"und-t-h0-hybrid").unwrap();
     /// let loc2 = Locale::from_bytes(b"und-u-ca-buddhist").unwrap();
@@ -77,10 +75,8 @@ impl Fields {
     /// ```
     /// use icu::locid::extensions::transform::{Fields, Key, Value};
     ///
-    /// let key: Key = "h0".parse()
-    ///     .expect("Failed to parse a Key.");
-    /// let value: Value = "hybrid".parse()
-    ///     .expect("Failed to parse a Value.");
+    /// let key: Key = "h0".parse().expect("Failed to parse a Key.");
+    /// let value: Value = "hybrid".parse().expect("Failed to parse a Value.");
     /// let mut fields: Fields = vec![(key, value)].into_iter().collect();
     ///
     /// assert_eq!(&fields.to_string(), "h0-hybrid");
@@ -101,14 +97,11 @@ impl Fields {
     /// ```
     /// use icu::locid::extensions::transform::{Fields, Key, Value};
     ///
-    /// let key: Key = "h0".parse()
-    ///     .expect("Failed to parse a Key.");
-    /// let value: Value = "hybrid".parse()
-    ///     .expect("Failed to parse a Value.");
+    /// let key: Key = "h0".parse().expect("Failed to parse a Key.");
+    /// let value: Value = "hybrid".parse().expect("Failed to parse a Value.");
     /// let mut fields: Fields = vec![(key, value)].into_iter().collect();
     ///
-    /// let key: Key = "h0".parse()
-    ///     .expect("Failed to parse a Key.");
+    /// let key: Key = "h0".parse().expect("Failed to parse a Key.");
     /// assert!(&fields.contains_key(&key));
     /// ```
     pub fn contains_key<Q>(&self, key: &Q) -> bool
@@ -127,14 +120,11 @@ impl Fields {
     /// ```
     /// use icu::locid::extensions::transform::{Fields, Key, Value};
     ///
-    /// let key: Key = "h0".parse()
-    ///     .expect("Failed to parse a Key.");
-    /// let value: Value = "hybrid".parse()
-    ///     .expect("Failed to parse a Value.");
+    /// let key: Key = "h0".parse().expect("Failed to parse a Key.");
+    /// let value: Value = "hybrid".parse().expect("Failed to parse a Value.");
     /// let mut fields: Fields = vec![(key, value)].into_iter().collect();
     ///
-    /// let key: Key = "h0".parse()
-    ///     .expect("Failed to parse a Key.");
+    /// let key: Key = "h0".parse().expect("Failed to parse a Key.");
     /// assert_eq!(
     ///     fields.get(&key).map(|v| v.to_string()),
     ///     Some("hybrid".to_string())
@@ -153,23 +143,21 @@ impl Fields {
     /// # Examples
     ///
     /// ```
-    /// use std::str::FromStr;
-    /// use std::string::ToString;
-    /// use icu::locid::transform_ext_key;
-    /// use icu::locid::Locale;
     /// use icu::locid::extensions::transform::Key;
     /// use icu::locid::extensions::transform::Value;
+    /// use icu::locid::transform_ext_key;
+    /// use icu::locid::Locale;
+    /// use std::str::FromStr;
+    /// use std::string::ToString;
     ///
     /// const D0_KEY: Key = transform_ext_key!("d0");
     /// let lower = Value::from_str("lower").expect("valid extension subtag");
     /// let casefold = Value::from_str("casefold").expect("valid extension subtag");
     ///
-    /// let mut loc: Locale = "en-t-hi-d0-casefold".parse()
+    /// let mut loc: Locale = "en-t-hi-d0-casefold"
+    ///     .parse()
     ///     .expect("valid BCP-47 identifier");
-    /// let old_value = loc.extensions.transform.fields.set(
-    ///     D0_KEY,
-    ///     lower
-    /// );
+    /// let old_value = loc.extensions.transform.fields.set(D0_KEY, lower);
     ///
     /// assert_eq!(old_value, Some(casefold));
     /// assert_eq!(loc, "en-t-hi-d0-lower");

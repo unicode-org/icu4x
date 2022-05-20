@@ -18,8 +18,7 @@ use tinystr::TinyAsciiStr;
 /// ```
 /// use icu::locid::extensions::unicode::Key;
 ///
-/// let key1: Key = "ca".parse()
-///     .expect("Failed to parse a Key.");
+/// let key1: Key = "ca".parse().expect("Failed to parse a Key.");
 ///
 /// assert_eq!(key1, "ca");
 /// ```
@@ -37,8 +36,7 @@ impl Key {
     /// ```
     /// use icu::locid::extensions::unicode::Key;
     ///
-    /// let key = Key::from_bytes(b"ca")
-    ///     .expect("Parsing failed.");
+    /// let key = Key::from_bytes(b"ca").expect("Parsing failed.");
     ///
     /// assert_eq!(key, "ca");
     /// ```

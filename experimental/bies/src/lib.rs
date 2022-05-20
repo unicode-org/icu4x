@@ -45,7 +45,6 @@
 //! **2a:** Step through each element in the BIES sequence. For each element, look at the triplet containing the element and both of its neighbors. By induction, assume the first element in the triplet is correct. Now, depending on whether there is a code point boundary following the element, calculate the probabilities of all valid BIES for the triplet, and based on those results, pick the most likely value for the current element.
 //!
 //! **3a:** Exhaustively check the probabilities of all possible BIES for the string. This algorithm has exponential runtime.
-//!
 
 use itertools::Itertools;
 use partial_min_max::max;

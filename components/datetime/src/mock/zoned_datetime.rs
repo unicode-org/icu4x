@@ -26,19 +26,19 @@ use icu_calendar::{DateTime, Gregorian};
 /// # Examples
 ///
 /// ```
+/// use icu::calendar::{DateTime, Gregorian};
 /// use icu::datetime::mock::parse_gregorian_from_str;
 /// use icu::datetime::mock::time_zone::MockTimeZone;
-/// use icu::calendar::{DateTime, Gregorian};
 /// use icu::datetime::mock::zoned_datetime::MockZonedDateTime;
 ///
-/// let dt: DateTime<Gregorian> = parse_gregorian_from_str("2020-10-14T13:21:00")
-///     .expect("Failed to parse a datetime.");
+/// let dt: DateTime<Gregorian> =
+///     parse_gregorian_from_str("2020-10-14T13:21:00").expect("Failed to parse a datetime.");
 ///
-/// let tz: MockTimeZone = "+05:00".parse()
-///     .expect("Failed to parse a time zone.");
+/// let tz: MockTimeZone = "+05:00".parse().expect("Failed to parse a time zone.");
 ///
 /// let zdt1 = MockZonedDateTime::new(dt, tz);
-/// let zdt2: MockZonedDateTime = "2020-10-14T13:21:00+05:00".parse()
+/// let zdt2: MockZonedDateTime = "2020-10-14T13:21:00+05:00"
+///     .parse()
 ///     .expect("Failed to parse a zoned datetime.");
 /// ```
 /// [`ZonedDateTimeFormat`]: crate::zoned_datetime::ZonedDateTimeFormat
@@ -77,7 +77,8 @@ impl FromStr for MockZonedDateTime {
     /// ```
     /// use icu::datetime::mock::zoned_datetime::MockZonedDateTime;
     ///
-    /// let date: MockZonedDateTime = "2020-10-14T13:21:00+05:30".parse()
+    /// let date: MockZonedDateTime = "2020-10-14T13:21:00+05:30"
+    ///     .parse()
     ///     .expect("Failed to parse a zoned datetime.");
     /// ```
     fn from_str(input: &str) -> Result<Self, Self::Err> {

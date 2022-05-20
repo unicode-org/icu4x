@@ -16,8 +16,7 @@ use tinystr::TinyAsciiStr;
 /// ```
 /// use icu::locid::subtags::Region;
 ///
-/// let region: Region = "DE".parse()
-///     .expect("Failed to parse a region subtag.");
+/// let region: Region = "DE".parse().expect("Failed to parse a region subtag.");
 /// ```
 ///
 /// [`unicode_region_id`]: https://unicode.org/reports/tr35/#unicode_region_id
@@ -38,8 +37,7 @@ impl Region {
     /// ```
     /// use icu::locid::subtags::Region;
     ///
-    /// let region = Region::from_bytes(b"fr")
-    ///     .expect("Parsing failed.");
+    /// let region = Region::from_bytes(b"fr").expect("Parsing failed.");
     ///
     /// assert_eq!(region, "FR");
     /// ```
@@ -106,8 +104,7 @@ impl Region {
     /// ```
     /// use icu::locid::subtags::Region;
     ///
-    /// let region = Region::from_bytes(b"us")
-    ///     .expect("Parsing failed.");
+    /// let region = Region::from_bytes(b"us").expect("Parsing failed.");
     ///
     /// let raw = region.into_raw();
     /// let region = unsafe { Region::from_raw_unchecked(raw) };
@@ -125,8 +122,7 @@ impl Region {
     /// ```
     /// use icu::locid::subtags::Region;
     ///
-    /// let region = Region::from_bytes(b"us")
-    ///     .expect("Parsing failed.");
+    /// let region = Region::from_bytes(b"us").expect("Parsing failed.");
     ///
     /// let raw = region.into_raw();
     /// let region = unsafe { Region::from_raw_unchecked(raw) };
@@ -149,8 +145,7 @@ impl Region {
     /// ```
     /// use icu::locid::subtags::Region;
     ///
-    /// let region = Region::from_bytes(b"it")
-    ///     .expect("Parsing failed.");
+    /// let region = Region::from_bytes(b"it").expect("Parsing failed.");
     ///
     /// assert_eq!(region.as_str(), "IT");
     /// ```
@@ -168,8 +163,7 @@ impl Region {
     /// ```
     /// use icu::locid::subtags::Region;
     ///
-    /// let region = Region::from_bytes(b"us")
-    ///     .expect("Parsing failed.");
+    /// let region = Region::from_bytes(b"us").expect("Parsing failed.");
     ///
     /// assert_eq!(region.is_alphabetic(), true);
     /// ```

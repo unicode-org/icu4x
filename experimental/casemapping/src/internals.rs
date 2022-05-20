@@ -638,7 +638,7 @@ impl<'data> CaseMappingInternals<'data> {
         match (c, is_turkic) {
             // Turkic mappings
             ('\u{49}', true) => '\u{131}', // 0049; T; 0131; # LATIN CAPITAL LETTER I
-            ('\u{130}', true) => '\u{69}', // 0130; T; 0069; # LATIN CAPITAL LETTER I WITH DOT ABOVE
+            ('\u{130}', true) => '\u{69}', /* 0130; T; 0069; # LATIN CAPITAL LETTER I WITH DOT ABOVE */
 
             // Default mappings
             ('\u{49}', false) => '\u{69}', // 0049; C; 0069; # LATIN CAPITAL LETTER I

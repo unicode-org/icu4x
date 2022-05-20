@@ -102,7 +102,7 @@ macro_rules! region {
 /// # Examples
 ///
 /// ```
-/// use icu::locid::{variant, subtags::Variant};
+/// use icu::locid::{subtags::Variant, variant};
 ///
 /// const POSIX: Variant = variant!("Posix");
 ///
@@ -133,7 +133,7 @@ macro_rules! variant {
 /// # Examples
 ///
 /// ```
-/// use icu::locid::{LanguageIdentifier, langid};
+/// use icu::locid::{langid, LanguageIdentifier};
 ///
 /// const DE_AT: LanguageIdentifier = langid!("de_at");
 ///
@@ -152,7 +152,9 @@ macro_rules! variant {
 ///
 /// Use runtime parsing instead:
 /// ```
-/// "de_at-foobar".parse::<icu::locid::LanguageIdentifier>().unwrap();
+/// "de_at-foobar"
+///     .parse::<icu::locid::LanguageIdentifier>()
+///     .unwrap();
 /// ```
 ///
 /// [`LanguageIdentifier`]: crate::LanguageIdentifier
@@ -183,7 +185,7 @@ macro_rules! langid {
 /// # Examples
 ///
 /// ```
-/// use icu::locid::{Locale, locale};
+/// use icu::locid::{locale, Locale};
 ///
 /// const DE_AT: Locale = locale!("de_at");
 ///
@@ -236,8 +238,8 @@ macro_rules! locale {
 /// # Examples
 ///
 /// ```
-/// use icu::locid::unicode_ext_key;
 /// use icu::locid::extensions::unicode::{Key, Value};
+/// use icu::locid::unicode_ext_key;
 /// use icu::locid::Locale;
 /// use writeable::Writeable;
 ///
@@ -272,9 +274,9 @@ macro_rules! unicode_ext_key {
 /// # Examples
 ///
 /// ```
-/// use icu::locid::{unicode_ext_key, unicode_ext_value};
 /// use icu::locid::extensions::unicode::{Key, Value};
 /// use icu::locid::Locale;
+/// use icu::locid::{unicode_ext_key, unicode_ext_value};
 /// use writeable::Writeable;
 ///
 /// const CALENDAR_KEY: Key = unicode_ext_key!("ca");
@@ -318,8 +320,8 @@ macro_rules! unicode_ext_value {
 /// # Examples
 ///
 /// ```
-/// use icu::locid::transform_ext_key;
 /// use icu::locid::extensions::transform::{Key, Value};
+/// use icu::locid::transform_ext_key;
 /// use icu::locid::Locale;
 /// use writeable::Writeable;
 ///

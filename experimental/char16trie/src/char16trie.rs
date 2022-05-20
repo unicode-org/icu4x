@@ -97,6 +97,7 @@ impl<'data> Char16Trie<'data> {
 }
 
 /// This struct represents an iterator over a Char16Trie.
+#[derive(Clone)]
 pub struct Char16TrieIterator<'a> {
     /// A reference to the Char16Trie data to iterate over.
     trie: &'a [<u16 as zerovec::ule::AsULE>::ULE],
