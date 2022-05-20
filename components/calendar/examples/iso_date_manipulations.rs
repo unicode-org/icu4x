@@ -9,7 +9,7 @@
 
 icu_benchmark_macros::static_setup!();
 
-use icu_calendar::{Date, DateTimeError, Iso};
+use icu_calendar::{Calendar, Date, DateTimeError, Iso};
 
 const DATES_ISO: &[(i32, u8, u8)] = &[
     (1970, 1, 1),
@@ -27,9 +27,18 @@ const DATES_ISO: &[(i32, u8, u8)] = &[
     (2033, 6, 10),
 ];
 
-fn print(_input: &str) {
+fn print<A: Calendar>(_date_input: &Date<A>) {
     #[cfg(debug_assertions)]
-    println!("{}", _input);
+    {
+        let formatted_date = format!(
+            "Year: {}, Month: {}, Day: {}",
+            _date_input.year().number,
+            _date_input.month().number,
+            _date_input.day_of_month().0,
+        );
+
+        println!("{}", formatted_date);
+    }
 }
 
 fn tuple_to_iso_date(date: (i32, u8, u8)) -> Result<Date<Iso>, DateTimeError> {
@@ -47,15 +56,7 @@ fn main(_argc: isize, _argv: *const *const u8) -> isize {
         .collect::<Result<Vec<Date<Iso>>, _>>()
         .expect("Failed to parse dates.");
 
-    for date in dates.iter() {
-        let formatted_date = format!(
-            "Year: {}, Month: {}, Day: {}",
-            date.year().number,
-            date.month().number,
-            date.day_of_month().0
-        );
-        print(&formatted_date);
-    }
+    dates.iter().map(|x| print(x)).for_each(drop);
 
     0
 }

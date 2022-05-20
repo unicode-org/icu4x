@@ -9,7 +9,7 @@
 
 icu_benchmark_macros::static_setup!();
 
-use icu_calendar::{DateTime, DateTimeError, Iso};
+use icu_calendar::{Calendar, DateTime, DateTimeError, Iso};
 
 const DATETIMES_ISO: &[(i32, u8, u8, u8, u8, u8)] = &[
     (1970, 1, 1, 3, 5, 12),
@@ -27,9 +27,21 @@ const DATETIMES_ISO: &[(i32, u8, u8, u8, u8, u8)] = &[
     (2033, 6, 10, 17, 22, 22),
 ];
 
-fn print(_input: &str) {
+fn print<A: Calendar>(_datetime_input: &DateTime<A>) {
     #[cfg(debug_assertions)]
-    println!("{}", _input);
+    {
+        let formatted_datetime = format!(
+            "Year: {}, Month: {}, Day: {}, Hour: {}, Minute: {}, Second: {}",
+            _datetime_input.date.year().number,
+            _datetime_input.date.month().number,
+            _datetime_input.date.day_of_month().0,
+            u8::from(_datetime_input.time.hour),
+            u8::from(_datetime_input.time.minute),
+            u8::from(_datetime_input.time.second),
+        );
+
+        println!("{}", formatted_datetime);
+    }
 }
 
 fn tuple_to_iso_datetime(date: (i32, u8, u8, u8, u8, u8)) -> Result<DateTime<Iso>, DateTimeError> {
@@ -47,18 +59,7 @@ fn main(_argc: isize, _argv: *const *const u8) -> isize {
         .collect::<Result<Vec<DateTime<Iso>>, _>>()
         .expect("Failed to parse datetimes.");
 
-    for datetime in datetimes.iter() {
-        let formatted_datetime = format!(
-            "Year: {}, Month: {}, Day: {}, Hour: {}, Minute: {}, Second: {}",
-            datetime.date.year().number,
-            datetime.date.month().number,
-            datetime.date.day_of_month().0,
-            u8::from(datetime.time.hour),
-            u8::from(datetime.time.minute),
-            u8::from(datetime.time.second),
-        );
-        print(&formatted_datetime);
-    }
+    datetimes.iter().map(|x| print(x)).for_each(drop);
 
     0
 }
