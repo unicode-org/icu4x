@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1653077877529,
+  "lastUpdate": 1653084798383,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -15443,6 +15443,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/6ef7eda5b3f348b8d2e950dce1518602cb493eec"
         },
         "date": 1653077852939,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 2220821,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "645b2f7e97192527974adc195daed7600558e85d",
+          "message": "Add panics/non_exhaustive to style guide (#1919)",
+          "timestamp": "2022-05-20T22:11:04Z",
+          "tree_id": "bb584728777931ec82ee4e7c3a250f65a3944f95",
+          "url": "https://github.com/unicode-org/icu4x/commit/645b2f7e97192527974adc195daed7600558e85d"
+        },
+        "date": 1653084775018,
         "tool": "ndjson",
         "benches": [
           {
