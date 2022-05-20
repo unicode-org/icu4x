@@ -34,10 +34,22 @@ impl<C: Calendar> AsCalendar for Rc<C> {
     }
 }
 
-/// A date for a given calendar
+/// A date for a given calendar.
 ///
 /// This can work with wrappers around [`Calendar`] types,
-/// e.g. `Rc<C>`, via the [`AsCalendar`] trait
+/// e.g. `Rc<C>`, via the [`AsCalendar`] trait.
+///
+/// ```rust
+/// use icu::calendar::Date;
+///
+/// // Example: creation of ISO date from integers.
+/// let date_iso = Date::new_iso_date_from_integers(1970, 1, 2)
+///     .expect("Failed to initialize ISO Date instance.");
+///
+/// assert_eq!(date_iso.year().number, 1970);
+/// assert_eq!(date_iso.month().number, 1);
+/// assert_eq!(date_iso.day_of_month().0, 2);
+/// ```
 pub struct Date<A: AsCalendar> {
     pub(crate) inner: <A::Calendar as Calendar>::DateInner,
     calendar: A,

@@ -386,7 +386,7 @@ impl Date<Iso> {
 }
 
 impl DateTime<Iso> {
-    /// Construct a new ISO date from integers.
+    /// Construct a new ISO datetime from integers.
     ///
     /// ```rust
     /// use icu::calendar::{DateTime,
