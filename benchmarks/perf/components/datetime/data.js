@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1653077613331,
+  "lastUpdate": 1653078419882,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -33095,6 +33095,102 @@ window.BENCHMARK_DATA = {
             "name": "pattern/parse",
             "value": 4484,
             "range": "± 13",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "andrewpkq@gmail.com",
+            "name": "andrewpollack",
+            "username": "andrewpollack"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "6ef7eda5b3f348b8d2e950dce1518602cb493eec",
+          "message": "Adding ISO `Date` and `DateTime` memory benchmark (#1872)\n\n* Adding iso date memory benchmark\r\n\r\n* fmt\r\n\r\n* Updating to test 0.6\r\n\r\n* Clippy\r\n\r\n* adding missing CI\r\n\r\n* Adding datetimes memory benches\r\n\r\n* Moving prints into debug line\r\n\r\n* Clippy",
+          "timestamp": "2022-05-20T20:15:42Z",
+          "tree_id": "564b4aedd309ba7409fbad1472c54d8bf77bcde2",
+          "url": "https://github.com/unicode-org/icu4x/commit/6ef7eda5b3f348b8d2e950dce1518602cb493eec"
+        },
+        "date": 1653078400276,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 77426,
+            "range": "± 191",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 785959,
+            "range": "± 1781",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 169582,
+            "range": "± 850",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/DateTimeFormat/format_to_write",
+            "value": 75196,
+            "range": "± 526",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/DateTimeFormat/format_to_string",
+            "value": 82548,
+            "range": "± 605",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/format",
+            "value": 76797,
+            "range": "± 167",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/to_string",
+            "value": 83762,
+            "range": "± 123",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/ZonedDateTimeFormat/format_to_write",
+            "value": 164223,
+            "range": "± 619",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/ZonedDateTimeFormat/format_to_string",
+            "value": 176358,
+            "range": "± 1688",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/format",
+            "value": 169707,
+            "range": "± 4089",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/to_string",
+            "value": 180918,
+            "range": "± 174",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "pattern/parse",
+            "value": 5157,
+            "range": "± 8",
             "unit": "ns/iter"
           }
         ]
