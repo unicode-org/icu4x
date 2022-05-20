@@ -10,7 +10,7 @@ use criterion::{
 };
 use icu_calendar::{types::Time, AsCalendar, Calendar, DateDuration, DateTime};
 
-fn bench_datetimes<A: AsCalendar>(datetimes: Vec<&mut DateTime<A>>) {
+fn bench_datetimes<A: AsCalendar>(datetimes: &mut [DateTime<A>]) {
     for datetime in datetimes {
         // black_box used to avoid compiler optimization.
         // Arithmetic.
@@ -36,7 +36,6 @@ fn bench_datetimes<A: AsCalendar>(datetimes: Vec<&mut DateTime<A>>) {
     }
 }
 
-#[allow(dead_code)]
 fn bench_calendar<C: Clone + Calendar>(
     group: &mut BenchmarkGroup<WallTime>,
     name: &str,
@@ -48,7 +47,7 @@ fn bench_calendar<C: Clone + Calendar>(
         b.iter(|| {
             for fx in &fxs.0 {
                 // Instantion from int
-                let mut instantiated_datetime_calendar = calendar_datetime_init(
+                let instantiated_datetime_calendar = calendar_datetime_init(
                     fx.year, fx.month, fx.day, fx.hour, fx.minute, fx.second,
                 );
 
@@ -57,13 +56,10 @@ fn bench_calendar<C: Clone + Calendar>(
                     fx.year, fx.month, fx.day, fx.hour, fx.minute, fx.second,
                 )
                 .unwrap();
-                let mut converted_datetime_calendar =
+                let converted_datetime_calendar =
                     DateTime::new_from_iso(datetime_iso, calendar.clone());
 
-                bench_datetimes(vec![
-                    &mut instantiated_datetime_calendar,
-                    &mut converted_datetime_calendar,
-                ]);
+                bench_datetimes(&mut [instantiated_datetime_calendar, converted_datetime_calendar]);
             }
         })
     });

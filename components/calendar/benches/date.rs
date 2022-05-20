@@ -12,7 +12,7 @@ use icu_calendar::{
     iso::IsoDay, iso::IsoMonth, iso::IsoYear, AsCalendar, Calendar, Date, DateDuration,
 };
 
-fn bench_dates<A: AsCalendar>(dates: Vec<&mut Date<A>>) {
+fn bench_dates<A: AsCalendar>(dates: &mut [Date<A>]) {
     for date in dates {
         // black_box used to avoid compiler optimization.
         // Arithmetic
@@ -33,7 +33,7 @@ fn bench_dates<A: AsCalendar>(dates: Vec<&mut Date<A>>) {
     }
 }
 
-#[allow(dead_code)]
+#[cfg(feature = "bench")]
 fn bench_calendar<C: Clone + Calendar>(
     group: &mut BenchmarkGroup<WallTime>,
     name: &str,
@@ -45,16 +45,13 @@ fn bench_calendar<C: Clone + Calendar>(
         b.iter(|| {
             for fx in &fxs.0 {
                 // Instantion from int
-                let mut instantiated_date_calendar = calendar_date_init(fx.year, fx.month, fx.day);
+                let instantiated_date_calendar = calendar_date_init(fx.year, fx.month, fx.day);
 
                 // Conversion from ISO
                 let date_iso = Date::new_iso_date_from_integers(fx.year, fx.month, fx.day).unwrap();
-                let mut converted_date_calendar = Date::new_from_iso(date_iso, calendar.clone());
+                let converted_date_calendar = Date::new_from_iso(date_iso, calendar.clone());
 
-                bench_dates(vec![
-                    &mut instantiated_date_calendar,
-                    &mut converted_date_calendar,
-                ]);
+                bench_dates(&mut [instantiated_date_calendar, converted_date_calendar]);
             }
         })
     });
@@ -74,19 +71,16 @@ fn bench_calendar_iso_types<C: Clone + Calendar>(
             for fx in &fxs.0 {
                 // Conversion from ISO
                 let date_iso = Date::new_iso_date_from_integers(fx.year, fx.month, fx.day).unwrap();
-                let mut converted_date_calendar = Date::new_from_iso(date_iso, calendar.clone());
+                let converted_date_calendar = Date::new_from_iso(date_iso, calendar.clone());
 
                 // Instantion from ISO
                 let iso_year = IsoYear(fx.year);
                 let iso_month = IsoMonth::try_from(fx.month).unwrap();
                 let iso_day = IsoDay::try_from(fx.day).unwrap();
-                let mut iso_insantiated_date_calendar =
+                let iso_insantiated_date_calendar =
                     calendar_date_init(iso_year, iso_month, iso_day);
 
-                bench_dates(vec![
-                    &mut iso_insantiated_date_calendar,
-                    &mut converted_date_calendar,
-                ]);
+                bench_dates(&mut [iso_insantiated_date_calendar, converted_date_calendar]);
             }
         })
     });
