@@ -2,23 +2,14 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use super::Error;
 use crate::dynutil::UpcastDataPayload;
 use crate::prelude::*;
 use crate::yoke::*;
 use alloc::boxed::Box;
-use core::ops::Deref;
 
 /// A wrapper around `Box<erased_serde::Serialize>` for integration with DataProvider.
 #[derive(yoke::Yokeable)]
 pub struct SerializeBox(Box<dyn erased_serde::Serialize>);
-
-impl Deref for SerializeBox {
-    type Target = dyn erased_serde::Serialize;
-    fn deref(&self) -> &Self::Target {
-        self.0.deref()
-    }
-}
 
 impl<M> UpcastDataPayload<M> for SerializeMarker
 where
@@ -60,17 +51,19 @@ impl DataPayload<SerializeMarker> {
     /// let mut buffer: Vec<u8> = vec![];
     /// payload
     ///     .into_serializable()
-    ///     .serialize(&mut <dyn erased_serde::Serializer>::erase(
-    ///         &mut serde_json::Serializer::new(&mut buffer),
-    ///     ))
+    ///     .serialize(&mut serde_json::Serializer::new(&mut buffer))
     ///     .expect("Serialization should succeed");
     /// assert_eq!("{\"message\":\"(und) Hello World\"}".as_bytes(), buffer);
     /// ```
-    pub fn serialize(
-        &self,
-        mut serializer: &mut dyn erased_serde::Serializer,
-    ) -> Result<(), Error> {
-        self.get().erased_serialize(&mut serializer)?;
+    pub fn serialize<S>(&self, serializer: S) -> Result<(), DataError>
+    where
+        S: serde::Serializer,
+        S::Ok: 'static, // erased_serde requirement, cannot return values in `Ok`
+    {
+        self.get()
+            .0
+            .erased_serialize(&mut <dyn erased_serde::Serializer>::erase(serializer))
+            .map_err(|e| DataError::custom("Serde export").with_display_context(&e))?;
         Ok(())
     }
 }

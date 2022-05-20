@@ -2,7 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::error::DatagenError;
 use crate::transform::cldr::cldr_serde;
 use crate::transform::reader::{get_langid_subdirectories, get_langid_subdirectory, open_reader};
 use crate::transform::uprops::EnumeratedPropertyCodePointTrieProvider;
@@ -40,7 +39,7 @@ impl<M: ResourceMarker<Yokeable = ListFormatterPatternsV1<'static>>> ResourcePro
             .ok_or_else(|| DataErrorKind::MissingLocale.into_error())?
             .join("listPatterns.json");
             serde_json::from_reader(open_reader(&path)?)
-                .map_err(|e| DatagenError::from((e, path)))?
+                .map_err(|e| DataError::from(e).with_path_context(&path))?
         };
 
         let data = &resource

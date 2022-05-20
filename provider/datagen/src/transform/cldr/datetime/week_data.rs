@@ -2,7 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::error::DatagenError;
 use crate::transform::cldr::cldr_serde::{
     self,
     week_data::{Territory, DEFAULT_TERRITORY},
@@ -42,7 +41,7 @@ impl WeekDataProvider {
                 .join("supplemental/weekData.json");
             let resource: cldr_serde::week_data::Resource =
                 serde_json::from_reader(open_reader(&path)?)
-                    .map_err(|e| DatagenError::from((e, path)))?;
+                    .map_err(|e| DataError::from(e).with_path_context(&path))?;
             let week_data = resource.supplemental.week_data;
             *self.data.write().unwrap() = Some((
                 CalendarInfo {

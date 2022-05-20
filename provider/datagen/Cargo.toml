@@ -48,7 +48,7 @@ icu_collator = { version = "0.6", path = "../../experimental/collator", features
 icu_normalizer = { version = "0.6", path = "../../experimental/normalizer", features = ["datagen"], optional = true }
 
 # ICU provider infrastructure
-icu_provider = { version = "0.6", path = "../core", features = ["std", "log_error_context"]}
+icu_provider = { version = "0.6", path = "../core", features = ["std", "log_error_context", "datagen"]}
 icu_provider_adapters = { version = "0.6", path = "../adapters", features = ["datagen"] }
 icu_provider_blob = { version = "0.6", path = "../blob", features = ["export"] }
 icu_provider_fs = { version = "0.6", path = "../fs", features = ["export"] }

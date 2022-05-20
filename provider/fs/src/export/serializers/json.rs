@@ -3,8 +3,9 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use super::AbstractSerializer;
-use super::Error;
 use icu_provider::buf::BufferFormat;
+use icu_provider::prelude::*;
+use icu_provider::serde::SerializeMarker;
 use std::io::{self, Write};
 
 #[non_exhaustive]
@@ -40,22 +41,14 @@ impl Default for Options {
 impl AbstractSerializer for Serializer {
     fn serialize(
         &self,
-        obj: &dyn erased_serde::Serialize,
+        obj: DataPayload<SerializeMarker>,
         sink: &mut dyn io::Write,
-    ) -> Result<(), Error> {
+    ) -> Result<(), DataError> {
         let mut sink = crlify::BufWriterWithLineEndingFix::new(sink);
         match self.style {
-            StyleOption::Compact => {
-                obj.erased_serialize(&mut <dyn erased_serde::Serializer>::erase(
-                    &mut serde_json::Serializer::new(&mut sink),
-                ))?;
-            }
-            StyleOption::Pretty => {
-                obj.erased_serialize(&mut <dyn erased_serde::Serializer>::erase(
-                    &mut serde_json::Serializer::pretty(&mut sink),
-                ))?;
-            }
-        };
+            StyleOption::Compact => obj.serialize(&mut serde_json::Serializer::new(&mut sink)),
+            StyleOption::Pretty => obj.serialize(&mut serde_json::Serializer::pretty(&mut sink)),
+        }?;
         // Write an empty line at the end of the document
         writeln!(sink)?;
         Ok(())

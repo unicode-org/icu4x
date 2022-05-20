@@ -2,7 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use super::Error;
 use crate::buf::BufferFormat;
 use crate::buf::BufferProvider;
 use crate::prelude::*;
@@ -10,24 +9,6 @@ use core::marker::PhantomData;
 use serde::de::Deserialize;
 use yoke::trait_hack::YokeTraitHack;
 use yoke::Yokeable;
-
-/// Returns an error if the buffer format is not enabled.
-pub fn check_format_supported(buffer_format: BufferFormat) -> Result<(), Error> {
-    match buffer_format {
-        #[cfg(feature = "deserialize_json")]
-        BufferFormat::Json => Ok(()),
-
-        #[cfg(feature = "deserialize_bincode_1")]
-        BufferFormat::Bincode1 => Ok(()),
-
-        #[cfg(feature = "deserialize_postcard_07")]
-        BufferFormat::Postcard07 => Ok(()),
-
-        // Allowed for cases in which all features are enabled
-        #[allow(unreachable_patterns)]
-        _ => Err(Error::UnavailableFormat(buffer_format)),
-    }
-}
 
 /// A [`BufferProvider`] that deserializes its data using Serde.
 pub struct DeserializingBufferProvider<'a, P: ?Sized>(&'a P);
@@ -52,7 +33,7 @@ fn deserialize_impl<'data, M>(
     #[allow(unused_variables)] bytes: &'data [u8],
     buffer_format: BufferFormat,
     _: PhantomData<&'data ()>,
-) -> Result<<M::Yokeable as Yokeable<'data>>::Output, Error>
+) -> Result<<M::Yokeable as Yokeable<'data>>::Output, DataError>
 where
     M: DataMarker,
     // Actual bound:
@@ -88,12 +69,15 @@ where
 
         // Allowed for cases in which all features are enabled
         #[allow(unreachable_patterns)]
-        _ => Err(Error::UnavailableFormat(buffer_format)),
+        _ => Err(DataErrorKind::UnavailableBufferFormat(buffer_format).into_error()),
     }
 }
 
 impl DataPayload<BufferMarker> {
-    pub fn into_deserialized<M>(self, buffer_format: BufferFormat) -> Result<DataPayload<M>, Error>
+    pub fn into_deserialized<M>(
+        self,
+        buffer_format: BufferFormat,
+    ) -> Result<DataPayload<M>, DataError>
     where
         M: DataMarker,
         // Actual bound:
@@ -134,23 +118,18 @@ where
         key: ResourceKey,
         req: &DataRequest,
     ) -> Result<DataResponse<M>, DataError> {
-        let old_response = BufferProvider::load_buffer(self.0, key, req)?;
-        if let Some(old_payload) = old_response.payload {
-            let buffer_format = old_response
-                .metadata
-                .buffer_format
-                .ok_or(Error::FormatNotSpecified)?;
-            let new_payload = old_payload.into_deserialized(buffer_format)?;
-            Ok(DataResponse {
-                metadata: old_response.metadata,
-                payload: Some(new_payload),
-            })
-        } else {
-            Ok(DataResponse {
-                metadata: old_response.metadata,
-                payload: None,
-            })
-        }
+        let buffer_response = BufferProvider::load_buffer(self.0, key, req)?;
+        let buffer_format = buffer_response
+            .metadata
+            .buffer_format
+            .ok_or_else(|| DataError::custom("BufferProvider didn't set BufferFormat"))?;
+        Ok(DataResponse {
+            metadata: buffer_response.metadata,
+            payload: buffer_response
+                .payload
+                .map(|p| p.into_deserialized(buffer_format))
+                .transpose()?,
+        })
     }
 }
 
