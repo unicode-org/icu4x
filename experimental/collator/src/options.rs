@@ -358,6 +358,8 @@ impl CollatorOptions {
     /// The maximum character class that `AlternateHandling::Shifted`
     /// applies to.
     pub fn max_variable(&self) -> MaxVariable {
+        // Safe, because we mask two bits and shift them to the low
+        // two bits and the enum has values for 0 to 3, inclusive.
         unsafe {
             core::mem::transmute(
                 ((self.0 & CollatorOptions::MAX_VARIABLE_MASK)
