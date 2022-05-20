@@ -20,6 +20,8 @@ members = [
     "experimental/char16trie",
     "experimental/crabbake",
     "experimental/crabbake/derive",
+    "experimental/collator",
+    "experimental/normalizer",
     "experimental/segmenter",
     "experimental/segmenter_lstm",
     "ffi/capi_cdylib",
