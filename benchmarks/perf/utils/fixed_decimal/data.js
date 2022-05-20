@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1653066478875,
+  "lastUpdate": 1653072400798,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -27329,6 +27329,66 @@ window.BENCHMARK_DATA = {
             "name": "from_string/1000000001",
             "value": 83,
             "range": "± 3",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "andrewpkq@gmail.com",
+            "name": "andrewpollack",
+            "username": "andrewpollack"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "26acf4fd2cfc629a091ba91ac70eac3fe001c946",
+          "message": "Adding high level date and datetime example to base structs, fixing typo (#1866)\n\n* Adding high level date and datetime example to base structs\r\n\r\n* Substituting unwrap for expect\r\n\r\n* Substituting unwrap for expect\r\n\r\n* Adding ISO to message",
+          "timestamp": "2022-05-20T18:35:41Z",
+          "tree_id": "b467867d93bae3ee59b6b0b09a8386a695c232ac",
+          "url": "https://github.com/unicode-org/icu4x/commit/26acf4fd2cfc629a091ba91ac70eac3fe001c946"
+        },
+        "date": 1653072382121,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 97394,
+            "range": "± 327",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 21575,
+            "range": "± 51",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 68860,
+            "range": "± 737",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 164,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 95,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 77,
+            "range": "± 0",
             "unit": "ns/iter"
           }
         ]
