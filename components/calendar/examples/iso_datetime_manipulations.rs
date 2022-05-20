@@ -59,7 +59,7 @@ fn main(_argc: isize, _argv: *const *const u8) -> isize {
         .collect::<Result<Vec<DateTime<Iso>>, _>>()
         .expect("Failed to parse datetimes.");
 
-    datetimes.iter().map(|x| print(x)).for_each(drop);
+    datetimes.iter().map(print).for_each(drop);
 
     0
 }

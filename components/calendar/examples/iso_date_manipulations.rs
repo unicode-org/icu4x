@@ -56,7 +56,7 @@ fn main(_argc: isize, _argv: *const *const u8) -> isize {
         .collect::<Result<Vec<Date<Iso>>, _>>()
         .expect("Failed to parse dates.");
 
-    dates.iter().map(|x| print(x)).for_each(drop);
+    dates.iter().map(print).for_each(drop);
 
     0
 }
