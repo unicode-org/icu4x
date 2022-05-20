@@ -16,10 +16,10 @@ use core::ops::Deref;
 /// ```
 /// use icu::locid::extensions::unicode::{Attribute, Attributes};
 ///
-/// let attribute1: Attribute = "foobar".parse()
-///     .expect("Failed to parse a variant subtag.");
+/// let attribute1: Attribute = "foobar".parse().expect("Failed to parse a variant subtag.");
 ///
-/// let attribute2: Attribute = "testing".parse()
+/// let attribute2: Attribute = "testing"
+///     .parse()
 ///     .expect("Failed to parse a variant subtag.");
 /// let mut v = vec![attribute1, attribute2];
 /// v.sort();
@@ -28,7 +28,6 @@ use core::ops::Deref;
 /// let attributes: Attributes = Attributes::from_vec_unchecked(v);
 /// assert_eq!(attributes.to_string(), "foobar-testing");
 /// ```
-///
 #[derive(Default, Debug, PartialEq, Eq, Clone, Hash, PartialOrd, Ord)]
 pub struct Attributes(Vec<Attribute>);
 
@@ -55,10 +54,8 @@ impl Attributes {
     /// ```
     /// use icu::locid::extensions::unicode::{Attribute, Attributes};
     ///
-    /// let attribute1: Attribute = "foobar".parse()
-    ///     .expect("Parsing failed.");
-    /// let attribute2: Attribute = "testing".parse()
-    ///     .expect("Parsing failed.");
+    /// let attribute1: Attribute = "foobar".parse().expect("Parsing failed.");
+    /// let attribute2: Attribute = "testing".parse().expect("Parsing failed.");
     /// let mut v = vec![attribute1, attribute2];
     /// v.sort();
     /// v.dedup();
@@ -80,10 +77,8 @@ impl Attributes {
     /// ```
     /// use icu::locid::extensions::unicode::{Attribute, Attributes};
     ///
-    /// let attribute1: Attribute = "foobar".parse()
-    ///     .expect("Parsing failed.");
-    /// let attribute2: Attribute = "testing".parse()
-    ///     .expect("Parsing failed.");
+    /// let attribute1: Attribute = "foobar".parse().expect("Parsing failed.");
+    /// let attribute2: Attribute = "testing".parse().expect("Parsing failed.");
     /// let mut v = vec![attribute1, attribute2];
     ///
     /// let mut attributes: Attributes = Attributes::from_vec_unchecked(v);

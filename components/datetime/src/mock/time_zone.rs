@@ -20,18 +20,17 @@ use core::str::FromStr;
 /// # Examples
 ///
 /// ```
-/// use icu::datetime::mock::time_zone::MockTimeZone;
 /// use icu::datetime::date::GmtOffset;
+/// use icu::datetime::mock::time_zone::MockTimeZone;
 ///
 /// let tz1 = MockTimeZone::new(
 ///     GmtOffset::default(),
-///     /* time_zone_id  */ None,
-///     /* metazone_id   */ None,
+///     /* time_zone_id */ None,
+///     /* metazone_id */ None,
 ///     /* time_variaint */ None,
 /// );
 ///
-/// let tz2: MockTimeZone = "+05:00".parse()
-///     .expect("Failed to parse a time zone.");
+/// let tz2: MockTimeZone = "+05:00".parse().expect("Failed to parse a time zone.");
 /// ```
 #[derive(Debug, Default)]
 #[allow(clippy::exhaustive_structs)] // this type will not add fields (it is largely an example type)

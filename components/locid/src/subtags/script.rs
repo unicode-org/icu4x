@@ -16,8 +16,7 @@ use tinystr::TinyAsciiStr;
 /// ```
 /// use icu::locid::subtags::Script;
 ///
-/// let script: Script = "Latn".parse()
-///     .expect("Failed to parse a script subtag.");
+/// let script: Script = "Latn".parse().expect("Failed to parse a script subtag.");
 /// ```
 ///
 /// [`unicode_script_id`]: https://unicode.org/reports/tr35/#unicode_script_id
@@ -37,8 +36,7 @@ impl Script {
     /// ```
     /// use icu::locid::subtags::Script;
     ///
-    /// let script = Script::from_bytes(b"Latn")
-    ///     .expect("Parsing failed.");
+    /// let script = Script::from_bytes(b"Latn").expect("Parsing failed.");
     ///
     /// assert_eq!(script, "Latn");
     /// ```
@@ -100,8 +98,7 @@ impl Script {
     /// ```
     /// use icu::locid::subtags::Script;
     ///
-    /// let script = Script::from_bytes(b"Latn")
-    ///     .expect("Parsing failed.");
+    /// let script = Script::from_bytes(b"Latn").expect("Parsing failed.");
     ///
     /// let raw = script.into_raw();
     /// let script = unsafe { Script::from_raw_unchecked(raw) };
@@ -119,8 +116,7 @@ impl Script {
     /// ```
     /// use icu::locid::subtags::Script;
     ///
-    /// let script = Script::from_bytes(b"Latn")
-    ///     .expect("Parsing failed.");
+    /// let script = Script::from_bytes(b"Latn").expect("Parsing failed.");
     ///
     /// let raw = script.into_raw();
     /// let script = unsafe { Script::from_raw_unchecked(raw) };
@@ -143,8 +139,7 @@ impl Script {
     /// ```
     /// use icu::locid::subtags::Script;
     ///
-    /// let script = Script::from_bytes(b"Latn")
-    ///     .expect("Parsing failed.");
+    /// let script = Script::from_bytes(b"Latn").expect("Parsing failed.");
     ///
     /// assert_eq!(script.as_str(), "Latn");
     /// ```

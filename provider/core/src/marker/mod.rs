@@ -48,7 +48,7 @@ use crate::ResourceKey;
 ///
 /// // We can now use MyDataStruct with DataProvider:
 /// let s = MyDataStruct {
-///     message: Cow::Owned("Hello World".into())
+///     message: Cow::Owned("Hello World".into()),
 /// };
 /// let payload = DataPayload::<MyDataStructMarker>::from_owned(s);
 /// assert_eq!(payload.get().message, "Hello World");

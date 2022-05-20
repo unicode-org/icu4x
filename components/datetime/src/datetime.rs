@@ -32,9 +32,9 @@ use crate::{date::DateTimeInput, CldrCalendar, DateTimeFormatError, FormattedDat
 /// # Examples
 ///
 /// ```
-/// use icu::locid::locale;
-/// use icu::datetime::{DateTimeFormat, options::length};
 /// use icu::calendar::{DateTime, Gregorian};
+/// use icu::datetime::{options::length, DateTimeFormat};
+/// use icu::locid::locale;
 /// use icu_provider::inv::InvariantDataProvider;
 ///
 /// let provider = InvariantDataProvider;
@@ -43,7 +43,6 @@ use crate::{date::DateTimeInput, CldrCalendar, DateTimeFormatError, FormattedDat
 ///
 /// let dtf = DateTimeFormat::<Gregorian>::try_new(locale!("en"), &provider, &options.into())
 ///     .expect("Failed to create DateTimeFormat instance.");
-///
 ///
 /// let datetime = DateTime::new_gregorian_datetime_from_integers(2020, 9, 1, 12, 34, 28, 0)
 ///     .expect("Failed to construct DateTime.");
@@ -63,9 +62,9 @@ impl<C: CldrCalendar> DateTimeFormat<C> {
     /// # Examples
     ///
     /// ```
-    /// use icu::locid::locale;
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::{DateTimeFormat, DateTimeFormatOptions};
+    /// use icu::locid::locale;
     /// use icu_provider::inv::InvariantDataProvider;
     ///
     /// let provider = InvariantDataProvider;
@@ -110,8 +109,8 @@ impl<C: CldrCalendar> DateTimeFormat<C> {
     /// # Examples
     ///
     /// ```
-    /// use icu::datetime::{DateTimeFormat, DateTimeFormatOptions};
     /// use icu::calendar::{DateTime, Gregorian};
+    /// use icu::datetime::{DateTimeFormat, DateTimeFormatOptions};
     /// use icu_provider::inv::InvariantDataProvider;
     /// # let locale = icu::locid::locale!("en");
     /// # let provider = InvariantDataProvider;
@@ -144,8 +143,8 @@ impl<C: CldrCalendar> DateTimeFormat<C> {
     /// # Examples
     ///
     /// ```
-    /// use icu::datetime::{DateTimeFormat, DateTimeFormatOptions};
     /// use icu::calendar::{DateTime, Gregorian};
+    /// use icu::datetime::{DateTimeFormat, DateTimeFormatOptions};
     /// use icu_provider::inv::InvariantDataProvider;
     /// # let locale = icu::locid::locale!("en");
     /// # let provider = InvariantDataProvider;
@@ -176,8 +175,8 @@ impl<C: CldrCalendar> DateTimeFormat<C> {
     /// # Examples
     ///
     /// ```
-    /// use icu::datetime::{DateTimeFormat, DateTimeFormatOptions};
     /// use icu::calendar::{DateTime, Gregorian};
+    /// use icu::datetime::{DateTimeFormat, DateTimeFormatOptions};
     /// use icu_provider::inv::InvariantDataProvider;
     /// # let locale = icu::locid::locale!("en");
     /// # let provider = InvariantDataProvider;
@@ -221,10 +220,7 @@ impl<C: CldrCalendar> DateTimeFormat<C> {
     /// expected_components_bag.month = Some(components::Month::Short);
     /// expected_components_bag.day = Some(components::Day::NumericDayOfMonth);
     ///
-    /// assert_eq!(
-    ///     dtf.resolve_components(),
-    ///     expected_components_bag
-    /// );
+    /// assert_eq!(dtf.resolve_components(), expected_components_bag);
     /// ```
     pub fn resolve_components(&self) -> components::Bag {
         self.0.resolve_components()

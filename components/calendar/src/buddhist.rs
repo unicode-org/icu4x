@@ -5,9 +5,9 @@
 //! This module contains types and implementations for the Buddhist calendar.
 //!
 //! ```rust
-//! use icu::calendar::{Date, DateTime,
-//!                     types::IsoHour, types::IsoMinute, types::IsoSecond,
-//!                     buddhist::Buddhist};
+//! use icu::calendar::{
+//!     buddhist::Buddhist, types::IsoHour, types::IsoMinute, types::IsoSecond, Date, DateTime,
+//! };
 //!
 //! // `Date` type
 //! let date_iso = Date::new_iso_date_from_integers(1970, 1, 2)
@@ -133,8 +133,8 @@ impl Date<Buddhist> {
     /// use icu::calendar::Date;
     /// use std::convert::TryFrom;
     ///
-    /// let date_buddhist = Date::new_buddhist_date(1970, 1, 2)
-    ///     .expect("Failed to initialize Buddhist Date instance.");
+    /// let date_buddhist =
+    ///     Date::new_buddhist_date(1970, 1, 2).expect("Failed to initialize Buddhist Date instance.");
     ///
     /// assert_eq!(date_buddhist.year().number, 1970);
     /// assert_eq!(date_buddhist.month().number, 1);
@@ -156,10 +156,7 @@ impl DateTime<Buddhist> {
     /// Years are specified as BE years.
     ///
     /// ```rust
-    /// use icu::calendar::{DateTime,
-    ///                     types::IsoHour,
-    ///                     types::IsoMinute,
-    ///                     types::IsoSecond};
+    /// use icu::calendar::{types::IsoHour, types::IsoMinute, types::IsoSecond, DateTime};
     ///
     /// let datetime_buddhist = DateTime::new_buddhist_datetime(1970, 1, 2, 13, 1, 0)
     ///     .expect("Failed to initialize Buddhist DateTime instance.");

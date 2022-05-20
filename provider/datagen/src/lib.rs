@@ -25,7 +25,8 @@
 //!         &SourceData::default().with_uprops(PathBuf::from("/path/to/uprops/root")),
 //!         Out::Blob(Box::new(File::create("data.postcard").unwrap())),
 //!         false,
-//!     ).unwrap();
+//!     )
+//!     .unwrap();
 //! }
 //! ```
 //!

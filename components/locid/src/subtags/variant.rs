@@ -18,8 +18,7 @@ use tinystr::TinyAsciiStr;
 /// ```
 /// use icu::locid::subtags::Variant;
 ///
-/// let variant: Variant = "macos".parse()
-///     .expect("Failed to parse a variant subtag.");
+/// let variant: Variant = "macos".parse().expect("Failed to parse a variant subtag.");
 /// ```
 ///
 /// [`unicode_variant_id`]: https://unicode.org/reports/tr35/#unicode_variant_id
@@ -40,8 +39,7 @@ impl Variant {
     /// ```
     /// use icu::locid::subtags::Variant;
     ///
-    /// let variant = Variant::from_bytes(b"posix")
-    ///     .expect("Parsing failed.");
+    /// let variant = Variant::from_bytes(b"posix").expect("Parsing failed.");
     ///
     /// assert_eq!(variant, "posix");
     /// ```
@@ -114,8 +112,7 @@ impl Variant {
     /// ```
     /// use icu::locid::subtags::Variant;
     ///
-    /// let variant = Variant::from_bytes(b"posix")
-    ///     .expect("Parsing failed.");
+    /// let variant = Variant::from_bytes(b"posix").expect("Parsing failed.");
     ///
     /// let raw = variant.into_raw();
     /// let variant = unsafe { Variant::from_raw_unchecked(raw) };
@@ -133,8 +130,7 @@ impl Variant {
     /// ```
     /// use icu::locid::subtags::Variant;
     ///
-    /// let variant = Variant::from_bytes(b"posix")
-    ///     .expect("Parsing failed.");
+    /// let variant = Variant::from_bytes(b"posix").expect("Parsing failed.");
     ///
     /// let raw = variant.into_raw();
     /// let variant = unsafe { Variant::from_raw_unchecked(raw) };
@@ -157,8 +153,7 @@ impl Variant {
     /// ```
     /// use icu::locid::subtags::Variant;
     ///
-    /// let variant = Variant::from_bytes(b"macos")
-    ///     .expect("Parsing failed.");
+    /// let variant = Variant::from_bytes(b"macos").expect("Parsing failed.");
     ///
     /// assert_eq!(variant.as_str(), "macos");
     /// ```

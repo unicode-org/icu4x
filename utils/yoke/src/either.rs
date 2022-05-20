@@ -23,29 +23,17 @@ use stable_deref_trait::StableDeref;
 /// # Examples
 ///
 /// ```
-/// use yoke::Yoke;
-/// use yoke::either::EitherCart;
 /// use std::borrow::Cow;
 /// use std::rc::Rc;
+/// use yoke::either::EitherCart;
+/// use yoke::Yoke;
 ///
-/// let y1: Yoke<
-///     &'static str,
-///     Rc<str>
-/// > = Yoke::attach_to_zero_copy_cart(
-///     "reference counted hello world".into()
-/// );
+/// let y1: Yoke<&'static str, Rc<str>> =
+///     Yoke::attach_to_zero_copy_cart("reference counted hello world".into());
 ///
-/// let y2: Yoke<
-///     &'static str,
-///     &str
-/// > = Yoke::attach_to_zero_copy_cart(
-///     "borrowed hello world"
-/// );
+/// let y2: Yoke<&'static str, &str> = Yoke::attach_to_zero_copy_cart("borrowed hello world");
 ///
-/// type CombinedYoke<'a> = Yoke<
-///     &'static str,
-///     EitherCart<Rc<str>, &'a str>
-/// >;
+/// type CombinedYoke<'a> = Yoke<&'static str, EitherCart<Rc<str>, &'a str>>;
 ///
 /// // Both yokes can be combined into a single yoke type despite different carts
 /// let y3: CombinedYoke = y1.wrap_cart_in_either_a();

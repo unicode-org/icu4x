@@ -114,8 +114,8 @@ impl<U: Copy + Eq> Eq for OptionULE<U> {}
 /// A type allowing one to represent `Option<U>` for [`VarULE`] `U` types.
 ///
 /// ```rust
-/// use zerovec::VarZeroVec;
 /// use zerovec::ule::OptionVarULE;
+/// use zerovec::VarZeroVec;
 ///
 /// let mut zv: VarZeroVec<OptionVarULE<str>> = VarZeroVec::new();
 ///

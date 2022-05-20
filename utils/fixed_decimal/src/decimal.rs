@@ -299,7 +299,9 @@ impl FixedDecimal {
     /// ```
     /// use fixed_decimal::FixedDecimal;
     ///
-    /// let dec = FixedDecimal::from(42).multiplied_pow10(3).expect("Bounds are small");
+    /// let dec = FixedDecimal::from(42)
+    ///     .multiplied_pow10(3)
+    ///     .expect("Bounds are small");
     /// assert_eq!("42000", dec.to_string());
     /// ```
     pub fn multiplied_pow10(mut self, delta: i16) -> Result<Self, Error> {
@@ -364,8 +366,6 @@ impl FixedDecimal {
     ///
     /// let mut dec = FixedDecimal::from(42);
     /// assert_eq!("42", dec.to_string());
-    ///
-    /// ;
     /// assert_eq!("0042", dec.clone().padded_left(4).to_string());
     ///
     /// assert_eq!("042", dec.clone().padded_left(3).to_string());
@@ -571,7 +571,10 @@ impl FixedDecimal {
     ///
     /// assert_eq!(Signum::AboveZero, FixedDecimal::from(42).signum());
     /// assert_eq!(Signum::PositiveZero, FixedDecimal::from(0).signum());
-    /// assert_eq!(Signum::NegativeZero, FixedDecimal::from(0).negated().signum());
+    /// assert_eq!(
+    ///     Signum::NegativeZero,
+    ///     FixedDecimal::from(0).negated().signum()
+    /// );
     /// assert_eq!(Signum::BelowZero, FixedDecimal::from(-42).signum());
     /// ```
     pub fn signum(&self) -> Signum {
@@ -639,7 +642,8 @@ impl writeable::Writeable for FixedDecimal {
     ///
     /// let dec = FixedDecimal::from(42);
     /// let mut result = String::with_capacity(dec.write_len().capacity());
-    /// dec.write_to(&mut result).expect("write_to(String) should not fail");
+    /// dec.write_to(&mut result)
+    ///     .expect("write_to(String) should not fail");
     /// assert_eq!("42", result);
     /// ```
     fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
@@ -663,10 +667,12 @@ impl writeable::Writeable for FixedDecimal {
     ///
     /// ```
     /// use fixed_decimal::FixedDecimal;
-    /// use writeable::Writeable;
     /// use writeable::LengthHint;
+    /// use writeable::Writeable;
     ///
-    /// let dec = FixedDecimal::from(-5000).multiplied_pow10(-2).expect("Bounds are small");
+    /// let dec = FixedDecimal::from(-5000)
+    ///     .multiplied_pow10(-2)
+    ///     .expect("Bounds are small");
     /// let result = dec.write_to_string();
     /// assert_eq!(LengthHint::exact(6), dec.write_len());
     /// ```
@@ -940,23 +946,17 @@ impl FixedDecimal {
     ///
     /// let decimal = FixedDecimal::try_from_f64(
     ///     -5.1,
-    ///     DoublePrecision::Magnitude(-2, RoundingMode::Unnecessary)
+    ///     DoublePrecision::Magnitude(-2, RoundingMode::Unnecessary),
     /// )
     /// .expect("Finite quantity with limited precision");
     /// assert_eq!(decimal.write_to_string(), "-5.10");
     ///
-    /// let decimal = FixedDecimal::try_from_f64(
-    ///     0.012345678,
-    ///     DoublePrecision::Floating
-    /// )
-    /// .expect("Finite quantity");
+    /// let decimal = FixedDecimal::try_from_f64(0.012345678, DoublePrecision::Floating)
+    ///     .expect("Finite quantity");
     /// assert_eq!(decimal.write_to_string(), "0.012345678");
     ///
-    /// let decimal = FixedDecimal::try_from_f64(
-    ///     12345678000.,
-    ///     DoublePrecision::Integer
-    /// )
-    /// .expect("Finite, integer-valued quantity");
+    /// let decimal = FixedDecimal::try_from_f64(12345678000., DoublePrecision::Integer)
+    ///     .expect("Finite, integer-valued quantity");
     /// assert_eq!(decimal.write_to_string(), "12345678000");
     /// ```
     ///
@@ -968,10 +968,8 @@ impl FixedDecimal {
     ///
     /// // IEEE 754 for floating point defines the sign bit separate
     /// // from the mantissa and exponent, allowing for -0.
-    /// let negative_zero = FixedDecimal::try_from_f64(
-    ///     -0.0,
-    ///      DoublePrecision::Integer
-    /// ).expect("Negative zero");
+    /// let negative_zero =
+    ///     FixedDecimal::try_from_f64(-0.0, DoublePrecision::Integer).expect("Negative zero");
     /// assert_eq!(negative_zero.write_to_string(), "-0");
     /// ```
     pub fn try_from_f64(float: f64, precision: DoublePrecision) -> Result<Self, Error> {

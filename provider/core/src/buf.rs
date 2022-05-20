@@ -25,12 +25,11 @@ impl DataMarker for BufferMarker {
 ///
 /// ```
 /// # #[cfg(feature = "deserialize_json")] {
-/// use icu_provider::prelude::*;
-/// use icu_provider::hello_world::*;
 /// use icu_locid::locale;
+/// use icu_provider::hello_world::*;
+/// use icu_provider::prelude::*;
 ///
-/// let buffer_provider = HelloWorldProvider::new_with_placeholder_data()
-///     .into_json_provider();
+/// let buffer_provider = HelloWorldProvider::new_with_placeholder_data().into_json_provider();
 ///
 /// let data_provider = buffer_provider.as_deserializing();
 ///

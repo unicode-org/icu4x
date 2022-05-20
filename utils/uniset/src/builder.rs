@@ -312,7 +312,7 @@ impl UnicodeSetBuilder {
     /// # Examples
     ///
     /// ```
-    /// use icu_uniset::{UnicodeSetBuilder, UnicodeSet};
+    /// use icu_uniset::{UnicodeSet, UnicodeSetBuilder};
     /// let mut builder = UnicodeSetBuilder::new();
     /// let set = UnicodeSet::from_inversion_list_slice(&[65, 70]).unwrap();
     /// builder.add_range(&('A'..='Z'));
@@ -379,9 +379,11 @@ impl UnicodeSetBuilder {
     /// # Examples
     ///
     /// ```
-    /// use icu_uniset::{UnicodeSetBuilder, UnicodeSet};
+    /// use icu_uniset::{UnicodeSet, UnicodeSetBuilder};
     /// let mut builder = UnicodeSetBuilder::new();
-    /// let set = UnicodeSet::from_inversion_list_slice(&[0x0, 0x41, 0x46, (std::char::MAX as u32) + 1]).unwrap();
+    /// let set =
+    ///     UnicodeSet::from_inversion_list_slice(&[0x0, 0x41, 0x46, (std::char::MAX as u32) + 1])
+    ///         .unwrap();
     /// builder.add_set(&set);
     /// builder.complement();
     /// let check = builder.build();
@@ -452,7 +454,7 @@ impl UnicodeSetBuilder {
     /// # Examples
     ///
     /// ```
-    /// use icu_uniset::{UnicodeSetBuilder, UnicodeSet};
+    /// use icu_uniset::{UnicodeSet, UnicodeSetBuilder};
     /// let mut builder = UnicodeSetBuilder::new();
     /// let set = UnicodeSet::from_inversion_list_slice(&[0x41, 0x46, 0x4B, 0x5A]).unwrap();
     /// builder.add_range(&('C'..='N')); // 67 - 78
@@ -471,7 +473,7 @@ impl UnicodeSetBuilder {
     /// # Examples
     ///
     /// ```
-    /// use icu_uniset::{UnicodeSetBuilder, UnicodeSet};
+    /// use icu_uniset::{UnicodeSet, UnicodeSetBuilder};
     /// let mut builder = UnicodeSetBuilder::new();
     /// let check = builder.build();
     /// assert!(check.is_empty());

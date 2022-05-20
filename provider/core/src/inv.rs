@@ -19,9 +19,9 @@ use alloc::boxed::Box;
 /// # Examples
 ///
 /// ```
-/// use icu_provider::prelude::*;
-/// use icu_provider::inv::InvariantDataProvider;
 /// use icu_provider::hello_world::HelloWorldV1Marker;
+/// use icu_provider::inv::InvariantDataProvider;
+/// use icu_provider::prelude::*;
 /// use std::borrow::Cow;
 ///
 /// let provider = InvariantDataProvider;

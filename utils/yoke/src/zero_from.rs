@@ -39,13 +39,10 @@ where
     /// Attach to a cart:
     ///
     /// ```
-    /// use yoke::Yoke;
     /// use std::borrow::Cow;
-    ///  
-    /// let yoke = Yoke::<
-    ///     Cow<'static, str>,
-    ///     String
-    /// >::attach_to_zero_copy_cart("demo".to_string());
+    /// use yoke::Yoke;
+    ///
+    /// let yoke = Yoke::<Cow<'static, str>, String>::attach_to_zero_copy_cart("demo".to_string());
     ///
     /// assert_eq!("demo", yoke.get());
     /// ```

@@ -34,9 +34,9 @@
 //! # Examples
 //!
 //! ```
-//! use std::borrow::Cow;
-//! use icu_provider::prelude::*;
 //! use icu_locid::locale;
+//! use icu_provider::prelude::*;
+//! use std::borrow::Cow;
 //!
 //! let data_provider = icu_testdata::get_provider();
 //!
@@ -48,7 +48,8 @@
 //!     .unwrap()
 //!     .take_payload()
 //!     .unwrap();
-//! let rule = "v = 0 and i % 10 = 2..4 and i % 100 != 12..14".parse()
+//! let rule = "v = 0 and i % 10 = 2..4 and i % 100 != 12..14"
+//!     .parse()
 //!     .expect("Failed to parse plural rule");
 //! assert_eq!(data.get().few, Some(rule));
 //! ```

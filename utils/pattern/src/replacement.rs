@@ -20,15 +20,9 @@ use std::collections::HashMap;
 ///
 /// ```
 /// use icu_pattern::{
-///     Parser, ParserOptions,
-///     Pattern,
-///     Interpolator, InterpolatedKind, ReplacementProvider
+///     InterpolatedKind, Interpolator, Parser, ParserOptions, Pattern, ReplacementProvider,
 /// };
-/// use std::{
-///     collections::HashMap,
-///     convert::TryInto,
-///     borrow::Cow,
-/// };
+/// use std::{borrow::Cow, collections::HashMap, convert::TryInto};
 ///
 /// #[derive(Debug, PartialEq)]
 /// enum Element {
@@ -47,22 +41,31 @@ use std::collections::HashMap;
 /// }
 ///
 /// let mut replacements = HashMap::new();
-/// replacements.insert(0, vec![
-///     Element::TokenZero
-/// ]);
-/// replacements.insert(5, vec![
-///     Element::TokenFive
-/// ]);
+/// replacements.insert(0, vec![Element::TokenZero]);
+/// replacements.insert(5, vec![Element::TokenFive]);
 ///
-/// let pattern: Pattern<_> = Parser::new("{5}, {0}", ParserOptions {
-///     allow_raw_letters: false
-/// }).try_into().unwrap();
+/// let pattern: Pattern<_> = Parser::new(
+///     "{5}, {0}",
+///     ParserOptions {
+///         allow_raw_letters: false,
+///     },
+/// )
+/// .try_into()
+/// .unwrap();
 /// let mut interpolator = Interpolator::new(&pattern, &replacements);
 ///
-///
-/// assert_eq!(Ok(Some(InterpolatedKind::Element(&Element::TokenFive))), interpolator.try_next());
-/// assert_eq!(Ok(Some(InterpolatedKind::Literal(&", ".into()))), interpolator.try_next());
-/// assert_eq!(Ok(Some(InterpolatedKind::Element(&Element::TokenZero))), interpolator.try_next());
+/// assert_eq!(
+///     Ok(Some(InterpolatedKind::Element(&Element::TokenFive))),
+///     interpolator.try_next()
+/// );
+/// assert_eq!(
+///     Ok(Some(InterpolatedKind::Literal(&", ".into()))),
+///     interpolator.try_next()
+/// );
+/// assert_eq!(
+///     Ok(Some(InterpolatedKind::Element(&Element::TokenZero))),
+///     interpolator.try_next()
+/// );
 /// assert_eq!(Ok(None), interpolator.try_next());
 /// ```
 pub trait ReplacementProvider<'r, E: 'r> {
@@ -75,10 +78,7 @@ pub trait ReplacementProvider<'r, E: 'r> {
     /// # Examples
     /// ```
     /// use icu_pattern::ReplacementProvider;
-    /// use std::{
-    ///     collections::HashMap,
-    ///     convert::TryInto
-    /// };
+    /// use std::{collections::HashMap, convert::TryInto};
     ///
     /// #[derive(Debug, PartialEq)]
     /// enum Element {
@@ -96,9 +96,7 @@ pub trait ReplacementProvider<'r, E: 'r> {
     /// }
     ///
     /// let mut replacements = HashMap::new();
-    /// replacements.insert(5, vec![
-    ///     Element::TokenFive
-    /// ]);
+    /// replacements.insert(5, vec![Element::TokenFive]);
     ///
     /// assert_eq!(
     ///     replacements.take_replacement(&5).map(|r| r.collect()),
@@ -106,7 +104,9 @@ pub trait ReplacementProvider<'r, E: 'r> {
     /// );
     ///
     /// assert_eq!(
-    ///     replacements.take_replacement(&1).map(|r| r.collect::<Vec<_>>()),
+    ///     replacements
+    ///         .take_replacement(&1)
+    ///         .map(|r| r.collect::<Vec<_>>()),
     ///     None
     /// );
     /// ```

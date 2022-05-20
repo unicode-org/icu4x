@@ -66,23 +66,24 @@ type Result<E, R> = std::result::Result<Option<E>, InterpolatorError<R>>;
 ///
 /// # Examples
 /// ```
-/// use icu_pattern::{Parser, Pattern, ParserOptions, Interpolator, InterpolatedKind};
-/// use std::{
-///     convert::TryInto,
-/// };
+/// use icu_pattern::{InterpolatedKind, Interpolator, Parser, ParserOptions, Pattern};
+/// use std::convert::TryInto;
 ///
 /// #[derive(Debug, PartialEq)]
 /// enum Element {
 ///     Value(usize),
 /// }
 ///
-/// let pattern: Pattern<_> = Parser::new("{0} days ago", ParserOptions {
-///     allow_raw_letters: true
-/// }).try_into().unwrap();
+/// let pattern: Pattern<_> = Parser::new(
+///     "{0} days ago",
+///     ParserOptions {
+///         allow_raw_letters: true,
+///     },
+/// )
+/// .try_into()
+/// .unwrap();
 ///
-/// let replacements = vec![
-///     Element::Value(5),
-/// ];
+/// let replacements = vec![Element::Value(5)];
 ///
 /// let mut interpolator = Interpolator::new(&pattern, &replacements);
 ///
@@ -92,10 +93,13 @@ type Result<E, R> = std::result::Result<Option<E>, InterpolatorError<R>>;
 ///     result.push(element);
 /// }
 ///
-/// assert_eq!(result, &[
-///     InterpolatedKind::Element(&Element::Value(5)),
-///     InterpolatedKind::Literal(&" days ago".into()),
-/// ]);
+/// assert_eq!(
+///     result,
+///     &[
+///         InterpolatedKind::Element(&Element::Value(5)),
+///         InterpolatedKind::Literal(&" days ago".into()),
+///     ]
+/// );
 /// ```
 ///
 /// # Type parameters
@@ -163,7 +167,7 @@ where
     ///
     /// # Examples
     /// ```
-    /// use icu_pattern::{Parser, Pattern, ParserOptions, Interpolator};
+    /// use icu_pattern::{Interpolator, Parser, ParserOptions, Pattern};
     /// use std::convert::TryInto;
     ///
     /// enum Element {
@@ -171,14 +175,15 @@ where
     ///     Token,
     /// }
     ///
-    /// let pattern: Pattern<usize> = Parser::new("{0}, {1}", ParserOptions {
-    ///     allow_raw_letters: false
-    /// }).try_into().unwrap();
-    /// let replacements = vec![
-    ///     vec![
-    ///         Element::Token
-    ///     ]
-    /// ];
+    /// let pattern: Pattern<usize> = Parser::new(
+    ///     "{0}, {1}",
+    ///     ParserOptions {
+    ///         allow_raw_letters: false,
+    ///     },
+    /// )
+    /// .try_into()
+    /// .unwrap();
+    /// let replacements = vec![vec![Element::Token]];
     /// let mut interpolator = Interpolator::<Vec<Vec<_>>, Element>::new(&pattern, &replacements);
     /// ```
     pub fn new(tokens: &'i [PatternToken<'p, R::Key>], replacements: &'i R) -> Self {
@@ -195,10 +200,8 @@ where
     ///
     /// # Examples
     /// ```
-    /// use icu_pattern::{Parser, ParserOptions, Pattern, Interpolator, InterpolatedKind};
-    /// use std::{
-    ///     convert::TryInto,
-    /// };
+    /// use icu_pattern::{InterpolatedKind, Interpolator, Parser, ParserOptions, Pattern};
+    /// use std::convert::TryInto;
     ///
     /// #[derive(Debug, PartialEq)]
     /// enum Element {
@@ -206,25 +209,31 @@ where
     ///     TokenTwo,
     /// }
     ///
-    /// let mut pattern: Pattern<_> = Parser::new("{0}, {1}", ParserOptions {
-    ///     allow_raw_letters: false
-    /// }).try_into().unwrap();
+    /// let mut pattern: Pattern<_> = Parser::new(
+    ///     "{0}, {1}",
+    ///     ParserOptions {
+    ///         allow_raw_letters: false,
+    ///     },
+    /// )
+    /// .try_into()
+    /// .unwrap();
     ///
-    /// let replacements = vec![
-    ///     vec![
-    ///         Element::TokenOne
-    ///     ],
-    ///     vec![
-    ///         Element::TokenTwo
-    ///     ]
-    /// ];
+    /// let replacements = vec![vec![Element::TokenOne], vec![Element::TokenTwo]];
     /// let mut interpolator = Interpolator::new(&pattern, &replacements);
     ///
-    ///
     /// // A call to try_next() returns the next value…
-    /// assert_eq!(Ok(Some(InterpolatedKind::Element(&Element::TokenOne))), interpolator.try_next());
-    /// assert_eq!(Ok(Some(InterpolatedKind::Literal(&", ".into()))), interpolator.try_next());
-    /// assert_eq!(Ok(Some(InterpolatedKind::Element(&Element::TokenTwo))), interpolator.try_next());
+    /// assert_eq!(
+    ///     Ok(Some(InterpolatedKind::Element(&Element::TokenOne))),
+    ///     interpolator.try_next()
+    /// );
+    /// assert_eq!(
+    ///     Ok(Some(InterpolatedKind::Literal(&", ".into()))),
+    ///     interpolator.try_next()
+    /// );
+    /// assert_eq!(
+    ///     Ok(Some(InterpolatedKind::Element(&Element::TokenTwo))),
+    ///     interpolator.try_next()
+    /// );
     ///
     /// // … and then None once it's over.
     /// assert_eq!(Ok(None), interpolator.try_next());

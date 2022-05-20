@@ -25,7 +25,6 @@
 //! cargo make diplomat-install
 //! cargo make diplomat-gen
 //! ```
-//!
 
 // Renamed so you can't accidentally use it
 #[cfg(target_arch = "wasm32")]
