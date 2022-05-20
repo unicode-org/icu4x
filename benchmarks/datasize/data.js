@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1653026248960,
+  "lastUpdate": 1653065942984,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -15293,6 +15293,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/e40ba553b10bd20b07bffc126499cf52b8d85dbe"
         },
         "date": 1653026228822,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 2220821,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "hsivonen@hsivonen.fi",
+            "name": "Henri Sivonen",
+            "username": "hsivonen"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "19bfd93689b3f34dc4f5b798dd03181d6a2d7454",
+          "message": "Add hsivonen and echeran as the owners of collator and normalizer (#1918)",
+          "timestamp": "2022-05-20T16:56:54Z",
+          "tree_id": "e53696a149b9bdb8ea18ed648ce0501a14c30376",
+          "url": "https://github.com/unicode-org/icu4x/commit/19bfd93689b3f34dc4f5b798dd03181d6a2d7454"
+        },
+        "date": 1653065919962,
         "tool": "ndjson",
         "benches": [
           {
