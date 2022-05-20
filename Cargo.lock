@@ -1304,6 +1304,7 @@ version = "0.6.0"
 dependencies = [
  "displaydoc",
  "icu",
+ "icu_benchmark_macros",
  "icu_calendar",
  "icu_locid",
  "icu_provider",
