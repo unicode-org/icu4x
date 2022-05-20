@@ -10,30 +10,28 @@ use criterion::{
 };
 use icu_calendar::{types::Time, AsCalendar, Calendar, DateDuration, DateTime};
 
-fn bench_datetimes<A: AsCalendar>(datetimes: &mut [DateTime<A>]) {
-    for datetime in datetimes {
-        // black_box used to avoid compiler optimization.
-        // Arithmetic.
-        datetime.date.add(DateDuration::new(
-            black_box(1),
-            black_box(2),
-            black_box(3),
-            black_box(4),
-        ));
-        datetime.time = Time::try_new(black_box(14), black_box(30), black_box(0), black_box(0))
-            .expect("Failed to initialize Time instance.");
+fn bench_datetime<A: AsCalendar>(datetime: &mut DateTime<A>) {
+    // black_box used to avoid compiler optimization.
+    // Arithmetic.
+    datetime.date.add(DateDuration::new(
+        black_box(1),
+        black_box(2),
+        black_box(3),
+        black_box(4),
+    ));
+    datetime.time = Time::try_new(black_box(14), black_box(30), black_box(0), black_box(0))
+        .expect("Failed to initialize Time instance.");
 
-        // Retrieving vals
-        let _ = black_box(datetime.date.year().number);
-        let _ = black_box(datetime.date.month().number);
-        let _ = black_box(datetime.date.day_of_month().0);
-        let _ = black_box(datetime.time.hour);
-        let _ = black_box(datetime.time.minute);
-        let _ = black_box(datetime.time.second);
+    // Retrieving vals
+    let _ = black_box(datetime.date.year().number);
+    let _ = black_box(datetime.date.month().number);
+    let _ = black_box(datetime.date.day_of_month().0);
+    let _ = black_box(datetime.time.hour);
+    let _ = black_box(datetime.time.minute);
+    let _ = black_box(datetime.time.second);
 
-        // Conversion to ISO.
-        let _ = black_box(datetime.to_iso());
-    }
+    // Conversion to ISO.
+    let _ = black_box(datetime.to_iso());
 }
 
 fn bench_calendar<C: Clone + Calendar>(
@@ -47,7 +45,7 @@ fn bench_calendar<C: Clone + Calendar>(
         b.iter(|| {
             for fx in &fxs.0 {
                 // Instantion from int
-                let instantiated_datetime_calendar = calendar_datetime_init(
+                let mut instantiated_datetime_calendar = calendar_datetime_init(
                     fx.year, fx.month, fx.day, fx.hour, fx.minute, fx.second,
                 );
 
@@ -56,10 +54,11 @@ fn bench_calendar<C: Clone + Calendar>(
                     fx.year, fx.month, fx.day, fx.hour, fx.minute, fx.second,
                 )
                 .unwrap();
-                let converted_datetime_calendar =
+                let mut converted_datetime_calendar =
                     DateTime::new_from_iso(datetime_iso, calendar.clone());
 
-                bench_datetimes(&mut [instantiated_datetime_calendar, converted_datetime_calendar]);
+                bench_datetime(&mut instantiated_datetime_calendar);
+                bench_datetime(&mut converted_datetime_calendar);
             }
         })
     });

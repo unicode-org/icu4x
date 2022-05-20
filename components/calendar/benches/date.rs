@@ -12,25 +12,23 @@ use icu_calendar::{
     iso::IsoDay, iso::IsoMonth, iso::IsoYear, AsCalendar, Calendar, Date, DateDuration,
 };
 
-fn bench_dates<A: AsCalendar>(dates: &mut [Date<A>]) {
-    for date in dates {
-        // black_box used to avoid compiler optimization.
-        // Arithmetic
-        date.add(DateDuration::new(
-            black_box(1),
-            black_box(2),
-            black_box(3),
-            black_box(4),
-        ));
+fn bench_date<A: AsCalendar>(date: &mut Date<A>) {
+    // black_box used to avoid compiler optimization.
+    // Arithmetic
+    date.add(DateDuration::new(
+        black_box(1),
+        black_box(2),
+        black_box(3),
+        black_box(4),
+    ));
 
-        // Retrieving vals
-        let _ = black_box(date.year().number);
-        let _ = black_box(date.month().number);
-        let _ = black_box(date.day_of_month().0);
+    // Retrieving vals
+    let _ = black_box(date.year().number);
+    let _ = black_box(date.month().number);
+    let _ = black_box(date.day_of_month().0);
 
-        // Conversion to ISO.
-        let _ = black_box(date.to_iso());
-    }
+    // Conversion to ISO.
+    let _ = black_box(date.to_iso());
 }
 
 #[cfg(feature = "bench")]
@@ -45,13 +43,14 @@ fn bench_calendar<C: Clone + Calendar>(
         b.iter(|| {
             for fx in &fxs.0 {
                 // Instantion from int
-                let instantiated_date_calendar = calendar_date_init(fx.year, fx.month, fx.day);
+                let mut instantiated_date_calendar = calendar_date_init(fx.year, fx.month, fx.day);
 
                 // Conversion from ISO
                 let date_iso = Date::new_iso_date_from_integers(fx.year, fx.month, fx.day).unwrap();
-                let converted_date_calendar = Date::new_from_iso(date_iso, calendar.clone());
+                let mut converted_date_calendar = Date::new_from_iso(date_iso, calendar.clone());
 
-                bench_dates(&mut [instantiated_date_calendar, converted_date_calendar]);
+                bench_date(&mut instantiated_date_calendar);
+                bench_date(&mut converted_date_calendar);
             }
         })
     });
@@ -71,16 +70,17 @@ fn bench_calendar_iso_types<C: Clone + Calendar>(
             for fx in &fxs.0 {
                 // Conversion from ISO
                 let date_iso = Date::new_iso_date_from_integers(fx.year, fx.month, fx.day).unwrap();
-                let converted_date_calendar = Date::new_from_iso(date_iso, calendar.clone());
+                let mut converted_date_calendar = Date::new_from_iso(date_iso, calendar.clone());
 
                 // Instantion from ISO
                 let iso_year = IsoYear(fx.year);
                 let iso_month = IsoMonth::try_from(fx.month).unwrap();
                 let iso_day = IsoDay::try_from(fx.day).unwrap();
-                let iso_insantiated_date_calendar =
+                let mut iso_insantiated_date_calendar =
                     calendar_date_init(iso_year, iso_month, iso_day);
 
-                bench_dates(&mut [iso_insantiated_date_calendar, converted_date_calendar]);
+                bench_date(&mut iso_insantiated_date_calendar);
+                bench_date(&mut converted_date_calendar);
             }
         })
     });
