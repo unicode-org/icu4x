@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1652970217941,
+  "lastUpdate": 1653026876822,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -27209,6 +27209,66 @@ window.BENCHMARK_DATA = {
             "name": "from_string/1000000001",
             "value": 77,
             "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "hsivonen@hsivonen.fi",
+            "name": "Henri Sivonen",
+            "username": "hsivonen"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "e40ba553b10bd20b07bffc126499cf52b8d85dbe",
+          "message": "Add a collator implementation under experimental/ (#1706)",
+          "timestamp": "2022-05-20T08:55:35+03:00",
+          "tree_id": "1898ef48e412fdd1c83befd35c6c44d4fc4130d8",
+          "url": "https://github.com/unicode-org/icu4x/commit/e40ba553b10bd20b07bffc126499cf52b8d85dbe"
+        },
+        "date": 1653026855885,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 113322,
+            "range": "± 9595",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 23565,
+            "range": "± 1152",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 65544,
+            "range": "± 3676",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 208,
+            "range": "± 10",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 90,
+            "range": "± 4",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 81,
+            "range": "± 3",
             "unit": "ns/iter"
           }
         ]
