@@ -51,9 +51,7 @@ impl DataPayload<SerializeMarker> {
     /// let mut buffer: Vec<u8> = vec![];
     /// payload
     ///     .into_serializable()
-    ///     .serialize(&mut <dyn erased_serde::Serializer>::erase(
-    ///         &mut serde_json::Serializer::new(&mut buffer),
-    ///     ))
+    ///     .serialize(&mut serde_json::Serializer::new(&mut buffer))
     ///     .expect("Serialization should succeed");
     /// assert_eq!("{\"message\":\"(und) Hello World\"}".as_bytes(), buffer);
     /// ```
