@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1653078305277,
+  "lastUpdate": 1653085262463,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -28133,6 +28133,60 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 46750209,
             "range": "± 2361037",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/worst",
+            "value": 3,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/worst",
+            "value": 3,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "645b2f7e97192527974adc195daed7600558e85d",
+          "message": "Add panics/non_exhaustive to style guide (#1919)",
+          "timestamp": "2022-05-20T22:11:04Z",
+          "tree_id": "bb584728777931ec82ee4e7c3a250f65a3944f95",
+          "url": "https://github.com/unicode-org/icu4x/commit/645b2f7e97192527974adc195daed7600558e85d"
+        },
+        "date": 1653085238461,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 49298191,
+            "range": "± 2821093",
             "unit": "ns/iter"
           },
           {
