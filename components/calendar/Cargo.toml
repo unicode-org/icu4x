@@ -25,6 +25,7 @@ include = [
 
 [features]
 std = []
+bench = []
 serde = ["dep:serde", "zerovec/serde", "tinystr/serde", "icu_provider/serde"]
 datagen = ["serde", "zerovec/serde_serialize"]
 
@@ -47,6 +48,7 @@ zerovec = { version = "0.7", path = "../../utils/zerovec", default-features = fa
 [dev-dependencies]
 criterion = "0.3"
 icu = { path = "../icu", default-features = false }
+icu_benchmark_macros = { version = "0.6", path = "../../tools/benchmark/macros" }
 icu_calendar = { version = "0.6", path = "../calendar", features = ["serde"] } # Dependency required to prevent `delayed_good_path_bugs` error (https://github.com/unicode-org/icu4x/pull/1844#issuecomment-1118111564)
 icu_testdata = { version = "0.6", path = "../../provider/testdata" }
 serde = { version = "1.0", features = ["derive"] }
@@ -59,3 +61,9 @@ harness = false
 [[bench]]
 name = "datetime"
 harness = false
+
+[[example]]
+name = "iso_date_manipulations"
+
+[[example]]
+name = "iso_datetime_manipulations"

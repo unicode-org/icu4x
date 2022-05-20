@@ -63,7 +63,7 @@ mod registry;
 mod source;
 pub mod transform;
 
-pub use error::{is_missing_cldr_error, is_missing_uprops_error};
+pub use error::{MISSING_CLDR_ERROR, MISSING_COLLATION_ERROR, MISSING_UPROPS_ERROR};
 pub use registry::get_all_keys;
 pub use source::SourceData;
 
@@ -169,8 +169,8 @@ pub enum Out {
 ///   Otherwise, all locales supported by the source data will be generated.
 /// * `keys`: The keys for which to generate data. See [`get_all_keys()`].
 /// * `sources`: The underlying source data. CLDR and/or uprops data can be missing if no
-///   requested key requires them. Otherwise a error will be returned that can be identified
-///   with [`is_missing_cldr_error`] or [`is_missing_uprops_error`].
+///   requested key requires them, otherwise [`MISSING_CLDR_ERROR`] or [`MISSING_UPROPS_ERROR`]
+///   will be returned.
 /// * `out`: The output format and location. See the documentation on [`Out`]
 /// * `ignore_missing_resource_keys`: some keys are not supported by datagen yet. Using
 ///   all keys will not work unless this option is set.

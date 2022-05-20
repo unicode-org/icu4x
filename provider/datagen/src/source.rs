@@ -2,7 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::error::DatagenError;
 use icu_codepointtrie::TrieType;
 use icu_provider::DataError;
 use std::path::{Path, PathBuf};
@@ -85,18 +84,16 @@ impl SourceData {
 
     /// Paths to CLDR source data.
     pub(crate) fn get_cldr_paths(&self) -> Result<&CldrPaths, DataError> {
-        Ok(self
-            .cldr_paths
+        self.cldr_paths
             .as_ref()
-            .ok_or(DatagenError::MissingCldrPaths)?)
+            .ok_or(crate::error::MISSING_CLDR_ERROR)
     }
 
     /// Path to Unicode Properties source data.
     pub(crate) fn get_uprops_root(&self) -> Result<&Path, DataError> {
-        Ok(self
-            .uprops_root
+        self.uprops_root
             .as_deref()
-            .ok_or(DatagenError::MissingUpropsPath)?)
+            .ok_or(crate::error::MISSING_UPROPS_ERROR)
     }
 
     /// Path to segmenter data.
@@ -113,10 +110,9 @@ impl SourceData {
     /// Path to collation data.
     #[cfg(feature = "experimental")]
     pub(crate) fn get_coll_root(&self) -> Result<&Path, DataError> {
-        Ok(self
-            .coll_root
+        self.coll_root
             .as_deref()
-            .ok_or(DatagenError::MissingCollPath)?)
+            .ok_or(crate::error::MISSING_COLLATION_ERROR)
     }
 }
 
