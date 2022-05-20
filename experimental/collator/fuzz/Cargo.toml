@@ -1,0 +1,34 @@
+# This file is part of ICU4X. For terms of use, please see the file
+# called LICENSE at the top level of the ICU4X source tree
+# (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
+
+[package]
+name = "icu_collator-fuzz"
+version = "0.0.0"
+authors = ["Automatically generated"]
+publish = false
+edition = "2018"
+
+[package.metadata]
+cargo-fuzz = true
+
+[dependencies]
+libfuzzer-sys = "0.4"
+rust_icu_unorm2 = { path = "../../../../rust_icu/rust_icu_unorm2", features = ["use-bindgen", "icu_config"] }
+rust_icu_ucol = { path = "../../../../rust_icu/rust_icu_ucol", features = ["use-bindgen", "icu_config"] }
+rust_icu_sys = { path = "../../../../rust_icu/rust_icu_sys", features = ["use-bindgen", "icu_config"] }
+rust_icu_ustring = { path = "../../../../rust_icu/rust_icu_ustring", features = ["use-bindgen", "icu_config"] }
+encoding_rs = "0.8.31"
+icu_locid = { version = "0.6", path = "../../../components/locid" }
+icu_testdata = { version = "0.6", path = "../../../provider/testdata" }
+icu_collator = { path = "..", features = ["serde"] }
+
+# Prevent this from interfering with workspaces
+[workspace]
+members = ["."]
+
+[[bin]]
+name = "compare_utf16"
+path = "fuzz_targets/compare_utf16.rs"
+test = false
+doc = false

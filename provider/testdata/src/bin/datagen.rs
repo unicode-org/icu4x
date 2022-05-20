@@ -17,7 +17,8 @@ fn main() {
 
     let source_data = SourceData::default()
         .with_cldr(paths::cldr_json_root(), "full".to_string())
-        .with_uprops(paths::uprops_toml_root());
+        .with_uprops(paths::uprops_toml_root())
+        .with_coll(paths::coll_toml_root());
     let locales = metadata::load().unwrap().package_metadata.locales;
 
     let json_out = Out::Fs {

@@ -70,6 +70,7 @@ fn test_components_bag() {
     input_bag.hour = Some(components::Numeric::Numeric);
     input_bag.minute = Some(components::Numeric::TwoDigit);
     input_bag.second = Some(components::Numeric::TwoDigit);
+    input_bag.fractional_second = Some(4);
     input_bag.preferences = None;
     let mut output_bag = input_bag; // make a copy
     output_bag.month = Some(components::Month::Short);

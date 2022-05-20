@@ -1,0 +1,5 @@
+﻿# This file must begin with a UTF-8 BOM.
+# This is a placeholder; replace with the real one from:
+# https://raw.githubusercontent.com/unicode-org/icu/289d9703a03494ef0d9dfec122169b22bd9fc84f/icu4c/source/test/testdata/riwords.txt
+ก
+ข
