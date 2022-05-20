@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1653077626758,
+  "lastUpdate": 1653078397954,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -27509,6 +27509,66 @@ window.BENCHMARK_DATA = {
             "name": "from_string/1000000001",
             "value": 90,
             "range": "± 1",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "andrewpkq@gmail.com",
+            "name": "andrewpollack",
+            "username": "andrewpollack"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "6ef7eda5b3f348b8d2e950dce1518602cb493eec",
+          "message": "Adding ISO `Date` and `DateTime` memory benchmark (#1872)\n\n* Adding iso date memory benchmark\r\n\r\n* fmt\r\n\r\n* Updating to test 0.6\r\n\r\n* Clippy\r\n\r\n* adding missing CI\r\n\r\n* Adding datetimes memory benches\r\n\r\n* Moving prints into debug line\r\n\r\n* Clippy",
+          "timestamp": "2022-05-20T20:15:42Z",
+          "tree_id": "564b4aedd309ba7409fbad1472c54d8bf77bcde2",
+          "url": "https://github.com/unicode-org/icu4x/commit/6ef7eda5b3f348b8d2e950dce1518602cb493eec"
+        },
+        "date": 1653078378273,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 109972,
+            "range": "± 376",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 24413,
+            "range": "± 67",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 68747,
+            "range": "± 112",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 187,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 95,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 77,
+            "range": "± 0",
             "unit": "ns/iter"
           }
         ]
