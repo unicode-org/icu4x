@@ -83,7 +83,7 @@ impl<A: AsCalendar + Clone> Clone for DateTime<A> {
     fn clone(&self) -> Self {
         Self {
             date: self.date.clone(),
-            time: self.time.clone(),
+            time: self.time,
         }
     }
 }
