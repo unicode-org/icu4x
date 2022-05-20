@@ -10,11 +10,13 @@
 //!                     coptic::Coptic};
 //!
 //! // `Date` type
-//! let date_iso = Date::new_iso_date_from_integers(1970, 1, 2).unwrap();
+//! let date_iso = Date::new_iso_date_from_integers(1970, 1, 2)
+//!     .expect("Failed to initialize ISO Date instance.");
 //! let date_coptic = Date::new_from_iso(date_iso, Coptic);
 //!
 //! // `DateTime` type
-//! let datetime_iso = DateTime::new_iso_datetime_from_integers(1970, 1, 2, 13, 1, 0).unwrap();
+//! let datetime_iso = DateTime::new_iso_datetime_from_integers(1970, 1, 2, 13, 1, 0)
+//!     .expect("Failed to initialize ISO DateTime instance.");
 //! let datetime_coptic = DateTime::new_from_iso(datetime_iso, Coptic);
 //!
 //! // `Date` checks
@@ -202,7 +204,8 @@ impl Date<Coptic> {
     /// ```rust
     /// use icu::calendar::Date;
     ///
-    /// let date_coptic = Date::new_coptic_date(1686, 5, 6).unwrap();
+    /// let date_coptic = Date::new_coptic_date(1686, 5, 6)
+    ///     .expect("Failed to initialize Coptic Date instance.");
     ///
     /// assert_eq!(date_coptic.year().number, 1686);
     /// assert_eq!(date_coptic.month().number, 5);
@@ -234,7 +237,8 @@ impl DateTime<Coptic> {
     ///                     types::IsoMinute,
     ///                     types::IsoSecond};
     ///
-    /// let datetime_coptic = DateTime::new_coptic_datetime(1686, 5, 6, 13, 1, 0).unwrap();
+    /// let datetime_coptic = DateTime::new_coptic_datetime(1686, 5, 6, 13, 1, 0)
+    ///     .expect("Failed to initialize Coptic DateTime instance.");
     ///
     /// assert_eq!(datetime_coptic.date.year().number, 1686);
     /// assert_eq!(datetime_coptic.date.month().number, 5);

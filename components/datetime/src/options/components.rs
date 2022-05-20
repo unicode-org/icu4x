@@ -102,6 +102,8 @@ pub struct Bag {
     pub minute: Option<Numeric>,
     /// Include the second such as "3" or "03".
     pub second: Option<Numeric>,
+    /// Specify the number of fractional second digits such as 1 (".3") or 3 (".003").
+    pub fractional_second: Option<u8>,
 
     /// Include the time zone, such as "GMT+05:00".
     pub time_zone_name: Option<TimeZoneName>,
@@ -309,8 +311,15 @@ impl Bag {
                     Numeric::TwoDigit => FieldLength::TwoDigit,
                 },
             });
-            // S - Not used in skeletons.
             // A - Milliseconds in day. Not used in skeletons.
+        }
+
+        if let Some(precision) = self.fractional_second {
+            // S - Fractional seconds.
+            fields.push(Field {
+                symbol: FieldSymbol::Second(fields::Second::FractionalSecond),
+                length: FieldLength::Fixed(precision),
+            });
         }
 
         if self.time_zone_name.is_some() {
@@ -668,18 +677,24 @@ impl<'data> From<&PatternPlurals<'data>> for Bag {
                     });
                 }
                 FieldSymbol::Second(second) => {
-                    bag.second = Some(match second {
-                        fields::Second::Second => match field.length {
-                            FieldLength::TwoDigit => Numeric::TwoDigit,
-                            _ => Numeric::Numeric,
-                        },
+                    match second {
+                        fields::Second::Second => {
+                            bag.second = Some(match field.length {
+                                FieldLength::TwoDigit => Numeric::TwoDigit,
+                                _ => Numeric::Numeric,
+                            });
+                        }
                         fields::Second::FractionalSecond => {
-                            unimplemented!("fields::Second::FractionalSecond. #1360")
+                            if let FieldLength::Fixed(p) = field.length {
+                                if p > 0 {
+                                    bag.fractional_second = Some(p);
+                                }
+                            }
                         }
                         fields::Second::Millisecond => {
-                            unimplemented!("fields::Second::Millisecond")
+                            // fields::Second::Millisecond is not implemented (#1834)
                         }
-                    });
+                    }
                 }
                 FieldSymbol::TimeZone(time_zone_name) => {
                     bag.time_zone_name = Some(match time_zone_name {
@@ -724,6 +739,7 @@ mod test {
             hour: Some(Numeric::Numeric),
             minute: Some(Numeric::Numeric),
             second: Some(Numeric::Numeric),
+            fractional_second: Some(3),
 
             ..Default::default()
         };
@@ -737,6 +753,11 @@ mod test {
                 (Symbol::Hour(fields::Hour::H23), Length::One).into(),
                 (Symbol::Minute, Length::One).into(),
                 (Symbol::Second(fields::Second::Second), Length::One).into(),
+                (
+                    Symbol::Second(fields::Second::FractionalSecond),
+                    Length::Fixed(3)
+                )
+                    .into(),
             ]
         );
     }

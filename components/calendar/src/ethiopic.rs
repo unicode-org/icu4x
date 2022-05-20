@@ -10,11 +10,13 @@
 //!                     ethiopic::Ethiopic};
 //!
 //! // `Date` type
-//! let date_iso = Date::new_iso_date_from_integers(1970, 1, 2).unwrap();
+//! let date_iso = Date::new_iso_date_from_integers(1970, 1, 2)
+//!     .expect("Failed to initialize ISO Date instance.");
 //! let date_ethiopic = Date::new_from_iso(date_iso, Ethiopic);
 //!
 //! // `DateTime` type
-//! let datetime_iso = DateTime::new_iso_datetime_from_integers(1970, 1, 2, 13, 1, 0).unwrap();
+//! let datetime_iso = DateTime::new_iso_datetime_from_integers(1970, 1, 2, 13, 1, 0)
+//!     .expect("Failed to initialize ISO DateTime instance.");
 //! let datetime_ethiopic = DateTime::new_from_iso(datetime_iso, Ethiopic);
 //!
 //! // `Date` checks
@@ -216,7 +218,8 @@ impl Date<Ethiopic> {
     /// ```rust
     /// use icu::calendar::Date;
     ///
-    /// let date_ethiopic = Date::new_ethiopic_date(2014, 8, 25).unwrap();
+    /// let date_ethiopic = Date::new_ethiopic_date(2014, 8, 25)
+    ///     .expect("Failed to initialize Ethopic Date instance.");
     ///
     /// assert_eq!(date_ethiopic.year().number, 2014);
     /// assert_eq!(date_ethiopic.month().number, 8);
@@ -256,7 +259,8 @@ impl DateTime<Ethiopic> {
     ///                     types::IsoMinute,
     ///                     types::IsoSecond};
     ///
-    /// let datetime_ethiopic = DateTime::new_ethiopic_datetime(2014, 8, 25, 13, 1, 0, 0).unwrap();
+    /// let datetime_ethiopic = DateTime::new_ethiopic_datetime(2014, 8, 25, 13, 1, 0, 0)
+    ///     .expect("Failed to initialize Ethiopic DateTime instance.");
     ///
     /// assert_eq!(datetime_ethiopic.date.year().number, 2014);
     /// assert_eq!(datetime_ethiopic.date.month().number, 8);
@@ -297,5 +301,20 @@ mod test {
         assert_eq!(ethiopic_date.0.year, 2015);
         assert_eq!(ethiopic_date.0.month, 13);
         assert_eq!(ethiopic_date.0.day, 6);
+    }
+
+    #[test]
+    fn test_iso_to_ethiopic_conversion_and_back() {
+        let iso_date = Date::new_iso_date_from_integers(1970, 1, 2).unwrap();
+        let date_ethiopic = Date::new_from_iso(iso_date, Ethiopic);
+
+        assert_eq!(date_ethiopic.inner.0.year, 1962);
+        assert_eq!(date_ethiopic.inner.0.month, 4);
+        assert_eq!(date_ethiopic.inner.0.day, 24);
+
+        assert_eq!(
+            date_ethiopic.to_iso(),
+            Date::new_iso_date_from_integers(1970, 1, 2).unwrap()
+        );
     }
 }

@@ -3,15 +3,33 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::error::DatagenError;
+use icu_codepointtrie::TrieType;
 use icu_provider::DataError;
 use std::path::{Path, PathBuf};
 
 /// Bag of options for datagen source data.
-#[derive(Clone, Debug, Default)]
+#[derive(Clone, Debug)]
 #[non_exhaustive]
 pub struct SourceData {
     cldr_paths: Option<CldrPaths>,
     uprops_root: Option<PathBuf>,
+    /// Only used in experimental context, but compiling this
+    /// out in non-experimental context would unnecessarily
+    /// complicate things.
+    #[allow(dead_code)]
+    coll_root: Option<PathBuf>,
+    trie_type: TrieType,
+}
+
+impl Default for SourceData {
+    fn default() -> Self {
+        Self {
+            cldr_paths: None,
+            uprops_root: None,
+            coll_root: None,
+            trie_type: TrieType::Small,
+        }
+    }
 }
 
 impl SourceData {
@@ -25,7 +43,7 @@ impl SourceData {
                 root,
                 locale_subset,
             }),
-            uprops_root: self.uprops_root,
+            ..self
         }
     }
 
@@ -34,9 +52,26 @@ impl SourceData {
     /// [GitHub downloads](https://github.com/unicode-org/icu/releases)).
     pub fn with_uprops(self, uprops_root: PathBuf) -> Self {
         Self {
-            cldr_paths: self.cldr_paths,
             uprops_root: Some(uprops_root),
+            ..self
         }
+    }
+
+    /// Adds collation data to this `DataSource`.
+    pub fn with_coll(self, coll_root: PathBuf) -> Self {
+        Self {
+            coll_root: Some(coll_root),
+            ..self
+        }
+    }
+
+    /// Sets the [`TrieType`] to be used when generating data, including rule-based
+    /// segmentation data.
+    ///
+    /// For Unicode Properties data, the TrieType is implicitly set when selecting the
+    /// root directory (either "small" or "fast").
+    pub fn with_trie_type(self, trie_type: TrieType) -> Self {
+        Self { trie_type, ..self }
     }
 
     #[cfg(test)]
@@ -45,6 +80,7 @@ impl SourceData {
         Self::default()
             .with_cldr(icu_testdata::paths::cldr_json_root(), "full".to_string())
             .with_uprops(icu_testdata::paths::uprops_toml_root())
+            .with_coll(icu_testdata::paths::coll_toml_root())
     }
 
     /// Paths to CLDR source data.
@@ -67,6 +103,20 @@ impl SourceData {
     #[cfg(feature = "experimental")]
     pub(crate) fn get_segmenter_data_root(&self) -> Result<PathBuf, DataError> {
         Ok(PathBuf::from(std::env!("CARGO_MANIFEST_DIR")).join("data"))
+    }
+
+    #[cfg_attr(not(feature = "experimental"), allow(dead_code))]
+    pub(crate) fn trie_type(&self) -> TrieType {
+        self.trie_type
+    }
+
+    /// Path to collation data.
+    #[cfg(feature = "experimental")]
+    pub(crate) fn get_coll_root(&self) -> Result<&Path, DataError> {
+        Ok(self
+            .coll_root
+            .as_deref()
+            .ok_or(DatagenError::MissingCollPath)?)
     }
 }
 

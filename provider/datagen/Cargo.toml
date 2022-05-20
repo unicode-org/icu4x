@@ -44,10 +44,12 @@ icu_properties = { version = "0.6", path = "../../components/properties", featur
 # (experimental)
 icu_casemapping = { version = "0.1", path = "../../experimental/casemapping", features = ["datagen"], optional = true }
 icu_segmenter = { version = "0.6", path = "../../experimental/segmenter", features = ["datagen"], optional = true }
+icu_collator = { version = "0.6", path = "../../experimental/collator", features = ["datagen"], optional = true }
+icu_normalizer = { version = "0.6", path = "../../experimental/normalizer", features = ["datagen"], optional = true }
 
 # ICU provider infrastructure
 icu_provider = { version = "0.6", path = "../core", features = ["std", "log_error_context"]}
-icu_provider_adapters = { path = "../adapters", features = ["datagen"] }
+icu_provider_adapters = { version = "0.6", path = "../adapters", features = ["datagen"] }
 icu_provider_blob = { version = "0.6", path = "../blob", features = ["export"] }
 icu_provider_fs = { version = "0.6", path = "../fs", features = ["export"] }
 
@@ -55,6 +57,7 @@ icu_provider_fs = { version = "0.6", path = "../fs", features = ["export"] }
 displaydoc = { version = "0.2.3", default-features = false }
 elsa = "1.7"
 icu_codepointtrie = { version = "0.4", path = "../../utils/codepointtrie", features = ["serde_serialize"] }
+icu_codepointtrie_builder = { path = "../../utils/codepointtrie/builder" }
 icu_locid = { version = "0.6", path = "../../components/locid", features = ["std"]}
 icu_uniset = { version = "0.5", path = "../../utils/uniset", features = ["serde"] }
 itertools = "0.10"
@@ -68,10 +71,11 @@ tinystr = { path = "../../utils/tinystr", version = "0.6", features = ["alloc", 
 toml = "0.5"
 zerovec = { version = "0.7", path = "../../utils/zerovec", features = ["serde_serialize", "yoke"] }
 quote = "1.0.9"
-crabbake = { path = "../../experimental/crabbake"}
+crabbake = { version = "0.4", path = "../../experimental/crabbake"}
 proc-macro2 = "1.0"
 crlify = { version = "1", path = "../../utils/crlify"}
 syn = {version = "1.0", features = ["parsing"] }
+writeable = { version = "0.4", path = "../../utils/writeable", optional = true }
 
 # Dependencies for "bin" feature
 clap = { version = "2.33", optional = true }
@@ -89,7 +93,7 @@ icu_testdata = { path = "../testdata", features = ["metadata"] }
 
 [features]
 default = []
-experimental = ["icu_casemapping", "icu_segmenter"]
+experimental = ["icu_casemapping", "icu_segmenter", "icu_collator", "icu_normalizer", "writeable"]
 bin = ["clap", "cached-path", "eyre", "pathdiff","sha2", "simple_logger", "walkdir"]
 
 [[bin]]

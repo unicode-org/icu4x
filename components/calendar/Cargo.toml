@@ -48,6 +48,8 @@ zerovec = { version = "0.7", path = "../../utils/zerovec", default-features = fa
 [dev-dependencies]
 icu = { path = "../icu", default-features = false }
 icu_benchmark_macros = { version = "0.6", path = "../../tools/benchmark/macros" }
+icu_calendar = { version = "0.6", path = "../calendar", features = ["serde"] }
+icu_testdata = { version = "0.6", path = "../../provider/testdata" }
 
 [[example]]
 name = "iso_date_manipulations"

@@ -268,7 +268,7 @@ macro_rules! impl_dyn_provider {
 
          impl $crate::datagen::IterableDynProvider<$crate::serde::SerializeMarker> for $provider
          {
-             fn supported_options_for_key(&self, key: $crate::ResourceKey) -> Result<Box<dyn Iterator<Item = $crate::ResourceOptions> + '_>, $crate::DataError> {
+             fn supported_options_for_key(&self, key: $crate::ResourceKey) -> Result<std::boxed::Box<dyn Iterator<Item = $crate::ResourceOptions> + '_>, $crate::DataError> {
                  match key {
                      $(
                          <$struct_m as $crate::ResourceMarker>::KEY => {
@@ -283,7 +283,7 @@ macro_rules! impl_dyn_provider {
     ($provider:ty, { $($pat:pat $(if $guard:expr)? => $struct_m:ty),+, }, ITERABLE_SERDE_SE) => {
 
         impl $crate::datagen::IterableDynProvider<$crate::serde::SerializeMarker> for $provider {
-            fn supported_options_for_key(&self, key: $crate::ResourceKey) -> Result<Box<dyn Iterator<Item = $crate::ResourceOptions> + '_>, $crate::DataError> {
+            fn supported_options_for_key(&self, key: $crate::ResourceKey) -> Result<std::boxed::Box<dyn Iterator<Item = $crate::ResourceOptions> + '_>, $crate::DataError> {
                 match key {
                     $(
                         $pat $(if $guard)? => {

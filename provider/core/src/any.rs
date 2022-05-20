@@ -384,9 +384,8 @@ mod test {
     #[test]
     fn test_non_owned_any_marker() {
         // This test demonstrates a code path that can trigger the InvalidState error kind.
-        let rc_buffer: Rc<[u8]> = Rc::from([]);
         let payload_result: Result<DataPayload<AnyMarker>, core::convert::Infallible> =
-            DataPayload::try_from_rc_buffer_badly(rc_buffer, |_| {
+            DataPayload::try_from_rc_buffer_badly((&[] as &[u8]).into(), |_| {
                 Ok(AnyPayload::from_static_ref(&CONST_DATA))
             });
         let err = payload_result
