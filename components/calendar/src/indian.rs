@@ -28,9 +28,9 @@
 //! assert_eq!(datetime_indian.date.year().number, 1892);
 //! assert_eq!(datetime_indian.date.month().number, 1);
 //! assert_eq!(datetime_indian.date.day_of_month().0, 2);
-//! assert_eq!(datetime_indian.time.hour, IsoHour::new_unchecked(13));
-//! assert_eq!(datetime_indian.time.minute, IsoMinute::new_unchecked(1));
-//! assert_eq!(datetime_indian.time.second, IsoSecond::new_unchecked(0));
+//! assert_eq!(datetime_indian.time.hour.number(), 13);
+//! assert_eq!(datetime_indian.time.minute.number(), 1);
+//! assert_eq!(datetime_indian.time.second.number(), 0);
 //! ```
 
 use crate::iso::{Iso, IsoYear};
@@ -223,9 +223,9 @@ impl DateTime<Indian> {
     /// assert_eq!(datetime_indian.date.year().number, 1891);
     /// assert_eq!(datetime_indian.date.month().number, 10);
     /// assert_eq!(datetime_indian.date.day_of_month().0, 12);
-    /// assert_eq!(datetime_indian.time.hour, IsoHour::new_unchecked(13));
-    /// assert_eq!(datetime_indian.time.minute, IsoMinute::new_unchecked(1));
-    /// assert_eq!(datetime_indian.time.second, IsoSecond::new_unchecked(0));
+    /// assert_eq!(datetime_indian.time.hour.number(), 13);
+    /// assert_eq!(datetime_indian.time.minute.number(), 1);
+    /// assert_eq!(datetime_indian.time.second.number(), 0);
     /// ```
     pub fn new_indian_datetime(
         year: i32,

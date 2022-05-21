@@ -28,9 +28,9 @@
 //! assert_eq!(datetime_gregorian.date.year().number, 1970);
 //! assert_eq!(datetime_gregorian.date.month().number, 1);
 //! assert_eq!(datetime_gregorian.date.day_of_month().0, 2);
-//! assert_eq!(datetime_gregorian.time.hour, IsoHour::new_unchecked(13));
-//! assert_eq!(datetime_gregorian.time.minute, IsoMinute::new_unchecked(1));
-//! assert_eq!(datetime_gregorian.time.second, IsoSecond::new_unchecked(0));
+//! assert_eq!(datetime_gregorian.time.hour.number(), 13);
+//! assert_eq!(datetime_gregorian.time.minute.number(), 1);
+//! assert_eq!(datetime_gregorian.time.second.number(), 0);
 //! ```
 
 use crate::iso::{Iso, IsoDateInner, IsoDay, IsoMonth, IsoYear};
@@ -164,9 +164,9 @@ impl DateTime<Gregorian> {
     /// assert_eq!(datetime_gregorian.date.year().number, 1970);
     /// assert_eq!(datetime_gregorian.date.month().number, 1);
     /// assert_eq!(datetime_gregorian.date.day_of_month().0, 2);
-    /// assert_eq!(datetime_gregorian.time.hour, IsoHour::new_unchecked(13));
-    /// assert_eq!(datetime_gregorian.time.minute, IsoMinute::new_unchecked(1));
-    /// assert_eq!(datetime_gregorian.time.second, IsoSecond::new_unchecked(0));
+    /// assert_eq!(datetime_gregorian.time.hour.number(), 13);
+    /// assert_eq!(datetime_gregorian.time.minute.number(), 1);
+    /// assert_eq!(datetime_gregorian.time.second.number(), 0);
     /// ```
     pub fn new_gregorian_datetime_from_integers(
         year: i32,

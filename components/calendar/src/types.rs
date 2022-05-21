@@ -116,9 +116,9 @@ macro_rules! dt_unit {
         pub struct $name($storage);
 
         impl $name {
-            /// Do not validate the numeric input for this component.
-            pub const fn new_unchecked(input: $storage) -> Self {
-                Self(input)
+            /// Gets the numeric value for this component.
+            pub const fn number(&self) -> $storage {
+                self.0
             }
         }
 

@@ -111,10 +111,10 @@ assert_eq!(datetime_iso.date.day_of_week(), IsoWeekday::Wednesday);
 assert_eq!(datetime_iso.date.year().number, 1992);
 assert_eq!(datetime_iso.date.month().number, 9);
 assert_eq!(datetime_iso.date.day_of_month().0, 2);
-assert_eq!(datetime_iso.time.hour, IsoHour::new_unchecked(8));
-assert_eq!(datetime_iso.time.minute, IsoMinute::new_unchecked(59));
-assert_eq!(datetime_iso.time.second, IsoSecond::new_unchecked(0));
-assert_eq!(datetime_iso.time.nanosecond, NanoSecond::new_unchecked(0));
+assert_eq!(datetime_iso.time.hour.number(), 8);
+assert_eq!(datetime_iso.time.minute.number(), 59);
+assert_eq!(datetime_iso.time.second.number(), 0);
+assert_eq!(datetime_iso.time.nanosecond.number(), 0);
 
 // Advancing date by 1 year, 2 months, 3 weeks, 4 days.
 datetime_iso.date.add(DateDuration::new(1, 2, 3, 4));
@@ -124,10 +124,10 @@ datetime_iso.time = Time::try_new(14, 30, 0, 0).expect("Failed to initialize Tim
 assert_eq!(datetime_iso.date.year().number, 1993);
 assert_eq!(datetime_iso.date.month().number, 11);
 assert_eq!(datetime_iso.date.day_of_month().0, 27);
-assert_eq!(datetime_iso.time.hour, IsoHour::new_unchecked(14));
-assert_eq!(datetime_iso.time.minute, IsoMinute::new_unchecked(30));
-assert_eq!(datetime_iso.time.second, IsoSecond::new_unchecked(0));
-assert_eq!(datetime_iso.time.nanosecond, NanoSecond::new_unchecked(0));
+assert_eq!(datetime_iso.time.hour.number(), 14);
+assert_eq!(datetime_iso.time.minute.number(), 30);
+assert_eq!(datetime_iso.time.second.number(), 0);
+assert_eq!(datetime_iso.time.nanosecond.number(), 0);
 ```
 [`ICU4X`]: ../icu/index.html
 
