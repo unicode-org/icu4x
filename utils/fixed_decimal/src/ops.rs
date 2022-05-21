@@ -38,13 +38,14 @@ fn test_i16_sub_unsigned() {
 ///
 /// Overflow cannot occur because the result is unsigned.
 ///
+/// This is similar to `abs_diff` but with the additional constraint that `a >= b`.
+///
 /// If `a < b`, panics in debug mode and wraps in release mode.
 #[inline(always)]
 pub fn i16_abs_sub(a: i16, b: i16) -> u16 {
     debug_assert!(a >= b);
     let c = (a as u16).wrapping_sub(b as u16);
-    debug_assert_eq!(c, a.abs_diff(b));
-    debug_assert_eq!(c, b.abs_diff(a));
+    debug_assert_eq!(a as i32 - b as i32, c as i32);
     c
 }
 
