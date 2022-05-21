@@ -28,9 +28,9 @@
 //! assert_eq!(datetime_buddhist.date.year().number, 2513);
 //! assert_eq!(datetime_buddhist.date.month().number, 1);
 //! assert_eq!(datetime_buddhist.date.day_of_month().0, 2);
-//! assert_eq!(datetime_buddhist.time.hour, IsoHour::new_unchecked(13));
-//! assert_eq!(datetime_buddhist.time.minute, IsoMinute::new_unchecked(1));
-//! assert_eq!(datetime_buddhist.time.second, IsoSecond::new_unchecked(0));
+//! assert_eq!(datetime_buddhist.time.hour.number(), 13);
+//! assert_eq!(datetime_buddhist.time.minute.number(), 1);
+//! assert_eq!(datetime_buddhist.time.second.number(), 0);
 //! ```
 
 use crate::iso::{Iso, IsoDateInner, IsoYear};
@@ -164,9 +164,9 @@ impl DateTime<Buddhist> {
     /// assert_eq!(datetime_buddhist.date.year().number, 1970);
     /// assert_eq!(datetime_buddhist.date.month().number, 1);
     /// assert_eq!(datetime_buddhist.date.day_of_month().0, 2);
-    /// assert_eq!(datetime_buddhist.time.hour, IsoHour::new_unchecked(13));
-    /// assert_eq!(datetime_buddhist.time.minute, IsoMinute::new_unchecked(1));
-    /// assert_eq!(datetime_buddhist.time.second, IsoSecond::new_unchecked(0));
+    /// assert_eq!(datetime_buddhist.time.hour.number(), 13);
+    /// assert_eq!(datetime_buddhist.time.minute.number(), 1);
+    /// assert_eq!(datetime_buddhist.time.second.number(), 0);
     /// ```
     pub fn new_buddhist_datetime(
         year: i32,

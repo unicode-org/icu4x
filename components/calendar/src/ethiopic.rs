@@ -28,9 +28,9 @@
 //! assert_eq!(datetime_ethiopic.date.year().number, 1962);
 //! assert_eq!(datetime_ethiopic.date.month().number, 4);
 //! assert_eq!(datetime_ethiopic.date.day_of_month().0, 24);
-//! assert_eq!(datetime_ethiopic.time.hour, IsoHour::new_unchecked(13));
-//! assert_eq!(datetime_ethiopic.time.minute, IsoMinute::new_unchecked(1));
-//! assert_eq!(datetime_ethiopic.time.second, IsoSecond::new_unchecked(0));
+//! assert_eq!(datetime_ethiopic.time.hour.number(), 13);
+//! assert_eq!(datetime_ethiopic.time.minute.number(), 1);
+//! assert_eq!(datetime_ethiopic.time.second.number(), 0);
 //! ```
 
 use crate::coptic::Coptic;
@@ -262,9 +262,9 @@ impl DateTime<Ethiopic> {
     /// assert_eq!(datetime_ethiopic.date.year().number, 2014);
     /// assert_eq!(datetime_ethiopic.date.month().number, 8);
     /// assert_eq!(datetime_ethiopic.date.day_of_month().0, 25);
-    /// assert_eq!(datetime_ethiopic.time.hour, IsoHour::new_unchecked(13));
-    /// assert_eq!(datetime_ethiopic.time.minute, IsoMinute::new_unchecked(1));
-    /// assert_eq!(datetime_ethiopic.time.second, IsoSecond::new_unchecked(0));
+    /// assert_eq!(datetime_ethiopic.time.hour.number(), 13);
+    /// assert_eq!(datetime_ethiopic.time.minute.number(), 1);
+    /// assert_eq!(datetime_ethiopic.time.second.number(), 0);
     /// ```
     pub fn new_ethiopic_datetime(
         year: i32,

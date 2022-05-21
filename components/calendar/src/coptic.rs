@@ -28,9 +28,9 @@
 //! assert_eq!(datetime_coptic.date.year().number, 1686);
 //! assert_eq!(datetime_coptic.date.month().number, 4);
 //! assert_eq!(datetime_coptic.date.day_of_month().0, 24);
-//! assert_eq!(datetime_coptic.time.hour, IsoHour::new_unchecked(13));
-//! assert_eq!(datetime_coptic.time.minute, IsoMinute::new_unchecked(1));
-//! assert_eq!(datetime_coptic.time.second, IsoSecond::new_unchecked(0));
+//! assert_eq!(datetime_coptic.time.hour.number(), 13);
+//! assert_eq!(datetime_coptic.time.minute.number(), 1);
+//! assert_eq!(datetime_coptic.time.second.number(), 0);
 //! ```
 
 use crate::iso::{Iso, IsoYear};
@@ -240,9 +240,9 @@ impl DateTime<Coptic> {
     /// assert_eq!(datetime_coptic.date.year().number, 1686);
     /// assert_eq!(datetime_coptic.date.month().number, 5);
     /// assert_eq!(datetime_coptic.date.day_of_month().0, 6);
-    /// assert_eq!(datetime_coptic.time.hour, IsoHour::new_unchecked(13));
-    /// assert_eq!(datetime_coptic.time.minute, IsoMinute::new_unchecked(1));
-    /// assert_eq!(datetime_coptic.time.second, IsoSecond::new_unchecked(0));
+    /// assert_eq!(datetime_coptic.time.hour.number(), 13);
+    /// assert_eq!(datetime_coptic.time.minute.number(), 1);
+    /// assert_eq!(datetime_coptic.time.second.number(), 0);
     /// ```
     pub fn new_coptic_datetime(
         year: i32,

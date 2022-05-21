@@ -40,9 +40,9 @@
 //!     datetime_japanese.date.year().era,
 //!     Era(tinystr!(16, "showa"))
 //! );
-//! assert_eq!(datetime_japanese.time.hour, IsoHour::new_unchecked(13));
-//! assert_eq!(datetime_japanese.time.minute, IsoMinute::new_unchecked(1));
-//! assert_eq!(datetime_japanese.time.second, IsoSecond::new_unchecked(0));
+//! assert_eq!(datetime_japanese.time.hour.number(), 13);
+//! assert_eq!(datetime_japanese.time.minute.number(), 1);
+//! assert_eq!(datetime_japanese.time.second.number(), 0);
 //! ```
 
 use crate::iso::{Iso, IsoDateInner};
