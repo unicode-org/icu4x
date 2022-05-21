@@ -215,7 +215,7 @@ impl FixedDecimal {
             // The following line can't fail: magnitude <= self.magnitude, by
             // the if statement above, and u16::MAX == i16::MAX - i16::MIN, and
             // usize is asserted to be at least as big as u16.
-            let j = self.magnitude.abs_diff(magnitude) as usize;
+            let j = crate::ops::i16_abs_sub(self.magnitude, magnitude) as usize;
             match self.digits.get(j) {
                 Some(v) => *v,
                 None => 0, // Trailing zero
@@ -531,7 +531,7 @@ impl FixedDecimal {
     pub fn truncate_left(&mut self, magnitude: i16) {
         if self.magnitude >= magnitude {
             let positive_magnitude = if magnitude > 0 { magnitude } else { 0 };
-            let cut = self.magnitude.abs_diff(magnitude) as usize;
+            let cut = crate::ops::i16_abs_sub(self.magnitude, magnitude) as usize;
             if cut >= self.digits.len() {
                 self.digits.clear();
                 self.magnitude = 0;
