@@ -552,6 +552,145 @@ impl FixedDecimal {
         self.check_invariants();
     }
 
+    fn n_magnitude(&self) -> i16 {
+        if self.digits.len() == 0 {
+            return self.magnitude;
+        }
+
+        self.magnitude - (self.digits.len() as i16 - 1)
+    }
+
+    fn increment_abs_by_one(&mut self) {
+        for i in (0..self.digits.len()).rev() {
+            self.digits[i] += 1;
+            if self.digits[i] < 10 {
+                return;
+            }
+            self.digits[i] = 0;
+        }
+
+        // Still there is a carry, add `1` in the beginning of the digits.
+        self.digits.insert(0, 1);
+        self.magnitude = {
+            if self.digits.len() == 1 {
+                self.magnitude
+            } else {
+                self.magnitude + 1
+            }
+        };
+
+        if self.upper_magnitude < self.magnitude {
+            self.upper_magnitude = self.magnitude;
+        }
+
+        // remove trailing zeros from `digits`
+        for i in (0..self.digits.len()).rev() {
+            if self.digits[i] == 0 {
+                self.digits.pop();
+            } else {
+                break;
+            }
+        }
+    }
+
+    /// NOTE: accept only n <= magnitude
+    fn truncate(&mut self, n: i16) {
+        fn diff(x: i16, y: i16) -> u16 {
+            if x > y {
+                (x - y) as u16
+            } else {
+                (y - x) as u16
+            }
+        }
+        let n_magnitude = self.n_magnitude();
+        if n < n_magnitude || n > self.magnitude {
+            return;
+        }
+
+        self.lower_magnitude = {
+            if n <= 0 {
+                n
+            } else {
+                0
+            }
+        };
+
+        self.digits.truncate((diff(self.magnitude, n) + 1) as usize);
+    }
+
+    /// Ceil the number at ten power round_n.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use fixed_decimal::FixedDecimal;
+    /// # use std::str::FromStr;
+    ///
+    /// let mut dec = FixedDecimal::from_str("3.234").unwrap();
+    /// dec.ceil(0);
+    /// assert_eq!("4", dec.to_string());
+    ///
+    /// let mut dec = FixedDecimal::from_str("2.222").unwrap();
+    /// dec.ceil(-1);
+    /// assert_eq!("2.3", dec.to_string());
+    ///
+    /// let mut dec = FixedDecimal::from_str("22.222").unwrap();
+    /// dec.ceil(-2);
+    /// assert_eq!("22.23", dec.to_string());
+    ///
+    /// let mut dec = FixedDecimal::from_str("99.999").unwrap();
+    /// dec.ceil(-2);
+    /// assert_eq!("100.00", dec.to_string());
+    ///
+    /// let mut dec = FixedDecimal::from_str("99.999").unwrap();
+    /// dec.ceil(-100);
+    /// assert_eq!("99.999", dec.to_string());
+    /// ```
+    pub fn ceil(&mut self, round_n: i16) {
+        let n_magnitude = self.n_magnitude();
+
+        if round_n <= self.lower_magnitude {
+            // Do nothing.
+        } else if round_n <= n_magnitude {
+            // NOTE: this case will include the zero `FixedDecimal`
+            self.lower_magnitude = {
+                if round_n <= 0 {
+                    round_n
+                } else {
+                    0
+                }
+            };
+        } else if round_n <= self.magnitude {
+            self.truncate(round_n);
+            self.increment_abs_by_one();
+        } else if round_n <= self.upper_magnitude {
+            self.magnitude = 0;
+            self.lower_magnitude = {
+                if round_n < 0 {
+                    round_n
+                } else {
+                    0
+                }
+            };
+            if self.digits.len() == 0 {
+                return;
+            }
+
+            self.digits.clear();
+            self.increment_abs_by_one();
+        } else {
+            // greater than the upper magnitude
+            self.upper_magnitude = round_n;
+            if self.digits.len() == 0 {
+                return;
+            }
+
+            self.digits.clear();
+            self.magnitude = 0;
+            self.increment_abs_by_one();
+        }
+    }
+
     /// Zero-pad the number on the right to a particular (negative) magnitude. Will truncate
     /// trailing zeros if necessary, but will not truncate other digits, returning the result.
     ///
