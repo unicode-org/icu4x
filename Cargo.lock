@@ -1369,6 +1369,7 @@ dependencies = [
 name = "icu_char16trie"
 version = "0.1.0"
 dependencies = [
+ "crabbake",
  "serde",
  "toml",
  "zerovec",
@@ -1378,6 +1379,7 @@ dependencies = [
 name = "icu_codepointtrie"
 version = "0.4.0"
 dependencies = [
+ "crabbake",
  "criterion",
  "displaydoc",
  "icu_uniset",
@@ -1778,6 +1780,7 @@ dependencies = [
 name = "icu_uniset"
 version = "0.5.0"
 dependencies = [
+ "crabbake",
  "criterion",
  "displaydoc",
  "icu_benchmark_macros",
@@ -3222,6 +3225,7 @@ name = "tinystr"
 version = "0.6.0"
 dependencies = [
  "bincode",
+ "crabbake",
  "criterion",
  "displaydoc",
  "postcard",
@@ -3936,6 +3940,7 @@ name = "zerovec"
 version = "0.7.0"
 dependencies = [
  "bincode",
+ "crabbake",
  "criterion",
  "getrandom",
  "iai",

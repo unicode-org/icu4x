@@ -60,6 +60,20 @@ impl<'de: 'a, 'a> serde::Deserialize<'de> for UnicodeSet<'a> {
     }
 }
 
+#[cfg(feature = "crabbake")]
+impl crabbake::Bakeable for UnicodeSet<'_> {
+    fn bake(&self, env: &crabbake::CrateEnv) -> crabbake::TokenStream {
+        env.insert("icu_uniset");
+        let inv_list = self.inv_list.bake(env);
+        let size = self.size.bake(env);
+        // Safe because our parts are safe.
+        crabbake::quote! { unsafe {
+            #[allow(unused_unsafe)]
+            ::icu_uniset::UnicodeSet::from_parts_unchecked(#inv_list, #size)
+        }}
+    }
+}
+
 // Note: serde(flatten) currently does not promote a struct field of type Vec
 // to replace the struct when serializing. The error message from the default
 // serialization is: "can only flatten structs and maps (got a sequence)".
@@ -115,6 +129,11 @@ impl<'data> UnicodeSet<'data> {
         } else {
             Err(UnicodeSetError::InvalidSet(inv_list.to_vec()))
         }
+    }
+
+    #[doc(hidden)] // Crabbake internal
+    pub const unsafe fn from_parts_unchecked(inv_list: ZeroVec<'data, u32>, size: usize) -> Self {
+        Self { inv_list, size }
     }
 
     /// Returns a new [`UnicodeSet`] by borrowing an [inversion list](https://en.wikipedia.org/wiki/Inversion_list)
