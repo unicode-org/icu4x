@@ -89,7 +89,7 @@ impl<Y: for<'a> Yokeable<'a>, C: StableDeref> Yoke<Y, C> {
     /// See also [`Yoke::try_attach_to_cart()`] to return a `Result` from the closure.
     ///
     /// Call sites for this function may not compile pre-1.61; if this still happens, use
-    /// [`Yoke::try_attach_to_cart_badly()`] and file a bug.
+    /// [`Yoke::attach_to_cart_badly()`] and file a bug.
     ///
     /// # Examples
     ///
