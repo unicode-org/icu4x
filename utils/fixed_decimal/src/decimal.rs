@@ -552,14 +552,9 @@ impl FixedDecimal {
         self.check_invariants();
     }
 
-    fn n_magnitude(&self) -> i16 {
-        if self.digits.len() == 0 {
-            return self.magnitude;
-        }
-
-        self.magnitude - (self.digits.len() as i16 - 1)
-    }
-
+    /// Increments the digits by 1. if the digits are empty, it will add
+    /// an element with value 1 and assign the value of the upper magnitude to
+    /// the magnitude.
     fn increment_abs_by_one(&mut self) {
         for i in (0..self.digits.len()).rev() {
             self.digits[i] += 1;
@@ -573,7 +568,7 @@ impl FixedDecimal {
         self.digits.insert(0, 1);
         self.magnitude = {
             if self.digits.len() == 1 {
-                self.magnitude
+                self.upper_magnitude
             } else {
                 self.magnitude + 1
             }
@@ -583,6 +578,11 @@ impl FixedDecimal {
             self.upper_magnitude = self.magnitude;
         }
 
+        self.remove_trailing_zeros();
+    }
+
+    /// Removes the trailing zeros in `self.digits`
+    fn remove_trailing_zeros(&mut self) {
         // remove trailing zeros from `digits`
         for i in (0..self.digits.len()).rev() {
             if self.digits[i] == 0 {
@@ -591,34 +591,88 @@ impl FixedDecimal {
                 break;
             }
         }
+
+        if self.digits.is_empty() {
+            self.magnitude = 0;
+        }
     }
 
-    /// NOTE: accept only n <= magnitude
-    fn truncate(&mut self, n: i16) {
-        fn diff(x: i16, y: i16) -> u16 {
-            if x > y {
-                (x - y) as u16
-            } else {
-                (y - x) as u16
-            }
-        }
-        let n_magnitude = self.n_magnitude();
-        if n < n_magnitude || n > self.magnitude {
+    /// Truncate the number on the right to a particular magnitude, deleting
+    /// digits if necessary.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use fixed_decimal::FixedDecimal;
+    ///
+    /// let mut dec = FixedDecimal::from(4235);
+    /// assert_eq!("4235", dec.to_string());
+    ///
+    /// dec.truncate_right(-5);
+    /// assert_eq!("4235", dec.to_string());
+    ///
+    /// dec.truncate_right(1);
+    /// assert_eq!("4230", dec.to_string());
+    ///
+    /// dec.truncate_right(1);
+    /// assert_eq!("4230", dec.to_string());
+    ///
+    /// dec.truncate_right(0);
+    /// assert_eq!("4230", dec.to_string());
+    ///
+    /// dec.truncate_right(5);
+    /// assert_eq!("0", dec.to_string());
+    ///
+    /// dec.truncate_right(2);
+    /// assert_eq!("0", dec.to_string());
+    ///
+    /// let mut dec = FixedDecimal::from(4235);
+    /// dec.truncate_right(100);
+    /// assert_eq!("0", dec.to_string());
+    /// ```
+    pub fn truncate_right(&mut self, n: i16) {
+        let bottom_magnitude = self.nonzero_magnitude_right();
+
+        if n <= self.lower_magnitude {
             return;
+        } else if n <= bottom_magnitude {
+            self.lower_magnitude = {
+                if n <= 0 {
+                    n
+                } else {
+                    0
+                }
+            };
+        } else if n <= self.magnitude {
+            self.digits
+                .truncate((self.magnitude.abs_diff(n) + 1) as usize);
+            self.remove_trailing_zeros();
+            self.lower_magnitude = {
+                if n <= 0 {
+                    n
+                } else {
+                    0
+                }
+            };
+        } else if n <= self.upper_magnitude {
+            self.lower_magnitude = {
+                if n <= 0 {
+                    n
+                } else {
+                    0
+                }
+            };
+            self.digits.clear();
+            self.magnitude = 0;
+        } else {
+            self.digits.clear();
+            self.lower_magnitude = 0;
+            self.magnitude = 0;
+            self.upper_magnitude = 0;
         }
-
-        self.lower_magnitude = {
-            if n <= 0 {
-                n
-            } else {
-                0
-            }
-        };
-
-        self.digits.truncate((diff(self.magnitude, n) + 1) as usize);
     }
 
-    /// Ceil the number at ten power round_n.
+    /// Ceils the number to the power ten of n.
     ///
     /// # Examples
     ///
@@ -643,51 +697,49 @@ impl FixedDecimal {
     /// assert_eq!("100.00", dec.to_string());
     ///
     /// let mut dec = FixedDecimal::from_str("99.999").unwrap();
-    /// dec.ceil(-100);
-    /// assert_eq!("99.999", dec.to_string());
+    /// dec.ceil(-10);
+    /// assert_eq!("99.9990000000", dec.to_string());
+    ///
+    /// let mut dec = FixedDecimal::from_str("-99.999").unwrap();
+    /// dec.ceil(-10);
+    /// assert_eq!("-99.9990000000", dec.to_string());
+    ///
+    /// let mut dec = FixedDecimal::from_str("99.999").unwrap();
+    /// dec.ceil(10);
+    /// assert_eq!("10000000000", dec.to_string());
     /// ```
-    pub fn ceil(&mut self, round_n: i16) {
-        let n_magnitude = self.n_magnitude();
+    pub fn ceil(&mut self, n: i16) {
+        let bottom_magnitude = self.nonzero_magnitude_right();
 
-        if round_n <= self.lower_magnitude {
-            // Do nothing.
-        } else if round_n <= n_magnitude {
+        if n <= self.lower_magnitude {
+            self.lower_magnitude = n;
+        } else if n <= bottom_magnitude {
             // NOTE: this case will include the zero `FixedDecimal`
             self.lower_magnitude = {
-                if round_n <= 0 {
-                    round_n
+                if n <= 0 {
+                    n
                 } else {
                     0
                 }
             };
-        } else if round_n <= self.magnitude {
-            self.truncate(round_n);
+        } else if n <= self.magnitude {
+            self.truncate_right(n);
             self.increment_abs_by_one();
-        } else if round_n <= self.upper_magnitude {
-            self.magnitude = 0;
-            self.lower_magnitude = {
-                if round_n < 0 {
-                    round_n
-                } else {
-                    0
-                }
-            };
-            if self.digits.len() == 0 {
-                return;
-            }
+        } else if n <= self.upper_magnitude {
+            let not_zero = !self.is_zero();
+            self.truncate_right(n);
 
-            self.digits.clear();
-            self.increment_abs_by_one();
+            if not_zero {
+                self.increment_abs_by_one();
+            }
         } else {
             // greater than the upper magnitude
-            self.upper_magnitude = round_n;
-            if self.digits.len() == 0 {
-                return;
+            let not_zero = !self.is_zero();
+            self.truncate_right(n);
+            self.upper_magnitude = n;
+            if not_zero {
+                self.increment_abs_by_one();
             }
-
-            self.digits.clear();
-            self.magnitude = 0;
-            self.increment_abs_by_one();
         }
     }
 
