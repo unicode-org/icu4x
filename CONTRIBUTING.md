@@ -64,7 +64,7 @@ Our wider testsuite is organized as `ci-job-foo` make tasks corresponding to eac
          * `rust-src` for that toolchain: `rustup component add --toolchain nightly-2022-04-05 rust-src`
          * Various targets for that toolchain: `rustup target add thumbv7m-none-eabi --toolchain nightly-2022-04-05`, `rustup target add thumbv8m.main-none-eabihf --toolchain nightly-2022-04-05`, `rustup target add x86_64-unknown-linux-gnu --toolchain nightly-2022-04-05`
      + [`Diplomat`](https://github.com/rust-diplomat/diplomat) installed at the appropriate version: `cargo make diplomat-install`
-     + `clang-13` and `lld-13` with the `gold` plugin (APT package `llvm-13`)
+     + `clang-14` and `lld-14` with the `gold` plugin (APT package `llvm-14`)
      + [`Sphinx`](https://www.sphinx-doc.org/en/master/) on Python3: `pip3 install sphinx sphinx-rtd-theme`
  - `cargo make ci-job-wasm`: Runs WASM tests; mostly important if you're changing the FFI interface. This also has a couple additional dependencies:
      + Node.js version 14. This is typically not the one offered by the package manager; get it from the NodeJS website or `nvm`.
