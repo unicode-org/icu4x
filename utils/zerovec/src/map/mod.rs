@@ -5,6 +5,8 @@
 //! See [`ZeroMap`](crate::ZeroMap) for details.
 
 mod borrowed;
+#[cfg(feature = "crabbake")]
+mod crabbake;
 mod kv;
 #[allow(clippy::module_inception)] // module is purely internal
 pub(crate) mod map;

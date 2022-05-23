@@ -77,6 +77,7 @@ fn skip_node_value(pos: usize, lead: u16) -> usize {
 /// - [ICU4J CharsTrie](https://unicode-org.github.io/icu-docs/apidoc/released/icu4j/com/ibm/icu/util/CharsTrie.html) API.
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(feature = "serde_serialize", derive(serde::Serialize))]
+#[cfg_attr(feature = "crabbake", derive(crabbake::Bakeable), crabbake(path = icu_char16trie::char16trie))]
 #[derive(Clone)]
 pub struct Char16Trie<'data> {
     /// An array of u16 containing the trie data.

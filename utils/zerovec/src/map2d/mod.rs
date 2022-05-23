@@ -5,6 +5,8 @@
 //! See [`ZeroMap2d`](crate::ZeroMap2d) for details.
 
 mod borrowed;
+#[cfg(feature = "crabbake")]
+mod crabbake;
 pub(crate) mod map;
 #[cfg(feature = "serde")]
 mod serde;

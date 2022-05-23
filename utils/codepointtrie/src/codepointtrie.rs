@@ -22,6 +22,7 @@ use zerovec::ZeroVecError;
 #[derive(Clone, Copy, PartialEq, Debug, Eq)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(feature = "serde_serialize", derive(serde::Serialize))]
+#[cfg_attr(feature = "crabbake", derive(crabbake::Bakeable), crabbake(path = icu_codepointtrie))]
 pub enum TrieType {
     /// Represents the "fast" type code point tries for the
     /// [`TrieType`] trait. The "fast max" limit is set to `0xffff`.
@@ -106,18 +107,23 @@ fn maybe_filter_value<T: TrieValue>(value: T, trie_null_value: T, null_value: T)
 /// - [ICU User Guide section on Properties lookup](https://unicode-org.github.io/icu/userguide/strings/properties.html#lookup)
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(feature = "serde_serialize", derive(serde::Serialize))]
+#[cfg_attr(feature = "crabbake", derive(crabbake::Bakeable), crabbake(path = icu_codepointtrie))]
 #[derive(Debug, Eq, PartialEq, Yokeable, ZeroFrom)]
 pub struct CodePointTrie<'trie, T: TrieValue> {
-    header: CodePointTrieHeader,
+    #[doc(hidden)]
+    pub header: CodePointTrieHeader,
+    #[doc(hidden)]
     #[cfg_attr(feature = "serde", serde(borrow))]
-    index: ZeroVec<'trie, u16>,
+    pub index: ZeroVec<'trie, u16>,
+    #[doc(hidden)]
     #[cfg_attr(feature = "serde", serde(borrow))]
-    data: ZeroVec<'trie, T>,
+    pub data: ZeroVec<'trie, T>,
 }
 
 /// This struct contains the fixed-length header fields of a [`CodePointTrie`].
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(feature = "serde_serialize", derive(serde::Serialize))]
+#[cfg_attr(feature = "crabbake", derive(crabbake::Bakeable), crabbake(path = icu_codepointtrie))]
 #[derive(Copy, Clone, Debug, Eq, PartialEq, Yokeable, ZeroFrom)]
 pub struct CodePointTrieHeader {
     /// The code point of the start of the last range of the trie. A

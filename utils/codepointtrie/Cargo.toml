@@ -38,6 +38,7 @@ serde = { version = "1.0", default-features = false, features = ["derive", "allo
 yoke = { version = "0.5.0", path = "../yoke", features = ["derive"] }
 zerofrom = { version = "0.1.0", path = "../zerofrom", features = ["derive"] }
 zerovec = { version = "0.7", path = "../zerovec", features = ["yoke"] }
+crabbake = { version = "0.4", path = "../../experimental/crabbake", optional = true, features = ["derive"]}
 
 [dev-dependencies]
 postcard = { version = "0.7", features = ["alloc"] }
@@ -53,6 +54,7 @@ path = "src/lib.rs"
 default = []
 serde = ["dep:serde", "zerovec/serde", "icu_uniset/serde"]
 serde_serialize = ["serde", "zerovec/serde_serialize", "icu_uniset/serde_serialize"]
+crabbake = ["dep:crabbake", "zerovec/crabbake"]
 bench = []
 
 [[bench]]

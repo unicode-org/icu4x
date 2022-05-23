@@ -12,7 +12,7 @@ use serde;
 
 #[icu_provider::data_struct(CanonicalDecompositionDataV1Marker = "normalizer/nfd@1")]
 #[derive(Debug, PartialEq, Clone)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize))]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, crabbake::Bakeable), crabbake(path = icu_normalizer::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct CanonicalDecompositionDataV1<'data> {
     #[cfg_attr(feature = "serde", serde(borrow))]

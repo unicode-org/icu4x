@@ -43,3 +43,57 @@ impl TryFrom<&str> for SkeletonV1 {
         }
     }
 }
+
+#[cfg(feature = "datagen")]
+impl crabbake::Bakeable for DateSkeletonPatternsV1<'_> {
+    fn bake(&self, env: &crabbake::CrateEnv) -> crabbake::TokenStream {
+        env.insert("icu_datetime");
+        let vals = self.0.iter().map(|(skeleton, pattern)| {
+            let fields = skeleton.0 .0.iter().map(|f| f.bake(env));
+            let pattern = pattern.bake(env);
+            crabbake::quote! {
+                (&[#(#fields),*], #pattern)
+            }
+        });
+        crabbake::quote! {
+            [#(#vals),*]
+        }
+    }
+}
+
+#[cfg(feature = "datagen")]
+impl Default for DateSkeletonPatternsV1Marker {
+    fn default() -> Self {
+        Self
+    }
+}
+
+#[cfg(feature = "datagen")]
+impl crabbake::Bakeable for DateSkeletonPatternsV1Marker {
+    fn bake(&self, env: &crabbake::CrateEnv) -> crabbake::TokenStream {
+        env.insert("icu_datetime");
+        env.insert("short_vec");
+        crabbake::quote! {
+            ::icu_datetime::provider::calendar::DateSkeletonPatternsV1Marker
+        }
+    }
+}
+
+type BakedDateSkeletonPatternsV1 = [(&'static [crate::fields::Field], PatternPlurals<'static>)];
+
+/// This is not actually zero-alloc. Whoops
+impl zerofrom::ZeroFrom<'static, BakedDateSkeletonPatternsV1> for DateSkeletonPatternsV1<'static> {
+    fn zero_from(other: &'static BakedDateSkeletonPatternsV1) -> Self {
+        Self(
+            other
+                .iter()
+                .map(|(fields, pattern)| {
+                    (
+                        SkeletonV1(Skeleton(fields.iter().cloned().collect())),
+                        zerofrom::ZeroFrom::zero_from(pattern),
+                    )
+                })
+                .collect(),
+        )
+    }
+}

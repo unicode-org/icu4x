@@ -37,6 +37,7 @@ fixed_decimal = { version = "0.3", path = "../../utils/fixed_decimal" }
 writeable = { version = "0.4", path = "../../utils/writeable" }
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }
 displaydoc = { version = "0.2.3", default-features = false }
+crabbake = { path = "../../experimental/crabbake", optional = true, features = ["derive"]}
 
 [dev-dependencies]
 criterion = "0.3"
@@ -54,7 +55,7 @@ std = ["icu_locid/std", "icu_provider/std", "fixed_decimal/std"]
 default = []
 bench = ["serde"]
 serde = ["dep:serde"]
-datagen = ["serde"]
+datagen = ["serde", "crabbake"]
 
 [[bench]]
 name = "fixed_decimal_format"

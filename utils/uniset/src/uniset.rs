@@ -36,7 +36,6 @@ pub struct UnicodeSet<'data> {
     // If we wanted to use an array to keep the memory on the stack, there is an unsafe nightly feature
     // https://doc.rust-lang.org/nightly/core/array/trait.FixedSizeArray.html
     // Allows for traits of fixed size arrays
-
     // Implements an [inversion list.](https://en.wikipedia.org/wiki/Inversion_list)
     inv_list: ZeroVec<'data, u32>,
     size: usize,
@@ -57,6 +56,20 @@ impl<'de: 'a, 'a> serde::Deserialize<'de> for UnicodeSet<'a> {
                 e
             ))
         })
+    }
+}
+
+#[cfg(feature = "crabbake")]
+impl crabbake::Bakeable for UnicodeSet<'_> {
+    fn bake(&self, env: &crabbake::CrateEnv) -> crabbake::TokenStream {
+        env.insert("icu_uniset");
+        let inv_list = self.inv_list.bake(env);
+        let size = self.size.bake(env);
+        // Safe because our parts are safe.
+        crabbake::quote! { unsafe {
+            #[allow(unused_unsafe)]
+            ::icu_uniset::UnicodeSet::from_parts_unchecked(#inv_list, #size)
+        }}
     }
 }
 
@@ -115,6 +128,11 @@ impl<'data> UnicodeSet<'data> {
         } else {
             Err(UnicodeSetError::InvalidSet(inv_list.to_vec()))
         }
+    }
+
+    #[doc(hidden)] // Crabbake internal
+    pub const unsafe fn from_parts_unchecked(inv_list: ZeroVec<'data, u32>, size: usize) -> Self {
+        Self { inv_list, size }
     }
 
     /// Returns a new [`UnicodeSet`] by borrowing an [inversion list](https://en.wikipedia.org/wiki/Inversion_list)

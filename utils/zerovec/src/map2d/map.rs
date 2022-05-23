@@ -81,10 +81,17 @@ where
     K1: ?Sized,
     V: ?Sized,
 {
-    pub(crate) keys0: K0::Container,
-    pub(crate) joiner: ZeroVec<'a, u32>,
-    pub(crate) keys1: K1::Container,
-    pub(crate) values: V::Container,
+    // These need to be public because we need to const-construct `ZeroMap2d`s for
+    // Crabbake. It's not possible to define a const constructor with the correct
+    // generic bounds without the `const_fn_trait_bound` feature.
+    #[doc(hidden)]
+    pub keys0: K0::Container,
+    #[doc(hidden)]
+    pub joiner: ZeroVec<'a, u32>,
+    #[doc(hidden)]
+    pub keys1: K1::Container,
+    #[doc(hidden)]
+    pub values: V::Container,
 }
 
 #[derive(PartialEq, Debug)]

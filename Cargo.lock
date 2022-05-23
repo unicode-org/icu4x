@@ -1302,6 +1302,7 @@ dependencies = [
 name = "icu_calendar"
 version = "0.6.0"
 dependencies = [
+ "crabbake",
  "displaydoc",
  "icu",
  "icu_benchmark_macros",
@@ -1356,6 +1357,7 @@ dependencies = [
 name = "icu_casemapping"
 version = "0.1.0"
 dependencies = [
+ "crabbake",
  "displaydoc",
  "icu_codepointtrie",
  "icu_locid",
@@ -1370,6 +1372,7 @@ dependencies = [
 name = "icu_char16trie"
 version = "0.1.0"
 dependencies = [
+ "crabbake",
  "serde",
  "toml",
  "zerovec",
@@ -1379,6 +1382,7 @@ dependencies = [
 name = "icu_codepointtrie"
 version = "0.4.0"
 dependencies = [
+ "crabbake",
  "criterion",
  "displaydoc",
  "icu_uniset",
@@ -1407,6 +1411,7 @@ version = "0.6.0"
 dependencies = [
  "arraystring",
  "atoi",
+ "crabbake",
  "displaydoc",
  "icu_char16trie",
  "icu_codepointtrie",
@@ -1478,6 +1483,7 @@ name = "icu_datetime"
 version = "0.6.0"
 dependencies = [
  "bincode",
+ "crabbake",
  "criterion",
  "displaydoc",
  "either",
@@ -1503,6 +1509,7 @@ dependencies = [
 name = "icu_decimal"
 version = "0.6.0"
 dependencies = [
+ "crabbake",
  "criterion",
  "displaydoc",
  "fixed_decimal",
@@ -1553,11 +1560,11 @@ dependencies = [
 name = "icu_locale_canonicalizer"
 version = "0.6.0"
 dependencies = [
+ "crabbake",
  "criterion",
  "icu_locid",
  "icu_provider",
  "icu_testdata",
- "litemap",
  "serde",
  "serde_json",
  "tinystr 0.6.0",
@@ -1568,6 +1575,7 @@ dependencies = [
 name = "icu_locid"
 version = "0.6.0"
 dependencies = [
+ "crabbake",
  "criterion",
  "displaydoc",
  "iai",
@@ -1586,6 +1594,7 @@ dependencies = [
 name = "icu_normalizer"
 version = "0.6.0"
 dependencies = [
+ "crabbake",
  "displaydoc",
  "icu_codepointtrie",
  "icu_properties",
@@ -1611,6 +1620,7 @@ dependencies = [
 name = "icu_plurals"
 version = "0.6.0"
 dependencies = [
+ "crabbake",
  "criterion",
  "displaydoc",
  "fixed_decimal",
@@ -1628,6 +1638,7 @@ dependencies = [
 name = "icu_properties"
 version = "0.6.0"
 dependencies = [
+ "crabbake",
  "displaydoc",
  "icu",
  "icu_codepointtrie",
@@ -1721,6 +1732,7 @@ dependencies = [
 name = "icu_segmenter"
 version = "0.6.0"
 dependencies = [
+ "crabbake",
  "criterion",
  "icu_char16trie",
  "icu_codepointtrie",
@@ -1756,26 +1768,41 @@ dependencies = [
  "displaydoc",
  "eyre",
  "futures",
+ "icu_calendar",
+ "icu_casemapping",
+ "icu_codepointtrie",
+ "icu_collator",
  "icu_datagen",
+ "icu_datetime",
+ "icu_decimal",
  "icu_list",
+ "icu_locale_canonicalizer",
  "icu_locid",
+ "icu_normalizer",
  "icu_plurals",
+ "icu_properties",
  "icu_provider",
  "icu_provider_blob",
  "icu_provider_fs",
+ "icu_segmenter",
+ "icu_uniset",
  "log",
  "reqwest",
  "serde",
  "serde_json",
  "simple_logger",
+ "smallvec",
+ "tinystr 0.6.0",
  "tokio",
  "writeable",
+ "zerovec",
 ]
 
 [[package]]
 name = "icu_uniset"
 version = "0.5.0"
 dependencies = [
+ "crabbake",
  "criterion",
  "displaydoc",
  "icu_benchmark_macros",
@@ -3220,6 +3247,7 @@ name = "tinystr"
 version = "0.6.0"
 dependencies = [
  "bincode",
+ "crabbake",
  "criterion",
  "displaydoc",
  "postcard",
@@ -3934,6 +3962,7 @@ name = "zerovec"
 version = "0.7.0"
 dependencies = [
  "bincode",
+ "crabbake",
  "criterion",
  "getrandom",
  "iai",

@@ -206,7 +206,9 @@ icu_provider::impl_dyn_provider!(
     JapaneseErasProvider,
     [JapaneseErasV1Marker,],
     SERDE_SE,
+    CRABBAKE,
     ITERABLE_SERDE_SE,
+    ITERABLE_CRABBAKE,
     DATA_CONVERTER
 );
 
