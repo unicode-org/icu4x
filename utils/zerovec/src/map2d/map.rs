@@ -137,7 +137,7 @@ where
     }
 
     #[doc(hidden)] // Crabbake internal
-    pub fn from_parts_unchecked(
+    pub const unsafe fn from_parts_unchecked(
         keys0: K0::Container,
         joiner: ZeroVec<'a, u32>,
         keys1: K1::Container,

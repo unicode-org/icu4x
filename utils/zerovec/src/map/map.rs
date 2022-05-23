@@ -100,7 +100,7 @@ where
     }
 
     #[doc(hidden)] // Crabbake internal
-    pub fn from_parts_unchecked(keys: K::Container, values: V::Container) -> Self {
+    pub const unsafe fn from_parts_unchecked(keys: K::Container, values: V::Container) -> Self {
         Self { keys, values }
     }
 
