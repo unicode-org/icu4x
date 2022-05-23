@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1653293230750,
+  "lastUpdate": 1653293291463,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -15533,6 +15533,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/cedb67fca4523119c29aebc7b0c6cbcb1bb3ce6e"
         },
         "date": 1653293210729,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 2220821,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "hsivonen@hsivonen.fi",
+            "name": "Henri Sivonen",
+            "username": "hsivonen"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "d639e265fa7bc01a6fd8a5b6a1f4d5ad82a759b8",
+          "message": "Remove the unused postcard dependency from the collator (#1917)\n\nCloses #1907",
+          "timestamp": "2022-05-23T11:06:03+03:00",
+          "tree_id": "c7942ec64e035d39e623600aea0e9cb81f919bc5",
+          "url": "https://github.com/unicode-org/icu4x/commit/d639e265fa7bc01a6fd8a5b6a1f4d5ad82a759b8"
+        },
+        "date": 1653293268650,
         "tool": "ndjson",
         "benches": [
           {
