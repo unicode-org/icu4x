@@ -169,6 +169,7 @@ impl TryFrom<u8> for TrieType {
 }
 
 impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
+    #[doc(hidden)] // crabbake internal
     pub const fn from_parts(
         header: CodePointTrieHeader,
         index: ZeroVec<'trie, u16>,

@@ -254,7 +254,7 @@ impl<'a, T: VarULE + ?Sized> VarZeroVec<'a, T> {
         Ok(VarZeroVec::Borrowed(borrowed))
     }
 
-    /// Uses a potentially invalid bytes slice as a `VarZeroVec`.
+    /// Uses a `&[u8]` buffer as a `VarZeroVec<T>` without any verification.
     ///
     /// # Safety
     ///
