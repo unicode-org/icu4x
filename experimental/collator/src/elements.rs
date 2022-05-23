@@ -84,6 +84,11 @@ pub(crate) const NO_CE_TERTIARY: u16 = 0x0100;
 const NO_CE_VALUE: u64 =
     ((NO_CE_PRIMARY as u64) << 32) | ((NO_CE_SECONDARY as u64) << 16) | (NO_CE_TERTIARY as u64); // 0x101000100
 
+// See ICU4C collation.h and https://www.unicode.org/reports/tr10/#Trailing_Weights
+const FFFD_PRIMARY: u32 = 0xFFFD0000; // U+FFFD
+const FFFD_CE_VALUE: u64 = ((FFFD_PRIMARY as u64) << 32) | COMMON_SEC_AND_TER_CE;
+const FFFD_CE: CollationElement = CollationElement(FFFD_CE_VALUE);
+
 #[inline(always)]
 fn in_inclusive_range(c: char, start: char, end: char) -> bool {
     u32::from(c).wrapping_sub(u32::from(start)) <= (u32::from(end) - u32::from(start))
@@ -1748,7 +1753,10 @@ where
                             | Tag::LatinExpansion
                             | Tag::U0000
                             | Tag::Hangul => {
-                                unreachable!();
+                                debug_assert!(false);
+                                // GIGO case
+                                self.pending.push(FFFD_CE);
+                                break 'ce32loop;
                             }
                         }
                     }
