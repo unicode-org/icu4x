@@ -44,12 +44,11 @@ use core::iter::FromIterator;
 ///
 /// let data = Data { map };
 ///
-/// let bincode_bytes = bincode::serialize(&data)
-///     .expect("Serialization should be successful");
+/// let bincode_bytes = bincode::serialize(&data).expect("Serialization should be successful");
 ///
 /// // Will deserialize without any allocations
-/// let deserialized: Data = bincode::deserialize(&bincode_bytes)
-///     .expect("Deserialization should be successful");
+/// let deserialized: Data =
+///     bincode::deserialize(&bincode_bytes).expect("Deserialization should be successful");
 ///
 /// assert_eq!(data.map.get(&1), Some("one"));
 /// assert_eq!(data.map.get(&2), Some("two"));
@@ -327,19 +326,31 @@ where
     /// types with the value to avoid an extra allocation when dealing with custom ULE types.
     ///
     /// ```rust
-    /// use zerovec::ZeroMap;
     /// use std::borrow::Cow;
+    /// use zerovec::ZeroMap;
     ///
     /// #[zerovec::make_varule(PersonULE)]
     /// #[derive(Clone, Eq, PartialEq, Ord, PartialOrd)]
     /// struct Person<'a> {
     ///     age: u8,
-    ///     name: Cow<'a, str>    
+    ///     name: Cow<'a, str>,
     /// }
     ///
     /// let mut map: ZeroMap<u32, PersonULE> = ZeroMap::new();
-    /// map.insert_var_v(&1, &Person { age: 20, name: "Joseph".into()    });
-    /// map.insert_var_v(&1, &Person { age: 35, name: "Carla".into()     });
+    /// map.insert_var_v(
+    ///     &1,
+    ///     &Person {
+    ///         age: 20,
+    ///         name: "Joseph".into(),
+    ///     },
+    /// );
+    /// map.insert_var_v(
+    ///     &1,
+    ///     &Person {
+    ///         age: 35,
+    ///         name: "Carla".into(),
+    ///     },
+    /// );
     /// assert_eq!(&map.get(&1).unwrap().name, "Carla");
     /// assert!(map.get(&3).is_none());
     /// ```

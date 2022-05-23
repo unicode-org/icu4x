@@ -2,7 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::error::DatagenError;
 use crate::SourceData;
 use icu_codepointtrie::CodePointTrie;
 use std::convert::TryFrom;
@@ -45,8 +44,8 @@ impl ResourceProvider<CanonicalDecompositionDataV1Marker> for CanonicalDecomposi
             let path_buf = self.source.get_uprops_root()?.join("decompositions.toml");
             let path: &Path = &path_buf;
             let toml_str = read_path_to_string(path)?;
-            let toml_obj: CanonicalDecompositionData =
-                toml::from_str(&toml_str).map_err(|e| DatagenError::from((e, path)))?;
+            let toml_obj: CanonicalDecompositionData = toml::from_str(&toml_str)
+                .map_err(|e| crate::error::data_error_from_toml(e).with_path_context(path))?;
             *self.data.write().unwrap() = Some(toml_obj);
         }
 
@@ -60,12 +59,13 @@ impl ResourceProvider<CanonicalDecompositionDataV1Marker> for CanonicalDecomposi
         }
         let uniset = builder.build();
 
-        let trie = CodePointTrie::<u32>::try_from(&toml_data.trie);
+        let trie = CodePointTrie::<u32>::try_from(&toml_data.trie)
+            .map_err(|e| DataError::custom("trie conversion").with_display_context(&e))?;
 
         Ok(DataResponse {
             metadata: DataResponseMetadata::default(),
             payload: Some(DataPayload::from_owned(CanonicalDecompositionDataV1 {
-                trie: trie.map_err(|e| DatagenError::Custom(e.to_string(), None))?,
+                trie,
                 scalars16: ZeroVec::alloc_from_slice(&toml_data.scalars16),
                 scalars32: ZeroVec::alloc_from_slice(&toml_data.scalars32),
                 decomposition_starts_with_non_starter: uniset,

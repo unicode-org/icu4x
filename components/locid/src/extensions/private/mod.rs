@@ -13,14 +13,12 @@
 //! # Examples
 //!
 //! ```
+//! use icu::locid::extensions::private::{Key, Private};
 //! use icu::locid::Locale;
-//! use icu::locid::extensions::private::{Private, Key};
 //!
-//! let mut loc: Locale = "en-US-x-foo-faa".parse()
-//!     .expect("Parsing failed.");
+//! let mut loc: Locale = "en-US-x-foo-faa".parse().expect("Parsing failed.");
 //!
-//! let key: Key = "foo".parse()
-//!     .expect("Parsing key failed.");
+//! let key: Key = "foo".parse().expect("Parsing key failed.");
 //! assert_eq!(loc.extensions.private.contains(&key), true);
 //! assert_eq!(loc.extensions.private.iter().next(), Some(&key));
 //! loc.extensions.private.clear();
@@ -48,12 +46,10 @@ use crate::parser::SubtagIterator;
 /// # Examples
 ///
 /// ```
-/// use icu::locid::extensions::private::{Private, Key};
+/// use icu::locid::extensions::private::{Key, Private};
 ///
-/// let key1: Key = "foo".parse()
-///     .expect("Failed to parse a Key.");
-/// let key2: Key = "bar".parse()
-///     .expect("Failed to parse a Key.");
+/// let key1: Key = "foo".parse().expect("Failed to parse a Key.");
+/// let key2: Key = "bar".parse().expect("Failed to parse a Key.");
 ///
 /// let private = Private::from_vec_unchecked(vec![key1, key2]);
 /// assert_eq!(&private.to_string(), "-x-foo-bar");
@@ -84,12 +80,10 @@ impl Private {
     /// # Examples
     ///
     /// ```
-    /// use icu::locid::extensions::private::{Private, Key};
+    /// use icu::locid::extensions::private::{Key, Private};
     ///
-    /// let key1: Key = "foo".parse()
-    ///     .expect("Failed to parse a Key.");
-    /// let key2: Key = "bar".parse()
-    ///     .expect("Failed to parse a Key.");
+    /// let key1: Key = "foo".parse().expect("Failed to parse a Key.");
+    /// let key2: Key = "bar".parse().expect("Failed to parse a Key.");
     ///
     /// let private = Private::from_vec_unchecked(vec![key1, key2]);
     /// assert_eq!(&private.to_string(), "-x-foo-bar");
@@ -103,12 +97,10 @@ impl Private {
     /// # Examples
     ///
     /// ```
-    /// use icu::locid::extensions::private::{Private, Key};
+    /// use icu::locid::extensions::private::{Key, Private};
     ///
-    /// let key1: Key = "foo".parse()
-    ///     .expect("Failed to parse a Key.");
-    /// let key2: Key = "bar".parse()
-    ///     .expect("Failed to parse a Key.");
+    /// let key1: Key = "foo".parse().expect("Failed to parse a Key.");
+    /// let key2: Key = "bar".parse().expect("Failed to parse a Key.");
     /// let mut private = Private::from_vec_unchecked(vec![key1, key2]);
     ///
     /// assert_eq!(&private.to_string(), "-x-foo-bar");

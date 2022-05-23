@@ -63,8 +63,8 @@ impl DataPayload<CrabbakeMarker> {
     /// # Examples
     ///
     /// ```
-    /// use icu_provider::prelude::*;
     /// use icu_provider::hello_world::HelloWorldV1Marker;
+    /// use icu_provider::prelude::*;
     /// # use crabbake::quote;
     /// # use std::collections::BTreeSet;
     ///
@@ -74,20 +74,23 @@ impl DataPayload<CrabbakeMarker> {
     /// let env = crabbake::CrateEnv::default();
     /// let (tokens, marker) = payload.into_bakeable().tokenize(&env);
     /// assert_eq!(
-    ///     quote!{
+    ///     quote! {
     ///         ::icu_provider::hello_world::HelloWorldV1 {
     ///             message: ::alloc::borrow::Cow::Borrowed("(und) Hello World"),
     ///         }
-    ///     }.to_string(),
+    ///     }
+    ///     .to_string(),
     ///     tokens.to_string()
     /// );
     /// assert_eq!(
-    ///     quote!{ ::icu_provider::hello_world::HelloWorldV1Marker }.to_string(),
+    ///     quote! { ::icu_provider::hello_world::HelloWorldV1Marker }.to_string(),
     ///     marker.to_string()
     /// );
     /// assert_eq!(
     ///     env.into_iter().collect::<BTreeSet<_>>(),
-    ///     ["icu_provider", "alloc"].into_iter().collect::<BTreeSet<_>>()
+    ///     ["icu_provider", "alloc"]
+    ///         .into_iter()
+    ///         .collect::<BTreeSet<_>>()
     /// );
     /// ```
     pub fn tokenize(&self, env: &CrateEnv) -> (TokenStream, TokenStream) {

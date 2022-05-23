@@ -514,6 +514,8 @@ impl CharacterAndClass {
         CharacterAndClass(u32::from(c) | (0xFF << 24))
     }
     pub fn character(&self) -> char {
+        // Safe, because the low 24 bits came from a `char`
+        // originally.
         unsafe { char::from_u32_unchecked(self.0 & 0xFFFFFF) }
     }
     pub fn ccc(&self) -> CanonicalCombiningClass {

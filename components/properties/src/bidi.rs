@@ -9,29 +9,20 @@
 //! # Examples
 //!
 //!```
+//! use icu_codepointtrie::CodePointTrie;
 //! use icu_properties::bidi::BidiClassAdapter;
 //! use icu_properties::{maps, BidiClass};
-//! use icu_codepointtrie::CodePointTrie;
 //! use unicode_bidi::BidiClass as DataSourceBidiClass;
 //! use unicode_bidi::BidiDataSource;
 //! use unicode_bidi::BidiInfo;
 //! // This example text is defined using `concat!` because some browsers
 //! // and text editors have trouble displaying bidi strings.
-//! let text = concat![
-//!   "א",
-//!   "ב",
-//!   "ג",
-//!   "a",
-//!   "b",
-//!   "c",
-//! ];
+//! let text = concat!["א", "ב", "ג", "a", "b", "c",];
 //!
 //! // Create an adapter to provide the data to `BidiInfo`.
 //! let provider = icu_testdata::get_provider();
 //!
-//! let payload =
-//!     maps::get_bidi_class(&provider)
-//!         .expect("The data should be valid");
+//! let payload = maps::get_bidi_class(&provider).expect("The data should be valid");
 //! let data_struct = payload.get();
 //! let bc = &data_struct.code_point_trie;
 //!
@@ -53,14 +44,7 @@
 //! let line = para.range.clone();
 //!
 //! let display = bidi_info.reorder_line(para, line);
-//! assert_eq!(display, concat![
-//!   "a",
-//!   "b",
-//!   "c",
-//!   "ג",
-//!   "ב",
-//!   "א",
-//! ]);
+//! assert_eq!(display, concat!["a", "b", "c", "ג", "ב", "א",]);
 //! ```
 
 use crate::props::BidiClass;
@@ -73,17 +57,15 @@ use unicode_bidi::BidiClass as DataSourceBidiClass;
 /// # Example
 ///
 /// ```
+/// use icu_codepointtrie::CodePointTrie;
 /// use icu_properties::bidi::BidiClassAdapter;
 /// use icu_properties::{maps, BidiClass};
-/// use icu_codepointtrie::CodePointTrie;
 /// use unicode_bidi::BidiClass as DataSourceBidiClass;
 /// use unicode_bidi::BidiDataSource;
 ///
 /// let provider = icu_testdata::get_provider();
 ///
-/// let payload =
-///     maps::get_bidi_class(&provider)
-///         .expect("The data should be valid");
+/// let payload = maps::get_bidi_class(&provider).expect("The data should be valid");
 /// let data_struct = payload.get();
 /// let bc = &data_struct.code_point_trie;
 ///
@@ -108,17 +90,15 @@ impl<'a> BidiDataSource for BidiClassAdapter<'a> {
     /// # Example
     ///
     /// ```
+    /// use icu_codepointtrie::CodePointTrie;
     /// use icu_properties::bidi::BidiClassAdapter;
     /// use icu_properties::{maps, BidiClass};
-    /// use icu_codepointtrie::CodePointTrie;
     /// use unicode_bidi::BidiClass as DataSourceBidiClass;
     /// use unicode_bidi::BidiDataSource;
     ///
     /// let provider = icu_testdata::get_provider();
     ///
-    /// let payload =
-    ///     maps::get_bidi_class(&provider)
-    ///         .expect("The data should be valid");
+    /// let payload = maps::get_bidi_class(&provider).expect("The data should be valid");
     /// let data_struct = payload.get();
     /// let bc = &data_struct.code_point_trie;
     ///

@@ -2,7 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::error::DatagenError;
 use crate::transform::cldr::cldr_serde;
 use crate::transform::reader::{get_langid_subdirectories, get_langid_subdirectory, open_reader};
 use crate::SourceData;
@@ -80,8 +79,7 @@ macro_rules! impl_resource_provider {
                         .join(&format!("ca-{}.json", cldr_cal));
 
                         let mut resource: cldr_serde::ca::Resource =
-                            serde_json::from_reader(open_reader(&path)?)
-                                .map_err(|e| DatagenError::from((e, path)))?;
+                            serde_json::from_reader(open_reader(&path)?).map_err(|e| DataError::from(e).with_path_context(&path))?;
 
                         self.data.insert(
                             req.options.clone(),

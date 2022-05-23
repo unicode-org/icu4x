@@ -116,9 +116,9 @@ macro_rules! dt_unit {
         pub struct $name($storage);
 
         impl $name {
-            /// Do not validate the numeric input for this component.
-            pub const fn new_unchecked(input: $storage) -> Self {
-                Self(input)
+            /// Gets the numeric value for this component.
+            pub const fn number(&self) -> $storage {
+                self.0
             }
         }
 
@@ -348,7 +348,7 @@ impl FromStr for GmtOffset {
     fn from_str(input: &str) -> Result<Self, Self::Err> {
         let offset_sign = match input.chars().next() {
             Some('+') => 1,
-            /* ASCII  */ Some('-') => -1,
+            /* ASCII */ Some('-') => -1,
             /* U+2212 */ Some('−') => -1,
             Some('Z') => return Ok(Self(0)),
             _ => return Err(DateTimeError::InvalidTimeZoneOffset),

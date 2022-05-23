@@ -15,7 +15,7 @@
 //! ```rust
 //! use tinystr::TinyAsciiStr;
 //!
-//! let s1: TinyAsciiStr::<4> = "tEsT".parse().expect("Failed to parse.");
+//! let s1: TinyAsciiStr<4> = "tEsT".parse().expect("Failed to parse.");
 //!
 //! assert_eq!(s1, "tEsT");
 //! assert_eq!(s1.to_ascii_uppercase(), "TEST");

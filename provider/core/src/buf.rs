@@ -25,12 +25,11 @@ impl DataMarker for BufferMarker {
 ///
 /// ```
 /// # #[cfg(feature = "deserialize_json")] {
-/// use icu_provider::prelude::*;
-/// use icu_provider::hello_world::*;
 /// use icu_locid::locale;
+/// use icu_provider::hello_world::*;
+/// use icu_provider::prelude::*;
 ///
-/// let buffer_provider = HelloWorldProvider::new_with_placeholder_data()
-///     .into_json_provider();
+/// let buffer_provider = HelloWorldProvider::new_with_placeholder_data().into_json_provider();
 ///
 /// let data_provider = buffer_provider.as_deserializing();
 ///
@@ -67,4 +66,24 @@ pub enum BufferFormat {
     Bincode1,
     /// Serialize using Postcard version 0.7.
     Postcard07,
+}
+
+impl BufferFormat {
+    /// Returns an error if the buffer format is not enabled.
+    pub fn check_available(&self) -> Result<(), DataError> {
+        match self {
+            #[cfg(feature = "deserialize_json")]
+            BufferFormat::Json => Ok(()),
+
+            #[cfg(feature = "deserialize_bincode_1")]
+            BufferFormat::Bincode1 => Ok(()),
+
+            #[cfg(feature = "deserialize_postcard_07")]
+            BufferFormat::Postcard07 => Ok(()),
+
+            // Allowed for cases in which all features are enabled
+            #[allow(unreachable_patterns)]
+            _ => Err(DataErrorKind::UnavailableBufferFormat(*self).into_error()),
+        }
+    }
 }

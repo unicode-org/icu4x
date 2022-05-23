@@ -22,10 +22,7 @@ for working with dates, encompassing information about the day, month, year,
 as well as the calendar type.
 
 ```rust
-use icu_calendar::{Date,
-                   DateDuration,
-                   DateDurationUnit,
-                   types::IsoWeekday};
+use icu_calendar::{types::IsoWeekday, Date, DateDuration, DateDurationUnit};
 
 // Creating ISO date: 1992-09-02.
 let mut date_iso = Date::new_iso_date_from_integers(1992, 9, 2)
@@ -72,9 +69,7 @@ assert_eq!(mutated_date_iso.day_of_month().0, 27);
 Example of converting an ISO date across Indian and Buddhist calendars.
 
 ```rust
-use icu_calendar::{Date,
-                   buddhist::Buddhist,
-                   indian::Indian};
+use icu_calendar::{buddhist::Buddhist, indian::Indian, Date};
 
 // Creating ISO date: 1992-09-02.
 let mut date_iso = Date::new_iso_date_from_integers(1992, 9, 2)
@@ -103,14 +98,10 @@ year, and calendar type. Additionally, `DateTime` objects contain an accessible
 `Time` object, including granularity of hour, minute, second, and nanosecond.
 
 ```rust
-use icu_calendar::{DateTime,
-                   DateDuration,
-                   types::IsoWeekday,
-                   types::IsoHour,
-                   types::IsoMinute,
-                   types::IsoSecond,
-                   types::NanoSecond,
-                   types::Time};
+use icu_calendar::{
+    types::IsoHour, types::IsoMinute, types::IsoSecond, types::IsoWeekday, types::NanoSecond,
+    types::Time, DateDuration, DateTime,
+};
 
 // Creating ISO date: 1992-09-02 8:59
 let mut datetime_iso = DateTime::new_iso_datetime_from_integers(1992, 9, 2, 8, 59, 0)
@@ -120,24 +111,23 @@ assert_eq!(datetime_iso.date.day_of_week(), IsoWeekday::Wednesday);
 assert_eq!(datetime_iso.date.year().number, 1992);
 assert_eq!(datetime_iso.date.month().number, 9);
 assert_eq!(datetime_iso.date.day_of_month().0, 2);
-assert_eq!(datetime_iso.time.hour, IsoHour::new_unchecked(8));
-assert_eq!(datetime_iso.time.minute, IsoMinute::new_unchecked(59));
-assert_eq!(datetime_iso.time.second, IsoSecond::new_unchecked(0));
-assert_eq!(datetime_iso.time.nanosecond, NanoSecond::new_unchecked(0));
+assert_eq!(datetime_iso.time.hour.number(), 8);
+assert_eq!(datetime_iso.time.minute.number(), 59);
+assert_eq!(datetime_iso.time.second.number(), 0);
+assert_eq!(datetime_iso.time.nanosecond.number(), 0);
 
 // Advancing date by 1 year, 2 months, 3 weeks, 4 days.
 datetime_iso.date.add(DateDuration::new(1, 2, 3, 4));
 // New time of 14:30
-datetime_iso.time = Time::try_new(14, 30, 0, 0)
-    .expect("Failed to initialize Time instance.");
+datetime_iso.time = Time::try_new(14, 30, 0, 0).expect("Failed to initialize Time instance.");
 
 assert_eq!(datetime_iso.date.year().number, 1993);
 assert_eq!(datetime_iso.date.month().number, 11);
 assert_eq!(datetime_iso.date.day_of_month().0, 27);
-assert_eq!(datetime_iso.time.hour, IsoHour::new_unchecked(14));
-assert_eq!(datetime_iso.time.minute, IsoMinute::new_unchecked(30));
-assert_eq!(datetime_iso.time.second, IsoSecond::new_unchecked(0));
-assert_eq!(datetime_iso.time.nanosecond, NanoSecond::new_unchecked(0));
+assert_eq!(datetime_iso.time.hour.number(), 14);
+assert_eq!(datetime_iso.time.minute.number(), 30);
+assert_eq!(datetime_iso.time.second.number(), 0);
+assert_eq!(datetime_iso.time.nanosecond.number(), 0);
 ```
 [`ICU4X`]: ../icu/index.html
 

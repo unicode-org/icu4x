@@ -37,7 +37,6 @@ zerovec = { version = "0.7", path = "../../utils/zerovec", features = ["serde", 
 # For the export feature
 log = { version = "0.4", optional = true }
 litemap = { version = "0.4", path = "../../utils/litemap/", optional = true }
-erased-serde = { version = "0.3", default-features = false, features = ["alloc"], optional = true }
 
 [dev-dependencies]
 icu_locid = { version = "0.6", path = "../../components/locid", features = ["serde"] }
@@ -54,6 +53,5 @@ export = [
     "litemap",
     "icu_provider/datagen",
     "zerovec/serde_serialize",
-    "erased-serde",
 ]
 std = ["icu_provider/std"]

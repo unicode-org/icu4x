@@ -320,9 +320,9 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
     /// use icu_codepointtrie::planes;
     /// let trie = planes::get_planes_trie();
     ///
-    /// assert_eq!(0, trie.get(0x41));  // 'A' as u32
-    /// assert_eq!(0, trie.get(0x13E0));  // 'Ꮰ' as u32
-    /// assert_eq!(1, trie.get(0x10044));  // '𐁄' as u32
+    /// assert_eq!(0, trie.get(0x41)); // 'A' as u32
+    /// assert_eq!(0, trie.get(0x13E0)); // 'Ꮰ' as u32
+    /// assert_eq!(1, trie.get(0x10044)); // '𐁄' as u32
     /// ```
     #[inline]
     pub fn get(&self, code_point: u32) -> T {
@@ -341,9 +341,9 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
     /// use icu_codepointtrie::planes;
     /// let trie = planes::get_planes_trie();
     ///
-    /// assert_eq!(Some(&0), trie.get_ule(0x41));  // 'A' as u32
-    /// assert_eq!(Some(&0), trie.get_ule(0x13E0));  // 'Ꮰ' as u32
-    /// assert_eq!(Some(&1), trie.get_ule(0x10044));  // '𐁄' as u32
+    /// assert_eq!(Some(&0), trie.get_ule(0x41)); // 'A' as u32
+    /// assert_eq!(Some(&0), trie.get_ule(0x13E0)); // 'Ꮰ' as u32
+    /// assert_eq!(Some(&1), trie.get_ule(0x10044)); // '𐁄' as u32
     /// ```
     pub fn get_ule(&self, code_point: u32) -> Option<&T::ULE> {
         // All code points up to the fast max limit are represented
@@ -382,8 +382,7 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
     /// use icu_codepointtrie::CodePointTrie;
     ///
     /// let cpt1: CodePointTrie<char> = unimplemented!();
-    /// let cpt2: CodePointTrie<u32> = cpt1.try_into_converted()
-    ///     .expect("infallible");
+    /// let cpt2: CodePointTrie<u32> = cpt1.try_into_converted().expect("infallible");
     /// ```
     pub fn try_into_converted<P>(self) -> Result<CodePointTrie<'trie, P>, ZeroVecError>
     where
@@ -758,8 +757,8 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
     ///
     /// ```
     /// use core::ops::RangeInclusive;
-    /// use icu_codepointtrie::CodePointMapRange;
     /// use icu_codepointtrie::planes;
+    /// use icu_codepointtrie::CodePointMapRange;
     ///
     /// let planes_trie = planes::get_planes_trie();
     ///
@@ -873,7 +872,6 @@ impl<'trie, T: TrieValue + Into<u32>> CodePointTrie<'trie, T> {
     /// let plane_num: u8 = trie.get(cp);
     /// assert_eq!(trie.get_u32(cp), plane_num as u32);
     /// ```
-    ///
     // Note: This API method maintains consistency with the corresponding
     // original ICU APIs.
     pub fn get_u32(&self, code_point: u32) -> u32 {

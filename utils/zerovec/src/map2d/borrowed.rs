@@ -25,13 +25,13 @@ use crate::map2d::KeyError;
 ///
 /// // Example byte buffer representing the map { 1: {2: "three" } }
 /// let BINCODE_BYTES: &[u8; 53] = &[
-///     2, 0, 0, 0, 0, 0, 0, 0, 1, 0, 4, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 2, 0, 0, 0, 0, 0,
-///     0, 0, 2, 0, 13, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 116, 104, 114, 101, 101
+///     2, 0, 0, 0, 0, 0, 0, 0, 1, 0, 4, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0,
+///     2, 0, 13, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 116, 104, 114, 101, 101,
 /// ];
 ///
 /// // Deserializing to ZeroMap2d requires no heap allocations.
-/// let zero_map: ZeroMap2dBorrowed<u16, u16, str> = bincode::deserialize(BINCODE_BYTES)
-///     .expect("Should deserialize successfully");
+/// let zero_map: ZeroMap2dBorrowed<u16, u16, str> =
+///     bincode::deserialize(BINCODE_BYTES).expect("Should deserialize successfully");
 /// assert_eq!(zero_map.get(&1, &2), Ok("three"));
 /// ```
 ///
@@ -158,8 +158,8 @@ where
     /// primary advantage of using [`ZeroMap2dBorrowed`](super::ZeroMap2dBorrowed) over [`ZeroMap2d`](super::ZeroMap2d).
     ///
     /// ```rust
-    /// use zerovec::ZeroMap2d;
     /// use zerovec::maps::{KeyError, ZeroMap2dBorrowed};
+    /// use zerovec::ZeroMap2d;
     ///
     /// let mut map = ZeroMap2d::new();
     /// map.insert(&1, "one", "foo");
@@ -198,8 +198,8 @@ where
     /// Returns whether `key0` is contained in this map
     ///
     /// ```rust
-    /// use zerovec::ZeroMap2d;
     /// use zerovec::maps::ZeroMap2dBorrowed;
+    /// use zerovec::ZeroMap2d;
     ///
     /// let mut map = ZeroMap2d::new();
     /// map.insert(&1, "one", "foo");

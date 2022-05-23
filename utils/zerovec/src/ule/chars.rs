@@ -19,7 +19,7 @@ use core::convert::TryFrom;
 /// Convert a `char` to a `CharULE` and back again:
 ///
 /// ```
-/// use zerovec::ule::{ULE, AsULE, CharULE};
+/// use zerovec::ule::{AsULE, CharULE, ULE};
 ///
 /// let c1 = '𑄃';
 /// let ule = c1.to_unaligned();
@@ -31,7 +31,7 @@ use core::convert::TryFrom;
 /// Attempt to parse invalid bytes to a `CharULE`:
 ///
 /// ```
-/// use zerovec::ule::{ULE, CharULE};
+/// use zerovec::ule::{CharULE, ULE};
 ///
 /// let bytes: &[u8] = &[0xFF, 0xFF, 0xFF, 0xFF];
 /// CharULE::parse_byte_slice(bytes).expect_err("Invalid bytes");

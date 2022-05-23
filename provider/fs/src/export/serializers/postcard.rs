@@ -3,8 +3,9 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use super::AbstractSerializer;
-use super::Error;
 use icu_provider::buf::BufferFormat;
+use icu_provider::prelude::*;
+use icu_provider::serde::SerializeMarker;
 use std::io;
 
 /// A serializer for Postcard.
@@ -19,13 +20,13 @@ pub struct Options;
 impl AbstractSerializer for Serializer {
     fn serialize(
         &self,
-        obj: &dyn erased_serde::Serialize,
+        obj: DataPayload<SerializeMarker>,
         sink: &mut dyn io::Write,
-    ) -> Result<(), Error> {
+    ) -> Result<(), DataError> {
         let mut serializer = postcard::Serializer {
             output: postcard::flavors::StdVec(Vec::new()),
         };
-        obj.erased_serialize(&mut <dyn erased_serde::Serializer>::erase(&mut serializer))?;
+        obj.serialize(&mut serializer)?;
         sink.write_all(&serializer.output.0)?;
         Ok(())
     }

@@ -64,11 +64,13 @@ pub fn get_all_keys() -> Vec<ResourceKey> {
 /// use icu_datagen::SourceData;
 ///
 /// // This data provider supports the keys for LocaleCanonicalizer.
-/// let provider = icu_datagen::create_datagen_provider!(SourceData::default(),
-/// [
-///     icu_datagen::transform::cldr::AliasesProvider,
-///     icu_datagen::transform::cldr::LikelySubtagsProvider,
-/// ]);
+/// let provider = icu_datagen::create_datagen_provider!(
+///     SourceData::default(),
+///     [
+///         icu_datagen::transform::cldr::AliasesProvider,
+///         icu_datagen::transform::cldr::LikelySubtagsProvider,
+///     ]
+/// );
 /// ```
 #[macro_export]
 #[cfg(not(feature = "experimental"))]
@@ -129,10 +131,13 @@ macro_rules! create_datagen_provider {
 /// use icu_datagen::SourceData;
 ///
 /// // This data provider supports the keys for LocaleCanonicalizer.
-/// let provider = icu_datagen::create_datagen_provider!(SourceData::default(), [
-///     icu_datagen::transform::cldr::AliasesProvider,
-///     icu_datagen::transform::cldr::LikelySubtagsProvider,
-/// ]);
+/// let provider = icu_datagen::create_datagen_provider!(
+///     SourceData::default(),
+///     [
+///         icu_datagen::transform::cldr::AliasesProvider,
+///         icu_datagen::transform::cldr::LikelySubtagsProvider,
+///     ]
+/// );
 /// ```
 #[macro_export]
 #[cfg(feature = "experimental")]

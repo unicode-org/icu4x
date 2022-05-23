@@ -2,7 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::error::DatagenError;
 use crate::transform::cldr::cldr_serde;
 use crate::transform::reader::open_reader;
 use crate::SourceData;
@@ -42,7 +41,7 @@ impl ResourceProvider<AliasesV1Marker> for AliasesProvider {
             .join("supplemental")
             .join("aliases.json");
         let data: cldr_serde::aliases::Resource = serde_json::from_reader(open_reader(&path)?)
-            .map_err(|e| DatagenError::from((e, path)))?;
+            .map_err(|e| DataError::from(e).with_path_context(&path))?;
 
         let metadata = DataResponseMetadata::default();
         // TODO(#1109): Set metadata.data_langid correctly.

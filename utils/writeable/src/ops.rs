@@ -82,13 +82,13 @@ impl core::ops::BitOr<LengthHint> for LengthHint {
     /// struct NonDeterministicWriteable(String, String);
     ///
     /// impl Writeable for NonDeterministicWriteable {
-    ///   fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
-    ///     sink.write_str(if coin_flip() { &self.0 } else { &self.1 })  
-    ///   }
-    ///   
-    ///   fn write_len(&self) -> LengthHint {
-    ///     LengthHint::exact(self.0.len()) | LengthHint::exact(self.1.len())
-    ///   }
+    ///     fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
+    ///         sink.write_str(if coin_flip() { &self.0 } else { &self.1 })
+    ///     }
+    ///
+    ///     fn write_len(&self) -> LengthHint {
+    ///         LengthHint::exact(self.0.len()) | LengthHint::exact(self.1.len())
+    ///     }
     /// }
     /// ```
     fn bitor(self, other: LengthHint) -> Self {

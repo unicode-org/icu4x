@@ -128,11 +128,11 @@ mod tests {
         let swe: &ScriptWithExtensions = &payload.get().data;
 
         assert_eq!(
-            swe.get_script_extensions_val('𐓐' as u32).as_zerovec(), // U+104D0 OSAGE CAPITAL LETTER KHA
+            swe.get_script_extensions_val('𐓐' as u32).as_zerovec(), /* U+104D0 OSAGE CAPITAL LETTER KHA */
             ZeroVec::<Script>::alloc_from_slice(&[Script::Osage])
         );
         assert_eq!(
-            swe.get_script_extensions_val('🥳' as u32).as_zerovec(), // U+1F973 FACE WITH PARTY HORN AND PARTY HAT
+            swe.get_script_extensions_val('🥳' as u32).as_zerovec(), /* U+1F973 FACE WITH PARTY HORN AND PARTY HAT */
             ZeroVec::<Script>::alloc_from_slice(&[Script::Common])
         );
         assert_eq!(

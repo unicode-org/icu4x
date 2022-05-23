@@ -228,9 +228,7 @@ impl<'data> ScriptWithExtensions<'data> {
     ///
     /// let provider = icu_testdata::get_provider();
     ///
-    /// let payload =
-    ///     script::get_script_with_extensions(&provider)
-    ///         .expect("The data should be valid");
+    /// let payload = script::get_script_with_extensions(&provider).expect("The data should be valid");
     /// let data_struct = payload.get();
     /// let swe = &data_struct.data;
     ///
@@ -329,30 +327,32 @@ impl<'data> ScriptWithExtensions<'data> {
     ///
     /// let provider = icu_testdata::get_provider();
     ///
-    /// let payload =
-    ///     script::get_script_with_extensions(&provider)
-    ///         .expect("The data should be valid");
+    /// let payload = script::get_script_with_extensions(&provider).expect("The data should be valid");
     /// let data_struct = payload.get();
     /// let swe = &data_struct.data;
     ///
     /// assert_eq!(
-    ///     swe.get_script_extensions_val('𐓐' as u32)  // U+104D0 OSAGE CAPITAL LETTER KHA
-    ///         .iter().collect::<Vec<Script>>(),
+    ///     swe.get_script_extensions_val('𐓐' as u32) // U+104D0 OSAGE CAPITAL LETTER KHA
+    ///         .iter()
+    ///         .collect::<Vec<Script>>(),
     ///     vec![Script::Osage]
     /// );
     /// assert_eq!(
-    ///     swe.get_script_extensions_val('🥳' as u32)  // U+1F973 FACE WITH PARTY HORN AND PARTY HAT
-    ///         .iter().collect::<Vec<Script>>(),
+    ///     swe.get_script_extensions_val('🥳' as u32) // U+1F973 FACE WITH PARTY HORN AND PARTY HAT
+    ///         .iter()
+    ///         .collect::<Vec<Script>>(),
     ///     vec![Script::Common]
     /// );
     /// assert_eq!(
-    ///     swe.get_script_extensions_val(0x200D)  // ZERO WIDTH JOINER
-    ///         .iter().collect::<Vec<Script>>(),
+    ///     swe.get_script_extensions_val(0x200D) // ZERO WIDTH JOINER
+    ///         .iter()
+    ///         .collect::<Vec<Script>>(),
     ///     vec![Script::Inherited]
     /// );
     /// assert_eq!(
-    ///     swe.get_script_extensions_val('௫' as u32)  // U+0BEB TAMIL DIGIT FIVE
-    ///         .iter().collect::<Vec<Script>>(),
+    ///     swe.get_script_extensions_val('௫' as u32) // U+0BEB TAMIL DIGIT FIVE
+    ///         .iter()
+    ///         .collect::<Vec<Script>>(),
     ///     vec![Script::Tamil, Script::Grantha]
     /// );
     /// ```
@@ -380,9 +380,7 @@ impl<'data> ScriptWithExtensions<'data> {
     ///
     /// let provider = icu_testdata::get_provider();
     ///
-    /// let payload =
-    ///     script::get_script_with_extensions(&provider)
-    ///         .expect("The data should be valid");
+    /// let payload = script::get_script_with_extensions(&provider).expect("The data should be valid");
     /// let data_struct = payload.get();
     /// let swe = &data_struct.data;
     ///
@@ -432,38 +430,40 @@ impl<'data> ScriptWithExtensions<'data> {
     ///
     /// let provider = icu_testdata::get_provider();
     ///
-    /// let payload =
-    ///     script::get_script_with_extensions(&provider)
-    ///         .expect("The data should be valid");
+    /// let payload = script::get_script_with_extensions(&provider).expect("The data should be valid");
     /// let data_struct = payload.get();
     /// let swe = &data_struct.data;
     ///
     /// let syriac_script_extensions_ranges = swe.get_script_extensions_ranges(Script::Syriac);
     ///
     /// let exp_ranges = vec![
-    ///     0x060C..=0x060C,   // ARABIC COMMA
-    ///     0x061B..=0x061B,   // ARABIC SEMICOLON
-    ///     0x061C..=0x061C,   // ARABIC LETTER MARK
-    ///     0x061F..=0x061F,   // ARABIC QUESTION MARK
-    ///     0x0640..=0x0640,   // ARABIC TATWEEL
-    ///     0x064B..=0x0655,   // ARABIC FATHATAN..ARABIC HAMZA BELOW
-    ///     0x0670..=0x0670,   // ARABIC LETTER SUPERSCRIPT ALEF
-    ///     0x0700..=0x070D,   // Syriac block begins at U+0700
-    ///     0x070F..=0x074A,   // Syriac block
-    ///     0x074D..=0x074F,   // Syriac block ends at U+074F
-    ///     0x0860..=0x086A,   // Syriac Supplement block is U+0860..=U+086F
-    ///     0x1DF8..=0x1DF8,   // U+1DF8 COMBINING DOT ABOVE LEFT
-    ///     0x1DFA..=0x1DFA,   // U+1DFA COMBINING DOT BELOW LEFT
+    ///     0x060C..=0x060C, // ARABIC COMMA
+    ///     0x061B..=0x061B, // ARABIC SEMICOLON
+    ///     0x061C..=0x061C, // ARABIC LETTER MARK
+    ///     0x061F..=0x061F, // ARABIC QUESTION MARK
+    ///     0x0640..=0x0640, // ARABIC TATWEEL
+    ///     0x064B..=0x0655, // ARABIC FATHATAN..ARABIC HAMZA BELOW
+    ///     0x0670..=0x0670, // ARABIC LETTER SUPERSCRIPT ALEF
+    ///     0x0700..=0x070D, // Syriac block begins at U+0700
+    ///     0x070F..=0x074A, // Syriac block
+    ///     0x074D..=0x074F, // Syriac block ends at U+074F
+    ///     0x0860..=0x086A, // Syriac Supplement block is U+0860..=U+086F
+    ///     0x1DF8..=0x1DF8, // U+1DF8 COMBINING DOT ABOVE LEFT
+    ///     0x1DFA..=0x1DFA, // U+1DFA COMBINING DOT BELOW LEFT
     /// ];
     /// let mut exp_ranges_iter = exp_ranges.iter();
     ///
     /// for act_range in syriac_script_extensions_ranges {
-    ///     let exp_range = exp_ranges_iter.next()
+    ///     let exp_range = exp_ranges_iter
+    ///         .next()
     ///         .expect("There are too many ranges returned by get_script_extensions_ranges()");
     ///     assert_eq!(act_range.start(), exp_range.start());
     ///     assert_eq!(act_range.end(), exp_range.end());
     /// }
-    /// assert!(exp_ranges_iter.next().is_none(), "There are too few ranges returned by get_script_extensions_ranges()");
+    /// assert!(
+    ///     exp_ranges_iter.next().is_none(),
+    ///     "There are too few ranges returned by get_script_extensions_ranges()"
+    /// );
     /// ```
     pub fn get_script_extensions_ranges(
         &self,
@@ -494,9 +494,7 @@ impl<'data> ScriptWithExtensions<'data> {
     ///
     /// let provider = icu_testdata::get_provider();
     ///
-    /// let payload =
-    ///     script::get_script_with_extensions(&provider)
-    ///         .expect("The data should be valid");
+    /// let payload = script::get_script_with_extensions(&provider).expect("The data should be valid");
     /// let data_struct = payload.get();
     /// let swe = &data_struct.data;
     ///

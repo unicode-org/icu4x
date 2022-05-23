@@ -23,7 +23,7 @@ a.out: ../../../../../target/debug/libicu_capi_staticlib_test.a $(ALL_HEADERS) t
 	$(CXX) -std=c++17 test.cpp ../../../../../target/debug/libicu_capi_staticlib_test.a -ldl -lpthread -lm -g
 
 ../../../../../target/wasm32-unknown-emscripten/release/libicu_capi_staticlib_test.a: $(ALL_RUST)
-	RUSTFLAGS="-Cpanic=abort" cargo +nightly-2022-01-31 build --release -p icu_capi_staticlib --features provider_test --target wasm32-unknown-emscripten -Z build-std=std,panic_abort -Z build-std-features=panic_immediate_abort
+	RUSTFLAGS="-Cpanic=abort" cargo +nightly-2022-02-17 build --release -p icu_capi_staticlib --features provider_test --target wasm32-unknown-emscripten -Z build-std=std,panic_abort -Z build-std-features=panic_immediate_abort
 	mv ../../../../../target/wasm32-unknown-emscripten/release/libicu_capi_staticlib.a ../../../../../target/wasm32-unknown-emscripten/release/libicu_capi_staticlib_test.a
 
 web-version.html: ../../../../../target/wasm32-unknown-emscripten/release/libicu_capi_staticlib_test.a $(ALL_HEADERS) test.cpp
