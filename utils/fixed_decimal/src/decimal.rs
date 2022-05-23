@@ -215,7 +215,7 @@ impl FixedDecimal {
             // The following line can't fail: magnitude <= self.magnitude, by
             // the if statement above, and u16::MAX == i16::MAX - i16::MIN, and
             // usize is asserted to be at least as big as u16.
-            let j = (self.magnitude as i32 - magnitude as i32) as usize;
+            let j = crate::ops::i16_abs_sub(self.magnitude, magnitude) as usize;
             match self.digits.get(j) {
                 Some(v) => *v,
                 None => 0, // Trailing zero
@@ -232,11 +232,62 @@ impl FixedDecimal {
     /// ```
     /// use fixed_decimal::FixedDecimal;
     ///
-    /// let mut dec = FixedDecimal::from(120);
-    /// assert_eq!(0..=2, dec.magnitude_range());
+    /// let dec: FixedDecimal = "012.340".parse().expect("valid syntax");
+    /// assert_eq!(-3..=2, dec.magnitude_range());
     /// ```
     pub const fn magnitude_range(&self) -> RangeInclusive<i16> {
         self.lower_magnitude..=self.upper_magnitude
+    }
+
+    /// Gets the magnitude of the largest nonzero digit. If the number is zero, 0 is returned.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use fixed_decimal::FixedDecimal;
+    ///
+    /// let dec: FixedDecimal = "012.340".parse().expect("valid syntax");
+    /// assert_eq!(1, dec.nonzero_magnitude_left());
+    ///
+    /// assert_eq!(0, FixedDecimal::from(0).nonzero_magnitude_left());
+    /// ```
+    pub fn nonzero_magnitude_left(&self) -> i16 {
+        self.magnitude
+    }
+
+    /// Gets the magnitude of the smallest nonzero digit. If the number is zero, 0 is returned.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use fixed_decimal::FixedDecimal;
+    ///
+    /// let dec: FixedDecimal = "012.340".parse().expect("valid syntax");
+    /// assert_eq!(-2, dec.nonzero_magnitude_right());
+    ///
+    /// assert_eq!(0, FixedDecimal::from(0).nonzero_magnitude_right());
+    /// ```
+    pub fn nonzero_magnitude_right(&self) -> i16 {
+        if self.is_zero() {
+            0
+        } else {
+            crate::ops::i16_sub_unsigned(self.magnitude, self.digits.len() as u16 - 1)
+        }
+    }
+
+    /// Returns whether the number has a numeric value of zero.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use fixed_decimal::FixedDecimal;
+    ///
+    /// let dec: FixedDecimal = "000.000".parse().expect("valid syntax");
+    /// assert!(dec.is_zero());
+    /// ```
+    #[inline]
+    pub fn is_zero(&self) -> bool {
+        self.digits.is_empty()
     }
 
     /// Shift the digits by a power of 10, modifying self.
@@ -280,7 +331,9 @@ impl FixedDecimal {
             }
             Ordering::Equal => {}
         };
-        self.magnitude += delta;
+        if !self.is_zero() {
+            self.magnitude += delta;
+        }
         #[cfg(debug_assertions)]
         self.check_invariants();
         Ok(())
@@ -471,11 +524,14 @@ impl FixedDecimal {
     ///
     /// dec.truncate_left(-1);
     /// assert_eq!("0", dec.to_string());
+    ///
+    /// dec.truncate_left(-2);
+    /// assert_eq!("0", dec.to_string());
     /// ```
     pub fn truncate_left(&mut self, magnitude: i16) {
         if self.magnitude >= magnitude {
             let positive_magnitude = if magnitude > 0 { magnitude } else { 0 };
-            let cut = ((self.magnitude as i32) - (magnitude as i32)) as usize;
+            let cut = crate::ops::i16_abs_sub(self.magnitude, magnitude) as usize;
             if cut >= self.digits.len() {
                 self.digits.clear();
                 self.magnitude = 0;
@@ -484,11 +540,12 @@ impl FixedDecimal {
                 self.check_invariants();
                 return;
             }
-            let _ = self.digits.drain(0..cut as usize).count();
+            let _ = self.digits.drain(0..cut).count();
             // Count number of leading zeroes
             let extra_zeroes = self.digits.iter().position(|x| *x != 0).unwrap_or(0);
             let _ = self.digits.drain(0..extra_zeroes).count();
-            self.magnitude = magnitude - extra_zeroes as i16;
+            debug_assert!(!self.digits.is_empty());
+            self.magnitude = crate::ops::i16_sub_unsigned(magnitude, extra_zeroes as u16);
             self.upper_magnitude = positive_magnitude;
         }
         #[cfg(debug_assertions)]
@@ -550,7 +607,7 @@ impl FixedDecimal {
         } else {
             -(negative_magnitude as i16)
         };
-        let bottom_magnitude = (self.magnitude as i32 - self.digits.len() as i32 + 1) as i16;
+        let bottom_magnitude = self.nonzero_magnitude_right();
         // Do not truncate nonzero digits
         if magnitude >= bottom_magnitude {
             magnitude = bottom_magnitude;
@@ -627,6 +684,8 @@ impl FixedDecimal {
                 "Ends with a zero {:?}",
                 self
             );
+        } else {
+            debug_assert_eq!(self.magnitude, 0);
         }
     }
 }
@@ -1511,54 +1570,95 @@ fn test_from_str() {
     #[derive(Debug)]
     struct TestCase {
         pub input_str: &'static str,
+        /// [upper magnitude, upper nonzero magnitude, lower nonzero magnitude, lower magnitude]
+        pub magnitudes: [i16; 4],
     }
     let cases = [
         TestCase {
             input_str: "-00123400",
+            magnitudes: [7, 5, 2, 0],
         },
         TestCase {
             input_str: "0.0123400",
+            magnitudes: [0, -2, -5, -7],
         },
         TestCase {
             input_str: "-00.123400",
+            magnitudes: [1, -1, -4, -6],
         },
         TestCase {
             input_str: "0012.3400",
+            magnitudes: [3, 1, -2, -4],
         },
         TestCase {
             input_str: "-0012340.0",
+            magnitudes: [6, 4, 1, -1],
         },
-        TestCase { input_str: "1234" },
+        TestCase {
+            input_str: "1234",
+            magnitudes: [3, 3, 0, 0],
+        },
         TestCase {
             input_str: "0.000000001",
+            magnitudes: [0, -9, -9, -9],
         },
         TestCase {
             input_str: "0.0000000010",
+            magnitudes: [0, -9, -9, -10],
         },
         TestCase {
             input_str: "1000000",
+            magnitudes: [6, 6, 6, 0],
         },
         TestCase {
             input_str: "10000001",
+            magnitudes: [7, 7, 0, 0],
         },
-        TestCase { input_str: "123" },
+        TestCase {
+            input_str: "123",
+            magnitudes: [2, 2, 0, 0],
+        },
         TestCase {
             input_str: "922337203685477580898230948203840239384.9823094820384023938423424",
+            magnitudes: [38, 38, -25, -25],
         },
         TestCase {
             input_str: "009223372000.003685477580898230948203840239384000",
+            magnitudes: [11, 9, -33, -36],
         },
         TestCase {
-            input_str: "009223372000.003685477580898230948203840239384000",
+            input_str: "-009223372000.003685477580898230948203840239384000",
+            magnitudes: [11, 9, -33, -36],
         },
-        TestCase { input_str: "0" },
-        TestCase { input_str: "-0" },
-        TestCase { input_str: "000" },
-        TestCase { input_str: "-00.0" },
+        TestCase {
+            input_str: "0",
+            magnitudes: [0, 0, 0, 0],
+        },
+        TestCase {
+            input_str: "-0",
+            magnitudes: [0, 0, 0, 0],
+        },
+        TestCase {
+            input_str: "000",
+            magnitudes: [2, 0, 0, 0],
+        },
+        TestCase {
+            input_str: "-00.0",
+            magnitudes: [1, 0, 0, -1],
+        },
     ];
     for cas in &cases {
-        let input_str_roundtrip = FixedDecimal::from_str(cas.input_str).unwrap().to_string();
-        assert_eq!(cas.input_str, input_str_roundtrip);
+        let fd = FixedDecimal::from_str(cas.input_str).unwrap();
+        assert_eq!(
+            fd.magnitude_range(),
+            cas.magnitudes[3]..=cas.magnitudes[0],
+            "{:?}",
+            cas
+        );
+        assert_eq!(fd.nonzero_magnitude_left(), cas.magnitudes[1], "{:?}", cas);
+        assert_eq!(fd.nonzero_magnitude_right(), cas.magnitudes[2], "{:?}", cas);
+        let input_str_roundtrip = fd.to_string();
+        assert_eq!(cas.input_str, input_str_roundtrip, "{:?}", cas);
     }
 }
 
@@ -1636,6 +1736,7 @@ fn test_upper_magnitude_bounds() {
     assert_eq!(dec.upper_magnitude, 4);
     dec.multiply_pow10(32763).unwrap();
     assert_eq!(dec.upper_magnitude, core::i16::MAX);
+    assert_eq!(dec.nonzero_magnitude_left(), core::i16::MAX);
     let dec_backup = dec.clone();
     assert_eq!(Error::Limit, dec.multiply_pow10(1).unwrap_err());
     assert_eq!(dec, dec_backup, "Value should be unchanged on failure");
@@ -1651,6 +1752,7 @@ fn test_lower_magnitude_bounds() {
     assert_eq!(dec.lower_magnitude, 0);
     dec.multiply_pow10(-32768).unwrap();
     assert_eq!(dec.lower_magnitude, core::i16::MIN);
+    assert_eq!(dec.nonzero_magnitude_right(), core::i16::MIN);
     let dec_backup = dec.clone();
     assert_eq!(Error::Limit, dec.multiply_pow10(-1).unwrap_err());
     assert_eq!(dec, dec_backup, "Value should be unchanged on failure");
