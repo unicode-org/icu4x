@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1653293905201,
+  "lastUpdate": 1653325571015,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -33575,6 +33575,102 @@ window.BENCHMARK_DATA = {
             "name": "pattern/parse",
             "value": 5163,
             "range": "± 89",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "5025df3a3d5c2af5d6bb661a6ceef98d56fc0d4e",
+          "message": "Improve integer operations in FixedDecimal (#1924)",
+          "timestamp": "2022-05-23T09:53:51-07:00",
+          "tree_id": "0dc6158aa27afcfa95b7715be58c8d3b20697b80",
+          "url": "https://github.com/unicode-org/icu4x/commit/5025df3a3d5c2af5d6bb661a6ceef98d56fc0d4e"
+        },
+        "date": 1653325550650,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 77676,
+            "range": "± 292",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 805209,
+            "range": "± 3029",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 171338,
+            "range": "± 1222",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/DateTimeFormat/format_to_write",
+            "value": 74013,
+            "range": "± 188",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/DateTimeFormat/format_to_string",
+            "value": 81872,
+            "range": "± 178",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/format",
+            "value": 77392,
+            "range": "± 249",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/to_string",
+            "value": 84447,
+            "range": "± 133",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/ZonedDateTimeFormat/format_to_write",
+            "value": 166180,
+            "range": "± 303",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/ZonedDateTimeFormat/format_to_string",
+            "value": 537480,
+            "range": "± 171529",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/format",
+            "value": 170623,
+            "range": "± 349",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/to_string",
+            "value": 183189,
+            "range": "± 394",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "pattern/parse",
+            "value": 5179,
+            "range": "± 18",
             "unit": "ns/iter"
           }
         ]
