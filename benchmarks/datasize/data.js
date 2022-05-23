@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1653324977756,
+  "lastUpdate": 1653327695929,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -15593,6 +15593,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/5025df3a3d5c2af5d6bb661a6ceef98d56fc0d4e"
         },
         "date": 1653324952183,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 2220821,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "326c2f245fc4fdf75e51005dd7abb4d823cf5a72",
+          "message": "Update nightly to 2022-02-17, the latest that supports clang-13 (#1928)",
+          "timestamp": "2022-05-23T19:39:24+02:00",
+          "tree_id": "b123908d0f1ada50ec7a379086e1f4da35541a14",
+          "url": "https://github.com/unicode-org/icu4x/commit/326c2f245fc4fdf75e51005dd7abb4d823cf5a72"
+        },
+        "date": 1653327672752,
         "tool": "ndjson",
         "benches": [
           {
