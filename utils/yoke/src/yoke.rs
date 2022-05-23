@@ -88,7 +88,7 @@ impl<Y: for<'a> Yokeable<'a>, C: StableDeref> Yoke<Y, C> {
     ///
     /// See also [`Yoke::try_attach_to_cart()`] to return a `Result` from the closure.
     ///
-    /// Call sites for this function did not compile pre-1.61; if this still happens, use
+    /// Call sites for this function may not compile pre-1.61; if this still happens, use
     /// [`Yoke::try_attach_to_cart_badly()`] and file a bug.
     ///
     /// # Examples
@@ -128,7 +128,7 @@ impl<Y: for<'a> Yokeable<'a>, C: StableDeref> Yoke<Y, C> {
     /// Construct a [`Yoke`] by yokeing an object to a cart. If an error occurs in the
     /// deserializer function, the error is passed up to the caller.
     ///
-    /// Call sites for this function did not compile pre-1.61; if this still happens, use
+    /// Call sites for this function may not compile pre-1.61; if this still happens, use
     /// [`Yoke::try_attach_to_cart_badly()`] and file a bug.
     pub fn try_attach_to_cart<E, F>(cart: C, f: F) -> Result<Self, E>
     where
