@@ -252,7 +252,9 @@ impl Calendar for AnyCalendar {
 impl AnyCalendar {
     /// Constructs an AnyCalendar for a given calendar kind and [`AnyProvider`] data source
     ///
-    /// For calendars that need data, will attempt to load the appropriate data from the source
+    /// For calendars that need data, will attempt to load the appropriate data from the source.
+    ///
+    /// This API needs the `calendar/japanese@1` data key if working with Japanese calendars.
     pub fn try_new_with_any_provider<P>(
         kind: AnyCalendarKind,
         provider: &P,
@@ -279,7 +281,9 @@ impl AnyCalendar {
 
     /// Constructs an AnyCalendar for a given calendar kind and [`BufferProvider`] data source
     ///
-    /// For calendars that need data, will attempt to load the appropriate data from the source
+    /// For calendars that need data, will attempt to load the appropriate data from the source.
+    ///
+    /// This API needs the `calendar/japanese@1` data key if working with Japanese calendars.
     ///
     /// This needs the `"serde"` feature to be enabled to be used
     #[cfg(feature = "serde")]
