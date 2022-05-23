@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1653293832864,
+  "lastUpdate": 1653293905201,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -33479,6 +33479,102 @@ window.BENCHMARK_DATA = {
             "name": "pattern/parse",
             "value": 4530,
             "range": "± 26",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "hsivonen@hsivonen.fi",
+            "name": "Henri Sivonen",
+            "username": "hsivonen"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "d639e265fa7bc01a6fd8a5b6a1f4d5ad82a759b8",
+          "message": "Remove the unused postcard dependency from the collator (#1917)\n\nCloses #1907",
+          "timestamp": "2022-05-23T11:06:03+03:00",
+          "tree_id": "c7942ec64e035d39e623600aea0e9cb81f919bc5",
+          "url": "https://github.com/unicode-org/icu4x/commit/d639e265fa7bc01a6fd8a5b6a1f4d5ad82a759b8"
+        },
+        "date": 1653293884562,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 77225,
+            "range": "± 279",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 786145,
+            "range": "± 1191",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 169122,
+            "range": "± 4358",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/DateTimeFormat/format_to_write",
+            "value": 74012,
+            "range": "± 95",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/DateTimeFormat/format_to_string",
+            "value": 82073,
+            "range": "± 137",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/format",
+            "value": 77091,
+            "range": "± 112",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/to_string",
+            "value": 83894,
+            "range": "± 83",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/ZonedDateTimeFormat/format_to_write",
+            "value": 165005,
+            "range": "± 4766",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/ZonedDateTimeFormat/format_to_string",
+            "value": 175863,
+            "range": "± 859",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/format",
+            "value": 168960,
+            "range": "± 4011",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/to_string",
+            "value": 180871,
+            "range": "± 1535",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "pattern/parse",
+            "value": 5163,
+            "range": "± 89",
             "unit": "ns/iter"
           }
         ]
