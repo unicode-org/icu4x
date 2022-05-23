@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1653293291463,
+  "lastUpdate": 1653324977756,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -15563,6 +15563,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/d639e265fa7bc01a6fd8a5b6a1f4d5ad82a759b8"
         },
         "date": 1653293268650,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 2220821,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "5025df3a3d5c2af5d6bb661a6ceef98d56fc0d4e",
+          "message": "Improve integer operations in FixedDecimal (#1924)",
+          "timestamp": "2022-05-23T09:53:51-07:00",
+          "tree_id": "0dc6158aa27afcfa95b7715be58c8d3b20697b80",
+          "url": "https://github.com/unicode-org/icu4x/commit/5025df3a3d5c2af5d6bb661a6ceef98d56fc0d4e"
+        },
+        "date": 1653324952183,
         "tool": "ndjson",
         "benches": [
           {
