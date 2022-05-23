@@ -93,7 +93,9 @@ impl<Y: for<'a> Yokeable<'a>, C: StableDeref> Yoke<Y, C> {
     ///
     /// # Examples
     ///
-    /// ```
+    /// ```ignore
+    /// # // ignored because while it works on stable, our coverage CI is still on an old
+    /// # // nightly that would require attach_to_cart_badly.
     /// # use yoke::{Yoke, Yokeable};
     /// # use std::rc::Rc;
     /// # use std::borrow::Cow;
