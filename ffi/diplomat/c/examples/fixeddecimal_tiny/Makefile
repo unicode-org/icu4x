@@ -13,8 +13,8 @@ $(ALL_RUST):
 $(ALL_HEADERS):
 
 GCC := gcc
-CLANG := clang-13
-LLD := lld-13
+CLANG := clang-14
+LLD := lld-14
 
 
 ../../../../../target/debug/libicu_capi_staticlib_test.a: $(ALL_RUST)
@@ -22,11 +22,11 @@ LLD := lld-13
 	mv ../../../../../target/debug/libicu_capi_staticlib.a ../../../../../target/debug/libicu_capi_staticlib_test.a
 
 ../../../../../target/x86_64-unknown-linux-gnu/debug/libicu_capi_staticlib_test.a: $(ALL_RUST)
-	RUSTFLAGS="-Clinker-plugin-lto -Clinker=$(CLANG) -Ccodegen-units=1 -Clink-arg=-flto -Cpanic=abort" cargo +nightly-2022-02-17 panic-abort-build -p icu_capi_staticlib --target x86_64-unknown-linux-gnu --no-default-features --features x86tiny --features provider_test
+	RUSTFLAGS="-Clinker-plugin-lto -Clinker=$(CLANG) -Ccodegen-units=1 -Clink-arg=-flto -Cpanic=abort" cargo +nightly-2022-04-05 panic-abort-build -p icu_capi_staticlib --target x86_64-unknown-linux-gnu --no-default-features --features x86tiny --features provider_test
 	mv ../../../../../target/x86_64-unknown-linux-gnu/debug/libicu_capi_staticlib.a ../../../../../target/x86_64-unknown-linux-gnu/debug/libicu_capi_staticlib_test.a
 
 ../../../../../target/x86_64-unknown-linux-gnu/release/libicu_capi_staticlib_test_small.a: $(ALL_RUST)
-	RUSTFLAGS="-Clinker-plugin-lto -Clinker=$(CLANG) -Ccodegen-units=1 -Clink-arg=-flto -Cpanic=abort" cargo +nightly-2022-02-17 panic-abort-build -p icu_capi_staticlib --target x86_64-unknown-linux-gnu --no-default-features --features x86tiny --features smaller_test --release
+	RUSTFLAGS="-Clinker-plugin-lto -Clinker=$(CLANG) -Ccodegen-units=1 -Clink-arg=-flto -Cpanic=abort" cargo +nightly-2022-04-05 panic-abort-build -p icu_capi_staticlib --target x86_64-unknown-linux-gnu --no-default-features --features x86tiny --features smaller_test --release
 	mv ../../../../../target/x86_64-unknown-linux-gnu/release/libicu_capi_staticlib.a ../../../../../target/x86_64-unknown-linux-gnu/release/libicu_capi_staticlib_test_small.a
 
 # Naive target: no optimizations, full std
