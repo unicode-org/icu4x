@@ -74,7 +74,7 @@ fn process_cli_args() -> ProcessedArgs {
 
         toolchain: matches
             .value_of("TOOLCHAIN")
-            .unwrap_or("nightly-2022-01-31")
+            .unwrap_or("nightly-2022-02-17")
             .to_string(),
     }
 }
