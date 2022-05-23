@@ -81,6 +81,21 @@ const HANGUL_N_COUNT: u32 = 588;
 const HANGUL_S_COUNT: u32 = 11172;
 
 #[inline(always)]
+fn char_from_u32(u: u32) -> char {
+    if let Some(c) = core::char::from_u32(u) {
+        c
+    } else {
+        debug_assert!(false);
+        REPLACEMENT_CHARACTER
+    }
+}
+
+#[inline(always)]
+fn char_from_u16(u: u16) -> char {
+    char_from_u32(u32::from(u))
+}
+
+#[inline(always)]
 fn in_inclusive_range(c: char, start: char, end: char) -> bool {
     u32::from(c).wrapping_sub(u32::from(start)) <= (u32::from(end) - u32::from(start))
 }
@@ -115,6 +130,7 @@ impl CharacterAndClass {
         CharacterAndClass(u32::from(c))
     }
     pub fn character(&self) -> char {
+        // Safe, because the low 24 bits came from a `char`.
         unsafe { char::from_u32_unchecked(self.0 & 0xFFFFFF) }
     }
     pub fn ccc(&self) -> CanonicalCombiningClass {
@@ -221,13 +237,13 @@ where
                     let low = decomposition as u16;
                     if high != 0 && low != 0 {
                         // Decomposition into two BMP characters: starter and non-starter
-                        let starter = core::char::from_u32(u32::from(high)).unwrap();
-                        let combining = core::char::from_u32(u32::from(low)).unwrap();
+                        let starter = char_from_u16(high);
+                        let combining = char_from_u16(low);
                         self.buffer.push(CharacterAndClass::new(combining));
                         (starter, 0)
                     } else if high != 0 {
                         // Decomposition into one BMP character
-                        let starter = core::char::from_u32(u32::from(high)).unwrap();
+                        let starter = char_from_u16(high);
                         (starter, 0)
                     } else {
                         // Complex decomposition
@@ -252,25 +268,20 @@ where
                                 .split_first()
                                 .unwrap();
                             // Starter
-                            let starter =
-                                core::char::from_u32(u32::from(u16::from_unaligned(first)))
-                                    .unwrap();
+                            let starter = char_from_u16(u16::from_unaligned(first));
                             if low & 0x800 == 0 {
                                 // All the rest are combining
                                 for &ule in tail.iter() {
-                                    self.buffer.push(CharacterAndClass::new(
-                                        core::char::from_u32(u32::from(u16::from_unaligned(ule)))
-                                            .unwrap(),
-                                    ));
+                                    self.buffer.push(CharacterAndClass::new(char_from_u16(
+                                        u16::from_unaligned(ule),
+                                    )));
                                 }
                                 (starter, 0)
                             } else {
                                 let mut i = 0;
                                 let mut combining_start = 0;
                                 for &ule in tail.iter() {
-                                    let ch =
-                                        core::char::from_u32(u32::from(u16::from_unaligned(ule)))
-                                            .unwrap();
+                                    let ch = char_from_u16(u16::from_unaligned(ule));
                                     self.buffer.push(CharacterAndClass::new(ch));
                                     i += 1;
                                     if !self
@@ -288,21 +299,20 @@ where
                                 [offset..offset + len]
                                 .split_first()
                                 .unwrap();
-                            let starter = core::char::from_u32(u32::from_unaligned(first)).unwrap();
+                            let starter = char_from_u32(u32::from_unaligned(first));
                             if low & 0x800 == 0 {
                                 // All the rest are combining
                                 for &ule in tail.iter() {
-                                    self.buffer.push(CharacterAndClass::new(
-                                        core::char::from_u32(u32::from_unaligned(ule)).unwrap(),
-                                    ));
+                                    self.buffer.push(CharacterAndClass::new(char_from_u32(
+                                        u32::from_unaligned(ule),
+                                    )));
                                 }
                                 (starter, 0)
                             } else {
                                 let mut i = 0;
                                 let mut combining_start = 0;
                                 for &ule in tail.iter() {
-                                    let ch =
-                                        core::char::from_u32(u32::from_unaligned(ule)).unwrap();
+                                    let ch = char_from_u32(u32::from_unaligned(ule));
                                     self.buffer.push(CharacterAndClass::new(ch));
                                     i += 1;
                                     if !self
@@ -325,6 +335,9 @@ where
                 let v = (hangul_offset % HANGUL_N_COUNT) / HANGUL_T_COUNT;
                 let t = hangul_offset % HANGUL_T_COUNT;
 
+                // The unsafe blocks here are OK, because the values stay
+                // within the Hangul jamo block and, therefore, the scalar
+                // value range by construction.
                 self.buffer.push(CharacterAndClass::new(unsafe {
                     core::char::from_u32_unchecked(HANGUL_V_BASE + v)
                 }));
