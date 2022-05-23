@@ -104,6 +104,8 @@ pub mod time_zone;
 #[allow(missing_docs)] // TODO(#686) - Add missing docs.
 pub mod zoned_datetime;
 
+pub mod any;
+
 pub use calendar::CldrCalendar;
 pub use datetime::DateTimeFormat;
 pub use error::DateTimeFormatError;
