@@ -31,7 +31,7 @@ type DataStruct =
     &'static <::icu_collator::provider::CollationDiacriticsV1Marker as DataMarker>::Yokeable;
 static UND: DataStruct = &::icu_collator::provider::CollationDiacriticsV1 {
     ce32s: unsafe {
-        static DATA: &[u8] = &[
+        ::zerovec::ZeroVec::from_bytes_unchecked(&[
             5u8, 138u8, 0u8, 0u8, 5u8, 136u8, 0u8, 0u8, 5u8, 142u8, 0u8, 0u8, 5u8, 154u8, 0u8, 0u8,
             5u8, 164u8, 0u8, 0u8, 5u8, 180u8, 0u8, 0u8, 5u8, 140u8, 0u8, 0u8, 5u8, 156u8, 0u8, 0u8,
             5u8, 150u8, 0u8, 0u8, 5u8, 182u8, 0u8, 0u8, 5u8, 146u8, 0u8, 0u8, 5u8, 152u8, 0u8, 0u8,
@@ -60,9 +60,6 @@ static UND: DataStruct = &::icu_collator::provider::CollationDiacriticsV1 {
             19u8, 5u8, 0u8, 50u8, 19u8, 5u8, 0u8, 58u8, 19u8, 5u8, 0u8, 70u8, 19u8, 5u8, 0u8, 82u8,
             19u8, 5u8, 0u8, 46u8, 19u8, 5u8, 0u8, 48u8, 19u8, 5u8, 0u8, 56u8, 19u8, 5u8, 0u8, 66u8,
             19u8, 5u8, 0u8, 76u8, 19u8, 5u8, 0u8, 80u8, 19u8, 5u8, 0u8, 84u8, 19u8, 5u8, 0u8, 88u8,
-        ];
-        let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-        metadata /= 4usize;
-        zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+        ])
     },
 };

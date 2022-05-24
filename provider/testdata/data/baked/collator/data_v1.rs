@@ -34,8 +34,8 @@ impl ResourceProvider<::icu_collator::provider::CollationDataV1Marker>
 type DataStruct =
     &'static <::icu_collator::provider::CollationDataV1Marker as DataMarker>::Yokeable;
 static BN: DataStruct = &::icu_collator::provider::CollationDataV1 {
-    trie: ::icu_codepointtrie::CodePointTrie {
-        header: ::icu_codepointtrie::CodePointTrieHeader {
+    trie: ::icu_codepointtrie::CodePointTrie::from_parts(
+        ::icu_codepointtrie::CodePointTrieHeader {
             high_start: 55296u32,
             shifted12_high_start: 14u16,
             index3_null_offset: 2u16,
@@ -43,8 +43,8 @@ static BN: DataStruct = &::icu_collator::provider::CollationDataV1 {
             null_value: 192u32,
             trie_type: ::icu_codepointtrie::TrieType::Small,
         },
-        index: unsafe {
-            static DATA: &[u8] = &[
+        unsafe {
+            ::zerovec::ZeroVec::from_bytes_unchecked(&[
                 0u8, 0u8, 64u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8,
                 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8,
                 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8,
@@ -73,13 +73,10 @@ static BN: DataStruct = &::icu_collator::provider::CollationDataV1 {
                 0u8, 2u8, 0u8, 2u8, 0u8, 2u8, 0u8, 116u8, 0u8, 116u8, 0u8, 116u8, 0u8, 116u8, 0u8,
                 116u8, 0u8, 116u8, 0u8, 116u8, 0u8, 116u8, 0u8, 116u8, 0u8, 116u8, 0u8, 116u8, 0u8,
                 122u8, 0u8,
-            ];
-            let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-            metadata /= 2usize;
-            zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+            ])
         },
-        data: unsafe {
-            static DATA: &[u8] = &[
+        unsafe {
+            ::zerovec::ZeroVec::from_bytes_unchecked(&[
                 192u8, 0u8, 0u8, 0u8, 192u8, 0u8, 0u8, 0u8, 192u8, 0u8, 0u8, 0u8, 192u8, 0u8, 0u8,
                 0u8, 192u8, 0u8, 0u8, 0u8, 192u8, 0u8, 0u8, 0u8, 192u8, 0u8, 0u8, 0u8, 192u8, 0u8,
                 0u8, 0u8, 192u8, 0u8, 0u8, 0u8, 192u8, 0u8, 0u8, 0u8, 192u8, 0u8, 0u8, 0u8, 192u8,
@@ -139,34 +136,16 @@ static BN: DataStruct = &::icu_collator::provider::CollationDataV1 {
                 0u8, 0u8, 0u8, 192u8, 0u8, 0u8, 0u8, 192u8, 0u8, 0u8, 0u8, 192u8, 0u8, 0u8, 0u8,
                 192u8, 0u8, 0u8, 0u8, 192u8, 0u8, 0u8, 0u8, 192u8, 0u8, 0u8, 0u8, 192u8, 0u8, 0u8,
                 0u8, 192u8, 0u8, 0u8, 0u8, 192u8, 0u8, 0u8, 0u8,
-            ];
-            let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-            metadata /= 4usize;
-            zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+            ])
         },
-    },
-    ces: unsafe {
-        static DATA: &[u8] = &[];
-        let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-        metadata /= 8usize;
-        zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
-    },
-    ce32s: unsafe {
-        static DATA: &[u8] = &[];
-        let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-        metadata /= 4usize;
-        zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
-    },
-    contexts: unsafe {
-        static DATA: &[u8] = &[];
-        let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-        metadata /= 2usize;
-        zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
-    },
+    ),
+    ces: unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(&[]) },
+    ce32s: unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(&[]) },
+    contexts: unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(&[]) },
 };
 static ES: DataStruct = &::icu_collator::provider::CollationDataV1 {
-    trie: ::icu_codepointtrie::CodePointTrie {
-        header: ::icu_codepointtrie::CodePointTrieHeader {
+    trie: ::icu_codepointtrie::CodePointTrie::from_parts(
+        ::icu_codepointtrie::CodePointTrieHeader {
             high_start: 55296u32,
             shifted12_high_start: 14u16,
             index3_null_offset: 2u16,
@@ -174,8 +153,8 @@ static ES: DataStruct = &::icu_collator::provider::CollationDataV1 {
             null_value: 192u32,
             trie_type: ::icu_codepointtrie::TrieType::Small,
         },
-        index: unsafe {
-            static DATA: &[u8] = &[
+        unsafe {
+            ::zerovec::ZeroVec::from_bytes_unchecked(&[
                 0u8, 0u8, 64u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8,
                 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8,
                 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8,
@@ -203,13 +182,10 @@ static ES: DataStruct = &::icu_collator::provider::CollationDataV1 {
                 0u8, 2u8, 0u8, 2u8, 0u8, 108u8, 0u8, 108u8, 0u8, 108u8, 0u8, 108u8, 0u8, 108u8,
                 0u8, 108u8, 0u8, 108u8, 0u8, 108u8, 0u8, 108u8, 0u8, 108u8, 0u8, 108u8, 0u8, 114u8,
                 0u8,
-            ];
-            let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-            metadata /= 2usize;
-            zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+            ])
         },
-        data: unsafe {
-            static DATA: &[u8] = &[
+        unsafe {
+            ::zerovec::ZeroVec::from_bytes_unchecked(&[
                 192u8, 0u8, 0u8, 0u8, 192u8, 0u8, 0u8, 0u8, 192u8, 0u8, 0u8, 0u8, 192u8, 0u8, 0u8,
                 0u8, 192u8, 0u8, 0u8, 0u8, 192u8, 0u8, 0u8, 0u8, 192u8, 0u8, 0u8, 0u8, 192u8, 0u8,
                 0u8, 0u8, 192u8, 0u8, 0u8, 0u8, 192u8, 0u8, 0u8, 0u8, 192u8, 0u8, 0u8, 0u8, 192u8,
@@ -252,37 +228,21 @@ static ES: DataStruct = &::icu_collator::provider::CollationDataV1 {
                 192u8, 0u8, 0u8, 0u8, 192u8, 0u8, 0u8, 0u8, 192u8, 0u8, 0u8, 0u8, 192u8, 0u8, 0u8,
                 0u8, 192u8, 0u8, 0u8, 0u8, 192u8, 0u8, 0u8, 0u8, 192u8, 0u8, 0u8, 0u8, 192u8, 0u8,
                 0u8, 0u8, 192u8, 0u8, 0u8, 0u8, 192u8, 0u8, 0u8, 0u8,
-            ];
-            let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-            metadata /= 4usize;
-            zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+            ])
         },
-    },
-    ces: unsafe {
-        static DATA: &[u8] = &[];
-        let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-        metadata /= 8usize;
-        zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
-    },
-    ce32s: unsafe {
-        static DATA: &[u8] = &[];
-        let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-        metadata /= 4usize;
-        zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
-    },
+    ),
+    ces: unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(&[]) },
+    ce32s: unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(&[]) },
     contexts: unsafe {
-        static DATA: &[u8] = &[
+        ::zerovec::ZeroVec::from_bytes_unchecked(&[
             0u8, 68u8, 156u8, 5u8, 48u8, 0u8, 3u8, 3u8, 255u8, 255u8, 2u8, 69u8, 134u8, 5u8, 0u8,
             68u8, 5u8, 5u8, 48u8, 0u8, 3u8, 3u8, 255u8, 255u8, 2u8, 69u8, 5u8, 5u8,
-        ];
-        let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-        metadata /= 2usize;
-        zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+        ])
     },
 };
 static JA: DataStruct = &::icu_collator::provider::CollationDataV1 {
-    trie: ::icu_codepointtrie::CodePointTrie {
-        header: ::icu_codepointtrie::CodePointTrieHeader {
+    trie: ::icu_codepointtrie::CodePointTrie::from_parts(
+        ::icu_codepointtrie::CodePointTrieHeader {
             high_start: 65536u32,
             shifted12_high_start: 16u16,
             index3_null_offset: 2u16,
@@ -290,8 +250,8 @@ static JA: DataStruct = &::icu_collator::provider::CollationDataV1 {
             null_value: 192u32,
             trie_type: ::icu_codepointtrie::TrieType::Small,
         },
-        index: unsafe {
-            static DATA: &[u8] = &[
+        unsafe {
+            ::zerovec::ZeroVec::from_bytes_unchecked(&[
                 0u8, 0u8, 64u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8,
                 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8,
                 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8,
@@ -537,13 +497,10 @@ static JA: DataStruct = &::icu_collator::provider::CollationDataV1 {
                 2u8, 0u8, 2u8, 0u8, 2u8, 0u8, 2u8, 0u8, 2u8, 0u8, 2u8, 0u8, 2u8, 0u8, 2u8, 0u8,
                 2u8, 0u8, 2u8, 0u8, 2u8, 0u8, 2u8, 0u8, 2u8, 0u8, 2u8, 0u8, 2u8, 0u8, 2u8, 0u8,
                 2u8, 0u8, 224u8, 5u8,
-            ];
-            let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-            metadata /= 2usize;
-            zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+            ])
         },
-        data: unsafe {
-            static DATA: &[u8] = &[
+        unsafe {
+            ::zerovec::ZeroVec::from_bytes_unchecked(&[
                 192u8, 0u8, 0u8, 0u8, 192u8, 0u8, 0u8, 0u8, 192u8, 0u8, 0u8, 0u8, 192u8, 0u8, 0u8,
                 0u8, 192u8, 0u8, 0u8, 0u8, 192u8, 0u8, 0u8, 0u8, 192u8, 0u8, 0u8, 0u8, 192u8, 0u8,
                 0u8, 0u8, 192u8, 0u8, 0u8, 0u8, 192u8, 0u8, 0u8, 0u8, 192u8, 0u8, 0u8, 0u8, 192u8,
@@ -5818,14 +5775,11 @@ static JA: DataStruct = &::icu_collator::provider::CollationDataV1 {
                 5u8, 100u8, 12u8, 133u8, 5u8, 104u8, 12u8, 133u8, 5u8, 102u8, 12u8, 133u8, 5u8,
                 106u8, 12u8, 133u8, 5u8, 181u8, 12u8, 133u8, 5u8, 186u8, 12u8, 192u8, 0u8, 0u8,
                 0u8, 192u8, 0u8, 0u8, 0u8,
-            ];
-            let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-            metadata /= 4usize;
-            zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+            ])
         },
-    },
+    ),
     ces: unsafe {
-        static DATA: &[u8] = &[
+        ::zerovec::ZeroVec::from_bytes_unchecked(&[
             64u8, 3u8, 0u8, 5u8, 0u8, 0u8, 6u8, 122u8, 64u8, 133u8, 0u8, 5u8, 0u8, 0u8, 6u8, 122u8,
             64u8, 3u8, 0u8, 5u8, 0u8, 0u8, 8u8, 122u8, 64u8, 133u8, 0u8, 5u8, 0u8, 0u8, 8u8, 122u8,
             64u8, 3u8, 0u8, 5u8, 0u8, 0u8, 10u8, 122u8, 64u8, 133u8, 0u8, 5u8, 0u8, 0u8, 10u8,
@@ -5889,25 +5843,19 @@ static JA: DataStruct = &::icu_collator::provider::CollationDataV1 {
             0u8, 5u8, 0u8, 5u8, 0u8, 0u8, 24u8, 122u8, 64u8, 3u8, 0u8, 174u8, 0u8, 0u8, 0u8, 0u8,
             64u8, 5u8, 0u8, 5u8, 0u8, 0u8, 26u8, 122u8, 0u8, 5u8, 0u8, 70u8, 0u8, 0u8, 46u8, 122u8,
             0u8, 133u8, 0u8, 5u8, 0u8, 247u8, 101u8, 121u8,
-        ];
-        let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-        metadata /= 8usize;
-        zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+        ])
     },
     ce32s: unsafe {
-        static DATA: &[u8] = &[
+        ::zerovec::ZeroVec::from_bytes_unchecked(&[
             5u8, 5u8, 18u8, 122u8, 2u8, 174u8, 0u8, 0u8, 5u8, 5u8, 24u8, 122u8, 3u8, 174u8, 0u8,
             0u8, 5u8, 5u8, 86u8, 122u8, 5u8, 70u8, 90u8, 122u8, 5u8, 5u8, 0u8, 19u8, 5u8, 5u8, 0u8,
             21u8, 5u8, 5u8, 0u8, 23u8, 5u8, 5u8, 0u8, 25u8, 5u8, 5u8, 0u8, 27u8, 5u8, 5u8, 0u8,
             29u8, 5u8, 5u8, 0u8, 31u8, 5u8, 5u8, 0u8, 33u8, 5u8, 5u8, 0u8, 35u8, 5u8, 5u8, 0u8,
             37u8,
-        ];
-        let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-        metadata /= 4usize;
-        zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+        ])
     },
     contexts: unsafe {
-        static DATA: &[u8] = &[
+        ::zerovec::ZeroVec::from_bytes_unchecked(&[
             121u8, 13u8, 5u8, 5u8, 0u8, 0u8, 61u8, 0u8, 111u8, 48u8, 244u8, 0u8, 136u8, 48u8,
             176u8, 0u8, 144u8, 48u8, 140u8, 0u8, 149u8, 48u8, 122u8, 0u8, 149u8, 48u8, 255u8,
             255u8, 18u8, 122u8, 4u8, 5u8, 150u8, 48u8, 255u8, 255u8, 24u8, 122u8, 4u8, 5u8, 153u8,
@@ -6189,15 +6137,12 @@ static JA: DataStruct = &::icu_collator::provider::CollationDataV1 {
             48u8, 9u8, 192u8, 198u8, 1u8, 4u8, 0u8, 207u8, 48u8, 11u8, 192u8, 198u8, 97u8, 210u8,
             48u8, 11u8, 192u8, 198u8, 129u8, 213u8, 48u8, 11u8, 192u8, 198u8, 161u8, 216u8, 48u8,
             11u8, 192u8, 198u8, 193u8, 219u8, 48u8, 11u8, 192u8, 198u8, 225u8,
-        ];
-        let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-        metadata /= 2usize;
-        zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+        ])
     },
 };
 static TH: DataStruct = &::icu_collator::provider::CollationDataV1 {
-    trie: ::icu_codepointtrie::CodePointTrie {
-        header: ::icu_codepointtrie::CodePointTrieHeader {
+    trie: ::icu_codepointtrie::CodePointTrie::from_parts(
+        ::icu_codepointtrie::CodePointTrieHeader {
             high_start: 55296u32,
             shifted12_high_start: 14u16,
             index3_null_offset: 2u16,
@@ -6205,8 +6150,8 @@ static TH: DataStruct = &::icu_collator::provider::CollationDataV1 {
             null_value: 192u32,
             trie_type: ::icu_codepointtrie::TrieType::Small,
         },
-        index: unsafe {
-            static DATA: &[u8] = &[
+        unsafe {
+            ::zerovec::ZeroVec::from_bytes_unchecked(&[
                 0u8, 0u8, 64u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8,
                 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8,
                 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8,
@@ -6238,13 +6183,10 @@ static TH: DataStruct = &::icu_collator::provider::CollationDataV1 {
                 0u8, 2u8, 0u8, 2u8, 0u8, 2u8, 0u8, 2u8, 0u8, 2u8, 0u8, 140u8, 0u8, 140u8, 0u8,
                 140u8, 0u8, 140u8, 0u8, 140u8, 0u8, 140u8, 0u8, 140u8, 0u8, 140u8, 0u8, 140u8, 0u8,
                 140u8, 0u8, 140u8, 0u8, 146u8, 0u8,
-            ];
-            let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-            metadata /= 2usize;
-            zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+            ])
         },
-        data: unsafe {
-            static DATA: &[u8] = &[
+        unsafe {
+            ::zerovec::ZeroVec::from_bytes_unchecked(&[
                 192u8, 0u8, 0u8, 0u8, 192u8, 0u8, 0u8, 0u8, 192u8, 0u8, 0u8, 0u8, 192u8, 0u8, 0u8,
                 0u8, 192u8, 0u8, 0u8, 0u8, 192u8, 0u8, 0u8, 0u8, 192u8, 0u8, 0u8, 0u8, 192u8, 0u8,
                 0u8, 0u8, 192u8, 0u8, 0u8, 0u8, 192u8, 0u8, 0u8, 0u8, 192u8, 0u8, 0u8, 0u8, 192u8,
@@ -6307,40 +6249,26 @@ static TH: DataStruct = &::icu_collator::provider::CollationDataV1 {
                 0u8, 192u8, 0u8, 0u8, 0u8, 192u8, 0u8, 0u8, 0u8, 192u8, 0u8, 0u8, 0u8, 192u8, 0u8,
                 0u8, 0u8, 192u8, 0u8, 0u8, 0u8, 192u8, 0u8, 0u8, 0u8, 192u8, 0u8, 0u8, 0u8, 192u8,
                 0u8, 0u8, 0u8, 192u8, 0u8, 0u8, 0u8, 192u8, 0u8, 0u8, 0u8, 192u8, 0u8, 0u8, 0u8,
-            ];
-            let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-            metadata /= 4usize;
-            zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+            ])
         },
-    },
-    ces: unsafe {
-        static DATA: &[u8] = &[];
-        let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-        metadata /= 8usize;
-        zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
-    },
+    ),
+    ces: unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(&[]) },
     ce32s: unsafe {
-        static DATA: &[u8] = &[
+        ::zerovec::ZeroVec::from_bytes_unchecked(&[
             5u8, 5u8, 104u8, 114u8, 8u8, 5u8, 99u8, 114u8, 5u8, 5u8, 104u8, 114u8, 7u8, 5u8, 99u8,
             114u8, 6u8, 5u8, 104u8, 114u8, 6u8, 5u8, 99u8, 114u8,
-        ];
-        let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-        metadata /= 4usize;
-        zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+        ])
     },
     contexts: unsafe {
-        static DATA: &[u8] = &[
+        ::zerovec::ZeroVec::from_bytes_unchecked(&[
             99u8, 114u8, 5u8, 5u8, 1u8, 0u8, 50u8, 14u8, 0u8, 192u8, 197u8, 66u8, 69u8, 14u8, 0u8,
             192u8, 197u8, 130u8,
-        ];
-        let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-        metadata /= 2usize;
-        zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+        ])
     },
 };
 static TR: DataStruct = &::icu_collator::provider::CollationDataV1 {
-    trie: ::icu_codepointtrie::CodePointTrie {
-        header: ::icu_codepointtrie::CodePointTrieHeader {
+    trie: ::icu_codepointtrie::CodePointTrie::from_parts(
+        ::icu_codepointtrie::CodePointTrieHeader {
             high_start: 55296u32,
             shifted12_high_start: 14u16,
             index3_null_offset: 5u16,
@@ -6348,8 +6276,8 @@ static TR: DataStruct = &::icu_collator::provider::CollationDataV1 {
             null_value: 192u32,
             trie_type: ::icu_codepointtrie::TrieType::Small,
         },
-        index: unsafe {
-            static DATA: &[u8] = &[
+        unsafe {
+            ::zerovec::ZeroVec::from_bytes_unchecked(&[
                 0u8, 0u8, 64u8, 0u8, 0u8, 0u8, 0u8, 0u8, 118u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8,
                 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8,
                 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8,
@@ -6378,13 +6306,10 @@ static TR: DataStruct = &::icu_collator::provider::CollationDataV1 {
                 5u8, 0u8, 5u8, 0u8, 5u8, 0u8, 5u8, 0u8, 5u8, 0u8, 5u8, 0u8, 5u8, 0u8, 5u8, 0u8,
                 120u8, 0u8, 120u8, 0u8, 120u8, 0u8, 120u8, 0u8, 120u8, 0u8, 120u8, 0u8, 120u8, 0u8,
                 120u8, 0u8, 120u8, 0u8, 120u8, 0u8, 120u8, 0u8, 126u8, 0u8,
-            ];
-            let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-            metadata /= 2usize;
-            zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+            ])
         },
-        data: unsafe {
-            static DATA: &[u8] = &[
+        unsafe {
+            ::zerovec::ZeroVec::from_bytes_unchecked(&[
                 192u8, 0u8, 0u8, 0u8, 192u8, 0u8, 0u8, 0u8, 192u8, 0u8, 0u8, 0u8, 192u8, 0u8, 0u8,
                 0u8, 192u8, 0u8, 0u8, 0u8, 192u8, 0u8, 0u8, 0u8, 192u8, 0u8, 0u8, 0u8, 192u8, 0u8,
                 0u8, 0u8, 192u8, 0u8, 0u8, 0u8, 192u8, 0u8, 0u8, 0u8, 192u8, 0u8, 0u8, 0u8, 192u8,
@@ -6442,26 +6367,13 @@ static TR: DataStruct = &::icu_collator::provider::CollationDataV1 {
                 192u8, 0u8, 0u8, 0u8, 192u8, 0u8, 0u8, 0u8, 192u8, 0u8, 0u8, 0u8, 192u8, 0u8, 0u8,
                 0u8, 192u8, 0u8, 0u8, 0u8, 192u8, 0u8, 0u8, 0u8, 192u8, 0u8, 0u8, 0u8, 192u8, 0u8,
                 0u8, 0u8,
-            ];
-            let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-            metadata /= 4usize;
-            zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+            ])
         },
-    },
-    ces: unsafe {
-        static DATA: &[u8] = &[];
-        let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-        metadata /= 8usize;
-        zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
-    },
-    ce32s: unsafe {
-        static DATA: &[u8] = &[];
-        let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-        metadata /= 4usize;
-        zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
-    },
+    ),
+    ces: unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(&[]) },
+    ce32s: unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(&[]) },
     contexts: unsafe {
-        static DATA: &[u8] = &[
+        ::zerovec::ZeroVec::from_bytes_unchecked(&[
             0u8, 46u8, 156u8, 5u8, 48u8, 0u8, 39u8, 3u8, 2u8, 239u8, 134u8, 5u8, 0u8, 54u8, 156u8,
             5u8, 48u8, 0u8, 6u8, 3u8, 2u8, 247u8, 134u8, 5u8, 27u8, 57u8, 134u8, 5u8, 48u8, 0u8,
             7u8, 3u8, 0u8, 250u8, 134u8, 5u8, 0u8, 70u8, 156u8, 5u8, 48u8, 0u8, 8u8, 3u8, 255u8,
@@ -6472,15 +6384,12 @@ static TR: DataStruct = &::icu_collator::provider::CollationDataV1 {
             48u8, 0u8, 8u8, 3u8, 255u8, 255u8, 2u8, 71u8, 5u8, 5u8, 0u8, 78u8, 5u8, 5u8, 48u8, 0u8,
             39u8, 3u8, 255u8, 255u8, 2u8, 79u8, 5u8, 5u8, 0u8, 82u8, 5u8, 5u8, 48u8, 0u8, 8u8, 3u8,
             255u8, 255u8, 2u8, 83u8, 5u8, 5u8,
-        ];
-        let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-        metadata /= 2usize;
-        zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+        ])
     },
 };
 static UND: DataStruct = &::icu_collator::provider::CollationDataV1 {
-    trie: ::icu_codepointtrie::CodePointTrie {
-        header: ::icu_codepointtrie::CodePointTrieHeader {
+    trie: ::icu_codepointtrie::CodePointTrie::from_parts(
+        ::icu_codepointtrie::CodePointTrieHeader {
             high_start: 918016u32,
             shifted12_high_start: 225u16,
             index3_null_offset: 2857u16,
@@ -6488,8 +6397,8 @@ static UND: DataStruct = &::icu_collator::provider::CollationDataV1 {
             null_value: 4294967295u32,
             trie_type: ::icu_codepointtrie::TrieType::Small,
         },
-        index: unsafe {
-            static DATA: &[u8] = &[
+        unsafe {
+            ::zerovec::ZeroVec::from_bytes_unchecked(&[
                 0u8, 0u8, 64u8, 0u8, 127u8, 0u8, 191u8, 0u8, 254u8, 0u8, 62u8, 1u8, 126u8, 1u8,
                 190u8, 1u8, 246u8, 1u8, 54u8, 2u8, 118u8, 2u8, 182u8, 2u8, 246u8, 2u8, 54u8, 3u8,
                 118u8, 3u8, 182u8, 3u8, 246u8, 3u8, 54u8, 4u8, 118u8, 4u8, 182u8, 4u8, 246u8, 4u8,
@@ -7960,13 +7869,10 @@ static UND: DataStruct = &::icu_collator::provider::CollationDataV1 {
                 11u8, 41u8, 11u8, 41u8, 11u8, 41u8, 11u8, 41u8, 11u8, 41u8, 11u8, 41u8, 11u8, 41u8,
                 11u8, 41u8, 11u8, 41u8, 11u8, 41u8, 11u8, 41u8, 11u8, 41u8, 11u8, 41u8, 11u8, 41u8,
                 11u8, 41u8, 11u8, 196u8, 162u8, 238u8, 255u8,
-            ];
-            let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-            metadata /= 2usize;
-            zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+            ])
         },
-        data: unsafe {
-            static DATA: &[u8] = &[
+        unsafe {
+            ::zerovec::ZeroVec::from_bytes_unchecked(&[
                 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8,
                 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8,
                 0u8, 0u8, 0u8, 0u8, 5u8, 5u8, 4u8, 3u8, 5u8, 5u8, 6u8, 3u8, 5u8, 5u8, 8u8, 3u8,
@@ -38330,14 +38236,11 @@ static UND: DataStruct = &::icu_collator::provider::CollationDataV1 {
                 255u8, 255u8, 255u8, 255u8, 255u8, 255u8, 255u8, 255u8, 255u8, 255u8, 255u8, 255u8,
                 255u8, 255u8, 255u8, 255u8, 255u8, 255u8, 255u8, 255u8, 255u8, 255u8, 255u8, 255u8,
                 255u8,
-            ];
-            let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-            metadata /= 4usize;
-            zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+            ])
         },
-    },
+    ),
     ces: unsafe {
-        static DATA: &[u8] = &[
+        ::zerovec::ZeroVec::from_bytes_unchecked(&[
             2u8, 212u8, 78u8, 0u8, 0u8, 152u8, 10u8, 251u8, 2u8, 238u8, 78u8, 0u8, 0u8, 4u8, 11u8,
             251u8, 2u8, 180u8, 1u8, 2u8, 0u8, 150u8, 11u8, 251u8, 2u8, 45u8, 79u8, 0u8, 0u8, 6u8,
             12u8, 251u8, 2u8, 105u8, 79u8, 0u8, 0u8, 46u8, 13u8, 251u8, 2u8, 3u8, 2u8, 2u8, 0u8,
@@ -39433,13 +39336,10 @@ static UND: DataStruct = &::icu_collator::provider::CollationDataV1 {
             1u8, 0u8, 104u8, 37u8, 13u8, 7u8, 0u8, 250u8, 1u8, 0u8, 54u8, 13u8, 13u8, 7u8, 144u8,
             250u8, 1u8, 0u8, 237u8, 44u8, 13u8, 7u8, 0u8, 251u8, 1u8, 0u8, 112u8, 189u8, 12u8, 7u8,
             148u8, 251u8, 1u8, 0u8, 125u8, 193u8, 12u8,
-        ];
-        let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-        metadata /= 8usize;
-        zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+        ])
     },
     ce32s: unsafe {
-        static DATA: &[u8] = &[
+        ::zerovec::ZeroVec::from_bytes_unchecked(&[
             194u8, 32u8, 9u8, 230u8, 194u8, 46u8, 29u8, 232u8, 194u8, 32u8, 108u8, 230u8, 194u8,
             46u8, 29u8, 232u8, 194u8, 32u8, 207u8, 230u8, 194u8, 32u8, 29u8, 232u8, 194u8, 46u8,
             207u8, 230u8, 194u8, 46u8, 29u8, 232u8, 194u8, 32u8, 85u8, 231u8, 194u8, 32u8, 29u8,
@@ -40765,13 +40665,10 @@ static UND: DataStruct = &::icu_collator::provider::CollationDataV1 {
             21u8, 26u8, 5u8, 0u8, 23u8, 26u8, 5u8, 0u8, 25u8, 26u8, 5u8, 0u8, 27u8, 26u8, 5u8, 0u8,
             29u8, 26u8, 5u8, 0u8, 31u8, 26u8, 5u8, 0u8, 33u8, 26u8, 5u8, 0u8, 35u8, 28u8, 5u8, 0u8,
             37u8,
-        ];
-        let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-        metadata /= 4usize;
-        zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+        ])
     },
     contexts: unsafe {
-        static DATA: &[u8] = &[
+        ::zerovec::ZeroVec::from_bytes_unchecked(&[
             26u8, 9u8, 5u8, 5u8, 1u8, 0u8, 76u8, 0u8, 255u8, 255u8, 219u8, 251u8, 194u8, 5u8,
             108u8, 0u8, 255u8, 255u8, 219u8, 251u8, 194u8, 5u8, 70u8, 97u8, 174u8, 5u8, 48u8, 0u8,
             6u8, 3u8, 255u8, 255u8, 78u8, 97u8, 160u8, 5u8, 70u8, 97u8, 5u8, 5u8, 48u8, 0u8, 6u8,
@@ -41435,9 +41332,6 @@ static UND: DataStruct = &::icu_collator::provider::CollationDataV1 {
             30u8, 200u8, 113u8, 193u8, 23u8, 49u8, 0u8, 5u8, 216u8, 175u8, 221u8, 255u8, 255u8,
             200u8, 113u8, 193u8, 37u8, 206u8, 113u8, 193u8, 112u8, 49u8, 0u8, 6u8, 216u8, 48u8,
             221u8, 255u8, 255u8, 206u8, 113u8, 193u8, 126u8,
-        ];
-        let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-        metadata /= 2usize;
-        zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+        ])
     },
 };

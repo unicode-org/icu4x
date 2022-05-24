@@ -32,8 +32,8 @@ impl ResourceProvider<::icu_properties::provider::ScriptWithExtensionsPropertyV1
 type DataStruct = & 'static < :: icu_properties :: provider :: ScriptWithExtensionsPropertyV1Marker as DataMarker > :: Yokeable ;
 static UND: DataStruct = &::icu_properties::provider::ScriptWithExtensionsPropertyV1 {
     data: ::icu_properties::script::ScriptWithExtensions {
-        trie: ::icu_codepointtrie::CodePointTrie {
-            header: ::icu_codepointtrie::CodePointTrieHeader {
+        trie: ::icu_codepointtrie::CodePointTrie::from_parts(
+            ::icu_codepointtrie::CodePointTrieHeader {
                 high_start: 918016u32,
                 shifted12_high_start: 225u16,
                 index3_null_offset: 1104u16,
@@ -41,8 +41,8 @@ static UND: DataStruct = &::icu_properties::provider::ScriptWithExtensionsProper
                 null_value: 103u32,
                 trie_type: ::icu_codepointtrie::TrieType::Small,
             },
-            index: unsafe {
-                static DATA: &[u8] = &[
+            unsafe {
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     0u8, 0u8, 64u8, 0u8, 123u8, 0u8, 187u8, 0u8, 243u8, 0u8, 243u8, 0u8, 243u8,
                     0u8, 243u8, 0u8, 243u8, 0u8, 243u8, 0u8, 250u8, 0u8, 51u8, 1u8, 115u8, 1u8,
                     177u8, 1u8, 241u8, 1u8, 20u8, 2u8, 84u8, 2u8, 84u8, 2u8, 145u8, 2u8, 84u8, 2u8,
@@ -549,13 +549,10 @@ static UND: DataStruct = &::icu_properties::provider::ScriptWithExtensionsProper
                     4u8, 80u8, 4u8, 80u8, 4u8, 80u8, 4u8, 80u8, 4u8, 80u8, 4u8, 80u8, 4u8, 80u8,
                     4u8, 80u8, 4u8, 80u8, 4u8, 80u8, 4u8, 80u8, 4u8, 80u8, 4u8, 80u8, 4u8, 80u8,
                     4u8, 80u8, 4u8, 80u8, 4u8, 100u8, 11u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 2usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
-            data: unsafe {
-                static DATA: &[u8] = &[
+            unsafe {
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8,
                     0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8,
                     0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8,
@@ -1924,14 +1921,11 @@ static UND: DataStruct = &::icu_properties::provider::ScriptWithExtensionsProper
                     17u8, 0u8, 17u8, 0u8, 17u8, 0u8, 103u8, 0u8, 103u8, 0u8, 103u8, 0u8, 103u8,
                     0u8, 103u8, 0u8, 103u8, 0u8, 103u8, 0u8, 103u8, 0u8, 103u8, 0u8, 103u8, 0u8,
                     103u8, 0u8, 103u8, 0u8, 103u8, 0u8, 103u8, 0u8, 103u8, 0u8, 103u8, 0u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 2usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
-        },
+        ),
         extensions: unsafe {
-            static BYTES: &[u8] = &[
+            ::zerovec::VarZeroVec::from_bytes_unchecked(&[
                 66u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 2u8, 0u8, 0u8, 0u8, 4u8, 0u8, 0u8, 0u8,
                 6u8, 0u8, 0u8, 0u8, 8u8, 0u8, 0u8, 0u8, 10u8, 0u8, 0u8, 0u8, 12u8, 0u8, 0u8, 0u8,
                 14u8, 0u8, 0u8, 0u8, 16u8, 0u8, 0u8, 0u8, 20u8, 0u8, 0u8, 0u8, 26u8, 0u8, 0u8, 0u8,
@@ -1988,8 +1982,7 @@ static UND: DataStruct = &::icu_properties::provider::ScriptWithExtensionsProper
                 0u8, 15u8, 0u8, 16u8, 0u8, 21u8, 0u8, 26u8, 0u8, 31u8, 0u8, 33u8, 0u8, 35u8, 0u8,
                 36u8, 0u8, 48u8, 0u8, 58u8, 0u8, 137u8, 0u8, 145u8, 0u8, 153u8, 0u8, 158u8, 0u8,
                 160u8, 0u8, 175u8, 0u8, 178u8, 0u8, 179u8, 0u8, 187u8, 0u8,
-            ];
-            ::zerovec::VarZeroVec::Borrowed(core::mem::transmute(BYTES))
+            ])
         },
     },
 };

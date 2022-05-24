@@ -14,14 +14,6 @@ where
         env.insert("core");
         env.insert("zerovec");
         let bytes = self.as_bytes();
-        let size: usize = core::mem::size_of::<T::ULE>();
-        // Safe because self.as_bytes() and self.as_ule_slice() are the same slice
-        // with different length metadata.
-        quote! { unsafe {
-            static DATA: &[u8] = &[#(#bytes),*];
-            let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-            metadata /= #size;
-            zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
-        }}
+        quote! { unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(&[#(#bytes),*]) } }
     }
 }

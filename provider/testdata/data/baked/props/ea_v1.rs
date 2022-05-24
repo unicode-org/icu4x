@@ -27,8 +27,8 @@ impl ResourceProvider<icu_properties::provider::EastAsianWidthV1Marker>
 type DataStruct =
     &'static <icu_properties::provider::EastAsianWidthV1Marker as DataMarker>::Yokeable;
 static UND: DataStruct = &::icu_properties::provider::UnicodePropertyMapV1 {
-    code_point_trie: ::icu_codepointtrie::CodePointTrie {
-        header: ::icu_codepointtrie::CodePointTrieHeader {
+    code_point_trie: ::icu_codepointtrie::CodePointTrie::from_parts(
+        ::icu_codepointtrie::CodePointTrieHeader {
             high_start: 1114112u32,
             shifted12_high_start: 272u16,
             index3_null_offset: 18u16,
@@ -36,8 +36,8 @@ static UND: DataStruct = &::icu_properties::provider::UnicodePropertyMapV1 {
             null_value: 0u32,
             trie_type: ::icu_codepointtrie::TrieType::Small,
         },
-        index: unsafe {
-            static DATA: &[u8] = &[
+        unsafe {
+            ::zerovec::ZeroVec::from_bytes_unchecked(&[
                 0u8, 0u8, 64u8, 0u8, 127u8, 0u8, 191u8, 0u8, 252u8, 0u8, 59u8, 1u8, 103u8, 1u8,
                 153u8, 1u8, 103u8, 1u8, 200u8, 1u8, 103u8, 1u8, 4u8, 2u8, 68u8, 2u8, 84u8, 2u8,
                 132u8, 2u8, 194u8, 2u8, 1u8, 3u8, 49u8, 3u8, 103u8, 1u8, 103u8, 1u8, 103u8, 1u8,
@@ -245,13 +245,10 @@ static UND: DataStruct = &::icu_properties::provider::UnicodePropertyMapV1 {
                 112u8, 2u8, 112u8, 2u8, 112u8, 2u8, 112u8, 2u8, 112u8, 2u8, 112u8, 2u8, 112u8, 2u8,
                 112u8, 2u8, 112u8, 2u8, 112u8, 2u8, 112u8, 2u8, 112u8, 2u8, 112u8, 2u8, 112u8, 2u8,
                 112u8, 2u8, 112u8, 2u8, 112u8, 2u8, 112u8, 2u8, 120u8, 4u8,
-            ];
-            let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-            metadata /= 2usize;
-            zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+            ])
         },
-        data: unsafe {
-            static DATA: &[u8] = &[
+        unsafe {
+            ::zerovec::ZeroVec::from_bytes_unchecked(&[
                 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8,
                 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8,
                 4u8, 4u8, 4u8, 4u8, 4u8, 4u8, 4u8, 4u8, 4u8, 4u8, 4u8, 4u8, 4u8, 4u8, 4u8, 4u8,
@@ -374,10 +371,7 @@ static UND: DataStruct = &::icu_properties::provider::UnicodePropertyMapV1 {
                 5u8, 5u8, 0u8, 0u8, 0u8, 0u8, 0u8, 5u8, 5u8, 5u8, 5u8, 5u8, 5u8, 5u8, 5u8, 5u8,
                 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 5u8,
                 5u8, 5u8, 5u8, 5u8, 0u8, 0u8, 0u8, 5u8, 5u8, 5u8, 5u8, 5u8, 0u8, 0u8, 0u8, 0u8,
-            ];
-            let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-            metadata /= 1usize;
-            zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+            ])
         },
-    },
+    ),
 };

@@ -2,18 +2,14 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use super::VarZeroVec;
-use crate::ule::*;
+use crate::{ule::VarULE, VarZeroVec};
 use crabbake::*;
 
 impl<T: VarULE + ?Sized> Bakeable for VarZeroVec<'_, T> {
     fn bake(&self, env: &CrateEnv) -> TokenStream {
         env.insert("zerovec");
         let bytes = self.as_bytes();
-        // Safe because VarZeroSlice has the same layout as [u8]
-        quote! { unsafe {
-            static BYTES: &[u8] = &[#(#bytes),*];
-            ::zerovec::VarZeroVec::Borrowed(core::mem::transmute(BYTES))
-        }}
+        // Safe because self.as_bytes is a safe input
+        quote! { unsafe { ::zerovec::VarZeroVec::from_bytes_unchecked(&[#(#bytes),*]) } }
     }
 }

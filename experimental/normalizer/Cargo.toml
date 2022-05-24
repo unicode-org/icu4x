@@ -52,5 +52,5 @@ bench = false  # This option is required for Benchmark CI
 
 [features]
 default = []
-serde = ["dep:serde", "icu_codepointtrie/serde", "zerovec/serde", "icu_uniset/serde"]
+serde = ["dep:serde", "icu_codepointtrie/serde", "zerovec/serde", "icu_uniset/serde", "icu_properties/serde"]
 datagen = ["serde", "icu_codepointtrie/serde_serialize", "zerovec/serde_serialize", "icu_uniset/serde_serialize", "crabbake", "icu_codepointtrie/crabbake", "zerovec/crabbake", "icu_uniset/crabbake"]

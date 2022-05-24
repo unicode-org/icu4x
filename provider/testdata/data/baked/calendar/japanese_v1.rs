@@ -27,7 +27,7 @@ impl ResourceProvider<::icu_calendar::provider::JapaneseErasV1Marker>
 type DataStruct = &'static <::icu_calendar::provider::JapaneseErasV1Marker as DataMarker>::Yokeable;
 static UND: DataStruct = &::icu_calendar::provider::JapaneseErasV1 {
     dates_to_historical_eras: unsafe {
-        static DATA: &[u8] = &[
+        ::zerovec::ZeroVec::from_bytes_unchecked(&[
             133u8, 2u8, 0u8, 0u8, 6u8, 19u8, 116u8, 97u8, 105u8, 107u8, 97u8, 45u8, 54u8, 52u8,
             53u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 138u8, 2u8, 0u8, 0u8, 2u8, 15u8, 104u8, 97u8,
             107u8, 117u8, 99u8, 104u8, 105u8, 45u8, 54u8, 53u8, 48u8, 0u8, 0u8, 0u8, 0u8, 0u8,
@@ -374,13 +374,10 @@ static UND: DataStruct = &::icu_calendar::provider::JapaneseErasV1 {
             0u8, 0u8, 2u8, 20u8, 103u8, 101u8, 110u8, 106u8, 105u8, 45u8, 49u8, 56u8, 54u8, 52u8,
             0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 73u8, 7u8, 0u8, 0u8, 4u8, 7u8, 107u8, 101u8, 105u8,
             111u8, 45u8, 49u8, 56u8, 54u8, 53u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8,
-        ];
-        let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-        metadata /= 22usize;
-        zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+        ])
     },
     dates_to_eras: unsafe {
-        static DATA: &[u8] = &[
+        ::zerovec::ZeroVec::from_bytes_unchecked(&[
             76u8, 7u8, 0u8, 0u8, 9u8, 8u8, 109u8, 101u8, 105u8, 106u8, 105u8, 0u8, 0u8, 0u8, 0u8,
             0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 120u8, 7u8, 0u8, 0u8, 7u8, 30u8, 116u8, 97u8, 105u8,
             115u8, 104u8, 111u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 134u8, 7u8, 0u8,
@@ -389,9 +386,6 @@ static UND: DataStruct = &::icu_calendar::provider::JapaneseErasV1 {
             105u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 227u8, 7u8, 0u8, 0u8, 5u8,
             1u8, 114u8, 101u8, 105u8, 119u8, 97u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8,
             0u8, 0u8,
-        ];
-        let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-        metadata /= 22usize;
-        zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+        ])
     },
 };

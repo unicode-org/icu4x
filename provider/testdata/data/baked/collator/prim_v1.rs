@@ -31,10 +31,7 @@ type DataStruct =
     &'static <::icu_collator::provider::CollationSpecialPrimariesV1Marker as DataMarker>::Yokeable;
 static UND: DataStruct = &::icu_collator::provider::CollationSpecialPrimariesV1 {
     last_primaries: unsafe {
-        static DATA: &[u8] = &[6u8, 5u8, 0u8, 12u8, 137u8, 13u8, 0u8, 14u8];
-        let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-        metadata /= 2usize;
-        zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+        ::zerovec::ZeroVec::from_bytes_unchecked(&[6u8, 5u8, 0u8, 12u8, 137u8, 13u8, 0u8, 14u8])
     },
     numeric_primary: 15u8,
 };

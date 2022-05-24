@@ -34,7 +34,7 @@ static UND: DataStruct = &::icu_properties::provider::UnicodePropertyV1 {
         #[allow(unused_unsafe)]
         ::icu_uniset::UnicodeSet::from_parts_unchecked(
             unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     65u8, 0u8, 0u8, 0u8, 91u8, 0u8, 0u8, 0u8, 160u8, 0u8, 0u8, 0u8, 161u8, 0u8,
                     0u8, 0u8, 168u8, 0u8, 0u8, 0u8, 169u8, 0u8, 0u8, 0u8, 170u8, 0u8, 0u8, 0u8,
                     171u8, 0u8, 0u8, 0u8, 173u8, 0u8, 0u8, 0u8, 174u8, 0u8, 0u8, 0u8, 175u8, 0u8,
@@ -522,10 +522,7 @@ static UND: DataStruct = &::icu_properties::provider::UnicodePropertyV1 {
                     242u8, 1u8, 0u8, 80u8, 242u8, 1u8, 0u8, 82u8, 242u8, 1u8, 0u8, 240u8, 251u8,
                     1u8, 0u8, 250u8, 251u8, 1u8, 0u8, 0u8, 248u8, 2u8, 0u8, 30u8, 250u8, 2u8, 0u8,
                     0u8, 0u8, 14u8, 0u8, 0u8, 16u8, 14u8, 0u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 4usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             10429usize,
         )

@@ -66,7 +66,7 @@ use alloc::sync::Arc;
 ///
 /// fn load_object(filename: &str) -> Yoke<Cow<'static, str>, Rc<[u8]>> {
 ///     let rc: Rc<[u8]> = load_from_cache(filename);
-///     Yoke::<Cow<'static, str>, Rc<[u8]>>::attach_to_cart_badly(rc, |data: &[u8]| {
+///     Yoke::<Cow<'static, str>, Rc<[u8]>>::attach_to_cart(rc, |data: &[u8]| {
 ///         // essentially forcing a #[serde(borrow)]
 ///         Cow::Borrowed(bincode::deserialize(data).unwrap())
 ///     })
@@ -88,15 +88,12 @@ impl<Y: for<'a> Yokeable<'a>, C: StableDeref> Yoke<Y, C> {
     ///
     /// See also [`Yoke::try_attach_to_cart()`] to return a `Result` from the closure.
     ///
-    /// Call sites for this function may not compile; if this happens, use
-    /// [`Yoke::attach_to_cart_badly()`] instead.
+    /// Call sites for this function may not compile pre-1.61; if this still happens, use
+    /// [`Yoke::attach_to_cart_badly()`] and file a bug.
     ///
     /// # Examples
     ///
-    /// The following code does not currently compile.
-    /// See [#1061](https://github.com/unicode-org/icu4x/issues/1061).
-    ///
-    /// ```compile_fail
+    /// ```
     /// # use yoke::{Yoke, Yokeable};
     /// # use std::rc::Rc;
     /// # use std::borrow::Cow;
@@ -131,9 +128,8 @@ impl<Y: for<'a> Yokeable<'a>, C: StableDeref> Yoke<Y, C> {
     /// Construct a [`Yoke`] by yokeing an object to a cart. If an error occurs in the
     /// deserializer function, the error is passed up to the caller.
     ///
-    /// Call sites for this function may not compile; if this happens, use
-    /// [`Yoke::try_attach_to_cart_badly()`] instead.
-    /// See [#1061](https://github.com/unicode-org/icu4x/issues/1061).
+    /// Call sites for this function may not compile pre-1.61; if this still happens, use
+    /// [`Yoke::try_attach_to_cart_badly()`] and file a bug.
     pub fn try_attach_to_cart<E, F>(cart: C, f: F) -> Result<Self, E>
     where
         F: for<'de> FnOnce(&'de <C as Deref>::Target) -> Result<<Y as Yokeable<'de>>::Output, E>,
@@ -145,75 +141,26 @@ impl<Y: for<'a> Yokeable<'a>, C: StableDeref> Yoke<Y, C> {
         })
     }
 
-    /// Construct a [`Yoke`] by yokeing an object to a cart in a closure.
+    /// Use [`Yoke::attach_to_cart()`].
     ///
-    /// For a version of this function that takes a `FnOnce` instead of a raw function pointer,
-    /// see [`Yoke::attach_to_cart()`].
-    ///
-    /// # Example
-    ///
-    /// For example, we can use this to store zero-copy deserialized data in a cache:
-    ///
-    /// ```rust
-    /// # use yoke::{Yoke, Yokeable};
-    /// # use std::rc::Rc;
-    /// # use std::borrow::Cow;
-    /// # fn load_from_cache(_filename: &str) -> Rc<[u8]> {
-    /// #     // dummy implementation
-    /// #     Rc::new([0x5, 0, 0, 0, 0, 0, 0, 0, 0x68, 0x65, 0x6c, 0x6c, 0x6f])
-    /// # }
-    ///
-    /// fn load_object(filename: &str) -> Yoke<Cow<'static, str>, Rc<[u8]>> {
-    ///     let rc: Rc<[u8]> = load_from_cache(filename);
-    ///     Yoke::<Cow<'static, str>, Rc<[u8]>>::attach_to_cart_badly(rc, |data: &[u8]| {
-    ///         // essentially forcing a #[serde(borrow)]
-    ///         Cow::Borrowed(bincode::deserialize(data).unwrap())
-    ///     })
-    /// }
-    ///
-    /// let yoke: Yoke<Cow<str>, _> = load_object("filename.bincode");
-    /// assert_eq!(&**yoke.get(), "hello");
-    /// assert!(matches!(yoke.get(), &Cow::Borrowed(_)));
-    /// ```
+    /// This was needed because the pre-1.61 compiler couldn't always handle the FnOnce trait bound.
+    #[deprecated]
     pub fn attach_to_cart_badly(
         cart: C,
         f: for<'de> fn(&'de <C as Deref>::Target) -> <Y as Yokeable<'de>>::Output,
     ) -> Self {
-        let deserialized = f(cart.deref());
-        Self {
-            yokeable: unsafe { Y::make(deserialized) },
-            cart,
-        }
+        Self::attach_to_cart(cart, f)
     }
 
-    /// Construct a [`Yoke`] by yokeing an object to a cart. If an error occurs in the
-    /// deserializer function, the error is passed up to the caller.
+    /// Use [`Yoke::try_attach_to_cart()`].
     ///
-    /// For a version of this function that takes a `FnOnce` instead of a raw function pointer,
-    /// see [`Yoke::try_attach_to_cart()`].
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// # use yoke::{Yoke, Yokeable};
-    /// # use std::rc::Rc;
-    /// # use std::borrow::Cow;
-    /// let rc = Rc::new([0xb, 0xa, 0xd]);
-    ///
-    /// let yoke_result: Result<Yoke<Cow<str>, Rc<[u8]>>, _> =
-    ///     Yoke::try_attach_to_cart_badly(rc, |data: &[u8]| bincode::deserialize(data));
-    ///
-    /// assert!(matches!(yoke_result, Err(_)));
-    /// ```
+    /// This was needed because the pre-1.61 compiler couldn't always handle the FnOnce trait bound.
+    #[deprecated]
     pub fn try_attach_to_cart_badly<E>(
         cart: C,
         f: for<'de> fn(&'de <C as Deref>::Target) -> Result<<Y as Yokeable<'de>>::Output, E>,
     ) -> Result<Self, E> {
-        let deserialized = f(cart.deref())?;
-        Ok(Self {
-            yokeable: unsafe { Y::make(deserialized) },
-            cart,
-        })
+        Self::try_attach_to_cart(cart, f)
     }
 }
 
@@ -238,7 +185,7 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     /// #
     /// # fn load_object(filename: &str) -> Yoke<Cow<'static, str>, Rc<[u8]>> {
     /// #     let rc: Rc<[u8]> = load_from_cache(filename);
-    /// #     Yoke::<Cow<'static, str>, Rc<[u8]>>::attach_to_cart_badly(rc, |data: &[u8]| {
+    /// #     Yoke::<Cow<'static, str>, Rc<[u8]>>::attach_to_cart(rc, |data: &[u8]| {
     /// #         Cow::Borrowed(bincode::deserialize(data).unwrap())
     /// #     })
     /// # }
@@ -352,7 +299,7 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     /// #
     /// # fn load_object(filename: &str) -> Yoke<Bar<'static>, Rc<[u8]>> {
     /// #     let rc: Rc<[u8]> = load_from_cache(filename);
-    /// #     Yoke::<Bar<'static>, Rc<[u8]>>::attach_to_cart_badly(rc, |data: &[u8]| {
+    /// #     Yoke::<Bar<'static>, Rc<[u8]>>::attach_to_cart(rc, |data: &[u8]| {
     /// #         // A real implementation would properly deserialize `Bar` as a whole
     /// #         Bar {
     /// #             numbers: Cow::Borrowed(bincode::deserialize(data).unwrap()),
@@ -822,8 +769,8 @@ impl<Y: for<'a> Yokeable<'a>, C: 'static + Sized> Yoke<Y, Rc<C>> {
     /// let buffer1: Rc<String> = Rc::new("   foo bar baz  ".into());
     /// let buffer2: Box<String> = Box::new("  baz quux  ".into());
     ///
-    /// let yoke1 = Yoke::<&'static str, _>::attach_to_cart_badly(buffer1, |rc| rc.trim());
-    /// let yoke2 = Yoke::<&'static str, _>::attach_to_cart_badly(buffer2, |b| b.trim());
+    /// let yoke1 = Yoke::<&'static str, _>::attach_to_cart(buffer1, |rc| rc.trim());
+    /// let yoke2 = Yoke::<&'static str, _>::attach_to_cart(buffer2, |b| b.trim());
     ///
     /// let erased1: Yoke<_, ErasedRcCart> = yoke1.erase_rc_cart();
     /// // Wrap the Box in an Rc to make it compatible
@@ -866,8 +813,8 @@ impl<Y: for<'a> Yokeable<'a>, C: 'static + Sized> Yoke<Y, Box<C>> {
     /// let buffer1: Rc<String> = Rc::new("   foo bar baz  ".into());
     /// let buffer2: Box<String> = Box::new("  baz quux  ".into());
     ///
-    /// let yoke1 = Yoke::<&'static str, _>::attach_to_cart_badly(buffer1, |rc| rc.trim());
-    /// let yoke2 = Yoke::<&'static str, _>::attach_to_cart_badly(buffer2, |b| b.trim());
+    /// let yoke1 = Yoke::<&'static str, _>::attach_to_cart(buffer1, |rc| rc.trim());
+    /// let yoke2 = Yoke::<&'static str, _>::attach_to_cart(buffer2, |b| b.trim());
     ///
     /// // Wrap the Rc in an Box to make it compatible
     /// let erased1: Yoke<_, ErasedBoxCart> = yoke1.wrap_cart_in_box().erase_box_cart();

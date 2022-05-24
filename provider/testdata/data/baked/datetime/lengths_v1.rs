@@ -380,52 +380,40 @@ static AR_U_CA_BUDDHIST_AR_U_CA_COPTIC_AR_U_CA_ETHIOPIC: DataStruct =
         date: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
             full: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 80u8, 4u8, 0u8, 6u8, 12u8, 0u8, 0u8, 32u8, 128u8, 64u8, 1u8, 0u8,
                         0u8, 32u8, 128u8, 32u8, 4u8, 0u8, 0u8, 32u8, 128u8, 16u8, 1u8, 0u8, 0u8,
                         32u8, 128u8, 0u8, 1u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
             },
             long: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 64u8, 1u8, 0u8, 0u8, 32u8, 128u8, 32u8, 4u8, 0u8, 0u8, 32u8, 128u8,
                         16u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 1u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
             },
             medium: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 64u8, 2u8, 0u8, 32u8, 15u8, 0u8, 0u8, 47u8, 128u8, 32u8, 2u8, 0u8,
                         32u8, 15u8, 0u8, 0u8, 47u8, 128u8, 16u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8,
                         1u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
             },
             short: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 64u8, 1u8, 0u8, 32u8, 15u8, 0u8, 0u8, 47u8, 128u8, 32u8, 1u8, 0u8,
                         32u8, 15u8, 0u8, 0u8, 47u8, 128u8, 16u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8,
                         5u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
             },
@@ -433,51 +421,39 @@ static AR_U_CA_BUDDHIST_AR_U_CA_COPTIC_AR_U_CA_ETHIOPIC: DataStruct =
         time_h11_h12: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
             full: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8,
                         128u8, 144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8, 0u8, 0u8, 32u8, 128u8,
                         160u8, 4u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
             },
             long: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8,
                         128u8, 144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8, 0u8, 0u8, 32u8, 128u8,
                         160u8, 1u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
             },
             medium: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8,
                         128u8, 144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
             },
             short: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 32u8,
                         128u8, 96u8, 1u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Minutes,
             },
@@ -485,46 +461,36 @@ static AR_U_CA_BUDDHIST_AR_U_CA_COPTIC_AR_U_CA_ETHIOPIC: DataStruct =
         time_h23_h24: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
             full: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8,
                         128u8, 144u8, 2u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
             },
             long: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8,
                         128u8, 144u8, 2u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
             },
             medium: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8,
                         128u8, 144u8, 2u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
             },
             short: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                        128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8,
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Minutes,
             },
@@ -534,46 +500,34 @@ static AR_U_CA_BUDDHIST_AR_U_CA_COPTIC_AR_U_CA_ETHIOPIC: DataStruct =
             ::icu_datetime::provider::calendar::patterns::GenericLengthPatternsV1 {
                 full: ::icu_datetime::pattern::runtime::GenericPattern {
                     items: unsafe {
-                        static DATA: &[u8] = &[
+                        ::zerovec::ZeroVec::from_bytes_unchecked(&[
                             128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 0u8, 6u8, 65u8, 0u8, 6u8, 74u8, 0u8,
                             0u8, 32u8, 128u8, 0u8, 0u8,
-                        ];
-                        let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                        metadata /= 3usize;
-                        zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                        ])
                     },
                 },
                 long: ::icu_datetime::pattern::runtime::GenericPattern {
                     items: unsafe {
-                        static DATA: &[u8] = &[
+                        ::zerovec::ZeroVec::from_bytes_unchecked(&[
                             128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 0u8, 6u8, 65u8, 0u8, 6u8, 74u8, 0u8,
                             0u8, 32u8, 128u8, 0u8, 0u8,
-                        ];
-                        let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                        metadata /= 3usize;
-                        zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                        ])
                     },
                 },
                 medium: ::icu_datetime::pattern::runtime::GenericPattern {
                     items: unsafe {
-                        static DATA: &[u8] = &[
+                        ::zerovec::ZeroVec::from_bytes_unchecked(&[
                             128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 0u8, 6u8, 65u8, 0u8, 6u8, 74u8, 0u8,
                             0u8, 32u8, 128u8, 0u8, 0u8,
-                        ];
-                        let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                        metadata /= 3usize;
-                        zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                        ])
                     },
                 },
                 short: ::icu_datetime::pattern::runtime::GenericPattern {
                     items: unsafe {
-                        static DATA: &[u8] = &[
+                        ::zerovec::ZeroVec::from_bytes_unchecked(&[
                             128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 0u8, 6u8, 65u8, 0u8, 6u8, 74u8, 0u8,
                             0u8, 32u8, 128u8, 0u8, 0u8,
-                        ];
-                        let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                        metadata /= 3usize;
-                        zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                        ])
                     },
                 },
             },
@@ -583,49 +537,37 @@ static AR_U_CA_GREGORY_AR_EG_U_CA_GREGORY: DataStruct =
         date: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
             full: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 80u8, 4u8, 0u8, 6u8, 12u8, 0u8, 0u8, 32u8, 128u8, 64u8, 1u8, 0u8,
                         0u8, 32u8, 128u8, 32u8, 4u8, 0u8, 0u8, 32u8, 128u8, 16u8, 1u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
             },
             long: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 64u8, 1u8, 0u8, 0u8, 32u8, 128u8, 32u8, 4u8, 0u8, 0u8, 32u8, 128u8,
                         16u8, 1u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
             },
             medium: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 64u8, 2u8, 0u8, 32u8, 15u8, 0u8, 0u8, 47u8, 128u8, 32u8, 2u8, 0u8,
                         32u8, 15u8, 0u8, 0u8, 47u8, 128u8, 16u8, 1u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
             },
             short: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 64u8, 1u8, 0u8, 32u8, 15u8, 0u8, 0u8, 47u8, 128u8, 32u8, 1u8, 0u8,
                         32u8, 15u8, 0u8, 0u8, 47u8, 128u8, 16u8, 1u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
             },
@@ -633,51 +575,39 @@ static AR_U_CA_GREGORY_AR_EG_U_CA_GREGORY: DataStruct =
         time_h11_h12: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
             full: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8,
                         128u8, 144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8, 0u8, 0u8, 32u8, 128u8,
                         160u8, 4u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
             },
             long: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8,
                         128u8, 144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8, 0u8, 0u8, 32u8, 128u8,
                         160u8, 1u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
             },
             medium: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8,
                         128u8, 144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
             },
             short: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 32u8,
                         128u8, 96u8, 1u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Minutes,
             },
@@ -685,46 +615,36 @@ static AR_U_CA_GREGORY_AR_EG_U_CA_GREGORY: DataStruct =
         time_h23_h24: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
             full: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8,
                         128u8, 144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 163u8, 1u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
             },
             long: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8,
                         128u8, 144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 163u8, 1u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
             },
             medium: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8,
                         128u8, 144u8, 2u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
             },
             short: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                        128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8,
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Minutes,
             },
@@ -734,44 +654,32 @@ static AR_U_CA_GREGORY_AR_EG_U_CA_GREGORY: DataStruct =
             ::icu_datetime::provider::calendar::patterns::GenericLengthPatternsV1 {
                 full: ::icu_datetime::pattern::runtime::GenericPattern {
                     items: unsafe {
-                        static DATA: &[u8] = &[
+                        ::zerovec::ZeroVec::from_bytes_unchecked(&[
                             128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 0u8, 6u8, 65u8, 0u8, 6u8, 74u8, 0u8,
                             0u8, 32u8, 128u8, 0u8, 0u8,
-                        ];
-                        let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                        metadata /= 3usize;
-                        zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                        ])
                     },
                 },
                 long: ::icu_datetime::pattern::runtime::GenericPattern {
                     items: unsafe {
-                        static DATA: &[u8] = &[
+                        ::zerovec::ZeroVec::from_bytes_unchecked(&[
                             128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 0u8, 6u8, 65u8, 0u8, 6u8, 74u8, 0u8,
                             0u8, 32u8, 128u8, 0u8, 0u8,
-                        ];
-                        let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                        metadata /= 3usize;
-                        zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                        ])
                     },
                 },
                 medium: ::icu_datetime::pattern::runtime::GenericPattern {
                     items: unsafe {
-                        static DATA: &[u8] = &[
+                        ::zerovec::ZeroVec::from_bytes_unchecked(&[
                             128u8, 0u8, 1u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
-                        ];
-                        let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                        metadata /= 3usize;
-                        zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                        ])
                     },
                 },
                 short: ::icu_datetime::pattern::runtime::GenericPattern {
                     items: unsafe {
-                        static DATA: &[u8] = &[
+                        ::zerovec::ZeroVec::from_bytes_unchecked(&[
                             128u8, 0u8, 1u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
-                        ];
-                        let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                        metadata /= 3usize;
-                        zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                        ])
                     },
                 },
             },
@@ -781,50 +689,38 @@ static BN_U_CA_BUDDHIST_BN_U_CA_COPTIC_BN_U_CA_ETHIOPIC: DataStruct =
         date: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
             full: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 80u8, 4u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 64u8, 1u8, 0u8,
                         0u8, 32u8, 128u8, 32u8, 4u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 16u8,
                         1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 1u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
             },
             long: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 64u8, 1u8, 0u8, 0u8, 32u8, 128u8, 32u8, 4u8, 0u8, 0u8, 44u8, 0u8,
                         0u8, 32u8, 128u8, 16u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 1u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
             },
             medium: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 64u8, 1u8, 0u8, 0u8, 32u8, 128u8, 32u8, 3u8, 0u8, 0u8, 44u8, 0u8,
                         0u8, 32u8, 128u8, 16u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 1u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
             },
             short: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 64u8, 1u8, 0u8, 0u8, 47u8, 128u8, 32u8, 1u8, 0u8, 0u8, 47u8, 128u8,
                         16u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 5u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
             },
@@ -832,51 +728,39 @@ static BN_U_CA_BUDDHIST_BN_U_CA_COPTIC_BN_U_CA_ETHIOPIC: DataStruct =
         time_h11_h12: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
             full: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8,
                         128u8, 144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8, 0u8, 0u8, 32u8, 128u8,
                         160u8, 4u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
             },
             long: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8,
                         128u8, 144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8, 0u8, 0u8, 32u8, 128u8,
                         160u8, 1u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
             },
             medium: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8,
                         128u8, 144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
             },
             short: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 32u8,
                         128u8, 96u8, 1u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Minutes,
             },
@@ -884,46 +768,36 @@ static BN_U_CA_BUDDHIST_BN_U_CA_COPTIC_BN_U_CA_ETHIOPIC: DataStruct =
         time_h23_h24: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
             full: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8,
                         128u8, 144u8, 2u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
             },
             long: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8,
                         128u8, 144u8, 2u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
             },
             medium: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8,
                         128u8, 144u8, 2u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
             },
             short: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                        128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8,
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Minutes,
             },
@@ -933,34 +807,30 @@ static BN_U_CA_BUDDHIST_BN_U_CA_COPTIC_BN_U_CA_ETHIOPIC: DataStruct =
             ::icu_datetime::provider::calendar::patterns::GenericLengthPatternsV1 {
                 full: ::icu_datetime::pattern::runtime::GenericPattern {
                     items: unsafe {
-                        static DATA: &[u8] = &[128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8];
-                        let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                        metadata /= 3usize;
-                        zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                        ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                            128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
+                        ])
                     },
                 },
                 long: ::icu_datetime::pattern::runtime::GenericPattern {
                     items: unsafe {
-                        static DATA: &[u8] = &[128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8];
-                        let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                        metadata /= 3usize;
-                        zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                        ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                            128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
+                        ])
                     },
                 },
                 medium: ::icu_datetime::pattern::runtime::GenericPattern {
                     items: unsafe {
-                        static DATA: &[u8] = &[128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8];
-                        let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                        metadata /= 3usize;
-                        zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                        ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                            128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
+                        ])
                     },
                 },
                 short: ::icu_datetime::pattern::runtime::GenericPattern {
                     items: unsafe {
-                        static DATA: &[u8] = &[128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8];
-                        let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                        metadata /= 3usize;
-                        zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                        ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                            128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
+                        ])
                     },
                 },
             },
@@ -970,50 +840,38 @@ static BN_U_CA_GREGORY_CCP_U_CA_GREGORY: DataStruct =
         date: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
             full: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 80u8, 4u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 64u8, 1u8, 0u8,
                         0u8, 32u8, 128u8, 32u8, 4u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 16u8,
                         1u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
             },
             long: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 64u8, 1u8, 0u8, 0u8, 32u8, 128u8, 32u8, 4u8, 0u8, 0u8, 44u8, 0u8,
                         0u8, 32u8, 128u8, 16u8, 1u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
             },
             medium: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 64u8, 1u8, 0u8, 0u8, 32u8, 128u8, 32u8, 3u8, 0u8, 0u8, 44u8, 0u8,
                         0u8, 32u8, 128u8, 16u8, 1u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
             },
             short: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 64u8, 1u8, 0u8, 0u8, 47u8, 128u8, 32u8, 1u8, 0u8, 0u8, 47u8, 128u8,
                         16u8, 2u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
             },
@@ -1021,51 +879,39 @@ static BN_U_CA_GREGORY_CCP_U_CA_GREGORY: DataStruct =
         time_h11_h12: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
             full: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8,
                         128u8, 144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8, 0u8, 0u8, 32u8, 128u8,
                         160u8, 4u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
             },
             long: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8,
                         128u8, 144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8, 0u8, 0u8, 32u8, 128u8,
                         160u8, 1u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
             },
             medium: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8,
                         128u8, 144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
             },
             short: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 32u8,
                         128u8, 96u8, 1u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Minutes,
             },
@@ -1073,46 +919,36 @@ static BN_U_CA_GREGORY_CCP_U_CA_GREGORY: DataStruct =
         time_h23_h24: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
             full: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8,
                         128u8, 144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 163u8, 1u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
             },
             long: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8,
                         128u8, 144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 163u8, 1u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
             },
             medium: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8,
                         128u8, 144u8, 2u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
             },
             short: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                        128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8,
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Minutes,
             },
@@ -1122,34 +958,30 @@ static BN_U_CA_GREGORY_CCP_U_CA_GREGORY: DataStruct =
             ::icu_datetime::provider::calendar::patterns::GenericLengthPatternsV1 {
                 full: ::icu_datetime::pattern::runtime::GenericPattern {
                     items: unsafe {
-                        static DATA: &[u8] = &[128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8];
-                        let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                        metadata /= 3usize;
-                        zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                        ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                            128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
+                        ])
                     },
                 },
                 long: ::icu_datetime::pattern::runtime::GenericPattern {
                     items: unsafe {
-                        static DATA: &[u8] = &[128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8];
-                        let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                        metadata /= 3usize;
-                        zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                        ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                            128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
+                        ])
                     },
                 },
                 medium: ::icu_datetime::pattern::runtime::GenericPattern {
                     items: unsafe {
-                        static DATA: &[u8] = &[128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8];
-                        let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                        metadata /= 3usize;
-                        zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                        ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                            128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
+                        ])
                     },
                 },
                 short: ::icu_datetime::pattern::runtime::GenericPattern {
                     items: unsafe {
-                        static DATA: &[u8] = &[128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8];
-                        let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                        metadata /= 3usize;
-                        zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                        ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                            128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
+                        ])
                     },
                 },
             },
@@ -1159,50 +991,38 @@ static EN_001_U_CA_BUDDHIST_EN_001_U_CA_COPTIC: DataStruct =
         date: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
             full: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 80u8, 4u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 64u8, 1u8, 0u8,
                         0u8, 32u8, 128u8, 32u8, 4u8, 0u8, 0u8, 32u8, 128u8, 16u8, 1u8, 0u8, 0u8,
                         32u8, 128u8, 0u8, 1u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
             },
             long: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 64u8, 1u8, 0u8, 0u8, 32u8, 128u8, 32u8, 4u8, 0u8, 0u8, 32u8, 128u8,
                         16u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 1u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
             },
             medium: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 64u8, 1u8, 0u8, 0u8, 32u8, 128u8, 32u8, 3u8, 0u8, 0u8, 32u8, 128u8,
                         16u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 1u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
             },
             short: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 64u8, 2u8, 0u8, 0u8, 47u8, 128u8, 32u8, 2u8, 0u8, 0u8, 47u8, 128u8,
                         16u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 5u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
             },
@@ -1210,51 +1030,39 @@ static EN_001_U_CA_BUDDHIST_EN_001_U_CA_COPTIC: DataStruct =
         time_h11_h12: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
             full: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8,
                         128u8, 144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8, 0u8, 0u8, 32u8, 128u8,
                         160u8, 4u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
             },
             long: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8,
                         128u8, 144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8, 0u8, 0u8, 32u8, 128u8,
                         160u8, 1u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
             },
             medium: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8,
                         128u8, 144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
             },
             short: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 32u8,
                         128u8, 96u8, 1u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Minutes,
             },
@@ -1262,46 +1070,36 @@ static EN_001_U_CA_BUDDHIST_EN_001_U_CA_COPTIC: DataStruct =
         time_h23_h24: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
             full: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8,
                         128u8, 144u8, 2u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
             },
             long: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8,
                         128u8, 144u8, 2u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
             },
             medium: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8,
                         128u8, 144u8, 2u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
             },
             short: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                        128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8,
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Minutes,
             },
@@ -1311,44 +1109,32 @@ static EN_001_U_CA_BUDDHIST_EN_001_U_CA_COPTIC: DataStruct =
             ::icu_datetime::provider::calendar::patterns::GenericLengthPatternsV1 {
                 full: ::icu_datetime::pattern::runtime::GenericPattern {
                     items: unsafe {
-                        static DATA: &[u8] = &[
+                        ::zerovec::ZeroVec::from_bytes_unchecked(&[
                             128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 0u8, 0u8, 97u8, 0u8, 0u8, 116u8, 0u8,
                             0u8, 32u8, 128u8, 0u8, 0u8,
-                        ];
-                        let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                        metadata /= 3usize;
-                        zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                        ])
                     },
                 },
                 long: ::icu_datetime::pattern::runtime::GenericPattern {
                     items: unsafe {
-                        static DATA: &[u8] = &[
+                        ::zerovec::ZeroVec::from_bytes_unchecked(&[
                             128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 0u8, 0u8, 97u8, 0u8, 0u8, 116u8, 0u8,
                             0u8, 32u8, 128u8, 0u8, 0u8,
-                        ];
-                        let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                        metadata /= 3usize;
-                        zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                        ])
                     },
                 },
                 medium: ::icu_datetime::pattern::runtime::GenericPattern {
                     items: unsafe {
-                        static DATA: &[u8] = &[
+                        ::zerovec::ZeroVec::from_bytes_unchecked(&[
                             128u8, 0u8, 1u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
-                        ];
-                        let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                        metadata /= 3usize;
-                        zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                        ])
                     },
                 },
                 short: ::icu_datetime::pattern::runtime::GenericPattern {
                     items: unsafe {
-                        static DATA: &[u8] = &[
+                        ::zerovec::ZeroVec::from_bytes_unchecked(&[
                             128u8, 0u8, 1u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
-                        ];
-                        let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                        metadata /= 3usize;
-                        zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                        ])
                     },
                 },
             },
@@ -1357,49 +1143,37 @@ static EN_001_U_CA_GREGORY: DataStruct = &::icu_datetime::provider::calendar::Da
     date: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
         full: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 80u8, 4u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 64u8, 1u8, 0u8, 0u8,
                     32u8, 128u8, 32u8, 4u8, 0u8, 0u8, 32u8, 128u8, 16u8, 1u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
         },
         long: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 64u8, 1u8, 0u8, 0u8, 32u8, 128u8, 32u8, 4u8, 0u8, 0u8, 32u8, 128u8,
                     16u8, 1u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
         },
         medium: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 64u8, 1u8, 0u8, 0u8, 32u8, 128u8, 32u8, 3u8, 0u8, 0u8, 32u8, 128u8,
                     16u8, 1u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
         },
         short: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 64u8, 2u8, 0u8, 0u8, 47u8, 128u8, 32u8, 2u8, 0u8, 0u8, 47u8, 128u8,
                     16u8, 1u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
         },
@@ -1407,51 +1181,39 @@ static EN_001_U_CA_GREGORY: DataStruct = &::icu_datetime::provider::calendar::Da
     time_h11_h12: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
         full: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8, 128u8,
                     144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8, 0u8, 0u8, 32u8, 128u8, 160u8,
                     4u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
         },
         long: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8, 128u8,
                     144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8, 0u8, 0u8, 32u8, 128u8, 160u8,
                     1u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
         },
         medium: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8, 128u8,
                     144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
         },
         short: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 32u8, 128u8,
                     96u8, 1u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Minutes,
         },
@@ -1459,46 +1221,36 @@ static EN_001_U_CA_GREGORY: DataStruct = &::icu_datetime::provider::calendar::Da
     time_h23_h24: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
         full: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8, 128u8,
                     144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 163u8, 1u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
         },
         long: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8, 128u8,
                     144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 163u8, 1u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
         },
         medium: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8, 128u8,
                     144u8, 2u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
         },
         short: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                    128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8,
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Minutes,
         },
@@ -1507,44 +1259,32 @@ static EN_001_U_CA_GREGORY: DataStruct = &::icu_datetime::provider::calendar::Da
     length_combinations: ::icu_datetime::provider::calendar::patterns::GenericLengthPatternsV1 {
         full: ::icu_datetime::pattern::runtime::GenericPattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 0u8, 0u8, 97u8, 0u8, 0u8, 116u8, 0u8, 0u8,
                     32u8, 128u8, 0u8, 0u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
         },
         long: ::icu_datetime::pattern::runtime::GenericPattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 0u8, 0u8, 97u8, 0u8, 0u8, 116u8, 0u8, 0u8,
                     32u8, 128u8, 0u8, 0u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
         },
         medium: ::icu_datetime::pattern::runtime::GenericPattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 0u8, 1u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
         },
         short: ::icu_datetime::pattern::runtime::GenericPattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 0u8, 1u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
         },
     },
@@ -1554,50 +1294,38 @@ static EN_U_CA_BUDDHIST_EN_U_CA_COPTIC_EN_U_CA_ETHIOPIC: DataStruct =
         date: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
             full: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 80u8, 4u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 32u8, 4u8, 0u8,
                         0u8, 32u8, 128u8, 64u8, 1u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 16u8,
                         1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 1u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
             },
             long: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 32u8, 4u8, 0u8, 0u8, 32u8, 128u8, 64u8, 1u8, 0u8, 0u8, 44u8, 0u8,
                         0u8, 32u8, 128u8, 16u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 1u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
             },
             medium: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 32u8, 3u8, 0u8, 0u8, 32u8, 128u8, 64u8, 1u8, 0u8, 0u8, 44u8, 0u8,
                         0u8, 32u8, 128u8, 16u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 1u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
             },
             short: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 32u8, 1u8, 0u8, 0u8, 47u8, 128u8, 64u8, 1u8, 0u8, 0u8, 47u8, 128u8,
                         16u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 5u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
             },
@@ -1605,51 +1333,39 @@ static EN_U_CA_BUDDHIST_EN_U_CA_COPTIC_EN_U_CA_ETHIOPIC: DataStruct =
         time_h11_h12: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
             full: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8,
                         128u8, 144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8, 0u8, 0u8, 32u8, 128u8,
                         160u8, 4u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
             },
             long: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8,
                         128u8, 144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8, 0u8, 0u8, 32u8, 128u8,
                         160u8, 1u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
             },
             medium: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8,
                         128u8, 144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
             },
             short: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 32u8,
                         128u8, 96u8, 1u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Minutes,
             },
@@ -1657,46 +1373,36 @@ static EN_U_CA_BUDDHIST_EN_U_CA_COPTIC_EN_U_CA_ETHIOPIC: DataStruct =
         time_h23_h24: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
             full: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8,
                         128u8, 144u8, 2u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
             },
             long: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8,
                         128u8, 144u8, 2u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
             },
             medium: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8,
                         128u8, 144u8, 2u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
             },
             short: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                        128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8,
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Minutes,
             },
@@ -1706,44 +1412,32 @@ static EN_U_CA_BUDDHIST_EN_U_CA_COPTIC_EN_U_CA_ETHIOPIC: DataStruct =
             ::icu_datetime::provider::calendar::patterns::GenericLengthPatternsV1 {
                 full: ::icu_datetime::pattern::runtime::GenericPattern {
                     items: unsafe {
-                        static DATA: &[u8] = &[
+                        ::zerovec::ZeroVec::from_bytes_unchecked(&[
                             128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 0u8, 0u8, 97u8, 0u8, 0u8, 116u8, 0u8,
                             0u8, 32u8, 128u8, 0u8, 0u8,
-                        ];
-                        let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                        metadata /= 3usize;
-                        zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                        ])
                     },
                 },
                 long: ::icu_datetime::pattern::runtime::GenericPattern {
                     items: unsafe {
-                        static DATA: &[u8] = &[
+                        ::zerovec::ZeroVec::from_bytes_unchecked(&[
                             128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 0u8, 0u8, 97u8, 0u8, 0u8, 116u8, 0u8,
                             0u8, 32u8, 128u8, 0u8, 0u8,
-                        ];
-                        let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                        metadata /= 3usize;
-                        zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                        ])
                     },
                 },
                 medium: ::icu_datetime::pattern::runtime::GenericPattern {
                     items: unsafe {
-                        static DATA: &[u8] = &[
+                        ::zerovec::ZeroVec::from_bytes_unchecked(&[
                             128u8, 0u8, 1u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
-                        ];
-                        let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                        metadata /= 3usize;
-                        zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                        ])
                     },
                 },
                 short: ::icu_datetime::pattern::runtime::GenericPattern {
                     items: unsafe {
-                        static DATA: &[u8] = &[
+                        ::zerovec::ZeroVec::from_bytes_unchecked(&[
                             128u8, 0u8, 1u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
-                        ];
-                        let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                        metadata /= 3usize;
-                        zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                        ])
                     },
                 },
             },
@@ -1752,49 +1446,37 @@ static EN_U_CA_GREGORY: DataStruct = &::icu_datetime::provider::calendar::DatePa
     date: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
         full: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 80u8, 4u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 32u8, 4u8, 0u8, 0u8,
                     32u8, 128u8, 64u8, 1u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 16u8, 1u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
         },
         long: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 32u8, 4u8, 0u8, 0u8, 32u8, 128u8, 64u8, 1u8, 0u8, 0u8, 44u8, 0u8, 0u8,
                     32u8, 128u8, 16u8, 1u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
         },
         medium: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 32u8, 3u8, 0u8, 0u8, 32u8, 128u8, 64u8, 1u8, 0u8, 0u8, 44u8, 0u8, 0u8,
                     32u8, 128u8, 16u8, 1u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
         },
         short: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 32u8, 1u8, 0u8, 0u8, 47u8, 128u8, 64u8, 1u8, 0u8, 0u8, 47u8, 128u8,
                     16u8, 2u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
         },
@@ -1802,51 +1484,39 @@ static EN_U_CA_GREGORY: DataStruct = &::icu_datetime::provider::calendar::DatePa
     time_h11_h12: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
         full: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8, 128u8,
                     144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8, 0u8, 0u8, 32u8, 128u8, 160u8,
                     4u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
         },
         long: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8, 128u8,
                     144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8, 0u8, 0u8, 32u8, 128u8, 160u8,
                     1u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
         },
         medium: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8, 128u8,
                     144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
         },
         short: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 32u8, 128u8,
                     96u8, 1u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Minutes,
         },
@@ -1854,46 +1524,36 @@ static EN_U_CA_GREGORY: DataStruct = &::icu_datetime::provider::calendar::DatePa
     time_h23_h24: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
         full: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8, 128u8,
                     144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 163u8, 1u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
         },
         long: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8, 128u8,
                     144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 163u8, 1u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
         },
         medium: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8, 128u8,
                     144u8, 2u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
         },
         short: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                    128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8,
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Minutes,
         },
@@ -1902,44 +1562,32 @@ static EN_U_CA_GREGORY: DataStruct = &::icu_datetime::provider::calendar::DatePa
     length_combinations: ::icu_datetime::provider::calendar::patterns::GenericLengthPatternsV1 {
         full: ::icu_datetime::pattern::runtime::GenericPattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 0u8, 0u8, 97u8, 0u8, 0u8, 116u8, 0u8, 0u8,
                     32u8, 128u8, 0u8, 0u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
         },
         long: ::icu_datetime::pattern::runtime::GenericPattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 0u8, 0u8, 97u8, 0u8, 0u8, 116u8, 0u8, 0u8,
                     32u8, 128u8, 0u8, 0u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
         },
         medium: ::icu_datetime::pattern::runtime::GenericPattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 0u8, 1u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
         },
         short: ::icu_datetime::pattern::runtime::GenericPattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 0u8, 1u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
         },
     },
@@ -1949,50 +1597,38 @@ static EN_ZA_U_CA_BUDDHIST_EN_ZA_U_CA_COPTIC: DataStruct =
         date: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
             full: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 80u8, 4u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 64u8, 2u8, 0u8,
                         0u8, 32u8, 128u8, 32u8, 4u8, 0u8, 0u8, 32u8, 128u8, 16u8, 1u8, 0u8, 0u8,
                         32u8, 128u8, 0u8, 1u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
             },
             long: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 64u8, 2u8, 0u8, 0u8, 32u8, 128u8, 32u8, 4u8, 0u8, 0u8, 32u8, 128u8,
                         16u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 1u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
             },
             medium: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 64u8, 2u8, 0u8, 0u8, 32u8, 128u8, 32u8, 3u8, 0u8, 0u8, 32u8, 128u8,
                         16u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 1u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
             },
             short: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 0u8, 5u8, 0u8, 0u8, 32u8, 128u8, 16u8, 1u8, 0u8, 0u8, 47u8, 128u8,
                         32u8, 2u8, 0u8, 0u8, 47u8, 128u8, 64u8, 2u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
             },
@@ -2000,49 +1636,37 @@ static EN_ZA_U_CA_BUDDHIST_EN_ZA_U_CA_COPTIC: DataStruct =
         time_h11_h12: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
             full: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8,
                         128u8, 144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
             },
             long: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8,
                         128u8, 144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
             },
             medium: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8,
                         128u8, 144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
             },
             short: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 32u8,
                         128u8, 96u8, 1u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Minutes,
             },
@@ -2050,46 +1674,36 @@ static EN_ZA_U_CA_BUDDHIST_EN_ZA_U_CA_COPTIC: DataStruct =
         time_h23_h24: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
             full: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8,
                         128u8, 144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 160u8, 4u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
             },
             long: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8,
                         128u8, 144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 160u8, 1u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
             },
             medium: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8,
                         128u8, 144u8, 2u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
             },
             short: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                        128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8,
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Minutes,
             },
@@ -2099,44 +1713,32 @@ static EN_ZA_U_CA_BUDDHIST_EN_ZA_U_CA_COPTIC: DataStruct =
             ::icu_datetime::provider::calendar::patterns::GenericLengthPatternsV1 {
                 full: ::icu_datetime::pattern::runtime::GenericPattern {
                     items: unsafe {
-                        static DATA: &[u8] = &[
+                        ::zerovec::ZeroVec::from_bytes_unchecked(&[
                             128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 0u8, 0u8, 97u8, 0u8, 0u8, 116u8, 0u8,
                             0u8, 32u8, 128u8, 0u8, 0u8,
-                        ];
-                        let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                        metadata /= 3usize;
-                        zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                        ])
                     },
                 },
                 long: ::icu_datetime::pattern::runtime::GenericPattern {
                     items: unsafe {
-                        static DATA: &[u8] = &[
+                        ::zerovec::ZeroVec::from_bytes_unchecked(&[
                             128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 0u8, 0u8, 97u8, 0u8, 0u8, 116u8, 0u8,
                             0u8, 32u8, 128u8, 0u8, 0u8,
-                        ];
-                        let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                        metadata /= 3usize;
-                        zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                        ])
                     },
                 },
                 medium: ::icu_datetime::pattern::runtime::GenericPattern {
                     items: unsafe {
-                        static DATA: &[u8] = &[
+                        ::zerovec::ZeroVec::from_bytes_unchecked(&[
                             128u8, 0u8, 1u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
-                        ];
-                        let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                        metadata /= 3usize;
-                        zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                        ])
                     },
                 },
                 short: ::icu_datetime::pattern::runtime::GenericPattern {
                     items: unsafe {
-                        static DATA: &[u8] = &[
+                        ::zerovec::ZeroVec::from_bytes_unchecked(&[
                             128u8, 0u8, 1u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
-                        ];
-                        let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                        metadata /= 3usize;
-                        zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                        ])
                     },
                 },
             },
@@ -2145,49 +1747,37 @@ static EN_ZA_U_CA_GREGORY: DataStruct = &::icu_datetime::provider::calendar::Dat
     date: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
         full: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 80u8, 4u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 64u8, 2u8, 0u8, 0u8,
                     32u8, 128u8, 32u8, 4u8, 0u8, 0u8, 32u8, 128u8, 16u8, 1u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
         },
         long: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 64u8, 2u8, 0u8, 0u8, 32u8, 128u8, 32u8, 4u8, 0u8, 0u8, 32u8, 128u8,
                     16u8, 1u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
         },
         medium: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 64u8, 2u8, 0u8, 0u8, 32u8, 128u8, 32u8, 3u8, 0u8, 0u8, 32u8, 128u8,
                     16u8, 1u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
         },
         short: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 16u8, 1u8, 0u8, 0u8, 47u8, 128u8, 32u8, 2u8, 0u8, 0u8, 47u8, 128u8,
                     64u8, 2u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
         },
@@ -2195,51 +1785,39 @@ static EN_ZA_U_CA_GREGORY: DataStruct = &::icu_datetime::provider::calendar::Dat
     time_h11_h12: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
         full: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8, 128u8,
                     144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8, 0u8, 0u8, 32u8, 128u8, 163u8,
                     1u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
         },
         long: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8, 128u8,
                     144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8, 0u8, 0u8, 32u8, 128u8, 163u8,
                     1u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
         },
         medium: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8, 128u8,
                     144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
         },
         short: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 32u8, 128u8,
                     96u8, 1u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Minutes,
         },
@@ -2247,46 +1825,36 @@ static EN_ZA_U_CA_GREGORY: DataStruct = &::icu_datetime::provider::calendar::Dat
     time_h23_h24: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
         full: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8, 128u8,
                     144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 160u8, 4u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
         },
         long: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8, 128u8,
                     144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 160u8, 1u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
         },
         medium: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8, 128u8,
                     144u8, 2u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
         },
         short: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                    128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8,
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Minutes,
         },
@@ -2295,44 +1863,32 @@ static EN_ZA_U_CA_GREGORY: DataStruct = &::icu_datetime::provider::calendar::Dat
     length_combinations: ::icu_datetime::provider::calendar::patterns::GenericLengthPatternsV1 {
         full: ::icu_datetime::pattern::runtime::GenericPattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 0u8, 0u8, 97u8, 0u8, 0u8, 116u8, 0u8, 0u8,
                     32u8, 128u8, 0u8, 0u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
         },
         long: ::icu_datetime::pattern::runtime::GenericPattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 0u8, 0u8, 97u8, 0u8, 0u8, 116u8, 0u8, 0u8,
                     32u8, 128u8, 0u8, 0u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
         },
         medium: ::icu_datetime::pattern::runtime::GenericPattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 0u8, 1u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
         },
         short: ::icu_datetime::pattern::runtime::GenericPattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 0u8, 1u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
         },
     },
@@ -2341,50 +1897,38 @@ static EN_ZA_U_CA_JAPANESE: DataStruct = &::icu_datetime::provider::calendar::Da
     date: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
         full: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 80u8, 4u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 32u8, 4u8, 0u8, 0u8,
                     32u8, 128u8, 64u8, 1u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 16u8, 1u8, 0u8,
                     0u8, 32u8, 128u8, 0u8, 1u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
         },
         long: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 32u8, 4u8, 0u8, 0u8, 32u8, 128u8, 64u8, 1u8, 0u8, 0u8, 44u8, 0u8, 0u8,
                     32u8, 128u8, 16u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 1u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
         },
         medium: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 32u8, 3u8, 0u8, 0u8, 32u8, 128u8, 64u8, 1u8, 0u8, 0u8, 44u8, 0u8, 0u8,
                     32u8, 128u8, 16u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 1u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
         },
         short: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 32u8, 1u8, 0u8, 0u8, 47u8, 128u8, 64u8, 1u8, 0u8, 0u8, 47u8, 128u8,
                     16u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 5u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
         },
@@ -2392,49 +1936,37 @@ static EN_ZA_U_CA_JAPANESE: DataStruct = &::icu_datetime::provider::calendar::Da
     time_h11_h12: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
         full: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8, 128u8,
                     144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
         },
         long: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8, 128u8,
                     144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
         },
         medium: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8, 128u8,
                     144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
         },
         short: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 32u8, 128u8,
                     96u8, 1u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Minutes,
         },
@@ -2442,46 +1974,36 @@ static EN_ZA_U_CA_JAPANESE: DataStruct = &::icu_datetime::provider::calendar::Da
     time_h23_h24: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
         full: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8, 128u8,
                     144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 160u8, 4u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
         },
         long: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8, 128u8,
                     144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 160u8, 1u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
         },
         medium: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8, 128u8,
                     144u8, 2u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
         },
         short: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                    128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8,
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Minutes,
         },
@@ -2490,44 +2012,32 @@ static EN_ZA_U_CA_JAPANESE: DataStruct = &::icu_datetime::provider::calendar::Da
     length_combinations: ::icu_datetime::provider::calendar::patterns::GenericLengthPatternsV1 {
         full: ::icu_datetime::pattern::runtime::GenericPattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 0u8, 0u8, 97u8, 0u8, 0u8, 116u8, 0u8, 0u8,
                     32u8, 128u8, 0u8, 0u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
         },
         long: ::icu_datetime::pattern::runtime::GenericPattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 0u8, 0u8, 97u8, 0u8, 0u8, 116u8, 0u8, 0u8,
                     32u8, 128u8, 0u8, 0u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
         },
         medium: ::icu_datetime::pattern::runtime::GenericPattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 0u8, 1u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
         },
         short: ::icu_datetime::pattern::runtime::GenericPattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 0u8, 1u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
         },
     },
@@ -2537,53 +2047,41 @@ static ES_AR_U_CA_BUDDHIST_ES_AR_U_CA_COPTIC: DataStruct =
         date: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
             full: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 80u8, 4u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 64u8, 1u8, 0u8,
                         0u8, 32u8, 0u8, 0u8, 100u8, 0u8, 0u8, 101u8, 0u8, 0u8, 32u8, 128u8, 32u8,
                         4u8, 0u8, 0u8, 32u8, 0u8, 0u8, 100u8, 0u8, 0u8, 101u8, 0u8, 0u8, 32u8,
                         128u8, 16u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 1u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
             },
             long: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 64u8, 1u8, 0u8, 0u8, 32u8, 0u8, 0u8, 100u8, 0u8, 0u8, 101u8, 0u8,
                         0u8, 32u8, 128u8, 32u8, 4u8, 0u8, 0u8, 32u8, 0u8, 0u8, 100u8, 0u8, 0u8,
                         101u8, 0u8, 0u8, 32u8, 128u8, 16u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 1u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
             },
             medium: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 64u8, 1u8, 0u8, 0u8, 32u8, 0u8, 0u8, 100u8, 0u8, 0u8, 101u8, 0u8,
                         0u8, 32u8, 128u8, 32u8, 3u8, 0u8, 0u8, 32u8, 0u8, 0u8, 100u8, 0u8, 0u8,
                         101u8, 0u8, 0u8, 32u8, 128u8, 16u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 1u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
             },
             short: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 64u8, 1u8, 0u8, 0u8, 47u8, 128u8, 32u8, 1u8, 0u8, 0u8, 47u8, 128u8,
                         16u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 5u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
             },
@@ -2591,49 +2089,37 @@ static ES_AR_U_CA_BUDDHIST_ES_AR_U_CA_COPTIC: DataStruct =
         time_h11_h12: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
             full: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8,
                         128u8, 144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
             },
             long: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8,
                         128u8, 144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
             },
             medium: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8,
                         128u8, 144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
             },
             short: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 32u8,
                         128u8, 96u8, 1u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Minutes,
             },
@@ -2641,46 +2127,36 @@ static ES_AR_U_CA_BUDDHIST_ES_AR_U_CA_COPTIC: DataStruct =
         time_h23_h24: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
             full: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8,
                         128u8, 144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 160u8, 4u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
             },
             long: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8,
                         128u8, 144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 160u8, 1u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
             },
             medium: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8,
                         128u8, 144u8, 2u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
             },
             short: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                        128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8,
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Minutes,
             },
@@ -2690,38 +2166,30 @@ static ES_AR_U_CA_BUDDHIST_ES_AR_U_CA_COPTIC: DataStruct =
             ::icu_datetime::provider::calendar::patterns::GenericLengthPatternsV1 {
                 full: ::icu_datetime::pattern::runtime::GenericPattern {
                     items: unsafe {
-                        static DATA: &[u8] = &[
+                        ::zerovec::ZeroVec::from_bytes_unchecked(&[
                             128u8, 0u8, 1u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
-                        ];
-                        let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                        metadata /= 3usize;
-                        zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                        ])
                     },
                 },
                 long: ::icu_datetime::pattern::runtime::GenericPattern {
                     items: unsafe {
-                        static DATA: &[u8] = &[
+                        ::zerovec::ZeroVec::from_bytes_unchecked(&[
                             128u8, 0u8, 1u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
-                        ];
-                        let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                        metadata /= 3usize;
-                        zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                        ])
                     },
                 },
                 medium: ::icu_datetime::pattern::runtime::GenericPattern {
                     items: unsafe {
-                        static DATA: &[u8] = &[128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8];
-                        let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                        metadata /= 3usize;
-                        zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                        ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                            128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
+                        ])
                     },
                 },
                 short: ::icu_datetime::pattern::runtime::GenericPattern {
                     items: unsafe {
-                        static DATA: &[u8] = &[128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8];
-                        let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                        metadata /= 3usize;
-                        zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                        ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                            128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
+                        ])
                     },
                 },
             },
@@ -2730,51 +2198,39 @@ static ES_AR_U_CA_GREGORY: DataStruct = &::icu_datetime::provider::calendar::Dat
     date: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
         full: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 80u8, 4u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 64u8, 1u8, 0u8, 0u8,
                     32u8, 0u8, 0u8, 100u8, 0u8, 0u8, 101u8, 0u8, 0u8, 32u8, 128u8, 32u8, 4u8, 0u8,
                     0u8, 32u8, 0u8, 0u8, 100u8, 0u8, 0u8, 101u8, 0u8, 0u8, 32u8, 128u8, 16u8, 1u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
         },
         long: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 64u8, 1u8, 0u8, 0u8, 32u8, 0u8, 0u8, 100u8, 0u8, 0u8, 101u8, 0u8, 0u8,
                     32u8, 128u8, 32u8, 4u8, 0u8, 0u8, 32u8, 0u8, 0u8, 100u8, 0u8, 0u8, 101u8, 0u8,
                     0u8, 32u8, 128u8, 16u8, 1u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
         },
         medium: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 64u8, 1u8, 0u8, 0u8, 32u8, 128u8, 32u8, 3u8, 0u8, 0u8, 32u8, 128u8,
                     16u8, 1u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
         },
         short: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 64u8, 1u8, 0u8, 0u8, 47u8, 128u8, 32u8, 1u8, 0u8, 0u8, 47u8, 128u8,
                     16u8, 2u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
         },
@@ -2782,51 +2238,39 @@ static ES_AR_U_CA_GREGORY: DataStruct = &::icu_datetime::provider::calendar::Dat
     time_h11_h12: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
         full: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8, 128u8,
                     144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8, 0u8, 0u8, 32u8, 128u8, 163u8,
                     1u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
         },
         long: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8, 128u8,
                     144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8, 0u8, 0u8, 32u8, 128u8, 163u8,
                     1u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
         },
         medium: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 113u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8, 128u8,
                     144u8, 2u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
         },
         short: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 32u8, 128u8,
                     96u8, 1u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Minutes,
         },
@@ -2834,46 +2278,36 @@ static ES_AR_U_CA_GREGORY: DataStruct = &::icu_datetime::provider::calendar::Dat
     time_h23_h24: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
         full: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8, 128u8,
                     144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 160u8, 4u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
         },
         long: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8, 128u8,
                     144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 160u8, 1u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
         },
         medium: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8, 128u8,
                     144u8, 2u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
         },
         short: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                    128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8,
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Minutes,
         },
@@ -2882,40 +2316,30 @@ static ES_AR_U_CA_GREGORY: DataStruct = &::icu_datetime::provider::calendar::Dat
     length_combinations: ::icu_datetime::provider::calendar::patterns::GenericLengthPatternsV1 {
         full: ::icu_datetime::pattern::runtime::GenericPattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 0u8, 1u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
         },
         long: ::icu_datetime::pattern::runtime::GenericPattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 0u8, 1u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
         },
         medium: ::icu_datetime::pattern::runtime::GenericPattern {
             items: unsafe {
-                static DATA: &[u8] = &[128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                    128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
+                ])
             },
         },
         short: ::icu_datetime::pattern::runtime::GenericPattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 0u8, 1u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
         },
     },
@@ -2924,52 +2348,40 @@ static ES_AR_U_CA_JAPANESE: DataStruct = &::icu_datetime::provider::calendar::Da
     date: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
         full: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 80u8, 4u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 64u8, 1u8, 0u8, 0u8,
                     32u8, 0u8, 0u8, 100u8, 0u8, 0u8, 101u8, 0u8, 0u8, 32u8, 128u8, 32u8, 4u8, 0u8,
                     0u8, 32u8, 0u8, 0u8, 100u8, 0u8, 0u8, 101u8, 0u8, 0u8, 32u8, 128u8, 16u8, 1u8,
                     0u8, 0u8, 32u8, 128u8, 0u8, 1u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
         },
         long: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 64u8, 1u8, 0u8, 0u8, 32u8, 0u8, 0u8, 100u8, 0u8, 0u8, 101u8, 0u8, 0u8,
                     32u8, 128u8, 32u8, 4u8, 0u8, 0u8, 32u8, 0u8, 0u8, 100u8, 0u8, 0u8, 101u8, 0u8,
                     0u8, 32u8, 128u8, 16u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 1u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
         },
         medium: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 64u8, 2u8, 0u8, 0u8, 47u8, 128u8, 32u8, 2u8, 0u8, 0u8, 47u8, 128u8,
                     16u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 5u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
         },
         short: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 64u8, 2u8, 0u8, 0u8, 47u8, 128u8, 32u8, 2u8, 0u8, 0u8, 47u8, 128u8,
                     16u8, 2u8, 0u8, 0u8, 32u8, 128u8, 0u8, 5u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
         },
@@ -2977,49 +2389,37 @@ static ES_AR_U_CA_JAPANESE: DataStruct = &::icu_datetime::provider::calendar::Da
     time_h11_h12: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
         full: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8, 128u8,
                     144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
         },
         long: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8, 128u8,
                     144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
         },
         medium: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8, 128u8,
                     144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
         },
         short: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 32u8, 128u8,
                     96u8, 1u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Minutes,
         },
@@ -3027,46 +2427,36 @@ static ES_AR_U_CA_JAPANESE: DataStruct = &::icu_datetime::provider::calendar::Da
     time_h23_h24: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
         full: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8, 128u8,
                     144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 160u8, 4u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
         },
         long: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8, 128u8,
                     144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 160u8, 1u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
         },
         medium: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8, 128u8,
                     144u8, 2u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
         },
         short: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                    128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8,
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Minutes,
         },
@@ -3075,38 +2465,30 @@ static ES_AR_U_CA_JAPANESE: DataStruct = &::icu_datetime::provider::calendar::Da
     length_combinations: ::icu_datetime::provider::calendar::patterns::GenericLengthPatternsV1 {
         full: ::icu_datetime::pattern::runtime::GenericPattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 0u8, 1u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
         },
         long: ::icu_datetime::pattern::runtime::GenericPattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 0u8, 1u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
         },
         medium: ::icu_datetime::pattern::runtime::GenericPattern {
             items: unsafe {
-                static DATA: &[u8] = &[128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                    128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
+                ])
             },
         },
         short: ::icu_datetime::pattern::runtime::GenericPattern {
             items: unsafe {
-                static DATA: &[u8] = &[128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                    128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
+                ])
             },
         },
     },
@@ -3116,53 +2498,41 @@ static ES_U_CA_BUDDHIST_ES_U_CA_COPTIC_ES_U_CA_ETHIOPIC: DataStruct =
         date: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
             full: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 80u8, 4u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 64u8, 1u8, 0u8,
                         0u8, 32u8, 0u8, 0u8, 100u8, 0u8, 0u8, 101u8, 0u8, 0u8, 32u8, 128u8, 32u8,
                         4u8, 0u8, 0u8, 32u8, 0u8, 0u8, 100u8, 0u8, 0u8, 101u8, 0u8, 0u8, 32u8,
                         128u8, 16u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 1u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
             },
             long: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 64u8, 1u8, 0u8, 0u8, 32u8, 0u8, 0u8, 100u8, 0u8, 0u8, 101u8, 0u8,
                         0u8, 32u8, 128u8, 32u8, 4u8, 0u8, 0u8, 32u8, 0u8, 0u8, 100u8, 0u8, 0u8,
                         101u8, 0u8, 0u8, 32u8, 128u8, 16u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 1u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
             },
             medium: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 64u8, 1u8, 0u8, 0u8, 32u8, 0u8, 0u8, 100u8, 0u8, 0u8, 101u8, 0u8,
                         0u8, 32u8, 128u8, 32u8, 3u8, 0u8, 0u8, 32u8, 0u8, 0u8, 100u8, 0u8, 0u8,
                         101u8, 0u8, 0u8, 32u8, 128u8, 16u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 1u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
             },
             short: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 64u8, 1u8, 0u8, 0u8, 47u8, 128u8, 32u8, 1u8, 0u8, 0u8, 47u8, 128u8,
                         16u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 5u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
             },
@@ -3170,49 +2540,37 @@ static ES_U_CA_BUDDHIST_ES_U_CA_COPTIC_ES_U_CA_ETHIOPIC: DataStruct =
         time_h11_h12: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
             full: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8,
                         128u8, 144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
             },
             long: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8,
                         128u8, 144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
             },
             medium: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8,
                         128u8, 144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
             },
             short: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 32u8,
                         128u8, 96u8, 1u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Minutes,
             },
@@ -3220,47 +2578,37 @@ static ES_U_CA_BUDDHIST_ES_U_CA_COPTIC_ES_U_CA_ETHIOPIC: DataStruct =
         time_h23_h24: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
             full: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 114u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8,
                         128u8, 144u8, 2u8, 0u8, 0u8, 32u8, 0u8, 0u8, 40u8, 128u8, 160u8, 4u8, 0u8,
                         0u8, 41u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
             },
             long: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 114u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8,
                         128u8, 144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 160u8, 1u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
             },
             medium: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 114u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8,
                         128u8, 144u8, 2u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
             },
             short: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[128u8, 114u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                        128u8, 114u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8,
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Minutes,
             },
@@ -3270,42 +2618,30 @@ static ES_U_CA_BUDDHIST_ES_U_CA_COPTIC_ES_U_CA_ETHIOPIC: DataStruct =
             ::icu_datetime::provider::calendar::patterns::GenericLengthPatternsV1 {
                 full: ::icu_datetime::pattern::runtime::GenericPattern {
                     items: unsafe {
-                        static DATA: &[u8] = &[
+                        ::zerovec::ZeroVec::from_bytes_unchecked(&[
                             128u8, 0u8, 1u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
-                        ];
-                        let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                        metadata /= 3usize;
-                        zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                        ])
                     },
                 },
                 long: ::icu_datetime::pattern::runtime::GenericPattern {
                     items: unsafe {
-                        static DATA: &[u8] = &[
+                        ::zerovec::ZeroVec::from_bytes_unchecked(&[
                             128u8, 0u8, 1u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
-                        ];
-                        let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                        metadata /= 3usize;
-                        zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                        ])
                     },
                 },
                 medium: ::icu_datetime::pattern::runtime::GenericPattern {
                     items: unsafe {
-                        static DATA: &[u8] = &[
+                        ::zerovec::ZeroVec::from_bytes_unchecked(&[
                             128u8, 0u8, 1u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
-                        ];
-                        let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                        metadata /= 3usize;
-                        zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                        ])
                     },
                 },
                 short: ::icu_datetime::pattern::runtime::GenericPattern {
                     items: unsafe {
-                        static DATA: &[u8] = &[
+                        ::zerovec::ZeroVec::from_bytes_unchecked(&[
                             128u8, 0u8, 1u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
-                        ];
-                        let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                        metadata /= 3usize;
-                        zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                        ])
                     },
                 },
             },
@@ -3314,51 +2650,39 @@ static ES_U_CA_GREGORY: DataStruct = &::icu_datetime::provider::calendar::DatePa
     date: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
         full: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 80u8, 4u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 64u8, 1u8, 0u8, 0u8,
                     32u8, 0u8, 0u8, 100u8, 0u8, 0u8, 101u8, 0u8, 0u8, 32u8, 128u8, 32u8, 4u8, 0u8,
                     0u8, 32u8, 0u8, 0u8, 100u8, 0u8, 0u8, 101u8, 0u8, 0u8, 32u8, 128u8, 16u8, 1u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
         },
         long: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 64u8, 1u8, 0u8, 0u8, 32u8, 0u8, 0u8, 100u8, 0u8, 0u8, 101u8, 0u8, 0u8,
                     32u8, 128u8, 32u8, 4u8, 0u8, 0u8, 32u8, 0u8, 0u8, 100u8, 0u8, 0u8, 101u8, 0u8,
                     0u8, 32u8, 128u8, 16u8, 1u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
         },
         medium: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 64u8, 1u8, 0u8, 0u8, 32u8, 128u8, 32u8, 3u8, 0u8, 0u8, 32u8, 128u8,
                     16u8, 1u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
         },
         short: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 64u8, 1u8, 0u8, 0u8, 47u8, 128u8, 32u8, 1u8, 0u8, 0u8, 47u8, 128u8,
                     16u8, 2u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
         },
@@ -3366,51 +2690,39 @@ static ES_U_CA_GREGORY: DataStruct = &::icu_datetime::provider::calendar::DatePa
     time_h11_h12: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
         full: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8, 128u8,
                     144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8, 0u8, 0u8, 32u8, 128u8, 163u8,
                     1u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
         },
         long: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8, 128u8,
                     144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8, 0u8, 0u8, 32u8, 128u8, 163u8,
                     1u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
         },
         medium: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8, 128u8,
                     144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
         },
         short: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 32u8, 128u8,
                     96u8, 1u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Minutes,
         },
@@ -3418,46 +2730,36 @@ static ES_U_CA_GREGORY: DataStruct = &::icu_datetime::provider::calendar::DatePa
     time_h23_h24: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
         full: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 114u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8, 128u8,
                     144u8, 2u8, 0u8, 0u8, 32u8, 0u8, 0u8, 40u8, 128u8, 160u8, 4u8, 0u8, 0u8, 41u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
         },
         long: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 114u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8, 128u8,
                     144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 160u8, 1u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
         },
         medium: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 114u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8, 128u8,
                     144u8, 2u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
         },
         short: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[128u8, 114u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                    128u8, 114u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8,
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Minutes,
         },
@@ -3466,42 +2768,30 @@ static ES_U_CA_GREGORY: DataStruct = &::icu_datetime::provider::calendar::DatePa
     length_combinations: ::icu_datetime::provider::calendar::patterns::GenericLengthPatternsV1 {
         full: ::icu_datetime::pattern::runtime::GenericPattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 0u8, 1u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
         },
         long: ::icu_datetime::pattern::runtime::GenericPattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 0u8, 1u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
         },
         medium: ::icu_datetime::pattern::runtime::GenericPattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 0u8, 1u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
         },
         short: ::icu_datetime::pattern::runtime::GenericPattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 0u8, 1u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
         },
     },
@@ -3510,52 +2800,40 @@ static ES_U_CA_JAPANESE: DataStruct = &::icu_datetime::provider::calendar::DateP
     date: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
         full: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 80u8, 4u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 64u8, 1u8, 0u8, 0u8,
                     32u8, 0u8, 0u8, 100u8, 0u8, 0u8, 101u8, 0u8, 0u8, 32u8, 128u8, 32u8, 4u8, 0u8,
                     0u8, 32u8, 0u8, 0u8, 100u8, 0u8, 0u8, 101u8, 0u8, 0u8, 32u8, 128u8, 16u8, 1u8,
                     0u8, 0u8, 32u8, 128u8, 0u8, 1u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
         },
         long: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 64u8, 1u8, 0u8, 0u8, 32u8, 0u8, 0u8, 100u8, 0u8, 0u8, 101u8, 0u8, 0u8,
                     32u8, 128u8, 32u8, 4u8, 0u8, 0u8, 32u8, 0u8, 0u8, 100u8, 0u8, 0u8, 101u8, 0u8,
                     0u8, 32u8, 128u8, 16u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 1u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
         },
         medium: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 64u8, 2u8, 0u8, 0u8, 47u8, 128u8, 32u8, 2u8, 0u8, 0u8, 47u8, 128u8,
                     16u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 5u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
         },
         short: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 64u8, 2u8, 0u8, 0u8, 47u8, 128u8, 32u8, 2u8, 0u8, 0u8, 47u8, 128u8,
                     16u8, 2u8, 0u8, 0u8, 32u8, 128u8, 0u8, 5u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
         },
@@ -3563,49 +2841,37 @@ static ES_U_CA_JAPANESE: DataStruct = &::icu_datetime::provider::calendar::DateP
     time_h11_h12: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
         full: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8, 128u8,
                     144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
         },
         long: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8, 128u8,
                     144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
         },
         medium: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8, 128u8,
                     144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
         },
         short: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 32u8, 128u8,
                     96u8, 1u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Minutes,
         },
@@ -3613,46 +2879,36 @@ static ES_U_CA_JAPANESE: DataStruct = &::icu_datetime::provider::calendar::DateP
     time_h23_h24: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
         full: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 114u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8, 128u8,
                     144u8, 2u8, 0u8, 0u8, 32u8, 0u8, 0u8, 40u8, 128u8, 160u8, 4u8, 0u8, 0u8, 41u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
         },
         long: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 114u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8, 128u8,
                     144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 160u8, 1u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
         },
         medium: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 114u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8, 128u8,
                     144u8, 2u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
         },
         short: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[128u8, 114u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                    128u8, 114u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8,
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Minutes,
         },
@@ -3661,42 +2917,30 @@ static ES_U_CA_JAPANESE: DataStruct = &::icu_datetime::provider::calendar::DateP
     length_combinations: ::icu_datetime::provider::calendar::patterns::GenericLengthPatternsV1 {
         full: ::icu_datetime::pattern::runtime::GenericPattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 0u8, 1u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
         },
         long: ::icu_datetime::pattern::runtime::GenericPattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 0u8, 1u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
         },
         medium: ::icu_datetime::pattern::runtime::GenericPattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 0u8, 1u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
         },
         short: ::icu_datetime::pattern::runtime::GenericPattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 0u8, 1u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
         },
     },
@@ -3706,50 +2950,38 @@ static FIL_U_CA_BUDDHIST_FIL_U_CA_COPTIC_FIL_U_CA_ETHIOPIC: DataStruct =
         date: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
             full: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 80u8, 4u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 32u8, 4u8, 0u8,
                         0u8, 32u8, 128u8, 64u8, 1u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 16u8,
                         1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 1u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
             },
             long: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 32u8, 4u8, 0u8, 0u8, 32u8, 128u8, 64u8, 1u8, 0u8, 0u8, 44u8, 0u8,
                         0u8, 32u8, 128u8, 16u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 1u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
             },
             medium: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 32u8, 3u8, 0u8, 0u8, 32u8, 128u8, 64u8, 1u8, 0u8, 0u8, 44u8, 0u8,
                         0u8, 32u8, 128u8, 16u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 1u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
             },
             short: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 32u8, 1u8, 0u8, 0u8, 47u8, 128u8, 64u8, 1u8, 0u8, 0u8, 47u8, 128u8,
                         16u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 5u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
             },
@@ -3757,51 +2989,39 @@ static FIL_U_CA_BUDDHIST_FIL_U_CA_COPTIC_FIL_U_CA_ETHIOPIC: DataStruct =
         time_h11_h12: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
             full: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8,
                         128u8, 144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8, 0u8, 0u8, 32u8, 128u8,
                         160u8, 4u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
             },
             long: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8,
                         128u8, 144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8, 0u8, 0u8, 32u8, 128u8,
                         160u8, 1u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
             },
             medium: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8,
                         128u8, 144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
             },
             short: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 32u8,
                         128u8, 96u8, 1u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Minutes,
             },
@@ -3809,46 +3029,36 @@ static FIL_U_CA_BUDDHIST_FIL_U_CA_COPTIC_FIL_U_CA_ETHIOPIC: DataStruct =
         time_h23_h24: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
             full: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8,
                         128u8, 144u8, 2u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
             },
             long: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8,
                         128u8, 144u8, 2u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
             },
             medium: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8,
                         128u8, 144u8, 2u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
             },
             short: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                        128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8,
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Minutes,
             },
@@ -3858,44 +3068,32 @@ static FIL_U_CA_BUDDHIST_FIL_U_CA_COPTIC_FIL_U_CA_ETHIOPIC: DataStruct =
             ::icu_datetime::provider::calendar::patterns::GenericLengthPatternsV1 {
                 full: ::icu_datetime::pattern::runtime::GenericPattern {
                     items: unsafe {
-                        static DATA: &[u8] = &[
+                        ::zerovec::ZeroVec::from_bytes_unchecked(&[
                             128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 0u8, 0u8, 110u8, 0u8, 0u8, 97u8, 0u8,
                             0u8, 110u8, 0u8, 0u8, 103u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
-                        ];
-                        let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                        metadata /= 3usize;
-                        zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                        ])
                     },
                 },
                 long: ::icu_datetime::pattern::runtime::GenericPattern {
                     items: unsafe {
-                        static DATA: &[u8] = &[
+                        ::zerovec::ZeroVec::from_bytes_unchecked(&[
                             128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 0u8, 0u8, 110u8, 0u8, 0u8, 97u8, 0u8,
                             0u8, 110u8, 0u8, 0u8, 103u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
-                        ];
-                        let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                        metadata /= 3usize;
-                        zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                        ])
                     },
                 },
                 medium: ::icu_datetime::pattern::runtime::GenericPattern {
                     items: unsafe {
-                        static DATA: &[u8] = &[
+                        ::zerovec::ZeroVec::from_bytes_unchecked(&[
                             128u8, 0u8, 1u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
-                        ];
-                        let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                        metadata /= 3usize;
-                        zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                        ])
                     },
                 },
                 short: ::icu_datetime::pattern::runtime::GenericPattern {
                     items: unsafe {
-                        static DATA: &[u8] = &[
+                        ::zerovec::ZeroVec::from_bytes_unchecked(&[
                             128u8, 0u8, 1u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
-                        ];
-                        let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                        metadata /= 3usize;
-                        zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                        ])
                     },
                 },
             },
@@ -3904,49 +3102,37 @@ static FIL_U_CA_GREGORY: DataStruct = &::icu_datetime::provider::calendar::DateP
     date: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
         full: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 80u8, 4u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 32u8, 4u8, 0u8, 0u8,
                     32u8, 128u8, 64u8, 1u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 16u8, 1u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
         },
         long: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 32u8, 4u8, 0u8, 0u8, 32u8, 128u8, 64u8, 1u8, 0u8, 0u8, 44u8, 0u8, 0u8,
                     32u8, 128u8, 16u8, 1u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
         },
         medium: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 32u8, 3u8, 0u8, 0u8, 32u8, 128u8, 64u8, 1u8, 0u8, 0u8, 44u8, 0u8, 0u8,
                     32u8, 128u8, 16u8, 1u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
         },
         short: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 32u8, 1u8, 0u8, 0u8, 47u8, 128u8, 64u8, 1u8, 0u8, 0u8, 47u8, 128u8,
                     16u8, 2u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
         },
@@ -3954,51 +3140,39 @@ static FIL_U_CA_GREGORY: DataStruct = &::icu_datetime::provider::calendar::DateP
     time_h11_h12: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
         full: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8, 128u8,
                     144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8, 0u8, 0u8, 32u8, 128u8, 160u8,
                     4u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
         },
         long: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8, 128u8,
                     144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8, 0u8, 0u8, 32u8, 128u8, 160u8,
                     1u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
         },
         medium: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8, 128u8,
                     144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
         },
         short: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 32u8, 128u8,
                     96u8, 1u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Minutes,
         },
@@ -4006,46 +3180,36 @@ static FIL_U_CA_GREGORY: DataStruct = &::icu_datetime::provider::calendar::DateP
     time_h23_h24: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
         full: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8, 128u8,
                     144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 163u8, 1u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
         },
         long: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8, 128u8,
                     144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 163u8, 1u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
         },
         medium: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8, 128u8,
                     144u8, 2u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
         },
         short: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                    128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8,
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Minutes,
         },
@@ -4054,44 +3218,32 @@ static FIL_U_CA_GREGORY: DataStruct = &::icu_datetime::provider::calendar::DateP
     length_combinations: ::icu_datetime::provider::calendar::patterns::GenericLengthPatternsV1 {
         full: ::icu_datetime::pattern::runtime::GenericPattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 0u8, 0u8, 110u8, 0u8, 0u8, 97u8, 0u8, 0u8,
                     110u8, 0u8, 0u8, 103u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
         },
         long: ::icu_datetime::pattern::runtime::GenericPattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 0u8, 0u8, 110u8, 0u8, 0u8, 97u8, 0u8, 0u8,
                     110u8, 0u8, 0u8, 103u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
         },
         medium: ::icu_datetime::pattern::runtime::GenericPattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 0u8, 1u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
         },
         short: ::icu_datetime::pattern::runtime::GenericPattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 0u8, 1u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
         },
     },
@@ -4101,50 +3253,38 @@ static FR_U_CA_BUDDHIST_FR_U_CA_COPTIC_FR_U_CA_ETHIOPIC: DataStruct =
         date: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
             full: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 80u8, 4u8, 0u8, 0u8, 32u8, 128u8, 64u8, 1u8, 0u8, 0u8, 32u8, 128u8,
                         32u8, 4u8, 0u8, 0u8, 32u8, 128u8, 16u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8,
                         1u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
             },
             long: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 64u8, 1u8, 0u8, 0u8, 32u8, 128u8, 32u8, 4u8, 0u8, 0u8, 32u8, 128u8,
                         16u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 1u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
             },
             medium: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 64u8, 1u8, 0u8, 0u8, 32u8, 128u8, 32u8, 3u8, 0u8, 0u8, 32u8, 128u8,
                         16u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 1u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
             },
             short: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 64u8, 2u8, 0u8, 0u8, 47u8, 128u8, 32u8, 2u8, 0u8, 0u8, 47u8, 128u8,
                         16u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 5u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
             },
@@ -4152,49 +3292,37 @@ static FR_U_CA_BUDDHIST_FR_U_CA_COPTIC_FR_U_CA_ETHIOPIC: DataStruct =
         time_h11_h12: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
             full: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8,
                         128u8, 144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
             },
             long: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8,
                         128u8, 144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
             },
             medium: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8,
                         128u8, 144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
             },
             short: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 32u8,
                         128u8, 96u8, 1u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Minutes,
             },
@@ -4202,46 +3330,36 @@ static FR_U_CA_BUDDHIST_FR_U_CA_COPTIC_FR_U_CA_ETHIOPIC: DataStruct =
         time_h23_h24: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
             full: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8,
                         128u8, 144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 160u8, 4u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
             },
             long: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8,
                         128u8, 144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 160u8, 1u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
             },
             medium: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8,
                         128u8, 144u8, 2u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
             },
             short: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                        128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8,
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Minutes,
             },
@@ -4251,40 +3369,32 @@ static FR_U_CA_BUDDHIST_FR_U_CA_COPTIC_FR_U_CA_ETHIOPIC: DataStruct =
             ::icu_datetime::provider::calendar::patterns::GenericLengthPatternsV1 {
                 full: ::icu_datetime::pattern::runtime::GenericPattern {
                     items: unsafe {
-                        static DATA: &[u8] = &[
+                        ::zerovec::ZeroVec::from_bytes_unchecked(&[
                             128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 0u8, 0u8, 224u8, 0u8, 0u8, 32u8,
                             128u8, 0u8, 0u8,
-                        ];
-                        let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                        metadata /= 3usize;
-                        zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                        ])
                     },
                 },
                 long: ::icu_datetime::pattern::runtime::GenericPattern {
                     items: unsafe {
-                        static DATA: &[u8] = &[
+                        ::zerovec::ZeroVec::from_bytes_unchecked(&[
                             128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 0u8, 0u8, 224u8, 0u8, 0u8, 32u8,
                             128u8, 0u8, 0u8,
-                        ];
-                        let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                        metadata /= 3usize;
-                        zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                        ])
                     },
                 },
                 medium: ::icu_datetime::pattern::runtime::GenericPattern {
                     items: unsafe {
-                        static DATA: &[u8] = &[128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8];
-                        let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                        metadata /= 3usize;
-                        zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                        ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                            128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
+                        ])
                     },
                 },
                 short: ::icu_datetime::pattern::runtime::GenericPattern {
                     items: unsafe {
-                        static DATA: &[u8] = &[128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8];
-                        let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                        metadata /= 3usize;
-                        zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                        ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                            128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
+                        ])
                     },
                 },
             },
@@ -4293,49 +3403,37 @@ static FR_U_CA_GREGORY: DataStruct = &::icu_datetime::provider::calendar::DatePa
     date: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
         full: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 80u8, 4u8, 0u8, 0u8, 32u8, 128u8, 64u8, 1u8, 0u8, 0u8, 32u8, 128u8,
                     32u8, 4u8, 0u8, 0u8, 32u8, 128u8, 16u8, 1u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
         },
         long: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 64u8, 1u8, 0u8, 0u8, 32u8, 128u8, 32u8, 4u8, 0u8, 0u8, 32u8, 128u8,
                     16u8, 1u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
         },
         medium: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 64u8, 1u8, 0u8, 0u8, 32u8, 128u8, 32u8, 3u8, 0u8, 0u8, 32u8, 128u8,
                     16u8, 1u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
         },
         short: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 64u8, 2u8, 0u8, 0u8, 47u8, 128u8, 32u8, 2u8, 0u8, 0u8, 47u8, 128u8,
                     16u8, 1u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
         },
@@ -4343,51 +3441,39 @@ static FR_U_CA_GREGORY: DataStruct = &::icu_datetime::provider::calendar::DatePa
     time_h11_h12: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
         full: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8, 128u8,
                     144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8, 0u8, 0u8, 32u8, 128u8, 163u8,
                     1u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
         },
         long: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8, 128u8,
                     144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8, 0u8, 0u8, 32u8, 128u8, 163u8,
                     1u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
         },
         medium: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8, 128u8,
                     144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
         },
         short: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 32u8, 128u8,
                     96u8, 1u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Minutes,
         },
@@ -4395,46 +3481,36 @@ static FR_U_CA_GREGORY: DataStruct = &::icu_datetime::provider::calendar::DatePa
     time_h23_h24: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
         full: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8, 128u8,
                     144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 160u8, 4u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
         },
         long: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8, 128u8,
                     144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 160u8, 1u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
         },
         medium: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8, 128u8,
                     144u8, 2u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
         },
         short: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                    128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8,
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Minutes,
         },
@@ -4443,42 +3519,32 @@ static FR_U_CA_GREGORY: DataStruct = &::icu_datetime::provider::calendar::DatePa
     length_combinations: ::icu_datetime::provider::calendar::patterns::GenericLengthPatternsV1 {
         full: ::icu_datetime::pattern::runtime::GenericPattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 0u8, 0u8, 224u8, 0u8, 0u8, 32u8, 128u8, 0u8,
                     0u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
         },
         long: ::icu_datetime::pattern::runtime::GenericPattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 0u8, 0u8, 224u8, 0u8, 0u8, 32u8, 128u8, 0u8,
                     0u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
         },
         medium: ::icu_datetime::pattern::runtime::GenericPattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 0u8, 1u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
         },
         short: ::icu_datetime::pattern::runtime::GenericPattern {
             items: unsafe {
-                static DATA: &[u8] = &[128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                    128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
+                ])
             },
         },
     },
@@ -4487,49 +3553,37 @@ static FR_U_CA_JAPANESE: DataStruct = &::icu_datetime::provider::calendar::DateP
     date: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
         full: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 80u8, 4u8, 0u8, 0u8, 32u8, 128u8, 64u8, 1u8, 0u8, 0u8, 32u8, 128u8,
                     32u8, 4u8, 0u8, 0u8, 32u8, 128u8, 16u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 1u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
         },
         long: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 64u8, 1u8, 0u8, 0u8, 32u8, 128u8, 32u8, 4u8, 0u8, 0u8, 32u8, 128u8,
                     16u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 1u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
         },
         medium: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 64u8, 1u8, 0u8, 0u8, 32u8, 128u8, 32u8, 3u8, 0u8, 0u8, 32u8, 128u8,
                     16u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 1u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
         },
         short: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 64u8, 2u8, 0u8, 0u8, 47u8, 128u8, 32u8, 2u8, 0u8, 0u8, 47u8, 128u8,
                     16u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 5u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
         },
@@ -4537,49 +3591,37 @@ static FR_U_CA_JAPANESE: DataStruct = &::icu_datetime::provider::calendar::DateP
     time_h11_h12: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
         full: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8, 128u8,
                     144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
         },
         long: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8, 128u8,
                     144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
         },
         medium: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8, 128u8,
                     144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
         },
         short: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 32u8, 128u8,
                     96u8, 1u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Minutes,
         },
@@ -4587,46 +3629,36 @@ static FR_U_CA_JAPANESE: DataStruct = &::icu_datetime::provider::calendar::DateP
     time_h23_h24: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
         full: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8, 128u8,
                     144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 160u8, 4u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
         },
         long: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8, 128u8,
                     144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 160u8, 1u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
         },
         medium: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8, 128u8,
                     144u8, 2u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
         },
         short: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                    128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8,
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Minutes,
         },
@@ -4635,34 +3667,30 @@ static FR_U_CA_JAPANESE: DataStruct = &::icu_datetime::provider::calendar::DateP
     length_combinations: ::icu_datetime::provider::calendar::patterns::GenericLengthPatternsV1 {
         full: ::icu_datetime::pattern::runtime::GenericPattern {
             items: unsafe {
-                static DATA: &[u8] = &[128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                    128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
+                ])
             },
         },
         long: ::icu_datetime::pattern::runtime::GenericPattern {
             items: unsafe {
-                static DATA: &[u8] = &[128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                    128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
+                ])
             },
         },
         medium: ::icu_datetime::pattern::runtime::GenericPattern {
             items: unsafe {
-                static DATA: &[u8] = &[128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                    128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
+                ])
             },
         },
         short: ::icu_datetime::pattern::runtime::GenericPattern {
             items: unsafe {
-                static DATA: &[u8] = &[128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                    128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
+                ])
             },
         },
     },
@@ -4671,49 +3699,37 @@ static JA_U_CA_BUDDHIST: DataStruct = &::icu_datetime::provider::calendar::DateP
     date: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
         full: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 0u8, 4u8, 128u8, 16u8, 1u8, 0u8, 94u8, 116u8, 128u8, 32u8, 1u8, 0u8,
                     103u8, 8u8, 128u8, 64u8, 1u8, 0u8, 101u8, 229u8, 128u8, 80u8, 4u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
         },
         long: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 0u8, 4u8, 128u8, 16u8, 1u8, 0u8, 94u8, 116u8, 128u8, 32u8, 1u8, 0u8,
                     103u8, 8u8, 128u8, 64u8, 1u8, 0u8, 101u8, 229u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
         },
         medium: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 0u8, 1u8, 128u8, 16u8, 1u8, 0u8, 0u8, 47u8, 128u8, 32u8, 2u8, 0u8, 0u8,
                     47u8, 128u8, 64u8, 2u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
         },
         short: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 0u8, 1u8, 128u8, 16u8, 1u8, 0u8, 0u8, 47u8, 128u8, 32u8, 2u8, 0u8, 0u8,
                     47u8, 128u8, 64u8, 2u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
         },
@@ -4721,48 +3737,36 @@ static JA_U_CA_BUDDHIST: DataStruct = &::icu_datetime::provider::calendar::DateP
     time_h11_h12: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
         full: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 96u8, 1u8, 128u8, 112u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8,
                     0u8, 58u8, 128u8, 144u8, 2u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
         },
         long: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 96u8, 1u8, 128u8, 112u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8,
                     0u8, 58u8, 128u8, 144u8, 2u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
         },
         medium: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 96u8, 1u8, 128u8, 112u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8,
                     0u8, 58u8, 128u8, 144u8, 2u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
         },
         short: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 96u8, 1u8, 128u8, 112u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Minutes,
         },
@@ -4770,46 +3774,36 @@ static JA_U_CA_BUDDHIST: DataStruct = &::icu_datetime::provider::calendar::DateP
     time_h23_h24: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
         full: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 114u8, 1u8, 0u8, 102u8, 66u8, 128u8, 128u8, 2u8, 0u8, 82u8, 6u8, 128u8,
                     144u8, 2u8, 0u8, 121u8, 210u8, 0u8, 0u8, 32u8, 128u8, 160u8, 4u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
         },
         long: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 114u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8, 128u8,
                     144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 160u8, 1u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
         },
         medium: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 114u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8, 128u8,
                     144u8, 2u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
         },
         short: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[128u8, 114u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                    128u8, 114u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8,
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Minutes,
         },
@@ -4818,34 +3812,30 @@ static JA_U_CA_BUDDHIST: DataStruct = &::icu_datetime::provider::calendar::DateP
     length_combinations: ::icu_datetime::provider::calendar::patterns::GenericLengthPatternsV1 {
         full: ::icu_datetime::pattern::runtime::GenericPattern {
             items: unsafe {
-                static DATA: &[u8] = &[128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                    128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
+                ])
             },
         },
         long: ::icu_datetime::pattern::runtime::GenericPattern {
             items: unsafe {
-                static DATA: &[u8] = &[128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                    128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
+                ])
             },
         },
         medium: ::icu_datetime::pattern::runtime::GenericPattern {
             items: unsafe {
-                static DATA: &[u8] = &[128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                    128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
+                ])
             },
         },
         short: ::icu_datetime::pattern::runtime::GenericPattern {
             items: unsafe {
-                static DATA: &[u8] = &[128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                    128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
+                ])
             },
         },
     },
@@ -4855,50 +3845,38 @@ static JA_U_CA_COPTIC_JA_U_CA_ETHIOPIC_JA_U_CA_INDIAN: DataStruct =
         date: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
             full: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 0u8, 1u8, 128u8, 16u8, 1u8, 0u8, 94u8, 116u8, 128u8, 32u8, 1u8, 0u8,
                         103u8, 8u8, 128u8, 64u8, 1u8, 0u8, 101u8, 229u8, 0u8, 0u8, 40u8, 128u8,
                         80u8, 4u8, 0u8, 0u8, 41u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
             },
             long: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 0u8, 1u8, 128u8, 16u8, 1u8, 0u8, 94u8, 116u8, 128u8, 32u8, 1u8, 0u8,
                         103u8, 8u8, 128u8, 64u8, 1u8, 0u8, 101u8, 229u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
             },
             medium: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 0u8, 5u8, 128u8, 16u8, 1u8, 0u8, 0u8, 47u8, 128u8, 32u8, 2u8, 0u8,
                         0u8, 47u8, 128u8, 64u8, 2u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
             },
             short: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 0u8, 5u8, 128u8, 16u8, 1u8, 0u8, 0u8, 47u8, 128u8, 32u8, 1u8, 0u8,
                         0u8, 47u8, 128u8, 64u8, 1u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
             },
@@ -4906,48 +3884,36 @@ static JA_U_CA_COPTIC_JA_U_CA_ETHIOPIC_JA_U_CA_INDIAN: DataStruct =
         time_h11_h12: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
             full: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 96u8, 1u8, 128u8, 112u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8,
                         0u8, 0u8, 58u8, 128u8, 144u8, 2u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
             },
             long: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 96u8, 1u8, 128u8, 112u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8,
                         0u8, 0u8, 58u8, 128u8, 144u8, 2u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
             },
             medium: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 96u8, 1u8, 128u8, 112u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8,
                         0u8, 0u8, 58u8, 128u8, 144u8, 2u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
             },
             short: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 96u8, 1u8, 128u8, 112u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Minutes,
             },
@@ -4955,46 +3921,36 @@ static JA_U_CA_COPTIC_JA_U_CA_ETHIOPIC_JA_U_CA_INDIAN: DataStruct =
         time_h23_h24: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
             full: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 114u8, 1u8, 0u8, 102u8, 66u8, 128u8, 128u8, 2u8, 0u8, 82u8, 6u8,
                         128u8, 144u8, 2u8, 0u8, 121u8, 210u8, 0u8, 0u8, 32u8, 128u8, 160u8, 4u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
             },
             long: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 114u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8,
                         128u8, 144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 160u8, 1u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
             },
             medium: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 114u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8,
                         128u8, 144u8, 2u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
             },
             short: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[128u8, 114u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                        128u8, 114u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8,
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Minutes,
             },
@@ -5004,34 +3960,30 @@ static JA_U_CA_COPTIC_JA_U_CA_ETHIOPIC_JA_U_CA_INDIAN: DataStruct =
             ::icu_datetime::provider::calendar::patterns::GenericLengthPatternsV1 {
                 full: ::icu_datetime::pattern::runtime::GenericPattern {
                     items: unsafe {
-                        static DATA: &[u8] = &[128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8];
-                        let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                        metadata /= 3usize;
-                        zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                        ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                            128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
+                        ])
                     },
                 },
                 long: ::icu_datetime::pattern::runtime::GenericPattern {
                     items: unsafe {
-                        static DATA: &[u8] = &[128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8];
-                        let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                        metadata /= 3usize;
-                        zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                        ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                            128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
+                        ])
                     },
                 },
                 medium: ::icu_datetime::pattern::runtime::GenericPattern {
                     items: unsafe {
-                        static DATA: &[u8] = &[128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8];
-                        let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                        metadata /= 3usize;
-                        zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                        ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                            128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
+                        ])
                     },
                 },
                 short: ::icu_datetime::pattern::runtime::GenericPattern {
                     items: unsafe {
-                        static DATA: &[u8] = &[128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8];
-                        let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                        metadata /= 3usize;
-                        zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                        ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                            128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
+                        ])
                     },
                 },
             },
@@ -5040,49 +3992,37 @@ static JA_U_CA_GREGORY: DataStruct = &::icu_datetime::provider::calendar::DatePa
     date: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
         full: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 16u8, 1u8, 0u8, 94u8, 116u8, 128u8, 32u8, 1u8, 0u8, 103u8, 8u8, 128u8,
                     64u8, 1u8, 0u8, 101u8, 229u8, 128u8, 80u8, 4u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
         },
         long: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 16u8, 1u8, 0u8, 94u8, 116u8, 128u8, 32u8, 1u8, 0u8, 103u8, 8u8, 128u8,
                     64u8, 1u8, 0u8, 101u8, 229u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
         },
         medium: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 16u8, 1u8, 0u8, 0u8, 47u8, 128u8, 32u8, 2u8, 0u8, 0u8, 47u8, 128u8,
                     64u8, 2u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
         },
         short: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 16u8, 1u8, 0u8, 0u8, 47u8, 128u8, 32u8, 2u8, 0u8, 0u8, 47u8, 128u8,
                     64u8, 2u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
         },
@@ -5090,48 +4030,36 @@ static JA_U_CA_GREGORY: DataStruct = &::icu_datetime::provider::calendar::DatePa
     time_h11_h12: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
         full: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 96u8, 1u8, 128u8, 112u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8,
                     0u8, 58u8, 128u8, 144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 163u8, 1u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
         },
         long: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 96u8, 1u8, 128u8, 112u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8,
                     0u8, 58u8, 128u8, 144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 163u8, 1u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
         },
         medium: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 96u8, 1u8, 128u8, 112u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8,
                     0u8, 58u8, 128u8, 144u8, 2u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
         },
         short: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 96u8, 1u8, 128u8, 112u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Minutes,
         },
@@ -5139,46 +4067,36 @@ static JA_U_CA_GREGORY: DataStruct = &::icu_datetime::provider::calendar::DatePa
     time_h23_h24: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
         full: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 114u8, 1u8, 0u8, 102u8, 66u8, 128u8, 128u8, 2u8, 0u8, 82u8, 6u8, 128u8,
                     144u8, 2u8, 0u8, 121u8, 210u8, 0u8, 0u8, 32u8, 128u8, 160u8, 4u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
         },
         long: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 114u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8, 128u8,
                     144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 160u8, 1u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
         },
         medium: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 114u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8, 128u8,
                     144u8, 2u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
         },
         short: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[128u8, 114u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                    128u8, 114u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8,
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Minutes,
         },
@@ -5187,34 +4105,30 @@ static JA_U_CA_GREGORY: DataStruct = &::icu_datetime::provider::calendar::DatePa
     length_combinations: ::icu_datetime::provider::calendar::patterns::GenericLengthPatternsV1 {
         full: ::icu_datetime::pattern::runtime::GenericPattern {
             items: unsafe {
-                static DATA: &[u8] = &[128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                    128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
+                ])
             },
         },
         long: ::icu_datetime::pattern::runtime::GenericPattern {
             items: unsafe {
-                static DATA: &[u8] = &[128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                    128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
+                ])
             },
         },
         medium: ::icu_datetime::pattern::runtime::GenericPattern {
             items: unsafe {
-                static DATA: &[u8] = &[128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                    128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
+                ])
             },
         },
         short: ::icu_datetime::pattern::runtime::GenericPattern {
             items: unsafe {
-                static DATA: &[u8] = &[128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                    128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
+                ])
             },
         },
     },
@@ -5223,49 +4137,37 @@ static JA_U_CA_JAPANESE: DataStruct = &::icu_datetime::provider::calendar::DateP
     date: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
         full: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 0u8, 1u8, 128u8, 16u8, 1u8, 0u8, 94u8, 116u8, 128u8, 32u8, 1u8, 0u8,
                     103u8, 8u8, 128u8, 64u8, 1u8, 0u8, 101u8, 229u8, 128u8, 80u8, 4u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
         },
         long: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 0u8, 1u8, 128u8, 16u8, 1u8, 0u8, 94u8, 116u8, 128u8, 32u8, 1u8, 0u8,
                     103u8, 8u8, 128u8, 64u8, 1u8, 0u8, 101u8, 229u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
         },
         medium: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 0u8, 1u8, 128u8, 16u8, 1u8, 0u8, 94u8, 116u8, 128u8, 32u8, 1u8, 0u8,
                     103u8, 8u8, 128u8, 64u8, 1u8, 0u8, 101u8, 229u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
         },
         short: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 0u8, 5u8, 128u8, 16u8, 1u8, 0u8, 0u8, 47u8, 128u8, 32u8, 1u8, 0u8, 0u8,
                     47u8, 128u8, 64u8, 1u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
         },
@@ -5273,48 +4175,36 @@ static JA_U_CA_JAPANESE: DataStruct = &::icu_datetime::provider::calendar::DateP
     time_h11_h12: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
         full: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 96u8, 1u8, 128u8, 112u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8,
                     0u8, 58u8, 128u8, 144u8, 2u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
         },
         long: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 96u8, 1u8, 128u8, 112u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8,
                     0u8, 58u8, 128u8, 144u8, 2u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
         },
         medium: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 96u8, 1u8, 128u8, 112u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8,
                     0u8, 58u8, 128u8, 144u8, 2u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
         },
         short: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 96u8, 1u8, 128u8, 112u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Minutes,
         },
@@ -5322,46 +4212,36 @@ static JA_U_CA_JAPANESE: DataStruct = &::icu_datetime::provider::calendar::DateP
     time_h23_h24: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
         full: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 114u8, 1u8, 0u8, 102u8, 66u8, 128u8, 128u8, 2u8, 0u8, 82u8, 6u8, 128u8,
                     144u8, 2u8, 0u8, 121u8, 210u8, 0u8, 0u8, 32u8, 128u8, 160u8, 4u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
         },
         long: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 114u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8, 128u8,
                     144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 160u8, 1u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
         },
         medium: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 114u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8, 128u8,
                     144u8, 2u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
         },
         short: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[128u8, 114u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                    128u8, 114u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8,
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Minutes,
         },
@@ -5370,34 +4250,30 @@ static JA_U_CA_JAPANESE: DataStruct = &::icu_datetime::provider::calendar::DateP
     length_combinations: ::icu_datetime::provider::calendar::patterns::GenericLengthPatternsV1 {
         full: ::icu_datetime::pattern::runtime::GenericPattern {
             items: unsafe {
-                static DATA: &[u8] = &[128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                    128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
+                ])
             },
         },
         long: ::icu_datetime::pattern::runtime::GenericPattern {
             items: unsafe {
-                static DATA: &[u8] = &[128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                    128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
+                ])
             },
         },
         medium: ::icu_datetime::pattern::runtime::GenericPattern {
             items: unsafe {
-                static DATA: &[u8] = &[128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                    128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
+                ])
             },
         },
         short: ::icu_datetime::pattern::runtime::GenericPattern {
             items: unsafe {
-                static DATA: &[u8] = &[128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                    128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
+                ])
             },
         },
     },
@@ -5407,52 +4283,40 @@ static RU_U_CA_BUDDHIST_RU_U_CA_COPTIC_RU_U_CA_ETHIOPIC: DataStruct =
         date: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
             full: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 80u8, 4u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 64u8, 1u8, 0u8,
                         0u8, 32u8, 128u8, 32u8, 4u8, 0u8, 0u8, 32u8, 128u8, 16u8, 1u8, 0u8, 0u8,
                         32u8, 0u8, 4u8, 51u8, 0u8, 0u8, 46u8, 0u8, 0u8, 32u8, 128u8, 0u8, 1u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
             },
             long: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 64u8, 1u8, 0u8, 0u8, 32u8, 128u8, 32u8, 4u8, 0u8, 0u8, 32u8, 128u8,
                         16u8, 1u8, 0u8, 0u8, 32u8, 0u8, 4u8, 51u8, 0u8, 0u8, 46u8, 0u8, 0u8, 32u8,
                         128u8, 0u8, 1u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
             },
             medium: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 64u8, 1u8, 0u8, 0u8, 32u8, 128u8, 32u8, 3u8, 0u8, 0u8, 32u8, 128u8,
                         16u8, 1u8, 0u8, 0u8, 32u8, 0u8, 4u8, 51u8, 0u8, 0u8, 46u8, 0u8, 0u8, 32u8,
                         128u8, 0u8, 1u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
             },
             short: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 64u8, 2u8, 0u8, 0u8, 46u8, 128u8, 32u8, 2u8, 0u8, 0u8, 46u8, 128u8,
                         16u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 1u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
             },
@@ -5460,49 +4324,37 @@ static RU_U_CA_BUDDHIST_RU_U_CA_COPTIC_RU_U_CA_ETHIOPIC: DataStruct =
         time_h11_h12: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
             full: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8,
                         128u8, 144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
             },
             long: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8,
                         128u8, 144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
             },
             medium: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8,
                         128u8, 144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
             },
             short: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 32u8,
                         128u8, 96u8, 1u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Minutes,
             },
@@ -5510,46 +4362,36 @@ static RU_U_CA_BUDDHIST_RU_U_CA_COPTIC_RU_U_CA_ETHIOPIC: DataStruct =
         time_h23_h24: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
             full: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8,
                         128u8, 144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 160u8, 4u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
             },
             long: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8,
                         128u8, 144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 160u8, 1u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
             },
             medium: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8,
                         128u8, 144u8, 2u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
             },
             short: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                        128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8,
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Minutes,
             },
@@ -5559,42 +4401,30 @@ static RU_U_CA_BUDDHIST_RU_U_CA_COPTIC_RU_U_CA_ETHIOPIC: DataStruct =
             ::icu_datetime::provider::calendar::patterns::GenericLengthPatternsV1 {
                 full: ::icu_datetime::pattern::runtime::GenericPattern {
                     items: unsafe {
-                        static DATA: &[u8] = &[
+                        ::zerovec::ZeroVec::from_bytes_unchecked(&[
                             128u8, 0u8, 1u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
-                        ];
-                        let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                        metadata /= 3usize;
-                        zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                        ])
                     },
                 },
                 long: ::icu_datetime::pattern::runtime::GenericPattern {
                     items: unsafe {
-                        static DATA: &[u8] = &[
+                        ::zerovec::ZeroVec::from_bytes_unchecked(&[
                             128u8, 0u8, 1u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
-                        ];
-                        let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                        metadata /= 3usize;
-                        zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                        ])
                     },
                 },
                 medium: ::icu_datetime::pattern::runtime::GenericPattern {
                     items: unsafe {
-                        static DATA: &[u8] = &[
+                        ::zerovec::ZeroVec::from_bytes_unchecked(&[
                             128u8, 0u8, 1u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
-                        ];
-                        let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                        metadata /= 3usize;
-                        zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                        ])
                     },
                 },
                 short: ::icu_datetime::pattern::runtime::GenericPattern {
                     items: unsafe {
-                        static DATA: &[u8] = &[
+                        ::zerovec::ZeroVec::from_bytes_unchecked(&[
                             128u8, 0u8, 1u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
-                        ];
-                        let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                        metadata /= 3usize;
-                        zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                        ])
                     },
                 },
             },
@@ -5603,50 +4433,38 @@ static RU_U_CA_GREGORY: DataStruct = &::icu_datetime::provider::calendar::DatePa
     date: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
         full: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 80u8, 4u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 64u8, 1u8, 0u8, 0u8,
                     32u8, 128u8, 32u8, 4u8, 0u8, 0u8, 32u8, 128u8, 16u8, 1u8, 0u8, 0u8, 32u8, 0u8,
                     4u8, 51u8, 0u8, 0u8, 46u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
         },
         long: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 64u8, 1u8, 0u8, 0u8, 32u8, 128u8, 32u8, 4u8, 0u8, 0u8, 32u8, 128u8,
                     16u8, 1u8, 0u8, 0u8, 32u8, 0u8, 4u8, 51u8, 0u8, 0u8, 46u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
         },
         medium: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 64u8, 1u8, 0u8, 0u8, 32u8, 128u8, 32u8, 3u8, 0u8, 0u8, 32u8, 128u8,
                     16u8, 1u8, 0u8, 0u8, 32u8, 0u8, 4u8, 51u8, 0u8, 0u8, 46u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
         },
         short: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 64u8, 2u8, 0u8, 0u8, 46u8, 128u8, 32u8, 2u8, 0u8, 0u8, 46u8, 128u8,
                     16u8, 1u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
         },
@@ -5654,51 +4472,39 @@ static RU_U_CA_GREGORY: DataStruct = &::icu_datetime::provider::calendar::DatePa
     time_h11_h12: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
         full: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8, 128u8,
                     144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8, 0u8, 0u8, 32u8, 128u8, 163u8,
                     1u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
         },
         long: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8, 128u8,
                     144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8, 0u8, 0u8, 32u8, 128u8, 163u8,
                     1u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
         },
         medium: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8, 128u8,
                     144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
         },
         short: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 32u8, 128u8,
                     96u8, 1u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Minutes,
         },
@@ -5706,46 +4512,36 @@ static RU_U_CA_GREGORY: DataStruct = &::icu_datetime::provider::calendar::DatePa
     time_h23_h24: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
         full: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8, 128u8,
                     144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 160u8, 4u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
         },
         long: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8, 128u8,
                     144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 160u8, 1u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
         },
         medium: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8, 128u8,
                     144u8, 2u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
         },
         short: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                    128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8,
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Minutes,
         },
@@ -5754,42 +4550,30 @@ static RU_U_CA_GREGORY: DataStruct = &::icu_datetime::provider::calendar::DatePa
     length_combinations: ::icu_datetime::provider::calendar::patterns::GenericLengthPatternsV1 {
         full: ::icu_datetime::pattern::runtime::GenericPattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 0u8, 1u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
         },
         long: ::icu_datetime::pattern::runtime::GenericPattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 0u8, 1u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
         },
         medium: ::icu_datetime::pattern::runtime::GenericPattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 0u8, 1u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
         },
         short: ::icu_datetime::pattern::runtime::GenericPattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 0u8, 1u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
         },
     },
@@ -5799,51 +4583,39 @@ static SR_U_CA_BUDDHIST_SR_U_CA_COPTIC_SR_U_CA_ETHIOPIC: DataStruct =
         date: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
             full: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 80u8, 4u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 64u8, 1u8, 0u8,
                         0u8, 46u8, 0u8, 0u8, 32u8, 128u8, 32u8, 4u8, 0u8, 0u8, 32u8, 128u8, 16u8,
                         1u8, 0u8, 0u8, 46u8, 0u8, 0u8, 32u8, 128u8, 0u8, 1u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
             },
             long: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 64u8, 1u8, 0u8, 0u8, 46u8, 0u8, 0u8, 32u8, 128u8, 32u8, 4u8, 0u8,
                         0u8, 32u8, 128u8, 16u8, 1u8, 0u8, 0u8, 46u8, 0u8, 0u8, 32u8, 128u8, 0u8,
                         1u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
             },
             medium: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 64u8, 1u8, 0u8, 0u8, 46u8, 128u8, 32u8, 2u8, 0u8, 0u8, 46u8, 128u8,
                         16u8, 1u8, 0u8, 0u8, 46u8, 0u8, 0u8, 32u8, 128u8, 0u8, 1u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
             },
             short: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 64u8, 1u8, 0u8, 0u8, 46u8, 128u8, 32u8, 1u8, 0u8, 0u8, 46u8, 128u8,
                         16u8, 1u8, 0u8, 0u8, 46u8, 0u8, 0u8, 32u8, 128u8, 0u8, 5u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
             },
@@ -5851,49 +4623,37 @@ static SR_U_CA_BUDDHIST_SR_U_CA_COPTIC_SR_U_CA_ETHIOPIC: DataStruct =
         time_h11_h12: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
             full: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 113u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8,
                         128u8, 144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
             },
             long: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 113u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8,
                         128u8, 144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
             },
             medium: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 113u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8,
                         128u8, 144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
             },
             short: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 113u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 32u8,
                         128u8, 96u8, 1u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Minutes,
             },
@@ -5901,46 +4661,36 @@ static SR_U_CA_BUDDHIST_SR_U_CA_COPTIC_SR_U_CA_ETHIOPIC: DataStruct =
         time_h23_h24: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
             full: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8,
                         128u8, 144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 160u8, 4u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
             },
             long: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8,
                         128u8, 144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 160u8, 1u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
             },
             medium: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8,
                         128u8, 144u8, 2u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
             },
             short: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                        128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8,
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Minutes,
             },
@@ -5950,34 +4700,30 @@ static SR_U_CA_BUDDHIST_SR_U_CA_COPTIC_SR_U_CA_ETHIOPIC: DataStruct =
             ::icu_datetime::provider::calendar::patterns::GenericLengthPatternsV1 {
                 full: ::icu_datetime::pattern::runtime::GenericPattern {
                     items: unsafe {
-                        static DATA: &[u8] = &[128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8];
-                        let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                        metadata /= 3usize;
-                        zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                        ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                            128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
+                        ])
                     },
                 },
                 long: ::icu_datetime::pattern::runtime::GenericPattern {
                     items: unsafe {
-                        static DATA: &[u8] = &[128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8];
-                        let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                        metadata /= 3usize;
-                        zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                        ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                            128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
+                        ])
                     },
                 },
                 medium: ::icu_datetime::pattern::runtime::GenericPattern {
                     items: unsafe {
-                        static DATA: &[u8] = &[128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8];
-                        let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                        metadata /= 3usize;
-                        zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                        ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                            128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
+                        ])
                     },
                 },
                 short: ::icu_datetime::pattern::runtime::GenericPattern {
                     items: unsafe {
-                        static DATA: &[u8] = &[128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8];
-                        let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                        metadata /= 3usize;
-                        zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                        ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                            128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
+                        ])
                     },
                 },
             },
@@ -5987,50 +4733,38 @@ static SR_U_CA_GREGORY_SR_CYRL_U_CA_GREGORY: DataStruct =
         date: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
             full: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 80u8, 4u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 64u8, 1u8, 0u8,
                         0u8, 46u8, 0u8, 0u8, 32u8, 128u8, 32u8, 4u8, 0u8, 0u8, 32u8, 128u8, 16u8,
                         1u8, 0u8, 0u8, 46u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
             },
             long: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 64u8, 1u8, 0u8, 0u8, 46u8, 0u8, 0u8, 32u8, 128u8, 32u8, 4u8, 0u8,
                         0u8, 32u8, 128u8, 16u8, 1u8, 0u8, 0u8, 46u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
             },
             medium: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 64u8, 1u8, 0u8, 0u8, 46u8, 0u8, 0u8, 32u8, 128u8, 32u8, 1u8, 0u8,
                         0u8, 46u8, 0u8, 0u8, 32u8, 128u8, 16u8, 1u8, 0u8, 0u8, 46u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
             },
             short: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 64u8, 1u8, 0u8, 0u8, 46u8, 128u8, 32u8, 1u8, 0u8, 0u8, 46u8, 128u8,
                         16u8, 2u8, 0u8, 0u8, 46u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
             },
@@ -6038,51 +4772,39 @@ static SR_U_CA_GREGORY_SR_CYRL_U_CA_GREGORY: DataStruct =
         time_h11_h12: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
             full: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8,
                         128u8, 144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8, 0u8, 0u8, 32u8, 128u8,
                         163u8, 1u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
             },
             long: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8,
                         128u8, 144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8, 0u8, 0u8, 32u8, 128u8,
                         163u8, 1u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
             },
             medium: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8,
                         128u8, 144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
             },
             short: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 32u8,
                         128u8, 96u8, 1u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Minutes,
             },
@@ -6090,46 +4812,36 @@ static SR_U_CA_GREGORY_SR_CYRL_U_CA_GREGORY: DataStruct =
         time_h23_h24: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
             full: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8,
                         128u8, 144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 160u8, 4u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
             },
             long: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8,
                         128u8, 144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 160u8, 1u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
             },
             medium: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8,
                         128u8, 144u8, 2u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
             },
             short: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                        128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8,
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Minutes,
             },
@@ -6139,34 +4851,30 @@ static SR_U_CA_GREGORY_SR_CYRL_U_CA_GREGORY: DataStruct =
             ::icu_datetime::provider::calendar::patterns::GenericLengthPatternsV1 {
                 full: ::icu_datetime::pattern::runtime::GenericPattern {
                     items: unsafe {
-                        static DATA: &[u8] = &[128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8];
-                        let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                        metadata /= 3usize;
-                        zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                        ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                            128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
+                        ])
                     },
                 },
                 long: ::icu_datetime::pattern::runtime::GenericPattern {
                     items: unsafe {
-                        static DATA: &[u8] = &[128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8];
-                        let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                        metadata /= 3usize;
-                        zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                        ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                            128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
+                        ])
                     },
                 },
                 medium: ::icu_datetime::pattern::runtime::GenericPattern {
                     items: unsafe {
-                        static DATA: &[u8] = &[128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8];
-                        let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                        metadata /= 3usize;
-                        zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                        ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                            128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
+                        ])
                     },
                 },
                 short: ::icu_datetime::pattern::runtime::GenericPattern {
                     items: unsafe {
-                        static DATA: &[u8] = &[128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8];
-                        let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                        metadata /= 3usize;
-                        zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                        ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                            128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
+                        ])
                     },
                 },
             },
@@ -6176,50 +4884,38 @@ static SR_U_CA_JAPANESE_SR_CYRL_U_CA_JAPANESE: DataStruct =
         date: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
             full: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 80u8, 4u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 32u8, 4u8, 0u8,
                         0u8, 32u8, 128u8, 64u8, 1u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 16u8,
                         1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 1u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
             },
             long: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 32u8, 4u8, 0u8, 0u8, 32u8, 128u8, 64u8, 1u8, 0u8, 0u8, 44u8, 0u8,
                         0u8, 32u8, 128u8, 16u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 1u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
             },
             medium: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 32u8, 3u8, 0u8, 0u8, 32u8, 128u8, 64u8, 1u8, 0u8, 0u8, 44u8, 0u8,
                         0u8, 32u8, 128u8, 16u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 1u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
             },
             short: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 32u8, 1u8, 0u8, 0u8, 47u8, 128u8, 64u8, 1u8, 0u8, 0u8, 47u8, 128u8,
                         16u8, 2u8, 0u8, 0u8, 32u8, 128u8, 0u8, 1u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
             },
@@ -6227,49 +4923,37 @@ static SR_U_CA_JAPANESE_SR_CYRL_U_CA_JAPANESE: DataStruct =
         time_h11_h12: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
             full: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 113u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8,
                         128u8, 144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
             },
             long: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 113u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8,
                         128u8, 144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
             },
             medium: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 113u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8,
                         128u8, 144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
             },
             short: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 113u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 32u8,
                         128u8, 96u8, 1u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Minutes,
             },
@@ -6277,46 +4961,36 @@ static SR_U_CA_JAPANESE_SR_CYRL_U_CA_JAPANESE: DataStruct =
         time_h23_h24: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
             full: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8,
                         128u8, 144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 160u8, 4u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
             },
             long: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8,
                         128u8, 144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 160u8, 1u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
             },
             medium: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8,
                         128u8, 144u8, 2u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
             },
             short: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                        128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8,
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Minutes,
             },
@@ -6326,34 +5000,30 @@ static SR_U_CA_JAPANESE_SR_CYRL_U_CA_JAPANESE: DataStruct =
             ::icu_datetime::provider::calendar::patterns::GenericLengthPatternsV1 {
                 full: ::icu_datetime::pattern::runtime::GenericPattern {
                     items: unsafe {
-                        static DATA: &[u8] = &[128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8];
-                        let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                        metadata /= 3usize;
-                        zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                        ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                            128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
+                        ])
                     },
                 },
                 long: ::icu_datetime::pattern::runtime::GenericPattern {
                     items: unsafe {
-                        static DATA: &[u8] = &[128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8];
-                        let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                        metadata /= 3usize;
-                        zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                        ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                            128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
+                        ])
                     },
                 },
                 medium: ::icu_datetime::pattern::runtime::GenericPattern {
                     items: unsafe {
-                        static DATA: &[u8] = &[128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8];
-                        let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                        metadata /= 3usize;
-                        zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                        ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                            128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
+                        ])
                     },
                 },
                 short: ::icu_datetime::pattern::runtime::GenericPattern {
                     items: unsafe {
-                        static DATA: &[u8] = &[128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8];
-                        let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                        metadata /= 3usize;
-                        zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                        ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                            128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
+                        ])
                     },
                 },
             },
@@ -6362,50 +5032,38 @@ static TH_U_CA_BUDDHIST: DataStruct = &::icu_datetime::provider::calendar::DateP
     date: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
         full: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 80u8, 4u8, 0u8, 14u8, 23u8, 0u8, 14u8, 53u8, 0u8, 14u8, 72u8, 0u8, 0u8,
                     32u8, 128u8, 64u8, 1u8, 0u8, 0u8, 32u8, 128u8, 32u8, 4u8, 0u8, 0u8, 32u8,
                     128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 16u8, 1u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
         },
         long: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 64u8, 1u8, 0u8, 0u8, 32u8, 128u8, 32u8, 4u8, 0u8, 0u8, 32u8, 128u8,
                     16u8, 1u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
         },
         medium: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 64u8, 1u8, 0u8, 0u8, 32u8, 128u8, 32u8, 3u8, 0u8, 0u8, 32u8, 128u8,
                     16u8, 1u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
         },
         short: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 64u8, 1u8, 0u8, 0u8, 47u8, 128u8, 32u8, 1u8, 0u8, 0u8, 47u8, 128u8,
                     16u8, 2u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
         },
@@ -6413,49 +5071,37 @@ static TH_U_CA_BUDDHIST: DataStruct = &::icu_datetime::provider::calendar::DateP
     time_h11_h12: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
         full: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8, 128u8,
                     144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
         },
         long: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8, 128u8,
                     144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
         },
         medium: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8, 128u8,
                     144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
         },
         short: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 32u8, 128u8,
                     96u8, 1u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Minutes,
         },
@@ -6463,54 +5109,44 @@ static TH_U_CA_BUDDHIST: DataStruct = &::icu_datetime::provider::calendar::DateP
     time_h23_h24: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
         full: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 114u8, 1u8, 0u8, 0u8, 32u8, 0u8, 14u8, 25u8, 0u8, 14u8, 50u8, 0u8, 14u8,
                     44u8, 0u8, 14u8, 52u8, 0u8, 14u8, 1u8, 0u8, 14u8, 50u8, 0u8, 0u8, 32u8, 128u8,
                     128u8, 2u8, 0u8, 0u8, 32u8, 0u8, 14u8, 25u8, 0u8, 14u8, 50u8, 0u8, 14u8, 23u8,
                     0u8, 14u8, 53u8, 0u8, 0u8, 32u8, 128u8, 144u8, 2u8, 0u8, 0u8, 32u8, 0u8, 14u8,
                     39u8, 0u8, 14u8, 52u8, 0u8, 14u8, 25u8, 0u8, 14u8, 50u8, 0u8, 14u8, 23u8, 0u8,
                     14u8, 53u8, 0u8, 0u8, 32u8, 128u8, 160u8, 4u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
         },
         long: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 114u8, 1u8, 0u8, 0u8, 32u8, 0u8, 14u8, 25u8, 0u8, 14u8, 50u8, 0u8, 14u8,
                     44u8, 0u8, 14u8, 52u8, 0u8, 14u8, 1u8, 0u8, 14u8, 50u8, 0u8, 0u8, 32u8, 128u8,
                     128u8, 2u8, 0u8, 0u8, 32u8, 0u8, 14u8, 25u8, 0u8, 14u8, 50u8, 0u8, 14u8, 23u8,
                     0u8, 14u8, 53u8, 0u8, 0u8, 32u8, 128u8, 144u8, 2u8, 0u8, 0u8, 32u8, 0u8, 14u8,
                     39u8, 0u8, 14u8, 52u8, 0u8, 14u8, 25u8, 0u8, 14u8, 50u8, 0u8, 14u8, 23u8, 0u8,
                     14u8, 53u8, 0u8, 0u8, 32u8, 128u8, 160u8, 1u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
         },
         medium: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8, 128u8,
                     144u8, 2u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
         },
         short: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                    128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8,
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Minutes,
         },
@@ -6519,34 +5155,30 @@ static TH_U_CA_BUDDHIST: DataStruct = &::icu_datetime::provider::calendar::DateP
     length_combinations: ::icu_datetime::provider::calendar::patterns::GenericLengthPatternsV1 {
         full: ::icu_datetime::pattern::runtime::GenericPattern {
             items: unsafe {
-                static DATA: &[u8] = &[128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                    128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
+                ])
             },
         },
         long: ::icu_datetime::pattern::runtime::GenericPattern {
             items: unsafe {
-                static DATA: &[u8] = &[128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                    128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
+                ])
             },
         },
         medium: ::icu_datetime::pattern::runtime::GenericPattern {
             items: unsafe {
-                static DATA: &[u8] = &[128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                    128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
+                ])
             },
         },
         short: ::icu_datetime::pattern::runtime::GenericPattern {
             items: unsafe {
-                static DATA: &[u8] = &[128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                    128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
+                ])
             },
         },
     },
@@ -6556,50 +5188,38 @@ static TH_U_CA_COPTIC_TH_U_CA_ETHIOPIC_TH_U_CA_INDIAN: DataStruct =
         date: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
             full: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 80u8, 4u8, 0u8, 14u8, 23u8, 0u8, 14u8, 53u8, 0u8, 14u8, 72u8, 0u8,
                         0u8, 32u8, 128u8, 64u8, 1u8, 0u8, 0u8, 32u8, 128u8, 32u8, 4u8, 0u8, 0u8,
                         32u8, 128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 16u8, 1u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
             },
             long: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 64u8, 1u8, 0u8, 0u8, 32u8, 128u8, 32u8, 4u8, 0u8, 0u8, 32u8, 128u8,
                         0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 16u8, 1u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
             },
             medium: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 64u8, 1u8, 0u8, 0u8, 32u8, 128u8, 32u8, 3u8, 0u8, 0u8, 32u8, 128u8,
                         0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 16u8, 1u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
             },
             short: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 64u8, 1u8, 0u8, 0u8, 47u8, 128u8, 32u8, 1u8, 0u8, 0u8, 47u8, 128u8,
                         16u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 1u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
             },
@@ -6607,49 +5227,37 @@ static TH_U_CA_COPTIC_TH_U_CA_ETHIOPIC_TH_U_CA_INDIAN: DataStruct =
         time_h11_h12: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
             full: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8,
                         128u8, 144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
             },
             long: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8,
                         128u8, 144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
             },
             medium: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8,
                         128u8, 144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
             },
             short: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 32u8,
                         128u8, 96u8, 1u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Minutes,
             },
@@ -6657,54 +5265,44 @@ static TH_U_CA_COPTIC_TH_U_CA_ETHIOPIC_TH_U_CA_INDIAN: DataStruct =
         time_h23_h24: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
             full: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 114u8, 1u8, 0u8, 0u8, 32u8, 0u8, 14u8, 25u8, 0u8, 14u8, 50u8, 0u8,
                         14u8, 44u8, 0u8, 14u8, 52u8, 0u8, 14u8, 1u8, 0u8, 14u8, 50u8, 0u8, 0u8,
                         32u8, 128u8, 128u8, 2u8, 0u8, 0u8, 32u8, 0u8, 14u8, 25u8, 0u8, 14u8, 50u8,
                         0u8, 14u8, 23u8, 0u8, 14u8, 53u8, 0u8, 0u8, 32u8, 128u8, 144u8, 2u8, 0u8,
                         0u8, 32u8, 0u8, 14u8, 39u8, 0u8, 14u8, 52u8, 0u8, 14u8, 25u8, 0u8, 14u8,
                         50u8, 0u8, 14u8, 23u8, 0u8, 14u8, 53u8, 0u8, 0u8, 32u8, 128u8, 160u8, 4u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
             },
             long: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 114u8, 1u8, 0u8, 0u8, 32u8, 0u8, 14u8, 25u8, 0u8, 14u8, 50u8, 0u8,
                         14u8, 44u8, 0u8, 14u8, 52u8, 0u8, 14u8, 1u8, 0u8, 14u8, 50u8, 0u8, 0u8,
                         32u8, 128u8, 128u8, 2u8, 0u8, 0u8, 32u8, 0u8, 14u8, 25u8, 0u8, 14u8, 50u8,
                         0u8, 14u8, 23u8, 0u8, 14u8, 53u8, 0u8, 0u8, 32u8, 128u8, 144u8, 2u8, 0u8,
                         0u8, 32u8, 0u8, 14u8, 39u8, 0u8, 14u8, 52u8, 0u8, 14u8, 25u8, 0u8, 14u8,
                         50u8, 0u8, 14u8, 23u8, 0u8, 14u8, 53u8, 0u8, 0u8, 32u8, 128u8, 160u8, 1u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
             },
             medium: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8,
                         128u8, 144u8, 2u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
             },
             short: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                        128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8,
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Minutes,
             },
@@ -6714,34 +5312,30 @@ static TH_U_CA_COPTIC_TH_U_CA_ETHIOPIC_TH_U_CA_INDIAN: DataStruct =
             ::icu_datetime::provider::calendar::patterns::GenericLengthPatternsV1 {
                 full: ::icu_datetime::pattern::runtime::GenericPattern {
                     items: unsafe {
-                        static DATA: &[u8] = &[128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8];
-                        let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                        metadata /= 3usize;
-                        zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                        ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                            128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
+                        ])
                     },
                 },
                 long: ::icu_datetime::pattern::runtime::GenericPattern {
                     items: unsafe {
-                        static DATA: &[u8] = &[128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8];
-                        let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                        metadata /= 3usize;
-                        zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                        ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                            128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
+                        ])
                     },
                 },
                 medium: ::icu_datetime::pattern::runtime::GenericPattern {
                     items: unsafe {
-                        static DATA: &[u8] = &[128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8];
-                        let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                        metadata /= 3usize;
-                        zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                        ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                            128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
+                        ])
                     },
                 },
                 short: ::icu_datetime::pattern::runtime::GenericPattern {
                     items: unsafe {
-                        static DATA: &[u8] = &[128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8];
-                        let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                        metadata /= 3usize;
-                        zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                        ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                            128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
+                        ])
                     },
                 },
             },
@@ -6750,50 +5344,38 @@ static TH_U_CA_GREGORY: DataStruct = &::icu_datetime::provider::calendar::DatePa
     date: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
         full: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 80u8, 4u8, 0u8, 14u8, 23u8, 0u8, 14u8, 53u8, 0u8, 14u8, 72u8, 0u8, 0u8,
                     32u8, 128u8, 64u8, 1u8, 0u8, 0u8, 32u8, 128u8, 32u8, 4u8, 0u8, 0u8, 32u8,
                     128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 16u8, 1u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
         },
         long: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 64u8, 1u8, 0u8, 0u8, 32u8, 128u8, 32u8, 4u8, 0u8, 0u8, 32u8, 128u8, 0u8,
                     1u8, 0u8, 0u8, 32u8, 128u8, 16u8, 1u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
         },
         medium: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 64u8, 1u8, 0u8, 0u8, 32u8, 128u8, 32u8, 3u8, 0u8, 0u8, 32u8, 128u8,
                     16u8, 1u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
         },
         short: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 64u8, 1u8, 0u8, 0u8, 47u8, 128u8, 32u8, 1u8, 0u8, 0u8, 47u8, 128u8,
                     16u8, 2u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
         },
@@ -6801,51 +5383,39 @@ static TH_U_CA_GREGORY: DataStruct = &::icu_datetime::provider::calendar::DatePa
     time_h11_h12: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
         full: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8, 128u8,
                     144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8, 0u8, 0u8, 32u8, 128u8, 163u8,
                     1u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
         },
         long: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8, 128u8,
                     144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8, 0u8, 0u8, 32u8, 128u8, 163u8,
                     1u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
         },
         medium: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8, 128u8,
                     144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
         },
         short: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 32u8, 128u8,
                     96u8, 1u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Minutes,
         },
@@ -6853,54 +5423,44 @@ static TH_U_CA_GREGORY: DataStruct = &::icu_datetime::provider::calendar::DatePa
     time_h23_h24: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
         full: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 114u8, 1u8, 0u8, 0u8, 32u8, 0u8, 14u8, 25u8, 0u8, 14u8, 50u8, 0u8, 14u8,
                     44u8, 0u8, 14u8, 52u8, 0u8, 14u8, 1u8, 0u8, 14u8, 50u8, 0u8, 0u8, 32u8, 128u8,
                     128u8, 2u8, 0u8, 0u8, 32u8, 0u8, 14u8, 25u8, 0u8, 14u8, 50u8, 0u8, 14u8, 23u8,
                     0u8, 14u8, 53u8, 0u8, 0u8, 32u8, 128u8, 144u8, 2u8, 0u8, 0u8, 32u8, 0u8, 14u8,
                     39u8, 0u8, 14u8, 52u8, 0u8, 14u8, 25u8, 0u8, 14u8, 50u8, 0u8, 14u8, 23u8, 0u8,
                     14u8, 53u8, 0u8, 0u8, 32u8, 128u8, 160u8, 4u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
         },
         long: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 114u8, 1u8, 0u8, 0u8, 32u8, 0u8, 14u8, 25u8, 0u8, 14u8, 50u8, 0u8, 14u8,
                     44u8, 0u8, 14u8, 52u8, 0u8, 14u8, 1u8, 0u8, 14u8, 50u8, 0u8, 0u8, 32u8, 128u8,
                     128u8, 2u8, 0u8, 0u8, 32u8, 0u8, 14u8, 25u8, 0u8, 14u8, 50u8, 0u8, 14u8, 23u8,
                     0u8, 14u8, 53u8, 0u8, 0u8, 32u8, 128u8, 144u8, 2u8, 0u8, 0u8, 32u8, 0u8, 14u8,
                     39u8, 0u8, 14u8, 52u8, 0u8, 14u8, 25u8, 0u8, 14u8, 50u8, 0u8, 14u8, 23u8, 0u8,
                     14u8, 53u8, 0u8, 0u8, 32u8, 128u8, 160u8, 1u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
         },
         medium: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8, 128u8,
                     144u8, 2u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
         },
         short: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                    128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8,
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Minutes,
         },
@@ -6909,34 +5469,30 @@ static TH_U_CA_GREGORY: DataStruct = &::icu_datetime::provider::calendar::DatePa
     length_combinations: ::icu_datetime::provider::calendar::patterns::GenericLengthPatternsV1 {
         full: ::icu_datetime::pattern::runtime::GenericPattern {
             items: unsafe {
-                static DATA: &[u8] = &[128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                    128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
+                ])
             },
         },
         long: ::icu_datetime::pattern::runtime::GenericPattern {
             items: unsafe {
-                static DATA: &[u8] = &[128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                    128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
+                ])
             },
         },
         medium: ::icu_datetime::pattern::runtime::GenericPattern {
             items: unsafe {
-                static DATA: &[u8] = &[128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                    128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
+                ])
             },
         },
         short: ::icu_datetime::pattern::runtime::GenericPattern {
             items: unsafe {
-                static DATA: &[u8] = &[128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                    128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
+                ])
             },
         },
     },
@@ -6945,51 +5501,39 @@ static TH_U_CA_JAPANESE: DataStruct = &::icu_datetime::provider::calendar::DateP
     date: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
         full: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 80u8, 4u8, 0u8, 14u8, 23u8, 0u8, 14u8, 53u8, 0u8, 14u8, 72u8, 0u8, 0u8,
                     32u8, 128u8, 64u8, 1u8, 0u8, 0u8, 32u8, 128u8, 32u8, 4u8, 0u8, 0u8, 32u8, 0u8,
                     14u8, 27u8, 0u8, 14u8, 53u8, 128u8, 0u8, 1u8, 0u8, 14u8, 23u8, 0u8, 14u8, 53u8,
                     0u8, 14u8, 72u8, 0u8, 0u8, 32u8, 128u8, 16u8, 1u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
         },
         long: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 64u8, 1u8, 0u8, 0u8, 32u8, 128u8, 32u8, 4u8, 0u8, 0u8, 32u8, 0u8, 14u8,
                     27u8, 0u8, 14u8, 53u8, 128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 16u8, 1u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
         },
         medium: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 64u8, 1u8, 0u8, 0u8, 32u8, 128u8, 32u8, 3u8, 0u8, 0u8, 32u8, 128u8, 0u8,
                     1u8, 0u8, 0u8, 32u8, 128u8, 16u8, 1u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
         },
         short: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 64u8, 1u8, 0u8, 0u8, 47u8, 128u8, 32u8, 1u8, 0u8, 0u8, 47u8, 128u8,
                     16u8, 2u8, 0u8, 0u8, 32u8, 128u8, 0u8, 1u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
         },
@@ -6997,49 +5541,37 @@ static TH_U_CA_JAPANESE: DataStruct = &::icu_datetime::provider::calendar::DateP
     time_h11_h12: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
         full: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8, 128u8,
                     144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
         },
         long: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8, 128u8,
                     144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
         },
         medium: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8, 128u8,
                     144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
         },
         short: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 32u8, 128u8,
                     96u8, 1u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Minutes,
         },
@@ -7047,54 +5579,44 @@ static TH_U_CA_JAPANESE: DataStruct = &::icu_datetime::provider::calendar::DateP
     time_h23_h24: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
         full: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 114u8, 1u8, 0u8, 0u8, 32u8, 0u8, 14u8, 25u8, 0u8, 14u8, 50u8, 0u8, 14u8,
                     44u8, 0u8, 14u8, 52u8, 0u8, 14u8, 1u8, 0u8, 14u8, 50u8, 0u8, 0u8, 32u8, 128u8,
                     128u8, 2u8, 0u8, 0u8, 32u8, 0u8, 14u8, 25u8, 0u8, 14u8, 50u8, 0u8, 14u8, 23u8,
                     0u8, 14u8, 53u8, 0u8, 0u8, 32u8, 128u8, 144u8, 2u8, 0u8, 0u8, 32u8, 0u8, 14u8,
                     39u8, 0u8, 14u8, 52u8, 0u8, 14u8, 25u8, 0u8, 14u8, 50u8, 0u8, 14u8, 23u8, 0u8,
                     14u8, 53u8, 0u8, 0u8, 32u8, 128u8, 160u8, 4u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
         },
         long: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 114u8, 1u8, 0u8, 0u8, 32u8, 0u8, 14u8, 25u8, 0u8, 14u8, 50u8, 0u8, 14u8,
                     44u8, 0u8, 14u8, 52u8, 0u8, 14u8, 1u8, 0u8, 14u8, 50u8, 0u8, 0u8, 32u8, 128u8,
                     128u8, 2u8, 0u8, 0u8, 32u8, 0u8, 14u8, 25u8, 0u8, 14u8, 50u8, 0u8, 14u8, 23u8,
                     0u8, 14u8, 53u8, 0u8, 0u8, 32u8, 128u8, 144u8, 2u8, 0u8, 0u8, 32u8, 0u8, 14u8,
                     39u8, 0u8, 14u8, 52u8, 0u8, 14u8, 25u8, 0u8, 14u8, 50u8, 0u8, 14u8, 23u8, 0u8,
                     14u8, 53u8, 0u8, 0u8, 32u8, 128u8, 160u8, 1u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
         },
         medium: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8, 128u8,
                     144u8, 2u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
         },
         short: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                    128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8,
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Minutes,
         },
@@ -7103,34 +5625,30 @@ static TH_U_CA_JAPANESE: DataStruct = &::icu_datetime::provider::calendar::DateP
     length_combinations: ::icu_datetime::provider::calendar::patterns::GenericLengthPatternsV1 {
         full: ::icu_datetime::pattern::runtime::GenericPattern {
             items: unsafe {
-                static DATA: &[u8] = &[128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                    128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
+                ])
             },
         },
         long: ::icu_datetime::pattern::runtime::GenericPattern {
             items: unsafe {
-                static DATA: &[u8] = &[128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                    128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
+                ])
             },
         },
         medium: ::icu_datetime::pattern::runtime::GenericPattern {
             items: unsafe {
-                static DATA: &[u8] = &[128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                    128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
+                ])
             },
         },
         short: ::icu_datetime::pattern::runtime::GenericPattern {
             items: unsafe {
-                static DATA: &[u8] = &[128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                    128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
+                ])
             },
         },
     },
@@ -7140,50 +5658,38 @@ static TR_U_CA_BUDDHIST_TR_U_CA_COPTIC_TR_U_CA_ETHIOPIC: DataStruct =
         date: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
             full: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 64u8, 1u8, 0u8, 0u8, 32u8, 128u8,
                         32u8, 4u8, 0u8, 0u8, 32u8, 128u8, 16u8, 1u8, 0u8, 0u8, 32u8, 128u8, 80u8,
                         4u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
             },
             long: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 64u8, 1u8, 0u8, 0u8, 32u8, 128u8,
                         32u8, 4u8, 0u8, 0u8, 32u8, 128u8, 16u8, 1u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
             },
             medium: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 64u8, 1u8, 0u8, 0u8, 32u8, 128u8,
                         32u8, 3u8, 0u8, 0u8, 32u8, 128u8, 16u8, 1u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
             },
             short: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 0u8, 5u8, 0u8, 0u8, 32u8, 128u8, 64u8, 1u8, 0u8, 0u8, 46u8, 128u8,
                         32u8, 2u8, 0u8, 0u8, 46u8, 128u8, 16u8, 1u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
             },
@@ -7191,49 +5697,37 @@ static TR_U_CA_BUDDHIST_TR_U_CA_COPTIC_TR_U_CA_ETHIOPIC: DataStruct =
         time_h11_h12: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
             full: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8,
                         128u8, 144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
             },
             long: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8,
                         128u8, 144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
             },
             medium: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8,
                         128u8, 144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
             },
             short: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 32u8,
                         128u8, 96u8, 1u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Minutes,
             },
@@ -7241,46 +5735,36 @@ static TR_U_CA_BUDDHIST_TR_U_CA_COPTIC_TR_U_CA_ETHIOPIC: DataStruct =
         time_h23_h24: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
             full: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8,
                         128u8, 144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 160u8, 4u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
             },
             long: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8,
                         128u8, 144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 160u8, 1u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
             },
             medium: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8,
                         128u8, 144u8, 2u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
             },
             short: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                        128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8,
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Minutes,
             },
@@ -7290,34 +5774,30 @@ static TR_U_CA_BUDDHIST_TR_U_CA_COPTIC_TR_U_CA_ETHIOPIC: DataStruct =
             ::icu_datetime::provider::calendar::patterns::GenericLengthPatternsV1 {
                 full: ::icu_datetime::pattern::runtime::GenericPattern {
                     items: unsafe {
-                        static DATA: &[u8] = &[128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8];
-                        let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                        metadata /= 3usize;
-                        zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                        ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                            128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
+                        ])
                     },
                 },
                 long: ::icu_datetime::pattern::runtime::GenericPattern {
                     items: unsafe {
-                        static DATA: &[u8] = &[128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8];
-                        let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                        metadata /= 3usize;
-                        zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                        ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                            128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
+                        ])
                     },
                 },
                 medium: ::icu_datetime::pattern::runtime::GenericPattern {
                     items: unsafe {
-                        static DATA: &[u8] = &[128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8];
-                        let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                        metadata /= 3usize;
-                        zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                        ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                            128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
+                        ])
                     },
                 },
                 short: ::icu_datetime::pattern::runtime::GenericPattern {
                     items: unsafe {
-                        static DATA: &[u8] = &[128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8];
-                        let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                        metadata /= 3usize;
-                        zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                        ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                            128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
+                        ])
                     },
                 },
             },
@@ -7326,49 +5806,37 @@ static TR_U_CA_GREGORY: DataStruct = &::icu_datetime::provider::calendar::DatePa
     date: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
         full: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 64u8, 1u8, 0u8, 0u8, 32u8, 128u8, 32u8, 4u8, 0u8, 0u8, 32u8, 128u8,
                     16u8, 1u8, 0u8, 0u8, 32u8, 128u8, 80u8, 4u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
         },
         long: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 64u8, 1u8, 0u8, 0u8, 32u8, 128u8, 32u8, 4u8, 0u8, 0u8, 32u8, 128u8,
                     16u8, 1u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
         },
         medium: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 64u8, 1u8, 0u8, 0u8, 32u8, 128u8, 32u8, 3u8, 0u8, 0u8, 32u8, 128u8,
                     16u8, 1u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
         },
         short: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 64u8, 1u8, 0u8, 0u8, 46u8, 128u8, 32u8, 2u8, 0u8, 0u8, 46u8, 128u8,
                     16u8, 1u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
         },
@@ -7376,51 +5844,39 @@ static TR_U_CA_GREGORY: DataStruct = &::icu_datetime::provider::calendar::DatePa
     time_h11_h12: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
         full: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 96u8, 1u8, 0u8, 0u8, 32u8, 128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8,
                     128u8, 2u8, 0u8, 0u8, 58u8, 128u8, 144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 163u8,
                     1u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
         },
         long: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 96u8, 1u8, 0u8, 0u8, 32u8, 128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8,
                     128u8, 2u8, 0u8, 0u8, 58u8, 128u8, 144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 163u8,
                     1u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
         },
         medium: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 96u8, 1u8, 0u8, 0u8, 32u8, 128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8,
                     128u8, 2u8, 0u8, 0u8, 58u8, 128u8, 144u8, 2u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
         },
         short: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 96u8, 1u8, 0u8, 0u8, 32u8, 128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8,
                     128u8, 2u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Minutes,
         },
@@ -7428,46 +5884,36 @@ static TR_U_CA_GREGORY: DataStruct = &::icu_datetime::provider::calendar::DatePa
     time_h23_h24: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
         full: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8, 128u8,
                     144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 160u8, 4u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
         },
         long: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8, 128u8,
                     144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 160u8, 1u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
         },
         medium: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8, 128u8,
                     144u8, 2u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
         },
         short: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                    128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8,
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Minutes,
         },
@@ -7476,34 +5922,30 @@ static TR_U_CA_GREGORY: DataStruct = &::icu_datetime::provider::calendar::DatePa
     length_combinations: ::icu_datetime::provider::calendar::patterns::GenericLengthPatternsV1 {
         full: ::icu_datetime::pattern::runtime::GenericPattern {
             items: unsafe {
-                static DATA: &[u8] = &[128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                    128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
+                ])
             },
         },
         long: ::icu_datetime::pattern::runtime::GenericPattern {
             items: unsafe {
-                static DATA: &[u8] = &[128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                    128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
+                ])
             },
         },
         medium: ::icu_datetime::pattern::runtime::GenericPattern {
             items: unsafe {
-                static DATA: &[u8] = &[128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                    128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
+                ])
             },
         },
         short: ::icu_datetime::pattern::runtime::GenericPattern {
             items: unsafe {
-                static DATA: &[u8] = &[128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                    128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
+                ])
             },
         },
     },
@@ -7512,49 +5954,37 @@ static TR_U_CA_JAPANESE: DataStruct = &::icu_datetime::provider::calendar::DateP
     date: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
         full: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 64u8, 1u8, 0u8, 0u8, 32u8, 128u8, 32u8, 4u8, 0u8, 0u8, 32u8, 128u8,
                     16u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 80u8, 4u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
         },
         long: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 64u8, 1u8, 0u8, 0u8, 32u8, 128u8, 32u8, 4u8, 0u8, 0u8, 32u8, 128u8,
                     16u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 1u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
         },
         medium: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 64u8, 1u8, 0u8, 0u8, 32u8, 128u8, 32u8, 3u8, 0u8, 0u8, 32u8, 128u8,
                     16u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 1u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
         },
         short: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 64u8, 1u8, 0u8, 0u8, 46u8, 128u8, 32u8, 2u8, 0u8, 0u8, 46u8, 128u8,
                     16u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 1u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
         },
@@ -7562,49 +5992,37 @@ static TR_U_CA_JAPANESE: DataStruct = &::icu_datetime::provider::calendar::DateP
     time_h11_h12: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
         full: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8, 128u8,
                     144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
         },
         long: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8, 128u8,
                     144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
         },
         medium: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8, 128u8,
                     144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
         },
         short: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 32u8, 128u8,
                     96u8, 1u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Minutes,
         },
@@ -7612,46 +6030,36 @@ static TR_U_CA_JAPANESE: DataStruct = &::icu_datetime::provider::calendar::DateP
     time_h23_h24: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
         full: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8, 128u8,
                     144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 160u8, 4u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
         },
         long: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8, 128u8,
                     144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 160u8, 1u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
         },
         medium: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8, 128u8,
                     144u8, 2u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
         },
         short: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                    128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8,
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Minutes,
         },
@@ -7660,34 +6068,30 @@ static TR_U_CA_JAPANESE: DataStruct = &::icu_datetime::provider::calendar::DateP
     length_combinations: ::icu_datetime::provider::calendar::patterns::GenericLengthPatternsV1 {
         full: ::icu_datetime::pattern::runtime::GenericPattern {
             items: unsafe {
-                static DATA: &[u8] = &[128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                    128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
+                ])
             },
         },
         long: ::icu_datetime::pattern::runtime::GenericPattern {
             items: unsafe {
-                static DATA: &[u8] = &[128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                    128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
+                ])
             },
         },
         medium: ::icu_datetime::pattern::runtime::GenericPattern {
             items: unsafe {
-                static DATA: &[u8] = &[128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                    128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
+                ])
             },
         },
         short: ::icu_datetime::pattern::runtime::GenericPattern {
             items: unsafe {
-                static DATA: &[u8] = &[128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                    128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
+                ])
             },
         },
     },
@@ -7697,50 +6101,38 @@ static UND_U_CA_BUDDHIST_UND_U_CA_COPTIC_UND_U_CA_ETHIOPIC: DataStruct =
         date: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
             full: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 16u8, 1u8, 0u8, 0u8, 32u8, 128u8,
                         32u8, 4u8, 0u8, 0u8, 32u8, 128u8, 64u8, 1u8, 0u8, 0u8, 44u8, 0u8, 0u8,
                         32u8, 128u8, 80u8, 4u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
             },
             long: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 16u8, 1u8, 0u8, 0u8, 32u8, 128u8,
                         32u8, 4u8, 0u8, 0u8, 32u8, 128u8, 64u8, 1u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
             },
             medium: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 16u8, 1u8, 0u8, 0u8, 32u8, 128u8,
                         32u8, 3u8, 0u8, 0u8, 32u8, 128u8, 64u8, 1u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
             },
             short: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 0u8, 5u8, 0u8, 0u8, 32u8, 128u8, 16u8, 1u8, 0u8, 0u8, 45u8, 128u8,
                         32u8, 2u8, 0u8, 0u8, 45u8, 128u8, 64u8, 2u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
             },
@@ -7748,49 +6140,37 @@ static UND_U_CA_BUDDHIST_UND_U_CA_COPTIC_UND_U_CA_ETHIOPIC: DataStruct =
         time_h11_h12: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
             full: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8,
                         128u8, 144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
             },
             long: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8,
                         128u8, 144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
             },
             medium: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8,
                         128u8, 144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
             },
             short: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 32u8,
                         128u8, 96u8, 1u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Minutes,
             },
@@ -7798,46 +6178,36 @@ static UND_U_CA_BUDDHIST_UND_U_CA_COPTIC_UND_U_CA_ETHIOPIC: DataStruct =
         time_h23_h24: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
             full: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8,
                         128u8, 144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 160u8, 4u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
             },
             long: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8,
                         128u8, 144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 160u8, 1u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
             },
             medium: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8,
                         128u8, 144u8, 2u8,
-                    ];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
             },
             short: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    static DATA: &[u8] = &[128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8];
-                    let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                    metadata /= 3usize;
-                    zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                        128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8,
+                    ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Minutes,
             },
@@ -7847,34 +6217,30 @@ static UND_U_CA_BUDDHIST_UND_U_CA_COPTIC_UND_U_CA_ETHIOPIC: DataStruct =
             ::icu_datetime::provider::calendar::patterns::GenericLengthPatternsV1 {
                 full: ::icu_datetime::pattern::runtime::GenericPattern {
                     items: unsafe {
-                        static DATA: &[u8] = &[128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8];
-                        let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                        metadata /= 3usize;
-                        zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                        ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                            128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
+                        ])
                     },
                 },
                 long: ::icu_datetime::pattern::runtime::GenericPattern {
                     items: unsafe {
-                        static DATA: &[u8] = &[128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8];
-                        let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                        metadata /= 3usize;
-                        zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                        ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                            128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
+                        ])
                     },
                 },
                 medium: ::icu_datetime::pattern::runtime::GenericPattern {
                     items: unsafe {
-                        static DATA: &[u8] = &[128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8];
-                        let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                        metadata /= 3usize;
-                        zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                        ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                            128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
+                        ])
                     },
                 },
                 short: ::icu_datetime::pattern::runtime::GenericPattern {
                     items: unsafe {
-                        static DATA: &[u8] = &[128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8];
-                        let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                        metadata /= 3usize;
-                        zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                        ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                            128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
+                        ])
                     },
                 },
             },
@@ -7883,49 +6249,37 @@ static UND_U_CA_GREGORY: DataStruct = &::icu_datetime::provider::calendar::DateP
     date: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
         full: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 16u8, 1u8, 0u8, 0u8, 32u8, 128u8, 32u8, 4u8, 0u8, 0u8, 32u8, 128u8,
                     64u8, 1u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 80u8, 4u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
         },
         long: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 16u8, 1u8, 0u8, 0u8, 32u8, 128u8, 32u8, 4u8, 0u8, 0u8, 32u8, 128u8,
                     64u8, 1u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
         },
         medium: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 16u8, 1u8, 0u8, 0u8, 32u8, 128u8, 32u8, 3u8, 0u8, 0u8, 32u8, 128u8,
                     64u8, 1u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
         },
         short: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 16u8, 1u8, 0u8, 0u8, 45u8, 128u8, 32u8, 2u8, 0u8, 0u8, 45u8, 128u8,
                     64u8, 2u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
         },
@@ -7933,51 +6287,39 @@ static UND_U_CA_GREGORY: DataStruct = &::icu_datetime::provider::calendar::DateP
     time_h11_h12: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
         full: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8, 128u8,
                     144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8, 0u8, 0u8, 32u8, 128u8, 163u8,
                     1u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
         },
         long: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8, 128u8,
                     144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8, 0u8, 0u8, 32u8, 128u8, 163u8,
                     1u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
         },
         medium: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8, 128u8,
                     144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
         },
         short: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 32u8, 128u8,
                     96u8, 1u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Minutes,
         },
@@ -7985,46 +6327,36 @@ static UND_U_CA_GREGORY: DataStruct = &::icu_datetime::provider::calendar::DateP
     time_h23_h24: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
         full: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8, 128u8,
                     144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 160u8, 4u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
         },
         long: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8, 128u8,
                     144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 160u8, 1u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
         },
         medium: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8, 128u8,
                     144u8, 2u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
         },
         short: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                static DATA: &[u8] = &[128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                    128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8,
+                ])
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Minutes,
         },
@@ -8033,34 +6365,30 @@ static UND_U_CA_GREGORY: DataStruct = &::icu_datetime::provider::calendar::DateP
     length_combinations: ::icu_datetime::provider::calendar::patterns::GenericLengthPatternsV1 {
         full: ::icu_datetime::pattern::runtime::GenericPattern {
             items: unsafe {
-                static DATA: &[u8] = &[128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                    128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
+                ])
             },
         },
         long: ::icu_datetime::pattern::runtime::GenericPattern {
             items: unsafe {
-                static DATA: &[u8] = &[128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                    128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
+                ])
             },
         },
         medium: ::icu_datetime::pattern::runtime::GenericPattern {
             items: unsafe {
-                static DATA: &[u8] = &[128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                    128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
+                ])
             },
         },
         short: ::icu_datetime::pattern::runtime::GenericPattern {
             items: unsafe {
-                static DATA: &[u8] = &[128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 3usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                    128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
+                ])
             },
         },
     },

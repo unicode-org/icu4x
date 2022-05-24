@@ -40,50 +40,44 @@ impl ResourceProvider<::icu_plurals::provider::CardinalV1Marker>
 type DataStruct = &'static <::icu_plurals::provider::CardinalV1Marker as DataMarker>::Yokeable;
 static AR: DataStruct = &::icu_plurals::provider::PluralRulesV1 {
     zero: Some(::icu_plurals::rules::runtime::ast::Rule(unsafe {
-        static BYTES: &[u8] = &[
+        ::zerovec::VarZeroVec::from_bytes_unchecked(&[
             1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 192u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8,
             0u8, 0u8, 0u8, 0u8,
-        ];
-        ::zerovec::VarZeroVec::Borrowed(core::mem::transmute(BYTES))
+        ])
     })),
     one: Some(::icu_plurals::rules::runtime::ast::Rule(unsafe {
-        static BYTES: &[u8] = &[
+        ::zerovec::VarZeroVec::from_bytes_unchecked(&[
             1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 192u8, 0u8, 0u8, 0u8, 0u8, 1u8, 0u8, 0u8, 0u8,
             1u8, 0u8, 0u8, 0u8,
-        ];
-        ::zerovec::VarZeroVec::Borrowed(core::mem::transmute(BYTES))
+        ])
     })),
     two: Some(::icu_plurals::rules::runtime::ast::Rule(unsafe {
-        static BYTES: &[u8] = &[
+        ::zerovec::VarZeroVec::from_bytes_unchecked(&[
             1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 192u8, 0u8, 0u8, 0u8, 0u8, 2u8, 0u8, 0u8, 0u8,
             2u8, 0u8, 0u8, 0u8,
-        ];
-        ::zerovec::VarZeroVec::Borrowed(core::mem::transmute(BYTES))
+        ])
     })),
     few: Some(::icu_plurals::rules::runtime::ast::Rule(unsafe {
-        static BYTES: &[u8] = &[
+        ::zerovec::VarZeroVec::from_bytes_unchecked(&[
             1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 192u8, 100u8, 0u8, 0u8, 0u8, 3u8, 0u8, 0u8,
             0u8, 10u8, 0u8, 0u8, 0u8,
-        ];
-        ::zerovec::VarZeroVec::Borrowed(core::mem::transmute(BYTES))
+        ])
     })),
     many: Some(::icu_plurals::rules::runtime::ast::Rule(unsafe {
-        static BYTES: &[u8] = &[
+        ::zerovec::VarZeroVec::from_bytes_unchecked(&[
             1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 192u8, 100u8, 0u8, 0u8, 0u8, 11u8, 0u8, 0u8,
             0u8, 99u8, 0u8, 0u8, 0u8,
-        ];
-        ::zerovec::VarZeroVec::Borrowed(core::mem::transmute(BYTES))
+        ])
     })),
 };
 static BN: DataStruct = &::icu_plurals::provider::PluralRulesV1 {
     zero: None,
     one: Some(::icu_plurals::rules::runtime::ast::Rule(unsafe {
-        static BYTES: &[u8] = &[
+        ::zerovec::VarZeroVec::from_bytes_unchecked(&[
             2u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 13u8, 0u8, 0u8, 0u8, 193u8, 0u8, 0u8, 0u8, 0u8,
             0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 64u8, 0u8, 0u8, 0u8, 0u8, 1u8, 0u8, 0u8, 0u8,
             1u8, 0u8, 0u8, 0u8,
-        ];
-        ::zerovec::VarZeroVec::Borrowed(core::mem::transmute(BYTES))
+        ])
     })),
     two: None,
     few: None,
@@ -92,12 +86,11 @@ static BN: DataStruct = &::icu_plurals::provider::PluralRulesV1 {
 static EN: DataStruct = &::icu_plurals::provider::PluralRulesV1 {
     zero: None,
     one: Some(::icu_plurals::rules::runtime::ast::Rule(unsafe {
-        static BYTES: &[u8] = &[
+        ::zerovec::VarZeroVec::from_bytes_unchecked(&[
             2u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 13u8, 0u8, 0u8, 0u8, 193u8, 0u8, 0u8, 0u8, 0u8,
             1u8, 0u8, 0u8, 0u8, 1u8, 0u8, 0u8, 0u8, 194u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8,
             0u8, 0u8, 0u8, 0u8,
-        ];
-        ::zerovec::VarZeroVec::Borrowed(core::mem::transmute(BYTES))
+        ])
     })),
     two: None,
     few: None,
@@ -106,30 +99,28 @@ static EN: DataStruct = &::icu_plurals::provider::PluralRulesV1 {
 static ES: DataStruct = &::icu_plurals::provider::PluralRulesV1 {
     zero: None,
     one: Some(::icu_plurals::rules::runtime::ast::Rule(unsafe {
-        static BYTES: &[u8] = &[
+        ::zerovec::VarZeroVec::from_bytes_unchecked(&[
             1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 192u8, 0u8, 0u8, 0u8, 0u8, 1u8, 0u8, 0u8, 0u8,
             1u8, 0u8, 0u8, 0u8,
-        ];
-        ::zerovec::VarZeroVec::Borrowed(core::mem::transmute(BYTES))
+        ])
     })),
     two: None,
     few: None,
     many: Some(::icu_plurals::rules::runtime::ast::Rule(unsafe {
-        static BYTES: &[u8] = &[
+        ::zerovec::VarZeroVec::from_bytes_unchecked(&[
             5u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 13u8, 0u8, 0u8, 0u8, 26u8, 0u8, 0u8, 0u8, 39u8,
             0u8, 0u8, 0u8, 52u8, 0u8, 0u8, 0u8, 199u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8,
             0u8, 0u8, 0u8, 129u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8,
             193u8, 64u8, 66u8, 15u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 194u8, 0u8, 0u8,
             0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 7u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8,
             0u8, 0u8, 5u8, 0u8, 0u8, 0u8,
-        ];
-        ::zerovec::VarZeroVec::Borrowed(core::mem::transmute(BYTES))
+        ])
     })),
 };
 static FIL: DataStruct = &::icu_plurals::provider::PluralRulesV1 {
     zero: None,
     one: Some(::icu_plurals::rules::runtime::ast::Rule(unsafe {
-        static BYTES: &[u8] = &[
+        ::zerovec::VarZeroVec::from_bytes_unchecked(&[
             6u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 13u8, 0u8, 0u8, 0u8, 42u8, 0u8, 0u8, 0u8, 55u8,
             0u8, 0u8, 0u8, 84u8, 0u8, 0u8, 0u8, 97u8, 0u8, 0u8, 0u8, 194u8, 0u8, 0u8, 0u8, 0u8,
             0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 193u8, 0u8, 0u8, 0u8, 0u8, 1u8, 0u8, 0u8, 0u8,
@@ -140,8 +131,7 @@ static FIL: DataStruct = &::icu_plurals::provider::PluralRulesV1 {
             0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 132u8, 10u8, 0u8, 0u8, 0u8, 4u8, 0u8, 0u8, 0u8, 4u8,
             0u8, 0u8, 0u8, 6u8, 0u8, 0u8, 0u8, 6u8, 0u8, 0u8, 0u8, 9u8, 0u8, 0u8, 0u8, 9u8, 0u8,
             0u8, 0u8,
-        ];
-        ::zerovec::VarZeroVec::Borrowed(core::mem::transmute(BYTES))
+        ])
     })),
     two: None,
     few: None,
@@ -150,24 +140,22 @@ static FIL: DataStruct = &::icu_plurals::provider::PluralRulesV1 {
 static FR: DataStruct = &::icu_plurals::provider::PluralRulesV1 {
     zero: None,
     one: Some(::icu_plurals::rules::runtime::ast::Rule(unsafe {
-        static BYTES: &[u8] = &[
+        ::zerovec::VarZeroVec::from_bytes_unchecked(&[
             1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 193u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8,
             0u8, 0u8, 0u8, 0u8, 1u8, 0u8, 0u8, 0u8, 1u8, 0u8, 0u8, 0u8,
-        ];
-        ::zerovec::VarZeroVec::Borrowed(core::mem::transmute(BYTES))
+        ])
     })),
     two: None,
     few: None,
     many: Some(::icu_plurals::rules::runtime::ast::Rule(unsafe {
-        static BYTES: &[u8] = &[
+        ::zerovec::VarZeroVec::from_bytes_unchecked(&[
             5u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 13u8, 0u8, 0u8, 0u8, 26u8, 0u8, 0u8, 0u8, 39u8,
             0u8, 0u8, 0u8, 52u8, 0u8, 0u8, 0u8, 199u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8,
             0u8, 0u8, 0u8, 129u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8,
             193u8, 64u8, 66u8, 15u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 194u8, 0u8, 0u8,
             0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 7u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8,
             0u8, 0u8, 5u8, 0u8, 0u8, 0u8,
-        ];
-        ::zerovec::VarZeroVec::Borrowed(core::mem::transmute(BYTES))
+        ])
     })),
 };
 static JA_TH_UND: DataStruct = &::icu_plurals::provider::PluralRulesV1 {
@@ -180,26 +168,24 @@ static JA_TH_UND: DataStruct = &::icu_plurals::provider::PluralRulesV1 {
 static RU: DataStruct = &::icu_plurals::provider::PluralRulesV1 {
     zero: None,
     one: Some(::icu_plurals::rules::runtime::ast::Rule(unsafe {
-        static BYTES: &[u8] = &[
+        ::zerovec::VarZeroVec::from_bytes_unchecked(&[
             3u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 13u8, 0u8, 0u8, 0u8, 26u8, 0u8, 0u8, 0u8,
             194u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 193u8, 10u8, 0u8,
             0u8, 0u8, 1u8, 0u8, 0u8, 0u8, 1u8, 0u8, 0u8, 0u8, 129u8, 100u8, 0u8, 0u8, 0u8, 11u8,
             0u8, 0u8, 0u8, 11u8, 0u8, 0u8, 0u8,
-        ];
-        ::zerovec::VarZeroVec::Borrowed(core::mem::transmute(BYTES))
+        ])
     })),
     two: None,
     few: Some(::icu_plurals::rules::runtime::ast::Rule(unsafe {
-        static BYTES: &[u8] = &[
+        ::zerovec::VarZeroVec::from_bytes_unchecked(&[
             3u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 13u8, 0u8, 0u8, 0u8, 26u8, 0u8, 0u8, 0u8,
             194u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 193u8, 10u8, 0u8,
             0u8, 0u8, 2u8, 0u8, 0u8, 0u8, 4u8, 0u8, 0u8, 0u8, 129u8, 100u8, 0u8, 0u8, 0u8, 12u8,
             0u8, 0u8, 0u8, 14u8, 0u8, 0u8, 0u8,
-        ];
-        ::zerovec::VarZeroVec::Borrowed(core::mem::transmute(BYTES))
+        ])
     })),
     many: Some(::icu_plurals::rules::runtime::ast::Rule(unsafe {
-        static BYTES: &[u8] = &[
+        ::zerovec::VarZeroVec::from_bytes_unchecked(&[
             6u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 13u8, 0u8, 0u8, 0u8, 26u8, 0u8, 0u8, 0u8, 39u8,
             0u8, 0u8, 0u8, 52u8, 0u8, 0u8, 0u8, 65u8, 0u8, 0u8, 0u8, 194u8, 0u8, 0u8, 0u8, 0u8,
             0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 193u8, 10u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8,
@@ -207,45 +193,41 @@ static RU: DataStruct = &::icu_plurals::provider::PluralRulesV1 {
             193u8, 10u8, 0u8, 0u8, 0u8, 5u8, 0u8, 0u8, 0u8, 9u8, 0u8, 0u8, 0u8, 66u8, 0u8, 0u8,
             0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 193u8, 100u8, 0u8, 0u8, 0u8, 11u8,
             0u8, 0u8, 0u8, 14u8, 0u8, 0u8, 0u8,
-        ];
-        ::zerovec::VarZeroVec::Borrowed(core::mem::transmute(BYTES))
+        ])
     })),
 };
 static SR: DataStruct = &::icu_plurals::provider::PluralRulesV1 {
     zero: None,
     one: Some(::icu_plurals::rules::runtime::ast::Rule(unsafe {
-        static BYTES: &[u8] = &[
+        ::zerovec::VarZeroVec::from_bytes_unchecked(&[
             5u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 13u8, 0u8, 0u8, 0u8, 26u8, 0u8, 0u8, 0u8, 39u8,
             0u8, 0u8, 0u8, 52u8, 0u8, 0u8, 0u8, 194u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8,
             0u8, 0u8, 0u8, 193u8, 10u8, 0u8, 0u8, 0u8, 1u8, 0u8, 0u8, 0u8, 1u8, 0u8, 0u8, 0u8,
             129u8, 100u8, 0u8, 0u8, 0u8, 11u8, 0u8, 0u8, 0u8, 11u8, 0u8, 0u8, 0u8, 68u8, 10u8, 0u8,
             0u8, 0u8, 1u8, 0u8, 0u8, 0u8, 1u8, 0u8, 0u8, 0u8, 132u8, 100u8, 0u8, 0u8, 0u8, 11u8,
             0u8, 0u8, 0u8, 11u8, 0u8, 0u8, 0u8,
-        ];
-        ::zerovec::VarZeroVec::Borrowed(core::mem::transmute(BYTES))
+        ])
     })),
     two: None,
     few: Some(::icu_plurals::rules::runtime::ast::Rule(unsafe {
-        static BYTES: &[u8] = &[
+        ::zerovec::VarZeroVec::from_bytes_unchecked(&[
             5u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 13u8, 0u8, 0u8, 0u8, 26u8, 0u8, 0u8, 0u8, 39u8,
             0u8, 0u8, 0u8, 52u8, 0u8, 0u8, 0u8, 194u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8,
             0u8, 0u8, 0u8, 193u8, 10u8, 0u8, 0u8, 0u8, 2u8, 0u8, 0u8, 0u8, 4u8, 0u8, 0u8, 0u8,
             129u8, 100u8, 0u8, 0u8, 0u8, 12u8, 0u8, 0u8, 0u8, 14u8, 0u8, 0u8, 0u8, 68u8, 10u8, 0u8,
             0u8, 0u8, 2u8, 0u8, 0u8, 0u8, 4u8, 0u8, 0u8, 0u8, 132u8, 100u8, 0u8, 0u8, 0u8, 12u8,
             0u8, 0u8, 0u8, 14u8, 0u8, 0u8, 0u8,
-        ];
-        ::zerovec::VarZeroVec::Borrowed(core::mem::transmute(BYTES))
+        ])
     })),
     many: None,
 };
 static TR: DataStruct = &::icu_plurals::provider::PluralRulesV1 {
     zero: None,
     one: Some(::icu_plurals::rules::runtime::ast::Rule(unsafe {
-        static BYTES: &[u8] = &[
+        ::zerovec::VarZeroVec::from_bytes_unchecked(&[
             1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 192u8, 0u8, 0u8, 0u8, 0u8, 1u8, 0u8, 0u8, 0u8,
             1u8, 0u8, 0u8, 0u8,
-        ];
-        ::zerovec::VarZeroVec::Borrowed(core::mem::transmute(BYTES))
+        ])
     })),
     two: None,
     few: None,

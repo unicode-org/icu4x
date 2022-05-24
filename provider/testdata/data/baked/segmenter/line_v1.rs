@@ -28,8 +28,8 @@ type DataStruct =
     &'static <::icu_segmenter::provider::LineBreakDataV1Marker as DataMarker>::Yokeable;
 static UND: DataStruct = &::icu_segmenter::provider::RuleBreakDataV1 {
     property_table: ::icu_segmenter::provider::RuleBreakPropertyTable(
-        ::icu_codepointtrie::CodePointTrie {
-            header: ::icu_codepointtrie::CodePointTrieHeader {
+        ::icu_codepointtrie::CodePointTrie::from_parts(
+            ::icu_codepointtrie::CodePointTrieHeader {
                 high_start: 131072u32,
                 shifted12_high_start: 32u16,
                 index3_null_offset: 1111u16,
@@ -37,8 +37,8 @@ static UND: DataStruct = &::icu_segmenter::provider::RuleBreakDataV1 {
                 null_value: 45u32,
                 trie_type: ::icu_codepointtrie::TrieType::Small,
             },
-            index: unsafe {
-                static DATA: &[u8] = &[
+            unsafe {
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     0u8, 0u8, 64u8, 0u8, 127u8, 0u8, 191u8, 0u8, 247u8, 0u8, 247u8, 0u8, 247u8,
                     0u8, 247u8, 0u8, 247u8, 0u8, 247u8, 0u8, 247u8, 0u8, 48u8, 1u8, 112u8, 1u8,
                     161u8, 1u8, 225u8, 1u8, 247u8, 0u8, 247u8, 0u8, 247u8, 0u8, 30u8, 2u8, 247u8,
@@ -513,13 +513,10 @@ static UND: DataStruct = &::icu_segmenter::provider::RuleBreakDataV1 {
                     4u8, 46u8, 9u8, 78u8, 9u8, 101u8, 9u8, 87u8, 4u8, 117u8, 9u8, 149u8, 9u8, 87u8,
                     4u8, 174u8, 9u8, 206u8, 9u8, 238u8, 9u8, 14u8, 10u8, 46u8, 10u8, 78u8, 10u8,
                     110u8, 10u8, 142u8, 10u8, 174u8, 10u8, 175u8, 10u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 2usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
-            data: unsafe {
-                static DATA: &[u8] = &[
+            unsafe {
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     10u8, 10u8, 10u8, 10u8, 10u8, 10u8, 10u8, 10u8, 10u8, 4u8, 28u8, 6u8, 6u8,
                     12u8, 10u8, 10u8, 10u8, 10u8, 10u8, 10u8, 10u8, 10u8, 10u8, 10u8, 10u8, 10u8,
                     10u8, 10u8, 10u8, 10u8, 10u8, 10u8, 42u8, 15u8, 38u8, 2u8, 36u8, 34u8, 2u8,
@@ -1120,15 +1117,12 @@ static UND: DataStruct = &::icu_segmenter::provider::RuleBreakDataV1 {
                     13u8, 22u8, 22u8, 22u8, 22u8, 22u8, 22u8, 22u8, 22u8, 22u8, 22u8, 13u8, 13u8,
                     13u8, 13u8, 13u8, 13u8, 13u8, 22u8, 22u8, 22u8, 22u8, 22u8, 22u8, 22u8, 22u8,
                     22u8, 22u8, 22u8, 22u8, 22u8, 22u8, 45u8, 45u8, 0u8, 0u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 1usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
-        },
+        ),
     ),
     break_state_table: ::icu_segmenter::provider::RuleBreakStateTable(unsafe {
-        static DATA: &[u8] = &[
+        ::zerovec::ZeroVec::from_bytes_unchecked(&[
             128u8, 128u8, 128u8, 128u8, 255u8, 128u8, 255u8, 128u8, 255u8, 255u8, 128u8, 255u8,
             255u8, 128u8, 128u8, 255u8, 255u8, 128u8, 128u8, 128u8, 255u8, 128u8, 128u8, 255u8,
             255u8, 128u8, 128u8, 128u8, 255u8, 255u8, 255u8, 128u8, 128u8, 128u8, 128u8, 128u8,
@@ -1450,10 +1444,7 @@ static UND: DataStruct = &::icu_segmenter::provider::RuleBreakDataV1 {
             128u8, 128u8, 128u8, 128u8, 128u8, 128u8, 128u8, 128u8, 128u8, 128u8, 128u8, 128u8,
             128u8, 128u8, 128u8, 128u8, 128u8, 128u8, 128u8, 128u8, 128u8, 128u8, 128u8, 128u8,
             128u8, 128u8,
-        ];
-        let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-        metadata /= 1usize;
-        zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+        ])
     }),
     property_count: 62u8,
     last_codepoint_property: 47i8,

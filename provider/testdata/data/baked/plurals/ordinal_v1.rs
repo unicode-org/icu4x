@@ -48,72 +48,64 @@ static AR_ES_JA_RU_SR_TH_TR_UND: DataStruct = &::icu_plurals::provider::PluralRu
 static BN: DataStruct = &::icu_plurals::provider::PluralRulesV1 {
     zero: None,
     one: Some(::icu_plurals::rules::runtime::ast::Rule(unsafe {
-        static BYTES: &[u8] = &[
+        ::zerovec::VarZeroVec::from_bytes_unchecked(&[
             1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 192u8, 0u8, 0u8, 0u8, 0u8, 1u8, 0u8, 0u8, 0u8,
             1u8, 0u8, 0u8, 0u8, 5u8, 0u8, 0u8, 0u8, 5u8, 0u8, 0u8, 0u8, 7u8, 0u8, 0u8, 0u8, 7u8,
             0u8, 0u8, 0u8, 8u8, 0u8, 0u8, 0u8, 8u8, 0u8, 0u8, 0u8, 9u8, 0u8, 0u8, 0u8, 9u8, 0u8,
             0u8, 0u8, 10u8, 0u8, 0u8, 0u8, 10u8, 0u8, 0u8, 0u8,
-        ];
-        ::zerovec::VarZeroVec::Borrowed(core::mem::transmute(BYTES))
+        ])
     })),
     two: Some(::icu_plurals::rules::runtime::ast::Rule(unsafe {
-        static BYTES: &[u8] = &[
+        ::zerovec::VarZeroVec::from_bytes_unchecked(&[
             1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 192u8, 0u8, 0u8, 0u8, 0u8, 2u8, 0u8, 0u8, 0u8,
             2u8, 0u8, 0u8, 0u8, 3u8, 0u8, 0u8, 0u8, 3u8, 0u8, 0u8, 0u8,
-        ];
-        ::zerovec::VarZeroVec::Borrowed(core::mem::transmute(BYTES))
+        ])
     })),
     few: Some(::icu_plurals::rules::runtime::ast::Rule(unsafe {
-        static BYTES: &[u8] = &[
+        ::zerovec::VarZeroVec::from_bytes_unchecked(&[
             1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 192u8, 0u8, 0u8, 0u8, 0u8, 4u8, 0u8, 0u8, 0u8,
             4u8, 0u8, 0u8, 0u8,
-        ];
-        ::zerovec::VarZeroVec::Borrowed(core::mem::transmute(BYTES))
+        ])
     })),
     many: Some(::icu_plurals::rules::runtime::ast::Rule(unsafe {
-        static BYTES: &[u8] = &[
+        ::zerovec::VarZeroVec::from_bytes_unchecked(&[
             1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 192u8, 0u8, 0u8, 0u8, 0u8, 6u8, 0u8, 0u8, 0u8,
             6u8, 0u8, 0u8, 0u8,
-        ];
-        ::zerovec::VarZeroVec::Borrowed(core::mem::transmute(BYTES))
+        ])
     })),
 };
 static EN: DataStruct = &::icu_plurals::provider::PluralRulesV1 {
     zero: None,
     one: Some(::icu_plurals::rules::runtime::ast::Rule(unsafe {
-        static BYTES: &[u8] = &[
+        ::zerovec::VarZeroVec::from_bytes_unchecked(&[
             2u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 13u8, 0u8, 0u8, 0u8, 192u8, 10u8, 0u8, 0u8,
             0u8, 1u8, 0u8, 0u8, 0u8, 1u8, 0u8, 0u8, 0u8, 128u8, 100u8, 0u8, 0u8, 0u8, 11u8, 0u8,
             0u8, 0u8, 11u8, 0u8, 0u8, 0u8,
-        ];
-        ::zerovec::VarZeroVec::Borrowed(core::mem::transmute(BYTES))
+        ])
     })),
     two: Some(::icu_plurals::rules::runtime::ast::Rule(unsafe {
-        static BYTES: &[u8] = &[
+        ::zerovec::VarZeroVec::from_bytes_unchecked(&[
             2u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 13u8, 0u8, 0u8, 0u8, 192u8, 10u8, 0u8, 0u8,
             0u8, 2u8, 0u8, 0u8, 0u8, 2u8, 0u8, 0u8, 0u8, 128u8, 100u8, 0u8, 0u8, 0u8, 12u8, 0u8,
             0u8, 0u8, 12u8, 0u8, 0u8, 0u8,
-        ];
-        ::zerovec::VarZeroVec::Borrowed(core::mem::transmute(BYTES))
+        ])
     })),
     few: Some(::icu_plurals::rules::runtime::ast::Rule(unsafe {
-        static BYTES: &[u8] = &[
+        ::zerovec::VarZeroVec::from_bytes_unchecked(&[
             2u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 13u8, 0u8, 0u8, 0u8, 192u8, 10u8, 0u8, 0u8,
             0u8, 3u8, 0u8, 0u8, 0u8, 3u8, 0u8, 0u8, 0u8, 128u8, 100u8, 0u8, 0u8, 0u8, 13u8, 0u8,
             0u8, 0u8, 13u8, 0u8, 0u8, 0u8,
-        ];
-        ::zerovec::VarZeroVec::Borrowed(core::mem::transmute(BYTES))
+        ])
     })),
     many: None,
 };
 static FIL_FR: DataStruct = &::icu_plurals::provider::PluralRulesV1 {
     zero: None,
     one: Some(::icu_plurals::rules::runtime::ast::Rule(unsafe {
-        static BYTES: &[u8] = &[
+        ::zerovec::VarZeroVec::from_bytes_unchecked(&[
             1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 192u8, 0u8, 0u8, 0u8, 0u8, 1u8, 0u8, 0u8, 0u8,
             1u8, 0u8, 0u8, 0u8,
-        ];
-        ::zerovec::VarZeroVec::Borrowed(core::mem::transmute(BYTES))
+        ])
     })),
     two: None,
     few: None,

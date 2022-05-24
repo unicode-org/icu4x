@@ -28,7 +28,7 @@ type DataStruct =
     &'static <::icu_collator::provider::CollationJamoV1Marker as DataMarker>::Yokeable;
 static UND: DataStruct = &::icu_collator::provider::CollationJamoV1 {
     ce32s: unsafe {
-        static DATA: &[u8] = &[
+        ::zerovec::ZeroVec::from_bytes_unchecked(&[
             5u8, 5u8, 6u8, 121u8, 5u8, 5u8, 8u8, 121u8, 5u8, 5u8, 10u8, 121u8, 5u8, 5u8, 12u8,
             121u8, 5u8, 5u8, 14u8, 121u8, 5u8, 5u8, 16u8, 121u8, 5u8, 5u8, 18u8, 121u8, 5u8, 5u8,
             20u8, 121u8, 5u8, 5u8, 22u8, 121u8, 5u8, 5u8, 24u8, 121u8, 5u8, 5u8, 26u8, 121u8, 5u8,
@@ -104,9 +104,6 @@ static UND: DataStruct = &::icu_collator::provider::CollationJamoV1 {
             231u8, 0u8, 206u8, 160u8, 231u8, 0u8, 206u8, 160u8, 231u8, 0u8, 206u8, 160u8, 231u8,
             0u8, 206u8, 160u8, 231u8, 0u8, 206u8, 160u8, 231u8, 0u8, 206u8, 160u8, 231u8, 0u8,
             206u8, 160u8, 231u8, 0u8, 206u8, 160u8, 231u8, 0u8,
-        ];
-        let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-        metadata /= 4usize;
-        zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+        ])
     },
 };

@@ -33,14 +33,11 @@ static UND: DataStruct = &::icu_properties::provider::UnicodePropertyV1 {
         #[allow(unused_unsafe)]
         ::icu_uniset::UnicodeSet::from_parts_unchecked(
             unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     9u8, 0u8, 0u8, 0u8, 14u8, 0u8, 0u8, 0u8, 32u8, 0u8, 0u8, 0u8, 33u8, 0u8, 0u8,
                     0u8, 133u8, 0u8, 0u8, 0u8, 134u8, 0u8, 0u8, 0u8, 14u8, 32u8, 0u8, 0u8, 16u8,
                     32u8, 0u8, 0u8, 40u8, 32u8, 0u8, 0u8, 42u8, 32u8, 0u8, 0u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 4usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             11usize,
         )

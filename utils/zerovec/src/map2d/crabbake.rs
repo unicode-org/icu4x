@@ -2,21 +2,17 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use super::ZeroMap2d;
-use crate::map::ZeroMapKV;
+use crate::{maps::ZeroMapKV, ZeroMap2d};
 use crabbake::*;
 
 impl<'a, K0, K1, V> Bakeable for ZeroMap2d<'a, K0, K1, V>
 where
-    K0: ZeroMapKV<'a>,
-    K1: ZeroMapKV<'a>,
-    V: ZeroMapKV<'a>,
+    K0: ZeroMapKV<'a> + ?Sized,
+    K1: ZeroMapKV<'a> + ?Sized,
+    V: ZeroMapKV<'a> + ?Sized,
     K0::Container: Bakeable,
     K1::Container: Bakeable,
     V::Container: Bakeable,
-    K0: ?Sized,
-    K1: ?Sized,
-    V: ?Sized,
 {
     fn bake(&self, env: &CrateEnv) -> TokenStream {
         env.insert("zerovec");
@@ -24,11 +20,6 @@ where
         let joiner = self.joiner.bake(env);
         let keys1 = self.keys1.bake(env);
         let values = self.values.bake(env);
-        quote! { ::zerovec::ZeroMap2d {
-            keys0: #keys0,
-            joiner: #joiner,
-            keys1: #keys1,
-            values: #values
-        } }
+        quote! { unsafe { #[allow(unused_unsafe)] ::zerovec::ZeroMap2d::from_parts_unchecked(#keys0, #joiner, #keys1, #values) } }
     }
 }

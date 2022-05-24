@@ -31,8 +31,8 @@ impl ResourceProvider<::icu_normalizer::provider::CanonicalDecompositionDataV1Ma
 }
 type DataStruct = & 'static < :: icu_normalizer :: provider :: CanonicalDecompositionDataV1Marker as DataMarker > :: Yokeable ;
 static UND: DataStruct = &::icu_normalizer::provider::CanonicalDecompositionDataV1 {
-    trie: ::icu_codepointtrie::CodePointTrie {
-        header: ::icu_codepointtrie::CodePointTrieHeader {
+    trie: ::icu_codepointtrie::CodePointTrie::from_parts(
+        ::icu_codepointtrie::CodePointTrieHeader {
             high_start: 195584u32,
             shifted12_high_start: 48u16,
             index3_null_offset: 317u16,
@@ -40,8 +40,8 @@ static UND: DataStruct = &::icu_normalizer::provider::CanonicalDecompositionData
             null_value: 0u32,
             trie_type: ::icu_codepointtrie::TrieType::Small,
         },
-        index: unsafe {
-            static DATA: &[u8] = &[
+        unsafe {
+            ::zerovec::ZeroVec::from_bytes_unchecked(&[
                 0u8, 0u8, 64u8, 0u8, 0u8, 0u8, 128u8, 0u8, 192u8, 0u8, 255u8, 0u8, 62u8, 1u8,
                 113u8, 1u8, 177u8, 1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 241u8, 1u8, 48u8,
                 2u8, 102u8, 2u8, 166u8, 2u8, 224u8, 2u8, 0u8, 0u8, 31u8, 3u8, 0u8, 0u8, 0u8, 0u8,
@@ -157,13 +157,10 @@ static UND: DataStruct = &::icu_normalizer::provider::CanonicalDecompositionData
                 1u8, 61u8, 1u8, 61u8, 1u8, 61u8, 1u8, 61u8, 1u8, 61u8, 1u8, 61u8, 1u8, 61u8, 1u8,
                 61u8, 1u8, 61u8, 1u8, 61u8, 1u8, 61u8, 1u8, 61u8, 1u8, 61u8, 1u8, 61u8, 1u8, 155u8,
                 2u8, 187u8, 2u8, 238u8, 255u8,
-            ];
-            let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-            metadata /= 2usize;
-            zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+            ])
         },
-        data: unsafe {
-            static DATA: &[u8] = &[
+        unsafe {
+            ::zerovec::ZeroVec::from_bytes_unchecked(&[
                 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8,
                 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8,
                 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8,
@@ -1182,14 +1179,11 @@ static UND: DataStruct = &::icu_normalizer::provider::CanonicalDecompositionData
                 0u8, 254u8, 158u8, 0u8, 0u8, 5u8, 159u8, 0u8, 0u8, 15u8, 159u8, 0u8, 0u8, 22u8,
                 159u8, 0u8, 0u8, 59u8, 159u8, 172u8, 48u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8,
                 0u8, 0u8,
-            ];
-            let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-            metadata /= 4usize;
-            zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+            ])
         },
-    },
+    ),
     scalars16: unsafe {
-        static DATA: &[u8] = &[
+        ::zerovec::ZeroVec::from_bytes_unchecked(&[
             85u8, 0u8, 8u8, 3u8, 4u8, 3u8, 117u8, 0u8, 8u8, 3u8, 4u8, 3u8, 85u8, 0u8, 8u8, 3u8,
             1u8, 3u8, 117u8, 0u8, 8u8, 3u8, 1u8, 3u8, 85u8, 0u8, 8u8, 3u8, 12u8, 3u8, 117u8, 0u8,
             8u8, 3u8, 12u8, 3u8, 85u8, 0u8, 8u8, 3u8, 0u8, 3u8, 117u8, 0u8, 8u8, 3u8, 0u8, 3u8,
@@ -1306,13 +1300,10 @@ static UND: DataStruct = &::icu_normalizer::provider::CanonicalDecompositionData
             0u8, 3u8, 197u8, 3u8, 8u8, 3u8, 1u8, 3u8, 197u8, 3u8, 8u8, 3u8, 66u8, 3u8, 201u8, 3u8,
             0u8, 3u8, 69u8, 3u8, 201u8, 3u8, 1u8, 3u8, 69u8, 3u8, 201u8, 3u8, 66u8, 3u8, 69u8, 3u8,
             233u8, 5u8, 188u8, 5u8, 193u8, 5u8, 233u8, 5u8, 188u8, 5u8, 194u8, 5u8,
-        ];
-        let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-        metadata /= 2usize;
-        zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+        ])
     },
     scalars32: unsafe {
-        static DATA: &[u8] = &[
+        ::zerovec::ZeroVec::from_bytes_unchecked(&[
             238u8, 66u8, 2u8, 0u8, 74u8, 40u8, 2u8, 0u8, 68u8, 40u8, 2u8, 0u8, 213u8, 51u8, 2u8,
             0u8, 73u8, 82u8, 2u8, 0u8, 208u8, 92u8, 2u8, 0u8, 211u8, 126u8, 2u8, 0u8, 153u8, 16u8,
             1u8, 0u8, 186u8, 16u8, 1u8, 0u8, 155u8, 16u8, 1u8, 0u8, 186u8, 16u8, 1u8, 0u8, 165u8,
@@ -1360,16 +1351,13 @@ static UND: DataStruct = &::icu_normalizer::provider::CanonicalDecompositionData
             2u8, 0u8, 10u8, 148u8, 2u8, 0u8, 150u8, 148u8, 2u8, 0u8, 182u8, 149u8, 2u8, 0u8, 48u8,
             155u8, 2u8, 0u8, 206u8, 160u8, 2u8, 0u8, 5u8, 161u8, 2u8, 0u8, 14u8, 162u8, 2u8, 0u8,
             145u8, 162u8, 2u8, 0u8, 0u8, 166u8, 2u8, 0u8,
-        ];
-        let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-        metadata /= 4usize;
-        zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+        ])
     },
     decomposition_starts_with_non_starter: unsafe {
         #[allow(unused_unsafe)]
         ::icu_uniset::UnicodeSet::from_parts_unchecked(
             unsafe {
-                static DATA: &[u8] = &[
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     0u8, 3u8, 0u8, 0u8, 79u8, 3u8, 0u8, 0u8, 80u8, 3u8, 0u8, 0u8, 112u8, 3u8, 0u8,
                     0u8, 131u8, 4u8, 0u8, 0u8, 136u8, 4u8, 0u8, 0u8, 145u8, 5u8, 0u8, 0u8, 190u8,
                     5u8, 0u8, 0u8, 191u8, 5u8, 0u8, 0u8, 192u8, 5u8, 0u8, 0u8, 193u8, 5u8, 0u8,
@@ -1478,10 +1466,7 @@ static UND: DataStruct = &::icu_normalizer::provider::CanonicalDecompositionData
                     1u8, 0u8, 55u8, 225u8, 1u8, 0u8, 174u8, 226u8, 1u8, 0u8, 175u8, 226u8, 1u8,
                     0u8, 236u8, 226u8, 1u8, 0u8, 240u8, 226u8, 1u8, 0u8, 208u8, 232u8, 1u8, 0u8,
                     215u8, 232u8, 1u8, 0u8, 68u8, 233u8, 1u8, 0u8, 75u8, 233u8, 1u8, 0u8,
-                ];
-                let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-                metadata /= 4usize;
-                zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+                ])
             },
             915usize,
         )

@@ -49,10 +49,11 @@ impl ResourceProvider<::icu_datetime::provider::time_zones::ExemplarCitiesV1Mark
 }
 type DataStruct =
     &'static <::icu_datetime::provider::time_zones::ExemplarCitiesV1Marker as DataMarker>::Yokeable;
-static AR_AR_EG: DataStruct =
-    &::icu_datetime::provider::time_zones::ExemplarCitiesV1(::zerovec::ZeroMap {
-        keys: unsafe {
-            static DATA: &[u8] = &[
+static AR_AR_EG: DataStruct = &::icu_datetime::provider::time_zones::ExemplarCitiesV1(unsafe {
+    #[allow(unused_unsafe)]
+    ::zerovec::ZeroMap::from_parts_unchecked(
+        unsafe {
+            ::zerovec::ZeroVec::from_bytes_unchecked(&[
                 97u8, 100u8, 97u8, 108u8, 118u8, 0u8, 0u8, 0u8, 97u8, 101u8, 100u8, 120u8, 98u8,
                 0u8, 0u8, 0u8, 97u8, 102u8, 107u8, 98u8, 108u8, 0u8, 0u8, 0u8, 97u8, 103u8, 97u8,
                 110u8, 117u8, 0u8, 0u8, 0u8, 97u8, 105u8, 97u8, 120u8, 97u8, 0u8, 0u8, 0u8, 97u8,
@@ -312,13 +313,10 @@ static AR_AR_EG: DataStruct =
                 101u8, 97u8, 100u8, 101u8, 0u8, 0u8, 0u8, 121u8, 116u8, 109u8, 97u8, 109u8, 0u8,
                 0u8, 0u8, 122u8, 97u8, 106u8, 110u8, 98u8, 0u8, 0u8, 0u8, 122u8, 109u8, 108u8,
                 117u8, 110u8, 0u8, 0u8, 0u8, 122u8, 119u8, 104u8, 114u8, 101u8, 0u8, 0u8, 0u8,
-            ];
-            let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-            metadata /= 8usize;
-            zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+            ])
         },
-        values: unsafe {
-            static BYTES: &[u8] = &[
+        unsafe {
+            ::zerovec::VarZeroVec::from_bytes_unchecked(&[
                 172u8, 1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 12u8, 0u8, 0u8, 0u8, 18u8, 0u8, 0u8, 0u8,
                 28u8, 0u8, 0u8, 0u8, 42u8, 0u8, 0u8, 0u8, 56u8, 0u8, 0u8, 0u8, 68u8, 0u8, 0u8, 0u8,
                 80u8, 0u8, 0u8, 0u8, 94u8, 0u8, 0u8, 0u8, 106u8, 0u8, 0u8, 0u8, 116u8, 0u8, 0u8,
@@ -937,14 +935,15 @@ static AR_AR_EG: DataStruct =
                 135u8, 216u8, 167u8, 217u8, 134u8, 216u8, 179u8, 216u8, 168u8, 216u8, 177u8, 216u8,
                 186u8, 217u8, 132u8, 217u8, 136u8, 216u8, 179u8, 216u8, 167u8, 217u8, 131u8, 216u8,
                 167u8, 217u8, 135u8, 216u8, 177u8, 216u8, 167u8, 216u8, 177u8, 217u8, 138u8,
-            ];
-            ::zerovec::VarZeroVec::Borrowed(core::mem::transmute(BYTES))
+            ])
         },
-    });
-static BN: DataStruct =
-    &::icu_datetime::provider::time_zones::ExemplarCitiesV1(::zerovec::ZeroMap {
-        keys: unsafe {
-            static DATA: &[u8] = &[
+    )
+});
+static BN: DataStruct = &::icu_datetime::provider::time_zones::ExemplarCitiesV1(unsafe {
+    #[allow(unused_unsafe)]
+    ::zerovec::ZeroMap::from_parts_unchecked(
+        unsafe {
+            ::zerovec::ZeroVec::from_bytes_unchecked(&[
                 97u8, 100u8, 97u8, 108u8, 118u8, 0u8, 0u8, 0u8, 97u8, 101u8, 100u8, 120u8, 98u8,
                 0u8, 0u8, 0u8, 97u8, 102u8, 107u8, 98u8, 108u8, 0u8, 0u8, 0u8, 97u8, 103u8, 97u8,
                 110u8, 117u8, 0u8, 0u8, 0u8, 97u8, 105u8, 97u8, 120u8, 97u8, 0u8, 0u8, 0u8, 97u8,
@@ -1204,13 +1203,10 @@ static BN: DataStruct =
                 101u8, 97u8, 100u8, 101u8, 0u8, 0u8, 0u8, 121u8, 116u8, 109u8, 97u8, 109u8, 0u8,
                 0u8, 0u8, 122u8, 97u8, 106u8, 110u8, 98u8, 0u8, 0u8, 0u8, 122u8, 109u8, 108u8,
                 117u8, 110u8, 0u8, 0u8, 0u8, 122u8, 119u8, 104u8, 114u8, 101u8, 0u8, 0u8, 0u8,
-            ];
-            let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-            metadata /= 8usize;
-            zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+            ])
         },
-        values: unsafe {
-            static BYTES: &[u8] = &[
+        unsafe {
+            ::zerovec::VarZeroVec::from_bytes_unchecked(&[
                 172u8, 1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 30u8, 0u8, 0u8, 0u8, 45u8, 0u8, 0u8, 0u8,
                 60u8, 0u8, 0u8, 0u8, 99u8, 0u8, 0u8, 0u8, 132u8, 0u8, 0u8, 0u8, 150u8, 0u8, 0u8,
                 0u8, 177u8, 0u8, 0u8, 0u8, 198u8, 0u8, 0u8, 0u8, 225u8, 0u8, 0u8, 0u8, 240u8, 0u8,
@@ -2227,14 +2223,15 @@ static BN: DataStruct =
                 129u8, 224u8, 166u8, 184u8, 224u8, 166u8, 190u8, 224u8, 166u8, 149u8, 224u8, 166u8,
                 190u8, 224u8, 166u8, 185u8, 224u8, 166u8, 190u8, 224u8, 166u8, 176u8, 224u8, 166u8,
                 190u8, 224u8, 166u8, 176u8, 224u8, 167u8, 135u8,
-            ];
-            ::zerovec::VarZeroVec::Borrowed(core::mem::transmute(BYTES))
+            ])
         },
-    });
-static CCP: DataStruct =
-    &::icu_datetime::provider::time_zones::ExemplarCitiesV1(::zerovec::ZeroMap {
-        keys: unsafe {
-            static DATA: &[u8] = &[
+    )
+});
+static CCP: DataStruct = &::icu_datetime::provider::time_zones::ExemplarCitiesV1(unsafe {
+    #[allow(unused_unsafe)]
+    ::zerovec::ZeroMap::from_parts_unchecked(
+        unsafe {
+            ::zerovec::ZeroVec::from_bytes_unchecked(&[
                 97u8, 100u8, 97u8, 108u8, 118u8, 0u8, 0u8, 0u8, 97u8, 101u8, 100u8, 120u8, 98u8,
                 0u8, 0u8, 0u8, 97u8, 102u8, 107u8, 98u8, 108u8, 0u8, 0u8, 0u8, 97u8, 103u8, 97u8,
                 110u8, 117u8, 0u8, 0u8, 0u8, 97u8, 105u8, 97u8, 120u8, 97u8, 0u8, 0u8, 0u8, 97u8,
@@ -2494,13 +2491,10 @@ static CCP: DataStruct =
                 101u8, 97u8, 100u8, 101u8, 0u8, 0u8, 0u8, 121u8, 116u8, 109u8, 97u8, 109u8, 0u8,
                 0u8, 0u8, 122u8, 97u8, 106u8, 110u8, 98u8, 0u8, 0u8, 0u8, 122u8, 109u8, 108u8,
                 117u8, 110u8, 0u8, 0u8, 0u8, 122u8, 119u8, 104u8, 114u8, 101u8, 0u8, 0u8, 0u8,
-            ];
-            let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-            metadata /= 8usize;
-            zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+            ])
         },
-        values: unsafe {
-            static BYTES: &[u8] = &[
+        unsafe {
+            ::zerovec::VarZeroVec::from_bytes_unchecked(&[
                 172u8, 1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 32u8, 0u8, 0u8, 0u8, 48u8, 0u8, 0u8, 0u8,
                 68u8, 0u8, 0u8, 0u8, 112u8, 0u8, 0u8, 0u8, 152u8, 0u8, 0u8, 0u8, 168u8, 0u8, 0u8,
                 0u8, 200u8, 0u8, 0u8, 0u8, 224u8, 0u8, 0u8, 0u8, 248u8, 0u8, 0u8, 0u8, 16u8, 1u8,
@@ -3801,14 +3795,15 @@ static CCP: DataStruct =
                 240u8, 145u8, 132u8, 180u8, 240u8, 145u8, 132u8, 163u8, 240u8, 145u8, 132u8, 170u8,
                 240u8, 145u8, 132u8, 165u8, 240u8, 145u8, 132u8, 135u8, 240u8, 145u8, 132u8, 166u8,
                 240u8, 145u8, 132u8, 162u8, 240u8, 145u8, 132u8, 162u8, 240u8, 145u8, 132u8, 172u8,
-            ];
-            ::zerovec::VarZeroVec::Borrowed(core::mem::transmute(BYTES))
+            ])
         },
-    });
-static EN: DataStruct =
-    &::icu_datetime::provider::time_zones::ExemplarCitiesV1(::zerovec::ZeroMap {
-        keys: unsafe {
-            static DATA: &[u8] = &[
+    )
+});
+static EN: DataStruct = &::icu_datetime::provider::time_zones::ExemplarCitiesV1(unsafe {
+    #[allow(unused_unsafe)]
+    ::zerovec::ZeroMap::from_parts_unchecked(
+        unsafe {
+            ::zerovec::ZeroVec::from_bytes_unchecked(&[
                 97u8, 100u8, 97u8, 108u8, 118u8, 0u8, 0u8, 0u8, 97u8, 101u8, 100u8, 120u8, 98u8,
                 0u8, 0u8, 0u8, 97u8, 102u8, 107u8, 98u8, 108u8, 0u8, 0u8, 0u8, 97u8, 103u8, 97u8,
                 110u8, 117u8, 0u8, 0u8, 0u8, 97u8, 105u8, 97u8, 120u8, 97u8, 0u8, 0u8, 0u8, 97u8,
@@ -4067,13 +4062,10 @@ static EN: DataStruct =
                 0u8, 0u8, 121u8, 116u8, 109u8, 97u8, 109u8, 0u8, 0u8, 0u8, 122u8, 97u8, 106u8,
                 110u8, 98u8, 0u8, 0u8, 0u8, 122u8, 109u8, 108u8, 117u8, 110u8, 0u8, 0u8, 0u8,
                 122u8, 119u8, 104u8, 114u8, 101u8, 0u8, 0u8, 0u8,
-            ];
-            let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-            metadata /= 8usize;
-            zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+            ])
         },
-        values: unsafe {
-            static BYTES: &[u8] = &[
+        unsafe {
+            ::zerovec::VarZeroVec::from_bytes_unchecked(&[
                 169u8, 1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 7u8, 0u8, 0u8, 0u8, 12u8, 0u8, 0u8, 0u8,
                 17u8, 0u8, 0u8, 0u8, 24u8, 0u8, 0u8, 0u8, 32u8, 0u8, 0u8, 0u8, 38u8, 0u8, 0u8, 0u8,
                 45u8, 0u8, 0u8, 0u8, 53u8, 0u8, 0u8, 0u8, 59u8, 0u8, 0u8, 0u8, 64u8, 0u8, 0u8, 0u8,
@@ -4469,14 +4461,15 @@ static EN: DataStruct =
                 77u8, 97u8, 121u8, 111u8, 116u8, 116u8, 101u8, 74u8, 111u8, 104u8, 97u8, 110u8,
                 110u8, 101u8, 115u8, 98u8, 117u8, 114u8, 103u8, 76u8, 117u8, 115u8, 97u8, 107u8,
                 97u8, 72u8, 97u8, 114u8, 97u8, 114u8, 101u8,
-            ];
-            ::zerovec::VarZeroVec::Borrowed(core::mem::transmute(BYTES))
+            ])
         },
-    });
-static EN_001_EN_ZA: DataStruct =
-    &::icu_datetime::provider::time_zones::ExemplarCitiesV1(::zerovec::ZeroMap {
-        keys: unsafe {
-            static DATA: &[u8] = &[
+    )
+});
+static EN_001_EN_ZA: DataStruct = &::icu_datetime::provider::time_zones::ExemplarCitiesV1(unsafe {
+    #[allow(unused_unsafe)]
+    ::zerovec::ZeroMap::from_parts_unchecked(
+        unsafe {
+            ::zerovec::ZeroVec::from_bytes_unchecked(&[
                 97u8, 100u8, 97u8, 108u8, 118u8, 0u8, 0u8, 0u8, 97u8, 101u8, 100u8, 120u8, 98u8,
                 0u8, 0u8, 0u8, 97u8, 102u8, 107u8, 98u8, 108u8, 0u8, 0u8, 0u8, 97u8, 103u8, 97u8,
                 110u8, 117u8, 0u8, 0u8, 0u8, 97u8, 105u8, 97u8, 120u8, 97u8, 0u8, 0u8, 0u8, 97u8,
@@ -4735,13 +4728,10 @@ static EN_001_EN_ZA: DataStruct =
                 0u8, 0u8, 121u8, 116u8, 109u8, 97u8, 109u8, 0u8, 0u8, 0u8, 122u8, 97u8, 106u8,
                 110u8, 98u8, 0u8, 0u8, 0u8, 122u8, 109u8, 108u8, 117u8, 110u8, 0u8, 0u8, 0u8,
                 122u8, 119u8, 104u8, 114u8, 101u8, 0u8, 0u8, 0u8,
-            ];
-            let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-            metadata /= 8usize;
-            zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+            ])
         },
-        values: unsafe {
-            static BYTES: &[u8] = &[
+        unsafe {
+            ::zerovec::VarZeroVec::from_bytes_unchecked(&[
                 169u8, 1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 7u8, 0u8, 0u8, 0u8, 12u8, 0u8, 0u8, 0u8,
                 17u8, 0u8, 0u8, 0u8, 24u8, 0u8, 0u8, 0u8, 32u8, 0u8, 0u8, 0u8, 38u8, 0u8, 0u8, 0u8,
                 45u8, 0u8, 0u8, 0u8, 53u8, 0u8, 0u8, 0u8, 59u8, 0u8, 0u8, 0u8, 64u8, 0u8, 0u8, 0u8,
@@ -5136,14 +5126,15 @@ static EN_001_EN_ZA: DataStruct =
                 101u8, 110u8, 77u8, 97u8, 121u8, 111u8, 116u8, 116u8, 101u8, 74u8, 111u8, 104u8,
                 97u8, 110u8, 110u8, 101u8, 115u8, 98u8, 117u8, 114u8, 103u8, 76u8, 117u8, 115u8,
                 97u8, 107u8, 97u8, 72u8, 97u8, 114u8, 97u8, 114u8, 101u8,
-            ];
-            ::zerovec::VarZeroVec::Borrowed(core::mem::transmute(BYTES))
+            ])
         },
-    });
-static ES: DataStruct =
-    &::icu_datetime::provider::time_zones::ExemplarCitiesV1(::zerovec::ZeroMap {
-        keys: unsafe {
-            static DATA: &[u8] = &[
+    )
+});
+static ES: DataStruct = &::icu_datetime::provider::time_zones::ExemplarCitiesV1(unsafe {
+    #[allow(unused_unsafe)]
+    ::zerovec::ZeroMap::from_parts_unchecked(
+        unsafe {
+            ::zerovec::ZeroVec::from_bytes_unchecked(&[
                 97u8, 100u8, 97u8, 108u8, 118u8, 0u8, 0u8, 0u8, 97u8, 101u8, 100u8, 120u8, 98u8,
                 0u8, 0u8, 0u8, 97u8, 102u8, 107u8, 98u8, 108u8, 0u8, 0u8, 0u8, 97u8, 103u8, 97u8,
                 110u8, 117u8, 0u8, 0u8, 0u8, 97u8, 105u8, 97u8, 120u8, 97u8, 0u8, 0u8, 0u8, 97u8,
@@ -5403,13 +5394,10 @@ static ES: DataStruct =
                 101u8, 97u8, 100u8, 101u8, 0u8, 0u8, 0u8, 121u8, 116u8, 109u8, 97u8, 109u8, 0u8,
                 0u8, 0u8, 122u8, 97u8, 106u8, 110u8, 98u8, 0u8, 0u8, 0u8, 122u8, 109u8, 108u8,
                 117u8, 110u8, 0u8, 0u8, 0u8, 122u8, 119u8, 104u8, 114u8, 101u8, 0u8, 0u8, 0u8,
-            ];
-            let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-            metadata /= 8usize;
-            zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+            ])
         },
-        values: unsafe {
-            static BYTES: &[u8] = &[
+        unsafe {
+            ::zerovec::VarZeroVec::from_bytes_unchecked(&[
                 172u8, 1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 7u8, 0u8, 0u8, 0u8, 13u8, 0u8, 0u8, 0u8,
                 18u8, 0u8, 0u8, 0u8, 25u8, 0u8, 0u8, 0u8, 32u8, 0u8, 0u8, 0u8, 38u8, 0u8, 0u8, 0u8,
                 45u8, 0u8, 0u8, 0u8, 52u8, 0u8, 0u8, 0u8, 58u8, 0u8, 0u8, 0u8, 63u8, 0u8, 0u8, 0u8,
@@ -5819,14 +5807,15 @@ static ES: DataStruct =
                 195u8, 169u8, 110u8, 77u8, 97u8, 121u8, 111u8, 116u8, 116u8, 101u8, 74u8, 111u8,
                 104u8, 97u8, 110u8, 110u8, 101u8, 115u8, 98u8, 117u8, 114u8, 103u8, 111u8, 76u8,
                 117u8, 115u8, 97u8, 107u8, 97u8, 72u8, 97u8, 114u8, 97u8, 114u8, 101u8,
-            ];
-            ::zerovec::VarZeroVec::Borrowed(core::mem::transmute(BYTES))
+            ])
         },
-    });
-static ES_AR: DataStruct =
-    &::icu_datetime::provider::time_zones::ExemplarCitiesV1(::zerovec::ZeroMap {
-        keys: unsafe {
-            static DATA: &[u8] = &[
+    )
+});
+static ES_AR: DataStruct = &::icu_datetime::provider::time_zones::ExemplarCitiesV1(unsafe {
+    #[allow(unused_unsafe)]
+    ::zerovec::ZeroMap::from_parts_unchecked(
+        unsafe {
+            ::zerovec::ZeroVec::from_bytes_unchecked(&[
                 97u8, 100u8, 97u8, 108u8, 118u8, 0u8, 0u8, 0u8, 97u8, 101u8, 100u8, 120u8, 98u8,
                 0u8, 0u8, 0u8, 97u8, 102u8, 107u8, 98u8, 108u8, 0u8, 0u8, 0u8, 97u8, 103u8, 97u8,
                 110u8, 117u8, 0u8, 0u8, 0u8, 97u8, 105u8, 97u8, 120u8, 97u8, 0u8, 0u8, 0u8, 97u8,
@@ -6086,13 +6075,10 @@ static ES_AR: DataStruct =
                 101u8, 97u8, 100u8, 101u8, 0u8, 0u8, 0u8, 121u8, 116u8, 109u8, 97u8, 109u8, 0u8,
                 0u8, 0u8, 122u8, 97u8, 106u8, 110u8, 98u8, 0u8, 0u8, 0u8, 122u8, 109u8, 108u8,
                 117u8, 110u8, 0u8, 0u8, 0u8, 122u8, 119u8, 104u8, 114u8, 101u8, 0u8, 0u8, 0u8,
-            ];
-            let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-            metadata /= 8usize;
-            zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+            ])
         },
-        values: unsafe {
-            static BYTES: &[u8] = &[
+        unsafe {
+            ::zerovec::VarZeroVec::from_bytes_unchecked(&[
                 172u8, 1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 7u8, 0u8, 0u8, 0u8, 13u8, 0u8, 0u8, 0u8,
                 18u8, 0u8, 0u8, 0u8, 25u8, 0u8, 0u8, 0u8, 32u8, 0u8, 0u8, 0u8, 38u8, 0u8, 0u8, 0u8,
                 45u8, 0u8, 0u8, 0u8, 52u8, 0u8, 0u8, 0u8, 58u8, 0u8, 0u8, 0u8, 63u8, 0u8, 0u8, 0u8,
@@ -6503,14 +6489,15 @@ static ES_AR: DataStruct =
                 121u8, 111u8, 116u8, 116u8, 101u8, 74u8, 111u8, 104u8, 97u8, 110u8, 110u8, 101u8,
                 115u8, 98u8, 117u8, 114u8, 103u8, 111u8, 76u8, 117u8, 115u8, 97u8, 107u8, 97u8,
                 72u8, 97u8, 114u8, 97u8, 114u8, 101u8,
-            ];
-            ::zerovec::VarZeroVec::Borrowed(core::mem::transmute(BYTES))
+            ])
         },
-    });
-static FIL: DataStruct =
-    &::icu_datetime::provider::time_zones::ExemplarCitiesV1(::zerovec::ZeroMap {
-        keys: unsafe {
-            static DATA: &[u8] = &[
+    )
+});
+static FIL: DataStruct = &::icu_datetime::provider::time_zones::ExemplarCitiesV1(unsafe {
+    #[allow(unused_unsafe)]
+    ::zerovec::ZeroMap::from_parts_unchecked(
+        unsafe {
+            ::zerovec::ZeroVec::from_bytes_unchecked(&[
                 97u8, 100u8, 97u8, 108u8, 118u8, 0u8, 0u8, 0u8, 97u8, 101u8, 100u8, 120u8, 98u8,
                 0u8, 0u8, 0u8, 97u8, 102u8, 107u8, 98u8, 108u8, 0u8, 0u8, 0u8, 97u8, 103u8, 97u8,
                 110u8, 117u8, 0u8, 0u8, 0u8, 97u8, 105u8, 97u8, 120u8, 97u8, 0u8, 0u8, 0u8, 97u8,
@@ -6770,13 +6757,10 @@ static FIL: DataStruct =
                 101u8, 97u8, 100u8, 101u8, 0u8, 0u8, 0u8, 121u8, 116u8, 109u8, 97u8, 109u8, 0u8,
                 0u8, 0u8, 122u8, 97u8, 106u8, 110u8, 98u8, 0u8, 0u8, 0u8, 122u8, 109u8, 108u8,
                 117u8, 110u8, 0u8, 0u8, 0u8, 122u8, 119u8, 104u8, 114u8, 101u8, 0u8, 0u8, 0u8,
-            ];
-            let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-            metadata /= 8usize;
-            zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+            ])
         },
-        values: unsafe {
-            static BYTES: &[u8] = &[
+        unsafe {
+            ::zerovec::VarZeroVec::from_bytes_unchecked(&[
                 172u8, 1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 7u8, 0u8, 0u8, 0u8, 12u8, 0u8, 0u8, 0u8,
                 17u8, 0u8, 0u8, 0u8, 24u8, 0u8, 0u8, 0u8, 32u8, 0u8, 0u8, 0u8, 38u8, 0u8, 0u8, 0u8,
                 45u8, 0u8, 0u8, 0u8, 52u8, 0u8, 0u8, 0u8, 58u8, 0u8, 0u8, 0u8, 63u8, 0u8, 0u8, 0u8,
@@ -7177,14 +7161,15 @@ static FIL: DataStruct =
                 100u8, 101u8, 110u8, 77u8, 97u8, 121u8, 111u8, 116u8, 116u8, 101u8, 74u8, 111u8,
                 104u8, 97u8, 110u8, 110u8, 101u8, 115u8, 98u8, 117u8, 114u8, 103u8, 76u8, 117u8,
                 115u8, 97u8, 107u8, 97u8, 72u8, 97u8, 114u8, 97u8, 114u8, 101u8,
-            ];
-            ::zerovec::VarZeroVec::Borrowed(core::mem::transmute(BYTES))
+            ])
         },
-    });
-static FR: DataStruct =
-    &::icu_datetime::provider::time_zones::ExemplarCitiesV1(::zerovec::ZeroMap {
-        keys: unsafe {
-            static DATA: &[u8] = &[
+    )
+});
+static FR: DataStruct = &::icu_datetime::provider::time_zones::ExemplarCitiesV1(unsafe {
+    #[allow(unused_unsafe)]
+    ::zerovec::ZeroMap::from_parts_unchecked(
+        unsafe {
+            ::zerovec::ZeroVec::from_bytes_unchecked(&[
                 97u8, 100u8, 97u8, 108u8, 118u8, 0u8, 0u8, 0u8, 97u8, 101u8, 100u8, 120u8, 98u8,
                 0u8, 0u8, 0u8, 97u8, 102u8, 107u8, 98u8, 108u8, 0u8, 0u8, 0u8, 97u8, 103u8, 97u8,
                 110u8, 117u8, 0u8, 0u8, 0u8, 97u8, 105u8, 97u8, 120u8, 97u8, 0u8, 0u8, 0u8, 97u8,
@@ -7444,13 +7429,10 @@ static FR: DataStruct =
                 101u8, 97u8, 100u8, 101u8, 0u8, 0u8, 0u8, 121u8, 116u8, 109u8, 97u8, 109u8, 0u8,
                 0u8, 0u8, 122u8, 97u8, 106u8, 110u8, 98u8, 0u8, 0u8, 0u8, 122u8, 109u8, 108u8,
                 117u8, 110u8, 0u8, 0u8, 0u8, 122u8, 119u8, 104u8, 114u8, 101u8, 0u8, 0u8, 0u8,
-            ];
-            let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-            metadata /= 8usize;
-            zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+            ])
         },
-        values: unsafe {
-            static BYTES: &[u8] = &[
+        unsafe {
+            ::zerovec::VarZeroVec::from_bytes_unchecked(&[
                 172u8, 1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 7u8, 0u8, 0u8, 0u8, 13u8, 0u8, 0u8, 0u8,
                 19u8, 0u8, 0u8, 0u8, 26u8, 0u8, 0u8, 0u8, 34u8, 0u8, 0u8, 0u8, 40u8, 0u8, 0u8, 0u8,
                 46u8, 0u8, 0u8, 0u8, 54u8, 0u8, 0u8, 0u8, 60u8, 0u8, 0u8, 0u8, 65u8, 0u8, 0u8, 0u8,
@@ -7865,14 +7847,15 @@ static FR: DataStruct =
                 111u8, 116u8, 116u8, 101u8, 74u8, 111u8, 104u8, 97u8, 110u8, 110u8, 101u8, 115u8,
                 98u8, 117u8, 114u8, 103u8, 76u8, 117u8, 115u8, 97u8, 107u8, 97u8, 72u8, 97u8,
                 114u8, 97u8, 114u8, 101u8,
-            ];
-            ::zerovec::VarZeroVec::Borrowed(core::mem::transmute(BYTES))
+            ])
         },
-    });
-static JA: DataStruct =
-    &::icu_datetime::provider::time_zones::ExemplarCitiesV1(::zerovec::ZeroMap {
-        keys: unsafe {
-            static DATA: &[u8] = &[
+    )
+});
+static JA: DataStruct = &::icu_datetime::provider::time_zones::ExemplarCitiesV1(unsafe {
+    #[allow(unused_unsafe)]
+    ::zerovec::ZeroMap::from_parts_unchecked(
+        unsafe {
+            ::zerovec::ZeroVec::from_bytes_unchecked(&[
                 97u8, 100u8, 97u8, 108u8, 118u8, 0u8, 0u8, 0u8, 97u8, 101u8, 100u8, 120u8, 98u8,
                 0u8, 0u8, 0u8, 97u8, 102u8, 107u8, 98u8, 108u8, 0u8, 0u8, 0u8, 97u8, 103u8, 97u8,
                 110u8, 117u8, 0u8, 0u8, 0u8, 97u8, 105u8, 97u8, 120u8, 97u8, 0u8, 0u8, 0u8, 97u8,
@@ -8132,13 +8115,10 @@ static JA: DataStruct =
                 101u8, 97u8, 100u8, 101u8, 0u8, 0u8, 0u8, 121u8, 116u8, 109u8, 97u8, 109u8, 0u8,
                 0u8, 0u8, 122u8, 97u8, 106u8, 110u8, 98u8, 0u8, 0u8, 0u8, 122u8, 109u8, 108u8,
                 117u8, 110u8, 0u8, 0u8, 0u8, 122u8, 119u8, 104u8, 114u8, 101u8, 0u8, 0u8, 0u8,
-            ];
-            let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-            metadata /= 8usize;
-            zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+            ])
         },
-        values: unsafe {
-            static BYTES: &[u8] = &[
+        unsafe {
+            ::zerovec::VarZeroVec::from_bytes_unchecked(&[
                 172u8, 1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 12u8, 0u8, 0u8, 0u8, 21u8, 0u8, 0u8, 0u8,
                 33u8, 0u8, 0u8, 0u8, 51u8, 0u8, 0u8, 0u8, 63u8, 0u8, 0u8, 0u8, 75u8, 0u8, 0u8, 0u8,
                 87u8, 0u8, 0u8, 0u8, 102u8, 0u8, 0u8, 0u8, 114u8, 0u8, 0u8, 0u8, 132u8, 0u8, 0u8,
@@ -8814,14 +8794,15 @@ static JA: DataStruct =
                 227u8, 131u8, 150u8, 227u8, 131u8, 171u8, 227u8, 130u8, 176u8, 227u8, 131u8, 171u8,
                 227u8, 130u8, 181u8, 227u8, 130u8, 171u8, 227u8, 131u8, 143u8, 227u8, 131u8, 169u8,
                 227u8, 131u8, 172u8,
-            ];
-            ::zerovec::VarZeroVec::Borrowed(core::mem::transmute(BYTES))
+            ])
         },
-    });
-static RU: DataStruct =
-    &::icu_datetime::provider::time_zones::ExemplarCitiesV1(::zerovec::ZeroMap {
-        keys: unsafe {
-            static DATA: &[u8] = &[
+    )
+});
+static RU: DataStruct = &::icu_datetime::provider::time_zones::ExemplarCitiesV1(unsafe {
+    #[allow(unused_unsafe)]
+    ::zerovec::ZeroMap::from_parts_unchecked(
+        unsafe {
+            ::zerovec::ZeroVec::from_bytes_unchecked(&[
                 97u8, 100u8, 97u8, 108u8, 118u8, 0u8, 0u8, 0u8, 97u8, 101u8, 100u8, 120u8, 98u8,
                 0u8, 0u8, 0u8, 97u8, 102u8, 107u8, 98u8, 108u8, 0u8, 0u8, 0u8, 97u8, 103u8, 97u8,
                 110u8, 117u8, 0u8, 0u8, 0u8, 97u8, 105u8, 97u8, 120u8, 97u8, 0u8, 0u8, 0u8, 97u8,
@@ -9081,13 +9062,10 @@ static RU: DataStruct =
                 101u8, 97u8, 100u8, 101u8, 0u8, 0u8, 0u8, 121u8, 116u8, 109u8, 97u8, 109u8, 0u8,
                 0u8, 0u8, 122u8, 97u8, 106u8, 110u8, 98u8, 0u8, 0u8, 0u8, 122u8, 109u8, 108u8,
                 117u8, 110u8, 0u8, 0u8, 0u8, 122u8, 119u8, 104u8, 114u8, 101u8, 0u8, 0u8, 0u8,
-            ];
-            let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-            metadata /= 8usize;
-            zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+            ])
         },
-        values: unsafe {
-            static BYTES: &[u8] = &[
+        unsafe {
+            ::zerovec::VarZeroVec::from_bytes_unchecked(&[
                 172u8, 1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 14u8, 0u8, 0u8, 0u8, 24u8, 0u8, 0u8, 0u8,
                 34u8, 0u8, 0u8, 0u8, 48u8, 0u8, 0u8, 0u8, 62u8, 0u8, 0u8, 0u8, 74u8, 0u8, 0u8, 0u8,
                 86u8, 0u8, 0u8, 0u8, 100u8, 0u8, 0u8, 0u8, 112u8, 0u8, 0u8, 0u8, 122u8, 0u8, 0u8,
@@ -9761,14 +9739,15 @@ static RU: DataStruct =
                 209u8, 129u8, 208u8, 177u8, 209u8, 131u8, 209u8, 128u8, 208u8, 179u8, 208u8, 155u8,
                 209u8, 131u8, 209u8, 129u8, 208u8, 176u8, 208u8, 186u8, 208u8, 176u8, 208u8, 165u8,
                 208u8, 176u8, 209u8, 128u8, 208u8, 176u8, 209u8, 128u8, 208u8, 181u8,
-            ];
-            ::zerovec::VarZeroVec::Borrowed(core::mem::transmute(BYTES))
+            ])
         },
-    });
-static SR_LATN: DataStruct =
-    &::icu_datetime::provider::time_zones::ExemplarCitiesV1(::zerovec::ZeroMap {
-        keys: unsafe {
-            static DATA: &[u8] = &[
+    )
+});
+static SR_LATN: DataStruct = &::icu_datetime::provider::time_zones::ExemplarCitiesV1(unsafe {
+    #[allow(unused_unsafe)]
+    ::zerovec::ZeroMap::from_parts_unchecked(
+        unsafe {
+            ::zerovec::ZeroVec::from_bytes_unchecked(&[
                 97u8, 100u8, 97u8, 108u8, 118u8, 0u8, 0u8, 0u8, 97u8, 101u8, 100u8, 120u8, 98u8,
                 0u8, 0u8, 0u8, 97u8, 102u8, 107u8, 98u8, 108u8, 0u8, 0u8, 0u8, 97u8, 103u8, 97u8,
                 110u8, 117u8, 0u8, 0u8, 0u8, 97u8, 105u8, 97u8, 120u8, 97u8, 0u8, 0u8, 0u8, 97u8,
@@ -10028,13 +10007,10 @@ static SR_LATN: DataStruct =
                 101u8, 97u8, 100u8, 101u8, 0u8, 0u8, 0u8, 121u8, 116u8, 109u8, 97u8, 109u8, 0u8,
                 0u8, 0u8, 122u8, 97u8, 106u8, 110u8, 98u8, 0u8, 0u8, 0u8, 122u8, 109u8, 108u8,
                 117u8, 110u8, 0u8, 0u8, 0u8, 122u8, 119u8, 104u8, 114u8, 101u8, 0u8, 0u8, 0u8,
-            ];
-            let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-            metadata /= 8usize;
-            zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+            ])
         },
-        values: unsafe {
-            static BYTES: &[u8] = &[
+        unsafe {
+            ::zerovec::VarZeroVec::from_bytes_unchecked(&[
                 172u8, 1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 6u8, 0u8, 0u8, 0u8, 11u8, 0u8, 0u8, 0u8,
                 16u8, 0u8, 0u8, 0u8, 23u8, 0u8, 0u8, 0u8, 30u8, 0u8, 0u8, 0u8, 36u8, 0u8, 0u8, 0u8,
                 43u8, 0u8, 0u8, 0u8, 50u8, 0u8, 0u8, 0u8, 56u8, 0u8, 0u8, 0u8, 61u8, 0u8, 0u8, 0u8,
@@ -10430,14 +10406,15 @@ static SR_LATN: DataStruct =
                 111u8, 116u8, 74u8, 111u8, 104u8, 97u8, 110u8, 101u8, 115u8, 98u8, 117u8, 114u8,
                 103u8, 76u8, 117u8, 115u8, 97u8, 107u8, 97u8, 72u8, 97u8, 114u8, 97u8, 114u8,
                 101u8,
-            ];
-            ::zerovec::VarZeroVec::Borrowed(core::mem::transmute(BYTES))
+            ])
         },
-    });
-static SR_SR_CYRL: DataStruct =
-    &::icu_datetime::provider::time_zones::ExemplarCitiesV1(::zerovec::ZeroMap {
-        keys: unsafe {
-            static DATA: &[u8] = &[
+    )
+});
+static SR_SR_CYRL: DataStruct = &::icu_datetime::provider::time_zones::ExemplarCitiesV1(unsafe {
+    #[allow(unused_unsafe)]
+    ::zerovec::ZeroMap::from_parts_unchecked(
+        unsafe {
+            ::zerovec::ZeroVec::from_bytes_unchecked(&[
                 97u8, 100u8, 97u8, 108u8, 118u8, 0u8, 0u8, 0u8, 97u8, 101u8, 100u8, 120u8, 98u8,
                 0u8, 0u8, 0u8, 97u8, 102u8, 107u8, 98u8, 108u8, 0u8, 0u8, 0u8, 97u8, 103u8, 97u8,
                 110u8, 117u8, 0u8, 0u8, 0u8, 97u8, 105u8, 97u8, 120u8, 97u8, 0u8, 0u8, 0u8, 97u8,
@@ -10697,13 +10674,10 @@ static SR_SR_CYRL: DataStruct =
                 101u8, 97u8, 100u8, 101u8, 0u8, 0u8, 0u8, 121u8, 116u8, 109u8, 97u8, 109u8, 0u8,
                 0u8, 0u8, 122u8, 97u8, 106u8, 110u8, 98u8, 0u8, 0u8, 0u8, 122u8, 109u8, 108u8,
                 117u8, 110u8, 0u8, 0u8, 0u8, 122u8, 119u8, 104u8, 114u8, 101u8, 0u8, 0u8, 0u8,
-            ];
-            let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-            metadata /= 8usize;
-            zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+            ])
         },
-        values: unsafe {
-            static BYTES: &[u8] = &[
+        unsafe {
+            ::zerovec::VarZeroVec::from_bytes_unchecked(&[
                 172u8, 1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 12u8, 0u8, 0u8, 0u8, 22u8, 0u8, 0u8, 0u8,
                 32u8, 0u8, 0u8, 0u8, 46u8, 0u8, 0u8, 0u8, 60u8, 0u8, 0u8, 0u8, 72u8, 0u8, 0u8, 0u8,
                 86u8, 0u8, 0u8, 0u8, 100u8, 0u8, 0u8, 0u8, 112u8, 0u8, 0u8, 0u8, 122u8, 0u8, 0u8,
@@ -11362,14 +11336,15 @@ static SR_SR_CYRL: DataStruct =
                 128u8, 208u8, 179u8, 208u8, 155u8, 209u8, 131u8, 209u8, 129u8, 208u8, 176u8, 208u8,
                 186u8, 208u8, 176u8, 208u8, 165u8, 208u8, 176u8, 209u8, 128u8, 208u8, 176u8, 209u8,
                 128u8, 208u8, 181u8,
-            ];
-            ::zerovec::VarZeroVec::Borrowed(core::mem::transmute(BYTES))
+            ])
         },
-    });
-static TH: DataStruct =
-    &::icu_datetime::provider::time_zones::ExemplarCitiesV1(::zerovec::ZeroMap {
-        keys: unsafe {
-            static DATA: &[u8] = &[
+    )
+});
+static TH: DataStruct = &::icu_datetime::provider::time_zones::ExemplarCitiesV1(unsafe {
+    #[allow(unused_unsafe)]
+    ::zerovec::ZeroMap::from_parts_unchecked(
+        unsafe {
+            ::zerovec::ZeroVec::from_bytes_unchecked(&[
                 97u8, 100u8, 97u8, 108u8, 118u8, 0u8, 0u8, 0u8, 97u8, 101u8, 100u8, 120u8, 98u8,
                 0u8, 0u8, 0u8, 97u8, 102u8, 107u8, 98u8, 108u8, 0u8, 0u8, 0u8, 97u8, 103u8, 97u8,
                 110u8, 117u8, 0u8, 0u8, 0u8, 97u8, 105u8, 97u8, 120u8, 97u8, 0u8, 0u8, 0u8, 97u8,
@@ -11629,13 +11604,10 @@ static TH: DataStruct =
                 101u8, 97u8, 100u8, 101u8, 0u8, 0u8, 0u8, 121u8, 116u8, 109u8, 97u8, 109u8, 0u8,
                 0u8, 0u8, 122u8, 97u8, 106u8, 110u8, 98u8, 0u8, 0u8, 0u8, 122u8, 109u8, 108u8,
                 117u8, 110u8, 0u8, 0u8, 0u8, 122u8, 119u8, 104u8, 114u8, 101u8, 0u8, 0u8, 0u8,
-            ];
-            let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-            metadata /= 8usize;
-            zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+            ])
         },
-        values: unsafe {
-            static BYTES: &[u8] = &[
+        unsafe {
+            ::zerovec::VarZeroVec::from_bytes_unchecked(&[
                 172u8, 1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 27u8, 0u8, 0u8, 0u8, 39u8, 0u8, 0u8, 0u8,
                 54u8, 0u8, 0u8, 0u8, 75u8, 0u8, 0u8, 0u8, 99u8, 0u8, 0u8, 0u8, 117u8, 0u8, 0u8,
                 0u8, 138u8, 0u8, 0u8, 0u8, 159u8, 0u8, 0u8, 0u8, 180u8, 0u8, 0u8, 0u8, 198u8, 0u8,
@@ -12627,14 +12599,15 @@ static TH: DataStruct =
                 139u8, 224u8, 184u8, 178u8, 224u8, 184u8, 129u8, 224u8, 184u8, 178u8, 224u8, 184u8,
                 174u8, 224u8, 184u8, 178u8, 224u8, 184u8, 163u8, 224u8, 184u8, 178u8, 224u8, 185u8,
                 128u8, 224u8, 184u8, 163u8,
-            ];
-            ::zerovec::VarZeroVec::Borrowed(core::mem::transmute(BYTES))
+            ])
         },
-    });
-static TR: DataStruct =
-    &::icu_datetime::provider::time_zones::ExemplarCitiesV1(::zerovec::ZeroMap {
-        keys: unsafe {
-            static DATA: &[u8] = &[
+    )
+});
+static TR: DataStruct = &::icu_datetime::provider::time_zones::ExemplarCitiesV1(unsafe {
+    #[allow(unused_unsafe)]
+    ::zerovec::ZeroMap::from_parts_unchecked(
+        unsafe {
+            ::zerovec::ZeroVec::from_bytes_unchecked(&[
                 97u8, 100u8, 97u8, 108u8, 118u8, 0u8, 0u8, 0u8, 97u8, 101u8, 100u8, 120u8, 98u8,
                 0u8, 0u8, 0u8, 97u8, 102u8, 107u8, 98u8, 108u8, 0u8, 0u8, 0u8, 97u8, 103u8, 97u8,
                 110u8, 117u8, 0u8, 0u8, 0u8, 97u8, 105u8, 97u8, 120u8, 97u8, 0u8, 0u8, 0u8, 97u8,
@@ -12894,13 +12867,10 @@ static TR: DataStruct =
                 101u8, 97u8, 100u8, 101u8, 0u8, 0u8, 0u8, 121u8, 116u8, 109u8, 97u8, 109u8, 0u8,
                 0u8, 0u8, 122u8, 97u8, 106u8, 110u8, 98u8, 0u8, 0u8, 0u8, 122u8, 109u8, 108u8,
                 117u8, 110u8, 0u8, 0u8, 0u8, 122u8, 119u8, 104u8, 114u8, 101u8, 0u8, 0u8, 0u8,
-            ];
-            let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-            metadata /= 8usize;
-            zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+            ])
         },
-        values: unsafe {
-            static BYTES: &[u8] = &[
+        unsafe {
+            ::zerovec::VarZeroVec::from_bytes_unchecked(&[
                 172u8, 1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 7u8, 0u8, 0u8, 0u8, 12u8, 0u8, 0u8, 0u8,
                 17u8, 0u8, 0u8, 0u8, 24u8, 0u8, 0u8, 0u8, 32u8, 0u8, 0u8, 0u8, 37u8, 0u8, 0u8, 0u8,
                 43u8, 0u8, 0u8, 0u8, 51u8, 0u8, 0u8, 0u8, 57u8, 0u8, 0u8, 0u8, 62u8, 0u8, 0u8, 0u8,
@@ -13302,14 +13272,15 @@ static TR: DataStruct =
                 111u8, 116u8, 116u8, 101u8, 74u8, 111u8, 104u8, 97u8, 110u8, 110u8, 101u8, 115u8,
                 98u8, 117u8, 114u8, 103u8, 76u8, 117u8, 115u8, 97u8, 107u8, 97u8, 72u8, 97u8,
                 114u8, 97u8, 114u8, 101u8,
-            ];
-            ::zerovec::VarZeroVec::Borrowed(core::mem::transmute(BYTES))
+            ])
         },
-    });
-static UND: DataStruct =
-    &::icu_datetime::provider::time_zones::ExemplarCitiesV1(::zerovec::ZeroMap {
-        keys: unsafe {
-            static DATA: &[u8] = &[
+    )
+});
+static UND: DataStruct = &::icu_datetime::provider::time_zones::ExemplarCitiesV1(unsafe {
+    #[allow(unused_unsafe)]
+    ::zerovec::ZeroMap::from_parts_unchecked(
+        unsafe {
+            ::zerovec::ZeroVec::from_bytes_unchecked(&[
                 97u8, 100u8, 97u8, 108u8, 118u8, 0u8, 0u8, 0u8, 97u8, 101u8, 100u8, 120u8, 98u8,
                 0u8, 0u8, 0u8, 97u8, 102u8, 107u8, 98u8, 108u8, 0u8, 0u8, 0u8, 97u8, 103u8, 97u8,
                 110u8, 117u8, 0u8, 0u8, 0u8, 97u8, 105u8, 97u8, 120u8, 97u8, 0u8, 0u8, 0u8, 97u8,
@@ -13568,13 +13539,10 @@ static UND: DataStruct =
                 0u8, 0u8, 121u8, 116u8, 109u8, 97u8, 109u8, 0u8, 0u8, 0u8, 122u8, 97u8, 106u8,
                 110u8, 98u8, 0u8, 0u8, 0u8, 122u8, 109u8, 108u8, 117u8, 110u8, 0u8, 0u8, 0u8,
                 122u8, 119u8, 104u8, 114u8, 101u8, 0u8, 0u8, 0u8,
-            ];
-            let (data, mut metadata): (usize, usize) = core::mem::transmute(DATA);
-            metadata /= 8usize;
-            zerovec::ZeroVec::Borrowed(core::mem::transmute((data, metadata)))
+            ])
         },
-        values: unsafe {
-            static BYTES: &[u8] = &[
+        unsafe {
+            ::zerovec::VarZeroVec::from_bytes_unchecked(&[
                 169u8, 1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 7u8, 0u8, 0u8, 0u8, 12u8, 0u8, 0u8, 0u8,
                 17u8, 0u8, 0u8, 0u8, 24u8, 0u8, 0u8, 0u8, 32u8, 0u8, 0u8, 0u8, 38u8, 0u8, 0u8, 0u8,
                 45u8, 0u8, 0u8, 0u8, 52u8, 0u8, 0u8, 0u8, 58u8, 0u8, 0u8, 0u8, 63u8, 0u8, 0u8, 0u8,
@@ -13969,7 +13937,7 @@ static UND: DataStruct =
                 116u8, 116u8, 101u8, 74u8, 111u8, 104u8, 97u8, 110u8, 110u8, 101u8, 115u8, 98u8,
                 117u8, 114u8, 103u8, 76u8, 117u8, 115u8, 97u8, 107u8, 97u8, 72u8, 97u8, 114u8,
                 97u8, 114u8, 101u8,
-            ];
-            ::zerovec::VarZeroVec::Borrowed(core::mem::transmute(BYTES))
+            ])
         },
-    });
+    )
+});

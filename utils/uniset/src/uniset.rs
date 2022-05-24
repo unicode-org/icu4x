@@ -36,6 +36,7 @@ pub struct UnicodeSet<'data> {
     // If we wanted to use an array to keep the memory on the stack, there is an unsafe nightly feature
     // https://doc.rust-lang.org/nightly/core/array/trait.FixedSizeArray.html
     // Allows for traits of fixed size arrays
+
     // Implements an [inversion list.](https://en.wikipedia.org/wiki/Inversion_list)
     inv_list: ZeroVec<'data, u32>,
     size: usize,
