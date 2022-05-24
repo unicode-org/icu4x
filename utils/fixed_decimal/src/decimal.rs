@@ -578,11 +578,11 @@ impl FixedDecimal {
             self.upper_magnitude = self.magnitude;
         }
 
-        self.remove_trailing_zeros();
+        self.remove_trailing_zeros_from_digits_list();
     }
 
     /// Removes the trailing zeros in `self.digits`
-    fn remove_trailing_zeros(&mut self) {
+    fn remove_trailing_zeros_from_digits_list(&mut self) {
         // remove trailing zeros from `digits`
         for i in (0..self.digits.len()).rev() {
             if self.digits[i] == 0 {
@@ -680,7 +680,7 @@ impl FixedDecimal {
         } else if n <= self.magnitude {
             self.digits
                 .truncate((crate::ops::i16_abs_sub(self.magnitude, n).add(1)) as usize);
-            self.remove_trailing_zeros();
+            self.remove_trailing_zeros_from_digits_list();
             self.lower_magnitude = {
                 if n <= 0 {
                     n
