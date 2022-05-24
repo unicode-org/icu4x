@@ -14,7 +14,6 @@ where
         env.insert("core");
         env.insert("zerovec");
         let bytes = self.as_bytes();
-        let size: usize = core::mem::size_of::<T::ULE>();
-        quote! { unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(&[#(#bytes),*], #size) } }
+        quote! { unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(&[#(#bytes),*]) } }
     }
 }

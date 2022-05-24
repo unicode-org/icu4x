@@ -254,12 +254,11 @@ where
     ///
     /// # Safety
     ///
-    /// `bytes` need to be an output from [`ZeroSlice::as_bytes()`], and `size_of`
-    /// is `mem::size_of::<T::ULE>()`.
-    pub const unsafe fn from_bytes_unchecked(bytes: &'a [u8], size_of: usize) -> Self {
+    /// `bytes` need to be an output from [`ZeroSlice::as_bytes()`].
+    pub const unsafe fn from_bytes_unchecked(bytes: &'a [u8]) -> Self {
         // &[u8] and &[T::ULE] are the same slice with different length metadata.
         let (data, mut metadata): (usize, usize) = core::mem::transmute(bytes);
-        metadata /= size_of;
+        metadata /= core::mem::size_of::<T::ULE>();
         Self::Borrowed(core::mem::transmute((data, metadata)))
     }
 
