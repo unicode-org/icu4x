@@ -556,18 +556,31 @@ impl FixedDecimal {
     /// an element with value 1 and assign the value of the upper magnitude to
     /// the magnitude.
     fn increment_abs_by_one(&mut self) {
+        let is_digits_empty = self.digits.is_empty();
+
         for i in (0..self.digits.len()).rev() {
             self.digits[i] += 1;
             if self.digits[i] < 10 {
+                #[cfg(debug_assertions)]
+                self.check_invariants();
                 return;
             }
-            self.digits[i] = 0;
+
+            self.digits.pop();
         }
 
-        // Still there is a carry, add `1` in the beginning of the digits.
-        self.digits.insert(0, 1);
+        if self.magnitude == i16::MAX {
+            self.magnitude = 0;
+
+            #[cfg(debug_assertions)]
+            self.check_invariants();
+            return;
+        }
+
+        // Still a carry, carry one to the next magnitude.
+        self.digits.push(1);
         self.magnitude = {
-            if self.digits.len() == 1 {
+            if is_digits_empty {
                 self.upper_magnitude
             } else {
                 self.magnitude + 1
@@ -578,7 +591,8 @@ impl FixedDecimal {
             self.upper_magnitude = self.magnitude;
         }
 
-        self.remove_trailing_zeros_from_digits_list();
+        #[cfg(debug_assertions)]
+        self.check_invariants();
     }
 
     /// Removes the trailing zeros in `self.digits`
@@ -601,6 +615,9 @@ impl FixedDecimal {
         if self.digits.is_empty() {
             self.magnitude = 0;
         }
+
+        #[cfg(debug_assertions)]
+        self.check_invariants();
     }
 
     /// Truncate the number on the right to a particular magnitude, deleting
@@ -710,6 +727,9 @@ impl FixedDecimal {
             self.magnitude = 0;
             self.upper_magnitude = 0;
         }
+
+        #[cfg(debug_assertions)]
+        self.check_invariants();
     }
 
     /// Ceils the number to the power ten of n.
@@ -768,6 +788,9 @@ impl FixedDecimal {
                 self.increment_abs_by_one();
             }
         }
+
+        #[cfg(debug_assertions)]
+        self.check_invariants();
     }
 
     /// Floors the number to the power ten of n.
@@ -816,6 +839,9 @@ impl FixedDecimal {
         if n > original_upper_magnitude {
             self.upper_magnitude = n;
         }
+
+        #[cfg(debug_assertions)]
+        self.check_invariants();
     }
 
     /// Zero-pad the number on the right to a particular (negative) magnitude. Will truncate
