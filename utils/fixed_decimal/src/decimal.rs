@@ -7,7 +7,7 @@ use smallvec::SmallVec;
 use core::cmp;
 use core::cmp::Ordering;
 use core::fmt;
-use core::ops::{Add, RangeInclusive};
+use core::ops::{Add, AddAssign, RangeInclusive};
 
 use core::str::FromStr;
 
@@ -583,14 +583,20 @@ impl FixedDecimal {
 
     /// Removes the trailing zeros in `self.digits`
     fn remove_trailing_zeros_from_digits_list(&mut self) {
+        let mut no_of_trailing_zeros = 0;
         // remove trailing zeros from `digits`
         for i in (0..self.digits.len()).rev() {
             if self.digits[i] == 0 {
-                self.digits.pop();
+                no_of_trailing_zeros.add_assign(1);
             } else {
                 break;
             }
         }
+
+        self.digits.truncate(crate::ops::i16_sub_unsigned(
+            self.digits.len() as i16,
+            no_of_trailing_zeros,
+        ) as usize);
 
         if self.digits.is_empty() {
             self.magnitude = 0;
