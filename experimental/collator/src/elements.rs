@@ -332,6 +332,19 @@ impl CollationElement32 {
         }
     }
 
+    /// Expands to 64 bits if the expansion is to a single 64-bit collation
+    /// element or otherwise returns the collation element for U+FFFD.
+    #[inline(always)]
+    pub fn to_ce_self_contained_or_gigo(self) -> CollationElement {
+        if let Some(ce) = self.to_ce_self_contained() {
+            ce
+        } else {
+            // GIGO case
+            debug_assert!(false);
+            FFFD_CE
+        }
+    }
+
     /// Gets the length from this element.
     ///
     /// # Panics
@@ -1138,8 +1151,7 @@ where
                                     let ce_for_combining = CollationElement32::new_from_ule(
                                         self.diacritics[diacritic_index],
                                     )
-                                    .to_ce_self_contained()
-                                    .unwrap();
+                                    .to_ce_self_contained_or_gigo();
                                     self.pending.push(ce_for_combining);
                                     self.mark_prefix_unmatchable();
                                     return ce;
@@ -1159,8 +1171,7 @@ where
                                                     CollationElement32::new_from_ule(
                                                         self.diacritics[diacritic_index],
                                                     )
-                                                    .to_ce_self_contained()
-                                                    .unwrap();
+                                                    .to_ce_self_contained_or_gigo();
                                                 self.pending.push(ce_for_combining);
                                                 self.mark_prefix_unmatchable();
                                                 return ce;
@@ -1329,21 +1340,18 @@ where
                         CollationElement32::new_from_ule(
                             self.jamo[(HANGUL_V_BASE - HANGUL_L_BASE + v) as usize],
                         )
-                        .to_ce_self_contained()
-                        .unwrap(),
+                        .to_ce_self_contained_or_gigo(),
                     );
                     if t != 0 {
                         self.pending.push(
                             CollationElement32::new_from_ule(
                                 self.jamo[(HANGUL_T_BASE - HANGUL_L_BASE + t) as usize],
                             )
-                            .to_ce_self_contained()
-                            .unwrap(),
+                            .to_ce_self_contained_or_gigo(),
                         );
                     }
                     return CollationElement32::new_from_ule(self.jamo[l as usize])
-                        .to_ce_self_contained()
-                        .unwrap();
+                        .to_ce_self_contained_or_gigo();
                 }
 
                 // Uphold the invariant that the upcoming character is a starter (or end of stream)
@@ -1358,8 +1366,7 @@ where
                         CollationElement32::new_from_ule(
                             self.jamo[(HANGUL_V_BASE - HANGUL_L_BASE + v) as usize],
                         )
-                        .to_ce_self_contained()
-                        .unwrap(),
+                        .to_ce_self_contained_or_gigo(),
                     );
                     self.upcoming.insert(0, unsafe {
                         core::char::from_u32_unchecked(HANGUL_T_BASE + t)
@@ -1371,8 +1378,7 @@ where
                 }
 
                 return CollationElement32::new_from_ule(self.jamo[l as usize])
-                    .to_ce_self_contained()
-                    .unwrap();
+                    .to_ce_self_contained_or_gigo();
             }
             let mut may_have_contracted_starter = false;
             // Slow path
@@ -1398,7 +1404,7 @@ where
                                 let ce32s = data.get_ce32s(ce32.index(), ce32.len());
                                 for u in ce32s.iter() {
                                     self.pending.push(
-                                        CollationElement32::new(u).to_ce_self_contained().unwrap(),
+                                        CollationElement32::new(u).to_ce_self_contained_or_gigo(),
                                     );
                                 }
                                 break 'ce32loop;
@@ -1835,11 +1841,9 @@ where
                                     continue 'combining;
                                 }
                             }
-                            // Unwrap: expectation of data integrity
                             self.pending.push(
                                 CollationElement32::new_from_ule(diacritic)
-                                    .to_ce_self_contained()
-                                    .unwrap(),
+                                    .to_ce_self_contained_or_gigo(),
                             );
                             self.mark_prefix_unmatchable();
                             i += 1;
