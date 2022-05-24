@@ -18,6 +18,7 @@
 //! This module also declares various constants that are also used
 //! by the `comparison` module.
 
+use core::char::REPLACEMENT_CHARACTER;
 use icu_char16trie::char16trie::TrieResult;
 use icu_codepointtrie::CodePointTrie;
 use icu_normalizer::provider::CanonicalDecompositionDataV1;
@@ -83,6 +84,22 @@ pub(crate) const NO_CE_SECONDARY: u16 = 0x0100;
 pub(crate) const NO_CE_TERTIARY: u16 = 0x0100;
 const NO_CE_VALUE: u64 =
     ((NO_CE_PRIMARY as u64) << 32) | ((NO_CE_SECONDARY as u64) << 16) | (NO_CE_TERTIARY as u64); // 0x101000100
+
+#[inline(always)]
+fn char_from_u32(u: u32) -> char {
+    if let Some(c) = core::char::from_u32(u) {
+        c
+    } else {
+        // GIGO case
+        debug_assert!(false);
+        REPLACEMENT_CHARACTER
+    }
+}
+
+#[inline(always)]
+fn char_from_u16(u: u16) -> char {
+    char_from_u32(u32::from(u))
+}
 
 #[inline(always)]
 fn in_inclusive_range(c: char, start: char, end: char) -> bool {
@@ -758,14 +775,11 @@ where
             let low = decomposition as u16;
             if high != 0 && low != 0 {
                 // Decomposition into two BMP characters: starter and non-starter
-                self.upcoming
-                    .push(core::char::from_u32(u32::from(high)).unwrap());
-                self.upcoming
-                    .push(core::char::from_u32(u32::from(low)).unwrap());
+                self.upcoming.push(char_from_u16(high));
+                self.upcoming.push(char_from_u16(low));
             } else if high != 0 {
                 // Decomposition into one BMP character
-                self.upcoming
-                    .push(core::char::from_u32(u32::from(high)).unwrap());
+                self.upcoming.push(char_from_u16(high));
             } else {
                 // Complex decomposition
                 // Format for 16-bit value:
@@ -787,16 +801,13 @@ where
                     for &ule in
                         self.decompositions.scalars16.as_ule_slice()[offset..offset + len].iter()
                     {
-                        self.upcoming.push(
-                            core::char::from_u32(u32::from(u16::from_unaligned(ule))).unwrap(),
-                        );
+                        self.upcoming.push(char_from_u16(u16::from_unaligned(ule)));
                     }
                 } else {
                     for &ule in
                         self.decompositions.scalars32.as_ule_slice()[offset..offset + len].iter()
                     {
-                        self.upcoming
-                            .push(core::char::from_u32(u32::from_unaligned(ule)).unwrap());
+                        self.upcoming.push(char_from_u32(u32::from_unaligned(ule)));
                     }
                 }
                 if low & 0x800 != 0 {
@@ -1061,13 +1072,13 @@ where
                     let low = decomposition as u16;
                     if high != 0 && low != 0 {
                         // Decomposition into two BMP characters: starter and non-starter
-                        c = core::char::from_u32(u32::from(high)).unwrap();
+                        c = char_from_u16(high);
                         ce32 = data.ce32_for_char(c);
                         if ce32 == FALLBACK_CE32 {
                             data = self.root;
                             ce32 = data.ce32_for_char(c);
                         }
-                        let combining = core::char::from_u32(u32::from(low)).unwrap();
+                        let combining = char_from_u16(low);
                         if self.is_next_decomposition_starts_with_starter() {
                             let diacritic_index =
                                 (low as usize).wrapping_sub(COMBINING_DIACRITICS_BASE);
@@ -1128,7 +1139,7 @@ where
                         combining_characters.push(CharacterAndClass::new(combining));
                     } else if high != 0 {
                         // Decomposition into one BMP character
-                        c = core::char::from_u32(u32::from(high)).unwrap();
+                        c = char_from_u16(high);
                         ce32 = data.ce32_for_char(c);
                         if ce32 == FALLBACK_CE32 {
                             data = self.root;
@@ -1164,22 +1175,18 @@ where
                                 [offset..offset + len]
                                 .split_first()
                                 .unwrap();
-                            c = core::char::from_u32(u32::from(u16::from_unaligned(first)))
-                                .unwrap();
+                            c = char_from_u16(u16::from_unaligned(first));
                             if low & 0x800 == 0 {
                                 for &ule in tail.iter() {
                                     combining_characters.push(CharacterAndClass::new(
-                                        core::char::from_u32(u32::from(u16::from_unaligned(ule)))
-                                            .unwrap(),
+                                        char_from_u16(u16::from_unaligned(ule)),
                                     ));
                                 }
                             } else {
                                 next_is_known_to_decompose_to_non_starter = false;
                                 let mut it = tail.iter();
                                 while let Some(&ule) = it.next() {
-                                    let ch =
-                                        core::char::from_u32(u32::from(u16::from_unaligned(ule)))
-                                            .unwrap();
+                                    let ch = char_from_u16(u16::from_unaligned(ule));
                                     if self
                                         .decompositions
                                         .decomposition_starts_with_non_starter
@@ -1200,10 +1207,7 @@ where
 
                                     while let Some(&ule) = it.next_back() {
                                         self.prepend_and_sort_non_starter_prefix_of_suffix(
-                                            core::char::from_u32(u32::from(u16::from_unaligned(
-                                                ule,
-                                            )))
-                                            .unwrap(),
+                                            char_from_u16(u16::from_unaligned(ule)),
                                         );
                                     }
                                     self.prepend_and_sort_non_starter_prefix_of_suffix(ch);
@@ -1215,19 +1219,18 @@ where
                                 [offset..offset + len]
                                 .split_first()
                                 .unwrap();
-                            c = core::char::from_u32(u32::from_unaligned(first)).unwrap();
+                            c = char_from_u32(u32::from_unaligned(first));
                             if low & 0x800 == 0 {
                                 for &ule in tail.iter() {
                                     combining_characters.push(CharacterAndClass::new(
-                                        core::char::from_u32(u32::from_unaligned(ule)).unwrap(),
+                                        char_from_u32(u32::from_unaligned(ule)),
                                     ));
                                 }
                             } else {
                                 next_is_known_to_decompose_to_non_starter = false;
                                 let mut it = tail.iter();
                                 while let Some(&ule) = it.next() {
-                                    let ch =
-                                        core::char::from_u32(u32::from_unaligned(ule)).unwrap();
+                                    let ch = char_from_u32(u32::from_unaligned(ule));
                                     if self
                                         .decompositions
                                         .decomposition_starts_with_non_starter
@@ -1247,7 +1250,7 @@ where
 
                                     while let Some(&ule) = it.next_back() {
                                         self.prepend_and_sort_non_starter_prefix_of_suffix(
-                                            core::char::from_u32(u32::from_unaligned(ule)).unwrap(),
+                                            char_from_u32(u32::from_unaligned(ule)),
                                         );
                                     }
                                     self.prepend_and_sort_non_starter_prefix_of_suffix(ch);
@@ -1299,6 +1302,9 @@ where
                 // at the start of the next `next()` call. We uphold this invariant by leaving the
                 // last jamo unmapped to `CollationElement` in `pending` and instead prepend it to
                 // `upcoming`.
+                //
+                // The `unsafe` blocks are OK, because the value is by construction in the Hangul
+                // jamo block, which is in the scalar value range.
                 if t != 0 {
                     self.pending.push(
                         CollationElement32::new_from_ule(
@@ -1307,11 +1313,13 @@ where
                         .to_ce_self_contained()
                         .unwrap(),
                     );
-                    self.upcoming
-                        .insert(0, core::char::from_u32(HANGUL_T_BASE + t).unwrap());
+                    self.upcoming.insert(0, unsafe {
+                        core::char::from_u32_unchecked(HANGUL_T_BASE + t)
+                    });
                 } else {
-                    self.upcoming
-                        .insert(0, core::char::from_u32(HANGUL_V_BASE + v).unwrap());
+                    self.upcoming.insert(0, unsafe {
+                        core::char::from_u32_unchecked(HANGUL_V_BASE + v)
+                    });
                 }
 
                 return CollationElement32::new_from_ule(self.jamo[l as usize])
@@ -1871,6 +1879,8 @@ where
             || !self.is_next_decomposition_starts_with_starter()
         {
             *next_is_known_to_decompose_to_non_starter = false;
+            // `unwrap` is OK, because `!self.is_next_decomposition_starts_with_starter()`
+            // means the `unwrap()` must succeed.
             let combining = self.next_internal().unwrap();
             if !in_inclusive_range(combining, '\u{0340}', '\u{0F81}') {
                 combining_characters.push(CharacterAndClass::new(combining));
