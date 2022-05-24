@@ -682,7 +682,7 @@ impl FixedDecimal {
     /// let mut dec = FixedDecimal::from(4235 as i32);
     /// dec.truncate_right(100);
     /// assert_eq!("0", dec.to_string());
-    /// 
+    ///
     /// let mut dec = FixedDecimal::from_str("-99.999").unwrap();
     /// dec.truncate_right(-2);
     /// assert_eq!("-99.99", dec.to_string());
@@ -767,7 +767,7 @@ impl FixedDecimal {
     /// let mut dec = FixedDecimal::from_str("-99.999").unwrap();
     /// dec.ceil(-10);
     /// assert_eq!("-99.9990000000", dec.to_string());
-    /// 
+    ///
     /// let mut dec = FixedDecimal::from_str("-99.999").unwrap();
     /// dec.ceil(-2);
     /// assert_eq!("-99.99", dec.to_string());
