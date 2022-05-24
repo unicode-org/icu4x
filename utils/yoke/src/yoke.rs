@@ -142,7 +142,7 @@ impl<Y: for<'a> Yokeable<'a>, C: StableDeref> Yoke<Y, C> {
     }
 
     /// Use [`Yoke::attach_to_cart()`].
-    /// 
+    ///
     /// This was needed because the pre-1.61 compiler couldn't always handle the FnOnce trait bound.
     #[deprecated]
     pub fn attach_to_cart_badly(
