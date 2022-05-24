@@ -682,6 +682,10 @@ impl FixedDecimal {
     /// let mut dec = FixedDecimal::from(4235 as i32);
     /// dec.truncate_right(100);
     /// assert_eq!("0", dec.to_string());
+    /// 
+    /// let mut dec = FixedDecimal::from_str("-99.999").unwrap();
+    /// dec.truncate_right(-2);
+    /// assert_eq!("-99.99", dec.to_string());
     ///
     /// let mut dec = FixedDecimal::from_str("1234.56").unwrap();
     /// dec.truncate_right(-1);
@@ -763,12 +767,21 @@ impl FixedDecimal {
     /// let mut dec = FixedDecimal::from_str("-99.999").unwrap();
     /// dec.ceil(-10);
     /// assert_eq!("-99.9990000000", dec.to_string());
+    /// 
+    /// let mut dec = FixedDecimal::from_str("-99.999").unwrap();
+    /// dec.ceil(-2);
+    /// assert_eq!("-99.99", dec.to_string());
     ///
     /// let mut dec = FixedDecimal::from_str("99.999").unwrap();
     /// dec.ceil(10);
     /// assert_eq!("10000000000", dec.to_string());
+    ///
+    /// let mut dec = FixedDecimal::from_str("-99.999").unwrap();
+    /// dec.ceil(10);
+    /// assert_eq!("-00000000000", dec.to_string());
     /// ```
     pub fn ceil(&mut self, n: i16) {
+        let is_positive = !self.is_negative;
         let not_zero = !self.is_zero();
         let original_bottom_magnitude = self.nonzero_magnitude_right();
         let original_upper_magnitude = self.upper_magnitude;
@@ -777,16 +790,31 @@ impl FixedDecimal {
 
         if n <= original_bottom_magnitude {
             self.lower_magnitude = n;
-        } else if n <= original_upper_magnitude {
+        } else if n <= original_upper_magnitude && is_positive {
             if not_zero {
                 self.increment_abs_by_one();
             }
-        } else {
-            // greater than the upper magnitude
-            self.upper_magnitude = n;
+        } else if n > self.upper_magnitude && is_positive {
+            // n is greater than the upper magnitude
+            self.upper_magnitude = {
+                if n >= 0 {
+                    n
+                } else {
+                    0
+                }
+            };
             if not_zero {
                 self.increment_abs_by_one();
             }
+        } else if n > self.upper_magnitude && !is_positive {
+            // n is greater than the upper magnitude and the number is negative.
+            self.upper_magnitude = {
+                if n >= 0 {
+                    n
+                } else {
+                    0
+                }
+            };
         }
 
         #[cfg(debug_assertions)]
@@ -809,7 +837,6 @@ impl FixedDecimal {
     /// dec.floor(-1);
     /// assert_eq!("2.2", dec.to_string());
     ///
-    ///
     /// let mut dec = FixedDecimal::from_str("99.999").unwrap();
     /// dec.floor(-2);
     /// assert_eq!("99.99", dec.to_string());
@@ -825,20 +852,15 @@ impl FixedDecimal {
     /// let mut dec = FixedDecimal::from_str("99.999").unwrap();
     /// dec.floor(10);
     /// assert_eq!("00000000000", dec.to_string());
+    ///
+    /// let mut dec = FixedDecimal::from_str("-99.999").unwrap();
+    /// dec.floor(10);
+    /// assert_eq!("-10000000000", dec.to_string());
     /// ```
     pub fn floor(&mut self, n: i16) {
-        let original_lower_magnitude = self.lower_magnitude;
-        let original_upper_magnitude = self.upper_magnitude;
-
-        self.truncate_right(n);
-
-        if n <= original_lower_magnitude {
-            self.lower_magnitude = n;
-        }
-
-        if n > original_upper_magnitude {
-            self.upper_magnitude = n;
-        }
+        self.negate();
+        self.ceil(n);
+        self.negate();
 
         #[cfg(debug_assertions)]
         self.check_invariants();
