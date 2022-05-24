@@ -97,6 +97,21 @@ pub(crate) const EMPTY_U16: &ZeroSlice<u16> =
     ZeroSlice::<u16>::from_ule_slice_const(&<u16 as AsULE>::ULE::from_array([]));
 const EMPTY_U32: &ZeroSlice<u32> =
     ZeroSlice::<u32>::from_ule_slice_const(&<u32 as AsULE>::ULE::from_array([]));
+const SINGLE_U16: &ZeroSlice<u16> =
+    ZeroSlice::<u16>::from_ule_slice_const(&<u16 as AsULE>::ULE::from_array([0xFFFD]));
+const SINGLE_U32: &ZeroSlice<u32> =
+    ZeroSlice::<u32>::from_ule_slice_const(&<u32 as AsULE>::ULE::from_array([0xFFFD]));
+
+#[inline(always)]
+fn unwrap_or_gigo<T>(opt: Option<T>, default: T) -> T {
+    if let Some(val) = opt {
+        val
+    } else {
+        // GIGO case
+        debug_assert!(false);
+        default
+    }
+}
 
 #[inline(always)]
 fn char_from_u32(u: u32) -> char {
@@ -851,22 +866,24 @@ where
                 let offset = usize::from(low & 0x7FF);
                 let len = usize::from(low >> 13);
                 if low & 0x1000 == 0 {
-                    for u in self
-                        .decompositions
-                        .scalars16
-                        .get_subslice(offset..offset + len)
-                        .unwrap_or(EMPTY_U16)
-                        .iter()
+                    for u in unwrap_or_gigo(
+                        self.decompositions
+                            .scalars16
+                            .get_subslice(offset..offset + len),
+                        SINGLE_U16, // single instead of empty for consistency with the other code path
+                    )
+                    .iter()
                     {
                         self.upcoming.push(char_from_u16(u));
                     }
                 } else {
-                    for u in self
-                        .decompositions
-                        .scalars32
-                        .get_subslice(offset..offset + len)
-                        .unwrap_or(EMPTY_U32)
-                        .iter()
+                    for u in unwrap_or_gigo(
+                        self.decompositions
+                            .scalars32
+                            .get_subslice(offset..offset + len),
+                        SINGLE_U32, // single instead of empty for consistency with the other code path
+                    )
+                    .iter()
                     {
                         self.upcoming.push(char_from_u32(u));
                     }
