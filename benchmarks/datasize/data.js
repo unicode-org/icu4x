@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1653354481335,
+  "lastUpdate": 1653374112122,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -15653,6 +15653,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/b4a5ed8cf2fb05b82d0fce4c3808030db4d4a35a"
         },
         "date": 1653354460434,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 2220821,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "768a0c0f0351137c32333b9b68670c976e81473a",
+          "message": "Add missing serde feature propagation (#1934)",
+          "timestamp": "2022-05-23T23:33:06-07:00",
+          "tree_id": "9087b4df9d986bf4bc53f066c2e1afd23c579d3f",
+          "url": "https://github.com/unicode-org/icu4x/commit/768a0c0f0351137c32333b9b68670c976e81473a"
+        },
+        "date": 1653374091293,
         "tool": "ndjson",
         "benches": [
           {
