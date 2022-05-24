@@ -7,7 +7,7 @@ use smallvec::SmallVec;
 use core::cmp;
 use core::cmp::Ordering;
 use core::fmt;
-use core::ops::RangeInclusive;
+use core::ops::{Add, RangeInclusive};
 
 use core::str::FromStr;
 
@@ -605,7 +605,37 @@ impl FixedDecimal {
     /// ```
     /// use fixed_decimal::FixedDecimal;
     ///
-    /// let mut dec = FixedDecimal::from(4235);
+    /// let dec = FixedDecimal::from(4235);
+    /// assert_eq!("4235", dec.to_string());
+    ///
+    /// assert_eq!("4235", dec.clone().truncated_right(-5).to_string());
+    ///
+    /// assert_eq!("4230", dec.clone().truncated_right(1).to_string());
+    ///
+    /// assert_eq!("4230", dec.clone().truncated_right(1).to_string());
+    ///
+    /// assert_eq!("4235", dec.clone().truncated_right(0).to_string());
+    ///
+    /// assert_eq!("4200", dec.clone().truncated_right(2).to_string());
+    ///
+    /// assert_eq!("0", dec.clone().truncated_right(5).to_string());
+    ///
+    /// assert_eq!("0", dec.clone().truncated_right(100).to_string());
+    /// ```
+    pub fn truncated_right(mut self, magnitude: i16) -> Self {
+        self.truncate_right(magnitude);
+        self
+    }
+
+    /// Truncate the number on the right to a particular magnitude, deleting
+    /// digits if necessary.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use fixed_decimal::FixedDecimal;
+    /// # use std::str::FromStr;
+    /// let mut dec = FixedDecimal::from(4235 as i32);
     /// assert_eq!("4235", dec.to_string());
     ///
     /// dec.truncate_right(-5);
@@ -626,9 +656,13 @@ impl FixedDecimal {
     /// dec.truncate_right(2);
     /// assert_eq!("0", dec.to_string());
     ///
-    /// let mut dec = FixedDecimal::from(4235);
+    /// let mut dec = FixedDecimal::from(4235 as i32);
     /// dec.truncate_right(100);
     /// assert_eq!("0", dec.to_string());
+    ///
+    /// let mut dec = FixedDecimal::from_str("1234.56").unwrap();
+    /// dec.truncate_right(-1);
+    /// assert_eq!("1234.5", dec.to_string());
     /// ```
     pub fn truncate_right(&mut self, n: i16) {
         let bottom_magnitude = self.nonzero_magnitude_right();
@@ -645,7 +679,7 @@ impl FixedDecimal {
             };
         } else if n <= self.magnitude {
             self.digits
-                .truncate((self.magnitude.abs_diff(n) + 1) as usize);
+                .truncate((crate::ops::i16_abs_sub(self.magnitude, n).add(1)) as usize);
             self.remove_trailing_zeros();
             self.lower_magnitude = {
                 if n <= 0 {
@@ -709,37 +743,72 @@ impl FixedDecimal {
     /// assert_eq!("10000000000", dec.to_string());
     /// ```
     pub fn ceil(&mut self, n: i16) {
-        let bottom_magnitude = self.nonzero_magnitude_right();
+        let not_zero = !self.is_zero();
+        let original_bottom_magnitude = self.nonzero_magnitude_right();
+        let original_upper_magnitude = self.upper_magnitude;
 
-        if n <= self.lower_magnitude {
+        self.truncate_right(n);
+
+        if n <= original_bottom_magnitude {
             self.lower_magnitude = n;
-        } else if n <= bottom_magnitude {
-            // NOTE: this case will include the zero `FixedDecimal`
-            self.lower_magnitude = {
-                if n <= 0 {
-                    n
-                } else {
-                    0
-                }
-            };
-        } else if n <= self.magnitude {
-            self.truncate_right(n);
-            self.increment_abs_by_one();
-        } else if n <= self.upper_magnitude {
-            let not_zero = !self.is_zero();
-            self.truncate_right(n);
-
+        } else if n <= original_upper_magnitude {
             if not_zero {
                 self.increment_abs_by_one();
             }
         } else {
             // greater than the upper magnitude
-            let not_zero = !self.is_zero();
-            self.truncate_right(n);
             self.upper_magnitude = n;
             if not_zero {
                 self.increment_abs_by_one();
             }
+        }
+    }
+
+    /// Floors the number to the power ten of n.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use fixed_decimal::FixedDecimal;
+    /// # use std::str::FromStr;
+    ///
+    /// let mut dec = FixedDecimal::from_str("3.234").unwrap();
+    /// dec.floor(0);
+    /// assert_eq!("3", dec.to_string());
+    ///
+    /// let mut dec = FixedDecimal::from_str("2.222").unwrap();
+    /// dec.floor(-1);
+    /// assert_eq!("2.2", dec.to_string());
+    ///
+    ///
+    /// let mut dec = FixedDecimal::from_str("99.999").unwrap();
+    /// dec.floor(-2);
+    /// assert_eq!("99.99", dec.to_string());
+    ///
+    /// let mut dec = FixedDecimal::from_str("99.999").unwrap();
+    /// dec.floor(-10);
+    /// assert_eq!("99.9990000000", dec.to_string());
+    ///
+    /// let mut dec = FixedDecimal::from_str("-99.999").unwrap();
+    /// dec.floor(-10);
+    /// assert_eq!("-99.9990000000", dec.to_string());
+    ///
+    /// let mut dec = FixedDecimal::from_str("99.999").unwrap();
+    /// dec.floor(10);
+    /// assert_eq!("00000000000", dec.to_string());
+    /// ```
+    pub fn floor(&mut self, n: i16) {
+        let original_lower_magnitude = self.lower_magnitude;
+        let original_upper_magnitude = self.upper_magnitude;
+
+        self.truncate_right(n);
+
+        if n <= original_lower_magnitude {
+            self.lower_magnitude = n;
+        }
+
+        if n > original_upper_magnitude {
+            self.upper_magnitude = n;
         }
     }
 
