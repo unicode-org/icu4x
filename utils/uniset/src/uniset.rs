@@ -78,7 +78,7 @@ impl crabbake::Bakeable for UnicodeSet<'_> {
 // to replace the struct when serializing. The error message from the default
 // serialization is: "can only flatten structs and maps (got a sequence)".
 
-#[cfg(any(feature = "serde_serialize", test))]
+#[cfg(any(feature = "serde", test))]
 impl<'data> serde::Serialize for UnicodeSet<'data> {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where

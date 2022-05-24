@@ -6,11 +6,171 @@ use super::{MutableZeroVecLike, ZeroMap, ZeroMapBorrowed, ZeroMapKV, ZeroVecLike
 use core::fmt;
 use core::marker::PhantomData;
 use serde::de::{self, Deserialize, Deserializer, MapAccess, SeqAccess, Visitor};
-#[cfg(feature = "serde_serialize")]
+#[cfg(feature = "serde")]
 use serde::ser::{Serialize, SerializeMap, SerializeSeq, Serializer};
 
-/// This impl can be made available by enabling the optional `serde_serialize` feature of the `zerovec` crate
-#[cfg(feature = "serde_serialize")]
+#[cfg(feature = "serde")]
+fn is_num_or_string<T: Serialize + ?Sized>(k: &T) -> bool {
+    // Serializer that errors in the same cases as serde_json::ser::MapKeySerializer
+    struct MapKeySerializerDryRun;
+    impl serde::ser::Serializer for MapKeySerializerDryRun {
+        type Ok = ();
+        // Singleton error type that implements serde::ser::Error
+        type Error = core::fmt::Error;
+
+        type SerializeSeq = serde::ser::Impossible<(), Self::Error>;
+        type SerializeTuple = serde::ser::Impossible<(), Self::Error>;
+        type SerializeTupleStruct = serde::ser::Impossible<(), Self::Error>;
+        type SerializeTupleVariant = serde::ser::Impossible<(), Self::Error>;
+        type SerializeMap = serde::ser::Impossible<(), Self::Error>;
+        type SerializeStruct = serde::ser::Impossible<(), Self::Error>;
+        type SerializeStructVariant = serde::ser::Impossible<(), Self::Error>;
+
+        fn serialize_str(self, _value: &str) -> Result<Self::Ok, Self::Error> {
+            Ok(())
+        }
+        fn serialize_unit_variant(
+            self,
+            _name: &'static str,
+            _variant_index: u32,
+            _variant: &'static str,
+        ) -> Result<Self::Ok, Self::Error> {
+            Ok(())
+        }
+        fn serialize_newtype_struct<T: Serialize + ?Sized>(
+            self,
+            _name: &'static str,
+            value: &T,
+        ) -> Result<Self::Ok, Self::Error> {
+            // Recurse
+            value.serialize(self)
+        }
+        fn serialize_bool(self, _value: bool) -> Result<Self::Ok, Self::Error> {
+            Err(core::fmt::Error)
+        }
+        fn serialize_i8(self, _value: i8) -> Result<Self::Ok, Self::Error> {
+            Ok(())
+        }
+        fn serialize_i16(self, _value: i16) -> Result<Self::Ok, Self::Error> {
+            Ok(())
+        }
+        fn serialize_i32(self, _value: i32) -> Result<Self::Ok, Self::Error> {
+            Ok(())
+        }
+        fn serialize_i64(self, _value: i64) -> Result<Self::Ok, Self::Error> {
+            Ok(())
+        }
+        serde::serde_if_integer128! {
+            fn serialize_i128(self, _value: i128) -> Result<Self::Ok, Self::Error> {
+                Ok(())
+            }
+        }
+        fn serialize_u8(self, _value: u8) -> Result<Self::Ok, Self::Error> {
+            Ok(())
+        }
+        fn serialize_u16(self, _value: u16) -> Result<Self::Ok, Self::Error> {
+            Ok(())
+        }
+        fn serialize_u32(self, _value: u32) -> Result<Self::Ok, Self::Error> {
+            Ok(())
+        }
+        fn serialize_u64(self, _value: u64) -> Result<Self::Ok, Self::Error> {
+            Ok(())
+        }
+        serde::serde_if_integer128! {
+            fn serialize_u128(self, _value: u128) -> Result<Self::Ok, Self::Error> {
+                Ok(())
+            }
+        }
+        fn serialize_f32(self, _value: f32) -> Result<Self::Ok, Self::Error> {
+            Err(core::fmt::Error)
+        }
+        fn serialize_f64(self, _value: f64) -> Result<Self::Ok, Self::Error> {
+            Err(core::fmt::Error)
+        }
+        fn serialize_char(self, _value: char) -> Result<Self::Ok, Self::Error> {
+            Ok(())
+        }
+        fn serialize_bytes(self, _value: &[u8]) -> Result<Self::Ok, Self::Error> {
+            Err(core::fmt::Error)
+        }
+        fn serialize_unit(self) -> Result<Self::Ok, Self::Error> {
+            Err(core::fmt::Error)
+        }
+        fn serialize_unit_struct(self, _name: &'static str) -> Result<Self::Ok, Self::Error> {
+            Err(core::fmt::Error)
+        }
+        fn serialize_newtype_variant<T: Serialize + ?Sized>(
+            self,
+            _name: &'static str,
+            _variant_index: u32,
+            _variant: &'static str,
+            _value: &T,
+        ) -> Result<Self::Ok, Self::Error> {
+            Err(core::fmt::Error)
+        }
+        fn serialize_none(self) -> Result<Self::Ok, Self::Error> {
+            Err(core::fmt::Error)
+        }
+        fn serialize_some<T: Serialize + ?Sized>(
+            self,
+            _value: &T,
+        ) -> Result<Self::Ok, Self::Error> {
+            Err(core::fmt::Error)
+        }
+        fn serialize_seq(self, _len: Option<usize>) -> Result<Self::SerializeSeq, Self::Error> {
+            Err(core::fmt::Error)
+        }
+        fn serialize_tuple(self, _len: usize) -> Result<Self::SerializeTuple, Self::Error> {
+            Err(core::fmt::Error)
+        }
+        fn serialize_tuple_struct(
+            self,
+            _name: &'static str,
+            _len: usize,
+        ) -> Result<Self::SerializeTupleStruct, Self::Error> {
+            Err(core::fmt::Error)
+        }
+        fn serialize_tuple_variant(
+            self,
+            _name: &'static str,
+            _variant_index: u32,
+            _variant: &'static str,
+            _len: usize,
+        ) -> Result<Self::SerializeTupleVariant, Self::Error> {
+            Err(core::fmt::Error)
+        }
+        fn serialize_map(self, _len: Option<usize>) -> Result<Self::SerializeMap, Self::Error> {
+            Err(core::fmt::Error)
+        }
+        fn serialize_struct(
+            self,
+            _name: &'static str,
+            _len: usize,
+        ) -> Result<Self::SerializeStruct, Self::Error> {
+            Err(core::fmt::Error)
+        }
+        fn serialize_struct_variant(
+            self,
+            _name: &'static str,
+            _variant_index: u32,
+            _variant: &'static str,
+            _len: usize,
+        ) -> Result<Self::SerializeStructVariant, Self::Error> {
+            Err(core::fmt::Error)
+        }
+        fn collect_str<T: core::fmt::Display + ?Sized>(
+            self,
+            _value: &T,
+        ) -> Result<Self::Ok, Self::Error> {
+            Ok(())
+        }
+    }
+    k.serialize(MapKeySerializerDryRun).is_ok()
+}
+
+/// This impl can be made available by enabling the optional `serde` feature of the `zerovec` crate
+#[cfg(feature = "serde")]
 impl<'a, K, V> Serialize for ZeroMap<'a, K, V>
 where
     K: ZeroMapKV<'a> + Serialize + ?Sized + Ord,
@@ -27,8 +187,7 @@ where
             // than numbers and strings as map keys. For them, we can serialize
             // as a vec of tuples instead
             if let Some(k) = self.iter_keys().next() {
-                let json = K::Container::zvl_get_as_t(k, |k| serde_json::json!(k));
-                if !json.is_string() && !json.is_number() {
+                if !K::Container::zvl_get_as_t(k, is_num_or_string) {
                     let mut seq = serializer.serialize_seq(Some(self.len()))?;
                     for (k, v) in self.iter() {
                         K::Container::zvl_get_as_t(k, |k| {
@@ -50,8 +209,8 @@ where
     }
 }
 
-/// This impl can be made available by enabling the optional `serde_serialize` feature of the `zerovec` crate
-#[cfg(feature = "serde_serialize")]
+/// This impl can be made available by enabling the optional `serde` feature of the `zerovec` crate
+#[cfg(feature = "serde")]
 impl<'a, K, V> Serialize for ZeroMapBorrowed<'a, K, V>
 where
     K: ZeroMapKV<'a> + Serialize + ?Sized + Ord,

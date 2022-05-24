@@ -54,7 +54,6 @@ path = "src/lib.rs"
 [features]
 bench = []
 serde = ["dep:serde", "zerovec/serde"]
-serde_serialize = ["serde", "zerovec/serde_serialize"]
 crabbake = ["dep:crabbake", "zerovec/crabbake"]
 
 [[bench]]
