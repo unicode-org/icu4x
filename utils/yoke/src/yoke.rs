@@ -129,7 +129,7 @@ impl<Y: for<'a> Yokeable<'a>, C: StableDeref> Yoke<Y, C> {
     }
 
     /// Construct a [`Yoke`] by yokeing an object to a cart. If an error occurs in the
-    /// deserializer function, the error is passed up to the caller.   
+    /// deserializer function, the error is passed up to the caller.
     ///
     /// Call sites for this function may not compile; if this happens, use
     /// [`Yoke::try_attach_to_cart_badly()`] instead.
