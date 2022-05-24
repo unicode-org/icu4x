@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1653418800428,
+  "lastUpdate": 1653419148143,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -28619,6 +28619,60 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 40637418,
             "range": "± 65871",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/worst",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/worst",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "f6ffb443167beaa9fd488a0cce263e20418b4cb4",
+          "message": "Crabbake for utils (#1926)",
+          "timestamp": "2022-05-24T20:55:41+02:00",
+          "tree_id": "1c6c6a0fde1bcd2c17e1d240dac12e5543d3eea8",
+          "url": "https://github.com/unicode-org/icu4x/commit/f6ffb443167beaa9fd488a0cce263e20418b4cb4"
+        },
+        "date": 1653419129468,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 35901785,
+            "range": "± 53842",
             "unit": "ns/iter"
           },
           {
