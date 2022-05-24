@@ -4,6 +4,164 @@ const diplomat_alloc_destroy_registry = new FinalizationRegistry(obj => {
   wasm.diplomat_free(obj["ptr"], obj["size"], obj["align"]);
 });
 
+const ICU4XBidi_box_destroy_registry = new FinalizationRegistry(underlying => {
+  wasm.ICU4XBidi_destroy(underlying);
+});
+
+export class ICU4XBidi {
+  constructor(underlying) {
+    this.underlying = underlying;
+  }
+
+  static try_new(provider) {
+    const diplomat_out = (() => {
+      const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
+      const result_tag = {};
+      diplomat_alloc_destroy_registry.register(result_tag, {
+        ptr: diplomat_receive_buffer,
+        size: 5,
+        align: 4,
+      });
+      wasm.ICU4XBidi_try_new(diplomat_receive_buffer, provider.underlying);
+      const is_ok = (new Uint8Array(wasm.memory.buffer, diplomat_receive_buffer + 4, 1))[0] == 1;
+      if (is_ok) {
+        const ok_value = (() => {
+          const out = new ICU4XBidi((new Uint32Array(wasm.memory.buffer, diplomat_receive_buffer, 1))[0]);
+          out.owner = result_tag;
+          return out;
+        })();
+        return ok_value;
+      } else {
+        const throw_value = {};
+        throw new diplomatRuntime.FFIError(throw_value);
+      }
+    })();
+    return diplomat_out;
+  }
+
+  for_text(text) {
+    let text_diplomat_bytes = (new TextEncoder()).encode(text);
+    let text_diplomat_ptr = wasm.diplomat_alloc(text_diplomat_bytes.length, 1);
+    let text_diplomat_buf = new Uint8Array(wasm.memory.buffer, text_diplomat_ptr, text_diplomat_bytes.length);
+    text_diplomat_buf.set(text_diplomat_bytes, 0);
+    const diplomat_out = (() => {
+      const out = (() => {
+        const out = new ICU4XBidiInfo(wasm.ICU4XBidi_for_text(this.underlying, text_diplomat_ptr, text_diplomat_bytes.length));
+        out.owner = null;
+        return out;
+      })();
+      ICU4XBidiInfo_box_destroy_registry.register(out, out.underlying)
+      return out;
+    })();
+    wasm.diplomat_free(text_diplomat_ptr, text_diplomat_bytes.length, 1);
+    return diplomat_out;
+  }
+}
+
+const ICU4XBidiDirection_js_to_rust = {
+  "Ltr": 0,
+  "Rtl": 1,
+  "Mixed": 2,
+};
+const ICU4XBidiDirection_rust_to_js = {
+  0: "Ltr",
+  1: "Rtl",
+  2: "Mixed",
+};
+
+const ICU4XBidiInfo_box_destroy_registry = new FinalizationRegistry(underlying => {
+  wasm.ICU4XBidiInfo_destroy(underlying);
+});
+
+export class ICU4XBidiInfo {
+  constructor(underlying) {
+    this.underlying = underlying;
+  }
+
+  paragraph_count() {
+    const diplomat_out = wasm.ICU4XBidiInfo_paragraph_count(this.underlying);
+    return diplomat_out;
+  }
+
+  paragraph_at(n) {
+    const diplomat_out = (() => {
+      const option_value = wasm.ICU4XBidiInfo_paragraph_at(this.underlying, n)
+      if (option_value !== 0) {
+        const inhabited_value = (() => {
+          const out = (() => {
+            const out = new ICU4XBidiParagraph(option_value);
+            out.owner = null;
+            return out;
+          })();
+          ICU4XBidiParagraph_box_destroy_registry.register(out, out.underlying)
+          return out;
+        })();
+        return inhabited_value;
+      } else {
+        return null;
+      }
+    })();
+    return diplomat_out;
+  }
+}
+
+const ICU4XBidiParagraph_box_destroy_registry = new FinalizationRegistry(underlying => {
+  wasm.ICU4XBidiParagraph_destroy(underlying);
+});
+
+export class ICU4XBidiParagraph {
+  constructor(underlying) {
+    this.underlying = underlying;
+  }
+
+  direction() {
+    const diplomat_out = ICU4XBidiDirection_rust_to_js[wasm.ICU4XBidiParagraph_direction(this.underlying)];
+    return diplomat_out;
+  }
+
+  size() {
+    const diplomat_out = wasm.ICU4XBidiParagraph_size(this.underlying);
+    return diplomat_out;
+  }
+
+  range_start() {
+    const diplomat_out = wasm.ICU4XBidiParagraph_range_start(this.underlying);
+    return diplomat_out;
+  }
+
+  range_end() {
+    const diplomat_out = wasm.ICU4XBidiParagraph_range_end(this.underlying);
+    return diplomat_out;
+  }
+
+  reorder_line(range_start, range_end) {
+    const diplomat_out = diplomatRuntime.withWriteable(wasm, (writeable) => {
+      return (() => {
+        const is_ok = wasm.ICU4XBidiParagraph_reorder_line(this.underlying, range_start, range_end, writeable) == 1;
+        if (!is_ok) {
+          throw new diplomatRuntime.FFIError({});
+        }
+      })();
+    });
+    return diplomat_out;
+  }
+
+  level_at(pos) {
+    const diplomat_out = wasm.ICU4XBidiParagraph_level_at(this.underlying, pos);
+    return diplomat_out;
+  }
+
+  static level_is_rtl(level) {
+    const diplomat_out = wasm.ICU4XBidiParagraph_level_is_rtl(level);
+    return diplomat_out;
+  }
+
+  static level_is_ltr(level) {
+    const diplomat_out = wasm.ICU4XBidiParagraph_level_is_ltr(level);
+    return diplomat_out;
+  }
+}
+
 const ICU4XCanonicalizationResult_js_to_rust = {
   "Modified": 0,
   "Unmodified": 1,
