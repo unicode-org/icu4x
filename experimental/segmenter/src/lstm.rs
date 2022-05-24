@@ -118,13 +118,13 @@ impl LstmSegmenter {
     }
 
     /// Create a dictionary based break iterator for an `str` (a UTF-8 string).
-    pub fn segment_str<'s>(&self, input: &str) -> LstmSegmenterIterator {
+    pub fn segment_str(&self, input: &str) -> LstmSegmenterIterator {
         LstmSegmenterIterator::new(&self.lstm, input)
     }
 
     /// Create a dictionary based break iterator for a UTF-16 string.
-    pub fn segment_utf16<'s>(&self, input: &[u16]) -> LstmSegmenterIteratorUtf16 {
-        LstmSegmenterIteratorUtf16::new(&self.lstm, &input)
+    pub fn segment_utf16(&self, input: &[u16]) -> LstmSegmenterIteratorUtf16 {
+        LstmSegmenterIteratorUtf16::new(&self.lstm, input)
     }
 }
 
