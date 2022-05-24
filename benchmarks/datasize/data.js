@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1653327695929,
+  "lastUpdate": 1653354481335,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -15623,6 +15623,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/326c2f245fc4fdf75e51005dd7abb4d823cf5a72"
         },
         "date": 1653327672752,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 2220821,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "b4a5ed8cf2fb05b82d0fce4c3808030db4d4a35a",
+          "message": "Update Rust to 1.61, Nightly to 2022-04-05, and LLVM to 14 (#1933)",
+          "timestamp": "2022-05-23T18:05:52-07:00",
+          "tree_id": "0dce76324cd8436a9ed166d65beda999a6e759ff",
+          "url": "https://github.com/unicode-org/icu4x/commit/b4a5ed8cf2fb05b82d0fce4c3808030db4d4a35a"
+        },
+        "date": 1653354460434,
         "tool": "ndjson",
         "benches": [
           {
