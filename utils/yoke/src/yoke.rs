@@ -96,7 +96,7 @@ impl<Y: for<'a> Yokeable<'a>, C: StableDeref> Yoke<Y, C> {
     /// The following code does not currently compile.
     /// See [#1061](https://github.com/unicode-org/icu4x/issues/1061).
     ///
-    /// ```compile_fail
+    /// ```
     /// # use yoke::{Yoke, Yokeable};
     /// # use std::rc::Rc;
     /// # use std::borrow::Cow;
