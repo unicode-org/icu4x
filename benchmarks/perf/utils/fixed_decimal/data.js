@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1653328370523,
+  "lastUpdate": 1653355059631,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -27928,6 +27928,66 @@ window.BENCHMARK_DATA = {
           {
             "name": "from_string/1000000001",
             "value": 77,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "b4a5ed8cf2fb05b82d0fce4c3808030db4d4a35a",
+          "message": "Update Rust to 1.61, Nightly to 2022-04-05, and LLVM to 14 (#1933)",
+          "timestamp": "2022-05-23T18:05:52-07:00",
+          "tree_id": "0dce76324cd8436a9ed166d65beda999a6e759ff",
+          "url": "https://github.com/unicode-org/icu4x/commit/b4a5ed8cf2fb05b82d0fce4c3808030db4d4a35a"
+        },
+        "date": 1653355039536,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 106490,
+            "range": "± 343",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 22438,
+            "range": "± 597",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 60049,
+            "range": "± 388",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 186,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 94,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 76,
             "range": "± 0",
             "unit": "ns/iter"
           }
