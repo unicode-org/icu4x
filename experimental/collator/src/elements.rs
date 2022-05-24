@@ -88,8 +88,15 @@ const NO_CE_VALUE: u64 =
 
 // See ICU4C collation.h and https://www.unicode.org/reports/tr10/#Trailing_Weights
 const FFFD_PRIMARY: u32 = 0xFFFD0000; // U+FFFD
-const FFFD_CE_VALUE: u64 = ((FFFD_PRIMARY as u64) << 32) | COMMON_SEC_AND_TER_CE;
-const FFFD_CE: CollationElement = CollationElement(FFFD_CE_VALUE);
+pub(crate) const FFFD_CE_VALUE: u64 = ((FFFD_PRIMARY as u64) << 32) | COMMON_SEC_AND_TER_CE;
+pub(crate) const FFFD_CE: CollationElement = CollationElement(FFFD_CE_VALUE);
+pub(crate) const FFFD_CE32_VALUE: u32 = 0xFFFD0505;
+pub(crate) const FFFD_CE32: CollationElement32 = CollationElement32(FFFD_CE32_VALUE);
+
+pub(crate) const EMPTY_U16: &ZeroSlice<u16> =
+    ZeroSlice::<u16>::from_ule_slice_const(&<u16 as AsULE>::ULE::from_array([]));
+const EMPTY_U32: &ZeroSlice<u32> =
+    ZeroSlice::<u32>::from_ule_slice_const(&<u32 as AsULE>::ULE::from_array([]));
 
 #[inline(always)]
 fn char_from_u32(u: u32) -> char {
@@ -106,11 +113,6 @@ fn char_from_u32(u: u32) -> char {
 fn char_from_u16(u: u16) -> char {
     char_from_u32(u32::from(u))
 }
-
-const EMPTY_U16: &ZeroSlice<u16> =
-    ZeroSlice::<u16>::from_ule_slice_const(&<u16 as AsULE>::ULE::from_array([]));
-const EMPTY_U32: &ZeroSlice<u32> =
-    ZeroSlice::<u32>::from_ule_slice_const(&<u32 as AsULE>::ULE::from_array([]));
 
 #[inline(always)]
 fn split_first_u16(s: Option<&ZeroSlice<u16>>) -> (char, &ZeroSlice<u16>) {
@@ -402,11 +404,6 @@ impl CollationElement {
     #[inline(always)]
     pub fn new(bits: u64) -> Self {
         CollationElement(bits)
-    }
-
-    #[inline(always)]
-    pub fn new_from_ule(ule: RawBytesULE<8>) -> Self {
-        CollationElement(u64::from_unaligned(ule))
     }
 
     #[inline(always)]
@@ -1399,19 +1396,17 @@ where
                         match ce32.tag() {
                             Tag::Expansion32 => {
                                 let ce32s = data.get_ce32s(ce32.index(), ce32.len());
-                                for &ce32_ule in ce32s {
+                                for u in ce32s.iter() {
                                     self.pending.push(
-                                        CollationElement32::new_from_ule(ce32_ule)
-                                            .to_ce_self_contained()
-                                            .unwrap(),
+                                        CollationElement32::new(u).to_ce_self_contained().unwrap(),
                                     );
                                 }
                                 break 'ce32loop;
                             }
                             Tag::Expansion => {
                                 let ces = data.get_ces(ce32.index(), ce32.len());
-                                for &ce_ule in ces {
-                                    self.pending.push(CollationElement::new_from_ule(ce_ule));
+                                for u in ces.iter() {
+                                    self.pending.push(CollationElement::new(u));
                                 }
                                 break 'ce32loop;
                             }
@@ -1783,8 +1778,7 @@ where
                                     }
                                     break 'ce32loop;
                                 }
-                                let ce32s = data.get_ce32s(ce32.index(), 1);
-                                ce32 = CollationElement32::new_from_ule(ce32s[0]);
+                                ce32 = data.get_ce32(ce32.index());
                                 continue 'ce32loop;
                             }
                             // XXX how common are the following two cases? Should these
