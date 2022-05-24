@@ -22,6 +22,7 @@ use zerovec::ZeroVecError;
 #[derive(Clone, Copy, PartialEq, Debug, Eq)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(feature = "serde_serialize", derive(serde::Serialize))]
+#[cfg_attr(feature = "crabbake", derive(crabbake::Bakeable), crabbake(path = icu_codepointtrie))]
 pub enum TrieType {
     /// Represents the "fast" type code point tries for the
     /// [`TrieType`] trait. The "fast max" limit is set to `0xffff`.
@@ -118,6 +119,7 @@ pub struct CodePointTrie<'trie, T: TrieValue> {
 /// This struct contains the fixed-length header fields of a [`CodePointTrie`].
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(feature = "serde_serialize", derive(serde::Serialize))]
+#[cfg_attr(feature = "crabbake", derive(crabbake::Bakeable), crabbake(path = icu_codepointtrie))]
 #[derive(Copy, Clone, Debug, Eq, PartialEq, Yokeable, ZeroFrom)]
 pub struct CodePointTrieHeader {
     /// The code point of the start of the last range of the trie. A
@@ -167,6 +169,19 @@ impl TryFrom<u8> for TrieType {
 }
 
 impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
+    #[doc(hidden)] // crabbake internal
+    pub const fn from_parts(
+        header: CodePointTrieHeader,
+        index: ZeroVec<'trie, u16>,
+        data: ZeroVec<'trie, T>,
+    ) -> Self {
+        Self {
+            header,
+            index,
+            data,
+        }
+    }
+
     /// Returns a new [`CodePointTrie`] backed by borrowed data for the `index`
     /// array and `data` array, whose data values have width `W`.
     pub fn try_new(
@@ -828,6 +843,16 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
     pub fn get_set_for_value(&self, value: T) -> UnicodeSet<'static> {
         let value_ranges = self.get_ranges_for_value(value);
         UnicodeSet::from_iter(value_ranges)
+    }
+}
+
+#[cfg(feature = "crabbake")]
+impl<'trie, T: TrieValue> crabbake::Bakeable for CodePointTrie<'trie, T> {
+    fn bake(&self, env: &crabbake::CrateEnv) -> crabbake::TokenStream {
+        let header = self.header.bake(env);
+        let index = self.index.bake(env);
+        let data = self.data.bake(env);
+        crabbake::quote! { ::icu_codepointtrie::CodePointTrie::from_parts(#header, #index, #data) }
     }
 }
 

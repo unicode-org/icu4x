@@ -2,6 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+#[cfg(feature = "crabbake")]
+mod crabbake;
+
 #[cfg(feature = "serde")]
 mod serde;
 
@@ -245,6 +248,18 @@ where
     pub fn parse_byte_slice(bytes: &'a [u8]) -> Result<Self, ZeroVecError> {
         let slice: &'a [T::ULE] = T::ULE::parse_byte_slice(bytes)?;
         Ok(Self::Borrowed(slice))
+    }
+
+    /// Uses a `&[u8]` buffer as a `ZeroVec<T>` without any verification.
+    ///
+    /// # Safety
+    ///
+    /// `bytes` need to be an output from [`ZeroSlice::as_bytes()`].
+    pub const unsafe fn from_bytes_unchecked(bytes: &'a [u8]) -> Self {
+        // &[u8] and &[T::ULE] are the same slice with different length metadata.
+        let (data, mut metadata): (usize, usize) = core::mem::transmute(bytes);
+        metadata /= core::mem::size_of::<T::ULE>();
+        Self::Borrowed(core::mem::transmute((data, metadata)))
     }
 
     /// Converts a `ZeroVec<T>` into a `ZeroVec<u8>`, retaining the current ownership model.

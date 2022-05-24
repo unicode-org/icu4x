@@ -97,6 +97,12 @@ where
             values: V::Container::zvl_new(),
         }
     }
+
+    #[doc(hidden)] // Crabbake internal
+    pub const unsafe fn from_parts_unchecked(keys: K::Container, values: V::Container) -> Self {
+        Self { keys, values }
+    }
+
     /// Construct a new [`ZeroMap`] with a given capacity
     pub fn with_capacity(capacity: usize) -> Self {
         Self {
