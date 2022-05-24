@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1653355059631,
+  "lastUpdate": 1653374653686,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -27989,6 +27989,66 @@ window.BENCHMARK_DATA = {
             "name": "from_string/1000000001",
             "value": 76,
             "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "768a0c0f0351137c32333b9b68670c976e81473a",
+          "message": "Add missing serde feature propagation (#1934)",
+          "timestamp": "2022-05-23T23:33:06-07:00",
+          "tree_id": "9087b4df9d986bf4bc53f066c2e1afd23c579d3f",
+          "url": "https://github.com/unicode-org/icu4x/commit/768a0c0f0351137c32333b9b68670c976e81473a"
+        },
+        "date": 1653374631377,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 110523,
+            "range": "± 4943",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 23320,
+            "range": "± 1433",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 62401,
+            "range": "± 4426",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 194,
+            "range": "± 11",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 99,
+            "range": "± 5",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 82,
+            "range": "± 4",
             "unit": "ns/iter"
           }
         ]
