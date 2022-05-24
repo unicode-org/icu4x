@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1653419200027,
+  "lastUpdate": 1653419602315,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -44213,6 +44213,192 @@ window.BENCHMARK_DATA = {
             "name": "subtags/variant/parse",
             "value": 198,
             "range": "± 13",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "f6ffb443167beaa9fd488a0cce263e20418b4cb4",
+          "message": "Crabbake for utils (#1926)",
+          "timestamp": "2022-05-24T20:55:41+02:00",
+          "tree_id": "1c6c6a0fde1bcd2c17e1d240dac12e5543d3eea8",
+          "url": "https://github.com/unicode-org/icu4x/commit/f6ffb443167beaa9fd488a0cce263e20418b4cb4"
+        },
+        "date": 1653419575989,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 3465,
+            "range": "± 148",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/construct/langid",
+            "value": 987,
+            "range": "± 41",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/construct/locale",
+            "value": 1508,
+            "range": "± 83",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/to_string/langid",
+            "value": 1112,
+            "range": "± 90",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/to_string/langid/writeable",
+            "value": 625,
+            "range": "± 66",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/to_string/locale",
+            "value": 1106,
+            "range": "± 41",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/to_string/locale/writeable",
+            "value": 619,
+            "range": "± 32",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/compare/struct/langid",
+            "value": 107,
+            "range": "± 6",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/compare/struct/locale",
+            "value": 109,
+            "range": "± 3",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/compare/str/langid",
+            "value": 867,
+            "range": "± 44",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/compare/cmp_bytes/langid",
+            "value": 386,
+            "range": "± 19",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/compare/str/locale",
+            "value": 881,
+            "range": "± 45",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/compare/cmp_bytes/locale",
+            "value": 379,
+            "range": "± 17",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/canonicalize/langid",
+            "value": 2972,
+            "range": "± 170",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/canonicalize/locale",
+            "value": 3973,
+            "range": "± 261",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 4682,
+            "range": "± 201",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/construct/locale",
+            "value": 2066,
+            "range": "± 87",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/to_string/locale",
+            "value": 1579,
+            "range": "± 73",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/to_string/locale/writeable",
+            "value": 1048,
+            "range": "± 58",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/compare/struct/locale",
+            "value": 276,
+            "range": "± 11",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/compare/str/locale",
+            "value": 2096,
+            "range": "± 101",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/compare/cmp_bytes/locale",
+            "value": 619,
+            "range": "± 29",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/canonicalize/locale",
+            "value": 4414,
+            "range": "± 279",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "subtags/language/parse",
+            "value": 200,
+            "range": "± 9",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "subtags/script/parse",
+            "value": 143,
+            "range": "± 7",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "subtags/region/parse",
+            "value": 202,
+            "range": "± 7",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "subtags/variant/parse",
+            "value": 196,
+            "range": "± 7",
             "unit": "ns/iter"
           }
         ]
