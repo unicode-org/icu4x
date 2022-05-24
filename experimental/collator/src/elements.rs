@@ -26,6 +26,7 @@ use icu_properties::CanonicalCombiningClass;
 use smallvec::SmallVec;
 use zerovec::ule::AsULE;
 use zerovec::ule::RawBytesULE;
+use zerovec::ZeroSlice;
 
 use crate::provider::CollationDataV1;
 
@@ -99,6 +100,43 @@ fn char_from_u32(u: u32) -> char {
 #[inline(always)]
 fn char_from_u16(u: u16) -> char {
     char_from_u32(u32::from(u))
+}
+
+const EMPTY_U16: &ZeroSlice<u16> =
+    &ZeroSlice::<u16>::from_ule_slice_const(&<u16 as AsULE>::ULE::from_array([]));
+const EMPTY_U32: &ZeroSlice<u32> =
+    &ZeroSlice::<u32>::from_ule_slice_const(&<u32 as AsULE>::ULE::from_array([]));
+
+#[inline(always)]
+fn split_first_u16(s: Option<&ZeroSlice<u16>>) -> (char, &ZeroSlice<u16>) {
+    if let Some(slice) = s {
+        if let Some(first) = slice.first() {
+            // `unwrap()` must succeed, because `first()` returned `Some`.
+            return (
+                char_from_u16(first),
+                slice.get_subslice(1..slice.len()).unwrap(),
+            );
+        }
+    }
+    // GIGO case
+    debug_assert!(false);
+    (REPLACEMENT_CHARACTER, EMPTY_U16)
+}
+
+#[inline(always)]
+fn split_first_u32(s: Option<&ZeroSlice<u32>>) -> (char, &ZeroSlice<u32>) {
+    if let Some(slice) = s {
+        if let Some(first) = slice.first() {
+            // `unwrap()` must succeed, because `first()` returned `Some`.
+            return (
+                char_from_u32(first),
+                slice.get_subslice(1..slice.len()).unwrap(),
+            );
+        }
+    }
+    // GIGO case
+    debug_assert!(false);
+    (REPLACEMENT_CHARACTER, EMPTY_U32)
 }
 
 #[inline(always)]
@@ -798,16 +836,24 @@ where
                 let offset = usize::from(low & 0x7FF);
                 let len = usize::from(low >> 13);
                 if low & 0x1000 == 0 {
-                    for &ule in
-                        self.decompositions.scalars16.as_ule_slice()[offset..offset + len].iter()
+                    for u in self
+                        .decompositions
+                        .scalars16
+                        .get_subslice(offset..offset + len)
+                        .unwrap_or(EMPTY_U16)
+                        .iter()
                     {
-                        self.upcoming.push(char_from_u16(u16::from_unaligned(ule)));
+                        self.upcoming.push(char_from_u16(u));
                     }
                 } else {
-                    for &ule in
-                        self.decompositions.scalars32.as_ule_slice()[offset..offset + len].iter()
+                    for u in self
+                        .decompositions
+                        .scalars32
+                        .get_subslice(offset..offset + len)
+                        .unwrap_or(EMPTY_U32)
+                        .iter()
                     {
-                        self.upcoming.push(char_from_u32(u32::from_unaligned(ule)));
+                        self.upcoming.push(char_from_u32(u));
                     }
                 }
                 if low & 0x800 != 0 {
@@ -1171,22 +1217,22 @@ where
                         let offset = usize::from(low & 0x7FF);
                         let len = usize::from(low >> 13);
                         if low & 0x1000 == 0 {
-                            let (&first, tail) = &self.decompositions.scalars16.as_ule_slice()
-                                [offset..offset + len]
-                                .split_first()
-                                .unwrap();
-                            c = char_from_u16(u16::from_unaligned(first));
+                            let (starter, tail) = split_first_u16(
+                                self.decompositions
+                                    .scalars16
+                                    .get_subslice(offset..offset + len),
+                            );
+                            c = starter;
                             if low & 0x800 == 0 {
-                                for &ule in tail.iter() {
-                                    combining_characters.push(CharacterAndClass::new(
-                                        char_from_u16(u16::from_unaligned(ule)),
-                                    ));
+                                for u in tail.iter() {
+                                    combining_characters
+                                        .push(CharacterAndClass::new(char_from_u16(u)));
                                 }
                             } else {
                                 next_is_known_to_decompose_to_non_starter = false;
                                 let mut it = tail.iter();
-                                while let Some(&ule) = it.next() {
-                                    let ch = char_from_u16(u16::from_unaligned(ule));
+                                while let Some(u) = it.next() {
+                                    let ch = char_from_u16(u);
                                     if self
                                         .decompositions
                                         .decomposition_starts_with_non_starter
@@ -1205,9 +1251,9 @@ where
                                     // sort the right characters.
                                     self.maybe_gather_combining();
 
-                                    while let Some(&ule) = it.next_back() {
+                                    while let Some(u) = it.next_back() {
                                         self.prepend_and_sort_non_starter_prefix_of_suffix(
-                                            char_from_u16(u16::from_unaligned(ule)),
+                                            char_from_u16(u),
                                         );
                                     }
                                     self.prepend_and_sort_non_starter_prefix_of_suffix(ch);
@@ -1215,22 +1261,22 @@ where
                                 }
                             }
                         } else {
-                            let (&first, tail) = &self.decompositions.scalars32.as_ule_slice()
-                                [offset..offset + len]
-                                .split_first()
-                                .unwrap();
-                            c = char_from_u32(u32::from_unaligned(first));
+                            let (starter, tail) = split_first_u32(
+                                self.decompositions
+                                    .scalars32
+                                    .get_subslice(offset..offset + len),
+                            );
+                            c = starter;
                             if low & 0x800 == 0 {
-                                for &ule in tail.iter() {
-                                    combining_characters.push(CharacterAndClass::new(
-                                        char_from_u32(u32::from_unaligned(ule)),
-                                    ));
+                                for u in tail.iter() {
+                                    combining_characters
+                                        .push(CharacterAndClass::new(char_from_u32(u)));
                                 }
                             } else {
                                 next_is_known_to_decompose_to_non_starter = false;
                                 let mut it = tail.iter();
-                                while let Some(&ule) = it.next() {
-                                    let ch = char_from_u32(u32::from_unaligned(ule));
+                                while let Some(u) = it.next() {
+                                    let ch = char_from_u32(u);
                                     if self
                                         .decompositions
                                         .decomposition_starts_with_non_starter
@@ -1248,9 +1294,9 @@ where
                                     // sort the right characters.
                                     self.maybe_gather_combining();
 
-                                    while let Some(&ule) = it.next_back() {
+                                    while let Some(u) = it.next_back() {
                                         self.prepend_and_sort_non_starter_prefix_of_suffix(
-                                            char_from_u32(u32::from_unaligned(ule)),
+                                            char_from_u32(u),
                                         );
                                     }
                                     self.prepend_and_sort_non_starter_prefix_of_suffix(ch);
