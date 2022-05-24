@@ -63,6 +63,7 @@ use icu_provider::ResourceProvider;
 use smallvec::SmallVec;
 use utf8_iter::Utf8CharsEx;
 use zerovec::ule::AsULE;
+use zerovec::ZeroSlice;
 
 // These constants originate from page 143 of Unicode 14.0
 /// Syllable base
@@ -85,6 +86,7 @@ fn char_from_u32(u: u32) -> char {
     if let Some(c) = core::char::from_u32(u) {
         c
     } else {
+        // GIGO case
         debug_assert!(false);
         REPLACEMENT_CHARACTER
     }
@@ -93,6 +95,43 @@ fn char_from_u32(u: u32) -> char {
 #[inline(always)]
 fn char_from_u16(u: u16) -> char {
     char_from_u32(u32::from(u))
+}
+
+const EMPTY_U16: &ZeroSlice<u16> =
+    &ZeroSlice::<u16>::from_ule_slice_const(&<u16 as AsULE>::ULE::from_array([]));
+const EMPTY_U32: &ZeroSlice<u32> =
+    &ZeroSlice::<u32>::from_ule_slice_const(&<u32 as AsULE>::ULE::from_array([]));
+
+#[inline(always)]
+fn split_first_u16(s: Option<&ZeroSlice<u16>>) -> (char, &ZeroSlice<u16>) {
+    if let Some(slice) = s {
+        if let Some(first) = slice.first() {
+            // `unwrap()` must succeed, because `first()` returned `Some`.
+            return (
+                char_from_u16(first),
+                slice.get_subslice(1..slice.len()).unwrap(),
+            );
+        }
+    }
+    // GIGO case
+    debug_assert!(false);
+    (REPLACEMENT_CHARACTER, EMPTY_U16)
+}
+
+#[inline(always)]
+fn split_first_u32(s: Option<&ZeroSlice<u32>>) -> (char, &ZeroSlice<u32>) {
+    if let Some(slice) = s {
+        if let Some(first) = slice.first() {
+            // `unwrap()` must succeed, because `first()` returned `Some`.
+            return (
+                char_from_u32(first),
+                slice.get_subslice(1..slice.len()).unwrap(),
+            );
+        }
+    }
+    // GIGO case
+    debug_assert!(false);
+    (REPLACEMENT_CHARACTER, EMPTY_U32)
 }
 
 #[inline(always)]
@@ -263,25 +302,22 @@ where
                         let offset = usize::from(low & 0x7FF);
                         let len = usize::from(low >> 13);
                         if low & 0x1000 == 0 {
-                            let (&first, tail) = &self.decompositions.scalars16.as_ule_slice()
-                                [offset..offset + len]
-                                .split_first()
-                                .unwrap();
-                            // Starter
-                            let starter = char_from_u16(u16::from_unaligned(first));
+                            let (starter, tail) = split_first_u16(
+                                self.decompositions
+                                    .scalars16
+                                    .get_subslice(offset..offset + len),
+                            );
                             if low & 0x800 == 0 {
                                 // All the rest are combining
-                                for &ule in tail.iter() {
-                                    self.buffer.push(CharacterAndClass::new(char_from_u16(
-                                        u16::from_unaligned(ule),
-                                    )));
+                                for u in tail.iter() {
+                                    self.buffer.push(CharacterAndClass::new(char_from_u16(u)));
                                 }
                                 (starter, 0)
                             } else {
                                 let mut i = 0;
                                 let mut combining_start = 0;
-                                for &ule in tail.iter() {
-                                    let ch = char_from_u16(u16::from_unaligned(ule));
+                                for u in tail.iter() {
+                                    let ch = char_from_u16(u);
                                     self.buffer.push(CharacterAndClass::new(ch));
                                     i += 1;
                                     if !self
@@ -295,24 +331,22 @@ where
                                 (starter, combining_start)
                             }
                         } else {
-                            let (&first, tail) = &self.decompositions.scalars32.as_ule_slice()
-                                [offset..offset + len]
-                                .split_first()
-                                .unwrap();
-                            let starter = char_from_u32(u32::from_unaligned(first));
+                            let (starter, tail) = split_first_u32(
+                                self.decompositions
+                                    .scalars32
+                                    .get_subslice(offset..offset + len),
+                            );
                             if low & 0x800 == 0 {
                                 // All the rest are combining
-                                for &ule in tail.iter() {
-                                    self.buffer.push(CharacterAndClass::new(char_from_u32(
-                                        u32::from_unaligned(ule),
-                                    )));
+                                for u in tail.iter() {
+                                    self.buffer.push(CharacterAndClass::new(char_from_u32(u)));
                                 }
                                 (starter, 0)
                             } else {
                                 let mut i = 0;
                                 let mut combining_start = 0;
-                                for &ule in tail.iter() {
-                                    let ch = char_from_u32(u32::from_unaligned(ule));
+                                for u in tail.iter() {
+                                    let ch = char_from_u32(u);
                                     self.buffer.push(CharacterAndClass::new(ch));
                                     i += 1;
                                     if !self
