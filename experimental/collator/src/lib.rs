@@ -140,5 +140,5 @@ pub use options::CollatorOptions;
 pub use options::MaxVariable;
 pub use options::Strength;
 
-#[cfg(test)]
+#[cfg(all(test, feature = "serde"))]
 mod tests;
