@@ -139,7 +139,7 @@ pub mod ffi {
         /// Invalid levels (numbers greater than 125) will be assumed LTR
         #[diplomat::rust_link(unicode_bidi::Level::is_rtl, FnInStruct)]
         pub fn level_is_rtl(level: u8) -> bool {
-            Level::new(level).unwrap_or(Level::ltr()).is_rtl()
+            Level::new(level).unwrap_or_else(|_| Level::ltr()).is_rtl()
         }
 
         /// Check if a Level returned by level_at is an LTR level.
@@ -147,7 +147,7 @@ pub mod ffi {
         /// Invalid levels (numbers greater than 125) will be assumed LTR
         #[diplomat::rust_link(unicode_bidi::Level::is_ltr, FnInStruct)]
         pub fn level_is_ltr(level: u8) -> bool {
-            Level::new(level).unwrap_or(Level::ltr()).is_ltr()
+            Level::new(level).unwrap_or_else(|_| Level::ltr()).is_ltr()
         }
     }
 }
