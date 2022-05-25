@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use serde::ser::{Serialize, Serializer, Impossible};
+use serde::ser::{Impossible, Serialize, Serializer};
 
 pub fn is_num_or_string<T: Serialize + ?Sized>(k: &T) -> bool {
     // Serializer that errors in the same cases as serde_json::ser::MapKeySerializer
