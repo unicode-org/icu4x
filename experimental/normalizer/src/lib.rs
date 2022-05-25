@@ -538,15 +538,4 @@ impl DecomposingNormalizer {
 }
 
 #[cfg(test)]
-mod tests {
-    use crate::DecomposingNormalizer;
-
-    #[test]
-    fn test_basic() {
-        let data_provider = icu_testdata::get_provider();
-
-        let normalizer: DecomposingNormalizer =
-            DecomposingNormalizer::try_new(&data_provider).unwrap();
-        assert_eq!(normalizer.normalize("ä"), "a\u{0308}");
-    }
-}
+mod tests;
