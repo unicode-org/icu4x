@@ -7,14 +7,14 @@ pub mod ffi {
     use alloc::boxed::Box;
     use diplomat_runtime::{DiplomatResult, DiplomatWriteable};
 
+    use core::fmt::Write;
     use icu_properties::bidi::BidiClassAdapter;
     use icu_properties::maps;
     use icu_properties::provider::BidiClassV1Marker;
     use icu_provider::DataPayload;
     use unicode_bidi::BidiInfo;
-    use unicode_bidi::Paragraph;
     use unicode_bidi::Level;
-    use core::fmt::Write;
+    use unicode_bidi::Paragraph;
 
     use crate::provider::ffi::ICU4XDataProvider;
 
@@ -42,7 +42,6 @@ pub mod ffi {
                 Err(()).into()
             }
         }
-
 
         /// Use the data loaded in this object to process a string and calculate bidi information
         #[diplomat::rust_link(unicode_bidi::BidiInfo::new_with_data_source, FnInStruct)]
@@ -106,9 +105,14 @@ pub mod ffi {
         /// Reorder a line based on display order. The ranges are specified relative to the source text and must be contained
         /// within this paragraph's range.
         #[diplomat::rust_link(unicode_bidi::Paragraph::level_at, FnInStruct)]
-        pub fn reorder_line(&self, range_start: usize, range_end: usize, out: &mut DiplomatWriteable) -> DiplomatResult<(), ()> {
+        pub fn reorder_line(
+            &self,
+            range_start: usize,
+            range_end: usize,
+            out: &mut DiplomatWriteable,
+        ) -> DiplomatResult<(), ()> {
             if range_start < self.range_start() || range_end > self.range_end() {
-                return Err(()).into()
+                return Err(()).into();
             }
 
             let info = self.0.info;
@@ -145,9 +149,7 @@ pub mod ffi {
         pub fn level_is_ltr(level: u8) -> bool {
             Level::new(level).unwrap_or(Level::ltr()).is_ltr()
         }
-
     }
-
 }
 
 use unicode_bidi::Direction;
