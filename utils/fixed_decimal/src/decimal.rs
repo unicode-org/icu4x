@@ -559,8 +559,9 @@ impl FixedDecimal {
         let is_digits_empty = self.digits.is_empty();
 
         for i in (0..self.digits.len()).rev() {
-            self.digits[i] += 1;
-            if self.digits[i] < 10 {
+            let digit = self.digits.get_mut(i).unwrap();
+            *digit += 1;
+            if *digit < 10 {
                 #[cfg(debug_assertions)]
                 self.check_invariants();
                 return;
