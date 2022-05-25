@@ -102,8 +102,13 @@ const SINGLE_U16: &ZeroSlice<u16> =
 const SINGLE_U32: &ZeroSlice<u32> =
     ZeroSlice::<u32>::from_ule_slice_const(&<u32 as AsULE>::ULE::from_array([0xFFFD]));
 
+/// If `opt` is `Some`, unwrap it. If `None`, panic if debug assertions
+/// are enabled and return `default` if debug assertions are not enabled.
+///
+/// Use this only if the only reason why `opt` could be `None` is bogus
+/// data from the provider.
 #[inline(always)]
-fn unwrap_or_gigo<T>(opt: Option<T>, default: T) -> T {
+pub(crate) fn unwrap_or_gigo<T>(opt: Option<T>, default: T) -> T {
     if let Some(val) = opt {
         val
     } else {
@@ -113,17 +118,13 @@ fn unwrap_or_gigo<T>(opt: Option<T>, default: T) -> T {
     }
 }
 
+/// Convert a `u32` _obtained from data provider data_ to `char`.
 #[inline(always)]
 fn char_from_u32(u: u32) -> char {
-    if let Some(c) = core::char::from_u32(u) {
-        c
-    } else {
-        // GIGO case
-        debug_assert!(false);
-        REPLACEMENT_CHARACTER
-    }
+    unwrap_or_gigo(core::char::from_u32(u), REPLACEMENT_CHARACTER)
 }
 
+/// Convert a `u16` _obtained from data provider data_ to `char`.
 #[inline(always)]
 fn char_from_u16(u: u16) -> char {
     char_from_u32(u32::from(u))
@@ -351,13 +352,7 @@ impl CollationElement32 {
     /// element or otherwise returns the collation element for U+FFFD.
     #[inline(always)]
     pub fn to_ce_self_contained_or_gigo(self) -> CollationElement {
-        if let Some(ce) = self.to_ce_self_contained() {
-            ce
-        } else {
-            // GIGO case
-            debug_assert!(false);
-            FFFD_CE
-        }
+        unwrap_or_gigo(self.to_ce_self_contained(), FFFD_CE)
     }
 
     /// Gets the length from this element.
