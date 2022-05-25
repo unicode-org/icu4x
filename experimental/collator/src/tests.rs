@@ -127,33 +127,23 @@ fn test_currency() {
 fn test_de() {
     // Adapted from `CollationGermanTest` in decoll.cpp of ICU4C.
     let left = [
-        "\u{47}\u{72}\u{00F6}\u{00DF}\u{65}",
-        "\u{61}\u{62}\u{63}",
-        "\u{54}\u{00F6}\u{6e}\u{65}",
-        "\u{54}\u{00F6}\u{6e}\u{65}",
-        "\u{54}\u{00F6}\u{6e}\u{65}",
-        "\u{61}\u{0308}\u{62}\u{63}",
-        "\u{00E4}\u{62}\u{63}",
-        "\u{00E4}\u{62}\u{63}",
-        "\u{53}\u{74}\u{72}\u{61}\u{00DF}\u{65}",
-        "\u{65}\u{66}\u{67}",
-        "\u{00E4}\u{62}\u{63}",
-        "\u{53}\u{74}\u{72}\u{61}\u{00DF}\u{65}",
+        "Größe", "abc", "Töne", "Töne", "Töne", "äbc", "äbc", "äbc", "Straße", "efg", "äbc",
+        "Straße",
     ];
 
     let right = [
-        "\u{47}\u{72}\u{6f}\u{73}\u{73}\u{69}\u{73}\u{74}",
-        "\u{61}\u{0308}\u{62}\u{63}",
-        "\u{54}\u{6f}\u{6e}",
-        "\u{54}\u{6f}\u{64}",
-        "\u{54}\u{6f}\u{66}\u{75}",
-        "\u{41}\u{0308}\u{62}\u{63}",
-        "\u{61}\u{0308}\u{62}\u{63}",
-        "\u{61}\u{65}\u{62}\u{63}",
-        "\u{53}\u{74}\u{72}\u{61}\u{73}\u{73}\u{65}",
-        "\u{65}\u{66}\u{67}",
-        "\u{61}\u{65}\u{62}\u{63}",
-        "\u{53}\u{74}\u{72}\u{61}\u{73}\u{73}\u{65}",
+        "Grossist",
+        "a\u{0308}bc",
+        "Ton",
+        "Tod",
+        "Tofu",
+        "A\u{0308}bc",
+        "a\u{0308}bc",
+        "aebc",
+        "Strasse",
+        "efg",
+        "aebc",
+        "Strasse",
     ];
 
     let expect_primary = [
@@ -211,107 +201,107 @@ fn test_de() {
 fn test_en() {
     // Adapted from encoll.cpp in ICU4C
     let left = [
-        "\u{0061}\u{0062}",
-        "\u{0062}\u{006C}\u{0061}\u{0063}\u{006B}\u{002D}\u{0062}\u{0069}\u{0072}\u{0064}",
-        "\u{0062}\u{006C}\u{0061}\u{0063}\u{006B}\u{0020}\u{0062}\u{0069}\u{0072}\u{0064}",
-        "\u{0062}\u{006C}\u{0061}\u{0063}\u{006B}\u{002D}\u{0062}\u{0069}\u{0072}\u{0064}",
-        "\u{0048}\u{0065}\u{006C}\u{006C}\u{006F}",
-        "\u{0041}\u{0042}\u{0043}",
-        "\u{0061}\u{0062}\u{0063}",
-        "\u{0062}\u{006C}\u{0061}\u{0063}\u{006B}\u{0062}\u{0069}\u{0072}\u{0064}",
-        "\u{0062}\u{006C}\u{0061}\u{0063}\u{006B}\u{002D}\u{0062}\u{0069}\u{0072}\u{0064}",
-        "\u{0062}\u{006C}\u{0061}\u{0063}\u{006B}\u{002D}\u{0062}\u{0069}\u{0072}\u{0064}",
-        "\u{0070}\u{00EA}\u{0063}\u{0068}\u{0065}",
-        "\u{0070}\u{00E9}\u{0063}\u{0068}\u{00E9}",
-        "\u{00C4}\u{0042}\u{0308}\u{0043}\u{0308}",
-        "\u{0061}\u{0308}\u{0062}\u{0063}",
-        "\u{0070}\u{00E9}\u{0063}\u{0068}\u{0065}\u{0072}",
-        "\u{0072}\u{006F}\u{006C}\u{0065}\u{0073}",
-        "\u{0061}\u{0062}\u{0063}",
-        "\u{0041}",
-        "\u{0041}",
-        "\u{0061}\u{0062}",
-        "\u{0074}\u{0063}\u{006F}\u{006D}\u{0070}\u{0061}\u{0072}\u{0065}\u{0070}\u{006C}\u{0061}\u{0069}\u{006E}",
-        "\u{0061}\u{0062}",
-        "\u{0061}\u{0023}\u{0062}",
-        "\u{0061}\u{0023}\u{0062}",
-        "\u{0061}\u{0062}\u{0063}",
-        "\u{0041}\u{0062}\u{0063}\u{0064}\u{0061}",
-        "\u{0061}\u{0062}\u{0063}\u{0064}\u{0061}",
-        "\u{0061}\u{0062}\u{0063}\u{0064}\u{0061}",
-        "\u{00E6}\u{0062}\u{0063}\u{0064}\u{0061}",
-        "\u{00E4}\u{0062}\u{0063}\u{0064}\u{0061}",
-        "\u{0061}\u{0062}\u{0063}",
-        "\u{0061}\u{0062}\u{0063}",
-        "\u{0061}\u{0062}\u{0063}",
-        "\u{0061}\u{0062}\u{0063}",
-        "\u{0061}\u{0062}\u{0063}",
-        "\u{0061}\u{0063}\u{0048}\u{0063}",
-        "\u{0061}\u{0308}\u{0062}\u{0063}",
-        "\u{0074}\u{0068}\u{0069}\u{0302}\u{0073}",
-        "\u{0070}\u{00EA}\u{0063}\u{0068}\u{0065}",
-        "\u{0061}\u{0062}\u{0063}",
-        "\u{0061}\u{0062}\u{0063}",
-        "\u{0061}\u{0062}\u{0063}",
-        "\u{0061}\u{00E6}\u{0063}",
-        "\u{0061}\u{0062}\u{0063}",
-        "\u{0061}\u{0062}\u{0063}",
-        "\u{0061}\u{00E6}\u{0063}",
-        "\u{0061}\u{0062}\u{0063}",
-        "\u{0061}\u{0062}\u{0063}",
-        "\u{0070}\u{00E9}\u{0063}\u{0068}\u{00E9}"
+        "ab",
+        "black-bird",
+        "black bird",
+        "black-bird",
+        "Hello",
+        "ABC",
+        "abc",
+        "blackbird",
+        "black-bird",
+        "black-bird",
+        "pêche",
+        "péché",
+        "ÄB̈C̈",
+        "äbc",
+        "pécher",
+        "roles",
+        "abc",
+        "A",
+        "A",
+        "ab",
+        "tcompareplain",
+        "ab",
+        "a#b",
+        "a#b",
+        "abc",
+        "Abcda",
+        "abcda",
+        "abcda",
+        "æbcda",
+        "äbcda",
+        "abc",
+        "abc",
+        "abc",
+        "abc",
+        "abc",
+        "acHc",
+        "äbc",
+        "thîs",
+        "pêche",
+        "abc",
+        "abc",
+        "abc",
+        "aæc",
+        "abc",
+        "abc",
+        "aæc",
+        "abc",
+        "abc",
+        "péché",
     ]; // 49
 
     let right = [
-        "\u{0061}\u{0062}\u{0063}",
-        "\u{0062}\u{006C}\u{0061}\u{0063}\u{006B}\u{0062}\u{0069}\u{0072}\u{0064}",
-        "\u{0062}\u{006C}\u{0061}\u{0063}\u{006B}\u{002D}\u{0062}\u{0069}\u{0072}\u{0064}",
-        "\u{0062}\u{006C}\u{0061}\u{0063}\u{006B}",
-        "\u{0068}\u{0065}\u{006C}\u{006C}\u{006F}",
-        "\u{0041}\u{0042}\u{0043}",
-        "\u{0041}\u{0042}\u{0043}",
-        "\u{0062}\u{006C}\u{0061}\u{0063}\u{006B}\u{0062}\u{0069}\u{0072}\u{0064}\u{0073}",
-        "\u{0062}\u{006C}\u{0061}\u{0063}\u{006B}\u{0062}\u{0069}\u{0072}\u{0064}\u{0073}",
-        "\u{0062}\u{006C}\u{0061}\u{0063}\u{006B}\u{0062}\u{0069}\u{0072}\u{0064}",
-        "\u{0070}\u{00E9}\u{0063}\u{0068}\u{00E9}",
-        "\u{0070}\u{00E9}\u{0063}\u{0068}\u{0065}\u{0072}",
-        "\u{00C4}\u{0042}\u{0308}\u{0043}\u{0308}",
-        "\u{0041}\u{0308}\u{0062}\u{0063}",
-        "\u{0070}\u{00E9}\u{0063}\u{0068}\u{0065}",
-        "\u{0072}\u{006F}\u{0302}\u{006C}\u{0065}",
-        "\u{0041}\u{00E1}\u{0063}\u{0064}",
-        "\u{0041}\u{00E1}\u{0063}\u{0064}",
-        "\u{0061}\u{0062}\u{0063}",
-        "\u{0061}\u{0062}\u{0063}",
-        "\u{0054}\u{0043}\u{006F}\u{006D}\u{0070}\u{0061}\u{0072}\u{0065}\u{0050}\u{006C}\u{0061}\u{0069}\u{006E}",
-        "\u{0061}\u{0042}\u{0063}",
-        "\u{0061}\u{0023}\u{0042}",
-        "\u{0061}\u{0026}\u{0062}",
-        "\u{0061}\u{0023}\u{0063}",
-        "\u{0061}\u{0062}\u{0063}\u{0064}\u{0061}",
-        "\u{00C4}\u{0062}\u{0063}\u{0064}\u{0061}",
-        "\u{00E4}\u{0062}\u{0063}\u{0064}\u{0061}",
-        "\u{00C4}\u{0062}\u{0063}\u{0064}\u{0061}",
-        "\u{00C4}\u{0062}\u{0063}\u{0064}\u{0061}",
-        "\u{0061}\u{0062}\u{0023}\u{0063}",
-        "\u{0061}\u{0062}\u{0063}",
-        "\u{0061}\u{0062}\u{003D}\u{0063}",
-        "\u{0061}\u{0062}\u{0064}",
-        "\u{00E4}\u{0062}\u{0063}",
-        "\u{0061}\u{0043}\u{0048}\u{0063}",
-        "\u{00E4}\u{0062}\u{0063}",
-        "\u{0074}\u{0068}\u{00EE}\u{0073}",
-        "\u{0070}\u{00E9}\u{0063}\u{0068}\u{00E9}",
-        "\u{0061}\u{0042}\u{0043}",
-        "\u{0061}\u{0062}\u{0064}",
-        "\u{00E4}\u{0062}\u{0063}",
-        "\u{0061}\u{00C6}\u{0063}",
-        "\u{0061}\u{0042}\u{0064}",
-        "\u{00E4}\u{0062}\u{0063}",
-        "\u{0061}\u{00C6}\u{0063}",
-        "\u{0061}\u{0042}\u{0064}",
-        "\u{00E4}\u{0062}\u{0063}",
-        "\u{0070}\u{00EA}\u{0063}\u{0068}\u{0065}"
+        "abc",
+        "blackbird",
+        "black-bird",
+        "black",
+        "hello",
+        "ABC",
+        "ABC",
+        "blackbirds",
+        "blackbirds",
+        "blackbird",
+        "péché",
+        "pécher",
+        "ÄB̈C̈",
+        "Äbc",
+        "péche",
+        "rôle",
+        "Aácd",
+        "Aácd",
+        "abc",
+        "abc",
+        "TComparePlain",
+        "aBc",
+        "a#B",
+        "a&b",
+        "a#c",
+        "abcda",
+        "Äbcda",
+        "äbcda",
+        "Äbcda",
+        "Äbcda",
+        "ab#c",
+        "abc",
+        "ab=c",
+        "abd",
+        "äbc",
+        "aCHc",
+        "äbc",
+        "thîs",
+        "péché",
+        "aBC",
+        "abd",
+        "äbc",
+        "aÆc",
+        "aBd",
+        "äbc",
+        "aÆc",
+        "aBd",
+        "äbc",
+        "pêche",
     ]; // 49
 
     let expectations = [
@@ -408,18 +398,7 @@ fn test_en() {
 #[test]
 fn test_en_bugs() {
     // Adapted from encoll.cpp in ICU4C
-    let bugs = [
-        "\u{61}",
-        "\u{41}",
-        "\u{65}",
-        "\u{45}",
-        "\u{00e9}",
-        "\u{00e8}",
-        "\u{00ea}",
-        "\u{00eb}",
-        "\u{65}\u{61}",
-        "\u{78}",
-    ];
+    let bugs = ["a", "A", "e", "E", "é", "è", "ê", "ë", "ea", "x"];
     //        let locale: Locale = langid!("en").into();
     let locale: Locale = Locale::default(); // English uses the root collation
     let data_provider = icu_testdata::get_provider();
@@ -443,20 +422,20 @@ fn test_en_bugs() {
 fn test_ja_tertiary() {
     // Adapted from `CollationKanaTest::TestTertiary` in jacoll.cpp in ICU4C
     let left = [
-        "\u{FF9E}",
-        "\u{3042}",
-        "\u{30A2}",
-        "\u{3042}\u{3042}",
-        "\u{30A2}\u{30FC}",
-        "\u{30A2}\u{30FC}\u{30C8}",
+        "ﾞ", // half-width
+        "あ",
+        "ア",
+        "ああ",
+        "アー",
+        "アート",
     ];
     let right = [
-        "\u{FF9F}",
-        "\u{30A2}",
-        "\u{3042}\u{3042}",
-        "\u{30A2}\u{30FC}",
-        "\u{30A2}\u{30FC}\u{30C8}",
-        "\u{3042}\u{3042}\u{3068}",
+        "ﾟ", // half-width
+        "ア",
+        "ああ",
+        "アー",
+        "アート",
+        "ああと",
     ];
     let expectations = [
         Ordering::Less,
@@ -482,12 +461,7 @@ fn test_ja_tertiary() {
 #[test]
 fn test_ja_base() {
     // Adapted from `CollationKanaTest::TestBase` in jacoll.cpp of ICU4C.
-    let cases = [
-        "\u{30AB}",
-        "\u{30AB}\u{30AD}",
-        "\u{30AD}",
-        "\u{30AD}\u{30AD}",
-    ];
+    let cases = ["カ", "カキ", "キ", "キキ"];
 
     let locale: Locale = langid!("ja").into();
     let data_provider = icu_testdata::get_provider();
@@ -508,12 +482,7 @@ fn test_ja_base() {
 #[test]
 fn test_ja_plain_dakuten_handakuten() {
     // Adapted from `CollationKanaTest::TestPlainDakutenHandakuten` in jacoll.cpp of ICU4C.
-    let cases = [
-        "\u{30CF}\u{30AB}",
-        "\u{30D0}\u{30AB}",
-        "\u{30CF}\u{30AD}",
-        "\u{30D0}\u{30AD}",
-    ];
+    let cases = ["ハカ", "バカ", "ハキ", "バキ"];
 
     let locale: Locale = langid!("ja").into();
     let data_provider = icu_testdata::get_provider();
@@ -534,12 +503,7 @@ fn test_ja_plain_dakuten_handakuten() {
 #[test]
 fn test_ja_small_large() {
     // Adapted from `CollationKanaTest::TestSmallLarge` in jacoll.cpp of ICU4C.
-    let cases = [
-        "\u{30C3}\u{30CF}",
-        "\u{30C4}\u{30CF}",
-        "\u{30C3}\u{30D0}",
-        "\u{30C4}\u{30D0}",
-    ];
+    let cases = ["ッハ", "ツハ", "ッバ", "ツバ"];
 
     let locale: Locale = langid!("ja").into();
     let data_provider = icu_testdata::get_provider();
@@ -561,12 +525,7 @@ fn test_ja_small_large() {
 #[test]
 fn test_ja_hiragana_katakana() {
     // Adapted from `CollationKanaTest::TestKatakanaHiragana` in jacoll.cpp of ICU4C.
-    let cases = [
-        "\u{3042}\u{30C3}",
-        "\u{30A2}\u{30C3}",
-        "\u{3042}\u{30C4}",
-        "\u{30A2}\u{30C4}",
-    ];
+    let cases = ["あッ", "アッ", "あツ", "アツ"];
 
     let locale: Locale = langid!("ja").into();
     let data_provider = icu_testdata::get_provider();
@@ -619,14 +578,14 @@ fn test_ja_hiragana_katakana_utf16() {
 fn test_ja_chooon_kigoo() {
     // Adapted from `CollationKanaTest::TestChooonKigoo` in jacoll.cpp of ICU4C.
     let cases = [
-        "\u{30AB}\u{30FC}\u{3042}",
-        "\u{30AB}\u{30FC}\u{30A2}",
-        "\u{30AB}\u{30A4}\u{3042}",
-        "\u{30AB}\u{30A4}\u{30A2}",
-        "\u{30AD}\u{30FC}\u{3042}", /* Prolonged sound mark sorts BEFORE equivalent vowel (ICU 2.0)*/
-        "\u{30AD}\u{30FC}\u{30A2}", /* Prolonged sound mark sorts BEFORE equivalent vowel (ICU 2.0)*/
-        "\u{30AD}\u{30A4}\u{3042}",
-        "\u{30AD}\u{30A4}\u{30A2}",
+        "カーあ",
+        "カーア",
+        "カイあ",
+        "カイア",
+        "キーあ", /* Prolonged sound mark sorts BEFORE equivalent vowel (ICU 2.0)*/
+        "キーア", /* Prolonged sound mark sorts BEFORE equivalent vowel (ICU 2.0)*/
+        "キイあ",
+        "キイア",
     ];
 
     let locale: Locale = langid!("ja").into();
@@ -656,24 +615,20 @@ fn test_fi() {
     let left = [
         "wat",
         "vat",
-        "a\u{FC}beck",
-        "L\u{E5}vi",
+        "aübeck",
+        "Låvi",
         // ICU4C has a duplicate of the first case below.
         // The duplicate is omitted here.
         // Instead, the subsequent tests are added for ICU4X.
-        "\u{E4}",
+        "ä",
         "a\u{0308}",
     ];
     let right = [
-        "vat",
-        "way",
-        "axbeck",
-        "L\u{E4}we",
+        "vat", "way", "axbeck", "Läwe",
         // ICU4C has a duplicate of the first case below.
         // The duplicate is omitted here.
         // Instead, the subsequent tests are added for ICU4X.
-        "o",
-        "\u{E4}",
+        "o", "ä",
     ];
     let expectations = [
         Ordering::Greater,
@@ -708,7 +663,7 @@ fn test_fi() {
 fn test_sv() {
     // This is the same as test_fi. The purpose of this copy is to test that
     // Swedish defaults to "reformed", which behaves like Finnish "standard",
-    // and not to "standard", which behaves like Finnash "traditional".
+    // and not to "standard", which behaves like Finnish "traditional".
 
     // Adapted from ficoll.cpp in ICU4C
     // Testing that w and v behave as in the root collation is for checking
@@ -717,24 +672,20 @@ fn test_sv() {
     let left = [
         "wat",
         "vat",
-        "a\u{FC}beck",
-        "L\u{E5}vi",
+        "aübeck",
+        "Låvi",
         // ICU4C has a duplicate of the first case below.
         // The duplicate is omitted here.
         // Instead, the subsequent tests are added for ICU4X.
-        "\u{E4}",
+        "ä",
         "a\u{0308}",
     ];
     let right = [
-        "vat",
-        "way",
-        "axbeck",
-        "L\u{E4}we",
+        "vat", "way", "axbeck", "Läwe",
         // ICU4C has a duplicate of the first case below.
         // The duplicate is omitted here.
         // Instead, the subsequent tests are added for ICU4X.
-        "o",
-        "\u{E4}",
+        "o", "ä",
     ];
     let expectations = [
         Ordering::Greater,
@@ -786,6 +737,9 @@ fn test_region_fallback() {
 fn test_reordering() {
     let locale: Locale = langid!("bn").into();
     let data_provider = icu_testdata::get_provider();
+
+    // অ is Bengali
+    // ऄ is Devanagari
 
     {
         let collator: Collator =
@@ -926,20 +880,8 @@ fn test_zh() {
 #[test]
 fn test_es_tertiary() {
     // Adapted from `CollationSpanishTest::TestTertiary` in escoll.cpp in ICU4C
-    let left = [
-        "\u{61}\u{6c}\u{69}\u{61}\u{73}",
-        "\u{45}\u{6c}\u{6c}\u{69}\u{6f}\u{74}",
-        "\u{48}\u{65}\u{6c}\u{6c}\u{6f}",
-        "\u{61}\u{63}\u{48}\u{63}",
-        "\u{61}\u{63}\u{63}",
-    ];
-    let right = [
-        "\u{61}\u{6c}\u{6c}\u{69}\u{61}\u{73}",
-        "\u{45}\u{6d}\u{69}\u{6f}\u{74}",
-        "\u{68}\u{65}\u{6c}\u{6c}\u{4f}",
-        "\u{61}\u{43}\u{48}\u{63}",
-        "\u{61}\u{43}\u{48}\u{63}",
-    ];
+    let left = ["alias", "Elliot", "Hello", "acHc", "acc"];
+    let right = ["allias", "Emiot", "hellO", "aCHc", "aCHc"];
     let expectations = [
         Ordering::Less,
         Ordering::Less,
@@ -962,18 +904,8 @@ fn test_es_tertiary() {
 #[test]
 fn test_es_primary() {
     // Adapted from `CollationSpanishTest::TestPrimary` in escoll.cpp in ICU4C
-    let left = [
-        "\u{61}\u{6c}\u{69}\u{61}\u{73}",
-        "\u{61}\u{63}\u{48}\u{63}",
-        "\u{61}\u{63}\u{63}",
-        "\u{48}\u{65}\u{6c}\u{6c}\u{6f}",
-    ];
-    let right = [
-        "\u{61}\u{6c}\u{6c}\u{69}\u{61}\u{73}",
-        "\u{61}\u{43}\u{48}\u{63}",
-        "\u{61}\u{43}\u{48}\u{63}",
-        "\u{68}\u{65}\u{6c}\u{6c}\u{4f}",
-    ];
+    let left = ["alias", "acHc", "acc", "Hello"];
+    let right = ["allias", "aCHc", "aCHc", "hellO"];
     let expectations = [
         Ordering::Less,
         Ordering::Equal,
@@ -1002,7 +934,7 @@ fn test_el_secondary() {
     options.set_strength(Some(Strength::Secondary));
 
     let collator: Collator = Collator::try_new(locale, &data_provider, options).unwrap();
-    assert_eq!(collator.compare("\u{03D4}", "\u{03AB}"), Ordering::Equal);
+    assert_eq!(collator.compare("ϔ", "Ϋ"), Ordering::Equal);
 }
 
 #[test]
@@ -1152,26 +1084,8 @@ fn test_th_reordering() {
 #[test]
 fn test_tr_tertiary() {
     // Adapted from `CollationTurkishTest::TestTertiary` in trcoll.cpp in ICU4C
-    let left = [
-        "\u{73}\u{0327}",
-        "\u{76}\u{00E4}\u{74}",
-        "\u{6f}\u{6c}\u{64}",
-        "\u{00FC}\u{6f}\u{69}\u{64}",
-        "\u{68}\u{011E}\u{61}\u{6c}\u{74}",
-        "\u{73}\u{74}\u{72}\u{65}\u{73}\u{015E}",
-        "\u{76}\u{6f}\u{0131}\u{64}",
-        "\u{69}\u{64}\u{65}\u{61}",
-    ];
-    let right = [
-        "\u{75}\u{0308}",
-        "\u{76}\u{62}\u{74}",
-        "\u{00D6}\u{61}\u{79}",
-        "\u{76}\u{6f}\u{69}\u{64}",
-        "\u{68}\u{61}\u{6c}\u{74}",
-        "\u{015E}\u{74}\u{72}\u{65}\u{015E}\u{73}",
-        "\u{76}\u{6f}\u{69}\u{64}",
-        "\u{49}\u{64}\u{65}\u{61}",
-    ];
+    let left = ["ş", "vät", "old", "üoid", "hĞalt", "stresŞ", "voıd", "idea"];
+    let right = ["ü", "vbt", "Öay", "void", "halt", "ŞtreŞs", "void", "Idea"];
     let expectations = [
         Ordering::Less,
         Ordering::Less,
@@ -1197,16 +1111,8 @@ fn test_tr_tertiary() {
 #[test]
 fn test_tr_primary() {
     // Adapted from `CollationTurkishTest::TestPrimary` in trcoll.cpp in ICU4C
-    let left = [
-        "\u{00FC}\u{6f}\u{69}\u{64}",
-        "\u{76}\u{6f}\u{0131}\u{64}",
-        "\u{69}\u{64}\u{65}\u{61}",
-    ];
-    let right = [
-        "\u{76}\u{6f}\u{69}\u{64}",
-        "\u{76}\u{6f}\u{69}\u{64}",
-        "\u{49}\u{64}\u{65}\u{61}",
-    ];
+    let left = ["üoid", "voıd", "idea"];
+    let right = ["void", "void", "Idea"];
     let expectations = [Ordering::Less, Ordering::Less, Ordering::Greater];
     let locale: Locale = langid!("tr").into();
     let data_provider = icu_testdata::get_provider();
