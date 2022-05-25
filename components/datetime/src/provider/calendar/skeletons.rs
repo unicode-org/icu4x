@@ -44,9 +44,14 @@ impl TryFrom<&str> for SkeletonV1 {
     }
 }
 
+// DateSkeletonPatternsV1 uses heap-allocations, so it cannot be const-constructed
+// (and it also isn't zero-copy). For baking, we work around this by using an equivalent
+// const type (BakedDateSkeletonPatternsV1) and then zero-froming that into the final
+// struct. This operation contains the required allocation (which also happens in the
+// serde codepath, ZeroFrom<Self> uses #[zerofrom(clone)]).
+// See https://github.com/unicode-org/icu4x/issues/1678.
+
 #[cfg(feature = "datagen")]
-// This cannot be const constructed. Instead we bake it to a BakedDateSkeletonPatternsV1
-// for which we then define ZeroFrom to the struct itself.
 impl crabbake::Bakeable for DateSkeletonPatternsV1<'_> {
     fn bake(&self, env: &crabbake::CrateEnv) -> crabbake::TokenStream {
         env.insert("icu_datetime");
@@ -82,7 +87,6 @@ impl crabbake::Bakeable for DateSkeletonPatternsV1Marker {
 
 type BakedDateSkeletonPatternsV1 = [(&'static [crate::fields::Field], PatternPlurals<'static>)];
 
-/// This is not actually zero-alloc. Whoops
 impl zerofrom::ZeroFrom<'static, BakedDateSkeletonPatternsV1> for DateSkeletonPatternsV1<'static> {
     fn zero_from(other: &'static BakedDateSkeletonPatternsV1) -> Self {
         Self(
