@@ -1791,7 +1791,6 @@ dependencies = [
  "serde",
  "serde_json",
  "simple_logger",
- "smallvec",
  "tinystr 0.6.0",
  "tokio",
  "writeable",

@@ -278,7 +278,7 @@ impl RelationULE {
 
 #[derive(Copy, Clone, Hash, PartialEq, Eq, Debug)]
 #[repr(transparent)]
-pub struct AndOrPolarityOperandULE(u8);
+pub(crate) struct AndOrPolarityOperandULE(u8);
 
 // Safety (based on the safety checklist on the ULE trait):
 //  1. AndOrPolarityOperandULE does not include any uninitialized or padding bytes

@@ -182,7 +182,6 @@ icu_normalizer = { version = "0.6", path = "../../experimental/normalizer", opti
 icu_collator = { version = "0.6", path = "../../experimental/collator", optional = true }
 tinystr = { version = "0.6", path = "../../utils/tinystr", optional = true }
 zerovec = { version = "0.7", path = "../../utils/zerovec", optional = true }
-smallvec = { version = "1.6", optional = true }
 
 [dev-dependencies]
 icu_plurals = { version = "0.6", path = "../../components/plurals" }
@@ -219,7 +218,6 @@ baked = [
     "icu_uniset",
     "tinystr",
     "zerovec",
-    "smallvec"
 ]
 std = []
 bin = [

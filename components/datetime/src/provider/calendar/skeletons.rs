@@ -45,6 +45,8 @@ impl TryFrom<&str> for SkeletonV1 {
 }
 
 #[cfg(feature = "datagen")]
+// This cannot be const constructed. Instead we bake it to a BakedDateSkeletonPatternsV1
+// for which we then define ZeroFrom to the struct itself.
 impl crabbake::Bakeable for DateSkeletonPatternsV1<'_> {
     fn bake(&self, env: &crabbake::CrateEnv) -> crabbake::TokenStream {
         env.insert("icu_datetime");
@@ -72,7 +74,6 @@ impl Default for DateSkeletonPatternsV1Marker {
 impl crabbake::Bakeable for DateSkeletonPatternsV1Marker {
     fn bake(&self, env: &crabbake::CrateEnv) -> crabbake::TokenStream {
         env.insert("icu_datetime");
-        env.insert("short_vec");
         crabbake::quote! {
             ::icu_datetime::provider::calendar::DateSkeletonPatternsV1Marker
         }
