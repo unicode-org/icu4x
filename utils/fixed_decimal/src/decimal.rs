@@ -559,7 +559,7 @@ impl FixedDecimal {
         let is_digits_empty = self.digits.is_empty();
 
         for i in (0..self.digits.len()).rev() {
-            let digit = self.digits.get_mut(i).unwrap();
+            let digit = self.digits.get_mut(i).expect("an item from self.digits");
             *digit += 1;
             if *digit < 10 {
                 #[cfg(debug_assertions)]
