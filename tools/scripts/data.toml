@@ -75,6 +75,8 @@ if greater_than ${output_length} 0
 end
 '''
 
+###### END CI TASKS
+
 [tasks.testdata-build-hello-world-json]
 description = "Build the Hello World JSON tree."
 category = "ICU4X Data"
@@ -130,8 +132,6 @@ dependencies = [
     "testdata-build-hello-world-bincode",
     "testdata-build-hello-world-postcard",
 ]
-
-###### END CI TASKS
 
 
 [tasks.full-data]
