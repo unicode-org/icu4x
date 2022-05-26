@@ -6,6 +6,9 @@
 
 mod borrowed;
 pub(crate) mod map;
+
+#[cfg(feature = "crabbake")]
+mod crabbake;
 #[cfg(feature = "serde")]
 mod serde;
 

@@ -263,7 +263,7 @@ where
     /// use icu_provider::yoke::Yoke;
     ///
     /// let payload = DataPayload::<HelloWorldV1Marker>::try_from_yoked_buffer(
-    ///     Yoke::attach_to_cart_badly("{\"message\":\"Hello World\"}".as_bytes().into(), |b| b),
+    ///     Yoke::attach_to_cart("{\"message\":\"Hello World\"}".as_bytes().into(), |b| b),
     ///     (),
     ///     |bytes, _, _| serde_json::from_slice(bytes),
     /// )
@@ -708,7 +708,7 @@ impl DataPayload<BufferMarker> {
     /// can be obtained from a `&[u8]`.
     pub fn from_rc_buffer(buffer: RcWrap) -> Self {
         Self {
-            yoke: Yoke::attach_to_cart_badly(buffer, |b| b).wrap_cart_in_option(),
+            yoke: Yoke::attach_to_cart(buffer, |b| b).wrap_cart_in_option(),
         }
     }
 

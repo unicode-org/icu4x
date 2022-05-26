@@ -77,7 +77,9 @@ impl ResourceProvider<CanonicalDecompositionDataV1Marker> for CanonicalDecomposi
 icu_provider::impl_dyn_provider!(
     CanonicalDecompositionDataProvider,
     [CanonicalDecompositionDataV1Marker,],
+    CRABBAKE,
     SERDE_SE,
+    ITERABLE_CRABBAKE,
     ITERABLE_SERDE_SE,
     DATA_CONVERTER
 );

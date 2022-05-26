@@ -133,7 +133,7 @@ macro_rules! impl_resource_provider {
             }
         )+
 
-        icu_provider::impl_dyn_provider!(CommonDateProvider, [$($marker),+,], SERDE_SE, ITERABLE_SERDE_SE, DATA_CONVERTER);
+        icu_provider::impl_dyn_provider!(CommonDateProvider, [$($marker),+,], CRABBAKE, SERDE_SE, ITERABLE_CRABBAKE, ITERABLE_SERDE_SE, DATA_CONVERTER);
     };
 }
 

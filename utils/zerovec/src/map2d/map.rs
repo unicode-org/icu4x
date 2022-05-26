@@ -136,6 +136,21 @@ where
         }
     }
 
+    #[doc(hidden)] // Crabbake internal
+    pub const unsafe fn from_parts_unchecked(
+        keys0: K0::Container,
+        joiner: ZeroVec<'a, u32>,
+        keys1: K1::Container,
+        values: V::Container,
+    ) -> Self {
+        Self {
+            keys0,
+            joiner,
+            keys1,
+            values,
+        }
+    }
+
     /// Construct a new [`ZeroMap2d`] with a given capacity
     pub fn with_capacity(capacity: usize) -> Self {
         Self {

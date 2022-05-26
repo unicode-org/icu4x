@@ -8,6 +8,7 @@ use icu_provider::export::DataExporter;
 use icu_provider::prelude::*;
 use itertools::Itertools;
 use litemap::LiteMap;
+use rayon::prelude::*;
 use std::collections::HashMap;
 use std::fs::File;
 use std::io::Write;
@@ -24,8 +25,6 @@ macro_rules! move_out {
 
 // TokenStream isn't Send/Sync
 type SyncTokenStream = String;
-// syn::Path also isn't Send/Sync
-type Path = Vec<String>;
 
 #[allow(clippy::type_complexity)]
 pub(crate) struct ConstExporter {
@@ -35,8 +34,6 @@ pub(crate) struct ConstExporter {
     insert_feature_gates: bool,
     // Temporary storage for put_payload: key -> (marker path, options -> bake)
     data: Mutex<LiteMap<ResourceKey, (SyncTokenStream, LiteMap<ResourceOptions, SyncTokenStream>)>>,
-    // (field, module path, marker path) after flushing each key
-    per_key_data: Mutex<Vec<(String, Path, Path)>>,
     // All mod.rs files in the module tree. Because generation is parallel,
     // this will be non-deterministic and have to be sorted later.
     mod_files: Mutex<HashMap<PathBuf, Vec<String>>>,
@@ -52,7 +49,6 @@ impl ConstExporter {
             pretty,
             insert_feature_gates,
             data: Default::default(),
-            per_key_data: Default::default(),
             mod_files: Default::default(),
             dependencies: Default::default(),
         }
@@ -63,25 +59,38 @@ impl ConstExporter {
         path: P,
         data: TokenStream,
     ) -> Result<(), DataError> {
-        let path = self.mod_directory.join(path).with_extension("rs");
+        let path = self.mod_directory.join(path).with_extension("raw");
         std::fs::create_dir_all(&path.parent().unwrap())?;
 
         {
             let mut file = crlify::BufWriterWithLineEndingFix::new(File::create(&path)?);
-            writeln!(file, "// GENERATED MODULE. DO NOT EDIT")?;
+            writeln!(file, "// @generated")?;
             writeln!(file, "{}", data)?;
         }
 
         if self.pretty {
             std::process::Command::new("rustfmt")
-                .arg(path)
+                // When called on a file, rustfmt also formats all submodules.
+                // Because we might have massive submodules that are already
+                // formatted, we don't want this. Currently the only way to
+                // disable this behaviour seems to be to use stdin/stdout.
+                .stdin(std::process::Stdio::from(File::open(&path)?))
+                .stdout(std::process::Stdio::from(File::create(
+                    path.with_extension("rs"),
+                )?))
                 // The default, "auto", is meant to detect the existing line endings and preserve them.
                 // However, this seems to be broken and generates Unix line endings on Windows, which
                 // introduces Git diffs when regenerating.
-                .args(&["--config", "newline_style=native"])
+                .args(&[
+                    "--config",
+                    "newline_style=native,format_generated_files=true,normalize_doc_attributes=true",
+                ])
                 .spawn()
                 .unwrap()
                 .wait()?;
+            std::fs::remove_file(&path)?;
+        } else {
+            std::fs::rename(&path, path.with_extension("rs"))?
         }
         Ok(())
     }
@@ -95,21 +104,18 @@ impl DataExporter<CrabbakeMarker> for ConstExporter {
         payload: DataPayload<CrabbakeMarker>,
     ) -> Result<(), DataError> {
         let (payload, marker_type) = payload.tokenize(&self.dependencies);
+        let payload_string = payload.to_string();
         let mut map = self.data.lock().expect("poison");
         if !map.contains_key(&key) {
             map.insert(key, (marker_type.to_string(), LiteMap::new()));
         }
-        map.get_mut(&key)
-            .unwrap()
-            .1
-            .insert(options, payload.to_string());
+        map.get_mut(&key).unwrap().1.insert(options, payload_string);
         Ok(())
     }
 
     fn flush(&self, key: ResourceKey) -> Result<(), DataError> {
-        if let Some((marker, raw)) = self.data.lock().expect("poison").remove(&key) {
-            let marker = syn::parse_str::<syn::Path>(&marker).unwrap();
-
+        let tmp = self.data.lock().expect("poison").remove(&key);
+        if let Some((marker, raw)) = tmp {
             let mut sorted = raw.into_tuple_vec();
             // Sort by payload bake so we can deduplicate.
             sorted.sort_by(|(_, a), (_, b)| a.cmp(b));
@@ -133,8 +139,11 @@ impl DataExporter<CrabbakeMarker> for ConstExporter {
                         string
                     })
                     .reduce(|mut a, b| {
-                        a.push('_');
-                        a.push_str(&b);
+                        // Cap identifier length at around 35
+                        if a.len() < 35 {
+                            a.push('_');
+                            a.push_str(&b);
+                        }
                         a
                     })
                     .unwrap();
@@ -150,7 +159,7 @@ impl DataExporter<CrabbakeMarker> for ConstExporter {
                 .map(|(ident_string, payload_bake_string)| {
                     let ident = ident_string.parse::<TokenStream>().unwrap();
                     let payload_bake = payload_bake_string.parse::<TokenStream>().unwrap();
-                    quote! { static #ident: DataStruct<#marker> = &#payload_bake; }
+                    quote! { static #ident: DataStruct = &#payload_bake; }
                 });
 
             all_options.sort_unstable_by(|(a, _), (b, _)| a.cmp(b));
@@ -163,7 +172,7 @@ impl DataExporter<CrabbakeMarker> for ConstExporter {
             // a token that is not allowed in an initial position.
             let module_path = syn::parse_str::<syn::Path>(
                 &key.get_path()
-                    .replace('=', "_")
+                    .to_ascii_lowercase()
                     .replace('@', "_v")
                     .replace('/', "::"),
             )
@@ -171,50 +180,73 @@ impl DataExporter<CrabbakeMarker> for ConstExporter {
                 DataError::custom("Key component is not a valid Rust identifier").with_key(key)
             })?;
 
-            // Intialise intermediate "mod.rs"s.
-            let mut path = PathBuf::new();
-            let depth = module_path.segments.len();
-            for i in 1..depth {
-                path = path.join(module_path.segments[i - 1].ident.to_string());
+            let marker = syn::parse_str::<syn::Path>(&marker).unwrap();
 
-                let mod_path = path.join("mod.rs");
+            let feature = if self.insert_feature_gates {
+                let feature = marker.segments.iter().next().unwrap().ident.to_string();
+                quote! { #![cfg(feature = #feature)] }
+            } else {
+                quote!()
+            };
+
+            let mut path = PathBuf::new();
+            let mut supers = quote!();
+            for level in module_path.segments {
                 let mut map = self.mod_files.lock().expect("poison");
-                if !map.contains_key(&mod_path) {
-                    map.insert(mod_path.clone(), Vec::new());
+                if !map.contains_key(&path) {
+                    map.insert(path.clone(), Vec::new());
                 }
-                map.get_mut(&mod_path)
-                    .unwrap()
-                    .push(module_path.segments[i].ident.to_string());
+                map.get_mut(&path).unwrap().push(level.ident.to_string());
+                path = path.join(level.ident.to_string());
+                supers = quote! { super:: #supers };
             }
 
-            path = path
-                .join(module_path.segments[depth - 1].ident.to_string())
-                .with_extension("rs");
-
-            let depth = vec![TokenStream::new(); depth];
+            let struct_type =
+                if key == icu_datetime::provider::calendar::DateSkeletonPatternsV1Marker::KEY {
+                    quote! {
+                        &'static [(
+                            &'static [::icu_datetime::fields::Field],
+                            ::icu_datetime::pattern::runtime::PatternPlurals<'static>
+                        )]
+                    }
+                } else {
+                    quote! {
+                        &'static <#marker as DataMarker>::Yokeable
+                    }
+                };
 
             self.write_to_file(
                 &path,
                 quote! {
-                    use #(super:: #depth)* Data;
-                    use #(super:: #depth)* DataStruct;
-                    pub static VALUES: Data<#marker> = &[#(#all_options),*];
+                    #feature
+
+                    use ::icu_provider::prelude::*;
+
+                    impl ResourceProvider<#marker> for #supers BakedDataProvider {
+                        fn load_resource(
+                            &self,
+                            req: &DataRequest,
+                        ) -> Result<DataResponse<#marker>, DataError> {
+                            static VALUES: &[(&str, DataStruct)] = &[#(#all_options),*];
+                            #[allow(clippy::unwrap_used)] // binary search Ok() is safe to index
+                            let value = VALUES
+                                .binary_search_by(|(k, _)| req.options.cmp_bytes(k.as_bytes()).reverse())
+                                .map(|i| VALUES.get(i).unwrap().1)
+                                .map_err(|_| {
+                                    DataErrorKind::MissingResourceOptions.with_req(<#marker>::KEY, req)
+                                })?;
+                            Ok(DataResponse {
+                                metadata: DataResponseMetadata::default(),
+                                payload: Some(DataPayload::from_owned(zerofrom::ZeroFrom::zero_from(value))),
+                            })
+                        }
+                    }
+
+                    type DataStruct = #struct_type;
+
                     #(#statics)*
                 },
             )?;
-            self.per_key_data.lock().expect("poison").push((
-                key.get_path().replace(&['=', '/'], "_").replace('@', "_v"),
-                module_path
-                    .segments
-                    .into_iter()
-                    .map(|i| i.ident.to_string())
-                    .collect(),
-                marker
-                    .segments
-                    .into_iter()
-                    .map(|i| i.ident.to_string())
-                    .collect(),
-            ));
         }
         Ok(())
     }
@@ -228,111 +260,36 @@ impl DataExporter<CrabbakeMarker> for ConstExporter {
             log::info!("{}", crate_name);
         }
 
-        for (path, mut mods) in self.mod_files.lock().expect("poison").drain() {
-            mods.sort();
-            let mods = mods.into_iter().map(|p| p.parse::<TokenStream>().unwrap());
-            self.write_to_file(
-                &path,
-                quote! {
-                    #(
-                        pub mod #mods;
-                    )*
-                },
-            )?;
-        }
-
-        let mut data = self.per_key_data.lock().expect("poison");
-        // data is populated concurrently, so this is required for stability.
-        data.sort_unstable();
-
-        // One per key
-        let mut module_paths = Vec::new();
-        let mut fields = Vec::new();
-        let mut markers = Vec::new();
-        let mut feature_gates = Vec::new();
-
-        // One per submodule
-        let mut mods = Vec::new();
-
-        for (field, module_path, marker) in data.iter() {
-            let module_path = module_path
-                .iter()
-                .map(|p| syn::parse_str::<syn::Ident>(p).unwrap())
-                .collect::<Vec<_>>();
-            let marker = marker
-                .iter()
-                .map(|m| syn::parse_str::<syn::Ident>(m).unwrap())
-                .collect::<Vec<_>>();
-            module_paths.push(quote! {#(#module_path)::*});
-            fields.push(syn::parse_str::<syn::Ident>(field).unwrap());
-            markers.push(quote! {#(::#marker)*});
-            feature_gates.push(if self.insert_feature_gates {
-                let feature = marker[0].to_string();
-                quote! { #[cfg(feature = #feature)] }
-            } else {
-                quote!()
-            });
-            mods.push(module_path.into_iter().next().unwrap());
-        }
-
-        let mods = mods
-            .into_iter()
-            .zip(feature_gates.iter())
-            .unique_by(|(modd, _)| modd.to_string())
-            .map(|(modd, feature)| {
-                quote! { #feature mod #modd; }
-            });
-
-        self.write_to_file("mod", quote! {
-            type DataStruct<M> = &'static <M as ::icu_provider::DataMarker>::Yokeable;
-            type Options = &'static str;
-            type Data<M> = &'static [(Options, DataStruct<M>)];
-
-            pub struct BakedDataProvider {
-                #(
-                    #feature_gates
-                    #fields: Data<#markers>,
-                )*
-            }
-
-            #(#mods)*
-
-            pub static PROVIDER: &BakedDataProvider = &BakedDataProvider {
-                #(
-                    #feature_gates
-                    #fields: #module_paths::VALUES,
-                )*
-            };
-
-            use ::icu_provider::prelude::*;
-            macro_rules! provider_impl {
-                ($ marker : ty , $ field_name : ident) => {
-                    impl ResourceProvider<$marker> for &'static BakedDataProvider {
-                        fn load_resource(
-                            &self,
-                            req: &DataRequest,
-                        ) -> Result<DataResponse<$marker>, DataError> {
-                            let value = self
-                                .$field_name
-                                .binary_search_by(|(k, _)| req.options.cmp_bytes(k.as_bytes()).reverse())
-                                .map(|i| self.$field_name.get(i).unwrap().1)
-                                .map_err(|_| {
-                                    DataErrorKind::MissingResourceOptions.with_req(<$marker>::KEY, req)
-                                })?;
-                            Ok(DataResponse {
-                                metadata: DataResponseMetadata::default(),
-                                payload: Some(DataPayload::from_owned(zerofrom::ZeroFrom::zero_from(value))),
-                            })
-                        }
+        move_out!(self.mod_files)
+            .into_inner()
+            .expect("poison")
+            .into_par_iter()
+            .try_for_each(|(path, mut mods)| {
+                mods.sort();
+                let mods = mods
+                    .into_iter()
+                    .dedup()
+                    .map(|p| p.parse::<TokenStream>().unwrap());
+                let maybe_decl = if path.as_os_str().is_empty() {
+                    quote! {
+                        /// This data provider was programmatically generated by [`icu_datagen`](
+                        /// https://unicode-org.github.io/icu4x-docs/doc/icu_datagen/enum.Out.html#variant.Module).
+                        #[non_exhaustive]
+                        pub struct BakedDataProvider;
                     }
+                } else {
+                    quote!()
                 };
-            }
-
-            #(
-                #feature_gates
-                provider_impl!(#markers, #fields);
-            )*
-        })?;
+                self.write_to_file(
+                    &path.join("mod"),
+                    quote! {
+                        #maybe_decl
+                        #(
+                            mod #mods;
+                        )*
+                    },
+                )
+            })?;
 
         Ok(())
     }

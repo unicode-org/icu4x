@@ -12,7 +12,11 @@ use zerovec::{ZeroMap, ZeroMap2d, ZeroVec};
 /// See CLDR-JSON timeZoneNames.json for more context.
 #[icu_provider::data_struct(TimeZoneFormatsV1Marker = "time_zone/formats@1")]
 #[derive(PartialEq, Debug, Clone, Default)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize))]
+#[cfg_attr(
+    feature = "datagen",
+    derive(serde::Serialize, crabbake::Bakeable),
+    crabbake(path = icu_datetime::provider::time_zones),
+)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
 pub struct TimeZoneFormatsV1<'data> {
@@ -99,7 +103,11 @@ impl<'a> zerovec::maps::ZeroMapKV<'a> for MetaZoneId {
 /// See CLDR-JSON timeZoneNames.json for more context.
 #[icu_provider::data_struct(ExemplarCitiesV1Marker = "time_zone/exemplar_cities@1")]
 #[derive(PartialEq, Debug, Clone, Default)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize))]
+#[cfg_attr(
+    feature = "datagen",
+    derive(serde::Serialize, crabbake::Bakeable),
+    crabbake(path = icu_datetime::provider::time_zones),
+)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
 pub struct ExemplarCitiesV1<'data>(
@@ -110,7 +118,11 @@ pub struct ExemplarCitiesV1<'data>(
 /// See CLDR-JSON timeZoneNames.json for more context.
 #[icu_provider::data_struct(MetaZoneGenericNamesLongV1Marker = "time_zone/generic_long@1")]
 #[derive(PartialEq, Debug, Clone, Default)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize))]
+#[cfg_attr(
+    feature = "datagen",
+    derive(serde::Serialize, crabbake::Bakeable),
+    crabbake(path = icu_datetime::provider::time_zones),
+)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
 pub struct MetaZoneGenericNamesLongV1<'data> {
@@ -126,7 +138,11 @@ pub struct MetaZoneGenericNamesLongV1<'data> {
 /// See CLDR-JSON timeZoneNames.json for more context.
 #[icu_provider::data_struct(MetaZoneGenericNamesShortV1Marker = "time_zone/generic_short@1")]
 #[derive(PartialEq, Debug, Clone, Default)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize))]
+#[cfg_attr(
+    feature = "datagen",
+    derive(serde::Serialize, crabbake::Bakeable),
+    crabbake(path = icu_datetime::provider::time_zones),
+)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
 pub struct MetaZoneGenericNamesShortV1<'data> {
@@ -143,7 +159,11 @@ pub struct MetaZoneGenericNamesShortV1<'data> {
 /// See CLDR-JSON timeZoneNames.json for more context.
 #[icu_provider::data_struct(MetaZoneSpecificNamesLongV1Marker = "time_zone/specific_long@1")]
 #[derive(PartialEq, Debug, Clone, Default)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize))]
+#[cfg_attr(
+    feature = "datagen",
+    derive(serde::Serialize, crabbake::Bakeable),
+    crabbake(path = icu_datetime::provider::time_zones),
+)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
 pub struct MetaZoneSpecificNamesLongV1<'data> {
@@ -160,7 +180,11 @@ pub struct MetaZoneSpecificNamesLongV1<'data> {
 /// See CLDR-JSON timeZoneNames.json for more context.
 #[icu_provider::data_struct(MetaZoneSpecificNamesShortV1Marker = "time_zone/specific_short@1")]
 #[derive(PartialEq, Debug, Clone, Default)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize))]
+#[cfg_attr(
+    feature = "datagen",
+    derive(serde::Serialize, crabbake::Bakeable),
+    crabbake(path = icu_datetime::provider::time_zones),
+)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
 pub struct MetaZoneSpecificNamesShortV1<'data> {

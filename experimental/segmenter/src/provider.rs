@@ -18,7 +18,11 @@ use zerovec::{ZeroSlice, ZeroVec};
     SentenceBreakDataV1Marker = "segmenter/sentence@1"
 )]
 #[derive(Debug, PartialEq, Clone)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize))]
+#[cfg_attr(
+    feature = "datagen",
+    derive(serde::Serialize,crabbake::Bakeable),
+    crabbake(path = icu_segmenter::provider),
+)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct RuleBreakDataV1<'data> {
     /// Property table for rule-based breaking.
@@ -40,7 +44,11 @@ pub struct RuleBreakDataV1<'data> {
 
 /// Property table for rule-based breaking.
 #[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize))]
+#[cfg_attr(
+    feature = "datagen",
+    derive(serde::Serialize,crabbake::Bakeable),
+    crabbake(path = icu_segmenter::provider),
+)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct RuleBreakPropertyTable<'data>(
     #[cfg_attr(feature = "serde", serde(borrow))] pub CodePointTrie<'data, u8>,
@@ -48,7 +56,11 @@ pub struct RuleBreakPropertyTable<'data>(
 
 /// Break state table for rule-based breaking.
 #[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize))]
+#[cfg_attr(
+    feature = "datagen",
+    derive(serde::Serialize,crabbake::Bakeable),
+    crabbake(path = icu_segmenter::provider),
+)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct RuleBreakStateTable<'data>(
     #[cfg_attr(feature = "serde", serde(borrow))] pub ZeroVec<'data, i8>,
@@ -57,7 +69,11 @@ pub struct RuleBreakStateTable<'data>(
 /// char16trie data for dictionary break
 #[icu_provider::data_struct(UCharDictionaryBreakDataV1Marker = "segmenter/char16trie@1")]
 #[derive(Debug, PartialEq, Clone)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize))]
+#[cfg_attr(
+    feature = "datagen",
+    derive(serde::Serialize,crabbake::Bakeable),
+    crabbake(path = icu_segmenter::provider),
+)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct UCharDictionaryBreakDataV1<'data> {
     /// Dictionary data of char16trie.

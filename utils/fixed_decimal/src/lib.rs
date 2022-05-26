@@ -51,6 +51,7 @@
 )]
 
 pub mod decimal;
+mod ops;
 pub mod signum;
 mod uint_iterator;
 

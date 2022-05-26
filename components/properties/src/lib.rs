@@ -84,6 +84,7 @@ mod error;
 pub mod maps;
 mod props;
 pub mod provider;
+#[allow(clippy::exhaustive_structs)] // TODO
 pub mod script;
 pub mod sets;
 mod trievalue;

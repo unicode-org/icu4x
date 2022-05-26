@@ -256,6 +256,15 @@ impl<'a, T: VarULE + ?Sized> VarZeroVec<'a, T> {
         Ok(VarZeroVec::Borrowed(borrowed))
     }
 
+    /// Uses a `&[u8]` buffer as a `VarZeroVec<T>` without any verification.
+    ///
+    /// # Safety
+    ///
+    /// `bytes` need to be an output from [`VarZeroSlice::as_bytes()`].
+    pub const unsafe fn from_bytes_unchecked(bytes: &'a [u8]) -> Self {
+        Self::Borrowed(core::mem::transmute(bytes))
+    }
+
     /// Convert this into a mutable vector of the owned `T` type, cloning if necessary.
     ///
     ///

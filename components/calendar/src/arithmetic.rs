@@ -10,7 +10,12 @@ pub mod week_of {
 
     /// Information about how a given calendar assigns weeks to a year or month.
     #[derive(Clone, Copy, Debug)]
-    #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+    #[cfg_attr(
+        feature = "datagen",
+        derive(serde::Serialize, crabbake::Bakeable),
+        crabbake(path = icu_calendar::arithmetic::week_of),
+    )]
+    #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
     #[allow(clippy::exhaustive_structs)] // this type is stable
     pub struct CalendarInfo {
         /// The first day of a week.

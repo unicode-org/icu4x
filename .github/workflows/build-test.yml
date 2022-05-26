@@ -150,16 +150,16 @@ jobs:
       run: rustup show
     - name: Load cortex target for no_std build.
       run: |
-        rustup install nightly-2022-01-31
-        rustup component add --toolchain nightly-2022-01-31 rust-src
-        rustup target add thumbv7m-none-eabi --toolchain nightly-2022-01-31
-        rustup target add thumbv8m.main-none-eabihf --toolchain nightly-2022-01-31
-        rustup target add x86_64-unknown-linux-gnu --toolchain nightly-2022-01-31
-    - name: Set up Clang-13
+        rustup install nightly-2022-04-05
+        rustup component add --toolchain nightly-2022-04-05 rust-src
+        rustup target add thumbv7m-none-eabi --toolchain nightly-2022-04-05
+        rustup target add thumbv8m.main-none-eabihf --toolchain nightly-2022-04-05
+        rustup target add x86_64-unknown-linux-gnu --toolchain nightly-2022-04-05
+    - name: Set up Clang-14
       run: |
         wget https://apt.llvm.org/llvm.sh
         chmod +x llvm.sh
-        sudo ./llvm.sh 13
+        sudo ./llvm.sh 14
     - name: Get cargo-make version
       id: cargo-make-version
       run: |
@@ -282,10 +282,10 @@ jobs:
       - uses: actions/checkout@v2
       - name: Load nightly Rust toolchain for WASM.
         run: |
-          rustup install nightly-2022-01-31
-          rustup target add wasm32-unknown-unknown --toolchain nightly-2022-01-31
-          rustup target add wasm32-unknown-emscripten --toolchain nightly-2022-01-31
-          rustup component add rust-src --toolchain nightly-2022-01-31
+          rustup install nightly-2022-04-05
+          rustup target add wasm32-unknown-unknown --toolchain nightly-2022-04-05
+          rustup target add wasm32-unknown-emscripten --toolchain nightly-2022-04-05
+          rustup component add rust-src --toolchain nightly-2022-04-05
 
       - name: Install npm dependencies from cache
         uses: actions/cache@v2
@@ -685,12 +685,12 @@ jobs:
       # then this line is no longer needed.
       - uses: actions-rs/toolchain@v1
         with:
-          toolchain: nightly-2022-01-31
+          toolchain: nightly-2022-04-05
           override: true
 
       - name: Run the example with dhat-rs to collect memory information
         run: |
-          cargo run --package icu_benchmark_memory -- --os ${{ matrix.os }} ${{ matrix.examples }} --toolchain nightly-2022-01-31
+          cargo run --package icu_benchmark_memory -- --os ${{ matrix.os }} ${{ matrix.examples }} --toolchain nightly-2022-04-05
 
       # Benchmarking & dashboards job > (unmerged PR only) Convert benchmark output into
       # dashboard HTML in a commit of a branch of the local repo.
@@ -840,8 +840,8 @@ jobs:
     - name: Install prerequisites for wasm build
       run: |
         rustup toolchain list
-        rustup toolchain install nightly-2022-01-31
-        rustup component add --toolchain nightly-2022-01-31 rust-src
+        rustup toolchain install nightly-2022-04-05
+        rustup component add --toolchain nightly-2022-04-05 rust-src
 
     - name: Setup output data directory
       run: |

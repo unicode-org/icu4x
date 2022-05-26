@@ -19,10 +19,10 @@ pub enum PropertiesError {
     /// An error occurred while loading data
     #[displaydoc("{0}")]
     PropDataLoad(DataError),
-    /// An unknown value was used for the [`Script`] property
+    /// An unknown value was used for the [`Script`](crate::Script) property
     #[displaydoc("Unknown script id: {0}")]
     UnknownScriptId(u16),
-    /// An unknown value was used for the [`GeneralCategoryGroup`] property
+    /// An unknown value was used for the [`GeneralCategoryGroup`](crate::GeneralCategoryGroup) property
     #[displaydoc("Unknown general category group: {0}")]
     UnknownGeneralCategoryGroup(u32),
 }
