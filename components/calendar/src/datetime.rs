@@ -77,6 +77,7 @@ where
     }
 }
 
+// We can do this since DateInner is required to be Eq by the Calendar trait
 impl<A: AsCalendar> Eq for DateTime<A> {}
 
 impl<A: AsCalendar + Clone> Clone for DateTime<A> {
