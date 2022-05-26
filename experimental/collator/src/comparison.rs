@@ -20,7 +20,7 @@ use crate::provider::CollationJamoV1Marker;
 use crate::provider::CollationMetadataV1Marker;
 use crate::provider::CollationReorderingV1Marker;
 use crate::provider::CollationSpecialPrimariesV1Marker;
-use crate::{AlternateHandling, CollatorOptions, Strength};
+use crate::{AlternateHandling, CollatorOptions, MaxVariable, Strength};
 use alloc::string::ToString;
 use core::char::{decode_utf16, DecodeUtf16Error, REPLACEMENT_CHARACTER};
 use core::cmp::Ordering;
@@ -224,6 +224,11 @@ impl Collator {
             let special_primaries: DataPayload<CollationSpecialPrimariesV1Marker> = data_provider
                 .load_resource(&DataRequest::default())?
                 .take_payload()?;
+            // `variant_count` isn't stable yet:
+            // https://github.com/rust-lang/rust/issues/73662
+            if special_primaries.get().last_primaries.len() <= (MaxVariable::Currency as usize) {
+                return Err(CollatorError::MalformedData);
+            }
             Some(special_primaries)
         } else {
             None

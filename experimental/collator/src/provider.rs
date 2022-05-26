@@ -269,6 +269,8 @@ pub struct CollationSpecialPrimariesV1<'data> {
 
 impl<'data> CollationSpecialPrimariesV1<'data> {
     pub(crate) fn last_primary_for_group(&self, max_variable: MaxVariable) -> u32 {
+        // `unwrap` is OK, because `Collator::try_new` validates the length.
+        //
         // Minus one to generate the right lower 16 bits from the high 16 bits.
         // See parse.cpp in genrb and getLastPrimaryForGroup in ICU4C.
         (u32::from(self.last_primaries.get(max_variable as usize).unwrap()) << 16) - 1
