@@ -39,7 +39,7 @@ impl PluralsProvider {
             CardinalV1Marker::KEY => {
                 #[allow(clippy::unwrap_used)]
                 // TODO(#1668) Clippy exceptions need docs or fixing.
-                if self.cardinal_rules.read().unwrap().is_none() {
+                if self.cardinal_rules.read().expect("poison").is_none() {
                     let path = self
                         .source
                         .get_cldr_paths()?
@@ -52,17 +52,17 @@ impl PluralsProvider {
                     let _ = self
                         .cardinal_rules
                         .write()
-                        .unwrap()
+                        .expect("poison")
                         .get_or_insert(data.supplemental.plurals_type_cardinal);
                 }
                 #[allow(clippy::unwrap_used)]
                 // TODO(#1668) Clippy exceptions need docs or fixing.
-                self.cardinal_rules.read().unwrap()
+                self.cardinal_rules.read().expect("poison")
             }
             OrdinalV1Marker::KEY => {
                 #[allow(clippy::unwrap_used)]
                 // TODO(#1668) Clippy exceptions need docs or fixing.
-                if self.ordinal_rules.read().unwrap().is_none() {
+                if self.ordinal_rules.read().expect("poison").is_none() {
                     let path = self
                         .source
                         .get_cldr_paths()?
@@ -75,12 +75,12 @@ impl PluralsProvider {
                     let _ = self
                         .ordinal_rules
                         .write()
-                        .unwrap()
+                        .expect("poison")
                         .get_or_insert(data.supplemental.plurals_type_ordinal);
                 }
                 #[allow(clippy::unwrap_used)]
                 // TODO(#1668) Clippy exceptions need docs or fixing.
-                self.ordinal_rules.read().unwrap()
+                self.ordinal_rules.read().expect("poison")
             }
             _ => return Err(DataError::custom("Unknown key for PluralRulesV1")),
         })

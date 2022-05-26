@@ -41,7 +41,7 @@ impl DataExporter<SerializeMarker> for BlobExporter<'_> {
             output: postcard::flavors::AllocVec(Vec::new()),
         };
         payload.serialize(&mut serializer)?;
-        self.resources.lock().unwrap().push((
+        self.resources.lock().expect("poison").push((
             key.get_hash(),
             options.write_to_string().into_owned().into_bytes(),
             serializer.output.0,
@@ -54,7 +54,7 @@ impl DataExporter<SerializeMarker> for BlobExporter<'_> {
         let zm = self
             .resources
             .get_mut()
-            .unwrap()
+            .expect("poison")
             .drain(..)
             .collect::<ZeroMap2d<_, _, _>>();
 

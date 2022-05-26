@@ -40,16 +40,16 @@ impl ResourceProvider<CanonicalDecompositionDataV1Marker> for CanonicalDecomposi
         &self,
         _req: &DataRequest,
     ) -> Result<DataResponse<CanonicalDecompositionDataV1Marker>, DataError> {
-        if self.data.read().unwrap().is_none() {
+        if self.data.read().expect("poison").is_none() {
             let path_buf = self.source.get_uprops_root()?.join("decompositions.toml");
             let path: &Path = &path_buf;
             let toml_str = read_path_to_string(path)?;
             let toml_obj: CanonicalDecompositionData = toml::from_str(&toml_str)
                 .map_err(|e| crate::error::data_error_from_toml(e).with_path_context(path))?;
-            *self.data.write().unwrap() = Some(toml_obj);
+            *self.data.write().expect("poison") = Some(toml_obj);
         }
 
-        let guard = self.data.read().unwrap();
+        let guard = self.data.read().expect("poison");
 
         let toml_data = guard.as_ref().unwrap();
 

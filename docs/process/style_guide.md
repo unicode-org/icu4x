@@ -773,6 +773,10 @@ This should not include the contract of code in a different Crate. I.e. if a fun
 
 See also: the [Panics](#Panics--required) section of this document.
 
+#### Exception: Poison
+
+The `lock`, `read`, and `write` methods on `Mutex` and `RwLock` return `Result`s in case the lock got poisoned. This happens when the process holding the lock panics, so it is fine to panic when encountering a poison. For consistency we require poisons to be handled with `.expect("poison")`.
+
 ### Don't Handle Errors :: suggested
 
 Functions which can error for any reason must return a `Result`, and APIs should be designed such that you should not generally need to recover from an [Err](https://doc.rust-lang.org/std/result/enum.Result.html#variant.Err) internally (which should normally be immediately propagated up to the user by using the [`?` operator](https://doc.rust-lang.org/edition-guide/rust-2018/error-handling-and-panics/the-question-mark-operator-for-easier-error-handling.html)). I.e. don't generally write library code which recovers from its own "errors", since if it can be recovered from, then it wasn't an "error".
