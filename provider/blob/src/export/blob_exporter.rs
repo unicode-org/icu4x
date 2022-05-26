@@ -28,7 +28,6 @@ impl<'w> BlobExporter<'w> {
 }
 
 impl DataExporter for BlobExporter<'_> {
-    #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
     fn put_payload(
         &self,
         key: ResourceKey,
@@ -40,7 +39,8 @@ impl DataExporter for BlobExporter<'_> {
             output: postcard::flavors::AllocVec(Vec::new()),
         };
         payload.serialize(&mut serializer)?;
-        self.resources.lock().unwrap().push((
+        #[allow(clippy::expect_used)]
+        self.resources.lock().expect("poison").push((
             key.get_hash(),
             options.write_to_string().into_owned().into_bytes(),
             serializer.output.0,
@@ -48,12 +48,12 @@ impl DataExporter for BlobExporter<'_> {
         Ok(())
     }
 
-    #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
     fn close(&mut self) -> Result<(), DataError> {
+        #[allow(clippy::expect_used)]
         let zm = self
             .resources
             .get_mut()
-            .unwrap()
+            .expect("poison")
             .drain(..)
             .collect::<ZeroMap2d<_, _, _>>();
 
