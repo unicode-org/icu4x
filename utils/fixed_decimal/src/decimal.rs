@@ -795,7 +795,7 @@ impl FixedDecimal {
             return;
         }
 
-        assert!(self.digits.is_empty());
+        debug_assert!(self.digits.is_empty());
         self.digits.push(1);
         self.magnitude = n;
 
