@@ -12,7 +12,6 @@ use icu_provider::hello_world::HelloWorldV1Marker;
 use icu_provider::prelude::*;
 use icu_provider_fs::export::serializers::{bincode, json, postcard};
 use simple_logger::SimpleLogger;
-use std::fs::File;
 use std::path::PathBuf;
 use std::str::FromStr;
 
@@ -135,12 +134,11 @@ fn main() -> eyre::Result<()> {
                 ),
         )
         .arg(
-            Arg::with_name("KEY_FILE")
-                .long("key-file")
+            Arg::with_name("BINARY")
+                .long("binary")
                 .takes_value(true)
                 .help(
-                    "Path to text file with resource keys to include, one per line. Empty lines \
-                    and lines starting with '#' are ignored. Also see --key.",
+                    "Path to a binary. All keys used by the binary will be selected. Also see --key.",
                 ),
         )
         .arg(
@@ -156,7 +154,7 @@ fn main() -> eyre::Result<()> {
         .group(
             ArgGroup::with_name("KEY_MODE")
                 .arg("KEYS")
-                .arg("KEY_FILE")
+                .arg("BINARY")
                 .arg("HELLO_WORLD")
                 .arg("ALL_KEYS")
                 .required(true),
@@ -232,10 +230,8 @@ fn main() -> eyre::Result<()> {
         vec![HelloWorldV1Marker::KEY]
     } else if let Some(paths) = matches.values_of("KEYS") {
         icu_datagen::keys(&paths.collect::<Vec<_>>())
-    } else if let Some(key_file_path) = matches.value_of_os("KEY_FILE") {
-        File::open(key_file_path)
-            .and_then(icu_datagen::keys_from_file)
-            .with_context(|| key_file_path.to_string_lossy().into_owned())?
+    } else if let Some(binary_path) = matches.value_of_os("BINARY") {
+        icu_datagen::keys_from_bin(binary_path).unwrap() // cannot use eyre for Box<dyn Error>
     } else {
         unreachable!();
     };

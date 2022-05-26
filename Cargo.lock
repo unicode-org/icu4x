@@ -1462,6 +1462,7 @@ dependencies = [
  "proc-macro2",
  "quote",
  "rayon",
+ "rust-strings",
  "serde",
  "serde-aux",
  "serde_json",
@@ -2654,6 +2655,12 @@ dependencies = [
  "quote",
  "syn",
 ]
+
+[[package]]
+name = "rust-strings"
+version = "0.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "3a0698250b42f25f68be9a9510f9bbadc78ffb3387d94d9f5255a81d6bde5854"
 
 [[package]]
 name = "rustc-demangle"

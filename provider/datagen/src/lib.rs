@@ -75,8 +75,7 @@ use icu_provider_adapters::filter::Filterable;
 use icu_provider_fs::export::serializers;
 use rayon::prelude::*;
 use std::collections::HashSet;
-use std::io::{BufRead, BufReader, Read};
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 
 /// Parses a list of human-readable key identifiers and returns a
 /// list of [`ResourceKey`]s. Invalid key names are ignored.
@@ -100,23 +99,18 @@ pub fn keys<S: AsRef<str>>(strings: &[S]) -> Vec<ResourceKey> {
         .collect()
 }
 
-/// Parses a file of human-readable key identifiers and returns a
-/// list of [`ResourceKey`]s. Invalid key names are ignored.
+/// Parses a compiled binary and returns a list of used [`ResourceKey`]s. Unknown
+/// key names are ignored.
 ///
 /// # Example
 ///
-/// #### keys.txt
-/// ```text
-/// list/and@1
-/// list/or@1
-/// ```
 /// #### build.rs
 /// ```no_run
 /// # use icu_provider::ResourceMarker;
 /// # use std::fs::File;
-/// # fn main() -> std::io::Result<()> {
+/// # fn main() -> Result<(), Box<dyn std::error::Error>> {
 /// assert_eq!(
-///     icu_datagen::keys_from_file(File::open("keys.txt")?)?,
+///     icu_datagen::keys_from_bin("target/release/my-app")?,
 ///     vec![
 ///         icu_list::provider::AndListV1Marker::KEY,
 ///         icu_list::provider::OrListV1Marker::KEY,
@@ -125,10 +119,42 @@ pub fn keys<S: AsRef<str>>(strings: &[S]) -> Vec<ResourceKey> {
 /// # Ok(())
 /// # }
 /// ```
-pub fn keys_from_file<R: Read>(file: R) -> std::io::Result<Vec<ResourceKey>> {
-    let keys = BufReader::new(file)
-        .lines()
-        .collect::<std::io::Result<HashSet<String>>>()?;
+pub fn keys_from_bin<P: AsRef<Path>>(
+    path: P,
+) -> Result<Vec<ResourceKey>, Box<dyn std::error::Error>> {
+    let strings = rust_strings::strings(
+        &rust_strings::FileConfig::new(&path.as_ref().as_os_str().to_string_lossy())
+            .with_min_length(
+                icu_provider::leading_tag!().len() + 1 + icu_provider::trailing_tag!().len(),
+            ),
+    )?;
+
+    let keys = strings
+        .iter()
+        .flat_map(|(string, _)| {
+            if let Some(with_trailing) = string.strip_prefix(icu_provider::leading_tag!()) {
+                with_trailing
+                    .find(icu_provider::trailing_tag!())
+                    .map(|end| &with_trailing[..end])
+                    .into_iter()
+                    .collect::<Vec<_>>()
+            } else {
+                string
+                    .split(icu_provider::leading_tag!())
+                    // The string doesn't start with the leading tag, so the first element
+                    // is garbage
+                    .skip(1)
+                    .flat_map(|with_trailing| {
+                        with_trailing
+                            .find(icu_provider::trailing_tag!())
+                            .map(|end| &with_trailing[..end])
+                            .into_iter()
+                    })
+                    .collect::<Vec<_>>()
+            }
+            .into_iter()
+        })
+        .collect::<HashSet<&str>>();
     Ok(get_all_keys()
         .into_iter()
         .filter(|k| keys.contains(k.get_path()))
@@ -298,13 +324,10 @@ fn test_keys() {
 }
 
 #[test]
-fn test_keys_from_file() {
-    let file = std::fs::File::open(
-        PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("tests/testdata/work_log+keys.txt"),
-    )
-    .unwrap();
+fn test_keys_from_bin() {
     assert_eq!(
-        keys_from_file(file).unwrap(),
+        keys_from_bin(PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("tests/data/work_log.wasm"))
+            .unwrap(),
         vec![
             icu_datetime::provider::calendar::DatePatternsV1Marker::KEY,
             icu_datetime::provider::calendar::DateSkeletonPatternsV1Marker::KEY,
