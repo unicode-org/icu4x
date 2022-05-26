@@ -60,7 +60,10 @@ export = [
     "bincode",
     "postcard",
     "crlify",
-    "icu_provider/datagen"
+    "icu_provider/datagen",
+    "icu_provider/deserialize_json",
+    "icu_provider/deserialize_bincode_1",
+    "icu_provider/deserialize_postcard_07",
 ]
 bench = []
 
