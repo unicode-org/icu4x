@@ -75,7 +75,7 @@ macro_rules! impl_resource_provider {
                         )
                     };
 
-                    if self.bcp47_tzid_data.read().unwrap().len() == 0 {
+                    if self.bcp47_tzid_data.read().expect("poison").len() == 0 {
                         let bcp47_time_zone_path = self
                             .source
                             .get_cldr_paths()?
@@ -88,7 +88,7 @@ macro_rules! impl_resource_provider {
                                 .map_err(|e| DataError::from(e).with_path_context(&bcp47_time_zone_path))?;
                         let r = resource.keyword.u.time_zones.values;
 
-                        let mut data_guard = self.bcp47_tzid_data.write().unwrap();
+                        let mut data_guard = self.bcp47_tzid_data.write().expect("poison");
                         for (bcp47_tzid, bcp47_tzid_data) in r.iter() {
                             if let Some(alias) = &bcp47_tzid_data.alias {
                                 for data_value in alias.split(" ") {
@@ -98,7 +98,7 @@ macro_rules! impl_resource_provider {
                         }
                     }
 
-                    if self.meta_zone_id_data.read().unwrap().len() == 0 {
+                    if self.meta_zone_id_data.read().expect("poison").len() == 0 {
                         let meta_zone_id_path = self
                             .source
                             .get_cldr_paths()?
@@ -111,7 +111,7 @@ macro_rules! impl_resource_provider {
                                 .map_err(|e| DataError::from(e).with_path_context(&meta_zone_id_path))?;
                         let r = resource.supplemental.meta_zones.meta_zone_ids.0;
 
-                        let mut data_guard = self.meta_zone_id_data.write().unwrap();
+                        let mut data_guard = self.meta_zone_id_data.write().expect("poison");
                         for (meta_zone_id, meta_zone_id_data) in r.iter() {
                             data_guard.insert(meta_zone_id_data.long_id.to_string(), *meta_zone_id);
                         }
@@ -119,8 +119,8 @@ macro_rules! impl_resource_provider {
 
                     let cldr_time_zones_data = CldrTimeZonesData {
                         time_zone_names,
-                        bcp47_tzids: &self.bcp47_tzid_data.read().unwrap(),
-                        meta_zone_ids: &self.meta_zone_id_data.read().unwrap(),
+                        bcp47_tzids: &self.bcp47_tzid_data.read().expect("poison"),
+                        meta_zone_ids: &self.meta_zone_id_data.read().expect("poison"),
                     };
 
                     let metadata = DataResponseMetadata::default();

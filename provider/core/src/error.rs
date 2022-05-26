@@ -54,12 +54,6 @@ pub enum DataErrorKind {
     #[displaydoc("Missing payload")]
     MissingPayload,
 
-    /// An error involving a lock or mutex occurred.
-    ///
-    /// Check debug logs for potentially more information.
-    #[displaydoc("Mutex error")]
-    Mutex,
-
     /// A data provider object was given to an operation in an invalid state.
     #[displaydoc("Invalid state")]
     InvalidState,
@@ -279,15 +273,5 @@ impl From<std::io::Error> for DataError {
         #[cfg(feature = "log_error_context")]
         log::warn!("I/O error: {}", e);
         DataErrorKind::Io(e.kind()).into_error()
-    }
-}
-
-#[cfg(feature = "std")]
-impl<T> From<std::sync::PoisonError<T>> for DataError {
-    #[cfg_attr(not(feature = "log_error_context"), allow(unused_variables))]
-    fn from(e: std::sync::PoisonError<T>) -> Self {
-        #[cfg(feature = "log_error_context")]
-        log::warn!("Poison error: {}", e);
-        DataErrorKind::Mutex.into_error()
     }
 }
