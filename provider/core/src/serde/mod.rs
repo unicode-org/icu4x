@@ -6,7 +6,8 @@
 //!
 //! Providers that produce opaque buffers that need to be deserialized into concrete data structs,
 //! such as `FsDataProvider`, should implement [`BufferProvider`]. These can be converted into
-//! [`DeserializingBufferProvider`] using the [`as_deserializing`] convenience method.
+//! [`DeserializingBufferProvider`] using the [`as_deserializing`](AsDeserializingBufferProvider::as_deserializing)
+//! convenience method.
 //!
 //! [`BufferProvider`]: crate::buf::BufferProvider
 

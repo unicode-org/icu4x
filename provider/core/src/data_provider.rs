@@ -843,7 +843,7 @@ fn test_debug() {
 /// Unlike [`ResourceProvider`], there may be multiple keys corresponding to the same data type.
 /// This is often the case when returning `dyn` trait objects such as [`AnyMarker`].
 ///
-/// [`SerializeMarker`]: crate::any::AnyMarker
+/// [`AnyMarker`]: crate::any::AnyMarker
 pub trait DynProvider<M>
 where
     M: DataMarker,

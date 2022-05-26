@@ -242,7 +242,7 @@ pub fn datagen(
                         .map_err(|e| e.with_req(key, &req))?;
                     exporters
                         .par_iter()
-                        .try_for_each(|e| Ok(e.put_payload(key, &options, &payload)?))
+                        .try_for_each(|e| e.put_payload(key, &options, &payload))
                 })
             }
             Err(e)
