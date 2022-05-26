@@ -150,7 +150,7 @@ where
     fn supported_options_for_key(
         &self,
         key: ResourceKey,
-    ) -> Result<std::vec::Vec<ResourceOptions>, DataError> {
+    ) -> Result<alloc::vec::Vec<ResourceOptions>, DataError> {
         self.inner.supported_options_for_key(key).map(|vec| {
             // Use filter_map instead of filter to avoid cloning the options
             vec.into_iter()
@@ -177,7 +177,7 @@ where
     F: Fn(&DataRequest) -> bool,
     D: datagen::IterableResourceProvider<M>,
 {
-    fn supported_options(&self) -> Result<std::vec::Vec<ResourceOptions>, DataError> {
+    fn supported_options(&self) -> Result<alloc::vec::Vec<ResourceOptions>, DataError> {
         self.inner.supported_options().map(|vec| {
             // Use filter_map instead of filter to avoid cloning the options
             vec.into_iter()

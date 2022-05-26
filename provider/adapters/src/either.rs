@@ -83,7 +83,7 @@ impl<M: DataMarker, P0: datagen::IterableDynProvider<M>, P1: datagen::IterableDy
     fn supported_options_for_key(
         &self,
         key: ResourceKey,
-    ) -> Result<std::vec::Vec<ResourceOptions>, DataError> {
+    ) -> Result<alloc::vec::Vec<ResourceOptions>, DataError> {
         use EitherProvider::*;
         match self {
             A(p) => p.supported_options_for_key(key),
@@ -100,7 +100,7 @@ impl<
     > datagen::IterableResourceProvider<M> for EitherProvider<P0, P1>
 {
     #[inline]
-    fn supported_options(&self) -> Result<std::vec::Vec<ResourceOptions>, DataError> {
+    fn supported_options(&self) -> Result<alloc::vec::Vec<ResourceOptions>, DataError> {
         use EitherProvider::*;
         match self {
             A(p) => p.supported_options(),
