@@ -74,7 +74,7 @@ where
 ///     fn supported_options(
 ///         &self,
 ///     ) -> Result<Vec<ResourceOptions>, DataError> {
-///         Ok(Box::new(core::iter::once(Default::default())))
+///         Ok(vec![Default::default()])
 ///     }
 /// }
 ///
@@ -124,7 +124,7 @@ where
 /// impl IterableDynProvider<HelloWorldV1Marker> for MyProvider {
 ///     fn supported_options_for_key(&self, _: ResourceKey)
 ///         -> Result<Vec<ResourceOptions>, DataError> {
-///         Ok(Box::new(core::iter::once(Default::default())))
+///         Ok(vec![Default::default()])
 ///     }
 /// }
 ///

@@ -63,16 +63,18 @@ impl DataPayload<ExportMarker> {
     /// # Examples
     ///
     /// ```
+    /// use icu_provider::datagen::*;
+    /// use icu_provider::dynutil::UpcastDataPayload;
     /// use icu_provider::hello_world::HelloWorldV1Marker;
     /// use icu_provider::prelude::*;
     ///
     /// // Create an example DataPayload
     /// let payload: DataPayload<HelloWorldV1Marker> = Default::default();
+    /// let export: DataPayload<ExportMarker> = UpcastDataPayload::upcast(payload);
     ///
     /// // Serialize the payload to a JSON string
     /// let mut buffer: Vec<u8> = vec![];
-    /// payload
-    ///     .into_serializable()
+    /// export
     ///     .serialize(&mut serde_json::Serializer::new(&mut buffer))
     ///     .expect("Serialization should succeed");
     /// assert_eq!("{\"message\":\"(und) Hello World\"}".as_bytes(), buffer);
@@ -93,6 +95,8 @@ impl DataPayload<ExportMarker> {
     /// # Examples
     ///
     /// ```
+    /// use icu_provider::datagen::*;
+    /// use icu_provider::dynutil::UpcastDataPayload;
     /// use icu_provider::hello_world::HelloWorldV1Marker;
     /// use icu_provider::prelude::*;
     /// # use crabbake::quote;
@@ -100,7 +104,7 @@ impl DataPayload<ExportMarker> {
     ///
     /// // Create an example DataPayload
     /// let payload: DataPayload<HelloWorldV1Marker> = Default::default();
-    /// let export: DataPayload<ExportMarker> = payload.upcast();
+    /// let export: DataPayload<ExportMarker> = UpcastDataPayload::upcast(payload);
     ///
     /// let env = crabbake::CrateEnv::default();
     /// let (tokens, marker) = export.tokenize(&env);

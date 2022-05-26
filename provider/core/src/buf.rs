@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! Traits for data providers that produce opaque buffers.
+//! Trait for data providers that produce opaque buffers.
 
 use crate::prelude::*;
 
@@ -20,6 +20,8 @@ impl DataMarker for BufferMarker {
 /// enabling at least one of the Serde features.
 ///
 /// Along with [`ResourceProvider`], this is one of the two foundational traits in this crate.
+///
+/// [`BufferProvider`] can be made into a trait object. It is used over FFI.
 ///
 /// # Examples
 ///
