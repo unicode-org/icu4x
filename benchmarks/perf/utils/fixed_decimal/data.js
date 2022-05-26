@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1653586559695,
+  "lastUpdate": 1653586621396,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -28409,6 +28409,66 @@ window.BENCHMARK_DATA = {
             "name": "from_string/1000000001",
             "value": 76,
             "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "72d94a270fe2ea80dfaecc9051c6b8a7412b5a0e",
+          "message": "Remove lifetime from ZeroVecLike (#1901)",
+          "timestamp": "2022-05-26T12:24:43-05:00",
+          "tree_id": "f04bbefbd4c6f931187bfd75997b7f2d3da05d3a",
+          "url": "https://github.com/unicode-org/icu4x/commit/72d94a270fe2ea80dfaecc9051c6b8a7412b5a0e"
+        },
+        "date": 1653586595736,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 114996,
+            "range": "± 3462",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 25105,
+            "range": "± 846",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 66485,
+            "range": "± 1168",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 215,
+            "range": "± 3",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 97,
+            "range": "± 2",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 85,
+            "range": "± 3",
             "unit": "ns/iter"
           }
         ]
