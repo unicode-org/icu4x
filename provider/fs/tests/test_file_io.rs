@@ -43,23 +43,14 @@ fn test_provider() {
 
 #[test]
 fn test_errors() {
-    pub struct HelloWorldV0Marker;
-    impl DataMarker for HelloWorldV0Marker {
-        type Yokeable = HelloWorldV1<'static>;
-    }
-    impl ResourceMarker for HelloWorldV0Marker {
-        const KEY: ResourceKey = resource_key!("core/helloworld@0");
-    }
-
-    let req = DataRequest {
-        options: langid!("zh-DE").into(),
-        metadata: Default::default(),
-    };
-
     for path in PATHS {
         let provider = FsDataProvider::try_new(path).unwrap();
 
-        let err: Result<DataResponse<HelloWorldV1Marker>, DataError> = provider.load_resource(&req);
+        let err: Result<DataResponse<HelloWorldV1Marker>, DataError> =
+            provider.load_resource(&DataRequest {
+                options: langid!("zh-DE").into(),
+                metadata: Default::default(),
+            });
 
         assert!(
             matches!(
@@ -73,7 +64,16 @@ fn test_errors() {
             err
         );
 
-        let err: Result<DataResponse<HelloWorldV0Marker>, DataError> = provider.load_resource(&req);
+        struct WrongV1Marker;
+        impl DataMarker for WrongV1Marker {
+            type Yokeable = HelloWorldV1<'static>;
+        }
+        impl ResourceMarker for WrongV1Marker {
+            const KEY: ResourceKey = resource_key!("nope@1");
+        }
+
+        let err: Result<DataResponse<WrongV1Marker>, DataError> =
+            provider.load_resource(&Default::default());
 
         assert!(
             matches!(
