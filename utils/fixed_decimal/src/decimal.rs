@@ -682,26 +682,30 @@ impl FixedDecimal {
         } else if self_right > other_left {
             // Append the digits from other to the end of self
             let inner_zeroes = crate::ops::i16_abs_sub(self_right, other_left) as usize - 1;
-            let new_len = self.digits.len() + inner_zeroes;
-            self.digits.resize_with(new_len, || 0);
-            self.digits.extend(other.digits);
+            self.append_digits(inner_zeroes, &other.digits);
         } else {
             debug_assert!(other_right > self_left);
             // Append the digits from self to the end of other
             let inner_zeroes = crate::ops::i16_abs_sub(other_right, self_left) as usize - 1;
-            let new_len = other.digits.len() + inner_zeroes;
             let mut digits = other.digits;
-            digits.resize_with(new_len, || 0);
-            let digits2 = core::mem::replace(&mut self.digits, SmallVec::new());
-            digits.extend(digits2);
-            self.digits = digits;
+            core::mem::swap(&mut self.digits, &mut digits);
             self.magnitude = other.magnitude;
+            self.append_digits(inner_zeroes, &digits);
         }
         self.upper_magnitude = cmp::max(self.upper_magnitude, other.upper_magnitude);
         self.lower_magnitude = cmp::min(self.lower_magnitude, other.lower_magnitude);
         #[cfg(debug_assertions)]
         self.check_invariants();
-        return Ok(());
+        Ok(())
+    }
+
+    /// Appends a slice of digits to the end of `self.digits` with optional inner zeroes.
+    ///
+    /// This function does not check invariants.
+    fn append_digits(&mut self, inner_zeroes: usize, new_digits: &[u8]) {
+        let new_len = self.digits.len() + inner_zeroes;
+        self.digits.resize_with(new_len, || 0);
+        self.digits.extend(new_digits.iter().copied());
     }
 
     /// Returns the [Signum][Signum] of this FixedDecimal.
