@@ -51,10 +51,9 @@ fn test_fixture(fixture_name: &str) {
         let input_japanese = input_value.to_calendar(japanese);
         let input_coptic = input_value.to_calendar(Coptic);
         let input_indian = input_value.to_calendar(Indian);
-        let input_ethiopic = input_value.to_calendar(Ethiopic);
-        let mut input_ethioaa = input_ethiopic.clone();
-        input_ethioaa.set_amete_alem(true);
+        let input_ethiopic = input_value.to_calendar(Ethiopic::new());
 
+        let input_ethioaa = input_value.to_calendar(Ethiopic::new_with_amete_alem(true));
         let description = match fx.description {
             Some(description) => {
                 format!(
