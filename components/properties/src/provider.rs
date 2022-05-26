@@ -16,7 +16,11 @@ use icu_uniset::UnicodeSet;
 
 /// A set of characters with a particular property.
 #[derive(Debug, Eq, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize))]
+#[cfg_attr(
+    feature = "datagen", 
+    derive(serde::Serialize, crabbake::Bakeable),
+    crabbake(path = icu_properties::provider),
+)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct UnicodePropertyV1<'data> {
     /// The set of characters, represented as an inversion list
@@ -26,7 +30,11 @@ pub struct UnicodePropertyV1<'data> {
 
 /// A map efficiently storing data about individual characters.
 #[derive(Clone, Debug, Eq, PartialEq, yoke::Yokeable, zerofrom::ZeroFrom)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize))]
+#[cfg_attr(
+    feature = "datagen", 
+    derive(serde::Serialize, crabbake::Bakeable),
+    crabbake(path = icu_properties::provider),
+)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct UnicodePropertyMapV1<'data, T: TrieValue> {
     /// A codepoint trie storing the data
@@ -37,7 +45,11 @@ pub struct UnicodePropertyMapV1<'data, T: TrieValue> {
 /// A data structure efficiently storing `Script` and `Script_Extensions` property data.
 #[icu_provider::data_struct(ScriptWithExtensionsPropertyV1Marker = "props/scx@1")]
 #[derive(Debug, Eq, PartialEq, Clone)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize))]
+#[cfg_attr(
+    feature = "datagen", 
+    derive(serde::Serialize, crabbake::Bakeable),
+    crabbake(path = icu_properties::provider),
+)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct ScriptWithExtensionsPropertyV1<'data> {
     /// A special data structure for `Script` and `Script_Extensions`.
@@ -60,6 +72,21 @@ macro_rules! expand {
                 impl ResourceMarker for $bin_marker {
                     const KEY: ResourceKey = resource_key!(concat!("props/", $bin_s, "@1"));
                 }
+
+                #[cfg(feature = "datagen")]
+                impl Default for $bin_marker {
+                    fn default() -> Self {
+                        Self
+                    }
+                }
+
+                #[cfg(feature = "datagen")]
+                impl crabbake::Bakeable for $bin_marker {
+                    fn bake(&self, env: &crabbake::CrateEnv) -> crabbake::TokenStream {
+                        env.insert("icu_properties");
+                        crabbake::quote!{ icu_properties::provider::$bin_marker }
+                    }
+                }
             )+
 
             $(
@@ -71,6 +98,21 @@ macro_rules! expand {
 
                 impl ResourceMarker for $enum_marker {
                     const KEY: ResourceKey = resource_key!(concat!("props/", $enum_s, "@1"));
+                }
+
+                #[cfg(feature = "datagen")]
+                impl Default for $enum_marker {
+                    fn default() -> Self {
+                        Self
+                    }
+                }
+
+                #[cfg(feature = "datagen")]
+                impl crabbake::Bakeable for $enum_marker {
+                    fn bake(&self, env: &crabbake::CrateEnv) -> crabbake::TokenStream {
+                        env.insert("icu_properties");
+                        crabbake::quote!{ icu_properties::provider::$enum_marker }
+                    }
                 }
             )+
 

@@ -22,7 +22,11 @@ use icu_provider::{yoke, zerofrom};
     OrdinalV1Marker = "plurals/ordinal@1"
 )]
 #[derive(Default, Clone, PartialEq, Debug)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize))]
+#[cfg_attr(
+    feature = "datagen",
+    derive(serde::Serialize, crabbake::Bakeable),
+    crabbake(path = icu_plurals::provider),
+)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[allow(missing_docs)] // TODO(#1029) - Add missing docs.
 pub struct PluralRulesV1<'data> {

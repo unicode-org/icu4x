@@ -57,7 +57,9 @@ impl ResourceProvider<LikelySubtagsV1Marker> for LikelySubtagsProvider {
 icu_provider::impl_dyn_provider!(
     LikelySubtagsProvider,
     [LikelySubtagsV1Marker,],
+    CRABBAKE,
     SERDE_SE,
+    ITERABLE_CRABBAKE,
     ITERABLE_SERDE_SE,
     DATA_CONVERTER
 );

@@ -220,10 +220,7 @@ pub fn datagen(
             locales,
             keys,
             ignore_missing_resource_keys,
-            Box::new(create_datagen_provider!(
-                *sources,
-                [crate::transform::cldr::ListProvider,]
-            )),
+            Box::new(create_datagen_provider!(*sources)),
             Box::new(crabbake::ConstExporter::new(
                 mod_directory,
                 pretty,

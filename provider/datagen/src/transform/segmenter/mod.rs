@@ -718,7 +718,9 @@ icu_provider::impl_dyn_provider!(
         WordBreakDataV1Marker,
         SentenceBreakDataV1Marker,
     ],
+    CRABBAKE,
     SERDE_SE,
+    ITERABLE_CRABBAKE,
     ITERABLE_SERDE_SE,
     DATA_CONVERTER
 );

@@ -9,6 +9,11 @@ use icu_provider::{yoke, zerofrom};
 use zerovec::ZeroVec;
 
 #[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
+#[cfg_attr(
+    feature = "datagen",
+    derive(crabbake::Bakeable),
+    crabbake(path = icu_datetime::pattern::runtime),
+)]
 #[allow(clippy::exhaustive_structs)] // part of data struct
 pub struct Pattern<'data> {
     pub items: ZeroVec<'data, PatternItem>,

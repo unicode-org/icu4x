@@ -127,14 +127,12 @@ pub fn get_smaller_postcard_provider() -> icu_provider_blob::StaticDataProvider 
 }
 
 #[cfg(feature = "baked")]
-mod baked {
-    #![allow(clippy::unwrap_used, clippy::exhaustive_structs)]
-    include!(concat!(env!("CARGO_MANIFEST_DIR"), "/data/baked/mod.rs"));
-}
+include!(concat!(env!("CARGO_MANIFEST_DIR"), "/data/baked/mod.rs"));
 
 #[cfg(feature = "baked")]
-pub fn get_baked_provider() -> &'static baked::BakedDataProvider {
-    baked::PROVIDER
+/// Get a data provider that contains hardcoded data without any deserialization overhead.
+pub fn get_baked_provider() -> BakedDataProvider {
+    BakedDataProvider
 }
 
 #[cfg(feature = "static")]

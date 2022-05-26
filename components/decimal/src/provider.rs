@@ -14,7 +14,11 @@ use icu_provider::{yoke, zerofrom};
 
 /// A collection of strings to affix to a decimal number.
 #[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize))]
+#[cfg_attr(
+    feature = "datagen",
+    derive(serde::Serialize, crabbake::Bakeable),
+    crabbake(path = icu_decimal::provider),
+)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct AffixesV1<'data> {
     /// String to prepend before the decimal number.
@@ -29,7 +33,11 @@ pub struct AffixesV1<'data> {
 /// A collection of settings expressing where to put grouping separators in a decimal number.
 /// For example, `1,000,000` has two grouping separators, positioned along every 3 digits.
 #[derive(Debug, PartialEq, Clone, yoke::Yokeable, Copy, zerofrom::ZeroFrom)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize))]
+#[cfg_attr(
+    feature = "datagen",
+    derive(serde::Serialize, crabbake::Bakeable),
+    crabbake(path = icu_decimal::provider),
+)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct GroupingSizesV1 {
     /// The size of the first (lowest-magnitude) group.
@@ -46,7 +54,11 @@ pub struct GroupingSizesV1 {
 /// Symbols and metadata required for formatting a [`FixedDecimal`](crate::FixedDecimal).
 #[icu_provider::data_struct(DecimalSymbolsV1Marker = "decimal/symbols@1")]
 #[derive(Debug, PartialEq, Clone)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize))]
+#[cfg_attr(
+    feature = "datagen",
+    derive(serde::Serialize, crabbake::Bakeable),
+    crabbake(path = icu_decimal::provider),
+)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct DecimalSymbolsV1<'data> {
     /// Prefix and suffix to apply when a negative sign is needed.

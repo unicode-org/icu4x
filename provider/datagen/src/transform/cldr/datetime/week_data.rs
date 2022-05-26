@@ -128,7 +128,9 @@ impl ResourceProvider<WeekDataV1Marker> for WeekDataProvider {
 icu_provider::impl_dyn_provider!(
     WeekDataProvider,
     [WeekDataV1Marker,],
+    CRABBAKE,
     SERDE_SE,
+    ITERABLE_CRABBAKE,
     ITERABLE_SERDE_SE,
     DATA_CONVERTER
 );

@@ -46,7 +46,7 @@ fn data_ce_to_primary(data_ce: u64, c: char) -> u32 {
 
 #[icu_provider::data_struct(CollationDataV1Marker = "collator/data@1")]
 #[derive(Debug, PartialEq, Clone)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize))]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, crabbake::Bakeable), crabbake(path = icu_collator::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct CollationDataV1<'data> {
     #[cfg_attr(feature = "serde", serde(borrow))]
@@ -106,7 +106,7 @@ impl<'data> CollationDataV1<'data> {
 
 #[icu_provider::data_struct(CollationDiacriticsV1Marker = "collator/dia@1")]
 #[derive(Debug, PartialEq, Clone)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize))]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, crabbake::Bakeable), crabbake(path = icu_collator::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct CollationDiacriticsV1<'data> {
     #[cfg_attr(feature = "serde", serde(borrow))]
@@ -115,7 +115,7 @@ pub struct CollationDiacriticsV1<'data> {
 
 #[icu_provider::data_struct(CollationJamoV1Marker = "collator/jamo@1")]
 #[derive(Debug, PartialEq, Clone)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize))]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, crabbake::Bakeable), crabbake(path = icu_collator::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct CollationJamoV1<'data> {
     #[cfg_attr(feature = "serde", serde(borrow))]
@@ -124,7 +124,7 @@ pub struct CollationJamoV1<'data> {
 
 #[icu_provider::data_struct(CollationReorderingV1Marker = "collator/reord@1")]
 #[derive(Debug, PartialEq, Clone)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize))]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, crabbake::Bakeable), crabbake(path = icu_collator::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct CollationReorderingV1<'data> {
     pub min_high_no_reorder: u32,
@@ -168,7 +168,7 @@ impl<'data> CollationReorderingV1<'data> {
 
 #[icu_provider::data_struct(CollationMetadataV1Marker = "collator/meta@1")]
 #[derive(Debug, PartialEq, Clone, Copy)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize))]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, crabbake::Bakeable), crabbake(path = icu_collator::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct CollationMetadataV1 {
     /// 8 highest bits for numeric primary.
@@ -259,7 +259,7 @@ impl CollationMetadataV1 {
 
 #[icu_provider::data_struct(CollationSpecialPrimariesV1Marker = "collator/prim@1")]
 #[derive(Debug, PartialEq, Clone)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize))]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, crabbake::Bakeable), crabbake(path = icu_collator::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct CollationSpecialPrimariesV1<'data> {
     #[cfg_attr(feature = "serde", serde(borrow))]

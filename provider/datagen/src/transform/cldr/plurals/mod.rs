@@ -111,7 +111,9 @@ impl<M: ResourceMarker<Yokeable = PluralRulesV1<'static>>> ResourceProvider<M> f
 icu_provider::impl_dyn_provider!(
     PluralsProvider,
     [OrdinalV1Marker, CardinalV1Marker,],
+    CRABBAKE,
     SERDE_SE,
+    ITERABLE_CRABBAKE,
     ITERABLE_SERDE_SE,
     DATA_CONVERTER
 );

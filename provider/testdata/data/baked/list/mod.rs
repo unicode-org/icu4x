@@ -1,4 +1,4 @@
-// GENERATED MODULE. DO NOT EDIT
-pub mod and_v1;
-pub mod or_v1;
-pub mod unit_v1;
+// @generated
+mod and_v1;
+mod or_v1;
+mod unit_v1;

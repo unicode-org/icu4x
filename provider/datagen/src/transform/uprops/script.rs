@@ -82,7 +82,9 @@ impl IterableResourceProvider<ScriptWithExtensionsPropertyV1Marker>
 icu_provider::impl_dyn_provider!(
     ScriptWithExtensionsPropertyProvider,
     [ScriptWithExtensionsPropertyV1Marker,],
+    CRABBAKE,
     SERDE_SE,
+    ITERABLE_CRABBAKE,
     ITERABLE_SERDE_SE,
     DATA_CONVERTER
 );

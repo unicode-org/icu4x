@@ -9,9 +9,6 @@
 //!
 //! Read more about data providers: [`icu_provider`]
 
-#[cfg(doc)]
-use icu_provider::prelude::ResourceKey;
-
 /// Data providers for the Gregorian Calendar.
 pub mod calendar;
 

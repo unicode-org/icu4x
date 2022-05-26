@@ -198,7 +198,9 @@ macro_rules! collation_provider {
         icu_provider::impl_dyn_provider!(
             $provider,
             [$marker,],
+            CRABBAKE,
             SERDE_SE,
+            ITERABLE_CRABBAKE,
             ITERABLE_SERDE_SE,
             DATA_CONVERTER
         );
