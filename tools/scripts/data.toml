@@ -75,7 +75,7 @@ if greater_than ${output_length} 0
 end
 '''
 
-[tasks.testdata-build-hello-world-json]
+[tasks.testdata-hello-world-json]
 description = "Build the Hello World JSON tree."
 category = "ICU4X Data"
 command = "cargo"
@@ -90,7 +90,7 @@ args = [
     "--overwrite",
 ]
 
-[tasks.testdata-build-hello-world-bincode]
+[tasks.testdata-hello-world-bincode]
 description = "Build the Hello World bincode tree."
 category = "ICU4X Data"
 command = "cargo"
@@ -106,7 +106,7 @@ args = [
     "--overwrite",
 ]
 
-[tasks.testdata-build-hello-world-postcard]
+[tasks.testdata-hello-world-postcard]
 description = "Build the Hello World postcard testdata file."
 category = "ICU4X Data"
 command = "cargo"
@@ -122,13 +122,13 @@ args = [
     "--overwrite",
 ]
 
-[tasks.testdata-build-hello-world]
+[tasks.testdata-hello-world]
 description = "Build all three the Hello World outputs."
 category = "ICU4X Data"
 dependencies = [
-    "testdata-build-hello-world-json",
-    "testdata-build-hello-world-bincode",
-    "testdata-build-hello-world-postcard",
+    "testdata-hello-world-json",
+    "testdata-hello-world-bincode",
+    "testdata-hello-world-postcard",
 ]
 
 ###### END CI TASKS
