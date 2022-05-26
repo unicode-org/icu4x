@@ -107,6 +107,22 @@ args = [
 ]
 
 [tasks.testdata-hello-world-postcard]
+description = "Build the Hello World postcard tree."
+category = "ICU4X Data"
+command = "cargo"
+args = [
+    "run",
+    "--bin=icu4x-datagen",
+    "--features=experimental,bin",
+    "--",
+    "--syntax=postcard",
+    "--hello-world-key",
+    "--all-locales",
+    "--out=provider/fs/tests/data/postcard",
+    "--overwrite",
+]
+
+[tasks.testdata-hello-world-blob]
 description = "Build the Hello World postcard testdata file."
 category = "ICU4X Data"
 command = "cargo"
@@ -129,6 +145,7 @@ dependencies = [
     "testdata-hello-world-json",
     "testdata-hello-world-bincode",
     "testdata-hello-world-postcard",
+    "testdata-hello-world-blob",
 ]
 
 ###### END CI TASKS
