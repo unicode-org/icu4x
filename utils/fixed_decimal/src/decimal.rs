@@ -7,7 +7,7 @@ use smallvec::SmallVec;
 use core::cmp;
 use core::cmp::Ordering;
 use core::fmt;
-use core::ops::{Add, AddAssign, RangeInclusive};
+use core::ops::RangeInclusive;
 
 use core::str::FromStr;
 
@@ -553,64 +553,57 @@ impl FixedDecimal {
     }
 
     /// Increments the digits by 1. if the digits are empty, it will add
-    /// an element with value 1 and assign the value of the upper magnitude to
-    /// the magnitude.
-    fn increment_abs_by_one(&mut self) {
-        let is_digits_empty = self.digits.is_empty();
-
-        for i in (0..self.digits.len()).rev() {
-            let digit = self.digits.get_mut(i).expect("an item from self.digits");
+    /// an element with value 1.
+    fn increment_abs_by_one(&mut self) -> Result<(), Error> {
+        for digit in self.digits.iter_mut().rev() {
             *digit += 1;
             if *digit < 10 {
                 #[cfg(debug_assertions)]
                 self.check_invariants();
-                return;
+                return Ok(());
             }
 
-            self.digits.pop();
+            *digit = 0;
         }
 
         if self.magnitude == i16::MAX {
             self.magnitude = 0;
+            self.digits.clear();
 
             #[cfg(debug_assertions)]
             self.check_invariants();
-            return;
+            return Err(Error::Limit);
         }
+
+        self.digits.clear();
 
         // Still a carry, carry one to the next magnitude.
         self.digits.push(1);
-        self.magnitude = {
-            if is_digits_empty {
-                self.upper_magnitude
-            } else {
-                self.magnitude + 1
-            }
-        };
+        self.magnitude += 1;
 
         if self.upper_magnitude < self.magnitude {
             self.upper_magnitude = self.magnitude;
         }
 
+        self.remove_trailing_zeros_from_digits_list();
+
         #[cfg(debug_assertions)]
         self.check_invariants();
+        Ok(())
     }
 
     /// Removes the trailing zeros in `self.digits`
     fn remove_trailing_zeros_from_digits_list(&mut self) {
-        let mut no_of_trailing_zeros = 0;
-        // remove trailing zeros from `digits`
-        for i in (0..self.digits.len()).rev() {
-            if self.digits[i] == 0 {
-                no_of_trailing_zeros.add_assign(1);
-            } else {
-                break;
-            }
-        }
+        let no_of_trailing_zeros = self
+            .digits
+            .iter()
+            .rev()
+            .take_while(|&digit| *digit == 0)
+            .count();
 
         self.digits.truncate(crate::ops::i16_sub_unsigned(
             self.digits.len() as i16,
-            no_of_trailing_zeros,
+            no_of_trailing_zeros as u16,
         ) as usize);
 
         if self.digits.is_empty() {
@@ -632,7 +625,7 @@ impl FixedDecimal {
     /// let dec = FixedDecimal::from(4235);
     /// assert_eq!("4235", dec.to_string());
     ///
-    /// assert_eq!("4235", dec.clone().truncated_right(-5).to_string());
+    /// assert_eq!("4235.00000", dec.clone().truncated_right(-5).to_string());
     ///
     /// assert_eq!("4230", dec.clone().truncated_right(1).to_string());
     ///
@@ -642,9 +635,7 @@ impl FixedDecimal {
     ///
     /// assert_eq!("4200", dec.clone().truncated_right(2).to_string());
     ///
-    /// assert_eq!("0", dec.clone().truncated_right(5).to_string());
-    ///
-    /// assert_eq!("0", dec.clone().truncated_right(100).to_string());
+    /// assert_eq!("00000000000", dec.clone().truncated_right(10).to_string());
     /// ```
     pub fn truncated_right(mut self, magnitude: i16) -> Self {
         self.truncate_right(magnitude);
@@ -663,7 +654,7 @@ impl FixedDecimal {
     /// assert_eq!("4235", dec.to_string());
     ///
     /// dec.truncate_right(-5);
-    /// assert_eq!("4235", dec.to_string());
+    /// assert_eq!("4235.00000", dec.to_string());
     ///
     /// dec.truncate_right(1);
     /// assert_eq!("4230", dec.to_string());
@@ -675,14 +666,14 @@ impl FixedDecimal {
     /// assert_eq!("4230", dec.to_string());
     ///
     /// dec.truncate_right(5);
-    /// assert_eq!("0", dec.to_string());
+    /// assert_eq!("000000", dec.to_string());
     ///
     /// dec.truncate_right(2);
-    /// assert_eq!("0", dec.to_string());
+    /// assert_eq!("000000", dec.to_string());
     ///
     /// let mut dec = FixedDecimal::from(4235 as i32);
-    /// dec.truncate_right(100);
-    /// assert_eq!("0", dec.to_string());
+    /// dec.truncate_right(10);
+    /// assert_eq!("00000000000", dec.to_string());
     ///
     /// let mut dec = FixedDecimal::from_str("-99.999").unwrap();
     /// dec.truncate_right(-2);
@@ -693,44 +684,16 @@ impl FixedDecimal {
     /// assert_eq!("1234.5", dec.to_string());
     /// ```
     pub fn truncate_right(&mut self, n: i16) {
-        let bottom_magnitude = self.nonzero_magnitude_right();
+        self.lower_magnitude = cmp::min(n, 0);
+        self.upper_magnitude = cmp::max(self.upper_magnitude, n);
 
-        if n <= self.lower_magnitude {
-            return;
-        } else if n <= bottom_magnitude {
-            self.lower_magnitude = {
-                if n <= 0 {
-                    n
-                } else {
-                    0
-                }
-            };
-        } else if n <= self.magnitude {
+        if n <= self.magnitude {
             self.digits
-                .truncate((crate::ops::i16_abs_sub(self.magnitude, n).add(1)) as usize);
+                .truncate((crate::ops::i16_abs_sub(self.magnitude, n) + 1) as usize);
             self.remove_trailing_zeros_from_digits_list();
-            self.lower_magnitude = {
-                if n <= 0 {
-                    n
-                } else {
-                    0
-                }
-            };
-        } else if n <= self.upper_magnitude {
-            self.lower_magnitude = {
-                if n <= 0 {
-                    n
-                } else {
-                    0
-                }
-            };
-            self.digits.clear();
-            self.magnitude = 0;
         } else {
             self.digits.clear();
-            self.lower_magnitude = 0;
             self.magnitude = 0;
-            self.upper_magnitude = 0;
         }
 
         #[cfg(debug_assertions)]
@@ -782,41 +745,37 @@ impl FixedDecimal {
     /// assert_eq!("-00000000000", dec.to_string());
     /// ```
     pub fn ceil(&mut self, n: i16) {
-        let is_positive = !self.is_negative;
-        let not_zero = !self.is_zero();
-        let original_bottom_magnitude = self.nonzero_magnitude_right();
-        let original_upper_magnitude = self.upper_magnitude;
+        if self.is_negative {
+            self.truncate_right(n);
 
+            #[cfg(debug_assertions)]
+            self.check_invariants();
+            return;
+        }
+
+        // Now, the number is positive.
+        let before_truncate_is_zero = self.is_zero();
+        let before_truncate_is_bottom_magnitude = self.nonzero_magnitude_right();
         self.truncate_right(n);
 
-        if n <= original_bottom_magnitude {
-            self.lower_magnitude = n;
-        } else if n <= original_upper_magnitude && is_positive {
-            if not_zero {
-                self.increment_abs_by_one();
-            }
-        } else if n > self.upper_magnitude && is_positive {
-            // n is greater than the upper magnitude
-            self.upper_magnitude = {
-                if n >= 0 {
-                    n
-                } else {
-                    0
-                }
-            };
-            if not_zero {
-                self.increment_abs_by_one();
-            }
-        } else if n > self.upper_magnitude && !is_positive {
-            // n is greater than the upper magnitude and the number is negative.
-            self.upper_magnitude = {
-                if n >= 0 {
-                    n
-                } else {
-                    0
-                }
-            };
+        if before_truncate_is_zero {
+            #[cfg(debug_assertions)]
+            self.check_invariants();
+            return;
         }
+
+        // Now, the number is positive and not zero before truncation.
+        if n <= before_truncate_is_bottom_magnitude {
+            #[cfg(debug_assertions)]
+            self.check_invariants();
+            return;
+        }
+
+        let result = self.increment_abs_by_one();
+        if result.is_err() {
+            // Do nothing for now.
+        }
+        self.magnitude = cmp::max(n, self.magnitude);
 
         #[cfg(debug_assertions)]
         self.check_invariants();
@@ -862,9 +821,6 @@ impl FixedDecimal {
         self.negate();
         self.ceil(n);
         self.negate();
-
-        #[cfg(debug_assertions)]
-        self.check_invariants();
     }
 
     /// Zero-pad the number on the right to a particular (negative) magnitude. Will truncate
