@@ -129,6 +129,7 @@ pub fn keys_from_bin<P: AsRef<Path>>(
             ),
     )?;
 
+    #[allow(clippy::single_char_pattern)] // trailing_tag is currently one char but we don't control that
     let keys = strings
         .iter()
         .flat_map(|(string, _)| {
@@ -154,7 +155,7 @@ pub fn keys_from_bin<P: AsRef<Path>>(
             }
             .into_iter()
         })
-        .collect::<HashSet<&str>>();
+        .collect::<HashSet<_>>();
     Ok(get_all_keys()
         .into_iter()
         .filter(|k| keys.contains(k.get_path()))
