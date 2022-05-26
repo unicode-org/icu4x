@@ -49,8 +49,9 @@ crlify = { version = "1", path = "../../utils/crlify", optional = true }
 [dev-dependencies]
 icu_locid = { version = "0.6", path = "../../components/locid", features = ["serde"] }
 icu_benchmark_macros = { version = "0.6", path = "../../tools/benchmark/macros" }
-icu_provider = { version = "0.6", path = "../core", features = ["deserialize_json", "deserialize_bincode_1"] }
+icu_provider = { version = "0.6", path = "../core", features = ["deserialize_json", "deserialize_bincode_1", "deserialize_postcard_07"] }
 criterion = "0.3.3"
+# serde-json-core = { version = "0.4", features = ["std"] }
 
 [features]
 # Enables the "export" module and FilesystemExporter

@@ -2,128 +2,89 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-#![allow(unused_imports)]
-
 use icu_locid::langid;
-use icu_locid::LanguageIdentifier;
-use icu_provider::hello_world::*;
+use icu_provider::hello_world::{HelloWorldProvider, HelloWorldV1, HelloWorldV1Marker};
 use icu_provider::prelude::*;
-use icu_provider::serde::*;
 use icu_provider_fs::FsDataProvider;
 
-#[test]
-fn test_json() {
-    let provider =
-        FsDataProvider::try_new("./tests/data/json").expect("Loading file from testdata directory");
+const JSON_PATH: &str = concat!(env!("CARGO_MANIFEST_DIR"), "/tests/data/json");
+const BINCODE_PATH: &str = concat!(env!("CARGO_MANIFEST_DIR"), "/tests/data/bincode");
+const POSTCARD_PATH: &str = concat!(env!("CARGO_MANIFEST_DIR"), "/tests/data/postcard");
 
-    let privet: DataPayload<HelloWorldV1Marker> = provider
-        .load_resource(&DataRequest {
-            options: langid!("ru").into(),
-            metadata: Default::default(),
-        })
-        .and_then(DataResponse::take_payload)
-        .expect("The data should be present");
-    assert_eq!(privet.get().message, "Привет, мир");
+const PATHS: &[&str] = &[JSON_PATH, BINCODE_PATH, POSTCARD_PATH];
+
+#[test]
+fn test_provider() {
+    for path in PATHS {
+        let provider = FsDataProvider::try_new(path).unwrap();
+        for (locale, expected) in HelloWorldProvider::DATA.iter() {
+            let req = DataRequest {
+                options: locale.clone().into(),
+                metadata: Default::default(),
+            };
+
+            let actual: DataPayload<HelloWorldV1Marker> = provider
+                .load_resource(&req)
+                .unwrap()
+                .take_payload()
+                .unwrap();
+            assert_eq!(&actual.get().message, expected);
+
+            let actual: DataPayload<HelloWorldV1Marker> = (&provider as &dyn BufferProvider)
+                .as_deserializing()
+                .load_resource(&req)
+                .unwrap()
+                .take_payload()
+                .unwrap();
+            assert_eq!(&actual.get().message, expected);
+        }
+    }
 }
 
 #[test]
-fn test_json_dyn_erased_serde() {
-    let provider =
-        FsDataProvider::try_new("./tests/data/json").expect("Loading file from testdata directory");
-
-    let privet: DataPayload<HelloWorldV1Marker> = (&provider as &dyn BufferProvider)
-        .as_deserializing()
-        .load_resource(&DataRequest {
-            options: langid!("ru").into(),
-            metadata: Default::default(),
-        })
-        .and_then(DataResponse::take_payload)
-        .expect("The data should be present");
-    assert_eq!(privet.get().message, "Привет, мир");
-}
-
-#[test]
-fn test_json_errors() {
-    let provider =
-        FsDataProvider::try_new("./tests/data/json").expect("Loading file from testdata directory");
-
-    struct WrongV1Marker;
-    impl DataMarker for WrongV1Marker {
+fn test_errors() {
+    pub struct HelloWorldV0Marker;
+    impl DataMarker for HelloWorldV0Marker {
         type Yokeable = HelloWorldV1<'static>;
     }
-    impl ResourceMarker for WrongV1Marker {
-        const KEY: ResourceKey = resource_key!("nope@1");
+    impl ResourceMarker for HelloWorldV0Marker {
+        const KEY: ResourceKey = resource_key!("core/helloworld@0");
     }
 
-    assert!(matches!(
-        (&provider as &dyn ResourceProvider<HelloWorldV1Marker>).load_resource(&DataRequest {
-            options: langid!("ru").into(),
-            metadata: Default::default(),
-        },),
-        Ok(_)
-    ));
+    let req = DataRequest {
+        options: langid!("zh-DE").into(),
+        metadata: Default::default(),
+    };
 
-    assert!(matches!(
-        (&provider as &dyn ResourceProvider<HelloWorldV1Marker>).load_resource(&DataRequest {
-            options: langid!("sr").into(),
-            metadata: Default::default(),
-        },),
-        Err(DataError {
-            kind: DataErrorKind::MissingResourceOptions,
-            ..
-        })
-    ));
+    for path in PATHS {
+        let provider = FsDataProvider::try_new(path).unwrap();
 
-    assert!(matches!(
-        (&provider as &dyn ResourceProvider<WrongV1Marker>).load_resource(&DataRequest {
-            options: langid!("ru").into(),
-            metadata: Default::default(),
-        },),
-        Err(DataError {
-            kind: DataErrorKind::MissingResourceKey,
-            ..
-        })
-    ));
+        let err: Result<DataResponse<HelloWorldV1Marker>, DataError> = provider.load_resource(&req);
 
-    assert!(matches!(
-        (&provider as &dyn ResourceProvider<WrongV1Marker>).load_resource(&DataRequest {
-            options: langid!("ru").into(),
-            metadata: Default::default(),
-        },),
-        Err(DataError {
-            kind: DataErrorKind::MissingResourceKey,
-            ..
-        })
-    ));
-}
+        assert!(
+            matches!(
+                err,
+                Err(DataError {
+                    kind: DataErrorKind::MissingResourceOptions,
+                    ..
+                })
+            ),
+            "{:?}",
+            err
+        );
 
-#[test]
-fn test_bincode() {
-    let provider = FsDataProvider::try_new("./tests/data/bincode")
-        .expect("Loading file from testdata directory");
+        let err: Result<DataResponse<HelloWorldV0Marker>, DataError> = provider.load_resource(&req);
 
-    let privet: DataPayload<HelloWorldV1Marker> = provider
-        .load_resource(&DataRequest {
-            options: langid!("ru").into(),
-            metadata: Default::default(),
-        })
-        .and_then(DataResponse::take_payload)
-        .expect("The data should be present");
-    assert_eq!(privet.get().message, "Привет, мир");
-}
-
-#[test]
-fn test_bincode_dyn_erased_serde() {
-    let provider = FsDataProvider::try_new("./tests/data/bincode")
-        .expect("Loading file from testdata directory");
-
-    let privet: DataPayload<HelloWorldV1Marker> = (&provider as &dyn BufferProvider)
-        .as_deserializing()
-        .load_resource(&DataRequest {
-            options: langid!("ru").into(),
-            metadata: Default::default(),
-        })
-        .and_then(DataResponse::take_payload)
-        .expect("The data should be present");
-    assert_eq!(privet.get().message, "Привет, мир");
+        assert!(
+            matches!(
+                err,
+                Err(DataError {
+                    kind: DataErrorKind::MissingResourceKey,
+                    ..
+                })
+            ),
+            "{:?}",
+            err
+        );
+    }
 }

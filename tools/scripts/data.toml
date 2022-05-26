@@ -4,24 +4,75 @@
 
 # This is a cargo-make file included in the toplevel Makefile.toml
 
+<<<<<<< Updated upstream
 ###### CI TASKS
 
 [tasks.testdata-fingerprint-blob]
 description = "Generate a fingerprint for the ICU4X testdata.postcard file."
+=======
+[tasks.testdata-build-json]
+description = "Build ICU4X JSON from the downloaded CLDR JSON, overwriting the existing ICU4X JSON."
+>>>>>>> Stashed changes
 category = "ICU4X Data"
 command = "cargo"
 args = [
     "run",
+<<<<<<< Updated upstream
     "--bin=icu4x-fingerprint-data",
     "--features=experimental,bin",
+=======
+    "--bin=icu4x-datagen",
+    "--features=experimental",
+    "--",
+    "--input-from-testdata",
+    "--out-testdata",
+    "--test-keys",
+    "--test-locales",
+    "--syntax=json",
+    "--pretty",
+    "--overwrite",
+]
+
+[tasks.testdata-build-blob]
+description = "Build ICU4X data as a Postcard blob, overwriting the existing Postcard blob."
+category = "ICU4X Data"
+command = "cargo"
+args = [
+    "run",
+    "--bin=icu4x-datagen",
+    "--features=experimental",
+>>>>>>> Stashed changes
     "--",
     "--format=blob",
     "--data=provider/testdata/data/testdata.postcard",
     "--out=provider/testdata/data/blob.fingerprint",
 ]
 
+<<<<<<< Updated upstream
 [tasks.testdata-fingerprint-json]
 description = "Generate a fingerprint for the ICU4X JSON testdata file."
+=======
+[tasks.testdata-build-blob-smaller]
+description = "Build a small subset of ICU4X data as a Postcard blob."
+category = "ICU4X Data"
+command = "cargo"
+args = [
+    "run",
+    "--bin=icu4x-datagen",
+    "--features=experimental",
+    "--",
+    "--format=blob",
+    "--input-from-testdata",
+    "--out=provider/testdata/data/decimal-bn-en.postcard",
+    "--keys=decimal/symbols@1",
+    "--locales=bn",
+    "--locales=en",
+    "--overwrite",
+]
+
+[tasks.testdata-build-hello-world-blob]
+description = "Build the Hello World Postcard blob."
+>>>>>>> Stashed changes
 category = "ICU4X Data"
 command = "cargo"
 args = [
@@ -34,12 +85,60 @@ args = [
     "--out=provider/testdata/data/json.fingerprint",
 ]
 
+<<<<<<< Updated upstream
 [tasks.testdata-fingerprint]
 description = "Generate a fingerprint for Postcard and JSON testdata."
 category = "ICU4X Data"
 dependencies = [
     "testdata-fingerprint-json",
     "testdata-fingerprint-blob",
+=======
+[tasks.testdata-build-hello-world-json]
+description = "Build the Hello World JSON tree."
+category = "ICU4X Data"
+command = "cargo"
+args = [
+    "run",
+    "--bin=icu4x-datagen",
+    "--features=experimental",
+    "--",
+    "--hello-world-key",
+    "--all-locales",
+    "--out=provider/fs/tests/data/json",
+    "--overwrite",
+]
+
+[tasks.testdata-build-hello-world-bincode]
+description = "Build the Hello World Bincode tree."
+category = "ICU4X Data"
+command = "cargo"
+args = [
+    "run",
+    "--bin=icu4x-datagen",
+    "--features=experimental",
+    "--",
+    "--syntax=bincode",
+    "--hello-world-key",
+    "--all-locales",
+    "--out=provider/fs/tests/data/bincode",
+    "--overwrite",
+]
+
+[tasks.testdata-build-hello-world-postcard]
+description = "Build the Hello World Postcard tree."
+category = "ICU4X Data"
+command = "cargo"
+args = [
+    "run",
+    "--bin=icu4x-datagen",
+    "--features=experimental",
+    "--",
+    "--syntax=postcard",
+    "--hello-world-key",
+    "--all-locales",
+    "--out=provider/fs/tests/data/postcard",
+    "--overwrite",
+>>>>>>> Stashed changes
 ]
 
 [tasks.testdata]
@@ -52,17 +151,32 @@ args = [
     "--features=bin",
 ]
 
+<<<<<<< Updated upstream
 [tasks.testdata-check]
+=======
+[tasks.testdata-hello-world]
+description = "Rebuild all ICU4X hello world testdata."
+category = "ICU4X Data"
+dependencies = [
+    "testdata-build-hello-world-blob",
+    "testdata-build-hello-world-json",
+    "testdata-build-hello-world-bincode",
+    "testdata-build-hello-world-postcard",
+]
+
+[tasks.testdata-check-unchanged]
+>>>>>>> Stashed changes
 description = "Rebuild ICU4X testdata and ensure that the working copy is clean"
 category = "ICU4X Data"
 dependencies = [
-    "testdata"
+    "testdata",
+    "testdata-hello-world",
 ]
 script_runner = "@duckscript"
 script = '''
 exit_on_error true
 
-output = exec git status --porcelain=v1 provider/testdata/data
+output = exec git status --porcelain=v1 provider/testdata/data provider/fs/tests/data provider/blob/tests/data
 output_length = length ${output.stdout}
 if greater_than ${output_length} 0
     msg = array "" ""
@@ -89,8 +203,34 @@ args = [
     "--overwrite",
 ]
 
+<<<<<<< Updated upstream
 [tasks.testdata-build-hello-world-bincode]
 description = "Build the Hello World bincode tree."
+=======
+# The following tasks are not used by CI
+
+[tasks.testdata-download]
+description = "Download fresh CLDR JSON, overwriting the existing CLDR JSON."
+category = "ICU4X Data"
+command = "cargo"
+args = [
+    "run",
+    "--bin=icu4x-testdata-download",
+    "--features=download-testdata",
+    "--",
+    "-v",
+]
+
+[tasks.icu4x-key-extract]
+description = "Extracts ICU4X resource keys used by a binary."
+category = "ICU4X Data"
+script_runner = "bash"
+script = '''strings ${1} | grep -e "icu4x_key_tag\w" | sed s/icu4x_key_tag// | sort > ${2}'''
+
+
+[tasks.testdata-build-bincode]
+description = "Build ICU4X Bincode filesystem structure from the downloaded CLDR JSON, overwriting the existing ICU4X Bincode if present."
+>>>>>>> Stashed changes
 category = "ICU4X Data"
 command = "cargo"
 args = [
