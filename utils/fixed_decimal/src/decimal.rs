@@ -682,6 +682,10 @@ impl FixedDecimal {
     /// let mut dec = FixedDecimal::from_str("1234.56").unwrap();
     /// dec.truncate_right(-1);
     /// assert_eq!("1234.5", dec.to_string());
+    ///
+    /// let mut dec = FixedDecimal::from_str("0.009").unwrap();
+    /// dec.truncate_right(-1);
+    /// assert_eq!("0.0", dec.to_string());
     /// ```
     pub fn truncate_right(&mut self, n: i16) {
         self.lower_magnitude = cmp::min(n, 0);
@@ -743,6 +747,14 @@ impl FixedDecimal {
     /// let mut dec = FixedDecimal::from_str("-99.999").unwrap();
     /// dec.ceil(10);
     /// assert_eq!("-00000000000", dec.to_string());
+    ///
+    /// let mut dec = FixedDecimal::from_str("0.009").unwrap();
+    /// dec.ceil(-1);
+    /// assert_eq!("0.1", dec.to_string());
+    ///
+    /// let mut dec = FixedDecimal::from_str("-0.009").unwrap();
+    /// dec.ceil(-1);
+    /// assert_eq!("-0.0", dec.to_string());
     /// ```
     pub fn ceil(&mut self, n: i16) {
         if self.is_negative {
@@ -756,6 +768,7 @@ impl FixedDecimal {
         // Now, the number is positive.
         let before_truncate_is_zero = self.is_zero();
         let before_truncate_is_bottom_magnitude = self.nonzero_magnitude_right();
+        let before_truncate_magnitude = self.magnitude;
         self.truncate_right(n);
 
         if before_truncate_is_zero {
@@ -771,11 +784,20 @@ impl FixedDecimal {
             return;
         }
 
-        let result = self.increment_abs_by_one();
-        if result.is_err() {
-            // Do nothing for now.
+        if n <= before_truncate_magnitude {
+            let result = self.increment_abs_by_one();
+            if result.is_err() {
+                // Do nothing for now.
+            }
+
+            #[cfg(debug_assertions)]
+            self.check_invariants();
+            return;
         }
-        self.magnitude = cmp::max(n, self.magnitude);
+
+        assert!(self.digits.is_empty());
+        self.digits.push(1);
+        self.magnitude = n;
 
         #[cfg(debug_assertions)]
         self.check_invariants();
