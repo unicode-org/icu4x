@@ -92,6 +92,9 @@ pub enum Error {
     /// 123 (or 123.0) must be used.
     #[displaydoc("Failed to parse the input string")]
     Syntax,
+    /// The operation being performed is illegal due to malformed arguments.
+    #[displaydoc("Illegal operation")]
+    Illegal,
 }
 
 #[cfg(feature = "std")]
