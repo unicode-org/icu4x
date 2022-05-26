@@ -120,7 +120,11 @@ impl IterableResourceProvider<HelloAltMarker> for DataProvider2 {
     }
 }
 
-crate::impl_dyn_provider!(DataProvider2, [HelloWorldV1Marker, HelloAltMarker,], AnyMarker);
+crate::impl_dyn_provider!(
+    DataProvider2,
+    [HelloWorldV1Marker, HelloAltMarker,],
+    AnyMarker
+);
 
 #[allow(clippy::redundant_static_lifetimes)]
 const DATA: &'static str = r#"{

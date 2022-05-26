@@ -179,8 +179,7 @@ impl IterableResourceProvider<HelloWorldV1Marker> for HelloWorldProvider {
 #[test]
 fn test_iter() {
     let provider = HelloWorldProvider::new_with_placeholder_data();
-    let mut supported_langids: Vec<ResourceOptions> =
-        provider.supported_options().unwrap();
+    let mut supported_langids: Vec<ResourceOptions> = provider.supported_options().unwrap();
     supported_langids.sort();
 
     assert_eq!(
