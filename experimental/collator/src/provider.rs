@@ -9,16 +9,26 @@ use icu_char16trie::char16trie::Char16TrieIterator;
 use icu_codepointtrie::CodePointTrie;
 use icu_provider::{yoke, zerofrom};
 use zerovec::ule::AsULE;
-use zerovec::ule::RawBytesULE;
+use zerovec::ZeroSlice;
 use zerovec::ZeroVec;
 
 use crate::elements::CollationElement;
 use crate::elements::CollationElement32;
 use crate::elements::Tag;
+use crate::elements::EMPTY_U16;
+use crate::elements::FFFD_CE;
+use crate::elements::FFFD_CE32;
+use crate::elements::FFFD_CE32_VALUE;
+use crate::elements::FFFD_CE_VALUE;
 use crate::elements::NO_CE_PRIMARY;
 
 use super::CaseFirst;
 use super::MaxVariable;
+
+const SINGLE_U32: &ZeroSlice<u32> =
+    ZeroSlice::<u32>::from_ule_slice_const(&<u32 as AsULE>::ULE::from_array([FFFD_CE32_VALUE]));
+const SINGLE_U64: &ZeroSlice<u64> =
+    ZeroSlice::<u64>::from_ule_slice_const(&<u64 as AsULE>::ULE::from_array([FFFD_CE_VALUE]));
 
 fn data_ce_to_primary(data_ce: u64, c: char) -> u32 {
     // Collation::getThreeBytePrimaryForOffsetData
@@ -63,31 +73,61 @@ impl<'data> CollationDataV1<'data> {
     pub(crate) fn ce32_for_char(&self, c: char) -> CollationElement32 {
         CollationElement32::new(self.trie.get(c as u32))
     }
-    pub(crate) fn get_ce32s(&'data self, index: usize, len: usize) -> &'data [RawBytesULE<4>] {
-        &self.ce32s.as_ule_slice()[index..index + len]
+    pub(crate) fn get_ce32(&'data self, index: usize) -> CollationElement32 {
+        CollationElement32::new(if let Some(u) = self.ce32s.get(index) {
+            u
+        } else {
+            // GIGO case
+            debug_assert!(false);
+            FFFD_CE32_VALUE
+        })
     }
-    pub(crate) fn get_ces(&'data self, index: usize, len: usize) -> &'data [RawBytesULE<8>] {
-        &self.ces.as_ule_slice()[index..index + len]
+    pub(crate) fn get_ce32s(&'data self, index: usize, len: usize) -> &'data ZeroSlice<u32> {
+        if len > 0 {
+            if let Some(slice) = self.ce32s.get_subslice(index..index + len) {
+                return slice;
+            }
+        }
+        // GIGO case
+        debug_assert!(false);
+        SINGLE_U32
+    }
+    pub(crate) fn get_ces(&'data self, index: usize, len: usize) -> &'data ZeroSlice<u64> {
+        if len > 0 {
+            if let Some(slice) = self.ces.get_subslice(index..index + len) {
+                return slice;
+            }
+        }
+        // GIGO case
+        debug_assert!(false);
+        SINGLE_U64
     }
     fn get_default_and_trie_impl(
         &'data self,
         index: usize,
-    ) -> (CollationElement32, &'data [RawBytesULE<2>]) {
-        let tail = &self.contexts.as_ule_slice()[index..];
-        let (default, trie) = tail.split_at(2);
-        let first = u16::from_unaligned(default[0]);
-        let second = u16::from_unaligned(default[1]);
-        (
-            CollationElement32::new((u32::from(first) << 16) | u32::from(second)),
-            trie,
-        )
+    ) -> (CollationElement32, &'data ZeroSlice<u16>) {
+        if let Some(slice) = self.contexts.get_subslice(index..self.contexts.len()) {
+            if slice.len() >= 2 {
+                // `unwrap` must succeed due to the length check above.
+                let first = slice.get(0).unwrap();
+                let second = slice.get(1).unwrap();
+                let trie = slice.get_subslice(2..slice.len()).unwrap();
+                return (
+                    CollationElement32::new((u32::from(first) << 16) | u32::from(second)),
+                    trie,
+                );
+            }
+        }
+        // GIGO case
+        debug_assert!(false);
+        (FFFD_CE32, EMPTY_U16)
     }
     pub(crate) fn get_default_and_trie(
         &'data self,
         index: usize,
     ) -> (CollationElement32, Char16TrieIterator<'data>) {
         let (ce32, trie) = self.get_default_and_trie_impl(index);
-        (ce32, Char16TrieIterator::new(trie))
+        (ce32, Char16TrieIterator::new(trie.as_ule_slice()))
     }
     pub(crate) fn get_default(&'data self, index: usize) -> CollationElement32 {
         let (ce32, _) = self.get_default_and_trie_impl(index);
@@ -99,8 +139,13 @@ impl<'data> CollationDataV1<'data> {
         ce32: CollationElement32,
     ) -> CollationElement {
         debug_assert!(ce32.tag() == Tag::Offset);
-        let data_ce = u64::from_unaligned(self.ces.as_ule_slice()[ce32.index()]);
-        CollationElement::new_from_primary(data_ce_to_primary(data_ce, c))
+        if let Some(data_ce) = self.ces.get(ce32.index()) {
+            CollationElement::new_from_primary(data_ce_to_primary(data_ce, c))
+        } else {
+            // GIGO case
+            debug_assert!(false);
+            FFFD_CE
+        }
     }
 }
 
