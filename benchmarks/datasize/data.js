@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1653596563835,
+  "lastUpdate": 1653631173362,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -16043,6 +16043,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/c6a433fe991c433e1c736a10ba4795dbae08b7f4"
         },
         "date": 1653596543051,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 2220821,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "hsivonen@hsivonen.fi",
+            "name": "Henri Sivonen",
+            "username": "hsivonen"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "6f9c70e4128e2f057bccae52a50e2372f3e49b22",
+          "message": "GIGO fix-ups for the normalizer and the collator (#1931)\n\nCloses #1892.\r\n\r\nCloses #1891",
+          "timestamp": "2022-05-27T08:57:18+03:00",
+          "tree_id": "48911d53556ce5dc7ec34d4100e20e00efed8e0f",
+          "url": "https://github.com/unicode-org/icu4x/commit/6f9c70e4128e2f057bccae52a50e2372f3e49b22"
+        },
+        "date": 1653631148400,
         "tool": "ndjson",
         "benches": [
           {
