@@ -74,6 +74,7 @@ macro_rules! impl_resource_provider {
                     {
                         meta_zone_ids.insert(meta_zone_id_data.long_id.to_string(), meta_zone_id.clone());
                     }
+                    let mut meta_zone_periods = resource.supplemental.meta_zones.meta_zone_info.time_zone.0;
 
                     let metadata = DataResponseMetadata::default();
                     // TODO(#1109): Set metadata.data_langid correctly.
@@ -84,6 +85,7 @@ macro_rules! impl_resource_provider {
                                 time_zone_names,
                                 bcp47_tzids,
                                 meta_zone_ids,
+                                meta_zone_periods,
                             }),
                         )),
                     })
@@ -113,7 +115,8 @@ impl_resource_provider!(
     MetaZoneGenericNamesLongV1Marker,
     MetaZoneGenericNamesShortV1Marker,
     MetaZoneSpecificNamesLongV1Marker,
-    MetaZoneSpecificNamesShortV1Marker
+    MetaZoneSpecificNamesShortV1Marker,
+    MetaZonePeriodV1Marker
 );
 
 #[cfg(test)]

@@ -4,7 +4,7 @@
 
 use icu_datetime::provider::time_zones::{
     ExemplarCitiesV1, MetaZoneGenericNamesLongV1, MetaZoneGenericNamesShortV1, MetaZoneId,
-    MetaZoneSpecificNamesLongV1, MetaZoneSpecificNamesShortV1, TimeZoneBcp47Id, TimeZoneFormatsV1,
+    MetaZoneSpecificNamesLongV1, MetaZoneSpecificNamesShortV1, TimeZoneBcp47Id, TimeZoneFormatsV1, MetaZonePeriodV1,
 };
 use std::borrow::Cow;
 use tinystr::TinyStr8;
@@ -13,6 +13,7 @@ use zerovec::{ZeroMap, ZeroMap2d};
 use crate::transform::cldr::cldr_serde::{
     time_zones::time_zone_names::*, time_zones::CldrTimeZonesData,
 };
+use crate::transform::cldr::cldr_serde::time_zones::meta_zones::{ZonePeriod, LocationOrSubRegion, MetaZoneForPeriod};
 
 /// Performs part 1 of type fallback as specified in the UTS-35 spec for TimeZone Goals:
 /// https://unicode.org/reports/tr35/tr35-dates.html#Time_Zone_Goals
@@ -134,6 +135,56 @@ impl From<&CldrTimeZonesData> for ExemplarCitiesV1<'static> {
                         })
                 })
                 .collect(),
+        )
+    }
+}
+
+impl From<&CldrTimeZonesData<'_>> for MetaZonePeriodV1<'static> {
+    fn from(other: &CldrTimeZonesData) -> Self {
+        let data = &other.meta_zone_periods;
+        Self (
+            data
+                .iter()
+                .filter_map(|(key, zone)| {
+                    let mut key = key.clone();
+                    match zone {
+                        ZonePeriod::Region(periods) => {
+                            periods
+                                .iter()
+                                .map(|period| vec![(key.clone(), period.clone())])
+                        }
+                        ZonePeriod::LocationOrSubRegion(place) => {
+                            place
+                                .iter()
+                                .filter_map(move |(inner_key, location_or_subregion)| {
+                                    let mut key = key.clone();
+                                    key.push('/');
+                                    key.push_str(inner_key);
+                                    match location_or_subregion {
+                                        LocationOrSubRegion::Location(periods) => {
+                                            periods
+                                                .iter()
+                                                .map(|period| (key.clone(), period.clone()))
+                                        }
+                                        LocationOrSubRegion::SubRegion(subregion) => {
+                                            subregion
+                                                .iter()
+                                                .filter_map(move |(inner_inner_key, periods)| {
+                                                    let mut key = key.clone();
+                                                    key.push('/');
+                                                    key.push_str(inner_inner_key);
+                                                    periods
+                                                        .iter()
+                                                        .map(|period| (key.clone(), period.clone()))
+                                                })
+                                        }
+                                    }
+                                }).collect::<Vec<_>>()
+                            }
+                    }
+                })
+                .flat_map(iterate_metazone_period)
+                .collect()
         )
     }
 }
@@ -367,4 +418,20 @@ fn iterate_zone_format_for_time_zone_id(
                 value,
             )
         })
+}
+
+fn iterate_metazone_period(
+    pair: (TimeZoneBcp47Id, MetaZoneForPeriod),
+) -> impl Iterator<Item = (TimeZoneBcp47Id, str, MetaZoneId)> {
+    let (key1, metazone_period) = pair;
+    let period = if !metazone_period.uses_meta_zone.from.is_none() {
+        metazone_period.uses_meta_zone.from
+    } else {
+        "1970-00-00 00:00"
+    };
+    vec![(
+        key1,
+        period,
+        metazone_period.uses_meta_zone.mzone,
+    )]
 }
