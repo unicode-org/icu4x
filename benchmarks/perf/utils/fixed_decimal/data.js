@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1653676563341,
+  "lastUpdate": 1653681525920,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -28889,6 +28889,66 @@ window.BENCHMARK_DATA = {
             "name": "from_string/1000000001",
             "value": 76,
             "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "80083c9807269f41ed9ecddf7b36de2d61d7d1e7",
+          "message": "Add FixedDecimal::concatenate_right (#1953)\n\n* Add FixedDecimal::concatenated\r\n\r\n* Refactoring & clippy\r\n\r\n* concatenate -> concatenate_right\r\n\r\n* Use extend_from_slice for more efficiency",
+          "timestamp": "2022-05-27T15:45:34-04:00",
+          "tree_id": "ad4fcb059b2900191be3577578ae1f7dab1a5e6c",
+          "url": "https://github.com/unicode-org/icu4x/commit/80083c9807269f41ed9ecddf7b36de2d61d7d1e7"
+        },
+        "date": 1653681497490,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 123585,
+            "range": "± 2412",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 26168,
+            "range": "± 608",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 71543,
+            "range": "± 1551",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 233,
+            "range": "± 8",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 100,
+            "range": "± 3",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 94,
+            "range": "± 3",
             "unit": "ns/iter"
           }
         ]
