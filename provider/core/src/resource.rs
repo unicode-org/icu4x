@@ -22,7 +22,7 @@ use zerovec::ule::*;
 #[macro_export]
 macro_rules! leading_tag {
     () => {
-        "icu4x_key"
+        "\nicu4x_key_tag"
     };
 }
 
@@ -30,7 +30,7 @@ macro_rules! leading_tag {
 #[macro_export]
 macro_rules! trailing_tag {
     () => {
-        "\0"
+        "\n"
     };
 }
 
