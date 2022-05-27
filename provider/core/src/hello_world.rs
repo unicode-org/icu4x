@@ -80,31 +80,34 @@ pub struct HelloWorldProvider {
 }
 
 impl HelloWorldProvider {
+    pub const DATA: &'static [(icu_locid::Locale, &'static str)] = &[
+        (locale!("bn"), "ওহে বিশ্ব"),
+        (locale!("cs"), "Ahoj světe"),
+        (locale!("de"), "Hallo Welt"),
+        (locale!("el"), "Καλημέρα κόσμε"),
+        (locale!("en"), "Hello World"),
+        (locale!("eo"), "Saluton, Mondo"),
+        (locale!("fa"), "سلام دنیا‎"),
+        (locale!("fi"), "hei maailma"),
+        (locale!("is"), "Halló, heimur"),
+        (locale!("ja"), "こんにちは世界"),
+        (locale!("la"), "Ave, munde"),
+        (locale!("pt"), "Olá, mundo"),
+        (locale!("ro"), "Salut, lume"),
+        (locale!("ru"), "Привет, мир"),
+        (locale!("vi"), "Xin chào thế giới"),
+        (locale!("zh"), "你好世界"),
+    ];
+
     /// Creates a [`HelloWorldProvider`] pre-populated with hardcoded data from Wiktionary.
     pub fn new_with_placeholder_data() -> HelloWorldProvider {
         // Data from https://en.wiktionary.org/wiki/Hello_World#Translations
         HelloWorldProvider {
-            map: [
-                (locale!("bn"), "ওহে বিশ্ব"),
-                (locale!("cs"), "Ahoj světe"),
-                (locale!("de"), "Hallo Welt"),
-                (locale!("el"), "Καλημέρα κόσμε"),
-                (locale!("en"), "Hello World"),
-                (locale!("eo"), "Saluton, Mondo"),
-                (locale!("fa"), "سلام دنیا‎"),
-                (locale!("fi"), "hei maailma"),
-                (locale!("is"), "Halló, heimur"),
-                (locale!("ja"), "こんにちは世界"),
-                (locale!("la"), "Ave, munde"),
-                (locale!("pt"), "Olá, mundo"),
-                (locale!("ro"), "Salut, lume"),
-                (locale!("ru"), "Привет, мир"),
-                (locale!("vi"), "Xin chào thế giới"),
-                (locale!("zh"), "你好世界"),
-            ]
-            .into_iter()
-            .map(|(loc, value)| (loc.into(), value.into()))
-            .collect(),
+            map: Self::DATA
+                .iter()
+                .cloned()
+                .map(|(loc, value)| (loc.into(), value.into()))
+                .collect(),
         }
     }
 
