@@ -7,15 +7,7 @@ pub mod ffi {
     use alloc::boxed::Box;
     use icu_provider::prelude::BufferProvider;
     use icu_provider_blob::BlobDataProvider;
-<<<<<<< Updated upstream
     use icu_provider_blob::StaticDataProvider;
-=======
-    #[cfg(all(
-        feature = "provider_fs",
-        not(any(target_arch = "wasm32", target_os = "none"))
-    ))]
-    use icu_provider_fs::FsDataProvider;
->>>>>>> Stashed changes
 
     #[diplomat::opaque]
     /// An ICU4X data provider, capable of loading ICU4X data keys from some source.
@@ -89,15 +81,7 @@ pub mod ffi {
         /// Constructs an empty `StaticDataProvider` and returns it as an [`ICU4XDataProvider`].
         #[diplomat::rust_link(icu_provider_blob::StaticDataProvider, Struct)]
         pub fn create_empty() -> ICU4XCreateDataProviderResult {
-<<<<<<< Updated upstream
             make_result!(Some(StaticDataProvider::new_empty()))
-=======
-            let provider = BlobDataProvider::new_from_rc_blob(Rc::from(&[])).unwrap();
-            ICU4XCreateDataProviderResult {
-                provider: Some(Box::new(ICU4XDataProvider(Box::new(provider)))),
-                success: true,
-            }
->>>>>>> Stashed changes
         }
     }
 }
