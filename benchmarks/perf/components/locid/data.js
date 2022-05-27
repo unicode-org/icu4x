@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1653681686208,
+  "lastUpdate": 1653691678375,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -46816,6 +46816,192 @@ window.BENCHMARK_DATA = {
           {
             "name": "subtags/variant/parse",
             "value": 137,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "fc24fe01b29296d05641ef2ccf68725cbdcb6b34",
+          "message": "fix diplomat-install (#1957)\n\n* regen diplomat\r\n\r\n* fixup diplomat-install\r\n\r\n* regen\r\n\r\n* remove file",
+          "timestamp": "2022-05-27T22:33:04Z",
+          "tree_id": "73142ebb2326542ba421c360dc8f67cdd9d3638c",
+          "url": "https://github.com/unicode-org/icu4x/commit/fc24fe01b29296d05641ef2ccf68725cbdcb6b34"
+        },
+        "date": 1653691657240,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 2901,
+            "range": "± 23",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/construct/langid",
+            "value": 847,
+            "range": "± 9",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/construct/locale",
+            "value": 1178,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/to_string/langid",
+            "value": 950,
+            "range": "± 2",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/to_string/langid/writeable",
+            "value": 551,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/to_string/locale",
+            "value": 950,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/to_string/locale/writeable",
+            "value": 550,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/compare/struct/langid",
+            "value": 90,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/compare/struct/locale",
+            "value": 90,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/compare/str/langid",
+            "value": 741,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/compare/cmp_bytes/langid",
+            "value": 294,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/compare/str/locale",
+            "value": 742,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/compare/cmp_bytes/locale",
+            "value": 294,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/canonicalize/langid",
+            "value": 2326,
+            "range": "± 4",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/canonicalize/locale",
+            "value": 3152,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 3795,
+            "range": "± 4",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/construct/locale",
+            "value": 1708,
+            "range": "± 2",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/to_string/locale",
+            "value": 1252,
+            "range": "± 3",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/to_string/locale/writeable",
+            "value": 852,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/compare/struct/locale",
+            "value": 246,
+            "range": "± 2",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/compare/str/locale",
+            "value": 1780,
+            "range": "± 3",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/compare/cmp_bytes/locale",
+            "value": 539,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/canonicalize/locale",
+            "value": 3443,
+            "range": "± 4",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "subtags/language/parse",
+            "value": 159,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "subtags/script/parse",
+            "value": 113,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "subtags/region/parse",
+            "value": 168,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "subtags/variant/parse",
+            "value": 156,
             "range": "± 0",
             "unit": "ns/iter"
           }
