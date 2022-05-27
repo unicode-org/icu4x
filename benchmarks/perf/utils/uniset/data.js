@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1653631589988,
+  "lastUpdate": 1653676418823,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -29267,6 +29267,60 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 40527775,
             "range": "± 211524",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/worst",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/worst",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "dd20084f5cad0c02e9d36d1804a930a6a90fe80f",
+          "message": "FsDataProvider test completeness (#1947)",
+          "timestamp": "2022-05-27T20:24:08+02:00",
+          "tree_id": "599dba4eca4b3c95b92ee2b4b9b20a4db75f351b",
+          "url": "https://github.com/unicode-org/icu4x/commit/dd20084f5cad0c02e9d36d1804a930a6a90fe80f"
+        },
+        "date": 1653676398012,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 40584112,
+            "range": "± 351683",
             "unit": "ns/iter"
           },
           {
