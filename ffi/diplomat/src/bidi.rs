@@ -86,13 +86,11 @@ pub mod ffi {
         /// This is equivalent to calling `paragraph_at()` on `ICU4XBidiInfo` but doesn't
         /// create a new object
         pub fn set_paragraph_in_text(&mut self, n: usize) -> DiplomatResult<(), ()> {
-            let para = self.0.info
-                .paragraphs
-                .get(n);
+            let para = self.0.info.paragraphs.get(n);
             let para = if let Some(para) = para {
                 para
             } else {
-                return Err(()).into()
+                return Err(()).into();
             };
 
             self.0 = Paragraph::new(&self.0.info, para);
