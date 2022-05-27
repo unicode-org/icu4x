@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1653691385592,
+  "lastUpdate": 1653691597796,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -29483,6 +29483,60 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 44020416,
             "range": "± 1523448",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/worst",
+            "value": 3,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/worst",
+            "value": 3,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "a724aeed2b9f4a89032be88f8a8c14a8f58addc7",
+          "message": "Remove serde_json dep from zeromap/litemap and align features (#1939)",
+          "timestamp": "2022-05-28T00:37:05+02:00",
+          "tree_id": "0e461cbb2829526be5b2dd9ae4cf84a2a8b4b6db",
+          "url": "https://github.com/unicode-org/icu4x/commit/a724aeed2b9f4a89032be88f8a8c14a8f58addc7"
+        },
+        "date": 1653691573179,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 51166891,
+            "range": "± 835756",
             "unit": "ns/iter"
           },
           {
