@@ -550,7 +550,7 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     /// described in [#86702](https://github.com/rust-lang/rust/issues/86702). This parameter
     /// should just be ignored in the function.
     ///
-    /// To capture data and pass it to the closure, use [`Yoke::project_with_capture()`].
+    /// To capture data and pass it to the closure, use [`Yoke::map_project_with_capture()`].
     /// See [#1061](https://github.com/unicode-org/icu4x/issues/1061).
     ///
     /// This can be used, for example, to transform data from one format to another:
@@ -560,7 +560,7 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     /// # use yoke::Yoke;
     /// #
     /// fn slice(y: Yoke<&'static str, Rc<[u8]>>) -> Yoke<&'static [u8], Rc<[u8]>> {
-    ///     y.project(move |yk, _| yk.as_bytes())
+    ///     y.map_project(move |yk, _| yk.as_bytes())
     /// }
     /// ```
     ///
@@ -578,8 +578,8 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     ///     string_2: &'a str,
     /// }
     ///
-    /// fn project_string_1(bar: Yoke<Bar<'static>, Rc<[u8]>>) -> Yoke<&'static str, Rc<[u8]>> {
-    ///     bar.project(|bar, _| bar.string_1)
+    /// fn map_project_string_1(bar: Yoke<Bar<'static>, Rc<[u8]>>) -> Yoke<&'static str, Rc<[u8]>> {
+    ///     bar.map_project(|bar, _| bar.string_1)
     /// }
     ///
     /// #
@@ -610,7 +610,7 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     /// ```
     //
     // Safety docs can be found below on `__project_safety_docs()`
-    pub fn project<P>(
+    pub fn map_project<P>(
         self,
         f: for<'a> fn(
             <Y as Yokeable<'a>>::Output,
@@ -627,12 +627,12 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
         }
     }
 
-    /// This is similar to [`Yoke::project`], however it does not move
+    /// This is similar to [`Yoke::map_project`], however it does not move
     /// [`Self`] and instead clones the cart (only if the cart is a [`CloneableCart`])
     ///
     /// This is a bit more efficient than cloning the [`Yoke`] and then calling [`Yoke::project`]
     /// because then it will not clone fields that are going to be discarded.
-    pub fn project_cloned<'this, P>(
+    pub fn map_project_cloned<'this, P>(
         &'this self,
         f: for<'a> fn(
             &'this <Y as Yokeable<'a>>::Output,
@@ -650,12 +650,12 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
         }
     }
 
-    /// This is similar to [`Yoke::project`], but it works around it not being able to
+    /// This is similar to [`Yoke::map_project`], but it works around it not being able to
     /// use `FnOnce` by using an explicit capture input.
     /// See [#1061](https://github.com/unicode-org/icu4x/issues/1061).
     ///
     /// See the docs of [`Yoke::project`] for how this works.
-    pub fn project_with_capture<P, T>(
+    pub fn map_project_with_capture<P, T>(
         self,
         capture: T,
         f: for<'a> fn(
@@ -674,12 +674,12 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
         }
     }
 
-    /// This is similar to [`Yoke::project_cloned`], however it works around it not being able to
+    /// This is similar to [`Yoke::map_project_cloned`], however it works around it not being able to
     /// use `FnOnce` by using an explicit capture input.
     /// See [#1061](https://github.com/unicode-org/icu4x/issues/1061).
     ///
-    /// See the docs of [`Yoke::project_cloned`] for how this works.
-    pub fn project_cloned_with_capture<'this, P, T>(
+    /// See the docs of [`Yoke::map_project_cloned`] for how this works.
+    pub fn map_project_cloned_with_capture<'this, P, T>(
         &'this self,
         capture: T,
         f: for<'a> fn(
@@ -699,10 +699,10 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
         }
     }
 
-    /// A version of [`Yoke::project`] that takes a capture and bubbles up an error
+    /// A version of [`Yoke::map_project`] that takes a capture and bubbles up an error
     /// from the callback function.
     #[allow(clippy::type_complexity)]
-    pub fn try_project_with_capture<P, T, E>(
+    pub fn try_map_project_with_capture<P, T, E>(
         self,
         capture: T,
         f: for<'a> fn(
@@ -721,10 +721,10 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
         })
     }
 
-    /// A version of [`Yoke::project_cloned`] that takes a capture and bubbles up an error
+    /// A version of [`Yoke::map_project_cloned`] that takes a capture and bubbles up an error
     /// from the callback function.
     #[allow(clippy::type_complexity)]
-    pub fn try_project_cloned_with_capture<'this, P, T, E>(
+    pub fn try_map_project_cloned_with_capture<'this, P, T, E>(
         &'this self,
         capture: T,
         f: for<'a> fn(
@@ -912,7 +912,7 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
 /// # use yoke::Yoke;
 /// # use std::borrow::Cow;
 /// fn borrow_potentially_owned(y: &Yoke<Cow<'static, str>, Rc<[u8]>>) -> Yoke<&'static str, Rc<[u8]>> {
-///    y.project_cloned(|cow, _| &*cow)   
+///    y.map_project_cloned(|cow, _| &*cow)   
 /// }
 /// ```
 ///
@@ -925,7 +925,7 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
 /// # use yoke::Yoke;
 /// # use std::borrow::Cow;
 /// fn borrow_potentially_owned(y: Yoke<Cow<'static, str>, Rc<[u8]>>) -> Yoke<&'static str, Rc<[u8]>> {
-///    y.project(|cow, _| &*cow)   
+///    y.map_project(|cow, _| &*cow)   
 /// }
 /// ```
 ///
@@ -945,9 +945,9 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
 ///     string_2: &'a str,
 /// }
 ///
-/// fn project_owned(bar: &Yoke<Bar<'static>, Rc<[u8]>>) -> Yoke<&'static str, Rc<[u8]>> {
+/// fn map_project_owned(bar: &Yoke<Bar<'static>, Rc<[u8]>>) -> Yoke<&'static str, Rc<[u8]>> {
 ///     // ERROR (but works if you replace owned with string_2)
-///     bar.project_cloned(|bar, _| &*bar.owned)   
+///     bar.map_project_cloned(|bar, _| &*bar.owned)   
 /// }
 ///
 /// #

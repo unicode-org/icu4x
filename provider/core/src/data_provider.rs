@@ -284,7 +284,7 @@ where
     ) -> Result<Self, E> {
         let yoke = yoked_buffer
             .wrap_cart_in_option()
-            .try_project_with_capture(capture, f)?;
+            .try_map_project_with_capture(capture, f)?;
         Ok(Self { yoke })
     }
 
@@ -436,7 +436,7 @@ where
         M2: DataMarker,
     {
         DataPayload {
-            yoke: self.yoke.project(f),
+            yoke: self.yoke.map_project(f),
         }
     }
 
@@ -480,7 +480,7 @@ where
         M2: DataMarker,
     {
         DataPayload {
-            yoke: self.yoke.project_cloned(f),
+            yoke: self.yoke.map_project_cloned(f),
         }
     }
 
@@ -529,7 +529,7 @@ where
         M2: DataMarker,
     {
         DataPayload {
-            yoke: self.yoke.project_with_capture(capture, f),
+            yoke: self.yoke.map_project_with_capture(capture, f),
         }
     }
 
@@ -581,7 +581,7 @@ where
         M2: DataMarker,
     {
         DataPayload {
-            yoke: self.yoke.project_cloned_with_capture(capture, f),
+            yoke: self.yoke.map_project_cloned_with_capture(capture, f),
         }
     }
 
@@ -634,7 +634,7 @@ where
         M2: DataMarker,
     {
         Ok(DataPayload {
-            yoke: self.yoke.try_project_with_capture(capture, f)?,
+            yoke: self.yoke.try_map_project_with_capture(capture, f)?,
         })
     }
 
@@ -690,7 +690,7 @@ where
         M2: DataMarker,
     {
         Ok(DataPayload {
-            yoke: self.yoke.try_project_cloned_with_capture(capture, f)?,
+            yoke: self.yoke.try_map_project_cloned_with_capture(capture, f)?,
         })
     }
 
