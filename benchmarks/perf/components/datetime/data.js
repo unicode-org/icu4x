@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1653681501673,
+  "lastUpdate": 1653691470861,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -35399,6 +35399,102 @@ window.BENCHMARK_DATA = {
             "name": "pattern/parse",
             "value": 5315,
             "range": "± 339",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "f5520c8da6d55466f9c30ad61bdcaac9bbf640e9",
+          "message": "Add bidi ffi (#1944)\n\n* Bump diplomat\r\n\r\n* Initial bidi ffi\r\n\r\n* regen\r\n\r\n* Add test\r\n\r\n* fmt\r\n\r\n* fixes\r\n\r\n* regen based on PR\r\n\r\n* update tests\r\n\r\n* update diplomat hash\r\n\r\n* fix comment\r\n\r\n* Add mutable paragraph setter\r\n\r\n* regen\r\n\r\n* rustfmttttttttt\r\n\r\n* clip",
+          "timestamp": "2022-05-27T22:32:56Z",
+          "tree_id": "818c4cdaaced0f1f73c347f287a052f6ae4ef075",
+          "url": "https://github.com/unicode-org/icu4x/commit/f5520c8da6d55466f9c30ad61bdcaac9bbf640e9"
+        },
+        "date": 1653691447208,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 77718,
+            "range": "± 72",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 774819,
+            "range": "± 898",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 158894,
+            "range": "± 1426",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/DateTimeFormat/format_to_write",
+            "value": 75615,
+            "range": "± 83",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/DateTimeFormat/format_to_string",
+            "value": 82933,
+            "range": "± 71",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/format",
+            "value": 76880,
+            "range": "± 60",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/to_string",
+            "value": 84955,
+            "range": "± 159",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/ZonedDateTimeFormat/format_to_write",
+            "value": 155592,
+            "range": "± 697",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/ZonedDateTimeFormat/format_to_string",
+            "value": 169279,
+            "range": "± 199",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/format",
+            "value": 159188,
+            "range": "± 237",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/to_string",
+            "value": 171445,
+            "range": "± 177",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "pattern/parse",
+            "value": 4609,
+            "range": "± 6",
             "unit": "ns/iter"
           }
         ]
