@@ -93,7 +93,7 @@ pub mod ffi {
                 return Err(()).into();
             };
 
-            self.0 = Paragraph::new(&self.0.info, para);
+            self.0 = Paragraph::new(self.0.info, para);
             Ok(()).into()
         }
         #[diplomat::rust_link(unicode_bidi::Paragraph::level_at, FnInStruct)]
