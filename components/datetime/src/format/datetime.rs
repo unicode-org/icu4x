@@ -122,7 +122,7 @@ where
         }
         FieldLength::Fixed(p) => {
             num.pad_left(p as u16);
-            num.truncate_left((p - 1) as i16);
+            num.truncate_left(p as i16 - 1);
         }
     }
 
@@ -368,6 +368,7 @@ where
                         }
                     };
 
+                    // We store fractional seconds as nanoseconds, convert to seconds.
                     fraction
                         .multiply_pow10(-9)
                         .map_err(|_| Error::FixedDecimal)?;
