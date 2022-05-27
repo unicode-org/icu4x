@@ -80,6 +80,24 @@ pub mod ffi {
     pub struct ICU4XBidiParagraph<'info>(pub Paragraph<'info, 'info>);
 
     impl<'info> ICU4XBidiParagraph<'info> {
+        /// Given a paragraph index `n` within the surrounding text, this sets this
+        /// object to the paragraph at that index. Returns an error when out of bounds.
+        ///
+        /// This is equivalent to calling `paragraph_at()` on `ICU4XBidiInfo` but doesn't
+        /// create a new object
+        pub fn set_paragraph_in_text(&mut self, n: usize) -> DiplomatResult<(), ()> {
+            let para = self.0.info
+                .paragraphs
+                .get(n);
+            let para = if let Some(para) = para {
+                para
+            } else {
+                return Err(()).into()
+            };
+
+            self.0 = Paragraph::new(&self.0.info, para);
+            Ok(()).into()
+        }
         #[diplomat::rust_link(unicode_bidi::Paragraph::level_at, FnInStruct)]
         /// The primary direction of this paragraph
         pub fn direction(&self) -> ICU4XBidiDirection {
