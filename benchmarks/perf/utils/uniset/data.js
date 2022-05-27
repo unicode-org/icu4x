@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1653676418823,
+  "lastUpdate": 1653681385777,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -29321,6 +29321,60 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 40584112,
             "range": "± 351683",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/worst",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/worst",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "80083c9807269f41ed9ecddf7b36de2d61d7d1e7",
+          "message": "Add FixedDecimal::concatenate_right (#1953)\n\n* Add FixedDecimal::concatenated\r\n\r\n* Refactoring & clippy\r\n\r\n* concatenate -> concatenate_right\r\n\r\n* Use extend_from_slice for more efficiency",
+          "timestamp": "2022-05-27T15:45:34-04:00",
+          "tree_id": "ad4fcb059b2900191be3577578ae1f7dab1a5e6c",
+          "url": "https://github.com/unicode-org/icu4x/commit/80083c9807269f41ed9ecddf7b36de2d61d7d1e7"
+        },
+        "date": 1653681361739,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 39415539,
+            "range": "± 2188313",
             "unit": "ns/iter"
           },
           {
