@@ -618,6 +618,90 @@ impl FixedDecimal {
         self.check_invariants();
     }
 
+    /// Concatenate another `FixedDecimal` into the end of this `FixedDecimal`.
+    ///
+    /// All nonzero digits in `other` must have lower magnitude than nonzero digits in `self`.
+    /// If the two decimals represent overlapping ranges of magnitudes, an `Err` is returned,
+    /// passing ownership of `other` back to the caller.
+    ///
+    /// The magnitude range of `self` will be increased if `other` covers a larger range.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use fixed_decimal::FixedDecimal;
+    ///
+    /// let integer = FixedDecimal::from(123);
+    /// let fraction = FixedDecimal::from(456)
+    ///     .multiplied_pow10(-3)
+    ///     .expect("in-range");
+    ///
+    /// let result =  integer.concatenated_right(fraction).expect("nonoverlapping");
+    ///
+    /// assert_eq!("123.456", result.to_string());
+    /// ```
+    pub fn concatenated_right(mut self, other: FixedDecimal) -> Result<Self, FixedDecimal> {
+        match self.concatenate_right(other) {
+            Ok(()) => Ok(self),
+            Err(err) => Err(err),
+        }
+    }
+
+    /// Concatenate another `FixedDecimal` into the end of this `FixedDecimal`.
+    ///
+    /// All nonzero digits in `other` must have lower magnitude than nonzero digits in `self`.
+    /// If the two decimals represent overlapping ranges of magnitudes, an `Err` is returned,
+    /// passing ownership of `other` back to the caller.
+    ///
+    /// The magnitude range of `self` will be increased if `other` covers a larger range.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use fixed_decimal::FixedDecimal;
+    ///
+    /// let mut integer = FixedDecimal::from(123);
+    /// let fraction = FixedDecimal::from(456)
+    ///     .multiplied_pow10(-3)
+    ///     .expect("nonoverlapping");
+    ///
+    /// integer.concatenate_right(fraction);
+    ///
+    /// assert_eq!("123.456", integer.to_string());
+    /// ```
+    pub fn concatenate_right(&mut self, other: FixedDecimal) -> Result<(), FixedDecimal> {
+        let self_right = self.nonzero_magnitude_right();
+        let other_left = other.nonzero_magnitude_left();
+        if self.is_zero() {
+            // Operation will succeed. We can move the digits into self.
+            self.digits = other.digits;
+            self.magnitude = other.magnitude;
+        } else if other.is_zero() {
+            // No changes to the digits are necessary.
+        } else if self_right <= other_left {
+            // Illegal: `other` is not to the right of `self`
+            return Err(other);
+        } else {
+            // Append the digits from other to the end of self
+            let inner_zeroes = crate::ops::i16_abs_sub(self_right, other_left) as usize - 1;
+            self.append_digits(inner_zeroes, &other.digits);
+        }
+        self.upper_magnitude = cmp::max(self.upper_magnitude, other.upper_magnitude);
+        self.lower_magnitude = cmp::min(self.lower_magnitude, other.lower_magnitude);
+        #[cfg(debug_assertions)]
+        self.check_invariants();
+        Ok(())
+    }
+
+    /// Appends a slice of digits to the end of `self.digits` with optional inner zeroes.
+    ///
+    /// This function does not check invariants.
+    fn append_digits(&mut self, inner_zeroes: usize, new_digits: &[u8]) {
+        let new_len = self.digits.len() + inner_zeroes;
+        self.digits.resize_with(new_len, || 0);
+        self.digits.extend_from_slice(new_digits);
+    }
+
     /// Returns the [Signum][Signum] of this FixedDecimal.
     ///
     /// # Examples
@@ -2060,4 +2144,118 @@ fn test_pad_right_bounds() {
         max_fractional_digits - 1,
         dec.to_string().split_once('.').unwrap().1.len()
     );
+}
+
+#[test]
+fn test_concatenate() {
+    #[derive(Debug)]
+    struct TestCase {
+        pub input_1: &'static str,
+        pub input_2: &'static str,
+        pub expected: Option<&'static str>,
+    }
+    let cases = [
+        TestCase {
+            input_1: "123",
+            input_2: "0.456",
+            expected: Some("123.456"),
+        },
+        TestCase {
+            input_1: "0.456",
+            input_2: "123",
+            expected: None,
+        },
+        TestCase {
+            input_1: "123",
+            input_2: "0.0456",
+            expected: Some("123.0456"),
+        },
+        TestCase {
+            input_1: "0.0456",
+            input_2: "123",
+            expected: None,
+        },
+        TestCase {
+            input_1: "100",
+            input_2: "0.456",
+            expected: Some("100.456"),
+        },
+        TestCase {
+            input_1: "0.456",
+            input_2: "100",
+            expected: None,
+        },
+        TestCase {
+            input_1: "100",
+            input_2: "0.001",
+            expected: Some("100.001"),
+        },
+        TestCase {
+            input_1: "0.001",
+            input_2: "100",
+            expected: None,
+        },
+        TestCase {
+            input_1: "123000",
+            input_2: "456",
+            expected: Some("123456"),
+        },
+        TestCase {
+            input_1: "456",
+            input_2: "123000",
+            expected: None,
+        },
+        TestCase {
+            input_1: "5",
+            input_2: "5",
+            expected: None,
+        },
+        TestCase {
+            input_1: "120",
+            input_2: "25",
+            expected: None,
+        },
+        TestCase {
+            input_1: "1.1",
+            input_2: "0.2",
+            expected: None,
+        },
+        TestCase {
+            input_1: "0",
+            input_2: "222",
+            expected: Some("222"),
+        },
+        TestCase {
+            input_1: "222",
+            input_2: "0",
+            expected: Some("222"),
+        },
+        TestCase {
+            input_1: "0",
+            input_2: "0",
+            expected: Some("0"),
+        },
+        TestCase {
+            input_1: "000",
+            input_2: "0",
+            expected: Some("000"),
+        },
+        TestCase {
+            input_1: "0.00",
+            input_2: "0",
+            expected: Some("0.00"),
+        },
+    ];
+    for cas in &cases {
+        let fd1 = FixedDecimal::from_str(cas.input_1).unwrap();
+        let fd2 = FixedDecimal::from_str(cas.input_2).unwrap();
+        match fd1.concatenated_right(fd2) {
+            Ok(fd) => {
+                assert_eq!(cas.expected, Some(fd.to_string().as_str()), "{:?}", cas);
+            }
+            Err(_) => {
+                assert!(cas.expected.is_none(), "{:?}", cas);
+            }
+        }
+    }
 }
