@@ -44,9 +44,9 @@ use alloc::sync::Arc;
 /// ()`. `.get()` protects access by essentially reifying the erased lifetime to a safe local one
 /// when necessary.
 ///
-/// Furthermore, there are various [`.project()`][Yoke::project] methods that allow turning a `Yoke`
+/// Furthermore, there are various [`.map_project()`][Yoke::map_project] methods that allow turning a `Yoke`
 /// into another `Yoke` containing a different type that may contain elements of the original yoked
-/// value. See the [`Yoke::project()`] docs for more details.
+/// value. See the [`Yoke::map_project()`] docs for more details.
 ///
 /// In general, `C` is a concrete type, but it is also possible for it to be a trait object;
 /// for more information, see [`IsCovariant`].
@@ -630,7 +630,7 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     /// This is similar to [`Yoke::map_project`], however it does not move
     /// [`Self`] and instead clones the cart (only if the cart is a [`CloneableCart`])
     ///
-    /// This is a bit more efficient than cloning the [`Yoke`] and then calling [`Yoke::project`]
+    /// This is a bit more efficient than cloning the [`Yoke`] and then calling [`Yoke::map_project`]
     /// because then it will not clone fields that are going to be discarded.
     pub fn map_project_cloned<'this, P>(
         &'this self,
@@ -654,7 +654,7 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     /// use `FnOnce` by using an explicit capture input.
     /// See [#1061](https://github.com/unicode-org/icu4x/issues/1061).
     ///
-    /// See the docs of [`Yoke::project`] for how this works.
+    /// See the docs of [`Yoke::map_project`] for how this works.
     pub fn map_project_with_capture<P, T>(
         self,
         capture: T,
