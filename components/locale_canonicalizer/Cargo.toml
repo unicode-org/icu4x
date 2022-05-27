@@ -52,7 +52,7 @@ path = "src/lib.rs"
 default = []
 bench = ["serde"]
 serde = ["dep:serde", "icu_locid/serde", "tinystr/serde", "zerovec/serde"]
-datagen = ["serde", "zerovec/serde_serialize", "crabbake", "zerovec/crabbake", "icu_locid/crabbake"]
+datagen = ["serde", "crabbake", "zerovec/crabbake", "icu_locid/crabbake"]
 
 [[bench]]
 name = "locale_canonicalizer"

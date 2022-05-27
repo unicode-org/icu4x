@@ -40,5 +40,4 @@ path = "src/lib.rs"
 [features]
 default = []
 serde = ["dep:serde", "zerovec/serde"]
-serde_serialize = ["serde", "zerovec/serde_serialize"]
 crabbake = ["dep:crabbake", "zerovec/crabbake"]

@@ -27,7 +27,7 @@ include = [
 std = []
 bench = []
 serde = ["dep:serde", "zerovec/serde", "tinystr/serde", "icu_provider/serde"]
-datagen = ["serde", "zerovec/serde_serialize", "crabbake", "zerovec/crabbake", "tinystr/crabbake"]
+datagen = ["serde", "crabbake", "zerovec/crabbake", "tinystr/crabbake"]
 
 [package.metadata.docs.rs]
 all-features = true

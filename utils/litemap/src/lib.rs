@@ -44,6 +44,8 @@ extern crate alloc;
 mod map;
 #[cfg(feature = "serde")]
 mod serde;
+#[cfg(feature = "serde")]
+mod serde_helpers;
 pub mod store;
 
 #[cfg(feature = "testing")]
