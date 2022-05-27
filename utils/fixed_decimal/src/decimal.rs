@@ -699,7 +699,7 @@ impl FixedDecimal {
     fn append_digits(&mut self, inner_zeroes: usize, new_digits: &[u8]) {
         let new_len = self.digits.len() + inner_zeroes;
         self.digits.resize_with(new_len, || 0);
-        self.digits.extend(new_digits.iter().copied());
+        self.digits.extend_from_slice(new_digits);
     }
 
     /// Returns the [Signum][Signum] of this FixedDecimal.
