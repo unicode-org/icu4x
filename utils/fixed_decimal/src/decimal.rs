@@ -618,10 +618,11 @@ impl FixedDecimal {
         self.check_invariants();
     }
 
-    /// Concatenate another `FixedDecimal` into this `FixedDecimal`.
+    /// Concatenate another `FixedDecimal` into the end of this `FixedDecimal`.
     ///
-    /// The two decimals must represent non-overlapping ranges of magnitudes. If the range of
-    /// nonzero digits overlaps between `self` and `other`, an `Err` is returned.
+    /// All nonzero digits in `other` must have lower magnitude than nonzero digits in `self`.
+    /// If the two decimals represent overlapping ranges of magnitudes, an `Err` is returned,
+    /// passing ownership of `other` back to the caller.
     ///
     /// The magnitude range of `self` will be increased if `other` covers a larger range.
     ///
@@ -630,24 +631,27 @@ impl FixedDecimal {
     /// ```
     /// use fixed_decimal::FixedDecimal;
     ///
-    /// let mut integer = FixedDecimal::from(123);
+    /// let integer = FixedDecimal::from(123);
     /// let fraction = FixedDecimal::from(456)
     ///     .multiplied_pow10(-3)
     ///     .expect("in-range");
     ///
-    /// assert_eq!("123.456", integer.concatenated(fraction).expect("nonoverlapping").to_string());
+    /// let result =  integer.concatenated_right(fraction).expect("nonoverlapping");
+    ///
+    /// assert_eq!("123.456", result.to_string());
     /// ```
-    pub fn concatenated(mut self, other: FixedDecimal) -> Result<Self, Error> {
-        match self.concatenate(other) {
+    pub fn concatenated_right(mut self, other: FixedDecimal) -> Result<Self, FixedDecimal> {
+        match self.concatenate_right(other) {
             Ok(()) => Ok(self),
             Err(err) => Err(err),
         }
     }
 
-    /// Concatenate another `FixedDecimal` into this `FixedDecimal`.
+    /// Concatenate another `FixedDecimal` into the end of this `FixedDecimal`.
     ///
-    /// The two decimals must represent non-overlapping ranges of magnitudes. If the range of
-    /// nonzero digits overlaps between `self` and `other`, an `Err` is returned.
+    /// All nonzero digits in `other` must have lower magnitude than nonzero digits in `self`.
+    /// If the two decimals represent overlapping ranges of magnitudes, an `Err` is returned,
+    /// passing ownership of `other` back to the caller.
     ///
     /// The magnitude range of `self` will be increased if `other` covers a larger range.
     ///
@@ -661,36 +665,26 @@ impl FixedDecimal {
     ///     .multiplied_pow10(-3)
     ///     .expect("nonoverlapping");
     ///
-    /// integer.concatenate(fraction);
+    /// integer.concatenate_right(fraction);
     ///
     /// assert_eq!("123.456", integer.to_string());
     /// ```
-    pub fn concatenate(&mut self, other: FixedDecimal) -> Result<(), Error> {
-        let self_left = self.nonzero_magnitude_left();
+    pub fn concatenate_right(&mut self, other: FixedDecimal) -> Result<(), FixedDecimal> {
         let self_right = self.nonzero_magnitude_right();
         let other_left = other.nonzero_magnitude_left();
-        let other_right = other.nonzero_magnitude_right();
         if self.is_zero() {
             // Operation will succeed. We can move the digits into self.
             self.digits = other.digits;
             self.magnitude = other.magnitude;
         } else if other.is_zero() {
             // No changes to the digits are necessary.
-        } else if self_left >= other_right && self_right <= other_left {
-            // Illegal: overlapping ranges of nonzero digits
-            return Err(Error::Illegal);
-        } else if self_right > other_left {
+        } else if self_right <= other_left {
+            // Illegal: `other` is not to the right of `self`
+            return Err(other);
+        } else {
             // Append the digits from other to the end of self
             let inner_zeroes = crate::ops::i16_abs_sub(self_right, other_left) as usize - 1;
             self.append_digits(inner_zeroes, &other.digits);
-        } else {
-            debug_assert!(other_right > self_left);
-            // Append the digits from self to the end of other
-            let inner_zeroes = crate::ops::i16_abs_sub(other_right, self_left) as usize - 1;
-            let mut digits = other.digits;
-            core::mem::swap(&mut self.digits, &mut digits);
-            self.magnitude = other.magnitude;
-            self.append_digits(inner_zeroes, &digits);
         }
         self.upper_magnitude = cmp::max(self.upper_magnitude, other.upper_magnitude);
         self.lower_magnitude = cmp::min(self.lower_magnitude, other.lower_magnitude);
@@ -2169,7 +2163,7 @@ fn test_concatenate() {
         TestCase {
             input_1: "0.456",
             input_2: "123",
-            expected: Some("123.456"),
+            expected: None,
         },
         TestCase {
             input_1: "123",
@@ -2179,7 +2173,7 @@ fn test_concatenate() {
         TestCase {
             input_1: "0.0456",
             input_2: "123",
-            expected: Some("123.0456"),
+            expected: None,
         },
         TestCase {
             input_1: "100",
@@ -2189,7 +2183,7 @@ fn test_concatenate() {
         TestCase {
             input_1: "0.456",
             input_2: "100",
-            expected: Some("100.456"),
+            expected: None,
         },
         TestCase {
             input_1: "100",
@@ -2199,7 +2193,7 @@ fn test_concatenate() {
         TestCase {
             input_1: "0.001",
             input_2: "100",
-            expected: Some("100.001"),
+            expected: None,
         },
         TestCase {
             input_1: "123000",
@@ -2209,7 +2203,7 @@ fn test_concatenate() {
         TestCase {
             input_1: "456",
             input_2: "123000",
-            expected: Some("123456"),
+            expected: None,
         },
         TestCase {
             input_1: "5",
@@ -2255,14 +2249,13 @@ fn test_concatenate() {
     for cas in &cases {
         let fd1 = FixedDecimal::from_str(cas.input_1).unwrap();
         let fd2 = FixedDecimal::from_str(cas.input_2).unwrap();
-        match fd1.concatenated(fd2) {
+        match fd1.concatenated_right(fd2) {
             Ok(fd) => {
                 assert_eq!(cas.expected, Some(fd.to_string().as_str()), "{:?}", cas);
             }
-            Err(Error::Illegal) => {
+            Err(_) => {
                 assert!(cas.expected.is_none(), "{:?}", cas);
             }
-            _ => panic!("{:?}", cas),
         }
     }
 }
