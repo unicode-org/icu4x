@@ -119,7 +119,7 @@ pub fn keys<S: AsRef<str>>(strings: &[S]) -> Vec<ResourceKey> {
 /// # Ok(())
 /// # }
 /// ```
-pub fn keys_from_bin<P: AsRef<Path>>(path: P) -> Result<Vec<ResourceKey>, std::io::Error> {
+pub fn keys_from_bin<P: AsRef<Path>>(path: P) -> std::io::Result<Vec<ResourceKey>> {
     let file = std::fs::read(path.as_ref())?;
     let strings = file.split(|&b| b == b'\0').collect::<HashSet<_>>();
     Ok(get_all_keys()

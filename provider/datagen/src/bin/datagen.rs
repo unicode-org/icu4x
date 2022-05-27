@@ -231,7 +231,8 @@ fn main() -> eyre::Result<()> {
     } else if let Some(paths) = matches.values_of("KEYS") {
         icu_datagen::keys(&paths.collect::<Vec<_>>())
     } else if let Some(binary_path) = matches.value_of_os("BINARY") {
-        icu_datagen::keys_from_bin(binary_path)?
+        icu_datagen::keys_from_bin(binary_path)
+            .with_context(|| binary_path.to_string_lossy().into_owned())?
     } else {
         unreachable!();
     };
