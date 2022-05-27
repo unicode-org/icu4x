@@ -27,7 +27,7 @@ include = [
 std = []
 bench = []
 serde = ["dep:serde", "zerovec/serde", "tinystr/serde", "icu_provider/serde"]
-datagen = ["serde"]
+datagen = ["serde", "crabbake", "zerovec/crabbake", "tinystr/crabbake"]
 
 [package.metadata.docs.rs]
 all-features = true
@@ -44,6 +44,7 @@ icu_provider = { version = "0.6", path = "../../provider/core", features = ["mac
 icu_locid = { version = "0.6", path = "../../components/locid" }
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }
 zerovec = { version = "0.7", path = "../../utils/zerovec", default-features = false, features = ["derive"] }
+crabbake = { version = "0.4", path = "../../experimental/crabbake", optional = true, features = ["derive"] }
 
 [dev-dependencies]
 icu = { path = "../icu", default-features = false }

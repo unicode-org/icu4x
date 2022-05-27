@@ -103,7 +103,7 @@ macro_rules! collation_provider {
         /// A data provider reading from .toml files produced by the ICU4C genrb tool.
         impl $provider {
             fn load_data_if_not_loaded(&self) -> Result<(), DataError> {
-                if self.data.read().unwrap().is_some() {
+                if self.data.read().expect("poison").is_some() {
                     return Ok(());
                 }
                 let guard = self.data.write();
@@ -178,7 +178,7 @@ macro_rules! collation_provider {
                     }
                 }
 
-                let guard = self.data.read().unwrap();
+                let guard = self.data.read().expect("poison");
 
                 if let Some($toml_data) = guard.as_ref().unwrap().get(&s) {
                     Ok(DataResponse {
@@ -198,7 +198,9 @@ macro_rules! collation_provider {
         icu_provider::impl_dyn_provider!(
             $provider,
             [$marker,],
+            CRABBAKE,
             SERDE_SE,
+            ITERABLE_CRABBAKE,
             ITERABLE_SERDE_SE,
             DATA_CONVERTER
         );
@@ -209,7 +211,7 @@ macro_rules! collation_provider {
             ) -> Result<Box<dyn Iterator<Item = ResourceOptions>>, DataError> {
                 self.load_data_if_not_loaded()?;
 
-                let guard = self.data.read().unwrap();
+                let guard = self.data.read().expect("poison");
 
                 let list: Vec<ResourceOptions> = guard
                     .as_ref()

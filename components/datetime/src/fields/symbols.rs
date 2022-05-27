@@ -25,7 +25,9 @@ pub enum SymbolError {
 impl std::error::Error for SymbolError {}
 
 #[derive(Debug, Eq, PartialEq, Clone, Copy)]
-#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, crabbake::Bakeable), crabbake(path = icu_datetime::fields))]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[allow(clippy::exhaustive_enums)] // part of data struct
 pub enum FieldSymbol {
     Era,
     Year(Year),
@@ -184,6 +186,7 @@ unsafe impl ULE for FieldSymbolULE {
 }
 
 #[derive(Debug, Eq, PartialEq, Clone, Copy)]
+#[allow(clippy::exhaustive_enums)] // used in data struct
 pub enum TextOrNumeric {
     Text,
     Numeric,
@@ -300,6 +303,108 @@ impl Ord for FieldSymbol {
     fn cmp(&self, other: &Self) -> Ordering {
         self.get_canonical_order().cmp(&other.get_canonical_order())
     }
+}
+
+macro_rules! field_type {
+    ($i:ident; { $($key:expr => $val:ident = $idx:expr,)* }; $length_type:ident; $ule_name:ident) => (
+        field_type!($i; {$($key => $val = $idx,)*}; $ule_name);
+
+        impl LengthType for $i {
+            fn get_length_type(&self, _length: FieldLength) -> TextOrNumeric {
+                TextOrNumeric::$length_type
+            }
+        }
+    );
+    ($i:ident; { $($key:expr => $val:ident = $idx:expr,)* }; $ule_name:ident) => (
+        #[derive(Debug, Eq, PartialEq, Ord, PartialOrd, Clone, Copy, yoke::Yokeable, zerofrom::ZeroFrom)]
+        // FIXME: This should be replaced with a custom derive.
+        // See: https://github.com/unicode-org/icu4x/issues/1044
+        #[cfg_attr(
+            feature = "datagen",
+            derive(serde::Serialize, crabbake::Bakeable),
+            crabbake(path = icu_datetime::fields),
+        )]
+        #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+        #[allow(clippy::enum_variant_names)]
+        #[repr(u8)]
+        #[zerovec::make_ule($ule_name)]
+        #[allow(clippy::exhaustive_enums)] // used in data struct
+        pub enum $i {
+            $($val = $idx, )*
+        }
+
+        impl $i {
+            /// Retrieves an index of the field variant.
+            ///
+            /// # Examples
+            ///
+            /// ```ignore
+            /// use icu::datetime::fields::Month;
+            ///
+            /// assert_eq!(Month::StandAlone::idx(), 1);
+            /// ```
+            ///
+            /// # Stability
+            ///
+            /// This is mostly useful for serialization,
+            /// and does not guarantee index stability between ICU4X
+            /// versions.
+            #[inline]
+            pub(crate) fn idx(self) -> u8 {
+                self as u8
+            }
+
+            /// Retrieves a field variant from an index.
+            ///
+            /// # Examples
+            ///
+            /// ```ignore
+            /// use icu::datetime::fields::Month;
+            ///
+            /// assert_eq!(Month::from_idx(0), Month::Format);
+            /// ```
+            ///
+            /// # Stability
+            ///
+            /// This is mostly useful for serialization,
+            /// and does not guarantee index stability between ICU4X
+            /// versions.
+            #[inline]
+            pub(crate) fn from_idx(idx: u8) -> Result<Self, SymbolError> {
+                Self::new_from_u8(idx)
+                    .ok_or(SymbolError::InvalidIndex(idx))
+            }
+        }
+
+        impl TryFrom<char> for $i {
+            type Error = SymbolError;
+
+            fn try_from(ch: char) -> Result<Self, Self::Error> {
+                match ch {
+                    $(
+                        $key => Ok(Self::$val),
+                    )*
+                    _ => Err(SymbolError::Unknown(ch)),
+                }
+            }
+        }
+
+        impl From<$i> for FieldSymbol {
+            fn from(input: $i) -> Self {
+                Self::$i(input)
+            }
+        }
+
+        impl From<$i> for char {
+            fn from(input: $i) -> char {
+                match input {
+                    $(
+                        $i::$val => $key,
+                    )*
+                }
+            }
+        }
+    );
 }
 
 field_type!(Year; {

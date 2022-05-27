@@ -63,6 +63,7 @@ use icu_provider::ResourceProvider;
 use smallvec::SmallVec;
 use utf8_iter::Utf8CharsEx;
 use zerovec::ule::AsULE;
+use zerovec::ZeroSlice;
 
 // These constants originate from page 143 of Unicode 14.0
 /// Syllable base
@@ -79,6 +80,71 @@ const HANGUL_T_COUNT: u32 = 28;
 const HANGUL_N_COUNT: u32 = 588;
 /// Syllable count
 const HANGUL_S_COUNT: u32 = 11172;
+
+/// If `opt` is `Some`, unwrap it. If `None`, panic if debug assertions
+/// are enabled and return `default` if debug assertions are not enabled.
+///
+/// Use this only if the only reason why `opt` could be `None` is bogus
+/// data from the provider.
+#[inline(always)]
+pub(crate) fn unwrap_or_gigo<T>(opt: Option<T>, default: T) -> T {
+    if let Some(val) = opt {
+        val
+    } else {
+        // GIGO case
+        debug_assert!(false);
+        default
+    }
+}
+
+/// Convert a `u32` _obtained from data provider data_ to `char`.
+#[inline(always)]
+fn char_from_u32(u: u32) -> char {
+    unwrap_or_gigo(core::char::from_u32(u), REPLACEMENT_CHARACTER)
+}
+
+/// Convert a `u16` _obtained from data provider data_ to `char`.
+#[inline(always)]
+fn char_from_u16(u: u16) -> char {
+    char_from_u32(u32::from(u))
+}
+
+const EMPTY_U16: &ZeroSlice<u16> =
+    ZeroSlice::<u16>::from_ule_slice_const(&<u16 as AsULE>::ULE::from_array([]));
+const EMPTY_U32: &ZeroSlice<u32> =
+    ZeroSlice::<u32>::from_ule_slice_const(&<u32 as AsULE>::ULE::from_array([]));
+
+#[inline(always)]
+fn split_first_u16(s: Option<&ZeroSlice<u16>>) -> (char, &ZeroSlice<u16>) {
+    if let Some(slice) = s {
+        if let Some(first) = slice.first() {
+            // `unwrap()` must succeed, because `first()` returned `Some`.
+            return (
+                char_from_u16(first),
+                slice.get_subslice(1..slice.len()).unwrap(),
+            );
+        }
+    }
+    // GIGO case
+    debug_assert!(false);
+    (REPLACEMENT_CHARACTER, EMPTY_U16)
+}
+
+#[inline(always)]
+fn split_first_u32(s: Option<&ZeroSlice<u32>>) -> (char, &ZeroSlice<u32>) {
+    if let Some(slice) = s {
+        if let Some(first) = slice.first() {
+            // `unwrap()` must succeed, because `first()` returned `Some`.
+            return (
+                char_from_u32(first),
+                slice.get_subslice(1..slice.len()).unwrap(),
+            );
+        }
+    }
+    // GIGO case
+    debug_assert!(false);
+    (REPLACEMENT_CHARACTER, EMPTY_U32)
+}
 
 #[inline(always)]
 fn in_inclusive_range(c: char, start: char, end: char) -> bool {
@@ -115,6 +181,7 @@ impl CharacterAndClass {
         CharacterAndClass(u32::from(c))
     }
     pub fn character(&self) -> char {
+        // Safe, because the low 24 bits came from a `char`.
         unsafe { char::from_u32_unchecked(self.0 & 0xFFFFFF) }
     }
     pub fn ccc(&self) -> CanonicalCombiningClass {
@@ -221,13 +288,13 @@ where
                     let low = decomposition as u16;
                     if high != 0 && low != 0 {
                         // Decomposition into two BMP characters: starter and non-starter
-                        let starter = core::char::from_u32(u32::from(high)).unwrap();
-                        let combining = core::char::from_u32(u32::from(low)).unwrap();
+                        let starter = char_from_u16(high);
+                        let combining = char_from_u16(low);
                         self.buffer.push(CharacterAndClass::new(combining));
                         (starter, 0)
                     } else if high != 0 {
                         // Decomposition into one BMP character
-                        let starter = core::char::from_u32(u32::from(high)).unwrap();
+                        let starter = char_from_u16(high);
                         (starter, 0)
                     } else {
                         // Complex decomposition
@@ -247,30 +314,22 @@ where
                         let offset = usize::from(low & 0x7FF);
                         let len = usize::from(low >> 13);
                         if low & 0x1000 == 0 {
-                            let (&first, tail) = &self.decompositions.scalars16.as_ule_slice()
-                                [offset..offset + len]
-                                .split_first()
-                                .unwrap();
-                            // Starter
-                            let starter =
-                                core::char::from_u32(u32::from(u16::from_unaligned(first)))
-                                    .unwrap();
+                            let (starter, tail) = split_first_u16(
+                                self.decompositions
+                                    .scalars16
+                                    .get_subslice(offset..offset + len),
+                            );
                             if low & 0x800 == 0 {
                                 // All the rest are combining
-                                for &ule in tail.iter() {
-                                    self.buffer.push(CharacterAndClass::new(
-                                        core::char::from_u32(u32::from(u16::from_unaligned(ule)))
-                                            .unwrap(),
-                                    ));
+                                for u in tail.iter() {
+                                    self.buffer.push(CharacterAndClass::new(char_from_u16(u)));
                                 }
                                 (starter, 0)
                             } else {
                                 let mut i = 0;
                                 let mut combining_start = 0;
-                                for &ule in tail.iter() {
-                                    let ch =
-                                        core::char::from_u32(u32::from(u16::from_unaligned(ule)))
-                                            .unwrap();
+                                for u in tail.iter() {
+                                    let ch = char_from_u16(u);
                                     self.buffer.push(CharacterAndClass::new(ch));
                                     i += 1;
                                     if !self
@@ -284,25 +343,22 @@ where
                                 (starter, combining_start)
                             }
                         } else {
-                            let (&first, tail) = &self.decompositions.scalars32.as_ule_slice()
-                                [offset..offset + len]
-                                .split_first()
-                                .unwrap();
-                            let starter = core::char::from_u32(u32::from_unaligned(first)).unwrap();
+                            let (starter, tail) = split_first_u32(
+                                self.decompositions
+                                    .scalars32
+                                    .get_subslice(offset..offset + len),
+                            );
                             if low & 0x800 == 0 {
                                 // All the rest are combining
-                                for &ule in tail.iter() {
-                                    self.buffer.push(CharacterAndClass::new(
-                                        core::char::from_u32(u32::from_unaligned(ule)).unwrap(),
-                                    ));
+                                for u in tail.iter() {
+                                    self.buffer.push(CharacterAndClass::new(char_from_u32(u)));
                                 }
                                 (starter, 0)
                             } else {
                                 let mut i = 0;
                                 let mut combining_start = 0;
-                                for &ule in tail.iter() {
-                                    let ch =
-                                        core::char::from_u32(u32::from_unaligned(ule)).unwrap();
+                                for u in tail.iter() {
+                                    let ch = char_from_u32(u);
                                     self.buffer.push(CharacterAndClass::new(ch));
                                     i += 1;
                                     if !self
@@ -325,6 +381,9 @@ where
                 let v = (hangul_offset % HANGUL_N_COUNT) / HANGUL_T_COUNT;
                 let t = hangul_offset % HANGUL_T_COUNT;
 
+                // The unsafe blocks here are OK, because the values stay
+                // within the Hangul jamo block and, therefore, the scalar
+                // value range by construction.
                 self.buffer.push(CharacterAndClass::new(unsafe {
                     core::char::from_u32_unchecked(HANGUL_V_BASE + v)
                 }));
@@ -537,16 +596,5 @@ impl DecomposingNormalizer {
     }
 }
 
-#[cfg(test)]
-mod tests {
-    use crate::DecomposingNormalizer;
-
-    #[test]
-    fn test_basic() {
-        let data_provider = icu_testdata::get_provider();
-
-        let normalizer: DecomposingNormalizer =
-            DecomposingNormalizer::try_new(&data_provider).unwrap();
-        assert_eq!(normalizer.normalize("ä"), "a\u{0308}");
-    }
-}
+#[cfg(all(test, feature = "serde"))]
+mod tests;

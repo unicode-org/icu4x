@@ -167,7 +167,21 @@ displaydoc = { version = "0.2.3", default-features = false, optional = true }
 writeable = { version = "0.4", path = "../../utils/writeable", optional = true }
 
 # crabbake deps
+icu_calendar = { version = "0.6", path = "../../components/calendar", optional = true }
+icu_casemapping = { version = "0.1", path = "../../experimental/casemapping", optional = true }
+icu_datetime = { version = "0.6", path = "../../components/datetime", optional = true }
+icu_decimal = { version = "0.6", path = "../../components/decimal", optional = true }
 icu_list = { version = "0.6", path = "../../components/list", optional = true }
+icu_locale_canonicalizer = { version = "0.6", path = "../../components/locale_canonicalizer", optional = true }
+icu_plurals = { version = "0.6", path = "../../components/plurals", optional = true }
+icu_properties = { version = "0.6", path = "../../components/properties", optional = true }
+icu_segmenter = { version = "0.6", path = "../../experimental/segmenter", optional = true }
+icu_codepointtrie = { version = "0.4", path = "../../utils/codepointtrie", optional = true }
+icu_uniset = { version = "0.5", path = "../../utils/uniset", optional = true }
+icu_normalizer = { version = "0.6", path = "../../experimental/normalizer", optional = true }
+icu_collator = { version = "0.6", path = "../../experimental/collator", optional = true }
+tinystr = { version = "0.6", path = "../../utils/tinystr", optional = true }
+zerovec = { version = "0.7", path = "../../utils/zerovec", optional = true }
 
 [dev-dependencies]
 icu_plurals = { version = "0.6", path = "../../components/plurals" }
@@ -186,7 +200,25 @@ metadata = [
 ]
 fs = ["icu_provider/deserialize_json", "icu_provider_fs", "std"]
 static = ["icu_provider_blob"]
-baked = ["icu_list"]
+baked = [
+    "icu_list",
+    "icu_calendar",
+    "icu_casemapping",
+    "icu_collator",
+    "icu_datetime",
+    "icu_decimal",
+    "icu_list",
+    "icu_locale_canonicalizer",
+    "icu_locid",
+    "icu_normalizer",
+    "icu_plurals",
+    "icu_properties",
+    "icu_segmenter",
+    "icu_codepointtrie",
+    "icu_uniset",
+    "tinystr",
+    "zerovec",
+]
 std = []
 bin = [
     "clap",

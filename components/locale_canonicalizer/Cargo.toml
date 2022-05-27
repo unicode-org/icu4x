@@ -33,10 +33,10 @@ all-features = true
 [dependencies]
 icu_locid = { version = "0.6", path = "../locid", features = ["serde", "zerovec"] }
 icu_provider = { version = "0.6", path = "../../provider/core", features = ["macros"] }
-litemap = { version = "0.4", path = "../../utils/litemap", features = ["yoke"] }
 serde = { version = "1.0", features = ["derive", "alloc"], optional = true, default-features = false }
-tinystr = { path = "../../utils/tinystr", version = "0.6", default-features = false, features = ["alloc", "zerovec"] }
-zerovec = { path = "../../utils/zerovec", version = "0.7", features = ["yoke"]}
+tinystr = { path = "../../utils/tinystr", version = "0.6.0", default-features = false, features = ["alloc", "zerovec"] }
+zerovec = { path = "../../utils/zerovec", version = "0.7.0", features = ["yoke"] }
+crabbake = { version = "0.4", path = "../../experimental/crabbake", optional = true, features = ["derive"] }
 
 [dev-dependencies]
 criterion = "0.3.3"
@@ -51,8 +51,8 @@ path = "src/lib.rs"
 [features]
 default = []
 bench = ["serde"]
-serde = ["dep:serde", "icu_locid/serde", "litemap/serde", "tinystr/serde", "zerovec/serde"]
-datagen = ["serde"]
+serde = ["dep:serde", "icu_locid/serde", "tinystr/serde", "zerovec/serde"]
+datagen = ["serde", "crabbake", "zerovec/crabbake", "icu_locid/crabbake"]
 
 [[bench]]
 name = "locale_canonicalizer"

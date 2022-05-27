@@ -18,8 +18,8 @@ mod reference {
     #[derive(Debug, Clone, PartialEq, Deserialize)]
     #[cfg_attr(feature = "datagen", derive(Serialize))]
     struct PatternForSerde {
-        pub items: Vec<PatternItem>,
-        pub(crate) time_granularity: TimeGranularity,
+        items: Vec<PatternItem>,
+        time_granularity: TimeGranularity,
     }
 
     impl From<PatternForSerde> for Pattern {

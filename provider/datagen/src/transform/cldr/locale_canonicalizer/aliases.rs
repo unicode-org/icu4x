@@ -55,7 +55,9 @@ impl ResourceProvider<AliasesV1Marker> for AliasesProvider {
 icu_provider::impl_dyn_provider!(
     AliasesProvider,
     [AliasesV1Marker,],
+    CRABBAKE,
     SERDE_SE,
+    ITERABLE_CRABBAKE,
     ITERABLE_SERDE_SE,
     DATA_CONVERTER
 );

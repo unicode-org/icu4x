@@ -34,8 +34,14 @@ type UnvalidatedLanguageIdentifierPair = StrStrPairVarULE;
 #[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Debug)]
 #[cfg_attr(
     feature = "serde",
-    derive(serde::Deserialize, serde::Serialize),
-    zerovec::derive(Deserialize, Serialize)
+    derive(serde::Deserialize),
+    zerovec::derive(Deserialize)
+)]
+#[cfg_attr(
+    feature = "datagen",
+    derive(serde::Serialize, crabbake::Bakeable),
+    zerovec::derive(Serialize),
+    crabbake(path = icu_locale_canonicalizer::provider),
 )]
 /// A pair of strings with a EncodeAsVarULE implementation.
 pub struct StrStrPair<'a>(
@@ -45,7 +51,11 @@ pub struct StrStrPair<'a>(
 
 #[icu_provider::data_struct(AliasesV1Marker = "locale_canonicalizer/aliases@1")]
 #[derive(PartialEq, Clone, Default)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize))]
+#[cfg_attr(
+    feature = "datagen",
+    derive(serde::Serialize, crabbake::Bakeable),
+    crabbake(path = icu_locale_canonicalizer::provider),
+)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
 /// This alias data is used for locale canonicalization. Each field defines a
@@ -106,7 +116,11 @@ pub struct AliasesV1<'data> {
 
 #[icu_provider::data_struct(LikelySubtagsV1Marker = "locale_canonicalizer/likelysubtags@1")]
 #[derive(Debug, PartialEq, Clone)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize))]
+#[cfg_attr(
+    feature = "datagen",
+    derive(serde::Serialize, crabbake::Bakeable),
+    crabbake(path = icu_locale_canonicalizer::provider),
+)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 /// This likely subtags data is used for the minimize and maximize operations.
 /// Each field defines a mapping from an old identifier to a new identifier,

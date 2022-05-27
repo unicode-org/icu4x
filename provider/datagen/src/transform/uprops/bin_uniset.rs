@@ -28,9 +28,9 @@ impl From<&SourceData> for BinaryPropertyUnicodeSetDataProvider {
 
 impl BinaryPropertyUnicodeSetDataProvider {
     fn init(&self) -> Result<RwLockReadGuard<Option<TomlBinary>>, DataError> {
-        if self.data.read().unwrap().is_none() {
+        if self.data.read().expect("poison").is_none() {
             let data = uprops_helpers::load_binary_from_dir(self.source.get_uprops_root()?)?;
-            *self.data.write().unwrap() = Some(data);
+            *self.data.write().expect("poison") = Some(data);
         }
 
         Ok(self.data.read().expect("poison"))
@@ -81,7 +81,7 @@ macro_rules! expand {
             }
         )+
 
-        icu_provider::impl_dyn_provider!(BinaryPropertyUnicodeSetDataProvider, [$($marker),+,], SERDE_SE, ITERABLE_SERDE_SE, DATA_CONVERTER);
+        icu_provider::impl_dyn_provider!(BinaryPropertyUnicodeSetDataProvider, [$($marker),+,], CRABBAKE, SERDE_SE, ITERABLE_CRABBAKE, ITERABLE_SERDE_SE, DATA_CONVERTER);
     };
 }
 
