@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1653675994304,
+  "lastUpdate": 1653680853390,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -16103,6 +16103,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/dd20084f5cad0c02e9d36d1804a930a6a90fe80f"
         },
         "date": 1653675967877,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 2220821,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "80083c9807269f41ed9ecddf7b36de2d61d7d1e7",
+          "message": "Add FixedDecimal::concatenate_right (#1953)\n\n* Add FixedDecimal::concatenated\r\n\r\n* Refactoring & clippy\r\n\r\n* concatenate -> concatenate_right\r\n\r\n* Use extend_from_slice for more efficiency",
+          "timestamp": "2022-05-27T15:45:34-04:00",
+          "tree_id": "ad4fcb059b2900191be3577578ae1f7dab1a5e6c",
+          "url": "https://github.com/unicode-org/icu4x/commit/80083c9807269f41ed9ecddf7b36de2d61d7d1e7"
+        },
+        "date": 1653680832219,
         "tool": "ndjson",
         "benches": [
           {
