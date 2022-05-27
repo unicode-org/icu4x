@@ -31,6 +31,15 @@ class ICU4XBidiParagraph {
  public:
 
   /**
+   * Given a paragraph index `n` within the surrounding text, this sets this
+   * object to the paragraph at that index. Returns an error when out of bounds.
+   * 
+   * This is equivalent to calling `paragraph_at()` on `ICU4XBidiInfo` but doesn't
+   * create a new object
+   */
+  diplomat::result<std::monostate, std::monostate> set_paragraph_in_text(size_t n);
+
+  /**
    * The primary direction of this paragraph
    * 
    * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/unicode_bidi/struct.Paragraph.html#method.level_at) for more information.
@@ -106,6 +115,16 @@ class ICU4XBidiParagraph {
 };
 
 
+inline diplomat::result<std::monostate, std::monostate> ICU4XBidiParagraph::set_paragraph_in_text(size_t n) {
+  auto diplomat_result_raw_out_value = capi::ICU4XBidiParagraph_set_paragraph_in_text(this->inner.get(), n);
+  diplomat::result<std::monostate, std::monostate> diplomat_result_out_value;
+  if (diplomat_result_raw_out_value.is_ok) {
+    diplomat_result_out_value = diplomat::Ok(std::monostate());
+  } else {
+    diplomat_result_out_value = diplomat::Err(std::monostate());
+  }
+  return diplomat_result_out_value;
+}
 inline ICU4XBidiDirection ICU4XBidiParagraph::direction() const {
   return static_cast<ICU4XBidiDirection>(capi::ICU4XBidiParagraph_direction(this->inner.get()));
 }

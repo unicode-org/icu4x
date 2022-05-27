@@ -31,6 +31,8 @@
 
     .. cpp:function:: size_t paragraph_count() const
 
+        The number of paragraphs contained here
+
     .. cpp:function:: std::optional<ICU4XBidiParagraph> paragraph_at(size_t n) const
 
         Get the nth paragraph, returning None if out of bounds
@@ -38,6 +40,11 @@
 .. cpp:class:: ICU4XBidiParagraph
 
     Bidi information for a single processed paragraph
+
+    .. cpp:function:: diplomat::result<std::monostate, std::monostate> set_paragraph_in_text(size_t n)
+
+        Given a paragraph index ``n`` within the surrounding text, this sets this object to the paragraph at that index. Returns an error when out of bounds.
+        This is equivalent to calling ``paragraph_at()`` on ``ICU4XBidiInfo`` but doesn't create a new object
 
     .. cpp:function:: ICU4XBidiDirection direction() const
 

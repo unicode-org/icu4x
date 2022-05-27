@@ -31,6 +31,10 @@ struct ICU4XBidiInfoDeleter {
  */
 class ICU4XBidiInfo {
  public:
+
+  /**
+   * The number of paragraphs contained here
+   */
   size_t paragraph_count() const;
 
   /**

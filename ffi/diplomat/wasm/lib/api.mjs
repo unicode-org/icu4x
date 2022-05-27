@@ -114,6 +114,16 @@ export class ICU4XBidiParagraph {
     this.underlying = underlying;
   }
 
+  set_paragraph_in_text(n) {
+    const diplomat_out = (() => {
+      const is_ok = wasm.ICU4XBidiParagraph_set_paragraph_in_text(this.underlying, n) == 1;
+      if (!is_ok) {
+        throw new diplomatRuntime.FFIError({});
+      }
+    })();
+    return diplomat_out;
+  }
+
   direction() {
     const diplomat_out = ICU4XBidiDirection_rust_to_js[wasm.ICU4XBidiParagraph_direction(this.underlying)];
     return diplomat_out;

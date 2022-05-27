@@ -11,8 +11,10 @@ extern "C" {
 #endif
 
 typedef struct ICU4XBidiParagraph ICU4XBidiParagraph;
-#include "ICU4XBidiDirection.h"
 #include "diplomat_result_void_void.h"
+#include "ICU4XBidiDirection.h"
+
+diplomat_result_void_void ICU4XBidiParagraph_set_paragraph_in_text(ICU4XBidiParagraph* self, size_t n);
 
 ICU4XBidiDirection ICU4XBidiParagraph_direction(const ICU4XBidiParagraph* self);
 
