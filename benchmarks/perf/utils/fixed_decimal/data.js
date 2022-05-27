@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1653691443477,
+  "lastUpdate": 1653691737079,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -29069,6 +29069,66 @@ window.BENCHMARK_DATA = {
             "name": "from_string/1000000001",
             "value": 67,
             "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "a724aeed2b9f4a89032be88f8a8c14a8f58addc7",
+          "message": "Remove serde_json dep from zeromap/litemap and align features (#1939)",
+          "timestamp": "2022-05-28T00:37:05+02:00",
+          "tree_id": "0e461cbb2829526be5b2dd9ae4cf84a2a8b4b6db",
+          "url": "https://github.com/unicode-org/icu4x/commit/a724aeed2b9f4a89032be88f8a8c14a8f58addc7"
+        },
+        "date": 1653691712485,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 119236,
+            "range": "± 5431",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 24794,
+            "range": "± 723",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 66306,
+            "range": "± 2629",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 200,
+            "range": "± 8",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 102,
+            "range": "± 4",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 86,
+            "range": "± 8",
             "unit": "ns/iter"
           }
         ]
