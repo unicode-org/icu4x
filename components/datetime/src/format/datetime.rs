@@ -14,9 +14,7 @@ use crate::provider::calendar::patterns::PatternPluralsFromPatternsV1Marker;
 use crate::provider::date_time::DateTimeSymbols;
 use crate::provider::week_data::WeekDataV1;
 
-use alloc::string::ToString;
 use core::fmt;
-use core::str::FromStr;
 use fixed_decimal::FixedDecimal;
 use icu_decimal::FixedDecimalFormat;
 use icu_locid::Locale;
@@ -345,12 +343,12 @@ where
             field.length,
         )?,
         FieldSymbol::Second(Second::Second) => {
-            let seconds = usize::from(
+            let mut seconds = FixedDecimal::from(usize::from(
                 datetime
                     .datetime()
                     .second()
                     .ok_or(Error::MissingInputField)?,
-            );
+            ));
             if let Some(PatternItem::Field(next_field)) = next_item {
                 if let FieldSymbol::Second(Second::FractionalSecond) = next_field.symbol {
                     let mut fraction = FixedDecimal::from(usize::from(
@@ -373,25 +371,13 @@ where
                         .multiply_pow10(-9)
                         .map_err(|_| Error::FixedDecimal)?;
 
-                    let mut buffer = seconds.to_string();
-                    // Strip the leading zero, so we append something like .123 to the seconds
-                    buffer.push_str(fraction.to_string().get(1..).unwrap_or(""));
-
-                    let mut num =
-                        FixedDecimal::from_str(&buffer).map_err(|_| Error::FixedDecimal)?;
-                    num.pad_right(precision as u16);
-
-                    format_number(w, fixed_decimal_format, num, field.length)?;
-
-                    return Ok(());
+                    seconds
+                        .concatenate_right(fraction)
+                        .map_err(|_| Error::FixedDecimal)?;
+                    seconds.pad_right(precision as u16);
                 }
             }
-            format_number(
-                w,
-                fixed_decimal_format,
-                FixedDecimal::from(seconds),
-                field.length,
-            )?
+            format_number(w, fixed_decimal_format, seconds, field.length)?
         }
         FieldSymbol::Second(Second::FractionalSecond) => {
             // Formatting of fractional seconds is handled when formatting seconds.
