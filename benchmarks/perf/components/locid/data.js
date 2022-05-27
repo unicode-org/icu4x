@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1653597742523,
+  "lastUpdate": 1653631938505,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -46258,6 +46258,192 @@ window.BENCHMARK_DATA = {
           {
             "name": "subtags/variant/parse",
             "value": 167,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "hsivonen@hsivonen.fi",
+            "name": "Henri Sivonen",
+            "username": "hsivonen"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "6f9c70e4128e2f057bccae52a50e2372f3e49b22",
+          "message": "GIGO fix-ups for the normalizer and the collator (#1931)\n\nCloses #1892.\r\n\r\nCloses #1891",
+          "timestamp": "2022-05-27T08:57:18+03:00",
+          "tree_id": "48911d53556ce5dc7ec34d4100e20e00efed8e0f",
+          "url": "https://github.com/unicode-org/icu4x/commit/6f9c70e4128e2f057bccae52a50e2372f3e49b22"
+        },
+        "date": 1653631917732,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 2879,
+            "range": "± 2",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/construct/langid",
+            "value": 846,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/construct/locale",
+            "value": 1190,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/to_string/langid",
+            "value": 957,
+            "range": "± 4",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/to_string/langid/writeable",
+            "value": 550,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/to_string/locale",
+            "value": 955,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/to_string/locale/writeable",
+            "value": 550,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/compare/struct/langid",
+            "value": 89,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/compare/struct/locale",
+            "value": 89,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/compare/str/langid",
+            "value": 735,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/compare/cmp_bytes/langid",
+            "value": 294,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/compare/str/locale",
+            "value": 736,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/compare/cmp_bytes/locale",
+            "value": 294,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/canonicalize/langid",
+            "value": 2353,
+            "range": "± 4",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/canonicalize/locale",
+            "value": 3138,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 3831,
+            "range": "± 16",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/construct/locale",
+            "value": 1706,
+            "range": "± 2",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/to_string/locale",
+            "value": 1252,
+            "range": "± 3",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/to_string/locale/writeable",
+            "value": 851,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/compare/struct/locale",
+            "value": 246,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/compare/str/locale",
+            "value": 1775,
+            "range": "± 3",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/compare/cmp_bytes/locale",
+            "value": 539,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/canonicalize/locale",
+            "value": 3428,
+            "range": "± 9",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "subtags/language/parse",
+            "value": 159,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "subtags/script/parse",
+            "value": 113,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "subtags/region/parse",
+            "value": 168,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "subtags/variant/parse",
+            "value": 155,
             "range": "± 0",
             "unit": "ns/iter"
           }
