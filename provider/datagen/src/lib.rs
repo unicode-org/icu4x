@@ -119,47 +119,12 @@ pub fn keys<S: AsRef<str>>(strings: &[S]) -> Vec<ResourceKey> {
 /// # Ok(())
 /// # }
 /// ```
-pub fn keys_from_bin<P: AsRef<Path>>(
-    path: P,
-) -> Result<Vec<ResourceKey>, Box<dyn std::error::Error>> {
-    let strings = rust_strings::strings(
-        &rust_strings::FileConfig::new(&path.as_ref().as_os_str().to_string_lossy())
-            .with_min_length(
-                icu_provider::leading_tag!().len() + 1 + icu_provider::trailing_tag!().len(),
-            ),
-    )?;
-
-    #[allow(clippy::single_char_pattern)]
-    // trailing_tag is currently one char but we don't control that
-    let keys = strings
-        .iter()
-        .flat_map(|(string, _)| {
-            if let Some(with_trailing) = string.strip_prefix(icu_provider::leading_tag!()) {
-                with_trailing
-                    .find(icu_provider::trailing_tag!())
-                    .map(|end| &with_trailing[..end])
-                    .into_iter()
-                    .collect::<Vec<_>>()
-            } else {
-                string
-                    .split(icu_provider::leading_tag!())
-                    // The string doesn't start with the leading tag, so the first element
-                    // is garbage
-                    .skip(1)
-                    .flat_map(|with_trailing| {
-                        with_trailing
-                            .find(icu_provider::trailing_tag!())
-                            .map(|end| &with_trailing[..end])
-                            .into_iter()
-                    })
-                    .collect::<Vec<_>>()
-            }
-            .into_iter()
-        })
-        .collect::<HashSet<_>>();
+pub fn keys_from_bin<P: AsRef<Path>>(path: P) -> Result<Vec<ResourceKey>, std::io::Error> {
+    let file = std::fs::read(path.as_ref())?;
+    let strings = file.split(|&b| b == b'\0').collect::<HashSet<_>>();
     Ok(get_all_keys()
         .into_iter()
-        .filter(|k| keys.contains(k.get_path()))
+        .filter(|k| strings.contains(k.get_path().as_bytes()))
         .collect())
 }
 

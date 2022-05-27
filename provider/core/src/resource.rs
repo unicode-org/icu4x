@@ -22,7 +22,7 @@ use zerovec::ule::*;
 #[macro_export]
 macro_rules! leading_tag {
     () => {
-        "\nicu4x_key_tag"
+        "\0"
     };
 }
 
@@ -30,7 +30,7 @@ macro_rules! leading_tag {
 #[macro_export]
 macro_rules! trailing_tag {
     () => {
-        "\n"
+        "\0"
     };
 }
 
@@ -264,26 +264,29 @@ fn test_path_syntax() {
     // No version:
     assert_eq!(
         ResourceKey::construct_internal(tagged!("hello/world")),
-        Err(("[a-zA-z0-9_/@]", 25))
+        Err((
+            "[a-zA-z0-9_/@]",
+            concat!(leading_tag!(), "hello/world").len()
+        ))
     );
 
     assert_eq!(
         ResourceKey::construct_internal(tagged!("hello/world@")),
-        Err(("[0-9]", 26))
+        Err(("[0-9]", concat!(leading_tag!(), "hello/world@").len()))
     );
     assert_eq!(
         ResourceKey::construct_internal(tagged!("hello/world@foo")),
-        Err(("[0-9]", 26))
+        Err(("[0-9]", concat!(leading_tag!(), "hello/world@").len()))
     );
     assert_eq!(
         ResourceKey::construct_internal(tagged!("hello/world@1foo")),
-        Err(("[0-9]", 27))
+        Err(("[0-9]", concat!(leading_tag!(), "hello/world@1").len()))
     );
 
     // Invalid characters:
     assert_eq!(
         ResourceKey::construct_internal(tagged!("你好/世界@1")),
-        Err(("[a-zA-Z0-9_]", 14))
+        Err(("[a-zA-Z0-9_]", leading_tag!().len()))
     );
 
     // Invalid tag:
@@ -293,7 +296,7 @@ fn test_path_syntax() {
     );
     assert_eq!(
         ResourceKey::construct_internal(concat!(leading_tag!(), "hello/world@1")),
-        Err(("tag", 27))
+        Err(("tag", concat!(leading_tag!(), "hello/world@1").len()))
     );
     assert_eq!(
         ResourceKey::construct_internal("hello/world@1"),
