@@ -207,7 +207,7 @@ rev = exec cargo make --loglevel error diplomat-get-rev
 rev = trim ${rev.stdout}
 if contains ${rev} "."
     echo "Installing Diplomat version ${rev}"
-    exec cargo install --git https://github.com/rust-diplomat/diplomat.git --version ${rev} diplomat-tool -f
+    exec cargo install --version ${rev} diplomat-tool -f
 
 else
     echo "Installing Diplomat rev ${rev}"
