@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1653680853390,
+  "lastUpdate": 1653690900016,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -16133,6 +16133,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/80083c9807269f41ed9ecddf7b36de2d61d7d1e7"
         },
         "date": 1653680832219,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 2220821,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "f5520c8da6d55466f9c30ad61bdcaac9bbf640e9",
+          "message": "Add bidi ffi (#1944)\n\n* Bump diplomat\r\n\r\n* Initial bidi ffi\r\n\r\n* regen\r\n\r\n* Add test\r\n\r\n* fmt\r\n\r\n* fixes\r\n\r\n* regen based on PR\r\n\r\n* update tests\r\n\r\n* update diplomat hash\r\n\r\n* fix comment\r\n\r\n* Add mutable paragraph setter\r\n\r\n* regen\r\n\r\n* rustfmttttttttt\r\n\r\n* clip",
+          "timestamp": "2022-05-27T22:32:56Z",
+          "tree_id": "818c4cdaaced0f1f73c347f287a052f6ae4ef075",
+          "url": "https://github.com/unicode-org/icu4x/commit/f5520c8da6d55466f9c30ad61bdcaac9bbf640e9"
+        },
+        "date": 1653690876697,
         "tool": "ndjson",
         "benches": [
           {
