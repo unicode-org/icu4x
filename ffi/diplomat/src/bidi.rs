@@ -61,7 +61,7 @@ pub mod ffi {
     pub struct ICU4XBidiInfo<'text>(pub BidiInfo<'text>);
 
     impl<'text> ICU4XBidiInfo<'text> {
-        //. The number of paragraphs contained here
+        /// The number of paragraphs contained here
         pub fn paragraph_count(&self) -> usize {
             self.0.paragraphs.len()
         }
