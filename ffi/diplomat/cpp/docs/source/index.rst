@@ -5,6 +5,7 @@ Documentation
    :maxdepth: 3
    :caption: Modules:
 
+   bidi_ffi
    data_struct_ffi
    decimal_ffi
    fixed_decimal_ffi
