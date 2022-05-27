@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1653681525920,
+  "lastUpdate": 1653691438416,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -28949,6 +28949,66 @@ window.BENCHMARK_DATA = {
             "name": "from_string/1000000001",
             "value": 94,
             "range": "± 3",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "fc24fe01b29296d05641ef2ccf68725cbdcb6b34",
+          "message": "fix diplomat-install (#1957)\n\n* regen diplomat\r\n\r\n* fixup diplomat-install\r\n\r\n* regen\r\n\r\n* remove file",
+          "timestamp": "2022-05-27T22:33:04Z",
+          "tree_id": "73142ebb2326542ba421c360dc8f67cdd9d3638c",
+          "url": "https://github.com/unicode-org/icu4x/commit/fc24fe01b29296d05641ef2ccf68725cbdcb6b34"
+        },
+        "date": 1653691418960,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 95185,
+            "range": "± 272",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 22430,
+            "range": "± 146",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 53032,
+            "range": "± 379",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 164,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 83,
+            "range": "± 2",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 67,
+            "range": "± 0",
             "unit": "ns/iter"
           }
         ]
