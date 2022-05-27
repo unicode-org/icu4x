@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1653681385777,
+  "lastUpdate": 1653691372898,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -29398,6 +29398,60 @@ window.BENCHMARK_DATA = {
           {
             "name": "uniset/contains_range/worst",
             "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "f5520c8da6d55466f9c30ad61bdcaac9bbf640e9",
+          "message": "Add bidi ffi (#1944)\n\n* Bump diplomat\r\n\r\n* Initial bidi ffi\r\n\r\n* regen\r\n\r\n* Add test\r\n\r\n* fmt\r\n\r\n* fixes\r\n\r\n* regen based on PR\r\n\r\n* update tests\r\n\r\n* update diplomat hash\r\n\r\n* fix comment\r\n\r\n* Add mutable paragraph setter\r\n\r\n* regen\r\n\r\n* rustfmttttttttt\r\n\r\n* clip",
+          "timestamp": "2022-05-27T22:32:56Z",
+          "tree_id": "818c4cdaaced0f1f73c347f287a052f6ae4ef075",
+          "url": "https://github.com/unicode-org/icu4x/commit/f5520c8da6d55466f9c30ad61bdcaac9bbf640e9"
+        },
+        "date": 1653691347158,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 48712759,
+            "range": "± 163608",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/best",
+            "value": 3,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/worst",
+            "value": 3,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/best",
+            "value": 3,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/worst",
+            "value": 3,
             "range": "± 0",
             "unit": "ns/iter"
           }
