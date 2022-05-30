@@ -257,7 +257,7 @@ impl AnyCalendar {
         provider: &P,
     ) -> Result<Self, DataError>
     where
-        P: AnyProvider,
+        P: AnyProvider + ?Sized,
     {
         Ok(match kind {
             AnyCalendarKind::Gregorian => AnyCalendar::Gregorian(Gregorian),
@@ -283,7 +283,7 @@ impl AnyCalendar {
         provider: &P,
     ) -> Result<Self, DataError>
     where
-        P: BufferProvider,
+        P: BufferProvider + ?Sized,
     {
         Ok(match kind {
             AnyCalendarKind::Gregorian => AnyCalendar::Gregorian(Gregorian),
@@ -308,7 +308,7 @@ impl AnyCalendar {
     #[cfg(feature = "serde")]
     pub fn try_new_unstable<P>(kind: AnyCalendarKind, provider: &P) -> Result<Self, DataError>
     where
-        P: ResourceProvider<provider::JapaneseErasV1Marker>,
+        P: ResourceProvider<provider::JapaneseErasV1Marker> + ?Sized,
     {
         Ok(match kind {
             AnyCalendarKind::Gregorian => AnyCalendar::Gregorian(Gregorian),
