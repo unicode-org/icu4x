@@ -240,7 +240,7 @@ where
                         .datetime()
                         .month()
                         .ok_or(Error::MissingInputField)?
-                        .number as isize,
+                        .number,
                 ),
                 field.length,
             )?,
@@ -265,13 +265,13 @@ where
             Week::WeekOfYear => format_number(
                 w,
                 fixed_decimal_format,
-                FixedDecimal::from(datetime.week_of_year()?.0 as isize),
+                FixedDecimal::from(datetime.week_of_year()?.0),
                 field.length,
             )?,
             Week::WeekOfMonth => format_number(
                 w,
                 fixed_decimal_format,
-                FixedDecimal::from(datetime.week_of_month()?.0 as isize),
+                FixedDecimal::from(datetime.week_of_month()?.0),
                 field.length,
             )?,
         },
@@ -295,9 +295,9 @@ where
                         .datetime()
                         .day_of_month()
                         .ok_or(Error::MissingInputField)?
-                        .0 as isize
+                        .0
                 }
-                fields::Day::DayOfWeekInMonth => datetime.day_of_week_in_month()?.0 as isize,
+                fields::Day::DayOfWeekInMonth => datetime.day_of_week_in_month()?.0,
                 _ => return Err(Error::UnsupportedField(symbol)),
             }),
             field.length,
@@ -362,7 +362,11 @@ where
                     let precision = match next_field.length {
                         FieldLength::Fixed(p) => p,
                         _ => {
-                            return Err(Error::FixedDecimal);
+                            return Err(Error::Pattern(
+                                crate::pattern::PatternError::FieldLengthInvalid(
+                                    FieldSymbol::Second(Second::FractionalSecond),
+                                ),
+                            ));
                         }
                     };
 
