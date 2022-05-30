@@ -8,10 +8,9 @@ use std::convert::TryFrom;
 use zerovec::ZeroVec;
 
 use crate::transform::reader::read_path_to_string;
-use crate::transform::uprops::decompositions_serde::CanonicalDecompositionData;
+use crate::transform::uprops::decompositions_serde::DecompositionData;
 
-use icu_normalizer::provider::CanonicalDecompositionDataV1;
-use icu_normalizer::provider::CanonicalDecompositionDataV1Marker;
+use icu_normalizer::provider::DecompositionDataV1;
 use icu_provider::datagen::IterableResourceProvider;
 use icu_provider::prelude::*;
 use icu_uniset::UnicodeSetBuilder;
@@ -19,75 +18,98 @@ use icu_uniset::UnicodeSetBuilder;
 use std::path::Path;
 use std::sync::RwLock;
 
-/// The provider struct holding the `SourceData` and the `RWLock`-wrapped
-/// TOML data.
-pub struct CanonicalDecompositionDataProvider {
-    source: SourceData,
-    data: RwLock<Option<CanonicalDecompositionData>>,
-}
+macro_rules! normalization_provider {
+    ($marker:ident, $provider:ident, $file_name:literal) => {
+        use icu_normalizer::provider::$marker;
 
-impl From<&SourceData> for CanonicalDecompositionDataProvider {
-    fn from(source: &SourceData) -> Self {
-        Self {
-            source: source.clone(),
-            data: RwLock::new(None),
-        }
-    }
-}
-
-impl ResourceProvider<CanonicalDecompositionDataV1Marker> for CanonicalDecompositionDataProvider {
-    fn load_resource(
-        &self,
-        _req: &DataRequest,
-    ) -> Result<DataResponse<CanonicalDecompositionDataV1Marker>, DataError> {
-        if self.data.read().expect("poison").is_none() {
-            let path_buf = self.source.get_uprops_root()?.join("decompositions.toml");
-            let path: &Path = &path_buf;
-            let toml_str = read_path_to_string(path)?;
-            let toml_obj: CanonicalDecompositionData = toml::from_str(&toml_str)
-                .map_err(|e| crate::error::data_error_from_toml(e).with_path_context(path))?;
-            *self.data.write().expect("poison") = Some(toml_obj);
+        /// The provider struct holding the `SourceData` and the `RWLock`-wrapped
+        /// TOML data.
+        pub struct $provider {
+            source: SourceData,
+            data: RwLock<Option<DecompositionData>>,
         }
 
-        let guard = self.data.read().expect("poison");
-
-        let toml_data = guard.as_ref().unwrap();
-
-        let mut builder = UnicodeSetBuilder::new();
-        for range in &toml_data.ranges {
-            builder.add_range_u32(&(range.0..=range.1));
+        impl From<&SourceData> for $provider {
+            fn from(source: &SourceData) -> Self {
+                Self {
+                    source: source.clone(),
+                    data: RwLock::new(None),
+                }
+            }
         }
-        let uniset = builder.build();
 
-        let trie = CodePointTrie::<u32>::try_from(&toml_data.trie)
-            .map_err(|e| DataError::custom("trie conversion").with_display_context(&e))?;
+        impl ResourceProvider<$marker> for $provider {
+            fn load_resource(
+                &self,
+                _req: &DataRequest,
+            ) -> Result<DataResponse<$marker>, DataError> {
+                if self.data.read().expect("poison").is_none() {
+                    let path_buf = self.source.get_uprops_root()?.join($file_name);
+                    let path: &Path = &path_buf;
+                    let toml_str = read_path_to_string(path)?;
+                    let toml_obj: DecompositionData = toml::from_str(&toml_str).map_err(|e| {
+                        crate::error::data_error_from_toml(e).with_path_context(path)
+                    })?;
+                    *self.data.write().expect("poison") = Some(toml_obj);
+                }
 
-        Ok(DataResponse {
-            metadata: DataResponseMetadata::default(),
-            payload: Some(DataPayload::from_owned(CanonicalDecompositionDataV1 {
-                trie,
-                scalars16: ZeroVec::alloc_from_slice(&toml_data.scalars16),
-                scalars32: ZeroVec::alloc_from_slice(&toml_data.scalars32),
-                decomposition_starts_with_non_starter: uniset,
-            })),
-        })
-    }
+                let guard = self.data.read().expect("poison");
+
+                let toml_data = guard.as_ref().unwrap();
+
+                let mut builder = UnicodeSetBuilder::new();
+                for range in &toml_data.ranges {
+                    builder.add_range_u32(&(range.0..=range.1));
+                }
+                let uniset = builder.build();
+
+                let trie = CodePointTrie::<u32>::try_from(&toml_data.trie)
+                    .map_err(|e| DataError::custom("trie conversion").with_display_context(&e))?;
+
+                Ok(DataResponse {
+                    metadata: DataResponseMetadata::default(),
+                    payload: Some(DataPayload::from_owned(DecompositionDataV1 {
+                        trie,
+                        scalars16: ZeroVec::alloc_from_slice(&toml_data.scalars16),
+                        scalars32: ZeroVec::alloc_from_slice(&toml_data.scalars32),
+                        decomposition_starts_with_non_starter: uniset,
+                    })),
+                })
+            }
+        }
+
+        icu_provider::impl_dyn_provider!(
+            $provider,
+            [$marker,],
+            CRABBAKE,
+            SERDE_SE,
+            ITERABLE_CRABBAKE,
+            ITERABLE_SERDE_SE,
+            DATA_CONVERTER
+        );
+
+        impl IterableResourceProvider<$marker> for $provider {
+            fn supported_options(
+                &self,
+            ) -> Result<Box<dyn Iterator<Item = ResourceOptions>>, DataError> {
+                Ok(Box::new(core::iter::once(ResourceOptions::default())))
+            }
+        }
+    };
 }
 
-icu_provider::impl_dyn_provider!(
+normalization_provider!(
+    CanonicalDecompositionDataV1Marker,
     CanonicalDecompositionDataProvider,
-    [CanonicalDecompositionDataV1Marker,],
-    CRABBAKE,
-    SERDE_SE,
-    ITERABLE_CRABBAKE,
-    ITERABLE_SERDE_SE,
-    DATA_CONVERTER
+    "nfd.toml"
 );
-
-impl IterableResourceProvider<CanonicalDecompositionDataV1Marker>
-    for CanonicalDecompositionDataProvider
-{
-    fn supported_options(&self) -> Result<Box<dyn Iterator<Item = ResourceOptions>>, DataError> {
-        Ok(Box::new(core::iter::once(ResourceOptions::default())))
-    }
-}
+normalization_provider!(
+    CompatibilityDecompositionDataV1Marker,
+    CompatibilityDecompositionDataProvider,
+    "nfkd.toml"
+);
+normalization_provider!(
+    CaseFoldDecompositionDataV1Marker,
+    CaseFoldDecompositionDataProvider,
+    "nfkdcf.toml"
+);

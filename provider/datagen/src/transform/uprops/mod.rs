@@ -35,6 +35,10 @@ pub use bin_uniset::BinaryPropertyUnicodeSetDataProvider;
 #[cfg(feature = "experimental")]
 pub use canonical_decompositions::CanonicalDecompositionDataProvider;
 #[cfg(feature = "experimental")]
+pub use canonical_decompositions::CaseFoldDecompositionDataProvider;
+#[cfg(feature = "experimental")]
+pub use canonical_decompositions::CompatibilityDecompositionDataProvider;
+#[cfg(feature = "experimental")]
 pub use casemapping::CaseMappingDataProvider;
 pub use enum_codepointtrie::EnumeratedPropertyCodePointTrieProvider;
 pub use script::ScriptWithExtensionsPropertyProvider;

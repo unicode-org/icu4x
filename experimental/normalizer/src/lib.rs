@@ -49,8 +49,10 @@ pub mod error;
 pub mod provider;
 
 use crate::error::NormalizerError;
-use crate::provider::CanonicalDecompositionDataV1;
 use crate::provider::CanonicalDecompositionDataV1Marker;
+use crate::provider::CaseFoldDecompositionDataV1Marker;
+use crate::provider::CompatibilityDecompositionDataV1Marker;
+use crate::provider::DecompositionDataV1;
 use alloc::string::String;
 use alloc::vec::Vec;
 use core::char::{decode_utf16, DecodeUtf16Error, REPLACEMENT_CHARACTER};
@@ -64,6 +66,29 @@ use smallvec::SmallVec;
 use utf8_iter::Utf8CharsEx;
 use zerovec::ule::AsULE;
 use zerovec::ZeroSlice;
+
+enum PayloadHolder {
+    Canonical(DataPayload<CanonicalDecompositionDataV1Marker>),
+    Compatibility(DataPayload<CompatibilityDecompositionDataV1Marker>),
+    CaseFold(DataPayload<CaseFoldDecompositionDataV1Marker>),
+}
+
+impl PayloadHolder {
+    fn get(&self) -> &DecompositionDataV1 {
+        match self {
+            PayloadHolder::Canonical(d) => d.get(),
+            PayloadHolder::Compatibility(d) => d.get(),
+            PayloadHolder::CaseFold(d) => d.get(),
+        }
+    }
+}
+
+/// The tail (everything after the first character) of the NFKD form U+FDFA
+/// as 16-bit units.
+static FDFA_NFKD: [u16; 17] = [
+    0x644, 0x649, 0x20, 0x627, 0x644, 0x644, 0x647, 0x20, 0x639, 0x644, 0x64A, 0x647, 0x20, 0x648,
+    0x633, 0x644, 0x645,
+];
 
 // These constants originate from page 143 of Unicode 14.0
 /// Syllable base
@@ -225,7 +250,7 @@ where
     /// the rest upon every read.
     buffer_pos: usize,
     pending_unnormalized_starter: Option<char>, // None at end of stream
-    decompositions: &'data CanonicalDecompositionDataV1<'data>,
+    decompositions: &'data DecompositionDataV1<'data>,
     ccc: &'data CodePointTrie<'data, CanonicalCombiningClass>,
 }
 
@@ -240,7 +265,7 @@ where
     /// there's a good reason to use this constructor directly.
     pub fn new(
         delegate: I,
-        decompositions: &'data CanonicalDecompositionDataV1,
+        decompositions: &'data DecompositionDataV1,
         ccc: &'data CodePointTrie<'data, CanonicalCombiningClass>,
     ) -> Self {
         let mut ret = Decomposition::<I> {
@@ -293,33 +318,48 @@ where
                         self.buffer.push(CharacterAndClass::new(combining));
                         (starter, 0)
                     } else if high != 0 {
-                        // Decomposition into one BMP character
-                        let starter = char_from_u16(high);
-                        (starter, 0)
+                        if high != 1 {
+                            // Decomposition into one BMP character
+                            let starter = char_from_u16(high);
+                            (starter, 0)
+                        } else {
+                            // Special case for the NFKD form of U+FDFA.
+                            for u in FDFA_NFKD {
+                                // Safe, because `FDFA_NFKD` is known not to contain
+                                // surrogates.
+                                self.buffer.push(CharacterAndClass::new(unsafe {
+                                    core::char::from_u32_unchecked(u32::from(u))
+                                }));
+                            }
+                            ('\u{0635}', 17)
+                        }
                     } else {
                         // Complex decomposition
                         // Format for 16-bit value:
-                        // Three highest bits: length (always makes the whole thing non-zero, since
-                        // zero is not a length in use; one bit is "wasted" in order to ensure the
-                        // 16 bits always end up being non-zero as a whole)
-                        // Fourth-highest bit: 0 if 16-bit units, 1 if 32-bit units
-                        // Fifth-highest bit:  0 if all trailing characters are non-starter, 1 if
-                        //                     at least one trailing character is a starter.
-                        //                     As of Unicode 14, there a two BMP characters that
-                        //                     decompose to three characters starter, starter,
-                        //                     non-starter, and plane 1 has characters that
-                        //                     decompose to two starters. However, for forward
-                        //                     compatibility, the semantics here are more generic.
-                        // Lower bits: Start index in storage
-                        let offset = usize::from(low & 0x7FF);
-                        let len = usize::from(low >> 13);
-                        if low & 0x1000 == 0 {
+                        // 15..13: length minus two for 16-bit case and length minus one for
+                        //         the 32-bit case. Length 8 needs to fit in three bits in
+                        //         the 16-bit case, and this way the value is future-proofed
+                        //         up to 9 in the 16-bit case. Zero is unused and length one
+                        //         in the 16-bit case goes directly into the trie.
+                        //     12: 1 if all trailing characters are guaranteed non-starters,
+                        //         0 if no guarantees about non-starterness.
+                        //         Note: The bit choice is this way around to allow for
+                        //         dynamically falling back to not having this but instead
+                        //         having one more bit for length by merely choosing
+                        //         different masks.
+                        //  11..0: Start offset in storage. If less than the length of
+                        //         scalars16, the offset is into scalars16. Otherwise,
+                        //         the offset minus the length of scalars16 is an offset
+                        //         into scalars32.
+                        let offset = usize::from(low & 0xFFF);
+                        if offset < self.decompositions.scalars16.len() {
+                            let len = usize::from(low >> 13) + 2;
                             let (starter, tail) = split_first_u16(
                                 self.decompositions
                                     .scalars16
                                     .get_subslice(offset..offset + len),
                             );
-                            if low & 0x800 == 0 {
+                            if low & 0x1000 != 0 {
                                 // All the rest are combining
                                 for u in tail.iter() {
                                     self.buffer.push(CharacterAndClass::new(char_from_u16(u)));
@@ -343,12 +383,14 @@ where
                                 (starter, combining_start)
                             }
                         } else {
+                            let len = usize::from(low >> 13) + 1;
+                            let offset32 = offset - self.decompositions.scalars16.len();
                             let (starter, tail) = split_first_u32(
                                 self.decompositions
                                     .scalars32
-                                    .get_subslice(offset..offset + len),
+                                    .get_subslice(offset32..offset32 + len),
                             );
-                            if low & 0x800 == 0 {
+                            if low & 0x1000 != 0 {
                                 // All the rest are combining
                                 for u in tail.iter() {
                                     self.buffer.push(CharacterAndClass::new(char_from_u32(u)));
@@ -405,10 +447,13 @@ where
                 .decomposition_starts_with_non_starter
                 .contains(ch)
             {
-                if !in_inclusive_range(ch, '\u{0340}', '\u{0F81}') {
+                if !(in_inclusive_range(ch, '\u{0340}', '\u{0F81}')
+                    || (u32::from(ch) & !1 == 0xFF9E))
+                {
                     self.buffer.push(CharacterAndClass::new(ch));
                 } else {
                     // The Tibetan special cases are starters that decompose into non-starters.
+                    // The same applies to the half-width kana voicing marks in NFKD.
                     //
                     // Logically the canonical combining class of each special case is known
                     // at compile time, but all characters in the buffer are treated the same
@@ -447,6 +492,18 @@ where
                             self.buffer.push(CharacterAndClass::new('\u{0F71}'));
                             self.buffer.push(CharacterAndClass::new('\u{0F80}'));
                         }
+                        '\u{FF9E}' => {
+                            // HALFWIDTH KATAKANA VOICED SOUND MARK
+                            // Compatibility decomposition only; can't come here
+                            // in NFD.
+                            self.buffer.push(CharacterAndClass::new('\u{3099}'));
+                        }
+                        '\u{FF9F}' => {
+                            // HALFWIDTH KATAKANA SEMI-VOICED SOUND MARK
+                            // Compatibility decomposition only; can't come here
+                            // in NFD.
+                            self.buffer.push(CharacterAndClass::new('\u{309A}'));
+                        }
                         _ => {
                             self.buffer.push(CharacterAndClass::new(ch));
                         }
@@ -464,16 +521,15 @@ where
     }
 }
 
-/// A normalizer for performing decomposing normalization (currently only NFD
-/// but NFKD expected in the future).
+/// A normalizer for performing decomposing normalization.
 pub struct DecomposingNormalizer {
-    decompositions: DataPayload<CanonicalDecompositionDataV1Marker>,
+    decompositions: PayloadHolder,
     ccc: DataPayload<CanonicalCombiningClassV1Marker>,
 }
 
 impl DecomposingNormalizer {
     /// NFD constructor.
-    pub fn try_new<D>(data_provider: &D) -> Result<Self, NormalizerError>
+    pub fn try_new_nfd<D>(data_provider: &D) -> Result<Self, NormalizerError>
     where
         D: ResourceProvider<CanonicalDecompositionDataV1Marker>
             + ResourceProvider<icu_properties::provider::CanonicalCombiningClassV1Marker>
@@ -483,11 +539,97 @@ impl DecomposingNormalizer {
             .load_resource(&DataRequest::default())?
             .take_payload()?;
 
+        if decompositions.get().scalars16.len() + decompositions.get().scalars32.len() > 0xFFF {
+            // The data is from a future where there exists a normalization flavor whose
+            // complex decompositions take more than 0xFFF but fewer than 0x1FFF code points
+            // of space. If a good use case from such a decomposition flavor arises, we can
+            // dynamically change the bit masks so that the length mask becomes 0x1FFF instead
+            // of 0xFFF and the all-non-starters mask becomes 0 instead of 0x1000. However,
+            // since for now the masks are hard-coded, error out.
+            return Err(NormalizerError::FutureExtension);
+        }
+
         let ccc: DataPayload<CanonicalCombiningClassV1Marker> =
             icu_properties::maps::get_canonical_combining_class(data_provider)?;
 
         Ok(DecomposingNormalizer {
-            decompositions,
+            decompositions: PayloadHolder::Canonical(decompositions),
+            ccc,
+        })
+    }
+
+    /// NFKD constructor.
+    pub fn try_new_nfkd<D>(data_provider: &D) -> Result<Self, NormalizerError>
+    where
+        D: ResourceProvider<CompatibilityDecompositionDataV1Marker>
+            + ResourceProvider<icu_properties::provider::CanonicalCombiningClassV1Marker>
+            + ?Sized,
+    {
+        let decompositions: DataPayload<CompatibilityDecompositionDataV1Marker> = data_provider
+            .load_resource(&DataRequest::default())?
+            .take_payload()?;
+
+        if decompositions.get().scalars16.len() + decompositions.get().scalars32.len() > 0xFFF {
+            // The data is from a future where there exists a normalization flavor whose
+            // complex decompositions take more than 0xFFF but fewer than 0x1FFF code points
+            // of space. If a good use case from such a decomposition flavor arises, we can
+            // dynamically change the bit masks so that the length mask becomes 0x1FFF instead
+            // of 0xFFF and the all-non-starters mask becomes 0 instead of 0x1000. However,
+            // since for now the masks are hard-coded, error out.
+            return Err(NormalizerError::FutureExtension);
+        }
+
+        let ccc: DataPayload<CanonicalCombiningClassV1Marker> =
+            icu_properties::maps::get_canonical_combining_class(data_provider)?;
+
+        Ok(DecomposingNormalizer {
+            decompositions: PayloadHolder::Compatibility(decompositions),
+            ccc,
+        })
+    }
+
+    /// NFKD_CaseFold constructor.
+    ///
+    /// This is a special building block normalization for IDNA. It is the decomposed counterpart of
+    /// the NFKC_CaseFold normalization specified for IDNA except that default ignorables map to themselves
+    /// instead of mapping to the empty string.
+    ///
+    /// Warning: In this normalization, U+0345 COMBINING GREEK YPOGEGRAMMENI exhibits a behavior
+    /// that no character in Unicode exhibits in NFD, NFKD, NFC, or NFKC: Case folding turns
+    /// U+0345 from a reordered character into a non-reordered character before reordering happens.
+    /// Therefore, the output of this normalization may differ for different inputs that are
+    /// canonically equivant with each other if they differ by how U+0345 is ordered relative
+    /// to other reorderable characters.
+    ///
+    /// XXX This normalization is probably useful outside IDNA for search index use cases.
+    /// However, due to the warning above and the non-standard nature of this normalization,
+    /// we should evaluate whether ICU4X should expose this before the normalizer graduates
+    /// from `experimental/` to `components/`.
+    pub fn try_new_nfkd_case_fold<D>(data_provider: &D) -> Result<Self, NormalizerError>
+    where
+        D: ResourceProvider<CaseFoldDecompositionDataV1Marker>
+            + ResourceProvider<icu_properties::provider::CanonicalCombiningClassV1Marker>
+            + ?Sized,
+    {
+        let decompositions: DataPayload<CaseFoldDecompositionDataV1Marker> = data_provider
+            .load_resource(&DataRequest::default())?
+            .take_payload()?;
+
+        if decompositions.get().scalars16.len() + decompositions.get().scalars32.len() > 0xFFF {
+            // The data is from a future where there exists a normalization flavor whose
+            // complex decompositions take more than 0xFFF but fewer than 0x1FFF code points
+            // of space. If a good use case from such a decomposition flavor arises, we can
+            // dynamically change the bit masks so that the length mask becomes 0x1FFF instead
+            // of 0xFFF and the all-non-starters mask becomes 0 instead of 0x1000. However,
+            // since for now the masks are hard-coded, error out.
+            return Err(NormalizerError::FutureExtension);
+        }
+
+        let ccc: DataPayload<CanonicalCombiningClassV1Marker> =
+            icu_properties::maps::get_canonical_combining_class(data_provider)?;
+
+        Ok(DecomposingNormalizer {
+            decompositions: PayloadHolder::CaseFold(decompositions),
             ccc,
         })
     }

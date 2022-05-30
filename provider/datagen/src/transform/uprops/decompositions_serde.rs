@@ -5,7 +5,7 @@
 use icu_codepointtrie::toml::CodePointTrieToml;
 
 #[derive(serde::Deserialize)]
-pub struct CanonicalDecompositionData {
+pub struct DecompositionData {
     pub trie: CodePointTrieToml,
     pub scalars16: Vec<u16>,
     pub scalars32: Vec<u32>,

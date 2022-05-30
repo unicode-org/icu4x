@@ -21,7 +21,7 @@
 use core::char::REPLACEMENT_CHARACTER;
 use icu_char16trie::char16trie::TrieResult;
 use icu_codepointtrie::CodePointTrie;
-use icu_normalizer::provider::CanonicalDecompositionDataV1;
+use icu_normalizer::provider::DecompositionDataV1;
 use icu_properties::CanonicalCombiningClass;
 use smallvec::SmallVec;
 use zerovec::ule::AsULE;
@@ -604,7 +604,9 @@ impl Default for NonPrimary {
 /// set on the instance on which it is intended to
 /// be set and not on a temporary copy.
 ///
-/// XXX check that 0xFF is actually reserved by the spec.
+/// Note that 0xFF is won't be assigned to an actual
+/// canonical combining class per definition D104
+/// in The Unicode Standard.
 #[derive(Debug)]
 struct CharacterAndClass(u32);
 
@@ -689,7 +691,7 @@ where
     /// The `CollationElement32` mapping for the Combining Diacritical Marks block.
     diacritics: &'data [<u32 as AsULE>::ULE; COMBINING_DIACRITICS_COUNT],
     /// NFD data.
-    decompositions: &'data CanonicalDecompositionDataV1<'data>,
+    decompositions: &'data DecompositionDataV1<'data>,
     /// Canonical Combining Class data.
     ccc: &'data CodePointTrie<'data, CanonicalCombiningClass>,
     /// If numeric mode is enabled, the 8 high bits of the numeric primary.
@@ -713,7 +715,7 @@ where
         tailoring: &'data CollationDataV1,
         jamo: &'data [<u32 as AsULE>::ULE; JAMO_COUNT],
         diacritics: &'data [<u32 as AsULE>::ULE; COMBINING_DIACRITICS_COUNT],
-        decompositions: &'data CanonicalDecompositionDataV1,
+        decompositions: &'data DecompositionDataV1,
         ccc: &'data CodePointTrie<'data, CanonicalCombiningClass>,
         numeric_primary: Option<u8>,
         lithuanian_dot_above: bool,
@@ -863,26 +865,30 @@ where
                 self.upcoming.push(char_from_u16(high));
                 self.upcoming.push(char_from_u16(low));
             } else if high != 0 {
+                debug_assert_ne!(high, 1, "How come U+FDFA NFKD marker seen in NFD?");
                 // Decomposition into one BMP character
                 self.upcoming.push(char_from_u16(high));
             } else {
                 // Complex decomposition
                 // Format for 16-bit value:
-                // Three highest bits: length (always makes the whole thing non-zero, since
-                // zero is not a length in use; one bit is "wasted" in order to ensure the
-                // 16 bits always end up being non-zero as a whole)
-                // Fourth-highest bit: 0 if 16-bit units, 1 if 32-bit units
-                // Fifth-highest bit:  0 if all trailing characters are non-starter, 1 if
-                //                     at least one trailing character is a starter.
-                //                     As of Unicode 14, there a two BMP characters that
-                //                     decompose to three characters starter, starter,
-                //                     non-starter, and plane 1 has characters that
-                //                     decompose to two starters. However, for forward
-                //                     compatibility, the semantics here are more generic.
-                // Lower bits: Start index in storage
-                let offset = usize::from(low & 0x7FF);
-                let len = usize::from(low >> 13);
-                if low & 0x1000 == 0 {
+                // 15..13: length minus two for 16-bit case and length minus one for
+                //         the 32-bit case. Length 8 needs to fit in three bits in
+                //         the 16-bit case, and this way the value is future-proofed
+                //         up to 9 in the 16-bit case. Zero is unused and length one
+                //         in the 16-bit case goes directly into the trie.
+                //     12: 1 if all trailing characters are guaranteed non-starters,
+                //         0 if no guarantees about non-starterness.
+                //         Note: The bit choice is this way around to allow for
+                //         dynamically falling back to not having this but instead
+                //         having one more bit for length by merely choosing
+                //         different masks.
+                //  11..0: Start offset in storage. If less than the length of
+                //         scalars16, the offset is into scalars16. Otherwise,
+                //         the offset minus the length of scalars16 is an offset
+                //         into scalars32.
+                let offset = usize::from(low & 0xFFF);
+                if offset < self.decompositions.scalars16.len() {
+                    let len = usize::from(low >> 13) + 2;
                     for u in unwrap_or_gigo(
                         self.decompositions
                             .scalars16
@@ -894,10 +900,12 @@ where
                         self.upcoming.push(char_from_u16(u));
                     }
                 } else {
+                    let len = usize::from(low >> 13) + 1;
+                    let offset32 = offset - self.decompositions.scalars16.len();
                     for u in unwrap_or_gigo(
                         self.decompositions
                             .scalars32
-                            .get_subslice(offset..offset + len),
+                            .get_subslice(offset32..offset32 + len),
                         SINGLE_U32, // single instead of empty for consistency with the other code path
                     )
                     .iter()
@@ -905,9 +913,7 @@ where
                         self.upcoming.push(char_from_u32(u));
                     }
                 }
-                if low & 0x800 != 0 {
-                    search_start_combining = true;
-                }
+                search_start_combining = low & 0x1000 == 0;
             }
         }
         let start_combining = if search_start_combining {
@@ -1231,6 +1237,7 @@ where
                         }
                         combining_characters.push(CharacterAndClass::new(combining));
                     } else if high != 0 {
+                        debug_assert_ne!(high, 1, "How come U+FDFA NFKD marker seen in NFD?");
                         // Decomposition into one BMP character
                         c = char_from_u16(high);
                         ce32 = data.ce32_for_char(c);
@@ -1249,28 +1256,31 @@ where
                     } else {
                         // Complex decomposition
                         // Format for 16-bit value:
-                        // Three highest bits: length (always makes the whole thing non-zero, since
-                        // zero is not a length in use; one bit is "wasted" in order to ensure the
-                        // 16 bits always end up being non-zero as a whole)
-                        // Fourth-highest bit: 0 if 16-bit units, 1 if 32-bit units
-                        // Fifth-highest bit:  0 if all trailing characters are non-starter, 1 if
-                        //                     at least one trailing character is a starter.
-                        //                     As of Unicode 14, there a two BMP characters that
-                        //                     decompose to three characters starter, starter,
-                        //                     non-starter, and plane 1 has characters that
-                        //                     decompose to two starters. However, for forward
-                        //                     compatibility, the semantics here are more generic.
-                        // Lower bits: Start index in storage
-                        let offset = usize::from(low & 0x7FF);
-                        let len = usize::from(low >> 13);
-                        if low & 0x1000 == 0 {
+                        // 15..13: length minus two for 16-bit case and length minus one for
+                        //         the 32-bit case. Length 8 needs to fit in three bits in
+                        //         the 16-bit case, and this way the value is future-proofed
+                        //         up to 9 in the 16-bit case. Zero is unused and length one
+                        //         in the 16-bit case goes directly into the trie.
+                        //     12: 1 if all trailing characters are guaranteed non-starters,
+                        //         0 if no guarantees about non-starterness.
+                        //         Note: The bit choice is this way around to allow for
+                        //         dynamically falling back to not having this but instead
+                        //         having one more bit for length by merely choosing
+                        //         different masks.
+                        //  11..0: Start offset in storage. If less than the length of
+                        //         scalars16, the offset is into scalars16. Otherwise,
+                        //         the offset minus the length of scalars16 is an offset
+                        //         into scalars32.
+                        let offset = usize::from(low & 0xFFF);
+                        if offset < self.decompositions.scalars16.len() {
+                            let len = usize::from(low >> 13) + 2;
                             let (starter, tail) = split_first_u16(
                                 self.decompositions
                                     .scalars16
                                     .get_subslice(offset..offset + len),
                             );
                             c = starter;
-                            if low & 0x800 == 0 {
+                            if low & 0x1000 != 0 {
                                 for u in tail.iter() {
                                     combining_characters
                                         .push(CharacterAndClass::new(char_from_u16(u)));
@@ -1308,13 +1318,15 @@ where
                                 }
                             }
                         } else {
+                            let len = usize::from(low >> 13) + 1;
+                            let offset32 = offset - self.decompositions.scalars16.len();
                             let (starter, tail) = split_first_u32(
                                 self.decompositions
                                     .scalars32
-                                    .get_subslice(offset..offset + len),
+                                    .get_subslice(offset32..offset32 + len),
                             );
                             c = starter;
-                            if low & 0x800 == 0 {
+                            if low & 0x1000 != 0 {
                                 for u in tail.iter() {
                                     combining_characters
                                         .push(CharacterAndClass::new(char_from_u32(u)));

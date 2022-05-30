@@ -10,17 +10,21 @@ use zerovec::ZeroVec;
 #[cfg(feature = "serde")]
 use serde;
 
-#[icu_provider::data_struct(CanonicalDecompositionDataV1Marker = "normalizer/nfd@1")]
+#[icu_provider::data_struct(
+    CanonicalDecompositionDataV1Marker = "normalizer/nfd@1",
+    CompatibilityDecompositionDataV1Marker = "normalizer/nfkd@1",
+    CaseFoldDecompositionDataV1Marker = "normalizer/nfkdcf@1"
+)]
 #[derive(Debug, PartialEq, Clone)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, crabbake::Bakeable), crabbake(path = icu_normalizer::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-pub struct CanonicalDecompositionDataV1<'data> {
+pub struct DecompositionDataV1<'data> {
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub trie: CodePointTrie<'data, u32>,
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub scalars16: ZeroVec<'data, u16>,
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub scalars32: ZeroVec<'data, u32>,
+    pub scalars32: ZeroVec<'data, u32>, // Should really be using 24-bit elements
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub decomposition_starts_with_non_starter: UnicodeSet<'data>,
 }
