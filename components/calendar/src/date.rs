@@ -77,7 +77,7 @@ impl<'a, C> Deref for Ref<'a, C> {
 /// ```
 pub struct Date<A: AsCalendar> {
     pub(crate) inner: <A::Calendar as Calendar>::DateInner,
-    calendar: A,
+    pub(crate) calendar: A,
 }
 
 impl<A: AsCalendar> Date<A> {

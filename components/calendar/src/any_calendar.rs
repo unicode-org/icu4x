@@ -11,7 +11,7 @@ use crate::gregorian::Gregorian;
 use crate::indian::Indian;
 use crate::iso::Iso;
 use crate::japanese::Japanese;
-use crate::{types, Calendar, Date, DateDuration, DateDurationUnit};
+use crate::{types, AsCalendar, Calendar, Date, DateDuration, DateDurationUnit, DateTime, Ref};
 
 use icu_locid::extensions::unicode::Value;
 use icu_locid::{unicode_ext_key, unicode_ext_value, Locale};
@@ -346,6 +346,46 @@ impl AnyCalendar {
             Self::Indian(_) => "Indian",
             Self::Coptic(_) => "Coptic",
             Self::Iso(_) => "Iso",
+        }
+    }
+
+    pub fn kind(&self) -> AnyCalendarKind {
+        match *self {
+            Self::Gregorian(_) => AnyCalendarKind::Gregorian,
+            Self::Buddhist(_) => AnyCalendarKind::Buddhist,
+            Self::Japanese(_) => AnyCalendarKind::Japanese,
+            Self::Ethiopic(_) => AnyCalendarKind::Ethiopic,
+            Self::Indian(_) => AnyCalendarKind::Indian,
+            Self::Coptic(_) => AnyCalendarKind::Coptic,
+            Self::Iso(_) => AnyCalendarKind::Iso,
+        }
+    }
+
+    /// Given an AnyCalendar date, convert that date to another AnyCalendar date in this calendar,
+    /// if conversion is needed
+    pub fn convert_any_date<'a>(
+        &'a self,
+        date: &Date<impl AsCalendar<Calendar = AnyCalendar>>,
+    ) -> Date<Ref<'a, AnyCalendar>> {
+        if self.kind() != date.calendar.as_calendar().kind() {
+            Date::new_from_iso(date.to_iso(), Ref(self))
+        } else {
+            Date {
+                inner: date.inner.clone(),
+                calendar: Ref(self),
+            }
+        }
+    }
+
+    /// Given an AnyCalendar datetime, convert that date to another AnyCalendar datetime in this calendar,
+    /// if conversion is needed
+    pub fn convert_any_datetime<'a>(
+        &'a self,
+        date: &DateTime<impl AsCalendar<Calendar = AnyCalendar>>,
+    ) -> DateTime<Ref<'a, AnyCalendar>> {
+        DateTime {
+            time: date.time,
+            date: self.convert_any_date(&date.date),
         }
     }
 }
