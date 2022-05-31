@@ -21,6 +21,8 @@ impl DataMarker for BufferMarker {
 ///
 /// Along with [`ResourceProvider`], this is one of the two foundational traits in this crate.
 ///
+/// [`BufferProvider`] can be made into a trait object. It is used over FFI.
+///
 /// # Examples
 ///
 /// ```

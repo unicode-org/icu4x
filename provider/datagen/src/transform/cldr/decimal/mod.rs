@@ -137,24 +137,15 @@ impl ResourceProvider<DecimalSymbolsV1Marker> for NumbersProvider {
     }
 }
 
-icu_provider::impl_dyn_provider!(
-    NumbersProvider,
-    [DecimalSymbolsV1Marker,],
-    SERDE_SE,
-    CRABBAKE,
-    ITERABLE_SERDE_SE,
-    ITERABLE_CRABBAKE,
-    DATA_CONVERTER
-);
+icu_provider::make_exportable_provider!(NumbersProvider, [DecimalSymbolsV1Marker,]);
 
 impl IterableResourceProvider<DecimalSymbolsV1Marker> for NumbersProvider {
-    fn supported_options(
-        &self,
-    ) -> Result<Box<dyn Iterator<Item = ResourceOptions> + '_>, DataError> {
-        Ok(Box::new(
+    fn supported_options(&self) -> Result<Vec<ResourceOptions>, DataError> {
+        Ok(
             get_langid_subdirectories(&self.source.get_cldr_paths()?.cldr_numbers().join("main"))?
-                .map(Into::<ResourceOptions>::into),
-        ))
+                .map(ResourceOptions::from)
+                .collect(),
+        )
     }
 }
 

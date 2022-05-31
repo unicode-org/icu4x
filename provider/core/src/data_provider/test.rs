@@ -68,12 +68,12 @@ impl ResourceProvider<HelloWorldV1Marker> for DataWarehouse {
 }
 
 impl IterableResourceProvider<HelloWorldV1Marker> for DataWarehouse {
-    fn supported_options(&self) -> Result<Box<dyn Iterator<Item = ResourceOptions>>, DataError> {
-        Ok(Box::new(core::iter::once(ResourceOptions::default())))
+    fn supported_options(&self) -> Result<Vec<ResourceOptions>, DataError> {
+        Ok(vec![Default::default()])
     }
 }
 
-crate::impl_dyn_provider!(DataWarehouse, [HelloWorldV1Marker,], ANY);
+crate::impl_dyn_provider!(DataWarehouse, [HelloWorldV1Marker,], AnyMarker);
 
 /// A DataProvider that supports both key::HELLO_WORLD_V1 and HELLO_ALT.
 #[derive(Debug)]
@@ -100,8 +100,8 @@ impl ResourceProvider<HelloWorldV1Marker> for DataProvider2 {
 }
 
 impl IterableResourceProvider<HelloWorldV1Marker> for DataProvider2 {
-    fn supported_options(&self) -> Result<Box<dyn Iterator<Item = ResourceOptions>>, DataError> {
-        Ok(Box::new(core::iter::once(ResourceOptions::default())))
+    fn supported_options(&self) -> Result<Vec<ResourceOptions>, DataError> {
+        Ok(vec![Default::default()])
     }
 }
 
@@ -115,12 +115,16 @@ impl ResourceProvider<HelloAltMarker> for DataProvider2 {
 }
 
 impl IterableResourceProvider<HelloAltMarker> for DataProvider2 {
-    fn supported_options(&self) -> Result<Box<dyn Iterator<Item = ResourceOptions>>, DataError> {
-        Ok(Box::new(core::iter::once(ResourceOptions::default())))
+    fn supported_options(&self) -> Result<Vec<ResourceOptions>, DataError> {
+        Ok(vec![Default::default()])
     }
 }
 
-crate::impl_dyn_provider!(DataProvider2, [HelloWorldV1Marker, HelloAltMarker,], ANY);
+crate::impl_dyn_provider!(
+    DataProvider2,
+    [HelloWorldV1Marker, HelloAltMarker,],
+    AnyMarker
+);
 
 #[allow(clippy::redundant_static_lifetimes)]
 const DATA: &'static str = r#"{

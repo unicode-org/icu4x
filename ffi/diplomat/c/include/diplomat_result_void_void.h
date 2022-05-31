@@ -1,5 +1,5 @@
-#ifndef result_void_void_H
-#define result_void_void_H
+#ifndef diplomat_result_void_void_H
+#define diplomat_result_void_void_H
 #include <stdio.h>
 #include <stdint.h>
 #include <stddef.h>
@@ -9,9 +9,9 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-typedef struct decimal_ffi_result_void_void {
+typedef struct diplomat_result_void_void {
     bool is_ok;
-} decimal_ffi_result_void_void;
+} diplomat_result_void_void;
 #ifdef __cplusplus
 }
 #endif

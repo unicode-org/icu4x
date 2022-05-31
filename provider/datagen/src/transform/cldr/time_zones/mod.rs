@@ -133,8 +133,8 @@ macro_rules! impl_resource_provider {
             }
 
             impl IterableResourceProvider<$marker> for TimeZonesProvider {
-                fn supported_options(&self) -> Result<Box<dyn Iterator<Item = ResourceOptions> + '_>, DataError> {
-                    Ok(Box::new(
+                fn supported_options(&self) -> Result<Vec<ResourceOptions>, DataError> {
+                    Ok(
                         get_langid_subdirectories(
                             &self
                                 .source
@@ -142,13 +142,13 @@ macro_rules! impl_resource_provider {
                                 .cldr_dates("gregorian")
                                 .join("main"),
                         )?
-                        .map(Into::<ResourceOptions>::into),
-                    ))
+                        .map(ResourceOptions::from).collect(),
+                    )
                 }
             }
         )+
 
-        icu_provider::impl_dyn_provider!(TimeZonesProvider, [$($marker),+,], CRABBAKE, SERDE_SE, ITERABLE_CRABBAKE, ITERABLE_SERDE_SE, DATA_CONVERTER);
+        icu_provider::make_exportable_provider!(TimeZonesProvider, [$($marker),+,]);
     };
 }
 

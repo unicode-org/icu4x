@@ -331,7 +331,7 @@ fn main() -> eyre::Result<()> {
         selected_locales.as_deref(),
         &selected_keys,
         &source_data,
-        out,
+        vec![out],
         matches.is_present("IGNORE_MISSING_DATA"),
     )
     .map_err(|e| -> eyre::ErrReport {

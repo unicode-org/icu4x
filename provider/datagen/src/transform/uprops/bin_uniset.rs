@@ -71,17 +71,17 @@ macro_rules! expand {
             impl IterableResourceProvider<$marker> for BinaryPropertyUnicodeSetDataProvider {
                 fn supported_options(
                     &self,
-                ) -> Result<Box<dyn Iterator<Item = ResourceOptions>>, DataError> {
+                ) -> Result<Vec<ResourceOptions>, DataError> {
                     if !self.init()?.as_ref().unwrap().contains_key($prop_name) {
                         return Err(DataErrorKind::MissingResourceKey.into_error())
                     }
 
-                    Ok(Box::new(core::iter::once(ResourceOptions::default())))
+                    Ok(vec![Default::default()])
                 }
             }
         )+
 
-        icu_provider::impl_dyn_provider!(BinaryPropertyUnicodeSetDataProvider, [$($marker),+,], CRABBAKE, SERDE_SE, ITERABLE_CRABBAKE, ITERABLE_SERDE_SE, DATA_CONVERTER);
+        icu_provider::make_exportable_provider!(BinaryPropertyUnicodeSetDataProvider, [$($marker),+,]);
     };
 }
 

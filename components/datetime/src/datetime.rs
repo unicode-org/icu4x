@@ -88,7 +88,8 @@ impl<C: CldrCalendar> DateTimeFormat<C> {
             + ResourceProvider<DatePatternsV1Marker>
             + ResourceProvider<DateSkeletonPatternsV1Marker>
             + ResourceProvider<OrdinalV1Marker>
-            + ResourceProvider<WeekDataV1Marker>,
+            + ResourceProvider<WeekDataV1Marker>
+            + ?Sized,
     {
         let mut locale = locale.into();
         // TODO(#419): Resolve the locale calendar with the API calendar.

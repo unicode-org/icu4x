@@ -68,7 +68,7 @@ std = ["icu_provider/std", "icu_locid/std", "icu_calendar/std"]
 default = []
 bench = ["serde"]
 serde = ["dep:serde", "litemap/serde", "zerovec/serde", "tinystr/serde", "smallvec/serde", "icu_calendar/serde", "icu_provider/serde", "icu_plurals/serde"]
-datagen = ["serde", "icu_calendar/datagen", "icu_provider/datagen", "litemap/serde_serialize", "std", "crabbake"]
+datagen = ["serde", "icu_calendar/datagen", "icu_provider/datagen", "std", "crabbake"]
 
 [[bench]]
 name = "datetime"
