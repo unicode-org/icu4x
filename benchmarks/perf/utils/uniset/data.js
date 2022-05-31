@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1654020773348,
+  "lastUpdate": 1654034355906,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -29668,6 +29668,60 @@ window.BENCHMARK_DATA = {
           {
             "name": "uniset/contains_range/worst",
             "value": 3,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "yzhang1994@gmail.com",
+            "name": "Yvonne Z",
+            "username": "yzhang1994"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "cf1b9a68a591a954cd8c731462e250efcf072e7d",
+          "message": "Rename Yoke::project functions to ::map_project (#1955)\n\n* Rename Yoke::project functions to ::map_project\r\n\r\n* Rename Yoke::project in docs.\r\n\r\n* Rename Yoke::project in data_provider.rs",
+          "timestamp": "2022-05-31T21:49:41Z",
+          "tree_id": "76e7df10f3fd258cb7f5334e6a153bc81ef6d027",
+          "url": "https://github.com/unicode-org/icu4x/commit/cf1b9a68a591a954cd8c731462e250efcf072e7d"
+        },
+        "date": 1654034333361,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 40453156,
+            "range": "± 77089",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/worst",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/worst",
+            "value": 2,
             "range": "± 0",
             "unit": "ns/iter"
           }
