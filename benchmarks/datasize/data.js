@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1654020235210,
+  "lastUpdate": 1654033905109,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -16283,6 +16283,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/0f4dd863e9a2415b1f459d85d68c729c80a03b83"
         },
         "date": 1654020209158,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 2220821,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "yzhang1994@gmail.com",
+            "name": "Yvonne Z",
+            "username": "yzhang1994"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "cf1b9a68a591a954cd8c731462e250efcf072e7d",
+          "message": "Rename Yoke::project functions to ::map_project (#1955)\n\n* Rename Yoke::project functions to ::map_project\r\n\r\n* Rename Yoke::project in docs.\r\n\r\n* Rename Yoke::project in data_provider.rs",
+          "timestamp": "2022-05-31T21:49:41Z",
+          "tree_id": "76e7df10f3fd258cb7f5334e6a153bc81ef6d027",
+          "url": "https://github.com/unicode-org/icu4x/commit/cf1b9a68a591a954cd8c731462e250efcf072e7d"
+        },
+        "date": 1654033881256,
         "tool": "ndjson",
         "benches": [
           {
