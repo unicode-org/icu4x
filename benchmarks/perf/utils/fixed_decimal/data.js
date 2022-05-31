@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1654020854314,
+  "lastUpdate": 1654034506257,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -29249,6 +29249,66 @@ window.BENCHMARK_DATA = {
             "name": "from_string/1000000001",
             "value": 76,
             "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "yzhang1994@gmail.com",
+            "name": "Yvonne Z",
+            "username": "yzhang1994"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "cf1b9a68a591a954cd8c731462e250efcf072e7d",
+          "message": "Rename Yoke::project functions to ::map_project (#1955)\n\n* Rename Yoke::project functions to ::map_project\r\n\r\n* Rename Yoke::project in docs.\r\n\r\n* Rename Yoke::project in data_provider.rs",
+          "timestamp": "2022-05-31T21:49:41Z",
+          "tree_id": "76e7df10f3fd258cb7f5334e6a153bc81ef6d027",
+          "url": "https://github.com/unicode-org/icu4x/commit/cf1b9a68a591a954cd8c731462e250efcf072e7d"
+        },
+        "date": 1654034480950,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 128623,
+            "range": "± 1837",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 26642,
+            "range": "± 241",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 71650,
+            "range": "± 1204",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 226,
+            "range": "± 3",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 113,
+            "range": "± 3",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 92,
+            "range": "± 1",
             "unit": "ns/iter"
           }
         ]
