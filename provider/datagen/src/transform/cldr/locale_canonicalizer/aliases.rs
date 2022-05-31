@@ -52,19 +52,11 @@ impl ResourceProvider<AliasesV1Marker> for AliasesProvider {
     }
 }
 
-icu_provider::impl_dyn_provider!(
-    AliasesProvider,
-    [AliasesV1Marker,],
-    CRABBAKE,
-    SERDE_SE,
-    ITERABLE_CRABBAKE,
-    ITERABLE_SERDE_SE,
-    DATA_CONVERTER
-);
+icu_provider::make_exportable_provider!(AliasesProvider, [AliasesV1Marker,]);
 
 impl IterableResourceProvider<AliasesV1Marker> for AliasesProvider {
-    fn supported_options(&self) -> Result<Box<dyn Iterator<Item = ResourceOptions>>, DataError> {
-        Ok(Box::new(core::iter::once(ResourceOptions::default())))
+    fn supported_options(&self) -> Result<Vec<ResourceOptions>, DataError> {
+        Ok(vec![Default::default()])
     }
 }
 

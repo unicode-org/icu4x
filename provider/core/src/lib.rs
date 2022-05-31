@@ -133,16 +133,15 @@
 
 extern crate alloc;
 
-#[macro_use]
-pub mod dynutil;
-
 pub mod any;
 pub mod buf;
 mod data_provider;
 #[cfg(feature = "datagen")]
+#[macro_use]
 pub mod datagen;
+#[macro_use]
+pub mod dynutil;
 mod error;
-pub mod export;
 pub mod hello_world;
 mod helpers;
 pub mod inv;

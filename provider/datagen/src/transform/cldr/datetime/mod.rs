@@ -108,7 +108,7 @@ macro_rules! impl_resource_provider {
             }
 
             impl IterableResourceProvider<$marker> for CommonDateProvider {
-                fn supported_options(&self) -> Result<Box<dyn Iterator<Item = ResourceOptions> + '_>, DataError> {
+                fn supported_options(&self) -> Result<Vec<ResourceOptions>, DataError> {
                     let mut r = Vec::new();
                     for (cal_value, cldr_cal) in self.supported_cals.iter() {
                         r.extend(get_langid_subdirectories(
@@ -128,12 +128,12 @@ macro_rules! impl_resource_provider {
                                 ResourceOptions::from(locale)
                             }));
                     }
-                    Ok(Box::new(r.into_iter()))
+                    Ok(r)
                 }
             }
         )+
 
-        icu_provider::impl_dyn_provider!(CommonDateProvider, [$($marker),+,], CRABBAKE, SERDE_SE, ITERABLE_CRABBAKE, ITERABLE_SERDE_SE, DATA_CONVERTER);
+        icu_provider::make_exportable_provider!(CommonDateProvider, [$($marker),+,]);
     };
 }
 

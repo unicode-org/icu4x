@@ -3,8 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crabbake::{quote, CrateEnv, TokenStream};
-use icu_provider::datagen::CrabbakeMarker;
-use icu_provider::export::DataExporter;
+use icu_provider::datagen::*;
 use icu_provider::prelude::*;
 use itertools::Itertools;
 use litemap::LiteMap;
@@ -96,12 +95,12 @@ impl ConstExporter {
     }
 }
 
-impl DataExporter<CrabbakeMarker> for ConstExporter {
+impl DataExporter for ConstExporter {
     fn put_payload(
         &self,
         key: ResourceKey,
-        options: ResourceOptions,
-        payload: DataPayload<CrabbakeMarker>,
+        options: &ResourceOptions,
+        payload: &DataPayload<ExportMarker>,
     ) -> Result<(), DataError> {
         let (payload, marker_type) = payload.tokenize(&self.dependencies);
         let payload_string = payload.to_string();
@@ -109,7 +108,10 @@ impl DataExporter<CrabbakeMarker> for ConstExporter {
         if !map.contains_key(&key) {
             map.insert(key, (marker_type.to_string(), LiteMap::new()));
         }
-        map.get_mut(&key).unwrap().1.insert(options, payload_string);
+        map.get_mut(&key)
+            .unwrap()
+            .1
+            .insert(options.clone(), payload_string);
         Ok(())
     }
 
@@ -246,7 +248,7 @@ impl DataExporter<CrabbakeMarker> for ConstExporter {
 
                     #(#statics)*
                 },
-            )?;
+            ).map_err(|e| e.with_path_context(&path))?;
         }
         Ok(())
     }
@@ -289,6 +291,7 @@ impl DataExporter<CrabbakeMarker> for ConstExporter {
                         )*
                     },
                 )
+                .map_err(|e| e.with_path_context(&path.join("mod/*")))
             })?;
 
         Ok(())
