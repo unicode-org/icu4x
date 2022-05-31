@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1654034506257,
+  "lastUpdate": 1654036567760,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -29309,6 +29309,66 @@ window.BENCHMARK_DATA = {
             "name": "from_string/1000000001",
             "value": 92,
             "range": "± 1",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "4f3617caed57e4cdfae41d402221218070aaf8b0",
+          "message": "Add support for ethioaa calendars (#1902)\n\n* Import ethioaa stuff\r\n\r\n* Load in anno mundi era for ethiopic calendar\r\n\r\n* regen testdata\r\n\r\n* Add Clone/Eq impls for DateTime\r\n\r\n* Add tests for ethioaa\r\n\r\n* Add ethioaa support in AnyCalendar\r\n\r\n* Avoid unused error when building without all features\r\n\r\n* Move bool to calendar",
+          "timestamp": "2022-05-31T22:24:32Z",
+          "tree_id": "30449d6c2f8c85e3157448c0c610ac471161ba67",
+          "url": "https://github.com/unicode-org/icu4x/commit/4f3617caed57e4cdfae41d402221218070aaf8b0"
+        },
+        "date": 1654036544059,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 99715,
+            "range": "± 556",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 21601,
+            "range": "± 111",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 65382,
+            "range": "± 153",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 171,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 65,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 77,
+            "range": "± 0",
             "unit": "ns/iter"
           }
         ]
