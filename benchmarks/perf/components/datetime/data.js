@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1654034572493,
+  "lastUpdate": 1654036584283,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -35975,6 +35975,102 @@ window.BENCHMARK_DATA = {
             "name": "pattern/parse",
             "value": 6355,
             "range": "± 521",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "4f3617caed57e4cdfae41d402221218070aaf8b0",
+          "message": "Add support for ethioaa calendars (#1902)\n\n* Import ethioaa stuff\r\n\r\n* Load in anno mundi era for ethiopic calendar\r\n\r\n* regen testdata\r\n\r\n* Add Clone/Eq impls for DateTime\r\n\r\n* Add tests for ethioaa\r\n\r\n* Add ethioaa support in AnyCalendar\r\n\r\n* Avoid unused error when building without all features\r\n\r\n* Move bool to calendar",
+          "timestamp": "2022-05-31T22:24:32Z",
+          "tree_id": "30449d6c2f8c85e3157448c0c610ac471161ba67",
+          "url": "https://github.com/unicode-org/icu4x/commit/4f3617caed57e4cdfae41d402221218070aaf8b0"
+        },
+        "date": 1654036561383,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 78473,
+            "range": "± 542",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 798092,
+            "range": "± 922",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 170577,
+            "range": "± 718",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/DateTimeFormat/format_to_write",
+            "value": 75459,
+            "range": "± 87",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/DateTimeFormat/format_to_string",
+            "value": 83434,
+            "range": "± 137",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/format",
+            "value": 78587,
+            "range": "± 94",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/to_string",
+            "value": 85427,
+            "range": "± 440",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/ZonedDateTimeFormat/format_to_write",
+            "value": 166524,
+            "range": "± 240",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/ZonedDateTimeFormat/format_to_string",
+            "value": 177783,
+            "range": "± 144",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/format",
+            "value": 170271,
+            "range": "± 671",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/to_string",
+            "value": 182330,
+            "range": "± 271",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "pattern/parse",
+            "value": 5232,
+            "range": "± 11",
             "unit": "ns/iter"
           }
         ]
