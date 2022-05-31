@@ -62,6 +62,10 @@ use icu_properties::CanonicalCombiningClass;
 use icu_provider::DataPayload;
 use icu_provider::DataRequest;
 use icu_provider::ResourceProvider;
+use icu_uniset::UnicodeSet;
+use provider::CanonicalDecompositionTablesV1Marker;
+use provider::CompatibilityDecompositionTablesV1Marker;
+use provider::DecompositionTablesV1;
 use smallvec::SmallVec;
 use utf8_iter::Utf8CharsEx;
 use zerovec::ule::AsULE;
@@ -250,7 +254,12 @@ where
     /// the rest upon every read.
     buffer_pos: usize,
     pending_unnormalized_starter: Option<char>, // None at end of stream
-    decompositions: &'data DecompositionDataV1<'data>,
+    trie: &'data CodePointTrie<'data, u32>,
+    decomposition_starts_with_non_starter: UnicodeSet<'data>,
+    scalars16: &'data ZeroSlice<u16>,
+    scalars32: &'data ZeroSlice<u32>,
+    supplementary_scalars16: &'data ZeroSlice<u16>,
+    supplementary_scalars32: &'data ZeroSlice<u32>,
     ccc: &'data CodePointTrie<'data, CanonicalCombiningClass>,
 }
 
@@ -266,6 +275,8 @@ where
     pub fn new(
         delegate: I,
         decompositions: &'data DecompositionDataV1,
+        tables: &'data DecompositionTablesV1,
+        supplementary_tables: Option<&'data DecompositionTablesV1>,
         ccc: &'data CodePointTrie<'data, CanonicalCombiningClass>,
     ) -> Self {
         let mut ret = Decomposition::<I> {
@@ -275,11 +286,84 @@ where
             // Initialize with a placeholder starter in case
             // the real stream starts with a non-starter.
             pending_unnormalized_starter: Some('\u{FFFF}'),
-            decompositions,
+            trie: &decompositions.trie,
+            decomposition_starts_with_non_starter: decompositions
+                .decomposition_starts_with_non_starter
+                .clone(),
+            scalars16: &tables.scalars16,
+            scalars32: &tables.scalars32,
+            supplementary_scalars16: if let Some(supplementary) = supplementary_tables {
+                &supplementary.scalars16
+            } else {
+                EMPTY_U16
+            },
+            supplementary_scalars32: if let Some(supplementary) = supplementary_tables {
+                &supplementary.scalars32
+            } else {
+                EMPTY_U32
+            },
             ccc,
         };
         let _ = ret.next(); // Remove the U+FFFF placeholder
         ret
+    }
+
+    fn push_decomposition16(
+        &mut self,
+        low: u16,
+        offset: usize,
+        slice16: &ZeroSlice<u16>,
+    ) -> (char, usize) {
+        let len = usize::from(low >> 13) + 2;
+        let (starter, tail) = split_first_u16(slice16.get_subslice(offset..offset + len));
+        if low & 0x1000 != 0 {
+            // All the rest are combining
+            for u in tail.iter() {
+                self.buffer.push(CharacterAndClass::new(char_from_u16(u)));
+            }
+            (starter, 0)
+        } else {
+            let mut i = 0;
+            let mut combining_start = 0;
+            for u in tail.iter() {
+                let ch = char_from_u16(u);
+                self.buffer.push(CharacterAndClass::new(ch));
+                i += 1;
+                if !self.decomposition_starts_with_non_starter.contains(ch) {
+                    combining_start = i;
+                }
+            }
+            (starter, combining_start)
+        }
+    }
+
+    fn push_decomposition32(
+        &mut self,
+        low: u16,
+        offset: usize,
+        slice32: &ZeroSlice<u32>,
+    ) -> (char, usize) {
+        let len = usize::from(low >> 13) + 1;
+        let (starter, tail) = split_first_u32(slice32.get_subslice(offset..offset + len));
+        if low & 0x1000 != 0 {
+            // All the rest are combining
+            for u in tail.iter() {
+                self.buffer.push(CharacterAndClass::new(char_from_u32(u)));
+            }
+            (starter, 0)
+        } else {
+            let mut i = 0;
+            let mut combining_start = 0;
+            for u in tail.iter() {
+                let ch = char_from_u32(u);
+                self.buffer.push(CharacterAndClass::new(ch));
+                i += 1;
+                if !self.decomposition_starts_with_non_starter.contains(ch) {
+                    combining_start = i;
+                }
+            }
+            (starter, combining_start)
+        }
     }
 }
 
@@ -304,7 +388,7 @@ where
         let (starter, combining_start) = {
             let hangul_offset = u32::from(c).wrapping_sub(HANGUL_S_BASE); // SIndex in the spec
             if hangul_offset >= HANGUL_S_COUNT {
-                let decomposition = self.decompositions.trie.get(u32::from(c));
+                let decomposition = self.trie.get(u32::from(c));
                 if decomposition == 0 {
                     // The character is its own decomposition
                     (c, 0)
@@ -347,72 +431,37 @@ where
                         //         dynamically falling back to not having this but instead
                         //         having one more bit for length by merely choosing
                         //         different masks.
-                        //  11..0: Start offset in storage. If less than the length of
-                        //         scalars16, the offset is into scalars16. Otherwise,
-                        //         the offset minus the length of scalars16 is an offset
-                        //         into scalars32.
+                        //  11..0: Start offset in storage. The offset is to the logical
+                        //         sequence of scalars16, scalars32, supplementary_scalars16,
+                        //         supplementary_scalars32.
                         let offset = usize::from(low & 0xFFF);
-                        if offset < self.decompositions.scalars16.len() {
-                            let len = usize::from(low >> 13) + 2;
-                            let (starter, tail) = split_first_u16(
-                                self.decompositions
-                                    .scalars16
-                                    .get_subslice(offset..offset + len),
-                            );
-                            if low & 0x1000 != 0 {
-                                // All the rest are combining
-                                for u in tail.iter() {
-                                    self.buffer.push(CharacterAndClass::new(char_from_u16(u)));
-                                }
-                                (starter, 0)
-                            } else {
-                                let mut i = 0;
-                                let mut combining_start = 0;
-                                for u in tail.iter() {
-                                    let ch = char_from_u16(u);
-                                    self.buffer.push(CharacterAndClass::new(ch));
-                                    i += 1;
-                                    if !self
-                                        .decompositions
-                                        .decomposition_starts_with_non_starter
-                                        .contains(ch)
-                                    {
-                                        combining_start = i;
-                                    }
-                                }
-                                (starter, combining_start)
-                            }
+                        if offset < self.scalars16.len() {
+                            self.push_decomposition16(low, offset, self.scalars16)
+                        } else if offset < self.scalars16.len() + self.scalars32.len() {
+                            self.push_decomposition32(
+                                low,
+                                offset - self.scalars16.len(),
+                                self.scalars32,
+                            )
+                        } else if offset
+                            < self.scalars16.len()
+                                + self.scalars32.len()
+                                + self.supplementary_scalars16.len()
+                        {
+                            self.push_decomposition16(
+                                low,
+                                offset - (self.scalars16.len() + self.scalars32.len()),
+                                self.supplementary_scalars16,
+                            )
                         } else {
-                            let len = usize::from(low >> 13) + 1;
-                            let offset32 = offset - self.decompositions.scalars16.len();
-                            let (starter, tail) = split_first_u32(
-                                self.decompositions
-                                    .scalars32
-                                    .get_subslice(offset32..offset32 + len),
-                            );
-                            if low & 0x1000 != 0 {
-                                // All the rest are combining
-                                for u in tail.iter() {
-                                    self.buffer.push(CharacterAndClass::new(char_from_u32(u)));
-                                }
-                                (starter, 0)
-                            } else {
-                                let mut i = 0;
-                                let mut combining_start = 0;
-                                for u in tail.iter() {
-                                    let ch = char_from_u32(u);
-                                    self.buffer.push(CharacterAndClass::new(ch));
-                                    i += 1;
-                                    if !self
-                                        .decompositions
-                                        .decomposition_starts_with_non_starter
-                                        .contains(ch)
-                                    {
-                                        combining_start = i;
-                                    }
-                                }
-                                (starter, combining_start)
-                            }
+                            self.push_decomposition32(
+                                low,
+                                offset
+                                    - (self.scalars16.len()
+                                        + self.scalars32.len()
+                                        + self.supplementary_scalars16.len()),
+                                self.supplementary_scalars32,
+                            )
                         }
                     }
                 }
@@ -442,11 +491,7 @@ where
         };
         debug_assert_eq!(self.pending_unnormalized_starter, None);
         for ch in self.delegate.by_ref() {
-            if self
-                .decompositions
-                .decomposition_starts_with_non_starter
-                .contains(ch)
-            {
+            if self.decomposition_starts_with_non_starter.contains(ch) {
                 if !(in_inclusive_range(ch, '\u{0340}', '\u{0F81}')
                     || (u32::from(ch) & !1 == 0xFF9E))
                 {
@@ -524,6 +569,8 @@ where
 /// A normalizer for performing decomposing normalization.
 pub struct DecomposingNormalizer {
     decompositions: PayloadHolder,
+    tables: DataPayload<CanonicalDecompositionTablesV1Marker>,
+    supplementary_tables: Option<DataPayload<CompatibilityDecompositionTablesV1Marker>>,
     ccc: DataPayload<CanonicalCombiningClassV1Marker>,
 }
 
@@ -532,14 +579,18 @@ impl DecomposingNormalizer {
     pub fn try_new_nfd<D>(data_provider: &D) -> Result<Self, NormalizerError>
     where
         D: ResourceProvider<CanonicalDecompositionDataV1Marker>
+            + ResourceProvider<CanonicalDecompositionTablesV1Marker>
             + ResourceProvider<icu_properties::provider::CanonicalCombiningClassV1Marker>
             + ?Sized,
     {
         let decompositions: DataPayload<CanonicalDecompositionDataV1Marker> = data_provider
             .load_resource(&DataRequest::default())?
             .take_payload()?;
+        let tables: DataPayload<CanonicalDecompositionTablesV1Marker> = data_provider
+            .load_resource(&DataRequest::default())?
+            .take_payload()?;
 
-        if decompositions.get().scalars16.len() + decompositions.get().scalars32.len() > 0xFFF {
+        if tables.get().scalars16.len() + tables.get().scalars32.len() > 0xFFF {
             // The data is from a future where there exists a normalization flavor whose
             // complex decompositions take more than 0xFFF but fewer than 0x1FFF code points
             // of space. If a good use case from such a decomposition flavor arises, we can
@@ -554,6 +605,8 @@ impl DecomposingNormalizer {
 
         Ok(DecomposingNormalizer {
             decompositions: PayloadHolder::Canonical(decompositions),
+            tables,
+            supplementary_tables: None,
             ccc,
         })
     }
@@ -562,14 +615,28 @@ impl DecomposingNormalizer {
     pub fn try_new_nfkd<D>(data_provider: &D) -> Result<Self, NormalizerError>
     where
         D: ResourceProvider<CompatibilityDecompositionDataV1Marker>
+            + ResourceProvider<CanonicalDecompositionTablesV1Marker>
+            + ResourceProvider<CompatibilityDecompositionTablesV1Marker>
             + ResourceProvider<icu_properties::provider::CanonicalCombiningClassV1Marker>
             + ?Sized,
     {
         let decompositions: DataPayload<CompatibilityDecompositionDataV1Marker> = data_provider
             .load_resource(&DataRequest::default())?
             .take_payload()?;
+        let tables: DataPayload<CanonicalDecompositionTablesV1Marker> = data_provider
+            .load_resource(&DataRequest::default())?
+            .take_payload()?;
+        let supplementary_tables: DataPayload<CompatibilityDecompositionTablesV1Marker> =
+            data_provider
+                .load_resource(&DataRequest::default())?
+                .take_payload()?;
 
-        if decompositions.get().scalars16.len() + decompositions.get().scalars32.len() > 0xFFF {
+        if tables.get().scalars16.len()
+            + tables.get().scalars32.len()
+            + supplementary_tables.get().scalars16.len()
+            + supplementary_tables.get().scalars32.len()
+            > 0xFFF
+        {
             // The data is from a future where there exists a normalization flavor whose
             // complex decompositions take more than 0xFFF but fewer than 0x1FFF code points
             // of space. If a good use case from such a decomposition flavor arises, we can
@@ -584,6 +651,8 @@ impl DecomposingNormalizer {
 
         Ok(DecomposingNormalizer {
             decompositions: PayloadHolder::Compatibility(decompositions),
+            tables,
+            supplementary_tables: Some(supplementary_tables),
             ccc,
         })
     }
@@ -608,14 +677,29 @@ impl DecomposingNormalizer {
     pub fn try_new_nfkd_case_fold<D>(data_provider: &D) -> Result<Self, NormalizerError>
     where
         D: ResourceProvider<CaseFoldDecompositionDataV1Marker>
+            + ResourceProvider<CanonicalDecompositionTablesV1Marker>
+            + ResourceProvider<CompatibilityDecompositionTablesV1Marker>
+            // CaseFold here also
             + ResourceProvider<icu_properties::provider::CanonicalCombiningClassV1Marker>
             + ?Sized,
     {
         let decompositions: DataPayload<CaseFoldDecompositionDataV1Marker> = data_provider
             .load_resource(&DataRequest::default())?
             .take_payload()?;
+        let tables: DataPayload<CanonicalDecompositionTablesV1Marker> = data_provider
+            .load_resource(&DataRequest::default())?
+            .take_payload()?;
+        let supplementary_tables: DataPayload<CompatibilityDecompositionTablesV1Marker> =
+            data_provider
+                .load_resource(&DataRequest::default())?
+                .take_payload()?;
 
-        if decompositions.get().scalars16.len() + decompositions.get().scalars32.len() > 0xFFF {
+        if tables.get().scalars16.len()
+            + tables.get().scalars32.len()
+            + supplementary_tables.get().scalars16.len()
+            + supplementary_tables.get().scalars32.len()
+            > 0xFFF
+        {
             // The data is from a future where there exists a normalization flavor whose
             // complex decompositions take more than 0xFFF but fewer than 0x1FFF code points
             // of space. If a good use case from such a decomposition flavor arises, we can
@@ -630,6 +714,8 @@ impl DecomposingNormalizer {
 
         Ok(DecomposingNormalizer {
             decompositions: PayloadHolder::CaseFold(decompositions),
+            tables,
+            supplementary_tables: Some(supplementary_tables),
             ccc,
         })
     }
@@ -640,6 +726,8 @@ impl DecomposingNormalizer {
         Decomposition::new(
             iter,
             self.decompositions.get(),
+            self.tables.get(),
+            self.supplementary_tables.as_ref().map(|s| s.get()),
             &self.ccc.get().code_point_trie,
         )
     }

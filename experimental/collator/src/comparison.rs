@@ -27,6 +27,7 @@ use core::cmp::Ordering;
 use core::convert::TryFrom;
 use icu_locid::Locale;
 use icu_normalizer::provider::CanonicalDecompositionDataV1Marker;
+use icu_normalizer::provider::CanonicalDecompositionTablesV1Marker;
 use icu_normalizer::Decomposition;
 use icu_properties::provider::CanonicalCombiningClassV1Marker;
 use icu_provider::DataPayload;
@@ -72,6 +73,7 @@ pub struct Collator {
     options: CollatorOptions,
     reordering: Option<DataPayload<CollationReorderingV1Marker>>,
     decompositions: DataPayload<CanonicalDecompositionDataV1Marker>,
+    tables: DataPayload<CanonicalDecompositionTablesV1Marker>,
     ccc: DataPayload<CanonicalCombiningClassV1Marker>,
     lithuanian_dot_above: bool,
 }
@@ -90,6 +92,7 @@ impl Collator {
             + ResourceProvider<CollationMetadataV1Marker>
             + ResourceProvider<CollationReorderingV1Marker>
             + ResourceProvider<CanonicalDecompositionDataV1Marker>
+            + ResourceProvider<CanonicalDecompositionTablesV1Marker>
             + ResourceProvider<CanonicalCombiningClassV1Marker>
             + ?Sized,
     {
@@ -203,6 +206,10 @@ impl Collator {
             .load_resource(&DataRequest::default())?
             .take_payload()?;
 
+        let tables: DataPayload<CanonicalDecompositionTablesV1Marker> = data_provider
+            .load_resource(&DataRequest::default())?
+            .take_payload()?;
+
         let ccc: DataPayload<CanonicalCombiningClassV1Marker> =
             icu_properties::maps::get_canonical_combining_class(data_provider)?;
 
@@ -246,6 +253,7 @@ impl Collator {
             options: merged_options,
             reordering,
             decompositions,
+            tables,
             ccc,
             lithuanian_dot_above: metadata.lithuanian_dot_above(),
         })
@@ -272,11 +280,15 @@ impl Collator {
             return Decomposition::new(
                 decode_utf16(left.iter().copied()).map(utf16_error_to_replacement),
                 self.decompositions.get(),
+                self.tables.get(),
+                None,
                 &self.ccc.get().code_point_trie,
             )
             .cmp(Decomposition::new(
                 decode_utf16(right.iter().copied()).map(utf16_error_to_replacement),
                 self.decompositions.get(),
+                self.tables.get(),
+                None,
                 &self.ccc.get().code_point_trie,
             ));
         }
@@ -301,11 +313,15 @@ impl Collator {
             return Decomposition::new(
                 left.chars(),
                 self.decompositions.get(),
+                self.tables.get(),
+                None,
                 &self.ccc.get().code_point_trie,
             )
             .cmp(Decomposition::new(
                 right.chars(),
                 self.decompositions.get(),
+                self.tables.get(),
+                None,
                 &self.ccc.get().code_point_trie,
             ));
         }
@@ -330,11 +346,15 @@ impl Collator {
             return Decomposition::new(
                 left.chars(),
                 self.decompositions.get(),
+                self.tables.get(),
+                None,
                 &self.ccc.get().code_point_trie,
             )
             .cmp(Decomposition::new(
                 right.chars(),
                 self.decompositions.get(),
+                self.tables.get(),
+                None,
                 &self.ccc.get().code_point_trie,
             ));
         }
@@ -411,6 +431,7 @@ impl Collator {
             )
             .unwrap(), // length already validated
             self.decompositions.get(),
+            self.tables.get(),
             &self.ccc.get().code_point_trie,
             numeric_primary,
             self.lithuanian_dot_above,
@@ -426,6 +447,7 @@ impl Collator {
             )
             .unwrap(), // length already validated
             self.decompositions.get(),
+            self.tables.get(),
             &self.ccc.get().code_point_trie,
             numeric_primary,
             self.lithuanian_dot_above,

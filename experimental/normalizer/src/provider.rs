@@ -22,9 +22,19 @@ pub struct DecompositionDataV1<'data> {
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub trie: CodePointTrie<'data, u32>,
     #[cfg_attr(feature = "serde", serde(borrow))]
+    pub decomposition_starts_with_non_starter: UnicodeSet<'data>,
+}
+
+#[icu_provider::data_struct(
+    CanonicalDecompositionTablesV1Marker = "normalizer/nfdex@1",
+    CompatibilityDecompositionTablesV1Marker = "normalizer/nfkdex@1"
+)]
+#[derive(Debug, PartialEq, Clone)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, crabbake::Bakeable), crabbake(path = icu_normalizer::provider))]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+pub struct DecompositionTablesV1<'data> {
+    #[cfg_attr(feature = "serde", serde(borrow))]
     pub scalars16: ZeroVec<'data, u16>,
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub scalars32: ZeroVec<'data, u32>, // Should really be using 24-bit elements
-    #[cfg_attr(feature = "serde", serde(borrow))]
-    pub decomposition_starts_with_non_starter: UnicodeSet<'data>,
 }

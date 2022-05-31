@@ -22,7 +22,9 @@ use core::char::REPLACEMENT_CHARACTER;
 use icu_char16trie::char16trie::TrieResult;
 use icu_codepointtrie::CodePointTrie;
 use icu_normalizer::provider::DecompositionDataV1;
+use icu_normalizer::provider::DecompositionTablesV1;
 use icu_properties::CanonicalCombiningClass;
+use icu_uniset::UnicodeSet;
 use smallvec::SmallVec;
 use zerovec::ule::AsULE;
 use zerovec::ule::RawBytesULE;
@@ -690,8 +692,14 @@ where
     jamo: &'data [<u32 as AsULE>::ULE; JAMO_COUNT],
     /// The `CollationElement32` mapping for the Combining Diacritical Marks block.
     diacritics: &'data [<u32 as AsULE>::ULE; COMBINING_DIACRITICS_COUNT],
-    /// NFD data.
-    decompositions: &'data DecompositionDataV1<'data>,
+    /// NFD main trie.
+    trie: &'data CodePointTrie<'data, u32>,
+    /// NFD helper set
+    decomposition_starts_with_non_starter: UnicodeSet<'data>,
+    /// NFD complex decompositions on the BMP
+    scalars16: &'data ZeroSlice<u16>,
+    /// NFD complex decompositions on supplementary planes
+    scalars32: &'data ZeroSlice<u32>,
     /// Canonical Combining Class data.
     ccc: &'data CodePointTrie<'data, CanonicalCombiningClass>,
     /// If numeric mode is enabled, the 8 high bits of the numeric primary.
@@ -716,6 +724,7 @@ where
         jamo: &'data [<u32 as AsULE>::ULE; JAMO_COUNT],
         diacritics: &'data [<u32 as AsULE>::ULE; COMBINING_DIACRITICS_COUNT],
         decompositions: &'data DecompositionDataV1,
+        tables: &'data DecompositionTablesV1,
         ccc: &'data CodePointTrie<'data, CanonicalCombiningClass>,
         numeric_primary: Option<u8>,
         lithuanian_dot_above: bool,
@@ -732,7 +741,12 @@ where
             tailoring,
             jamo,
             diacritics,
-            decompositions,
+            trie: &decompositions.trie,
+            decomposition_starts_with_non_starter: decompositions
+                .decomposition_starts_with_non_starter
+                .clone(),
+            scalars16: &tables.scalars16,
+            scalars32: &tables.scalars32,
             ccc,
             numeric_primary,
             lithuanian_dot_above,
@@ -766,7 +780,6 @@ where
             return;
         }
         if !self
-            .decompositions
             .decomposition_starts_with_non_starter
             .contains(self.upcoming[0])
         {
@@ -775,11 +788,7 @@ where
         // Not using `while let` to be able to set `iter_exhausted`
         loop {
             if let Some(ch) = self.iter.next() {
-                if self
-                    .decompositions
-                    .decomposition_starts_with_non_starter
-                    .contains(ch)
-                {
+                if self.decomposition_starts_with_non_starter.contains(ch) {
                     if !in_inclusive_range(ch, '\u{0340}', '\u{0F81}') {
                         self.upcoming.push(ch);
                     } else {
@@ -853,7 +862,7 @@ where
         // Hangul syllables in lookahead, because Hangul isn't allowed to
         // participate in contractions, and the trie default is that a character
         // is its own decomposition.
-        let decomposition = self.decompositions.trie.get(u32::from(c));
+        let decomposition = self.trie.get(u32::from(c));
         if decomposition == 0 {
             // The character is its own decomposition (or Hangul syllable)
             self.upcoming.push(c);
@@ -887,12 +896,10 @@ where
                 //         the offset minus the length of scalars16 is an offset
                 //         into scalars32.
                 let offset = usize::from(low & 0xFFF);
-                if offset < self.decompositions.scalars16.len() {
+                if offset < self.scalars16.len() {
                     let len = usize::from(low >> 13) + 2;
                     for u in unwrap_or_gigo(
-                        self.decompositions
-                            .scalars16
-                            .get_subslice(offset..offset + len),
+                        self.scalars16.get_subslice(offset..offset + len),
                         SINGLE_U16, // single instead of empty for consistency with the other code path
                     )
                     .iter()
@@ -901,11 +908,9 @@ where
                     }
                 } else {
                     let len = usize::from(low >> 13) + 1;
-                    let offset32 = offset - self.decompositions.scalars16.len();
+                    let offset32 = offset - self.scalars16.len();
                     for u in unwrap_or_gigo(
-                        self.decompositions
-                            .scalars32
-                            .get_subslice(offset32..offset32 + len),
+                        self.scalars32.get_subslice(offset32..offset32 + len),
                         SINGLE_U32, // single instead of empty for consistency with the other code path
                     )
                     .iter()
@@ -925,7 +930,6 @@ where
             // and search for the last starter.
             let mut i = self.upcoming.len() - 1;
             while self
-                .decompositions
                 .decomposition_starts_with_non_starter
                 .contains(self.upcoming[i])
             {
@@ -939,11 +943,7 @@ where
         // Not using `while let` to be able to set `iter_exhausted`
         loop {
             if let Some(ch) = self.iter.next() {
-                if self
-                    .decompositions
-                    .decomposition_starts_with_non_starter
-                    .contains(ch)
-                {
+                if self.decomposition_starts_with_non_starter.contains(ch) {
                     if !in_inclusive_range(ch, '\u{0340}', '\u{0F81}') {
                         self.upcoming.push(ch);
                     } else {
@@ -1040,7 +1040,6 @@ where
             return true;
         }
         !self
-            .decompositions
             .decomposition_starts_with_non_starter
             .contains(self.upcoming[0])
     }
@@ -1051,11 +1050,7 @@ where
             let mut iter = self.upcoming.iter().enumerate();
             loop {
                 if let Some((i, &ch)) = iter.next() {
-                    if !self
-                        .decompositions
-                        .decomposition_starts_with_non_starter
-                        .contains(ch)
-                    {
+                    if !self.decomposition_starts_with_non_starter.contains(ch) {
                         break i;
                     }
                 } else {
@@ -1068,11 +1063,7 @@ where
             }
         };
         self.upcoming.insert(0, c);
-        let start = if self
-            .decompositions
-            .decomposition_starts_with_non_starter
-            .contains(c)
-        {
+        let start = if self.decomposition_starts_with_non_starter.contains(c) {
             0
         } else {
             1
@@ -1119,7 +1110,7 @@ where
             // starters.
             let hangul_offset = u32::from(c).wrapping_sub(HANGUL_S_BASE); // SIndex in the spec
             if hangul_offset >= HANGUL_S_COUNT {
-                let decomposition = self.decompositions.trie.get(u32::from(c));
+                let decomposition = self.trie.get(u32::from(c));
                 if decomposition == 0 {
                     // The character is its own decomposition
                     let jamo_index = (c as usize).wrapping_sub(HANGUL_L_BASE as usize);
@@ -1272,13 +1263,10 @@ where
                         //         the offset minus the length of scalars16 is an offset
                         //         into scalars32.
                         let offset = usize::from(low & 0xFFF);
-                        if offset < self.decompositions.scalars16.len() {
+                        if offset < self.scalars16.len() {
                             let len = usize::from(low >> 13) + 2;
-                            let (starter, tail) = split_first_u16(
-                                self.decompositions
-                                    .scalars16
-                                    .get_subslice(offset..offset + len),
-                            );
+                            let (starter, tail) =
+                                split_first_u16(self.scalars16.get_subslice(offset..offset + len));
                             c = starter;
                             if low & 0x1000 != 0 {
                                 for u in tail.iter() {
@@ -1290,11 +1278,7 @@ where
                                 let mut it = tail.iter();
                                 while let Some(u) = it.next() {
                                     let ch = char_from_u16(u);
-                                    if self
-                                        .decompositions
-                                        .decomposition_starts_with_non_starter
-                                        .contains(ch)
-                                    {
+                                    if self.decomposition_starts_with_non_starter.contains(ch) {
                                         // As of Unicode 14, this branch is never taken.
                                         // It exist for forward compatibility.
                                         combining_characters.push(CharacterAndClass::new(ch));
@@ -1319,11 +1303,9 @@ where
                             }
                         } else {
                             let len = usize::from(low >> 13) + 1;
-                            let offset32 = offset - self.decompositions.scalars16.len();
+                            let offset32 = offset - self.scalars16.len();
                             let (starter, tail) = split_first_u32(
-                                self.decompositions
-                                    .scalars32
-                                    .get_subslice(offset32..offset32 + len),
+                                self.scalars32.get_subslice(offset32..offset32 + len),
                             );
                             c = starter;
                             if low & 0x1000 != 0 {
@@ -1336,11 +1318,7 @@ where
                                 let mut it = tail.iter();
                                 while let Some(u) = it.next() {
                                     let ch = char_from_u32(u);
-                                    if self
-                                        .decompositions
-                                        .decomposition_starts_with_non_starter
-                                        .contains(ch)
-                                    {
+                                    if self.decomposition_starts_with_non_starter.contains(ch) {
                                         // As of Unicode 14, this branch is never taken.
                                         // It exist for forward compatibility.
                                         combining_characters.push(CharacterAndClass::new(ch));
@@ -1566,7 +1544,6 @@ where
                                                     continue 'ce32loop;
                                                 }
                                                 if !self
-                                                    .decompositions
                                                     .decomposition_starts_with_non_starter
                                                     .contains(ch)
                                                 {

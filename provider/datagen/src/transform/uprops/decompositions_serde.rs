@@ -7,7 +7,11 @@ use icu_codepointtrie::toml::CodePointTrieToml;
 #[derive(serde::Deserialize)]
 pub struct DecompositionData {
     pub trie: CodePointTrieToml,
+    pub ranges: Vec<(u32, u32)>,
+}
+
+#[derive(serde::Deserialize)]
+pub struct DecompositionTables {
     pub scalars16: Vec<u16>,
     pub scalars32: Vec<u32>,
-    pub ranges: Vec<(u32, u32)>,
 }

@@ -1419,6 +1419,7 @@ dependencies = [
  "icu_properties",
  "icu_provider",
  "icu_testdata",
+ "icu_uniset",
  "serde",
  "smallvec",
  "utf8_iter",
