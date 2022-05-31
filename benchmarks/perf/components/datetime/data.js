@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1654020869093,
+  "lastUpdate": 1654034572493,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -35879,6 +35879,102 @@ window.BENCHMARK_DATA = {
             "name": "pattern/parse",
             "value": 5121,
             "range": "± 9",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "yzhang1994@gmail.com",
+            "name": "Yvonne Z",
+            "username": "yzhang1994"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "cf1b9a68a591a954cd8c731462e250efcf072e7d",
+          "message": "Rename Yoke::project functions to ::map_project (#1955)\n\n* Rename Yoke::project functions to ::map_project\r\n\r\n* Rename Yoke::project in docs.\r\n\r\n* Rename Yoke::project in data_provider.rs",
+          "timestamp": "2022-05-31T21:49:41Z",
+          "tree_id": "76e7df10f3fd258cb7f5334e6a153bc81ef6d027",
+          "url": "https://github.com/unicode-org/icu4x/commit/cf1b9a68a591a954cd8c731462e250efcf072e7d"
+        },
+        "date": 1654034544218,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 105933,
+            "range": "± 4350",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 1017421,
+            "range": "± 106948",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 223818,
+            "range": "± 13976",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/DateTimeFormat/format_to_write",
+            "value": 107414,
+            "range": "± 13121",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/DateTimeFormat/format_to_string",
+            "value": 115938,
+            "range": "± 10898",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/format",
+            "value": 110706,
+            "range": "± 8048",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/to_string",
+            "value": 121819,
+            "range": "± 7831",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/ZonedDateTimeFormat/format_to_write",
+            "value": 225555,
+            "range": "± 23120",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/ZonedDateTimeFormat/format_to_string",
+            "value": 238556,
+            "range": "± 18713",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/format",
+            "value": 225603,
+            "range": "± 19903",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/to_string",
+            "value": 242409,
+            "range": "± 27120",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "pattern/parse",
+            "value": 6355,
+            "range": "± 521",
             "unit": "ns/iter"
           }
         ]
