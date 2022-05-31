@@ -4,6 +4,7 @@
 
 use crate::types::Time;
 use crate::{AsCalendar, Calendar, Date, Iso};
+use crate::any_calendar::{AnyCalendar, IncludedInAnyCalendar};
 
 /// A date+time for a given calendar.
 ///
@@ -62,6 +63,16 @@ impl<A: AsCalendar> DateTime<A> {
         DateTime {
             date: self.date.to_calendar(calendar),
             time: self.time,
+        }
+    }
+}
+
+impl<C: IncludedInAnyCalendar, A: AsCalendar<Calendar = C>> DateTime<A> {
+    /// Type-erase the date, converting it to a date for [`AnyCalendar`]
+    pub fn to_any(&self) -> DateTime<AnyCalendar> {
+        DateTime {
+            date: self.date.to_any(),
+            time: self.time
         }
     }
 }

@@ -5,8 +5,6 @@
 //! This module contains the untyped [`AnyCalendar`]-based `DateTimeFormat` APIs that are
 //! capable of formatting dates from any calendar
 
-
-
 use crate::{
     options::{components, DateTimeFormatOptions},
     provider::calendar::{DatePatternsV1Marker, DateSkeletonPatternsV1Marker, DateSymbolsV1Marker},
@@ -22,13 +20,52 @@ use icu_provider::prelude::*;
 use crate::{date::DateTimeInput, CldrCalendar, DateTimeFormatError, FormattedDateTime};
 
 use icu_calendar::any_calendar::{AnyCalendar, AnyCalendarKind};
+use icu_calendar::{AsCalendar, DateTime, Ref};
 
 /// [`AnyDateTimeFormat`] is a [`DateTimeFormat`](crate::DateTimeFormat) capable of formatting
 /// dates from any calendar, selected at runtime.
+///
+/// When constructed, it uses data from the [data provider], selected [`Locale`] and provided options to
+/// collect all data necessary to format any dates into that locale.
+///
+/// For that reason, one should think of the process of formatting a date in two steps - first, a computational
+/// heavy construction of [`DateTimeFormat`], and then fast formatting of [`DateTime`] data using the instance.
+///
+/// [`icu_datetime`]: crate
+/// [`DateTimeFormat`]: crate::datetime::DateTimeFormat
+///
+/// # Examples
+///
+/// ```
+/// use icu::calendar::{any_calendar::AnyCalendar, DateTime, Gregorian};
+/// use icu::datetime::{options::length, any::AnyDateTimeFormat};
+/// use icu::locid::Locale;
+/// use icu_provider::any::DynProviderAnyMarkerWrap;
+/// use std::str::FromStr;
+///
+/// let provider = icu_testdata::get_provider();
+/// // let provider = DynProviderAnyMarkerWrap(&provider);
+///
+/// let mut options = length::Bag::from_date_time_style(length::Date::Medium, length::Time::Short);
+///
+/// let dtf = AnyDateTimeFormat::try_new_with_buffer_provider(Locale::from_str("en-u-ca-gregory").unwrap(), &provider, &options.into())
+///     .expect("Failed to create DateTimeFormat instance.");
+///
+/// let datetime = DateTime::new_gregorian_datetime_from_integers(2020, 9, 1, 12, 34, 28, 0)
+///     .expect("Failed to construct DateTime.");
+/// let any_datetime = datetime.to_any();
+///
+/// let value = dtf.format_to_string(&any_datetime);
+/// assert_eq!(value, "Sep 1, 2020, 12:34 PM");
+/// ```
+///
+/// This model replicates that of `ICU` and `ECMA402`.
+///
+/// [data provider]: icu_provider
 pub struct AnyDateTimeFormat(pub(super) raw::DateTimeFormat, AnyCalendar);
 
 impl AnyDateTimeFormat {
-    /// TBD
+    ///
     #[inline]
     pub fn try_new_with_any_provider<T: Into<Locale>, P>(
         locale: T,
@@ -36,7 +73,7 @@ impl AnyDateTimeFormat {
         options: &DateTimeFormatOptions,
     ) -> Result<Self, DateTimeFormatError>
     where
-        P: AnyProvider
+        P: AnyProvider,
     {
         let locale = locale.into();
 
@@ -60,7 +97,7 @@ impl AnyDateTimeFormat {
         options: &DateTimeFormatOptions,
     ) -> Result<Self, DateTimeFormatError>
     where
-        P: BufferProvider
+        P: BufferProvider,
     {
         let locale = locale.into();
 
@@ -75,29 +112,25 @@ impl AnyDateTimeFormat {
         ))
     }
 
-    /// ...
-    #[inline]
-    pub fn format<'l, T>(&'l self, value: &'l T) -> FormattedDateTime<'l, T>
-    where
-        T: DateTimeInput<Calendar = AnyCalendar>,
-    {
-        self.0.format(value)
-    }
-
     ///  ...
     #[inline]
     pub fn format_to_write(
         &self,
         w: &mut impl core::fmt::Write,
-        value: &impl DateTimeInput<Calendar = AnyCalendar>,
+        value: &DateTime<impl AsCalendar<Calendar = AnyCalendar>>,
     ) -> core::fmt::Result {
-        self.0.format_to_write(w, value)
+        let converted = self.1.convert_any_datetime(value);
+        self.0.format_to_write(w, &converted)
     }
 
     /// ..
     #[inline]
-    pub fn format_to_string(&self, value: &impl DateTimeInput<Calendar = AnyCalendar>) -> String {
-        self.0.format_to_string(value)
+    pub fn format_to_string(
+        &self,
+        value: &DateTime<impl AsCalendar<Calendar = AnyCalendar>>,
+    ) -> String {
+        let converted = self.1.convert_any_datetime(value);
+        self.0.format_to_string(&converted)
     }
 
     /// ...

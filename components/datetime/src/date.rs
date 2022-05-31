@@ -5,9 +5,8 @@
 //! A collection of utilities for representing and working with dates as an input to
 //! formatting operations.
 
-use crate::calendar::CldrCalendar;
-
 use crate::provider::time_zones::{MetaZoneId, TimeZoneBcp47Id};
+use icu_calendar::Calendar;
 use icu_calendar::{arithmetic::week_of, AsCalendar, Date, DateTime};
 use icu_locid::Locale;
 use tinystr::TinyStr8;
@@ -24,8 +23,8 @@ pub use icu_calendar::DateTimeError;
 ///
 /// All data represented in [`DateInput`] should be locale-agnostic.
 pub trait DateInput {
-    /// The CLDR calendar this date relates to
-    type Calendar: CldrCalendar;
+    /// The calendar this date relates to
+    type Calendar: Calendar;
     /// Gets the era and year input.
     fn year(&self) -> Option<Year>;
 
@@ -314,7 +313,7 @@ impl<'data, T: ZonedDateTimeInput> LocalizedDateTimeInput<T>
     }
 }
 
-impl<C: CldrCalendar, A: AsCalendar<Calendar = C>> DateInput for Date<A> {
+impl<C: Calendar, A: AsCalendar<Calendar = C>> DateInput for Date<A> {
     type Calendar = C;
     /// Gets the era and year input.
     fn year(&self) -> Option<Year> {
@@ -342,7 +341,7 @@ impl<C: CldrCalendar, A: AsCalendar<Calendar = C>> DateInput for Date<A> {
     }
 }
 
-impl<C: CldrCalendar, A: AsCalendar<Calendar = C>> DateInput for DateTime<A> {
+impl<C: Calendar, A: AsCalendar<Calendar = C>> DateInput for DateTime<A> {
     type Calendar = C;
     /// Gets the era and year input.
     fn year(&self) -> Option<Year> {
