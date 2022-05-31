@@ -116,7 +116,8 @@ impl<C: CldrCalendar> ZonedDateTimeFormat<C> {
         DP: ResourceProvider<DateSymbolsV1Marker>
             + ResourceProvider<DatePatternsV1Marker>
             + ResourceProvider<DateSkeletonPatternsV1Marker>
-            + ResourceProvider<WeekDataV1Marker>,
+            + ResourceProvider<WeekDataV1Marker>
+            + ?Sized,
         ZP: ResourceProvider<provider::time_zones::TimeZoneFormatsV1Marker>
             + ResourceProvider<provider::time_zones::ExemplarCitiesV1Marker>
             + ResourceProvider<provider::time_zones::MetaZoneGenericNamesLongV1Marker>
@@ -124,7 +125,7 @@ impl<C: CldrCalendar> ZonedDateTimeFormat<C> {
             + ResourceProvider<provider::time_zones::MetaZoneSpecificNamesLongV1Marker>
             + ResourceProvider<provider::time_zones::MetaZoneSpecificNamesShortV1Marker>
             + ?Sized,
-        PP: ResourceProvider<OrdinalV1Marker>,
+        PP: ResourceProvider<OrdinalV1Marker> + ?Sized,
     {
         let mut locale = locale.into();
         // TODO(#419): Resolve the locale calendar with the API calendar.
