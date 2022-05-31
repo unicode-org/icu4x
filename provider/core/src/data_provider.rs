@@ -383,11 +383,11 @@ where
         self.yoke.get()
     }
 
-    /// Maps `DataPayload<M>` to `DataPayload<M2>` by projecting it with [`Yoke::project`].
+    /// Maps `DataPayload<M>` to `DataPayload<M2>` by projecting it with [`Yoke::map_project`].
     ///
     /// This is accomplished by a function that takes `M`'s data type and returns `M2`'s data
     /// type. The function takes a second argument which should be ignored. For more details,
-    /// see [`Yoke::project()`].
+    /// see [`Yoke::map_project()`].
     ///
     /// The standard [`DataPayload::map_project()`] function moves `self` and cannot capture any
     /// data from its context. Use one of the sister methods if you need these capabilities:
