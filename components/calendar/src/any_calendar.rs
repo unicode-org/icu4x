@@ -16,7 +16,6 @@ use crate::{types, Calendar, Date, DateDuration, DateDurationUnit};
 use icu_locid::extensions::unicode::Value;
 use icu_locid::{unicode_ext_key, unicode_ext_value, Locale};
 
-use crate::provider;
 use icu_provider::prelude::*;
 
 /// This is a calendar that encompasses all formattable calendars supported by this crate
@@ -34,6 +33,8 @@ pub enum AnyCalendar {
     Gregorian(Gregorian),
     Buddhist(Buddhist),
     Japanese(Japanese),
+    /// The Ethiopic calendar; the bool specifies whether dates
+    /// that this calendar produces should be in the Amete Alem era scheme
     Ethiopic(Ethiopic),
     Indian(Indian),
     Coptic(Coptic),
@@ -269,6 +270,10 @@ impl AnyCalendar {
             AnyCalendarKind::Indian => AnyCalendar::Indian(Indian),
             AnyCalendarKind::Coptic => AnyCalendar::Coptic(Coptic),
             AnyCalendarKind::Iso => AnyCalendar::Iso(Iso),
+            AnyCalendarKind::Ethiopic => {
+                AnyCalendar::Ethiopic(Ethiopic::new_with_amete_alem(false))
+            }
+            AnyCalendarKind::Ethioaa => AnyCalendar::Ethiopic(Ethiopic::new_with_amete_alem(true)),
         })
     }
 
@@ -295,6 +300,10 @@ impl AnyCalendar {
             AnyCalendarKind::Indian => AnyCalendar::Indian(Indian),
             AnyCalendarKind::Coptic => AnyCalendar::Coptic(Coptic),
             AnyCalendarKind::Iso => AnyCalendar::Iso(Iso),
+            AnyCalendarKind::Ethiopic => {
+                AnyCalendar::Ethiopic(Ethiopic::new_with_amete_alem(false))
+            }
+            AnyCalendarKind::Ethioaa => AnyCalendar::Ethiopic(Ethiopic::new_with_amete_alem(true)),
         })
     }
 
@@ -308,7 +317,7 @@ impl AnyCalendar {
     #[cfg(feature = "serde")]
     pub fn try_new_unstable<P>(kind: AnyCalendarKind, provider: &P) -> Result<Self, DataError>
     where
-        P: ResourceProvider<provider::JapaneseErasV1Marker> + ?Sized,
+        P: ResourceProvider<crate::provider::JapaneseErasV1Marker> + ?Sized,
     {
         Ok(match kind {
             AnyCalendarKind::Gregorian => AnyCalendar::Gregorian(Gregorian),
@@ -317,6 +326,10 @@ impl AnyCalendar {
             AnyCalendarKind::Indian => AnyCalendar::Indian(Indian),
             AnyCalendarKind::Coptic => AnyCalendar::Coptic(Coptic),
             AnyCalendarKind::Iso => AnyCalendar::Iso(Iso),
+            AnyCalendarKind::Ethiopic => {
+                AnyCalendar::Ethiopic(Ethiopic::new_with_amete_alem(false))
+            }
+            AnyCalendarKind::Ethioaa => AnyCalendar::Ethiopic(Ethiopic::new_with_amete_alem(true)),
         })
     }
 
@@ -357,6 +370,9 @@ pub enum AnyCalendarKind {
     Indian,
     Coptic,
     Iso,
+    Ethiopic,
+    /// Ethiopic with Amete Alem era
+    Ethioaa,
 }
 
 impl AnyCalendarKind {
@@ -367,6 +383,8 @@ impl AnyCalendarKind {
             "indian" => AnyCalendarKind::Indian,
             "coptic" => AnyCalendarKind::Coptic,
             "iso" => AnyCalendarKind::Iso,
+            "ethiopic" => AnyCalendarKind::Ethiopic,
+            "ethioaa" => AnyCalendarKind::Ethioaa,
             _ => return None,
         })
     }
@@ -382,6 +400,10 @@ impl AnyCalendarKind {
             AnyCalendarKind::Coptic
         } else if *x == unicode_ext_value!("iso") {
             AnyCalendarKind::Iso
+        } else if *x == unicode_ext_value!("ethiopic") {
+            AnyCalendarKind::Ethiopic
+        } else if *x == unicode_ext_value!("ethioaa") {
+            AnyCalendarKind::Ethioaa
         } else {
             return None;
         })
@@ -395,6 +417,8 @@ impl AnyCalendarKind {
             AnyCalendarKind::Indian => "indian",
             AnyCalendarKind::Coptic => "coptic",
             AnyCalendarKind::Iso => "iso",
+            AnyCalendarKind::Ethiopic => "ethiopic",
+            AnyCalendarKind::Ethioaa => "ethioaa",
         }
     }
 
@@ -467,11 +491,12 @@ impl IncludedInAnyCalendar for Japanese {
 }
 
 impl IncludedInAnyCalendar for Ethiopic {
+    // Amete Mihret calendars are the default
     fn to_any(self) -> AnyCalendar {
         AnyCalendar::Ethiopic(self)
     }
     fn to_any_cloned(&self) -> AnyCalendar {
-        AnyCalendar::Ethiopic(Ethiopic)
+        AnyCalendar::Ethiopic(Ethiopic::new())
     }
     fn date_to_any(d: &Self::DateInner) -> AnyDateInner {
         AnyDateInner::Ethiopic(*d)

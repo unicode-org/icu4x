@@ -115,15 +115,18 @@
   "eras": {
     "names": {
       "before-incar": "от воплощения Христа",
-      "incarnation": "до воплощения Христа"
+      "incarnation": "до воплощения Христа",
+      "mundi": "ERA0"
     },
     "abbr": {
       "before-incar": "от Христа",
-      "incarnation": "до Христа"
+      "incarnation": "до Христа",
+      "mundi": "ERA0"
     },
     "narrow": {
       "before-incar": "от Христа",
-      "incarnation": "до Христа"
+      "incarnation": "до Христа",
+      "mundi": "ERA0"
     }
   }
 }
