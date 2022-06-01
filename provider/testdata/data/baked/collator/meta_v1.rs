@@ -38,4 +38,4 @@ type DataStruct =
 static BN_JA: DataStruct = &::icu_collator::provider::CollationMetadataV1 { bits: 251658313u32 };
 static ES_TR: DataStruct = &::icu_collator::provider::CollationMetadataV1 { bits: 251658249u32 };
 static TH: DataStruct = &::icu_collator::provider::CollationMetadataV1 { bits: 251658825u32 };
-static UND: DataStruct = &::icu_collator::provider::CollationMetadataV1 { bits: 251658265u32 };
+static UND: DataStruct = &::icu_collator::provider::CollationMetadataV1 { bits: 251658241u32 };

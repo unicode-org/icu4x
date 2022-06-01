@@ -47,9 +47,9 @@ const HANGUL_S_COUNT: u32 = 11172;
 pub(crate) const JAMO_COUNT: usize = 256; // 0x1200 - 0x1100
 
 const COMBINING_DIACRITICS_BASE: usize = 0x0300;
-const COMBINING_DIACRITICS_LIMIT: usize = 0x0370;
-pub(crate) const COMBINING_DIACRITICS_COUNT: usize =
-    COMBINING_DIACRITICS_LIMIT - COMBINING_DIACRITICS_BASE;
+const OPTIMIZED_DIACRITICS_LIMIT: usize = 0x034F;
+pub(crate) const OPTIMIZED_DIACRITICS_MAX_COUNT: usize =
+    OPTIMIZED_DIACRITICS_LIMIT - COMBINING_DIACRITICS_BASE;
 
 pub(crate) const CASE_MASK: u16 = 0xC000;
 pub(crate) const TERTIARY_MASK: u16 = 0x3F3F; // ONLY_TERTIARY_MASK in ICU4C
@@ -468,6 +468,11 @@ impl CollationElement {
     }
 
     #[inline(always)]
+    pub fn new_from_secondary(secondary: u16) -> Self {
+        CollationElement((u64::from(secondary) << 16) | COMMON_TERTIARY_CE)
+    }
+
+    #[inline(always)]
     pub fn new_implicit_from_char(c: char) -> Self {
         // Collation::unassignedPrimaryFromCodePoint
         // Create a gap before U+0000. Use c-1 for [first unassigned].
@@ -700,7 +705,7 @@ where
     /// Note: in ICU4C the jamo table contains only modern jamo. Here, the jamo table contains the whole Unicode block.
     jamo: &'data [<u32 as AsULE>::ULE; JAMO_COUNT],
     /// The `CollationElement32` mapping for the Combining Diacritical Marks block.
-    diacritics: &'data [<u32 as AsULE>::ULE; COMBINING_DIACRITICS_COUNT],
+    diacritics: &'data ZeroSlice<u16>,
     /// NFD main trie.
     trie: &'data CodePointTrie<'data, u32>,
     /// NFD helper set
@@ -731,7 +736,7 @@ where
         root: &'data CollationDataV1,
         tailoring: &'data CollationDataV1,
         jamo: &'data [<u32 as AsULE>::ULE; JAMO_COUNT],
-        diacritics: &'data [<u32 as AsULE>::ULE; COMBINING_DIACRITICS_COUNT],
+        diacritics: &'data ZeroSlice<u16>,
         decompositions: &'data DecompositionDataV1,
         tables: &'data DecompositionTablesV1,
         ccc: &'data CodePointTrie<'data, CanonicalCombiningClass>,
@@ -1183,15 +1188,11 @@ where
                         if self.is_next_decomposition_starts_with_starter() {
                             let diacritic_index =
                                 (low as usize).wrapping_sub(COMBINING_DIACRITICS_BASE);
-                            if diacritic_index < self.diacritics.len() {
+                            if let Some(secondary) = self.diacritics.get(diacritic_index) {
                                 debug_assert!(low != 0x0344, "Should never have COMBINING GREEK DIALYTIKA TONOS here, since it should have decomposed further.");
                                 if let Some(ce) = ce32.to_ce_simple_or_long_primary() {
-                                    // Inner unwrap: already checked len()
-                                    // Outer unwrap: expectation of data integrity.
-                                    let ce_for_combining = CollationElement32::new_from_ule(
-                                        self.diacritics[diacritic_index],
-                                    )
-                                    .to_ce_self_contained_or_gigo();
+                                    let ce_for_combining =
+                                        CollationElement::new_from_secondary(secondary);
                                     self.pending.push(ce_for_combining);
                                     self.mark_prefix_unmatchable();
                                     return ce;
@@ -1205,13 +1206,8 @@ where
                                         TrieResult::NoMatch | TrieResult::NoValue => {
                                             if let Some(ce) = default.to_ce_simple_or_long_primary()
                                             {
-                                                // Inner unwrap: already checked len()
-                                                // Outer unwrap: expectation of data integrity.
                                                 let ce_for_combining =
-                                                    CollationElement32::new_from_ule(
-                                                        self.diacritics[diacritic_index],
-                                                    )
-                                                    .to_ce_self_contained_or_gigo();
+                                                    CollationElement::new_from_secondary(secondary);
                                                 self.pending.push(ce_for_combining);
                                                 self.mark_prefix_unmatchable();
                                                 return ce;
@@ -1854,7 +1850,7 @@ where
                     'combining: while i < combining_characters.len() {
                         c = combining_characters[i].character();
                         let diacritic_index = (c as usize).wrapping_sub(COMBINING_DIACRITICS_BASE);
-                        if let Some(&diacritic) = self.diacritics.get(diacritic_index) {
+                        if let Some(secondary) = self.diacritics.get(diacritic_index) {
                             // TODO: unlikely annotation for the first two conditions here:
                             if c == '\u{0307}'
                                 && self.lithuanian_dot_above
@@ -1873,15 +1869,13 @@ where
                                     continue 'combining;
                                 }
                             }
-                            self.pending.push(
-                                CollationElement32::new_from_ule(diacritic)
-                                    .to_ce_self_contained_or_gigo(),
-                            );
+                            self.pending
+                                .push(CollationElement::new_from_secondary(secondary));
                             self.mark_prefix_unmatchable();
                             i += 1;
                             continue 'combining;
                         }
-                        // `c` is not from the Combining Diacritical Marks block.
+                        // `c` is not a table-optimized diacritic.
                         // Not bothering to micro optimize away the move of the remaining
                         // part of `combining_characters`.
                         let _ = combining_characters.drain(..=i);

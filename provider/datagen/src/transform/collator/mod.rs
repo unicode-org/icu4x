@@ -50,7 +50,7 @@ struct CollationData {
 /// Serde counterpart for `CollationDiacriticsV1`.
 #[derive(serde::Deserialize)]
 struct CollationDiacritics {
-    pub ce32s: Vec<u32>,
+    pub secondaries: Vec<u16>,
 }
 
 /// Serde counterpart for `CollationJamoV1`.
@@ -261,7 +261,7 @@ collation_provider!(
     CollationDiacritics,
     b"_dia",
     icu_collator::provider::CollationDiacriticsV1 {
-        ce32s: ZeroVec::alloc_from_slice(&toml_data.ce32s),
+        secondaries: ZeroVec::alloc_from_slice(&toml_data.secondaries),
     },
     toml_data
 );

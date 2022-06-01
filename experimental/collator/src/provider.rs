@@ -155,7 +155,7 @@ impl<'data> CollationDataV1<'data> {
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct CollationDiacriticsV1<'data> {
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub ce32s: ZeroVec<'data, u32>,
+    pub secondaries: ZeroVec<'data, u16>,
 }
 
 #[icu_provider::data_struct(CollationJamoV1Marker = "collator/jamo@1")]

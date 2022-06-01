@@ -10,8 +10,8 @@
 //! the comparison of collation element sequences.
 
 use crate::elements::{
-    CollationElement, CollationElements, NonPrimary, COMBINING_DIACRITICS_COUNT, JAMO_COUNT, NO_CE,
-    NO_CE_PRIMARY, NO_CE_SECONDARY, NO_CE_TERTIARY, QUATERNARY_MASK,
+    CollationElement, CollationElements, NonPrimary, JAMO_COUNT, NO_CE, NO_CE_PRIMARY,
+    NO_CE_SECONDARY, NO_CE_TERTIARY, OPTIMIZED_DIACRITICS_MAX_COUNT, QUATERNARY_MASK,
 };
 use crate::error::CollatorError;
 use crate::provider::CollationDataV1Marker;
@@ -179,9 +179,10 @@ impl Collator {
             .load_resource(&DataRequest::default())?
             .take_payload()?;
 
+        let tailored_diacritics = metadata.tailored_diacritics();
         let diacritics: DataPayload<CollationDiacriticsV1Marker> = data_provider
             .load_resource(&DataRequest {
-                options: if metadata.tailored_diacritics() {
+                options: if tailored_diacritics {
                     resource_options
                 } else {
                     ResourceOptions::default()
@@ -190,8 +191,19 @@ impl Collator {
             })?
             .take_payload()?;
 
-        if diacritics.get().ce32s.len() != COMBINING_DIACRITICS_COUNT {
-            return Err(CollatorError::MalformedData);
+        if tailored_diacritics {
+            // In the tailored case we accept a shorter table in which case the tailoring is
+            // responsible for supplying the missing values in the trie.
+            // As of June 2022, none of the collations actually use a shortened table.
+            // Vietnamese and Ewe load a full-length alternative table and the rest use
+            // the default one.
+            if diacritics.get().secondaries.len() > OPTIMIZED_DIACRITICS_MAX_COUNT {
+                return Err(CollatorError::MalformedData);
+            }
+        } else {
+            if diacritics.get().secondaries.len() != OPTIMIZED_DIACRITICS_MAX_COUNT {
+                return Err(CollatorError::MalformedData);
+            }
         }
 
         let jamo: DataPayload<CollationJamoV1Marker> = data_provider
@@ -426,10 +438,7 @@ impl Collator {
             tailoring.get(),
             <&[<u32 as AsULE>::ULE; JAMO_COUNT]>::try_from(self.jamo.get().ce32s.as_ule_slice())
                 .unwrap(), // length already validated
-            <&[<u32 as AsULE>::ULE; COMBINING_DIACRITICS_COUNT]>::try_from(
-                self.diacritics.get().ce32s.as_ule_slice(),
-            )
-            .unwrap(), // length already validated
+            &self.diacritics.get().secondaries,
             self.decompositions.get(),
             self.tables.get(),
             &self.ccc.get().code_point_trie,
@@ -442,10 +451,7 @@ impl Collator {
             tailoring.get(),
             <&[<u32 as AsULE>::ULE; JAMO_COUNT]>::try_from(self.jamo.get().ce32s.as_ule_slice())
                 .unwrap(), // length already validated
-            <&[<u32 as AsULE>::ULE; COMBINING_DIACRITICS_COUNT]>::try_from(
-                self.diacritics.get().ce32s.as_ule_slice(),
-            )
-            .unwrap(), // length already validated
+            &self.diacritics.get().secondaries,
             self.decompositions.get(),
             self.tables.get(),
             &self.ccc.get().code_point_trie,
