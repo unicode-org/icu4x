@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1654036584283,
+  "lastUpdate": 1654098221987,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -36071,6 +36071,102 @@ window.BENCHMARK_DATA = {
             "name": "pattern/parse",
             "value": 5232,
             "range": "± 11",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "andrewpkq@gmail.com",
+            "name": "andrewpollack",
+            "username": "andrewpollack"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "f1cad321545c2e95c1a0feecb7c882d6dafcf28d",
+          "message": "Calendar benchmarks (#1887)\n\n* Initial drafting of calendar benchmarks\r\n\r\n* Extracting tests into external function\r\n\r\n* Extracting tests into external function\r\n\r\n* Pulled benches into own function\r\n\r\n* Adding datetime benches\r\n\r\n* Refactoring code to be more generic\r\n\r\n* Adding comments\r\n\r\n* Make outliers into close to generic\r\n\r\n* Adding nanoseconds to test data\r\n\r\n* Removing nanosecond from ethiopic datetime\r\n\r\n* Removing nano from gregorian datetime creation, new_gregorian_datetime_from_integers --> new_gregorian_datetime\r\n\r\n* Adding issue link\r\n\r\n* Adjusting datetime sample numbers to be coptic friendly\r\n\r\n* Substituting vector of mutable for mutable array\r\n\r\n* PR followups\r\n\r\n* Removing unnecessary comment\r\n\r\n* Adjusting ethiopic instantiation",
+          "timestamp": "2022-06-01T15:31:44Z",
+          "tree_id": "418bf3c80cbe87cd0cb8fcb65474751ea67011a8",
+          "url": "https://github.com/unicode-org/icu4x/commit/f1cad321545c2e95c1a0feecb7c882d6dafcf28d"
+        },
+        "date": 1654098197390,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 78593,
+            "range": "± 129",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 776856,
+            "range": "± 860",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 155942,
+            "range": "± 176",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/DateTimeFormat/format_to_write",
+            "value": 75431,
+            "range": "± 65",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/DateTimeFormat/format_to_string",
+            "value": 82727,
+            "range": "± 375",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/format",
+            "value": 78785,
+            "range": "± 629",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/to_string",
+            "value": 86257,
+            "range": "± 85",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/ZonedDateTimeFormat/format_to_write",
+            "value": 153430,
+            "range": "± 749",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/ZonedDateTimeFormat/format_to_string",
+            "value": 165405,
+            "range": "± 199",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/format",
+            "value": 156982,
+            "range": "± 262",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/to_string",
+            "value": 168669,
+            "range": "± 136",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "pattern/parse",
+            "value": 4632,
+            "range": "± 24",
             "unit": "ns/iter"
           }
         ]
