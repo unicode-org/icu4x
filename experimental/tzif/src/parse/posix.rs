@@ -654,9 +654,9 @@ mod test {
         assert_parse_err!(time(12), "00:00:60");
 
         // valid times
-        // assert_parse_eq!(time(12), "12", Seconds(12 * 60 * 60));
-        // assert_parse_eq!(time(12), "+12", Seconds(12 * 60 * 60));
-        // assert_parse_eq!(time(12), "-12", Seconds(-12 * 60 * 60));
+        assert_parse_eq!(time(12), "12", Seconds(12 * 60 * 60));
+        assert_parse_eq!(time(12), "+12", Seconds(12 * 60 * 60));
+        assert_parse_eq!(time(12), "-12", Seconds(-12 * 60 * 60));
         assert_parse_eq!(time(12), "12:15", Seconds(12 * 60 * 60 + 15 * 60));
         assert_parse_eq!(time(12), "-12:15", Seconds(-12 * 60 * 60 - 15 * 60));
         assert_parse_eq!(time(12), "12:30:15", Seconds(12 * 60 * 60 + 30 * 60 + 15));
