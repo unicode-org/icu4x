@@ -258,7 +258,7 @@ impl DateTime<Ethiopic> {
     /// ```rust
     /// use icu::calendar::{types::IsoHour, types::IsoMinute, types::IsoSecond, DateTime};
     ///
-    /// let datetime_ethiopic = DateTime::new_ethiopic_datetime(2014, 8, 25, 13, 1, 0, 0)
+    /// let datetime_ethiopic = DateTime::new_ethiopic_datetime(2014, 8, 25, 13, 1, 0)
     ///     .expect("Failed to initialize Ethiopic DateTime instance.");
     ///
     /// assert_eq!(datetime_ethiopic.date.year().number, 2014);
@@ -275,11 +275,10 @@ impl DateTime<Ethiopic> {
         hour: u8,
         minute: u8,
         second: u8,
-        fraction: u32,
     ) -> Result<DateTime<Ethiopic>, DateTimeError> {
         Ok(DateTime {
             date: Date::new_ethiopic_date(year, month, day)?,
-            time: types::Time::try_new(hour, minute, second, fraction)?,
+            time: types::Time::try_new(hour, minute, second, 0)?,
         })
     }
 }

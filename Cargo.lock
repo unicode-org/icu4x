@@ -1300,6 +1300,7 @@ name = "icu_calendar"
 version = "0.6.0"
 dependencies = [
  "crabbake",
+ "criterion",
  "displaydoc",
  "icu",
  "icu_benchmark_macros",
@@ -1308,6 +1309,7 @@ dependencies = [
  "icu_provider",
  "icu_testdata",
  "serde",
+ "serde_json",
  "tinystr 0.6.0",
  "zerovec",
 ]
@@ -1489,6 +1491,7 @@ dependencies = [
  "icu",
  "icu_benchmark_macros",
  "icu_calendar",
+ "icu_datetime",
  "icu_locid",
  "icu_plurals",
  "icu_provider",

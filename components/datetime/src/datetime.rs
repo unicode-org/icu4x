@@ -44,7 +44,8 @@ use crate::{date::DateTimeInput, CldrCalendar, DateTimeFormatError, FormattedDat
 /// let dtf = DateTimeFormat::<Gregorian>::try_new(locale!("en"), &provider, &options.into())
 ///     .expect("Failed to create DateTimeFormat instance.");
 ///
-/// let datetime = DateTime::new_gregorian_datetime_from_integers(2020, 9, 1, 12, 34, 28, 0)
+///
+/// let datetime = DateTime::new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
 ///     .expect("Failed to construct DateTime.");
 ///
 /// let value = dtf.format_to_string(&datetime);
@@ -119,7 +120,7 @@ impl<C: CldrCalendar> DateTimeFormat<C> {
     /// let dtf = DateTimeFormat::<Gregorian>::try_new(locale, &provider, &options)
     ///     .expect("Failed to create DateTimeFormat instance.");
     ///
-    /// let datetime = DateTime::new_gregorian_datetime_from_integers(2020, 9, 1, 12, 34, 28, 0)
+    /// let datetime = DateTime::new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
     ///     .expect("Failed to construct DateTime.");
     ///
     /// let formatted_date = dtf.format(&datetime);
@@ -153,7 +154,7 @@ impl<C: CldrCalendar> DateTimeFormat<C> {
     /// let dtf = DateTimeFormat::<Gregorian>::try_new(locale, &provider, &options.into())
     ///     .expect("Failed to create DateTimeFormat instance.");
     ///
-    /// let datetime = DateTime::new_gregorian_datetime_from_integers(2020, 9, 1, 12, 34, 28, 0)
+    /// let datetime = DateTime::new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
     ///     .expect("Failed to construct DateTime.");
     ///
     /// let mut buffer = String::new();
@@ -185,7 +186,7 @@ impl<C: CldrCalendar> DateTimeFormat<C> {
     /// let dtf = DateTimeFormat::<Gregorian>::try_new(locale, &provider, &options.into())
     ///     .expect("Failed to create DateTimeFormat instance.");
     ///
-    /// let datetime = DateTime::new_gregorian_datetime_from_integers(2020, 9, 1, 12, 34, 28, 0)
+    /// let datetime = DateTime::new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
     ///     .expect("Failed to construct DateTime.");
     ///
     /// let _ = dtf.format_to_string(&datetime);
