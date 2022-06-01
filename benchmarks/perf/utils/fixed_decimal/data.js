@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1654036567760,
+  "lastUpdate": 1654098231709,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -29369,6 +29369,66 @@ window.BENCHMARK_DATA = {
             "name": "from_string/1000000001",
             "value": 77,
             "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "andrewpkq@gmail.com",
+            "name": "andrewpollack",
+            "username": "andrewpollack"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "f1cad321545c2e95c1a0feecb7c882d6dafcf28d",
+          "message": "Calendar benchmarks (#1887)\n\n* Initial drafting of calendar benchmarks\r\n\r\n* Extracting tests into external function\r\n\r\n* Extracting tests into external function\r\n\r\n* Pulled benches into own function\r\n\r\n* Adding datetime benches\r\n\r\n* Refactoring code to be more generic\r\n\r\n* Adding comments\r\n\r\n* Make outliers into close to generic\r\n\r\n* Adding nanoseconds to test data\r\n\r\n* Removing nanosecond from ethiopic datetime\r\n\r\n* Removing nano from gregorian datetime creation, new_gregorian_datetime_from_integers --> new_gregorian_datetime\r\n\r\n* Adding issue link\r\n\r\n* Adjusting datetime sample numbers to be coptic friendly\r\n\r\n* Substituting vector of mutable for mutable array\r\n\r\n* PR followups\r\n\r\n* Removing unnecessary comment\r\n\r\n* Adjusting ethiopic instantiation",
+          "timestamp": "2022-06-01T15:31:44Z",
+          "tree_id": "418bf3c80cbe87cd0cb8fcb65474751ea67011a8",
+          "url": "https://github.com/unicode-org/icu4x/commit/f1cad321545c2e95c1a0feecb7c882d6dafcf28d"
+        },
+        "date": 1654098206097,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 128437,
+            "range": "± 1255",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 26843,
+            "range": "± 244",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 71955,
+            "range": "± 663",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 239,
+            "range": "± 2",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 112,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 90,
+            "range": "± 1",
             "unit": "ns/iter"
           }
         ]
