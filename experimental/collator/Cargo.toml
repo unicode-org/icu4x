@@ -45,6 +45,7 @@ serde = { version = "1.0", default-features = false, features = ["derive", "allo
 zerovec = { version = "0.7", path = "../../utils/zerovec", features = ["serde"] }
 utf8_iter = "1.0"
 crabbake = { version = "0.4", path = "../../experimental/crabbake", optional = true, features = ["derive"] }
+zerofrom = { version = "0.1.0", path = "../../utils/zerofrom" }
 
 [dev-dependencies]
 icu_testdata = { version = "0.6", path = "../../provider/testdata" }

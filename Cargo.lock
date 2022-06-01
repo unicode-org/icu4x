@@ -1423,6 +1423,7 @@ dependencies = [
  "serde",
  "smallvec",
  "utf8_iter",
+ "zerofrom",
  "zerovec",
 ]
 
@@ -1604,6 +1605,7 @@ dependencies = [
  "serde",
  "smallvec",
  "utf8_iter",
+ "zerofrom",
  "zerovec",
 ]
 

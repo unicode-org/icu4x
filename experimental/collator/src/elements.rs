@@ -26,6 +26,7 @@ use icu_normalizer::provider::DecompositionTablesV1;
 use icu_properties::CanonicalCombiningClass;
 use icu_uniset::UnicodeSet;
 use smallvec::SmallVec;
+use zerofrom::ZeroFrom;
 use zerovec::ule::AsULE;
 use zerovec::ule::RawBytesULE;
 use zerovec::ZeroSlice;
@@ -695,7 +696,7 @@ where
     /// NFD main trie.
     trie: &'data CodePointTrie<'data, u32>,
     /// NFD helper set
-    decomposition_starts_with_non_starter: &'data UnicodeSet<'data>,
+    decomposition_starts_with_non_starter: UnicodeSet<'data>,
     /// NFD complex decompositions on the BMP
     scalars16: &'data ZeroSlice<u16>,
     /// NFD complex decompositions on supplementary planes
@@ -742,8 +743,9 @@ where
             jamo,
             diacritics,
             trie: &decompositions.trie,
-            decomposition_starts_with_non_starter: &decompositions
-                .decomposition_starts_with_non_starter,
+            decomposition_starts_with_non_starter: UnicodeSet::zero_from(
+                &decompositions.decomposition_starts_with_non_starter,
+            ),
             scalars16: &tables.scalars16,
             scalars32: &tables.scalars32,
             ccc,

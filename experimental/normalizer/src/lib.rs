@@ -122,6 +122,7 @@ use provider::CompatibilityDecompositionTablesV1Marker;
 use provider::DecompositionTablesV1;
 use smallvec::SmallVec;
 use utf8_iter::Utf8CharsEx;
+use zerofrom::ZeroFrom;
 use zerovec::ule::AsULE;
 use zerovec::ZeroSlice;
 
@@ -311,7 +312,7 @@ where
     buffer_pos: usize,
     pending_unnormalized_starter: Option<char>, // None at end of stream
     trie: &'data CodePointTrie<'data, u32>,
-    decomposition_starts_with_non_starter: &'data UnicodeSet<'data>,
+    decomposition_starts_with_non_starter: UnicodeSet<'data>,
     scalars16: &'data ZeroSlice<u16>,
     scalars32: &'data ZeroSlice<u32>,
     supplementary_scalars16: &'data ZeroSlice<u16>,
@@ -343,8 +344,9 @@ where
             // the real stream starts with a non-starter.
             pending_unnormalized_starter: Some('\u{FFFF}'),
             trie: &decompositions.trie,
-            decomposition_starts_with_non_starter: &decompositions
-                .decomposition_starts_with_non_starter,
+            decomposition_starts_with_non_starter: UnicodeSet::zero_from(
+                &decompositions.decomposition_starts_with_non_starter,
+            ),
             scalars16: &tables.scalars16,
             scalars32: &tables.scalars32,
             supplementary_scalars16: if let Some(supplementary) = supplementary_tables {
