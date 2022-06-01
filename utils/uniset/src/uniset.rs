@@ -206,6 +206,19 @@ impl<'data> UnicodeSet<'data> {
         UnicodeSet::from_inversion_list(inv_list_zv)
     }
 
+    /// Returns a `UnicodeSet` that has the same logical contents as this `UnicodeSet`
+    /// and that borrows the underlying data of this `UnicodeSet`.
+    ///
+    /// Useful for flattening out a level of reference indirection compared to taking
+    /// a reference to this `UnicodeSet`.
+    pub fn borrowing_clone(&'data self) -> UnicodeSet<'data> {
+        let slice: &ZeroSlice<u32> = &self.inv_list;
+        UnicodeSet {
+            inv_list: slice.as_zerovec(),
+            size: self.size,
+        }
+    }
+
     /// Returns an owned inversion list representing the current [`UnicodeSet`]
     pub fn get_inversion_list(&self) -> Vec<u32> {
         let result: Vec<u32> = self.as_inversion_list().to_vec(); // Only crate public, to not leak impl
@@ -215,7 +228,7 @@ impl<'data> UnicodeSet<'data> {
     /// Returns [`UnicodeSet`] spanning entire Unicode range
     ///
     /// The range spans from `0x0 -> 0x10FFFF` inclusive.
-    ///  
+    ///
     /// # Examples
     ///
     /// ```
