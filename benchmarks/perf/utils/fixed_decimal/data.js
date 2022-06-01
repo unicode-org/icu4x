@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1654103237226,
+  "lastUpdate": 1654127362356,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -29548,6 +29548,66 @@ window.BENCHMARK_DATA = {
           {
             "name": "from_string/1000000001",
             "value": 95,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "269b807d9f0eda2905efab6c9e6bd30d8c243a80",
+          "message": "Make various ZeroVec methods `const` (#1976)",
+          "timestamp": "2022-06-01T16:37:02-07:00",
+          "tree_id": "0409983def33fd5e456be126bc0b2ad1ccd9d674",
+          "url": "https://github.com/unicode-org/icu4x/commit/269b807d9f0eda2905efab6c9e6bd30d8c243a80"
+        },
+        "date": 1654127340585,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 107709,
+            "range": "± 383",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 22307,
+            "range": "± 112",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 60130,
+            "range": "± 363",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 186,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 94,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 76,
             "range": "± 0",
             "unit": "ns/iter"
           }
