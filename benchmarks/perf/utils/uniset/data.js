@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1654103075735,
+  "lastUpdate": 1654127252778,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -29915,6 +29915,60 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 40660088,
             "range": "± 133123",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/worst",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/worst",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "269b807d9f0eda2905efab6c9e6bd30d8c243a80",
+          "message": "Make various ZeroVec methods `const` (#1976)",
+          "timestamp": "2022-06-01T16:37:02-07:00",
+          "tree_id": "0409983def33fd5e456be126bc0b2ad1ccd9d674",
+          "url": "https://github.com/unicode-org/icu4x/commit/269b807d9f0eda2905efab6c9e6bd30d8c243a80"
+        },
+        "date": 1654127231065,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 40653337,
+            "range": "± 216960",
             "unit": "ns/iter"
           },
           {
