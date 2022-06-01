@@ -8,3 +8,6 @@
 
 /// The parsed data representations.
 pub mod data;
+
+/// The parser implementations.
+pub mod parse;
