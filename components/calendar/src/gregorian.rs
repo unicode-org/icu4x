@@ -5,9 +5,7 @@
 //! This module contains types and implementations for the Gregorian calendar.
 //!
 //! ```rust
-//! use icu::calendar::{
-//!     gregorian::Gregorian, types::IsoHour, types::IsoMinute, types::IsoSecond, Date, DateTime,
-//! };
+//! use icu::calendar::{gregorian::Gregorian, Date, DateTime};
 //!
 //! // `Date` type
 //! let date_iso = Date::new_iso_date_from_integers(1970, 1, 2)
@@ -155,7 +153,7 @@ impl DateTime<Gregorian> {
     /// Years are specified as ISO years.
     ///
     /// ```rust
-    /// use icu::calendar::{types::IsoHour, types::IsoMinute, types::IsoSecond, DateTime};
+    /// use icu::calendar::DateTime;
     ///
     /// let datetime_gregorian = DateTime::new_gregorian_datetime(1970, 1, 2, 13, 1, 0)
     ///     .expect("Failed to initialize Gregorian DateTime instance.");
