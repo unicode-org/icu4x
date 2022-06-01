@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1654102536879,
+  "lastUpdate": 1654126752310,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -16433,6 +16433,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/de6d2b34ad85a7ea1c6752b13d58dc7c3abc43bf"
         },
         "date": 1654102512197,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 2221790,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "269b807d9f0eda2905efab6c9e6bd30d8c243a80",
+          "message": "Make various ZeroVec methods `const` (#1976)",
+          "timestamp": "2022-06-01T16:37:02-07:00",
+          "tree_id": "0409983def33fd5e456be126bc0b2ad1ccd9d674",
+          "url": "https://github.com/unicode-org/icu4x/commit/269b807d9f0eda2905efab6c9e6bd30d8c243a80"
+        },
+        "date": 1654126727939,
         "tool": "ndjson",
         "benches": [
           {
