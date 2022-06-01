@@ -42,7 +42,7 @@ where
         byte(b'>'),
         many1::<Vec<u8>, _, _>(satisfy(|byte| byte != b'>')),
     )
-    .map(|name| dbg!(String::from_utf8_lossy(&name).to_string()))
+    .map(|name| String::from_utf8_lossy(&name).to_string())
 }
 
 /// The string specifies the name of the time zone variant. It must be three or more characters
@@ -71,7 +71,7 @@ where
     .then(|name| {
         ensure(
             name,
-            |name| dbg!(name).as_bytes()[0] != b':',
+            |name| name.as_bytes()[0] != b':',
             "zone variant name starts with a leading ':' but should not",
         )
     })
