@@ -213,7 +213,7 @@ where
     /// let zv: ZeroVec<u16> = ZeroVec::new();
     /// assert!(zv.is_empty());
     /// ```
-    pub fn new() -> Self {
+    pub const fn new() -> Self {
         Self::Borrowed(&[])
     }
 

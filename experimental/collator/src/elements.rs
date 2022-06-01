@@ -94,13 +94,13 @@ pub(crate) const FFFD_CE32_VALUE: u32 = 0xFFFD0505;
 pub(crate) const FFFD_CE32: CollationElement32 = CollationElement32(FFFD_CE32_VALUE);
 
 pub(crate) const EMPTY_U16: &ZeroSlice<u16> =
-    ZeroSlice::<u16>::from_ule_slice_const(&<u16 as AsULE>::ULE::from_array([]));
+    ZeroSlice::<u16>::from_ule_slice(&<u16 as AsULE>::ULE::from_array([]));
 const EMPTY_U32: &ZeroSlice<u32> =
-    ZeroSlice::<u32>::from_ule_slice_const(&<u32 as AsULE>::ULE::from_array([]));
+    ZeroSlice::<u32>::from_ule_slice(&<u32 as AsULE>::ULE::from_array([]));
 const SINGLE_U16: &ZeroSlice<u16> =
-    ZeroSlice::<u16>::from_ule_slice_const(&<u16 as AsULE>::ULE::from_array([0xFFFD]));
+    ZeroSlice::<u16>::from_ule_slice(&<u16 as AsULE>::ULE::from_array([0xFFFD]));
 const SINGLE_U32: &ZeroSlice<u32> =
-    ZeroSlice::<u32>::from_ule_slice_const(&<u32 as AsULE>::ULE::from_array([0xFFFD]));
+    ZeroSlice::<u32>::from_ule_slice(&<u32 as AsULE>::ULE::from_array([0xFFFD]));
 
 /// If `opt` is `Some`, unwrap it. If `None`, panic if debug assertions
 /// are enabled and return `default` if debug assertions are not enabled.
