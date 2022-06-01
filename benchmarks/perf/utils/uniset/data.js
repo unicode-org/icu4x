@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1654098066703,
+  "lastUpdate": 1654101736367,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -29807,6 +29807,60 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 51085992,
             "range": "± 915783",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/worst",
+            "value": 3,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/worst",
+            "value": 3,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "andrewpkq@gmail.com",
+            "name": "andrewpollack",
+            "username": "andrewpollack"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "b313a0ce64bde19f64296df79ba05556404d6d85",
+          "message": "Removing extraneous imports of ISO time types from examples (#1975)",
+          "timestamp": "2022-06-01T16:31:41Z",
+          "tree_id": "444161e7af59a620668cef12a785280441d6469c",
+          "url": "https://github.com/unicode-org/icu4x/commit/b313a0ce64bde19f64296df79ba05556404d6d85"
+        },
+        "date": 1654101709232,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 44982252,
+            "range": "± 1224011",
             "unit": "ns/iter"
           },
           {
