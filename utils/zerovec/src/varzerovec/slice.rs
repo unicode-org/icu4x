@@ -80,10 +80,11 @@ pub struct VarZeroSlice<T: ?Sized> {
 
 impl<T: VarULE + ?Sized> VarZeroSlice<T> {
     /// Construct a new empty VarZeroSlice
-    pub fn new_empty() -> &'static Self {
+    pub const fn new_empty() -> &'static Self {
         let arr: &[u8] = &[];
         unsafe { mem::transmute(arr) }
     }
+
     /// Obtain a [`VarZeroVecComponents`] borrowing from the internal buffer
     #[inline]
     pub(crate) fn as_components<'a>(&'a self) -> VarZeroVecComponents<'a, T> {
@@ -233,7 +234,7 @@ impl<T: VarULE + ?Sized> VarZeroSlice<T> {
     /// # Ok::<(), ZeroVecError>(())
     /// ```
     #[inline]
-    pub fn as_bytes(&self) -> &[u8] {
+    pub const fn as_bytes(&self) -> &[u8] {
         &self.entire_slice
     }
 
@@ -241,8 +242,8 @@ impl<T: VarULE + ?Sized> VarZeroSlice<T> {
     ///
     /// If you wish to repeatedly call methods on this [`VarZeroSlice`],
     /// it is more efficient to perform this conversion first
-    pub fn as_varzerovec<'a>(&'a self) -> VarZeroVec<'a, T> {
-        self.into()
+    pub const fn as_varzerovec<'a>(&'a self) -> VarZeroVec<'a, T> {
+        VarZeroVec::Borrowed(self)
     }
 
     /// Parse a VarZeroSlice from a slice of the appropriate format
