@@ -99,7 +99,7 @@ fn datetime_benches(c: &mut Criterion) {
         &mut group,
         "calendar/ethiopic",
         &fxs,
-        icu::calendar::ethiopic::Ethiopic,
+        icu::calendar::ethiopic::Ethiopic::new(),
         |y, m, d, h, min, s| DateTime::new_ethiopic_datetime(y, m, d, h, min, s).unwrap(),
     );
 
