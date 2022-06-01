@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1654101736367,
+  "lastUpdate": 1654103075735,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -29884,6 +29884,60 @@ window.BENCHMARK_DATA = {
           {
             "name": "uniset/contains_range/worst",
             "value": 3,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "de6d2b34ad85a7ea1c6752b13d58dc7c3abc43bf",
+          "message": "Bump yoke to 0.6 (#1971)\n\n* Bump yoke to 0.6.0\r\n\r\n* update yoke deps\r\n\r\n* lockfile",
+          "timestamp": "2022-06-01T16:53:17Z",
+          "tree_id": "7c23aa5f365c134068e3d76495a54b8d8f933bb1",
+          "url": "https://github.com/unicode-org/icu4x/commit/de6d2b34ad85a7ea1c6752b13d58dc7c3abc43bf"
+        },
+        "date": 1654103051647,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 40660088,
+            "range": "± 133123",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/worst",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/worst",
+            "value": 2,
             "range": "± 0",
             "unit": "ns/iter"
           }
