@@ -23,7 +23,7 @@ mod test {
     use crate::{
         fields::{Day, Field, FieldLength, Month, Weekday},
         options::components,
-        pattern::runtime::Pattern,
+        pattern::runtime,
         provider::calendar::{
             DatePatternsV1Marker, DateSkeletonPatternsV1, DateSkeletonPatternsV1Marker, SkeletonV1,
         },
@@ -181,7 +181,7 @@ mod test {
         let mut skeletons = LiteMap::new();
         skeletons.insert(
             SkeletonV1::try_from("EEEE").unwrap(),
-            Pattern::from_str("weekday EEEE").unwrap().into(),
+            runtime::Pattern::from_str("weekday EEEE").unwrap().into(),
         );
         let skeletons = DateSkeletonPatternsV1(skeletons);
 

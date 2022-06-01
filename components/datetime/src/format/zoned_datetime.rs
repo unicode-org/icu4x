@@ -8,7 +8,7 @@ use crate::date::ZonedDateTimeInput;
 use crate::date::{LocalizedDateTimeInput, ZonedDateTimeInputWithLocale};
 use crate::error::DateTimeFormatError as Error;
 use crate::fields::{self, FieldSymbol};
-use crate::pattern::{runtime::Pattern, PatternItem};
+use crate::pattern::{runtime, PatternItem};
 use crate::{raw, FormattedTimeZone};
 use core::fmt;
 use writeable::Writeable;
@@ -84,7 +84,7 @@ where
 }
 
 fn write_field<T, W>(
-    pattern: &Pattern,
+    pattern: &runtime::Pattern,
     field: fields::Field,
     zoned_datetime_format: &raw::ZonedDateTimeFormat,
     loc_datetime: &impl LocalizedDateTimeInput<T>,
