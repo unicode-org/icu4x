@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1654098231709,
+  "lastUpdate": 1654101784955,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -29429,6 +29429,66 @@ window.BENCHMARK_DATA = {
             "name": "from_string/1000000001",
             "value": 90,
             "range": "± 1",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "andrewpkq@gmail.com",
+            "name": "andrewpollack",
+            "username": "andrewpollack"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "b313a0ce64bde19f64296df79ba05556404d6d85",
+          "message": "Removing extraneous imports of ISO time types from examples (#1975)",
+          "timestamp": "2022-06-01T16:31:41Z",
+          "tree_id": "444161e7af59a620668cef12a785280441d6469c",
+          "url": "https://github.com/unicode-org/icu4x/commit/b313a0ce64bde19f64296df79ba05556404d6d85"
+        },
+        "date": 1654101763417,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 107739,
+            "range": "± 381",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 22304,
+            "range": "± 79",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 59968,
+            "range": "± 650",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 186,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 94,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 76,
+            "range": "± 0",
             "unit": "ns/iter"
           }
         ]
