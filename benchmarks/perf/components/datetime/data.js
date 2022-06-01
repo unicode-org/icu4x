@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1654101830435,
+  "lastUpdate": 1654103256487,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -36263,6 +36263,102 @@ window.BENCHMARK_DATA = {
             "name": "pattern/parse",
             "value": 5112,
             "range": "± 5",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "de6d2b34ad85a7ea1c6752b13d58dc7c3abc43bf",
+          "message": "Bump yoke to 0.6 (#1971)\n\n* Bump yoke to 0.6.0\r\n\r\n* update yoke deps\r\n\r\n* lockfile",
+          "timestamp": "2022-06-01T16:53:17Z",
+          "tree_id": "7c23aa5f365c134068e3d76495a54b8d8f933bb1",
+          "url": "https://github.com/unicode-org/icu4x/commit/de6d2b34ad85a7ea1c6752b13d58dc7c3abc43bf"
+        },
+        "date": 1654103229597,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 94157,
+            "range": "± 6293",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 953304,
+            "range": "± 5354",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 204545,
+            "range": "± 2311",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/DateTimeFormat/format_to_write",
+            "value": 88754,
+            "range": "± 1227",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/DateTimeFormat/format_to_string",
+            "value": 97607,
+            "range": "± 1261",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/format",
+            "value": 93729,
+            "range": "± 926",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/to_string",
+            "value": 100233,
+            "range": "± 1879",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/ZonedDateTimeFormat/format_to_write",
+            "value": 217314,
+            "range": "± 18357",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/ZonedDateTimeFormat/format_to_string",
+            "value": 230251,
+            "range": "± 14829",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/format",
+            "value": 205612,
+            "range": "± 2079",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/to_string",
+            "value": 219172,
+            "range": "± 2087",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "pattern/parse",
+            "value": 6076,
+            "range": "± 77",
             "unit": "ns/iter"
           }
         ]
