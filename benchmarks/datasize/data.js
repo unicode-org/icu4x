@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1654097649535,
+  "lastUpdate": 1654101250311,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -16373,6 +16373,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/f1cad321545c2e95c1a0feecb7c882d6dafcf28d"
         },
         "date": 1654097623837,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 2221790,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "andrewpkq@gmail.com",
+            "name": "andrewpollack",
+            "username": "andrewpollack"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "b313a0ce64bde19f64296df79ba05556404d6d85",
+          "message": "Removing extraneous imports of ISO time types from examples (#1975)",
+          "timestamp": "2022-06-01T16:31:41Z",
+          "tree_id": "444161e7af59a620668cef12a785280441d6469c",
+          "url": "https://github.com/unicode-org/icu4x/commit/b313a0ce64bde19f64296df79ba05556404d6d85"
+        },
+        "date": 1654101224544,
         "tool": "ndjson",
         "benches": [
           {
