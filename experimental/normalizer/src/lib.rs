@@ -100,6 +100,7 @@ extern crate alloc;
 
 pub mod error;
 pub mod provider;
+pub mod u24;
 
 use crate::error::NormalizerError;
 use crate::provider::CanonicalDecompositionDataV1Marker;
@@ -121,6 +122,8 @@ use provider::CanonicalDecompositionTablesV1Marker;
 use provider::CompatibilityDecompositionTablesV1Marker;
 use provider::DecompositionTablesV1;
 use smallvec::SmallVec;
+use u24::EMPTY_U24;
+use u24::U24;
 use utf8_iter::Utf8CharsEx;
 use zerofrom::ZeroFrom;
 use zerovec::ule::AsULE;
@@ -195,10 +198,14 @@ fn char_from_u16(u: u16) -> char {
     char_from_u32(u32::from(u))
 }
 
+/// Convert a `U24` _obtained from data provider data_ to `char`.
+#[inline(always)]
+fn char_from_u24(u: U24) -> char {
+    char_from_u32(u.into())
+}
+
 const EMPTY_U16: &ZeroSlice<u16> =
     ZeroSlice::<u16>::from_ule_slice(&<u16 as AsULE>::ULE::from_array([]));
-const EMPTY_U32: &ZeroSlice<u32> =
-    ZeroSlice::<u32>::from_ule_slice(&<u32 as AsULE>::ULE::from_array([]));
 
 #[inline(always)]
 fn split_first_u16(s: Option<&ZeroSlice<u16>>) -> (char, &ZeroSlice<u16>) {
@@ -217,19 +224,19 @@ fn split_first_u16(s: Option<&ZeroSlice<u16>>) -> (char, &ZeroSlice<u16>) {
 }
 
 #[inline(always)]
-fn split_first_u32(s: Option<&ZeroSlice<u32>>) -> (char, &ZeroSlice<u32>) {
+fn split_first_u24(s: Option<&ZeroSlice<U24>>) -> (char, &ZeroSlice<U24>) {
     if let Some(slice) = s {
         if let Some(first) = slice.first() {
             // `unwrap()` must succeed, because `first()` returned `Some`.
             return (
-                char_from_u32(first),
+                char_from_u24(first),
                 slice.get_subslice(1..slice.len()).unwrap(),
             );
         }
     }
     // GIGO case
     debug_assert!(false);
-    (REPLACEMENT_CHARACTER, EMPTY_U32)
+    (REPLACEMENT_CHARACTER, EMPTY_U24)
 }
 
 #[inline(always)]
@@ -314,9 +321,9 @@ where
     trie: &'data CodePointTrie<'data, u32>,
     decomposition_starts_with_non_starter: UnicodeSet<'data>,
     scalars16: &'data ZeroSlice<u16>,
-    scalars32: &'data ZeroSlice<u32>,
+    scalars24: &'data ZeroSlice<U24>,
     supplementary_scalars16: &'data ZeroSlice<u16>,
-    supplementary_scalars32: &'data ZeroSlice<u32>,
+    supplementary_scalars24: &'data ZeroSlice<U24>,
     ccc: &'data CodePointTrie<'data, CanonicalCombiningClass>,
 }
 
@@ -348,16 +355,16 @@ where
                 &decompositions.decomposition_starts_with_non_starter,
             ),
             scalars16: &tables.scalars16,
-            scalars32: &tables.scalars32,
+            scalars24: &tables.scalars24,
             supplementary_scalars16: if let Some(supplementary) = supplementary_tables {
                 &supplementary.scalars16
             } else {
                 EMPTY_U16
             },
-            supplementary_scalars32: if let Some(supplementary) = supplementary_tables {
-                &supplementary.scalars32
+            supplementary_scalars24: if let Some(supplementary) = supplementary_tables {
+                &supplementary.scalars24
             } else {
-                EMPTY_U32
+                EMPTY_U24
             },
             ccc,
         };
@@ -398,21 +405,21 @@ where
         &mut self,
         low: u16,
         offset: usize,
-        slice32: &ZeroSlice<u32>,
+        slice32: &ZeroSlice<U24>,
     ) -> (char, usize) {
         let len = usize::from(low >> 13) + 1;
-        let (starter, tail) = split_first_u32(slice32.get_subslice(offset..offset + len));
+        let (starter, tail) = split_first_u24(slice32.get_subslice(offset..offset + len));
         if low & 0x1000 != 0 {
             // All the rest are combining
             for u in tail.iter() {
-                self.buffer.push(CharacterAndClass::new(char_from_u32(u)));
+                self.buffer.push(CharacterAndClass::new(char_from_u24(u)));
             }
             (starter, 0)
         } else {
             let mut i = 0;
             let mut combining_start = 0;
             for u in tail.iter() {
-                let ch = char_from_u32(u);
+                let ch = char_from_u24(u);
                 self.buffer.push(CharacterAndClass::new(ch));
                 i += 1;
                 if !self.decomposition_starts_with_non_starter.contains(ch) {
@@ -494,20 +501,20 @@ where
                         let offset = usize::from(low & 0xFFF);
                         if offset < self.scalars16.len() {
                             self.push_decomposition16(low, offset, self.scalars16)
-                        } else if offset < self.scalars16.len() + self.scalars32.len() {
+                        } else if offset < self.scalars16.len() + self.scalars24.len() {
                             self.push_decomposition32(
                                 low,
                                 offset - self.scalars16.len(),
-                                self.scalars32,
+                                self.scalars24,
                             )
                         } else if offset
                             < self.scalars16.len()
-                                + self.scalars32.len()
+                                + self.scalars24.len()
                                 + self.supplementary_scalars16.len()
                         {
                             self.push_decomposition16(
                                 low,
-                                offset - (self.scalars16.len() + self.scalars32.len()),
+                                offset - (self.scalars16.len() + self.scalars24.len()),
                                 self.supplementary_scalars16,
                             )
                         } else {
@@ -515,9 +522,9 @@ where
                                 low,
                                 offset
                                     - (self.scalars16.len()
-                                        + self.scalars32.len()
+                                        + self.scalars24.len()
                                         + self.supplementary_scalars16.len()),
-                                self.supplementary_scalars32,
+                                self.supplementary_scalars24,
                             )
                         }
                     }
@@ -647,7 +654,7 @@ impl DecomposingNormalizer {
             .load_resource(&DataRequest::default())?
             .take_payload()?;
 
-        if tables.get().scalars16.len() + tables.get().scalars32.len() > 0xFFF {
+        if tables.get().scalars16.len() + tables.get().scalars24.len() > 0xFFF {
             // The data is from a future where there exists a normalization flavor whose
             // complex decompositions take more than 0xFFF but fewer than 0x1FFF code points
             // of space. If a good use case from such a decomposition flavor arises, we can
@@ -689,9 +696,9 @@ impl DecomposingNormalizer {
                 .take_payload()?;
 
         if tables.get().scalars16.len()
-            + tables.get().scalars32.len()
+            + tables.get().scalars24.len()
             + supplementary_tables.get().scalars16.len()
-            + supplementary_tables.get().scalars32.len()
+            + supplementary_tables.get().scalars24.len()
             > 0xFFF
         {
             // The data is from a future where there exists a normalization flavor whose
@@ -758,9 +765,9 @@ impl DecomposingNormalizer {
                 .take_payload()?;
 
         if tables.get().scalars16.len()
-            + tables.get().scalars32.len()
+            + tables.get().scalars24.len()
             + supplementary_tables.get().scalars16.len()
-            + supplementary_tables.get().scalars32.len()
+            + supplementary_tables.get().scalars24.len()
             > 0xFFF
         {
             // The data is from a future where there exists a normalization flavor whose

@@ -23,6 +23,8 @@ use icu_char16trie::char16trie::TrieResult;
 use icu_codepointtrie::CodePointTrie;
 use icu_normalizer::provider::DecompositionDataV1;
 use icu_normalizer::provider::DecompositionTablesV1;
+use icu_normalizer::u24::EMPTY_U24;
+use icu_normalizer::u24::U24;
 use icu_properties::CanonicalCombiningClass;
 use icu_uniset::UnicodeSet;
 use smallvec::SmallVec;
@@ -98,12 +100,12 @@ pub(crate) const FFFD_CE32: CollationElement32 = CollationElement32(FFFD_CE32_VA
 
 pub(crate) const EMPTY_U16: &ZeroSlice<u16> =
     ZeroSlice::<u16>::from_ule_slice(&<u16 as AsULE>::ULE::from_array([]));
-const EMPTY_U32: &ZeroSlice<u32> =
-    ZeroSlice::<u32>::from_ule_slice(&<u32 as AsULE>::ULE::from_array([]));
 const SINGLE_U16: &ZeroSlice<u16> =
     ZeroSlice::<u16>::from_ule_slice(&<u16 as AsULE>::ULE::from_array([0xFFFD]));
-const SINGLE_U32: &ZeroSlice<u32> =
-    ZeroSlice::<u32>::from_ule_slice(&<u32 as AsULE>::ULE::from_array([0xFFFD]));
+
+const SINGLE_U24_ARR: [u8; 3] = [0xFD, 0xFF, 00];
+const SINGLE_U24_SLICE: &[U24] = &[U24(SINGLE_U24_ARR)];
+const SINGLE_U24: &ZeroSlice<U24> = unsafe { core::mem::transmute(SINGLE_U24_SLICE) };
 
 /// If `opt` is `Some`, unwrap it. If `None`, panic if debug assertions
 /// are enabled and return `default` if debug assertions are not enabled.
@@ -133,6 +135,12 @@ fn char_from_u16(u: u16) -> char {
     char_from_u32(u32::from(u))
 }
 
+/// Convert a `U24` _obtained from data provider data_ to `char`.
+#[inline(always)]
+fn char_from_u24(u: U24) -> char {
+    char_from_u32(u.into())
+}
+
 #[inline(always)]
 fn split_first_u16(s: Option<&ZeroSlice<u16>>) -> (char, &ZeroSlice<u16>) {
     if let Some(slice) = s {
@@ -150,19 +158,19 @@ fn split_first_u16(s: Option<&ZeroSlice<u16>>) -> (char, &ZeroSlice<u16>) {
 }
 
 #[inline(always)]
-fn split_first_u32(s: Option<&ZeroSlice<u32>>) -> (char, &ZeroSlice<u32>) {
+fn split_first_u32(s: Option<&ZeroSlice<U24>>) -> (char, &ZeroSlice<U24>) {
     if let Some(slice) = s {
         if let Some(first) = slice.first() {
             // `unwrap()` must succeed, because `first()` returned `Some`.
             return (
-                char_from_u32(first),
+                char_from_u24(first),
                 slice.get_subslice(1..slice.len()).unwrap(),
             );
         }
     }
     // GIGO case
     debug_assert!(false);
-    (REPLACEMENT_CHARACTER, EMPTY_U32)
+    (REPLACEMENT_CHARACTER, EMPTY_U24)
 }
 
 #[inline(always)]
@@ -700,7 +708,7 @@ where
     /// NFD complex decompositions on the BMP
     scalars16: &'data ZeroSlice<u16>,
     /// NFD complex decompositions on supplementary planes
-    scalars32: &'data ZeroSlice<u32>,
+    scalars32: &'data ZeroSlice<U24>,
     /// Canonical Combining Class data.
     ccc: &'data CodePointTrie<'data, CanonicalCombiningClass>,
     /// If numeric mode is enabled, the 8 high bits of the numeric primary.
@@ -747,7 +755,7 @@ where
                 &decompositions.decomposition_starts_with_non_starter,
             ),
             scalars16: &tables.scalars16,
-            scalars32: &tables.scalars32,
+            scalars32: &tables.scalars24,
             ccc,
             numeric_primary,
             lithuanian_dot_above,
@@ -912,11 +920,11 @@ where
                     let offset32 = offset - self.scalars16.len();
                     for u in unwrap_or_gigo(
                         self.scalars32.get_subslice(offset32..offset32 + len),
-                        SINGLE_U32, // single instead of empty for consistency with the other code path
+                        SINGLE_U24, // single instead of empty for consistency with the other code path
                     )
                     .iter()
                     {
-                        self.upcoming.push(char_from_u32(u));
+                        self.upcoming.push(char_from_u24(u));
                     }
                 }
                 search_start_combining = low & 0x1000 == 0;
@@ -1312,13 +1320,13 @@ where
                             if low & 0x1000 != 0 {
                                 for u in tail.iter() {
                                     combining_characters
-                                        .push(CharacterAndClass::new(char_from_u32(u)));
+                                        .push(CharacterAndClass::new(char_from_u24(u)));
                                 }
                             } else {
                                 next_is_known_to_decompose_to_non_starter = false;
                                 let mut it = tail.iter();
                                 while let Some(u) = it.next() {
-                                    let ch = char_from_u32(u);
+                                    let ch = char_from_u24(u);
                                     if self.decomposition_starts_with_non_starter.contains(ch) {
                                         // As of Unicode 14, this branch is never taken.
                                         // It exist for forward compatibility.
@@ -1334,7 +1342,7 @@ where
 
                                     while let Some(u) = it.next_back() {
                                         self.prepend_and_sort_non_starter_prefix_of_suffix(
-                                            char_from_u32(u),
+                                            char_from_u24(u),
                                         );
                                     }
                                     self.prepend_and_sort_non_starter_prefix_of_suffix(ch);

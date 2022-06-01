@@ -20,6 +20,8 @@ use icu_uniset::UnicodeSetBuilder;
 use std::path::Path;
 use std::sync::RwLock;
 
+use icu_normalizer::u24::U24;
+
 macro_rules! normalization_provider {
     ($marker:ident, $provider:ident, $serde_struct:ident, $file_name:literal, $conversion:expr, $toml_data:ident) => {
         use icu_normalizer::provider::$marker;
@@ -111,11 +113,18 @@ macro_rules! normalization_tables_provider {
             DecompositionTables,
             $file_name,
             {
+                let mut scalars24: Vec<U24> = Vec::new();
+                for &u in toml_data.scalars32.iter() {
+                    scalars24.push(
+                        u.try_into()
+                            .map_err(|_| DataError::custom("scalars24 conversion"))?,
+                    );
+                }
                 Ok(DataResponse {
                     metadata: DataResponseMetadata::default(),
                     payload: Some(DataPayload::from_owned(DecompositionTablesV1 {
                         scalars16: ZeroVec::alloc_from_slice(&toml_data.scalars16),
-                        scalars32: ZeroVec::alloc_from_slice(&toml_data.scalars32),
+                        scalars24: ZeroVec::alloc_from_slice(&scalars24),
                     })),
                 })
             },

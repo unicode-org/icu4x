@@ -10,6 +10,8 @@ use zerovec::ZeroVec;
 #[cfg(feature = "serde")]
 use serde;
 
+use crate::u24::U24;
+
 #[icu_provider::data_struct(
     CanonicalDecompositionDataV1Marker = "normalizer/nfd@1",
     CompatibilityDecompositionDataV1Marker = "normalizer/nfkd@1",
@@ -36,5 +38,5 @@ pub struct DecompositionTablesV1<'data> {
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub scalars16: ZeroVec<'data, u16>,
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub scalars32: ZeroVec<'data, u32>, // Should really be using 24-bit elements
+    pub scalars24: ZeroVec<'data, U24>,
 }
