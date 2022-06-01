@@ -5,9 +5,7 @@
 //! This module contains types and implementations for the Ethiopic calendar.
 //!
 //! ```rust
-//! use icu::calendar::{
-//!     ethiopic::Ethiopic, types::IsoHour, types::IsoMinute, types::IsoSecond, Date, DateTime,
-//! };
+//! use icu::calendar::{ethiopic::Ethiopic, Date, DateTime};
 //!
 //! // `Date` type
 //! let date_iso = Date::new_iso_date_from_integers(1970, 1, 2)
@@ -256,7 +254,7 @@ impl DateTime<Ethiopic> {
     /// Construct a new Ethiopic datetime from integers.
     ///
     /// ```rust
-    /// use icu::calendar::{types::IsoHour, types::IsoMinute, types::IsoSecond, DateTime};
+    /// use icu::calendar::DateTime;
     ///
     /// let datetime_ethiopic = DateTime::new_ethiopic_datetime(2014, 8, 25, 13, 1, 0)
     ///     .expect("Failed to initialize Ethiopic DateTime instance.");
