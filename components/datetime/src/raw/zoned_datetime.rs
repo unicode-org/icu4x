@@ -51,7 +51,8 @@ impl ZonedDateTimeFormat {
         DP: ResourceProvider<DateSymbolsV1Marker>
             + ResourceProvider<DatePatternsV1Marker>
             + ResourceProvider<DateSkeletonPatternsV1Marker>
-            + ResourceProvider<WeekDataV1Marker>,
+            + ResourceProvider<WeekDataV1Marker>
+            + ?Sized,
         ZP: ResourceProvider<provider::time_zones::TimeZoneFormatsV1Marker>
             + ResourceProvider<provider::time_zones::ExemplarCitiesV1Marker>
             + ResourceProvider<provider::time_zones::MetaZoneGenericNamesLongV1Marker>
@@ -59,7 +60,7 @@ impl ZonedDateTimeFormat {
             + ResourceProvider<provider::time_zones::MetaZoneSpecificNamesLongV1Marker>
             + ResourceProvider<provider::time_zones::MetaZoneSpecificNamesShortV1Marker>
             + ?Sized,
-        PP: ResourceProvider<OrdinalV1Marker>,
+        PP: ResourceProvider<OrdinalV1Marker> + ?Sized,
     {
         let patterns = provider::date_time::PatternSelector::for_options(
             date_provider,

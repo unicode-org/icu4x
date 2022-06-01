@@ -54,19 +54,11 @@ impl ResourceProvider<LikelySubtagsV1Marker> for LikelySubtagsProvider {
     }
 }
 
-icu_provider::impl_dyn_provider!(
-    LikelySubtagsProvider,
-    [LikelySubtagsV1Marker,],
-    CRABBAKE,
-    SERDE_SE,
-    ITERABLE_CRABBAKE,
-    ITERABLE_SERDE_SE,
-    DATA_CONVERTER
-);
+icu_provider::make_exportable_provider!(LikelySubtagsProvider, [LikelySubtagsV1Marker,]);
 
 impl IterableResourceProvider<LikelySubtagsV1Marker> for LikelySubtagsProvider {
-    fn supported_options(&self) -> Result<Box<dyn Iterator<Item = ResourceOptions>>, DataError> {
-        Ok(Box::new(core::iter::once(ResourceOptions::default())))
+    fn supported_options(&self) -> Result<Vec<ResourceOptions>, DataError> {
+        Ok(vec![Default::default()])
     }
 }
 

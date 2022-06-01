@@ -38,7 +38,6 @@ all-features = true
 default = []
 sync = []
 std = ["icu_locid/std"]
-serde = ["dep:serde", "yoke/serde"]
 macros = ["icu_provider_macros"]
 
 # Enable logging of additional context of data errors
@@ -50,7 +49,7 @@ deserialize_bincode_1 = ["serde", "bincode", "std"]
 deserialize_postcard_07 = ["serde", "postcard"]
 
 # Dependencies for running data generation
-datagen = ["dhat", "serde", "erased-serde", "crabbake", "std", "serde_json"]
+datagen = ["dhat", "serde", "erased-serde", "crabbake", "std", "serde_json", "sync", "yoke/serde"]
 
 [dependencies]
 icu_locid = { version = "0.6", path = "../../components/locid" }

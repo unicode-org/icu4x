@@ -95,8 +95,9 @@ impl BufferProvider for BlobDataProvider {
         Ok(DataResponse {
             metadata,
             payload: Some(DataPayload::from_yoked_buffer(
-                self.data
-                    .try_project_cloned_with_capture((key, req), |zm, (key, req), _| {
+                self.data.try_map_project_cloned_with_capture(
+                    (key, req),
+                    |zm, (key, req), _| {
                         zm.get(&key.get_hash(), req.options.write_to_string().as_bytes())
                             .map_err(|e| {
                                 match e {
@@ -105,7 +106,8 @@ impl BufferProvider for BlobDataProvider {
                                 }
                                 .with_req(key, req)
                             })
-                    })?,
+                    },
+                )?,
             )),
         })
     }

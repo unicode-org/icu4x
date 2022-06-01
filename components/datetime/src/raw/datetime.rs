@@ -49,7 +49,8 @@ impl DateTimeFormat {
             + ResourceProvider<DatePatternsV1Marker>
             + ResourceProvider<DateSkeletonPatternsV1Marker>
             + ResourceProvider<OrdinalV1Marker>
-            + ResourceProvider<WeekDataV1Marker>,
+            + ResourceProvider<WeekDataV1Marker>
+            + ?Sized,
     {
         let patterns =
             provider::date_time::PatternSelector::for_options(data_provider, &locale, options)?;

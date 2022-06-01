@@ -63,21 +63,11 @@ macro_rules! normalization_provider {
             }
         }
 
-        icu_provider::impl_dyn_provider!(
-            $provider,
-            [$marker,],
-            CRABBAKE,
-            SERDE_SE,
-            ITERABLE_CRABBAKE,
-            ITERABLE_SERDE_SE,
-            DATA_CONVERTER
-        );
+        icu_provider::make_exportable_provider!($provider, [$marker,]);
 
         impl IterableResourceProvider<$marker> for $provider {
-            fn supported_options(
-                &self,
-            ) -> Result<Box<dyn Iterator<Item = ResourceOptions>>, DataError> {
-                Ok(Box::new(core::iter::once(ResourceOptions::default())))
+            fn supported_options(&self) -> Result<Vec<ResourceOptions>, DataError> {
+                Ok(vec![ResourceOptions::default()])
             }
         }
     };

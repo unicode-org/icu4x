@@ -53,9 +53,6 @@ mod yokeable;
 #[cfg(feature = "zerofrom")]
 mod zero_from;
 
-#[cfg(feature = "serde")]
-mod serde;
-
 #[cfg(feature = "derive")]
 pub use yoke_derive::Yokeable;
 

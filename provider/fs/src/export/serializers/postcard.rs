@@ -4,8 +4,8 @@
 
 use super::AbstractSerializer;
 use icu_provider::buf::BufferFormat;
+use icu_provider::datagen::*;
 use icu_provider::prelude::*;
-use icu_provider::serde::SerializeMarker;
 use std::io;
 
 /// A serializer for Postcard.
@@ -20,13 +20,14 @@ pub struct Options;
 impl AbstractSerializer for Serializer {
     fn serialize(
         &self,
-        obj: DataPayload<SerializeMarker>,
+        obj: &DataPayload<ExportMarker>,
         sink: &mut dyn io::Write,
     ) -> Result<(), DataError> {
         let mut serializer = postcard::Serializer {
             output: postcard::flavors::StdVec(Vec::new()),
         };
-        obj.serialize(&mut serializer)?;
+        obj.serialize(&mut serializer)
+            .map_err(|e| DataError::custom("Postcard serialize").with_display_context(&e))?;
         sink.write_all(&serializer.output.0)?;
         Ok(())
     }
