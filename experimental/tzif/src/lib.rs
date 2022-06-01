@@ -6,3 +6,5 @@
 
 #![warn(missing_docs)]
 
+/// The parsed data representations.
+pub mod data;
