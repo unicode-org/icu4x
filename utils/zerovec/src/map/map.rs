@@ -97,6 +97,12 @@ where
             values: V::Container::zvl_new(),
         }
     }
+
+    #[doc(hidden)] // Crabbake internal
+    pub const unsafe fn from_parts_unchecked(keys: K::Container, values: V::Container) -> Self {
+        Self { keys, values }
+    }
+
     /// Construct a new [`ZeroMap`] with a given capacity
     pub fn with_capacity(capacity: usize) -> Self {
         Self {
@@ -289,9 +295,9 @@ where
     > {
         (0..self.keys.zvl_len()).map(move |idx| {
             (
-                #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
+                #[allow(clippy::unwrap_used)] // idx is in-range
                 self.keys.zvl_get(idx).unwrap(),
-                #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
+                #[allow(clippy::unwrap_used)] // idx is in-range
                 self.values.zvl_get(idx).unwrap(),
             )
         })
@@ -299,13 +305,13 @@ where
 
     /// Produce an ordered iterator over keys
     pub fn iter_keys<'b>(&'b self) -> impl Iterator<Item = &'b <K as ZeroMapKV<'a>>::GetType> {
-        #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
+        #[allow(clippy::unwrap_used)] // idx is in-range
         (0..self.keys.zvl_len()).map(move |idx| self.keys.zvl_get(idx).unwrap())
     }
 
     /// Produce an iterator over values, ordered by keys
     pub fn iter_values<'b>(&'b self) -> impl Iterator<Item = &'b <V as ZeroMapKV<'a>>::GetType> {
-        #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
+        #[allow(clippy::unwrap_used)] // idx is in-range
         (0..self.values.zvl_len()).map(move |idx| self.values.zvl_get(idx).unwrap())
     }
 }

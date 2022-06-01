@@ -20,7 +20,7 @@ use crate::provider::CollationJamoV1Marker;
 use crate::provider::CollationMetadataV1Marker;
 use crate::provider::CollationReorderingV1Marker;
 use crate::provider::CollationSpecialPrimariesV1Marker;
-use crate::{AlternateHandling, CollatorOptions, Strength};
+use crate::{AlternateHandling, CollatorOptions, MaxVariable, Strength};
 use alloc::string::ToString;
 use core::char::{decode_utf16, DecodeUtf16Error, REPLACEMENT_CHARACTER};
 use core::cmp::Ordering;
@@ -192,7 +192,7 @@ impl Collator {
         }
 
         let jamo: DataPayload<CollationJamoV1Marker> = data_provider
-            .load_resource(&DataRequest::default())? // TODO: load other jamo tables
+            .load_resource(&DataRequest::default())? // TODO: redesign Korean search collation handling
             .take_payload()?;
 
         if jamo.get().ce32s.len() != JAMO_COUNT {
@@ -211,6 +211,9 @@ impl Collator {
         if metadata.alternate_shifted() {
             altered_defaults.set_alternate_handling(Some(AlternateHandling::Shifted));
         }
+        if metadata.backward_second_level() {
+            altered_defaults.set_backward_second_level(Some(true));
+        }
 
         altered_defaults.set_case_first(Some(metadata.case_first()));
         altered_defaults.set_max_variable(Some(metadata.max_variable()));
@@ -224,6 +227,11 @@ impl Collator {
             let special_primaries: DataPayload<CollationSpecialPrimariesV1Marker> = data_provider
                 .load_resource(&DataRequest::default())?
                 .take_payload()?;
+            // `variant_count` isn't stable yet:
+            // https://github.com/rust-lang/rust/issues/73662
+            if special_primaries.get().last_primaries.len() <= (MaxVariable::Currency as usize) {
+                return Err(CollatorError::MalformedData);
+            }
             Some(special_primaries)
         } else {
             None

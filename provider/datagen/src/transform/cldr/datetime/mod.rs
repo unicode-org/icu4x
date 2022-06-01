@@ -67,7 +67,7 @@ macro_rules! impl_resource_provider {
                             .get(&calendar)
                             .ok_or_else(|| DataErrorKind::MissingVariant.into_error())?;
 
-                        let path = get_langid_subdirectory(
+                        let folder = get_langid_subdirectory(
                             &self
                                 .source
                                 .get_cldr_paths()?
@@ -75,15 +75,14 @@ macro_rules! impl_resource_provider {
                                 .join("main"),
                             &langid,
                         )?
-                        .ok_or_else(|| DataErrorKind::MissingLocale.into_error())?
-                        .join(&format!("ca-{}.json", cldr_cal));
+                        .ok_or_else(|| DataErrorKind::MissingLocale.into_error())?;
+
+                        let calendar_file = folder.join(&format!("ca-{}.json", cldr_cal));
 
                         let mut resource: cldr_serde::ca::Resource =
-                            serde_json::from_reader(open_reader(&path)?).map_err(|e| DataError::from(e).with_path_context(&path))?;
+                            serde_json::from_reader(open_reader(&calendar_file)?).map_err(|e| DataError::from(e).with_path_context(&calendar_file))?;
 
-                        self.data.insert(
-                            req.options.clone(),
-                            Box::new(
+                        let mut data =
                                 resource
                                     .main
                                     .0
@@ -92,8 +91,38 @@ macro_rules! impl_resource_provider {
                                     .dates
                                     .calendars
                                     .remove(*cldr_cal)
-                                    .expect("CLDR file contains the expected calendar"),
-                            ),
+                                    .expect("CLDR file contains the expected calendar");
+
+                        // CLDR treats ethiopic and ethioaa as separate calendars; however we treat them as a single resource key that
+                        // supports symbols for both era patterns based on the settings on the date. Load in ethioaa data as well when dealing with
+                        // ethiopic.
+                        if calendar == icu_locid::unicode_ext_value!("ethiopic") {
+                            let ethioaa_path = folder.join("ca-ethiopic-amete-alem.json");
+
+                            let mut ethioaa: cldr_serde::ca::Resource = serde_json::from_reader(open_reader(&ethioaa_path)?)
+                                .map_err(|e| DataError::from(e).with_path_context(&ethioaa_path))?;
+
+                            let ethioaa_data = ethioaa
+                                .main
+                                .0
+                                .remove(&langid)
+                                .expect("CLDR ca-ethiopic-amete-alem.json contains the expected language")
+                                                        .dates
+                                                        .calendars
+                                                        .remove("ethiopic-amete-alem")
+                                                        .expect("CLDR ca-ethiopic-amete-alem.json contains the expected calendar");
+
+                            let mundi_name = ethioaa_data.eras.names.get("0").expect("ethiopic-amete-alem calendar must have 0 era");
+                            let mundi_abbr = ethioaa_data.eras.abbr.get("0").expect("ethiopic-amete-alem calendar must have 0 era");
+                            let mundi_narrow = ethioaa_data.eras.narrow.get("0").expect("ethiopic-amete-alem calendar must have 0 era");
+
+                            data.eras.names.insert("2".to_string(), mundi_name.clone());
+                            data.eras.abbr.insert("2".to_string(), mundi_abbr.clone());
+                            data.eras.narrow.insert("2".to_string(), mundi_narrow.clone());
+                        }
+                        self.data.insert(
+                            req.options.clone(),
+                            Box::new(data)
                         )
                     };
 
@@ -108,7 +137,7 @@ macro_rules! impl_resource_provider {
             }
 
             impl IterableResourceProvider<$marker> for CommonDateProvider {
-                fn supported_options(&self) -> Result<Box<dyn Iterator<Item = ResourceOptions> + '_>, DataError> {
+                fn supported_options(&self) -> Result<Vec<ResourceOptions>, DataError> {
                     let mut r = Vec::new();
                     for (cal_value, cldr_cal) in self.supported_cals.iter() {
                         r.extend(get_langid_subdirectories(
@@ -128,12 +157,12 @@ macro_rules! impl_resource_provider {
                                 ResourceOptions::from(locale)
                             }));
                     }
-                    Ok(Box::new(r.into_iter()))
+                    Ok(r)
                 }
             }
         )+
 
-        icu_provider::impl_dyn_provider!(CommonDateProvider, [$($marker),+,], SERDE_SE, ITERABLE_SERDE_SE, DATA_CONVERTER);
+        icu_provider::make_exportable_provider!(CommonDateProvider, [$($marker),+,]);
     };
 }
 

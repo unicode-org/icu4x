@@ -248,7 +248,7 @@
 //! {
 //!     fn demo(data: u32) -> Self {
 //!         let rc_u32: Rc<u32> = Rc::new(data);
-//!         Yoke::attach_to_cart_badly(rc_u32, |u| {
+//!         Yoke::attach_to_cart(rc_u32, |u| {
 //!             YokeTraitHack::<<Y as Yokeable>::Output>::demo(*u).0
 //!         })
 //!     }

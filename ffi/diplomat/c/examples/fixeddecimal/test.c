@@ -18,7 +18,7 @@ int main() {
 
     ICU4XFixedDecimalFormatOptions opts = {ICU4XFixedDecimalGroupingStrategy_Auto, ICU4XFixedDecimalSignDisplay_Auto};
 
-    decimal_ffi_result_box_ICU4XFixedDecimalFormat_void fdf_result = ICU4XFixedDecimalFormat_try_new(locale, provider, opts);
+    diplomat_result_box_ICU4XFixedDecimalFormat_void fdf_result = ICU4XFixedDecimalFormat_try_new(locale, provider, opts);
     if (!fdf_result.is_ok)  {
         printf("Failed to create FixedDecimalFormat\n");
         return 1;

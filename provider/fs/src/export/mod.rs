@@ -12,9 +12,10 @@
 //! # Examples
 //!
 //! ```
-//! use icu_provider::export::DataExporter;
+//! use icu_provider::datagen::DataExporter;
 //! use icu_provider::hello_world::*;
 //! use icu_provider::prelude::*;
+//! use icu_provider::dynutil::*;
 //! use icu_provider_fs::export::fs_exporter;
 //! use icu_provider_fs::export::serializers;
 //! use icu_provider_fs::FsDataProvider;
@@ -38,8 +39,8 @@
 //! let result = exporter
 //!     .put_payload(
 //!         HelloWorldV1Marker::KEY,
-//!         Default::default(),
-//!         payload.clone().into_serializable(),
+//!         &Default::default(),
+//!         &UpcastDataPayload::upcast(payload.clone()),
 //!     )
 //!     .expect("Should successfully export");
 //!

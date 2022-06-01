@@ -28,9 +28,9 @@ impl From<&SourceData> for BinaryPropertyUnicodeSetDataProvider {
 
 impl BinaryPropertyUnicodeSetDataProvider {
     fn init(&self) -> Result<RwLockReadGuard<Option<TomlBinary>>, DataError> {
-        if self.data.read().unwrap().is_none() {
+        if self.data.read().expect("poison").is_none() {
             let data = uprops_helpers::load_binary_from_dir(self.source.get_uprops_root()?)?;
-            *self.data.write().unwrap() = Some(data);
+            *self.data.write().expect("poison") = Some(data);
         }
 
         Ok(self.data.read().expect("poison"))
@@ -71,17 +71,17 @@ macro_rules! expand {
             impl IterableResourceProvider<$marker> for BinaryPropertyUnicodeSetDataProvider {
                 fn supported_options(
                     &self,
-                ) -> Result<Box<dyn Iterator<Item = ResourceOptions>>, DataError> {
+                ) -> Result<Vec<ResourceOptions>, DataError> {
                     if !self.init()?.as_ref().unwrap().contains_key($prop_name) {
                         return Err(DataErrorKind::MissingResourceKey.into_error())
                     }
 
-                    Ok(Box::new(core::iter::once(ResourceOptions::default())))
+                    Ok(vec![Default::default()])
                 }
             }
         )+
 
-        icu_provider::impl_dyn_provider!(BinaryPropertyUnicodeSetDataProvider, [$($marker),+,], SERDE_SE, ITERABLE_SERDE_SE, DATA_CONVERTER);
+        icu_provider::make_exportable_provider!(BinaryPropertyUnicodeSetDataProvider, [$($marker),+,]);
     };
 }
 

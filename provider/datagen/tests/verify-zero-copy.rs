@@ -71,7 +71,7 @@ fn main() {
         let mut max_net_violation = 0;
 
         for options in
-            match IterableDynProvider::<icu_provider::serde::SerializeMarker>::supported_options_for_key(
+            match IterableDynProvider::<icu_provider::datagen::ExportMarker>::supported_options_for_key(
                 &converter, key,
             ) {
                 Err(_) if key.get_path().starts_with("props/") => {

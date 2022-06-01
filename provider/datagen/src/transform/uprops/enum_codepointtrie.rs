@@ -35,12 +35,12 @@ macro_rules! expand {
             impl ResourceProvider<$marker> for EnumeratedPropertyCodePointTrieProvider
             {
                 fn load_resource(&self, _: &DataRequest) -> Result<DataResponse<$marker>, DataError> {
-                    if self.data.read().unwrap().is_none() {
+                    if self.data.read().expect("poison").is_none() {
                         let data = uprops_helpers::load_enumerated_from_dir(self.source.get_uprops_root()?)?;
-                        *self.data.write().unwrap() = Some(data);
+                        *self.data.write().expect("poison") = Some(data);
                     }
 
-                    let guard = self.data.read().unwrap();
+                    let guard = self.data.read().expect("poison");
 
                     let source_cpt_data = &guard
                         .as_ref()
@@ -63,13 +63,13 @@ macro_rules! expand {
             impl IterableResourceProvider<$marker> for EnumeratedPropertyCodePointTrieProvider {
                 fn supported_options(
                     &self,
-                ) -> Result<Box<dyn Iterator<Item = ResourceOptions>>, DataError> {
-                    Ok(Box::new(core::iter::once(ResourceOptions::default())))
+                ) -> Result<Vec<ResourceOptions>, DataError> {
+                    Ok(vec![Default::default()])
                 }
             }
         )+
 
-        icu_provider::impl_dyn_provider!(EnumeratedPropertyCodePointTrieProvider, [$($marker),+,], SERDE_SE, ITERABLE_SERDE_SE, DATA_CONVERTER);
+        icu_provider::make_exportable_provider!(EnumeratedPropertyCodePointTrieProvider, [$($marker),+,]);
     };
 }
 

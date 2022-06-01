@@ -52,6 +52,6 @@ export = [
     "std", 
     "litemap",
     "icu_provider/datagen",
-    "zerovec/serde_serialize",
+    "zerovec/serde",
 ]
 std = ["icu_provider/std"]

@@ -24,9 +24,9 @@
 //! assert_eq!(datetime_iso.date.year().number, 1970);
 //! assert_eq!(datetime_iso.date.month().number, 1);
 //! assert_eq!(datetime_iso.date.day_of_month().0, 2);
-//! assert_eq!(datetime_iso.time.hour, IsoHour::new_unchecked(13));
-//! assert_eq!(datetime_iso.time.minute, IsoMinute::new_unchecked(1));
-//! assert_eq!(datetime_iso.time.second, IsoSecond::new_unchecked(0));
+//! assert_eq!(datetime_iso.time.hour.number(), 13);
+//! assert_eq!(datetime_iso.time.minute.number(), 1);
+//! assert_eq!(datetime_iso.time.second.number(), 0);
 //! ```
 
 use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, DateTime, DateTimeError};
@@ -393,9 +393,9 @@ impl DateTime<Iso> {
     /// assert_eq!(datetime_iso.date.year().number, 1970);
     /// assert_eq!(datetime_iso.date.month().number, 1);
     /// assert_eq!(datetime_iso.date.day_of_month().0, 2);
-    /// assert_eq!(datetime_iso.time.hour, IsoHour::new_unchecked(13));
-    /// assert_eq!(datetime_iso.time.minute, IsoMinute::new_unchecked(1));
-    /// assert_eq!(datetime_iso.time.second, IsoSecond::new_unchecked(0));
+    /// assert_eq!(datetime_iso.time.hour.number(), 13);
+    /// assert_eq!(datetime_iso.time.minute.number(), 1);
+    /// assert_eq!(datetime_iso.time.second.number(), 0);
     /// ```
     pub fn new_iso_datetime_from_integers(
         year: i32,

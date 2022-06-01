@@ -65,7 +65,7 @@ impl BlobDataProvider {
     /// Create a [`BlobDataProvider`] from a blob of ICU4X data.
     pub fn new_from_blob<B: Into<RcWrap>>(blob: B) -> Result<Self, DataError> {
         Ok(BlobDataProvider {
-            data: Yoke::try_attach_to_cart_badly(blob.into(), |bytes| {
+            data: Yoke::try_attach_to_cart(blob.into(), |bytes| {
                 BlobSchema::deserialize(&mut postcard::Deserializer::from_bytes(bytes)).map(
                     |blob| {
                         let BlobSchema::V001(blob) = blob;
@@ -95,8 +95,9 @@ impl BufferProvider for BlobDataProvider {
         Ok(DataResponse {
             metadata,
             payload: Some(DataPayload::from_yoked_buffer(
-                self.data
-                    .try_project_cloned_with_capture((key, req), |zm, (key, req), _| {
+                self.data.try_map_project_cloned_with_capture(
+                    (key, req),
+                    |zm, (key, req), _| {
                         zm.get(&key.get_hash(), req.options.write_to_string().as_bytes())
                             .map_err(|e| {
                                 match e {
@@ -105,7 +106,8 @@ impl BufferProvider for BlobDataProvider {
                                 }
                                 .with_req(key, req)
                             })
-                    })?,
+                    },
+                )?,
             )),
         })
     }

@@ -40,16 +40,16 @@ impl ResourceProvider<CanonicalDecompositionDataV1Marker> for CanonicalDecomposi
         &self,
         _req: &DataRequest,
     ) -> Result<DataResponse<CanonicalDecompositionDataV1Marker>, DataError> {
-        if self.data.read().unwrap().is_none() {
+        if self.data.read().expect("poison").is_none() {
             let path_buf = self.source.get_uprops_root()?.join("decompositions.toml");
             let path: &Path = &path_buf;
             let toml_str = read_path_to_string(path)?;
             let toml_obj: CanonicalDecompositionData = toml::from_str(&toml_str)
                 .map_err(|e| crate::error::data_error_from_toml(e).with_path_context(path))?;
-            *self.data.write().unwrap() = Some(toml_obj);
+            *self.data.write().expect("poison") = Some(toml_obj);
         }
 
-        let guard = self.data.read().unwrap();
+        let guard = self.data.read().expect("poison");
 
         let toml_data = guard.as_ref().unwrap();
 
@@ -74,18 +74,15 @@ impl ResourceProvider<CanonicalDecompositionDataV1Marker> for CanonicalDecomposi
     }
 }
 
-icu_provider::impl_dyn_provider!(
+icu_provider::make_exportable_provider!(
     CanonicalDecompositionDataProvider,
-    [CanonicalDecompositionDataV1Marker,],
-    SERDE_SE,
-    ITERABLE_SERDE_SE,
-    DATA_CONVERTER
+    [CanonicalDecompositionDataV1Marker,]
 );
 
 impl IterableResourceProvider<CanonicalDecompositionDataV1Marker>
     for CanonicalDecompositionDataProvider
 {
-    fn supported_options(&self) -> Result<Box<dyn Iterator<Item = ResourceOptions>>, DataError> {
-        Ok(Box::new(core::iter::once(ResourceOptions::default())))
+    fn supported_options(&self) -> Result<Vec<ResourceOptions>, DataError> {
+        Ok(vec![ResourceOptions::default()])
     }
 }

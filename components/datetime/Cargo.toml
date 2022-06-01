@@ -45,6 +45,7 @@ serde-tuple-vec-map = { version = "1.0", optional = true }
 smallvec = "1.6"
 displaydoc = { version = "0.2.3", default-features = false }
 either = { version = "1.6.1", default-features = false }
+crabbake = { path = "../../experimental/crabbake", optional = true, features = ["derive"]}
 
 [dev-dependencies]
 criterion = "0.3"
@@ -69,7 +70,7 @@ std = ["icu_provider/std", "icu_locid/std", "icu_calendar/std"]
 default = []
 bench = ["serde"]
 serde = ["dep:serde", "litemap/serde", "zerovec/serde", "tinystr/serde", "smallvec/serde", "icu_calendar/serde", "icu_provider/serde", "icu_plurals/serde"]
-datagen = ["serde", "icu_calendar/datagen", "icu_provider/datagen", "litemap/serde_serialize", "std"]
+datagen = ["serde", "icu_calendar/datagen", "icu_provider/datagen", "std", "crabbake"]
 
 [[bench]]
 name = "datetime"

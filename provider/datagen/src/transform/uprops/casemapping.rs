@@ -73,20 +73,12 @@ impl ResourceProvider<CaseMappingV1Marker> for CaseMappingDataProvider {
 impl icu_provider::datagen::IterableResourceProvider<CaseMappingV1Marker>
     for CaseMappingDataProvider
 {
-    fn supported_options(
-        &self,
-    ) -> Result<Box<dyn Iterator<Item = ResourceOptions> + '_>, DataError> {
-        Ok(Box::new(core::iter::once(Default::default())))
+    fn supported_options(&self) -> Result<Vec<ResourceOptions>, DataError> {
+        Ok(vec![Default::default()])
     }
 }
 
-icu_provider::impl_dyn_provider!(
-    CaseMappingDataProvider,
-    [CaseMappingV1Marker,],
-    SERDE_SE,
-    ITERABLE_SERDE_SE,
-    DATA_CONVERTER
-);
+icu_provider::make_exportable_provider!(CaseMappingDataProvider, [CaseMappingV1Marker,]);
 
 #[cfg(test)]
 mod tests {

@@ -676,8 +676,7 @@ dependencies = [
 [[package]]
 name = "diplomat"
 version = "0.3.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b827d7e3428372b0b3d98c243e7d53526b1ddc264586536644e86a3e2ec176f3"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=c51237218404421da2cf1ac0be922ff4218d6a81#c51237218404421da2cf1ac0be922ff4218d6a81"
 dependencies = [
  "diplomat_core",
  "proc-macro2",
@@ -688,14 +687,12 @@ dependencies = [
 [[package]]
 name = "diplomat-runtime"
 version = "0.3.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e55ba854b349be22d95ff1f0d7ceec5bd11a68d6389f4e9a673f7e117f0170f4"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=c51237218404421da2cf1ac0be922ff4218d6a81#c51237218404421da2cf1ac0be922ff4218d6a81"
 
 [[package]]
 name = "diplomat_core"
 version = "0.3.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "bbde4faa50fdeda288168cc7f85db22a1f63baecd088fb4a78ca7b5ce7a1f847"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=c51237218404421da2cf1ac0be922ff4218d6a81#c51237218404421da2cf1ac0be922ff4218d6a81"
 dependencies = [
  "impls",
  "lazy_static",
@@ -1302,6 +1299,7 @@ dependencies = [
 name = "icu_calendar"
 version = "0.6.0"
 dependencies = [
+ "crabbake",
  "criterion",
  "displaydoc",
  "icu",
@@ -1323,6 +1321,7 @@ dependencies = [
  "diplomat",
  "diplomat-runtime",
  "fixed_decimal",
+ "icu_codepointtrie",
  "icu_decimal",
  "icu_locale_canonicalizer",
  "icu_locid",
@@ -1336,6 +1335,7 @@ dependencies = [
  "icu_testdata",
  "log",
  "tinystr 0.6.0",
+ "unicode-bidi",
  "writeable",
 ]
 
@@ -1358,6 +1358,7 @@ dependencies = [
 name = "icu_casemapping"
 version = "0.1.0"
 dependencies = [
+ "crabbake",
  "displaydoc",
  "icu_codepointtrie",
  "icu_locid",
@@ -1372,6 +1373,7 @@ dependencies = [
 name = "icu_char16trie"
 version = "0.1.0"
 dependencies = [
+ "crabbake",
  "serde",
  "toml",
  "zerovec",
@@ -1381,6 +1383,7 @@ dependencies = [
 name = "icu_codepointtrie"
 version = "0.4.0"
 dependencies = [
+ "crabbake",
  "criterion",
  "displaydoc",
  "icu_uniset",
@@ -1409,6 +1412,7 @@ version = "0.6.0"
 dependencies = [
  "arraystring",
  "atoi",
+ "crabbake",
  "displaydoc",
  "icu_char16trie",
  "icu_codepointtrie",
@@ -1417,7 +1421,6 @@ dependencies = [
  "icu_properties",
  "icu_provider",
  "icu_testdata",
- "postcard",
  "serde",
  "smallvec",
  "utf8_iter",
@@ -1481,6 +1484,7 @@ name = "icu_datetime"
 version = "0.6.0"
 dependencies = [
  "bincode",
+ "crabbake",
  "criterion",
  "displaydoc",
  "either",
@@ -1507,6 +1511,7 @@ dependencies = [
 name = "icu_decimal"
 version = "0.6.0"
 dependencies = [
+ "crabbake",
  "criterion",
  "displaydoc",
  "fixed_decimal",
@@ -1557,11 +1562,11 @@ dependencies = [
 name = "icu_locale_canonicalizer"
 version = "0.6.0"
 dependencies = [
+ "crabbake",
  "criterion",
  "icu_locid",
  "icu_provider",
  "icu_testdata",
- "litemap",
  "serde",
  "serde_json",
  "tinystr 0.6.0",
@@ -1572,6 +1577,7 @@ dependencies = [
 name = "icu_locid"
 version = "0.6.0"
 dependencies = [
+ "crabbake",
  "criterion",
  "displaydoc",
  "iai",
@@ -1590,6 +1596,7 @@ dependencies = [
 name = "icu_normalizer"
 version = "0.6.0"
 dependencies = [
+ "crabbake",
  "displaydoc",
  "icu_codepointtrie",
  "icu_properties",
@@ -1615,6 +1622,7 @@ dependencies = [
 name = "icu_plurals"
 version = "0.6.0"
 dependencies = [
+ "crabbake",
  "criterion",
  "displaydoc",
  "fixed_decimal",
@@ -1632,6 +1640,7 @@ dependencies = [
 name = "icu_properties"
 version = "0.6.0"
 dependencies = [
+ "crabbake",
  "displaydoc",
  "icu",
  "icu_codepointtrie",
@@ -1725,6 +1734,7 @@ dependencies = [
 name = "icu_segmenter"
 version = "0.6.0"
 dependencies = [
+ "crabbake",
  "criterion",
  "icu_char16trie",
  "icu_codepointtrie",
@@ -1760,26 +1770,40 @@ dependencies = [
  "displaydoc",
  "eyre",
  "futures",
+ "icu_calendar",
+ "icu_casemapping",
+ "icu_codepointtrie",
+ "icu_collator",
  "icu_datagen",
+ "icu_datetime",
+ "icu_decimal",
  "icu_list",
+ "icu_locale_canonicalizer",
  "icu_locid",
+ "icu_normalizer",
  "icu_plurals",
+ "icu_properties",
  "icu_provider",
  "icu_provider_blob",
  "icu_provider_fs",
+ "icu_segmenter",
+ "icu_uniset",
  "log",
  "reqwest",
  "serde",
  "serde_json",
  "simple_logger",
+ "tinystr 0.6.0",
  "tokio",
  "writeable",
+ "zerovec",
 ]
 
 [[package]]
 name = "icu_uniset"
 version = "0.5.0"
 dependencies = [
+ "crabbake",
  "criterion",
  "displaydoc",
  "icu_benchmark_macros",
@@ -3224,6 +3248,7 @@ name = "tinystr"
 version = "0.6.0"
 dependencies = [
  "bincode",
+ "crabbake",
  "criterion",
  "displaydoc",
  "postcard",
@@ -3938,6 +3963,7 @@ name = "zerovec"
 version = "0.7.0"
 dependencies = [
  "bincode",
+ "crabbake",
  "criterion",
  "getrandom",
  "iai",

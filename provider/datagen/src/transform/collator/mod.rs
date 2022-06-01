@@ -103,7 +103,7 @@ macro_rules! collation_provider {
         /// A data provider reading from .toml files produced by the ICU4C genrb tool.
         impl $provider {
             fn load_data_if_not_loaded(&self) -> Result<(), DataError> {
-                if self.data.read().unwrap().is_some() {
+                if self.data.read().expect("poison").is_some() {
                     return Ok(());
                 }
                 let guard = self.data.write();
@@ -178,7 +178,7 @@ macro_rules! collation_provider {
                     }
                 }
 
-                let guard = self.data.read().unwrap();
+                let guard = self.data.read().expect("poison");
 
                 if let Some($toml_data) = guard.as_ref().unwrap().get(&s) {
                     Ok(DataResponse {
@@ -195,23 +195,15 @@ macro_rules! collation_provider {
             }
         }
 
-        icu_provider::impl_dyn_provider!(
-            $provider,
-            [$marker,],
-            SERDE_SE,
-            ITERABLE_SERDE_SE,
-            DATA_CONVERTER
-        );
+        icu_provider::make_exportable_provider!($provider, [$marker,]);
 
         impl IterableResourceProvider<$marker> for $provider {
-            fn supported_options(
-                &self,
-            ) -> Result<Box<dyn Iterator<Item = ResourceOptions>>, DataError> {
+            fn supported_options(&self) -> Result<Vec<ResourceOptions>, DataError> {
                 self.load_data_if_not_loaded()?;
 
-                let guard = self.data.read().unwrap();
+                let guard = self.data.read().expect("poison");
 
-                let list: Vec<ResourceOptions> = guard
+                Ok(guard
                     .as_ref()
                     .unwrap()
                     .keys()
@@ -242,8 +234,7 @@ macro_rules! collation_provider {
                         };
                         Some(ResourceOptions::from(locale))
                     })
-                    .collect();
-                Ok(Box::new(list.into_iter()))
+                    .collect())
             }
         }
     };

@@ -36,11 +36,10 @@ impl From<&SourceData> for NumbersProvider {
 impl NumbersProvider {
     /// Returns the digits for the given numbering system name.
     fn get_digits_for_numbering_system(&self, nsname: TinyStr8) -> Option<[char; 10]> {
-        #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
         match self
             .cldr_numbering_systems_data
             .read()
-            .unwrap()
+            .expect("poison")
             .as_ref()
             .unwrap()
             .get(&nsname)
@@ -100,7 +99,12 @@ impl ResourceProvider<DecimalSymbolsV1Marker> for NumbersProvider {
         })?;
 
         #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
-        if self.cldr_numbering_systems_data.read().unwrap().is_none() {
+        if self
+            .cldr_numbering_systems_data
+            .read()
+            .expect("poison")
+            .is_none()
+        {
             let path = self
                 .source
                 .get_cldr_paths()?
@@ -113,7 +117,7 @@ impl ResourceProvider<DecimalSymbolsV1Marker> for NumbersProvider {
             let _ = self
                 .cldr_numbering_systems_data
                 .write()
-                .unwrap()
+                .expect("poison")
                 .get_or_insert(resource.supplemental.numbering_systems);
         }
 
@@ -133,22 +137,15 @@ impl ResourceProvider<DecimalSymbolsV1Marker> for NumbersProvider {
     }
 }
 
-icu_provider::impl_dyn_provider!(
-    NumbersProvider,
-    [DecimalSymbolsV1Marker,],
-    SERDE_SE,
-    ITERABLE_SERDE_SE,
-    DATA_CONVERTER
-);
+icu_provider::make_exportable_provider!(NumbersProvider, [DecimalSymbolsV1Marker,]);
 
 impl IterableResourceProvider<DecimalSymbolsV1Marker> for NumbersProvider {
-    fn supported_options(
-        &self,
-    ) -> Result<Box<dyn Iterator<Item = ResourceOptions> + '_>, DataError> {
-        Ok(Box::new(
+    fn supported_options(&self) -> Result<Vec<ResourceOptions>, DataError> {
+        Ok(
             get_langid_subdirectories(&self.source.get_cldr_paths()?.cldr_numbers().join("main"))?
-                .map(Into::<ResourceOptions>::into),
-        ))
+                .map(ResourceOptions::from)
+                .collect(),
+        )
     }
 }
 

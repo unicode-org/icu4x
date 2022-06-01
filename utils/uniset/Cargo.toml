@@ -38,6 +38,7 @@ displaydoc = { version = "0.2.3", default-features = false }
 yoke = { version = "0.5.0", path = "../yoke", features = ["derive"] }
 zerofrom = { version = "0.1.0", path = "../zerofrom", features = ["derive"] }
 zerovec = { version = "0.7", path = "../zerovec", features = ["yoke"] }
+crabbake = { version = "0.4", path = "../../experimental/crabbake", features = ["derive"], optional = true }
 
 [dev-dependencies]
 criterion = "0.3.3"
@@ -53,7 +54,7 @@ path = "src/lib.rs"
 [features]
 bench = []
 serde = ["dep:serde", "zerovec/serde"]
-serde_serialize = ["serde", "zerovec/serde_serialize"]
+crabbake = ["dep:crabbake", "zerovec/crabbake"]
 
 [[bench]]
 name = "inv_list"

@@ -555,7 +555,7 @@ For structs with argumented constructors, `new` or `try_new` methods should be u
 | Other | 𐄂 | | `Struct::from_{name}(value);` |
 | Other | ✓ | | `Struct::try_from_{name}(value)?;` |
 
-## Structs With All Public Fields
+## Options structs With All Public Fields
 
 Many ICU related constructors require a number of options to be passed. In such cases, it is recommended to provide a separate structure that is used to assemble all required options, and pass it to the constructor.
 
@@ -574,6 +574,8 @@ fn main() {
 This model provides a good separation between the `options` struct which most likely will be mutable while used, and the final struct which can be optimized to only contain the final set of computed fields and remain immutable.
 
 The `#[non_exhaustive]` attribute disabled users ability to construct the Options struct manually, which enables us to extend the struct with additional features without breaking changes.
+
+See the [Exhaustiveness](#exhaustiveness--required) section for more details.
 
 ### Examples
 
@@ -769,6 +771,12 @@ Call non-panicking data access APIs whenever data is not guaranteed to be safe.
 
 This should not include the contract of code in a different Crate. I.e. if a function in a different Crate promises to return a valid map key, but it's not a compile time checked type (like an enum), then the calling code must allow for it to fail.
 
+See also: the [Panics](#Panics--required) section of this document.
+
+#### Exception: Poison
+
+The `lock`, `read`, and `write` methods on `Mutex` and `RwLock` return `Result`s in case the lock got poisoned. This happens when the process holding the lock panics, so it is fine to panic when encountering a poison. For consistency we require poisons to be handled with `.expect("poison")`.
+
 ### Don't Handle Errors :: suggested
 
 Functions which can error for any reason must return a `Result`, and APIs should be designed such that you should not generally need to recover from an [Err](https://doc.rust-lang.org/std/result/enum.Result.html#variant.Err) internally (which should normally be immediately propagated up to the user by using the [`?` operator](https://doc.rust-lang.org/edition-guide/rust-2018/error-handling-and-panics/the-question-mark-operator-for-easier-error-handling.html)). I.e. don't generally write library code which recovers from its own "errors", since if it can be recovered from, then it wasn't an "error".
@@ -862,6 +870,41 @@ where
   return Ok(result)
 }
 ```
+
+# Lints
+
+Some lints should be enabled at the crate level for primary ICU4X crates. This guidance need not extend to utils.
+
+## Exhaustiveness :: required
+
+Crates should deny the `clippy::exhaustive_structs, clippy::exhaustive_enums` lints at the top-level so that our types default to being `#[non_exhaustive]`.
+
+These kinds of types _must_ be `#[non_exhaustive]`:
+
+ - Options structs
+ - Options enums
+ - Error enums
+ 
+Provider structs and enums _must not_ be `#[non_exhaustive]`. The provider module should ideally have `#[allow(clippy::exhaustive_structs, clippy::exhaustive_enums)]`. These are expected to be stable at the Postcard level. Exceptions _may_ be made in cases where the deserializer is written in a way that may accept future fields or variants.
+
+Most public newtypes and marker types should also be allowed to be exhaustive.
+
+Miscellaneous types with public fields may or may not be exhaustive based on need: if they are expected to be stable, they should be marked with an allow attribute and a comment explaining why. Otherwise, default to `#[non_exhaustive]`.
+
+## Panics :: required
+
+Crates should deny the `clippy::indexing_slicing, clippy::unwrap_used, clippy::expect_used, clippy::panic` lints at the top-level to greatly reduce the number of panicky call sites in our code.
+
+In general, non-panicky APIs that return `Result`s or `Option`s should be preferred.
+
+`#[allow()]`s may be added, in cases where:
+
+ - The panic will only occur if fundamental invariants of the codebase are invalidated. This should be avoided as much as possible, however
+ - The API is clearly documented to be a panicky one and is not transitively used in other non-documented-as-panicky APIs.
+ - The panic would only occur due to an invalidation of an API that is checked _very nearby_.
+ - The code is pure test code.
+
+`#[allow()]`s should be documented with a comment.
 
 # Imports and Configurations
 

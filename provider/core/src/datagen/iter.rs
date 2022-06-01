@@ -5,18 +5,17 @@
 //! Collection of iteration APIs for data providers.
 
 use crate::prelude::*;
-use alloc::boxed::Box;
 
 /// A [`DynProvider`] that can iterate over all supported [`ResourceOptions`] for a certain key.
 ///
 /// Implementing this trait means that a data provider knows all of the data it can successfully
 /// return from a load request.
 pub trait IterableDynProvider<M: DataMarker>: DynProvider<M> {
-    /// Given a [`ResourceKey`], returns a boxed iterator over [`ResourceOptions`].
+    /// Given a [`ResourceKey`], returns a list of [`ResourceOptions`].
     fn supported_options_for_key(
         &self,
         key: ResourceKey,
-    ) -> Result<Box<dyn Iterator<Item = ResourceOptions> + '_>, DataError>;
+    ) -> Result<Vec<ResourceOptions>, DataError>;
 }
 
 /// A [`ResourceProvider`] that can iterate over all supported [`ResourceOptions`] for a certain key.
@@ -24,10 +23,8 @@ pub trait IterableDynProvider<M: DataMarker>: DynProvider<M> {
 /// Implementing this trait means that a data provider knows all of the data it can successfully
 /// return from a load request.
 pub trait IterableResourceProvider<M: ResourceMarker>: ResourceProvider<M> {
-    /// Returns a boxed iterator over [`ResourceOptions`].
-    fn supported_options(
-        &self,
-    ) -> Result<Box<dyn Iterator<Item = ResourceOptions> + '_>, DataError>;
+    /// Returns a list of [`ResourceOptions`].
+    fn supported_options(&self) -> Result<Vec<ResourceOptions>, DataError>;
 }
 
 impl<M, P> IterableDynProvider<M> for Box<P>
@@ -38,7 +35,7 @@ where
     fn supported_options_for_key(
         &self,
         key: ResourceKey,
-    ) -> Result<Box<dyn Iterator<Item = ResourceOptions> + '_>, DataError> {
+    ) -> Result<Vec<ResourceOptions>, DataError> {
         (**self).supported_options_for_key(key)
     }
 }

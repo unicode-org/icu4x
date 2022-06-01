@@ -33,7 +33,7 @@ impl From<&SourceData> for WeekDataProvider {
 
 impl WeekDataProvider {
     fn init(&self) -> Result<(), DataError> {
-        if self.data.read().unwrap().is_none() {
+        if self.data.read().expect("poison").is_none() {
             let path = self
                 .source
                 .get_cldr_paths()?
@@ -43,7 +43,7 @@ impl WeekDataProvider {
                 serde_json::from_reader(open_reader(&path)?)
                     .map_err(|e| DataError::from(e).with_path_context(&path))?;
             let week_data = resource.supplemental.week_data;
-            *self.data.write().unwrap() = Some((
+            *self.data.write().expect("poison") = Some((
                 CalendarInfo {
                     first_weekday: week_data
                         .first_day
@@ -69,9 +69,9 @@ impl WeekDataProvider {
 
 impl IterableResourceProvider<WeekDataV1Marker> for WeekDataProvider {
     #[allow(clippy::needless_collect)] // https://github.com/rust-lang/rust-clippy/issues/7526
-    fn supported_options(&self) -> Result<Box<dyn Iterator<Item = ResourceOptions>>, DataError> {
+    fn supported_options(&self) -> Result<Vec<ResourceOptions>, DataError> {
         self.init()?;
-        let guard = self.data.read().unwrap();
+        let guard = self.data.read().expect("poison");
         let week_data = &guard.as_ref().unwrap().1;
         let regions: HashSet<ResourceOptions> = week_data
             .min_days
@@ -84,7 +84,7 @@ impl IterableResourceProvider<WeekDataV1Marker> for WeekDataProvider {
             })
             .map(ResourceOptions::temp_for_region)
             .collect();
-        Ok(Box::new(regions.into_iter()))
+        Ok(regions.into_iter().collect())
     }
 }
 
@@ -104,7 +104,7 @@ impl ResourceProvider<WeekDataV1Marker> for WeekDataProvider {
 
         self.init()?;
 
-        let guard = self.data.read().unwrap();
+        let guard = self.data.read().expect("poison");
         let (default, week_data) = &guard.as_ref().unwrap();
 
         Ok(DataResponse {
@@ -125,13 +125,7 @@ impl ResourceProvider<WeekDataV1Marker> for WeekDataProvider {
     }
 }
 
-icu_provider::impl_dyn_provider!(
-    WeekDataProvider,
-    [WeekDataV1Marker,],
-    SERDE_SE,
-    ITERABLE_SERDE_SE,
-    DATA_CONVERTER
-);
+icu_provider::make_exportable_provider!(WeekDataProvider, [WeekDataV1Marker,]);
 
 #[test]
 fn basic_cldr_week_data() {

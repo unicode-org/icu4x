@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::types::Time;
-use crate::{AsCalendar, Date, Iso};
+use crate::{AsCalendar, Calendar, Date, Iso};
 
 /// A date+time for a given calendar.
 ///
@@ -21,9 +21,9 @@ use crate::{AsCalendar, Date, Iso};
 /// assert_eq!(datetime_iso.date.year().number, 1970);
 /// assert_eq!(datetime_iso.date.month().number, 1);
 /// assert_eq!(datetime_iso.date.day_of_month().0, 2);
-/// assert_eq!(datetime_iso.time.hour, IsoHour::new_unchecked(13));
-/// assert_eq!(datetime_iso.time.minute, IsoMinute::new_unchecked(1));
-/// assert_eq!(datetime_iso.time.second, IsoSecond::new_unchecked(0));
+/// assert_eq!(datetime_iso.time.hour.number(), 13);
+/// assert_eq!(datetime_iso.time.minute.number(), 1);
+/// assert_eq!(datetime_iso.time.second.number(), 0);
 /// ```
 #[derive(Debug)]
 #[allow(clippy::exhaustive_structs)] // this type is stable
@@ -61,6 +61,29 @@ impl<A: AsCalendar> DateTime<A> {
     pub fn to_calendar<A2: AsCalendar>(&self, calendar: A2) -> DateTime<A2> {
         DateTime {
             date: self.date.to_calendar(calendar),
+            time: self.time,
+        }
+    }
+}
+
+impl<C, A, B> PartialEq<DateTime<B>> for DateTime<A>
+where
+    C: Calendar,
+    A: AsCalendar<Calendar = C>,
+    B: AsCalendar<Calendar = C>,
+{
+    fn eq(&self, other: &DateTime<B>) -> bool {
+        self.date == other.date && self.time == other.time
+    }
+}
+
+// We can do this since DateInner is required to be Eq by the Calendar trait
+impl<A: AsCalendar> Eq for DateTime<A> {}
+
+impl<A: AsCalendar + Clone> Clone for DateTime<A> {
+    fn clone(&self) -> Self {
+        Self {
+            date: self.date.clone(),
             time: self.time,
         }
     }

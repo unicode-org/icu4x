@@ -14,6 +14,9 @@ use crate::elements::{CASE_MASK, TERTIARY_MASK};
 /// If an earlier level isn't equal, the earlier level is decisive.
 /// If the result is equal on a level, but the strength is higher,
 /// the comparison proceeds to the next level.
+///
+/// Note: The bit layout of `CollatorOptions` requires `Strength`
+/// to fit in 3 bits.
 #[derive(Eq, PartialEq, Debug, PartialOrd, Ord)]
 #[repr(u8)]
 pub enum Strength {
@@ -185,7 +188,7 @@ pub enum Strength {
     /// assert_eq!(collator.compare("דחי", "דחי֭"),
     ///            core::cmp::Ordering::Less);
     /// ```
-    Identical = 4,
+    Identical = 7,
 }
 
 /// What to do about characters whose comparison level can be
@@ -335,11 +338,13 @@ impl CollatorOptions {
     /// This is the BCP47 key `ks`.
     pub fn strength(&self) -> Strength {
         let mut bits = self.0 & CollatorOptions::STRENGTH_MASK;
-        if bits > 4 {
-            debug_assert!(false, "Bad value for strength");
-            bits = 4;
+        if !(bits <= 3 || bits == 7) {
+            debug_assert!(false, "Bad value for strength.");
+            // If the bits say higher than `Quaternary` but
+            // lower than `Identical`, clamp to `Quaternary`.
+            bits = 3;
         }
-        // By construction in range and, therefore,
+        // By construction above in range and, therefore,
         // never UB.
         unsafe { core::mem::transmute(bits as u8) }
     }
@@ -358,6 +363,8 @@ impl CollatorOptions {
     /// The maximum character class that `AlternateHandling::Shifted`
     /// applies to.
     pub fn max_variable(&self) -> MaxVariable {
+        // Safe, because we mask two bits and shift them to the low
+        // two bits and the enum has values for 0 to 3, inclusive.
         unsafe {
             core::mem::transmute(
                 ((self.0 & CollatorOptions::MAX_VARIABLE_MASK)

@@ -323,7 +323,7 @@ pub trait AsDowncastingAnyProvider {
 
 impl<P> AsDowncastingAnyProvider for P
 where
-    P: AnyProvider,
+    P: AnyProvider + ?Sized,
 {
     #[inline]
     fn as_downcasting(&self) -> DowncastingAnyProvider<P> {
