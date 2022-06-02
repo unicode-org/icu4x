@@ -44,14 +44,10 @@ impl ResourceProvider<ScriptWithExtensionsPropertyV1Marker>
             .get_uprops_paths()?
             .read_and_parse_toml("scx.toml")?;
 
-        let scx_data = toml_obj
-            .script_extensions
-            .iter()
-            .next()
-            .ok_or_else(|| {
-                DataError::custom("Could not parse Script_Extensions data from TOML")
-                    .with_path_context("scx.toml")
-            })?;
+        let scx_data = toml_obj.script_extensions.iter().next().ok_or_else(|| {
+            DataError::custom("Could not parse Script_Extensions data from TOML")
+                .with_path_context("scx.toml")
+        })?;
 
         let cpt_data = &scx_data.code_point_trie;
         let scx_array_data = &scx_data.script_code_array;

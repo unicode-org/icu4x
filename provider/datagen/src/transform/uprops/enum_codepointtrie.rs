@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use super::source::UpropsPaths;
 use crate::SourceData;
 use icu_codepointtrie::CodePointTrie;
 use icu_properties::provider::*;
@@ -9,7 +10,6 @@ use icu_provider::datagen::*;
 use icu_provider::prelude::*;
 use std::convert::TryFrom;
 use std::path::PathBuf;
-use super::source::UpropsPaths;
 
 /// A data provider reading from TOML files produced by the ICU4C icuexportdata tool.
 ///

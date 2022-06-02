@@ -4,11 +4,11 @@
 
 use elsa::sync::FrozenMap;
 use icu_provider::{DataError, DataErrorKind};
+use std::any::Any;
 use std::fmt::Debug;
 use std::path::Path;
 use std::path::PathBuf;
 use std::sync::Arc;
-use std::any::Any;
 
 pub(crate) struct UpropsPaths {
     root: PathBuf,
@@ -34,14 +34,17 @@ impl UpropsPaths {
 
     pub fn read_and_parse_toml<S, P: AsRef<Path>>(&self, path: P) -> Result<&S, DataError>
     where
-    for<'de> S: serde::Deserialize<'de> + 'static + Send + Sync,
+        for<'de> S: serde::Deserialize<'de> + 'static + Send + Sync,
     {
         let path = self.root.join(path);
 
         if self.cache.get(&path).is_none() {
             log::trace!("Reading: {:?}", &path);
-            let file = std::fs::read_to_string(&path)
-                .map_err(|_| DataErrorKind::MissingResourceKey.into_error().with_path_context(&path))?; // treat missing files as key errors
+            let file = std::fs::read_to_string(&path).map_err(|_| {
+                DataErrorKind::MissingResourceKey
+                    .into_error()
+                    .with_path_context(&path)
+            })?; // treat missing files as key errors
             let file: S = toml::from_str(&file)
                 .map_err(|e| crate::error::data_error_from_toml(e).with_path_context(&path))?;
             self.cache.insert(path.to_path_buf(), Box::new(file));
