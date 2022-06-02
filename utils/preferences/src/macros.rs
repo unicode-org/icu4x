@@ -1,13 +1,13 @@
 #[macro_export]
 macro_rules! preferences {
-    ($trait:ident, $name:ident, $resolved_name:ident, {$($key:ident => $pref:ty, $resolved:ty, $ue:expr),*}) => (
-        pub trait $trait: Preferences {
-            $(
-                fn $key(&self) -> $pref {
-                    None
-                }
-            )*
-        }
+    ($name:ident, $resolved_name:ident, {$($key:ident => $pref:ty, $resolved:ty, $ue:expr),*}) => (
+        // pub trait $trait: Preferences {
+        //     $(
+        //         fn $key(&self) -> $pref {
+        //             None
+        //         }
+        //     )*
+        // }
 
         #[derive(Default)]
         #[non_exhaustive]
@@ -43,13 +43,13 @@ macro_rules! preferences {
             }
         }
 
-        impl $trait for $name {
-            $(
-                fn $key(&self) -> $pref {
-                    self.$key
-                }
-            )*
-        }
+        // impl $trait for $name {
+        //     $(
+        //         fn $key(&self) -> $pref {
+        //             self.$key
+        //         }
+        //     )*
+        // }
 
         impl TryFrom<Locale> for $name {
             type Error = ();
@@ -121,7 +121,7 @@ macro_rules! preferences {
                     language = &self.lid.language;
                 }
                 $(
-                    if let Some(v) = prefs.$key() {
+                    if let Some(v) = prefs.$key {
                         self.$key = v;
                     }
                 )*

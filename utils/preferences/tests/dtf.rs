@@ -21,7 +21,6 @@ impl TryFrom<&icu_locid::extensions::unicode::Value> for Calendar {
 }
 
 preferences!(
-    DTFPreferences,
     DTFPreferencesBag,
     ResolvedDTFPreferencesBag,
     {
