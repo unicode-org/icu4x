@@ -693,7 +693,7 @@ impl FixedDecimal {
 
         if n <= self.magnitude {
             self.digits
-                .truncate((crate::ops::i16_abs_sub(self.magnitude, n) + 1) as usize);
+                .truncate(crate::ops::i16_abs_sub(self.magnitude, n) as usize + 1);
             self.remove_trailing_zeros_from_digits_list();
         } else {
             self.digits.clear();
