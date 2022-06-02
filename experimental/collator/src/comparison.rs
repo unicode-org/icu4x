@@ -200,10 +200,8 @@ impl Collator {
             if diacritics.get().secondaries.len() > OPTIMIZED_DIACRITICS_MAX_COUNT {
                 return Err(CollatorError::MalformedData);
             }
-        } else {
-            if diacritics.get().secondaries.len() != OPTIMIZED_DIACRITICS_MAX_COUNT {
-                return Err(CollatorError::MalformedData);
-            }
+        } else if diacritics.get().secondaries.len() != OPTIMIZED_DIACRITICS_MAX_COUNT {
+            return Err(CollatorError::MalformedData);
         }
 
         let jamo: DataPayload<CollationJamoV1Marker> = data_provider
