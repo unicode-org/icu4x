@@ -103,9 +103,10 @@ pub mod provider;
 
 use crate::error::NormalizerError;
 use crate::provider::CanonicalDecompositionDataV1Marker;
-use crate::provider::CaseFoldDecompositionDataV1Marker;
 use crate::provider::CompatibilityDecompositionDataV1Marker;
 use crate::provider::DecompositionDataV1;
+#[cfg(test)]
+use crate::provider::Uts46DecompositionDataV1Marker;
 use alloc::string::String;
 use alloc::vec::Vec;
 use core::char::{decode_utf16, DecodeUtf16Error, REPLACEMENT_CHARACTER};
@@ -127,7 +128,8 @@ use zerovec::ZeroSlice;
 enum PayloadHolder {
     Canonical(DataPayload<CanonicalDecompositionDataV1Marker>),
     Compatibility(DataPayload<CompatibilityDecompositionDataV1Marker>),
-    CaseFold(DataPayload<CaseFoldDecompositionDataV1Marker>),
+    #[cfg(test)]
+    Uts46(DataPayload<Uts46DecompositionDataV1Marker>),
 }
 
 impl PayloadHolder {
@@ -135,7 +137,8 @@ impl PayloadHolder {
         match self {
             PayloadHolder::Canonical(d) => d.get(),
             PayloadHolder::Compatibility(d) => d.get(),
-            PayloadHolder::CaseFold(d) => d.get(),
+            #[cfg(test)]
+            PayloadHolder::Uts46(d) => d.get(),
         }
     }
 }
@@ -709,11 +712,16 @@ impl DecomposingNormalizer {
         })
     }
 
-    /// NFKD_CaseFold constructor.
+    /// UTS 46 decomposed constructor (testing only)
     ///
     /// This is a special building block normalization for IDNA. It is the decomposed counterpart of
-    /// the NFKC_CaseFold normalization specified for IDNA except that default ignorables map to themselves
-    /// instead of mapping to the empty string.
+    /// ICU4C's UTS 46 normalization with two exceptions: characters that UTS 46 disallows and
+    /// ICU4C maps to U+FFFD and characters that UTS 46 maps to the empty string normalize as in
+    /// NFD in this normalization. In both cases, the previous UTS 46 processing before using
+    /// normalization is expected to deal with these characters. Making the disallowed characters
+    /// behave like this is beneficial to data size, and this normalizer implementation cannot
+    /// deal with a character normalizing to the empty string, which doesn't happen in NFD or
+    /// NFKD as of Unicode 14.
     ///
     /// Warning: In this normalization, U+0345 COMBINING GREEK YPOGEGRAMMENI exhibits a behavior
     /// that no character in Unicode exhibits in NFD, NFKD, NFC, or NFKC: Case folding turns
@@ -722,20 +730,21 @@ impl DecomposingNormalizer {
     /// canonically equivant with each other if they differ by how U+0345 is ordered relative
     /// to other reorderable characters.
     ///
-    /// XXX This normalization is probably useful outside IDNA for search index use cases.
-    /// However, due to the warning above and the non-standard nature of this normalization,
-    /// we should evaluate whether ICU4X should expose this before the normalizer graduates
-    /// from `experimental/` to `components/`.
-    pub fn try_new_nfkd_case_fold<D>(data_provider: &D) -> Result<Self, NormalizerError>
+    /// This constructor exists only in the test mode in order to allow this data to be tested
+    /// in isolation of the canonical composition step.
+    #[cfg(test)]
+    fn try_new_uts46_decomposed_without_ignored_and_disallowed<D>(
+        data_provider: &D,
+    ) -> Result<Self, NormalizerError>
     where
-        D: ResourceProvider<CaseFoldDecompositionDataV1Marker>
+        D: ResourceProvider<Uts46DecompositionDataV1Marker>
             + ResourceProvider<CanonicalDecompositionTablesV1Marker>
             + ResourceProvider<CompatibilityDecompositionTablesV1Marker>
-            // CaseFold here also
+            // UTS 46 tables merged into CompatibilityDecompositionTablesV1Marker
             + ResourceProvider<icu_properties::provider::CanonicalCombiningClassV1Marker>
             + ?Sized,
     {
-        let decompositions: DataPayload<CaseFoldDecompositionDataV1Marker> = data_provider
+        let decompositions: DataPayload<Uts46DecompositionDataV1Marker> = data_provider
             .load_resource(&DataRequest::default())?
             .take_payload()?;
         let tables: DataPayload<CanonicalDecompositionTablesV1Marker> = data_provider
@@ -765,7 +774,7 @@ impl DecomposingNormalizer {
             icu_properties::maps::get_canonical_combining_class(data_provider)?;
 
         Ok(DecomposingNormalizer {
-            decompositions: PayloadHolder::CaseFold(decompositions),
+            decompositions: PayloadHolder::Uts46(decompositions),
             tables,
             supplementary_tables: Some(supplementary_tables),
             ccc,

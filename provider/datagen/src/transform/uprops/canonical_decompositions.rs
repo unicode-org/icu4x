@@ -137,9 +137,9 @@ normalization_data_provider!(
 );
 
 normalization_data_provider!(
-    CaseFoldDecompositionDataV1Marker,
-    CaseFoldDecompositionDataProvider,
-    "nfkdcf.toml"
+    Uts46DecompositionDataV1Marker,
+    Uts46DecompositionDataProvider,
+    "uts46d.toml"
 );
 
 normalization_tables_provider!(
@@ -154,4 +154,4 @@ normalization_tables_provider!(
     "nfkdex.toml"
 );
 
-// No nfkdcfex.toml, because the CaseFold data is in nfkdex.toml.
+// No uts46dex.toml, because that data is also in nfkdex.toml.

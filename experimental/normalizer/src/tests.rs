@@ -40,11 +40,14 @@ fn test_nfkd_basic() {
 }
 
 #[test]
-fn test_nfkd_case_fold_basic() {
+fn test_uts46d_basic() {
     let data_provider = icu_testdata::get_provider();
 
     let normalizer: DecomposingNormalizer =
-        DecomposingNormalizer::try_new_nfkd_case_fold(&data_provider).unwrap();
+        DecomposingNormalizer::try_new_uts46_decomposed_without_ignored_and_disallowed(
+            &data_provider,
+        )
+        .unwrap();
     assert_eq!(normalizer.normalize("ä"), "a\u{0308}");
     assert_eq!(normalizer.normalize("Ä"), "a\u{0308}");
     assert_eq!(normalizer.normalize("ệ"), "e\u{0323}\u{0302}");

@@ -13,7 +13,7 @@ use serde;
 #[icu_provider::data_struct(
     CanonicalDecompositionDataV1Marker = "normalizer/nfd@1",
     CompatibilityDecompositionDataV1Marker = "normalizer/nfkd@1",
-    CaseFoldDecompositionDataV1Marker = "normalizer/nfkdcf@1"
+    Uts46DecompositionDataV1Marker = "normalizer/uts46d@1"
 )]
 #[derive(Debug, PartialEq, Clone)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, crabbake::Bakeable), crabbake(path = icu_normalizer::provider))]

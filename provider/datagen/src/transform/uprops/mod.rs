@@ -37,11 +37,11 @@ pub use canonical_decompositions::CanonicalDecompositionDataProvider;
 #[cfg(feature = "experimental")]
 pub use canonical_decompositions::CanonicalDecompositionTablesProvider;
 #[cfg(feature = "experimental")]
-pub use canonical_decompositions::CaseFoldDecompositionDataProvider;
-#[cfg(feature = "experimental")]
 pub use canonical_decompositions::CompatibilityDecompositionDataProvider;
 #[cfg(feature = "experimental")]
 pub use canonical_decompositions::CompatibilityDecompositionTablesProvider;
+#[cfg(feature = "experimental")]
+pub use canonical_decompositions::Uts46DecompositionDataProvider;
 #[cfg(feature = "experimental")]
 pub use casemapping::CaseMappingDataProvider;
 pub use enum_codepointtrie::EnumeratedPropertyCodePointTrieProvider;

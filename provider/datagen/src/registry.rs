@@ -33,7 +33,7 @@ pub fn get_all_keys() -> Vec<ResourceKey> {
         #[cfg(feature = "experimental")]
         icu_normalizer::provider::CompatibilityDecompositionDataV1Marker::KEY,
         #[cfg(feature = "experimental")]
-        icu_normalizer::provider::CaseFoldDecompositionDataV1Marker::KEY,
+        icu_normalizer::provider::Uts46DecompositionDataV1Marker::KEY,
         #[cfg(feature = "experimental")]
         icu_normalizer::provider::CanonicalDecompositionTablesV1Marker::KEY,
         #[cfg(feature = "experimental")]
@@ -170,7 +170,7 @@ macro_rules! create_datagen_provider {
                 $crate::transform::segmenter::SegmenterRuleProvider,
                 $crate::transform::uprops::CanonicalDecompositionDataProvider,
                 $crate::transform::uprops::CompatibilityDecompositionDataProvider,
-                $crate::transform::uprops::CaseFoldDecompositionDataProvider,
+                $crate::transform::uprops::Uts46DecompositionDataProvider,
                 $crate::transform::uprops::CanonicalDecompositionTablesProvider,
                 $crate::transform::uprops::CompatibilityDecompositionTablesProvider,
                 $crate::transform::collator::CollationDataDataProvider,
