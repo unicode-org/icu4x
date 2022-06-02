@@ -6,6 +6,7 @@
 //! formatting operations.
 
 use crate::provider::time_zones::{MetaZoneId, TimeZoneBcp47Id};
+use icu_calendar::any_calendar::AnyCalendarKind;
 use icu_calendar::Calendar;
 use icu_calendar::{arithmetic::week_of, AsCalendar, Date, DateTime};
 use icu_locid::Locale;
@@ -39,6 +40,10 @@ pub trait DateInput {
 
     /// Gets information on the position of the day within the year.
     fn day_of_year_info(&self) -> Option<DayOfYearInfo>;
+
+    /// Gets the kind of calendar this date is for, if associated with AnyCalendar
+    /// In most cases you'll probably want to return AnyCalendarKind::Iso
+    fn any_calendar_kind(&self) -> Option<AnyCalendarKind>;
 }
 
 /// Representation of a time of day according to ISO-8601 conventions. Always indexed from
@@ -339,6 +344,10 @@ impl<C: Calendar, A: AsCalendar<Calendar = C>> DateInput for Date<A> {
     fn day_of_year_info(&self) -> Option<DayOfYearInfo> {
         Some(self.day_of_year_info())
     }
+
+    fn any_calendar_kind(&self) -> Option<AnyCalendarKind> {
+        self.calendar().any_calendar_kind()
+    }
 }
 
 impl<C: Calendar, A: AsCalendar<Calendar = C>> DateInput for DateTime<A> {
@@ -366,6 +375,10 @@ impl<C: Calendar, A: AsCalendar<Calendar = C>> DateInput for DateTime<A> {
     /// Gets information on the position of the day within the year.
     fn day_of_year_info(&self) -> Option<DayOfYearInfo> {
         Some(self.date.day_of_year_info())
+    }
+
+    fn any_calendar_kind(&self) -> Option<AnyCalendarKind> {
+        self.date.calendar().any_calendar_kind()
     }
 }
 

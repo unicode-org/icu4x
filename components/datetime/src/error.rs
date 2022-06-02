@@ -7,6 +7,7 @@ use crate::fields::FieldSymbol;
 use crate::pattern::PatternError;
 use crate::skeleton::SkeletonError;
 use displaydoc::Display;
+use icu_calendar::any_calendar::AnyCalendarKind;
 use icu_plurals::PluralRulesError;
 use icu_provider::prelude::DataError;
 use tinystr::TinyStr16;
@@ -52,6 +53,9 @@ pub enum DateTimeFormatError {
     /// An error originating from a missing era symbol in the data.
     #[displaydoc("Data file missing era symbol for era code {0}")]
     MissingEraSymbol(TinyStr16),
+    /// An error from mixing calendar types
+    #[displaydoc("AnyDateTimeFormat for {0} calendar was given a {0:?} calendar")]
+    MismatchedAnyCalendar(AnyCalendarKind, Option<AnyCalendarKind>),
 }
 
 #[cfg(feature = "std")]

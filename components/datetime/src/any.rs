@@ -117,24 +117,42 @@ impl AnyDateTimeFormat {
     pub fn format_to_write(
         &self,
         w: &mut impl core::fmt::Write,
-        value: &DateTime<impl AsCalendar<Calendar = AnyCalendar>>,
-    ) -> core::fmt::Result {
-        let converted = self.1.convert_any_datetime(value);
-        self.0.format_to_write(w, &converted)
+        value: &impl DateTimeInput<Calendar = AnyCalendar>,
+    ) -> Result<(), DateTimeFormatError> {
+        self.check_calendars(value)?;
+        self.0.format_to_write(w, value)?;
+        Ok(())
     }
 
     /// ..
     #[inline]
     pub fn format_to_string(
         &self,
-        value: &DateTime<impl AsCalendar<Calendar = AnyCalendar>>,
-    ) -> String {
-        let converted = self.1.convert_any_datetime(value);
-        self.0.format_to_string(&converted)
+        value: &impl DateTimeInput<Calendar = AnyCalendar>,
+    ) -> Result<String, DateTimeFormatError> {
+        self.check_calendars(value)?;
+        Ok(self.0.format_to_string(value))
     }
 
     /// ...
     pub fn resolve_components(&self) -> components::Bag {
         self.0.resolve_components()
+    }
+
+    /// Checks if a date is constructed with the same calendar
+    fn check_calendars(
+        &self,
+        value: &impl DateTimeInput<Calendar = AnyCalendar>,
+    ) -> Result<(), DateTimeFormatError> {
+        let this_calendar = self.1.kind();
+        let date_calendar = value.any_calendar_kind();
+        if Some(this_calendar) != date_calendar {
+            return Err(DateTimeFormatError::MismatchedAnyCalendar(
+                this_calendar,
+                date_calendar,
+            ));
+        }
+
+        Ok(())
     }
 }

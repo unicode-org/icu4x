@@ -11,6 +11,7 @@ use core::str::FromStr;
 use super::parse_gregorian_from_str;
 use super::time_zone::MockTimeZone;
 
+use icu_calendar::any_calendar::AnyCalendarKind;
 use icu_calendar::{DateTime, Gregorian};
 
 /// A temporary struct that implements [`ZonedDateTimeInput`]
@@ -118,6 +119,10 @@ impl DateInput for MockZonedDateTime {
 
     fn day_of_year_info(&self) -> Option<DayOfYearInfo> {
         self.datetime.day_of_year_info()
+    }
+
+    fn any_calendar_kind(&self) -> Option<AnyCalendarKind> {
+        Some(AnyCalendarKind::Iso)
     }
 }
 
