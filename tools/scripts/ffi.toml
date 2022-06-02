@@ -86,6 +86,8 @@ cd ffi/diplomat/cpp/examples/pluralrules
 exec --fail-on-error make
 cd ../properties
 exec --fail-on-error make
+cd ../bidi
+exec --fail-on-error make
 cd ../segmenter
 exec --fail-on-error make
 cd ../fixeddecimal
@@ -134,13 +136,13 @@ mkdir ./cpp/include
 rm -r ./cpp/docs/source
 mkdir ./cpp/docs/source
 writefile ./cpp/docs/source/conf.py ${conf_py}
-exec --fail-on-error diplomat-tool cpp ./cpp/include --docs ./cpp/docs/source
+exec --fail-on-error diplomat-tool cpp ./cpp/include --docs ./cpp/docs/source --docs-base-urls=*:https://unicode-org.github.io/icu4x-docs/doc/ 
 '''
 
 [tasks.build-wearos-ffi]
 description = "Build ICU4X CAPI for Cortex"
 category = "ICU4X FFI"
-toolchain = "nightly-2022-01-31"
+toolchain = "nightly-2022-04-05"
 env = { "RUSTFLAGS" = "-Ctarget-cpu=cortex-m33 -Cpanic=abort" }
 command = "cargo"
 args = ["build", "--package", "icu_freertos",
@@ -152,7 +154,7 @@ args = ["build", "--package", "icu_freertos",
 [tasks.test-nostd]
 description = "Ensure ICU4X core builds on no-std"
 category = "ICU4X FFI"
-toolchain = "nightly-2022-01-31"
+toolchain = "nightly-2022-04-05"
 command = "cargo"
 args = ["build", "--package", "icu", "--target", "thumbv7m-none-eabi"]
 
@@ -177,15 +179,20 @@ for pkg in ${packages}
     if ${e}
         # get pkg.source
         source = map_get ${pkg} source
+        version = map_get ${pkg} version
         # extract the bit between `rev=` and `#`
         handle = split ${source} "rev="
-        hash = array_get ${handle} 1
+        hash_len = array_length ${handle}
+        if eq ${hash_len} 2
+            hash = array_get ${handle} 1
+            release handle
+            handle = split ${hash} "#"
+            version = array_get ${handle} 0
+        end
         release handle
-        handle = split ${hash} "#"
-        rev = array_get ${handle} 0
-        release handle
+
         # print it
-        echo ${rev}
+        echo ${version}
     end
 end
 release --recursive ${metadata}
@@ -200,6 +207,12 @@ script = '''
 exit_on_error true
 rev = exec cargo make --loglevel error diplomat-get-rev
 rev = trim ${rev.stdout}
-echo "Installing Diplomat rev ${rev}"
-exec cargo install --git https://github.com/rust-diplomat/diplomat.git --rev ${rev} diplomat-tool -f
+if contains ${rev} "."
+    echo "Installing Diplomat version ${rev}"
+    exec cargo install --version ${rev} diplomat-tool -f
+
+else
+    echo "Installing Diplomat rev ${rev}"
+    exec cargo install --git https://github.com/rust-diplomat/diplomat.git --rev ${rev} diplomat-tool -f
+end
 '''

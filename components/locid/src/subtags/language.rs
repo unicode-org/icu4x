@@ -18,8 +18,7 @@ use tinystr::TinyAsciiStr;
 /// ```
 /// use icu::locid::subtags::Language;
 ///
-/// let language: Language = "en".parse()
-///     .expect("Failed to parse a language subtag.");
+/// let language: Language = "en".parse().expect("Failed to parse a language subtag.");
 /// ```
 ///
 /// If the [`Language`] has no value assigned, it serializes to a string `"und"`, which
@@ -39,7 +38,7 @@ use tinystr::TinyAsciiStr;
 ///
 /// [`unicode_language_id`]: https://unicode.org/reports/tr35/#unicode_language_id
 #[derive(Debug, PartialEq, Eq, Clone, Hash, PartialOrd, Ord, Copy)]
-#[cfg_attr(feature = "serialize", derive(serde::Serialize))]
+#[cfg_attr(feature = "serde", derive(serde::Serialize))]
 #[repr(transparent)]
 pub struct Language(TinyAsciiStr<{ *LANGUAGE_LENGTH.end() }>);
 
@@ -54,8 +53,7 @@ impl Language {
     /// ```
     /// use icu::locid::subtags::Language;
     ///
-    /// let lang = Language::from_bytes(b"en")
-    ///     .expect("Parsing failed.");
+    /// let lang = Language::from_bytes(b"en").expect("Parsing failed.");
     ///
     /// assert_eq!(lang, "en");
     /// ```
@@ -102,7 +100,7 @@ impl Language {
             .map_err(|_| ParserError::InvalidSubtag)?;
         let is_valid = match s.len() {
             // LANGUAGE_LENGTH
-            2..=3 => s.is_ascii_alphabetic() && s.is_ascii_lowercase(),
+            2..=3 => s.is_ascii_alphabetic_lowercase(),
             _ => false,
         };
         if is_valid {
@@ -120,8 +118,7 @@ impl Language {
     /// ```
     /// use icu::locid::subtags::Language;
     ///
-    /// let lang = Language::from_bytes(b"en")
-    ///     .expect("Parsing failed.");
+    /// let lang = Language::from_bytes(b"en").expect("Parsing failed.");
     ///
     /// let raw = lang.into_raw();
     /// let lang = unsafe { Language::from_raw_unchecked(raw) };
@@ -139,8 +136,7 @@ impl Language {
     /// ```
     /// use icu::locid::subtags::Language;
     ///
-    /// let lang = Language::from_bytes(b"en")
-    ///     .expect("Parsing failed.");
+    /// let lang = Language::from_bytes(b"en").expect("Parsing failed.");
     ///
     /// let raw = lang.into_raw();
     /// let lang = unsafe { Language::from_raw_unchecked(raw) };
@@ -175,8 +171,7 @@ impl Language {
     /// ```
     /// use icu::locid::subtags::Language;
     ///
-    /// let lang = Language::from_bytes(b"en")
-    ///     .expect("Parsing failed.");
+    /// let lang = Language::from_bytes(b"en").expect("Parsing failed.");
     ///
     /// assert_eq!(lang.as_str(), "en");
     /// ```
@@ -195,8 +190,7 @@ impl Language {
     /// ```
     /// use icu::locid::subtags::Language;
     ///
-    /// let mut lang: Language = "csb".parse()
-    ///     .expect("Parsing failed.");
+    /// let mut lang: Language = "csb".parse().expect("Parsing failed.");
     ///
     /// assert_eq!(lang.as_str(), "csb");
     ///
@@ -216,8 +210,7 @@ impl Language {
     /// ```
     /// use icu::locid::subtags::Language;
     ///
-    /// let mut lang: Language = "und".parse()
-    ///     .expect("Parsing failed.");
+    /// let mut lang: Language = "und".parse().expect("Parsing failed.");
     ///
     /// assert_eq!(lang.is_empty(), true);
     ///

@@ -3,7 +3,7 @@
     "th": {
       "identity": {
         "version": {
-          "_cldrVersion": "40"
+          "_cldrVersion": "41"
         },
         "language": "th"
       },
@@ -352,7 +352,7 @@
                 "Ehms": "E h:mm:ss a",
                 "EHms": "E HH:mm:ss",
                 "Gy": "G y",
-                "GyMd": "d/M/y",
+                "GyMd": "d/M/y GGGGG",
                 "GyMMM": "MMM G y",
                 "GyMMMd": "d MMM G y",
                 "GyMMMEd": "E d MMM G y",

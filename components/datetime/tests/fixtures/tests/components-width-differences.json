@@ -31,7 +31,10 @@
                 "en": "2020 AD",
                 "buddhist/en": "2563 BE",
                 "coptic/en": "1736 ERA1",
-                "coptic/fr": "1736 ap. D."
+                "coptic/fr": "1736 ap. D.",
+                "ethiopic/en" : "2012 ERA0",
+                "ethiopic/fr" : "2012 av. Inc.",
+                "ethioaa/fr" : "2012 ERA0"
             }
         }
     },

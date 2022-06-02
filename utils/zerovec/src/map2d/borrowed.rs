@@ -25,13 +25,13 @@ use crate::map2d::KeyError;
 ///
 /// // Example byte buffer representing the map { 1: {2: "three" } }
 /// let BINCODE_BYTES: &[u8; 53] = &[
-///     2, 0, 0, 0, 0, 0, 0, 0, 1, 0, 4, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 2, 0, 0, 0, 0, 0,
-///     0, 0, 2, 0, 13, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 116, 104, 114, 101, 101
+///     2, 0, 0, 0, 0, 0, 0, 0, 1, 0, 4, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0,
+///     2, 0, 13, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 116, 104, 114, 101, 101,
 /// ];
 ///
 /// // Deserializing to ZeroMap2d requires no heap allocations.
-/// let zero_map: ZeroMap2dBorrowed<u16, u16, str> = bincode::deserialize(BINCODE_BYTES)
-///     .expect("Should deserialize successfully");
+/// let zero_map: ZeroMap2dBorrowed<u16, u16, str> =
+///     bincode::deserialize(BINCODE_BYTES).expect("Should deserialize successfully");
 /// assert_eq!(zero_map.get(&1, &2), Ok("three"));
 /// ```
 ///
@@ -45,10 +45,10 @@ where
     K1: ?Sized,
     V: ?Sized,
 {
-    pub(crate) keys0: <<K0 as ZeroMapKV<'a>>::Container as ZeroVecLike<'a, K0>>::BorrowedVariant,
+    pub(crate) keys0: &'a <<K0 as ZeroMapKV<'a>>::Container as ZeroVecLike<K0>>::BorrowedVariant,
     pub(crate) joiner: &'a ZeroSlice<u32>,
-    pub(crate) keys1: <<K1 as ZeroMapKV<'a>>::Container as ZeroVecLike<'a, K1>>::BorrowedVariant,
-    pub(crate) values: <<V as ZeroMapKV<'a>>::Container as ZeroVecLike<'a, V>>::BorrowedVariant,
+    pub(crate) keys1: &'a <<K1 as ZeroMapKV<'a>>::Container as ZeroVecLike<K1>>::BorrowedVariant,
+    pub(crate) values: &'a <<V as ZeroMapKV<'a>>::Container as ZeroVecLike<V>>::BorrowedVariant,
 }
 
 impl<'a, K0, K1, V> Copy for ZeroMap2dBorrowed<'a, K0, K1, V>
@@ -86,6 +86,9 @@ where
     K0: ZeroMapKV<'a>,
     K1: ZeroMapKV<'a>,
     V: ZeroMapKV<'a>,
+    <<K0 as ZeroMapKV<'a>>::Container as ZeroVecLike<K0>>::BorrowedVariant: 'static,
+    <<K1 as ZeroMapKV<'a>>::Container as ZeroVecLike<K1>>::BorrowedVariant: 'static,
+    <<V as ZeroMapKV<'a>>::Container as ZeroVecLike<V>>::BorrowedVariant: 'static,
     K0: ?Sized,
     K1: ?Sized,
     V: ?Sized,
@@ -100,6 +103,9 @@ where
     K0: ZeroMapKV<'a>,
     K1: ZeroMapKV<'a>,
     V: ZeroMapKV<'a>,
+    <<K0 as ZeroMapKV<'a>>::Container as ZeroVecLike<K0>>::BorrowedVariant: 'static,
+    <<K1 as ZeroMapKV<'a>>::Container as ZeroVecLike<K1>>::BorrowedVariant: 'static,
+    <<V as ZeroMapKV<'a>>::Container as ZeroVecLike<V>>::BorrowedVariant: 'static,
     K0: ?Sized,
     K1: ?Sized,
     V: ?Sized,
@@ -120,17 +126,27 @@ where
     pub fn new() -> Self {
         Self {
             keys0:
-                <<K0 as ZeroMapKV<'a>>::Container as ZeroVecLike<'a, K0>>::BorrowedVariant::zvl_new(
+                <<K0 as ZeroMapKV<'a>>::Container as ZeroVecLike<K0>>::BorrowedVariant::zvl_new_borrowed(
                 ),
             joiner: Default::default(),
             keys1:
-                <<K1 as ZeroMapKV<'a>>::Container as ZeroVecLike<'a, K1>>::BorrowedVariant::zvl_new(
+                <<K1 as ZeroMapKV<'a>>::Container as ZeroVecLike<K1>>::BorrowedVariant::zvl_new_borrowed(
                 ),
             values:
-                <<V as ZeroMapKV<'a>>::Container as ZeroVecLike<'a, V>>::BorrowedVariant::zvl_new(),
+                <<V as ZeroMapKV<'a>>::Container as ZeroVecLike<V>>::BorrowedVariant::zvl_new_borrowed(),
         }
     }
+}
 
+impl<'a, K0, K1, V> ZeroMap2dBorrowed<'a, K0, K1, V>
+where
+    K0: ZeroMapKV<'a>,
+    K1: ZeroMapKV<'a>,
+    V: ZeroMapKV<'a>,
+    K0: ?Sized,
+    K1: ?Sized,
+    V: ?Sized,
+{
     /// The number of elements in the [`ZeroMap2dBorrowed`]
     pub fn len(&self) -> usize {
         self.values.zvl_len()
@@ -158,8 +174,8 @@ where
     /// primary advantage of using [`ZeroMap2dBorrowed`](super::ZeroMap2dBorrowed) over [`ZeroMap2d`](super::ZeroMap2d).
     ///
     /// ```rust
-    /// use zerovec::ZeroMap2d;
     /// use zerovec::maps::{KeyError, ZeroMap2dBorrowed};
+    /// use zerovec::ZeroMap2d;
     ///
     /// let mut map = ZeroMap2d::new();
     /// map.insert(&1, "one", "foo");
@@ -192,14 +208,14 @@ where
         // This unwrap is protected by the invariant keys1.len() == values.len(),
         // the above debug_assert!, and the contract of zvl_binary_search_in_range.
         #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
-        Ok(self.values.zvl_get_borrowed(index).unwrap())
+        Ok(self.values.zvl_get(index).unwrap())
     }
 
     /// Returns whether `key0` is contained in this map
     ///
     /// ```rust
-    /// use zerovec::ZeroMap2d;
     /// use zerovec::maps::ZeroMap2dBorrowed;
+    /// use zerovec::ZeroMap2d;
     ///
     /// let mut map = ZeroMap2d::new();
     /// map.insert(&1, "one", "foo");
@@ -291,18 +307,18 @@ where
     K0: for<'c> ZeroMapKV<'c> + ?Sized,
     K1: for<'c> ZeroMapKV<'c> + ?Sized,
     V: for<'c> ZeroMapKV<'c> + ?Sized,
-    <<K0 as ZeroMapKV<'a>>::Container as ZeroVecLike<'a, K0>>::BorrowedVariant:
-        PartialEq<<<K0 as ZeroMapKV<'b>>::Container as ZeroVecLike<'b, K0>>::BorrowedVariant>,
-    <<K1 as ZeroMapKV<'a>>::Container as ZeroVecLike<'a, K1>>::BorrowedVariant:
-        PartialEq<<<K1 as ZeroMapKV<'b>>::Container as ZeroVecLike<'b, K1>>::BorrowedVariant>,
-    <<V as ZeroMapKV<'a>>::Container as ZeroVecLike<'a, V>>::BorrowedVariant:
-        PartialEq<<<V as ZeroMapKV<'b>>::Container as ZeroVecLike<'b, V>>::BorrowedVariant>,
+    <<K0 as ZeroMapKV<'a>>::Container as ZeroVecLike<K0>>::BorrowedVariant:
+        PartialEq<<<K0 as ZeroMapKV<'b>>::Container as ZeroVecLike<K0>>::BorrowedVariant>,
+    <<K1 as ZeroMapKV<'a>>::Container as ZeroVecLike<K1>>::BorrowedVariant:
+        PartialEq<<<K1 as ZeroMapKV<'b>>::Container as ZeroVecLike<K1>>::BorrowedVariant>,
+    <<V as ZeroMapKV<'a>>::Container as ZeroVecLike<V>>::BorrowedVariant:
+        PartialEq<<<V as ZeroMapKV<'b>>::Container as ZeroVecLike<V>>::BorrowedVariant>,
 {
     fn eq(&self, other: &ZeroMap2dBorrowed<'b, K0, K1, V>) -> bool {
-        self.keys0.eq(&other.keys0)
+        self.keys0.eq(other.keys0)
             && self.joiner.eq(other.joiner)
-            && self.keys1.eq(&other.keys1)
-            && self.values.eq(&other.values)
+            && self.keys1.eq(other.keys1)
+            && self.values.eq(other.values)
     }
 }
 
@@ -311,9 +327,9 @@ where
     K0: ZeroMapKV<'a> + ?Sized,
     K1: ZeroMapKV<'a> + ?Sized,
     V: ZeroMapKV<'a> + ?Sized,
-    <<K0 as ZeroMapKV<'a>>::Container as ZeroVecLike<'a, K0>>::BorrowedVariant: fmt::Debug,
-    <<K1 as ZeroMapKV<'a>>::Container as ZeroVecLike<'a, K1>>::BorrowedVariant: fmt::Debug,
-    <<V as ZeroMapKV<'a>>::Container as ZeroVecLike<'a, V>>::BorrowedVariant: fmt::Debug,
+    <<K0 as ZeroMapKV<'a>>::Container as ZeroVecLike<K0>>::BorrowedVariant: fmt::Debug,
+    <<K1 as ZeroMapKV<'a>>::Container as ZeroVecLike<K1>>::BorrowedVariant: fmt::Debug,
+    <<V as ZeroMapKV<'a>>::Container as ZeroVecLike<V>>::BorrowedVariant: fmt::Debug,
 {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> Result<(), fmt::Error> {
         f.debug_struct("ZeroMap2dBorrowed")

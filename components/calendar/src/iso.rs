@@ -2,7 +2,32 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! This module contains types and implementations for the ISO calendar
+//! This module contains types and implementations for the ISO calendar.
+//!
+//! ```rust
+//! use icu::calendar::{Date, DateTime};
+//!
+//! // `Date` type
+//! let date_iso = Date::new_iso_date_from_integers(1970, 1, 2)
+//!     .expect("Failed to initialize ISO Date instance.");
+//!
+//! // `DateTime` type
+//! let datetime_iso = DateTime::new_iso_datetime_from_integers(1970, 1, 2, 13, 1, 0)
+//!     .expect("Failed to initialize ISO DateTime instance.");
+//!
+//! // `Date` checks
+//! assert_eq!(date_iso.year().number, 1970);
+//! assert_eq!(date_iso.month().number, 1);
+//! assert_eq!(date_iso.day_of_month().0, 2);
+//!
+//! // `DateTime` type
+//! assert_eq!(datetime_iso.date.year().number, 1970);
+//! assert_eq!(datetime_iso.date.month().number, 1);
+//! assert_eq!(datetime_iso.date.day_of_month().0, 2);
+//! assert_eq!(datetime_iso.time.hour.number(), 13);
+//! assert_eq!(datetime_iso.time.minute.number(), 1);
+//! assert_eq!(datetime_iso.time.second.number(), 0);
+//! ```
 
 use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, DateTime, DateTimeError};
 use core::convert::{TryFrom, TryInto};
@@ -12,6 +37,7 @@ use tinystr::tinystr;
 const EPOCH: i32 = 1;
 
 #[derive(Copy, Clone, Debug, Default)]
+#[allow(clippy::exhaustive_structs)] // this type is stable
 /// The ISO Calendar
 pub struct Iso;
 
@@ -22,6 +48,7 @@ pub struct IsoDay(u8);
 #[derive(Copy, Clone, Debug, Hash, Eq, PartialEq, Ord, PartialOrd)]
 pub struct IsoMonth(u8);
 #[derive(Copy, Clone, Debug, Hash, Eq, PartialEq, Ord, PartialOrd)]
+#[allow(clippy::exhaustive_structs)] // newtype
 /// An ISO year. Year 0 == 1 BCE
 pub struct IsoYear(pub i32);
 
@@ -252,6 +279,7 @@ impl Calendar for Iso {
         &self,
         date1: &Self::DateInner,
         date2: &Self::DateInner,
+        _calendar2: &Self,
         _largest_unit: DateDurationUnit,
         _smallest_unit: DateDurationUnit,
     ) -> DateDuration<Self> {
@@ -293,13 +321,30 @@ impl Calendar for Iso {
         }
     }
 
-    fn debug_name() -> &'static str {
+    fn debug_name(&self) -> &'static str {
         "ISO"
     }
 }
 
 impl Date<Iso> {
-    /// Construct a new ISO Date
+    /// Construct a new ISO Date.
+    ///
+    /// ```rust
+    /// use icu::calendar::{iso::IsoDay, iso::IsoMonth, iso::IsoYear, Date};
+    /// use std::convert::TryFrom;
+    ///
+    /// let iso_year = IsoYear(1996);
+    /// let iso_month = IsoMonth::try_from(2).expect("Failed to initialize IsoMonth instance.");
+    /// let iso_day = IsoDay::try_from(3).expect("Failed to initialize IsoDay instance.");
+    ///
+    /// // Creation of ISO date
+    /// let date_iso = Date::new_iso_date(iso_year, iso_month, iso_day)
+    ///     .expect("Failed to initialize ISO Date instance.");
+    ///
+    /// assert_eq!(date_iso.year().number, 1996);
+    /// assert_eq!(date_iso.month().number, 2);
+    /// assert_eq!(date_iso.day_of_month().0, 3);
+    /// ```
     pub fn new_iso_date(
         year: IsoYear,
         month: IsoMonth,
@@ -315,7 +360,18 @@ impl Date<Iso> {
         Ok(Date::from_raw(IsoDateInner { day, month, year }, Iso))
     }
 
-    /// Construct a new ISO date from integers
+    /// Construct a new ISO date from integers.
+    ///
+    /// ```rust
+    /// use icu::calendar::Date;
+    ///
+    /// let date_iso = Date::new_iso_date_from_integers(1970, 1, 2)
+    ///     .expect("Failed to initialize ISO Date instance.");
+    ///
+    /// assert_eq!(date_iso.year().number, 1970);
+    /// assert_eq!(date_iso.month().number, 1);
+    /// assert_eq!(date_iso.day_of_month().0, 2);
+    /// ```
     pub fn new_iso_date_from_integers(
         year: i32,
         month: u8,
@@ -326,7 +382,21 @@ impl Date<Iso> {
 }
 
 impl DateTime<Iso> {
-    /// Construct a new ISO date from integers
+    /// Construct a new ISO datetime from integers.
+    ///
+    /// ```rust
+    /// use icu::calendar::DateTime;
+    ///
+    /// let datetime_iso = DateTime::new_iso_datetime_from_integers(1970, 1, 2, 13, 1, 0)
+    ///     .expect("Failed to initialize ISO DateTime instance.");
+    ///
+    /// assert_eq!(datetime_iso.date.year().number, 1970);
+    /// assert_eq!(datetime_iso.date.month().number, 1);
+    /// assert_eq!(datetime_iso.date.day_of_month().0, 2);
+    /// assert_eq!(datetime_iso.time.hour.number(), 13);
+    /// assert_eq!(datetime_iso.time.minute.number(), 1);
+    /// assert_eq!(datetime_iso.time.second.number(), 0);
+    /// ```
     pub fn new_iso_datetime_from_integers(
         year: i32,
         month: u8,
@@ -337,7 +407,7 @@ impl DateTime<Iso> {
     ) -> Result<DateTime<Iso>, DateTimeError> {
         Ok(DateTime {
             date: Date::new_iso_date_from_integers(year, month, day)?,
-            time: types::Time::try_new(hour, minute, second)?,
+            time: types::Time::try_new(hour, minute, second, 0)?,
         })
     }
 }
@@ -421,7 +491,7 @@ impl Iso {
 
         let year = 400 * n_400 + 100 * n_100 + 4 * n_4 + n_1;
 
-        if n_400 == 4 || n_4 == 1 {
+        if n_100 == 4 || n_1 == 4 {
             year
         } else {
             year + 1

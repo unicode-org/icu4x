@@ -22,10 +22,10 @@ pub mod ffi {
 
     #[diplomat::opaque]
     /// An ICU4X line-break segmenter, capable of finding breakpoints in strings.
-    /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu_segmenter/struct.LineBreakSegmenter.html) for more information.
+    #[diplomat::rust_link(icu_segmenter::LineBreakSegmenter, Struct)]
     pub struct ICU4XLineBreakSegmenter(LineBreakSegmenter);
 
-    /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu_segmenter/enum.LineBreakRule.html) for more information.
+    #[diplomat::rust_link(icu_segmenter::LineBreakRule, Enum)]
     pub enum ICU4XLineBreakRule {
         Loose,
         Normal,
@@ -33,14 +33,14 @@ pub mod ffi {
         Anywhere,
     }
 
-    /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu_segmenter/enum.WordBreakRule.html) for more information.
+    #[diplomat::rust_link(icu_segmenter::WordBreakRule, Enum)]
     pub enum ICU4XWordBreakRule {
         Normal,
         BreakAll,
         KeepAll,
     }
 
-    /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu_segmenter/enum.LineBreakOptions.html) for more information.
+    #[diplomat::rust_link(icu_segmenter::LineBreakOptions, Struct)]
     pub struct ICU4XLineBreakOptions {
         pub line_break_rule: ICU4XLineBreakRule,
         pub word_break_rule: ICU4XWordBreakRule,
@@ -58,7 +58,7 @@ pub mod ffi {
 
     impl ICU4XLineBreakSegmenter {
         /// Construct a [`ICU4XLineBreakSegmenter`] with default options.
-        /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu_segmenter/struct.LineBreakSegmenter.html#method.try_new) for more information.
+        #[diplomat::rust_link(icu_segmenter::LineBreakSegmenter::try_new, FnInStruct)]
         pub fn try_new(
             provider: &ICU4XDataProvider,
         ) -> DiplomatResult<Box<ICU4XLineBreakSegmenter>, ()> {
@@ -80,7 +80,7 @@ pub mod ffi {
         }
 
         /// Construct a [`ICU4XLineBreakSegmenter`] with custom options.
-        /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu_segmenter/struct.LineBreakSegmenter.html#method.try_new_with_options) for more information.
+        #[diplomat::rust_link(icu_segmenter::LineBreakSegmenter::try_new_with_options, FnInStruct)]
         pub fn try_new_with_options(
             provider: &ICU4XDataProvider,
             options: ICU4XLineBreakOptions,
@@ -106,13 +106,13 @@ pub mod ffi {
         }
 
         /// Segments a UTF-8 string.
-        /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu_segmenter/struct.LineBreakSegmenter.html#method.segment_str) for more information.
+        #[diplomat::rust_link(icu_segmenter::LineBreakSegmenter::segment_str, FnInStruct)]
         pub fn segment_utf8<'a>(&'a self, input: &'a str) -> Box<ICU4XLineBreakIteratorUtf8<'a>> {
             Box::new(ICU4XLineBreakIteratorUtf8(self.0.segment_str(input)))
         }
 
         /// Segments a UTF-16 string.
-        /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu_segmenter/struct.LineBreakSegmenter.html#method.segment_utf16) for more information.
+        #[diplomat::rust_link(icu_segmenter::LineBreakSegmenter::segment_utf16, FnInStruct)]
         pub fn segment_utf16<'a>(
             &'a self,
             input: &'a [u16],
@@ -121,7 +121,7 @@ pub mod ffi {
         }
 
         /// Segments a Latin-1 string.
-        /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu_segmenter/struct.LineBreakSegmenter.html#method.segment_latin1) for more information.
+        #[diplomat::rust_link(icu_segmenter::LineBreakSegmenter::segment_latin1, FnInStruct)]
         pub fn segment_latin1<'a>(
             &'a self,
             input: &'a [u8],

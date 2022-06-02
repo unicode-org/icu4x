@@ -15,18 +15,16 @@
 //! For example, if your regular stack type is:
 //!
 //! ```rust
-//! use zerovec::ZeroVec;
-//! use zerovec::ule::*;
 //! use zerofrom::ZeroFrom;
+//! use zerovec::ule::*;
+//! use zerovec::ZeroVec;
 //!
-//! # pub use dep_serde as serde;
 //! #[derive(serde::Serialize, serde::Deserialize)]
-//! # #[serde(crate = "dep_serde")]
 //! struct Foo<'a> {
-//!    field1: char,
-//!    field2: u32,
-//!    #[serde(borrow)]
-//!    field3: ZeroVec<'a, u32>   
+//!     field1: char,
+//!     field2: u32,
+//!     #[serde(borrow)]
+//!     field3: ZeroVec<'a, u32>,
 //! }
 //! ```
 //!
@@ -41,15 +39,13 @@
 //! use zerofrom::ZeroFrom;
 //! use core::mem;
 //!
-//! # pub use dep_serde as serde;
 //! # #[derive(serde::Serialize, serde::Deserialize)]
-//! # #[serde(crate = "dep_serde")]
-//!# struct Foo<'a> {
-//!#    field1: char,
-//!#    field2: u32,
-//!#    #[serde(borrow)]
-//!#    field3: ZeroVec<'a, u32>   
-//!# }
+//! # struct Foo<'a> {
+//! #    field1: char,
+//! #    field2: u32,
+//! #    #[serde(borrow)]
+//! #    field3: ZeroVec<'a, u32>   
+//! # }
 //!
 //! // Must be repr(packed) for safety of VarULE!
 //! // Must also only contain ULE types

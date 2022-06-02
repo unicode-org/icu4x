@@ -22,11 +22,10 @@ use core::str::FromStr;
 /// # Examples
 ///
 /// ```
-/// use icu::locid::Locale;
 /// use icu::locid::extensions::unicode::{Key, Value};
+/// use icu::locid::Locale;
 ///
-/// let loc: Locale = "en-US-u-ca-buddhist".parse()
-///     .expect("Failed to parse.");
+/// let loc: Locale = "en-US-u-ca-buddhist".parse().expect("Failed to parse.");
 ///
 /// assert_eq!(loc.id.language, "en");
 /// assert_eq!(loc.id.script, None);
@@ -36,8 +35,7 @@ use core::str::FromStr;
 ///
 /// let key: Key = "ca".parse().expect("Parsing key failed.");
 /// let value: Value = "buddhist".parse().expect("Parsing value failed.");
-/// assert_eq!(loc.extensions.unicode.keywords.get(&key),
-///     Some(&value));
+/// assert_eq!(loc.extensions.unicode.keywords.get(&key), Some(&value));
 /// ```
 ///
 /// # Parsing
@@ -59,7 +57,8 @@ use core::str::FromStr;
 /// ```
 /// use icu::locid::Locale;
 ///
-/// let loc: Locale = "eN_latn_Us-Valencia_u-hC-H12".parse()
+/// let loc: Locale = "eN_latn_Us-Valencia_u-hC-H12"
+///     .parse()
 ///     .expect("Failed to parse.");
 ///
 /// assert_eq!(loc.id.language, "en");
@@ -70,6 +69,7 @@ use core::str::FromStr;
 /// [`Unicode Locale Identifier`]: https://unicode.org/reports/tr35/tr35.html#Unicode_locale_identifier
 #[derive(Default, PartialEq, Eq, Clone, Hash, PartialOrd, Ord)]
 #[allow(missing_docs)] // TODO(#1028) - Add missing docs.
+#[allow(clippy::exhaustive_structs)] // This struct is stable (and invoked by a macro)
 pub struct Locale {
     // Language component of the Locale
     pub id: LanguageIdentifier,
@@ -86,8 +86,7 @@ impl Locale {
     /// ```
     /// use icu::locid::Locale;
     ///
-    /// let loc = Locale::from_bytes("en-US-u-hc-h12".as_bytes())
-    ///     .expect("Parsing failed.");
+    /// let loc = Locale::from_bytes("en-US-u-hc-h12".as_bytes()).expect("Parsing failed.");
     ///
     /// assert_eq!(loc.to_string(), "en-US-u-hc-h12");
     /// ```
@@ -120,7 +119,10 @@ impl Locale {
     /// ```
     /// use icu::locid::Locale;
     ///
-    /// assert_eq!(Locale::canonicalize("pL_latn_pl-U-HC-H12"), Ok("pl-Latn-PL-u-hc-h12".to_string()));
+    /// assert_eq!(
+    ///     Locale::canonicalize("pL_latn_pl-U-HC-H12"),
+    ///     Ok("pl-Latn-PL-u-hc-h12".to_string())
+    /// );
     /// ```
     pub fn canonicalize<S: AsRef<[u8]>>(input: S) -> Result<String, ParserError> {
         let locale = Self::from_bytes(input.as_ref())?;
@@ -318,8 +320,8 @@ impl PartialEq<str> for Locale {
 /// # Examples
 ///
 /// ```
-/// use icu::locid::Locale;
 /// use icu::locid::language;
+/// use icu::locid::Locale;
 ///
 /// let language = language!("en");
 /// let loc = Locale::from(language);
@@ -339,8 +341,8 @@ impl From<subtags::Language> for Locale {
 /// # Examples
 ///
 /// ```
-/// use icu::locid::Locale;
 /// use icu::locid::script;
+/// use icu::locid::Locale;
 ///
 /// let script = script!("latn");
 /// let loc = Locale::from(Some(script));
@@ -360,8 +362,8 @@ impl From<Option<subtags::Script>> for Locale {
 /// # Examples
 ///
 /// ```
-/// use icu::locid::Locale;
 /// use icu::locid::region;
+/// use icu::locid::Locale;
 ///
 /// let region = region!("US");
 /// let loc = Locale::from(Some(region));
@@ -382,7 +384,7 @@ impl From<Option<subtags::Region>> for Locale {
 ///
 /// ```
 /// use icu::locid::Locale;
-/// use icu::locid::{language, script, region};
+/// use icu::locid::{language, region, script};
 ///
 /// let lang = language!("en");
 /// let script = script!("Latn");

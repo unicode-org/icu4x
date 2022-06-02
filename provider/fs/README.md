@@ -63,7 +63,7 @@ To generate the data required for [`FsDataProvider`], run the following from the
 cargo run             \
   --bin icu4x-datagen \
   --                  \
-  --cldr-tag 39.0.0   \
+  --cldr-tag 41.0.0   \
   --out ./icu4x-data  \
   --all-keys          \
   --all-locales
@@ -75,15 +75,15 @@ To export `bincode` format, use
 cargo run             \
   --bin icu4x-datagen \
   --                  \
-  --cldr-tag 39.0.0   \
+  --cldr-tag 41.0.0   \
   --out ./icu4x-data  \
   --all-keys          \
   --all-locales       \
   -s bincode
 ```
 
-*Notice:* In order to use `bincode` encoded data in production, [`icu_provider_fs`](crate) has to be
-added with `bincode` feature.
+*Notice:* In order to use `bincode` encoded data in production, [`icu_provider`](crate) has to be
+added with `deserialize_bincode_1` feature.
 
 [`ICU4X`]: ../icu/index.html
 

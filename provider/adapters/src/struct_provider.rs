@@ -14,8 +14,8 @@ use zerofrom::ZeroFrom;
 /// # Examples
 ///
 /// ```
-/// use icu_provider::prelude::*;
 /// use icu_provider::hello_world::*;
+/// use icu_provider::prelude::*;
 /// use icu_provider_adapters::struct_provider::AnyPayloadProvider;
 /// use std::borrow::Cow;
 ///
@@ -41,6 +41,7 @@ use zerofrom::ZeroFrom;
 ///
 /// assert_eq!(payload.get().message, "hello world");
 /// ```
+#[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct AnyPayloadProvider {
     pub key: ResourceKey,
     pub data: AnyPayload,

@@ -3,7 +3,7 @@
     "th": {
       "identity": {
         "version": {
-          "_cldrVersion": "40"
+          "_cldrVersion": "41"
         },
         "language": "th"
       },
@@ -468,7 +468,7 @@
                   "d": "E d MMM – E d MMM G y",
                   "G": "E d MMM G y – E d MMM G y",
                   "M": "E d MMM – E d MMM G y",
-                  "y": "E d MMM y – E d MMM y"
+                  "y": "E d MMM G y – E d MMM y"
                 },
                 "h": {
                   "a": "h a – h a",

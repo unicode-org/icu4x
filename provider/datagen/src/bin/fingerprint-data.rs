@@ -100,7 +100,7 @@ fn main() -> eyre::Result<()> {
         }
     } else if format == "blob" {
         let blob = fs::read(base)?;
-        let provider = BlobDataProvider::new_from_rc_blob(blob.into())?;
+        let provider = BlobDataProvider::new_from_blob(blob)?;
         let mut all_keys = icu_datagen::get_all_keys();
         all_keys.sort_by_key(|k| k.get_path());
         let map = provider.get_map();
@@ -117,9 +117,11 @@ fn main() -> eyre::Result<()> {
                     let result = hasher.finalize();
                     let slash = if locale.is_empty() { "" } else { "/" };
                     let path = key.get_path();
+                    let locale_str = std::str::from_utf8(locale)
+                        .expect("Locales in the data provider should be valid strings");
 
-                    log::trace!("Hash for {path}{slash}{locale} is {result:x}");
-                    writeln!(out, "{path}{slash}{locale}: {result:x}")?;
+                    log::trace!("Hash for {path}{slash}{locale_str} is {result:x}");
+                    writeln!(out, "{path}{slash}{locale_str}: {result:x}")?;
                 }
             }
         }

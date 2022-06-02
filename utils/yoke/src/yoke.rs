@@ -44,9 +44,9 @@ use alloc::sync::Arc;
 /// ()`. `.get()` protects access by essentially reifying the erased lifetime to a safe local one
 /// when necessary.
 ///
-/// Furthermore, there are various [`.project()`][Yoke::project] methods that allow turning a `Yoke`
+/// Furthermore, there are various [`.map_project()`][Yoke::map_project] methods that allow turning a `Yoke`
 /// into another `Yoke` containing a different type that may contain elements of the original yoked
-/// value. See the [`Yoke::project()`] docs for more details.
+/// value. See the [`Yoke::map_project()`] docs for more details.
 ///
 /// In general, `C` is a concrete type, but it is also possible for it to be a trait object;
 /// for more information, see [`IsCovariant`].
@@ -66,7 +66,7 @@ use alloc::sync::Arc;
 ///
 /// fn load_object(filename: &str) -> Yoke<Cow<'static, str>, Rc<[u8]>> {
 ///     let rc: Rc<[u8]> = load_from_cache(filename);
-///     Yoke::<Cow<'static, str>, Rc<[u8]>>::attach_to_cart_badly(rc, |data: &[u8]| {
+///     Yoke::<Cow<'static, str>, Rc<[u8]>>::attach_to_cart(rc, |data: &[u8]| {
 ///         // essentially forcing a #[serde(borrow)]
 ///         Cow::Borrowed(bincode::deserialize(data).unwrap())
 ///     })
@@ -76,7 +76,6 @@ use alloc::sync::Arc;
 /// assert_eq!(&**yoke.get(), "hello");
 /// assert!(matches!(yoke.get(), &Cow::Borrowed(_)));
 /// ```
-///
 pub struct Yoke<Y: for<'a> Yokeable<'a>, C> {
     // must be the first field for drop order
     // this will have a 'static lifetime parameter, that parameter is a lie
@@ -89,15 +88,12 @@ impl<Y: for<'a> Yokeable<'a>, C: StableDeref> Yoke<Y, C> {
     ///
     /// See also [`Yoke::try_attach_to_cart()`] to return a `Result` from the closure.
     ///
-    /// Call sites for this function may not compile; if this happens, use
-    /// [`Yoke::attach_to_cart_badly()`] instead.
+    /// Call sites for this function may not compile pre-1.61; if this still happens, use
+    /// [`Yoke::attach_to_cart_badly()`] and file a bug.
     ///
     /// # Examples
     ///
-    /// The following code does not currently compile.
-    /// See [#1061](https://github.com/unicode-org/icu4x/issues/1061).
-    ///
-    /// ```compile_fail
+    /// ```
     /// # use yoke::{Yoke, Yokeable};
     /// # use std::rc::Rc;
     /// # use std::borrow::Cow;
@@ -132,9 +128,8 @@ impl<Y: for<'a> Yokeable<'a>, C: StableDeref> Yoke<Y, C> {
     /// Construct a [`Yoke`] by yokeing an object to a cart. If an error occurs in the
     /// deserializer function, the error is passed up to the caller.
     ///
-    /// Call sites for this function may not compile; if this happens, use
-    /// [`Yoke::try_attach_to_cart_badly()`] instead.
-    /// See [#1061](https://github.com/unicode-org/icu4x/issues/1061).
+    /// Call sites for this function may not compile pre-1.61; if this still happens, use
+    /// [`Yoke::try_attach_to_cart_badly()`] and file a bug.
     pub fn try_attach_to_cart<E, F>(cart: C, f: F) -> Result<Self, E>
     where
         F: for<'de> FnOnce(&'de <C as Deref>::Target) -> Result<<Y as Yokeable<'de>>::Output, E>,
@@ -146,77 +141,26 @@ impl<Y: for<'a> Yokeable<'a>, C: StableDeref> Yoke<Y, C> {
         })
     }
 
-    /// Construct a [`Yoke`] by yokeing an object to a cart in a closure.
+    /// Use [`Yoke::attach_to_cart()`].
     ///
-    /// For a version of this function that takes a `FnOnce` instead of a raw function pointer,
-    /// see [`Yoke::attach_to_cart()`].
-    ///
-    /// # Example
-    ///
-    /// For example, we can use this to store zero-copy deserialized data in a cache:
-    ///
-    /// ```rust
-    /// # use yoke::{Yoke, Yokeable};
-    /// # use std::rc::Rc;
-    /// # use std::borrow::Cow;
-    /// # fn load_from_cache(_filename: &str) -> Rc<[u8]> {
-    /// #     // dummy implementation
-    /// #     Rc::new([0x5, 0, 0, 0, 0, 0, 0, 0, 0x68, 0x65, 0x6c, 0x6c, 0x6f])
-    /// # }
-    ///
-    /// fn load_object(filename: &str) -> Yoke<Cow<'static, str>, Rc<[u8]>> {
-    ///     let rc: Rc<[u8]> = load_from_cache(filename);
-    ///     Yoke::<Cow<'static, str>, Rc<[u8]>>::attach_to_cart_badly(rc, |data: &[u8]| {
-    ///         // essentially forcing a #[serde(borrow)]
-    ///         Cow::Borrowed(bincode::deserialize(data).unwrap())
-    ///     })
-    /// }
-    ///
-    /// let yoke: Yoke<Cow<str>, _> = load_object("filename.bincode");
-    /// assert_eq!(&**yoke.get(), "hello");
-    /// assert!(matches!(yoke.get(), &Cow::Borrowed(_)));
-    /// ```
+    /// This was needed because the pre-1.61 compiler couldn't always handle the FnOnce trait bound.
+    #[deprecated]
     pub fn attach_to_cart_badly(
         cart: C,
         f: for<'de> fn(&'de <C as Deref>::Target) -> <Y as Yokeable<'de>>::Output,
     ) -> Self {
-        let deserialized = f(cart.deref());
-        Self {
-            yokeable: unsafe { Y::make(deserialized) },
-            cart,
-        }
+        Self::attach_to_cart(cart, f)
     }
 
-    /// Construct a [`Yoke`] by yokeing an object to a cart. If an error occurs in the
-    /// deserializer function, the error is passed up to the caller.
+    /// Use [`Yoke::try_attach_to_cart()`].
     ///
-    /// For a version of this function that takes a `FnOnce` instead of a raw function pointer,
-    /// see [`Yoke::try_attach_to_cart()`].
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// # use yoke::{Yoke, Yokeable};
-    /// # use std::rc::Rc;
-    /// # use std::borrow::Cow;
-    /// let rc = Rc::new([0xb, 0xa, 0xd]);
-    ///
-    /// let yoke_result: Result<Yoke<Cow<str>, Rc<[u8]>>, _> =
-    ///     Yoke::try_attach_to_cart_badly(rc, |data: &[u8]| {
-    ///         bincode::deserialize(data)
-    ///     });
-    ///
-    /// assert!(matches!(yoke_result, Err(_)));
-    /// ```
+    /// This was needed because the pre-1.61 compiler couldn't always handle the FnOnce trait bound.
+    #[deprecated]
     pub fn try_attach_to_cart_badly<E>(
         cart: C,
         f: for<'de> fn(&'de <C as Deref>::Target) -> Result<<Y as Yokeable<'de>>::Output, E>,
     ) -> Result<Self, E> {
-        let deserialized = f(cart.deref())?;
-        Ok(Self {
-            yokeable: unsafe { Y::make(deserialized) },
-            cart,
-        })
+        Self::try_attach_to_cart(cart, f)
     }
 }
 
@@ -241,7 +185,7 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     /// #
     /// # fn load_object(filename: &str) -> Yoke<Cow<'static, str>, Rc<[u8]>> {
     /// #     let rc: Rc<[u8]> = load_from_cache(filename);
-    /// #     Yoke::<Cow<'static, str>, Rc<[u8]>>::attach_to_cart_badly(rc, |data: &[u8]| {
+    /// #     Yoke::<Cow<'static, str>, Rc<[u8]>>::attach_to_cart(rc, |data: &[u8]| {
     /// #         Cow::Borrowed(bincode::deserialize(data).unwrap())
     /// #     })
     /// # }
@@ -277,10 +221,7 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     /// use yoke::Yoke;
     ///
     /// let local_data = "foo".to_string();
-    /// let yoke = Yoke::<
-    ///     &'static str,
-    ///     Box<String>
-    /// >::attach_to_zero_copy_cart(Box::new(local_data));
+    /// let yoke = Yoke::<&'static str, Box<String>>::attach_to_zero_copy_cart(Box::new(local_data));
     /// assert_eq!(*yoke.get(), "foo");
     ///
     /// // Get back the cart
@@ -291,14 +232,12 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     /// Bad example: information specified in `.with_mut()` is lost.
     ///
     /// ```
-    /// use yoke::Yoke;
     /// use std::borrow::Cow;
+    /// use yoke::Yoke;
     ///
     /// let local_data = "foo".to_string();
-    /// let mut yoke = Yoke::<
-    ///     Cow<'static, str>,
-    ///     Box<String>
-    /// >::attach_to_zero_copy_cart(Box::new(local_data));
+    /// let mut yoke =
+    ///     Yoke::<Cow<'static, str>, Box<String>>::attach_to_zero_copy_cart(Box::new(local_data));
     /// assert_eq!(yoke.get(), "foo");
     ///
     /// // Override data in the cart
@@ -360,7 +299,7 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     /// #
     /// # fn load_object(filename: &str) -> Yoke<Bar<'static>, Rc<[u8]>> {
     /// #     let rc: Rc<[u8]> = load_from_cache(filename);
-    /// #     Yoke::<Bar<'static>, Rc<[u8]>>::attach_to_cart_badly(rc, |data: &[u8]| {
+    /// #     Yoke::<Bar<'static>, Rc<[u8]>>::attach_to_cart(rc, |data: &[u8]| {
     /// #         // A real implementation would properly deserialize `Bar` as a whole
     /// #         Bar {
     /// #             numbers: Cow::Borrowed(bincode::deserialize(data).unwrap()),
@@ -387,7 +326,7 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     ///
     /// bar.with_mut(|bar| {
     ///     bar.string.to_mut().push_str(" world");
-    ///     bar.owned.extend_from_slice(&[1, 4, 1, 5, 9]);   
+    ///     bar.owned.extend_from_slice(&[1, 4, 1, 5, 9]);
     /// });
     ///
     /// assert_eq!(bar.get().string, "hello world");
@@ -611,7 +550,7 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     /// described in [#86702](https://github.com/rust-lang/rust/issues/86702). This parameter
     /// should just be ignored in the function.
     ///
-    /// To capture data and pass it to the closure, use [`Yoke::project_with_capture()`].
+    /// To capture data and pass it to the closure, use [`Yoke::map_project_with_capture()`].
     /// See [#1061](https://github.com/unicode-org/icu4x/issues/1061).
     ///
     /// This can be used, for example, to transform data from one format to another:
@@ -621,9 +560,8 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     /// # use yoke::Yoke;
     /// #
     /// fn slice(y: Yoke<&'static str, Rc<[u8]>>) -> Yoke<&'static [u8], Rc<[u8]>> {
-    ///    y.project(move |yk, _| yk.as_bytes())
+    ///     y.map_project(move |yk, _| yk.as_bytes())
     /// }
-    ///
     /// ```
     ///
     /// This can also be used to create a yoke for a subfield
@@ -640,8 +578,8 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     ///     string_2: &'a str,
     /// }
     ///
-    /// fn project_string_1(bar: Yoke<Bar<'static>, Rc<[u8]>>) -> Yoke<&'static str, Rc<[u8]>> {
-    ///     bar.project(|bar, _| bar.string_1)   
+    /// fn map_project_string_1(bar: Yoke<Bar<'static>, Rc<[u8]>>) -> Yoke<&'static str, Rc<[u8]>> {
+    ///     bar.map_project(|bar, _| bar.string_1)
     /// }
     ///
     /// #
@@ -672,7 +610,7 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     /// ```
     //
     // Safety docs can be found below on `__project_safety_docs()`
-    pub fn project<P>(
+    pub fn map_project<P>(
         self,
         f: for<'a> fn(
             <Y as Yokeable<'a>>::Output,
@@ -689,12 +627,12 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
         }
     }
 
-    /// This is similar to [`Yoke::project`], however it does not move
+    /// This is similar to [`Yoke::map_project`], however it does not move
     /// [`Self`] and instead clones the cart (only if the cart is a [`CloneableCart`])
     ///
-    /// This is a bit more efficient than cloning the [`Yoke`] and then calling [`Yoke::project`]
+    /// This is a bit more efficient than cloning the [`Yoke`] and then calling [`Yoke::map_project`]
     /// because then it will not clone fields that are going to be discarded.
-    pub fn project_cloned<'this, P>(
+    pub fn map_project_cloned<'this, P>(
         &'this self,
         f: for<'a> fn(
             &'this <Y as Yokeable<'a>>::Output,
@@ -712,12 +650,12 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
         }
     }
 
-    /// This is similar to [`Yoke::project`], but it works around it not being able to
+    /// This is similar to [`Yoke::map_project`], but it works around it not being able to
     /// use `FnOnce` by using an explicit capture input.
     /// See [#1061](https://github.com/unicode-org/icu4x/issues/1061).
     ///
-    /// See the docs of [`Yoke::project`] for how this works.
-    pub fn project_with_capture<P, T>(
+    /// See the docs of [`Yoke::map_project`] for how this works.
+    pub fn map_project_with_capture<P, T>(
         self,
         capture: T,
         f: for<'a> fn(
@@ -736,12 +674,12 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
         }
     }
 
-    /// This is similar to [`Yoke::project_cloned`], however it works around it not being able to
+    /// This is similar to [`Yoke::map_project_cloned`], however it works around it not being able to
     /// use `FnOnce` by using an explicit capture input.
     /// See [#1061](https://github.com/unicode-org/icu4x/issues/1061).
     ///
-    /// See the docs of [`Yoke::project_cloned`] for how this works.
-    pub fn project_cloned_with_capture<'this, P, T>(
+    /// See the docs of [`Yoke::map_project_cloned`] for how this works.
+    pub fn map_project_cloned_with_capture<'this, P, T>(
         &'this self,
         capture: T,
         f: for<'a> fn(
@@ -761,10 +699,10 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
         }
     }
 
-    /// A version of [`Yoke::project`] that takes a capture and bubbles up an error
+    /// A version of [`Yoke::map_project`] that takes a capture and bubbles up an error
     /// from the callback function.
     #[allow(clippy::type_complexity)]
-    pub fn try_project_with_capture<P, T, E>(
+    pub fn try_map_project_with_capture<P, T, E>(
         self,
         capture: T,
         f: for<'a> fn(
@@ -783,10 +721,10 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
         })
     }
 
-    /// A version of [`Yoke::project_cloned`] that takes a capture and bubbles up an error
+    /// A version of [`Yoke::map_project_cloned`] that takes a capture and bubbles up an error
     /// from the callback function.
     #[allow(clippy::type_complexity)]
-    pub fn try_project_cloned_with_capture<'this, P, T, E>(
+    pub fn try_map_project_cloned_with_capture<'this, P, T, E>(
         &'this self,
         capture: T,
         f: for<'a> fn(
@@ -824,16 +762,15 @@ impl<Y: for<'a> Yokeable<'a>, C: 'static + Sized> Yoke<Y, Rc<C>> {
     /// # Example
     ///
     /// ```rust
-    /// use yoke::Yoke;
-    /// use yoke::erased::ErasedRcCart;
     /// use std::rc::Rc;
+    /// use yoke::erased::ErasedRcCart;
+    /// use yoke::Yoke;
     ///
     /// let buffer1: Rc<String> = Rc::new("   foo bar baz  ".into());
     /// let buffer2: Box<String> = Box::new("  baz quux  ".into());
     ///
-    /// let yoke1 = Yoke::<&'static str, _>::attach_to_cart_badly(buffer1, |rc| rc.trim());
-    /// let yoke2 = Yoke::<&'static str, _>::attach_to_cart_badly(buffer2, |b| b.trim());
-    ///
+    /// let yoke1 = Yoke::<&'static str, _>::attach_to_cart(buffer1, |rc| rc.trim());
+    /// let yoke2 = Yoke::<&'static str, _>::attach_to_cart(buffer2, |b| b.trim());
     ///
     /// let erased1: Yoke<_, ErasedRcCart> = yoke1.erase_rc_cart();
     /// // Wrap the Box in an Rc to make it compatible
@@ -869,16 +806,15 @@ impl<Y: for<'a> Yokeable<'a>, C: 'static + Sized> Yoke<Y, Box<C>> {
     /// # Example
     ///
     /// ```rust
-    /// use yoke::Yoke;
-    /// use yoke::erased::ErasedBoxCart;
     /// use std::rc::Rc;
+    /// use yoke::erased::ErasedBoxCart;
+    /// use yoke::Yoke;
     ///
     /// let buffer1: Rc<String> = Rc::new("   foo bar baz  ".into());
     /// let buffer2: Box<String> = Box::new("  baz quux  ".into());
     ///
-    /// let yoke1 = Yoke::<&'static str, _>::attach_to_cart_badly(buffer1, |rc| rc.trim());
-    /// let yoke2 = Yoke::<&'static str, _>::attach_to_cart_badly(buffer2, |b| b.trim());
-    ///
+    /// let yoke1 = Yoke::<&'static str, _>::attach_to_cart(buffer1, |rc| rc.trim());
+    /// let yoke2 = Yoke::<&'static str, _>::attach_to_cart(buffer2, |b| b.trim());
     ///
     /// // Wrap the Rc in an Box to make it compatible
     /// let erased1: Yoke<_, ErasedBoxCart> = yoke1.wrap_cart_in_box().erase_box_cart();
@@ -976,7 +912,7 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
 /// # use yoke::Yoke;
 /// # use std::borrow::Cow;
 /// fn borrow_potentially_owned(y: &Yoke<Cow<'static, str>, Rc<[u8]>>) -> Yoke<&'static str, Rc<[u8]>> {
-///    y.project_cloned(|cow, _| &*cow)   
+///    y.map_project_cloned(|cow, _| &*cow)   
 /// }
 /// ```
 ///
@@ -989,7 +925,7 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
 /// # use yoke::Yoke;
 /// # use std::borrow::Cow;
 /// fn borrow_potentially_owned(y: Yoke<Cow<'static, str>, Rc<[u8]>>) -> Yoke<&'static str, Rc<[u8]>> {
-///    y.project(|cow, _| &*cow)   
+///    y.map_project(|cow, _| &*cow)   
 /// }
 /// ```
 ///
@@ -1009,9 +945,9 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
 ///     string_2: &'a str,
 /// }
 ///
-/// fn project_owned(bar: &Yoke<Bar<'static>, Rc<[u8]>>) -> Yoke<&'static str, Rc<[u8]>> {
+/// fn map_project_owned(bar: &Yoke<Bar<'static>, Rc<[u8]>>) -> Yoke<&'static str, Rc<[u8]>> {
 ///     // ERROR (but works if you replace owned with string_2)
-///     bar.project_cloned(|bar, _| &*bar.owned)   
+///     bar.map_project_cloned(|bar, _| &*bar.owned)   
 /// }
 ///
 /// #

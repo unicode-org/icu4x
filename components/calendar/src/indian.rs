@@ -2,7 +2,34 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! This module contains types and implementations for the Indian national calendar
+//! This module contains types and implementations for the Indian national calendar.
+//!
+//! ```rust
+//! use icu::calendar::{indian::Indian, Date, DateTime};
+//!
+//! // `Date` type
+//! let date_iso = Date::new_iso_date_from_integers(1970, 1, 2)
+//!     .expect("Failed to initialize ISO Date instance.");
+//! let date_indian = Date::new_from_iso(date_iso, Indian);
+//!
+//! // `DateTime` type
+//! let datetime_iso = DateTime::new_iso_datetime_from_integers(1970, 1, 2, 13, 1, 0)
+//!     .expect("Failed to initialize ISO DateTime instance.");
+//! let datetime_indian = DateTime::new_from_iso(datetime_iso, Indian);
+//!
+//! // `Date` checks
+//! assert_eq!(date_indian.year().number, 1892);
+//! assert_eq!(date_indian.month().number, 1);
+//! assert_eq!(date_indian.day_of_month().0, 2);
+//!
+//! // `DateTime` type
+//! assert_eq!(datetime_indian.date.year().number, 1892);
+//! assert_eq!(datetime_indian.date.month().number, 1);
+//! assert_eq!(datetime_indian.date.day_of_month().0, 2);
+//! assert_eq!(datetime_indian.time.hour.number(), 13);
+//! assert_eq!(datetime_indian.time.minute.number(), 1);
+//! assert_eq!(datetime_indian.time.second.number(), 0);
+//! ```
 
 use crate::iso::{Iso, IsoYear};
 use crate::{
@@ -12,8 +39,9 @@ use crate::{
 use core::marker::PhantomData;
 use tinystr::tinystr;
 
+/// The Indian national calendar
 #[derive(Copy, Clone, Debug, Hash, Default, Eq, PartialEq)]
-// The Indian national calendar
+#[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct Indian;
 
 #[derive(Copy, Clone, Debug, Hash, Eq, PartialEq)]
@@ -85,6 +113,7 @@ impl Calendar for Indian {
         &self,
         date1: &Self::DateInner,
         date2: &Self::DateInner,
+        _calendar2: &Self,
         _largest_unit: DateDurationUnit,
         _smallest_unit: DateDurationUnit,
     ) -> DateDuration<Self> {
@@ -130,7 +159,7 @@ impl Calendar for Indian {
         }
     }
 
-    fn debug_name() -> &'static str {
+    fn debug_name(&self) -> &'static str {
         "Indian"
     }
 }
@@ -151,12 +180,19 @@ impl Indian {
 }
 
 impl Date<Indian> {
-    /// Construct new Indian Date
-    pub fn new_indian_date_from_integers(
-        year: i32,
-        month: u8,
-        day: u8,
-    ) -> Result<Date<Indian>, DateTimeError> {
+    /// Construct new Indian Date.
+    ///
+    /// ```rust
+    /// use icu::calendar::Date;
+    ///
+    /// let date_indian =
+    ///     Date::new_indian_date(1891, 10, 12).expect("Failed to initialize Indian Date instance.");
+    ///
+    /// assert_eq!(date_indian.year().number, 1891);
+    /// assert_eq!(date_indian.month().number, 10);
+    /// assert_eq!(date_indian.day_of_month().0, 12);
+    /// ```
+    pub fn new_indian_date(year: i32, month: u8, day: u8) -> Result<Date<Indian>, DateTimeError> {
         let inner = ArithmeticDate {
             year,
             month,
@@ -174,8 +210,22 @@ impl Date<Indian> {
 }
 
 impl DateTime<Indian> {
-    /// Construct a new Indian datetime from integers
-    pub fn new_indian_datetime_from_integers(
+    /// Construct a new Indian datetime from integers.
+    ///
+    /// ```rust
+    /// use icu::calendar::DateTime;
+    ///
+    /// let datetime_indian = DateTime::new_indian_datetime(1891, 10, 12, 13, 1, 0)
+    ///     .expect("Failed to initialize Indian DateTime instance.");
+    ///
+    /// assert_eq!(datetime_indian.date.year().number, 1891);
+    /// assert_eq!(datetime_indian.date.month().number, 10);
+    /// assert_eq!(datetime_indian.date.day_of_month().0, 12);
+    /// assert_eq!(datetime_indian.time.hour.number(), 13);
+    /// assert_eq!(datetime_indian.time.minute.number(), 1);
+    /// assert_eq!(datetime_indian.time.second.number(), 0);
+    /// ```
+    pub fn new_indian_datetime(
         year: i32,
         month: u8,
         day: u8,
@@ -184,8 +234,8 @@ impl DateTime<Indian> {
         second: u8,
     ) -> Result<DateTime<Indian>, DateTimeError> {
         Ok(DateTime {
-            date: Date::new_indian_date_from_integers(year, month, day)?,
-            time: types::Time::try_new(hour, minute, second)?,
+            date: Date::new_indian_date(year, month, day)?,
+            time: types::Time::try_new(hour, minute, second, 0)?,
         })
     }
 }

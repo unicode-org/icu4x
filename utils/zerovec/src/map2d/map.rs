@@ -35,13 +35,13 @@ use crate::map::{MutableZeroVecLike, ZeroVecLike};
 ///
 /// // Example byte buffer representing the map { 1: {2: "three" } }
 /// let BINCODE_BYTES: &[u8; 53] = &[
-///     2, 0, 0, 0, 0, 0, 0, 0, 1, 0, 4, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 2, 0, 0, 0, 0, 0,
-///     0, 0, 2, 0, 13, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 116, 104, 114, 101, 101
+///     2, 0, 0, 0, 0, 0, 0, 0, 1, 0, 4, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0,
+///     2, 0, 13, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 116, 104, 114, 101, 101,
 /// ];
 ///
 /// // Deserializing to ZeroMap requires no heap allocations.
-/// let zero_map: ZeroMap2d<u16, u16, str> = bincode::deserialize(BINCODE_BYTES)
-///     .expect("Should deserialize successfully");
+/// let zero_map: ZeroMap2d<u16, u16, str> =
+///     bincode::deserialize(BINCODE_BYTES).expect("Should deserialize successfully");
 /// assert_eq!(zero_map.get(&1, &2), Ok("three"));
 /// ```
 ///
@@ -136,6 +136,21 @@ where
         }
     }
 
+    #[doc(hidden)] // Crabbake internal
+    pub const unsafe fn from_parts_unchecked(
+        keys0: K0::Container,
+        joiner: ZeroVec<'a, u32>,
+        keys1: K1::Container,
+        values: V::Container,
+    ) -> Self {
+        Self {
+            keys0,
+            joiner,
+            keys1,
+            values,
+        }
+    }
+
     /// Construct a new [`ZeroMap2d`] with a given capacity
     pub fn with_capacity(capacity: usize) -> Self {
         Self {
@@ -198,8 +213,8 @@ where
     /// Get the value associated with `key0` and `key1`, if it exists.
     ///
     /// ```rust
-    /// use zerovec::ZeroMap2d;
     /// use zerovec::maps::KeyError;
+    /// use zerovec::ZeroMap2d;
     ///
     /// let mut map = ZeroMap2d::new();
     /// map.insert(&1, "one", "foo");
@@ -269,8 +284,8 @@ where
     /// Remove the value at `key`, returning it if it exists.
     ///
     /// ```rust
-    /// use zerovec::ZeroMap2d;
     /// use zerovec::maps::KeyError;
+    /// use zerovec::ZeroMap2d;
     ///
     /// let mut map = ZeroMap2d::new();
     /// map.insert(&1, "one", "foo");
@@ -307,8 +322,8 @@ where
     /// `key` and `value` _if it failed_. Useful for extending with an existing
     /// sorted list.
     /// ```rust
-    /// use zerovec::ZeroMap2d;
     /// use zerovec::maps::KeyError;
+    /// use zerovec::ZeroMap2d;
     ///
     /// let mut map = ZeroMap2d::new();
     /// assert!(map.try_append(&1, "one", "uno").is_none());
@@ -587,7 +602,7 @@ where
     ///
     /// ```
     /// # use zerovec::ZeroMap2d;
-    /// let mut map: ZeroMap2d::<u16, u16, u16> = ZeroMap2d::new();
+    /// let mut map: ZeroMap2d<u16, u16, u16> = ZeroMap2d::new();
     /// map.insert(&1, &2, &3);
     /// map.insert(&1, &4, &5);
     /// map.insert(&6, &7, &8);

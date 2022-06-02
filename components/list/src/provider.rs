@@ -2,16 +2,20 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+// Provider structs must be stable
+#![allow(clippy::exhaustive_structs)]
+
 //! Data provider struct definitions for this ICU4X component.
 //!
 //! Read more about data providers: [`icu_provider`]
 
-use crate::string_matcher::StringMatcher;
 use crate::ListStyle;
 use alloc::borrow::Cow;
 use icu_provider::DataMarker;
 use icu_provider::{yoke, zerofrom};
 use writeable::{LengthHint, Writeable};
+
+pub use crate::string_matcher::StringMatcher;
 
 /// Symbols and metadata required for [`ListFormatter`](crate::ListFormatter).
 #[icu_provider::data_struct(
@@ -20,14 +24,37 @@ use writeable::{LengthHint, Writeable};
     UnitListV1Marker = "list/unit@1"
 )]
 #[derive(Clone, Debug)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize))]
-#[cfg_attr(feature = "serialize", derive(serde::Deserialize))]
+#[cfg_attr(
+    feature = "datagen",
+    derive(serde::Serialize, crabbake::Bakeable),
+    crabbake(path = icu_list::provider),
+)]
 pub struct ListFormatterPatternsV1<'data>(
-    #[cfg_attr(feature = "serialize", serde(borrow, with = "deduplicating_array"))]
+    #[cfg_attr(feature = "datagen", serde(with = "deduplicating_array"))]
     /// The patterns in the order start, middle, end, pair, short_start, short_middle,
     /// short_end, short_pair, narrow_start, narrow_middle, narrow_end, narrow_pair,
-    [ConditionalListJoinerPattern<'data>; 12],
+    pub [ConditionalListJoinerPattern<'data>; 12],
 );
+
+#[cfg(feature = "serde")]
+impl<'de> serde::Deserialize<'de> for ListFormatterPatternsV1<'de> {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::de::Deserializer<'de>,
+    {
+        #[cfg(not(feature = "serde_human"))]
+        if deserializer.is_human_readable() {
+            use serde::de::Error;
+            return Err(D::Error::custom(
+                    "Deserializing human-readable ListFormatter data requires the 'serde_human' feature",
+                ));
+        }
+
+        Ok(ListFormatterPatternsV1(deduplicating_array::deserialize(
+            deserializer,
+        )?))
+    }
+}
 
 pub(crate) struct ErasedListV1Marker;
 
@@ -69,46 +96,102 @@ impl<'data> ListFormatterPatternsV1<'data> {
 
 /// A pattern that can behave conditionally on the next element.
 #[derive(Clone, Debug, PartialEq, yoke::Yokeable, zerofrom::ZeroFrom)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize))]
-#[cfg_attr(feature = "serialize", derive(serde::Deserialize))]
-pub(crate) struct ConditionalListJoinerPattern<'data> {
-    #[cfg_attr(feature = "serialize", serde(borrow))]
-    default: ListJoinerPattern<'data>,
-    #[cfg_attr(feature = "serialize", serde(borrow))]
-    special_case: Option<SpecialCasePattern<'data>>,
+#[cfg_attr(
+    feature = "datagen",
+    derive(serde::Serialize, crabbake::Bakeable),
+    crabbake(path = icu_list::provider),
+)]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+pub struct ConditionalListJoinerPattern<'data> {
+    /// The default pattern
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub default: ListJoinerPattern<'data>,
+    /// And optional special case
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub special_case: Option<SpecialCasePattern<'data>>,
 }
 
+/// The special case of a [`ConditionalListJoinerPattern`]
 #[derive(Clone, Debug, PartialEq, yoke::Yokeable, zerofrom::ZeroFrom)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize))]
-#[cfg_attr(feature = "serialize", derive(serde::Deserialize))]
-struct SpecialCasePattern<'data> {
-    #[cfg_attr(feature = "serialize", serde(borrow))]
-    condition: StringMatcher<'data>,
-    #[cfg_attr(feature = "serialize", serde(borrow))]
-    pattern: ListJoinerPattern<'data>,
+#[cfg_attr(
+    feature = "datagen",
+    derive(serde::Serialize, crabbake::Bakeable),
+    crabbake(path = icu_list::provider),
+)]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+pub struct SpecialCasePattern<'data> {
+    /// The condition on the following element
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub condition: StringMatcher<'data>,
+    /// The pattern if the condition matches
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub pattern: ListJoinerPattern<'data>,
 }
 
 /// A pattern containing two numeric placeholders ("{0}, and {1}.")
 #[derive(Clone, Debug, PartialEq, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize))]
-#[cfg_attr(feature = "serialize", derive(serde::Deserialize))]
-struct ListJoinerPattern<'data> {
+pub struct ListJoinerPattern<'data> {
     /// The pattern string without the placeholders
-    #[cfg_attr(feature = "serialize", serde(borrow))]
     string: Cow<'data, str>,
-    /// The index of the first placeholder. Always 0 for CLDR
-    /// data, so we don't need to serialize it. In-memory we
-    /// have free space for it as index_1 doesn't fill a word.
-    #[cfg_attr(feature = "serialize", serde(skip))]
+    /// The index of the first placeholder.
+    // Always 0 for CLDR data, so we don't need to serialize it.
+    // In-memory we have free space for it as index_1 doesn't
+    // fill a word.
+    #[cfg_attr(feature = "datagen", serde(skip))]
     index_0: u8,
     /// The index of the second placeholder
     index_1: u8,
 }
 
+#[cfg(feature = "serde")]
+impl<'de: 'data, 'data> serde::Deserialize<'de> for ListJoinerPattern<'data> {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        #[derive(serde::Deserialize)]
+        struct Dummy<'data> {
+            #[cfg_attr(feature = "serde", serde(borrow))]
+            string: Cow<'data, str>,
+            index_1: u8,
+        }
+        let Dummy { string, index_1 } = Dummy::deserialize(deserializer)?;
+
+        if index_1 as usize > string.len() {
+            use serde::de::Error;
+            Err(D::Error::custom("invalid index_1"))
+        } else {
+            Ok(ListJoinerPattern {
+                string,
+                index_0: 0,
+                index_1,
+            })
+        }
+    }
+}
+
+impl<'a> ListJoinerPattern<'a> {
+    /// Constructs a [`ListJoinerPattern`] from raw parts. Used by crabbake.
+    ///
+    /// # Safety
+    /// index_1 may be at most string.len()
+    pub const unsafe fn from_parts_unchecked(string: &'a str, index_1: u8) -> Self {
+        Self {
+            string: Cow::Borrowed(string),
+            index_0: 0,
+            index_1,
+        }
+    }
+}
+
 pub(crate) type PatternParts<'a> = (&'a str, &'a str, &'a str);
 
 impl<'a> ConditionalListJoinerPattern<'a> {
-    pub fn parts<'b, W: Writeable + ?Sized>(&'a self, following_value: &'b W) -> PatternParts<'a> {
+    pub(crate) fn parts<'b, W: Writeable + ?Sized>(
+        &'a self,
+        following_value: &'b W,
+    ) -> PatternParts<'a> {
         match &self.special_case {
             Some(SpecialCasePattern { condition, pattern })
                 // TODO: Implement lookahead instead of materializing here.
@@ -200,6 +283,7 @@ mod datagen {
     }
 
     impl<'data> ListJoinerPattern<'data> {
+        /// Construct the pattern from a CLDR pattern string
         pub fn from_str(
             pattern: &str,
             allow_prefix: bool,
@@ -239,6 +323,17 @@ mod datagen {
                 default,
                 special_case: None,
             }
+        }
+    }
+
+    impl crabbake::Bakeable for ListJoinerPattern<'_> {
+        fn bake(&self, env: &crabbake::CrateEnv) -> crabbake::TokenStream {
+            let string = (&*self.string).bake(env);
+            let index_1 = self.index_1.bake(env);
+            // Safe because our own data is safe
+            crabbake::quote! { unsafe {
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(#string, #index_1)
+            }}
         }
     }
 }

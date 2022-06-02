@@ -20,6 +20,8 @@ members = [
     "experimental/char16trie",
     "experimental/crabbake",
     "experimental/crabbake/derive",
+    "experimental/collator",
+    "experimental/normalizer",
     "experimental/segmenter",
     "experimental/segmenter_lstm",
     "ffi/capi_cdylib",
@@ -38,6 +40,7 @@ members = [
     "tools/benchmark/memory",
     "tools/benchmark/binsize",
     "utils/codepointtrie",
+    "utils/codepointtrie/builder",
     "utils/deduplicating_array",
     "utils/fixed_decimal",
     "utils/litemap",
@@ -52,6 +55,7 @@ members = [
     "utils/zerovec",
     "utils/zerovec/derive",
 ]
+exclude = ["provider/testdata/data/const"]
 
 # Enable lto for WASM.
 # 2020-10-30: This currently doesn't work in .cargo/config:

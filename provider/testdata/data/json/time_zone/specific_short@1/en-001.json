@@ -1,6 +1,6 @@
 {
   "defaults": {
-    "GMT": {
+    "mgmt": {
       "standard": "GMT"
     }
   },

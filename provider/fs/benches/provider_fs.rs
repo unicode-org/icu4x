@@ -5,7 +5,7 @@
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
 
 use icu_locid::langid;
-use icu_plurals::provider::*;
+use icu_provider::hello_world::HelloWorldV1Marker;
 use icu_provider::prelude::*;
 use icu_provider_fs::FsDataProvider;
 
@@ -13,15 +13,14 @@ fn overview_bench(c: &mut Criterion) {
     // End-to-end JSON test
     c.bench_function("json/overview", |b| {
         b.iter(|| {
-            let provider = FsDataProvider::try_new("./tests/testdata/json")
+            let provider = FsDataProvider::try_new("./tests/data/json")
                 .expect("Loading file from testdata directory");
-            let _: DataPayload<CardinalV1Marker> = black_box(&provider)
+            let _: DataPayload<HelloWorldV1Marker> = black_box(&provider)
                 .load_resource(&DataRequest {
                     options: langid!("ru").into(),
                     metadata: Default::default(),
                 })
-                .expect("The data should be valid")
-                .take_payload()
+                .and_then(DataResponse::take_payload)
                 .expect("Loading was successful");
         });
     });
@@ -30,40 +29,38 @@ fn overview_bench(c: &mut Criterion) {
     {
         json_bench(c);
         #[cfg(feature = "deserialize_bincode_1")]
-        {
-            bincode_bench(c);
-        }
+        bincode_bench(c);
+        #[cfg(feature = "deserialize_postcard_07")]
+        postcard_bench(c);
     }
 }
 
 #[cfg(feature = "bench")]
 fn json_bench(c: &mut Criterion) {
-    let provider = FsDataProvider::try_new("./tests/testdata/json")
-        .expect("Loading file from testdata directory");
+    let provider =
+        FsDataProvider::try_new("./tests/data/json").expect("Loading file from testdata directory");
 
     c.bench_function("json/generic", |b| {
         b.iter(|| {
-            let _: DataPayload<CardinalV1Marker> = black_box(&provider)
+            let _: DataPayload<HelloWorldV1Marker> = black_box(&provider)
                 .load_resource(&DataRequest {
                     options: langid!("ru").into(),
                     metadata: Default::default(),
                 })
-                .expect("The data should be valid")
-                .take_payload()
+                .and_then(DataResponse::take_payload)
                 .expect("Loading was successful");
         });
     });
 
     c.bench_function("json/erased_serde", |b| {
         b.iter(|| {
-            let _: DataPayload<CardinalV1Marker> = black_box(&provider as &dyn BufferProvider)
+            let _: DataPayload<HelloWorldV1Marker> = black_box(&provider as &dyn BufferProvider)
                 .as_deserializing()
                 .load_resource(&DataRequest {
                     options: langid!("ru").into(),
                     metadata: Default::default(),
                 })
-                .expect("The data should be valid")
-                .take_payload()
+                .and_then(DataResponse::take_payload)
                 .expect("Loading was successful");
         });
     });
@@ -71,14 +68,46 @@ fn json_bench(c: &mut Criterion) {
 
 #[cfg(all(feature = "bench", feature = "deserialize_bincode_1"))]
 fn bincode_bench(c: &mut Criterion) {
-    let provider = FsDataProvider::try_new("./tests/testdata/bincode")
+    let provider = FsDataProvider::try_new("./tests/data/bincode")
         .expect("Loading file from testdata directory");
 
     c.bench_function("bincode/generic", |b| {
         b.iter(|| {
-            let _: DataPayload<CardinalV1Marker> = black_box(&provider)
+            let _: DataPayload<HelloWorldV1Marker> = black_box(&provider)
                 .load_resource(&DataRequest {
-                    options: langid!("sr").into(),
+                    options: langid!("ru").into(),
+                    metadata: Default::default(),
+                })
+                .and_then(DataResponse::take_payload)
+                .expect("Loading was successful");
+        });
+    });
+
+    c.bench_function("bincode/erased_serde", |b| {
+        b.iter(|| {
+            let _: DataPayload<HelloWorldV1Marker> = black_box(&provider as &dyn BufferProvider)
+                .as_deserializing()
+                .load_resource(&DataRequest {
+                    options: langid!("ru").into(),
+                    metadata: Default::default(),
+                })
+                .expect("The data should be valid")
+                .take_payload()
+                .expect("Loading was successful");
+        });
+    });
+}
+
+#[cfg(all(feature = "bench", feature = "deserialize_postcard_07"))]
+fn postcard_bench(c: &mut Criterion) {
+    let provider = FsDataProvider::try_new("./tests/data/postcard")
+        .expect("Loading file from testdata directory");
+
+    c.bench_function("postcard/generic", |b| {
+        b.iter(|| {
+            let _: DataPayload<HelloWorldV1Marker> = black_box(&provider)
+                .load_resource(&DataRequest {
+                    options: langid!("ru").into(),
                     metadata: Default::default(),
                 })
                 .expect("The data should be valid")
@@ -87,16 +116,15 @@ fn bincode_bench(c: &mut Criterion) {
         });
     });
 
-    c.bench_function("bincode/erased_serde", |b| {
+    c.bench_function("postcard/erased_serde", |b| {
         b.iter(|| {
-            let _: DataPayload<CardinalV1Marker> = black_box(&provider as &dyn BufferProvider)
+            let _: DataPayload<HelloWorldV1Marker> = black_box(&provider as &dyn BufferProvider)
                 .as_deserializing()
                 .load_resource(&DataRequest {
-                    options: langid!("sr").into(),
+                    options: langid!("ru").into(),
                     metadata: Default::default(),
                 })
-                .expect("The data should be valid")
-                .take_payload()
+                .and_then(DataResponse::take_payload)
                 .expect("Loading was successful");
         });
     });

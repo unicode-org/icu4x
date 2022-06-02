@@ -20,8 +20,7 @@ use alloc::string::ToString;
 /// ```
 /// use icu::locid::LanguageIdentifier;
 ///
-/// let li: LanguageIdentifier = "en-US".parse()
-///     .expect("Failed to parse.");
+/// let li: LanguageIdentifier = "en-US".parse().expect("Failed to parse.");
 ///
 /// assert_eq!(li.language, "en");
 /// assert_eq!(li.script, None);
@@ -49,8 +48,7 @@ use alloc::string::ToString;
 /// ```
 /// use icu::locid::LanguageIdentifier;
 ///
-/// let li: LanguageIdentifier = "eN_latn_Us-Valencia".parse()
-///     .expect("Failed to parse.");
+/// let li: LanguageIdentifier = "eN_latn_Us-Valencia".parse().expect("Failed to parse.");
 ///
 /// assert_eq!(li.language, "en");
 /// assert_eq!(li.script.unwrap(), "Latn");
@@ -60,6 +58,7 @@ use alloc::string::ToString;
 ///
 /// [`Unicode BCP47 Language Identifier`]: https://unicode.org/reports/tr35/tr35.html#Unicode_language_identifier
 #[derive(Default, PartialEq, Eq, Clone, Hash, PartialOrd, Ord)]
+#[allow(clippy::exhaustive_structs)] // This struct is stable (and invoked by a macro)
 pub struct LanguageIdentifier {
     /// Language subtag of the language identifier.
     pub language: subtags::Language,
@@ -80,8 +79,7 @@ impl LanguageIdentifier {
     /// ```
     /// use icu::locid::LanguageIdentifier;
     ///
-    /// let li = LanguageIdentifier::from_bytes(b"en-US")
-    ///     .expect("Parsing failed.");
+    /// let li = LanguageIdentifier::from_bytes(b"en-US").expect("Parsing failed.");
     ///
     /// assert_eq!(li.to_string(), "en-US");
     /// ```
@@ -113,8 +111,7 @@ impl LanguageIdentifier {
     /// ```
     /// use icu::locid::LanguageIdentifier;
     ///
-    /// let li = LanguageIdentifier::from_locale_bytes(b"en-US-x-posix")
-    ///     .expect("Parsing failed.");
+    /// let li = LanguageIdentifier::from_locale_bytes(b"en-US-x-posix").expect("Parsing failed.");
     ///
     /// assert_eq!(li.to_string(), "en-US");
     /// ```
@@ -152,7 +149,10 @@ impl LanguageIdentifier {
     /// ```
     /// use icu::locid::LanguageIdentifier;
     ///
-    /// assert_eq!(LanguageIdentifier::canonicalize("pL_latn_pl"), Ok("pl-Latn-PL".to_string()));
+    /// assert_eq!(
+    ///     LanguageIdentifier::canonicalize("pL_latn_pl"),
+    ///     Ok("pl-Latn-PL".to_string())
+    /// );
     /// ```
     pub fn canonicalize<S: AsRef<[u8]>>(input: S) -> Result<String, ParserError> {
         let lang_id = Self::from_bytes(input.as_ref())?;
@@ -324,8 +324,8 @@ impl PartialEq<str> for LanguageIdentifier {
 /// # Examples
 ///
 /// ```
-/// use icu::locid::LanguageIdentifier;
 /// use icu::locid::language;
+/// use icu::locid::LanguageIdentifier;
 ///
 /// let language = language!("en");
 /// let li = LanguageIdentifier::from(language);
@@ -345,8 +345,8 @@ impl From<subtags::Language> for LanguageIdentifier {
 /// # Examples
 ///
 /// ```
-/// use icu::locid::LanguageIdentifier;
 /// use icu::locid::script;
+/// use icu::locid::LanguageIdentifier;
 ///
 /// let script = script!("latn");
 /// let li = LanguageIdentifier::from(Some(script));
@@ -366,8 +366,8 @@ impl From<Option<subtags::Script>> for LanguageIdentifier {
 /// # Examples
 ///
 /// ```
-/// use icu::locid::LanguageIdentifier;
 /// use icu::locid::region;
+/// use icu::locid::LanguageIdentifier;
 ///
 /// let region = region!("US");
 /// let li = LanguageIdentifier::from(Some(region));
@@ -388,7 +388,7 @@ impl From<Option<subtags::Region>> for LanguageIdentifier {
 ///
 /// ```
 /// use icu::locid::LanguageIdentifier;
-/// use icu::locid::{language, script, region};
+/// use icu::locid::{language, region, script};
 ///
 /// let lang = language!("en");
 /// let script = script!("Latn");

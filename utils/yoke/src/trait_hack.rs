@@ -164,7 +164,10 @@
 //! }
 //!
 //! // The trait needs to be defined on references:
-//! impl<'a, T> MyTrait for &'a T where T: MyTrait {
+//! impl<'a, T> MyTrait for &'a T
+//! where
+//!     T: MyTrait,
+//! {
 //!     fn demo(&self) -> u32 {
 //!         self.demo()
 //!     }
@@ -189,10 +192,10 @@
 //! Example for using [`YokeTraitHack`]:
 //!
 //! ```
+//! use std::rc::Rc;
+//! use yoke::trait_hack::YokeTraitHack;
 //! use yoke::Yoke;
 //! use yoke::Yokeable;
-//! use yoke::trait_hack::YokeTraitHack;
-//! use std::rc::Rc;
 //!
 //! // Example trait and struct for illustration purposes:
 //! trait MyTrait {
@@ -229,7 +232,10 @@
 //! }
 //!
 //! // The trait needs to be defined on YokeTraitHack:
-//! impl<'a, T> MyTrait for YokeTraitHack<T> where T: MyTrait {
+//! impl<'a, T> MyTrait for YokeTraitHack<T>
+//! where
+//!     T: MyTrait,
+//! {
 //!     fn demo(data: u32) -> Self {
 //!         YokeTraitHack(T::demo(data))
 //!     }
@@ -242,7 +248,7 @@
 //! {
 //!     fn demo(data: u32) -> Self {
 //!         let rc_u32: Rc<u32> = Rc::new(data);
-//!         Yoke::attach_to_cart_badly(rc_u32, |u| {
+//!         Yoke::attach_to_cart(rc_u32, |u| {
 //!             YokeTraitHack::<<Y as Yokeable>::Output>::demo(*u).0
 //!         })
 //!     }
@@ -267,8 +273,8 @@ use core::mem;
 /// Using `YokeTraitHack` as a type bound in a function comparing two `Yoke`s:
 ///
 /// ```
-/// use yoke::*;
 /// use yoke::trait_hack::YokeTraitHack;
+/// use yoke::*;
 ///
 /// fn compare_yokes<Y, C1, C2>(y1: Yoke<Y, C1>, y2: Yoke<Y, C2>) -> bool
 /// where

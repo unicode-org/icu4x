@@ -12,7 +12,13 @@ use icu_provider::{yoke, zerofrom};
 /// Used to represent either H11/H12, or H23/H24. Skeletons only store these
 /// hour cycles as H12 or H23.
 #[derive(Debug, PartialEq, Clone, Copy, yoke::Yokeable, zerofrom::ZeroFrom)]
-#[cfg_attr(feature = "serialize", derive(serde::Serialize, serde::Deserialize))]
+#[cfg_attr(
+    feature = "datagen",
+    derive(serde::Serialize, crabbake::Bakeable),
+    crabbake(path = icu_datetime::pattern),
+)]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[allow(clippy::exhaustive_enums)] // this type is stable
 pub enum CoarseHourCycle {
     /// Can either be fields::Hour::H11 or fields::Hour::H12
     H11H12,

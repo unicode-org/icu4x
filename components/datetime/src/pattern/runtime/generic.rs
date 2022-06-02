@@ -13,6 +13,12 @@ use icu_provider::{yoke, zerofrom};
 use zerovec::ZeroVec;
 
 #[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
+#[allow(clippy::exhaustive_structs)] // this type is stable
+#[cfg_attr(
+    feature = "datagen",
+    derive(crabbake::Bakeable),
+    crabbake(path = icu_datetime::pattern::runtime),
+)]
 pub struct GenericPattern<'data> {
     pub items: ZeroVec<'data, GenericPatternItem>,
 }
@@ -26,13 +32,12 @@ impl<'data> GenericPattern<'data> {
     /// ```
     /// use icu_datetime::pattern::runtime::{GenericPattern, Pattern};
     ///
-    /// let date: Pattern = "Y-m-d".parse()
-    ///         .expect("Failed to parse pattern");
-    /// let time: Pattern = "HH:mm".parse()
-    ///         .expect("Failed to parse pattern");
+    /// let date: Pattern = "Y-m-d".parse().expect("Failed to parse pattern");
+    /// let time: Pattern = "HH:mm".parse().expect("Failed to parse pattern");
     ///
-    /// let glue: GenericPattern = "{1} 'at' {0}".parse()
-    ///         .expect("Failed to parse generic pattern");
+    /// let glue: GenericPattern = "{1} 'at' {0}"
+    ///     .parse()
+    ///     .expect("Failed to parse generic pattern");
     /// assert_eq!(
     ///     glue.combined(date, time)
     ///         .expect("Failed to combine patterns")

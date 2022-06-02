@@ -3,11 +3,13 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use super::AbstractSerializer;
-use super::Error;
 use icu_provider::buf::BufferFormat;
+use icu_provider::datagen::*;
+use icu_provider::prelude::*;
 use std::io;
 
 /// A serializer for Postcard.
+#[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct Serializer;
 
 /// Options bag for initializing a [`postcard::Serializer`].
@@ -18,13 +20,14 @@ pub struct Options;
 impl AbstractSerializer for Serializer {
     fn serialize(
         &self,
-        obj: &dyn erased_serde::Serialize,
+        obj: &DataPayload<ExportMarker>,
         sink: &mut dyn io::Write,
-    ) -> Result<(), Error> {
+    ) -> Result<(), DataError> {
         let mut serializer = postcard::Serializer {
             output: postcard::flavors::StdVec(Vec::new()),
         };
-        obj.erased_serialize(&mut <dyn erased_serde::Serializer>::erase(&mut serializer))?;
+        obj.serialize(&mut serializer)
+            .map_err(|e| DataError::custom("Postcard serialize").with_display_context(&e))?;
         sink.write_all(&serializer.output.0)?;
         Ok(())
     }
@@ -37,5 +40,11 @@ impl AbstractSerializer for Serializer {
 impl Serializer {
     pub fn new(_options: Options) -> Self {
         Self {}
+    }
+}
+
+impl Default for Serializer {
+    fn default() -> Self {
+        Self::new(Default::default())
     }
 }

@@ -4,11 +4,7 @@
 
 //! Locale-invariant data provider that requires no I/O.
 
-#[cfg(feature = "datagen")]
-use crate::datagen::IterableDynProvider;
 use crate::prelude::*;
-#[cfg(feature = "datagen")]
-use alloc::boxed::Box;
 
 /// A locale-invariant data provider. Sometimes useful for testing. Not intended to be used in
 /// production environments.
@@ -19,9 +15,9 @@ use alloc::boxed::Box;
 /// # Examples
 ///
 /// ```
-/// use icu_provider::prelude::*;
-/// use icu_provider::inv::InvariantDataProvider;
 /// use icu_provider::hello_world::HelloWorldV1Marker;
+/// use icu_provider::inv::InvariantDataProvider;
+/// use icu_provider::prelude::*;
 /// use std::borrow::Cow;
 ///
 /// let provider = InvariantDataProvider;
@@ -33,6 +29,7 @@ use alloc::boxed::Box;
 ///
 /// assert_eq!("(und) Hello World", result.get().message);
 /// ```
+#[allow(clippy::exhaustive_structs)] // stable type
 pub struct InvariantDataProvider;
 
 impl<M> ResourceProvider<M> for InvariantDataProvider
@@ -58,19 +55,5 @@ where
             metadata: DataResponseMetadata::default(),
             payload: Some(DataPayload::from_owned(M::Yokeable::default())),
         })
-    }
-}
-
-#[cfg(feature = "datagen")]
-impl<M> IterableDynProvider<M> for InvariantDataProvider
-where
-    M: DataMarker,
-    M::Yokeable: Default,
-{
-    fn supported_options_for_key(
-        &self,
-        _: ResourceKey,
-    ) -> Result<Box<dyn Iterator<Item = ResourceOptions>>, DataError> {
-        Ok(Box::new(core::iter::once(ResourceOptions::default())))
     }
 }

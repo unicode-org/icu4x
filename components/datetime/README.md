@@ -11,25 +11,24 @@ used to quickly format any date and time provided.
 ## Examples
 
 ```rust
-use icu::locid::locale;
 use icu::calendar::Gregorian;
-use icu::datetime::{DateTimeFormat, DateTimeFormatOptions, mock::parse_gregorian_from_str, options::length};
+use icu::datetime::{
+    mock::parse_gregorian_from_str, options::length, DateTimeFormat, DateTimeFormatOptions,
+};
+use icu::locid::locale;
 
 let provider = icu_testdata::get_provider();
 
 // See the next code example for a more ergonomic example with .into().
-let options = DateTimeFormatOptions::Length(length::Bag {
-    date: Some(length::Date::Medium),
-    time: Some(length::Time::Short),
-    ..Default::default()
-});
+let options = DateTimeFormatOptions::Length(length::Bag::from_date_time_style(
+    length::Date::Medium,
+    length::Time::Short,
+));
 
 let dtf = DateTimeFormat::<Gregorian>::try_new(locale!("en"), &provider, &options)
     .expect("Failed to create DateTimeFormat instance.");
 
-
-let date = parse_gregorian_from_str("2020-09-12T12:35:00")
-    .expect("Failed to parse date.");
+let date = parse_gregorian_from_str("2020-09-12T12:35:00").expect("Failed to parse date.");
 
 let formatted_date = dtf.format(&date);
 assert_eq!(formatted_date.to_string(), "Sep 12, 2020, 12:35 PM");
@@ -40,12 +39,9 @@ convert a [`options::length::Bag`] into a [`DateTimeFormatOptions::Length`].
 
 ```rust
 use icu::calendar::Gregorian;
-use icu::datetime::{DateTimeFormat, DateTimeFormatOptions, options::length};
-let options = length::Bag {
-    date: Some(length::Date::Medium),
-    time: Some(length::Time::Short),
-    ..Default::default()
-}.into();
+use icu::datetime::{options::length, DateTimeFormat, DateTimeFormatOptions};
+let options =
+    length::Bag::from_date_time_style(length::Date::Medium, length::Time::Short).into();
 
 let dtf = DateTimeFormat::<Gregorian>::try_new(locale, &provider, &options);
 ```

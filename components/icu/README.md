@@ -48,25 +48,24 @@ functionality are compiled. These features are:
 ## Example
 
 ```rust
+use icu::datetime::{mock::parse_gregorian_from_str, options::length, DateTimeFormat};
 use icu::locid::locale;
-use icu::datetime::{DateTimeFormat, options::length, mock::parse_gregorian_from_str};
 
 let provider = icu_testdata::get_provider();
 
-let options = length::Bag {
-    date: Some(length::Date::Long),
-    time: Some(length::Time::Medium),
-    ..Default::default()
-}.into();
+let options =
+    length::Bag::from_date_time_style(length::Date::Long, length::Time::Medium).into();
 
 let dtf = DateTimeFormat::try_new(locale!("en"), &provider, &options)
     .expect("Failed to create DateTimeFormat instance.");
 
-let date = parse_gregorian_from_str("2020-09-12T12:35:00")
-    .expect("Failed to parse date.");
+let date = parse_gregorian_from_str("2020-09-12T12:35:00").expect("Failed to parse date.");
 
 let formatted_date = dtf.format(&date);
-assert_eq!(formatted_date.to_string(), "September 12, 2020 at 12:35:00 PM");
+assert_eq!(
+    formatted_date.to_string(),
+    "September 12, 2020 at 12:35:00 PM"
+);
 ```
 
 [`DataProvider`]: ../icu_provider/prelude/trait.DataProvider.html

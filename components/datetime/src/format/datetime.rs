@@ -4,7 +4,7 @@
 
 use crate::date::{DateTimeInput, DateTimeInputWithLocale, LocalizedDateTimeInput};
 use crate::error::DateTimeFormatError as Error;
-use crate::fields::{self, Field, FieldLength, FieldSymbol, Week, Year};
+use crate::fields::{self, Field, FieldLength, FieldSymbol, Second, Week, Year};
 use crate::pattern::{
     runtime::{Pattern, PatternPlurals},
     PatternItem,
@@ -31,15 +31,15 @@ use writeable::Writeable;
 /// # Examples
 ///
 /// ```
-/// use icu::locid::locale;
-/// use icu::datetime::DateTimeFormat;
 /// use icu::calendar::{DateTime, Gregorian};
+/// use icu::datetime::DateTimeFormat;
+/// use icu::locid::locale;
 /// # let provider = icu_provider::inv::InvariantDataProvider;
 /// # let options = icu::datetime::DateTimeFormatOptions::default();
 /// let dtf = DateTimeFormat::<Gregorian>::try_new(locale!("en"), &provider, &options)
 ///     .expect("Failed to create DateTimeFormat instance.");
 ///
-/// let datetime = DateTime::new_gregorian_datetime_from_integers(2020, 9, 1, 12, 34, 28)
+/// let datetime = DateTime::new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
 ///     .expect("Failed to construct DateTime.");
 ///
 /// let formatted_date = dtf.format(&datetime);
@@ -100,12 +100,26 @@ where
             } else {
                 let buffer = num.to_string();
                 let len = buffer.len();
+                // Safe because we've handled the case where len < 2 above
                 #[allow(clippy::indexing_slicing)]
-                // TODO(#1668) Clippy exceptions need docs or fixing.
                 result.write_str(&buffer[len - 2..])
             }
         }
-        length => write!(result, "{:0>width$}", num, width = length as usize),
+        FieldLength::Abbreviated => write!(result, "{:0>width$}", num, width = 3),
+        FieldLength::Wide => write!(result, "{:0>width$}", num, width = 4),
+        FieldLength::Narrow => write!(result, "{:0>width$}", num, width = 5),
+        FieldLength::Six => write!(result, "{:0>width$}", num, width = 6),
+        FieldLength::Fixed(p) => {
+            let buffer = num.to_string();
+            let len = buffer.len();
+            if len < p.into() {
+                write!(result, "{:0<width$}", num, width = p as usize)
+            } else {
+                // Safe because we've handled the case where len < p above
+                #[allow(clippy::indexing_slicing)]
+                result.write_str(&buffer[0..p as usize])
+            }
+        }
     }
 }
 
@@ -284,7 +298,7 @@ where
             ) as isize,
             field.length,
         )?,
-        FieldSymbol::Second(..) => format_number(
+        FieldSymbol::Second(Second::Second) => format_number(
             w,
             usize::from(
                 datetime
@@ -294,6 +308,19 @@ where
             ) as isize,
             field.length,
         )?,
+        FieldSymbol::Second(Second::FractionalSecond) => format_number(
+            w,
+            usize::from(
+                datetime
+                    .datetime()
+                    .nanosecond()
+                    .ok_or(Error::MissingInputField)?,
+            ) as isize,
+            field.length,
+        )?,
+        field @ FieldSymbol::Second(Second::Millisecond) => {
+            return Err(Error::UnsupportedField(field))
+        }
         FieldSymbol::DayPeriod(period) => {
             #[allow(clippy::expect_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
             let symbol = symbols
@@ -305,6 +332,7 @@ where
                     pattern.time_granularity.is_top_of_hour(
                         datetime.datetime().minute().map(u8::from).unwrap_or(0),
                         datetime.datetime().second().map(u8::from).unwrap_or(0),
+                        datetime.datetime().nanosecond().map(u32::from).unwrap_or(0),
                     ),
                 )?;
             w.write_str(symbol)?
@@ -392,28 +420,26 @@ pub fn analyze_patterns(
 #[cfg(test)]
 mod tests {
     use super::*;
+
     #[test]
-    #[cfg(feature = "serialize")]
+    #[cfg(feature = "serde")]
     fn test_basic() {
         use crate::provider::calendar::DateSymbolsV1Marker;
         use icu_calendar::DateTime;
         use icu_provider::prelude::*;
 
         let provider = icu_testdata::get_provider();
+        let locale: Locale = "en-u-ca-gregory".parse().unwrap();
         let data: DataPayload<DateSymbolsV1Marker> = provider
             .load_resource(&DataRequest {
-                options: ResourceOptions {
-                    variant: Some("gregory".into()),
-                    langid: Some("en".parse().unwrap()),
-                },
+                options: locale.into(),
                 metadata: Default::default(),
             })
             .unwrap()
             .take_payload()
             .unwrap();
         let pattern = "MMM".parse().unwrap();
-        let datetime =
-            DateTime::new_gregorian_datetime_from_integers(2020, 8, 1, 12, 34, 28).unwrap();
+        let datetime = DateTime::new_gregorian_datetime(2020, 8, 1, 12, 34, 28).unwrap();
         let mut sink = String::new();
         let loc_datetime = DateTimeInputWithLocale::new(&datetime, None, &"und".parse().unwrap());
         write_pattern(&pattern, Some(data.get()), &loc_datetime, &mut sink).unwrap();

@@ -8,59 +8,65 @@ use zerovec::{VarZeroVec, ZeroVec};
 use crate::error::Error;
 use crate::internals::{ClosureSet, DotType, MappingKind};
 
-// This represents case mapping exceptions that can't be represented as a delta applied to
-// the original code point. Similar to ICU4C, data is stored as a u16 array. The codepoint
-// trie in CaseMapping stores offsets into this array. The u16 at that index contains a
-// set of flags describing the subsequent data.
-//
-//   [idx + 0]  Header word:
-//       Bits:
-//         0..7  Flag bits indicating which optional slots are present (if any):
-//               0: Lowercase mapping (code point)
-//               1: Case folding (code point)
-//               2: Uppercase mapping (code point)
-//               3: Titlecase mapping (code point)
-//               4: Delta to simple case mapping (code point) (sign stored separately)
-//               5: [RESERVED]
-//               6: Closure mappings (string; see below)
-//               7: Full mappings (strings; see below)
-//            8  Double-width slots. If set, then each optional slot is stored as two
-//               elements of the array (high and low halves of 32-bit values) instead of
-//               a single element.
-//            9  Has no simple case folding, even if there is a simple lowercase mapping
-//           10  The value in the delta slot is negative
-//           11  Is case-sensitive (not exposed)
-//       12..13  Dot type
-//           14  Has conditional special casing
-//           15  Has conditional case folding
-//
-//   If double-width slots is false:
-//
-//   [idx + 1] First optional slot
-//   [idx + 2] Second optional slot
-//   [idx + 3] Third optional slot
-//   ...
-//
-//   If double-width slots is true:
-//
-//   [idx + 1] First optional slot
-//   [idx + 3] Second optional slot
-//   [idx + 5] Third optional slot
-//   ...
-//
-// In ICU4C, the full mapping and closure strings are stored inline in the data, encoded
-// as UTF-16, and the full mapping and closure slots contain information about the length
-// of those strings. To avoid the need for allocations when converting from UTF-16 to
-// UTF-8, we instead store strings encoded as UTF-8 in a side table. The full mapping and
-// closure slots contain indices into that side table.
-#[cfg_attr(feature = "serialize", derive(serde::Deserialize))]
-#[cfg_attr(feature = "serde_serialize", derive(serde::Serialize))]
+/// This represents case mapping exceptions that can't be represented as a delta applied to
+/// the original code point. Similar to ICU4C, data is stored as a u16 array. The codepoint
+/// trie in CaseMapping stores offsets into this array. The u16 at that index contains a
+/// set of flags describing the subsequent data.
+///
+///   [idx + 0]  Header word:
+///       Bits:
+///         0..7  Flag bits indicating which optional slots are present (if any):
+///               0: Lowercase mapping (code point)
+///               1: Case folding (code point)
+///               2: Uppercase mapping (code point)
+///               3: Titlecase mapping (code point)
+///               4: Delta to simple case mapping (code point) (sign stored separately)
+///               5: RESERVED
+///               6: Closure mappings (string; see below)
+///               7: Full mappings (strings; see below)
+///            8  Double-width slots. If set, then each optional slot is stored as two
+///               elements of the array (high and low halves of 32-bit values) instead of
+///               a single element.
+///            9  Has no simple case folding, even if there is a simple lowercase mapping
+///           10  The value in the delta slot is negative
+///           11  Is case-sensitive (not exposed)
+///       12..13  Dot type
+///           14  Has conditional special casing
+///           15  Has conditional case folding
+///
+///   If double-width slots is false:
+///
+///   [idx + 1] First optional slot
+///   [idx + 2] Second optional slot
+///   [idx + 3] Third optional slot
+///   ...
+///
+///   If double-width slots is true:
+///
+///   [idx + 1] First optional slot
+///   [idx + 3] Second optional slot
+///   [idx + 5] Third optional slot
+///   ...
+///
+/// In ICU4C, the full mapping and closure strings are stored inline in the data, encoded
+/// as UTF-16, and the full mapping and closure slots contain information about the length
+/// of those strings. To avoid the need for allocations when converting from UTF-16 to
+/// UTF-8, we instead store strings encoded as UTF-8 in a side table. The full mapping and
+/// closure slots contain indices into that side table.
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[cfg_attr(
+    feature = "datagen", 
+    derive(serde::Serialize, crabbake::Bakeable),
+    crabbake(path = icu_casemapping::provider),
+)]
 #[derive(Debug, Eq, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
-pub(crate) struct CaseMappingExceptions<'data> {
-    #[cfg_attr(feature = "serialize", serde(borrow))]
-    pub(crate) slots: ZeroVec<'data, u16>,
-    #[cfg_attr(feature = "serialize", serde(borrow))]
-    pub(crate) strings: VarZeroVec<'data, str>,
+pub struct CaseMappingExceptions<'data> {
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    #[allow(missing_docs)] // struct doc covers this
+    pub slots: ZeroVec<'data, u16>,
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    #[allow(missing_docs)] // struct doc covers this
+    pub strings: VarZeroVec<'data, str>,
 }
 
 #[derive(Copy, Clone)]
@@ -200,7 +206,7 @@ impl<'data> CaseMappingExceptions<'data> {
 
     // Returns whether the given slot exists for an entry.
     #[inline]
-    pub fn has_slot(&self, hdr_idx: u16, slot: ExceptionSlot) -> bool {
+    pub(crate) fn has_slot(&self, hdr_idx: u16, slot: ExceptionSlot) -> bool {
         self.header(hdr_idx).has_slot(slot)
     }
 
@@ -226,7 +232,7 @@ impl<'data> CaseMappingExceptions<'data> {
 
     // Returns the character stored in a given slot for an entry.
     #[inline]
-    pub fn slot_char(&self, hdr_idx: u16, slot: ExceptionSlot) -> Option<char> {
+    pub(crate) fn slot_char(&self, hdr_idx: u16, slot: ExceptionSlot) -> Option<char> {
         debug_assert!(slot.contains_char());
         if self.has_slot(hdr_idx, slot) {
             let raw = self.slot_value(hdr_idx, slot);
@@ -239,7 +245,7 @@ impl<'data> CaseMappingExceptions<'data> {
     // Given a mapping kind, returns the character for that kind, if it exists. Fold falls
     // back to Lower; Title falls back to Upper.
     #[inline]
-    pub fn slot_char_for_kind(&self, hdr_idx: u16, kind: MappingKind) -> Option<char> {
+    pub(crate) fn slot_char_for_kind(&self, hdr_idx: u16, kind: MappingKind) -> Option<char> {
         match kind {
             MappingKind::Lower | MappingKind::Upper => self.slot_char(hdr_idx, kind.into()),
             MappingKind::Fold => self
@@ -253,13 +259,13 @@ impl<'data> CaseMappingExceptions<'data> {
 
     // Returns whether an entry has a delta slot.
     #[inline]
-    pub fn has_delta(&self, hdr_idx: u16) -> bool {
+    pub(crate) fn has_delta(&self, hdr_idx: u16) -> bool {
         self.header(hdr_idx).has_slot(ExceptionSlot::Delta)
     }
 
     // Returns the delta value for an entry (with the correct sign).
     #[inline]
-    pub fn delta(&self, hdr_idx: u16) -> i32 {
+    pub(crate) fn delta(&self, hdr_idx: u16) -> i32 {
         debug_assert!(self.has_delta(hdr_idx));
         let raw: i32 = self.slot_value(hdr_idx, ExceptionSlot::Delta) as _;
         if self.header(hdr_idx).delta_is_negative() {
@@ -277,38 +283,38 @@ impl<'data> CaseMappingExceptions<'data> {
 
     // Returns whether there is no simple case folding for an entry.
     #[inline]
-    pub fn no_simple_case_folding(&self, hdr_idx: u16) -> bool {
+    pub(crate) fn no_simple_case_folding(&self, hdr_idx: u16) -> bool {
         self.header(hdr_idx).no_simple_case_folding()
     }
 
     // Returns whether this code point is case-sensitive.
     // (Note that this information is stored in the trie for code points without
     // exception data, but the exception index requires more bits than the delta.)
-    pub fn is_sensitive(&self, hdr_idx: u16) -> bool {
+    pub(crate) fn is_sensitive(&self, hdr_idx: u16) -> bool {
         self.header(hdr_idx).is_sensitive()
     }
 
     // Returns whether there is a conditional case fold for this entry.
     // (This is used to implement Turkic mappings for dotted/dotless i.)
-    pub fn has_conditional_fold(&self, hdr_idx: u16) -> bool {
+    pub(crate) fn has_conditional_fold(&self, hdr_idx: u16) -> bool {
         self.header(hdr_idx).has_conditional_fold()
     }
 
     // Given a header index, returns whether there is a language-specific case mapping.
-    pub fn has_conditional_special(&self, hdr_idx: u16) -> bool {
+    pub(crate) fn has_conditional_special(&self, hdr_idx: u16) -> bool {
         self.header(hdr_idx).has_conditional_special()
     }
 
     // Given a header index, returns the dot type.
     // (Note that this information is stored in the trie for code points without
     // exception data, but the exception index requires more bits than the delta.)
-    pub fn dot_type(&self, hdr_idx: u16) -> DotType {
+    pub(crate) fn dot_type(&self, hdr_idx: u16) -> DotType {
         self.header(hdr_idx).dot_type()
     }
 
     // Given a header index and a mapping kind, returns the full mapping string.
     // Note that the string may be empty.
-    pub fn full_mapping_string(&self, hdr_idx: u16, slot: MappingKind) -> &str {
+    pub(crate) fn full_mapping_string(&self, hdr_idx: u16, slot: MappingKind) -> &str {
         debug_assert!(self.has_slot(hdr_idx, ExceptionSlot::FullMappings));
         let mappings_idx = self.slot_value(hdr_idx, ExceptionSlot::FullMappings);
         let idx = mappings_idx as usize + slot as usize;
@@ -322,7 +328,7 @@ impl<'data> CaseMappingExceptions<'data> {
         &self.strings[closure_idx]
     }
 
-    pub fn add_full_and_closure_mappings<S: ClosureSet>(&self, hdr_idx: u16, set: &mut S) {
+    pub(crate) fn add_full_and_closure_mappings<S: ClosureSet>(&self, hdr_idx: u16, set: &mut S) {
         if self.has_slot(hdr_idx, ExceptionSlot::FullMappings) {
             let mapping_string = self.full_mapping_string(hdr_idx, MappingKind::Fold);
             if !mapping_string.is_empty() {
@@ -337,7 +343,7 @@ impl<'data> CaseMappingExceptions<'data> {
         };
     }
 
-    pub fn validate(&self) -> Result<Vec<u16>, Error> {
+    pub(crate) fn validate(&self) -> Result<Vec<u16>, Error> {
         let mut valid_indices = vec![];
         let mut idx: u16 = 0;
 

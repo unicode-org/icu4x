@@ -1,0 +1,142 @@
+{
+  "months": {
+    "format": {
+      "abbreviated": [
+        "Meskerem",
+        "Tekemt",
+        "Hedar",
+        "Tahsas",
+        "Ter",
+        "Yekatit",
+        "Megabit",
+        "Miazia",
+        "Genbot",
+        "Sene",
+        "Hamle",
+        "Nehasse"
+      ],
+      "narrow": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12"
+      ],
+      "short": null,
+      "wide": [
+        "Meskerem",
+        "Tekemt",
+        "Hedar",
+        "Tahsas",
+        "Ter",
+        "Yekatit",
+        "Megabit",
+        "Miazia",
+        "Genbot",
+        "Sene",
+        "Hamle",
+        "Nehasse"
+      ]
+    },
+    "stand_alone": null
+  },
+  "weekdays": {
+    "format": {
+      "abbreviated": [
+        "Lin",
+        "Lun",
+        "Mar",
+        "Miy",
+        "Huw",
+        "Biy",
+        "Sab"
+      ],
+      "narrow": [
+        "Lin",
+        "Lun",
+        "Mar",
+        "Miy",
+        "Huw",
+        "Biy",
+        "Sab"
+      ],
+      "short": [
+        "Li",
+        "Lu",
+        "Ma",
+        "Mi",
+        "Hu",
+        "Bi",
+        "Sa"
+      ],
+      "wide": [
+        "Linggo",
+        "Lunes",
+        "Martes",
+        "Miyerkules",
+        "Huwebes",
+        "Biyernes",
+        "Sabado"
+      ]
+    },
+    "stand_alone": null
+  },
+  "day_periods": {
+    "format": {
+      "abbreviated": {
+        "am": "AM",
+        "pm": "PM",
+        "noon": "tanghaling-tapat",
+        "midnight": "hatinggabi"
+      },
+      "narrow": {
+        "am": "am",
+        "pm": "pm",
+        "noon": "tanghaling-tapat",
+        "midnight": "hatinggabi"
+      },
+      "short": null,
+      "wide": {
+        "am": "AM",
+        "pm": "PM",
+        "noon": "tanghaling-tapat",
+        "midnight": "hatinggabi"
+      }
+    },
+    "stand_alone": {
+      "abbreviated": null,
+      "narrow": {
+        "am": "AM",
+        "pm": "PM",
+        "noon": "tanghaling-tapat",
+        "midnight": "hatinggabi"
+      },
+      "short": null,
+      "wide": null
+    }
+  },
+  "eras": {
+    "names": {
+      "before-incar": "ERA1",
+      "incarnation": "ERA0",
+      "mundi": "ERA0"
+    },
+    "abbr": {
+      "before-incar": "ERA1",
+      "incarnation": "ERA0",
+      "mundi": "ERA0"
+    },
+    "narrow": {
+      "before-incar": "ERA1",
+      "incarnation": "ERA0",
+      "mundi": "ERA0"
+    }
+  }
+}

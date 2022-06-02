@@ -8,9 +8,14 @@ mod borrowed;
 mod kv;
 #[allow(clippy::module_inception)] // module is purely internal
 pub(crate) mod map;
+mod vecs;
+
+#[cfg(feature = "crabbake")]
+mod crabbake;
 #[cfg(feature = "serde")]
 mod serde;
-mod vecs;
+#[cfg(feature = "serde")]
+mod serde_helpers;
 
 pub use crate::ZeroMap;
 pub use borrowed::ZeroMapBorrowed;

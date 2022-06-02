@@ -2,7 +2,34 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! This module contains types and implementations for the Coptic calendar
+//! This module contains types and implementations for the Coptic calendar.
+//!
+//! ```rust
+//! use icu::calendar::{coptic::Coptic, Date, DateTime};
+//!
+//! // `Date` type
+//! let date_iso = Date::new_iso_date_from_integers(1970, 1, 2)
+//!     .expect("Failed to initialize ISO Date instance.");
+//! let date_coptic = Date::new_from_iso(date_iso, Coptic);
+//!
+//! // `DateTime` type
+//! let datetime_iso = DateTime::new_iso_datetime_from_integers(1970, 1, 2, 13, 1, 0)
+//!     .expect("Failed to initialize ISO DateTime instance.");
+//! let datetime_coptic = DateTime::new_from_iso(datetime_iso, Coptic);
+//!
+//! // `Date` checks
+//! assert_eq!(date_coptic.year().number, 1686);
+//! assert_eq!(date_coptic.month().number, 4);
+//! assert_eq!(date_coptic.day_of_month().0, 24);
+//!
+//! // `DateTime` type
+//! assert_eq!(datetime_coptic.date.year().number, 1686);
+//! assert_eq!(datetime_coptic.date.month().number, 4);
+//! assert_eq!(datetime_coptic.date.day_of_month().0, 24);
+//! assert_eq!(datetime_coptic.time.hour.number(), 13);
+//! assert_eq!(datetime_coptic.time.minute.number(), 1);
+//! assert_eq!(datetime_coptic.time.second.number(), 0);
+//! ```
 
 use crate::iso::{Iso, IsoYear};
 use crate::julian::Julian;
@@ -14,12 +41,13 @@ use core::convert::TryInto;
 use core::marker::PhantomData;
 use tinystr::tinystr;
 
+/// The Coptic calendar
 #[derive(Copy, Clone, Debug, Hash, Default, Eq, PartialEq)]
-// The Coptic Calendar
+#[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct Coptic;
 
 #[derive(Copy, Clone, Debug, Hash, Eq, PartialEq)]
-pub struct CopticDateInner(ArithmeticDate<Coptic>);
+pub struct CopticDateInner(pub(crate) ArithmeticDate<Coptic>);
 
 impl CalendarArithmetic for Coptic {
     fn month_days(year: i32, month: u8) -> u8 {
@@ -82,6 +110,7 @@ impl Calendar for Coptic {
         &self,
         date1: &Self::DateInner,
         date2: &Self::DateInner,
+        _calendar2: &Self,
         _largest_unit: DateDurationUnit,
         _smallest_unit: DateDurationUnit,
     ) -> DateDuration<Self> {
@@ -115,17 +144,12 @@ impl Calendar for Coptic {
         }
     }
 
-    fn debug_name() -> &'static str {
+    fn debug_name(&self) -> &'static str {
         "Coptic"
     }
 }
 
 impl Coptic {
-    /// Construct a new Coptic Calendar
-    pub fn new() -> Self {
-        Self
-    }
-
     // "Fixed" is a day count representation of calendars staring from Jan 1st of year 1 of the Georgian Calendar.
     // The fixed date algorithms are from
     // Dershowitz, Nachum, and Edward M. Reingold. _Calendrical calculations_. Cambridge University Press, 2008.
@@ -140,7 +164,7 @@ impl Coptic {
             + date.day as i32
     }
 
-    fn fixed_from_coptic_integers(year: i32, month: i32, day: i32) -> i32 {
+    pub(crate) fn fixed_from_coptic_integers(year: i32, month: i32, day: i32) -> i32 {
         #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
         Self::fixed_from_coptic(ArithmeticDate {
             year,
@@ -151,14 +175,14 @@ impl Coptic {
     }
 
     // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/1ee51ecfaae6f856b0d7de3e36e9042100b4f424/calendar.l#L1990
-    fn coptic_from_fixed(date: i32) -> CopticDateInner {
+    pub(crate) fn coptic_from_fixed(date: i32) -> CopticDateInner {
         let coptic_epoch = Julian::fixed_from_julian_integers(284, 8, 29);
         let year = (4 * (date - coptic_epoch) + 1463) / 1461;
         let month = (date - Self::fixed_from_coptic_integers(year, 1, 1)) / 30 + 1;
         let day = date + 1 - Self::fixed_from_coptic_integers(year, month, 1);
 
         #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
-        *Date::new_coptic_date_from_integers(year, month as u8, day as u8)
+        *Date::new_coptic_date(year, month as u8, day as u8)
             .unwrap()
             .inner()
     }
@@ -173,12 +197,19 @@ impl Coptic {
 }
 
 impl Date<Coptic> {
-    /// Construct new Coptic Date
-    pub fn new_coptic_date_from_integers(
-        year: i32,
-        month: u8,
-        day: u8,
-    ) -> Result<Date<Coptic>, DateTimeError> {
+    /// Construct new Coptic Date.
+    ///
+    /// ```rust
+    /// use icu::calendar::Date;
+    ///
+    /// let date_coptic =
+    ///     Date::new_coptic_date(1686, 5, 6).expect("Failed to initialize Coptic Date instance.");
+    ///
+    /// assert_eq!(date_coptic.year().number, 1686);
+    /// assert_eq!(date_coptic.month().number, 5);
+    /// assert_eq!(date_coptic.day_of_month().0, 6);
+    /// ```
+    pub fn new_coptic_date(year: i32, month: u8, day: u8) -> Result<Date<Coptic>, DateTimeError> {
         let inner = ArithmeticDate {
             year,
             month,
@@ -196,8 +227,22 @@ impl Date<Coptic> {
 }
 
 impl DateTime<Coptic> {
-    /// Construct a new Coptic datetime from integers
-    pub fn new_coptic_datetime_from_integers(
+    /// Construct a new Coptic datetime from integers.
+    ///
+    /// ```rust
+    /// use icu::calendar::DateTime;
+    ///
+    /// let datetime_coptic = DateTime::new_coptic_datetime(1686, 5, 6, 13, 1, 0)
+    ///     .expect("Failed to initialize Coptic DateTime instance.");
+    ///
+    /// assert_eq!(datetime_coptic.date.year().number, 1686);
+    /// assert_eq!(datetime_coptic.date.month().number, 5);
+    /// assert_eq!(datetime_coptic.date.day_of_month().0, 6);
+    /// assert_eq!(datetime_coptic.time.hour.number(), 13);
+    /// assert_eq!(datetime_coptic.time.minute.number(), 1);
+    /// assert_eq!(datetime_coptic.time.second.number(), 0);
+    /// ```
+    pub fn new_coptic_datetime(
         year: i32,
         month: u8,
         day: u8,
@@ -206,8 +251,8 @@ impl DateTime<Coptic> {
         second: u8,
     ) -> Result<DateTime<Coptic>, DateTimeError> {
         Ok(DateTime {
-            date: Date::new_coptic_date_from_integers(year, month, day)?,
-            time: types::Time::try_new(hour, minute, second)?,
+            date: Date::new_coptic_date(year, month, day)?,
+            time: types::Time::try_new(hour, minute, second, 0)?,
         })
     }
 }

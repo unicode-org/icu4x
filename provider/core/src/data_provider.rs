@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 #[cfg(test)]
-#[cfg(all(feature = "serialize", feature = "datagen"))]
+#[cfg(feature = "datagen")]
 mod test;
 
 use crate::buf::BufferMarker;
@@ -14,19 +14,18 @@ use crate::resource::ResourceOptions;
 use crate::yoke::trait_hack::YokeTraitHack;
 use crate::yoke::*;
 
-use alloc::rc::Rc;
-
 use core::convert::TryFrom;
 use core::fmt;
 use core::fmt::Debug;
 use core::marker::PhantomData;
 use icu_locid::LanguageIdentifier;
 
-#[derive(Default)]
+#[derive(Default, Debug, PartialEq, Eq, PartialOrd, Ord)]
 #[non_exhaustive]
 pub struct DataRequestMetadata;
 
-#[derive(Default)]
+#[derive(Default, Debug, PartialEq, Eq, PartialOrd, Ord)]
+#[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct DataRequest {
     pub options: ResourceOptions,
     pub metadata: DataRequestMetadata,
@@ -35,41 +34,6 @@ pub struct DataRequest {
 impl fmt::Display for DataRequest {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         fmt::Display::fmt(&self.options, f)
-    }
-}
-
-impl DataRequest {
-    /// Returns the [`LanguageIdentifier`] for this [`DataRequest`], or `None` if it is not present.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use icu_provider::prelude::*;
-    /// use icu_locid::locale;
-    ///
-    /// const FOO_BAR: ResourceKey = icu_provider::resource_key!("foo/bar@1");
-    ///
-    /// let req_no_langid = DataRequest {
-    ///     options: ResourceOptions::default(),
-    ///     metadata: Default::default(),
-    /// };
-    ///
-    /// let req_with_langid = DataRequest {
-    ///     options: locale!("ar-EG").into(),
-    ///     metadata: Default::default(),
-    /// };
-    ///
-    /// assert!(matches!(
-    ///     req_no_langid.get_langid(),
-    ///     None
-    /// ));
-    /// assert!(matches!(
-    ///     req_with_langid.get_langid(),
-    ///     Some(_)
-    /// ));
-    /// ```
-    pub fn get_langid(&self) -> Option<&LanguageIdentifier> {
-        self.options.langid.as_ref()
     }
 }
 
@@ -110,13 +74,18 @@ pub struct DataResponseMetadata {
 /// To transform a [`DataPayload`] to a different type backed by the same data store (cart), use
 /// [`DataPayload::map_project()`] or one of its sister methods.
 ///
+/// # `sync` feature
+///
+/// By default, the payload uses an [`Rc<[u8]>`] internally and hence is neither [`Sync`] nor [`Send`].
+/// If these traits are required, the `sync` feature can be enabled to use an [`Arc<[u8]>`] instead.
+///
 /// # Examples
 ///
 /// Basic usage, using the `CowStrMarker` marker:
 ///
 /// ```
-/// use icu_provider::prelude::*;
 /// use icu_provider::marker::CowStrMarker;
+/// use icu_provider::prelude::*;
 /// use std::borrow::Cow;
 ///
 /// let payload = DataPayload::<CowStrMarker>::from_owned(Cow::Borrowed("Demo"));
@@ -127,7 +96,7 @@ pub struct DataPayload<M>
 where
     M: DataMarker,
 {
-    pub(crate) yoke: Yoke<M::Yokeable, Option<Rc<[u8]>>>,
+    pub(crate) yoke: Yoke<M::Yokeable, Option<RcWrap>>,
 }
 
 impl<M> Debug for DataPayload<M>
@@ -146,8 +115,8 @@ where
 /// # Examples
 ///
 /// ```no_run
-/// use icu_provider::prelude::*;
 /// use icu_provider::hello_world::*;
+/// use icu_provider::prelude::*;
 ///
 /// let resp1: DataPayload<HelloWorldV1Marker> = todo!();
 /// let resp2 = resp1.clone();
@@ -181,6 +150,42 @@ where
 {
 }
 
+/// A wrapper type that wraps either an [`Rc`](alloc::rc::Rc) or an
+/// [`Arc`](alloc::sync::Arc), depending on the "sync" feature. Create
+/// this from a `&[u8]`.
+#[derive(Clone)]
+pub struct RcWrap(
+    #[cfg(not(feature = "sync"))] alloc::rc::Rc<[u8]>,
+    #[cfg(feature = "sync")] alloc::sync::Arc<[u8]>,
+);
+
+impl core::ops::Deref for RcWrap {
+    type Target = [u8];
+    fn deref(&self) -> &Self::Target {
+        self.0.deref()
+    }
+}
+
+// Safe because both Rc and Arc are CloneableCart
+unsafe impl CloneableCart for RcWrap {}
+
+// Safe because both Rc and Arc are StableDeref
+unsafe impl stable_deref_trait::StableDeref for RcWrap {}
+
+impl From<alloc::vec::Vec<u8>> for RcWrap {
+    fn from(other: alloc::vec::Vec<u8>) -> Self {
+        Self(other.into())
+    }
+}
+
+// Constructing from `Box<[u8]>` copies the whole slice, so we might
+// as well define this on a slice directly.
+impl From<&[u8]> for RcWrap {
+    fn from(other: &[u8]) -> Self {
+        Self(other.into())
+    }
+}
+
 #[test]
 fn test_clone_eq() {
     use crate::marker::CowStrMarker;
@@ -203,10 +208,10 @@ where
     /// [`try_from_rc_buffer_badly()`](Self::try_from_rc_buffer_badly) instead.
     #[inline]
     pub fn try_from_rc_buffer<E>(
-        rc_buffer: Rc<[u8]>,
+        buffer: RcWrap,
         f: impl for<'de> FnOnce(&'de [u8]) -> Result<<M::Yokeable as Yokeable<'de>>::Output, E>,
     ) -> Result<Self, E> {
-        let yoke = Yoke::try_attach_to_cart(rc_buffer, f)?.wrap_cart_in_option();
+        let yoke = Yoke::try_attach_to_cart(buffer, f)?.wrap_cart_in_option();
         Ok(Self { yoke })
     }
 
@@ -222,18 +227,12 @@ where
     ///
     /// ```
     /// # #[cfg(feature = "serde_json")] {
-    /// use icu_provider::prelude::*;
     /// use icu_provider::hello_world::*;
-    /// use std::rc::Rc;
-    ///
-    /// let json_text = "{\"message\":\"Hello World\"}";
-    /// let json_rc_buffer: Rc<[u8]> = json_text.as_bytes().into();
+    /// use icu_provider::prelude::*;
     ///
     /// let payload = DataPayload::<HelloWorldV1Marker>::try_from_rc_buffer_badly(
-    ///     json_rc_buffer.clone(),
-    ///     |bytes| {
-    ///         serde_json::from_slice(bytes)
-    ///     }
+    ///     "{\"message\":\"Hello World\"}".as_bytes().into(),
+    ///     |bytes| serde_json::from_slice(bytes),
     /// )
     /// .expect("JSON is valid");
     ///
@@ -242,10 +241,10 @@ where
     /// ```
     #[allow(clippy::type_complexity)]
     pub fn try_from_rc_buffer_badly<E>(
-        rc_buffer: Rc<[u8]>,
+        buffer: RcWrap,
         f: for<'de> fn(&'de [u8]) -> Result<<M::Yokeable as Yokeable<'de>>::Output, E>,
     ) -> Result<Self, E> {
-        let yoke = Yoke::try_attach_to_cart(rc_buffer, f)?.wrap_cart_in_option();
+        let yoke = Yoke::try_attach_to_cart(buffer, f)?.wrap_cart_in_option();
         Ok(Self { yoke })
     }
 
@@ -253,26 +252,20 @@ where
     /// conversion. This can often be a Serde deserialization operation.
     ///
     /// This function is similar to [`DataPayload::try_from_rc_buffer`], but it accepts a buffer
-    /// that is already yoked to an Rc buffer cart.
+    /// that is already yoked.
     ///
     /// # Examples
     ///
     /// ```
     /// # #[cfg(feature = "serde_json")] {
-    /// use icu_provider::prelude::*;
     /// use icu_provider::hello_world::*;
-    /// use std::rc::Rc;
+    /// use icu_provider::prelude::*;
     /// use icu_provider::yoke::Yoke;
     ///
-    /// let json_text = "{\"message\":\"Hello World\"}";
-    /// let json_rc_buffer: Rc<[u8]> = json_text.as_bytes().into();
-    ///
     /// let payload = DataPayload::<HelloWorldV1Marker>::try_from_yoked_buffer(
-    ///     Yoke::attach_to_zero_copy_cart(json_rc_buffer),
+    ///     Yoke::attach_to_cart("{\"message\":\"Hello World\"}".as_bytes().into(), |b| b),
     ///     (),
-    ///     |bytes, _, _| {
-    ///         serde_json::from_slice(bytes)
-    ///     }
+    ///     |bytes, _, _| serde_json::from_slice(bytes),
     /// )
     /// .expect("JSON is valid");
     ///
@@ -281,7 +274,7 @@ where
     /// ```
     #[allow(clippy::type_complexity)]
     pub fn try_from_yoked_buffer<T, E>(
-        yoked_buffer: Yoke<&'static [u8], Rc<[u8]>>,
+        yoked_buffer: Yoke<&'static [u8], RcWrap>,
         capture: T,
         f: for<'de> fn(
             <&'static [u8] as yoke::Yokeable<'de>>::Output,
@@ -291,7 +284,7 @@ where
     ) -> Result<Self, E> {
         let yoke = yoked_buffer
             .wrap_cart_in_option()
-            .try_project_with_capture(capture, f)?;
+            .try_map_project_with_capture(capture, f)?;
         Ok(Self { yoke })
     }
 
@@ -302,8 +295,8 @@ where
     /// # Examples
     ///
     /// ```
-    /// use icu_provider::prelude::*;
     /// use icu_provider::hello_world::*;
+    /// use icu_provider::prelude::*;
     /// use std::borrow::Cow;
     ///
     /// let local_struct = HelloWorldV1 {
@@ -339,8 +332,8 @@ where
     /// Basic usage:
     ///
     /// ```
-    /// use icu_provider::prelude::*;
     /// use icu_provider::marker::CowStrMarker;
+    /// use icu_provider::prelude::*;
     ///
     /// let mut payload = DataPayload::<CowStrMarker>::from_static_str("Hello");
     ///
@@ -352,8 +345,8 @@ where
     /// To transfer data from the context into the data struct, use the `move` keyword:
     ///
     /// ```
-    /// use icu_provider::prelude::*;
     /// use icu_provider::marker::CowStrMarker;
+    /// use icu_provider::prelude::*;
     ///
     /// let mut payload = DataPayload::<CowStrMarker>::from_static_str("Hello");
     ///
@@ -377,8 +370,8 @@ where
     /// # Examples
     ///
     /// ```
-    /// use icu_provider::prelude::*;
     /// use icu_provider::marker::CowStrMarker;
+    /// use icu_provider::prelude::*;
     ///
     /// let payload = DataPayload::<CowStrMarker>::from_static_str("Demo");
     ///
@@ -390,11 +383,11 @@ where
         self.yoke.get()
     }
 
-    /// Maps `DataPayload<M>` to `DataPayload<M2>` by projecting it with [`Yoke::project`].
+    /// Maps `DataPayload<M>` to `DataPayload<M2>` by projecting it with [`Yoke::map_project`].
     ///
     /// This is accomplished by a function that takes `M`'s data type and returns `M2`'s data
     /// type. The function takes a second argument which should be ignored. For more details,
-    /// see [`Yoke::project()`].
+    /// see [`Yoke::map_project()`].
     ///
     /// The standard [`DataPayload::map_project()`] function moves `self` and cannot capture any
     /// data from its context. Use one of the sister methods if you need these capabilities:
@@ -421,14 +414,12 @@ where
     /// }
     ///
     /// let p1: DataPayload<HelloWorldV1Marker> = DataPayload::from_owned(HelloWorldV1 {
-    ///     message: Cow::Borrowed("Hello World")
+    ///     message: Cow::Borrowed("Hello World"),
     /// });
     ///
     /// assert_eq!("Hello World", p1.get().message);
     ///
-    /// let p2: DataPayload<HelloWorldV1MessageMarker> = p1.map_project(|obj, _| {
-    ///     obj.message
-    /// });
+    /// let p2: DataPayload<HelloWorldV1MessageMarker> = p1.map_project(|obj, _| obj.message);
     ///
     /// // Note: at this point, p1 has been moved.
     /// assert_eq!("Hello World", p2.get());
@@ -445,7 +436,7 @@ where
         M2: DataMarker,
     {
         DataPayload {
-            yoke: self.yoke.project(f),
+            yoke: self.yoke.map_project(f),
         }
     }
 
@@ -466,14 +457,13 @@ where
     /// # }
     ///
     /// let p1: DataPayload<HelloWorldV1Marker> = DataPayload::from_owned(HelloWorldV1 {
-    ///     message: Cow::Borrowed("Hello World")
+    ///     message: Cow::Borrowed("Hello World"),
     /// });
     ///
     /// assert_eq!("Hello World", p1.get().message);
     ///
-    /// let p2: DataPayload<HelloWorldV1MessageMarker> = p1.map_project_cloned(|obj, _| {
-    ///     obj.message.clone()
-    /// });
+    /// let p2: DataPayload<HelloWorldV1MessageMarker> =
+    ///     p1.map_project_cloned(|obj, _| obj.message.clone());
     ///
     /// // Note: p1 is still valid.
     /// assert_eq!(p1.get().message, *p2.get());
@@ -490,7 +480,7 @@ where
         M2: DataMarker,
     {
         DataPayload {
-            yoke: self.yoke.project_cloned(f),
+            yoke: self.yoke.map_project_cloned(f),
         }
     }
 
@@ -512,14 +502,13 @@ where
     /// # }
     ///
     /// let p1: DataPayload<HelloWorldV1Marker> = DataPayload::from_owned(HelloWorldV1 {
-    ///     message: Cow::Borrowed("Hello World")
+    ///     message: Cow::Borrowed("Hello World"),
     /// });
     ///
     /// assert_eq!("Hello World", p1.get().message);
     ///
-    /// let p2: DataPayload<HelloWorldV1MessageMarker> = p1.map_project_with_capture(
-    ///     "Extra",
-    ///     |mut obj, capture, _| {
+    /// let p2: DataPayload<HelloWorldV1MessageMarker> =
+    ///     p1.map_project_with_capture("Extra", |mut obj, capture, _| {
     ///         obj.message.to_mut().push_str(capture);
     ///         obj.message
     ///     });
@@ -540,7 +529,7 @@ where
         M2: DataMarker,
     {
         DataPayload {
-            yoke: self.yoke.project_with_capture(capture, f),
+            yoke: self.yoke.map_project_with_capture(capture, f),
         }
     }
 
@@ -562,14 +551,13 @@ where
     /// # }
     ///
     /// let p1: DataPayload<HelloWorldV1Marker> = DataPayload::from_owned(HelloWorldV1 {
-    ///     message: Cow::Borrowed("Hello World")
+    ///     message: Cow::Borrowed("Hello World"),
     /// });
     ///
     /// assert_eq!("Hello World", p1.get().message);
     ///
-    /// let p2: DataPayload<HelloWorldV1MessageMarker> = p1.map_project_cloned_with_capture(
-    ///     "Extra",
-    ///     |obj, capture, _| {
+    /// let p2: DataPayload<HelloWorldV1MessageMarker> =
+    ///     p1.map_project_cloned_with_capture("Extra", |obj, capture, _| {
     ///         let mut message = obj.message.clone();
     ///         message.to_mut().push_str(capture);
     ///         message
@@ -593,7 +581,7 @@ where
         M2: DataMarker,
     {
         DataPayload {
-            yoke: self.yoke.project_cloned_with_capture(capture, f),
+            yoke: self.yoke.map_project_cloned_with_capture(capture, f),
         }
     }
 
@@ -615,14 +603,13 @@ where
     /// # }
     ///
     /// let p1: DataPayload<HelloWorldV1Marker> = DataPayload::from_owned(HelloWorldV1 {
-    ///     message: Cow::Borrowed("Hello World")
+    ///     message: Cow::Borrowed("Hello World"),
     /// });
     ///
     /// assert_eq!("Hello World", p1.get().message);
     ///
-    /// let p2: DataPayload<HelloWorldV1MessageMarker> = p1.try_map_project_with_capture(
-    ///     "Extra",
-    ///     |mut obj, capture, _| {
+    /// let p2: DataPayload<HelloWorldV1MessageMarker> =
+    ///     p1.try_map_project_with_capture("Extra", |mut obj, capture, _| {
     ///         if obj.message.is_empty() {
     ///             return Err("Example error");
     ///         }
@@ -647,7 +634,7 @@ where
         M2: DataMarker,
     {
         Ok(DataPayload {
-            yoke: self.yoke.try_project_with_capture(capture, f)?,
+            yoke: self.yoke.try_map_project_with_capture(capture, f)?,
         })
     }
 
@@ -669,14 +656,13 @@ where
     /// # }
     ///
     /// let p1: DataPayload<HelloWorldV1Marker> = DataPayload::from_owned(HelloWorldV1 {
-    ///     message: Cow::Borrowed("Hello World")
+    ///     message: Cow::Borrowed("Hello World"),
     /// });
     ///
     /// assert_eq!("Hello World", p1.get().message);
     ///
-    /// let p2: DataPayload<HelloWorldV1MessageMarker> = p1.try_map_project_cloned_with_capture(
-    ///     "Extra",
-    ///     |obj, capture, _| {
+    /// let p2: DataPayload<HelloWorldV1MessageMarker> =
+    ///     p1.try_map_project_cloned_with_capture("Extra", |obj, capture, _| {
     ///         if obj.message.is_empty() {
     ///             return Err("Example error");
     ///         }
@@ -704,7 +690,7 @@ where
         M2: DataMarker,
     {
         Ok(DataPayload {
-            yoke: self.yoke.try_project_cloned_with_capture(capture, f)?,
+            yoke: self.yoke.try_map_project_cloned_with_capture(capture, f)?,
         })
     }
 
@@ -718,15 +704,16 @@ where
 }
 
 impl DataPayload<BufferMarker> {
-    /// Converts a reference-counted byte buffer into a `DataPayload<BufferMarker>`.
-    pub fn from_rc_buffer(buffer: Rc<[u8]>) -> Self {
+    /// Converts an [`RcWrap`] into a `DataPayload<BufferMarker>`. The [`RcWrap`]
+    /// can be obtained from a `&[u8]`.
+    pub fn from_rc_buffer(buffer: RcWrap) -> Self {
         Self {
-            yoke: Yoke::attach_to_zero_copy_cart(buffer).wrap_cart_in_option(),
+            yoke: Yoke::attach_to_cart(buffer, |b| b).wrap_cart_in_option(),
         }
     }
 
     /// Converts a yoked byte buffer into a `DataPayload<BufferMarker>`.
-    pub fn from_yoked_buffer(yoked_buffer: Yoke<&'static [u8], Rc<[u8]>>) -> Self {
+    pub fn from_yoked_buffer(yoked_buffer: Yoke<&'static [u8], RcWrap>) -> Self {
         Self {
             yoke: yoked_buffer.wrap_cart_in_option(),
         }
@@ -751,6 +738,7 @@ where
 }
 
 /// A response object containing an object as payload and metadata about it.
+#[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct DataResponse<M>
 where
     M: DataMarker,
@@ -818,8 +806,8 @@ where
 /// # Examples
 ///
 /// ```no_run
-/// use icu_provider::prelude::*;
 /// use icu_provider::hello_world::*;
+/// use icu_provider::prelude::*;
 ///
 /// let resp1: DataResponse<HelloWorldV1Marker> = todo!();
 /// let resp2 = resp1.clone();
@@ -853,9 +841,9 @@ fn test_debug() {
 /// A data provider that loads data for a specific data type.
 ///
 /// Unlike [`ResourceProvider`], there may be multiple keys corresponding to the same data type.
-/// This is often the case when returning `dyn` trait objects such as [`SerializeMarker`].
+/// This is often the case when returning `dyn` trait objects such as [`AnyMarker`].
 ///
-/// [`SerializeMarker`]: crate::serde::SerializeMarker
+/// [`AnyMarker`]: crate::any::AnyMarker
 pub trait DynProvider<M>
 where
     M: DataMarker,

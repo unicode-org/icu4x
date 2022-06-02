@@ -50,25 +50,24 @@
 //! # Example
 //!
 //! ```
+//! use icu::datetime::{mock::parse_gregorian_from_str, options::length, DateTimeFormat};
 //! use icu::locid::locale;
-//! use icu::datetime::{DateTimeFormat, options::length, mock::parse_gregorian_from_str};
 //!
 //! let provider = icu_testdata::get_provider();
 //!
-//! let options = length::Bag {
-//!     date: Some(length::Date::Long),
-//!     time: Some(length::Time::Medium),
-//!     ..Default::default()
-//! }.into();
+//! let options =
+//!     length::Bag::from_date_time_style(length::Date::Long, length::Time::Medium).into();
 //!
 //! let dtf = DateTimeFormat::try_new(locale!("en"), &provider, &options)
 //!     .expect("Failed to create DateTimeFormat instance.");
 //!
-//! let date = parse_gregorian_from_str("2020-09-12T12:35:00")
-//!     .expect("Failed to parse date.");
+//! let date = parse_gregorian_from_str("2020-09-12T12:35:00").expect("Failed to parse date.");
 //!
 //! let formatted_date = dtf.format(&date);
-//! assert_eq!(formatted_date.to_string(), "September 12, 2020 at 12:35:00 PM");
+//! assert_eq!(
+//!     formatted_date.to_string(),
+//!     "September 12, 2020 at 12:35:00 PM"
+//! );
 //! ```
 //!
 //! [`DataProvider`]: ../icu_provider/prelude/trait.DataProvider.html
@@ -115,22 +114,17 @@ pub mod datetime {
     //! # Examples
     //!
     //! ```
+    //! use icu::datetime::{mock::parse_gregorian_from_str, options::length, DateTimeFormat};
     //! use icu::locid::locale;
-    //! use icu::datetime::{DateTimeFormat, options::length, mock::parse_gregorian_from_str};
     //!
     //! let provider = icu_testdata::get_provider();
     //!
-    //! let options = length::Bag {
-    //!     date: Some(length::Date::Medium),
-    //!     time: Some(length::Time::Short),
-    //!     ..Default::default()
-    //! }.into();
-    //!
+    //! let options =
+    //!     length::Bag::from_date_time_style(length::Date::Medium, length::Time::Short).into();
     //! let dtf = DateTimeFormat::try_new(locale!("en"), &provider, &options)
     //!     .expect("Failed to create DateTimeFormat instance.");
     //!
-    //! let date = parse_gregorian_from_str("2020-09-12T12:35:00")
-    //!     .expect("Failed to parse date.");
+    //! let date = parse_gregorian_from_str("2020-09-12T12:35:00").expect("Failed to parse date.");
     //!
     //! let formatted_date = dtf.format(&date);
     //! assert_eq!(formatted_date.to_string(), "Sep 12, 2020, 12:35 PM");
@@ -204,16 +198,13 @@ pub mod locale_canonicalizer {
     //! use icu_locid::Locale;
     //!
     //! let provider = icu_testdata::get_provider();
-    //! let lc = LocaleCanonicalizer::new(&provider)
-    //!     .expect("create failed");
+    //! let lc = LocaleCanonicalizer::new(&provider).expect("create failed");
     //!
-    //! let mut locale : Locale = "zh-CN".parse()
-    //!     .expect("parse failed");
+    //! let mut locale: Locale = "zh-CN".parse().expect("parse failed");
     //! assert_eq!(lc.maximize(&mut locale), CanonicalizationResult::Modified);
     //! assert_eq!(locale.to_string(), "zh-Hans-CN");
     //!
-    //! let mut locale : Locale = "zh-Hant-TW".parse()
-    //!     .expect("parse failed");
+    //! let mut locale: Locale = "zh-Hant-TW".parse().expect("parse failed");
     //! assert_eq!(lc.maximize(&mut locale), CanonicalizationResult::Unmodified);
     //! assert_eq!(locale.to_string(), "zh-Hant-TW");
     //! ```
@@ -223,16 +214,13 @@ pub mod locale_canonicalizer {
     //! use icu_locid::Locale;
     //!
     //! let provider = icu_testdata::get_provider();
-    //! let lc = LocaleCanonicalizer::new(&provider)
-    //!     .expect("create failed");
+    //! let lc = LocaleCanonicalizer::new(&provider).expect("create failed");
     //!
-    //! let mut locale : Locale = "zh-Hans-CN".parse()
-    //!     .expect("parse failed");
+    //! let mut locale: Locale = "zh-Hans-CN".parse().expect("parse failed");
     //! assert_eq!(lc.minimize(&mut locale), CanonicalizationResult::Modified);
     //! assert_eq!(locale.to_string(), "zh");
     //!
-    //! let mut locale : Locale = "zh".parse()
-    //!     .expect("parse failed");
+    //! let mut locale: Locale = "zh".parse().expect("parse failed");
     //! assert_eq!(lc.minimize(&mut locale), CanonicalizationResult::Unmodified);
     //! assert_eq!(locale.to_string(), "zh");
     //! ```
@@ -310,7 +298,7 @@ pub mod plurals {
     //!
     //! ```
     //! use icu::locid::locale;
-    //! use icu::plurals::{PluralRules, PluralRuleType, PluralCategory};
+    //! use icu::plurals::{PluralCategory, PluralRuleType, PluralRules};
     //!
     //! let provider = icu_testdata::get_provider();
     //!
@@ -373,14 +361,12 @@ pub mod properties {
     //!
     //! // A binary property as a `UnicodeSet`
     //!
-    //! let payload =
-    //!     sets::get_emoji(&provider)
-    //!         .expect("The data should be valid");
+    //! let payload = sets::get_emoji(&provider).expect("The data should be valid");
     //! let data_struct = payload.get();
     //! let emoji = &data_struct.inv_list;
     //!
-    //! assert!(emoji.contains('🎃'));  // U+1F383 JACK-O-LANTERN
-    //! assert!(!emoji.contains('木'));  // U+6728
+    //! assert!(emoji.contains('🎃')); // U+1F383 JACK-O-LANTERN
+    //! assert!(!emoji.contains('木')); // U+6728
     //!
     //! // An individual enumerated property value as a `UnicodeSet`
     //!
@@ -400,14 +386,12 @@ pub mod properties {
     //!
     //! let provider = icu_testdata::get_provider();
     //!
-    //! let payload =
-    //!     maps::get_script(&provider)
-    //!         .expect("The data should be valid");
+    //! let payload = maps::get_script(&provider).expect("The data should be valid");
     //! let data_struct = payload.get();
     //! let script = &data_struct.code_point_trie;
     //!
-    //! assert_eq!(script.get('🎃' as u32), Script::Common);  // U+1F383 JACK-O-LANTERN
-    //! assert_eq!(script.get('木' as u32), Script::Han);  // U+6728
+    //! assert_eq!(script.get('🎃' as u32), Script::Common); // U+1F383 JACK-O-LANTERN
+    //! assert_eq!(script.get('木' as u32), Script::Han); // U+6728
     //! ```
     //!
     //! ## Property data for `Script` and `Script_Extensions`
@@ -417,9 +401,7 @@ pub mod properties {
     //!
     //! let provider = icu_testdata::get_provider();
     //!
-    //! let payload =
-    //!     script::get_script_with_extensions(&provider)
-    //!         .expect("The data should be valid");
+    //! let payload = script::get_script_with_extensions(&provider).expect("The data should be valid");
     //! let data_struct = payload.get();
     //! let swe = &data_struct.data;
     //!
@@ -430,14 +412,24 @@ pub mod properties {
     //! // get the `Script_Extensions` property value
     //! assert_eq!(
     //!     swe.get_script_extensions_val(0x0640) // U+0640 ARABIC TATWEEL
-    //!         .iter().collect::<Vec<Script>>(),
-    //!     vec![Script::Arabic, Script::Syriac, Script::Mandaic, Script::Manichaean,
-    //!          Script::PsalterPahlavi, Script::Adlam, Script::HanifiRohingya, Script::Sogdian,
-    //!          Script::OldUyghur]
+    //!         .iter()
+    //!         .collect::<Vec<Script>>(),
+    //!     vec![
+    //!         Script::Arabic,
+    //!         Script::Syriac,
+    //!         Script::Mandaic,
+    //!         Script::Manichaean,
+    //!         Script::PsalterPahlavi,
+    //!         Script::Adlam,
+    //!         Script::HanifiRohingya,
+    //!         Script::Sogdian,
+    //!         Script::OldUyghur
+    //!     ]
     //! );
     //! assert_eq!(
     //!     swe.get_script_extensions_val('௫' as u32) // U+0BEB TAMIL DIGIT FIVE
-    //!         .iter().collect::<Vec<Script>>(),
+    //!         .iter()
+    //!         .collect::<Vec<Script>>(),
     //!     vec![Script::Tamil, Script::Grantha]
     //! );
     //!
@@ -481,14 +473,16 @@ pub mod list {
     //!     .expect("Data should load successfully");
     //!
     //! assert_eq!(
-    //!     list_formatter.format(["España", "Suiza"].iter())
+    //!     list_formatter
+    //!         .format(["España", "Suiza"].iter())
     //!         .write_to_string(),
     //!     "España y Suiza"
     //! );
     //!
     //! // The Spanish 'y' sometimes becomes an 'e':
     //! assert_eq!(
-    //!     list_formatter.format(["España", "Suiza", "Italia"].iter())
+    //!     list_formatter
+    //!         .format(["España", "Suiza", "Italia"].iter())
     //!         .write_to_string(),
     //!     "España, Suiza e Italia"
     //! );
@@ -498,7 +492,7 @@ pub mod list {
     //!     list_formatter.format(1..=10).write_to_string(),
     //!     "1, 2, 3, 4, 5, 6, 7, 8, 9 y 10"
     //! );
-    //!```
+    //! ```
     //!
     //! [`ListFormatter`]: ListFormatter
 

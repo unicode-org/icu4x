@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::any_calendar::{AnyCalendar, IncludedInAnyCalendar};
 use crate::{types, Calendar, DateDuration, DateDurationUnit, Iso};
 use alloc::rc::Rc;
 use core::fmt;
@@ -33,12 +34,24 @@ impl<C: Calendar> AsCalendar for Rc<C> {
     }
 }
 
-/// A date for a given calendar
+/// A date for a given calendar.
 ///
-/// This can work with wrappers arount [`Calendar`] types,
-/// e.g. `Rc<C>`, via the [`AsCalendar`] trait
+/// This can work with wrappers around [`Calendar`] types,
+/// e.g. `Rc<C>`, via the [`AsCalendar`] trait.
+///
+/// ```rust
+/// use icu::calendar::Date;
+///
+/// // Example: creation of ISO date from integers.
+/// let date_iso = Date::new_iso_date_from_integers(1970, 1, 2)
+///     .expect("Failed to initialize ISO Date instance.");
+///
+/// assert_eq!(date_iso.year().number, 1970);
+/// assert_eq!(date_iso.month().number, 1);
+/// assert_eq!(date_iso.day_of_month().0, 2);
+/// ```
 pub struct Date<A: AsCalendar> {
-    inner: <A::Calendar as Calendar>::DateInner,
+    pub(crate) inner: <A::Calendar as Calendar>::DateInner,
     calendar: A,
 }
 
@@ -111,9 +124,13 @@ impl<A: AsCalendar> Date<A> {
         largest_unit: DateDurationUnit,
         smallest_unit: DateDurationUnit,
     ) -> DateDuration<A::Calendar> {
-        self.calendar
-            .as_calendar()
-            .until(self.inner(), other.inner(), largest_unit, smallest_unit)
+        self.calendar.as_calendar().until(
+            self.inner(),
+            other.inner(),
+            other.calendar.as_calendar(),
+            largest_unit,
+            smallest_unit,
+        )
     }
 
     /// The calendar-specific year represented by `self`
@@ -145,6 +162,9 @@ impl<A: AsCalendar> Date<A> {
     ///
     /// Calling this outside of calendar implementations is sound, but calendar implementations are not
     /// expected to do anything sensible with such invalid dates.
+    ///
+    /// AnyCalendar *will* panic if AnyCalendar [`Date`] objects with mismatching
+    /// date and calendar types are constructed
     #[inline]
     pub fn from_raw(inner: <A::Calendar as Calendar>::DateInner, calendar: A) -> Self {
         Self { inner, calendar }
@@ -154,6 +174,31 @@ impl<A: AsCalendar> Date<A> {
     #[inline]
     pub fn inner(&self) -> &<A::Calendar as Calendar>::DateInner {
         &self.inner
+    }
+
+    /// Get a reference to the contained calendar
+    #[inline]
+    pub fn calendar(&self) -> &A::Calendar {
+        self.calendar.as_calendar()
+    }
+}
+
+impl<C: IncludedInAnyCalendar, A: AsCalendar<Calendar = C>> Date<A> {
+    /// Type-erase the date, converting it to a date for [`AnyCalendar`]
+    pub fn to_any(&self) -> Date<AnyCalendar> {
+        Date::from_raw(
+            C::date_to_any(self.inner()),
+            self.calendar().to_any_cloned(),
+        )
+    }
+}
+
+impl<C: Calendar> Date<C> {
+    /// Wrap the calendar type in `Rc<T>`
+    ///
+    /// Useful when paired with [`Self::to_any()`] to obtain a `Date<Rc<AnyCalendar>>`
+    pub fn wrap_calendar_in_rc(self) -> Date<Rc<C>> {
+        Date::from_raw(self.inner, Rc::new(self.calendar))
     }
 }
 
@@ -176,7 +221,7 @@ impl<A: AsCalendar> fmt::Debug for Date<A> {
             f,
             "Date({:?}, for calendar {})",
             self.inner,
-            A::Calendar::debug_name()
+            self.calendar.as_calendar().debug_name()
         )
     }
 }

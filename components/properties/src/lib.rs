@@ -24,19 +24,16 @@
 //!
 //! // A binary property as a `UnicodeSet`
 //!
-//! let payload =
-//!     sets::get_emoji(&provider)
-//!         .expect("The data should be valid");
+//! let payload = sets::get_emoji(&provider).expect("The data should be valid");
 //! let data_struct = payload.get();
 //! let emoji = &data_struct.inv_list;
 //!
-//! assert!(emoji.contains('🎃'));  // U+1F383 JACK-O-LANTERN
-//! assert!(!emoji.contains('木'));  // U+6728
+//! assert!(emoji.contains('🎃')); // U+1F383 JACK-O-LANTERN
+//! assert!(!emoji.contains('木')); // U+6728
 //!
 //! // An individual enumerated property value as a `UnicodeSet`
 //!
-//! let payload = maps::get_general_category(&provider)
-//!     .expect("The data should be valid");
+//! let payload = maps::get_general_category(&provider).expect("The data should be valid");
 //! let data_struct = payload.get();
 //! let gc = &data_struct.code_point_trie;
 //! let line_sep = gc.get_set_for_value(GeneralCategory::LineSeparator);
@@ -52,14 +49,12 @@
 //!
 //! let provider = icu_testdata::get_provider();
 //!
-//! let payload =
-//!     maps::get_script(&provider)
-//!         .expect("The data should be valid");
+//! let payload = maps::get_script(&provider).expect("The data should be valid");
 //! let data_struct = payload.get();
 //! let script = &data_struct.code_point_trie;
 //!
-//! assert_eq!(script.get('🎃' as u32), Script::Common);  // U+1F383 JACK-O-LANTERN
-//! assert_eq!(script.get('木' as u32), Script::Han);  // U+6728
+//! assert_eq!(script.get('🎃' as u32), Script::Common); // U+1F383 JACK-O-LANTERN
+//! assert_eq!(script.get('木' as u32), Script::Han); // U+6728
 //! ```
 //!
 //! [`ICU4X`]: ../icu/index.html
@@ -76,14 +71,20 @@
         clippy::indexing_slicing,
         clippy::unwrap_used,
         clippy::expect_used,
-        clippy::panic
+        clippy::panic,
+        clippy::exhaustive_structs,
+        clippy::exhaustive_enums
     )
 )]
+
+#[cfg(feature = "bidi")]
+pub mod bidi;
 
 mod error;
 pub mod maps;
 mod props;
 pub mod provider;
+#[allow(clippy::exhaustive_structs)] // TODO
 pub mod script;
 pub mod sets;
 mod trievalue;
@@ -92,3 +93,5 @@ pub use props::{
     BidiClass, CanonicalCombiningClass, EastAsianWidth, EnumeratedProperty, GeneralCategory,
     GeneralCategoryGroup, GraphemeClusterBreak, LineBreak, Script, SentenceBreak, WordBreak,
 };
+
+pub use error::PropertiesError;

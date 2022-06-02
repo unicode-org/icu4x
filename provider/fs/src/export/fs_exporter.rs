@@ -2,16 +2,12 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use super::serializers::{json, AbstractSerializer};
-use crate::error::Error;
+use super::serializers::AbstractSerializer;
 use crate::manifest::Manifest;
-use crate::manifest::MANIFEST_FILE;
-use icu_provider::export::DataExporter;
+use icu_provider::datagen::*;
 use icu_provider::prelude::*;
-use icu_provider::serde::SerializeMarker;
 use serde::{Deserialize, Serialize};
 use std::fs;
-use std::ops::Deref;
 use std::path::PathBuf;
 use writeable::Writeable;
 
@@ -57,63 +53,51 @@ impl FilesystemExporter {
     pub fn try_new(
         serializer: Box<dyn AbstractSerializer + Sync>,
         options: ExporterOptions,
-    ) -> Result<Self, Error> {
+    ) -> Result<Self, DataError> {
         let result = FilesystemExporter {
             root: options.root,
-            manifest: Manifest {
-                buffer_format: serializer.get_buffer_format(),
-            },
+            manifest: Manifest::for_format(serializer.get_buffer_format())?,
             serializer,
         };
 
         match options.overwrite {
-            OverwriteOption::CheckEmpty => {
-                if result.root.exists() {
-                    fs::remove_dir(&result.root).map_err(|e| (e, &result.root))?;
-                }
+            OverwriteOption::CheckEmpty if result.root.exists() => fs::remove_dir(&result.root),
+            OverwriteOption::RemoveAndReplace if result.root.exists() => {
+                fs::remove_dir_all(&result.root)
             }
-            OverwriteOption::RemoveAndReplace => {
-                if result.root.exists() {
-                    fs::remove_dir_all(&result.root).map_err(|e| (e, &result.root))?;
-                }
-            }
-        };
-        fs::create_dir_all(&result.root).map_err(|e| (e, &result.root))?;
+            _ => Ok(()),
+        }
+        .and_then(|_| fs::create_dir_all(&result.root))
+        .map_err(|e| DataError::from(e).with_path_context(&result.root))?;
 
-        let manifest_path = result.root.join(MANIFEST_FILE);
-        let mut manifest_file =
-            fs::File::create(&manifest_path).map_err(|e| (e, &manifest_path))?;
-        let manifest_serializer = json::Serializer::new(json::Options {
-            style: json::StyleOption::Pretty,
-        });
-        manifest_serializer
-            .serialize(&result.manifest, &mut manifest_file)
-            .map_err(|e| (e, manifest_path))?;
+        result.manifest.write(&result.root)?;
         Ok(result)
     }
 }
 
-impl DataExporter<SerializeMarker> for FilesystemExporter {
+impl DataExporter for FilesystemExporter {
     fn put_payload(
         &self,
         key: ResourceKey,
-        options: ResourceOptions,
-        obj: DataPayload<SerializeMarker>,
+        options: &ResourceOptions,
+        obj: &DataPayload<ExportMarker>,
     ) -> Result<(), DataError> {
         log::trace!("Writing: {}/{}", key, options);
 
         let mut path_buf = self.root.clone();
         path_buf.push(&*key.write_to_string());
         path_buf.push(&*options.write_to_string());
-        path_buf.set_extension(self.manifest.get_file_extension());
+        path_buf.set_extension(self.manifest.file_extension);
 
         if let Some(parent_dir) = path_buf.parent() {
-            fs::create_dir_all(&parent_dir).map_err(|e| Error::from((e, parent_dir)))?;
+            fs::create_dir_all(&parent_dir)
+                .map_err(|e| DataError::from(e).with_path_context(&parent_dir))?;
         }
-        let mut file = fs::File::create(&path_buf).map_err(|e| Error::from((e, &path_buf)))?;
+        let mut file = fs::File::create(&path_buf)
+            .map_err(|e| DataError::from(e).with_path_context(&path_buf))?;
         self.serializer
-            .serialize(obj.get().deref(), &mut file)
-            .map_err(|e| Error::from((e, &path_buf)))?;
+            .serialize(obj, &mut file)
+            .map_err(|e| e.with_path_context(&path_buf))?;
         Ok(())
     }
 }

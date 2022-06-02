@@ -15,9 +15,9 @@ use litemap::LiteMap;
 #[icu_provider::data_struct(DateSkeletonPatternsV1Marker = "datetime/skeletons@1")]
 #[derive(Debug, PartialEq, Clone, Default)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize))]
-#[cfg_attr(feature = "serialize", derive(serde::Deserialize))]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct DateSkeletonPatternsV1<'data>(
-    #[cfg_attr(feature = "serialize", serde(borrow))]
+    #[cfg_attr(feature = "serde", serde(borrow))]
     #[zerofrom(clone)]
     pub LiteMap<SkeletonV1, PatternPlurals<'data>>,
 );
@@ -30,7 +30,7 @@ pub struct DateSkeletonPatternsV1<'data>(
 /// custom serialization practices.
 #[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Clone)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize))]
-#[cfg_attr(feature = "serialize", derive(serde::Deserialize))]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct SkeletonV1(pub Skeleton);
 
 impl TryFrom<&str> for SkeletonV1 {
@@ -41,5 +41,64 @@ impl TryFrom<&str> for SkeletonV1 {
             Ok(skeleton) => Ok(Self(skeleton)),
             Err(err) => Err(err),
         }
+    }
+}
+
+// DateSkeletonPatternsV1 uses heap-allocations, so it cannot be const-constructed
+// (and it also isn't zero-copy). For baking, we work around this by using an equivalent
+// const type (BakedDateSkeletonPatternsV1) and then zero-froming that into the final
+// struct. This operation contains the required allocation (which also happens in the
+// serde codepath, ZeroFrom<Self> uses #[zerofrom(clone)]).
+// See https://github.com/unicode-org/icu4x/issues/1678.
+
+#[cfg(feature = "datagen")]
+impl crabbake::Bakeable for DateSkeletonPatternsV1<'_> {
+    fn bake(&self, env: &crabbake::CrateEnv) -> crabbake::TokenStream {
+        env.insert("icu_datetime");
+        let vals = self.0.iter().map(|(skeleton, pattern)| {
+            let fields = skeleton.0 .0.iter().map(|f| f.bake(env));
+            let pattern = pattern.bake(env);
+            crabbake::quote! {
+                (&[#(#fields),*], #pattern)
+            }
+        });
+        crabbake::quote! {
+            [#(#vals),*]
+        }
+    }
+}
+
+#[cfg(feature = "datagen")]
+impl Default for DateSkeletonPatternsV1Marker {
+    fn default() -> Self {
+        Self
+    }
+}
+
+#[cfg(feature = "datagen")]
+impl crabbake::Bakeable for DateSkeletonPatternsV1Marker {
+    fn bake(&self, env: &crabbake::CrateEnv) -> crabbake::TokenStream {
+        env.insert("icu_datetime");
+        crabbake::quote! {
+            ::icu_datetime::provider::calendar::DateSkeletonPatternsV1Marker
+        }
+    }
+}
+
+type BakedDateSkeletonPatternsV1 = [(&'static [crate::fields::Field], PatternPlurals<'static>)];
+
+impl zerofrom::ZeroFrom<'static, BakedDateSkeletonPatternsV1> for DateSkeletonPatternsV1<'static> {
+    fn zero_from(other: &'static BakedDateSkeletonPatternsV1) -> Self {
+        Self(
+            other
+                .iter()
+                .map(|(fields, pattern)| {
+                    (
+                        SkeletonV1(Skeleton(fields.iter().cloned().collect())),
+                        zerofrom::ZeroFrom::zero_from(pattern),
+                    )
+                })
+                .collect(),
+        )
     }
 }

@@ -9,9 +9,17 @@ use icu_provider::{yoke, zerofrom};
 use zerovec::ZeroVec;
 
 #[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
+#[cfg_attr(
+    feature = "datagen",
+    derive(crabbake::Bakeable),
+    crabbake(path = icu_datetime::pattern::runtime),
+)]
+#[allow(clippy::exhaustive_structs)] // part of data struct
 pub struct Pattern<'data> {
     pub items: ZeroVec<'data, PatternItem>,
-    pub(crate) time_granularity: TimeGranularity,
+    /// This field should contain the smallest time unit from the `items` vec.
+    /// If it doesn't, unexpected results for day periods may be encountered.
+    pub time_granularity: TimeGranularity,
 }
 
 impl<'data> Pattern<'data> {

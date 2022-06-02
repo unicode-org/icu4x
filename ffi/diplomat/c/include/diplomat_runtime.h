@@ -8,7 +8,13 @@
 // uchar.h doesn't always exist, but char32_t is always available
 // in C++ anyway
 #ifndef __cplusplus
-#include<uchar.h>
+#ifdef __APPLE__
+#include <stdint.h>
+typedef uint16_t char16_t;
+typedef uint32_t char32_t;
+#else
+#include <uchar.h>
+#endif
 #endif
 
 

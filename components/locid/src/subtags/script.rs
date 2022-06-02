@@ -16,13 +16,12 @@ use tinystr::TinyAsciiStr;
 /// ```
 /// use icu::locid::subtags::Script;
 ///
-/// let script: Script = "Latn".parse()
-///     .expect("Failed to parse a script subtag.");
+/// let script: Script = "Latn".parse().expect("Failed to parse a script subtag.");
 /// ```
 ///
 /// [`unicode_script_id`]: https://unicode.org/reports/tr35/#unicode_script_id
 #[derive(Debug, PartialEq, Eq, Clone, Hash, PartialOrd, Ord, Copy)]
-#[cfg_attr(feature = "serialize", derive(serde::Serialize))]
+#[cfg_attr(feature = "serde", derive(serde::Serialize))]
 #[repr(transparent)]
 pub struct Script(TinyAsciiStr<SCRIPT_LENGTH>);
 
@@ -37,8 +36,7 @@ impl Script {
     /// ```
     /// use icu::locid::subtags::Script;
     ///
-    /// let script = Script::from_bytes(b"Latn")
-    ///     .expect("Parsing failed.");
+    /// let script = Script::from_bytes(b"Latn").expect("Parsing failed.");
     ///
     /// assert_eq!(script, "Latn");
     /// ```
@@ -82,7 +80,7 @@ impl Script {
         let s = TinyAsciiStr::<{ core::mem::size_of::<Self>() }>::try_from_raw(v)
             .map_err(|_| ParserError::InvalidSubtag)?;
         let is_valid = match s.len() {
-            SCRIPT_LENGTH => s.is_ascii_alphabetic() && s.is_ascii_titlecase(),
+            SCRIPT_LENGTH => s.is_ascii_alphabetic_titlecase(),
             _ => false,
         };
         if is_valid {
@@ -100,8 +98,7 @@ impl Script {
     /// ```
     /// use icu::locid::subtags::Script;
     ///
-    /// let script = Script::from_bytes(b"Latn")
-    ///     .expect("Parsing failed.");
+    /// let script = Script::from_bytes(b"Latn").expect("Parsing failed.");
     ///
     /// let raw = script.into_raw();
     /// let script = unsafe { Script::from_raw_unchecked(raw) };
@@ -119,8 +116,7 @@ impl Script {
     /// ```
     /// use icu::locid::subtags::Script;
     ///
-    /// let script = Script::from_bytes(b"Latn")
-    ///     .expect("Parsing failed.");
+    /// let script = Script::from_bytes(b"Latn").expect("Parsing failed.");
     ///
     /// let raw = script.into_raw();
     /// let script = unsafe { Script::from_raw_unchecked(raw) };
@@ -143,8 +139,7 @@ impl Script {
     /// ```
     /// use icu::locid::subtags::Script;
     ///
-    /// let script = Script::from_bytes(b"Latn")
-    ///     .expect("Parsing failed.");
+    /// let script = Script::from_bytes(b"Latn").expect("Parsing failed.");
     ///
     /// assert_eq!(script.as_str(), "Latn");
     /// ```

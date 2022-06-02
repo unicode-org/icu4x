@@ -6,8 +6,10 @@ use crate::fields::FieldLength;
 use core::{cmp::Ordering, convert::TryFrom};
 use displaydoc::Display;
 use icu_provider::{yoke, zerofrom};
+use zerovec::ule::{AsULE, ZeroVecError, ULE};
 
 #[derive(Display, Debug, PartialEq, Copy, Clone)]
+#[non_exhaustive]
 pub enum SymbolError {
     /// Invalid field symbol index.
     #[displaydoc("Invalid field symbol index: {0}")]
@@ -23,7 +25,9 @@ pub enum SymbolError {
 impl std::error::Error for SymbolError {}
 
 #[derive(Debug, Eq, PartialEq, Clone, Copy)]
-#[cfg_attr(feature = "serialize", derive(serde::Serialize, serde::Deserialize))]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, crabbake::Bakeable), crabbake(path = icu_datetime::fields))]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[allow(clippy::exhaustive_enums)] // part of data struct
 pub enum FieldSymbol {
     Era,
     Year(Year),
@@ -72,26 +76,6 @@ impl FieldSymbol {
     /// # Constraints
     ///
     /// This model limits the available number of possible types and symbols to 16 each.
-
-    #[inline]
-    pub(crate) fn idx_in_range(kv: &u8) -> bool {
-        let symbol = kv & 0b0000_1111;
-        let field_type = kv >> 4;
-        match field_type {
-            0 => true, // eras
-            1 => Year::idx_in_range(&symbol),
-            2 => Month::idx_in_range(&symbol),
-            3 => Week::idx_in_range(&symbol),
-            4 => Day::idx_in_range(&symbol),
-            5 => Weekday::idx_in_range(&symbol),
-            6 => DayPeriod::idx_in_range(&symbol),
-            7 => Hour::idx_in_range(&symbol),
-            8 => symbol == 0,
-            9 => Second::idx_in_range(&symbol),
-            10 => TimeZone::idx_in_range(&symbol),
-            _ => false,
-        }
-    }
 
     #[inline]
     pub(crate) fn idx(&self) -> u8 {
@@ -159,7 +143,50 @@ impl FieldSymbol {
     }
 }
 
+#[repr(transparent)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq)]
+pub struct FieldSymbolULE(u8);
+
+impl AsULE for FieldSymbol {
+    type ULE = FieldSymbolULE;
+    fn to_unaligned(self) -> Self::ULE {
+        FieldSymbolULE(self.idx())
+    }
+    fn from_unaligned(unaligned: Self::ULE) -> Self {
+        #[allow(clippy::unwrap_used)] // OK because the ULE is pre-validated
+        Self::from_idx(unaligned.0).unwrap()
+    }
+}
+
+impl FieldSymbolULE {
+    #[inline]
+    pub(crate) fn validate_byte(byte: u8) -> Result<(), ZeroVecError> {
+        FieldSymbol::from_idx(byte)
+            .map(|_| ())
+            .map_err(|_| ZeroVecError::parse::<FieldSymbol>())
+    }
+}
+
+// Safety checklist for ULE:
+//
+// 1. Must not include any uninitialized or padding bytes (true since transparent over a ULE).
+// 2. Must have an alignment of 1 byte (true since transparent over a ULE).
+// 3. ULE::validate_byte_slice() checks that the given byte slice represents a valid slice.
+// 4. ULE::validate_byte_slice() checks that the given byte slice has a valid length
+//    (true since transparent over a type of size 1).
+// 5. All other methods must be left with their default impl.
+// 6. Byte equality is semantic equality.
+unsafe impl ULE for FieldSymbolULE {
+    fn validate_byte_slice(bytes: &[u8]) -> Result<(), ZeroVecError> {
+        for byte in bytes {
+            Self::validate_byte(*byte)?;
+        }
+        Ok(())
+    }
+}
+
 #[derive(Debug, Eq, PartialEq, Clone, Copy)]
+#[allow(clippy::exhaustive_enums)] // used in data struct
 pub enum TextOrNumeric {
     Text,
     Numeric,
@@ -278,6 +305,108 @@ impl Ord for FieldSymbol {
     }
 }
 
+macro_rules! field_type {
+    ($i:ident; { $($key:expr => $val:ident = $idx:expr,)* }; $length_type:ident; $ule_name:ident) => (
+        field_type!($i; {$($key => $val = $idx,)*}; $ule_name);
+
+        impl LengthType for $i {
+            fn get_length_type(&self, _length: FieldLength) -> TextOrNumeric {
+                TextOrNumeric::$length_type
+            }
+        }
+    );
+    ($i:ident; { $($key:expr => $val:ident = $idx:expr,)* }; $ule_name:ident) => (
+        #[derive(Debug, Eq, PartialEq, Ord, PartialOrd, Clone, Copy, yoke::Yokeable, zerofrom::ZeroFrom)]
+        // FIXME: This should be replaced with a custom derive.
+        // See: https://github.com/unicode-org/icu4x/issues/1044
+        #[cfg_attr(
+            feature = "datagen",
+            derive(serde::Serialize, crabbake::Bakeable),
+            crabbake(path = icu_datetime::fields),
+        )]
+        #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+        #[allow(clippy::enum_variant_names)]
+        #[repr(u8)]
+        #[zerovec::make_ule($ule_name)]
+        #[allow(clippy::exhaustive_enums)] // used in data struct
+        pub enum $i {
+            $($val = $idx, )*
+        }
+
+        impl $i {
+            /// Retrieves an index of the field variant.
+            ///
+            /// # Examples
+            ///
+            /// ```ignore
+            /// use icu::datetime::fields::Month;
+            ///
+            /// assert_eq!(Month::StandAlone::idx(), 1);
+            /// ```
+            ///
+            /// # Stability
+            ///
+            /// This is mostly useful for serialization,
+            /// and does not guarantee index stability between ICU4X
+            /// versions.
+            #[inline]
+            pub(crate) fn idx(self) -> u8 {
+                self as u8
+            }
+
+            /// Retrieves a field variant from an index.
+            ///
+            /// # Examples
+            ///
+            /// ```ignore
+            /// use icu::datetime::fields::Month;
+            ///
+            /// assert_eq!(Month::from_idx(0), Month::Format);
+            /// ```
+            ///
+            /// # Stability
+            ///
+            /// This is mostly useful for serialization,
+            /// and does not guarantee index stability between ICU4X
+            /// versions.
+            #[inline]
+            pub(crate) fn from_idx(idx: u8) -> Result<Self, SymbolError> {
+                Self::new_from_u8(idx)
+                    .ok_or(SymbolError::InvalidIndex(idx))
+            }
+        }
+
+        impl TryFrom<char> for $i {
+            type Error = SymbolError;
+
+            fn try_from(ch: char) -> Result<Self, Self::Error> {
+                match ch {
+                    $(
+                        $key => Ok(Self::$val),
+                    )*
+                    _ => Err(SymbolError::Unknown(ch)),
+                }
+            }
+        }
+
+        impl From<$i> for FieldSymbol {
+            fn from(input: $i) -> Self {
+                Self::$i(input)
+            }
+        }
+
+        impl From<$i> for char {
+            fn from(input: $i) -> char {
+                match input {
+                    $(
+                        $i::$val => $key,
+                    )*
+                }
+            }
+        }
+    );
+}
+
 field_type!(Year; {
     'y' => Calendar = 0,
     'Y' => WeekOf = 1,
@@ -297,6 +426,10 @@ impl LengthType for Month {
             FieldLength::Wide => TextOrNumeric::Text,
             FieldLength::Narrow => TextOrNumeric::Text,
             FieldLength::Six => TextOrNumeric::Text,
+            FieldLength::Fixed(_) => {
+                debug_assert!(false, "Fixed field length is only supported for seconds");
+                TextOrNumeric::Text
+            }
         }
     }
 }

@@ -19,6 +19,8 @@ pub trait ZeroMapKV<'a> {
     /// The container that can be used with this type: [`ZeroVec`] or [`VarZeroVec`].
     type Container: MutableZeroVecLike<'a, Self, GetType = Self::GetType, OwnedType = Self::OwnedType>
         + Sized;
+    // TODO: Consider adding Slice here
+    // type Slice: ZeroVecLike<Self, GetType = Self::GetType> + ?Sized;
     /// The type produced by `Container::get()`
     ///
     /// This type will be predetermined by the choice of `Self::Container`:
@@ -56,7 +58,10 @@ impl_sized_kv!(char);
 impl_sized_kv!(f32);
 impl_sized_kv!(f64);
 
-impl<'a, T: AsULE + 'static> ZeroMapKV<'a> for Option<T> {
+impl<'a, T> ZeroMapKV<'a> for Option<T>
+where
+    T: AsULE + 'static,
+{
     type Container = ZeroVec<'a, Option<T>>;
     type GetType = <Option<T> as AsULE>::ULE;
     type OwnedType = Option<T>;
@@ -86,7 +91,19 @@ where
     type OwnedType = Box<[T]>;
 }
 
-impl<'a, T: AsULE + 'static> ZeroMapKV<'a> for ZeroSlice<T> {
+impl<'a, T, const N: usize> ZeroMapKV<'a> for [T; N]
+where
+    T: AsULE + 'static,
+{
+    type Container = ZeroVec<'a, [T; N]>;
+    type GetType = [T::ULE; N];
+    type OwnedType = [T; N];
+}
+
+impl<'a, T> ZeroMapKV<'a> for ZeroSlice<T>
+where
+    T: AsULE + 'static,
+{
     type Container = VarZeroVec<'a, ZeroSlice<T>>;
     type GetType = ZeroSlice<T>;
     type OwnedType = Box<ZeroSlice<T>>;

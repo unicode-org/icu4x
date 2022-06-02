@@ -16,19 +16,24 @@
 //! use icu_locid::locale;
 //! use writeable::Writeable;
 //!
-//! let provider = icu_testdata::get_provider();
-//! let list_formatter = ListFormatter::try_new_and(locale!("es"), &provider, ListStyle::Wide)
-//!     .expect("Data should load successfully");
+//! let list_formatter = ListFormatter::try_new_and(
+//!     locale!("es"),
+//!     &icu_testdata::get_provider(),
+//!     ListStyle::Wide,
+//! )
+//! .expect("Data should load successfully");
 //!
 //! assert_eq!(
-//!     list_formatter.format(["España", "Suiza"].iter())
+//!     list_formatter
+//!         .format(["España", "Suiza"].iter())
 //!         .write_to_string(),
 //!     "España y Suiza"
 //! );
 //!
 //! // The Spanish 'y' sometimes becomes an 'e':
 //! assert_eq!(
-//!     list_formatter.format(["España", "Suiza", "Italia"].iter())
+//!     list_formatter
+//!         .format(["España", "Suiza", "Italia"].iter())
 //!         .write_to_string(),
 //!     "España, Suiza e Italia"
 //! );
@@ -38,11 +43,23 @@
 //!     list_formatter.format(1..=10).write_to_string(),
 //!     "1, 2, 3, 4, 5, 6, 7, 8, 9 y 10"
 //! );
-//!```
+//! ```
 //!
 //! [`ListFormatter`]: ListFormatter
 
 #![cfg_attr(not(feature = "std"), no_std)]
+#![cfg_attr(
+    not(test),
+    deny(
+        // TODO(#1668) Clippy exceptions need docs or fixing
+        // clippy::indexing_slicing,
+        // clippy::unwrap_used,
+        // clippy::expect_used,
+        // clippy::panic,
+        clippy::exhaustive_structs,
+        clippy::exhaustive_enums
+    )
+)]
 
 extern crate alloc;
 
@@ -57,6 +74,7 @@ pub use list_formatter::*;
 /// [CLDR spec](https://unicode.org/reports/tr35/tr35-general.html#ListPatterns)
 /// for an explanation of the different styles.
 #[derive(Copy, Clone, PartialEq, Debug)]
+#[non_exhaustive]
 pub enum ListStyle {
     /// A typical list
     Wide,

@@ -40,7 +40,7 @@ fn print(_input: &str, _value: Option<usize>) {
 fn main(_argc: isize, _argv: *const *const u8) -> isize {
     icu_benchmark_macros::main_setup!();
 
-    let provider = icu_testdata::get_static_provider();
+    let provider = icu_testdata::get_provider();
 
     let dates = DATES_ISO
         .iter()
@@ -49,11 +49,10 @@ fn main(_argc: isize, _argv: *const *const u8) -> isize {
         .collect::<Result<Vec<DateTime<Gregorian>>, _>>()
         .expect("Failed to parse dates.");
 
-    let options = length::Bag {
-        date: Some(length::Date::Medium),
-        time: Some(length::Time::Short),
-        ..Default::default()
-    };
+    let mut options = length::Bag::default();
+
+    options.date = Some(length::Date::Medium);
+    options.time = Some(length::Time::Short);
 
     let dtf = DateTimeFormat::<Gregorian>::try_new(locale!("en"), &provider, &options.into())
         .expect("Failed to create DateTimeFormat instance.");

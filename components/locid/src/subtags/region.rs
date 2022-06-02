@@ -16,13 +16,12 @@ use tinystr::TinyAsciiStr;
 /// ```
 /// use icu::locid::subtags::Region;
 ///
-/// let region: Region = "DE".parse()
-///     .expect("Failed to parse a region subtag.");
+/// let region: Region = "DE".parse().expect("Failed to parse a region subtag.");
 /// ```
 ///
 /// [`unicode_region_id`]: https://unicode.org/reports/tr35/#unicode_region_id
 #[derive(Debug, PartialEq, Eq, Clone, Hash, PartialOrd, Ord, Copy)]
-#[cfg_attr(feature = "serialize", derive(serde::Serialize))]
+#[cfg_attr(feature = "serde", derive(serde::Serialize))]
 #[repr(transparent)]
 pub struct Region(TinyAsciiStr<REGION_NUM_LENGTH>);
 
@@ -38,8 +37,7 @@ impl Region {
     /// ```
     /// use icu::locid::subtags::Region;
     ///
-    /// let region = Region::from_bytes(b"fr")
-    ///     .expect("Parsing failed.");
+    /// let region = Region::from_bytes(b"fr").expect("Parsing failed.");
     ///
     /// assert_eq!(region, "FR");
     /// ```
@@ -87,7 +85,7 @@ impl Region {
         let s = TinyAsciiStr::<{ core::mem::size_of::<Self>() }>::try_from_raw(v)
             .map_err(|_| ParserError::InvalidSubtag)?;
         let is_valid = match s.len() {
-            REGION_ALPHA_LENGTH => s.is_ascii_alphabetic() && s.is_ascii_uppercase(),
+            REGION_ALPHA_LENGTH => s.is_ascii_alphabetic_uppercase(),
             REGION_NUM_LENGTH => s.is_ascii_numeric(),
             _ => false,
         };
@@ -106,8 +104,7 @@ impl Region {
     /// ```
     /// use icu::locid::subtags::Region;
     ///
-    /// let region = Region::from_bytes(b"us")
-    ///     .expect("Parsing failed.");
+    /// let region = Region::from_bytes(b"us").expect("Parsing failed.");
     ///
     /// let raw = region.into_raw();
     /// let region = unsafe { Region::from_raw_unchecked(raw) };
@@ -125,8 +122,7 @@ impl Region {
     /// ```
     /// use icu::locid::subtags::Region;
     ///
-    /// let region = Region::from_bytes(b"us")
-    ///     .expect("Parsing failed.");
+    /// let region = Region::from_bytes(b"us").expect("Parsing failed.");
     ///
     /// let raw = region.into_raw();
     /// let region = unsafe { Region::from_raw_unchecked(raw) };
@@ -149,8 +145,7 @@ impl Region {
     /// ```
     /// use icu::locid::subtags::Region;
     ///
-    /// let region = Region::from_bytes(b"it")
-    ///     .expect("Parsing failed.");
+    /// let region = Region::from_bytes(b"it").expect("Parsing failed.");
     ///
     /// assert_eq!(region.as_str(), "IT");
     /// ```
@@ -168,8 +163,7 @@ impl Region {
     /// ```
     /// use icu::locid::subtags::Region;
     ///
-    /// let region = Region::from_bytes(b"us")
-    ///     .expect("Parsing failed.");
+    /// let region = Region::from_bytes(b"us").expect("Parsing failed.");
     ///
     /// assert_eq!(region.is_alphabetic(), true);
     /// ```

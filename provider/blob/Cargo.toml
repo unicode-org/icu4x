@@ -5,7 +5,7 @@
 [package]
 name = "icu_provider_blob"
 description = "ICU4X data provider that reads from blobs in memory"
-version = "0.5.0"
+version = "0.6.0"
 authors = ["The ICU4X Project Developers"]
 edition = "2018"
 readme = "README.md"
@@ -27,26 +27,31 @@ include = [
 all-features = true
 
 [dependencies]
-icu_provider = { version = "0.5", path = "../core", features = ["deserialize_postcard_07", "serde"] }
-icu_locid = { version = "0.5", path = "../../components/locid", features = ["serde"] }
+icu_provider = { version = "0.6", path = "../core", features = ["deserialize_postcard_07", "serde"] }
 serde = { version = "1.0", default-features = false, features = ["alloc"] }
 postcard = { version = "0.7.0", default-features = false }
-erased-serde = { version = "0.3", default-features = false, features = ["alloc"] }
-writeable = { version = "0.3", path = "../../utils/writeable" }
-yoke = { version = "0.5.0", path = "../../utils/yoke" }
-zerovec = { version = "0.6", path = "../../utils/zerovec", features = ["serde", "yoke"] }
+writeable = { version = "0.4", path = "../../utils/writeable" }
+yoke = { version = "0.6.0", path = "../../utils/yoke" }
+zerovec = { version = "0.7", path = "../../utils/zerovec", features = ["serde", "yoke"] }
 
 # For the export feature
 log = { version = "0.4", optional = true }
-litemap = { version = "0.3.0", path = "../../utils/litemap/", optional = true }
+litemap = { version = "0.4", path = "../../utils/litemap/", optional = true }
 
 [dev-dependencies]
-icu = { version = "0.5", path = "../../components/icu" }
-icu_testdata = { version = "0.5", path = "../testdata", features = ["static"] }
+icu_locid = { version = "0.6", path = "../../components/locid", features = ["serde"] }
 
 [lib]
 path = "src/lib.rs"
 
 [features]
-export = ["log", "postcard/alloc", "std", "litemap", "icu_provider/serialize", "zerovec/serde_serialize"]
-std = ["icu_locid/std", "icu_provider/std"]
+default = []
+export = [
+    "log",
+    "postcard/alloc",
+    "std", 
+    "litemap",
+    "icu_provider/datagen",
+    "zerovec/serde",
+]
+std = ["icu_provider/std"]

@@ -7,6 +7,7 @@ use core::convert::TryInto;
 use core::marker::PhantomData;
 
 #[derive(Copy, Clone, Debug, Hash, Eq, PartialEq)]
+#[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct ArithmeticDate<C: CalendarArithmetic> {
     pub year: i32,
     /// 1-based month of year

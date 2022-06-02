@@ -97,9 +97,9 @@ impl DotType {
 
 // The datatype stored in the codepoint trie for casemapping.
 #[derive(Copy, Clone, Debug, Eq, PartialEq)]
-#[cfg_attr(feature = "serialize", derive(serde::Deserialize))]
-#[cfg_attr(feature = "serde_serialize", derive(serde::Serialize))]
-struct CaseMappingData(u16);
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize))]
+pub struct CaseMappingData(u16);
 
 impl CaseMappingData {
     // Sequences of case-ignorable characters are skipped when determining
@@ -245,15 +245,20 @@ impl TrieValue for CaseMappingData {
     }
 }
 
-// Reverse case folding data. Maps from multi-character strings back
-// to code-points that fold to those strings.
-#[cfg_attr(feature = "serialize", derive(serde::Deserialize))]
-#[cfg_attr(feature = "serde_serialize", derive(serde::Serialize))]
+/// Reverse case folding data. Maps from multi-character strings back
+/// to code-points that fold to those strings.
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[cfg_attr(
+    feature = "datagen",
+    derive(serde::Serialize, crabbake::Bakeable),
+    crabbake(path = icu_casemapping::provider),
+)]
 #[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[yoke(prove_covariance_manually)]
-struct CaseMappingUnfoldData<'data> {
-    #[cfg_attr(feature = "serialize", serde(borrow))]
-    map: ZeroMap<'data, str, str>,
+pub struct CaseMappingUnfoldData<'data> {
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    #[allow(missing_docs)]
+    pub map: ZeroMap<'data, str, str>,
 }
 
 impl<'data> CaseMappingUnfoldData<'data> {
@@ -337,17 +342,24 @@ impl FoldOptions {
 
 /// CaseMappingInternals provides low-level access to the data necessary to
 /// convert characters and strings to upper, lower, or title case.
-#[cfg_attr(feature = "serialize", derive(serde::Deserialize))]
-#[cfg_attr(feature = "serde_serialize", derive(serde::Serialize))]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[cfg_attr(
+    feature = "datagen",
+    derive(serde::Serialize, crabbake::Bakeable),
+    crabbake(path = icu_casemapping::provider),
+)]
 #[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[yoke(prove_covariance_manually)]
 pub struct CaseMappingInternals<'data> {
-    #[cfg_attr(feature = "serialize", serde(borrow))]
-    trie: CodePointTrie<'data, CaseMappingData>,
-    #[cfg_attr(feature = "serialize", serde(borrow))]
-    exceptions: CaseMappingExceptions<'data>,
-    #[cfg_attr(feature = "serialize", serde(borrow))]
-    unfold: CaseMappingUnfoldData<'data>,
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    /// TODO
+    pub trie: CodePointTrie<'data, CaseMappingData>,
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    /// TODO
+    pub exceptions: CaseMappingExceptions<'data>,
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    /// TODO
+    pub unfold: CaseMappingUnfoldData<'data>,
 }
 
 impl<'data> CaseMappingInternals<'data> {
@@ -638,7 +650,7 @@ impl<'data> CaseMappingInternals<'data> {
         match (c, is_turkic) {
             // Turkic mappings
             ('\u{49}', true) => '\u{131}', // 0049; T; 0131; # LATIN CAPITAL LETTER I
-            ('\u{130}', true) => '\u{69}', // 0130; T; 0069; # LATIN CAPITAL LETTER I WITH DOT ABOVE
+            ('\u{130}', true) => '\u{69}', /* 0130; T; 0069; # LATIN CAPITAL LETTER I WITH DOT ABOVE */
 
             // Default mappings
             ('\u{49}', false) => '\u{69}', // 0049; C; 0069; # LATIN CAPITAL LETTER I

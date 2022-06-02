@@ -24,8 +24,7 @@ pub mod ffi {
 
     impl ICU4XDataStruct {
         /// Construct a new DecimalSymbolsV1 data struct.
-        ///
-        /// See the [rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu/decimal/provider/struct.DecimalSymbolsV1.html) for more details.
+        #[diplomat::rust_link(icu::decimal::provider::DecimalSymbolsV1, Struct)]
         #[allow(clippy::too_many_arguments)]
         pub fn create_decimal_symbols_v1(
             plus_sign_prefix: &str,

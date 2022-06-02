@@ -3,12 +3,14 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use super::AbstractSerializer;
-use super::Error;
 use bincode::config::Options as _;
 use icu_provider::buf::BufferFormat;
+use icu_provider::datagen::*;
+use icu_provider::prelude::*;
 use std::io;
 
 /// A serializer for Bincode.
+#[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct Serializer;
 
 /// Options bag for initializing a [`bincode::Serializer`].
@@ -19,15 +21,14 @@ pub struct Options;
 impl AbstractSerializer for Serializer {
     fn serialize(
         &self,
-        obj: &dyn erased_serde::Serialize,
+        obj: &DataPayload<ExportMarker>,
         mut sink: &mut dyn io::Write,
-    ) -> Result<(), Error> {
-        obj.erased_serialize(&mut <dyn erased_serde::Serializer>::erase(
-            &mut bincode::Serializer::new(
-                &mut sink,
-                bincode::config::DefaultOptions::new().with_fixint_encoding(),
-            ),
-        ))?;
+    ) -> Result<(), DataError> {
+        obj.serialize(&mut bincode::Serializer::new(
+            &mut sink,
+            bincode::config::DefaultOptions::new().with_fixint_encoding(),
+        ))
+        .map_err(|e| DataError::custom("Bincode serialize").with_display_context(&e))?;
         Ok(())
     }
 
@@ -39,5 +40,11 @@ impl AbstractSerializer for Serializer {
 impl Serializer {
     pub fn new(_options: Options) -> Self {
         Self {}
+    }
+}
+
+impl Default for Serializer {
+    fn default() -> Self {
+        Self::new(Default::default())
     }
 }

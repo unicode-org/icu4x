@@ -15,11 +15,12 @@ $(ALL_RUST):
 $(ALL_HEADERS):
 
 
-../../../../../target/debug/libicu_capi_staticlib.a: $(ALL_RUST)
-	cargo build -p icu_capi_staticlib -p icu_capi_staticlib
+../../../../../target/debug/libicu_capi_staticlib_test.a: $(ALL_RUST)
+	cargo build -p icu_capi_staticlib --features provider_test
+	mv ../../../../../target/debug/libicu_capi_staticlib.a ../../../../../target/debug/libicu_capi_staticlib_test.a
 
-a.out: ../../../../../target/debug/libicu_capi_staticlib.a $(ALL_HEADERS) test.cpp
-	$(CXX) -std=c++17 test.cpp ../../../../../target/debug/libicu_capi_staticlib.a -ldl -lpthread -lm -g
+a.out: ../../../../../target/debug/libicu_capi_staticlib_test.a $(ALL_HEADERS) test.cpp
+	$(CXX) -std=c++17 test.cpp ../../../../../target/debug/libicu_capi_staticlib_test.a -ldl -lpthread -lm -g
 
 build: a.out
 

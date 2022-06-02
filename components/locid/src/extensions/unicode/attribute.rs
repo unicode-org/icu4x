@@ -19,8 +19,7 @@ use tinystr::TinyAsciiStr;
 /// ```
 /// use icu::locid::extensions::unicode::Attribute;
 ///
-/// let attr: Attribute = "buddhist".parse()
-///     .expect("Failed to parse an Attribute.");
+/// let attr: Attribute = "buddhist".parse().expect("Failed to parse an Attribute.");
 ///
 /// assert_eq!(attr, "buddhist");
 /// ```
@@ -38,8 +37,7 @@ impl Attribute {
     /// ```
     /// use icu::locid::extensions::unicode::Attribute;
     ///
-    /// let attribute = Attribute::from_bytes(b"foobar")
-    ///     .expect("Parsing failed.");
+    /// let attribute = Attribute::from_bytes(b"foobar").expect("Parsing failed.");
     ///
     /// assert_eq!(attribute, "foobar");
     /// ```
@@ -67,8 +65,7 @@ impl Attribute {
     /// ```
     /// use icu::locid::extensions::unicode::Attribute;
     ///
-    /// let attribute = Attribute::from_bytes(b"foobar")
-    ///     .expect("Parsing failed.");
+    /// let attribute = Attribute::from_bytes(b"foobar").expect("Parsing failed.");
     ///
     /// assert_eq!(attribute.as_str(), "foobar");
     /// ```

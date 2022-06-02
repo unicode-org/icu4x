@@ -3,7 +3,7 @@
     "locale": "en",
     "config": {
       "time_zone_id": "uslax",
-      "metazone_id": "America_Pacific",
+      "metazone_id": "ampa",
       "time_variant": "daylight"
     },
     "datetime": "2021-01-11T12:00:00.000-07:00",
@@ -169,7 +169,7 @@
     "locale": "en",
     "config": {
       "time_zone_id": "gblon",
-      "metazone_id": "GMT",
+      "metazone_id": "mgmt",
       "time_variant": "daylight"
     },
     "datetime": "2021-01-11T12:00:00.000-07:00",
@@ -284,7 +284,7 @@
     "locale": "en",
     "config": {
       "time_zone_id": "iedub",
-      "metazone_id": "GMT",
+      "metazone_id": "mgmt",
       "time_variant": "daylight"
     },
     "datetime": "2021-01-11T12:00:00.000-07:00",
@@ -399,7 +399,7 @@
     "locale": "ja",
     "config": {
       "time_zone_id": "jptyo",
-      "metazone_id": "Japan",
+      "metazone_id": "japa",
       "time_variant": null
     },
     "datetime": "2021-01-11T12:00:00.000+09:00",
@@ -571,7 +571,7 @@
     "locale": "ru",
     "config": {
       "time_zone_id": "aqtrl",
-      "metazone_id": "GMT",
+      "metazone_id": "mgmt",
       "time_variant": null
     },
     "datetime": "2021-01-11T12:00:00.000Z",
@@ -788,7 +788,7 @@
     "locale": "sr-Cyrl",
     "config": {
       "time_zone_id": "npktm",
-      "metazone_id": "Nepal",
+      "metazone_id": "nepa",
       "time_variant": null
     },
     "datetime": "2021-01-11T12:00:00.000+05:45",

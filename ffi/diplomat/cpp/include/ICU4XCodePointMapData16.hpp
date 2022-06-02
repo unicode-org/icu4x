@@ -24,18 +24,26 @@ struct ICU4XCodePointMapData16Deleter {
     capi::ICU4XCodePointMapData16_destroy(l);
   }
 };
+
+/**
+ * An ICU4X Unicode Set Property object, capable of querying whether a code point is contained in a set based on a Unicode property. For properties whose values fit into 16 bits.
+ * 
+ * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu_properties/index.html) for more information.
+ */
 class ICU4XCodePointMapData16 {
  public:
 
   /**
    * Gets a map for Unicode property Script from a [`ICU4XDataProvider`].
-   * See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu_properties/maps/fn.get_script.html) for more information.
+   * 
+   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu_properties/maps/fn.get_script.html) for more information.
    */
   static ICU4XCodePointMapData16Response try_get_script(const ICU4XDataProvider& provider);
 
   /**
    * Gets the value for a code point.
-   * See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu_codepointtrie/codepointtrie/struct.CodePointTrie.html#method.get_u32) for more information.
+   * 
+   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu_codepointtrie/codepointtrie/struct.CodePointTrie.html#method.get_u32) for more information.
    */
   uint16_t get(char32_t cp) const;
   inline const capi::ICU4XCodePointMapData16* AsFFI() const { return this->inner.get(); }

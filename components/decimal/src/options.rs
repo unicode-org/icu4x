@@ -7,6 +7,7 @@
 /// A bag of options defining how numbers will be formatted by
 /// [`FixedDecimalFormat`](crate::FixedDecimalFormat).
 #[derive(Debug, Eq, PartialEq, Clone, Default)]
+#[non_exhaustive]
 pub struct FixedDecimalFormatOptions {
     /// When to render grouping separators.
     pub grouping_strategy: GroupingStrategy,
@@ -19,9 +20,9 @@ pub struct FixedDecimalFormatOptions {
 /// # Examples
 ///
 /// ```
+/// use icu_decimal::options;
 /// use icu_decimal::FixedDecimalFormat;
 /// use icu_decimal::FormattedFixedDecimal;
-/// use icu_decimal::options;
 /// use icu_locid::Locale;
 /// use writeable::Writeable;
 ///
@@ -70,9 +71,9 @@ impl Default for GroupingStrategy {
 /// # Examples
 ///
 /// ```
+/// use icu_decimal::options;
 /// use icu_decimal::FixedDecimalFormat;
 /// use icu_decimal::FormattedFixedDecimal;
-/// use icu_decimal::options;
 /// use icu_locid::Locale;
 /// use writeable::Writeable;
 ///

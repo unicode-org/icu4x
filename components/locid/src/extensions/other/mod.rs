@@ -13,11 +13,10 @@
 //! # Examples
 //!
 //! ```
-//! use icu::locid::Locale;
 //! use icu::locid::extensions::other::Other;
+//! use icu::locid::Locale;
 //!
-//! let mut loc: Locale = "en-US-a-foo-faa".parse()
-//!     .expect("Parsing failed.");
+//! let mut loc: Locale = "en-US-a-foo-faa".parse().expect("Parsing failed.");
 //! ```
 //!
 //! [`Keys`]: Key
@@ -38,12 +37,10 @@ pub use key::Key;
 /// # Examples
 ///
 /// ```
-/// use icu::locid::extensions::other::{Other, Key};
+/// use icu::locid::extensions::other::{Key, Other};
 ///
-/// let key1: Key = "foo".parse()
-///     .expect("Failed to parse a Key.");
-/// let key2: Key = "bar".parse()
-///     .expect("Failed to parse a Key.");
+/// let key1: Key = "foo".parse().expect("Failed to parse a Key.");
+/// let key2: Key = "bar".parse().expect("Failed to parse a Key.");
 ///
 /// let other = Other::from_vec_unchecked(b'a', vec![key1, key2]);
 /// assert_eq!(&other.to_string(), "-a-foo-bar");
@@ -64,12 +61,10 @@ impl Other {
     /// # Examples
     ///
     /// ```
-    /// use icu::locid::extensions::other::{Other, Key};
+    /// use icu::locid::extensions::other::{Key, Other};
     ///
-    /// let key1: Key = "foo".parse()
-    ///     .expect("Failed to parse a Key.");
-    /// let key2: Key = "bar".parse()
-    ///     .expect("Failed to parse a Key.");
+    /// let key1: Key = "foo".parse().expect("Failed to parse a Key.");
+    /// let key2: Key = "bar".parse().expect("Failed to parse a Key.");
     ///
     /// let other = Other::from_vec_unchecked(b'a', vec![key1, key2]);
     /// assert_eq!(&other.to_string(), "-a-foo-bar");
@@ -101,8 +96,8 @@ impl Other {
     /// # Examples
     ///
     /// ```
-    /// use std::str::FromStr;
     /// use icu::locid::Locale;
+    /// use std::str::FromStr;
     ///
     /// let loc: Locale = "und-a-hello-world".parse().unwrap();
     /// let other_ext = &loc.extensions.other[0];
@@ -117,8 +112,8 @@ impl Other {
     /// # Examples
     ///
     /// ```
-    /// use std::str::FromStr;
     /// use icu::locid::Locale;
+    /// use std::str::FromStr;
     ///
     /// let loc: Locale = "und-a-hello-world".parse().unwrap();
     /// let other_ext = &loc.extensions.other[0];

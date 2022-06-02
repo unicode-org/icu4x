@@ -17,7 +17,8 @@ namespace capi {
 
 /**
  * FFI version of `CanonicalizationResult`.
- * See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu/locale_canonicalizer/enum.CanonicalizationResult.html) for more details.
+ * 
+ * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu/locale_canonicalizer/enum.CanonicalizationResult.html) for more information.
  */
 enum struct ICU4XCanonicalizationResult {
   Modified = 0,

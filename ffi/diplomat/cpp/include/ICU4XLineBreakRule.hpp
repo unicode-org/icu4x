@@ -16,7 +16,9 @@ namespace capi {
 
 
 /**
- * See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu_segmenter/enum.LineBreakRule.html) for more information.
+ * 
+ * 
+ * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu_segmenter/enum.LineBreakRule.html) for more information.
  */
 enum struct ICU4XLineBreakRule {
   Loose = 0,

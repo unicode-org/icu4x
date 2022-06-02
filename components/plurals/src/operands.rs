@@ -33,28 +33,34 @@ use fixed_decimal::FixedDecimal;
 ///
 /// ```
 /// use icu::plurals::PluralOperands;
-/// assert_eq!(PluralOperands {
-///    i: 2,
-///    v: 0,
-///    w: 0,
-///    f: 0,
-///    t: 0,
-///    c: 0,
-/// }, PluralOperands::from(2_usize))
+/// assert_eq!(
+///     PluralOperands {
+///         i: 2,
+///         v: 0,
+///         w: 0,
+///         f: 0,
+///         t: 0,
+///         c: 0,
+///     },
+///     PluralOperands::from(2_usize)
+/// )
 /// ```
 ///
 /// From &str
 ///
 /// ```
 /// use icu::plurals::PluralOperands;
-/// assert_eq!(Ok(PluralOperands {
-///    i: 123,
-///    v: 2,
-///    w: 2,
-///    f: 45,
-///    t: 45,
-///    c: 0,
-/// }), "123.45".parse())
+/// assert_eq!(
+///     Ok(PluralOperands {
+///         i: 123,
+///         v: 2,
+///         w: 2,
+///         f: 45,
+///         t: 45,
+///         c: 0,
+///     }),
+///     "123.45".parse()
+/// )
 /// ```
 ///
 /// From [`FixedDecimal`]
@@ -62,16 +68,22 @@ use fixed_decimal::FixedDecimal;
 /// ```
 /// use fixed_decimal::FixedDecimal;
 /// use icu::plurals::PluralOperands;
-/// assert_eq!(Ok(PluralOperands {
-///    i: 123,
-///    v: 2,
-///    w: 2,
-///    f: 45,
-///    t: 45,
-///    c: 0,
-/// }), FixedDecimal::from(12345).multiplied_pow10(-2).map(|d| (&d).into()))
+/// assert_eq!(
+///     Ok(PluralOperands {
+///         i: 123,
+///         v: 2,
+///         w: 2,
+///         f: 45,
+///         t: 45,
+///         c: 0,
+///     }),
+///     FixedDecimal::from(12345)
+///         .multiplied_pow10(-2)
+///         .map(|d| (&d).into())
+/// )
 /// ```
-#[derive(Debug, Clone, Copy, PartialEq)]
+#[derive(Debug, Clone, Copy, PartialEq, Default)]
+#[allow(clippy::exhaustive_structs)] // mostly stable, new operands may be added at the cadence of ICU's release cycle
 pub struct PluralOperands {
     /// Integer value of input
     pub i: u64,
@@ -101,6 +113,7 @@ impl PluralOperands {
 }
 
 #[derive(Display, Debug, PartialEq, Eq)]
+#[non_exhaustive]
 pub enum OperandsError {
     /// Input to the Operands parsing was empty.
     #[displaydoc("Input to the Operands parsing was empty")]

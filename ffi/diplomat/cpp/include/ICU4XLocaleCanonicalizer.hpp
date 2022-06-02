@@ -26,30 +26,40 @@ struct ICU4XLocaleCanonicalizerDeleter {
     capi::ICU4XLocaleCanonicalizer_destroy(l);
   }
 };
+
+/**
+ * A locale canonicalizer.
+ * 
+ * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu/locale_canonicalizer/struct.LocaleCanonicalizer.html) for more information.
+ */
 class ICU4XLocaleCanonicalizer {
  public:
 
   /**
    * Create a new [`ICU4XLocaleCanonicalizer`].
-   * See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu/locale_canonicalizer/struct.LocaleCanonicalizer.html#method.new) for more details.
+   * 
+   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu/locale_canonicalizer/struct.LocaleCanonicalizer.html#method.new) for more information.
    */
   static std::optional<ICU4XLocaleCanonicalizer> create(const ICU4XDataProvider& provider);
 
   /**
    * FFI version of `LocaleCanonicalizer::canonicalize()`.
-   * See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu/locale_canonicalizer/struct.LocaleCanonicalizer.html#method.canonicalize) for more details.
+   * 
+   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu/locale_canonicalizer/struct.LocaleCanonicalizer.html#method.canonicalize) for more information.
    */
   ICU4XCanonicalizationResult canonicalize(ICU4XLocale& locale) const;
 
   /**
    * FFI version of `LocaleCanonicalizer::maximize()`.
-   * See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu/locale_canonicalizer/struct.LocaleCanonicalizer.html#method.maximize) for more details.
+   * 
+   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu/locale_canonicalizer/struct.LocaleCanonicalizer.html#method.maximize) for more information.
    */
   ICU4XCanonicalizationResult maximize(ICU4XLocale& locale) const;
 
   /**
    * FFI version of `LocaleCanonicalizer::minimize()`.
-   * See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu/locale_canonicalizer/struct.LocaleCanonicalizer.html#method.minimize) for more details.
+   * 
+   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu/locale_canonicalizer/struct.LocaleCanonicalizer.html#method.minimize) for more information.
    */
   ICU4XCanonicalizationResult minimize(ICU4XLocale& locale) const;
   inline const capi::ICU4XLocaleCanonicalizer* AsFFI() const { return this->inner.get(); }

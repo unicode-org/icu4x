@@ -10,6 +10,7 @@ impl std::error::Error for DateTimeError {}
 /// A list of possible error outcomes for working with various inputs to DateTime inputs
 /// and operations.
 #[derive(Display, Debug, Copy, Clone)]
+#[non_exhaustive]
 pub enum DateTimeError {
     /// An input could not be parsed.
     #[displaydoc("Could not parse as integer")]

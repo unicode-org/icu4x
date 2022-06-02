@@ -3,13 +3,15 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use alloc::borrow::Cow;
-#[cfg(any(feature = "icu4x_human_readable_de", feature = "datagen"))]
+#[cfg(any(feature = "serde_human", feature = "datagen"))]
 use alloc::string::ToString;
 use icu_provider::{yoke, zerofrom};
 use regex_automata::dfa::sparse::DFA;
 use regex_automata::dfa::Automaton;
 
+/// A precompiled regex
 #[derive(Clone, Debug, yoke::Yokeable, zerofrom::ZeroFrom)]
+#[allow(clippy::exhaustive_structs)] // not a public API
 pub struct StringMatcher<'data> {
     // Safety: These always represent a valid DFA (DFA::from_bytes(dfa_bytes).is_ok())
     dfa_bytes: Cow<'data, [u8]>,
@@ -22,7 +24,19 @@ impl PartialEq for StringMatcher<'_> {
     }
 }
 
-#[cfg(feature = "serialize")]
+#[cfg(feature = "datagen")]
+impl crabbake::Bakeable for StringMatcher<'_> {
+    fn bake(&self, ctx: &crabbake::CrateEnv) -> crabbake::TokenStream {
+        ctx.insert("icu_list");
+        let bytes = (&*self.dfa_bytes).bake(ctx);
+        // Safe because our own data is safe
+        crabbake::quote! {
+            unsafe { ::icu_list::provider::StringMatcher::from_dfa_bytes_unchecked(#bytes) }
+        }
+    }
+}
+
+#[cfg(feature = "datagen")]
 impl serde::Serialize for StringMatcher<'_> {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
@@ -44,7 +58,7 @@ impl serde::Serialize for StringMatcher<'_> {
     }
 }
 
-#[cfg(feature = "serialize")]
+#[cfg(feature = "serde")]
 impl<'de: 'data, 'data> serde::Deserialize<'de> for StringMatcher<'data> {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where
@@ -52,12 +66,11 @@ impl<'de: 'data, 'data> serde::Deserialize<'de> for StringMatcher<'data> {
     {
         use icu_provider::serde::borrow_de_utils::CowBytesWrap;
 
-        #[cfg(feature = "icu4x_human_readable_de")]
+        #[cfg(feature = "serde_human")]
         if deserializer.is_human_readable() {
-            return StringMatcher::new(<&str>::deserialize(deserializer)?).map_err(|e| {
-                use serde::de::Error;
-                D::Error::custom(e.to_string())
-            });
+            use serde::de::Error;
+            return StringMatcher::new(<&str>::deserialize(deserializer)?)
+                .map_err(|e| D::Error::custom(e.to_string()));
         }
 
         if cfg!(target_endian = "big") {
@@ -85,7 +98,20 @@ impl<'de: 'data, 'data> serde::Deserialize<'de> for StringMatcher<'data> {
 }
 
 impl<'data> StringMatcher<'data> {
-    #[cfg(any(feature = "datagen", feature = "icu4x_human_readable_de",))]
+    /// Creates a `StringMatcher` from a serialized DFA. Used internally by Crabbake.
+    ///
+    /// # Safety
+    ///
+    /// `dfa_bytes` has to be a valid DFA (regex_automata::dfa::sparse::DFA::from_bytes(dfa_bytes).is_ok())
+    pub const unsafe fn from_dfa_bytes_unchecked(dfa_bytes: &'data [u8]) -> Self {
+        Self {
+            dfa_bytes: Cow::Borrowed(dfa_bytes),
+            pattern: None,
+        }
+    }
+
+    /// Creates a `StringMatcher` from regex.
+    #[cfg(any(feature = "datagen", feature = "serde_human",))]
     pub fn new(pattern: &str) -> Result<Self, icu_provider::DataError> {
         use regex_automata::{
             dfa::dense::{Builder, Config},
@@ -112,7 +138,7 @@ impl<'data> StringMatcher<'data> {
         })
     }
 
-    pub fn test(&self, string: &str) -> bool {
+    pub(crate) fn test(&self, string: &str) -> bool {
         cfg!(target_endian = "little")
             && matches!(
                 // Safe due to struct invariant.
@@ -160,7 +186,7 @@ mod test {
     }
 
     #[test]
-    #[cfg(feature = "icu4x_human_readable_de")]
+    #[cfg(feature = "serde_human")]
     fn test_json_serialization() {
         let matcher = StringMatcher::new("abc*").unwrap();
 

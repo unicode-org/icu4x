@@ -22,8 +22,19 @@ pub mod zoned_datetime;
 /// use icu::datetime::mock::parse_gregorian_from_str;
 /// use icu_calendar::{DateTime, Gregorian};
 ///
-/// let date: DateTime<Gregorian> = parse_gregorian_from_str("2020-10-14T13:21:00")
-///     .expect("Failed to parse a datetime.");
+/// let date: DateTime<Gregorian> =
+///     parse_gregorian_from_str("2020-10-14T13:21:00").expect("Failed to parse a datetime.");
+/// ```
+///
+/// Optionally, fractional seconds can be specified: `YYYY-MM-DDThh:mm:ss.SSS`.
+///
+/// ```
+/// use icu::datetime::mock::parse_gregorian_from_str;
+/// use icu_calendar::{DateTime, Gregorian};
+///
+/// let date: DateTime<Gregorian> =
+///     parse_gregorian_from_str("2020-10-14T13:21:00.101").expect("Failed to parse a datetime.");
+/// assert_eq!(u32::from(date.time.nanosecond), 101_000_000);
 /// ```
 pub fn parse_gregorian_from_str(input: &str) -> Result<DateTime<Gregorian>, DateTimeError> {
     #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
@@ -38,5 +49,53 @@ pub fn parse_gregorian_from_str(input: &str) -> Result<DateTime<Gregorian>, Date
     let minute: u8 = input[14..16].parse()?;
     #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
     let second: u8 = input[17..19].parse()?;
-    DateTime::new_gregorian_datetime_from_integers(year, month, day, hour, minute, second)
+    #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
+    let fraction: u32 = if input.len() > 20 {
+        // Extract fractional input and trim any trailing zeros
+        let mut fraction = input[20..].trim_end_matches('0');
+        // Truncate to at most 9 digits
+        if fraction.len() > 9 {
+            fraction = &fraction[0..9];
+        }
+        let as_int: u32 = fraction.parse().unwrap_or(0);
+        // Convert fraction to nanoseconds
+        as_int * (10u32.pow(9 - fraction.len() as u32))
+    } else {
+        0
+    };
+    let mut datetime = DateTime::new_gregorian_datetime(year, month, day, hour, minute, second)?;
+    datetime.time = icu_calendar::types::Time::try_new(hour, minute, second, fraction)?;
+
+    Ok(datetime)
+}
+
+#[test]
+fn test_parsing_fractional_seconds() {
+    use icu::datetime::mock::parse_gregorian_from_str;
+    use icu_calendar::{DateTime, Gregorian};
+
+    // Milliseconds
+    let date: DateTime<Gregorian> =
+        parse_gregorian_from_str("2020-10-14T13:21:00.123").expect("Failed to parse a datetime.");
+    assert_eq!(u32::from(date.time.nanosecond), 123_000_000);
+
+    // All zeros
+    let date: DateTime<Gregorian> =
+        parse_gregorian_from_str("2020-10-14T13:21:00.000").expect("Failed to parse a datetime.");
+    assert_eq!(u32::from(date.time.nanosecond), 0);
+
+    // Leading zeros
+    let date: DateTime<Gregorian> = parse_gregorian_from_str("2020-10-14T13:21:00.000123")
+        .expect("Failed to parse a datetime.");
+    assert_eq!(u32::from(date.time.nanosecond), 123_000);
+
+    // Trailing zeros
+    let date: DateTime<Gregorian> = parse_gregorian_from_str("2020-10-14T13:21:00.123000000000000")
+        .expect("Failed to parse a datetime.");
+    assert_eq!(u32::from(date.time.nanosecond), 123_000_000);
+
+    // Too much precision, should truncate to nanoseconds
+    let date: DateTime<Gregorian> = parse_gregorian_from_str("2020-10-14T13:21:00.123456789999999")
+        .expect("Failed to parse a datetime.");
+    assert_eq!(u32::from(date.time.nanosecond), 123_456_789);
 }

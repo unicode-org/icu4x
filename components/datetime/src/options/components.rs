@@ -41,21 +41,16 @@
 //! # Examples
 //!
 //! ```
-//! use icu::datetime::DateTimeFormatOptions;
 //! use icu::datetime::options::components;
+//! use icu::datetime::DateTimeFormatOptions;
 //!
-//! let bag = components::Bag {
-//!     year: Some(components::Year::Numeric),
-//!     month: Some(components::Month::Long),
-//!     day: Some(components::Day::NumericDayOfMonth),
+//! let mut bag = components::Bag::default();
+//! bag.year = Some(components::Year::Numeric);
+//! bag.month = Some(components::Month::Long);
+//! bag.day = Some(components::Day::NumericDayOfMonth);
 //!
-//!     hour: Some(components::Numeric::TwoDigit),
-//!     minute: Some(components::Numeric::TwoDigit),
-//!
-//!     preferences: None,
-//!
-//!     ..Default::default()
-//! };
+//! bag.hour = Some(components::Numeric::TwoDigit);
+//! bag.minute = Some(components::Numeric::TwoDigit);
 //!
 //! // The options can be created manually.
 //! let options = DateTimeFormatOptions::Components(bag);
@@ -64,8 +59,8 @@
 //! Or the options can be inferred through the `.into()` trait.
 //!
 //! ```
-//! use icu::datetime::DateTimeFormatOptions;
 //! use icu::datetime::options::components;
+//! use icu::datetime::DateTimeFormatOptions;
 //! let options: DateTimeFormatOptions = components::Bag::default().into();
 //! ```
 //!
@@ -80,12 +75,13 @@ use crate::{
 use alloc::vec::Vec;
 
 use super::preferences;
-#[cfg(feature = "serialize")]
+#[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 
 /// See the [module-level](./index.html) docs for more information.
 #[derive(Debug, Clone, PartialEq, Default, Copy)]
-#[cfg_attr(feature = "serialize", derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[non_exhaustive]
 pub struct Bag {
     /// Include the era, such as "AD" or "CE".
     pub era: Option<Text>,
@@ -106,6 +102,8 @@ pub struct Bag {
     pub minute: Option<Numeric>,
     /// Include the second such as "3" or "03".
     pub second: Option<Numeric>,
+    /// Specify the number of fractional second digits such as 1 (".3") or 3 (".003").
+    pub fractional_second: Option<u8>,
 
     /// Include the time zone, such as "GMT+05:00".
     pub time_zone_name: Option<TimeZoneName>,
@@ -115,6 +113,13 @@ pub struct Bag {
 }
 
 impl Bag {
+    /// Creates an empty components bag
+    ///
+    /// Has the same behavior as the [`Default`] implementation on this type.
+    pub fn empty() -> Self {
+        Self::default()
+    }
+
     #[allow(clippy::wrong_self_convention)]
     /// Converts the components::Bag into a Vec<Field>. The fields will be ordered in from most
     /// significant field to least significant. This is the order the fields are listed in
@@ -306,8 +311,15 @@ impl Bag {
                     Numeric::TwoDigit => FieldLength::TwoDigit,
                 },
             });
-            // S - Not used in skeletons.
             // A - Milliseconds in day. Not used in skeletons.
+        }
+
+        if let Some(precision) = self.fractional_second {
+            // S - Fractional seconds.
+            fields.push(Field {
+                symbol: FieldSymbol::Second(fields::Second::FractionalSecond),
+                length: FieldLength::Fixed(precision),
+            });
         }
 
         if self.time_zone_name.is_some() {
@@ -337,10 +349,11 @@ impl Bag {
 /// and second.
 #[derive(Debug, Clone, Copy, PartialEq)]
 #[cfg_attr(
-    feature = "serialize",
+    feature = "serde",
     derive(Serialize, Deserialize),
     serde(rename_all = "kebab-case")
 )]
+#[non_exhaustive]
 pub enum Numeric {
     /// Display the numeric value. For instance in a year this would be "1970".
     Numeric,
@@ -351,10 +364,11 @@ pub enum Numeric {
 /// A text component for the `components::`[`Bag`]. It is used for the era and weekday.
 #[derive(Debug, Clone, Copy, PartialEq)]
 #[cfg_attr(
-    feature = "serialize",
+    feature = "serde",
     derive(Serialize, Deserialize),
     serde(rename_all = "kebab-case")
 )]
+#[non_exhaustive]
 pub enum Text {
     /// Display the long form of the text, such as "Wednesday" for the weekday.
     Long,
@@ -367,10 +381,11 @@ pub enum Text {
 /// Options for displaying a Year for the `components::`[`Bag`].
 #[derive(Debug, Clone, Copy, PartialEq)]
 #[cfg_attr(
-    feature = "serialize",
+    feature = "serde",
     derive(Serialize, Deserialize),
     serde(rename_all = "kebab-case")
 )]
+#[non_exhaustive]
 pub enum Year {
     /// The numeric value of the year, such as "2018" for 2018-12-31.
     Numeric,
@@ -387,10 +402,11 @@ pub enum Year {
 /// Options for displaying a Month for the `components::`[`Bag`].
 #[derive(Debug, Clone, Copy, PartialEq)]
 #[cfg_attr(
-    feature = "serialize",
+    feature = "serde",
     derive(Serialize, Deserialize),
     serde(rename_all = "kebab-case")
 )]
+#[non_exhaustive]
 pub enum Month {
     /// The numeric value of the month, such as "4".
     Numeric,
@@ -412,10 +428,11 @@ pub enum Month {
 /// Week numbers are relative to either a month or year, e.g. 'week 3 of January' or 'week 40 of 2000'.
 #[derive(Debug, Clone, Copy, PartialEq)]
 #[cfg_attr(
-    feature = "serialize",
+    feature = "serde",
     derive(Serialize, Deserialize),
     serde(rename_all = "kebab-case")
 )]
+#[non_exhaustive]
 pub enum Week {
     /// The week of the month, such as the "3" in "week 3 of January".
     WeekOfMonth,
@@ -432,6 +449,7 @@ pub enum Week {
     derive(Serialize, Deserialize),
     serde(rename_all = "kebab-case")
 )]
+#[non_exhaustive]
 pub enum Day {
     /// The numeric value of the day of month, such as the "2" in July 2 1984.
     NumericDayOfMonth,
@@ -447,19 +465,18 @@ pub enum Day {
 /// options.
 #[derive(Debug, Clone, Copy, PartialEq)]
 #[cfg_attr(
-    feature = "serialize",
+    feature = "serde",
     derive(Serialize, Deserialize),
     serde(rename_all = "kebab-case")
 )]
+#[non_exhaustive]
 pub enum TimeZoneName {
     // UTS-35 fields: z..zzz
-    //
     /// Short localized form, without the location. (e.g.: PST, GMT-8)
     ShortSpecific,
 
     // UTS-35 fields: zzzz
     // Per UTS-35: [long form] specific non-location (falling back to long localized GMT)
-    //
     /// Long localized form, without the location (e.g., Pacific Standard Time, Nordamerikanische Westküsten-Normalzeit)
     LongSpecific,
 
@@ -470,7 +487,6 @@ pub enum TimeZoneName {
     // hour-format for the locale, and ICU4X uses the preferred one.
     //   e.g.
     //   https://github.com/unicode-org/cldr-json/blob/c23635f13946292e40077fd62aee6a8e122e7689/cldr-json/cldr-dates-full/main/es-MX/timeZoneNames.json#L13
-    //
     /// Localized GMT format, in the locale's preferred hour format. (e.g., GMT-0800),
     GmtOffset,
 
@@ -539,7 +555,9 @@ impl<'data> From<&PatternPlurals<'data>> for Bag {
                             Text::Short
                         }
                         FieldLength::Wide => Text::Long,
-                        FieldLength::Narrow | FieldLength::Six => Text::Narrow,
+                        FieldLength::Narrow | FieldLength::Six | FieldLength::Fixed(_) => {
+                            Text::Narrow
+                        }
                     });
                 }
                 FieldSymbol::Year(year) => {
@@ -562,7 +580,9 @@ impl<'data> From<&PatternPlurals<'data>> for Bag {
                         FieldLength::TwoDigit => Month::TwoDigit,
                         FieldLength::Abbreviated => Month::Short,
                         FieldLength::Wide => Month::Long,
-                        FieldLength::Narrow | FieldLength::Six => Month::Narrow,
+                        FieldLength::Narrow | FieldLength::Six | FieldLength::Fixed(_) => {
+                            Month::Narrow
+                        }
                     });
                 }
                 FieldSymbol::Week(week) => {
@@ -623,7 +643,9 @@ impl<'data> From<&PatternPlurals<'data>> for Bag {
                             }
                             FieldLength::Abbreviated => Text::Short,
                             FieldLength::Wide => Text::Long,
-                            FieldLength::Narrow | FieldLength::Six => Text::Narrow,
+                            FieldLength::Narrow | FieldLength::Six | FieldLength::Fixed(_) => {
+                                Text::Narrow
+                            }
                         },
                         fields::Weekday::Local => unimplemented!("fields::Weekday::Local"),
                     });
@@ -652,18 +674,24 @@ impl<'data> From<&PatternPlurals<'data>> for Bag {
                     });
                 }
                 FieldSymbol::Second(second) => {
-                    bag.second = Some(match second {
-                        fields::Second::Second => match field.length {
-                            FieldLength::TwoDigit => Numeric::TwoDigit,
-                            _ => Numeric::Numeric,
-                        },
+                    match second {
+                        fields::Second::Second => {
+                            bag.second = Some(match field.length {
+                                FieldLength::TwoDigit => Numeric::TwoDigit,
+                                _ => Numeric::Numeric,
+                            });
+                        }
                         fields::Second::FractionalSecond => {
-                            unimplemented!("fields::Second::FractionalSecond. #1360")
+                            if let FieldLength::Fixed(p) = field.length {
+                                if p > 0 {
+                                    bag.fractional_second = Some(p);
+                                }
+                            }
                         }
                         fields::Second::Millisecond => {
-                            unimplemented!("fields::Second::Millisecond")
+                            // fields::Second::Millisecond is not implemented (#1834)
                         }
-                    });
+                    }
                 }
                 FieldSymbol::TimeZone(time_zone_name) => {
                     bag.time_zone_name = Some(match time_zone_name {
@@ -708,6 +736,7 @@ mod test {
             hour: Some(Numeric::Numeric),
             minute: Some(Numeric::Numeric),
             second: Some(Numeric::Numeric),
+            fractional_second: Some(3),
 
             ..Default::default()
         };
@@ -721,6 +750,11 @@ mod test {
                 (Symbol::Hour(fields::Hour::H23), Length::One).into(),
                 (Symbol::Minute, Length::One).into(),
                 (Symbol::Second(fields::Second::Second), Length::One).into(),
+                (
+                    Symbol::Second(fields::Second::FractionalSecond),
+                    Length::Fixed(3)
+                )
+                    .into(),
             ]
         );
     }

@@ -5,7 +5,7 @@
 [package]
 name = "icu_uniset"
 description = "API for highly efficient querying of sets of Unicode characters"
-version = "0.4.1"
+version = "0.5.0"
 authors = ["The ICU4X Project Developers"]
 edition = "2018"
 readme = "README.md"
@@ -33,15 +33,16 @@ all-features = true
 
 [dependencies]
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }
-tinystr = { path = "../tinystr", version = "0.5.0", features = ["alloc"], default-features = false }
+tinystr = { path = "../tinystr", version = "0.6.0", features = ["alloc"], default-features = false }
 displaydoc = { version = "0.2.3", default-features = false }
-yoke = { version = "0.5.0", path = "../yoke", features = ["derive"] }
+yoke = { version = "0.6.0", path = "../yoke", features = ["derive"] }
 zerofrom = { version = "0.1.0", path = "../zerofrom", features = ["derive"] }
-zerovec = { version = "0.6", path = "../zerovec", features = ["yoke"] }
+zerovec = { version = "0.7", path = "../zerovec", features = ["yoke"] }
+crabbake = { version = "0.4", path = "../../experimental/crabbake", features = ["derive"], optional = true }
 
 [dev-dependencies]
 criterion = "0.3.3"
-icu_benchmark_macros = { version = "0.5", path = "../../tools/benchmark/macros" }
+icu_benchmark_macros = { version = "0.6", path = "../../tools/benchmark/macros" }
 postcard = { version = "0.7", features = ["use-std", "alloc"] }
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
@@ -52,8 +53,8 @@ path = "src/lib.rs"
 
 [features]
 bench = []
-serialize = ["serde", "zerovec/serde"]
-serde_serialize = ["serde", "zerovec/serde_serialize"]
+serde = ["dep:serde", "zerovec/serde"]
+crabbake = ["dep:crabbake", "zerovec/crabbake"]
 
 [[bench]]
 name = "inv_list"

@@ -13,6 +13,7 @@ use tinystr::TinyStr16;
 
 /// A list of possible error outcomes for the [`DateTimeFormat`](crate::DateTimeFormat) struct.
 #[derive(Display, Debug, Copy, Clone)]
+#[non_exhaustive]
 pub enum DateTimeFormatError {
     /// An error originating from parsing a pattern.
     #[displaydoc("{0}")]

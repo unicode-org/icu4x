@@ -5,7 +5,7 @@ decimal.multiply_pow10(-2);
 decimal.negate();
 console.log(decimal.to_string());
 
-const dataProvider = ICU4XDataProvider.create_static().provider;
+const dataProvider = ICU4XDataProvider.create_test().provider;
 
 const locale = ICU4XLocale.create("bn");
 

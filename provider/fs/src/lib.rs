@@ -65,7 +65,7 @@
 //! cargo run             \
 //!   --bin icu4x-datagen \
 //!   --                  \
-//!   --cldr-tag 39.0.0   \
+//!   --cldr-tag 41.0.0   \
 //!   --out ./icu4x-data  \
 //!   --all-keys          \
 //!   --all-locales
@@ -77,15 +77,15 @@
 //! cargo run             \
 //!   --bin icu4x-datagen \
 //!   --                  \
-//!   --cldr-tag 39.0.0   \
+//!   --cldr-tag 41.0.0   \
 //!   --out ./icu4x-data  \
 //!   --all-keys          \
 //!   --all-locales       \
 //!   -s bincode
 //! ```
 //!
-//! *Notice:* In order to use `bincode` encoded data in production, [`icu_provider_fs`](crate) has to be
-//! added with `bincode` feature.
+//! *Notice:* In order to use `bincode` encoded data in production, [`icu_provider`](crate) has to be
+//! added with `deserialize_bincode_1` feature.
 //!
 //! [`ICU4X`]: ../icu/index.html
 
@@ -96,16 +96,16 @@
         clippy::indexing_slicing,
         clippy::unwrap_used,
         clippy::expect_used,
-        clippy::panic
+        clippy::panic,
+        clippy::exhaustive_structs,
+        clippy::exhaustive_enums
     )
 )]
 
-mod error;
 mod fs_data_provider;
-pub mod manifest;
+mod manifest;
 
 #[cfg(feature = "export")]
 pub mod export;
 
-pub use error::Error as FsDataError;
 pub use fs_data_provider::FsDataProvider;

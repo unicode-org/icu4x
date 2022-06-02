@@ -4,7 +4,7 @@
 
 [package]
 name = "litemap"
-version = "0.3.0"
+version = "0.4.0"
 authors = ["The ICU4X Project Developers"]
 repository = "https://github.com/unicode-org/icu4x"
 edition = "2018"
@@ -29,8 +29,7 @@ all-features = true
 
 [dependencies]
 serde = {version = "1", optional = true, default-features = false, features = ["alloc"]}
-serde_json = { version = "1", optional = true, default-features = false, features = ["alloc"]}
-yoke = { version = "0.5.0", path = "../yoke", features = ["derive"], optional = true }
+yoke = { version = "0.6.0", path = "../yoke", features = ["derive"], optional = true }
 
 [dev-dependencies]
 serde = "1"
@@ -39,8 +38,8 @@ rkyv = { version = "0.7", features = ["validation"] }
 bytecheck = "0.6"
 bincode = "1"
 postcard = { version = "0.7", features = ["use-std"] }
-icu_locid = { version = "0.5", path = "../../components/locid" }
-icu_benchmark_macros = { version = "0.5", path = "../../tools/benchmark/macros" }
+icu_locid = { version = "0.6", path = "../../components/locid" }
+icu_benchmark_macros = { version = "0.6", path = "../../tools/benchmark/macros" }
 criterion = "0.3.4"
 
 [[test]]
@@ -63,7 +62,6 @@ required-features = ["serde"]
 
 [features]
 bench = []
-serde_serialize = ["serde", "serde_json"]
 
 # Enables the `testing` module with tools for testing custom stores.
 testing = []

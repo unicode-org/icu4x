@@ -1,6 +1,6 @@
 {
   "defaults": {
-    "Gulf": {
+    "gulf": {
       "standard": "GST"
     }
   },

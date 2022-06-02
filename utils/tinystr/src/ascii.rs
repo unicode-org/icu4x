@@ -28,18 +28,18 @@ impl<const N: usize> TinyAsciiStr<N> {
     /// # Example
     ///
     /// ```
-    /// use tinystr::TinyAsciiStr;
     /// use tinystr::tinystr;
+    /// use tinystr::TinyAsciiStr;
     ///
     /// assert_eq!(
     ///     TinyAsciiStr::<3>::try_from_raw(*b"GB\0"),
-    ///     Ok(tinystr!(3, "GB")));
+    ///     Ok(tinystr!(3, "GB"))
+    /// );
     /// assert_eq!(
     ///     TinyAsciiStr::<3>::try_from_raw(*b"USD"),
-    ///     Ok(tinystr!(3, "USD")));
-    /// assert!(matches!(
-    ///     TinyAsciiStr::<3>::try_from_raw(*b"\0A\0"),
-    ///     Err(_)));
+    ///     Ok(tinystr!(3, "USD"))
+    /// );
+    /// assert!(matches!(TinyAsciiStr::<3>::try_from_raw(*b"\0A\0"), Err(_)));
     /// ```
     pub const fn try_from_raw(raw: [u8; N]) -> Result<Self, TinyStrError> {
         Self::from_bytes_inner(&raw, 0, N, true)
@@ -206,6 +206,28 @@ macro_rules! check_is {
             true
         }
     };
+    ($self:ident, $check_int:ident, $check_u8_0_inv:ident, $check_u8_1_inv:ident) => {
+        if N <= 4 {
+            Aligned4::from_bytes(&$self.bytes).$check_int()
+        } else if N <= 8 {
+            Aligned8::from_bytes(&$self.bytes).$check_int()
+        } else {
+            // Won't panic because N is > 8
+            if !$self.bytes[0].$check_u8_0_inv() {
+                return false;
+            }
+            let mut i = 1;
+            // Won't panic because self.bytes has length N
+            #[allow(clippy::indexing_slicing)]
+            while i < N && $self.bytes[i] != 0 {
+                if !$self.bytes[i].$check_u8_1_inv() {
+                    return false;
+                }
+                i += 1;
+            }
+            true
+        }
+    };
 }
 
 impl<const N: usize> TinyAsciiStr<N> {
@@ -219,10 +241,8 @@ impl<const N: usize> TinyAsciiStr<N> {
     /// ```
     /// use tinystr::TinyAsciiStr;
     ///
-    /// let s1: TinyAsciiStr<4> = "Test".parse()
-    ///     .expect("Failed to parse.");
-    /// let s2: TinyAsciiStr<4> = "Te3t".parse()
-    ///     .expect("Failed to parse.");
+    /// let s1: TinyAsciiStr<4> = "Test".parse().expect("Failed to parse.");
+    /// let s2: TinyAsciiStr<4> = "Te3t".parse().expect("Failed to parse.");
     ///
     /// assert!(s1.is_ascii_alphabetic());
     /// assert!(!s2.is_ascii_alphabetic());
@@ -244,10 +264,8 @@ impl<const N: usize> TinyAsciiStr<N> {
     /// ```
     /// use tinystr::TinyAsciiStr;
     ///
-    /// let s1: TinyAsciiStr<4> = "A15b".parse()
-    ///     .expect("Failed to parse.");
-    /// let s2: TinyAsciiStr<4> = "[3@w".parse()
-    ///     .expect("Failed to parse.");
+    /// let s1: TinyAsciiStr<4> = "A15b".parse().expect("Failed to parse.");
+    /// let s2: TinyAsciiStr<4> = "[3@w".parse().expect("Failed to parse.");
     ///
     /// assert!(s1.is_ascii_alphanumeric());
     /// assert!(!s2.is_ascii_alphanumeric());
@@ -267,10 +285,8 @@ impl<const N: usize> TinyAsciiStr<N> {
     /// ```
     /// use tinystr::TinyAsciiStr;
     ///
-    /// let s1: TinyAsciiStr<4> = "312".parse()
-    ///     .expect("Failed to parse.");
-    /// let s2: TinyAsciiStr<4> = "3d".parse()
-    ///     .expect("Failed to parse.");
+    /// let s1: TinyAsciiStr<4> = "312".parse().expect("Failed to parse.");
+    /// let s2: TinyAsciiStr<4> = "3d".parse().expect("Failed to parse.");
     ///
     /// assert!(s1.is_ascii_numeric());
     /// assert!(!s2.is_ascii_numeric());
@@ -290,12 +306,9 @@ impl<const N: usize> TinyAsciiStr<N> {
     /// ```
     /// use tinystr::TinyAsciiStr;
     ///
-    /// let s1: TinyAsciiStr<4> = "teSt".parse()
-    ///     .expect("Failed to parse.");
-    /// let s2: TinyAsciiStr<4> = "test".parse()
-    ///     .expect("Failed to parse.");
-    /// let s3: TinyAsciiStr<4> = "001z".parse()
-    ///     .expect("Failed to parse.");
+    /// let s1: TinyAsciiStr<4> = "teSt".parse().expect("Failed to parse.");
+    /// let s2: TinyAsciiStr<4> = "test".parse().expect("Failed to parse.");
+    /// let s3: TinyAsciiStr<4> = "001z".parse().expect("Failed to parse.");
     ///
     /// assert!(!s1.is_ascii_lowercase());
     /// assert!(s2.is_ascii_lowercase());
@@ -322,12 +335,9 @@ impl<const N: usize> TinyAsciiStr<N> {
     /// ```
     /// use tinystr::TinyAsciiStr;
     ///
-    /// let s1: TinyAsciiStr<4> = "teSt".parse()
-    ///     .expect("Failed to parse.");
-    /// let s2: TinyAsciiStr<4> = "Test".parse()
-    ///     .expect("Failed to parse.");
-    /// let s3: TinyAsciiStr<4> = "001z".parse()
-    ///     .expect("Failed to parse.");
+    /// let s1: TinyAsciiStr<4> = "teSt".parse().expect("Failed to parse.");
+    /// let s2: TinyAsciiStr<4> = "Test".parse().expect("Failed to parse.");
+    /// let s3: TinyAsciiStr<4> = "001z".parse().expect("Failed to parse.");
     ///
     /// assert!(!s1.is_ascii_titlecase());
     /// assert!(s2.is_ascii_titlecase());
@@ -353,12 +363,9 @@ impl<const N: usize> TinyAsciiStr<N> {
     /// ```
     /// use tinystr::TinyAsciiStr;
     ///
-    /// let s1: TinyAsciiStr<4> = "teSt".parse()
-    ///     .expect("Failed to parse.");
-    /// let s2: TinyAsciiStr<4> = "TEST".parse()
-    ///     .expect("Failed to parse.");
-    /// let s3: TinyAsciiStr<4> = "001z".parse()
-    ///     .expect("Failed to parse.");
+    /// let s1: TinyAsciiStr<4> = "teSt".parse().expect("Failed to parse.");
+    /// let s2: TinyAsciiStr<4> = "TEST".parse().expect("Failed to parse.");
+    /// let s3: TinyAsciiStr<4> = "001z".parse().expect("Failed to parse.");
     ///
     /// assert!(!s1.is_ascii_uppercase());
     /// assert!(s2.is_ascii_uppercase());
@@ -372,6 +379,100 @@ impl<const N: usize> TinyAsciiStr<N> {
             is_ascii_uppercase,
             !is_ascii_lowercase,
             !is_ascii_lowercase
+        )
+    }
+
+    /// Checks if the value is composed of ASCII alphabetic lower case characters:
+    ///
+    ///  * U+0061 'a' ..= U+007A 'z',
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use tinystr::TinyAsciiStr;
+    ///
+    /// let s1: TinyAsciiStr<4> = "Test".parse().expect("Failed to parse.");
+    /// let s2: TinyAsciiStr<4> = "Te3t".parse().expect("Failed to parse.");
+    /// let s3: TinyAsciiStr<4> = "teSt".parse().expect("Failed to parse.");
+    /// let s4: TinyAsciiStr<4> = "test".parse().expect("Failed to parse.");
+    /// let s5: TinyAsciiStr<4> = "001z".parse().expect("Failed to parse.");
+    ///
+    /// assert!(!s1.is_ascii_alphabetic_lowercase());
+    /// assert!(!s2.is_ascii_alphabetic_lowercase());
+    /// assert!(!s3.is_ascii_alphabetic_lowercase());
+    /// assert!(s4.is_ascii_alphabetic_lowercase());
+    /// assert!(!s5.is_ascii_alphabetic_lowercase());
+    /// ```
+    #[inline]
+    #[must_use]
+    pub const fn is_ascii_alphabetic_lowercase(&self) -> bool {
+        check_is!(
+            self,
+            is_ascii_alphabetic_lowercase,
+            is_ascii_lowercase,
+            is_ascii_lowercase
+        )
+    }
+
+    /// Checks if the value is composed of ASCII alphabetic, with the first character being ASCII uppercase, and all others ASCII lowercase.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use tinystr::TinyAsciiStr;
+    ///
+    /// let s1: TinyAsciiStr<4> = "Test".parse().expect("Failed to parse.");
+    /// let s2: TinyAsciiStr<4> = "Te3t".parse().expect("Failed to parse.");
+    /// let s3: TinyAsciiStr<4> = "teSt".parse().expect("Failed to parse.");
+    /// let s4: TinyAsciiStr<4> = "test".parse().expect("Failed to parse.");
+    /// let s5: TinyAsciiStr<4> = "001z".parse().expect("Failed to parse.");
+    ///
+    /// assert!(s1.is_ascii_alphabetic_titlecase());
+    /// assert!(!s2.is_ascii_alphabetic_titlecase());
+    /// assert!(!s3.is_ascii_alphabetic_titlecase());
+    /// assert!(!s4.is_ascii_alphabetic_titlecase());
+    /// assert!(!s5.is_ascii_alphabetic_titlecase());
+    /// ```
+    #[inline]
+    #[must_use]
+    pub const fn is_ascii_alphabetic_titlecase(&self) -> bool {
+        check_is!(
+            self,
+            is_ascii_alphabetic_titlecase,
+            is_ascii_uppercase,
+            is_ascii_lowercase
+        )
+    }
+
+    /// Checks if the value is composed of ASCII alphabetic upper case characters:
+    ///
+    ///  * U+0041 'A' ..= U+005A 'Z',
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use tinystr::TinyAsciiStr;
+    ///
+    /// let s1: TinyAsciiStr<4> = "Test".parse().expect("Failed to parse.");
+    /// let s2: TinyAsciiStr<4> = "Te3t".parse().expect("Failed to parse.");
+    /// let s3: TinyAsciiStr<4> = "teSt".parse().expect("Failed to parse.");
+    /// let s4: TinyAsciiStr<4> = "TEST".parse().expect("Failed to parse.");
+    /// let s5: TinyAsciiStr<4> = "001z".parse().expect("Failed to parse.");
+    ///
+    /// assert!(!s1.is_ascii_alphabetic_uppercase());
+    /// assert!(!s2.is_ascii_alphabetic_uppercase());
+    /// assert!(!s3.is_ascii_alphabetic_uppercase());
+    /// assert!(s4.is_ascii_alphabetic_uppercase());
+    /// assert!(!s5.is_ascii_alphabetic_uppercase());
+    /// ```
+    #[inline]
+    #[must_use]
+    pub const fn is_ascii_alphabetic_uppercase(&self) -> bool {
+        check_is!(
+            self,
+            is_ascii_alphabetic_uppercase,
+            is_ascii_uppercase,
+            is_ascii_uppercase
         )
     }
 }
@@ -418,8 +519,7 @@ impl<const N: usize> TinyAsciiStr<N> {
     /// ```
     /// use tinystr::TinyAsciiStr;
     ///
-    /// let s1: TinyAsciiStr<4> = "TeS3".parse()
-    ///     .expect("Failed to parse.");
+    /// let s1: TinyAsciiStr<4> = "TeS3".parse().expect("Failed to parse.");
     ///
     /// assert_eq!(&*s1.to_ascii_lowercase(), "tes3");
     /// ```
@@ -439,8 +539,7 @@ impl<const N: usize> TinyAsciiStr<N> {
     /// ```
     /// use tinystr::TinyAsciiStr;
     ///
-    /// let s1: TinyAsciiStr<4> = "teSt".parse()
-    ///     .expect("Failed to parse.");
+    /// let s1: TinyAsciiStr<4> = "teSt".parse().expect("Failed to parse.");
     ///
     /// assert_eq!(&*s1.to_ascii_titlecase(), "Test");
     /// ```
@@ -464,8 +563,7 @@ impl<const N: usize> TinyAsciiStr<N> {
     /// ```
     /// use tinystr::TinyAsciiStr;
     ///
-    /// let s1: TinyAsciiStr<4> = "Tes3".parse()
-    ///     .expect("Failed to parse.");
+    /// let s1: TinyAsciiStr<4> = "Tes3".parse().expect("Failed to parse.");
     ///
     /// assert_eq!(&*s1.to_ascii_uppercase(), "TES3");
     /// ```
@@ -710,6 +808,78 @@ mod test {
                         .as_str()
                 },
                 |t: TinyAsciiStr<N>| TinyAsciiStr::is_ascii_uppercase(&t),
+            )
+        }
+        check::<2>();
+        check::<3>();
+        check::<4>();
+        check::<5>();
+        check::<8>();
+        check::<16>();
+    }
+
+    #[test]
+    fn test_is_ascii_alphabetic_lowercase() {
+        fn check<const N: usize>() {
+            check_operation(
+                |s| {
+                    // Check alphabetic
+                    s.chars().all(|c| c.is_ascii_alphabetic()) &&
+                    // Check lowercase
+                    s == TinyAsciiStr::<16>::from_str(s)
+                        .unwrap()
+                        .to_ascii_lowercase()
+                        .as_str()
+                },
+                |t: TinyAsciiStr<N>| TinyAsciiStr::is_ascii_alphabetic_lowercase(&t),
+            )
+        }
+        check::<2>();
+        check::<3>();
+        check::<4>();
+        check::<5>();
+        check::<8>();
+        check::<16>();
+    }
+
+    #[test]
+    fn test_is_ascii_alphabetic_titlecase() {
+        fn check<const N: usize>() {
+            check_operation(
+                |s| {
+                    // Check alphabetic
+                    s.chars().all(|c| c.is_ascii_alphabetic()) &&
+                    // Check titlecase
+                    s == TinyAsciiStr::<16>::from_str(s)
+                        .unwrap()
+                        .to_ascii_titlecase()
+                        .as_str()
+                },
+                |t: TinyAsciiStr<N>| TinyAsciiStr::is_ascii_alphabetic_titlecase(&t),
+            )
+        }
+        check::<2>();
+        check::<3>();
+        check::<4>();
+        check::<5>();
+        check::<8>();
+        check::<16>();
+    }
+
+    #[test]
+    fn test_is_ascii_alphabetic_uppercase() {
+        fn check<const N: usize>() {
+            check_operation(
+                |s| {
+                    // Check alphabetic
+                    s.chars().all(|c| c.is_ascii_alphabetic()) &&
+                    // Check uppercase
+                    s == TinyAsciiStr::<16>::from_str(s)
+                        .unwrap()
+                        .to_ascii_uppercase()
+                        .as_str()
+                },
+                |t: TinyAsciiStr<N>| TinyAsciiStr::is_ascii_alphabetic_uppercase(&t),
             )
         }
         check::<2>();

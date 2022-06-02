@@ -82,7 +82,7 @@
 //!
 //! ### `DataProvider<SerializeMarker>`
 //!
-//! *Enabled with the "serialize" feature*
+//! *Enabled with the "datagen" feature*
 //!
 //! Data providers capable of returning opaque `erased_serde::Serialize` trait objects can be use
 //! as input to a data exporter, such as when writing data to the filesystem.
@@ -125,22 +125,23 @@
         clippy::indexing_slicing,
         clippy::unwrap_used,
         clippy::expect_used,
-        clippy::panic
+        clippy::panic,
+        clippy::exhaustive_structs,
+        clippy::exhaustive_enums
     )
 )]
 
 extern crate alloc;
 
-#[macro_use]
-pub mod dynutil;
-
 pub mod any;
 pub mod buf;
 mod data_provider;
 #[cfg(feature = "datagen")]
+#[macro_use]
 pub mod datagen;
+#[macro_use]
+pub mod dynutil;
 mod error;
-pub mod export;
 pub mod hello_world;
 mod helpers;
 pub mod inv;
@@ -182,13 +183,13 @@ pub mod prelude {
     #[cfg(feature = "serde")]
     pub use crate::serde::AsDeserializingBufferProvider;
 
+    /// Re-export of the yoke and zerofrom crates for convenience of downstream implementors.
     pub use yoke;
     pub use zerofrom;
 }
 
-/// Re-export of the yoke and zerofrom crates for convenience of downstream implementors.
-pub use yoke;
-pub use zerofrom;
-
 // Also include the same symbols at the top level for selective inclusion
 pub use prelude::*;
+
+// Less important non-prelude item
+pub use crate::data_provider::RcWrap;

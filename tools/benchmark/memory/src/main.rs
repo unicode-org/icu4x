@@ -74,7 +74,7 @@ fn process_cli_args() -> ProcessedArgs {
 
         toolchain: matches
             .value_of("TOOLCHAIN")
-            .unwrap_or("nightly-2022-01-31")
+            .unwrap_or("nightly-2022-04-05")
             .to_string(),
     }
 }
@@ -242,6 +242,8 @@ fn main() {
             .arg(&package.manifest_path)
             .arg("--features")
             .arg("icu_benchmark_macros/benchmark_memory")
+            .arg("--features")
+            .arg("bench")
             .stderr(Stdio::piped())
             .spawn()
             .unwrap_or_else(|err| {

@@ -3,7 +3,7 @@
     "ar-EG": {
       "identity": {
         "version": {
-          "_cldrVersion": "40"
+          "_cldrVersion": "41"
         },
         "language": "ar",
         "territory": "EG"
@@ -1222,6 +1222,9 @@
               },
               "Johnston": {
                 "exemplarCity": "جونستون"
+              },
+              "Kanton": {
+                "exemplarCity": "كانتون"
               },
               "Kiritimati": {
                 "exemplarCity": "كيريتي ماتي"

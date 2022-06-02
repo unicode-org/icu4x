@@ -64,16 +64,15 @@ fn pattern_for_date_length_inner(data: DatePatternsV1, length: length::Date) -> 
     PatternPlurals::from(pattern)
 }
 
-pub struct PatternSelector<'a, D> {
+pub struct PatternSelector<'a, D: ?Sized> {
     data_provider: &'a D,
     locale: &'a Locale,
-    calendar: &'static str,
 }
 
 // Manual impls needed since `derive(Copy)` inserts
 // a `D: Copy` bound
-impl<D> Copy for PatternSelector<'_, D> {}
-impl<D> Clone for PatternSelector<'_, D> {
+impl<D: ?Sized> Copy for PatternSelector<'_, D> {}
+impl<D: ?Sized> Clone for PatternSelector<'_, D> {
     fn clone(&self) -> Self {
         *self
     }
@@ -81,18 +80,18 @@ impl<D> Clone for PatternSelector<'_, D> {
 
 impl<D> PatternSelector<'_, D>
 where
-    D: ResourceProvider<DatePatternsV1Marker> + ResourceProvider<DateSkeletonPatternsV1Marker>,
+    D: ResourceProvider<DatePatternsV1Marker>
+        + ResourceProvider<DateSkeletonPatternsV1Marker>
+        + ?Sized,
 {
     pub(crate) fn for_options<'a>(
         data_provider: &'a D,
         locale: &'a Locale,
         options: &DateTimeFormatOptions,
-        calendar: &'static str,
     ) -> Result<DataPayload<PatternPluralsFromPatternsV1Marker>> {
         let selector = PatternSelector {
             data_provider,
             locale,
-            calendar,
         };
         match options {
             DateTimeFormatOptions::Length(bag) => selector.pattern_for_length_bag(bag),
@@ -209,10 +208,7 @@ where
         let data = self
             .data_provider
             .load_resource(&DataRequest {
-                options: ResourceOptions {
-                    variant: Some(self.calendar.into()),
-                    langid: Some(self.locale.clone().into()),
-                },
+                options: ResourceOptions::from(self.locale),
                 metadata: Default::default(),
             })?
             .take_payload()?;
@@ -223,10 +219,7 @@ where
         let data = self
             .data_provider
             .load_resource(&DataRequest {
-                options: ResourceOptions {
-                    variant: Some(self.calendar.into()),
-                    langid: Some(self.locale.clone().into()),
-                },
+                options: ResourceOptions::from(self.locale),
                 metadata: Default::default(),
             })?
             .take_payload()?;

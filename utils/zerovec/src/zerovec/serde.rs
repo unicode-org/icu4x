@@ -9,9 +9,8 @@ use alloc::vec::Vec;
 use core::fmt;
 use core::marker::PhantomData;
 use core::mem;
-use dep_serde as serde;
 use serde::de::{self, Deserialize, Deserializer, SeqAccess, Visitor};
-#[cfg(feature = "serde_serialize")]
+#[cfg(feature = "serde")]
 use serde::ser::{Serialize, SerializeSeq, Serializer};
 
 struct ZeroVecVisitor<T> {
@@ -78,8 +77,8 @@ where
     }
 }
 
-/// This impl can be made available by enabling the optional `serde_serialize` feature of the `zerovec` crate
-#[cfg(feature = "serde_serialize")]
+/// This impl can be made available by enabling the optional `serde` feature of the `zerovec` crate
+#[cfg(feature = "serde")]
 impl<T> Serialize for ZeroVec<'_, T>
 where
     T: Serialize + AsULE,
@@ -115,8 +114,8 @@ where
     }
 }
 
-/// This impl can be made available by enabling the optional `serde_serialize` feature of the `zerovec` crate
-#[cfg(feature = "serde_serialize")]
+/// This impl can be made available by enabling the optional `serde` feature of the `zerovec` crate
+#[cfg(feature = "serde")]
 impl<T> Serialize for ZeroSlice<T>
 where
     T: Serialize + AsULE,
@@ -132,11 +131,10 @@ where
 #[cfg(test)]
 #[allow(non_camel_case_types)]
 mod test {
-    use super::super::*;
     use crate::samples::*;
+    use crate::ZeroVec;
 
-    #[derive(dep_serde::Serialize, dep_serde::Deserialize)]
-    #[serde(crate = "dep_serde")]
+    #[derive(serde::Serialize, serde::Deserialize)]
     struct DeriveTest_ZeroVec<'data> {
         #[serde(borrow)]
         _data: ZeroVec<'data, u16>,

@@ -31,9 +31,7 @@ use core::iter::FromIterator;
 /// ```
 /// use zerovec::ZeroMap;
 ///
-/// # pub use dep_serde as serde;
 /// #[derive(serde::Serialize, serde::Deserialize)]
-/// # #[serde(crate = "dep_serde")]
 /// struct Data<'a> {
 ///     #[serde(borrow)]
 ///     map: ZeroMap<'a, u32, str>,
@@ -46,12 +44,11 @@ use core::iter::FromIterator;
 ///
 /// let data = Data { map };
 ///
-/// let bincode_bytes = bincode::serialize(&data)
-///     .expect("Serialization should be successful");
+/// let bincode_bytes = bincode::serialize(&data).expect("Serialization should be successful");
 ///
 /// // Will deserialize without any allocations
-/// let deserialized: Data = bincode::deserialize(&bincode_bytes)
-///     .expect("Deserialization should be successful");
+/// let deserialized: Data =
+///     bincode::deserialize(&bincode_bytes).expect("Deserialization should be successful");
 ///
 /// assert_eq!(data.map.get(&1), Some("one"));
 /// assert_eq!(data.map.get(&2), Some("two"));
@@ -100,6 +97,12 @@ where
             values: V::Container::zvl_new(),
         }
     }
+
+    #[doc(hidden)] // Crabbake internal
+    pub const unsafe fn from_parts_unchecked(keys: K::Container, values: V::Container) -> Self {
+        Self { keys, values }
+    }
+
     /// Construct a new [`ZeroMap`] with a given capacity
     pub fn with_capacity(capacity: usize) -> Self {
         Self {
@@ -292,9 +295,9 @@ where
     > {
         (0..self.keys.zvl_len()).map(move |idx| {
             (
-                #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
+                #[allow(clippy::unwrap_used)] // idx is in-range
                 self.keys.zvl_get(idx).unwrap(),
-                #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
+                #[allow(clippy::unwrap_used)] // idx is in-range
                 self.values.zvl_get(idx).unwrap(),
             )
         })
@@ -302,13 +305,13 @@ where
 
     /// Produce an ordered iterator over keys
     pub fn iter_keys<'b>(&'b self) -> impl Iterator<Item = &'b <K as ZeroMapKV<'a>>::GetType> {
-        #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
+        #[allow(clippy::unwrap_used)] // idx is in-range
         (0..self.keys.zvl_len()).map(move |idx| self.keys.zvl_get(idx).unwrap())
     }
 
     /// Produce an iterator over values, ordered by keys
     pub fn iter_values<'b>(&'b self) -> impl Iterator<Item = &'b <V as ZeroMapKV<'a>>::GetType> {
-        #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
+        #[allow(clippy::unwrap_used)] // idx is in-range
         (0..self.values.zvl_len()).map(move |idx| self.values.zvl_get(idx).unwrap())
     }
 }
@@ -323,19 +326,31 @@ where
     /// types with the value to avoid an extra allocation when dealing with custom ULE types.
     ///
     /// ```rust
-    /// use zerovec::ZeroMap;
     /// use std::borrow::Cow;
+    /// use zerovec::ZeroMap;
     ///
     /// #[zerovec::make_varule(PersonULE)]
     /// #[derive(Clone, Eq, PartialEq, Ord, PartialOrd)]
     /// struct Person<'a> {
     ///     age: u8,
-    ///     name: Cow<'a, str>    
+    ///     name: Cow<'a, str>,
     /// }
     ///
     /// let mut map: ZeroMap<u32, PersonULE> = ZeroMap::new();
-    /// map.insert_var_v(&1, &Person { age: 20, name: "Joseph".into()    });
-    /// map.insert_var_v(&1, &Person { age: 35, name: "Carla".into()     });
+    /// map.insert_var_v(
+    ///     &1,
+    ///     &Person {
+    ///         age: 20,
+    ///         name: "Joseph".into(),
+    ///     },
+    /// );
+    /// map.insert_var_v(
+    ///     &1,
+    ///     &Person {
+    ///         age: 35,
+    ///         name: "Carla".into(),
+    ///     },
+    /// );
     /// assert_eq!(&map.get(&1).unwrap().name, "Carla");
     /// assert!(map.get(&3).is_none());
     /// ```

@@ -22,10 +22,10 @@ use zerovec::maps::{KeyError, ZeroMap2dBorrowed};
 /// Load "hello world" data from a postcard blob statically linked at compile time:
 ///
 /// ```
-/// use icu_provider::prelude::*;
-/// use icu_provider::hello_world::*;
-/// use icu_provider_blob::StaticDataProvider;
 /// use icu_locid::locale;
+/// use icu_provider::hello_world::*;
+/// use icu_provider::prelude::*;
+/// use icu_provider_blob::StaticDataProvider;
 ///
 /// const HELLO_WORLD_BLOB: &[u8] = include_bytes!(concat!(
 ///     env!("CARGO_MANIFEST_DIR"),
@@ -49,7 +49,7 @@ use zerovec::maps::{KeyError, ZeroMap2dBorrowed};
 ///
 /// [`BlobDataProvider`]: crate::BlobDataProvider
 pub struct StaticDataProvider {
-    data: ZeroMap2dBorrowed<'static, ResourceKeyHash, str, [u8]>,
+    data: ZeroMap2dBorrowed<'static, ResourceKeyHash, [u8], [u8]>,
 }
 
 impl StaticDataProvider {
@@ -72,10 +72,10 @@ impl StaticDataProvider {
     /// # Examples
     ///
     /// ```
-    /// use icu_provider::prelude::*;
-    /// use icu_provider::hello_world::*;
-    /// use icu_provider_blob::StaticDataProvider;
     /// use icu_locid::locale;
+    /// use icu_provider::hello_world::*;
+    /// use icu_provider::prelude::*;
+    /// use icu_provider_blob::StaticDataProvider;
     ///
     /// let stub_provider = StaticDataProvider::new_empty();
     ///
@@ -84,7 +84,7 @@ impl StaticDataProvider {
     ///     &DataRequest {
     ///         options: locale!("la").into(),
     ///         metadata: Default::default(),
-    ///     }
+    ///     },
     /// )
     /// .expect_err("Stub provider returns no data");
     /// ```
@@ -108,7 +108,7 @@ impl BufferProvider for StaticDataProvider {
             metadata,
             payload: Some(DataPayload::from_static_buffer(
                 self.data
-                    .get(&key.get_hash(), &req.options.write_to_string())
+                    .get(&key.get_hash(), req.options.write_to_string().as_bytes())
                     .map_err(|e| {
                         match e {
                             KeyError::K0 => DataErrorKind::MissingResourceKey,

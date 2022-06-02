@@ -34,7 +34,7 @@ impl fmt::Display for Skeleton<'_> {
     fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
         for field in self.fields_iter() {
             let ch: char = field.symbol.into();
-            for _ in 0..field.length as usize {
+            for _ in 0..field.length.to_len() {
                 formatter.write_char(ch)?;
             }
         }

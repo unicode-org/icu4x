@@ -10,7 +10,7 @@ pub mod ffi {
     use crate::{locale::ffi::ICU4XLocale, provider::ffi::ICU4XDataProvider};
 
     /// FFI version of `CanonicalizationResult`.
-    /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu/locale_canonicalizer/enum.CanonicalizationResult.html) for more details.
+    #[diplomat::rust_link(icu::locale_canonicalizer::CanonicalizationResult, Enum)]
     pub enum ICU4XCanonicalizationResult {
         Modified,
         Unmodified,
@@ -27,13 +27,13 @@ pub mod ffi {
     }
 
     /// A locale canonicalizer.
-    /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu/locale_canonicalizer/struct.LocaleCanonicalizer.html) for more details.
+    #[diplomat::rust_link(icu::locale_canonicalizer::LocaleCanonicalizer, Struct)]
     #[diplomat::opaque]
     pub struct ICU4XLocaleCanonicalizer(LocaleCanonicalizer);
 
     impl ICU4XLocaleCanonicalizer {
         /// Create a new [`ICU4XLocaleCanonicalizer`].
-        /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu/locale_canonicalizer/struct.LocaleCanonicalizer.html#method.new) for more details.
+        #[diplomat::rust_link(icu::locale_canonicalizer::LocaleCanonicalizer::new, FnInStruct)]
         pub fn create(provider: &ICU4XDataProvider) -> Option<Box<ICU4XLocaleCanonicalizer>> {
             use icu_provider::serde::AsDeserializingBufferProvider;
             let provider = provider.0.as_deserializing();
@@ -43,19 +43,22 @@ pub mod ffi {
         }
 
         /// FFI version of `LocaleCanonicalizer::canonicalize()`.
-        /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu/locale_canonicalizer/struct.LocaleCanonicalizer.html#method.canonicalize) for more details.
+        #[diplomat::rust_link(
+            icu::locale_canonicalizer::LocaleCanonicalizer::canonicalize,
+            FnInStruct
+        )]
         pub fn canonicalize(&self, locale: &mut ICU4XLocale) -> ICU4XCanonicalizationResult {
             canonicalization_result_to_ffi(self.0.canonicalize(&mut locale.0))
         }
 
         /// FFI version of `LocaleCanonicalizer::maximize()`.
-        /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu/locale_canonicalizer/struct.LocaleCanonicalizer.html#method.maximize) for more details.
+        #[diplomat::rust_link(icu::locale_canonicalizer::LocaleCanonicalizer::maximize, FnInStruct)]
         pub fn maximize(&self, locale: &mut ICU4XLocale) -> ICU4XCanonicalizationResult {
             canonicalization_result_to_ffi(self.0.maximize(&mut locale.0))
         }
 
         /// FFI version of `LocaleCanonicalizer::minimize()`.
-        /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu/locale_canonicalizer/struct.LocaleCanonicalizer.html#method.minimize) for more details.
+        #[diplomat::rust_link(icu::locale_canonicalizer::LocaleCanonicalizer::minimize, FnInStruct)]
         pub fn minimize(&self, locale: &mut ICU4XLocale) -> ICU4XCanonicalizationResult {
             canonicalization_result_to_ffi(self.0.minimize(&mut locale.0))
         }

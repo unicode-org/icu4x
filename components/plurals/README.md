@@ -23,7 +23,7 @@ appropriate [`Plural Category`].
 
 ```rust
 use icu::locid::locale;
-use icu::plurals::{PluralRules, PluralRuleType, PluralCategory};
+use icu::plurals::{PluralCategory, PluralRuleType, PluralRules};
 
 let provider = icu_testdata::get_provider();
 

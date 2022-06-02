@@ -21,6 +21,7 @@ use tinystr::{tinystr, TinyAsciiStr};
 
 /// Used to track the result of a canonicalization operation that potentially modifies its argument in place.
 #[derive(Debug, PartialEq)]
+#[allow(clippy::exhaustive_enums)] // this enum is stable
 pub enum CanonicalizationResult {
     /// The canonicalization operation modified the locale.
     Modified,
@@ -53,12 +54,15 @@ pub enum CanonicalizationResult {
 /// use icu_locid::Locale;
 ///
 /// let provider = icu_testdata::get_provider();
-/// let lc = LocaleCanonicalizer::new(&provider)
-///     .expect("create failed");
+/// let lc = LocaleCanonicalizer::new(&provider).expect("create failed");
 ///
-/// let mut locale : Locale = "ja-Latn-fonipa-hepburn-heploc".parse()
+/// let mut locale: Locale = "ja-Latn-fonipa-hepburn-heploc"
+///     .parse()
 ///     .expect("parse failed");
-/// assert_eq!(lc.canonicalize(&mut locale), CanonicalizationResult::Modified);
+/// assert_eq!(
+///     lc.canonicalize(&mut locale),
+///     CanonicalizationResult::Modified
+/// );
 /// assert_eq!(locale.to_string(), "ja-Latn-alalc97-fonipa");
 /// ```
 ///
@@ -67,16 +71,13 @@ pub enum CanonicalizationResult {
 /// use icu_locid::Locale;
 ///
 /// let provider = icu_testdata::get_provider();
-/// let lc = LocaleCanonicalizer::new(&provider)
-///     .expect("create failed");
+/// let lc = LocaleCanonicalizer::new(&provider).expect("create failed");
 ///
-/// let mut locale : Locale = "zh-CN".parse()
-///     .expect("parse failed");
+/// let mut locale: Locale = "zh-CN".parse().expect("parse failed");
 /// assert_eq!(lc.maximize(&mut locale), CanonicalizationResult::Modified);
 /// assert_eq!(locale.to_string(), "zh-Hans-CN");
 ///
-/// let mut locale : Locale = "zh-Hant-TW".parse()
-///     .expect("parse failed");
+/// let mut locale: Locale = "zh-Hant-TW".parse().expect("parse failed");
 /// assert_eq!(lc.maximize(&mut locale), CanonicalizationResult::Unmodified);
 /// assert_eq!(locale.to_string(), "zh-Hant-TW");
 /// ```
@@ -86,16 +87,13 @@ pub enum CanonicalizationResult {
 /// use icu_locid::Locale;
 ///
 /// let provider = icu_testdata::get_provider();
-/// let lc = LocaleCanonicalizer::new(&provider)
-///     .expect("create failed");
+/// let lc = LocaleCanonicalizer::new(&provider).expect("create failed");
 ///
-/// let mut locale : Locale = "zh-Hans-CN".parse()
-///     .expect("parse failed");
+/// let mut locale: Locale = "zh-Hans-CN".parse().expect("parse failed");
 /// assert_eq!(lc.minimize(&mut locale), CanonicalizationResult::Modified);
 /// assert_eq!(locale.to_string(), "zh");
 ///
-/// let mut locale : Locale = "zh".parse()
-///     .expect("parse failed");
+/// let mut locale: Locale = "zh".parse().expect("parse failed");
 /// assert_eq!(lc.minimize(&mut locale), CanonicalizationResult::Unmodified);
 /// assert_eq!(locale.to_string(), "zh");
 /// ```
@@ -341,15 +339,17 @@ impl LocaleCanonicalizer {
     /// use icu_locid::Locale;
     ///
     /// let provider = icu_testdata::get_provider();
-    /// let lc = LocaleCanonicalizer::new(&provider)
-    ///     .expect("create failed");
+    /// let lc = LocaleCanonicalizer::new(&provider).expect("create failed");
     ///
-    /// let mut locale : Locale = "ja-Latn-fonipa-hepburn-heploc".parse()
+    /// let mut locale: Locale = "ja-Latn-fonipa-hepburn-heploc"
+    ///     .parse()
     ///     .expect("parse failed");
-    /// assert_eq!(lc.canonicalize(&mut locale), CanonicalizationResult::Modified);
+    /// assert_eq!(
+    ///     lc.canonicalize(&mut locale),
+    ///     CanonicalizationResult::Modified
+    /// );
     /// assert_eq!(locale.to_string(), "ja-Latn-alalc97-fonipa");
     /// ```
-    ///
     pub fn canonicalize(&self, locale: &mut Locale) -> CanonicalizationResult {
         let mut result = CanonicalizationResult::Unmodified;
 
@@ -581,16 +581,13 @@ impl LocaleCanonicalizer {
     /// use icu_locid::Locale;
     ///
     /// let provider = icu_testdata::get_provider();
-    /// let lc = LocaleCanonicalizer::new(&provider)
-    ///     .expect("create failed");
+    /// let lc = LocaleCanonicalizer::new(&provider).expect("create failed");
     ///
-    /// let mut locale : Locale = "zh-CN".parse()
-    ///     .expect("parse failed");
+    /// let mut locale: Locale = "zh-CN".parse().expect("parse failed");
     /// assert_eq!(lc.maximize(&mut locale), CanonicalizationResult::Modified);
     /// assert_eq!(locale.to_string(), "zh-Hans-CN");
     ///
-    /// let mut locale : Locale = "zh-Hant-TW".parse()
-    ///     .expect("parse failed");
+    /// let mut locale: Locale = "zh-Hant-TW".parse().expect("parse failed");
     /// assert_eq!(lc.maximize(&mut locale), CanonicalizationResult::Unmodified);
     /// assert_eq!(locale.to_string(), "zh-Hant-TW");
     /// ```
@@ -677,16 +674,13 @@ impl LocaleCanonicalizer {
     /// use icu_locid::Locale;
     ///
     /// let provider = icu_testdata::get_provider();
-    /// let lc = LocaleCanonicalizer::new(&provider)
-    ///     .expect("creation failed");
+    /// let lc = LocaleCanonicalizer::new(&provider).expect("creation failed");
     ///
-    /// let mut locale : Locale = "zh-Hans-CN".parse()
-    ///     .expect("parse failed");
+    /// let mut locale: Locale = "zh-Hans-CN".parse().expect("parse failed");
     /// assert_eq!(lc.minimize(&mut locale), CanonicalizationResult::Modified);
     /// assert_eq!(locale.to_string(), "zh");
     ///
-    /// let mut locale : Locale = "zh".parse()
-    ///     .expect("parse failed");
+    /// let mut locale: Locale = "zh".parse().expect("parse failed");
     /// assert_eq!(lc.minimize(&mut locale), CanonicalizationResult::Unmodified);
     /// assert_eq!(locale.to_string(), "zh");
     /// ```

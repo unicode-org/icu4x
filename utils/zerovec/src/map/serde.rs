@@ -5,13 +5,12 @@
 use super::{MutableZeroVecLike, ZeroMap, ZeroMapBorrowed, ZeroMapKV, ZeroVecLike};
 use core::fmt;
 use core::marker::PhantomData;
-use dep_serde as serde;
 use serde::de::{self, Deserialize, Deserializer, MapAccess, SeqAccess, Visitor};
-#[cfg(feature = "serde_serialize")]
+#[cfg(feature = "serde")]
 use serde::ser::{Serialize, SerializeMap, SerializeSeq, Serializer};
 
-/// This impl can be made available by enabling the optional `serde_serialize` feature of the `zerovec` crate
-#[cfg(feature = "serde_serialize")]
+/// This impl can be made available by enabling the optional `serde` feature of the `zerovec` crate
+#[cfg(feature = "serde")]
 impl<'a, K, V> Serialize for ZeroMap<'a, K, V>
 where
     K: ZeroMapKV<'a> + Serialize + ?Sized + Ord,
@@ -28,8 +27,7 @@ where
             // than numbers and strings as map keys. For them, we can serialize
             // as a vec of tuples instead
             if let Some(k) = self.iter_keys().next() {
-                let json = K::Container::zvl_get_as_t(k, |k| serde_json::json!(k));
-                if !json.is_string() && !json.is_number() {
+                if !K::Container::zvl_get_as_t(k, super::serde_helpers::is_num_or_string) {
                     let mut seq = serializer.serialize_seq(Some(self.len()))?;
                     for (k, v) in self.iter() {
                         K::Container::zvl_get_as_t(k, |k| {
@@ -51,8 +49,8 @@ where
     }
 }
 
-/// This impl can be made available by enabling the optional `serde_serialize` feature of the `zerovec` crate
-#[cfg(feature = "serde_serialize")]
+/// This impl can be made available by enabling the optional `serde` feature of the `zerovec` crate
+#[cfg(feature = "serde")]
 impl<'a, K, V> Serialize for ZeroMapBorrowed<'a, K, V>
 where
     K: ZeroMapKV<'a> + Serialize + ?Sized + Ord,
@@ -235,17 +233,15 @@ where
 #[cfg(test)]
 #[allow(non_camel_case_types)]
 mod test {
-    use super::super::*;
+    use crate::{map::ZeroMapBorrowed, ZeroMap};
 
-    #[derive(dep_serde::Serialize, dep_serde::Deserialize)]
-    #[serde(crate = "dep_serde")]
+    #[derive(serde::Serialize, serde::Deserialize)]
     struct DeriveTest_ZeroMap<'data> {
         #[serde(borrow)]
         _data: ZeroMap<'data, str, [u8]>,
     }
 
-    #[derive(dep_serde::Serialize, dep_serde::Deserialize)]
-    #[serde(crate = "dep_serde")]
+    #[derive(serde::Serialize, serde::Deserialize)]
     struct DeriveTest_ZeroMapBorrowed<'data> {
         #[serde(borrow)]
         _data: ZeroMapBorrowed<'data, str, [u8]>,

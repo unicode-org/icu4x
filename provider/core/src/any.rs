@@ -42,6 +42,7 @@ pub struct AnyPayload {
 }
 
 /// The [`DataMarker`] marker type for [`AnyPayload`].
+#[allow(clippy::exhaustive_structs)] // marker type
 pub struct AnyMarker;
 
 impl DataMarker for AnyMarker {
@@ -95,18 +96,17 @@ impl AnyPayload {
     /// # Examples
     ///
     /// ```
-    /// use icu_provider::prelude::*;
     /// use icu_provider::hello_world::*;
+    /// use icu_provider::prelude::*;
     /// use std::borrow::Cow;
     ///
     /// const HELLO_DATA: HelloWorldV1<'static> = HelloWorldV1 {
-    ///     message: Cow::Borrowed("Custom Hello World")
+    ///     message: Cow::Borrowed("Custom Hello World"),
     /// };
     ///
     /// let any_payload = AnyPayload::from_static_ref(&HELLO_DATA);
     ///
-    /// let payload: DataPayload<HelloWorldV1Marker> = any_payload.downcast()
-    ///     .expect("TypeId matches");
+    /// let payload: DataPayload<HelloWorldV1Marker> = any_payload.downcast().expect("TypeId matches");
     /// assert_eq!("Custom Hello World", payload.get().message);
     /// ```
     pub fn from_static_ref<Y>(static_ref: &'static Y) -> Self
@@ -126,21 +126,19 @@ impl AnyPayload {
     /// # Examples
     ///
     /// ```
-    /// use icu_provider::prelude::*;
     /// use icu_provider::hello_world::*;
+    /// use icu_provider::prelude::*;
     /// use std::borrow::Cow;
     /// use std::rc::Rc;
     ///
-    /// let payload: DataPayload<HelloWorldV1Marker> =
-    ///     DataPayload::from_owned(HelloWorldV1 {
-    ///         message: Cow::Borrowed("Custom Hello World")
-    ///     });
+    /// let payload: DataPayload<HelloWorldV1Marker> = DataPayload::from_owned(HelloWorldV1 {
+    ///     message: Cow::Borrowed("Custom Hello World"),
+    /// });
     /// let rc_payload = Rc::from(payload);
     ///
     /// let any_payload = AnyPayload::from_rc_payload(rc_payload);
     ///
-    /// let payload: DataPayload<HelloWorldV1Marker> = any_payload.downcast()
-    ///     .expect("TypeId matches");
+    /// let payload: DataPayload<HelloWorldV1Marker> = any_payload.downcast().expect("TypeId matches");
     /// assert_eq!("Custom Hello World", payload.get().message);
     /// ```
     pub fn from_rc_payload<M>(rc_payload: Rc<DataPayload<M>>) -> Self
@@ -163,20 +161,18 @@ where
     /// # Examples
     ///
     /// ```
-    /// use icu_provider::prelude::*;
     /// use icu_provider::hello_world::*;
+    /// use icu_provider::prelude::*;
     /// use std::borrow::Cow;
     /// use std::rc::Rc;
     ///
-    /// let payload: DataPayload<HelloWorldV1Marker> =
-    ///     DataPayload::from_owned(HelloWorldV1 {
-    ///         message: Cow::Borrowed("Custom Hello World")
-    ///     });
+    /// let payload: DataPayload<HelloWorldV1Marker> = DataPayload::from_owned(HelloWorldV1 {
+    ///     message: Cow::Borrowed("Custom Hello World"),
+    /// });
     ///
     /// let any_payload = payload.wrap_into_any_payload();
     ///
-    /// let payload: DataPayload<HelloWorldV1Marker> = any_payload.downcast()
-    ///     .expect("TypeId matches");
+    /// let payload: DataPayload<HelloWorldV1Marker> = any_payload.downcast().expect("TypeId matches");
     /// assert_eq!("Custom Hello World", payload.get().message);
     /// ```
     pub fn wrap_into_any_payload(self) -> AnyPayload {
@@ -203,6 +199,7 @@ impl DataPayload<AnyMarker> {
 /// A [`DataResponse`] for type-erased values.
 ///
 /// Convertible to and from `DataResponse<AnyMarker>`.
+#[allow(clippy::exhaustive_structs)] // this type is stable (the metadata is allowed to grow)
 pub struct AnyResponse {
     /// Metadata about the returned object.
     pub metadata: DataResponseMetadata,
@@ -255,8 +252,8 @@ impl AnyResponse {
 /// [`AnyPayloadProvider`] implements `AnyProvider`.
 ///
 /// ```
-/// use icu_provider::prelude::*;
 /// use icu_provider::hello_world::*;
+/// use icu_provider::prelude::*;
 /// use icu_provider_adapters::struct_provider::AnyPayloadProvider;
 /// use std::borrow::Cow;
 ///
@@ -274,11 +271,9 @@ impl AnyResponse {
 ///     .expect("Load should succeed");
 ///
 /// // Downcast to something useful
-/// let response: DataResponse<HelloWorldV1Marker> = any_response.downcast()
-///     .expect("Types match");
+/// let response: DataResponse<HelloWorldV1Marker> = any_response.downcast().expect("Types match");
 ///
-/// let payload = response.take_payload()
-///     .expect("Data should be present");
+/// let payload = response.take_payload().expect("Data should be present");
 ///
 /// assert_eq!(payload.get().message, "Custom Hello World");
 /// ```
@@ -289,6 +284,7 @@ pub trait AnyProvider {
 }
 
 /// A wrapper over `DynProvider<AnyMarker>` that implements `AnyProvider`
+#[allow(clippy::exhaustive_structs)] // newtype
 pub struct DynProviderAnyMarkerWrap<'a, P: ?Sized>(pub &'a P);
 
 pub trait AsDynProviderAnyMarkerWrap {
@@ -317,6 +313,7 @@ where
 }
 
 /// A wrapper over `AnyProvider` that implements `DynProvider<M>` via downcasting
+#[allow(clippy::exhaustive_structs)] // newtype
 pub struct DowncastingAnyProvider<'a, P: ?Sized>(pub &'a P);
 
 pub trait AsDowncastingAnyProvider {
@@ -326,7 +323,7 @@ pub trait AsDowncastingAnyProvider {
 
 impl<P> AsDowncastingAnyProvider for P
 where
-    P: AnyProvider,
+    P: AnyProvider + ?Sized,
 {
     #[inline]
     fn as_downcasting(&self) -> DowncastingAnyProvider<P> {
@@ -380,9 +377,8 @@ mod test {
     #[test]
     fn test_non_owned_any_marker() {
         // This test demonstrates a code path that can trigger the InvalidState error kind.
-        let rc_buffer: Rc<[u8]> = Rc::from([]);
         let payload_result: Result<DataPayload<AnyMarker>, core::convert::Infallible> =
-            DataPayload::try_from_rc_buffer_badly(rc_buffer, |_| {
+            DataPayload::try_from_rc_buffer_badly((&[] as &[u8]).into(), |_| {
                 Ok(AnyPayload::from_static_ref(&CONST_DATA))
             });
         let err = payload_result

@@ -19,7 +19,7 @@ pub fn uprops_toml_root() -> PathBuf {
     data_root().join("uprops")
 }
 
-/// Returns the absolute path to the ICU4X JSON root directory.
-pub fn icu4x_json_root() -> PathBuf {
-    data_root().join("json")
+/// Returns the absolute path to the collation tailoring TOML root directory.
+pub fn coll_toml_root() -> PathBuf {
+    data_root().join("coll")
 }

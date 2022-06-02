@@ -21,12 +21,12 @@ where
     /// # Examples
     ///
     /// ```
-    /// use icu_provider::prelude::*;
-    /// use icu_provider::hello_world::*;
-    /// use icu_provider::datagen::*;
-    /// use icu_provider_adapters::filter::Filterable;
     /// use icu_locid::LanguageIdentifier;
-    /// use icu_locid::{language, locale, langid};
+    /// use icu_locid::{langid, language, locale};
+    /// use icu_provider::datagen::*;
+    /// use icu_provider::hello_world::*;
+    /// use icu_provider::prelude::*;
+    /// use icu_provider_adapters::filter::Filterable;
     ///
     /// let provider = HelloWorldProvider::new_with_placeholder_data()
     ///     .filterable("Demo no-English filter")
@@ -37,8 +37,7 @@ where
     ///     options: locale!("de").into(),
     ///     metadata: Default::default(),
     /// };
-    /// let response: Result<DataResponse<HelloWorldV1Marker>, _> =
-    ///     provider.load_resource(&req_de);
+    /// let response: Result<DataResponse<HelloWorldV1Marker>, _> = provider.load_resource(&req_de);
     /// assert!(matches!(response, Ok(_)));
     ///
     /// // English requests should fail:
@@ -46,25 +45,29 @@ where
     ///     options: locale!("en-US").into(),
     ///     metadata: Default::default(),
     /// };
-    /// let response: Result<DataResponse<HelloWorldV1Marker>, _> =
-    ///     provider.load_resource(&req_en);
+    /// let response: Result<DataResponse<HelloWorldV1Marker>, _> = provider.load_resource(&req_en);
     /// assert!(matches!(
     ///     response,
-    ///     Err(DataError { kind: DataErrorKind::FilteredResource, .. })
+    ///     Err(DataError {
+    ///         kind: DataErrorKind::FilteredResource,
+    ///         ..
+    ///     })
     /// ));
     ///
     /// // English should not appear in the iterator result:
-    /// let supported_langids = provider.supported_options()
+    /// let supported_langids = provider
+    ///     .supported_options()
     ///     .expect("Should successfully make an iterator of supported locales")
-    ///     .filter_map(|options| options.langid)
+    ///     .into_iter()
+    ///     .map(|options| options.get_langid())
     ///     .collect::<Vec<LanguageIdentifier>>();
     /// assert!(supported_langids.contains(&langid!("de")));
     /// assert!(!supported_langids.contains(&langid!("en")));
     /// ```
     pub fn filter_by_langid<'a>(
         self,
-        predicate: impl Fn(&LanguageIdentifier) -> bool + 'a,
-    ) -> RequestFilterDataProvider<D, Box<dyn Fn(&DataRequest) -> bool + 'a>>
+        predicate: impl Fn(&LanguageIdentifier) -> bool + Sync + 'a,
+    ) -> RequestFilterDataProvider<D, Box<dyn Fn(&DataRequest) -> bool + Sync + 'a>>
     where
         F: 'a,
     {
@@ -75,10 +78,7 @@ where
                 if !(old_predicate)(request) {
                     return false;
                 }
-                match &request.options.langid {
-                    Some(langid) => predicate(langid),
-                    None => true,
-                }
+                predicate(&request.options.get_langid())
             }),
             filter_name: self.filter_name,
         }
@@ -96,10 +96,10 @@ where
     /// # Examples
     ///
     /// ```
-    /// use icu_provider::prelude::*;
+    /// use icu_locid::{langid, locale};
     /// use icu_provider::hello_world::*;
+    /// use icu_provider::prelude::*;
     /// use icu_provider_adapters::filter::Filterable;
-    /// use icu_locid::{locale, langid};
     ///
     /// let allowlist = vec![langid!("de"), langid!("zh")];
     /// let provider = HelloWorldProvider::new_with_placeholder_data()
@@ -111,8 +111,7 @@ where
     ///     options: locale!("de").into(),
     ///     metadata: Default::default(),
     /// };
-    /// let response: Result<DataResponse<HelloWorldV1Marker>, _> =
-    ///     provider.load_resource(&req_de);
+    /// let response: Result<DataResponse<HelloWorldV1Marker>, _> = provider.load_resource(&req_de);
     /// assert!(matches!(response, Ok(_)));
     ///
     /// // English requests should fail:
@@ -120,11 +119,13 @@ where
     ///     options: locale!("en-US").into(),
     ///     metadata: Default::default(),
     /// };
-    /// let response: Result<DataResponse<HelloWorldV1Marker>, _> =
-    ///     provider.load_resource(&req_en);
+    /// let response: Result<DataResponse<HelloWorldV1Marker>, _> = provider.load_resource(&req_en);
     /// assert!(matches!(
     ///     response,
-    ///     Err(DataError { kind: DataErrorKind::FilteredResource, .. })
+    ///     Err(DataError {
+    ///         kind: DataErrorKind::FilteredResource,
+    ///         ..
+    ///     })
     /// ));
     /// assert_eq!(
     ///     response.unwrap_err().str_context,
@@ -145,10 +146,7 @@ where
                 if !(old_predicate)(request) {
                     return false;
                 }
-                match &request.options.langid {
-                    Some(langid) => allowlist.contains(langid),
-                    None => true,
-                }
+                request.options.is_langid_und() || allowlist.contains(&request.options.get_langid())
             }),
             filter_name: self.filter_name,
         }
@@ -159,10 +157,10 @@ where
     /// # Examples
     ///
     /// ```
-    /// use icu_provider::prelude::*;
-    /// use icu_provider::hello_world::*;
-    /// use icu_provider_adapters::filter::Filterable;
     /// use icu_locid::locale;
+    /// use icu_provider::hello_world::*;
+    /// use icu_provider::prelude::*;
+    /// use icu_provider_adapters::filter::Filterable;
     ///
     /// let provider = HelloWorldProvider::new_with_placeholder_data()
     ///     .filterable("Demo require-langid filter")
@@ -186,12 +184,15 @@ where
     ///     provider.load_resource(&req_no_langid);
     /// assert!(matches!(
     ///     response,
-    ///     Err(DataError { kind: DataErrorKind::FilteredResource, .. })
+    ///     Err(DataError {
+    ///         kind: DataErrorKind::FilteredResource,
+    ///         ..
+    ///     })
     /// ));
     /// ```
     pub fn require_langid<'a>(
         self,
-    ) -> RequestFilterDataProvider<D, Box<dyn Fn(&DataRequest) -> bool + 'a>>
+    ) -> RequestFilterDataProvider<D, Box<dyn Fn(&DataRequest) -> bool + Sync + 'a>>
     where
         F: 'a,
     {
@@ -202,7 +203,7 @@ where
                 if !(old_predicate)(request) {
                     return false;
                 }
-                request.options.langid.is_some()
+                !request.options.is_langid_und()
             }),
             filter_name: self.filter_name,
         }

@@ -24,13 +24,14 @@ include = [
 
 [dependencies]
 displaydoc = { version = "0.2.3", default-features = false }
-icu_codepointtrie = { version = "0.3", path = "../../utils/codepointtrie" }
-icu_locid = { version = "0.5", path = "../../components/locid" }
-icu_provider = { version = "0.5", path = "../../provider/core", features = ["macros"] }
-icu_uniset = { version = "0.4", path = "../../utils/uniset" }
-yoke = { version = "0.5.0", path = "../../utils/yoke", features = ["derive"] }
-zerovec = { version = "0.6", path = "../../utils/zerovec", features = ["yoke"] }
+icu_codepointtrie = { version = "0.4", path = "../../utils/codepointtrie" }
+icu_locid = { version = "0.6", path = "../../components/locid" }
+icu_provider = { version = "0.6", path = "../../provider/core", features = ["macros"] }
+icu_uniset = { version = "0.5", path = "../../utils/uniset" }
+yoke = { version = "0.6.0", path = "../../utils/yoke", features = ["derive"] }
+zerovec = { version = "0.7", path = "../../utils/zerovec", features = ["yoke"] }
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }
+crabbake = { path = "../../experimental/crabbake", optional = true, features = ["derive"]}
 
 [lib]
 path = "src/lib.rs"
@@ -38,6 +39,6 @@ bench = false  # This option is required for Benchmark CI
 
 [features]
 std = ["icu_provider/std"]
-default = ["serialize"]
-serialize = ["serde", "zerovec/serde", "icu_codepointtrie/serde"]
-datagen = ["std", "zerovec/serde_serialize", "icu_codepointtrie/serde_serialize"]
+default = []
+serde = ["dep:serde", "zerovec/serde", "icu_codepointtrie/serde"]
+datagen = ["serde", "std", "crabbake", "zerovec/crabbake", "icu_codepointtrie/crabbake"]

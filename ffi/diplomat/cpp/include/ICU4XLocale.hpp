@@ -24,12 +24,19 @@ struct ICU4XLocaleDeleter {
     capi::ICU4XLocale_destroy(l);
   }
 };
+
+/**
+ * An ICU4X Locale, capable of representing strings like `"en-US"`.
+ * 
+ * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html) for more information.
+ */
 class ICU4XLocale {
  public:
 
   /**
    * Construct an [`ICU4XLocale`] from an locale identifier.
-   * See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#method.from_bytes) for more information.
+   * 
+   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#method.from_bytes) for more information.
    */
   static std::optional<ICU4XLocale> create(const std::string_view name);
 
@@ -50,99 +57,115 @@ class ICU4XLocale {
 
   /**
    * Clones the [`ICU4XLocale`].
-   * See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html) for more information.
+   * 
+   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html) for more information.
    */
   ICU4XLocale clone() const;
 
   /**
    * Write a string representation of the `LanguageIdentifier` part of
    * [`ICU4XLocale`] to `write`.
-   * See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#structfield.id) for more information.
+   * 
+   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#structfield.id) for more information.
    */
   template<typename W> diplomat::result<std::monostate, ICU4XLocaleError> basename_to_writeable(W& write) const;
 
   /**
    * Write a string representation of the `LanguageIdentifier` part of
    * [`ICU4XLocale`] to `write`.
-   * See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#structfield.id) for more information.
+   * 
+   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#structfield.id) for more information.
    */
   diplomat::result<std::string, ICU4XLocaleError> basename() const;
 
   /**
    * Write a string representation of the unicode extension to `write`
-   * See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#structfield.extensions) for more information.
+   * 
+   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#structfield.extensions) for more information.
    */
   template<typename W> diplomat::result<std::monostate, ICU4XLocaleError> get_unicode_extension_to_writeable(const std::string_view bytes, W& write) const;
 
   /**
    * Write a string representation of the unicode extension to `write`
-   * See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#structfield.extensions) for more information.
+   * 
+   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#structfield.extensions) for more information.
    */
   diplomat::result<std::string, ICU4XLocaleError> get_unicode_extension(const std::string_view bytes) const;
 
   /**
    * Write a string representation of [`ICU4XLocale`] language to `write`
-   * See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#structfield.id) for more information.
+   * 
+   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#structfield.id) for more information.
    */
   template<typename W> diplomat::result<std::monostate, ICU4XLocaleError> language_to_writeable(W& write) const;
 
   /**
    * Write a string representation of [`ICU4XLocale`] language to `write`
-   * See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#structfield.id) for more information.
+   * 
+   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#structfield.id) for more information.
    */
   diplomat::result<std::string, ICU4XLocaleError> language() const;
 
   /**
    * Set the language part of the [`ICU4XLocale`].
-   * See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#method.from_bytes) for more information.
+   * 
+   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#method.from_bytes) for more information.
    */
   diplomat::result<std::monostate, ICU4XLocaleError> set_language(const std::string_view bytes);
 
   /**
    * Write a string representation of [`ICU4XLocale`] region to `write`
-   * See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#structfield.id) for more information.
+   * 
+   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#structfield.id) for more information.
    */
   template<typename W> diplomat::result<std::monostate, ICU4XLocaleError> region_to_writeable(W& write) const;
 
   /**
    * Write a string representation of [`ICU4XLocale`] region to `write`
-   * See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#structfield.id) for more information.
+   * 
+   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#structfield.id) for more information.
    */
   diplomat::result<std::string, ICU4XLocaleError> region() const;
 
   /**
    * Set the region part of the [`ICU4XLocale`].
-   * See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#method.from_bytes) for more information.
+   * 
+   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#method.from_bytes) for more information.
    */
   diplomat::result<std::monostate, ICU4XLocaleError> set_region(const std::string_view bytes);
 
   /**
    * Write a string representation of [`ICU4XLocale`] script to `write`
-   * See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#structfield.id) for more information.
+   * 
+   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#structfield.id) for more information.
    */
   template<typename W> diplomat::result<std::monostate, ICU4XLocaleError> script_to_writeable(W& write) const;
 
   /**
    * Write a string representation of [`ICU4XLocale`] script to `write`
-   * See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#structfield.id) for more information.
+   * 
+   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#structfield.id) for more information.
    */
   diplomat::result<std::string, ICU4XLocaleError> script() const;
 
   /**
    * Set the script part of the [`ICU4XLocale`]. Pass an empty string to remove the script.
-   * See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#method.from_bytes) for more information.
+   * 
+   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#method.from_bytes) for more information.
    */
   diplomat::result<std::monostate, ICU4XLocaleError> set_script(const std::string_view bytes);
 
   /**
    * Write a string representation of [`ICU4XLocale`] to `write`
-   * See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html) for more information.
+   * 
+   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html) for more information.
    */
   template<typename W> diplomat::result<std::monostate, ICU4XLocaleError> tostring_to_writeable(W& write) const;
 
   /**
    * Write a string representation of [`ICU4XLocale`] to `write`
-   * See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html) for more information.
+   * 
+   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html) for more information.
    */
   diplomat::result<std::string, ICU4XLocaleError> tostring() const;
   inline const capi::ICU4XLocale* AsFFI() const { return this->inner.get(); }

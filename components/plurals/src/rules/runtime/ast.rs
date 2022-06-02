@@ -4,6 +4,7 @@
 
 #![allow(missing_docs)]
 #![allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
+#![allow(clippy::exhaustive_enums, clippy::exhaustive_structs)] // TODO(#1668) Clippy exceptions need docs or fixing.
 
 use crate::rules::reference;
 use core::{convert::TryInto, fmt, str::FromStr};
@@ -14,18 +15,23 @@ use zerovec::{
 };
 
 #[derive(yoke::Yokeable, zerofrom::ZeroFrom, Clone, PartialEq, Debug)]
+#[cfg_attr(
+    feature = "crabbake",
+    derive(crabbake::Bakeable),
+    crabbake(path = icu_plurals::rules::runtime::ast),
+)]
 pub struct Rule<'data>(pub VarZeroVec<'data, RelationULE>);
 
 #[derive(Copy, Clone, Eq, PartialEq, Ord, PartialOrd, Debug)]
 #[repr(u8)]
-pub enum AndOr {
+pub(crate) enum AndOr {
     Or,
     And,
 }
 
 #[derive(Copy, Clone, Eq, PartialEq, Ord, PartialOrd, Debug)]
 #[repr(u8)]
-pub enum Polarity {
+pub(crate) enum Polarity {
     Negative,
     Positive,
 }
@@ -33,7 +39,7 @@ pub enum Polarity {
 #[derive(Copy, Clone, Debug, PartialEq, Eq, Ord, PartialOrd)]
 #[repr(u8)]
 #[zerovec::make_ule(OperandULE)]
-pub enum Operand {
+pub(crate) enum Operand {
     N = 0,
     I = 1,
     V = 2,
@@ -45,7 +51,7 @@ pub enum Operand {
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Ord, PartialOrd)]
-pub enum RangeOrValue {
+pub(crate) enum RangeOrValue {
     Range(u32, u32),
     Value(u32),
 }
@@ -357,7 +363,7 @@ impl AsULE for RangeOrValue {
     }
 }
 
-#[cfg(feature = "serialize")]
+#[cfg(feature = "serde")]
 mod serde {
     use super::*;
     use ::serde::{de, ser, Deserialize, Deserializer, Serialize};

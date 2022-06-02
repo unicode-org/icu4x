@@ -13,7 +13,7 @@ use crate::{
 };
 use alloc::string::String;
 use core::marker::PhantomData;
-use icu_locid::Locale;
+use icu_locid::{unicode_ext_key, Locale};
 use icu_plurals::provider::OrdinalV1Marker;
 use icu_provider::prelude::*;
 
@@ -32,23 +32,20 @@ use crate::{date::DateTimeInput, CldrCalendar, DateTimeFormatError, FormattedDat
 /// # Examples
 ///
 /// ```
-/// use icu::locid::locale;
-/// use icu::datetime::{DateTimeFormat, options::length};
 /// use icu::calendar::{DateTime, Gregorian};
+/// use icu::datetime::{options::length, DateTimeFormat};
+/// use icu::locid::locale;
 /// use icu_provider::inv::InvariantDataProvider;
 ///
 /// let provider = InvariantDataProvider;
 ///
-/// let options = length::Bag {
-///     date: Some(length::Date::Medium),
-///     time: Some(length::Time::Short),
-///     ..Default::default()
-/// };
+/// let mut options = length::Bag::from_date_time_style(length::Date::Medium, length::Time::Short);
+///
 /// let dtf = DateTimeFormat::<Gregorian>::try_new(locale!("en"), &provider, &options.into())
 ///     .expect("Failed to create DateTimeFormat instance.");
 ///
 ///
-/// let datetime = DateTime::new_gregorian_datetime_from_integers(2020, 9, 1, 12, 34, 28)
+/// let datetime = DateTime::new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
 ///     .expect("Failed to construct DateTime.");
 ///
 /// let value = dtf.format_to_string(&datetime);
@@ -66,9 +63,9 @@ impl<C: CldrCalendar> DateTimeFormat<C> {
     /// # Examples
     ///
     /// ```
-    /// use icu::locid::locale;
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::{DateTimeFormat, DateTimeFormatOptions};
+    /// use icu::locid::locale;
     /// use icu_provider::inv::InvariantDataProvider;
     ///
     /// let provider = InvariantDataProvider;
@@ -92,10 +89,18 @@ impl<C: CldrCalendar> DateTimeFormat<C> {
             + ResourceProvider<DatePatternsV1Marker>
             + ResourceProvider<DateSkeletonPatternsV1Marker>
             + ResourceProvider<OrdinalV1Marker>
-            + ResourceProvider<WeekDataV1Marker>,
+            + ResourceProvider<WeekDataV1Marker>
+            + ?Sized,
     {
+        let mut locale = locale.into();
+        // TODO(#419): Resolve the locale calendar with the API calendar.
+        locale
+            .extensions
+            .unicode
+            .keywords
+            .set(unicode_ext_key!("ca"), C::BCP_47_IDENTIFIER);
         Ok(Self(
-            raw::DateTimeFormat::try_new(locale, data_provider, options, C::IDENTIFIER)?,
+            raw::DateTimeFormat::try_new(locale, data_provider, options)?,
             PhantomData,
         ))
     }
@@ -106,8 +111,8 @@ impl<C: CldrCalendar> DateTimeFormat<C> {
     /// # Examples
     ///
     /// ```
-    /// use icu::datetime::{DateTimeFormat, DateTimeFormatOptions};
     /// use icu::calendar::{DateTime, Gregorian};
+    /// use icu::datetime::{DateTimeFormat, DateTimeFormatOptions};
     /// use icu_provider::inv::InvariantDataProvider;
     /// # let locale = icu::locid::locale!("en");
     /// # let provider = InvariantDataProvider;
@@ -115,7 +120,7 @@ impl<C: CldrCalendar> DateTimeFormat<C> {
     /// let dtf = DateTimeFormat::<Gregorian>::try_new(locale, &provider, &options)
     ///     .expect("Failed to create DateTimeFormat instance.");
     ///
-    /// let datetime = DateTime::new_gregorian_datetime_from_integers(2020, 9, 1, 12, 34, 28)
+    /// let datetime = DateTime::new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
     ///     .expect("Failed to construct DateTime.");
     ///
     /// let formatted_date = dtf.format(&datetime);
@@ -140,8 +145,8 @@ impl<C: CldrCalendar> DateTimeFormat<C> {
     /// # Examples
     ///
     /// ```
-    /// use icu::datetime::{DateTimeFormat, DateTimeFormatOptions};
     /// use icu::calendar::{DateTime, Gregorian};
+    /// use icu::datetime::{DateTimeFormat, DateTimeFormatOptions};
     /// use icu_provider::inv::InvariantDataProvider;
     /// # let locale = icu::locid::locale!("en");
     /// # let provider = InvariantDataProvider;
@@ -149,7 +154,7 @@ impl<C: CldrCalendar> DateTimeFormat<C> {
     /// let dtf = DateTimeFormat::<Gregorian>::try_new(locale, &provider, &options.into())
     ///     .expect("Failed to create DateTimeFormat instance.");
     ///
-    /// let datetime = DateTime::new_gregorian_datetime_from_integers(2020, 9, 1, 12, 34, 28)
+    /// let datetime = DateTime::new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
     ///     .expect("Failed to construct DateTime.");
     ///
     /// let mut buffer = String::new();
@@ -172,8 +177,8 @@ impl<C: CldrCalendar> DateTimeFormat<C> {
     /// # Examples
     ///
     /// ```
-    /// use icu::datetime::{DateTimeFormat, DateTimeFormatOptions};
     /// use icu::calendar::{DateTime, Gregorian};
+    /// use icu::datetime::{DateTimeFormat, DateTimeFormatOptions};
     /// use icu_provider::inv::InvariantDataProvider;
     /// # let locale = icu::locid::locale!("en");
     /// # let provider = InvariantDataProvider;
@@ -181,7 +186,7 @@ impl<C: CldrCalendar> DateTimeFormat<C> {
     /// let dtf = DateTimeFormat::<Gregorian>::try_new(locale, &provider, &options.into())
     ///     .expect("Failed to create DateTimeFormat instance.");
     ///
-    /// let datetime = DateTime::new_gregorian_datetime_from_integers(2020, 9, 1, 12, 34, 28)
+    /// let datetime = DateTime::new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
     ///     .expect("Failed to construct DateTime.");
     ///
     /// let _ = dtf.format_to_string(&datetime);
@@ -206,25 +211,18 @@ impl<C: CldrCalendar> DateTimeFormat<C> {
     /// };
     /// use icu::locid::locale;
     ///
-    /// let options = DateTimeFormatOptions::Length(length::Bag {
-    ///     date: Some(length::Date::Medium),
-    ///     time: None,
-    ///     preferences: None,
-    /// });
+    /// let options = length::Bag::from_date_style(length::Date::Medium).into();
     ///
     /// let provider = icu_testdata::get_provider();
     /// let dtf = DateTimeFormat::<Gregorian>::try_new(locale!("en"), &provider, &options)
     ///     .expect("Failed to create DateTimeFormat instance.");
     ///
-    /// assert_eq!(
-    ///     dtf.resolve_components(),
-    ///     components::Bag {
-    ///         year: Some(components::Year::Numeric),
-    ///         month: Some(components::Month::Short),
-    ///         day: Some(components::Day::NumericDayOfMonth),
-    ///         ..Default::default()
-    ///     }
-    /// );
+    /// let mut expected_components_bag = components::Bag::default();
+    /// expected_components_bag.year = Some(components::Year::Numeric);
+    /// expected_components_bag.month = Some(components::Month::Short);
+    /// expected_components_bag.day = Some(components::Day::NumericDayOfMonth);
+    ///
+    /// assert_eq!(dtf.resolve_components(), expected_components_bag);
     /// ```
     pub fn resolve_components(&self) -> components::Bag {
         self.0.resolve_components()

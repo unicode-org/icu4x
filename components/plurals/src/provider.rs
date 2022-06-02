@@ -2,6 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+// Provider structs must be stable
+#![allow(clippy::exhaustive_structs)]
+
 //! Data provider struct definitions for this ICU4X component.
 //!
 //! Read more about data providers: [`icu_provider`]
@@ -19,19 +22,23 @@ use icu_provider::{yoke, zerofrom};
     OrdinalV1Marker = "plurals/ordinal@1"
 )]
 #[derive(Default, Clone, PartialEq, Debug)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize))]
-#[cfg_attr(feature = "serialize", derive(serde::Deserialize))]
+#[cfg_attr(
+    feature = "datagen",
+    derive(serde::Serialize, crabbake::Bakeable),
+    crabbake(path = icu_plurals::provider),
+)]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[allow(missing_docs)] // TODO(#1029) - Add missing docs.
 pub struct PluralRulesV1<'data> {
-    #[cfg_attr(feature = "serialize", serde(borrow))]
+    #[cfg_attr(feature = "serde", serde(borrow))]
     pub zero: Option<Rule<'data>>,
-    #[cfg_attr(feature = "serialize", serde(borrow))]
+    #[cfg_attr(feature = "serde", serde(borrow))]
     pub one: Option<Rule<'data>>,
-    #[cfg_attr(feature = "serialize", serde(borrow))]
+    #[cfg_attr(feature = "serde", serde(borrow))]
     pub two: Option<Rule<'data>>,
-    #[cfg_attr(feature = "serialize", serde(borrow))]
+    #[cfg_attr(feature = "serde", serde(borrow))]
     pub few: Option<Rule<'data>>,
-    #[cfg_attr(feature = "serialize", serde(borrow))]
+    #[cfg_attr(feature = "serde", serde(borrow))]
     pub many: Option<Rule<'data>>,
 }
 

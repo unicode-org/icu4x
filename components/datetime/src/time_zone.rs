@@ -2,11 +2,13 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::provider::time_zones::TimeZoneBcp47Id;
 use alloc::borrow::Cow;
 use alloc::format;
 use alloc::string::String;
 use core::fmt;
 use smallvec::SmallVec;
+use tinystr::tinystr;
 
 use crate::{
     date::TimeZoneInput,
@@ -31,14 +33,12 @@ where
     L: Clone + Into<LanguageIdentifier>,
     P: ResourceProvider<D> + ?Sized,
 {
+    let langid: LanguageIdentifier = locale.clone().into();
     if destination.is_none() {
         *destination = Some(
             provider
                 .load_resource(&DataRequest {
-                    options: ResourceOptions {
-                        langid: Some(locale.clone().into()),
-                        variant: None,
-                    },
+                    options: langid.into(),
                     metadata: Default::default(),
                 })?
                 .take_payload()?,
@@ -61,23 +61,23 @@ where
 /// # Examples
 ///
 /// ```
-/// use icu_locid::locale;
-/// use icu_datetime::{TimeZoneFormat, TimeZoneFormatConfig, TimeZoneFormatOptions};
 /// use icu_datetime::date::GmtOffset;
 /// use icu_datetime::mock::time_zone::MockTimeZone;
+/// use icu_datetime::{TimeZoneFormat, TimeZoneFormatConfig, TimeZoneFormatOptions};
+/// use icu_locid::locale;
 /// use icu_provider::inv::InvariantDataProvider;
 ///
 /// let provider = InvariantDataProvider;
 ///
-/// let tzf = TimeZoneFormat::try_from_config(locale!("en"), TimeZoneFormatConfig::GenericNonLocationLong, &provider, &TimeZoneFormatOptions::default())
-///     .expect("Failed to create TimeZoneFormat");
+/// let tzf = TimeZoneFormat::try_from_config(
+///     locale!("en"),
+///     TimeZoneFormatConfig::GenericNonLocationLong,
+///     &provider,
+///     &TimeZoneFormatOptions::default(),
+/// )
+/// .expect("Failed to create TimeZoneFormat");
 ///
-/// let time_zone = MockTimeZone::new(
-///        GmtOffset::default(),
-///        None,
-///        None,
-///        None,
-/// );
+/// let time_zone = MockTimeZone::new(GmtOffset::default(), None, None, None);
 ///
 /// let value = tzf.format_to_string(&time_zone);
 /// ```
@@ -134,7 +134,7 @@ impl TimeZoneFormat {
         let data_payloads = TimeZoneDataPayloads {
             zone_formats: zone_provider
                 .load_resource(&DataRequest {
-                    options: locale.clone().into(),
+                    options: ResourceOptions::from(&locale),
                     metadata: Default::default(),
                 })?
                 .take_payload()?,
@@ -349,14 +349,19 @@ impl TimeZoneFormat {
     /// # Examples
     ///
     /// ```
-    /// use icu_locid::locale;
-    /// use icu_datetime::{TimeZoneFormat, TimeZoneFormatConfig, TimeZoneFormatOptions};
     /// use icu_datetime::mock::time_zone::MockTimeZone;
+    /// use icu_datetime::{TimeZoneFormat, TimeZoneFormatConfig, TimeZoneFormatOptions};
+    /// use icu_locid::locale;
     /// use icu_provider::inv::InvariantDataProvider;
     ///
     /// let provider = InvariantDataProvider;
     ///
-    /// let tzf = TimeZoneFormat::try_from_config(locale!("en"), TimeZoneFormatConfig::LocalizedGMT, &provider, &TimeZoneFormatOptions::default());
+    /// let tzf = TimeZoneFormat::try_from_config(
+    ///     locale!("en"),
+    ///     TimeZoneFormatConfig::LocalizedGMT,
+    ///     &provider,
+    ///     &TimeZoneFormatOptions::default(),
+    /// );
     ///
     /// assert!(tzf.is_ok());
     /// ```
@@ -381,7 +386,7 @@ impl TimeZoneFormat {
         let data_payloads = TimeZoneDataPayloads {
             zone_formats: zone_provider
                 .load_resource(&DataRequest {
-                    options: locale.clone().into(),
+                    options: ResourceOptions::from(&locale),
                     metadata: Default::default(),
                 })?
                 .take_payload()?,
@@ -600,23 +605,23 @@ impl TimeZoneFormat {
     /// # Examples
     ///
     /// ```
-    /// use icu_locid::locale;
-    /// use icu_datetime::{TimeZoneFormat, TimeZoneFormatConfig, TimeZoneFormatOptions};
     /// use icu_datetime::date::GmtOffset;
     /// use icu_datetime::mock::time_zone::MockTimeZone;
+    /// use icu_datetime::{TimeZoneFormat, TimeZoneFormatConfig, TimeZoneFormatOptions};
+    /// use icu_locid::locale;
     /// use icu_provider::inv::InvariantDataProvider;
     ///
     /// let provider = InvariantDataProvider;
     ///
-    /// let tzf = TimeZoneFormat::try_from_config(locale!("en"), TimeZoneFormatConfig::LocalizedGMT, &provider, &TimeZoneFormatOptions::default())
-    ///     .expect("Failed to create TimeZoneFormat");
+    /// let tzf = TimeZoneFormat::try_from_config(
+    ///     locale!("en"),
+    ///     TimeZoneFormatConfig::LocalizedGMT,
+    ///     &provider,
+    ///     &TimeZoneFormatOptions::default(),
+    /// )
+    /// .expect("Failed to create TimeZoneFormat");
     ///
-    /// let time_zone = MockTimeZone::new(
-    ///        GmtOffset::default(),
-    ///        None,
-    ///        None,
-    ///        None,
-    /// );
+    /// let time_zone = MockTimeZone::new(GmtOffset::default(), None, None, None);
     ///
     /// let _ = tzf.format(&time_zone);
     /// ```
@@ -636,23 +641,23 @@ impl TimeZoneFormat {
     /// # Examples
     ///
     /// ```
-    /// use icu_locid::locale;
-    /// use icu_datetime::{TimeZoneFormat, TimeZoneFormatConfig, TimeZoneFormatOptions};
     /// use icu_datetime::date::GmtOffset;
     /// use icu_datetime::mock::time_zone::MockTimeZone;
+    /// use icu_datetime::{TimeZoneFormat, TimeZoneFormatConfig, TimeZoneFormatOptions};
+    /// use icu_locid::locale;
     /// use icu_provider::inv::InvariantDataProvider;
     ///
     /// let provider = InvariantDataProvider;
     ///
-    /// let tzf = TimeZoneFormat::try_from_config(locale!("en"), TimeZoneFormatConfig::LocalizedGMT, &provider, &TimeZoneFormatOptions::default())
-    ///     .expect("Failed to create TimeZoneFormat");
+    /// let tzf = TimeZoneFormat::try_from_config(
+    ///     locale!("en"),
+    ///     TimeZoneFormatConfig::LocalizedGMT,
+    ///     &provider,
+    ///     &TimeZoneFormatOptions::default(),
+    /// )
+    /// .expect("Failed to create TimeZoneFormat");
     ///
-    /// let time_zone = MockTimeZone::new(
-    ///        GmtOffset::default(),
-    ///        None,
-    ///        None,
-    ///        None,
-    /// );
+    /// let time_zone = MockTimeZone::new(GmtOffset::default(), None, None, None);
     ///
     /// let mut buffer = String::new();
     /// tzf.format_to_write(&mut buffer, &time_zone)
@@ -673,23 +678,23 @@ impl TimeZoneFormat {
     /// # Examples
     ///
     /// ```
-    /// use icu_locid::locale;
-    /// use icu_datetime::{TimeZoneFormat, TimeZoneFormatConfig, TimeZoneFormatOptions};
     /// use icu_datetime::date::GmtOffset;
     /// use icu_datetime::mock::time_zone::MockTimeZone;
+    /// use icu_datetime::{TimeZoneFormat, TimeZoneFormatConfig, TimeZoneFormatOptions};
+    /// use icu_locid::locale;
     /// use icu_provider::inv::InvariantDataProvider;
     ///
     /// let provider = InvariantDataProvider;
     ///
-    /// let tzf = TimeZoneFormat::try_from_config(locale!("en"), TimeZoneFormatConfig::LocalizedGMT, &provider, &TimeZoneFormatOptions::default())
-    ///     .expect("Failed to create TimeZoneFormat");
+    /// let tzf = TimeZoneFormat::try_from_config(
+    ///     locale!("en"),
+    ///     TimeZoneFormatConfig::LocalizedGMT,
+    ///     &provider,
+    ///     &TimeZoneFormatOptions::default(),
+    /// )
+    /// .expect("Failed to create TimeZoneFormat");
     ///
-    /// let time_zone = MockTimeZone::new(
-    ///        GmtOffset::default(),
-    ///        None,
-    ///        None,
-    ///        None,
-    /// );
+    /// let time_zone = MockTimeZone::new(GmtOffset::default(), None, None, None);
     ///
     /// let _ = tzf.format_to_string(&time_zone);
     /// ```
@@ -740,6 +745,7 @@ impl TimeZoneFormat {
 
 /// Determines which ISO-8601 format should be used to format a [`GmtOffset`](crate::date::GmtOffset).
 #[derive(Debug, Clone, Copy, PartialEq)]
+#[allow(clippy::exhaustive_enums)] // this type is stable
 pub enum IsoFormat {
     /// ISO-8601 Basic Format.
     /// Formats zero-offset numerically.
@@ -764,6 +770,7 @@ pub enum IsoFormat {
 
 /// Whether the minutes field should be optional or required in ISO-8601 format.
 #[derive(Debug, Clone, Copy, PartialEq)]
+#[allow(clippy::exhaustive_enums)] // this type is stable
 pub enum IsoMinutes {
     /// Minutes are always displayed.
     Required,
@@ -774,6 +781,7 @@ pub enum IsoMinutes {
 
 /// Whether the seconds field should be optional or excluded in ISO-8601 format.
 #[derive(Debug, Clone, Copy, PartialEq)]
+#[allow(clippy::exhaustive_enums)] // this type is stable
 pub enum IsoSeconds {
     /// Seconds are displayed only if they are non-zero.
     Optional,
@@ -784,6 +792,7 @@ pub enum IsoSeconds {
 
 /// Whether a field should be zero-padded in ISO-8601 format.
 #[derive(Debug, Clone, Copy, PartialEq)]
+#[allow(clippy::exhaustive_enums)] // this type is stable
 pub enum ZeroPadding {
     /// Add zero-padding.
     On,
@@ -794,6 +803,7 @@ pub enum ZeroPadding {
 
 /// A config enum for initializing TimeZoneFormat.
 #[derive(Debug, Clone, Copy, PartialEq)]
+#[non_exhaustive]
 pub enum TimeZoneFormatConfig {
     GenericNonLocationLong,                     // Pacific Time
     GenericNonLocationShort,                    // PT
@@ -806,6 +816,7 @@ pub enum TimeZoneFormatConfig {
 
 /// An enum for fallback formats.
 #[derive(Debug, Clone, Copy, PartialEq)]
+#[non_exhaustive]
 pub enum FallbackFormat {
     Iso8601(IsoFormat, IsoMinutes, IsoSeconds),
     LocalizedGmt,
@@ -819,6 +830,7 @@ impl Default for FallbackFormat {
 
 /// A bag of options to define how time zone will be formatted.
 #[derive(Default, Debug, Clone, Copy, PartialEq)]
+#[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct TimeZoneFormatOptions {
     pub fallback_format: FallbackFormat,
 }
@@ -1252,7 +1264,7 @@ impl FormatTimeZone for ExemplarCityFormat {
                     .exemplar_cities
                     .as_ref()
                     .map(|p| p.get())
-                    .and_then(|cities| cities.0.get("Etc/Unknown"))
+                    .and_then(|cities| cities.0.get(&TimeZoneBcp47Id(tinystr!(8, "unk"))))
                     .unwrap_or(&Cow::Borrowed("Unknown"));
                 Ok(sink.write_str(formatted_unknown_city))
             }

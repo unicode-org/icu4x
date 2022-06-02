@@ -12,19 +12,24 @@ use icu_list::{ListFormatter, ListStyle};
 use icu_locid::locale;
 use writeable::Writeable;
 
-let provider = icu_testdata::get_provider();
-let list_formatter = ListFormatter::try_new_and(locale!("es"), &provider, ListStyle::Wide)
-    .expect("Data should load successfully");
+let list_formatter = ListFormatter::try_new_and(
+    locale!("es"),
+    &icu_testdata::get_provider(),
+    ListStyle::Wide,
+)
+.expect("Data should load successfully");
 
 assert_eq!(
-    list_formatter.format(["España", "Suiza"].iter())
+    list_formatter
+        .format(["España", "Suiza"].iter())
         .write_to_string(),
     "España y Suiza"
 );
 
 // The Spanish 'y' sometimes becomes an 'e':
 assert_eq!(
-    list_formatter.format(["España", "Suiza", "Italia"].iter())
+    list_formatter
+        .format(["España", "Suiza", "Italia"].iter())
         .write_to_string(),
     "España, Suiza e Italia"
 );

@@ -78,8 +78,12 @@ macro_rules! impl_byte_slice_size {
                 result
             }
         }
+    };
+}
 
-        impl ZeroSlice<$unsigned> {
+macro_rules! impl_const_constructors {
+    ($base:ty, $size:literal) => {
+        impl ZeroSlice<$base> {
             /// This function can be used for constructing ZeroVecs in a const context, avoiding
             /// parsing checks.
             ///
@@ -90,6 +94,7 @@ macro_rules! impl_byte_slice_size {
             /// See [`ZeroSlice::cast()`] for an example.
             pub const fn try_from_bytes(bytes: &[u8]) -> Result<&Self, ZeroVecError> {
                 let len = bytes.len();
+                #[allow(clippy::modulo_one)]
                 if len % $size == 0 {
                     unsafe {
                         // Most of the slice manipulation functions are not yet const-stable,
@@ -98,7 +103,7 @@ macro_rules! impl_byte_slice_size {
                         //
                         // Safety:
                         // * [u8] and [RawBytesULE<N>] have different lengths but the same alignment
-                        // * ZeroSlice<$unsigned> is repr(transparent) with [RawBytesULE<N>]
+                        // * ZeroSlice<$base> is repr(transparent) with [RawBytesULE<N>]
                         let [ptr, _]: [usize; 2] = mem::transmute(bytes);
                         let new_len = len / $size;
                         let raw = [ptr, new_len];
@@ -106,20 +111,10 @@ macro_rules! impl_byte_slice_size {
                     }
                 } else {
                     Err(ZeroVecError::InvalidLength {
-                        ty: concat!("RawBytesULE< ", $size, ">"),
+                        ty: concat!("<const construct: ", $size, ">"),
                         len,
                     })
                 }
-            }
-
-            /// This function can be used for constructing ZeroVecs in a const context, avoiding
-            /// parsing checks.
-            ///
-            /// See [`ZeroSlice`] for an example.
-            pub const fn from_ule_slice_const(slice: &[RawBytesULE<$size>]) -> &Self {
-                // This is safe because ZeroSlice is transparent over [T::ULE]
-                // so &ZeroSlice<T> can be safely cast from &[T::ULE]
-                unsafe { &*(slice as *const _ as *const Self) }
             }
         }
     };
@@ -164,6 +159,17 @@ impl_byte_slice_type!(i16, 2);
 impl_byte_slice_type!(i32, 4);
 impl_byte_slice_type!(i64, 8);
 impl_byte_slice_type!(i128, 16);
+
+impl_const_constructors!(u8, 1);
+impl_const_constructors!(u16, 2);
+impl_const_constructors!(u32, 4);
+impl_const_constructors!(u64, 8);
+impl_const_constructors!(u128, 16);
+
+// Note: The f32 and f64 const constructors currently have limited use because
+// `f32::to_le_bytes` is not yet const.
+
+impl_const_constructors!(bool, 1);
 
 // Safety (based on the safety checklist on the ULE trait):
 //  1. u8 does not include any uninitialized or padding bytes.

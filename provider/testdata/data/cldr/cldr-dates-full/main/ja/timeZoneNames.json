@@ -3,7 +3,7 @@
     "ja": {
       "identity": {
         "version": {
-          "_cldrVersion": "40"
+          "_cldrVersion": "41"
         },
         "language": "ja"
       },
@@ -1221,6 +1221,9 @@
               },
               "Johnston": {
                 "exemplarCity": "ジョンストン島"
+              },
+              "Kanton": {
+                "exemplarCity": "Kanton"
               },
               "Kiritimati": {
                 "exemplarCity": "キリスィマスィ島"

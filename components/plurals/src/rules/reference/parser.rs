@@ -13,6 +13,7 @@ use displaydoc::Display;
 
 #[derive(Display, Debug, PartialEq, Eq, Copy, Clone)]
 #[allow(clippy::enum_variant_names)]
+#[non_exhaustive]
 pub enum ParserError {
     #[displaydoc("expected 'AND' condition")]
     ExpectedAndCondition,

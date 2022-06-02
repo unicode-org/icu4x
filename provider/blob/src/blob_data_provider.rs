@@ -3,9 +3,9 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::blob_schema::BlobSchema;
-use alloc::rc::Rc;
 use icu_provider::buf::BufferFormat;
 use icu_provider::prelude::*;
+use icu_provider::RcWrap;
 use serde::de::Deserialize;
 use writeable::Writeable;
 use yoke::*;
@@ -18,12 +18,17 @@ use zerovec::maps::{KeyError, ZeroMap2dBorrowed};
 ///
 /// If you prefer to bake the data into your binary, see [`StaticDataProvider`].
 ///
+/// # `Sync + Send`
+///
+/// This provider uses a [`icu_provider::RcWrap`] internally, which can be made `Sync + Send` with the
+/// `sync` feature on the [`icu_provider`] crate.
+///
 /// # Examples
 ///
 /// ```
 /// use icu_locid::locale;
-/// use icu_provider::prelude::*;
 /// use icu_provider::hello_world::*;
+/// use icu_provider::prelude::*;
 /// use icu_provider_blob::BlobDataProvider;
 /// use std::fs;
 ///
@@ -31,11 +36,11 @@ use zerovec::maps::{KeyError, ZeroMap2dBorrowed};
 /// let blob = fs::read(concat!(
 ///     env!("CARGO_MANIFEST_DIR"),
 ///     "/tests/data/hello_world.postcard",
-/// )).expect("Reading pre-computed postcard buffer");
+/// ))
+/// .expect("Reading pre-computed postcard buffer");
 ///
 /// // Create a DataProvider from it:
-/// let provider = BlobDataProvider::new_from_rc_blob(blob.into())
-///     .expect("Deserialization should succeed");
+/// let provider = BlobDataProvider::new_from_blob(blob).expect("Deserialization should succeed");
 ///
 /// // Check that it works:
 /// let response: DataPayload<HelloWorldV1Marker> = provider
@@ -52,14 +57,15 @@ use zerovec::maps::{KeyError, ZeroMap2dBorrowed};
 ///
 /// [`StaticDataProvider`]: crate::StaticDataProvider
 pub struct BlobDataProvider {
-    data: Yoke<ZeroMap2dBorrowed<'static, ResourceKeyHash, str, [u8]>, Rc<[u8]>>,
+    #[allow(clippy::type_complexity)]
+    data: Yoke<ZeroMap2dBorrowed<'static, ResourceKeyHash, [u8], [u8]>, RcWrap>,
 }
 
 impl BlobDataProvider {
-    /// Create a [`BlobDataProvider`] from an `Rc` blob of ICU4X data.
-    pub fn new_from_rc_blob(blob: Rc<[u8]>) -> Result<Self, DataError> {
+    /// Create a [`BlobDataProvider`] from a blob of ICU4X data.
+    pub fn new_from_blob<B: Into<RcWrap>>(blob: B) -> Result<Self, DataError> {
         Ok(BlobDataProvider {
-            data: Yoke::try_attach_to_cart_badly(blob, |bytes| {
+            data: Yoke::try_attach_to_cart(blob.into(), |bytes| {
                 BlobSchema::deserialize(&mut postcard::Deserializer::from_bytes(bytes)).map(
                     |blob| {
                         let BlobSchema::V001(blob) = blob;
@@ -72,7 +78,7 @@ impl BlobDataProvider {
 
     #[cfg(feature = "export")]
     #[doc(hidden)] // See #1771, we don't want this to be a publicly visible API
-    pub fn get_map(&self) -> &ZeroMap2dBorrowed<ResourceKeyHash, str, [u8]> {
+    pub fn get_map(&self) -> &ZeroMap2dBorrowed<ResourceKeyHash, [u8], [u8]> {
         self.data.get()
     }
 }
@@ -89,9 +95,10 @@ impl BufferProvider for BlobDataProvider {
         Ok(DataResponse {
             metadata,
             payload: Some(DataPayload::from_yoked_buffer(
-                self.data
-                    .try_project_cloned_with_capture((key, req), |zm, (key, req), _| {
-                        zm.get(&key.get_hash(), &req.options.write_to_string())
+                self.data.try_map_project_cloned_with_capture(
+                    (key, req),
+                    |zm, (key, req), _| {
+                        zm.get(&key.get_hash(), req.options.write_to_string().as_bytes())
                             .map_err(|e| {
                                 match e {
                                     KeyError::K0 => DataErrorKind::MissingResourceKey,
@@ -99,7 +106,8 @@ impl BufferProvider for BlobDataProvider {
                                 }
                                 .with_req(key, req)
                             })
-                    })?,
+                    },
+                )?,
             )),
         })
     }
