@@ -26,9 +26,9 @@ use super::CaseFirst;
 use super::MaxVariable;
 
 const SINGLE_U32: &ZeroSlice<u32> =
-    ZeroSlice::<u32>::from_ule_slice_const(&<u32 as AsULE>::ULE::from_array([FFFD_CE32_VALUE]));
+    ZeroSlice::<u32>::from_ule_slice(&<u32 as AsULE>::ULE::from_array([FFFD_CE32_VALUE]));
 const SINGLE_U64: &ZeroSlice<u64> =
-    ZeroSlice::<u64>::from_ule_slice_const(&<u64 as AsULE>::ULE::from_array([FFFD_CE_VALUE]));
+    ZeroSlice::<u64>::from_ule_slice(&<u64 as AsULE>::ULE::from_array([FFFD_CE_VALUE]));
 
 fn data_ce_to_primary(data_ce: u64, c: char) -> u32 {
     // Collation::getThreeBytePrimaryForOffsetData

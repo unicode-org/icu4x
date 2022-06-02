@@ -55,6 +55,8 @@ icu_provider = { version = "0.6", path = "../../provider/core" }
 icu_provider_adapters = { path = "../../provider/adapters" }
 icu_testdata = { version = "0.6", path = "../../provider/testdata" }
 icu_calendar = { version = "0.6", path = "../calendar", features = ["serde"] }
+icu_datetime = { version = "0.6", path = "../../components/datetime", features = ["datagen"] }
+
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 bincode = "1.3"
