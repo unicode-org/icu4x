@@ -10,6 +10,8 @@ use icu_provider::prelude::DataError;
 pub enum NormalizerError {
     #[displaydoc("{0}")]
     DataProvider(DataError),
+    /// The data uses a planned but unsupported feature.
+    FutureExtension,
 }
 
 #[cfg(feature = "std")]
