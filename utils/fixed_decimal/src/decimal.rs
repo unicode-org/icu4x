@@ -553,16 +553,20 @@ impl FixedDecimal {
     }
 
     /// Increments the digits by 1. if the digits are empty, it will add
-    /// an element with value 1.
+    /// an element with value 1. If there are some trailing zeros,
+    /// it will be reomved from `self.digits`.
     fn increment_abs_by_one(&mut self) -> Result<(), Error> {
+        let mut zero_count = 0;
         for digit in self.digits.iter_mut().rev() {
             *digit += 1;
             if *digit < 10 {
+                self.digits.truncate(self.digits.len() - zero_count);
                 #[cfg(debug_assertions)]
                 self.check_invariants();
                 return Ok(());
             }
 
+            zero_count += 1;
             *digit = 0;
         }
 
@@ -584,8 +588,6 @@ impl FixedDecimal {
         if self.upper_magnitude < self.magnitude {
             self.upper_magnitude = self.magnitude;
         }
-
-        self.remove_trailing_zeros_from_digits_list();
 
         #[cfg(debug_assertions)]
         self.check_invariants();
