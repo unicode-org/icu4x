@@ -556,8 +556,7 @@ impl FixedDecimal {
     /// an element with value 1. If there are some trailing zeros,
     /// it will be reomved from `self.digits`.
     fn increment_abs_by_one(&mut self) -> Result<(), Error> {
-        let mut zero_count = 0;
-        for digit in self.digits.iter_mut().rev() {
+        for (zero_count, digit) in self.digits.iter_mut().rev().enumerate() {
             *digit += 1;
             if *digit < 10 {
                 self.digits.truncate(self.digits.len() - zero_count);
@@ -566,7 +565,6 @@ impl FixedDecimal {
                 return Ok(());
             }
 
-            zero_count += 1;
             *digit = 0;
         }
 
