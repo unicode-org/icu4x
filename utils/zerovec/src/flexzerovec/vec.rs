@@ -17,7 +17,8 @@ use core::ops::Deref;
 ///
 /// The maximum value that can be stored in `FlexZeroVec` is `usize::MAX` on the current platform.
 ///
-/// `FlexZeroVec` is the data structure for storing `usize` in a `ZeroMap`.
+/// `FlexZeroVec` will be the data structure for storing `usize` in a `ZeroMap`; see
+/// <https://github.com/unicode-org/icu4x/issues/1443>.
 ///
 /// `FlexZeroVec` derefs to [`FlexZeroSlice`], which contains most of the methods.
 ///
