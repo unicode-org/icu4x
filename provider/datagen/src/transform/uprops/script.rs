@@ -39,7 +39,13 @@ impl ResourceProvider<ScriptWithExtensionsPropertyV1Marker>
         &self,
         _: &DataRequest,
     ) -> Result<DataResponse<ScriptWithExtensionsPropertyV1Marker>, DataError> {
-        let scx_data = self.source.get_uprops_paths()?.get_script_extensions()?;
+        let toml_obj: uprops_serde::script_extensions::Main = self.source.get_uprops_paths()?.read_and_parse_toml("scx.toml")?;
+
+        let scx_data = toml_obj
+            .script_extensions
+            .into_iter()
+            .next()
+            .ok_or_else(|| DataError::custom("Could not parse Script_Extensions data from TOML").with_path_context("scx.toml"));
 
         let cpt_data = &scx_data.code_point_trie;
         let scx_array_data = &scx_data.script_code_array;

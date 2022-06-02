@@ -378,6 +378,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "combine"
+version = "4.6.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "2a604e93b79d1808327a6fca85a6f2d69de66461e7620f5a4cbf5fb4d1d7c948"
+dependencies = [
+ "bytes",
+ "memchr",
+]
+
+[[package]]
 name = "console"
 version = "0.15.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1421,9 +1431,11 @@ dependencies = [
  "icu_properties",
  "icu_provider",
  "icu_testdata",
+ "icu_uniset",
  "serde",
  "smallvec",
  "utf8_iter",
+ "zerofrom",
  "zerovec",
 ]
 
@@ -1606,6 +1618,7 @@ dependencies = [
  "serde",
  "smallvec",
  "utf8_iter",
+ "zerofrom",
  "zerovec",
 ]
 
@@ -1728,6 +1741,13 @@ dependencies = [
  "proc-macro2",
  "quote",
  "syn",
+]
+
+[[package]]
+name = "icu_provider_tzif"
+version = "0.1.0"
+dependencies = [
+ "combine",
 ]
 
 [[package]]

@@ -28,7 +28,7 @@ impl ResourceProvider<CaseMappingV1Marker> for CaseMappingDataProvider {
         &self,
         _req: &DataRequest,
     ) -> Result<DataResponse<CaseMappingV1Marker>, DataError> {
-        let toml = &self.source.get_uprops_paths()?.get_case()?.ucase;
+        let toml = &self.source.get_uprops_paths()?.read_and_parse_toml("ucase.toml")?.ucase;
 
         let trie_data = &toml.code_point_trie;
         let trie_header = CodePointTrieHeader::try_from(trie_data).map_err(|e| {

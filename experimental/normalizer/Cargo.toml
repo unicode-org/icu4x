@@ -42,6 +42,7 @@ icu_uniset = { version = "0.5", path = "../../utils/uniset" }
 icu_properties = { version = "0.6", path = "../../components/properties" }
 utf8_iter = "1.0"
 crabbake = { version = "0.4", path = "../../experimental/crabbake", optional = true, features = ["derive"] }
+zerofrom = { version = "0.1.0", path = "../../utils/zerofrom" }
 
 [dev-dependencies]
 icu_testdata = { version = "0.6", path = "../../provider/testdata" }

@@ -7,6 +7,7 @@ use icu_properties::provider::*;
 use icu_provider::datagen::*;
 use icu_provider::prelude::*;
 use icu_uniset::UnicodeSetBuilder;
+use std::path::PathBuf;
 
 /// A data provider reading from TOML files produced by the ICU4C icuexportdata tool.
 pub struct BinaryPropertyUnicodeSetDataProvider {
@@ -21,6 +22,14 @@ impl From<&SourceData> for BinaryPropertyUnicodeSetDataProvider {
     }
 }
 
+pub fn get_binary(
+    source: &UpropsPaths,
+    key: &str,
+) -> Result<&uprops_serde::binary::BinaryProperty, DataError> {
+    let toml_obj: uprops_serde::binary::Main = source.read_and_parse_toml(&PathBuf::from(key).with_extension("toml"))?;
+    toml_obj.binary_property.into_iter().next().ok_or_else(|| DataErrorKind::MissingResourceKey.into_error())
+}
+
 macro_rules! expand {
     ($(($marker:ident, $prop_name:literal)),+) => {
         $(
@@ -29,11 +38,9 @@ macro_rules! expand {
                     &self,
                     _: &DataRequest,
                 ) -> Result<DataResponse<$marker>, DataError> {
-                    let data = self
+                    let data = get_binary(self
                         .source
-                        .get_uprops_paths()?
-                        .get_binary($prop_name)
-                        .map_err(|_| DataErrorKind::MissingResourceKey.into_error())?;
+                        .get_uprops_paths()?, $prop_name)?;
 
                     let mut builder = UnicodeSetBuilder::new();
                     for (start, end) in &data.ranges {
@@ -54,11 +61,9 @@ macro_rules! expand {
                 fn supported_options(
                     &self,
                 ) -> Result<Vec<ResourceOptions>, DataError> {
-                    self
+                    get_binary(self
                         .source
-                        .get_uprops_paths()?
-                        .get_binary($prop_name)
-                        .map_err(|_| DataErrorKind::MissingResourceKey.into_error())?;
+                        .get_uprops_paths()?, $prop_name)?;
 
                     Ok(vec![Default::default()])
                 }
