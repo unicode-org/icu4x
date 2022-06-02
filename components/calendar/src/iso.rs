@@ -29,6 +29,7 @@
 //! assert_eq!(datetime_iso.time.second.number(), 0);
 //! ```
 
+use crate::any_calendar::AnyCalendarKind;
 use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, DateTime, DateTimeError};
 use core::convert::{TryFrom, TryInto};
 use tinystr::tinystr;
@@ -323,6 +324,10 @@ impl Calendar for Iso {
 
     fn debug_name(&self) -> &'static str {
         "ISO"
+    }
+
+    fn any_calendar_kind(&self) -> Option<AnyCalendarKind> {
+        Some(AnyCalendarKind::Iso)
     }
 }
 

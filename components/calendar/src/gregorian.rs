@@ -33,6 +33,7 @@
 //! assert_eq!(datetime_gregorian.time.second.number(), 0);
 //! ```
 
+use crate::any_calendar::AnyCalendarKind;
 use crate::iso::{Iso, IsoDateInner, IsoDay, IsoMonth, IsoYear};
 use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, DateTime, DateTimeError};
 use core::convert::TryInto;
@@ -116,6 +117,10 @@ impl Calendar for Gregorian {
 
     fn debug_name(&self) -> &'static str {
         "Gregorian"
+    }
+
+    fn any_calendar_kind(&self) -> Option<AnyCalendarKind> {
+        Some(AnyCalendarKind::Iso)
     }
 }
 

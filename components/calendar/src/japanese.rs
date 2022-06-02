@@ -45,6 +45,7 @@
 //! assert_eq!(datetime_japanese.time.second.number(), 0);
 //! ```
 
+use crate::any_calendar::AnyCalendarKind;
 use crate::iso::{Iso, IsoDateInner};
 use crate::provider::{self, EraStartDate};
 use crate::{types, Calendar, Date, DateDuration, DateDurationUnit};
@@ -164,6 +165,10 @@ impl Calendar for Japanese {
 
     fn debug_name(&self) -> &'static str {
         "Japanese"
+    }
+
+    fn any_calendar_kind(&self) -> Option<AnyCalendarKind> {
+        Some(AnyCalendarKind::Japanese)
     }
 }
 

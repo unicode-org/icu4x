@@ -18,6 +18,8 @@ use icu_locid::{unicode_ext_key, unicode_ext_value, Locale};
 
 use icu_provider::prelude::*;
 
+use core::fmt;
+
 /// This is a calendar that encompasses all formattable calendars supported by this crate
 ///
 /// This allows for the construction of [`Date`] objects that have their calendar known at runtime.
@@ -247,6 +249,10 @@ impl Calendar for AnyCalendar {
             Self::Iso(_) => "AnyCalendar (Iso)",
         }
     }
+
+    fn any_calendar_kind(&self) -> Option<AnyCalendarKind> {
+        Some(self.kind())
+    }
 }
 
 impl AnyCalendar {
@@ -354,7 +360,9 @@ impl AnyCalendar {
             Self::Gregorian(_) => AnyCalendarKind::Gregorian,
             Self::Buddhist(_) => AnyCalendarKind::Buddhist,
             Self::Japanese(_) => AnyCalendarKind::Japanese,
-            Self::Ethiopic(_) => AnyCalendarKind::Ethiopic,
+            Self::Ethiopic(ref e) => e
+                .any_calendar_kind()
+                .expect("Ethiopic calendar known to have an AnyCalendarKind"),
             Self::Indian(_) => AnyCalendarKind::Indian,
             Self::Coptic(_) => AnyCalendarKind::Coptic,
             Self::Iso(_) => AnyCalendarKind::Iso,
@@ -406,7 +414,7 @@ impl AnyDateInner {
 
 /// Convenient type for selecting the kind of AnyCalendar to construct
 #[non_exhaustive]
-#[derive(Copy, Clone, Eq, PartialEq, Ord, PartialOrd, Hash)]
+#[derive(Copy, Clone, Eq, PartialEq, Ord, PartialOrd, Hash, Debug)]
 pub enum AnyCalendarKind {
     Gregorian,
     Buddhist,
@@ -472,6 +480,12 @@ impl AnyCalendarKind {
             .keywords
             .get(&unicode_ext_key!("ca"))
             .and_then(Self::from_bcp47)
+    }
+}
+
+impl fmt::Display for AnyCalendarKind {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        fmt::Debug::fmt(self, f)
     }
 }
 

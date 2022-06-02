@@ -33,6 +33,7 @@
 //! assert_eq!(datetime_coptic.time.second.number(), 0);
 //! ```
 
+use crate::any_calendar::AnyCalendarKind;
 use crate::iso::{Iso, IsoYear};
 use crate::julian::Julian;
 use crate::{
@@ -148,6 +149,10 @@ impl Calendar for Coptic {
 
     fn debug_name(&self) -> &'static str {
         "Coptic"
+    }
+
+    fn any_calendar_kind(&self) -> Option<AnyCalendarKind> {
+        Some(AnyCalendarKind::Coptic)
     }
 }
 

@@ -33,6 +33,7 @@
 //! assert_eq!(datetime_indian.time.second.number(), 0);
 //! ```
 
+use crate::any_calendar::AnyCalendarKind;
 use crate::iso::{Iso, IsoYear};
 use crate::{
     types, ArithmeticDate, Calendar, CalendarArithmetic, Date, DateDuration, DateDurationUnit,
@@ -163,6 +164,10 @@ impl Calendar for Indian {
 
     fn debug_name(&self) -> &'static str {
         "Indian"
+    }
+
+    fn any_calendar_kind(&self) -> Option<AnyCalendarKind> {
+        Some(AnyCalendarKind::Indian)
     }
 }
 

@@ -2,9 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::any_calendar::{AnyCalendar, IncludedInAnyCalendar};
 use crate::types::Time;
 use crate::{AsCalendar, Calendar, Date, Iso};
-use crate::any_calendar::{AnyCalendar, IncludedInAnyCalendar};
 
 /// A date+time for a given calendar.
 ///
@@ -72,7 +72,7 @@ impl<C: IncludedInAnyCalendar, A: AsCalendar<Calendar = C>> DateTime<A> {
     pub fn to_any(&self) -> DateTime<AnyCalendar> {
         DateTime {
             date: self.date.to_any(),
-            time: self.time
+            time: self.time,
         }
     }
 }

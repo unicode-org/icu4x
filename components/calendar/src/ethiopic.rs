@@ -33,6 +33,7 @@
 //! assert_eq!(datetime_ethiopic.time.second.number(), 0);
 //! ```
 
+use crate::any_calendar::AnyCalendarKind;
 use crate::coptic::Coptic;
 use crate::iso::{Iso, IsoYear};
 use crate::julian::Julian;
@@ -163,6 +164,14 @@ impl Calendar for Ethiopic {
 
     fn debug_name(&self) -> &'static str {
         "Ethiopic"
+    }
+
+    fn any_calendar_kind(&self) -> Option<AnyCalendarKind> {
+        if self.0 {
+            Some(AnyCalendarKind::Ethioaa)
+        } else {
+            Some(AnyCalendarKind::Ethiopic)
+        }
     }
 }
 

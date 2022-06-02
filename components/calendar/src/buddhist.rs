@@ -33,6 +33,7 @@
 //! assert_eq!(datetime_buddhist.time.second.number(), 0);
 //! ```
 
+use crate::any_calendar::AnyCalendarKind;
 use crate::iso::{Iso, IsoDateInner, IsoYear};
 use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, DateTime, DateTimeError};
 use tinystr::tinystr;
@@ -121,6 +122,10 @@ impl Calendar for Buddhist {
 
     fn debug_name(&self) -> &'static str {
         "Buddhist"
+    }
+
+    fn any_calendar_kind(&self) -> Option<AnyCalendarKind> {
+        Some(AnyCalendarKind::Buddhist)
     }
 }
 
