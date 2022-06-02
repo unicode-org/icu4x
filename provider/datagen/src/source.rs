@@ -7,7 +7,7 @@ use crate::transform::uprops::source::UpropsPaths;
 use icu_codepointtrie::TrieType;
 use icu_provider::DataError;
 use std::fmt::Debug;
-use std::path::{Path, PathBuf};
+use std::path::PathBuf;
 use std::sync::Arc;
 
 /// Bag of options for datagen source data.
@@ -110,7 +110,7 @@ impl SourceData {
 
     /// Path to collation data.
     #[cfg(feature = "experimental")]
-    pub(crate) fn get_coll_root(&self) -> Result<&Path, DataError> {
+    pub(crate) fn get_coll_root(&self) -> Result<&std::path::Path, DataError> {
         self.coll_root
             .as_deref()
             .ok_or(crate::error::MISSING_COLLATION_ERROR)

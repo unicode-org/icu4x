@@ -8,73 +8,43 @@ use icu_plurals::provider::*;
 use icu_plurals::rules::runtime::ast::Rule;
 use icu_provider::datagen::IterableResourceProvider;
 use icu_provider::prelude::*;
-use std::sync::RwLock;
 
 /// A data provider reading from CLDR JSON plural rule files.
 #[derive(Debug)]
 pub struct PluralsProvider {
     source: SourceData,
-    cardinal_rules: RwLock<Option<Option<cldr_serde::plurals::Rules>>>,
-    ordinal_rules: RwLock<Option<Option<cldr_serde::plurals::Rules>>>,
 }
 
 impl From<&SourceData> for PluralsProvider {
     fn from(source: &SourceData) -> Self {
         PluralsProvider {
             source: source.clone(),
-            cardinal_rules: RwLock::new(None),
-            ordinal_rules: RwLock::new(None),
         }
     }
 }
 
 impl PluralsProvider {
-    fn get_rules_for(
-        &self,
-        key: ResourceKey,
-    ) -> Result<std::sync::RwLockReadGuard<Option<Option<cldr_serde::plurals::Rules>>>, DataError>
-    {
-        Ok(match key {
-            CardinalV1Marker::KEY => {
-                #[allow(clippy::unwrap_used)]
-                // TODO(#1668) Clippy exceptions need docs or fixing.
-                if self.cardinal_rules.read().unwrap().is_none() {
-                    let data: &cldr_serde::plurals::Resource = self
-                        .source
-                        .get_cldr_paths()?
-                        .cldr_core()
-                        .read_and_parse("supplemental/plurals.json")?;
-                    let _ = self
-                        .cardinal_rules
-                        .write()
-                        .expect("poison")
-                        .get_or_insert(data.supplemental.plurals_type_cardinal.clone());
-                }
-                #[allow(clippy::unwrap_used)]
-                // TODO(#1668) Clippy exceptions need docs or fixing.
-                self.cardinal_rules.read().expect("poison")
-            }
-            OrdinalV1Marker::KEY => {
-                #[allow(clippy::unwrap_used)]
-                // TODO(#1668) Clippy exceptions need docs or fixing.
-                if self.ordinal_rules.read().unwrap().is_none() {
-                    let data: &cldr_serde::plurals::Resource = self
-                        .source
-                        .get_cldr_paths()?
-                        .cldr_core()
-                        .read_and_parse("supplemental/ordinals.json")?;
-                    let _ = self
-                        .ordinal_rules
-                        .write()
-                        .expect("poison")
-                        .get_or_insert(data.supplemental.plurals_type_ordinal.clone());
-                }
-                #[allow(clippy::unwrap_used)]
-                // TODO(#1668) Clippy exceptions need docs or fixing.
-                self.ordinal_rules.read().expect("poison")
-            }
-            _ => return Err(DataError::custom("Unknown key for PluralRulesV1")),
-        })
+    fn get_rules_for(&self, key: ResourceKey) -> Result<&cldr_serde::plurals::Rules, DataError> {
+        match key {
+            CardinalV1Marker::KEY => self
+                .source
+                .get_cldr_paths()?
+                .cldr_core()
+                .read_and_parse::<cldr_serde::plurals::Resource>("supplemental/plurals.json")?
+                .supplemental
+                .plurals_type_cardinal
+                .as_ref(),
+            OrdinalV1Marker::KEY => self
+                .source
+                .get_cldr_paths()?
+                .cldr_core()
+                .read_and_parse::<cldr_serde::plurals::Resource>("supplemental/ordinals.json")?
+                .supplemental
+                .plurals_type_ordinal
+                .as_ref(),
+            _ => None,
+        }
+        .ok_or(DataError::custom("Unknown key for PluralRulesV1"))
     }
 }
 
@@ -87,10 +57,6 @@ impl<M: ResourceMarker<Yokeable = PluralRulesV1<'static>>> ResourceProvider<M> f
             payload: Some(DataPayload::from_owned(PluralRulesV1::from(
                 #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
                 self.get_rules_for(M::KEY)?
-                    .as_ref()
-                    .unwrap()
-                    .as_ref()
-                    .ok_or(DataErrorKind::MissingResourceKey.into_error())?
                     .0
                     .get(&req.options.get_langid())
                     .ok_or(DataErrorKind::MissingLocale.into_error())?,
@@ -105,20 +71,14 @@ impl<M: ResourceMarker<Yokeable = PluralRulesV1<'static>>> IterableResourceProvi
     for PluralsProvider
 {
     fn supported_options(&self) -> Result<Vec<ResourceOptions>, DataError> {
-        Ok(
-            #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
-            self.get_rules_for(M::KEY)?
-                .as_ref()
-                .unwrap()
-                .as_ref()
-                .ok_or(DataErrorKind::MissingResourceKey.into_error())?
-                .0
-                .iter_keys()
-                // TODO(#568): Avoid the clone
-                .cloned()
-                .map(ResourceOptions::from)
-                .collect(),
-        )
+        Ok(self
+            .get_rules_for(M::KEY)?
+            .0
+            .iter_keys()
+            // TODO(#568): Avoid the clone
+            .cloned()
+            .map(ResourceOptions::from)
+            .collect())
     }
 }
 

@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::transform::uprops::{decompositions_serde, uprops_serde};
+use crate::transform::uprops::uprops_serde;
 use elsa::sync::FrozenMap;
 use icu_provider::DataError;
 use std::fmt::Debug;
@@ -84,9 +84,10 @@ impl UpropsPaths {
             })
     }
 
+    #[cfg(feature = "experimental")]
     pub fn get_decompositions(
         &self,
-    ) -> Result<decompositions_serde::CanonicalDecompositionData, DataError> {
+    ) -> Result<crate::transform::uprops::decompositions_serde::CanonicalDecompositionData, DataError> {
         self.read_and_parse_toml(&self.root.join("decompositions.toml"))
     }
 
