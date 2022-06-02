@@ -4,14 +4,13 @@
 
 use crate::SourceData;
 use icu_codepointtrie::CodePointTrie;
-use icu_normalizer::provider::CanonicalDecompositionDataV1;
-use icu_normalizer::provider::CanonicalDecompositionDataV1Marker;
+use icu_normalizer::u24::U24;
 use icu_provider::datagen::IterableResourceProvider;
 use icu_provider::prelude::*;
 use icu_uniset::UnicodeSetBuilder;
 use std::convert::TryFrom;
 use zerovec::ZeroVec;
-use icu_normalizer::u24::U24;
+use icu_normalizer::provider::*;
 
 macro_rules! normalization_provider {
     ($marker:ident, $provider:ident, $serde_struct:ident, $file_name:literal, $conversion:expr, $toml_data:ident) => {
@@ -36,7 +35,10 @@ macro_rules! normalization_provider {
                 &self,
                 _req: &DataRequest,
             ) -> Result<DataResponse<$marker>, DataError> {
-                let $toml_data: $serde_struct = self.source.get_uprops_paths.read_and_parse_toml($file_name)?;
+                let $toml_data: &super::decompositions_serde::$serde_struct = self
+                    .source
+                    .get_uprops_paths()?
+                    .read_and_parse_toml($file_name)?;
 
                 $conversion
             }

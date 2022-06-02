@@ -8,6 +8,7 @@ use icu_provider::datagen::*;
 use icu_provider::prelude::*;
 use icu_uniset::UnicodeSetBuilder;
 use std::path::PathBuf;
+use super::source::UpropsPaths;
 
 /// A data provider reading from TOML files produced by the ICU4C icuexportdata tool.
 pub struct BinaryPropertyUnicodeSetDataProvider {
@@ -22,12 +23,17 @@ impl From<&SourceData> for BinaryPropertyUnicodeSetDataProvider {
     }
 }
 
-pub fn get_binary(
-    source: &UpropsPaths,
+fn get_binary<'a>(
+    source: &'a UpropsPaths,
     key: &str,
-) -> Result<&uprops_serde::binary::BinaryProperty, DataError> {
-    let toml_obj: uprops_serde::binary::Main = source.read_and_parse_toml(&PathBuf::from(key).with_extension("toml"))?;
-    toml_obj.binary_property.into_iter().next().ok_or_else(|| DataErrorKind::MissingResourceKey.into_error())
+) -> Result<&'a super::uprops_serde::binary::BinaryProperty, DataError> {
+    let toml_obj: &super::uprops_serde::binary::Main =
+        source.read_and_parse_toml(&PathBuf::from(key).with_extension("toml"))?;
+    toml_obj
+        .binary_property
+        .iter()
+        .next()
+        .ok_or_else(|| DataErrorKind::MissingResourceKey.into_error())
 }
 
 macro_rules! expand {

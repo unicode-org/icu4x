@@ -9,6 +9,7 @@ use icu_provider::datagen::*;
 use icu_provider::prelude::*;
 use std::convert::TryFrom;
 use std::path::PathBuf;
+use super::source::UpropsPaths;
 
 /// A data provider reading from TOML files produced by the ICU4C icuexportdata tool.
 ///
@@ -25,12 +26,17 @@ impl From<&SourceData> for EnumeratedPropertyCodePointTrieProvider {
     }
 }
 
-pub fn get_enumerated(
-    &source: &UpropsPaths,
+fn get_enumerated<'a>(
+    source: &'a UpropsPaths,
     key: &str,
-) -> Result<&uprops_serde::enumerated::EnumeratedPropertyMap, DataError> {
-    let toml_obj: uprops_serde::enumerated::Main = source.read_and_parse_toml(&PathBuf::from(key).with_extension("toml"))?;
-    toml_obj.enum_property.into_iter().next().ok_or_else(DataErrorKind::MissingResourceKey.into_error())
+) -> Result<&'a super::uprops_serde::enumerated::EnumeratedPropertyMap, DataError> {
+    let toml_obj: &super::uprops_serde::enumerated::Main =
+        source.read_and_parse_toml(&PathBuf::from(key).with_extension("toml"))?;
+    toml_obj
+        .enum_property
+        .iter()
+        .next()
+        .ok_or_else(|| DataErrorKind::MissingResourceKey.into_error())
 }
 
 macro_rules! expand {
@@ -39,7 +45,7 @@ macro_rules! expand {
             impl ResourceProvider<$marker> for EnumeratedPropertyCodePointTrieProvider
             {
                 fn load_resource(&self, _: &DataRequest) -> Result<DataResponse<$marker>, DataError> {
-                    let source_cpt_data = get_enumerated(&self.source.get_uprops_paths()?, $prop_name)?.code_point_trie;
+                    let source_cpt_data = &get_enumerated(self.source.get_uprops_paths()?, $prop_name)?.code_point_trie;
 
                     let code_point_trie = CodePointTrie::try_from(source_cpt_data).map_err(|e| {
                         DataError::custom("Could not parse CodePointTrie TOML").with_display_context(&e)
@@ -56,7 +62,7 @@ macro_rules! expand {
                 fn supported_options(
                     &self,
                 ) -> Result<Vec<ResourceOptions>, DataError> {
-                    get_enumerated(&self.source.get_uprops_paths()?, $prop_name)?;
+                    get_enumerated(self.source.get_uprops_paths()?, $prop_name)?;
                     Ok(vec![Default::default()])
                 }
             }
