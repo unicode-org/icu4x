@@ -2,7 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::error::DatagenError;
 use crate::transform::cldr::cldr_serde;
 use crate::SourceData;
 use icu_calendar::provider::*;
@@ -85,28 +84,18 @@ impl ResourceProvider<JapaneseErasV1Marker> for JapaneseErasProvider {
             let date = &era_dates_map
                 .get(era_id)
                 .ok_or_else(|| {
-                    DatagenError::Custom(
-                        format!(
-                            "calendarData.json contains no data for japanese era index {}",
-                            era_id
-                        ),
-                        None,
-                    )
+                    DataError::custom("calendarData.json is missing data for a japanese era")
+                        .with_display_context(&format!("era index {}", era_id))
                 })?
                 .start;
 
             let start_date = EraStartDate::from_str(date).map_err(|_| {
-                DatagenError::Custom(
-                    format!(
-                        "calendarData.json contains unparseable data for japanese era index {}",
-                        era_id
-                    ),
-                    None,
-                )
+                DataError::custom("calendarData.json contains unparseable data for a japanese era")
+                    .with_display_context(&format!("era index {}", era_id))
             })?;
 
             let code = era_to_code(era_name, start_date.year)
-                .map_err(|e| DatagenError::Custom(e, None))?;
+                .map_err(|e| DataError::custom("Era codes").with_display_context(&e))?;
             if start_date.year >= 1868 {
                 ret.dates_to_eras
                     .to_mut()
@@ -202,17 +191,11 @@ fn era_to_code(original: &str, year: i32) -> Result<TinyStr16, String> {
     Ok(code)
 }
 
-icu_provider::impl_dyn_provider!(
-    JapaneseErasProvider,
-    [JapaneseErasV1Marker,],
-    SERDE_SE,
-    ITERABLE_SERDE_SE,
-    DATA_CONVERTER
-);
+icu_provider::make_exportable_provider!(JapaneseErasProvider, [JapaneseErasV1Marker,]);
 
 impl IterableResourceProvider<JapaneseErasV1Marker> for JapaneseErasProvider {
-    fn supported_options(&self) -> Result<Box<dyn Iterator<Item = ResourceOptions>>, DataError> {
-        Ok(Box::new(core::iter::once(ResourceOptions::default())))
+    fn supported_options(&self) -> Result<Vec<ResourceOptions>, DataError> {
+        Ok(vec![Default::default()])
     }
 }
 

@@ -41,23 +41,18 @@ impl<'s, P> Pattern<'s, P> {
     /// # Example
     ///
     /// ```
-    /// use icu_pattern::{Pattern, InterpolatedKind};
-    /// use std::{
-    ///     convert::TryFrom,
-    ///     ops::Deref
-    /// };
+    /// use icu_pattern::{InterpolatedKind, Pattern};
+    /// use std::{convert::TryFrom, ops::Deref};
     ///
     /// #[derive(Debug, PartialEq)]
     /// struct Element(usize);
     ///
-    /// let pattern = Pattern::try_from("${0}")
-    ///     .expect("Failed to parse a pattern");
+    /// let pattern = Pattern::try_from("${0}").expect("Failed to parse a pattern");
     ///
-    /// let replacements = vec![
-    ///     Element(5)
-    /// ];
+    /// let replacements = vec![Element(5)];
     ///
-    /// let interpolated_pattern = pattern.interpolate(&replacements)
+    /// let interpolated_pattern = pattern
+    ///     .interpolate(&replacements)
     ///     .expect("Failed to interpolate");
     ///
     /// assert_eq!(
@@ -98,10 +93,7 @@ impl<'s, P> Pattern<'s, P> {
     ///
     /// ```
     /// use icu_pattern::Pattern;
-    /// use std::{
-    ///     convert::TryFrom,
-    ///     fmt::Display
-    /// };
+    /// use std::{convert::TryFrom, fmt::Display};
     ///
     /// #[derive(Debug, PartialEq)]
     /// struct Element(usize);
@@ -112,20 +104,15 @@ impl<'s, P> Pattern<'s, P> {
     ///     }
     /// }
     ///
-    /// let pattern = Pattern::try_from("${0}")
-    ///     .expect("Failed to parse a pattern");
+    /// let pattern = Pattern::try_from("${0}").expect("Failed to parse a pattern");
     ///
-    /// let replacements = vec![
-    ///     Element(5)
-    /// ];
+    /// let replacements = vec![Element(5)];
     ///
-    /// let interpolated_pattern = pattern.interpolate_to_string(&replacements)
+    /// let interpolated_pattern = pattern
+    ///     .interpolate_to_string(&replacements)
     ///     .expect("Failed to interpolate");
     ///
-    /// assert_eq!(
-    ///     interpolated_pattern,
-    ///     "$5",
-    /// );
+    /// assert_eq!(interpolated_pattern, "$5",);
     /// ```
     ///
     /// For buffer write interpolation, see `interpolate_to_write`.
@@ -152,10 +139,7 @@ impl<'s, P> Pattern<'s, P> {
     ///
     /// ```
     /// use icu_pattern::Pattern;
-    /// use std::{
-    ///     convert::TryFrom,
-    ///     fmt::Display
-    /// };
+    /// use std::{convert::TryFrom, fmt::Display};
     ///
     /// #[derive(Debug, PartialEq)]
     /// struct Element(usize);
@@ -166,21 +150,16 @@ impl<'s, P> Pattern<'s, P> {
     ///     }
     /// }
     ///
-    /// let pattern = Pattern::try_from("${0}")
-    ///     .expect("Failed to parse a pattern");
+    /// let pattern = Pattern::try_from("${0}").expect("Failed to parse a pattern");
     ///
-    /// let replacements = vec![
-    ///     Element(5)
-    /// ];
+    /// let replacements = vec![Element(5)];
     ///
     /// let mut result = String::new();
-    /// pattern.interpolate_to_write(&replacements, &mut result)
+    /// pattern
+    ///     .interpolate_to_write(&replacements, &mut result)
     ///     .expect("Failed to interpolate");
     ///
-    /// assert_eq!(
-    ///     result,
-    ///     "$5",
-    /// );
+    /// assert_eq!(result, "$5",);
     /// ```
     pub fn interpolate_to_write<'i, E, R, W>(
         &'i self,
@@ -207,10 +186,8 @@ impl<'s, P> Pattern<'s, P> {
     ///
     /// ```
     /// use icu_pattern::Pattern;
+    /// use std::convert::TryFrom;
     /// use writeable::Writeable;
-    /// use std::{
-    ///     convert::TryFrom,
-    /// };
     ///
     /// #[derive(Debug, PartialEq)]
     /// struct Element(usize);
@@ -224,21 +201,16 @@ impl<'s, P> Pattern<'s, P> {
     ///     }
     /// }
     ///
-    /// let pattern = Pattern::try_from("${0}")
-    ///     .expect("Failed to parse a pattern");
+    /// let pattern = Pattern::try_from("${0}").expect("Failed to parse a pattern");
     ///
-    /// let replacements = vec![
-    ///     Element(5)
-    /// ];
+    /// let replacements = vec![Element(5)];
     ///
     /// let mut result = String::new();
-    /// pattern.interpolate_to_writeable(&replacements, &mut result)
+    /// pattern
+    ///     .interpolate_to_writeable(&replacements, &mut result)
     ///     .expect("Failed to interpolate");
     ///
-    /// assert_eq!(
-    ///     result,
-    ///     "$5",
-    /// );
+    /// assert_eq!(result, "$5",);
     /// ```
     pub fn interpolate_to_writeable<'i, E, R, W>(
         &'i self,

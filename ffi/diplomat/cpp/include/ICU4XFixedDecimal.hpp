@@ -37,7 +37,6 @@ class ICU4XFixedDecimal {
   /**
    * Construct an [`ICU4XFixedDecimal`] from an integer.
    * 
-   * 
    * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html) for more information.
    */
   static ICU4XFixedDecimal create(int32_t v);
@@ -46,7 +45,6 @@ class ICU4XFixedDecimal {
    * Construct an [`ICU4XFixedDecimal`] from an float, with enough digits to recover
    * the original floating point in IEEE 754 without needing trailing zeros
    * 
-   * 
    * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.from_f64) for more information.
    */
   static std::optional<ICU4XFixedDecimal> create_from_f64_with_max_precision(double f);
@@ -54,14 +52,12 @@ class ICU4XFixedDecimal {
   /**
    * Construct an [`ICU4XFixedDecimal`] from an float, with a given power of 10 for the lower magnitude
    * 
-   * 
    * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.from_f64) for more information.
    */
   static std::optional<ICU4XFixedDecimal> create_from_f64_with_lower_magnitude(double f, int16_t precision, ICU4XFixedDecimalRoundingMode rounding_mode);
 
   /**
    * Construct an [`ICU4XFixedDecimal`] from an float, for a given number of significant digits
-   * 
    * 
    * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.from_f64) for more information.
    */

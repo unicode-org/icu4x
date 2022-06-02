@@ -22,16 +22,13 @@
 //! # Examples
 //!
 //! ```
-//! use icu::locid::Locale;
 //! use icu::locid::subtags::{Language, Region};
+//! use icu::locid::Locale;
 //!
-//! let mut loc: Locale = "en-US".parse()
-//!     .expect("Parsing failed.");
+//! let mut loc: Locale = "en-US".parse().expect("Parsing failed.");
 //!
-//! let lang: Language = "en".parse()
-//!     .expect("Parsing failed.");
-//! let region: Region = "US".parse()
-//!     .expect("Parsing failed.");
+//! let lang: Language = "en".parse().expect("Parsing failed.");
+//! let region: Region = "US".parse().expect("Parsing failed.");
 //!
 //! assert_eq!(loc.id.language, lang);
 //! assert_eq!(loc.id.script, None);
@@ -47,7 +44,7 @@
 //! ## Macros
 //!
 //! ```rust
-//! use icu::locid::{language, region, langid};
+//! use icu::locid::{langid, language, region};
 //!
 //! let lid = langid!("EN_US");
 //!
@@ -82,6 +79,8 @@ extern crate alloc;
 #[macro_use]
 mod helpers;
 
+#[cfg(feature = "crabbake")]
+mod crabbake;
 pub mod extensions;
 mod langid;
 mod locale;

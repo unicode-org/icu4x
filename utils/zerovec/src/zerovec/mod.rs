@@ -2,6 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+#[cfg(feature = "crabbake")]
+mod crabbake;
+
 #[cfg(feature = "serde")]
 mod serde;
 
@@ -50,13 +53,14 @@ use core::ops::Deref;
 /// }
 ///
 /// // The owned version will allocate
-/// let data = Data { nums: ZeroVec::alloc_from_slice(nums) };
-/// let bincode_bytes = bincode::serialize(&data)
-///     .expect("Serialization should be successful");
+/// let data = Data {
+///     nums: ZeroVec::alloc_from_slice(nums),
+/// };
+/// let bincode_bytes = bincode::serialize(&data).expect("Serialization should be successful");
 ///
 /// // Will deserialize without allocations
-/// let deserialized: Data = bincode::deserialize(&bincode_bytes)
-///     .expect("Deserialization should be successful");
+/// let deserialized: Data =
+///     bincode::deserialize(&bincode_bytes).expect("Deserialization should be successful");
 ///
 /// // This deserializes without allocation!
 /// assert!(matches!(deserialized.nums, ZeroVec::Borrowed(_)));
@@ -93,13 +97,17 @@ where
     /// # Example
     ///
     /// ```
-    /// use zerovec::ZeroVec;
     /// use zerovec::ule::*;
+    /// use zerovec::ZeroVec;
     ///
     /// // The little-endian bytes correspond to the numbers on the following line.
     /// let bytes: &[u8] = &[0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x01];
-    /// let nums: &[RawBytesULE<2>] = &[211_u16.to_unaligned(), 281_u16.to_unaligned(),
-    ///                                 421_u16.to_unaligned(), 461_u16.to_unaligned()];
+    /// let nums: &[RawBytesULE<2>] = &[
+    ///     211_u16.to_unaligned(),
+    ///     281_u16.to_unaligned(),
+    ///     421_u16.to_unaligned(),
+    ///     461_u16.to_unaligned(),
+    /// ];
     ///
     /// let zerovec = ZeroVec::<u16>::Borrowed(nums);
     ///
@@ -205,7 +213,7 @@ where
     /// let zv: ZeroVec<u16> = ZeroVec::new();
     /// assert!(zv.is_empty());
     /// ```
-    pub fn new() -> Self {
+    pub const fn new() -> Self {
         Self::Borrowed(&[])
     }
 
@@ -240,6 +248,18 @@ where
     pub fn parse_byte_slice(bytes: &'a [u8]) -> Result<Self, ZeroVecError> {
         let slice: &'a [T::ULE] = T::ULE::parse_byte_slice(bytes)?;
         Ok(Self::Borrowed(slice))
+    }
+
+    /// Uses a `&[u8]` buffer as a `ZeroVec<T>` without any verification.
+    ///
+    /// # Safety
+    ///
+    /// `bytes` need to be an output from [`ZeroSlice::as_bytes()`].
+    pub const unsafe fn from_bytes_unchecked(bytes: &'a [u8]) -> Self {
+        // &[u8] and &[T::ULE] are the same slice with different length metadata.
+        let (data, mut metadata): (usize, usize) = core::mem::transmute(bytes);
+        metadata /= core::mem::size_of::<T::ULE>();
+        Self::Borrowed(core::mem::transmute((data, metadata)))
     }
 
     /// Converts a `ZeroVec<T>` into a `ZeroVec<u8>`, retaining the current ownership model.
@@ -332,10 +352,8 @@ where
     /// use zerovec::ZeroVec;
     ///
     /// let bytes: &[u8] = &[0x7F, 0xF3, 0x01, 0x00, 0x49, 0xF6, 0x01, 0x00];
-    /// let zv_char: ZeroVec<char> = ZeroVec::parse_byte_slice(bytes)
-    ///     .expect("valid code points");
-    /// let zv_u32: ZeroVec<u32> = zv_char.try_into_converted()
-    ///     .expect("infallible conversion");
+    /// let zv_char: ZeroVec<char> = ZeroVec::parse_byte_slice(bytes).expect("valid code points");
+    /// let zv_u32: ZeroVec<u32> = zv_char.try_into_converted().expect("infallible conversion");
     ///
     /// assert!(matches!(zv_u32, ZeroVec::Borrowed(_)));
     /// assert_eq!(zv_u32.get(0), Some(u32::from('🍿')));
@@ -348,8 +366,7 @@ where
     ///
     /// let chars: &[char] = &['🍿', '🙉'];
     /// let zv_char = ZeroVec::alloc_from_slice(chars);
-    /// let zv_u32: ZeroVec<u32> = zv_char.try_into_converted()
-    ///     .expect("length is divisible");
+    /// let zv_u32: ZeroVec<u32> = zv_char.try_into_converted().expect("length is divisible");
     ///
     /// assert!(matches!(zv_u32, ZeroVec::Owned(_)));
     /// assert_eq!(zv_u32.get(0), Some(u32::from('🍿')));
@@ -361,8 +378,7 @@ where
     /// use zerovec::ZeroVec;
     ///
     /// let bytes: &[u8] = &[0x7F, 0xF3, 0x01, 0x00, 0x49, 0xF6, 0x01, 0x00];
-    /// let zv_char: ZeroVec<char> = ZeroVec::parse_byte_slice(bytes)
-    ///     .expect("valid code points");
+    /// let zv_char: ZeroVec<char> = ZeroVec::parse_byte_slice(bytes).expect("valid code points");
     ///
     /// // Panics! mem::size_of::<char::ULE> != mem::size_of::<u16::ULE>
     /// zv_char.try_into_converted::<u16>();
@@ -374,10 +390,8 @@ where
     /// use zerovec::ZeroVec;
     ///
     /// let bytes: &[u8] = &[0x7F, 0xF3, 0x01, 0x00, 0x49, 0xF6, 0x01, 0x00];
-    /// let zv_char: ZeroVec<char> = ZeroVec::parse_byte_slice(bytes)
-    ///     .expect("valid code points");
-    /// let zv_u16: ZeroVec<u16> = zv_char.into_bytes().try_into_parsed()
-    ///     .expect("infallible");
+    /// let zv_char: ZeroVec<char> = ZeroVec::parse_byte_slice(bytes).expect("valid code points");
+    /// let zv_u16: ZeroVec<u16> = zv_char.into_bytes().try_into_parsed().expect("infallible");
     ///
     /// assert!(matches!(zv_u16, ZeroVec::Borrowed(_)));
     /// assert_eq!(zv_u16.get(0), Some(0xF37F));
@@ -575,8 +589,8 @@ where
     /// # Example
     ///
     /// ```
-    /// use zerovec::ZeroVec;
     /// use zerovec::ule::AsULE;
+    /// use zerovec::ZeroVec;
     ///
     /// let bytes: &[u8] = &[0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x01];
     /// let mut zerovec: ZeroVec<u16> = ZeroVec::parse_byte_slice(bytes).expect("infallible");
@@ -600,15 +614,15 @@ where
     /// # Example
     ///
     /// ```
-    /// use zerovec::ZeroVec;
     /// use zerovec::ule::AsULE;
+    /// use zerovec::ZeroVec;
     ///
     /// let bytes: &[u8] = &[0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x01];
     /// let mut zerovec: ZeroVec<u16> = ZeroVec::parse_byte_slice(bytes).expect("infallible");
     ///
     /// zerovec.try_for_each_mut(|item| {
     ///     *item = item.checked_add(1).ok_or(())?;
-    ///     Ok(())   
+    ///     Ok(())
     /// })?;
     ///
     /// assert_eq!(zerovec.to_vec(), &[212, 282, 422, 462]);

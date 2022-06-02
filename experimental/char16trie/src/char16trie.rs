@@ -75,8 +75,8 @@ fn skip_node_value(pos: usize, lead: u16) -> usize {
 /// For more information:
 /// - [ICU4C UCharsTrie](https://unicode-org.github.io/icu-docs/apidoc/released/icu4c/classicu_1_1UCharsTrie.html)
 /// - [ICU4J CharsTrie](https://unicode-org.github.io/icu-docs/apidoc/released/icu4j/com/ibm/icu/util/CharsTrie.html) API.
-#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-#[cfg_attr(feature = "serde_serialize", derive(serde::Serialize))]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize, serde::Serialize))]
+#[cfg_attr(feature = "crabbake", derive(crabbake::Bakeable), crabbake(path = icu_char16trie::char16trie))]
 #[derive(Clone)]
 pub struct Char16Trie<'data> {
     /// An array of u16 containing the trie data.
@@ -97,6 +97,7 @@ impl<'data> Char16Trie<'data> {
 }
 
 /// This struct represents an iterator over a Char16Trie.
+#[derive(Clone)]
 pub struct Char16TrieIterator<'a> {
     /// A reference to the Char16Trie data to iterate over.
     trie: &'a [<u16 as zerovec::ule::AsULE>::ULE],

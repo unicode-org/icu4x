@@ -127,29 +127,22 @@ impl<M: ResourceMarker<Yokeable = ListFormatterPatternsV1<'static>>> ResourcePro
     }
 }
 
-icu_provider::impl_dyn_provider!(
+icu_provider::make_exportable_provider!(
     ListProvider,
-    [AndListV1Marker, OrListV1Marker, UnitListV1Marker,],
-    SERDE_SE,
-    CRABBAKE,
-    ITERABLE_SERDE_SE,
-    ITERABLE_CRABBAKE,
-    DATA_CONVERTER
+    [AndListV1Marker, OrListV1Marker, UnitListV1Marker,]
 );
 
 impl<M: ResourceMarker<Yokeable = ListFormatterPatternsV1<'static>>> IterableResourceProvider<M>
     for ListProvider
 {
-    fn supported_options(
-        &self,
-    ) -> Result<Box<dyn Iterator<Item = ResourceOptions> + '_>, DataError> {
-        Ok(Box::new(
-            self.source
-                .get_cldr_paths()?
-                .cldr_misc()
-                .list_langs()?
-                .map(Into::<ResourceOptions>::into),
-        ))
+    fn supported_options(&self) -> Result<Vec<ResourceOptions>, DataError> {
+        Ok(self
+            .source
+            .get_cldr_paths()?
+            .cldr_misc()
+            .list_langs()?
+            .map(Into::<ResourceOptions>::into)
+            .collect())
     }
 }
 

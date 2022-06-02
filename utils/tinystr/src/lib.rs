@@ -15,7 +15,7 @@
 //! ```rust
 //! use tinystr::TinyAsciiStr;
 //!
-//! let s1: TinyAsciiStr::<4> = "tEsT".parse().expect("Failed to parse.");
+//! let s1: TinyAsciiStr<4> = "tEsT".parse().expect("Failed to parse.");
 //!
 //! assert_eq!(s1, "tEsT");
 //! assert_eq!(s1.to_ascii_uppercase(), "TEST");
@@ -70,6 +70,9 @@ mod int_ops;
 
 #[cfg(feature = "serde")]
 mod serde;
+
+#[cfg(feature = "crabbake")]
+mod crabbake;
 
 #[cfg(feature = "zerovec")]
 mod ule;

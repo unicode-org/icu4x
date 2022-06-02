@@ -28,10 +28,14 @@ pub fn get_all_keys() -> Vec<ResourceKey> {
         icu_plurals::provider::OrdinalV1Marker::KEY,
         #[cfg(feature = "experimental")]
         icu_casemapping::provider::CaseMappingV1Marker::KEY,
+        #[cfg(feature = "experimental")]
+        icu_normalizer::provider::CanonicalDecompositionDataV1Marker::KEY,
     ];
     v.extend(icu_properties::provider::ALL_KEYS);
     #[cfg(feature = "experimental")]
     v.extend(icu_segmenter::ALL_KEYS);
+    #[cfg(feature = "experimental")]
+    v.extend(crate::transform::collator::ALL_KEYS);
     v
 }
 
@@ -60,11 +64,13 @@ pub fn get_all_keys() -> Vec<ResourceKey> {
 /// use icu_datagen::SourceData;
 ///
 /// // This data provider supports the keys for LocaleCanonicalizer.
-/// let provider = icu_datagen::create_datagen_provider!(SourceData::default(),
-/// [
-///     icu_datagen::transform::cldr::AliasesProvider,
-///     icu_datagen::transform::cldr::LikelySubtagsProvider,
-/// ]);
+/// let provider = icu_datagen::create_datagen_provider!(
+///     SourceData::default(),
+///     [
+///         icu_datagen::transform::cldr::AliasesProvider,
+///         icu_datagen::transform::cldr::LikelySubtagsProvider,
+///     ]
+/// );
 /// ```
 #[macro_export]
 #[cfg(not(feature = "experimental"))]
@@ -125,10 +131,13 @@ macro_rules! create_datagen_provider {
 /// use icu_datagen::SourceData;
 ///
 /// // This data provider supports the keys for LocaleCanonicalizer.
-/// let provider = icu_datagen::create_datagen_provider!(SourceData::default(), [
-///     icu_datagen::transform::cldr::AliasesProvider,
-///     icu_datagen::transform::cldr::LikelySubtagsProvider,
-/// ]);
+/// let provider = icu_datagen::create_datagen_provider!(
+///     SourceData::default(),
+///     [
+///         icu_datagen::transform::cldr::AliasesProvider,
+///         icu_datagen::transform::cldr::LikelySubtagsProvider,
+///     ]
+/// );
 /// ```
 #[macro_export]
 #[cfg(feature = "experimental")]
@@ -151,6 +160,13 @@ macro_rules! create_datagen_provider {
                 $crate::transform::uprops::ScriptWithExtensionsPropertyProvider,
                 $crate::transform::uprops::BinaryPropertyUnicodeSetDataProvider,
                 $crate::transform::segmenter::SegmenterRuleProvider,
+                $crate::transform::uprops::CanonicalDecompositionDataProvider,
+                $crate::transform::collator::CollationDataDataProvider,
+                $crate::transform::collator::CollationDiacriticsDataProvider,
+                $crate::transform::collator::CollationJamoDataProvider,
+                $crate::transform::collator::CollationMetadataDataProvider,
+                $crate::transform::collator::CollationReorderingDataProvider,
+                $crate::transform::collator::CollationSpecialPrimariesDataProvider,
             ]
         )
     };

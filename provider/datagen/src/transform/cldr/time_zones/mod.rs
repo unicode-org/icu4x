@@ -67,11 +67,11 @@ macro_rules! impl_resource_provider {
                         )
                     };
 
-                    if self.bcp47_tzid_data.read().unwrap().len() == 0 {
+                    if self.bcp47_tzid_data.read().expect("poison").len() == 0 {
                         let resource: &cldr_serde::time_zones::bcp47_tzid::Resource =
                             self.source.get_cldr_paths()?.cldr_bcp47().read_and_parse("timezone.json")?;
 
-                        let mut data_guard = self.bcp47_tzid_data.write().unwrap();
+                        let mut data_guard = self.bcp47_tzid_data.write().expect("poison");
                         for (bcp47_tzid, bcp47_tzid_data) in resource.keyword.u.time_zones.values.iter() {
                             if let Some(alias) = &bcp47_tzid_data.alias {
                                 for data_value in alias.split(" ") {
@@ -81,11 +81,11 @@ macro_rules! impl_resource_provider {
                         }
                     }
 
-                    if self.meta_zone_id_data.read().unwrap().len() == 0 {
+                    if self.meta_zone_id_data.read().expect("poison").len() == 0 {
                         let resource: &cldr_serde::time_zones::meta_zones::Resource =
                             self.source.get_cldr_paths()?.cldr_core().read_and_parse("supplemental/metaZones.json")?;
 
-                        let mut data_guard = self.meta_zone_id_data.write().unwrap();
+                        let mut data_guard = self.meta_zone_id_data.write().expect("poison");
                         for (meta_zone_id, meta_zone_id_data) in resource.supplemental.meta_zones.meta_zone_ids.0.iter() {
                             data_guard.insert(
                                 meta_zone_id_data.long_id.to_string(),
@@ -96,8 +96,8 @@ macro_rules! impl_resource_provider {
 
                     let cldr_time_zones_data = CldrTimeZonesData {
                         time_zone_names,
-                        bcp47_tzids: &self.bcp47_tzid_data.read().unwrap(),
-                        meta_zone_ids: &self.meta_zone_id_data.read().unwrap(),
+                        bcp47_tzids: &self.bcp47_tzid_data.read().expect("poison"),
+                        meta_zone_ids: &self.meta_zone_id_data.read().expect("poison"),
                     };
 
                     let metadata = DataResponseMetadata::default();
@@ -110,19 +110,19 @@ macro_rules! impl_resource_provider {
             }
 
             impl IterableResourceProvider<$marker> for TimeZonesProvider {
-                fn supported_options(&self) -> Result<Box<dyn Iterator<Item = ResourceOptions> + '_>, DataError> {
-                    Ok(Box::new(
+                fn supported_options(&self) -> Result<Vec<ResourceOptions>, DataError> {
+                    Ok(
                             self
                                 .source
                                 .get_cldr_paths()?
                                 .cldr_dates("gregorian").list_langs()?
-                        .map(Into::<ResourceOptions>::into),
-                    ))
+                        .map(Into::<ResourceOptions>::into).collect(),
+                    )
                 }
             }
         )+
 
-        icu_provider::impl_dyn_provider!(TimeZonesProvider, [$($marker),+,], SERDE_SE, ITERABLE_SERDE_SE, DATA_CONVERTER);
+        icu_provider::make_exportable_provider!(TimeZonesProvider, [$($marker),+,]);
     };
 }
 

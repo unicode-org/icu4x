@@ -2,8 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-#[macro_use]
-mod macros;
+#![allow(clippy::exhaustive_structs)] // Field and FieldULE part of data struct
+
 mod length;
 pub(crate) mod symbols;
 
@@ -27,7 +27,11 @@ pub enum Error {
 impl std::error::Error for Error {}
 
 #[derive(Debug, Eq, PartialEq, Clone, Copy, Ord, PartialOrd)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize))]
+#[cfg_attr(
+    feature = "datagen",
+    derive(serde::Serialize, crabbake::Bakeable),
+    crabbake(path = icu_datetime::fields),
+)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[zerovec::make_ule(FieldULE)]
 pub struct Field {

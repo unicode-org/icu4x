@@ -9,10 +9,10 @@ use core::marker::PhantomData;
 use serde::de::{MapAccess, SeqAccess, Visitor};
 use serde::{Deserialize, Deserializer};
 
-#[cfg(feature = "serde_serialize")]
+#[cfg(feature = "serde")]
 use serde::{ser::SerializeMap, Serialize, Serializer};
 
-#[cfg(feature = "serde_serialize")]
+#[cfg(feature = "serde")]
 impl<K, V, R> Serialize for LiteMap<K, V, R>
 where
     K: Serialize,
@@ -28,8 +28,7 @@ where
         // as a vec of tuples instead
         if serializer.is_human_readable() {
             if let Some((ref k, _)) = self.values.lm_get(0) {
-                let json = serde_json::json!(k);
-                if !json.is_string() && !json.is_number() {
+                if !super::serde_helpers::is_num_or_string(k) {
                     return self.values.serialize(serializer);
                 }
                 // continue to regular serialization

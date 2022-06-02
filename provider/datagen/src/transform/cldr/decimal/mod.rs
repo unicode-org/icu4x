@@ -2,7 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::error::DatagenError;
 use crate::transform::cldr::cldr_serde;
 use crate::SourceData;
 use icu_decimal::provider::*;
@@ -36,11 +35,10 @@ impl From<&SourceData> for NumbersProvider {
 impl NumbersProvider {
     /// Returns the digits for the given numbering system name.
     fn get_digits_for_numbering_system(&self, nsname: TinyStr8) -> Option<[char; 10]> {
-        #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
         match self
             .cldr_numbering_systems_data
             .read()
-            .unwrap()
+            .expect("poison")
             .as_ref()
             .unwrap()
             .get(&nsname)
@@ -90,11 +88,17 @@ impl ResourceProvider<DecimalSymbolsV1Marker> for NumbersProvider {
             .numbers;
         let nsname = numbers.default_numbering_system;
 
-        let mut result = DecimalSymbolsV1::try_from(numbers)
-            .map_err(|s| DatagenError::Custom(s.to_string(), Some(langid.clone())))?;
+        let mut result = DecimalSymbolsV1::try_from(numbers).map_err(|s| {
+            DataError::custom("Could not create decimal symbols").with_display_context(&s)
+        })?;
 
         #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
-        if self.cldr_numbering_systems_data.read().unwrap().is_none() {
+        if self
+            .cldr_numbering_systems_data
+            .read()
+            .expect("poison")
+            .is_none()
+        {
             let resource: &cldr_serde::numbering_systems::Resource = self
                 .source
                 .get_cldr_paths()?
@@ -103,17 +107,15 @@ impl ResourceProvider<DecimalSymbolsV1Marker> for NumbersProvider {
             let _ = self
                 .cldr_numbering_systems_data
                 .write()
-                .unwrap()
+                .expect("poison")
                 .get_or_insert(resource.supplemental.numbering_systems.clone());
         }
 
         result.digits = self
             .get_digits_for_numbering_system(nsname)
             .ok_or_else(|| {
-                DatagenError::Custom(
-                    format!("Could not process numbering system: {:?}", nsname),
-                    Some(langid.clone()),
-                )
+                DataError::custom("Could not process numbering system")
+                    .with_display_context(&nsname)
             })?;
 
         let metadata = DataResponseMetadata::default();
@@ -125,25 +127,17 @@ impl ResourceProvider<DecimalSymbolsV1Marker> for NumbersProvider {
     }
 }
 
-icu_provider::impl_dyn_provider!(
-    NumbersProvider,
-    [DecimalSymbolsV1Marker,],
-    SERDE_SE,
-    ITERABLE_SERDE_SE,
-    DATA_CONVERTER
-);
+icu_provider::make_exportable_provider!(NumbersProvider, [DecimalSymbolsV1Marker,]);
 
 impl IterableResourceProvider<DecimalSymbolsV1Marker> for NumbersProvider {
-    fn supported_options(
-        &self,
-    ) -> Result<Box<dyn Iterator<Item = ResourceOptions> + '_>, DataError> {
-        Ok(Box::new(
-            self.source
-                .get_cldr_paths()?
-                .cldr_numbers()
-                .list_langs()?
-                .map(Into::<ResourceOptions>::into),
-        ))
+    fn supported_options(&self) -> Result<Vec<ResourceOptions>, DataError> {
+        Ok(self
+            .source
+            .get_cldr_paths()?
+            .cldr_numbers()
+            .list_langs()?
+            .map(Into::<ResourceOptions>::into)
+            .collect())
     }
 }
 

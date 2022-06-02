@@ -112,13 +112,13 @@ fn test_day_of_week_in_month() {
 macro_rules! dt_unit {
     ($name:ident, $storage:ident, $value:expr, $docs:expr) => {
         #[doc=$docs]
-        #[derive(Debug, Default, Clone, Copy, PartialEq, Hash)]
+        #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Ord, PartialOrd, Hash)]
         pub struct $name($storage);
 
         impl $name {
-            /// Do not validate the numeric input for this component.
-            pub const fn new_unchecked(input: $storage) -> Self {
-                Self(input)
+            /// Gets the numeric value for this component.
+            pub const fn number(&self) -> $storage {
+                self.0
             }
         }
 
@@ -226,7 +226,7 @@ dt_unit!(
     "A fractional second component, stored as nanoseconds."
 );
 
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Copy, Clone, Eq, PartialEq, Ord, PartialOrd, Hash)]
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct Time {
     /// 0-based hour.
@@ -348,7 +348,7 @@ impl FromStr for GmtOffset {
     fn from_str(input: &str) -> Result<Self, Self::Err> {
         let offset_sign = match input.chars().next() {
             Some('+') => 1,
-            /* ASCII  */ Some('-') => -1,
+            /* ASCII */ Some('-') => -1,
             /* U+2212 */ Some('−') => -1,
             Some('Z') => return Ok(Self(0)),
             _ => return Err(DateTimeError::InvalidTimeZoneOffset),
@@ -405,7 +405,12 @@ impl FromStr for GmtOffset {
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 #[allow(missing_docs)] // The weekday variants should be self-obvious.
 #[repr(i8)]
-#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+#[cfg_attr(
+    feature = "datagen",
+    derive(serde::Serialize, crabbake::Bakeable),
+    crabbake(path = icu_calendar::types),
+)]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[allow(clippy::exhaustive_enums)] // This is stable
 pub enum IsoWeekday {
     Monday = 1,

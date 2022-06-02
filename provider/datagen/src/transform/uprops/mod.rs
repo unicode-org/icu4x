@@ -21,13 +21,19 @@
 
 mod bin_uniset;
 #[cfg(feature = "experimental")]
+mod canonical_decompositions;
+#[cfg(feature = "experimental")]
 mod casemapping;
+#[cfg(feature = "experimental")]
+mod decompositions_serde;
 mod enum_codepointtrie;
 mod script;
 pub(crate) mod source;
 mod uprops_serde;
 
 pub use bin_uniset::BinaryPropertyUnicodeSetDataProvider;
+#[cfg(feature = "experimental")]
+pub use canonical_decompositions::CanonicalDecompositionDataProvider;
 #[cfg(feature = "experimental")]
 pub use casemapping::CaseMappingDataProvider;
 pub use enum_codepointtrie::EnumeratedPropertyCodePointTrieProvider;

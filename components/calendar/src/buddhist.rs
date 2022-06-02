@@ -5,9 +5,7 @@
 //! This module contains types and implementations for the Buddhist calendar.
 //!
 //! ```rust
-//! use icu::calendar::{Date, DateTime,
-//!                     types::IsoHour, types::IsoMinute, types::IsoSecond,
-//!                     buddhist::Buddhist};
+//! use icu::calendar::{buddhist::Buddhist, Date, DateTime};
 //!
 //! // `Date` type
 //! let date_iso = Date::new_iso_date_from_integers(1970, 1, 2)
@@ -28,9 +26,9 @@
 //! assert_eq!(datetime_buddhist.date.year().number, 2513);
 //! assert_eq!(datetime_buddhist.date.month().number, 1);
 //! assert_eq!(datetime_buddhist.date.day_of_month().0, 2);
-//! assert_eq!(datetime_buddhist.time.hour, IsoHour::new_unchecked(13));
-//! assert_eq!(datetime_buddhist.time.minute, IsoMinute::new_unchecked(1));
-//! assert_eq!(datetime_buddhist.time.second, IsoSecond::new_unchecked(0));
+//! assert_eq!(datetime_buddhist.time.hour.number(), 13);
+//! assert_eq!(datetime_buddhist.time.minute.number(), 1);
+//! assert_eq!(datetime_buddhist.time.second.number(), 0);
 //! ```
 
 use crate::iso::{Iso, IsoDateInner, IsoYear};
@@ -133,8 +131,8 @@ impl Date<Buddhist> {
     /// use icu::calendar::Date;
     /// use std::convert::TryFrom;
     ///
-    /// let date_buddhist = Date::new_buddhist_date(1970, 1, 2)
-    ///     .expect("Failed to initialize Buddhist Date instance.");
+    /// let date_buddhist =
+    ///     Date::new_buddhist_date(1970, 1, 2).expect("Failed to initialize Buddhist Date instance.");
     ///
     /// assert_eq!(date_buddhist.year().number, 1970);
     /// assert_eq!(date_buddhist.month().number, 1);
@@ -156,10 +154,7 @@ impl DateTime<Buddhist> {
     /// Years are specified as BE years.
     ///
     /// ```rust
-    /// use icu::calendar::{DateTime,
-    ///                     types::IsoHour,
-    ///                     types::IsoMinute,
-    ///                     types::IsoSecond};
+    /// use icu::calendar::DateTime;
     ///
     /// let datetime_buddhist = DateTime::new_buddhist_datetime(1970, 1, 2, 13, 1, 0)
     ///     .expect("Failed to initialize Buddhist DateTime instance.");
@@ -167,9 +162,9 @@ impl DateTime<Buddhist> {
     /// assert_eq!(datetime_buddhist.date.year().number, 1970);
     /// assert_eq!(datetime_buddhist.date.month().number, 1);
     /// assert_eq!(datetime_buddhist.date.day_of_month().0, 2);
-    /// assert_eq!(datetime_buddhist.time.hour, IsoHour::new_unchecked(13));
-    /// assert_eq!(datetime_buddhist.time.minute, IsoMinute::new_unchecked(1));
-    /// assert_eq!(datetime_buddhist.time.second, IsoSecond::new_unchecked(0));
+    /// assert_eq!(datetime_buddhist.time.hour.number(), 13);
+    /// assert_eq!(datetime_buddhist.time.minute.number(), 1);
+    /// assert_eq!(datetime_buddhist.time.second.number(), 0);
     /// ```
     pub fn new_buddhist_datetime(
         year: i32,

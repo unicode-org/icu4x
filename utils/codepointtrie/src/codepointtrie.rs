@@ -20,8 +20,8 @@ use zerovec::ZeroVecError;
 /// would make it small or fast.
 /// See [`UCPTrieType`](https://unicode-org.github.io/icu-docs/apidoc/dev/icu4c/ucptrie_8h.html) in ICU4C.
 #[derive(Clone, Copy, PartialEq, Debug, Eq)]
-#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-#[cfg_attr(feature = "serde_serialize", derive(serde::Serialize))]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize, serde::Serialize))]
+#[cfg_attr(feature = "crabbake", derive(crabbake::Bakeable), crabbake(path = icu_codepointtrie))]
 pub enum TrieType {
     /// Represents the "fast" type code point tries for the
     /// [`TrieType`] trait. The "fast max" limit is set to `0xffff`.
@@ -104,8 +104,7 @@ fn maybe_filter_value<T: TrieValue>(value: T, trie_null_value: T, null_value: T)
 /// For more information:
 /// - [ICU Site design doc](http://site.icu-project.org/design/struct/utrie)
 /// - [ICU User Guide section on Properties lookup](https://unicode-org.github.io/icu/userguide/strings/properties.html#lookup)
-#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-#[cfg_attr(feature = "serde_serialize", derive(serde::Serialize))]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize, serde::Serialize))]
 #[derive(Debug, Eq, PartialEq, Yokeable, ZeroFrom)]
 pub struct CodePointTrie<'trie, T: TrieValue> {
     header: CodePointTrieHeader,
@@ -116,8 +115,8 @@ pub struct CodePointTrie<'trie, T: TrieValue> {
 }
 
 /// This struct contains the fixed-length header fields of a [`CodePointTrie`].
-#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-#[cfg_attr(feature = "serde_serialize", derive(serde::Serialize))]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize, serde::Serialize))]
+#[cfg_attr(feature = "crabbake", derive(crabbake::Bakeable), crabbake(path = icu_codepointtrie))]
 #[derive(Copy, Clone, Debug, Eq, PartialEq, Yokeable, ZeroFrom)]
 pub struct CodePointTrieHeader {
     /// The code point of the start of the last range of the trie. A
@@ -167,6 +166,19 @@ impl TryFrom<u8> for TrieType {
 }
 
 impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
+    #[doc(hidden)] // crabbake internal
+    pub const fn from_parts(
+        header: CodePointTrieHeader,
+        index: ZeroVec<'trie, u16>,
+        data: ZeroVec<'trie, T>,
+    ) -> Self {
+        Self {
+            header,
+            index,
+            data,
+        }
+    }
+
     /// Returns a new [`CodePointTrie`] backed by borrowed data for the `index`
     /// array and `data` array, whose data values have width `W`.
     pub fn try_new(
@@ -305,9 +317,9 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
     /// use icu_codepointtrie::planes;
     /// let trie = planes::get_planes_trie();
     ///
-    /// assert_eq!(0, trie.get(0x41));  // 'A' as u32
-    /// assert_eq!(0, trie.get(0x13E0));  // 'Ꮰ' as u32
-    /// assert_eq!(1, trie.get(0x10044));  // '𐁄' as u32
+    /// assert_eq!(0, trie.get(0x41)); // 'A' as u32
+    /// assert_eq!(0, trie.get(0x13E0)); // 'Ꮰ' as u32
+    /// assert_eq!(1, trie.get(0x10044)); // '𐁄' as u32
     /// ```
     #[inline]
     pub fn get(&self, code_point: u32) -> T {
@@ -326,9 +338,9 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
     /// use icu_codepointtrie::planes;
     /// let trie = planes::get_planes_trie();
     ///
-    /// assert_eq!(Some(&0), trie.get_ule(0x41));  // 'A' as u32
-    /// assert_eq!(Some(&0), trie.get_ule(0x13E0));  // 'Ꮰ' as u32
-    /// assert_eq!(Some(&1), trie.get_ule(0x10044));  // '𐁄' as u32
+    /// assert_eq!(Some(&0), trie.get_ule(0x41)); // 'A' as u32
+    /// assert_eq!(Some(&0), trie.get_ule(0x13E0)); // 'Ꮰ' as u32
+    /// assert_eq!(Some(&1), trie.get_ule(0x10044)); // '𐁄' as u32
     /// ```
     pub fn get_ule(&self, code_point: u32) -> Option<&T::ULE> {
         // All code points up to the fast max limit are represented
@@ -367,8 +379,7 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
     /// use icu_codepointtrie::CodePointTrie;
     ///
     /// let cpt1: CodePointTrie<char> = unimplemented!();
-    /// let cpt2: CodePointTrie<u32> = cpt1.try_into_converted()
-    ///     .expect("infallible");
+    /// let cpt2: CodePointTrie<u32> = cpt1.try_into_converted().expect("infallible");
     /// ```
     pub fn try_into_converted<P>(self) -> Result<CodePointTrie<'trie, P>, ZeroVecError>
     where
@@ -743,8 +754,8 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
     ///
     /// ```
     /// use core::ops::RangeInclusive;
-    /// use icu_codepointtrie::CodePointMapRange;
     /// use icu_codepointtrie::planes;
+    /// use icu_codepointtrie::CodePointMapRange;
     ///
     /// let planes_trie = planes::get_planes_trie();
     ///
@@ -832,6 +843,16 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
     }
 }
 
+#[cfg(feature = "crabbake")]
+impl<'trie, T: TrieValue> crabbake::Bakeable for CodePointTrie<'trie, T> {
+    fn bake(&self, env: &crabbake::CrateEnv) -> crabbake::TokenStream {
+        let header = self.header.bake(env);
+        let index = self.index.bake(env);
+        let data = self.data.bake(env);
+        crabbake::quote! { ::icu_codepointtrie::CodePointTrie::from_parts(#header, #index, #data) }
+    }
+}
+
 impl<'trie, T: TrieValue + Into<u32>> CodePointTrie<'trie, T> {
     /// Returns the value that is associated with `code_point` for this [`CodePointTrie`]
     /// as a `u32`.
@@ -848,7 +869,6 @@ impl<'trie, T: TrieValue + Into<u32>> CodePointTrie<'trie, T> {
     /// let plane_num: u8 = trie.get(cp);
     /// assert_eq!(trie.get_u32(cp), plane_num as u32);
     /// ```
-    ///
     // Note: This API method maintains consistency with the corresponding
     // original ICU APIs.
     pub fn get_u32(&self, code_point: u32) -> u32 {
@@ -910,11 +930,11 @@ mod tests {
     use super::*;
     use crate::planes;
     use alloc::vec::Vec;
-    #[cfg(feature = "serde_serialize")]
+    #[cfg(feature = "serde")]
     use zerovec::ZeroVec;
 
     #[test]
-    #[cfg(feature = "serde_serialize")]
+    #[cfg(feature = "serde")]
     fn test_serde_with_postcard_roundtrip() -> Result<(), postcard::Error> {
         let trie = crate::planes::get_planes_trie();
         let trie_serialized: Vec<u8> = postcard::to_allocvec(&trie).unwrap();

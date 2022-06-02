@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::buf::BufferFormat;
 use crate::prelude::*;
 use displaydoc::Display;
 
@@ -53,12 +54,6 @@ pub enum DataErrorKind {
     #[displaydoc("Missing payload")]
     MissingPayload,
 
-    /// An error involving a lock or mutex occurred.
-    ///
-    /// Check debug logs for potentially more information.
-    #[displaydoc("Mutex error")]
-    Mutex,
-
     /// A data provider object was given to an operation in an invalid state.
     #[displaydoc("Invalid state")]
     InvalidState,
@@ -77,6 +72,11 @@ pub enum DataErrorKind {
     #[displaydoc("Missing source data")]
     #[cfg(feature = "datagen")]
     MissingSourceData,
+
+    /// An error indicating that the desired buffer format is not available. This usually
+    /// means that a required feature was not enabled
+    #[displaydoc("Unavailable buffer format: {0:?} (does icu_provider need to be compiled with an additional feature?)")]
+    UnavailableBufferFormat(BufferFormat),
 }
 
 /// The error type for ICU4X data provider operations.
@@ -224,22 +224,9 @@ impl DataError {
     /// it will print out the context.
     #[cfg(feature = "std")]
     #[cfg_attr(not(feature = "log_error_context"), allow(unused_variables))]
-    pub fn with_path<P: AsRef<std::path::Path> + ?Sized>(self, path: &P) -> Self {
+    pub fn with_path_context<P: AsRef<std::path::Path> + ?Sized>(self, path: &P) -> Self {
         #[cfg(feature = "log_error_context")]
         log::warn!("{} (path: {:?})", self, path.as_ref());
-        self
-    }
-
-    /// Logs the data error with the given context, then return self.
-    ///
-    /// This does not modify the error, but if the "log_error_context" feature is enabled,
-    /// it will print out the context.
-    #[cfg(feature = "std")]
-    #[cfg_attr(not(feature = "log_error_context"), allow(unused_variables))]
-    #[inline]
-    pub fn with_error_context<E: std::error::Error + ?Sized>(self, err: &E) -> Self {
-        #[cfg(feature = "log_error_context")]
-        log::warn!("{}: {}", self, err);
         self
     }
 
@@ -268,7 +255,7 @@ impl DataError {
     }
 
     #[inline]
-    pub(crate) fn for_type<T>() -> DataError {
+    pub fn for_type<T>() -> DataError {
         DataError {
             kind: DataErrorKind::MismatchedType(core::any::type_name::<T>()),
             key: None,
@@ -280,41 +267,11 @@ impl DataError {
 #[cfg(feature = "std")]
 impl std::error::Error for DataError {}
 
-#[cfg(feature = "serde")]
-impl From<crate::serde::Error> for DataError {
-    #[cfg_attr(not(feature = "log_error_context"), allow(unused_variables))]
-    fn from(e: crate::serde::Error) -> Self {
-        #[cfg(feature = "log_error_context")]
-        log::warn!("Serde error: {}", e);
-        DataError::custom("Serde error")
-    }
-}
-
-#[cfg(feature = "postcard")]
-impl From<postcard::Error> for DataError {
-    #[cfg_attr(not(feature = "log_error_context"), allow(unused_variables))]
-    fn from(e: postcard::Error) -> Self {
-        #[cfg(feature = "log_error_context")]
-        log::warn!("Postcard error: {}", e);
-        DataError::custom("Postcard error")
-    }
-}
-
 #[cfg(feature = "std")]
 impl From<std::io::Error> for DataError {
     fn from(e: std::io::Error) -> Self {
         #[cfg(feature = "log_error_context")]
         log::warn!("I/O error: {}", e);
         DataErrorKind::Io(e.kind()).into_error()
-    }
-}
-
-#[cfg(feature = "std")]
-impl<T> From<std::sync::PoisonError<T>> for DataError {
-    #[cfg_attr(not(feature = "log_error_context"), allow(unused_variables))]
-    fn from(e: std::sync::PoisonError<T>) -> Self {
-        #[cfg(feature = "log_error_context")]
-        log::warn!("Poison error: {}", e);
-        DataErrorKind::Mutex.into_error()
     }
 }

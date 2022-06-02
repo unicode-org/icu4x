@@ -14,24 +14,29 @@ use icu_provider::{yoke, zerofrom};
 
 /// A collection of plural variants of a pattern.
 #[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize))]
+#[cfg_attr(
+    feature = "datagen",
+    derive(serde::Serialize, crabbake::Bakeable),
+    crabbake(path = icu_datetime::pattern::runtime),
+)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[allow(clippy::exhaustive_structs)] // part of data struct
 pub struct PluralPattern<'data> {
     /// The field that 'variants' are predicated on.
-    pivot_field: Week,
+    pub pivot_field: Week,
 
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub(crate) zero: Option<Pattern<'data>>,
+    pub zero: Option<Pattern<'data>>,
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub(crate) one: Option<Pattern<'data>>,
+    pub one: Option<Pattern<'data>>,
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub(crate) two: Option<Pattern<'data>>,
+    pub two: Option<Pattern<'data>>,
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub(crate) few: Option<Pattern<'data>>,
+    pub few: Option<Pattern<'data>>,
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub(crate) many: Option<Pattern<'data>>,
+    pub many: Option<Pattern<'data>>,
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub(crate) other: Pattern<'data>,
+    pub other: Pattern<'data>,
 }
 
 impl<'data> PluralPattern<'data> {
@@ -130,6 +135,11 @@ impl<'data> PluralPattern<'data> {
 #[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[allow(clippy::large_enum_variant)]
 #[allow(clippy::exhaustive_enums)] // this type is stable
+#[cfg_attr(
+    feature = "datagen",
+    derive(crabbake::Bakeable),
+    crabbake(path = icu_datetime::pattern::runtime),
+)]
 pub enum PatternPlurals<'data> {
     /// A collection of pattern variants for when plurals differ.
     MultipleVariants(PluralPattern<'data>),

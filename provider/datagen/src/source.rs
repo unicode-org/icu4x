@@ -2,13 +2,12 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::error::DatagenError;
 use crate::transform::cldr::source::CldrPaths;
 use crate::transform::uprops::source::UpropsPaths;
 use icu_codepointtrie::TrieType;
 use icu_provider::DataError;
 use std::fmt::Debug;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 use std::sync::Arc;
 
 /// Bag of options for datagen source data.
@@ -17,6 +16,11 @@ use std::sync::Arc;
 pub struct SourceData {
     cldr_paths: Option<Arc<CldrPaths>>,
     uprops_paths: Option<Arc<UpropsPaths>>,
+    /// Only used in experimental context, but compiling this
+    /// out in non-experimental context would unnecessarily
+    /// complicate things.
+    #[allow(dead_code)]
+    coll_root: Option<PathBuf>,
     trie_type: TrieType,
 }
 
@@ -25,6 +29,7 @@ impl Default for SourceData {
         Self {
             cldr_paths: None,
             uprops_paths: None,
+            coll_root: None,
             trie_type: TrieType::Small,
         }
     }
@@ -52,6 +57,14 @@ impl SourceData {
         }
     }
 
+    /// Adds collation data to this `DataSource`.
+    pub fn with_coll(self, coll_root: PathBuf) -> Self {
+        Self {
+            coll_root: Some(coll_root),
+            ..self
+        }
+    }
+
     /// Sets the [`TrieType`] to be used when generating data, including rule-based
     /// segmentation data.
     ///
@@ -67,22 +80,21 @@ impl SourceData {
         Self::default()
             .with_cldr(icu_testdata::paths::cldr_json_root(), "full".to_string())
             .with_uprops(icu_testdata::paths::uprops_toml_root())
+            .with_coll(icu_testdata::paths::coll_toml_root())
     }
 
     /// Paths to CLDR source data.
     pub(crate) fn get_cldr_paths(&self) -> Result<&CldrPaths, DataError> {
-        Ok(self
-            .cldr_paths
-            .as_ref()
-            .ok_or(DatagenError::MissingCldrPaths)?)
+        self.cldr_paths
+            .as_deref()
+            .ok_or(crate::error::MISSING_CLDR_ERROR)
     }
 
     /// Path to Unicode Properties source data.
     pub(crate) fn get_uprops_paths(&self) -> Result<&UpropsPaths, DataError> {
-        Ok(self
-            .uprops_paths
-            .as_ref()
-            .ok_or(DatagenError::MissingUpropsPath)?)
+        self.uprops_paths
+            .as_deref()
+            .ok_or(crate::error::MISSING_UPROPS_ERROR)
     }
 
     /// Path to segmenter data.
@@ -94,5 +106,13 @@ impl SourceData {
     #[cfg_attr(not(feature = "experimental"), allow(dead_code))]
     pub(crate) fn trie_type(&self) -> TrieType {
         self.trie_type
+    }
+
+    /// Path to collation data.
+    #[cfg(feature = "experimental")]
+    pub(crate) fn get_coll_root(&self) -> Result<&Path, DataError> {
+        self.coll_root
+            .as_deref()
+            .ok_or(crate::error::MISSING_COLLATION_ERROR)
     }
 }

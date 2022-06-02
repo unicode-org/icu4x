@@ -6,5 +6,7 @@
 
 pub mod cldr;
 #[cfg(feature = "experimental")]
+pub mod collator;
+#[cfg(feature = "experimental")]
 pub mod segmenter;
 pub mod uprops;

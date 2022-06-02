@@ -23,9 +23,10 @@
 //!         Some(&[langid!("de"), langid!("en-AU")]),
 //!         &icu_datagen::keys(&["list/and@1"]),
 //!         &SourceData::default().with_uprops(PathBuf::from("/path/to/uprops/root")),
-//!         Out::Blob(Box::new(File::create("data.postcard").unwrap())),
+//!         vec![Out::Blob(Box::new(File::create("data.postcard").unwrap()))],
 //!         false,
-//!     ).unwrap();
+//!     )
+//!     .unwrap();
 //! }
 //! ```
 //!
@@ -62,13 +63,12 @@ mod registry;
 mod source;
 pub mod transform;
 
-pub use error::{is_missing_cldr_error, is_missing_uprops_error};
+pub use error::{MISSING_CLDR_ERROR, MISSING_COLLATION_ERROR, MISSING_UPROPS_ERROR};
 pub use registry::get_all_keys;
 pub use source::SourceData;
 
 use icu_locid::LanguageIdentifier;
-use icu_provider::datagen::IterableDynProvider;
-use icu_provider::export::DataExporter;
+use icu_provider::datagen::*;
 use icu_provider::prelude::*;
 use icu_provider_adapters::filter::Filterable;
 use icu_provider_fs::export::serializers;
@@ -168,8 +168,8 @@ pub enum Out {
 ///   Otherwise, all locales supported by the source data will be generated.
 /// * `keys`: The keys for which to generate data. See [`get_all_keys()`].
 /// * `sources`: The underlying source data. CLDR and/or uprops data can be missing if no
-///   requested key requires them. Otherwise a error will be returned that can be identified
-///   with [`is_missing_cldr_error`] or [`is_missing_uprops_error`].
+///   requested key requires them, otherwise [`MISSING_CLDR_ERROR`] or [`MISSING_UPROPS_ERROR`]
+///   will be returned.
 /// * `out`: The output format and location. See the documentation on [`Out`]
 /// * `ignore_missing_resource_keys`: some keys are not supported by datagen yet. Using
 ///   all keys will not work unless this option is set.
@@ -177,68 +177,47 @@ pub fn datagen(
     locales: Option<&[LanguageIdentifier]>,
     keys: &[ResourceKey],
     sources: &SourceData,
-    out: Out,
+    outs: Vec<Out>,
     ignore_missing_resource_keys: bool,
 ) -> Result<(), DataError> {
-    match out {
-        Out::Fs {
-            output_path,
-            serializer,
-            overwrite,
-        } => {
-            let mut options = icu_provider_fs::export::fs_exporter::ExporterOptions::default();
-            options.root = output_path;
-            if overwrite {
-                options.overwrite =
-                    icu_provider_fs::export::fs_exporter::OverwriteOption::RemoveAndReplace
-            }
-            datagen_internal(
-                locales,
-                keys,
-                ignore_missing_resource_keys,
-                Box::new(create_datagen_provider!(*sources)),
-                Box::new(icu_provider_fs::export::FilesystemExporter::try_new(
-                    serializer, options,
-                )?),
-            )
-        }
-        Out::Blob(write) => datagen_internal(
-            locales,
-            keys,
-            ignore_missing_resource_keys,
-            Box::new(create_datagen_provider!(*sources)),
-            Box::new(icu_provider_blob::export::BlobExporter::new_with_sink(
-                write,
-            )),
-        ),
-        Out::Module {
-            mod_directory,
-            pretty,
-            insert_feature_gates,
-        } => datagen_internal(
-            locales,
-            keys,
-            ignore_missing_resource_keys,
-            Box::new(create_datagen_provider!(
-                *sources,
-                [crate::transform::cldr::ListProvider,]
-            )),
-            Box::new(crabbake::ConstExporter::new(
-                mod_directory,
-                pretty,
-                insert_feature_gates,
-            )),
-        ),
-    }
-}
+    let exporters = outs
+        .into_iter()
+        .map(|out| -> Result<Box<dyn DataExporter>, DataError> {
+            Ok(match out {
+                Out::Fs {
+                    output_path,
+                    serializer,
+                    overwrite,
+                } => {
+                    let mut options =
+                        icu_provider_fs::export::fs_exporter::ExporterOptions::default();
+                    options.root = output_path;
+                    if overwrite {
+                        options.overwrite =
+                            icu_provider_fs::export::fs_exporter::OverwriteOption::RemoveAndReplace
+                    }
+                    Box::new(icu_provider_fs::export::FilesystemExporter::try_new(
+                        serializer, options,
+                    )?)
+                }
+                Out::Blob(write) => Box::new(
+                    icu_provider_blob::export::BlobExporter::new_with_sink(write),
+                ),
+                Out::Module {
+                    mod_directory,
+                    pretty,
+                    insert_feature_gates,
+                } => Box::new(crabbake::ConstExporter::new(
+                    mod_directory,
+                    pretty,
+                    insert_feature_gates,
+                )),
+            })
+        })
+        .collect::<Result<Vec<_>, DataError>>()?;
 
-fn datagen_internal<M: DataMarker + 'static>(
-    locales: Option<&[LanguageIdentifier]>,
-    keys: &[ResourceKey],
-    ignore_missing_resource_keys: bool,
-    mut provider: Box<dyn IterableDynProvider<M> + Sync>,
-    mut exporter: Box<dyn DataExporter<M>>,
-) -> Result<(), DataError> {
+    let mut provider: Box<dyn ExportableProvider> = Box::new(create_datagen_provider!(*sources));
+
     if let Some(locales) = locales {
         let locales = locales.to_vec();
         provider = Box::new(
@@ -250,21 +229,21 @@ fn datagen_internal<M: DataMarker + 'static>(
 
     keys.into_par_iter().try_for_each(|&key| {
         let res = match provider.supported_options_for_key(key) {
-            Ok(iter) => {
+            Ok(options) => {
                 log::info!("Writing key: {}", key);
-                iter.collect::<Vec<_>>()
-                    .into_par_iter()
-                    .try_for_each(|options| {
-                        let req = DataRequest {
-                            options: options.clone(),
-                            metadata: Default::default(),
-                        };
-                        let payload = provider
-                            .load_payload(key, &req)
-                            .and_then(DataResponse::take_payload)
-                            .map_err(|e| e.with_req(key, &req))?;
-                        exporter.put_payload(key, options, payload)
-                    })
+                options.into_par_iter().try_for_each(|options| {
+                    let req = DataRequest {
+                        options: options.clone(),
+                        metadata: Default::default(),
+                    };
+                    let payload = provider
+                        .load_payload(key, &req)
+                        .and_then(DataResponse::take_payload)
+                        .map_err(|e| e.with_req(key, &req))?;
+                    exporters
+                        .par_iter()
+                        .try_for_each(|e| e.put_payload(key, &options, &payload))
+                })
             }
             Err(e)
                 if ignore_missing_resource_keys && e.kind == DataErrorKind::MissingResourceKey =>
@@ -275,12 +254,16 @@ fn datagen_internal<M: DataMarker + 'static>(
             Err(e) => Err(e),
         };
 
-        exporter.flush(key)?;
+        for e in &exporters {
+            e.flush(key)?;
+        }
 
         res
     })?;
 
-    exporter.close()?;
+    for mut e in exporters {
+        e.close()?;
+    }
 
     Ok(())
 }

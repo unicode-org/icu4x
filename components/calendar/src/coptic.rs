@@ -5,9 +5,7 @@
 //! This module contains types and implementations for the Coptic calendar.
 //!
 //! ```rust
-//! use icu::calendar::{Date, DateTime,
-//!                     types::IsoHour, types::IsoMinute, types::IsoSecond,
-//!                     coptic::Coptic};
+//! use icu::calendar::{coptic::Coptic, Date, DateTime};
 //!
 //! // `Date` type
 //! let date_iso = Date::new_iso_date_from_integers(1970, 1, 2)
@@ -28,9 +26,9 @@
 //! assert_eq!(datetime_coptic.date.year().number, 1686);
 //! assert_eq!(datetime_coptic.date.month().number, 4);
 //! assert_eq!(datetime_coptic.date.day_of_month().0, 24);
-//! assert_eq!(datetime_coptic.time.hour, IsoHour::new_unchecked(13));
-//! assert_eq!(datetime_coptic.time.minute, IsoMinute::new_unchecked(1));
-//! assert_eq!(datetime_coptic.time.second, IsoSecond::new_unchecked(0));
+//! assert_eq!(datetime_coptic.time.hour.number(), 13);
+//! assert_eq!(datetime_coptic.time.minute.number(), 1);
+//! assert_eq!(datetime_coptic.time.second.number(), 0);
 //! ```
 
 use crate::iso::{Iso, IsoYear};
@@ -204,8 +202,8 @@ impl Date<Coptic> {
     /// ```rust
     /// use icu::calendar::Date;
     ///
-    /// let date_coptic = Date::new_coptic_date(1686, 5, 6)
-    ///     .expect("Failed to initialize Coptic Date instance.");
+    /// let date_coptic =
+    ///     Date::new_coptic_date(1686, 5, 6).expect("Failed to initialize Coptic Date instance.");
     ///
     /// assert_eq!(date_coptic.year().number, 1686);
     /// assert_eq!(date_coptic.month().number, 5);
@@ -232,10 +230,7 @@ impl DateTime<Coptic> {
     /// Construct a new Coptic datetime from integers.
     ///
     /// ```rust
-    /// use icu::calendar::{DateTime,
-    ///                     types::IsoHour,
-    ///                     types::IsoMinute,
-    ///                     types::IsoSecond};
+    /// use icu::calendar::DateTime;
     ///
     /// let datetime_coptic = DateTime::new_coptic_datetime(1686, 5, 6, 13, 1, 0)
     ///     .expect("Failed to initialize Coptic DateTime instance.");
@@ -243,9 +238,9 @@ impl DateTime<Coptic> {
     /// assert_eq!(datetime_coptic.date.year().number, 1686);
     /// assert_eq!(datetime_coptic.date.month().number, 5);
     /// assert_eq!(datetime_coptic.date.day_of_month().0, 6);
-    /// assert_eq!(datetime_coptic.time.hour, IsoHour::new_unchecked(13));
-    /// assert_eq!(datetime_coptic.time.minute, IsoMinute::new_unchecked(1));
-    /// assert_eq!(datetime_coptic.time.second, IsoSecond::new_unchecked(0));
+    /// assert_eq!(datetime_coptic.time.hour.number(), 13);
+    /// assert_eq!(datetime_coptic.time.minute.number(), 1);
+    /// assert_eq!(datetime_coptic.time.second.number(), 0);
     /// ```
     pub fn new_coptic_datetime(
         year: i32,

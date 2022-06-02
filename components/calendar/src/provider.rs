@@ -23,7 +23,11 @@ use zerovec::ZeroVec;
 #[derive(
     Copy, Clone, PartialEq, PartialOrd, Eq, Ord, Hash, Debug, yoke::Yokeable, zerofrom::ZeroFrom,
 )]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize))]
+#[cfg_attr(
+    feature = "datagen",
+    derive(serde::Serialize, crabbake::Bakeable),
+    crabbake(path = icu_calendar::provider),
+)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct EraStartDate {
     pub year: i32,
@@ -33,7 +37,11 @@ pub struct EraStartDate {
 
 #[icu_provider::data_struct(JapaneseErasV1Marker = "calendar/japanese@1")]
 #[derive(Debug, PartialEq, Clone, Default)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize))]
+#[cfg_attr(
+    feature = "datagen",
+    derive(serde::Serialize, crabbake::Bakeable),
+    crabbake(path = icu_calendar::provider),
+)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct JapaneseErasV1<'data> {
     #[cfg_attr(feature = "serde", serde(borrow))]

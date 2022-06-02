@@ -143,8 +143,8 @@ impl Writeable for str {
     /// # Examples
     ///
     /// ```
-    /// use writeable::Writeable;
     /// use std::borrow::Cow;
+    /// use writeable::Writeable;
     ///
     /// let cow = "foo".write_to_string();
     /// assert!(matches!(cow, Cow::Borrowed(_)));

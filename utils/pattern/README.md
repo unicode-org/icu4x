@@ -25,11 +25,7 @@ is being used.
 
 ```rust
 use icu_pattern::Pattern;
-use std::{
-    convert::TryInto,
-    borrow::Cow,
-    fmt::Display,
-};
+use std::{borrow::Cow, convert::TryInto, fmt::Display};
 
 #[derive(Debug, PartialEq)]
 enum ExampleToken {
@@ -37,7 +33,7 @@ enum ExampleToken {
     Month,
     Day,
     Hour,
-    Minute
+    Minute,
 }
 
 impl Display for ExampleToken {
@@ -61,8 +57,7 @@ impl Display for ExampleElement<'_> {
     }
 }
 
-let pattern: Pattern<usize> = "{0}, {1}".try_into()
-    .expect("Failed to parse a pattern.");
+let pattern: Pattern<usize> = "{0}, {1}".try_into().expect("Failed to parse a pattern.");
 
 let replacements = vec![
     vec![
@@ -80,9 +75,9 @@ let replacements = vec![
 ];
 
 assert_eq!(
-    pattern.interpolate_to_string::<ExampleElement, _>(&replacements)
+    pattern
+        .interpolate_to_string::<ExampleElement, _>(&replacements)
         .expect("Failed to interpolate a pattern."),
-
     "[Year]-[Month]-[Day], [Hour]:[Minute]"
 );
 ```

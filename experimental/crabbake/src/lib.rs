@@ -52,7 +52,7 @@ macro_rules! literal {
     }
 }
 
-literal!(u8, u16, u32, u64, u128, usize, i8, i16, i32, i64, i128, isize, &str);
+literal!(u8, u16, u32, u64, u128, usize, i8, i16, i32, i64, i128, isize, &str, char);
 
 impl<'a, T> Bakeable for &'a [T]
 where

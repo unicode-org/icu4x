@@ -5,7 +5,7 @@
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
 
 use icu_locid::langid;
-use icu_provider::hello_world::*;
+use icu_provider::hello_world::HelloWorldV1Marker;
 use icu_provider::prelude::*;
 use icu_provider_fs::FsDataProvider;
 
@@ -29,9 +29,9 @@ fn overview_bench(c: &mut Criterion) {
     {
         json_bench(c);
         #[cfg(feature = "deserialize_bincode_1")]
-        {
-            bincode_bench(c);
-        }
+        bincode_bench(c);
+        #[cfg(feature = "deserialize_postcard_07")]
+        postcard_bench(c);
     }
 }
 
@@ -84,6 +84,39 @@ fn bincode_bench(c: &mut Criterion) {
     });
 
     c.bench_function("bincode/erased_serde", |b| {
+        b.iter(|| {
+            let _: DataPayload<HelloWorldV1Marker> = black_box(&provider as &dyn BufferProvider)
+                .as_deserializing()
+                .load_resource(&DataRequest {
+                    options: langid!("ru").into(),
+                    metadata: Default::default(),
+                })
+                .expect("The data should be valid")
+                .take_payload()
+                .expect("Loading was successful");
+        });
+    });
+}
+
+#[cfg(all(feature = "bench", feature = "deserialize_postcard_07"))]
+fn postcard_bench(c: &mut Criterion) {
+    let provider = FsDataProvider::try_new("./tests/data/postcard")
+        .expect("Loading file from testdata directory");
+
+    c.bench_function("postcard/generic", |b| {
+        b.iter(|| {
+            let _: DataPayload<HelloWorldV1Marker> = black_box(&provider)
+                .load_resource(&DataRequest {
+                    options: langid!("ru").into(),
+                    metadata: Default::default(),
+                })
+                .expect("The data should be valid")
+                .take_payload()
+                .expect("Loading was successful");
+        });
+    });
+
+    c.bench_function("postcard/erased_serde", |b| {
         b.iter(|| {
             let _: DataPayload<HelloWorldV1Marker> = black_box(&provider as &dyn BufferProvider)
                 .as_deserializing()

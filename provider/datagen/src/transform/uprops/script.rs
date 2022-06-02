@@ -72,17 +72,14 @@ impl ResourceProvider<ScriptWithExtensionsPropertyV1Marker>
 impl IterableResourceProvider<ScriptWithExtensionsPropertyV1Marker>
     for ScriptWithExtensionsPropertyProvider
 {
-    fn supported_options(&self) -> Result<Box<dyn Iterator<Item = ResourceOptions>>, DataError> {
-        Ok(Box::new(core::iter::once(ResourceOptions::default())))
+    fn supported_options(&self) -> Result<Vec<ResourceOptions>, DataError> {
+        Ok(vec![Default::default()])
     }
 }
 
-icu_provider::impl_dyn_provider!(
+icu_provider::make_exportable_provider!(
     ScriptWithExtensionsPropertyProvider,
-    [ScriptWithExtensionsPropertyV1Marker,],
-    SERDE_SE,
-    ITERABLE_SERDE_SE,
-    DATA_CONVERTER
+    [ScriptWithExtensionsPropertyV1Marker,]
 );
 
 #[cfg(test)]
@@ -126,11 +123,11 @@ mod tests {
         let swe: &ScriptWithExtensions = &payload.get().data;
 
         assert_eq!(
-            swe.get_script_extensions_val('𐓐' as u32).as_zerovec(), // U+104D0 OSAGE CAPITAL LETTER KHA
+            swe.get_script_extensions_val('𐓐' as u32).as_zerovec(), /* U+104D0 OSAGE CAPITAL LETTER KHA */
             ZeroVec::<Script>::alloc_from_slice(&[Script::Osage])
         );
         assert_eq!(
-            swe.get_script_extensions_val('🥳' as u32).as_zerovec(), // U+1F973 FACE WITH PARTY HORN AND PARTY HAT
+            swe.get_script_extensions_val('🥳' as u32).as_zerovec(), /* U+1F973 FACE WITH PARTY HORN AND PARTY HAT */
             ZeroVec::<Script>::alloc_from_slice(&[Script::Common])
         );
         assert_eq!(

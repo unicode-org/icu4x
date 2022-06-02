@@ -31,15 +31,15 @@ use writeable::Writeable;
 /// # Examples
 ///
 /// ```
-/// use icu::locid::locale;
-/// use icu::datetime::DateTimeFormat;
 /// use icu::calendar::{DateTime, Gregorian};
+/// use icu::datetime::DateTimeFormat;
+/// use icu::locid::locale;
 /// # let provider = icu_provider::inv::InvariantDataProvider;
 /// # let options = icu::datetime::DateTimeFormatOptions::default();
 /// let dtf = DateTimeFormat::<Gregorian>::try_new(locale!("en"), &provider, &options)
 ///     .expect("Failed to create DateTimeFormat instance.");
 ///
-/// let datetime = DateTime::new_gregorian_datetime_from_integers(2020, 9, 1, 12, 34, 28, 0)
+/// let datetime = DateTime::new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
 ///     .expect("Failed to construct DateTime.");
 ///
 /// let formatted_date = dtf.format(&datetime);
@@ -439,8 +439,7 @@ mod tests {
             .take_payload()
             .unwrap();
         let pattern = "MMM".parse().unwrap();
-        let datetime =
-            DateTime::new_gregorian_datetime_from_integers(2020, 8, 1, 12, 34, 28, 0).unwrap();
+        let datetime = DateTime::new_gregorian_datetime(2020, 8, 1, 12, 34, 28).unwrap();
         let mut sink = String::new();
         let loc_datetime = DateTimeInputWithLocale::new(&datetime, None, &"und".parse().unwrap());
         write_pattern(&pattern, Some(data.get()), &loc_datetime, &mut sink).unwrap();

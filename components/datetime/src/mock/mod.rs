@@ -22,8 +22,8 @@ pub mod zoned_datetime;
 /// use icu::datetime::mock::parse_gregorian_from_str;
 /// use icu_calendar::{DateTime, Gregorian};
 ///
-/// let date: DateTime<Gregorian> = parse_gregorian_from_str("2020-10-14T13:21:00")
-///     .expect("Failed to parse a datetime.");
+/// let date: DateTime<Gregorian> =
+///     parse_gregorian_from_str("2020-10-14T13:21:00").expect("Failed to parse a datetime.");
 /// ```
 ///
 /// Optionally, fractional seconds can be specified: `YYYY-MM-DDThh:mm:ss.SSS`.
@@ -32,8 +32,8 @@ pub mod zoned_datetime;
 /// use icu::datetime::mock::parse_gregorian_from_str;
 /// use icu_calendar::{DateTime, Gregorian};
 ///
-/// let date: DateTime<Gregorian> = parse_gregorian_from_str("2020-10-14T13:21:00.101")
-///     .expect("Failed to parse a datetime.");
+/// let date: DateTime<Gregorian> =
+///     parse_gregorian_from_str("2020-10-14T13:21:00.101").expect("Failed to parse a datetime.");
 /// assert_eq!(u32::from(date.time.nanosecond), 101_000_000);
 /// ```
 pub fn parse_gregorian_from_str(input: &str) -> Result<DateTime<Gregorian>, DateTimeError> {
@@ -63,7 +63,10 @@ pub fn parse_gregorian_from_str(input: &str) -> Result<DateTime<Gregorian>, Date
     } else {
         0
     };
-    DateTime::new_gregorian_datetime_from_integers(year, month, day, hour, minute, second, fraction)
+    let mut datetime = DateTime::new_gregorian_datetime(year, month, day, hour, minute, second)?;
+    datetime.time = icu_calendar::types::Time::try_new(hour, minute, second, fraction)?;
+
+    Ok(datetime)
 }
 
 #[test]

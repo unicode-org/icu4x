@@ -116,16 +116,6 @@ macro_rules! impl_const_constructors {
                     })
                 }
             }
-
-            /// This function can be used for constructing ZeroVecs in a const context, avoiding
-            /// parsing checks.
-            ///
-            /// See [`ZeroSlice`] for an example.
-            pub const fn from_ule_slice_const(slice: &[<$base as AsULE>::ULE]) -> &Self {
-                // This is safe because ZeroSlice is transparent over [T::ULE]
-                // so &ZeroSlice<T> can be safely cast from &[T::ULE]
-                unsafe { &*(slice as *const _ as *const Self) }
-            }
         }
     };
 }

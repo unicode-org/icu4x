@@ -18,11 +18,11 @@ const BMP_MAX: u32 = 0xFFFF;
 
 /// Represents the inversion list for a set of all code points in the Basic Multilingual Plane.
 const BMP_INV_LIST_SLICE: &ZeroSlice<u32> =
-    ZeroSlice::<u32>::from_ule_slice_const(&<u32 as AsULE>::ULE::from_array([0x0, BMP_MAX + 1]));
+    ZeroSlice::<u32>::from_ule_slice(&<u32 as AsULE>::ULE::from_array([0x0, BMP_MAX + 1]));
 
 /// Represents the inversion list for all of the code points in the Unicode range.
 const ALL_SLICE: &ZeroSlice<u32> =
-    ZeroSlice::<u32>::from_ule_slice_const(&<u32 as AsULE>::ULE::from_array([
+    ZeroSlice::<u32>::from_ule_slice(&<u32 as AsULE>::ULE::from_array([
         0x0,
         (char::MAX as u32) + 1,
     ]));
@@ -60,11 +60,25 @@ impl<'de: 'a, 'a> serde::Deserialize<'de> for UnicodeSet<'a> {
     }
 }
 
+#[cfg(feature = "crabbake")]
+impl crabbake::Bakeable for UnicodeSet<'_> {
+    fn bake(&self, env: &crabbake::CrateEnv) -> crabbake::TokenStream {
+        env.insert("icu_uniset");
+        let inv_list = self.inv_list.bake(env);
+        let size = self.size.bake(env);
+        // Safe because our parts are safe.
+        crabbake::quote! { unsafe {
+            #[allow(unused_unsafe)]
+            ::icu_uniset::UnicodeSet::from_parts_unchecked(#inv_list, #size)
+        }}
+    }
+}
+
 // Note: serde(flatten) currently does not promote a struct field of type Vec
 // to replace the struct when serializing. The error message from the default
 // serialization is: "can only flatten structs and maps (got a sequence)".
 
-#[cfg(any(feature = "serde_serialize", test))]
+#[cfg(any(feature = "serde", test))]
 impl<'data> serde::Serialize for UnicodeSet<'data> {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
@@ -117,6 +131,11 @@ impl<'data> UnicodeSet<'data> {
         }
     }
 
+    #[doc(hidden)] // Crabbake internal
+    pub const unsafe fn from_parts_unchecked(inv_list: ZeroVec<'data, u32>, size: usize) -> Self {
+        Self { inv_list, size }
+    }
+
     /// Returns a new [`UnicodeSet`] by borrowing an [inversion list](https://en.wikipedia.org/wiki/Inversion_list)
     /// represented as a slice of [`u32`] code points.
     ///
@@ -163,8 +182,7 @@ impl<'data> UnicodeSet<'data> {
     /// use std::vec::Vec;
     ///
     /// fn inv_list_to_owned_unicodeset(inv_list: &[u32]) -> UnicodeSet {
-    ///     UnicodeSet::clone_from_inversion_list_slice(inv_list)
-    ///         .unwrap()
+    ///     UnicodeSet::clone_from_inversion_list_slice(inv_list).unwrap()
     /// }
     ///
     /// let bmp_list: [u32; 2] = [0x0, 0x10000];
@@ -172,10 +190,10 @@ impl<'data> UnicodeSet<'data> {
     /// let sip_list: &[u32] = &vec![0x20000, 0x30000];
     ///
     /// let inv_lists: [&[u32]; 3] = [&bmp_list, &smp_list, sip_list];
-    /// let unicodesets: Vec<UnicodeSet> =
-    ///     inv_lists.iter()
-    ///         .map(|il| inv_list_to_owned_unicodeset(il))
-    ///         .collect();
+    /// let unicodesets: Vec<UnicodeSet> = inv_lists
+    ///     .iter()
+    ///     .map(|il| inv_list_to_owned_unicodeset(il))
+    ///     .collect();
     ///
     /// let bmp = &unicodesets.get(0).unwrap();
     /// assert!(bmp.contains_u32(0xFFFF));
@@ -424,7 +442,7 @@ impl<'data> UnicodeSet<'data> {
     /// ```
     /// use icu_uniset::UnicodeSet;
     /// use std::char;
-    /// let check = char::from_u32(0xD7FE).unwrap() .. char::from_u32(0xE001).unwrap();
+    /// let check = char::from_u32(0xD7FE).unwrap()..char::from_u32(0xE001).unwrap();
     /// let example_list = [0xD7FE, 0xD7FF, 0xE000, 0xE001];
     /// let example = UnicodeSet::from_inversion_list_slice(&example_list).unwrap();
     /// assert!(!example.contains_range(&(check)));

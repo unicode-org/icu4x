@@ -9,6 +9,9 @@ pub(crate) mod owned;
 pub(crate) mod slice;
 pub(crate) mod vec;
 
+#[cfg(feature = "crabbake")]
+mod crabbake;
+
 #[cfg(feature = "serde")]
 mod serde;
 

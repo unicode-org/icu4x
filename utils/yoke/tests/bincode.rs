@@ -17,7 +17,7 @@ fn load_from_cache(_filename: &str) -> Rc<[u8]> {
 
 fn load_object(filename: &str) -> Yoke<Bar<'static>, Rc<[u8]>> {
     let rc: Rc<[u8]> = load_from_cache(filename);
-    Yoke::<Bar<'static>, Rc<[u8]>>::attach_to_cart_badly(rc, |data: &[u8]| {
+    Yoke::<Bar<'static>, Rc<[u8]>>::attach_to_cart(rc, |data: &[u8]| {
         // A real implementation would properly deserialize `Bar` as a whole
         Bar {
             numbers: Cow::Borrowed(bincode::deserialize(data).unwrap()),

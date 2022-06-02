@@ -6,42 +6,19 @@ pub mod bincode;
 pub mod json;
 pub mod postcard;
 
-use displaydoc::Display;
 use icu_provider::buf::BufferFormat;
+use icu_provider::datagen::*;
+use icu_provider::prelude::*;
 use std::io;
-
-/// An Error type specifically for the [`Serializer`](serde::Serializer) that doesn't carry filenames
-#[derive(Display, Debug)]
-#[non_exhaustive]
-pub enum Error {
-    #[displaydoc("{0}")]
-    Io(io::Error),
-    #[displaydoc("{0}")]
-    Serializer(erased_serde::Error),
-}
-
-impl std::error::Error for Error {}
-
-impl From<io::Error> for Error {
-    fn from(e: io::Error) -> Self {
-        Error::Io(e)
-    }
-}
-
-impl From<erased_serde::Error> for Error {
-    fn from(e: erased_serde::Error) -> Self {
-        Error::Serializer(e)
-    }
-}
 
 /// A simple serializer trait that works on whole objects.
 pub trait AbstractSerializer {
     /// Serializes an object to a sink.
     fn serialize(
         &self,
-        obj: &dyn erased_serde::Serialize,
+        obj: &DataPayload<ExportMarker>,
         sink: &mut dyn io::Write,
-    ) -> Result<(), Error>;
+    ) -> Result<(), DataError>;
 
     /// Gets the buffer format currently being serialized.
     fn get_buffer_format(&self) -> BufferFormat;

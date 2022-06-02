@@ -11,18 +11,14 @@
 //! # Examples
 //!
 //! ```
+//! use icu::locid::extensions::unicode::{Attribute, Key, Unicode, Value};
 //! use icu::locid::{LanguageIdentifier, Locale};
-//! use icu::locid::extensions::unicode::{Unicode, Key, Value, Attribute};
 //!
-//! let mut loc: Locale = "en-US-u-foobar-hc-h12".parse()
-//!     .expect("Parsing failed.");
+//! let mut loc: Locale = "en-US-u-foobar-hc-h12".parse().expect("Parsing failed.");
 //!
-//! let key: Key = "hc".parse()
-//!     .expect("Parsing key failed.");
-//! let value: Value = "h12".parse()
-//!     .expect("Parsing value failed.");
-//! let attribute: Attribute = "foobar".parse()
-//!     .expect("Parsing attribute failed.");
+//! let key: Key = "hc".parse().expect("Parsing key failed.");
+//! let value: Value = "h12".parse().expect("Parsing value failed.");
+//! let attribute: Attribute = "foobar".parse().expect("Parsing attribute failed.");
 //!
 //! assert_eq!(loc.extensions.unicode.keywords.get(&key), Some(&value));
 //! assert!(loc.extensions.unicode.attributes.contains(&attribute));
@@ -62,16 +58,14 @@ use litemap::LiteMap;
 /// # Examples
 ///
 /// ```
-/// use icu::locid::Locale;
 /// use icu::locid::extensions::unicode::{Key, Value};
+/// use icu::locid::Locale;
 ///
-/// let mut loc: Locale = "de-u-hc-h12-ca-buddhist".parse()
-///     .expect("Parsing failed.");
+/// let mut loc: Locale = "de-u-hc-h12-ca-buddhist".parse().expect("Parsing failed.");
 ///
 /// let key: Key = "ca".parse().expect("Parsing key failed.");
 /// let value: Value = "buddhist".parse().expect("Parsing value failed.");
-/// assert_eq!(loc.extensions.unicode.keywords.get(&key),
-///            Some(&value));
+/// assert_eq!(loc.extensions.unicode.keywords.get(&key), Some(&value));
 /// ```
 #[derive(Clone, PartialEq, Eq, Debug, Default, Hash, PartialOrd, Ord)]
 #[allow(missing_docs)] // TODO(#1028) - Add missing docs.
@@ -106,8 +100,7 @@ impl Unicode {
     /// ```
     /// use icu::locid::Locale;
     ///
-    /// let loc: Locale = "en-US-u-foo".parse()
-    ///     .expect("Parsing failed.");
+    /// let loc: Locale = "en-US-u-foo".parse().expect("Parsing failed.");
     ///
     /// assert_eq!(loc.extensions.unicode.is_empty(), false);
     /// ```
@@ -121,8 +114,8 @@ impl Unicode {
     /// # Example
     ///
     /// ```
-    /// use std::str::FromStr;
     /// use icu::locid::Locale;
+    /// use std::str::FromStr;
     ///
     /// let mut loc: Locale = "und-t-mul-u-hello-ca-buddhist-hc-h12".parse().unwrap();
     /// loc.extensions.unicode.clear();

@@ -9,30 +9,24 @@
 //! # Examples
 //!
 //! ```
-//! use icu::plurals::rules::reference::parse_condition;
 //! use icu::plurals::rules::reference::ast::*;
+//! use icu::plurals::rules::reference::parse_condition;
 //!
 //! let input = "i = 1";
 //!
-//! let ast = parse_condition(input.as_bytes())
-//!     .expect("Parsing failed.");
+//! let ast = parse_condition(input.as_bytes()).expect("Parsing failed.");
 //!
-//! assert_eq!(ast, Condition(vec![
-//!     AndCondition(vec![
-//!         Relation {
-//!             expression: Expression {
-//!                 operand: Operand::I,
-//!                 modulus: None,
-//!             },
-//!             operator: Operator::Eq,
-//!             range_list: RangeList(vec![
-//!                 RangeListItem::Value(
-//!                     Value(1)
-//!                 )
-//!             ])
-//!         }
-//!     ])
-//! ]));
+//! assert_eq!(
+//!     ast,
+//!     Condition(vec![AndCondition(vec![Relation {
+//!         expression: Expression {
+//!             operand: Operand::I,
+//!             modulus: None,
+//!         },
+//!         operator: Operator::Eq,
+//!         range_list: RangeList(vec![RangeListItem::Value(Value(1))])
+//!     }])])
+//! );
 //! ```
 //!
 //! [`PluralCategory`]: crate::PluralCategory
@@ -51,8 +45,7 @@ use core::ops::RangeInclusive;
 /// use icu::plurals::rules::reference::ast::*;
 /// use icu::plurals::rules::reference::{parse, parse_condition};
 ///
-/// let condition = parse_condition(b"i = 5 or v = 2")
-///     .expect("Parsing failed.");
+/// let condition = parse_condition(b"i = 5 or v = 2").expect("Parsing failed.");
 ///
 /// let samples = Samples {
 ///     integer: Some(SampleList {
@@ -60,14 +53,14 @@ use core::ops::RangeInclusive;
 ///             lower_val: DecimalValue("2".to_string()),
 ///             upper_val: None,
 ///         }],
-///         ellipsis: true
+///         ellipsis: true,
 ///     }),
 ///     decimal: Some(SampleList {
 ///         sample_ranges: vec![SampleRange {
 ///             lower_val: DecimalValue("2.5".to_string()),
 ///             upper_val: None,
 ///         }],
-///         ellipsis: false
+///         ellipsis: false,
 ///     }),
 /// };
 ///
@@ -78,8 +71,7 @@ use core::ops::RangeInclusive;
 ///
 /// assert_eq!(
 ///     rule,
-///     parse("i = 5 or v = 2 @integer 2, … @decimal 2.5".as_bytes())
-///          .expect("Parsing failed")
+///     parse("i = 5 or v = 2 @integer 2, … @decimal 2.5".as_bytes()).expect("Parsing failed")
 /// )
 /// ```
 ///
@@ -121,8 +113,7 @@ pub struct Rule {
 ///
 /// assert_eq!(
 ///     condition,
-///     parse_condition(b"i = 5 or v = 2")
-///          .expect("Parsing failed")
+///     parse_condition(b"i = 5 or v = 2").expect("Parsing failed")
 /// )
 /// ```
 ///
@@ -165,7 +156,6 @@ pub struct Condition(pub Vec<AndCondition>);
 ///         range_list: RangeList(vec![RangeListItem::Value(Value(2))]),
 ///     },
 /// ]);
-///
 /// ```
 ///
 /// [`Relations`]: Relation
@@ -197,7 +187,6 @@ pub struct AndCondition(pub Vec<Relation>);
 ///     operator: Operator::Eq,
 ///     range_list: RangeList(vec![RangeListItem::Value(Value(3))]),
 /// };
-///
 /// ```
 #[derive(Debug, Clone, PartialEq)]
 #[allow(missing_docs)] // TODO(#1029) - Add missing docs.
@@ -216,7 +205,6 @@ pub struct Relation {
 /// | - | - |
 /// | `Eq` | "=" |
 /// | `NotEq` | "!=" |
-///
 #[derive(Debug, Clone, Copy, PartialEq)]
 #[allow(missing_docs)] // TODO(#1029) - Add missing docs.
 #[allow(clippy::exhaustive_enums)] // this type is stable
@@ -245,7 +233,6 @@ pub enum Operator {
 ///     operand: Operand::I,
 ///     modulus: Some(Value(100)),
 /// };
-///
 /// ```
 #[derive(Debug, Clone, PartialEq)]
 #[allow(missing_docs)] // TODO(#1029) - Add missing docs.
@@ -390,14 +377,14 @@ pub struct Value(pub u64);
 ///             lower_val: DecimalValue("2".to_string()),
 ///             upper_val: None,
 ///         }],
-///         ellipsis: true
+///         ellipsis: true,
 ///     }),
 ///     decimal: Some(SampleList {
 ///         sample_ranges: vec![SampleRange {
 ///             lower_val: DecimalValue("2.5".to_string()),
 ///             upper_val: None,
 ///         }],
-///         ellipsis: false
+///         ellipsis: false,
 ///     }),
 /// };
 /// ```
@@ -420,13 +407,11 @@ pub struct Samples {
 /// ```
 /// use icu::plurals::rules::reference::ast::*;
 /// SampleList {
-///     sample_ranges: vec![
-///         SampleRange {
-///             lower_val: DecimalValue("0.0".to_string()),
-///             upper_val: Some(DecimalValue("1.5".to_string())),
-///         }
-///     ],
-///     ellipsis: true
+///     sample_ranges: vec![SampleRange {
+///         lower_val: DecimalValue("0.0".to_string()),
+///         upper_val: Some(DecimalValue("1.5".to_string())),
+///     }],
+///     ellipsis: true,
 /// };
 /// ```
 #[derive(Debug, Clone, PartialEq)]

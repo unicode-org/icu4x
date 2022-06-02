@@ -21,12 +21,12 @@ where
     /// # Examples
     ///
     /// ```
-    /// use icu_provider::prelude::*;
-    /// use icu_provider::hello_world::*;
-    /// use icu_provider::datagen::*;
-    /// use icu_provider_adapters::filter::Filterable;
     /// use icu_locid::LanguageIdentifier;
-    /// use icu_locid::{language, locale, langid};
+    /// use icu_locid::{langid, language, locale};
+    /// use icu_provider::datagen::*;
+    /// use icu_provider::hello_world::*;
+    /// use icu_provider::prelude::*;
+    /// use icu_provider_adapters::filter::Filterable;
     ///
     /// let provider = HelloWorldProvider::new_with_placeholder_data()
     ///     .filterable("Demo no-English filter")
@@ -37,8 +37,7 @@ where
     ///     options: locale!("de").into(),
     ///     metadata: Default::default(),
     /// };
-    /// let response: Result<DataResponse<HelloWorldV1Marker>, _> =
-    ///     provider.load_resource(&req_de);
+    /// let response: Result<DataResponse<HelloWorldV1Marker>, _> = provider.load_resource(&req_de);
     /// assert!(matches!(response, Ok(_)));
     ///
     /// // English requests should fail:
@@ -46,16 +45,20 @@ where
     ///     options: locale!("en-US").into(),
     ///     metadata: Default::default(),
     /// };
-    /// let response: Result<DataResponse<HelloWorldV1Marker>, _> =
-    ///     provider.load_resource(&req_en);
+    /// let response: Result<DataResponse<HelloWorldV1Marker>, _> = provider.load_resource(&req_en);
     /// assert!(matches!(
     ///     response,
-    ///     Err(DataError { kind: DataErrorKind::FilteredResource, .. })
+    ///     Err(DataError {
+    ///         kind: DataErrorKind::FilteredResource,
+    ///         ..
+    ///     })
     /// ));
     ///
     /// // English should not appear in the iterator result:
-    /// let supported_langids = provider.supported_options()
+    /// let supported_langids = provider
+    ///     .supported_options()
     ///     .expect("Should successfully make an iterator of supported locales")
+    ///     .into_iter()
     ///     .map(|options| options.get_langid())
     ///     .collect::<Vec<LanguageIdentifier>>();
     /// assert!(supported_langids.contains(&langid!("de")));
@@ -93,10 +96,10 @@ where
     /// # Examples
     ///
     /// ```
-    /// use icu_provider::prelude::*;
+    /// use icu_locid::{langid, locale};
     /// use icu_provider::hello_world::*;
+    /// use icu_provider::prelude::*;
     /// use icu_provider_adapters::filter::Filterable;
-    /// use icu_locid::{locale, langid};
     ///
     /// let allowlist = vec![langid!("de"), langid!("zh")];
     /// let provider = HelloWorldProvider::new_with_placeholder_data()
@@ -108,8 +111,7 @@ where
     ///     options: locale!("de").into(),
     ///     metadata: Default::default(),
     /// };
-    /// let response: Result<DataResponse<HelloWorldV1Marker>, _> =
-    ///     provider.load_resource(&req_de);
+    /// let response: Result<DataResponse<HelloWorldV1Marker>, _> = provider.load_resource(&req_de);
     /// assert!(matches!(response, Ok(_)));
     ///
     /// // English requests should fail:
@@ -117,11 +119,13 @@ where
     ///     options: locale!("en-US").into(),
     ///     metadata: Default::default(),
     /// };
-    /// let response: Result<DataResponse<HelloWorldV1Marker>, _> =
-    ///     provider.load_resource(&req_en);
+    /// let response: Result<DataResponse<HelloWorldV1Marker>, _> = provider.load_resource(&req_en);
     /// assert!(matches!(
     ///     response,
-    ///     Err(DataError { kind: DataErrorKind::FilteredResource, .. })
+    ///     Err(DataError {
+    ///         kind: DataErrorKind::FilteredResource,
+    ///         ..
+    ///     })
     /// ));
     /// assert_eq!(
     ///     response.unwrap_err().str_context,
@@ -153,10 +157,10 @@ where
     /// # Examples
     ///
     /// ```
-    /// use icu_provider::prelude::*;
-    /// use icu_provider::hello_world::*;
-    /// use icu_provider_adapters::filter::Filterable;
     /// use icu_locid::locale;
+    /// use icu_provider::hello_world::*;
+    /// use icu_provider::prelude::*;
+    /// use icu_provider_adapters::filter::Filterable;
     ///
     /// let provider = HelloWorldProvider::new_with_placeholder_data()
     ///     .filterable("Demo require-langid filter")
@@ -180,7 +184,10 @@ where
     ///     provider.load_resource(&req_no_langid);
     /// assert!(matches!(
     ///     response,
-    ///     Err(DataError { kind: DataErrorKind::FilteredResource, .. })
+    ///     Err(DataError {
+    ///         kind: DataErrorKind::FilteredResource,
+    ///         ..
+    ///     })
     /// ));
     /// ```
     pub fn require_langid<'a>(

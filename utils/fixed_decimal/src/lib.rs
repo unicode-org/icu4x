@@ -51,6 +51,7 @@
 )]
 
 pub mod decimal;
+mod ops;
 pub mod signum;
 mod uint_iterator;
 
@@ -71,11 +72,14 @@ pub enum Error {
     /// # Examples
     ///
     /// ```
-    /// use fixed_decimal::FixedDecimal;
     /// use fixed_decimal::Error;
+    /// use fixed_decimal::FixedDecimal;
     ///
     /// let mut dec1 = FixedDecimal::from(123);
-    /// assert_eq!(Error::Limit, dec1.multiply_pow10(core::i16::MAX).unwrap_err());
+    /// assert_eq!(
+    ///     Error::Limit,
+    ///     dec1.multiply_pow10(core::i16::MAX).unwrap_err()
+    /// );
     /// ```
     #[displaydoc("Magnitude or number of digits exceeded")]
     Limit,

@@ -13,7 +13,6 @@
 //!
 //! [`ICU4X`]: ../icu/index.html
 //! [data provider]: icu_provider
-//!
 
 mod calendar;
 mod cldr_serde;

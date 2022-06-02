@@ -331,20 +331,18 @@ fn main() -> eyre::Result<()> {
         selected_locales.as_deref(),
         &selected_keys,
         &source_data,
-        out,
+        vec![out],
         matches.is_present("IGNORE_MISSING_DATA"),
     )
     .map_err(|e| -> eyre::ErrReport {
-        if icu_datagen::is_missing_cldr_error(e) {
-            eyre::eyre!(
+        match e {
+            icu_datagen::MISSING_CLDR_ERROR => eyre::eyre!(
                 "Either --cldr-tag or --cldr-root or --input-from-testdata must be specified"
-            )
-        } else if icu_datagen::is_missing_uprops_error(e) {
-            eyre::eyre!(
+            ),
+            icu_datagen::MISSING_UPROPS_ERROR => eyre::eyre!(
                 "Either --uprops-tag or --uprops-root or --input-from-testdata must be specified"
-            )
-        } else {
-            e.into()
+            ),
+            e => e.into(),
         }
     })
 }

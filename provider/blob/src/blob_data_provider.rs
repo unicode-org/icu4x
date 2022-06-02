@@ -27,8 +27,8 @@ use zerovec::maps::{KeyError, ZeroMap2dBorrowed};
 ///
 /// ```
 /// use icu_locid::locale;
-/// use icu_provider::prelude::*;
 /// use icu_provider::hello_world::*;
+/// use icu_provider::prelude::*;
 /// use icu_provider_blob::BlobDataProvider;
 /// use std::fs;
 ///
@@ -36,11 +36,11 @@ use zerovec::maps::{KeyError, ZeroMap2dBorrowed};
 /// let blob = fs::read(concat!(
 ///     env!("CARGO_MANIFEST_DIR"),
 ///     "/tests/data/hello_world.postcard",
-/// )).expect("Reading pre-computed postcard buffer");
+/// ))
+/// .expect("Reading pre-computed postcard buffer");
 ///
 /// // Create a DataProvider from it:
-/// let provider = BlobDataProvider::new_from_blob(blob)
-///     .expect("Deserialization should succeed");
+/// let provider = BlobDataProvider::new_from_blob(blob).expect("Deserialization should succeed");
 ///
 /// // Check that it works:
 /// let response: DataPayload<HelloWorldV1Marker> = provider
@@ -65,7 +65,7 @@ impl BlobDataProvider {
     /// Create a [`BlobDataProvider`] from a blob of ICU4X data.
     pub fn new_from_blob<B: Into<RcWrap>>(blob: B) -> Result<Self, DataError> {
         Ok(BlobDataProvider {
-            data: Yoke::try_attach_to_cart_badly(blob.into(), |bytes| {
+            data: Yoke::try_attach_to_cart(blob.into(), |bytes| {
                 BlobSchema::deserialize(&mut postcard::Deserializer::from_bytes(bytes)).map(
                     |blob| {
                         let BlobSchema::V001(blob) = blob;
@@ -95,8 +95,9 @@ impl BufferProvider for BlobDataProvider {
         Ok(DataResponse {
             metadata,
             payload: Some(DataPayload::from_yoked_buffer(
-                self.data
-                    .try_project_cloned_with_capture((key, req), |zm, (key, req), _| {
+                self.data.try_map_project_cloned_with_capture(
+                    (key, req),
+                    |zm, (key, req), _| {
                         zm.get(&key.get_hash(), req.options.write_to_string().as_bytes())
                             .map_err(|e| {
                                 match e {
@@ -105,7 +106,8 @@ impl BufferProvider for BlobDataProvider {
                                 }
                                 .with_req(key, req)
                             })
-                    })?,
+                    },
+                )?,
             )),
         })
     }

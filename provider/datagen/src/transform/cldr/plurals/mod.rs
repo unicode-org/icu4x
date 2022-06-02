@@ -47,12 +47,12 @@ impl PluralsProvider {
                     let _ = self
                         .cardinal_rules
                         .write()
-                        .unwrap()
+                        .expect("poison")
                         .get_or_insert(data.supplemental.plurals_type_cardinal.clone());
                 }
                 #[allow(clippy::unwrap_used)]
                 // TODO(#1668) Clippy exceptions need docs or fixing.
-                self.cardinal_rules.read().unwrap()
+                self.cardinal_rules.read().expect("poison")
             }
             OrdinalV1Marker::KEY => {
                 #[allow(clippy::unwrap_used)]
@@ -66,12 +66,12 @@ impl PluralsProvider {
                     let _ = self
                         .ordinal_rules
                         .write()
-                        .unwrap()
+                        .expect("poison")
                         .get_or_insert(data.supplemental.plurals_type_ordinal.clone());
                 }
                 #[allow(clippy::unwrap_used)]
                 // TODO(#1668) Clippy exceptions need docs or fixing.
-                self.ordinal_rules.read().unwrap()
+                self.ordinal_rules.read().expect("poison")
             }
             _ => return Err(DataError::custom("Unknown key for PluralRulesV1")),
         })
@@ -99,21 +99,13 @@ impl<M: ResourceMarker<Yokeable = PluralRulesV1<'static>>> ResourceProvider<M> f
     }
 }
 
-icu_provider::impl_dyn_provider!(
-    PluralsProvider,
-    [OrdinalV1Marker, CardinalV1Marker,],
-    SERDE_SE,
-    ITERABLE_SERDE_SE,
-    DATA_CONVERTER
-);
+icu_provider::make_exportable_provider!(PluralsProvider, [OrdinalV1Marker, CardinalV1Marker,]);
 
 impl<M: ResourceMarker<Yokeable = PluralRulesV1<'static>>> IterableResourceProvider<M>
     for PluralsProvider
 {
-    fn supported_options(
-        &self,
-    ) -> Result<Box<dyn Iterator<Item = ResourceOptions> + '_>, DataError> {
-        Ok(Box::new(
+    fn supported_options(&self) -> Result<Vec<ResourceOptions>, DataError> {
+        Ok(
             #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
             self.get_rules_for(M::KEY)?
                 .as_ref()
@@ -124,10 +116,9 @@ impl<M: ResourceMarker<Yokeable = PluralRulesV1<'static>>> IterableResourceProvi
                 .iter_keys()
                 // TODO(#568): Avoid the clone
                 .cloned()
-                .collect::<Vec<_>>()
-                .into_iter()
-                .map(Into::<ResourceOptions>::into),
-        ))
+                .map(ResourceOptions::from)
+                .collect(),
+        )
     }
 }
 

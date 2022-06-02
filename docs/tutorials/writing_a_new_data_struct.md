@@ -224,15 +224,13 @@ impl ResourceProvider<FooV1Marker> for FooProvider {
 impl IterableResourceProvider<FooV1Marker> for FooProvider {
     fn supported_options(
         &self,
-    ) -> Result<Box<dyn Iterator<Item = ResourceOptions>>, DataError> {
+    ) -> Result<Vec<ResourceOptions>, DataError> {
         // This should list all supported locales, for example.
     }
 }
 
-// Once we have ResourceProvider and IterableResourceProvider, we can implement IterableDynProvider<SerializeMarker>.
-icu_provider::impl_dyn_provider!(FooProvider, [
-    FooV1Marker,
-], SERDE_SE);
+// Once we have ResourceProvider and IterableResourceProvider, we can apply this macro:
+icu_provider::make_exportable_provider!(FooProvider, [FooV1Marker,]);
 ```
 
 The above example is an abridged snippet of code illustrating the most important boilerplate for implementing and ICU4X data transform.

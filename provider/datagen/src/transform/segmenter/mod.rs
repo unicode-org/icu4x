@@ -710,40 +710,37 @@ impl ResourceProvider<SentenceBreakDataV1Marker> for SegmenterRuleProvider {
     }
 }
 
-icu_provider::impl_dyn_provider!(
+icu_provider::make_exportable_provider!(
     SegmenterRuleProvider,
     [
         LineBreakDataV1Marker,
         GraphemeClusterBreakDataV1Marker,
         WordBreakDataV1Marker,
         SentenceBreakDataV1Marker,
-    ],
-    SERDE_SE,
-    ITERABLE_SERDE_SE,
-    DATA_CONVERTER
+    ]
 );
 
 impl IterableResourceProvider<LineBreakDataV1Marker> for SegmenterRuleProvider {
-    fn supported_options(&self) -> Result<Box<dyn Iterator<Item = ResourceOptions>>, DataError> {
-        Ok(Box::new(core::iter::once(ResourceOptions::default())))
+    fn supported_options(&self) -> Result<Vec<ResourceOptions>, DataError> {
+        Ok(vec![Default::default()])
     }
 }
 
 impl IterableResourceProvider<GraphemeClusterBreakDataV1Marker> for SegmenterRuleProvider {
-    fn supported_options(&self) -> Result<Box<dyn Iterator<Item = ResourceOptions>>, DataError> {
-        Ok(Box::new(core::iter::once(ResourceOptions::default())))
+    fn supported_options(&self) -> Result<Vec<ResourceOptions>, DataError> {
+        Ok(vec![Default::default()])
     }
 }
 
 impl IterableResourceProvider<WordBreakDataV1Marker> for SegmenterRuleProvider {
-    fn supported_options(&self) -> Result<Box<dyn Iterator<Item = ResourceOptions>>, DataError> {
-        Ok(Box::new(core::iter::once(ResourceOptions::default())))
+    fn supported_options(&self) -> Result<Vec<ResourceOptions>, DataError> {
+        Ok(vec![Default::default()])
     }
 }
 
 impl IterableResourceProvider<SentenceBreakDataV1Marker> for SegmenterRuleProvider {
-    fn supported_options(&self) -> Result<Box<dyn Iterator<Item = ResourceOptions>>, DataError> {
-        Ok(Box::new(core::iter::once(ResourceOptions::default())))
+    fn supported_options(&self) -> Result<Vec<ResourceOptions>, DataError> {
+        Ok(vec![Default::default()])
     }
 }
 

@@ -52,7 +52,8 @@ fn main() {
 
     let converter = icu_datagen::create_datagen_provider!(SourceData::default()
         .with_cldr(icu_testdata::paths::cldr_json_root(), "full".to_string())
-        .with_uprops(icu_testdata::paths::uprops_toml_root()))
+        .with_uprops(icu_testdata::paths::uprops_toml_root())
+        .with_coll(icu_testdata::paths::coll_toml_root()))
     .filterable("icu4x-datagen locales")
     .filter_by_langid_allowlist_strict(&selected_locales);
 
@@ -70,7 +71,7 @@ fn main() {
         let mut max_net_violation = 0;
 
         for options in
-            match IterableDynProvider::<icu_provider::serde::SerializeMarker>::supported_options_for_key(
+            match IterableDynProvider::<icu_provider::datagen::ExportMarker>::supported_options_for_key(
                 &converter, key,
             ) {
                 Err(_) if key.get_path().starts_with("props/") => {

@@ -46,14 +46,14 @@ macro_rules! expand {
             impl IterableResourceProvider<$marker> for EnumeratedPropertyCodePointTrieProvider {
                 fn supported_options(
                     &self,
-                ) -> Result<Box<dyn Iterator<Item = ResourceOptions>>, DataError> {
+                ) -> Result<Vec<ResourceOptions>, DataError> {
                     self.source.get_uprops_paths()?.get_enumerated($prop_name)?;
-                    Ok(Box::new(core::iter::once(ResourceOptions::default())))
+                    Ok(vec![Default::default()])
                 }
             }
         )+
 
-        icu_provider::impl_dyn_provider!(EnumeratedPropertyCodePointTrieProvider, [$($marker),+,], SERDE_SE, ITERABLE_SERDE_SE, DATA_CONVERTER);
+        icu_provider::make_exportable_provider!(EnumeratedPropertyCodePointTrieProvider, [$($marker),+,]);
     };
 }
 

@@ -35,7 +35,7 @@
 //! # Cargo features
 //!
 //! This crate has five optional features:
-//!  -  `serde` and `serde_serialize`: Allows serializing and deserializing `zerovec`'s abstractions via [`serde`](https://docs.rs/serde)
+//!  -  `serde`: Allows serializing and deserializing `zerovec`'s abstractions via [`serde`](https://docs.rs/serde)
 //!  -   `yoke`: Enables implementations of `Yokeable` from the [`yoke`](https://docs.rs/yoke/) crate, which is also useful
 //!              in situations involving a lot of zero-copy deserialization.
 //!  - `derive`: Makes it easier to use custom types in these collections by providing the [`#[make_ule]`](crate::make_ule) and
@@ -54,8 +54,8 @@
 //! Serialize and deserialize a struct with ZeroVec and VarZeroVec with Bincode:
 //!
 //! ```
-//! # #[cfg(feature = "serde_serialize")] {
-//! use zerovec::{ZeroVec, VarZeroVec};
+//! # #[cfg(feature = "serde")] {
+//! use zerovec::{VarZeroVec, ZeroVec};
 //!
 //! // This example requires the "serde" feature
 //! #[derive(serde::Serialize, serde::Deserialize)]
@@ -73,24 +73,23 @@
 //!     chars: ZeroVec::from_slice_or_alloc(&['ö', '冇', 'म']),
 //!     strs: VarZeroVec::from(&["hello", "world"]),
 //! };
-//! let bincode_bytes = bincode::serialize(&data)
-//!     .expect("Serialization should be successful");
+//! let bincode_bytes = bincode::serialize(&data).expect("Serialization should be successful");
 //! assert_eq!(bincode_bytes.len(), 74);
 //!
-//! let deserialized: DataStruct = bincode::deserialize(&bincode_bytes)
-//!     .expect("Deserialization should be successful");
+//! let deserialized: DataStruct =
+//!     bincode::deserialize(&bincode_bytes).expect("Deserialization should be successful");
 //! assert_eq!(deserialized.nums.first(), Some(211));
 //! assert_eq!(deserialized.chars.get(1), Some('冇'));
 //! assert_eq!(deserialized.strs.get(1), Some("world"));
 //! // The deserialization will not have allocated anything
 //! assert!(matches!(deserialized.nums, ZeroVec::Borrowed(_)));
-//! # } // feature = "serde_serialize"
+//! # } // feature = "serde"
 //! ```
 //!
 //! Use custom types inside of ZeroVec:
 //!
 //! ```rust
-//! # #[cfg(all(feature = "serde_serialize", feature = "derive"))] {
+//! # #[cfg(all(feature = "serde", feature = "derive"))] {
 //! use zerovec::{ZeroVec, VarZeroVec, ZeroMap};
 //! use std::borrow::Cow;
 //! use zerovec::ule::encode_varule_to_box;
@@ -334,27 +333,43 @@ pub mod vecs {
 /// struct Date {
 ///     y: u64,
 ///     m: u8,
-///     d: u8
+///     d: u8,
 /// }
 ///
 /// #[derive(serde::Serialize, serde::Deserialize)]
 /// struct Dates<'a> {
 ///     #[serde(borrow)]
-///     dates: ZeroVec<'a, Date>   
+///     dates: ZeroVec<'a, Date>,
 /// }
 ///
-/// let dates = Dates { dates: ZeroVec::alloc_from_slice(&[Date {y: 1985, m: 9, d: 3}, Date {y: 1970, m: 2, d: 20}, Date {y: 1990, m: 6, d: 13}]) };
+/// let dates = Dates {
+///     dates: ZeroVec::alloc_from_slice(&[
+///         Date {
+///             y: 1985,
+///             m: 9,
+///             d: 3,
+///         },
+///         Date {
+///             y: 1970,
+///             m: 2,
+///             d: 20,
+///         },
+///         Date {
+///             y: 1990,
+///             m: 6,
+///             d: 13,
+///         },
+///     ]),
+/// };
 ///
-/// let bincode_bytes = bincode::serialize(&dates)
-///     .expect("Serialization should be successful");
+/// let bincode_bytes = bincode::serialize(&dates).expect("Serialization should be successful");
 ///
 /// // Will deserialize without allocations
-/// let deserialized: Dates = bincode::deserialize(&bincode_bytes)
-///     .expect("Deserialization should be successful");
+/// let deserialized: Dates =
+///     bincode::deserialize(&bincode_bytes).expect("Deserialization should be successful");
 ///
 /// assert_eq!(deserialized.dates.get(1).unwrap().y, 1970);
 /// assert_eq!(deserialized.dates.get(2).unwrap().d, 13);
-///
 /// ```
 #[cfg(feature = "derive")]
 pub use zerovec_derive::make_ule;
@@ -405,10 +420,10 @@ pub use zerovec_derive::make_ule;
 /// # Example
 ///
 /// ```rust
-/// use zerovec::{ZeroVec, VarZeroVec, ZeroMap};
 /// use std::borrow::Cow;
-/// use zerovec::ule::encode_varule_to_box;
 /// use zerofrom::ZeroFrom;
+/// use zerovec::ule::encode_varule_to_box;
+/// use zerovec::{VarZeroVec, ZeroMap, ZeroVec};
 ///
 /// // custom fixed-size ULE type for ZeroVec
 /// #[zerovec::make_ule(DateULE)]
@@ -416,7 +431,7 @@ pub use zerovec_derive::make_ule;
 /// struct Date {
 ///     y: u64,
 ///     m: u8,
-///     d: u8
+///     d: u8,
 /// }
 ///
 /// // custom variable sized VarULE type for VarZeroVec
@@ -437,34 +452,41 @@ pub use zerovec_derive::make_ule;
 ///     important_people: VarZeroVec<'a, PersonULE>,
 /// }
 ///
-///
 /// let person1 = Person {
-///     birthday: Date { y: 1990, m: 9, d: 7},
+///     birthday: Date {
+///         y: 1990,
+///         m: 9,
+///         d: 7,
+///     },
 ///     favorite_character: 'π',
-///     name: Cow::from("Kate")
+///     name: Cow::from("Kate"),
 /// };
 /// let person2 = Person {
-///     birthday: Date { y: 1960, m: 5, d: 25},
+///     birthday: Date {
+///         y: 1960,
+///         m: 5,
+///         d: 25,
+///     },
 ///     favorite_character: '冇',
-///     name: Cow::from("Jesse")
+///     name: Cow::from("Jesse"),
 /// };
 ///
 /// let important_people = VarZeroVec::from(&[person1, person2]);
 /// let data = Data { important_people };
 ///
-/// let bincode_bytes = bincode::serialize(&data)
-///     .expect("Serialization should be successful");
+/// let bincode_bytes = bincode::serialize(&data).expect("Serialization should be successful");
 ///
 /// // Will deserialize without allocations
-/// let deserialized: Data = bincode::deserialize(&bincode_bytes)
-///     .expect("Deserialization should be successful");
+/// let deserialized: Data =
+///     bincode::deserialize(&bincode_bytes).expect("Deserialization should be successful");
 ///
 /// assert_eq!(&deserialized.important_people.get(1).unwrap().name, "Jesse");
 /// assert_eq!(&deserialized.important_people.get(0).unwrap().name, "Kate");
 ///
 /// // Since VarZeroVec produces PersonULE types, it's convenient to use ZeroFrom
 /// // to recoup Person values in a zero-copy way
-/// let person_converted: Person = ZeroFrom::zero_from(deserialized.important_people.get(1).unwrap());
+/// let person_converted: Person =
+///     ZeroFrom::zero_from(deserialized.important_people.get(1).unwrap());
 /// assert_eq!(person_converted.name, "Jesse");
 /// assert_eq!(person_converted.birthday.y, 1960);
 /// ```

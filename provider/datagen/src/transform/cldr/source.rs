@@ -2,9 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::error::DatagenError;
 use elsa::sync::FrozenMap;
 use icu_locid::LanguageIdentifier;
+use icu_provider::DataError;
 use std::any::Any;
 use std::fmt::Debug;
 use std::fs;
@@ -85,7 +85,7 @@ impl CldrPaths {
 pub(crate) struct CldrDirNoLang<'a>(PathBuf, &'a FrozenMap<PathBuf, Box<dyn Any + Send + Sync>>);
 
 impl<'a> CldrDirNoLang<'a> {
-    pub(crate) fn read_and_parse<S>(&self, file_name: &str) -> Result<&'a S, DatagenError>
+    pub(crate) fn read_and_parse<S>(&self, file_name: &str) -> Result<&'a S, DataError>
     where
         for<'de> S: serde::Deserialize<'de> + 'static + Send + Sync,
     {
@@ -100,19 +100,19 @@ impl<'a> CldrDirLang<'a> {
         &self,
         lang: &LanguageIdentifier,
         file_name: &str,
-    ) -> Result<&'a S, DatagenError>
+    ) -> Result<&'a S, DataError>
     where
         for<'de> S: serde::Deserialize<'de> + 'static + Send + Sync,
     {
         read_and_parse_json(&self.0.join(lang.to_string()).join(file_name), self.1)
     }
 
-    pub(crate) fn list_langs(
-        &self,
-    ) -> Result<impl Iterator<Item = LanguageIdentifier>, DatagenError> {
+    pub(crate) fn list_langs(&self) -> Result<impl Iterator<Item = LanguageIdentifier>, DataError> {
         let mut result = vec![];
-        for entry in fs::read_dir(&self.0).map_err(|e| (e, self.0.clone()))? {
-            let entry = entry.map_err(|e| (e, self.0.clone()))?;
+        for entry in
+            fs::read_dir(&self.0).map_err(|e| DataError::from(e).with_path_context(&self.0))?
+        {
+            let entry = entry.map_err(|e| DataError::from(e).with_path_context(&self.0.clone()))?;
             let path = entry.path();
             result.push(path);
         }
@@ -125,19 +125,20 @@ impl<'a> CldrDirLang<'a> {
 fn read_and_parse_json<'a, S>(
     path: &Path,
     cache: &'a FrozenMap<PathBuf, Box<dyn Any + Send + Sync>>,
-) -> Result<&'a S, DatagenError>
+) -> Result<&'a S, DataError>
 where
     for<'de> S: serde::Deserialize<'de> + 'static + Send + Sync,
 {
     if cache.get(path).is_none() {
         log::trace!("Reading: {:?}", path);
-        let file = File::open(path).map_err(|e| (e, path))?;
-        let file: S = serde_json::from_reader(BufReader::new(file)).map_err(|e| (e, path))?;
+        let file = File::open(path).map_err(|e| DataError::from(e).with_path_context(&path))?;
+        let file: S = serde_json::from_reader(BufReader::new(file))
+            .map_err(|e| DataError::from(e).with_path_context(&path))?;
         cache.insert(path.to_path_buf(), Box::new(file));
     }
     cache
         .get(path)
         .unwrap()
         .downcast_ref::<S>()
-        .ok_or_else(|| DatagenError::Custom("Any error".to_string(), None))
+        .ok_or_else(|| DataError::for_type::<S>())
 }

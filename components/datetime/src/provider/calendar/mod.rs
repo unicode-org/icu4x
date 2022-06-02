@@ -15,7 +15,11 @@ pub use symbols::*;
 
 #[icu_provider::data_struct(DatePatternsV1Marker = "datetime/lengths@1")]
 #[derive(Debug, PartialEq, Clone, Default)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize))]
+#[cfg_attr(
+    feature = "datagen",
+    derive(serde::Serialize, crabbake::Bakeable),
+    crabbake(path = icu_datetime::provider::calendar),
+)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct DatePatternsV1<'data> {
     #[cfg_attr(feature = "serde", serde(borrow))]
@@ -47,7 +51,11 @@ pub mod patterns {
     use icu_provider::{yoke, zerofrom};
 
     #[derive(Debug, PartialEq, Clone, Default, yoke::Yokeable, zerofrom::ZeroFrom)]
-    #[cfg_attr(feature = "datagen", derive(serde::Serialize))]
+    #[cfg_attr(
+        feature = "datagen",
+        derive(serde::Serialize, crabbake::Bakeable),
+        crabbake(path = icu_datetime::provider::calendar::patterns),
+    )]
     #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
     pub struct LengthPatternsV1<'data> {
         #[cfg_attr(feature = "serde", serde(borrow))]
@@ -61,7 +69,11 @@ pub mod patterns {
     }
 
     #[derive(Debug, PartialEq, Clone, Default, yoke::Yokeable, zerofrom::ZeroFrom)]
-    #[cfg_attr(feature = "datagen", derive(serde::Serialize))]
+    #[cfg_attr(
+        feature = "datagen",
+        derive(serde::Serialize, crabbake::Bakeable),
+        crabbake(path = icu_datetime::provider::calendar::patterns),
+    )]
     #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
     pub struct LengthPatternPluralsV1<'data> {
         #[cfg_attr(feature = "serde", serde(borrow))]
@@ -75,7 +87,11 @@ pub mod patterns {
     }
 
     #[derive(Debug, PartialEq, Clone, Default, yoke::Yokeable, zerofrom::ZeroFrom)]
-    #[cfg_attr(feature = "datagen", derive(serde::Serialize))]
+    #[cfg_attr(
+        feature = "datagen",
+        derive(serde::Serialize, crabbake::Bakeable),
+        crabbake(path = icu_datetime::provider::calendar::patterns),
+    )]
     #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
     pub struct GenericLengthPatternsV1<'data> {
         #[cfg_attr(feature = "serde", serde(borrow))]

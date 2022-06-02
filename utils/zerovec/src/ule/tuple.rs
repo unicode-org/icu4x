@@ -15,11 +15,10 @@
 //! use zerovec::ZeroVec;
 //!
 //! // ZeroVec of tuples!
-//! let zerovec: ZeroVec<(u32, char)> = [
-//!     (1, 'a'),
-//!     (1234901, '啊'),
-//!     (100, 'अ'),
-//! ].iter().copied().collect();
+//! let zerovec: ZeroVec<(u32, char)> = [(1, 'a'), (1234901, '啊'), (100, 'अ')]
+//!     .iter()
+//!     .copied()
+//!     .collect();
 //!
 //! assert_eq!(zerovec.get(1), Some((1234901, '啊')));
 //! ```

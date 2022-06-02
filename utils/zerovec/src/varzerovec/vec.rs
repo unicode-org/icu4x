@@ -49,17 +49,18 @@ use super::*;
 /// #[derive(serde::Serialize, serde::Deserialize)]
 /// struct Data<'a> {
 ///     #[serde(borrow)]
-///     strings: VarZeroVec<'a, str>
+///     strings: VarZeroVec<'a, str>,
 /// }
 ///
-/// let data = Data { strings: VarZeroVec::from(&strings) };
+/// let data = Data {
+///     strings: VarZeroVec::from(&strings),
+/// };
 ///
-/// let bincode_bytes = bincode::serialize(&data)
-///     .expect("Serialization should be successful");
+/// let bincode_bytes = bincode::serialize(&data).expect("Serialization should be successful");
 ///
 /// // Will deserialize without allocations
-/// let deserialized: Data = bincode::deserialize(&bincode_bytes)
-///     .expect("Deserialization should be successful");
+/// let deserialized: Data =
+///     bincode::deserialize(&bincode_bytes).expect("Deserialization should be successful");
 ///
 /// assert_eq!(deserialized.strings.get(2), Some("文"));
 /// assert_eq!(deserialized.strings, &*strings);
@@ -71,10 +72,10 @@ use super::*;
 /// ```rust
 /// # use std::str::Utf8Error;
 /// # use zerovec::ule::ZeroVecError;
-/// use zerovec::VarZeroVec;
-/// use zerovec::ZeroVec;
-/// use zerovec::ZeroSlice;
 /// use zerovec::ule::*;
+/// use zerovec::VarZeroVec;
+/// use zerovec::ZeroSlice;
+/// use zerovec::ZeroVec;
 ///
 /// // The structured list correspond to the list of integers.
 /// let numbers: &[&[u32]] = &[
@@ -87,16 +88,17 @@ use super::*;
 /// #[derive(serde::Serialize, serde::Deserialize)]
 /// struct Data<'a> {
 ///     #[serde(borrow)]
-///     vecs: VarZeroVec<'a, ZeroSlice<u32>>
+///     vecs: VarZeroVec<'a, ZeroSlice<u32>>,
 /// }
 ///
-/// let data = Data { vecs: VarZeroVec::from(numbers) };
+/// let data = Data {
+///     vecs: VarZeroVec::from(numbers),
+/// };
 ///
-/// let bincode_bytes = bincode::serialize(&data)
-///     .expect("Serialization should be successful");
+/// let bincode_bytes = bincode::serialize(&data).expect("Serialization should be successful");
 ///
-/// let deserialized: Data = bincode::deserialize(&bincode_bytes)
-///     .expect("Deserialization should be successful");
+/// let deserialized: Data =
+///     bincode::deserialize(&bincode_bytes).expect("Deserialization should be successful");
 ///
 /// assert_eq!(deserialized.vecs[0].get(1).unwrap(), 25);
 /// assert_eq!(deserialized.vecs[1], *numbers[1]);
@@ -147,8 +149,8 @@ pub enum VarZeroVec<'a, T: ?Sized> {
     /// use zerovec::VarZeroVec;
     ///
     /// let bytes = &[
-    ///     4, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0,  3, 0, 0, 0,
-    ///     6, 0, 0, 0, 119, 207, 137, 230, 150, 135, 240, 145, 132, 131,
+    ///     4, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 3, 0, 0, 0, 6, 0, 0, 0, 119, 207, 137, 230, 150, 135,
+    ///     240, 145, 132, 131,
     /// ];
     ///
     /// let vzv: VarZeroVec<str> = VarZeroVec::parse_byte_slice(bytes).unwrap();
@@ -254,6 +256,15 @@ impl<'a, T: VarULE + ?Sized> VarZeroVec<'a, T> {
         Ok(VarZeroVec::Borrowed(borrowed))
     }
 
+    /// Uses a `&[u8]` buffer as a `VarZeroVec<T>` without any verification.
+    ///
+    /// # Safety
+    ///
+    /// `bytes` need to be an output from [`VarZeroSlice::as_bytes()`].
+    pub const unsafe fn from_bytes_unchecked(bytes: &'a [u8]) -> Self {
+        Self::Borrowed(core::mem::transmute(bytes))
+    }
+
     /// Convert this into a mutable vector of the owned `T` type, cloning if necessary.
     ///
     ///
@@ -348,7 +359,6 @@ impl<'a, T: VarULE + ?Sized> VarZeroVec<'a, T> {
     ///
     /// # Ok::<(), ZeroVecError>(())
     /// ```
-    ///
     pub fn into_bytes(self) -> Vec<u8> {
         match self {
             VarZeroVec::Owned(vec) => vec.into_bytes(),

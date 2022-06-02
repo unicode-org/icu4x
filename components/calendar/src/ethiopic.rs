@@ -5,19 +5,17 @@
 //! This module contains types and implementations for the Ethiopic calendar.
 //!
 //! ```rust
-//! use icu::calendar::{Date, DateTime,
-//!                     types::IsoHour, types::IsoMinute, types::IsoSecond,
-//!                     ethiopic::Ethiopic};
+//! use icu::calendar::{ethiopic::Ethiopic, Date, DateTime};
 //!
 //! // `Date` type
 //! let date_iso = Date::new_iso_date_from_integers(1970, 1, 2)
 //!     .expect("Failed to initialize ISO Date instance.");
-//! let date_ethiopic = Date::new_from_iso(date_iso, Ethiopic);
+//! let date_ethiopic = Date::new_from_iso(date_iso, Ethiopic::new());
 //!
 //! // `DateTime` type
 //! let datetime_iso = DateTime::new_iso_datetime_from_integers(1970, 1, 2, 13, 1, 0)
 //!     .expect("Failed to initialize ISO DateTime instance.");
-//! let datetime_ethiopic = DateTime::new_from_iso(datetime_iso, Ethiopic);
+//! let datetime_ethiopic = DateTime::new_from_iso(datetime_iso, Ethiopic::new());
 //!
 //! // `Date` checks
 //! assert_eq!(date_ethiopic.year().number, 1962);
@@ -28,9 +26,9 @@
 //! assert_eq!(datetime_ethiopic.date.year().number, 1962);
 //! assert_eq!(datetime_ethiopic.date.month().number, 4);
 //! assert_eq!(datetime_ethiopic.date.day_of_month().0, 24);
-//! assert_eq!(datetime_ethiopic.time.hour, IsoHour::new_unchecked(13));
-//! assert_eq!(datetime_ethiopic.time.minute, IsoMinute::new_unchecked(1));
-//! assert_eq!(datetime_ethiopic.time.second, IsoSecond::new_unchecked(0));
+//! assert_eq!(datetime_ethiopic.time.hour.number(), 13);
+//! assert_eq!(datetime_ethiopic.time.minute.number(), 1);
+//! assert_eq!(datetime_ethiopic.time.second.number(), 0);
 //! ```
 
 use crate::coptic::Coptic;
@@ -45,17 +43,10 @@ use tinystr::tinystr;
 
 // The Ethiopic Calendar
 #[derive(Copy, Clone, Debug, Hash, Default, Eq, PartialEq)]
-#[allow(clippy::exhaustive_structs)] // this type is stable
-pub struct Ethiopic;
+pub struct Ethiopic(pub(crate) bool);
 
 #[derive(Copy, Clone, Debug, Hash, Eq, PartialEq)]
-pub struct EthiopicDateInner(ArithmeticDate<Ethiopic>, bool);
-
-impl EthiopicDateInner {
-    pub fn set_amete_alem(&mut self, amete_alem: bool) {
-        self.1 = amete_alem;
-    }
-}
+pub struct EthiopicDateInner(ArithmeticDate<Ethiopic>);
 
 impl CalendarArithmetic for Ethiopic {
     fn month_days(year: i32, month: u8) -> u8 {
@@ -106,7 +97,7 @@ impl Calendar for Ethiopic {
     }
 
     fn day_of_week(&self, date: &Self::DateInner) -> types::IsoWeekday {
-        Iso.day_of_week(Ethiopic.date_to_iso(date).inner())
+        Iso.day_of_week(self.date_to_iso(date).inner())
     }
 
     fn offset_date(&self, date: &mut Self::DateInner, offset: DateDuration<Self>) {
@@ -126,7 +117,7 @@ impl Calendar for Ethiopic {
     }
 
     fn year(&self, date: &Self::DateInner) -> types::Year {
-        if date.1 {
+        if self.0 {
             types::Year {
                 era: types::Era(tinystr!(16, "mundi")),
                 number: date.0.year,
@@ -174,9 +165,22 @@ impl Calendar for Ethiopic {
 }
 
 impl Ethiopic {
-    /// Construct a new Ethiopic Calendar
+    /// Construct a new Ethiopic Calendar for the Amete Mihret era naming scheme
     pub fn new() -> Self {
-        Self
+        Self(false)
+    }
+    /// Construct a new Ethiopic Calendar with a value specifying whether or not it is Amete Alem
+    pub fn new_with_amete_alem(amete_alem: bool) -> Self {
+        Self(amete_alem)
+    }
+    /// Set whether or not this uses the Amete Alem era scheme
+    pub fn set_amete_alem(&mut self, value: bool) {
+        self.0 = value
+    }
+
+    /// Returns whether this has the Amete Alem era
+    pub fn is_amete_alem(&self) -> bool {
+        self.0
     }
 
     // "Fixed" is a day count representation of calendars staring from Jan 1st of year 1 of the Georgian Calendar.
@@ -218,8 +222,8 @@ impl Date<Ethiopic> {
     /// ```rust
     /// use icu::calendar::Date;
     ///
-    /// let date_ethiopic = Date::new_ethiopic_date(2014, 8, 25)
-    ///     .expect("Failed to initialize Ethopic Date instance.");
+    /// let date_ethiopic =
+    ///     Date::new_ethiopic_date(2014, 8, 25).expect("Failed to initialize Ethopic Date instance.");
     ///
     /// assert_eq!(date_ethiopic.year().number, 2014);
     /// assert_eq!(date_ethiopic.month().number, 8);
@@ -242,11 +246,7 @@ impl Date<Ethiopic> {
             return Err(DateTimeError::OutOfRange);
         }
 
-        Ok(Date::from_raw(EthiopicDateInner(inner, false), Ethiopic))
-    }
-
-    pub fn set_amete_alem(&mut self, value: bool) {
-        self.inner.set_amete_alem(value);
+        Ok(Date::from_raw(EthiopicDateInner(inner), Ethiopic::new()))
     }
 }
 
@@ -254,20 +254,17 @@ impl DateTime<Ethiopic> {
     /// Construct a new Ethiopic datetime from integers.
     ///
     /// ```rust
-    /// use icu::calendar::{DateTime,
-    ///                     types::IsoHour,
-    ///                     types::IsoMinute,
-    ///                     types::IsoSecond};
+    /// use icu::calendar::DateTime;
     ///
-    /// let datetime_ethiopic = DateTime::new_ethiopic_datetime(2014, 8, 25, 13, 1, 0, 0)
+    /// let datetime_ethiopic = DateTime::new_ethiopic_datetime(2014, 8, 25, 13, 1, 0)
     ///     .expect("Failed to initialize Ethiopic DateTime instance.");
     ///
     /// assert_eq!(datetime_ethiopic.date.year().number, 2014);
     /// assert_eq!(datetime_ethiopic.date.month().number, 8);
     /// assert_eq!(datetime_ethiopic.date.day_of_month().0, 25);
-    /// assert_eq!(datetime_ethiopic.time.hour, IsoHour::new_unchecked(13));
-    /// assert_eq!(datetime_ethiopic.time.minute, IsoMinute::new_unchecked(1));
-    /// assert_eq!(datetime_ethiopic.time.second, IsoSecond::new_unchecked(0));
+    /// assert_eq!(datetime_ethiopic.time.hour.number(), 13);
+    /// assert_eq!(datetime_ethiopic.time.minute.number(), 1);
+    /// assert_eq!(datetime_ethiopic.time.second.number(), 0);
     /// ```
     pub fn new_ethiopic_datetime(
         year: i32,
@@ -276,16 +273,11 @@ impl DateTime<Ethiopic> {
         hour: u8,
         minute: u8,
         second: u8,
-        fraction: u32,
     ) -> Result<DateTime<Ethiopic>, DateTimeError> {
         Ok(DateTime {
             date: Date::new_ethiopic_date(year, month, day)?,
-            time: types::Time::try_new(hour, minute, second, fraction)?,
+            time: types::Time::try_new(hour, minute, second, 0)?,
         })
-    }
-
-    pub fn set_amete_alem(&mut self, value: bool) {
-        self.date.inner.set_amete_alem(value);
     }
 }
 
@@ -297,7 +289,7 @@ mod test {
     fn test_leap_year() {
         // 11th September 2023 in gregorian is 6/13/2015 in ethiopic
         let iso_date = Date::new_iso_date_from_integers(2023, 9, 11).unwrap();
-        let ethiopic_date = Ethiopic.date_from_iso(iso_date);
+        let ethiopic_date = Ethiopic::new().date_from_iso(iso_date);
         assert_eq!(ethiopic_date.0.year, 2015);
         assert_eq!(ethiopic_date.0.month, 13);
         assert_eq!(ethiopic_date.0.day, 6);
@@ -306,7 +298,7 @@ mod test {
     #[test]
     fn test_iso_to_ethiopic_conversion_and_back() {
         let iso_date = Date::new_iso_date_from_integers(1970, 1, 2).unwrap();
-        let date_ethiopic = Date::new_from_iso(iso_date, Ethiopic);
+        let date_ethiopic = Date::new_from_iso(iso_date, Ethiopic::new());
 
         assert_eq!(date_ethiopic.inner.0.year, 1962);
         assert_eq!(date_ethiopic.inner.0.month, 4);
