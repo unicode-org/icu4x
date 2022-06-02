@@ -9,9 +9,11 @@ use zerovec::ZeroVec;
 
 use crate::transform::reader::read_path_to_string;
 use crate::transform::uprops::decompositions_serde::DecompositionData;
+use crate::transform::uprops::decompositions_serde::DecompositionSupplement;
 use crate::transform::uprops::decompositions_serde::DecompositionTables;
 
 use icu_normalizer::provider::DecompositionDataV1;
+use icu_normalizer::provider::DecompositionSupplementV1;
 use icu_normalizer::provider::DecompositionTablesV1;
 use icu_provider::datagen::IterableResourceProvider;
 use icu_provider::prelude::*;
@@ -105,6 +107,30 @@ macro_rules! normalization_data_provider {
     };
 }
 
+macro_rules! normalization_supplement_provider {
+    ($marker:ident, $provider:ident, $file_name:literal) => {
+        normalization_provider!(
+            $marker,
+            $provider,
+            DecompositionSupplement,
+            $file_name,
+            {
+                let trie = CodePointTrie::<u32>::try_from(&toml_data.trie)
+                    .map_err(|e| DataError::custom("trie conversion").with_display_context(&e))?;
+
+                Ok(DataResponse {
+                    metadata: DataResponseMetadata::default(),
+                    payload: Some(DataPayload::from_owned(DecompositionSupplementV1 {
+                        trie,
+                        flags: toml_data.flags,
+                    })),
+                })
+            },
+            toml_data
+        );
+    };
+}
+
 macro_rules! normalization_tables_provider {
     ($marker:ident, $provider:ident, $file_name:literal) => {
         normalization_provider!(
@@ -139,15 +165,15 @@ normalization_data_provider!(
     "nfd.toml"
 );
 
-normalization_data_provider!(
-    CompatibilityDecompositionDataV1Marker,
-    CompatibilityDecompositionDataProvider,
+normalization_supplement_provider!(
+    CompatibilityDecompositionSupplementV1Marker,
+    CompatibilityDecompositionSupplementProvider,
     "nfkd.toml"
 );
 
-normalization_data_provider!(
-    Uts46DecompositionDataV1Marker,
-    Uts46DecompositionDataProvider,
+normalization_supplement_provider!(
+    Uts46DecompositionSupplementV1Marker,
+    Uts46DecompositionSupplementProvider,
     "uts46d.toml"
 );
 

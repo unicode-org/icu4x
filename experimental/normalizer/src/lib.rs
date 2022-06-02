@@ -43,58 +43,6 @@
 //!
 //! Hopefully Unicode never adds more decomposing non-starters, but if it does, a code update
 //! is needed instead of a mere data update.
-//!
-//! # Data size considerations
-//!
-//! The normalizer supports three flavors: NFD, NFKD, and the decomposed counterpart of
-//! NFKC_CaseFold without ignoring default ignorables. Logically NFKD adds data on top of NFD
-//! and case fold adds data on top of NFKD (some of the details may be a bit more complicated).
-//!
-//! Currently, the complex decomposition expansion data is consolidated such that there is one
-//! data struct that contains the expansions needed by NFD and there's another data instance
-//! that contains the expansions for both NFKD and fusion of case fold and NFKD.
-//!
-//! However, similar consolidation hasn't been applied to the trie or to the set of characters
-//! whose decompositions starts with a non-starter. These are tradeoffs between data size and
-//! run-time branchiness. It is unclear if the present situation is the right call.
-//!
-//! As of Unicode 14, the set of characters whose decompositions starts with a non-starter
-//! is almost the same all three cases. NFKD adds two characters to the set compared to NFD:
-//! the half-width kana voicing marks. The case fold variant then removes one character
-//! compared to regular NFKD: U+0345 COMBINING GREEK YPOGEGRAMMENI.
-//!
-//! There are three alternatives to the current solution of having three pre-computed sets.
-//!
-//! First, we could add explicit checks for the chosen normalization form and these three
-//! characters to the set lookup, which would add branches to each set lookup and would
-//! hard-code the assumption that only these three characters may differ between the
-//! normalization forms. Intuitively, it seems like a reasonable guess that these three
-//! characters are all quite unusual and it's unlikely that Unicode would add more
-//! characters that would make the sets differ in the future.
-//!
-//! Second, we could store two small sets: additions and removals relative to the base set.
-//! However, using these would involve a heap allocation for the computed actual set.
-//! In a multi-process architecture when using crabbake, having each process carry its
-//! own heap allocation for the lifetime of the process would be worse than making the
-//! static data larger.
-//!
-//! The third option would be to make the run-time lookup from three sets: the base,
-//! additions, and removals. Since the additions and removals would be empty sets for NFD,
-//! chances are that this would be less branchy in the NFD case than the first option,
-//! especially if we made `UnicodeSet` be able to be shallow-copied in a way that borrows
-//! its `ZeroVec` instead of making an owning copy of of the wrapped `ZeroVec`.
-//!
-//! As for the trie, the alternative would be to have two levels of tries: supplementary
-//! and base where base would be the NFD trie and the default (zero) value from the
-//! supplementary trie would mean falling back to the base trie.
-//!
-//! Compared to the current expansion supplement arrangement, this would differ in terms
-//! of run-time cost. In the NFD case, the expansion supplement adds one branch for the
-//! case where a character has a non-self supplementary-plane decomposition, which is
-//! rare. In contrast, having the ability to make a lookup for supplementary trie would
-//! mean having to branch on the presence of the supplementary trie for each starter.
-//! For the normalization forms that would use the supplementary trie, each starter
-//! would go through two full trie lookups instead of one.
 
 extern crate alloc;
 
@@ -104,10 +52,10 @@ pub mod u24;
 
 use crate::error::NormalizerError;
 use crate::provider::CanonicalDecompositionDataV1Marker;
-use crate::provider::CompatibilityDecompositionDataV1Marker;
+use crate::provider::CompatibilityDecompositionSupplementV1Marker;
 use crate::provider::DecompositionDataV1;
 #[cfg(test)]
-use crate::provider::Uts46DecompositionDataV1Marker;
+use crate::provider::Uts46DecompositionSupplementV1Marker;
 use alloc::string::String;
 use alloc::vec::Vec;
 use core::char::{decode_utf16, DecodeUtf16Error, REPLACEMENT_CHARACTER};
@@ -120,6 +68,7 @@ use icu_provider::ResourceProvider;
 use icu_uniset::UnicodeSet;
 use provider::CanonicalDecompositionTablesV1Marker;
 use provider::CompatibilityDecompositionTablesV1Marker;
+use provider::DecompositionSupplementV1;
 use provider::DecompositionTablesV1;
 use smallvec::SmallVec;
 use u24::EMPTY_U24;
@@ -129,20 +78,18 @@ use zerofrom::ZeroFrom;
 use zerovec::ule::AsULE;
 use zerovec::ZeroSlice;
 
-enum PayloadHolder {
-    Canonical(DataPayload<CanonicalDecompositionDataV1Marker>),
-    Compatibility(DataPayload<CompatibilityDecompositionDataV1Marker>),
+enum SupplementPayloadHolder {
+    Compatibility(DataPayload<CompatibilityDecompositionSupplementV1Marker>),
     #[cfg(test)]
-    Uts46(DataPayload<Uts46DecompositionDataV1Marker>),
+    Uts46(DataPayload<Uts46DecompositionSupplementV1Marker>),
 }
 
-impl PayloadHolder {
-    fn get(&self) -> &DecompositionDataV1 {
+impl SupplementPayloadHolder {
+    fn get(&self) -> &DecompositionSupplementV1 {
         match self {
-            PayloadHolder::Canonical(d) => d.get(),
-            PayloadHolder::Compatibility(d) => d.get(),
+            SupplementPayloadHolder::Compatibility(d) => d.get(),
             #[cfg(test)]
-            PayloadHolder::Uts46(d) => d.get(),
+            SupplementPayloadHolder::Uts46(d) => d.get(),
         }
     }
 }
@@ -319,12 +266,16 @@ where
     buffer_pos: usize,
     pending_unnormalized_starter: Option<char>, // None at end of stream
     trie: &'data CodePointTrie<'data, u32>,
+    supplementary_trie: Option<&'data CodePointTrie<'data, u32>>,
     decomposition_starts_with_non_starter: UnicodeSet<'data>,
     scalars16: &'data ZeroSlice<u16>,
     scalars24: &'data ZeroSlice<U24>,
     supplementary_scalars16: &'data ZeroSlice<u16>,
     supplementary_scalars24: &'data ZeroSlice<U24>,
     ccc: &'data CodePointTrie<'data, CanonicalCombiningClass>,
+    half_width_voicing_marks_become_non_starters: bool,
+    iota_subscript_becomes_starter: bool,
+    has_starter_exceptions: bool,
 }
 
 impl<'data, I> Decomposition<'data, I>
@@ -332,7 +283,8 @@ where
     I: Iterator<Item = char>,
 {
     /// Constructs a decomposing iterator adapter from a delegate
-    /// iterator and references to the necessary data.
+    /// iterator and references to the necessary data, without
+    /// supplementary data.
     ///
     /// Use `DecomposingNormalizer::normalize_iter()` instead unless
     /// there's a good reason to use this constructor directly.
@@ -340,9 +292,34 @@ where
         delegate: I,
         decompositions: &'data DecompositionDataV1,
         tables: &'data DecompositionTablesV1,
+        ccc: &'data CodePointTrie<'data, CanonicalCombiningClass>,
+    ) -> Self {
+        Self::new_with_supplements(delegate, decompositions, None, tables, None, ccc)
+    }
+
+    /// Constructs a decomposing iterator adapter from a delegate
+    /// iterator and references to the necessary data, including
+    /// supplementary data.
+    ///
+    /// Use `DecomposingNormalizer::normalize_iter()` instead unless
+    /// there's a good reason to use this constructor directly.
+    pub fn new_with_supplements(
+        delegate: I,
+        decompositions: &'data DecompositionDataV1,
+        supplementary_decompositions: Option<&'data DecompositionSupplementV1>,
+        tables: &'data DecompositionTablesV1,
         supplementary_tables: Option<&'data DecompositionTablesV1>,
         ccc: &'data CodePointTrie<'data, CanonicalCombiningClass>,
     ) -> Self {
+        let (half_width_voicing_marks_become_non_starters, iota_subscript_becomes_starter) =
+            if let Some(supplementary) = supplementary_decompositions {
+                (
+                    supplementary.half_width_voicing_marks_become_non_starters(),
+                    supplementary.iota_subscript_becomes_starter(),
+                )
+            } else {
+                (false, false)
+            };
         let mut ret = Decomposition::<I> {
             delegate,
             buffer: SmallVec::new(), // Normalized
@@ -351,6 +328,7 @@ where
             // the real stream starts with a non-starter.
             pending_unnormalized_starter: Some('\u{FFFF}'),
             trie: &decompositions.trie,
+            supplementary_trie: supplementary_decompositions.map(|s| &s.trie),
             decomposition_starts_with_non_starter: UnicodeSet::zero_from(
                 &decompositions.decomposition_starts_with_non_starter,
             ),
@@ -367,9 +345,26 @@ where
                 EMPTY_U24
             },
             ccc,
+            half_width_voicing_marks_become_non_starters,
+            iota_subscript_becomes_starter,
+            has_starter_exceptions: half_width_voicing_marks_become_non_starters
+                || iota_subscript_becomes_starter,
         };
         let _ = ret.next(); // Remove the U+FFFF placeholder
         ret
+    }
+
+    #[inline(always)]
+    fn decomposition_starts_with_non_starter(&self, c: char) -> bool {
+        if self.has_starter_exceptions {
+            if u32::from(c) & !1 == 0xFF9E {
+                return self.half_width_voicing_marks_become_non_starters;
+            }
+            if c == '\u{0345}' {
+                return !self.iota_subscript_becomes_starter;
+            }
+        }
+        self.decomposition_starts_with_non_starter.contains(c)
     }
 
     fn push_decomposition16(
@@ -393,7 +388,7 @@ where
                 let ch = char_from_u16(u);
                 self.buffer.push(CharacterAndClass::new(ch));
                 i += 1;
-                if !self.decomposition_starts_with_non_starter.contains(ch) {
+                if !self.decomposition_starts_with_non_starter(ch) {
                     combining_start = i;
                 }
             }
@@ -422,7 +417,7 @@ where
                 let ch = char_from_u24(u);
                 self.buffer.push(CharacterAndClass::new(ch));
                 i += 1;
-                if !self.decomposition_starts_with_non_starter.contains(ch) {
+                if !self.decomposition_starts_with_non_starter(ch) {
                     combining_start = i;
                 }
             }
@@ -452,7 +447,19 @@ where
         let (starter, combining_start) = {
             let hangul_offset = u32::from(c).wrapping_sub(HANGUL_S_BASE); // SIndex in the spec
             if hangul_offset >= HANGUL_S_COUNT {
-                let decomposition = self.trie.get(u32::from(c));
+                let mut decomposition;
+                // The loop is only broken out of as goto forward
+                #[allow(clippy::never_loop)]
+                loop {
+                    if let Some(supplementary) = self.supplementary_trie {
+                        decomposition = supplementary.get(u32::from(c));
+                        if decomposition != 0 {
+                            break;
+                        }
+                    }
+                    decomposition = self.trie.get(u32::from(c));
+                    break;
+                }
                 if decomposition == 0 {
                     // The character is its own decomposition
                     (c, 0)
@@ -554,8 +561,10 @@ where
             }
         };
         debug_assert_eq!(self.pending_unnormalized_starter, None);
-        for ch in self.delegate.by_ref() {
-            if self.decomposition_starts_with_non_starter.contains(ch) {
+        // Not a `for` loop to avoid holding a mutable reference to `self` across
+        // the loop body.
+        while let Some(ch) = self.delegate.next() {
+            if self.decomposition_starts_with_non_starter(ch) {
                 if !(in_inclusive_range(ch, '\u{0340}', '\u{0F81}')
                     || (u32::from(ch) & !1 == 0xFF9E))
                 {
@@ -632,7 +641,8 @@ where
 
 /// A normalizer for performing decomposing normalization.
 pub struct DecomposingNormalizer {
-    decompositions: PayloadHolder,
+    decompositions: DataPayload<CanonicalDecompositionDataV1Marker>,
+    supplementary_decompositions: Option<SupplementPayloadHolder>,
     tables: DataPayload<CanonicalDecompositionTablesV1Marker>,
     supplementary_tables: Option<DataPayload<CompatibilityDecompositionTablesV1Marker>>,
     ccc: DataPayload<CanonicalCombiningClassV1Marker>,
@@ -668,7 +678,8 @@ impl DecomposingNormalizer {
             icu_properties::maps::get_canonical_combining_class(data_provider)?;
 
         Ok(DecomposingNormalizer {
-            decompositions: PayloadHolder::Canonical(decompositions),
+            decompositions,
+            supplementary_decompositions: None,
             tables,
             supplementary_tables: None,
             ccc,
@@ -678,13 +689,19 @@ impl DecomposingNormalizer {
     /// NFKD constructor.
     pub fn try_new_nfkd<D>(data_provider: &D) -> Result<Self, NormalizerError>
     where
-        D: ResourceProvider<CompatibilityDecompositionDataV1Marker>
+        D: ResourceProvider<CanonicalDecompositionDataV1Marker>
+            + ResourceProvider<CompatibilityDecompositionSupplementV1Marker>
             + ResourceProvider<CanonicalDecompositionTablesV1Marker>
             + ResourceProvider<CompatibilityDecompositionTablesV1Marker>
             + ResourceProvider<icu_properties::provider::CanonicalCombiningClassV1Marker>
             + ?Sized,
     {
-        let decompositions: DataPayload<CompatibilityDecompositionDataV1Marker> = data_provider
+        let decompositions: DataPayload<CanonicalDecompositionDataV1Marker> = data_provider
+            .load_resource(&DataRequest::default())?
+            .take_payload()?;
+        let supplementary_decompositions: DataPayload<
+            CompatibilityDecompositionSupplementV1Marker,
+        > = data_provider
             .load_resource(&DataRequest::default())?
             .take_payload()?;
         let tables: DataPayload<CanonicalDecompositionTablesV1Marker> = data_provider
@@ -714,7 +731,10 @@ impl DecomposingNormalizer {
             icu_properties::maps::get_canonical_combining_class(data_provider)?;
 
         Ok(DecomposingNormalizer {
-            decompositions: PayloadHolder::Compatibility(decompositions),
+            decompositions,
+            supplementary_decompositions: Some(SupplementPayloadHolder::Compatibility(
+                supplementary_decompositions,
+            )),
             tables,
             supplementary_tables: Some(supplementary_tables),
             ccc,
@@ -746,16 +766,21 @@ impl DecomposingNormalizer {
         data_provider: &D,
     ) -> Result<Self, NormalizerError>
     where
-        D: ResourceProvider<Uts46DecompositionDataV1Marker>
+        D: ResourceProvider<CanonicalDecompositionDataV1Marker>
+            + ResourceProvider<Uts46DecompositionSupplementV1Marker>
             + ResourceProvider<CanonicalDecompositionTablesV1Marker>
             + ResourceProvider<CompatibilityDecompositionTablesV1Marker>
             // UTS 46 tables merged into CompatibilityDecompositionTablesV1Marker
             + ResourceProvider<icu_properties::provider::CanonicalCombiningClassV1Marker>
             + ?Sized,
     {
-        let decompositions: DataPayload<Uts46DecompositionDataV1Marker> = data_provider
+        let decompositions: DataPayload<CanonicalDecompositionDataV1Marker> = data_provider
             .load_resource(&DataRequest::default())?
             .take_payload()?;
+        let supplementary_decompositions: DataPayload<Uts46DecompositionSupplementV1Marker> =
+            data_provider
+                .load_resource(&DataRequest::default())?
+                .take_payload()?;
         let tables: DataPayload<CanonicalDecompositionTablesV1Marker> = data_provider
             .load_resource(&DataRequest::default())?
             .take_payload()?;
@@ -783,7 +808,10 @@ impl DecomposingNormalizer {
             icu_properties::maps::get_canonical_combining_class(data_provider)?;
 
         Ok(DecomposingNormalizer {
-            decompositions: PayloadHolder::Uts46(decompositions),
+            decompositions,
+            supplementary_decompositions: Some(SupplementPayloadHolder::Uts46(
+                supplementary_decompositions,
+            )),
             tables,
             supplementary_tables: Some(supplementary_tables),
             ccc,
@@ -793,9 +821,10 @@ impl DecomposingNormalizer {
     /// Wraps a delegate iterator into a decomposing iterator
     /// adapter by using the data already held by this normalizer.
     pub fn normalize_iter<I: Iterator<Item = char>>(&self, iter: I) -> Decomposition<I> {
-        Decomposition::new(
+        Decomposition::new_with_supplements(
             iter,
             self.decompositions.get(),
+            self.supplementary_decompositions.as_ref().map(|s| s.get()),
             self.tables.get(),
             self.supplementary_tables.as_ref().map(|s| s.get()),
             &self.ccc.get().code_point_trie,

@@ -291,14 +291,12 @@ impl Collator {
                 decode_utf16(left.iter().copied()).map(utf16_error_to_replacement),
                 self.decompositions.get(),
                 self.tables.get(),
-                None,
                 &self.ccc.get().code_point_trie,
             )
             .cmp(Decomposition::new(
                 decode_utf16(right.iter().copied()).map(utf16_error_to_replacement),
                 self.decompositions.get(),
                 self.tables.get(),
-                None,
                 &self.ccc.get().code_point_trie,
             ));
         }
@@ -324,14 +322,12 @@ impl Collator {
                 left.chars(),
                 self.decompositions.get(),
                 self.tables.get(),
-                None,
                 &self.ccc.get().code_point_trie,
             )
             .cmp(Decomposition::new(
                 right.chars(),
                 self.decompositions.get(),
                 self.tables.get(),
-                None,
                 &self.ccc.get().code_point_trie,
             ));
         }
@@ -357,14 +353,12 @@ impl Collator {
                 left.chars(),
                 self.decompositions.get(),
                 self.tables.get(),
-                None,
                 &self.ccc.get().code_point_trie,
             )
             .cmp(Decomposition::new(
                 right.chars(),
                 self.decompositions.get(),
                 self.tables.get(),
-                None,
                 &self.ccc.get().code_point_trie,
             ));
         }
