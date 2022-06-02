@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1654207185883,
+  "lastUpdate": 1654209002602,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -16523,6 +16523,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/ea62d2e85010951416e921f4a78c88b91ea4cd16"
         },
         "date": 1654207163230,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 2301197,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "00d4fbbe25d5975c9a7bb2070801a6f40c9070c0",
+          "message": "Add FlexZeroVec (#1790)",
+          "timestamp": "2022-06-02T15:27:32-07:00",
+          "tree_id": "dfab1e3070fab18b1c396016b3a45287f778908f",
+          "url": "https://github.com/unicode-org/icu4x/commit/00d4fbbe25d5975c9a7bb2070801a6f40c9070c0"
+        },
+        "date": 1654208976519,
         "tool": "ndjson",
         "benches": [
           {
