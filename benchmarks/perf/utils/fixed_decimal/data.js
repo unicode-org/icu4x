@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1654207825626,
+  "lastUpdate": 1654209616412,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -29729,6 +29729,66 @@ window.BENCHMARK_DATA = {
             "name": "from_string/1000000001",
             "value": 81,
             "range": "± 5",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "00d4fbbe25d5975c9a7bb2070801a6f40c9070c0",
+          "message": "Add FlexZeroVec (#1790)",
+          "timestamp": "2022-06-02T15:27:32-07:00",
+          "tree_id": "dfab1e3070fab18b1c396016b3a45287f778908f",
+          "url": "https://github.com/unicode-org/icu4x/commit/00d4fbbe25d5975c9a7bb2070801a6f40c9070c0"
+        },
+        "date": 1654209590115,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 129206,
+            "range": "± 521",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 26835,
+            "range": "± 146",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 73392,
+            "range": "± 2387",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 223,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 113,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 91,
+            "range": "± 0",
             "unit": "ns/iter"
           }
         ]
