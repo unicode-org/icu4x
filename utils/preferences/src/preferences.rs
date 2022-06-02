@@ -1,5 +1,7 @@
-use icu_locid::subtags::{Language, Region, Script};
-use icu_locid::Locale;
+use icu_locid::{
+    subtags::{Language, Region, Script},
+    Locale,
+};
 
 pub trait Preferences {
     fn language(&self) -> &Language {

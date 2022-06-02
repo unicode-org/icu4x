@@ -43,32 +43,41 @@ macro_rules! preferences {
             }
         }
 
-        impl $trait for Locale {
-            $(
-                fn $key(&self) -> $pref {
-                    let ue = $ue.unwrap();
-                    if let Some(value) = self
-                        .extensions
-                        .unicode
-                        .keywords
-                        .get(&ue)
-                    {
-                        //XXX: This is fallible!
-                        if let Ok(v) = TryInto::try_into(value) {
-                            return Some(v);
-                        }
-                    }
-                    return None;
-                }
-            )*
-        }
-
         impl $trait for $name {
             $(
                 fn $key(&self) -> $pref {
                     self.$key
                 }
             )*
+        }
+
+        impl TryFrom<Locale> for $name {
+            type Error = ();
+
+            fn try_from(loc: Locale) -> Result<Self, Self::Error> {
+                let mut lid = Some(loc.id);
+
+                Ok(Self {
+                    lid,
+                    $(
+                        $key: {
+                            if let Some(ue) = $ue {
+                                if let Some(value) = loc
+                                    .extensions
+                                    .unicode
+                                    .keywords
+                                    .get(&ue) {
+                                        Some(TryInto::try_into(value)?)
+                                    } else {
+                                        None
+                                    }
+                            } else {
+                                None
+                            }
+                        },
+                    )*
+                })
+            }
         }
 
         impl $name {
@@ -106,30 +115,16 @@ macro_rules! preferences {
         }
 
         impl $resolved_name {
-            fn resolve(&self, prefs: &impl $trait) -> Self {
+            fn resolve(&mut self, prefs: &$name) {
                 let mut language = prefs.language();
                 if language.is_empty() {
                     language = &self.lid.language;
                 }
-                let mut script = prefs.script();
-                if script.is_none() {
-                    script = self.lid.script.as_ref();
-                }
-                let mut region = prefs.region();
-                if region.is_none() {
-                    region = self.lid.region.as_ref();
-                }
-                Self {
-                    lid: icu_locid::LanguageIdentifier {
-                        language: *language,
-                        script: script.copied(),
-                        region: region.copied(),
-                        variants: icu_locid::subtags::Variants::new()
-                    },
-                    $(
-                        $key: prefs.$key().unwrap_or(self.$key),
-                    )*
-                }
+                $(
+                    if let Some(v) = prefs.$key() {
+                        self.$key = v;
+                    }
+                )*
             }
         }
     )
