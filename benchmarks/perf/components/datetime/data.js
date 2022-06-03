@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1654209619141,
+  "lastUpdate": 1654224335362,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -36743,6 +36743,102 @@ window.BENCHMARK_DATA = {
             "name": "pattern/parse",
             "value": 4905,
             "range": "± 3",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "younies.mahmoud@gmail.com",
+            "name": "Younies Mahmoud",
+            "username": "younies"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "5e83a4b917affb061b0bed70dbdc346e220162a9",
+          "message": "Ceil function. (#1923)\n\nImplement Ceil, floor and truncate functions",
+          "timestamp": "2022-06-02T19:32:21-07:00",
+          "tree_id": "a35c4f6b4ef9a5ccc7ab48ea0aa98b8f6335f346",
+          "url": "https://github.com/unicode-org/icu4x/commit/5e83a4b917affb061b0bed70dbdc346e220162a9"
+        },
+        "date": 1654224313142,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 91085,
+            "range": "± 5528",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 870603,
+            "range": "± 56386",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 185595,
+            "range": "± 9482",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/DateTimeFormat/format_to_write",
+            "value": 80936,
+            "range": "± 3419",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/DateTimeFormat/format_to_string",
+            "value": 95395,
+            "range": "± 6027",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/format",
+            "value": 89898,
+            "range": "± 5672",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/to_string",
+            "value": 98589,
+            "range": "± 7065",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/ZonedDateTimeFormat/format_to_write",
+            "value": 189885,
+            "range": "± 14796",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/ZonedDateTimeFormat/format_to_string",
+            "value": 185931,
+            "range": "± 8565",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/format",
+            "value": 178523,
+            "range": "± 7499",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/to_string",
+            "value": 198697,
+            "range": "± 12397",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "pattern/parse",
+            "value": 4897,
+            "range": "± 290",
             "unit": "ns/iter"
           }
         ]
