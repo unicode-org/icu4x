@@ -252,8 +252,7 @@ fn sort_slice_by_ccc<'data>(
 }
 
 /// An iterator adaptor that turns an `Iterator` over `char` into
-/// a lazily-decomposed (currently only NFD though NFKD should also
-/// be possible) `char` sequence.
+/// a lazily-decomposed `char` sequence.
 pub struct Decomposition<'data, I>
 where
     I: Iterator<Item = char>,
