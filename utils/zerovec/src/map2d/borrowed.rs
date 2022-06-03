@@ -9,7 +9,7 @@ use core::fmt;
 
 use crate::map::{ZeroMapKV};
 use crate::map::{BorrowedZeroVecLike, ZeroVecLike};
-use crate::map2d::{KeyError, ZeroMap2dCursorBorrowed};
+use crate::map2d::{KeyError, ZeroMap2dCursor};
 
 /// A borrowed-only version of [`ZeroMap2d`](super::ZeroMap2d)
 ///
@@ -225,9 +225,9 @@ where
     /// assert!(matches!(borrowed.get0(&3), None));
     /// ```
     #[inline]
-    pub fn get0<'l>(&'l self, key0: &K0) -> Option<ZeroMap2dCursorBorrowed<'a, 'a, K0, K1, V>> {
+    pub fn get0<'l>(&'l self, key0: &K0) -> Option<ZeroMap2dCursor<'a, 'a, K0, K1, V>> {
         let key0_index = self.keys0.zvl_binary_search(key0).ok()?;
-        Some(ZeroMap2dCursorBorrowed::from_borrowed(self, key0_index))
+        Some(ZeroMap2dCursor::from_borrowed(self, key0_index))
     }
 }
 
@@ -243,8 +243,8 @@ where
     /// Produce an ordered iterator over keys0
     pub fn iter0<'l>(
         &'l self,
-    ) -> impl Iterator<Item = ZeroMap2dCursorBorrowed<'a, 'a, K0, K1, V>> + '_ {
-        (0..self.keys0.zvl_len()).map(move |idx| ZeroMap2dCursorBorrowed::from_borrowed(self, idx))
+    ) -> impl Iterator<Item = ZeroMap2dCursor<'a, 'a, K0, K1, V>> + '_ {
+        (0..self.keys0.zvl_len()).map(move |idx| ZeroMap2dCursor::from_borrowed(self, idx))
     }
 }
 

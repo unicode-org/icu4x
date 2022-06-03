@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use super::{ZeroMap2d, ZeroMap2dBorrowed, ZeroMap2dCursorBorrowed};
+use super::{ZeroMap2d, ZeroMap2dBorrowed, ZeroMap2dCursor};
 use crate::map::{MutableZeroVecLike, ZeroMapKV, ZeroVecLike};
 use crate::ZeroVec;
 use alloc::vec::Vec;
@@ -51,7 +51,7 @@ where
     K1: ZeroMapKV<'a> + ?Sized + Ord,
     V: ZeroMapKV<'a> + ?Sized,
 {
-    pub cursor: ZeroMap2dCursorBorrowed<'l, 'a, K0, K1, V>,
+    pub cursor: ZeroMap2dCursor<'l, 'a, K0, K1, V>,
 }
 
 #[cfg(feature = "serde")]

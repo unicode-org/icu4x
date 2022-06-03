@@ -230,8 +230,8 @@ where
     /// ```
     pub fn iter0<'l>(
         &'l self,
-    ) -> impl Iterator<Item = ZeroMap2dCursorBorrowed<'l, 'a, K0, K1, V>> + 'l {
-        (0..self.keys0.zvl_len()).map(move |idx| ZeroMap2dCursorBorrowed::from_cow(self, idx))
+    ) -> impl Iterator<Item = ZeroMap2dCursor<'l, 'a, K0, K1, V>> + 'l {
+        (0..self.keys0.zvl_len()).map(move |idx| ZeroMap2dCursor::from_cow(self, idx))
     }
 }
 
@@ -424,7 +424,7 @@ where
 
     /// Given an index into the joiner array, returns the corresponding range of keys1
     fn get_range_for_key0_index(&self, key0_index: usize) -> Range<usize> {
-        ZeroMap2dCursorBorrowed::from_cow(self, key0_index).get_range()
+        ZeroMap2dCursor::from_cow(self, key0_index).get_range()
     }
 
     /// Same as `get_range_for_key0`, but creates key0 if it doesn't already exist
@@ -526,9 +526,9 @@ where
     V: ?Sized,
 {
     #[inline]
-    pub fn get0<'l>(&'l self, key0: &K0) -> Option<ZeroMap2dCursorBorrowed<'l, 'a, K0, K1, V>> {
+    pub fn get0<'l>(&'l self, key0: &K0) -> Option<ZeroMap2dCursor<'l, 'a, K0, K1, V>> {
         let key0_index = self.keys0.zvl_binary_search(key0).ok()?;
-        Some(ZeroMap2dCursorBorrowed::from_cow(self, key0_index))
+        Some(ZeroMap2dCursor::from_cow(self, key0_index))
     }
 
     /// Returns whether `key0` is contained in this map

@@ -12,7 +12,7 @@ use crate::map::ZeroVecLike;
 
 use super::ZeroMap2dBorrowed;
 
-pub struct ZeroMap2dCursorBorrowed<'l, 'a, K0, K1, V>
+pub struct ZeroMap2dCursor<'l, 'a, K0, K1, V>
 where
     K0: ZeroMapKV<'a>,
     K1: ZeroMapKV<'a>,
@@ -29,7 +29,7 @@ where
     key0_index: usize,
 }
 
-impl<'a, K0, K1, V> ZeroMap2dCursorBorrowed<'a, 'a, K0, K1, V>
+impl<'a, K0, K1, V> ZeroMap2dCursor<'a, 'a, K0, K1, V>
 where
     K0: ZeroMapKV<'a>,
     K1: ZeroMapKV<'a>,
@@ -41,7 +41,7 @@ where
     /// `key0_index` must be in range
     pub(crate) fn from_borrowed(borrowed: &ZeroMap2dBorrowed<'a, K0, K1, V>, key0_index: usize) -> Self {
         debug_assert!(key0_index < borrowed.joiner.len());
-        ZeroMap2dCursorBorrowed {
+        ZeroMap2dCursor {
             keys0: borrowed.keys0,
             joiner: borrowed.joiner,
             keys1: borrowed.keys1,
@@ -51,7 +51,7 @@ where
     }
 }
 
-impl<'l, 'a, K0, K1, V> ZeroMap2dCursorBorrowed<'l, 'a, K0, K1, V>
+impl<'l, 'a, K0, K1, V> ZeroMap2dCursor<'l, 'a, K0, K1, V>
 where
     K0: ZeroMapKV<'a>,
     K1: ZeroMapKV<'a>,
@@ -119,7 +119,7 @@ where
     }
 }
 
-impl<'l, 'a, K0, K1, V> ZeroMap2dCursorBorrowed<'l, 'a, K0, K1, V>
+impl<'l, 'a, K0, K1, V> ZeroMap2dCursor<'l, 'a, K0, K1, V>
 where
     K0: ZeroMapKV<'a>,
     K1: ZeroMapKV<'a> + Ord,
@@ -167,7 +167,7 @@ where
     }
 }
 
-impl<'l, 'a, K0, K1, V> ZeroMap2dCursorBorrowed<'l, 'a, K0, K1, V>
+impl<'l, 'a, K0, K1, V> ZeroMap2dCursor<'l, 'a, K0, K1, V>
 where
     K0: ZeroMapKV<'a> + ?Sized,
     K1: ZeroMapKV<'a> + ?Sized + Ord,
