@@ -7,7 +7,7 @@ use alloc::vec::Vec;
 
 /// Internal: A vector that supports no-allocation, constant values if length 0 or 1.
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
-pub(crate) enum ShortVec<T> {
+pub enum ShortVec<T> {
     Empty,
     Single(T),
     Multi(Vec<T>),
@@ -53,6 +53,12 @@ impl<T> From<Vec<T>> for ShortVec<T> {
             1 => ShortVec::Single(v.into_iter().next().unwrap()),
             _ => ShortVec::Multi(v),
         }
+    }
+}
+
+impl<T> Default for ShortVec<T> {
+    fn default() -> Self {
+        ShortVec::Empty
     }
 }
 
