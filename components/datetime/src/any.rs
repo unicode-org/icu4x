@@ -7,20 +7,18 @@
 
 use crate::{
     options::{components, DateTimeFormatOptions},
-    provider::calendar::{DatePatternsV1Marker, DateSkeletonPatternsV1Marker, DateSymbolsV1Marker},
-    provider::week_data::WeekDataV1Marker,
     raw,
 };
 use alloc::string::String;
-use core::marker::PhantomData;
-use icu_locid::{unicode_ext_key, Locale};
-use icu_plurals::provider::OrdinalV1Marker;
+
+use icu_locid::{Locale};
+
 use icu_provider::prelude::*;
 
-use crate::{date::DateTimeInput, CldrCalendar, DateTimeFormatError, FormattedDateTime};
+use crate::{date::DateTimeInput, DateTimeFormatError, FormattedDateTime};
 
 use icu_calendar::any_calendar::{AnyCalendar, AnyCalendarKind};
-use icu_calendar::{AsCalendar, DateTime, Ref};
+
 
 /// [`AnyDateTimeFormat`] is a [`DateTimeFormat`](crate::DateTimeFormat) capable of formatting
 /// dates from any calendar, selected at runtime.
