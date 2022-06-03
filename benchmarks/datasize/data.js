@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1654223665075,
+  "lastUpdate": 1654291693821,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -16583,6 +16583,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/5e83a4b917affb061b0bed70dbdc346e220162a9"
         },
         "date": 1654223643768,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 2301197,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "a43374e81cca106a1190b7c8daf168c9eeac9ba7",
+          "message": "[breaking] FixedDecimal: Define \"magnitude\" and introduce \"position\" concept (#1981)\n\nSee #1981 for details on updating call sites.",
+          "timestamp": "2022-06-03T14:25:59-07:00",
+          "tree_id": "a3b18ce743a9fecd3eae5c03c16f03406bd3c0a3",
+          "url": "https://github.com/unicode-org/icu4x/commit/a43374e81cca106a1190b7c8daf168c9eeac9ba7"
+        },
+        "date": 1654291668850,
         "tool": "ndjson",
         "benches": [
           {
