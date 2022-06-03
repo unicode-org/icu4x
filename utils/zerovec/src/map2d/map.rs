@@ -414,13 +414,6 @@ where
         None
     }
 
-    /// Produce an iterator over values, ordered by the pair (key0,key1)
-    pub fn iter_values<'b>(&'b self) -> impl Iterator<Item = &'b <V as ZeroMapKV<'a>>::GetType> {
-        // The unwrap is protected because we are looping over the range of indices in the vec
-        #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
-        (0..self.values.zvl_len()).map(move |idx| self.values.zvl_get(idx).unwrap())
-    }
-
     // INTERNAL ROUTINES FOLLOW //
 
     /// Given a value that may exist in keys0, returns the corresponding range of keys1

@@ -259,12 +259,6 @@ where
             key0_index: idx,
         })
     }
-
-    /// Produce an iterator over values, ordered by the pair (key0,key1)
-    pub fn iter_values<'b>(&'b self) -> impl Iterator<Item = &'b <V as ZeroMapKV<'a>>::GetType> {
-        #[allow(clippy::unwrap_used)] // Iterating over a ZeroVecLike requires this pattern
-        (0..self.values.zvl_len()).map(move |idx| self.values.zvl_get(idx).unwrap())
-    }
 }
 
 impl<'a, K0, K1, V> ZeroMap2dBorrowed<'a, K0, K1, V>
