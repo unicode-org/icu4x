@@ -21,6 +21,7 @@ where
     K1: ?Sized,
     V: ?Sized,
 {
+    // Invariant: these fields have the same invariants as they do in ZeroMap2d
     keys0: &'l <<K0 as ZeroMapKV<'a>>::Container as ZeroVecLike<K0>>::BorrowedVariant,
     joiner: &'l ZeroSlice<u32>,
     keys1: &'l <<K1 as ZeroMapKV<'a>>::Container as ZeroVecLike<K1>>::BorrowedVariant,
@@ -112,10 +113,6 @@ where
         debug_assert!(start < limit);
         debug_assert!((limit as usize) < self.values.zvl_len());
         (start as usize)..(limit as usize)
-    }
-
-    pub(super) fn get_key0_index(&self) -> usize {
-        self.key0_index
     }
 }
 

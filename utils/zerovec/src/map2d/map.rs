@@ -303,7 +303,8 @@ where
     /// assert_eq!(map.remove(&1, "one"), Err(KeyError::K0));
     /// ```
     pub fn remove(&mut self, key0: &K0, key1: &K1) -> Result<V::OwnedType, KeyError> {
-        let (key0_index, range) = self.get_range_for_key0(key0).ok_or(KeyError::K0)?;
+        let key0_index = self.keys0.zvl_binary_search(key0).map_err(|_| KeyError::K0)?;
+        let range = self.get_range_for_key0_index(key0_index);
         debug_assert!(range.start < range.end); // '<' because every key0 should have a key1
         debug_assert!(range.end <= self.keys1.zvl_len());
         // The above debug_assert! protects the unwrap() below
@@ -415,12 +416,6 @@ where
     }
 
     // INTERNAL ROUTINES FOLLOW //
-
-    /// Given a value that may exist in keys0, returns the corresponding range of keys1
-    fn get_range_for_key0(&self, key0: &K0) -> Option<(usize, Range<usize>)> {
-        let cursor = self.get0(key0)?;
-        Some((cursor.get_key0_index(), cursor.get_range()))
-    }
 
     /// Given an index into the joiner array, returns the corresponding range of keys1
     fn get_range_for_key0_index(&self, key0_index: usize) -> Range<usize> {
