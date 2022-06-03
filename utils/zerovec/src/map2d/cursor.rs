@@ -6,12 +6,14 @@ use crate::ule::AsULE;
 use crate::{ZeroMap2d, ZeroSlice, ZeroVec};
 
 use core::ops::Range;
+use core::fmt;
 
 use crate::map::ZeroMapKV;
 use crate::map::ZeroVecLike;
 
 use super::ZeroMap2dBorrowed;
 
+/// An intermediate state of queries over [`ZeroMap2d`] and [`ZeroMap2dBorrowed`].
 pub struct ZeroMap2dCursor<'l, 'a, K0, K1, V>
 where
     K0: ZeroMapKV<'a>,
@@ -74,12 +76,22 @@ where
     }
 
     /// Returns the key0 corresponding to the cursor position.
+    ///
+    /// ```rust
+    /// use zerovec::ZeroMap2d;
+    ///
+    /// let mut map = ZeroMap2d::new();
+    /// map.insert("one", &1u32, "foo");
+    /// assert_eq!(map.get0("one").unwrap().key0(), "one");
+    /// ```
     pub fn key0(&self) -> &'l K0::GetType {
         #[allow(clippy::unwrap_used)] // safe by invariant on `self.key0_index`
         self.keys0.zvl_get(self.key0_index).unwrap()
     }
 
-    /// Produce an ordered iterator over keys1 for a particular key0, if key0 exists
+    /// Produce an ordered iterator over keys1 for a particular key0.
+    /// 
+    /// For an example, see [`ZeroMap2d::iter0()`].
     pub fn iter1(
         &self,
     ) -> impl Iterator<
@@ -125,6 +137,16 @@ where
     K1: ?Sized,
     V: ?Sized,
 {
+    /// Gets the value for a key1 from this cursor, or `None` if key1 is not in the map.
+    ///
+    /// ```rust
+    /// use zerovec::ZeroMap2d;
+    ///
+    /// let mut map = ZeroMap2d::new();
+    /// map.insert("one", &1u32, "foo");
+    /// assert_eq!(map.get0("one").unwrap().get1(&1), Some("foo"));
+    /// assert_eq!(map.get0("one").unwrap().get1(&2), None);
+    /// ```
     pub fn get1(&self, key1: &K1) -> Option<&'l V::GetType> {
         let key1_index = self.get_key1_index(key1)?;
         #[allow(clippy::unwrap_used)] // key1_index is valid
@@ -166,13 +188,73 @@ where
 
 impl<'l, 'a, K0, K1, V> ZeroMap2dCursor<'l, 'a, K0, K1, V>
 where
-    K0: ZeroMapKV<'a> + ?Sized,
-    K1: ZeroMapKV<'a> + ?Sized + Ord,
+    K0: ZeroMapKV<'a>,
+    K1: ZeroMapKV<'a> + Ord,
     V: ZeroMapKV<'a, Container = ZeroVec<'a, V>>,
     V: AsULE + Copy,
+    K0: ?Sized,
+    K1: ?Sized,
+    V: ?Sized,
 {
+    /// For cases when `V` is fixed-size, obtain a direct copy of `V` instead of `V::ULE`
+    ///
+    /// ```rust
+    /// use zerovec::ZeroMap2d;
+    ///
+    /// let mut map: ZeroMap2d<u16, u16, u16> = ZeroMap2d::new();
+    /// map.insert(&1, &2, &3);
+    /// map.insert(&1, &4, &5);
+    /// map.insert(&6, &7, &8);
+    ///
+    /// assert_eq!(map.get0(&6).unwrap().get1_copied(&7), Some(8));
+    /// ```
     pub fn get1_copied(&self, key1: &K1) -> Option<V> {
         let key1_index = self.get_key1_index(key1)?;
         self.values.get(key1_index)
+    }
+}
+
+// We can't use the default PartialEq because ZeroMap2d is invariant
+// so otherwise rustc will not automatically allow you to compare ZeroMaps
+// with different lifetimes
+impl<'m, 'n, 'a, 'b, K0, K1, V> PartialEq<ZeroMap2dCursor<'n, 'b, K0, K1, V>>
+    for ZeroMap2dCursor<'m, 'a, K0, K1, V>
+where
+    K0: for<'c> ZeroMapKV<'c> + ?Sized,
+    K1: for<'c> ZeroMapKV<'c> + ?Sized,
+    V: for<'c> ZeroMapKV<'c> + ?Sized,
+    <<K0 as ZeroMapKV<'a>>::Container as ZeroVecLike<K0>>::BorrowedVariant:
+        PartialEq<<<K0 as ZeroMapKV<'b>>::Container as ZeroVecLike<K0>>::BorrowedVariant>,
+    <<K1 as ZeroMapKV<'a>>::Container as ZeroVecLike<K1>>::BorrowedVariant:
+        PartialEq<<<K1 as ZeroMapKV<'b>>::Container as ZeroVecLike<K1>>::BorrowedVariant>,
+    <<V as ZeroMapKV<'a>>::Container as ZeroVecLike<V>>::BorrowedVariant:
+        PartialEq<<<V as ZeroMapKV<'b>>::Container as ZeroVecLike<V>>::BorrowedVariant>,
+{
+    fn eq(&self, other: &ZeroMap2dCursor<'n, 'b, K0, K1, V>) -> bool {
+        self.keys0.eq(other.keys0)
+            && self.joiner.eq(other.joiner)
+            && self.keys1.eq(other.keys1)
+            && self.values.eq(other.values)
+            && self.key0_index.eq(&other.key0_index)
+    }
+}
+
+impl<'l, 'a, K0, K1, V> fmt::Debug for ZeroMap2dCursor<'l, 'a, K0, K1, V>
+where
+    K0: ZeroMapKV<'a> + ?Sized,
+    K1: ZeroMapKV<'a> + ?Sized,
+    V: ZeroMapKV<'a> + ?Sized,
+    <<K0 as ZeroMapKV<'a>>::Container as ZeroVecLike<K0>>::BorrowedVariant: fmt::Debug,
+    <<K1 as ZeroMapKV<'a>>::Container as ZeroVecLike<K1>>::BorrowedVariant: fmt::Debug,
+    <<V as ZeroMapKV<'a>>::Container as ZeroVecLike<V>>::BorrowedVariant: fmt::Debug,
+{
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> Result<(), fmt::Error> {
+        f.debug_struct("ZeroMap2d")
+            .field("keys0", &self.keys0)
+            .field("joiner", &self.joiner)
+            .field("keys1", &self.keys1)
+            .field("values", &self.values)
+            .field("key0_index", &self.key0_index)
+            .finish()
     }
 }

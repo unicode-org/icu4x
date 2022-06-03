@@ -499,6 +499,22 @@ where
     K1: ?Sized,
     V: ?Sized,
 {
+    /// Gets a cursor for `key0`. If `None`, then `key0` is not in the map. If `Some`,
+    /// then `key0` is in the map, and `key1` can be queried.
+    ///
+    /// ```rust
+    /// use zerovec::ZeroMap2d;
+    ///
+    /// let mut map = ZeroMap2d::new();
+    /// map.insert(&1u32, "one", "foo");
+    /// map.insert(&2, "one", "bar");
+    /// map.insert(&2, "two", "baz");
+    /// assert_eq!(map.get0(&1).unwrap().get1("one").unwrap(), "foo");
+    /// assert_eq!(map.get0(&1).unwrap().get1("two"), None);
+    /// assert_eq!(map.get0(&2).unwrap().get1("one").unwrap(), "bar");
+    /// assert_eq!(map.get0(&2).unwrap().get1("two").unwrap(), "baz");
+    /// assert_eq!(map.get0(&3), None);
+    /// ```
     #[inline]
     pub fn get0<'l>(&'l self, key0: &K0) -> Option<ZeroMap2dCursor<'l, 'a, K0, K1, V>> {
         let key0_index = self.keys0.zvl_binary_search(key0).ok()?;
