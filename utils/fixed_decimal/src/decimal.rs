@@ -440,6 +440,90 @@ impl FixedDecimal {
         self
     }
 
+    /// Remove leading zeroes, consuming self and returning a new object.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use fixed_decimal::FixedDecimal;
+    ///
+    /// let dec = FixedDecimal::from(123400)
+    ///     .multiplied_pow10(-4)
+    ///     .expect("in-bounds")
+    ///     .padded_left(4);
+    /// assert_eq!("0012.3400", dec.to_string());
+    ///
+    /// assert_eq!("12.3400", dec.stripped_left().to_string());
+    /// ```
+    pub fn stripped_left(mut self) -> Self {
+        self.strip_left();
+        self
+    }
+
+    /// Remove leading zeroes, modifying self.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use fixed_decimal::FixedDecimal;
+    ///
+    /// let mut dec = FixedDecimal::from(123400)
+    ///     .multiplied_pow10(-4)
+    ///     .expect("in-bounds")
+    ///     .padded_left(4);
+    /// assert_eq!("0012.3400", dec.to_string());
+    ///
+    /// dec.strip_left();
+    /// assert_eq!("12.3400", dec.to_string());
+    /// ```
+    pub fn strip_left(&mut self) {
+        self.upper_magnitude = self.magnitude;
+        #[cfg(debug_assertions)]
+        self.check_invariants();
+    }
+
+    /// Remove trailing zeroes, consuming self and returning a new object.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use fixed_decimal::FixedDecimal;
+    ///
+    /// let dec = FixedDecimal::from(123400)
+    ///     .multiplied_pow10(-4)
+    ///     .expect("in-bounds")
+    ///     .padded_left(4);
+    /// assert_eq!("0012.3400", dec.to_string());
+    ///
+    /// assert_eq!("0012.34", dec.stripped_right().to_string());
+    /// ```
+    pub fn stripped_right(mut self) -> Self {
+        self.strip_right();
+        self
+    }
+
+    /// Remove trailing zeroes, modifying self.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use fixed_decimal::FixedDecimal;
+    ///
+    /// let mut dec = FixedDecimal::from(123400)
+    ///     .multiplied_pow10(-4)
+    ///     .expect("in-bounds")
+    ///     .padded_left(4);
+    /// assert_eq!("0012.3400", dec.to_string());
+    ///
+    /// dec.strip_right();
+    /// assert_eq!("0012.34", dec.to_string());
+    /// ```
+    pub fn strip_right(&mut self) {
+        self.lower_magnitude = self.nonzero_magnitude_right();
+        #[cfg(debug_assertions)]
+        self.check_invariants();
+    }
+
     /// Zero-pad the number on the left to a particular position,
     /// returning the result.
     ///
@@ -503,6 +587,8 @@ impl FixedDecimal {
             magnitude = self.magnitude;
         }
         self.upper_magnitude = magnitude;
+        #[cfg(debug_assertions)]
+        self.check_invariants();
     }
 
     /// Truncate the number on the left to a particular position, deleting
