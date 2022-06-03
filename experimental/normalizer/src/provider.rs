@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use icu_char16trie::char16trie::Char16Trie;
 use icu_codepointtrie::CodePointTrie;
 use icu_provider::{yoke, zerofrom};
 use icu_uniset::UnicodeSet;
@@ -65,4 +66,26 @@ pub struct DecompositionTablesV1<'data> {
     pub scalars16: ZeroVec<'data, u16>,
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub scalars24: ZeroVec<'data, U24>,
+}
+
+#[icu_provider::data_struct(CanonicalCompositionsV1Marker = "normalizer/comp@1")]
+#[derive(Debug, PartialEq, Clone)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, crabbake::Bakeable), crabbake(path = icu_normalizer::provider))]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+pub struct CanonicalCompositionsV1<'data> {
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub canonical_compositions: Char16Trie<'data>,
+}
+
+#[icu_provider::data_struct(
+    CanonicalCompositionPassthroughV1Marker = "normalizer/nfc@1",
+    CompatibilityCompositionPassthroughV1Marker = "normalizer/nfkc@1",
+    Uts46CompositionPassthroughV1Marker = "normalizer/uts46@1"
+)]
+#[derive(Debug, PartialEq, Clone)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, crabbake::Bakeable), crabbake(path = icu_normalizer::provider))]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+pub struct CompositionPassthroughV1<'data> {
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub potential_passthrough_and_not_backward_combining: UnicodeSet<'data>,
 }

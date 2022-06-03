@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::SourceData;
+use icu_char16trie::char16trie::Char16Trie;
 use icu_codepointtrie::CodePointTrie;
 use icu_normalizer::provider::*;
 use icu_normalizer::u24::U24;
@@ -79,7 +80,7 @@ macro_rules! normalization_data_provider {
                     })),
                 })
             },
-            toml_data
+            toml_data // simply matches the identifier in the above block
         );
     };
 }
@@ -103,7 +104,7 @@ macro_rules! normalization_supplement_provider {
                     })),
                 })
             },
-            toml_data
+            toml_data // simply matches the identifier in the above block
         );
     };
 }
@@ -131,7 +132,55 @@ macro_rules! normalization_tables_provider {
                     })),
                 })
             },
-            toml_data
+            toml_data // simply matches the identifier in the above block
+        );
+    };
+}
+
+macro_rules! normalization_passthrough_provider {
+    ($marker:ident, $provider:ident, $file_name:literal) => {
+        normalization_provider!(
+            $marker,
+            $provider,
+            CompositionPassthrough,
+            $file_name,
+            {
+                let mut builder = UnicodeSetBuilder::new();
+                for range in &toml_data.ranges {
+                    builder.add_range_u32(&(range.0..=range.1));
+                }
+                let uniset = builder.build();
+
+                Ok(DataResponse {
+                    metadata: DataResponseMetadata::default(),
+                    payload: Some(DataPayload::from_owned(CompositionPassthroughV1 {
+                        potential_passthrough_and_not_backward_combining: uniset,
+                    })),
+                })
+            },
+            toml_data // simply matches the identifier in the above block
+        );
+    };
+}
+
+macro_rules! normalization_canonical_compositions_provider {
+    ($marker:ident, $provider:ident, $file_name:literal) => {
+        normalization_provider!(
+            $marker,
+            $provider,
+            CanonicalCompositions,
+            $file_name,
+            {
+                Ok(DataResponse {
+                    metadata: DataResponseMetadata::default(),
+                    payload: Some(DataPayload::from_owned(CanonicalCompositionsV1 {
+                        canonical_compositions: Char16Trie::new(ZeroVec::alloc_from_slice(
+                            &toml_data.compositions,
+                        )),
+                    })),
+                })
+            },
+            toml_data // simply matches the identifier in the above block
         );
     };
 }
@@ -167,3 +216,38 @@ normalization_tables_provider!(
 );
 
 // No uts46dex.toml, because that data is also in nfkdex.toml.
+
+normalization_passthrough_provider!(
+    CanonicalCompositionPassthroughV1Marker,
+    CanonicalCompositionPassthroughProvider,
+    // nfkc.toml is close enough that we could provide an option
+    // to use nfkc.toml here so that it would get deduplicated
+    // with the meant-for-NFKC case below for data size at the
+    // expense of pessimizing the performance for the characters
+    // that have compatibility decompositions that matter for
+    // NFKC but that could be passed through in NFC.
+    // This optimization only makes sense if the application
+    // is known to use both NFC and NFKC, and it's likely
+    // enough for an app to want NFC and for it to be maximally
+    // performant that it doesn't make sense to default to
+    // this size optimization.
+    "nfc.toml"
+);
+
+normalization_passthrough_provider!(
+    CompatibilityCompositionPassthroughV1Marker,
+    CompatibilityCompositionPassthroughProvider,
+    "nfkc.toml"
+);
+
+normalization_passthrough_provider!(
+    Uts46CompositionPassthroughV1Marker,
+    Uts46CompositionPassthroughProvider,
+    "uts46.toml"
+);
+
+normalization_canonical_compositions_provider!(
+    CanonicalCompositionsV1Marker,
+    CanonicalCompositionsProvider,
+    "compositions.toml"
+);

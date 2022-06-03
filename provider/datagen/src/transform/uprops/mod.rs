@@ -32,13 +32,21 @@ mod uprops_serde;
 
 pub use bin_uniset::BinaryPropertyUnicodeSetDataProvider;
 #[cfg(feature = "experimental")]
+pub use canonical_decompositions::CanonicalCompositionPassthroughProvider;
+#[cfg(feature = "experimental")]
+pub use canonical_decompositions::CanonicalCompositionsProvider;
+#[cfg(feature = "experimental")]
 pub use canonical_decompositions::CanonicalDecompositionDataProvider;
 #[cfg(feature = "experimental")]
 pub use canonical_decompositions::CanonicalDecompositionTablesProvider;
 #[cfg(feature = "experimental")]
+pub use canonical_decompositions::CompatibilityCompositionPassthroughProvider;
+#[cfg(feature = "experimental")]
 pub use canonical_decompositions::CompatibilityDecompositionSupplementProvider;
 #[cfg(feature = "experimental")]
 pub use canonical_decompositions::CompatibilityDecompositionTablesProvider;
+#[cfg(feature = "experimental")]
+pub use canonical_decompositions::Uts46CompositionPassthroughProvider;
 #[cfg(feature = "experimental")]
 pub use canonical_decompositions::Uts46DecompositionSupplementProvider;
 #[cfg(feature = "experimental")]

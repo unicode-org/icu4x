@@ -1432,6 +1432,7 @@ dependencies = [
  "crabbake",
  "serde",
  "toml",
+ "zerofrom",
  "zerovec",
 ]
 
@@ -1500,6 +1501,7 @@ dependencies = [
  "eyre",
  "icu_calendar",
  "icu_casemapping",
+ "icu_char16trie",
  "icu_codepointtrie",
  "icu_codepointtrie_builder",
  "icu_collator",
@@ -1658,8 +1660,11 @@ dependencies = [
 name = "icu_normalizer"
 version = "0.6.0"
 dependencies = [
+ "arraystring",
+ "atoi",
  "crabbake",
  "displaydoc",
+ "icu_char16trie",
  "icu_codepointtrie",
  "icu_properties",
  "icu_provider",
