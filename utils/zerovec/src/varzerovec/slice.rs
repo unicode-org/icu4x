@@ -373,6 +373,50 @@ where
     pub fn binary_search_by(&self, predicate: impl FnMut(&T) -> Ordering) -> Result<usize, usize> {
         self.as_components().binary_search_by(predicate)
     }
+
+    /// Binary searches a `VarZeroVec<T>` for the given predicate within a certain sorted range.
+    ///
+    /// If the range is out of bounds, returns `None`. Otherwise, returns a `Result` according
+    /// to the behavior of the standard library function [`binary_search`].
+    ///
+    /// The index is returned relative to the start of the range.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// # use std::str::Utf8Error;
+    /// # use zerovec::ule::ZeroVecError;
+    /// # use zerovec::VarZeroVec;
+    ///
+    /// let strings = vec!["a", "b", "f", "g", "m", "n", "q"];
+    /// let vec = VarZeroVec::<str>::from(&strings);
+    ///
+    /// // Same behavior as binary_search when the range covers the whole slice:
+    /// assert_eq!(vec.binary_search_in_range_by(|v| v.cmp("g"), 0..7), Some(Ok(3)));
+    /// assert_eq!(vec.binary_search_in_range_by(|v| v.cmp("h"), 0..7), Some(Err(4)));
+    ///
+    /// // Will not look outside of the range:
+    /// assert_eq!(vec.binary_search_in_range_by(|v| v.cmp("g"), 0..1), Some(Err(1)));
+    /// assert_eq!(vec.binary_search_in_range_by(|v| v.cmp("g"), 6..7), Some(Err(0)));
+    ///
+    /// // Will return indices relative to the start of the range:
+    /// assert_eq!(vec.binary_search_in_range_by(|v| v.cmp("g"), 1..6), Some(Ok(2)));
+    /// assert_eq!(vec.binary_search_in_range_by(|v| v.cmp("h"), 1..6), Some(Err(3)));
+    ///
+    /// // Will return None if the range is out of bounds:
+    /// assert_eq!(vec.binary_search_in_range_by(|v| v.cmp("x"), 100..200), None);
+    /// assert_eq!(vec.binary_search_in_range_by(|v| v.cmp("x"), 0..200), None);
+    /// # Ok::<(), ZeroVecError>(())
+    /// ```
+    ///
+    /// [`binary_search`]: https://doc.rust-lang.org/std/primitive.slice.html#method.binary_search
+    pub fn binary_search_in_range_by(
+        &self,
+        predicate: impl FnMut(&T) -> Ordering,
+        range: Range<usize>,
+    ) -> Option<Result<usize, usize>> {
+        self.as_components().binary_search_in_range_by(predicate, range)
+    }
 }
 // Safety (based on the safety checklist on the VarULE trait):
 //  1. VarZeroSlice does not include any uninitialized or padding bytes (achieved by `#[repr(transparent)]` on a

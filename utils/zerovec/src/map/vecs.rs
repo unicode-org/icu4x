@@ -35,8 +35,9 @@ pub trait ZeroVecLike<T: ?Sized> {
     fn zvl_binary_search(&self, k: &T) -> Result<usize, usize>
     where
         T: Ord;
-    /// Search for a key within a certain range in a sorted vector. Returns `None` if the
-    /// range is out of bounds, and `Ok` or `Err` in the same way as `zvl_binary_search`.
+    /// Search for a key within a certain range in a sorted vector.
+    /// Returns `None` if the ange is out of bounds, and
+    /// `Ok` or `Err` in the same way as `zvl_binary_search`.
     /// Indices are returned relative to the start of the range.
     fn zvl_binary_search_in_range(
         &self,
@@ -50,6 +51,16 @@ pub trait ZeroVecLike<T: ?Sized> {
     /// returns `Err(insert_index)` if not found, where `insert_index` is the
     /// index where it should be inserted to maintain sort order.
     fn zvl_binary_search_by(&self, predicate: impl FnMut(&T) -> Ordering) -> Result<usize, usize>;
+    /// Search for a key within a certain range in a sorted vector by a predicate.
+    /// Returns `None` if the range is out of bounds, and
+    /// `Ok` or `Err` in the same way as `zvl_binary_search`.
+    /// Indices are returned relative to the start of the range.
+    fn zvl_binary_search_in_range_by(
+        &self,
+        predicate: impl FnMut(&T) -> Ordering,
+        range: Range<usize>,
+    ) -> Option<Result<usize, usize>>;
+
     /// Get element at `index`
     fn zvl_get(&self, index: usize) -> Option<&Self::GetType>;
     /// The length of this vector
@@ -184,6 +195,14 @@ where
     ) -> Result<usize, usize> {
         ZeroSlice::binary_search_by(self, |probe| predicate(&probe))
     }
+    fn zvl_binary_search_in_range_by(
+        &self,
+        predicate: impl FnMut(&T) -> Ordering,
+        range: Range<usize>,
+    ) -> Option<Result<usize, usize>> {
+        let zs: &ZeroSlice<T> = &*self;
+        zs.zvl_binary_search_in_range_by(predicate, range)
+    }
     fn zvl_get(&self, index: usize) -> Option<&T::ULE> {
         self.get_ule_ref(index)
     }
@@ -241,6 +260,14 @@ where
         mut predicate: impl FnMut(&T) -> Ordering,
     ) -> Result<usize, usize> {
         ZeroSlice::binary_search_by(self, |probe| predicate(&probe))
+    }
+    fn zvl_binary_search_in_range_by(
+        &self,
+        mut predicate: impl FnMut(&T) -> Ordering,
+        range: Range<usize>,
+    ) -> Option<Result<usize, usize>> {
+        let subslice = self.get_subslice(range)?;
+        Some(ZeroSlice::binary_search_by(subslice, |probe| predicate(&probe)))
     }
     fn zvl_get(&self, index: usize) -> Option<&T::ULE> {
         self.get_ule_ref(index)
@@ -348,6 +375,13 @@ where
     fn zvl_binary_search_by(&self, predicate: impl FnMut(&T) -> Ordering) -> Result<usize, usize> {
         self.binary_search_by(predicate)
     }
+    fn zvl_binary_search_in_range_by(
+        &self,
+        predicate: impl FnMut(&T) -> Ordering,
+        range: Range<usize>,
+    ) -> Option<Result<usize, usize>> {
+        self.binary_search_in_range_by(predicate, range)
+    }
     fn zvl_get(&self, index: usize) -> Option<&T> {
         self.get(index)
     }
@@ -408,6 +442,13 @@ where
     }
     fn zvl_binary_search_by(&self, predicate: impl FnMut(&T) -> Ordering) -> Result<usize, usize> {
         self.binary_search_by(predicate)
+    }
+    fn zvl_binary_search_in_range_by(
+        &self,
+        predicate: impl FnMut(&T) -> Ordering,
+        range: Range<usize>,
+    ) -> Option<Result<usize, usize>> {
+        self.binary_search_in_range_by(predicate, range)
     }
     fn zvl_get(&self, index: usize) -> Option<&T> {
         self.get(index)
