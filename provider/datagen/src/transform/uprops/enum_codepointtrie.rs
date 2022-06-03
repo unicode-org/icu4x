@@ -34,8 +34,7 @@ fn get_enumerated<'a>(
         source.read_and_parse_toml(&PathBuf::from(key).with_extension("toml"))?;
     toml_obj
         .enum_property
-        .iter()
-        .next()
+        .get(0)
         .ok_or_else(|| DataErrorKind::MissingResourceKey.into_error())
 }
 

@@ -47,12 +47,12 @@ impl UpropsPaths {
             })?; // treat missing files as key errors
             let file: S = toml::from_str(&file)
                 .map_err(|e| crate::error::data_error_from_toml(e).with_path_context(&path))?;
-            self.cache.insert(path.to_path_buf(), Box::new(file));
+            self.cache.insert(path.clone(), Box::new(file));
         }
         self.cache
             .get(&path)
             .unwrap()
             .downcast_ref::<S>()
-            .ok_or_else(|| DataError::for_type::<S>())
+            .ok_or_else(|| DataError::custom("Uprops TOML error").with_type_context::<S>())
     }
 }

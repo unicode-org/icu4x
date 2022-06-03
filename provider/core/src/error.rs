@@ -255,7 +255,7 @@ impl DataError {
     }
 
     #[inline]
-    pub fn for_type<T>() -> DataError {
+    pub(crate) fn for_type<T>() -> DataError {
         DataError {
             kind: DataErrorKind::MismatchedType(core::any::type_name::<T>()),
             key: None,

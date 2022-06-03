@@ -140,5 +140,5 @@ where
         .get(path)
         .unwrap()
         .downcast_ref::<S>()
-        .ok_or_else(|| DataError::for_type::<S>())
+        .ok_or_else(|| DataError::custom("CLDR JSON error").with_type_context::<S>())
 }
