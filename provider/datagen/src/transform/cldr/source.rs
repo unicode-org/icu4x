@@ -14,15 +14,15 @@ use std::path::{Path, PathBuf};
 use std::str::FromStr;
 use std::sync::Arc;
 
-pub(crate) struct CldrPaths {
+pub(crate) struct CldrCache {
     root: PathBuf,
     locale_subset: String,
     cache: Arc<FrozenMap<PathBuf, Box<dyn Any + Send + Sync>>>,
 }
 
-impl Debug for CldrPaths {
+impl Debug for CldrCache {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        f.debug_struct("CldrPaths")
+        f.debug_struct("CldrCache")
             .field("root", &self.root)
             .field("locale_subset", &self.locale_subset)
             // skip formatting the cache
@@ -30,7 +30,7 @@ impl Debug for CldrPaths {
     }
 }
 
-impl CldrPaths {
+impl CldrCache {
     pub(crate) fn new(root: PathBuf, locale_subset: String) -> Self {
         Self {
             root,

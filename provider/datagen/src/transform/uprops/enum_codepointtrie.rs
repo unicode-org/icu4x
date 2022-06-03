@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use super::source::TomlPaths;
+use crate::source::TomlCache;
 use crate::SourceData;
 use icu_codepointtrie::CodePointTrie;
 use icu_properties::provider::*;
@@ -27,7 +27,7 @@ impl From<&SourceData> for EnumeratedPropertyCodePointTrieProvider {
 }
 
 fn get_enumerated<'a>(
-    source: &'a TomlPaths,
+    source: &'a TomlCache,
     key: &str,
 ) -> Result<&'a super::uprops_serde::enumerated::EnumeratedPropertyMap, DataError> {
     let toml_obj: &super::uprops_serde::enumerated::Main =

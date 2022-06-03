@@ -171,14 +171,11 @@ pub enum Out {
 ///   requested key requires them, otherwise [`MISSING_CLDR_ERROR`] or [`MISSING_UPROPS_ERROR`]
 ///   will be returned.
 /// * `out`: The output format and location. See the documentation on [`Out`]
-/// * `ignore_missing_resource_keys`: some keys are not supported by datagen yet. Using
-///   all keys will not work unless this option is set.
 pub fn datagen(
     locales: Option<&[LanguageIdentifier]>,
     keys: &[ResourceKey],
     sources: &SourceData,
     outs: Vec<Out>,
-    ignore_missing_resource_keys: bool,
 ) -> Result<(), DataError> {
     let exporters = outs
         .into_iter()
@@ -228,31 +225,21 @@ pub fn datagen(
     }
 
     keys.into_par_iter().try_for_each(|&key| {
-        let res = match provider.supported_options_for_key(key) {
-            Ok(options) => {
-                log::info!("Writing key: {}", key);
-                options.into_par_iter().try_for_each(|options| {
-                    let req = DataRequest {
-                        options: options.clone(),
-                        metadata: Default::default(),
-                    };
-                    let payload = provider
-                        .load_payload(key, &req)
-                        .and_then(DataResponse::take_payload)
-                        .map_err(|e| e.with_req(key, &req))?;
-                    exporters
-                        .par_iter()
-                        .try_for_each(|e| e.put_payload(key, &options, &payload))
-                })
-            }
-            Err(e)
-                if ignore_missing_resource_keys && e.kind == DataErrorKind::MissingResourceKey =>
-            {
-                log::trace!("Skipped key: {}", key);
-                Ok(())
-            }
-            Err(e) => Err(e),
-        };
+        let options = provider.supported_options_for_key(key)?;
+        log::info!("Writing key: {}", key);
+        let res = options.into_par_iter().try_for_each(|options| {
+            let req = DataRequest {
+                options: options.clone(),
+                metadata: Default::default(),
+            };
+            let payload = provider
+                .load_payload(key, &req)
+                .and_then(DataResponse::take_payload)
+                .map_err(|e| e.with_req(key, &req))?;
+            exporters
+                .par_iter()
+                .try_for_each(|e| e.put_payload(key, &options, &payload))
+        });
 
         for e in &exporters {
             e.flush(key)?;

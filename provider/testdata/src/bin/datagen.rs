@@ -8,6 +8,26 @@ use icu_provider_fs::export::serializers::json;
 use icu_testdata::{metadata, paths};
 use std::fs::File;
 
+// Uprops test data isn't complete, so we don't test these keys.
+const IGNORED_KEYS: &[&str] = &[
+    "props/alnum@1",
+    "props/blank@1",
+    "props/Comp_Ex@1",
+    "props/CWCM@1",
+    "props/Gr_Link@1",
+    "props/graph@1",
+    "props/Hyphen@1",
+    "props/nfcinert@1",
+    "props/nfdinert@1",
+    "props/nfkcinert@1",
+    "props/nfkdinert@1",
+    "props/PCM@1",
+    "props/print@1",
+    "props/segstart@1",
+    "props/Sensitive@1",
+    "props/xdigit@1",
+];
+
 fn main() {
     simple_logger::SimpleLogger::new()
         .env()
@@ -17,7 +37,7 @@ fn main() {
 
     let source_data = SourceData::default()
         .with_cldr(paths::cldr_json_root(), "full".to_string())
-        .with_uprops(paths::uprops_toml_root(), TrieType::Fast)
+        .with_uprops(paths::uprops_toml_root(), TrieType::Small)
         .with_coll(paths::coll_toml_root());
     let locales = metadata::load().unwrap().package_metadata.locales;
 
@@ -39,10 +59,12 @@ fn main() {
 
     icu_datagen::datagen(
         Some(&locales),
-        &icu_datagen::get_all_keys(),
+        &icu_datagen::get_all_keys()
+            .into_iter()
+            .filter(|k| !IGNORED_KEYS.contains(&k.get_path()))
+            .collect::<Vec<_>>(),
         &source_data,
         vec![json_out, blob_out, mod_out],
-        true,
     )
     .unwrap();
 
@@ -53,7 +75,6 @@ fn main() {
         vec![Out::Blob(Box::new(
             File::create(paths::data_root().join("decimal-bn-en.postcard")).unwrap(),
         ))],
-        true,
     )
     .unwrap();
 }

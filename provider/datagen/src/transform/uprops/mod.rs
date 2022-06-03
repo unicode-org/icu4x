@@ -28,7 +28,6 @@ mod casemapping;
 mod decompositions_serde;
 mod enum_codepointtrie;
 mod script;
-pub(crate) mod source;
 mod uprops_serde;
 
 pub use bin_uniset::BinaryPropertyUnicodeSetDataProvider;
