@@ -6,6 +6,7 @@ use crate::ule::AsULE;
 use crate::ZeroSlice;
 
 use core::fmt;
+use core::cmp::Ordering;
 
 use crate::map::ZeroMapKV;
 use crate::map::{BorrowedZeroVecLike, ZeroVecLike};
@@ -228,6 +229,41 @@ where
     pub fn get0<'l>(&'l self, key0: &K0) -> Option<ZeroMap2dCursor<'a, 'a, K0, K1, V>> {
         let key0_index = self.keys0.zvl_binary_search(key0).ok()?;
         Some(ZeroMap2dCursor::from_borrowed(self, key0_index))
+    }
+
+    /// Binary search the map for `key0`, returning a cursor.
+    ///
+    /// ```rust
+    /// use zerovec::maps::ZeroMap2dBorrowed;
+    /// use zerovec::ZeroMap2d;
+    ///
+    /// let mut map = ZeroMap2d::new();
+    /// map.insert(&1, "one", "foo");
+    /// map.insert(&2, "two", "bar");
+    /// let borrowed = map.as_borrowed();
+    /// assert!(matches!(borrowed.get0_by(|probe| probe.cmp(&1)), Some(_)));
+    /// assert!(matches!(borrowed.get0_by(|probe| probe.cmp(&3)), None));
+    /// ```
+    pub fn get0_by<'l>(&'l self, predicate: impl FnMut(&K0) -> Ordering) -> Option<ZeroMap2dCursor<'a, 'a, K0, K1, V>> {
+        let key0_index = self.keys0.zvl_binary_search_by(predicate).ok()?;
+        Some(ZeroMap2dCursor::from_borrowed(self, key0_index))
+    }
+
+    /// Returns whether `key0` is contained in this map
+    ///
+    /// ```rust
+    /// use zerovec::maps::ZeroMap2dBorrowed;
+    /// use zerovec::ZeroMap2d;
+    ///
+    /// let mut map = ZeroMap2d::new();
+    /// map.insert(&1, "one", "foo");
+    /// map.insert(&2, "two", "bar");
+    /// let borrowed = map.as_borrowed();
+    /// assert_eq!(borrowed.contains_key0(&1), true);
+    /// assert_eq!(borrowed.contains_key0(&3), false);
+    /// ```
+    pub fn contains_key0(&self, key0: &K0) -> bool {
+        self.keys0.zvl_binary_search(key0).is_ok()
     }
 }
 
