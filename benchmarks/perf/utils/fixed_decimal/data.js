@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1654209616412,
+  "lastUpdate": 1654224325280,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -29789,6 +29789,66 @@ window.BENCHMARK_DATA = {
             "name": "from_string/1000000001",
             "value": 91,
             "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "younies.mahmoud@gmail.com",
+            "name": "Younies Mahmoud",
+            "username": "younies"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "5e83a4b917affb061b0bed70dbdc346e220162a9",
+          "message": "Ceil function. (#1923)\n\nImplement Ceil, floor and truncate functions",
+          "timestamp": "2022-06-02T19:32:21-07:00",
+          "tree_id": "a35c4f6b4ef9a5ccc7ab48ea0aa98b8f6335f346",
+          "url": "https://github.com/unicode-org/icu4x/commit/5e83a4b917affb061b0bed70dbdc346e220162a9"
+        },
+        "date": 1654224299196,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 126556,
+            "range": "± 2187",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 28553,
+            "range": "± 519",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 73834,
+            "range": "± 1022",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 221,
+            "range": "± 3",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 110,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 91,
+            "range": "± 1",
             "unit": "ns/iter"
           }
         ]
