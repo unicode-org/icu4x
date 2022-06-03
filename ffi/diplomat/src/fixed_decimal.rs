@@ -104,23 +104,23 @@ pub mod ffi {
             self.0.negate()
         }
 
-        /// Zero-pad the [`ICU4XFixedDecimal`] on the left to a particular number of integer digits
+        /// Zero-pad the [`ICU4XFixedDecimal`] on the left to a particular position
         #[diplomat::rust_link(fixed_decimal::decimal::FixedDecimal::pad_left, FnInStruct)]
-        pub fn pad_left(&mut self, digits: u16) {
-            self.0.pad_left(digits)
+        pub fn pad_left(&mut self, position: i16) {
+            self.0.pad_left(position)
         }
 
-        /// Truncate the [`ICU4XFixedDecimal`] on the left to a particular magnitude, deleting digits if necessary. This is useful for, e.g. abbreviating years
+        /// Truncate the [`ICU4XFixedDecimal`] on the left to a particular position, deleting digits if necessary. This is useful for, e.g. abbreviating years
         /// ("2022" -> "22")
         #[diplomat::rust_link(fixed_decimal::decimal::FixedDecimal::truncate_left, FnInStruct)]
-        pub fn truncate_left(&mut self, magnitude: i16) {
-            self.0.truncate_left(magnitude)
+        pub fn truncate_left(&mut self, position: i16) {
+            self.0.truncate_left(position)
         }
 
-        /// Zero-pad the [`ICU4XFixedDecimal`] on the right to a particular (negative) magnitude
+        /// Zero-pad the [`ICU4XFixedDecimal`] on the right to a particular position
         #[diplomat::rust_link(fixed_decimal::decimal::FixedDecimal::pad_right, FnInStruct)]
-        pub fn pad_right(&mut self, negative_magnitude: u16) {
-            self.0.pad_right(negative_magnitude)
+        pub fn pad_right(&mut self, position: i16) {
+            self.0.pad_right(position)
         }
 
         /// Format the [`ICU4XFixedDecimal`] as a string.
