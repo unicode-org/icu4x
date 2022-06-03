@@ -415,7 +415,8 @@ where
         predicate: impl FnMut(&T) -> Ordering,
         range: Range<usize>,
     ) -> Option<Result<usize, usize>> {
-        self.as_components().binary_search_in_range_by(predicate, range)
+        self.as_components()
+            .binary_search_in_range_by(predicate, range)
     }
 }
 // Safety (based on the safety checklist on the VarULE trait):
