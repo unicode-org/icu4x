@@ -267,7 +267,9 @@ where
         range: Range<usize>,
     ) -> Option<Result<usize, usize>> {
         let subslice = self.get_subslice(range)?;
-        Some(ZeroSlice::binary_search_by(subslice, |probe| predicate(&probe)))
+        Some(ZeroSlice::binary_search_by(subslice, |probe| {
+            predicate(&probe)
+        }))
     }
     fn zvl_get(&self, index: usize) -> Option<&T::ULE> {
         self.get_ule_ref(index)

@@ -5,8 +5,8 @@
 use crate::ule::AsULE;
 use crate::ZeroSlice;
 
-use core::fmt;
 use core::cmp::Ordering;
+use core::fmt;
 
 use crate::map::ZeroMapKV;
 use crate::map::{BorrowedZeroVecLike, ZeroVecLike};
@@ -244,7 +244,10 @@ where
     /// assert!(matches!(borrowed.get0_by(|probe| probe.cmp(&1)), Some(_)));
     /// assert!(matches!(borrowed.get0_by(|probe| probe.cmp(&3)), None));
     /// ```
-    pub fn get0_by<'l>(&'l self, predicate: impl FnMut(&K0) -> Ordering) -> Option<ZeroMap2dCursor<'a, 'a, K0, K1, V>> {
+    pub fn get0_by<'l>(
+        &'l self,
+        predicate: impl FnMut(&K0) -> Ordering,
+    ) -> Option<ZeroMap2dCursor<'a, 'a, K0, K1, V>> {
         let key0_index = self.keys0.zvl_binary_search_by(predicate).ok()?;
         Some(ZeroMap2dCursor::from_borrowed(self, key0_index))
     }

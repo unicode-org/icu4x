@@ -5,6 +5,7 @@
 use crate::ule::AsULE;
 use crate::{ZeroMap2d, ZeroSlice};
 
+use core::cmp::Ordering;
 use core::fmt;
 use core::ops::Range;
 
@@ -156,23 +157,35 @@ where
         Some(self.values.zvl_get(key1_index).unwrap())
     }
 
-    // pub fn get1_by(&self, predicate: impl FnMut(&K1) -> Ordering) -> Option<&V::GetType> {
-    //     let range = self.map.get_range_for_key0_index(self.key0_index);
-    //     debug_assert!(range.start < range.end); // '<' because every key0 should have a key1
-    //     debug_assert!(range.end <= self.map.keys1.zvl_len());
-    //     #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
-    //     let index = range.start
-    //         + self
-    //             .map
-    //             .keys1
-    //             .zvl_binary_search_in_range(key1, range)
-    //             .expect("in-bounds range")
-    //             .ok()?;
-    //     // This unwrap is protected by the invariant keys1.len() == values.len(),
-    //     // the above debug_assert!, and the contract of zvl_binary_search_in_range.
-    //     #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
-    //     Some(self.map.values.zvl_get(index).unwrap())
-    // }
+    /// Gets the value for a predicate from this cursor, or `None` if key1 is not in the map.
+    ///
+    /// ```rust
+    /// use zerovec::ZeroMap2d;
+    ///
+    /// let mut map = ZeroMap2d::new();
+    /// map.insert("one", &1u32, "foo");
+    /// assert_eq!(map.get0("one").unwrap().get1_by(|v| v.cmp(&1)), Some("foo"));
+    /// assert_eq!(map.get0("one").unwrap().get1_by(|v| v.cmp(&2)), None);
+    /// ```
+    pub fn get1_by(&self, predicate: impl FnMut(&K1) -> Ordering) -> Option<&'l V::GetType> {
+        let key1_index = self.get_key1_index_by(predicate)?;
+        #[allow(clippy::unwrap_used)] // key1_index is valid
+        Some(self.values.zvl_get(key1_index).unwrap())
+    }
+
+    /// Given key0_index and predicate, returns the index into the values array
+    fn get_key1_index_by(&self, predicate: impl FnMut(&K1) -> Ordering) -> Option<usize> {
+        let range = self.get_range();
+        debug_assert!(range.start < range.end); // '<' because every key0 should have a key1
+        debug_assert!(range.end <= self.keys1.zvl_len());
+        let start = range.start;
+        #[allow(clippy::expect_used)] // protected by the debug_assert above
+        let binary_search_result = self
+            .keys1
+            .zvl_binary_search_in_range_by(predicate, range)
+            .expect("in-bounds range");
+        binary_search_result.ok().map(move |s| s + start)
+    }
 
     /// Given key0_index and key1, returns the index into the values array
     fn get_key1_index(&self, key1: &K1) -> Option<usize> {
