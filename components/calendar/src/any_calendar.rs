@@ -360,6 +360,7 @@ impl AnyCalendar {
             Self::Gregorian(_) => AnyCalendarKind::Gregorian,
             Self::Buddhist(_) => AnyCalendarKind::Buddhist,
             Self::Japanese(_) => AnyCalendarKind::Japanese,
+            #[allow(clippy::expect_used)] // Invariant known at compile time
             Self::Ethiopic(ref e) => e
                 .any_calendar_kind()
                 .expect("Ethiopic calendar known to have an AnyCalendarKind"),

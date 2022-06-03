@@ -42,6 +42,7 @@ impl<C: Calendar> AsCalendar for Rc<C> {
 /// `AsCalendar` for `C: Calendar`.
 ///
 /// Use `Date<Ref<'a, C>>` where you would use `Date<&'a C>`
+#[allow(clippy::exhaustive_structs)] // newtype
 pub struct Ref<'a, C>(pub &'a C);
 
 impl<C: Calendar> AsCalendar for Ref<'_, C> {
