@@ -564,20 +564,17 @@ impl FixedDecimal {
                 self.check_invariants();
                 return Ok(());
             }
-
-            *digit = 0;
         }
+
+        self.digits.clear();
 
         if self.magnitude == i16::MAX {
             self.magnitude = 0;
-            self.digits.clear();
 
             #[cfg(debug_assertions)]
             self.check_invariants();
             return Err(Error::Limit);
         }
-
-        self.digits.clear();
 
         // Still a carry, carry one to the next magnitude.
         self.digits.push(1);
