@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1654224325280,
+  "lastUpdate": 1654292289978,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -29849,6 +29849,66 @@ window.BENCHMARK_DATA = {
             "name": "from_string/1000000001",
             "value": 91,
             "range": "± 1",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "a43374e81cca106a1190b7c8daf168c9eeac9ba7",
+          "message": "[breaking] FixedDecimal: Define \"magnitude\" and introduce \"position\" concept (#1981)\n\nSee #1981 for details on updating call sites.",
+          "timestamp": "2022-06-03T14:25:59-07:00",
+          "tree_id": "a3b18ce743a9fecd3eae5c03c16f03406bd3c0a3",
+          "url": "https://github.com/unicode-org/icu4x/commit/a43374e81cca106a1190b7c8daf168c9eeac9ba7"
+        },
+        "date": 1654292267452,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 108440,
+            "range": "± 343",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 24236,
+            "range": "± 91",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 63199,
+            "range": "± 286",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 185,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 94,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 79,
+            "range": "± 0",
             "unit": "ns/iter"
           }
         ]
