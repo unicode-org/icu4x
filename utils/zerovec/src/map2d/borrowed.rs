@@ -345,6 +345,7 @@ where
     joiner: &'l ZeroSlice<u32>,
     keys1: &'l <<K1 as ZeroMapKV<'a>>::Container as ZeroVecLike<K1>>::BorrowedVariant,
     values: &'l <<V as ZeroMapKV<'a>>::Container as ZeroVecLike<V>>::BorrowedVariant,
+    // Invariant: key0_index is in range
     key0_index: usize,
 }
 
@@ -357,7 +358,9 @@ where
     K1: ?Sized,
     V: ?Sized,
 {
+    /// `key0_index` must be in range
     pub(crate) fn from_cow(cow: &'l ZeroMap2d<'a, K0, K1, V>, key0_index: usize) -> Self {
+        debug_assert!(key0_index < cow.joiner.len());
         Self {
             keys0: cow.keys0.zvl_as_borrowed(),
             joiner: &cow.joiner,
@@ -367,7 +370,9 @@ where
         }
     }
 
+    /// Returns the key0 corresponding to the cursor position.
     pub fn key0(&self) -> &'l K0::GetType {
+        #[allow(clippy::unwrap_used)] // safe by invariant on `self.key0_index`
         self.keys0.zvl_get(self.key0_index).unwrap()
     }
 
@@ -381,7 +386,7 @@ where
         ),
     > + '_ {
         let range = self.get_range();
-        #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
+        #[allow(clippy::unwrap_used)] // `self.get_range()` returns a valid range
         range.map(move |idx| {
             (
                 self.keys1.zvl_get(idx).unwrap(),
@@ -390,8 +395,8 @@ where
         })
     }
 
-    /// Given key0_index, returns the corresponding range of keys1
-    fn get_range(&self) -> Range<usize> {
+    /// Given key0_index, returns the corresponding range of keys1, which will be valid
+    pub(super) fn get_range(&self) -> Range<usize> {
         debug_assert!(self.key0_index < self.joiner.len());
         let start = if self.key0_index == 0 {
             0
@@ -401,7 +406,14 @@ where
         };
         #[allow(clippy::unwrap_used)] // protected by the debug_assert above
         let limit = self.joiner.get(self.key0_index).unwrap();
+        // These two assertions are true based on the invariants of ZeroMap2d
+        debug_assert!(start < limit);
+        debug_assert!((limit as usize) < self.values.zvl_len());
         (start as usize)..(limit as usize)
+    }
+
+    pub(super) fn get_key0_index(&self) -> usize {
+        self.key0_index
     }
 }
 

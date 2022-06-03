@@ -418,24 +418,13 @@ where
 
     /// Given a value that may exist in keys0, returns the corresponding range of keys1
     fn get_range_for_key0(&self, key0: &K0) -> Option<(usize, Range<usize>)> {
-        let key0_index = self.keys0.zvl_binary_search(key0).ok()?;
-        Some((key0_index, self.get_range_for_key0_index(key0_index)))
+        let cursor = self.get0(key0)?;
+        Some((cursor.get_key0_index(), cursor.get_range()))
     }
 
     /// Given an index into the joiner array, returns the corresponding range of keys1
     fn get_range_for_key0_index(&self, key0_index: usize) -> Range<usize> {
-        debug_assert!(key0_index < self.joiner.len());
-        let start = if key0_index == 0 {
-            0
-        } else {
-            // The unwrap is protected by the debug_assert above
-            #[allow(clippy::unwrap_used)]
-            self.joiner.get(key0_index - 1).unwrap()
-        };
-        // The unwrap is protected by the debug_assert above
-        #[allow(clippy::unwrap_used)]
-        let limit = self.joiner.get(key0_index).unwrap();
-        (start as usize)..(limit as usize)
+        ZeroMap2dCursorBorrowed::from_cow(self, key0_index).get_range()
     }
 
     /// Same as `get_range_for_key0`, but creates key0 if it doesn't already exist
