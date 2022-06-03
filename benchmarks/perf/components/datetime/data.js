@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1654224335362,
+  "lastUpdate": 1654292375695,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -36839,6 +36839,102 @@ window.BENCHMARK_DATA = {
             "name": "pattern/parse",
             "value": 4897,
             "range": "± 290",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "a43374e81cca106a1190b7c8daf168c9eeac9ba7",
+          "message": "[breaking] FixedDecimal: Define \"magnitude\" and introduce \"position\" concept (#1981)\n\nSee #1981 for details on updating call sites.",
+          "timestamp": "2022-06-03T14:25:59-07:00",
+          "tree_id": "a3b18ce743a9fecd3eae5c03c16f03406bd3c0a3",
+          "url": "https://github.com/unicode-org/icu4x/commit/a43374e81cca106a1190b7c8daf168c9eeac9ba7"
+        },
+        "date": 1654292350385,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 82139,
+            "range": "± 250",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 813574,
+            "range": "± 1870",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 178485,
+            "range": "± 323",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/DateTimeFormat/format_to_write",
+            "value": 77411,
+            "range": "± 194",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/DateTimeFormat/format_to_string",
+            "value": 86087,
+            "range": "± 169",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/format",
+            "value": 83577,
+            "range": "± 376",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/to_string",
+            "value": 89627,
+            "range": "± 200",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/ZonedDateTimeFormat/format_to_write",
+            "value": 173372,
+            "range": "± 327",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/ZonedDateTimeFormat/format_to_string",
+            "value": 184510,
+            "range": "± 420",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/format",
+            "value": 178562,
+            "range": "± 301",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/to_string",
+            "value": 190816,
+            "range": "± 508",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "pattern/parse",
+            "value": 5199,
+            "range": "± 12",
             "unit": "ns/iter"
           }
         ]
