@@ -476,8 +476,21 @@ impl FixedDecimal {
     /// dec.strip_left();
     /// assert_eq!("12.3400", dec.to_string());
     /// ```
+    ///
+    /// There is no effect if the most significant digit has magnitude less than zero:
+    ///
+    /// ```
+    /// # use fixed_decimal::FixedDecimal;
+    /// let mut dec = FixedDecimal::from(22)
+    ///     .multiplied_pow10(-4)
+    ///     .expect("in-bounds");
+    /// assert_eq!("0.0022", dec.to_string());
+    ///
+    /// dec.strip_left();
+    /// assert_eq!("0.0022", dec.to_string());
+    /// ```
     pub fn strip_left(&mut self) {
-        self.upper_magnitude = self.magnitude;
+        self.upper_magnitude = cmp::max(self.magnitude, 0);
         #[cfg(debug_assertions)]
         self.check_invariants();
     }
@@ -518,8 +531,19 @@ impl FixedDecimal {
     /// dec.strip_right();
     /// assert_eq!("0012.34", dec.to_string());
     /// ```
+    ///
+    /// There is no effect if the least significant digit has magnitude more than zero:
+    ///
+    /// ```
+    /// # use fixed_decimal::FixedDecimal;
+    /// let mut dec = FixedDecimal::from(2200);
+    /// assert_eq!("2200", dec.to_string());
+    ///
+    /// dec.strip_right();
+    /// assert_eq!("2200", dec.to_string());
+    /// ```
     pub fn strip_right(&mut self) {
-        self.lower_magnitude = self.nonzero_magnitude_right();
+        self.lower_magnitude = cmp::min(0, self.nonzero_magnitude_right());
         #[cfg(debug_assertions)]
         self.check_invariants();
     }
