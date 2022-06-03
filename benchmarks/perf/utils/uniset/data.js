@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1654224216904,
+  "lastUpdate": 1654292179356,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -30208,6 +30208,60 @@ window.BENCHMARK_DATA = {
           {
             "name": "uniset/contains_range/worst",
             "value": 3,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "a43374e81cca106a1190b7c8daf168c9eeac9ba7",
+          "message": "[breaking] FixedDecimal: Define \"magnitude\" and introduce \"position\" concept (#1981)\n\nSee #1981 for details on updating call sites.",
+          "timestamp": "2022-06-03T14:25:59-07:00",
+          "tree_id": "a3b18ce743a9fecd3eae5c03c16f03406bd3c0a3",
+          "url": "https://github.com/unicode-org/icu4x/commit/a43374e81cca106a1190b7c8daf168c9eeac9ba7"
+        },
+        "date": 1654292157453,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 40474268,
+            "range": "± 73846",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/worst",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/worst",
+            "value": 2,
             "range": "± 0",
             "unit": "ns/iter"
           }
