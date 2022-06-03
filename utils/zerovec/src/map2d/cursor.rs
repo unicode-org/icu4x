@@ -5,8 +5,8 @@
 use crate::ule::AsULE;
 use crate::{ZeroMap2d, ZeroSlice};
 
-use core::ops::Range;
 use core::fmt;
+use core::ops::Range;
 
 use crate::map::ZeroMapKV;
 use crate::map::ZeroVecLike;
@@ -42,7 +42,10 @@ where
     V: ?Sized,
 {
     /// `key0_index` must be in range
-    pub(crate) fn from_borrowed(borrowed: &ZeroMap2dBorrowed<'a, K0, K1, V>, key0_index: usize) -> Self {
+    pub(crate) fn from_borrowed(
+        borrowed: &ZeroMap2dBorrowed<'a, K0, K1, V>,
+        key0_index: usize,
+    ) -> Self {
         debug_assert!(key0_index < borrowed.joiner.len());
         ZeroMap2dCursor {
             keys0: borrowed.keys0,
@@ -90,7 +93,7 @@ where
     }
 
     /// Produce an ordered iterator over keys1 for a particular key0.
-    /// 
+    ///
     /// For an example, see [`ZeroMap2d::iter0()`].
     pub fn iter1(
         &self,

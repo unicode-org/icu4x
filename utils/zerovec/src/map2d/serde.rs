@@ -31,9 +31,7 @@ where
             let mut serde_map = serializer.serialize_map(None)?;
             for cursor in self.iter0() {
                 K0::Container::zvl_get_as_t(cursor.key0(), |k| serde_map.serialize_key(k))?;
-                let inner_map = ZeroMap2dInnerMapSerialize {
-                    cursor,
-                };
+                let inner_map = ZeroMap2dInnerMapSerialize { cursor };
                 serde_map.serialize_value(&inner_map)?;
             }
             serde_map.end()

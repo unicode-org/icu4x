@@ -228,9 +228,7 @@ where
     ///
     /// assert_eq!(total_value, 22);
     /// ```
-    pub fn iter0<'l>(
-        &'l self,
-    ) -> impl Iterator<Item = ZeroMap2dCursor<'l, 'a, K0, K1, V>> + 'l {
+    pub fn iter0<'l>(&'l self) -> impl Iterator<Item = ZeroMap2dCursor<'l, 'a, K0, K1, V>> + 'l {
         (0..self.keys0.zvl_len()).map(move |idx| ZeroMap2dCursor::from_cow(self, idx))
     }
 
@@ -349,7 +347,10 @@ where
     /// assert_eq!(map.remove(&1, "one"), Err(KeyError::K0));
     /// ```
     pub fn remove(&mut self, key0: &K0, key1: &K1) -> Result<V::OwnedType, KeyError> {
-        let key0_index = self.keys0.zvl_binary_search(key0).map_err(|_| KeyError::K0)?;
+        let key0_index = self
+            .keys0
+            .zvl_binary_search(key0)
+            .map_err(|_| KeyError::K0)?;
         let range = self.get_range_for_key0_index(key0_index);
         debug_assert!(range.start < range.end); // '<' because every key0 should have a key1
         debug_assert!(range.end <= self.keys1.zvl_len());
