@@ -111,7 +111,7 @@ where
         let limit = self.joiner.get(self.key0_index).unwrap();
         // These two assertions are true based on the invariants of ZeroMap2d
         debug_assert!(start < limit);
-        debug_assert!((limit as usize) < self.values.zvl_len());
+        debug_assert!((limit as usize) <= self.values.zvl_len());
         (start as usize)..(limit as usize)
     }
 }

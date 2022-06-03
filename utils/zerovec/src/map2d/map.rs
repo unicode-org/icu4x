@@ -220,7 +220,7 @@ where
     /// for cursor in map.iter0() {
     ///     for (key1, value) in cursor.iter1() {
     ///         // This code runs for every (key0, key1) pair
-    ///         total_value += key0.as_unsigned_int() as usize;
+    ///         total_value += cursor.key0().as_unsigned_int() as usize;
     ///         total_value += key1.as_unsigned_int() as usize;
     ///         total_value += value.len();
     ///     }
@@ -567,7 +567,7 @@ where
     /// map.insert(&1, &4, &5);
     /// map.insert(&6, &7, &8);
     ///
-    /// assert_eq!(map.get_copied(&6, &7), Some(8));
+    /// assert_eq!(map.get_copied(&6, &7), Ok(8));
     /// ```
     pub fn get_copied(&self, key0: &K0, key1: &K1) -> Result<V, KeyError> {
         self.get0(key0)
