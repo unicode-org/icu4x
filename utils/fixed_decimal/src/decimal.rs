@@ -552,6 +552,296 @@ impl FixedDecimal {
         self.check_invariants();
     }
 
+    /// Increments the digits by 1. if the digits are empty, it will add
+    /// an element with value 1. If there are some trailing zeros,
+    /// it will be reomved from `self.digits`.
+    fn increment_abs_by_one(&mut self) -> Result<(), Error> {
+        for (zero_count, digit) in self.digits.iter_mut().rev().enumerate() {
+            *digit += 1;
+            if *digit < 10 {
+                self.digits.truncate(self.digits.len() - zero_count);
+                #[cfg(debug_assertions)]
+                self.check_invariants();
+                return Ok(());
+            }
+        }
+
+        self.digits.clear();
+
+        if self.magnitude == i16::MAX {
+            self.magnitude = 0;
+
+            #[cfg(debug_assertions)]
+            self.check_invariants();
+            return Err(Error::Limit);
+        }
+
+        // Still a carry, carry one to the next magnitude.
+        self.digits.push(1);
+        self.magnitude += 1;
+
+        if self.upper_magnitude < self.magnitude {
+            self.upper_magnitude = self.magnitude;
+        }
+
+        #[cfg(debug_assertions)]
+        self.check_invariants();
+        Ok(())
+    }
+
+    /// Removes the trailing zeros in `self.digits`
+    fn remove_trailing_zeros_from_digits_list(&mut self) {
+        let no_of_trailing_zeros = self
+            .digits
+            .iter()
+            .rev()
+            .take_while(|&digit| *digit == 0)
+            .count();
+
+        self.digits.truncate(crate::ops::i16_sub_unsigned(
+            self.digits.len() as i16,
+            no_of_trailing_zeros as u16,
+        ) as usize);
+
+        if self.digits.is_empty() {
+            self.magnitude = 0;
+        }
+
+        #[cfg(debug_assertions)]
+        self.check_invariants();
+    }
+
+    /// Truncate the number on the right to a particular magnitude, deleting
+    /// digits if necessary.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use fixed_decimal::FixedDecimal;
+    ///
+    /// let dec = FixedDecimal::from(4235);
+    /// assert_eq!("4235", dec.to_string());
+    ///
+    /// assert_eq!("4235.00000", dec.clone().truncated_right(-5).to_string());
+    ///
+    /// assert_eq!("4230", dec.clone().truncated_right(1).to_string());
+    ///
+    /// assert_eq!("4230", dec.clone().truncated_right(1).to_string());
+    ///
+    /// assert_eq!("4235", dec.clone().truncated_right(0).to_string());
+    ///
+    /// assert_eq!("4200", dec.clone().truncated_right(2).to_string());
+    ///
+    /// assert_eq!("00000000000", dec.clone().truncated_right(10).to_string());
+    /// ```
+    pub fn truncated_right(mut self, magnitude: i16) -> Self {
+        self.truncate_right(magnitude);
+        self
+    }
+
+    /// Truncate the number on the right to a particular magnitude, deleting
+    /// digits if necessary.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use fixed_decimal::FixedDecimal;
+    /// # use std::str::FromStr;
+    /// let mut dec = FixedDecimal::from(4235 as i32);
+    /// assert_eq!("4235", dec.to_string());
+    ///
+    /// dec.truncate_right(-5);
+    /// assert_eq!("4235.00000", dec.to_string());
+    ///
+    /// dec.truncate_right(1);
+    /// assert_eq!("4230", dec.to_string());
+    ///
+    /// dec.truncate_right(1);
+    /// assert_eq!("4230", dec.to_string());
+    ///
+    /// dec.truncate_right(0);
+    /// assert_eq!("4230", dec.to_string());
+    ///
+    /// dec.truncate_right(5);
+    /// assert_eq!("000000", dec.to_string());
+    ///
+    /// dec.truncate_right(2);
+    /// assert_eq!("000000", dec.to_string());
+    ///
+    /// let mut dec = FixedDecimal::from(4235 as i32);
+    /// dec.truncate_right(10);
+    /// assert_eq!("00000000000", dec.to_string());
+    ///
+    /// let mut dec = FixedDecimal::from_str("-99.999").unwrap();
+    /// dec.truncate_right(-2);
+    /// assert_eq!("-99.99", dec.to_string());
+    ///
+    /// let mut dec = FixedDecimal::from_str("1234.56").unwrap();
+    /// dec.truncate_right(-1);
+    /// assert_eq!("1234.5", dec.to_string());
+    ///
+    /// let mut dec = FixedDecimal::from_str("0.009").unwrap();
+    /// dec.truncate_right(-1);
+    /// assert_eq!("0.0", dec.to_string());
+    /// ```
+    pub fn truncate_right(&mut self, n: i16) {
+        self.lower_magnitude = cmp::min(n, 0);
+        self.upper_magnitude = cmp::max(self.upper_magnitude, n);
+
+        if n <= self.magnitude {
+            self.digits
+                .truncate(crate::ops::i16_abs_sub(self.magnitude, n) as usize + 1);
+            self.remove_trailing_zeros_from_digits_list();
+        } else {
+            self.digits.clear();
+            self.magnitude = 0;
+        }
+
+        #[cfg(debug_assertions)]
+        self.check_invariants();
+    }
+
+    /// Ceils the number to the power ten of n.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use fixed_decimal::FixedDecimal;
+    /// # use std::str::FromStr;
+    ///
+    /// let mut dec = FixedDecimal::from_str("3.234").unwrap();
+    /// dec.ceil(0);
+    /// assert_eq!("4", dec.to_string());
+    ///
+    /// let mut dec = FixedDecimal::from_str("2.222").unwrap();
+    /// dec.ceil(-1);
+    /// assert_eq!("2.3", dec.to_string());
+    ///
+    /// let mut dec = FixedDecimal::from_str("22.222").unwrap();
+    /// dec.ceil(-2);
+    /// assert_eq!("22.23", dec.to_string());
+    ///
+    /// let mut dec = FixedDecimal::from_str("99.999").unwrap();
+    /// dec.ceil(-2);
+    /// assert_eq!("100.00", dec.to_string());
+    ///
+    /// let mut dec = FixedDecimal::from_str("99.999").unwrap();
+    /// dec.ceil(-10);
+    /// assert_eq!("99.9990000000", dec.to_string());
+    ///
+    /// let mut dec = FixedDecimal::from_str("-99.999").unwrap();
+    /// dec.ceil(-10);
+    /// assert_eq!("-99.9990000000", dec.to_string());
+    ///
+    /// let mut dec = FixedDecimal::from_str("-99.999").unwrap();
+    /// dec.ceil(-2);
+    /// assert_eq!("-99.99", dec.to_string());
+    ///
+    /// let mut dec = FixedDecimal::from_str("99.999").unwrap();
+    /// dec.ceil(10);
+    /// assert_eq!("10000000000", dec.to_string());
+    ///
+    /// let mut dec = FixedDecimal::from_str("-99.999").unwrap();
+    /// dec.ceil(10);
+    /// assert_eq!("-00000000000", dec.to_string());
+    ///
+    /// let mut dec = FixedDecimal::from_str("0.009").unwrap();
+    /// dec.ceil(-1);
+    /// assert_eq!("0.1", dec.to_string());
+    ///
+    /// let mut dec = FixedDecimal::from_str("-0.009").unwrap();
+    /// dec.ceil(-1);
+    /// assert_eq!("-0.0", dec.to_string());
+    /// ```
+    pub fn ceil(&mut self, n: i16) {
+        if self.is_negative {
+            self.truncate_right(n);
+
+            #[cfg(debug_assertions)]
+            self.check_invariants();
+            return;
+        }
+
+        // Now, the number is positive.
+        let before_truncate_is_zero = self.is_zero();
+        let before_truncate_is_bottom_magnitude = self.nonzero_magnitude_right();
+        let before_truncate_magnitude = self.magnitude;
+        self.truncate_right(n);
+
+        if before_truncate_is_zero {
+            #[cfg(debug_assertions)]
+            self.check_invariants();
+            return;
+        }
+
+        // Now, the number is positive and not zero before truncation.
+        if n <= before_truncate_is_bottom_magnitude {
+            #[cfg(debug_assertions)]
+            self.check_invariants();
+            return;
+        }
+
+        if n <= before_truncate_magnitude {
+            let result = self.increment_abs_by_one();
+            if result.is_err() {
+                // Do nothing for now.
+            }
+
+            #[cfg(debug_assertions)]
+            self.check_invariants();
+            return;
+        }
+
+        debug_assert!(self.digits.is_empty());
+        self.digits.push(1);
+        self.magnitude = n;
+
+        #[cfg(debug_assertions)]
+        self.check_invariants();
+    }
+
+    /// Floors the number to the power ten of n.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use fixed_decimal::FixedDecimal;
+    /// # use std::str::FromStr;
+    ///
+    /// let mut dec = FixedDecimal::from_str("3.234").unwrap();
+    /// dec.floor(0);
+    /// assert_eq!("3", dec.to_string());
+    ///
+    /// let mut dec = FixedDecimal::from_str("2.222").unwrap();
+    /// dec.floor(-1);
+    /// assert_eq!("2.2", dec.to_string());
+    ///
+    /// let mut dec = FixedDecimal::from_str("99.999").unwrap();
+    /// dec.floor(-2);
+    /// assert_eq!("99.99", dec.to_string());
+    ///
+    /// let mut dec = FixedDecimal::from_str("99.999").unwrap();
+    /// dec.floor(-10);
+    /// assert_eq!("99.9990000000", dec.to_string());
+    ///
+    /// let mut dec = FixedDecimal::from_str("-99.999").unwrap();
+    /// dec.floor(-10);
+    /// assert_eq!("-99.9990000000", dec.to_string());
+    ///
+    /// let mut dec = FixedDecimal::from_str("99.999").unwrap();
+    /// dec.floor(10);
+    /// assert_eq!("00000000000", dec.to_string());
+    ///
+    /// let mut dec = FixedDecimal::from_str("-99.999").unwrap();
+    /// dec.floor(10);
+    /// assert_eq!("-10000000000", dec.to_string());
+    /// ```
+    pub fn floor(&mut self, n: i16) {
+        self.negate();
+        self.ceil(n);
+        self.negate();
+    }
+
     /// Zero-pad the number on the right to a particular (negative) magnitude. Will truncate
     /// trailing zeros if necessary, but will not truncate other digits, returning the result.
     ///
