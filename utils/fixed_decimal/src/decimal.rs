@@ -444,7 +444,7 @@ impl FixedDecimal {
     /// returning the result.
     ///
     /// Negative numbers have no effect.
-    /// 
+    ///
     /// Also see [`FixedDecimal::truncated_left()`].
     ///
     /// # Examples
@@ -470,7 +470,7 @@ impl FixedDecimal {
     /// Zero-pad the number on the left to a particular position.
     ///
     /// Negative numbers have no effect.
-    /// 
+    ///
     /// Also see [`FixedDecimal::truncate_left()`].
     ///
     /// # Examples
@@ -507,7 +507,7 @@ impl FixedDecimal {
 
     /// Truncate the number on the left to a particular position, deleting
     /// digits if necessary, returning the result.
-    /// 
+    ///
     /// Also see [`FixedDecimal::padded_left()`].
     ///
     /// # Examples
@@ -539,7 +539,7 @@ impl FixedDecimal {
 
     /// Truncate the number on the left to a particular position, deleting
     /// digits if necessary.
-    /// 
+    ///
     /// Also see [`FixedDecimal::pad_left()`].
     ///
     /// # Examples
@@ -889,7 +889,7 @@ impl FixedDecimal {
 
     /// Zero-pad the number on the right to a particular (negative) position. Will truncate
     /// trailing zeros if necessary, but will not truncate other digits, returning the result.
-    /// 
+    ///
     /// Positive numbers have no effect.
     ///
     /// Also see [`FixedDecimal::truncated_right()`].
@@ -918,7 +918,7 @@ impl FixedDecimal {
 
     /// Zero-pad the number on the right to a particular (negative) position. Will truncate
     /// trailing zeros if necessary, but will not truncate other digits.
-    /// 
+    ///
     /// Positive numbers have no effect.
     ///
     /// Also see [`FixedDecimal::truncate_right()`].
