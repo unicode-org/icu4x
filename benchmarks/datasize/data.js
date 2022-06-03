@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1654209002602,
+  "lastUpdate": 1654223665075,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -16553,6 +16553,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/00d4fbbe25d5975c9a7bb2070801a6f40c9070c0"
         },
         "date": 1654208976519,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 2301197,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "younies.mahmoud@gmail.com",
+            "name": "Younies Mahmoud",
+            "username": "younies"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "5e83a4b917affb061b0bed70dbdc346e220162a9",
+          "message": "Ceil function. (#1923)\n\nImplement Ceil, floor and truncate functions",
+          "timestamp": "2022-06-02T19:32:21-07:00",
+          "tree_id": "a35c4f6b4ef9a5ccc7ab48ea0aa98b8f6335f346",
+          "url": "https://github.com/unicode-org/icu4x/commit/5e83a4b917affb061b0bed70dbdc346e220162a9"
+        },
+        "date": 1654223643768,
         "tool": "ndjson",
         "benches": [
           {
