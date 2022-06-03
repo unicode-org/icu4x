@@ -3,8 +3,8 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::transform::cldr::source::CldrPaths;
-use crate::transform::uprops::source::UpropsPaths;
-use icu_codepointtrie::TrieType;
+use crate::transform::uprops::source::TomlPaths;
+pub use icu_codepointtrie::TrieType;
 use icu_provider::DataError;
 use std::fmt::Debug;
 use std::path::PathBuf;
@@ -15,12 +15,12 @@ use std::sync::Arc;
 #[non_exhaustive]
 pub struct SourceData {
     cldr_paths: Option<Arc<CldrPaths>>,
-    uprops_paths: Option<Arc<UpropsPaths>>,
+    uprops_paths: Option<Arc<TomlPaths>>,
     /// Only used in experimental context, but compiling this
     /// out in non-experimental context would unnecessarily
     /// complicate things.
     #[allow(dead_code)]
-    coll_root: Option<PathBuf>,
+    coll_paths: Option<Arc<TomlPaths>>,
     trie_type: TrieType,
 }
 
@@ -29,7 +29,7 @@ impl Default for SourceData {
         Self {
             cldr_paths: None,
             uprops_paths: None,
-            coll_root: None,
+            coll_paths: None,
             trie_type: TrieType::Small,
         }
     }
@@ -50,17 +50,22 @@ impl SourceData {
     /// Adds Unicode Properties data to this `DataSource`. The path should
     /// point to a local `icuexportdata_uprops_full` directory (see
     /// [GitHub downloads](https://github.com/unicode-org/icu/releases)).
-    pub fn with_uprops(self, root: PathBuf) -> Self {
+    pub fn with_uprops(self, root: PathBuf, trie_type: TrieType) -> Self {
         Self {
-            uprops_paths: Some(Arc::new(UpropsPaths::new(root))),
+            uprops_paths: Some(Arc::new(TomlPaths::new(
+                root.join("icu_exportdata_full").join(match trie_type {
+                    TrieType::Fast => "fast",
+                    TrieType::Small => "small",
+                }),
+            ))),
             ..self
         }
     }
 
     /// Adds collation data to this `DataSource`.
-    pub fn with_coll(self, coll_root: PathBuf) -> Self {
+    pub fn with_coll(self, root: PathBuf) -> Self {
         Self {
-            coll_root: Some(coll_root),
+            coll_paths: Some(Arc::new(TomlPaths::new(root))),
             ..self
         }
     }
@@ -91,7 +96,7 @@ impl SourceData {
     }
 
     /// Path to Unicode Properties source data.
-    pub(crate) fn get_uprops_paths(&self) -> Result<&UpropsPaths, DataError> {
+    pub(crate) fn get_uprops_paths(&self) -> Result<&TomlPaths, DataError> {
         self.uprops_paths
             .as_deref()
             .ok_or(crate::error::MISSING_UPROPS_ERROR)
@@ -110,8 +115,8 @@ impl SourceData {
 
     /// Path to collation data.
     #[cfg(feature = "experimental")]
-    pub(crate) fn get_coll_root(&self) -> Result<&std::path::Path, DataError> {
-        self.coll_root
+    pub(crate) fn get_coll_paths(&self) -> Result<&TomlPaths, DataError> {
+        self.coll_paths
             .as_deref()
             .ok_or(crate::error::MISSING_COLLATION_ERROR)
     }

@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use super::source::UpropsPaths;
+use super::source::TomlPaths;
 use crate::SourceData;
 use icu_properties::provider::*;
 use icu_provider::datagen::*;
@@ -24,7 +24,7 @@ impl From<&SourceData> for BinaryPropertyUnicodeSetDataProvider {
 }
 
 fn get_binary<'a>(
-    source: &'a UpropsPaths,
+    source: &'a TomlPaths,
     key: &str,
 ) -> Result<&'a super::uprops_serde::binary::BinaryProperty, DataError> {
     let toml_obj: &super::uprops_serde::binary::Main =

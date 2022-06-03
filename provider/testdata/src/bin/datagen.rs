@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use icu_datagen::{Out, SourceData};
+use icu_datagen::{Out, SourceData, TrieType};
 use icu_locid::langid;
 use icu_provider_fs::export::serializers::json;
 use icu_testdata::{metadata, paths};
@@ -17,7 +17,7 @@ fn main() {
 
     let source_data = SourceData::default()
         .with_cldr(paths::cldr_json_root(), "full".to_string())
-        .with_uprops(paths::uprops_toml_root())
+        .with_uprops(paths::uprops_toml_root(), TrieType::Fast)
         .with_coll(paths::coll_toml_root());
     let locales = metadata::load().unwrap().package_metadata.locales;
 

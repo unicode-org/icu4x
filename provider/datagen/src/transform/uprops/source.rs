@@ -10,21 +10,21 @@ use std::path::Path;
 use std::path::PathBuf;
 use std::sync::Arc;
 
-pub(crate) struct UpropsPaths {
+pub(crate) struct TomlPaths {
     root: PathBuf,
     cache: Arc<FrozenMap<PathBuf, Box<dyn Any + Send + Sync>>>,
 }
 
-impl Debug for UpropsPaths {
+impl Debug for TomlPaths {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        f.debug_struct("UpropsPaths")
+        f.debug_struct("TomlPaths")
             .field("root", &self.root)
             // skip formatting the cache
             .finish()
     }
 }
 
-impl UpropsPaths {
+impl TomlPaths {
     pub fn new(root: PathBuf) -> Self {
         Self {
             root,
@@ -54,5 +54,18 @@ impl UpropsPaths {
             .unwrap()
             .downcast_ref::<S>()
             .ok_or_else(|| DataError::custom("Uprops TOML error").with_type_context::<S>())
+    }
+
+    #[cfg_attr(not(feature = "experimental"), allow(dead_code))]
+    pub fn list(&self) -> Result<impl Iterator<Item = PathBuf>, DataError> {
+        let mut result = vec![];
+        for entry in std::fs::read_dir(&self.root)
+            .map_err(|e| DataError::from(e).with_path_context(&self.root))?
+        {
+            let entry = entry.map_err(|e| DataError::from(e).with_path_context(&self.root))?;
+            let path = entry.path();
+            result.push(path);
+        }
+        Ok(result.into_iter())
     }
 }

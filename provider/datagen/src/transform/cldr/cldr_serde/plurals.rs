@@ -11,7 +11,7 @@ use icu_locid::LanguageIdentifier;
 use litemap::LiteMap;
 use serde::Deserialize;
 
-#[derive(PartialEq, PartialOrd, Ord, Eq, Debug, Deserialize, Clone)]
+#[derive(PartialEq, PartialOrd, Ord, Eq, Debug, Deserialize)]
 pub struct LocalePluralRules {
     #[serde(rename = "pluralRule-count-zero")]
     pub zero: Option<String>,
@@ -25,10 +25,10 @@ pub struct LocalePluralRules {
     pub many: Option<String>,
 }
 
-#[derive(PartialEq, Debug, Deserialize, Clone)]
+#[derive(PartialEq, Debug, Deserialize)]
 pub struct Rules(pub LiteMap<LanguageIdentifier, LocalePluralRules>);
 
-#[derive(PartialEq, Debug, Deserialize, Clone)]
+#[derive(PartialEq, Debug, Deserialize)]
 pub struct Supplemental {
     #[serde(rename = "plurals-type-cardinal")]
     pub plurals_type_cardinal: Option<Rules>,
@@ -36,7 +36,7 @@ pub struct Supplemental {
     pub plurals_type_ordinal: Option<Rules>,
 }
 
-#[derive(PartialEq, Debug, Deserialize, Clone)]
+#[derive(PartialEq, Debug, Deserialize)]
 pub struct Resource {
     pub supplemental: Supplemental,
 }

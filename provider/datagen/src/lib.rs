@@ -65,7 +65,7 @@ pub mod transform;
 
 pub use error::{MISSING_CLDR_ERROR, MISSING_COLLATION_ERROR, MISSING_UPROPS_ERROR};
 pub use registry::get_all_keys;
-pub use source::SourceData;
+pub use source::{SourceData, TrieType};
 
 use icu_locid::LanguageIdentifier;
 use icu_provider::datagen::*;
