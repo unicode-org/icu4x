@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::ule::AsULE;
-use crate::{ZeroMap2d, ZeroSlice, ZeroVec};
+use crate::{ZeroMap2d, ZeroSlice};
 
 use core::ops::Range;
 use core::fmt;
@@ -190,11 +190,10 @@ impl<'l, 'a, K0, K1, V> ZeroMap2dCursor<'l, 'a, K0, K1, V>
 where
     K0: ZeroMapKV<'a>,
     K1: ZeroMapKV<'a> + Ord,
-    V: ZeroMapKV<'a, Container = ZeroVec<'a, V>>,
+    V: ZeroMapKV<'a, GetType = V::ULE>,
     V: AsULE + Copy,
     K0: ?Sized,
     K1: ?Sized,
-    V: ?Sized,
 {
     /// For cases when `V` is fixed-size, obtain a direct copy of `V` instead of `V::ULE`
     ///
@@ -210,7 +209,9 @@ where
     /// ```
     pub fn get1_copied(&self, key1: &K1) -> Option<V> {
         let key1_index = self.get_key1_index(key1)?;
-        self.values.get(key1_index)
+        #[allow(clippy::unwrap_used)] // key1_index is valid
+        let ule = self.values.zvl_get(key1_index).unwrap();
+        Some(V::from_unaligned(*ule))
     }
 }
 

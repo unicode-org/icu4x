@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::ule::AsULE;
-use crate::{ZeroSlice, ZeroVec};
+use crate::ZeroSlice;
 
 use core::fmt;
 
@@ -250,10 +250,12 @@ where
 
 impl<'a, K0, K1, V> ZeroMap2dBorrowed<'a, K0, K1, V>
 where
-    K0: ZeroMapKV<'a> + ?Sized + Ord,
-    K1: ZeroMapKV<'a> + ?Sized + Ord,
-    V: ZeroMapKV<'a, Container = ZeroVec<'a, V>> + ?Sized,
+    K0: ZeroMapKV<'a> + Ord,
+    K1: ZeroMapKV<'a> + Ord,
+    V: ZeroMapKV<'a, GetType = V::ULE>,
     V: AsULE + Copy,
+    K0: ?Sized,
+    K1: ?Sized,
 {
     /// For cases when `V` is fixed-size, obtain a direct copy of `V` instead of `V::ULE`
     pub fn get_copied(&self, key0: &K0, key1: &K1) -> Result<V, KeyError> {
