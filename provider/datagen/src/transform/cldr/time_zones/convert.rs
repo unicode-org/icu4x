@@ -37,7 +37,7 @@ fn parse_hour_format(hour_format: &str) -> (Cow<'static, str>, Cow<'static, str>
     (Cow::Owned(positive), Cow::Owned(negative))
 }
 
-impl From<&CldrTimeZonesData<'_>> for TimeZoneFormatsV1<'static> {
+impl From<&CldrTimeZonesData> for TimeZoneFormatsV1<'static> {
     fn from(other: &CldrTimeZonesData) -> Self {
         let data = &other.time_zone_names;
         Self {
@@ -89,7 +89,7 @@ impl Location {
     }
 }
 
-impl From<&CldrTimeZonesData<'_>> for ExemplarCitiesV1<'static> {
+impl From<&CldrTimeZonesData> for ExemplarCitiesV1<'static> {
     fn from(other: &CldrTimeZonesData) -> Self {
         let time_zone_names_data = &other.time_zone_names;
         let bcp47_tzid_data = &other.bcp47_tzids;
@@ -140,7 +140,7 @@ impl From<&CldrTimeZonesData<'_>> for ExemplarCitiesV1<'static> {
 
 macro_rules! long_short_impls {
     ($generic:ty, $specific:ty, $field:ident, $metazones_name:ident) => {
-        impl From<&CldrTimeZonesData<'_>> for $generic {
+        impl From<&CldrTimeZonesData> for $generic {
             fn from(other: &CldrTimeZonesData) -> Self {
                 let data = &other.time_zone_names;
                 let bcp47_tzid_data = &other.bcp47_tzids;
@@ -227,7 +227,7 @@ macro_rules! long_short_impls {
             }
         }
 
-        impl From<&CldrTimeZonesData<'_>> for $specific {
+        impl From<&CldrTimeZonesData> for $specific {
             fn from(other: &CldrTimeZonesData) -> Self {
                 let data = &other.time_zone_names;
                 let bcp47_tzid_data = &other.bcp47_tzids;

@@ -3,7 +3,6 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::transform::cldr::cldr_serde;
-use crate::transform::reader::open_reader;
 use crate::SourceData;
 use icu_locale_canonicalizer::provider::*;
 use icu_locid::{language, subtags, LanguageIdentifier};
@@ -34,20 +33,16 @@ impl ResourceProvider<AliasesV1Marker> for AliasesProvider {
             return Err(DataErrorKind::ExtraneousResourceOptions.into_error());
         }
 
-        let path = self
+        let data: &cldr_serde::aliases::Resource = self
             .source
             .get_cldr_paths()?
             .cldr_core()
-            .join("supplemental")
-            .join("aliases.json");
-        let data: cldr_serde::aliases::Resource = serde_json::from_reader(open_reader(&path)?)
-            .map_err(|e| DataError::from(e).with_path_context(&path))?;
-
+            .read_and_parse("supplemental/aliases.json")?;
         let metadata = DataResponseMetadata::default();
         // TODO(#1109): Set metadata.data_langid correctly.
         Ok(DataResponse {
             metadata,
-            payload: Some(DataPayload::from_owned(AliasesV1::from(&data))),
+            payload: Some(DataPayload::from_owned(AliasesV1::from(data))),
         })
     }
 }

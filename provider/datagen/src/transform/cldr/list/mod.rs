@@ -3,7 +3,6 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::transform::cldr::cldr_serde;
-use crate::transform::reader::{get_langid_subdirectories, get_langid_subdirectory, open_reader};
 use crate::transform::uprops::EnumeratedPropertyCodePointTrieProvider;
 use crate::SourceData;
 use icu_list::provider::*;
@@ -31,16 +30,11 @@ impl<M: ResourceMarker<Yokeable = ListFormatterPatternsV1<'static>>> ResourcePro
     fn load_resource(&self, req: &DataRequest) -> Result<DataResponse<M>, DataError> {
         let langid = req.options.get_langid();
 
-        let resource: cldr_serde::list_patterns::Resource = {
-            let path = get_langid_subdirectory(
-                &self.source.get_cldr_paths()?.cldr_misc().join("main"),
-                &langid,
-            )?
-            .ok_or_else(|| DataErrorKind::MissingLocale.into_error())?
-            .join("listPatterns.json");
-            serde_json::from_reader(open_reader(&path)?)
-                .map_err(|e| DataError::from(e).with_path_context(&path))?
-        };
+        let resource: &cldr_serde::list_patterns::Resource = self
+            .source
+            .get_cldr_paths()?
+            .cldr_misc()
+            .read_and_parse(&langid, "listPatterns.json")?;
 
         let data = &resource
             .main
@@ -142,11 +136,13 @@ impl<M: ResourceMarker<Yokeable = ListFormatterPatternsV1<'static>>> IterableRes
     for ListProvider
 {
     fn supported_options(&self) -> Result<Vec<ResourceOptions>, DataError> {
-        Ok(
-            get_langid_subdirectories(&self.source.get_cldr_paths()?.cldr_misc().join("main"))?
-                .map(ResourceOptions::from)
-                .collect(),
-        )
+        Ok(self
+            .source
+            .get_cldr_paths()?
+            .cldr_misc()
+            .list_langs()?
+            .map(Into::<ResourceOptions>::into)
+            .collect())
     }
 }
 
