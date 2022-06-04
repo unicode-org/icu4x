@@ -79,7 +79,7 @@ impl SourceData {
     pub(crate) fn for_test() -> Self {
         Self::default()
             .with_cldr(icu_testdata::paths::cldr_json_root(), "full".to_string())
-            .with_uprops(icu_testdata::paths::uprops_toml_root())
+            .with_uprops(icu_testdata::paths::uprops_toml_root(), TrieType::Small)
             .with_coll(icu_testdata::paths::coll_toml_root())
     }
 
