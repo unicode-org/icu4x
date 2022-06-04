@@ -174,6 +174,38 @@ impl From<ScriptWithExt> for Script {
     }
 }
 
+// We can also create a tuple struct here!
+#[derive(Copy, Clone, Debug, Eq, PartialEq)]
+pub struct ScriptExtensionsSet<'a> {
+    pub values: &'a ZeroSlice<Script>
+}
+
+impl ScriptExtensionsSet<'_> {
+    pub fn contains(&self, x: &Script) -> Result<usize, usize> {
+        ZeroSlice::binary_search(&*self.values, x)
+    }
+
+    pub fn iter(&self) -> impl DoubleEndedIterator<Item = Script> + '_ {
+        ZeroSlice::iter(&*self.values)
+    }
+}
+
+// // IntoIterator is required here because compiler don't know how to iterate over
+// // ScriptExtensions. Implementing IntoIterator will allow us to execute for loop 
+// // on ScriptExtensions directly. Is this understanding correct?
+// impl IntoIterator for ScriptExtensions<'_> {
+//     type Item = Script;
+
+//     // Should I be assigning a DoubleEndedIterator here based on
+//     // https://unicode-org.github.io/icu4x-docs/doc/src/zerovec/zerovec/slice.rs.html#312 ?
+//     type IntoIter = std::vec::IntoIter<Self::Item>;
+//     // type IntoIter = <ZeroSlice<Script> as IntoIterator>::IntoIter;
+
+//     fn into_iter(self) -> Self::IntoIter {
+//         self.values.iter()
+//     }
+// }
+
 /// A data structure that represents the data for both Script and
 /// Script_Extensions properties in an efficient way. This structure matches
 /// the data and data structures that are stored in the corresponding ICU data
@@ -356,15 +388,16 @@ impl<'data> ScriptWithExtensions<'data> {
     ///     vec![Script::Tamil, Script::Grantha]
     /// );
     /// ```
-    pub fn get_script_extensions_val(&self, code_point: u32) -> &ZeroSlice<Script> {
+    pub fn get_script_extensions_val(&self, code_point: u32) -> ScriptExtensionsSet {
         let sc_with_ext_ule = self.trie.get_ule(code_point);
 
-        match sc_with_ext_ule {
-            Some(ule_ref) => self.get_scx_val_using_trie_val(ule_ref),
-            None => ZeroSlice::from_ule_slice(&[]),
+        ScriptExtensionsSet {
+            values: match sc_with_ext_ule {
+                Some(ule_ref) => self.get_scx_val_using_trie_val(ule_ref),
+                None => ZeroSlice::from_ule_slice(&[]),
+            }
         }
     }
-
     /// Returns whether `script` is contained in the Script_Extensions
     /// property value if the code_point has Script_Extensions, otherwise
     /// if the code point does not have Script_Extensions then returns
