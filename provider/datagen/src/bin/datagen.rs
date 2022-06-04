@@ -239,7 +239,7 @@ fn main() -> eyre::Result<()> {
         eyre::bail!("No keys selected");
     }
 
-    let cldr_locale = matches
+    let cldr_locales = matches
         .value_of("CLDR_LOCALE_SUBSET")
         .unwrap_or("full")
         .to_string();
@@ -251,13 +251,13 @@ fn main() -> eyre::Result<()> {
                 .cached_path_with_options(
                     &format!(
                         "https://github.com/unicode-org/cldr-json/releases/download/{}/cldr-{}-json-{}.zip",
-                        tag, tag, matches.value_of("CLDR_LOCALE_SUBSET").unwrap_or("full")),
+                        tag, tag, cldr_locales),
                     &cached_path::Options::default().extract(),
                 )?,
-                cldr_locale
+                cldr_locales
             );
     } else if let Some(path) = matches.value_of("CLDR_ROOT") {
-        source_data = source_data.with_cldr(PathBuf::from(path), cldr_locale);
+        source_data = source_data.with_cldr(PathBuf::from(path), cldr_locales);
     }
 
     let trie_type = match matches.value_of("TRIE_TYPE") {
