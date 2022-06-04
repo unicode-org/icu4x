@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1654301736220,
+  "lastUpdate": 1654313683087,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -16643,6 +16643,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/42a725338b4faa78b87701ca026118cc257d62d3"
         },
         "date": 1654301709165,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 2301197,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "62316dae9b0985f50d89886d72709c6716452a2c",
+          "message": "Add caches to SourceData (#1859)",
+          "timestamp": "2022-06-03T20:32:31-07:00",
+          "tree_id": "42cb7d29a687537cd59bb26aa018d502baf9e429",
+          "url": "https://github.com/unicode-org/icu4x/commit/62316dae9b0985f50d89886d72709c6716452a2c"
+        },
+        "date": 1654313660097,
         "tool": "ndjson",
         "benches": [
           {
