@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1654291693821,
+  "lastUpdate": 1654301736220,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -16613,6 +16613,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/a43374e81cca106a1190b7c8daf168c9eeac9ba7"
         },
         "date": 1654291668850,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 2301197,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "42a725338b4faa78b87701ca026118cc257d62d3",
+          "message": "Refactor ZeroMap2d and add get_by functions (#1876)",
+          "timestamp": "2022-06-03T17:13:07-07:00",
+          "tree_id": "ca8897527c0760536186f62f7cfdd1863d223a06",
+          "url": "https://github.com/unicode-org/icu4x/commit/42a725338b4faa78b87701ca026118cc257d62d3"
+        },
+        "date": 1654301709165,
         "tool": "ndjson",
         "benches": [
           {
