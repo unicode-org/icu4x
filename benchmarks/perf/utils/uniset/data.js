@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1654302152474,
+  "lastUpdate": 1654314117174,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -30293,6 +30293,60 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 35832923,
             "range": "± 60602",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/worst",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/worst",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "62316dae9b0985f50d89886d72709c6716452a2c",
+          "message": "Add caches to SourceData (#1859)",
+          "timestamp": "2022-06-03T20:32:31-07:00",
+          "tree_id": "42cb7d29a687537cd59bb26aa018d502baf9e429",
+          "url": "https://github.com/unicode-org/icu4x/commit/62316dae9b0985f50d89886d72709c6716452a2c"
+        },
+        "date": 1654314094071,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 40434635,
+            "range": "± 59427",
             "unit": "ns/iter"
           },
           {
