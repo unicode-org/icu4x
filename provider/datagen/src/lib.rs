@@ -22,9 +22,8 @@
 //!     icu_datagen::datagen(
 //!         Some(&[langid!("de"), langid!("en-AU")]),
 //!         &icu_datagen::keys(&["list/and@1"]),
-//!         &SourceData::default().with_uprops(PathBuf::from("/path/to/uprops/root")),
+//!         &SourceData::default(),
 //!         vec![Out::Blob(Box::new(File::create("data.postcard").unwrap()))],
-//!         false,
 //!     )
 //!     .unwrap();
 //! }
