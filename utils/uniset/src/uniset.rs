@@ -18,11 +18,11 @@ const BMP_MAX: u32 = 0xFFFF;
 
 /// Represents the inversion list for a set of all code points in the Basic Multilingual Plane.
 const BMP_INV_LIST_SLICE: &ZeroSlice<u32> =
-    ZeroSlice::<u32>::from_ule_slice_const(&<u32 as AsULE>::ULE::from_array([0x0, BMP_MAX + 1]));
+    ZeroSlice::<u32>::from_ule_slice(&<u32 as AsULE>::ULE::from_array([0x0, BMP_MAX + 1]));
 
 /// Represents the inversion list for all of the code points in the Unicode range.
 const ALL_SLICE: &ZeroSlice<u32> =
-    ZeroSlice::<u32>::from_ule_slice_const(&<u32 as AsULE>::ULE::from_array([
+    ZeroSlice::<u32>::from_ule_slice(&<u32 as AsULE>::ULE::from_array([
         0x0,
         (char::MAX as u32) + 1,
     ]));
@@ -78,7 +78,7 @@ impl crabbake::Bakeable for UnicodeSet<'_> {
 // to replace the struct when serializing. The error message from the default
 // serialization is: "can only flatten structs and maps (got a sequence)".
 
-#[cfg(any(feature = "serde_serialize", test))]
+#[cfg(any(feature = "serde", test))]
 impl<'data> serde::Serialize for UnicodeSet<'data> {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where

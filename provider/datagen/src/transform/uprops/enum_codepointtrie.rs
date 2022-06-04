@@ -2,31 +2,40 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::transform::uprops::uprops_helpers::{self, TomlEnumerated};
-
+use crate::source::TomlCache;
 use crate::SourceData;
 use icu_codepointtrie::CodePointTrie;
 use icu_properties::provider::*;
 use icu_provider::datagen::*;
 use icu_provider::prelude::*;
 use std::convert::TryFrom;
-use std::sync::RwLock;
+use std::path::PathBuf;
 
 /// A data provider reading from TOML files produced by the ICU4C icuexportdata tool.
 ///
 /// This data provider returns `CodePointTrie` data inside a `UnicodePropertyMap` data struct.
 pub struct EnumeratedPropertyCodePointTrieProvider {
     source: SourceData,
-    data: RwLock<Option<TomlEnumerated>>,
 }
 
 impl From<&SourceData> for EnumeratedPropertyCodePointTrieProvider {
     fn from(source: &SourceData) -> Self {
         Self {
             source: source.clone(),
-            data: RwLock::new(None),
         }
     }
+}
+
+fn get_enumerated<'a>(
+    source: &'a TomlCache,
+    key: &str,
+) -> Result<&'a super::uprops_serde::enumerated::EnumeratedPropertyMap, DataError> {
+    let toml_obj: &super::uprops_serde::enumerated::Main =
+        source.read_and_parse_toml(&PathBuf::from(key).with_extension("toml"))?;
+    toml_obj
+        .enum_property
+        .get(0)
+        .ok_or_else(|| DataErrorKind::MissingResourceKey.into_error())
 }
 
 macro_rules! expand {
@@ -35,19 +44,7 @@ macro_rules! expand {
             impl ResourceProvider<$marker> for EnumeratedPropertyCodePointTrieProvider
             {
                 fn load_resource(&self, _: &DataRequest) -> Result<DataResponse<$marker>, DataError> {
-                    if self.data.read().unwrap().is_none() {
-                        let data = uprops_helpers::load_enumerated_from_dir(self.source.get_uprops_root()?)?;
-                        *self.data.write().unwrap() = Some(data);
-                    }
-
-                    let guard = self.data.read().unwrap();
-
-                    let source_cpt_data = &guard
-                        .as_ref()
-                        .unwrap()
-                        .get($prop_name)
-                        .ok_or(DataErrorKind::MissingResourceKey.into_error())?
-                        .code_point_trie;
+                    let source_cpt_data = &get_enumerated(self.source.get_uprops_paths()?, $prop_name)?.code_point_trie;
 
                     let code_point_trie = CodePointTrie::try_from(source_cpt_data).map_err(|e| {
                         DataError::custom("Could not parse CodePointTrie TOML").with_display_context(&e)
@@ -63,13 +60,14 @@ macro_rules! expand {
             impl IterableResourceProvider<$marker> for EnumeratedPropertyCodePointTrieProvider {
                 fn supported_options(
                     &self,
-                ) -> Result<Box<dyn Iterator<Item = ResourceOptions>>, DataError> {
-                    Ok(Box::new(core::iter::once(ResourceOptions::default())))
+                ) -> Result<Vec<ResourceOptions>, DataError> {
+                    get_enumerated(self.source.get_uprops_paths()?, $prop_name)?;
+                    Ok(vec![Default::default()])
                 }
             }
         )+
 
-        icu_provider::impl_dyn_provider!(EnumeratedPropertyCodePointTrieProvider, [$($marker),+,], SERDE_SE, ITERABLE_SERDE_SE, DATA_CONVERTER);
+        icu_provider::make_exportable_provider!(EnumeratedPropertyCodePointTrieProvider, [$($marker),+,]);
     };
 }
 

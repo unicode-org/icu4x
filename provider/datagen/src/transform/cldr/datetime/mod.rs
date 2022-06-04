@@ -3,9 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::transform::cldr::cldr_serde;
-use crate::transform::reader::{get_langid_subdirectories, get_langid_subdirectory, open_reader};
 use crate::SourceData;
-use elsa::sync::FrozenBTreeMap;
 use icu_datetime::provider::calendar::*;
 use icu_locid::{unicode_ext_key, Locale};
 use icu_provider::datagen::IterableResourceProvider;
@@ -23,7 +21,6 @@ pub struct CommonDateProvider {
     source: SourceData,
     // BCP-47 value -> CLDR identifier
     supported_cals: LiteMap<icu_locid::extensions::unicode::Value, &'static str>,
-    data: FrozenBTreeMap<ResourceOptions, Box<cldr_serde::ca::Dates>>,
 }
 
 impl From<&SourceData> for CommonDateProvider {
@@ -40,7 +37,6 @@ impl From<&SourceData> for CommonDateProvider {
             ]
             .into_iter()
             .collect(),
-            data: FrozenBTreeMap::new(),
         }
     }
 }
@@ -59,65 +55,73 @@ macro_rules! impl_resource_provider {
                         .get_unicode_ext(&unicode_ext_key!("ca"))
                         .ok_or_else(|| DataErrorKind::NeedsVariant.into_error())?;
 
-                    let dates = if let Some(dates) = self.data.get(&req.options) {
-                        dates
-                    } else {
-                        let cldr_cal = self
-                            .supported_cals
-                            .get(&calendar)
-                            .ok_or_else(|| DataErrorKind::MissingVariant.into_error())?;
+                    let cldr_cal = self
+                        .supported_cals
+                        .get(&calendar)
+                        .ok_or_else(|| DataErrorKind::MissingVariant.into_error())?;
 
-                        let path = get_langid_subdirectory(
-                            &self
-                                .source
-                                .get_cldr_paths()?
-                                .cldr_dates(cldr_cal)
-                                .join("main"),
-                            &langid,
-                        )?
-                        .ok_or_else(|| DataErrorKind::MissingLocale.into_error())?
-                        .join(&format!("ca-{}.json", cldr_cal));
+                    let resource: &cldr_serde::ca::Resource =
+                    self
+                    .source
+                    .get_cldr_paths()?
+                    .cldr_dates(cldr_cal).read_and_parse(&langid, &format!("ca-{}.json", cldr_cal))?;
 
-                        let mut resource: cldr_serde::ca::Resource =
-                            serde_json::from_reader(open_reader(&path)?).map_err(|e| DataError::from(e).with_path_context(&path))?;
+                    let mut data =
+                            resource
+                                .main
+                                .0
+                                .get(&langid)
+                                .expect("CLDR file contains the expected language")
+                                .dates
+                                .calendars
+                                .get(*cldr_cal)
+                                .expect("CLDR file contains the expected calendar")
+                                .clone();
 
-                        self.data.insert(
-                            req.options.clone(),
-                            Box::new(
-                                resource
-                                    .main
-                                    .0
-                                    .remove(&langid)
-                                    .expect("CLDR file contains the expected language")
-                                    .dates
-                                    .calendars
-                                    .remove(*cldr_cal)
-                                    .expect("CLDR file contains the expected calendar"),
-                            ),
-                        )
-                    };
+                    // CLDR treats ethiopic and ethioaa as separate calendars; however we treat them as a single resource key that
+                    // supports symbols for both era patterns based on the settings on the date. Load in ethioaa data as well when dealing with
+                    // ethiopic.
+                    if calendar == icu_locid::unicode_ext_value!("ethiopic") {
+                        let ethioaa: &cldr_serde::ca::Resource = self.source.get_cldr_paths()?.cldr_dates("ethiopic").read_and_parse(&langid, "ca-ethiopic-amete-alem.json")?;
+
+                        let ethioaa_data = ethioaa
+                            .main
+                            .0
+                            .get(&langid)
+                            .expect("CLDR ca-ethiopic-amete-alem.json contains the expected language")
+                            .dates
+                            .calendars
+                            .get("ethiopic-amete-alem")
+                            .expect("CLDR ca-ethiopic-amete-alem.json contains the expected calendar")
+                            .clone();
+
+                        let mundi_name = ethioaa_data.eras.names.get("0").expect("ethiopic-amete-alem calendar must have 0 era");
+                        let mundi_abbr = ethioaa_data.eras.abbr.get("0").expect("ethiopic-amete-alem calendar must have 0 era");
+                        let mundi_narrow = ethioaa_data.eras.narrow.get("0").expect("ethiopic-amete-alem calendar must have 0 era");
+
+                        data.eras.names.insert("2".to_string(), mundi_name.clone());
+                        data.eras.abbr.insert("2".to_string(), mundi_abbr.clone());
+                        data.eras.narrow.insert("2".to_string(), mundi_narrow.clone());
+                    }
 
                     let metadata = DataResponseMetadata::default();
                     // TODO(#1109): Set metadata.data_langid correctly.
                     Ok(DataResponse {
                         metadata,
                         #[allow(clippy::redundant_closure_call)]
-                        payload: Some(DataPayload::from_owned(($expr)(dates, &calendar.to_string()))),
+                        payload: Some(DataPayload::from_owned(($expr)(&data, &calendar.to_string()))),
                     })
                 }
             }
 
             impl IterableResourceProvider<$marker> for CommonDateProvider {
-                fn supported_options(&self) -> Result<Box<dyn Iterator<Item = ResourceOptions> + '_>, DataError> {
+                fn supported_options(&self) -> Result<Vec<ResourceOptions>, DataError> {
                     let mut r = Vec::new();
                     for (cal_value, cldr_cal) in self.supported_cals.iter() {
-                        r.extend(get_langid_subdirectories(
-                                &self
+                        r.extend(self
                                     .source
                                     .get_cldr_paths()?
-                                    .cldr_dates(cldr_cal)
-                                    .join("main"),
-                            )?
+                                    .cldr_dates(cldr_cal).list_langs()?
                             .map(|lid| {
                                 let mut locale: Locale = lid.into();
                                 locale
@@ -128,12 +132,12 @@ macro_rules! impl_resource_provider {
                                 ResourceOptions::from(locale)
                             }));
                     }
-                    Ok(Box::new(r.into_iter()))
+                    Ok(r)
                 }
             }
         )+
 
-        icu_provider::impl_dyn_provider!(CommonDateProvider, [$($marker),+,], SERDE_SE, ITERABLE_SERDE_SE, DATA_CONVERTER);
+        icu_provider::make_exportable_provider!(CommonDateProvider, [$($marker),+,]);
     };
 }
 

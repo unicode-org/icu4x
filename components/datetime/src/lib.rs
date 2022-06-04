@@ -86,7 +86,8 @@ mod calendar;
 pub mod date;
 pub mod datetime;
 mod error;
-mod fields;
+#[allow(missing_docs)] // TODO(#686) - Add missing docs.
+pub mod fields;
 #[allow(missing_docs)] // TODO(#686) - Add missing docs.
 mod format;
 pub mod mock;

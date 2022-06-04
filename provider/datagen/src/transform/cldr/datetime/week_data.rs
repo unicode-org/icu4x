@@ -6,73 +6,36 @@ use crate::transform::cldr::cldr_serde::{
     self,
     week_data::{Territory, DEFAULT_TERRITORY},
 };
-use crate::transform::reader::open_reader;
 use crate::SourceData;
 use icu_calendar::arithmetic::week_of::CalendarInfo;
 use icu_datetime::provider::week_data::*;
 use icu_provider::datagen::IterableResourceProvider;
 use icu_provider::prelude::*;
 use std::collections::HashSet;
-use std::sync::RwLock;
 
 /// A data provider reading from CLDR JSON weekData files.
 #[derive(Debug)]
 pub struct WeekDataProvider {
     source: SourceData,
-    data: RwLock<Option<(CalendarInfo, cldr_serde::week_data::WeekData)>>,
 }
 
 impl From<&SourceData> for WeekDataProvider {
     fn from(source: &SourceData) -> Self {
         Self {
             source: source.clone(),
-            data: RwLock::new(None),
         }
-    }
-}
-
-impl WeekDataProvider {
-    fn init(&self) -> Result<(), DataError> {
-        if self.data.read().unwrap().is_none() {
-            let path = self
-                .source
-                .get_cldr_paths()?
-                .cldr_core()
-                .join("supplemental/weekData.json");
-            let resource: cldr_serde::week_data::Resource =
-                serde_json::from_reader(open_reader(&path)?)
-                    .map_err(|e| DataError::from(e).with_path_context(&path))?;
-            let week_data = resource.supplemental.week_data;
-            *self.data.write().unwrap() = Some((
-                CalendarInfo {
-                    first_weekday: week_data
-                        .first_day
-                        .get(&DEFAULT_TERRITORY)
-                        .ok_or(DataError::custom(
-                            "Missing default entry for firstDay in weekData.json",
-                        ))?
-                        .into(),
-                    min_week_days: week_data
-                        .min_days
-                        .get(&DEFAULT_TERRITORY)
-                        .ok_or(DataError::custom(
-                            "Missing default entry for minDays in weekData.json",
-                        ))?
-                        .0,
-                },
-                week_data,
-            ));
-        }
-        Ok(())
     }
 }
 
 impl IterableResourceProvider<WeekDataV1Marker> for WeekDataProvider {
     #[allow(clippy::needless_collect)] // https://github.com/rust-lang/rust-clippy/issues/7526
-    fn supported_options(&self) -> Result<Box<dyn Iterator<Item = ResourceOptions>>, DataError> {
-        self.init()?;
-        let guard = self.data.read().unwrap();
-        let week_data = &guard.as_ref().unwrap().1;
+    fn supported_options(&self) -> Result<Vec<ResourceOptions>, DataError> {
+        let week_data: &cldr_serde::week_data::Resource = self
+            .source
+            .get_cldr_paths()?
+            .cldr_core()
+            .read_and_parse("supplemental/weekData.json")?;
+        let week_data = &week_data.supplemental.week_data;
         let regions: HashSet<ResourceOptions> = week_data
             .min_days
             .keys()
@@ -84,7 +47,7 @@ impl IterableResourceProvider<WeekDataV1Marker> for WeekDataProvider {
             })
             .map(ResourceOptions::temp_for_region)
             .collect();
-        Ok(Box::new(regions.into_iter()))
+        Ok(regions.into_iter().collect())
     }
 }
 
@@ -102,10 +65,12 @@ impl ResourceProvider<WeekDataV1Marker> for WeekDataProvider {
             .transpose()?
             .unwrap_or_else(|| DEFAULT_TERRITORY.clone());
 
-        self.init()?;
-
-        let guard = self.data.read().unwrap();
-        let (default, week_data) = &guard.as_ref().unwrap();
+        let week_data: &cldr_serde::week_data::Resource = self
+            .source
+            .get_cldr_paths()?
+            .cldr_core()
+            .read_and_parse("supplemental/weekData.json")?;
+        let week_data = &week_data.supplemental.week_data;
 
         Ok(DataResponse {
             metadata,
@@ -113,25 +78,25 @@ impl ResourceProvider<WeekDataV1Marker> for WeekDataProvider {
                 first_weekday: week_data
                     .first_day
                     .get(&territory)
-                    .map(|w| w.into())
-                    .unwrap_or(default.first_weekday),
+                    .or_else(|| week_data.first_day.get(&DEFAULT_TERRITORY))
+                    .ok_or(DataError::custom(
+                        "Missing default entry for firstDay in weekData.json",
+                    ))?
+                    .into(),
                 min_week_days: week_data
                     .min_days
                     .get(&territory)
-                    .map(|c| c.0)
-                    .unwrap_or(default.min_week_days),
+                    .or_else(|| week_data.min_days.get(&DEFAULT_TERRITORY))
+                    .ok_or(DataError::custom(
+                        "Missing default entry for minDays in weekData.json",
+                    ))?
+                    .0,
             }))),
         })
     }
 }
 
-icu_provider::impl_dyn_provider!(
-    WeekDataProvider,
-    [WeekDataV1Marker,],
-    SERDE_SE,
-    ITERABLE_SERDE_SE,
-    DATA_CONVERTER
-);
+icu_provider::make_exportable_provider!(WeekDataProvider, [WeekDataV1Marker,]);
 
 #[test]
 fn basic_cldr_week_data() {

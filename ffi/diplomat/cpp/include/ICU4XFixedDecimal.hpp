@@ -85,26 +85,26 @@ class ICU4XFixedDecimal {
   void negate();
 
   /**
-   * Zero-pad the [`ICU4XFixedDecimal`] on the left to a particular number of integer digits
+   * Zero-pad the [`ICU4XFixedDecimal`] on the left to a particular position
    * 
    * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.pad_left) for more information.
    */
-  void pad_left(uint16_t digits);
+  void pad_left(int16_t position);
 
   /**
-   * Truncate the [`ICU4XFixedDecimal`] on the left to a particular magnitude, deleting digits if necessary. This is useful for, e.g. abbreviating years
+   * Truncate the [`ICU4XFixedDecimal`] on the left to a particular position, deleting digits if necessary. This is useful for, e.g. abbreviating years
    * ("2022" -> "22")
    * 
    * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.truncate_left) for more information.
    */
-  void truncate_left(int16_t magnitude);
+  void truncate_left(int16_t position);
 
   /**
-   * Zero-pad the [`ICU4XFixedDecimal`] on the right to a particular (negative) magnitude
+   * Zero-pad the [`ICU4XFixedDecimal`] on the right to a particular position
    * 
    * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.pad_right) for more information.
    */
-  void pad_right(uint16_t negative_magnitude);
+  void pad_right(int16_t position);
 
   /**
    * Format the [`ICU4XFixedDecimal`] as a string.
@@ -181,14 +181,14 @@ inline bool ICU4XFixedDecimal::multiply_pow10(int16_t power) {
 inline void ICU4XFixedDecimal::negate() {
   capi::ICU4XFixedDecimal_negate(this->inner.get());
 }
-inline void ICU4XFixedDecimal::pad_left(uint16_t digits) {
-  capi::ICU4XFixedDecimal_pad_left(this->inner.get(), digits);
+inline void ICU4XFixedDecimal::pad_left(int16_t position) {
+  capi::ICU4XFixedDecimal_pad_left(this->inner.get(), position);
 }
-inline void ICU4XFixedDecimal::truncate_left(int16_t magnitude) {
-  capi::ICU4XFixedDecimal_truncate_left(this->inner.get(), magnitude);
+inline void ICU4XFixedDecimal::truncate_left(int16_t position) {
+  capi::ICU4XFixedDecimal_truncate_left(this->inner.get(), position);
 }
-inline void ICU4XFixedDecimal::pad_right(uint16_t negative_magnitude) {
-  capi::ICU4XFixedDecimal_pad_right(this->inner.get(), negative_magnitude);
+inline void ICU4XFixedDecimal::pad_right(int16_t position) {
+  capi::ICU4XFixedDecimal_pad_right(this->inner.get(), position);
 }
 template<typename W> inline void ICU4XFixedDecimal::to_string_to_writeable(W& to) const {
   capi::DiplomatWriteable to_writer = diplomat::WriteableTrait<W>::Construct(to);

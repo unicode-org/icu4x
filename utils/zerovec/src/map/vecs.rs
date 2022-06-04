@@ -19,24 +19,25 @@ use core::ops::Range;
 /// for human-readable serialization.
 ///
 /// Methods are prefixed with `zvl_*` to avoid clashes with methods on the types themselves
-pub trait ZeroVecLike<'a, T: ?Sized> {
+pub trait ZeroVecLike<T: ?Sized> {
     /// The type returned by `Self::get()`
     type GetType: ?Sized + 'static;
     /// A fully borrowed version of this
-    type BorrowedVariant: ZeroVecLike<'a, T, GetType = Self::GetType>
-        + BorrowedZeroVecLike<'a, T>
-        + Copy;
+    type BorrowedVariant: ZeroVecLike<T, GetType = Self::GetType> + BorrowedZeroVecLike<T> + ?Sized;
 
     /// Create a new, empty vector
-    fn zvl_new() -> Self;
+    fn zvl_new() -> Self
+    where
+        Self: Sized;
     /// Search for a key in a sorted vector, returns `Ok(index)` if found,
     /// returns `Err(insert_index)` if not found, where `insert_index` is the
     /// index where it should be inserted to maintain sort order.
     fn zvl_binary_search(&self, k: &T) -> Result<usize, usize>
     where
         T: Ord;
-    /// Search for a key within a certain range in a sorted vector. Returns `None` if the
-    /// range is out of bounds, and `Ok` or `Err` in the same way as `zvl_binary_search`.
+    /// Search for a key within a certain range in a sorted vector.
+    /// Returns `None` if the ange is out of bounds, and
+    /// `Ok` or `Err` in the same way as `zvl_binary_search`.
     /// Indices are returned relative to the start of the range.
     fn zvl_binary_search_in_range(
         &self,
@@ -50,6 +51,16 @@ pub trait ZeroVecLike<'a, T: ?Sized> {
     /// returns `Err(insert_index)` if not found, where `insert_index` is the
     /// index where it should be inserted to maintain sort order.
     fn zvl_binary_search_by(&self, predicate: impl FnMut(&T) -> Ordering) -> Result<usize, usize>;
+    /// Search for a key within a certain range in a sorted vector by a predicate.
+    /// Returns `None` if the range is out of bounds, and
+    /// `Ok` or `Err` in the same way as `zvl_binary_search`.
+    /// Indices are returned relative to the start of the range.
+    fn zvl_binary_search_in_range_by(
+        &self,
+        predicate: impl FnMut(&T) -> Ordering,
+        range: Range<usize>,
+    ) -> Option<Result<usize, usize>>;
+
     /// Get element at `index`
     fn zvl_get(&self, index: usize) -> Option<&Self::GetType>;
     /// The length of this vector
@@ -71,21 +82,7 @@ pub trait ZeroVecLike<'a, T: ?Sized> {
     /// Note: We rely on the compiler recognizing `'a` and `'b` as covariant and
     /// casting `&'b Self<'a>` to `&'b Self<'b>` when this gets called, which works
     /// out for `ZeroVec` and `VarZeroVec` containers just fine.
-    fn zvl_as_borrowed(&'a self) -> Self::BorrowedVariant;
-
-    /// Extract the inner borrowed variant if possible. Returns `None` if the data is owned.
-    ///
-    /// This function behaves like `&'_ self -> Self::BorrowedVariant<'a>`,
-    /// where `'a` is the lifetime of this object's borrowed data.
-    ///
-    /// This function is similar to matching the `Borrowed` variant of `ZeroVec`
-    /// or `VarZeroVec`, returning the inner borrowed type.
-    fn zvl_as_borrowed_inner(&self) -> Option<Self::BorrowedVariant>;
-
-    /// Construct from the borrowed version of the type
-    ///
-    /// These are useful to ensure serialization parity between borrowed and owned versions
-    fn zvl_from_borrowed(b: Self::BorrowedVariant) -> Self;
+    fn zvl_as_borrowed(&self) -> &Self::BorrowedVariant;
 
     /// Compare this type with a `Self::GetType`. This must produce the same result as
     /// if `g` were converted to `Self`
@@ -121,9 +118,9 @@ pub trait ZeroVecLike<'a, T: ?Sized> {
 /// longer references to the underlying buffer, for borrowed-only vector types.
 ///
 /// Methods are prefixed with `zvl_*` to avoid clashes with methods on the types themselves
-pub trait BorrowedZeroVecLike<'a, T: ?Sized>: ZeroVecLike<'a, T> {
-    /// Get element at `index`, with a longer lifetime
-    fn zvl_get_borrowed(&self, index: usize) -> Option<&'a Self::GetType>;
+pub trait BorrowedZeroVecLike<T: ?Sized>: ZeroVecLike<T> {
+    /// Return a new, empty value with the static lifetime
+    fn zvl_new_borrowed() -> &'static Self;
 }
 
 /// Trait abstracting over [`ZeroVec`] and [`VarZeroVec`], for use in [`ZeroMap`](super::ZeroMap). **You
@@ -133,7 +130,7 @@ pub trait BorrowedZeroVecLike<'a, T: ?Sized>: ZeroVecLike<'a, T> {
 /// vector for owned vector types.
 ///
 /// Methods are prefixed with `zvl_*` to avoid clashes with methods on the types themselves
-pub trait MutableZeroVecLike<'a, T: ?Sized>: ZeroVecLike<'a, T> {
+pub trait MutableZeroVecLike<'a, T: ?Sized>: ZeroVecLike<T> {
     /// The type returned by `Self::remove()` and `Self::replace()`
     type OwnedType;
 
@@ -154,14 +151,27 @@ pub trait MutableZeroVecLike<'a, T: ?Sized>: ZeroVecLike<'a, T> {
 
     /// Convert an owned value to a borrowed T
     fn owned_as_t(o: &Self::OwnedType) -> &T;
+
+    /// Construct from the borrowed version of the type
+    ///
+    /// These are useful to ensure serialization parity between borrowed and owned versions
+    fn zvl_from_borrowed(b: &'a Self::BorrowedVariant) -> Self;
+    /// Extract the inner borrowed variant if possible. Returns `None` if the data is owned.
+    ///
+    /// This function behaves like `&'_ self -> Self::BorrowedVariant<'a>`,
+    /// where `'a` is the lifetime of this object's borrowed data.
+    ///
+    /// This function is similar to matching the `Borrowed` variant of `ZeroVec`
+    /// or `VarZeroVec`, returning the inner borrowed type.
+    fn zvl_as_borrowed_inner(&self) -> Option<&'a Self::BorrowedVariant>;
 }
 
-impl<'a, T> ZeroVecLike<'a, T> for ZeroVec<'a, T>
+impl<'a, T> ZeroVecLike<T> for ZeroVec<'a, T>
 where
     T: 'a + AsULE + Copy,
 {
     type GetType = T::ULE;
-    type BorrowedVariant = &'a ZeroSlice<T>;
+    type BorrowedVariant = ZeroSlice<T>;
 
     fn zvl_new() -> Self {
         Self::new()
@@ -185,6 +195,14 @@ where
     ) -> Result<usize, usize> {
         ZeroSlice::binary_search_by(self, |probe| predicate(&probe))
     }
+    fn zvl_binary_search_in_range_by(
+        &self,
+        predicate: impl FnMut(&T) -> Ordering,
+        range: Range<usize>,
+    ) -> Option<Result<usize, usize>> {
+        let zs: &ZeroSlice<T> = &*self;
+        zs.zvl_binary_search_in_range_by(predicate, range)
+    }
     fn zvl_get(&self, index: usize) -> Option<&T::ULE> {
         self.get_ule_ref(index)
     }
@@ -201,19 +219,8 @@ where
             .all(|w| T::from_unaligned(w[1]).cmp(&T::from_unaligned(w[0])) == Ordering::Greater)
     }
 
-    fn zvl_as_borrowed(&'a self) -> &'a ZeroSlice<T> {
+    fn zvl_as_borrowed(&self) -> &ZeroSlice<T> {
         &*self
-    }
-    fn zvl_as_borrowed_inner(&self) -> Option<&'a ZeroSlice<T>> {
-        if let ZeroVec::Borrowed(b) = *self {
-            Some(ZeroSlice::from_ule_slice(b))
-        } else {
-            None
-        }
-    }
-
-    fn zvl_from_borrowed(b: &'a ZeroSlice<T>) -> Self {
-        b.as_zerovec()
     }
 
     #[inline]
@@ -222,21 +229,24 @@ where
     }
 }
 
-impl<'a, T> ZeroVecLike<'a, T> for &'a ZeroSlice<T>
+impl<T> ZeroVecLike<T> for ZeroSlice<T>
 where
     T: AsULE + Copy,
 {
     type GetType = T::ULE;
-    type BorrowedVariant = &'a ZeroSlice<T>;
+    type BorrowedVariant = ZeroSlice<T>;
 
-    fn zvl_new() -> Self {
-        ZeroSlice::from_ule_slice(&[])
+    fn zvl_new() -> Self
+    where
+        Self: Sized,
+    {
+        unreachable!()
     }
     fn zvl_binary_search(&self, k: &T) -> Result<usize, usize>
     where
         T: Ord,
     {
-        ZeroSlice::binary_search(*self, k)
+        ZeroSlice::binary_search(self, k)
     }
     fn zvl_binary_search_in_range(&self, k: &T, range: Range<usize>) -> Option<Result<usize, usize>>
     where
@@ -251,11 +261,21 @@ where
     ) -> Result<usize, usize> {
         ZeroSlice::binary_search_by(self, |probe| predicate(&probe))
     }
+    fn zvl_binary_search_in_range_by(
+        &self,
+        mut predicate: impl FnMut(&T) -> Ordering,
+        range: Range<usize>,
+    ) -> Option<Result<usize, usize>> {
+        let subslice = self.get_subslice(range)?;
+        Some(ZeroSlice::binary_search_by(subslice, |probe| {
+            predicate(&probe)
+        }))
+    }
     fn zvl_get(&self, index: usize) -> Option<&T::ULE> {
         self.get_ule_ref(index)
     }
     fn zvl_len(&self) -> usize {
-        ZeroSlice::len(*self)
+        ZeroSlice::len(self)
     }
     fn zvl_is_ascending(&self) -> bool
     where
@@ -267,14 +287,8 @@ where
             .all(|w| T::from_unaligned(w[1]).cmp(&T::from_unaligned(w[0])) == Ordering::Greater)
     }
 
-    fn zvl_as_borrowed(&'a self) -> &'a ZeroSlice<T> {
+    fn zvl_as_borrowed(&self) -> &ZeroSlice<T> {
         self
-    }
-    fn zvl_as_borrowed_inner(&self) -> Option<&'a ZeroSlice<T>> {
-        Some(self)
-    }
-    fn zvl_from_borrowed(b: &'a ZeroSlice<T>) -> Self {
-        b
     }
 
     #[inline]
@@ -283,12 +297,12 @@ where
     }
 }
 
-impl<'a, T> BorrowedZeroVecLike<'a, T> for &'a ZeroSlice<T>
+impl<T> BorrowedZeroVecLike<T> for ZeroSlice<T>
 where
     T: AsULE + Copy,
 {
-    fn zvl_get_borrowed(&self, index: usize) -> Option<&'a T::ULE> {
-        self.as_ule_slice().get(index)
+    fn zvl_new_borrowed() -> &'static Self {
+        ZeroSlice::from_ule_slice(&[])
     }
 }
 
@@ -324,15 +338,26 @@ where
     fn owned_as_t(o: &Self::OwnedType) -> &T {
         o
     }
+
+    fn zvl_from_borrowed(b: &'a ZeroSlice<T>) -> Self {
+        b.as_zerovec()
+    }
+    fn zvl_as_borrowed_inner(&self) -> Option<&'a ZeroSlice<T>> {
+        if let ZeroVec::Borrowed(b) = *self {
+            Some(ZeroSlice::from_ule_slice(b))
+        } else {
+            None
+        }
+    }
 }
 
-impl<'a, T> ZeroVecLike<'a, T> for VarZeroVec<'a, T>
+impl<'a, T> ZeroVecLike<T> for VarZeroVec<'a, T>
 where
     T: VarULE,
     T: ?Sized,
 {
     type GetType = T;
-    type BorrowedVariant = &'a VarZeroSlice<T>;
+    type BorrowedVariant = VarZeroSlice<T>;
 
     fn zvl_new() -> Self {
         Self::new()
@@ -352,6 +377,13 @@ where
     fn zvl_binary_search_by(&self, predicate: impl FnMut(&T) -> Ordering) -> Result<usize, usize> {
         self.binary_search_by(predicate)
     }
+    fn zvl_binary_search_in_range_by(
+        &self,
+        predicate: impl FnMut(&T) -> Ordering,
+        range: Range<usize>,
+    ) -> Option<Result<usize, usize>> {
+        self.binary_search_in_range_by(predicate, range)
+    }
     fn zvl_get(&self, index: usize) -> Option<&T> {
         self.get(index)
     }
@@ -374,18 +406,8 @@ where
         true
     }
 
-    fn zvl_as_borrowed(&'a self) -> &'a VarZeroSlice<T> {
+    fn zvl_as_borrowed(&self) -> &VarZeroSlice<T> {
         self.as_slice()
-    }
-    fn zvl_as_borrowed_inner(&self) -> Option<&'a VarZeroSlice<T>> {
-        if let VarZeroVec::Borrowed(b) = *self {
-            Some(b)
-        } else {
-            None
-        }
-    }
-    fn zvl_from_borrowed(b: &'a VarZeroSlice<T>) -> Self {
-        b.as_varzerovec()
     }
 
     #[inline]
@@ -394,16 +416,19 @@ where
     }
 }
 
-impl<'a, T> ZeroVecLike<'a, T> for &'a VarZeroSlice<T>
+impl<T> ZeroVecLike<T> for VarZeroSlice<T>
 where
     T: VarULE,
     T: ?Sized,
 {
     type GetType = T;
-    type BorrowedVariant = &'a VarZeroSlice<T>;
+    type BorrowedVariant = VarZeroSlice<T>;
 
-    fn zvl_new() -> Self {
-        VarZeroSlice::new_empty()
+    fn zvl_new() -> Self
+    where
+        Self: Sized,
+    {
+        unreachable!()
     }
     fn zvl_binary_search(&self, k: &T) -> Result<usize, usize>
     where
@@ -420,6 +445,13 @@ where
     fn zvl_binary_search_by(&self, predicate: impl FnMut(&T) -> Ordering) -> Result<usize, usize> {
         self.binary_search_by(predicate)
     }
+    fn zvl_binary_search_in_range_by(
+        &self,
+        predicate: impl FnMut(&T) -> Ordering,
+        range: Range<usize>,
+    ) -> Option<Result<usize, usize>> {
+        self.binary_search_in_range_by(predicate, range)
+    }
     fn zvl_get(&self, index: usize) -> Option<&T> {
         self.get(index)
     }
@@ -442,14 +474,8 @@ where
         true
     }
 
-    fn zvl_as_borrowed(&'a self) -> &'a VarZeroSlice<T> {
+    fn zvl_as_borrowed(&self) -> &VarZeroSlice<T> {
         self
-    }
-    fn zvl_as_borrowed_inner(&self) -> Option<&'a VarZeroSlice<T>> {
-        Some(self)
-    }
-    fn zvl_from_borrowed(b: &'a VarZeroSlice<T>) -> Self {
-        b
     }
 
     #[inline]
@@ -458,13 +484,13 @@ where
     }
 }
 
-impl<'a, T> BorrowedZeroVecLike<'a, T> for &'a VarZeroSlice<T>
+impl<T> BorrowedZeroVecLike<T> for VarZeroSlice<T>
 where
     T: VarULE,
     T: ?Sized,
 {
-    fn zvl_get_borrowed(&self, index: usize) -> Option<&'a T> {
-        self.get(index)
+    fn zvl_new_borrowed() -> &'static Self {
+        VarZeroSlice::new_empty()
     }
 }
 
@@ -507,6 +533,17 @@ where
 
     fn owned_as_t(o: &Self::OwnedType) -> &T {
         o
+    }
+
+    fn zvl_from_borrowed(b: &'a VarZeroSlice<T>) -> Self {
+        b.as_varzerovec()
+    }
+    fn zvl_as_borrowed_inner(&self) -> Option<&'a VarZeroSlice<T>> {
+        if let VarZeroVec::Borrowed(b) = *self {
+            Some(b)
+        } else {
+            None
+        }
     }
 }
 

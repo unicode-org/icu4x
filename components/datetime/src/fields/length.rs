@@ -17,7 +17,13 @@ pub enum LengthError {
 impl std::error::Error for LengthError {}
 
 #[derive(Debug, Eq, PartialEq, Clone, Copy, Ord, PartialOrd)]
-#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+#[cfg_attr(
+    feature = "datagen",
+    derive(serde::Serialize, crabbake::Bakeable),
+    crabbake(path = icu_datetime::fields),
+)]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[allow(clippy::exhaustive_enums)] // part of data struct
 pub enum FieldLength {
     One,
     TwoDigit,

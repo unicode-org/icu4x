@@ -56,7 +56,7 @@ icu_provider_fs = { version = "0.6", path = "../fs", features = ["export"] }
 # Other
 displaydoc = { version = "0.2.3", default-features = false }
 elsa = "1.7"
-icu_codepointtrie = { version = "0.4", path = "../../utils/codepointtrie", features = ["serde_serialize"] }
+icu_codepointtrie = { version = "0.4", path = "../../utils/codepointtrie", features = ["serde"] }
 icu_codepointtrie_builder = { path = "../../utils/codepointtrie/builder" }
 icu_locid = { version = "0.6", path = "../../components/locid", features = ["std"]}
 icu_uniset = { version = "0.5", path = "../../utils/uniset", features = ["serde"] }
@@ -69,7 +69,7 @@ serde_json = { version = "1.0", default-features = false, features = ["alloc"] }
 serde-aux = "2.1.1"
 tinystr = { path = "../../utils/tinystr", version = "0.6", features = ["alloc", "serde", "zerovec"], default-features = false }
 toml = "0.5"
-zerovec = { version = "0.7", path = "../../utils/zerovec", features = ["serde_serialize", "yoke"] }
+zerovec = { version = "0.7", path = "../../utils/zerovec", features = ["serde", "yoke"] }
 quote = "1.0.9"
 crabbake = { version = "0.4", path = "../../experimental/crabbake"}
 proc-macro2 = "1.0"

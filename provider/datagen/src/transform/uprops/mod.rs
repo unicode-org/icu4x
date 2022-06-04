@@ -28,12 +28,19 @@ mod casemapping;
 mod decompositions_serde;
 mod enum_codepointtrie;
 mod script;
-mod uprops_helpers;
 mod uprops_serde;
 
 pub use bin_uniset::BinaryPropertyUnicodeSetDataProvider;
 #[cfg(feature = "experimental")]
 pub use canonical_decompositions::CanonicalDecompositionDataProvider;
+#[cfg(feature = "experimental")]
+pub use canonical_decompositions::CanonicalDecompositionTablesProvider;
+#[cfg(feature = "experimental")]
+pub use canonical_decompositions::CompatibilityDecompositionDataProvider;
+#[cfg(feature = "experimental")]
+pub use canonical_decompositions::CompatibilityDecompositionTablesProvider;
+#[cfg(feature = "experimental")]
+pub use canonical_decompositions::Uts46DecompositionDataProvider;
 #[cfg(feature = "experimental")]
 pub use casemapping::CaseMappingDataProvider;
 pub use enum_codepointtrie::EnumeratedPropertyCodePointTrieProvider;

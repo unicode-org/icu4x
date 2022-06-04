@@ -2,18 +2,18 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use super::{ZeroMap2d, ZeroMap2dBorrowed};
+use super::{ZeroMap2d, ZeroMap2dBorrowed, ZeroMap2dCursor};
 use crate::map::{MutableZeroVecLike, ZeroMapKV, ZeroVecLike};
 use crate::ZeroVec;
 use alloc::vec::Vec;
 use core::fmt;
 use core::marker::PhantomData;
 use serde::de::{self, Deserialize, Deserializer, MapAccess, Visitor};
-#[cfg(feature = "serde_serialize")]
+#[cfg(feature = "serde")]
 use serde::ser::{Serialize, SerializeMap, Serializer};
 
-/// This impl can be made available by enabling the optional `serde_serialize` feature of the `zerovec` crate
-#[cfg(feature = "serde_serialize")]
+/// This impl can be made available by enabling the optional `serde` feature of the `zerovec` crate
+#[cfg(feature = "serde")]
 impl<'a, K0, K1, V> Serialize for ZeroMap2d<'a, K0, K1, V>
 where
     K0: ZeroMapKV<'a> + Serialize + ?Sized + Ord,
@@ -28,17 +28,11 @@ where
         S: Serializer,
     {
         if serializer.is_human_readable() {
-            let mut values_it = self.iter_values();
             let mut serde_map = serializer.serialize_map(None)?;
-            for (key0_index, key0) in self.iter_keys0().enumerate() {
-                K0::Container::zvl_get_as_t(key0, |k| serde_map.serialize_key(k))?;
-                let inner_map = ZeroMap2dInnerMapSerialize {
-                    key0_index,
-                    map: self,
-                    values_it: core::cell::RefCell::new(values_it),
-                };
+            for cursor in self.iter0() {
+                K0::Container::zvl_get_as_t(cursor.key0(), |k| serde_map.serialize_key(k))?;
+                let inner_map = ZeroMap2dInnerMapSerialize { cursor };
                 serde_map.serialize_value(&inner_map)?;
-                values_it = inner_map.values_it.into_inner();
             }
             serde_map.end()
         } else {
@@ -48,20 +42,18 @@ where
 }
 
 /// Helper struct for human-serializing the inner map of a ZeroMap2d
-#[cfg(feature = "serde_serialize")]
-struct ZeroMap2dInnerMapSerialize<'a, 'l, K0, K1, V, I>
+#[cfg(feature = "serde")]
+struct ZeroMap2dInnerMapSerialize<'a, 'l, K0, K1, V>
 where
     K0: ZeroMapKV<'a> + ?Sized + Ord,
     K1: ZeroMapKV<'a> + ?Sized + Ord,
     V: ZeroMapKV<'a> + ?Sized,
 {
-    pub key0_index: usize,
-    pub map: &'l ZeroMap2d<'a, K0, K1, V>,
-    pub values_it: core::cell::RefCell<I>,
+    pub cursor: ZeroMap2dCursor<'l, 'a, K0, K1, V>,
 }
 
-#[cfg(feature = "serde_serialize")]
-impl<'a, 'l, K0, K1, V, I> Serialize for ZeroMap2dInnerMapSerialize<'a, 'l, K0, K1, V, I>
+#[cfg(feature = "serde")]
+impl<'a, 'l, K0, K1, V> Serialize for ZeroMap2dInnerMapSerialize<'a, 'l, K0, K1, V>
 where
     K0: ZeroMapKV<'a> + Serialize + ?Sized + Ord,
     K1: ZeroMapKV<'a> + Serialize + ?Sized + Ord,
@@ -69,25 +61,22 @@ where
     K0::Container: Serialize,
     K1::Container: Serialize,
     V::Container: Serialize,
-    I: Iterator<Item = &'l <V as ZeroMapKV<'a>>::GetType>,
 {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
         S: Serializer,
     {
         let mut serde_map = serializer.serialize_map(None)?;
-        #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
-        for key1 in self.map.iter_keys1_by_index(self.key0_index).unwrap() {
+        for (key1, v) in self.cursor.iter1() {
             K1::Container::zvl_get_as_t(key1, |k| serde_map.serialize_key(k))?;
-            let v = self.values_it.borrow_mut().next().unwrap();
             V::Container::zvl_get_as_t(v, |v| serde_map.serialize_value(v))?;
         }
         serde_map.end()
     }
 }
 
-/// This impl can be made available by enabling the optional `serde_serialize` feature of the `zerovec` crate
-#[cfg(feature = "serde_serialize")]
+/// This impl can be made available by enabling the optional `serde` feature of the `zerovec` crate
+#[cfg(feature = "serde")]
 impl<'a, K0, K1, V> Serialize for ZeroMap2dBorrowed<'a, K0, K1, V>
 where
     K0: ZeroMapKV<'a> + Serialize + ?Sized + Ord,

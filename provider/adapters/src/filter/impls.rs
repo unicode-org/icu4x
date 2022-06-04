@@ -58,6 +58,7 @@ where
     /// let supported_langids = provider
     ///     .supported_options()
     ///     .expect("Should successfully make an iterator of supported locales")
+    ///     .into_iter()
     ///     .map(|options| options.get_langid())
     ///     .collect::<Vec<LanguageIdentifier>>();
     /// assert!(supported_langids.contains(&langid!("de")));

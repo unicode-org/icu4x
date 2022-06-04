@@ -3,7 +3,6 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::transform::cldr::cldr_serde;
-use crate::transform::reader::open_reader;
 use crate::SourceData;
 use icu_calendar::provider::*;
 use icu_locid::langid;
@@ -44,26 +43,16 @@ impl ResourceProvider<JapaneseErasV1Marker> for JapaneseErasProvider {
         // The era codes depend on the Latin romanizations of the eras, found
         // in the `en` locale. We load this data to construct era codes but
         // actual user code only needs to load the data for the locales it cares about.
-        let era_names_path = self
+        let era_names: &cldr_serde::ca::Resource = self
             .source
             .get_cldr_paths()?
             .cldr_dates("japanese")
-            .join("main")
-            .join("en")
-            .join("ca-japanese.json");
-        let era_dates_path = self
+            .read_and_parse(&langid!("en"), "ca-japanese.json")?;
+        let era_dates: &cldr_serde::japanese::Resource = self
             .source
             .get_cldr_paths()?
             .cldr_core()
-            .join("supplemental")
-            .join("calendarData.json");
-
-        let era_names: cldr_serde::ca::Resource =
-            serde_json::from_reader(open_reader(&era_names_path)?)
-                .map_err(|e| DataError::from(e).with_path_context(&era_names_path))?;
-        let era_dates: cldr_serde::japanese::Resource =
-            serde_json::from_reader(open_reader(&era_dates_path)?)
-                .map_err(|e| DataError::from(e).with_path_context(&era_dates_path))?;
+            .read_and_parse("supplemental/calendarData.json")?;
 
         let era_name_map = &era_names
             .main
@@ -202,17 +191,11 @@ fn era_to_code(original: &str, year: i32) -> Result<TinyStr16, String> {
     Ok(code)
 }
 
-icu_provider::impl_dyn_provider!(
-    JapaneseErasProvider,
-    [JapaneseErasV1Marker,],
-    SERDE_SE,
-    ITERABLE_SERDE_SE,
-    DATA_CONVERTER
-);
+icu_provider::make_exportable_provider!(JapaneseErasProvider, [JapaneseErasV1Marker,]);
 
 impl IterableResourceProvider<JapaneseErasV1Marker> for JapaneseErasProvider {
-    fn supported_options(&self) -> Result<Box<dyn Iterator<Item = ResourceOptions>>, DataError> {
-        Ok(Box::new(core::iter::once(ResourceOptions::default())))
+    fn supported_options(&self) -> Result<Vec<ResourceOptions>, DataError> {
+        Ok(vec![Default::default()])
     }
 }
 

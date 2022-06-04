@@ -80,31 +80,34 @@ pub struct HelloWorldProvider {
 }
 
 impl HelloWorldProvider {
+    pub const DATA: &'static [(icu_locid::Locale, &'static str)] = &[
+        (locale!("bn"), "ওহে বিশ্ব"),
+        (locale!("cs"), "Ahoj světe"),
+        (locale!("de"), "Hallo Welt"),
+        (locale!("el"), "Καλημέρα κόσμε"),
+        (locale!("en"), "Hello World"),
+        (locale!("eo"), "Saluton, Mondo"),
+        (locale!("fa"), "سلام دنیا‎"),
+        (locale!("fi"), "hei maailma"),
+        (locale!("is"), "Halló, heimur"),
+        (locale!("ja"), "こんにちは世界"),
+        (locale!("la"), "Ave, munde"),
+        (locale!("pt"), "Olá, mundo"),
+        (locale!("ro"), "Salut, lume"),
+        (locale!("ru"), "Привет, мир"),
+        (locale!("vi"), "Xin chào thế giới"),
+        (locale!("zh"), "你好世界"),
+    ];
+
     /// Creates a [`HelloWorldProvider`] pre-populated with hardcoded data from Wiktionary.
     pub fn new_with_placeholder_data() -> HelloWorldProvider {
         // Data from https://en.wiktionary.org/wiki/Hello_World#Translations
         HelloWorldProvider {
-            map: [
-                (locale!("bn"), "ওহে বিশ্ব"),
-                (locale!("cs"), "Ahoj světe"),
-                (locale!("de"), "Hallo Welt"),
-                (locale!("el"), "Καλημέρα κόσμε"),
-                (locale!("en"), "Hello World"),
-                (locale!("eo"), "Saluton, Mondo"),
-                (locale!("fa"), "سلام دنیا‎"),
-                (locale!("fi"), "hei maailma"),
-                (locale!("is"), "Halló, heimur"),
-                (locale!("ja"), "こんにちは世界"),
-                (locale!("la"), "Ave, munde"),
-                (locale!("pt"), "Olá, mundo"),
-                (locale!("ro"), "Salut, lume"),
-                (locale!("ru"), "Привет, мир"),
-                (locale!("vi"), "Xin chào thế giới"),
-                (locale!("zh"), "你好世界"),
-            ]
-            .into_iter()
-            .map(|(loc, value)| (loc.into(), value.into()))
-            .collect(),
+            map: Self::DATA
+                .iter()
+                .cloned()
+                .map(|(loc, value)| (loc.into(), value.into()))
+                .collect(),
         }
     }
 
@@ -135,18 +138,10 @@ impl ResourceProvider<HelloWorldV1Marker> for HelloWorldProvider {
     }
 }
 
-impl_dyn_provider!(HelloWorldProvider, [HelloWorldV1Marker,], ANY);
+impl_dyn_provider!(HelloWorldProvider, [HelloWorldV1Marker,], AnyMarker);
 
 #[cfg(feature = "datagen")]
-impl_dyn_provider!(
-    HelloWorldProvider,
-    [HelloWorldV1Marker,],
-    SERDE_SE,
-    CRABBAKE,
-    ITERABLE_SERDE_SE,
-    ITERABLE_CRABBAKE,
-    DATA_CONVERTER
-);
+make_exportable_provider!(HelloWorldProvider, [HelloWorldV1Marker,]);
 
 pub struct HelloWorldJsonProvider(HelloWorldProvider);
 
@@ -174,23 +169,20 @@ impl BufferProvider for HelloWorldJsonProvider {
 
 #[cfg(feature = "datagen")]
 impl IterableResourceProvider<HelloWorldV1Marker> for HelloWorldProvider {
-    fn supported_options(
-        &self,
-    ) -> Result<alloc::boxed::Box<dyn Iterator<Item = ResourceOptions> + '_>, DataError> {
-        Ok(alloc::boxed::Box::new(
-            self.map
-                .iter_keys()
-                .cloned()
-                .map(Into::<ResourceOptions>::into),
-        ))
+    fn supported_options(&self) -> Result<Vec<ResourceOptions>, DataError> {
+        Ok(self
+            .map
+            .iter_keys()
+            .cloned()
+            .map(ResourceOptions::from)
+            .collect())
     }
 }
 
 #[test]
 fn test_iter() {
     let provider = HelloWorldProvider::new_with_placeholder_data();
-    let mut supported_langids: Vec<ResourceOptions> =
-        provider.supported_options().unwrap().collect();
+    let mut supported_langids: Vec<ResourceOptions> = provider.supported_options().unwrap();
     supported_langids.sort();
 
     assert_eq!(

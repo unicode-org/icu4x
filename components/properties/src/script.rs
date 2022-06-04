@@ -211,7 +211,11 @@ impl ScriptExtensionsSet<'_> {
 /// the data and data structures that are stored in the corresponding ICU data
 /// file for these properties.
 #[cfg_attr(feature = "serde", derive(Deserialize))]
-#[cfg_attr(feature = "datagen", derive(Serialize))]
+#[cfg_attr(
+    feature = "datagen",
+    derive(Serialize, crabbake::Bakeable),
+    crabbake(path = icu_properties::script),
+)]
 #[derive(Clone, Debug, Eq, PartialEq, yoke::Yokeable, zerofrom::ZeroFrom)]
 pub struct ScriptWithExtensions<'data> {
     /// Note: The `ScriptWithExt` values in this array will assume a 12-bit layout. The 2
@@ -229,7 +233,7 @@ pub struct ScriptWithExtensions<'data> {
     /// When the lower 10 bits of the value are used as an index, that index is
     /// used for the outer-level vector of the nested `extensions` structure.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    trie: CodePointTrie<'data, ScriptWithExt>,
+    pub trie: CodePointTrie<'data, ScriptWithExt>,
 
     /// This companion structure stores Script_Extensions values, which are
     /// themselves arrays / vectors. This structure only stores the values for
@@ -237,7 +241,7 @@ pub struct ScriptWithExtensions<'data> {
     /// sub-vector represents the Script_Extensions array value for a code point,
     /// and may also indicate Script value, as described for the `trie` field.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    extensions: VarZeroVec<'data, ZeroSlice<Script>>,
+    pub extensions: VarZeroVec<'data, ZeroSlice<Script>>,
 }
 
 impl<'data> ScriptWithExtensions<'data> {

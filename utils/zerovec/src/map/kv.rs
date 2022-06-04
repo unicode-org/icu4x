@@ -19,6 +19,8 @@ pub trait ZeroMapKV<'a> {
     /// The container that can be used with this type: [`ZeroVec`] or [`VarZeroVec`].
     type Container: MutableZeroVecLike<'a, Self, GetType = Self::GetType, OwnedType = Self::OwnedType>
         + Sized;
+    // TODO: Consider adding Slice here
+    // type Slice: ZeroVecLike<Self, GetType = Self::GetType> + ?Sized;
     /// The type produced by `Container::get()`
     ///
     /// This type will be predetermined by the choice of `Self::Container`:

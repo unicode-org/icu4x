@@ -3,9 +3,8 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::blob_schema::*;
-use icu_provider::export::DataExporter;
+use icu_provider::datagen::*;
 use icu_provider::prelude::*;
-use icu_provider::serde::SerializeMarker;
 use std::sync::Mutex;
 use writeable::Writeable;
 use zerovec::ZeroMap2d;
@@ -28,20 +27,20 @@ impl<'w> BlobExporter<'w> {
     }
 }
 
-impl DataExporter<SerializeMarker> for BlobExporter<'_> {
-    #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
+impl DataExporter for BlobExporter<'_> {
     fn put_payload(
         &self,
         key: ResourceKey,
-        options: ResourceOptions,
-        payload: DataPayload<SerializeMarker>,
+        options: &ResourceOptions,
+        payload: &DataPayload<ExportMarker>,
     ) -> Result<(), DataError> {
         log::trace!("Adding: {}/{}", key, options);
         let mut serializer = postcard::Serializer {
             output: postcard::flavors::AllocVec(Vec::new()),
         };
         payload.serialize(&mut serializer)?;
-        self.resources.lock().unwrap().push((
+        #[allow(clippy::expect_used)]
+        self.resources.lock().expect("poison").push((
             key.get_hash(),
             options.write_to_string().into_owned().into_bytes(),
             serializer.output.0,
@@ -49,12 +48,12 @@ impl DataExporter<SerializeMarker> for BlobExporter<'_> {
         Ok(())
     }
 
-    #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
     fn close(&mut self) -> Result<(), DataError> {
+        #[allow(clippy::expect_used)]
         let zm = self
             .resources
             .get_mut()
-            .unwrap()
+            .expect("poison")
             .drain(..)
             .collect::<ZeroMap2d<_, _, _>>();
 

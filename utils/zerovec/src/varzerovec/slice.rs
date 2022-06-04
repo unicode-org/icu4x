@@ -80,10 +80,11 @@ pub struct VarZeroSlice<T: ?Sized> {
 
 impl<T: VarULE + ?Sized> VarZeroSlice<T> {
     /// Construct a new empty VarZeroSlice
-    pub fn new_empty() -> &'static Self {
+    pub const fn new_empty() -> &'static Self {
         let arr: &[u8] = &[];
         unsafe { mem::transmute(arr) }
     }
+
     /// Obtain a [`VarZeroVecComponents`] borrowing from the internal buffer
     #[inline]
     pub(crate) fn as_components<'a>(&'a self) -> VarZeroVecComponents<'a, T> {
@@ -233,7 +234,7 @@ impl<T: VarULE + ?Sized> VarZeroSlice<T> {
     /// # Ok::<(), ZeroVecError>(())
     /// ```
     #[inline]
-    pub fn as_bytes(&self) -> &[u8] {
+    pub const fn as_bytes(&self) -> &[u8] {
         &self.entire_slice
     }
 
@@ -241,8 +242,8 @@ impl<T: VarULE + ?Sized> VarZeroSlice<T> {
     ///
     /// If you wish to repeatedly call methods on this [`VarZeroSlice`],
     /// it is more efficient to perform this conversion first
-    pub fn as_varzerovec<'a>(&'a self) -> VarZeroVec<'a, T> {
-        self.into()
+    pub const fn as_varzerovec<'a>(&'a self) -> VarZeroVec<'a, T> {
+        VarZeroVec::Borrowed(self)
     }
 
     /// Parse a VarZeroSlice from a slice of the appropriate format
@@ -371,6 +372,51 @@ where
     #[inline]
     pub fn binary_search_by(&self, predicate: impl FnMut(&T) -> Ordering) -> Result<usize, usize> {
         self.as_components().binary_search_by(predicate)
+    }
+
+    /// Binary searches a `VarZeroVec<T>` for the given predicate within a certain sorted range.
+    ///
+    /// If the range is out of bounds, returns `None`. Otherwise, returns a `Result` according
+    /// to the behavior of the standard library function [`binary_search`].
+    ///
+    /// The index is returned relative to the start of the range.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// # use std::str::Utf8Error;
+    /// # use zerovec::ule::ZeroVecError;
+    /// # use zerovec::VarZeroVec;
+    ///
+    /// let strings = vec!["a", "b", "f", "g", "m", "n", "q"];
+    /// let vec = VarZeroVec::<str>::from(&strings);
+    ///
+    /// // Same behavior as binary_search when the range covers the whole slice:
+    /// assert_eq!(vec.binary_search_in_range_by(|v| v.cmp("g"), 0..7), Some(Ok(3)));
+    /// assert_eq!(vec.binary_search_in_range_by(|v| v.cmp("h"), 0..7), Some(Err(4)));
+    ///
+    /// // Will not look outside of the range:
+    /// assert_eq!(vec.binary_search_in_range_by(|v| v.cmp("g"), 0..1), Some(Err(1)));
+    /// assert_eq!(vec.binary_search_in_range_by(|v| v.cmp("g"), 6..7), Some(Err(0)));
+    ///
+    /// // Will return indices relative to the start of the range:
+    /// assert_eq!(vec.binary_search_in_range_by(|v| v.cmp("g"), 1..6), Some(Ok(2)));
+    /// assert_eq!(vec.binary_search_in_range_by(|v| v.cmp("h"), 1..6), Some(Err(3)));
+    ///
+    /// // Will return None if the range is out of bounds:
+    /// assert_eq!(vec.binary_search_in_range_by(|v| v.cmp("x"), 100..200), None);
+    /// assert_eq!(vec.binary_search_in_range_by(|v| v.cmp("x"), 0..200), None);
+    /// # Ok::<(), ZeroVecError>(())
+    /// ```
+    ///
+    /// [`binary_search`]: https://doc.rust-lang.org/std/primitive.slice.html#method.binary_search
+    pub fn binary_search_in_range_by(
+        &self,
+        predicate: impl FnMut(&T) -> Ordering,
+        range: Range<usize>,
+    ) -> Option<Result<usize, usize>> {
+        self.as_components()
+            .binary_search_in_range_by(predicate, range)
     }
 }
 // Safety (based on the safety checklist on the VarULE trait):
