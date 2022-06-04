@@ -2,39 +2,37 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::transform::uprops::uprops_helpers::{self, TomlBinary};
-
+use crate::source::TomlCache;
 use crate::SourceData;
 use icu_properties::provider::*;
 use icu_provider::datagen::*;
 use icu_provider::prelude::*;
 use icu_uniset::UnicodeSetBuilder;
-use std::sync::{RwLock, RwLockReadGuard};
+use std::path::PathBuf;
 
 /// A data provider reading from TOML files produced by the ICU4C icuexportdata tool.
 pub struct BinaryPropertyUnicodeSetDataProvider {
     source: SourceData,
-    data: RwLock<Option<TomlBinary>>,
 }
 
 impl From<&SourceData> for BinaryPropertyUnicodeSetDataProvider {
     fn from(source: &SourceData) -> Self {
         Self {
             source: source.clone(),
-            data: RwLock::new(None),
         }
     }
 }
 
-impl BinaryPropertyUnicodeSetDataProvider {
-    fn init(&self) -> Result<RwLockReadGuard<Option<TomlBinary>>, DataError> {
-        if self.data.read().expect("poison").is_none() {
-            let data = uprops_helpers::load_binary_from_dir(self.source.get_uprops_root()?)?;
-            *self.data.write().expect("poison") = Some(data);
-        }
-
-        Ok(self.data.read().expect("poison"))
-    }
+fn get_binary<'a>(
+    source: &'a TomlCache,
+    key: &str,
+) -> Result<&'a super::uprops_serde::binary::BinaryProperty, DataError> {
+    let toml_obj: &super::uprops_serde::binary::Main =
+        source.read_and_parse_toml(&PathBuf::from(key).with_extension("toml"))?;
+    toml_obj
+        .binary_property
+        .get(0)
+        .ok_or_else(|| DataErrorKind::MissingResourceKey.into_error())
 }
 
 macro_rules! expand {
@@ -45,13 +43,9 @@ macro_rules! expand {
                     &self,
                     _: &DataRequest,
                 ) -> Result<DataResponse<$marker>, DataError> {
-                    let guard = self.init()?;
-
-                    let data = guard
-                        .as_ref()
-                        .unwrap()
-                        .get($prop_name)
-                        .ok_or_else(|| DataErrorKind::MissingResourceKey.into_error())?;
+                    let data = get_binary(self
+                        .source
+                        .get_uprops_paths()?, $prop_name)?;
 
                     let mut builder = UnicodeSetBuilder::new();
                     for (start, end) in &data.ranges {
@@ -72,9 +66,9 @@ macro_rules! expand {
                 fn supported_options(
                     &self,
                 ) -> Result<Vec<ResourceOptions>, DataError> {
-                    if !self.init()?.as_ref().unwrap().contains_key($prop_name) {
-                        return Err(DataErrorKind::MissingResourceKey.into_error())
-                    }
+                    get_binary(self
+                        .source
+                        .get_uprops_paths()?, $prop_name)?;
 
                     Ok(vec![Default::default()])
                 }

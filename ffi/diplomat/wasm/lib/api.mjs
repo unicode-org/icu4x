@@ -687,16 +687,16 @@ export class ICU4XFixedDecimal {
     const diplomat_out = wasm.ICU4XFixedDecimal_negate(this.underlying);
   }
 
-  pad_left(digits) {
-    const diplomat_out = wasm.ICU4XFixedDecimal_pad_left(this.underlying, digits);
+  pad_left(position) {
+    const diplomat_out = wasm.ICU4XFixedDecimal_pad_left(this.underlying, position);
   }
 
-  truncate_left(magnitude) {
-    const diplomat_out = wasm.ICU4XFixedDecimal_truncate_left(this.underlying, magnitude);
+  truncate_left(position) {
+    const diplomat_out = wasm.ICU4XFixedDecimal_truncate_left(this.underlying, position);
   }
 
-  pad_right(negative_magnitude) {
-    const diplomat_out = wasm.ICU4XFixedDecimal_pad_right(this.underlying, negative_magnitude);
+  pad_right(position) {
+    const diplomat_out = wasm.ICU4XFixedDecimal_pad_right(this.underlying, position);
   }
 
   to_string() {

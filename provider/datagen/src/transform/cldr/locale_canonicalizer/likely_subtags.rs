@@ -3,7 +3,6 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::transform::cldr::cldr_serde;
-use crate::transform::reader::open_reader;
 use crate::SourceData;
 use icu_locale_canonicalizer::provider::*;
 use icu_provider::datagen::IterableResourceProvider;
@@ -35,21 +34,17 @@ impl ResourceProvider<LikelySubtagsV1Marker> for LikelySubtagsProvider {
             return Err(DataErrorKind::ExtraneousResourceOptions.into_error());
         }
 
-        let path = self
+        let data: &cldr_serde::likely_subtags::Resource = self
             .source
             .get_cldr_paths()?
             .cldr_core()
-            .join("supplemental")
-            .join("likelySubtags.json");
-        let data: cldr_serde::likely_subtags::Resource =
-            serde_json::from_reader(open_reader(&path)?)
-                .map_err(|e| DataError::from(e).with_path_context(&path))?;
+            .read_and_parse("supplemental/likelySubtags.json")?;
 
         let metadata = DataResponseMetadata::default();
         // TODO(#1109): Set metadata.data_langid correctly.
         Ok(DataResponse {
             metadata,
-            payload: Some(DataPayload::from_owned(LikelySubtagsV1::from(&data))),
+            payload: Some(DataPayload::from_owned(LikelySubtagsV1::from(data))),
         })
     }
 }

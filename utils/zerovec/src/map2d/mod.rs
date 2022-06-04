@@ -5,6 +5,7 @@
 //! See [`ZeroMap2d`](crate::ZeroMap2d) for details.
 
 mod borrowed;
+mod cursor;
 pub(crate) mod map;
 
 #[cfg(feature = "crabbake")]
@@ -14,4 +15,5 @@ mod serde;
 
 pub use crate::ZeroMap2d;
 pub use borrowed::ZeroMap2dBorrowed;
+pub use cursor::ZeroMap2dCursor;
 pub use map::KeyError;

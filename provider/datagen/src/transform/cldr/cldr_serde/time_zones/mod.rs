@@ -11,8 +11,8 @@ use litemap::LiteMap;
 use time_zone_names::TimeZoneNames;
 
 #[derive(Debug)]
-pub struct CldrTimeZonesData<'a> {
-    pub time_zone_names: &'a TimeZoneNames,
-    pub bcp47_tzids: &'a LiteMap<String, TimeZoneBcp47Id>,
-    pub meta_zone_ids: &'a LiteMap<String, MetaZoneId>,
+pub struct CldrTimeZonesData {
+    pub time_zone_names: TimeZoneNames,
+    pub bcp47_tzids: LiteMap<String, TimeZoneBcp47Id>,
+    pub meta_zone_ids: LiteMap<String, MetaZoneId>,
 }
