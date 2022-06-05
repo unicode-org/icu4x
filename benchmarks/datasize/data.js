@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1654313683087,
+  "lastUpdate": 1654453797801,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -16673,6 +16673,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/62316dae9b0985f50d89886d72709c6716452a2c"
         },
         "date": 1654313660097,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 2301197,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "zibi@unicode.org",
+            "name": "Zibi Braniecki",
+            "username": "zbraniecki"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "568032bfd3682b50d32e77905695e0c1971d4e6f",
+          "message": "Add iai bench for CPT (#1870)\n\nCo-authored-by: Zibi Braniecki <=>",
+          "timestamp": "2022-06-05T11:27:41-07:00",
+          "tree_id": "6b340c492c224e5f43898988b70abe21ea8895a5",
+          "url": "https://github.com/unicode-org/icu4x/commit/568032bfd3682b50d32e77905695e0c1971d4e6f"
+        },
+        "date": 1654453772186,
         "tool": "ndjson",
         "benches": [
           {
