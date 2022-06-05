@@ -7,7 +7,9 @@ use icu_codepointtrie::CodePointTrie;
 use icu_properties::provider::{
     ScriptWithExtensionsPropertyV1, ScriptWithExtensionsPropertyV1Marker,
 };
-use icu_properties::script::{ScriptWithExt, ScriptWithExtensions, ScriptExtensionsSet};
+#[cfg(test)]
+use icu_properties::script::ScriptExtensionsSet;
+use icu_properties::script::{ScriptWithExt, ScriptWithExtensions};
 use icu_properties::Script;
 use icu_provider::datagen::*;
 use icu_provider::prelude::*;
@@ -130,36 +132,75 @@ mod tests {
 
         let swe: &ScriptWithExtensions = &payload.get().data;
 
-        // assert_eq!(
-        //     swe.get_script_extensions_val('𐓐' as u32), /* U+104D0 OSAGE CAPITAL LETTER KHA */
-        //     ScriptExtensionsSet { values: &ZeroVec::<Script>::alloc_from_slice(&[Script::Grantha]) }
-        // );
-        // assert_eq!(
-        //     swe.get_script_extensions_val('🥳' as u32).as_zerovec(), /* U+1F973 FACE WITH PARTY HORN AND PARTY HAT */
-        //     ZeroVec::<Script>::alloc_from_slice(&[Script::Common])
-        // );
-        // assert_eq!(
-        //     swe.get_script_extensions_val(0x200D).as_zerovec(), // ZERO WIDTH JOINER
-        //     ZeroVec::<Script>::alloc_from_slice(&[Script::Inherited])
-        // );
-        // assert_eq!(
-        //     swe.get_script_extensions_val('௫' as u32).as_zerovec(), // U+0BEB TAMIL DIGIT FIVE
-        //     ZeroVec::<Script>::alloc_from_slice(&[Script::Tamil, Script::Grantha])
-        // );
-        // assert_eq!(
-        //     swe.get_script_extensions_val(0x11303).as_zerovec(), // GRANTHA SIGN VISARGA
-        //     ZeroVec::<Script>::alloc_from_slice(&[Script::Tamil, Script::Grantha])
-        // );
-        // assert_eq!(
-        //     swe.get_script_extensions_val(0x30A0).as_zerovec(), // KATAKANA-HIRAGANA DOUBLE HYPHEN
-        //     ZeroVec::<Script>::alloc_from_slice(&[Script::Hiragana, Script::Katakana])
-        // );
+        assert_eq!(
+            swe.get_script_extensions_val('𐓐' as u32), /* U+104D0 OSAGE CAPITAL LETTER KHA */
+            ScriptExtensionsSet {
+                values: &ZeroVec::<Script>::alloc_from_slice(&[Script::Osage]),
+            }
+        );
+        assert_eq!(
+            swe.get_script_extensions_val('🥳' as u32), /* U+1F973 FACE WITH PARTY HORN AND PARTY HAT */
+            ScriptExtensionsSet {
+                values: &ZeroVec::<Script>::alloc_from_slice(&[Script::Common]),
+            }
+        );
+        assert_eq!(
+            swe.get_script_extensions_val(0x200D), // ZERO WIDTH JOINER
+            ScriptExtensionsSet {
+                values: &ZeroVec::<Script>::alloc_from_slice(&[Script::Inherited]),
+            }
+        );
+        assert_eq!(
+            swe.get_script_extensions_val('௫' as u32), // U+0BEB TAMIL DIGIT FIVE
+            ScriptExtensionsSet {
+                values: &ZeroVec::<Script>::alloc_from_slice(&[Script::Tamil, Script::Grantha]),
+            }
+        );
+        assert_eq!(
+            swe.get_script_extensions_val(0x11303), // GRANTHA SIGN VISARGA
+            ScriptExtensionsSet {
+                values: &ZeroVec::<Script>::alloc_from_slice(&[Script::Tamil, Script::Grantha]),
+            }
+        );
+        assert_eq!(
+            swe.get_script_extensions_val(0x30A0), // KATAKANA-HIRAGANA DOUBLE HYPHEN
+            ScriptExtensionsSet {
+                values: &ZeroVec::<Script>::alloc_from_slice(&[Script::Hiragana, Script::Katakana]),
+            }
+        );
+
+        // // Test associated functions of ScriptExtensionsSet.
+        assert_eq!(
+            swe.get_script_extensions_val('௫' as u32) // U+0BEB TAMIL DIGIT FIVE
+                .iter()
+                .collect::<Vec<Script>>(),
+            vec![Script::Tamil, Script::Grantha]
+        );
+
+        assert_eq!(
+            swe.get_script_extensions_val(0x200D) // ZERO WIDTH JOINER
+                .iter()
+                .next(),
+            Some(Script::Inherited)
+        );
+
+        assert!(swe
+            .get_script_extensions_val(0x11303) // GRANTHA SIGN VISARGA
+            .contains(&Script::Grantha)
+            .is_ok());
+
+        assert!(swe
+            .get_script_extensions_val(0x11303) // GRANTHA SIGN VISARGA
+            .contains(&Script::Common)
+            .is_err());
 
         // // Invalid code point
-        // assert_eq!(
-        //     swe.get_script_extensions_val(0x11_0000).as_zerovec(), // CODE_POINT_MAX + 1 is invalid
-        //     ZeroVec::<Script>::alloc_from_slice(&[Script::Unknown])
-        // );
+        assert_eq!(
+            swe.get_script_extensions_val(0x11_0000), // CODE_POINT_MAX + 1 is invalid
+            ScriptExtensionsSet {
+                values: &ZeroVec::<Script>::alloc_from_slice(&[Script::Unknown]),
+            }
+        );
     }
 
     #[test]

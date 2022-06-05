@@ -174,37 +174,54 @@ impl From<ScriptWithExt> for Script {
     }
 }
 
-// We can also create a tuple struct here!
+/// A data structure that wraps ScriptExtensions array return value.
 #[derive(Copy, Clone, Debug, Eq, PartialEq)]
 pub struct ScriptExtensionsSet<'a> {
-    pub values: &'a ZeroSlice<Script>
+    pub values: &'a ZeroSlice<Script>,
 }
 
 impl ScriptExtensionsSet<'_> {
+    /// Binary searches a `ZeroSlice<T>` for the given element.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu::properties::{script, Script};
+    /// let provider = icu_testdata::get_provider();
+    /// let payload = script::get_script_with_extensions(&provider).expect("The data should be valid");
+    /// let data_struct = payload.get();
+    /// let swe = &data_struct.data;
+    ///
+    /// assert!(swe
+    ///    .get_script_extensions_val(0x11303) // GRANTHA SIGN VISARGA
+    ///    .contains(&Script::Grantha)
+    ///    .is_ok());
+    /// ```
     pub fn contains(&self, x: &Script) -> Result<usize, usize> {
         ZeroSlice::binary_search(&*self.values, x)
     }
 
+    /// Gets an iterator over the elements.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu::properties::{script, Script};
+    /// let provider = icu_testdata::get_provider();
+    /// let payload = script::get_script_with_extensions(&provider).expect("The data should be valid");
+    /// let data_struct = payload.get();
+    /// let swe = &data_struct.data;
+    ///
+    /// assert_eq!(
+    ///     swe.get_script_extensions_val('௫' as u32) // U+0BEB TAMIL DIGIT FIVE
+    ///         .iter()
+    ///         .collect::<Vec<Script>>(),
+    ///     vec![Script::Tamil, Script::Grantha]
+    /// ```
     pub fn iter(&self) -> impl DoubleEndedIterator<Item = Script> + '_ {
         ZeroSlice::iter(&*self.values)
     }
 }
-
-// // IntoIterator is required here because compiler don't know how to iterate over
-// // ScriptExtensions. Implementing IntoIterator will allow us to execute for loop 
-// // on ScriptExtensions directly. Is this understanding correct?
-// impl IntoIterator for ScriptExtensions<'_> {
-//     type Item = Script;
-
-//     // Should I be assigning a DoubleEndedIterator here based on
-//     // https://unicode-org.github.io/icu4x-docs/doc/src/zerovec/zerovec/slice.rs.html#312 ?
-//     type IntoIter = std::vec::IntoIter<Self::Item>;
-//     // type IntoIter = <ZeroSlice<Script> as IntoIterator>::IntoIter;
-
-//     fn into_iter(self) -> Self::IntoIter {
-//         self.values.iter()
-//     }
-// }
 
 /// A data structure that represents the data for both Script and
 /// Script_Extensions properties in an efficient way. This structure matches
@@ -368,28 +385,27 @@ impl<'data> ScriptWithExtensions<'data> {
     /// let swe = &data_struct.data;
     ///
     /// assert_eq!(
-    ///     swe.get_script_extensions_val('𐓐' as u32) // U+104D0 OSAGE CAPITAL LETTER KHA
-    ///         .iter()
-    ///         .collect::<Vec<Script>>(),
-    ///     vec![Script::Osage]
-    /// );
+    ///    swe.get_script_extensions_val('𐓐' as u32), /* U+104D0 OSAGE CAPITAL LETTER KHA */
+    ///    ScriptExtensionsSet {
+    ///        values: &ZeroVec::<Script>::alloc_from_slice(&[Script::Osage]),
+    ///    });
     /// assert_eq!(
     ///     swe.get_script_extensions_val('🥳' as u32) // U+1F973 FACE WITH PARTY HORN AND PARTY HAT
-    ///         .iter()
-    ///         .collect::<Vec<Script>>(),
-    ///     vec![Script::Common]
+    ///     ScriptExtensionsSet {
+    ///         values: &ZeroVec::<Script>::alloc_from_slice(&[Script::Common]),
+    ///     });
     /// );
     /// assert_eq!(
     ///     swe.get_script_extensions_val(0x200D) // ZERO WIDTH JOINER
-    ///         .iter()
-    ///         .collect::<Vec<Script>>(),
-    ///     vec![Script::Inherited]
+    ///     ScriptExtensionsSet {
+    ///        values: &ZeroVec::<Script>::alloc_from_slice(&[Script::Inherited]),
+    ///     });
     /// );
     /// assert_eq!(
     ///     swe.get_script_extensions_val('௫' as u32) // U+0BEB TAMIL DIGIT FIVE
-    ///         .iter()
-    ///         .collect::<Vec<Script>>(),
-    ///     vec![Script::Tamil, Script::Grantha]
+     ///     ScriptExtensionsSet {
+    ///        values: &ZeroVec::<Script>::alloc_from_slice(&[Script::Tamil, Script::Grantha]),
+    ///     });
     /// );
     /// ```
     pub fn get_script_extensions_val(&self, code_point: u32) -> ScriptExtensionsSet {
@@ -399,7 +415,7 @@ impl<'data> ScriptWithExtensions<'data> {
             values: match sc_with_ext_ule {
                 Some(ule_ref) => self.get_scx_val_using_trie_val(ule_ref),
                 None => ZeroSlice::from_ule_slice(&[]),
-            }
+            },
         }
     }
     /// Returns whether `script` is contained in the Script_Extensions
