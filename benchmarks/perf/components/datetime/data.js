@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1654314316253,
+  "lastUpdate": 1654454368690,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -37127,6 +37127,102 @@ window.BENCHMARK_DATA = {
             "name": "pattern/parse",
             "value": 6211,
             "range": "± 19",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "zibi@unicode.org",
+            "name": "Zibi Braniecki",
+            "username": "zbraniecki"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "568032bfd3682b50d32e77905695e0c1971d4e6f",
+          "message": "Add iai bench for CPT (#1870)\n\nCo-authored-by: Zibi Braniecki <=>",
+          "timestamp": "2022-06-05T11:27:41-07:00",
+          "tree_id": "6b340c492c224e5f43898988b70abe21ea8895a5",
+          "url": "https://github.com/unicode-org/icu4x/commit/568032bfd3682b50d32e77905695e0c1971d4e6f"
+        },
+        "date": 1654454347214,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 70909,
+            "range": "± 721",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 703439,
+            "range": "± 2789",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 153254,
+            "range": "± 2764",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/DateTimeFormat/format_to_write",
+            "value": 67432,
+            "range": "± 310",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/DateTimeFormat/format_to_string",
+            "value": 73231,
+            "range": "± 447",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/format",
+            "value": 70311,
+            "range": "± 431",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/to_string",
+            "value": 76622,
+            "range": "± 527",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/ZonedDateTimeFormat/format_to_write",
+            "value": 170583,
+            "range": "± 1245",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/ZonedDateTimeFormat/format_to_string",
+            "value": 161366,
+            "range": "± 517",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/format",
+            "value": 153675,
+            "range": "± 448",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/to_string",
+            "value": 164302,
+            "range": "± 1451",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "pattern/parse",
+            "value": 4567,
+            "range": "± 9",
             "unit": "ns/iter"
           }
         ]
