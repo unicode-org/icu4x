@@ -217,6 +217,7 @@ impl ScriptExtensionsSet<'_> {
     ///         .iter()
     ///         .collect::<Vec<Script>>(),
     ///     vec![Script::Tamil, Script::Grantha]
+    /// );
     /// ```
     pub fn iter(&self) -> impl DoubleEndedIterator<Item = Script> + '_ {
         ZeroSlice::iter(&*self.values)
