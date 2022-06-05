@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1654314117174,
+  "lastUpdate": 1654454258263,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -30370,6 +30370,60 @@ window.BENCHMARK_DATA = {
           {
             "name": "uniset/contains_range/worst",
             "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "zibi@unicode.org",
+            "name": "Zibi Braniecki",
+            "username": "zbraniecki"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "568032bfd3682b50d32e77905695e0c1971d4e6f",
+          "message": "Add iai bench for CPT (#1870)\n\nCo-authored-by: Zibi Braniecki <=>",
+          "timestamp": "2022-06-05T11:27:41-07:00",
+          "tree_id": "6b340c492c224e5f43898988b70abe21ea8895a5",
+          "url": "https://github.com/unicode-org/icu4x/commit/568032bfd3682b50d32e77905695e0c1971d4e6f"
+        },
+        "date": 1654454230390,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 50683860,
+            "range": "± 105303",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/best",
+            "value": 3,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/worst",
+            "value": 3,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/best",
+            "value": 3,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/worst",
+            "value": 3,
             "range": "± 0",
             "unit": "ns/iter"
           }
