@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1654314298375,
+  "lastUpdate": 1654454340735,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -30029,6 +30029,66 @@ window.BENCHMARK_DATA = {
             "name": "from_string/1000000001",
             "value": 89,
             "range": "± 4",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "zibi@unicode.org",
+            "name": "Zibi Braniecki",
+            "username": "zbraniecki"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "568032bfd3682b50d32e77905695e0c1971d4e6f",
+          "message": "Add iai bench for CPT (#1870)\n\nCo-authored-by: Zibi Braniecki <=>",
+          "timestamp": "2022-06-05T11:27:41-07:00",
+          "tree_id": "6b340c492c224e5f43898988b70abe21ea8895a5",
+          "url": "https://github.com/unicode-org/icu4x/commit/568032bfd3682b50d32e77905695e0c1971d4e6f"
+        },
+        "date": 1654454316267,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 100020,
+            "range": "± 373",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 21686,
+            "range": "± 161",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 66213,
+            "range": "± 301",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 168,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 65,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 77,
+            "range": "± 0",
             "unit": "ns/iter"
           }
         ]
