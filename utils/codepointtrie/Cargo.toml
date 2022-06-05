@@ -46,6 +46,7 @@ postcard = { version = "0.7", features = ["alloc"] }
 toml = "0.5"
 serde = { version = "1.0", features = ["derive"] }
 criterion = "0.3.4"
+iai = "0.1.1"
 
 [lib]
 bench = false  # This option is required for Benchmark CI
@@ -60,3 +61,8 @@ crabbake = ["dep:crabbake", "zerovec/crabbake"]
 [[bench]]
 name = "codepointtrie"
 harness = false
+
+[[bench]]
+name = "iai_cpt"
+harness = false
+required-features = ["bench"]
