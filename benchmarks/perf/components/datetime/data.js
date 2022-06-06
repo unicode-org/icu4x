@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1654454368690,
+  "lastUpdate": 1654535395211,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -37223,6 +37223,102 @@ window.BENCHMARK_DATA = {
             "name": "pattern/parse",
             "value": 4567,
             "range": "± 9",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "hsivonen@hsivonen.fi",
+            "name": "Henri Sivonen",
+            "username": "hsivonen"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "02b9a3fc92659360e1b0a88f7c8afe2a34bae6f6",
+          "message": " Store only secondary weight in diacritic table and remove jamo tailoring bit (#1978)\n\n* Store only secondary weight in the diacritic table, make it shorter, and allow dynamic further shortening in tailorings\r\n\r\nThis makes the action of turning a value read from the table into a `CollationElement` super-simple (and branchless).\r\n\r\n* Remove unused jamo tailoring bit from metadata\r\n\r\n* Fix clippy lints",
+          "timestamp": "2022-06-06T19:55:45+03:00",
+          "tree_id": "143b22dfa1a1cb9ef4a5c6646dfe808458a6f356",
+          "url": "https://github.com/unicode-org/icu4x/commit/02b9a3fc92659360e1b0a88f7c8afe2a34bae6f6"
+        },
+        "date": 1654535367089,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 109708,
+            "range": "± 6357",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 1105832,
+            "range": "± 33118",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 218129,
+            "range": "± 10583",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/DateTimeFormat/format_to_write",
+            "value": 101015,
+            "range": "± 7690",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/DateTimeFormat/format_to_string",
+            "value": 110408,
+            "range": "± 4785",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/format",
+            "value": 106282,
+            "range": "± 6493",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/to_string",
+            "value": 114685,
+            "range": "± 4377",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/ZonedDateTimeFormat/format_to_write",
+            "value": 216121,
+            "range": "± 11094",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/ZonedDateTimeFormat/format_to_string",
+            "value": 238288,
+            "range": "± 9736",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/format",
+            "value": 219207,
+            "range": "± 12942",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/to_string",
+            "value": 243026,
+            "range": "± 11742",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "pattern/parse",
+            "value": 6226,
+            "range": "± 376",
             "unit": "ns/iter"
           }
         ]
