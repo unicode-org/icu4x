@@ -181,7 +181,7 @@ pub struct ScriptExtensionsSet<'a> {
 }
 
 impl ScriptExtensionsSet<'_> {
-    /// Binary searches a `ZeroSlice<T>` for the given element.
+    /// Returns whether this set contains the given script.
     ///
     /// # Example
     ///
