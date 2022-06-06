@@ -14,14 +14,19 @@ use zerovec::ZeroMap2d;
 #[cfg_attr(
     feature = "datagen",
     derive(serde::Serialize, crabbake::Bakeable),
-    crabbake(path = icu_plurals::provider),
+    crabbake(path = icu_provider_adapters::fallback::provider),
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
 pub struct LocaleFallbackDataV1<'data> {
+    #[cfg_attr(feature = "serde", serde(borrow))]
     pub l2s: ZeroMap<'data, [u8; 3], Script>,
+    #[cfg_attr(feature = "serde", serde(borrow))]
     pub lr2s: ZeroMap2d<'data, [u8; 3], [u8; 3], Script>,
+    #[cfg_attr(feature = "serde", serde(borrow))]
     pub l2r: ZeroMap<'data, [u8; 3], Region>,
+    #[cfg_attr(feature = "serde", serde(borrow))]
     pub ls2r: ZeroMap2d<'data, [u8; 3], [u8; 4], Region>,
+    #[cfg_attr(feature = "serde", serde(borrow))]
     pub parents: ZeroMap<'data, [u8], (Language, Option<Script>, Option<Region>)>,
 }

@@ -25,7 +25,7 @@ pub enum LocaleFallbackStrategy {
 #[non_exhaustive]
 pub struct LocaleFallbackKeyMetadata {
     pub strategy: LocaleFallbackStrategy,
-    pub extension_kw: Key,
+    pub extension_kw: Option<Key>,
 }
 
 pub struct LocaleFallbacker {
@@ -54,6 +54,12 @@ impl LocaleFallbacker {
             .load_resource(&Default::default())?
             .take_payload()?;
         Ok(LocaleFallbacker { fallback_data })
+    }
+
+    pub fn new_without_data() -> Self {
+        LocaleFallbacker {
+            fallback_data: DataPayload::from_owned(Default::default()),
+        }
     }
 
     pub fn for_key_metadata(

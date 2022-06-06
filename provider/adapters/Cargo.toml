@@ -29,7 +29,9 @@ icu_locid = { version = "0.6.0", path = "../../components/locid", features = ["z
 yoke = { version = "0.6.0", path = "../../utils/yoke" }
 zerovec = { path = "../../utils/zerovec", features = ["yoke"] }
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }
+crabbake = { version = "0.4", path = "../../experimental/crabbake", optional = true, features = ["derive"]}
 
 [features]
 std = ["icu_locid/std"]
-datagen = ["icu_provider/datagen", "std"]
+serde = ["dep:serde", "zerovec/serde", "icu_locid/serde"]
+datagen = ["std", "crabbake", "icu_provider/datagen", "icu_locid/crabbake", "zerovec/crabbake"]
