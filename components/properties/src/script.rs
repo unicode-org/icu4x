@@ -177,7 +177,7 @@ impl From<ScriptWithExt> for Script {
 /// A data structure that wraps ScriptExtensions array return value.
 #[derive(Copy, Clone, Debug, Eq, PartialEq)]
 pub struct ScriptExtensionsSet<'a> {
-    pub values: &'a ZeroSlice<Script>,
+    values: &'a ZeroSlice<Script>,
 }
 
 impl ScriptExtensionsSet<'_> {
@@ -194,8 +194,7 @@ impl ScriptExtensionsSet<'_> {
     ///
     /// assert!(swe
     ///    .get_script_extensions_val(0x11303) // GRANTHA SIGN VISARGA
-    ///    .contains(&Script::Grantha)
-    ///    .is_ok());
+    ///    .contains(&Script::Grantha));
     /// ```
     pub fn contains(&self, x: &Script) -> bool {
         ZeroSlice::binary_search(&*self.values, x).is_ok()
