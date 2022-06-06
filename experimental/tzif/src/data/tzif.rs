@@ -5,7 +5,7 @@
 use super::time::Seconds;
 use crate::data::posix::PosixTzString;
 
-/// A TZif file header.
+/// A `TZif` file header.
 /// See <https://datatracker.ietf.org/doc/html/rfc8536> for more information.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct TzifHeader {
@@ -55,7 +55,7 @@ pub struct TzifHeader {
     /// zero.  (Although local time type records convey no useful
     /// information in files that have nonempty TZ strings but no
     /// transitions, at least one such record is nevertheless required
-    /// because many TZif readers reject files that have zero time types.)
+    /// because many `TZif` readers reject files that have zero time types.)
     pub typecnt: usize,
 
     /// A four-byte unsigned integer specifying the total number
@@ -67,13 +67,13 @@ pub struct TzifHeader {
 }
 
 impl TzifHeader {
-    /// Returns the version number of the TZif header.
+    /// Returns the version number of the `TZif` header.
     pub fn version(&self) -> usize {
         self.version
     }
 
     /// Returns the number of bytes per time object based on the version number.
-    pub fn time_size<const V: usize>(&self) -> usize {
+    pub fn time_size<const V: usize>() -> usize {
         match V {
             1 => 4,
             _ => 8,
@@ -82,7 +82,7 @@ impl TzifHeader {
 
     /// Returns the exact size of the data block in bytes based on the header.
     pub fn block_size<const V: usize>(&self) -> usize {
-        let time_size = self.time_size::<V>();
+        let time_size = Self::time_size::<V>();
         self.timecnt * time_size
             + self.timecnt
             + self.typecnt * 6
@@ -93,8 +93,8 @@ impl TzifHeader {
     }
 }
 
-/// A struct containing the data of a TZif file.
-/// > A TZif file is structured as follows:
+/// A struct containing the data of a `TZif` file.
+/// > A `TZif` file is structured as follows:
 /// > ```text
 /// >      Version 1       Versions 2 & 3
 /// >   +-------------+   +-------------+
@@ -119,21 +119,20 @@ pub struct TzifData {
     pub header1: TzifHeader,
     /// The version-1 data block, which is always present.
     pub data_block1: DataBlock,
-    /// The version-2+ header, which is present only in version 2 and 3 TZif files.
+    /// The version-2+ header, which is present only in version 2 and 3 `TZif` files.
     pub header2: Option<TzifHeader>,
-    /// The vesrion-2+ data block, which is present only in version 2 and 3 TZif files.
+    /// The vesrion-2+ data block, which is present only in version 2 and 3 `TZif` files.
     pub data_block2: Option<DataBlock>,
-    /// The version-2+ footer, which is present only in version 2 and 3 TZif files.
+    /// The version-2+ footer, which is present only in version 2 and 3 `TZif` files.
     pub footer: Option<PosixTzString>,
 }
 
 impl TzifData {
-    /// Returns the version number of this TZif data.
+    /// Returns the version number of this `TZif` data.
     pub fn version_number(&self) -> usize {
         self.header2
             .as_ref()
-            .map(TzifHeader::version)
-            .unwrap_or_else(|| self.header1.version())
+            .map_or(self.header1.version(), TzifHeader::version)
     }
 
     /// Returns the number of bytes per time object based on the version number.
@@ -226,7 +225,7 @@ pub enum UtLocalIndicator {
     Local,
 }
 
-/// A TZif data block consists of seven variable-length elements, each of
+/// A `TZif` data block consists of seven variable-length elements, each of
 /// which is a series of items.  The number of items in each series is
 /// determined by the corresponding count field in the header.  The total
 /// length of each element is calculated by multiplying the number of
@@ -235,9 +234,9 @@ pub enum UtLocalIndicator {
 /// total length and skip directly to the header of the version-2+ data
 /// block.
 ///
-/// In the version 1 data block, time values are 32 bits (TIME_SIZE = 4
+/// In the version 1 data block, time values are 32 bits (`TIME_SIZE` = 4
 /// bytes).  In the version-2+ data block, present only in version 2 and
-/// 3 files, time values are 64 bits (TIME_SIZE = 8 bytes).
+/// 3 files, time values are 64 bits (`TIME_SIZE` = 8 bytes).
 ///
 /// For consistency, this struct stores all time values in 64-bit integers
 /// even for version 1 data blocks.

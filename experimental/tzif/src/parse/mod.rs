@@ -11,7 +11,7 @@ use combine::{value, Parser, Stream};
 /// <https://www.gnu.org/software/libc/manual/html_node/TZ-Variable.html>
 pub mod posix;
 
-/// Parser definition for TZif binary files as specified by
+/// Parser definition for `TZif` binary files as specified by
 /// <https://datatracker.ietf.org/doc/html/rfc8536>
 pub mod tzif;
 

@@ -104,7 +104,7 @@ where
     digits().map(|digits| {
         digits
             .into_iter()
-            .map(|digit| (digit - b'0') as i64)
+            .map(|digit| i64::from(digit - b'0'))
             .rev()
             .zip(0u32..)
             .map(|(digit, n)| digit * 10i64.pow(n))
@@ -393,6 +393,7 @@ where
 
 /// Parses a POSIX time-zone string according to the following specification:
 /// <https://www.gnu.org/software/libc/manual/html_node/TZ-Variable.html>
+#[must_use]
 pub fn posix_tz_string<Input>() -> impl Parser<Input, Output = PosixTzString>
 where
     Input: Stream<Token = u8>,

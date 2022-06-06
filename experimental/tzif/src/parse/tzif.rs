@@ -12,7 +12,7 @@ use combine::{
     any, between, choice, count_min_max, one_of, skip_count, value, ParseError, Parser, Stream,
 };
 
-/// Parses the four-byte ASCII \[RFC20\] sequence "TZif" (0x54 0x5A 0x69 0x42),
+/// Parses the four-byte ASCII \[RFC20\] sequence `"TZif"` (0x54 0x5A 0x69 0x42),
 /// which identifies the file as utilizing the Time Zone Information Format.
 fn magic_sequence<Input>() -> impl Parser<Input, Output = u8>
 where
@@ -25,7 +25,7 @@ where
         .with(byte(b'f'))
 }
 
-/// Parse the TZif version number specified by <https://datatracker.ietf.org/doc/html/rfc8536>
+/// Parse the `TZif` version number specified by <https://datatracker.ietf.org/doc/html/rfc8536>
 /// > A byte identifying the version of the file's format.
 /// > The value MUST be one of the following:
 /// >
@@ -44,7 +44,7 @@ where
         .map(|version| if version == 0 { 1 } else { version })
 }
 
-/// Parse the TZif `isutcnt` value specified by <https://datatracker.ietf.org/doc/html/rfc8536>
+/// Parse the `TZif` `isutcnt` value specified by <https://datatracker.ietf.org/doc/html/rfc8536>
 /// > A four-byte unsigned integer specifying the number of UT/
 /// > local indicators contained in the data block -- MUST either be
 /// > zero or equal to "typecnt".
@@ -56,7 +56,7 @@ where
     be_u32().map(|u32| u32 as usize)
 }
 
-/// Parse the TZif `isstdcnt` value specified by <https://datatracker.ietf.org/doc/html/rfc8536>
+/// Parse the `TZif` `isstdcnt` value specified by <https://datatracker.ietf.org/doc/html/rfc8536>
 /// > A four-byte unsigned integer specifying the number of
 /// > standard/wall indicators contained in the data block -- MUST
 /// > either be zero or equal to "typecnt".
@@ -68,7 +68,7 @@ where
     be_u32().map(|u32| u32 as usize)
 }
 
-/// Parse the TZif `leapcnt` value specified by <https://datatracker.ietf.org/doc/html/rfc8536>
+/// Parse the `TZif` `leapcnt` value specified by <https://datatracker.ietf.org/doc/html/rfc8536>
 /// > A four-byte unsigned integer specifying the number of
 /// > leap-second records contained in the data block.
 fn leapcnt<Input>() -> impl Parser<Input, Output = usize>
@@ -79,7 +79,7 @@ where
     be_u32().map(|u32| u32 as usize)
 }
 
-/// Parse the TZif `timecnt` value specified by <https://datatracker.ietf.org/doc/html/rfc8536>
+/// Parse the `TZif` `timecnt` value specified by <https://datatracker.ietf.org/doc/html/rfc8536>
 /// > A four-byte unsigned integer specifying the number of
 /// > transition times contained in the data block.
 fn timecnt<Input>() -> impl Parser<Input, Output = usize>
@@ -90,13 +90,13 @@ where
     be_u32().map(|u32| u32 as usize)
 }
 
-/// Parse the TZif `typecnt` value specified by <https://datatracker.ietf.org/doc/html/rfc8536>
+/// Parse the `TZif` `typecnt` value specified by <https://datatracker.ietf.org/doc/html/rfc8536>
 /// > A four-byte unsigned integer specifying the number of
 /// > local time type records contained in the data block -- MUST NOT be
 /// > zero. (Although local time type records convey no useful
 /// > information in files that have nonempty TZ strings but no
 /// > transitions, at least one such record is nevertheless required
-/// > because many TZif readers reject files that have zero time types.)
+/// > because many `TZif` readers reject files that have zero time types.)
 ///
 /// Takes `isutcnt` and `isstdcnt` as arguments. If either of these values are
 /// non-zero, then they must be equal to the parsed `typecnt`.
@@ -130,7 +130,7 @@ where
         })
 }
 
-/// Parse the TZif `charcnt` value specified by <https://datatracker.ietf.org/doc/html/rfc8536>
+/// Parse the `TZif` `charcnt` value specified by <https://datatracker.ietf.org/doc/html/rfc8536>
 /// > A four-byte unsigned integer specifying the total number
 /// > of bytes used by the set of time zone designations contained in
 /// > the data block - MUST NOT be zero. The count includes the
@@ -150,8 +150,8 @@ where
     })
 }
 
-/// Parse a TZif file header specified by <https://datatracker.ietf.org/doc/html/rfc8536>
-/// > A TZif header is structured as follows (the lengths of multi-byte
+/// Parse a `TZif` file header specified by <https://datatracker.ietf.org/doc/html/rfc8536>
+/// > A `TZif` header is structured as follows (the lengths of multi-byte
 /// > fields are shown in parentheses):
 /// > ```text
 /// > +---------------+---+
@@ -197,7 +197,7 @@ where
 /// computing local time may change. Each time value SHOULD be at least -2**59.
 ///
 /// (-2**59 is the greatest negated power of 2 that predates the Big
-/// Bang, and avoiding earlier timestamps works around known TZif
+/// Bang, and avoiding earlier timestamps works around known `TZif`
 /// reader bugs relating to outlandishly negative timestamps.)
 fn historic_transition_time<const V: usize, Input>() -> impl Parser<Input, Output = Seconds>
 where
@@ -205,7 +205,7 @@ where
     Input::Error: ParseError<Input::Token, Input::Range, Input::Position>,
 {
     match V {
-        1 => be_i32().map(|time| time as i64).left(),
+        1 => be_i32().map(i64::from).left(),
         _ => be_i64().right(),
     }
     .then(|time| {
@@ -291,7 +291,7 @@ where
                 "utoff should never be equal to -2.pow(31)",
             )
         })
-        .map(|utoff| Seconds(utoff as i64))
+        .map(|utoff| Seconds(i64::from(utoff)))
 }
 
 /// Parses a byte as a boolean value. The value must be exactly
@@ -442,7 +442,7 @@ where
     Input::Error: ParseError<Input::Token, Input::Range, Input::Position>,
 {
     match V {
-        1 => be_i32().map(|occurrence| occurrence as i64).left(),
+        1 => be_i32().map(i64::from).left(),
         _ => be_i64().right(),
     }
     .map(Seconds)
@@ -526,8 +526,7 @@ where
                 |records| {
                     records
                         .first()
-                        .map(|first| first.occurrence >= Seconds(0))
-                        .unwrap_or(true)
+                        .map_or(true, |first| first.occurrence >= Seconds(0))
                 },
                 "The first leap-second occurrence, if present, must be non-negative",
             )
@@ -538,8 +537,7 @@ where
                 |records| {
                     records
                         .first()
-                        .map(|first| first.correction == 1 || first.correction == -1)
-                        .unwrap_or(true)
+                        .map_or(true, |first| first.correction == 1 || first.correction == -1)
                 },
                 "The first leap-second correction, if present, must be 1 or -1",
             )
@@ -638,8 +636,8 @@ where
     count_min_max(isstdcnt, isstdcnt, ut_local_indicator())
 }
 
-/// Parses a TZif data block.
-/// A TZif data block consists of seven variable-length elements, each of
+/// Parses a `TZif` data block.
+/// A `TZif` data block consists of seven variable-length elements, each of
 /// which is a series of items.  The number of items in each series is
 /// determined by the corresponding count field in the header.  The total
 /// length of each element is calculated by multiplying the number of
@@ -648,9 +646,9 @@ where
 /// total length and skip directly to the header of the version-2+ data
 /// block.
 ///
-/// In the version 1 data block, time values are 32 bits (TIME_SIZE = 4
+/// In the version 1 data block, time values are 32 bits (`TIME_SIZE` = 4
 /// bytes).  In the version-2+ data block, present only in version 2 and
-/// 3 files, time values are 64 bits (TIME_SIZE = 8 bytes).
+/// 3 files, time values are 64 bits (`TIME_SIZE` = 8 bytes).
 ///
 /// The data block is structured as follows (the lengths of multi-byte
 /// fields are shown in parentheses):
@@ -717,8 +715,8 @@ where
         )
 }
 
-/// Parses a TZif footer.
-/// The TZif footer is structured as follows (the lengths of multi-byte
+/// Parses a `TZif` footer.
+/// The `TZif` footer is structured as follows (the lengths of multi-byte
 /// fields are shown in parentheses):
 ///
 /// > ```text
@@ -726,7 +724,7 @@ where
 /// > | NL|  TZ string (0...)  |NL |
 /// > +---+--------------------+---+
 /// >
-/// >           TZif Footer
+/// >           `TZif` Footer
 /// > ```
 ///
 /// The elements of the footer are defined as follows:
@@ -750,7 +748,7 @@ where
 /// > > The string MUST NOT contain NUL bytes or be NUL-terminated, and
 /// > > it SHOULD NOT begin with the ':' (colon) character.
 ///
-/// The TZif footer is present only in version 2 and 3 files, as the
+/// The `TZif` footer is present only in version 2 and 3 files, as the
 /// obsolescent version 1 format was designed before the need for a
 /// footer was apparent.
 fn footer<Input>() -> impl Parser<Input, Output = PosixTzString>
@@ -761,8 +759,9 @@ where
     between(byte(b'\n'), byte(b'\n'), posix_tz_string())
 }
 
-/// Parses a TZif binary file. For more information see the above parsers,
+/// Parses a `TZif` binary file. For more information see the above parsers,
 /// or read more directly from the source <https://datatracker.ietf.org/doc/html/rfc8536>
+#[must_use]
 pub fn tzif<Input>() -> impl Parser<Input, Output = TzifData>
 where
     Input: Stream<Token = u8>,
