@@ -592,11 +592,13 @@ impl ResourceOptions {
         self.keywords.get(key).cloned()
     }
 
+    /// Returns whether there are any Unicode extension keywords in this [`ResourceOptions`].
     #[inline]
     pub fn has_unicode_ext(&self) -> bool {
         !self.keywords.is_empty()
     }
 
+    /// Returns whether a specific Unicode extension keyword is present in this [`ResourceOptions`].
     #[inline]
     pub fn contains_unicode_ext(&self, key: &unicode_ext::Key) -> bool {
         self.keywords.contains_key(key)
@@ -628,11 +630,16 @@ impl ResourceOptions {
 
     /// Sets the value for a specific Unicode extension keyword on this [`ResourceOptions`].
     #[inline]
-    pub fn set_unicode_ext(&mut self, key: unicode_ext::Key, value: unicode_ext::Value) -> Option<unicode_ext::Value> {
+    pub fn set_unicode_ext(
+        &mut self,
+        key: unicode_ext::Key,
+        value: unicode_ext::Value,
+    ) -> Option<unicode_ext::Value> {
         self.keywords.set(key, value)
     }
 
-    /// Removes a specific keyword.
+    /// Removes a specific Unicode extension keyword from this [`ResourceOptions`], returning
+    /// the value if it was present.
     #[inline]
     pub fn remove_unicode_ext(&mut self, key: &unicode_ext::Key) -> Option<unicode_ext::Value> {
         self.keywords.remove(key)
