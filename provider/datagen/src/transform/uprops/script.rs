@@ -186,13 +186,11 @@ mod tests {
 
         assert!(swe
             .get_script_extensions_val(0x11303) // GRANTHA SIGN VISARGA
-            .contains(&Script::Grantha)
-            .is_ok());
+            .contains(&Script::Grantha));
 
-        assert!(swe
+        assert!(!swe
             .get_script_extensions_val(0x11303) // GRANTHA SIGN VISARGA
-            .contains(&Script::Common)
-            .is_err());
+            .contains(&Script::Common));
 
         // // Invalid code point
         assert_eq!(

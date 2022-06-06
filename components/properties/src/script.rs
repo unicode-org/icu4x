@@ -197,8 +197,8 @@ impl ScriptExtensionsSet<'_> {
     ///    .contains(&Script::Grantha)
     ///    .is_ok());
     /// ```
-    pub fn contains(&self, x: &Script) -> Result<usize, usize> {
-        ZeroSlice::binary_search(&*self.values, x)
+    pub fn contains(&self, x: &Script) -> bool {
+        ZeroSlice::binary_search(&*self.values, x).is_ok()
     }
 
     /// Gets an iterator over the elements.
@@ -367,12 +367,12 @@ impl<'data> ScriptWithExtensions<'data> {
     ///
     /// If `code_point` has Script_Extensions, then return the Script codes in
     /// the Script_Extensions. In this case, the Script property value
-    /// (normally Common or Inherited) is not included in the [`ZeroSlice`].
+    /// (normally Common or Inherited) is not included in the ScriptExtensionsSet.
     ///
     /// If c does not have Script_Extensions, then the one Script code is put
-    /// into the [`ZeroSlice`] and also returned.
+    /// into the ScriptExtensionsSet and also returned.
     ///
-    /// If c is not a valid code point, then return an empty [`ZeroSlice`].
+    /// If c is not a valid code point, then return an empty ScriptExtensionsSet.
     ///
     /// # Examples
     ///
@@ -386,27 +386,28 @@ impl<'data> ScriptWithExtensions<'data> {
     /// let swe = &data_struct.data;
     ///
     /// assert_eq!(
-    ///    swe.get_script_extensions_val('𐓐' as u32), /* U+104D0 OSAGE CAPITAL LETTER KHA */
-    ///    ScriptExtensionsSet {
-    ///        values: &ZeroVec::<Script>::alloc_from_slice(&[Script::Osage]),
-    ///    });
+    ///     swe.get_script_extensions_val('𐓐' as u32) // U+104D0 OSAGE CAPITAL LETTER KHA
+    ///         .iter()
+    ///         .collect::<Vec<Script>>(),
+    ///     vec![Script::Osage]
+    /// );
     /// assert_eq!(
     ///     swe.get_script_extensions_val('🥳' as u32) // U+1F973 FACE WITH PARTY HORN AND PARTY HAT
-    ///     ScriptExtensionsSet {
-    ///         values: &ZeroVec::<Script>::alloc_from_slice(&[Script::Common]),
-    ///     });
+    ///         .iter()
+    ///         .collect::<Vec<Script>>(),
+    ///     vec![Script::Common]
     /// );
     /// assert_eq!(
     ///     swe.get_script_extensions_val(0x200D) // ZERO WIDTH JOINER
-    ///     ScriptExtensionsSet {
-    ///        values: &ZeroVec::<Script>::alloc_from_slice(&[Script::Inherited]),
-    ///     });
+    ///         .iter()
+    ///         .collect::<Vec<Script>>(),
+    ///     vec![Script::Inherited]
     /// );
     /// assert_eq!(
     ///     swe.get_script_extensions_val('௫' as u32) // U+0BEB TAMIL DIGIT FIVE
-     ///     ScriptExtensionsSet {
-    ///        values: &ZeroVec::<Script>::alloc_from_slice(&[Script::Tamil, Script::Grantha]),
-    ///     });
+    ///         .iter()
+    ///         .collect::<Vec<Script>>(),
+    ///     vec![Script::Tamil, Script::Grantha]
     /// );
     /// ```
     pub fn get_script_extensions_val(&self, code_point: u32) -> ScriptExtensionsSet {
