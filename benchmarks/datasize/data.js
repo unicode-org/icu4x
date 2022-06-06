@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1654453797801,
+  "lastUpdate": 1654534662987,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -16708,6 +16708,36 @@ window.BENCHMARK_DATA = {
           {
             "name": "provider/testdata/data/testdata.postcard",
             "value": 2301197,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "hsivonen@hsivonen.fi",
+            "name": "Henri Sivonen",
+            "username": "hsivonen"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "02b9a3fc92659360e1b0a88f7c8afe2a34bae6f6",
+          "message": " Store only secondary weight in diacritic table and remove jamo tailoring bit (#1978)\n\n* Store only secondary weight in the diacritic table, make it shorter, and allow dynamic further shortening in tailorings\r\n\r\nThis makes the action of turning a value read from the table into a `CollationElement` super-simple (and branchless).\r\n\r\n* Remove unused jamo tailoring bit from metadata\r\n\r\n* Fix clippy lints",
+          "timestamp": "2022-06-06T19:55:45+03:00",
+          "tree_id": "143b22dfa1a1cb9ef4a5c6646dfe808458a6f356",
+          "url": "https://github.com/unicode-org/icu4x/commit/02b9a3fc92659360e1b0a88f7c8afe2a34bae6f6"
+        },
+        "date": 1654534641956,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 2300847,
             "unit": "bytes",
             "biggerIsBetter": false
           }
