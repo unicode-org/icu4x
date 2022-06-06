@@ -104,7 +104,7 @@ where
         FieldLength::One => {}
         FieldLength::TwoDigit => {
             num.pad_left(2);
-            num.truncate_left(1);
+            num.truncate_left(2);
         }
         FieldLength::Abbreviated => {
             num.pad_left(3);
@@ -119,8 +119,8 @@ where
             num.pad_left(6);
         }
         FieldLength::Fixed(p) => {
-            num.pad_left(p as u16);
-            num.truncate_left(p as i16 - 1);
+            num.pad_left(p as i16);
+            num.truncate_left(p as i16);
         }
     }
 
@@ -378,7 +378,7 @@ where
                     seconds
                         .concatenate_right(fraction)
                         .map_err(|_| Error::FixedDecimal)?;
-                    seconds.pad_right(precision as u16);
+                    seconds.pad_right(-(precision as i16));
                 }
             }
             format_number(w, fixed_decimal_format, seconds, field.length)?
