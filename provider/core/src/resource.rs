@@ -18,6 +18,9 @@ use icu_locid::{LanguageIdentifier, Locale};
 use writeable::{LengthHint, Writeable};
 use zerovec::ule::*;
 
+#[cfg(doc)]
+use icu_locid::subtags::Variant;
+
 #[doc(hidden)]
 #[macro_export]
 macro_rules! leading_tag {
@@ -498,6 +501,12 @@ impl ResourceOptions {
         self.langid.clone()
     }
 
+    /// Overrides the entire [`LanguageIdentifier`] portion of this [`ResourceOptions`].
+    #[inline]
+    pub fn set_langid(&mut self, lid: LanguageIdentifier) {
+        self.langid = lid;
+    }
+
     /// Converts this [`ResourceOptions`] into a [`Locale`].
     ///
     /// See also [`ResourceOptions::get_langid()`].
@@ -530,23 +539,67 @@ impl ResourceOptions {
     }
 
     /// Returns the [`Language`] for this [`ResourceOptions`].
+    #[inline]
     pub fn language(&self) -> Language {
         self.langid.language
     }
 
+    /// Returns the [`Language`] for this [`ResourceOptions`].
+    #[inline]
+    pub fn set_language(&mut self, language: Language) {
+        self.langid.language = language;
+    }
+
     /// Returns the [`Script`] for this [`ResourceOptions`].
+    #[inline]
     pub fn script(&self) -> Option<Script> {
         self.langid.script
     }
 
+    /// Sets the [`Script`] for this [`ResourceOptions`].
+    #[inline]
+    pub fn set_script(&mut self, script: Option<Script>) {
+        self.langid.script = script;
+    }
+
     /// Returns the [`Region`] for this [`ResourceOptions`].
+    #[inline]
     pub fn region(&self) -> Option<Region> {
         self.langid.region
     }
 
+    /// Sets the [`Region`] for this [`ResourceOptions`].
+    #[inline]
+    pub fn set_region(&mut self, region: Option<Region>) {
+        self.langid.region = region;
+    }
+
+    /// Returns whether there are any [`Variant`] subtags in this [`ResourceOptions`].
+    #[inline]
+    pub fn has_variants(&self) -> bool {
+        self.langid.variants.is_empty()
+    }
+
+    /// Removes all [`Variant`] subtags in this [`ResourceOptions`].
+    #[inline]
+    pub fn clear_variants(&mut self) {
+        self.langid.variants.clear()
+    }
+
     /// Gets the value of the specified Unicode extension keyword for this [`ResourceOptions`].
+    #[inline]
     pub fn get_unicode_ext(&self, key: &unicode_ext::Key) -> Option<unicode_ext::Value> {
         self.keywords.get(key).cloned()
+    }
+
+    #[inline]
+    pub fn has_unicode_ext(&self) -> bool {
+        !self.keywords.is_empty()
+    }
+
+    #[inline]
+    pub fn contains_unicode_ext(&self, key: &unicode_ext::Key) -> bool {
+        self.keywords.contains_key(key)
     }
 
     /// Returns whether this [`ResourceOptions`] contains a Unicode extension keyword
@@ -568,8 +621,30 @@ impl ResourceOptions {
     /// );
     /// assert!(options.matches_unicode_ext(&unicode_ext_key!("ca"), &unicode_ext_value!("coptic"),));
     /// ```
+    #[inline]
     pub fn matches_unicode_ext(&self, key: &unicode_ext::Key, value: &unicode_ext::Value) -> bool {
         self.keywords.get(key) == Some(value)
+    }
+
+    /// Sets the value for a specific Unicode extension keyword on this [`ResourceOptions`].
+    #[inline]
+    pub fn set_unicode_ext(&mut self, key: unicode_ext::Key, value: unicode_ext::Value) -> Option<unicode_ext::Value> {
+        self.keywords.set(key, value)
+    }
+
+    /// Removes a specific keyword.
+    #[inline]
+    pub fn remove_unicode_ext(&mut self, key: &unicode_ext::Key) -> Option<unicode_ext::Value> {
+        self.keywords.remove(key)
+    }
+
+    /// Retains a subset of keywords as specified by the predicate function.
+    #[inline]
+    pub fn retain_unicode_ext<F>(&mut self, predicate: F)
+    where
+        F: FnMut(&unicode_ext::Key) -> bool,
+    {
+        self.keywords.retain_by_key(predicate)
     }
 }
 
