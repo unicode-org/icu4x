@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1654454564892,
+  "lastUpdate": 1654535538128,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -50351,6 +50351,192 @@ window.BENCHMARK_DATA = {
             "name": "subtags/variant/parse",
             "value": 174,
             "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "hsivonen@hsivonen.fi",
+            "name": "Henri Sivonen",
+            "username": "hsivonen"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "02b9a3fc92659360e1b0a88f7c8afe2a34bae6f6",
+          "message": " Store only secondary weight in diacritic table and remove jamo tailoring bit (#1978)\n\n* Store only secondary weight in the diacritic table, make it shorter, and allow dynamic further shortening in tailorings\r\n\r\nThis makes the action of turning a value read from the table into a `CollationElement` super-simple (and branchless).\r\n\r\n* Remove unused jamo tailoring bit from metadata\r\n\r\n* Fix clippy lints",
+          "timestamp": "2022-06-06T19:55:45+03:00",
+          "tree_id": "143b22dfa1a1cb9ef4a5c6646dfe808458a6f356",
+          "url": "https://github.com/unicode-org/icu4x/commit/02b9a3fc92659360e1b0a88f7c8afe2a34bae6f6"
+        },
+        "date": 1654535514773,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 2879,
+            "range": "± 214",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/construct/langid",
+            "value": 843,
+            "range": "± 44",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/construct/locale",
+            "value": 1218,
+            "range": "± 88",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/to_string/langid",
+            "value": 991,
+            "range": "± 70",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/to_string/langid/writeable",
+            "value": 560,
+            "range": "± 35",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/to_string/locale",
+            "value": 982,
+            "range": "± 58",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/to_string/locale/writeable",
+            "value": 590,
+            "range": "± 32",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/compare/struct/langid",
+            "value": 91,
+            "range": "± 6",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/compare/struct/locale",
+            "value": 88,
+            "range": "± 5",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/compare/str/langid",
+            "value": 830,
+            "range": "± 43",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/compare/cmp_bytes/langid",
+            "value": 343,
+            "range": "± 11",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/compare/str/locale",
+            "value": 831,
+            "range": "± 29",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/compare/cmp_bytes/locale",
+            "value": 353,
+            "range": "± 12",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/canonicalize/langid",
+            "value": 2450,
+            "range": "± 151",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/canonicalize/locale",
+            "value": 3135,
+            "range": "± 207",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 3922,
+            "range": "± 267",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/construct/locale",
+            "value": 1716,
+            "range": "± 95",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/to_string/locale",
+            "value": 1261,
+            "range": "± 77",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/to_string/locale/writeable",
+            "value": 891,
+            "range": "± 59",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/compare/struct/locale",
+            "value": 253,
+            "range": "± 15",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/compare/str/locale",
+            "value": 1771,
+            "range": "± 120",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/compare/cmp_bytes/locale",
+            "value": 533,
+            "range": "± 37",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/canonicalize/locale",
+            "value": 4048,
+            "range": "± 136",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "subtags/language/parse",
+            "value": 164,
+            "range": "± 12",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "subtags/script/parse",
+            "value": 112,
+            "range": "± 6",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "subtags/region/parse",
+            "value": 171,
+            "range": "± 8",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "subtags/variant/parse",
+            "value": 162,
+            "range": "± 9",
             "unit": "ns/iter"
           }
         ]
