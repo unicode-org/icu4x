@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1654454258263,
+  "lastUpdate": 1654535162189,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -30424,6 +30424,60 @@ window.BENCHMARK_DATA = {
           {
             "name": "uniset/contains_range/worst",
             "value": 3,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "hsivonen@hsivonen.fi",
+            "name": "Henri Sivonen",
+            "username": "hsivonen"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "02b9a3fc92659360e1b0a88f7c8afe2a34bae6f6",
+          "message": " Store only secondary weight in diacritic table and remove jamo tailoring bit (#1978)\n\n* Store only secondary weight in the diacritic table, make it shorter, and allow dynamic further shortening in tailorings\r\n\r\nThis makes the action of turning a value read from the table into a `CollationElement` super-simple (and branchless).\r\n\r\n* Remove unused jamo tailoring bit from metadata\r\n\r\n* Fix clippy lints",
+          "timestamp": "2022-06-06T19:55:45+03:00",
+          "tree_id": "143b22dfa1a1cb9ef4a5c6646dfe808458a6f356",
+          "url": "https://github.com/unicode-org/icu4x/commit/02b9a3fc92659360e1b0a88f7c8afe2a34bae6f6"
+        },
+        "date": 1654535140128,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 40394488,
+            "range": "± 59584",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/worst",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/worst",
+            "value": 2,
             "range": "± 0",
             "unit": "ns/iter"
           }
