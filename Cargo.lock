@@ -1746,6 +1746,7 @@ version = "0.6.0"
 dependencies = [
  "icu_locid",
  "icu_provider",
+ "serde",
  "yoke",
  "zerovec",
 ]
