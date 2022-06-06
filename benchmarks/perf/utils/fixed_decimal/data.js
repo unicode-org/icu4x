@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1654454340735,
+  "lastUpdate": 1654535280396,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -30088,6 +30088,66 @@ window.BENCHMARK_DATA = {
           {
             "name": "from_string/1000000001",
             "value": 77,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "hsivonen@hsivonen.fi",
+            "name": "Henri Sivonen",
+            "username": "hsivonen"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "02b9a3fc92659360e1b0a88f7c8afe2a34bae6f6",
+          "message": " Store only secondary weight in diacritic table and remove jamo tailoring bit (#1978)\n\n* Store only secondary weight in the diacritic table, make it shorter, and allow dynamic further shortening in tailorings\r\n\r\nThis makes the action of turning a value read from the table into a `CollationElement` super-simple (and branchless).\r\n\r\n* Remove unused jamo tailoring bit from metadata\r\n\r\n* Fix clippy lints",
+          "timestamp": "2022-06-06T19:55:45+03:00",
+          "tree_id": "143b22dfa1a1cb9ef4a5c6646dfe808458a6f356",
+          "url": "https://github.com/unicode-org/icu4x/commit/02b9a3fc92659360e1b0a88f7c8afe2a34bae6f6"
+        },
+        "date": 1654535258452,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 108559,
+            "range": "± 347",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 24208,
+            "range": "± 62",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 63310,
+            "range": "± 341",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 185,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 94,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 79,
             "range": "± 0",
             "unit": "ns/iter"
           }
