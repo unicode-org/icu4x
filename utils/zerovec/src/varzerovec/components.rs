@@ -335,6 +335,15 @@ where
         self.binary_search_impl(predicate, self.indices)
     }
 
+    pub fn binary_search_in_range_by(
+        &self,
+        predicate: impl FnMut(&T) -> Ordering,
+        range: Range<usize>,
+    ) -> Option<Result<usize, usize>> {
+        let indices_slice = self.indices.get(range)?;
+        Some(self.binary_search_impl(predicate, indices_slice))
+    }
+
     /// Binary searches a sorted `VarZeroVecComponents<T>` with the given predicate. For more information, see
     /// the primitive function [`binary_search`](slice::binary_search).
     fn binary_search_impl(

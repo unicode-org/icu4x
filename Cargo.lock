@@ -1396,6 +1396,7 @@ dependencies = [
  "crabbake",
  "criterion",
  "displaydoc",
+ "iai",
  "icu_uniset",
  "postcard",
  "serde",

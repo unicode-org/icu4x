@@ -173,12 +173,7 @@ macro_rules! create_datagen_provider {
                 $crate::transform::uprops::Uts46DecompositionSupplementProvider,
                 $crate::transform::uprops::CanonicalDecompositionTablesProvider,
                 $crate::transform::uprops::CompatibilityDecompositionTablesProvider,
-                $crate::transform::collator::CollationDataDataProvider,
-                $crate::transform::collator::CollationDiacriticsDataProvider,
-                $crate::transform::collator::CollationJamoDataProvider,
-                $crate::transform::collator::CollationMetadataDataProvider,
-                $crate::transform::collator::CollationReorderingDataProvider,
-                $crate::transform::collator::CollationSpecialPrimariesDataProvider,
+                $crate::transform::collator::CollationProvider,
             ]
         )
     };
