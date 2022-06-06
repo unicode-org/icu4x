@@ -44,14 +44,44 @@ pub mod ffi {
         }
 
         /// Use the data loaded in this object to process a string and calculate bidi information
+        ///
+        /// Takes in a Level for the default level, if it is an invalid value it will default to LTR
         #[diplomat::rust_link(unicode_bidi::BidiInfo::new_with_data_source, FnInStruct)]
-        pub fn for_text<'text>(&self, text: &'text str) -> Box<ICU4XBidiInfo<'text>> {
+        pub fn for_text<'text>(&self, text: &'text str, default_level: u8) -> Box<ICU4XBidiInfo<'text>> {
             let data = self.0.get();
             let adapter = BidiClassAdapter::new(&data.code_point_trie);
 
             Box::new(ICU4XBidiInfo(BidiInfo::new_with_data_source(
-                &adapter, text, None,
+                &adapter, text, Level::new(default_level).ok(),
             )))
+        }
+
+        /// Check if a Level returned by level_at is an RTL level.
+        ///
+        /// Invalid levels (numbers greater than 125) will be assumed LTR
+        #[diplomat::rust_link(unicode_bidi::Level::is_rtl, FnInStruct)]
+        pub fn level_is_rtl(level: u8) -> bool {
+            Level::new(level).unwrap_or_else(|_| Level::ltr()).is_rtl()
+        }
+
+        /// Check if a Level returned by level_at is an LTR level.
+        ///
+        /// Invalid levels (numbers greater than 125) will be assumed LTR
+        #[diplomat::rust_link(unicode_bidi::Level::is_ltr, FnInStruct)]
+        pub fn level_is_ltr(level: u8) -> bool {
+            Level::new(level).unwrap_or_else(|_| Level::ltr()).is_ltr()
+        }
+
+        /// Get a basic RTL Level value
+        #[diplomat::rust_link(unicode_bidi::Level::rtl, FnInStruct)]
+        pub fn level_rtl() -> u8 {
+            Level::rtl().number()
+        }
+
+        /// Get a simple LTR Level value
+        #[diplomat::rust_link(unicode_bidi::Level::ltr, FnInStruct)]
+        pub fn level_ltr() -> u8 {
+            Level::ltr().number()
         }
     }
 
@@ -72,6 +102,24 @@ pub mod ffi {
                 .paragraphs
                 .get(n)
                 .map(|p| Box::new(ICU4XBidiParagraph(Paragraph::new(&self.0, p))))
+        }
+
+        /// The number of bytes in this full text
+        pub fn size(&self) -> usize {
+            self.0.levels.len()
+        }
+
+        /// Get the BIDI level at a particular byte index in the full text.
+        /// This integer is conceptually a `unicode_bidi::Level`,
+        /// and can be further inspected using the static methods on ICU4XBidi.
+        ///
+        /// Returns 0 (equivalent to `Level::ltr()`) on error
+        pub fn level_at(&self, pos: usize) -> u8 {
+            if pos >= self.size() {
+                return 0;
+            }
+
+            self.0.levels[pos].number()
         }
     }
 
@@ -139,8 +187,11 @@ pub mod ffi {
             out.write_str(&reordered).map_err(|_| ()).into()
         }
 
-        /// Get the BIDI level. This integer is conceptually a `unicode_bidi::Level`,
-        /// and can be further inspected using the static methods on this class.
+        /// Get the BIDI level at a particular byte index in this paragraph.
+        /// This integer is conceptually a `unicode_bidi::Level`,
+        /// and can be further inspected using the static methods on ICU4XBidi.
+        ///
+        /// Returns 0 (equivalent to `Level::ltr()`) on error
         #[diplomat::rust_link(unicode_bidi::Paragraph::level_at, FnInStruct)]
         pub fn level_at(&self, pos: usize) -> u8 {
             if pos >= self.size() {
@@ -148,22 +199,6 @@ pub mod ffi {
             }
 
             self.0.level_at(pos).number()
-        }
-
-        /// Check if a Level returned by level_at is an RTL level.
-        ///
-        /// Invalid levels (numbers greater than 125) will be assumed LTR
-        #[diplomat::rust_link(unicode_bidi::Level::is_rtl, FnInStruct)]
-        pub fn level_is_rtl(level: u8) -> bool {
-            Level::new(level).unwrap_or_else(|_| Level::ltr()).is_rtl()
-        }
-
-        /// Check if a Level returned by level_at is an LTR level.
-        ///
-        /// Invalid levels (numbers greater than 125) will be assumed LTR
-        #[diplomat::rust_link(unicode_bidi::Level::is_ltr, FnInStruct)]
-        pub fn level_is_ltr(level: u8) -> bool {
-            Level::new(level).unwrap_or_else(|_| Level::ltr()).is_ltr()
         }
     }
 }
