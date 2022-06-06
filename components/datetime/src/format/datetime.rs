@@ -220,14 +220,14 @@ where
                         .datetime()
                         .year()
                         .ok_or(Error::MissingInputField)?
-                        .number as isize,
+                        .number,
                 ),
                 field.length,
             )?,
             Year::WeekOf => format_number(
                 w,
                 fixed_decimal_format,
-                FixedDecimal::from(datetime.year_week()?.number as isize),
+                FixedDecimal::from(datetime.year_week()?.number),
                 field.length,
             )?,
         },
@@ -339,7 +339,7 @@ where
                     .datetime()
                     .minute()
                     .ok_or(Error::MissingInputField)?,
-            ) as isize),
+            )),
             field.length,
         )?,
         FieldSymbol::Second(Second::Second) => {
