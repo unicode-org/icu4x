@@ -1510,4 +1510,28 @@ mod test {
             }
         );
     }
+
+    fn parse_tzif_file<P: AsRef<Path>>(path: P) -> Result<(), ()> {
+        println!("parsing {:?}", path.as_ref().to_str());
+        let read = File::open(path).unwrap();
+        let stream = stream::buffered::Stream::new(
+            stream::position::Stream::new(stream::read::Stream::new(read)),
+            1,
+        );
+        let parsed = tzif().parse(stream);
+        assert!(parsed.is_ok());
+        //println!("{:#?}", parsed.unwrap().0);
+        Ok(())
+    }
+
+    #[test]
+    fn parse_tzif_testdata() -> Result<(), ()> {
+        for entry in WalkDir::new("testdata").follow_links(true) {
+            let entry = entry.unwrap();
+            if entry.file_type().is_file() {
+                parse_tzif_file(entry.path())?
+            }
+        }
+        Ok(())
+    }
 }
