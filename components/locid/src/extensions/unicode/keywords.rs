@@ -203,6 +203,32 @@ impl Keywords {
         self.0.insert(key, value)
     }
 
+    /// Removes the specified keyword, returning the old value if it existed.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::locid::extensions::unicode::Key;
+    /// use icu::locid::unicode_ext_key;
+    /// use icu::locid::Locale;
+    /// use std::str::FromStr;
+    ///
+    /// const CA_KEY: Key = unicode_ext_key!("ca");
+    ///
+    /// let mut loc: Locale = "und-u-hello-ca-buddhist-hc-h12"
+    ///     .parse()
+    ///     .expect("valid BCP-47 identifier");
+    /// loc.extensions.unicode.keywords.remove(&CA_KEY);
+    /// assert_eq!(loc, "und-u-hello-hc-h12");
+    /// ```
+    pub fn remove<Q>(&mut self, key: &Q) -> Option<Value>
+    where
+        Key: Borrow<Q>,
+        Q: Ord,
+    {
+        self.0.remove(key)
+    }
+
     /// Clears all Unicode extension keywords, leaving Unicode attributes.
     ///
     /// # Example
