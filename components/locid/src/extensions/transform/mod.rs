@@ -118,7 +118,7 @@ impl Transform {
     ///
     /// let mut loc: Locale = "en-US-t-es-AR".parse().unwrap();
     /// loc.extensions.transform.clear();
-    /// assert_eq!(loc, "en-US");
+    /// assert_eq!(loc, "en-US".parse().unwrap());
     /// ```
     pub fn clear(&mut self) {
         self.lang = None;

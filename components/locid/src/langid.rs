@@ -18,15 +18,15 @@ use alloc::string::ToString;
 /// # Examples
 ///
 /// ```
-/// use icu::locid::LanguageIdentifier;
+/// use icu::locid::{LanguageIdentifier, subtags::*};
 ///
 /// let li: LanguageIdentifier = "en-US".parse().expect("Failed to parse.");
 ///
-/// assert_eq!(li.language, "en");
+/// assert_eq!(li.language, "en".parse::<Language>().unwrap());
 /// assert_eq!(li.script, None);
-/// assert_eq!(li.region.unwrap(), "US");
+/// assert_eq!(li.region.unwrap(), "US".parse::<Region>().unwrap());
 /// assert_eq!(li.variants.len(), 0);
-/// assert_eq!(li, "en-US");
+/// assert_eq!(li.to_string(), "en-US");
 /// ```
 ///
 /// # Parsing
@@ -46,13 +46,13 @@ use alloc::string::ToString;
 /// # Examples
 ///
 /// ```
-/// use icu::locid::LanguageIdentifier;
+/// use icu::locid::{LanguageIdentifier, subtags::*};
 ///
 /// let li: LanguageIdentifier = "eN_latn_Us-Valencia".parse().expect("Failed to parse.");
 ///
-/// assert_eq!(li.language, "en");
-/// assert_eq!(li.script.unwrap(), "Latn");
-/// assert_eq!(li.region.unwrap(), "US");
+/// assert_eq!(li.language, "en".parse::<Language>().unwrap());
+/// assert_eq!(li.script.unwrap(), "Latn".parse::<Script>().unwrap());
+/// assert_eq!(li.region.unwrap(), "US".parse::<Region>().unwrap());
 /// assert_eq!(li.variants.get(0).unwrap(), "valencia");
 /// ```
 ///
@@ -222,17 +222,17 @@ impl LanguageIdentifier {
     /// use icu::locid::LanguageIdentifier;
     /// use std::cmp::Ordering;
     ///
-    /// let bcp47_strings: &[&[u8]] = &[
+    /// let bcp47_strings: &[&str] = &[
     ///     "pl-LaTn-pL",
     ///     "uNd",
+    ///     "UnD-adlm",
+    ///     "uNd-GB",
     ///     "UND-FONIPA",
-    ///     "UnD-t-m0-TrUe",
-    ///     "uNd-u-CA-Japanese",
     ///     "ZH",
     /// ];
     ///
     /// for a in bcp47_strings {
-    ///     assert!(LanguageIdentifier::from_bytes(a).unwrap().normalizing_eq(a));
+    ///     assert!(a.parse::<LanguageIdentifier>().unwrap().normalizing_eq(a));
     /// }
     /// ```
     pub fn normalizing_eq(&self, other: &str) -> bool {
@@ -345,8 +345,8 @@ fn test_writeable() {
 /// let language = language!("en");
 /// let li = LanguageIdentifier::from(language);
 ///
-/// assert_eq!(li.language, "en");
-/// assert_eq!(li, "en");
+/// assert_eq!(li.language, language);
+/// assert_eq!(li.to_string(), "en");
 /// ```
 impl From<subtags::Language> for LanguageIdentifier {
     fn from(language: subtags::Language) -> Self {
@@ -366,8 +366,8 @@ impl From<subtags::Language> for LanguageIdentifier {
 /// let script = script!("latn");
 /// let li = LanguageIdentifier::from(Some(script));
 ///
-/// assert_eq!(li.script.unwrap(), "Latn");
-/// assert_eq!(li, "und-Latn");
+/// assert_eq!(li.script.unwrap(), script);
+/// assert_eq!(li.to_string(), "und-Latn");
 /// ```
 impl From<Option<subtags::Script>> for LanguageIdentifier {
     fn from(script: Option<subtags::Script>) -> Self {
@@ -387,8 +387,8 @@ impl From<Option<subtags::Script>> for LanguageIdentifier {
 /// let region = region!("US");
 /// let li = LanguageIdentifier::from(Some(region));
 ///
-/// assert_eq!(li.region.unwrap(), "US");
-/// assert_eq!(li, "und-US");
+/// assert_eq!(li.region.unwrap(), region);
+/// assert_eq!(li.to_string(), "und-US");
 /// ```
 impl From<Option<subtags::Region>> for LanguageIdentifier {
     fn from(region: Option<subtags::Region>) -> Self {
@@ -410,11 +410,11 @@ impl From<Option<subtags::Region>> for LanguageIdentifier {
 /// let region = region!("US");
 /// let li = LanguageIdentifier::from((lang, Some(script), Some(region)));
 ///
-/// assert_eq!(li.language, "en");
-/// assert_eq!(li.script.unwrap(), "Latn");
-/// assert_eq!(li.region.unwrap(), "US");
+/// assert_eq!(li.language, lang);
+/// assert_eq!(li.script.unwrap(), script);
+/// assert_eq!(li.region.unwrap(), region);
 /// assert_eq!(li.variants.len(), 0);
-/// assert_eq!(li, "en-Latn-US");
+/// assert_eq!(li.to_string(), "en-Latn-US");
 /// ```
 impl
     From<(

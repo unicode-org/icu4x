@@ -278,7 +278,7 @@ impl From<&cldr_serde::aliases::Resource> for AliasesV1<'_> {
 fn test_rules_cmp() {
     let mut rules: Vec<LanguageIdentifier> = vec![
         icu_locid::langid!("en-GB"),
-        icu_locid::langid!("CA"),
+        icu_locid::langid!("ca"),
         "und-hepburn-heploc".parse().unwrap(),
         icu_locid::langid!("fr-CA"),
     ];
@@ -292,7 +292,7 @@ fn test_rules_cmp() {
     assert_eq!(rules[0].to_string(), "en-GB");
     assert_eq!(rules[1].to_string(), "fr-CA");
     assert_eq!(rules[2].to_string(), "und-hepburn-heploc");
-    assert_eq!(rules[3].to_string(), "CA");
+    assert_eq!(rules[3].to_string(), "ca");
 }
 
 #[test]
