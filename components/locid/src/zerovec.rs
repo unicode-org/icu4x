@@ -46,7 +46,7 @@
 //! both of these types may require memory allocation. If possible, architect your code such that
 //! you do not need to obtain a structured type.
 //!
-//! If need the structured type, such as if you need to manipulate it in some way, there are two
+//! If you need the structured type, such as if you need to manipulate it in some way, there are two
 //! options: storing subtags, and storing a string for parsing.
 //!
 //! ## Storing Subtags
