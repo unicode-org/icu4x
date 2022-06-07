@@ -59,7 +59,7 @@ unsafe impl ULE for CharULE {
         for chunk in bytes.chunks_exact(3) {
             // TODO: Use slice::as_chunks() when stabilized
             #[allow(clippy::indexing_slicing)]
-            // TODO(#1668) Clippy exceptions need docs or fixing.ti
+            // Won't panic because the chunks are always 3 bytes long
             let u = u32::from_le_bytes([chunk[0], chunk[1], chunk[2], 0]);
             char::try_from(u).map_err(|_| ZeroVecError::parse::<Self>())?;
         }
@@ -72,8 +72,8 @@ impl AsULE for char {
 
     #[inline]
     fn to_unaligned(self) -> Self::ULE {
-        let u = u32::from(self).to_le_bytes();
-        CharULE([u[0], u[1], u[2]])
+        let [u0, u1, u2, u3] = u32::from(self).to_le_bytes();
+        CharULE([u0, u1, u2])
     }
 
     #[inline]
