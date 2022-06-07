@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1654566711227,
+  "lastUpdate": 1654626153796,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -30209,6 +30209,66 @@ window.BENCHMARK_DATA = {
             "name": "from_string/1000000001",
             "value": 85,
             "range": "± 3",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "dminor@mozilla.com",
+            "name": "Dan Minor",
+            "username": "dminor"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "00da9ecc6ea11b69dc27e768d59d30e05d80e7fc",
+          "message": "Use FixedDecimalFormat in DateTimeFormat (#1952)\n\n* Use FixedDecimalFormat in DateTimeFormat\r\n\r\n* Fix datetime benches\r\n\r\n* Bench and test fixes\r\n\r\n* Address review feedback\r\n\r\n* Another test fix\r\n\r\n* Use new FixedDecimal::concatenate_right method\r\n\r\n* Review feedback\r\n\r\n* Clean up a few more unnecessary casts\r\n\r\n* Fixes for changes to FixedDecimal",
+          "timestamp": "2022-06-07T14:09:23-04:00",
+          "tree_id": "14b414c5c260c74cec80ed34f5c7dd12b8b4655f",
+          "url": "https://github.com/unicode-org/icu4x/commit/00da9ecc6ea11b69dc27e768d59d30e05d80e7fc"
+        },
+        "date": 1654626131754,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 108136,
+            "range": "± 312",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 24232,
+            "range": "± 78",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 62986,
+            "range": "± 399",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 175,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 94,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 79,
+            "range": "± 0",
             "unit": "ns/iter"
           }
         ]
