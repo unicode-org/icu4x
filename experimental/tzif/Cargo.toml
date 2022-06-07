@@ -3,7 +3,7 @@
 # (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 [package]
-name = "icu_provider_tzif"
+name = "tzif"
 author = ["The ICU4X Project Developers"]
 version = "0.1.0"
 edition = "2021"
@@ -15,3 +15,5 @@ license-file = "LICENSE"
 [dependencies]
 combine = "4.6.4"
 
+[dev-dependencies]
+walkdir = "2.3.2"

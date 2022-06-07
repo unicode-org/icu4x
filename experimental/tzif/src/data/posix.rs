@@ -47,7 +47,7 @@ pub enum TransitionDay {
 }
 
 /// A struct for holding DST transition info.
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct DstTransitionInfo {
     /// The zone variant info including name and offset.
     pub variant_info: ZoneVariantInfo,
@@ -60,7 +60,7 @@ pub struct DstTransitionInfo {
 }
 
 /// A struct for holding data encoded by a POSIX time-zone string.
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct PosixTzString {
     /// The variant info of the STD time-zone variant.
     pub std_info: ZoneVariantInfo,

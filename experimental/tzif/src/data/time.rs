@@ -6,15 +6,15 @@ use std::ops::{Add, Sub};
 
 /// The seconds unit of time.
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
-pub struct Seconds(pub i32);
+pub struct Seconds(pub i64);
 
 /// The minutes unit of time.
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
-pub struct Minutes(pub i32);
+pub struct Minutes(pub i64);
 
 /// The hours unit of time.
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
-pub struct Hours(pub i32);
+pub struct Hours(pub i64);
 
 impl Add for Seconds {
     type Output = Seconds;
