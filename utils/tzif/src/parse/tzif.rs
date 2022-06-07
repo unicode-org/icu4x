@@ -763,8 +763,8 @@ where
     between(byte(b'\n'), byte(b'\n'), posix_tz_string())
 }
 
-/// Parses a `TZif` binary file. For more information see the above parsers,
-/// or read more directly from the source <https://datatracker.ietf.org/doc/html/rfc8536>
+/// Parses a `TZif` binary file according to the following specification:
+/// <https://datatracker.ietf.org/doc/html/rfc8536>
 #[must_use]
 pub fn tzif<Input>() -> impl Parser<Input, Output = TzifData>
 where
