@@ -136,6 +136,49 @@ jobs:
         command: make
         args: ci-job-test-docs
 
+  # Runs full datagen on prod data
+  full-datagen:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Load the default Rust toolchain via the rust-toolchain file.
+      run: rustup show
+    - name: Attempt to load cached source data
+      uses: actions/cache@v2
+      id: source-data-cache
+      with:
+        path: data/source
+        key: source-data-41-71
+    - name: Download CLDR source data
+      if: steps.source-data-cache.outputs.cache-hit != 'true'
+      uses: robinraju/release-downloader@v1.3
+      with: 
+        repository: "unicode-org/cldr-json"
+        tag: "41.0.0"
+        fileName: "cldr-41.0.0-json-full.zip"
+        out-file-path: "data/source/"
+    - name: Download ICU source data
+      if: steps.source-data-cache.outputs.cache-hit != 'true'
+      uses: robinraju/release-downloader@v1.3
+      with: 
+        repository: "unicode-org/icu"
+        tag: "release-71-1"
+        fileName: "icuexportdata_uprops_full.zip"
+        out-file-path: "data/source/"
+    - name: Run datagen
+      uses: actions-rs/cargo@v1.0.1
+      with:
+        command: run
+        args: > 
+          -p icu_datagen --features bin --release --
+          --uprops-root data/source/icuexportdata_uprops_full.zip
+          --cldr-root data/source/cldr-41.0.0-json-full.zip 
+          --all-locales
+          --all-keys
+          --format blob
+          --syntax postcard
+          --out data.postcard 
+
   # FFI job - runs all "cargo make" FFI tests
   ffi:
     strategy:
