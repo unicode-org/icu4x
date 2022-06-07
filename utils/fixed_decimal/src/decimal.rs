@@ -791,57 +791,23 @@ impl FixedDecimal {
     /// ```
     pub fn half_truncate_right(&mut self, position: i16) {
         let digit_after_n = self.digit_at_next_positon(position);
-        let condition = {
+        let should_expand = {
             if digit_after_n < 5 {
                 false
             } else if digit_after_n > 5 {
                 true
             } else if position == i16::MIN {
                 false
-            } else if self.nonzero_magnitude_right() < position - 1 {
-                true
             } else {
-                false
+                self.nonzero_magnitude_right() < position - 1
             }
         };
 
-        self.expand_with_condition(position, condition);
-    }
-
-    /// This performs the normat expand.
-    /// However, if the user set the condition to `false`, the expand will not increment the digit by 1.
-    /// This is useful for implementing methods such as half_expand and half_trunc.
-    pub fn expand_with_condition(&mut self, position: i16, condition: bool) {
-        let before_truncate_is_zero = self.is_zero();
-        let before_truncate_is_bottom_magnitude = self.nonzero_magnitude_right();
-        let before_truncate_magnitude = self.magnitude;
-        self.truncate_right(position);
-
-        if before_truncate_is_zero || position <= before_truncate_is_bottom_magnitude || !condition
-        {
-            #[cfg(debug_assertions)]
-            self.check_invariants();
-            return;
+        if should_expand {
+            self.expand(position);
+        } else {
+            self.truncate_right(position);
         }
-
-        if position <= before_truncate_magnitude {
-            let result = self.increment_abs_by_one();
-            if result.is_err() {
-                // Do nothing for now.
-            }
-
-            #[cfg(debug_assertions)]
-            self.check_invariants();
-            return;
-        }
-
-        debug_assert!(self.digits.is_empty());
-        self.digits.push(1);
-        self.magnitude = position;
-        self.upper_magnitude = cmp::max(self.upper_magnitude, position);
-
-        #[cfg(debug_assertions)]
-        self.check_invariants();
     }
 
     /// Take the expand of the number at a particular position.
@@ -897,7 +863,35 @@ impl FixedDecimal {
     /// assert_eq!("-0.1", dec.to_string());
     /// ```
     pub fn expand(&mut self, position: i16) {
-        self.expand_with_condition(position, true);
+        let before_truncate_is_zero = self.is_zero();
+        let before_truncate_is_bottom_magnitude = self.nonzero_magnitude_right();
+        let before_truncate_magnitude = self.magnitude;
+        self.truncate_right(position);
+
+        if before_truncate_is_zero || position <= before_truncate_is_bottom_magnitude {
+            #[cfg(debug_assertions)]
+            self.check_invariants();
+            return;
+        }
+
+        if position <= before_truncate_magnitude {
+            let result = self.increment_abs_by_one();
+            if result.is_err() {
+                // Do nothing for now.
+            }
+
+            #[cfg(debug_assertions)]
+            self.check_invariants();
+            return;
+        }
+
+        debug_assert!(self.digits.is_empty());
+        self.digits.push(1);
+        self.magnitude = position;
+        self.upper_magnitude = cmp::max(self.upper_magnitude, position);
+
+        #[cfg(debug_assertions)]
+        self.check_invariants();
     }
 
     /// Take the half expand of the number at a particular position.
@@ -985,7 +979,11 @@ impl FixedDecimal {
             }
         };
 
-        self.expand_with_condition(position, digit_after_n >= 5);
+        if digit_after_n >= 5 {
+            self.expand(position);
+        } else {
+            self.truncate_right(position);
+        }
     }
 
     /// Take the ceiling of the number at a particular position.
@@ -1289,28 +1287,28 @@ impl FixedDecimal {
     /// ```
     pub fn half_even(&mut self, position: i16) {
         let digit_after_n = self.digit_at_next_positon(position);
-        let mut check_odditiy = false;
-        let mut condition = {
+        let mut exactly_half = false;
+        let should_expand = {
             if digit_after_n < 5 {
                 false
             } else if digit_after_n > 5 {
                 true
             } else if position == i16::MIN {
-                check_odditiy = true;
+                exactly_half = true;
                 false // review
             } else if self.nonzero_magnitude_right() < position - 1 {
                 true
             } else {
-                check_odditiy = true;
+                exactly_half = true;
                 false
             }
         };
 
-        if check_odditiy && self.digit_at(position) % 2 != 0 {
-            condition = true;
+        if should_expand || exactly_half && self.digit_at(position) % 2 != 0 {
+            self.expand(position);
+        } else {
+            self.truncate_right(position);
         }
-
-        self.expand_with_condition(position, condition);
     }
 
     /// Zero-pad the number on the right to a particular (negative) position. Will truncate
