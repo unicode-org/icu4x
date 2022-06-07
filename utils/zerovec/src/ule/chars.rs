@@ -38,7 +38,7 @@ use core::convert::TryFrom;
 /// ```
 #[repr(transparent)]
 #[derive(Debug, PartialEq, Eq, Clone, Copy)]
-pub struct CharULE([u8; 4]);
+pub struct CharULE([u8; 3]);
 
 // Safety (based on the safety checklist on the ULE trait):
 //  1. CharULE does not include any uninitialized or padding bytes.
@@ -52,15 +52,15 @@ pub struct CharULE([u8; 4]);
 unsafe impl ULE for CharULE {
     #[inline]
     fn validate_byte_slice(bytes: &[u8]) -> Result<(), ZeroVecError> {
-        if bytes.len() % 4 != 0 {
+        if bytes.len() % 3  != 0 {
             return Err(ZeroVecError::length::<Self>(bytes.len()));
         }
         // Validate the bytes
-        for chunk in bytes.chunks_exact(4) {
+        for chunk in bytes.chunks_exact(3) {
             // TODO: Use slice::as_chunks() when stabilized
             #[allow(clippy::indexing_slicing)]
-            // TODO(#1668) Clippy exceptions need docs or fixing.i
-            let u = u32::from_le_bytes([chunk[0], chunk[1], chunk[2], chunk[3]]);
+            // TODO(#1668) Clippy exceptions need docs or fixing.ti
+            let u = u32::from_le_bytes([chunk[0], chunk[1], chunk[2], 0]);
             char::try_from(u).map_err(|_| ZeroVecError::parse::<Self>())?;
         }
         Ok(())
@@ -72,14 +72,14 @@ impl AsULE for char {
 
     #[inline]
     fn to_unaligned(self) -> Self::ULE {
-        let u = u32::from(self);
-        CharULE(u.to_le_bytes())
+        let u = u32::from(self).to_le_bytes();
+        CharULE([u[0], u[1], u[2]])
     }
 
     #[inline]
     fn from_unaligned(unaligned: Self::ULE) -> Self {
-        let u = u32::from_le_bytes(unaligned.0);
         // Safe because the bytes of CharULE are defined to represent a valid Unicode code point.
+        let u = u32::from_le_bytes([unaligned.0[0], unaligned.0[1], unaligned.0[2], 0]);
         // TODO: Use char::from_u32_unchecked() when stabilized
         #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
         Self::try_from(u).unwrap()
@@ -108,8 +108,8 @@ mod test {
 
     #[test]
     fn test_parse() {
-        // 1-byte, 2-byte, 3-byte, and 4-byte character in UTF-8 (not as relevant in UTF-32)
-        let chars = ['w', 'ω', '文', '𑄃'];
+        // 1-byte, 2-byte, 3-byte, and two 4-byte character in UTF-8 (not as relevant in UTF-32)
+        let chars = ['w', 'ω', '文', '𑄃', '🙃'];
         let char_ules: Vec<CharULE> = chars.iter().copied().map(char::to_unaligned).collect();
         let char_bytes: &[u8] = CharULE::as_byte_slice(&char_ules);
 
@@ -142,7 +142,7 @@ mod test {
 
         // Compare to golden expected data
         assert_eq!(
-            &[119, 0, 0, 0, 201, 3, 0, 0, 135, 101, 0, 0, 3, 17, 1, 0],
+            &[119, 0, 0, 201, 3, 0, 135, 101, 0, 3, 17, 1, 67, 246, 1],
             char_bytes
         );
     }
