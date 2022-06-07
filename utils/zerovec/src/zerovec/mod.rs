@@ -346,38 +346,12 @@ where
     ///
     /// # Examples
     ///
-    /// Convert a borrowed `ZeroVec`:
-    ///
-    /// ```
-    /// use zerovec::ZeroVec;
-    ///
-    /// let bytes: &[u8] = &[0x7F, 0xF3, 0x01, 0x00, 0x49, 0xF6, 0x01, 0x00];
-    /// let zv_char: ZeroVec<char> = ZeroVec::parse_byte_slice(bytes).expect("valid code points");
-    /// let zv_u32: ZeroVec<u32> = zv_char.try_into_converted().expect("infallible conversion");
-    ///
-    /// assert!(matches!(zv_u32, ZeroVec::Borrowed(_)));
-    /// assert_eq!(zv_u32.get(0), Some(u32::from('🍿')));
-    /// ```
-    ///
-    /// Convert an owned `ZeroVec`:
-    ///
-    /// ```
-    /// use zerovec::ZeroVec;
-    ///
-    /// let chars: &[char] = &['🍿', '🙉'];
-    /// let zv_char = ZeroVec::alloc_from_slice(chars);
-    /// let zv_u32: ZeroVec<u32> = zv_char.try_into_converted().expect("length is divisible");
-    ///
-    /// assert!(matches!(zv_u32, ZeroVec::Owned(_)));
-    /// assert_eq!(zv_u32.get(0), Some(u32::from('🍿')));
-    /// ```
-    ///
     /// If the types are not the same size, we refuse to convert:
     ///
     /// ```should_panic
     /// use zerovec::ZeroVec;
     ///
-    /// let bytes: &[u8] = &[0x7F, 0xF3, 0x01, 0x00, 0x49, 0xF6, 0x01, 0x00];
+    /// let bytes: &[u8] = &[0x7F, 0xF3, 0x01, 0x49, 0xF6, 0x01];
     /// let zv_char: ZeroVec<char> = ZeroVec::parse_byte_slice(bytes).expect("valid code points");
     ///
     /// // Panics! mem::size_of::<char::ULE> != mem::size_of::<u16::ULE>
@@ -389,7 +363,7 @@ where
     /// ```
     /// use zerovec::ZeroVec;
     ///
-    /// let bytes: &[u8] = &[0x7F, 0xF3, 0x01, 0x00, 0x49, 0xF6, 0x01, 0x00];
+    /// let bytes: &[u8] = &[0x7F, 0xF3, 0x01, 0x49, 0xF6, 0x01];
     /// let zv_char: ZeroVec<char> = ZeroVec::parse_byte_slice(bytes).expect("valid code points");
     /// let zv_u16: ZeroVec<u16> = zv_char.into_bytes().try_into_parsed().expect("infallible");
     ///

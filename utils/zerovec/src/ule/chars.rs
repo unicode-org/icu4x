@@ -23,7 +23,7 @@ use core::convert::TryFrom;
 ///
 /// let c1 = '𑄃';
 /// let ule = c1.to_unaligned();
-/// assert_eq!(CharULE::as_byte_slice(&[ule]), &[0x03, 0x11, 0x01, 0x00]);
+/// assert_eq!(CharULE::as_byte_slice(&[ule]), &[0x03, 0x11, 0x01]);
 /// let c2 = char::from_unaligned(ule);
 /// assert_eq!(c1, c2);
 /// ```
@@ -118,16 +118,6 @@ mod test {
             .map(char::from_unaligned)
             .collect();
         assert_eq!(&chars, parsed_chars.as_slice());
-
-        // Compare to u32
-        let u32s: Vec<u32> = chars.iter().copied().map(u32::from).collect();
-        let u32_ules: Vec<RawBytesULE<4>> = u32s
-            .iter()
-            .copied()
-            .map(<u32 as AsULE>::to_unaligned)
-            .collect();
-        let u32_bytes: &[u8] = RawBytesULE::<4>::as_byte_slice(&u32_ules);
-        assert_eq!(char_bytes, u32_bytes);
 
         // Compare to golden expected data
         assert_eq!(
