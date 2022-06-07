@@ -101,12 +101,12 @@ fn char_benches(c: &mut Criterion) {
     });
 
     c.bench_function("zerovec_serde/serialize/char/zerovec", |b| {
-        b.iter(|| bincode::serialize(&ZeroVec::from_slice_or_alloc(black_box(ORIGINAL_CHARS))));
+        b.iter(|| bincode::serialize(&ZeroVec::alloc_from_slice(black_box(ORIGINAL_CHARS))));
     });
 
     c.bench_function("zerovec_serde/deserialize/char/zerovec", |b| {
         let buffer =
-            bincode::serialize(&ZeroVec::from_slice_or_alloc(black_box(ORIGINAL_CHARS))).unwrap();
+            bincode::serialize(&ZeroVec::alloc_from_slice(black_box(ORIGINAL_CHARS))).unwrap();
         b.iter(|| bincode::deserialize::<ZeroVec<char>>(&buffer));
     });
 }
