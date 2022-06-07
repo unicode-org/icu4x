@@ -72,6 +72,7 @@ fn datetime_benches(c: &mut Criterion) {
                         &provider,
                         &provider,
                         &provider,
+                        &provider,
                         &options,
                         &TimeZoneFormatOptions::default(),
                     )
@@ -214,6 +215,7 @@ fn datetime_benches(c: &mut Criterion) {
                             &provider,
                             &provider,
                             &provider,
+                            &provider,
                             &options,
                             &TimeZoneFormatOptions::default(),
                         )
@@ -247,6 +249,7 @@ fn datetime_benches(c: &mut Criterion) {
                             &provider,
                             &provider,
                             &provider,
+                            &provider,
                             &options,
                             &TimeZoneFormatOptions::default(),
                         )
@@ -274,6 +277,7 @@ fn datetime_benches(c: &mut Criterion) {
                         let options = fixtures::get_options(&setup.options);
                         let dtf = ZonedDateTimeFormat::<Gregorian>::try_new(
                             locale,
+                            &provider,
                             &provider,
                             &provider,
                             &provider,
@@ -308,6 +312,7 @@ fn datetime_benches(c: &mut Criterion) {
                         let options = fixtures::get_options(&setup.options);
                         let dtf = ZonedDateTimeFormat::<Gregorian>::try_new(
                             locale,
+                            &provider,
                             &provider,
                             &provider,
                             &provider,

@@ -340,9 +340,7 @@ fn append_fractional_seconds(pattern: &mut Pattern, fields: &[Field]) {
         }) {
             if let FieldLength::Fixed(p) = requested_field.length {
                 if p > 0 {
-                    // TODO: Use locale appropriate decimal separator (issue #597)
-                    items.insert(pos + 1, PatternItem::Literal('.'));
-                    items.insert(pos + 2, PatternItem::Field(*requested_field));
+                    items.insert(pos + 1, PatternItem::Field(*requested_field));
                 }
             }
         }

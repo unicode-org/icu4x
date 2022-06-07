@@ -278,6 +278,7 @@ fn test_keys_from_file() {
             icu_datetime::provider::calendar::DateSkeletonPatternsV1Marker::KEY,
             icu_datetime::provider::calendar::DateSymbolsV1Marker::KEY,
             icu_datetime::provider::week_data::WeekDataV1Marker::KEY,
+            icu_decimal::provider::DecimalSymbolsV1Marker::KEY,
             icu_plurals::provider::OrdinalV1Marker::KEY,
         ]
     );

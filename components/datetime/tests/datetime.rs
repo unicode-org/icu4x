@@ -22,6 +22,7 @@ use icu_datetime::{
     time_zone::{TimeZoneFormat, TimeZoneFormatOptions},
     CldrCalendar, DateTimeFormat, DateTimeFormatOptions, ZonedDateTimeFormat,
 };
+use icu_decimal::provider::DecimalSymbolsV1Marker;
 use icu_locid::{unicode_ext_key, unicode_ext_value, LanguageIdentifier, Locale};
 use icu_plurals::provider::OrdinalV1Marker;
 use icu_provider::prelude::*;
@@ -145,6 +146,7 @@ fn assert_fixture_element<A, D>(
     D: ResourceProvider<DateSymbolsV1Marker>
         + ResourceProvider<DatePatternsV1Marker>
         + ResourceProvider<DateSkeletonPatternsV1Marker>
+        + ResourceProvider<DecimalSymbolsV1Marker>
         + ResourceProvider<OrdinalV1Marker>
         + ResourceProvider<WeekDataV1Marker>,
 {
@@ -194,6 +196,7 @@ fn test_fixture_with_time_zones(fixture_name: &str, config: TimeZoneConfig) {
             let locale: Locale = locale.parse().unwrap();
             let dtf = ZonedDateTimeFormat::<Gregorian>::try_new(
                 locale,
+                &provider,
                 &provider,
                 &provider,
                 &provider,
@@ -266,6 +269,14 @@ fn test_dayperiod_patterns() {
             .unwrap()
             .take_payload()
             .unwrap();
+        let decimal_data: DataPayload<DecimalSymbolsV1Marker> = provider
+            .load_resource(&DataRequest {
+                options: ResourceOptions::from(locale.id.clone()),
+                metadata: Default::default(),
+            })
+            .unwrap()
+            .take_payload()
+            .unwrap();
         for test_case in &test.test_cases {
             for dt_input in &test_case.datetimes {
                 let datetime = parse_gregorian_from_str(dt_input).unwrap();
@@ -294,6 +305,10 @@ fn test_dayperiod_patterns() {
                                 AnyPayloadProvider {
                                     key: WeekDataV1Marker::KEY,
                                     data: week_data.clone().wrap_into_any_payload(),
+                                },
+                                AnyPayloadProvider {
+                                    key: DecimalSymbolsV1Marker::KEY,
+                                    data: decimal_data.clone().wrap_into_any_payload(),
                                 },
                             ],
                         };
@@ -373,6 +388,7 @@ fn test_time_zone_format_configs() {
 #[test]
 fn test_time_zone_patterns() {
     let date_provider = icu_testdata::get_provider();
+    let decimal_provider = icu_testdata::get_provider();
     let plural_provider = icu_testdata::get_provider();
     let zone_provider = icu_testdata::get_provider();
     let format_options = DateTimeFormatOptions::default();
@@ -468,6 +484,7 @@ fn test_time_zone_patterns() {
                         &local_provider.as_downcasting(),
                         &zone_provider,
                         &plural_provider,
+                        &decimal_provider,
                         &format_options,
                         &fallback_format.into(),
                     )
