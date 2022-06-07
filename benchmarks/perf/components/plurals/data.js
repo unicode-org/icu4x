@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1654535559694,
+  "lastUpdate": 1654566935125,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -49493,6 +49493,150 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/select/fs",
             "value": 2383,
             "range": "± 5",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "a6377a6b7c2f264663427182265c5b154cf1b35f",
+          "message": "Add another method to icu_locid for vertical fallback (#1992)",
+          "timestamp": "2022-06-06T18:38:58-07:00",
+          "tree_id": "d266d2f2e3b4e1477a8025aafdba06cf7a9d2a79",
+          "url": "https://github.com/unicode-org/icu4x/commit/a6377a6b7c2f264663427182265c5b154cf1b35f"
+        },
+        "date": 1654566904074,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1384,
+            "range": "± 18",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/operands/create/usize",
+            "value": 22,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/operands/create/isize",
+            "value": 19,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/operands/create/string",
+            "value": 1153,
+            "range": "± 13",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/operands/create/string/samples/0",
+            "value": 22,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/operands/create/string/samples/10",
+            "value": 24,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/operands/create/string/samples/200",
+            "value": 27,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/operands/create/string/samples/3000",
+            "value": 30,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/operands/create/string/samples/40000",
+            "value": 32,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/operands/create/string/samples/500000",
+            "value": 34,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/operands/create/string/samples/6000000",
+            "value": 37,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/operands/create/string/samples/70000000",
+            "value": 41,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/operands/eq/mostly_unequal",
+            "value": 180,
+            "range": "± 3",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/operands/eq/mostly_equal",
+            "value": 196,
+            "range": "± 3",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/operands/create/from_fixed_decimal",
+            "value": 174,
+            "range": "± 3",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 6055,
+            "range": "± 112",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/lex",
+            "value": 2140,
+            "range": "± 35",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 19864,
+            "range": "± 304",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/construct/fs",
+            "value": 7783,
+            "range": "± 141",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/select/fs",
+            "value": 2784,
+            "range": "± 54",
             "unit": "ns/iter"
           }
         ]
