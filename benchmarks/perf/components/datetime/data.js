@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1654626251285,
+  "lastUpdate": 1654644010703,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -37607,6 +37607,102 @@ window.BENCHMARK_DATA = {
             "name": "pattern/parse",
             "value": 5602,
             "range": "± 390",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "90648681+snktd@users.noreply.github.com",
+            "name": "snktd",
+            "username": "snktd"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "142c718dc1627972ce186e70828c7e4c00a44c4e",
+          "message": "Create wrapper object for ScriptExtensions array return value  #1536 (#1990)\n\n* Create wrapper object for ScriptExtensions array return value #1536\r\n\r\n* #1536 Create wrapper object for ScriptExtensions array return value\r\n\r\n* Resolving a minor issue with code comments.\r\n\r\n* Update components/properties/src/script.rs\r\n\r\nCo-authored-by: Shane F. Carr <shane@unicode.org>\r\n\r\n* Addressing review comments.\r\n\r\n* Making ScriptExtensionsSet.values private\r\n\r\n* Addressing a minor review comment.\r\n\r\nCo-authored-by: Shane F. Carr <shane@unicode.org>",
+          "timestamp": "2022-06-07T23:05:50Z",
+          "tree_id": "db3f8175b5c64af7a1cfd987c0a1206e20fd6d49",
+          "url": "https://github.com/unicode-org/icu4x/commit/142c718dc1627972ce186e70828c7e4c00a44c4e"
+        },
+        "date": 1654643971119,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 81271,
+            "range": "± 197",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 768469,
+            "range": "± 5907",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 145129,
+            "range": "± 1035",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/DateTimeFormat/format_to_write",
+            "value": 77018,
+            "range": "± 2300",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/DateTimeFormat/format_to_string",
+            "value": 83274,
+            "range": "± 325",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/format",
+            "value": 80309,
+            "range": "± 251",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/to_string",
+            "value": 86379,
+            "range": "± 292",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/ZonedDateTimeFormat/format_to_write",
+            "value": 143177,
+            "range": "± 2023",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/ZonedDateTimeFormat/format_to_string",
+            "value": 154444,
+            "range": "± 845",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/format",
+            "value": 145370,
+            "range": "± 1851",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/to_string",
+            "value": 156767,
+            "range": "± 462",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "pattern/parse",
+            "value": 4095,
+            "range": "± 112",
             "unit": "ns/iter"
           }
         ]
