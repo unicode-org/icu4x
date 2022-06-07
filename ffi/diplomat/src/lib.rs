@@ -32,6 +32,7 @@ extern crate std as rust_std;
 
 extern crate alloc;
 
+pub mod bidi;
 pub mod custom_writeable;
 pub mod data_struct;
 pub mod decimal;

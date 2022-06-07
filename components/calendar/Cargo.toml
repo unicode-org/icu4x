@@ -27,7 +27,7 @@ include = [
 std = []
 bench = []
 serde = ["dep:serde", "zerovec/serde", "tinystr/serde", "icu_provider/serde"]
-datagen = ["serde", "zerovec/serde_serialize"]
+datagen = ["serde", "crabbake", "zerovec/crabbake", "tinystr/crabbake"]
 
 [package.metadata.docs.rs]
 all-features = true
@@ -44,12 +44,24 @@ icu_provider = { version = "0.6", path = "../../provider/core", features = ["mac
 icu_locid = { version = "0.6", path = "../../components/locid" }
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }
 zerovec = { version = "0.7", path = "../../utils/zerovec", default-features = false, features = ["derive"] }
+crabbake = { version = "0.4", path = "../../experimental/crabbake", optional = true, features = ["derive"] }
 
 [dev-dependencies]
+criterion = "0.3"
 icu = { path = "../icu", default-features = false }
 icu_benchmark_macros = { version = "0.6", path = "../../tools/benchmark/macros" }
 icu_calendar = { version = "0.6", path = "../calendar", features = ["serde"] }
 icu_testdata = { version = "0.6", path = "../../provider/testdata" }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+
+[[bench]]
+name = "date"
+harness = false
+
+[[bench]]
+name = "datetime"
+harness = false
 
 [[example]]
 name = "iso_date_manipulations"

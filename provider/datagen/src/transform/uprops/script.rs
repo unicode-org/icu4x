@@ -2,7 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::transform::uprops::uprops_helpers;
 use crate::SourceData;
 use icu_codepointtrie::CodePointTrie;
 use icu_properties::provider::{
@@ -40,8 +39,15 @@ impl ResourceProvider<ScriptWithExtensionsPropertyV1Marker>
         &self,
         _: &DataRequest,
     ) -> Result<DataResponse<ScriptWithExtensionsPropertyV1Marker>, DataError> {
-        let scx_data =
-            uprops_helpers::load_script_extensions_from_dir(self.source.get_uprops_root()?)?;
+        let toml_obj: &super::uprops_serde::script_extensions::Main = self
+            .source
+            .get_uprops_paths()?
+            .read_and_parse_toml("scx.toml")?;
+
+        let scx_data = toml_obj.script_extensions.get(0).ok_or_else(|| {
+            DataError::custom("Could not parse Script_Extensions data from TOML")
+                .with_path_context("scx.toml")
+        })?;
 
         let cpt_data = &scx_data.code_point_trie;
         let scx_array_data = &scx_data.script_code_array;
@@ -74,17 +80,14 @@ impl ResourceProvider<ScriptWithExtensionsPropertyV1Marker>
 impl IterableResourceProvider<ScriptWithExtensionsPropertyV1Marker>
     for ScriptWithExtensionsPropertyProvider
 {
-    fn supported_options(&self) -> Result<Box<dyn Iterator<Item = ResourceOptions>>, DataError> {
-        Ok(Box::new(core::iter::once(ResourceOptions::default())))
+    fn supported_options(&self) -> Result<Vec<ResourceOptions>, DataError> {
+        Ok(vec![Default::default()])
     }
 }
 
-icu_provider::impl_dyn_provider!(
+icu_provider::make_exportable_provider!(
     ScriptWithExtensionsPropertyProvider,
-    [ScriptWithExtensionsPropertyV1Marker,],
-    SERDE_SE,
-    ITERABLE_SERDE_SE,
-    DATA_CONVERTER
+    [ScriptWithExtensionsPropertyV1Marker,]
 );
 
 #[cfg(test)]

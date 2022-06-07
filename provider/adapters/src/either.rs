@@ -7,8 +7,6 @@
 use icu_provider::prelude::*;
 
 #[cfg(feature = "datagen")]
-use alloc::boxed::Box;
-#[cfg(feature = "datagen")]
 use icu_provider::datagen;
 
 /// A provider that is one of two types determined at runtime.
@@ -85,7 +83,7 @@ impl<M: DataMarker, P0: datagen::IterableDynProvider<M>, P1: datagen::IterableDy
     fn supported_options_for_key(
         &self,
         key: ResourceKey,
-    ) -> Result<Box<dyn Iterator<Item = ResourceOptions> + '_>, DataError> {
+    ) -> Result<alloc::vec::Vec<ResourceOptions>, DataError> {
         use EitherProvider::*;
         match self {
             A(p) => p.supported_options_for_key(key),
@@ -102,9 +100,7 @@ impl<
     > datagen::IterableResourceProvider<M> for EitherProvider<P0, P1>
 {
     #[inline]
-    fn supported_options(
-        &self,
-    ) -> Result<Box<dyn Iterator<Item = ResourceOptions> + '_>, DataError> {
+    fn supported_options(&self) -> Result<alloc::vec::Vec<ResourceOptions>, DataError> {
         use EitherProvider::*;
         match self {
             A(p) => p.supported_options(),

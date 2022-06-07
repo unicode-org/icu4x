@@ -4,6 +4,7 @@
 
 #![allow(missing_docs)]
 #![allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
+#![allow(clippy::exhaustive_enums, clippy::exhaustive_structs)] // TODO(#1668) Clippy exceptions need docs or fixing.
 
 use crate::rules::reference;
 use core::{convert::TryInto, fmt, str::FromStr};
@@ -14,7 +15,12 @@ use zerovec::{
 };
 
 #[derive(yoke::Yokeable, zerofrom::ZeroFrom, Clone, PartialEq, Debug)]
-pub struct Rule<'data>(pub(crate) VarZeroVec<'data, RelationULE>);
+#[cfg_attr(
+    feature = "crabbake",
+    derive(crabbake::Bakeable),
+    crabbake(path = icu_plurals::rules::runtime::ast),
+)]
+pub struct Rule<'data>(pub VarZeroVec<'data, RelationULE>);
 
 #[derive(Copy, Clone, Eq, PartialEq, Ord, PartialOrd, Debug)]
 #[repr(u8)]
@@ -52,7 +58,7 @@ pub(crate) enum RangeOrValue {
 
 #[derive(Clone, Debug, PartialEq, Eq, Ord, PartialOrd)]
 #[zerovec::make_varule(RelationULE)]
-pub(crate) struct Relation<'data> {
+pub struct Relation<'data> {
     pub(crate) aopo: AndOrPolarityOperand,
     pub(crate) modulo: u32,
     pub(crate) range_list: ZeroVec<'data, RangeOrValue>,

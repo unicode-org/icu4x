@@ -32,9 +32,6 @@ use icu_provider::prelude::*;
 use icu_segmenter::symbols::*;
 use icu_segmenter::*;
 use std::fmt::Debug;
-use std::fs::File;
-use std::io::Read;
-use std::path::PathBuf;
 use zerovec::ZeroVec;
 
 // state machine name define by builtin name
@@ -253,42 +250,20 @@ impl From<&SourceData> for SegmenterRuleProvider {
 }
 
 impl SegmenterRuleProvider {
-    fn build_rule_data_path(&self, key: ResourceKey) -> Result<PathBuf, DataError> {
-        let file_name = key
-            .get_path()
-            .split(&['/', '@'])
-            .nth(1)
-            .expect("ResourceKey format should be valid!");
-        let mut data_path = self.source.get_segmenter_data_root()?.join(file_name);
-        data_path.set_extension("toml");
-        Ok(data_path)
-    }
-
-    fn load_rule_data(&self, key: ResourceKey) -> Result<SegmenterRuleTable, DataError> {
-        let path = self.build_rule_data_path(key)?;
-        let mut file = File::open(&path).map_err(|e| {
-            DataErrorKind::Io(e.kind())
-                .with_key(key)
-                .with_str_context("Failed to open rule data file!")
-        })?;
-        let mut buffer = Vec::new();
-        file.read_to_end(&mut buffer).map_err(|e| {
-            DataErrorKind::Io(e.kind())
-                .with_key(key)
-                .with_str_context("Failed to read rule data file!")
-        })?;
-        toml::from_slice(&buffer).map_err(|_| {
-            DataErrorKind::MissingPayload
-                .with_key(key)
-                .with_str_context("Failed to parse rule data file!")
-        })
-    }
-
     fn generate_rule_break_data(
         &self,
         key: ResourceKey,
     ) -> Result<RuleBreakDataV1<'static>, DataError> {
-        let segmenter = self.load_rule_data(key)?;
+        let segmenter = self
+            .source
+            .get_segmenter_paths()?
+            .read_and_parse_toml::<SegmenterRuleTable, _>(&format!(
+                "{}.toml",
+                key.get_path()
+                    .split(&['/', '@'])
+                    .nth(1)
+                    .expect("ResourceKey format should be valid!")
+            ))?;
 
         // Load enumerate Unicode property dependencies.
         let cp_map_provider = EnumeratedPropertyCodePointTrieProvider::from(&self.source);
@@ -710,40 +685,37 @@ impl ResourceProvider<SentenceBreakDataV1Marker> for SegmenterRuleProvider {
     }
 }
 
-icu_provider::impl_dyn_provider!(
+icu_provider::make_exportable_provider!(
     SegmenterRuleProvider,
     [
         LineBreakDataV1Marker,
         GraphemeClusterBreakDataV1Marker,
         WordBreakDataV1Marker,
         SentenceBreakDataV1Marker,
-    ],
-    SERDE_SE,
-    ITERABLE_SERDE_SE,
-    DATA_CONVERTER
+    ]
 );
 
 impl IterableResourceProvider<LineBreakDataV1Marker> for SegmenterRuleProvider {
-    fn supported_options(&self) -> Result<Box<dyn Iterator<Item = ResourceOptions>>, DataError> {
-        Ok(Box::new(core::iter::once(ResourceOptions::default())))
+    fn supported_options(&self) -> Result<Vec<ResourceOptions>, DataError> {
+        Ok(vec![Default::default()])
     }
 }
 
 impl IterableResourceProvider<GraphemeClusterBreakDataV1Marker> for SegmenterRuleProvider {
-    fn supported_options(&self) -> Result<Box<dyn Iterator<Item = ResourceOptions>>, DataError> {
-        Ok(Box::new(core::iter::once(ResourceOptions::default())))
+    fn supported_options(&self) -> Result<Vec<ResourceOptions>, DataError> {
+        Ok(vec![Default::default()])
     }
 }
 
 impl IterableResourceProvider<WordBreakDataV1Marker> for SegmenterRuleProvider {
-    fn supported_options(&self) -> Result<Box<dyn Iterator<Item = ResourceOptions>>, DataError> {
-        Ok(Box::new(core::iter::once(ResourceOptions::default())))
+    fn supported_options(&self) -> Result<Vec<ResourceOptions>, DataError> {
+        Ok(vec![Default::default()])
     }
 }
 
 impl IterableResourceProvider<SentenceBreakDataV1Marker> for SegmenterRuleProvider {
-    fn supported_options(&self) -> Result<Box<dyn Iterator<Item = ResourceOptions>>, DataError> {
-        Ok(Box::new(core::iter::once(ResourceOptions::default())))
+    fn supported_options(&self) -> Result<Vec<ResourceOptions>, DataError> {
+        Ok(vec![Default::default()])
     }
 }
 

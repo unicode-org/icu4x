@@ -14,6 +14,8 @@ mod vecs;
 mod crabbake;
 #[cfg(feature = "serde")]
 mod serde;
+#[cfg(feature = "serde")]
+mod serde_helpers;
 
 pub use crate::ZeroMap;
 pub use borrowed::ZeroMapBorrowed;

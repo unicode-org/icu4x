@@ -146,7 +146,7 @@ mod line;
 mod sentence;
 mod word;
 
-mod provider;
+pub mod provider;
 pub mod symbols;
 
 #[cfg(feature = "lstm")]

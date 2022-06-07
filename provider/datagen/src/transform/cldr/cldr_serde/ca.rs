@@ -105,7 +105,7 @@ symbols!(
     ["midnight", midnight, Option<Cow<'static, str>>],
 );
 
-#[derive(PartialEq, Debug, Deserialize)]
+#[derive(PartialEq, Debug, Deserialize, Clone)]
 #[serde(untagged)]
 pub enum LengthPattern {
     Plain(String),
@@ -127,7 +127,7 @@ impl LengthPattern {
     }
 }
 
-#[derive(PartialEq, Debug, Deserialize)]
+#[derive(PartialEq, Debug, Deserialize, Clone)]
 pub struct Eras {
     #[serde(rename = "eraNames")]
     pub names: LiteMap<String, String>,
@@ -137,7 +137,7 @@ pub struct Eras {
     pub narrow: LiteMap<String, String>,
 }
 
-#[derive(PartialEq, Debug, Deserialize)]
+#[derive(PartialEq, Debug, Deserialize, Clone)]
 pub struct LengthPatterns {
     pub full: LengthPattern,
     pub long: LengthPattern,
@@ -145,7 +145,7 @@ pub struct LengthPatterns {
     pub short: LengthPattern,
 }
 
-#[derive(PartialEq, Debug, Deserialize)]
+#[derive(PartialEq, Debug, Deserialize, Clone)]
 pub struct DateTimeFormats {
     pub full: LengthPattern,
     pub long: LengthPattern,
@@ -163,7 +163,7 @@ pub struct AvailableFormats(pub LiteMap<String, String>);
 ///
 /// e.g.
 /// https://github.com/unicode-org/cldr-json/blob/master/cldr-json/cldr-dates-full/main/en/ca-gregorian.json
-#[derive(PartialEq, Debug, Deserialize)]
+#[derive(PartialEq, Debug, Deserialize, Clone)]
 pub struct Dates {
     pub months: months::Contexts,
     pub days: days::Contexts,

@@ -24,6 +24,7 @@ members = [
     "experimental/normalizer",
     "experimental/segmenter",
     "experimental/segmenter_lstm",
+    "experimental/tzif",
     "ffi/capi_cdylib",
     "ffi/diplomat",
     "ffi/capi_staticlib",

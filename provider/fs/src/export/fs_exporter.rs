@@ -4,9 +4,8 @@
 
 use super::serializers::AbstractSerializer;
 use crate::manifest::Manifest;
-use icu_provider::export::DataExporter;
+use icu_provider::datagen::*;
 use icu_provider::prelude::*;
-use icu_provider::serde::SerializeMarker;
 use serde::{Deserialize, Serialize};
 use std::fs;
 use std::path::PathBuf;
@@ -76,12 +75,12 @@ impl FilesystemExporter {
     }
 }
 
-impl DataExporter<SerializeMarker> for FilesystemExporter {
+impl DataExporter for FilesystemExporter {
     fn put_payload(
         &self,
         key: ResourceKey,
-        options: ResourceOptions,
-        obj: DataPayload<SerializeMarker>,
+        options: &ResourceOptions,
+        obj: &DataPayload<ExportMarker>,
     ) -> Result<(), DataError> {
         log::trace!("Writing: {}/{}", key, options);
 

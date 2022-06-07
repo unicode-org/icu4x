@@ -112,7 +112,7 @@ fn test_day_of_week_in_month() {
 macro_rules! dt_unit {
     ($name:ident, $storage:ident, $value:expr, $docs:expr) => {
         #[doc=$docs]
-        #[derive(Debug, Default, Clone, Copy, PartialEq, Hash)]
+        #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Ord, PartialOrd, Hash)]
         pub struct $name($storage);
 
         impl $name {
@@ -226,7 +226,7 @@ dt_unit!(
     "A fractional second component, stored as nanoseconds."
 );
 
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Copy, Clone, Eq, PartialEq, Ord, PartialOrd, Hash)]
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct Time {
     /// 0-based hour.
@@ -405,7 +405,12 @@ impl FromStr for GmtOffset {
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 #[allow(missing_docs)] // The weekday variants should be self-obvious.
 #[repr(i8)]
-#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+#[cfg_attr(
+    feature = "datagen",
+    derive(serde::Serialize, crabbake::Bakeable),
+    crabbake(path = icu_calendar::types),
+)]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[allow(clippy::exhaustive_enums)] // This is stable
 pub enum IsoWeekday {
     Monday = 1,

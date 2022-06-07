@@ -2,7 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::transform::uprops::uprops_serde;
 use crate::SourceData;
 use icu_casemapping::provider::{CaseMappingV1, CaseMappingV1Marker};
 use icu_casemapping::CaseMappingInternals;
@@ -10,7 +9,6 @@ use icu_codepointtrie::toml::CodePointDataSlice;
 use icu_codepointtrie::CodePointTrieHeader;
 use icu_provider::prelude::*;
 use std::convert::TryFrom;
-use std::fs;
 
 /// A data provider reading from TOML files produced by the ICU4C icuexportdata tool.
 pub struct CaseMappingDataProvider {
@@ -30,13 +28,13 @@ impl ResourceProvider<CaseMappingV1Marker> for CaseMappingDataProvider {
         &self,
         _req: &DataRequest,
     ) -> Result<DataResponse<CaseMappingV1Marker>, DataError> {
-        let path = self.source.get_uprops_root()?.join("ucase.toml");
-        let toml_str =
-            fs::read_to_string(&path).map_err(|e| DataError::from(e).with_path_context(&path))?;
-        let toml: uprops_serde::case::Main = toml::from_str(&toml_str)
-            .map_err(|e| crate::error::data_error_from_toml(e).with_path_context(&path))?;
+        let toml = &self
+            .source
+            .get_uprops_paths()?
+            .read_and_parse_toml::<super::uprops_serde::case::Main, _>("ucase.toml")?
+            .ucase;
 
-        let trie_data = &toml.ucase.code_point_trie;
+        let trie_data = &toml.code_point_trie;
         let trie_header = CodePointTrieHeader::try_from(trie_data).map_err(|e| {
             DataError::custom("Could not parse CodePointTrie TOML").with_display_context(&e)
         })?;
@@ -48,8 +46,8 @@ impl ResourceProvider<CaseMappingV1Marker> for CaseMappingDataProvider {
                 "Did not find 16-bit data array for case mapping in TOML",
             ));
         };
-        let exceptions = &toml.ucase.exceptions.exceptions;
-        let unfold = &toml.ucase.unfold.unfold;
+        let exceptions = &toml.exceptions.exceptions;
+        let unfold = &toml.unfold.unfold;
 
         let case_mapping = CaseMappingInternals::try_from_icu(
             trie_header,
@@ -73,20 +71,12 @@ impl ResourceProvider<CaseMappingV1Marker> for CaseMappingDataProvider {
 impl icu_provider::datagen::IterableResourceProvider<CaseMappingV1Marker>
     for CaseMappingDataProvider
 {
-    fn supported_options(
-        &self,
-    ) -> Result<Box<dyn Iterator<Item = ResourceOptions> + '_>, DataError> {
-        Ok(Box::new(core::iter::once(Default::default())))
+    fn supported_options(&self) -> Result<Vec<ResourceOptions>, DataError> {
+        Ok(vec![Default::default()])
     }
 }
 
-icu_provider::impl_dyn_provider!(
-    CaseMappingDataProvider,
-    [CaseMappingV1Marker,],
-    SERDE_SE,
-    ITERABLE_SERDE_SE,
-    DATA_CONVERTER
-);
+icu_provider::make_exportable_provider!(CaseMappingDataProvider, [CaseMappingV1Marker,]);
 
 #[cfg(test)]
 mod tests {

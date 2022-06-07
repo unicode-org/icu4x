@@ -20,13 +20,14 @@ use crate::provider::CollationJamoV1Marker;
 use crate::provider::CollationMetadataV1Marker;
 use crate::provider::CollationReorderingV1Marker;
 use crate::provider::CollationSpecialPrimariesV1Marker;
-use crate::{AlternateHandling, CollatorOptions, Strength};
+use crate::{AlternateHandling, CollatorOptions, MaxVariable, Strength};
 use alloc::string::ToString;
 use core::char::{decode_utf16, DecodeUtf16Error, REPLACEMENT_CHARACTER};
 use core::cmp::Ordering;
 use core::convert::TryFrom;
 use icu_locid::Locale;
 use icu_normalizer::provider::CanonicalDecompositionDataV1Marker;
+use icu_normalizer::provider::CanonicalDecompositionTablesV1Marker;
 use icu_normalizer::Decomposition;
 use icu_properties::provider::CanonicalCombiningClassV1Marker;
 use icu_provider::DataPayload;
@@ -72,6 +73,7 @@ pub struct Collator {
     options: CollatorOptions,
     reordering: Option<DataPayload<CollationReorderingV1Marker>>,
     decompositions: DataPayload<CanonicalDecompositionDataV1Marker>,
+    tables: DataPayload<CanonicalDecompositionTablesV1Marker>,
     ccc: DataPayload<CanonicalCombiningClassV1Marker>,
     lithuanian_dot_above: bool,
 }
@@ -90,6 +92,7 @@ impl Collator {
             + ResourceProvider<CollationMetadataV1Marker>
             + ResourceProvider<CollationReorderingV1Marker>
             + ResourceProvider<CanonicalDecompositionDataV1Marker>
+            + ResourceProvider<CanonicalDecompositionTablesV1Marker>
             + ResourceProvider<CanonicalCombiningClassV1Marker>
             + ?Sized,
     {
@@ -192,7 +195,7 @@ impl Collator {
         }
 
         let jamo: DataPayload<CollationJamoV1Marker> = data_provider
-            .load_resource(&DataRequest::default())? // TODO: load other jamo tables
+            .load_resource(&DataRequest::default())? // TODO: redesign Korean search collation handling
             .take_payload()?;
 
         if jamo.get().ce32s.len() != JAMO_COUNT {
@@ -203,6 +206,10 @@ impl Collator {
             .load_resource(&DataRequest::default())?
             .take_payload()?;
 
+        let tables: DataPayload<CanonicalDecompositionTablesV1Marker> = data_provider
+            .load_resource(&DataRequest::default())?
+            .take_payload()?;
+
         let ccc: DataPayload<CanonicalCombiningClassV1Marker> =
             icu_properties::maps::get_canonical_combining_class(data_provider)?;
 
@@ -210,6 +217,9 @@ impl Collator {
 
         if metadata.alternate_shifted() {
             altered_defaults.set_alternate_handling(Some(AlternateHandling::Shifted));
+        }
+        if metadata.backward_second_level() {
+            altered_defaults.set_backward_second_level(Some(true));
         }
 
         altered_defaults.set_case_first(Some(metadata.case_first()));
@@ -224,6 +234,11 @@ impl Collator {
             let special_primaries: DataPayload<CollationSpecialPrimariesV1Marker> = data_provider
                 .load_resource(&DataRequest::default())?
                 .take_payload()?;
+            // `variant_count` isn't stable yet:
+            // https://github.com/rust-lang/rust/issues/73662
+            if special_primaries.get().last_primaries.len() <= (MaxVariable::Currency as usize) {
+                return Err(CollatorError::MalformedData);
+            }
             Some(special_primaries)
         } else {
             None
@@ -238,6 +253,7 @@ impl Collator {
             options: merged_options,
             reordering,
             decompositions,
+            tables,
             ccc,
             lithuanian_dot_above: metadata.lithuanian_dot_above(),
         })
@@ -264,11 +280,15 @@ impl Collator {
             return Decomposition::new(
                 decode_utf16(left.iter().copied()).map(utf16_error_to_replacement),
                 self.decompositions.get(),
+                self.tables.get(),
+                None,
                 &self.ccc.get().code_point_trie,
             )
             .cmp(Decomposition::new(
                 decode_utf16(right.iter().copied()).map(utf16_error_to_replacement),
                 self.decompositions.get(),
+                self.tables.get(),
+                None,
                 &self.ccc.get().code_point_trie,
             ));
         }
@@ -293,11 +313,15 @@ impl Collator {
             return Decomposition::new(
                 left.chars(),
                 self.decompositions.get(),
+                self.tables.get(),
+                None,
                 &self.ccc.get().code_point_trie,
             )
             .cmp(Decomposition::new(
                 right.chars(),
                 self.decompositions.get(),
+                self.tables.get(),
+                None,
                 &self.ccc.get().code_point_trie,
             ));
         }
@@ -322,11 +346,15 @@ impl Collator {
             return Decomposition::new(
                 left.chars(),
                 self.decompositions.get(),
+                self.tables.get(),
+                None,
                 &self.ccc.get().code_point_trie,
             )
             .cmp(Decomposition::new(
                 right.chars(),
                 self.decompositions.get(),
+                self.tables.get(),
+                None,
                 &self.ccc.get().code_point_trie,
             ));
         }
@@ -403,6 +431,7 @@ impl Collator {
             )
             .unwrap(), // length already validated
             self.decompositions.get(),
+            self.tables.get(),
             &self.ccc.get().code_point_trie,
             numeric_primary,
             self.lithuanian_dot_above,
@@ -418,6 +447,7 @@ impl Collator {
             )
             .unwrap(), // length already validated
             self.decompositions.get(),
+            self.tables.get(),
             &self.ccc.get().code_point_trie,
             numeric_primary,
             self.lithuanian_dot_above,

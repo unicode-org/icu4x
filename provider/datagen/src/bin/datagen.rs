@@ -192,11 +192,6 @@ fn main() -> eyre::Result<()> {
                 )
                 .takes_value(true),
         )
-        .arg(
-            Arg::with_name("IGNORE_MISSING_DATA")
-                .long("ignore-missing-data")
-                .help("Skips missing data errors")
-        )
         .arg(Arg::with_name("INSERT_FEATURE_GATES")
             .long("insert-feature_gates")
             .help("Module-mode only: Insert per-key feature gates for each key's crate.")
@@ -241,48 +236,43 @@ fn main() -> eyre::Result<()> {
         eyre::bail!("No keys selected");
     }
 
+    let cldr_locales = matches
+        .value_of("CLDR_LOCALE_SUBSET")
+        .unwrap_or("full")
+        .to_string();
+
     let mut source_data = SourceData::default();
-    if let Some(_tag) = matches.value_of("CLDR_TAG") {
+    if let Some(tag) = matches.value_of("CLDR_TAG") {
         source_data = source_data.with_cldr(
             cached_path::CacheBuilder::new().freshness_lifetime(u64::MAX).build()?
                 .cached_path_with_options(
                     &format!(
                         "https://github.com/unicode-org/cldr-json/releases/download/{}/cldr-{}-json-{}.zip",
-                        _tag, _tag, matches.value_of("CLDR_LOCALE_SUBSET").unwrap_or("full")),
+                        tag, tag, cldr_locales),
                     &cached_path::Options::default().extract(),
                 )?,
-            matches
-                .value_of("CLDR_LOCALE_SUBSET")
-                .unwrap_or("full")
-                .to_string()
+                cldr_locales
             );
     } else if let Some(path) = matches.value_of("CLDR_ROOT") {
-        source_data = source_data.with_cldr(
-            PathBuf::from(path),
-            matches
-                .value_of("CLDR_LOCALE_SUBSET")
-                .unwrap_or("full")
-                .to_string(),
-        );
+        source_data = source_data.with_cldr(PathBuf::from(path), cldr_locales);
     }
 
-    if let Some(_tag) = matches.value_of("UPROPS_TAG") {
-        source_data = source_data.with_uprops(cached_path::CacheBuilder::new().freshness_lifetime(u64::MAX).build()?
-            .cached_path_with_options(
-                &format!("https://github.com/unicode-org/icu/releases/download/{}/icuexportdata_uprops_full.zip", _tag),
-                &cached_path::Options::default().extract()
-            )?
-            .join("icuexportdata_uprops_full")
-            .join(matches.value_of("TRIE_TYPE").unwrap()));
-    } else if let Some(path) = matches.value_of("UPROPS_ROOT") {
-        source_data = source_data.with_uprops(PathBuf::from(path));
-    }
-
-    source_data = source_data.with_trie_type(match matches.value_of("TRIE_TYPE") {
+    let trie_type = match matches.value_of("TRIE_TYPE") {
         Some("small") => TrieType::Small,
         Some("fast") => TrieType::Fast,
         _ => unreachable!(),
-    });
+    };
+
+    if let Some(tag) = matches.value_of("UPROPS_TAG") {
+        source_data = source_data.with_uprops(cached_path::CacheBuilder::new().freshness_lifetime(u64::MAX).build()?
+            .cached_path_with_options(
+                &format!("https://github.com/unicode-org/icu/releases/download/{}/icuexportdata_uprops_full.zip", tag),
+                &cached_path::Options::default().extract()
+            )?,
+            trie_type);
+    } else if let Some(path) = matches.value_of("UPROPS_ROOT") {
+        source_data = source_data.with_uprops(PathBuf::from(path), trie_type);
+    }
 
     let out = match matches
         .value_of("FORMAT")
@@ -328,8 +318,7 @@ fn main() -> eyre::Result<()> {
         selected_locales.as_deref(),
         &selected_keys,
         &source_data,
-        out,
-        matches.is_present("IGNORE_MISSING_DATA"),
+        vec![out],
     )
     .map_err(|e| -> eyre::ErrReport {
         match e {

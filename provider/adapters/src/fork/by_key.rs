@@ -4,8 +4,6 @@
 
 //! Providers that invoke other providers based on the resource key.
 
-#[cfg(feature = "datagen")]
-use alloc::boxed::Box;
 use alloc::vec::Vec;
 #[cfg(feature = "datagen")]
 use icu_provider::datagen;
@@ -175,7 +173,7 @@ where
     fn supported_options_for_key(
         &self,
         key: ResourceKey,
-    ) -> Result<Box<dyn Iterator<Item = ResourceOptions> + '_>, DataError> {
+    ) -> Result<Vec<ResourceOptions>, DataError> {
         let result = self.0.supported_options_for_key(key);
         if !result_is_err_missing_resource_key(&result) {
             return result;
@@ -309,7 +307,7 @@ where
     fn supported_options_for_key(
         &self,
         key: ResourceKey,
-    ) -> Result<Box<dyn Iterator<Item = ResourceOptions> + '_>, DataError> {
+    ) -> Result<Vec<ResourceOptions>, DataError> {
         for provider in self.providers.iter() {
             let result = provider.supported_options_for_key(key);
             if !result_is_err_missing_resource_key(&result) {

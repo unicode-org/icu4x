@@ -20,9 +20,13 @@ pub use item::{GenericPatternItem, PatternItem};
 #[derive(
     Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, yoke::Yokeable, zerofrom::ZeroFrom,
 )]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize))]
+#[cfg_attr(
+    feature = "datagen",
+    derive(serde::Serialize, crabbake::Bakeable),
+    crabbake(path = icu_datetime::pattern),
+)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-#[allow(clippy::exhaustive_enums)] // part of data struct
+#[non_exhaustive]
 pub enum TimeGranularity {
     None,
     Hours,

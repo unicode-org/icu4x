@@ -284,7 +284,7 @@ where
     ) -> Result<Self, E> {
         let yoke = yoked_buffer
             .wrap_cart_in_option()
-            .try_project_with_capture(capture, f)?;
+            .try_map_project_with_capture(capture, f)?;
         Ok(Self { yoke })
     }
 
@@ -383,11 +383,11 @@ where
         self.yoke.get()
     }
 
-    /// Maps `DataPayload<M>` to `DataPayload<M2>` by projecting it with [`Yoke::project`].
+    /// Maps `DataPayload<M>` to `DataPayload<M2>` by projecting it with [`Yoke::map_project`].
     ///
     /// This is accomplished by a function that takes `M`'s data type and returns `M2`'s data
     /// type. The function takes a second argument which should be ignored. For more details,
-    /// see [`Yoke::project()`].
+    /// see [`Yoke::map_project()`].
     ///
     /// The standard [`DataPayload::map_project()`] function moves `self` and cannot capture any
     /// data from its context. Use one of the sister methods if you need these capabilities:
@@ -436,7 +436,7 @@ where
         M2: DataMarker,
     {
         DataPayload {
-            yoke: self.yoke.project(f),
+            yoke: self.yoke.map_project(f),
         }
     }
 
@@ -480,7 +480,7 @@ where
         M2: DataMarker,
     {
         DataPayload {
-            yoke: self.yoke.project_cloned(f),
+            yoke: self.yoke.map_project_cloned(f),
         }
     }
 
@@ -529,7 +529,7 @@ where
         M2: DataMarker,
     {
         DataPayload {
-            yoke: self.yoke.project_with_capture(capture, f),
+            yoke: self.yoke.map_project_with_capture(capture, f),
         }
     }
 
@@ -581,7 +581,7 @@ where
         M2: DataMarker,
     {
         DataPayload {
-            yoke: self.yoke.project_cloned_with_capture(capture, f),
+            yoke: self.yoke.map_project_cloned_with_capture(capture, f),
         }
     }
 
@@ -634,7 +634,7 @@ where
         M2: DataMarker,
     {
         Ok(DataPayload {
-            yoke: self.yoke.try_project_with_capture(capture, f)?,
+            yoke: self.yoke.try_map_project_with_capture(capture, f)?,
         })
     }
 
@@ -690,7 +690,7 @@ where
         M2: DataMarker,
     {
         Ok(DataPayload {
-            yoke: self.yoke.try_project_cloned_with_capture(capture, f)?,
+            yoke: self.yoke.try_map_project_cloned_with_capture(capture, f)?,
         })
     }
 
@@ -841,9 +841,9 @@ fn test_debug() {
 /// A data provider that loads data for a specific data type.
 ///
 /// Unlike [`ResourceProvider`], there may be multiple keys corresponding to the same data type.
-/// This is often the case when returning `dyn` trait objects such as [`SerializeMarker`].
+/// This is often the case when returning `dyn` trait objects such as [`AnyMarker`].
 ///
-/// [`SerializeMarker`]: crate::serde::SerializeMarker
+/// [`AnyMarker`]: crate::any::AnyMarker
 pub trait DynProvider<M>
 where
     M: DataMarker,

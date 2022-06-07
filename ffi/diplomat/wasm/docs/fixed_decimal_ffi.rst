@@ -50,19 +50,19 @@
         Invert the sign of the :js:class:`ICU4XFixedDecimal`.
         See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.negate>`__ for more information.
 
-    .. js:function:: pad_left(digits)
+    .. js:function:: pad_left(position)
 
-        Zero-pad the :js:class:`ICU4XFixedDecimal` on the left to a particular number of integer digits
+        Zero-pad the :js:class:`ICU4XFixedDecimal` on the left to a particular position
         See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.pad_left>`__ for more information.
 
-    .. js:function:: truncate_left(magnitude)
+    .. js:function:: truncate_left(position)
 
-        Truncate the :js:class:`ICU4XFixedDecimal` on the left to a particular magnitude, deleting digits if necessary. This is useful for, e.g. abbreviating years ("2022" -> "22")
+        Truncate the :js:class:`ICU4XFixedDecimal` on the left to a particular position, deleting digits if necessary. This is useful for, e.g. abbreviating years ("2022" -> "22")
         See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.truncate_left>`__ for more information.
 
-    .. js:function:: pad_right(negative_magnitude)
+    .. js:function:: pad_right(position)
 
-        Zero-pad the :js:class:`ICU4XFixedDecimal` on the right to a particular (negative) magnitude
+        Zero-pad the :js:class:`ICU4XFixedDecimal` on the right to a particular position
         See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.pad_right>`__ for more information.
 
     .. js:function:: to_string()

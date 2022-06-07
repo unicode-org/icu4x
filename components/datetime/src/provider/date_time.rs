@@ -64,15 +64,15 @@ fn pattern_for_date_length_inner(data: DatePatternsV1, length: length::Date) -> 
     PatternPlurals::from(pattern)
 }
 
-pub struct PatternSelector<'a, D> {
+pub struct PatternSelector<'a, D: ?Sized> {
     data_provider: &'a D,
     locale: &'a Locale,
 }
 
 // Manual impls needed since `derive(Copy)` inserts
 // a `D: Copy` bound
-impl<D> Copy for PatternSelector<'_, D> {}
-impl<D> Clone for PatternSelector<'_, D> {
+impl<D: ?Sized> Copy for PatternSelector<'_, D> {}
+impl<D: ?Sized> Clone for PatternSelector<'_, D> {
     fn clone(&self) -> Self {
         *self
     }
@@ -80,7 +80,9 @@ impl<D> Clone for PatternSelector<'_, D> {
 
 impl<D> PatternSelector<'_, D>
 where
-    D: ResourceProvider<DatePatternsV1Marker> + ResourceProvider<DateSkeletonPatternsV1Marker>,
+    D: ResourceProvider<DatePatternsV1Marker>
+        + ResourceProvider<DateSkeletonPatternsV1Marker>
+        + ?Sized,
 {
     pub(crate) fn for_options<'a>(
         data_provider: &'a D,

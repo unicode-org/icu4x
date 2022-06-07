@@ -63,7 +63,10 @@ pub fn parse_gregorian_from_str(input: &str) -> Result<DateTime<Gregorian>, Date
     } else {
         0
     };
-    DateTime::new_gregorian_datetime_from_integers(year, month, day, hour, minute, second, fraction)
+    let mut datetime = DateTime::new_gregorian_datetime(year, month, day, hour, minute, second)?;
+    datetime.time = icu_calendar::types::Time::try_new(hour, minute, second, fraction)?;
+
+    Ok(datetime)
 }
 
 #[test]
