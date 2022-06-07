@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1654626041673,
+  "lastUpdate": 1654643783085,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -30617,6 +30617,60 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 50942468,
             "range": "± 947341",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/worst",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/worst",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "90648681+snktd@users.noreply.github.com",
+            "name": "snktd",
+            "username": "snktd"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "142c718dc1627972ce186e70828c7e4c00a44c4e",
+          "message": "Create wrapper object for ScriptExtensions array return value  #1536 (#1990)\n\n* Create wrapper object for ScriptExtensions array return value #1536\r\n\r\n* #1536 Create wrapper object for ScriptExtensions array return value\r\n\r\n* Resolving a minor issue with code comments.\r\n\r\n* Update components/properties/src/script.rs\r\n\r\nCo-authored-by: Shane F. Carr <shane@unicode.org>\r\n\r\n* Addressing review comments.\r\n\r\n* Making ScriptExtensionsSet.values private\r\n\r\n* Addressing a minor review comment.\r\n\r\nCo-authored-by: Shane F. Carr <shane@unicode.org>",
+          "timestamp": "2022-06-07T23:05:50Z",
+          "tree_id": "db3f8175b5c64af7a1cfd987c0a1206e20fd6d49",
+          "url": "https://github.com/unicode-org/icu4x/commit/142c718dc1627972ce186e70828c7e4c00a44c4e"
+        },
+        "date": 1654643760601,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 34651883,
+            "range": "± 2413635",
             "unit": "ns/iter"
           },
           {
