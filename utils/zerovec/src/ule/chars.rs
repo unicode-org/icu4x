@@ -123,13 +123,6 @@ mod test {
             .collect();
         assert_eq!(&chars, parsed_chars.as_slice());
 
-        // Check EqULE
-        let char_ule_slice = char::slice_to_unaligned(&chars);
-        #[cfg(target_endian = "little")]
-        assert_eq!(char_ule_slice, Some(char_ules.as_slice()));
-        #[cfg(not(target_endian = "little"))]
-        assert_eq!(char_ule_slice, None);
-
         // Compare to u32
         let u32s: Vec<u32> = chars.iter().copied().map(u32::from).collect();
         let u32_ules: Vec<RawBytesULE<4>> = u32s
