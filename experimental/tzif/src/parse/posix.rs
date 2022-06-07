@@ -65,14 +65,14 @@ where
         ensure(
             name,
             |name| name.len() >= 3,
-            "zone variant name has as length of less than 3 characters",
+            "zone variant name should be 3 or more characters long",
         )
     })
     .then(|name| {
         ensure(
             name,
             |name| name.as_bytes()[0] != b':',
-            "zone variant name starts with a leading ':' but should not",
+            "zone variant name should never start with a leading colon",
         )
     })
 }
@@ -118,7 +118,7 @@ where
     Input: Stream<Token = u8>,
     Input::Error: ParseError<Input::Token, Input::Range, Input::Position>,
 {
-    assert!(
+    debug_assert!(
         lower_bound <= upper_bound,
         "lower bound {lower_bound} was not less than or equal, upper bound {upper_bound}"
     );
@@ -126,7 +126,7 @@ where
         ensure(
             natural,
             |&natural| lower_bound <= natural && natural <= upper_bound,
-            "natural number was out of bounds",
+            "parsed natural number is out of bounds",
         )
     })
 }
@@ -147,7 +147,7 @@ where
             ensure(
                 integer,
                 |&integer| lower_bound <= integer && integer <= upper_bound,
-                "integer was out of bounds",
+                "parsed bounded integer is out of bounds",
             )
         })
 }
@@ -339,8 +339,8 @@ where
 /// Parses a time value of the form `\[+|-\]hh\[:mm\[:ss\]\]`.
 ///
 /// This is positive if the local time zone is west of the Prime Meridian and negative if it is east.
-/// The hour must be in range `[-167, 167]`, and the minute and seconds must be in range `[0 and 59]`.
-/// This is an extension to POSIX.1, which only allows hours to be in range `[0 through 24]`.
+/// The hour must be in range `[-167, 167]`, and the minute and seconds must be in range `[0, 59]`.
+/// This is an extension to POSIX.1, which only allows hours to be in range `[0, 24]`.
 fn transition_time<Input>() -> impl Parser<Input, Output = Seconds>
 where
     Input: Stream<Token = u8>,
