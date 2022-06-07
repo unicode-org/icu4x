@@ -32,7 +32,6 @@ fn langid_benches(c: &mut Criterion) {
             let mut group = c.benchmark_group("langid/construct");
 
             construct!(group, LanguageIdentifier, "langid", &data.canonicalized);
-            construct!(group, Locale, "locale", &data.canonicalized);
 
             group.finish();
         }
@@ -48,7 +47,6 @@ fn langid_benches(c: &mut Criterion) {
                 .collect();
 
             to_string!(group, LanguageIdentifier, "langid", &langids);
-            to_string!(group, Locale, "locale", &langids);
 
             group.finish();
         }
@@ -69,7 +67,6 @@ fn langid_benches(c: &mut Criterion) {
                 .collect();
 
             compare_struct!(group, LanguageIdentifier, "langid", &langids, &langids2);
-            compare_struct!(group, Locale, "locale", &langids, &langids2);
 
             compare_str!(
                 group,
@@ -78,7 +75,6 @@ fn langid_benches(c: &mut Criterion) {
                 &langids,
                 &data.canonicalized
             );
-            compare_str!(group, Locale, "locale", &langids, &data.canonicalized);
 
             group.finish();
         }
@@ -88,7 +84,6 @@ fn langid_benches(c: &mut Criterion) {
             let mut group = c.benchmark_group("langid/canonicalize");
 
             canonicalize!(group, LanguageIdentifier, "langid", &data.casing);
-            canonicalize!(group, Locale, "locale", &data.casing);
 
             group.finish();
         }

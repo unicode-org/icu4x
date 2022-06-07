@@ -425,9 +425,9 @@ impl From<&Locale> for ResourceOptions {
 }
 
 impl ResourceOptions {
-    pub fn cmp_bytes(&self, other: &[u8]) -> Ordering {
+    pub fn strict_cmp(&self, other: &[u8]) -> Ordering {
         if self.keywords.is_empty() {
-            self.langid.cmp_bytes(other)
+            self.langid.strict_cmp(other)
         } else {
             // TODO: Avoid the allocation
             self.write_to_string().as_bytes().cmp(other)

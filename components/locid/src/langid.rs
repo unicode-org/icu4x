@@ -159,7 +159,7 @@ impl LanguageIdentifier {
         Ok(lang_id.to_string())
     }
 
-    /// Compare this `LanguageIdentifier` with a BCP-47 string.
+    /// Compare this `LanguageIdentifier` with BCP-47 bytes.
     ///
     /// The return value is equivalent to what would happen if you first converted this
     /// `LanguageIdentifier` to a BCP-47 string and then performed a byte comparison.
@@ -188,10 +188,10 @@ impl LanguageIdentifier {
     ///     let b = ab[1];
     ///     assert!(a.cmp(b) == Ordering::Less);
     ///     let a_langid = LanguageIdentifier::from_bytes(a).unwrap();
-    ///     assert!(a_langid.cmp_bytes(b) == Ordering::Less);
+    ///     assert!(a_langid.strict_cmp(b) == Ordering::Less);
     /// }
     /// ```
-    pub fn cmp_bytes(&self, other: &[u8]) -> Ordering {
+    pub fn strict_cmp(&self, other: &[u8]) -> Ordering {
         let mut other_iter = other.split(|b| *b == b'-');
         let r = self.for_each_subtag_str(&mut |subtag| {
             if let Some(other) = other_iter.next() {
@@ -210,6 +210,62 @@ impl LanguageIdentifier {
             return Ordering::Less;
         }
         Ordering::Equal
+    }
+   /// Compare this `LanguageIdentifier` with a potentially unnormalized BCP-47 string.
+    ///
+    /// The return value is equivalent to what would happen if you first parsed the
+    /// BCP-47 string to a `LanguageIdentifier` and then performed a structucal comparison.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::locid::LanguageIdentifier;
+    /// use std::cmp::Ordering;
+    ///
+    /// let bcp47_strings: &[&[u8]] = &[
+    ///     "pl-LaTn-pL",
+    ///     "uNd",
+    ///     "UND-FONIPA",
+    ///     "UnD-t-m0-TrUe",
+    ///     "uNd-u-CA-Japanese",
+    ///     "ZH",
+    /// ];
+    ///
+    /// for a in bcp47_strings {
+    ///     assert!(LanguageIdentifier::from_bytes(a).unwrap().normalizing_eq(a));
+    /// }
+    /// ``` 
+    pub fn normalizing_eq(&self, other: &str) -> bool {
+        
+        macro_rules! subtag_matches {
+            ($T:ty, $iter:ident, $expected:expr) => {
+                $iter
+                    .next()
+                    .map(|b| <$T>::from_bytes(b) == Ok($expected))
+                    .unwrap_or(false)
+            };
+        }
+        
+        let mut iter = get_subtag_iterator(other.as_bytes());
+        if !subtag_matches!(subtags::Language, iter, self.language) {
+            return false;
+        }
+        if let Some(ref script) = self.script {
+            if !subtag_matches!(subtags::Script, iter, *script) {
+                return false;
+            }
+        }
+        if let Some(ref region) = self.region {
+            if !subtag_matches!(subtags::Region, iter, *region) {
+                return false;
+            }
+        }
+        for variant in self.variants.iter() {
+            if !subtag_matches!(subtags::Variant, iter, *variant) {
+                return false;
+            }
+        }
+        iter.next() == None
     }
 
     pub(crate) fn for_each_subtag_str<E, F>(&self, f: &mut F) -> Result<(), E>
@@ -281,45 +337,6 @@ fn test_writeable() {
     );
 }
 
-macro_rules! subtag_matches {
-    ($T:ty, $iter:ident, $expected:expr) => {
-        $iter
-            .next()
-            .map(|b| <$T>::from_bytes(b) == Ok($expected))
-            .unwrap_or(false)
-    };
-}
-
-impl PartialEq<&str> for LanguageIdentifier {
-    fn eq(&self, other: &&str) -> bool {
-        self == *other
-    }
-}
-
-impl PartialEq<str> for LanguageIdentifier {
-    fn eq(&self, other: &str) -> bool {
-        let mut iter = get_subtag_iterator(other.as_bytes());
-        if !subtag_matches!(subtags::Language, iter, self.language) {
-            return false;
-        }
-        if let Some(ref script) = self.script {
-            if !subtag_matches!(subtags::Script, iter, *script) {
-                return false;
-            }
-        }
-        if let Some(ref region) = self.region {
-            if !subtag_matches!(subtags::Region, iter, *region) {
-                return false;
-            }
-        }
-        for variant in self.variants.iter() {
-            if !subtag_matches!(subtags::Variant, iter, *variant) {
-                return false;
-            }
-        }
-        iter.next() == None
-    }
-}
 
 /// # Examples
 ///

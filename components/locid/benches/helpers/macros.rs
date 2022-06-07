@@ -12,7 +12,7 @@ macro_rules! overview {
                     let value: Result<$struct, _> = black_box(s).parse();
                     values.push(value.expect("Parsing failed"));
                 }
-                let _ = values.iter().filter(|v| *v == $compare).count();
+                let _ = values.iter().filter(|&v| v.normalizing_eq($compare)).count();
 
                 let mut strings = vec![];
                 for value in &values {
@@ -76,14 +76,14 @@ macro_rules! compare_str {
         $c.bench_function(BenchmarkId::new("str", $struct_name), |b| {
             b.iter(|| {
                 for (lid, s) in $data1.iter().zip($data2.iter()) {
-                    let _ = black_box(lid) == &black_box(s).as_str();
+                    let _ = black_box(lid).normalizing_eq(&black_box(s));
                 }
             })
         });
-        $c.bench_function(BenchmarkId::new("cmp_bytes", $struct_name), |b| {
+        $c.bench_function(BenchmarkId::new("strict_cmp", $struct_name), |b| {
             b.iter(|| {
                 for (lid, s) in $data1.iter().zip($data2.iter()) {
-                    let _ = black_box(lid).cmp_bytes(&black_box(s).as_str().as_bytes());
+                    let _ = black_box(lid).strict_cmp(&black_box(s).as_str().as_bytes());
                 }
             })
         });

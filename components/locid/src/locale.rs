@@ -129,7 +129,7 @@ impl Locale {
         Ok(locale.to_string())
     }
 
-    /// Compare this `Locale` with a BCP-47 string.
+    /// Compare this `Locale` with BCP-47 bytes.
     ///
     /// The return value is equivalent to what would happen if you first converted this
     /// `Locale` to a BCP-47 string and then performed a byte comparison.
@@ -158,10 +158,10 @@ impl Locale {
     ///     let b = ab[1];
     ///     assert!(a.cmp(b) == Ordering::Less);
     ///     let a_langid = Locale::from_bytes(a).unwrap();
-    ///     assert!(a_langid.cmp_bytes(b) == Ordering::Less);
+    ///     assert!(a_langid.strict_cmp(b) == Ordering::Less);
     /// }
     /// ```
-    pub fn cmp_bytes(&self, other: &[u8]) -> Ordering {
+    pub fn strict_cmp(&self, other: &[u8]) -> Ordering {
         let mut other_iter = other.split(|b| *b == b'-');
         let r = self.for_each_subtag_str(&mut |subtag| {
             if let Some(other) = other_iter.next() {
@@ -180,6 +180,76 @@ impl Locale {
             return Ordering::Less;
         }
         Ordering::Equal
+    }
+
+
+    /// Compare this `Locale` with a potentially unnormalized BCP-47 string.
+    ///
+    /// The return value is equivalent to what would happen if you first parsed the
+    /// BCP-47 string to a `Locale` and then performed a structucal comparison.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::locid::Locale;
+    /// use std::cmp::Ordering;
+    ///
+    /// let bcp47_strings: &[&[u8]] = &[
+    ///     "pl-LaTn-pL",
+    ///     "uNd",
+    ///     "UND-FONIPA",
+    ///     "UnD-t-m0-TrUe",
+    ///     "uNd-u-CA-Japanese",
+    ///     "ZH",
+    /// ];
+    ///
+    /// for a in bcp47_strings {
+    ///     assert!(Locale::from_bytes(a).unwrap().normalizing_eq(a));
+    /// }
+    /// ```
+    pub fn normalizing_eq(&self, other: &str) -> bool {
+
+        macro_rules! subtag_matches {
+            ($T:ty, $iter:ident, $expected:expr) => {
+                $iter
+                    .next()
+                    .map(|b| <$T>::from_bytes(b) == Ok($expected))
+                    .unwrap_or(false)
+            };
+        }
+
+        let mut iter = get_subtag_iterator(other.as_bytes());
+        if !subtag_matches!(subtags::Language, iter, self.id.language) {
+            return false;
+        }
+        if let Some(ref script) = self.id.script {
+            if !subtag_matches!(subtags::Script, iter, *script) {
+                return false;
+            }
+        }
+        if let Some(ref region) = self.id.region {
+            if !subtag_matches!(subtags::Region, iter, *region) {
+                return false;
+            }
+        }
+        for variant in self.id.variants.iter() {
+            if !subtag_matches!(subtags::Variant, iter, *variant) {
+                return false;
+            }
+        }
+        if !self.extensions.is_empty() {
+            match extensions::Extensions::try_from_iter(&mut iter) {
+                Ok(exts) => {
+                    if self.extensions != exts {
+                        return false;
+                    }
+                }
+                Err(_) => {
+                    return false;
+                }
+            }
+        }
+        iter.next() == None
     }
 
     pub(crate) fn for_each_subtag_str<E, F>(&self, f: &mut F) -> Result<(), E>
@@ -263,58 +333,6 @@ fn test_writeable() {
         "en-001-x-foo-bar",
     );
     assert_writeable_eq!(Locale::from_str("und-t-m0-true").unwrap(), "und-t-m0-true",);
-}
-
-impl PartialEq<&str> for Locale {
-    fn eq(&self, other: &&str) -> bool {
-        self == *other
-    }
-}
-
-macro_rules! subtag_matches {
-    ($T:ty, $iter:ident, $expected:expr) => {
-        $iter
-            .next()
-            .map(|b| <$T>::from_bytes(b) == Ok($expected))
-            .unwrap_or(false)
-    };
-}
-
-impl PartialEq<str> for Locale {
-    fn eq(&self, other: &str) -> bool {
-        let mut iter = get_subtag_iterator(other.as_bytes());
-        if !subtag_matches!(subtags::Language, iter, self.id.language) {
-            return false;
-        }
-        if let Some(ref script) = self.id.script {
-            if !subtag_matches!(subtags::Script, iter, *script) {
-                return false;
-            }
-        }
-        if let Some(ref region) = self.id.region {
-            if !subtag_matches!(subtags::Region, iter, *region) {
-                return false;
-            }
-        }
-        for variant in self.id.variants.iter() {
-            if !subtag_matches!(subtags::Variant, iter, *variant) {
-                return false;
-            }
-        }
-        if !self.extensions.is_empty() {
-            match extensions::Extensions::try_from_iter(&mut iter) {
-                Ok(exts) => {
-                    if self.extensions != exts {
-                        return false;
-                    }
-                }
-                Err(_) => {
-                    return false;
-                }
-            }
-        }
-        iter.next() == None
-    }
 }
 
 /// # Examples
