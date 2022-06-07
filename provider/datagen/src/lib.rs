@@ -73,8 +73,8 @@ use icu_provider_adapters::filter::Filterable;
 use icu_provider_fs::export::serializers;
 use rayon::prelude::*;
 use std::collections::HashSet;
+use std::io::{BufRead, BufReader};
 use std::path::{Path, PathBuf};
-use std::io::{BufReader, BufRead};
 
 /// Parses a list of human-readable key identifiers and returns a
 /// list of [`ResourceKey`]s. Invalid key names are ignored.
@@ -155,18 +155,20 @@ pub fn keys_from_file<P: AsRef<Path>>(path: P) -> std::io::Result<Vec<ResourceKe
 /// ```
 pub fn keys_from_bin<P: AsRef<Path>>(path: P) -> std::io::Result<Vec<ResourceKey>> {
     let file = std::fs::read(path.as_ref())?;
-    let candidates = (0..file.len()).filter_map(|i| {
-        if file[i..].starts_with(icu_provider::leading_tag!().as_bytes()) {
-            let i = i + icu_provider::leading_tag!().len();
-            for j in i..Ord::min(i+100, file.len())  { // Assume some maximum key size to not make this quadratic
-                if file[j..].starts_with(icu_provider::trailing_tag!().as_bytes()) {
-                    return Some(&file[i..j]);
+    let candidates = (0..file.len())
+        .filter_map(|i| {
+            if file[i..].starts_with(icu_provider::leading_tag!().as_bytes()) {
+                let i = i + icu_provider::leading_tag!().len();
+                for j in i..Ord::min(i + 100, file.len()) {
+                    // Assume some maximum key size to not make this quadratic
+                    if file[j..].starts_with(icu_provider::trailing_tag!().as_bytes()) {
+                        return Some(&file[i..j]);
+                    }
                 }
             }
-        }
-        None
-    })
-    .collect::<HashSet<_>>();
+            None
+        })
+        .collect::<HashSet<_>>();
 
     Ok(get_all_keys()
         .into_iter()
@@ -309,7 +311,10 @@ fn test_keys() {
 #[test]
 fn test_keys_from_file() {
     assert_eq!(
-        keys_from_file(PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("tests/data/work_log+keys.txt")).unwrap(),
+        keys_from_file(
+            PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("tests/data/work_log+keys.txt")
+        )
+        .unwrap(),
         vec![
             icu_datetime::provider::calendar::DatePatternsV1Marker::KEY,
             icu_datetime::provider::calendar::DateSkeletonPatternsV1Marker::KEY,
