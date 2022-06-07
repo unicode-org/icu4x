@@ -36,7 +36,7 @@ impl Default for SourceData {
                     PathBuf::from(std::env!("CARGO_MANIFEST_DIR")).join("data"),
                     String::new(),
                 )
-                .unwrap(),
+                .expect("valid dir"),
             )),
             trie_type: TrieType::Small,
         }
@@ -94,11 +94,11 @@ impl SourceData {
     pub(crate) fn for_test() -> Self {
         Self::default()
             .with_cldr(icu_testdata::paths::cldr_json_root(), "full".to_string())
-            .unwrap()
+            .expect("testdata is valid")
             .with_uprops(icu_testdata::paths::uprops_toml_root(), TrieType::Small)
-            .unwrap()
+            .expect("testdata is valid")
             .with_coll(icu_testdata::paths::coll_toml_root())
-            .unwrap()
+            .expect("testdata is valid")
     }
 
     /// Paths to CLDR source data.
@@ -161,17 +161,18 @@ impl TomlCache {
     where
         for<'de> S: serde::Deserialize<'de> + 'static + Send + Sync,
     {
-        if self.cache.get(path).is_none() {
-            let file = self.root.open(path)?;
-            let file: S = toml::from_slice(&file)
-                .map_err(|e| crate::error::data_error_from_toml(e).with_display_context(&path))?;
-            self.cache.insert(path.to_string(), Box::new(file));
+        match self.cache.get(path) {
+            Some(x) => x,
+            None => {
+                let file = self.root.read_to_buf(path)?;
+                let file: S = toml::from_slice(&file).map_err(|e| {
+                    crate::error::data_error_from_toml(e).with_display_context(&path)
+                })?;
+                self.cache.insert(path.to_string(), Box::new(file))
+            }
         }
-        self.cache
-            .get(path)
-            .unwrap()
-            .downcast_ref::<S>()
-            .ok_or_else(|| DataError::custom("Uprops TOML error").with_type_context::<S>())
+        .downcast_ref::<S>()
+        .ok_or_else(|| DataError::custom("Uprops TOML error").with_type_context::<S>())
     }
 
     #[cfg_attr(not(feature = "experimental"), allow(dead_code))]
@@ -198,7 +199,7 @@ impl AbstractFs {
         }
     }
 
-    pub fn open(&self, path: &str) -> Result<Vec<u8>, DataError> {
+    pub fn read_to_buf(&self, path: &str) -> Result<Vec<u8>, DataError> {
         match self {
             Self::Fs(root) => {
                 log::trace!("Reading: {}/{}", root.display(), path);
@@ -209,7 +210,7 @@ impl AbstractFs {
                 log::trace!("Reading: {}/{}", root.join(prefix).display(), path);
                 let mut buf = Vec::new();
                 zip::ZipArchive::new(File::open(root)?)
-                    .unwrap()
+                    .unwrap("validated in constructor")
                     .by_name(&format!("{}{}", prefix, path))
                     .map_err(|e| {
                         DataError::custom("Zip")
@@ -228,7 +229,7 @@ impl AbstractFs {
                 .map(|e| -> Result<_, DataError> { Ok(PathBuf::from(e?.file_name())) })
                 .collect::<Result<_, DataError>>()?,
             Self::Zip(root, prefix) => zip::ZipArchive::new(File::open(root)?)
-                .unwrap()
+                .expect("validated in constructor")
                 .file_names()
                 .filter_map(|p| p.strip_prefix(prefix))
                 .filter_map(|p| p.strip_prefix('/'))

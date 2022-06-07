@@ -100,16 +100,15 @@ fn read_and_parse_json<'a, S>(paths: &'a CldrCache, path: &str) -> Result<&'a S,
 where
     for<'de> S: serde::Deserialize<'de> + 'static + Send + Sync,
 {
-    if paths.cache.get(path).is_none() {
-        let file = paths.root.open(path)?;
-        let file: S = serde_json::from_slice(&file)
-            .map_err(|e| DataError::from(e).with_path_context(&path))?;
-        paths.cache.insert(path.to_string(), Box::new(file));
+    match paths.cache.get(path) {
+        Some(x) => x,
+        None => {
+            let file = paths.root.read_to_buf(path)?;
+            let file: S = serde_json::from_slice(&file)
+                .map_err(|e| DataError::from(e).with_path_context(&path))?;
+            paths.cache.insert(path.to_string(), Box::new(file))
+        }
     }
-    paths
-        .cache
-        .get(path)
-        .unwrap()
-        .downcast_ref::<S>()
-        .ok_or_else(|| DataError::custom("CLDR JSON error").with_type_context::<S>())
+    .downcast_ref::<S>()
+    .ok_or_else(|| DataError::custom("CLDR JSON error").with_type_context::<S>())
 }
