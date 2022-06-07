@@ -11,14 +11,18 @@ use crate::{
 };
 use alloc::string::String;
 
-use icu_locid::{Locale};
+use icu_locid::Locale;
 
 use icu_provider::prelude::*;
 
+use crate::provider::{
+    calendar::{DatePatternsV1Marker, DateSkeletonPatternsV1Marker, DateSymbolsV1Marker},
+    week_data::WeekDataV1Marker,
+};
 use crate::{date::DateTimeInput, DateTimeFormatError, FormattedDateTime};
-
 use icu_calendar::any_calendar::{AnyCalendar, AnyCalendarKind};
-
+use icu_calendar::provider::JapaneseErasV1Marker;
+use icu_plurals::provider::OrdinalV1Marker;
 
 /// [`AnyDateTimeFormat`] is a [`DateTimeFormat`](crate::DateTimeFormat) capable of formatting
 /// dates from any calendar, selected at runtime.
@@ -80,18 +84,8 @@ impl AnyDateTimeFormat {
     where
         P: AnyProvider,
     {
-        let locale = locale.into();
-
-        let kind = AnyCalendarKind::from_locale(&locale)
-            .ok_or(DateTimeFormatError::MissingCalendarOnLocale)?;
-
-        let calendar = AnyCalendar::try_new_with_any_provider(kind, data_provider)?;
-
         let downcasting = data_provider.as_downcasting();
-        Ok(Self(
-            raw::DateTimeFormat::try_new(locale, &downcasting, options)?,
-            calendar,
-        ))
+        Self::try_new_unstable(locale, &downcasting, options)
     }
 
     /// Construct a new [`AnyDateTimeFormat`] from a data provider that implements
@@ -137,20 +131,68 @@ impl AnyDateTimeFormat {
     where
         P: BufferProvider,
     {
+        let deserializing = data_provider.as_deserializing();
+        Self::try_new_unstable(locale, &deserializing, options)
+    }
+
+    /// Construct a new [`AnyDateTimeFormat`] from a data provider that can provide all of the requested data.
+    ///
+    /// This method is **unstable**, more bounds may be added in the future as calendar support is added. It is
+    /// preferable to use a provider that implements `ResourceProvider<D>` for all `D`, and ensure data is loaded as
+    /// appropriate. The [`Self::try_new_with_buffer_provider()`], [`Self::try_new_with_any_provider()`] constructors
+    /// may also be used if compile stability is desired.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::calendar::{any_calendar::AnyCalendar, DateTime, Gregorian};
+    /// use icu::datetime::{options::length, any::AnyDateTimeFormat};
+    /// use icu::locid::Locale;
+    /// use icu_provider::any::DynProviderAnyMarkerWrap;
+    /// use std::str::FromStr;
+    ///
+    /// let provider = icu_testdata::get_provider();
+    ///
+    /// let mut options = length::Bag::from_date_time_style(length::Date::Medium, length::Time::Short);
+    ///
+    /// let dtf = AnyDateTimeFormat::try_new_unstable(Locale::from_str("en-u-ca-gregory").unwrap(), &provider, &options.into())
+    ///     .expect("Failed to create DateTimeFormat instance.");
+    ///
+    /// let datetime = DateTime::new_gregorian_datetime_from_integers(2020, 9, 1, 12, 34, 28, 0)
+    ///     .expect("Failed to construct DateTime.");
+    /// let any_datetime = datetime.to_any();
+    ///
+    /// let value = dtf.format_to_string(&any_datetime).expect("calendars should match");
+    /// assert_eq!(value, "Sep 1, 2020, 12:34 PM");
+    /// ```
+    #[inline(never)]
+    pub fn try_new_unstable<T, P>(
+        locale: T,
+        data_provider: &P,
+        options: &DateTimeFormatOptions,
+    ) -> Result<Self, DateTimeFormatError>
+    where
+        T: Into<Locale>,
+        P: ResourceProvider<DateSymbolsV1Marker>
+            + ResourceProvider<DatePatternsV1Marker>
+            + ResourceProvider<DateSkeletonPatternsV1Marker>
+            + ResourceProvider<OrdinalV1Marker>
+            + ResourceProvider<WeekDataV1Marker>
+            + ResourceProvider<JapaneseErasV1Marker>
+            + ?Sized,
+    {
         let locale = locale.into();
 
         let kind = AnyCalendarKind::from_locale(&locale)
             .ok_or(DateTimeFormatError::MissingCalendarOnLocale)?;
 
-        let calendar = AnyCalendar::try_new_with_buffer_provider(kind, data_provider)?;
+        let calendar = AnyCalendar::try_new_unstable(kind, data_provider)?;
 
-        let deserializing = data_provider.as_deserializing();
         Ok(Self(
-            raw::DateTimeFormat::try_new(locale, &deserializing, options)?,
+            raw::DateTimeFormat::try_new(locale, data_provider, options)?,
             calendar,
         ))
     }
-
     /// Takes a [`DateTimeInput`] implementer and returns an instance of a [`FormattedDateTime`]
     /// that contains all information necessary to display a formatted date and operate on it.
     ///
