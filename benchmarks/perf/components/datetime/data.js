@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1654566715077,
+  "lastUpdate": 1654626208815,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -37415,6 +37415,102 @@ window.BENCHMARK_DATA = {
             "name": "pattern/parse",
             "value": 4958,
             "range": "± 4",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "dminor@mozilla.com",
+            "name": "Dan Minor",
+            "username": "dminor"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "00da9ecc6ea11b69dc27e768d59d30e05d80e7fc",
+          "message": "Use FixedDecimalFormat in DateTimeFormat (#1952)\n\n* Use FixedDecimalFormat in DateTimeFormat\r\n\r\n* Fix datetime benches\r\n\r\n* Bench and test fixes\r\n\r\n* Address review feedback\r\n\r\n* Another test fix\r\n\r\n* Use new FixedDecimal::concatenate_right method\r\n\r\n* Review feedback\r\n\r\n* Clean up a few more unnecessary casts\r\n\r\n* Fixes for changes to FixedDecimal",
+          "timestamp": "2022-06-07T14:09:23-04:00",
+          "tree_id": "14b414c5c260c74cec80ed34f5c7dd12b8b4655f",
+          "url": "https://github.com/unicode-org/icu4x/commit/00da9ecc6ea11b69dc27e768d59d30e05d80e7fc"
+        },
+        "date": 1654626185581,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 107758,
+            "range": "± 6914",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 1064567,
+            "range": "± 79111",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 220112,
+            "range": "± 26377",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/DateTimeFormat/format_to_write",
+            "value": 112178,
+            "range": "± 6463",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/DateTimeFormat/format_to_string",
+            "value": 118637,
+            "range": "± 9893",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/format",
+            "value": 116464,
+            "range": "± 6539",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/to_string",
+            "value": 117756,
+            "range": "± 13833",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/ZonedDateTimeFormat/format_to_write",
+            "value": 195017,
+            "range": "± 12083",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/ZonedDateTimeFormat/format_to_string",
+            "value": 222709,
+            "range": "± 15631",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/format",
+            "value": 223528,
+            "range": "± 18014",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/to_string",
+            "value": 240078,
+            "range": "± 16645",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "pattern/parse",
+            "value": 5061,
+            "range": "± 302",
             "unit": "ns/iter"
           }
         ]
