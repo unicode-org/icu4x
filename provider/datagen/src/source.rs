@@ -94,8 +94,11 @@ impl SourceData {
     pub(crate) fn for_test() -> Self {
         Self::default()
             .with_cldr(icu_testdata::paths::cldr_json_root(), "full".to_string())
+            .unwrap()
             .with_uprops(icu_testdata::paths::uprops_toml_root(), TrieType::Small)
+            .unwrap()
             .with_coll(icu_testdata::paths::coll_toml_root())
+            .unwrap()
     }
 
     /// Paths to CLDR source data.
@@ -159,7 +162,7 @@ impl TomlCache {
         for<'de> S: serde::Deserialize<'de> + 'static + Send + Sync,
     {
         if self.cache.get(path).is_none() {
-            let file = self.root.open(&path)?;
+            let file = self.root.open(path)?;
             let file: S = toml::from_slice(&file)
                 .map_err(|e| crate::error::data_error_from_toml(e).with_display_context(&path))?;
             self.cache.insert(path.to_string(), Box::new(file));
@@ -228,7 +231,7 @@ impl AbstractFs {
                 .unwrap()
                 .file_names()
                 .filter_map(|p| p.strip_prefix(prefix))
-                .filter_map(|p| p.strip_prefix("/"))
+                .filter_map(|p| p.strip_prefix('/'))
                 .filter_map(|p| p.strip_prefix(path))
                 .filter_map(|suffix| suffix.split('/').next())
                 .filter(|s| !s.is_empty())

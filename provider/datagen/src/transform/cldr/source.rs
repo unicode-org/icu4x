@@ -37,24 +37,24 @@ impl CldrCache {
     }
 
     pub(crate) fn cldr_core(&self) -> CldrDirNoLang<'_> {
-        CldrDirNoLang(&self, "cldr-core".to_string())
+        CldrDirNoLang(self, "cldr-core".to_string())
     }
 
     pub(crate) fn cldr_numbers(&self) -> CldrDirLang<'_> {
-        CldrDirLang(&self, format!("cldr-numbers-{}/main", self.locale_subset))
+        CldrDirLang(self, format!("cldr-numbers-{}/main", self.locale_subset))
     }
 
     pub(crate) fn cldr_misc(&self) -> CldrDirLang<'_> {
-        CldrDirLang(&self, format!("cldr-misc-{}/main", self.locale_subset))
+        CldrDirLang(self, format!("cldr-misc-{}/main", self.locale_subset))
     }
 
     pub(crate) fn cldr_bcp47(&self) -> CldrDirNoLang<'_> {
-        CldrDirNoLang(&self, "cldr-bcp47/bcp47".to_string())
+        CldrDirNoLang(self, "cldr-bcp47/bcp47".to_string())
     }
 
     pub(crate) fn cldr_dates(&self, cal: &str) -> CldrDirLang<'_> {
         CldrDirLang(
-            &self,
+            self,
             if cal == "gregorian" {
                 format!("cldr-dates-{}/main", self.locale_subset)
             } else {
@@ -71,7 +71,7 @@ impl<'a> CldrDirNoLang<'a> {
     where
         for<'de> S: serde::Deserialize<'de> + 'static + Send + Sync,
     {
-        read_and_parse_json(&self.0, &format!("{}/{}", self.1, file_name))
+        read_and_parse_json(self.0, &format!("{}/{}", self.1, file_name))
     }
 }
 
@@ -86,7 +86,7 @@ impl<'a> CldrDirLang<'a> {
     where
         for<'de> S: serde::Deserialize<'de> + 'static + Send + Sync,
     {
-        read_and_parse_json(&self.0, &format!("{}/{}/{}", self.1, lang, file_name))
+        read_and_parse_json(self.0, &format!("{}/{}/{}", self.1, lang, file_name))
     }
 
     pub(crate) fn list_langs(&self) -> Result<impl Iterator<Item = LanguageIdentifier>, DataError> {
