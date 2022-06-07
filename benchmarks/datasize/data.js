@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1654625515932,
+  "lastUpdate": 1654625633568,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -16793,6 +16793,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/00da9ecc6ea11b69dc27e768d59d30e05d80e7fc"
         },
         "date": 1654625486932,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 2300847,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "58569820+nordzilla@users.noreply.github.com",
+            "name": "Erik Nordin",
+            "username": "nordzilla"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "d3dbdac9200fa0907b89638bfbac52decb6c3ac9",
+          "message": "Parse TZif binary files using Combine (#1999)\n\n* Add TZif data representations\r\n\r\n* Add TZif parser\r\n\r\n* Add tests with real TZif files",
+          "timestamp": "2022-06-07T11:11:16-07:00",
+          "tree_id": "6b652a417f6aae571358435aa610f5cf36d162ca",
+          "url": "https://github.com/unicode-org/icu4x/commit/d3dbdac9200fa0907b89638bfbac52decb6c3ac9"
+        },
+        "date": 1654625605333,
         "tool": "ndjson",
         "benches": [
           {
