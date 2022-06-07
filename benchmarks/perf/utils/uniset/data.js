@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1654535162189,
+  "lastUpdate": 1654566544251,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -30455,6 +30455,60 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 40394488,
             "range": "± 59584",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/worst",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/worst",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "a6377a6b7c2f264663427182265c5b154cf1b35f",
+          "message": "Add another method to icu_locid for vertical fallback (#1992)",
+          "timestamp": "2022-06-06T18:38:58-07:00",
+          "tree_id": "d266d2f2e3b4e1477a8025aafdba06cf7a9d2a79",
+          "url": "https://github.com/unicode-org/icu4x/commit/a6377a6b7c2f264663427182265c5b154cf1b35f"
+        },
+        "date": 1654566520103,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 51094324,
+            "range": "± 980892",
             "unit": "ns/iter"
           },
           {
