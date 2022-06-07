@@ -72,7 +72,7 @@ impl AsULE for char {
 
     #[inline]
     fn to_unaligned(self) -> Self::ULE {
-        let [u0, u1, u2, u3] = u32::from(self).to_le_bytes();
+        let [u0, u1, u2, _u3] = u32::from(self).to_le_bytes();
         CharULE([u0, u1, u2])
     }
 
