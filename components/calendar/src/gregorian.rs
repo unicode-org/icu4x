@@ -120,7 +120,7 @@ impl Calendar for Gregorian {
     }
 
     fn any_calendar_kind(&self) -> Option<AnyCalendarKind> {
-        Some(AnyCalendarKind::Iso)
+        Some(AnyCalendarKind::Gregorian)
     }
 }
 
