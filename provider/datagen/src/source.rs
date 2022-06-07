@@ -210,7 +210,7 @@ impl AbstractFs {
                 log::trace!("Reading: {}/{}", root.join(prefix).display(), path);
                 let mut buf = Vec::new();
                 zip::ZipArchive::new(File::open(root)?)
-                    .unwrap("validated in constructor")
+                    .expect("validated in constructor")
                     .by_name(&format!("{}{}", prefix, path))
                     .map_err(|e| {
                         DataError::custom("Zip")
