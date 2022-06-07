@@ -641,8 +641,7 @@ impl CharacterAndClass {
     pub fn ccc(&self) -> CanonicalCombiningClass {
         CanonicalCombiningClass((self.0 >> 24) as u8)
     }
-    // XXX need better naming here.
-    pub fn set_ccc(&mut self, ccc: &CodePointTrie<CanonicalCombiningClass>) {
+    pub fn set_ccc_from_trie(&mut self, ccc: &CodePointTrie<CanonicalCombiningClass>) {
         debug_assert_eq!(self.0 >> 24, 0xFF, "This method has already been called!");
         let scalar = self.0 & 0xFFFFFF;
         self.0 = ((ccc.get(scalar).0 as u32) << 24) | scalar;
@@ -668,7 +667,7 @@ where
 {
     iter: I,
     /// Already computed but not yet returned `CollationElement`s.
-    pending: SmallVec<[CollationElement; 6]>, // TODO Figure out good length
+    pending: SmallVec<[CollationElement; 6]>, // TODO(#2005): Figure out good length
     /// The index of the next item to be returned from `pending`. The purpose
     /// of this index is to avoid moving the rest of the items.
     pending_pos: usize,
@@ -695,7 +694,7 @@ where
     /// if `upcoming` isn't empty (with `iter` having been exhausted), the
     /// first `char` in `upcoming` must have its decompostion start with a
     /// starter.
-    upcoming: SmallVec<[char; 10]>, // TODO Figure out good length; longest contraction suffix in CLDR 40 is 7 characters long
+    upcoming: SmallVec<[char; 10]>, // TODO(#2005): Figure out good length; longest contraction suffix in CLDR 40 is 7 characters long
     /// The root collation data.
     root: &'data CollationDataV1<'data>,
     /// Tailoring if applicable.
@@ -982,21 +981,18 @@ where
                                 end_combining += 1;
                             }
                             '\u{0F73}' => {
-                                // XXX check if we can actually come here.
                                 // TIBETAN VOWEL SIGN II
                                 self.upcoming.push('\u{0F71}');
                                 self.upcoming.push('\u{0F72}');
                                 end_combining += 1;
                             }
                             '\u{0F75}' => {
-                                // XXX check if we can actually come here.
                                 // TIBETAN VOWEL SIGN UU
                                 self.upcoming.push('\u{0F71}');
                                 self.upcoming.push('\u{0F74}');
                                 end_combining += 1;
                             }
                             '\u{0F81}' => {
-                                // XXX check if we can actually come here.
                                 // TIBETAN VOWEL SIGN REVERSED II
                                 self.upcoming.push('\u{0F71}');
                                 self.upcoming.push('\u{0F80}');
@@ -1113,15 +1109,13 @@ where
             let mut next_is_known_to_decompose_to_non_starter = false; // micro optimization to avoid checking `UnicodeSet` twice
             let mut ce32;
             let mut data: &CollationDataV1 = self.tailoring;
-            let mut combining_characters: SmallVec<[CharacterAndClass; 7]> = SmallVec::new(); // XXX figure out proper size
+            let mut combining_characters: SmallVec<[CharacterAndClass; 7]> = SmallVec::new(); // TODO(#2005): Figure out good length
 
             // Betting that fusing the NFD algorithm into this one at the
             // expense of the repetitiveness below, the common cases become
             // fast in a way that offsets the lack of the canonical closure.
             // The wall of code before the "Slow path" is an attempt to
             // optimize based on that bet.
-            // TODO: ASCII fast path here if ASCII not tailored with
-            // starters.
             let hangul_offset = u32::from(c).wrapping_sub(HANGUL_S_BASE); // SIndex in the spec
             if hangul_offset >= HANGUL_S_COUNT {
                 let decomposition = self.trie.get(u32::from(c));
@@ -1141,13 +1135,13 @@ where
                         // part of the search root. Instead, all non-Korean tailorings
                         // can use a shared copy of the non-Korean search jamo table.
                         //
-                        // XXX This isn't actually true with the current jamo search
-                        // expansions!
+                        // TODO(#1941): This isn't actually true with the current jamo
+                        // search expansions!
 
-                        // TODO: Instead of having different jamo CE32 table for "search"
-                        // collations, we could instead decompose the archaic jamo to
-                        // the modern approximation sequences here and then map those
-                        // by looking up the modern jamo from the normal root.
+                        // TODO(#1941): Instead of having different jamo CE32 table for
+                        // "search" collations, we could instead decompose the archaic
+                        // jamo to the modern approximation sequences here and then map
+                        // those by looking up the modern jamo from the normal root.
 
                         // We need to set data to root, because archaic jamo refer to
                         // the root.
@@ -1170,6 +1164,8 @@ where
                                 return ce;
                             }
                         }
+                        // TODO(2003): Figure out if it would be an optimization to
+                        // handle `Implicit` and `Offset` tags here.
                     } else {
                         next_is_known_to_decompose_to_non_starter = true;
                     }
@@ -1213,10 +1209,18 @@ where
                                                 return ce;
                                             }
                                         }
-                                        TrieResult::Intermediate(trie_ce32)
-                                        | TrieResult::FinalValue(trie_ce32) => {
-                                            // Assuming that we don't have longer matches with
-                                            // a starter at this point. XXX Is this true?
+                                        TrieResult::Intermediate(trie_ce32) => {
+                                            if !ce32.at_least_one_suffix_contains_starter() {
+                                                if let Some(ce) =
+                                                    CollationElement32::new(trie_ce32 as u32)
+                                                        .to_ce_simple_or_long_primary()
+                                                {
+                                                    self.mark_prefix_unmatchable();
+                                                    return ce;
+                                                }
+                                            }
+                                        }
+                                        TrieResult::FinalValue(trie_ce32) => {
                                             if let Some(ce) =
                                                 CollationElement32::new(trie_ce32 as u32)
                                                     .to_ce_simple_or_long_primary()
@@ -1363,8 +1367,9 @@ where
                 // No prefix matches on Hangul
                 self.mark_prefix_unmatchable();
                 if self.is_next_decomposition_starts_with_starter() {
-                    // XXX Figure out if non-self-contained jamo CE32s exist in
-                    // CLDR for modern jamo.
+                    // TODO(#1941): Assuming self-contained CE32s is OK for the root,
+                    // but not currently OK for search collation, which at this time
+                    // do not support tailored Hangul.
                     self.pending.push(
                         CollationElement32::new_from_ule(
                             self.jamo[(HANGUL_V_BASE - HANGUL_L_BASE + v) as usize],
@@ -1424,6 +1429,8 @@ where
             let mut drain_from_suffix = 0;
             'outer: loop {
                 'ce32loop: loop {
+                    // TODO(#2002): Ensure that the CE32 flavors in this loop are checked in the optimal
+                    // order given their frequency in real workloads.
                     if let Some(ce) = ce32.to_ce_self_contained() {
                         self.pending.push(ce);
                         break 'ce32loop;
@@ -1485,7 +1492,7 @@ where
                                 let mut i = 0;
                                 let mut most_recent_skipped_ccc =
                                     CanonicalCombiningClass::NotReordered;
-                                // XXX pending removals will in practice be small numbers.
+                                // TODO(#2001): Pending removals will in practice be small numbers.
                                 // What if we made the item smaller than usize?
                                 let mut pending_removals: SmallVec<[usize; 1]> = SmallVec::new();
                                 while i < combining_characters.len() {
@@ -1661,13 +1668,17 @@ where
                             }
                             Tag::Digit => {
                                 if let Some(high_bits) = self.numeric_primary {
-                                    let mut digits: SmallVec<[u8; 8]> = SmallVec::new(); // XXX figure out proper size
+                                    let mut digits: SmallVec<[u8; 8]> = SmallVec::new(); // TODO(#2005): Figure out good length
                                     digits.push(ce32.digit());
                                     let numeric_primary = u32::from(high_bits) << 24;
                                     if combining_characters.is_empty() {
                                         // Numeric collation doesn't work with combining
                                         // characters applied to the digits.
-                                        // XXX Does any tailoring actually tailor digits?
+                                        // It's unclear if reading from the tailoring first
+                                        // is needed for practical purposes, since it doesn't
+                                        // make much sense to tailor the numeric value of digits.
+                                        // Performing the usual fallback pattern anyway just in
+                                        // case.
                                         may_have_contracted_starter = true;
                                         while let Some(upcoming) = self.look_ahead(looked_ahead) {
                                             looked_ahead += 1;
@@ -1774,7 +1785,16 @@ where
                                         let mut primary =
                                             numeric_primary | ((132 - 4 + num_pairs) << 16);
                                         // Find the length without trailing 00 pairs.
-                                        // XXX what guarantees [len - 2] not being index out of bounds?
+                                        //
+                                        // The indexing below is within bounds due to the following:
+                                        //
+                                        // * We skipped leading zeros.
+                                        // * If `len == 2`: The loop condition is false, because
+                                        //   `head[len - 2]` isn't a leading zero.
+                                        // * If `len == 1`: The loop condition is false, because
+                                        //   `head[len - 1]` isn't a leading zero, and `&&`
+                                        //   short-circuts, so the `head[len - 2]` access doesn't
+                                        //   occur.
                                         while head[len - 1] == 0 && head[len - 2] == 0 {
                                             len -= 2;
                                         }
@@ -1815,8 +1835,6 @@ where
                                 ce32 = data.get_ce32(ce32.index());
                                 continue 'ce32loop;
                             }
-                            // XXX how common are the following two cases? Should these
-                            // be baked into the fast path, since they yield a single CE?
                             Tag::Offset => {
                                 self.pending.push(data.ce_from_offset_ce32(c, ce32));
                                 break 'ce32loop;
@@ -1851,7 +1869,7 @@ where
                         c = combining_characters[i].character();
                         let diacritic_index = (c as usize).wrapping_sub(COMBINING_DIACRITICS_BASE);
                         if let Some(secondary) = self.diacritics.get(diacritic_index) {
-                            // TODO: unlikely annotation for the first two conditions here:
+                            // TODO(#2006): unlikely annotation for the first two conditions here:
                             if c == '\u{0307}'
                                 && self.lithuanian_dot_above
                                 && i + 1 < combining_characters.len()
@@ -1887,7 +1905,7 @@ where
                         }
                         continue 'outer;
                     }
-                    // XXX the borrow checker didn't like the iterator formulation
+                    // Note: The borrow checker didn't like the iterator formulation
                     // for the loop below, because the `Drain` would have kept `self`
                     // mutable borrowed when trying to call `prefix_push`. To change
                     // this, `prefix` and `prefix_push` would need to be refactored
@@ -1898,7 +1916,7 @@ where
                         self.prefix_push(ch);
                         i += 1;
                     }
-                    // XXX The above makes prefix out of sync when starter-contracting
+                    // TODO(#2004): The above makes prefix out of sync when starter-contracting
                     // contractions use `pending_removals` instead of `drain_from_suffix`.
                     // Do there exist prefixes that overlap contraction suffixes?
                     // At least as of CLDR 40, the two possible non-starters in prefixes,
@@ -2018,7 +2036,7 @@ where
             // an item more than once.
             combining_characters
                 .iter_mut()
-                .for_each(|cc| cc.set_ccc(self.ccc));
+                .for_each(|cc| cc.set_ccc_from_trie(self.ccc));
             combining_characters.sort_by_key(|cc| cc.ccc());
         }
     }
