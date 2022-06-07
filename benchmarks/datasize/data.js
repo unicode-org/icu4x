@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1654625633568,
+  "lastUpdate": 1654643268136,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -16823,6 +16823,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/d3dbdac9200fa0907b89638bfbac52decb6c3ac9"
         },
         "date": 1654625605333,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 2300847,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "90648681+snktd@users.noreply.github.com",
+            "name": "snktd",
+            "username": "snktd"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "142c718dc1627972ce186e70828c7e4c00a44c4e",
+          "message": "Create wrapper object for ScriptExtensions array return value  #1536 (#1990)\n\n* Create wrapper object for ScriptExtensions array return value #1536\r\n\r\n* #1536 Create wrapper object for ScriptExtensions array return value\r\n\r\n* Resolving a minor issue with code comments.\r\n\r\n* Update components/properties/src/script.rs\r\n\r\nCo-authored-by: Shane F. Carr <shane@unicode.org>\r\n\r\n* Addressing review comments.\r\n\r\n* Making ScriptExtensionsSet.values private\r\n\r\n* Addressing a minor review comment.\r\n\r\nCo-authored-by: Shane F. Carr <shane@unicode.org>",
+          "timestamp": "2022-06-07T23:05:50Z",
+          "tree_id": "db3f8175b5c64af7a1cfd987c0a1206e20fd6d49",
+          "url": "https://github.com/unicode-org/icu4x/commit/142c718dc1627972ce186e70828c7e4c00a44c4e"
+        },
+        "date": 1654643246371,
         "tool": "ndjson",
         "benches": [
           {
