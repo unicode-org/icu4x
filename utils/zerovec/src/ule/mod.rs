@@ -214,11 +214,11 @@ where
 {
     #[inline]
     fn slice_to_unaligned(slice: &[Self]) -> Option<&[Self::ULE]> {
-        // This is safe because on little-endian platforms, the byte sequence of &[T]
-        // is equivalent to the byte sequence of &[T::ULE] by the contract of EqULE,
-        // and &[T::ULE] has equal or looser alignment than &[T].
-        let ule_slice =
-            unsafe { core::slice::from_raw_parts(slice.as_ptr() as *const Self::ULE, slice.len()) };
+        // char 4 bytes will be converted to 3 bytes of CharULE by skipping every 4th byte of information
+        let reduced_slice: &[u8] = slice.iter().copied().map(|c| c);
+        let ule_slice = unsafe {
+            core::slice::from_raw_parts(reduced_slice.as_ptr() as *const Self::ULE, slice.len())
+        };
         Some(ule_slice)
     }
 }

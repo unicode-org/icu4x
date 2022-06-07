@@ -52,7 +52,7 @@ pub struct CharULE([u8; 3]);
 unsafe impl ULE for CharULE {
     #[inline]
     fn validate_byte_slice(bytes: &[u8]) -> Result<(), ZeroVecError> {
-        if bytes.len() % 3  != 0 {
+        if bytes.len() % 3 != 0 {
             return Err(ZeroVecError::length::<Self>(bytes.len()));
         }
         // Validate the bytes
