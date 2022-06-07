@@ -8,12 +8,13 @@ use icu_datetime::provider::time_zones::{
 };
 use std::borrow::Cow;
 use tinystr::TinyStr8;
+use litemap::LiteMap;
 use zerovec::{ZeroMap, ZeroMap2d};
 
 use crate::transform::cldr::cldr_serde::{
     time_zones::time_zone_names::*, time_zones::CldrTimeZonesData,
 };
-use crate::transform::cldr::cldr_serde::time_zones::meta_zones::{ZonePeriod, LocationOrSubRegion, MetaZoneForPeriod};
+use crate::transform::cldr::cldr_serde::time_zones::meta_zones::{ZonePeriod, MetaLocationOrSubRegion, MetaZoneForPeriod};
 
 /// Performs part 1 of type fallback as specified in the UTS-35 spec for TimeZone Goals:
 /// https://unicode.org/reports/tr35/tr35-dates.html#Time_Zone_Goals
@@ -142,41 +143,52 @@ impl From<&CldrTimeZonesData> for ExemplarCitiesV1<'static> {
 impl From<&CldrTimeZonesData<'_>> for MetaZonePeriodV1<'static> {
     fn from(other: &CldrTimeZonesData) -> Self {
         let data = &other.meta_zone_periods;
+        let bcp47_tzid_data = &other.bcp47_tzids;
+        let meta_zone_id_data = &other.meta_zone_ids;
         Self (
             data
                 .iter()
-                .filter_map(|(key, zone)| {
+                .flat_map(|(key, zone)| {
                     let mut key = key.clone();
                     match zone {
                         ZonePeriod::Region(periods) => {
-                            periods
-                                .iter()
-                                .map(|period| vec![(key.clone(), period.clone())])
+                            match bcp47_tzid_data.get(&key) {
+                                Some(bcp47) => {
+                                    vec![(key.clone(), periods.clone(), meta_zone_id_data.clone())]
+                                }
+                                None => panic!("Cannot find bcp47 for {:?}.", key),
+                            }
                         }
                         ZonePeriod::LocationOrSubRegion(place) => {
                             place
                                 .iter()
-                                .filter_map(move |(inner_key, location_or_subregion)| {
+                                .flat_map(move |(inner_key, location_or_subregion)| {
                                     let mut key = key.clone();
                                     key.push('/');
                                     key.push_str(inner_key);
                                     match location_or_subregion {
-                                        LocationOrSubRegion::Location(periods) => {
-                                            periods
-                                                .iter()
-                                                .map(|period| (key.clone(), period.clone()))
+                                        MetaLocationOrSubRegion::Location(periods) => {
+                                            match bcp47_tzid_data.get(&key) {
+                                                Some(bcp47) => {
+                                                    vec![(key.clone(), periods.clone(), meta_zone_id_data.clone())]
+                                                }
+                                                None => panic!("Cannot find bcp47 for {:?}.", key),
+                                            }
                                         }
-                                        LocationOrSubRegion::SubRegion(subregion) => {
+                                        MetaLocationOrSubRegion::SubRegion(subregion) => {
                                             subregion
                                                 .iter()
-                                                .filter_map(move |(inner_inner_key, periods)| {
+                                                .flat_map(move |(inner_inner_key, periods)| {
                                                     let mut key = key.clone();
                                                     key.push('/');
                                                     key.push_str(inner_inner_key);
-                                                    periods
-                                                        .iter()
-                                                        .map(|period| (key.clone(), period.clone()))
-                                                })
+                                                    match bcp47_tzid_data.get(&key) {
+                                                        Some(bcp47) => {
+                                                            vec![(key.clone(), periods.clone(), meta_zone_id_data.clone())]
+                                                        }
+                                                        None => panic!("Cannot find bcp47 for {:?}.", key),
+                                                    }
+                                                }).collect::<Vec<_>>()
                                         }
                                     }
                                 }).collect::<Vec<_>>()
@@ -421,17 +433,55 @@ fn iterate_zone_format_for_time_zone_id(
 }
 
 fn iterate_metazone_period(
-    pair: (TimeZoneBcp47Id, MetaZoneForPeriod),
-) -> impl Iterator<Item = (TimeZoneBcp47Id, str, MetaZoneId)> {
-    let (key1, metazone_period) = pair;
-    let period = if !metazone_period.uses_meta_zone.from.is_none() {
-        metazone_period.uses_meta_zone.from
-    } else {
-        "1970-00-00 00:00"
-    };
-    vec![(
-        key1,
-        period,
-        metazone_period.uses_meta_zone.mzone,
-    )]
+    pair: (TimeZoneBcp47Id, Vec<MetaZoneForPeriod>, LiteMap<String, MetaZoneId>),
+) -> impl Iterator<Item = (TimeZoneBcp47Id, String, MetaZoneId)> {
+    let (time_zone_key, periods, meta_zone_id_data) = pair;
+    periods
+        .iter()
+        .map(move |period| match &period.uses_meta_zone.from {
+            Some(from) => {
+                (
+                    time_zone_key,
+                    from.clone(),
+                    match meta_zone_id_data.get(&period.uses_meta_zone.mzone) {
+                        Some(meta_zone_short_id) => {
+                            meta_zone_short_id.clone()
+                        }
+                        None => {
+                            // TODO(#1781): Remove this special case once the short id is updated in CLDR
+                            if &period.uses_meta_zone.mzone == "Yukon" {
+                                MetaZoneId(tinystr::tinystr!(4, "yuko"))
+                            } else {
+                                panic!(
+                                    "Cannot find short id of meta zone for {:?}.",
+                                    &period.uses_meta_zone.mzone
+                                )
+                            }
+                        }
+                    }
+                )
+            }
+            None => {
+                (
+                    time_zone_key,
+                    String::from("1970-00-00 00:00"),
+                    match meta_zone_id_data.get(&period.uses_meta_zone.mzone) {
+                        Some(meta_zone_short_id) => {
+                            meta_zone_short_id.clone()
+                        }
+                        None => {
+                            // TODO(#1781): Remove this special case once the short id is updated in CLDR
+                            if &period.uses_meta_zone.mzone == "Yukon" {
+                                MetaZoneId(tinystr::tinystr!(4, "yuko"))
+                            } else {
+                                panic!(
+                                    "Cannot find short id of meta zone for {:?}.",
+                                    &period.uses_meta_zone.mzone
+                                )
+                            }
+                        }
+                    }
+                )
+            }
+        })
 }
