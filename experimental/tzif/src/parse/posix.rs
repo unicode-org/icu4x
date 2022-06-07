@@ -297,8 +297,7 @@ where
     Input: Stream<Token = u8>,
     Input::Error: ParseError<Input::Token, Input::Range, Input::Position>,
 {
-    byte(b'J')
-        .then(|_| bounded_natural(1, 365).map(|natural| TransitionDay::NoLeap(natural as u16)))
+    byte(b'J').with(bounded_natural(1, 365).map(|natural| TransitionDay::NoLeap(natural as u16)))
 }
 
 /// Parses a transition date specified by a leading `M`, e.g. `Mm.w.d`
@@ -313,13 +312,11 @@ where
     Input::Error: ParseError<Input::Token, Input::Range, Input::Position>,
 {
     byte(b'M')
-        .then(|_| {
-            (
-                bounded_natural(1, 12),
-                byte(b'.').then(|_| bounded_natural(1, 5)),
-                byte(b'.').then(|_| bounded_natural(0, 6)),
-            )
-        })
+        .with((
+            bounded_natural(1, 12),
+            byte(b'.').with(bounded_natural(1, 5)),
+            byte(b'.').with(bounded_natural(0, 6)),
+        ))
         .map(|(m, w, d)| TransitionDay::Mwd(m as u16, w as u16, d as u16))
 }
 
@@ -385,8 +382,8 @@ where
     combine::struct_parser! {
         DstTransitionInfo {
             variant_info: dst_variant_info(std_offset),
-            start_date: byte(b',').then(|_| transition_date()),
-            end_date: byte(b',').then(|_| transition_date()),
+            start_date: byte(b',').with(transition_date()),
+            end_date: byte(b',').with(transition_date()),
         }
     }
 }
