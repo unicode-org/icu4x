@@ -366,12 +366,12 @@ impl<'data> ScriptWithExtensions<'data> {
     ///
     /// If `code_point` has Script_Extensions, then return the Script codes in
     /// the Script_Extensions. In this case, the Script property value
-    /// (normally Common or Inherited) is not included in the ScriptExtensionsSet.
+    /// (normally Common or Inherited) is not included in the [`ScriptExtensionsSet`].
     ///
     /// If c does not have Script_Extensions, then the one Script code is put
-    /// into the ScriptExtensionsSet and also returned.
+    /// into the [`ScriptExtensionsSet`] and also returned.
     ///
-    /// If c is not a valid code point, then return an empty ScriptExtensionsSet.
+    /// If c is not a valid code point, then return an empty [`ScriptExtensionsSet`].
     ///
     /// # Examples
     ///
