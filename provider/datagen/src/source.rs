@@ -66,7 +66,7 @@ impl SourceData {
             uprops_paths: Some(Arc::new(TomlCache::new(AbstractFs::new(
                 root,
                 format!(
-                    "icuexportdata_uprops_full/{}",
+                    "icuexportdata_uprops_full/{}/",
                     match trie_type {
                         TrieType::Fast => "fast",
                         TrieType::Small => "small",
@@ -210,7 +210,7 @@ impl AbstractFs {
                 let mut buf = Vec::new();
                 zip::ZipArchive::new(File::open(root)?)
                     .unwrap()
-                    .by_name(&format!("{}/{}", prefix, path))
+                    .by_name(&format!("{}{}", prefix, path))
                     .map_err(|e| {
                         DataError::custom("Zip")
                             .with_display_context(&e)

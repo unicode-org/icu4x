@@ -264,7 +264,7 @@ fn main() -> eyre::Result<()> {
         _ => unreachable!(),
     };
 
-    if let Some(tag) = matches.value_of("UPROP_TAG") {
+    if let Some(tag) = matches.value_of("UPROPS_TAG") {
         source_data = source_data.with_uprops(
             cached_path::CacheBuilder::new().freshness_lifetime(u64::MAX).build()?
                 .cached_path(
