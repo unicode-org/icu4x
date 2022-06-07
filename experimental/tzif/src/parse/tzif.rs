@@ -826,15 +826,11 @@ where
 
 #[cfg(test)]
 mod test {
-    use std::fs::File;
-    use std::path::Path;
-
     use super::*;
     use crate::data::posix::{DstTransitionInfo, TransitionDate, TransitionDay, ZoneVariantInfo};
     use crate::data::time::Hours;
     use crate::{assert_parse_eq, assert_parse_err, assert_parse_ok};
-    use combine::{stream, EasyParser};
-    use walkdir::WalkDir;
+    use combine::EasyParser;
 
     // Test constants
     const A: usize = b'A' as usize;
