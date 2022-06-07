@@ -211,7 +211,7 @@ impl LanguageIdentifier {
         }
         Ordering::Equal
     }
-   /// Compare this `LanguageIdentifier` with a potentially unnormalized BCP-47 string.
+    /// Compare this `LanguageIdentifier` with a potentially unnormalized BCP-47 string.
     ///
     /// The return value is equivalent to what would happen if you first parsed the
     /// BCP-47 string to a `LanguageIdentifier` and then performed a structucal comparison.
@@ -234,9 +234,8 @@ impl LanguageIdentifier {
     /// for a in bcp47_strings {
     ///     assert!(LanguageIdentifier::from_bytes(a).unwrap().normalizing_eq(a));
     /// }
-    /// ``` 
+    /// ```
     pub fn normalizing_eq(&self, other: &str) -> bool {
-        
         macro_rules! subtag_matches {
             ($T:ty, $iter:ident, $expected:expr) => {
                 $iter
@@ -245,7 +244,7 @@ impl LanguageIdentifier {
                     .unwrap_or(false)
             };
         }
-        
+
         let mut iter = get_subtag_iterator(other.as_bytes());
         if !subtag_matches!(subtags::Language, iter, self.language) {
             return false;
@@ -336,7 +335,6 @@ fn test_writeable() {
         "zh-macos-posix",
     );
 }
-
 
 /// # Examples
 ///

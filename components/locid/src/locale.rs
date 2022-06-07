@@ -182,7 +182,6 @@ impl Locale {
         Ordering::Equal
     }
 
-
     /// Compare this `Locale` with a potentially unnormalized BCP-47 string.
     ///
     /// The return value is equivalent to what would happen if you first parsed the
@@ -208,7 +207,6 @@ impl Locale {
     /// }
     /// ```
     pub fn normalizing_eq(&self, other: &str) -> bool {
-
         macro_rules! subtag_matches {
             ($T:ty, $iter:ident, $expected:expr) => {
                 $iter

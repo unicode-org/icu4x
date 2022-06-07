@@ -12,7 +12,10 @@ macro_rules! overview {
                     let value: Result<$struct, _> = black_box(s).parse();
                     values.push(value.expect("Parsing failed"));
                 }
-                let _ = values.iter().filter(|&v| v.normalizing_eq($compare)).count();
+                let _ = values
+                    .iter()
+                    .filter(|&v| v.normalizing_eq($compare))
+                    .count();
 
                 let mut strings = vec![];
                 for value in &values {

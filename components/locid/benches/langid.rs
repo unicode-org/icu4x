@@ -25,7 +25,6 @@ fn langid_benches(c: &mut Criterion) {
     #[cfg(feature = "bench")]
     {
         use criterion::BenchmarkId;
-        use icu_locid::Locale;
 
         // Construct
         {
