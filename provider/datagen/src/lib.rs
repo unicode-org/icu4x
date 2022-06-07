@@ -74,6 +74,7 @@ use icu_provider_fs::export::serializers;
 use rayon::prelude::*;
 use std::collections::HashSet;
 use std::path::{Path, PathBuf};
+use std::io::{BufReader, BufRead};
 
 /// Parses a list of human-readable key identifiers and returns a
 /// list of [`ResourceKey`]s. Invalid key names are ignored.
@@ -95,6 +96,41 @@ pub fn keys<S: AsRef<str>>(strings: &[S]) -> Vec<ResourceKey> {
         .into_iter()
         .filter(|k| keys.contains(k.get_path()))
         .collect()
+}
+
+/// Parses a file of human-readable key identifiers and returns a
+/// list of [`ResourceKey`]s. Invalid key names are ignored.
+///
+/// # Example
+///
+/// #### keys.txt
+/// ```text
+/// list/and@1
+/// list/or@1
+/// ```
+/// #### build.rs
+/// ```no_run
+/// # use icu_provider::ResourceMarker;
+/// # use std::fs::File;
+/// # fn main() -> std::io::Result<()> {
+/// assert_eq!(
+///     icu_datagen::keys_from_file("keys.txt")?,
+///     vec![
+///         icu_list::provider::AndListV1Marker::KEY,
+///         icu_list::provider::OrListV1Marker::KEY,
+///     ],
+/// );
+/// # Ok(())
+/// # }
+/// ```
+pub fn keys_from_file<P: AsRef<Path>>(path: P) -> std::io::Result<Vec<ResourceKey>> {
+    let keys = BufReader::new(std::fs::File::open(path.as_ref())?)
+        .lines()
+        .collect::<std::io::Result<HashSet<String>>>()?;
+    Ok(get_all_keys()
+        .into_iter()
+        .filter(|k| keys.contains(k.get_path()))
+        .collect())
 }
 
 /// Parses a compiled binary and returns a list of used [`ResourceKey`]s. Unknown
@@ -119,10 +155,22 @@ pub fn keys<S: AsRef<str>>(strings: &[S]) -> Vec<ResourceKey> {
 /// ```
 pub fn keys_from_bin<P: AsRef<Path>>(path: P) -> std::io::Result<Vec<ResourceKey>> {
     let file = std::fs::read(path.as_ref())?;
-    let strings = file.split(|&b| b == b'\0').collect::<HashSet<_>>();
+    let candidates = (0..file.len()).filter_map(|i| {
+        if file[i..].starts_with(icu_provider::leading_tag!().as_bytes()) {
+            let i = i + icu_provider::leading_tag!().len();
+            for j in i..Ord::min(i+100, file.len())  { // Assume some maximum key size to not make this quadratic
+                if file[j..].starts_with(icu_provider::trailing_tag!().as_bytes()) {
+                    return Some(&file[i..j]);
+                }
+            }
+        }
+        None
+    })
+    .collect::<HashSet<_>>();
+
     Ok(get_all_keys()
         .into_iter()
-        .filter(|k| strings.contains(k.get_path().as_bytes()))
+        .filter(|k| candidates.contains(k.get_path().as_bytes()))
         .collect())
 }
 
@@ -259,7 +307,23 @@ fn test_keys() {
 }
 
 #[test]
+fn test_keys_from_file() {
+    assert_eq!(
+        keys_from_file(PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("tests/data/work_log+keys.txt")).unwrap(),
+        vec![
+            icu_datetime::provider::calendar::DatePatternsV1Marker::KEY,
+            icu_datetime::provider::calendar::DateSkeletonPatternsV1Marker::KEY,
+            icu_datetime::provider::calendar::DateSymbolsV1Marker::KEY,
+            icu_datetime::provider::week_data::WeekDataV1Marker::KEY,
+            icu_plurals::provider::OrdinalV1Marker::KEY,
+        ]
+    );
+}
+
+#[test]
 fn test_keys_from_bin() {
+    // File obtained by changing work_log.rs to use `icu_testdata::get_smaller_static_provider`
+    // and running `cargo +nightly wasm-build-release --examples -p icu_datetime --features serde`
     assert_eq!(
         keys_from_bin(PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("tests/data/work_log.wasm"))
             .unwrap(),

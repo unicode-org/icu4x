@@ -134,11 +134,12 @@ fn main() -> eyre::Result<()> {
                 ),
         )
         .arg(
-            Arg::with_name("BINARY")
-                .long("binary")
+            Arg::with_name("KEY_FILE")
+                .long("key-file")
                 .takes_value(true)
                 .help(
-                    "Path to a binary. All keys used by the binary will be selected. Also see --key.",
+                    "Path to text file with resource keys to include, one per line. Empty lines \
+                    and lines starting with '#' are ignored. Also see --key.",
                 ),
         )
         .arg(
@@ -154,7 +155,7 @@ fn main() -> eyre::Result<()> {
         .group(
             ArgGroup::with_name("KEY_MODE")
                 .arg("KEYS")
-                .arg("BINARY")
+                .arg("KEY_FILE")
                 .arg("HELLO_WORLD")
                 .arg("ALL_KEYS")
                 .required(true),
@@ -225,9 +226,9 @@ fn main() -> eyre::Result<()> {
         vec![HelloWorldV1Marker::KEY]
     } else if let Some(paths) = matches.values_of("KEYS") {
         icu_datagen::keys(&paths.collect::<Vec<_>>())
-    } else if let Some(binary_path) = matches.value_of_os("BINARY") {
-        icu_datagen::keys_from_bin(binary_path)
-            .with_context(|| binary_path.to_string_lossy().into_owned())?
+    } else if let Some(key_file_path) = matches.value_of_os("KEY_FILE") {
+        icu_datagen::keys_from_file(key_file_path)
+            .with_context(|| key_file_path.to_string_lossy().into_owned())?
     } else {
         unreachable!();
     };
