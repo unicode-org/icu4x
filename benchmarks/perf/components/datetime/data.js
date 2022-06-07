@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1654626208815,
+  "lastUpdate": 1654626251285,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -37511,6 +37511,102 @@ window.BENCHMARK_DATA = {
             "name": "pattern/parse",
             "value": 5061,
             "range": "± 302",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "58569820+nordzilla@users.noreply.github.com",
+            "name": "Erik Nordin",
+            "username": "nordzilla"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "d3dbdac9200fa0907b89638bfbac52decb6c3ac9",
+          "message": "Parse TZif binary files using Combine (#1999)\n\n* Add TZif data representations\r\n\r\n* Add TZif parser\r\n\r\n* Add tests with real TZif files",
+          "timestamp": "2022-06-07T11:11:16-07:00",
+          "tree_id": "6b652a417f6aae571358435aa610f5cf36d162ca",
+          "url": "https://github.com/unicode-org/icu4x/commit/d3dbdac9200fa0907b89638bfbac52decb6c3ac9"
+        },
+        "date": 1654626220034,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 125480,
+            "range": "± 10822",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 1086320,
+            "range": "± 67912",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 220631,
+            "range": "± 14244",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/DateTimeFormat/format_to_write",
+            "value": 106980,
+            "range": "± 5783",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/DateTimeFormat/format_to_string",
+            "value": 118279,
+            "range": "± 8640",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/format",
+            "value": 116732,
+            "range": "± 7986",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/to_string",
+            "value": 129506,
+            "range": "± 6793",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/ZonedDateTimeFormat/format_to_write",
+            "value": 210683,
+            "range": "± 14889",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/ZonedDateTimeFormat/format_to_string",
+            "value": 224225,
+            "range": "± 15766",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/format",
+            "value": 219685,
+            "range": "± 16331",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/to_string",
+            "value": 228317,
+            "range": "± 13909",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "pattern/parse",
+            "value": 5602,
+            "range": "± 390",
             "unit": "ns/iter"
           }
         ]
