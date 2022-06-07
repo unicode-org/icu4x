@@ -86,10 +86,6 @@ impl AsULE for char {
     }
 }
 
-// EqULE is true because `char` is transmutable to `u32`, which in turn has the same byte sequence
-// as CharULE on little-endian platforms.
-unsafe impl EqULE for char {}
-
 impl PartialOrd for CharULE {
     fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
         char::from_unaligned(*self).partial_cmp(&char::from_unaligned(*other))
