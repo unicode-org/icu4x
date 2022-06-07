@@ -23,7 +23,7 @@ const_assert!(core::mem::size_of::<usize>() >= core::mem::size_of::<u16>());
 
 /// A struct containing decimal digits with efficient iteration and manipulation by magnitude
 /// (power of 10). Supports a mantissa of non-zero digits and a number of leading and trailing
-/// zeros, used for formatting and plural selection.
+/// zeros, as well as an optional sign; used for formatting and plural selection.
 ///
 /// # Data Types
 ///
@@ -112,8 +112,17 @@ pub struct FixedDecimal {
     /// - <= magnitude
     lower_magnitude: i16,
 
-    /// Whether the number is negative. Negative zero is supported.
-    is_negative: bool,
+    // The sign; note that a positive value may be represented by either
+    // `Sign::Positive` (corresponding to a prefix +) or `Sign::None`
+    // (corresponding to the absence of a prefix sign).
+    sign: Sign,
+}
+
+#[derive(Copy, Clone, PartialEq, Eq, Debug)]
+pub enum Sign {
+    None,
+    Negative,
+    Positive,
 }
 
 impl Default for FixedDecimal {
@@ -124,7 +133,7 @@ impl Default for FixedDecimal {
             magnitude: 0,
             upper_magnitude: 0,
             lower_magnitude: 0,
-            is_negative: false,
+            sign: Sign::None,
         }
     }
 }
@@ -134,10 +143,14 @@ macro_rules! impl_from_signed_integer_type {
         impl From<$itype> for FixedDecimal {
             fn from(value: $itype) -> Self {
                 let int_iterator: IntIterator<$utype> = value.into();
-                let is_negative = int_iterator.is_negative;
+                let sign = if int_iterator.is_negative {
+                    Sign::Negative
+                } else {
+                    Sign::None
+                };
                 let mut result = Self::from_ascending(int_iterator)
                     .expect("All built-in integer types should fit");
-                result.is_negative = is_negative;
+                result.sign = sign;
                 result
             }
         }
@@ -397,6 +410,7 @@ impl FixedDecimal {
 
     /// Change the value from negative to positive or from positive to negative, modifying self.
     /// Negative zero is supported.
+    /// Negating a number with negative sign results in one with no sign (rather than an explicit positive sign).
     ///
     /// # Examples
     ///
@@ -422,7 +436,11 @@ impl FixedDecimal {
     /// assert_ne!(zero, negative_zero);
     /// ```
     pub fn negate(&mut self) {
-        self.is_negative = !self.is_negative;
+        self.sign = if self.sign == Sign::Negative {
+            Sign::None
+        } else {
+            Sign::Negative
+        };
     }
 
     /// Change the value from negative to positive or from positive to negative, consuming self
@@ -799,7 +817,7 @@ impl FixedDecimal {
     /// assert_eq!("-0.0", dec.to_string());
     /// ```
     pub fn ceil(&mut self, position: i16) {
-        if self.is_negative {
+        if self.sign == Sign::Negative {
             self.truncate_right(position);
             #[cfg(debug_assertions)]
             self.check_invariants();
@@ -1061,7 +1079,8 @@ impl FixedDecimal {
     /// ```
     pub fn signum(&self) -> Signum {
         let is_zero = self.digits.is_empty();
-        match (self.is_negative, is_zero) {
+        let is_negative = self.sign == Sign::Negative;
+        match (is_negative, is_zero) {
             (false, false) => Signum::AboveZero,
             (false, true) => Signum::PositiveZero,
             (true, false) => Signum::BelowZero,
@@ -1131,8 +1150,10 @@ impl writeable::Writeable for FixedDecimal {
     /// assert_eq!("42", result);
     /// ```
     fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
-        if self.is_negative {
-            sink.write_char('-')?;
+        match self.sign {
+            Sign::Negative => sink.write_char('-')?,
+            Sign::Positive => sink.write_char('+')?,
+            Sign::None => (),
         }
         for m in self.magnitude_range().rev() {
             if m == -1 {
@@ -1163,7 +1184,7 @@ impl writeable::Writeable for FixedDecimal {
     fn write_len(&self) -> writeable::LengthHint {
         writeable::LengthHint::exact(1)
             + ((self.upper_magnitude as i32 - self.lower_magnitude as i32) as usize)
-            + (if self.is_negative { 1 } else { 0 })
+            + (if self.sign == Sign::None { 0 } else { 1 })
             + (if self.lower_magnitude < 0 { 1 } else { 0 })
     }
 }
@@ -1180,19 +1201,25 @@ impl FromStr for FixedDecimal {
     fn from_str(input_str: &str) -> Result<Self, Self::Err> {
         // input_str: the input string
         // no_sign_str: the input string when the sign is removed from it
-        // Check if the input string is "" or "-"
-        if input_str.is_empty() || input_str == "-" {
+        if input_str.is_empty() {
             return Err(Error::Syntax);
         }
         let input_str = input_str.as_bytes();
         #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
-        let is_negative = input_str[0] == b'-';
-        #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
-        let no_sign_str = if is_negative {
-            &input_str[1..]
-        } else {
-            input_str
+        let sign = match input_str[0] {
+            b'-' => Sign::Negative,
+            b'+' => Sign::Positive,
+            _ => Sign::None,
         };
+        #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
+        let no_sign_str = if sign == Sign::None {
+            input_str
+        } else {
+            &input_str[1..]
+        };
+        if no_sign_str.is_empty() {
+            return Err(Error::Syntax);
+        }
         // Compute length of each string once and store it, so if you use that multiple times,
         // you don't compute it multiple times
         // has_dot: shows if your input has dot in it
@@ -1255,7 +1282,7 @@ impl FromStr for FixedDecimal {
 
         // defining the output dec here and set its sign
         let mut dec = Self {
-            is_negative,
+            sign,
             ..Default::default()
         };
 
@@ -2004,6 +2031,10 @@ fn test_from_str() {
             magnitudes: [7, 5, 2, 0],
         },
         TestCase {
+            input_str: "+00123400",
+            magnitudes: [7, 5, 2, 0],
+        },
+        TestCase {
             input_str: "0.0123400",
             magnitudes: [0, -2, -5, -7],
         },
@@ -2061,6 +2092,10 @@ fn test_from_str() {
         },
         TestCase {
             input_str: "-0",
+            magnitudes: [0, 0, 0, 0],
+        },
+        TestCase {
+            input_str: "+0",
             magnitudes: [0, 0, 0, 0],
         },
         TestCase {
@@ -2324,6 +2359,10 @@ fn test_syntax_error() {
         },
         TestCase {
             input_str: "-",
+            expected_err: Some(Error::Syntax),
+        },
+        TestCase {
+            input_str: "+",
             expected_err: Some(Error::Syntax),
         },
         TestCase {
