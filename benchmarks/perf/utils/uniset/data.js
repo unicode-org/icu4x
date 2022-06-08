@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1654648493371,
+  "lastUpdate": 1654662849817,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -30725,6 +30725,60 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 47092574,
             "range": "± 80563",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/worst",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/worst",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "hsivonen@hsivonen.fi",
+            "name": "Henri Sivonen",
+            "username": "hsivonen"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "98da7a4f35151cfd1a656c4437a3a61d3640cd9d",
+          "message": "Resolve XXX comments or replace them with TODOs pointing to issue numbers (#2014)\n\nCloses #1904",
+          "timestamp": "2022-06-08T07:24:19+03:00",
+          "tree_id": "176d4f70a3cdf722a864c05c6a4e6bc998b8aad4",
+          "url": "https://github.com/unicode-org/icu4x/commit/98da7a4f35151cfd1a656c4437a3a61d3640cd9d"
+        },
+        "date": 1654662827394,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 46802266,
+            "range": "± 235644",
             "unit": "ns/iter"
           },
           {
