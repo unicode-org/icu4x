@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1654648636523,
+  "lastUpdate": 1654663024312,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -30449,6 +30449,66 @@ window.BENCHMARK_DATA = {
             "name": "from_string/1000000001",
             "value": 85,
             "range": "± 7",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "hsivonen@hsivonen.fi",
+            "name": "Henri Sivonen",
+            "username": "hsivonen"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "98da7a4f35151cfd1a656c4437a3a61d3640cd9d",
+          "message": "Resolve XXX comments or replace them with TODOs pointing to issue numbers (#2014)\n\nCloses #1904",
+          "timestamp": "2022-06-08T07:24:19+03:00",
+          "tree_id": "176d4f70a3cdf722a864c05c6a4e6bc998b8aad4",
+          "url": "https://github.com/unicode-org/icu4x/commit/98da7a4f35151cfd1a656c4437a3a61d3640cd9d"
+        },
+        "date": 1654662996644,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 116603,
+            "range": "± 3575",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 25263,
+            "range": "± 1055",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 69542,
+            "range": "± 2303",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 219,
+            "range": "± 7",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 97,
+            "range": "± 4",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 89,
+            "range": "± 2",
             "unit": "ns/iter"
           }
         ]
