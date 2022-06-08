@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1654712779633,
+  "lastUpdate": 1654730434522,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -30688,6 +30688,66 @@ window.BENCHMARK_DATA = {
           {
             "name": "from_string/1000000001",
             "value": 101,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "34ca5209d85348461132d0faad56a4e851f7bd6b",
+          "message": "Update Locale and LanguageIdentifier comparison names (#2020)",
+          "timestamp": "2022-06-08T16:08:14-07:00",
+          "tree_id": "5955ebe12f08a02cca4477d6bca6204dca7fb687",
+          "url": "https://github.com/unicode-org/icu4x/commit/34ca5209d85348461132d0faad56a4e851f7bd6b"
+        },
+        "date": 1654730409722,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 99893,
+            "range": "± 364",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 22212,
+            "range": "± 196",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 66649,
+            "range": "± 246",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 175,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 65,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 74,
             "range": "± 0",
             "unit": "ns/iter"
           }
