@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1654712481457,
+  "lastUpdate": 1654712779633,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -30629,6 +30629,66 @@ window.BENCHMARK_DATA = {
             "name": "from_string/1000000001",
             "value": 72,
             "range": "± 3",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "58569820+nordzilla@users.noreply.github.com",
+            "name": "Erik Nordin",
+            "username": "nordzilla"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "a8c8d2c564df24d29d01985428ec2c95e6adfbb4",
+          "message": "Move tzif crate from experimental to utils for publishing (#2019)\n\n* Replace empty `.then()` with `.with()`\r\n\r\n* Update error messages\r\n\r\n* Move `tzif` from `experimental` to `utils`\r\n\r\n* Add integration test for POSIX string\r\n\r\n* Update doc comments\r\n\r\n* Add crate keywords\r\n\r\n* Update Cargo.toml",
+          "timestamp": "2022-06-08T11:12:05-07:00",
+          "tree_id": "27a3e2cc47a900a3ab88feb80a0898b9b30db294",
+          "url": "https://github.com/unicode-org/icu4x/commit/a8c8d2c564df24d29d01985428ec2c95e6adfbb4"
+        },
+        "date": 1654712752527,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 133273,
+            "range": "± 2241",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 28044,
+            "range": "± 522",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 75543,
+            "range": "± 961",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 240,
+            "range": "± 2",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 112,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 101,
+            "range": "± 0",
             "unit": "ns/iter"
           }
         ]
