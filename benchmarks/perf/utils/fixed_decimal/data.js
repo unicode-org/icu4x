@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1654663024312,
+  "lastUpdate": 1654705754963,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -30509,6 +30509,66 @@ window.BENCHMARK_DATA = {
             "name": "from_string/1000000001",
             "value": 89,
             "range": "± 2",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "25506+bdragon@users.noreply.github.com",
+            "name": "Bryan Dragon",
+            "username": "bdragon"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "b6774e2212d47d9c24648ccc065ba4637c68b9ce",
+          "message": "Include module name to disambiguate Pattern (#1889) (#2017)",
+          "timestamp": "2022-06-08T11:17:01-05:00",
+          "tree_id": "e543b2b64baee3f4de293faa7a9bfa3746f759d7",
+          "url": "https://github.com/unicode-org/icu4x/commit/b6774e2212d47d9c24648ccc065ba4637c68b9ce"
+        },
+        "date": 1654705731967,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 113141,
+            "range": "± 326",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 23719,
+            "range": "± 109",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 63384,
+            "range": "± 423",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 202,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 94,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 84,
+            "range": "± 0",
             "unit": "ns/iter"
           }
         ]
