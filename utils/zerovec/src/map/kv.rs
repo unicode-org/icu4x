@@ -4,9 +4,9 @@
 
 use super::vecs::{MutableZeroVecLike, ZeroVecLike};
 use crate::ule::*;
-use crate::varzerovec::{VarZeroSlice, VarZeroVec};
-use crate::zerovec::{ZeroSlice, ZeroVec};
 use crate::vecs::FlexZeroVec;
+use crate::zerovec::{ZeroSlice, ZeroVec};
+use crate::VarZeroVec;
 use alloc::boxed::Box;
 
 /// Trait marking types which are allowed to be keys or values in [`ZeroMap`](super::ZeroMap).

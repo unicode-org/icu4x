@@ -4,9 +4,9 @@
 
 use crate::ule::*;
 use crate::varzerovec::owned::VarZeroVecOwned;
+use crate::vecs::{FlexZeroSlice, FlexZeroVec, FlexZeroVecOwned};
 use crate::{VarZeroSlice, VarZeroVec};
 use crate::{ZeroSlice, ZeroVec};
-use crate::vecs::{FlexZeroSlice, FlexZeroVec, FlexZeroVecOwned};
 use alloc::boxed::Box;
 use alloc::vec::Vec;
 use core::cmp::Ordering;
@@ -518,20 +518,21 @@ where
     }
 }
 
-impl<'a> ZeroVecLike<usize> for FlexZeroVec<'a>
-{
+impl<'a> ZeroVecLike<usize> for FlexZeroVec<'a> {
     type GetType = [u8];
     type SliceVariant = FlexZeroSlice;
 
     fn zvl_new_borrowed() -> &'static Self::SliceVariant {
         FlexZeroSlice::new_empty()
     }
-    fn zvl_binary_search(&self, k: &usize) -> Result<usize, usize>
-    {
+    fn zvl_binary_search(&self, k: &usize) -> Result<usize, usize> {
         FlexZeroSlice::binary_search(self, *k)
     }
-    fn zvl_binary_search_in_range(&self, k: &usize, range: Range<usize>) -> Option<Result<usize, usize>>
-    {
+    fn zvl_binary_search_in_range(
+        &self,
+        k: &usize,
+        range: Range<usize>,
+    ) -> Option<Result<usize, usize>> {
         FlexZeroSlice::binary_search_in_range(&self, *k, range)
     }
     fn zvl_binary_search_by(
@@ -542,7 +543,7 @@ impl<'a> ZeroVecLike<usize> for FlexZeroVec<'a>
     }
     fn zvl_binary_search_in_range_by(
         &self,
-        predicate: impl FnMut(&usize) -> Ordering,
+        mut predicate: impl FnMut(&usize) -> Ordering,
         range: Range<usize>,
     ) -> Option<Result<usize, usize>> {
         FlexZeroSlice::binary_search_in_range_by(&self, |probe| predicate(&probe), range)
@@ -553,8 +554,7 @@ impl<'a> ZeroVecLike<usize> for FlexZeroVec<'a>
     fn zvl_len(&self) -> usize {
         FlexZeroSlice::len(self)
     }
-    fn zvl_is_ascending(&self) -> bool
-    {
+    fn zvl_is_ascending(&self) -> bool {
         // FIXME
         todo!()
     }
@@ -569,20 +569,21 @@ impl<'a> ZeroVecLike<usize> for FlexZeroVec<'a>
     }
 }
 
-impl ZeroVecLike<usize> for FlexZeroSlice
-{
+impl ZeroVecLike<usize> for FlexZeroSlice {
     type GetType = [u8];
     type SliceVariant = FlexZeroSlice;
 
     fn zvl_new_borrowed() -> &'static Self::SliceVariant {
         FlexZeroSlice::new_empty()
     }
-    fn zvl_binary_search(&self, k: &usize) -> Result<usize, usize>
-    {
+    fn zvl_binary_search(&self, k: &usize) -> Result<usize, usize> {
         FlexZeroSlice::binary_search(self, *k)
     }
-    fn zvl_binary_search_in_range(&self, k: &usize, range: Range<usize>) -> Option<Result<usize, usize>>
-    {
+    fn zvl_binary_search_in_range(
+        &self,
+        k: &usize,
+        range: Range<usize>,
+    ) -> Option<Result<usize, usize>> {
         FlexZeroSlice::binary_search_in_range(&self, *k, range)
     }
     fn zvl_binary_search_by(
@@ -604,8 +605,7 @@ impl ZeroVecLike<usize> for FlexZeroSlice
     fn zvl_len(&self) -> usize {
         FlexZeroSlice::len(self)
     }
-    fn zvl_is_ascending(&self) -> bool
-    {
+    fn zvl_is_ascending(&self) -> bool {
         // FIXME
         todo!()
     }
@@ -620,8 +620,7 @@ impl ZeroVecLike<usize> for FlexZeroSlice
     }
 }
 
-impl<'a> MutableZeroVecLike<'a, usize> for FlexZeroVec<'a>
-{
+impl<'a> MutableZeroVecLike<'a, usize> for FlexZeroVec<'a> {
     type OwnedType = usize;
     fn zvl_insert(&mut self, index: usize, value: &usize) {
         self.to_mut().insert(index, *value)

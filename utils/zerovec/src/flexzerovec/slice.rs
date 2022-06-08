@@ -203,8 +203,7 @@ impl FlexZeroSlice {
     #[inline]
     pub(crate) fn get_chunk(&self, index: usize) -> Option<&[u8]> {
         let w = self.get_width();
-        self.data
-            .get(index * w..index * w + w)
+        self.data.get(index * w..index * w + w)
     }
 
     /// Gets the element at `index` without checking bounds.
@@ -269,15 +268,15 @@ impl FlexZeroSlice {
     }
 
     /// Binary searches a sorted `FlexZeroSlice` for the given `usize` value.
-    /// 
+    ///
     /// # Examples
-    /// 
+    ///
     /// ```
     /// use zerovec::vecs::FlexZeroVec;
     ///
     /// let nums: &[usize] = &[211, 281, 421, 461];
     /// let fzv: FlexZeroVec = nums.iter().copied().collect();
-    /// 
+    ///
     /// assert_eq!(nums.binary_search(0), Err(0));
     /// assert_eq!(nums.binary_search(211), Ok(0));
     /// assert_eq!(nums.binary_search(250), Err(1));
@@ -294,7 +293,11 @@ impl FlexZeroSlice {
     }
 
     #[inline]
-    pub fn binary_search_in_range(&self, needle: usize, range: Range<usize>) -> Option<Result<usize, usize>> {
+    pub fn binary_search_in_range(
+        &self,
+        needle: usize,
+        range: Range<usize>,
+    ) -> Option<Result<usize, usize>> {
         self.binary_search_in_range_by(|probe| probe.cmp(&needle), range)
     }
 
@@ -302,7 +305,7 @@ impl FlexZeroSlice {
     #[inline]
     pub fn binary_search_by(
         &self,
-        mut predicate: impl FnMut(usize) -> Ordering,
+        predicate: impl FnMut(usize) -> Ordering,
     ) -> Result<usize, usize> {
         debug_assert!(self.len() <= self.data.len());
         // Safety: self.len() <= self.data.len()
@@ -321,11 +324,11 @@ impl FlexZeroSlice {
     }
 
     /// # Safety
-    /// 
+    ///
     /// `scaled_slice` must be a subslice of `self.data`
     fn binary_search_impl(
         &self,
-        predicate: impl FnMut(usize) -> Ordering,
+        mut predicate: impl FnMut(usize) -> Ordering,
         scaled_slice: &[u8],
     ) -> Result<usize, usize> {
         // See comments in components.rs regarding the following code.
@@ -440,13 +443,17 @@ impl FlexZeroSlice {
     }
 
     /// # Safety
-    /// 
+    ///
     /// `index` must be in range.
-    pub(crate) fn replace_impl(&mut self, index: usize, item: usize) -> usize {
+    pub(crate) unsafe fn replace_impl(&mut self, index: usize, item: usize) -> usize {
         let w = self.get_width();
         let item_bytes = item.to_le_bytes();
         let old_value = self.get_unchecked(index);
-        core::ptr::copy_nonoverlapping(item_bytes.as_ptr(), self.data.as_mut_ptr().add(index * w), w);
+        core::ptr::copy_nonoverlapping(
+            item_bytes.as_ptr(),
+            self.data.as_mut_ptr().add(index * w),
+            w,
+        );
         old_value
     }
 }

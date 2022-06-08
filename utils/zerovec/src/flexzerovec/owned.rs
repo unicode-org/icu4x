@@ -118,7 +118,7 @@ impl FlexZeroVecOwned {
     /// # Panics
     ///
     /// Panics if `index >= len`.
-    /// 
+    ///
     /// # Examples
     ///
     /// ```
