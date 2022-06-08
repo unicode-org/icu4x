@@ -2923,7 +2923,7 @@ fn test_rounding() {
 
     assert_eq!("4200", dec.clone().truncated_right(2).to_string());
 
-    assert_eq!("00000", dec.clone().truncated_right(5).to_string());
+    assert_eq!("00000", dec.truncated_right(5).to_string());
 
     //Test expand
     let mut dec = FixedDecimal::from_str("3.234").unwrap();
