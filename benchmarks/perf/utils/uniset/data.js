@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1654643783085,
+  "lastUpdate": 1654648493371,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -30671,6 +30671,60 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 34651883,
             "range": "± 2413635",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/worst",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/worst",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "2b75f5aa3af24cd6c35acee03a09998fbe444636",
+          "message": "Direct zip file reading in datagen (#1989)",
+          "timestamp": "2022-06-07T17:23:10-07:00",
+          "tree_id": "50a02e427d9c54e3fb1bb310344bed5000c3d8cb",
+          "url": "https://github.com/unicode-org/icu4x/commit/2b75f5aa3af24cd6c35acee03a09998fbe444636"
+        },
+        "date": 1654648470008,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 47092574,
+            "range": "± 80563",
             "unit": "ns/iter"
           },
           {
