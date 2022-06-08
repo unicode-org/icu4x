@@ -301,7 +301,11 @@ where
         self.to_mut().push(value.to_unaligned())
     }
     fn zvl_with_capacity(cap: usize) -> Self {
-        ZeroVec::Owned(Vec::with_capacity(cap))
+        if cap == 0 {
+            ZeroVec::new()
+        } else {
+            ZeroVec::Owned(Vec::with_capacity(cap))
+        }
     }
     fn zvl_clear(&mut self) {
         self.to_mut().clear()
@@ -484,7 +488,11 @@ where
         self.make_mut().insert(len, value)
     }
     fn zvl_with_capacity(cap: usize) -> Self {
-        VarZeroVecOwned::with_capacity(cap).into()
+        if cap == 0 {
+            VarZeroVec::new()
+        } else {
+            VarZeroVec::Owned(VarZeroVecOwned::with_capacity(cap))
+        }
     }
     fn zvl_clear(&mut self) {
         self.make_mut().clear()
