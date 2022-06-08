@@ -237,6 +237,25 @@ where
     /// if and only if `T::ULE` and `P::ULE` are the same size.
     ///
     /// If `T` and `P` have the exact same `ULE`, use [`Self::cast()`].
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use zerovec::ZeroSlice;
+    ///
+    /// const bytes: &[u8] = &[0x7F, 0xF3, 0x01, 0x00, 0x49, 0xF6, 0x01, 0x00];
+    /// const zs_u32: &ZeroSlice<u32> = {
+    ///     match ZeroSlice::<u32>::try_from_bytes(bytes) {
+    ///         Ok(s) => s,
+    ///         Err(_) => unreachable!(),
+    ///     }
+    /// };
+    ///
+    /// let zs_i32: &ZeroSlice<i32> = zs_u32.try_as_converted().expect("valid code points");
+    ///
+    /// assert_eq!(zs_u32.get(0), Some(127871));
+    /// assert_eq!(zs_i32.get(0), Some(127871));
+    /// ```
     #[inline]
     pub fn try_as_converted<P: AsULE>(&self) -> Result<&ZeroSlice<P>, ZeroVecError> {
         let new_slice = P::ULE::parse_byte_slice(self.as_bytes())?;
