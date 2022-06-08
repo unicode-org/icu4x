@@ -23,6 +23,8 @@ use core::ops::Deref;
 ///
 /// # Examples
 ///
+/// Storing a vec of `usize`s in a zero-copy way:
+///
 /// ```
 /// use zerovec::vecs::FlexZeroVec;
 ///
@@ -42,6 +44,44 @@ use core::ops::Deref;
 /// // Verify the compact storage
 /// assert_eq!(7, bytes.len());
 /// assert!(matches!(zv2, FlexZeroVec::Borrowed(_)));
+/// ```
+///
+/// Storing a map of `usize` to `usize` in a zero-copy way:
+///
+/// ```
+/// use zerovec::ZeroMap;
+///
+/// // Append some values to the ZeroMap
+/// let mut zm = ZeroMap::<usize, usize>::new();
+/// assert!(zm.try_append(&29, &92).is_none());
+/// assert!(zm.try_append(&38, &83).is_none());
+/// assert!(zm.try_append(&56, &65).is_none());
+/// assert_eq!(zm.len(), 3);
+///
+/// // Insert another value into the middle
+/// assert!(zm.try_append(&47, &74).is_some());
+/// assert!(zm.insert(&47, &74).is_none());
+/// assert_eq!(zm.len(), 4);
+///
+/// // Check that the values are correct
+/// assert_eq!(zm.get_copied(&0), None);
+/// assert_eq!(zm.get_copied(&29), Some(92));
+/// assert_eq!(zm.get_copied(&38), Some(83));
+/// assert_eq!(zm.get_copied(&47), Some(74));
+/// assert_eq!(zm.get_copied(&56), Some(65));
+/// assert_eq!(zm.get_copied(&usize::MAX), None);
+///
+/// // Perform some mutations and check that the state is still correct
+/// assert_eq!(zm.insert(&47, &7744), Some(74));
+/// assert!(zm.try_append(&1100, &1).is_none());
+///
+/// assert_eq!(zm.get_copied(&0), None);
+/// assert_eq!(zm.get_copied(&29), Some(92));
+/// assert_eq!(zm.get_copied(&38), Some(83));
+/// assert_eq!(zm.get_copied(&47), Some(7744));
+/// assert_eq!(zm.get_copied(&56), Some(65));
+/// assert_eq!(zm.get_copied(&1100), Some(1));
+/// assert_eq!(zm.get_copied(&usize::MAX), None);
 /// ```
 #[derive(Debug)]
 pub enum FlexZeroVec<'a> {

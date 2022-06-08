@@ -239,6 +239,7 @@ where
         let ule = self.values.zvl_get(index)?;
         let mut result = Option::<V>::None;
         V::Container::zvl_get_as_t(ule, |v| result.replace(*v));
+        #[allow(clippy::unwrap_used)] // `zvl_get_as_t` guarantees that the callback is invoked
         Some(result.unwrap())
     }
 }

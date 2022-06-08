@@ -108,6 +108,8 @@ pub trait ZeroVecLike<T: ?Sized> {
     ///
     /// This uses a callback because it's not possible to return owned-or-borrowed
     /// types without GATs
+    ///
+    /// Impls should guarantee that the callback function is be called exactly once.
     fn zvl_get_as_t<R>(g: &Self::GetType, f: impl FnOnce(&T) -> R) -> R;
 }
 
