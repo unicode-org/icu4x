@@ -47,12 +47,18 @@ pub mod ffi {
         ///
         /// Takes in a Level for the default level, if it is an invalid value it will default to LTR
         #[diplomat::rust_link(unicode_bidi::BidiInfo::new_with_data_source, FnInStruct)]
-        pub fn for_text<'text>(&self, text: &'text str, default_level: u8) -> Box<ICU4XBidiInfo<'text>> {
+        pub fn for_text<'text>(
+            &self,
+            text: &'text str,
+            default_level: u8,
+        ) -> Box<ICU4XBidiInfo<'text>> {
             let data = self.0.get();
             let adapter = BidiClassAdapter::new(&data.code_point_trie);
 
             Box::new(ICU4XBidiInfo(BidiInfo::new_with_data_source(
-                &adapter, text, Level::new(default_level).ok(),
+                &adapter,
+                text,
+                Level::new(default_level).ok(),
             )))
         }
 
