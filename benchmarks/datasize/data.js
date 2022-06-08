@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1654662398866,
+  "lastUpdate": 1654705155015,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -16913,6 +16913,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/98da7a4f35151cfd1a656c4437a3a61d3640cd9d"
         },
         "date": 1654662373384,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 2300847,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "25506+bdragon@users.noreply.github.com",
+            "name": "Bryan Dragon",
+            "username": "bdragon"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "b6774e2212d47d9c24648ccc065ba4637c68b9ce",
+          "message": "Include module name to disambiguate Pattern (#1889) (#2017)",
+          "timestamp": "2022-06-08T11:17:01-05:00",
+          "tree_id": "e543b2b64baee3f4de293faa7a9bfa3746f759d7",
+          "url": "https://github.com/unicode-org/icu4x/commit/b6774e2212d47d9c24648ccc065ba4637c68b9ce"
+        },
+        "date": 1654705130847,
         "tool": "ndjson",
         "benches": [
           {
