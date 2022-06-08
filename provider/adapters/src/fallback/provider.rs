@@ -9,7 +9,7 @@ use icu_provider::prelude::*;
 use zerovec::ZeroMap;
 use zerovec::ZeroMap2d;
 
-#[icu_provider::data_struct(LocaleFallbackDataV1Marker = "fallback/locale@1")]
+#[icu_provider::data_struct(LocaleFallbackRulesV1Marker = "fallback/locale@1")]
 #[derive(Default, Clone, PartialEq, Debug)]
 #[cfg_attr(
     feature = "datagen",
@@ -18,7 +18,7 @@ use zerovec::ZeroMap2d;
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
-pub struct LocaleFallbackDataV1<'data> {
+pub struct LocaleFallbackRulesV1<'data> {
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub l2s: ZeroMap<'data, [u8; 3], Script>,
     #[cfg_attr(feature = "serde", serde(borrow))]

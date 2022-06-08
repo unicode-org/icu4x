@@ -13,8 +13,8 @@ mod provider;
 
 pub use adapter::LocaleFallbackAdapter;
 pub use adapter::LocaleFallbackProvider;
-pub use provider::LocaleFallbackDataV1;
-pub use provider::LocaleFallbackDataV1Marker;
+pub use provider::LocaleFallbackRulesV1;
+pub use provider::LocaleFallbackRulesV1Marker;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum LocaleFallbackStrategy {
@@ -29,16 +29,16 @@ pub struct LocaleFallbackKeyMetadata {
 }
 
 pub struct LocaleFallbacker {
-    fallback_data: DataPayload<LocaleFallbackDataV1Marker>,
+    fallback_data: DataPayload<LocaleFallbackRulesV1Marker>,
 }
 
 pub struct LocaleFallbackerForKey<'a> {
-    fallback_data: &'a LocaleFallbackDataV1<'a>,
+    fallback_data: &'a LocaleFallbackRulesV1<'a>,
     key_metadata: LocaleFallbackKeyMetadata,
 }
 
 pub struct LocaleFallbackIterator<'a, 'b> {
-    fallback_data: &'b LocaleFallbackDataV1<'a>,
+    fallback_data: &'b LocaleFallbackRulesV1<'a>,
     key_metadata: &'b LocaleFallbackKeyMetadata,
     current: ResourceOptions,
     backup_extension: Option<Value>,
@@ -48,7 +48,7 @@ pub struct LocaleFallbackIterator<'a, 'b> {
 impl LocaleFallbacker {
     pub fn try_new<P>(provider: &P) -> Result<Self, DataError>
     where
-        P: ResourceProvider<LocaleFallbackDataV1Marker> + ?Sized,
+        P: ResourceProvider<LocaleFallbackRulesV1Marker> + ?Sized,
     {
         let fallback_data = provider
             .load_resource(&Default::default())?
