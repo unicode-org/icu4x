@@ -14,7 +14,7 @@ use icu_calendar::{
 use icu_datetime::provider::time_zones::{MetaZoneId, TimeZoneBcp47Id};
 use icu_datetime::{
     mock::{parse_gregorian_from_str, zoned_datetime::MockZonedDateTime},
-    pattern::runtime::Pattern,
+    pattern::runtime,
     provider::{
         calendar::{DatePatternsV1Marker, DateSkeletonPatternsV1Marker, DateSymbolsV1Marker},
         week_data::WeekDataV1Marker,
@@ -282,8 +282,8 @@ fn test_dayperiod_patterns() {
                 let datetime = parse_gregorian_from_str(dt_input).unwrap();
                 for DayPeriodExpectation { patterns, expected } in &test_case.expectations {
                     for pattern_input in patterns {
-                        let new_pattern1: Pattern = pattern_input.parse().unwrap();
-                        let new_pattern2: Pattern = pattern_input.parse().unwrap();
+                        let new_pattern1: runtime::Pattern = pattern_input.parse().unwrap();
+                        let new_pattern2: runtime::Pattern = pattern_input.parse().unwrap();
                         patterns_data.with_mut(move |data| {
                             data.time_h11_h12.long = new_pattern1;
                             data.time_h23_h24.long = new_pattern2;
@@ -451,8 +451,8 @@ fn test_time_zone_patterns() {
         } in &test.expectations
         {
             for pattern_input in patterns {
-                let new_pattern1: Pattern = pattern_input.parse().unwrap();
-                let new_pattern2: Pattern = pattern_input.parse().unwrap();
+                let new_pattern1: runtime::Pattern = pattern_input.parse().unwrap();
+                let new_pattern2: runtime::Pattern = pattern_input.parse().unwrap();
                 patterns_data.with_mut(move |data| {
                     data.time_h11_h12.long = new_pattern1;
                     data.time_h23_h24.long = new_pattern2;
