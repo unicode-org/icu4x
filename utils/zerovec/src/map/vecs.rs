@@ -68,7 +68,21 @@ pub trait ZeroVecLike<T: ?Sized> {
     /// Check if this vector is in ascending order according to `T`s `Ord` impl
     fn zvl_is_ascending(&self) -> bool
     where
-        T: Ord;
+        T: Ord,
+    {
+        if let Some(first) = self.zvl_get(0) {
+            let mut prev = first;
+            for i in 1..self.zvl_len() {
+                #[allow(clippy::unwrap_used)] // looping over the valid indices
+                let curr = self.zvl_get(i).unwrap();
+                if Self::get_cmp_get(prev, curr) != Ordering::Greater {
+                    return false;
+                }
+                prev = curr;
+            }
+        }
+        true
+    }
     /// Check if this vector is empty
     fn zvl_is_empty(&self) -> bool {
         self.zvl_len() == 0
@@ -199,15 +213,6 @@ where
     fn zvl_len(&self) -> usize {
         ZeroSlice::len(self)
     }
-    fn zvl_is_ascending(&self) -> bool
-    where
-        T: Ord,
-    {
-        #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
-        self.as_ule_slice()
-            .windows(2)
-            .all(|w| T::from_unaligned(w[1]).cmp(&T::from_unaligned(w[0])) == Ordering::Greater)
-    }
 
     fn zvl_as_borrowed(&self) -> &ZeroSlice<T> {
         &*self
@@ -263,15 +268,6 @@ where
     }
     fn zvl_len(&self) -> usize {
         ZeroSlice::len(self)
-    }
-    fn zvl_is_ascending(&self) -> bool
-    where
-        T: Ord,
-    {
-        #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
-        self.as_ule_slice()
-            .windows(2)
-            .all(|w| T::from_unaligned(w[1]).cmp(&T::from_unaligned(w[0])) == Ordering::Greater)
     }
 
     fn zvl_as_borrowed(&self) -> &ZeroSlice<T> {
@@ -372,21 +368,6 @@ where
     fn zvl_len(&self) -> usize {
         self.len()
     }
-    fn zvl_is_ascending(&self) -> bool
-    where
-        T: Ord,
-    {
-        if let Some(first) = self.get(0) {
-            let mut prev = first;
-            for element in self.iter().skip(1) {
-                if element.cmp(prev) != Ordering::Greater {
-                    return false;
-                }
-                prev = element;
-            }
-        }
-        true
-    }
 
     fn zvl_as_borrowed(&self) -> &VarZeroSlice<T> {
         self.as_slice()
@@ -436,21 +417,6 @@ where
     }
     fn zvl_len(&self) -> usize {
         self.len()
-    }
-    fn zvl_is_ascending(&self) -> bool
-    where
-        T: Ord,
-    {
-        if let Some(first) = self.get(0) {
-            let mut prev = first;
-            for element in self.iter().skip(1) {
-                if element.cmp(prev) != Ordering::Greater {
-                    return false;
-                }
-                prev = element;
-            }
-        }
-        true
     }
 
     fn zvl_as_borrowed(&self) -> &VarZeroSlice<T> {
@@ -556,9 +522,6 @@ impl<'a> ZeroVecLike<usize> for FlexZeroVec<'a> {
     fn zvl_len(&self) -> usize {
         FlexZeroSlice::len(self)
     }
-    fn zvl_is_ascending(&self) -> bool {
-        FlexZeroSlice::zvl_is_ascending(self)
-    }
 
     fn zvl_as_borrowed(&self) -> &FlexZeroSlice {
         &*self
@@ -605,18 +568,6 @@ impl ZeroVecLike<usize> for FlexZeroSlice {
     }
     fn zvl_len(&self) -> usize {
         FlexZeroSlice::len(self)
-    }
-    fn zvl_is_ascending(&self) -> bool {
-        if let Some(first) = self.get(0) {
-            let mut prev = first;
-            for element in self.iter().skip(1) {
-                if element.cmp(&prev) != Ordering::Greater {
-                    return false;
-                }
-                prev = element;
-            }
-        }
-        true
     }
 
     fn zvl_as_borrowed(&self) -> &FlexZeroSlice {
