@@ -436,7 +436,7 @@ impl ResourceOptions {
         if self.keywords.is_empty() {
             self.langid.strict_cmp(other)
         } else {
-            // TODO: Avoid the allocation
+            // TODO(#2032): Avoid the allocation
             self.write_to_string().as_bytes().cmp(other)
         }
     }
