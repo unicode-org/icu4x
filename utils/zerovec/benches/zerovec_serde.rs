@@ -43,16 +43,10 @@ fn overview_bench(c: &mut Criterion) {
         });
     });
 
-    const ORIGINAL_CHARS: &[char] = &[
-        'ⶢ', '⺇', 'Ⱜ', '◁', '◩', '⌂', '⼅', '⏻', '⢜', '◊', 'ⲫ', '⏷', '◢', '⟉', '℞',
-    ];
-
-    let _char_zero_vec = &ZeroVec::alloc_from_slice(ORIGINAL_CHARS);
-
     #[cfg(feature = "bench")]
     {
         u32_benches(c);
-        char_benches(c, ORIGINAL_CHARS, _char_zero_vec);
+        char_benches(c);
         stress_benches(c);
     }
 }
@@ -92,13 +86,19 @@ fn u32_benches(c: &mut Criterion) {
 }
 
 #[cfg(feature = "bench")]
-fn char_benches(c: &mut Criterion, original_chars: &[char], char_zero_vec: &ZeroVec<char>) {
+fn char_benches(c: &mut Criterion) {
+    const ORIGINAL_CHARS: &[char] = &[
+        'ⶢ', '⺇', 'Ⱜ', '◁', '◩', '⌂', '⼅', '⏻', '⢜', '◊', 'ⲫ', '⏷', '◢', '⟉', '℞',
+    ];
+
+    let char_zero_vec = &ZeroVec::alloc_from_slice(ORIGINAL_CHARS);
+
     c.bench_function("zerovec_serde/serialize/char/slice", |b| {
-        b.iter(|| bincode::serialize(&Vec::from(original_chars)));
+        b.iter(|| bincode::serialize(black_box(&Vec::from(ORIGINAL_CHARS))));
     });
 
     c.bench_function("zerovec_serde/deserialize/char/slice", |b| {
-        let buffer = bincode::serialize(&Vec::from(original_chars)).unwrap();
+        let buffer = bincode::serialize(black_box(&Vec::from(ORIGINAL_CHARS))).unwrap();
         b.iter(|| bincode::deserialize::<Vec<char>>(&buffer));
     });
 
