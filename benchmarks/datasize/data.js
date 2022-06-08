@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1654643268136,
+  "lastUpdate": 1654647915609,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -16853,6 +16853,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/142c718dc1627972ce186e70828c7e4c00a44c4e"
         },
         "date": 1654643246371,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 2300847,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "2b75f5aa3af24cd6c35acee03a09998fbe444636",
+          "message": "Direct zip file reading in datagen (#1989)",
+          "timestamp": "2022-06-07T17:23:10-07:00",
+          "tree_id": "50a02e427d9c54e3fb1bb310344bed5000c3d8cb",
+          "url": "https://github.com/unicode-org/icu4x/commit/2b75f5aa3af24cd6c35acee03a09998fbe444636"
+        },
+        "date": 1654647892953,
         "tool": "ndjson",
         "benches": [
           {
