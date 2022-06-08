@@ -107,10 +107,8 @@ where
     /// ```
     pub fn new() -> Self {
         Self {
-            keys: <<K as ZeroMapKV<'a>>::Container as ZeroVecLike<K>>::BorrowedVariant::zvl_new_borrowed(
-            ),
-            values:
-                <<V as ZeroMapKV<'a>>::Container as ZeroVecLike<V>>::BorrowedVariant::zvl_new_borrowed(),
+            keys: K::Container::zvl_new_borrowed(),
+            values: V::Container::zvl_new_borrowed(),
         }
     }
 }

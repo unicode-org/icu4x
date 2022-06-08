@@ -9,7 +9,7 @@ use core::cmp::Ordering;
 use core::fmt;
 
 use crate::map::ZeroMapKV;
-use crate::map::{BorrowedZeroVecLike, ZeroVecLike};
+use crate::map::ZeroVecLike;
 use crate::map2d::{KeyError, ZeroMap2dCursor};
 
 /// A borrowed-only version of [`ZeroMap2d`](super::ZeroMap2d)
@@ -125,15 +125,10 @@ where
     /// ```
     pub fn new() -> Self {
         Self {
-            keys0:
-                <<K0 as ZeroMapKV<'a>>::Container as ZeroVecLike<K0>>::BorrowedVariant::zvl_new_borrowed(
-                ),
+            keys0: K0::Container::zvl_new_borrowed(),
             joiner: Default::default(),
-            keys1:
-                <<K1 as ZeroMapKV<'a>>::Container as ZeroVecLike<K1>>::BorrowedVariant::zvl_new_borrowed(
-                ),
-            values:
-                <<V as ZeroMapKV<'a>>::Container as ZeroVecLike<V>>::BorrowedVariant::zvl_new_borrowed(),
+            keys1: K1::Container::zvl_new_borrowed(),
+            values: V::Container::zvl_new_borrowed(),
         }
     }
 }

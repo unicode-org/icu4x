@@ -25,10 +25,9 @@ pub trait ZeroVecLike<T: ?Sized> {
     /// A fully borrowed version of this
     type BorrowedVariant: ZeroVecLike<T, GetType = Self::GetType> + BorrowedZeroVecLike<T> + ?Sized;
 
-    /// Create a new, empty vector
-    fn zvl_new() -> Self
-    where
-        Self: Sized;
+    /// Create a new, empty borrowed variant
+    fn zvl_new_borrowed() -> &'static Self::BorrowedVariant;
+
     /// Search for a key in a sorted vector, returns `Ok(index)` if found,
     /// returns `Err(insert_index)` if not found, where `insert_index` is the
     /// index where it should be inserted to maintain sort order.
@@ -120,7 +119,7 @@ pub trait ZeroVecLike<T: ?Sized> {
 /// Methods are prefixed with `zvl_*` to avoid clashes with methods on the types themselves
 pub trait BorrowedZeroVecLike<T: ?Sized>: ZeroVecLike<T> {
     /// Return a new, empty value with the static lifetime
-    fn zvl_new_borrowed() -> &'static Self;
+    fn zvl_new_borrowed_2() -> &'static Self;
 }
 
 /// Trait abstracting over [`ZeroVec`] and [`VarZeroVec`], for use in [`ZeroMap`](super::ZeroMap). **You
@@ -173,8 +172,8 @@ where
     type GetType = T::ULE;
     type BorrowedVariant = ZeroSlice<T>;
 
-    fn zvl_new() -> Self {
-        Self::new()
+    fn zvl_new_borrowed() -> &'static Self::BorrowedVariant {
+        ZeroSlice::<T>::new_empty()
     }
     fn zvl_binary_search(&self, k: &T) -> Result<usize, usize>
     where
@@ -236,11 +235,8 @@ where
     type GetType = T::ULE;
     type BorrowedVariant = ZeroSlice<T>;
 
-    fn zvl_new() -> Self
-    where
-        Self: Sized,
-    {
-        unreachable!()
+    fn zvl_new_borrowed() -> &'static Self::BorrowedVariant {
+        ZeroSlice::<T>::new_empty()
     }
     fn zvl_binary_search(&self, k: &T) -> Result<usize, usize>
     where
@@ -301,7 +297,7 @@ impl<T> BorrowedZeroVecLike<T> for ZeroSlice<T>
 where
     T: AsULE + Copy,
 {
-    fn zvl_new_borrowed() -> &'static Self {
+    fn zvl_new_borrowed_2() -> &'static Self {
         ZeroSlice::from_ule_slice(&[])
     }
 }
@@ -359,8 +355,8 @@ where
     type GetType = T;
     type BorrowedVariant = VarZeroSlice<T>;
 
-    fn zvl_new() -> Self {
-        Self::new()
+    fn zvl_new_borrowed() -> &'static Self::BorrowedVariant {
+        VarZeroSlice::<T>::new_empty()
     }
     fn zvl_binary_search(&self, k: &T) -> Result<usize, usize>
     where
@@ -424,11 +420,8 @@ where
     type GetType = T;
     type BorrowedVariant = VarZeroSlice<T>;
 
-    fn zvl_new() -> Self
-    where
-        Self: Sized,
-    {
-        unreachable!()
+    fn zvl_new_borrowed() -> &'static Self::BorrowedVariant {
+        VarZeroSlice::<T>::new_empty()
     }
     fn zvl_binary_search(&self, k: &T) -> Result<usize, usize>
     where
@@ -489,7 +482,7 @@ where
     T: VarULE,
     T: ?Sized,
 {
-    fn zvl_new_borrowed() -> &'static Self {
+    fn zvl_new_borrowed_2() -> &'static Self {
         VarZeroSlice::new_empty()
     }
 }
