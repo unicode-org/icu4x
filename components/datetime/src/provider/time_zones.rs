@@ -205,10 +205,8 @@ pub struct MetaZoneSpecificNamesShortV1<'data> {
 #[cfg_attr(feature = "datagen", derive(serde::Serialize))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
-pub struct MetaZonePeriodV1<'data> (
+pub struct MetaZonePeriodV1<'data>(
     /// The default mapping between period and metazone id.
-    #[cfg_attr(feature = "serde", serde(borrow))] pub ZeroMap2d<'data, TimeZoneBcp47Id, str, MetaZoneId>,
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub ZeroMap2d<'data, TimeZoneBcp47Id, str, MetaZoneId>,
 );
-
-
-

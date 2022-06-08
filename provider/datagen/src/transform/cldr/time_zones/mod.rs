@@ -263,5 +263,25 @@ mod tests {
                 )
                 .unwrap()
         );
+
+        let metazone_period: DataPayload<MetaZonePeriodV1Marker> = provider
+            .load_resource(&DataRequest {
+                options: langid!("en").into(),
+                metadata: Default::default(),
+            })
+            .unwrap()
+            .take_payload()
+            .unwrap();
+        assert_eq!(
+            &MetaZoneId(tinystr!(4, "mgmt")),
+            metazone_period
+                .get()
+                .0
+                .get(
+                    &TimeZoneBcp47Id(tinystr!(8, "gblon")),
+                    &String::from("1971-10-31 02:00")
+                )
+                .unwrap()
+        );
     }
 }

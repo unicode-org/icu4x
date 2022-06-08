@@ -8,8 +8,8 @@ pub mod time_zone_names;
 
 use icu_datetime::provider::time_zones::{MetaZoneId, TimeZoneBcp47Id};
 use litemap::LiteMap;
-use time_zone_names::TimeZoneNames;
 use meta_zones::ZonePeriod;
+use time_zone_names::TimeZoneNames;
 
 #[derive(Debug)]
 pub struct CldrTimeZonesData {

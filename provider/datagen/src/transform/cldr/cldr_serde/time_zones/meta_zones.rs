@@ -19,10 +19,10 @@ pub struct MetaZoneAliasData {
     pub since: String,
 }
 
-#[derive(PartialEq, Debug, Deserialize)]
+#[derive(PartialEq, Debug, Clone, Deserialize)]
 pub struct MetaZoneIds(pub LiteMap<MetaZoneId, MetaZoneAliasData>);
 
-#[derive(PartialEq, Debug, Deserialize)]
+#[derive(PartialEq, Debug, Clone, Deserialize)]
 pub struct UsesMetaZone {
     #[serde(rename = "_mzone")]
     pub mzone: String,
@@ -32,13 +32,13 @@ pub struct UsesMetaZone {
     pub to: Option<String>,
 }
 
-#[derive(PartialEq, Debug, Deserialize)]
+#[derive(PartialEq, Debug, Clone, Deserialize)]
 pub struct MetaZoneForPeriod {
     #[serde(rename = "usesMetazone")]
     pub uses_meta_zone: UsesMetaZone,
 }
 
-#[derive(PartialEq, Debug, Deserialize)]
+#[derive(PartialEq, Debug, Clone, Deserialize)]
 #[serde(untagged)]
 #[allow(clippy::enum_variant_names)]
 pub enum MetaLocationOrSubRegion {
@@ -46,24 +46,24 @@ pub enum MetaLocationOrSubRegion {
     SubRegion(LiteMap<String, Vec<MetaZoneForPeriod>>),
 }
 
-#[derive(PartialEq, Debug, Deserialize)]
+#[derive(PartialEq, Debug, Clone, Deserialize)]
 #[serde(untagged)]
 #[allow(clippy::enum_variant_names)]
 pub enum ZonePeriod {
     Region(Vec<MetaZoneForPeriod>),
-    LocationOrSubRegion(LiteMap<String,  MetaLocationOrSubRegion>),
+    LocationOrSubRegion(LiteMap<String, MetaLocationOrSubRegion>),
 }
 
-#[derive(PartialEq, Debug, Deserialize)]
+#[derive(PartialEq, Debug, Clone, Deserialize)]
 pub struct TimeZonePeriod(pub LiteMap<String, ZonePeriod>);
 
-#[derive(PartialEq, Debug, Deserialize)]
+#[derive(PartialEq, Debug, Clone, Deserialize)]
 pub struct MetaZoneInfo {
     #[serde(rename = "timezone")]
     pub time_zone: TimeZonePeriod,
 }
 
-#[derive(PartialEq, Debug, Deserialize)]
+#[derive(PartialEq, Debug, Clone, Deserialize)]
 pub struct MapZone {
     #[serde(rename = "_other")]
     pub other: String,
@@ -73,16 +73,16 @@ pub struct MapZone {
     pub territory: String,
 }
 
-#[derive(PartialEq, Debug, Deserialize)]
+#[derive(PartialEq, Debug, Clone, Deserialize)]
 pub struct MetaZoneTerritory {
     #[serde(rename = "mapZone")]
     pub map_zone: MapZone,
 }
 
-#[derive(PartialEq, Debug, Deserialize)]
+#[derive(PartialEq, Debug, Clone, Deserialize)]
 pub struct MetaZonesTerritory(pub Vec<MetaZoneTerritory>);
 
-#[derive(PartialEq, Debug, Deserialize)]
+#[derive(PartialEq, Debug, Clone, Deserialize)]
 pub struct MetaZones {
     #[serde(rename = "metazoneInfo")]
     pub meta_zone_info: MetaZoneInfo,
@@ -92,13 +92,13 @@ pub struct MetaZones {
     pub meta_zone_ids: MetaZoneIds,
 }
 
-#[derive(PartialEq, Debug, Deserialize)]
+#[derive(PartialEq, Debug, Clone, Deserialize)]
 pub struct Supplemental {
     #[serde(rename = "metaZones")]
     pub meta_zones: MetaZones,
 }
 
-#[derive(PartialEq, Debug, Deserialize)]
+#[derive(PartialEq, Debug, Clone, Deserialize)]
 pub struct Resource {
     pub supplemental: Supplemental,
 }
