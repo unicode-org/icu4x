@@ -293,11 +293,11 @@ impl FlexZeroSlice {
     }
 
     /// Binary searches a sorted range of a `FlexZeroSlice` for the given `usize` value.
-    /// 
+    ///
     /// Indices are returned relative to the start of the range.
-    /// 
+    ///
     /// # Examples
-    /// 
+    ///
     /// ```
     /// use zerovec::vecs::FlexZeroVec;
     ///
@@ -313,14 +313,14 @@ impl FlexZeroSlice {
     /// assert_eq!(fzv.binary_search_in_range(399, 0..3), Some(Err(2)));
     /// assert_eq!(fzv.binary_search_in_range(444, 0..3), Some(Ok(2)));
     /// assert_eq!(fzv.binary_search_in_range(999, 0..3), Some(Err(3)));
-    /// 
+    ///
     /// // Search in the second range:
     /// assert_eq!(fzv.binary_search_in_range(0, 3..5), Some(Err(0)));
     /// assert_eq!(fzv.binary_search_in_range(333, 3..5), Some(Ok(0)));
     /// assert_eq!(fzv.binary_search_in_range(399, 3..5), Some(Err(1)));
     /// assert_eq!(fzv.binary_search_in_range(555, 3..5), Some(Ok(1)));
     /// assert_eq!(fzv.binary_search_in_range(999, 3..5), Some(Err(2)));
-    /// 
+    ///
     /// // Out-of-bounds range:
     /// assert_eq!(fzv.binary_search_in_range(0, 4..6), None);
     /// ```
@@ -346,7 +346,7 @@ impl FlexZeroSlice {
     }
 
     /// Binary searches a sorted range of a `FlexZeroSlice` according to a predicate function.
-    /// 
+    ///
     /// Indices are returned relative to the start of the range.
     #[inline]
     pub fn binary_search_in_range_by(
