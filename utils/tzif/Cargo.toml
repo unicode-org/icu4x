@@ -5,6 +5,7 @@
 [package]
 name = "tzif"
 authors = ["The ICU4X Project Developers"]
+description = "A parser for TZif files"
 version = "0.1.0"
 edition = "2021"
 readme = "README.md"
