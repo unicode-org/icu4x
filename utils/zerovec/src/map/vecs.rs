@@ -535,7 +535,7 @@ impl<'a> ZeroVecLike<usize> for FlexZeroVec<'a> {
         k: &usize,
         range: Range<usize>,
     ) -> Option<Result<usize, usize>> {
-        FlexZeroSlice::binary_search_in_range(&self, *k, range)
+        FlexZeroSlice::binary_search_in_range(self, *k, range)
     }
     fn zvl_binary_search_by(
         &self,
@@ -548,7 +548,7 @@ impl<'a> ZeroVecLike<usize> for FlexZeroVec<'a> {
         mut predicate: impl FnMut(&usize) -> Ordering,
         range: Range<usize>,
     ) -> Option<Result<usize, usize>> {
-        FlexZeroSlice::binary_search_in_range_by(&self, |probe| predicate(&probe), range)
+        FlexZeroSlice::binary_search_in_range_by(self, |probe| predicate(&probe), range)
     }
     fn zvl_get(&self, index: usize) -> Option<&[u8]> {
         self.get_chunk(index)
@@ -586,7 +586,7 @@ impl ZeroVecLike<usize> for FlexZeroSlice {
         k: &usize,
         range: Range<usize>,
     ) -> Option<Result<usize, usize>> {
-        FlexZeroSlice::binary_search_in_range(&self, *k, range)
+        FlexZeroSlice::binary_search_in_range(self, *k, range)
     }
     fn zvl_binary_search_by(
         &self,
@@ -599,7 +599,7 @@ impl ZeroVecLike<usize> for FlexZeroSlice {
         mut predicate: impl FnMut(&usize) -> Ordering,
         range: Range<usize>,
     ) -> Option<Result<usize, usize>> {
-        FlexZeroSlice::binary_search_in_range_by(&self, |probe| predicate(&probe), range)
+        FlexZeroSlice::binary_search_in_range_by(self, |probe| predicate(&probe), range)
     }
     fn zvl_get(&self, index: usize) -> Option<&[u8]> {
         self.get_chunk(index)
