@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1654711794081,
+  "lastUpdate": 1654712060688,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -16973,6 +16973,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/69813317b6ca06545181880e45861fcdcd549678"
         },
         "date": 1654711770267,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 2300847,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "58569820+nordzilla@users.noreply.github.com",
+            "name": "Erik Nordin",
+            "username": "nordzilla"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "a8c8d2c564df24d29d01985428ec2c95e6adfbb4",
+          "message": "Move tzif crate from experimental to utils for publishing (#2019)\n\n* Replace empty `.then()` with `.with()`\r\n\r\n* Update error messages\r\n\r\n* Move `tzif` from `experimental` to `utils`\r\n\r\n* Add integration test for POSIX string\r\n\r\n* Update doc comments\r\n\r\n* Add crate keywords\r\n\r\n* Update Cargo.toml",
+          "timestamp": "2022-06-08T11:12:05-07:00",
+          "tree_id": "27a3e2cc47a900a3ab88feb80a0898b9b30db294",
+          "url": "https://github.com/unicode-org/icu4x/commit/a8c8d2c564df24d29d01985428ec2c95e6adfbb4"
+        },
+        "date": 1654712036191,
         "tool": "ndjson",
         "benches": [
           {
