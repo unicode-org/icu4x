@@ -123,8 +123,8 @@
 
 use crate::subtags::{Language, Region, Script, Variant};
 use zerovec::ule::{AsULE, ULE};
-use zerovec::ZeroVec;
 use zerovec::ZeroVecError;
+use zerovec::{ZeroSlice, ZeroVec};
 
 // Safety checklist for ULE:
 //
@@ -181,6 +181,7 @@ impl AsULE for Language {
 
 impl<'a> zerovec::maps::ZeroMapKV<'a> for Language {
     type Container = zerovec::ZeroVec<'a, Language>;
+    type Slice = zerovec::ZeroSlice<Language>;
     type GetType = Language;
     type OwnedType = Language;
 }
@@ -240,6 +241,7 @@ impl AsULE for Script {
 
 impl<'a> zerovec::maps::ZeroMapKV<'a> for Script {
     type Container = ZeroVec<'a, Script>;
+    type Slice = ZeroSlice<Script>;
     type GetType = Script;
     type OwnedType = Script;
 }
@@ -298,6 +300,7 @@ impl AsULE for Region {
 
 impl<'a> zerovec::maps::ZeroMapKV<'a> for Region {
     type Container = ZeroVec<'a, Region>;
+    type Slice = ZeroSlice<Region>;
     type GetType = Region;
     type OwnedType = Region;
 }
@@ -357,6 +360,7 @@ impl AsULE for Variant {
 
 impl<'a> zerovec::maps::ZeroMapKV<'a> for Variant {
     type Container = ZeroVec<'a, Variant>;
+    type Slice = ZeroSlice<Variant>;
     type GetType = Variant;
     type OwnedType = Variant;
 }
