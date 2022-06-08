@@ -4,11 +4,12 @@
 
 [package]
 name = "tzif"
-author = ["The ICU4X Project Developers"]
+authors = ["The ICU4X Project Developers"]
 version = "0.1.0"
 edition = "2021"
 readme = "README.md"
 license-file = "LICENSE"
+repository = "https://github.com/unicode-org/icu4x"
 keywords = ["time-zone", "posix", "iana", "parse", "data"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
