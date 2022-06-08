@@ -557,8 +557,7 @@ impl<'a> ZeroVecLike<usize> for FlexZeroVec<'a> {
         FlexZeroSlice::len(self)
     }
     fn zvl_is_ascending(&self) -> bool {
-        // FIXME
-        todo!()
+        FlexZeroSlice::zvl_is_ascending(self)
     }
 
     fn zvl_as_borrowed(&self) -> &FlexZeroSlice {
@@ -608,8 +607,16 @@ impl ZeroVecLike<usize> for FlexZeroSlice {
         FlexZeroSlice::len(self)
     }
     fn zvl_is_ascending(&self) -> bool {
-        // FIXME
-        todo!()
+        if let Some(first) = self.get(0) {
+            let mut prev = first;
+            for element in self.iter().skip(1) {
+                if element.cmp(&prev) != Ordering::Greater {
+                    return false;
+                }
+                prev = element;
+            }
+        }
+        true
     }
 
     fn zvl_as_borrowed(&self) -> &FlexZeroSlice {
