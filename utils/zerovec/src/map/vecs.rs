@@ -35,7 +35,7 @@ pub trait ZeroVecLike<T: ?Sized> {
     where
         T: Ord;
     /// Search for a key within a certain range in a sorted vector.
-    /// Returns `None` if the ange is out of bounds, and
+    /// Returns `None` if the range is out of bounds, and
     /// `Ok` or `Err` in the same way as `zvl_binary_search`.
     /// Indices are returned relative to the start of the range.
     fn zvl_binary_search_in_range(
