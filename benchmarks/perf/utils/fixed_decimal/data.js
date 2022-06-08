@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1654705754963,
+  "lastUpdate": 1654712481457,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -30569,6 +30569,66 @@ window.BENCHMARK_DATA = {
             "name": "from_string/1000000001",
             "value": 84,
             "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "69813317b6ca06545181880e45861fcdcd549678",
+          "message": "ZeroVecLike cleanup (#2024)\n\n* rm BorrowedZeroVecLike\r\n* BorrowedVariant -> SliceVariant\r\n* Add Slice to ZeroMapKV",
+          "timestamp": "2022-06-08T11:07:30-07:00",
+          "tree_id": "d6a6b8e93c014e052ac24ea0c65f8d31f0d3a084",
+          "url": "https://github.com/unicode-org/icu4x/commit/69813317b6ca06545181880e45861fcdcd549678"
+        },
+        "date": 1654712459823,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 101413,
+            "range": "± 8442",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 22383,
+            "range": "± 1223",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 62004,
+            "range": "± 8475",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 204,
+            "range": "± 21",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 83,
+            "range": "± 7",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 72,
+            "range": "± 3",
             "unit": "ns/iter"
           }
         ]
