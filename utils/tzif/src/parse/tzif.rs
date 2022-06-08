@@ -115,21 +115,21 @@ where
             ensure(
                 typecnt,
                 |&typecnt| typecnt != 0,
-                "typecnt was zero and should not be",
+                "typecnt should never be equal to zero",
             )
         })
         .then(move |typecnt| {
             ensure(
                 typecnt,
                 |&typecnt| isutcnt == 0 || isutcnt == typecnt,
-                "isutcnt is nonzero but not equal to typecnt",
+                "if isutcnt is non-zero it should be equal to typecnt",
             )
         })
         .then(move |typecnt| {
             ensure(
                 typecnt,
                 |&typecnt| isstdcnt == 0 || isstdcnt == typecnt,
-                "isutcnt is nonzero but not equal to typecnt",
+                "if isstdcnt is non-zero it should be equal to typecnt",
             )
         })
 }
@@ -145,11 +145,11 @@ where
     Input: Stream<Token = u8>,
     Input::Error: ParseError<Input::Token, Input::Range, Input::Position>,
 {
-    be_u32().map(|u32| u32 as usize).then(|typecnt| {
+    be_u32().map(|u32| u32 as usize).then(|charcnt| {
         ensure(
-            typecnt,
-            |&typecnt| typecnt != 0,
-            "charcnt was zero and should not be",
+            charcnt,
+            |&charcnt| charcnt != 0,
+            "charcnt should never be zero",
         )
     })
 }
@@ -763,8 +763,8 @@ where
     between(byte(b'\n'), byte(b'\n'), posix_tz_string())
 }
 
-/// Parses a `TZif` binary file. For more information see the above parsers,
-/// or read more directly from the source <https://datatracker.ietf.org/doc/html/rfc8536>
+/// Parses a `TZif` binary file according to the following specification:
+/// <https://datatracker.ietf.org/doc/html/rfc8536>
 #[must_use]
 pub fn tzif<Input>() -> impl Parser<Input, Output = TzifData>
 where
