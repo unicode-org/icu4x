@@ -377,7 +377,7 @@ where
 impl<'a, K, V> ZeroMap<'a, K, V>
 where
     K: ZeroMapKV<'a> + ?Sized + Ord,
-    V: ZeroMapKV<'a, Container = ZeroVec<'a, V>> + ?Sized,
+    V: ZeroMapKV<'a, GetType = V::ULE> + ?Sized,
     V: AsULE + Copy,
 {
     /// For cases when `V` is fixed-size, obtain a direct copy of `V` instead of `V::ULE`.
@@ -394,7 +394,8 @@ where
     /// assert_eq!(map.get_copied(&3), None);
     pub fn get_copied(&self, key: &K) -> Option<V> {
         let index = self.keys.zvl_binary_search(key).ok()?;
-        ZeroSlice::get(&*self.values, index)
+        let ule = self.values.zvl_get(index)?;
+        Some(V::from_unaligned(*ule))
     }
 
     /// Binary search the map with `predicate` to find a key, returning the value.
@@ -415,7 +416,8 @@ where
     /// ```
     pub fn get_copied_by(&self, predicate: impl FnMut(&K) -> Ordering) -> Option<V> {
         let index = self.keys.zvl_binary_search_by(predicate).ok()?;
-        ZeroSlice::get(&*self.values, index)
+        let ule = self.values.zvl_get(index)?;
+        Some(V::from_unaligned(*ule))
     }
 }
 
