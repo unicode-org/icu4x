@@ -11,3 +11,4 @@ pub(crate) mod vec;
 pub use owned::FlexZeroVecOwned;
 pub use slice::FlexZeroSlice;
 pub use vec::FlexZeroVec;
+pub(crate) use slice::chunk_to_usize;
