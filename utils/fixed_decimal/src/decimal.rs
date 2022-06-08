@@ -783,13 +783,12 @@ impl FixedDecimal {
     /// ```
     pub fn half_truncate_right(&mut self, position: i16) {
         let digit_after_position = self.digit_at_next_positon(position);
-        let should_expand = {
-            if digit_after_position < 5 {
-                false
-            } else if digit_after_position > 5 {
-                true
-            } else {
-                // NOTE: `digit_after_position` equals 5, this means, position does not equal to `i16::MIN`.
+        let should_expand = match digit_after_position.cmp(&5) {
+            Ordering::Less => false,
+            Ordering::Greater => true,
+            Ordering::Equal =>
+            // NOTE: `digit_after_position` equals 5, this means, position does not equal to `i16::MIN`.
+            {
                 self.nonzero_magnitude_right() < position - 1
             }
         };
@@ -1052,16 +1051,16 @@ impl FixedDecimal {
     /// ```
     pub fn half_even(&mut self, position: i16) {
         let digit_after_position = self.digit_at_next_positon(position);
-        let should_expand = {
-            if digit_after_position < 5 {
-                false
-            } else if digit_after_position > 5 {
-                true
-            } else if self.nonzero_magnitude_right() < position - 1 {
+        let should_expand = match digit_after_position.cmp(&5) {
+            Ordering::Less => false,
+            Ordering::Greater => true,
+            Ordering::Equal => {
                 // NOTE: `digit_after_position` equals to 5, this means that positon does not equal i16::MIN.
-                true
-            } else {
-                self.digit_at(position) % 2 != 0
+                if self.nonzero_magnitude_right() < position - 1 {
+                    true
+                } else {
+                    self.digit_at(position) % 2 != 0
+                }
             }
         };
 
