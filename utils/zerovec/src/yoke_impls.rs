@@ -122,9 +122,9 @@ unsafe impl<'a, K, V> Yokeable<'a> for ZeroMapBorrowed<'static, K, V>
 where
     K: 'static + for<'b> ZeroMapKV<'b> + ?Sized,
     V: 'static + for<'b> ZeroMapKV<'b> + ?Sized,
-    &'static <<K as ZeroMapKV<'static>>::Container as ZeroVecLike<K>>::BorrowedVariant:
+    &'static <<K as ZeroMapKV<'static>>::Container as ZeroVecLike<K>>::SliceVariant:
         for<'b> Yokeable<'b>,
-    &'static <<V as ZeroMapKV<'static>>::Container as ZeroVecLike<V>>::BorrowedVariant:
+    &'static <<V as ZeroMapKV<'static>>::Container as ZeroVecLike<V>>::SliceVariant:
         for<'b> Yokeable<'b>,
 {
     type Output = ZeroMapBorrowed<'a, K, V>;
@@ -219,11 +219,11 @@ where
     K0: 'static + for<'b> ZeroMapKV<'b> + ?Sized,
     K1: 'static + for<'b> ZeroMapKV<'b> + ?Sized,
     V: 'static + for<'b> ZeroMapKV<'b> + ?Sized,
-    &'static <<K0 as ZeroMapKV<'static>>::Container as ZeroVecLike<K0>>::BorrowedVariant:
+    &'static <<K0 as ZeroMapKV<'static>>::Container as ZeroVecLike<K0>>::SliceVariant:
         for<'b> Yokeable<'b>,
-    &'static <<K1 as ZeroMapKV<'static>>::Container as ZeroVecLike<K1>>::BorrowedVariant:
+    &'static <<K1 as ZeroMapKV<'static>>::Container as ZeroVecLike<K1>>::SliceVariant:
         for<'b> Yokeable<'b>,
-    &'static <<V as ZeroMapKV<'static>>::Container as ZeroVecLike<V>>::BorrowedVariant:
+    &'static <<V as ZeroMapKV<'static>>::Container as ZeroVecLike<V>>::SliceVariant:
         for<'b> Yokeable<'b>,
 {
     type Output = ZeroMap2dBorrowed<'a, K0, K1, V>;

@@ -23,10 +23,10 @@ pub trait ZeroVecLike<T: ?Sized> {
     /// The type returned by `Self::get()`
     type GetType: ?Sized + 'static;
     /// A fully borrowed version of this
-    type BorrowedVariant: ZeroVecLike<T, GetType = Self::GetType> + ?Sized;
+    type SliceVariant: ZeroVecLike<T, GetType = Self::GetType> + ?Sized;
 
     /// Create a new, empty borrowed variant
-    fn zvl_new_borrowed() -> &'static Self::BorrowedVariant;
+    fn zvl_new_borrowed() -> &'static Self::SliceVariant;
 
     /// Search for a key in a sorted vector, returns `Ok(index)` if found,
     /// returns `Err(insert_index)` if not found, where `insert_index` is the
@@ -75,13 +75,13 @@ pub trait ZeroVecLike<T: ?Sized> {
 
     /// Construct a borrowed variant by borrowing from `&self`.
     ///
-    /// This function behaves like `&'b self -> Self::BorrowedVariant<'b>`,
+    /// This function behaves like `&'b self -> Self::SliceVariant<'b>`,
     /// where `'b` is the lifetime of the reference to this object.
     ///
     /// Note: We rely on the compiler recognizing `'a` and `'b` as covariant and
     /// casting `&'b Self<'a>` to `&'b Self<'b>` when this gets called, which works
     /// out for `ZeroVec` and `VarZeroVec` containers just fine.
-    fn zvl_as_borrowed(&self) -> &Self::BorrowedVariant;
+    fn zvl_as_borrowed(&self) -> &Self::SliceVariant;
 
     /// Compare this type with a `Self::GetType`. This must produce the same result as
     /// if `g` were converted to `Self`
@@ -142,15 +142,15 @@ pub trait MutableZeroVecLike<'a, T: ?Sized>: ZeroVecLike<T> {
     /// Construct from the borrowed version of the type
     ///
     /// These are useful to ensure serialization parity between borrowed and owned versions
-    fn zvl_from_borrowed(b: &'a Self::BorrowedVariant) -> Self;
+    fn zvl_from_borrowed(b: &'a Self::SliceVariant) -> Self;
     /// Extract the inner borrowed variant if possible. Returns `None` if the data is owned.
     ///
-    /// This function behaves like `&'_ self -> Self::BorrowedVariant<'a>`,
+    /// This function behaves like `&'_ self -> Self::SliceVariant<'a>`,
     /// where `'a` is the lifetime of this object's borrowed data.
     ///
     /// This function is similar to matching the `Borrowed` variant of `ZeroVec`
     /// or `VarZeroVec`, returning the inner borrowed type.
-    fn zvl_as_borrowed_inner(&self) -> Option<&'a Self::BorrowedVariant>;
+    fn zvl_as_borrowed_inner(&self) -> Option<&'a Self::SliceVariant>;
 }
 
 impl<'a, T> ZeroVecLike<T> for ZeroVec<'a, T>
@@ -158,9 +158,9 @@ where
     T: 'a + AsULE + Copy,
 {
     type GetType = T::ULE;
-    type BorrowedVariant = ZeroSlice<T>;
+    type SliceVariant = ZeroSlice<T>;
 
-    fn zvl_new_borrowed() -> &'static Self::BorrowedVariant {
+    fn zvl_new_borrowed() -> &'static Self::SliceVariant {
         ZeroSlice::<T>::new_empty()
     }
     fn zvl_binary_search(&self, k: &T) -> Result<usize, usize>
@@ -221,9 +221,9 @@ where
     T: AsULE + Copy,
 {
     type GetType = T::ULE;
-    type BorrowedVariant = ZeroSlice<T>;
+    type SliceVariant = ZeroSlice<T>;
 
-    fn zvl_new_borrowed() -> &'static Self::BorrowedVariant {
+    fn zvl_new_borrowed() -> &'static Self::SliceVariant {
         ZeroSlice::<T>::new_empty()
     }
     fn zvl_binary_search(&self, k: &T) -> Result<usize, usize>
@@ -332,9 +332,9 @@ where
     T: ?Sized,
 {
     type GetType = T;
-    type BorrowedVariant = VarZeroSlice<T>;
+    type SliceVariant = VarZeroSlice<T>;
 
-    fn zvl_new_borrowed() -> &'static Self::BorrowedVariant {
+    fn zvl_new_borrowed() -> &'static Self::SliceVariant {
         VarZeroSlice::<T>::new_empty()
     }
     fn zvl_binary_search(&self, k: &T) -> Result<usize, usize>
@@ -397,9 +397,9 @@ where
     T: ?Sized,
 {
     type GetType = T;
-    type BorrowedVariant = VarZeroSlice<T>;
+    type SliceVariant = VarZeroSlice<T>;
 
-    fn zvl_new_borrowed() -> &'static Self::BorrowedVariant {
+    fn zvl_new_borrowed() -> &'static Self::SliceVariant {
         VarZeroSlice::<T>::new_empty()
     }
     fn zvl_binary_search(&self, k: &T) -> Result<usize, usize>

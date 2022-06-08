@@ -25,10 +25,10 @@ where
     V: ?Sized,
 {
     // Invariant: these fields have the same invariants as they do in ZeroMap2d
-    keys0: &'l <<K0 as ZeroMapKV<'a>>::Container as ZeroVecLike<K0>>::BorrowedVariant,
+    keys0: &'l <<K0 as ZeroMapKV<'a>>::Container as ZeroVecLike<K0>>::SliceVariant,
     joiner: &'l ZeroSlice<u32>,
-    keys1: &'l <<K1 as ZeroMapKV<'a>>::Container as ZeroVecLike<K1>>::BorrowedVariant,
-    values: &'l <<V as ZeroMapKV<'a>>::Container as ZeroVecLike<V>>::BorrowedVariant,
+    keys1: &'l <<K1 as ZeroMapKV<'a>>::Container as ZeroVecLike<K1>>::SliceVariant,
+    values: &'l <<V as ZeroMapKV<'a>>::Container as ZeroVecLike<V>>::SliceVariant,
     // Invariant: key0_index is in range
     key0_index: usize,
 }
@@ -240,12 +240,12 @@ where
     K0: for<'c> ZeroMapKV<'c> + ?Sized,
     K1: for<'c> ZeroMapKV<'c> + ?Sized,
     V: for<'c> ZeroMapKV<'c> + ?Sized,
-    <<K0 as ZeroMapKV<'a>>::Container as ZeroVecLike<K0>>::BorrowedVariant:
-        PartialEq<<<K0 as ZeroMapKV<'b>>::Container as ZeroVecLike<K0>>::BorrowedVariant>,
-    <<K1 as ZeroMapKV<'a>>::Container as ZeroVecLike<K1>>::BorrowedVariant:
-        PartialEq<<<K1 as ZeroMapKV<'b>>::Container as ZeroVecLike<K1>>::BorrowedVariant>,
-    <<V as ZeroMapKV<'a>>::Container as ZeroVecLike<V>>::BorrowedVariant:
-        PartialEq<<<V as ZeroMapKV<'b>>::Container as ZeroVecLike<V>>::BorrowedVariant>,
+    <<K0 as ZeroMapKV<'a>>::Container as ZeroVecLike<K0>>::SliceVariant:
+        PartialEq<<<K0 as ZeroMapKV<'b>>::Container as ZeroVecLike<K0>>::SliceVariant>,
+    <<K1 as ZeroMapKV<'a>>::Container as ZeroVecLike<K1>>::SliceVariant:
+        PartialEq<<<K1 as ZeroMapKV<'b>>::Container as ZeroVecLike<K1>>::SliceVariant>,
+    <<V as ZeroMapKV<'a>>::Container as ZeroVecLike<V>>::SliceVariant:
+        PartialEq<<<V as ZeroMapKV<'b>>::Container as ZeroVecLike<V>>::SliceVariant>,
 {
     fn eq(&self, other: &ZeroMap2dCursor<'n, 'b, K0, K1, V>) -> bool {
         self.keys0.eq(other.keys0)
@@ -261,9 +261,9 @@ where
     K0: ZeroMapKV<'a> + ?Sized,
     K1: ZeroMapKV<'a> + ?Sized,
     V: ZeroMapKV<'a> + ?Sized,
-    <<K0 as ZeroMapKV<'a>>::Container as ZeroVecLike<K0>>::BorrowedVariant: fmt::Debug,
-    <<K1 as ZeroMapKV<'a>>::Container as ZeroVecLike<K1>>::BorrowedVariant: fmt::Debug,
-    <<V as ZeroMapKV<'a>>::Container as ZeroVecLike<V>>::BorrowedVariant: fmt::Debug,
+    <<K0 as ZeroMapKV<'a>>::Container as ZeroVecLike<K0>>::SliceVariant: fmt::Debug,
+    <<K1 as ZeroMapKV<'a>>::Container as ZeroVecLike<K1>>::SliceVariant: fmt::Debug,
+    <<V as ZeroMapKV<'a>>::Container as ZeroVecLike<V>>::SliceVariant: fmt::Debug,
 {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> Result<(), fmt::Error> {
         f.debug_struct("ZeroMap2d")

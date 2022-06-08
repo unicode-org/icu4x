@@ -45,10 +45,10 @@ where
     K1: ?Sized,
     V: ?Sized,
 {
-    pub(crate) keys0: &'a <<K0 as ZeroMapKV<'a>>::Container as ZeroVecLike<K0>>::BorrowedVariant,
+    pub(crate) keys0: &'a <<K0 as ZeroMapKV<'a>>::Container as ZeroVecLike<K0>>::SliceVariant,
     pub(crate) joiner: &'a ZeroSlice<u32>,
-    pub(crate) keys1: &'a <<K1 as ZeroMapKV<'a>>::Container as ZeroVecLike<K1>>::BorrowedVariant,
-    pub(crate) values: &'a <<V as ZeroMapKV<'a>>::Container as ZeroVecLike<V>>::BorrowedVariant,
+    pub(crate) keys1: &'a <<K1 as ZeroMapKV<'a>>::Container as ZeroVecLike<K1>>::SliceVariant,
+    pub(crate) values: &'a <<V as ZeroMapKV<'a>>::Container as ZeroVecLike<V>>::SliceVariant,
 }
 
 impl<'a, K0, K1, V> Copy for ZeroMap2dBorrowed<'a, K0, K1, V>
@@ -86,9 +86,9 @@ where
     K0: ZeroMapKV<'a>,
     K1: ZeroMapKV<'a>,
     V: ZeroMapKV<'a>,
-    <<K0 as ZeroMapKV<'a>>::Container as ZeroVecLike<K0>>::BorrowedVariant: 'static,
-    <<K1 as ZeroMapKV<'a>>::Container as ZeroVecLike<K1>>::BorrowedVariant: 'static,
-    <<V as ZeroMapKV<'a>>::Container as ZeroVecLike<V>>::BorrowedVariant: 'static,
+    <<K0 as ZeroMapKV<'a>>::Container as ZeroVecLike<K0>>::SliceVariant: 'static,
+    <<K1 as ZeroMapKV<'a>>::Container as ZeroVecLike<K1>>::SliceVariant: 'static,
+    <<V as ZeroMapKV<'a>>::Container as ZeroVecLike<V>>::SliceVariant: 'static,
     K0: ?Sized,
     K1: ?Sized,
     V: ?Sized,
@@ -103,9 +103,9 @@ where
     K0: ZeroMapKV<'a>,
     K1: ZeroMapKV<'a>,
     V: ZeroMapKV<'a>,
-    <<K0 as ZeroMapKV<'a>>::Container as ZeroVecLike<K0>>::BorrowedVariant: 'static,
-    <<K1 as ZeroMapKV<'a>>::Container as ZeroVecLike<K1>>::BorrowedVariant: 'static,
-    <<V as ZeroMapKV<'a>>::Container as ZeroVecLike<V>>::BorrowedVariant: 'static,
+    <<K0 as ZeroMapKV<'a>>::Container as ZeroVecLike<K0>>::SliceVariant: 'static,
+    <<K1 as ZeroMapKV<'a>>::Container as ZeroVecLike<K1>>::SliceVariant: 'static,
+    <<V as ZeroMapKV<'a>>::Container as ZeroVecLike<V>>::SliceVariant: 'static,
     K0: ?Sized,
     K1: ?Sized,
     V: ?Sized,
@@ -307,12 +307,12 @@ where
     K0: for<'c> ZeroMapKV<'c> + ?Sized,
     K1: for<'c> ZeroMapKV<'c> + ?Sized,
     V: for<'c> ZeroMapKV<'c> + ?Sized,
-    <<K0 as ZeroMapKV<'a>>::Container as ZeroVecLike<K0>>::BorrowedVariant:
-        PartialEq<<<K0 as ZeroMapKV<'b>>::Container as ZeroVecLike<K0>>::BorrowedVariant>,
-    <<K1 as ZeroMapKV<'a>>::Container as ZeroVecLike<K1>>::BorrowedVariant:
-        PartialEq<<<K1 as ZeroMapKV<'b>>::Container as ZeroVecLike<K1>>::BorrowedVariant>,
-    <<V as ZeroMapKV<'a>>::Container as ZeroVecLike<V>>::BorrowedVariant:
-        PartialEq<<<V as ZeroMapKV<'b>>::Container as ZeroVecLike<V>>::BorrowedVariant>,
+    <<K0 as ZeroMapKV<'a>>::Container as ZeroVecLike<K0>>::SliceVariant:
+        PartialEq<<<K0 as ZeroMapKV<'b>>::Container as ZeroVecLike<K0>>::SliceVariant>,
+    <<K1 as ZeroMapKV<'a>>::Container as ZeroVecLike<K1>>::SliceVariant:
+        PartialEq<<<K1 as ZeroMapKV<'b>>::Container as ZeroVecLike<K1>>::SliceVariant>,
+    <<V as ZeroMapKV<'a>>::Container as ZeroVecLike<V>>::SliceVariant:
+        PartialEq<<<V as ZeroMapKV<'b>>::Container as ZeroVecLike<V>>::SliceVariant>,
 {
     fn eq(&self, other: &ZeroMap2dBorrowed<'b, K0, K1, V>) -> bool {
         self.keys0.eq(other.keys0)
@@ -327,9 +327,9 @@ where
     K0: ZeroMapKV<'a> + ?Sized,
     K1: ZeroMapKV<'a> + ?Sized,
     V: ZeroMapKV<'a> + ?Sized,
-    <<K0 as ZeroMapKV<'a>>::Container as ZeroVecLike<K0>>::BorrowedVariant: fmt::Debug,
-    <<K1 as ZeroMapKV<'a>>::Container as ZeroVecLike<K1>>::BorrowedVariant: fmt::Debug,
-    <<V as ZeroMapKV<'a>>::Container as ZeroVecLike<V>>::BorrowedVariant: fmt::Debug,
+    <<K0 as ZeroMapKV<'a>>::Container as ZeroVecLike<K0>>::SliceVariant: fmt::Debug,
+    <<K1 as ZeroMapKV<'a>>::Container as ZeroVecLike<K1>>::SliceVariant: fmt::Debug,
+    <<V as ZeroMapKV<'a>>::Container as ZeroVecLike<V>>::SliceVariant: fmt::Debug,
 {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> Result<(), fmt::Error> {
         f.debug_struct("ZeroMap2dBorrowed")
