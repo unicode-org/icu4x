@@ -992,7 +992,7 @@ fn test_th_corner_cases() {
         "\u{0E24}\u{0E29}\u{0E35}",
         "\u{0E26}\u{0E29}\u{0E35}",
         // Vowels reorder, should compare \u{0E2D} and \u{0E34}
-        // XXX Should the middle code point differ between the two strings?
+        // (Should the middle code point differ between the two strings?)
         "\u{0E40}\u{0E01}\u{0E2D}",
         // Tones are compared after the rest of the word (e.g. primary ignorable)
         "\u{0E01}\u{0E32}\u{0E01}\u{0E48}\u{0E32}",
@@ -1032,7 +1032,7 @@ fn test_th_corner_cases() {
     let locale: Locale = langid!("th").into();
     let data_provider = icu_testdata::get_provider();
     {
-        // XXX TODO: Check why the commented-out cases fail
+        // TODO(#2013): Check why the commented-out cases fail
         let collator: Collator =
             Collator::try_new(locale, &data_provider, CollatorOptions::new()).unwrap();
         check_expectations(&collator, &left, &right, &expectations);
@@ -1046,7 +1046,7 @@ fn test_th_reordering() {
         // composition
         "\u{0E41}c\u{0301}",
         // supplementaries
-        // XXX Why does this fail?
+        // TODO(#2013): Why does this fail?
         // "\u{0E41}\u{1D7CE}",
         // supplementary composition decomps to supplementary
         "\u{0E41}\u{1D15F}",
