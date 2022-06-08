@@ -521,10 +521,10 @@ where
 impl<'a> ZeroVecLike<usize> for FlexZeroVec<'a>
 {
     type GetType = [u8];
-    type BorrowedVariant = FlexZeroSlice;
+    type SliceVariant = FlexZeroSlice;
 
-    fn zvl_new() -> Self {
-        Self::new()
+    fn zvl_new_borrowed() -> &'static Self::SliceVariant {
+        FlexZeroSlice::new_empty()
     }
     fn zvl_binary_search(&self, k: &usize) -> Result<usize, usize>
     {
@@ -572,11 +572,10 @@ impl<'a> ZeroVecLike<usize> for FlexZeroVec<'a>
 impl ZeroVecLike<usize> for FlexZeroSlice
 {
     type GetType = [u8];
-    type BorrowedVariant = FlexZeroSlice;
+    type SliceVariant = FlexZeroSlice;
 
-    fn zvl_new() -> FlexZeroSlice
-    {
-        unreachable!()
+    fn zvl_new_borrowed() -> &'static Self::SliceVariant {
+        FlexZeroSlice::new_empty()
     }
     fn zvl_binary_search(&self, k: &usize) -> Result<usize, usize>
     {
@@ -621,13 +620,6 @@ impl ZeroVecLike<usize> for FlexZeroSlice
     }
 }
 
-impl BorrowedZeroVecLike<usize> for FlexZeroSlice
-{
-    fn zvl_new_borrowed() -> &'static Self {
-        FlexZeroSlice::new_empty()
-    }
-}
-
 impl<'a> MutableZeroVecLike<'a, usize> for FlexZeroVec<'a>
 {
     type OwnedType = usize;
@@ -643,14 +635,14 @@ impl<'a> MutableZeroVecLike<'a, usize> for FlexZeroVec<'a>
     fn zvl_push(&mut self, value: &usize) {
         self.to_mut().push(*value)
     }
-    fn zvl_with_capacity(cap: usize) -> Self {
+    fn zvl_with_capacity(_cap: usize) -> Self {
         // There is no `FlexZeroVec::with_capacity()` because it is variable-width
         FlexZeroVec::Owned(FlexZeroVecOwned::new_empty())
     }
     fn zvl_clear(&mut self) {
         self.to_mut().clear()
     }
-    fn zvl_reserve(&mut self, addl: usize) {
+    fn zvl_reserve(&mut self, _addl: usize) {
         // There is no `FlexZeroVec::reserve()` because it is variable-width
     }
 
