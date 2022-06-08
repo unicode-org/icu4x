@@ -441,19 +441,108 @@ impl FlexZeroSlice {
         }
         self.width = new_width as u8;
     }
+}
 
-    /// # Safety
+/// Pre-computed information about a pending insertion operation.
+///
+/// Do not create one of these directly; call `get_insert_info()`.
+pub(crate) struct ReplaceInfo {
+    /// The index of the entry being replaced.
+    pub replace_index: usize,
+    /// The bytes to be inserted, with zero-fill.
+    pub new_item_bytes: [u8; USIZE_WIDTH],
+    /// The new item width after insertion.
+    pub new_width: usize,
+    /// The new number of bytes required for the entire slice (self.data.len() + 1).
+    pub new_bytes_len: usize,
+    /// The number of items in the slice.
+    pub count: usize,
+}
+
+impl FlexZeroSlice {
+    /// Compute the [`ReplaceInfo`] for replacing the specified item with another item.
     ///
-    /// `index` must be in range.
-    pub(crate) unsafe fn replace_impl(&mut self, index: usize, item: usize) -> usize {
-        let w = self.get_width();
-        let item_bytes = item.to_le_bytes();
-        let old_value = self.get_unchecked(index);
-        core::ptr::copy_nonoverlapping(
-            item_bytes.as_ptr(),
-            self.data.as_mut_ptr().add(index * w),
-            w,
-        );
+    /// # Panics
+    ///
+    /// Panics if replacing the element would require allocating more than `usize::MAX` bytes.
+    pub(crate) fn get_replace_info(&self, replace_index: usize, new_item: usize) -> ReplaceInfo {
+        debug_assert!(replace_index < self.len());
+        // Safety: replace_index is in range (assertion on previous line)
+        let old_item_bytes = unsafe { self.get_unchecked(replace_index).to_le_bytes() };
+        let old_item_width = get_item_width(&old_item_bytes);
+        let new_item_bytes = new_item.to_le_bytes();
+        let new_item_width = get_item_width(&new_item_bytes);
+        let old_width = self.get_width();
+        let count = self.data.len() / old_width;
+        let new_width = if new_item_width >= old_width {
+            // The new item will be maximally wide
+            new_item_width
+        } else if old_item_width < old_width {
+            // The old item was not maximally wide, so we don't need to shrink
+            core::cmp::max(old_width, new_item_width)
+        } else {
+            debug_assert_eq!(old_width, old_item_width);
+            // We might be removing the widest element. If so, we need to scale down.
+            let mut largest_width = new_item_width;
+            for i in 0..count {
+                // Safety: i is in range (between 0 and count)
+                let curr_bytes = unsafe { self.get_unchecked(i).to_le_bytes() };
+                let curr_width = get_item_width(&curr_bytes);
+                largest_width = core::cmp::max(curr_width, largest_width);
+            }
+            largest_width
+        };
+        #[allow(clippy::unwrap_used)] // panic is documented in function contract
+        let new_bytes_len = count.checked_mul(new_width).unwrap();
+        ReplaceInfo {
+            replace_index,
+            new_item_bytes,
+            new_width,
+            new_bytes_len,
+            count,
+        }
+    }
+
+    pub(crate) fn replace_impl(&mut self, replace_info: ReplaceInfo) -> usize {
+        let ReplaceInfo {
+            replace_index,
+            new_item_bytes,
+            new_width,
+            new_bytes_len,
+            count,
+        } = replace_info;
+        let old_width = self.get_width();
+        if new_width != old_width {
+            let range = if new_width < old_width {
+                0..count
+            } else {
+                (0..count).rev()
+            };
+            for i in range {
+                // Safety: `i < count` so it is in-range
+                let bytes_to_write = unsafe { self.get_unchecked(i).to_le_bytes() };
+                // Safety: The vector has capacity for `new_width` items at the new index.
+                unsafe {
+                    core::ptr::copy_nonoverlapping(
+                        bytes_to_write.as_ptr(),
+                        self.data.as_mut_ptr().add(new_width * i),
+                        new_width,
+                    );
+                }
+            }
+            self.width = new_width as u8;
+        }
+        debug_assert!(replace_index < count);
+        // Safety: `replace_index < count` (asserted above)
+        let old_value = unsafe { self.get_unchecked(replace_index) };
+        // Safety: The vector has capacity for `new_width` items at an in-bounds index
+        unsafe {
+            core::ptr::copy_nonoverlapping(
+                new_item_bytes.as_ptr(),
+                self.data.as_mut_ptr().add(replace_index * new_width),
+                new_width,
+            );
+        }
         old_value
     }
 }
