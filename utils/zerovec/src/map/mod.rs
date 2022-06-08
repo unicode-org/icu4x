@@ -20,4 +20,4 @@ mod serde_helpers;
 pub use crate::ZeroMap;
 pub use borrowed::ZeroMapBorrowed;
 pub use kv::ZeroMapKV;
-pub use vecs::{BorrowedZeroVecLike, MutableZeroVecLike, ZeroVecLike};
+pub use vecs::{MutableZeroVecLike, ZeroVecLike};

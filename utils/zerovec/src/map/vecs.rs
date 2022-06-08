@@ -23,7 +23,7 @@ pub trait ZeroVecLike<T: ?Sized> {
     /// The type returned by `Self::get()`
     type GetType: ?Sized + 'static;
     /// A fully borrowed version of this
-    type BorrowedVariant: ZeroVecLike<T, GetType = Self::GetType> + BorrowedZeroVecLike<T> + ?Sized;
+    type BorrowedVariant: ZeroVecLike<T, GetType = Self::GetType> + ?Sized;
 
     /// Create a new, empty borrowed variant
     fn zvl_new_borrowed() -> &'static Self::BorrowedVariant;
@@ -108,18 +108,6 @@ pub trait ZeroVecLike<T: ?Sized> {
     /// This uses a callback because it's not possible to return owned-or-borrowed
     /// types without GATs
     fn zvl_get_as_t<R>(g: &Self::GetType, f: impl FnOnce(&T) -> R) -> R;
-}
-
-/// Trait abstracting over [`ZeroVec`] and [`VarZeroVec`], for use in [`ZeroMap`](super::ZeroMap). **You
-/// should not be implementing or calling this trait directly.**
-///
-/// This trait augments [`ZeroVecLike`] with methods allowing for taking
-/// longer references to the underlying buffer, for borrowed-only vector types.
-///
-/// Methods are prefixed with `zvl_*` to avoid clashes with methods on the types themselves
-pub trait BorrowedZeroVecLike<T: ?Sized>: ZeroVecLike<T> {
-    /// Return a new, empty value with the static lifetime
-    fn zvl_new_borrowed_2() -> &'static Self;
 }
 
 /// Trait abstracting over [`ZeroVec`] and [`VarZeroVec`], for use in [`ZeroMap`](super::ZeroMap). **You
@@ -290,15 +278,6 @@ where
     #[inline]
     fn zvl_get_as_t<R>(g: &Self::GetType, f: impl FnOnce(&T) -> R) -> R {
         f(&T::from_unaligned(*g))
-    }
-}
-
-impl<T> BorrowedZeroVecLike<T> for ZeroSlice<T>
-where
-    T: AsULE + Copy,
-{
-    fn zvl_new_borrowed_2() -> &'static Self {
-        ZeroSlice::from_ule_slice(&[])
     }
 }
 
@@ -474,16 +453,6 @@ where
     #[inline]
     fn zvl_get_as_t<R>(g: &Self::GetType, f: impl FnOnce(&T) -> R) -> R {
         f(g)
-    }
-}
-
-impl<T> BorrowedZeroVecLike<T> for VarZeroSlice<T>
-where
-    T: VarULE,
-    T: ?Sized,
-{
-    fn zvl_new_borrowed_2() -> &'static Self {
-        VarZeroSlice::new_empty()
     }
 }
 

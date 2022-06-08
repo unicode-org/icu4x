@@ -263,7 +263,7 @@ pub mod maps {
     pub use crate::map2d::ZeroMap2d;
     pub use crate::map2d::ZeroMap2dBorrowed;
 
-    pub use crate::map::{BorrowedZeroVecLike, MutableZeroVecLike, ZeroMapKV, ZeroVecLike};
+    pub use crate::map::{MutableZeroVecLike, ZeroMapKV, ZeroVecLike};
     pub use crate::map2d::KeyError;
 }
 

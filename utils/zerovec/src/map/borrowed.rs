@@ -9,7 +9,7 @@ use core::cmp::Ordering;
 use core::fmt;
 
 pub use super::kv::ZeroMapKV;
-pub use super::vecs::{BorrowedZeroVecLike, MutableZeroVecLike, ZeroVecLike};
+pub use super::vecs::{MutableZeroVecLike, ZeroVecLike};
 
 /// A borrowed-only version of [`ZeroMap`](super::ZeroMap)
 ///
