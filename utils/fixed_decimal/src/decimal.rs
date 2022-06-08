@@ -789,7 +789,7 @@ impl FixedDecimal {
             } else if digit_after_position > 5 {
                 true
             } else {
-                // `digit_after_position` equals 5, this means, position is equals to `i16::MIN`.
+                // NOTE: `digit_after_position` equals 5, this means, position does not equal to `i16::MIN`.
                 self.nonzero_magnitude_right() < position - 1
             }
         };
@@ -1052,21 +1052,20 @@ impl FixedDecimal {
     /// ```
     pub fn half_even(&mut self, position: i16) {
         let digit_after_position = self.digit_at_next_positon(position);
-        let mut exactly_half = false;
         let should_expand = {
             if digit_after_position < 5 {
                 false
             } else if digit_after_position > 5 {
                 true
             } else if self.nonzero_magnitude_right() < position - 1 {
+                // NOTE: `digit_after_position` equals to 5, this means that positon does not equal i16::MIN.
                 true
             } else {
-                exactly_half = true;
-                false
+                self.digit_at(position) % 2 != 0
             }
         };
 
-        if should_expand || exactly_half && self.digit_at(position) % 2 != 0 {
+        if should_expand {
             self.expand(position);
         } else {
             self.truncate_right(position);
