@@ -298,6 +298,11 @@ mod test {
     }
 
     #[derive(yoke::Yokeable, zerofrom::ZeroFrom)]
+    struct DeriveTest_FlexZeroVec<'data> {
+        _data: FlexZeroVec<'data>,
+    }
+
+    #[derive(yoke::Yokeable, zerofrom::ZeroFrom)]
     struct DeriveTest_VarZeroVec<'data> {
         _data: VarZeroVec<'data, str>,
     }
