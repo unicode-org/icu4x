@@ -7,7 +7,7 @@ use alloc::vec::Vec;
 
 /// Internal: A vector that supports no-allocation, constant values if length 0 or 1.
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
-pub enum ShortVec<T> {
+pub(crate) enum ShortVec<T> {
     Empty,
     Single(T),
     Multi(Vec<T>),

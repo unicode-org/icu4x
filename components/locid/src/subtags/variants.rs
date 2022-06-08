@@ -71,62 +71,6 @@ impl Variants {
         Self(ShortVec::from(input))
     }
 
-    /// Deconstructs the [`Variants`] into raw format to be consumed
-    /// by [`from_raw_unchecked()`](Variants::from_raw_unchecked()).
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use icu::locid::subtags::{Variant, Variants};
-    ///
-    /// let variant1: Variant = "posix".parse().expect("Parsing failed.");
-    /// let variant2: Variant = "macos".parse().expect("Parsing failed.");
-    /// let mut v = vec![variant1, variant2];
-    /// v.sort();
-    /// v.dedup();
-    ///
-    /// let variants = unsafe { Variants::from_vec_unchecked(v) };
-    ///
-    /// let raw = variants.into_raw();
-    /// let variants = unsafe { Variants::from_raw_unchecked(raw) };
-    /// assert_eq!(variants.len(), 2);
-    /// ```
-    pub fn into_raw(self) -> ShortVec<Variant> {
-        self.0
-    }
-
-    /// Constructor which takes a raw value returned by [`into_raw()`](Variants::into_raw()).
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use icu::locid::subtags::{Variant, Variants};
-    ///
-    /// let variant1: Variant = "posix".parse().expect("Parsing failed.");
-    /// let variant2: Variant = "macos".parse().expect("Parsing failed.");
-    /// let mut v = vec![variant1, variant2];
-    /// v.sort();
-    /// v.dedup();
-    ///
-    /// let variants = unsafe { Variants::from_vec_unchecked(v) };
-    ///
-    /// let raw = variants.into_raw();
-    /// let variants = unsafe { Variants::from_raw_unchecked(raw) };
-    /// assert_eq!(variants.len(), 2);
-    /// ```
-    ///
-    /// Notice: For performance- and memory-constrained environments, it is recommended
-    /// for the caller to use [`binary_search`](slice::binary_search) instead of [`sort`](slice::sort)
-    /// and [`dedup`](Vec::dedup()).
-    ///
-    /// # Safety
-    ///
-    /// This function accepts any [`Box`]`<`[`Variant`]`>` that is expected to be a
-    /// valid list of sorted variants.
-    pub const unsafe fn from_raw_unchecked(input: ShortVec<Variant>) -> Self {
-        Self(input)
-    }
-
     /// Empties the [`Variants`] list.
     ///
     /// # Examples
