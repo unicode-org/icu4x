@@ -161,7 +161,7 @@ impl Language {
     /// assert_eq!(Language::default(), Language::UND);
     /// assert_eq!("und", Language::UND.to_string());
     /// ```
-    pub const UND: Self = crate::language!("und");
+    pub const UND: Self = crate::subtags_language!("und");
 
     /// A helper function for displaying
     /// a [`Language`] subtag as a `&`[`str`].

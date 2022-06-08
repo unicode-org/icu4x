@@ -341,7 +341,7 @@ fn test_writeable() {
 /// # Examples
 ///
 /// ```
-/// use icu::locid::language;
+/// use icu::locid::subtags_language as language;
 /// use icu::locid::Locale;
 ///
 /// let language = language!("en");
@@ -362,7 +362,7 @@ impl From<subtags::Language> for Locale {
 /// # Examples
 ///
 /// ```
-/// use icu::locid::script;
+/// use icu::locid::subtags_script as script;
 /// use icu::locid::Locale;
 ///
 /// let script = script!("latn");
@@ -383,7 +383,7 @@ impl From<Option<subtags::Script>> for Locale {
 /// # Examples
 ///
 /// ```
-/// use icu::locid::region;
+/// use icu::locid::subtags_region as region;
 /// use icu::locid::Locale;
 ///
 /// let region = region!("US");
@@ -405,7 +405,7 @@ impl From<Option<subtags::Region>> for Locale {
 ///
 /// ```
 /// use icu::locid::Locale;
-/// use icu::locid::{language, region, script};
+/// use icu::locid::{subtags_language as language, subtags_region as region, subtags_script as script};
 ///
 /// let lang = language!("en");
 /// let script = script!("Latn");

@@ -505,7 +505,7 @@ impl ResourceOptions {
     /// # Examples
     ///
     /// ```
-    /// use icu_locid::{langid, language, region, Locale};
+    /// use icu_locid::{langid, subtags_language as language, subtags_region as region, Locale};
     /// use icu_provider::prelude::*;
     ///
     /// let locale: Locale = "it-IT-u-ca-coptic".parse().expect("Valid BCP-47");
@@ -555,18 +555,18 @@ impl ResourceOptions {
     /// # Examples
     ///
     /// ```
-    /// use icu_locid::{unicode_ext_key, unicode_ext_value, Locale};
+    /// use icu_locid::{extensions_unicode_key as key, extensions_unicode_value as value, Locale};
     /// use icu_provider::prelude::*;
     ///
     /// let locale: Locale = "it-IT-u-ca-coptic".parse().expect("Valid BCP-47");
     /// let options: ResourceOptions = locale.into();
     ///
-    /// assert_eq!(options.get_unicode_ext(&unicode_ext_key!("hc")), None);
+    /// assert_eq!(options.get_unicode_ext(&key!("hc")), None);
     /// assert_eq!(
-    ///     options.get_unicode_ext(&unicode_ext_key!("ca")),
-    ///     Some(unicode_ext_value!("coptic"))
+    ///     options.get_unicode_ext(&key!("ca")),
+    ///     Some(value!("coptic"))
     /// );
-    /// assert!(options.matches_unicode_ext(&unicode_ext_key!("ca"), &unicode_ext_value!("coptic"),));
+    /// assert!(options.matches_unicode_ext(&key!("ca"), &value!("coptic"),));
     /// ```
     pub fn matches_unicode_ext(&self, key: &unicode_ext::Key, value: &unicode_ext::Value) -> bool {
         self.keywords.get(key) == Some(value)
