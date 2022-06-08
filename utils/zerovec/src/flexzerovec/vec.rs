@@ -63,24 +63,12 @@ use core::ops::Deref;
 /// assert!(zm.insert(&47, &74).is_none());
 /// assert_eq!(zm.len(), 4);
 ///
-/// // Check that the values are correct
+/// // Verify that the values are correct
 /// assert_eq!(zm.get_copied(&0), None);
 /// assert_eq!(zm.get_copied(&29), Some(92));
 /// assert_eq!(zm.get_copied(&38), Some(83));
 /// assert_eq!(zm.get_copied(&47), Some(74));
 /// assert_eq!(zm.get_copied(&56), Some(65));
-/// assert_eq!(zm.get_copied(&usize::MAX), None);
-///
-/// // Perform some mutations and check that the state is still correct
-/// assert_eq!(zm.insert(&47, &7744), Some(74));
-/// assert!(zm.try_append(&1100, &1).is_none());
-///
-/// assert_eq!(zm.get_copied(&0), None);
-/// assert_eq!(zm.get_copied(&29), Some(92));
-/// assert_eq!(zm.get_copied(&38), Some(83));
-/// assert_eq!(zm.get_copied(&47), Some(7744));
-/// assert_eq!(zm.get_copied(&56), Some(65));
-/// assert_eq!(zm.get_copied(&1100), Some(1));
 /// assert_eq!(zm.get_copied(&usize::MAX), None);
 /// ```
 #[derive(Debug)]
@@ -253,4 +241,34 @@ impl FromIterator<usize> for FlexZeroVec<'_> {
     {
         FlexZeroVecOwned::from_iter(iter).into_flexzerovec()
     }
+}
+
+#[test]
+fn test_zeromap_usize() {
+    use crate::ZeroMap;
+
+    let mut zm = ZeroMap::<usize, usize>::new();
+    assert!(zm.try_append(&29, &92).is_none());
+    assert!(zm.try_append(&38, &83).is_none());
+    assert!(zm.try_append(&47, &74).is_none());
+    assert!(zm.try_append(&56, &65).is_none());
+
+    assert_eq!(zm.keys.get_width(), 1);
+    assert_eq!(zm.values.get_width(), 1);
+
+    assert_eq!(zm.insert(&47, &744), Some(74));
+    assert_eq!(zm.values.get_width(), 2);
+    assert_eq!(zm.insert(&47, &774), Some(744));
+    assert_eq!(zm.values.get_width(), 2);
+    assert!(zm.try_append(&1100, &1).is_none());
+    assert_eq!(zm.keys.get_width(), 2);
+    assert_eq!(zm.remove(&1100), Some(1));
+    assert_eq!(zm.keys.get_width(), 1);
+
+    assert_eq!(zm.get_copied(&0), None);
+    assert_eq!(zm.get_copied(&29), Some(92));
+    assert_eq!(zm.get_copied(&38), Some(83));
+    assert_eq!(zm.get_copied(&47), Some(774));
+    assert_eq!(zm.get_copied(&56), Some(65));
+    assert_eq!(zm.get_copied(&usize::MAX), None);
 }
