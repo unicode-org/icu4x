@@ -121,11 +121,11 @@ pub mod ffi {
         ///
         /// Returns 0 (equivalent to `Level::ltr()`) on error
         pub fn level_at(&self, pos: usize) -> u8 {
-            if pos >= self.size() {
-                return 0;
+            if let Some(l) = self.0.levels.get(pos) {
+                l.number()
+            } else {
+                0
             }
-
-            self.0.levels[pos].number()
         }
     }
 
