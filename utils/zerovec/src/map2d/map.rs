@@ -129,10 +129,10 @@ where
     /// ```
     pub fn new() -> Self {
         Self {
-            keys0: K0::Container::zvl_new(),
+            keys0: K0::Container::zvl_with_capacity(0),
             joiner: ZeroVec::new(),
-            keys1: K1::Container::zvl_new(),
-            values: V::Container::zvl_new(),
+            keys1: K1::Container::zvl_with_capacity(0),
+            values: V::Container::zvl_with_capacity(0),
         }
     }
 

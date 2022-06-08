@@ -38,6 +38,11 @@ impl<T> ZeroSlice<T>
 where
     T: AsULE,
 {
+    /// Returns an empty slice.
+    pub const fn new_empty() -> &'static Self {
+        Self::from_ule_slice(&[])
+    }
+
     /// Get this [`ZeroSlice`] as a borrowed [`ZeroVec`]
     ///
     /// [`ZeroSlice`] does not have most of the methods that [`ZeroVec`] does,

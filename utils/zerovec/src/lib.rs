@@ -252,9 +252,9 @@ pub mod maps {
     //! relaxed lifetime constraints.
     //!
     //! The [`ZeroMapKV`] trait is required to be implemented on any type that needs to be used
-    //! within a map type. [`ZeroVecLike`], [`BorrowedZeroVecLike`], and [`MutableZeroVecLike`] are
-    //! all traits used in the internal workings of the map types, and should typically not be used
-    //! or implemented by users of this crate.
+    //! within a map type. [`ZeroVecLike`] and [`MutableZeroVecLike`] are traits used in the
+    //! internal workings of the map types, and should typically not be used or implemented by
+    //! users of this crate.
     #[doc(no_inline)]
     pub use crate::map::ZeroMap;
     pub use crate::map::ZeroMapBorrowed;
@@ -263,7 +263,7 @@ pub mod maps {
     pub use crate::map2d::ZeroMap2d;
     pub use crate::map2d::ZeroMap2dBorrowed;
 
-    pub use crate::map::{BorrowedZeroVecLike, MutableZeroVecLike, ZeroMapKV, ZeroVecLike};
+    pub use crate::map::{MutableZeroVecLike, ZeroMapKV, ZeroVecLike};
     pub use crate::map2d::KeyError;
 }
 
