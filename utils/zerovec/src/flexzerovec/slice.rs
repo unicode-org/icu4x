@@ -277,21 +277,53 @@ impl FlexZeroSlice {
     /// let nums: &[usize] = &[211, 281, 421, 461];
     /// let fzv: FlexZeroVec = nums.iter().copied().collect();
     ///
-    /// assert_eq!(nums.binary_search(0), Err(0));
-    /// assert_eq!(nums.binary_search(211), Ok(0));
-    /// assert_eq!(nums.binary_search(250), Err(1));
-    /// assert_eq!(nums.binary_search(281), Ok(1));
-    /// assert_eq!(nums.binary_search(300), Err(2));
-    /// assert_eq!(nums.binary_search(421), Ok(2));
-    /// assert_eq!(nums.binary_search(450), Err(3));
-    /// assert_eq!(nums.binary_search(461), Ok(3));
-    /// assert_eq!(nums.binary_search(462), Err(4));
+    /// assert_eq!(fzv.binary_search(0), Err(0));
+    /// assert_eq!(fzv.binary_search(211), Ok(0));
+    /// assert_eq!(fzv.binary_search(250), Err(1));
+    /// assert_eq!(fzv.binary_search(281), Ok(1));
+    /// assert_eq!(fzv.binary_search(300), Err(2));
+    /// assert_eq!(fzv.binary_search(421), Ok(2));
+    /// assert_eq!(fzv.binary_search(450), Err(3));
+    /// assert_eq!(fzv.binary_search(461), Ok(3));
+    /// assert_eq!(fzv.binary_search(462), Err(4));
     /// ```
     #[inline]
     pub fn binary_search(&self, needle: usize) -> Result<usize, usize> {
         self.binary_search_by(|probe| probe.cmp(&needle))
     }
 
+    /// Binary searches a sorted range of a `FlexZeroSlice` for the given `usize` value.
+    /// 
+    /// Indices are returned relative to the start of the range.
+    /// 
+    /// # Examples
+    /// 
+    /// ```
+    /// use zerovec::vecs::FlexZeroVec;
+    ///
+    /// // Make a FlexZeroVec with two sorted ranges: 0..3 and 3..5
+    /// let nums: &[usize] = &[111, 222, 444, 333, 555];
+    /// let fzv: FlexZeroVec = nums.iter().copied().collect();
+    ///
+    /// // Search in the first range:
+    /// assert_eq!(fzv.binary_search_in_range(0, 0..3), Some(Err(0)));
+    /// assert_eq!(fzv.binary_search_in_range(111, 0..3), Some(Ok(0)));
+    /// assert_eq!(fzv.binary_search_in_range(199, 0..3), Some(Err(1)));
+    /// assert_eq!(fzv.binary_search_in_range(222, 0..3), Some(Ok(1)));
+    /// assert_eq!(fzv.binary_search_in_range(399, 0..3), Some(Err(2)));
+    /// assert_eq!(fzv.binary_search_in_range(444, 0..3), Some(Ok(2)));
+    /// assert_eq!(fzv.binary_search_in_range(999, 0..3), Some(Err(3)));
+    /// 
+    /// // Search in the second range:
+    /// assert_eq!(fzv.binary_search_in_range(0, 3..5), Some(Err(0)));
+    /// assert_eq!(fzv.binary_search_in_range(333, 3..5), Some(Ok(0)));
+    /// assert_eq!(fzv.binary_search_in_range(399, 3..5), Some(Err(1)));
+    /// assert_eq!(fzv.binary_search_in_range(555, 3..5), Some(Ok(1)));
+    /// assert_eq!(fzv.binary_search_in_range(999, 3..5), Some(Err(2)));
+    /// 
+    /// // Out-of-bounds range:
+    /// assert_eq!(fzv.binary_search_in_range(0, 4..6), None);
+    /// ```
     #[inline]
     pub fn binary_search_in_range(
         &self,
@@ -313,12 +345,20 @@ impl FlexZeroSlice {
         self.binary_search_impl(predicate, scaled_slice)
     }
 
+    /// Binary searches a sorted range of a `FlexZeroSlice` according to a predicate function.
+    /// 
+    /// Indices are returned relative to the start of the range.
     #[inline]
     pub fn binary_search_in_range_by(
         &self,
         predicate: impl FnMut(usize) -> Ordering,
         range: Range<usize>,
     ) -> Option<Result<usize, usize>> {
+        // Note: We need to check bounds separately, since `self.data.get(range)` does not return
+        // bounds errors, since it is indexing directly into the upscaled data array
+        if range.start >= self.len() || range.end > self.len() {
+            return None;
+        }
         let scaled_slice = self.data.get(range)?;
         Some(self.binary_search_impl(predicate, scaled_slice))
     }
