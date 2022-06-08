@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1654712665701,
+  "lastUpdate": 1654730301424,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -30941,6 +30941,60 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 48029518,
             "range": "± 1640905",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/worst",
+            "value": 3,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/worst",
+            "value": 3,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "34ca5209d85348461132d0faad56a4e851f7bd6b",
+          "message": "Update Locale and LanguageIdentifier comparison names (#2020)",
+          "timestamp": "2022-06-08T16:08:14-07:00",
+          "tree_id": "5955ebe12f08a02cca4477d6bca6204dca7fb687",
+          "url": "https://github.com/unicode-org/icu4x/commit/34ca5209d85348461132d0faad56a4e851f7bd6b"
+        },
+        "date": 1654730275668,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 54184041,
+            "range": "± 799353",
             "unit": "ns/iter"
           },
           {
