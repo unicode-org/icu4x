@@ -17,7 +17,7 @@
 //! # Lookup
 //!
 //! To perform lookup, store the stringified locale in a canonical BCP-47 form as a byte array,
-//! and then use [`Locale::cmp_bytes()`] to perform an efficient, zero-allocation lookup.
+//! and then use [`Locale::strict_cmp()`] to perform an efficient, zero-allocation lookup.
 //!
 //! ```
 //! use icu_locid::Locale;
@@ -36,7 +36,7 @@
 //!
 //! // Get the value associated with a locale
 //! let loc: Locale = "en-US-u-ca-buddhist".parse().unwrap();
-//! let value = zm.get_copied_by(|bytes| loc.cmp_bytes(bytes).reverse());
+//! let value = zm.get_copied_by(|bytes| loc.strict_cmp(bytes).reverse());
 //! assert_eq!(value, Some(10));
 //! ```
 //!
@@ -118,7 +118,7 @@
 //! ```
 //!
 //! [`Locale`]: crate::Locale
-//! [`Locale::cmp_bytes()`]: crate::Locale::cmp_bytes()
+//! [`Locale::strict_cmp()`]: crate::Locale::strict_cmp()
 //! [`LanguageIdentifier`]: crate::LanguageIdentifier
 
 use crate::subtags::{Language, Region, Script, Variant};

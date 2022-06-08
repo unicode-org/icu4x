@@ -160,7 +160,7 @@ impl Fields {
     /// let old_value = loc.extensions.transform.fields.set(D0_KEY, lower);
     ///
     /// assert_eq!(old_value, Some(casefold));
-    /// assert_eq!(loc, "en-t-hi-d0-lower");
+    /// assert_eq!(loc, "en-t-hi-d0-lower".parse().unwrap());
     /// ```
     pub fn set(&mut self, key: Key, value: Value) -> Option<Value> {
         self.0.insert(key, value)
@@ -177,10 +177,10 @@ impl Fields {
     /// let mut loc: Locale = "und-t-h0-hybrid-d0-hex-m0-xml".parse().unwrap();
     ///
     /// loc.extensions.transform.fields.retain_by_key(|k| k == "h0");
-    /// assert_eq!(loc, "und-t-h0-hybrid");
+    /// assert_eq!(loc, "und-t-h0-hybrid".parse().unwrap());
     ///
     /// loc.extensions.transform.fields.retain_by_key(|k| k == "d0");
-    /// assert_eq!(loc, "und");
+    /// assert_eq!(loc, Locale::UND);
     /// ```
     pub fn retain_by_key<F>(&mut self, mut predicate: F)
     where
