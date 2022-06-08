@@ -809,49 +809,25 @@ impl FixedDecimal {
     /// use fixed_decimal::FixedDecimal;
     /// # use std::str::FromStr;
     ///
-    /// let mut dec = FixedDecimal::from_str("3.234").unwrap();
+    /// let mut dec = FixedDecimal::from_str("-1.5").unwrap();
     /// dec.expand(0);
-    /// assert_eq!("4", dec.to_string());
+    /// assert_eq!("-2", dec.to_string());
     ///
-    /// let mut dec = FixedDecimal::from_str("2.222").unwrap();
-    /// dec.expand(-1);
-    /// assert_eq!("2.3", dec.to_string());
+    /// let mut dec = FixedDecimal::from_str("0.4").unwrap();
+    /// dec.expand(0);
+    /// assert_eq!("1", dec.to_string());
     ///
-    /// let mut dec = FixedDecimal::from_str("22.222").unwrap();
-    /// dec.expand(-2);
-    /// assert_eq!("22.23", dec.to_string());
+    /// let mut dec = FixedDecimal::from_str("0.5").unwrap();
+    /// dec.expand(0);
+    /// assert_eq!("1", dec.to_string());
     ///
-    /// let mut dec = FixedDecimal::from_str("99.999").unwrap();
-    /// dec.expand(-2);
-    /// assert_eq!("100.00", dec.to_string());
-    ///
-    /// let mut dec = FixedDecimal::from_str("99.999").unwrap();
-    /// dec.expand(-5);
-    /// assert_eq!("99.99900", dec.to_string());
-    ///
-    /// let mut dec = FixedDecimal::from_str("-99.999").unwrap();
-    /// dec.expand(-5);
-    /// assert_eq!("-99.99900", dec.to_string());
-    ///
-    /// let mut dec = FixedDecimal::from_str("-99.999").unwrap();
-    /// dec.expand(-2);
-    /// assert_eq!("-100.00", dec.to_string());
-    ///
-    /// let mut dec = FixedDecimal::from_str("99.999").unwrap();
-    /// dec.expand(4);
-    /// assert_eq!("10000", dec.to_string());
-    ///
-    /// let mut dec = FixedDecimal::from_str("-99.999").unwrap();
-    /// dec.expand(4);
-    /// assert_eq!("-10000", dec.to_string());
-    ///
-    /// let mut dec = FixedDecimal::from_str("0.009").unwrap();
-    /// dec.expand(-1);
-    /// assert_eq!("0.1", dec.to_string());
-    ///
-    /// let mut dec = FixedDecimal::from_str("-0.009").unwrap();
-    /// dec.expand(-1);
-    /// assert_eq!("-0.1", dec.to_string());
+    /// let mut dec = FixedDecimal::from_str("0.6").unwrap();
+    /// dec.expand(0);
+    /// assert_eq!("1", dec.to_string());
+    ///    
+    /// let mut dec = FixedDecimal::from_str("1.5").unwrap();
+    /// dec.expand(0);
+    /// assert_eq!("2", dec.to_string());
     /// ```
     pub fn expand(&mut self, position: i16) {
         let before_truncate_is_zero = self.is_zero();
@@ -2950,6 +2926,55 @@ fn test_rounding() {
     assert_eq!("4200", dec.clone().truncated_right(2).to_string());
 
     assert_eq!("00000", dec.clone().truncated_right(5).to_string());
+
+    //Test expand
+    let mut dec = FixedDecimal::from_str("3.234").unwrap();
+    dec.expand(0);
+    assert_eq!("4", dec.to_string());
+
+    let mut dec = FixedDecimal::from_str("2.222").unwrap();
+    dec.expand(-1);
+    assert_eq!("2.3", dec.to_string());
+
+    let mut dec = FixedDecimal::from_str("22.222").unwrap();
+    dec.expand(-2);
+    assert_eq!("22.23", dec.to_string());
+
+    let mut dec = FixedDecimal::from_str("99.999").unwrap();
+    dec.expand(-2);
+    assert_eq!("100.00", dec.to_string());
+
+    let mut dec = FixedDecimal::from_str("99.999").unwrap();
+    dec.expand(-5);
+    assert_eq!("99.99900", dec.to_string());
+
+    let mut dec = FixedDecimal::from_str("-99.999").unwrap();
+    dec.expand(-5);
+    assert_eq!("-99.99900", dec.to_string());
+
+    let mut dec = FixedDecimal::from_str("-99.999").unwrap();
+    dec.expand(-2);
+    assert_eq!("-100.00", dec.to_string());
+
+    let mut dec = FixedDecimal::from_str("99.999").unwrap();
+    dec.expand(4);
+    assert_eq!("10000", dec.to_string());
+
+    let mut dec = FixedDecimal::from_str("-99.999").unwrap();
+    dec.expand(4);
+    assert_eq!("-10000", dec.to_string());
+
+    let mut dec = FixedDecimal::from_str("0.009").unwrap();
+    dec.expand(-1);
+    assert_eq!("0.1", dec.to_string());
+
+    let mut dec = FixedDecimal::from_str("-0.009").unwrap();
+    dec.expand(-1);
+    assert_eq!("-0.1", dec.to_string());
+
+    let mut dec = FixedDecimal::from_str("3.954").unwrap();
+    dec.expand(0);
+    assert_eq!("4", dec.to_string());
 
     // Test half_expand
     let mut dec = FixedDecimal::from_str("3.234").unwrap();
