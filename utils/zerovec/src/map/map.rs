@@ -392,6 +392,7 @@ where
     /// map.insert(&2, &'b');
     /// assert_eq!(map.get_copied(&1), Some('a'));
     /// assert_eq!(map.get_copied(&3), None);
+    #[inline]
     pub fn get_copied(&self, key: &K) -> Option<V> {
         let index = self.keys.zvl_binary_search(key).ok()?;
         self.get_copied_at(index)
@@ -413,6 +414,7 @@ where
     /// assert_eq!(map.get_copied_by(|probe| probe.cmp(&1)), Some('a'));
     /// assert_eq!(map.get_copied_by(|probe| probe.cmp(&3)), None);
     /// ```
+    #[inline]
     pub fn get_copied_by(&self, predicate: impl FnMut(&K) -> Ordering) -> Option<V> {
         let index = self.keys.zvl_binary_search_by(predicate).ok()?;
         self.get_copied_at(index)
