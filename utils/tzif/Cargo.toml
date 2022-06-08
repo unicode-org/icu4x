@@ -6,7 +6,7 @@
 name = "tzif"
 authors = ["The ICU4X Project Developers"]
 description = "A parser for TZif files"
-version = "0.1.1"
+version = "0.2.0"
 edition = "2021"
 readme = "README.md"
 license-file = "LICENSE"
