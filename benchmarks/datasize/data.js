@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1654712060688,
+  "lastUpdate": 1654729813477,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -17003,6 +17003,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/a8c8d2c564df24d29d01985428ec2c95e6adfbb4"
         },
         "date": 1654712036191,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 2300847,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "34ca5209d85348461132d0faad56a4e851f7bd6b",
+          "message": "Update Locale and LanguageIdentifier comparison names (#2020)",
+          "timestamp": "2022-06-08T16:08:14-07:00",
+          "tree_id": "5955ebe12f08a02cca4477d6bca6204dca7fb687",
+          "url": "https://github.com/unicode-org/icu4x/commit/34ca5209d85348461132d0faad56a4e851f7bd6b"
+        },
+        "date": 1654729791150,
         "tool": "ndjson",
         "benches": [
           {
