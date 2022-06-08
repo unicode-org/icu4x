@@ -58,6 +58,7 @@ impl TzifParser {
 
 /// A parser for [POSIX time-zone strings](https://www.gnu.org/software/libc/manual/html_node/TZ-Variable.html)
 pub struct PosixParser {}
+
 impl PosixParser {
     /// Parses a POSIX time-zone string from the given bytes.
     pub fn parse_bytes(bytes: &[u8]) -> Result<PosixTzString, Error> {
