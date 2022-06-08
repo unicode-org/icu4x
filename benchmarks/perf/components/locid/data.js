@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1654712668610,
+  "lastUpdate": 1654712957323,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -52024,6 +52024,192 @@ window.BENCHMARK_DATA = {
           {
             "name": "subtags/variant/parse",
             "value": 164,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "58569820+nordzilla@users.noreply.github.com",
+            "name": "Erik Nordin",
+            "username": "nordzilla"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "a8c8d2c564df24d29d01985428ec2c95e6adfbb4",
+          "message": "Move tzif crate from experimental to utils for publishing (#2019)\n\n* Replace empty `.then()` with `.with()`\r\n\r\n* Update error messages\r\n\r\n* Move `tzif` from `experimental` to `utils`\r\n\r\n* Add integration test for POSIX string\r\n\r\n* Update doc comments\r\n\r\n* Add crate keywords\r\n\r\n* Update Cargo.toml",
+          "timestamp": "2022-06-08T11:12:05-07:00",
+          "tree_id": "27a3e2cc47a900a3ab88feb80a0898b9b30db294",
+          "url": "https://github.com/unicode-org/icu4x/commit/a8c8d2c564df24d29d01985428ec2c95e6adfbb4"
+        },
+        "date": 1654712930933,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 2868,
+            "range": "± 2",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/construct/langid",
+            "value": 858,
+            "range": "± 3",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/construct/locale",
+            "value": 1185,
+            "range": "± 2",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/to_string/langid",
+            "value": 824,
+            "range": "± 6",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/to_string/langid/writeable",
+            "value": 480,
+            "range": "± 3",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/to_string/locale",
+            "value": 825,
+            "range": "± 4",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/to_string/locale/writeable",
+            "value": 481,
+            "range": "± 4",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/compare/struct/langid",
+            "value": 83,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/compare/struct/locale",
+            "value": 83,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/compare/str/langid",
+            "value": 780,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/compare/cmp_bytes/langid",
+            "value": 307,
+            "range": "± 2",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/compare/str/locale",
+            "value": 781,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/compare/cmp_bytes/locale",
+            "value": 308,
+            "range": "± 2",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/canonicalize/langid",
+            "value": 2165,
+            "range": "± 5",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/canonicalize/locale",
+            "value": 3095,
+            "range": "± 5",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 4020,
+            "range": "± 2",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/construct/locale",
+            "value": 1697,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/to_string/locale",
+            "value": 1113,
+            "range": "± 3",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/to_string/locale/writeable",
+            "value": 803,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/compare/struct/locale",
+            "value": 240,
+            "range": "± 2",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/compare/str/locale",
+            "value": 1716,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/compare/cmp_bytes/locale",
+            "value": 529,
+            "range": "± 2",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/canonicalize/locale",
+            "value": 3486,
+            "range": "± 2",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "subtags/language/parse",
+            "value": 202,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "subtags/script/parse",
+            "value": 141,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "subtags/region/parse",
+            "value": 211,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "subtags/variant/parse",
+            "value": 174,
             "range": "± 0",
             "unit": "ns/iter"
           }
