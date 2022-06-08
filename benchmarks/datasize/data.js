@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1654647915609,
+  "lastUpdate": 1654662398866,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -16883,6 +16883,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/2b75f5aa3af24cd6c35acee03a09998fbe444636"
         },
         "date": 1654647892953,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 2300847,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "hsivonen@hsivonen.fi",
+            "name": "Henri Sivonen",
+            "username": "hsivonen"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "98da7a4f35151cfd1a656c4437a3a61d3640cd9d",
+          "message": "Resolve XXX comments or replace them with TODOs pointing to issue numbers (#2014)\n\nCloses #1904",
+          "timestamp": "2022-06-08T07:24:19+03:00",
+          "tree_id": "176d4f70a3cdf722a864c05c6a4e6bc998b8aad4",
+          "url": "https://github.com/unicode-org/icu4x/commit/98da7a4f35151cfd1a656c4437a3a61d3640cd9d"
+        },
+        "date": 1654662373384,
         "tool": "ndjson",
         "benches": [
           {
