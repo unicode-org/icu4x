@@ -962,15 +962,9 @@ impl FixedDecimal {
     /// assert_eq!("-0.0", dec.to_string());
     /// ```
     pub fn half_expand(&mut self, position: i16) {
-        let digit_after_n = {
-            if position == i16::MIN {
-                0
-            } else {
-                self.digit_at(position - 1)
-            }
-        };
+        let digit_after_position = self.digit_at_next_positon(position);
 
-        if digit_after_n >= 5 {
+        if digit_after_position >= 5 {
             self.expand(position);
         } else {
             self.truncate_right(position);
@@ -1133,12 +1127,12 @@ impl FixedDecimal {
     /// assert_eq!("2", dec.to_string());
     /// ```
     pub fn half_even(&mut self, position: i16) {
-        let digit_after_n = self.digit_at_next_positon(position);
+        let digit_after_position = self.digit_at_next_positon(position);
         let mut exactly_half = false;
         let should_expand = {
-            if digit_after_n < 5 {
+            if digit_after_position < 5 {
                 false
-            } else if digit_after_n > 5 {
+            } else if digit_after_position > 5 {
                 true
             } else if self.nonzero_magnitude_right() < position - 1 {
                 true
