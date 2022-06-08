@@ -75,7 +75,7 @@ pub trait ZeroVecLike<T: ?Sized> {
             for i in 1..self.zvl_len() {
                 #[allow(clippy::unwrap_used)] // looping over the valid indices
                 let curr = self.zvl_get(i).unwrap();
-                if Self::get_cmp_get(prev, curr) != Ordering::Greater {
+                if Self::get_cmp_get(prev, curr) != Ordering::Less {
                     return false;
                 }
                 prev = curr;
