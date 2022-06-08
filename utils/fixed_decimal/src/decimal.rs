@@ -699,38 +699,21 @@ impl FixedDecimal {
     /// use fixed_decimal::FixedDecimal;
     /// # use std::str::FromStr;
     ///
-    /// let mut dec = FixedDecimal::from(4235970).multiplied_pow10(-3).expect("in-bounds");
-    /// assert_eq!("4235.970", dec.to_string());
-    ///
-    /// dec.truncate_right(-5);
-    /// assert_eq!("4235.97000", dec.to_string());
-    ///
-    /// dec.truncate_right(-1);
-    /// assert_eq!("4235.9", dec.to_string());
-    ///
+    /// let mut dec = FixedDecimal::from_str("-1.5").unwrap();
     /// dec.truncate_right(0);
-    /// assert_eq!("4235", dec.to_string());
-    ///
-    /// dec.truncate_right(1);
-    /// assert_eq!("4230", dec.to_string());
-    ///
-    /// dec.truncate_right(5);
-    /// assert_eq!("00000", dec.to_string());
-    ///
-    /// dec.truncate_right(2);
-    /// assert_eq!("00000", dec.to_string());
-    ///
-    /// let mut dec = FixedDecimal::from_str("-99.999").unwrap();
-    /// dec.truncate_right(-2);
-    /// assert_eq!("-99.99", dec.to_string());
-    ///
-    /// let mut dec = FixedDecimal::from_str("1234.56").unwrap();
-    /// dec.truncate_right(-1);
-    /// assert_eq!("1234.5", dec.to_string());
-    ///
-    /// let mut dec = FixedDecimal::from_str("0.009").unwrap();
-    /// dec.truncate_right(-1);
-    /// assert_eq!("0.0", dec.to_string());
+    /// assert_eq!("-1", dec.to_string());
+    /// let mut dec = FixedDecimal::from_str("0.4").unwrap();
+    /// dec.truncate_right(0);
+    /// assert_eq!("0", dec.to_string());
+    /// let mut dec = FixedDecimal::from_str("0.5").unwrap();
+    /// dec.truncate_right(0);
+    /// assert_eq!("0", dec.to_string());
+    /// let mut dec = FixedDecimal::from_str("0.6").unwrap();
+    /// dec.truncate_right(0);
+    /// assert_eq!("0", dec.to_string());
+    /// let mut dec = FixedDecimal::from_str("1.5").unwrap();
+    /// dec.truncate_right(0);
+    /// assert_eq!("1", dec.to_string());
     /// ```
     pub fn truncate_right(&mut self, position: i16) {
         self.lower_magnitude = cmp::min(position, 0);
@@ -790,15 +773,14 @@ impl FixedDecimal {
     /// assert_eq!("4", dec.to_string());
     /// ```
     pub fn half_truncate_right(&mut self, position: i16) {
-        let digit_after_n = self.digit_at_next_positon(position);
+        let digit_after_position = self.digit_at_next_positon(position);
         let should_expand = {
-            if digit_after_n < 5 {
+            if digit_after_position < 5 {
                 false
-            } else if digit_after_n > 5 {
+            } else if digit_after_position > 5 {
                 true
-            } else if position == i16::MIN {
-                false
             } else {
+                // `digit_after_position` equals 5, this means, position is equals to `i16::MIN`.
                 self.nonzero_magnitude_right() < position - 1
             }
         };
@@ -1149,9 +1131,6 @@ impl FixedDecimal {
                 false
             } else if digit_after_n > 5 {
                 true
-            } else if position == i16::MIN {
-                exactly_half = true;
-                false // review
             } else if self.nonzero_magnitude_right() < position - 1 {
                 true
             } else {
@@ -2683,7 +2662,7 @@ fn test_pad() {
 }
 
 #[test]
-fn test_truncate() {
+fn test_truncate_left() {
     let mut dec = FixedDecimal::from(1000);
     assert_eq!("1000", dec.to_string());
 
@@ -2757,9 +2736,9 @@ fn test_pad_right_bounds() {
 
 #[test]
 fn test_rounding() {
-    // Test Ceil
     pub(crate) use std::str::FromStr;
 
+    // Test Ceil
     let mut dec = FixedDecimal::from_str("3.234").unwrap();
     dec.ceil(0);
     assert_eq!("4", dec.to_string());
@@ -2873,7 +2852,7 @@ fn test_rounding() {
     dec.half_ceil(-1);
     assert_eq!("-0.0", dec.to_string());
 
-    // Floor
+    // Test Floor
     let mut dec = FixedDecimal::from_str("3.234").unwrap();
     dec.floor(0);
     assert_eq!("3", dec.to_string());
@@ -2903,7 +2882,6 @@ fn test_rounding() {
     assert_eq!("-10000000000", dec.to_string());
 
     // Test Half Floor
-
     let mut dec = FixedDecimal::from_str("3.234").unwrap();
     dec.half_floor(0);
     assert_eq!("3", dec.to_string());
@@ -2971,6 +2949,42 @@ fn test_rounding() {
     let mut dec = FixedDecimal::from_str("-0.009").unwrap();
     dec.half_floor(-1);
     assert_eq!("-0.0", dec.to_string());
+
+    // Test Truncate Right
+    let mut dec = FixedDecimal::from(4235970)
+        .multiplied_pow10(-3)
+        .expect("in-bounds");
+    assert_eq!("4235.970", dec.to_string());
+
+    dec.truncate_right(-5);
+    assert_eq!("4235.97000", dec.to_string());
+
+    dec.truncate_right(-1);
+    assert_eq!("4235.9", dec.to_string());
+
+    dec.truncate_right(0);
+    assert_eq!("4235", dec.to_string());
+
+    dec.truncate_right(1);
+    assert_eq!("4230", dec.to_string());
+
+    dec.truncate_right(5);
+    assert_eq!("00000", dec.to_string());
+
+    dec.truncate_right(2);
+    assert_eq!("00000", dec.to_string());
+
+    let mut dec = FixedDecimal::from_str("-99.999").unwrap();
+    dec.truncate_right(-2);
+    assert_eq!("-99.99", dec.to_string());
+
+    let mut dec = FixedDecimal::from_str("1234.56").unwrap();
+    dec.truncate_right(-1);
+    assert_eq!("1234.5", dec.to_string());
+
+    let mut dec = FixedDecimal::from_str("0.009").unwrap();
+    dec.truncate_right(-1);
+    assert_eq!("0.0", dec.to_string());
 }
 
 #[test]
