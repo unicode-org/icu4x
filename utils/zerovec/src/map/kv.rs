@@ -4,9 +4,9 @@
 
 use super::vecs::{MutableZeroVecLike, ZeroVecLike};
 use crate::ule::*;
-use crate::vecs::FlexZeroVec;
+use crate::vecs::{FlexZeroSlice, FlexZeroVec};
 use crate::zerovec::{ZeroSlice, ZeroVec};
-use crate::VarZeroVec;
+use crate::vecs::{VarZeroSlice, VarZeroVec};
 use alloc::boxed::Box;
 
 /// Trait marking types which are allowed to be keys or values in [`ZeroMap`](super::ZeroMap).
@@ -66,6 +66,7 @@ impl_sized_kv!(f64);
 
 impl<'a> ZeroMapKV<'a> for usize {
     type Container = FlexZeroVec<'a>;
+    type Slice = FlexZeroSlice;
     type GetType = [u8];
     type OwnedType = usize;
 }

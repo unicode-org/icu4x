@@ -110,33 +110,6 @@ impl FlexZeroVecOwned {
         self.as_mut_slice().insert_impl(insert_info, index);
     }
 
-    /// Replaces the element at a certain offset into the vector.
-    ///
-    /// Caution: Both arguments to this function are of type `usize`. Please be careful to pass
-    /// the index first followed by the value second.
-    ///
-    /// # Panics
-    ///
-    /// Panics if `index >= len`.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use zerovec::vecs::FlexZeroVec;
-    ///
-    /// let mut zv: FlexZeroVec = [22, 44, 66].iter().copied().collect();
-    /// zv.to_mut().replace(1, 55);
-    /// assert_eq!(zv.to_vec(), vec![22, 55, 66]);
-    /// ```
-    pub fn replace(&mut self, index: usize, item: usize) -> usize {
-        #[allow(clippy::panic)] // panic is documented in function contract
-        if index >= self.len() {
-            panic!("index {} out of range {}", index, self.len());
-        }
-        // Safety: `index` is in range
-        unsafe { self.as_mut_slice().replace_impl(index, item) }
-    }
-
     /// Inserts an element into an ascending sorted vector
     /// at a position that keeps the vector sorted.
     ///

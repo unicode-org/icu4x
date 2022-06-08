@@ -629,7 +629,10 @@ impl<'a> MutableZeroVecLike<'a, usize> for FlexZeroVec<'a> {
         self.to_mut().remove(index)
     }
     fn zvl_replace(&mut self, index: usize, value: &usize) -> usize {
-        self.to_mut().replace(index, *value)
+        let mutable = self.to_mut();
+        let old_value = mutable.remove(index);
+        mutable.insert(index, *value);
+        old_value
     }
     fn zvl_push(&mut self, value: &usize) {
         self.to_mut().push(*value)
