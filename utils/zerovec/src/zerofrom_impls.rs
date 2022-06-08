@@ -4,8 +4,8 @@
 
 use crate::map::ZeroMapKV;
 use crate::ule::*;
+use crate::vecs::{FlexZeroSlice, FlexZeroVec};
 use crate::{VarZeroSlice, VarZeroVec, ZeroMap, ZeroMap2d, ZeroSlice, ZeroVec};
-use crate::vecs::{FlexZeroVec, FlexZeroSlice};
 use zerofrom::ZeroFrom;
 
 impl<'zf, T> ZeroFrom<'zf, ZeroVec<'_, T>> for ZeroVec<'zf, T>
@@ -28,16 +28,14 @@ where
     }
 }
 
-impl<'zf> ZeroFrom<'zf, FlexZeroVec<'_>> for FlexZeroVec<'zf>
-{
+impl<'zf> ZeroFrom<'zf, FlexZeroVec<'_>> for FlexZeroVec<'zf> {
     #[inline]
     fn zero_from(other: &'zf FlexZeroVec<'_>) -> Self {
         FlexZeroVec::Borrowed(&*other)
     }
 }
 
-impl<'zf> ZeroFrom<'zf, FlexZeroSlice> for FlexZeroVec<'zf>
-{
+impl<'zf> ZeroFrom<'zf, FlexZeroSlice> for FlexZeroVec<'zf> {
     #[inline]
     fn zero_from(other: &'zf FlexZeroSlice) -> Self {
         FlexZeroVec::Borrowed(&*other)
