@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::flexzerovec::FlexZeroSlice;
 use crate::ule::*;
 use alloc::boxed::Box;
 use alloc::format;
@@ -11,11 +12,6 @@ use core::cmp::Ordering;
 use core::convert::TryFrom;
 use core::marker::PhantomData;
 use core::ops::Range;
-use core::{iter, mem};
-
-fn usizeify(x: RawBytesULE<4>) -> usize {
-    u32::from_unaligned(x) as usize
-}
 
 /// A more parsed version of `VarZeroSlice`. This type is where most of the VarZeroVec
 /// internal representation code lies.
@@ -28,7 +24,7 @@ fn usizeify(x: RawBytesULE<4>) -> usize {
 /// See [`VarZeroVecComponents::parse_byte_slice()`] for information on the internal invariants involved
 pub struct VarZeroVecComponents<'a, T: ?Sized> {
     /// The list of indices into the `things` slice
-    indices: &'a [RawBytesULE<4>],
+    indices: &'a FlexZeroSlice,
     /// The contiguous list of `T::VarULE`s
     things: &'a [u8],
     /// The original slice this was constructed from
@@ -61,7 +57,7 @@ impl<'a, T: VarULE + ?Sized> VarZeroVecComponents<'a, T> {
     #[inline]
     pub fn new() -> Self {
         Self {
-            indices: &[],
+            indices: FlexZeroSlice::new_empty(),
             things: &[],
             entire_slice: &[],
             marker: PhantomData,
@@ -80,7 +76,7 @@ impl<'a, T: VarULE + ?Sized> VarZeroVecComponents<'a, T> {
     pub fn parse_byte_slice(slice: &'a [u8]) -> Result<Self, ZeroVecError> {
         if slice.is_empty() {
             return Ok(VarZeroVecComponents {
-                indices: &[],
+                indices: FlexZeroSlice::new_empty(),
                 things: &[],
                 entire_slice: slice,
                 marker: PhantomData,
@@ -92,10 +88,11 @@ impl<'a, T: VarULE + ?Sized> VarZeroVecComponents<'a, T> {
 
         let len = u32::from_unaligned(*len_ule.get(0).ok_or(ZeroVecError::VarZeroVecFormatError)?)
             as usize;
+        let width = *slice.get(4).ok_or(ZeroVecError::VarZeroVecFormatError)? as usize;
         let indices_bytes = slice
-            .get(4..4 * len + 4)
+            .get(4..5 + width * len)
             .ok_or(ZeroVecError::VarZeroVecFormatError)?;
-        let indices = RawBytesULE::<4>::parse_byte_slice(indices_bytes)
+        let indices = FlexZeroSlice::parse_byte_slice(indices_bytes)
             .map_err(|_| ZeroVecError::VarZeroVecFormatError)?;
         let things = slice
             .get(4 * len + 4..)
@@ -126,7 +123,7 @@ impl<'a, T: VarULE + ?Sized> VarZeroVecComponents<'a, T> {
     pub unsafe fn from_bytes_unchecked(slice: &'a [u8]) -> Self {
         if slice.is_empty() {
             return VarZeroVecComponents {
-                indices: &[],
+                indices: FlexZeroSlice::new_empty(),
                 things: &[],
                 entire_slice: slice,
                 marker: PhantomData,
@@ -136,8 +133,9 @@ impl<'a, T: VarULE + ?Sized> VarZeroVecComponents<'a, T> {
         let len_ule = RawBytesULE::<4>::from_byte_slice_unchecked(len_bytes);
 
         let len = u32::from_unaligned(*len_ule.get_unchecked(0)) as usize;
-        let indices_bytes = slice.get_unchecked(4..4 * len + 4);
-        let indices = RawBytesULE::<4>::from_byte_slice_unchecked(indices_bytes);
+        let width = *slice.get_unchecked(4) as usize;
+        let indices_bytes = slice.get_unchecked(4..5 + 4 * width);
+        let indices = FlexZeroSlice::from_byte_slice_unchecked(indices_bytes);
         let things = slice.get_unchecked(4 * len + 4..);
 
         VarZeroVecComponents {
@@ -186,11 +184,11 @@ impl<'a, T: VarULE + ?Sized> VarZeroVecComponents<'a, T> {
     /// - `idx` must be in bounds (`idx < self.len()`)
     #[inline]
     unsafe fn get_things_range(self, idx: usize) -> Range<usize> {
-        let start = usizeify(*self.indices.get_unchecked(idx));
+        let start = self.indices.get_unchecked(idx);
         let end = if idx + 1 == self.len() {
             self.things.len()
         } else {
-            usizeify(*self.indices.get_unchecked(idx + 1))
+            self.indices.get_unchecked(idx + 1)
         };
         debug_assert!(start <= end);
         start..end
@@ -221,67 +219,34 @@ impl<'a, T: VarULE + ?Sized> VarZeroVecComponents<'a, T> {
     /// assume that the slice has been passed through iter_checked
     #[inline]
     fn iter_checked(self) -> impl Iterator<Item = Result<&'a T, ZeroVecError>> {
-        let last = iter::from_fn(move || {
-            if !self.is_empty() {
-                #[allow(clippy::indexing_slicing)]
-                // TODO(#1668) Clippy exceptions need docs or fixing.
-                let start = usizeify(self.indices[self.len() - 1]);
-                let end = self.things.len();
-                Some(
-                    self.things
-                        .get(start..end)
-                        .ok_or(ZeroVecError::VarZeroVecFormatError),
-                )
-            } else {
-                None
-            }
-        })
-        .take(1);
         self.indices
-            .windows(2)
-            .map(move |win| {
-                #[allow(clippy::indexing_slicing)]
-                // TODO(#1668) Clippy exceptions need docs or fixing.
-                let start = usizeify(win[0]);
-                #[allow(clippy::indexing_slicing)]
-                // TODO(#1668) Clippy exceptions need docs or fixing.
-                let end = usizeify(win[1]);
+            .iter_pairs()
+            .map(move |(start, maybe_end)| {
+                let end = match maybe_end {
+                    Some(x) => x,
+                    None => self.things.len(),
+                };
                 // the .get() here automatically verifies that end>=start
                 self.things
                     .get(start..end)
                     .ok_or(ZeroVecError::VarZeroVecFormatError)
             })
-            .chain(last)
             .map(|s| s.and_then(|s| T::parse_byte_slice(s)))
     }
 
     /// Create an iterator over the Ts contained in VarZeroVecComponents
     #[inline]
     pub fn iter(self) -> impl Iterator<Item = &'a T> {
-        let last = iter::from_fn(move || {
-            if !self.is_empty() {
-                #[allow(clippy::indexing_slicing)]
-                // TODO(#1668) Clippy exceptions need docs or fixing.
-                let start = usizeify(self.indices[self.len() - 1]);
-                let end = self.things.len();
-                Some(unsafe { self.things.get_unchecked(start..end) })
-            } else {
-                None
-            }
-        })
-        .take(1);
         self.indices
-            .windows(2)
-            .map(move |win| {
-                #[allow(clippy::indexing_slicing)]
-                // TODO(#1668) Clippy exceptions need docs or fixing.
-                let start = usizeify(win[0]);
-                #[allow(clippy::indexing_slicing)]
-                // TODO(#1668) Clippy exceptions need docs or fixing.
-                let end = usizeify(win[1]);
+            .iter_pairs()
+            .map(move |(start, maybe_end)| {
+                let end = match maybe_end {
+                    Some(x) => x,
+                    None => self.things.len(),
+                };
+                // Safety: invariants on the indices array
                 unsafe { self.things.get_unchecked(start..end) }
             })
-            .chain(last)
             .map(|s| unsafe { T::from_byte_slice_unchecked(s) })
     }
 
@@ -292,12 +257,7 @@ impl<'a, T: VarULE + ?Sized> VarZeroVecComponents<'a, T> {
     // Dump a debuggable representation of this type
     #[allow(unused)] // useful for debugging
     pub(crate) fn dump(&self) -> String {
-        let indices = self
-            .indices
-            .iter()
-            .copied()
-            .map(u32::from_unaligned)
-            .collect::<Vec<_>>();
+        let indices = self.indices.iter().collect::<Vec<_>>();
         format!("VarZeroVecComponents {{ indices: {:?} }}", indices)
     }
 }
@@ -308,19 +268,24 @@ where
     T: ?Sized,
     T: Ord,
 {
-    /// Binary searches a sorted `VarZeroVecComponents<T>` for the given element. For more information, see
-    /// the primitive function [`binary_search`](slice::binary_search).
+    /// Binary searches a sorted `VarZeroVecComponents<T>` for the given element.
+    ///
+    /// For more information, see the std function [`binary_search_by`](slice::binary_search_by).
+    #[inline]
     pub fn binary_search(&self, needle: &T) -> Result<usize, usize> {
-        self.binary_search_impl(|probe| probe.cmp(needle), self.indices)
+        self.binary_search_by(|probe| probe.cmp(needle))
     }
 
+    /// Binary searches a sorted range of a `VarZeroVecComponents<T>` for the given element.
+    ///
+    /// For more information, see the std function [`binary_search_by`](slice::binary_search_by).
+    #[inline]
     pub fn binary_search_in_range(
         &self,
         needle: &T,
         range: Range<usize>,
     ) -> Option<Result<usize, usize>> {
-        let indices_slice = self.indices.get(range)?;
-        Some(self.binary_search_impl(|probe| probe.cmp(needle), indices_slice))
+        self.binary_search_in_range_by(|probe| probe.cmp(needle), range)
     }
 }
 
@@ -329,61 +294,52 @@ where
     T: VarULE,
     T: ?Sized,
 {
-    /// Binary searches a sorted `VarZeroVecComponents<T>` for the given predicate. For more information, see
-    /// the primitive function [`binary_search_by`](slice::binary_search_by).
-    pub fn binary_search_by(&self, predicate: impl FnMut(&T) -> Ordering) -> Result<usize, usize> {
-        self.binary_search_impl(predicate, self.indices)
-    }
-
-    pub fn binary_search_in_range_by(
-        &self,
-        predicate: impl FnMut(&T) -> Ordering,
-        range: Range<usize>,
-    ) -> Option<Result<usize, usize>> {
-        let indices_slice = self.indices.get(range)?;
-        Some(self.binary_search_impl(predicate, indices_slice))
-    }
-
-    /// Binary searches a sorted `VarZeroVecComponents<T>` with the given predicate. For more information, see
-    /// the primitive function [`binary_search`](slice::binary_search).
-    fn binary_search_impl(
+    /// Binary searches a sorted `VarZeroVecComponents<T>` for the given predicate.
+    ///
+    /// For more information, see the std function [`binary_search_by`](slice::binary_search_by).
+    pub fn binary_search_by(
         &self,
         mut predicate: impl FnMut(&T) -> Ordering,
-        indices_slice: &[RawBytesULE<4>],
     ) -> Result<usize, usize> {
-        // This code is an absolute atrocity. This code is not a place of honor. This
-        // code is known to the State of California to cause cancer.
-        //
-        // Unfortunately, the stdlib's `binary_search*` functions can only operate on slices.
-        // We do not have a slice. We have something we can .get() and index on, but that is not
-        // a slice.
-        //
-        // The `binary_search*` functions also do not have a variant where they give you the element's
-        // index, which we could otherwise use to directly index `self`.
-        // We do have `self.indices`, but these are indices into a byte buffer, which cannot in
-        // isolation be used to recoup the logical index of the element they refer to.
-        //
-        // However, `binary_search_by()` provides references to the elements of the slice being iterated.
-        // Since the layout of Rust slices is well-defined, we can do pointer arithmetic on these references
-        // to obtain the index being used by the search.
-        //
-        // It's worth noting that the slice we choose to search is irrelevant, as long as it has the appropriate
-        // length. `self.indices` is defined to have length `self.len()`, so it is convenient to use
-        // here and does not require additional allocations.
-        //
-        // The alternative to doing this is to implement our own binary search. This is significantly less fun.
-
-        // Note: We always use zero_index relative to the whole indices array, even if we are
-        // only searching a subslice of it.
-        let zero_index = self.indices.as_ptr() as *const _ as usize;
-        indices_slice.binary_search_by(|probe: &_| {
-            // `self.indices` is a vec of unaligned u32s, so we divide by sizeof(u32)
-            // to get the actual index
-            let index = (probe as *const _ as usize - zero_index) / mem::size_of::<u32>();
-            // safety: we know this is in bounds
-            let actual_probe = unsafe { self.get_unchecked(index) };
-            predicate(actual_probe)
+        self.indices.binary_search_with_index(|index| {
+            // Safety: `index` is in-range by contract
+            let start = unsafe { self.indices.get_unchecked(index) };
+            let end = if index < self.indices.len() {
+                unsafe { self.indices.get_unchecked(index + 1) }
+            } else {
+                self.things.len()
+            };
+            // Safety: invariants on the indices array
+            predicate(unsafe {
+                T::from_byte_slice_unchecked(self.things.get_unchecked(start..end))
+            })
         })
+    }
+
+    /// Binary searches a sorted range of a `VarZeroVecComponents<T>` for the given predicate.
+    ///
+    /// For more information, see the std function [`binary_search_by`](slice::binary_search_by).
+    pub fn binary_search_in_range_by(
+        &self,
+        mut predicate: impl FnMut(&T) -> Ordering,
+        range: Range<usize>,
+    ) -> Option<Result<usize, usize>> {
+        self.indices.binary_search_in_range_with_index(
+            |index| {
+                // Safety: `index` is in-range by contract
+                let start = unsafe { self.indices.get_unchecked(index) };
+                let end = if index < self.indices.len() {
+                    unsafe { self.indices.get_unchecked(index + 1) }
+                } else {
+                    self.things.len()
+                };
+                // Safety: invariants on the indices array
+                predicate(unsafe {
+                    T::from_byte_slice_unchecked(self.things.get_unchecked(start..end))
+                })
+            },
+            range,
+        )
     }
 }
 
