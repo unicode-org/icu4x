@@ -34,4 +34,4 @@ crabbake = { version = "0.4", path = "../../experimental/crabbake", optional = t
 [features]
 std = ["icu_locid/std"]
 serde = ["dep:serde", "zerovec/serde", "icu_locid/serde"]
-datagen = ["std", "crabbake", "icu_provider/datagen", "icu_locid/crabbake", "zerovec/crabbake"]
+datagen = ["std", "serde", "crabbake", "icu_provider/datagen", "icu_locid/crabbake", "zerovec/crabbake"]
