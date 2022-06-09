@@ -587,8 +587,8 @@ impl<'a, K0, K1, V> ZeroMap2d<'a, K0, K1, V>
 where
     K0: ZeroMapKV<'a> + Ord,
     K1: ZeroMapKV<'a> + Ord,
-    V: ZeroMapKV<'a, GetType = V::ULE>,
-    V: AsULE + Copy + 'static,
+    V: ZeroMapKV<'a>,
+    V: Copy,
     K0: ?Sized,
     K1: ?Sized,
 {
@@ -605,6 +605,7 @@ where
     ///
     /// assert_eq!(map.get_copied(&6, &7), Ok(8));
     /// ```
+    #[inline]
     pub fn get_copied(&self, key0: &K0, key1: &K1) -> Result<V, KeyError> {
         self.get0(key0)
             .ok_or(KeyError::K0)?

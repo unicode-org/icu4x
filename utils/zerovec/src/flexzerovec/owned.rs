@@ -52,6 +52,12 @@ impl FlexZeroVecOwned {
         FlexZeroVec::Owned(self)
     }
 
+    /// Clears all values out of this `FlexZeroVecOwned`.
+    #[inline]
+    pub fn clear(&mut self) {
+        *self = Self::new_empty()
+    }
+
     /// Appends an item to the end of the vector.
     ///
     /// # Panics

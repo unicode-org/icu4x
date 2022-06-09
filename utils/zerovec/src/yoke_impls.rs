@@ -5,6 +5,7 @@
 // This way we can copy-paste Yokeable impls
 #![allow(clippy::forget_copy)]
 
+use crate::flexzerovec::FlexZeroVec;
 use crate::map::ZeroMapBorrowed;
 use crate::map::ZeroMapKV;
 use crate::map2d::ZeroMap2dBorrowed;
@@ -45,6 +46,34 @@ unsafe impl<'a, T: 'static + AsULE + ?Sized> Yokeable<'a> for ZeroVec<'static, T
 /// This impl can be made available by enabling the optional `yoke` feature of the `zerovec` crate
 unsafe impl<'a, T: 'static + VarULE + ?Sized> Yokeable<'a> for VarZeroVec<'static, T> {
     type Output = VarZeroVec<'a, T>;
+    #[inline]
+    fn transform(&'a self) -> &'a Self::Output {
+        self
+    }
+    #[inline]
+    fn transform_owned(self) -> Self::Output {
+        self
+    }
+    #[inline]
+    unsafe fn make(from: Self::Output) -> Self {
+        debug_assert!(mem::size_of::<Self::Output>() == mem::size_of::<Self>());
+        let ptr: *const Self = (&from as *const Self::Output).cast();
+        mem::forget(from);
+        ptr::read(ptr)
+    }
+    #[inline]
+    fn transform_mut<F>(&'a mut self, f: F)
+    where
+        F: 'static + for<'b> FnOnce(&'b mut Self::Output),
+    {
+        unsafe { f(mem::transmute::<&mut Self, &mut Self::Output>(self)) }
+    }
+}
+
+// This impl is similar to the impl on Cow and is safe for the same reasons
+/// This impl can be made available by enabling the optional `yoke` feature of the `zerovec` crate
+unsafe impl<'a> Yokeable<'a> for FlexZeroVec<'static> {
+    type Output = FlexZeroVec<'a>;
     #[inline]
     fn transform(&'a self) -> &'a Self::Output {
         self
@@ -266,6 +295,11 @@ mod test {
     #[derive(yoke::Yokeable, zerofrom::ZeroFrom)]
     struct DeriveTest_ZeroVec<'data> {
         _data: ZeroVec<'data, u16>,
+    }
+
+    #[derive(yoke::Yokeable, zerofrom::ZeroFrom)]
+    struct DeriveTest_FlexZeroVec<'data> {
+        _data: FlexZeroVec<'data>,
     }
 
     #[derive(yoke::Yokeable, zerofrom::ZeroFrom)]

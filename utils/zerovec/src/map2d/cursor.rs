@@ -2,7 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::ule::AsULE;
 use crate::{ZeroMap2d, ZeroSlice};
 
 use core::cmp::Ordering;
@@ -206,8 +205,8 @@ impl<'l, 'a, K0, K1, V> ZeroMap2dCursor<'l, 'a, K0, K1, V>
 where
     K0: ZeroMapKV<'a>,
     K1: ZeroMapKV<'a> + Ord,
-    V: ZeroMapKV<'a, GetType = V::ULE>,
-    V: AsULE + Copy,
+    V: ZeroMapKV<'a>,
+    V: Copy,
     K0: ?Sized,
     K1: ?Sized,
 {
@@ -223,11 +222,25 @@ where
     ///
     /// assert_eq!(map.get0(&6).unwrap().get1_copied(&7), Some(8));
     /// ```
+    #[inline]
     pub fn get1_copied(&self, key1: &K1) -> Option<V> {
         let key1_index = self.get_key1_index(key1)?;
-        #[allow(clippy::unwrap_used)] // key1_index is valid
-        let ule = self.values.zvl_get(key1_index).unwrap();
-        Some(V::from_unaligned(*ule))
+        self.get1_copied_at(key1_index)
+    }
+
+    /// For cases when `V` is fixed-size, obtain a direct copy of `V` instead of `V::ULE`
+    #[inline]
+    pub fn get1_copied_by(&self, predicate: impl FnMut(&K1) -> Ordering) -> Option<V> {
+        let key1_index = self.get_key1_index_by(predicate)?;
+        self.get1_copied_at(key1_index)
+    }
+
+    fn get1_copied_at(&self, index: usize) -> Option<V> {
+        let ule = self.values.zvl_get(index)?;
+        let mut result = Option::<V>::None;
+        V::Container::zvl_get_as_t(ule, |v| result.replace(*v));
+        #[allow(clippy::unwrap_used)] // `zvl_get_as_t` guarantees that the callback is invoked
+        Some(result.unwrap())
     }
 }
 
