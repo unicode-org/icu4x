@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1654729813477,
+  "lastUpdate": 1654733618253,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -17033,6 +17033,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/34ca5209d85348461132d0faad56a4e851f7bd6b"
         },
         "date": 1654729791150,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 2300847,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "1699bbdb2887d89dfe7b45d4b055b4fe33d5564e",
+          "message": "Add more zerovec impls for usize and FlexZeroVec (#2023)",
+          "timestamp": "2022-06-08T19:11:04-05:00",
+          "tree_id": "b78c6a14d4b910429f7b8f3d009cc6ca0dce60fc",
+          "url": "https://github.com/unicode-org/icu4x/commit/1699bbdb2887d89dfe7b45d4b055b4fe33d5564e"
+        },
+        "date": 1654733589221,
         "tool": "ndjson",
         "benches": [
           {
