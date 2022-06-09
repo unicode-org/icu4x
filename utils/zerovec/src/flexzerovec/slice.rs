@@ -363,6 +363,19 @@ impl FlexZeroSlice {
         Some(self.binary_search_impl(predicate, scaled_slice))
     }
 
+    /// Binary searches a sorted `FlexZeroSlice` in pairs.
+    ///
+    /// The second element of the final pair is `usize::MAX`.
+    pub fn binary_search_pairs_by(
+        &self,
+        predicate: impl FnMut((usize, usize)) -> Ordering,
+    ) -> Result<usize, usize> {
+        debug_assert!(self.len() <= self.data.len());
+        // Safety: self.len() <= self.data.len()
+        let scaled_slice = unsafe { self.data.get_unchecked(0..self.len()) };
+        self.binary_search_pairs_impl(predicate, scaled_slice)
+    }
+
     /// # Safety
     ///
     /// `scaled_slice` must be a subslice of `self.data`
@@ -379,6 +392,30 @@ impl FlexZeroSlice {
             // Safety: we know this is in bounds
             let actual_probe = unsafe { self.get_unchecked(index) };
             predicate(actual_probe)
+        })
+    }
+
+    /// # Safety
+    ///
+    /// `scaled_slice` must be a subslice of `self.data`
+    fn binary_search_pairs_impl(
+        &self,
+        mut predicate: impl FnMut((usize, usize)) -> Ordering,
+        scaled_slice: &[u8],
+    ) -> Result<usize, usize> {
+        // See comments in components.rs regarding the following code.
+        let zero_index = self.data.as_ptr() as *const _ as usize;
+        scaled_slice.binary_search_by(|probe: &_| {
+            // Note: `scaled_slice` is a slice of u8
+            let index = probe as *const _ as usize - zero_index;
+            // Safety: we know this is in bounds
+            let actual_probe = unsafe { self.get_unchecked(index) };
+            let next_probe = if index < self.len() {
+                unsafe { self.get_unchecked(index + 1) }
+            } else {
+                usize::MAX
+            };
+            predicate((actual_probe, next_probe))
         })
     }
 }
