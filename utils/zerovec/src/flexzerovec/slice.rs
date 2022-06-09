@@ -195,8 +195,11 @@ impl FlexZeroSlice {
     /// ```
     #[inline]
     pub fn get(&self, index: usize) -> Option<usize> {
-        let w = self.get_width();
-        self.get_chunk(index).map(|chunk| chunk_to_usize(chunk, w))
+        if index >= self.len() {
+            None
+        } else {
+            Some(unsafe { self.get_unchecked(index) })
+        }
     }
 
     /// Gets the element at `index` as a chunk of bytes, or `None` if `index >= self.len()`.
@@ -214,9 +217,17 @@ impl FlexZeroSlice {
     #[inline]
     pub unsafe fn get_unchecked(&self, index: usize) -> usize {
         let w = self.get_width();
-        let mut bytes = [0; USIZE_WIDTH];
-        core::ptr::copy_nonoverlapping(self.data.as_ptr().add(index * w), bytes.as_mut_ptr(), w);
-        usize::from_le_bytes(bytes)
+        assert!(w <= USIZE_WIDTH);
+        let ptr = self.data.as_ptr().add(index * w);
+        match w {
+            1 => core::ptr::read(ptr) as usize,
+            2 => u16::from_le_bytes(core::ptr::read(ptr as *const [u8; 2])) as usize,
+            _ => {
+                let mut bytes = [0; USIZE_WIDTH];
+                core::ptr::copy_nonoverlapping(ptr, bytes.as_mut_ptr(), w);
+                usize::from_le_bytes(bytes)
+            }
+        }
     }
 
     /// Gets the first element of the slice, or `None` if the slice is empty.
