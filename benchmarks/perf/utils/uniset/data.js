@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1654748271954,
+  "lastUpdate": 1654793530835,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -31126,6 +31126,60 @@ window.BENCHMARK_DATA = {
           {
             "name": "uniset/contains_range/worst",
             "value": 3,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "2cf35edb09355bfa51931fcaaf66baddeee85411",
+          "message": "More Bidi FFI APIs (#2026)\n\n* move Level methods to BidiInfo, add more\r\n\r\n* regen\r\n\r\n* Update example\r\n\r\n* fmt\r\n\r\n* clippyyyyyyyy",
+          "timestamp": "2022-06-09T16:41:09Z",
+          "tree_id": "b6fcd79416468b3d12e90f3c16123ecf0c70c0d5",
+          "url": "https://github.com/unicode-org/icu4x/commit/2cf35edb09355bfa51931fcaaf66baddeee85411"
+        },
+        "date": 1654793507579,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 46816605,
+            "range": "± 83237",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/worst",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/worst",
+            "value": 2,
             "range": "± 0",
             "unit": "ns/iter"
           }
