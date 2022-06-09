@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1654734311268,
+  "lastUpdate": 1654748391435,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -30809,6 +30809,66 @@ window.BENCHMARK_DATA = {
             "name": "from_string/1000000001",
             "value": 102,
             "range": "± 1",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "hsivonen@hsivonen.fi",
+            "name": "Henri Sivonen",
+            "username": "hsivonen"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "50bedd7911e1979bc344f85837e11e6f09719141",
+          "message": "Make NFKD and UTS 46 data store only the difference form NFD (#1984)\n\nMakes testdata.postcard 25.8 KB smaller.",
+          "timestamp": "2022-06-09T07:06:51+03:00",
+          "tree_id": "99a91b71945b1fd16e59ecb4980c0457beb8463d",
+          "url": "https://github.com/unicode-org/icu4x/commit/50bedd7911e1979bc344f85837e11e6f09719141"
+        },
+        "date": 1654748363643,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 136735,
+            "range": "± 488",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 28662,
+            "range": "± 153",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 76132,
+            "range": "± 220",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 242,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 113,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 101,
+            "range": "± 0",
             "unit": "ns/iter"
           }
         ]
