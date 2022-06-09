@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1654733618253,
+  "lastUpdate": 1654747754945,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -17068,6 +17068,36 @@ window.BENCHMARK_DATA = {
           {
             "name": "provider/testdata/data/testdata.postcard",
             "value": 2300847,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "hsivonen@hsivonen.fi",
+            "name": "Henri Sivonen",
+            "username": "hsivonen"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "50bedd7911e1979bc344f85837e11e6f09719141",
+          "message": "Make NFKD and UTS 46 data store only the difference form NFD (#1984)\n\nMakes testdata.postcard 25.8 KB smaller.",
+          "timestamp": "2022-06-09T07:06:51+03:00",
+          "tree_id": "99a91b71945b1fd16e59ecb4980c0457beb8463d",
+          "url": "https://github.com/unicode-org/icu4x/commit/50bedd7911e1979bc344f85837e11e6f09719141"
+        },
+        "date": 1654747726888,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 2274473,
             "unit": "bytes",
             "biggerIsBetter": false
           }
