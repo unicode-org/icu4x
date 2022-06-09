@@ -73,7 +73,7 @@ impl DataExporter for BlobExporter<'_> {
             });
             log::info!("Serializing blob to output stream...");
 
-            let output = postcard::to_stdvec(&blob)?;
+            let output = postcard::to_allocvec(&blob)?;
             self.sink.write_all(&output)?;
         }
         Ok(())
