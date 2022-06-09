@@ -41,7 +41,7 @@ impl AbstractSerializer for Serializer {
     }
 
     fn get_buffer_format(&self) -> BufferFormat {
-        BufferFormat::Postcard07
+        BufferFormat::Postcard1
     }
 }
 
