@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1654748374731,
+  "lastUpdate": 1654793689279,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -38471,6 +38471,102 @@ window.BENCHMARK_DATA = {
             "name": "pattern/parse",
             "value": 4537,
             "range": "± 4",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "2cf35edb09355bfa51931fcaaf66baddeee85411",
+          "message": "More Bidi FFI APIs (#2026)\n\n* move Level methods to BidiInfo, add more\r\n\r\n* regen\r\n\r\n* Update example\r\n\r\n* fmt\r\n\r\n* clippyyyyyyyy",
+          "timestamp": "2022-06-09T16:41:09Z",
+          "tree_id": "b6fcd79416468b3d12e90f3c16123ecf0c70c0d5",
+          "url": "https://github.com/unicode-org/icu4x/commit/2cf35edb09355bfa51931fcaaf66baddeee85411"
+        },
+        "date": 1654793664872,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 91608,
+            "range": "± 944",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 893377,
+            "range": "± 2467",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 188965,
+            "range": "± 1637",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/DateTimeFormat/format_to_write",
+            "value": 89621,
+            "range": "± 113",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/DateTimeFormat/format_to_string",
+            "value": 97179,
+            "range": "± 948",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/format",
+            "value": 92968,
+            "range": "± 263",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/to_string",
+            "value": 101911,
+            "range": "± 810",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/ZonedDateTimeFormat/format_to_write",
+            "value": 184708,
+            "range": "± 629",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/ZonedDateTimeFormat/format_to_string",
+            "value": 196957,
+            "range": "± 358",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/format",
+            "value": 189133,
+            "range": "± 272",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/to_string",
+            "value": 200994,
+            "range": "± 305",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "pattern/parse",
+            "value": 5091,
+            "range": "± 25",
             "unit": "ns/iter"
           }
         ]
