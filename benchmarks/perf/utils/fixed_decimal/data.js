@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1654793662204,
+  "lastUpdate": 1654796178348,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -30929,6 +30929,66 @@ window.BENCHMARK_DATA = {
             "name": "from_string/1000000001",
             "value": 77,
             "range": "± 5",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "58569820+nordzilla@users.noreply.github.com",
+            "name": "Erik Nordin",
+            "username": "nordzilla"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "38f2736c662d3bf4947108e218d8e6f269fe1402",
+          "message": "Make tzif public API easier to use (#2027)\n\n* Add decription and categories before publishing\r\n\r\n* Update categories and bump version\r\n\r\n* Rework tzif public API",
+          "timestamp": "2022-06-09T17:20:38Z",
+          "tree_id": "3bfbdda6897136820e320693c4c3aca254201d68",
+          "url": "https://github.com/unicode-org/icu4x/commit/38f2736c662d3bf4947108e218d8e6f269fe1402"
+        },
+        "date": 1654796149757,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 136328,
+            "range": "± 652",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 28668,
+            "range": "± 156",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 76090,
+            "range": "± 274",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 241,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 113,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 101,
+            "range": "± 1",
             "unit": "ns/iter"
           }
         ]
