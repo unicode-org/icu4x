@@ -830,11 +830,11 @@ impl FixedDecimal {
     /// ```
     pub fn expand(&mut self, position: i16) {
         let before_truncate_is_zero = self.is_zero();
-        let before_truncate_is_bottom_magnitude = self.nonzero_magnitude_right();
+        let before_truncate_bottom_magnitude = self.nonzero_magnitude_right();
         let before_truncate_magnitude = self.magnitude;
         self.truncate_right(position);
 
-        if before_truncate_is_zero || position <= before_truncate_is_bottom_magnitude {
+        if before_truncate_is_zero || position <= before_truncate_bottom_magnitude {
             #[cfg(debug_assertions)]
             self.check_invariants();
             return;
