@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1654730434522,
+  "lastUpdate": 1654734311268,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -30749,6 +30749,66 @@ window.BENCHMARK_DATA = {
             "name": "from_string/1000000001",
             "value": 74,
             "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "1699bbdb2887d89dfe7b45d4b055b4fe33d5564e",
+          "message": "Add more zerovec impls for usize and FlexZeroVec (#2023)",
+          "timestamp": "2022-06-08T19:11:04-05:00",
+          "tree_id": "b78c6a14d4b910429f7b8f3d009cc6ca0dce60fc",
+          "url": "https://github.com/unicode-org/icu4x/commit/1699bbdb2887d89dfe7b45d4b055b4fe33d5564e"
+        },
+        "date": 1654734283244,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 135411,
+            "range": "± 2400",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 28697,
+            "range": "± 210",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 76703,
+            "range": "± 3423",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 237,
+            "range": "± 2",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 110,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 102,
+            "range": "± 1",
             "unit": "ns/iter"
           }
         ]
