@@ -251,7 +251,7 @@ impl FlexZeroSlice {
 
     /// Gets an iterator over pairs of elements.
     ///
-    /// The second element of the final pair is `usize::MAX`.
+    /// The second element of the final pair is `None`.
     ///
     /// # Examples
     ///
@@ -263,15 +263,15 @@ impl FlexZeroSlice {
     ///
     /// let mut pairs_it = fzv.iter_pairs();
     ///
-    /// assert_eq!(pairs_it.next(), Some((211, 281)));
-    /// assert_eq!(pairs_it.next(), Some((281, 421)));
-    /// assert_eq!(pairs_it.next(), Some((421, 461)));
-    /// assert_eq!(pairs_it.next(), Some((461, usize::MAX)));
+    /// assert_eq!(pairs_it.next(), Some((211, Some(281))));
+    /// assert_eq!(pairs_it.next(), Some((281, Some(421))));
+    /// assert_eq!(pairs_it.next(), Some((421, Some(461))));
+    /// assert_eq!(pairs_it.next(), Some((461, None)));
     /// assert_eq!(pairs_it.next(), None);
     /// ```
-    pub fn iter_pairs(&self) -> impl Iterator<Item = (usize, usize)> + '_ {
+    pub fn iter_pairs(&self) -> impl Iterator<Item = (usize, Option<usize>)> + '_ {
         self.iter()
-            .zip(self.iter().skip(1).chain(core::iter::once(usize::MAX)))
+            .zip(self.iter().skip(1).map(Some).chain(core::iter::once(None)))
     }
 
     /// Creates a `Vec<usize>` from a [`FlexZeroSlice`] (or `FlexZeroVec`).
