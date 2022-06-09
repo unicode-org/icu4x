@@ -529,7 +529,7 @@ impl<'a> ZeroVecLike<usize> for FlexZeroVec<'a> {
 
     #[inline]
     fn zvl_get_as_t<R>(g: &[u8], f: impl FnOnce(&usize) -> R) -> R {
-        f(&crate::chunk_to_usize(g, g.len()))
+        f(&crate::flexzerovec::slice::chunk_to_usize(g, g.len()))
     }
 }
 
@@ -576,7 +576,7 @@ impl ZeroVecLike<usize> for FlexZeroSlice {
 
     #[inline]
     fn zvl_get_as_t<R>(g: &Self::GetType, f: impl FnOnce(&usize) -> R) -> R {
-        f(&crate::chunk_to_usize(g, g.len()))
+        f(&crate::flexzerovec::slice::chunk_to_usize(g, g.len()))
     }
 }
 

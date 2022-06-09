@@ -232,8 +232,6 @@ pub use crate::map2d::map::ZeroMap2d;
 pub use crate::varzerovec::{slice::VarZeroSlice, vec::VarZeroVec};
 pub use crate::zerovec::{ZeroSlice, ZeroVec};
 
-pub(crate) use flexzerovec::chunk_to_usize;
-
 #[doc(hidden)]
 pub mod __zerovec_internal_reexport {
     pub use zerofrom::ZeroFrom;

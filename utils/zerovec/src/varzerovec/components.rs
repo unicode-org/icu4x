@@ -95,7 +95,7 @@ impl<'a, T: VarULE + ?Sized> VarZeroVecComponents<'a, T> {
         let indices = FlexZeroSlice::parse_byte_slice(indices_bytes)
             .map_err(|_| ZeroVecError::VarZeroVecFormatError)?;
         let things = slice
-            .get(4 * len + 4..)
+            .get(5 + width * len..)
             .ok_or(ZeroVecError::VarZeroVecFormatError)?;
 
         let borrowed = VarZeroVecComponents {
@@ -134,9 +134,9 @@ impl<'a, T: VarULE + ?Sized> VarZeroVecComponents<'a, T> {
 
         let len = u32::from_unaligned(*len_ule.get_unchecked(0)) as usize;
         let width = *slice.get_unchecked(4) as usize;
-        let indices_bytes = slice.get_unchecked(4..5 + 4 * width);
+        let indices_bytes = slice.get_unchecked(4..5 + width * len);
         let indices = FlexZeroSlice::from_byte_slice_unchecked(indices_bytes);
-        let things = slice.get_unchecked(4 * len + 4..);
+        let things = slice.get_unchecked(5 + width * len..);
 
         VarZeroVecComponents {
             indices,
@@ -368,30 +368,42 @@ where
     T: VarULE + ?Sized,
     A: EncodeAsVarULE<T>,
 {
-    #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
+    let data_len: usize = elements
+        .iter()
+        .map(|v| Some(v.encode_var_ule_len()))
+        .fold(Some(0usize), |s, v| {
+            s.and_then(|s| v.and_then(|v| s.checked_add(v)))
+        })
+        .unwrap();
+    // FIXME: Change basis of indices array
+    let idx_width = crate::flexzerovec::slice::get_item_width(&data_len.to_le_bytes());
+
+    #[allow(clippy::unwrap_used)] // Function signature allows panicky behavior
     let num_elements = u32::try_from(elements.len()).ok().unwrap();
-    #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
+    #[allow(clippy::indexing_slicing)] // Function signature allows panicky behavior
     output[0..4].copy_from_slice(&num_elements.to_unaligned().0);
 
+    output[4] = idx_width as u8;
+
     // idx_offset = offset from the start of the buffer for the next index
-    let mut idx_offset: usize = 4;
+    let mut idx_offset: usize = 5;
     // first_dat_offset = offset from the start of the buffer of the first data block
-    let first_dat_offset: usize = 4 + elements.len() * 4;
+    let first_dat_offset: usize = 5 + elements.len() * idx_width;
     // dat_offset = offset from the start of the buffer of the next data block
     let mut dat_offset: usize = first_dat_offset;
 
     for element in elements.iter() {
         let element_len = element.encode_var_ule_len();
 
-        let idx_limit = idx_offset + 4;
-        #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
+        let idx_limit = idx_offset + idx_width;
+        #[allow(clippy::indexing_slicing)] // Function signature allows panicky behavior
         let idx_slice = &mut output[idx_offset..idx_limit];
         // VZV expects data offsets to be stored relative to the first data block
         let offset = (dat_offset - first_dat_offset) as u32;
-        idx_slice.copy_from_slice(&offset.to_unaligned().0);
+        idx_slice.copy_from_slice(&offset.to_le_bytes()[0..idx_width]);
 
         let dat_limit = dat_offset + element_len;
-        #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
+        #[allow(clippy::indexing_slicing)] // Function signature allows panicky behavior
         let dat_slice = &mut output[dat_offset..dat_limit];
         element.encode_var_ule_write(dat_slice);
         debug_assert_eq!(T::validate_byte_slice(dat_slice), Ok(()));
@@ -400,25 +412,26 @@ where
         dat_offset = dat_limit;
     }
 
-    debug_assert_eq!(idx_offset, 4 + 4 * elements.len());
+    debug_assert_eq!(idx_offset, 5 + idx_width * elements.len());
     assert_eq!(dat_offset, output.len());
 }
 
-pub fn compute_serializable_len<T, A>(elements: &[A]) -> Option<u32>
+pub fn compute_serializable_len<T, A>(elements: &[A]) -> Option<usize>
 where
     T: VarULE + ?Sized,
     A: EncodeAsVarULE<T>,
 {
-    // 4 for length + 4 for each offset + the body
-    let idx_len: u32 = u32::try_from(elements.len())
-        .ok()?
-        .checked_mul(4)?
-        .checked_add(4)?;
-    let data_len: u32 = elements
+    if elements.len() > usize::try_from(u32::MAX).ok()? {
+        return None;
+    }
+    let data_len: usize = elements
         .iter()
-        .map(|v| u32::try_from(v.encode_var_ule_len()).ok())
-        .fold(Some(0u32), |s, v| {
+        .map(|v| Some(v.encode_var_ule_len()))
+        .fold(Some(0usize), |s, v| {
             s.and_then(|s| v.and_then(|v| s.checked_add(v)))
         })?;
+    // FIXME: Change basis of indices array
+    let idx_width = crate::flexzerovec::slice::get_item_width(&data_len.to_le_bytes());
+    let idx_len = idx_width.checked_mul(elements.len())?.checked_add(5)?;
     idx_len.checked_add(data_len)
 }

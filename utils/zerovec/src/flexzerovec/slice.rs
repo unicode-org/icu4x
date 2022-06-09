@@ -492,7 +492,7 @@ impl fmt::Debug for &FlexZeroSlice {
 }
 
 #[inline]
-fn get_item_width(item_bytes: &[u8; USIZE_WIDTH]) -> usize {
+pub(crate) fn get_item_width(item_bytes: &[u8; USIZE_WIDTH]) -> usize {
     USIZE_WIDTH - item_bytes.iter().rev().take_while(|b| **b == 0).count()
 }
 
