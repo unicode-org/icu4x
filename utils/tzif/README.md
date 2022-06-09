@@ -12,26 +12,12 @@ Resources to generate `TZif` files are provided by the [IANA database](https://w
 
 #### Parse TZif Files
 ```rust
-use combine::{Parser, stream};
-use std::fs::File;
-use tzif::tzif;
-
-let file = File::open("path_to_file").unwrap();
-let stream = stream::buffered::Stream::new(
-    stream::position::Stream::new(stream::read::Stream::new(file)),
-    0, /* lookahead */
-);
-let data = tzif().parse(stream).unwrap();
+let data = tzif::parse_tzif_file("path_to_file").unwrap();
 ```
 
 #### Parse POSIX time-zone strings
 ```rust
-use combine::Parser;
-use tzif::posix_tz_string;
-
-let data = posix_tz_string()
-    .parse(b"WGT3WGST,M3.5.0/-2,M10.5.0/-1".as_slice())
-    .unwrap();
+let data = tzif::parse_posix_tz_string(b"WGT3WGST,M3.5.0/-2,M10.5.0/-1").unwrap();
 ```
 
 ## More Information
