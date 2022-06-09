@@ -249,6 +249,31 @@ impl FlexZeroSlice {
             .map(move |chunk| chunk_to_usize(chunk, w))
     }
 
+    /// Gets an iterator over pairs of elements.
+    ///
+    /// The second element of the final pair is `usize::MAX`.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use zerovec::vecs::FlexZeroVec;
+    ///
+    /// let nums: &[usize] = &[211, 281, 421, 461];
+    /// let fzv: FlexZeroVec = nums.iter().copied().collect();
+    ///
+    /// let mut pairs_it = fzv.iter_pairs();
+    ///
+    /// assert_eq!(pairs_it.next(), Some((211, 281)));
+    /// assert_eq!(pairs_it.next(), Some((281, 421)));
+    /// assert_eq!(pairs_it.next(), Some((421, 461)));
+    /// assert_eq!(pairs_it.next(), Some((461, usize::MAX)));
+    /// assert_eq!(pairs_it.next(), None);
+    /// ```
+    pub fn iter_pairs(&self) -> impl Iterator<Item = (usize, usize)> + '_ {
+        self.iter()
+            .zip(self.iter().skip(1).chain(core::iter::once(usize::MAX)))
+    }
+
     /// Creates a `Vec<usize>` from a [`FlexZeroSlice`] (or `FlexZeroVec`).
     ///
     /// # Examples
