@@ -3,12 +3,11 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use std::path::Path;
-use tzif::TzifParser;
 use walkdir::WalkDir;
 
 fn parse_tzif_file<P: AsRef<Path>>(path: P) -> Result<(), tzif::error::Error> {
     println!("parsing {:?}", path.as_ref().to_str());
-    let parsed = TzifParser::parse_file(path)?;
+    let parsed = tzif::parse_tzif_file(path)?;
     println!("{:#?}", parsed);
     Ok(())
 }
@@ -26,5 +25,5 @@ fn parse_tzif_testdata() -> Result<(), tzif::error::Error> {
 
 #[test]
 fn parse_posix_tz_string() {
-    assert!(tzif::PosixParser::parse_bytes(b"WGT3WGST,M3.5.0/-2,M10.5.0/-1").is_ok());
+    assert!(tzif::parse_posix_tz_string(b"WGT3WGST,M3.5.0/-2,M10.5.0/-1").is_ok());
 }

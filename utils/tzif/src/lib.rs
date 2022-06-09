@@ -14,14 +14,12 @@
 //!
 //! ### Parse TZif Files
 //! ```no_run
-//! use tzif::TzifParser;
-//! let data = TzifParser::parse_file("path_to_file").unwrap();
+//! let data = tzif::parse_tzif_file("path_to_file").unwrap();
 //! ```
 //!
 //! ### Parse POSIX time-zone strings
 //! ```rust
-//! use tzif::PosixParser;
-//! let data = PosixParser::parse_bytes(b"WGT3WGST,M3.5.0/-2,M10.5.0/-1").unwrap();
+//! let data = tzif::parse_posix_tz_string(b"WGT3WGST,M3.5.0/-2,M10.5.0/-1").unwrap();
 //! ```
 
 #![warn(missing_docs)]
@@ -41,27 +39,17 @@ pub mod parse;
 /// Error types an implementations.
 pub mod error;
 
-/// A parser for [Time Zone Information Format (`TZif`)](https://tools.ietf.org/id/draft-murchison-tzdist-tzif-00.html) files.
-pub struct TzifParser {}
-
-impl TzifParser {
-    /// Parses a `TZif` file at the provided `path`.
-    pub fn parse_file<P: AsRef<Path>>(path: P) -> Result<TzifData, Error> {
-        let file = File::open(path)?;
-        let stream = stream::buffered::Stream::new(
-            stream::position::Stream::new(stream::read::Stream::new(file)),
-            0, /* lookahead */
-        );
-        Ok(parse::tzif::tzif().parse(stream)?.0)
-    }
+/// Parses a `TZif` file at the provided `path`.
+pub fn parse_tzif_file<P: AsRef<Path>>(path: P) -> Result<TzifData, Error> {
+    let file = File::open(path)?;
+    let stream = stream::buffered::Stream::new(
+        stream::position::Stream::new(stream::read::Stream::new(file)),
+        0, /* lookahead */
+    );
+    Ok(parse::tzif::tzif().parse(stream)?.0)
 }
 
-/// A parser for [POSIX time-zone strings](https://www.gnu.org/software/libc/manual/html_node/TZ-Variable.html)
-pub struct PosixParser {}
-
-impl PosixParser {
-    /// Parses a POSIX time-zone string from the given bytes.
-    pub fn parse_bytes(bytes: &[u8]) -> Result<PosixTzString, Error> {
-        Ok(parse::posix::posix_tz_string().parse(bytes)?.0)
-    }
+/// Parses a POSIX time-zone string from the given bytes.
+pub fn parse_posix_tz_string(bytes: &[u8]) -> Result<PosixTzString, Error> {
+    Ok(parse::posix::posix_tz_string().parse(bytes)?.0)
 }
