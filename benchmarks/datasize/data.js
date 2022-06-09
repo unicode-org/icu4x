@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1654793030241,
+  "lastUpdate": 1654795371707,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -17123,6 +17123,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/2cf35edb09355bfa51931fcaaf66baddeee85411"
         },
         "date": 1654792996873,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 2274473,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "58569820+nordzilla@users.noreply.github.com",
+            "name": "Erik Nordin",
+            "username": "nordzilla"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "38f2736c662d3bf4947108e218d8e6f269fe1402",
+          "message": "Make tzif public API easier to use (#2027)\n\n* Add decription and categories before publishing\r\n\r\n* Update categories and bump version\r\n\r\n* Rework tzif public API",
+          "timestamp": "2022-06-09T17:20:38Z",
+          "tree_id": "3bfbdda6897136820e320693c4c3aca254201d68",
+          "url": "https://github.com/unicode-org/icu4x/commit/38f2736c662d3bf4947108e218d8e6f269fe1402"
+        },
+        "date": 1654795336067,
         "tool": "ndjson",
         "benches": [
           {
