@@ -39,14 +39,14 @@ export class ICU4XBidi {
     return diplomat_out;
   }
 
-  for_text(text) {
+  for_text(text, default_level) {
     let text_diplomat_bytes = (new TextEncoder()).encode(text);
     let text_diplomat_ptr = wasm.diplomat_alloc(text_diplomat_bytes.length, 1);
     let text_diplomat_buf = new Uint8Array(wasm.memory.buffer, text_diplomat_ptr, text_diplomat_bytes.length);
     text_diplomat_buf.set(text_diplomat_bytes, 0);
     const diplomat_out = (() => {
       const out = (() => {
-        const out = new ICU4XBidiInfo(wasm.ICU4XBidi_for_text(this.underlying, text_diplomat_ptr, text_diplomat_bytes.length));
+        const out = new ICU4XBidiInfo(wasm.ICU4XBidi_for_text(this.underlying, text_diplomat_ptr, text_diplomat_bytes.length, default_level));
         out.owner = null;
         return out;
       })();
@@ -54,6 +54,26 @@ export class ICU4XBidi {
       return out;
     })();
     wasm.diplomat_free(text_diplomat_ptr, text_diplomat_bytes.length, 1);
+    return diplomat_out;
+  }
+
+  static level_is_rtl(level) {
+    const diplomat_out = wasm.ICU4XBidi_level_is_rtl(level);
+    return diplomat_out;
+  }
+
+  static level_is_ltr(level) {
+    const diplomat_out = wasm.ICU4XBidi_level_is_ltr(level);
+    return diplomat_out;
+  }
+
+  static level_rtl() {
+    const diplomat_out = wasm.ICU4XBidi_level_rtl();
+    return diplomat_out;
+  }
+
+  static level_ltr() {
+    const diplomat_out = wasm.ICU4XBidi_level_ltr();
     return diplomat_out;
   }
 }
@@ -101,6 +121,16 @@ export class ICU4XBidiInfo {
         return null;
       }
     })();
+    return diplomat_out;
+  }
+
+  size() {
+    const diplomat_out = wasm.ICU4XBidiInfo_size(this.underlying);
+    return diplomat_out;
+  }
+
+  level_at(pos) {
+    const diplomat_out = wasm.ICU4XBidiInfo_level_at(this.underlying, pos);
     return diplomat_out;
   }
 }
@@ -158,16 +188,6 @@ export class ICU4XBidiParagraph {
 
   level_at(pos) {
     const diplomat_out = wasm.ICU4XBidiParagraph_level_at(this.underlying, pos);
-    return diplomat_out;
-  }
-
-  static level_is_rtl(level) {
-    const diplomat_out = wasm.ICU4XBidiParagraph_level_is_rtl(level);
-    return diplomat_out;
-  }
-
-  static level_is_ltr(level) {
-    const diplomat_out = wasm.ICU4XBidiParagraph_level_is_ltr(level);
     return diplomat_out;
   }
 }
