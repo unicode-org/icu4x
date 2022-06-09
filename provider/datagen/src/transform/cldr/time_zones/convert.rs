@@ -155,7 +155,7 @@ impl From<&CldrTimeZonesData<'_>> for MetaZonePeriodV1<'static> {
                     match zone {
                         ZonePeriod::Region(periods) => match bcp47_tzid_data.get(key) {
                             Some(bcp47) => {
-                                vec![(bcp47.clone(), periods.clone(), meta_zone_id_data.clone())]
+                                vec![(*bcp47, periods.clone(), meta_zone_id_data.clone())]
                             }
                             None => panic!("Cannot find bcp47 for {:?}.", key),
                         },
@@ -170,7 +170,7 @@ impl From<&CldrTimeZonesData<'_>> for MetaZonePeriodV1<'static> {
                                         match bcp47_tzid_data.get(&key) {
                                             Some(bcp47) => {
                                                 vec![(
-                                                    bcp47.clone(),
+                                                    *bcp47,
                                                     periods.clone(),
                                                     meta_zone_id_data.clone(),
                                                 )]
@@ -187,7 +187,7 @@ impl From<&CldrTimeZonesData<'_>> for MetaZonePeriodV1<'static> {
                                             match bcp47_tzid_data.get(&key) {
                                                 Some(bcp47) => {
                                                     vec![(
-                                                        bcp47.clone(),
+                                                        *bcp47,
                                                         periods.clone(),
                                                         meta_zone_id_data.clone(),
                                                     )]
@@ -445,67 +445,55 @@ fn iterate_metazone_period(
         LiteMap<String, MetaZoneId>,
     ),
 ) -> impl Iterator<Item = (TimeZoneBcp47Id, String, MetaZoneId)> {
-    extern crate std;
-
     let (time_zone_key, periods, meta_zone_id_data) = pair;
     periods
         .into_iter()
         .map(move |period| match &period.uses_meta_zone.from {
             Some(from) => {
-                (
-                    time_zone_key,
-                    from.clone(),
-                    match meta_zone_id_data.get(&period.uses_meta_zone.mzone) {
-                        Some(meta_zone_short_id) => {
-                            std::println!(
-                                "{:?} {:?} {:?}",
+                match meta_zone_id_data.get(&period.uses_meta_zone.mzone) {
+                    Some(meta_zone_short_id) => (time_zone_key, from.clone(), *meta_zone_short_id),
+                    None => {
+                        // TODO(#1781): Remove this special case once the short id is updated in CLDR
+                        if &period.uses_meta_zone.mzone == "Yukon" {
+                            (
                                 time_zone_key,
                                 from.clone(),
-                                meta_zone_short_id.clone()
-                            );
-                            meta_zone_short_id.clone()
+                                MetaZoneId(tinystr::tinystr!(4, "yuko")),
+                            )
+                        } else {
+                            (
+                                time_zone_key,
+                                from.clone(),
+                                MetaZoneId(tinystr::tinystr!(4, "unkw")),
+                            )
                         }
-                        None => {
-                            // TODO(#1781): Remove this special case once the short id is updated in CLDR
-                            if &period.uses_meta_zone.mzone == "Yukon" {
-                                MetaZoneId(tinystr::tinystr!(4, "yuko"))
-                            } else {
-                                panic!(
-                                    "Cannot find short id of meta zone for {:?}.",
-                                    &period.uses_meta_zone.mzone
-                                )
-                            }
-                        }
-                    },
-                )
+                    }
+                }
             }
             None => {
-                (
-                    time_zone_key,
-                    String::from("1970-00-00 00:00"),
-                    match meta_zone_id_data.get(&period.uses_meta_zone.mzone) {
-                        Some(meta_zone_short_id) => {
-                            std::println!(
-                                "{:?} {:?} {:?}",
+                match meta_zone_id_data.get(&period.uses_meta_zone.mzone) {
+                    Some(meta_zone_short_id) => (
+                        time_zone_key,
+                        String::from("1970-00-00 00:00"),
+                        *meta_zone_short_id,
+                    ),
+                    None => {
+                        // TODO(#1781): Remove this special case once the short id is updated in CLDR
+                        if &period.uses_meta_zone.mzone == "Yukon" {
+                            (
                                 time_zone_key,
                                 String::from("1970-00-00 00:00"),
-                                meta_zone_short_id.clone()
-                            );
-                            meta_zone_short_id.clone()
+                                MetaZoneId(tinystr::tinystr!(4, "yuko")),
+                            )
+                        } else {
+                            (
+                                time_zone_key,
+                                String::from("1970-00-00 00:00"),
+                                MetaZoneId(tinystr::tinystr!(4, "unkw")),
+                            )
                         }
-                        None => {
-                            // TODO(#1781): Remove this special case once the short id is updated in CLDR
-                            if &period.uses_meta_zone.mzone == "Yukon" {
-                                MetaZoneId(tinystr::tinystr!(4, "yuko"))
-                            } else {
-                                panic!(
-                                    "Cannot find short id of meta zone for {:?}.",
-                                    &period.uses_meta_zone.mzone
-                                )
-                            }
-                        }
-                    },
-                )
+                    }
+                }
             }
         })
 }
