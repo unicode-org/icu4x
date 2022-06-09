@@ -216,14 +216,17 @@ impl FlexZeroSlice {
     /// `index` must be in-range.
     #[inline]
     pub unsafe fn get_unchecked(&self, index: usize) -> usize {
-        let w = self.get_width();
-        assert!(w <= USIZE_WIDTH);
-        let ptr = self.data.as_ptr().add(index * w);
-        match w {
-            1 => core::ptr::read(ptr) as usize,
-            2 => u16::from_le_bytes(core::ptr::read(ptr as *const [u8; 2])) as usize,
+        match self.width {
+            1 => *self.data.get_unchecked(index) as usize,
+            2 => {
+                let ptr = self.data.as_ptr().add(index * 2);
+                u16::from_le_bytes(core::ptr::read(ptr as *const [u8; 2])) as usize
+            }
             _ => {
                 let mut bytes = [0; USIZE_WIDTH];
+                let w = self.get_width();
+                assert!(w <= USIZE_WIDTH);
+                let ptr = self.data.as_ptr().add(index * w);
                 core::ptr::copy_nonoverlapping(ptr, bytes.as_mut_ptr(), w);
                 usize::from_le_bytes(bytes)
             }
