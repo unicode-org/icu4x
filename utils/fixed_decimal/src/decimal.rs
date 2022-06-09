@@ -1025,7 +1025,7 @@ impl FixedDecimal {
         self.half_truncate_right(position);
     }
 
-    /// Take the half floor of the number at a particular position.
+    /// Take the half even of the number at a particular position.
     ///
     /// # Examples
     ///
