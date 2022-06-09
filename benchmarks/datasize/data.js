@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1654747754945,
+  "lastUpdate": 1654793030241,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -17093,6 +17093,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/50bedd7911e1979bc344f85837e11e6f09719141"
         },
         "date": 1654747726888,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 2274473,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "2cf35edb09355bfa51931fcaaf66baddeee85411",
+          "message": "More Bidi FFI APIs (#2026)\n\n* move Level methods to BidiInfo, add more\r\n\r\n* regen\r\n\r\n* Update example\r\n\r\n* fmt\r\n\r\n* clippyyyyyyyy",
+          "timestamp": "2022-06-09T16:41:09Z",
+          "tree_id": "b6fcd79416468b3d12e90f3c16123ecf0c70c0d5",
+          "url": "https://github.com/unicode-org/icu4x/commit/2cf35edb09355bfa51931fcaaf66baddeee85411"
+        },
+        "date": 1654792996873,
         "tool": "ndjson",
         "benches": [
           {
