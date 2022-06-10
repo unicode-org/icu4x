@@ -183,7 +183,7 @@ impl AnyDateTimeFormat {
     {
         let locale = locale.into();
 
-        /// TODO (#2038), don't release 1.0 without fixing this
+        /// TODO (#2038), DO NOT SHIP 1.0 without fixing this
         let kind = AnyCalendarKind::from_locale(&locale)
             .unwrap_or(AnyCalendarKind::Gregorian);
 
