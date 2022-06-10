@@ -146,9 +146,21 @@ export class ICU4XBidiParagraph {
 
   set_paragraph_in_text(n) {
     const diplomat_out = (() => {
-      const is_ok = wasm.ICU4XBidiParagraph_set_paragraph_in_text(this.underlying, n) == 1;
-      if (!is_ok) {
-        throw new diplomatRuntime.FFIError({});
+      const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
+      const result_tag = {};
+      diplomat_alloc_destroy_registry.register(result_tag, {
+        ptr: diplomat_receive_buffer,
+        size: 5,
+        align: 4,
+      });
+      wasm.ICU4XBidiParagraph_set_paragraph_in_text(diplomat_receive_buffer, this.underlying, n);
+      const is_ok = (new Uint8Array(wasm.memory.buffer, diplomat_receive_buffer + 4, 1))[0] == 1;
+      if (is_ok) {
+        const ok_value = {};
+        return ok_value;
+      } else {
+        const throw_value = ICU4XError_rust_to_js[(new Int32Array(wasm.memory.buffer, diplomat_receive_buffer, 1))[0]];
+        throw new diplomatRuntime.FFIError(throw_value);
       }
     })();
     return diplomat_out;
@@ -177,9 +189,21 @@ export class ICU4XBidiParagraph {
   reorder_line(range_start, range_end) {
     const diplomat_out = diplomatRuntime.withWriteable(wasm, (writeable) => {
       return (() => {
-        const is_ok = wasm.ICU4XBidiParagraph_reorder_line(this.underlying, range_start, range_end, writeable) == 1;
-        if (!is_ok) {
-          throw new diplomatRuntime.FFIError({});
+        const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
+        const result_tag = {};
+        diplomat_alloc_destroy_registry.register(result_tag, {
+          ptr: diplomat_receive_buffer,
+          size: 5,
+          align: 4,
+        });
+        wasm.ICU4XBidiParagraph_reorder_line(diplomat_receive_buffer, this.underlying, range_start, range_end, writeable);
+        const is_ok = (new Uint8Array(wasm.memory.buffer, diplomat_receive_buffer + 4, 1))[0] == 1;
+        if (is_ok) {
+          const ok_value = {};
+          return ok_value;
+        } else {
+          const throw_value = ICU4XError_rust_to_js[(new Int32Array(wasm.memory.buffer, diplomat_receive_buffer, 1))[0]];
+          throw new diplomatRuntime.FFIError(throw_value);
         }
       })();
     });
@@ -565,6 +589,7 @@ export class ICU4XDataStruct {
 const ICU4XError_js_to_rust = {
   "UnknownError": 0,
   "WriteableError": 1,
+  "OutOfBoundsError": 2,
   "DataMissingResourceKeyError": 10,
   "DataMissingVariantError": 11,
   "DataMissingLocaleError": 12,
@@ -588,6 +613,7 @@ const ICU4XError_js_to_rust = {
 const ICU4XError_rust_to_js = {
   0: "UnknownError",
   1: "WriteableError",
+  2: "OutOfBoundsError",
   10: "DataMissingResourceKeyError",
   11: "DataMissingVariantError",
   12: "DataMissingLocaleError",

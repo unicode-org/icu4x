@@ -31,8 +31,10 @@ enum struct ICU4XError {
   /**
    * An error arising from writing to a string
    * Typically found when not enough space is allocated
+   * Most APIs that return a string may return this error
    */
   WriteableError = 1,
+  OutOfBoundsError = 2,
   DataMissingResourceKeyError = 10,
   DataMissingVariantError = 11,
   DataMissingLocaleError = 12,

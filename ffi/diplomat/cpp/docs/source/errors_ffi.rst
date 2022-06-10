@@ -12,7 +12,9 @@
 
     .. cpp:enumerator:: WriteableError
 
-        An error arising from writing to a string Typically found when not enough space is allocated
+        An error arising from writing to a string Typically found when not enough space is allocated Most APIs that return a string may return this error
+
+    .. cpp:enumerator:: OutOfBoundsError
 
     .. cpp:enumerator:: DataMissingResourceKeyError
 

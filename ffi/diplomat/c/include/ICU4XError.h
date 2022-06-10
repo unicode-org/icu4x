@@ -13,6 +13,7 @@ extern "C" {
 typedef enum ICU4XError {
   ICU4XError_UnknownError = 0,
   ICU4XError_WriteableError = 1,
+  ICU4XError_OutOfBoundsError = 2,
   ICU4XError_DataMissingResourceKeyError = 10,
   ICU4XError_DataMissingVariantError = 11,
   ICU4XError_DataMissingLocaleError = 12,
