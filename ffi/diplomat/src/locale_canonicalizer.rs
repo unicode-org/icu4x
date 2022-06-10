@@ -9,6 +9,9 @@ pub mod ffi {
 
     use crate::{locale::ffi::ICU4XLocale, provider::ffi::ICU4XDataProvider};
 
+    use crate::errors::ffi::ICU4XError;
+    use diplomat_runtime::DiplomatResult;
+
     /// FFI version of `CanonicalizationResult`.
     #[diplomat::rust_link(icu::locale_canonicalizer::CanonicalizationResult, Enum)]
     pub enum ICU4XCanonicalizationResult {
@@ -34,12 +37,12 @@ pub mod ffi {
     impl ICU4XLocaleCanonicalizer {
         /// Create a new [`ICU4XLocaleCanonicalizer`].
         #[diplomat::rust_link(icu::locale_canonicalizer::LocaleCanonicalizer::new, FnInStruct)]
-        pub fn create(provider: &ICU4XDataProvider) -> Option<Box<ICU4XLocaleCanonicalizer>> {
+        pub fn create(provider: &ICU4XDataProvider) -> DiplomatResult<Box<ICU4XLocaleCanonicalizer>, ICU4XError> {
             use icu_provider::serde::AsDeserializingBufferProvider;
             let provider = provider.0.as_deserializing();
             LocaleCanonicalizer::new(&provider)
-                .ok()
                 .map(|lc| Box::new(ICU4XLocaleCanonicalizer(lc)))
+                .map_err(Into::into).into()
         }
 
         /// FFI version of `LocaleCanonicalizer::canonicalize()`.
