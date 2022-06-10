@@ -14,7 +14,7 @@ clippy-all = "clippy --all-features --all-targets -- -D warnings"
 # Build configurations for small binary size
 panic-abort-build = "build -Z build-std=std,panic_abort -Z build-std-features=panic_immediate_abort"
 wasm-build-dev = "panic-abort-build --target wasm32-unknown-unknown"
-wasm-build-release = "wasm-build-dev --release"
+wasm-build-release = "wasm-build-dev --profile=release-opt-size"
 
 [target.wasm32-unknown-unknown]
 rustflags = [
