@@ -246,16 +246,14 @@ fn main() -> eyre::Result<()> {
     if let Some(tag) = matches.value_of("CLDR_TAG") {
         source_data = source_data.with_cldr(
             cached_path::CacheBuilder::new().freshness_lifetime(u64::MAX).build()?
-                .cached_path_with_options(
+                .cached_path(
                     &format!(
                         "https://github.com/unicode-org/cldr-json/releases/download/{}/cldr-{}-json-{}.zip",
-                        tag, tag, cldr_locales),
-                    &cached_path::Options::default().extract(),
-                )?,
-                cldr_locales
-            );
+                        tag, tag, cldr_locales))?,
+            cldr_locales
+            )?;
     } else if let Some(path) = matches.value_of("CLDR_ROOT") {
-        source_data = source_data.with_cldr(PathBuf::from(path), cldr_locales);
+        source_data = source_data.with_cldr(PathBuf::from(path), cldr_locales)?;
     }
 
     let trie_type = match matches.value_of("TRIE_TYPE") {
@@ -265,14 +263,14 @@ fn main() -> eyre::Result<()> {
     };
 
     if let Some(tag) = matches.value_of("UPROPS_TAG") {
-        source_data = source_data.with_uprops(cached_path::CacheBuilder::new().freshness_lifetime(u64::MAX).build()?
-            .cached_path_with_options(
-                &format!("https://github.com/unicode-org/icu/releases/download/{}/icuexportdata_uprops_full.zip", tag),
-                &cached_path::Options::default().extract()
+        source_data = source_data.with_uprops(
+            cached_path::CacheBuilder::new().freshness_lifetime(u64::MAX).build()?
+                .cached_path(
+                    &format!("https://github.com/unicode-org/icu/releases/download/{}/icuexportdata_uprops_full.zip", tag)
             )?,
-            trie_type);
+            trie_type)?;
     } else if let Some(path) = matches.value_of("UPROPS_ROOT") {
-        source_data = source_data.with_uprops(PathBuf::from(path), trie_type);
+        source_data = source_data.with_uprops(PathBuf::from(path), trie_type)?;
     }
 
     let out = match matches

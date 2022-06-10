@@ -17,7 +17,7 @@
 //! # Lookup
 //!
 //! To perform lookup, store the stringified locale in a canonical BCP-47 form as a byte array,
-//! and then use [`Locale::cmp_bytes()`] to perform an efficient, zero-allocation lookup.
+//! and then use [`Locale::strict_cmp()`] to perform an efficient, zero-allocation lookup.
 //!
 //! ```
 //! use icu_locid::Locale;
@@ -36,7 +36,7 @@
 //!
 //! // Get the value associated with a locale
 //! let loc: Locale = "en-US-u-ca-buddhist".parse().unwrap();
-//! let value = zm.get_copied_by(|bytes| loc.cmp_bytes(bytes).reverse());
+//! let value = zm.get_copied_by(|bytes| loc.strict_cmp(bytes).reverse());
 //! assert_eq!(value, Some(10));
 //! ```
 //!
@@ -46,7 +46,7 @@
 //! both of these types may require memory allocation. If possible, architect your code such that
 //! you do not need to obtain a structured type.
 //!
-//! If need the structured type, such as if you need to manipulate it in some way, there are two
+//! If you need the structured type, such as if you need to manipulate it in some way, there are two
 //! options: storing subtags, and storing a string for parsing.
 //!
 //! ## Storing Subtags
@@ -118,13 +118,13 @@
 //! ```
 //!
 //! [`Locale`]: crate::Locale
-//! [`Locale::cmp_bytes()`]: crate::Locale::cmp_bytes()
+//! [`Locale::strict_cmp()`]: crate::Locale::strict_cmp()
 //! [`LanguageIdentifier`]: crate::LanguageIdentifier
 
 use crate::subtags::{Language, Region, Script, Variant};
 use zerovec::ule::{AsULE, ULE};
-use zerovec::ZeroVec;
 use zerovec::ZeroVecError;
+use zerovec::{ZeroSlice, ZeroVec};
 
 // Safety checklist for ULE:
 //
@@ -181,6 +181,7 @@ impl AsULE for Language {
 
 impl<'a> zerovec::maps::ZeroMapKV<'a> for Language {
     type Container = zerovec::ZeroVec<'a, Language>;
+    type Slice = zerovec::ZeroSlice<Language>;
     type GetType = Language;
     type OwnedType = Language;
 }
@@ -240,6 +241,7 @@ impl AsULE for Script {
 
 impl<'a> zerovec::maps::ZeroMapKV<'a> for Script {
     type Container = ZeroVec<'a, Script>;
+    type Slice = ZeroSlice<Script>;
     type GetType = Script;
     type OwnedType = Script;
 }
@@ -298,6 +300,7 @@ impl AsULE for Region {
 
 impl<'a> zerovec::maps::ZeroMapKV<'a> for Region {
     type Container = ZeroVec<'a, Region>;
+    type Slice = ZeroSlice<Region>;
     type GetType = Region;
     type OwnedType = Region;
 }
@@ -357,6 +360,7 @@ impl AsULE for Variant {
 
 impl<'a> zerovec::maps::ZeroMapKV<'a> for Variant {
     type Container = ZeroVec<'a, Variant>;
+    type Slice = ZeroSlice<Variant>;
     type GetType = Variant;
     type OwnedType = Variant;
 }

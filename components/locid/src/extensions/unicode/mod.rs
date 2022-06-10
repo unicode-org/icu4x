@@ -119,7 +119,7 @@ impl Unicode {
     ///
     /// let mut loc: Locale = "und-t-mul-u-hello-ca-buddhist-hc-h12".parse().unwrap();
     /// loc.extensions.unicode.clear();
-    /// assert_eq!(loc, "und-t-mul");
+    /// assert_eq!(loc, "und-t-mul".parse().unwrap());
     /// ```
     pub fn clear(&mut self) {
         self.keywords.clear();

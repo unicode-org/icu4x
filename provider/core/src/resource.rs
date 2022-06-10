@@ -63,6 +63,7 @@ impl ResourceKeyHash {
 
 impl<'a> zerovec::maps::ZeroMapKV<'a> for ResourceKeyHash {
     type Container = zerovec::ZeroVec<'a, ResourceKeyHash>;
+    type Slice = zerovec::ZeroSlice<ResourceKeyHash>;
     type GetType = <ResourceKeyHash as AsULE>::ULE;
     type OwnedType = ResourceKeyHash;
 }
@@ -428,9 +429,9 @@ impl From<&Locale> for ResourceOptions {
 }
 
 impl ResourceOptions {
-    pub fn cmp_bytes(&self, other: &[u8]) -> Ordering {
+    pub fn strict_cmp(&self, other: &[u8]) -> Ordering {
         if self.keywords.is_empty() {
-            self.langid.cmp_bytes(other)
+            self.langid.strict_cmp(other)
         } else {
             // TODO: Avoid the allocation
             self.write_to_string().as_bytes().cmp(other)

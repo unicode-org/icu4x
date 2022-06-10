@@ -2,8 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use super::{runtime::Pattern, PatternItem};
-use crate::pattern::{reference, runtime};
+use super::{reference, runtime, PatternItem};
 use crate::{fields, options::preferences};
 #[cfg(feature = "datagen")]
 use crate::{provider, skeleton};
@@ -119,7 +118,7 @@ impl CoarseHourCycle {
 /// and between h23 and h24. This function is naive as it is assumed that this application of
 /// the hour cycle will not change between h1x to h2x.
 pub(crate) fn naively_apply_preferences(
-    pattern: &mut Pattern,
+    pattern: &mut runtime::Pattern,
     preferences: &Option<preferences::Bag>,
 ) {
     // If there is a preference overiding the hour cycle, apply it now.

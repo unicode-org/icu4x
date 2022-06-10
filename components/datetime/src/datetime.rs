@@ -13,6 +13,7 @@ use crate::{
 };
 use alloc::string::String;
 use core::marker::PhantomData;
+use icu_decimal::provider::DecimalSymbolsV1Marker;
 use icu_locid::{unicode_ext_key, Locale};
 use icu_plurals::provider::OrdinalV1Marker;
 use icu_provider::prelude::*;
@@ -88,6 +89,7 @@ impl<C: CldrCalendar> DateTimeFormat<C> {
         D: ResourceProvider<DateSymbolsV1Marker>
             + ResourceProvider<DatePatternsV1Marker>
             + ResourceProvider<DateSkeletonPatternsV1Marker>
+            + ResourceProvider<DecimalSymbolsV1Marker>
             + ResourceProvider<OrdinalV1Marker>
             + ResourceProvider<WeekDataV1Marker>
             + ?Sized,

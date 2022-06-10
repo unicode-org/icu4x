@@ -65,14 +65,14 @@ where
         ensure(
             name,
             |name| name.len() >= 3,
-            "zone variant name has as length of less than 3 characters",
+            "zone variant name should be 3 or more characters long",
         )
     })
     .then(|name| {
         ensure(
             name,
             |name| name.as_bytes()[0] != b':',
-            "zone variant name starts with a leading ':' but should not",
+            "zone variant name should never start with a leading colon",
         )
     })
 }
@@ -95,8 +95,8 @@ where
     many1(digit())
 }
 
-/// Parses a natural number as an i32.
-fn natural<Input>() -> impl Parser<Input, Output = i32>
+/// Parses a natural number as an i64.
+fn natural<Input>() -> impl Parser<Input, Output = i64>
 where
     Input: Stream<Token = u8>,
     Input::Error: ParseError<Input::Token, Input::Range, Input::Position>,
@@ -104,21 +104,21 @@ where
     digits().map(|digits| {
         digits
             .into_iter()
-            .map(|digit| (digit - b'0') as i32)
+            .map(|digit| i64::from(digit - b'0'))
             .rev()
             .zip(0u32..)
-            .map(|(digit, n)| digit * 10i32.pow(n))
-            .sum::<i32>()
+            .map(|(digit, n)| digit * 10i64.pow(n))
+            .sum::<i64>()
     })
 }
 
-/// Parses a natural number as an i32 and esnures that it falls within `[lower_bound, upper_bound]`.
-fn bounded_natural<Input>(lower_bound: i32, upper_bound: i32) -> impl Parser<Input, Output = i32>
+/// Parses a natural number as an i64 and esnures that it falls within `[lower_bound, upper_bound]`.
+fn bounded_natural<Input>(lower_bound: i64, upper_bound: i64) -> impl Parser<Input, Output = i64>
 where
     Input: Stream<Token = u8>,
     Input::Error: ParseError<Input::Token, Input::Range, Input::Position>,
 {
-    assert!(
+    debug_assert!(
         lower_bound <= upper_bound,
         "lower bound {lower_bound} was not less than or equal, upper bound {upper_bound}"
     );
@@ -126,13 +126,13 @@ where
         ensure(
             natural,
             |&natural| lower_bound <= natural && natural <= upper_bound,
-            "natural number was out of bounds",
+            "parsed natural number is out of bounds",
         )
     })
 }
 
-/// Parses an integer as an i32 and esnures that it falls within `[lower_bound, upper_bound]`.
-fn bounded_integer<Input>(lower_bound: i32, upper_bound: i32) -> impl Parser<Input, Output = i32>
+/// Parses an integer as an i64 and esnures that it falls within `[lower_bound, upper_bound]`.
+fn bounded_integer<Input>(lower_bound: i64, upper_bound: i64) -> impl Parser<Input, Output = i64>
 where
     Input: Stream<Token = u8>,
     Input::Error: ParseError<Input::Token, Input::Range, Input::Position>,
@@ -147,13 +147,13 @@ where
             ensure(
                 integer,
                 |&integer| lower_bound <= integer && integer <= upper_bound,
-                "integer was out of bounds",
+                "parsed bounded integer is out of bounds",
             )
         })
 }
 
 /// Parses an integer as [`Hours`] and ensures that it falls within `[-bound, bound]`.
-fn hours<Input>(bound: i32) -> impl Parser<Input, Output = Hours>
+fn hours<Input>(bound: i64) -> impl Parser<Input, Output = Hours>
 where
     Input: Stream<Token = u8>,
     Input::Error: ParseError<Input::Token, Input::Range, Input::Position>,
@@ -218,7 +218,7 @@ where
 /// Parses a time value of the form `\[+|-\]hh\[:mm\[:ss\]\]`.
 ///
 /// Returns the total time in [`Seconds`].
-fn time<Input>(hour_bound: i32) -> impl Parser<Input, Output = Seconds>
+fn time<Input>(hour_bound: i64) -> impl Parser<Input, Output = Seconds>
 where
     Input: Stream<Token = u8>,
     Input::Error: ParseError<Input::Token, Input::Range, Input::Position>,
@@ -297,8 +297,7 @@ where
     Input: Stream<Token = u8>,
     Input::Error: ParseError<Input::Token, Input::Range, Input::Position>,
 {
-    byte(b'J')
-        .then(|_| bounded_natural(1, 365).map(|natural| TransitionDay::NoLeap(natural as u16)))
+    byte(b'J').with(bounded_natural(1, 365).map(|natural| TransitionDay::NoLeap(natural as u16)))
 }
 
 /// Parses a transition date specified by a leading `M`, e.g. `Mm.w.d`
@@ -313,13 +312,11 @@ where
     Input::Error: ParseError<Input::Token, Input::Range, Input::Position>,
 {
     byte(b'M')
-        .then(|_| {
-            (
-                bounded_natural(1, 12),
-                byte(b'.').then(|_| bounded_natural(1, 5)),
-                byte(b'.').then(|_| bounded_natural(0, 6)),
-            )
-        })
+        .with((
+            bounded_natural(1, 12),
+            byte(b'.').with(bounded_natural(1, 5)),
+            byte(b'.').with(bounded_natural(0, 6)),
+        ))
         .map(|(m, w, d)| TransitionDay::Mwd(m as u16, w as u16, d as u16))
 }
 
@@ -342,8 +339,8 @@ where
 /// Parses a time value of the form `\[+|-\]hh\[:mm\[:ss\]\]`.
 ///
 /// This is positive if the local time zone is west of the Prime Meridian and negative if it is east.
-/// The hour must be in range `[-167, 167]`, and the minute and seconds must be in range `[0 and 59]`.
-/// This is an extension to POSIX.1, which only allows hours to be in range `[0 through 24]`.
+/// The hour must be in range `[-167, 167]`, and the minute and seconds must be in range `[0, 59]`.
+/// This is an extension to POSIX.1, which only allows hours to be in range `[0, 24]`.
 fn transition_time<Input>() -> impl Parser<Input, Output = Seconds>
 where
     Input: Stream<Token = u8>,
@@ -385,14 +382,15 @@ where
     combine::struct_parser! {
         DstTransitionInfo {
             variant_info: dst_variant_info(std_offset),
-            start_date: byte(b',').then(|_| transition_date()),
-            end_date: byte(b',').then(|_| transition_date()),
+            start_date: byte(b',').with(transition_date()),
+            end_date: byte(b',').with(transition_date()),
         }
     }
 }
 
 /// Parses a POSIX time-zone string according to the following specification:
 /// <https://www.gnu.org/software/libc/manual/html_node/TZ-Variable.html>
+#[must_use]
 pub fn posix_tz_string<Input>() -> impl Parser<Input, Output = PosixTzString>
 where
     Input: Stream<Token = u8>,
@@ -412,47 +410,8 @@ where
 #[cfg(test)]
 mod test {
     use super::*;
-
-    /// Helper macro to test that a parse should fail with Err().
-    macro_rules! assert_parse_err {
-        ($parser:expr, $src:expr) => {
-            assert!(
-                $parser.parse($src.as_bytes()).is_err(),
-                "expected {}, parse {} as Err(), but got Ok() {:#?}",
-                stringify!($parser),
-                $src,
-                $parser.parse($src.as_bytes()).unwrap().0,
-            )
-        };
-    }
-
-    /// Helper macro to test that a parse should succeed with Ok().
-    macro_rules! assert_parse_ok {
-        ($parser:expr, $src:expr) => {
-            assert!(
-                $parser.parse(($src).as_bytes()).is_ok(),
-                "expected {}, parse {} as Ok(), but got Err() {:#?}",
-                stringify!($parser),
-                $src,
-                $parser.parse($src.as_bytes()),
-            )
-        };
-    }
-
-    /// Helper macro to test the equality of the actual and expected parse.
-    macro_rules! assert_parse_eq {
-        ($parser:expr, $src:expr, $expected:expr) => {
-            assert_parse_ok!($parser, $src);
-            assert_eq!(
-                $parser.parse($src.as_bytes()).unwrap().0,
-                $expected,
-                "expected {:?}, parse as {:?} but got {:?}",
-                $src,
-                $expected,
-                $parser.parse($src.as_bytes()).unwrap().0,
-            )
-        };
-    }
+    use crate::{assert_parse_eq, assert_parse_err};
+    use combine::EasyParser;
 
     #[test]
     fn parse_zone_variant_name() {
@@ -542,15 +501,15 @@ mod test {
     #[test]
     fn parse_integer() {
         // invalid integers
-        assert_parse_err!(bounded_integer(i32::MIN, i32::MAX), "");
-        assert_parse_err!(bounded_integer(i32::MIN, i32::MAX), "+");
-        assert_parse_err!(bounded_integer(i32::MIN, i32::MAX), "-");
-        assert_parse_err!(bounded_integer(i32::MIN, i32::MAX), "a");
-        assert_parse_err!(bounded_integer(i32::MIN, i32::MAX), "ab");
-        assert_parse_err!(bounded_integer(i32::MIN, i32::MAX), "--1");
-        assert_parse_err!(bounded_integer(i32::MIN, i32::MAX), "++1");
-        assert_parse_err!(bounded_integer(i32::MIN, i32::MAX), "+-1");
-        assert_parse_err!(bounded_integer(i32::MIN, i32::MAX), "-+1");
+        assert_parse_err!(bounded_integer(i64::MIN, i64::MAX), "");
+        assert_parse_err!(bounded_integer(i64::MIN, i64::MAX), "+");
+        assert_parse_err!(bounded_integer(i64::MIN, i64::MAX), "-");
+        assert_parse_err!(bounded_integer(i64::MIN, i64::MAX), "a");
+        assert_parse_err!(bounded_integer(i64::MIN, i64::MAX), "ab");
+        assert_parse_err!(bounded_integer(i64::MIN, i64::MAX), "--1");
+        assert_parse_err!(bounded_integer(i64::MIN, i64::MAX), "++1");
+        assert_parse_err!(bounded_integer(i64::MIN, i64::MAX), "+-1");
+        assert_parse_err!(bounded_integer(i64::MIN, i64::MAX), "-+1");
 
         // out of bounds
         assert_parse_err!(bounded_integer(0, 9), "-1");
@@ -574,15 +533,15 @@ mod test {
         assert_parse_eq!(bounded_integer(0, 9), "9", 9);
 
         // valid integers
-        assert_parse_eq!(bounded_integer(i32::MIN, i32::MAX), "+1", 1);
-        assert_parse_eq!(bounded_integer(i32::MIN, i32::MAX), "-5", -5);
-        assert_parse_eq!(bounded_integer(i32::MIN, i32::MAX), "01", 1);
-        assert_parse_eq!(bounded_integer(i32::MIN, i32::MAX), "002", 2);
-        assert_parse_eq!(bounded_integer(i32::MIN, i32::MAX), "13", 13);
-        assert_parse_eq!(bounded_integer(i32::MIN, i32::MAX), "4321", 4321);
-        assert_parse_eq!(bounded_integer(i32::MIN, i32::MAX), "+0543-21", 543);
-        assert_parse_eq!(bounded_integer(i32::MIN, i32::MAX), "-0543+21", -543);
-        assert_parse_eq!(bounded_integer(i32::MIN, i32::MAX), "-12345abc", -12345);
+        assert_parse_eq!(bounded_integer(i64::MIN, i64::MAX), "+1", 1);
+        assert_parse_eq!(bounded_integer(i64::MIN, i64::MAX), "-5", -5);
+        assert_parse_eq!(bounded_integer(i64::MIN, i64::MAX), "01", 1);
+        assert_parse_eq!(bounded_integer(i64::MIN, i64::MAX), "002", 2);
+        assert_parse_eq!(bounded_integer(i64::MIN, i64::MAX), "13", 13);
+        assert_parse_eq!(bounded_integer(i64::MIN, i64::MAX), "4321", 4321);
+        assert_parse_eq!(bounded_integer(i64::MIN, i64::MAX), "+0543-21", 543);
+        assert_parse_eq!(bounded_integer(i64::MIN, i64::MAX), "-0543+21", -543);
+        assert_parse_eq!(bounded_integer(i64::MIN, i64::MAX), "-12345abc", -12345);
     }
 
     #[test]

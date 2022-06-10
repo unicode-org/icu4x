@@ -139,7 +139,6 @@ macro_rules! variant {
 ///
 /// let de_at: LanguageIdentifier = "de_at".parse().unwrap();
 ///
-/// assert_eq!(DE_AT, "de-AT");
 /// assert_eq!(DE_AT, de_at);
 /// ```
 ///
@@ -191,7 +190,6 @@ macro_rules! langid {
 ///
 /// let de_at: Locale = "de_at".parse().unwrap();
 ///
-/// assert_eq!(DE_AT, "de-AT");
 /// assert_eq!(DE_AT, de_at);
 /// ```
 ///

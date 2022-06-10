@@ -328,7 +328,8 @@ fn test_keys_from_file() {
 #[test]
 fn test_keys_from_bin() {
     // File obtained by changing work_log.rs to use `icu_testdata::get_smaller_static_provider`
-    // and running `cargo +nightly wasm-build-release --examples -p icu_datetime --features serde`
+    // and running `cargo +nightly wasm-build-release --examples -p icu_datetime --features serde \
+    // && cp target/wasm32-unknown-unknown/release/examples/work_log.wasm provider/datagen/tests/data/`
     assert_eq!(
         keys_from_bin(PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("tests/data/work_log.wasm"))
             .unwrap(),
@@ -337,6 +338,7 @@ fn test_keys_from_bin() {
             icu_datetime::provider::calendar::DateSkeletonPatternsV1Marker::KEY,
             icu_datetime::provider::calendar::DateSymbolsV1Marker::KEY,
             icu_datetime::provider::week_data::WeekDataV1Marker::KEY,
+            icu_decimal::provider::DecimalSymbolsV1Marker::KEY,
             icu_plurals::provider::OrdinalV1Marker::KEY,
         ]
     );

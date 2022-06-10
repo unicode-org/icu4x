@@ -6,7 +6,7 @@ use alloc::borrow::Cow;
 use icu_provider::{yoke, zerofrom};
 use tinystr::{TinyAsciiStr, TinyStr8};
 use zerovec::ule::{AsULE, ULE};
-use zerovec::{ZeroMap, ZeroMap2d, ZeroVec};
+use zerovec::{ZeroMap, ZeroMap2d, ZeroSlice, ZeroVec};
 
 /// An ICU4X mapping to the CLDR timeZoneNames format strings.
 /// See CLDR-JSON timeZoneNames.json for more context.
@@ -68,6 +68,7 @@ impl AsULE for TimeZoneBcp47Id {
 
 impl<'a> zerovec::maps::ZeroMapKV<'a> for TimeZoneBcp47Id {
     type Container = ZeroVec<'a, TimeZoneBcp47Id>;
+    type Slice = ZeroSlice<TimeZoneBcp47Id>;
     type GetType = TimeZoneBcp47Id;
     type OwnedType = TimeZoneBcp47Id;
 }
@@ -95,6 +96,7 @@ impl AsULE for MetaZoneId {
 
 impl<'a> zerovec::maps::ZeroMapKV<'a> for MetaZoneId {
     type Container = ZeroVec<'a, MetaZoneId>;
+    type Slice = ZeroSlice<MetaZoneId>;
     type GetType = MetaZoneId;
     type OwnedType = MetaZoneId;
 }

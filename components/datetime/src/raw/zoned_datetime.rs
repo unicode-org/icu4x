@@ -3,6 +3,11 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use alloc::string::String;
+use icu_decimal::{
+    options::{FixedDecimalFormatOptions, GroupingStrategy, SignDisplay},
+    provider::DecimalSymbolsV1Marker,
+    FixedDecimalFormat,
+};
 use icu_locid::Locale;
 use icu_plurals::{provider::OrdinalV1Marker, PluralRules};
 use icu_provider::prelude::*;
@@ -39,11 +44,12 @@ impl ZonedDateTimeFormat {
     ///
     /// The "calendar" argument should be a Unicode BCP47 calendar identifier
     #[inline(never)]
-    pub fn try_new<DP, ZP, PP>(
+    pub fn try_new<DP, ZP, PP, DEP>(
         locale: Locale,
         date_provider: &DP,
         zone_provider: &ZP,
         plural_provider: &PP,
+        decimal_provider: &DEP,
         date_time_format_options: &DateTimeFormatOptions,
         time_zone_format_options: &TimeZoneFormatOptions,
     ) -> Result<Self, DateTimeFormatError>
@@ -61,6 +67,7 @@ impl ZonedDateTimeFormat {
             + ResourceProvider<provider::time_zones::MetaZoneSpecificNamesShortV1Marker>
             + ?Sized,
         PP: ResourceProvider<OrdinalV1Marker> + ?Sized,
+        DEP: ResourceProvider<DecimalSymbolsV1Marker> + ?Sized,
     {
         let patterns = provider::date_time::PatternSelector::for_options(
             date_provider,
@@ -83,12 +90,13 @@ impl ZonedDateTimeFormat {
             None
         };
 
+        // TODO(#1109): Implement proper vertical fallback
+        let mut locale_no_extensions = locale.clone();
+        locale_no_extensions.extensions.unicode.clear();
+
         let ordinal_rules = if let PatternPlurals::MultipleVariants(_) = &patterns.get().0 {
-            // TODO(#1109): Implement proper vertical fallback
-            let mut locale_no_extensions = locale.clone();
-            locale_no_extensions.extensions.unicode.clear();
             Some(PluralRules::try_new_ordinal(
-                locale_no_extensions,
+                locale_no_extensions.clone(),
                 plural_provider,
             )?)
         } else {
@@ -108,12 +116,26 @@ impl ZonedDateTimeFormat {
             None
         };
 
-        let datetime_format =
-            raw::DateTimeFormat::new(locale, patterns, symbols_data, week_data, ordinal_rules);
+        let mut fixed_decimal_format_options = FixedDecimalFormatOptions::default();
+        fixed_decimal_format_options.grouping_strategy = GroupingStrategy::Never;
+        fixed_decimal_format_options.sign_display = SignDisplay::Never;
 
-        // TODO(#1109): Implement proper vertical fallback
-        let mut locale_no_extensions = datetime_format.locale.clone();
-        locale_no_extensions.extensions.unicode.clear();
+        let fixed_decimal_format = FixedDecimalFormat::try_new(
+            locale_no_extensions.clone(),
+            decimal_provider,
+            fixed_decimal_format_options,
+        )
+        .map_err(DateTimeFormatError::FixedDecimalFormat)?;
+
+        let datetime_format = raw::DateTimeFormat::new(
+            locale,
+            patterns,
+            symbols_data,
+            week_data,
+            ordinal_rules,
+            fixed_decimal_format,
+        );
+
         let time_zone_format = TimeZoneFormat::try_new(
             locale_no_extensions,
             datetime_format

@@ -51,6 +51,7 @@ fn main(_argc: isize, _argv: *const *const u8) -> isize {
             &provider,
             &provider,
             &provider,
+            &provider,
             &DateTimeFormatOptions::default(),
             &TimeZoneFormatOptions::default(),
         )

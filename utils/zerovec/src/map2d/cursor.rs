@@ -2,7 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::ule::AsULE;
 use crate::{ZeroMap2d, ZeroSlice};
 
 use core::cmp::Ordering;
@@ -25,10 +24,10 @@ where
     V: ?Sized,
 {
     // Invariant: these fields have the same invariants as they do in ZeroMap2d
-    keys0: &'l <<K0 as ZeroMapKV<'a>>::Container as ZeroVecLike<K0>>::BorrowedVariant,
+    keys0: &'l K0::Slice,
     joiner: &'l ZeroSlice<u32>,
-    keys1: &'l <<K1 as ZeroMapKV<'a>>::Container as ZeroVecLike<K1>>::BorrowedVariant,
-    values: &'l <<V as ZeroMapKV<'a>>::Container as ZeroVecLike<V>>::BorrowedVariant,
+    keys1: &'l K1::Slice,
+    values: &'l V::Slice,
     // Invariant: key0_index is in range
     key0_index: usize,
 }
@@ -206,8 +205,8 @@ impl<'l, 'a, K0, K1, V> ZeroMap2dCursor<'l, 'a, K0, K1, V>
 where
     K0: ZeroMapKV<'a>,
     K1: ZeroMapKV<'a> + Ord,
-    V: ZeroMapKV<'a, GetType = V::ULE>,
-    V: AsULE + Copy,
+    V: ZeroMapKV<'a>,
+    V: Copy,
     K0: ?Sized,
     K1: ?Sized,
 {
@@ -223,11 +222,25 @@ where
     ///
     /// assert_eq!(map.get0(&6).unwrap().get1_copied(&7), Some(8));
     /// ```
+    #[inline]
     pub fn get1_copied(&self, key1: &K1) -> Option<V> {
         let key1_index = self.get_key1_index(key1)?;
-        #[allow(clippy::unwrap_used)] // key1_index is valid
-        let ule = self.values.zvl_get(key1_index).unwrap();
-        Some(V::from_unaligned(*ule))
+        self.get1_copied_at(key1_index)
+    }
+
+    /// For cases when `V` is fixed-size, obtain a direct copy of `V` instead of `V::ULE`
+    #[inline]
+    pub fn get1_copied_by(&self, predicate: impl FnMut(&K1) -> Ordering) -> Option<V> {
+        let key1_index = self.get_key1_index_by(predicate)?;
+        self.get1_copied_at(key1_index)
+    }
+
+    fn get1_copied_at(&self, index: usize) -> Option<V> {
+        let ule = self.values.zvl_get(index)?;
+        let mut result = Option::<V>::None;
+        V::Container::zvl_get_as_t(ule, |v| result.replace(*v));
+        #[allow(clippy::unwrap_used)] // `zvl_get_as_t` guarantees that the callback is invoked
+        Some(result.unwrap())
     }
 }
 
@@ -240,12 +253,9 @@ where
     K0: for<'c> ZeroMapKV<'c> + ?Sized,
     K1: for<'c> ZeroMapKV<'c> + ?Sized,
     V: for<'c> ZeroMapKV<'c> + ?Sized,
-    <<K0 as ZeroMapKV<'a>>::Container as ZeroVecLike<K0>>::BorrowedVariant:
-        PartialEq<<<K0 as ZeroMapKV<'b>>::Container as ZeroVecLike<K0>>::BorrowedVariant>,
-    <<K1 as ZeroMapKV<'a>>::Container as ZeroVecLike<K1>>::BorrowedVariant:
-        PartialEq<<<K1 as ZeroMapKV<'b>>::Container as ZeroVecLike<K1>>::BorrowedVariant>,
-    <<V as ZeroMapKV<'a>>::Container as ZeroVecLike<V>>::BorrowedVariant:
-        PartialEq<<<V as ZeroMapKV<'b>>::Container as ZeroVecLike<V>>::BorrowedVariant>,
+    <K0 as ZeroMapKV<'a>>::Slice: PartialEq<<K0 as ZeroMapKV<'b>>::Slice>,
+    <K1 as ZeroMapKV<'a>>::Slice: PartialEq<<K1 as ZeroMapKV<'b>>::Slice>,
+    <V as ZeroMapKV<'a>>::Slice: PartialEq<<V as ZeroMapKV<'b>>::Slice>,
 {
     fn eq(&self, other: &ZeroMap2dCursor<'n, 'b, K0, K1, V>) -> bool {
         self.keys0.eq(other.keys0)
@@ -261,9 +271,9 @@ where
     K0: ZeroMapKV<'a> + ?Sized,
     K1: ZeroMapKV<'a> + ?Sized,
     V: ZeroMapKV<'a> + ?Sized,
-    <<K0 as ZeroMapKV<'a>>::Container as ZeroVecLike<K0>>::BorrowedVariant: fmt::Debug,
-    <<K1 as ZeroMapKV<'a>>::Container as ZeroVecLike<K1>>::BorrowedVariant: fmt::Debug,
-    <<V as ZeroMapKV<'a>>::Container as ZeroVecLike<V>>::BorrowedVariant: fmt::Debug,
+    K0::Slice: fmt::Debug,
+    K1::Slice: fmt::Debug,
+    V::Slice: fmt::Debug,
 {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> Result<(), fmt::Error> {
         f.debug_struct("ZeroMap2d")

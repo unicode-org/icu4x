@@ -12,11 +12,7 @@ use serde;
 
 use crate::u24::U24;
 
-#[icu_provider::data_struct(
-    CanonicalDecompositionDataV1Marker = "normalizer/nfd@1",
-    CompatibilityDecompositionDataV1Marker = "normalizer/nfkd@1",
-    Uts46DecompositionDataV1Marker = "normalizer/uts46d@1"
-)]
+#[icu_provider::data_struct(CanonicalDecompositionDataV1Marker = "normalizer/nfd@1")]
 #[derive(Debug, PartialEq, Clone)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, crabbake::Bakeable), crabbake(path = icu_normalizer::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
@@ -25,6 +21,36 @@ pub struct DecompositionDataV1<'data> {
     pub trie: CodePointTrie<'data, u32>,
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub decomposition_starts_with_non_starter: UnicodeSet<'data>,
+}
+
+#[icu_provider::data_struct(
+    CompatibilityDecompositionSupplementV1Marker = "normalizer/nfkd@1",
+    Uts46DecompositionSupplementV1Marker = "normalizer/uts46d@1"
+)]
+#[derive(Debug, PartialEq, Clone)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, crabbake::Bakeable), crabbake(path = icu_normalizer::provider))]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+pub struct DecompositionSupplementV1<'data> {
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub trie: CodePointTrie<'data, u32>,
+    pub flags: u8,
+}
+
+impl DecompositionSupplementV1<'_> {
+    const HALF_WIDTH_VOICING_MARK_MASK: u8 = 1;
+    const IOTA_SUBSCRIPT_MASK: u8 = (1 << 1);
+
+    /// Whether half-width kana voicing marks decompose into non-starters
+    /// (their full-width combining counterparts).
+    pub fn half_width_voicing_marks_become_non_starters(&self) -> bool {
+        (self.flags & DecompositionSupplementV1::HALF_WIDTH_VOICING_MARK_MASK) != 0
+    }
+
+    /// Whether U+0345 COMBINING GREEK YPOGEGRAMMENI decomposes into a
+    /// starter (U+03B9 GREEK SMALL LETTER IOTA).
+    pub fn iota_subscript_becomes_starter(&self) -> bool {
+        (self.flags & DecompositionSupplementV1::IOTA_SUBSCRIPT_MASK) != 0
+    }
 }
 
 #[icu_provider::data_struct(

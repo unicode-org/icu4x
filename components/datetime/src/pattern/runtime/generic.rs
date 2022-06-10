@@ -102,7 +102,7 @@ impl From<&GenericPattern<'_>> for reference::GenericPattern {
 
 impl fmt::Display for GenericPattern<'_> {
     fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
-        let reference = crate::pattern::reference::GenericPattern::from(self);
+        let reference = reference::GenericPattern::from(self);
         reference.fmt(formatter)
     }
 }
@@ -111,7 +111,7 @@ impl FromStr for GenericPattern<'_> {
     type Err = PatternError;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        let reference = crate::pattern::reference::GenericPattern::from_str(s)?;
+        let reference = reference::GenericPattern::from_str(s)?;
         Ok(Self::from(&reference))
     }
 }
