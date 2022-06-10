@@ -351,50 +351,6 @@ export class ICU4XCreateDataProviderResult {
   }
 }
 
-const ICU4XCreatePluralOperandsResult_box_destroy_registry = new FinalizationRegistry(underlying => {
-  wasm.ICU4XCreatePluralOperandsResult_destroy(underlying);
-});
-
-export class ICU4XCreatePluralOperandsResult {
-  constructor(underlying) {
-    this.underlying = underlying;
-  }
-
-  get operands() {
-    return (() => {
-      const out = new ICU4XPluralOperands(this.underlying + 0);
-      out.owner = null;
-      return out;
-    })();
-  }
-
-  get success() {
-    return (new Uint8Array(wasm.memory.buffer, this.underlying + 36, 1))[0] == 1;
-  }
-}
-
-const ICU4XCreatePluralRulesResult_box_destroy_registry = new FinalizationRegistry(underlying => {
-  wasm.ICU4XCreatePluralRulesResult_destroy(underlying);
-});
-
-export class ICU4XCreatePluralRulesResult {
-  constructor(underlying) {
-    this.underlying = underlying;
-  }
-
-  get rules() {
-    return (() => {
-      const out = new ICU4XPluralRules((new Uint32Array(wasm.memory.buffer, this.underlying + 0, 1))[0]);
-      out.owner = null;
-      return out;
-    })();
-  }
-
-  get success() {
-    return (new Uint8Array(wasm.memory.buffer, this.underlying + 4, 1))[0] == 1;
-  }
-}
-
 const ICU4XDataProvider_box_destroy_registry = new FinalizationRegistry(underlying => {
   wasm.ICU4XDataProvider_destroy(underlying);
 });
@@ -587,8 +543,9 @@ const ICU4XError_js_to_rust = {
   "DataStructValidityError": 33,
   "PropertyUnknownScriptIdError": 40,
   "PropertyUnknownGeneralCategoryGroupError": 41,
-  "DecimalLimit": 42,
-  "DecimalSyntax": 43,
+  "DecimalLimitError": 42,
+  "DecimalSyntaxError": 43,
+  "PluralParserError": 50,
 };
 const ICU4XError_rust_to_js = {
   0: "UnknownError",
@@ -613,8 +570,9 @@ const ICU4XError_rust_to_js = {
   33: "DataStructValidityError",
   40: "PropertyUnknownScriptIdError",
   41: "PropertyUnknownGeneralCategoryGroupError",
-  42: "DecimalLimit",
-  43: "DecimalSyntax",
+  42: "DecimalLimitError",
+  43: "DecimalSyntaxError",
+  50: "PluralParserError",
 };
 
 const ICU4XFixedDecimal_box_destroy_registry = new FinalizationRegistry(underlying => {
@@ -1453,20 +1411,25 @@ export class ICU4XLocaleCanonicalizer {
 
   static create(provider) {
     const diplomat_out = (() => {
-      const option_value = wasm.ICU4XLocaleCanonicalizer_create(provider.underlying)
-      if (option_value !== 0) {
-        const inhabited_value = (() => {
-          const out = (() => {
-            const out = new ICU4XLocaleCanonicalizer(option_value);
-            out.owner = null;
-            return out;
-          })();
-          ICU4XLocaleCanonicalizer_box_destroy_registry.register(out, out.underlying)
+      const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
+      const result_tag = {};
+      diplomat_alloc_destroy_registry.register(result_tag, {
+        ptr: diplomat_receive_buffer,
+        size: 5,
+        align: 4,
+      });
+      wasm.ICU4XLocaleCanonicalizer_create(diplomat_receive_buffer, provider.underlying);
+      const is_ok = (new Uint8Array(wasm.memory.buffer, diplomat_receive_buffer + 4, 1))[0] == 1;
+      if (is_ok) {
+        const ok_value = (() => {
+          const out = new ICU4XLocaleCanonicalizer((new Uint32Array(wasm.memory.buffer, diplomat_receive_buffer, 1))[0]);
+          out.owner = result_tag;
           return out;
         })();
-        return inhabited_value;
+        return ok_value;
       } else {
-        return null;
+        const throw_value = ICU4XError_rust_to_js[(new Int32Array(wasm.memory.buffer, diplomat_receive_buffer, 1))[0]];
+        throw new diplomatRuntime.FFIError(throw_value);
       }
     })();
     return diplomat_out;
@@ -1555,14 +1518,25 @@ export class ICU4XPluralOperands {
     s_diplomat_buf.set(s_diplomat_bytes, 0);
     const diplomat_out = (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(37, 8);
-      wasm.ICU4XPluralOperands_create(diplomat_receive_buffer, s_diplomat_ptr, s_diplomat_bytes.length);
-      const out = new ICU4XCreatePluralOperandsResult(diplomat_receive_buffer);
-      diplomat_alloc_destroy_registry.register(out, {
-        ptr: out.underlying,
+      const result_tag = {};
+      diplomat_alloc_destroy_registry.register(result_tag, {
+        ptr: diplomat_receive_buffer,
         size: 37,
         align: 8,
       });
-      return out;
+      wasm.ICU4XPluralOperands_create(diplomat_receive_buffer, s_diplomat_ptr, s_diplomat_bytes.length);
+      const is_ok = (new Uint8Array(wasm.memory.buffer, diplomat_receive_buffer + 36, 1))[0] == 1;
+      if (is_ok) {
+        const ok_value = (() => {
+          const out = new ICU4XPluralOperands(diplomat_receive_buffer);
+          out.owner = result_tag;
+          return out;
+        })();
+        return ok_value;
+      } else {
+        const throw_value = ICU4XError_rust_to_js[(new Int32Array(wasm.memory.buffer, diplomat_receive_buffer, 1))[0]];
+        throw new diplomatRuntime.FFIError(throw_value);
+      }
     })();
     wasm.diplomat_free(s_diplomat_ptr, s_diplomat_bytes.length, 1);
     return diplomat_out;
@@ -1605,21 +1579,25 @@ export class ICU4XPluralRules {
   static try_new_cardinal(locale, provider) {
     const diplomat_out = (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-      wasm.ICU4XPluralRules_try_new_cardinal(diplomat_receive_buffer, locale.underlying, provider.underlying);
-      const out = new ICU4XCreatePluralRulesResult(diplomat_receive_buffer);
-      if (out.rules.underlying !== 0) {
-        const out_rules_value = out.rules;
-        ICU4XPluralRules_box_destroy_registry.register(out_rules_value, out_rules_value.underlying);
-        Object.defineProperty(out, "rules", { value: out_rules_value });
-      } else {
-        Object.defineProperty(out, "rules", { value: null });
-      }
-      diplomat_alloc_destroy_registry.register(out, {
-        ptr: out.underlying,
+      const result_tag = {};
+      diplomat_alloc_destroy_registry.register(result_tag, {
+        ptr: diplomat_receive_buffer,
         size: 5,
         align: 4,
       });
-      return out;
+      wasm.ICU4XPluralRules_try_new_cardinal(diplomat_receive_buffer, locale.underlying, provider.underlying);
+      const is_ok = (new Uint8Array(wasm.memory.buffer, diplomat_receive_buffer + 4, 1))[0] == 1;
+      if (is_ok) {
+        const ok_value = (() => {
+          const out = new ICU4XPluralRules((new Uint32Array(wasm.memory.buffer, diplomat_receive_buffer, 1))[0]);
+          out.owner = result_tag;
+          return out;
+        })();
+        return ok_value;
+      } else {
+        const throw_value = ICU4XError_rust_to_js[(new Int32Array(wasm.memory.buffer, diplomat_receive_buffer, 1))[0]];
+        throw new diplomatRuntime.FFIError(throw_value);
+      }
     })();
     return diplomat_out;
   }
@@ -1627,21 +1605,25 @@ export class ICU4XPluralRules {
   static try_new_ordinal(locale, provider) {
     const diplomat_out = (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-      wasm.ICU4XPluralRules_try_new_ordinal(diplomat_receive_buffer, locale.underlying, provider.underlying);
-      const out = new ICU4XCreatePluralRulesResult(diplomat_receive_buffer);
-      if (out.rules.underlying !== 0) {
-        const out_rules_value = out.rules;
-        ICU4XPluralRules_box_destroy_registry.register(out_rules_value, out_rules_value.underlying);
-        Object.defineProperty(out, "rules", { value: out_rules_value });
-      } else {
-        Object.defineProperty(out, "rules", { value: null });
-      }
-      diplomat_alloc_destroy_registry.register(out, {
-        ptr: out.underlying,
+      const result_tag = {};
+      diplomat_alloc_destroy_registry.register(result_tag, {
+        ptr: diplomat_receive_buffer,
         size: 5,
         align: 4,
       });
-      return out;
+      wasm.ICU4XPluralRules_try_new_ordinal(diplomat_receive_buffer, locale.underlying, provider.underlying);
+      const is_ok = (new Uint8Array(wasm.memory.buffer, diplomat_receive_buffer + 4, 1))[0] == 1;
+      if (is_ok) {
+        const ok_value = (() => {
+          const out = new ICU4XPluralRules((new Uint32Array(wasm.memory.buffer, diplomat_receive_buffer, 1))[0]);
+          out.owner = result_tag;
+          return out;
+        })();
+        return ok_value;
+      } else {
+        const throw_value = ICU4XError_rust_to_js[(new Int32Array(wasm.memory.buffer, diplomat_receive_buffer, 1))[0]];
+        throw new diplomatRuntime.FFIError(throw_value);
+      }
     })();
     return diplomat_out;
   }

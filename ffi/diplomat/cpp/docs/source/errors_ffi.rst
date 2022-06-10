@@ -60,6 +60,8 @@
 
     .. cpp:enumerator:: PropertyUnknownGeneralCategoryGroupError
 
-    .. cpp:enumerator:: DecimalLimit
+    .. cpp:enumerator:: DecimalLimitError
 
-    .. cpp:enumerator:: DecimalSyntax
+    .. cpp:enumerator:: DecimalSyntaxError
+
+    .. cpp:enumerator:: PluralParserError

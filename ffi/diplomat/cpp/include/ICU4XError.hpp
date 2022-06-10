@@ -66,8 +66,9 @@ enum struct ICU4XError {
   DataStructValidityError = 33,
   PropertyUnknownScriptIdError = 40,
   PropertyUnknownGeneralCategoryGroupError = 41,
-  DecimalLimit = 42,
-  DecimalSyntax = 43,
+  DecimalLimitError = 42,
+  DecimalSyntaxError = 43,
+  PluralParserError = 50,
 };
 
 #endif

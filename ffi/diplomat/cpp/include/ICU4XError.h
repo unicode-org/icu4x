@@ -33,8 +33,9 @@ typedef enum ICU4XError {
   ICU4XError_DataStructValidityError = 33,
   ICU4XError_PropertyUnknownScriptIdError = 40,
   ICU4XError_PropertyUnknownGeneralCategoryGroupError = 41,
-  ICU4XError_DecimalLimit = 42,
-  ICU4XError_DecimalSyntax = 43,
+  ICU4XError_DecimalLimitError = 42,
+  ICU4XError_DecimalSyntaxError = 43,
+  ICU4XError_PluralParserError = 50,
 } ICU4XError;
 
 void ICU4XError_destroy(ICU4XError* self);

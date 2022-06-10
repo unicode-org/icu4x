@@ -15,7 +15,7 @@
     A locale canonicalizer.
     See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/icu/locale_canonicalizer/struct.LocaleCanonicalizer.html>`__ for more information.
 
-    .. cpp:function:: static std::optional<ICU4XLocaleCanonicalizer> create(const ICU4XDataProvider& provider)
+    .. cpp:function:: static diplomat::result<ICU4XLocaleCanonicalizer, ICU4XError> create(const ICU4XDataProvider& provider)
 
         Create a new :cpp:class:`ICU4XLocaleCanonicalizer`.
         See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/icu/locale_canonicalizer/struct.LocaleCanonicalizer.html#method.new>`__ for more information.
