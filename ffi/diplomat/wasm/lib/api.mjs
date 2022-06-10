@@ -423,21 +423,25 @@ export class ICU4XDataProvider {
     path_diplomat_buf.set(path_diplomat_bytes, 0);
     const diplomat_out = (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-      wasm.ICU4XDataProvider_create_fs(diplomat_receive_buffer, path_diplomat_ptr, path_diplomat_bytes.length);
-      const out = new ICU4XCreateDataProviderResult(diplomat_receive_buffer);
-      if (out.provider.underlying !== 0) {
-        const out_provider_value = out.provider;
-        ICU4XDataProvider_box_destroy_registry.register(out_provider_value, out_provider_value.underlying);
-        Object.defineProperty(out, "provider", { value: out_provider_value });
-      } else {
-        Object.defineProperty(out, "provider", { value: null });
-      }
-      diplomat_alloc_destroy_registry.register(out, {
-        ptr: out.underlying,
+      const result_tag = {};
+      diplomat_alloc_destroy_registry.register(result_tag, {
+        ptr: diplomat_receive_buffer,
         size: 5,
         align: 4,
       });
-      return out;
+      wasm.ICU4XDataProvider_create_fs(diplomat_receive_buffer, path_diplomat_ptr, path_diplomat_bytes.length);
+      const is_ok = (new Uint8Array(wasm.memory.buffer, diplomat_receive_buffer + 4, 1))[0] == 1;
+      if (is_ok) {
+        const ok_value = (() => {
+          const out = new ICU4XDataProvider((new Uint32Array(wasm.memory.buffer, diplomat_receive_buffer, 1))[0]);
+          out.owner = result_tag;
+          return out;
+        })();
+        return ok_value;
+      } else {
+        const throw_value = ICU4XError_rust_to_js[(new Int32Array(wasm.memory.buffer, diplomat_receive_buffer, 1))[0]];
+        throw new diplomatRuntime.FFIError(throw_value);
+      }
     })();
     wasm.diplomat_free(path_diplomat_ptr, path_diplomat_bytes.length, 1);
     return diplomat_out;
@@ -445,21 +449,12 @@ export class ICU4XDataProvider {
 
   static create_test() {
     const diplomat_out = (() => {
-      const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-      wasm.ICU4XDataProvider_create_test(diplomat_receive_buffer);
-      const out = new ICU4XCreateDataProviderResult(diplomat_receive_buffer);
-      if (out.provider.underlying !== 0) {
-        const out_provider_value = out.provider;
-        ICU4XDataProvider_box_destroy_registry.register(out_provider_value, out_provider_value.underlying);
-        Object.defineProperty(out, "provider", { value: out_provider_value });
-      } else {
-        Object.defineProperty(out, "provider", { value: null });
-      }
-      diplomat_alloc_destroy_registry.register(out, {
-        ptr: out.underlying,
-        size: 5,
-        align: 4,
-      });
+      const out = (() => {
+        const out = new ICU4XDataProvider(wasm.ICU4XDataProvider_create_test());
+        out.owner = null;
+        return out;
+      })();
+      ICU4XDataProvider_box_destroy_registry.register(out, out.underlying)
       return out;
     })();
     return diplomat_out;
@@ -472,21 +467,25 @@ export class ICU4XDataProvider {
     blob_diplomat_buf.set(blob_diplomat_bytes, 0);
     const diplomat_out = (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-      wasm.ICU4XDataProvider_create_from_byte_slice(diplomat_receive_buffer, blob_diplomat_ptr, blob_diplomat_bytes.length);
-      const out = new ICU4XCreateDataProviderResult(diplomat_receive_buffer);
-      if (out.provider.underlying !== 0) {
-        const out_provider_value = out.provider;
-        ICU4XDataProvider_box_destroy_registry.register(out_provider_value, out_provider_value.underlying);
-        Object.defineProperty(out, "provider", { value: out_provider_value });
-      } else {
-        Object.defineProperty(out, "provider", { value: null });
-      }
-      diplomat_alloc_destroy_registry.register(out, {
-        ptr: out.underlying,
+      const result_tag = {};
+      diplomat_alloc_destroy_registry.register(result_tag, {
+        ptr: diplomat_receive_buffer,
         size: 5,
         align: 4,
       });
-      return out;
+      wasm.ICU4XDataProvider_create_from_byte_slice(diplomat_receive_buffer, blob_diplomat_ptr, blob_diplomat_bytes.length);
+      const is_ok = (new Uint8Array(wasm.memory.buffer, diplomat_receive_buffer + 4, 1))[0] == 1;
+      if (is_ok) {
+        const ok_value = (() => {
+          const out = new ICU4XDataProvider((new Uint32Array(wasm.memory.buffer, diplomat_receive_buffer, 1))[0]);
+          out.owner = result_tag;
+          return out;
+        })();
+        return ok_value;
+      } else {
+        const throw_value = ICU4XError_rust_to_js[(new Int32Array(wasm.memory.buffer, diplomat_receive_buffer, 1))[0]];
+        throw new diplomatRuntime.FFIError(throw_value);
+      }
     })();
     wasm.diplomat_free(blob_diplomat_ptr, blob_diplomat_bytes.length, 1);
     return diplomat_out;
@@ -494,21 +493,12 @@ export class ICU4XDataProvider {
 
   static create_empty() {
     const diplomat_out = (() => {
-      const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-      wasm.ICU4XDataProvider_create_empty(diplomat_receive_buffer);
-      const out = new ICU4XCreateDataProviderResult(diplomat_receive_buffer);
-      if (out.provider.underlying !== 0) {
-        const out_provider_value = out.provider;
-        ICU4XDataProvider_box_destroy_registry.register(out_provider_value, out_provider_value.underlying);
-        Object.defineProperty(out, "provider", { value: out_provider_value });
-      } else {
-        Object.defineProperty(out, "provider", { value: null });
-      }
-      diplomat_alloc_destroy_registry.register(out, {
-        ptr: out.underlying,
-        size: 5,
-        align: 4,
-      });
+      const out = (() => {
+        const out = new ICU4XDataProvider(wasm.ICU4XDataProvider_create_empty());
+        out.owner = null;
+        return out;
+      })();
+      ICU4XDataProvider_box_destroy_registry.register(out, out.underlying)
       return out;
     })();
     return diplomat_out;
@@ -571,7 +561,7 @@ export class ICU4XDataStruct {
         })();
         return ok_value;
       } else {
-        const throw_value = {};
+        const throw_value = ICU4XError_rust_to_js[(new Int32Array(wasm.memory.buffer, diplomat_receive_buffer, 1))[0]];
         throw new diplomatRuntime.FFIError(throw_value);
       }
     })();
@@ -587,14 +577,46 @@ export class ICU4XDataStruct {
 }
 
 const ICU4XError_js_to_rust = {
+  "UnknownError": 0,
   "WriteableError": 1,
   "LocaleUndefinedSubtagError": 2,
   "LocaleParserError": 3,
+  "DataStructValidityError": 4,
+  "DataMissingResourceKeyError": 5,
+  "DataMissingVariantError": 6,
+  "DataMissingLocaleError": 7,
+  "DataMissingResourceOptionsError": 8,
+  "DataNeedsVariantError": 9,
+  "DataNeedsLocaleError": 10,
+  "DataExtraneousResourceOptionsError": 11,
+  "DataFilteredResourceError": 12,
+  "DataMismatchedTypeError": 13,
+  "DataMissingPayloadError": 14,
+  "DataInvalidStateError": 15,
+  "DataCustomError": 16,
+  "DataIoError": 17,
+  "DataUnavailableBufferFormatError": 18,
 };
 const ICU4XError_rust_to_js = {
+  0: "UnknownError",
   1: "WriteableError",
   2: "LocaleUndefinedSubtagError",
   3: "LocaleParserError",
+  4: "DataStructValidityError",
+  5: "DataMissingResourceKeyError",
+  6: "DataMissingVariantError",
+  7: "DataMissingLocaleError",
+  8: "DataMissingResourceOptionsError",
+  9: "DataNeedsVariantError",
+  10: "DataNeedsLocaleError",
+  11: "DataExtraneousResourceOptionsError",
+  12: "DataFilteredResourceError",
+  13: "DataMismatchedTypeError",
+  14: "DataMissingPayloadError",
+  15: "DataInvalidStateError",
+  16: "DataCustomError",
+  17: "DataIoError",
+  18: "DataUnavailableBufferFormatError",
 };
 
 const ICU4XFixedDecimal_box_destroy_registry = new FinalizationRegistry(underlying => {

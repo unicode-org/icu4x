@@ -23,6 +23,12 @@ namespace capi {
 enum struct ICU4XError {
 
   /**
+   * The error is not currently categorized as ICU4XError.
+   * Please file a bug
+   */
+  UnknownError = 0,
+
+  /**
    * An error arising from writing to a string
    * Typically found when not enough space is allocated
    */
@@ -37,6 +43,25 @@ enum struct ICU4XError {
    * The locale or subtag string failed to parse
    */
   LocaleParserError = 3,
+
+  /**
+   * Attempted to construct an invalid data struct
+   */
+  DataStructValidityError = 4,
+  DataMissingResourceKeyError = 5,
+  DataMissingVariantError = 6,
+  DataMissingLocaleError = 7,
+  DataMissingResourceOptionsError = 8,
+  DataNeedsVariantError = 9,
+  DataNeedsLocaleError = 10,
+  DataExtraneousResourceOptionsError = 11,
+  DataFilteredResourceError = 12,
+  DataMismatchedTypeError = 13,
+  DataMissingPayloadError = 14,
+  DataInvalidStateError = 15,
+  DataCustomError = 16,
+  DataIoError = 17,
+  DataUnavailableBufferFormatError = 18,
 };
 
 #endif
