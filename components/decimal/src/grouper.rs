@@ -18,12 +18,8 @@ pub fn check(
     strategy: GroupingStrategy,
     sizes: &GroupingSizesV1,
 ) -> bool {
-    let effective_sizes = GroupingSizesV1 {
-        primary: cmp::max(1, sizes.primary),
-        secondary: cmp::max(1, sizes.secondary),
-        min_grouping: cmp::max(1, sizes.min_grouping),
-    };
-    if magnitude < (effective_sizes.primary as i16) {
+    let primary = cmp::max(1, sizes.primary) as i16;
+    if magnitude < primary {
         return false;
     }
     let min_grouping = {
@@ -32,15 +28,20 @@ pub fn check(
             Never => return false,
             // Note: Auto and Always are the same for FixedDecimalFormat.
             // When currencies are implemented, this will change.
-            Auto | Always => effective_sizes.min_grouping as i16,
-            Min2 => i16::max(2, effective_sizes.min_grouping as i16),
+            Auto | Always => cmp::max(1, sizes.min_grouping) as i16,
+            Min2 => cmp::max(2, sizes.min_grouping) as i16,
         }
     };
-    if upper_magnitude < (effective_sizes.primary as i16) + min_grouping - 1 {
+    if upper_magnitude < primary + min_grouping - 1 {
         return false;
     }
-    let magnitude_prime = magnitude - (effective_sizes.primary as i16);
-    if magnitude_prime % (effective_sizes.secondary as i16) == 0 {
+    let secondary = if sizes.secondary == 0 {
+        primary
+    } else {
+        sizes.secondary as i16
+    };
+    let magnitude_prime = magnitude - primary;
+    if magnitude_prime % secondary == 0 {
         return true;
     }
     false
@@ -77,6 +78,13 @@ fn test_grouper() {
     let zero_test = GroupingSizesV1 {
         min_grouping: 0,
         primary: 0,
+        secondary: 0,
+    };
+
+    // Some clients may set secondary=0 to make it inherit from primary
+    let blank_secondary = GroupingSizesV1 {
+        min_grouping: 1,
+        primary: 3,
         secondary: 0,
     };
 
@@ -128,6 +136,16 @@ fn test_grouper() {
             strategy: GroupingStrategy::Min2,
             sizes: zero_test,
             expected: ["1,0,0,0", "1,0,0,0,0", "1,0,0,0,0,0", "1,0,0,0,0,0,0"],
+        },
+        TestCase {
+            strategy: GroupingStrategy::Auto,
+            sizes: blank_secondary,
+            expected: ["1,000", "10,000", "100,000", "1,000,000"],
+        },
+        TestCase {
+            strategy: GroupingStrategy::Min2,
+            sizes: blank_secondary,
+            expected: ["1000", "10,000", "100,000", "1,000,000"],
         },
     ];
     for cas in &cases {
