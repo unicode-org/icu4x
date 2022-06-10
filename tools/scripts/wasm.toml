@@ -54,7 +54,7 @@ dependencies = ["wasm-build-dev", "wasm-dir"]
 description = "Copy the WASM files from release into wasmpkg"
 category = "ICU4X WASM"
 command = "cp"
-args = ["${CARGO_MAKE_WORKSPACE_WORKING_DIRECTORY}/target/wasm32-unknown-unknown/release/icu_capi_cdylib.wasm", "wasmpkg/icu_capi.wasm"]
+args = ["${CARGO_MAKE_WORKSPACE_WORKING_DIRECTORY}/target/wasm32-unknown-unknown/release-opt-size/icu_capi_cdylib.wasm", "wasmpkg/icu_capi.wasm"]
 dependencies = ["wasm-build-release", "wasm-dir"]
 
 [tasks.wasm-cpp-emscripten]
