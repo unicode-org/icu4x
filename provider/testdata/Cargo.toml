@@ -60,7 +60,7 @@ locales = [
     # Spanish:
     #  - Most popular Romance language
     #  - South American dialect
-    #  - Has context dependent list fragments 
+    #  - Has context dependent list fragments
     "es",
     "es-AR",
 
@@ -177,6 +177,7 @@ icu_locale_canonicalizer = { version = "0.6", path = "../../components/locale_ca
 icu_plurals = { version = "0.6", path = "../../components/plurals", optional = true }
 icu_properties = { version = "0.6", path = "../../components/properties", optional = true }
 icu_segmenter = { version = "0.6", path = "../../experimental/segmenter", optional = true }
+icu_char16trie = { version = "0.1", path = "../../experimental/char16trie", optional = true }
 icu_codepointtrie = { version = "0.4", path = "../../utils/codepointtrie", optional = true }
 icu_uniset = { version = "0.5", path = "../../utils/uniset", optional = true }
 icu_normalizer = { version = "0.6", path = "../../experimental/normalizer", optional = true }
@@ -215,6 +216,7 @@ baked = [
     "icu_plurals",
     "icu_properties",
     "icu_segmenter",
+    "icu_char16trie",
     "icu_codepointtrie",
     "icu_uniset",
     "tinystr",

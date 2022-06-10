@@ -1840,6 +1840,7 @@ dependencies = [
  "futures",
  "icu_calendar",
  "icu_casemapping",
+ "icu_char16trie",
  "icu_codepointtrie",
  "icu_collator",
  "icu_datagen",
