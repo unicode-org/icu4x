@@ -78,16 +78,16 @@ fn test_grouper() {
         secondary: 3,
     };
 
-    // This is not valid input, but we should treat it as GIGO
+    // primary=0 implies no grouping; the other fields are ignored
     let zero_test = GroupingSizesV1 {
         min_grouping: 0,
         primary: 0,
         secondary: 0,
     };
 
-    // Some clients may set secondary=0 to make it inherit from primary
+    // secondary=0 implies that it inherits from primary
     let blank_secondary = GroupingSizesV1 {
-        min_grouping: 1,
+        min_grouping: 0,
         primary: 3,
         secondary: 0,
     };
