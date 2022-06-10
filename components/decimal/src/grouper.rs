@@ -21,7 +21,7 @@ pub fn check(
     let effective_sizes = GroupingSizesV1 {
         primary: cmp::max(1, sizes.primary),
         secondary: cmp::max(1, sizes.secondary),
-        min_grouping: cmp::max(1, sizes.min_grouping)
+        min_grouping: cmp::max(1, sizes.min_grouping),
     };
     if magnitude < (effective_sizes.primary as i16) {
         return false;
