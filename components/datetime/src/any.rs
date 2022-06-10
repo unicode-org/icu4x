@@ -22,6 +22,7 @@ use crate::provider::{
 use crate::{date::DateTimeInput, DateTimeFormatError, FormattedDateTime};
 use icu_calendar::any_calendar::{AnyCalendar, AnyCalendarKind};
 use icu_calendar::provider::JapaneseErasV1Marker;
+use icu_decimal::provider::DecimalSymbolsV1Marker;
 use icu_plurals::provider::OrdinalV1Marker;
 
 /// [`AnyDateTimeFormat`] is a [`DateTimeFormat`](crate::DateTimeFormat) capable of formatting
@@ -178,14 +179,14 @@ impl AnyDateTimeFormat {
             + ResourceProvider<DateSkeletonPatternsV1Marker>
             + ResourceProvider<OrdinalV1Marker>
             + ResourceProvider<WeekDataV1Marker>
+            + ResourceProvider<DecimalSymbolsV1Marker>
             + ResourceProvider<JapaneseErasV1Marker>
             + ?Sized,
     {
         let locale = locale.into();
 
-        /// TODO (#2038), DO NOT SHIP 1.0 without fixing this
-        let kind = AnyCalendarKind::from_locale(&locale)
-            .unwrap_or(AnyCalendarKind::Gregorian);
+        // TODO (#2038), DO NOT SHIP 1.0 without fixing this
+        let kind = AnyCalendarKind::from_locale(&locale).unwrap_or(AnyCalendarKind::Gregorian);
 
         let calendar = AnyCalendar::try_new_unstable(kind, data_provider)?;
 
