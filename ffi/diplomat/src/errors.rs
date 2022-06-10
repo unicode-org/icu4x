@@ -5,6 +5,7 @@
 use self::ffi::ICU4XError;
 use core::fmt;
 use fixed_decimal::Error as DecimalError;
+use icu_decimal::FixedDecimalFormatError;
 use icu_plurals::PluralRulesError;
 use icu_properties::PropertiesError;
 use icu_provider::{DataError, DataErrorKind};
@@ -131,6 +132,15 @@ impl From<PluralRulesError> for ICU4XError {
         match e {
             PluralRulesError::DataProvider(e) => e.into(),
             PluralRulesError::Parser(..) => ICU4XError::PluralParserError,
+            _ => ICU4XError::UnknownError,
+        }
+    }
+}
+
+impl From<FixedDecimalFormatError> for ICU4XError {
+    fn from(e: FixedDecimalFormatError) -> Self {
+        match e {
+            FixedDecimalFormatError::Data(e) => e.into(),
             _ => ICU4XError::UnknownError,
         }
     }
