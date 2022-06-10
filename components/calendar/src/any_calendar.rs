@@ -322,9 +322,6 @@ impl AnyCalendar {
     /// **This method is unstable; the bounds on `P` might expand over time as more calendars are added**
     ///
     /// For calendars that need data, will attempt to load the appropriate data from the source
-    ///
-    /// This needs the `"serde"` feature to be enabled to be used
-    #[cfg(feature = "serde")]
     pub fn try_new_unstable<P>(kind: AnyCalendarKind, provider: &P) -> Result<Self, DataError>
     where
         P: ResourceProvider<crate::provider::JapaneseErasV1Marker> + ?Sized,
