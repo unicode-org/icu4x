@@ -14,7 +14,7 @@ bool test_locale(ICU4XLocale* locale, const char* message, const char* expected)
 
     // Test setters
     DiplomatWriteable write = diplomat_simple_writeable(output, 40);
-    diplomat_result_void_ICU4XLocaleError result = ICU4XLocale_tostring(locale, &write);
+    diplomat_result_void_ICU4XError result = ICU4XLocale_tostring(locale, &write);
     if (!result.is_ok) {
         return 1;
     }
@@ -41,7 +41,7 @@ int main() {
     // Test creating a locale.
     DiplomatWriteable write = diplomat_simple_writeable(output, 40);
     ICU4XLocale* locale = ICU4XLocale_create("ar", 2);
-    diplomat_result_void_ICU4XLocaleError result = ICU4XLocale_tostring(locale, &write);
+    diplomat_result_void_ICU4XError result = ICU4XLocale_tostring(locale, &write);
     if (!result.is_ok) {
         return 1;
     }
@@ -92,7 +92,7 @@ int main() {
     }
 
     result = ICU4XLocale_get_unicode_extension(locale, "ca", 2, &write);
-    if (!(!result.is_ok && result.err == ICU4XLocaleError_Undefined)) {
+    if (!(!result.is_ok && result.err == ICU4XError_LocaleUndefinedSubtagError)) {
         return 1;
     }
 
