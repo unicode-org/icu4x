@@ -37,12 +37,15 @@ pub mod ffi {
     impl ICU4XLocaleCanonicalizer {
         /// Create a new [`ICU4XLocaleCanonicalizer`].
         #[diplomat::rust_link(icu::locale_canonicalizer::LocaleCanonicalizer::new, FnInStruct)]
-        pub fn create(provider: &ICU4XDataProvider) -> DiplomatResult<Box<ICU4XLocaleCanonicalizer>, ICU4XError> {
+        pub fn create(
+            provider: &ICU4XDataProvider,
+        ) -> DiplomatResult<Box<ICU4XLocaleCanonicalizer>, ICU4XError> {
             use icu_provider::serde::AsDeserializingBufferProvider;
             let provider = provider.0.as_deserializing();
             LocaleCanonicalizer::new(&provider)
                 .map(|lc| Box::new(ICU4XLocaleCanonicalizer(lc)))
-                .map_err(Into::into).into()
+                .map_err(Into::into)
+                .into()
         }
 
         /// FFI version of `LocaleCanonicalizer::canonicalize()`.

@@ -5,6 +5,7 @@
 use self::ffi::ICU4XError;
 use core::fmt;
 use fixed_decimal::Error as DecimalError;
+use icu_plurals::PluralRulesError;
 use icu_properties::PropertiesError;
 use icu_provider::{DataError, DataErrorKind};
 
@@ -57,8 +58,11 @@ pub mod ffi {
         // property and decimal errors
         PropertyUnknownScriptIdError = 40,
         PropertyUnknownGeneralCategoryGroupError = 41,
-        DecimalLimit = 42,
-        DecimalSyntax = 43,
+        DecimalLimitError = 42,
+        DecimalSyntaxError = 43,
+
+        // plural errors
+        PluralParserError = 50,
     }
 }
 
@@ -116,8 +120,18 @@ impl From<PropertiesError> for ICU4XError {
 impl From<DecimalError> for ICU4XError {
     fn from(e: DecimalError) -> Self {
         match e {
-            DecimalError::Limit => ICU4XError::DecimalLimit,
-            DecimalError::Syntax => ICU4XError::DecimalSyntax,
+            DecimalError::Limit => ICU4XError::DecimalLimitError,
+            DecimalError::Syntax => ICU4XError::DecimalSyntaxError,
+        }
+    }
+}
+
+impl From<PluralRulesError> for ICU4XError {
+    fn from(e: PluralRulesError) -> Self {
+        match e {
+            PluralRulesError::DataProvider(e) => e.into(),
+            PluralRulesError::Parser(..) => ICU4XError::PluralParserError,
+            _ => ICU4XError::UnknownError,
         }
     }
 }
