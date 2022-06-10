@@ -62,12 +62,12 @@ int main() {
 
     ICU4XFixedDecimal_destroy(decimal);
 
-    ICU4XCreateFixedDecimalResult fd_result = ICU4XFixedDecimal_create_fromstr("1000007.070", 11);
-    if (!fd_result.success) {
+    diplomat_result_box_ICU4XFixedDecimal_ICU4XError fd_result = ICU4XFixedDecimal_create_fromstr("1000007.070", 11);
+    if (!fd_result.is_ok) {
         printf("Failed to create FixedDecimal from string.\n");
         return 1;
     }
-    decimal = fd_result.fd;
+    decimal = fd_result.ok;
 
     write = diplomat_simple_writeable(output, 40);
 
