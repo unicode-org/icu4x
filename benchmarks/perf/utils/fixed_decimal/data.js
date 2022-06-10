@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1654796178348,
+  "lastUpdate": 1654829311065,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -30989,6 +30989,66 @@ window.BENCHMARK_DATA = {
             "name": "from_string/1000000001",
             "value": 101,
             "range": "± 1",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "c2ae85f86e8faf29cd47cd8044e493828b50afcc",
+          "message": "Try out Postcard alpha (#2037)\n\n* Update postcard to alpha\r\n\r\n* fix\r\n\r\n* regen postcard\r\n\r\n* Postcard07 -> Postcard1\r\n\r\n* test fix\r\n\r\n* features job",
+          "timestamp": "2022-06-09T19:36:09-07:00",
+          "tree_id": "64929b97d37feb8a0c5ef7907796d802b0308ad6",
+          "url": "https://github.com/unicode-org/icu4x/commit/c2ae85f86e8faf29cd47cd8044e493828b50afcc"
+        },
+        "date": 1654829287923,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 113760,
+            "range": "± 487",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 23883,
+            "range": "± 152",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 64167,
+            "range": "± 136",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 202,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 94,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 84,
+            "range": "± 0",
             "unit": "ns/iter"
           }
         ]
