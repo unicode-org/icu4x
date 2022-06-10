@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1654829237059,
+  "lastUpdate": 1654886698550,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -31288,6 +31288,60 @@ window.BENCHMARK_DATA = {
           {
             "name": "uniset/contains_range/worst",
             "value": 3,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "pandusonu@google.com",
+            "name": "Gollapudi Vamsi Krishna",
+            "username": "pandusonu2"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "b43c3913c4375bf8e5e8968ce28ef103f02aecf2",
+          "message": "Change charULE from 4 bytes to 3 bytes (#2015)\n\n* Change charULE from 4 bytes to 3 bytes",
+          "timestamp": "2022-06-10T18:32:34Z",
+          "tree_id": "c158bf6afc09e93e87bad5a5c0414c4f3b3ce5ad",
+          "url": "https://github.com/unicode-org/icu4x/commit/b43c3913c4375bf8e5e8968ce28ef103f02aecf2"
+        },
+        "date": 1654886673304,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 44955388,
+            "range": "± 2001607",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/worst",
+            "value": 3,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/worst",
+            "value": 2,
             "range": "± 0",
             "unit": "ns/iter"
           }
