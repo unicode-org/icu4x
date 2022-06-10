@@ -18,7 +18,11 @@ pub fn check(
     strategy: GroupingStrategy,
     sizes: &GroupingSizesV1,
 ) -> bool {
-    let primary = cmp::max(1, sizes.primary) as i16;
+    let primary = if sizes.primary == 0 {
+        return false;
+    } else {
+        sizes.primary as i16
+    };
     if magnitude < primary {
         return false;
     }
@@ -130,12 +134,12 @@ fn test_grouper() {
         TestCase {
             strategy: GroupingStrategy::Auto,
             sizes: zero_test,
-            expected: ["1,0,0,0", "1,0,0,0,0", "1,0,0,0,0,0", "1,0,0,0,0,0,0"],
+            expected: ["1000", "10000", "100000", "1000000"],
         },
         TestCase {
             strategy: GroupingStrategy::Min2,
             sizes: zero_test,
-            expected: ["1,0,0,0", "1,0,0,0,0", "1,0,0,0,0,0", "1,0,0,0,0,0,0"],
+            expected: ["1000", "10000", "100000", "1000000"],
         },
         TestCase {
             strategy: GroupingStrategy::Auto,
