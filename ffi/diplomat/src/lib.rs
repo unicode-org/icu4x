@@ -36,6 +36,7 @@ pub mod bidi;
 pub mod custom_writeable;
 pub mod data_struct;
 pub mod decimal;
+pub mod errors;
 pub mod fixed_decimal;
 pub mod locale;
 pub mod locale_canonicalizer;
