@@ -4,12 +4,12 @@
 
 #[diplomat::bridge]
 pub mod ffi {
+    use crate::errors::ffi::ICU4XError;
     use alloc::boxed::Box;
+    use diplomat_runtime::DiplomatResult;
     use icu_provider::prelude::BufferProvider;
     use icu_provider_blob::BlobDataProvider;
     use icu_provider_blob::StaticDataProvider;
-    use diplomat_runtime::DiplomatResult;
-    use crate::errors::ffi::ICU4XError;
 
     #[diplomat::opaque]
     /// An ICU4X data provider, capable of loading ICU4X data keys from some source.
@@ -24,7 +24,7 @@ pub mod ffi {
         pub success: bool,
     }
 
-    fn convert_provider<D: BufferProvider+ 'static>(x: D) -> Box<ICU4XDataProvider> {
+    fn convert_provider<D: BufferProvider + 'static>(x: D) -> Box<ICU4XDataProvider> {
         Box::new(ICU4XDataProvider(Box::new(x)))
     }
 
@@ -45,7 +45,10 @@ pub mod ffi {
                 feature = "provider_fs",
                 not(any(target_arch = "wasm32", target_os = "none"))
             ))]
-            icu_provider_fs::FsDataProvider::try_new(path).map_err(Into::into).map(convert_provider).into()
+            icu_provider_fs::FsDataProvider::try_new(path)
+                .map_err(Into::into)
+                .map(convert_provider)
+                .into()
         }
 
         /// Constructs a testdata provider and returns it as an [`ICU4XDataProvider`].
@@ -65,8 +68,13 @@ pub mod ffi {
 
         /// Constructs a `BlobDataProvider` and returns it as an [`ICU4XDataProvider`].
         #[diplomat::rust_link(icu_provider_blob::BlobDataProvider, Struct)]
-        pub fn create_from_byte_slice(blob: &[u8]) -> DiplomatResult<Box<ICU4XDataProvider>, ICU4XError> {
-            BlobDataProvider::new_from_blob(blob).map_err(Into::into).map(convert_provider).into()
+        pub fn create_from_byte_slice(
+            blob: &[u8],
+        ) -> DiplomatResult<Box<ICU4XDataProvider>, ICU4XError> {
+            BlobDataProvider::new_from_blob(blob)
+                .map_err(Into::into)
+                .map(convert_provider)
+                .into()
         }
 
         /// Constructs an empty `StaticDataProvider` and returns it as an [`ICU4XDataProvider`].

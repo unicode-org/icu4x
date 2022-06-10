@@ -2,9 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use self::ffi::ICU4XError;
 use core::fmt;
 use icu_provider::{DataError, DataErrorKind};
-use self::ffi::ICU4XError;
 
 #[diplomat::bridge]
 pub mod ffi {
@@ -44,9 +44,8 @@ pub mod ffi {
         DataMissingPayloadError = 14,
         DataInvalidStateError = 15,
         DataCustomError = 16,
-        DataIoError = 17, // ????
+        DataIoError = 17,
         DataUnavailableBufferFormatError = 18,
-
     }
 }
 
@@ -65,17 +64,21 @@ impl From<DataError> for ICU4XError {
             DataErrorKind::MissingResourceOptions => ICU4XError::DataMissingResourceOptionsError,
             DataErrorKind::NeedsVariant => ICU4XError::DataNeedsVariantError,
             DataErrorKind::NeedsLocale => ICU4XError::DataNeedsLocaleError,
-            DataErrorKind::ExtraneousResourceOptions => ICU4XError::DataExtraneousResourceOptionsError,
+            DataErrorKind::ExtraneousResourceOptions => {
+                ICU4XError::DataExtraneousResourceOptionsError
+            }
             DataErrorKind::FilteredResource => ICU4XError::DataFilteredResourceError,
             DataErrorKind::MismatchedType(..) => ICU4XError::DataMismatchedTypeError,
             DataErrorKind::MissingPayload => ICU4XError::DataMissingPayloadError,
             DataErrorKind::InvalidState => ICU4XError::DataInvalidStateError,
             DataErrorKind::Custom => ICU4XError::DataCustomError,
-            // std only
-            // DataErrorKind::Io(..) => ICU4XError::DataIoError,
+            #[cfg(feature = "provider_fs")]
+            DataErrorKind::Io(..) => ICU4XError::DataIoError,
             // datagen only
             // DataErrorKind::MissingSourceData(..) => ..,
-            DataErrorKind::UnavailableBufferFormat(..) => ICU4XError::DataUnavailableBufferFormatError,
+            DataErrorKind::UnavailableBufferFormat(..) => {
+                ICU4XError::DataUnavailableBufferFormatError
+            }
             _ => ICU4XError::UnknownError,
         }
     }
