@@ -23,5 +23,14 @@ int main() {
     if (cat != ICU4XPluralCategory::Few) {
         return 1;
     }
+
+    op = ICU4XPluralOperands::create("1011.0").ok().value();
+    cat = pr.select(op);
+    std::cout << "Category is " << static_cast<int32_t>(cat)
+                                << " (should be " << static_cast<int32_t>(ICU4XPluralCategory::Many) << ")"
+                                << std::endl;
+    if (cat != ICU4XPluralCategory::Many) {
+        return 1;
+    }
     return 0;
 }

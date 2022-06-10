@@ -30,14 +30,14 @@ int main() {
 
     printf("Plural Category %d (should be %d)\n", (int)cat1, (int)ICU4XPluralCategory_Few);
 
-    ICU4XCreatePluralOperandsResult op_result = ICU4XPluralOperands_create("1011.0", 6);
+    diplomat_result_ICU4XPluralOperands_ICU4XError op_result = ICU4XPluralOperands_create("1011.0", 6);
 
-    if (!op_result.success) {
+    if (!op_result.is_ok) {
         printf("Failed to create PluralOperands from string\n");
         return 1;
     }
 
-    ICU4XPluralCategory cat2 = ICU4XPluralRules_select(rules, op_result.operands);
+    ICU4XPluralCategory cat2 = ICU4XPluralRules_select(rules, op_result.ok);
 
     printf("Plural Category %d (should be %d)\n", (int)cat2, (int)ICU4XPluralCategory_Many);
 
