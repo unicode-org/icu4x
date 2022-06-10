@@ -59,3 +59,7 @@
     .. cpp:enumerator:: PropertyUnknownScriptIdError
 
     .. cpp:enumerator:: PropertyUnknownGeneralCategoryGroupError
+
+    .. cpp:enumerator:: DecimalLimit
+
+    .. cpp:enumerator:: DecimalSyntax

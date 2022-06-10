@@ -1,16 +1,6 @@
 ``fixed_decimal::ffi``
 ======================
 
-.. js:class:: ICU4XCreateFixedDecimalResult
-
-    .. js:attribute:: fd
-
-        Will be None if ``success`` is ``false``
-
-    .. js:attribute:: success
-
-        Currently just a boolean, but we might add a proper error enum as necessary
-
 .. js:class:: ICU4XFixedDecimal
 
     See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html>`__ for more information.

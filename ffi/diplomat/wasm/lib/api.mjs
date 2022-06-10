@@ -351,28 +351,6 @@ export class ICU4XCreateDataProviderResult {
   }
 }
 
-const ICU4XCreateFixedDecimalResult_box_destroy_registry = new FinalizationRegistry(underlying => {
-  wasm.ICU4XCreateFixedDecimalResult_destroy(underlying);
-});
-
-export class ICU4XCreateFixedDecimalResult {
-  constructor(underlying) {
-    this.underlying = underlying;
-  }
-
-  get fd() {
-    return (() => {
-      const out = new ICU4XFixedDecimal((new Uint32Array(wasm.memory.buffer, this.underlying + 0, 1))[0]);
-      out.owner = null;
-      return out;
-    })();
-  }
-
-  get success() {
-    return (new Uint8Array(wasm.memory.buffer, this.underlying + 4, 1))[0] == 1;
-  }
-}
-
 const ICU4XCreatePluralOperandsResult_box_destroy_registry = new FinalizationRegistry(underlying => {
   wasm.ICU4XCreatePluralOperandsResult_destroy(underlying);
 });
@@ -609,6 +587,8 @@ const ICU4XError_js_to_rust = {
   "DataStructValidityError": 33,
   "PropertyUnknownScriptIdError": 40,
   "PropertyUnknownGeneralCategoryGroupError": 41,
+  "DecimalLimit": 42,
+  "DecimalSyntax": 43,
 };
 const ICU4XError_rust_to_js = {
   0: "UnknownError",
@@ -633,6 +613,8 @@ const ICU4XError_rust_to_js = {
   33: "DataStructValidityError",
   40: "PropertyUnknownScriptIdError",
   41: "PropertyUnknownGeneralCategoryGroupError",
+  42: "DecimalLimit",
+  43: "DecimalSyntax",
 };
 
 const ICU4XFixedDecimal_box_destroy_registry = new FinalizationRegistry(underlying => {
@@ -659,20 +641,25 @@ export class ICU4XFixedDecimal {
 
   static create_from_f64_with_max_precision(f) {
     const diplomat_out = (() => {
-      const option_value = wasm.ICU4XFixedDecimal_create_from_f64_with_max_precision(f)
-      if (option_value !== 0) {
-        const inhabited_value = (() => {
-          const out = (() => {
-            const out = new ICU4XFixedDecimal(option_value);
-            out.owner = null;
-            return out;
-          })();
-          ICU4XFixedDecimal_box_destroy_registry.register(out, out.underlying)
+      const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
+      const result_tag = {};
+      diplomat_alloc_destroy_registry.register(result_tag, {
+        ptr: diplomat_receive_buffer,
+        size: 5,
+        align: 4,
+      });
+      wasm.ICU4XFixedDecimal_create_from_f64_with_max_precision(diplomat_receive_buffer, f);
+      const is_ok = (new Uint8Array(wasm.memory.buffer, diplomat_receive_buffer + 4, 1))[0] == 1;
+      if (is_ok) {
+        const ok_value = (() => {
+          const out = new ICU4XFixedDecimal((new Uint32Array(wasm.memory.buffer, diplomat_receive_buffer, 1))[0]);
+          out.owner = result_tag;
           return out;
         })();
-        return inhabited_value;
+        return ok_value;
       } else {
-        return null;
+        const throw_value = ICU4XError_rust_to_js[(new Int32Array(wasm.memory.buffer, diplomat_receive_buffer, 1))[0]];
+        throw new diplomatRuntime.FFIError(throw_value);
       }
     })();
     return diplomat_out;
@@ -680,20 +667,25 @@ export class ICU4XFixedDecimal {
 
   static create_from_f64_with_lower_magnitude(f, precision, rounding_mode) {
     const diplomat_out = (() => {
-      const option_value = wasm.ICU4XFixedDecimal_create_from_f64_with_lower_magnitude(f, precision, ICU4XFixedDecimalRoundingMode_js_to_rust[rounding_mode])
-      if (option_value !== 0) {
-        const inhabited_value = (() => {
-          const out = (() => {
-            const out = new ICU4XFixedDecimal(option_value);
-            out.owner = null;
-            return out;
-          })();
-          ICU4XFixedDecimal_box_destroy_registry.register(out, out.underlying)
+      const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
+      const result_tag = {};
+      diplomat_alloc_destroy_registry.register(result_tag, {
+        ptr: diplomat_receive_buffer,
+        size: 5,
+        align: 4,
+      });
+      wasm.ICU4XFixedDecimal_create_from_f64_with_lower_magnitude(diplomat_receive_buffer, f, precision, ICU4XFixedDecimalRoundingMode_js_to_rust[rounding_mode]);
+      const is_ok = (new Uint8Array(wasm.memory.buffer, diplomat_receive_buffer + 4, 1))[0] == 1;
+      if (is_ok) {
+        const ok_value = (() => {
+          const out = new ICU4XFixedDecimal((new Uint32Array(wasm.memory.buffer, diplomat_receive_buffer, 1))[0]);
+          out.owner = result_tag;
           return out;
         })();
-        return inhabited_value;
+        return ok_value;
       } else {
-        return null;
+        const throw_value = ICU4XError_rust_to_js[(new Int32Array(wasm.memory.buffer, diplomat_receive_buffer, 1))[0]];
+        throw new diplomatRuntime.FFIError(throw_value);
       }
     })();
     return diplomat_out;
@@ -701,20 +693,25 @@ export class ICU4XFixedDecimal {
 
   static create_from_f64_with_significant_digits(f, digits, rounding_mode) {
     const diplomat_out = (() => {
-      const option_value = wasm.ICU4XFixedDecimal_create_from_f64_with_significant_digits(f, digits, ICU4XFixedDecimalRoundingMode_js_to_rust[rounding_mode])
-      if (option_value !== 0) {
-        const inhabited_value = (() => {
-          const out = (() => {
-            const out = new ICU4XFixedDecimal(option_value);
-            out.owner = null;
-            return out;
-          })();
-          ICU4XFixedDecimal_box_destroy_registry.register(out, out.underlying)
+      const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
+      const result_tag = {};
+      diplomat_alloc_destroy_registry.register(result_tag, {
+        ptr: diplomat_receive_buffer,
+        size: 5,
+        align: 4,
+      });
+      wasm.ICU4XFixedDecimal_create_from_f64_with_significant_digits(diplomat_receive_buffer, f, digits, ICU4XFixedDecimalRoundingMode_js_to_rust[rounding_mode]);
+      const is_ok = (new Uint8Array(wasm.memory.buffer, diplomat_receive_buffer + 4, 1))[0] == 1;
+      if (is_ok) {
+        const ok_value = (() => {
+          const out = new ICU4XFixedDecimal((new Uint32Array(wasm.memory.buffer, diplomat_receive_buffer, 1))[0]);
+          out.owner = result_tag;
           return out;
         })();
-        return inhabited_value;
+        return ok_value;
       } else {
-        return null;
+        const throw_value = ICU4XError_rust_to_js[(new Int32Array(wasm.memory.buffer, diplomat_receive_buffer, 1))[0]];
+        throw new diplomatRuntime.FFIError(throw_value);
       }
     })();
     return diplomat_out;
@@ -727,21 +724,25 @@ export class ICU4XFixedDecimal {
     v_diplomat_buf.set(v_diplomat_bytes, 0);
     const diplomat_out = (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-      wasm.ICU4XFixedDecimal_create_fromstr(diplomat_receive_buffer, v_diplomat_ptr, v_diplomat_bytes.length);
-      const out = new ICU4XCreateFixedDecimalResult(diplomat_receive_buffer);
-      if (out.fd.underlying !== 0) {
-        const out_fd_value = out.fd;
-        ICU4XFixedDecimal_box_destroy_registry.register(out_fd_value, out_fd_value.underlying);
-        Object.defineProperty(out, "fd", { value: out_fd_value });
-      } else {
-        Object.defineProperty(out, "fd", { value: null });
-      }
-      diplomat_alloc_destroy_registry.register(out, {
-        ptr: out.underlying,
+      const result_tag = {};
+      diplomat_alloc_destroy_registry.register(result_tag, {
+        ptr: diplomat_receive_buffer,
         size: 5,
         align: 4,
       });
-      return out;
+      wasm.ICU4XFixedDecimal_create_fromstr(diplomat_receive_buffer, v_diplomat_ptr, v_diplomat_bytes.length);
+      const is_ok = (new Uint8Array(wasm.memory.buffer, diplomat_receive_buffer + 4, 1))[0] == 1;
+      if (is_ok) {
+        const ok_value = (() => {
+          const out = new ICU4XFixedDecimal((new Uint32Array(wasm.memory.buffer, diplomat_receive_buffer, 1))[0]);
+          out.owner = result_tag;
+          return out;
+        })();
+        return ok_value;
+      } else {
+        const throw_value = ICU4XError_rust_to_js[(new Int32Array(wasm.memory.buffer, diplomat_receive_buffer, 1))[0]];
+        throw new diplomatRuntime.FFIError(throw_value);
+      }
     })();
     wasm.diplomat_free(v_diplomat_ptr, v_diplomat_bytes.length, 1);
     return diplomat_out;
