@@ -42,7 +42,7 @@ serde = { version = "1.0", default-features = false, features = ["derive", "allo
 crabbake = { version = "0.4", path = "../../experimental/crabbake", features = ["derive"], optional = true }
 
 [dev-dependencies]
-postcard = { version = "1.0.0-alpha.2", features = ["alloc"] }
+postcard = { version = "0.7", features = ["alloc"] }
 toml = "0.5"
 serde = { version = "1.0", features = ["derive"] }
 criterion = "0.3.4"

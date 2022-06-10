@@ -47,7 +47,7 @@ impl DataPayload<BufferMarker> {
         let stats_before = dhat::HeapStats::get();
         // reify, but do nothing with the type
         let _reified_data: DataPayload<M> = self
-            .into_deserialized(BufferFormat::Postcard1)
+            .into_deserialized(BufferFormat::Postcard07)
             .expect("Failed to deserialize BufferMarker as postcard-0.7");
         let stats_after = dhat::HeapStats::get();
 

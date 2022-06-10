@@ -31,7 +31,7 @@ impl Manifest {
             file_extension: match buffer_format {
                 BufferFormat::Json => "json",
                 BufferFormat::Bincode1 => "bincode",
-                BufferFormat::Postcard1 => "postcard",
+                BufferFormat::Postcard07 => "postcard",
                 // BufferFormat is non_exhaustive, so we need a catchall case.
                 // This case could be triggered if a new buffer format is added to the core library
                 // before it gets added to FsDataProvider.

@@ -103,7 +103,7 @@ impl BufferProvider for StaticDataProvider {
     ) -> Result<DataResponse<BufferMarker>, DataError> {
         let mut metadata = DataResponseMetadata::default();
         // TODO(#1109): Set metadata.data_langid correctly.
-        metadata.buffer_format = Some(BufferFormat::Postcard1);
+        metadata.buffer_format = Some(BufferFormat::Postcard07);
         Ok(DataResponse {
             metadata,
             payload: Some(DataPayload::from_static_buffer(

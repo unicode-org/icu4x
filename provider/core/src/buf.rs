@@ -67,7 +67,7 @@ pub enum BufferFormat {
     /// Serialize using Bincode version 1.
     Bincode1,
     /// Serialize using Postcard version 0.7.
-    Postcard1,
+    Postcard07,
 }
 
 impl BufferFormat {
@@ -81,7 +81,7 @@ impl BufferFormat {
             BufferFormat::Bincode1 => Ok(()),
 
             #[cfg(feature = "deserialize_postcard_07")]
-            BufferFormat::Postcard1 => Ok(()),
+            BufferFormat::Postcard07 => Ok(()),
 
             // Allowed for cases in which all features are enabled
             #[allow(unreachable_patterns)]

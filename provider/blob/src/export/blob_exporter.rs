@@ -9,8 +9,6 @@ use std::sync::Mutex;
 use writeable::Writeable;
 use zerovec::ZeroMap2d;
 
-use postcard::ser_flavors::{AllocVec, Encoder, Flavor};
-
 /// A data exporter that writes data to a single-file blob.
 /// See the module-level docs for an example.
 pub struct BlobExporter<'w> {
@@ -38,22 +36,14 @@ impl DataExporter for BlobExporter<'_> {
     ) -> Result<(), DataError> {
         log::trace!("Adding: {}/{}", key, options);
         let mut serializer = postcard::Serializer {
-            output: Encoder {
-                flavor: AllocVec::new(),
-            },
+            output: postcard::flavors::AllocVec(Vec::new()),
         };
         payload.serialize(&mut serializer)?;
-
-        let output = serializer
-            .output
-            .flavor
-            .release()
-            .map_err(|_| DataError::custom("postcard release() failed"))?;
         #[allow(clippy::expect_used)]
         self.resources.lock().expect("poison").push((
             key.get_hash(),
             options.write_to_string().into_owned().into_bytes(),
-            output,
+            serializer.output.0,
         ));
         Ok(())
     }
@@ -72,9 +62,11 @@ impl DataExporter for BlobExporter<'_> {
                 resources: zm.as_borrowed(),
             });
             log::info!("Serializing blob to output stream...");
-
-            let output = postcard::to_allocvec(&blob)?;
-            self.sink.write_all(&output)?;
+            let mut serializer = postcard::Serializer {
+                output: postcard::flavors::AllocVec(Vec::new()),
+            };
+            serde::Serialize::serialize(&blob, &mut serializer)?;
+            self.sink.write_all(&serializer.output.0)?;
         }
         Ok(())
     }
