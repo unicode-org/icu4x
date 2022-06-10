@@ -251,10 +251,10 @@ where
     ///     }
     /// };
     ///
-    /// let zs_i32: &ZeroSlice<i32> = zs_u32.try_as_converted().expect("valid code points");
+    /// let zs_u8_4: &ZeroSlice<[u8; 4]> = zs_u32.try_as_converted().expect("valid code points");
     ///
     /// assert_eq!(zs_u32.get(0), Some(127871));
-    /// assert_eq!(zs_i32.get(0), Some(127871));
+    /// assert_eq!(zs_u8_4.get(0), Some([0x7F, 0xF3, 0x01, 0x00]));
     /// ```
     #[inline]
     pub fn try_as_converted<P: AsULE>(&self) -> Result<&ZeroSlice<P>, ZeroVecError> {
