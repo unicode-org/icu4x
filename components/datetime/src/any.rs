@@ -32,7 +32,7 @@ use icu_plurals::provider::OrdinalV1Marker;
 /// collect all data necessary to format any dates into that locale.
 ///
 /// For that reason, one should think of the process of formatting a date in two steps - first, a computational
-/// heavy construction of [`DateTimeFormat`], and then fast formatting of [`DateTime`] data using the instance.
+/// heavy construction of [`DateTimeFormat`](crate::DateTimeFormat), and then fast formatting of [`DateTime`](icu_calendars::DateTime) data using the instance.
 ///
 /// [`icu_datetime`]: crate
 /// [`DateTimeFormat`]: crate::datetime::DateTimeFormat
@@ -242,8 +242,8 @@ impl AnyDateTimeFormat {
     }
 
     /// Returns a [`components::Bag`] that represents the resolved components for the
-    /// options that were provided to the [`DateTimeFormat`]. The developer may request
-    /// a certain set of options for a [`DateTimeFormat`] but the locale and resolution
+    /// options that were provided to the [`DateTimeFormat`](crate::DateTimeFormat). The developer may request
+    /// a certain set of options for a [`DateTimeFormat`](crate::DateTimeFormat) but the locale and resolution
     /// algorithm may change certain details of what actually gets resolved.
     ///
     /// # Examples
