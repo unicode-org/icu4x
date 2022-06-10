@@ -25,6 +25,9 @@ pub mod ffi {
 
         /// The locale or subtag string failed to parse
         LocaleParserError = 3,
+
+        /// Attempted to construct an invalid data struct
+        DataStructValidityError = 4,
     }
 }
 

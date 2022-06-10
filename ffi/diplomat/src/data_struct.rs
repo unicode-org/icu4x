@@ -8,6 +8,7 @@ use alloc::string::String;
 #[diplomat::bridge]
 pub mod ffi {
     use super::str_to_cow;
+    use crate::errors::ffi::ICU4XError;
     use alloc::boxed::Box;
     use diplomat_runtime::DiplomatResult;
     use icu_decimal::provider::{
@@ -37,13 +38,13 @@ pub mod ffi {
             secondary_group_size: u8,
             min_group_size: u8,
             digits: &[char],
-        ) -> DiplomatResult<Box<ICU4XDataStruct>, ()> {
+        ) -> DiplomatResult<Box<ICU4XDataStruct>, ICU4XError> {
             let digits = if digits.len() == 10 {
                 let mut new_digits = ['\0'; 10];
                 new_digits.copy_from_slice(digits);
                 new_digits
             } else {
-                return Err(()).into();
+                return Err(ICU4XError::DataStructValidityError).into();
             };
             let plus_sign_affixes = AffixesV1 {
                 prefix: str_to_cow(plus_sign_prefix),
