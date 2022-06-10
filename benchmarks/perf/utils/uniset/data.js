@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1654795992090,
+  "lastUpdate": 1654829237059,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -31234,6 +31234,60 @@ window.BENCHMARK_DATA = {
           {
             "name": "uniset/contains_range/worst",
             "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "c2ae85f86e8faf29cd47cd8044e493828b50afcc",
+          "message": "Try out Postcard alpha (#2037)\n\n* Update postcard to alpha\r\n\r\n* fix\r\n\r\n* regen postcard\r\n\r\n* Postcard07 -> Postcard1\r\n\r\n* test fix\r\n\r\n* features job",
+          "timestamp": "2022-06-09T19:36:09-07:00",
+          "tree_id": "64929b97d37feb8a0c5ef7907796d802b0308ad6",
+          "url": "https://github.com/unicode-org/icu4x/commit/c2ae85f86e8faf29cd47cd8044e493828b50afcc"
+        },
+        "date": 1654829207758,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 44724586,
+            "range": "± 1673550",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/worst",
+            "value": 3,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/worst",
+            "value": 3,
             "range": "± 0",
             "unit": "ns/iter"
           }
