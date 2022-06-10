@@ -58,12 +58,7 @@ pub mod ffi {
             write: &mut diplomat_runtime::DiplomatWriteable,
         ) -> DiplomatResult<(), ICU4XError> {
             #[allow(unused_variables)]
-            let result = self
-                .0
-                .id
-                .write_to(write)
-                .map_err(|_| ICU4XError::WriteableError)
-                .into();
+            let result = self.0.id.write_to(write).map_err(Into::into).into();
             write.flush();
             result
         }
@@ -78,10 +73,7 @@ pub mod ffi {
             if let Ok(key) = Key::from_bytes(bytes.as_bytes()) {
                 if let Some(value) = self.0.extensions.unicode.keywords.get(&key) {
                     #[allow(unused_variables)]
-                    let result = value
-                        .write_to(write)
-                        .map_err(|_| ICU4XError::WriteableError)
-                        .into();
+                    let result = value.write_to(write).map_err(Into::into).into();
                     write.flush();
                     result
                 } else {
@@ -104,7 +96,7 @@ pub mod ffi {
                 .id
                 .language
                 .write_to(write)
-                .map_err(|_| ICU4XError::WriteableError)
+                .map_err(Into::into)
                 .into();
             write.flush();
             result
@@ -135,10 +127,7 @@ pub mod ffi {
         ) -> DiplomatResult<(), ICU4XError> {
             if let Some(region) = self.0.id.region {
                 #[allow(unused_variables)]
-                let result = region
-                    .write_to(write)
-                    .map_err(|_| ICU4XError::WriteableError)
-                    .into();
+                let result = region.write_to(write).map_err(Into::into).into();
                 write.flush();
                 result
             } else {
@@ -171,10 +160,7 @@ pub mod ffi {
         ) -> DiplomatResult<(), ICU4XError> {
             if let Some(script) = self.0.id.script {
                 #[allow(unused_variables)]
-                let result = script
-                    .write_to(write)
-                    .map_err(|_| ICU4XError::WriteableError)
-                    .into();
+                let result = script.write_to(write).map_err(Into::into).into();
                 write.flush();
                 result
             } else {
@@ -206,11 +192,7 @@ pub mod ffi {
             write: &mut diplomat_runtime::DiplomatWriteable,
         ) -> DiplomatResult<(), ICU4XError> {
             #[allow(unused_variables)]
-            let result = self
-                .0
-                .write_to(write)
-                .map_err(|_| ICU4XError::WriteableError)
-                .into();
+            let result = self.0.write_to(write).map_err(Into::into).into();
             write.flush();
             result
         }
