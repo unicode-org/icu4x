@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1654886801025,
+  "lastUpdate": 1654886879318,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -31091,6 +31091,66 @@ window.BENCHMARK_DATA = {
             "name": "isize/larger",
             "value": 63282,
             "range": "± 228",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 201,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 94,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 84,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "younies.mahmoud@gmail.com",
+            "name": "Younies Mahmoud",
+            "username": "younies"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "6c9bae905c9ba1f930cdf7469f1bcb06e827b6cb",
+          "message": "Implement all the rounding options (#2000)\n\n Implement all the rounding options",
+          "timestamp": "2022-06-10T14:34:32-04:00",
+          "tree_id": "9a9e6139a5ffe597f63342f409cd0dbbfc7e9a86",
+          "url": "https://github.com/unicode-org/icu4x/commit/6c9bae905c9ba1f930cdf7469f1bcb06e827b6cb"
+        },
+        "date": 1654886855845,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 113203,
+            "range": "± 400",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 24035,
+            "range": "± 146",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 63405,
+            "range": "± 459",
             "unit": "ns/iter"
           },
           {
