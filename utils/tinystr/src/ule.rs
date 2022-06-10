@@ -5,7 +5,7 @@
 use crate::TinyAsciiStr;
 use zerovec::maps::ZeroMapKV;
 use zerovec::ule::*;
-use zerovec::ZeroVec;
+use zerovec::{ZeroSlice, ZeroVec};
 
 // Safety (based on the safety checklist on the ULE trait):
 //  1. CharULE does not include any uninitialized or padding bytes.
@@ -47,6 +47,7 @@ impl<const N: usize> AsULE for TinyAsciiStr<N> {
 
 impl<'a, const N: usize> ZeroMapKV<'a> for TinyAsciiStr<N> {
     type Container = ZeroVec<'a, TinyAsciiStr<N>>;
+    type Slice = ZeroSlice<TinyAsciiStr<N>>;
     type GetType = TinyAsciiStr<N>;
     type OwnedType = TinyAsciiStr<N>;
 }

@@ -13,7 +13,7 @@ use crate::{AsCalendar, Calendar, Date, Iso};
 /// [`Date`].
 ///
 /// ```rust
-/// use icu::calendar::{DateTime, types::IsoHour, types::IsoMinute, types::IsoSecond};
+/// use icu::calendar::DateTime;
 ///
 /// // Example: Construction of ISO datetime from integers.
 /// let datetime_iso = DateTime::new_iso_datetime_from_integers(1970, 1, 2, 13, 1, 0)

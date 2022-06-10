@@ -69,16 +69,16 @@
 //! unsafe impl VarULE for FooULE {
 //!     fn validate_byte_slice(bytes: &[u8]) -> Result<(), ZeroVecError> {
 //!         // validate each field
-//!         <char as AsULE>::ULE::validate_byte_slice(&bytes[0..4]).map_err(|_| ZeroVecError::parse::<Self>())?;
-//!         <char as AsULE>::ULE::validate_byte_slice(&bytes[4..8]).map_err(|_| ZeroVecError::parse::<Self>())?;
-//!         let _ = ZeroVec::<u32>::parse_byte_slice(&bytes[8..]).map_err(|_| ZeroVecError::parse::<Self>())?;
+//!         <char as AsULE>::ULE::validate_byte_slice(&bytes[0..3]).map_err(|_| ZeroVecError::parse::<Self>())?;
+//!         <u32 as AsULE>::ULE::validate_byte_slice(&bytes[3..7]).map_err(|_| ZeroVecError::parse::<Self>())?;
+//!         let _ = ZeroVec::<u32>::parse_byte_slice(&bytes[7..]).map_err(|_| ZeroVecError::parse::<Self>())?;
 //!         Ok(())
 //!     }
 //!     unsafe fn from_byte_slice_unchecked(bytes: &[u8]) -> &Self {
 //!         let ptr = bytes.as_ptr();
 //!         let len = bytes.len();
 //!         // subtract the length of the char and u32 to get the length of the array
-//!         let len_new = (len - 8) / 4;
+//!         let len_new = (len - 7) / 4;
 //!         // it's hard constructing custom DSTs, we fake a pointer/length construction
 //!         // eventually we can use the Pointer::Metadata APIs when they stabilize
 //!         let fake_slice = core::ptr::slice_from_raw_parts(ptr as *const <u32 as AsULE>::ULE, len_new);

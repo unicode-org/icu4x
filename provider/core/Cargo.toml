@@ -55,7 +55,7 @@ datagen = ["dhat", "serde", "erased-serde", "crabbake", "std", "serde_json", "sy
 icu_locid = { version = "0.6", path = "../../components/locid" }
 writeable = { version = "0.4", path = "../../utils/writeable" }
 displaydoc = { version = "0.2.3", default-features = false }
-yoke = { version = "0.5.0", path = "../../utils/yoke", features = ["derive"] }
+yoke = { version = "0.6.0", path = "../../utils/yoke", features = ["derive"] }
 zerofrom = { version = "0.1.0", path = "../../utils/zerofrom", features = ["derive"] }
 zerovec = { version = "0.7.0", path = "../../utils/zerovec", features = ["derive"]}
 litemap = { version = "0.4.0", path = "../../utils/litemap" }
@@ -68,7 +68,7 @@ serde = { version = "1.0", default-features = false, features = ["derive", "allo
 # Serde formats
 serde_json = { version = "1.0", default-features = false, features = ["alloc"], optional = true }
 bincode = { version = "1.3", optional = true }
-postcard = { version = "0.7.0", default-features = false, optional = true }
+postcard = { version = "1.0.0-alpha.2", default-features = false, optional = true }
 
 # Datagen
 dhat = { version = "0.3.0", optional = true }

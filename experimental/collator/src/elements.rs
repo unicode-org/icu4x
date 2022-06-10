@@ -21,9 +21,14 @@
 use core::char::REPLACEMENT_CHARACTER;
 use icu_char16trie::char16trie::TrieResult;
 use icu_codepointtrie::CodePointTrie;
-use icu_normalizer::provider::CanonicalDecompositionDataV1;
+use icu_normalizer::provider::DecompositionDataV1;
+use icu_normalizer::provider::DecompositionTablesV1;
+use icu_normalizer::u24::EMPTY_U24;
+use icu_normalizer::u24::U24;
 use icu_properties::CanonicalCombiningClass;
+use icu_uniset::UnicodeSet;
 use smallvec::SmallVec;
+use zerofrom::ZeroFrom;
 use zerovec::ule::AsULE;
 use zerovec::ule::RawBytesULE;
 use zerovec::ZeroSlice;
@@ -42,9 +47,9 @@ const HANGUL_S_COUNT: u32 = 11172;
 pub(crate) const JAMO_COUNT: usize = 256; // 0x1200 - 0x1100
 
 const COMBINING_DIACRITICS_BASE: usize = 0x0300;
-const COMBINING_DIACRITICS_LIMIT: usize = 0x0370;
-pub(crate) const COMBINING_DIACRITICS_COUNT: usize =
-    COMBINING_DIACRITICS_LIMIT - COMBINING_DIACRITICS_BASE;
+const OPTIMIZED_DIACRITICS_LIMIT: usize = 0x034F;
+pub(crate) const OPTIMIZED_DIACRITICS_MAX_COUNT: usize =
+    OPTIMIZED_DIACRITICS_LIMIT - COMBINING_DIACRITICS_BASE;
 
 pub(crate) const CASE_MASK: u16 = 0xC000;
 pub(crate) const TERTIARY_MASK: u16 = 0x3F3F; // ONLY_TERTIARY_MASK in ICU4C
@@ -94,13 +99,13 @@ pub(crate) const FFFD_CE32_VALUE: u32 = 0xFFFD0505;
 pub(crate) const FFFD_CE32: CollationElement32 = CollationElement32(FFFD_CE32_VALUE);
 
 pub(crate) const EMPTY_U16: &ZeroSlice<u16> =
-    ZeroSlice::<u16>::from_ule_slice_const(&<u16 as AsULE>::ULE::from_array([]));
-const EMPTY_U32: &ZeroSlice<u32> =
-    ZeroSlice::<u32>::from_ule_slice_const(&<u32 as AsULE>::ULE::from_array([]));
+    ZeroSlice::<u16>::from_ule_slice(&<u16 as AsULE>::ULE::from_array([]));
 const SINGLE_U16: &ZeroSlice<u16> =
-    ZeroSlice::<u16>::from_ule_slice_const(&<u16 as AsULE>::ULE::from_array([0xFFFD]));
-const SINGLE_U32: &ZeroSlice<u32> =
-    ZeroSlice::<u32>::from_ule_slice_const(&<u32 as AsULE>::ULE::from_array([0xFFFD]));
+    ZeroSlice::<u16>::from_ule_slice(&<u16 as AsULE>::ULE::from_array([0xFFFD]));
+
+const SINGLE_U24_ARR: [u8; 3] = [0xFD, 0xFF, 00];
+const SINGLE_U24_SLICE: &[U24] = &[U24(SINGLE_U24_ARR)];
+const SINGLE_U24: &ZeroSlice<U24> = unsafe { core::mem::transmute(SINGLE_U24_SLICE) };
 
 /// If `opt` is `Some`, unwrap it. If `None`, panic if debug assertions
 /// are enabled and return `default` if debug assertions are not enabled.
@@ -130,6 +135,12 @@ fn char_from_u16(u: u16) -> char {
     char_from_u32(u32::from(u))
 }
 
+/// Convert a `U24` _obtained from data provider data_ to `char`.
+#[inline(always)]
+fn char_from_u24(u: U24) -> char {
+    char_from_u32(u.into())
+}
+
 #[inline(always)]
 fn split_first_u16(s: Option<&ZeroSlice<u16>>) -> (char, &ZeroSlice<u16>) {
     if let Some(slice) = s {
@@ -147,19 +158,19 @@ fn split_first_u16(s: Option<&ZeroSlice<u16>>) -> (char, &ZeroSlice<u16>) {
 }
 
 #[inline(always)]
-fn split_first_u32(s: Option<&ZeroSlice<u32>>) -> (char, &ZeroSlice<u32>) {
+fn split_first_u32(s: Option<&ZeroSlice<U24>>) -> (char, &ZeroSlice<U24>) {
     if let Some(slice) = s {
         if let Some(first) = slice.first() {
             // `unwrap()` must succeed, because `first()` returned `Some`.
             return (
-                char_from_u32(first),
+                char_from_u24(first),
                 slice.get_subslice(1..slice.len()).unwrap(),
             );
         }
     }
     // GIGO case
     debug_assert!(false);
-    (REPLACEMENT_CHARACTER, EMPTY_U32)
+    (REPLACEMENT_CHARACTER, EMPTY_U24)
 }
 
 #[inline(always)]
@@ -457,6 +468,11 @@ impl CollationElement {
     }
 
     #[inline(always)]
+    pub fn new_from_secondary(secondary: u16) -> Self {
+        CollationElement((u64::from(secondary) << 16) | COMMON_TERTIARY_CE)
+    }
+
+    #[inline(always)]
     pub fn new_implicit_from_char(c: char) -> Self {
         // Collation::unassignedPrimaryFromCodePoint
         // Create a gap before U+0000. Use c-1 for [first unassigned].
@@ -604,7 +620,9 @@ impl Default for NonPrimary {
 /// set on the instance on which it is intended to
 /// be set and not on a temporary copy.
 ///
-/// XXX check that 0xFF is actually reserved by the spec.
+/// Note that 0xFF is won't be assigned to an actual
+/// canonical combining class per definition D104
+/// in The Unicode Standard.
 #[derive(Debug)]
 struct CharacterAndClass(u32);
 
@@ -623,8 +641,7 @@ impl CharacterAndClass {
     pub fn ccc(&self) -> CanonicalCombiningClass {
         CanonicalCombiningClass((self.0 >> 24) as u8)
     }
-    // XXX need better naming here.
-    pub fn set_ccc(&mut self, ccc: &CodePointTrie<CanonicalCombiningClass>) {
+    pub fn set_ccc_from_trie(&mut self, ccc: &CodePointTrie<CanonicalCombiningClass>) {
         debug_assert_eq!(self.0 >> 24, 0xFF, "This method has already been called!");
         let scalar = self.0 & 0xFFFFFF;
         self.0 = ((ccc.get(scalar).0 as u32) << 24) | scalar;
@@ -650,7 +667,7 @@ where
 {
     iter: I,
     /// Already computed but not yet returned `CollationElement`s.
-    pending: SmallVec<[CollationElement; 6]>, // TODO Figure out good length
+    pending: SmallVec<[CollationElement; 6]>, // TODO(#2005): Figure out good length
     /// The index of the next item to be returned from `pending`. The purpose
     /// of this index is to avoid moving the rest of the items.
     pending_pos: usize,
@@ -677,7 +694,7 @@ where
     /// if `upcoming` isn't empty (with `iter` having been exhausted), the
     /// first `char` in `upcoming` must have its decompostion start with a
     /// starter.
-    upcoming: SmallVec<[char; 10]>, // TODO Figure out good length; longest contraction suffix in CLDR 40 is 7 characters long
+    upcoming: SmallVec<[char; 10]>, // TODO(#2005): Figure out good length; longest contraction suffix in CLDR 40 is 7 characters long
     /// The root collation data.
     root: &'data CollationDataV1<'data>,
     /// Tailoring if applicable.
@@ -687,9 +704,15 @@ where
     /// Note: in ICU4C the jamo table contains only modern jamo. Here, the jamo table contains the whole Unicode block.
     jamo: &'data [<u32 as AsULE>::ULE; JAMO_COUNT],
     /// The `CollationElement32` mapping for the Combining Diacritical Marks block.
-    diacritics: &'data [<u32 as AsULE>::ULE; COMBINING_DIACRITICS_COUNT],
-    /// NFD data.
-    decompositions: &'data CanonicalDecompositionDataV1<'data>,
+    diacritics: &'data ZeroSlice<u16>,
+    /// NFD main trie.
+    trie: &'data CodePointTrie<'data, u32>,
+    /// NFD helper set
+    decomposition_starts_with_non_starter: UnicodeSet<'data>,
+    /// NFD complex decompositions on the BMP
+    scalars16: &'data ZeroSlice<u16>,
+    /// NFD complex decompositions on supplementary planes
+    scalars32: &'data ZeroSlice<U24>,
     /// Canonical Combining Class data.
     ccc: &'data CodePointTrie<'data, CanonicalCombiningClass>,
     /// If numeric mode is enabled, the 8 high bits of the numeric primary.
@@ -712,8 +735,9 @@ where
         root: &'data CollationDataV1,
         tailoring: &'data CollationDataV1,
         jamo: &'data [<u32 as AsULE>::ULE; JAMO_COUNT],
-        diacritics: &'data [<u32 as AsULE>::ULE; COMBINING_DIACRITICS_COUNT],
-        decompositions: &'data CanonicalDecompositionDataV1,
+        diacritics: &'data ZeroSlice<u16>,
+        decompositions: &'data DecompositionDataV1,
+        tables: &'data DecompositionTablesV1,
         ccc: &'data CodePointTrie<'data, CanonicalCombiningClass>,
         numeric_primary: Option<u8>,
         lithuanian_dot_above: bool,
@@ -730,7 +754,12 @@ where
             tailoring,
             jamo,
             diacritics,
-            decompositions,
+            trie: &decompositions.trie,
+            decomposition_starts_with_non_starter: UnicodeSet::zero_from(
+                &decompositions.decomposition_starts_with_non_starter,
+            ),
+            scalars16: &tables.scalars16,
+            scalars32: &tables.scalars24,
             ccc,
             numeric_primary,
             lithuanian_dot_above,
@@ -764,7 +793,6 @@ where
             return;
         }
         if !self
-            .decompositions
             .decomposition_starts_with_non_starter
             .contains(self.upcoming[0])
         {
@@ -773,11 +801,7 @@ where
         // Not using `while let` to be able to set `iter_exhausted`
         loop {
             if let Some(ch) = self.iter.next() {
-                if self
-                    .decompositions
-                    .decomposition_starts_with_non_starter
-                    .contains(ch)
-                {
+                if self.decomposition_starts_with_non_starter.contains(ch) {
                     if !in_inclusive_range(ch, '\u{0340}', '\u{0F81}') {
                         self.upcoming.push(ch);
                     } else {
@@ -851,7 +875,7 @@ where
         // Hangul syllables in lookahead, because Hangul isn't allowed to
         // participate in contractions, and the trie default is that a character
         // is its own decomposition.
-        let decomposition = self.decompositions.trie.get(u32::from(c));
+        let decomposition = self.trie.get(u32::from(c));
         if decomposition == 0 {
             // The character is its own decomposition (or Hangul syllable)
             self.upcoming.push(c);
@@ -863,30 +887,32 @@ where
                 self.upcoming.push(char_from_u16(high));
                 self.upcoming.push(char_from_u16(low));
             } else if high != 0 {
+                debug_assert_ne!(high, 1, "How come U+FDFA NFKD marker seen in NFD?");
                 // Decomposition into one BMP character
                 self.upcoming.push(char_from_u16(high));
             } else {
                 // Complex decomposition
                 // Format for 16-bit value:
-                // Three highest bits: length (always makes the whole thing non-zero, since
-                // zero is not a length in use; one bit is "wasted" in order to ensure the
-                // 16 bits always end up being non-zero as a whole)
-                // Fourth-highest bit: 0 if 16-bit units, 1 if 32-bit units
-                // Fifth-highest bit:  0 if all trailing characters are non-starter, 1 if
-                //                     at least one trailing character is a starter.
-                //                     As of Unicode 14, there a two BMP characters that
-                //                     decompose to three characters starter, starter,
-                //                     non-starter, and plane 1 has characters that
-                //                     decompose to two starters. However, for forward
-                //                     compatibility, the semantics here are more generic.
-                // Lower bits: Start index in storage
-                let offset = usize::from(low & 0x7FF);
-                let len = usize::from(low >> 13);
-                if low & 0x1000 == 0 {
+                // 15..13: length minus two for 16-bit case and length minus one for
+                //         the 32-bit case. Length 8 needs to fit in three bits in
+                //         the 16-bit case, and this way the value is future-proofed
+                //         up to 9 in the 16-bit case. Zero is unused and length one
+                //         in the 16-bit case goes directly into the trie.
+                //     12: 1 if all trailing characters are guaranteed non-starters,
+                //         0 if no guarantees about non-starterness.
+                //         Note: The bit choice is this way around to allow for
+                //         dynamically falling back to not having this but instead
+                //         having one more bit for length by merely choosing
+                //         different masks.
+                //  11..0: Start offset in storage. If less than the length of
+                //         scalars16, the offset is into scalars16. Otherwise,
+                //         the offset minus the length of scalars16 is an offset
+                //         into scalars32.
+                let offset = usize::from(low & 0xFFF);
+                if offset < self.scalars16.len() {
+                    let len = usize::from(low >> 13) + 2;
                     for u in unwrap_or_gigo(
-                        self.decompositions
-                            .scalars16
-                            .get_subslice(offset..offset + len),
+                        self.scalars16.get_subslice(offset..offset + len),
                         SINGLE_U16, // single instead of empty for consistency with the other code path
                     )
                     .iter()
@@ -894,20 +920,18 @@ where
                         self.upcoming.push(char_from_u16(u));
                     }
                 } else {
+                    let len = usize::from(low >> 13) + 1;
+                    let offset32 = offset - self.scalars16.len();
                     for u in unwrap_or_gigo(
-                        self.decompositions
-                            .scalars32
-                            .get_subslice(offset..offset + len),
-                        SINGLE_U32, // single instead of empty for consistency with the other code path
+                        self.scalars32.get_subslice(offset32..offset32 + len),
+                        SINGLE_U24, // single instead of empty for consistency with the other code path
                     )
                     .iter()
                     {
-                        self.upcoming.push(char_from_u32(u));
+                        self.upcoming.push(char_from_u24(u));
                     }
                 }
-                if low & 0x800 != 0 {
-                    search_start_combining = true;
-                }
+                search_start_combining = low & 0x1000 == 0;
             }
         }
         let start_combining = if search_start_combining {
@@ -919,7 +943,6 @@ where
             // and search for the last starter.
             let mut i = self.upcoming.len() - 1;
             while self
-                .decompositions
                 .decomposition_starts_with_non_starter
                 .contains(self.upcoming[i])
             {
@@ -933,11 +956,7 @@ where
         // Not using `while let` to be able to set `iter_exhausted`
         loop {
             if let Some(ch) = self.iter.next() {
-                if self
-                    .decompositions
-                    .decomposition_starts_with_non_starter
-                    .contains(ch)
-                {
+                if self.decomposition_starts_with_non_starter.contains(ch) {
                     if !in_inclusive_range(ch, '\u{0340}', '\u{0F81}') {
                         self.upcoming.push(ch);
                     } else {
@@ -962,21 +981,18 @@ where
                                 end_combining += 1;
                             }
                             '\u{0F73}' => {
-                                // XXX check if we can actually come here.
                                 // TIBETAN VOWEL SIGN II
                                 self.upcoming.push('\u{0F71}');
                                 self.upcoming.push('\u{0F72}');
                                 end_combining += 1;
                             }
                             '\u{0F75}' => {
-                                // XXX check if we can actually come here.
                                 // TIBETAN VOWEL SIGN UU
                                 self.upcoming.push('\u{0F71}');
                                 self.upcoming.push('\u{0F74}');
                                 end_combining += 1;
                             }
                             '\u{0F81}' => {
-                                // XXX check if we can actually come here.
                                 // TIBETAN VOWEL SIGN REVERSED II
                                 self.upcoming.push('\u{0F71}');
                                 self.upcoming.push('\u{0F80}');
@@ -1034,7 +1050,6 @@ where
             return true;
         }
         !self
-            .decompositions
             .decomposition_starts_with_non_starter
             .contains(self.upcoming[0])
     }
@@ -1045,11 +1060,7 @@ where
             let mut iter = self.upcoming.iter().enumerate();
             loop {
                 if let Some((i, &ch)) = iter.next() {
-                    if !self
-                        .decompositions
-                        .decomposition_starts_with_non_starter
-                        .contains(ch)
-                    {
+                    if !self.decomposition_starts_with_non_starter.contains(ch) {
                         break i;
                     }
                 } else {
@@ -1062,11 +1073,7 @@ where
             }
         };
         self.upcoming.insert(0, c);
-        let start = if self
-            .decompositions
-            .decomposition_starts_with_non_starter
-            .contains(c)
-        {
+        let start = if self.decomposition_starts_with_non_starter.contains(c) {
             0
         } else {
             1
@@ -1102,18 +1109,16 @@ where
             let mut next_is_known_to_decompose_to_non_starter = false; // micro optimization to avoid checking `UnicodeSet` twice
             let mut ce32;
             let mut data: &CollationDataV1 = self.tailoring;
-            let mut combining_characters: SmallVec<[CharacterAndClass; 7]> = SmallVec::new(); // XXX figure out proper size
+            let mut combining_characters: SmallVec<[CharacterAndClass; 7]> = SmallVec::new(); // TODO(#2005): Figure out good length
 
             // Betting that fusing the NFD algorithm into this one at the
             // expense of the repetitiveness below, the common cases become
             // fast in a way that offsets the lack of the canonical closure.
             // The wall of code before the "Slow path" is an attempt to
             // optimize based on that bet.
-            // TODO: ASCII fast path here if ASCII not tailored with
-            // starters.
             let hangul_offset = u32::from(c).wrapping_sub(HANGUL_S_BASE); // SIndex in the spec
             if hangul_offset >= HANGUL_S_COUNT {
-                let decomposition = self.decompositions.trie.get(u32::from(c));
+                let decomposition = self.trie.get(u32::from(c));
                 if decomposition == 0 {
                     // The character is its own decomposition
                     let jamo_index = (c as usize).wrapping_sub(HANGUL_L_BASE as usize);
@@ -1130,13 +1135,13 @@ where
                         // part of the search root. Instead, all non-Korean tailorings
                         // can use a shared copy of the non-Korean search jamo table.
                         //
-                        // XXX This isn't actually true with the current jamo search
-                        // expansions!
+                        // TODO(#1941): This isn't actually true with the current jamo
+                        // search expansions!
 
-                        // TODO: Instead of having different jamo CE32 table for "search"
-                        // collations, we could instead decompose the archaic jamo to
-                        // the modern approximation sequences here and then map those
-                        // by looking up the modern jamo from the normal root.
+                        // TODO(#1941): Instead of having different jamo CE32 table for
+                        // "search" collations, we could instead decompose the archaic
+                        // jamo to the modern approximation sequences here and then map
+                        // those by looking up the modern jamo from the normal root.
 
                         // We need to set data to root, because archaic jamo refer to
                         // the root.
@@ -1159,6 +1164,8 @@ where
                                 return ce;
                             }
                         }
+                        // TODO(2003): Figure out if it would be an optimization to
+                        // handle `Implicit` and `Offset` tags here.
                     } else {
                         next_is_known_to_decompose_to_non_starter = true;
                     }
@@ -1177,15 +1184,11 @@ where
                         if self.is_next_decomposition_starts_with_starter() {
                             let diacritic_index =
                                 (low as usize).wrapping_sub(COMBINING_DIACRITICS_BASE);
-                            if diacritic_index < self.diacritics.len() {
+                            if let Some(secondary) = self.diacritics.get(diacritic_index) {
                                 debug_assert!(low != 0x0344, "Should never have COMBINING GREEK DIALYTIKA TONOS here, since it should have decomposed further.");
                                 if let Some(ce) = ce32.to_ce_simple_or_long_primary() {
-                                    // Inner unwrap: already checked len()
-                                    // Outer unwrap: expectation of data integrity.
-                                    let ce_for_combining = CollationElement32::new_from_ule(
-                                        self.diacritics[diacritic_index],
-                                    )
-                                    .to_ce_self_contained_or_gigo();
+                                    let ce_for_combining =
+                                        CollationElement::new_from_secondary(secondary);
                                     self.pending.push(ce_for_combining);
                                     self.mark_prefix_unmatchable();
                                     return ce;
@@ -1199,22 +1202,25 @@ where
                                         TrieResult::NoMatch | TrieResult::NoValue => {
                                             if let Some(ce) = default.to_ce_simple_or_long_primary()
                                             {
-                                                // Inner unwrap: already checked len()
-                                                // Outer unwrap: expectation of data integrity.
                                                 let ce_for_combining =
-                                                    CollationElement32::new_from_ule(
-                                                        self.diacritics[diacritic_index],
-                                                    )
-                                                    .to_ce_self_contained_or_gigo();
+                                                    CollationElement::new_from_secondary(secondary);
                                                 self.pending.push(ce_for_combining);
                                                 self.mark_prefix_unmatchable();
                                                 return ce;
                                             }
                                         }
-                                        TrieResult::Intermediate(trie_ce32)
-                                        | TrieResult::FinalValue(trie_ce32) => {
-                                            // Assuming that we don't have longer matches with
-                                            // a starter at this point. XXX Is this true?
+                                        TrieResult::Intermediate(trie_ce32) => {
+                                            if !ce32.at_least_one_suffix_contains_starter() {
+                                                if let Some(ce) =
+                                                    CollationElement32::new(trie_ce32 as u32)
+                                                        .to_ce_simple_or_long_primary()
+                                                {
+                                                    self.mark_prefix_unmatchable();
+                                                    return ce;
+                                                }
+                                            }
+                                        }
+                                        TrieResult::FinalValue(trie_ce32) => {
                                             if let Some(ce) =
                                                 CollationElement32::new(trie_ce32 as u32)
                                                     .to_ce_simple_or_long_primary()
@@ -1231,6 +1237,7 @@ where
                         }
                         combining_characters.push(CharacterAndClass::new(combining));
                     } else if high != 0 {
+                        debug_assert_ne!(high, 1, "How come U+FDFA NFKD marker seen in NFD?");
                         // Decomposition into one BMP character
                         c = char_from_u16(high);
                         ce32 = data.ce32_for_char(c);
@@ -1249,28 +1256,28 @@ where
                     } else {
                         // Complex decomposition
                         // Format for 16-bit value:
-                        // Three highest bits: length (always makes the whole thing non-zero, since
-                        // zero is not a length in use; one bit is "wasted" in order to ensure the
-                        // 16 bits always end up being non-zero as a whole)
-                        // Fourth-highest bit: 0 if 16-bit units, 1 if 32-bit units
-                        // Fifth-highest bit:  0 if all trailing characters are non-starter, 1 if
-                        //                     at least one trailing character is a starter.
-                        //                     As of Unicode 14, there a two BMP characters that
-                        //                     decompose to three characters starter, starter,
-                        //                     non-starter, and plane 1 has characters that
-                        //                     decompose to two starters. However, for forward
-                        //                     compatibility, the semantics here are more generic.
-                        // Lower bits: Start index in storage
-                        let offset = usize::from(low & 0x7FF);
-                        let len = usize::from(low >> 13);
-                        if low & 0x1000 == 0 {
-                            let (starter, tail) = split_first_u16(
-                                self.decompositions
-                                    .scalars16
-                                    .get_subslice(offset..offset + len),
-                            );
+                        // 15..13: length minus two for 16-bit case and length minus one for
+                        //         the 32-bit case. Length 8 needs to fit in three bits in
+                        //         the 16-bit case, and this way the value is future-proofed
+                        //         up to 9 in the 16-bit case. Zero is unused and length one
+                        //         in the 16-bit case goes directly into the trie.
+                        //     12: 1 if all trailing characters are guaranteed non-starters,
+                        //         0 if no guarantees about non-starterness.
+                        //         Note: The bit choice is this way around to allow for
+                        //         dynamically falling back to not having this but instead
+                        //         having one more bit for length by merely choosing
+                        //         different masks.
+                        //  11..0: Start offset in storage. If less than the length of
+                        //         scalars16, the offset is into scalars16. Otherwise,
+                        //         the offset minus the length of scalars16 is an offset
+                        //         into scalars32.
+                        let offset = usize::from(low & 0xFFF);
+                        if offset < self.scalars16.len() {
+                            let len = usize::from(low >> 13) + 2;
+                            let (starter, tail) =
+                                split_first_u16(self.scalars16.get_subslice(offset..offset + len));
                             c = starter;
-                            if low & 0x800 == 0 {
+                            if low & 0x1000 != 0 {
                                 for u in tail.iter() {
                                     combining_characters
                                         .push(CharacterAndClass::new(char_from_u16(u)));
@@ -1280,11 +1287,7 @@ where
                                 let mut it = tail.iter();
                                 while let Some(u) = it.next() {
                                     let ch = char_from_u16(u);
-                                    if self
-                                        .decompositions
-                                        .decomposition_starts_with_non_starter
-                                        .contains(ch)
-                                    {
+                                    if self.decomposition_starts_with_non_starter.contains(ch) {
                                         // As of Unicode 14, this branch is never taken.
                                         // It exist for forward compatibility.
                                         combining_characters.push(CharacterAndClass::new(ch));
@@ -1308,27 +1311,23 @@ where
                                 }
                             }
                         } else {
+                            let len = usize::from(low >> 13) + 1;
+                            let offset32 = offset - self.scalars16.len();
                             let (starter, tail) = split_first_u32(
-                                self.decompositions
-                                    .scalars32
-                                    .get_subslice(offset..offset + len),
+                                self.scalars32.get_subslice(offset32..offset32 + len),
                             );
                             c = starter;
-                            if low & 0x800 == 0 {
+                            if low & 0x1000 != 0 {
                                 for u in tail.iter() {
                                     combining_characters
-                                        .push(CharacterAndClass::new(char_from_u32(u)));
+                                        .push(CharacterAndClass::new(char_from_u24(u)));
                                 }
                             } else {
                                 next_is_known_to_decompose_to_non_starter = false;
                                 let mut it = tail.iter();
                                 while let Some(u) = it.next() {
-                                    let ch = char_from_u32(u);
-                                    if self
-                                        .decompositions
-                                        .decomposition_starts_with_non_starter
-                                        .contains(ch)
-                                    {
+                                    let ch = char_from_u24(u);
+                                    if self.decomposition_starts_with_non_starter.contains(ch) {
                                         // As of Unicode 14, this branch is never taken.
                                         // It exist for forward compatibility.
                                         combining_characters.push(CharacterAndClass::new(ch));
@@ -1343,7 +1342,7 @@ where
 
                                     while let Some(u) = it.next_back() {
                                         self.prepend_and_sort_non_starter_prefix_of_suffix(
-                                            char_from_u32(u),
+                                            char_from_u24(u),
                                         );
                                     }
                                     self.prepend_and_sort_non_starter_prefix_of_suffix(ch);
@@ -1368,8 +1367,9 @@ where
                 // No prefix matches on Hangul
                 self.mark_prefix_unmatchable();
                 if self.is_next_decomposition_starts_with_starter() {
-                    // XXX Figure out if non-self-contained jamo CE32s exist in
-                    // CLDR for modern jamo.
+                    // TODO(#1941): Assuming self-contained CE32s is OK for the root,
+                    // but not currently OK for search collation, which at this time
+                    // do not support tailored Hangul.
                     self.pending.push(
                         CollationElement32::new_from_ule(
                             self.jamo[(HANGUL_V_BASE - HANGUL_L_BASE + v) as usize],
@@ -1429,6 +1429,8 @@ where
             let mut drain_from_suffix = 0;
             'outer: loop {
                 'ce32loop: loop {
+                    // TODO(#2002): Ensure that the CE32 flavors in this loop are checked in the optimal
+                    // order given their frequency in real workloads.
                     if let Some(ce) = ce32.to_ce_self_contained() {
                         self.pending.push(ce);
                         break 'ce32loop;
@@ -1490,7 +1492,7 @@ where
                                 let mut i = 0;
                                 let mut most_recent_skipped_ccc =
                                     CanonicalCombiningClass::NotReordered;
-                                // XXX pending removals will in practice be small numbers.
+                                // TODO(#2001): Pending removals will in practice be small numbers.
                                 // What if we made the item smaller than usize?
                                 let mut pending_removals: SmallVec<[usize; 1]> = SmallVec::new();
                                 while i < combining_characters.len() {
@@ -1554,7 +1556,6 @@ where
                                                     continue 'ce32loop;
                                                 }
                                                 if !self
-                                                    .decompositions
                                                     .decomposition_starts_with_non_starter
                                                     .contains(ch)
                                                 {
@@ -1667,13 +1668,17 @@ where
                             }
                             Tag::Digit => {
                                 if let Some(high_bits) = self.numeric_primary {
-                                    let mut digits: SmallVec<[u8; 8]> = SmallVec::new(); // XXX figure out proper size
+                                    let mut digits: SmallVec<[u8; 8]> = SmallVec::new(); // TODO(#2005): Figure out good length
                                     digits.push(ce32.digit());
                                     let numeric_primary = u32::from(high_bits) << 24;
                                     if combining_characters.is_empty() {
                                         // Numeric collation doesn't work with combining
                                         // characters applied to the digits.
-                                        // XXX Does any tailoring actually tailor digits?
+                                        // It's unclear if reading from the tailoring first
+                                        // is needed for practical purposes, since it doesn't
+                                        // make much sense to tailor the numeric value of digits.
+                                        // Performing the usual fallback pattern anyway just in
+                                        // case.
                                         may_have_contracted_starter = true;
                                         while let Some(upcoming) = self.look_ahead(looked_ahead) {
                                             looked_ahead += 1;
@@ -1780,7 +1785,16 @@ where
                                         let mut primary =
                                             numeric_primary | ((132 - 4 + num_pairs) << 16);
                                         // Find the length without trailing 00 pairs.
-                                        // XXX what guarantees [len - 2] not being index out of bounds?
+                                        //
+                                        // The indexing below is within bounds due to the following:
+                                        //
+                                        // * We skipped leading zeros.
+                                        // * If `len == 2`: The loop condition is false, because
+                                        //   `head[len - 2]` isn't a leading zero.
+                                        // * If `len == 1`: The loop condition is false, because
+                                        //   `head[len - 1]` isn't a leading zero, and `&&`
+                                        //   short-circuts, so the `head[len - 2]` access doesn't
+                                        //   occur.
                                         while head[len - 1] == 0 && head[len - 2] == 0 {
                                             len -= 2;
                                         }
@@ -1821,8 +1835,6 @@ where
                                 ce32 = data.get_ce32(ce32.index());
                                 continue 'ce32loop;
                             }
-                            // XXX how common are the following two cases? Should these
-                            // be baked into the fast path, since they yield a single CE?
                             Tag::Offset => {
                                 self.pending.push(data.ce_from_offset_ce32(c, ce32));
                                 break 'ce32loop;
@@ -1856,8 +1868,8 @@ where
                     'combining: while i < combining_characters.len() {
                         c = combining_characters[i].character();
                         let diacritic_index = (c as usize).wrapping_sub(COMBINING_DIACRITICS_BASE);
-                        if let Some(&diacritic) = self.diacritics.get(diacritic_index) {
-                            // TODO: unlikely annotation for the first two conditions here:
+                        if let Some(secondary) = self.diacritics.get(diacritic_index) {
+                            // TODO(#2006): unlikely annotation for the first two conditions here:
                             if c == '\u{0307}'
                                 && self.lithuanian_dot_above
                                 && i + 1 < combining_characters.len()
@@ -1875,15 +1887,13 @@ where
                                     continue 'combining;
                                 }
                             }
-                            self.pending.push(
-                                CollationElement32::new_from_ule(diacritic)
-                                    .to_ce_self_contained_or_gigo(),
-                            );
+                            self.pending
+                                .push(CollationElement::new_from_secondary(secondary));
                             self.mark_prefix_unmatchable();
                             i += 1;
                             continue 'combining;
                         }
-                        // `c` is not from the Combining Diacritical Marks block.
+                        // `c` is not a table-optimized diacritic.
                         // Not bothering to micro optimize away the move of the remaining
                         // part of `combining_characters`.
                         let _ = combining_characters.drain(..=i);
@@ -1895,7 +1905,7 @@ where
                         }
                         continue 'outer;
                     }
-                    // XXX the borrow checker didn't like the iterator formulation
+                    // Note: The borrow checker didn't like the iterator formulation
                     // for the loop below, because the `Drain` would have kept `self`
                     // mutable borrowed when trying to call `prefix_push`. To change
                     // this, `prefix` and `prefix_push` would need to be refactored
@@ -1906,7 +1916,7 @@ where
                         self.prefix_push(ch);
                         i += 1;
                     }
-                    // XXX The above makes prefix out of sync when starter-contracting
+                    // TODO(#2004): The above makes prefix out of sync when starter-contracting
                     // contractions use `pending_removals` instead of `drain_from_suffix`.
                     // Do there exist prefixes that overlap contraction suffixes?
                     // At least as of CLDR 40, the two possible non-starters in prefixes,
@@ -2026,7 +2036,7 @@ where
             // an item more than once.
             combining_characters
                 .iter_mut()
-                .for_each(|cc| cc.set_ccc(self.ccc));
+                .for_each(|cc| cc.set_ccc_from_trie(self.ccc));
             combining_characters.sort_by_key(|cc| cc.ccc());
         }
     }

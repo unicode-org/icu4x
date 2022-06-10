@@ -25,7 +25,7 @@ use core::ops::Range;
 /// use zerovec::ZeroSlice;
 ///
 /// const DATA: &ZeroSlice<u16> =
-///     ZeroSlice::<u16>::from_ule_slice_const(&<u16 as AsULE>::ULE::from_array([
+///     ZeroSlice::<u16>::from_ule_slice(&<u16 as AsULE>::ULE::from_array([
 ///         211, 281, 421, 32973,
 ///     ]));
 ///
@@ -38,12 +38,17 @@ impl<T> ZeroSlice<T>
 where
     T: AsULE,
 {
+    /// Returns an empty slice.
+    pub const fn new_empty() -> &'static Self {
+        Self::from_ule_slice(&[])
+    }
+
     /// Get this [`ZeroSlice`] as a borrowed [`ZeroVec`]
     ///
     /// [`ZeroSlice`] does not have most of the methods that [`ZeroVec`] does,
     /// so it is recommended to convert it to a [`ZeroVec`] before doing anything.
     #[inline]
-    pub fn as_zerovec(&self) -> ZeroVec<'_, T> {
+    pub const fn as_zerovec(&self) -> ZeroVec<'_, T> {
         ZeroVec::Borrowed(&self.0)
     }
 
@@ -53,9 +58,14 @@ where
         T::ULE::parse_byte_slice(bytes).map(Self::from_ule_slice)
     }
 
-    /// Construct a `&ZeroSlice<T>` from a slice of ULEs
+    /// Construct a `&ZeroSlice<T>` from a slice of ULEs.
+    ///
+    /// This function can be used for constructing ZeroVecs in a const context, avoiding
+    /// parsing checks.
+    ///
+    /// See [`ZeroSlice`] for an example.
     #[inline]
-    pub fn from_ule_slice(slice: &[T::ULE]) -> &Self {
+    pub const fn from_ule_slice(slice: &[T::ULE]) -> &Self {
         // This is safe because ZeroSlice is transparent over [T::ULE]
         // so &ZeroSlice<T> can be safely cast from &[T::ULE]
         unsafe { &*(slice as *const _ as *const Self) }
@@ -93,7 +103,7 @@ where
 
     /// Dereferences this slice as `&[T::ULE]`.
     #[inline]
-    pub fn as_ule_slice(&self) -> &[T::ULE] {
+    pub const fn as_ule_slice(&self) -> &[T::ULE] {
         &self.0
     }
 
@@ -115,7 +125,7 @@ where
     /// );
     /// ```
     #[inline]
-    pub fn len(&self) -> usize {
+    pub const fn len(&self) -> usize {
         self.as_ule_slice().len()
     }
 
@@ -134,7 +144,7 @@ where
     /// assert!(emptyvec.is_empty());
     /// ```
     #[inline]
-    pub fn is_empty(&self) -> bool {
+    pub const fn is_empty(&self) -> bool {
         self.as_ule_slice().is_empty()
     }
 }
@@ -219,7 +229,7 @@ where
     /// assert_eq!(zs_i16.get(3), Some(-32563));
     /// ```
     #[inline]
-    pub fn cast<P>(&self) -> &ZeroSlice<P>
+    pub const fn cast<P>(&self) -> &ZeroSlice<P>
     where
         P: AsULE<ULE = T::ULE>,
     {
@@ -246,10 +256,10 @@ where
     ///     }
     /// };
     ///
-    /// let zs_char: &ZeroSlice<char> = zs_u32.try_as_converted().expect("valid code points");
+    /// let zs_u8_4: &ZeroSlice<[u8; 4]> = zs_u32.try_as_converted().expect("valid code points");
     ///
-    /// assert_eq!(zs_u32.get(0), Some(u32::from('🍿')));
-    /// assert_eq!(zs_char.get(0), Some('🍿'));
+    /// assert_eq!(zs_u32.get(0), Some(127871));
+    /// assert_eq!(zs_u8_4.get(0), Some([0x7F, 0xF3, 0x01, 0x00]));
     /// ```
     #[inline]
     pub fn try_as_converted<P: AsULE>(&self) -> Result<&ZeroSlice<P>, ZeroVecError> {

@@ -41,6 +41,20 @@ class ICU4XBidiInfo {
    * Get the nth paragraph, returning None if out of bounds
    */
   std::optional<ICU4XBidiParagraph> paragraph_at(size_t n) const;
+
+  /**
+   * The number of bytes in this full text
+   */
+  size_t size() const;
+
+  /**
+   * Get the BIDI level at a particular byte index in the full text.
+   * This integer is conceptually a `unicode_bidi::Level`,
+   * and can be further inspected using the static methods on ICU4XBidi.
+   * 
+   * Returns 0 (equivalent to `Level::ltr()`) on error
+   */
+  uint8_t level_at(size_t pos) const;
   inline const capi::ICU4XBidiInfo* AsFFI() const { return this->inner.get(); }
   inline capi::ICU4XBidiInfo* AsFFIMut() { return this->inner.get(); }
   inline ICU4XBidiInfo(capi::ICU4XBidiInfo* i) : inner(i) {}
@@ -65,5 +79,11 @@ inline std::optional<ICU4XBidiParagraph> ICU4XBidiInfo::paragraph_at(size_t n) c
     diplomat_optional_out_value = std::nullopt;
   }
   return diplomat_optional_out_value;
+}
+inline size_t ICU4XBidiInfo::size() const {
+  return capi::ICU4XBidiInfo_size(this->inner.get());
+}
+inline uint8_t ICU4XBidiInfo::level_at(size_t pos) const {
+  return capi::ICU4XBidiInfo_level_at(this->inner.get(), pos);
 }
 #endif

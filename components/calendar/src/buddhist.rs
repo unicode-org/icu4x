@@ -5,9 +5,7 @@
 //! This module contains types and implementations for the Buddhist calendar.
 //!
 //! ```rust
-//! use icu::calendar::{
-//!     buddhist::Buddhist, types::IsoHour, types::IsoMinute, types::IsoSecond, Date, DateTime,
-//! };
+//! use icu::calendar::{buddhist::Buddhist, Date, DateTime};
 //!
 //! // `Date` type
 //! let date_iso = Date::new_iso_date_from_integers(1970, 1, 2)
@@ -161,7 +159,7 @@ impl DateTime<Buddhist> {
     /// Years are specified as BE years.
     ///
     /// ```rust
-    /// use icu::calendar::{types::IsoHour, types::IsoMinute, types::IsoSecond, DateTime};
+    /// use icu::calendar::DateTime;
     ///
     /// let datetime_buddhist = DateTime::new_buddhist_datetime(1970, 1, 2, 13, 1, 0)
     ///     .expect("Failed to initialize Buddhist DateTime instance.");

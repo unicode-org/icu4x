@@ -91,7 +91,7 @@ impl BufferProvider for BlobDataProvider {
     ) -> Result<DataResponse<BufferMarker>, DataError> {
         let mut metadata = DataResponseMetadata::default();
         // TODO(#1109): Set metadata.data_langid correctly.
-        metadata.buffer_format = Some(BufferFormat::Postcard07);
+        metadata.buffer_format = Some(BufferFormat::Postcard1);
         Ok(DataResponse {
             metadata,
             payload: Some(DataPayload::from_yoked_buffer(

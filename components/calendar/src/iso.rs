@@ -5,7 +5,7 @@
 //! This module contains types and implementations for the ISO calendar.
 //!
 //! ```rust
-//! use icu::calendar::{types::IsoHour, types::IsoMinute, types::IsoSecond, Date, DateTime};
+//! use icu::calendar::{Date, DateTime};
 //!
 //! // `Date` type
 //! let date_iso = Date::new_iso_date_from_integers(1970, 1, 2)
@@ -390,7 +390,7 @@ impl DateTime<Iso> {
     /// Construct a new ISO datetime from integers.
     ///
     /// ```rust
-    /// use icu::calendar::{types::IsoHour, types::IsoMinute, types::IsoSecond, DateTime};
+    /// use icu::calendar::DateTime;
     ///
     /// let datetime_iso = DateTime::new_iso_datetime_from_integers(1970, 1, 2, 13, 1, 0)
     ///     .expect("Failed to initialize ISO DateTime instance.");

@@ -50,19 +50,19 @@
         Invert the sign of the :cpp:class:`ICU4XFixedDecimal`.
         See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.negate>`__ for more information.
 
-    .. cpp:function:: void pad_left(uint16_t digits)
+    .. cpp:function:: void pad_left(int16_t position)
 
-        Zero-pad the :cpp:class:`ICU4XFixedDecimal` on the left to a particular number of integer digits
+        Zero-pad the :cpp:class:`ICU4XFixedDecimal` on the left to a particular position
         See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.pad_left>`__ for more information.
 
-    .. cpp:function:: void truncate_left(int16_t magnitude)
+    .. cpp:function:: void truncate_left(int16_t position)
 
-        Truncate the :cpp:class:`ICU4XFixedDecimal` on the left to a particular magnitude, deleting digits if necessary. This is useful for, e.g. abbreviating years ("2022" -> "22")
+        Truncate the :cpp:class:`ICU4XFixedDecimal` on the left to a particular position, deleting digits if necessary. This is useful for, e.g. abbreviating years ("2022" -> "22")
         See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.truncate_left>`__ for more information.
 
-    .. cpp:function:: void pad_right(uint16_t negative_magnitude)
+    .. cpp:function:: void pad_right(int16_t position)
 
-        Zero-pad the :cpp:class:`ICU4XFixedDecimal` on the right to a particular (negative) magnitude
+        Zero-pad the :cpp:class:`ICU4XFixedDecimal` on the right to a particular position
         See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.pad_right>`__ for more information.
 
     .. cpp:function:: template<typename W> void to_string_to_writeable(W& to) const

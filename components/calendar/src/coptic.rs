@@ -5,9 +5,7 @@
 //! This module contains types and implementations for the Coptic calendar.
 //!
 //! ```rust
-//! use icu::calendar::{
-//!     coptic::Coptic, types::IsoHour, types::IsoMinute, types::IsoSecond, Date, DateTime,
-//! };
+//! use icu::calendar::{coptic::Coptic, Date, DateTime};
 //!
 //! // `Date` type
 //! let date_iso = Date::new_iso_date_from_integers(1970, 1, 2)
@@ -237,7 +235,7 @@ impl DateTime<Coptic> {
     /// Construct a new Coptic datetime from integers.
     ///
     /// ```rust
-    /// use icu::calendar::{types::IsoHour, types::IsoMinute, types::IsoSecond, DateTime};
+    /// use icu::calendar::DateTime;
     ///
     /// let datetime_coptic = DateTime::new_coptic_datetime(1686, 5, 6, 13, 1, 0)
     ///     .expect("Failed to initialize Coptic DateTime instance.");

@@ -174,7 +174,7 @@ mod test {
     #[test]
     fn test_chars_valid() {
         // 1-byte, 2-byte, 3-byte, and 4-byte character in UTF-8 (not as relevant in UTF-32)
-        let zerovec_orig = ZeroVec::from_slice_or_alloc(&['w', 'ω', '文', '𑄃']);
+        let zerovec_orig = ZeroVec::alloc_from_slice(&['w', 'ω', '文', '𑄃']);
         let bincode_buf = bincode::serialize(&zerovec_orig).expect("serialize");
         let zerovec_new: ZeroVec<char> =
             bincode::deserialize(&bincode_buf).expect("deserialize from buffer to ZeroVec");

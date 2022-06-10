@@ -46,6 +46,7 @@ members = [
     "utils/litemap",
     "utils/pattern",
     "utils/tinystr",
+    "utils/tzif",
     "utils/uniset",
     "utils/writeable",
     "utils/yoke",

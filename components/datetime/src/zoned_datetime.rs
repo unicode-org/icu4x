@@ -4,6 +4,7 @@
 
 use alloc::string::String;
 use core::marker::PhantomData;
+use icu_decimal::provider::DecimalSymbolsV1Marker;
 use icu_locid::{unicode_ext_key, Locale};
 use icu_plurals::provider::OrdinalV1Marker;
 use icu_provider::prelude::*;
@@ -48,6 +49,7 @@ use crate::{
 /// let date_provider = InvariantDataProvider;
 /// let zone_provider = InvariantDataProvider;
 /// let plural_provider = InvariantDataProvider;
+/// let decimal_provider = InvariantDataProvider;
 ///
 /// let options = length::Bag::from_date_time_style(length::Date::Medium, length::Time::Short);
 /// let zdtf = ZonedDateTimeFormat::<Gregorian>::try_new(
@@ -55,6 +57,7 @@ use crate::{
 ///     &date_provider,
 ///     &zone_provider,
 ///     &plural_provider,
+///     &decimal_provider,
 ///     &options.into(),
 ///     &TimeZoneFormatOptions::default(),
 /// )
@@ -86,6 +89,7 @@ impl<C: CldrCalendar> ZonedDateTimeFormat<C> {
     /// let date_provider = InvariantDataProvider;
     /// let zone_provider = InvariantDataProvider;
     /// let plural_provider = InvariantDataProvider;
+    /// let decimal_provider = InvariantDataProvider;
     ///
     /// let options = DateTimeFormatOptions::default();
     ///
@@ -94,6 +98,7 @@ impl<C: CldrCalendar> ZonedDateTimeFormat<C> {
     ///     &date_provider,
     ///     &zone_provider,
     ///     &plural_provider,
+    ///     &decimal_provider,
     ///     &options,
     ///     &TimeZoneFormatOptions::default(),
     /// );
@@ -103,11 +108,12 @@ impl<C: CldrCalendar> ZonedDateTimeFormat<C> {
     ///
     /// [data provider]: icu_provider
     #[inline]
-    pub fn try_new<L, DP, ZP, PP>(
+    pub fn try_new<L, DP, ZP, PP, DEP>(
         locale: L,
         date_provider: &DP,
         zone_provider: &ZP,
         plural_provider: &PP,
+        decimal_provider: &DEP,
         date_time_format_options: &DateTimeFormatOptions,
         time_zone_format_options: &TimeZoneFormatOptions,
     ) -> Result<Self, DateTimeFormatError>
@@ -126,6 +132,7 @@ impl<C: CldrCalendar> ZonedDateTimeFormat<C> {
             + ResourceProvider<provider::time_zones::MetaZoneSpecificNamesShortV1Marker>
             + ?Sized,
         PP: ResourceProvider<OrdinalV1Marker> + ?Sized,
+        DEP: ResourceProvider<DecimalSymbolsV1Marker> + ?Sized,
     {
         let mut locale = locale.into();
         // TODO(#419): Resolve the locale calendar with the API calendar.
@@ -140,6 +147,7 @@ impl<C: CldrCalendar> ZonedDateTimeFormat<C> {
                 date_provider,
                 zone_provider,
                 plural_provider,
+                decimal_provider,
                 date_time_format_options,
                 time_zone_format_options,
             )?,
@@ -162,12 +170,14 @@ impl<C: CldrCalendar> ZonedDateTimeFormat<C> {
     /// # let date_provider = InvariantDataProvider;
     /// # let zone_provider = InvariantDataProvider;
     /// # let plural_provider = InvariantDataProvider;
+    /// # let decimal_provider = InvariantDataProvider;
     /// # let options = icu::datetime::DateTimeFormatOptions::default();
     /// let zdtf = ZonedDateTimeFormat::<Gregorian>::try_new(
     ///     locale,
     ///     &date_provider,
     ///     &zone_provider,
     ///     &plural_provider,
+    ///     &decimal_provider,
     ///     &options,
     ///     &TimeZoneFormatOptions::default(),
     /// )
@@ -208,12 +218,14 @@ impl<C: CldrCalendar> ZonedDateTimeFormat<C> {
     /// # let date_provider = InvariantDataProvider;
     /// # let zone_provider = InvariantDataProvider;
     /// # let plural_provider = InvariantDataProvider;
+    /// # let decimal_provider = InvariantDataProvider;
     /// # let options = icu::datetime::DateTimeFormatOptions::default();
     /// let zdtf = ZonedDateTimeFormat::<Gregorian>::try_new(
     ///     locale,
     ///     &date_provider,
     ///     &zone_provider,
     ///     &plural_provider,
+    ///     &decimal_provider,
     ///     &options.into(),
     ///     &TimeZoneFormatOptions::default(),
     /// )
@@ -252,12 +264,14 @@ impl<C: CldrCalendar> ZonedDateTimeFormat<C> {
     /// # let date_provider = InvariantDataProvider;
     /// # let zone_provider = InvariantDataProvider;
     /// # let plural_provider = InvariantDataProvider;
+    /// # let decimal_provider = InvariantDataProvider;
     /// # let options = icu::datetime::DateTimeFormatOptions::default();
     /// let zdtf = ZonedDateTimeFormat::<Gregorian>::try_new(
     ///     locale,
     ///     &date_provider,
     ///     &zone_provider,
     ///     &plural_provider,
+    ///     &decimal_provider,
     ///     &options.into(),
     ///     &TimeZoneFormatOptions::default(),
     /// )

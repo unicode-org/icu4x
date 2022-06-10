@@ -5,10 +5,7 @@
 //! This module contains types and implementations for the Japanese calendar.
 //!
 //! ```rust
-//! use icu::calendar::{
-//!     japanese::Japanese, types::Era, types::IsoHour, types::IsoMinute, types::IsoSecond, Date,
-//!     DateTime,
-//! };
+//! use icu::calendar::{japanese::Japanese, types::Era, Date, DateTime};
 //! use tinystr::tinystr;
 //!
 //! // `icu_testdata::get_provider` contains information specifying era dates.

@@ -5,9 +5,7 @@
 //! This module contains types and implementations for the Julian calendar.
 //!
 //! ```rust
-//! use icu::calendar::{
-//!     julian::Julian, types::IsoHour, types::IsoMinute, types::IsoSecond, Date, DateTime,
-//! };
+//! use icu::calendar::{julian::Julian, Date, DateTime};
 //!
 //! // `Date` type
 //! let date_iso = Date::new_iso_date_from_integers(1970, 1, 2)
@@ -268,7 +266,7 @@ impl DateTime<Julian> {
     /// Construct a new Julian datetime from integers.
     ///
     /// ```rust
-    /// use icu::calendar::{types::IsoHour, types::IsoMinute, types::IsoSecond, DateTime};
+    /// use icu::calendar::DateTime;
     ///
     /// let datetime_julian = DateTime::new_julian_datetime(1969, 12, 20, 13, 1, 0)
     ///     .expect("Failed to initialize Julian DateTime instance.");

@@ -100,10 +100,7 @@
 //! `Time` object, including granularity of hour, minute, second, and nanosecond.
 //!
 //! ```rust
-//! use icu_calendar::{
-//!     types::IsoHour, types::IsoMinute, types::IsoSecond, types::IsoWeekday, types::NanoSecond,
-//!     types::Time, DateDuration, DateTime,
-//! };
+//! use icu_calendar::{types::IsoWeekday, types::Time, DateDuration, DateTime};
 //!
 //! // Creating ISO date: 1992-09-02 8:59
 //! let mut datetime_iso = DateTime::new_iso_datetime_from_integers(1992, 9, 2, 8, 59, 0)

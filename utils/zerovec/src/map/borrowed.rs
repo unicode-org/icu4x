@@ -3,13 +3,13 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::ule::AsULE;
-use crate::{ZeroSlice, ZeroVec};
+use crate::ZeroSlice;
 
 use core::cmp::Ordering;
 use core::fmt;
 
 pub use super::kv::ZeroMapKV;
-pub use super::vecs::{BorrowedZeroVecLike, MutableZeroVecLike, ZeroVecLike};
+pub use super::vecs::{MutableZeroVecLike, ZeroVecLike};
 
 /// A borrowed-only version of [`ZeroMap`](super::ZeroMap)
 ///
@@ -42,8 +42,8 @@ where
     K: ?Sized,
     V: ?Sized,
 {
-    pub(crate) keys: &'a <<K as ZeroMapKV<'a>>::Container as ZeroVecLike<K>>::BorrowedVariant,
-    pub(crate) values: &'a <<V as ZeroMapKV<'a>>::Container as ZeroVecLike<V>>::BorrowedVariant,
+    pub(crate) keys: &'a <K as ZeroMapKV<'a>>::Slice,
+    pub(crate) values: &'a <V as ZeroMapKV<'a>>::Slice,
 }
 
 impl<'a, K, V> Copy for ZeroMapBorrowed<'a, K, V>
@@ -73,8 +73,8 @@ impl<'a, K, V> Default for ZeroMapBorrowed<'a, K, V>
 where
     K: ZeroMapKV<'a>,
     V: ZeroMapKV<'a>,
-    <<K as ZeroMapKV<'a>>::Container as ZeroVecLike<K>>::BorrowedVariant: 'static,
-    <<V as ZeroMapKV<'a>>::Container as ZeroVecLike<V>>::BorrowedVariant: 'static,
+    K::Slice: 'static,
+    V::Slice: 'static,
     K: ?Sized,
     V: ?Sized,
 {
@@ -87,8 +87,8 @@ impl<'a, K, V> ZeroMapBorrowed<'a, K, V>
 where
     K: ZeroMapKV<'a>,
     V: ZeroMapKV<'a>,
-    <<K as ZeroMapKV<'a>>::Container as ZeroVecLike<K>>::BorrowedVariant: 'static,
-    <<V as ZeroMapKV<'a>>::Container as ZeroVecLike<V>>::BorrowedVariant: 'static,
+    K::Slice: 'static,
+    V::Slice: 'static,
     K: ?Sized,
     V: ?Sized,
 {
@@ -107,10 +107,8 @@ where
     /// ```
     pub fn new() -> Self {
         Self {
-            keys: <<K as ZeroMapKV<'a>>::Container as ZeroVecLike<K>>::BorrowedVariant::zvl_new_borrowed(
-            ),
-            values:
-                <<V as ZeroMapKV<'a>>::Container as ZeroVecLike<V>>::BorrowedVariant::zvl_new_borrowed(),
+            keys: K::Container::zvl_new_borrowed(),
+            values: V::Container::zvl_new_borrowed(),
         }
     }
 }
@@ -256,7 +254,7 @@ where
 impl<'a, K, V> ZeroMapBorrowed<'a, K, V>
 where
     K: ZeroMapKV<'a> + ?Sized + Ord,
-    V: ZeroMapKV<'a, Container = ZeroVec<'a, V>> + ?Sized,
+    V: ZeroMapKV<'a, Slice = ZeroSlice<V>> + ?Sized,
     V: AsULE + Ord + Copy + 'static,
 {
     /// For cases when `V` is fixed-size, obtain a direct copy of `V` instead of `V::ULE`
@@ -283,8 +281,8 @@ where
 
 impl<'a, K, V> ZeroMapBorrowed<'a, K, V>
 where
-    K: ZeroMapKV<'a, Container = ZeroVec<'a, K>> + ?Sized,
-    V: ZeroMapKV<'a, Container = ZeroVec<'a, V>> + ?Sized,
+    K: ZeroMapKV<'a, Slice = ZeroSlice<K>> + ?Sized,
+    V: ZeroMapKV<'a, Slice = ZeroSlice<V>> + ?Sized,
     K: AsULE + Copy + Ord + 'static,
     V: AsULE + Copy + Ord + 'static,
 {
@@ -313,10 +311,8 @@ impl<'a, 'b, K, V> PartialEq<ZeroMapBorrowed<'b, K, V>> for ZeroMapBorrowed<'a, 
 where
     K: for<'c> ZeroMapKV<'c> + ?Sized,
     V: for<'c> ZeroMapKV<'c> + ?Sized,
-    <<K as ZeroMapKV<'a>>::Container as ZeroVecLike<K>>::BorrowedVariant:
-        PartialEq<<<K as ZeroMapKV<'b>>::Container as ZeroVecLike<K>>::BorrowedVariant>,
-    <<V as ZeroMapKV<'a>>::Container as ZeroVecLike<V>>::BorrowedVariant:
-        PartialEq<<<V as ZeroMapKV<'b>>::Container as ZeroVecLike<V>>::BorrowedVariant>,
+    <K as ZeroMapKV<'a>>::Slice: PartialEq<<K as ZeroMapKV<'b>>::Slice>,
+    <V as ZeroMapKV<'a>>::Slice: PartialEq<<V as ZeroMapKV<'b>>::Slice>,
 {
     fn eq(&self, other: &ZeroMapBorrowed<'b, K, V>) -> bool {
         self.keys.eq(other.keys) && self.values.eq(other.values)
@@ -327,8 +323,8 @@ impl<'a, K, V> fmt::Debug for ZeroMapBorrowed<'a, K, V>
 where
     K: ZeroMapKV<'a> + ?Sized,
     V: ZeroMapKV<'a> + ?Sized,
-    <<K as ZeroMapKV<'a>>::Container as ZeroVecLike<K>>::BorrowedVariant: fmt::Debug,
-    <<V as ZeroMapKV<'a>>::Container as ZeroVecLike<V>>::BorrowedVariant: fmt::Debug,
+    K::Slice: fmt::Debug,
+    V::Slice: fmt::Debug,
 {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> Result<(), fmt::Error> {
         f.debug_struct("ZeroMapBorrowed")

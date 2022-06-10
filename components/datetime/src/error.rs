@@ -8,6 +8,7 @@ use crate::pattern::PatternError;
 use crate::skeleton::SkeletonError;
 use displaydoc::Display;
 use icu_calendar::any_calendar::AnyCalendarKind;
+use icu_decimal::FixedDecimalFormatError;
 use icu_plurals::PluralRulesError;
 use icu_provider::prelude::DataError;
 use tinystr::TinyStr16;
@@ -53,6 +54,12 @@ pub enum DateTimeFormatError {
     /// An error originating from a missing era symbol in the data.
     #[displaydoc("Data file missing era symbol for era code {0}")]
     MissingEraSymbol(TinyStr16),
+    /// An error while attempting to format the input as a FixedDecimal
+    #[displaydoc("FixedDecimal")]
+    FixedDecimal,
+    /// An error originating from FixedDecimalFormat
+    #[displaydoc("{0}")]
+    FixedDecimalFormat(FixedDecimalFormatError),
     /// An error from mixing calendar types
     #[displaydoc("AnyDateTimeFormat for {0} calendar was given a {0:?} calendar")]
     MismatchedAnyCalendar(AnyCalendarKind, Option<AnyCalendarKind>),

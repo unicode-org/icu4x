@@ -30,6 +30,14 @@ pub fn get_all_keys() -> Vec<ResourceKey> {
         icu_casemapping::provider::CaseMappingV1Marker::KEY,
         #[cfg(feature = "experimental")]
         icu_normalizer::provider::CanonicalDecompositionDataV1Marker::KEY,
+        #[cfg(feature = "experimental")]
+        icu_normalizer::provider::CompatibilityDecompositionSupplementV1Marker::KEY,
+        #[cfg(feature = "experimental")]
+        icu_normalizer::provider::Uts46DecompositionSupplementV1Marker::KEY,
+        #[cfg(feature = "experimental")]
+        icu_normalizer::provider::CanonicalDecompositionTablesV1Marker::KEY,
+        #[cfg(feature = "experimental")]
+        icu_normalizer::provider::CompatibilityDecompositionTablesV1Marker::KEY,
     ];
     v.extend(icu_properties::provider::ALL_KEYS);
     #[cfg(feature = "experimental")]
@@ -161,12 +169,11 @@ macro_rules! create_datagen_provider {
                 $crate::transform::uprops::BinaryPropertyUnicodeSetDataProvider,
                 $crate::transform::segmenter::SegmenterRuleProvider,
                 $crate::transform::uprops::CanonicalDecompositionDataProvider,
-                $crate::transform::collator::CollationDataDataProvider,
-                $crate::transform::collator::CollationDiacriticsDataProvider,
-                $crate::transform::collator::CollationJamoDataProvider,
-                $crate::transform::collator::CollationMetadataDataProvider,
-                $crate::transform::collator::CollationReorderingDataProvider,
-                $crate::transform::collator::CollationSpecialPrimariesDataProvider,
+                $crate::transform::uprops::CompatibilityDecompositionSupplementProvider,
+                $crate::transform::uprops::Uts46DecompositionSupplementProvider,
+                $crate::transform::uprops::CanonicalDecompositionTablesProvider,
+                $crate::transform::uprops::CompatibilityDecompositionTablesProvider,
+                $crate::transform::collator::CollationProvider,
             ]
         )
     };

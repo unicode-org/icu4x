@@ -59,6 +59,7 @@ pub fn make_ule_impl(attr: AttributeArgs, mut input: DeriveInput) -> TokenStream
         quote!(
             impl<'a> zerovec::maps::ZeroMapKV<'a> for #name {
                 type Container = zerovec::ZeroVec<'a, #name>;
+                type Slice = zerovec::ZeroSlice<#name>;
                 type GetType = #ule_name;
                 type OwnedType = #name;
             }

@@ -3,7 +3,6 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::transform::cldr::cldr_serde;
-use crate::transform::reader::open_reader;
 use crate::SourceData;
 use icu_locale_canonicalizer::provider::*;
 use icu_locid::{language, subtags, LanguageIdentifier};
@@ -34,20 +33,16 @@ impl ResourceProvider<AliasesV1Marker> for AliasesProvider {
             return Err(DataErrorKind::ExtraneousResourceOptions.into_error());
         }
 
-        let path = self
+        let data: &cldr_serde::aliases::Resource = self
             .source
             .get_cldr_paths()?
             .cldr_core()
-            .join("supplemental")
-            .join("aliases.json");
-        let data: cldr_serde::aliases::Resource = serde_json::from_reader(open_reader(&path)?)
-            .map_err(|e| DataError::from(e).with_path_context(&path))?;
-
+            .read_and_parse("supplemental/aliases.json")?;
         let metadata = DataResponseMetadata::default();
         // TODO(#1109): Set metadata.data_langid correctly.
         Ok(DataResponse {
             metadata,
-            payload: Some(DataPayload::from_owned(AliasesV1::from(&data))),
+            payload: Some(DataPayload::from_owned(AliasesV1::from(data))),
         })
     }
 }
@@ -150,7 +145,9 @@ impl From<&cldr_serde::aliases::Resource> for AliasesV1<'_> {
                         (language, None, Some(region), false)
                             if language == language!("sgn")
                                 && !replacement.language.is_empty()
-                                && replacement == replacement.language.as_str() =>
+                                && replacement.script.is_none()
+                                && replacement.region.is_none()
+                                && replacement.variants == subtags::Variants::new() =>
                         {
                             sgn_region.insert(&region.into(), &replacement.language);
                         }
@@ -281,7 +278,7 @@ impl From<&cldr_serde::aliases::Resource> for AliasesV1<'_> {
 fn test_rules_cmp() {
     let mut rules: Vec<LanguageIdentifier> = vec![
         icu_locid::langid!("en-GB"),
-        icu_locid::langid!("CA"),
+        icu_locid::langid!("ca"),
         "und-hepburn-heploc".parse().unwrap(),
         icu_locid::langid!("fr-CA"),
     ];
@@ -292,10 +289,10 @@ fn test_rules_cmp() {
     assert_eq!(union_size(&rules[3]), 2);
 
     rules.sort_unstable_by(rules_cmp);
-    assert_eq!(rules[0], "en-GB");
-    assert_eq!(rules[1], "fr-CA");
-    assert_eq!(rules[2], "und-hepburn-heploc");
-    assert_eq!(rules[3], "CA");
+    assert_eq!(rules[0].to_string(), "en-GB");
+    assert_eq!(rules[1].to_string(), "fr-CA");
+    assert_eq!(rules[2].to_string(), "und-hepburn-heploc");
+    assert_eq!(rules[3].to_string(), "ca");
 }
 
 #[test]

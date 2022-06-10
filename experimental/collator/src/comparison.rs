@@ -10,8 +10,8 @@
 //! the comparison of collation element sequences.
 
 use crate::elements::{
-    CollationElement, CollationElements, NonPrimary, COMBINING_DIACRITICS_COUNT, JAMO_COUNT, NO_CE,
-    NO_CE_PRIMARY, NO_CE_SECONDARY, NO_CE_TERTIARY, QUATERNARY_MASK,
+    CollationElement, CollationElements, NonPrimary, JAMO_COUNT, NO_CE, NO_CE_PRIMARY,
+    NO_CE_SECONDARY, NO_CE_TERTIARY, OPTIMIZED_DIACRITICS_MAX_COUNT, QUATERNARY_MASK,
 };
 use crate::error::CollatorError;
 use crate::provider::CollationDataV1Marker;
@@ -27,6 +27,7 @@ use core::cmp::Ordering;
 use core::convert::TryFrom;
 use icu_locid::Locale;
 use icu_normalizer::provider::CanonicalDecompositionDataV1Marker;
+use icu_normalizer::provider::CanonicalDecompositionTablesV1Marker;
 use icu_normalizer::Decomposition;
 use icu_properties::provider::CanonicalCombiningClassV1Marker;
 use icu_provider::DataPayload;
@@ -72,6 +73,7 @@ pub struct Collator {
     options: CollatorOptions,
     reordering: Option<DataPayload<CollationReorderingV1Marker>>,
     decompositions: DataPayload<CanonicalDecompositionDataV1Marker>,
+    tables: DataPayload<CanonicalDecompositionTablesV1Marker>,
     ccc: DataPayload<CanonicalCombiningClassV1Marker>,
     lithuanian_dot_above: bool,
 }
@@ -90,6 +92,7 @@ impl Collator {
             + ResourceProvider<CollationMetadataV1Marker>
             + ResourceProvider<CollationReorderingV1Marker>
             + ResourceProvider<CanonicalDecompositionDataV1Marker>
+            + ResourceProvider<CanonicalDecompositionTablesV1Marker>
             + ResourceProvider<CanonicalCombiningClassV1Marker>
             + ?Sized,
     {
@@ -176,9 +179,10 @@ impl Collator {
             .load_resource(&DataRequest::default())?
             .take_payload()?;
 
+        let tailored_diacritics = metadata.tailored_diacritics();
         let diacritics: DataPayload<CollationDiacriticsV1Marker> = data_provider
             .load_resource(&DataRequest {
-                options: if metadata.tailored_diacritics() {
+                options: if tailored_diacritics {
                     resource_options
                 } else {
                     ResourceOptions::default()
@@ -187,7 +191,16 @@ impl Collator {
             })?
             .take_payload()?;
 
-        if diacritics.get().ce32s.len() != COMBINING_DIACRITICS_COUNT {
+        if tailored_diacritics {
+            // In the tailored case we accept a shorter table in which case the tailoring is
+            // responsible for supplying the missing values in the trie.
+            // As of June 2022, none of the collations actually use a shortened table.
+            // Vietnamese and Ewe load a full-length alternative table and the rest use
+            // the default one.
+            if diacritics.get().secondaries.len() > OPTIMIZED_DIACRITICS_MAX_COUNT {
+                return Err(CollatorError::MalformedData);
+            }
+        } else if diacritics.get().secondaries.len() != OPTIMIZED_DIACRITICS_MAX_COUNT {
             return Err(CollatorError::MalformedData);
         }
 
@@ -200,6 +213,10 @@ impl Collator {
         }
 
         let decompositions: DataPayload<CanonicalDecompositionDataV1Marker> = data_provider
+            .load_resource(&DataRequest::default())?
+            .take_payload()?;
+
+        let tables: DataPayload<CanonicalDecompositionTablesV1Marker> = data_provider
             .load_resource(&DataRequest::default())?
             .take_payload()?;
 
@@ -246,24 +263,14 @@ impl Collator {
             options: merged_options,
             reordering,
             decompositions,
+            tables,
             ccc,
             lithuanian_dot_above: metadata.lithuanian_dot_above(),
         })
     }
 
     pub fn compare_utf16(&self, left: &[u16], right: &[u16]) -> Ordering {
-        // XXX u16-compare prefix, but some knowledge of possible
-        // PrefixTag cases is needed to know how much to back off
-        // before real collation to feed the prefix into the
-        // collation unit lookup.
-        // ICU4C says this, which suggests its backwardUnsafe set
-        // doesn't work exactly here unless we know the worst-case
-        // prefix length and pre-normalize that many characters into
-        // the prefix buffer of CollationElements:
-        //
-        // "Pass the actual start of each string into the CollationIterators,
-        // plus the equalPrefixLength position,
-        // so that prefix matches back into the equal prefix work."
+        // TODO(#2010): Identical prefix skipping not implemented.
         let ret = self.compare_impl(
             decode_utf16(left.iter().copied()).map(utf16_error_to_replacement),
             decode_utf16(right.iter().copied()).map(utf16_error_to_replacement),
@@ -272,11 +279,13 @@ impl Collator {
             return Decomposition::new(
                 decode_utf16(left.iter().copied()).map(utf16_error_to_replacement),
                 self.decompositions.get(),
+                self.tables.get(),
                 &self.ccc.get().code_point_trie,
             )
             .cmp(Decomposition::new(
                 decode_utf16(right.iter().copied()).map(utf16_error_to_replacement),
                 self.decompositions.get(),
+                self.tables.get(),
                 &self.ccc.get().code_point_trie,
             ));
         }
@@ -284,28 +293,19 @@ impl Collator {
     }
 
     pub fn compare(&self, left: &str, right: &str) -> Ordering {
-        // XXX byte-compare prefix, but some knowledge of possible
-        // PrefixTag cases is needed to know how much to back off
-        // before real collation to feed the prefix into the
-        // collation unit lookup.
-        // ICU4C says this, which suggests its backwardUnsafe set
-        // doesn't work exactly here unless we know the worst-case
-        // prefix length and pre-normalize that many characters into
-        // the prefix buffer of CollationElements:
-        //
-        // "Pass the actual start of each string into the CollationIterators,
-        // plus the equalPrefixLength position,
-        // so that prefix matches back into the equal prefix work."
+        // TODO(#2010): Identical prefix skipping not implemented.
         let ret = self.compare_impl(left.chars(), right.chars());
         if self.options.strength() == Strength::Identical && ret == Ordering::Equal {
             return Decomposition::new(
                 left.chars(),
                 self.decompositions.get(),
+                self.tables.get(),
                 &self.ccc.get().code_point_trie,
             )
             .cmp(Decomposition::new(
                 right.chars(),
                 self.decompositions.get(),
+                self.tables.get(),
                 &self.ccc.get().code_point_trie,
             ));
         }
@@ -313,28 +313,19 @@ impl Collator {
     }
 
     pub fn compare_utf8(&self, left: &[u8], right: &[u8]) -> Ordering {
-        // XXX byte-compare prefix, but some knowledge of possible
-        // PrefixTag cases is needed to know how much to back off
-        // before real collation to feed the prefix into the
-        // collation unit lookup.
-        // ICU4C says this, which suggests its backwardUnsafe set
-        // doesn't work exactly here unless we know the worst-case
-        // prefix length and pre-normalize that many characters into
-        // the prefix buffer of CollationElements:
-        //
-        // "Pass the actual start of each string into the CollationIterators,
-        // plus the equalPrefixLength position,
-        // so that prefix matches back into the equal prefix work."
+        // TODO(#2010): Identical prefix skipping not implemented.
         let ret = self.compare_impl(left.chars(), right.chars());
         if self.options.strength() == Strength::Identical && ret == Ordering::Equal {
             return Decomposition::new(
                 left.chars(),
                 self.decompositions.get(),
+                self.tables.get(),
                 &self.ccc.get().code_point_trie,
             )
             .cmp(Decomposition::new(
                 right.chars(),
                 self.decompositions.get(),
+                self.tables.get(),
                 &self.ccc.get().code_point_trie,
             ));
         }
@@ -350,7 +341,7 @@ impl Collator {
                 // use the root as the tailoring so that reads from the
                 // tailoring always succeed.
                 //
-                // XXX Do we instead want to have an untailored
+                // TODO(#2011): Do we instead want to have an untailored
                 // copypaste of the iterator that omits the tailoring
                 // branches for performance at the expense of code size
                 // and having to maintain both a tailoring-capable and
@@ -362,14 +353,17 @@ impl Collator {
                 &self.root
             };
 
-        // Sadly, it looks like variable CEs require us to store the full
-        // 64-bit CEs instead of storing only the NonPrimary part.
-        // XXX Consider having to flavors of this method:
-        // one that can deal with variables shifted to quaternary
-        // and another that doesn't support that.
-        // XXX what about primary ignorables with primary + case?
+        // Sadly, it looks like variable CEs and backward second level
+        // require us to store the full 64-bit CEs instead of storing only
+        // the NonPrimary part.
+        //
+        // TODO(#2008): Consider having two monomorphizations of this method:
+        // one that can deal with variables shifted to quaternary and
+        // backward second level and another that doesn't support that
+        // and only stores `NonPrimary` in `left_ces` and `right_ces`
+        // with double the number of stack allocated elements.
 
-        // XXX figure out a proper size for these
+        // TODO(#2007): figure out a proper stack buffer length for these
         let mut left_ces: SmallVec<[CollationElement; 8]> = SmallVec::new();
         let mut right_ces: SmallVec<[CollationElement; 8]> = SmallVec::new();
 
@@ -406,11 +400,9 @@ impl Collator {
             tailoring.get(),
             <&[<u32 as AsULE>::ULE; JAMO_COUNT]>::try_from(self.jamo.get().ce32s.as_ule_slice())
                 .unwrap(), // length already validated
-            <&[<u32 as AsULE>::ULE; COMBINING_DIACRITICS_COUNT]>::try_from(
-                self.diacritics.get().ce32s.as_ule_slice(),
-            )
-            .unwrap(), // length already validated
+            &self.diacritics.get().secondaries,
             self.decompositions.get(),
+            self.tables.get(),
             &self.ccc.get().code_point_trie,
             numeric_primary,
             self.lithuanian_dot_above,
@@ -421,11 +413,9 @@ impl Collator {
             tailoring.get(),
             <&[<u32 as AsULE>::ULE; JAMO_COUNT]>::try_from(self.jamo.get().ce32s.as_ule_slice())
                 .unwrap(), // length already validated
-            <&[<u32 as AsULE>::ULE; COMBINING_DIACRITICS_COUNT]>::try_from(
-                self.diacritics.get().ce32s.as_ule_slice(),
-            )
-            .unwrap(), // length already validated
+            &self.diacritics.get().secondaries,
             self.decompositions.get(),
+            self.tables.get(),
             &self.ccc.get().code_point_trie,
             numeric_primary,
             self.lithuanian_dot_above,
@@ -435,7 +425,7 @@ impl Collator {
             'left_primary_loop: loop {
                 let ce = left.next();
                 left_primary = ce.primary();
-                // XXX consider compiling out the variable handling when we know we aren't
+                // TODO(#2008): Consider compiling out the variable handling when we know we aren't
                 // shifting variable CEs.
                 if !(left_primary < variable_top && left_primary > MERGE_SEPARATOR_PRIMARY) {
                     left_ces.push(ce);
@@ -473,7 +463,7 @@ impl Collator {
             'right_primary_loop: loop {
                 let ce = right.next();
                 right_primary = ce.primary();
-                // XXX consider compiling out the variable handling when we know we aren't
+                // TODO(#2008): Consider compiling out the variable handling when we know we aren't
                 // shifting variable CEs.
                 if !(right_primary < variable_top && right_primary > MERGE_SEPARATOR_PRIMARY) {
                     right_ces.push(ce);
@@ -528,12 +518,12 @@ impl Collator {
         debug_assert_eq!(left_ces[left_ces.len() - 1], NO_CE);
         debug_assert_eq!(right_ces[right_ces.len() - 1], NO_CE);
 
-        // Note: unwrap_or_default in the iterations below should never
+        // Note: `unwrap_or_default` in the iterations below should never
         // actually end up using the "_or_default" part, because the sentinel
-        // is in the vectors? These could be changed to `unwrap()` if we
+        // is in the `SmallVec`s. These could be changed to `unwrap()` if we
         // preferred panic in case of a bug.
-        // XXX: Should we save one slot by not putting the sentinel in the
-        // vectors? So far, the answer seems "no", as it would complicate
+        // TODO(#2009): Should we save one slot by not putting the sentinel in
+        // the `SmallVec`s? So far, the answer seems "no", as it would complicate
         // the primary comparison above.
 
         // Compare the buffered secondary & tertiary weights.

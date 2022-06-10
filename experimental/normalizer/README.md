@@ -31,10 +31,11 @@ Since the normalizer produces output with `char` values read from the data, UB e
 invalid data with values outside the scalar value range is used. TODO: data validation.
 
 The decompositions of non-starters are hard-coded. At present in Unicode, these appear
-to be special cases falling into two categories:
+to be special cases falling into three categories:
 
 1. Deprecated Greek combining marks.
 2. Particular Tibetan vowel sings.
+3. NFKD only: half-width kana voicing marks.
 
 Hopefully Unicode never adds more decomposing non-starters, but if it does, a code update
 is needed instead of a mere data update.

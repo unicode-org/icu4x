@@ -76,6 +76,7 @@ proc-macro2 = "1.0"
 crlify = { version = "1", path = "../../utils/crlify"}
 syn = {version = "1.0", features = ["parsing"] }
 writeable = { version = "0.4", path = "../../utils/writeable", optional = true }
+zip = "0.6"
 
 # Dependencies for "bin" feature
 clap = { version = "2.33", optional = true }

@@ -35,10 +35,11 @@
 //! invalid data with values outside the scalar value range is used. TODO: data validation.
 //!
 //! The decompositions of non-starters are hard-coded. At present in Unicode, these appear
-//! to be special cases falling into two categories:
+//! to be special cases falling into three categories:
 //!
 //! 1. Deprecated Greek combining marks.
 //! 2. Particular Tibetan vowel sings.
+//! 3. NFKD only: half-width kana voicing marks.
 //!
 //! Hopefully Unicode never adds more decomposing non-starters, but if it does, a code update
 //! is needed instead of a mere data update.
@@ -47,10 +48,14 @@ extern crate alloc;
 
 pub mod error;
 pub mod provider;
+pub mod u24;
 
 use crate::error::NormalizerError;
-use crate::provider::CanonicalDecompositionDataV1;
 use crate::provider::CanonicalDecompositionDataV1Marker;
+use crate::provider::CompatibilityDecompositionSupplementV1Marker;
+use crate::provider::DecompositionDataV1;
+#[cfg(test)]
+use crate::provider::Uts46DecompositionSupplementV1Marker;
 use alloc::string::String;
 use alloc::vec::Vec;
 use core::char::{decode_utf16, DecodeUtf16Error, REPLACEMENT_CHARACTER};
@@ -60,10 +65,41 @@ use icu_properties::CanonicalCombiningClass;
 use icu_provider::DataPayload;
 use icu_provider::DataRequest;
 use icu_provider::ResourceProvider;
+use icu_uniset::UnicodeSet;
+use provider::CanonicalDecompositionTablesV1Marker;
+use provider::CompatibilityDecompositionTablesV1Marker;
+use provider::DecompositionSupplementV1;
+use provider::DecompositionTablesV1;
 use smallvec::SmallVec;
+use u24::EMPTY_U24;
+use u24::U24;
 use utf8_iter::Utf8CharsEx;
+use zerofrom::ZeroFrom;
 use zerovec::ule::AsULE;
 use zerovec::ZeroSlice;
+
+enum SupplementPayloadHolder {
+    Compatibility(DataPayload<CompatibilityDecompositionSupplementV1Marker>),
+    #[cfg(test)]
+    Uts46(DataPayload<Uts46DecompositionSupplementV1Marker>),
+}
+
+impl SupplementPayloadHolder {
+    fn get(&self) -> &DecompositionSupplementV1 {
+        match self {
+            SupplementPayloadHolder::Compatibility(d) => d.get(),
+            #[cfg(test)]
+            SupplementPayloadHolder::Uts46(d) => d.get(),
+        }
+    }
+}
+
+/// The tail (everything after the first character) of the NFKD form U+FDFA
+/// as 16-bit units.
+static FDFA_NFKD: [u16; 17] = [
+    0x644, 0x649, 0x20, 0x627, 0x644, 0x644, 0x647, 0x20, 0x639, 0x644, 0x64A, 0x647, 0x20, 0x648,
+    0x633, 0x644, 0x645,
+];
 
 // These constants originate from page 143 of Unicode 14.0
 /// Syllable base
@@ -109,10 +145,14 @@ fn char_from_u16(u: u16) -> char {
     char_from_u32(u32::from(u))
 }
 
+/// Convert a `U24` _obtained from data provider data_ to `char`.
+#[inline(always)]
+fn char_from_u24(u: U24) -> char {
+    char_from_u32(u.into())
+}
+
 const EMPTY_U16: &ZeroSlice<u16> =
-    ZeroSlice::<u16>::from_ule_slice_const(&<u16 as AsULE>::ULE::from_array([]));
-const EMPTY_U32: &ZeroSlice<u32> =
-    ZeroSlice::<u32>::from_ule_slice_const(&<u32 as AsULE>::ULE::from_array([]));
+    ZeroSlice::<u16>::from_ule_slice(&<u16 as AsULE>::ULE::from_array([]));
 
 #[inline(always)]
 fn split_first_u16(s: Option<&ZeroSlice<u16>>) -> (char, &ZeroSlice<u16>) {
@@ -131,19 +171,19 @@ fn split_first_u16(s: Option<&ZeroSlice<u16>>) -> (char, &ZeroSlice<u16>) {
 }
 
 #[inline(always)]
-fn split_first_u32(s: Option<&ZeroSlice<u32>>) -> (char, &ZeroSlice<u32>) {
+fn split_first_u24(s: Option<&ZeroSlice<U24>>) -> (char, &ZeroSlice<U24>) {
     if let Some(slice) = s {
         if let Some(first) = slice.first() {
             // `unwrap()` must succeed, because `first()` returned `Some`.
             return (
-                char_from_u32(first),
+                char_from_u24(first),
                 slice.get_subslice(1..slice.len()).unwrap(),
             );
         }
     }
     // GIGO case
     debug_assert!(false);
-    (REPLACEMENT_CHARACTER, EMPTY_U32)
+    (REPLACEMENT_CHARACTER, EMPTY_U24)
 }
 
 #[inline(always)]
@@ -212,8 +252,7 @@ fn sort_slice_by_ccc<'data>(
 }
 
 /// An iterator adaptor that turns an `Iterator` over `char` into
-/// a lazily-decomposed (currently only NFD though NFKD should also
-/// be possible) `char` sequence.
+/// a lazily-decomposed `char` sequence.
 pub struct Decomposition<'data, I>
 where
     I: Iterator<Item = char>,
@@ -225,8 +264,17 @@ where
     /// the rest upon every read.
     buffer_pos: usize,
     pending_unnormalized_starter: Option<char>, // None at end of stream
-    decompositions: &'data CanonicalDecompositionDataV1<'data>,
+    trie: &'data CodePointTrie<'data, u32>,
+    supplementary_trie: Option<&'data CodePointTrie<'data, u32>>,
+    decomposition_starts_with_non_starter: UnicodeSet<'data>,
+    scalars16: &'data ZeroSlice<u16>,
+    scalars24: &'data ZeroSlice<U24>,
+    supplementary_scalars16: &'data ZeroSlice<u16>,
+    supplementary_scalars24: &'data ZeroSlice<U24>,
     ccc: &'data CodePointTrie<'data, CanonicalCombiningClass>,
+    half_width_voicing_marks_become_non_starters: bool,
+    iota_subscript_becomes_starter: bool,
+    has_starter_exceptions: bool,
 }
 
 impl<'data, I> Decomposition<'data, I>
@@ -234,15 +282,43 @@ where
     I: Iterator<Item = char>,
 {
     /// Constructs a decomposing iterator adapter from a delegate
-    /// iterator and references to the necessary data.
+    /// iterator and references to the necessary data, without
+    /// supplementary data.
     ///
     /// Use `DecomposingNormalizer::normalize_iter()` instead unless
     /// there's a good reason to use this constructor directly.
     pub fn new(
         delegate: I,
-        decompositions: &'data CanonicalDecompositionDataV1,
+        decompositions: &'data DecompositionDataV1,
+        tables: &'data DecompositionTablesV1,
         ccc: &'data CodePointTrie<'data, CanonicalCombiningClass>,
     ) -> Self {
+        Self::new_with_supplements(delegate, decompositions, None, tables, None, ccc)
+    }
+
+    /// Constructs a decomposing iterator adapter from a delegate
+    /// iterator and references to the necessary data, including
+    /// supplementary data.
+    ///
+    /// Use `DecomposingNormalizer::normalize_iter()` instead unless
+    /// there's a good reason to use this constructor directly.
+    pub fn new_with_supplements(
+        delegate: I,
+        decompositions: &'data DecompositionDataV1,
+        supplementary_decompositions: Option<&'data DecompositionSupplementV1>,
+        tables: &'data DecompositionTablesV1,
+        supplementary_tables: Option<&'data DecompositionTablesV1>,
+        ccc: &'data CodePointTrie<'data, CanonicalCombiningClass>,
+    ) -> Self {
+        let (half_width_voicing_marks_become_non_starters, iota_subscript_becomes_starter) =
+            if let Some(supplementary) = supplementary_decompositions {
+                (
+                    supplementary.half_width_voicing_marks_become_non_starters(),
+                    supplementary.iota_subscript_becomes_starter(),
+                )
+            } else {
+                (false, false)
+            };
         let mut ret = Decomposition::<I> {
             delegate,
             buffer: SmallVec::new(), // Normalized
@@ -250,11 +326,102 @@ where
             // Initialize with a placeholder starter in case
             // the real stream starts with a non-starter.
             pending_unnormalized_starter: Some('\u{FFFF}'),
-            decompositions,
+            trie: &decompositions.trie,
+            supplementary_trie: supplementary_decompositions.map(|s| &s.trie),
+            decomposition_starts_with_non_starter: UnicodeSet::zero_from(
+                &decompositions.decomposition_starts_with_non_starter,
+            ),
+            scalars16: &tables.scalars16,
+            scalars24: &tables.scalars24,
+            supplementary_scalars16: if let Some(supplementary) = supplementary_tables {
+                &supplementary.scalars16
+            } else {
+                EMPTY_U16
+            },
+            supplementary_scalars24: if let Some(supplementary) = supplementary_tables {
+                &supplementary.scalars24
+            } else {
+                EMPTY_U24
+            },
             ccc,
+            half_width_voicing_marks_become_non_starters,
+            iota_subscript_becomes_starter,
+            has_starter_exceptions: half_width_voicing_marks_become_non_starters
+                || iota_subscript_becomes_starter,
         };
         let _ = ret.next(); // Remove the U+FFFF placeholder
         ret
+    }
+
+    #[inline(always)]
+    fn decomposition_starts_with_non_starter(&self, c: char) -> bool {
+        if self.has_starter_exceptions {
+            if u32::from(c) & !1 == 0xFF9E {
+                return self.half_width_voicing_marks_become_non_starters;
+            }
+            if c == '\u{0345}' {
+                return !self.iota_subscript_becomes_starter;
+            }
+        }
+        self.decomposition_starts_with_non_starter.contains(c)
+    }
+
+    fn push_decomposition16(
+        &mut self,
+        low: u16,
+        offset: usize,
+        slice16: &ZeroSlice<u16>,
+    ) -> (char, usize) {
+        let len = usize::from(low >> 13) + 2;
+        let (starter, tail) = split_first_u16(slice16.get_subslice(offset..offset + len));
+        if low & 0x1000 != 0 {
+            // All the rest are combining
+            for u in tail.iter() {
+                self.buffer.push(CharacterAndClass::new(char_from_u16(u)));
+            }
+            (starter, 0)
+        } else {
+            let mut i = 0;
+            let mut combining_start = 0;
+            for u in tail.iter() {
+                let ch = char_from_u16(u);
+                self.buffer.push(CharacterAndClass::new(ch));
+                i += 1;
+                if !self.decomposition_starts_with_non_starter(ch) {
+                    combining_start = i;
+                }
+            }
+            (starter, combining_start)
+        }
+    }
+
+    fn push_decomposition32(
+        &mut self,
+        low: u16,
+        offset: usize,
+        slice32: &ZeroSlice<U24>,
+    ) -> (char, usize) {
+        let len = usize::from(low >> 13) + 1;
+        let (starter, tail) = split_first_u24(slice32.get_subslice(offset..offset + len));
+        if low & 0x1000 != 0 {
+            // All the rest are combining
+            for u in tail.iter() {
+                self.buffer.push(CharacterAndClass::new(char_from_u24(u)));
+            }
+            (starter, 0)
+        } else {
+            let mut i = 0;
+            let mut combining_start = 0;
+            for u in tail.iter() {
+                let ch = char_from_u24(u);
+                self.buffer.push(CharacterAndClass::new(ch));
+                i += 1;
+                if !self.decomposition_starts_with_non_starter(ch) {
+                    combining_start = i;
+                }
+            }
+            (starter, combining_start)
+        }
     }
 }
 
@@ -279,7 +446,19 @@ where
         let (starter, combining_start) = {
             let hangul_offset = u32::from(c).wrapping_sub(HANGUL_S_BASE); // SIndex in the spec
             if hangul_offset >= HANGUL_S_COUNT {
-                let decomposition = self.decompositions.trie.get(u32::from(c));
+                let mut decomposition;
+                // The loop is only broken out of as goto forward
+                #[allow(clippy::never_loop)]
+                loop {
+                    if let Some(supplementary) = self.supplementary_trie {
+                        decomposition = supplementary.get(u32::from(c));
+                        if decomposition != 0 {
+                            break;
+                        }
+                    }
+                    decomposition = self.trie.get(u32::from(c));
+                    break;
+                }
                 if decomposition == 0 {
                     // The character is its own decomposition
                     (c, 0)
@@ -293,84 +472,66 @@ where
                         self.buffer.push(CharacterAndClass::new(combining));
                         (starter, 0)
                     } else if high != 0 {
-                        // Decomposition into one BMP character
-                        let starter = char_from_u16(high);
-                        (starter, 0)
+                        if high != 1 {
+                            // Decomposition into one BMP character
+                            let starter = char_from_u16(high);
+                            (starter, 0)
+                        } else {
+                            // Special case for the NFKD form of U+FDFA.
+                            for u in FDFA_NFKD {
+                                // Safe, because `FDFA_NFKD` is known not to contain
+                                // surrogates.
+                                self.buffer.push(CharacterAndClass::new(unsafe {
+                                    core::char::from_u32_unchecked(u32::from(u))
+                                }));
+                            }
+                            ('\u{0635}', 17)
+                        }
                     } else {
                         // Complex decomposition
                         // Format for 16-bit value:
-                        // Three highest bits: length (always makes the whole thing non-zero, since
-                        // zero is not a length in use; one bit is "wasted" in order to ensure the
-                        // 16 bits always end up being non-zero as a whole)
-                        // Fourth-highest bit: 0 if 16-bit units, 1 if 32-bit units
-                        // Fifth-highest bit:  0 if all trailing characters are non-starter, 1 if
-                        //                     at least one trailing character is a starter.
-                        //                     As of Unicode 14, there a two BMP characters that
-                        //                     decompose to three characters starter, starter,
-                        //                     non-starter, and plane 1 has characters that
-                        //                     decompose to two starters. However, for forward
-                        //                     compatibility, the semantics here are more generic.
-                        // Lower bits: Start index in storage
-                        let offset = usize::from(low & 0x7FF);
-                        let len = usize::from(low >> 13);
-                        if low & 0x1000 == 0 {
-                            let (starter, tail) = split_first_u16(
-                                self.decompositions
-                                    .scalars16
-                                    .get_subslice(offset..offset + len),
-                            );
-                            if low & 0x800 == 0 {
-                                // All the rest are combining
-                                for u in tail.iter() {
-                                    self.buffer.push(CharacterAndClass::new(char_from_u16(u)));
-                                }
-                                (starter, 0)
-                            } else {
-                                let mut i = 0;
-                                let mut combining_start = 0;
-                                for u in tail.iter() {
-                                    let ch = char_from_u16(u);
-                                    self.buffer.push(CharacterAndClass::new(ch));
-                                    i += 1;
-                                    if !self
-                                        .decompositions
-                                        .decomposition_starts_with_non_starter
-                                        .contains(ch)
-                                    {
-                                        combining_start = i;
-                                    }
-                                }
-                                (starter, combining_start)
-                            }
+                        // 15..13: length minus two for 16-bit case and length minus one for
+                        //         the 32-bit case. Length 8 needs to fit in three bits in
+                        //         the 16-bit case, and this way the value is future-proofed
+                        //         up to 9 in the 16-bit case. Zero is unused and length one
+                        //         in the 16-bit case goes directly into the trie.
+                        //     12: 1 if all trailing characters are guaranteed non-starters,
+                        //         0 if no guarantees about non-starterness.
+                        //         Note: The bit choice is this way around to allow for
+                        //         dynamically falling back to not having this but instead
+                        //         having one more bit for length by merely choosing
+                        //         different masks.
+                        //  11..0: Start offset in storage. The offset is to the logical
+                        //         sequence of scalars16, scalars32, supplementary_scalars16,
+                        //         supplementary_scalars32.
+                        let offset = usize::from(low & 0xFFF);
+                        if offset < self.scalars16.len() {
+                            self.push_decomposition16(low, offset, self.scalars16)
+                        } else if offset < self.scalars16.len() + self.scalars24.len() {
+                            self.push_decomposition32(
+                                low,
+                                offset - self.scalars16.len(),
+                                self.scalars24,
+                            )
+                        } else if offset
+                            < self.scalars16.len()
+                                + self.scalars24.len()
+                                + self.supplementary_scalars16.len()
+                        {
+                            self.push_decomposition16(
+                                low,
+                                offset - (self.scalars16.len() + self.scalars24.len()),
+                                self.supplementary_scalars16,
+                            )
                         } else {
-                            let (starter, tail) = split_first_u32(
-                                self.decompositions
-                                    .scalars32
-                                    .get_subslice(offset..offset + len),
-                            );
-                            if low & 0x800 == 0 {
-                                // All the rest are combining
-                                for u in tail.iter() {
-                                    self.buffer.push(CharacterAndClass::new(char_from_u32(u)));
-                                }
-                                (starter, 0)
-                            } else {
-                                let mut i = 0;
-                                let mut combining_start = 0;
-                                for u in tail.iter() {
-                                    let ch = char_from_u32(u);
-                                    self.buffer.push(CharacterAndClass::new(ch));
-                                    i += 1;
-                                    if !self
-                                        .decompositions
-                                        .decomposition_starts_with_non_starter
-                                        .contains(ch)
-                                    {
-                                        combining_start = i;
-                                    }
-                                }
-                                (starter, combining_start)
-                            }
+                            self.push_decomposition32(
+                                low,
+                                offset
+                                    - (self.scalars16.len()
+                                        + self.scalars24.len()
+                                        + self.supplementary_scalars16.len()),
+                                self.supplementary_scalars24,
+                            )
                         }
                     }
                 }
@@ -399,16 +560,17 @@ where
             }
         };
         debug_assert_eq!(self.pending_unnormalized_starter, None);
-        for ch in self.delegate.by_ref() {
-            if self
-                .decompositions
-                .decomposition_starts_with_non_starter
-                .contains(ch)
-            {
-                if !in_inclusive_range(ch, '\u{0340}', '\u{0F81}') {
+        // Not a `for` loop to avoid holding a mutable reference to `self` across
+        // the loop body.
+        while let Some(ch) = self.delegate.next() {
+            if self.decomposition_starts_with_non_starter(ch) {
+                if !(in_inclusive_range(ch, '\u{0340}', '\u{0F81}')
+                    || (u32::from(ch) & !1 == 0xFF9E))
+                {
                     self.buffer.push(CharacterAndClass::new(ch));
                 } else {
                     // The Tibetan special cases are starters that decompose into non-starters.
+                    // The same applies to the half-width kana voicing marks in NFKD.
                     //
                     // Logically the canonical combining class of each special case is known
                     // at compile time, but all characters in the buffer are treated the same
@@ -447,6 +609,18 @@ where
                             self.buffer.push(CharacterAndClass::new('\u{0F71}'));
                             self.buffer.push(CharacterAndClass::new('\u{0F80}'));
                         }
+                        '\u{FF9E}' => {
+                            // HALFWIDTH KATAKANA VOICED SOUND MARK
+                            // Compatibility decomposition only; can't come here
+                            // in NFD.
+                            self.buffer.push(CharacterAndClass::new('\u{3099}'));
+                        }
+                        '\u{FF9F}' => {
+                            // HALFWIDTH KATAKANA SEMI-VOICED SOUND MARK
+                            // Compatibility decomposition only; can't come here
+                            // in NFD.
+                            self.buffer.push(CharacterAndClass::new('\u{309A}'));
+                        }
                         _ => {
                             self.buffer.push(CharacterAndClass::new(ch));
                         }
@@ -464,30 +638,181 @@ where
     }
 }
 
-/// A normalizer for performing decomposing normalization (currently only NFD
-/// but NFKD expected in the future).
+/// A normalizer for performing decomposing normalization.
 pub struct DecomposingNormalizer {
     decompositions: DataPayload<CanonicalDecompositionDataV1Marker>,
+    supplementary_decompositions: Option<SupplementPayloadHolder>,
+    tables: DataPayload<CanonicalDecompositionTablesV1Marker>,
+    supplementary_tables: Option<DataPayload<CompatibilityDecompositionTablesV1Marker>>,
     ccc: DataPayload<CanonicalCombiningClassV1Marker>,
 }
 
 impl DecomposingNormalizer {
     /// NFD constructor.
-    pub fn try_new<D>(data_provider: &D) -> Result<Self, NormalizerError>
+    pub fn try_new_nfd<D>(data_provider: &D) -> Result<Self, NormalizerError>
     where
         D: ResourceProvider<CanonicalDecompositionDataV1Marker>
+            + ResourceProvider<CanonicalDecompositionTablesV1Marker>
             + ResourceProvider<icu_properties::provider::CanonicalCombiningClassV1Marker>
             + ?Sized,
     {
         let decompositions: DataPayload<CanonicalDecompositionDataV1Marker> = data_provider
             .load_resource(&DataRequest::default())?
             .take_payload()?;
+        let tables: DataPayload<CanonicalDecompositionTablesV1Marker> = data_provider
+            .load_resource(&DataRequest::default())?
+            .take_payload()?;
+
+        if tables.get().scalars16.len() + tables.get().scalars24.len() > 0xFFF {
+            // The data is from a future where there exists a normalization flavor whose
+            // complex decompositions take more than 0xFFF but fewer than 0x1FFF code points
+            // of space. If a good use case from such a decomposition flavor arises, we can
+            // dynamically change the bit masks so that the length mask becomes 0x1FFF instead
+            // of 0xFFF and the all-non-starters mask becomes 0 instead of 0x1000. However,
+            // since for now the masks are hard-coded, error out.
+            return Err(NormalizerError::FutureExtension);
+        }
 
         let ccc: DataPayload<CanonicalCombiningClassV1Marker> =
             icu_properties::maps::get_canonical_combining_class(data_provider)?;
 
         Ok(DecomposingNormalizer {
             decompositions,
+            supplementary_decompositions: None,
+            tables,
+            supplementary_tables: None,
+            ccc,
+        })
+    }
+
+    /// NFKD constructor.
+    pub fn try_new_nfkd<D>(data_provider: &D) -> Result<Self, NormalizerError>
+    where
+        D: ResourceProvider<CanonicalDecompositionDataV1Marker>
+            + ResourceProvider<CompatibilityDecompositionSupplementV1Marker>
+            + ResourceProvider<CanonicalDecompositionTablesV1Marker>
+            + ResourceProvider<CompatibilityDecompositionTablesV1Marker>
+            + ResourceProvider<icu_properties::provider::CanonicalCombiningClassV1Marker>
+            + ?Sized,
+    {
+        let decompositions: DataPayload<CanonicalDecompositionDataV1Marker> = data_provider
+            .load_resource(&DataRequest::default())?
+            .take_payload()?;
+        let supplementary_decompositions: DataPayload<
+            CompatibilityDecompositionSupplementV1Marker,
+        > = data_provider
+            .load_resource(&DataRequest::default())?
+            .take_payload()?;
+        let tables: DataPayload<CanonicalDecompositionTablesV1Marker> = data_provider
+            .load_resource(&DataRequest::default())?
+            .take_payload()?;
+        let supplementary_tables: DataPayload<CompatibilityDecompositionTablesV1Marker> =
+            data_provider
+                .load_resource(&DataRequest::default())?
+                .take_payload()?;
+
+        if tables.get().scalars16.len()
+            + tables.get().scalars24.len()
+            + supplementary_tables.get().scalars16.len()
+            + supplementary_tables.get().scalars24.len()
+            > 0xFFF
+        {
+            // The data is from a future where there exists a normalization flavor whose
+            // complex decompositions take more than 0xFFF but fewer than 0x1FFF code points
+            // of space. If a good use case from such a decomposition flavor arises, we can
+            // dynamically change the bit masks so that the length mask becomes 0x1FFF instead
+            // of 0xFFF and the all-non-starters mask becomes 0 instead of 0x1000. However,
+            // since for now the masks are hard-coded, error out.
+            return Err(NormalizerError::FutureExtension);
+        }
+
+        let ccc: DataPayload<CanonicalCombiningClassV1Marker> =
+            icu_properties::maps::get_canonical_combining_class(data_provider)?;
+
+        Ok(DecomposingNormalizer {
+            decompositions,
+            supplementary_decompositions: Some(SupplementPayloadHolder::Compatibility(
+                supplementary_decompositions,
+            )),
+            tables,
+            supplementary_tables: Some(supplementary_tables),
+            ccc,
+        })
+    }
+
+    /// UTS 46 decomposed constructor (testing only)
+    ///
+    /// This is a special building block normalization for IDNA. It is the decomposed counterpart of
+    /// ICU4C's UTS 46 normalization with two exceptions: characters that UTS 46 disallows and
+    /// ICU4C maps to U+FFFD and characters that UTS 46 maps to the empty string normalize as in
+    /// NFD in this normalization. In both cases, the previous UTS 46 processing before using
+    /// normalization is expected to deal with these characters. Making the disallowed characters
+    /// behave like this is beneficial to data size, and this normalizer implementation cannot
+    /// deal with a character normalizing to the empty string, which doesn't happen in NFD or
+    /// NFKD as of Unicode 14.
+    ///
+    /// Warning: In this normalization, U+0345 COMBINING GREEK YPOGEGRAMMENI exhibits a behavior
+    /// that no character in Unicode exhibits in NFD, NFKD, NFC, or NFKC: Case folding turns
+    /// U+0345 from a reordered character into a non-reordered character before reordering happens.
+    /// Therefore, the output of this normalization may differ for different inputs that are
+    /// canonically equivant with each other if they differ by how U+0345 is ordered relative
+    /// to other reorderable characters.
+    ///
+    /// This constructor exists only in the test mode in order to allow this data to be tested
+    /// in isolation of the canonical composition step.
+    #[cfg(test)]
+    fn try_new_uts46_decomposed_without_ignored_and_disallowed<D>(
+        data_provider: &D,
+    ) -> Result<Self, NormalizerError>
+    where
+        D: ResourceProvider<CanonicalDecompositionDataV1Marker>
+            + ResourceProvider<Uts46DecompositionSupplementV1Marker>
+            + ResourceProvider<CanonicalDecompositionTablesV1Marker>
+            + ResourceProvider<CompatibilityDecompositionTablesV1Marker>
+            // UTS 46 tables merged into CompatibilityDecompositionTablesV1Marker
+            + ResourceProvider<icu_properties::provider::CanonicalCombiningClassV1Marker>
+            + ?Sized,
+    {
+        let decompositions: DataPayload<CanonicalDecompositionDataV1Marker> = data_provider
+            .load_resource(&DataRequest::default())?
+            .take_payload()?;
+        let supplementary_decompositions: DataPayload<Uts46DecompositionSupplementV1Marker> =
+            data_provider
+                .load_resource(&DataRequest::default())?
+                .take_payload()?;
+        let tables: DataPayload<CanonicalDecompositionTablesV1Marker> = data_provider
+            .load_resource(&DataRequest::default())?
+            .take_payload()?;
+        let supplementary_tables: DataPayload<CompatibilityDecompositionTablesV1Marker> =
+            data_provider
+                .load_resource(&DataRequest::default())?
+                .take_payload()?;
+
+        if tables.get().scalars16.len()
+            + tables.get().scalars24.len()
+            + supplementary_tables.get().scalars16.len()
+            + supplementary_tables.get().scalars24.len()
+            > 0xFFF
+        {
+            // The data is from a future where there exists a normalization flavor whose
+            // complex decompositions take more than 0xFFF but fewer than 0x1FFF code points
+            // of space. If a good use case from such a decomposition flavor arises, we can
+            // dynamically change the bit masks so that the length mask becomes 0x1FFF instead
+            // of 0xFFF and the all-non-starters mask becomes 0 instead of 0x1000. However,
+            // since for now the masks are hard-coded, error out.
+            return Err(NormalizerError::FutureExtension);
+        }
+
+        let ccc: DataPayload<CanonicalCombiningClassV1Marker> =
+            icu_properties::maps::get_canonical_combining_class(data_provider)?;
+
+        Ok(DecomposingNormalizer {
+            decompositions,
+            supplementary_decompositions: Some(SupplementPayloadHolder::Uts46(
+                supplementary_decompositions,
+            )),
+            tables,
+            supplementary_tables: Some(supplementary_tables),
             ccc,
         })
     }
@@ -495,9 +820,12 @@ impl DecomposingNormalizer {
     /// Wraps a delegate iterator into a decomposing iterator
     /// adapter by using the data already held by this normalizer.
     pub fn normalize_iter<I: Iterator<Item = char>>(&self, iter: I) -> Decomposition<I> {
-        Decomposition::new(
+        Decomposition::new_with_supplements(
             iter,
             self.decompositions.get(),
+            self.supplementary_decompositions.as_ref().map(|s| s.get()),
+            self.tables.get(),
+            self.supplementary_tables.as_ref().map(|s| s.get()),
             &self.ccc.get().code_point_trie,
         )
     }

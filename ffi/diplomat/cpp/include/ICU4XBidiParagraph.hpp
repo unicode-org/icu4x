@@ -80,30 +80,15 @@ class ICU4XBidiParagraph {
   diplomat::result<std::string, std::monostate> reorder_line(size_t range_start, size_t range_end) const;
 
   /**
-   * Get the BIDI level. This integer is conceptually a `unicode_bidi::Level`,
-   * and can be further inspected using the static methods on this class.
+   * Get the BIDI level at a particular byte index in this paragraph.
+   * This integer is conceptually a `unicode_bidi::Level`,
+   * and can be further inspected using the static methods on ICU4XBidi.
+   * 
+   * Returns 0 (equivalent to `Level::ltr()`) on error
    * 
    * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/unicode_bidi/struct.Paragraph.html#method.level_at) for more information.
    */
   uint8_t level_at(size_t pos) const;
-
-  /**
-   * Check if a Level returned by level_at is an RTL level.
-   * 
-   * Invalid levels (numbers greater than 125) will be assumed LTR
-   * 
-   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/unicode_bidi/struct.Level.html#method.is_rtl) for more information.
-   */
-  static bool level_is_rtl(uint8_t level);
-
-  /**
-   * Check if a Level returned by level_at is an LTR level.
-   * 
-   * Invalid levels (numbers greater than 125) will be assumed LTR
-   * 
-   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/unicode_bidi/struct.Level.html#method.is_ltr) for more information.
-   */
-  static bool level_is_ltr(uint8_t level);
   inline const capi::ICU4XBidiParagraph* AsFFI() const { return this->inner.get(); }
   inline capi::ICU4XBidiParagraph* AsFFIMut() { return this->inner.get(); }
   inline ICU4XBidiParagraph(capi::ICU4XBidiParagraph* i) : inner(i) {}
@@ -162,11 +147,5 @@ inline diplomat::result<std::string, std::monostate> ICU4XBidiParagraph::reorder
 }
 inline uint8_t ICU4XBidiParagraph::level_at(size_t pos) const {
   return capi::ICU4XBidiParagraph_level_at(this->inner.get(), pos);
-}
-inline bool ICU4XBidiParagraph::level_is_rtl(uint8_t level) {
-  return capi::ICU4XBidiParagraph_level_is_rtl(level);
-}
-inline bool ICU4XBidiParagraph::level_is_ltr(uint8_t level) {
-  return capi::ICU4XBidiParagraph_level_is_ltr(level);
 }
 #endif

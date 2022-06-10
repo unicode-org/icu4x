@@ -26,9 +26,9 @@ use super::CaseFirst;
 use super::MaxVariable;
 
 const SINGLE_U32: &ZeroSlice<u32> =
-    ZeroSlice::<u32>::from_ule_slice_const(&<u32 as AsULE>::ULE::from_array([FFFD_CE32_VALUE]));
+    ZeroSlice::<u32>::from_ule_slice(&<u32 as AsULE>::ULE::from_array([FFFD_CE32_VALUE]));
 const SINGLE_U64: &ZeroSlice<u64> =
-    ZeroSlice::<u64>::from_ule_slice_const(&<u64 as AsULE>::ULE::from_array([FFFD_CE_VALUE]));
+    ZeroSlice::<u64>::from_ule_slice(&<u64 as AsULE>::ULE::from_array([FFFD_CE_VALUE]));
 
 fn data_ce_to_primary(data_ce: u64, c: char) -> u32 {
     // Collation::getThreeBytePrimaryForOffsetData
@@ -155,7 +155,7 @@ impl<'data> CollationDataV1<'data> {
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct CollationDiacriticsV1<'data> {
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub ce32s: ZeroVec<'data, u32>,
+    pub secondaries: ZeroVec<'data, u16>,
 }
 
 #[icu_provider::data_struct(CollationJamoV1Marker = "collator/jamo@1")]
@@ -232,14 +232,12 @@ impl CollationMetadataV1 {
     const MAX_VARIABLE_MASK: u32 = 0b11;
     const TAILORED_MASK: u32 = 1 << 3;
     const TAILORED_DIACRITICS_MASK: u32 = 1 << 4;
-    #[allow(dead_code)]
-    const TAILORED_JAMO_MASK: u32 = 1 << 5;
-    const REORDERING_MASK: u32 = 1 << 6;
-    const LITHUANIAN_DOT_ABOVE_MASK: u32 = 1 << 7;
-    const BACWARD_SECOND_LEVEL_MASK: u32 = 1 << 8;
-    const ALTERNATE_SHIFTED_MASK: u32 = 1 << 9;
-    const CASE_FIRST_MASK: u32 = 1 << 10;
-    const UPPER_FIRST_MASK: u32 = 1 << 11;
+    const REORDERING_MASK: u32 = 1 << 5;
+    const LITHUANIAN_DOT_ABOVE_MASK: u32 = 1 << 6;
+    const BACWARD_SECOND_LEVEL_MASK: u32 = 1 << 7;
+    const ALTERNATE_SHIFTED_MASK: u32 = 1 << 8;
+    const CASE_FIRST_MASK: u32 = 1 << 9;
+    const UPPER_FIRST_MASK: u32 = 1 << 10;
 
     #[inline(always)]
     pub(crate) fn max_variable(&self) -> MaxVariable {
@@ -257,14 +255,6 @@ impl CollationMetadataV1 {
     #[inline(always)]
     pub(crate) fn tailored_diacritics(&self) -> bool {
         self.bits & CollationMetadataV1::TAILORED_DIACRITICS_MASK != 0
-    }
-
-    /// Korean search
-    /// XXX: Currently ignored and being redesigned
-    #[allow(dead_code)]
-    #[inline(always)]
-    pub(crate) fn tailored_jamo(&self) -> bool {
-        self.bits & CollationMetadataV1::TAILORED_JAMO_MASK != 0
     }
 
     /// Lithuanian
