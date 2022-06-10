@@ -16,6 +16,7 @@ pub mod ffi {
     ///
     /// The error names are stable and can be checked against as strings in the JS API
     pub enum ICU4XError {
+        // general errors
         /// The error is not currently categorized as ICU4XError.
         /// Please file a bug
         UnknownError = 0,
@@ -23,33 +24,34 @@ pub mod ffi {
         /// Typically found when not enough space is allocated
         WriteableError = 1,
 
-        /// The subtag being requested was not set
-        LocaleUndefinedSubtagError = 2,
-
-        /// The locale or subtag string failed to parse
-        LocaleParserError = 3,
-
-        /// Attempted to construct an invalid data struct
-        DataStructValidityError = 4,
-
+        // general data errors
         // See DataError
-        DataMissingResourceKeyError = 5,
-        DataMissingVariantError = 6,
-        DataMissingLocaleError = 7,
-        DataMissingResourceOptionsError = 8,
-        DataNeedsVariantError = 9,
-        DataNeedsLocaleError = 10,
-        DataExtraneousResourceOptionsError = 11,
-        DataFilteredResourceError = 12,
-        DataMismatchedTypeError = 13,
-        DataMissingPayloadError = 14,
-        DataInvalidStateError = 15,
-        DataCustomError = 16,
-        DataIoError = 17,
-        DataUnavailableBufferFormatError = 18,
+        DataMissingResourceKeyError = 10,
+        DataMissingVariantError = 11,
+        DataMissingLocaleError = 12,
+        DataMissingResourceOptionsError = 13,
+        DataNeedsVariantError = 14,
+        DataNeedsLocaleError = 15,
+        DataExtraneousResourceOptionsError = 16,
+        DataFilteredResourceError = 17,
+        DataMismatchedTypeError = 18,
+        DataMissingPayloadError = 19,
+        DataInvalidStateError = 20,
+        DataCustomError = 21,
+        DataIoError = 22,
+        DataUnavailableBufferFormatError = 23,
 
-        PropertyUnknownScriptIdError = 19,
-        PropertyUnknownGeneralCategoryGroupError = 20,
+        // locale and data struct errors
+        /// The subtag being requested was not set
+        LocaleUndefinedSubtagError = 31,
+        /// The locale or subtag string failed to parse
+        LocaleParserError = 32,
+        /// Attempted to construct an invalid data struct
+        DataStructValidityError = 33,
+
+        // property errors
+        PropertyUnknownScriptIdError = 40,
+        PropertyUnknownGeneralCategoryGroupError = 41,
     }
 }
 
