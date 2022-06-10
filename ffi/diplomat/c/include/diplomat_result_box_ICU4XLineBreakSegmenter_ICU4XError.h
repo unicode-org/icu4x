@@ -1,5 +1,5 @@
-#ifndef diplomat_result_box_ICU4XLineBreakSegmenter_void_H
-#define diplomat_result_box_ICU4XLineBreakSegmenter_void_H
+#ifndef diplomat_result_box_ICU4XLineBreakSegmenter_ICU4XError_H
+#define diplomat_result_box_ICU4XLineBreakSegmenter_ICU4XError_H
 #include <stdio.h>
 #include <stdint.h>
 #include <stddef.h>
@@ -10,12 +10,14 @@
 extern "C" {
 #endif
 typedef struct ICU4XLineBreakSegmenter ICU4XLineBreakSegmenter;
-typedef struct diplomat_result_box_ICU4XLineBreakSegmenter_void {
+#include "ICU4XError.h"
+typedef struct diplomat_result_box_ICU4XLineBreakSegmenter_ICU4XError {
     union {
         ICU4XLineBreakSegmenter* ok;
+        ICU4XError err;
     };
     bool is_ok;
-} diplomat_result_box_ICU4XLineBreakSegmenter_void;
+} diplomat_result_box_ICU4XLineBreakSegmenter_ICU4XError;
 #ifdef __cplusplus
 }
 #endif

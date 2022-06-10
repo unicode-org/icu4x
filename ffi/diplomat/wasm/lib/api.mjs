@@ -765,7 +765,7 @@ export class ICU4XFixedDecimalFormat {
         })();
         return ok_value;
       } else {
-        const throw_value = {};
+        const throw_value = ICU4XError_rust_to_js[(new Int32Array(wasm.memory.buffer, diplomat_receive_buffer, 1))[0]];
         throw new diplomatRuntime.FFIError(throw_value);
       }
     })();
@@ -793,7 +793,7 @@ export class ICU4XFixedDecimalFormat {
         })();
         return ok_value;
       } else {
-        const throw_value = {};
+        const throw_value = ICU4XError_rust_to_js[(new Int32Array(wasm.memory.buffer, diplomat_receive_buffer, 1))[0]];
         throw new diplomatRuntime.FFIError(throw_value);
       }
     })();
@@ -803,9 +803,21 @@ export class ICU4XFixedDecimalFormat {
   format(value) {
     const diplomat_out = diplomatRuntime.withWriteable(wasm, (writeable) => {
       return (() => {
-        const is_ok = wasm.ICU4XFixedDecimalFormat_format(this.underlying, value.underlying, writeable) == 1;
-        if (!is_ok) {
-          throw new diplomatRuntime.FFIError({});
+        const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
+        const result_tag = {};
+        diplomat_alloc_destroy_registry.register(result_tag, {
+          ptr: diplomat_receive_buffer,
+          size: 5,
+          align: 4,
+        });
+        wasm.ICU4XFixedDecimalFormat_format(diplomat_receive_buffer, this.underlying, value.underlying, writeable);
+        const is_ok = (new Uint8Array(wasm.memory.buffer, diplomat_receive_buffer + 4, 1))[0] == 1;
+        if (is_ok) {
+          const ok_value = {};
+          return ok_value;
+        } else {
+          const throw_value = ICU4XError_rust_to_js[(new Int32Array(wasm.memory.buffer, diplomat_receive_buffer, 1))[0]];
+          throw new diplomatRuntime.FFIError(throw_value);
         }
       })();
     });
@@ -991,7 +1003,7 @@ export class ICU4XLineBreakSegmenter {
         })();
         return ok_value;
       } else {
-        const throw_value = {};
+        const throw_value = ICU4XError_rust_to_js[(new Int32Array(wasm.memory.buffer, diplomat_receive_buffer, 1))[0]];
         throw new diplomatRuntime.FFIError(throw_value);
       }
     })();
@@ -1020,7 +1032,7 @@ export class ICU4XLineBreakSegmenter {
         })();
         return ok_value;
       } else {
-        const throw_value = {};
+        const throw_value = ICU4XError_rust_to_js[(new Int32Array(wasm.memory.buffer, diplomat_receive_buffer, 1))[0]];
         throw new diplomatRuntime.FFIError(throw_value);
       }
     })();
