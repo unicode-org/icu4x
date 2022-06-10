@@ -11,10 +11,12 @@ use core::cmp::Ordering;
 use core::convert::TryFrom;
 use core::marker::PhantomData;
 use core::ops::Range;
-use core::{iter, mem};
+use core::iter;
 
-fn usizeify(x: RawBytesULE<4>) -> usize {
-    u32::from_unaligned(x) as usize
+const INDEX_WIDTH: usize = 4;
+
+fn usizeify(x: RawBytesULE<INDEX_WIDTH>) -> usize {
+    x.as_unsigned_int() as usize
 }
 
 /// A more parsed version of `VarZeroSlice`. This type is where most of the VarZeroVec
@@ -28,7 +30,7 @@ fn usizeify(x: RawBytesULE<4>) -> usize {
 /// See [`VarZeroVecComponents::parse_byte_slice()`] for information on the internal invariants involved
 pub struct VarZeroVecComponents<'a, T: ?Sized> {
     /// The list of indices into the `things` slice
-    indices: &'a [RawBytesULE<4>],
+    indices: &'a [RawBytesULE<INDEX_WIDTH>],
     /// The contiguous list of `T::VarULE`s
     things: &'a [u8],
     /// The original slice this was constructed from
@@ -87,18 +89,17 @@ impl<'a, T: VarULE + ?Sized> VarZeroVecComponents<'a, T> {
             });
         }
         let len_bytes = slice.get(0..4).ok_or(ZeroVecError::VarZeroVecFormatError)?;
-        let len_ule = RawBytesULE::<4>::parse_byte_slice(len_bytes)
+        let len_ule = RawBytesULE::<INDEX_WIDTH>::parse_byte_slice(len_bytes)
             .map_err(|_| ZeroVecError::VarZeroVecFormatError)?;
 
-        let len = u32::from_unaligned(*len_ule.get(0).ok_or(ZeroVecError::VarZeroVecFormatError)?)
-            as usize;
+        let len = len_ule.get(0).ok_or(ZeroVecError::VarZeroVecFormatError)?.as_unsigned_int() as usize;
         let indices_bytes = slice
-            .get(4..4 * len + 4)
+            .get(4..INDEX_WIDTH * len + 4)
             .ok_or(ZeroVecError::VarZeroVecFormatError)?;
-        let indices = RawBytesULE::<4>::parse_byte_slice(indices_bytes)
+        let indices = RawBytesULE::<INDEX_WIDTH>::parse_byte_slice(indices_bytes)
             .map_err(|_| ZeroVecError::VarZeroVecFormatError)?;
         let things = slice
-            .get(4 * len + 4..)
+            .get(INDEX_WIDTH * len + 4..)
             .ok_or(ZeroVecError::VarZeroVecFormatError)?;
 
         let borrowed = VarZeroVecComponents {
@@ -135,10 +136,10 @@ impl<'a, T: VarULE + ?Sized> VarZeroVecComponents<'a, T> {
         let len_bytes = slice.get_unchecked(0..4);
         let len_ule = RawBytesULE::<4>::from_byte_slice_unchecked(len_bytes);
 
-        let len = u32::from_unaligned(*len_ule.get_unchecked(0)) as usize;
-        let indices_bytes = slice.get_unchecked(4..4 * len + 4);
-        let indices = RawBytesULE::<4>::from_byte_slice_unchecked(indices_bytes);
-        let things = slice.get_unchecked(4 * len + 4..);
+        let len = len_ule.get_unchecked(0).as_unsigned_int() as usize;
+        let indices_bytes = slice.get_unchecked(4..INDEX_WIDTH * len + 4);
+        let indices = RawBytesULE::<INDEX_WIDTH>::from_byte_slice_unchecked(indices_bytes);
+        let things = slice.get_unchecked(INDEX_WIDTH * len + 4..);
 
         VarZeroVecComponents {
             indices,
@@ -295,8 +296,7 @@ impl<'a, T: VarULE + ?Sized> VarZeroVecComponents<'a, T> {
         let indices = self
             .indices
             .iter()
-            .copied()
-            .map(u32::from_unaligned)
+            .map(|i| i.as_unsigned_int())
             .collect::<Vec<_>>();
         format!("VarZeroVecComponents {{ indices: {:?} }}", indices)
     }
@@ -349,7 +349,7 @@ where
     fn binary_search_impl(
         &self,
         mut predicate: impl FnMut(&T) -> Ordering,
-        indices_slice: &[RawBytesULE<4>],
+        indices_slice: &[RawBytesULE<INDEX_WIDTH>],
     ) -> Result<usize, usize> {
         // This code is an absolute atrocity. This code is not a place of honor. This
         // code is known to the State of California to cause cancer.
@@ -377,9 +377,9 @@ where
         // only searching a subslice of it.
         let zero_index = self.indices.as_ptr() as *const _ as usize;
         indices_slice.binary_search_by(|probe: &_| {
-            // `self.indices` is a vec of unaligned u32s, so we divide by sizeof(u32)
+            // `self.indices` is a vec of unaligned INDEX_WIDTH values, so we divide by INDEX_WIDTH
             // to get the actual index
-            let index = (probe as *const _ as usize - zero_index) / mem::size_of::<u32>();
+            let index = (probe as *const _ as usize - zero_index) / INDEX_WIDTH;
             // safety: we know this is in bounds
             let actual_probe = unsafe { self.get_unchecked(index) };
             predicate(actual_probe)
@@ -420,19 +420,19 @@ where
     // idx_offset = offset from the start of the buffer for the next index
     let mut idx_offset: usize = 4;
     // first_dat_offset = offset from the start of the buffer of the first data block
-    let first_dat_offset: usize = 4 + elements.len() * 4;
+    let first_dat_offset: usize = 4 + elements.len() * INDEX_WIDTH;
     // dat_offset = offset from the start of the buffer of the next data block
     let mut dat_offset: usize = first_dat_offset;
 
     for element in elements.iter() {
         let element_len = element.encode_var_ule_len();
 
-        let idx_limit = idx_offset + 4;
+        let idx_limit = idx_offset + INDEX_WIDTH;
         #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
         let idx_slice = &mut output[idx_offset..idx_limit];
         // VZV expects data offsets to be stored relative to the first data block
-        let offset = (dat_offset - first_dat_offset) as u32;
-        idx_slice.copy_from_slice(&offset.to_unaligned().0);
+        let bytes = (dat_offset - first_dat_offset).to_le_bytes();
+        idx_slice.copy_from_slice(&bytes[..INDEX_WIDTH]);
 
         let dat_limit = dat_offset + element_len;
         #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
@@ -444,7 +444,7 @@ where
         dat_offset = dat_limit;
     }
 
-    debug_assert_eq!(idx_offset, 4 + 4 * elements.len());
+    debug_assert_eq!(idx_offset, 4 + INDEX_WIDTH * elements.len());
     assert_eq!(dat_offset, output.len());
 }
 
@@ -456,7 +456,7 @@ where
     // 4 for length + 4 for each offset + the body
     let idx_len: u32 = u32::try_from(elements.len())
         .ok()?
-        .checked_mul(4)?
+        .checked_mul(INDEX_WIDTH as u32)?
         .checked_add(4)?;
     let data_len: u32 = elements
         .iter()
