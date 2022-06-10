@@ -170,7 +170,12 @@ int main() {
 
     // Create a LocaleCanonicalizer.
     ICU4XDataProvider* provider = ICU4XDataProvider_create_test();
-    ICU4XLocaleCanonicalizer* lc = ICU4XLocaleCanonicalizer_create(provider);
+    diplomat_result_box_ICU4XLocaleCanonicalizer_ICU4XError result2 = ICU4XLocaleCanonicalizer_create(provider);
+    if (!result2.is_ok) {
+        printf("Could not construct Locale Canonicalizer");
+        return 1;
+    }
+    ICU4XLocaleCanonicalizer* lc = result2.ok;
 
     // Test maximize.
     write = diplomat_simple_writeable(output, 40);

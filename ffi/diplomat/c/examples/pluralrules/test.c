@@ -9,12 +9,12 @@
 int main() {
     ICU4XLocale* locale = ICU4XLocale_create("ar", 2);
     ICU4XDataProvider* provider = ICU4XDataProvider_create_test();
-    ICU4XCreatePluralRulesResult plural_result = ICU4XPluralRules_try_new_cardinal(locale, provider);
-    if (!plural_result.success) {
+    diplomat_result_box_ICU4XPluralRules_ICU4XError plural_result = ICU4XPluralRules_try_new_cardinal(locale, provider);
+    if (!plural_result.is_ok) {
         printf("Failed to create PluralRules\n");
         return 1;
     }
-    ICU4XPluralRules* rules = plural_result.rules;
+    ICU4XPluralRules* rules = plural_result.ok;
 
     ICU4XPluralCategories categories = ICU4XPluralRules_categories(rules);
     printf("Plural Category zero  (should be true): %s\n", categories.zero  ? "true" : "false");
