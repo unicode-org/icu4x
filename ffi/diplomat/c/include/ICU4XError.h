@@ -30,6 +30,8 @@ typedef enum ICU4XError {
   ICU4XError_DataCustomError = 16,
   ICU4XError_DataIoError = 17,
   ICU4XError_DataUnavailableBufferFormatError = 18,
+  ICU4XError_PropertyUnknownScriptIdError = 19,
+  ICU4XError_PropertyUnknownGeneralCategoryGroupError = 20,
 } ICU4XError;
 
 void ICU4XError_destroy(ICU4XError* self);

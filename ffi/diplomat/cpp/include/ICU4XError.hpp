@@ -62,6 +62,8 @@ enum struct ICU4XError {
   DataCustomError = 16,
   DataIoError = 17,
   DataUnavailableBufferFormatError = 18,
+  PropertyUnknownScriptIdError = 19,
+  PropertyUnknownGeneralCategoryGroupError = 20,
 };
 
 #endif

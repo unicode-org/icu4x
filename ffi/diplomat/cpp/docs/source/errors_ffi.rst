@@ -53,3 +53,7 @@
     .. cpp:enumerator:: DataIoError
 
     .. cpp:enumerator:: DataUnavailableBufferFormatError
+
+    .. cpp:enumerator:: PropertyUnknownScriptIdError
+
+    .. cpp:enumerator:: PropertyUnknownGeneralCategoryGroupError
