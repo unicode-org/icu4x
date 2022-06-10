@@ -4,6 +4,7 @@
 
 use self::ffi::ICU4XError;
 use core::fmt;
+use fixed_decimal::Error as DecimalError;
 use icu_properties::PropertiesError;
 use icu_provider::{DataError, DataErrorKind};
 
@@ -53,9 +54,11 @@ pub mod ffi {
         /// Attempted to construct an invalid data struct
         DataStructValidityError = 33,
 
-        // property errors
+        // property and decimal errors
         PropertyUnknownScriptIdError = 40,
         PropertyUnknownGeneralCategoryGroupError = 41,
+        DecimalLimit = 42,
+        DecimalSyntax = 43,
     }
 }
 
@@ -106,6 +109,15 @@ impl From<PropertiesError> for ICU4XError {
                 ICU4XError::PropertyUnknownGeneralCategoryGroupError
             }
             _ => ICU4XError::UnknownError,
+        }
+    }
+}
+
+impl From<DecimalError> for ICU4XError {
+    fn from(e: DecimalError) -> Self {
+        match e {
+            DecimalError::Limit => ICU4XError::DecimalLimit,
+            DecimalError::Syntax => ICU4XError::DecimalSyntax,
         }
     }
 }

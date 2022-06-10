@@ -10,16 +10,12 @@ pub mod ffi {
     use fixed_decimal::decimal::{DoublePrecision, FixedDecimal};
     use writeable::Writeable;
 
+    use crate::errors::ffi::ICU4XError;
+    use diplomat_runtime::DiplomatResult;
+
     #[diplomat::opaque]
     #[diplomat::rust_link(fixed_decimal::decimal::FixedDecimal, Struct)]
     pub struct ICU4XFixedDecimal(pub FixedDecimal);
-
-    pub struct ICU4XCreateFixedDecimalResult {
-        /// Will be None if `success` is `false`
-        pub fd: Option<Box<ICU4XFixedDecimal>>,
-        /// Currently just a boolean, but we might add a proper error enum as necessary
-        pub success: bool,
-    }
 
     /// How to round digits when constructing an ICU4XFixedDecimal from a
     /// floating point number
@@ -28,6 +24,10 @@ pub mod ffi {
         Truncate,
         ///  Round up from 0.5
         HalfExpand,
+    }
+
+    fn convert(dec: FixedDecimal) -> Box<ICU4XFixedDecimal> {
+        Box::new(ICU4XFixedDecimal(dec))
     }
 
     impl ICU4XFixedDecimal {
@@ -40,10 +40,14 @@ pub mod ffi {
         /// Construct an [`ICU4XFixedDecimal`] from an float, with enough digits to recover
         /// the original floating point in IEEE 754 without needing trailing zeros
         #[diplomat::rust_link(fixed_decimal::decimal::FixedDecimal::from_f64, FnInStruct)]
-        pub fn create_from_f64_with_max_precision(f: f64) -> Option<Box<ICU4XFixedDecimal>> {
-            Some(Box::new(ICU4XFixedDecimal(
-                FixedDecimal::try_from_f64(f, DoublePrecision::Floating).ok()?,
-            )))
+        pub fn create_from_f64_with_max_precision(
+            f: f64,
+        ) -> DiplomatResult<Box<ICU4XFixedDecimal>, ICU4XError> {
+            let precision = DoublePrecision::Floating;
+            FixedDecimal::try_from_f64(f, precision)
+                .map(convert)
+                .map_err(Into::into)
+                .into()
         }
 
         /// Construct an [`ICU4XFixedDecimal`] from an float, with a given power of 10 for the lower magnitude
@@ -52,14 +56,12 @@ pub mod ffi {
             f: f64,
             precision: i16,
             rounding_mode: ICU4XFixedDecimalRoundingMode,
-        ) -> Option<Box<ICU4XFixedDecimal>> {
-            Some(Box::new(ICU4XFixedDecimal(
-                FixedDecimal::try_from_f64(
-                    f,
-                    DoublePrecision::Magnitude(precision, rounding_mode.into()),
-                )
-                .ok()?,
-            )))
+        ) -> DiplomatResult<Box<ICU4XFixedDecimal>, ICU4XError> {
+            let precision = DoublePrecision::Magnitude(precision, rounding_mode.into());
+            FixedDecimal::try_from_f64(f, precision)
+                .map(convert)
+                .map_err(Into::into)
+                .into()
         }
 
         /// Construct an [`ICU4XFixedDecimal`] from an float, for a given number of significant digits
@@ -68,28 +70,21 @@ pub mod ffi {
             f: f64,
             digits: u8,
             rounding_mode: ICU4XFixedDecimalRoundingMode,
-        ) -> Option<Box<ICU4XFixedDecimal>> {
-            Some(Box::new(ICU4XFixedDecimal(
-                FixedDecimal::try_from_f64(
-                    f,
-                    DoublePrecision::SignificantDigits(digits, rounding_mode.into()),
-                )
-                .ok()?,
-            )))
+        ) -> DiplomatResult<Box<ICU4XFixedDecimal>, ICU4XError> {
+            let precision = DoublePrecision::SignificantDigits(digits, rounding_mode.into());
+            FixedDecimal::try_from_f64(f, precision)
+                .map(convert)
+                .map_err(Into::into)
+                .into()
         }
 
         /// Construct an [`ICU4XFixedDecimal`] from a string.
         #[diplomat::rust_link(fixed_decimal::decimal::FixedDecimal, Struct)]
-        pub fn create_fromstr(v: &str) -> ICU4XCreateFixedDecimalResult {
+        pub fn create_fromstr(v: &str) -> DiplomatResult<Box<ICU4XFixedDecimal>, ICU4XError> {
             v.parse::<FixedDecimal>()
-                .map(|v| ICU4XCreateFixedDecimalResult {
-                    fd: Some(Box::new(ICU4XFixedDecimal(v))),
-                    success: true,
-                })
-                .unwrap_or(ICU4XCreateFixedDecimalResult {
-                    fd: None,
-                    success: false,
-                })
+                .map(convert)
+                .map_err(Into::into)
+                .into()
         }
 
         /// Multiply the [`ICU4XFixedDecimal`] by a given power of ten.
