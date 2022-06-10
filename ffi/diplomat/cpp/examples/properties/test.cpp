@@ -42,7 +42,7 @@ int test_map_16_property(ICU4XCodePointMapData16Response result, char32_t sample
 }
 
 int main() {
-    ICU4XDataProvider dp = ICU4XDataProvider::create_test().provider.value();
+    ICU4XDataProvider dp = ICU4XDataProvider::create_test();
     int result;
 
     result = test_set_property(

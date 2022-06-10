@@ -169,12 +169,7 @@ int main() {
     ICU4XLocale_destroy(locale);
 
     // Create a LocaleCanonicalizer.
-    ICU4XCreateDataProviderResult provider_result = ICU4XDataProvider_create_test();
-    if (!provider_result.success) {
-        printf("Failed to create test data provider\n");
-        return 1;
-    }
-    ICU4XDataProvider* provider = provider_result.provider;
+    ICU4XDataProvider* provider = ICU4XDataProvider_create_test();
     ICU4XLocaleCanonicalizer* lc = ICU4XLocaleCanonicalizer_create(provider);
 
     // Test maximize.

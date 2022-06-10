@@ -8,7 +8,7 @@
 #include <iostream>
 
 int main() {
-    ICU4XDataProvider dp = ICU4XDataProvider::create_test().provider.value();
+    ICU4XDataProvider dp = ICU4XDataProvider::create_test();
     auto bidi = ICU4XBidi::try_new(dp).ok().value();
 
     // Written char-by-char to avoid messing up certain text editors.
