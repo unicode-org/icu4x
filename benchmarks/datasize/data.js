@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1654795371707,
+  "lastUpdate": 1654828687345,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -17158,6 +17158,36 @@ window.BENCHMARK_DATA = {
           {
             "name": "provider/testdata/data/testdata.postcard",
             "value": 2274473,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "c2ae85f86e8faf29cd47cd8044e493828b50afcc",
+          "message": "Try out Postcard alpha (#2037)\n\n* Update postcard to alpha\r\n\r\n* fix\r\n\r\n* regen postcard\r\n\r\n* Postcard07 -> Postcard1\r\n\r\n* test fix\r\n\r\n* features job",
+          "timestamp": "2022-06-09T19:36:09-07:00",
+          "tree_id": "64929b97d37feb8a0c5ef7907796d802b0308ad6",
+          "url": "https://github.com/unicode-org/icu4x/commit/c2ae85f86e8faf29cd47cd8044e493828b50afcc"
+        },
+        "date": 1654828666620,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 2274293,
             "unit": "bytes",
             "biggerIsBetter": false
           }
