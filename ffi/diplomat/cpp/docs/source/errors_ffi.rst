@@ -14,18 +14,6 @@
 
         An error arising from writing to a string Typically found when not enough space is allocated
 
-    .. cpp:enumerator:: LocaleUndefinedSubtagError
-
-        The subtag being requested was not set
-
-    .. cpp:enumerator:: LocaleParserError
-
-        The locale or subtag string failed to parse
-
-    .. cpp:enumerator:: DataStructValidityError
-
-        Attempted to construct an invalid data struct
-
     .. cpp:enumerator:: DataMissingResourceKeyError
 
     .. cpp:enumerator:: DataMissingVariantError
@@ -53,6 +41,18 @@
     .. cpp:enumerator:: DataIoError
 
     .. cpp:enumerator:: DataUnavailableBufferFormatError
+
+    .. cpp:enumerator:: LocaleUndefinedSubtagError
+
+        The subtag being requested was not set
+
+    .. cpp:enumerator:: LocaleParserError
+
+        The locale or subtag string failed to parse
+
+    .. cpp:enumerator:: DataStructValidityError
+
+        Attempted to construct an invalid data struct
 
     .. cpp:enumerator:: PropertyUnknownScriptIdError
 
