@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1654897065895,
+  "lastUpdate": 1654901990665,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -17273,6 +17273,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/cf1e111cfe07174e1c4e228783dcb730a1432851"
         },
         "date": 1654897037262,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 2274293,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "305cc84011b54d1b65a3ff3ec1d69c7a63705040",
+          "message": "Don't panic on invalid grouping sizes (#2042)",
+          "timestamp": "2022-06-10T15:57:22-07:00",
+          "tree_id": "58f83095c4e8e13aeb76aba06d73d7aaeeb0353d",
+          "url": "https://github.com/unicode-org/icu4x/commit/305cc84011b54d1b65a3ff3ec1d69c7a63705040"
+        },
+        "date": 1654901962143,
         "tool": "ndjson",
         "benches": [
           {
