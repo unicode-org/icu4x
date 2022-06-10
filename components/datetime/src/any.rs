@@ -183,8 +183,9 @@ impl AnyDateTimeFormat {
     {
         let locale = locale.into();
 
+        /// TODO (#2038), don't release 1.0 without fixing this
         let kind = AnyCalendarKind::from_locale(&locale)
-            .ok_or(DateTimeFormatError::MissingCalendarOnLocale)?;
+            .unwrap_or(AnyCalendarKind::Gregorian);
 
         let calendar = AnyCalendar::try_new_unstable(kind, data_provider)?;
 

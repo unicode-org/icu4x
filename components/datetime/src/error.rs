@@ -56,9 +56,6 @@ pub enum DateTimeFormatError {
     /// An error from mixing calendar types
     #[displaydoc("AnyDateTimeFormat for {0} calendar was given a {0:?} calendar")]
     MismatchedAnyCalendar(AnyCalendarKind, Option<AnyCalendarKind>),
-    /// An error from attempting to build AnyDateTimeFormat without a calendar in the locale
-    #[displaydoc("AnyDateTimeFormat requires locale to have a known u-ca- calendar subtag")]
-    MissingCalendarOnLocale,
 }
 
 #[cfg(feature = "std")]
