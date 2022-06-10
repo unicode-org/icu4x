@@ -63,6 +63,7 @@ exclude = ["provider/testdata/data/const"]
 #   error: options `-C embed-bitcode=no` and `-C lto` are incompatible
 [profile.release]
 lto = true
+opt-level = 's'
 
 # Enable debug information specifically for memory profiling.
 # https://docs.rs/dhat/0.2.1/dhat/#configuration
