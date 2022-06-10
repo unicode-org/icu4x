@@ -16,6 +16,7 @@ pub mod ffi {
     use unicode_bidi::Level;
     use unicode_bidi::Paragraph;
 
+    use crate::errors::ffi::ICU4XError;
     use crate::provider::ffi::ICU4XDataProvider;
 
     pub enum ICU4XBidiDirection {
@@ -33,14 +34,13 @@ pub mod ffi {
     impl ICU4XBidi {
         /// Creates a new [`ICU4XBidi`] from locale data.
         #[diplomat::rust_link(icu::properties::bidi::BidiClassAdapter::new, FnInStruct)]
-        pub fn try_new(provider: &ICU4XDataProvider) -> DiplomatResult<Box<ICU4XBidi>, ()> {
+        pub fn try_new(provider: &ICU4XDataProvider) -> DiplomatResult<Box<ICU4XBidi>, ICU4XError> {
             use icu_provider::serde::AsDeserializingBufferProvider;
             let provider = provider.0.as_deserializing();
-            if let Result::Ok(bidi) = maps::get_bidi_class(&provider) {
-                Ok(Box::new(ICU4XBidi(bidi))).into()
-            } else {
-                Err(()).into()
-            }
+            maps::get_bidi_class(&provider)
+                .map(|bidi| Box::new(ICU4XBidi(bidi)))
+                .map_err(Into::into)
+                .into()
         }
 
         /// Use the data loaded in this object to process a string and calculate bidi information

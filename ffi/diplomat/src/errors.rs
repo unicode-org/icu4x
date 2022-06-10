@@ -4,6 +4,7 @@
 
 use self::ffi::ICU4XError;
 use core::fmt;
+use icu_properties::PropertiesError;
 use icu_provider::{DataError, DataErrorKind};
 
 #[diplomat::bridge]
@@ -46,6 +47,9 @@ pub mod ffi {
         DataCustomError = 16,
         DataIoError = 17,
         DataUnavailableBufferFormatError = 18,
+
+        PropertyUnknownScriptIdError = 19,
+        PropertyUnknownGeneralCategoryGroupError = 20,
     }
 }
 
@@ -72,12 +76,28 @@ impl From<DataError> for ICU4XError {
             DataErrorKind::MissingPayload => ICU4XError::DataMissingPayloadError,
             DataErrorKind::InvalidState => ICU4XError::DataInvalidStateError,
             DataErrorKind::Custom => ICU4XError::DataCustomError,
-            #[cfg(feature = "provider_fs")]
+            #[cfg(all(
+                feature = "provider_fs",
+                not(any(target_arch = "wasm32", target_os = "none"))
+            ))]
             DataErrorKind::Io(..) => ICU4XError::DataIoError,
             // datagen only
             // DataErrorKind::MissingSourceData(..) => ..,
             DataErrorKind::UnavailableBufferFormat(..) => {
                 ICU4XError::DataUnavailableBufferFormatError
+            }
+            _ => ICU4XError::UnknownError,
+        }
+    }
+}
+
+impl From<PropertiesError> for ICU4XError {
+    fn from(e: PropertiesError) -> Self {
+        match e {
+            PropertiesError::PropDataLoad(e) => e.into(),
+            PropertiesError::UnknownScriptId(..) => ICU4XError::PropertyUnknownScriptIdError,
+            PropertiesError::UnknownGeneralCategoryGroup(..) => {
+                ICU4XError::PropertyUnknownGeneralCategoryGroupError
             }
             _ => ICU4XError::UnknownError,
         }
