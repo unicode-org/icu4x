@@ -35,40 +35,40 @@ enum struct ICU4XError {
    */
   WriteableError = 1,
   OutOfBoundsError = 2,
-  DataMissingResourceKeyError = 10,
-  DataMissingVariantError = 11,
-  DataMissingLocaleError = 12,
-  DataMissingResourceOptionsError = 13,
-  DataNeedsVariantError = 14,
-  DataNeedsLocaleError = 15,
-  DataExtraneousResourceOptionsError = 16,
-  DataFilteredResourceError = 17,
-  DataMismatchedTypeError = 18,
-  DataMissingPayloadError = 19,
-  DataInvalidStateError = 20,
-  DataCustomError = 21,
-  DataIoError = 22,
-  DataUnavailableBufferFormatError = 23,
+  DataMissingResourceKeyError = 256,
+  DataMissingVariantError = 257,
+  DataMissingLocaleError = 258,
+  DataMissingResourceOptionsError = 259,
+  DataNeedsVariantError = 260,
+  DataNeedsLocaleError = 261,
+  DataExtraneousResourceOptionsError = 262,
+  DataFilteredResourceError = 263,
+  DataMismatchedTypeError = 264,
+  DataMissingPayloadError = 265,
+  DataInvalidStateError = 266,
+  DataCustomError = 267,
+  DataIoError = 268,
+  DataUnavailableBufferFormatError = 269,
 
   /**
    * The subtag being requested was not set
    */
-  LocaleUndefinedSubtagError = 31,
+  LocaleUndefinedSubtagError = 512,
 
   /**
    * The locale or subtag string failed to parse
    */
-  LocaleParserError = 32,
+  LocaleParserError = 513,
 
   /**
    * Attempted to construct an invalid data struct
    */
-  DataStructValidityError = 33,
-  PropertyUnknownScriptIdError = 40,
+  DataStructValidityError = 768,
+  PropertyUnknownScriptIdError = 1024,
   PropertyUnknownGeneralCategoryGroupError = 41,
-  DecimalLimitError = 42,
-  DecimalSyntaxError = 43,
-  PluralParserError = 50,
+  DecimalLimitError = 1280,
+  DecimalSyntaxError = 1281,
+  PluralParserError = 1536,
 };
 
 #endif
