@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1654908626289,
+  "lastUpdate": 1654962800229,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -53795,6 +53795,150 @@ window.BENCHMARK_DATA = {
             "name": "subtags/variant/parse",
             "value": 275,
             "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "85683104261b60ccc92f7d41ca4c8bc397ece944",
+          "message": "Add FFI error strategy (#2045)\n\n* Introduce new error type, use for locale\r\n\r\n* regen\r\n\r\n* update test\r\n\r\n* use From\r\n\r\n* add data struct error\r\n\r\n* Data errors\r\n\r\n* regen\r\n\r\n* tests\r\n\r\n* correct features\r\n\r\n* Update properties errors\r\n\r\n* regen\r\n\r\n* fix test\r\n\r\n* Organize errors better\r\n\r\n* Regen\r\n\r\n* bidi errors\r\n\r\n* regen\r\n\r\n* Add decimal errors\r\n\r\n* regen\r\n\r\n* update tests\r\n\r\n* locale canonicalizer errors\r\n\r\n* plural rules errors\r\n\r\n* regen\r\n\r\n* update tests\r\n\r\n* update tests for plural category (add test for plural category)\r\n\r\n* FDF and segmenter errors\r\n\r\n* regen\r\n\r\n* update tests\r\n\r\n* remove custom writeable (Diplomat provides all of this now, it's unused)\r\n\r\n* rm file\r\n\r\n* fix docs\r\n\r\n* reconfigure error organization\r\n\r\n* regen",
+          "timestamp": "2022-06-11T15:36:23Z",
+          "tree_id": "f0c44dde811b15989b5d309b6bc430c15292586c",
+          "url": "https://github.com/unicode-org/icu4x/commit/85683104261b60ccc92f7d41ca4c8bc397ece944"
+        },
+        "date": 1654962774128,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 2967,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/construct/langid",
+            "value": 858,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/to_string/langid",
+            "value": 980,
+            "range": "± 5",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/to_string/langid/writeable",
+            "value": 1000,
+            "range": "± 3",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/compare/struct/langid",
+            "value": 78,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/compare/str/langid",
+            "value": 766,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/compare/strict_cmp/langid",
+            "value": 376,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/canonicalize/langid",
+            "value": 2363,
+            "range": "± 47",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 4284,
+            "range": "± 6",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/construct/locale",
+            "value": 1709,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/to_string/locale",
+            "value": 1396,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/to_string/locale/writeable",
+            "value": 1286,
+            "range": "± 2",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/compare/struct/locale",
+            "value": 120,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/compare/str/locale",
+            "value": 1708,
+            "range": "± 11",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/compare/strict_cmp/locale",
+            "value": 630,
+            "range": "± 3",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/canonicalize/locale",
+            "value": 3769,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "subtags/language/parse",
+            "value": 294,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "subtags/script/parse",
+            "value": 146,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "subtags/region/parse",
+            "value": 243,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "subtags/variant/parse",
+            "value": 293,
+            "range": "± 3",
             "unit": "ns/iter"
           }
         ]
