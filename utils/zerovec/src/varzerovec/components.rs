@@ -9,9 +9,9 @@ use alloc::string::String;
 use alloc::vec::Vec;
 use core::cmp::Ordering;
 use core::convert::TryFrom;
+use core::iter;
 use core::marker::PhantomData;
 use core::ops::Range;
-use core::iter;
 
 const INDEX_WIDTH: usize = 4;
 
@@ -29,6 +29,7 @@ fn usizeify(x: RawBytesULE<INDEX_WIDTH>) -> usize {
 ///
 /// See [`VarZeroVecComponents::parse_byte_slice()`] for information on the internal invariants involved
 pub struct VarZeroVecComponents<'a, T: ?Sized> {
+    len: u32,
     /// The list of indices into the `things` slice
     indices: &'a [RawBytesULE<INDEX_WIDTH>],
     /// The contiguous list of `T::VarULE`s
@@ -44,6 +45,7 @@ impl<'a, T: ?Sized> Copy for VarZeroVecComponents<'a, T> {}
 impl<'a, T: ?Sized> Clone for VarZeroVecComponents<'a, T> {
     fn clone(&self) -> Self {
         VarZeroVecComponents {
+            len: self.len,
             indices: self.indices,
             things: self.things,
             entire_slice: self.entire_slice,
@@ -63,6 +65,7 @@ impl<'a, T: VarULE + ?Sized> VarZeroVecComponents<'a, T> {
     #[inline]
     pub fn new() -> Self {
         Self {
+            len: 0,
             indices: &[],
             things: &[],
             entire_slice: &[],
@@ -82,6 +85,7 @@ impl<'a, T: VarULE + ?Sized> VarZeroVecComponents<'a, T> {
     pub fn parse_byte_slice(slice: &'a [u8]) -> Result<Self, ZeroVecError> {
         if slice.is_empty() {
             return Ok(VarZeroVecComponents {
+                len: 0,
                 indices: &[],
                 things: &[],
                 entire_slice: slice,
@@ -92,17 +96,21 @@ impl<'a, T: VarULE + ?Sized> VarZeroVecComponents<'a, T> {
         let len_ule = RawBytesULE::<INDEX_WIDTH>::parse_byte_slice(len_bytes)
             .map_err(|_| ZeroVecError::VarZeroVecFormatError)?;
 
-        let len = len_ule.get(0).ok_or(ZeroVecError::VarZeroVecFormatError)?.as_unsigned_int() as usize;
+        let len = len_ule
+            .get(0)
+            .ok_or(ZeroVecError::VarZeroVecFormatError)?
+            .as_unsigned_int();
         let indices_bytes = slice
-            .get(4..INDEX_WIDTH * len + 4)
+            .get(4..INDEX_WIDTH * (len as usize) + 4)
             .ok_or(ZeroVecError::VarZeroVecFormatError)?;
         let indices = RawBytesULE::<INDEX_WIDTH>::parse_byte_slice(indices_bytes)
             .map_err(|_| ZeroVecError::VarZeroVecFormatError)?;
         let things = slice
-            .get(INDEX_WIDTH * len + 4..)
+            .get(INDEX_WIDTH * (len as usize) + 4..)
             .ok_or(ZeroVecError::VarZeroVecFormatError)?;
 
         let borrowed = VarZeroVecComponents {
+            len,
             indices,
             things,
             entire_slice: slice,
@@ -127,6 +135,7 @@ impl<'a, T: VarULE + ?Sized> VarZeroVecComponents<'a, T> {
     pub unsafe fn from_bytes_unchecked(slice: &'a [u8]) -> Self {
         if slice.is_empty() {
             return VarZeroVecComponents {
+                len: 0,
                 indices: &[],
                 things: &[],
                 entire_slice: slice,
@@ -136,12 +145,13 @@ impl<'a, T: VarULE + ?Sized> VarZeroVecComponents<'a, T> {
         let len_bytes = slice.get_unchecked(0..4);
         let len_ule = RawBytesULE::<4>::from_byte_slice_unchecked(len_bytes);
 
-        let len = len_ule.get_unchecked(0).as_unsigned_int() as usize;
-        let indices_bytes = slice.get_unchecked(4..INDEX_WIDTH * len + 4);
+        let len = len_ule.get_unchecked(0).as_unsigned_int();
+        let indices_bytes = slice.get_unchecked(4..INDEX_WIDTH * (len as usize) + 4);
         let indices = RawBytesULE::<INDEX_WIDTH>::from_byte_slice_unchecked(indices_bytes);
-        let things = slice.get_unchecked(INDEX_WIDTH * len + 4..);
+        let things = slice.get_unchecked(INDEX_WIDTH * (len as usize) + 4..);
 
         VarZeroVecComponents {
+            len,
             indices,
             things,
             entire_slice: slice,
@@ -152,7 +162,7 @@ impl<'a, T: VarULE + ?Sized> VarZeroVecComponents<'a, T> {
     /// Get the number of elements in this vector
     #[inline]
     pub fn len(self) -> usize {
-        self.indices.len()
+        self.len as usize
     }
 
     /// Returns `true` if the vector contains no elements.
