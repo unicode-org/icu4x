@@ -22,48 +22,52 @@ pub mod ffi {
         // general errors
         /// The error is not currently categorized as ICU4XError.
         /// Please file a bug
-        UnknownError = 0,
+        UnknownError = 0x00,
         /// An error arising from writing to a string
         /// Typically found when not enough space is allocated
         /// Most APIs that return a string may return this error
-        WriteableError = 1,
+        WriteableError = 0x01,
 
         // Some input was out of bounds
-        OutOfBoundsError = 2,
+        OutOfBoundsError = 0x02,
 
         // general data errors
         // See DataError
-        DataMissingResourceKeyError = 10,
-        DataMissingVariantError = 11,
-        DataMissingLocaleError = 12,
-        DataMissingResourceOptionsError = 13,
-        DataNeedsVariantError = 14,
-        DataNeedsLocaleError = 15,
-        DataExtraneousResourceOptionsError = 16,
-        DataFilteredResourceError = 17,
-        DataMismatchedTypeError = 18,
-        DataMissingPayloadError = 19,
-        DataInvalidStateError = 20,
-        DataCustomError = 21,
-        DataIoError = 22,
-        DataUnavailableBufferFormatError = 23,
+        DataMissingResourceKeyError = 0x1_00,
+        DataMissingVariantError = 0x1_01,
+        DataMissingLocaleError = 0x1_02,
+        DataMissingResourceOptionsError = 0x1_03,
+        DataNeedsVariantError = 0x1_04,
+        DataNeedsLocaleError = 0x1_05,
+        DataExtraneousResourceOptionsError = 0x1_06,
+        DataFilteredResourceError = 0x1_07,
+        DataMismatchedTypeError = 0x1_08,
+        DataMissingPayloadError = 0x1_09,
+        DataInvalidStateError = 0x1_0A,
+        DataCustomError = 0x1_0B,
+        DataIoError = 0x1_0C,
+        DataUnavailableBufferFormatError = 0x1_0D,
 
-        // locale and data struct errors
+        // locale errors
         /// The subtag being requested was not set
-        LocaleUndefinedSubtagError = 31,
+        LocaleUndefinedSubtagError = 0x2_00,
         /// The locale or subtag string failed to parse
-        LocaleParserError = 32,
-        /// Attempted to construct an invalid data struct
-        DataStructValidityError = 33,
+        LocaleParserError = 0x2_01,
 
-        // property and decimal errors
-        PropertyUnknownScriptIdError = 40,
+        // data struct errors
+        /// Attempted to construct an invalid data struct
+        DataStructValidityError = 0x3_00,
+
+        // property errors
+        PropertyUnknownScriptIdError = 0x4_00,
         PropertyUnknownGeneralCategoryGroupError = 41,
-        DecimalLimitError = 42,
-        DecimalSyntaxError = 43,
+
+        // decimal errors
+        DecimalLimitError = 0x5_00,
+        DecimalSyntaxError = 0x5_01,
 
         // plural errors
-        PluralParserError = 50,
+        PluralParserError = 0x6_00,
     }
 }
 
