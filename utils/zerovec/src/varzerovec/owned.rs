@@ -2,6 +2,12 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+// The mutation operations in this file should panic to prevent undefined behavior
+#![allow(clippy::unwrap_used)]
+#![allow(clippy::expect_used)]
+#![allow(clippy::indexing_slicing)]
+#![allow(clippy::panic)]
+
 use super::*;
 use crate::ule::*;
 use alloc::boxed::Box;
@@ -144,7 +150,6 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
     ///
     /// ## Safety
     /// No safe functions may be called until `self.as_encoded_bytes()` is well-formed.
-    #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
     unsafe fn set_len(&mut self, len: usize) {
         assert!(len <= MAX_LENGTH);
         let len_bytes = len.to_le_bytes();
@@ -162,7 +167,6 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
     ///
     /// ## Safety
     /// The index must be valid, and self.as_encoded_bytes() must be well-formed
-    #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
     unsafe fn index_data(&self, index: usize) -> &RawBytesULE<INDEX_WIDTH> {
         &RawBytesULE::<INDEX_WIDTH>::from_byte_slice_unchecked(
             &self.entire_slice[Self::index_range(index)],
@@ -183,7 +187,6 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
         // if we know the buffer is larger.
         let data = slice::from_raw_parts_mut(ptr.add(range.start), INDEX_WIDTH);
 
-        #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
         &mut RawBytesULE::<INDEX_WIDTH>::from_byte_slice_unchecked_mut(data)[0]
     }
 
@@ -194,12 +197,10 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
     /// The length of the slice must be correctly set.
     unsafe fn shift_indices(&mut self, starting_index: usize, amount: i32) {
         let len = self.len();
-        #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
         let indices = RawBytesULE::<INDEX_WIDTH>::from_byte_slice_unchecked_mut(
             &mut self.entire_slice
                 [LENGTH_WIDTH + METADATA_WIDTH..LENGTH_WIDTH + METADATA_WIDTH + INDEX_WIDTH * len],
         );
-        #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
         for idx in &mut indices[starting_index..] {
             let mut new_idx = idx.as_unsigned_int();
             if amount > 0 {
@@ -270,7 +271,6 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
             new_size as i64 - (prev_element.end - prev_element.start) as i64 + index_shift;
         let new_slice_len = slice_len.wrapping_add(shift as usize);
         if shift > 0 {
-            #[allow(clippy::panic)] // TODO(#1668) Clippy exceptions need docs or fixing.
             if new_slice_len > u32::MAX as usize {
                 panic!(
                     "Attempted to grow VarZeroVec to an encoded size that does not fit within a u32"
@@ -350,7 +350,6 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
             + METADATA_WIDTH
             + self.len() * INDEX_WIDTH
             + self.element_position_unchecked(index);
-        #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
         &mut self.entire_slice[element_pos..element_pos + new_size as usize]
     }
 
@@ -370,7 +369,6 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
             _ => (),
         }
         let len = unsafe {
-            #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
             RawBytesULE::<LENGTH_WIDTH>::from_byte_slice_unchecked(
                 &self.entire_slice[..LENGTH_WIDTH],
             )[0]
@@ -393,7 +391,6 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
 
         // Test index validity.
         let indices = unsafe {
-            #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
             RawBytesULE::<INDEX_WIDTH>::from_byte_slice_unchecked(
                 &self.entire_slice[LENGTH_WIDTH + METADATA_WIDTH
                     ..LENGTH_WIDTH + METADATA_WIDTH + len as usize * INDEX_WIDTH],
@@ -406,7 +403,6 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
             }
         }
         for window in indices.windows(2) {
-            #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
             if window[0].as_unsigned_int() > window[1].as_unsigned_int() {
                 // Indices must be in non-decreasing order.
                 return false;
@@ -423,7 +419,6 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
     /// Insert an element at index `idx`
     pub fn insert<A: EncodeAsVarULE<T> + ?Sized>(&mut self, index: usize, element: &A) {
         let len = self.len();
-        #[allow(clippy::panic)] // TODO(#1668) Clippy exceptions need docs or fixing.
         if index > len {
             panic!(
                 "Called out-of-bounds insert() on VarZeroVec, index {} len {}",
@@ -433,7 +428,6 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
 
         let value_len = element.encode_var_ule_len();
 
-        #[allow(clippy::indexing_slicing)] // slice is long enough
         if len == 0 {
             let header_len = LENGTH_WIDTH + METADATA_WIDTH + INDEX_WIDTH;
             let cap = header_len + value_len;
@@ -453,7 +447,6 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
     /// Remove the element at index `idx`
     pub fn remove(&mut self, index: usize) {
         let len = self.len();
-        #[allow(clippy::panic)] // TODO(#1668) Clippy exceptions need docs or fixing.
         if index >= len {
             panic!(
                 "Called out-of-bounds remove() on VarZeroVec, index {} len {}",
@@ -473,7 +466,6 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
     /// Replace the element at index `idx` with another
     pub fn replace<A: EncodeAsVarULE<T> + ?Sized>(&mut self, index: usize, element: &A) {
         let len = self.len();
-        #[allow(clippy::panic)] // TODO(#1668) Clippy exceptions need docs or fixing.
         if index >= len {
             panic!(
                 "Called out-of-bounds replace() on VarZeroVec, index {} len {}",
