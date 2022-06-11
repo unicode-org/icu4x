@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1654907962255,
+  "lastUpdate": 1654961945250,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -17333,6 +17333,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/fcdbad1be0b92752f18ba8c63d36352f2781d5ff"
         },
         "date": 1654907934739,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 2274293,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "85683104261b60ccc92f7d41ca4c8bc397ece944",
+          "message": "Add FFI error strategy (#2045)\n\n* Introduce new error type, use for locale\r\n\r\n* regen\r\n\r\n* update test\r\n\r\n* use From\r\n\r\n* add data struct error\r\n\r\n* Data errors\r\n\r\n* regen\r\n\r\n* tests\r\n\r\n* correct features\r\n\r\n* Update properties errors\r\n\r\n* regen\r\n\r\n* fix test\r\n\r\n* Organize errors better\r\n\r\n* Regen\r\n\r\n* bidi errors\r\n\r\n* regen\r\n\r\n* Add decimal errors\r\n\r\n* regen\r\n\r\n* update tests\r\n\r\n* locale canonicalizer errors\r\n\r\n* plural rules errors\r\n\r\n* regen\r\n\r\n* update tests\r\n\r\n* update tests for plural category (add test for plural category)\r\n\r\n* FDF and segmenter errors\r\n\r\n* regen\r\n\r\n* update tests\r\n\r\n* remove custom writeable (Diplomat provides all of this now, it's unused)\r\n\r\n* rm file\r\n\r\n* fix docs\r\n\r\n* reconfigure error organization\r\n\r\n* regen",
+          "timestamp": "2022-06-11T15:36:23Z",
+          "tree_id": "f0c44dde811b15989b5d309b6bc430c15292586c",
+          "url": "https://github.com/unicode-org/icu4x/commit/85683104261b60ccc92f7d41ca4c8bc397ece944"
+        },
+        "date": 1654961914647,
         "tool": "ndjson",
         "benches": [
           {
