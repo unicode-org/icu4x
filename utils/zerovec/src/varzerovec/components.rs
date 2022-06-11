@@ -13,6 +13,8 @@ use core::iter;
 use core::marker::PhantomData;
 use core::ops::Range;
 
+const LENGTH_WIDTH: usize = 4;
+const METADATA_WIDTH: usize = 0;
 const INDEX_WIDTH: usize = 4;
 
 fn usizeify(x: RawBytesULE<INDEX_WIDTH>) -> usize {
@@ -29,6 +31,7 @@ fn usizeify(x: RawBytesULE<INDEX_WIDTH>) -> usize {
 ///
 /// See [`VarZeroVecComponents::parse_byte_slice()`] for information on the internal invariants involved
 pub struct VarZeroVecComponents<'a, T: ?Sized> {
+    /// The number of elements
     len: u32,
     /// The list of indices into the `things` slice
     indices: &'a [u8],
@@ -92,8 +95,8 @@ impl<'a, T: VarULE + ?Sized> VarZeroVecComponents<'a, T> {
                 marker: PhantomData,
             });
         }
-        let len_bytes = slice.get(0..4).ok_or(ZeroVecError::VarZeroVecFormatError)?;
-        let len_ule = RawBytesULE::<INDEX_WIDTH>::parse_byte_slice(len_bytes)
+        let len_bytes = slice.get(0..LENGTH_WIDTH).ok_or(ZeroVecError::VarZeroVecFormatError)?;
+        let len_ule = RawBytesULE::<LENGTH_WIDTH>::parse_byte_slice(len_bytes)
             .map_err(|_| ZeroVecError::VarZeroVecFormatError)?;
 
         let len = len_ule
@@ -101,10 +104,10 @@ impl<'a, T: VarULE + ?Sized> VarZeroVecComponents<'a, T> {
             .ok_or(ZeroVecError::VarZeroVecFormatError)?
             .as_unsigned_int();
         let indices_bytes = slice
-            .get(4..INDEX_WIDTH * (len as usize) + 4)
+            .get(LENGTH_WIDTH + METADATA_WIDTH..LENGTH_WIDTH + METADATA_WIDTH + INDEX_WIDTH * (len as usize))
             .ok_or(ZeroVecError::VarZeroVecFormatError)?;
         let things = slice
-            .get(INDEX_WIDTH * (len as usize) + 4..)
+            .get(INDEX_WIDTH * (len as usize) + LENGTH_WIDTH + METADATA_WIDTH..)
             .ok_or(ZeroVecError::VarZeroVecFormatError)?;
 
         let borrowed = VarZeroVecComponents {
@@ -140,12 +143,12 @@ impl<'a, T: VarULE + ?Sized> VarZeroVecComponents<'a, T> {
                 marker: PhantomData,
             };
         }
-        let len_bytes = slice.get_unchecked(0..4);
-        let len_ule = RawBytesULE::<4>::from_byte_slice_unchecked(len_bytes);
+        let len_bytes = slice.get_unchecked(0..LENGTH_WIDTH);
+        let len_ule = RawBytesULE::<LENGTH_WIDTH>::from_byte_slice_unchecked(len_bytes);
 
         let len = len_ule.get_unchecked(0).as_unsigned_int();
-        let indices_bytes = slice.get_unchecked(4..INDEX_WIDTH * (len as usize) + 4);
-        let things = slice.get_unchecked(INDEX_WIDTH * (len as usize) + 4..);
+        let indices_bytes = slice.get_unchecked(LENGTH_WIDTH + METADATA_WIDTH..LENGTH_WIDTH + METADATA_WIDTH + INDEX_WIDTH * (len as usize));
+        let things = slice.get_unchecked(LENGTH_WIDTH + METADATA_WIDTH + INDEX_WIDTH * (len as usize)..);
 
         VarZeroVecComponents {
             len,
@@ -181,7 +184,7 @@ impl<'a, T: VarULE + ?Sized> VarZeroVecComponents<'a, T> {
     ///
     /// Safety:
     /// - `idx` must be in bounds (`idx < self.len()`)
-    #[inline]
+    #[inline(never)]
     pub(crate) unsafe fn get_unchecked(self, idx: usize) -> &'a T {
         let range = self.get_things_range(idx);
         let things_slice = self.things.get_unchecked(range);
@@ -405,7 +408,7 @@ where
     A: EncodeAsVarULE<T>,
 {
     let len = compute_serializable_len(elements)?;
-    debug_assert!(len >= 4);
+    debug_assert!(len >= LENGTH_WIDTH as u32);
     let mut output: Vec<u8> = alloc::vec![0; len as usize];
     write_serializable_bytes(elements, &mut output);
     Some(output)
@@ -423,15 +426,17 @@ where
     T: VarULE + ?Sized,
     A: EncodeAsVarULE<T>,
 {
-    #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
-    let num_elements = u32::try_from(elements.len()).ok().unwrap();
-    #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
-    output[0..4].copy_from_slice(&num_elements.to_unaligned().0);
+    #[allow(clippy::unwrap_used)] // Function contract allows panicky behavior
+    let num_elements_bytes = elements.len().to_le_bytes();
+    #[allow(clippy::indexing_slicing)] // Function contract allows panicky behavior
+    output[0..LENGTH_WIDTH].copy_from_slice(&num_elements_bytes[0..LENGTH_WIDTH]);
+    // Double-check that the length fits in the length field
+    assert_eq!(num_elements_bytes[LENGTH_WIDTH..].iter().sum::<u8>(), 0);
 
     // idx_offset = offset from the start of the buffer for the next index
-    let mut idx_offset: usize = 4;
+    let mut idx_offset: usize = LENGTH_WIDTH + METADATA_WIDTH;
     // first_dat_offset = offset from the start of the buffer of the first data block
-    let first_dat_offset: usize = 4 + elements.len() * INDEX_WIDTH;
+    let first_dat_offset: usize = idx_offset + elements.len() * INDEX_WIDTH;
     // dat_offset = offset from the start of the buffer of the next data block
     let mut dat_offset: usize = first_dat_offset;
 
@@ -439,14 +444,14 @@ where
         let element_len = element.encode_var_ule_len();
 
         let idx_limit = idx_offset + INDEX_WIDTH;
-        #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
+        #[allow(clippy::indexing_slicing)] // Function contract allows panicky behavior
         let idx_slice = &mut output[idx_offset..idx_limit];
         // VZV expects data offsets to be stored relative to the first data block
         let bytes = (dat_offset - first_dat_offset).to_le_bytes();
         idx_slice.copy_from_slice(&bytes[..INDEX_WIDTH]);
 
         let dat_limit = dat_offset + element_len;
-        #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
+        #[allow(clippy::indexing_slicing)] // Function contract allows panicky behavior
         let dat_slice = &mut output[dat_offset..dat_limit];
         element.encode_var_ule_write(dat_slice);
         debug_assert_eq!(T::validate_byte_slice(dat_slice), Ok(()));
@@ -455,7 +460,7 @@ where
         dat_offset = dat_limit;
     }
 
-    debug_assert_eq!(idx_offset, 4 + INDEX_WIDTH * elements.len());
+    debug_assert_eq!(idx_offset, LENGTH_WIDTH + METADATA_WIDTH + INDEX_WIDTH * elements.len());
     assert_eq!(dat_offset, output.len());
 }
 
@@ -464,11 +469,11 @@ where
     T: VarULE + ?Sized,
     A: EncodeAsVarULE<T>,
 {
-    // 4 for length + 4 for each offset + the body
     let idx_len: u32 = u32::try_from(elements.len())
         .ok()?
         .checked_mul(INDEX_WIDTH as u32)?
-        .checked_add(4)?;
+        .checked_add(LENGTH_WIDTH as u32)?
+        .checked_add(METADATA_WIDTH as u32)?;
     let data_len: u32 = elements
         .iter()
         .map(|v| u32::try_from(v.encode_var_ule_len()).ok())
