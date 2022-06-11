@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1654908691225,
+  "lastUpdate": 1654962864240,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -52372,6 +52372,150 @@ window.BENCHMARK_DATA = {
           {
             "name": "plurals/pluralrules/select/fs",
             "value": 3048,
+            "range": "± 8",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "85683104261b60ccc92f7d41ca4c8bc397ece944",
+          "message": "Add FFI error strategy (#2045)\n\n* Introduce new error type, use for locale\r\n\r\n* regen\r\n\r\n* update test\r\n\r\n* use From\r\n\r\n* add data struct error\r\n\r\n* Data errors\r\n\r\n* regen\r\n\r\n* tests\r\n\r\n* correct features\r\n\r\n* Update properties errors\r\n\r\n* regen\r\n\r\n* fix test\r\n\r\n* Organize errors better\r\n\r\n* Regen\r\n\r\n* bidi errors\r\n\r\n* regen\r\n\r\n* Add decimal errors\r\n\r\n* regen\r\n\r\n* update tests\r\n\r\n* locale canonicalizer errors\r\n\r\n* plural rules errors\r\n\r\n* regen\r\n\r\n* update tests\r\n\r\n* update tests for plural category (add test for plural category)\r\n\r\n* FDF and segmenter errors\r\n\r\n* regen\r\n\r\n* update tests\r\n\r\n* remove custom writeable (Diplomat provides all of this now, it's unused)\r\n\r\n* rm file\r\n\r\n* fix docs\r\n\r\n* reconfigure error organization\r\n\r\n* regen",
+          "timestamp": "2022-06-11T15:36:23Z",
+          "tree_id": "f0c44dde811b15989b5d309b6bc430c15292586c",
+          "url": "https://github.com/unicode-org/icu4x/commit/85683104261b60ccc92f7d41ca4c8bc397ece944"
+        },
+        "date": 1654962840263,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1197,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/operands/create/usize",
+            "value": 62,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/operands/create/isize",
+            "value": 81,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/operands/create/string",
+            "value": 792,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/operands/create/string/samples/0",
+            "value": 13,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/operands/create/string/samples/10",
+            "value": 15,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/operands/create/string/samples/200",
+            "value": 18,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/operands/create/string/samples/3000",
+            "value": 20,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/operands/create/string/samples/40000",
+            "value": 22,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/operands/create/string/samples/500000",
+            "value": 24,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/operands/create/string/samples/6000000",
+            "value": 27,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/operands/create/string/samples/70000000",
+            "value": 30,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/operands/eq/mostly_unequal",
+            "value": 351,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/operands/eq/mostly_equal",
+            "value": 624,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/operands/create/from_fixed_decimal",
+            "value": 233,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 5457,
+            "range": "± 3",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/lex",
+            "value": 1899,
+            "range": "± 6",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 20679,
+            "range": "± 72",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/construct/fs",
+            "value": 8239,
+            "range": "± 7",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/select/fs",
+            "value": 3254,
             "range": "± 8",
             "unit": "ns/iter"
           }
