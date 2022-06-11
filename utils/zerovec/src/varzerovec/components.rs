@@ -9,7 +9,6 @@ use alloc::string::String;
 use alloc::vec::Vec;
 use core::cmp::Ordering;
 use core::convert::TryFrom;
-use core::iter;
 use core::marker::PhantomData;
 use core::ops::Range;
 
@@ -244,68 +243,39 @@ impl<'a, T: VarULE + ?Sized> VarZeroVecComponents<'a, T> {
     /// assume that the slice has been passed through iter_checked
     #[inline]
     fn iter_checked(self) -> impl Iterator<Item = Result<&'a T, ZeroVecError>> {
-        let last = iter::from_fn(move || {
-            if !self.is_empty() {
-                #[allow(clippy::indexing_slicing)]
-                // TODO(#1668) Clippy exceptions need docs or fixing.
-                let start = usizeify(self.indices_slice()[self.len() - 1]);
-                let end = self.things.len();
-                Some(
-                    self.things
-                        .get(start..end)
-                        .ok_or(ZeroVecError::VarZeroVecFormatError),
-                )
-            } else {
-                None
-            }
-        })
-        .take(1);
         self.indices_slice()
-            .windows(2)
-            .map(move |win| {
-                #[allow(clippy::indexing_slicing)]
-                // TODO(#1668) Clippy exceptions need docs or fixing.
-                let start = usizeify(win[0]);
-                #[allow(clippy::indexing_slicing)]
-                // TODO(#1668) Clippy exceptions need docs or fixing.
-                let end = usizeify(win[1]);
-                // the .get() here automatically verifies that end>=start
+            .iter()
+            .map(|i| i.as_unsigned_int() as usize)
+            .zip(
+                self.indices_slice()
+                    .iter()
+                    .map(|i| i.as_unsigned_int() as usize)
+                    .skip(1)
+                    .chain(core::iter::once(self.things.len())),
+            )
+            .map(move |(start, end)| {
                 self.things
                     .get(start..end)
                     .ok_or(ZeroVecError::VarZeroVecFormatError)
             })
-            .chain(last)
-            .map(|s| s.and_then(|s| T::parse_byte_slice(s)))
+            .map(|bytes_result| bytes_result.and_then(|bytes| T::parse_byte_slice(bytes)))
     }
 
     /// Create an iterator over the Ts contained in VarZeroVecComponents
     #[inline]
     pub fn iter(self) -> impl Iterator<Item = &'a T> {
-        let last = iter::from_fn(move || {
-            if !self.is_empty() {
-                #[allow(clippy::indexing_slicing)]
-                // TODO(#1668) Clippy exceptions need docs or fixing.
-                let start = usizeify(self.indices_slice()[self.len() - 1]);
-                let end = self.things.len();
-                Some(unsafe { self.things.get_unchecked(start..end) })
-            } else {
-                None
-            }
-        })
-        .take(1);
         self.indices_slice()
-            .windows(2)
-            .map(move |win| {
-                #[allow(clippy::indexing_slicing)]
-                // TODO(#1668) Clippy exceptions need docs or fixing.
-                let start = usizeify(win[0]);
-                #[allow(clippy::indexing_slicing)]
-                // TODO(#1668) Clippy exceptions need docs or fixing.
-                let end = usizeify(win[1]);
-                unsafe { self.things.get_unchecked(start..end) }
-            })
-            .chain(last)
-            .map(|s| unsafe { T::from_byte_slice_unchecked(s) })
+            .iter()
+            .map(|i| i.as_unsigned_int() as usize)
+            .zip(
+                self.indices_slice()
+                    .iter()
+                    .map(|i| i.as_unsigned_int() as usize)
+                    .skip(1)
+                    .chain(core::iter::once(self.things.len())),
+            )
+            .map(move |(start, end)| unsafe { self.things.get_unchecked(start..end) })
+            .map(|bytes| unsafe { T::from_byte_slice_unchecked(bytes) })
     }
 
     pub fn to_vec(self) -> Vec<Box<T>> {
