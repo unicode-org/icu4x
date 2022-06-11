@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1654901990665,
+  "lastUpdate": 1654907962255,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -17303,6 +17303,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/305cc84011b54d1b65a3ff3ec1d69c7a63705040"
         },
         "date": 1654901962143,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 2274293,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "fcdbad1be0b92752f18ba8c63d36352f2781d5ff",
+          "message": "Initial AnyDateTimeFormat (#1987)\n\n\r\n* Basic AnyDateTimeFormat",
+          "timestamp": "2022-06-11T00:36:53Z",
+          "tree_id": "af35f7be36fc1e44113ca102b20a770d04919f83",
+          "url": "https://github.com/unicode-org/icu4x/commit/fcdbad1be0b92752f18ba8c63d36352f2781d5ff"
+        },
+        "date": 1654907934739,
         "tool": "ndjson",
         "benches": [
           {
