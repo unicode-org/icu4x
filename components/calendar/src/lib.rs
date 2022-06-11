@@ -167,7 +167,7 @@ pub mod types;
 
 pub use calendar::Calendar;
 pub use calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
-pub use date::{AsCalendar, Date};
+pub use date::{AsCalendar, Date, Ref};
 pub use datetime::DateTime;
 pub use duration::{DateDuration, DateDurationUnit};
 pub use error::DateTimeError;

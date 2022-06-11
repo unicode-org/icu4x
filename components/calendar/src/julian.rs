@@ -31,6 +31,7 @@
 //! assert_eq!(datetime_julian.time.second.number(), 0);
 //! ```
 
+use crate::any_calendar::AnyCalendarKind;
 use crate::iso::{Iso, IsoYear};
 use crate::{
     types, ArithmeticDate, Calendar, CalendarArithmetic, Date, DateDuration, DateDurationUnit,
@@ -150,6 +151,10 @@ impl Calendar for Julian {
 
     fn debug_name(&self) -> &'static str {
         "Julian"
+    }
+
+    fn any_calendar_kind(&self) -> Option<AnyCalendarKind> {
+        None
     }
 }
 

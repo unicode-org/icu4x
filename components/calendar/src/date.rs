@@ -6,6 +6,7 @@ use crate::any_calendar::{AnyCalendar, IncludedInAnyCalendar};
 use crate::{types, Calendar, DateDuration, DateDurationUnit, Iso};
 use alloc::rc::Rc;
 use core::fmt;
+use core::ops::Deref;
 
 /// Types that contain a calendar
 ///
@@ -34,6 +35,31 @@ impl<C: Calendar> AsCalendar for Rc<C> {
     }
 }
 
+/// This exists as a wrapper around `&'a T` so that
+/// `Date<&'a C>` is possible for calendar `C`. Unfortunately,
+/// [`AsCalendar`] cannot be implemented on `&'a T` directly because
+/// `&'a T` is `#[fundamental]` and the impl would clash with the one above with
+/// `AsCalendar` for `C: Calendar`.
+///
+/// Use `Date<Ref<'a, C>>` where you would use `Date<&'a C>`
+#[allow(clippy::exhaustive_structs)] // newtype
+pub struct Ref<'a, C>(pub &'a C);
+
+impl<C: Calendar> AsCalendar for Ref<'_, C> {
+    type Calendar = C;
+    #[inline]
+    fn as_calendar(&self) -> &C {
+        self.0
+    }
+}
+
+impl<'a, C> Deref for Ref<'a, C> {
+    type Target = C;
+    fn deref(&self) -> &C {
+        self.0
+    }
+}
+
 /// A date for a given calendar.
 ///
 /// This can work with wrappers around [`Calendar`] types,
@@ -52,7 +78,7 @@ impl<C: Calendar> AsCalendar for Rc<C> {
 /// ```
 pub struct Date<A: AsCalendar> {
     pub(crate) inner: <A::Calendar as Calendar>::DateInner,
-    calendar: A,
+    pub(crate) calendar: A,
 }
 
 impl<A: AsCalendar> Date<A> {

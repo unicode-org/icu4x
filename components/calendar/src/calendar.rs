@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::any_calendar::AnyCalendarKind;
 use crate::{types, Date, DateDuration, DateDurationUnit, Iso};
 use core::fmt;
 
@@ -69,4 +70,10 @@ pub trait Calendar {
 
     /// Information of the day of the year
     fn day_of_year_info(&self, date: &Self::DateInner) -> types::DayOfYearInfo;
+
+    /// The [`AnyCalendarKind`] corresponding to this calendar,
+    /// if one exists. Implementors outside of icu_calendar should return None
+    fn any_calendar_kind(&self) -> Option<AnyCalendarKind> {
+        None
+    }
 }
