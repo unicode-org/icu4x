@@ -39,7 +39,7 @@ pub mod ffi {
 
         /// Construct an [`ICU4XFixedDecimal`] from an float, with enough digits to recover
         /// the original floating point in IEEE 754 without needing trailing zeros
-        #[diplomat::rust_link(fixed_decimal::decimal::FixedDecimal::from_f64, FnInStruct)]
+        #[diplomat::rust_link(fixed_decimal::decimal::FixedDecimal::try_from_f64, FnInStruct)]
         pub fn create_from_f64_with_max_precision(
             f: f64,
         ) -> DiplomatResult<Box<ICU4XFixedDecimal>, ICU4XError> {
@@ -51,7 +51,7 @@ pub mod ffi {
         }
 
         /// Construct an [`ICU4XFixedDecimal`] from an float, with a given power of 10 for the lower magnitude
-        #[diplomat::rust_link(fixed_decimal::decimal::FixedDecimal::from_f64, FnInStruct)]
+        #[diplomat::rust_link(fixed_decimal::decimal::FixedDecimal::try_from_f64, FnInStruct)]
         pub fn create_from_f64_with_lower_magnitude(
             f: f64,
             precision: i16,
@@ -65,7 +65,7 @@ pub mod ffi {
         }
 
         /// Construct an [`ICU4XFixedDecimal`] from an float, for a given number of significant digits
-        #[diplomat::rust_link(fixed_decimal::decimal::FixedDecimal::from_f64, FnInStruct)]
+        #[diplomat::rust_link(fixed_decimal::decimal::FixedDecimal::try_from_f64, FnInStruct)]
         pub fn create_from_f64_with_significant_digits(
             f: f64,
             digits: u8,
