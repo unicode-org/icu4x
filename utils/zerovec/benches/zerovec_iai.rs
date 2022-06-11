@@ -8,7 +8,7 @@ use iai::black_box;
 mod samples;
 use samples::*;
 
-use zerovec::{ZeroVec, VarZeroSlice, ule::VarULE};
+use zerovec::{ule::VarULE, VarZeroSlice, ZeroVec};
 
 fn sum_slice() -> u32 {
     black_box(TEST_SLICE).iter().sum::<u32>()

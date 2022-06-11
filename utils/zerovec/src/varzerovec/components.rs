@@ -98,7 +98,9 @@ impl<'a, T: VarULE + ?Sized> VarZeroVecComponents<'a, T> {
                 marker: PhantomData,
             });
         }
-        let len_bytes = slice.get(0..LENGTH_WIDTH).ok_or(ZeroVecError::VarZeroVecFormatError)?;
+        let len_bytes = slice
+            .get(0..LENGTH_WIDTH)
+            .ok_or(ZeroVecError::VarZeroVecFormatError)?;
         let len_ule = RawBytesULE::<LENGTH_WIDTH>::parse_byte_slice(len_bytes)
             .map_err(|_| ZeroVecError::VarZeroVecFormatError)?;
 
@@ -107,7 +109,10 @@ impl<'a, T: VarULE + ?Sized> VarZeroVecComponents<'a, T> {
             .ok_or(ZeroVecError::VarZeroVecFormatError)?
             .as_unsigned_int();
         let indices_bytes = slice
-            .get(LENGTH_WIDTH + METADATA_WIDTH..LENGTH_WIDTH + METADATA_WIDTH + INDEX_WIDTH * (len as usize))
+            .get(
+                LENGTH_WIDTH + METADATA_WIDTH
+                    ..LENGTH_WIDTH + METADATA_WIDTH + INDEX_WIDTH * (len as usize),
+            )
             .ok_or(ZeroVecError::VarZeroVecFormatError)?;
         let things = slice
             .get(INDEX_WIDTH * (len as usize) + LENGTH_WIDTH + METADATA_WIDTH..)
@@ -150,8 +155,12 @@ impl<'a, T: VarULE + ?Sized> VarZeroVecComponents<'a, T> {
         let len_ule = RawBytesULE::<LENGTH_WIDTH>::from_byte_slice_unchecked(len_bytes);
 
         let len = len_ule.get_unchecked(0).as_unsigned_int();
-        let indices_bytes = slice.get_unchecked(LENGTH_WIDTH + METADATA_WIDTH..LENGTH_WIDTH + METADATA_WIDTH + INDEX_WIDTH * (len as usize));
-        let things = slice.get_unchecked(LENGTH_WIDTH + METADATA_WIDTH + INDEX_WIDTH * (len as usize)..);
+        let indices_bytes = slice.get_unchecked(
+            LENGTH_WIDTH + METADATA_WIDTH
+                ..LENGTH_WIDTH + METADATA_WIDTH + INDEX_WIDTH * (len as usize),
+        );
+        let things =
+            slice.get_unchecked(LENGTH_WIDTH + METADATA_WIDTH + INDEX_WIDTH * (len as usize)..);
 
         VarZeroVecComponents {
             len,
@@ -311,7 +320,8 @@ impl<'a, T: VarULE + ?Sized> VarZeroVecComponents<'a, T> {
     // Dump a debuggable representation of this type
     #[allow(unused)] // useful for debugging
     pub(crate) fn dump(&self) -> String {
-        let indices = self.indices_slice()
+        let indices = self
+            .indices_slice()
             .iter()
             .map(|i| i.as_unsigned_int())
             .collect::<Vec<_>>();
@@ -462,7 +472,10 @@ where
         dat_offset = dat_limit;
     }
 
-    debug_assert_eq!(idx_offset, LENGTH_WIDTH + METADATA_WIDTH + INDEX_WIDTH * elements.len());
+    debug_assert_eq!(
+        idx_offset,
+        LENGTH_WIDTH + METADATA_WIDTH + INDEX_WIDTH * elements.len()
+    );
     assert_eq!(dat_offset, output.len());
 }
 

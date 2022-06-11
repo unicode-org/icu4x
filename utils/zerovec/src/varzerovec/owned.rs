@@ -123,7 +123,9 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
         } else {
             self.index_data(idx).as_unsigned_int() as usize
         };
-        debug_assert!(out + LENGTH_WIDTH + METADATA_WIDTH + len * INDEX_WIDTH <= self.entire_slice.len());
+        debug_assert!(
+            out + LENGTH_WIDTH + METADATA_WIDTH + len * INDEX_WIDTH <= self.entire_slice.len()
+        );
         out
     }
 
@@ -162,8 +164,9 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
     /// The index must be valid, and self.as_encoded_bytes() must be well-formed
     #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
     unsafe fn index_data(&self, index: usize) -> &RawBytesULE<INDEX_WIDTH> {
-        &RawBytesULE::<INDEX_WIDTH>::from_byte_slice_unchecked(&self.entire_slice[Self::index_range(index)])
-            [0]
+        &RawBytesULE::<INDEX_WIDTH>::from_byte_slice_unchecked(
+            &self.entire_slice[Self::index_range(index)],
+        )[0]
     }
 
     /// Return the mutable slice representing the given `index`.
@@ -192,8 +195,10 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
     unsafe fn shift_indices(&mut self, starting_index: usize, amount: i32) {
         let len = self.len();
         #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
-        let indices =
-            RawBytesULE::<INDEX_WIDTH>::from_byte_slice_unchecked_mut(&mut self.entire_slice[LENGTH_WIDTH + METADATA_WIDTH..LENGTH_WIDTH + METADATA_WIDTH + INDEX_WIDTH * len]);
+        let indices = RawBytesULE::<INDEX_WIDTH>::from_byte_slice_unchecked_mut(
+            &mut self.entire_slice
+                [LENGTH_WIDTH + METADATA_WIDTH..LENGTH_WIDTH + METADATA_WIDTH + INDEX_WIDTH * len],
+        );
         #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
         for idx in &mut indices[starting_index..] {
             let mut new_idx = idx.as_unsigned_int();
@@ -279,7 +284,9 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
             // Note: There are no references introduced between pointer creation and pointer use, and all
             //       raw pointers are derived from a single &mut. This preserves pointer provenance.
             let slice_range = self.entire_slice.as_mut_ptr_range();
-            let data_start = slice_range.start.add(LENGTH_WIDTH + METADATA_WIDTH + len * INDEX_WIDTH);
+            let data_start = slice_range
+                .start
+                .add(LENGTH_WIDTH + METADATA_WIDTH + len * INDEX_WIDTH);
             let prev_element_p =
                 data_start.add(prev_element.start)..data_start.add(prev_element.end);
 
@@ -288,7 +295,9 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
             // When removing:  where the index being removed is.
             // When replacing: unused.
             let index_range = {
-                let index_start = slice_range.start.add(LENGTH_WIDTH + METADATA_WIDTH + INDEX_WIDTH * index);
+                let index_start = slice_range
+                    .start
+                    .add(LENGTH_WIDTH + METADATA_WIDTH + INDEX_WIDTH * index);
                 index_start..index_start.add(INDEX_WIDTH)
             };
 
@@ -337,7 +346,10 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
         debug_assert!(self.verify_integrity());
 
         // Return a mut slice to the new element data.
-        let element_pos = LENGTH_WIDTH + METADATA_WIDTH + self.len() * INDEX_WIDTH + self.element_position_unchecked(index);
+        let element_pos = LENGTH_WIDTH
+            + METADATA_WIDTH
+            + self.len() * INDEX_WIDTH
+            + self.element_position_unchecked(index);
         #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
         &mut self.entire_slice[element_pos..element_pos + new_size as usize]
     }
@@ -359,7 +371,9 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
         }
         let len = unsafe {
             #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
-            RawBytesULE::<LENGTH_WIDTH>::from_byte_slice_unchecked(&self.entire_slice[..LENGTH_WIDTH])[0]
+            RawBytesULE::<LENGTH_WIDTH>::from_byte_slice_unchecked(
+                &self.entire_slice[..LENGTH_WIDTH],
+            )[0]
             .as_unsigned_int()
         };
         if len == 0 {
@@ -370,7 +384,8 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
             // Not enough room for the indices.
             return false;
         }
-        let data_len = self.entire_slice.len() - LENGTH_WIDTH - METADATA_WIDTH - len as usize * INDEX_WIDTH;
+        let data_len =
+            self.entire_slice.len() - LENGTH_WIDTH - METADATA_WIDTH - len as usize * INDEX_WIDTH;
         if data_len > MAX_INDEX {
             // The data segment is too long.
             return false;
@@ -379,7 +394,10 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
         // Test index validity.
         let indices = unsafe {
             #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
-            RawBytesULE::<INDEX_WIDTH>::from_byte_slice_unchecked(&self.entire_slice[LENGTH_WIDTH + METADATA_WIDTH..LENGTH_WIDTH + METADATA_WIDTH + len as usize * INDEX_WIDTH])
+            RawBytesULE::<INDEX_WIDTH>::from_byte_slice_unchecked(
+                &self.entire_slice[LENGTH_WIDTH + METADATA_WIDTH
+                    ..LENGTH_WIDTH + METADATA_WIDTH + len as usize * INDEX_WIDTH],
+            )
         };
         for idx in indices {
             if idx.as_unsigned_int() as usize > data_len {
