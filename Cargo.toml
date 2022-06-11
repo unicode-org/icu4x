@@ -58,12 +58,13 @@ members = [
 ]
 exclude = ["provider/testdata/data/const"]
 
+# LTO is needed for WASM and other size-optimized builds,
+# and it improve the performance of benchmarks
 [profile.release]
+lto = true
 
-# LTO is needed for WASM and other size-optimized builds
 [profile.release-opt-size]
 inherits = "release"
-lto = true
 opt-level = "s"
 
 # Enable debug information specifically for memory profiling.
