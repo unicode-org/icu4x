@@ -187,7 +187,7 @@ impl<'a, T: VarULE + ?Sized> VarZeroVecComponents<'a, T> {
     ///
     /// Safety:
     /// - `idx` must be in bounds (`idx < self.len()`)
-    #[inline(never)]
+    #[inline]
     pub(crate) unsafe fn get_unchecked(self, idx: usize) -> &'a T {
         let range = self.get_things_range(idx);
         let things_slice = self.things.get_unchecked(range);
