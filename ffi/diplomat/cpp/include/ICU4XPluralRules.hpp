@@ -15,7 +15,8 @@ namespace capi {
 
 class ICU4XLocale;
 class ICU4XDataProvider;
-struct ICU4XCreatePluralRulesResult;
+class ICU4XPluralRules;
+#include "ICU4XError.hpp"
 struct ICU4XPluralOperands;
 #include "ICU4XPluralCategory.hpp"
 struct ICU4XPluralCategories;
@@ -42,14 +43,14 @@ class ICU4XPluralRules {
    * 
    * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu_plurals/struct.PluralRules.html#method.try_new) for more information.
    */
-  static ICU4XCreatePluralRulesResult try_new_cardinal(const ICU4XLocale& locale, const ICU4XDataProvider& provider);
+  static diplomat::result<ICU4XPluralRules, ICU4XError> try_new_cardinal(const ICU4XLocale& locale, const ICU4XDataProvider& provider);
 
   /**
    * FFI version of `PluralRules::try_new_ordinal()`.
    * 
    * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu_plurals/struct.PluralRules.html#method.try_new) for more information.
    */
-  static ICU4XCreatePluralRulesResult try_new_ordinal(const ICU4XLocale& locale, const ICU4XDataProvider& provider);
+  static diplomat::result<ICU4XPluralRules, ICU4XError> try_new_ordinal(const ICU4XLocale& locale, const ICU4XDataProvider& provider);
 
   /**
    * FFI version of `PluralRules::select()`.
@@ -76,31 +77,28 @@ class ICU4XPluralRules {
 
 #include "ICU4XLocale.hpp"
 #include "ICU4XDataProvider.hpp"
-#include "ICU4XCreatePluralRulesResult.hpp"
 #include "ICU4XPluralOperands.hpp"
 #include "ICU4XPluralCategories.hpp"
 
-inline ICU4XCreatePluralRulesResult ICU4XPluralRules::try_new_cardinal(const ICU4XLocale& locale, const ICU4XDataProvider& provider) {
-  capi::ICU4XCreatePluralRulesResult diplomat_raw_struct_out_value = capi::ICU4XPluralRules_try_new_cardinal(locale.AsFFI(), provider.AsFFI());
-  auto diplomat_optional_raw_out_value_rules = diplomat_raw_struct_out_value.rules;
-  std::optional<ICU4XPluralRules> diplomat_optional_out_value_rules;
-  if (diplomat_optional_raw_out_value_rules != nullptr) {
-    diplomat_optional_out_value_rules = ICU4XPluralRules(diplomat_optional_raw_out_value_rules);
+inline diplomat::result<ICU4XPluralRules, ICU4XError> ICU4XPluralRules::try_new_cardinal(const ICU4XLocale& locale, const ICU4XDataProvider& provider) {
+  auto diplomat_result_raw_out_value = capi::ICU4XPluralRules_try_new_cardinal(locale.AsFFI(), provider.AsFFI());
+  diplomat::result<ICU4XPluralRules, ICU4XError> diplomat_result_out_value;
+  if (diplomat_result_raw_out_value.is_ok) {
+    diplomat_result_out_value = diplomat::Ok(ICU4XPluralRules(diplomat_result_raw_out_value.ok));
   } else {
-    diplomat_optional_out_value_rules = std::nullopt;
+    diplomat_result_out_value = diplomat::Err(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
-  return ICU4XCreatePluralRulesResult{ .rules = std::move(diplomat_optional_out_value_rules), .success = std::move(diplomat_raw_struct_out_value.success) };
+  return diplomat_result_out_value;
 }
-inline ICU4XCreatePluralRulesResult ICU4XPluralRules::try_new_ordinal(const ICU4XLocale& locale, const ICU4XDataProvider& provider) {
-  capi::ICU4XCreatePluralRulesResult diplomat_raw_struct_out_value = capi::ICU4XPluralRules_try_new_ordinal(locale.AsFFI(), provider.AsFFI());
-  auto diplomat_optional_raw_out_value_rules = diplomat_raw_struct_out_value.rules;
-  std::optional<ICU4XPluralRules> diplomat_optional_out_value_rules;
-  if (diplomat_optional_raw_out_value_rules != nullptr) {
-    diplomat_optional_out_value_rules = ICU4XPluralRules(diplomat_optional_raw_out_value_rules);
+inline diplomat::result<ICU4XPluralRules, ICU4XError> ICU4XPluralRules::try_new_ordinal(const ICU4XLocale& locale, const ICU4XDataProvider& provider) {
+  auto diplomat_result_raw_out_value = capi::ICU4XPluralRules_try_new_ordinal(locale.AsFFI(), provider.AsFFI());
+  diplomat::result<ICU4XPluralRules, ICU4XError> diplomat_result_out_value;
+  if (diplomat_result_raw_out_value.is_ok) {
+    diplomat_result_out_value = diplomat::Ok(ICU4XPluralRules(diplomat_result_raw_out_value.ok));
   } else {
-    diplomat_optional_out_value_rules = std::nullopt;
+    diplomat_result_out_value = diplomat::Err(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
-  return ICU4XCreatePluralRulesResult{ .rules = std::move(diplomat_optional_out_value_rules), .success = std::move(diplomat_raw_struct_out_value.success) };
+  return diplomat_result_out_value;
 }
 inline ICU4XPluralCategory ICU4XPluralRules::select(ICU4XPluralOperands op) const {
   ICU4XPluralOperands diplomat_wrapped_struct_op = op;

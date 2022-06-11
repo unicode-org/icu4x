@@ -4,6 +4,7 @@
 
 #[diplomat::bridge]
 pub mod ffi {
+    use crate::errors::ffi::ICU4XError;
     use alloc::boxed::Box;
     use core::str::FromStr;
     use diplomat_runtime::DiplomatResult;
@@ -17,11 +18,6 @@ pub mod ffi {
     /// An ICU4X Locale, capable of representing strings like `"en-US"`.
     #[diplomat::rust_link(icu::locid::Locale, Struct)]
     pub struct ICU4XLocale(pub Locale);
-
-    pub enum ICU4XLocaleError {
-        Undefined,
-        Error,
-    }
 
     impl ICU4XLocale {
         /// Construct an [`ICU4XLocale`] from an locale identifier.
@@ -60,14 +56,9 @@ pub mod ffi {
         pub fn basename(
             &self,
             write: &mut diplomat_runtime::DiplomatWriteable,
-        ) -> DiplomatResult<(), ICU4XLocaleError> {
+        ) -> DiplomatResult<(), ICU4XError> {
             #[allow(unused_variables)]
-            let result = self
-                .0
-                .id
-                .write_to(write)
-                .map_err(|_| ICU4XLocaleError::Error)
-                .into();
+            let result = self.0.id.write_to(write).map_err(Into::into).into();
             write.flush();
             result
         }
@@ -78,21 +69,18 @@ pub mod ffi {
             &self,
             bytes: &str,
             write: &mut diplomat_runtime::DiplomatWriteable,
-        ) -> DiplomatResult<(), ICU4XLocaleError> {
+        ) -> DiplomatResult<(), ICU4XError> {
             if let Ok(key) = Key::from_bytes(bytes.as_bytes()) {
                 if let Some(value) = self.0.extensions.unicode.keywords.get(&key) {
                     #[allow(unused_variables)]
-                    let result = value
-                        .write_to(write)
-                        .map_err(|_| ICU4XLocaleError::Error)
-                        .into();
+                    let result = value.write_to(write).map_err(Into::into).into();
                     write.flush();
                     result
                 } else {
-                    Result::Err(ICU4XLocaleError::Undefined).into()
+                    Result::Err(ICU4XError::LocaleUndefinedSubtagError).into()
                 }
             } else {
-                Result::Err(ICU4XLocaleError::Error).into()
+                Result::Err(ICU4XError::LocaleParserError).into()
             }
         }
 
@@ -101,14 +89,14 @@ pub mod ffi {
         pub fn language(
             &self,
             write: &mut diplomat_runtime::DiplomatWriteable,
-        ) -> DiplomatResult<(), ICU4XLocaleError> {
+        ) -> DiplomatResult<(), ICU4XError> {
             #[allow(unused_variables)]
             let result = self
                 .0
                 .id
                 .language
                 .write_to(write)
-                .map_err(|_| ICU4XLocaleError::Error)
+                .map_err(Into::into)
                 .into();
             write.flush();
             result
@@ -116,7 +104,7 @@ pub mod ffi {
 
         /// Set the language part of the [`ICU4XLocale`].
         #[diplomat::rust_link(icu::locid::Locale::from_bytes, FnInStruct)]
-        pub fn set_language(&mut self, bytes: &str) -> DiplomatResult<(), ICU4XLocaleError> {
+        pub fn set_language(&mut self, bytes: &str) -> DiplomatResult<(), ICU4XError> {
             if bytes.is_empty() {
                 self.0.id.language = Language::UND;
                 return Ok(()).into();
@@ -126,7 +114,7 @@ pub mod ffi {
                     self.0.id.language = language;
                     Ok(())
                 }
-                Err(_) => Err(ICU4XLocaleError::Error),
+                Err(_) => Err(ICU4XError::LocaleParserError),
             }
             .into()
         }
@@ -136,23 +124,20 @@ pub mod ffi {
         pub fn region(
             &self,
             write: &mut diplomat_runtime::DiplomatWriteable,
-        ) -> DiplomatResult<(), ICU4XLocaleError> {
+        ) -> DiplomatResult<(), ICU4XError> {
             if let Some(region) = self.0.id.region {
                 #[allow(unused_variables)]
-                let result = region
-                    .write_to(write)
-                    .map_err(|_| ICU4XLocaleError::Error)
-                    .into();
+                let result = region.write_to(write).map_err(Into::into).into();
                 write.flush();
                 result
             } else {
-                Result::Err(ICU4XLocaleError::Undefined).into()
+                Result::Err(ICU4XError::LocaleUndefinedSubtagError).into()
             }
         }
 
         /// Set the region part of the [`ICU4XLocale`].
         #[diplomat::rust_link(icu::locid::Locale::from_bytes, FnInStruct)]
-        pub fn set_region(&mut self, bytes: &str) -> DiplomatResult<(), ICU4XLocaleError> {
+        pub fn set_region(&mut self, bytes: &str) -> DiplomatResult<(), ICU4XError> {
             if bytes.is_empty() {
                 self.0.id.region = None;
                 return Ok(()).into();
@@ -162,7 +147,7 @@ pub mod ffi {
                     self.0.id.region = Some(region);
                     Ok(())
                 }
-                Err(_) => Err(ICU4XLocaleError::Error),
+                Err(_) => Err(ICU4XError::LocaleParserError),
             }
             .into()
         }
@@ -172,23 +157,20 @@ pub mod ffi {
         pub fn script(
             &self,
             write: &mut diplomat_runtime::DiplomatWriteable,
-        ) -> DiplomatResult<(), ICU4XLocaleError> {
+        ) -> DiplomatResult<(), ICU4XError> {
             if let Some(script) = self.0.id.script {
                 #[allow(unused_variables)]
-                let result = script
-                    .write_to(write)
-                    .map_err(|_| ICU4XLocaleError::Error)
-                    .into();
+                let result = script.write_to(write).map_err(Into::into).into();
                 write.flush();
                 result
             } else {
-                Result::Err(ICU4XLocaleError::Undefined).into()
+                Result::Err(ICU4XError::LocaleUndefinedSubtagError).into()
             }
         }
 
         /// Set the script part of the [`ICU4XLocale`]. Pass an empty string to remove the script.
         #[diplomat::rust_link(icu::locid::Locale::from_bytes, FnInStruct)]
-        pub fn set_script(&mut self, bytes: &str) -> DiplomatResult<(), ICU4XLocaleError> {
+        pub fn set_script(&mut self, bytes: &str) -> DiplomatResult<(), ICU4XError> {
             if bytes.is_empty() {
                 self.0.id.script = None;
                 return Ok(()).into();
@@ -198,7 +180,7 @@ pub mod ffi {
                     self.0.id.script = Some(script);
                     Ok(())
                 }
-                Err(_) => Err(ICU4XLocaleError::Error),
+                Err(_) => Err(ICU4XError::LocaleParserError),
             }
             .into()
         }
@@ -208,13 +190,9 @@ pub mod ffi {
         pub fn tostring(
             &self,
             write: &mut diplomat_runtime::DiplomatWriteable,
-        ) -> DiplomatResult<(), ICU4XLocaleError> {
+        ) -> DiplomatResult<(), ICU4XError> {
             #[allow(unused_variables)]
-            let result = self
-                .0
-                .write_to(write)
-                .map_err(|_| ICU4XLocaleError::Error)
-                .into();
+            let result = self.0.write_to(write).map_err(Into::into).into();
             write.flush();
             result
         }

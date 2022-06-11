@@ -8,17 +8,12 @@
 
 int main() {
     ICU4XLocale* locale = ICU4XLocale_create_bn();
-    ICU4XCreateDataProviderResult result = ICU4XDataProvider_create_test();
-    if (!result.success) {
-        printf("Failed to create test data provider\n");
-        return 1;
-    }
-    ICU4XDataProvider* provider = result.provider;
+    ICU4XDataProvider* provider = ICU4XDataProvider_create_test();
     ICU4XFixedDecimal* decimal = ICU4XFixedDecimal_create(1000007);
 
     ICU4XFixedDecimalFormatOptions opts = {ICU4XFixedDecimalGroupingStrategy_Auto, ICU4XFixedDecimalSignDisplay_Auto};
 
-    diplomat_result_box_ICU4XFixedDecimalFormat_void fdf_result = ICU4XFixedDecimalFormat_try_new(locale, provider, opts);
+    diplomat_result_box_ICU4XFixedDecimalFormat_ICU4XError fdf_result = ICU4XFixedDecimalFormat_try_new(locale, provider, opts);
     if (!fdf_result.is_ok)  {
         printf("Failed to create FixedDecimalFormat\n");
         return 1;

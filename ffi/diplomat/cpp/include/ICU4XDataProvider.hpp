@@ -13,7 +13,8 @@ namespace capi {
 #include "ICU4XDataProvider.h"
 }
 
-struct ICU4XCreateDataProviderResult;
+class ICU4XDataProvider;
+#include "ICU4XError.hpp"
 
 /**
  * A destruction policy for using ICU4XDataProvider with std::unique_ptr.
@@ -39,7 +40,7 @@ class ICU4XDataProvider {
    * 
    * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu_provider_fs/struct.FsDataProvider.html) for more information.
    */
-  static ICU4XCreateDataProviderResult create_fs(const std::string_view path);
+  static diplomat::result<ICU4XDataProvider, ICU4XError> create_fs(const std::string_view path);
 
   /**
    * Constructs a testdata provider and returns it as an [`ICU4XDataProvider`].
@@ -47,21 +48,21 @@ class ICU4XDataProvider {
    * 
    * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu_testdata/index.html) for more information.
    */
-  static ICU4XCreateDataProviderResult create_test();
+  static ICU4XDataProvider create_test();
 
   /**
    * Constructs a `BlobDataProvider` and returns it as an [`ICU4XDataProvider`].
    * 
    * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu_provider_blob/struct.BlobDataProvider.html) for more information.
    */
-  static ICU4XCreateDataProviderResult create_from_byte_slice(const diplomat::span<uint8_t> blob);
+  static diplomat::result<ICU4XDataProvider, ICU4XError> create_from_byte_slice(const diplomat::span<uint8_t> blob);
 
   /**
    * Constructs an empty `StaticDataProvider` and returns it as an [`ICU4XDataProvider`].
    * 
    * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu_provider_blob/struct.StaticDataProvider.html) for more information.
    */
-  static ICU4XCreateDataProviderResult create_empty();
+  static ICU4XDataProvider create_empty();
   inline const capi::ICU4XDataProvider* AsFFI() const { return this->inner.get(); }
   inline capi::ICU4XDataProvider* AsFFIMut() { return this->inner.get(); }
   inline ICU4XDataProvider(capi::ICU4XDataProvider* i) : inner(i) {}
@@ -72,50 +73,31 @@ class ICU4XDataProvider {
   std::unique_ptr<capi::ICU4XDataProvider, ICU4XDataProviderDeleter> inner;
 };
 
-#include "ICU4XCreateDataProviderResult.hpp"
 
-inline ICU4XCreateDataProviderResult ICU4XDataProvider::create_fs(const std::string_view path) {
-  capi::ICU4XCreateDataProviderResult diplomat_raw_struct_out_value = capi::ICU4XDataProvider_create_fs(path.data(), path.size());
-  auto diplomat_optional_raw_out_value_provider = diplomat_raw_struct_out_value.provider;
-  std::optional<ICU4XDataProvider> diplomat_optional_out_value_provider;
-  if (diplomat_optional_raw_out_value_provider != nullptr) {
-    diplomat_optional_out_value_provider = ICU4XDataProvider(diplomat_optional_raw_out_value_provider);
+inline diplomat::result<ICU4XDataProvider, ICU4XError> ICU4XDataProvider::create_fs(const std::string_view path) {
+  auto diplomat_result_raw_out_value = capi::ICU4XDataProvider_create_fs(path.data(), path.size());
+  diplomat::result<ICU4XDataProvider, ICU4XError> diplomat_result_out_value;
+  if (diplomat_result_raw_out_value.is_ok) {
+    diplomat_result_out_value = diplomat::Ok(ICU4XDataProvider(diplomat_result_raw_out_value.ok));
   } else {
-    diplomat_optional_out_value_provider = std::nullopt;
+    diplomat_result_out_value = diplomat::Err(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
-  return ICU4XCreateDataProviderResult{ .provider = std::move(diplomat_optional_out_value_provider), .success = std::move(diplomat_raw_struct_out_value.success) };
+  return diplomat_result_out_value;
 }
-inline ICU4XCreateDataProviderResult ICU4XDataProvider::create_test() {
-  capi::ICU4XCreateDataProviderResult diplomat_raw_struct_out_value = capi::ICU4XDataProvider_create_test();
-  auto diplomat_optional_raw_out_value_provider = diplomat_raw_struct_out_value.provider;
-  std::optional<ICU4XDataProvider> diplomat_optional_out_value_provider;
-  if (diplomat_optional_raw_out_value_provider != nullptr) {
-    diplomat_optional_out_value_provider = ICU4XDataProvider(diplomat_optional_raw_out_value_provider);
-  } else {
-    diplomat_optional_out_value_provider = std::nullopt;
-  }
-  return ICU4XCreateDataProviderResult{ .provider = std::move(diplomat_optional_out_value_provider), .success = std::move(diplomat_raw_struct_out_value.success) };
+inline ICU4XDataProvider ICU4XDataProvider::create_test() {
+  return ICU4XDataProvider(capi::ICU4XDataProvider_create_test());
 }
-inline ICU4XCreateDataProviderResult ICU4XDataProvider::create_from_byte_slice(const diplomat::span<uint8_t> blob) {
-  capi::ICU4XCreateDataProviderResult diplomat_raw_struct_out_value = capi::ICU4XDataProvider_create_from_byte_slice(blob.data(), blob.size());
-  auto diplomat_optional_raw_out_value_provider = diplomat_raw_struct_out_value.provider;
-  std::optional<ICU4XDataProvider> diplomat_optional_out_value_provider;
-  if (diplomat_optional_raw_out_value_provider != nullptr) {
-    diplomat_optional_out_value_provider = ICU4XDataProvider(diplomat_optional_raw_out_value_provider);
+inline diplomat::result<ICU4XDataProvider, ICU4XError> ICU4XDataProvider::create_from_byte_slice(const diplomat::span<uint8_t> blob) {
+  auto diplomat_result_raw_out_value = capi::ICU4XDataProvider_create_from_byte_slice(blob.data(), blob.size());
+  diplomat::result<ICU4XDataProvider, ICU4XError> diplomat_result_out_value;
+  if (diplomat_result_raw_out_value.is_ok) {
+    diplomat_result_out_value = diplomat::Ok(ICU4XDataProvider(diplomat_result_raw_out_value.ok));
   } else {
-    diplomat_optional_out_value_provider = std::nullopt;
+    diplomat_result_out_value = diplomat::Err(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
-  return ICU4XCreateDataProviderResult{ .provider = std::move(diplomat_optional_out_value_provider), .success = std::move(diplomat_raw_struct_out_value.success) };
+  return diplomat_result_out_value;
 }
-inline ICU4XCreateDataProviderResult ICU4XDataProvider::create_empty() {
-  capi::ICU4XCreateDataProviderResult diplomat_raw_struct_out_value = capi::ICU4XDataProvider_create_empty();
-  auto diplomat_optional_raw_out_value_provider = diplomat_raw_struct_out_value.provider;
-  std::optional<ICU4XDataProvider> diplomat_optional_out_value_provider;
-  if (diplomat_optional_raw_out_value_provider != nullptr) {
-    diplomat_optional_out_value_provider = ICU4XDataProvider(diplomat_optional_raw_out_value_provider);
-  } else {
-    diplomat_optional_out_value_provider = std::nullopt;
-  }
-  return ICU4XCreateDataProviderResult{ .provider = std::move(diplomat_optional_out_value_provider), .success = std::move(diplomat_raw_struct_out_value.success) };
+inline ICU4XDataProvider ICU4XDataProvider::create_empty() {
+  return ICU4XDataProvider(capi::ICU4XDataProvider_create_empty());
 }
 #endif

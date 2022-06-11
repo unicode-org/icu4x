@@ -4,17 +4,12 @@
 
 #include "../../include/ICU4XCodePointSetData.hpp"
 #include "../../include/ICU4XCodePointMapData16.hpp"
-#include "../../include/ICU4XCodePointMapData16Response.hpp"
 
 #include <iostream>
 
-int test_set_property(ICU4XCodePointSetDataResult result, char32_t included, char32_t excluded) {
-    if (!result.success) {
-        std::cout << "Failed to create ICU4XCodePointSetData" << std::endl;
-        return 1;
-    }
-    bool contains1 = result.data.value().contains(included);
-    bool contains2 = result.data.value().contains(excluded);
+int test_set_property(ICU4XCodePointSetData data, char32_t included, char32_t excluded) {
+    bool contains1 = data.contains(included);
+    bool contains2 = data.contains(excluded);
     std::cout << std::hex; // print hex for U+####
     if (contains1 && !contains2) {
         std::cout << "Set correctly contains U+" << included << " and not U+" << excluded << std::endl;
@@ -25,12 +20,8 @@ int test_set_property(ICU4XCodePointSetDataResult result, char32_t included, cha
     return 0;
 }
 
-int test_map_16_property(ICU4XCodePointMapData16Response result, char32_t sample, uint32_t expected) {
-    if (!result.success) {
-        std::cout << "Failed to create ICU4XCodePointMapData16" << std::endl;
-        return 1;
-    }
-    uint32_t actual = result.data.value().get(sample);
+int test_map_16_property(ICU4XCodePointMapData16 data, char32_t sample, uint32_t expected) {
+    uint32_t actual = data.get(sample);
     std::cout << std::hex; // print hex for U+####
     if (actual == expected) {
         std::cout << "Code point U+" << sample << " correctly mapped to 0x" << actual << std::endl;
@@ -42,11 +33,11 @@ int test_map_16_property(ICU4XCodePointMapData16Response result, char32_t sample
 }
 
 int main() {
-    ICU4XDataProvider dp = ICU4XDataProvider::create_test().provider.value();
+    ICU4XDataProvider dp = ICU4XDataProvider::create_test();
     int result;
 
     result = test_set_property(
-        ICU4XCodePointSetData::try_get_ascii_hex_digit(dp),
+        ICU4XCodePointSetData::try_get_ascii_hex_digit(dp).ok().value(),
         u'3',
         u'੩'
     );
@@ -55,7 +46,7 @@ int main() {
     }
 
     result = test_map_16_property(
-        ICU4XCodePointMapData16::try_get_script(dp),
+        ICU4XCodePointMapData16::try_get_script(dp).ok().value(),
         u'木',
         17 // Script::Han
     );

@@ -14,7 +14,8 @@ namespace capi {
 }
 
 class ICU4XDataProvider;
-struct ICU4XCodePointSetDataResult;
+class ICU4XCodePointSetData;
+#include "ICU4XError.hpp"
 
 /**
  * A destruction policy for using ICU4XCodePointSetData with std::unique_ptr.
@@ -38,7 +39,7 @@ class ICU4XCodePointSetData {
    * 
    * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu_properties/sets/fn.get_ascii_hex_digit.html) for more information.
    */
-  static ICU4XCodePointSetDataResult try_get_ascii_hex_digit(const ICU4XDataProvider& provider);
+  static diplomat::result<ICU4XCodePointSetData, ICU4XError> try_get_ascii_hex_digit(const ICU4XDataProvider& provider);
 
   /**
    * Checks whether the code point is in the set.
@@ -57,18 +58,16 @@ class ICU4XCodePointSetData {
 };
 
 #include "ICU4XDataProvider.hpp"
-#include "ICU4XCodePointSetDataResult.hpp"
 
-inline ICU4XCodePointSetDataResult ICU4XCodePointSetData::try_get_ascii_hex_digit(const ICU4XDataProvider& provider) {
-  capi::ICU4XCodePointSetDataResult diplomat_raw_struct_out_value = capi::ICU4XCodePointSetData_try_get_ascii_hex_digit(provider.AsFFI());
-  auto diplomat_optional_raw_out_value_data = diplomat_raw_struct_out_value.data;
-  std::optional<ICU4XCodePointSetData> diplomat_optional_out_value_data;
-  if (diplomat_optional_raw_out_value_data != nullptr) {
-    diplomat_optional_out_value_data = ICU4XCodePointSetData(diplomat_optional_raw_out_value_data);
+inline diplomat::result<ICU4XCodePointSetData, ICU4XError> ICU4XCodePointSetData::try_get_ascii_hex_digit(const ICU4XDataProvider& provider) {
+  auto diplomat_result_raw_out_value = capi::ICU4XCodePointSetData_try_get_ascii_hex_digit(provider.AsFFI());
+  diplomat::result<ICU4XCodePointSetData, ICU4XError> diplomat_result_out_value;
+  if (diplomat_result_raw_out_value.is_ok) {
+    diplomat_result_out_value = diplomat::Ok(ICU4XCodePointSetData(diplomat_result_raw_out_value.ok));
   } else {
-    diplomat_optional_out_value_data = std::nullopt;
+    diplomat_result_out_value = diplomat::Err(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
-  return ICU4XCodePointSetDataResult{ .data = std::move(diplomat_optional_out_value_data), .success = std::move(diplomat_raw_struct_out_value.success) };
+  return diplomat_result_out_value;
 }
 inline bool ICU4XCodePointSetData::contains(char32_t cp) const {
   return capi::ICU4XCodePointSetData_contains(this->inner.get(), cp);
