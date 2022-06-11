@@ -8,7 +8,7 @@ use iai::black_box;
 mod samples;
 use samples::*;
 
-use zerovec::ZeroVec;
+use zerovec::{ZeroVec, VarZeroSlice, ule::VarULE};
 
 fn sum_slice() -> u32 {
     black_box(TEST_SLICE).iter().sum::<u32>()
@@ -31,9 +31,14 @@ fn binarysearch_zerovec() -> Result<usize, usize> {
         .binary_search(&0x0c0d0c)
 }
 
+fn vzv_get() -> Option<&'static str> {
+    unsafe { VarZeroSlice::from_byte_slice_unchecked(black_box(TEST_VZV)) }.get(0)
+}
+
 iai::main!(
     sum_slice,
     sum_zerovec,
     binarysearch_slice,
     binarysearch_zerovec,
+    vzv_get,
 );

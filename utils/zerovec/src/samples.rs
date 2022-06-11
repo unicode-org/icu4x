@@ -30,6 +30,11 @@ pub const TEST_SLICE: &[u32] = &[
     0x4a4948, 0x4e4d4c,
 ];
 
+pub const TEST_VZV: &[u8] = &[
+    4, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 3, 0, 0, 0, 6, 0, 0, 0, 119, 207, 137, 230, 150, 135, 240,
+    145, 132, 131,
+];
+
 /// The sum of the numbers in TEST_SLICE.
 pub const TEST_SUM: u32 = 52629240;
 
