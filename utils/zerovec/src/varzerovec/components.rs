@@ -13,9 +13,12 @@ use core::iter;
 use core::marker::PhantomData;
 use core::ops::Range;
 
+// Keep these in sync with owned.rs
 const LENGTH_WIDTH: usize = 4;
 const METADATA_WIDTH: usize = 0;
 const INDEX_WIDTH: usize = 4;
+const MAX_LENGTH: usize = u32::MAX as usize;
+const MAX_INDEX: usize = u32::MAX as usize;
 
 fn usizeify(x: RawBytesULE<INDEX_WIDTH>) -> usize {
     x.as_unsigned_int() as usize
@@ -426,12 +429,10 @@ where
     T: VarULE + ?Sized,
     A: EncodeAsVarULE<T>,
 {
-    #[allow(clippy::unwrap_used)] // Function contract allows panicky behavior
+    assert!(elements.len() <= MAX_LENGTH);
     let num_elements_bytes = elements.len().to_le_bytes();
     #[allow(clippy::indexing_slicing)] // Function contract allows panicky behavior
     output[0..LENGTH_WIDTH].copy_from_slice(&num_elements_bytes[0..LENGTH_WIDTH]);
-    // Double-check that the length fits in the length field
-    assert_eq!(num_elements_bytes[LENGTH_WIDTH..].iter().sum::<u8>(), 0);
 
     // idx_offset = offset from the start of the buffer for the next index
     let mut idx_offset: usize = LENGTH_WIDTH + METADATA_WIDTH;
@@ -447,8 +448,9 @@ where
         #[allow(clippy::indexing_slicing)] // Function contract allows panicky behavior
         let idx_slice = &mut output[idx_offset..idx_limit];
         // VZV expects data offsets to be stored relative to the first data block
-        let bytes = (dat_offset - first_dat_offset).to_le_bytes();
-        idx_slice.copy_from_slice(&bytes[..INDEX_WIDTH]);
+        let idx = dat_offset - first_dat_offset;
+        assert!(idx <= MAX_INDEX);
+        idx_slice.copy_from_slice(&idx.to_le_bytes()[..INDEX_WIDTH]);
 
         let dat_limit = dat_offset + element_len;
         #[allow(clippy::indexing_slicing)] // Function contract allows panicky behavior
