@@ -32,7 +32,7 @@
 use crate::any_calendar::AnyCalendarKind;
 use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, DateTime, DateTimeError};
 use crate::{ArithmeticDate, CalendarArithmetic};
-use core::convert::{TryFrom, TryInto};
+use core::convert::TryInto;
 use tinystr::tinystr;
 
 // The georgian epoch is equivalent to first day in fixed day measurement
@@ -42,87 +42,6 @@ const EPOCH: i32 = 1;
 #[allow(clippy::exhaustive_structs)] // this type is stable
 /// The ISO Calendar
 pub struct Iso;
-
-/// A 1-indexed representation of an ISO day
-#[derive(Copy, Clone, Debug, Hash, Eq, PartialEq, Ord, PartialOrd)]
-pub struct IsoDay(u8);
-/// A 1-indexed representation of an ISO month
-#[derive(Copy, Clone, Debug, Hash, Eq, PartialEq, Ord, PartialOrd)]
-pub struct IsoMonth(u8);
-#[derive(Copy, Clone, Debug, Hash, Eq, PartialEq, Ord, PartialOrd)]
-#[allow(clippy::exhaustive_structs)] // newtype
-/// An ISO year. Year 0 == 1 BCE
-pub struct IsoYear(pub i32);
-
-impl TryFrom<u8> for IsoDay {
-    type Error = DateTimeError;
-    fn try_from(int: u8) -> Result<Self, DateTimeError> {
-        if !(1..=31).contains(&int) {
-            return Err(DateTimeError::OutOfRange);
-        }
-        Ok(Self(int))
-    }
-}
-
-impl TryFrom<u8> for IsoMonth {
-    type Error = DateTimeError;
-    fn try_from(int: u8) -> Result<Self, DateTimeError> {
-        if !(1..=12).contains(&int) {
-            return Err(DateTimeError::OutOfRange);
-        }
-        Ok(Self(int))
-    }
-}
-
-impl From<i32> for IsoYear {
-    fn from(int: i32) -> Self {
-        Self(int)
-    }
-}
-
-impl From<IsoDay> for u8 {
-    fn from(day: IsoDay) -> Self {
-        day.0
-    }
-}
-
-impl From<IsoMonth> for u8 {
-    fn from(month: IsoMonth) -> Self {
-        month.0
-    }
-}
-
-impl From<IsoYear> for i32 {
-    fn from(year: IsoYear) -> Self {
-        year.0
-    }
-}
-
-impl From<IsoYear> for types::Year {
-    fn from(year: IsoYear) -> types::Year {
-        types::Year {
-            era: types::Era(tinystr!(16, "default")),
-            number: year.0,
-            related_iso: year.0,
-        }
-    }
-}
-
-impl From<IsoMonth> for types::Month {
-    fn from(month: IsoMonth) -> types::Month {
-        types::Month {
-            ordinal_month: month.0 as u32,
-            // TODO(#486): Implement month codes
-            code: types::MonthCode(tinystr!(8, "TODO")),
-        }
-    }
-}
-
-impl From<IsoDay> for types::DayOfMonth {
-    fn from(day: IsoDay) -> types::DayOfMonth {
-        types::DayOfMonth(day.0 as u32)
-    }
-}
 
 #[derive(Copy, Clone, Debug, Hash, Eq, PartialEq)]
 /// The inner date type used for representing Date<Iso>
@@ -215,8 +134,42 @@ impl Calendar for Iso {
         types::IsoWeekday::from((day_offset + 1) as usize)
     }
 
-    fn offset_date(&self, date: &mut Self::DateInner, offset: DateDuration<Self>) {
-        date.0.offset_date(offset);
+    fn offset_date(&self, date: &mut Self::DateInner, mut offset: DateDuration<Self>) {
+        date.0.year += offset.years;
+        date.add_months(offset.months);
+        offset.months = 0;
+
+        offset.days += offset.weeks * 7;
+
+        // Normalize date to beginning of month
+        offset.days += date.0.day as i32 - 1;
+        date.0.day = 1;
+
+        while offset.days != 0 {
+            if offset.days < 0 {
+                date.add_months(-1);
+                let month_days = self.days_in_month(date);
+                if (-offset.days) > month_days as i32 {
+                    offset.days += month_days as i32;
+                } else {
+                    // Add 1 since we are subtracting from the first day of the
+                    // *next* month
+                    date.0.day = 1 + (month_days as i8 + offset.days as i8) as u8;
+                    offset.days = 0;
+                }
+            } else {
+                let month_days = self.days_in_month(date);
+                // >= because we date.day is 1, so adding the number of days in the month
+                // will still have the same effect
+                if offset.days >= month_days as i32 {
+                    date.add_months(1);
+                    offset.days -= month_days as i32;
+                } else {
+                    date.0.day += offset.days as u8;
+                    offset.days = 0;
+                }
+            }
+        }
     }
 
     #[allow(clippy::field_reassign_with_default)]
@@ -233,11 +186,7 @@ impl Calendar for Iso {
 
     /// The calendar-specific year represented by `date`
     fn year(&self, date: &Self::DateInner) -> types::Year {
-        types::Year {
-            era: types::Era(tinystr!(16, "default")),
-            number: date.0.year,
-            related_iso: date.0.year,
-        }
+        Self::year_as_iso(date.0.year)
     }
 
     /// The calendar-specific month represented by `date`
@@ -254,14 +203,14 @@ impl Calendar for Iso {
     }
 
     fn day_of_year_info(&self, date: &Self::DateInner) -> types::DayOfYearInfo {
-        let prev_year = IsoYear(date.0.year - 1);
-        let next_year = IsoYear(date.0.year + 1);
+        let prev_year = date.0.year - 1;
+        let next_year = date.0.year + 1;
         types::DayOfYearInfo {
             day_of_year: date.0.day_of_year(),
             days_in_year: date.0.days_in_year(),
-            prev_year: prev_year.into(),
-            days_in_prev_year: Iso::days_in_year_direct(prev_year.0),
-            next_year: next_year.into(),
+            prev_year: Self::year_as_iso(prev_year),
+            days_in_prev_year: Iso::days_in_year_direct(prev_year),
+            next_year: Self::year_as_iso(next_year),
         }
     }
 
@@ -464,6 +413,15 @@ impl Iso {
 
         prev_month_days + date.0.day as u32
     }
+
+    /// Wrap the year in the appropriate era code
+    fn year_as_iso(year: i32) -> types::Year {
+        types::Year {
+            era: types::Era(tinystr!(16, "default")),
+            number: year,
+            related_iso: year,
+        }
+    }
 }
 
 impl IsoDateInner {
@@ -472,6 +430,22 @@ impl IsoDateInner {
     }
     pub(crate) fn dec_31(year: i32) -> Self {
         Self(ArithmeticDate::new(year, 12, 1))
+    }
+
+    fn add_months(&mut self, months: i32) {
+        // Get a zero-indexed new month
+        let new_month = (self.0.month as i32 - 1) + months;
+        if new_month >= 0 {
+            self.0.year += new_month / 12;
+            self.0.month = ((new_month % 12) + 1) as u8;
+        } else {
+            // subtract full years
+            self.0.year -= (-new_month) / 12;
+            // subtract a partial year
+            self.0.year -= 1;
+            // adding 13 since months are 1-indexed
+            self.0.month = (13 + (new_month % 12)) as u8
+        }
     }
 }
 
@@ -494,23 +468,17 @@ mod test {
     fn test_day_of_week() {
         // June 23, 2021 is a Wednesday
         assert_eq!(
-            Date::new_iso_date(2021, 6, 23)
-                .unwrap()
-                .day_of_week(),
+            Date::new_iso_date(2021, 6, 23).unwrap().day_of_week(),
             IsoWeekday::Wednesday,
         );
         // Feb 2, 1983 was a Wednesday
         assert_eq!(
-            Date::new_iso_date(1983, 2, 2)
-                .unwrap()
-                .day_of_week(),
+            Date::new_iso_date(1983, 2, 2).unwrap().day_of_week(),
             IsoWeekday::Wednesday,
         );
         // Jan 21, 2021 was a Tuesday
         assert_eq!(
-            Date::new_iso_date(2020, 1, 21)
-                .unwrap()
-                .day_of_week(),
+            Date::new_iso_date(2020, 1, 21).unwrap().day_of_week(),
             IsoWeekday::Tuesday,
         );
     }

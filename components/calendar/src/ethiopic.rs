@@ -33,7 +33,7 @@
 
 use crate::any_calendar::AnyCalendarKind;
 use crate::coptic::Coptic;
-use crate::iso::{Iso, IsoYear};
+use crate::iso::Iso;
 use crate::julian::Julian;
 use crate::{
     types, ArithmeticDate, Calendar, CalendarArithmetic, Date, DateDuration, DateDurationUnit,
@@ -118,23 +118,7 @@ impl Calendar for Ethiopic {
     }
 
     fn year(&self, date: &Self::DateInner) -> types::Year {
-        if self.0 {
-            types::Year {
-                era: types::Era(tinystr!(16, "mundi")),
-                number: date.0.year,
-                related_iso: date.0.year + 5493 + 8,
-            }
-        } else {
-            types::Year {
-                era: if date.0.year > 0 {
-                    types::Era(tinystr!(16, "incarnation"))
-                } else {
-                    types::Era(tinystr!(16, "before-incar"))
-                },
-                number: date.0.year,
-                related_iso: date.0.year + 5493 + 8,
-            }
-        }
+        Self::year_as_ethiopic(date.0.year, self.0)
     }
 
     fn month(&self, date: &Self::DateInner) -> types::Month {
@@ -149,14 +133,14 @@ impl Calendar for Ethiopic {
     }
 
     fn day_of_year_info(&self, date: &Self::DateInner) -> types::DayOfYearInfo {
-        let prev_year = IsoYear(date.0.year - 1);
-        let next_year = IsoYear(date.0.year + 1);
+        let prev_year = date.0.year - 1;
+        let next_year = date.0.year + 1;
         types::DayOfYearInfo {
             day_of_year: date.0.day_of_year(),
             days_in_year: date.0.days_in_year(),
-            prev_year: prev_year.into(),
-            days_in_prev_year: Ethiopic::days_in_year_direct(prev_year.0),
-            next_year: next_year.into(),
+            prev_year: Self::year_as_ethiopic(prev_year, self.0),
+            days_in_prev_year: Ethiopic::days_in_year_direct(prev_year),
+            next_year: Self::year_as_ethiopic(next_year, self.0),
         }
     }
 
@@ -221,6 +205,26 @@ impl Ethiopic {
             366
         } else {
             365
+        }
+    }
+
+    fn year_as_ethiopic(year: i32, amete_alem: bool) -> types::Year {
+        if amete_alem {
+            types::Year {
+                era: types::Era(tinystr!(16, "mundi")),
+                number: year,
+                related_iso: year + 5493 + 8,
+            }
+        } else {
+            types::Year {
+                era: if year > 0 {
+                    types::Era(tinystr!(16, "incarnation"))
+                } else {
+                    types::Era(tinystr!(16, "before-incar"))
+                },
+                number: year,
+                related_iso: year + 5493 + 8,
+            }
         }
     }
 }

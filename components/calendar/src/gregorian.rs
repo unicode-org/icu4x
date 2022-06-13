@@ -86,7 +86,7 @@ impl Calendar for Gregorian {
 
     /// The calendar-specific year represented by `date`
     fn year(&self, date: &Self::DateInner) -> types::Year {
-        year_as_gregorian(date.0.0.year)
+        year_as_gregorian(date.0 .0.year)
     }
 
     /// The calendar-specific month represented by `date`
@@ -101,11 +101,11 @@ impl Calendar for Gregorian {
 
     /// Information of the day of the year
     fn day_of_year_info(&self, date: &Self::DateInner) -> types::DayOfYearInfo {
-        let prev_year = date.0.0.year - 1;
-        let next_year = date.0.0.year + 1;
+        let prev_year = date.0 .0.year - 1;
+        let next_year = date.0 .0.year + 1;
         types::DayOfYearInfo {
             day_of_year: Iso::day_of_year(date.0),
-            days_in_year: Iso::days_in_year_direct(date.0.0.year),
+            days_in_year: Iso::days_in_year_direct(date.0 .0.year),
             prev_year: year_as_gregorian(prev_year),
             days_in_prev_year: Iso::days_in_year_direct(prev_year),
             next_year: year_as_gregorian(next_year),
@@ -127,7 +127,7 @@ impl Date<Gregorian> {
     /// Years are specified as ISO years.
     ///
     /// ```rust
-    /// use icu::calendar::{iso::IsoDay, iso::IsoMonth, iso::IsoYear, Date};
+    /// use icu::calendar::{Date};
     /// use std::convert::TryFrom;
     ///
     /// // Conversion from ISO to Gregorian

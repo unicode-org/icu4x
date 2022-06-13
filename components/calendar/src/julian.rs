@@ -32,7 +32,7 @@
 //! ```
 
 use crate::any_calendar::AnyCalendarKind;
-use crate::iso::{Iso, IsoYear};
+use crate::iso::Iso;
 use crate::{
     types, ArithmeticDate, Calendar, CalendarArithmetic, Date, DateDuration, DateDurationUnit,
     DateTime, DateTimeError,
@@ -138,14 +138,14 @@ impl Calendar for Julian {
     }
 
     fn day_of_year_info(&self, date: &Self::DateInner) -> types::DayOfYearInfo {
-        let prev_year = IsoYear(date.0.year - 1);
-        let next_year = IsoYear(date.0.year + 1);
+        let prev_year = date.0.year - 1;
+        let next_year = date.0.year + 1;
         types::DayOfYearInfo {
             day_of_year: date.0.day_of_year(),
             days_in_year: date.0.days_in_year(),
-            prev_year: prev_year.into(),
-            days_in_prev_year: Julian::days_in_year_direct(prev_year.0),
-            next_year: next_year.into(),
+            prev_year: crate::gregorian::year_as_gregorian(prev_year),
+            days_in_prev_year: Julian::days_in_year_direct(prev_year),
+            next_year: crate::gregorian::year_as_gregorian(next_year),
         }
     }
 
