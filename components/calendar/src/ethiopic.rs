@@ -19,12 +19,12 @@
 //!
 //! // `Date` checks
 //! assert_eq!(date_ethiopic.year().number, 1962);
-//! assert_eq!(date_ethiopic.month().number, 4);
+//! assert_eq!(date_ethiopic.month().ordinal_month, 4);
 //! assert_eq!(date_ethiopic.day_of_month().0, 24);
 //!
 //! // `DateTime` type
 //! assert_eq!(datetime_ethiopic.date.year().number, 1962);
-//! assert_eq!(datetime_ethiopic.date.month().number, 4);
+//! assert_eq!(datetime_ethiopic.date.month().ordinal_month, 4);
 //! assert_eq!(datetime_ethiopic.date.day_of_month().0, 24);
 //! assert_eq!(datetime_ethiopic.time.hour.number(), 13);
 //! assert_eq!(datetime_ethiopic.time.minute.number(), 1);
@@ -139,7 +139,7 @@ impl Calendar for Ethiopic {
 
     fn month(&self, date: &Self::DateInner) -> types::Month {
         types::Month {
-            number: date.0.month.into(),
+            ordinal_month: date.0.month.into(),
             code: types::MonthCode(tinystr!(8, "TODO")),
         }
     }
@@ -235,7 +235,7 @@ impl Date<Ethiopic> {
     ///     Date::new_ethiopic_date(2014, 8, 25).expect("Failed to initialize Ethopic Date instance.");
     ///
     /// assert_eq!(date_ethiopic.year().number, 2014);
-    /// assert_eq!(date_ethiopic.month().number, 8);
+    /// assert_eq!(date_ethiopic.month().ordinal_month, 8);
     /// assert_eq!(date_ethiopic.day_of_month().0, 25);
     /// ```
     pub fn new_ethiopic_date(
@@ -269,7 +269,7 @@ impl DateTime<Ethiopic> {
     ///     .expect("Failed to initialize Ethiopic DateTime instance.");
     ///
     /// assert_eq!(datetime_ethiopic.date.year().number, 2014);
-    /// assert_eq!(datetime_ethiopic.date.month().number, 8);
+    /// assert_eq!(datetime_ethiopic.date.month().ordinal_month, 8);
     /// assert_eq!(datetime_ethiopic.date.day_of_month().0, 25);
     /// assert_eq!(datetime_ethiopic.time.hour.number(), 13);
     /// assert_eq!(datetime_ethiopic.time.minute.number(), 1);

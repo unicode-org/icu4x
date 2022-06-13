@@ -33,7 +33,7 @@ fn print<A: Calendar>(_date_input: &Date<A>) {
         let formatted_date = format!(
             "Year: {}, Month: {}, Day: {}",
             _date_input.year().number,
-            _date_input.month().number,
+            _date_input.month().ordinal_month,
             _date_input.day_of_month().0,
         );
 

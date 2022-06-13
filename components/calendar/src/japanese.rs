@@ -25,13 +25,13 @@
 //!
 //! // `Date` checks
 //! assert_eq!(date_japanese.year().number, 45);
-//! assert_eq!(date_japanese.month().number, 1);
+//! assert_eq!(date_japanese.month().ordinal_month, 1);
 //! assert_eq!(date_japanese.day_of_month().0, 2);
 //! assert_eq!(date_japanese.year().era, Era(tinystr!(16, "showa")));
 //!
 //! // `DateTime` type
 //! assert_eq!(datetime_japanese.date.year().number, 45);
-//! assert_eq!(datetime_japanese.date.month().number, 1);
+//! assert_eq!(datetime_japanese.date.month().ordinal_month, 1);
 //! assert_eq!(datetime_japanese.date.day_of_month().0, 2);
 //! assert_eq!(
 //!     datetime_japanese.date.year().era,

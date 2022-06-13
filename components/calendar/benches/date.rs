@@ -24,7 +24,7 @@ fn bench_date<A: AsCalendar>(date: &mut Date<A>) {
 
     // Retrieving vals
     let _ = black_box(date.year().number);
-    let _ = black_box(date.month().number);
+    let _ = black_box(date.month().ordinal_month);
     let _ = black_box(date.day_of_month().0);
 
     // Conversion to ISO.

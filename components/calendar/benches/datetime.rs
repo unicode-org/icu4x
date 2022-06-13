@@ -24,7 +24,7 @@ fn bench_datetime<A: AsCalendar>(datetime: &mut DateTime<A>) {
 
     // Retrieving vals
     let _ = black_box(datetime.date.year().number);
-    let _ = black_box(datetime.date.month().number);
+    let _ = black_box(datetime.date.month().ordinal_month);
     let _ = black_box(datetime.date.day_of_month().0);
     let _ = black_box(datetime.time.hour);
     let _ = black_box(datetime.time.minute);

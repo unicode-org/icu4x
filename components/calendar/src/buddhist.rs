@@ -19,12 +19,12 @@
 //!
 //! // `Date` checks
 //! assert_eq!(date_buddhist.year().number, 2513);
-//! assert_eq!(date_buddhist.month().number, 1);
+//! assert_eq!(date_buddhist.month().ordinal_month, 1);
 //! assert_eq!(date_buddhist.day_of_month().0, 2);
 //!
 //! // `DateTime` type
 //! assert_eq!(datetime_buddhist.date.year().number, 2513);
-//! assert_eq!(datetime_buddhist.date.month().number, 1);
+//! assert_eq!(datetime_buddhist.date.month().ordinal_month, 1);
 //! assert_eq!(datetime_buddhist.date.day_of_month().0, 2);
 //! assert_eq!(datetime_buddhist.time.hour.number(), 13);
 //! assert_eq!(datetime_buddhist.time.minute.number(), 1);
@@ -140,7 +140,7 @@ impl Date<Buddhist> {
     ///     Date::new_buddhist_date(1970, 1, 2).expect("Failed to initialize Buddhist Date instance.");
     ///
     /// assert_eq!(date_buddhist.year().number, 1970);
-    /// assert_eq!(date_buddhist.month().number, 1);
+    /// assert_eq!(date_buddhist.month().ordinal_month, 1);
     /// assert_eq!(date_buddhist.day_of_month().0, 2);
     /// ```
     pub fn new_buddhist_date(
@@ -165,7 +165,7 @@ impl DateTime<Buddhist> {
     ///     .expect("Failed to initialize Buddhist DateTime instance.");
     ///
     /// assert_eq!(datetime_buddhist.date.year().number, 1970);
-    /// assert_eq!(datetime_buddhist.date.month().number, 1);
+    /// assert_eq!(datetime_buddhist.date.month().ordinal_month, 1);
     /// assert_eq!(datetime_buddhist.date.day_of_month().0, 2);
     /// assert_eq!(datetime_buddhist.time.hour.number(), 13);
     /// assert_eq!(datetime_buddhist.time.minute.number(), 1);

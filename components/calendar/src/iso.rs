@@ -17,12 +17,12 @@
 //!
 //! // `Date` checks
 //! assert_eq!(date_iso.year().number, 1970);
-//! assert_eq!(date_iso.month().number, 1);
+//! assert_eq!(date_iso.month().ordinal_month, 1);
 //! assert_eq!(date_iso.day_of_month().0, 2);
 //!
 //! // `DateTime` type
 //! assert_eq!(datetime_iso.date.year().number, 1970);
-//! assert_eq!(datetime_iso.date.month().number, 1);
+//! assert_eq!(datetime_iso.date.month().ordinal_month, 1);
 //! assert_eq!(datetime_iso.date.day_of_month().0, 2);
 //! assert_eq!(datetime_iso.time.hour.number(), 13);
 //! assert_eq!(datetime_iso.time.minute.number(), 1);
@@ -110,7 +110,7 @@ impl From<IsoYear> for types::Year {
 impl From<IsoMonth> for types::Month {
     fn from(month: IsoMonth) -> types::Month {
         types::Month {
-            number: month.0 as u32,
+            ordinal_month: month.0 as u32,
             // TODO(#486): Implement month codes
             code: types::MonthCode(tinystr!(8, "TODO")),
         }
@@ -347,7 +347,7 @@ impl Date<Iso> {
     ///     .expect("Failed to initialize ISO Date instance.");
     ///
     /// assert_eq!(date_iso.year().number, 1996);
-    /// assert_eq!(date_iso.month().number, 2);
+    /// assert_eq!(date_iso.month().ordinal_month, 2);
     /// assert_eq!(date_iso.day_of_month().0, 3);
     /// ```
     pub fn new_iso_date(
@@ -374,7 +374,7 @@ impl Date<Iso> {
     ///     .expect("Failed to initialize ISO Date instance.");
     ///
     /// assert_eq!(date_iso.year().number, 1970);
-    /// assert_eq!(date_iso.month().number, 1);
+    /// assert_eq!(date_iso.month().ordinal_month, 1);
     /// assert_eq!(date_iso.day_of_month().0, 2);
     /// ```
     pub fn new_iso_date_from_integers(
@@ -396,7 +396,7 @@ impl DateTime<Iso> {
     ///     .expect("Failed to initialize ISO DateTime instance.");
     ///
     /// assert_eq!(datetime_iso.date.year().number, 1970);
-    /// assert_eq!(datetime_iso.date.month().number, 1);
+    /// assert_eq!(datetime_iso.date.month().ordinal_month, 1);
     /// assert_eq!(datetime_iso.date.day_of_month().0, 2);
     /// assert_eq!(datetime_iso.time.hour.number(), 13);
     /// assert_eq!(datetime_iso.time.minute.number(), 1);

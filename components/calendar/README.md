@@ -30,7 +30,7 @@ let mut date_iso = Date::new_iso_date_from_integers(1992, 9, 2)
 
 assert_eq!(date_iso.day_of_week(), IsoWeekday::Wednesday);
 assert_eq!(date_iso.year().number, 1992);
-assert_eq!(date_iso.month().number, 9);
+assert_eq!(date_iso.month().ordinal_month, 9);
 assert_eq!(date_iso.day_of_month().0, 2);
 
 // Answering questions about days in month and year.
@@ -40,13 +40,13 @@ assert_eq!(date_iso.days_in_month(), 30);
 // Advancing date in-place by 1 year, 2 months, 3 weeks, 4 days.
 date_iso.add(DateDuration::new(1, 2, 3, 4));
 assert_eq!(date_iso.year().number, 1993);
-assert_eq!(date_iso.month().number, 11);
+assert_eq!(date_iso.month().ordinal_month, 11);
 assert_eq!(date_iso.day_of_month().0, 27);
 
 // Reverse date advancement.
 date_iso.add(DateDuration::new(-1, -2, -3, -4));
 assert_eq!(date_iso.year().number, 1992);
-assert_eq!(date_iso.month().number, 9);
+assert_eq!(date_iso.month().ordinal_month, 9);
 assert_eq!(date_iso.day_of_month().0, 2);
 
 // Creating ISO date: 2022-01-30.
@@ -62,7 +62,7 @@ assert_eq!(duration.days, 28);
 // Create new date with date advancement. Reassign to new variable.
 let mutated_date_iso = date_iso.added(DateDuration::new(1, 2, 3, 4));
 assert_eq!(mutated_date_iso.year().number, 1993);
-assert_eq!(mutated_date_iso.month().number, 11);
+assert_eq!(mutated_date_iso.month().ordinal_month, 11);
 assert_eq!(mutated_date_iso.day_of_month().0, 27);
 ```
 
@@ -76,19 +76,19 @@ let mut date_iso = Date::new_iso_date_from_integers(1992, 9, 2)
     .expect("Failed to initialize ISO Date instance.");
 
 assert_eq!(date_iso.year().number, 1992);
-assert_eq!(date_iso.month().number, 9);
+assert_eq!(date_iso.month().ordinal_month, 9);
 assert_eq!(date_iso.day_of_month().0, 2);
 
 // Conversion into Indian calendar: 1914-08-02.
 let date_indian = date_iso.to_calendar(Indian);
 assert_eq!(date_indian.year().number, 1914);
-assert_eq!(date_indian.month().number, 8);
+assert_eq!(date_indian.month().ordinal_month, 8);
 assert_eq!(date_indian.day_of_month().0, 30);
 
 // Conversion into Buddhist calendar: 2535-09-02.
 let date_buddhist = date_iso.to_calendar(Buddhist);
 assert_eq!(date_buddhist.year().number, 2535);
-assert_eq!(date_buddhist.month().number, 9);
+assert_eq!(date_buddhist.month().ordinal_month, 9);
 assert_eq!(date_buddhist.day_of_month().0, 2);
 ```
 
@@ -106,7 +106,7 @@ let mut datetime_iso = DateTime::new_iso_datetime_from_integers(1992, 9, 2, 8, 5
 
 assert_eq!(datetime_iso.date.day_of_week(), IsoWeekday::Wednesday);
 assert_eq!(datetime_iso.date.year().number, 1992);
-assert_eq!(datetime_iso.date.month().number, 9);
+assert_eq!(datetime_iso.date.month().ordinal_month, 9);
 assert_eq!(datetime_iso.date.day_of_month().0, 2);
 assert_eq!(datetime_iso.time.hour.number(), 8);
 assert_eq!(datetime_iso.time.minute.number(), 59);
@@ -119,7 +119,7 @@ datetime_iso.date.add(DateDuration::new(1, 2, 3, 4));
 datetime_iso.time = Time::try_new(14, 30, 0, 0).expect("Failed to initialize Time instance.");
 
 assert_eq!(datetime_iso.date.year().number, 1993);
-assert_eq!(datetime_iso.date.month().number, 11);
+assert_eq!(datetime_iso.date.month().ordinal_month, 11);
 assert_eq!(datetime_iso.date.day_of_month().0, 27);
 assert_eq!(datetime_iso.time.hour.number(), 14);
 assert_eq!(datetime_iso.time.minute.number(), 30);
