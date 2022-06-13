@@ -1,0 +1,23 @@
+# This file is part of ICU4X. For terms of use, please see the file
+# called LICENSE at the top level of the ICU4X source tree
+# (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
+
+[package]
+name = "tzif"
+authors = ["The ICU4X Project Developers"]
+description = "A parser for TZif files"
+version = "0.2.0"
+edition = "2021"
+readme = "README.md"
+license-file = "LICENSE"
+repository = "https://github.com/unicode-org/icu4x"
+keywords = ["time-zone", "posix", "iana", "parse", "data"]
+categories = ["date-and-time", "parser-implementations"]
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+combine = "4.6.4"
+
+[dev-dependencies]
+walkdir = "2.3.2"

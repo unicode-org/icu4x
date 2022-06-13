@@ -63,6 +63,7 @@ impl ResourceKeyHash {
 
 impl<'a> zerovec::maps::ZeroMapKV<'a> for ResourceKeyHash {
     type Container = zerovec::ZeroVec<'a, ResourceKeyHash>;
+    type Slice = zerovec::ZeroSlice<ResourceKeyHash>;
     type GetType = <ResourceKeyHash as AsULE>::ULE;
     type OwnedType = ResourceKeyHash;
 }
@@ -264,26 +265,29 @@ fn test_path_syntax() {
     // No version:
     assert_eq!(
         ResourceKey::construct_internal(tagged!("hello/world")),
-        Err(("[a-zA-z0-9_/@]", 25))
+        Err((
+            "[a-zA-z0-9_/@]",
+            concat!(leading_tag!(), "hello/world").len()
+        ))
     );
 
     assert_eq!(
         ResourceKey::construct_internal(tagged!("hello/world@")),
-        Err(("[0-9]", 26))
+        Err(("[0-9]", concat!(leading_tag!(), "hello/world@").len()))
     );
     assert_eq!(
         ResourceKey::construct_internal(tagged!("hello/world@foo")),
-        Err(("[0-9]", 26))
+        Err(("[0-9]", concat!(leading_tag!(), "hello/world@").len()))
     );
     assert_eq!(
         ResourceKey::construct_internal(tagged!("hello/world@1foo")),
-        Err(("[0-9]", 27))
+        Err(("[0-9]", concat!(leading_tag!(), "hello/world@1").len()))
     );
 
     // Invalid characters:
     assert_eq!(
         ResourceKey::construct_internal(tagged!("你好/世界@1")),
-        Err(("[a-zA-Z0-9_]", 14))
+        Err(("[a-zA-Z0-9_]", leading_tag!().len()))
     );
 
     // Invalid tag:
@@ -293,7 +297,7 @@ fn test_path_syntax() {
     );
     assert_eq!(
         ResourceKey::construct_internal(concat!(leading_tag!(), "hello/world@1")),
-        Err(("tag", 27))
+        Err(("tag", concat!(leading_tag!(), "hello/world@1").len()))
     );
     assert_eq!(
         ResourceKey::construct_internal("hello/world@1"),
@@ -425,9 +429,9 @@ impl From<&Locale> for ResourceOptions {
 }
 
 impl ResourceOptions {
-    pub fn cmp_bytes(&self, other: &[u8]) -> Ordering {
+    pub fn strict_cmp(&self, other: &[u8]) -> Ordering {
         if self.keywords.is_empty() {
-            self.langid.cmp_bytes(other)
+            self.langid.strict_cmp(other)
         } else {
             // TODO: Avoid the allocation
             self.write_to_string().as_bytes().cmp(other)

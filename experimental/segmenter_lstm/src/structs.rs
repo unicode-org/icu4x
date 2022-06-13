@@ -44,3 +44,12 @@ pub struct LstmData<'data> {
     #[zerofrom(clone)]
     pub mat9: Array1<f32>,
 }
+
+impl<'data> Default for LstmData<'data> {
+    fn default() -> Self {
+        const THAI_MODEL: &[u8; 373466] =
+            include_bytes!("../../segmenter/tests/testdata/json/core/segmenter_lstm@1/th.json");
+
+        serde_json::from_slice(THAI_MODEL).expect("JSON syntax error")
+    }
+}

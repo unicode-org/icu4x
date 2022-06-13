@@ -23,15 +23,15 @@ use core::str::FromStr;
 ///
 /// ```
 /// use icu::locid::extensions::unicode::{Key, Value};
-/// use icu::locid::Locale;
+/// use icu::locid::{Locale, subtags::*};
 ///
 /// let loc: Locale = "en-US-u-ca-buddhist".parse().expect("Failed to parse.");
 ///
-/// assert_eq!(loc.id.language, "en");
+/// assert_eq!(loc.id.language, "en".parse::<Language>().unwrap());
 /// assert_eq!(loc.id.script, None);
-/// assert_eq!(loc.id.region, Some("US".parse().unwrap()));
+/// assert_eq!(loc.id.region, Some("US".parse::<Region>().unwrap()));
 /// assert_eq!(loc.id.variants.len(), 0);
-/// assert_eq!(loc, "en-US-u-ca-buddhist");
+/// assert_eq!(loc.to_string(), "en-US-u-ca-buddhist");
 ///
 /// let key: Key = "ca".parse().expect("Parsing key failed.");
 /// let value: Value = "buddhist".parse().expect("Parsing value failed.");
@@ -55,15 +55,15 @@ use core::str::FromStr;
 /// # Examples
 ///
 /// ```
-/// use icu::locid::Locale;
+/// use icu::locid::{Locale, subtags::*};
 ///
 /// let loc: Locale = "eN_latn_Us-Valencia_u-hC-H12"
 ///     .parse()
 ///     .expect("Failed to parse.");
 ///
-/// assert_eq!(loc.id.language, "en");
-/// assert_eq!(loc.id.script, Some("Latn".parse().unwrap()));
-/// assert_eq!(loc.id.region, Some("US".parse().unwrap()));
+/// assert_eq!(loc.id.language, "en".parse::<Language>().unwrap());
+/// assert_eq!(loc.id.script, Some("Latn".parse::<Script>().unwrap()));
+/// assert_eq!(loc.id.region, Some("US".parse::<Region>().unwrap()));
 /// assert_eq!(loc.id.variants.get(0).unwrap(), "valencia");
 /// ```
 /// [`Unicode Locale Identifier`]: https://unicode.org/reports/tr35/tr35.html#Unicode_locale_identifier
@@ -75,6 +75,11 @@ pub struct Locale {
     pub id: LanguageIdentifier,
     // Unicode Locale Extensions
     pub extensions: extensions::Extensions,
+}
+
+#[test]
+fn test() {
+    assert_eq!(core::mem::size_of::<Locale>(), 184);
 }
 
 impl Locale {
@@ -129,7 +134,7 @@ impl Locale {
         Ok(locale.to_string())
     }
 
-    /// Compare this `Locale` with a BCP-47 string.
+    /// Compare this `Locale` with BCP-47 bytes.
     ///
     /// The return value is equivalent to what would happen if you first converted this
     /// `Locale` to a BCP-47 string and then performed a byte comparison.
@@ -158,10 +163,10 @@ impl Locale {
     ///     let b = ab[1];
     ///     assert!(a.cmp(b) == Ordering::Less);
     ///     let a_langid = Locale::from_bytes(a).unwrap();
-    ///     assert!(a_langid.cmp_bytes(b) == Ordering::Less);
+    ///     assert!(a_langid.strict_cmp(b) == Ordering::Less);
     /// }
     /// ```
-    pub fn cmp_bytes(&self, other: &[u8]) -> Ordering {
+    pub fn strict_cmp(&self, other: &[u8]) -> Ordering {
         let mut other_iter = other.split(|b| *b == b'-');
         let r = self.for_each_subtag_str(&mut |subtag| {
             if let Some(other) = other_iter.next() {
@@ -180,6 +185,74 @@ impl Locale {
             return Ordering::Less;
         }
         Ordering::Equal
+    }
+
+    /// Compare this `Locale` with a potentially unnormalized BCP-47 string.
+    ///
+    /// The return value is equivalent to what would happen if you first parsed the
+    /// BCP-47 string to a `Locale` and then performed a structucal comparison.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::locid::Locale;
+    /// use std::cmp::Ordering;
+    ///
+    /// let bcp47_strings: &[&str] = &[
+    ///     "pl-LaTn-pL",
+    ///     "uNd",
+    ///     "UND-FONIPA",
+    ///     "UnD-t-m0-TrUe",
+    ///     "uNd-u-CA-Japanese",
+    ///     "ZH",
+    /// ];
+    ///
+    /// for a in bcp47_strings {
+    ///     assert!(a.parse::<Locale>().unwrap().normalizing_eq(a));
+    /// }
+    /// ```
+    pub fn normalizing_eq(&self, other: &str) -> bool {
+        macro_rules! subtag_matches {
+            ($T:ty, $iter:ident, $expected:expr) => {
+                $iter
+                    .next()
+                    .map(|b| <$T>::from_bytes(b) == Ok($expected))
+                    .unwrap_or(false)
+            };
+        }
+
+        let mut iter = get_subtag_iterator(other.as_bytes());
+        if !subtag_matches!(subtags::Language, iter, self.id.language) {
+            return false;
+        }
+        if let Some(ref script) = self.id.script {
+            if !subtag_matches!(subtags::Script, iter, *script) {
+                return false;
+            }
+        }
+        if let Some(ref region) = self.id.region {
+            if !subtag_matches!(subtags::Region, iter, *region) {
+                return false;
+            }
+        }
+        for variant in self.id.variants.iter() {
+            if !subtag_matches!(subtags::Variant, iter, *variant) {
+                return false;
+            }
+        }
+        if !self.extensions.is_empty() {
+            match extensions::Extensions::try_from_iter(&mut iter) {
+                Ok(exts) => {
+                    if self.extensions != exts {
+                        return false;
+                    }
+                }
+                Err(_) => {
+                    return false;
+                }
+            }
+        }
+        iter.next() == None
     }
 
     pub(crate) fn for_each_subtag_str<E, F>(&self, f: &mut F) -> Result<(), E>
@@ -265,58 +338,6 @@ fn test_writeable() {
     assert_writeable_eq!(Locale::from_str("und-t-m0-true").unwrap(), "und-t-m0-true",);
 }
 
-impl PartialEq<&str> for Locale {
-    fn eq(&self, other: &&str) -> bool {
-        self == *other
-    }
-}
-
-macro_rules! subtag_matches {
-    ($T:ty, $iter:ident, $expected:expr) => {
-        $iter
-            .next()
-            .map(|b| <$T>::from_bytes(b) == Ok($expected))
-            .unwrap_or(false)
-    };
-}
-
-impl PartialEq<str> for Locale {
-    fn eq(&self, other: &str) -> bool {
-        let mut iter = get_subtag_iterator(other.as_bytes());
-        if !subtag_matches!(subtags::Language, iter, self.id.language) {
-            return false;
-        }
-        if let Some(ref script) = self.id.script {
-            if !subtag_matches!(subtags::Script, iter, *script) {
-                return false;
-            }
-        }
-        if let Some(ref region) = self.id.region {
-            if !subtag_matches!(subtags::Region, iter, *region) {
-                return false;
-            }
-        }
-        for variant in self.id.variants.iter() {
-            if !subtag_matches!(subtags::Variant, iter, *variant) {
-                return false;
-            }
-        }
-        if !self.extensions.is_empty() {
-            match extensions::Extensions::try_from_iter(&mut iter) {
-                Ok(exts) => {
-                    if self.extensions != exts {
-                        return false;
-                    }
-                }
-                Err(_) => {
-                    return false;
-                }
-            }
-        }
-        iter.next() == None
-    }
-}
-
 /// # Examples
 ///
 /// ```
@@ -326,8 +347,8 @@ impl PartialEq<str> for Locale {
 /// let language = language!("en");
 /// let loc = Locale::from(language);
 ///
-/// assert_eq!(loc.id.language, "en");
-/// assert_eq!(loc, "en");
+/// assert_eq!(loc.id.language, language);
+/// assert_eq!(loc.to_string(), "en");
 /// ```
 impl From<subtags::Language> for Locale {
     fn from(language: subtags::Language) -> Self {
@@ -347,8 +368,8 @@ impl From<subtags::Language> for Locale {
 /// let script = script!("latn");
 /// let loc = Locale::from(Some(script));
 ///
-/// assert_eq!(loc.id.script.unwrap(), "Latn");
-/// assert_eq!(loc, "und-Latn");
+/// assert_eq!(loc.id.script.unwrap(), script);
+/// assert_eq!(loc.to_string(), "und-Latn");
 /// ```
 impl From<Option<subtags::Script>> for Locale {
     fn from(script: Option<subtags::Script>) -> Self {
@@ -368,8 +389,8 @@ impl From<Option<subtags::Script>> for Locale {
 /// let region = region!("US");
 /// let loc = Locale::from(Some(region));
 ///
-/// assert_eq!(loc.id.region.unwrap(), "US");
-/// assert_eq!(loc, "und-US");
+/// assert_eq!(loc.id.region.unwrap(), region);
+/// assert_eq!(loc.to_string(), "und-US");
 /// ```
 impl From<Option<subtags::Region>> for Locale {
     fn from(region: Option<subtags::Region>) -> Self {
@@ -391,11 +412,11 @@ impl From<Option<subtags::Region>> for Locale {
 /// let region = region!("US");
 /// let loc = Locale::from((lang, Some(script), Some(region)));
 ///
-/// assert_eq!(loc.id.language, "en");
-/// assert_eq!(loc.id.script.unwrap(), "Latn");
-/// assert_eq!(loc.id.region.unwrap(), "US");
+/// assert_eq!(loc.id.language, lang);
+/// assert_eq!(loc.id.script.unwrap(), script);
+/// assert_eq!(loc.id.region.unwrap(), region);
 /// assert_eq!(loc.id.variants.len(), 0);
-/// assert_eq!(loc, "en-Latn-US");
+/// assert_eq!(loc.to_string(), "en-Latn-US");
 /// ```
 impl
     From<(

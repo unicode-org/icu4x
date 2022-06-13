@@ -9,7 +9,7 @@ use core::cmp::Ordering;
 use core::fmt;
 
 use crate::map::ZeroMapKV;
-use crate::map::{BorrowedZeroVecLike, ZeroVecLike};
+use crate::map::ZeroVecLike;
 use crate::map2d::{KeyError, ZeroMap2dCursor};
 
 /// A borrowed-only version of [`ZeroMap2d`](super::ZeroMap2d)
@@ -45,10 +45,10 @@ where
     K1: ?Sized,
     V: ?Sized,
 {
-    pub(crate) keys0: &'a <<K0 as ZeroMapKV<'a>>::Container as ZeroVecLike<K0>>::BorrowedVariant,
+    pub(crate) keys0: &'a K0::Slice,
     pub(crate) joiner: &'a ZeroSlice<u32>,
-    pub(crate) keys1: &'a <<K1 as ZeroMapKV<'a>>::Container as ZeroVecLike<K1>>::BorrowedVariant,
-    pub(crate) values: &'a <<V as ZeroMapKV<'a>>::Container as ZeroVecLike<V>>::BorrowedVariant,
+    pub(crate) keys1: &'a K1::Slice,
+    pub(crate) values: &'a V::Slice,
 }
 
 impl<'a, K0, K1, V> Copy for ZeroMap2dBorrowed<'a, K0, K1, V>
@@ -86,9 +86,9 @@ where
     K0: ZeroMapKV<'a>,
     K1: ZeroMapKV<'a>,
     V: ZeroMapKV<'a>,
-    <<K0 as ZeroMapKV<'a>>::Container as ZeroVecLike<K0>>::BorrowedVariant: 'static,
-    <<K1 as ZeroMapKV<'a>>::Container as ZeroVecLike<K1>>::BorrowedVariant: 'static,
-    <<V as ZeroMapKV<'a>>::Container as ZeroVecLike<V>>::BorrowedVariant: 'static,
+    K0::Slice: 'static,
+    K1::Slice: 'static,
+    V::Slice: 'static,
     K0: ?Sized,
     K1: ?Sized,
     V: ?Sized,
@@ -103,9 +103,9 @@ where
     K0: ZeroMapKV<'a>,
     K1: ZeroMapKV<'a>,
     V: ZeroMapKV<'a>,
-    <<K0 as ZeroMapKV<'a>>::Container as ZeroVecLike<K0>>::BorrowedVariant: 'static,
-    <<K1 as ZeroMapKV<'a>>::Container as ZeroVecLike<K1>>::BorrowedVariant: 'static,
-    <<V as ZeroMapKV<'a>>::Container as ZeroVecLike<V>>::BorrowedVariant: 'static,
+    K0::Slice: 'static,
+    K1::Slice: 'static,
+    V::Slice: 'static,
     K0: ?Sized,
     K1: ?Sized,
     V: ?Sized,
@@ -125,15 +125,10 @@ where
     /// ```
     pub fn new() -> Self {
         Self {
-            keys0:
-                <<K0 as ZeroMapKV<'a>>::Container as ZeroVecLike<K0>>::BorrowedVariant::zvl_new_borrowed(
-                ),
+            keys0: K0::Container::zvl_new_borrowed(),
             joiner: Default::default(),
-            keys1:
-                <<K1 as ZeroMapKV<'a>>::Container as ZeroVecLike<K1>>::BorrowedVariant::zvl_new_borrowed(
-                ),
-            values:
-                <<V as ZeroMapKV<'a>>::Container as ZeroVecLike<V>>::BorrowedVariant::zvl_new_borrowed(),
+            keys1: K1::Container::zvl_new_borrowed(),
+            values: V::Container::zvl_new_borrowed(),
         }
     }
 }
@@ -312,12 +307,9 @@ where
     K0: for<'c> ZeroMapKV<'c> + ?Sized,
     K1: for<'c> ZeroMapKV<'c> + ?Sized,
     V: for<'c> ZeroMapKV<'c> + ?Sized,
-    <<K0 as ZeroMapKV<'a>>::Container as ZeroVecLike<K0>>::BorrowedVariant:
-        PartialEq<<<K0 as ZeroMapKV<'b>>::Container as ZeroVecLike<K0>>::BorrowedVariant>,
-    <<K1 as ZeroMapKV<'a>>::Container as ZeroVecLike<K1>>::BorrowedVariant:
-        PartialEq<<<K1 as ZeroMapKV<'b>>::Container as ZeroVecLike<K1>>::BorrowedVariant>,
-    <<V as ZeroMapKV<'a>>::Container as ZeroVecLike<V>>::BorrowedVariant:
-        PartialEq<<<V as ZeroMapKV<'b>>::Container as ZeroVecLike<V>>::BorrowedVariant>,
+    <K0 as ZeroMapKV<'a>>::Slice: PartialEq<<K0 as ZeroMapKV<'b>>::Slice>,
+    <K1 as ZeroMapKV<'a>>::Slice: PartialEq<<K1 as ZeroMapKV<'b>>::Slice>,
+    <V as ZeroMapKV<'a>>::Slice: PartialEq<<V as ZeroMapKV<'b>>::Slice>,
 {
     fn eq(&self, other: &ZeroMap2dBorrowed<'b, K0, K1, V>) -> bool {
         self.keys0.eq(other.keys0)
@@ -332,9 +324,9 @@ where
     K0: ZeroMapKV<'a> + ?Sized,
     K1: ZeroMapKV<'a> + ?Sized,
     V: ZeroMapKV<'a> + ?Sized,
-    <<K0 as ZeroMapKV<'a>>::Container as ZeroVecLike<K0>>::BorrowedVariant: fmt::Debug,
-    <<K1 as ZeroMapKV<'a>>::Container as ZeroVecLike<K1>>::BorrowedVariant: fmt::Debug,
-    <<V as ZeroMapKV<'a>>::Container as ZeroVecLike<V>>::BorrowedVariant: fmt::Debug,
+    K0::Slice: fmt::Debug,
+    K1::Slice: fmt::Debug,
+    V::Slice: fmt::Debug,
 {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> Result<(), fmt::Error> {
         f.debug_struct("ZeroMap2dBorrowed")

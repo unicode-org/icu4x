@@ -31,7 +31,7 @@ impl ResourceProvider<CaseMappingV1Marker> for CaseMappingDataProvider {
         let toml = &self
             .source
             .get_uprops_paths()?
-            .read_and_parse_toml::<super::uprops_serde::case::Main, _>("ucase.toml")?
+            .read_and_parse_toml::<super::uprops_serde::case::Main>("ucase.toml")?
             .ucase;
 
         let trie_data = &toml.code_point_trie;

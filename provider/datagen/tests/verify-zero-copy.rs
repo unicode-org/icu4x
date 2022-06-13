@@ -52,8 +52,11 @@ fn main() {
 
     let converter = icu_datagen::create_datagen_provider!(SourceData::default()
         .with_cldr(icu_testdata::paths::cldr_json_root(), "full".to_string())
+        .unwrap()
         .with_uprops(icu_testdata::paths::uprops_toml_root(), TrieType::Small)
-        .with_coll(icu_testdata::paths::coll_toml_root()))
+        .unwrap()
+        .with_coll(icu_testdata::paths::coll_toml_root())
+        .unwrap())
     .filterable("icu4x-datagen locales")
     .filter_by_langid_allowlist_strict(&selected_locales);
 

@@ -257,7 +257,7 @@ impl SegmenterRuleProvider {
         let segmenter = self
             .source
             .get_segmenter_paths()?
-            .read_and_parse_toml::<SegmenterRuleTable, _>(&format!(
+            .read_and_parse_toml::<SegmenterRuleTable>(&format!(
                 "{}.toml",
                 key.get_path()
                     .split(&['/', '@'])

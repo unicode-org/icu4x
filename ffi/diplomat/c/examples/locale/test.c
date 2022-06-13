@@ -14,7 +14,7 @@ bool test_locale(ICU4XLocale* locale, const char* message, const char* expected)
 
     // Test setters
     DiplomatWriteable write = diplomat_simple_writeable(output, 40);
-    diplomat_result_void_ICU4XLocaleError result = ICU4XLocale_tostring(locale, &write);
+    diplomat_result_void_ICU4XError result = ICU4XLocale_tostring(locale, &write);
     if (!result.is_ok) {
         return 1;
     }
@@ -41,7 +41,7 @@ int main() {
     // Test creating a locale.
     DiplomatWriteable write = diplomat_simple_writeable(output, 40);
     ICU4XLocale* locale = ICU4XLocale_create("ar", 2);
-    diplomat_result_void_ICU4XLocaleError result = ICU4XLocale_tostring(locale, &write);
+    diplomat_result_void_ICU4XError result = ICU4XLocale_tostring(locale, &write);
     if (!result.is_ok) {
         return 1;
     }
@@ -92,7 +92,7 @@ int main() {
     }
 
     result = ICU4XLocale_get_unicode_extension(locale, "ca", 2, &write);
-    if (!(!result.is_ok && result.err == ICU4XLocaleError_Undefined)) {
+    if (!(!result.is_ok && result.err == ICU4XError_LocaleUndefinedSubtagError)) {
         return 1;
     }
 
@@ -169,13 +169,13 @@ int main() {
     ICU4XLocale_destroy(locale);
 
     // Create a LocaleCanonicalizer.
-    ICU4XCreateDataProviderResult provider_result = ICU4XDataProvider_create_test();
-    if (!provider_result.success) {
-        printf("Failed to create test data provider\n");
+    ICU4XDataProvider* provider = ICU4XDataProvider_create_test();
+    diplomat_result_box_ICU4XLocaleCanonicalizer_ICU4XError result2 = ICU4XLocaleCanonicalizer_create(provider);
+    if (!result2.is_ok) {
+        printf("Could not construct Locale Canonicalizer");
         return 1;
     }
-    ICU4XDataProvider* provider = provider_result.provider;
-    ICU4XLocaleCanonicalizer* lc = ICU4XLocaleCanonicalizer_create(provider);
+    ICU4XLocaleCanonicalizer* lc = result2.ok;
 
     // Test maximize.
     write = diplomat_simple_writeable(output, 40);

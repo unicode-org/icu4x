@@ -12,10 +12,11 @@ extern "C" {
 
 typedef struct ICU4XLocaleCanonicalizer ICU4XLocaleCanonicalizer;
 #include "ICU4XDataProvider.h"
+#include "diplomat_result_box_ICU4XLocaleCanonicalizer_ICU4XError.h"
 #include "ICU4XLocale.h"
 #include "ICU4XCanonicalizationResult.h"
 
-ICU4XLocaleCanonicalizer* ICU4XLocaleCanonicalizer_create(const ICU4XDataProvider* provider);
+diplomat_result_box_ICU4XLocaleCanonicalizer_ICU4XError ICU4XLocaleCanonicalizer_create(const ICU4XDataProvider* provider);
 
 ICU4XCanonicalizationResult ICU4XLocaleCanonicalizer_canonicalize(const ICU4XLocaleCanonicalizer* self, ICU4XLocale* locale);
 

@@ -150,13 +150,13 @@ impl Extensions {
     /// only_unicode
     ///     .extensions
     ///     .retain_by_type(|t| t == ExtensionType::Unicode);
-    /// assert_eq!(only_unicode, "und-u-world");
+    /// assert_eq!(only_unicode, "und-u-world".parse().unwrap());
     ///
     /// let mut only_t_z = loc.clone();
     /// only_t_z
     ///     .extensions
     ///     .retain_by_type(|t| t == ExtensionType::Transform || t == ExtensionType::Other(b'z'));
-    /// assert_eq!(only_t_z, "und-t-mul-z-zzz");
+    /// assert_eq!(only_t_z, "und-t-mul-z-zzz".parse().unwrap());
     /// ```
     pub fn retain_by_type<F>(&mut self, mut predicate: F)
     where

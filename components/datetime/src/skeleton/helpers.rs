@@ -10,8 +10,8 @@ use crate::{
     fields::{self, Field, FieldLength, FieldSymbol},
     options::{components, length},
     pattern::{
-        hour_cycle, runtime,
-        runtime::{Pattern, PatternPlurals},
+        hour_cycle,
+        runtime::{self, PatternPlurals},
         PatternItem, TimeGranularity,
     },
     provider::calendar::{patterns::GenericLengthPatternsV1, DateSkeletonPatternsV1},
@@ -90,7 +90,7 @@ pub enum BestSkeleton<T> {
 /// This function swaps out the the time zone name field for the appropriate one. Skeleton matching
 /// only needs to find a single "v" field, and then the time zone name can expand from there.
 fn naively_apply_time_zone_name(
-    pattern: &mut Pattern,
+    pattern: &mut runtime::Pattern,
     time_zone_name: &Option<components::TimeZoneName>,
 ) {
     // If there is a preference overiding the hour cycle, apply it now.
@@ -179,7 +179,7 @@ pub fn create_best_pattern_for_fields<'data>(
             BestSkeleton::AllFieldsMatch(fields) => (Some(fields), false),
             BestSkeleton::NoMatch => (None, true),
         };
-    let time_pattern: Option<Pattern<'data>> = time_patterns.map(|pattern_plurals| {
+    let time_pattern: Option<runtime::Pattern<'data>> = time_patterns.map(|pattern_plurals| {
         let mut pattern =
             pattern_plurals.expect_pattern("Only date patterns can contain plural variants");
         hour_cycle::naively_apply_preferences(&mut pattern, &components.preferences);
@@ -301,7 +301,7 @@ fn group_fields_by_type(fields: &[Field]) -> FieldsByType {
 /// Alters given Pattern so that its fields have the same length as 'fields'.
 ///
 ///  For example the "d MMM y" pattern will be changed to "d MMMM y" given fields ["y", "MMMM", "d"].
-fn adjust_pattern_field_lengths(fields: &[Field], pattern: &mut Pattern) {
+fn adjust_pattern_field_lengths(fields: &[Field], pattern: &mut runtime::Pattern) {
     runtime::helpers::maybe_replace(pattern, |item| {
         if let PatternItem::Field(pattern_field) = item {
             if let Some(requested_field) = fields
@@ -326,7 +326,7 @@ fn adjust_pattern_field_lengths(fields: &[Field], pattern: &mut Pattern) {
 /// pattern should be adjusted by appending the locale’s decimal separator, followed by the sequence
 /// of ‘S’ characters from the requested skeleton.
 /// (see https://unicode.org/reports/tr35/tr35-dates.html#Matching_Skeletons)
-fn append_fractional_seconds(pattern: &mut Pattern, fields: &[Field]) {
+fn append_fractional_seconds(pattern: &mut runtime::Pattern, fields: &[Field]) {
     if let Some(requested_field) = fields
         .iter()
         .find(|field| field.symbol == FieldSymbol::Second(fields::Second::FractionalSecond))
@@ -344,7 +344,7 @@ fn append_fractional_seconds(pattern: &mut Pattern, fields: &[Field]) {
                 }
             }
         }
-        *pattern = Pattern::from(items);
+        *pattern = runtime::Pattern::from(items);
         pattern.time_granularity = TimeGranularity::Nanoseconds;
     }
 }
@@ -480,7 +480,7 @@ pub fn get_best_available_format_pattern<'data>(
             // A single field was requested and the best pattern either includes extra fields or can't be adjusted to match
             // (e.g. text vs numeric). We return the field instead of the matched pattern.
             return BestSkeleton::AllFieldsMatch(
-                Pattern::from(vec![PatternItem::Field(*field)]).into(),
+                runtime::Pattern::from(vec![PatternItem::Field(*field)]).into(),
             );
         }
     }

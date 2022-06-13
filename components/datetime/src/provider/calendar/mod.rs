@@ -47,7 +47,7 @@ pub struct DatePatternsV1<'data> {
 
 pub mod patterns {
     use super::*;
-    use crate::pattern::runtime::{GenericPattern, Pattern, PatternPlurals};
+    use crate::pattern::runtime::{self, GenericPattern, PatternPlurals};
     use icu_provider::{yoke, zerofrom};
 
     #[derive(Debug, PartialEq, Clone, Default, yoke::Yokeable, zerofrom::ZeroFrom)]
@@ -59,13 +59,13 @@ pub mod patterns {
     #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
     pub struct LengthPatternsV1<'data> {
         #[cfg_attr(feature = "serde", serde(borrow))]
-        pub full: Pattern<'data>,
+        pub full: runtime::Pattern<'data>,
         #[cfg_attr(feature = "serde", serde(borrow))]
-        pub long: Pattern<'data>,
+        pub long: runtime::Pattern<'data>,
         #[cfg_attr(feature = "serde", serde(borrow))]
-        pub medium: Pattern<'data>,
+        pub medium: runtime::Pattern<'data>,
         #[cfg_attr(feature = "serde", serde(borrow))]
-        pub short: Pattern<'data>,
+        pub short: runtime::Pattern<'data>,
     }
 
     #[derive(Debug, PartialEq, Clone, Default, yoke::Yokeable, zerofrom::ZeroFrom)]

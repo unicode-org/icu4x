@@ -13,7 +13,7 @@ impl ResourceProvider<::icu_normalizer::provider::CanonicalDecompositionTablesV1
         static VALUES: &[(&str, DataStruct)] = &[("und", UND)];
         #[allow(clippy::unwrap_used)]
         let value = VALUES
-            .binary_search_by(|(k, _)| req.options.cmp_bytes(k.as_bytes()).reverse())
+            .binary_search_by(|(k, _)| req.options.strict_cmp(k.as_bytes()).reverse())
             .map(|i| VALUES.get(i).unwrap().1)
             .map_err(|_| {
                 DataErrorKind::MissingResourceOptions.with_req(

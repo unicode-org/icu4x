@@ -72,5 +72,3 @@
 
         Write a string representation of :js:class:`ICU4XLocale` to ``write``
         See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html>`__ for more information.
-
-.. js:class:: ICU4XLocaleError

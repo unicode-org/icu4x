@@ -9,7 +9,6 @@ use icu_properties::provider::*;
 use icu_provider::datagen::*;
 use icu_provider::prelude::*;
 use std::convert::TryFrom;
-use std::path::PathBuf;
 
 /// A data provider reading from TOML files produced by the ICU4C icuexportdata tool.
 ///
@@ -31,7 +30,7 @@ fn get_enumerated<'a>(
     key: &str,
 ) -> Result<&'a super::uprops_serde::enumerated::EnumeratedPropertyMap, DataError> {
     let toml_obj: &super::uprops_serde::enumerated::Main =
-        source.read_and_parse_toml(&PathBuf::from(key).with_extension("toml"))?;
+        source.read_and_parse_toml(&format!("{}.toml", key))?;
     toml_obj
         .enum_property
         .get(0)

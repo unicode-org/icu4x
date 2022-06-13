@@ -119,22 +119,22 @@ fn test_langid_subtag_variants() {
 }
 
 #[test]
-fn test_langid_partialeq_str() {
+fn test_langid_normalizing_eq_str() {
     let path = "./tests/fixtures/langid.json";
     let tests: Vec<fixtures::LocaleTest> =
         helpers::read_fixture(path).expect("Failed to read a fixture");
     for test in tests {
         let parsed: LanguageIdentifier = test.input.try_into().expect("Parsing failed.");
-        assert_eq!(parsed, parsed.to_string().as_str());
+        assert!(parsed.normalizing_eq(parsed.to_string().as_str()));
     }
 
     // Check that trailing characters are not ignored
     let lang: LanguageIdentifier = "en".parse().expect("Parsing failed.");
-    assert_ne!(lang, "en-US");
+    assert!(!lang.normalizing_eq("en-US"));
 }
 
 #[test]
-fn test_langid_cmp_bytes() {
+fn test_langid_strict_cmp() {
     let path = "./tests/fixtures/langid.json";
     let tests: Vec<fixtures::LocaleTest> =
         helpers::read_fixture(path).expect("Failed to read a fixture");
@@ -151,7 +151,7 @@ fn test_langid_cmp_bytes() {
             let a_langid = LanguageIdentifier::from_str(a).expect("Invalid BCP-47 in fixture");
             let a_normalized = a_langid.to_string();
             let string_cmp = a_normalized.as_bytes().cmp(b.as_bytes());
-            let test_cmp = a_langid.cmp_bytes(b.as_bytes());
+            let test_cmp = a_langid.strict_cmp(b.as_bytes());
             assert_eq!(string_cmp, test_cmp, "{:?}/{:?}", a, b);
         }
     }

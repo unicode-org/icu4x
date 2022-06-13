@@ -79,8 +79,6 @@ fn compare_icu4c(
     };
     collator.set_strength(strength);
 
-    // XXX max variable
-
     let alternate_handling = match options.alternate_handling() {
         AlternateHandling::NonIgnorable => UColAttributeValue::UCOL_NON_IGNORABLE,
         AlternateHandling::Shifted => UColAttributeValue::UCOL_SHIFTED,

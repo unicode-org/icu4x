@@ -15,6 +15,7 @@ namespace capi {
 
 class ICU4XDataProvider;
 class ICU4XBidi;
+#include "ICU4XError.hpp"
 class ICU4XBidiInfo;
 
 /**
@@ -39,14 +40,48 @@ class ICU4XBidi {
    * 
    * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu/properties/bidi/struct.BidiClassAdapter.html#method.new) for more information.
    */
-  static diplomat::result<ICU4XBidi, std::monostate> try_new(const ICU4XDataProvider& provider);
+  static diplomat::result<ICU4XBidi, ICU4XError> try_new(const ICU4XDataProvider& provider);
 
   /**
    * Use the data loaded in this object to process a string and calculate bidi information
    * 
+   * Takes in a Level for the default level, if it is an invalid value it will default to LTR
+   * 
    * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/unicode_bidi/struct.BidiInfo.html#method.new_with_data_source) for more information.
    */
-  ICU4XBidiInfo for_text(const std::string_view text) const;
+  ICU4XBidiInfo for_text(const std::string_view text, uint8_t default_level) const;
+
+  /**
+   * Check if a Level returned by level_at is an RTL level.
+   * 
+   * Invalid levels (numbers greater than 125) will be assumed LTR
+   * 
+   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/unicode_bidi/struct.Level.html#method.is_rtl) for more information.
+   */
+  static bool level_is_rtl(uint8_t level);
+
+  /**
+   * Check if a Level returned by level_at is an LTR level.
+   * 
+   * Invalid levels (numbers greater than 125) will be assumed LTR
+   * 
+   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/unicode_bidi/struct.Level.html#method.is_ltr) for more information.
+   */
+  static bool level_is_ltr(uint8_t level);
+
+  /**
+   * Get a basic RTL Level value
+   * 
+   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/unicode_bidi/struct.Level.html#method.rtl) for more information.
+   */
+  static uint8_t level_rtl();
+
+  /**
+   * Get a simple LTR Level value
+   * 
+   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/unicode_bidi/struct.Level.html#method.ltr) for more information.
+   */
+  static uint8_t level_ltr();
   inline const capi::ICU4XBidi* AsFFI() const { return this->inner.get(); }
   inline capi::ICU4XBidi* AsFFIMut() { return this->inner.get(); }
   inline ICU4XBidi(capi::ICU4XBidi* i) : inner(i) {}
@@ -60,17 +95,29 @@ class ICU4XBidi {
 #include "ICU4XDataProvider.hpp"
 #include "ICU4XBidiInfo.hpp"
 
-inline diplomat::result<ICU4XBidi, std::monostate> ICU4XBidi::try_new(const ICU4XDataProvider& provider) {
+inline diplomat::result<ICU4XBidi, ICU4XError> ICU4XBidi::try_new(const ICU4XDataProvider& provider) {
   auto diplomat_result_raw_out_value = capi::ICU4XBidi_try_new(provider.AsFFI());
-  diplomat::result<ICU4XBidi, std::monostate> diplomat_result_out_value;
+  diplomat::result<ICU4XBidi, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
     diplomat_result_out_value = diplomat::Ok(ICU4XBidi(diplomat_result_raw_out_value.ok));
   } else {
-    diplomat_result_out_value = diplomat::Err(std::monostate());
+    diplomat_result_out_value = diplomat::Err(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
   return diplomat_result_out_value;
 }
-inline ICU4XBidiInfo ICU4XBidi::for_text(const std::string_view text) const {
-  return ICU4XBidiInfo(capi::ICU4XBidi_for_text(this->inner.get(), text.data(), text.size()));
+inline ICU4XBidiInfo ICU4XBidi::for_text(const std::string_view text, uint8_t default_level) const {
+  return ICU4XBidiInfo(capi::ICU4XBidi_for_text(this->inner.get(), text.data(), text.size(), default_level));
+}
+inline bool ICU4XBidi::level_is_rtl(uint8_t level) {
+  return capi::ICU4XBidi_level_is_rtl(level);
+}
+inline bool ICU4XBidi::level_is_ltr(uint8_t level) {
+  return capi::ICU4XBidi_level_is_ltr(level);
+}
+inline uint8_t ICU4XBidi::level_rtl() {
+  return capi::ICU4XBidi_level_rtl();
+}
+inline uint8_t ICU4XBidi::level_ltr() {
+  return capi::ICU4XBidi_level_ltr();
 }
 #endif

@@ -16,6 +16,7 @@ pub mod ffi {
     use unicode_bidi::Level;
     use unicode_bidi::Paragraph;
 
+    use crate::errors::ffi::ICU4XError;
     use crate::provider::ffi::ICU4XDataProvider;
 
     pub enum ICU4XBidiDirection {
@@ -33,25 +34,60 @@ pub mod ffi {
     impl ICU4XBidi {
         /// Creates a new [`ICU4XBidi`] from locale data.
         #[diplomat::rust_link(icu::properties::bidi::BidiClassAdapter::new, FnInStruct)]
-        pub fn try_new(provider: &ICU4XDataProvider) -> DiplomatResult<Box<ICU4XBidi>, ()> {
+        pub fn try_new(provider: &ICU4XDataProvider) -> DiplomatResult<Box<ICU4XBidi>, ICU4XError> {
             use icu_provider::serde::AsDeserializingBufferProvider;
             let provider = provider.0.as_deserializing();
-            if let Result::Ok(bidi) = maps::get_bidi_class(&provider) {
-                Ok(Box::new(ICU4XBidi(bidi))).into()
-            } else {
-                Err(()).into()
-            }
+            maps::get_bidi_class(&provider)
+                .map(|bidi| Box::new(ICU4XBidi(bidi)))
+                .map_err(Into::into)
+                .into()
         }
 
         /// Use the data loaded in this object to process a string and calculate bidi information
+        ///
+        /// Takes in a Level for the default level, if it is an invalid value it will default to LTR
         #[diplomat::rust_link(unicode_bidi::BidiInfo::new_with_data_source, FnInStruct)]
-        pub fn for_text<'text>(&self, text: &'text str) -> Box<ICU4XBidiInfo<'text>> {
+        pub fn for_text<'text>(
+            &self,
+            text: &'text str,
+            default_level: u8,
+        ) -> Box<ICU4XBidiInfo<'text>> {
             let data = self.0.get();
             let adapter = BidiClassAdapter::new(&data.code_point_trie);
 
             Box::new(ICU4XBidiInfo(BidiInfo::new_with_data_source(
-                &adapter, text, None,
+                &adapter,
+                text,
+                Level::new(default_level).ok(),
             )))
+        }
+
+        /// Check if a Level returned by level_at is an RTL level.
+        ///
+        /// Invalid levels (numbers greater than 125) will be assumed LTR
+        #[diplomat::rust_link(unicode_bidi::Level::is_rtl, FnInStruct)]
+        pub fn level_is_rtl(level: u8) -> bool {
+            Level::new(level).unwrap_or_else(|_| Level::ltr()).is_rtl()
+        }
+
+        /// Check if a Level returned by level_at is an LTR level.
+        ///
+        /// Invalid levels (numbers greater than 125) will be assumed LTR
+        #[diplomat::rust_link(unicode_bidi::Level::is_ltr, FnInStruct)]
+        pub fn level_is_ltr(level: u8) -> bool {
+            Level::new(level).unwrap_or_else(|_| Level::ltr()).is_ltr()
+        }
+
+        /// Get a basic RTL Level value
+        #[diplomat::rust_link(unicode_bidi::Level::rtl, FnInStruct)]
+        pub fn level_rtl() -> u8 {
+            Level::rtl().number()
+        }
+
+        /// Get a simple LTR Level value
+        #[diplomat::rust_link(unicode_bidi::Level::ltr, FnInStruct)]
+        pub fn level_ltr() -> u8 {
+            Level::ltr().number()
         }
     }
 
@@ -73,6 +109,24 @@ pub mod ffi {
                 .get(n)
                 .map(|p| Box::new(ICU4XBidiParagraph(Paragraph::new(&self.0, p))))
         }
+
+        /// The number of bytes in this full text
+        pub fn size(&self) -> usize {
+            self.0.levels.len()
+        }
+
+        /// Get the BIDI level at a particular byte index in the full text.
+        /// This integer is conceptually a `unicode_bidi::Level`,
+        /// and can be further inspected using the static methods on ICU4XBidi.
+        ///
+        /// Returns 0 (equivalent to `Level::ltr()`) on error
+        pub fn level_at(&self, pos: usize) -> u8 {
+            if let Some(l) = self.0.levels.get(pos) {
+                l.number()
+            } else {
+                0
+            }
+        }
     }
 
     /// Bidi information for a single processed paragraph
@@ -81,16 +135,16 @@ pub mod ffi {
 
     impl<'info> ICU4XBidiParagraph<'info> {
         /// Given a paragraph index `n` within the surrounding text, this sets this
-        /// object to the paragraph at that index. Returns an error when out of bounds.
+        /// object to the paragraph at that index. Returns `ICU4XError::OutOfBoundsError` when out of bounds.
         ///
         /// This is equivalent to calling `paragraph_at()` on `ICU4XBidiInfo` but doesn't
         /// create a new object
-        pub fn set_paragraph_in_text(&mut self, n: usize) -> DiplomatResult<(), ()> {
+        pub fn set_paragraph_in_text(&mut self, n: usize) -> DiplomatResult<(), ICU4XError> {
             let para = self.0.info.paragraphs.get(n);
             let para = if let Some(para) = para {
                 para
             } else {
-                return Err(()).into();
+                return Err(ICU4XError::OutOfBoundsError).into();
             };
 
             self.0 = Paragraph::new(self.0.info, para);
@@ -126,9 +180,9 @@ pub mod ffi {
             range_start: usize,
             range_end: usize,
             out: &mut DiplomatWriteable,
-        ) -> DiplomatResult<(), ()> {
+        ) -> DiplomatResult<(), ICU4XError> {
             if range_start < self.range_start() || range_end > self.range_end() {
-                return Err(()).into();
+                return Err(ICU4XError::OutOfBoundsError).into();
             }
 
             let info = self.0.info;
@@ -136,11 +190,14 @@ pub mod ffi {
 
             let reordered = info.reorder_line(para, range_start..range_end);
 
-            out.write_str(&reordered).map_err(|_| ()).into()
+            out.write_str(&reordered).map_err(Into::into).into()
         }
 
-        /// Get the BIDI level. This integer is conceptually a `unicode_bidi::Level`,
-        /// and can be further inspected using the static methods on this class.
+        /// Get the BIDI level at a particular byte index in this paragraph.
+        /// This integer is conceptually a `unicode_bidi::Level`,
+        /// and can be further inspected using the static methods on ICU4XBidi.
+        ///
+        /// Returns 0 (equivalent to `Level::ltr()`) on error
         #[diplomat::rust_link(unicode_bidi::Paragraph::level_at, FnInStruct)]
         pub fn level_at(&self, pos: usize) -> u8 {
             if pos >= self.size() {
@@ -148,22 +205,6 @@ pub mod ffi {
             }
 
             self.0.level_at(pos).number()
-        }
-
-        /// Check if a Level returned by level_at is an RTL level.
-        ///
-        /// Invalid levels (numbers greater than 125) will be assumed LTR
-        #[diplomat::rust_link(unicode_bidi::Level::is_rtl, FnInStruct)]
-        pub fn level_is_rtl(level: u8) -> bool {
-            Level::new(level).unwrap_or_else(|_| Level::ltr()).is_rtl()
-        }
-
-        /// Check if a Level returned by level_at is an LTR level.
-        ///
-        /// Invalid levels (numbers greater than 125) will be assumed LTR
-        #[diplomat::rust_link(unicode_bidi::Level::is_ltr, FnInStruct)]
-        pub fn level_is_ltr(level: u8) -> bool {
-            Level::new(level).unwrap_or_else(|_| Level::ltr()).is_ltr()
         }
     }
 }

@@ -13,7 +13,8 @@ namespace capi {
 #include "ICU4XPluralOperands.h"
 }
 
-struct ICU4XCreatePluralOperandsResult;
+struct ICU4XPluralOperands;
+#include "ICU4XError.hpp"
 
 /**
  * A destruction policy for using ICU4XPluralOperands with std::unique_ptr.
@@ -43,14 +44,19 @@ struct ICU4XPluralOperands {
    * 
    * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu_plurals/struct.PluralOperands.html#method.from_str) for more information.
    */
-  static ICU4XCreatePluralOperandsResult create(const std::string_view s);
+  static diplomat::result<ICU4XPluralOperands, ICU4XError> create(const std::string_view s);
 };
 
-#include "ICU4XCreatePluralOperandsResult.hpp"
 
-inline ICU4XCreatePluralOperandsResult ICU4XPluralOperands::create(const std::string_view s) {
-  capi::ICU4XCreatePluralOperandsResult diplomat_raw_struct_out_value = capi::ICU4XPluralOperands_create(s.data(), s.size());
-  capi::ICU4XPluralOperands diplomat_raw_struct_out_value_operands = diplomat_raw_struct_out_value.operands;
-  return ICU4XCreatePluralOperandsResult{ .operands = std::move(ICU4XPluralOperands{ .i = std::move(diplomat_raw_struct_out_value_operands.i), .v = std::move(diplomat_raw_struct_out_value_operands.v), .w = std::move(diplomat_raw_struct_out_value_operands.w), .f = std::move(diplomat_raw_struct_out_value_operands.f), .t = std::move(diplomat_raw_struct_out_value_operands.t), .c = std::move(diplomat_raw_struct_out_value_operands.c) }), .success = std::move(diplomat_raw_struct_out_value.success) };
+inline diplomat::result<ICU4XPluralOperands, ICU4XError> ICU4XPluralOperands::create(const std::string_view s) {
+  auto diplomat_result_raw_out_value = capi::ICU4XPluralOperands_create(s.data(), s.size());
+  diplomat::result<ICU4XPluralOperands, ICU4XError> diplomat_result_out_value;
+  if (diplomat_result_raw_out_value.is_ok) {
+  capi::ICU4XPluralOperands diplomat_raw_struct_out_value = diplomat_result_raw_out_value.ok;
+    diplomat_result_out_value = diplomat::Ok(ICU4XPluralOperands{ .i = std::move(diplomat_raw_struct_out_value.i), .v = std::move(diplomat_raw_struct_out_value.v), .w = std::move(diplomat_raw_struct_out_value.w), .f = std::move(diplomat_raw_struct_out_value.f), .t = std::move(diplomat_raw_struct_out_value.t), .c = std::move(diplomat_raw_struct_out_value.c) });
+  } else {
+    diplomat_result_out_value = diplomat::Err(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
+  }
+  return diplomat_result_out_value;
 }
 #endif
