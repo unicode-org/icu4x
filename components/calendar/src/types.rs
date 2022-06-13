@@ -39,17 +39,11 @@ pub struct MonthCode(pub TinyStr8);
 #[derive(Clone, Debug, PartialEq)]
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct Month {
-    /// A month number in a year. In normal years, this is usually the 1-based month index. In leap
-    /// years, this is what the month number would have been in a non-leap year.
+    /// The month number in this given year. For calendars with leap months, all months after
+    /// the leap month will end up with an incremented number.
     ///
-    /// For example:
-    ///
-    /// - January = 1
-    /// - December = 12
-    /// - Adar, Adar I, and Adar II = 6
-    ///
-    /// The `code` property is used to distinguish between unique months in leap years.
-    pub number: u32,
+    /// In general, prefer using the month code in generic code.
+    pub ordinal_month: u32,
 
     /// The month code, used to distinguish months during leap years.
     pub code: MonthCode,
