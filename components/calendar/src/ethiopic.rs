@@ -8,12 +8,12 @@
 //! use icu::calendar::{ethiopic::Ethiopic, Date, DateTime};
 //!
 //! // `Date` type
-//! let date_iso = Date::new_iso_date_from_integers(1970, 1, 2)
+//! let date_iso = Date::new_iso_date(1970, 1, 2)
 //!     .expect("Failed to initialize ISO Date instance.");
 //! let date_ethiopic = Date::new_from_iso(date_iso, Ethiopic::new());
 //!
 //! // `DateTime` type
-//! let datetime_iso = DateTime::new_iso_datetime_from_integers(1970, 1, 2, 13, 1, 0)
+//! let datetime_iso = DateTime::new_iso_datetime(1970, 1, 2, 13, 1, 0)
 //!     .expect("Failed to initialize ISO DateTime instance.");
 //! let datetime_ethiopic = DateTime::new_from_iso(datetime_iso, Ethiopic::new());
 //!
@@ -297,7 +297,7 @@ mod test {
     #[test]
     fn test_leap_year() {
         // 11th September 2023 in gregorian is 6/13/2015 in ethiopic
-        let iso_date = Date::new_iso_date_from_integers(2023, 9, 11).unwrap();
+        let iso_date = Date::new_iso_date(2023, 9, 11).unwrap();
         let ethiopic_date = Ethiopic::new().date_from_iso(iso_date);
         assert_eq!(ethiopic_date.0.year, 2015);
         assert_eq!(ethiopic_date.0.month, 13);
@@ -306,7 +306,7 @@ mod test {
 
     #[test]
     fn test_iso_to_ethiopic_conversion_and_back() {
-        let iso_date = Date::new_iso_date_from_integers(1970, 1, 2).unwrap();
+        let iso_date = Date::new_iso_date(1970, 1, 2).unwrap();
         let date_ethiopic = Date::new_from_iso(iso_date, Ethiopic::new());
 
         assert_eq!(date_ethiopic.inner.0.year, 1962);
@@ -315,7 +315,7 @@ mod test {
 
         assert_eq!(
             date_ethiopic.to_iso(),
-            Date::new_iso_date_from_integers(1970, 1, 2).unwrap()
+            Date::new_iso_date(1970, 1, 2).unwrap()
         );
     }
 }

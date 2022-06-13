@@ -46,7 +46,7 @@ fn bench_calendar<C: Clone + Calendar>(
                 let mut instantiated_date_calendar = calendar_date_init(fx.year, fx.month, fx.day);
 
                 // Conversion from ISO
-                let date_iso = Date::new_iso_date_from_integers(fx.year, fx.month, fx.day).unwrap();
+                let date_iso = Date::new_iso_date(fx.year, fx.month, fx.day).unwrap();
                 let mut converted_date_calendar = Date::new_from_iso(date_iso, calendar.clone());
 
                 bench_date(&mut instantiated_date_calendar);
@@ -69,7 +69,7 @@ fn bench_calendar_iso_types<C: Clone + Calendar>(
         b.iter(|| {
             for fx in &fxs.0 {
                 // Conversion from ISO
-                let date_iso = Date::new_iso_date_from_integers(fx.year, fx.month, fx.day).unwrap();
+                let date_iso = Date::new_iso_date(fx.year, fx.month, fx.day).unwrap();
                 let mut converted_date_calendar = Date::new_from_iso(date_iso, calendar.clone());
 
                 // Instantion from ISO

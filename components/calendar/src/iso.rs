@@ -8,11 +8,11 @@
 //! use icu::calendar::{Date, DateTime};
 //!
 //! // `Date` type
-//! let date_iso = Date::new_iso_date_from_integers(1970, 1, 2)
+//! let date_iso = Date::new_iso_date(1970, 1, 2)
 //!     .expect("Failed to initialize ISO Date instance.");
 //!
 //! // `DateTime` type
-//! let datetime_iso = DateTime::new_iso_datetime_from_integers(1970, 1, 2, 13, 1, 0)
+//! let datetime_iso = DateTime::new_iso_datetime(1970, 1, 2, 13, 1, 0)
 //!     .expect("Failed to initialize ISO DateTime instance.");
 //!
 //! // `Date` checks
@@ -494,21 +494,21 @@ mod test {
     fn test_day_of_week() {
         // June 23, 2021 is a Wednesday
         assert_eq!(
-            Date::new_iso_date_from_integers(2021, 6, 23)
+            Date::new_iso_date(2021, 6, 23)
                 .unwrap()
                 .day_of_week(),
             IsoWeekday::Wednesday,
         );
         // Feb 2, 1983 was a Wednesday
         assert_eq!(
-            Date::new_iso_date_from_integers(1983, 2, 2)
+            Date::new_iso_date(1983, 2, 2)
                 .unwrap()
                 .day_of_week(),
             IsoWeekday::Wednesday,
         );
         // Jan 21, 2021 was a Tuesday
         assert_eq!(
-            Date::new_iso_date_from_integers(2020, 1, 21)
+            Date::new_iso_date(2020, 1, 21)
                 .unwrap()
                 .day_of_week(),
             IsoWeekday::Tuesday,
@@ -519,7 +519,7 @@ mod test {
     fn test_day_of_year() {
         // June 23, 2021 was day 174
         assert_eq!(
-            Date::new_iso_date_from_integers(2021, 6, 23)
+            Date::new_iso_date(2021, 6, 23)
                 .unwrap()
                 .day_of_year_info()
                 .day_of_year,
@@ -527,7 +527,7 @@ mod test {
         );
         // June 23, 2020 was day 175
         assert_eq!(
-            Date::new_iso_date_from_integers(2020, 6, 23)
+            Date::new_iso_date(2020, 6, 23)
                 .unwrap()
                 .day_of_year_info()
                 .day_of_year,
@@ -535,7 +535,7 @@ mod test {
         );
         // Feb 2, 1983 was a Wednesday
         assert_eq!(
-            Date::new_iso_date_from_integers(1983, 2, 2)
+            Date::new_iso_date(1983, 2, 2)
                 .unwrap()
                 .day_of_year_info()
                 .day_of_year,
@@ -556,8 +556,8 @@ mod test {
 
     #[test]
     fn test_offset() {
-        let today = Date::new_iso_date_from_integers(2021, 6, 23).unwrap();
-        let today_plus_5000 = Date::new_iso_date_from_integers(2035, 3, 2).unwrap();
+        let today = Date::new_iso_date(2021, 6, 23).unwrap();
+        let today_plus_5000 = Date::new_iso_date(2035, 3, 2).unwrap();
         let offset = today.clone().added(DateDuration::new(0, 0, 0, 5000));
         assert_eq!(offset, today_plus_5000);
         let offset = today
@@ -565,8 +565,8 @@ mod test {
             .added(simple_subtract(&today_plus_5000, &today));
         assert_eq!(offset, today_plus_5000);
 
-        let today = Date::new_iso_date_from_integers(2021, 6, 23).unwrap();
-        let today_minus_5000 = Date::new_iso_date_from_integers(2007, 10, 15).unwrap();
+        let today = Date::new_iso_date(2021, 6, 23).unwrap();
+        let today_minus_5000 = Date::new_iso_date(2007, 10, 15).unwrap();
         let offset = today.clone().added(DateDuration::new(0, 0, 0, -5000));
         assert_eq!(offset, today_minus_5000);
         let offset = today
@@ -577,33 +577,33 @@ mod test {
 
     #[test]
     fn test_offset_at_month_boundary() {
-        let today = Date::new_iso_date_from_integers(2020, 2, 28).unwrap();
-        let today_plus_2 = Date::new_iso_date_from_integers(2020, 3, 1).unwrap();
+        let today = Date::new_iso_date(2020, 2, 28).unwrap();
+        let today_plus_2 = Date::new_iso_date(2020, 3, 1).unwrap();
         let offset = today.added(DateDuration::new(0, 0, 0, 2));
         assert_eq!(offset, today_plus_2);
 
-        let today = Date::new_iso_date_from_integers(2020, 2, 28).unwrap();
-        let today_plus_3 = Date::new_iso_date_from_integers(2020, 3, 2).unwrap();
+        let today = Date::new_iso_date(2020, 2, 28).unwrap();
+        let today_plus_3 = Date::new_iso_date(2020, 3, 2).unwrap();
         let offset = today.added(DateDuration::new(0, 0, 0, 3));
         assert_eq!(offset, today_plus_3);
 
-        let today = Date::new_iso_date_from_integers(2020, 2, 28).unwrap();
-        let today_plus_1 = Date::new_iso_date_from_integers(2020, 2, 29).unwrap();
+        let today = Date::new_iso_date(2020, 2, 28).unwrap();
+        let today_plus_1 = Date::new_iso_date(2020, 2, 29).unwrap();
         let offset = today.added(DateDuration::new(0, 0, 0, 1));
         assert_eq!(offset, today_plus_1);
 
-        let today = Date::new_iso_date_from_integers(2019, 2, 28).unwrap();
-        let today_plus_2 = Date::new_iso_date_from_integers(2019, 3, 2).unwrap();
+        let today = Date::new_iso_date(2019, 2, 28).unwrap();
+        let today_plus_2 = Date::new_iso_date(2019, 3, 2).unwrap();
         let offset = today.added(DateDuration::new(0, 0, 0, 2));
         assert_eq!(offset, today_plus_2);
 
-        let today = Date::new_iso_date_from_integers(2019, 2, 28).unwrap();
-        let today_plus_1 = Date::new_iso_date_from_integers(2019, 3, 1).unwrap();
+        let today = Date::new_iso_date(2019, 2, 28).unwrap();
+        let today_plus_1 = Date::new_iso_date(2019, 3, 1).unwrap();
         let offset = today.added(DateDuration::new(0, 0, 0, 1));
         assert_eq!(offset, today_plus_1);
 
-        let today = Date::new_iso_date_from_integers(2020, 3, 1).unwrap();
-        let today_minus_1 = Date::new_iso_date_from_integers(2020, 2, 29).unwrap();
+        let today = Date::new_iso_date(2020, 3, 1).unwrap();
+        let today_minus_1 = Date::new_iso_date(2020, 2, 29).unwrap();
         let offset = today.added(DateDuration::new(0, 0, 0, -1));
         assert_eq!(offset, today_minus_1);
     }

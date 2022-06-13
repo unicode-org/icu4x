@@ -69,7 +69,7 @@ impl<'a, C> Deref for Ref<'a, C> {
 /// use icu::calendar::Date;
 ///
 /// // Example: creation of ISO date from integers.
-/// let date_iso = Date::new_iso_date_from_integers(1970, 1, 2)
+/// let date_iso = Date::new_iso_date(1970, 1, 2)
 ///     .expect("Failed to initialize ISO Date instance.");
 ///
 /// assert_eq!(date_iso.year().number, 1970);

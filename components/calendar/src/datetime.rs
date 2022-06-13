@@ -16,7 +16,7 @@ use crate::{AsCalendar, Calendar, Date, Iso};
 /// use icu::calendar::DateTime;
 ///
 /// // Example: Construction of ISO datetime from integers.
-/// let datetime_iso = DateTime::new_iso_datetime_from_integers(1970, 1, 2, 13, 1, 0)
+/// let datetime_iso = DateTime::new_iso_datetime(1970, 1, 2, 13, 1, 0)
 ///     .expect("Failed to initialize ISO DateTime instance.");
 ///
 /// assert_eq!(datetime_iso.date.year().number, 1970);

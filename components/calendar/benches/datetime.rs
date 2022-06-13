@@ -50,7 +50,7 @@ fn bench_calendar<C: Clone + Calendar>(
                 );
 
                 // Conversion from ISO
-                let datetime_iso = DateTime::new_iso_datetime_from_integers(
+                let datetime_iso = DateTime::new_iso_datetime(
                     fx.year, fx.month, fx.day, fx.hour, fx.minute, fx.second,
                 )
                 .unwrap();
@@ -73,7 +73,7 @@ fn datetime_benches(c: &mut Criterion) {
         "calendar/overview",
         &fxs,
         icu::calendar::iso::Iso,
-        |y, m, d, h, min, s| DateTime::new_iso_datetime_from_integers(y, m, d, h, min, s).unwrap(),
+        |y, m, d, h, min, s| DateTime::new_iso_datetime(y, m, d, h, min, s).unwrap(),
     );
 
     #[cfg(feature = "bench")]

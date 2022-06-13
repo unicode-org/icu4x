@@ -27,7 +27,7 @@
 //! use icu_calendar::{types::IsoWeekday, Date, DateDuration, DateDurationUnit};
 //!
 //! // Creating ISO date: 1992-09-02.
-//! let mut date_iso = Date::new_iso_date_from_integers(1992, 9, 2)
+//! let mut date_iso = Date::new_iso_date(1992, 9, 2)
 //!     .expect("Failed to initialize ISO Date instance.");
 //!
 //! assert_eq!(date_iso.day_of_week(), IsoWeekday::Wednesday);
@@ -52,7 +52,7 @@
 //! assert_eq!(date_iso.day_of_month().0, 2);
 //!
 //! // Creating ISO date: 2022-01-30.
-//! let newer_date_iso = Date::new_iso_date_from_integers(2022, 1, 30)
+//! let newer_date_iso = Date::new_iso_date(2022, 1, 30)
 //!     .expect("Failed to initialize ISO Date instance.");
 //!
 //! // Comparing dates: 2022-01-30 and 1992-09-02.
@@ -74,7 +74,7 @@
 //! use icu_calendar::{buddhist::Buddhist, indian::Indian, Date};
 //!
 //! // Creating ISO date: 1992-09-02.
-//! let mut date_iso = Date::new_iso_date_from_integers(1992, 9, 2)
+//! let mut date_iso = Date::new_iso_date(1992, 9, 2)
 //!     .expect("Failed to initialize ISO Date instance.");
 //!
 //! assert_eq!(date_iso.year().number, 1992);
@@ -103,7 +103,7 @@
 //! use icu_calendar::{types::IsoWeekday, types::Time, DateDuration, DateTime};
 //!
 //! // Creating ISO date: 1992-09-02 8:59
-//! let mut datetime_iso = DateTime::new_iso_datetime_from_integers(1992, 9, 2, 8, 59, 0)
+//! let mut datetime_iso = DateTime::new_iso_datetime(1992, 9, 2, 8, 59, 0)
 //!     .expect("Failed to initialize ISO DateTime instance.");
 //!
 //! assert_eq!(datetime_iso.date.day_of_week(), IsoWeekday::Wednesday);
