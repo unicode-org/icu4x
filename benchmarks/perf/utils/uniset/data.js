@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1654962614047,
+  "lastUpdate": 1655113847798,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -31612,6 +31612,60 @@ window.BENCHMARK_DATA = {
           {
             "name": "uniset/contains_range/worst",
             "value": 10,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "m_kato@ga2.so-net.ne.jp",
+            "name": "Makoto Kato",
+            "username": "makotokato"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "5887c4b9d2806db8ae50976a9721d86e81845db0",
+          "message": "Use dictionary segmenter for word. (#1936)\n\n* Use dictionary segmenter for word.\r\n\r\n* Fix clippy error",
+          "timestamp": "2022-06-13T18:40:24+09:00",
+          "tree_id": "d49a1bccb0b4c4371f4ec918543e421e3da772e8",
+          "url": "https://github.com/unicode-org/icu4x/commit/5887c4b9d2806db8ae50976a9721d86e81845db0"
+        },
+        "date": 1655113823575,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 43466465,
+            "range": "± 67759",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/best",
+            "value": 9,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/worst",
+            "value": 9,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/best",
+            "value": 9,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/worst",
+            "value": 9,
             "range": "± 0",
             "unit": "ns/iter"
           }
