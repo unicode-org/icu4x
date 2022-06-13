@@ -22,7 +22,6 @@ use crate::provider::CollationReorderingV1Marker;
 use crate::provider::CollationSpecialPrimariesV1Marker;
 use crate::{AlternateHandling, CollatorOptions, MaxVariable, Strength};
 use alloc::string::ToString;
-use core::char::{decode_utf16, DecodeUtf16Error, REPLACEMENT_CHARACTER};
 use core::cmp::Ordering;
 use core::convert::TryFrom;
 use icu_locid::Locale;
@@ -35,6 +34,7 @@ use icu_provider::DataRequest;
 use icu_provider::ResourceOptions;
 use icu_provider::ResourceProvider;
 use smallvec::SmallVec;
+use utf16_iter::Utf16CharsEx;
 use utf8_iter::Utf8CharsEx;
 use zerovec::ule::AsULE;
 
@@ -56,14 +56,6 @@ impl AnyQuaternaryAccumulator {
         self.0 & u32::from(QUATERNARY_MASK) != 0
     }
 }
-
-// Hoisted to function, because the compiler doesn't like having
-// to identical closures.
-#[inline(always)]
-fn utf16_error_to_replacement(r: Result<char, DecodeUtf16Error>) -> char {
-    r.unwrap_or(REPLACEMENT_CHARACTER)
-}
-
 pub struct Collator {
     special_primaries: Option<DataPayload<CollationSpecialPrimariesV1Marker>>,
     root: DataPayload<CollationDataV1Marker>,
@@ -271,19 +263,16 @@ impl Collator {
 
     pub fn compare_utf16(&self, left: &[u16], right: &[u16]) -> Ordering {
         // TODO(#2010): Identical prefix skipping not implemented.
-        let ret = self.compare_impl(
-            decode_utf16(left.iter().copied()).map(utf16_error_to_replacement),
-            decode_utf16(right.iter().copied()).map(utf16_error_to_replacement),
-        );
+        let ret = self.compare_impl(left.chars(), right.chars());
         if self.options.strength() == Strength::Identical && ret == Ordering::Equal {
             return Decomposition::new(
-                decode_utf16(left.iter().copied()).map(utf16_error_to_replacement),
+                left.chars(),
                 self.decompositions.get(),
                 self.tables.get(),
                 &self.ccc.get().code_point_trie,
             )
             .cmp(Decomposition::new(
-                decode_utf16(right.iter().copied()).map(utf16_error_to_replacement),
+                right.chars(),
                 self.decompositions.get(),
                 self.tables.get(),
                 &self.ccc.get().code_point_trie,

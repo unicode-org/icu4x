@@ -44,6 +44,7 @@ icu_uniset = { version = "0.5", path = "../../utils/uniset" }
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }
 zerovec = { version = "0.7", path = "../../utils/zerovec", features = ["serde"] }
 utf8_iter = "1.0"
+utf16_iter = "1.0"
 crabbake = { version = "0.4", path = "../../experimental/crabbake", optional = true, features = ["derive"] }
 zerofrom = { version = "0.1.0", path = "../../utils/zerofrom" }
 

@@ -1482,6 +1482,7 @@ dependencies = [
  "icu_uniset",
  "serde",
  "smallvec",
+ "utf16_iter",
  "utf8_iter",
  "zerofrom",
  "zerovec",
@@ -1672,6 +1673,7 @@ dependencies = [
  "icu_uniset",
  "serde",
  "smallvec",
+ "utf16_iter",
  "utf8_iter",
  "zerofrom",
  "zerovec",
@@ -3626,6 +3628,12 @@ dependencies = [
  "matches",
  "percent-encoding",
 ]
+
+[[package]]
+name = "utf16_iter"
+version = "1.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b8fd690b5b39c6d4c161145f56f1e346e379c0a68a56a65bb927866200eef621"
 
 [[package]]
 name = "utf8_iter"

@@ -64,7 +64,7 @@ use crate::provider::DecompositionDataV1;
 use crate::provider::Uts46DecompositionSupplementV1Marker;
 use alloc::string::String;
 use alloc::vec::Vec;
-use core::char::{decode_utf16, DecodeUtf16Error, REPLACEMENT_CHARACTER};
+use core::char::REPLACEMENT_CHARACTER;
 use icu_char16trie::char16trie::Char16Trie;
 use icu_char16trie::char16trie::TrieResult;
 use icu_codepointtrie::CodePointTrie;
@@ -86,6 +86,7 @@ use provider::Uts46CompositionPassthroughV1Marker;
 use smallvec::SmallVec;
 use u24::EMPTY_U24;
 use u24::U24;
+use utf16_iter::Utf16CharsEx;
 use utf8_iter::Utf8CharsEx;
 use zerofrom::ZeroFrom;
 use zerovec::ule::AsULE;
@@ -216,13 +217,6 @@ fn split_first_u24(s: Option<&ZeroSlice<U24>>) -> (char, &ZeroSlice<U24>) {
 #[inline(always)]
 fn in_inclusive_range(c: char, start: char, end: char) -> bool {
     u32::from(c).wrapping_sub(u32::from(start)) <= (u32::from(end) - u32::from(start))
-}
-
-// Hoisted to function, because the compiler doesn't like having
-// two identical closures.
-#[inline(always)]
-fn utf16_error_to_replacement(r: Result<char, DecodeUtf16Error>) -> char {
-    r.unwrap_or(REPLACEMENT_CHARACTER)
 }
 
 /// Pack a `char` and a `CanonicalCombiningClass` in
@@ -1136,12 +1130,16 @@ macro_rules! normalizer_methods {
         /// Unpaired surrogates are mapped to the REPLACEMENT CHARACTER
         /// before normalizing.
         pub fn normalize_utf16(&self, text: &[u16]) -> Vec<u16> {
-            let mut buf = [0u16; 2];
-            let mut ret = Vec::new();
-            for c in self
-                .normalize_iter(decode_utf16(text.iter().copied()).map(utf16_error_to_replacement))
-            {
-                ret.extend_from_slice(c.encode_utf16(&mut buf));
+            let mut ret = Vec::with_capacity(text.len());
+            for c in self.normalize_iter(text.chars()) {
+                // This is measurably faster than `encode_utf16`.
+                if c <= '\u{FFFF}' {
+                    ret.push(c as u16);
+                } else {
+                    let u = u32::from(c);
+                    ret.push((0xD7C0 + (u >> 10)) as u16);
+                    ret.push((0xDC00 + (u & 0x3FF)) as u16);
+                }
             }
             ret
         }
@@ -1155,9 +1153,7 @@ macro_rules! normalizer_methods {
             text: &[u16],
             sink: &mut W,
         ) -> core::fmt::Result {
-            for c in self
-                .normalize_iter(decode_utf16(text.iter().copied()).map(utf16_error_to_replacement))
-            {
+            for c in self.normalize_iter(text.chars()) {
                 sink.write_char(c)?;
             }
             Ok(())
@@ -1167,8 +1163,7 @@ macro_rules! normalizer_methods {
         ///
         /// Unpaired surrogates are treated as the REPLACEMENT CHARACTER.
         pub fn is_normalized_utf16(&self, text: &[u16]) -> bool {
-            self.normalize_iter(decode_utf16(text.iter().copied()).map(utf16_error_to_replacement))
-                .eq(decode_utf16(text.iter().copied()).map(utf16_error_to_replacement))
+            self.normalize_iter(text.chars()).eq(text.chars())
         }
 
         /// Normalize a slice of potentially-invalid UTF-8 into a `String`.
