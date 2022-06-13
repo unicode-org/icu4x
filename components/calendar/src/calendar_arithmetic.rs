@@ -5,6 +5,7 @@
 use crate::{types, Calendar, DateDuration, DateDurationUnit};
 use core::convert::TryInto;
 use core::marker::PhantomData;
+use tinystr::tinystr;
 
 #[derive(Copy, Clone, Debug, Hash, Eq, PartialEq)]
 #[allow(clippy::exhaustive_structs)] // this type is stable
@@ -131,5 +132,36 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
     #[inline]
     pub fn day_of_month(&self) -> types::DayOfMonth {
         types::DayOfMonth(self.day.into())
+    }
+
+    /// The [`types::Month`] for the current month (with month code) for a solar calendar
+    /// Lunar calendars should not use this method and instead manually implement a month code
+    /// resolver.
+    ///
+    /// Returns "und" if run with months that are out of bounds for the current
+    /// calendar.
+    #[inline]
+    pub fn solar_month(&self) -> types::Month {
+        let code = match self.month {
+            a if a > C::months_for_every_year() => tinystr!(8, "und"),
+            1 => tinystr!(8, "M01"),
+            2 => tinystr!(8, "M02"),
+            3 => tinystr!(8, "M03"),
+            4 => tinystr!(8, "M04"),
+            5 => tinystr!(8, "M05"),
+            6 => tinystr!(8, "M06"),
+            7 => tinystr!(8, "M07"),
+            8 => tinystr!(8, "M08"),
+            9 => tinystr!(8, "M09"),
+            10 => tinystr!(8, "M10"),
+            11 => tinystr!(8, "M11"),
+            12 => tinystr!(8, "M12"),
+            13 => tinystr!(8, "M13"),
+            _ => tinystr!(8, "und"),
+        };
+        types::Month {
+            ordinal_month: self.month as u32,
+            code: types::MonthCode(code),
+        }
     }
 }
