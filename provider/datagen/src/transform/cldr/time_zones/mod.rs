@@ -74,7 +74,7 @@ macro_rules! impl_resource_provider {
                     {
                         meta_zone_ids.insert(meta_zone_id_data.long_id.to_string(), meta_zone_id.clone());
                     }
-                    let mut meta_zone_periods = resource.supplemental.meta_zones.meta_zone_info.time_zone.0;
+                    let meta_zone_periods = resource.supplemental.meta_zones.meta_zone_info.time_zone.0.clone();
 
                     let metadata = DataResponseMetadata::default();
                     // TODO(#1109): Set metadata.data_langid correctly.

@@ -143,11 +143,11 @@ impl From<&CldrTimeZonesData> for ExemplarCitiesV1<'static> {
     }
 }
 
-impl From<&CldrTimeZonesData<'_>> for MetaZonePeriodV1<'static> {
+impl From<&CldrTimeZonesData> for MetaZonePeriodV1<'static> {
     fn from(other: &CldrTimeZonesData) -> Self {
-        let data = other.meta_zone_periods;
-        let bcp47_tzid_data = other.bcp47_tzids;
-        let meta_zone_id_data = other.meta_zone_ids;
+        let data = &other.meta_zone_periods;
+        let bcp47_tzid_data = &other.bcp47_tzids;
+        let meta_zone_id_data = &other.meta_zone_ids;
         Self(
             data.iter()
                 .flat_map(|(key, zone)| {
