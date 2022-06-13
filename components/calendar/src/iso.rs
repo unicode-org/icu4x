@@ -547,10 +547,10 @@ mod test {
         let a = a.inner();
         let b = b.inner();
         DateDuration::new(
-            a.year.0 - b.year.0,
-            a.month.0 as i32 - b.month.0 as i32,
+            a.0.year - b.0.year,
+            a.0.month as i32 - b.0.month as i32,
             0,
-            a.day.0 as i32 - b.day.0 as i32,
+            a.0.day as i32 - b.0.day as i32,
         )
     }
 
