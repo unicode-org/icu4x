@@ -184,10 +184,14 @@ fn uts35_replacement<'a, I>(
 
         loop {
             match (sources.peek(), skips.peek(), replacements.peek()) {
-                (Some(&source), Some(skip), _) if source.strict_cmp(skip.as_bytes()) == Ordering::Greater => {
+                (Some(&source), Some(skip), _)
+                    if source.strict_cmp(skip.as_bytes()) == Ordering::Greater =>
+                {
                     skips.next();
                 }
-                (Some(&source), Some(skip), _) if source.strict_cmp(skip.as_bytes()) == Ordering::Equal => {
+                (Some(&source), Some(skip), _)
+                    if source.strict_cmp(skip.as_bytes()) == Ordering::Equal =>
+                {
                     skips.next();
                     sources.next();
                 }
@@ -376,7 +380,8 @@ impl LocaleCanonicalizer {
                             if let Ok(to) = raw_to.parse() {
                                 uts35_replacement(
                                     locale,
-                                    Language::UND.strict_cmp(raw_lang.as_bytes()) != Ordering::Equal,
+                                    Language::UND.strict_cmp(raw_lang.as_bytes())
+                                        != Ordering::Equal,
                                     false,
                                     false,
                                     Some(subtags),
