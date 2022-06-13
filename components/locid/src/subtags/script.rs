@@ -38,7 +38,7 @@ impl Script {
     ///
     /// let script = Script::from_bytes(b"Latn").expect("Parsing failed.");
     ///
-    /// assert_eq!(script, "Latn");
+    /// assert_eq!(script.as_str(), "Latn");
     /// ```
     pub const fn from_bytes(v: &[u8]) -> Result<Self, ParserError> {
         Self::from_bytes_manual_slice(v, 0, v.len())
@@ -102,7 +102,7 @@ impl Script {
     ///
     /// let raw = script.into_raw();
     /// let script = unsafe { Script::from_raw_unchecked(raw) };
-    /// assert_eq!(script, "Latn");
+    /// assert_eq!(script.as_str(), "Latn");
     /// ```
     pub fn into_raw(self) -> [u8; 4] {
         *self.0.all_bytes()
@@ -120,7 +120,7 @@ impl Script {
     ///
     /// let raw = script.into_raw();
     /// let script = unsafe { Script::from_raw_unchecked(raw) };
-    /// assert_eq!(script, "Latn");
+    /// assert_eq!(script.as_str(), "Latn");
     /// ```
     ///
     /// # Safety
@@ -156,7 +156,8 @@ impl Script {
     /// `Script` to a BCP-47 string and then performed a byte comparison.
     ///
     /// This function is case-sensitive and results in a *total order*, so it is appropriate for
-    /// binary search. The only argument producing [`Ordering::Equal`] is `self.to_string()`.
+    /// binary search. The only argument producing [`Ordering::Equal`](core::cmp::Ordering::Equal)
+    /// is `self.to_string()`.
     #[inline]
     pub fn strict_cmp(&self, other: &[u8]) -> core::cmp::Ordering {
         self.as_str().as_bytes().cmp(other)

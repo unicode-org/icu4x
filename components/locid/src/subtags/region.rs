@@ -39,7 +39,7 @@ impl Region {
     ///
     /// let region = Region::from_bytes(b"fr").expect("Parsing failed.");
     ///
-    /// assert_eq!(region, "FR");
+    /// assert_eq!(region.as_str(), "FR");
     /// ```
     pub const fn from_bytes(v: &[u8]) -> Result<Self, ParserError> {
         Self::from_bytes_manual_slice(v, 0, v.len())
@@ -108,7 +108,7 @@ impl Region {
     ///
     /// let raw = region.into_raw();
     /// let region = unsafe { Region::from_raw_unchecked(raw) };
-    /// assert_eq!(region, "US");
+    /// assert_eq!(region.as_str(), "US");
     /// ```
     pub fn into_raw(self) -> [u8; 3] {
         *self.0.all_bytes()
@@ -126,7 +126,7 @@ impl Region {
     ///
     /// let raw = region.into_raw();
     /// let region = unsafe { Region::from_raw_unchecked(raw) };
-    /// assert_eq!(region, "US");
+    /// assert_eq!(region.as_str(), "US");
     /// ```
     ///
     /// # Safety
@@ -177,7 +177,8 @@ impl Region {
     /// `Region` to a BCP-47 string and then performed a byte comparison.
     ///
     /// This function is case-sensitive and results in a *total order*, so it is appropriate for
-    /// binary search. The only argument producing [`Ordering::Equal`] is `self.to_string()`.
+    /// binary search. The only argument producing [`Ordering::Equal`](core::cmp::Ordering::Equal)
+    /// is `self.to_string()`.
     #[inline]
     pub fn strict_cmp(&self, other: &[u8]) -> core::cmp::Ordering {
         self.as_str().as_bytes().cmp(other)

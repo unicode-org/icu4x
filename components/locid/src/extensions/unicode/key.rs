@@ -20,7 +20,7 @@ use tinystr::TinyAsciiStr;
 ///
 /// let key1: Key = "ca".parse().expect("Failed to parse a Key.");
 ///
-/// assert_eq!(key1, "ca");
+/// assert_eq!(key1.as_str(), "ca");
 /// ```
 #[derive(Debug, PartialEq, Eq, Clone, Hash, PartialOrd, Ord, Copy)]
 pub struct Key(TinyAsciiStr<KEY_LENGTH>);
@@ -38,7 +38,7 @@ impl Key {
     ///
     /// let key = Key::from_bytes(b"ca").expect("Parsing failed.");
     ///
-    /// assert_eq!(key, "ca");
+    /// assert_eq!(key.as_str(), "ca");
     /// ```
     pub const fn from_bytes(key: &[u8]) -> Result<Self, ParserError> {
         #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
@@ -67,7 +67,7 @@ impl Key {
     ///
     /// let key = Key::from_tinystr_unchecked(tinystr!(2, "ca"));
     ///
-    /// assert_eq!(key, "ca");
+    /// assert_eq!(key.as_str(), "ca");
     /// ```
     pub fn from_tinystr_unchecked(key: TinyAsciiStr<KEY_LENGTH>) -> Self {
         Self(key)

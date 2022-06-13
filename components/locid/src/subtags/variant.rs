@@ -40,7 +40,7 @@ impl Variant {
     ///
     /// let variant = Variant::from_bytes(b"posix").expect("Parsing failed.");
     ///
-    /// assert_eq!(variant, "posix");
+    /// assert_eq!(variant.as_str(), "posix");
     /// ```
     pub const fn from_bytes(v: &[u8]) -> Result<Self, ParserError> {
         Self::from_bytes_manual_slice(v, 0, v.len())
@@ -115,7 +115,7 @@ impl Variant {
     ///
     /// let raw = variant.into_raw();
     /// let variant = unsafe { Variant::from_raw_unchecked(raw) };
-    /// assert_eq!(variant, "posix");
+    /// assert_eq!(variant.as_str(), "posix");
     /// ```
     pub fn into_raw(self) -> [u8; 8] {
         *self.0.all_bytes()
@@ -133,7 +133,7 @@ impl Variant {
     ///
     /// let raw = variant.into_raw();
     /// let variant = unsafe { Variant::from_raw_unchecked(raw) };
-    /// assert_eq!(variant, "posix");
+    /// assert_eq!(variant.as_str(), "posix");
     /// ```
     ///
     /// # Safety
@@ -169,7 +169,8 @@ impl Variant {
     /// `Variant` to a BCP-47 string and then performed a byte comparison.
     ///
     /// This function is case-sensitive and results in a *total order*, so it is appropriate for
-    /// binary search. The only argument producing [`Ordering::Equal`] is `self.to_string()`.
+    /// binary search. The only argument producing [`Ordering::Equal`](core::cmp::Ordering::Equal)
+    /// is `self.to_string()`.
     #[inline]
     pub fn strict_cmp(&self, other: &[u8]) -> core::cmp::Ordering {
         self.as_str().as_bytes().cmp(other)

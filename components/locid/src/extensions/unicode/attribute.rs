@@ -19,9 +19,9 @@ use tinystr::TinyAsciiStr;
 /// ```
 /// use icu::locid::extensions::unicode::Attribute;
 ///
-/// let attr: Attribute = "buddhist".parse().expect("Failed to parse an Attribute.");
+/// let attr: Attribute = "Buddhist".parse().expect("Failed to parse an Attribute.");
 ///
-/// assert_eq!(attr, "buddhist");
+/// assert_eq!(attr.as_str(), "buddhist");
 /// ```
 #[derive(Debug, PartialEq, Eq, Clone, Hash, PartialOrd, Ord, Copy)]
 pub struct Attribute(TinyAsciiStr<{ *ATTR_LENGTH.end() }>);
@@ -37,9 +37,9 @@ impl Attribute {
     /// ```
     /// use icu::locid::extensions::unicode::Attribute;
     ///
-    /// let attribute = Attribute::from_bytes(b"foobar").expect("Parsing failed.");
+    /// let attribute = Attribute::from_bytes(b"fooBar").expect("Parsing failed.");
     ///
-    /// assert_eq!(attribute, "foobar");
+    /// assert_eq!(attribute.as_str(), "foobar");
     /// ```
     ///
     /// Notice: No attribute subtags are defined by the current CLDR specification.

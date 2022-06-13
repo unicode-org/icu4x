@@ -55,7 +55,7 @@ impl Language {
     ///
     /// let lang = Language::from_bytes(b"en").expect("Parsing failed.");
     ///
-    /// assert_eq!(lang, "en");
+    /// assert_eq!(lang.as_str(), "en");
     /// ```
     pub const fn from_bytes(v: &[u8]) -> Result<Self, ParserError> {
         Self::from_bytes_manual_slice(v, 0, v.len())
@@ -122,7 +122,7 @@ impl Language {
     ///
     /// let raw = lang.into_raw();
     /// let lang = unsafe { Language::from_raw_unchecked(raw) };
-    /// assert_eq!(lang, "en");
+    /// assert_eq!(lang.as_str(), "en");
     /// ```
     pub fn into_raw(self) -> [u8; 3] {
         *self.0.all_bytes()
@@ -140,7 +140,7 @@ impl Language {
     ///
     /// let raw = lang.into_raw();
     /// let lang = unsafe { Language::from_raw_unchecked(raw) };
-    /// assert_eq!(lang, "en");
+    /// assert_eq!(lang.as_str(), "en");
     /// ```
     ///
     /// # Safety
@@ -229,7 +229,8 @@ impl Language {
     /// `Language` to a BCP-47 string and then performed a byte comparison.
     ///
     /// This function is case-sensitive and results in a *total order*, so it is appropriate for
-    /// binary search. The only argument producing [`Ordering::Equal`] is `self.to_string()`.
+    /// binary search. The only argument producing [`Ordering::Equal`](core::cmp::Ordering::Equal)
+    /// is `self.to_string()`.
     #[inline]
     pub fn strict_cmp(&self, other: &[u8]) -> core::cmp::Ordering {
         self.as_str().as_bytes().cmp(other)
