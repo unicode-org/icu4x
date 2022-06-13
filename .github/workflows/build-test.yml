@@ -171,8 +171,8 @@ jobs:
         command: run
         args: > 
           -p icu_datagen --features bin --release --
-          --uprops-root data/source/icuexportdata_uprops_full.zip
-          --cldr-root data/source/cldr-41.0.0-json-full.zip 
+          --uprops-root ../data/source/icuexportdata_uprops_full.zip
+          --cldr-root ../data/source/cldr-41.0.0-json-full.zip 
           --all-locales
           --all-keys
           --format blob
