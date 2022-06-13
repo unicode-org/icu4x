@@ -170,6 +170,28 @@ impl Region {
     pub fn is_alphabetic(&self) -> bool {
         self.0.is_ascii_alphabetic()
     }
+
+    /// Compare this `Region` with BCP-47 bytes.
+    ///
+    /// The return value is equivalent to what would happen if you first converted this
+    /// `Region` to a BCP-47 string and then performed a byte comparison.
+    ///
+    /// This function is case-sensitive and results in a *total order*, so it is appropriate for
+    /// binary search. The only argument producing [`Ordering::Equal`] is `self.to_string()`.
+    #[inline]
+    pub fn strict_cmp(&self, other: &[u8]) -> core::cmp::Ordering {
+        self.as_str().as_bytes().cmp(other)
+    }
+
+    /// Compare this `Region` with a potentially unnormalized BCP-47 string.
+    ///
+    /// The return value is equivalent to what would happen if you first parsed the
+    /// BCP-47 string to a `Region` and then performed a structucal comparison.
+    ///
+    #[inline]
+    pub fn normalizing_eq(&self, other: &str) -> bool {
+        self.as_str().eq_ignore_ascii_case(other)
+    }
 }
 
 impl FromStr for Region {
@@ -181,12 +203,6 @@ impl FromStr for Region {
 }
 
 impl_writeable_for_single_subtag!(Region, "GB");
-
-impl PartialEq<&str> for Region {
-    fn eq(&self, other: &&str) -> bool {
-        self.as_str() == *other
-    }
-}
 
 impl<'l> From<&'l Region> for &'l str {
     fn from(input: &'l Region) -> Self {

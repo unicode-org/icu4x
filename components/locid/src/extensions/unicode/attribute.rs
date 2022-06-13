@@ -86,9 +86,3 @@ impl FromStr for Attribute {
 }
 
 impl_writeable_for_single_subtag!(Attribute, "buddhist");
-
-impl PartialEq<&str> for Attribute {
-    fn eq(&self, other: &&str) -> bool {
-        self.as_str() == *other
-    }
-}

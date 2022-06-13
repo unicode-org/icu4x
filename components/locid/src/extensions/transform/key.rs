@@ -86,9 +86,3 @@ impl PartialEq<str> for Key {
         self.as_str() == other
     }
 }
-
-impl PartialEq<&str> for Key {
-    fn eq(&self, other: &&str) -> bool {
-        self.as_str() == *other
-    }
-}

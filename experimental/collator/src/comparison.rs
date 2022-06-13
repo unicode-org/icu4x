@@ -112,8 +112,8 @@ impl Collator {
             let key = icu_locid::unicode_ext_key!("co");
             if let Some(variant) = original_locale.extensions.unicode.keywords.get(&key) {
                 let s = variant.to_string();
-                let zh = filtered_locale.id.language == "zh";
-                let sv = filtered_locale.id.language == "sv";
+                let zh = filtered_locale.id.language == icu_locid::language!("zh");
+                let sv = filtered_locale.id.language == icu_locid::language!("sv");
                 // Omit the explicit collation variant if it is the default.
                 // "standard" is the default for all languages except zh and sv.
                 if !((!zh && !sv && s == "standard")

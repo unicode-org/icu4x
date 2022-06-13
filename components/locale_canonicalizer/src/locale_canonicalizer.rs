@@ -112,32 +112,31 @@ pub struct LocaleCanonicalizer {
 }
 
 #[inline]
-fn uts35_rule_matches<I, V, L>(
+fn uts35_rule_matches<'a, I>(
     source: &Locale,
-    language: L,
+    raw_language: &str,
     script: Option<Script>,
     region: Option<Region>,
-    variants: I,
+    raw_variants: I,
 ) -> bool
 where
-    I: Iterator<Item = V>,
-    Variant: PartialOrd<V>,
-    Language: PartialEq<L>,
+    I: Iterator<Item = &'a str>,
 {
-    (Language::UND == language || source.id.language == language)
+    (Language::UND.strict_cmp(raw_language.as_bytes()) == Ordering::Equal
+        || source.id.language.strict_cmp(raw_language.as_bytes()) == Ordering::Equal)
         && (script.is_none() || script == source.id.script)
         && (region.is_none() || region == source.id.region)
         && {
             // Checks if variants are a subset of source variants.
             // As both iterators are sorted, this can be done linearly.
             let mut source_variants = source.id.variants.iter();
-            'outer: for it in variants {
+            'outer: for it in raw_variants {
                 for cand in source_variants.by_ref() {
-                    match cand.partial_cmp(&it) {
-                        Some(Ordering::Equal) => {
+                    match cand.strict_cmp(it.as_bytes()) {
+                        Ordering::Equal => {
                             continue 'outer;
                         }
-                        Some(Ordering::Less) => {}
+                        Ordering::Less => {}
                         _ => {
                             return false;
                         }
@@ -149,7 +148,7 @@ where
         }
 }
 
-fn uts35_replacement<I, V>(
+fn uts35_replacement<'a, I>(
     source: &mut Locale,
     ruletype_has_language: bool,
     ruletype_has_script: bool,
@@ -157,8 +156,7 @@ fn uts35_replacement<I, V>(
     ruletype_variants: Option<I>,
     replacement: &LanguageIdentifier,
 ) where
-    I: Iterator<Item = V>,
-    Variant: PartialOrd<V>,
+    I: Iterator<Item = &'a str>,
 {
     if ruletype_has_language || (source.id.language.is_empty() && !replacement.language.is_empty())
     {
@@ -186,10 +184,10 @@ fn uts35_replacement<I, V>(
 
         loop {
             match (sources.peek(), skips.peek(), replacements.peek()) {
-                (Some(&source), Some(skip), _) if source > *skip => {
+                (Some(&source), Some(skip), _) if source.strict_cmp(skip.as_bytes()) == Ordering::Greater => {
                     skips.next();
                 }
-                (Some(&source), Some(skip), _) if source == *skip => {
+                (Some(&source), Some(skip), _) if source.strict_cmp(skip.as_bytes()) == Ordering::Equal => {
                     skips.next();
                     sources.next();
                 }
@@ -238,7 +236,7 @@ fn uts35_check_language_rules(
 
         if let Some(replacement) = replacement {
             if let Ok(langid) = replacement.parse() {
-                uts35_replacement::<core::iter::Empty<Variant>, Variant>(
+                uts35_replacement::<core::iter::Empty<&str>>(
                     locale, true, false, false, None, &langid,
                 );
                 return CanonicalizationResult::Modified;
@@ -378,7 +376,7 @@ impl LocaleCanonicalizer {
                             if let Ok(to) = raw_to.parse() {
                                 uts35_replacement(
                                     locale,
-                                    Language::UND != raw_lang,
+                                    Language::UND.strict_cmp(raw_lang.as_bytes()) != Ordering::Equal,
                                     false,
                                     false,
                                     Some(subtags),
@@ -402,10 +400,10 @@ impl LocaleCanonicalizer {
                     if let Ok(from) = raw_from.parse::<LanguageIdentifier>() {
                         if uts35_rule_matches(
                             locale,
-                            from.language,
+                            from.language.as_str(),
                             from.script,
                             from.region,
-                            from.variants.iter().copied(),
+                            from.variants.iter().map(Variant::as_str),
                         ) {
                             if let Ok(to) = raw_to.parse() {
                                 uts35_replacement(
@@ -413,7 +411,7 @@ impl LocaleCanonicalizer {
                                     !from.language.is_empty(),
                                     from.script.is_some(),
                                     from.region.is_some(),
-                                    Some(from.variants.iter().copied()),
+                                    Some(from.variants.iter().map(Variant::as_str)),
                                     &to,
                                 );
                                 result = CanonicalizationResult::Modified;
@@ -429,7 +427,7 @@ impl LocaleCanonicalizer {
                 if let Some(region) = locale.id.region {
                     if locale.id.language == language!("sgn") {
                         if let Some(&sgn_lang) = self.aliases.get().sgn_region.get(&region.into()) {
-                            uts35_replacement::<core::iter::Empty<Variant>, Variant>(
+                            uts35_replacement::<core::iter::Empty<&str>>(
                                 locale,
                                 true,
                                 false,
@@ -796,10 +794,10 @@ fn test_uts35_rule_matches() {
         assert_eq!(
             uts35_rule_matches(
                 &source,
-                rule.language,
+                rule.language.as_str(),
                 rule.script,
                 rule.region,
-                rule.variants.iter().copied(),
+                rule.variants.iter().map(Variant::as_str),
             ),
             result,
             "{}",
@@ -829,7 +827,7 @@ fn test_uts35_replacement() {
             !rule_0.language.is_empty(),
             rule_0.script.is_some(),
             rule_0.region.is_some(),
-            Some(rule_0.variants.iter().copied()),
+            Some(rule_0.variants.iter().map(Variant::as_str)),
             &rule_1,
         );
         assert_eq!(result, locale);
