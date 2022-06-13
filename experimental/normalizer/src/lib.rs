@@ -825,6 +825,7 @@ where
 {
     type Item = char;
 
+    #[inline]
     fn next(&mut self) -> Option<char> {
         let mut undecomposed_starter = '\u{0}'; // The compiler can't figure out that this gets overwritten before use.
         if self.unprocessed_starter.is_none() {
