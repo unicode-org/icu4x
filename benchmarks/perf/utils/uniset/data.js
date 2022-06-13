@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1655113847798,
+  "lastUpdate": 1655137517218,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -31666,6 +31666,60 @@ window.BENCHMARK_DATA = {
           {
             "name": "uniset/contains_range/worst",
             "value": 9,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "0a12d60e3ce16c61cdc7e4cdb7e6a3328da2b8c6",
+          "message": "Key extract (#1950)",
+          "timestamp": "2022-06-13T18:13:21+02:00",
+          "tree_id": "3f1d9ec5d02c4384d09c881fe8f14eb4ca2882e4",
+          "url": "https://github.com/unicode-org/icu4x/commit/0a12d60e3ce16c61cdc7e4cdb7e6a3328da2b8c6"
+        },
+        "date": 1655137485280,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 35364900,
+            "range": "± 648155",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/best",
+            "value": 10,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/worst",
+            "value": 11,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/best",
+            "value": 10,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/worst",
+            "value": 11,
             "range": "± 0",
             "unit": "ns/iter"
           }
