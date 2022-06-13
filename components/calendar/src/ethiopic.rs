@@ -122,10 +122,7 @@ impl Calendar for Ethiopic {
     }
 
     fn month(&self, date: &Self::DateInner) -> types::Month {
-        types::Month {
-            ordinal_month: date.0.month.into(),
-            code: types::MonthCode(tinystr!(8, "TODO")),
-        }
+        date.0.solar_month()
     }
 
     fn day_of_month(&self, date: &Self::DateInner) -> types::DayOfMonth {

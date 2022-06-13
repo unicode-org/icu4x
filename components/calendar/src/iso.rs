@@ -191,10 +191,7 @@ impl Calendar for Iso {
 
     /// The calendar-specific month represented by `date`
     fn month(&self, date: &Self::DateInner) -> types::Month {
-        types::Month {
-            ordinal_month: date.0.month.into(),
-            code: types::MonthCode(tinystr!(8, "TODO")),
-        }
+        date.0.solar_month()
     }
 
     /// The calendar-specific day-of-month represented by `date`
