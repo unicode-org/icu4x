@@ -26,6 +26,15 @@ pub trait CalendarArithmetic: Calendar {
 
 impl<C: CalendarArithmetic> ArithmeticDate<C> {
     #[inline]
+    pub fn new(year: i32, month: u8, day: u8) -> Self {
+        ArithmeticDate {
+            year,
+            month,
+            day,
+            marker: PhantomData,
+        }
+    }
+    #[inline]
     pub fn offset_date(&mut self, mut offset: DateDuration<C>) {
         self.year += offset.years;
         self.month += offset.months as u8;

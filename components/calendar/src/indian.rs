@@ -32,7 +32,7 @@
 //! ```
 
 use crate::any_calendar::AnyCalendarKind;
-use crate::iso::{Iso, IsoYear};
+use crate::iso::Iso;
 use crate::{
     types, ArithmeticDate, Calendar, CalendarArithmetic, Date, DateDuration, DateDurationUnit,
     DateTime, DateTimeError,
@@ -70,7 +70,7 @@ impl CalendarArithmetic for Indian {
     }
 
     fn is_leap_year(year: i32) -> bool {
-        Iso::is_leap_year(IsoYear(year + 78))
+        Iso::is_leap_year(year + 78)
     }
 }
 
@@ -79,7 +79,7 @@ impl Calendar for Indian {
     fn date_from_iso(&self, iso: Date<Iso>) -> IndianDateInner {
         let day_of_year = Iso::day_of_year(*iso.inner());
         IndianDateInner(ArithmeticDate::date_from_year_day(
-            iso.inner().year.0 - 78,
+            iso.inner().0.year - 78,
             day_of_year,
         ))
     }

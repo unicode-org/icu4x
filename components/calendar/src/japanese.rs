@@ -130,7 +130,7 @@ impl Calendar for Japanese {
         types::Year {
             era: types::Era(date.era),
             number: date.adjusted_year(),
-            related_iso: date.inner.year.0,
+            related_iso: date.inner.0.year,
         }
     }
 
@@ -146,16 +146,16 @@ impl Calendar for Japanese {
 
     /// Information of the day of the year
     fn day_of_year_info(&self, date: &Self::DateInner) -> types::DayOfYearInfo {
-        let prev_dec_31 = IsoDateInner::dec_31((date.inner.year.0 - 1).into());
-        let next_jan_1 = IsoDateInner::jan_1((date.inner.year.0 + 1).into());
+        let prev_dec_31 = IsoDateInner::dec_31((date.inner.0.year - 1).into());
+        let next_jan_1 = IsoDateInner::jan_1((date.inner.0.year + 1).into());
 
         let prev_dec_31 = self.date_from_iso(Date::from_raw(prev_dec_31, Iso));
         let next_jan_1 = self.date_from_iso(Date::from_raw(next_jan_1, Iso));
         types::DayOfYearInfo {
-            day_of_year: Iso::day_of_year(date.inner),
-            days_in_year: Iso::days_in_year(date.inner.year),
+            day_of_year: Iso::days_in_year_direct(date.inner.0.year),
+            days_in_year: Iso::days_in_year_direct(date.inner.0.year),
             prev_year: self.year(&prev_dec_31),
-            days_in_prev_year: Iso::days_in_year(prev_dec_31.inner.year),
+            days_in_prev_year: Iso::days_in_year_direct(prev_dec_31.inner.0.year),
             next_year: self.year(&next_jan_1),
         }
     }
@@ -177,7 +177,7 @@ impl JapaneseDateInner {
         // the era start date are for the first era (Currently, taika-645),
         // where we elect to still report the year as year 1 when it is in the same
         // Gregorian year, and use zero/negative years before that.
-        self.inner.year.0 - self.era_start + 1
+        self.inner.0.year - self.era_start + 1
     }
 }
 

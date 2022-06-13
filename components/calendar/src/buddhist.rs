@@ -32,7 +32,7 @@
 //! ```
 
 use crate::any_calendar::AnyCalendarKind;
-use crate::iso::{Iso, IsoDateInner, IsoYear};
+use crate::iso::{Iso, IsoDateInner};
 use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, DateTime, DateTimeError};
 use tinystr::tinystr;
 
@@ -92,7 +92,7 @@ impl Calendar for Buddhist {
 
     /// The calendar-specific year represented by `date`
     fn year(&self, date: &Self::DateInner) -> types::Year {
-        iso_year_as_buddhist(date.year)
+        iso_year_as_buddhist(date.0.year)
     }
 
     /// The calendar-specific month represented by `date`
@@ -107,13 +107,13 @@ impl Calendar for Buddhist {
 
     /// Information of the day of the year
     fn day_of_year_info(&self, date: &Self::DateInner) -> types::DayOfYearInfo {
-        let prev_year = IsoYear(date.year.0 - 1);
-        let next_year = IsoYear(date.year.0 + 1);
+        let prev_year = date.0.year - 1;
+        let next_year = date.0.year + 1;
         types::DayOfYearInfo {
             day_of_year: Iso::day_of_year(*date),
-            days_in_year: Iso::days_in_year(date.year),
+            days_in_year: Iso::days_in_year_direct(date.0.year),
             prev_year: iso_year_as_buddhist(prev_year),
-            days_in_prev_year: Iso::days_in_year(prev_year),
+            days_in_prev_year: Iso::days_in_year_direct(prev_year),
             next_year: iso_year_as_buddhist(next_year),
         }
     }
@@ -148,7 +148,7 @@ impl Date<Buddhist> {
         month: u8,
         day: u8,
     ) -> Result<Date<Buddhist>, DateTimeError> {
-        Date::new_iso_date_from_integers(year - BUDDHIST_ERA_OFFSET, month, day)
+        Date::new_iso_date(year - BUDDHIST_ERA_OFFSET, month, day)
             .map(|d| Date::new_from_iso(d, Buddhist))
     }
 }
@@ -186,11 +186,11 @@ impl DateTime<Buddhist> {
     }
 }
 
-fn iso_year_as_buddhist(year: IsoYear) -> types::Year {
-    let buddhist_year = year.0 + BUDDHIST_ERA_OFFSET;
+fn iso_year_as_buddhist(year: i32) -> types::Year {
+    let buddhist_year = year + BUDDHIST_ERA_OFFSET;
     types::Year {
         era: types::Era(tinystr!(16, "be")),
         number: buddhist_year,
-        related_iso: year.0,
+        related_iso: year,
     }
 }
