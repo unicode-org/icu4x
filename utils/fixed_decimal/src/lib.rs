@@ -60,6 +60,7 @@ pub use decimal::DoublePrecision;
 
 pub use decimal::FixedDecimal;
 pub use decimal::RoundingMode;
+pub use decimal::Sign;
 use displaydoc::Display;
 pub use signum::Signum;
 

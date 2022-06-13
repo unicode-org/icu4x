@@ -112,16 +112,20 @@ pub struct FixedDecimal {
     /// - <= magnitude
     lower_magnitude: i16,
 
-    // The sign; note that a positive value may be represented by either
-    // `Sign::Positive` (corresponding to a prefix +) or `Sign::None`
-    // (corresponding to the absence of a prefix sign).
+    /// The sign; note that a positive value may be represented by either
+    /// `Sign::Positive` (corresponding to a prefix +) or `Sign::None`
+    /// (corresponding to the absence of a prefix sign).
     sign: Sign,
 }
 
+/// A specification of the sign used when formatting a number.
 #[derive(Copy, Clone, PartialEq, Eq, Debug)]
 pub enum Sign {
+    /// No sign (implicitly positive, e.g., 1729).
     None,
+    /// A negative sign, e.g., -1729.
     Negative,
+    /// An explicit positive sign, e.g., +1729.
     Positive,
 }
 
@@ -455,6 +459,47 @@ impl FixedDecimal {
     /// ```
     pub fn negated(mut self) -> Self {
         self.negate();
+        self
+    }
+
+    /// Change the sign to the one given.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use fixed_decimal::FixedDecimal;
+    /// use fixed_decimal::Sign;
+    ///
+    /// let mut dec = FixedDecimal::from(1729);
+    /// assert_eq!("1729", dec.to_string());
+    ///
+    /// dec.set_sign(Sign::Negative);
+    /// assert_eq!("-1729", dec.to_string());
+    ///
+    /// dec.set_sign(Sign::Positive);
+    /// assert_eq!("+1729", dec.to_string());
+    ///
+    /// dec.set_sign(Sign::None);
+    /// assert_eq!("1729", dec.to_string());
+    /// ```
+    pub fn set_sign(&mut self, sign: Sign) {
+        self.sign = sign;
+    }
+
+    /// Change the sign to the one given, consuming self and returning a new object.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use fixed_decimal::FixedDecimal;
+    /// use fixed_decimal::Sign;
+    ///
+    /// assert_eq!("+1729", FixedDecimal::from(1729).with_sign(Sign::Positive).to_string());
+    /// assert_eq!("1729", FixedDecimal::from(-1729).with_sign(Sign::None).to_string());
+    /// assert_eq!("-1729", FixedDecimal::from(1729).with_sign(Sign::Negative).to_string());
+    /// ```
+    pub fn with_sign(mut self, sign: Sign) -> Self {
+        self.set_sign(sign);
         self
     }
 
@@ -1205,13 +1250,13 @@ impl FromStr for FixedDecimal {
             return Err(Error::Syntax);
         }
         let input_str = input_str.as_bytes();
-        #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
+        #[allow(clippy::indexing_slicing)] // The string is not empty.
         let sign = match input_str[0] {
             b'-' => Sign::Negative,
             b'+' => Sign::Positive,
             _ => Sign::None,
         };
-        #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
+        #[allow(clippy::indexing_slicing)] // The string is not empty.
         let no_sign_str = if sign == Sign::None {
             input_str
         } else {
