@@ -77,6 +77,11 @@ pub struct Locale {
     pub extensions: extensions::Extensions,
 }
 
+#[test]
+fn test() {
+    assert_eq!(core::mem::size_of::<Locale>(), 184);
+}
+
 impl Locale {
     /// A constructor which takes a utf8 slice, parses it and
     /// produces a well-formed [`Locale`].

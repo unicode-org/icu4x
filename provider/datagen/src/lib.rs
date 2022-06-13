@@ -155,20 +155,23 @@ pub fn keys_from_file<P: AsRef<Path>>(path: P) -> std::io::Result<Vec<ResourceKe
 /// ```
 pub fn keys_from_bin<P: AsRef<Path>>(path: P) -> std::io::Result<Vec<ResourceKey>> {
     let file = std::fs::read(path.as_ref())?;
-    let candidates = (0..file.len())
-        .filter_map(|i| {
-            if file[i..].starts_with(icu_provider::leading_tag!().as_bytes()) {
-                let i = i + icu_provider::leading_tag!().len();
-                for j in i..Ord::min(i + 100, file.len()) {
-                    // Assume some maximum key size to not make this quadratic
-                    if file[j..].starts_with(icu_provider::trailing_tag!().as_bytes()) {
-                        return Some(&file[i..j]);
-                    }
-                }
-            }
-            None
-        })
-        .collect::<HashSet<_>>();
+    let mut candidates = HashSet::new();
+    let mut i = 0;
+    let mut last_start = None;
+    while i < file.len() {
+        if file[i..].starts_with(icu_provider::leading_tag!().as_bytes()) {
+            i += icu_provider::leading_tag!().len();
+            last_start = Some(i);
+        } else if file[i..].starts_with(icu_provider::trailing_tag!().as_bytes())
+            && last_start.is_some()
+        {
+            candidates.insert(&file[last_start.unwrap()..i]);
+            i += icu_provider::trailing_tag!().len();
+            last_start = None;
+        } else {
+            i += 1;
+        }
+    }
 
     Ok(get_all_keys()
         .into_iter()
@@ -320,6 +323,7 @@ fn test_keys_from_file() {
             icu_datetime::provider::calendar::DateSkeletonPatternsV1Marker::KEY,
             icu_datetime::provider::calendar::DateSymbolsV1Marker::KEY,
             icu_datetime::provider::week_data::WeekDataV1Marker::KEY,
+            icu_decimal::provider::DecimalSymbolsV1Marker::KEY,
             icu_plurals::provider::OrdinalV1Marker::KEY,
         ]
     );
