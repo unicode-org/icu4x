@@ -2,7 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-// This file is shared with the litemap crate via symlink.
+// @@@@@@@@@@@@@@@@
+// THIS FILE IS SHARED BETWEEN LITEMAP AND ZEROVEC. PLEASE KEEP IT IN SYNC FOR ALL EDITS
+// @@@@@@@@@@@@@@@@
 
 use serde::ser::{Impossible, Serialize, Serializer};
 
