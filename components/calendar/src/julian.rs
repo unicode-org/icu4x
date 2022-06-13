@@ -39,7 +39,6 @@ use crate::{
 };
 use core::convert::TryInto;
 use core::marker::PhantomData;
-use tinystr::tinystr;
 
 // Julian epoch is equivalent to fixed_from_iso of December 30th of 0 year
 // 1st Jan of 1st year Julian is equivalent to December 30th of 0th year of ISO year

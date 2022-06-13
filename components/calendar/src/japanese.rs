@@ -146,8 +146,8 @@ impl Calendar for Japanese {
 
     /// Information of the day of the year
     fn day_of_year_info(&self, date: &Self::DateInner) -> types::DayOfYearInfo {
-        let prev_dec_31 = IsoDateInner::dec_31((date.inner.0.year - 1).into());
-        let next_jan_1 = IsoDateInner::jan_1((date.inner.0.year + 1).into());
+        let prev_dec_31 = IsoDateInner::dec_31(date.inner.0.year - 1);
+        let next_jan_1 = IsoDateInner::jan_1(date.inner.0.year + 1);
 
         let prev_dec_31 = self.date_from_iso(Date::from_raw(prev_dec_31, Iso));
         let next_jan_1 = self.date_from_iso(Date::from_raw(next_jan_1, Iso));
