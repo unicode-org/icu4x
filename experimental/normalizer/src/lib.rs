@@ -197,9 +197,10 @@ const EMPTY_U16: &ZeroSlice<u16> =
 fn split_first_u16(s: Option<&ZeroSlice<u16>>) -> (char, &ZeroSlice<u16>) {
     if let Some(slice) = s {
         if let Some(first) = slice.first() {
-            // `unwrap()` must succeed, because `first()` returned `Some`.
             return (
                 char_from_u16(first),
+                // `unwrap()` must succeed, because `first()` returned `Some`.
+                #[allow(clippy::unwrap_used)]
                 slice.get_subslice(1..slice.len()).unwrap(),
             );
         }
@@ -213,9 +214,10 @@ fn split_first_u16(s: Option<&ZeroSlice<u16>>) -> (char, &ZeroSlice<u16>) {
 fn split_first_u24(s: Option<&ZeroSlice<U24>>) -> (char, &ZeroSlice<U24>) {
     if let Some(slice) = s {
         if let Some(first) = slice.first() {
-            // `unwrap()` must succeed, because `first()` returned `Some`.
             return (
                 char_from_u24(first),
+                // `unwrap()` must succeed, because `first()` returned `Some`.
+                #[allow(clippy::unwrap_used)]
                 slice.get_subslice(1..slice.len()).unwrap(),
             );
         }
@@ -276,6 +278,9 @@ fn assign_ccc_and_sort_combining<'data>(
     ccc: &CodePointTrie<'data, CanonicalCombiningClass>,
 ) {
     slice.iter_mut().for_each(|cc| cc.set_ccc_from_trie(ccc));
+    // Slicing succeeds by construction; we've always ensured that `combining_start`
+    // is in permissible range.
+    #[allow(clippy::indexing_slicing)]
     slice[combining_start..].sort_by_key(|cc| cc.ccc());
 }
 
@@ -728,6 +733,9 @@ where
             // class for every character in `buffer`.
             assign_ccc_and_sort_combining(&mut self.buffer[..], combining_start, self.ccc);
         } else {
+            // Slicing succeeds by construction; we've always ensured that `combining_start`
+            // is in permissible range.
+            #[allow(clippy::indexing_slicing)]
             sort_slice_by_ccc(&mut self.buffer[combining_start..], self.ccc);
         }
         starter
@@ -741,8 +749,7 @@ where
     type Item = char;
 
     fn next(&mut self) -> Option<char> {
-        if self.buffer_pos < self.buffer.len() {
-            let ret = self.buffer[self.buffer_pos].character();
+        if let Some(ret) = self.buffer.get(self.buffer_pos).map(|c| c.character()) {
             self.buffer_pos += 1;
             if self.buffer_pos == self.buffer.len() {
                 self.buffer.clear();
@@ -843,9 +850,12 @@ where
             // The loop is only broken out of as goto forward
             #[allow(clippy::never_loop)]
             loop {
-                if self.decomposition.buffer_pos < self.decomposition.buffer.len() {
-                    let (character, ccc) = self.decomposition.buffer[self.decomposition.buffer_pos]
-                        .character_and_ccc();
+                if let Some((character, ccc)) = self
+                    .decomposition
+                    .buffer
+                    .get(self.decomposition.buffer_pos)
+                    .map(|c| c.character_and_ccc())
+                {
                     self.decomposition.buffer_pos += 1;
                     if self.decomposition.buffer_pos == self.decomposition.buffer.len() {
                         self.decomposition.buffer.clear();
@@ -870,6 +880,9 @@ where
                     .decomposition
                     .pending_is_potential_passthrough_and_not_backward_combining
                 {
+                    // Attribute belongs on inner expression, but
+                    // https://github.com/rust-lang/rust/issues/15701
+                    #[allow(clippy::unwrap_used)]
                     if let Some(upcoming) = self.decomposition.delegate.next() {
                         self.decomposition.pending = Some(upcoming);
                         // Note: If `upcoming` is not in the set due to its decomposition
@@ -988,14 +1001,18 @@ where
             // We first loop by index to avoid moving the contents of `buffer`, but
             // if there's a discontiguous match, we'll start modifying `buffer` instead.
             loop {
-                // `>=` instead of `==` for LLVM optimizer idioms; never actually `>`.
-                if self.decomposition.buffer_pos >= self.decomposition.buffer.len() {
+                let (character, ccc) = if let Some((character, ccc)) = self
+                    .decomposition
+                    .buffer
+                    .get(self.decomposition.buffer_pos)
+                    .map(|c| c.character_and_ccc())
+                {
+                    (character, ccc)
+                } else {
                     self.decomposition.buffer.clear();
                     self.decomposition.buffer_pos = 0;
                     break;
-                }
-                let (character, ccc) =
-                    self.decomposition.buffer[self.decomposition.buffer_pos].character_and_ccc();
+                };
                 if let Some(composed) = self.compose_non_hangul(starter, character) {
                     starter = composed;
                     self.decomposition.buffer_pos += 1;
@@ -1015,8 +1032,12 @@ where
                     return Some(starter);
                 }
                 let mut i = 1; // We have skipped one non-starter.
-                while i < self.decomposition.buffer.len() {
-                    let (character, ccc) = self.decomposition.buffer[i].character_and_ccc();
+                while let Some((character, ccc)) = self
+                    .decomposition
+                    .buffer
+                    .get(i)
+                    .map(|c| c.character_and_ccc())
+                {
                     if ccc == CanonicalCombiningClass::NotReordered {
                         // Discontiguous match not allowed.
                         return Some(starter);

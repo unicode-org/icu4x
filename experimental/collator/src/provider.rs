@@ -117,6 +117,7 @@ impl<'data> CollationDataV1<'data> {
         index: usize,
     ) -> (CollationElement32, &'data ZeroSlice<u16>) {
         if let Some(slice) = self.contexts.get_subslice(index..self.contexts.len()) {
+            #[allow(clippy::unwrap_used)]
             if slice.len() >= 2 {
                 // `unwrap` must succeed due to the length check above.
                 let first = slice.get(0).unwrap();
@@ -364,6 +365,7 @@ pub struct CollationSpecialPrimariesV1<'data> {
 }
 
 impl<'data> CollationSpecialPrimariesV1<'data> {
+    #[allow(clippy::unwrap_used)]
     pub(crate) fn last_primary_for_group(&self, max_variable: MaxVariable) -> u32 {
         // `unwrap` is OK, because `Collator::try_new` validates the length.
         //

@@ -368,22 +368,31 @@ impl Collator {
         // The algorithm comes from CollationCompare::compareUpToQuaternary in ICU4C.
 
         let mut any_variable = false;
+        // Attribute belongs closer to `unwrap`, but
+        // https://github.com/rust-lang/rust/issues/15701
+        #[allow(clippy::unwrap_used)]
         let variable_top = if self.options.alternate_handling() == AlternateHandling::NonIgnorable {
             0
         } else {
             // +1 so that we can use "<" and primary ignorables test out early.
             self.special_primaries
                 .as_ref()
+                // `unwrap()` is OK, because we've ensured in the constructor that value
+                // is `Some` if we have alternate handling.
                 .unwrap()
                 .get()
                 .last_primary_for_group(self.options.max_variable())
                 + 1
         };
 
+        // Attribute belongs on inner expression, but
+        // https://github.com/rust-lang/rust/issues/15701
+        #[allow(clippy::unwrap_used)]
         let numeric_primary = if self.options.numeric() {
             Some(
                 self.special_primaries
                     .as_ref()
+                    // `unwrap` is OK, because we've ensured `Some` in the constructor
                     .unwrap()
                     .get()
                     .numeric_primary,
@@ -392,12 +401,15 @@ impl Collator {
             None
         };
 
+        // Attribute belongs on inner expression, but
+        // https://github.com/rust-lang/rust/issues/15701
+        #[allow(clippy::unwrap_used)]
         let mut left = CollationElements::new(
             left_chars,
             self.root.get(),
             tailoring.get(),
             <&[<u32 as AsULE>::ULE; JAMO_COUNT]>::try_from(self.jamo.get().ce32s.as_ule_slice())
-                .unwrap(), // length already validated
+                .unwrap(), // `unwrap` OK, because length already validated
             &self.diacritics.get().secondaries,
             self.decompositions.get(),
             self.tables.get(),
@@ -405,12 +417,15 @@ impl Collator {
             numeric_primary,
             self.lithuanian_dot_above,
         );
+        // Attribute belongs on inner expression, but
+        // https://github.com/rust-lang/rust/issues/15701
+        #[allow(clippy::unwrap_used)]
         let mut right = CollationElements::new(
             right_chars,
             self.root.get(),
             tailoring.get(),
             <&[<u32 as AsULE>::ULE; JAMO_COUNT]>::try_from(self.jamo.get().ce32s.as_ule_slice())
-                .unwrap(), // length already validated
+                .unwrap(), // `unwrap` OK, because length already validated
             &self.diacritics.get().secondaries,
             self.decompositions.get(),
             self.tables.get(),
@@ -513,8 +528,8 @@ impl Collator {
         // Sadly, we end up pushing the sentinel value, which means these
         // `SmallVec`s allocate more often than if we didn't actually
         // store the sentinel.
-        debug_assert_eq!(left_ces[left_ces.len() - 1], NO_CE);
-        debug_assert_eq!(right_ces[right_ces.len() - 1], NO_CE);
+        debug_assert_eq!(left_ces.last(), Some(&NO_CE));
+        debug_assert_eq!(right_ces.last(), Some(&NO_CE));
 
         // Note: `unwrap_or_default` in the iterations below should never
         // actually end up using the "_or_default" part, because the sentinel
@@ -574,6 +589,8 @@ impl Collator {
                             debug_assert_ne!(left_primary, NO_CE_PRIMARY);
                         }
                         let left_new_remaining = left_iter.as_slice();
+                        // Index in range by construction
+                        #[allow(clippy::indexing_slicing)]
                         let left_prefix =
                             &left_remaining[..left_remaining.len() - 1 - left_new_remaining.len()];
                         left_remaining = left_new_remaining;
@@ -587,6 +604,8 @@ impl Collator {
                             debug_assert_ne!(right_primary, NO_CE_PRIMARY);
                         }
                         let right_new_remaining = right_iter.as_slice();
+                        // Index in range by construction
+                        #[allow(clippy::indexing_slicing)]
                         let right_prefix = &right_remaining
                             [..right_remaining.len() - 1 - right_new_remaining.len()];
                         right_remaining = right_new_remaining;
