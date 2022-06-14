@@ -40,7 +40,7 @@ Clone `rust_icu` from <https://github.com/google/rust_icu> to `$PROJECTS/rust_ic
 
 In `$PROJECTS/icu-build` run `make install`.
 
-`cd $PROJECTS/icu4x/experimental/collator`
+`cd $PROJECTS/icu4x/components/collator`
 
 Run the fuzzer until a panic:
 
@@ -52,7 +52,7 @@ Once there is a panic, recompile with debug symbols by adding `--dev`:
 
 Record with
 
-`LD_LIBRARY_PATH="$PROJECTS/localicu/lib" rr fuzz/target/x86_64-unknown-linux-gnu/debug/compare_utf16 -artifact_prefix=$PROJECTS/icu4x/experimental/collator/fuzz/artifacts/compare_utf16/ fuzz/artifacts/compare_utf16/crash-$ARTIFACTHASH`
+`LD_LIBRARY_PATH="$PROJECTS/localicu/lib" rr fuzz/target/x86_64-unknown-linux-gnu/debug/compare_utf16 -artifact_prefix=$PROJECTS/icu4x/components/collator/fuzz/artifacts/compare_utf16/ fuzz/artifacts/compare_utf16/crash-$ARTIFACTHASH`
 
 ## Design notes
 

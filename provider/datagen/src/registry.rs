@@ -28,21 +28,14 @@ pub fn get_all_keys() -> Vec<ResourceKey> {
         icu_plurals::provider::OrdinalV1Marker::KEY,
         #[cfg(feature = "experimental")]
         icu_casemapping::provider::CaseMappingV1Marker::KEY,
-        #[cfg(feature = "experimental")]
         icu_normalizer::provider::CanonicalDecompositionDataV1Marker::KEY,
-        #[cfg(feature = "experimental")]
         icu_normalizer::provider::CompatibilityDecompositionSupplementV1Marker::KEY,
         #[cfg(feature = "experimental")]
         icu_normalizer::provider::Uts46DecompositionSupplementV1Marker::KEY,
-        #[cfg(feature = "experimental")]
         icu_normalizer::provider::CanonicalDecompositionTablesV1Marker::KEY,
-        #[cfg(feature = "experimental")]
         icu_normalizer::provider::CompatibilityDecompositionTablesV1Marker::KEY,
-        #[cfg(feature = "experimental")]
         icu_normalizer::provider::CanonicalCompositionsV1Marker::KEY,
-        #[cfg(feature = "experimental")]
         icu_normalizer::provider::CanonicalCompositionPassthroughV1Marker::KEY,
-        #[cfg(feature = "experimental")]
         icu_normalizer::provider::CompatibilityCompositionPassthroughV1Marker::KEY,
         #[cfg(feature = "experimental")]
         icu_normalizer::provider::Uts46CompositionPassthroughV1Marker::KEY,
@@ -50,7 +43,6 @@ pub fn get_all_keys() -> Vec<ResourceKey> {
     v.extend(icu_properties::provider::ALL_KEYS);
     #[cfg(feature = "experimental")]
     v.extend(icu_segmenter::ALL_KEYS);
-    #[cfg(feature = "experimental")]
     v.extend(crate::transform::collator::ALL_KEYS);
     v
 }
@@ -107,6 +99,14 @@ macro_rules! create_datagen_provider {
                 $crate::transform::uprops::EnumeratedPropertyCodePointTrieProvider,
                 $crate::transform::uprops::ScriptWithExtensionsPropertyProvider,
                 $crate::transform::uprops::BinaryPropertyUnicodeSetDataProvider,
+                $crate::transform::collator::CollationProvider,
+                $crate::transform::uprops::CanonicalDecompositionTablesProvider,
+                $crate::transform::uprops::CompatibilityDecompositionTablesProvider,
+                $crate::transform::uprops::CanonicalCompositionsProvider,
+                $crate::transform::uprops::CanonicalCompositionPassthroughProvider,
+                $crate::transform::uprops::CompatibilityCompositionPassthroughProvider,
+                $crate::transform::uprops::CanonicalDecompositionDataProvider,
+                $crate::transform::uprops::CompatibilityDecompositionSupplementProvider,
             ]
         )
     };
@@ -176,16 +176,8 @@ macro_rules! create_datagen_provider {
                 $crate::transform::uprops::ScriptWithExtensionsPropertyProvider,
                 $crate::transform::uprops::BinaryPropertyUnicodeSetDataProvider,
                 $crate::transform::segmenter::SegmenterRuleProvider,
-                $crate::transform::uprops::CanonicalDecompositionDataProvider,
-                $crate::transform::uprops::CompatibilityDecompositionSupplementProvider,
                 $crate::transform::uprops::Uts46DecompositionSupplementProvider,
-                $crate::transform::uprops::CanonicalDecompositionTablesProvider,
-                $crate::transform::uprops::CompatibilityDecompositionTablesProvider,
-                $crate::transform::uprops::CanonicalCompositionsProvider,
-                $crate::transform::uprops::CanonicalCompositionPassthroughProvider,
-                $crate::transform::uprops::CompatibilityCompositionPassthroughProvider,
                 $crate::transform::uprops::Uts46CompositionPassthroughProvider,
-                $crate::transform::collator::CollationProvider,
             ]
         )
     };

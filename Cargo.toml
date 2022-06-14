@@ -6,6 +6,7 @@
 resolver = "2"
 members = [
     "components/calendar",
+    "components/collator",
     "components/datetime",
     "components/decimal",
     "components/icu",
@@ -13,6 +14,7 @@ members = [
     "components/list",
     "components/locale_canonicalizer",
     "components/locid",
+    "components/normalizer",
     "components/plurals",
     "components/properties",
     "experimental/bies",
@@ -20,8 +22,6 @@ members = [
     "experimental/char16trie",
     "experimental/crabbake",
     "experimental/crabbake/derive",
-    "experimental/collator",
-    "experimental/normalizer",
     "experimental/segmenter",
     "experimental/segmenter_lstm",
     "ffi/capi_cdylib",

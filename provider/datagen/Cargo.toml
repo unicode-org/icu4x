@@ -35,17 +35,17 @@ all-features = true
 
 # ICU components
 icu_calendar = { version = "0.6", path = "../../components/calendar", features = ["datagen"] }
+icu_collator = { version = "0.6", path = "../../components/collator", features = ["datagen"] }
 icu_datetime = { version = "0.6", path = "../../components/datetime", features = ["datagen"] }
 icu_decimal = { version = "0.6", path = "../../components/decimal", features = ["datagen"] }
 icu_list = { version = "0.6", path = "../../components/list", features = ["datagen"]}
 icu_locale_canonicalizer = { version = "0.6", path = "../../components/locale_canonicalizer", features = ["datagen"] }
+icu_normalizer = { version = "0.6", path = "../../components/normalizer", features = ["datagen"] }
 icu_plurals = { version = "0.6", path = "../../components/plurals", features = ["datagen"] }
 icu_properties = { version = "0.6", path = "../../components/properties", features = ["datagen"]}
 # (experimental)
 icu_casemapping = { version = "0.1", path = "../../experimental/casemapping", features = ["datagen"], optional = true }
 icu_segmenter = { version = "0.6", path = "../../experimental/segmenter", features = ["datagen"], optional = true }
-icu_collator = { version = "0.6", path = "../../experimental/collator", features = ["datagen"], optional = true }
-icu_normalizer = { version = "0.6", path = "../../experimental/normalizer", features = ["datagen"], optional = true }
 
 # ICU provider infrastructure
 icu_provider = { version = "0.6", path = "../core", features = ["std", "log_error_context", "datagen"]}
@@ -76,7 +76,7 @@ crabbake = { version = "0.4", path = "../../experimental/crabbake"}
 proc-macro2 = "1.0"
 crlify = { version = "1", path = "../../utils/crlify"}
 syn = {version = "1.0", features = ["parsing"] }
-writeable = { version = "0.4", path = "../../utils/writeable", optional = true }
+writeable = { version = "0.4", path = "../../utils/writeable" }
 zip = "0.6"
 
 # Dependencies for "bin" feature
@@ -90,12 +90,11 @@ walkdir = { version = "2.3.2", optional = true }
 
 [dev-dependencies]
 dhat = "0.3.0"
-writeable = { path = "../../utils/writeable" }
 icu_testdata = { path = "../testdata", features = ["metadata"] }
 
 [features]
 default = []
-experimental = ["icu_casemapping", "icu_segmenter", "icu_collator", "icu_normalizer", "writeable"]
+experimental = ["icu_casemapping", "icu_segmenter"]
 bin = ["clap", "cached-path", "eyre", "pathdiff","sha2", "simple_logger", "walkdir"]
 
 [[bin]]

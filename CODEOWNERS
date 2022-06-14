@@ -7,19 +7,19 @@
 
 # List of components with at least two owners as specified in docs/crate-ownership.
 
+components/collator/              @hsivonen @echeran
 components/datetime/              @zbraniecki @gregtatum @nordzilla
 components/decimal/               @sffc
 components/icu/                   @unicode-org/icu4x-owners
 components/icu4x/                 @unicode-org/icu4x-owners
 components/locale_canonicalizer/  @dminor @zbraniecki
 components/locid/                 @zbraniecki @nciric
+components/normalizer/            @hsivonen @echeran
 components/plurals/               @zbraniecki @sffc
 components/uniset/                @echeran @iainireland
 experimental/bies/                @sffc
 experimental/calendar/            @Manishearth @sffc
 experimental/codepointtrie/       @echeran
-experimental/collator/            @hsivonen @echeran
-experimental/normalizer/          @hsivonen @echeran
 experimental/provider_ppucd/      @echeran
 experimental/segmenter/           @aethanyc @makotokato
 experimental/segmenter_lstm/      @aethanyc @sffc

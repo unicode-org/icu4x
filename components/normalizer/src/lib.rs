@@ -72,6 +72,7 @@ use crate::error::NormalizerError;
 use crate::provider::CanonicalDecompositionDataV1Marker;
 use crate::provider::CompatibilityDecompositionSupplementV1Marker;
 use crate::provider::DecompositionDataV1;
+#[cfg(any(test, feature = "experimental"))]
 use crate::provider::Uts46DecompositionSupplementV1Marker;
 use alloc::string::String;
 use alloc::vec::Vec;
@@ -93,6 +94,7 @@ use provider::CompatibilityDecompositionTablesV1Marker;
 use provider::CompositionPassthroughV1;
 use provider::DecompositionSupplementV1;
 use provider::DecompositionTablesV1;
+#[cfg(any(test, feature = "experimental"))]
 use provider::Uts46CompositionPassthroughV1Marker;
 use smallvec::SmallVec;
 use u24::EMPTY_U24;
@@ -105,6 +107,7 @@ use zerovec::ZeroSlice;
 
 enum SupplementPayloadHolder {
     Compatibility(DataPayload<CompatibilityDecompositionSupplementV1Marker>),
+    #[cfg(any(test, feature = "experimental"))]
     Uts46(DataPayload<Uts46DecompositionSupplementV1Marker>),
 }
 
@@ -112,6 +115,7 @@ impl SupplementPayloadHolder {
     fn get(&self) -> &DecompositionSupplementV1 {
         match self {
             SupplementPayloadHolder::Compatibility(d) => d.get(),
+            #[cfg(any(test, feature = "experimental"))]
             SupplementPayloadHolder::Uts46(d) => d.get(),
         }
     }
@@ -120,6 +124,7 @@ impl SupplementPayloadHolder {
 enum PassthroughPayloadHolder {
     Canonical(DataPayload<CanonicalCompositionPassthroughV1Marker>),
     Compatibility(DataPayload<CompatibilityCompositionPassthroughV1Marker>),
+    #[cfg(any(test, feature = "experimental"))]
     Uts46(DataPayload<Uts46CompositionPassthroughV1Marker>),
 }
 
@@ -128,6 +133,7 @@ impl PassthroughPayloadHolder {
         match self {
             PassthroughPayloadHolder::Canonical(d) => d.get(),
             PassthroughPayloadHolder::Compatibility(d) => d.get(),
+            #[cfg(any(test, feature = "experimental"))]
             PassthroughPayloadHolder::Uts46(d) => d.get(),
         }
     }
@@ -1147,6 +1153,7 @@ macro_rules! normalizer_methods {
         }
 
         /// Normalize a string slice into a `Write` sink.
+        #[cfg(feature = "experimental")]
         pub fn normalize_to<W: core::fmt::Write + ?Sized>(
             &self,
             text: &str,
@@ -1181,6 +1188,7 @@ macro_rules! normalizer_methods {
         ///
         /// Unpaired surrogates are mapped to the REPLACEMENT CHARACTER
         /// before normalizing.
+        #[cfg(feature = "experimental")]
         pub fn normalize_utf16_to<W: core::fmt::Write + ?Sized>(
             &self,
             text: &[u16],
@@ -1211,6 +1219,7 @@ macro_rules! normalizer_methods {
         ///
         /// Errors are mapped to the REPLACEMENT CHARACTER according
         /// to the WHATWG Encoding Standard.
+        #[cfg(feature = "experimental")]
         pub fn normalize_utf8_to<W: core::fmt::Write + ?Sized>(
             &self,
             text: &[u8],
@@ -1353,6 +1362,7 @@ impl DecomposingNormalizer {
     /// to other reorderable characters.
     ///
     /// Deliberately private and not available outside the crate.
+    #[cfg(any(test, feature = "experimental"))]
     fn try_new_uts46_decomposed_without_ignored_and_disallowed<D>(
         data_provider: &D,
     ) -> Result<Self, NormalizerError>
@@ -1518,9 +1528,9 @@ impl ComposingNormalizer {
     /// canonically equivant with each other if they differ by how U+0345 is ordered relative
     /// to other reorderable characters.
     ///
-    /// NOTE: This method should probably remain experimental when this crate moves to
-    /// `components` until suitability of this feature as part of IDNA processing has
-    /// been demonstrated.
+    /// NOTE: This method remains experimental until suitability of this feature as part of
+    /// IDNA processing has been demonstrated.
+    #[cfg(any(test, feature = "experimental"))]
     pub fn try_new_uts46_without_ignored_and_disallowed<D>(
         data_provider: &D,
     ) -> Result<Self, NormalizerError>

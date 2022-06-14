@@ -38,7 +38,7 @@ icu_codepointtrie = { version = "0.4", path = "../../utils/codepointtrie" }
 icu_char16trie = { version = "0.1", path = "../../experimental/char16trie" }
 icu_provider = { version = "0.6", path = "../../provider/core", features = ["macros"] }
 icu_locid = { version = "0.6", path = "../../components/locid" }
-icu_normalizer = { version = "0.6", path = "../../experimental/normalizer" }
+icu_normalizer = { version = "0.6", path = "../../components/normalizer" }
 icu_properties = { version = "0.6", path = "../../components/properties" }
 icu_uniset = { version = "0.5", path = "../../utils/uniset" }
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }
