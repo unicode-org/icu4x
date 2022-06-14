@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1655153139834,
+  "lastUpdate": 1655226088091,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -31589,6 +31589,66 @@ window.BENCHMARK_DATA = {
             "name": "from_string/1000000001",
             "value": 86,
             "range": "± 3",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "e2b5302423248189b98619924174e2ca2f1391fe",
+          "message": "Full datagen CI (#2021)",
+          "timestamp": "2022-06-14T18:47:36+02:00",
+          "tree_id": "b888f30744baf70619f77851c957a833eb3754ad",
+          "url": "https://github.com/unicode-org/icu4x/commit/e2b5302423248189b98619924174e2ca2f1391fe"
+        },
+        "date": 1655226062041,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 113360,
+            "range": "± 372",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 26988,
+            "range": "± 108",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 71960,
+            "range": "± 256",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 188,
+            "range": "± 3",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 92,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 77,
+            "range": "± 0",
             "unit": "ns/iter"
           }
         ]
