@@ -56,6 +56,12 @@ impl<T> From<Vec<T>> for ShortVec<T> {
     }
 }
 
+impl<T> Default for ShortVec<T> {
+    fn default() -> Self {
+        ShortVec::Empty
+    }
+}
+
 macro_rules! impl_writeable_for_single_subtag {
     ($type:tt, $sample:literal) => {
         impl core::fmt::Display for $type {
