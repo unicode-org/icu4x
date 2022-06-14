@@ -17,7 +17,7 @@ pub mod ffi {
     #[diplomat::opaque]
     #[diplomat::rust_link(fixed_decimal::decimal::FixedDecimal, Struct)]
     pub struct ICU4XFixedDecimal(pub FixedDecimal);
-    
+
     /// How to round digits when constructing an ICU4XFixedDecimal from a
     /// floating point number
     pub enum ICU4XFixedDecimalRoundingMode {
