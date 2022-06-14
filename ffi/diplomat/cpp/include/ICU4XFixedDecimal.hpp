@@ -16,6 +16,7 @@ namespace capi {
 class ICU4XFixedDecimal;
 #include "ICU4XError.hpp"
 #include "ICU4XFixedDecimalRoundingMode.hpp"
+#include "ICU4XFixedDecimalSign.hpp"
 
 /**
  * A destruction policy for using ICU4XFixedDecimal with std::unique_ptr.
@@ -76,6 +77,13 @@ class ICU4XFixedDecimal {
    * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.multiply_pow10) for more information.
    */
   bool multiply_pow10(int16_t power);
+
+  /**
+   * Set the sign of the [`ICU4XFixedDecimal`].
+   * 
+   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.negate) for more information.
+   */
+  void set_sign(ICU4XFixedDecimalSign sign);
 
   /**
    * Zero-pad the [`ICU4XFixedDecimal`] on the left to a particular position
@@ -168,6 +176,9 @@ inline diplomat::result<ICU4XFixedDecimal, ICU4XError> ICU4XFixedDecimal::create
 }
 inline bool ICU4XFixedDecimal::multiply_pow10(int16_t power) {
   return capi::ICU4XFixedDecimal_multiply_pow10(this->inner.get(), power);
+}
+inline void ICU4XFixedDecimal::set_sign(ICU4XFixedDecimalSign sign) {
+  capi::ICU4XFixedDecimal_set_sign(this->inner.get(), static_cast<capi::ICU4XFixedDecimalSign>(sign));
 }
 inline void ICU4XFixedDecimal::pad_left(int16_t position) {
   capi::ICU4XFixedDecimal_pad_left(this->inner.get(), position);

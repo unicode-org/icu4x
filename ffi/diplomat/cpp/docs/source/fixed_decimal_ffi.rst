@@ -35,6 +35,11 @@
         Multiply the :cpp:class:`ICU4XFixedDecimal` by a given power of ten.
         See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.multiply_pow10>`__ for more information.
 
+    .. cpp:function:: void set_sign(ICU4XFixedDecimalSign sign)
+
+        Set the sign of the :cpp:class:`ICU4XFixedDecimal`.
+        See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.negate>`__ for more information.
+
     .. cpp:function:: void pad_left(int16_t position)
 
         Zero-pad the :cpp:class:`ICU4XFixedDecimal` on the left to a particular position
@@ -71,3 +76,19 @@
     .. cpp:enumerator:: HalfExpand
 
         Round up from 0.5
+
+.. cpp:enum-struct:: ICU4XFixedDecimalSign
+
+    The sign of a FixedDecimal, as shown in formatting.
+
+    .. cpp:enumerator:: None
+
+        No sign (implicitly positive, e.g., 1729).
+
+    .. cpp:enumerator:: Negative
+
+        A negative sign, e.g., -1729.
+
+    .. cpp:enumerator:: Positive
+
+        An explicit positive sign, e.g., +1729.

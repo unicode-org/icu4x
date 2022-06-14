@@ -32,7 +32,7 @@ int main() {
     }
 
     decimal.multiply_pow10(2);
-    decimal.negate();
+    decimal.set_sign(ICU4XFixedDecimalSign::Negative);
     out = fdf.format(decimal).ok().value();
     std::cout << "Value x100 and negated is " << out << std::endl;
     if (out != "-১০,০০,০০,৭০০") {
