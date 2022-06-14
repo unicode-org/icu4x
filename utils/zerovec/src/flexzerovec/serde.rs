@@ -9,13 +9,8 @@ use serde::de::{self, Deserialize, Deserializer, SeqAccess, Visitor};
 #[cfg(feature = "serde")]
 use serde::ser::{Serialize, SerializeSeq, Serializer};
 
+#[derive(Default)]
 struct FlexZeroVecVisitor {}
-
-impl Default for FlexZeroVecVisitor {
-    fn default() -> Self {
-        Self {}
-    }
-}
 
 impl<'de> Visitor<'de> for FlexZeroVecVisitor {
     type Value = FlexZeroVec<'de>;
