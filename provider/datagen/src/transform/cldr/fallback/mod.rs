@@ -2,15 +2,18 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use std::collections::{HashMap, HashSet};
+
 use crate::transform::cldr::cldr_serde;
 use crate::SourceData;
 use icu_locale_canonicalizer::provider::*;
-use icu_locid::{language, subtags, LanguageIdentifier};
+use icu_locid::{language, subtags::Script, LanguageIdentifier};
 use icu_provider::datagen::IterableResourceProvider;
 use icu_provider::prelude::*;
 use icu_provider_adapters::fallback::*;
 use tinystr::TinyAsciiStr;
-use zerovec::{ZeroMap, ZeroSlice};
+use writeable::Writeable;
+use zerovec::{maps::ZeroMap2d, ZeroMap, ZeroSlice};
 
 use super::LikelySubtagsProvider;
 
@@ -59,13 +62,14 @@ impl ResourceProvider<LocaleFallbackRulesV1Marker> for FallbackRulesProvider {
             .read_and_parse("supplemental/parentLocales.json")?;
 
         let metadata = DataResponseMetadata::default();
-        // TODO(#1109): Set metadata.data_langid correctly.
         Ok(DataResponse {
             metadata,
-            payload: Some(DataPayload::from_owned(LocaleFallbackRulesV1::from(FallbackSourceData {
-                likely_subtags_data,
-                parents_data
-            }))),
+            payload: Some(DataPayload::from_owned(LocaleFallbackRulesV1::from(
+                FallbackSourceData {
+                    likely_subtags_data,
+                    parents_data,
+                },
+            ))),
         })
     }
 }
@@ -80,7 +84,83 @@ impl IterableResourceProvider<LocaleFallbackRulesV1Marker> for FallbackRulesProv
 
 impl From<FallbackSourceData<'_>> for LocaleFallbackRulesV1<'static> {
     fn from(source_data: FallbackSourceData<'_>) -> Self {
-        todo!()
+        let mut l2s = ZeroMap::new();
+        let mut lr2s = ZeroMap2d::new();
+        let mut l2r = ZeroMap::new();
+        let mut ls2r = ZeroMap2d::new();
+        let mut parents = ZeroMap::new();
+
+        // To find single-script languages, collect all language-script pairs
+        let mut l2s_set = HashMap::new();
+        for maximized in source_data
+            .likely_subtags_data
+            .supplemental
+            .likely_subtags
+            .iter_values()
+        {
+            let set: &mut HashSet<Script> = l2s_set.entry(maximized.language).or_default();
+            set.insert(maximized.script.expect("maximized"));
+        }
+
+        // Now populate the maps
+        for (minimized, maximized) in source_data
+            .likely_subtags_data
+            .supplemental
+            .likely_subtags
+            .iter()
+        {
+            let language = minimized.language;
+            if language.is_empty() {
+                // We never fill in a missing language in vertical fallback
+                continue;
+            }
+            if let Some(script) = minimized.script {
+                assert!(minimized.region.is_none());
+                let region = maximized.region.expect("maximized");
+                ls2r.insert(&language.into(), &script.into(), &region);
+                continue;
+            }
+            if let Some(region) = minimized.region {
+                // Skip if it is a single-script language
+                if l2s_set.get(&language).unwrap().len() == 1 {
+                    continue;
+                }
+                let script = maximized.script.expect("maximized");
+                lr2s.insert(&language.into(), &region.into(), &script);
+                continue;
+            }
+            let script = maximized.script.expect("maximized");
+            let region = maximized.region.expect("maximized");
+            l2r.insert(&language.into(), &region);
+            // Skip if it is a single-script language
+            if l2s_set.get(&language).unwrap().len() == 1 {
+                continue;
+            }
+            l2s.insert(&language.into(), &script);
+        }
+
+        for (source, target) in source_data
+            .parents_data
+            .supplemental
+            .parent_locales
+            .parent_locale
+            .iter()
+        {
+            assert!(!source.language.is_empty());
+            if source.script.is_some() && source.region.is_none() {
+                // We always fall back from language-script to und
+                continue;
+            }
+            parents.insert(source.write_to_string().as_bytes(), &target.into());
+        }
+
+        LocaleFallbackRulesV1 {
+            l2s,
+            lr2s,
+            l2r,
+            ls2r,
+            parents,
+        }
     }
 }
 
@@ -94,4 +174,6 @@ fn test_basic() {
         .unwrap()
         .take_payload()
         .unwrap();
+
+    println!("{:?}", data);
 }
