@@ -371,17 +371,24 @@ impl LocaleCanonicalizer {
                     .iter()
                     .map(zerofrom::ZeroFrom::zero_from)
                 {
-                    let mut subtags = raw_lang_variants.split('-');
-                    if is_iter_sorted(subtags.clone()) {
-                        if let Some(Ok(lang)) = subtags.next().map(|raw| raw.parse::<Language>()) {
-                            if uts35_rule_matches(locale, lang, None, None, subtags.clone()) {
+                    let (raw_lang, raw_variants) = {
+                        let mut subtags = raw_lang_variants.split('-');
+                        (
+                            // str::split can't return empty iterators
+                            unsafe { subtags.next().unwrap_unchecked() },
+                            subtags,
+                        )
+                    };
+                    if is_iter_sorted(raw_variants.clone()) {
+                        if let Ok(lang) = raw_lang.parse::<Language>() {
+                            if uts35_rule_matches(locale, lang, None, None, raw_variants.clone()) {
                                 if let Ok(to) = raw_to.parse() {
                                     uts35_replacement(
                                         locale,
                                         !lang.is_empty(),
                                         false,
                                         false,
-                                        Some(subtags),
+                                        Some(raw_variants),
                                         &to,
                                     );
                                     result = CanonicalizationResult::Modified;
