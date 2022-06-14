@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1655246137028,
+  "lastUpdate": 1655246700364,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -39911,6 +39911,102 @@ window.BENCHMARK_DATA = {
             "name": "pattern/parse",
             "value": 6966,
             "range": "± 457",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "a7e496b4db689de7b8f5d79cda0b3328dbf1497b",
+          "message": "Start emitting month codes from the calendar crate, switch ISO to ArithmeticDate (#2053)\n\n* Add solar month method\r\n\r\n* Move ISO over to ArithmeticDate\r\n\r\nThis is a holdover from back when we had fewer calendars; the type\r\nsafety is nice but the code sharing between calendars is more important.\r\n\r\n* Remove IsoYear/IsoMonth/IsoDay\r\n\r\n* Make everyone use solar_month()",
+          "timestamp": "2022-06-14T22:31:13Z",
+          "tree_id": "2f57f5ba46193d2a764c536554c08e0cd21d83d5",
+          "url": "https://github.com/unicode-org/icu4x/commit/a7e496b4db689de7b8f5d79cda0b3328dbf1497b"
+        },
+        "date": 1655246670561,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 134753,
+            "range": "± 5060",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 1245762,
+            "range": "± 31423",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 241911,
+            "range": "± 5869",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/DateTimeFormat/format_to_write",
+            "value": 121898,
+            "range": "± 3578",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/DateTimeFormat/format_to_string",
+            "value": 136986,
+            "range": "± 3285",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/format",
+            "value": 130713,
+            "range": "± 2365",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/to_string",
+            "value": 146606,
+            "range": "± 9290",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/ZonedDateTimeFormat/format_to_write",
+            "value": 235770,
+            "range": "± 5393",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/ZonedDateTimeFormat/format_to_string",
+            "value": 259885,
+            "range": "± 10788",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/format",
+            "value": 248737,
+            "range": "± 4400",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/to_string",
+            "value": 268454,
+            "range": "± 2789",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "pattern/parse",
+            "value": 6984,
+            "range": "± 119",
             "unit": "ns/iter"
           }
         ]
