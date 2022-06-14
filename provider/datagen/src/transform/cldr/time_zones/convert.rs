@@ -201,7 +201,7 @@ impl From<&CldrTimeZonesData> for MetaZonePeriodV1<'static> {
                             .collect::<Vec<_>>(),
                     }
                 })
-                .flat_map(iterate_metazone_period)
+                .flat_map(metazone_periods_iter)
                 .collect(),
         )
     }
@@ -438,7 +438,7 @@ fn iterate_zone_format_for_time_zone_id(
         })
 }
 
-fn iterate_metazone_period(
+fn metazone_periods_iter(
     pair: (
         TimeZoneBcp47Id,
         Vec<MetaZoneForPeriod>,
