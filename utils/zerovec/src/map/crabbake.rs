@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::{maps::ZeroMapKV, ZeroMap, maps::ZeroMapBorrowed};
+use crate::{maps::ZeroMapBorrowed, maps::ZeroMapKV, ZeroMap};
 use crabbake::*;
 
 impl<'a, K, V> Bakeable for ZeroMap<'a, K, V>
