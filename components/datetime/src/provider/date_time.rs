@@ -15,7 +15,7 @@ use crate::provider::calendar::{
     DateSkeletonPatternsV1Marker,
 };
 use crate::skeleton;
-use icu_calendar::types::Era;
+use icu_calendar::types::{Era, MonthCode};
 use icu_locid::Locale;
 use icu_provider::prelude::*;
 
@@ -232,7 +232,7 @@ pub trait DateTimeSymbols {
         &self,
         month: fields::Month,
         length: fields::FieldLength,
-        num: usize,
+        code: MonthCode,
     ) -> Result<&str>;
     fn get_symbol_for_weekday(
         &self,
@@ -303,10 +303,8 @@ impl<'data> DateTimeSymbols for provider::calendar::DateSymbolsV1<'data> {
         &self,
         month: fields::Month,
         length: fields::FieldLength,
-        num: usize,
+        code: MonthCode,
     ) -> Result<&str> {
-        // TODO(#493): Support symbols for non-Gregorian calendars.
-        debug_assert!(num < 12);
         let widths = match month {
             fields::Month::Format => &self.months.format,
             fields::Month::StandAlone => {
@@ -319,14 +317,13 @@ impl<'data> DateTimeSymbols for provider::calendar::DateSymbolsV1<'data> {
                     if let Some(symbols) = symbols {
                         return symbols
                             .0
-                            .get(num)
-                            .map(|x| &**x)
-                            .ok_or(DateTimeFormatError::MissingMonthSymbol(num));
+                            .get(&code)
+                            .ok_or(DateTimeFormatError::MissingMonthSymbol(code));
                     } else {
-                        return self.get_symbol_for_month(fields::Month::Format, length, num);
+                        return self.get_symbol_for_month(fields::Month::Format, length, code);
                     }
                 } else {
-                    return self.get_symbol_for_month(fields::Month::Format, length, num);
+                    return self.get_symbol_for_month(fields::Month::Format, length, code);
                 }
             }
         };
@@ -337,9 +334,8 @@ impl<'data> DateTimeSymbols for provider::calendar::DateSymbolsV1<'data> {
         };
         symbols
             .0
-            .get(num)
-            .map(|x| &**x)
-            .ok_or(DateTimeFormatError::MissingMonthSymbol(num))
+            .get(&code)
+            .ok_or(DateTimeFormatError::MissingMonthSymbol(code))
     }
 
     fn get_symbol_for_day_period(

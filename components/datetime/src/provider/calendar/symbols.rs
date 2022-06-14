@@ -5,6 +5,7 @@
 #![allow(missing_docs)] // TODO(#686) - Add missing docs.
 
 use alloc::borrow::Cow;
+use icu_calendar::types::MonthCode;
 use icu_provider::{yoke, zerofrom};
 use zerovec::ZeroMap;
 
@@ -57,6 +58,7 @@ macro_rules! symbols {
                 crabbake(path = icu_datetime::provider::calendar::$name),
             )]
             #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+            #[yoke(prove_covariance_manually)]
             $symbols
 
             // UTS 35 specifies that `format` widths are mandatory
@@ -68,6 +70,7 @@ macro_rules! symbols {
                 crabbake(path = icu_datetime::provider::calendar::$name),
             )]
             #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+            #[yoke(prove_covariance_manually)]
             pub struct FormatWidthsV1<'data> {
                 #[cfg_attr(feature = "serde", serde(borrow))]
                 pub abbreviated: SymbolsV1<'data>,
@@ -87,6 +90,7 @@ macro_rules! symbols {
                 crabbake(path = icu_datetime::provider::calendar::$name),
             )]
             #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+            #[yoke(prove_covariance_manually)]
             pub struct StandAloneWidthsV1<'data> {
                 #[cfg_attr(feature = "serde", serde(borrow))]
                 pub abbreviated: Option<SymbolsV1<'data>>,
@@ -105,6 +109,7 @@ macro_rules! symbols {
                 crabbake(path = icu_datetime::provider::calendar::$name),
             )]
             #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+            #[yoke(prove_covariance_manually)]
             pub struct ContextsV1<'data> {
                 #[cfg_attr(feature = "serde", serde(borrow))]
                 pub format: FormatWidthsV1<'data>,
@@ -118,14 +123,7 @@ macro_rules! symbols {
 symbols!(
     months,
     pub struct SymbolsV1<'data>(
-        #[cfg_attr(
-            feature = "serde",
-            serde(
-                borrow,
-                deserialize_with = "icu_provider::serde::borrow_de_utils::array_of_cow"
-            )
-        )]
-        pub [Cow<'data, str>; 12],
+        #[cfg_attr(feature = "serde", serde(borrow))] pub ZeroMap<'data, MonthCode, str>,
     );
 );
 
