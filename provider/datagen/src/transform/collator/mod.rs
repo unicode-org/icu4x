@@ -13,6 +13,7 @@ use icu_locid::extensions::unicode::Value;
 use icu_locid::unicode_ext_key;
 use icu_locid::LanguageIdentifier;
 use icu_locid::Locale;
+use icu_locid::language;
 use icu_provider::datagen::IterableResourceProvider;
 use icu_provider::prelude::*;
 use icu_provider::ResourceKey;
@@ -99,9 +100,9 @@ fn locale_to_file_name(opts: &ResourceOptions) -> String {
         // The Swedish naming seems ad hoc from
         // https://unicode-org.atlassian.net/browse/CLDR-679 .
 
-        if opts.get_langid().language == "zh" {
+        if opts.get_langid().language == language!("zh") {
             s.push_str("_pinyin");
-        } else if opts.get_langid().language == "sv" {
+        } else if opts.get_langid().language == language!("sv") {
             s.push_str("_reformed");
         } else {
             s.push_str("_standard");

@@ -49,7 +49,7 @@ fn bench_langid_compare_components_str() {
 
     let result = LIDS
         .iter()
-        .filter(|l| l.language == "en" && l.region.map(|r| r == "US").unwrap_or(false))
+        .filter(|l| l.language == language!("en") && l.region.map(|r| r == region!("US")).unwrap_or(false))
         .count();
 
     assert_eq!(result, 2);

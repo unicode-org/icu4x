@@ -36,10 +36,7 @@ impl DataMarker for BufferMarker {
 /// let data_provider = buffer_provider.as_deserializing();
 ///
 /// let german_hello_world: DataPayload<HelloWorldV1Marker> = data_provider
-///     .load_resource(&DataRequest {
-///         options: locale!("de").into(),
-///         metadata: Default::default(),
-///     })
+///     .load_resource(&locale!("de").into())
 ///     .expect("Loading should succeed")
 ///     .take_payload()
 ///     .expect("Data should be present");
