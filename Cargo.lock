@@ -1748,6 +1748,7 @@ dependencies = [
  "icu_locid",
  "icu_provider",
  "serde",
+ "tinystr 0.6.0",
  "yoke",
  "zerovec",
 ]

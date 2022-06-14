@@ -30,6 +30,11 @@ impl From<&SourceData> for FallbackRulesProvider {
     }
 }
 
+struct FallbackSourceData<'a> {
+    likely_subtags_data: &'a cldr_serde::likely_subtags::Resource,
+    parents_data: &'a cldr_serde::parent_locales::Resource,
+}
+
 impl ResourceProvider<LocaleFallbackRulesV1Marker> for FallbackRulesProvider {
     fn load_resource(
         &self,
@@ -41,21 +46,26 @@ impl ResourceProvider<LocaleFallbackRulesV1Marker> for FallbackRulesProvider {
             return Err(DataErrorKind::ExtraneousResourceOptions.into_error());
         }
 
-        let likely_subtags_data: DataPayload<LikelySubtagsV1Marker> = self
-            .likely_subtags_provider
-            .load_resource(req)?
-            .take_payload()?;
-
-        let data: &cldr_serde::aliases::Resource = self
+        let likely_subtags_data: &cldr_serde::likely_subtags::Resource = self
             .source
             .get_cldr_paths()?
             .cldr_core()
-            .read_and_parse("supplemental/aliases.json")?;
+            .read_and_parse("supplemental/likelySubtags.json")?;
+
+        let parents_data: &cldr_serde::parent_locales::Resource = self
+            .source
+            .get_cldr_paths()?
+            .cldr_core()
+            .read_and_parse("supplemental/parentLocales.json")?;
+
         let metadata = DataResponseMetadata::default();
         // TODO(#1109): Set metadata.data_langid correctly.
         Ok(DataResponse {
             metadata,
-            payload: Some(DataPayload::from_owned(LocaleFallbackRulesV1::from(data))),
+            payload: Some(DataPayload::from_owned(LocaleFallbackRulesV1::from(FallbackSourceData {
+                likely_subtags_data,
+                parents_data
+            }))),
         })
     }
 }
@@ -68,35 +78,8 @@ impl IterableResourceProvider<LocaleFallbackRulesV1Marker> for FallbackRulesProv
     }
 }
 
-// The size of the union of all field value sets.
-fn union_size(langid: &LanguageIdentifier) -> usize {
-    let mut size = langid.variants.len();
-    if !langid.language.is_empty() {
-        size += 1;
-    }
-    if langid.script.is_some() {
-        size += 1;
-    }
-    if langid.region.is_some() {
-        size += 1;
-    }
-    size
-}
-
-// Sort rules by size of union of field sets and alphabeticaly
-// following rules in Preprocessing, step 5 of Appendix C.
-fn rules_cmp(a: &LanguageIdentifier, b: &LanguageIdentifier) -> std::cmp::Ordering {
-    let size_a = union_size(a);
-    let size_b = union_size(b);
-    if size_a == size_b {
-        a.cmp(b)
-    } else {
-        size_b.cmp(&size_a)
-    }
-}
-
-impl From<&cldr_serde::aliases::Resource> for LocaleFallbackRulesV1<'_> {
-    fn from(other: &cldr_serde::aliases::Resource) -> Self {
+impl From<FallbackSourceData<'_>> for LocaleFallbackRulesV1<'static> {
+    fn from(source_data: FallbackSourceData<'_>) -> Self {
         todo!()
     }
 }

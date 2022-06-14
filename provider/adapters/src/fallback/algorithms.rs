@@ -14,7 +14,7 @@ const SUBDIVISION_KEY: Key = unicode_ext_key!("sd");
 
 impl<'a> LocaleFallbackerForKey<'a> {
     pub(crate) fn normalize(&self, ro: &mut ResourceOptions) {
-        let lang_raw = ro.language().into_raw();
+        let lang_raw = ro.language().into();
         // 1. Populate the region
         if ro.region().is_none() {
             // 1a. First look for region based on language+script
@@ -22,7 +22,7 @@ impl<'a> LocaleFallbackerForKey<'a> {
                 ro.set_region(
                     self.fallback_data
                         .ls2r
-                        .get(&lang_raw, &script.into_raw())
+                        .get(&lang_raw, &script.into())
                         .ok()
                         .copied(),
                 );
@@ -42,7 +42,7 @@ impl<'a> LocaleFallbackerForKey<'a> {
                     ro.set_script(
                         self.fallback_data
                             .lr2s
-                            .get(&lang_raw, &region.into_raw())
+                            .get(&lang_raw, &region.into())
                             .ok()
                             .copied(),
                     );
@@ -103,7 +103,7 @@ impl<'a, 'b> LocaleFallbackIterator<'a, 'b> {
         if let Some(parent) = self
             .fallback_data
             .parents
-            .get_copied_by(|bytes| ro.cmp_bytes(bytes).reverse())
+            .get_copied_by(|bytes| ro.strict_cmp(bytes).reverse())
         {
             let lid = LanguageIdentifier::from(parent);
             ro.set_langid(lid);

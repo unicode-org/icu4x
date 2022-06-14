@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use icu_locid::subtags::{Language, Region, Script};
+use tinystr::TinyAsciiStr;
 
 use icu_provider::prelude::*;
 
