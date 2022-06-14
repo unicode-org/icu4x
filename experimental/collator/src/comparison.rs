@@ -56,6 +56,8 @@ impl AnyQuaternaryAccumulator {
         self.0 & u32::from(QUATERNARY_MASK) != 0
     }
 }
+
+/// Compares strings according to culturally-relevant ordering.
 pub struct Collator {
     special_primaries: Option<DataPayload<CollationSpecialPrimariesV1Marker>>,
     root: DataPayload<CollationDataV1Marker>,
@@ -71,6 +73,7 @@ pub struct Collator {
 }
 
 impl Collator {
+    /// Instantiates a collator for a given locale with the given options
     pub fn try_new<T: Into<Locale>, D>(
         locale: T,
         data_provider: &D,
@@ -261,6 +264,8 @@ impl Collator {
         })
     }
 
+    /// Compare potentially-invalid UTF-16 slices. Unpaired surrogates
+    /// are compared as if each one was a REPLACEMENT CHARACTER.
     pub fn compare_utf16(&self, left: &[u16], right: &[u16]) -> Ordering {
         // TODO(#2010): Identical prefix skipping not implemented.
         let ret = self.compare_impl(left.chars(), right.chars());
@@ -281,6 +286,7 @@ impl Collator {
         ret
     }
 
+    /// Compare guaranteed-valid UTF-8 slices.
     pub fn compare(&self, left: &str, right: &str) -> Ordering {
         // TODO(#2010): Identical prefix skipping not implemented.
         let ret = self.compare_impl(left.chars(), right.chars());
@@ -301,6 +307,9 @@ impl Collator {
         ret
     }
 
+    /// Compare potentially-valid UTF-8 slices. Invalid input is compared
+    /// as if errors had been replaced with REPLACEMENT CHARACTERs according
+    /// to the WHATWG Encoding Standard.
     pub fn compare_utf8(&self, left: &[u8], right: &[u8]) -> Ordering {
         // TODO(#2010): Identical prefix skipping not implemented.
         let ret = self.compare_impl(left.chars(), right.chars());

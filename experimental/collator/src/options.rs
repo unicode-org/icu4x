@@ -223,9 +223,16 @@ pub enum CaseFirst {
 #[derive(Eq, PartialEq)]
 #[repr(u8)]
 pub enum MaxVariable {
+    /// Characters classified as spaces are shifted.
     Space = 0,
+    /// Characters classified as spaces or punctuation
+    /// are shifted.
     Punctuation = 1,
+    /// Characters classified as spaces, punctuation,
+    /// or symbols are shifted.
     Symbol = 2,
+    /// Characters classified as spaces, punctuation,
+    /// symbols, or currency symbols are shifted.
     Currency = 3,
 }
 
@@ -331,6 +338,7 @@ impl CollatorOptions {
     /// Whether numeric is explicitly set.
     const EXPLICIT_NUMERIC_MASK: u32 = 1 << 25;
 
+    /// Create a new `CollatorOptions` with the defaults.
     pub const fn new() -> Self {
         Self(Strength::Tertiary as u32)
     }
@@ -457,6 +465,10 @@ impl CollatorOptions {
         }
     }
 
+    /// Whether case is the most significant part of the tertiary
+    /// level.
+    ///
+    /// See [the ICU guide](https://unicode-org.github.io/icu/userguide/collation/concepts.html#caselevel).
     pub fn case_first(&self) -> CaseFirst {
         if (self.0 & CollatorOptions::CASE_FIRST_MASK) != 0 {
             if (self.0 & CollatorOptions::UPPER_FIRST_MASK) != 0 {
@@ -469,6 +481,10 @@ impl CollatorOptions {
         }
     }
 
+    /// Whether case is the most significant part of the tertiary
+    /// level.
+    ///
+    /// See [the ICU guide](https://unicode-org.github.io/icu/userguide/collation/concepts.html#caselevel).
     pub fn set_case_first(&mut self, case_first: Option<CaseFirst>) {
         self.0 &= !(CollatorOptions::CASE_FIRST_MASK | CollatorOptions::UPPER_FIRST_MASK);
         if let Some(case_first) = case_first {
@@ -488,10 +504,14 @@ impl CollatorOptions {
         }
     }
 
+    /// Whether second level compares the last accend difference
+    /// instead of the first accent difference.
     pub fn backward_second_level(&self) -> bool {
         (self.0 & CollatorOptions::BACKWARD_SECOND_LEVEL_MASK) != 0
     }
 
+    /// Whether second level compares the last accend difference
+    /// instead of the first accent difference.
     pub fn set_backward_second_level(&mut self, backward_second_level: Option<bool>) {
         self.0 &= !CollatorOptions::BACKWARD_SECOND_LEVEL_MASK;
         if let Some(backward_second_level) = backward_second_level {
@@ -504,10 +524,14 @@ impl CollatorOptions {
         }
     }
 
+    /// Whether sequences of decimal digits are compared according
+    /// to their numeric value.
     pub fn numeric(&self) -> bool {
         (self.0 & CollatorOptions::NUMERIC_MASK) != 0
     }
 
+    /// Whether sequences of decimal digits are compared according
+    /// to their numeric value.
     pub fn set_numeric(&mut self, numeric: Option<bool>) {
         self.0 &= !CollatorOptions::NUMERIC_MASK;
         if let Some(numeric) = numeric {
@@ -520,8 +544,8 @@ impl CollatorOptions {
         }
     }
 
-    // If strength is <= secondary, returns `None`.
-    // Otherwise, returns the appropriate mask.
+    /// If strength is <= secondary, returns `None`.
+    /// Otherwise, returns the appropriate mask.
     pub(crate) fn tertiary_mask(&self) -> Option<u16> {
         if self.strength() <= Strength::Secondary {
             None
@@ -534,10 +558,15 @@ impl CollatorOptions {
         }
     }
 
+    /// Internal upper first getter
     pub(crate) fn upper_first(&self) -> bool {
         (self.0 & CollatorOptions::UPPER_FIRST_MASK) != 0
     }
 
+    /// For options left at defaults in this `CollatorOptions`,
+    /// set the value from `other`. Values taken from `other`
+    /// are marked as explicitly set if they were explicitly
+    /// set in `other`.
     pub fn set_defaults(&mut self, other: CollatorOptions) {
         if self.0 & CollatorOptions::EXPLICIT_STRENGTH_MASK == 0 {
             self.0 &= !CollatorOptions::STRENGTH_MASK;
