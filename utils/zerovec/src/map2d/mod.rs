@@ -8,8 +8,8 @@ mod borrowed;
 mod cursor;
 pub(crate) mod map;
 
-#[cfg(feature = "crabbake")]
-mod crabbake;
+#[cfg(feature = "databake")]
+mod databake;
 #[cfg(feature = "serde")]
 mod serde;
 

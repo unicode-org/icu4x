@@ -14,7 +14,7 @@ use crate::u24::U24;
 
 #[icu_provider::data_struct(CanonicalDecompositionDataV1Marker = "normalizer/nfd@1")]
 #[derive(Debug, PartialEq, Clone)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize, crabbake::Bakeable), crabbake(path = icu_normalizer::provider))]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake), databake(path = icu_normalizer::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct DecompositionDataV1<'data> {
     #[cfg_attr(feature = "serde", serde(borrow))]
@@ -28,7 +28,7 @@ pub struct DecompositionDataV1<'data> {
     Uts46DecompositionSupplementV1Marker = "normalizer/uts46d@1"
 )]
 #[derive(Debug, PartialEq, Clone)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize, crabbake::Bakeable), crabbake(path = icu_normalizer::provider))]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake), databake(path = icu_normalizer::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct DecompositionSupplementV1<'data> {
     #[cfg_attr(feature = "serde", serde(borrow))]
@@ -58,7 +58,7 @@ impl DecompositionSupplementV1<'_> {
     CompatibilityDecompositionTablesV1Marker = "normalizer/nfkdex@1"
 )]
 #[derive(Debug, PartialEq, Clone)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize, crabbake::Bakeable), crabbake(path = icu_normalizer::provider))]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake), databake(path = icu_normalizer::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct DecompositionTablesV1<'data> {
     #[cfg_attr(feature = "serde", serde(borrow))]

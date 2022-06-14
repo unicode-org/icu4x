@@ -480,27 +480,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "crabbake"
-version = "0.4.0"
-dependencies = [
- "crabbake-derive",
- "proc-macro2",
- "quote",
- "syn",
-]
-
-[[package]]
-name = "crabbake-derive"
-version = "0.4.0"
-dependencies = [
- "crabbake",
- "proc-macro2",
- "quote",
- "syn",
- "synstructure",
-]
-
-[[package]]
 name = "crc32fast"
 version = "1.3.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -669,6 +648,27 @@ dependencies = [
  "darling_core",
  "quote",
  "syn",
+]
+
+[[package]]
+name = "databake"
+version = "0.4.0"
+dependencies = [
+ "databake-derive",
+ "proc-macro2",
+ "quote",
+ "syn",
+]
+
+[[package]]
+name = "databake-derive"
+version = "0.4.0"
+dependencies = [
+ "databake",
+ "proc-macro2",
+ "quote",
+ "syn",
+ "synstructure",
 ]
 
 [[package]]
@@ -1355,8 +1355,8 @@ dependencies = [
 name = "icu_calendar"
 version = "0.6.0"
 dependencies = [
- "crabbake",
  "criterion",
+ "databake",
  "displaydoc",
  "icu",
  "icu_benchmark_macros",
@@ -1414,7 +1414,7 @@ dependencies = [
 name = "icu_casemapping"
 version = "0.1.0"
 dependencies = [
- "crabbake",
+ "databake",
  "displaydoc",
  "icu_codepointtrie",
  "icu_locid",
@@ -1429,7 +1429,7 @@ dependencies = [
 name = "icu_char16trie"
 version = "0.1.0"
 dependencies = [
- "crabbake",
+ "databake",
  "serde",
  "toml",
  "zerovec",
@@ -1439,8 +1439,8 @@ dependencies = [
 name = "icu_codepointtrie"
 version = "0.4.0"
 dependencies = [
- "crabbake",
  "criterion",
+ "databake",
  "displaydoc",
  "iai",
  "icu_uniset",
@@ -1469,7 +1469,7 @@ version = "0.6.0"
 dependencies = [
  "arraystring",
  "atoi",
- "crabbake",
+ "databake",
  "displaydoc",
  "icu_char16trie",
  "icu_codepointtrie",
@@ -1492,8 +1492,8 @@ version = "0.6.0"
 dependencies = [
  "cached-path",
  "clap",
- "crabbake",
  "crlify",
+ "databake",
  "dhat 0.3.0",
  "displaydoc",
  "elsa",
@@ -1544,8 +1544,8 @@ name = "icu_datetime"
 version = "0.6.0"
 dependencies = [
  "bincode",
- "crabbake",
  "criterion",
+ "databake",
  "displaydoc",
  "either",
  "fixed_decimal",
@@ -1573,8 +1573,8 @@ dependencies = [
 name = "icu_decimal"
 version = "0.6.0"
 dependencies = [
- "crabbake",
  "criterion",
+ "databake",
  "displaydoc",
  "fixed_decimal",
  "getrandom",
@@ -1604,8 +1604,8 @@ dependencies = [
 name = "icu_list"
 version = "0.6.0"
 dependencies = [
- "crabbake",
  "criterion",
+ "databake",
  "deduplicating_array",
  "displaydoc",
  "icu_benchmark_macros",
@@ -1624,8 +1624,8 @@ dependencies = [
 name = "icu_locale_canonicalizer"
 version = "0.6.0"
 dependencies = [
- "crabbake",
  "criterion",
+ "databake",
  "icu_locid",
  "icu_provider",
  "icu_testdata",
@@ -1639,8 +1639,8 @@ dependencies = [
 name = "icu_locid"
 version = "0.6.0"
 dependencies = [
- "crabbake",
  "criterion",
+ "databake",
  "displaydoc",
  "iai",
  "icu",
@@ -1658,7 +1658,7 @@ dependencies = [
 name = "icu_normalizer"
 version = "0.6.0"
 dependencies = [
- "crabbake",
+ "databake",
  "displaydoc",
  "icu_codepointtrie",
  "icu_properties",
@@ -1685,8 +1685,8 @@ dependencies = [
 name = "icu_plurals"
 version = "0.6.0"
 dependencies = [
- "crabbake",
  "criterion",
+ "databake",
  "displaydoc",
  "fixed_decimal",
  "icu",
@@ -1703,7 +1703,7 @@ dependencies = [
 name = "icu_properties"
 version = "0.6.0"
 dependencies = [
- "crabbake",
+ "databake",
  "displaydoc",
  "icu",
  "icu_codepointtrie",
@@ -1720,7 +1720,7 @@ name = "icu_provider"
 version = "0.6.0"
 dependencies = [
  "bincode",
- "crabbake",
+ "databake",
  "dhat 0.3.0",
  "displaydoc",
  "erased-serde",
@@ -1797,8 +1797,8 @@ dependencies = [
 name = "icu_segmenter"
 version = "0.6.0"
 dependencies = [
- "crabbake",
  "criterion",
+ "databake",
  "icu_char16trie",
  "icu_codepointtrie",
  "icu_provider",
@@ -1866,8 +1866,8 @@ dependencies = [
 name = "icu_uniset"
 version = "0.5.0"
 dependencies = [
- "crabbake",
  "criterion",
+ "databake",
  "displaydoc",
  "icu_benchmark_macros",
  "postcard",
@@ -3399,8 +3399,8 @@ name = "tinystr"
 version = "0.6.0"
 dependencies = [
  "bincode",
- "crabbake",
  "criterion",
+ "databake",
  "displaydoc",
  "postcard",
  "rand",
@@ -4122,8 +4122,8 @@ name = "zerovec"
 version = "0.7.0"
 dependencies = [
  "bincode",
- "crabbake",
  "criterion",
+ "databake",
  "getrandom",
  "iai",
  "icu_benchmark_macros",

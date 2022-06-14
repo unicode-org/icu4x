@@ -3,9 +3,9 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use super::{FlexZeroSlice, FlexZeroVec};
-use crabbake::*;
+use databake::*;
 
-impl Bakeable for FlexZeroVec<'_> {
+impl Bake for FlexZeroVec<'_> {
     fn bake(&self, env: &CrateEnv) -> TokenStream {
         env.insert("zerovec");
         let bytes = self.as_bytes();
@@ -13,7 +13,7 @@ impl Bakeable for FlexZeroVec<'_> {
     }
 }
 
-impl Bakeable for &FlexZeroSlice {
+impl Bake for &FlexZeroSlice {
     fn bake(&self, env: &CrateEnv) -> TokenStream {
         env.insert("zerovec");
         let bytes = self.as_bytes();

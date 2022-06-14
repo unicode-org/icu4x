@@ -13,8 +13,8 @@ use icu_provider::{yoke, zerofrom};
 #[derive(Debug, PartialEq, Clone, Copy, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(
     feature = "datagen",
-    derive(serde::Serialize, crabbake::Bakeable),
-    crabbake(path = icu_datetime::pattern),
+    derive(serde::Serialize, databake::Bake),
+    databake(path = icu_datetime::pattern),
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[allow(clippy::exhaustive_enums)] // this type is stable

@@ -3,9 +3,9 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::TinyAsciiStr;
-use crabbake::*;
+use databake::*;
 
-impl<const N: usize> Bakeable for TinyAsciiStr<N> {
+impl<const N: usize> Bake for TinyAsciiStr<N> {
     fn bake(&self, env: &CrateEnv) -> TokenStream {
         env.insert("tinystr");
         let string = self.as_str();

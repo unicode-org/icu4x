@@ -71,7 +71,7 @@ tinystr = { path = "../../utils/tinystr", version = "0.6", features = ["alloc", 
 toml = "0.5"
 zerovec = { version = "0.7", path = "../../utils/zerovec", features = ["serde", "yoke"] }
 quote = "1.0.9"
-crabbake = { version = "0.4", path = "../../experimental/crabbake"}
+databake = { version = "0.4", path = "../../utils/databake"}
 proc-macro2 = "1.0"
 crlify = { version = "1", path = "../../utils/crlify"}
 syn = {version = "1.0", features = ["parsing"] }

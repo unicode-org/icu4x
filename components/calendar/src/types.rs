@@ -401,8 +401,8 @@ impl FromStr for GmtOffset {
 #[repr(i8)]
 #[cfg_attr(
     feature = "datagen",
-    derive(serde::Serialize, crabbake::Bakeable),
-    crabbake(path = icu_calendar::types),
+    derive(serde::Serialize, databake::Bake),
+    databake(path = icu_calendar::types),
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[allow(clippy::exhaustive_enums)] // This is stable

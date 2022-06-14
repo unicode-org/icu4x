@@ -39,7 +39,7 @@ zerofrom = { version = "0.1.0", path = "../zerofrom", features = ["derive"] }
 zerovec = { version = "0.7", path = "../zerovec", features = ["yoke"] }
 
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }
-crabbake = { version = "0.4", path = "../../experimental/crabbake", features = ["derive"], optional = true }
+databake = { version = "0.4", path = "../../utils/databake", features = ["derive"], optional = true }
 
 [dev-dependencies]
 postcard = { version = "1.0.0-alpha.2", features = ["alloc"] }
@@ -56,7 +56,7 @@ path = "src/lib.rs"
 default = []
 serde = ["dep:serde", "zerovec/serde", "icu_uniset/serde"]
 bench = []
-crabbake = ["dep:crabbake", "zerovec/crabbake"]
+databake = ["dep:databake", "zerovec/databake"]
 
 [[bench]]
 name = "codepointtrie"

@@ -56,7 +56,7 @@
 )]
 #![warn(missing_docs)]
 
-mod crabbake;
+mod databake;
 mod error;
 mod registry;
 mod source;
@@ -249,7 +249,7 @@ pub fn datagen(
                     mod_directory,
                     pretty,
                     insert_feature_gates,
-                } => Box::new(crabbake::ConstExporter::new(
+                } => Box::new(databake::BakedDataExporter::new(
                     mod_directory,
                     pretty,
                     insert_feature_gates,

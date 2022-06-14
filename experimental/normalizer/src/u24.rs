@@ -12,8 +12,8 @@ use zerovec::{
 #[derive(Copy, Clone, Debug, Eq, PartialEq)]
 #[cfg_attr(
     feature = "datagen",
-    derive(serde::Serialize, crabbake::Bakeable),
-    crabbake(path = icu_normalizer::u24),
+    derive(serde::Serialize, databake::Bake),
+    databake(path = icu_normalizer::u24),
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct U24(pub [u8; 3]);
