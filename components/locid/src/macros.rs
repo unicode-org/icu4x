@@ -205,9 +205,7 @@ macro_rules! langid {
 macro_rules! locale {
     ($locale:literal) => {{
         const R: $crate::Locale =
-            match $crate::LanguageIdentifier::from_bytes_with_single_variant(
-                $locale.as_bytes(),
-            ) {
+            match $crate::LanguageIdentifier::from_bytes_with_single_variant($locale.as_bytes()) {
                 Ok((language, script, region, variant)) => $crate::Locale {
                     id: $crate::LanguageIdentifier {
                         language,
@@ -397,7 +395,7 @@ mod test {
         assert_eq!(langid.to_string(), "ca-ES-valencia");
         assert_eq!(LANGID.to_string(), "ca-ES-valencia");
         assert_eq!(langid, LANGID);
-        assert_eq!(langid.to_string(), "de-Arab-AT");
+        assert_eq!(langid.to_string(), "ca-ES-valencia");
     }
 
     #[test]
@@ -407,7 +405,7 @@ mod test {
         assert_eq!(locale.to_string(), "ca-ES-valencia");
         assert_eq!(LOCALE.to_string(), "ca-ES-valencia");
         assert_eq!(locale, LOCALE);
-        assert_eq!(locale.to_string(), "de-Arab-AT");
+        assert_eq!(locale.to_string(), "ca-ES-valencia");
     }
 
     #[test]

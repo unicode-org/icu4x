@@ -6,8 +6,8 @@ use core::cmp::Ordering;
 use core::str::FromStr;
 
 use crate::parser::{
-    get_subtag_iterator, parse_language_identifier,
-    parse_language_identifier_with_single_variant, ParserError, ParserMode,
+    get_subtag_iterator, parse_language_identifier, parse_language_identifier_with_single_variant,
+    ParserError, ParserMode,
 };
 use crate::subtags;
 use alloc::string::String;
