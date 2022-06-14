@@ -135,12 +135,11 @@ macro_rules! variant {
 /// ```
 /// use icu::locid::{langid, LanguageIdentifier};
 ///
-/// const DE_AT: LanguageIdentifier = langid!("de_at");
+/// const CA_ES_VALENCIA: LanguageIdentifier = langid!("ca_ES-valencia");
 ///
-/// let de_at: LanguageIdentifier = "de_at".parse().unwrap();
+/// let ca_es_valencia: LanguageIdentifier = "ca_es-valencia".parse().unwrap();
 ///
-/// assert_eq!(DE_AT, "de-AT");
-/// assert_eq!(DE_AT, de_at);
+/// assert_eq!(CA_ES_VALENCIA, ca_es_valencia);
 /// ```
 ///
 /// *Note*: The macro cannot produce language identifiers with variants due to const
@@ -163,16 +162,15 @@ macro_rules! variant {
 macro_rules! langid {
     ($langid:literal) => {{
         const R: $crate::LanguageIdentifier =
-            match $crate::LanguageIdentifier::from_bytes_without_variants($langid.as_bytes()) {
-                Ok((language, script, region)) => $crate::LanguageIdentifier {
+            match $crate::LanguageIdentifier::from_bytes_with_single_variant($langid.as_bytes()) {
+                Ok((language, script, region, variant)) => $crate::LanguageIdentifier {
                     language,
                     script,
                     region,
-                    variants: $crate::subtags::Variants::new(),
+                    variants: $crate::subtags::Variants::from_optional_variant(variant),
                 },
                 #[allow(clippy::panic)] // const context
-                _ => panic!(concat!("Invalid language code: ", $langid, " . Note that variant tags are not \
-                                        supported by the langid! macro, use runtime parsing instead.")),
+                _ => panic!(concat!("Invalid language code: ", $langid, " . Note langid! macro can only support up to a single variant tag. Use runtime parsing instead.")),
             };
         R
     }};
@@ -212,20 +210,26 @@ macro_rules! langid {
 macro_rules! locale {
     ($locale:literal) => {{
         const R: $crate::Locale =
-            match $crate::LanguageIdentifier::from_bytes_without_variants($locale.as_bytes()) {
-                Ok((language, script, region)) => $crate::Locale {
+            match $crate::LanguageIdentifier::from_bytes_with_single_variant(
+                $locale.as_bytes(),
+            ) {
+                Ok((language, script, region, variant)) => $crate::Locale {
                     id: $crate::LanguageIdentifier {
                         language,
                         script,
                         region,
-                        variants: $crate::subtags::Variants::new(),
+                        variants: $crate::subtags::Variants::from_optional_variant(variant),
                     },
                     extensions: $crate::extensions::Extensions::new(),
                 },
                 #[allow(clippy::panic)] // const context
-                _ => panic!(concat!("Invalid language code: ", $locale, " . Note that variant tags and \
-                                        Unicode extensions are not supported by the locale! macro, use \
-                                        runtime parsing instead.")),
+                _ => panic!(concat!(
+                    "Invalid language code: ",
+                    $locale,
+                    " . Note the locale! macro only supports up to one variant tag,\
+                                        Unicode extensions are not supported, use \
+                                        runtime parsing instead."
+                )),
             };
         R
     }};
@@ -355,8 +359,8 @@ mod test {
     const SCRIPT_LATN: crate::subtags::Script = script!("lAtN");
     const REGION_US: crate::subtags::Region = region!("us");
     const VARIANT_MACOS: crate::subtags::Variant = variant!("MACOS");
-    const LANGID: crate::LanguageIdentifier = langid!("de-Arab-AT");
-    const LOCALE: crate::Locale = locale!("de-Arab-AT");
+    const LANGID: crate::LanguageIdentifier = langid!("ca-ES-valencia");
+    const LOCALE: crate::Locale = locale!("ca-ES-valencia");
     const UNICODE_EXT_KEY: crate::extensions::unicode::Key = unicode_ext_key!("ms");
     const TRANSFORM_EXT_KEY: crate::extensions::transform::Key = transform_ext_key!("h0");
 
@@ -398,19 +402,19 @@ mod test {
 
     #[test]
     fn langid() {
-        let langid = langid!("de_Arab_aT");
+        let langid = langid!("ca-ES-valencia");
 
-        assert_eq!(langid.to_string(), "de-Arab-AT");
-        assert_eq!(LANGID.to_string(), "de-Arab-AT");
+        assert_eq!(langid.to_string(), "ca-ES-valencia");
+        assert_eq!(LANGID.to_string(), "ca-ES-valencia");
         assert_eq!(langid, LANGID);
     }
 
     #[test]
     fn locale() {
-        let locale = locale!("de_Arab_aT");
+        let locale = locale!("ca-ES-valencia");
 
-        assert_eq!(locale.to_string(), "de-Arab-AT");
-        assert_eq!(LOCALE.to_string(), "de-Arab-AT");
+        assert_eq!(locale.to_string(), "ca-ES-valencia");
+        assert_eq!(LOCALE.to_string(), "ca-ES-valencia");
         assert_eq!(locale, LOCALE);
     }
 

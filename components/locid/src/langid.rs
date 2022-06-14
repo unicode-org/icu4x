@@ -6,8 +6,8 @@ use core::cmp::Ordering;
 use core::str::FromStr;
 
 use crate::parser::{
-    get_subtag_iterator, parse_language_identifier, parse_language_identifier_without_variants,
-    ParserError, ParserMode,
+    get_subtag_iterator, parse_language_identifier,
+    parse_language_identifier_with_single_variant, ParserError, ParserMode,
 };
 use crate::subtags;
 use alloc::string::String;
@@ -90,17 +90,18 @@ impl LanguageIdentifier {
     #[doc(hidden)]
     // The return type should be `Result<Self, ParserError>` once the `const_precise_live_drops`
     // is stabilized ([rust-lang#73255](https://github.com/rust-lang/rust/issues/73255)).
-    pub const fn from_bytes_without_variants(
+    pub const fn from_bytes_with_single_variant(
         v: &[u8],
     ) -> Result<
         (
             subtags::Language,
             Option<subtags::Script>,
             Option<subtags::Region>,
+            Option<subtags::Variant>,
         ),
         ParserError,
     > {
-        parse_language_identifier_without_variants(v, ParserMode::LanguageIdentifier)
+        parse_language_identifier_with_single_variant(v, ParserMode::LanguageIdentifier)
     }
 
     /// A constructor which takes a utf8 slice which may contain extension keys,
