@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1655246024385,
+  "lastUpdate": 1655249725743,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -17573,6 +17573,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/a7e496b4db689de7b8f5d79cda0b3328dbf1497b"
         },
         "date": 1655245995841,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 2274293,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "yzhang1994@gmail.com",
+            "name": "Yvonne Z",
+            "username": "yzhang1994"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "d094e04dbbead31894eaa35648bc5f5bb29b2ad1",
+          "message": "Change Variants to be a ShortVec<Variant> (#1988)\n\nCo-authored-by: Yvonne Zhang <yvonnezhang@google.com>",
+          "timestamp": "2022-06-14T16:32:34-07:00",
+          "tree_id": "2fbbda49662e7b357d2a3a6709630c50b03265b1",
+          "url": "https://github.com/unicode-org/icu4x/commit/d094e04dbbead31894eaa35648bc5f5bb29b2ad1"
+        },
+        "date": 1655249693029,
         "tool": "ndjson",
         "benches": [
           {
