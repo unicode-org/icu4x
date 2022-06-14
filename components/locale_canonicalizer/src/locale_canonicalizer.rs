@@ -114,7 +114,7 @@ pub struct LocaleCanonicalizer {
 #[inline]
 fn uts35_rule_matches<'a, I>(
     source: &Locale,
-    raw_language: &str,
+    language: Language,
     script: Option<Script>,
     region: Option<Region>,
     raw_variants: I,
@@ -122,8 +122,7 @@ fn uts35_rule_matches<'a, I>(
 where
     I: Iterator<Item = &'a str>,
 {
-    (Language::UND.strict_cmp(raw_language.as_bytes()) == Ordering::Equal
-        || source.id.language.strict_cmp(raw_language.as_bytes()) == Ordering::Equal)
+    (language.is_empty() || language == source.id.language)
         && (script.is_none() || script == source.id.script)
         && (region.is_none() || region == source.id.region)
         && {
@@ -373,22 +372,21 @@ impl LocaleCanonicalizer {
                     .map(zerofrom::ZeroFrom::zero_from)
                 {
                     let mut subtags = raw_lang_variants.split('-');
-                    if let Some(raw_lang) = subtags.next() {
-                        if is_iter_sorted(subtags.clone())
-                            && uts35_rule_matches(locale, raw_lang, None, None, subtags.clone())
-                        {
-                            if let Ok(to) = raw_to.parse() {
-                                uts35_replacement(
-                                    locale,
-                                    Language::UND.strict_cmp(raw_lang.as_bytes())
-                                        != Ordering::Equal,
-                                    false,
-                                    false,
-                                    Some(subtags),
-                                    &to,
-                                );
-                                result = CanonicalizationResult::Modified;
-                                continue 'outer;
+                    if is_iter_sorted(subtags.clone()) {
+                        if let Some(Ok(lang)) = subtags.next().map(|raw| raw.parse::<Language>()) {
+                            if uts35_rule_matches(locale, lang, None, None, subtags.clone()) {
+                                if let Ok(to) = raw_to.parse() {
+                                    uts35_replacement(
+                                        locale,
+                                        !lang.is_empty(),
+                                        false,
+                                        false,
+                                        Some(subtags),
+                                        &to,
+                                    );
+                                    result = CanonicalizationResult::Modified;
+                                    continue 'outer;
+                                }
                             }
                         }
                     }
@@ -405,7 +403,7 @@ impl LocaleCanonicalizer {
                     if let Ok(from) = raw_from.parse::<LanguageIdentifier>() {
                         if uts35_rule_matches(
                             locale,
-                            from.language.as_str(),
+                            from.language,
                             from.script,
                             from.region,
                             from.variants.iter().map(Variant::as_str),
@@ -799,7 +797,7 @@ fn test_uts35_rule_matches() {
         assert_eq!(
             uts35_rule_matches(
                 &source,
-                rule.language.as_str(),
+                rule.language,
                 rule.script,
                 rule.region,
                 rule.variants.iter().map(Variant::as_str),
