@@ -21,16 +21,19 @@
 
 mod bin_uniset;
 #[cfg(feature = "experimental")]
+mod casemapping;
+mod enum_codepointtrie;
+#[cfg(feature = "experimental")]
 mod normalizer;
 #[cfg(feature = "experimental")]
-mod casemapping;
-#[cfg(feature = "experimental")]
 mod normalizer_serde;
-mod enum_codepointtrie;
 mod script;
 mod uprops_serde;
 
 pub use bin_uniset::BinaryPropertyUnicodeSetDataProvider;
+#[cfg(feature = "experimental")]
+pub use casemapping::CaseMappingDataProvider;
+pub use enum_codepointtrie::EnumeratedPropertyCodePointTrieProvider;
 #[cfg(feature = "experimental")]
 pub use normalizer::CanonicalCompositionPassthroughProvider;
 #[cfg(feature = "experimental")]
@@ -49,7 +52,4 @@ pub use normalizer::CompatibilityDecompositionTablesProvider;
 pub use normalizer::Uts46CompositionPassthroughProvider;
 #[cfg(feature = "experimental")]
 pub use normalizer::Uts46DecompositionSupplementProvider;
-#[cfg(feature = "experimental")]
-pub use casemapping::CaseMappingDataProvider;
-pub use enum_codepointtrie::EnumeratedPropertyCodePointTrieProvider;
 pub use script::ScriptWithExtensionsPropertyProvider;
