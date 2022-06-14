@@ -176,11 +176,10 @@ where
 /// `CrateEnv`. The `crate`-replacement crate will always be checked.
 #[macro_export]
 macro_rules! test_bake {
-    ($foo:expr $(, $krate:ident)? $(, [$($env_crate:ident),+])? $(,)?) => {
-        let value = $foo;
+    ($expr:expr $(, $krate:ident)? $(, [$($env_crate:ident),+])? $(,)?) => {
         let env = Default::default();
-        let bake = $crate::Bakeable::bake(&$foo, &env).to_string();
-        let expected_bake = stringify!($foo).parse::<$crate::TokenStream>().unwrap().to_string();
+        let bake = $crate::Bakeable::bake(&($expr), &env).to_string();
+        let expected_bake = $crate::quote!($expr).to_string();
         $(
             let expected_bake = expected_bake.replace("crate", concat!(":: ", stringify!($krate)));
         )?
