@@ -26,8 +26,6 @@ diplomat_result_box_ICU4XFixedDecimal_ICU4XError ICU4XFixedDecimal_create_fromst
 
 bool ICU4XFixedDecimal_multiply_pow10(ICU4XFixedDecimal* self, int16_t power);
 
-void ICU4XFixedDecimal_negate(ICU4XFixedDecimal* self);
-
 void ICU4XFixedDecimal_pad_left(ICU4XFixedDecimal* self, int16_t position);
 
 void ICU4XFixedDecimal_truncate_left(ICU4XFixedDecimal* self, int16_t position);

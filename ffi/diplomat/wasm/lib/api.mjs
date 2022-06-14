@@ -711,10 +711,6 @@ export class ICU4XFixedDecimal {
     return diplomat_out;
   }
 
-  negate() {
-    const diplomat_out = wasm.ICU4XFixedDecimal_negate(this.underlying);
-  }
-
   pad_left(position) {
     const diplomat_out = wasm.ICU4XFixedDecimal_pad_left(this.underlying, position);
   }

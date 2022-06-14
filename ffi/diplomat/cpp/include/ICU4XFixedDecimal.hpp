@@ -78,13 +78,6 @@ class ICU4XFixedDecimal {
   bool multiply_pow10(int16_t power);
 
   /**
-   * Invert the sign of the [`ICU4XFixedDecimal`].
-   * 
-   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.negate) for more information.
-   */
-  void negate();
-
-  /**
    * Zero-pad the [`ICU4XFixedDecimal`] on the left to a particular position
    * 
    * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.pad_left) for more information.
@@ -175,9 +168,6 @@ inline diplomat::result<ICU4XFixedDecimal, ICU4XError> ICU4XFixedDecimal::create
 }
 inline bool ICU4XFixedDecimal::multiply_pow10(int16_t power) {
   return capi::ICU4XFixedDecimal_multiply_pow10(this->inner.get(), power);
-}
-inline void ICU4XFixedDecimal::negate() {
-  capi::ICU4XFixedDecimal_negate(this->inner.get());
 }
 inline void ICU4XFixedDecimal::pad_left(int16_t position) {
   capi::ICU4XFixedDecimal_pad_left(this->inner.get(), position);

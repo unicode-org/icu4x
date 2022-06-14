@@ -93,12 +93,6 @@ pub mod ffi {
             self.0.multiply_pow10(power).is_ok()
         }
 
-        /// Invert the sign of the [`ICU4XFixedDecimal`].
-        #[diplomat::rust_link(fixed_decimal::decimal::FixedDecimal::negate, FnInStruct)]
-        pub fn negate(&mut self) {
-            self.0.negate()
-        }
-
         /// Zero-pad the [`ICU4XFixedDecimal`] on the left to a particular position
         #[diplomat::rust_link(fixed_decimal::decimal::FixedDecimal::pad_left, FnInStruct)]
         pub fn pad_left(&mut self, position: i16) {
