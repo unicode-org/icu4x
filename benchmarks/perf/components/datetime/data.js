@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1655246700364,
+  "lastUpdate": 1655250480100,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -40007,6 +40007,102 @@ window.BENCHMARK_DATA = {
             "name": "pattern/parse",
             "value": 6984,
             "range": "± 119",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "yzhang1994@gmail.com",
+            "name": "Yvonne Z",
+            "username": "yzhang1994"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "d094e04dbbead31894eaa35648bc5f5bb29b2ad1",
+          "message": "Change Variants to be a ShortVec<Variant> (#1988)\n\nCo-authored-by: Yvonne Zhang <yvonnezhang@google.com>",
+          "timestamp": "2022-06-14T16:32:34-07:00",
+          "tree_id": "2fbbda49662e7b357d2a3a6709630c50b03265b1",
+          "url": "https://github.com/unicode-org/icu4x/commit/d094e04dbbead31894eaa35648bc5f5bb29b2ad1"
+        },
+        "date": 1655250451732,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 134940,
+            "range": "± 1841",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 1324729,
+            "range": "± 20120",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 252432,
+            "range": "± 3370",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/DateTimeFormat/format_to_write",
+            "value": 125923,
+            "range": "± 2204",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/DateTimeFormat/format_to_string",
+            "value": 137173,
+            "range": "± 2484",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/format",
+            "value": 134050,
+            "range": "± 1908",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/to_string",
+            "value": 144501,
+            "range": "± 2504",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/ZonedDateTimeFormat/format_to_write",
+            "value": 261805,
+            "range": "± 13350",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/ZonedDateTimeFormat/format_to_string",
+            "value": 268988,
+            "range": "± 3265",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/format",
+            "value": 252081,
+            "range": "± 4138",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/to_string",
+            "value": 271055,
+            "range": "± 3319",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "pattern/parse",
+            "value": 7193,
+            "range": "± 57",
             "unit": "ns/iter"
           }
         ]
