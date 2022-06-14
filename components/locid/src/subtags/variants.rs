@@ -56,7 +56,7 @@ impl Variants {
     ///
     /// let variant: Variant = "posix".parse().expect("Parsing failed.");
     /// let mut v = Some(variant);
-    /// let variants = Variants::from_option(v);
+    /// let variants = Variants::from_optional_variant(v);
     /// ```
     #[inline]
     pub const fn from_optional_variant(variant: Option<Variant>) -> Self {

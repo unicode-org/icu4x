@@ -14,6 +14,12 @@ use crate::{
     provider::week_data::WeekDataV1Marker,
 };
 use alloc::string::String;
+
+use icu_decimal::{
+    options::{FixedDecimalFormatOptions, GroupingStrategy, SignDisplay},
+    provider::DecimalSymbolsV1Marker,
+    FixedDecimalFormat,
+};
 use icu_locid::Locale;
 use icu_plurals::{provider::OrdinalV1Marker, PluralRules};
 use icu_provider::prelude::*;
@@ -31,6 +37,7 @@ pub(crate) struct DateTimeFormat {
     pub symbols: Option<DataPayload<DateSymbolsV1Marker>>,
     pub week_data: Option<DataPayload<WeekDataV1Marker>>,
     pub ordinal_rules: Option<PluralRules>,
+    pub fixed_decimal_format: FixedDecimalFormat,
 }
 
 impl DateTimeFormat {
@@ -48,6 +55,7 @@ impl DateTimeFormat {
         D: ResourceProvider<DateSymbolsV1Marker>
             + ResourceProvider<DatePatternsV1Marker>
             + ResourceProvider<DateSkeletonPatternsV1Marker>
+            + ResourceProvider<DecimalSymbolsV1Marker>
             + ResourceProvider<OrdinalV1Marker>
             + ResourceProvider<WeekDataV1Marker>
             + ?Sized,
@@ -71,12 +79,13 @@ impl DateTimeFormat {
             None
         };
 
+        // TODO(#1109): Implement proper vertical fallback
+        let mut locale_no_extensions = locale.clone();
+        locale_no_extensions.extensions.unicode.clear();
+
         let ordinal_rules = if let PatternPlurals::MultipleVariants(_) = &patterns.get().0 {
-            // TODO(#1109): Implement proper vertical fallback
-            let mut locale_no_extensions = locale.clone();
-            locale_no_extensions.extensions.unicode.clear();
             Some(PluralRules::try_new_ordinal(
-                locale_no_extensions,
+                locale_no_extensions.clone(),
                 data_provider,
             )?)
         } else {
@@ -96,12 +105,24 @@ impl DateTimeFormat {
             None
         };
 
+        let mut fixed_decimal_format_options = FixedDecimalFormatOptions::default();
+        fixed_decimal_format_options.grouping_strategy = GroupingStrategy::Never;
+        fixed_decimal_format_options.sign_display = SignDisplay::Never;
+
+        let fixed_decimal_format = FixedDecimalFormat::try_new(
+            locale_no_extensions,
+            data_provider,
+            fixed_decimal_format_options,
+        )
+        .map_err(DateTimeFormatError::FixedDecimalFormat)?;
+
         Ok(Self::new(
             locale,
             patterns,
             symbols_data,
             week_data,
             ordinal_rules,
+            fixed_decimal_format,
         ))
     }
 
@@ -112,6 +133,7 @@ impl DateTimeFormat {
         symbols: Option<DataPayload<DateSymbolsV1Marker>>,
         week_data: Option<DataPayload<WeekDataV1Marker>>,
         ordinal_rules: Option<PluralRules>,
+        fixed_decimal_format: FixedDecimalFormat,
     ) -> Self {
         Self {
             locale,
@@ -119,6 +141,7 @@ impl DateTimeFormat {
             symbols,
             week_data,
             ordinal_rules,
+            fixed_decimal_format,
         }
     }
 
@@ -136,6 +159,7 @@ impl DateTimeFormat {
             week_data: self.week_data.as_ref().map(|s| s.get()),
             locale: &self.locale,
             ordinal_rules: self.ordinal_rules.as_ref(),
+            fixed_decimal_format: &self.fixed_decimal_format,
         }
     }
 
@@ -153,6 +177,7 @@ impl DateTimeFormat {
             value,
             self.week_data.as_ref().map(|s| s.get()),
             self.ordinal_rules.as_ref(),
+            &self.fixed_decimal_format,
             &self.locale,
             w,
         )

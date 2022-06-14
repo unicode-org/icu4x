@@ -70,11 +70,11 @@
 //!
 //! let data = DataStruct {
 //!     nums: ZeroVec::from_slice_or_alloc(&[211, 281, 421, 461]),
-//!     chars: ZeroVec::from_slice_or_alloc(&['ö', '冇', 'म']),
+//!     chars: ZeroVec::alloc_from_slice(&['ö', '冇', 'म']),
 //!     strs: VarZeroVec::from(&["hello", "world"]),
 //! };
 //! let bincode_bytes = bincode::serialize(&data).expect("Serialization should be successful");
-//! assert_eq!(bincode_bytes.len(), 74);
+//! assert_eq!(bincode_bytes.len(), 71);
 //!
 //! let deserialized: DataStruct =
 //!     bincode::deserialize(&bincode_bytes).expect("Deserialization should be successful");
@@ -148,7 +148,7 @@
 //!
 //! let bincode_bytes = bincode::serialize(&data)
 //!     .expect("Serialization should be successful");
-//! assert_eq!(bincode_bytes.len(), 180);
+//! assert_eq!(bincode_bytes.len(), 176);
 //!
 //! let deserialized: Data = bincode::deserialize(&bincode_bytes)
 //!     .expect("Deserialization should be successful");
@@ -232,6 +232,8 @@ pub use crate::map2d::map::ZeroMap2d;
 pub use crate::varzerovec::{slice::VarZeroSlice, vec::VarZeroVec};
 pub use crate::zerovec::{ZeroSlice, ZeroVec};
 
+pub(crate) use flexzerovec::chunk_to_usize;
+
 #[doc(hidden)]
 pub mod __zerovec_internal_reexport {
     pub use zerofrom::ZeroFrom;
@@ -252,9 +254,9 @@ pub mod maps {
     //! relaxed lifetime constraints.
     //!
     //! The [`ZeroMapKV`] trait is required to be implemented on any type that needs to be used
-    //! within a map type. [`ZeroVecLike`], [`BorrowedZeroVecLike`], and [`MutableZeroVecLike`] are
-    //! all traits used in the internal workings of the map types, and should typically not be used
-    //! or implemented by users of this crate.
+    //! within a map type. [`ZeroVecLike`] and [`MutableZeroVecLike`] are traits used in the
+    //! internal workings of the map types, and should typically not be used or implemented by
+    //! users of this crate.
     #[doc(no_inline)]
     pub use crate::map::ZeroMap;
     pub use crate::map::ZeroMapBorrowed;
@@ -263,7 +265,7 @@ pub mod maps {
     pub use crate::map2d::ZeroMap2d;
     pub use crate::map2d::ZeroMap2dBorrowed;
 
-    pub use crate::map::{BorrowedZeroVecLike, MutableZeroVecLike, ZeroMapKV, ZeroVecLike};
+    pub use crate::map::{MutableZeroVecLike, ZeroMapKV, ZeroVecLike};
     pub use crate::map2d::KeyError;
 }
 

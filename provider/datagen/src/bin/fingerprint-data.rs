@@ -106,12 +106,8 @@ fn main() -> eyre::Result<()> {
         let map = provider.get_map();
         for key in all_keys {
             let hash = key.get_hash();
-            if let Some(iter) = map.iter_keys1(&hash) {
-                for locale in iter {
-                    let data = map
-                        .get(&hash, locale)
-                        .expect("Key found in iter_keys1 should work");
-
+            if let Some(cursor) = map.get0(&hash) {
+                for (locale, data) in cursor.iter1() {
                     let mut hasher = Sha256::new();
                     hasher.update(&data);
                     let result = hasher.finalize();

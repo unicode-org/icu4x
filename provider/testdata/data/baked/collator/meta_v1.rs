@@ -17,7 +17,7 @@ impl ResourceProvider<::icu_collator::provider::CollationMetadataV1Marker>
         ];
         #[allow(clippy::unwrap_used)]
         let value = VALUES
-            .binary_search_by(|(k, _)| req.options.cmp_bytes(k.as_bytes()).reverse())
+            .binary_search_by(|(k, _)| req.options.strict_cmp(k.as_bytes()).reverse())
             .map(|i| VALUES.get(i).unwrap().1)
             .map_err(|_| {
                 DataErrorKind::MissingResourceOptions.with_req(
@@ -35,7 +35,7 @@ impl ResourceProvider<::icu_collator::provider::CollationMetadataV1Marker>
 }
 type DataStruct =
     &'static <::icu_collator::provider::CollationMetadataV1Marker as DataMarker>::Yokeable;
-static BN_JA: DataStruct = &::icu_collator::provider::CollationMetadataV1 { bits: 251658313u32 };
-static ES_TR: DataStruct = &::icu_collator::provider::CollationMetadataV1 { bits: 251658249u32 };
-static TH: DataStruct = &::icu_collator::provider::CollationMetadataV1 { bits: 251658825u32 };
-static UND: DataStruct = &::icu_collator::provider::CollationMetadataV1 { bits: 251658265u32 };
+static BN_JA: DataStruct = &::icu_collator::provider::CollationMetadataV1 { bits: 41u32 };
+static ES_TR: DataStruct = &::icu_collator::provider::CollationMetadataV1 { bits: 9u32 };
+static TH: DataStruct = &::icu_collator::provider::CollationMetadataV1 { bits: 297u32 };
+static UND: DataStruct = &::icu_collator::provider::CollationMetadataV1 { bits: 1u32 };

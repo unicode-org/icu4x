@@ -15,7 +15,6 @@
 ///
 /// let de: Language = "DE".parse().unwrap();
 ///
-/// assert_eq!(DE, "de");
 /// assert_eq!(DE, de);
 /// ```
 ///
@@ -46,7 +45,6 @@ macro_rules! language {
 ///
 /// let arab: Script = "aRaB".parse().unwrap();
 ///
-/// assert_eq!(ARAB, "Arab");
 /// assert_eq!(ARAB, arab);
 /// ```
 ///
@@ -77,7 +75,6 @@ macro_rules! script {
 ///
 /// let cn: Region = "cn".parse().unwrap();
 ///
-/// assert_eq!(CN, "CN");
 /// assert_eq!(CN, cn);
 /// ```
 ///
@@ -108,7 +105,6 @@ macro_rules! region {
 ///
 /// let posix: Variant = "Posix".parse().unwrap();
 ///
-/// assert_eq!(POSIX, "posix");
 /// assert_eq!(POSIX, posix);
 /// ```
 ///
@@ -189,7 +185,6 @@ macro_rules! langid {
 ///
 /// let de_at: Locale = "de_at".parse().unwrap();
 ///
-/// assert_eq!(DE_AT, "de-AT");
 /// assert_eq!(DE_AT, de_at);
 /// ```
 ///
@@ -367,37 +362,32 @@ mod test {
     #[test]
     fn language() {
         let lang = language!("Pl");
-
-        assert_eq!(lang, "pl");
-        assert_eq!(LANG_PL, "pl");
         assert_eq!(lang, LANG_PL);
+        assert_eq!(lang.as_str(), "pl");
     }
 
     #[test]
     fn script() {
         let script = script!("latn");
 
-        assert_eq!(script, "Latn");
-        assert_eq!(SCRIPT_LATN, "Latn");
         assert_eq!(script, SCRIPT_LATN);
+        assert_eq!(script.as_str(), "Latn");
     }
 
     #[test]
     fn region() {
         let region = region!("us");
 
-        assert_eq!(region, "US");
-        assert_eq!(REGION_US, "US");
         assert_eq!(region, REGION_US);
+        assert_eq!(region.as_str(), "US");
     }
 
     #[test]
     fn variant() {
         let variant = variant!("macOS");
 
-        assert_eq!(variant, "macos");
-        assert_eq!(VARIANT_MACOS, "macos");
         assert_eq!(variant, VARIANT_MACOS);
+        assert_eq!(variant.as_str(), "macos");
     }
 
     #[test]
@@ -407,6 +397,7 @@ mod test {
         assert_eq!(langid.to_string(), "ca-ES-valencia");
         assert_eq!(LANGID.to_string(), "ca-ES-valencia");
         assert_eq!(langid, LANGID);
+        assert_eq!(langid.to_string(), "de-Arab-AT");
     }
 
     #[test]
@@ -416,23 +407,22 @@ mod test {
         assert_eq!(locale.to_string(), "ca-ES-valencia");
         assert_eq!(LOCALE.to_string(), "ca-ES-valencia");
         assert_eq!(locale, LOCALE);
+        assert_eq!(locale.to_string(), "de-Arab-AT");
     }
 
     #[test]
     fn unicode_ext_key() {
         let unicode_ext_key = unicode_ext_key!("MS");
 
-        assert_eq!(unicode_ext_key.to_string(), "ms");
-        assert_eq!(UNICODE_EXT_KEY.to_string(), "ms");
         assert_eq!(unicode_ext_key, UNICODE_EXT_KEY);
+        assert_eq!(unicode_ext_key.to_string(), "ms");
     }
 
     #[test]
     fn transform_ext_key() {
         let transform_ext_key = transform_ext_key!("H0");
 
-        assert_eq!(transform_ext_key.to_string(), "h0");
-        assert_eq!(TRANSFORM_EXT_KEY.to_string(), "h0");
         assert_eq!(transform_ext_key, TRANSFORM_EXT_KEY);
+        assert_eq!(transform_ext_key.to_string(), "h0");
     }
 }

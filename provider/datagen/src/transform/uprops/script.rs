@@ -2,7 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::transform::uprops::uprops_helpers;
 use crate::SourceData;
 use icu_codepointtrie::CodePointTrie;
 use icu_properties::provider::{
@@ -40,8 +39,15 @@ impl ResourceProvider<ScriptWithExtensionsPropertyV1Marker>
         &self,
         _: &DataRequest,
     ) -> Result<DataResponse<ScriptWithExtensionsPropertyV1Marker>, DataError> {
-        let scx_data =
-            uprops_helpers::load_script_extensions_from_dir(self.source.get_uprops_root()?)?;
+        let toml_obj: &super::uprops_serde::script_extensions::Main = self
+            .source
+            .get_uprops_paths()?
+            .read_and_parse_toml("scx.toml")?;
+
+        let scx_data = toml_obj.script_extensions.get(0).ok_or_else(|| {
+            DataError::custom("Could not parse Script_Extensions data from TOML")
+                .with_path_context("scx.toml")
+        })?;
 
         let cpt_data = &scx_data.code_point_trie;
         let scx_array_data = &scx_data.script_code_array;
@@ -109,8 +115,6 @@ mod tests {
 
     #[test]
     fn test_scx_array_from_script_extensions() {
-        use zerovec::ZeroVec;
-
         let provider = ScriptWithExtensionsPropertyProvider::from(&SourceData::for_test());
 
         let payload: DataPayload<ScriptWithExtensionsPropertyV1Marker> = provider
@@ -125,34 +129,63 @@ mod tests {
         let swe: &ScriptWithExtensions = &payload.get().data;
 
         assert_eq!(
-            swe.get_script_extensions_val('𐓐' as u32).as_zerovec(), /* U+104D0 OSAGE CAPITAL LETTER KHA */
-            ZeroVec::<Script>::alloc_from_slice(&[Script::Osage])
+            swe.get_script_extensions_val('𐓐' as u32) /* U+104D0 OSAGE CAPITAL LETTER KHA */
+                .iter()
+                .collect::<Vec<Script>>(),
+            vec![Script::Osage]
         );
         assert_eq!(
-            swe.get_script_extensions_val('🥳' as u32).as_zerovec(), /* U+1F973 FACE WITH PARTY HORN AND PARTY HAT */
-            ZeroVec::<Script>::alloc_from_slice(&[Script::Common])
+            swe.get_script_extensions_val('🥳' as u32) /* U+1F973 FACE WITH PARTY HORN AND PARTY HAT */
+                .iter()
+                .collect::<Vec<Script>>(),
+            vec![Script::Common]
         );
         assert_eq!(
-            swe.get_script_extensions_val(0x200D).as_zerovec(), // ZERO WIDTH JOINER
-            ZeroVec::<Script>::alloc_from_slice(&[Script::Inherited])
+            swe.get_script_extensions_val(0x200D) // ZERO WIDTH JOINER
+                .iter()
+                .collect::<Vec<Script>>(),
+            vec![Script::Inherited]
         );
         assert_eq!(
-            swe.get_script_extensions_val('௫' as u32).as_zerovec(), // U+0BEB TAMIL DIGIT FIVE
-            ZeroVec::<Script>::alloc_from_slice(&[Script::Tamil, Script::Grantha])
+            swe.get_script_extensions_val('௫' as u32) // U+0BEB TAMIL DIGIT FIVE
+                .iter()
+                .collect::<Vec<Script>>(),
+            vec![Script::Tamil, Script::Grantha]
         );
         assert_eq!(
-            swe.get_script_extensions_val(0x11303).as_zerovec(), // GRANTHA SIGN VISARGA
-            ZeroVec::<Script>::alloc_from_slice(&[Script::Tamil, Script::Grantha])
+            swe.get_script_extensions_val(0x11303) // GRANTHA SIGN VISARGA
+                .iter()
+                .collect::<Vec<Script>>(),
+            vec![Script::Tamil, Script::Grantha]
         );
         assert_eq!(
-            swe.get_script_extensions_val(0x30A0).as_zerovec(), // KATAKANA-HIRAGANA DOUBLE HYPHEN
-            ZeroVec::<Script>::alloc_from_slice(&[Script::Hiragana, Script::Katakana])
+            swe.get_script_extensions_val(0x30A0) // KATAKANA-HIRAGANA DOUBLE HYPHEN
+                .iter()
+                .collect::<Vec<Script>>(),
+            vec![Script::Hiragana, Script::Katakana]
         );
 
-        // Invalid code point
         assert_eq!(
-            swe.get_script_extensions_val(0x11_0000).as_zerovec(), // CODE_POINT_MAX + 1 is invalid
-            ZeroVec::<Script>::alloc_from_slice(&[Script::Unknown])
+            swe.get_script_extensions_val(0x200D) // ZERO WIDTH JOINER
+                .iter()
+                .next(),
+            Some(Script::Inherited)
+        );
+
+        assert!(swe
+            .get_script_extensions_val(0x11303) // GRANTHA SIGN VISARGA
+            .contains(&Script::Grantha));
+
+        assert!(!swe
+            .get_script_extensions_val(0x11303) // GRANTHA SIGN VISARGA
+            .contains(&Script::Common));
+
+        // // Invalid code point
+        assert_eq!(
+            swe.get_script_extensions_val(0x11_0000) // CODE_POINT_MAX + 1 is invalid
+                .iter()
+                .collect::<Vec<Script>>(),
+            vec![Script::Unknown]
         );
     }
 

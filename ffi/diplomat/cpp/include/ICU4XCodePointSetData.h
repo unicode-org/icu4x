@@ -12,9 +12,9 @@ extern "C" {
 
 typedef struct ICU4XCodePointSetData ICU4XCodePointSetData;
 #include "ICU4XDataProvider.h"
-#include "ICU4XCodePointSetDataResult.h"
+#include "diplomat_result_box_ICU4XCodePointSetData_ICU4XError.h"
 
-ICU4XCodePointSetDataResult ICU4XCodePointSetData_try_get_ascii_hex_digit(const ICU4XDataProvider* provider);
+diplomat_result_box_ICU4XCodePointSetData_ICU4XError ICU4XCodePointSetData_try_get_ascii_hex_digit(const ICU4XDataProvider* provider);
 
 bool ICU4XCodePointSetData_contains(const ICU4XCodePointSetData* self, char32_t cp);
 void ICU4XCodePointSetData_destroy(ICU4XCodePointSetData* self);

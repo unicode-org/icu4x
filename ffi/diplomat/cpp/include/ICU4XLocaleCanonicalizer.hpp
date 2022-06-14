@@ -15,6 +15,7 @@ namespace capi {
 
 class ICU4XDataProvider;
 class ICU4XLocaleCanonicalizer;
+#include "ICU4XError.hpp"
 class ICU4XLocale;
 #include "ICU4XCanonicalizationResult.hpp"
 
@@ -40,7 +41,7 @@ class ICU4XLocaleCanonicalizer {
    * 
    * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu/locale_canonicalizer/struct.LocaleCanonicalizer.html#method.new) for more information.
    */
-  static std::optional<ICU4XLocaleCanonicalizer> create(const ICU4XDataProvider& provider);
+  static diplomat::result<ICU4XLocaleCanonicalizer, ICU4XError> create(const ICU4XDataProvider& provider);
 
   /**
    * FFI version of `LocaleCanonicalizer::canonicalize()`.
@@ -75,15 +76,15 @@ class ICU4XLocaleCanonicalizer {
 #include "ICU4XDataProvider.hpp"
 #include "ICU4XLocale.hpp"
 
-inline std::optional<ICU4XLocaleCanonicalizer> ICU4XLocaleCanonicalizer::create(const ICU4XDataProvider& provider) {
-  auto diplomat_optional_raw_out_value = capi::ICU4XLocaleCanonicalizer_create(provider.AsFFI());
-  std::optional<ICU4XLocaleCanonicalizer> diplomat_optional_out_value;
-  if (diplomat_optional_raw_out_value != nullptr) {
-    diplomat_optional_out_value = ICU4XLocaleCanonicalizer(diplomat_optional_raw_out_value);
+inline diplomat::result<ICU4XLocaleCanonicalizer, ICU4XError> ICU4XLocaleCanonicalizer::create(const ICU4XDataProvider& provider) {
+  auto diplomat_result_raw_out_value = capi::ICU4XLocaleCanonicalizer_create(provider.AsFFI());
+  diplomat::result<ICU4XLocaleCanonicalizer, ICU4XError> diplomat_result_out_value;
+  if (diplomat_result_raw_out_value.is_ok) {
+    diplomat_result_out_value = diplomat::Ok(ICU4XLocaleCanonicalizer(diplomat_result_raw_out_value.ok));
   } else {
-    diplomat_optional_out_value = std::nullopt;
+    diplomat_result_out_value = diplomat::Err(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
-  return diplomat_optional_out_value;
+  return diplomat_result_out_value;
 }
 inline ICU4XCanonicalizationResult ICU4XLocaleCanonicalizer::canonicalize(ICU4XLocale& locale) const {
   return static_cast<ICU4XCanonicalizationResult>(capi::ICU4XLocaleCanonicalizer_canonicalize(this->inner.get(), locale.AsFFIMut()));

@@ -12,10 +12,8 @@ pub mod ffi {
 
     use crate::{locale::ffi::ICU4XLocale, provider::ffi::ICU4XDataProvider};
 
-    pub struct ICU4XCreatePluralRulesResult {
-        pub rules: Option<Box<ICU4XPluralRules>>,
-        pub success: bool,
-    }
+    use crate::errors::ffi::ICU4XError;
+    use diplomat_runtime::DiplomatResult;
 
     /// FFI version of `PluralCategory`.
     #[diplomat::rust_link(icu_plurals::PluralCategory, Enum)]
@@ -39,19 +37,13 @@ pub mod ffi {
         pub fn try_new_cardinal(
             locale: &ICU4XLocale,
             provider: &ICU4XDataProvider,
-        ) -> ICU4XCreatePluralRulesResult {
+        ) -> DiplomatResult<Box<ICU4XPluralRules>, ICU4XError> {
             use icu_provider::serde::AsDeserializingBufferProvider;
             let provider = provider.0.as_deserializing();
             PluralRules::try_new_cardinal(locale.0.as_ref().clone(), &provider)
-                .ok()
-                .map(|r| ICU4XCreatePluralRulesResult {
-                    rules: Some(Box::new(ICU4XPluralRules(r))),
-                    success: true,
-                })
-                .unwrap_or(ICU4XCreatePluralRulesResult {
-                    rules: None,
-                    success: false,
-                })
+                .map(|r| Box::new(ICU4XPluralRules(r)))
+                .map_err(Into::into)
+                .into()
         }
 
         /// FFI version of `PluralRules::try_new_ordinal()`.
@@ -59,19 +51,13 @@ pub mod ffi {
         pub fn try_new_ordinal(
             locale: &ICU4XLocale,
             provider: &ICU4XDataProvider,
-        ) -> ICU4XCreatePluralRulesResult {
+        ) -> DiplomatResult<Box<ICU4XPluralRules>, ICU4XError> {
             use icu_provider::serde::AsDeserializingBufferProvider;
             let provider = provider.0.as_deserializing();
             PluralRules::try_new_ordinal(locale.0.as_ref().clone(), &provider)
-                .ok()
-                .map(|r| ICU4XCreatePluralRulesResult {
-                    rules: Some(Box::new(ICU4XPluralRules(r))),
-                    success: true,
-                })
-                .unwrap_or(ICU4XCreatePluralRulesResult {
-                    rules: None,
-                    success: false,
-                })
+                .map(|r| Box::new(ICU4XPluralRules(r)))
+                .map_err(Into::into)
+                .into()
         }
 
         /// FFI version of `PluralRules::select()`.
@@ -123,13 +109,6 @@ pub mod ffi {
         }
     }
 
-    /// This is the result returned by `ICU4XPluralOperands::create()`
-    #[diplomat::rust_link(icu_plurals::PluralOperands, Struct)]
-    pub struct ICU4XCreatePluralOperandsResult {
-        pub operands: ICU4XPluralOperands,
-        pub success: bool,
-    }
-
     /// FFI version of `PluralOperands`.
     #[diplomat::rust_link(icu_plurals::PluralOperands, Struct)]
     pub struct ICU4XPluralOperands {
@@ -144,31 +123,19 @@ pub mod ffi {
     impl ICU4XPluralOperands {
         /// FFI version of `PluralOperands::from_str()`.
         #[diplomat::rust_link(icu_plurals::PluralOperands::from_str, FnInStruct)]
-        pub fn create(s: &str) -> ICU4XCreatePluralOperandsResult {
+        pub fn create(s: &str) -> DiplomatResult<ICU4XPluralOperands, ICU4XError> {
             PluralOperands::from_str(s)
-                .ok()
-                .map(|ops| ICU4XCreatePluralOperandsResult {
-                    operands: ICU4XPluralOperands {
-                        i: ops.i,
-                        v: ops.v,
-                        w: ops.w,
-                        f: ops.f,
-                        t: ops.t,
-                        c: ops.c,
-                    },
-                    success: true,
+                .map(|ops| ICU4XPluralOperands {
+                    i: ops.i,
+                    v: ops.v,
+                    w: ops.w,
+                    f: ops.f,
+                    t: ops.t,
+                    c: ops.c,
                 })
-                .unwrap_or(ICU4XCreatePluralOperandsResult {
-                    operands: ICU4XPluralOperands {
-                        i: 0,
-                        v: 0,
-                        w: 0,
-                        f: 0,
-                        t: 0,
-                        c: 0,
-                    },
-                    success: false,
-                })
+                // XXX should this have its own errors?
+                .map_err(|_| ICU4XError::PluralParserError)
+                .into()
         }
     }
 

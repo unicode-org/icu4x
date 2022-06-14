@@ -8,7 +8,7 @@
 #include <iostream>
 
 int main() {
-    ICU4XDataProvider dp = ICU4XDataProvider::create_test().provider.value();
+    ICU4XDataProvider dp = ICU4XDataProvider::create_test();
     auto bidi = ICU4XBidi::try_new(dp).ok().value();
 
     // Written char-by-char to avoid messing up certain text editors.
@@ -35,7 +35,7 @@ int main() {
         "ג"
         "ב"
         "א";
-    auto bidi_info = bidi.for_text(str);
+    auto bidi_info = bidi.for_text(str, ICU4XBidi::level_ltr());
     auto n_para = bidi_info.paragraph_count();
     if (n_para != 2) {
         std::cout << "Expected 2 paragraphs, found " << n_para << std::endl;
@@ -53,7 +53,7 @@ int main() {
     // The first paragraph's first strongly directional character is RTL
     uint8_t level = para.level_at(0);
     std::cout << "Level of first paragraph at index 0 is " << unsigned(level) << std::endl;
-    if (!ICU4XBidiParagraph::level_is_rtl(level)) {
+    if (!ICU4XBidi::level_is_rtl(level)) {
         std::cout << "Expected level at index 0 to be RTL" << std::endl;
         return 1;
     }
@@ -77,7 +77,7 @@ int main() {
     // The second paragraph's first strongly directional character is LTR
     level = para.level_at(0);
     std::cout << "Level of second paragraph at index 0 is " << unsigned(level) << std::endl;
-    if (!ICU4XBidiParagraph::level_is_ltr(level)) {
+    if (!ICU4XBidi::level_is_ltr(level)) {
         std::cout << "Expected level at index 0 to be LTR" << std::endl;
         return 1;
     }

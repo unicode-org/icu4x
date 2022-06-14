@@ -201,9 +201,3 @@ args = [
     "--all-locales",
     "--ignore-missing-data",
 ]
-
-[tasks.icu4x-key-extract]
-description = "Extracts ICU4X resource keys used by a binary."
-category = "ICU4X Data"
-script_runner = "bash"
-script = '''strings ${1} | grep -e "icu4x_key_tag\w" | sed s/icu4x_key_tag// | sort > ${2}'''

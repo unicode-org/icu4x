@@ -4,23 +4,13 @@
 
 use crate::SourceData;
 use icu_codepointtrie::CodePointTrie;
-use std::convert::TryFrom;
-use zerovec::ZeroVec;
-
-use crate::transform::reader::read_path_to_string;
-use crate::transform::uprops::decompositions_serde::DecompositionData;
-use crate::transform::uprops::decompositions_serde::DecompositionTables;
-
-use icu_normalizer::provider::DecompositionDataV1;
-use icu_normalizer::provider::DecompositionTablesV1;
+use icu_normalizer::provider::*;
+use icu_normalizer::u24::U24;
 use icu_provider::datagen::IterableResourceProvider;
 use icu_provider::prelude::*;
 use icu_uniset::UnicodeSetBuilder;
-
-use std::path::Path;
-use std::sync::RwLock;
-
-use icu_normalizer::u24::U24;
+use std::convert::TryFrom;
+use zerovec::ZeroVec;
 
 macro_rules! normalization_provider {
     ($marker:ident, $provider:ident, $serde_struct:ident, $file_name:literal, $conversion:expr, $toml_data:ident) => {
@@ -30,14 +20,12 @@ macro_rules! normalization_provider {
         /// TOML data.
         pub struct $provider {
             source: SourceData,
-            data: RwLock<Option<$serde_struct>>,
         }
 
         impl From<&SourceData> for $provider {
             fn from(source: &SourceData) -> Self {
                 Self {
                     source: source.clone(),
-                    data: RwLock::new(None),
                 }
             }
         }
@@ -47,19 +35,10 @@ macro_rules! normalization_provider {
                 &self,
                 _req: &DataRequest,
             ) -> Result<DataResponse<$marker>, DataError> {
-                if self.data.read().expect("poison").is_none() {
-                    let path_buf = self.source.get_uprops_root()?.join($file_name);
-                    let path: &Path = &path_buf;
-                    let toml_str = read_path_to_string(path)?;
-                    let toml_obj: $serde_struct = toml::from_str(&toml_str).map_err(|e| {
-                        crate::error::data_error_from_toml(e).with_path_context(path)
-                    })?;
-                    *self.data.write().expect("poison") = Some(toml_obj);
-                }
-
-                let guard = self.data.read().expect("poison");
-
-                let $toml_data = guard.as_ref().unwrap();
+                let $toml_data: &super::decompositions_serde::$serde_struct = self
+                    .source
+                    .get_uprops_paths()?
+                    .read_and_parse_toml($file_name)?;
 
                 $conversion
             }
@@ -105,6 +84,30 @@ macro_rules! normalization_data_provider {
     };
 }
 
+macro_rules! normalization_supplement_provider {
+    ($marker:ident, $provider:ident, $file_name:literal) => {
+        normalization_provider!(
+            $marker,
+            $provider,
+            DecompositionSupplement,
+            $file_name,
+            {
+                let trie = CodePointTrie::<u32>::try_from(&toml_data.trie)
+                    .map_err(|e| DataError::custom("trie conversion").with_display_context(&e))?;
+
+                Ok(DataResponse {
+                    metadata: DataResponseMetadata::default(),
+                    payload: Some(DataPayload::from_owned(DecompositionSupplementV1 {
+                        trie,
+                        flags: toml_data.flags,
+                    })),
+                })
+            },
+            toml_data
+        );
+    };
+}
+
 macro_rules! normalization_tables_provider {
     ($marker:ident, $provider:ident, $file_name:literal) => {
         normalization_provider!(
@@ -139,15 +142,15 @@ normalization_data_provider!(
     "nfd.toml"
 );
 
-normalization_data_provider!(
-    CompatibilityDecompositionDataV1Marker,
-    CompatibilityDecompositionDataProvider,
+normalization_supplement_provider!(
+    CompatibilityDecompositionSupplementV1Marker,
+    CompatibilityDecompositionSupplementProvider,
     "nfkd.toml"
 );
 
-normalization_data_provider!(
-    Uts46DecompositionDataV1Marker,
-    Uts46DecompositionDataProvider,
+normalization_supplement_provider!(
+    Uts46DecompositionSupplementV1Marker,
+    Uts46DecompositionSupplementProvider,
     "uts46d.toml"
 );
 

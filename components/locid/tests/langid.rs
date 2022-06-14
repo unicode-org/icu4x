@@ -77,64 +77,62 @@ fn test_langid_from_locale() {
 #[test]
 fn test_langid_subtag_language() {
     let mut lang: subtags::Language = "en".parse().expect("Failed to parse a language.");
-    let s: &str = (&lang).into();
-    assert_eq!(s, "en");
+    assert_eq!(lang.as_str(), "en");
+
     lang.clear();
-    assert_eq!(lang, "und");
-    assert_eq!(lang.to_string(), "und".to_string());
+    assert_eq!(lang, subtags::Language::UND);
     assert!(lang.is_empty());
+
+    assert_eq!(lang.to_string(), "und");
 }
 
 #[test]
 fn test_langid_subtag_region() {
     let region: subtags::Region = "en".parse().expect("Failed to parse a region.");
-    let s: &str = (&region).into();
-    assert_eq!(s, "EN");
-    assert_eq!(region, "EN");
+    assert_eq!(region.as_str(), "EN");
+    assert_eq!(region.to_string(), "EN");
 }
 
 #[test]
 fn test_langid_subtag_script() {
     let script: subtags::Script = "Latn".parse().expect("Failed to parse a script.");
-    let s: &str = (&script).into();
-    assert_eq!(s, "Latn");
-    assert_eq!(script, "Latn");
+    assert_eq!(script.as_str(), "Latn");
+    assert_eq!(script.to_string(), "Latn");
 }
 
 #[test]
 fn test_langid_subtag_variant() {
     let variant: subtags::Variant = "macos".parse().expect("Failed to parse a variant.");
-    let s: &str = (&variant).into();
-    assert_eq!(s, "macos");
-    assert_eq!(variant, "macos");
+    assert_eq!(variant.as_str(), "macos");
+    assert_eq!(variant.to_string(), "macos");
 }
 
 #[test]
 fn test_langid_subtag_variants() {
     let variant: subtags::Variant = "macos".parse().expect("Failed to parse a variant.");
     let mut variants = subtags::Variants::from_vec_unchecked(vec![variant]);
-    assert_eq!(variants.get(0).unwrap(), "macos");
+    assert_eq!(variants.get(0), Some(&variant));
     variants.clear();
     assert_eq!(variants.len(), 0);
 }
 
 #[test]
-fn test_langid_partialeq_str() {
+fn test_langid_normalizing_eq_str() {
     let path = "./tests/fixtures/langid.json";
     let tests: Vec<fixtures::LocaleTest> =
         helpers::read_fixture(path).expect("Failed to read a fixture");
     for test in tests {
         let parsed: LanguageIdentifier = test.input.try_into().expect("Parsing failed.");
-        assert_eq!(parsed, parsed.to_string().as_str());
+        assert!(parsed.normalizing_eq(parsed.to_string().as_str()));
     }
 
     // Check that trailing characters are not ignored
     let lang: LanguageIdentifier = "en".parse().expect("Parsing failed.");
-    assert_ne!(lang, "en-US");
+    assert!(!lang.normalizing_eq("en-US"));
 }
 
 #[test]
-fn test_langid_cmp_bytes() {
+fn test_langid_strict_cmp() {
     let path = "./tests/fixtures/langid.json";
     let tests: Vec<fixtures::LocaleTest> =
         helpers::read_fixture(path).expect("Failed to read a fixture");
@@ -151,7 +149,7 @@ fn test_langid_cmp_bytes() {
             let a_langid = LanguageIdentifier::from_str(a).expect("Invalid BCP-47 in fixture");
             let a_normalized = a_langid.to_string();
             let string_cmp = a_normalized.as_bytes().cmp(b.as_bytes());
-            let test_cmp = a_langid.cmp_bytes(b.as_bytes());
+            let test_cmp = a_langid.strict_cmp(b.as_bytes());
             assert_eq!(string_cmp, test_cmp, "{:?}/{:?}", a, b);
         }
     }

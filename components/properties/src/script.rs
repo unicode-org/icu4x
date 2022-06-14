@@ -174,6 +174,55 @@ impl From<ScriptWithExt> for Script {
     }
 }
 
+/// A data structure that wraps ScriptExtensions array return value.
+#[derive(Copy, Clone, Debug, Eq, PartialEq)]
+pub struct ScriptExtensionsSet<'a> {
+    values: &'a ZeroSlice<Script>,
+}
+
+impl ScriptExtensionsSet<'_> {
+    /// Returns whether this set contains the given script.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu::properties::{script, Script};
+    /// let provider = icu_testdata::get_provider();
+    /// let payload = script::get_script_with_extensions(&provider).expect("The data should be valid");
+    /// let data_struct = payload.get();
+    /// let swe = &data_struct.data;
+    ///
+    /// assert!(swe
+    ///    .get_script_extensions_val(0x11303) // GRANTHA SIGN VISARGA
+    ///    .contains(&Script::Grantha));
+    /// ```
+    pub fn contains(&self, x: &Script) -> bool {
+        ZeroSlice::binary_search(&*self.values, x).is_ok()
+    }
+
+    /// Gets an iterator over the elements.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu::properties::{script, Script};
+    /// let provider = icu_testdata::get_provider();
+    /// let payload = script::get_script_with_extensions(&provider).expect("The data should be valid");
+    /// let data_struct = payload.get();
+    /// let swe = &data_struct.data;
+    ///
+    /// assert_eq!(
+    ///     swe.get_script_extensions_val('௫' as u32) // U+0BEB TAMIL DIGIT FIVE
+    ///         .iter()
+    ///         .collect::<Vec<Script>>(),
+    ///     vec![Script::Tamil, Script::Grantha]
+    /// );
+    /// ```
+    pub fn iter(&self) -> impl DoubleEndedIterator<Item = Script> + '_ {
+        ZeroSlice::iter(&*self.values)
+    }
+}
+
 /// A data structure that represents the data for both Script and
 /// Script_Extensions properties in an efficient way. This structure matches
 /// the data and data structures that are stored in the corresponding ICU data
@@ -317,12 +366,12 @@ impl<'data> ScriptWithExtensions<'data> {
     ///
     /// If `code_point` has Script_Extensions, then return the Script codes in
     /// the Script_Extensions. In this case, the Script property value
-    /// (normally Common or Inherited) is not included in the [`ZeroSlice`].
+    /// (normally Common or Inherited) is not included in the [`ScriptExtensionsSet`].
     ///
     /// If c does not have Script_Extensions, then the one Script code is put
-    /// into the [`ZeroSlice`] and also returned.
+    /// into the [`ScriptExtensionsSet`] and also returned.
     ///
-    /// If c is not a valid code point, then return an empty [`ZeroSlice`].
+    /// If c is not a valid code point, then return an empty [`ScriptExtensionsSet`].
     ///
     /// # Examples
     ///
@@ -360,15 +409,16 @@ impl<'data> ScriptWithExtensions<'data> {
     ///     vec![Script::Tamil, Script::Grantha]
     /// );
     /// ```
-    pub fn get_script_extensions_val(&self, code_point: u32) -> &ZeroSlice<Script> {
+    pub fn get_script_extensions_val(&self, code_point: u32) -> ScriptExtensionsSet {
         let sc_with_ext_ule = self.trie.get_ule(code_point);
 
-        match sc_with_ext_ule {
-            Some(ule_ref) => self.get_scx_val_using_trie_val(ule_ref),
-            None => ZeroSlice::from_ule_slice(&[]),
+        ScriptExtensionsSet {
+            values: match sc_with_ext_ule {
+                Some(ule_ref) => self.get_scx_val_using_trie_val(ule_ref),
+                None => ZeroSlice::from_ule_slice(&[]),
+            },
         }
     }
-
     /// Returns whether `script` is contained in the Script_Extensions
     /// property value if the code_point has Script_Extensions, otherwise
     /// if the code point does not have Script_Extensions then returns

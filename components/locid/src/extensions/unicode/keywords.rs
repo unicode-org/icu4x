@@ -197,10 +197,36 @@ impl Keywords {
     /// let old_value = loc.extensions.unicode.keywords.set(CA_KEY, japanese);
     ///
     /// assert_eq!(old_value, Some(buddhist));
-    /// assert_eq!(loc, "und-u-hello-ca-japanese-hc-h12");
+    /// assert_eq!(loc, "und-u-hello-ca-japanese-hc-h12".parse().unwrap());
     /// ```
     pub fn set(&mut self, key: Key, value: Value) -> Option<Value> {
         self.0.insert(key, value)
+    }
+
+    /// Removes the specified keyword, returning the old value if it existed.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::locid::extensions::unicode::Key;
+    /// use icu::locid::unicode_ext_key;
+    /// use icu::locid::Locale;
+    /// use std::str::FromStr;
+    ///
+    /// const CA_KEY: Key = unicode_ext_key!("ca");
+    ///
+    /// let mut loc: Locale = "und-u-hello-ca-buddhist-hc-h12"
+    ///     .parse()
+    ///     .expect("valid BCP-47 identifier");
+    /// loc.extensions.unicode.keywords.remove(&CA_KEY);
+    /// assert_eq!(loc, "und-u-hello-hc-h12".parse().unwrap());
+    /// ```
+    pub fn remove<Q>(&mut self, key: &Q) -> Option<Value>
+    where
+        Key: Borrow<Q>,
+        Q: Ord,
+    {
+        self.0.remove(key)
     }
 
     /// Clears all Unicode extension keywords, leaving Unicode attributes.
@@ -213,7 +239,7 @@ impl Keywords {
     ///
     /// let mut loc: Locale = "und-u-hello-ca-buddhist-hc-h12".parse().unwrap();
     /// loc.extensions.unicode.keywords.clear();
-    /// assert_eq!(loc, "und-u-hello");
+    /// assert_eq!(loc, "und-u-hello".parse().unwrap());
     /// ```
     pub fn clear(&mut self) {
         self.0.clear();
@@ -230,10 +256,10 @@ impl Keywords {
     /// let mut loc: Locale = "und-u-ca-buddhist-hc-h12-ms-metric".parse().unwrap();
     ///
     /// loc.extensions.unicode.keywords.retain_by_key(|k| k == "hc");
-    /// assert_eq!(loc, "und-u-hc-h12");
+    /// assert_eq!(loc, "und-u-hc-h12".parse().unwrap());
     ///
     /// loc.extensions.unicode.keywords.retain_by_key(|k| k == "ms");
-    /// assert_eq!(loc, "und");
+    /// assert_eq!(loc, Locale::UND);
     /// ```
     pub fn retain_by_key<F>(&mut self, mut predicate: F)
     where

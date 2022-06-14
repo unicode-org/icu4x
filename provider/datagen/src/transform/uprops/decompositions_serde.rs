@@ -11,6 +11,12 @@ pub struct DecompositionData {
 }
 
 #[derive(serde::Deserialize)]
+pub struct DecompositionSupplement {
+    pub trie: CodePointTrieToml,
+    pub flags: u8,
+}
+
+#[derive(serde::Deserialize)]
 pub struct DecompositionTables {
     pub scalars16: Vec<u16>,
     pub scalars32: Vec<u32>,

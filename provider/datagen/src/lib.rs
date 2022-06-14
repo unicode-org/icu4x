@@ -22,9 +22,8 @@
 //!     icu_datagen::datagen(
 //!         Some(&[langid!("de"), langid!("en-AU")]),
 //!         &icu_datagen::keys(&["list/and@1"]),
-//!         &SourceData::default().with_uprops(PathBuf::from("/path/to/uprops/root")),
+//!         &SourceData::default(),
 //!         vec![Out::Blob(Box::new(File::create("data.postcard").unwrap()))],
-//!         false,
 //!     )
 //!     .unwrap();
 //! }
@@ -65,7 +64,7 @@ pub mod transform;
 
 pub use error::{MISSING_CLDR_ERROR, MISSING_COLLATION_ERROR, MISSING_UPROPS_ERROR};
 pub use registry::get_all_keys;
-pub use source::SourceData;
+pub use source::{SourceData, TrieType};
 
 use icu_locid::LanguageIdentifier;
 use icu_provider::datagen::*;
@@ -74,8 +73,8 @@ use icu_provider_adapters::filter::Filterable;
 use icu_provider_fs::export::serializers;
 use rayon::prelude::*;
 use std::collections::HashSet;
-use std::io::{BufRead, BufReader, Read};
-use std::path::PathBuf;
+use std::io::{BufRead, BufReader};
+use std::path::{Path, PathBuf};
 
 /// Parses a list of human-readable key identifiers and returns a
 /// list of [`ResourceKey`]s. Invalid key names are ignored.
@@ -115,7 +114,7 @@ pub fn keys<S: AsRef<str>>(strings: &[S]) -> Vec<ResourceKey> {
 /// # use std::fs::File;
 /// # fn main() -> std::io::Result<()> {
 /// assert_eq!(
-///     icu_datagen::keys_from_file(File::open("keys.txt")?)?,
+///     icu_datagen::keys_from_file("keys.txt")?,
 ///     vec![
 ///         icu_list::provider::AndListV1Marker::KEY,
 ///         icu_list::provider::OrListV1Marker::KEY,
@@ -124,13 +123,59 @@ pub fn keys<S: AsRef<str>>(strings: &[S]) -> Vec<ResourceKey> {
 /// # Ok(())
 /// # }
 /// ```
-pub fn keys_from_file<R: Read>(file: R) -> std::io::Result<Vec<ResourceKey>> {
-    let keys = BufReader::new(file)
+pub fn keys_from_file<P: AsRef<Path>>(path: P) -> std::io::Result<Vec<ResourceKey>> {
+    let keys = BufReader::new(std::fs::File::open(path.as_ref())?)
         .lines()
         .collect::<std::io::Result<HashSet<String>>>()?;
     Ok(get_all_keys()
         .into_iter()
         .filter(|k| keys.contains(k.get_path()))
+        .collect())
+}
+
+/// Parses a compiled binary and returns a list of used [`ResourceKey`]s. Unknown
+/// key names are ignored.
+///
+/// # Example
+///
+/// #### build.rs
+/// ```no_run
+/// # use icu_provider::ResourceMarker;
+/// # use std::fs::File;
+/// # fn main() -> Result<(), Box<dyn std::error::Error>> {
+/// assert_eq!(
+///     icu_datagen::keys_from_bin("target/release/my-app")?,
+///     vec![
+///         icu_list::provider::AndListV1Marker::KEY,
+///         icu_list::provider::OrListV1Marker::KEY,
+///     ],
+/// );
+/// # Ok(())
+/// # }
+/// ```
+pub fn keys_from_bin<P: AsRef<Path>>(path: P) -> std::io::Result<Vec<ResourceKey>> {
+    let file = std::fs::read(path.as_ref())?;
+    let mut candidates = HashSet::new();
+    let mut i = 0;
+    let mut last_start = None;
+    while i < file.len() {
+        if file[i..].starts_with(icu_provider::leading_tag!().as_bytes()) {
+            i += icu_provider::leading_tag!().len();
+            last_start = Some(i);
+        } else if file[i..].starts_with(icu_provider::trailing_tag!().as_bytes())
+            && last_start.is_some()
+        {
+            candidates.insert(&file[last_start.unwrap()..i]);
+            i += icu_provider::trailing_tag!().len();
+            last_start = None;
+        } else {
+            i += 1;
+        }
+    }
+
+    Ok(get_all_keys()
+        .into_iter()
+        .filter(|k| candidates.contains(k.get_path().as_bytes()))
         .collect())
 }
 
@@ -171,14 +216,11 @@ pub enum Out {
 ///   requested key requires them, otherwise [`MISSING_CLDR_ERROR`] or [`MISSING_UPROPS_ERROR`]
 ///   will be returned.
 /// * `out`: The output format and location. See the documentation on [`Out`]
-/// * `ignore_missing_resource_keys`: some keys are not supported by datagen yet. Using
-///   all keys will not work unless this option is set.
 pub fn datagen(
     locales: Option<&[LanguageIdentifier]>,
     keys: &[ResourceKey],
     sources: &SourceData,
     outs: Vec<Out>,
-    ignore_missing_resource_keys: bool,
 ) -> Result<(), DataError> {
     let exporters = outs
         .into_iter()
@@ -228,31 +270,21 @@ pub fn datagen(
     }
 
     keys.into_par_iter().try_for_each(|&key| {
-        let res = match provider.supported_options_for_key(key) {
-            Ok(options) => {
-                log::info!("Writing key: {}", key);
-                options.into_par_iter().try_for_each(|options| {
-                    let req = DataRequest {
-                        options: options.clone(),
-                        metadata: Default::default(),
-                    };
-                    let payload = provider
-                        .load_payload(key, &req)
-                        .and_then(DataResponse::take_payload)
-                        .map_err(|e| e.with_req(key, &req))?;
-                    exporters
-                        .par_iter()
-                        .try_for_each(|e| e.put_payload(key, &options, &payload))
-                })
-            }
-            Err(e)
-                if ignore_missing_resource_keys && e.kind == DataErrorKind::MissingResourceKey =>
-            {
-                log::trace!("Skipped key: {}", key);
-                Ok(())
-            }
-            Err(e) => Err(e),
-        };
+        let options = provider.supported_options_for_key(key)?;
+        log::info!("Writing key: {}", key);
+        let res = options.into_par_iter().try_for_each(|options| {
+            let req = DataRequest {
+                options: options.clone(),
+                metadata: Default::default(),
+            };
+            let payload = provider
+                .load_payload(key, &req)
+                .and_then(DataResponse::take_payload)
+                .map_err(|e| e.with_req(key, &req))?;
+            exporters
+                .par_iter()
+                .try_for_each(|e| e.put_payload(key, &options, &payload))
+        });
 
         for e in &exporters {
             e.flush(key)?;
@@ -281,17 +313,36 @@ fn test_keys() {
 
 #[test]
 fn test_keys_from_file() {
-    let file = std::fs::File::open(
-        PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("tests/testdata/work_log+keys.txt"),
-    )
-    .unwrap();
     assert_eq!(
-        keys_from_file(file).unwrap(),
+        keys_from_file(
+            PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("tests/data/work_log+keys.txt")
+        )
+        .unwrap(),
         vec![
             icu_datetime::provider::calendar::DatePatternsV1Marker::KEY,
             icu_datetime::provider::calendar::DateSkeletonPatternsV1Marker::KEY,
             icu_datetime::provider::calendar::DateSymbolsV1Marker::KEY,
             icu_datetime::provider::week_data::WeekDataV1Marker::KEY,
+            icu_decimal::provider::DecimalSymbolsV1Marker::KEY,
+            icu_plurals::provider::OrdinalV1Marker::KEY,
+        ]
+    );
+}
+
+#[test]
+fn test_keys_from_bin() {
+    // File obtained by changing work_log.rs to use `icu_testdata::get_smaller_static_provider`
+    // and running `cargo +nightly wasm-build-release --examples -p icu_datetime --features serde \
+    // && cp target/wasm32-unknown-unknown/release/examples/work_log.wasm provider/datagen/tests/data/`
+    assert_eq!(
+        keys_from_bin(PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("tests/data/work_log.wasm"))
+            .unwrap(),
+        vec![
+            icu_datetime::provider::calendar::DatePatternsV1Marker::KEY,
+            icu_datetime::provider::calendar::DateSkeletonPatternsV1Marker::KEY,
+            icu_datetime::provider::calendar::DateSymbolsV1Marker::KEY,
+            icu_datetime::provider::week_data::WeekDataV1Marker::KEY,
+            icu_decimal::provider::DecimalSymbolsV1Marker::KEY,
             icu_plurals::provider::OrdinalV1Marker::KEY,
         ]
     );

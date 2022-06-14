@@ -9,7 +9,7 @@ use icu_provider_adapters::filter::Filterable;
 
 use icu_provider::prelude::*;
 
-use icu_datagen::SourceData;
+use icu_datagen::{SourceData, TrieType};
 use litemap::LiteMap;
 use std::cmp;
 use std::mem::ManuallyDrop;
@@ -52,8 +52,11 @@ fn main() {
 
     let converter = icu_datagen::create_datagen_provider!(SourceData::default()
         .with_cldr(icu_testdata::paths::cldr_json_root(), "full".to_string())
-        .with_uprops(icu_testdata::paths::uprops_toml_root())
-        .with_coll(icu_testdata::paths::coll_toml_root()))
+        .unwrap()
+        .with_uprops(icu_testdata::paths::uprops_toml_root(), TrieType::Small)
+        .unwrap()
+        .with_coll(icu_testdata::paths::coll_toml_root())
+        .unwrap())
     .filterable("icu4x-datagen locales")
     .filter_by_langid_allowlist_strict(&selected_locales);
 

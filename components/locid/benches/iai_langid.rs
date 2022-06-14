@@ -49,13 +49,15 @@ fn bench_langid_compare_components_str() {
 
     let result = LIDS
         .iter()
-        .filter(|l| l.language == "en" && l.region.map(|r| r == "US").unwrap_or(false))
+        .filter(|l| {
+            l.language == language!("en") && l.region.map(|r| r == region!("US")).unwrap_or(false)
+        })
         .count();
 
     assert_eq!(result, 2);
 }
 
-fn bench_langid_cmp_bytes() {
+fn bench_langid_strict_cmp() {
     // Tests the cost of comparing a langid against byte strings.
     use core::cmp::Ordering;
 
@@ -63,7 +65,7 @@ fn bench_langid_cmp_bytes() {
 
     let result = LIDS_STR
         .iter()
-        .filter(|s| lid.cmp_bytes(s.as_bytes()) == Ordering::Equal)
+        .filter(|s| lid.strict_cmp(s.as_bytes()) == Ordering::Equal)
         .count();
 
     assert_eq!(result, 1);
@@ -83,7 +85,7 @@ fn bench_langid_matching_str() {
 
     let lid = langid!("en_us");
 
-    let count = LIDS_STR.iter().filter(|l| lid == **l).count();
+    let count = LIDS_STR.iter().filter(|&l| lid.normalizing_eq(l)).count();
     assert_eq!(count, 1);
 }
 
@@ -106,7 +108,7 @@ iai::main!(
     bench_langid_constr,
     bench_langid_compare_components,
     bench_langid_compare_components_str,
-    bench_langid_cmp_bytes,
+    bench_langid_strict_cmp,
     bench_langid_matching,
     bench_langid_matching_str,
     bench_langid_serialize,

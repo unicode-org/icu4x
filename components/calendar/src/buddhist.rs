@@ -8,30 +8,31 @@
 //! use icu::calendar::{buddhist::Buddhist, Date, DateTime};
 //!
 //! // `Date` type
-//! let date_iso = Date::new_iso_date_from_integers(1970, 1, 2)
+//! let date_iso = Date::new_iso_date(1970, 1, 2)
 //!     .expect("Failed to initialize ISO Date instance.");
 //! let date_buddhist = Date::new_from_iso(date_iso, Buddhist);
 //!
 //! // `DateTime` type
-//! let datetime_iso = DateTime::new_iso_datetime_from_integers(1970, 1, 2, 13, 1, 0)
+//! let datetime_iso = DateTime::new_iso_datetime(1970, 1, 2, 13, 1, 0)
 //!     .expect("Failed to initialize ISO DateTime instance.");
 //! let datetime_buddhist = DateTime::new_from_iso(datetime_iso, Buddhist);
 //!
 //! // `Date` checks
 //! assert_eq!(date_buddhist.year().number, 2513);
-//! assert_eq!(date_buddhist.month().number, 1);
+//! assert_eq!(date_buddhist.month().ordinal, 1);
 //! assert_eq!(date_buddhist.day_of_month().0, 2);
 //!
 //! // `DateTime` type
 //! assert_eq!(datetime_buddhist.date.year().number, 2513);
-//! assert_eq!(datetime_buddhist.date.month().number, 1);
+//! assert_eq!(datetime_buddhist.date.month().ordinal, 1);
 //! assert_eq!(datetime_buddhist.date.day_of_month().0, 2);
 //! assert_eq!(datetime_buddhist.time.hour.number(), 13);
 //! assert_eq!(datetime_buddhist.time.minute.number(), 1);
 //! assert_eq!(datetime_buddhist.time.second.number(), 0);
 //! ```
 
-use crate::iso::{Iso, IsoDateInner, IsoYear};
+use crate::any_calendar::AnyCalendarKind;
+use crate::iso::{Iso, IsoDateInner};
 use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, DateTime, DateTimeError};
 use tinystr::tinystr;
 
@@ -91,7 +92,7 @@ impl Calendar for Buddhist {
 
     /// The calendar-specific year represented by `date`
     fn year(&self, date: &Self::DateInner) -> types::Year {
-        iso_year_as_buddhist(date.year)
+        iso_year_as_buddhist(date.0.year)
     }
 
     /// The calendar-specific month represented by `date`
@@ -106,19 +107,23 @@ impl Calendar for Buddhist {
 
     /// Information of the day of the year
     fn day_of_year_info(&self, date: &Self::DateInner) -> types::DayOfYearInfo {
-        let prev_year = IsoYear(date.year.0 - 1);
-        let next_year = IsoYear(date.year.0 + 1);
+        let prev_year = date.0.year - 1;
+        let next_year = date.0.year + 1;
         types::DayOfYearInfo {
             day_of_year: Iso::day_of_year(*date),
-            days_in_year: Iso::days_in_year(date.year),
+            days_in_year: Iso::days_in_year_direct(date.0.year),
             prev_year: iso_year_as_buddhist(prev_year),
-            days_in_prev_year: Iso::days_in_year(prev_year),
+            days_in_prev_year: Iso::days_in_year_direct(prev_year),
             next_year: iso_year_as_buddhist(next_year),
         }
     }
 
     fn debug_name(&self) -> &'static str {
         "Buddhist"
+    }
+
+    fn any_calendar_kind(&self) -> Option<AnyCalendarKind> {
+        Some(AnyCalendarKind::Buddhist)
     }
 }
 
@@ -135,7 +140,7 @@ impl Date<Buddhist> {
     ///     Date::new_buddhist_date(1970, 1, 2).expect("Failed to initialize Buddhist Date instance.");
     ///
     /// assert_eq!(date_buddhist.year().number, 1970);
-    /// assert_eq!(date_buddhist.month().number, 1);
+    /// assert_eq!(date_buddhist.month().ordinal, 1);
     /// assert_eq!(date_buddhist.day_of_month().0, 2);
     /// ```
     pub fn new_buddhist_date(
@@ -143,7 +148,7 @@ impl Date<Buddhist> {
         month: u8,
         day: u8,
     ) -> Result<Date<Buddhist>, DateTimeError> {
-        Date::new_iso_date_from_integers(year - BUDDHIST_ERA_OFFSET, month, day)
+        Date::new_iso_date(year - BUDDHIST_ERA_OFFSET, month, day)
             .map(|d| Date::new_from_iso(d, Buddhist))
     }
 }
@@ -160,7 +165,7 @@ impl DateTime<Buddhist> {
     ///     .expect("Failed to initialize Buddhist DateTime instance.");
     ///
     /// assert_eq!(datetime_buddhist.date.year().number, 1970);
-    /// assert_eq!(datetime_buddhist.date.month().number, 1);
+    /// assert_eq!(datetime_buddhist.date.month().ordinal, 1);
     /// assert_eq!(datetime_buddhist.date.day_of_month().0, 2);
     /// assert_eq!(datetime_buddhist.time.hour.number(), 13);
     /// assert_eq!(datetime_buddhist.time.minute.number(), 1);
@@ -181,11 +186,11 @@ impl DateTime<Buddhist> {
     }
 }
 
-fn iso_year_as_buddhist(year: IsoYear) -> types::Year {
-    let buddhist_year = year.0 + BUDDHIST_ERA_OFFSET;
+fn iso_year_as_buddhist(year: i32) -> types::Year {
+    let buddhist_year = year + BUDDHIST_ERA_OFFSET;
     types::Year {
         era: types::Era(tinystr!(16, "be")),
         number: buddhist_year,
-        related_iso: year.0,
+        related_iso: year,
     }
 }

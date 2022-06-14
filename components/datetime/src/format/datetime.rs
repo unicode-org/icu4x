@@ -14,8 +14,9 @@ use crate::provider::calendar::patterns::PatternPluralsFromPatternsV1Marker;
 use crate::provider::date_time::DateTimeSymbols;
 use crate::provider::week_data::WeekDataV1;
 
-use alloc::string::ToString;
 use core::fmt;
+use fixed_decimal::FixedDecimal;
+use icu_decimal::FixedDecimalFormat;
 use icu_locid::Locale;
 use icu_plurals::PluralRules;
 use icu_provider::DataPayload;
@@ -56,6 +57,7 @@ where
     pub(crate) week_data: Option<&'l WeekDataV1>,
     pub(crate) locale: &'l Locale,
     pub(crate) ordinal_rules: Option<&'l PluralRules>,
+    pub(crate) fixed_decimal_format: &'l FixedDecimalFormat,
 }
 
 impl<'l, T> Writeable for FormattedDateTime<'l, T>
@@ -69,6 +71,7 @@ where
             self.datetime,
             self.week_data,
             self.ordinal_rules,
+            self.fixed_decimal_format,
             self.locale,
             sink,
         )
@@ -87,67 +90,82 @@ where
     }
 }
 
-// Temporary formatting number with length.
-fn format_number<W>(result: &mut W, num: isize, length: FieldLength) -> Result<(), core::fmt::Error>
+// Apply length to input number and write to result using fixed_decimal_format.
+fn format_number<W>(
+    result: &mut W,
+    fixed_decimal_format: &FixedDecimalFormat,
+    mut num: FixedDecimal,
+    length: FieldLength,
+) -> fmt::Result
 where
     W: fmt::Write + ?Sized,
 {
     match length {
-        FieldLength::One => write!(result, "{}", num),
+        FieldLength::One => {}
         FieldLength::TwoDigit => {
-            if num < 100 {
-                write!(result, "{:0>width$}", num, width = 2)
-            } else {
-                let buffer = num.to_string();
-                let len = buffer.len();
-                // Safe because we've handled the case where len < 2 above
-                #[allow(clippy::indexing_slicing)]
-                result.write_str(&buffer[len - 2..])
-            }
+            num.pad_left(2);
+            num.truncate_left(2);
         }
-        FieldLength::Abbreviated => write!(result, "{:0>width$}", num, width = 3),
-        FieldLength::Wide => write!(result, "{:0>width$}", num, width = 4),
-        FieldLength::Narrow => write!(result, "{:0>width$}", num, width = 5),
-        FieldLength::Six => write!(result, "{:0>width$}", num, width = 6),
+        FieldLength::Abbreviated => {
+            num.pad_left(3);
+        }
+        FieldLength::Wide => {
+            num.pad_left(4);
+        }
+        FieldLength::Narrow => {
+            num.pad_left(5);
+        }
+        FieldLength::Six => {
+            num.pad_left(6);
+        }
         FieldLength::Fixed(p) => {
-            let buffer = num.to_string();
-            let len = buffer.len();
-            if len < p.into() {
-                write!(result, "{:0<width$}", num, width = p as usize)
-            } else {
-                // Safe because we've handled the case where len < p above
-                #[allow(clippy::indexing_slicing)]
-                result.write_str(&buffer[0..p as usize])
-            }
+            num.pad_left(p as i16);
+            num.truncate_left(p as i16);
         }
     }
+
+    let formatted = fixed_decimal_format.format(&num);
+    formatted.write_to(result)
 }
 
 fn write_pattern<T, W>(
     pattern: &crate::pattern::runtime::Pattern,
     symbols: Option<&provider::calendar::DateSymbolsV1>,
     loc_datetime: &impl LocalizedDateTimeInput<T>,
+    fixed_decimal_format: &FixedDecimalFormat,
     w: &mut W,
 ) -> Result<(), Error>
 where
     T: DateTimeInput,
     W: fmt::Write + ?Sized,
 {
-    for item in pattern.items.iter() {
-        match item {
-            PatternItem::Field(field) => write_field(pattern, field, symbols, loc_datetime, w)?,
-            PatternItem::Literal(ch) => w.write_char(ch)?,
+    let mut iter = pattern.items.iter().peekable();
+    loop {
+        match iter.next() {
+            Some(PatternItem::Field(field)) => write_field(
+                pattern,
+                field,
+                iter.peek(),
+                symbols,
+                loc_datetime,
+                fixed_decimal_format,
+                w,
+            )?,
+            Some(PatternItem::Literal(ch)) => w.write_char(ch)?,
+            None => break,
         }
     }
     Ok(())
 }
 
+#[allow(clippy::too_many_arguments)]
 pub fn write_pattern_plurals<T, W>(
     patterns: &PatternPlurals,
     symbols: Option<&provider::calendar::DateSymbolsV1>,
     datetime: &T,
     week_data: Option<&WeekDataV1>,
     ordinal_rules: Option<&PluralRules>,
+    fixed_decimal_format: &FixedDecimalFormat,
     locale: &Locale,
     w: &mut W,
 ) -> Result<(), Error>
@@ -157,7 +175,7 @@ where
 {
     let loc_datetime = DateTimeInputWithLocale::new(datetime, week_data.map(|d| &d.0), locale);
     let pattern = patterns.select(&loc_datetime, ordinal_rules)?;
-    write_pattern(pattern, symbols, &loc_datetime, w)
+    write_pattern(pattern, symbols, &loc_datetime, fixed_decimal_format, w)
 }
 
 // This function assumes that the correct decision has been
@@ -168,8 +186,10 @@ where
 pub(super) fn write_field<T, W>(
     pattern: &crate::pattern::runtime::Pattern,
     field: fields::Field,
+    next_item: Option<&PatternItem>,
     symbols: Option<&crate::provider::calendar::DateSymbolsV1>,
     datetime: &impl LocalizedDateTimeInput<T>,
+    fixed_decimal_format: &FixedDecimalFormat,
     w: &mut W,
 ) -> Result<(), Error>
 where
@@ -194,23 +214,34 @@ where
         FieldSymbol::Year(year) => match year {
             Year::Calendar => format_number(
                 w,
-                datetime
-                    .datetime()
-                    .year()
-                    .ok_or(Error::MissingInputField)?
-                    .number as isize,
+                fixed_decimal_format,
+                FixedDecimal::from(
+                    datetime
+                        .datetime()
+                        .year()
+                        .ok_or(Error::MissingInputField)?
+                        .number,
+                ),
                 field.length,
             )?,
-            Year::WeekOf => format_number(w, datetime.year_week()?.number as isize, field.length)?,
+            Year::WeekOf => format_number(
+                w,
+                fixed_decimal_format,
+                FixedDecimal::from(datetime.year_week()?.number),
+                field.length,
+            )?,
         },
         FieldSymbol::Month(month) => match field.length {
             FieldLength::One | FieldLength::TwoDigit => format_number(
                 w,
-                datetime
-                    .datetime()
-                    .month()
-                    .ok_or(Error::MissingInputField)?
-                    .number as isize,
+                fixed_decimal_format,
+                FixedDecimal::from(
+                    datetime
+                        .datetime()
+                        .month()
+                        .ok_or(Error::MissingInputField)?
+                        .ordinal,
+                ),
                 field.length,
             )?,
             length => {
@@ -224,19 +255,25 @@ where
                             .datetime()
                             .month()
                             .ok_or(Error::MissingInputField)?
-                            .number as usize
+                            .ordinal as usize
                             - 1,
                     )?;
                 w.write_str(symbol)?
             }
         },
         FieldSymbol::Week(week) => match week {
-            Week::WeekOfYear => {
-                format_number(w, datetime.week_of_year()?.0 as isize, field.length)?
-            }
-            Week::WeekOfMonth => {
-                format_number(w, datetime.week_of_month()?.0 as isize, field.length)?
-            }
+            Week::WeekOfYear => format_number(
+                w,
+                fixed_decimal_format,
+                FixedDecimal::from(datetime.week_of_year()?.0),
+                field.length,
+            )?,
+            Week::WeekOfMonth => format_number(
+                w,
+                fixed_decimal_format,
+                FixedDecimal::from(datetime.week_of_month()?.0),
+                field.length,
+            )?,
         },
         FieldSymbol::Weekday(weekday) => {
             let dow = datetime
@@ -251,17 +288,18 @@ where
         }
         symbol @ FieldSymbol::Day(day) => format_number(
             w,
-            match day {
+            fixed_decimal_format,
+            FixedDecimal::from(match day {
                 fields::Day::DayOfMonth => {
                     datetime
                         .datetime()
                         .day_of_month()
                         .ok_or(Error::MissingInputField)?
-                        .0 as isize
+                        .0
                 }
-                fields::Day::DayOfWeekInMonth => datetime.day_of_week_in_month()?.0 as isize,
+                fields::Day::DayOfWeekInMonth => datetime.day_of_week_in_month()?.0,
                 _ => return Err(Error::UnsupportedField(symbol)),
-            },
+            }),
             field.length,
         )?,
         FieldSymbol::Hour(hour) => {
@@ -286,38 +324,68 @@ where
                     }
                 }
             };
-            format_number(w, value, field.length)?
+            format_number(
+                w,
+                fixed_decimal_format,
+                FixedDecimal::from(value),
+                field.length,
+            )?
         }
         FieldSymbol::Minute => format_number(
             w,
-            usize::from(
+            fixed_decimal_format,
+            FixedDecimal::from(usize::from(
                 datetime
                     .datetime()
                     .minute()
                     .ok_or(Error::MissingInputField)?,
-            ) as isize,
+            )),
             field.length,
         )?,
-        FieldSymbol::Second(Second::Second) => format_number(
-            w,
-            usize::from(
+        FieldSymbol::Second(Second::Second) => {
+            let mut seconds = FixedDecimal::from(usize::from(
                 datetime
                     .datetime()
                     .second()
                     .ok_or(Error::MissingInputField)?,
-            ) as isize,
-            field.length,
-        )?,
-        FieldSymbol::Second(Second::FractionalSecond) => format_number(
-            w,
-            usize::from(
-                datetime
-                    .datetime()
-                    .nanosecond()
-                    .ok_or(Error::MissingInputField)?,
-            ) as isize,
-            field.length,
-        )?,
+            ));
+            if let Some(PatternItem::Field(next_field)) = next_item {
+                if let FieldSymbol::Second(Second::FractionalSecond) = next_field.symbol {
+                    let mut fraction = FixedDecimal::from(usize::from(
+                        datetime
+                            .datetime()
+                            .nanosecond()
+                            .ok_or(Error::MissingInputField)?,
+                    ));
+
+                    // We only support fixed field length for fractional seconds.
+                    let precision = match next_field.length {
+                        FieldLength::Fixed(p) => p,
+                        _ => {
+                            return Err(Error::Pattern(
+                                crate::pattern::PatternError::FieldLengthInvalid(
+                                    FieldSymbol::Second(Second::FractionalSecond),
+                                ),
+                            ));
+                        }
+                    };
+
+                    // We store fractional seconds as nanoseconds, convert to seconds.
+                    fraction
+                        .multiply_pow10(-9)
+                        .map_err(|_| Error::FixedDecimal)?;
+
+                    seconds
+                        .concatenate_right(fraction)
+                        .map_err(|_| Error::FixedDecimal)?;
+                    seconds.pad_right(-(precision as i16));
+                }
+            }
+            format_number(w, fixed_decimal_format, seconds, field.length)?
+        }
+        FieldSymbol::Second(Second::FractionalSecond) => {
+            // Formatting of fractional seconds is handled when formatting seconds.
+        }
         field @ FieldSymbol::Second(Second::Millisecond) => {
             return Err(Error::UnsupportedField(field))
         }
@@ -420,6 +488,7 @@ pub fn analyze_patterns(
 #[cfg(test)]
 mod tests {
     use super::*;
+    use icu_decimal::options::{FixedDecimalFormatOptions, GroupingStrategy, SignDisplay};
 
     #[test]
     #[cfg(feature = "serde")]
@@ -432,7 +501,7 @@ mod tests {
         let locale: Locale = "en-u-ca-gregory".parse().unwrap();
         let data: DataPayload<DateSymbolsV1Marker> = provider
             .load_resource(&DataRequest {
-                options: locale.into(),
+                options: locale.clone().into(),
                 metadata: Default::default(),
             })
             .unwrap()
@@ -440,13 +509,24 @@ mod tests {
             .unwrap();
         let pattern = "MMM".parse().unwrap();
         let datetime = DateTime::new_gregorian_datetime(2020, 8, 1, 12, 34, 28).unwrap();
+        let fixed_decimal_format =
+            FixedDecimalFormat::try_new(locale.id.language, &provider, Default::default()).unwrap();
+
         let mut sink = String::new();
         let loc_datetime = DateTimeInputWithLocale::new(&datetime, None, &"und".parse().unwrap());
-        write_pattern(&pattern, Some(data.get()), &loc_datetime, &mut sink).unwrap();
+        write_pattern(
+            &pattern,
+            Some(data.get()),
+            &loc_datetime,
+            &fixed_decimal_format,
+            &mut sink,
+        )
+        .unwrap();
         println!("{}", sink);
     }
 
     #[test]
+    #[cfg(feature = "serde")]
     fn test_format_number() {
         let values = &[2, 20, 201, 2017, 20173];
         let samples = &[
@@ -458,10 +538,28 @@ mod tests {
             ),
             (FieldLength::Wide, ["0002", "0020", "0201", "2017", "20173"]),
         ];
+
+        let provider = icu_testdata::get_provider();
+        let mut fixed_decimal_format_options = FixedDecimalFormatOptions::default();
+        fixed_decimal_format_options.grouping_strategy = GroupingStrategy::Never;
+        fixed_decimal_format_options.sign_display = SignDisplay::Never;
+        let fixed_decimal_format = FixedDecimalFormat::try_new(
+            icu_locid::locale!("en"),
+            &provider,
+            fixed_decimal_format_options,
+        )
+        .unwrap();
+
         for (length, expected) in samples {
             for (value, expected) in values.iter().zip(expected) {
                 let mut s = String::new();
-                format_number(&mut s, *value, *length).unwrap();
+                format_number(
+                    &mut s,
+                    &fixed_decimal_format,
+                    FixedDecimal::from(*value as i32),
+                    *length,
+                )
+                .unwrap();
                 assert_eq!(s, *expected);
             }
         }

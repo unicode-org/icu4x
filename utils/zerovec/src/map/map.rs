@@ -93,8 +93,8 @@ where
     /// ```
     pub fn new() -> Self {
         Self {
-            keys: K::Container::zvl_new(),
-            values: V::Container::zvl_new(),
+            keys: K::Container::zvl_with_capacity(0),
+            values: V::Container::zvl_with_capacity(0),
         }
     }
 
@@ -377,8 +377,8 @@ where
 impl<'a, K, V> ZeroMap<'a, K, V>
 where
     K: ZeroMapKV<'a> + ?Sized + Ord,
-    V: ZeroMapKV<'a, Container = ZeroVec<'a, V>> + ?Sized,
-    V: AsULE + Copy,
+    V: ZeroMapKV<'a> + ?Sized,
+    V: Copy,
 {
     /// For cases when `V` is fixed-size, obtain a direct copy of `V` instead of `V::ULE`.
     ///
@@ -392,9 +392,10 @@ where
     /// map.insert(&2, &'b');
     /// assert_eq!(map.get_copied(&1), Some('a'));
     /// assert_eq!(map.get_copied(&3), None);
+    #[inline]
     pub fn get_copied(&self, key: &K) -> Option<V> {
         let index = self.keys.zvl_binary_search(key).ok()?;
-        ZeroSlice::get(&*self.values, index)
+        self.get_copied_at(index)
     }
 
     /// Binary search the map with `predicate` to find a key, returning the value.
@@ -413,9 +414,18 @@ where
     /// assert_eq!(map.get_copied_by(|probe| probe.cmp(&1)), Some('a'));
     /// assert_eq!(map.get_copied_by(|probe| probe.cmp(&3)), None);
     /// ```
+    #[inline]
     pub fn get_copied_by(&self, predicate: impl FnMut(&K) -> Ordering) -> Option<V> {
         let index = self.keys.zvl_binary_search_by(predicate).ok()?;
-        ZeroSlice::get(&*self.values, index)
+        self.get_copied_at(index)
+    }
+
+    fn get_copied_at(&self, index: usize) -> Option<V> {
+        let ule = self.values.zvl_get(index)?;
+        let mut result = Option::<V>::None;
+        V::Container::zvl_get_as_t(ule, |v| result.replace(*v));
+        #[allow(clippy::unwrap_used)] // `zvl_get_as_t` guarantees that the callback is invoked
+        Some(result.unwrap())
     }
 }
 
