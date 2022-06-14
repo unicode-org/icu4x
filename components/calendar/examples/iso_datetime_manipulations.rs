@@ -33,7 +33,7 @@ fn print<A: Calendar>(_datetime_input: &DateTime<A>) {
         let formatted_datetime = format!(
             "Year: {}, Month: {}, Day: {}, Hour: {}, Minute: {}, Second: {}",
             _datetime_input.date.year().number,
-            _datetime_input.date.month().number,
+            _datetime_input.date.month().ordinal,
             _datetime_input.date.day_of_month().0,
             u8::from(_datetime_input.time.hour),
             u8::from(_datetime_input.time.minute),
@@ -45,7 +45,7 @@ fn print<A: Calendar>(_datetime_input: &DateTime<A>) {
 }
 
 fn tuple_to_iso_datetime(date: (i32, u8, u8, u8, u8, u8)) -> Result<DateTime<Iso>, DateTimeError> {
-    DateTime::new_iso_datetime_from_integers(date.0, date.1, date.2, date.3, date.4, date.5)
+    DateTime::new_iso_datetime(date.0, date.1, date.2, date.3, date.4, date.5)
 }
 
 #[no_mangle]

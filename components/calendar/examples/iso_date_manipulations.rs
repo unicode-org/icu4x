@@ -33,7 +33,7 @@ fn print<A: Calendar>(_date_input: &Date<A>) {
         let formatted_date = format!(
             "Year: {}, Month: {}, Day: {}",
             _date_input.year().number,
-            _date_input.month().number,
+            _date_input.month().ordinal,
             _date_input.day_of_month().0,
         );
 
@@ -42,7 +42,7 @@ fn print<A: Calendar>(_date_input: &Date<A>) {
 }
 
 fn tuple_to_iso_date(date: (i32, u8, u8)) -> Result<Date<Iso>, DateTimeError> {
-    Date::new_iso_date_from_integers(date.0, date.1, date.2)
+    Date::new_iso_date(date.0, date.1, date.2)
 }
 
 #[no_mangle]
