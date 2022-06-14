@@ -26,7 +26,7 @@ fn test_baked_vec() {
     test_bake!(
         unsafe {
             crate::vecs::FlexZeroSlice::from_byte_slice_unchecked(&[
-                2u8, 1u8, 0u8, 22u8, 0u8, 77u8, 1u8, 92u8, 17u8
+                2u8, 1u8, 0u8, 22u8, 0u8, 77u8, 1u8, 92u8, 17u8,
             ])
             .as_flexzerovec()
         },
@@ -39,7 +39,7 @@ fn test_baked_slice() {
     test_bake!(
         unsafe {
             crate::vecs::FlexZeroSlice::from_byte_slice_unchecked(&[
-                2u8, 1u8, 0u8, 22u8, 0u8, 77u8, 1u8, 92u8, 17u8
+                2u8, 1u8, 0u8, 22u8, 0u8, 77u8, 1u8, 92u8, 17u8,
             ])
         },
         zerovec

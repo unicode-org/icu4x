@@ -157,11 +157,12 @@ where
 /// This test will pass if `MyStruct::bake` returns `::my_crate::MyStruct(42usize)`:
 ///
 /// ```no_run
+/// # use crabbake::*;
 /// # struct MyStruct(usize);
-/// # impl crabbake::Bakeable for MyStruct {
-/// #   fn bake(&self, _: &crabbake::CrateEnv) -> crabbake::TokenStream { unimplemented!() }
+/// # impl Bakeable for MyStruct {
+/// #   fn bake(&self, _: &CrateEnv) -> TokenStream { unimplemented!() }
 /// # }
-/// # use crabbake::test_bake;
+/// # // We need an explicit main to put the struct at the crate root
 /// # fn main() {
 /// test_bake!(
 ///     crate::MyStruct(42usize),
