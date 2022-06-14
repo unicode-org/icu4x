@@ -43,7 +43,7 @@ pub struct Month {
     /// the leap month will end up with an incremented number.
     ///
     /// In general, prefer using the month code in generic code.
-    pub ordinal_month: u32,
+    pub ordinal: u32,
 
     /// The month code, used to distinguish months during leap years.
     pub code: MonthCode,

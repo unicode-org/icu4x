@@ -19,12 +19,12 @@
 //!
 //! // `Date` checks
 //! assert_eq!(date_indian.year().number, 1892);
-//! assert_eq!(date_indian.month().ordinal_month, 1);
+//! assert_eq!(date_indian.month().ordinal, 1);
 //! assert_eq!(date_indian.day_of_month().0, 2);
 //!
 //! // `DateTime` type
 //! assert_eq!(datetime_indian.date.year().number, 1892);
-//! assert_eq!(datetime_indian.date.month().ordinal_month, 1);
+//! assert_eq!(datetime_indian.date.month().ordinal, 1);
 //! assert_eq!(datetime_indian.date.day_of_month().0, 2);
 //! assert_eq!(datetime_indian.time.hour.number(), 13);
 //! assert_eq!(datetime_indian.time.minute.number(), 1);
@@ -191,7 +191,7 @@ impl Date<Indian> {
     ///     Date::new_indian_date(1891, 10, 12).expect("Failed to initialize Indian Date instance.");
     ///
     /// assert_eq!(date_indian.year().number, 1891);
-    /// assert_eq!(date_indian.month().ordinal_month, 10);
+    /// assert_eq!(date_indian.month().ordinal, 10);
     /// assert_eq!(date_indian.day_of_month().0, 12);
     /// ```
     pub fn new_indian_date(year: i32, month: u8, day: u8) -> Result<Date<Indian>, DateTimeError> {
@@ -221,7 +221,7 @@ impl DateTime<Indian> {
     ///     .expect("Failed to initialize Indian DateTime instance.");
     ///
     /// assert_eq!(datetime_indian.date.year().number, 1891);
-    /// assert_eq!(datetime_indian.date.month().ordinal_month, 10);
+    /// assert_eq!(datetime_indian.date.month().ordinal, 10);
     /// assert_eq!(datetime_indian.date.day_of_month().0, 12);
     /// assert_eq!(datetime_indian.time.hour.number(), 13);
     /// assert_eq!(datetime_indian.time.minute.number(), 1);

@@ -19,12 +19,12 @@
 //!
 //! // `Date` checks
 //! assert_eq!(date_gregorian.year().number, 1970);
-//! assert_eq!(date_gregorian.month().ordinal_month, 1);
+//! assert_eq!(date_gregorian.month().ordinal, 1);
 //! assert_eq!(date_gregorian.day_of_month().0, 2);
 //!
 //! // `DateTime` type
 //! assert_eq!(datetime_gregorian.date.year().number, 1970);
-//! assert_eq!(datetime_gregorian.date.month().ordinal_month, 1);
+//! assert_eq!(datetime_gregorian.date.month().ordinal, 1);
 //! assert_eq!(datetime_gregorian.date.day_of_month().0, 2);
 //! assert_eq!(datetime_gregorian.time.hour.number(), 13);
 //! assert_eq!(datetime_gregorian.time.minute.number(), 1);
@@ -135,7 +135,7 @@ impl Date<Gregorian> {
     ///     .expect("Failed to initialize Gregorian Date instance.");
     ///
     /// assert_eq!(date_gregorian.year().number, 1970);
-    /// assert_eq!(date_gregorian.month().ordinal_month, 1);
+    /// assert_eq!(date_gregorian.month().ordinal, 1);
     /// assert_eq!(date_gregorian.day_of_month().0, 2);
     /// ```
     pub fn new_gregorian_date(
@@ -159,7 +159,7 @@ impl DateTime<Gregorian> {
     ///     .expect("Failed to initialize Gregorian DateTime instance.");
     ///
     /// assert_eq!(datetime_gregorian.date.year().number, 1970);
-    /// assert_eq!(datetime_gregorian.date.month().ordinal_month, 1);
+    /// assert_eq!(datetime_gregorian.date.month().ordinal, 1);
     /// assert_eq!(datetime_gregorian.date.day_of_month().0, 2);
     /// assert_eq!(datetime_gregorian.time.hour.number(), 13);
     /// assert_eq!(datetime_gregorian.time.minute.number(), 1);

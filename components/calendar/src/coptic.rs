@@ -19,12 +19,12 @@
 //!
 //! // `Date` checks
 //! assert_eq!(date_coptic.year().number, 1686);
-//! assert_eq!(date_coptic.month().ordinal_month, 4);
+//! assert_eq!(date_coptic.month().ordinal, 4);
 //! assert_eq!(date_coptic.day_of_month().0, 24);
 //!
 //! // `DateTime` type
 //! assert_eq!(datetime_coptic.date.year().number, 1686);
-//! assert_eq!(datetime_coptic.date.month().ordinal_month, 4);
+//! assert_eq!(datetime_coptic.date.month().ordinal, 4);
 //! assert_eq!(datetime_coptic.date.day_of_month().0, 24);
 //! assert_eq!(datetime_coptic.time.hour.number(), 13);
 //! assert_eq!(datetime_coptic.time.minute.number(), 1);
@@ -207,7 +207,7 @@ impl Date<Coptic> {
     ///     Date::new_coptic_date(1686, 5, 6).expect("Failed to initialize Coptic Date instance.");
     ///
     /// assert_eq!(date_coptic.year().number, 1686);
-    /// assert_eq!(date_coptic.month().ordinal_month, 5);
+    /// assert_eq!(date_coptic.month().ordinal, 5);
     /// assert_eq!(date_coptic.day_of_month().0, 6);
     /// ```
     pub fn new_coptic_date(year: i32, month: u8, day: u8) -> Result<Date<Coptic>, DateTimeError> {
@@ -237,7 +237,7 @@ impl DateTime<Coptic> {
     ///     .expect("Failed to initialize Coptic DateTime instance.");
     ///
     /// assert_eq!(datetime_coptic.date.year().number, 1686);
-    /// assert_eq!(datetime_coptic.date.month().ordinal_month, 5);
+    /// assert_eq!(datetime_coptic.date.month().ordinal, 5);
     /// assert_eq!(datetime_coptic.date.day_of_month().0, 6);
     /// assert_eq!(datetime_coptic.time.hour.number(), 13);
     /// assert_eq!(datetime_coptic.time.minute.number(), 1);

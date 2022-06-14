@@ -73,7 +73,7 @@ impl<'a, C> Deref for Ref<'a, C> {
 ///     .expect("Failed to initialize ISO Date instance.");
 ///
 /// assert_eq!(date_iso.year().number, 1970);
-/// assert_eq!(date_iso.month().ordinal_month, 1);
+/// assert_eq!(date_iso.month().ordinal, 1);
 /// assert_eq!(date_iso.day_of_month().0, 2);
 /// ```
 pub struct Date<A: AsCalendar> {

@@ -20,7 +20,7 @@ use crate::{AsCalendar, Calendar, Date, Iso};
 ///     .expect("Failed to initialize ISO DateTime instance.");
 ///
 /// assert_eq!(datetime_iso.date.year().number, 1970);
-/// assert_eq!(datetime_iso.date.month().ordinal_month, 1);
+/// assert_eq!(datetime_iso.date.month().ordinal, 1);
 /// assert_eq!(datetime_iso.date.day_of_month().0, 2);
 /// assert_eq!(datetime_iso.time.hour.number(), 13);
 /// assert_eq!(datetime_iso.time.minute.number(), 1);

@@ -17,12 +17,12 @@
 //!
 //! // `Date` checks
 //! assert_eq!(date_iso.year().number, 1970);
-//! assert_eq!(date_iso.month().ordinal_month, 1);
+//! assert_eq!(date_iso.month().ordinal, 1);
 //! assert_eq!(date_iso.day_of_month().0, 2);
 //!
 //! // `DateTime` type
 //! assert_eq!(datetime_iso.date.year().number, 1970);
-//! assert_eq!(datetime_iso.date.month().ordinal_month, 1);
+//! assert_eq!(datetime_iso.date.month().ordinal, 1);
 //! assert_eq!(datetime_iso.date.day_of_month().0, 2);
 //! assert_eq!(datetime_iso.time.hour.number(), 13);
 //! assert_eq!(datetime_iso.time.minute.number(), 1);
@@ -230,7 +230,7 @@ impl Date<Iso> {
     ///     .expect("Failed to initialize ISO Date instance.");
     ///
     /// assert_eq!(date_iso.year().number, 1970);
-    /// assert_eq!(date_iso.month().ordinal_month, 1);
+    /// assert_eq!(date_iso.month().ordinal, 1);
     /// assert_eq!(date_iso.day_of_month().0, 2);
     /// ```
     pub fn new_iso_date(year: i32, month: u8, day: u8) -> Result<Date<Iso>, DateTimeError> {
@@ -257,7 +257,7 @@ impl DateTime<Iso> {
     ///     .expect("Failed to initialize ISO DateTime instance.");
     ///
     /// assert_eq!(datetime_iso.date.year().number, 1970);
-    /// assert_eq!(datetime_iso.date.month().ordinal_month, 1);
+    /// assert_eq!(datetime_iso.date.month().ordinal, 1);
     /// assert_eq!(datetime_iso.date.day_of_month().0, 2);
     /// assert_eq!(datetime_iso.time.hour.number(), 13);
     /// assert_eq!(datetime_iso.time.minute.number(), 1);

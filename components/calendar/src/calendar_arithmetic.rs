@@ -169,7 +169,7 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
             _ => tinystr!(8, "und"),
         };
         types::Month {
-            ordinal_month: self.month as u32,
+            ordinal: self.month as u32,
             code: types::MonthCode(code),
         }
     }
