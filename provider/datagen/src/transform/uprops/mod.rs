@@ -21,34 +21,34 @@
 
 mod bin_uniset;
 #[cfg(feature = "experimental")]
-mod canonical_decompositions;
+mod normalizer;
 #[cfg(feature = "experimental")]
 mod casemapping;
 #[cfg(feature = "experimental")]
-mod decompositions_serde;
+mod normalizer_serde;
 mod enum_codepointtrie;
 mod script;
 mod uprops_serde;
 
 pub use bin_uniset::BinaryPropertyUnicodeSetDataProvider;
 #[cfg(feature = "experimental")]
-pub use canonical_decompositions::CanonicalCompositionPassthroughProvider;
+pub use normalizer::CanonicalCompositionPassthroughProvider;
 #[cfg(feature = "experimental")]
-pub use canonical_decompositions::CanonicalCompositionsProvider;
+pub use normalizer::CanonicalCompositionsProvider;
 #[cfg(feature = "experimental")]
-pub use canonical_decompositions::CanonicalDecompositionDataProvider;
+pub use normalizer::CanonicalDecompositionDataProvider;
 #[cfg(feature = "experimental")]
-pub use canonical_decompositions::CanonicalDecompositionTablesProvider;
+pub use normalizer::CanonicalDecompositionTablesProvider;
 #[cfg(feature = "experimental")]
-pub use canonical_decompositions::CompatibilityCompositionPassthroughProvider;
+pub use normalizer::CompatibilityCompositionPassthroughProvider;
 #[cfg(feature = "experimental")]
-pub use canonical_decompositions::CompatibilityDecompositionSupplementProvider;
+pub use normalizer::CompatibilityDecompositionSupplementProvider;
 #[cfg(feature = "experimental")]
-pub use canonical_decompositions::CompatibilityDecompositionTablesProvider;
+pub use normalizer::CompatibilityDecompositionTablesProvider;
 #[cfg(feature = "experimental")]
-pub use canonical_decompositions::Uts46CompositionPassthroughProvider;
+pub use normalizer::Uts46CompositionPassthroughProvider;
 #[cfg(feature = "experimental")]
-pub use canonical_decompositions::Uts46DecompositionSupplementProvider;
+pub use normalizer::Uts46DecompositionSupplementProvider;
 #[cfg(feature = "experimental")]
 pub use casemapping::CaseMappingDataProvider;
 pub use enum_codepointtrie::EnumeratedPropertyCodePointTrieProvider;

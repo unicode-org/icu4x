@@ -36,7 +36,7 @@ macro_rules! normalization_provider {
                 &self,
                 _req: &DataRequest,
             ) -> Result<DataResponse<$marker>, DataError> {
-                let $toml_data: &super::decompositions_serde::$serde_struct = self
+                let $toml_data: &super::normalizer_serde::$serde_struct = self
                     .source
                     .get_uprops_paths()?
                     .read_and_parse_toml($file_name)?;
