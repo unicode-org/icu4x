@@ -47,14 +47,14 @@ mod test {
 
         // README: Except for the '::zerovec' instead of 'zerovec',
         // this string should be identical to the code above.
-        pub const BAKED_VEC_STR: &'static str = "unsafe {
+        pub const BAKED_VEC_STR: &str = "unsafe {
             ::zerovec::vecs::FlexZeroSlice::from_byte_slice_unchecked(&[
                 2u8, 1u8, 0u8, 22u8, 0u8, 77u8, 1u8, 92u8, 17u8
             ])
             .as_flexzerovec()
         }";
 
-        pub const BAKED_SLICE: &'static FlexZeroSlice = unsafe {
+        pub const BAKED_SLICE: &FlexZeroSlice = unsafe {
             zerovec::vecs::FlexZeroSlice::from_byte_slice_unchecked(&[
                 2u8, 1u8, 0u8, 22u8, 0u8, 77u8, 1u8, 92u8, 17u8
             ])
@@ -62,7 +62,7 @@ mod test {
 
         // README: Except for the '::zerovec' instead of 'zerovec',
         // this string should be identical to the code above.
-        pub const BAKED_SLICE_STR: &'static str = "unsafe {
+        pub const BAKED_SLICE_STR: &str = "unsafe {
             ::zerovec::vecs::FlexZeroSlice::from_byte_slice_unchecked(&[
                 2u8, 1u8, 0u8, 22u8, 0u8, 77u8, 1u8, 92u8, 17u8
             ])
@@ -74,7 +74,7 @@ mod test {
         let reference: FlexZeroVec = FlexZeroVec::parse_byte_slice(BYTES).expect("parse");
         assert_eq!(baked::BAKED_VEC, reference);
         let mut ctx = crabbake::CrateEnv::default();
-        let actual_tokens = reference.bake(&mut ctx);
+        let actual_tokens = reference.bake(&ctx);
         assert_eq!(
             actual_tokens.to_string(),
             TokenStream::from_str(baked::BAKED_VEC_STR)
@@ -88,7 +88,7 @@ mod test {
         let reference: &FlexZeroSlice = FlexZeroSlice::parse_byte_slice(BYTES).expect("parse");
         assert_eq!(baked::BAKED_SLICE, reference);
         let mut ctx = crabbake::CrateEnv::default();
-        let actual_tokens = reference.bake(&mut ctx);
+        let actual_tokens = reference.bake(&ctx);
         assert_eq!(
             actual_tokens.to_string(),
             TokenStream::from_str(baked::BAKED_SLICE_STR)
