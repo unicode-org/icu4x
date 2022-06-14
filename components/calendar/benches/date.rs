@@ -8,9 +8,7 @@ use crate::fixtures::structs::DateFixture;
 use criterion::{
     black_box, criterion_group, criterion_main, measurement::WallTime, BenchmarkGroup, Criterion,
 };
-use icu_calendar::{
-    iso::IsoDay, iso::IsoMonth, iso::IsoYear, AsCalendar, Calendar, Date, DateDuration,
-};
+use icu_calendar::{AsCalendar, Calendar, Date, DateDuration};
 
 fn bench_date<A: AsCalendar>(date: &mut Date<A>) {
     // black_box used to avoid compiler optimization.
@@ -56,41 +54,11 @@ fn bench_calendar<C: Clone + Calendar>(
     });
 }
 
-fn bench_calendar_iso_types<C: Clone + Calendar>(
-    group: &mut BenchmarkGroup<WallTime>,
-    name: &str,
-    fxs: &DateFixture,
-    calendar: C,
-    calendar_date_init: impl Fn(IsoYear, IsoMonth, IsoDay) -> Date<C>,
-) {
-    use std::convert::TryFrom;
-
-    group.bench_function(name, |b| {
-        b.iter(|| {
-            for fx in &fxs.0 {
-                // Conversion from ISO
-                let date_iso = Date::new_iso_date(fx.year, fx.month, fx.day).unwrap();
-                let mut converted_date_calendar = Date::new_from_iso(date_iso, calendar.clone());
-
-                // Instantion from ISO
-                let iso_year = IsoYear(fx.year);
-                let iso_month = IsoMonth::try_from(fx.month).unwrap();
-                let iso_day = IsoDay::try_from(fx.day).unwrap();
-                let mut iso_insantiated_date_calendar =
-                    calendar_date_init(iso_year, iso_month, iso_day);
-
-                bench_date(&mut iso_insantiated_date_calendar);
-                bench_date(&mut converted_date_calendar);
-            }
-        })
-    });
-}
-
 fn date_benches(c: &mut Criterion) {
     let mut group = c.benchmark_group("date");
     let fxs = fixtures::get_dates_fixture().unwrap();
 
-    bench_calendar_iso_types(
+    bench_calendar(
         &mut group,
         "calendar/overview",
         &fxs,
@@ -144,7 +112,7 @@ fn date_benches(c: &mut Criterion) {
     );
 
     #[cfg(feature = "bench")]
-    bench_calendar_iso_types(
+    bench_calendar(
         &mut group,
         "calendar/gregorian",
         &fxs,
