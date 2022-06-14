@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1655152509037,
+  "lastUpdate": 1655225395143,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -17453,6 +17453,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/034e71b8ac08325190efb128d956fc00dca166b9"
         },
         "date": 1655152479102,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 2274293,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "e2b5302423248189b98619924174e2ca2f1391fe",
+          "message": "Full datagen CI (#2021)",
+          "timestamp": "2022-06-14T18:47:36+02:00",
+          "tree_id": "b888f30744baf70619f77851c957a833eb3754ad",
+          "url": "https://github.com/unicode-org/icu4x/commit/e2b5302423248189b98619924174e2ca2f1391fe"
+        },
+        "date": 1655225370315,
         "tool": "ndjson",
         "benches": [
           {
