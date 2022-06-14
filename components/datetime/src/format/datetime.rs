@@ -240,7 +240,7 @@ where
                         .datetime()
                         .month()
                         .ok_or(Error::MissingInputField)?
-                        .number,
+                        .ordinal,
                 ),
                 field.length,
             )?,
@@ -255,7 +255,7 @@ where
                             .datetime()
                             .month()
                             .ok_or(Error::MissingInputField)?
-                            .number as usize
+                            .ordinal as usize
                             - 1,
                     )?;
                 w.write_str(symbol)?
