@@ -444,28 +444,26 @@ fn iterate_metazone_period(
         Vec<MetaZoneForPeriod>,
         LiteMap<String, MetaZoneId>,
     ),
-) -> impl Iterator<Item = (TimeZoneBcp47Id, String, MetaZoneId)> {
+) -> impl Iterator<Item = (TimeZoneBcp47Id, String, Option<MetaZoneId>)> {
     let (time_zone_key, periods, meta_zone_id_data) = pair;
     periods
         .into_iter()
         .map(move |period| match &period.uses_meta_zone.from {
             Some(from) => {
                 match meta_zone_id_data.get(&period.uses_meta_zone.mzone) {
-                    Some(meta_zone_short_id) => (time_zone_key, from.clone(), *meta_zone_short_id),
+                    Some(meta_zone_short_id) => {
+                        (time_zone_key, from.clone(), Some(*meta_zone_short_id))
+                    }
                     None => {
                         // TODO(#1781): Remove this special case once the short id is updated in CLDR
                         if &period.uses_meta_zone.mzone == "Yukon" {
                             (
                                 time_zone_key,
                                 from.clone(),
-                                MetaZoneId(tinystr::tinystr!(4, "yuko")),
+                                Some(MetaZoneId(tinystr::tinystr!(4, "yuko"))),
                             )
                         } else {
-                            (
-                                time_zone_key,
-                                from.clone(),
-                                MetaZoneId(tinystr::tinystr!(4, "unkw")),
-                            )
+                            (time_zone_key, from.clone(), None)
                         }
                     }
                 }
@@ -475,7 +473,7 @@ fn iterate_metazone_period(
                     Some(meta_zone_short_id) => (
                         time_zone_key,
                         String::from("1970-00-00 00:00"),
-                        *meta_zone_short_id,
+                        Some(*meta_zone_short_id),
                     ),
                     None => {
                         // TODO(#1781): Remove this special case once the short id is updated in CLDR
@@ -483,14 +481,10 @@ fn iterate_metazone_period(
                             (
                                 time_zone_key,
                                 String::from("1970-00-00 00:00"),
-                                MetaZoneId(tinystr::tinystr!(4, "yuko")),
+                                Some(MetaZoneId(tinystr::tinystr!(4, "yuko"))),
                             )
                         } else {
-                            (
-                                time_zone_key,
-                                String::from("1970-00-00 00:00"),
-                                MetaZoneId(tinystr::tinystr!(4, "unkw")),
-                            )
+                            (time_zone_key, String::from("1970-00-00 00:00"), None)
                         }
                     }
                 }

@@ -273,7 +273,7 @@ mod tests {
             .take_payload()
             .unwrap();
         assert_eq!(
-            &MetaZoneId(tinystr!(4, "mgmt")),
+            Some(MetaZoneId(tinystr!(4, "mgmt"))),
             metazone_period
                 .get()
                 .0
@@ -282,6 +282,7 @@ mod tests {
                     &String::from("1971-10-31 02:00")
                 )
                 .unwrap()
+                .get()
         );
     }
 }
