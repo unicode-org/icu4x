@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1655245433188,
+  "lastUpdate": 1655246024385,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -17543,6 +17543,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/dfb130699868ac678036ac4a605a03c318816b48"
         },
         "date": 1655245403886,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 2274293,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "a7e496b4db689de7b8f5d79cda0b3328dbf1497b",
+          "message": "Start emitting month codes from the calendar crate, switch ISO to ArithmeticDate (#2053)\n\n* Add solar month method\r\n\r\n* Move ISO over to ArithmeticDate\r\n\r\nThis is a holdover from back when we had fewer calendars; the type\r\nsafety is nice but the code sharing between calendars is more important.\r\n\r\n* Remove IsoYear/IsoMonth/IsoDay\r\n\r\n* Make everyone use solar_month()",
+          "timestamp": "2022-06-14T22:31:13Z",
+          "tree_id": "2f57f5ba46193d2a764c536554c08e0cd21d83d5",
+          "url": "https://github.com/unicode-org/icu4x/commit/a7e496b4db689de7b8f5d79cda0b3328dbf1497b"
+        },
+        "date": 1655245995841,
         "tool": "ndjson",
         "benches": [
           {
