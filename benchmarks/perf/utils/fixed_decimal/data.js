@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1655246588674,
+  "lastUpdate": 1655250383654,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -31829,6 +31829,66 @@ window.BENCHMARK_DATA = {
             "name": "from_string/1000000001",
             "value": 84,
             "range": "± 1",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "yzhang1994@gmail.com",
+            "name": "Yvonne Z",
+            "username": "yzhang1994"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "d094e04dbbead31894eaa35648bc5f5bb29b2ad1",
+          "message": "Change Variants to be a ShortVec<Variant> (#1988)\n\nCo-authored-by: Yvonne Zhang <yvonnezhang@google.com>",
+          "timestamp": "2022-06-14T16:32:34-07:00",
+          "tree_id": "2fbbda49662e7b357d2a3a6709630c50b03265b1",
+          "url": "https://github.com/unicode-org/icu4x/commit/d094e04dbbead31894eaa35648bc5f5bb29b2ad1"
+        },
+        "date": 1655250358789,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 124515,
+            "range": "± 554",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 28418,
+            "range": "± 100",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 72109,
+            "range": "± 85",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 219,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 103,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 83,
+            "range": "± 0",
             "unit": "ns/iter"
           }
         ]
