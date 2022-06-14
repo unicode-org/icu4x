@@ -142,20 +142,20 @@ where
 }
 
 /// This macro tests that an expression evaluates to a value that bakes to the same expression.
-/// 
-/// 
+///
+///
 /// ```
 /// # use crabbake::test_bake;
 /// test_bake!(18usize);
 /// ```
-/// 
-/// 
+///
+///
 /// As most output will need to reference its crate, and its not possible to name a crate from
 /// within it, the second (optional) parameter can be used to specify the crate name. The `crate`
 /// identifier in the original expression will be replaced by this in the expected output.
-/// 
+///
 /// This test will pass if `MyStruct::bake` returns `::my_crate::MyStruct(42usize)`:
-/// 
+///
 /// ```no_run
 /// # struct MyStruct(usize);
 /// # impl crabbake::Bakeable for MyStruct {
@@ -169,8 +169,8 @@ where
 /// );
 /// # }
 /// ```
-/// 
-/// 
+///
+///
 /// A third, optional, parameter is a list of crate names that are expected to be added to the
 /// `CrateEnv`. The `crate`-replacement crate will always be checked.
 #[macro_export]
