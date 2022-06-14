@@ -9,7 +9,7 @@ use core::convert::TryFrom;
 use core::convert::TryInto;
 use core::ops::{Add, Sub};
 use core::str::FromStr;
-use tinystr::{TinyStr16, TinyStr8};
+use tinystr::{TinyStr16, TinyStr4};
 
 #[derive(Copy, Clone, Debug, PartialEq)]
 #[allow(clippy::exhaustive_structs)] // this is a newtype
@@ -33,7 +33,7 @@ pub struct Year {
 /// TODO(#486): Implement month codes.
 #[derive(Clone, Debug, PartialEq)]
 #[allow(clippy::exhaustive_structs)] // this is a newtype
-pub struct MonthCode(pub TinyStr8);
+pub struct MonthCode(pub TinyStr4);
 
 /// Representation of a formattable month.
 #[derive(Clone, Debug, PartialEq)]
