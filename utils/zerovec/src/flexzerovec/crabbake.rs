@@ -73,7 +73,7 @@ mod test {
     fn test_baked_vec() {
         let reference: FlexZeroVec = FlexZeroVec::parse_byte_slice(BYTES).expect("parse");
         assert_eq!(baked::BAKED_VEC, reference);
-        let mut ctx = crabbake::CrateEnv::default();
+        let ctx = crabbake::CrateEnv::default();
         let actual_tokens = reference.bake(&ctx);
         assert_eq!(
             actual_tokens.to_string(),
@@ -87,7 +87,7 @@ mod test {
     fn test_baked_slice() {
         let reference: &FlexZeroSlice = FlexZeroSlice::parse_byte_slice(BYTES).expect("parse");
         assert_eq!(baked::BAKED_SLICE, reference);
-        let mut ctx = crabbake::CrateEnv::default();
+        let ctx = crabbake::CrateEnv::default();
         let actual_tokens = reference.bake(&ctx);
         assert_eq!(
             actual_tokens.to_string(),
