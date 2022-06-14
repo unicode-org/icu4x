@@ -145,7 +145,7 @@ impl From<&cldr_serde::likely_subtags::Resource> for LikelySubtagsV1<'static> {
 
 #[test]
 fn test_basic() {
-    use icu_locid::script;
+    use icu_locid::{language, region, script};
 
     let provider = LikelySubtagsProvider::from(&SourceData::for_test());
     let result: DataPayload<LikelySubtagsV1Marker> = provider
@@ -154,7 +154,7 @@ fn test_basic() {
         .take_payload()
         .unwrap();
 
-    let entry = result.get().script.get(&(script!("Glag").into())).unwrap();
-    assert_eq!(entry.0, "cu");
-    assert_eq!(entry.1, "BG");
+    let entry = result.get().script.get(&script!("Glag").into()).unwrap();
+    assert_eq!(entry.0, language!("cu"));
+    assert_eq!(entry.1, region!("BG"));
 }
