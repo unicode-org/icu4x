@@ -25,10 +25,8 @@
 
     .. js:attribute:: grouping_strategy
 
-    .. js:attribute:: sign_display
+    .. js:attribute:: work_around_diplomat_issue_173_do_not_use_this_field
 
     .. js:staticfunction:: default()
 
 .. js:class:: ICU4XFixedDecimalGroupingStrategy
-
-.. js:class:: ICU4XFixedDecimalSignDisplay

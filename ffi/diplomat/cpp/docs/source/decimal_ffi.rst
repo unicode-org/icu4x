@@ -30,7 +30,7 @@
 
     .. cpp:member:: ICU4XFixedDecimalGroupingStrategy grouping_strategy
 
-    .. cpp:member:: ICU4XFixedDecimalSignDisplay sign_display
+    .. cpp:member:: int8_t work_around_diplomat_issue_173_do_not_use_this_field
 
     .. cpp:function:: static ICU4XFixedDecimalFormatOptions default_()
 
@@ -43,15 +43,3 @@
     .. cpp:enumerator:: Always
 
     .. cpp:enumerator:: Min2
-
-.. cpp:enum-struct:: ICU4XFixedDecimalSignDisplay
-
-    .. cpp:enumerator:: Auto
-
-    .. cpp:enumerator:: Never
-
-    .. cpp:enumerator:: Always
-
-    .. cpp:enumerator:: ExceptZero
-
-    .. cpp:enumerator:: Negative

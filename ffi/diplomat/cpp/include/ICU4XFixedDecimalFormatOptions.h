@@ -10,11 +10,10 @@
 extern "C" {
 #endif
 #include "ICU4XFixedDecimalGroupingStrategy.h"
-#include "ICU4XFixedDecimalSignDisplay.h"
 
 typedef struct ICU4XFixedDecimalFormatOptions {
     ICU4XFixedDecimalGroupingStrategy grouping_strategy;
-    ICU4XFixedDecimalSignDisplay sign_display;
+    int8_t work_around_diplomat_issue_173_do_not_use_this_field;
 } ICU4XFixedDecimalFormatOptions;
 
 ICU4XFixedDecimalFormatOptions ICU4XFixedDecimalFormatOptions_default();

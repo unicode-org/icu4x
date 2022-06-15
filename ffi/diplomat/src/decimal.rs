@@ -37,6 +37,9 @@ pub mod ffi {
 
     pub struct ICU4XFixedDecimalFormatOptions {
         pub grouping_strategy: ICU4XFixedDecimalGroupingStrategy,
+        // JS code generation does not support single-field structures.
+        // See https://github.com/rust-diplomat/diplomat/issues/173.
+        work_around_diplomat_issue_173_do_not_use_this_field: i8,
     }
 
     impl ICU4XFixedDecimalFormatOptions {
