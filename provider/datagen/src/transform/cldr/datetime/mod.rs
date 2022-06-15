@@ -251,7 +251,17 @@ mod test {
             .take_payload()
             .unwrap();
 
-        assert_eq!("srpna", cs_dates.get().months.format.wide.0.get(&MonthCode(tinystr!(4, "M07"))).unwrap());
+        assert_eq!(
+            "srpna",
+            cs_dates
+                .get()
+                .months
+                .format
+                .wide
+                .0
+                .get(&MonthCode(tinystr!(4, "M08")))
+                .unwrap()
+        );
 
         assert_eq!(
             "po",
