@@ -7,8 +7,8 @@
 use crate::grouper;
 use crate::options::*;
 use crate::provider::*;
-use crate::sign_selector;
 use fixed_decimal::FixedDecimal;
+use fixed_decimal::Sign;
 use writeable::Writeable;
 
 /// An intermediate structure returned by [`FixedDecimalFormat`](crate::FixedDecimalFormat).
@@ -22,11 +22,10 @@ pub struct FormattedFixedDecimal<'l> {
 
 impl<'l> FormattedFixedDecimal<'l> {
     fn get_affixes(&self) -> Option<&AffixesV1> {
-        use sign_selector::SignSelection::*;
-        match sign_selector::select(self.value.signum(), self.options.sign_display) {
-            Minus => Some(&self.symbols.minus_sign_affixes),
-            Neither => None,
-            Plus => Some(&self.symbols.plus_sign_affixes),
+        match self.value.sign() {
+            Sign::Negative => Some(&self.symbols.minus_sign_affixes),
+            Sign::None => None,
+            Sign::Positive => Some(&self.symbols.plus_sign_affixes),
         }
     }
 }

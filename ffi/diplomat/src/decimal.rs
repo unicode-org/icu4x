@@ -7,7 +7,7 @@ pub mod ffi {
     use alloc::boxed::Box;
     use diplomat_runtime::DiplomatResult;
     use icu_decimal::{
-        options::{FixedDecimalFormatOptions, GroupingStrategy, SignDisplay},
+        options::{FixedDecimalFormatOptions, GroupingStrategy},
         provider::DecimalSymbolsV1Marker,
         FixedDecimalFormat,
     };
@@ -35,24 +35,14 @@ pub mod ffi {
         Min2,
     }
 
-    pub enum ICU4XFixedDecimalSignDisplay {
-        Auto,
-        Never,
-        Always,
-        ExceptZero,
-        Negative,
-    }
-
     pub struct ICU4XFixedDecimalFormatOptions {
         pub grouping_strategy: ICU4XFixedDecimalGroupingStrategy,
-        pub sign_display: ICU4XFixedDecimalSignDisplay,
     }
 
     impl ICU4XFixedDecimalFormatOptions {
         pub fn default() -> ICU4XFixedDecimalFormatOptions {
             ICU4XFixedDecimalFormatOptions {
                 grouping_strategy: ICU4XFixedDecimalGroupingStrategy::Auto,
-                sign_display: ICU4XFixedDecimalSignDisplay::Auto,
             }
         }
     }
@@ -108,16 +98,8 @@ pub mod ffi {
                 ICU4XFixedDecimalGroupingStrategy::Always => GroupingStrategy::Always,
                 ICU4XFixedDecimalGroupingStrategy::Min2 => GroupingStrategy::Min2,
             };
-            let sign_display = match options.sign_display {
-                ICU4XFixedDecimalSignDisplay::Auto => SignDisplay::Auto,
-                ICU4XFixedDecimalSignDisplay::Never => SignDisplay::Never,
-                ICU4XFixedDecimalSignDisplay::Always => SignDisplay::Always,
-                ICU4XFixedDecimalSignDisplay::ExceptZero => SignDisplay::ExceptZero,
-                ICU4XFixedDecimalSignDisplay::Negative => SignDisplay::Negative,
-            };
             let mut options = FixedDecimalFormatOptions::default();
             options.grouping_strategy = grouping_strategy;
-            options.sign_display = sign_display;
 
             FixedDecimalFormat::try_new(langid, provider, options)
                 .map(|fdf| Box::new(ICU4XFixedDecimalFormat(fdf)))

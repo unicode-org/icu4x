@@ -13,7 +13,6 @@ use core::str::FromStr;
 
 use static_assertions::const_assert;
 
-use crate::signum::Signum;
 use crate::uint_iterator::IntIterator;
 
 use crate::Error;
@@ -420,6 +419,21 @@ impl FixedDecimal {
             Ok(()) => Ok(self),
             Err(err) => Err(err),
         }
+    }
+
+    /// Returns the sign.
+    /// # Examples
+    /// ```
+    /// use fixed_decimal::FixedDecimal;
+    /// use fixed_decimal::Sign;
+    /// # use std::str::FromStr;
+    ///
+    /// assert_eq!(FixedDecimal::from_str("1729").unwrap().sign(), Sign::None);
+    /// assert_eq!(FixedDecimal::from_str("-1729").unwrap().sign(), Sign::Negative);
+    /// assert_eq!(FixedDecimal::from_str("+1729").unwrap().sign(), Sign::Positive);
+    /// ```
+    pub fn sign(&self) -> Sign {
+        self.sign
     }
 
     /// Change the sign to the one given.
@@ -1238,34 +1252,6 @@ impl FixedDecimal {
         let new_len = self.digits.len() + inner_zeroes;
         self.digits.resize_with(new_len, || 0);
         self.digits.extend_from_slice(new_digits);
-    }
-
-    /// Returns the [Signum][Signum] of this FixedDecimal.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use fixed_decimal::FixedDecimal;
-    /// use fixed_decimal::Signum;
-    /// # use std::str::FromStr;
-    ///
-    /// assert_eq!(Signum::AboveZero, FixedDecimal::from(42).signum());
-    /// assert_eq!(Signum::PositiveZero, FixedDecimal::from(0).signum());
-    /// assert_eq!(
-    ///     Signum::NegativeZero,
-    ///     FixedDecimal::from_str("-0").unwrap().signum()
-    /// );
-    /// assert_eq!(Signum::BelowZero, FixedDecimal::from(-42).signum());
-    /// ```
-    pub fn signum(&self) -> Signum {
-        let is_zero = self.digits.is_empty();
-        let is_negative = self.sign == Sign::Negative;
-        match (is_negative, is_zero) {
-            (false, false) => Signum::AboveZero,
-            (false, true) => Signum::PositiveZero,
-            (true, false) => Signum::BelowZero,
-            (true, true) => Signum::NegativeZero,
-        }
     }
 
     /// Assert that the invariants among struct fields are enforced. Returns true if all are okay.
@@ -2560,49 +2546,6 @@ fn test_syntax_error() {
                 assert_eq!(cas.expected_err, Some(err), "{:?}", cas);
             }
         }
-    }
-}
-
-#[test]
-fn test_signum_zero() {
-    #[derive(Debug)]
-    struct TestCase {
-        pub fixed_decimal: FixedDecimal,
-        pub expected_signum: Signum,
-    }
-    let cases = [
-        TestCase {
-            fixed_decimal: Default::default(),
-            expected_signum: Signum::PositiveZero,
-        },
-        TestCase {
-            fixed_decimal: FixedDecimal::from(0),
-            expected_signum: Signum::PositiveZero,
-        },
-        TestCase {
-            fixed_decimal: FixedDecimal::from_str("-0").unwrap(),
-            expected_signum: Signum::NegativeZero,
-        },
-        TestCase {
-            fixed_decimal: FixedDecimal::from_str("0").unwrap(),
-            expected_signum: Signum::PositiveZero,
-        },
-        TestCase {
-            fixed_decimal: FixedDecimal::from_str("000").unwrap(),
-            expected_signum: Signum::PositiveZero,
-        },
-        TestCase {
-            fixed_decimal: FixedDecimal::from_str("-0.000").unwrap(),
-            expected_signum: Signum::NegativeZero,
-        },
-        TestCase {
-            fixed_decimal: FixedDecimal::from_str("000.000").unwrap(),
-            expected_signum: Signum::PositiveZero,
-        },
-    ];
-    for cas in &cases {
-        let signum = cas.fixed_decimal.signum();
-        assert_eq!(cas.expected_signum, signum, "{:?}", cas);
     }
 }
 

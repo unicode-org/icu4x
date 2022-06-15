@@ -52,7 +52,6 @@
 
 pub mod decimal;
 mod ops;
-pub mod signum;
 mod uint_iterator;
 
 #[cfg(feature = "ryu")]
@@ -62,7 +61,6 @@ pub use decimal::FixedDecimal;
 pub use decimal::RoundingMode;
 pub use decimal::Sign;
 use displaydoc::Display;
-pub use signum::Signum;
 
 #[derive(Display, Debug, PartialEq)]
 pub enum Error {

@@ -8,7 +8,7 @@
 #![no_main] // https://github.com/unicode-org/icu4x/issues/395
 
 use fixed_decimal::FixedDecimal;
-use icu_decimal::{options, FixedDecimalFormat};
+use icu_decimal::{FixedDecimalFormat};
 use icu_locid::locale;
 use writeable::Writeable;
 
@@ -28,10 +28,7 @@ fn main(_argc: isize, _argv: *const *const u8) -> isize {
 
     let provider = icu_testdata::get_provider();
 
-    let mut options: options::FixedDecimalFormatOptions = Default::default();
-    options.sign_display = options::SignDisplay::ExceptZero;
-
-    let fdf = FixedDecimalFormat::try_new(locale!("bn"), &provider, options)
+    let fdf = FixedDecimalFormat::try_new(locale!("bn"), &provider, Default::default())
         .expect("Failed to create FixedDecimalFormat instance.");
 
     for line in LINES_REMOVED_ADDED.iter() {

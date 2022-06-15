@@ -16,7 +16,7 @@ use crate::{
 use alloc::string::String;
 
 use icu_decimal::{
-    options::{FixedDecimalFormatOptions, GroupingStrategy, SignDisplay},
+    options::{FixedDecimalFormatOptions, GroupingStrategy},
     provider::DecimalSymbolsV1Marker,
     FixedDecimalFormat,
 };
@@ -107,7 +107,6 @@ impl DateTimeFormat {
 
         let mut fixed_decimal_format_options = FixedDecimalFormatOptions::default();
         fixed_decimal_format_options.grouping_strategy = GroupingStrategy::Never;
-        fixed_decimal_format_options.sign_display = SignDisplay::Never;
 
         let fixed_decimal_format = FixedDecimalFormat::try_new(
             locale_no_extensions,
