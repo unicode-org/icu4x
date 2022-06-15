@@ -297,6 +297,13 @@ mod tests {
             expected_region_chain: &["es-AR", "und-AR"],
         },
         TestCase {
+            input: "hi-IN",
+            requires_data: true,
+            extension_kw: None,
+            expected_language_chain: &["hi-IN", "hi"],
+            expected_region_chain: &["hi-IN", "und-IN"],
+        },
+        TestCase {
             input: "hi-Latn-IN",
             requires_data: true,
             extension_kw: None,
