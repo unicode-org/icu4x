@@ -290,55 +290,101 @@ where
 #[allow(non_camel_case_types)]
 mod test {
     use super::*;
-    use crate::{VarZeroSlice, ZeroSlice};
+    use crate::{vecs::FlexZeroSlice, VarZeroSlice, ZeroSlice};
+
+    // Note: The following derives cover Yoke as well as Serde and CrabBake. These may partially
+    // duplicate tests elsewhere in this crate, but they are here for completeness.
 
     #[derive(yoke::Yokeable, zerofrom::ZeroFrom)]
+    #[cfg_attr(feature = "serde", derive(serde::Deserialize, serde::Serialize))]
+    #[cfg_attr(feature = "crabbake", derive(crabbake::Bakeable), crabbake(path = zerovec::yoke_impl::test))]
     struct DeriveTest_ZeroVec<'data> {
+        #[cfg_attr(feature = "serde", serde(borrow))]
         _data: ZeroVec<'data, u16>,
     }
 
-    #[derive(yoke::Yokeable, zerofrom::ZeroFrom)]
-    struct DeriveTest_FlexZeroVec<'data> {
-        _data: FlexZeroVec<'data>,
+    #[derive(yoke::Yokeable)]
+    #[cfg_attr(feature = "serde", derive(serde::Deserialize, serde::Serialize))]
+    #[cfg_attr(feature = "crabbake", derive(crabbake::Bakeable), crabbake(path = zerovec::yoke_impl::test))]
+    struct DeriveTest_ZeroSlice<'data> {
+        #[cfg_attr(feature = "serde", serde(borrow))]
+        _data: &'data ZeroSlice<u16>,
     }
 
     #[derive(yoke::Yokeable, zerofrom::ZeroFrom)]
+    #[cfg_attr(feature = "serde", derive(serde::Deserialize, serde::Serialize))]
+    #[cfg_attr(feature = "crabbake", derive(crabbake::Bakeable), crabbake(path = zerovec::yoke_impl::test))]
+    struct DeriveTest_FlexZeroVec<'data> {
+        #[cfg_attr(feature = "serde", serde(borrow))]
+        _data: FlexZeroVec<'data>,
+    }
+
+    #[derive(yoke::Yokeable)]
+    #[cfg_attr(feature = "serde", derive(serde::Deserialize, serde::Serialize))]
+    #[cfg_attr(feature = "crabbake", derive(crabbake::Bakeable), crabbake(path = zerovec::yoke_impl::test))]
+    struct DeriveTest_FlexZeroSlice<'data> {
+        #[cfg_attr(feature = "serde", serde(borrow))]
+        _data: &'data FlexZeroSlice,
+    }
+
+    #[derive(yoke::Yokeable, zerofrom::ZeroFrom)]
+    #[cfg_attr(feature = "serde", derive(serde::Deserialize, serde::Serialize))]
+    #[cfg_attr(feature = "crabbake", derive(crabbake::Bakeable), crabbake(path = zerovec::yoke_impl::test))]
     struct DeriveTest_VarZeroVec<'data> {
+        #[cfg_attr(feature = "serde", serde(borrow))]
         _data: VarZeroVec<'data, str>,
     }
 
     #[derive(yoke::Yokeable)]
+    #[cfg_attr(feature = "serde", derive(serde::Deserialize, serde::Serialize))]
+    #[cfg_attr(feature = "crabbake", derive(crabbake::Bakeable), crabbake(path = zerovec::yoke_impl::test))]
     struct DeriveTest_VarZeroSlice<'data> {
+        #[cfg_attr(feature = "serde", serde(borrow))]
         _data: &'data VarZeroSlice<str>,
     }
 
     #[derive(yoke::Yokeable, zerofrom::ZeroFrom)]
+    #[cfg_attr(feature = "serde", derive(serde::Deserialize, serde::Serialize))]
+    #[cfg_attr(feature = "crabbake", derive(crabbake::Bakeable), crabbake(path = zerovec::yoke_impl::test))]
     #[yoke(prove_covariance_manually)]
     struct DeriveTest_ZeroMap<'data> {
+        #[cfg_attr(feature = "serde", serde(borrow))]
         _data: ZeroMap<'data, [u8], str>,
     }
 
     #[derive(yoke::Yokeable)]
+    #[cfg_attr(feature = "serde", derive(serde::Deserialize, serde::Serialize))]
+    #[cfg_attr(feature = "crabbake", derive(crabbake::Bakeable), crabbake(path = zerovec::yoke_impl::test))]
     #[yoke(prove_covariance_manually)]
     struct DeriveTest_ZeroMapBorrowed<'data> {
+        #[cfg_attr(feature = "serde", serde(borrow))]
         _data: ZeroMapBorrowed<'data, [u8], str>,
     }
 
     #[derive(yoke::Yokeable, zerofrom::ZeroFrom)]
+    #[cfg_attr(feature = "serde", derive(serde::Deserialize, serde::Serialize))]
+    #[cfg_attr(feature = "crabbake", derive(crabbake::Bakeable), crabbake(path = zerovec::yoke_impl::test))]
     #[yoke(prove_covariance_manually)]
     struct DeriveTest_ZeroMapWithULE<'data> {
+        #[cfg_attr(feature = "serde", serde(borrow))]
         _data: ZeroMap<'data, ZeroSlice<u32>, str>,
     }
 
     #[derive(yoke::Yokeable, zerofrom::ZeroFrom)]
+    #[cfg_attr(feature = "serde", derive(serde::Deserialize, serde::Serialize))]
+    #[cfg_attr(feature = "crabbake", derive(crabbake::Bakeable), crabbake(path = zerovec::yoke_impl::test))]
     #[yoke(prove_covariance_manually)]
     struct DeriveTest_ZeroMap2d<'data> {
+        #[cfg_attr(feature = "serde", serde(borrow))]
         _data: ZeroMap2d<'data, u16, u16, str>,
     }
 
     #[derive(yoke::Yokeable)]
+    #[cfg_attr(feature = "serde", derive(serde::Deserialize, serde::Serialize))]
+    #[cfg_attr(feature = "crabbake", derive(crabbake::Bakeable), crabbake(path = zerovec::yoke_impl::test))]
     #[yoke(prove_covariance_manually)]
     struct DeriveTest_ZeroMap2dBorrowed<'data> {
+        #[cfg_attr(feature = "serde", serde(borrow))]
         _data: ZeroMap2dBorrowed<'data, u16, u16, str>,
     }
 }

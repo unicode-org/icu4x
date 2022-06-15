@@ -69,7 +69,7 @@
 
     .. js:function:: set_paragraph_in_text(n)
 
-        Given a paragraph index ``n`` within the surrounding text, this sets this object to the paragraph at that index. Returns an error when out of bounds.
+        Given a paragraph index ``n`` within the surrounding text, this sets this object to the paragraph at that index. Returns ``ICU4XError::OutOfBoundsError`` when out of bounds.
         This is equivalent to calling ``paragraph_at()`` on ``ICU4XBidiInfo`` but doesn't create a new object
 
     .. js:function:: direction()

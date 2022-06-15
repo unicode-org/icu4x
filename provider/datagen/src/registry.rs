@@ -15,6 +15,7 @@ pub fn get_all_keys() -> Vec<ResourceKey> {
         icu_datetime::provider::time_zones::ExemplarCitiesV1Marker::KEY,
         icu_datetime::provider::time_zones::MetaZoneGenericNamesLongV1Marker::KEY,
         icu_datetime::provider::time_zones::MetaZoneGenericNamesShortV1Marker::KEY,
+        icu_datetime::provider::time_zones::MetaZonePeriodV1Marker::KEY,
         icu_datetime::provider::time_zones::MetaZoneSpecificNamesLongV1Marker::KEY,
         icu_datetime::provider::time_zones::MetaZoneSpecificNamesShortV1Marker::KEY,
         icu_datetime::provider::week_data::WeekDataV1Marker::KEY,

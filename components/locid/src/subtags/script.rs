@@ -38,7 +38,7 @@ impl Script {
     ///
     /// let script = Script::from_bytes(b"Latn").expect("Parsing failed.");
     ///
-    /// assert_eq!(script, "Latn");
+    /// assert_eq!(script.as_str(), "Latn");
     /// ```
     pub const fn from_bytes(v: &[u8]) -> Result<Self, ParserError> {
         Self::from_bytes_manual_slice(v, 0, v.len())
@@ -102,7 +102,7 @@ impl Script {
     ///
     /// let raw = script.into_raw();
     /// let script = unsafe { Script::from_raw_unchecked(raw) };
-    /// assert_eq!(script, "Latn");
+    /// assert_eq!(script.as_str(), "Latn");
     /// ```
     pub fn into_raw(self) -> [u8; 4] {
         *self.0.all_bytes()
@@ -120,7 +120,7 @@ impl Script {
     ///
     /// let raw = script.into_raw();
     /// let script = unsafe { Script::from_raw_unchecked(raw) };
-    /// assert_eq!(script, "Latn");
+    /// assert_eq!(script.as_str(), "Latn");
     /// ```
     ///
     /// # Safety
@@ -149,6 +149,29 @@ impl Script {
     pub fn as_str(&self) -> &str {
         self.0.as_str()
     }
+
+    /// Compare this `Script` with BCP-47 bytes.
+    ///
+    /// The return value is equivalent to what would happen if you first converted this
+    /// `Script` to a BCP-47 string and then performed a byte comparison.
+    ///
+    /// This function is case-sensitive and results in a *total order*, so it is appropriate for
+    /// binary search. The only argument producing [`Ordering::Equal`](core::cmp::Ordering::Equal)
+    /// is `self.to_string()`.
+    #[inline]
+    pub fn strict_cmp(&self, other: &[u8]) -> core::cmp::Ordering {
+        self.as_str().as_bytes().cmp(other)
+    }
+
+    /// Compare this `Script` with a potentially unnormalized BCP-47 string.
+    ///
+    /// The return value is equivalent to what would happen if you first parsed the
+    /// BCP-47 string to a `Script` and then performed a structucal comparison.
+    ///
+    #[inline]
+    pub fn normalizing_eq(&self, other: &str) -> bool {
+        self.as_str().eq_ignore_ascii_case(other)
+    }
 }
 
 impl FromStr for Script {
@@ -160,12 +183,6 @@ impl FromStr for Script {
 }
 
 impl_writeable_for_single_subtag!(Script, "Mymr");
-
-impl PartialEq<&str> for Script {
-    fn eq(&self, other: &&str) -> bool {
-        self.as_str() == *other
-    }
-}
 
 impl<'l> From<&'l Script> for &'l str {
     fn from(input: &'l Script) -> Self {

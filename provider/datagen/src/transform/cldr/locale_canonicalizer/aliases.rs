@@ -147,7 +147,7 @@ impl From<&cldr_serde::aliases::Resource> for AliasesV1<'_> {
                                 && !replacement.language.is_empty()
                                 && replacement.script.is_none()
                                 && replacement.region.is_none()
-                                && replacement.variants == subtags::Variants::new() =>
+                                && replacement.variants.is_empty() =>
                         {
                             sgn_region.insert(&region.into(), &replacement.language);
                         }

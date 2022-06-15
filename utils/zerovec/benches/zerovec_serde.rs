@@ -91,22 +91,23 @@ fn char_benches(c: &mut Criterion) {
         'ⶢ', '⺇', 'Ⱜ', '◁', '◩', '⌂', '⼅', '⏻', '⢜', '◊', 'ⲫ', '⏷', '◢', '⟉', '℞',
     ];
 
+    let char_zero_vec = &ZeroVec::alloc_from_slice(ORIGINAL_CHARS);
+
     c.bench_function("zerovec_serde/serialize/char/slice", |b| {
-        b.iter(|| bincode::serialize(&Vec::from(ORIGINAL_CHARS)));
+        b.iter(|| bincode::serialize(black_box(&Vec::from(ORIGINAL_CHARS))));
     });
 
     c.bench_function("zerovec_serde/deserialize/char/slice", |b| {
-        let buffer = bincode::serialize(&Vec::from(ORIGINAL_CHARS)).unwrap();
+        let buffer = bincode::serialize(black_box(&Vec::from(ORIGINAL_CHARS))).unwrap();
         b.iter(|| bincode::deserialize::<Vec<char>>(&buffer));
     });
 
     c.bench_function("zerovec_serde/serialize/char/zerovec", |b| {
-        b.iter(|| bincode::serialize(&ZeroVec::from_slice_or_alloc(black_box(ORIGINAL_CHARS))));
+        b.iter(|| bincode::serialize(black_box(char_zero_vec)));
     });
 
     c.bench_function("zerovec_serde/deserialize/char/zerovec", |b| {
-        let buffer =
-            bincode::serialize(&ZeroVec::from_slice_or_alloc(black_box(ORIGINAL_CHARS))).unwrap();
+        let buffer = bincode::serialize(black_box(char_zero_vec)).unwrap();
         b.iter(|| bincode::deserialize::<ZeroVec<char>>(&buffer));
     });
 }

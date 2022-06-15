@@ -8,6 +8,12 @@ pub(crate) mod owned;
 pub(crate) mod slice;
 pub(crate) mod vec;
 
+#[cfg(feature = "crabbake")]
+mod crabbake;
+
+#[cfg(feature = "serde")]
+mod serde;
+
 pub use owned::FlexZeroVecOwned;
 pub(crate) use slice::chunk_to_usize;
 pub use slice::FlexZeroSlice;

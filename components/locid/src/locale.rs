@@ -29,7 +29,7 @@ use core::str::FromStr;
 ///
 /// assert_eq!(loc.id.language, "en".parse::<Language>().unwrap());
 /// assert_eq!(loc.id.script, None);
-/// assert_eq!(loc.id.region, Some("US".parse::<Region>().unwrap()));
+/// assert_eq!(loc.id.region, "US".parse::<Region>().ok());
 /// assert_eq!(loc.id.variants.len(), 0);
 /// assert_eq!(loc.to_string(), "en-US-u-ca-buddhist");
 ///
@@ -62,9 +62,9 @@ use core::str::FromStr;
 ///     .expect("Failed to parse.");
 ///
 /// assert_eq!(loc.id.language, "en".parse::<Language>().unwrap());
-/// assert_eq!(loc.id.script, Some("Latn".parse::<Script>().unwrap()));
-/// assert_eq!(loc.id.region, Some("US".parse::<Region>().unwrap()));
-/// assert_eq!(loc.id.variants.get(0).unwrap(), "valencia");
+/// assert_eq!(loc.id.script, "Latn".parse::<Script>().ok());
+/// assert_eq!(loc.id.region, "US".parse::<Region>().ok());
+/// assert_eq!(loc.id.variants.get(0), "valencia".parse::<Variant>().ok().as_ref());
 /// ```
 /// [`Unicode Locale Identifier`]: https://unicode.org/reports/tr35/tr35.html#Unicode_locale_identifier
 #[derive(Default, PartialEq, Eq, Clone, Hash, PartialOrd, Ord)]
@@ -75,6 +75,11 @@ pub struct Locale {
     pub id: LanguageIdentifier,
     // Unicode Locale Extensions
     pub extensions: extensions::Extensions,
+}
+
+#[test]
+fn test() {
+    assert_eq!(core::mem::size_of::<Locale>(), 184);
 }
 
 impl Locale {

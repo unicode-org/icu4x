@@ -67,11 +67,11 @@ pub struct DataStruct<'data> {
 
 let data = DataStruct {
     nums: ZeroVec::from_slice_or_alloc(&[211, 281, 421, 461]),
-    chars: ZeroVec::from_slice_or_alloc(&['ö', '冇', 'म']),
+    chars: ZeroVec::alloc_from_slice(&['ö', '冇', 'म']),
     strs: VarZeroVec::from(&["hello", "world"]),
 };
 let bincode_bytes = bincode::serialize(&data).expect("Serialization should be successful");
-assert_eq!(bincode_bytes.len(), 74);
+assert_eq!(bincode_bytes.len(), 71);
 
 let deserialized: DataStruct =
     bincode::deserialize(&bincode_bytes).expect("Deserialization should be successful");
@@ -143,7 +143,7 @@ let data = Data { important_dates, important_people, birthdays_to_people };
 
 let bincode_bytes = bincode::serialize(&data)
     .expect("Serialization should be successful");
-assert_eq!(bincode_bytes.len(), 180);
+assert_eq!(bincode_bytes.len(), 176);
 
 let deserialized: Data = bincode::deserialize(&bincode_bytes)
     .expect("Deserialization should be successful");

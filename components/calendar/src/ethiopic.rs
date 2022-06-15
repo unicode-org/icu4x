@@ -8,31 +8,32 @@
 //! use icu::calendar::{ethiopic::Ethiopic, Date, DateTime};
 //!
 //! // `Date` type
-//! let date_iso = Date::new_iso_date_from_integers(1970, 1, 2)
+//! let date_iso = Date::new_iso_date(1970, 1, 2)
 //!     .expect("Failed to initialize ISO Date instance.");
 //! let date_ethiopic = Date::new_from_iso(date_iso, Ethiopic::new());
 //!
 //! // `DateTime` type
-//! let datetime_iso = DateTime::new_iso_datetime_from_integers(1970, 1, 2, 13, 1, 0)
+//! let datetime_iso = DateTime::new_iso_datetime(1970, 1, 2, 13, 1, 0)
 //!     .expect("Failed to initialize ISO DateTime instance.");
 //! let datetime_ethiopic = DateTime::new_from_iso(datetime_iso, Ethiopic::new());
 //!
 //! // `Date` checks
 //! assert_eq!(date_ethiopic.year().number, 1962);
-//! assert_eq!(date_ethiopic.month().number, 4);
+//! assert_eq!(date_ethiopic.month().ordinal, 4);
 //! assert_eq!(date_ethiopic.day_of_month().0, 24);
 //!
 //! // `DateTime` type
 //! assert_eq!(datetime_ethiopic.date.year().number, 1962);
-//! assert_eq!(datetime_ethiopic.date.month().number, 4);
+//! assert_eq!(datetime_ethiopic.date.month().ordinal, 4);
 //! assert_eq!(datetime_ethiopic.date.day_of_month().0, 24);
 //! assert_eq!(datetime_ethiopic.time.hour.number(), 13);
 //! assert_eq!(datetime_ethiopic.time.minute.number(), 1);
 //! assert_eq!(datetime_ethiopic.time.second.number(), 0);
 //! ```
 
+use crate::any_calendar::AnyCalendarKind;
 use crate::coptic::Coptic;
-use crate::iso::{Iso, IsoYear};
+use crate::iso::Iso;
 use crate::julian::Julian;
 use crate::{
     types, ArithmeticDate, Calendar, CalendarArithmetic, Date, DateDuration, DateDurationUnit,
@@ -117,30 +118,11 @@ impl Calendar for Ethiopic {
     }
 
     fn year(&self, date: &Self::DateInner) -> types::Year {
-        if self.0 {
-            types::Year {
-                era: types::Era(tinystr!(16, "mundi")),
-                number: date.0.year,
-                related_iso: date.0.year + 5493 + 8,
-            }
-        } else {
-            types::Year {
-                era: if date.0.year > 0 {
-                    types::Era(tinystr!(16, "incarnation"))
-                } else {
-                    types::Era(tinystr!(16, "before-incar"))
-                },
-                number: date.0.year,
-                related_iso: date.0.year + 5493 + 8,
-            }
-        }
+        Self::year_as_ethiopic(date.0.year, self.0)
     }
 
     fn month(&self, date: &Self::DateInner) -> types::Month {
-        types::Month {
-            number: date.0.month.into(),
-            code: types::MonthCode(tinystr!(8, "TODO")),
-        }
+        date.0.solar_month()
     }
 
     fn day_of_month(&self, date: &Self::DateInner) -> types::DayOfMonth {
@@ -148,19 +130,27 @@ impl Calendar for Ethiopic {
     }
 
     fn day_of_year_info(&self, date: &Self::DateInner) -> types::DayOfYearInfo {
-        let prev_year = IsoYear(date.0.year - 1);
-        let next_year = IsoYear(date.0.year + 1);
+        let prev_year = date.0.year - 1;
+        let next_year = date.0.year + 1;
         types::DayOfYearInfo {
             day_of_year: date.0.day_of_year(),
             days_in_year: date.0.days_in_year(),
-            prev_year: prev_year.into(),
-            days_in_prev_year: Ethiopic::days_in_year_direct(prev_year.0),
-            next_year: next_year.into(),
+            prev_year: Self::year_as_ethiopic(prev_year, self.0),
+            days_in_prev_year: Ethiopic::days_in_year_direct(prev_year),
+            next_year: Self::year_as_ethiopic(next_year, self.0),
         }
     }
 
     fn debug_name(&self) -> &'static str {
         "Ethiopic"
+    }
+
+    fn any_calendar_kind(&self) -> Option<AnyCalendarKind> {
+        if self.0 {
+            Some(AnyCalendarKind::Ethioaa)
+        } else {
+            Some(AnyCalendarKind::Ethiopic)
+        }
     }
 }
 
@@ -214,6 +204,26 @@ impl Ethiopic {
             365
         }
     }
+
+    fn year_as_ethiopic(year: i32, amete_alem: bool) -> types::Year {
+        if amete_alem {
+            types::Year {
+                era: types::Era(tinystr!(16, "mundi")),
+                number: year,
+                related_iso: year + 5493 + 8,
+            }
+        } else {
+            types::Year {
+                era: if year > 0 {
+                    types::Era(tinystr!(16, "incarnation"))
+                } else {
+                    types::Era(tinystr!(16, "before-incar"))
+                },
+                number: year,
+                related_iso: year + 5493 + 8,
+            }
+        }
+    }
 }
 
 impl Date<Ethiopic> {
@@ -226,7 +236,7 @@ impl Date<Ethiopic> {
     ///     Date::new_ethiopic_date(2014, 8, 25).expect("Failed to initialize Ethopic Date instance.");
     ///
     /// assert_eq!(date_ethiopic.year().number, 2014);
-    /// assert_eq!(date_ethiopic.month().number, 8);
+    /// assert_eq!(date_ethiopic.month().ordinal, 8);
     /// assert_eq!(date_ethiopic.day_of_month().0, 25);
     /// ```
     pub fn new_ethiopic_date(
@@ -260,7 +270,7 @@ impl DateTime<Ethiopic> {
     ///     .expect("Failed to initialize Ethiopic DateTime instance.");
     ///
     /// assert_eq!(datetime_ethiopic.date.year().number, 2014);
-    /// assert_eq!(datetime_ethiopic.date.month().number, 8);
+    /// assert_eq!(datetime_ethiopic.date.month().ordinal, 8);
     /// assert_eq!(datetime_ethiopic.date.day_of_month().0, 25);
     /// assert_eq!(datetime_ethiopic.time.hour.number(), 13);
     /// assert_eq!(datetime_ethiopic.time.minute.number(), 1);
@@ -288,7 +298,7 @@ mod test {
     #[test]
     fn test_leap_year() {
         // 11th September 2023 in gregorian is 6/13/2015 in ethiopic
-        let iso_date = Date::new_iso_date_from_integers(2023, 9, 11).unwrap();
+        let iso_date = Date::new_iso_date(2023, 9, 11).unwrap();
         let ethiopic_date = Ethiopic::new().date_from_iso(iso_date);
         assert_eq!(ethiopic_date.0.year, 2015);
         assert_eq!(ethiopic_date.0.month, 13);
@@ -297,7 +307,7 @@ mod test {
 
     #[test]
     fn test_iso_to_ethiopic_conversion_and_back() {
-        let iso_date = Date::new_iso_date_from_integers(1970, 1, 2).unwrap();
+        let iso_date = Date::new_iso_date(1970, 1, 2).unwrap();
         let date_ethiopic = Date::new_from_iso(iso_date, Ethiopic::new());
 
         assert_eq!(date_ethiopic.inner.0.year, 1962);
@@ -306,7 +316,7 @@ mod test {
 
         assert_eq!(
             date_ethiopic.to_iso(),
-            Date::new_iso_date_from_integers(1970, 1, 2).unwrap()
+            Date::new_iso_date(1970, 1, 2).unwrap()
         );
     }
 }

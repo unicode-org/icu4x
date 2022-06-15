@@ -58,11 +58,13 @@ members = [
 ]
 exclude = ["provider/testdata/data/const"]
 
-# Enable lto for WASM.
-# 2020-10-30: This currently doesn't work in .cargo/config:
-#   error: options `-C embed-bitcode=no` and `-C lto` are incompatible
 [profile.release]
+
+# LTO is needed for WASM and other size-optimized builds
+[profile.release-opt-size]
+inherits = "release"
 lto = true
+opt-level = "s"
 
 # Enable debug information specifically for memory profiling.
 # https://docs.rs/dhat/0.2.1/dhat/#configuration

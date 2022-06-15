@@ -15,6 +15,7 @@ namespace capi {
 
 class ICU4XDataProvider;
 class ICU4XBidi;
+#include "ICU4XError.hpp"
 class ICU4XBidiInfo;
 
 /**
@@ -39,7 +40,7 @@ class ICU4XBidi {
    * 
    * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu/properties/bidi/struct.BidiClassAdapter.html#method.new) for more information.
    */
-  static diplomat::result<ICU4XBidi, std::monostate> try_new(const ICU4XDataProvider& provider);
+  static diplomat::result<ICU4XBidi, ICU4XError> try_new(const ICU4XDataProvider& provider);
 
   /**
    * Use the data loaded in this object to process a string and calculate bidi information
@@ -94,13 +95,13 @@ class ICU4XBidi {
 #include "ICU4XDataProvider.hpp"
 #include "ICU4XBidiInfo.hpp"
 
-inline diplomat::result<ICU4XBidi, std::monostate> ICU4XBidi::try_new(const ICU4XDataProvider& provider) {
+inline diplomat::result<ICU4XBidi, ICU4XError> ICU4XBidi::try_new(const ICU4XDataProvider& provider) {
   auto diplomat_result_raw_out_value = capi::ICU4XBidi_try_new(provider.AsFFI());
-  diplomat::result<ICU4XBidi, std::monostate> diplomat_result_out_value;
+  diplomat::result<ICU4XBidi, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
     diplomat_result_out_value = diplomat::Ok(ICU4XBidi(diplomat_result_raw_out_value.ok));
   } else {
-    diplomat_result_out_value = diplomat::Err(std::monostate());
+    diplomat_result_out_value = diplomat::Err(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
   return diplomat_result_out_value;
 }
