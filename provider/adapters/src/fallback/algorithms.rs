@@ -11,7 +11,7 @@ use super::*;
 
 const SUBDIVISION_KEY: Key = unicode_ext_key!("sd");
 
-impl<'a> LocaleFallbackerForKey<'a> {
+impl<'a> LocaleFallbackerWithConfig<'a> {
     pub(crate) fn normalize(&self, ro: &mut ResourceOptions) {
         let language = ro.language();
         // 1. Populate the region
@@ -46,11 +46,9 @@ impl<'a> LocaleFallbackerForKey<'a> {
                         .get_copied(&language.into(), &region.into())
                         .unwrap_or(default_script)
                 {
-                    println!("Normalize A");
                     ro.set_script(None);
                 }
             } else if script == default_script {
-                println!("Normalize B");
                 ro.set_script(None);
             }
         }
@@ -71,6 +69,9 @@ impl<'a> LocaleFallbackerForKey<'a> {
 }
 
 impl<'a, 'b> LocaleFallbackIterator<'a, 'b> {
+    /// Performs one step of the locale fallback algorithm.
+    ///
+    /// The fallback is completed once the inner [`ResourceOptions`] becomes `und`.
     pub fn step(&mut self) -> &mut Self {
         match self.key_metadata.strategy {
             LocaleFallbackStrategy::LanguagePriority => self.step_language(),
@@ -85,14 +86,12 @@ impl<'a, 'b> LocaleFallbackIterator<'a, 'b> {
         if let Some(extension_kw) = self.key_metadata.extension_kw {
             if let Some(value) = ro.remove_unicode_ext(&extension_kw) {
                 self.backup_extension = Some(value);
-                println!("Fallback 1");
                 return;
             }
         }
         // 2. Remove the subdivision keyword
         if let Some(value) = ro.remove_unicode_ext(&SUBDIVISION_KEY) {
             self.backup_subdivision = Some(value);
-            println!("Fallback 2");
             return;
         }
         // 3. Assert that the locale is a language identifier
@@ -100,7 +99,6 @@ impl<'a, 'b> LocaleFallbackIterator<'a, 'b> {
         // 4. Remove variants
         if ro.has_variants() {
             self.backup_variants = Some(ro.clear_variants());
-            println!("Fallback 4");
             return;
         }
         // 5. Check for parent override
@@ -112,7 +110,6 @@ impl<'a, 'b> LocaleFallbackIterator<'a, 'b> {
             let lid = LanguageIdentifier::from(parent);
             ro.set_langid(lid);
             self.restore_extensions_variants();
-            println!("Fallback 5");
             return;
         }
         // 6. Add the script subtag if necessary
@@ -126,7 +123,6 @@ impl<'a, 'b> LocaleFallbackIterator<'a, 'b> {
                 {
                     ro.set_script(Some(script));
                     self.restore_extensions_variants();
-                    println!("Fallback 6");
                     return;
                 }
             }
@@ -134,14 +130,12 @@ impl<'a, 'b> LocaleFallbackIterator<'a, 'b> {
         // 7. Remove region
         if ro.region().is_some() {
             ro.set_region(None);
-            println!("Fallback 7");
             return;
         }
         // 8. Remove language+script
-        debug_assert!(!ro.language().is_empty());
+        debug_assert!(!ro.language().is_empty()); // don't call .step() on und
         ro.set_script(None);
         ro.set_language(Language::UND);
-        println!("Fallback 8");
     }
 
     fn step_region(&mut self) {
@@ -150,14 +144,12 @@ impl<'a, 'b> LocaleFallbackIterator<'a, 'b> {
         if let Some(extension_kw) = self.key_metadata.extension_kw {
             if let Some(value) = ro.remove_unicode_ext(&extension_kw) {
                 self.backup_extension = Some(value);
-                println!("Fallback 1");
                 return;
             }
         }
         // 2. Remove the subdivision keyword
         if let Some(value) = ro.remove_unicode_ext(&SUBDIVISION_KEY) {
             self.backup_subdivision = Some(value);
-            println!("Fallback 2");
             return;
         }
         // 3. Assert that the locale is a language identifier
@@ -165,7 +157,6 @@ impl<'a, 'b> LocaleFallbackIterator<'a, 'b> {
         // 4. Remove variants
         if ro.has_variants() {
             self.backup_variants = Some(ro.clear_variants());
-            println!("Fallback 4");
             return;
         }
         // 5. Remove language+script
@@ -173,12 +164,11 @@ impl<'a, 'b> LocaleFallbackIterator<'a, 'b> {
             ro.set_script(None);
             ro.set_language(Language::UND);
             self.restore_extensions_variants();
-            println!("Fallback 5");
             return;
         }
         // 6. Remove region
+        debug_assert!(ro.region().is_some()); // don't call .step() on und
         ro.set_region(None);
-        println!("Fallback 6");
     }
 
     fn restore_extensions_variants(&mut self) {
@@ -226,6 +216,28 @@ mod tests {
             extension_kw: None,
             expected_language_chain: &["en-US-u-sd-usca", "en-US", "en"],
             expected_region_chain: &["en-US-u-sd-usca", "en-US", "und-US-u-sd-usca", "und-US"],
+        },
+        TestCase {
+            input: "en-US-fonipa-u-hc-h12-sd-usca",
+            requires_data: false,
+            extension_kw: Some(unicode_ext_key!("hc")),
+            expected_language_chain: &[
+                "en-US-fonipa-u-hc-h12-sd-usca",
+                "en-US-fonipa-u-sd-usca",
+                "en-US-fonipa",
+                "en-US",
+                "en",
+            ],
+            expected_region_chain: &[
+                "en-US-fonipa-u-hc-h12-sd-usca",
+                "en-US-fonipa-u-sd-usca",
+                "en-US-fonipa",
+                "en-US",
+                "und-US-fonipa-u-hc-h12-sd-usca",
+                "und-US-fonipa-u-sd-usca",
+                "und-US-fonipa",
+                "und-US",
+            ],
         },
         TestCase {
             input: "en-u-hc-h12-sd-usca",
@@ -329,14 +341,14 @@ mod tests {
                     cas.expected_region_chain,
                 ),
             ] {
-                let key_metadata = LocaleFallbackKeyMetadata {
+                let key_metadata = LocaleFallbackConfig {
                     strategy,
                     extension_kw: cas.extension_kw,
                 };
                 let key_fallbacker = if cas.requires_data {
-                    fallbacker_with_data.for_key_metadata(key_metadata)
+                    fallbacker_with_data.for_config(key_metadata)
                 } else {
-                    fallbacker_no_data.for_key_metadata(key_metadata)
+                    fallbacker_no_data.for_config(key_metadata)
                 };
                 let loc = Locale::from_str(cas.input).unwrap();
                 let ro = ResourceOptions::from(loc);
