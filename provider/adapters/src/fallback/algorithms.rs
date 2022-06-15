@@ -9,7 +9,6 @@ use icu_locid::LanguageIdentifier;
 
 use super::*;
 
-const REGION_KEY: Key = unicode_ext_key!("rg");
 const SUBDIVISION_KEY: Key = unicode_ext_key!("sd");
 
 impl<'a> LocaleFallbackerForKey<'a> {
@@ -35,21 +34,23 @@ impl<'a> LocaleFallbackerForKey<'a> {
         // 2. Remove the script if it is implied by the other subtags
         if let Some(script) = ro.script() {
             if let Some(region) = ro.region() {
-                if let Ok(region_script) = self
-                    .likely_subtags
-                    .lr2s
-                    .get_copied(&language.into(), &region.into())
+                if script
+                    == self
+                        .likely_subtags
+                        .lr2s
+                        .get_copied(&language.into(), &region.into())
+                        .unwrap_or(DEFAULT_SCRIPT)
                 {
-                    if region_script == script {
-                        ro.set_script(None);
-                    }
-                } else if let Some(language_script) =
-                    self.likely_subtags.l2s.get_copied(&language.into())
-                {
-                    if language_script == script {
-                        ro.set_script(None);
-                    }
+                    ro.set_script(None);
                 }
+            } else if script
+                == self
+                    .likely_subtags
+                    .l2s
+                    .get_copied(&language.into())
+                    .unwrap_or(DEFAULT_SCRIPT)
+            {
+                ro.set_script(None);
             }
         }
         // 3. Remove irrelevant extension subtags
@@ -57,8 +58,6 @@ impl<'a> LocaleFallbackerForKey<'a> {
             match *key {
                 // Always retain -u-sd
                 SUBDIVISION_KEY => true,
-                // Retain -u-rg only in region fallback mode
-                REGION_KEY => self.key_metadata.strategy == LocaleFallbackStrategy::RegionPriority,
                 // Retain the query-specific keyword
                 _ if Some(*key) == self.key_metadata.extension_kw => true,
                 // Drop all others
@@ -201,92 +200,61 @@ mod tests {
     use icu_locid::Locale;
     use std::str::FromStr;
 
-    struct NormalizeTestCase {
+    struct TestCase {
         input: &'static str,
-        expected_language: &'static str,
-        extension_kw: Option<Key>,
         requires_data: bool,
-        expected_region: &'static str,
-    }
-
-    struct FallbackTestCase {
-        input: &'static str,
         extension_kw: Option<Key>,
-        requires_data: bool,
+        // Note: The first entry in the chain is the normalized locale
         expected_language_chain: &'static [&'static str],
         expected_region_chain: &'static [&'static str],
     }
 
     // TODO: Consider loading these from a JSON file
-    const NORMALIZE_TEST_CASES: &[NormalizeTestCase] = &[
-        NormalizeTestCase {
+    const TEST_CASES: &[TestCase] = &[
+        TestCase {
             input: "en-u-hc-h12-sd-usca",
             requires_data: false,
             extension_kw: None,
-            expected_language: "en-u-sd-usca",
-            expected_region: "en-u-sd-usca",
+            expected_language_chain: &["en-u-sd-usca", "en"],
+            expected_region_chain: &["en-u-sd-usca", "en", "und-u-sd-usca"],
         },
-        NormalizeTestCase {
-            input: "en-u-hc-h12-sd-usca",
+        TestCase {
+            input: "en-US-u-hc-h12-sd-usca",
             requires_data: false,
-            extension_kw: Some(unicode_ext_key!("hc")),
-            expected_language: "en-u-hc-h12-sd-usca",
-            expected_region: "en-u-hc-h12-sd-usca",
+            extension_kw: None,
+            expected_language_chain: &["en-US-u-sd-usca", "en-US", "en"],
+            expected_region_chain: &["en-US-u-sd-usca", "en-US", "und-US-u-sd-usca", "und-US"],
         },
-        NormalizeTestCase {
+        TestCase {
+            input: "en-u-hc-h12-sd-usca",
+            requires_data: true,
+            extension_kw: None,
+            expected_language_chain: &["en-US-u-sd-usca", "en-US", "en"],
+            expected_region_chain: &["en-US-u-sd-usca", "en-US", "und-US-u-sd-usca", "und-US"],
+        },
+        TestCase {
+            input: "en-Latn-US-u-sd-usca",
+            requires_data: true,
+            extension_kw: None,
+            expected_language_chain: &["en-US-u-sd-usca", "en-US", "en"],
+            expected_region_chain: &["en-US-u-sd-usca", "en-US", "und-US-u-sd-usca", "und-US"],
+        },
+        TestCase {
+            // NOTE: -u-rg is not yet supported; when it is, this test should be updated
             input: "en-u-rg-gbxxxx",
             requires_data: false,
             extension_kw: None,
-            expected_language: "en",
-            expected_region: "en-u-rg-gbxxxx",
+            expected_language_chain: &["en"],
+            expected_region_chain: &["en"],
         },
     ];
-
-    // TODO: Consider loading these from a JSON file
-    const FALLBACK_TEST_CASES: &[FallbackTestCase] = &[FallbackTestCase {
-        input: "en-US-u-hc-h12-sd-usca",
-        requires_data: false,
-        extension_kw: None,
-        expected_language_chain: &["en-US-u-sd-usca", "en-US", "en"],
-        expected_region_chain: &["en-US-u-sd-usca", "en-US", "und-US-u-sd-usca", "und-US"],
-    }];
-
-    #[test]
-    fn test_normalize() {
-        let fallbacker_no_data = LocaleFallbacker::new_without_data();
-        let provider = icu_testdata::get_provider();
-        let fallbacker_with_data = LocaleFallbacker::try_new(&provider).unwrap();
-        for cas in NORMALIZE_TEST_CASES {
-            for (strategy, expected) in [
-                (
-                    LocaleFallbackStrategy::LanguagePriority,
-                    cas.expected_language,
-                ),
-                (LocaleFallbackStrategy::RegionPriority, cas.expected_region),
-            ] {
-                let key_metadata = LocaleFallbackKeyMetadata {
-                    strategy: strategy,
-                    extension_kw: cas.extension_kw,
-                };
-                let key_fallbacker = if cas.requires_data {
-                    fallbacker_with_data.for_key_metadata(key_metadata)
-                } else {
-                    fallbacker_no_data.for_key_metadata(key_metadata)
-                };
-                let loc = Locale::from_str(cas.input).unwrap();
-                let mut ro = ResourceOptions::from(loc);
-                key_fallbacker.normalize(&mut ro);
-                assert_eq!(expected, ro.to_string());
-            }
-        }
-    }
 
     #[test]
     fn test_fallback() {
         let fallbacker_no_data = LocaleFallbacker::new_without_data();
         let provider = icu_testdata::get_provider();
         let fallbacker_with_data = LocaleFallbacker::try_new(&provider).unwrap();
-        for cas in FALLBACK_TEST_CASES {
+        for cas in TEST_CASES {
             for (strategy, expected_chain) in [
                 (
                     LocaleFallbackStrategy::LanguagePriority,
@@ -319,7 +287,13 @@ mod tests {
                     );
                     it.step();
                 }
-                assert_eq!("und", it.get().to_string());
+                assert_eq!(
+                    "und",
+                    it.get().to_string(),
+                    "{:?} ({:?})",
+                    cas.input,
+                    strategy
+                );
             }
         }
     }
