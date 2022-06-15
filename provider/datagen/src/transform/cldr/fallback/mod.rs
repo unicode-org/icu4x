@@ -2,33 +2,27 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use std::collections::{HashMap, HashSet};
-
 use crate::transform::cldr::cldr_serde;
 use crate::SourceData;
-use icu_locale_canonicalizer::provider::*;
-use icu_locid::{language, region, script, subtags::Script, LanguageIdentifier};
+
+use icu_locid::LanguageIdentifier;
 use icu_provider::datagen::IterableResourceProvider;
 use icu_provider::prelude::*;
 use icu_provider_adapters::fallback::provider::*;
-use tinystr::TinyAsciiStr;
-use writeable::Writeable;
-use zerovec::{maps::ZeroMap2d, ZeroMap, ZeroSlice};
 
-use super::LikelySubtagsProvider;
+use writeable::Writeable;
+use zerovec::{maps::ZeroMap2d, ZeroMap};
 
 /// A data provider reading from CLDR JSON likely subtags rule files.
 #[derive(Debug)]
 pub struct FallbackRulesProvider {
     source: SourceData,
-    likely_subtags_provider: LikelySubtagsProvider,
 }
 
 impl From<&SourceData> for FallbackRulesProvider {
     fn from(source: &SourceData) -> Self {
         FallbackRulesProvider {
             source: source.clone(),
-            likely_subtags_provider: source.into(),
         }
     }
 }
@@ -190,8 +184,7 @@ impl From<&cldr_serde::parent_locales::Resource> for LocaleFallbackParentsV1<'st
 
 #[test]
 fn test_basic() {
-    use icu_locid::langid;
-    use tinystr::tinystr;
+    use icu_locid::{langid, language, region, script};
 
     let provider = FallbackRulesProvider::from(&SourceData::for_test());
     let likely_subtags: DataPayload<LocaleFallbackLikelySubtagsV1Marker> = provider
