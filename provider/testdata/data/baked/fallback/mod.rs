@@ -1,2 +1,3 @@
 // @generated
-mod locale_v1;
+mod likelysubtags_v1;
+mod parents_v1;
