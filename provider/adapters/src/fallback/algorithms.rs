@@ -71,11 +71,12 @@ impl<'a> LocaleFallbackerForKey<'a> {
 }
 
 impl<'a, 'b> LocaleFallbackIterator<'a, 'b> {
-    pub fn step(&mut self) {
+    pub fn step(&mut self) -> &mut Self {
         match self.key_metadata.strategy {
             LocaleFallbackStrategy::LanguagePriority => self.step_language(),
             LocaleFallbackStrategy::RegionPriority => self.step_region(),
-        }
+        };
+        self
     }
 
     fn step_language(&mut self) {

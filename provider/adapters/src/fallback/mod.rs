@@ -3,6 +3,39 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 //! Locale fallbacking in data provider.
+//!
+//! # Examples
+//!
+//! Run the locale fallback algorithm:
+//!
+//! ```
+//! use icu_provider_adapters::fallback::LocaleFallbacker;
+//!
+//! // Set up a LocaleFallbacker with data.
+//! let provider = icu_testdata::get_provider();
+//! let fallbacker = LocaleFallbacker::try_new(&provider).expect("data");
+//!
+//! // Create a LocaleFallbackerForKey with metadata for a specific key.
+//! // By default, uses language priority with no additional extension keywords.
+//! let key_fallbacker = fallbacker.for_key_metadata(Default::default());
+//!
+//! // Set up the fallback iterator.
+//! let loc = icu_locid::locale!("hi-Latn-IN");
+//! let mut fallback_iterator = key_fallbacker.fallback_for(loc.into());
+//!
+//! // Run the algorithm and check the results.
+//! assert_eq!(fallback_iterator.get().to_string(), "hi-Latn-IN");
+//! fallback_iterator.step();
+//! assert_eq!(fallback_iterator.get().to_string(), "hi-Latn");
+//! fallback_iterator.step();
+//! assert_eq!(fallback_iterator.get().to_string(), "en-IN");
+//! fallback_iterator.step();
+//! assert_eq!(fallback_iterator.get().to_string(), "en-001");
+//! fallback_iterator.step();
+//! assert_eq!(fallback_iterator.get().to_string(), "en");
+//! fallback_iterator.step();
+//! assert_eq!(fallback_iterator.get().to_string(), "und");
+//! ```
 
 use icu_locid::extensions::unicode::{Key, Value};
 use icu_locid::subtags::Variants;
@@ -21,6 +54,13 @@ pub enum LocaleFallbackStrategy {
     RegionPriority,
 }
 
+impl Default for LocaleFallbackStrategy {
+    fn default() -> Self {
+        Self::LanguagePriority
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
 #[non_exhaustive]
 pub struct LocaleFallbackKeyMetadata {
     pub strategy: LocaleFallbackStrategy,
