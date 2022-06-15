@@ -51,7 +51,7 @@ macro_rules! symbols {
     }
 }
 
-symbols!(months, pub struct Symbols(LiteMap<String, String>););
+symbols!(months, pub struct Symbols(pub LiteMap<String, String>););
 
 symbols!(
     days,

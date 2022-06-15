@@ -3,14 +3,16 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::transform::cldr::cldr_serde;
+use icu_calendar::types::MonthCode;
 use icu_datetime::provider::calendar::*;
 use std::borrow::Cow;
 use std::collections::BTreeMap;
-use tinystr::{tinystr, TinyStr16};
+use tinystr::{tinystr, TinyStr16, TinyStr4};
+use zerovec::ZeroMap;
 
 pub fn convert_dates(other: &cldr_serde::ca::Dates, calendar: &str) -> DateSymbolsV1<'static> {
     DateSymbolsV1 {
-        months: other.months.get(&()),
+        months: other.months.get(&get_month_code_map(calendar)),
         weekdays: other.days.get(&()),
         day_periods: other.day_periods.get(&()),
         eras: convert_eras(&other.eras, calendar),
@@ -35,15 +37,28 @@ fn convert_eras(eras: &cldr_serde::ca::Eras, calendar: &str) -> Eras<'static> {
     out_eras
 }
 
-fn get_month_code_map(calendar: &str) -> &'static [&'static str] {
-    const THIRTEEN_MONTH_CODES: &[&str] = &[
-        "M01", "M02", "M03", "M04", "M05", "M06", "M07", "M08", "M09", "M10", "M11", "M12", "M13",
+fn get_month_code_map(calendar: &str) -> &'static [TinyStr4] {
+    // This will need to be more complicated to handle lunar calendars
+    // https://github.com/unicode-org/icu4x/issues/2066
+    static SOLAR_MONTH_CODES: &[TinyStr4] = &[
+        tinystr!(4, "M01"),
+        tinystr!(4, "M02"),
+        tinystr!(4, "M03"),
+        tinystr!(4, "M04"),
+        tinystr!(4, "M05"),
+        tinystr!(4, "M06"),
+        tinystr!(4, "M07"),
+        tinystr!(4, "M08"),
+        tinystr!(4, "M09"),
+        tinystr!(4, "M10"),
+        tinystr!(4, "M11"),
+        tinystr!(4, "M12"),
+        tinystr!(4, "M13"),
     ];
-    const TWELVE_MONTH_CODES: &[&str] = &THIRTEEN_MONTH_CODES[..12];
 
     match calendar {
-        "gregory" | "buddhist" | "japanese" | "indian" => TWELVE_MONTH_CODES,
-        "coptic" | "ethiopic" => THIRTEEN_MONTH_CODES,
+        "gregory" | "buddhist" | "japanese" | "indian" => &SOLAR_MONTH_CODES[0..12],
+        "coptic" | "ethiopic" => SOLAR_MONTH_CODES,
         #[allow(clippy::panic)] // Panics okay in datagen
         _ => panic!("Month map unknown for {}", calendar),
     }
@@ -178,11 +193,27 @@ macro_rules! symbols_from {
         }
     };
 }
-symbols_from!(
-    [months, months],
-    (),
-    [m1, m2, m3, m4, m5, m6, m7, m8, m9, m10, m11, m12],
-);
+symbols_from!([months, months], &'static [TinyStr4]);
+
+impl cldr_serde::ca::months::Symbols {
+    fn get(&self, ctx: &&'static [TinyStr4]) -> months::SymbolsV1<'static> {
+        let mut map: ZeroMap<MonthCode, str> = ZeroMap::default();
+        for (k, v) in self.0.iter() {
+            let index: usize = k
+                .parse()
+                .expect("CLDR month indices must parse as numbers!");
+            if index == 0 {
+                panic!("CLDR month indices cannot be zero");
+            }
+            let code = ctx
+                .get(index - 1)
+                .expect("Found out of bounds month index for calendar");
+
+            map.insert(&MonthCode(*code), v);
+        }
+        months::SymbolsV1(map)
+    }
+}
 
 symbols_from!([days, weekdays], (), [sun, mon, tue, wed, thu, fri, sat]);
 
