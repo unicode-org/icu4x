@@ -14,3 +14,8 @@ impl<const N: usize> Bakeable for TinyAsciiStr<N> {
         }
     }
 }
+
+#[test]
+fn test() {
+    test_bake!(crate::tinystr!(10usize, "foo"), tinystr);
+}
