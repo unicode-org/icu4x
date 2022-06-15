@@ -170,22 +170,24 @@ symbols!(
 #[cfg(all(test, feature = "datagen"))]
 mod test {
     use super::*;
+    use tinystr::tinystr;
 
     fn serialize() -> Vec<u8> {
-        let months = months::SymbolsV1([
-            Cow::Owned("January".to_string()),
-            Cow::Owned("February".to_string()),
-            Cow::Owned("March".to_string()),
-            Cow::Owned("April".to_string()),
-            Cow::Owned("May".to_string()),
-            Cow::Owned("June".to_string()),
-            Cow::Owned("July".to_string()),
-            Cow::Owned("August".to_string()),
-            Cow::Owned("September".to_string()),
-            Cow::Owned("October".to_string()),
-            Cow::Owned("November".to_string()),
-            Cow::Owned("December".to_string()),
-        ]);
+        let months = [
+            (&MonthCode(tinystr!(4, "M01")), "January"),
+            (&MonthCode(tinystr!(4, "M02")), "February"),
+            (&MonthCode(tinystr!(4, "M03")), "March"),
+            (&MonthCode(tinystr!(4, "M04")), "April"),
+            (&MonthCode(tinystr!(4, "M05")), "May"),
+            (&MonthCode(tinystr!(4, "M06")), "June"),
+            (&MonthCode(tinystr!(4, "M07")), "July"),
+            (&MonthCode(tinystr!(4, "M08")), "August"),
+            (&MonthCode(tinystr!(4, "M09")), "September"),
+            (&MonthCode(tinystr!(4, "M10")), "October"),
+            (&MonthCode(tinystr!(4, "M11")), "November"),
+            (&MonthCode(tinystr!(4, "M12")), "December"),
+        ];
+        let months = months::SymbolsV1(months.iter().copied().collect());
 
         let weekdays = weekdays::SymbolsV1([
             Cow::Owned("Monday".to_string()),
@@ -254,18 +256,6 @@ mod test {
             },
         })
         .unwrap()
-    }
-
-    #[test]
-    fn months_borrows() {
-        let bytes = serialize();
-        let de = bincode::deserialize::<DateSymbolsV1>(&bytes).unwrap();
-
-        assert!(matches!(de.months.format.narrow.0[2], Cow::Borrowed(_)));
-        assert!(matches!(
-            de.months.format.short.as_ref().unwrap().0[11],
-            Cow::Borrowed(_)
-        ));
     }
 
     #[test]
