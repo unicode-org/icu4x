@@ -237,6 +237,8 @@ mod test {
 
     #[test]
     fn test_basic_symbols() {
+        use icu_calendar::types::MonthCode;
+        use tinystr::tinystr;
         let provider = CommonDateProvider::from(&SourceData::for_test());
 
         let locale: Locale = "cs-u-ca-gregory".parse().unwrap();
@@ -249,7 +251,7 @@ mod test {
             .take_payload()
             .unwrap();
 
-        assert_eq!("srpna", cs_dates.get().months.format.wide.0[7]);
+        assert_eq!("srpna", cs_dates.get().months.format.wide.0.get(&MonthCode(tinystr!(4, "M07"))).unwrap());
 
         assert_eq!(
             "po",
