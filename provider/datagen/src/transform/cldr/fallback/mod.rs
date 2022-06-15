@@ -180,5 +180,24 @@ fn test_basic() {
         .take_payload()
         .unwrap();
 
-    println!("{:?}", data);
+    assert_eq!(
+        data.get().l2s.get_copied(&language!("zh").into()),
+        Some(script!("Hans"))
+    );
+    assert_eq!(
+        data.get()
+            .lr2s
+            .get_copied(&language!("zh").into(), &region!("TW").into()),
+        Ok(script!("Hant"))
+    );
+    assert_eq!(
+        data.get().l2r.get_copied(&language!("zh").into()),
+        Some(region!("CN"))
+    );
+    assert_eq!(
+        data.get()
+            .ls2r
+            .get_copied(&language!("zh").into(), &script!("Hant").into()),
+        Ok(region!("TW"))
+    );
 }
