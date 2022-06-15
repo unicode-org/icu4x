@@ -88,7 +88,7 @@ impl Fields {
     /// assert_eq!(&fields.to_string(), "");
     /// ```
     pub fn clear(&mut self) -> Self {
-        core::mem::replace(self, Default::default())
+        core::mem::take(self)
     }
 
     /// Returns `true` if the list contains a [`Value`] for the specified [`Key`].

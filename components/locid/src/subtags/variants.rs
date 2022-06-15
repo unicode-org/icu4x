@@ -95,7 +95,7 @@ impl Variants {
     /// assert_eq!(variants.to_string(), "");
     /// ```
     pub fn clear(&mut self) -> Self {
-        core::mem::replace(self, Default::default())
+        core::mem::take(self)
     }
 
     pub(crate) fn for_each_subtag_str<E, F>(&self, f: &mut F) -> Result<(), E>

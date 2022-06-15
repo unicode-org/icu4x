@@ -244,7 +244,7 @@ impl Keywords {
     /// assert_eq!(loc, "und-u-hello".parse().unwrap());
     /// ```
     pub fn clear(&mut self) -> Self {
-        core::mem::replace(self, Default::default())
+        core::mem::take(self)
     }
 
     /// Retains a subset of keywords as specified by the predicate function.
