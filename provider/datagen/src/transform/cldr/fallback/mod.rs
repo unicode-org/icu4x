@@ -171,7 +171,7 @@ impl From<&cldr_serde::parent_locales::Resource> for LocaleFallbackParentsV1<'st
 
         for (source, target) in source_data.supplemental.parent_locales.parent_locale.iter() {
             assert!(!source.language.is_empty());
-            if source.script.is_some() && source.region.is_none() {
+            if source.script.is_some() && source.region.is_none() && target == &LanguageIdentifier::UND {
                 // We always fall back from language-script to und
                 continue;
             }

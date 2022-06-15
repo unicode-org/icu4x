@@ -33,23 +33,24 @@ impl<'a> LocaleFallbackerForKey<'a> {
         }
         // 2. Remove the script if it is implied by the other subtags
         if let Some(script) = ro.script() {
+            let default_script = self
+                .likely_subtags
+                .l2s
+                .get_copied(&language.into())
+                .unwrap_or(DEFAULT_SCRIPT);
             if let Some(region) = ro.region() {
                 if script
                     == self
                         .likely_subtags
                         .lr2s
                         .get_copied(&language.into(), &region.into())
-                        .unwrap_or(DEFAULT_SCRIPT)
+                        .unwrap_or(default_script)
                 {
+                    println!("Normalize A");
                     ro.set_script(None);
                 }
-            } else if script
-                == self
-                    .likely_subtags
-                    .l2s
-                    .get_copied(&language.into())
-                    .unwrap_or(DEFAULT_SCRIPT)
-            {
+            } else if script == default_script {
+                println!("Normalize B");
                 ro.set_script(None);
             }
         }
@@ -233,6 +234,13 @@ mod tests {
             expected_region_chain: &["en-US-u-sd-usca", "en-US", "und-US-u-sd-usca", "und-US"],
         },
         TestCase {
+            input: "en-Latn-u-sd-usca",
+            requires_data: true,
+            extension_kw: None,
+            expected_language_chain: &["en-US-u-sd-usca", "en-US", "en"],
+            expected_region_chain: &["en-US-u-sd-usca", "en-US", "und-US-u-sd-usca", "und-US"],
+        },
+        TestCase {
             input: "en-Latn-US-u-sd-usca",
             requires_data: true,
             extension_kw: None,
@@ -246,6 +254,54 @@ mod tests {
             extension_kw: None,
             expected_language_chain: &["en"],
             expected_region_chain: &["en"],
+        },
+        TestCase {
+            input: "sr-ME",
+            requires_data: true,
+            extension_kw: None,
+            expected_language_chain: &["sr-ME", "sr-Latn-ME", "sr-Latn"],
+            expected_region_chain: &["sr-ME", "und-ME"],
+        },
+        TestCase {
+            input: "sr-ME-fonipa",
+            requires_data: true,
+            extension_kw: None,
+            expected_language_chain: &[
+                "sr-ME-fonipa",
+                "sr-ME",
+                "sr-Latn-ME-fonipa",
+                "sr-Latn-ME",
+                "sr-Latn",
+            ],
+            expected_region_chain: &["sr-ME-fonipa", "sr-ME", "und-ME-fonipa", "und-ME"],
+        },
+        TestCase {
+            input: "de-Latn-LI",
+            requires_data: true,
+            extension_kw: None,
+            expected_language_chain: &["de-LI", "de"],
+            expected_region_chain: &["de-LI", "und-LI"],
+        },
+        TestCase {
+            input: "ca-ES-valencia",
+            requires_data: true,
+            extension_kw: None,
+            expected_language_chain: &["ca-ES-valencia", "ca-ES", "ca"],
+            expected_region_chain: &["ca-ES-valencia", "ca-ES", "und-ES-valencia", "und-ES"],
+        },
+        TestCase {
+            input: "es-AR",
+            requires_data: true,
+            extension_kw: None,
+            expected_language_chain: &["es-AR", "es-419", "es"],
+            expected_region_chain: &["es-AR", "und-AR"],
+        },
+        TestCase {
+            input: "hi-Latn-IN",
+            requires_data: true,
+            extension_kw: None,
+            expected_language_chain: &["hi-Latn-IN", "hi-Latn", "en-IN", "en-001", "en"],
+            expected_region_chain: &["hi-Latn-IN", "und-IN"],
         },
     ];
 
