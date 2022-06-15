@@ -4,8 +4,8 @@
 
 use icu_locid::extensions::unicode::Key;
 use icu_locid::subtags::Language;
-use icu_locid::LanguageIdentifier;
 use icu_locid::unicode_ext_key;
+use icu_locid::LanguageIdentifier;
 
 use super::*;
 
@@ -14,50 +14,45 @@ const SUBDIVISION_KEY: Key = unicode_ext_key!("sd");
 
 impl<'a> LocaleFallbackerForKey<'a> {
     pub(crate) fn normalize(&self, ro: &mut ResourceOptions) {
-        let lang_raw = ro.language().into();
+        let language = ro.language();
         // 1. Populate the region
         if ro.region().is_none() {
             // 1a. First look for region based on language+script
             if let Some(script) = ro.script() {
                 ro.set_region(
-                    self.fallback_data
+                    self.likely_subtags
                         .ls2r
-                        .get(&lang_raw, &script.into())
+                        .get(&language.into(), &script.into())
                         .ok()
                         .copied(),
                 );
             }
             // 1b. If that fails, try language only
             if ro.region().is_none() {
-                ro.set_region(self.fallback_data.l2r.get(&lang_raw).copied());
+                ro.set_region(self.likely_subtags.l2r.get(&language.into()).copied());
             }
         }
-        // 2. Check if this is a multi-script language
-        let maybe_default_script = self.fallback_data.l2s.get(&lang_raw).copied();
-        // 3. Populate the script iff multi-script language
-        if let Some(default_script) = maybe_default_script {
-            if ro.script().is_none() {
-                // 3a. First look for the script based on language+region
-                if let Some(region) = ro.region() {
-                    ro.set_script(
-                        self.fallback_data
-                            .lr2s
-                            .get(&lang_raw, &region.into())
-                            .ok()
-                            .copied(),
-                    );
-                }
-                // 3b. If that fails, use the default script loaded above
-                if ro.script().is_none() {
-                    ro.set_script(Some(default_script));
+        // 2. Remove the script if it is implied by the other subtags
+        if let Some(script) = ro.script() {
+            if let Some(region) = ro.region() {
+                if let Ok(region_script) = self
+                    .likely_subtags
+                    .lr2s
+                    .get_copied(&language.into(), &region.into())
+                {
+                    if region_script == script {
+                        ro.set_script(None);
+                    }
+                } else if let Some(language_script) =
+                    self.likely_subtags.l2s.get_copied(&language.into())
+                {
+                    if language_script == script {
+                        ro.set_script(None);
+                    }
                 }
             }
-            debug_assert!(ro.script().is_some());
-        } else {
-            // 3c. If single-script language, clear out the script
-            ro.set_script(None);
         }
-        // 4. Remove irrelevant extension subtags
+        // 3. Remove irrelevant extension subtags
         ro.retain_unicode_ext(|key| {
             match *key {
                 // Always retain -u-sd
@@ -70,7 +65,7 @@ impl<'a> LocaleFallbackerForKey<'a> {
                 _ => false,
             }
         });
-        // 5. If there is an invalid "sd" subtag, drop it
+        // 4. If there is an invalid "sd" subtag, drop it
         // For now, ignore it, and let fallback do it for us
     }
 }
@@ -99,34 +94,43 @@ impl<'a, 'b> LocaleFallbackIterator<'a, 'b> {
         }
         // 3. Assert that the locale is a language identifier
         debug_assert!(ro.has_unicode_ext());
-        // 4. Check for parent override
+        // 4. Remove variants
+        if ro.has_variants() {
+            self.backup_variants = Some(ro.clear_variants());
+            return;
+        }
+        // 5. Check for parent override
         if let Some(parent) = self
-            .fallback_data
+            .parents
             .parents
             .get_copied_by(|bytes| ro.strict_cmp(bytes).reverse())
         {
             let lid = LanguageIdentifier::from(parent);
             ro.set_langid(lid);
-            if let Some(value) = self.backup_extension.take() {
-                #[allow(clippy::unwrap_used)] // not reachable unless extension_kw is present
-                ro.set_unicode_ext(self.key_metadata.extension_kw.unwrap(), value);
-            }
-            if let Some(value) = self.backup_subdivision.take() {
-                ro.set_unicode_ext(SUBDIVISION_KEY, value);
-            }
+            self.restore_extensions_variants();
             return;
         }
-        // 5. Remove variants
-        if ro.has_variants() {
-            ro.clear_variants();
-            return;
+        // 6. Add the script subtag if necessary
+        if ro.script().is_none() {
+            if let Some(region) = ro.region() {
+                let language = ro.language();
+                if let Ok(script) = self
+                    .likely_subtags
+                    .lr2s
+                    .get_copied(&language.into(), &region.into())
+                {
+                    ro.set_script(Some(script));
+                    self.restore_extensions_variants();
+                    return;
+                }
+            }
         }
-        // 6. Remove region
+        // 7. Remove region
         if ro.region().is_some() {
             ro.set_region(None);
             return;
         }
-        // 7. Remove language+script
+        // 8. Remove language+script
         debug_assert!(!ro.language().is_empty());
         ro.set_script(None);
         ro.set_language(Language::UND);
@@ -134,6 +138,20 @@ impl<'a, 'b> LocaleFallbackIterator<'a, 'b> {
 
     fn step_region(&mut self) {
         todo!()
+    }
+
+    fn restore_extensions_variants(&mut self) {
+        let ro = &mut self.current;
+        if let Some(value) = self.backup_extension.take() {
+            #[allow(clippy::unwrap_used)] // not reachable unless extension_kw is present
+            ro.set_unicode_ext(self.key_metadata.extension_kw.unwrap(), value);
+        }
+        if let Some(value) = self.backup_subdivision.take() {
+            ro.set_unicode_ext(SUBDIVISION_KEY, value);
+        }
+        if let Some(variants) = self.backup_variants.take() {
+            ro.set_variants(variants);
+        }
     }
 }
 

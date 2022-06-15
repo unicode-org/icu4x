@@ -2,8 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use icu_locid::{script, region};
 use icu_locid::subtags::{Language, Region, Script};
+use icu_locid::{region, script};
 use tinystr::TinyAsciiStr;
 
 use icu_provider::prelude::*;
@@ -19,8 +19,8 @@ type UnvalidatedLanguage = TinyAsciiStr<3>;
 type UnvalidatedScript = TinyAsciiStr<4>;
 type UnvalidatedRegion = TinyAsciiStr<3>;
 
-/// Fallback rules for a particular language.
-#[icu_provider::data_struct(LocaleFallbackRulesV1Marker = "fallback/locale@1")]
+/// Locale fallback rules derived from likely subtags data.
+#[icu_provider::data_struct(LocaleFallbackLikelySubtagsV1Marker = "fallback/likelysubtags@1")]
 #[derive(Default, Clone, PartialEq, Debug)]
 #[cfg_attr(
     feature = "datagen",
@@ -29,33 +29,31 @@ type UnvalidatedRegion = TinyAsciiStr<3>;
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
-pub struct LocaleFallbackRulesV1<'data> {
+pub struct LocaleFallbackLikelySubtagsV1<'data> {
     /// Map from language to the default script in that language. Languages whose default script
     /// is `Latn` are not included in the map for data size savings.
-    /// 
+    ///
     /// Example: "zh" defaults to "Hans", which is in this map.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub l2s: ZeroMap<'data, UnvalidatedLanguage, Script>,
     /// Map from language-region pairs to a script. Only populated if the script is different
     /// from the one in `l2s` for that language.
-    /// 
+    ///
     /// Example: "zh-TW" defaults to "Hant", which is in this map.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub lr2s: ZeroMap2d<'data, UnvalidatedLanguage, UnvalidatedRegion, Script>,
     /// Map from language to the default region in that language. Languages whose default region
     /// is `ZZ` are not included in the map for data size savings.
-    /// 
+    ///
     /// Example: "zh" defaults to "CN".
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub l2r: ZeroMap<'data, UnvalidatedLanguage, Region>,
     /// Map from language-script pairs to a region. Only populated if the region is different
     /// from the one in `l2r` for that language.
-    /// 
+    ///
     /// Example: "zh-Hant" defaults to "TW".
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub ls2r: ZeroMap2d<'data, UnvalidatedLanguage, UnvalidatedScript, Region>,
-    #[cfg_attr(feature = "serde", serde(borrow))]
-    pub parents: ZeroMap<'data, [u8], (Language, Option<Script>, Option<Region>)>,
 }
 
 /// `Latn` is the most common script, so it is defaulted for data size savings.
@@ -63,3 +61,20 @@ pub const DEFAULT_SCRIPT: Script = script!("Latn");
 
 /// `ZZ` is the most common region, so it is defaulted for data size savings.
 pub const DEFAULT_REGION: Region = region!("ZZ");
+
+/// Locale fallback rules derived from CLDR parent locales data.
+#[icu_provider::data_struct(LocaleFallbackParentsV1Marker = "fallback/parents@1")]
+#[derive(Default, Clone, PartialEq, Debug)]
+#[cfg_attr(
+    feature = "datagen",
+    derive(serde::Serialize, crabbake::Bakeable),
+    crabbake(path = icu_provider_adapters::fallback::provider),
+)]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[yoke(prove_covariance_manually)]
+pub struct LocaleFallbackParentsV1<'data> {
+    /// Map from language identifier to language identifier, indicating that the language on the
+    /// left should inherit from the language on the right.
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub parents: ZeroMap<'data, [u8], (Language, Option<Script>, Option<Region>)>,
+}

@@ -13,7 +13,7 @@ use core::default::Default;
 use core::fmt;
 use core::fmt::Write;
 use icu_locid::extensions::unicode as unicode_ext;
-use icu_locid::subtags::{Language, Region, Script};
+use icu_locid::subtags::{Language, Region, Script, Variants};
 use icu_locid::{LanguageIdentifier, Locale};
 use writeable::{LengthHint, Writeable};
 use zerovec::ule::*;
@@ -580,9 +580,14 @@ impl ResourceOptions {
         self.langid.variants.is_empty()
     }
 
+    #[inline]
+    pub fn set_variants(&mut self, variants: Variants) {
+        self.langid.variants = variants;
+    }
+
     /// Removes all [`Variant`] subtags in this [`ResourceOptions`].
     #[inline]
-    pub fn clear_variants(&mut self) {
+    pub fn clear_variants(&mut self) -> Variants {
         self.langid.variants.clear()
     }
 

@@ -5,6 +5,7 @@
 //! Locale fallbacking in data provider.
 
 use icu_locid::extensions::unicode::{Key, Value};
+use icu_locid::subtags::Variants;
 use icu_provider::prelude::*;
 
 mod adapter;
@@ -15,8 +16,7 @@ pub mod provider;
 pub use adapter::LocaleFallbackAdapter;
 pub use adapter::LocaleFallbackProvider;
 
-use provider::LocaleFallbackRulesV1;
-use provider::LocaleFallbackRulesV1Marker;
+use provider::*;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum LocaleFallbackStrategy {
@@ -31,36 +31,49 @@ pub struct LocaleFallbackKeyMetadata {
 }
 
 pub struct LocaleFallbacker {
-    fallback_data: DataPayload<LocaleFallbackRulesV1Marker>,
+    likely_subtags: DataPayload<LocaleFallbackLikelySubtagsV1Marker>,
+    parents: DataPayload<LocaleFallbackParentsV1Marker>,
 }
 
 pub struct LocaleFallbackerForKey<'a> {
-    fallback_data: &'a LocaleFallbackRulesV1<'a>,
+    likely_subtags: &'a LocaleFallbackLikelySubtagsV1<'a>,
+    parents: &'a LocaleFallbackParentsV1<'a>,
     key_metadata: LocaleFallbackKeyMetadata,
 }
 
 pub struct LocaleFallbackIterator<'a, 'b> {
-    fallback_data: &'b LocaleFallbackRulesV1<'a>,
+    likely_subtags: &'a LocaleFallbackLikelySubtagsV1<'a>,
+    parents: &'a LocaleFallbackParentsV1<'a>,
     key_metadata: &'b LocaleFallbackKeyMetadata,
     current: ResourceOptions,
     backup_extension: Option<Value>,
     backup_subdivision: Option<Value>,
+    backup_variants: Option<Variants>,
 }
 
 impl LocaleFallbacker {
     pub fn try_new<P>(provider: &P) -> Result<Self, DataError>
     where
-        P: ResourceProvider<LocaleFallbackRulesV1Marker> + ?Sized,
+        P: ResourceProvider<LocaleFallbackLikelySubtagsV1Marker>
+            + ResourceProvider<LocaleFallbackParentsV1Marker>
+            + ?Sized,
     {
-        let fallback_data = provider
+        let likely_subtags = provider
             .load_resource(&Default::default())?
             .take_payload()?;
-        Ok(LocaleFallbacker { fallback_data })
+        let parents = provider
+            .load_resource(&Default::default())?
+            .take_payload()?;
+        Ok(LocaleFallbacker {
+            likely_subtags,
+            parents,
+        })
     }
 
     pub fn new_without_data() -> Self {
         LocaleFallbacker {
-            fallback_data: DataPayload::from_owned(Default::default()),
+            likely_subtags: DataPayload::from_owned(Default::default()),
+            parents: DataPayload::from_owned(Default::default()),
         }
     }
 
@@ -69,7 +82,8 @@ impl LocaleFallbacker {
         key_metadata: LocaleFallbackKeyMetadata,
     ) -> LocaleFallbackerForKey {
         LocaleFallbackerForKey {
-            fallback_data: self.fallback_data.get(),
+            likely_subtags: self.likely_subtags.get(),
+            parents: self.parents.get(),
             key_metadata,
         }
     }
@@ -79,11 +93,13 @@ impl<'a> LocaleFallbackerForKey<'a> {
     pub fn fallback_for<'b>(&'b self, mut ro: ResourceOptions) -> LocaleFallbackIterator<'a, 'b> {
         self.normalize(&mut ro);
         LocaleFallbackIterator {
-            fallback_data: &self.fallback_data,
+            likely_subtags: &self.likely_subtags,
+            parents: &self.parents,
             key_metadata: &self.key_metadata,
             current: ro,
             backup_extension: None,
             backup_subdivision: None,
+            backup_variants: None,
         }
     }
 }
