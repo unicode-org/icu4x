@@ -141,16 +141,59 @@ where
     }
 }
 
-#[test]
-fn test_primitives() {
-    let val = &[Some((18, Cow::Borrowed("hi")))][..];
-    let ctx = CrateEnv::default();
-    assert_eq!(
-        val.bake(&ctx).to_string(),
-        quote! {
-            &[Some((18i32, ::alloc::borrow::Cow::Borrowed("hi")))]
-        }
-        .to_string()
-    );
-    assert_eq!(ctx.into_iter().collect::<Vec<_>>(), vec!["alloc"]);
+/// This macro tests that an expression evaluates to a value that bakes to the same expression.
+///
+///
+/// ```
+/// # use crabbake::test_bake;
+/// test_bake!(18usize);
+/// ```
+///
+///
+/// As most output will need to reference its crate, and its not possible to name a crate from
+/// within it, the second (optional) parameter can be used to specify the crate name. The `crate`
+/// identifier in the original expression will be replaced by this in the expected output.
+///
+/// This test will pass if `MyStruct::bake` returns `::my_crate::MyStruct(42usize)`:
+///
+/// ```no_run
+/// # use crabbake::*;
+/// # struct MyStruct(usize);
+/// # impl Bakeable for MyStruct {
+/// #   fn bake(&self, _: &CrateEnv) -> TokenStream { unimplemented!() }
+/// # }
+/// # // We need an explicit main to put the struct at the crate root
+/// # fn main() {
+/// test_bake!(
+///     crate::MyStruct(42usize),
+///     my_crate,
+/// );
+/// # }
+/// ```
+///
+///
+/// A third, optional, parameter is a list of crate names that are expected to be added to the
+/// `CrateEnv`. The `crate`-replacement crate will always be checked.
+#[macro_export]
+macro_rules! test_bake {
+    ($expr:expr $(, $krate:ident)? $(, [$($env_crate:ident),+])? $(,)?) => {
+        let env = Default::default();
+        let bake = $crate::Bakeable::bake(&($expr), &env).to_string();
+        let expected_bake = $crate::quote!($expr).to_string();
+        $(
+            let expected_bake = expected_bake.replace("crate", concat!(":: ", stringify!($krate)));
+        )?
+        assert_eq!(bake, expected_bake);
+
+        #[allow(unused_variable)]
+        let env = env.into_iter().collect::<std::collections::HashSet<_>>();
+        $(
+            assert!(env.contains(stringify!($krate)), "Crate {:?} was not added to the CrateEnv", stringify!($krate));
+        )?
+        $(
+            $(
+                assert!(env.contains(stringify!($env_crate)), "Crate {:?} was not added to the CrateEnv", stringify!($env_crate));
+            )+
+        )?
+    };
 }
