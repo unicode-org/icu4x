@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1655250383654,
+  "lastUpdate": 1655262481224,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -31888,6 +31888,66 @@ window.BENCHMARK_DATA = {
           {
             "name": "from_string/1000000001",
             "value": 83,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "samchen61661@gmail.com",
+            "name": "samchen",
+            "username": "samchen61661"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "6c5e4b3f41dc4fe288758838d4628ef3c48b976c",
+          "message": "Add time period metaZone to TimeZonesProvider (#1961)\n\n* Add time period metaZone to TimeZonesProvider\r\n\r\n* fix type mismatch and handle short timezone/metazone ids\r\n\r\n* fix trait bound error\r\n\r\n* handle metazones who do not have short ids\r\n\r\n* fix compiler errors and add comment\r\n\r\n* address comments\r\n\r\n* address minor comments",
+          "timestamp": "2022-06-14T19:56:03-07:00",
+          "tree_id": "ba63f6ec65e77cd6372f756942a087ebd35e3316",
+          "url": "https://github.com/unicode-org/icu4x/commit/6c5e4b3f41dc4fe288758838d4628ef3c48b976c"
+        },
+        "date": 1655262456344,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 124312,
+            "range": "± 409",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 28417,
+            "range": "± 111",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 72127,
+            "range": "± 126",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 219,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 103,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 84,
             "range": "± 0",
             "unit": "ns/iter"
           }
