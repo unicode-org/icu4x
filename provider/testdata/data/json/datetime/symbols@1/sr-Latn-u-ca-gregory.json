@@ -1,49 +1,49 @@
 {
   "months": {
     "format": {
-      "abbreviated": [
-        "jan",
-        "feb",
-        "mar",
-        "apr",
-        "maj",
-        "jun",
-        "jul",
-        "avg",
-        "sep",
-        "okt",
-        "nov",
-        "dec"
-      ],
-      "narrow": [
-        "j",
-        "f",
-        "m",
-        "a",
-        "m",
-        "j",
-        "j",
-        "a",
-        "s",
-        "o",
-        "n",
-        "d"
-      ],
+      "abbreviated": {
+        "M01": "jan",
+        "M02": "feb",
+        "M03": "mar",
+        "M04": "apr",
+        "M05": "maj",
+        "M06": "jun",
+        "M07": "jul",
+        "M08": "avg",
+        "M09": "sep",
+        "M10": "okt",
+        "M11": "nov",
+        "M12": "dec"
+      },
+      "narrow": {
+        "M01": "j",
+        "M02": "f",
+        "M03": "m",
+        "M04": "a",
+        "M05": "m",
+        "M06": "j",
+        "M07": "j",
+        "M08": "a",
+        "M09": "s",
+        "M10": "o",
+        "M11": "n",
+        "M12": "d"
+      },
       "short": null,
-      "wide": [
-        "januar",
-        "februar",
-        "mart",
-        "april",
-        "maj",
-        "jun",
-        "jul",
-        "avgust",
-        "septembar",
-        "oktobar",
-        "novembar",
-        "decembar"
-      ]
+      "wide": {
+        "M01": "januar",
+        "M02": "februar",
+        "M03": "mart",
+        "M04": "april",
+        "M05": "maj",
+        "M06": "jun",
+        "M07": "jul",
+        "M08": "avgust",
+        "M09": "septembar",
+        "M10": "oktobar",
+        "M11": "novembar",
+        "M12": "decembar"
+      }
     },
     "stand_alone": null
   },

@@ -1,49 +1,49 @@
 {
   "months": {
     "format": {
-      "abbreviated": [
-        "Oca",
-        "Şub",
-        "Mar",
-        "Nis",
-        "May",
-        "Haz",
-        "Tem",
-        "Ağu",
-        "Eyl",
-        "Eki",
-        "Kas",
-        "Ara"
-      ],
-      "narrow": [
-        "O",
-        "Ş",
-        "M",
-        "N",
-        "M",
-        "H",
-        "T",
-        "A",
-        "E",
-        "E",
-        "K",
-        "A"
-      ],
+      "abbreviated": {
+        "M01": "Oca",
+        "M02": "Şub",
+        "M03": "Mar",
+        "M04": "Nis",
+        "M05": "May",
+        "M06": "Haz",
+        "M07": "Tem",
+        "M08": "Ağu",
+        "M09": "Eyl",
+        "M10": "Eki",
+        "M11": "Kas",
+        "M12": "Ara"
+      },
+      "narrow": {
+        "M01": "O",
+        "M02": "Ş",
+        "M03": "M",
+        "M04": "N",
+        "M05": "M",
+        "M06": "H",
+        "M07": "T",
+        "M08": "A",
+        "M09": "E",
+        "M10": "E",
+        "M11": "K",
+        "M12": "A"
+      },
       "short": null,
-      "wide": [
-        "Ocak",
-        "Şubat",
-        "Mart",
-        "Nisan",
-        "Mayıs",
-        "Haziran",
-        "Temmuz",
-        "Ağustos",
-        "Eylül",
-        "Ekim",
-        "Kasım",
-        "Aralık"
-      ]
+      "wide": {
+        "M01": "Ocak",
+        "M02": "Şubat",
+        "M03": "Mart",
+        "M04": "Nisan",
+        "M05": "Mayıs",
+        "M06": "Haziran",
+        "M07": "Temmuz",
+        "M08": "Ağustos",
+        "M09": "Eylül",
+        "M10": "Ekim",
+        "M11": "Kasım",
+        "M12": "Aralık"
+      }
     },
     "stand_alone": null
   },

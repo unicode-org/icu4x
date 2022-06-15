@@ -1,49 +1,52 @@
 {
   "months": {
     "format": {
-      "abbreviated": [
-        "meskerem",
-        "tekemt",
-        "hedar",
-        "tahsas",
-        "ter",
-        "yekatit",
-        "megabit",
-        "miazia",
-        "genbot",
-        "sene",
-        "hamle",
-        "nehasse"
-      ],
-      "narrow": [
-        "1",
-        "2",
-        "3",
-        "4",
-        "5",
-        "6",
-        "7",
-        "8",
-        "9",
-        "10",
-        "11",
-        "12"
-      ],
+      "abbreviated": {
+        "M01": "meskerem",
+        "M02": "tekemt",
+        "M03": "hedar",
+        "M04": "tahsas",
+        "M05": "ter",
+        "M06": "yekatit",
+        "M07": "megabit",
+        "M08": "miazia",
+        "M09": "genbot",
+        "M10": "sene",
+        "M11": "hamle",
+        "M12": "nehasse",
+        "M13": "pagumen"
+      },
+      "narrow": {
+        "M01": "1",
+        "M02": "2",
+        "M03": "3",
+        "M04": "4",
+        "M05": "5",
+        "M06": "6",
+        "M07": "7",
+        "M08": "8",
+        "M09": "9",
+        "M10": "10",
+        "M11": "11",
+        "M12": "12",
+        "M13": "13"
+      },
       "short": null,
-      "wide": [
-        "meskerem",
-        "tekemt",
-        "hedar",
-        "tahsas",
-        "ter",
-        "yekatit",
-        "megabit",
-        "miazia",
-        "genbot",
-        "sene",
-        "hamle",
-        "nehasse"
-      ]
+      "wide": {
+        "M01": "meskerem",
+        "M02": "tekemt",
+        "M03": "hedar",
+        "M04": "tahsas",
+        "M05": "ter",
+        "M06": "yekatit",
+        "M07": "megabit",
+        "M08": "miazia",
+        "M09": "genbot",
+        "M10": "sene",
+        "M11": "hamle",
+        "M12": "nehasse",
+        "M13": "pagumen"
+      }
     },
     "stand_alone": null
   },

@@ -1,49 +1,49 @@
 {
   "months": {
     "format": {
-      "abbreviated": [
-        "chaitra",
-        "vaisakha",
-        "jyaistha",
-        "asadha",
-        "sravana",
-        "bhadra",
-        "asvina",
-        "kartika",
-        "agrahayana",
-        "pausa",
-        "magha",
-        "phalguna"
-      ],
-      "narrow": [
-        "1",
-        "2",
-        "3",
-        "4",
-        "5",
-        "6",
-        "7",
-        "8",
-        "9",
-        "10",
-        "11",
-        "12"
-      ],
+      "abbreviated": {
+        "M01": "chaitra",
+        "M02": "vaisakha",
+        "M03": "jyaistha",
+        "M04": "asadha",
+        "M05": "sravana",
+        "M06": "bhadra",
+        "M07": "asvina",
+        "M08": "kartika",
+        "M09": "agrahayana",
+        "M10": "pausa",
+        "M11": "magha",
+        "M12": "phalguna"
+      },
+      "narrow": {
+        "M01": "1",
+        "M02": "2",
+        "M03": "3",
+        "M04": "4",
+        "M05": "5",
+        "M06": "6",
+        "M07": "7",
+        "M08": "8",
+        "M09": "9",
+        "M10": "10",
+        "M11": "11",
+        "M12": "12"
+      },
       "short": null,
-      "wide": [
-        "chaitra",
-        "vaisakha",
-        "jyaistha",
-        "asadha",
-        "sravana",
-        "bhadra",
-        "asvina",
-        "kartika",
-        "agrahayana",
-        "pausa",
-        "magha",
-        "phalguna"
-      ]
+      "wide": {
+        "M01": "chaitra",
+        "M02": "vaisakha",
+        "M03": "jyaistha",
+        "M04": "asadha",
+        "M05": "sravana",
+        "M06": "bhadra",
+        "M07": "asvina",
+        "M08": "kartika",
+        "M09": "agrahayana",
+        "M10": "pausa",
+        "M11": "magha",
+        "M12": "phalguna"
+      }
     },
     "stand_alone": null
   },

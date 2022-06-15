@@ -1,66 +1,66 @@
 {
   "months": {
     "format": {
-      "abbreviated": [
-        "Ene",
-        "Peb",
-        "Mar",
-        "Abr",
-        "May",
-        "Hun",
-        "Hul",
-        "Ago",
-        "Set",
-        "Okt",
-        "Nob",
-        "Dis"
-      ],
-      "narrow": [
-        "Ene",
-        "Peb",
-        "Mar",
-        "Abr",
-        "May",
-        "Hun",
-        "Hul",
-        "Ago",
-        "Set",
-        "Okt",
-        "Nob",
-        "Dis"
-      ],
+      "abbreviated": {
+        "M01": "Ene",
+        "M02": "Peb",
+        "M03": "Mar",
+        "M04": "Abr",
+        "M05": "May",
+        "M06": "Hun",
+        "M07": "Hul",
+        "M08": "Ago",
+        "M09": "Set",
+        "M10": "Okt",
+        "M11": "Nob",
+        "M12": "Dis"
+      },
+      "narrow": {
+        "M01": "Ene",
+        "M02": "Peb",
+        "M03": "Mar",
+        "M04": "Abr",
+        "M05": "May",
+        "M06": "Hun",
+        "M07": "Hul",
+        "M08": "Ago",
+        "M09": "Set",
+        "M10": "Okt",
+        "M11": "Nob",
+        "M12": "Dis"
+      },
       "short": null,
-      "wide": [
-        "Enero",
-        "Pebrero",
-        "Marso",
-        "Abril",
-        "Mayo",
-        "Hunyo",
-        "Hulyo",
-        "Agosto",
-        "Setyembre",
-        "Oktubre",
-        "Nobyembre",
-        "Disyembre"
-      ]
+      "wide": {
+        "M01": "Enero",
+        "M02": "Pebrero",
+        "M03": "Marso",
+        "M04": "Abril",
+        "M05": "Mayo",
+        "M06": "Hunyo",
+        "M07": "Hulyo",
+        "M08": "Agosto",
+        "M09": "Setyembre",
+        "M10": "Oktubre",
+        "M11": "Nobyembre",
+        "M12": "Disyembre"
+      }
     },
     "stand_alone": {
       "abbreviated": null,
-      "narrow": [
-        "E",
-        "P",
-        "M",
-        "A",
-        "M",
-        "Hun",
-        "Hul",
-        "Ago",
-        "Set",
-        "Okt",
-        "Nob",
-        "Dis"
-      ],
+      "narrow": {
+        "M01": "E",
+        "M02": "P",
+        "M03": "M",
+        "M04": "A",
+        "M05": "M",
+        "M06": "Hun",
+        "M07": "Hul",
+        "M08": "Ago",
+        "M09": "Set",
+        "M10": "Okt",
+        "M11": "Nob",
+        "M12": "Dis"
+      },
       "short": null,
       "wide": null
     }
