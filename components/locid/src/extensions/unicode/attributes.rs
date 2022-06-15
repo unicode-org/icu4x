@@ -72,6 +72,8 @@ impl Attributes {
 
     /// Empties the [`Attributes`] list.
     ///
+    /// Returns the old list.
+    ///
     /// # Examples
     ///
     /// ```
@@ -89,8 +91,8 @@ impl Attributes {
     ///
     /// assert_eq!(attributes.to_string(), "");
     /// ```
-    pub fn clear(&mut self) {
-        self.0.clear();
+    pub fn clear(&mut self) -> Self {
+        core::mem::replace(self, Default::default())
     }
 
     pub(crate) fn for_each_subtag_str<E, F>(&self, f: &mut F) -> Result<(), E>
