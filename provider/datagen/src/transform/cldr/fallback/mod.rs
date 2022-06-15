@@ -33,16 +33,11 @@ impl From<&SourceData> for FallbackRulesProvider {
     }
 }
 
-struct FallbackSourceData<'a> {
-    likely_subtags_data: &'a cldr_serde::likely_subtags::Resource,
-    parents_data: &'a cldr_serde::parent_locales::Resource,
-}
-
-impl ResourceProvider<LocaleFallbackRulesV1Marker> for FallbackRulesProvider {
+impl ResourceProvider<LocaleFallbackLikelySubtagsV1Marker> for FallbackRulesProvider {
     fn load_resource(
         &self,
         req: &DataRequest,
-    ) -> Result<DataResponse<LocaleFallbackRulesV1Marker>, DataError> {
+    ) -> Result<DataResponse<LocaleFallbackLikelySubtagsV1Marker>, DataError> {
         // We treat searching for `und` as a request for all data. Other requests
         // are not currently supported.
         if !req.options.is_empty() {
@@ -55,6 +50,25 @@ impl ResourceProvider<LocaleFallbackRulesV1Marker> for FallbackRulesProvider {
             .cldr_core()
             .read_and_parse("supplemental/likelySubtags.json")?;
 
+        let metadata = DataResponseMetadata::default();
+        Ok(DataResponse {
+            metadata,
+            payload: Some(DataPayload::from_owned(likely_subtags_data.into())),
+        })
+    }
+}
+
+impl ResourceProvider<LocaleFallbackParentsV1Marker> for FallbackRulesProvider {
+    fn load_resource(
+        &self,
+        req: &DataRequest,
+    ) -> Result<DataResponse<LocaleFallbackParentsV1Marker>, DataError> {
+        // We treat searching for `und` as a request for all data. Other requests
+        // are not currently supported.
+        if !req.options.is_empty() {
+            return Err(DataErrorKind::ExtraneousResourceOptions.into_error());
+        }
+
         let parents_data: &cldr_serde::parent_locales::Resource = self
             .source
             .get_cldr_paths()?
@@ -64,35 +78,40 @@ impl ResourceProvider<LocaleFallbackRulesV1Marker> for FallbackRulesProvider {
         let metadata = DataResponseMetadata::default();
         Ok(DataResponse {
             metadata,
-            payload: Some(DataPayload::from_owned(LocaleFallbackRulesV1::from(
-                FallbackSourceData {
-                    likely_subtags_data,
-                    parents_data,
-                },
-            ))),
+            payload: Some(DataPayload::from_owned(parents_data.into())),
         })
     }
 }
 
-icu_provider::make_exportable_provider!(FallbackRulesProvider, [LocaleFallbackRulesV1Marker,]);
+icu_provider::make_exportable_provider!(
+    FallbackRulesProvider,
+    [
+        LocaleFallbackLikelySubtagsV1Marker,
+        LocaleFallbackParentsV1Marker,
+    ]
+);
 
-impl IterableResourceProvider<LocaleFallbackRulesV1Marker> for FallbackRulesProvider {
+impl IterableResourceProvider<LocaleFallbackLikelySubtagsV1Marker> for FallbackRulesProvider {
     fn supported_options(&self) -> Result<Vec<ResourceOptions>, DataError> {
         Ok(vec![Default::default()])
     }
 }
 
-impl From<FallbackSourceData<'_>> for LocaleFallbackRulesV1<'static> {
-    fn from(source_data: FallbackSourceData<'_>) -> Self {
+impl IterableResourceProvider<LocaleFallbackParentsV1Marker> for FallbackRulesProvider {
+    fn supported_options(&self) -> Result<Vec<ResourceOptions>, DataError> {
+        Ok(vec![Default::default()])
+    }
+}
+
+impl From<&cldr_serde::likely_subtags::Resource> for LocaleFallbackLikelySubtagsV1<'static> {
+    fn from(source_data: &cldr_serde::likely_subtags::Resource) -> Self {
         let mut l2s = ZeroMap::new();
         let mut lr2s = ZeroMap2d::new();
         let mut l2r = ZeroMap::new();
         let mut ls2r = ZeroMap2d::new();
-        let mut parents = ZeroMap::new();
 
         // First collect the l2s and l2r maps
         for (minimized, maximized) in source_data
-            .likely_subtags_data
             .supplemental
             .likely_subtags
             .iter()
@@ -114,7 +133,6 @@ impl From<FallbackSourceData<'_>> for LocaleFallbackRulesV1<'static> {
 
         // Now populate the other maps
         for (minimized, maximized) in source_data
-            .likely_subtags_data
             .supplemental
             .likely_subtags
             .iter()
@@ -144,13 +162,20 @@ impl From<FallbackSourceData<'_>> for LocaleFallbackRulesV1<'static> {
             unreachable!();
         }
 
-        for (source, target) in source_data
-            .parents_data
-            .supplemental
-            .parent_locales
-            .parent_locale
-            .iter()
-        {
+        LocaleFallbackLikelySubtagsV1 {
+            l2s,
+            lr2s,
+            l2r,
+            ls2r,
+        }
+    }
+}
+
+impl From<&cldr_serde::parent_locales::Resource> for LocaleFallbackParentsV1<'static> {
+    fn from(source_data: &cldr_serde::parent_locales::Resource) -> Self {
+        let mut parents = ZeroMap::new();
+
+        for (source, target) in source_data.supplemental.parent_locales.parent_locale.iter() {
             assert!(!source.language.is_empty());
             if source.script.is_some() && source.region.is_none() {
                 // We always fall back from language-script to und
@@ -159,45 +184,57 @@ impl From<FallbackSourceData<'_>> for LocaleFallbackRulesV1<'static> {
             parents.insert(source.write_to_string().as_bytes(), &target.into());
         }
 
-        LocaleFallbackRulesV1 {
-            l2s,
-            lr2s,
-            l2r,
-            ls2r,
-            parents,
-        }
+        LocaleFallbackParentsV1 { parents }
     }
 }
 
 #[test]
 fn test_basic() {
+    use icu_locid::langid;
     use tinystr::tinystr;
 
     let provider = FallbackRulesProvider::from(&SourceData::for_test());
-    let data: DataPayload<LocaleFallbackRulesV1Marker> = provider
+    let likely_subtags: DataPayload<LocaleFallbackLikelySubtagsV1Marker> = provider
         .load_resource(&DataRequest::default())
         .unwrap()
         .take_payload()
         .unwrap();
 
     assert_eq!(
-        data.get().l2s.get_copied(&language!("zh").into()),
+        likely_subtags.get().l2s.get_copied(&language!("zh").into()),
         Some(script!("Hans"))
     );
     assert_eq!(
-        data.get()
+        likely_subtags
+            .get()
             .lr2s
             .get_copied(&language!("zh").into(), &region!("TW").into()),
         Ok(script!("Hant"))
     );
     assert_eq!(
-        data.get().l2r.get_copied(&language!("zh").into()),
+        likely_subtags.get().l2r.get_copied(&language!("zh").into()),
         Some(region!("CN"))
     );
     assert_eq!(
-        data.get()
+        likely_subtags
+            .get()
             .ls2r
             .get_copied(&language!("zh").into(), &script!("Hant").into()),
         Ok(region!("TW"))
+    );
+
+    let parents: DataPayload<LocaleFallbackParentsV1Marker> = provider
+        .load_resource(&DataRequest::default())
+        .unwrap()
+        .take_payload()
+        .unwrap();
+
+    assert_eq!(
+        parents
+            .get()
+            .parents
+            .get_copied(b"zh-Hant-MO")
+            .map(LanguageIdentifier::from),
+        Some(langid!("zh-Hant-HK"))
     );
 }
