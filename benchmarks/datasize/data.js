@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1655281300382,
+  "lastUpdate": 1655293167544,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -17663,6 +17663,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/c8ba00e23f0045ee2d2fd7de33a3739d47178d94"
         },
         "date": 1655281269742,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 2692707,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "ab8e92dafeccdd604b0d6272beeeaecb525b9099",
+          "message": "Fix test failure on main in icu_locid (#2067)",
+          "timestamp": "2022-06-15T13:37:09+02:00",
+          "tree_id": "cb91b3b57077c6b8cc2de24929cd99d66b6a3143",
+          "url": "https://github.com/unicode-org/icu4x/commit/ab8e92dafeccdd604b0d6272beeeaecb525b9099"
+        },
+        "date": 1655293140615,
         "tool": "ndjson",
         "benches": [
           {
