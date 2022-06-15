@@ -10,9 +10,9 @@ use tinystr::{tinystr, TinyStr16};
 
 pub fn convert_dates(other: &cldr_serde::ca::Dates, calendar: &str) -> DateSymbolsV1<'static> {
     DateSymbolsV1 {
-        months: (&other.months).into(),
-        weekdays: (&other.days).into(),
-        day_periods: (&other.day_periods).into(),
+        months: other.months.get(),
+        weekdays: other.days.get(),
+        day_periods: other.day_periods.get(),
         eras: convert_eras(&other.eras, calendar),
     }
 }
@@ -68,13 +68,14 @@ fn get_era_code_map(calendar: &str) -> BTreeMap<String, TinyStr16> {
     }
 }
 
+
 macro_rules! symbols_from {
     ([$name: ident, $name2: ident $(,)?], [ $($element: ident),+ $(,)? ] $(,)?) => {
-        impl From<&cldr_serde::ca::$name::Symbols> for $name2::SymbolsV1<'static> {
-            fn from(other: &cldr_serde::ca::$name::Symbols) -> Self {
-                Self([
+        impl cldr_serde::ca::$name::Symbols {
+            fn get(&self) -> $name2::SymbolsV1<'static> {
+                $name2::SymbolsV1([
                     $(
-                        Cow::Owned(other.$element.clone()),
+                        Cow::Owned(self.$element.clone()),
                     )*
                 ])
             }
@@ -82,11 +83,11 @@ macro_rules! symbols_from {
         symbols_from!([$name, $name2]);
     };
     ([$name: ident, $name2: ident $(,)?], { $($element: ident),+ $(,)? } $(,)?) => {
-        impl From<&cldr_serde::ca::$name::Symbols> for $name2::SymbolsV1<'static> {
-            fn from(other: &cldr_serde::ca::$name::Symbols) -> Self {
-                Self {
+        impl cldr_serde::ca::$name::Symbols {
+            fn get(&self) -> $name2::SymbolsV1<'static> {
+                $name2::SymbolsV1 {
                     $(
-                        $element: other.$element.clone(),
+                        $element: self.$element.clone(),
                     )*
                 }
             }
@@ -105,13 +106,13 @@ macro_rules! symbols_from {
             }
         }
 
-        impl From<&cldr_serde::ca::$name::Contexts> for $name2::ContextsV1<'static> {
-            fn from(other: &cldr_serde::ca::$name::Contexts) -> Self {
-                Self {
-                    format: (&other.format).into(),
-                    stand_alone: other.stand_alone.as_ref().and_then(|stand_alone| {
-                        stand_alone.get_unaliased(&other.format)
-                    }).map(|ref stand_alone| stand_alone.into())
+        impl cldr_serde::ca::$name::Contexts {
+            fn get(&self) -> $name2::ContextsV1<'static> {
+                $name2::ContextsV1 {
+                    format: self.format.get(),
+                    stand_alone: self.stand_alone.as_ref().and_then(|stand_alone| {
+                        stand_alone.get_unaliased(&self.format)
+                    }).map(|ref stand_alone| stand_alone.get())
                 }
             }
         }
@@ -141,30 +142,29 @@ macro_rules! symbols_from {
             }
         }
 
-        impl From<&cldr_serde::ca::$name::FormatWidths> for $name2::FormatWidthsV1<'static> {
-            fn from(other: &cldr_serde::ca::$name::FormatWidths) -> Self {
-                Self {
-                    abbreviated: (&other.abbreviated).into(),
-                    narrow: (&other.narrow).into(),
-                    short: other.short.as_ref().map(|width| width.into()),
-                    wide: (&other.wide).into(),
+        impl cldr_serde::ca::$name::FormatWidths {
+            fn get(&self) -> $name2::FormatWidthsV1<'static> {
+                $name2::FormatWidthsV1 {
+                    abbreviated: self.abbreviated.get(),
+                    narrow: self.narrow.get(),
+                    short: self.short.as_ref().map(|width| width.get()),
+                    wide: self.wide.get(),
                 }
             }
         }
 
-        impl From<&cldr_serde::ca::$name::StandAloneWidths> for $name2::StandAloneWidthsV1<'static> {
-            fn from(other: &cldr_serde::ca::$name::StandAloneWidths) -> Self {
-                Self {
-                    abbreviated: other.abbreviated.as_ref().map(|width| width.into()),
-                    narrow: other.narrow.as_ref().map(|width| width.into()),
-                    short: other.short.as_ref().map(|width| width.into()),
-                    wide: other.wide.as_ref().map(|width| width.into()),
+        impl cldr_serde::ca::$name::StandAloneWidths {
+            fn get(&self) -> $name2::StandAloneWidthsV1<'static> {
+                $name2::StandAloneWidthsV1 {
+                    abbreviated: self.abbreviated.as_ref().map(|width| width.get()),
+                    narrow: self.narrow.as_ref().map(|width| width.get()),
+                    short: self.short.as_ref().map(|width| width.get()),
+                    wide: self.wide.as_ref().map(|width| width.get()),
                 }
             }
         }
     };
 }
-
 symbols_from!(
     [months, months],
     [m1, m2, m3, m4, m5, m6, m7, m8, m9, m10, m11, m12],
