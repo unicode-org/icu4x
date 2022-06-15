@@ -10,9 +10,9 @@ use tinystr::{tinystr, TinyStr16};
 
 pub fn convert_dates(other: &cldr_serde::ca::Dates, calendar: &str) -> DateSymbolsV1<'static> {
     DateSymbolsV1 {
-        months: other.months.get(),
-        weekdays: other.days.get(),
-        day_periods: other.day_periods.get(),
+        months: other.months.get(&()),
+        weekdays: other.days.get(&()),
+        day_periods: other.day_periods.get(&()),
         eras: convert_eras(&other.eras, calendar),
     }
 }
@@ -70,9 +70,9 @@ fn get_era_code_map(calendar: &str) -> BTreeMap<String, TinyStr16> {
 
 
 macro_rules! symbols_from {
-    ([$name: ident, $name2: ident $(,)?], [ $($element: ident),+ $(,)? ] $(,)?) => {
+    ([$name: ident, $name2: ident $(,)?], $ctx:ty, [ $($element: ident),+ $(,)? ] $(,)?) => {
         impl cldr_serde::ca::$name::Symbols {
-            fn get(&self) -> $name2::SymbolsV1<'static> {
+            fn get(&self, _ctx: &$ctx) -> $name2::SymbolsV1<'static> {
                 $name2::SymbolsV1([
                     $(
                         Cow::Owned(self.$element.clone()),
@@ -80,11 +80,11 @@ macro_rules! symbols_from {
                 ])
             }
         }
-        symbols_from!([$name, $name2]);
+        symbols_from!([$name, $name2], $ctx);
     };
-    ([$name: ident, $name2: ident $(,)?], { $($element: ident),+ $(,)? } $(,)?) => {
+    ([$name: ident, $name2: ident $(,)?], $ctx:ty, { $($element: ident),+ $(,)? } $(,)?) => {
         impl cldr_serde::ca::$name::Symbols {
-            fn get(&self) -> $name2::SymbolsV1<'static> {
+            fn get(&self, _ctx: &$ctx) -> $name2::SymbolsV1<'static> {
                 $name2::SymbolsV1 {
                     $(
                         $element: self.$element.clone(),
@@ -92,9 +92,9 @@ macro_rules! symbols_from {
                 }
             }
         }
-        symbols_from!([$name, $name]);
+        symbols_from!([$name, $name], $ctx);
     };
-    ([$name: ident, $name2: ident]) => {
+    ([$name: ident, $name2: ident], $ctx:ty) => {
         impl cldr_serde::ca::$name::Symbols {
             // Helper function which returns None if the two groups of symbols overlap.
             pub fn get_unaliased(&self, other: &Self) -> Option<Self> {
@@ -107,12 +107,12 @@ macro_rules! symbols_from {
         }
 
         impl cldr_serde::ca::$name::Contexts {
-            fn get(&self) -> $name2::ContextsV1<'static> {
+            fn get(&self, ctx: &$ctx) -> $name2::ContextsV1<'static> {
                 $name2::ContextsV1 {
-                    format: self.format.get(),
+                    format: self.format.get(ctx),
                     stand_alone: self.stand_alone.as_ref().and_then(|stand_alone| {
                         stand_alone.get_unaliased(&self.format)
-                    }).map(|ref stand_alone| stand_alone.get())
+                    }).map(|ref stand_alone| stand_alone.get(ctx))
                 }
             }
         }
@@ -143,23 +143,23 @@ macro_rules! symbols_from {
         }
 
         impl cldr_serde::ca::$name::FormatWidths {
-            fn get(&self) -> $name2::FormatWidthsV1<'static> {
+            fn get(&self, ctx: &$ctx) -> $name2::FormatWidthsV1<'static> {
                 $name2::FormatWidthsV1 {
-                    abbreviated: self.abbreviated.get(),
-                    narrow: self.narrow.get(),
-                    short: self.short.as_ref().map(|width| width.get()),
-                    wide: self.wide.get(),
+                    abbreviated: self.abbreviated.get(ctx),
+                    narrow: self.narrow.get(ctx),
+                    short: self.short.as_ref().map(|width| width.get(ctx)),
+                    wide: self.wide.get(ctx),
                 }
             }
         }
 
         impl cldr_serde::ca::$name::StandAloneWidths {
-            fn get(&self) -> $name2::StandAloneWidthsV1<'static> {
+            fn get(&self, ctx: &$ctx) -> $name2::StandAloneWidthsV1<'static> {
                 $name2::StandAloneWidthsV1 {
-                    abbreviated: self.abbreviated.as_ref().map(|width| width.get()),
-                    narrow: self.narrow.as_ref().map(|width| width.get()),
-                    short: self.short.as_ref().map(|width| width.get()),
-                    wide: self.wide.as_ref().map(|width| width.get()),
+                    abbreviated: self.abbreviated.as_ref().map(|width| width.get(ctx)),
+                    narrow: self.narrow.as_ref().map(|width| width.get(ctx)),
+                    short: self.short.as_ref().map(|width| width.get(ctx)),
+                    wide: self.wide.as_ref().map(|width| width.get(ctx)),
                 }
             }
         }
@@ -167,16 +167,18 @@ macro_rules! symbols_from {
 }
 symbols_from!(
     [months, months],
+    (),
     [m1, m2, m3, m4, m5, m6, m7, m8, m9, m10, m11, m12],
 );
 
-symbols_from!([days, weekdays], [sun, mon, tue, wed, thu, fri, sat]);
+symbols_from!([days, weekdays], (), [sun, mon, tue, wed, thu, fri, sat]);
 
 symbols_from!(
     [
         day_periods,
         day_periods,
     ],
+    (),
     {
         am,
         pm,
