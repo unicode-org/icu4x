@@ -144,7 +144,39 @@ impl<'a, 'b> LocaleFallbackIterator<'a, 'b> {
     }
 
     fn step_region(&mut self) {
-        todo!()
+        let ro = &mut self.current;
+        // 1. Remove the extension fallback keyword
+        if let Some(extension_kw) = self.key_metadata.extension_kw {
+            if let Some(value) = ro.remove_unicode_ext(&extension_kw) {
+                self.backup_extension = Some(value);
+                println!("Fallback 1");
+                return;
+            }
+        }
+        // 2. Remove the subdivision keyword
+        if let Some(value) = ro.remove_unicode_ext(&SUBDIVISION_KEY) {
+            self.backup_subdivision = Some(value);
+            println!("Fallback 2");
+            return;
+        }
+        // 3. Assert that the locale is a language identifier
+        debug_assert!(!ro.has_unicode_ext());
+        // 4. Remove variants
+        if ro.has_variants() {
+            self.backup_variants = Some(ro.clear_variants());
+            println!("Fallback 4");
+            return;
+        }
+        // 5. Remove language+script
+        if !ro.language().is_empty() || ro.script().is_some() {
+            ro.set_script(None);
+            ro.set_language(Language::UND);
+            println!("Fallback 5");
+            return;
+        }
+        // 6. Remove region
+        ro.set_region(None);
+        println!("Fallback 6");
     }
 
     fn restore_extensions_variants(&mut self) {
