@@ -35,6 +35,20 @@ fn convert_eras(eras: &cldr_serde::ca::Eras, calendar: &str) -> Eras<'static> {
     out_eras
 }
 
+fn get_month_code_map(calendar: &str) -> &'static [&'static str] {
+    const THIRTEEN_MONTH_CODES: &[&str] = &[
+        "M01", "M02", "M03", "M04", "M05", "M06", "M07", "M08", "M09", "M10", "M11", "M12", "M13",
+    ];
+    const TWELVE_MONTH_CODES: &[&str] = &THIRTEEN_MONTH_CODES[..12];
+
+    match calendar {
+        "gregory" | "buddhist" | "japanese" | "indian" => TWELVE_MONTH_CODES,
+        "coptic" | "ethiopic" => THIRTEEN_MONTH_CODES,
+        #[allow(clippy::panic)] // Panics okay in datagen
+        _ => panic!("Month map unknown for {}", calendar),
+    }
+}
+
 fn get_era_code_map(calendar: &str) -> BTreeMap<String, TinyStr16> {
     match calendar {
         "gregory" => vec![
@@ -63,11 +77,10 @@ fn get_era_code_map(calendar: &str) -> BTreeMap<String, TinyStr16> {
         ]
         .into_iter()
         .collect(),
-        #[allow(clippy::panic)] // TODO(#1668) Clippy exceptions need docs or fixing.
+        #[allow(clippy::panic)] // Panics okay in datagen
         _ => panic!("Era map unknown for {}", calendar),
     }
 }
-
 
 macro_rules! symbols_from {
     ([$name: ident, $name2: ident $(,)?], $ctx:ty, [ $($element: ident),+ $(,)? ] $(,)?) => {
