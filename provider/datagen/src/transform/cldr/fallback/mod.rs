@@ -7,10 +7,10 @@ use std::collections::{HashMap, HashSet};
 use crate::transform::cldr::cldr_serde;
 use crate::SourceData;
 use icu_locale_canonicalizer::provider::*;
-use icu_locid::{language, subtags::Script, LanguageIdentifier};
+use icu_locid::{language, region, script, subtags::Script, LanguageIdentifier};
 use icu_provider::datagen::IterableResourceProvider;
 use icu_provider::prelude::*;
-use icu_provider_adapters::fallback::*;
+use icu_provider_adapters::fallback::provider::*;
 use tinystr::TinyAsciiStr;
 use writeable::Writeable;
 use zerovec::{maps::ZeroMap2d, ZeroMap, ZeroSlice};
@@ -104,8 +104,12 @@ impl From<FallbackSourceData<'_>> for LocaleFallbackRulesV1<'static> {
             let language = minimized.language;
             let script = maximized.script.expect("maximized");
             let region = maximized.region.expect("maximized");
-            l2s.insert(&language.into(), &script);
-            l2r.insert(&language.into(), &region);
+            if script != DEFAULT_SCRIPT {
+                l2s.insert(&language.into(), &script);
+            }
+            if region != DEFAULT_REGION {
+                l2r.insert(&language.into(), &region);
+            }
         }
 
         // Now populate the other maps
@@ -124,19 +128,17 @@ impl From<FallbackSourceData<'_>> for LocaleFallbackRulesV1<'static> {
             let region = maximized.region.expect("maximized");
             if minimized.script.is_some() {
                 assert!(minimized.region.is_none(), "{:?}", minimized);
-                // Skip if the region is the default region
-                if l2s.get_copied(&language.into()) == Some(script) {
-                    continue;
+                let region_for_lang = l2r.get_copied(&language.into()).unwrap_or(DEFAULT_REGION);
+                if region != region_for_lang {
+                    ls2r.insert(&language.into(), &script.into(), &region);
                 }
-                ls2r.insert(&language.into(), &script.into(), &region);
                 continue;
             }
             if minimized.region.is_some() {
-                // Skip if the script is the default script
-                if l2r.get_copied(&language.into()) == Some(region) {
-                    continue;
+                let script_for_lang = l2s.get_copied(&language.into()).unwrap_or(DEFAULT_SCRIPT);
+                if script != script_for_lang {
+                    lr2s.insert(&language.into(), &region.into(), &script);
                 }
-                lr2s.insert(&language.into(), &region.into(), &script);
                 continue;
             }
             unreachable!();

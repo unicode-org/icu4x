@@ -9,12 +9,14 @@ use icu_provider::prelude::*;
 
 mod adapter;
 mod algorithms;
-mod provider;
+
+pub mod provider;
 
 pub use adapter::LocaleFallbackAdapter;
 pub use adapter::LocaleFallbackProvider;
-pub use provider::LocaleFallbackRulesV1;
-pub use provider::LocaleFallbackRulesV1Marker;
+
+use provider::LocaleFallbackRulesV1;
+use provider::LocaleFallbackRulesV1Marker;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum LocaleFallbackStrategy {
