@@ -8,7 +8,7 @@
 #![no_main] // https://github.com/unicode-org/icu4x/issues/395
 
 use fixed_decimal::FixedDecimal;
-use icu_decimal::{FixedDecimalFormat};
+use icu_decimal::FixedDecimalFormat;
 use icu_locid::locale;
 use writeable::Writeable;
 
