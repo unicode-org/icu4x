@@ -1,21 +1,6 @@
 ``pluralrules::ffi``
 ====================
 
-.. cpp:struct:: ICU4XCreatePluralOperandsResult
-
-    This is the result returned by ``ICU4XPluralOperands::create()``
-    See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/icu_plurals/struct.PluralOperands.html>`__ for more information.
-
-    .. cpp:member:: ICU4XPluralOperands operands
-
-    .. cpp:member:: bool success
-
-.. cpp:struct:: ICU4XCreatePluralRulesResult
-
-    .. cpp:member:: std::optional<ICU4XPluralRules> rules
-
-    .. cpp:member:: bool success
-
 .. cpp:struct:: ICU4XPluralCategories
 
     FFI version of ``PluralRules::categories()`` data.
@@ -66,7 +51,7 @@
 
     .. cpp:member:: size_t c
 
-    .. cpp:function:: static ICU4XCreatePluralOperandsResult create(const std::string_view s)
+    .. cpp:function:: static diplomat::result<ICU4XPluralOperands, ICU4XError> create(const std::string_view s)
 
         FFI version of ``PluralOperands::from_str()``.
         See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/icu_plurals/struct.PluralOperands.html#method.from_str>`__ for more information.
@@ -76,12 +61,12 @@
     FFI version of ``PluralRules``.
     See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/icu_plurals/struct.PluralRules.html>`__ for more information.
 
-    .. cpp:function:: static ICU4XCreatePluralRulesResult try_new_cardinal(const ICU4XLocale& locale, const ICU4XDataProvider& provider)
+    .. cpp:function:: static diplomat::result<ICU4XPluralRules, ICU4XError> try_new_cardinal(const ICU4XLocale& locale, const ICU4XDataProvider& provider)
 
         FFI version of ``PluralRules::try_new_cardinal()``.
         See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/icu_plurals/struct.PluralRules.html#method.try_new>`__ for more information.
 
-    .. cpp:function:: static ICU4XCreatePluralRulesResult try_new_ordinal(const ICU4XLocale& locale, const ICU4XDataProvider& provider)
+    .. cpp:function:: static diplomat::result<ICU4XPluralRules, ICU4XError> try_new_ordinal(const ICU4XLocale& locale, const ICU4XDataProvider& provider)
 
         FFI version of ``PluralRules::try_new_ordinal()``.
         See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/icu_plurals/struct.PluralRules.html#method.try_new>`__ for more information.

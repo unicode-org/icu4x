@@ -374,7 +374,7 @@ pub mod week_of {
             let month = ((yyyymmdd / 100) % 100) as u8;
             let day = (yyyymmdd % 100) as u8;
 
-            let date = Date::new_iso_date_from_integers(year, month, day)?;
+            let date = Date::new_iso_date(year, month, day)?;
             let previous_month = date.clone().added(DateDuration::new(0, -1, 0, 0));
 
             week_of(

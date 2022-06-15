@@ -14,7 +14,8 @@ namespace capi {
 }
 
 class ICU4XDataProvider;
-struct ICU4XCodePointMapData16Response;
+class ICU4XCodePointMapData16;
+#include "ICU4XError.hpp"
 
 /**
  * A destruction policy for using ICU4XCodePointMapData16 with std::unique_ptr.
@@ -38,7 +39,7 @@ class ICU4XCodePointMapData16 {
    * 
    * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu_properties/maps/fn.get_script.html) for more information.
    */
-  static ICU4XCodePointMapData16Response try_get_script(const ICU4XDataProvider& provider);
+  static diplomat::result<ICU4XCodePointMapData16, ICU4XError> try_get_script(const ICU4XDataProvider& provider);
 
   /**
    * Gets the value for a code point.
@@ -57,18 +58,16 @@ class ICU4XCodePointMapData16 {
 };
 
 #include "ICU4XDataProvider.hpp"
-#include "ICU4XCodePointMapData16Response.hpp"
 
-inline ICU4XCodePointMapData16Response ICU4XCodePointMapData16::try_get_script(const ICU4XDataProvider& provider) {
-  capi::ICU4XCodePointMapData16Response diplomat_raw_struct_out_value = capi::ICU4XCodePointMapData16_try_get_script(provider.AsFFI());
-  auto diplomat_optional_raw_out_value_data = diplomat_raw_struct_out_value.data;
-  std::optional<ICU4XCodePointMapData16> diplomat_optional_out_value_data;
-  if (diplomat_optional_raw_out_value_data != nullptr) {
-    diplomat_optional_out_value_data = ICU4XCodePointMapData16(diplomat_optional_raw_out_value_data);
+inline diplomat::result<ICU4XCodePointMapData16, ICU4XError> ICU4XCodePointMapData16::try_get_script(const ICU4XDataProvider& provider) {
+  auto diplomat_result_raw_out_value = capi::ICU4XCodePointMapData16_try_get_script(provider.AsFFI());
+  diplomat::result<ICU4XCodePointMapData16, ICU4XError> diplomat_result_out_value;
+  if (diplomat_result_raw_out_value.is_ok) {
+    diplomat_result_out_value = diplomat::Ok(ICU4XCodePointMapData16(diplomat_result_raw_out_value.ok));
   } else {
-    diplomat_optional_out_value_data = std::nullopt;
+    diplomat_result_out_value = diplomat::Err(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
-  return ICU4XCodePointMapData16Response{ .data = std::move(diplomat_optional_out_value_data), .success = std::move(diplomat_raw_struct_out_value.success) };
+  return diplomat_result_out_value;
 }
 inline uint16_t ICU4XCodePointMapData16::get(char32_t cp) const {
   return capi::ICU4XCodePointMapData16_get(this->inner.get(), cp);

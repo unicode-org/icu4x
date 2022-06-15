@@ -3,7 +3,6 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::parser::errors::ParserError;
-use core::cmp::Ordering;
 use core::ops::RangeInclusive;
 use core::str::FromStr;
 use tinystr::TinyAsciiStr;
@@ -41,7 +40,7 @@ impl Variant {
     ///
     /// let variant = Variant::from_bytes(b"posix").expect("Parsing failed.");
     ///
-    /// assert_eq!(variant, "posix");
+    /// assert_eq!(variant.as_str(), "posix");
     /// ```
     pub const fn from_bytes(v: &[u8]) -> Result<Self, ParserError> {
         Self::from_bytes_manual_slice(v, 0, v.len())
@@ -116,7 +115,7 @@ impl Variant {
     ///
     /// let raw = variant.into_raw();
     /// let variant = unsafe { Variant::from_raw_unchecked(raw) };
-    /// assert_eq!(variant, "posix");
+    /// assert_eq!(variant.as_str(), "posix");
     /// ```
     pub fn into_raw(self) -> [u8; 8] {
         *self.0.all_bytes()
@@ -134,7 +133,7 @@ impl Variant {
     ///
     /// let raw = variant.into_raw();
     /// let variant = unsafe { Variant::from_raw_unchecked(raw) };
-    /// assert_eq!(variant, "posix");
+    /// assert_eq!(variant.as_str(), "posix");
     /// ```
     ///
     /// # Safety
@@ -163,6 +162,29 @@ impl Variant {
     pub fn as_str(&self) -> &str {
         self.0.as_str()
     }
+
+    /// Compare this `Variant` with BCP-47 bytes.
+    ///
+    /// The return value is equivalent to what would happen if you first converted this
+    /// `Variant` to a BCP-47 string and then performed a byte comparison.
+    ///
+    /// This function is case-sensitive and results in a *total order*, so it is appropriate for
+    /// binary search. The only argument producing [`Ordering::Equal`](core::cmp::Ordering::Equal)
+    /// is `self.to_string()`.
+    #[inline]
+    pub fn strict_cmp(&self, other: &[u8]) -> core::cmp::Ordering {
+        self.as_str().as_bytes().cmp(other)
+    }
+
+    /// Compare this `Variant` with a potentially unnormalized BCP-47 string.
+    ///
+    /// The return value is equivalent to what would happen if you first parsed the
+    /// BCP-47 string to a `Variant` and then performed a structucal comparison.
+    ///
+    #[inline]
+    pub fn normalizing_eq(&self, other: &str) -> bool {
+        self.as_str().eq_ignore_ascii_case(other)
+    }
 }
 
 impl FromStr for Variant {
@@ -174,23 +196,6 @@ impl FromStr for Variant {
 }
 
 impl_writeable_for_single_subtag!(Variant, "posix");
-
-impl PartialEq<&str> for Variant {
-    fn eq(&self, other: &&str) -> bool {
-        self.as_str() == *other
-    }
-}
-impl PartialOrd<&str> for Variant {
-    fn partial_cmp(&self, other: &&str) -> Option<Ordering> {
-        Some(self.as_str().cmp(*other))
-    }
-}
-
-impl PartialEq<str> for Variant {
-    fn eq(&self, other: &str) -> bool {
-        *self.as_str() == *other
-    }
-}
 
 impl<'l> From<&'l Variant> for &'l str {
     fn from(input: &'l Variant) -> Self {

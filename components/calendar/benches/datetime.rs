@@ -24,7 +24,7 @@ fn bench_datetime<A: AsCalendar>(datetime: &mut DateTime<A>) {
 
     // Retrieving vals
     let _ = black_box(datetime.date.year().number);
-    let _ = black_box(datetime.date.month().number);
+    let _ = black_box(datetime.date.month().ordinal);
     let _ = black_box(datetime.date.day_of_month().0);
     let _ = black_box(datetime.time.hour);
     let _ = black_box(datetime.time.minute);
@@ -50,7 +50,7 @@ fn bench_calendar<C: Clone + Calendar>(
                 );
 
                 // Conversion from ISO
-                let datetime_iso = DateTime::new_iso_datetime_from_integers(
+                let datetime_iso = DateTime::new_iso_datetime(
                     fx.year, fx.month, fx.day, fx.hour, fx.minute, fx.second,
                 )
                 .unwrap();
@@ -73,7 +73,7 @@ fn datetime_benches(c: &mut Criterion) {
         "calendar/overview",
         &fxs,
         icu::calendar::iso::Iso,
-        |y, m, d, h, min, s| DateTime::new_iso_datetime_from_integers(y, m, d, h, min, s).unwrap(),
+        |y, m, d, h, min, s| DateTime::new_iso_datetime(y, m, d, h, min, s).unwrap(),
     );
 
     #[cfg(feature = "bench")]

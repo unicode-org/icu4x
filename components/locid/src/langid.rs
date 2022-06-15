@@ -51,9 +51,9 @@ use alloc::string::ToString;
 /// let li: LanguageIdentifier = "eN_latn_Us-Valencia".parse().expect("Failed to parse.");
 ///
 /// assert_eq!(li.language, "en".parse::<Language>().unwrap());
-/// assert_eq!(li.script.unwrap(), "Latn".parse::<Script>().unwrap());
-/// assert_eq!(li.region.unwrap(), "US".parse::<Region>().unwrap());
-/// assert_eq!(li.variants.get(0).unwrap(), "valencia");
+/// assert_eq!(li.script, "Latn".parse::<Script>().ok());
+/// assert_eq!(li.region, "US".parse::<Region>().ok());
+/// assert_eq!(li.variants.get(0), "valencia".parse::<Variant>().ok().as_ref());
 /// ```
 ///
 /// [`Unicode BCP47 Language Identifier`]: https://unicode.org/reports/tr35/tr35.html#Unicode_language_identifier

@@ -14,8 +14,8 @@ namespace capi {
 }
 
 class ICU4XFixedDecimal;
+#include "ICU4XError.hpp"
 #include "ICU4XFixedDecimalRoundingMode.hpp"
-struct ICU4XCreateFixedDecimalResult;
 
 /**
  * A destruction policy for using ICU4XFixedDecimal with std::unique_ptr.
@@ -45,30 +45,30 @@ class ICU4XFixedDecimal {
    * Construct an [`ICU4XFixedDecimal`] from an float, with enough digits to recover
    * the original floating point in IEEE 754 without needing trailing zeros
    * 
-   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.from_f64) for more information.
+   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.try_from_f64) for more information.
    */
-  static std::optional<ICU4XFixedDecimal> create_from_f64_with_max_precision(double f);
+  static diplomat::result<ICU4XFixedDecimal, ICU4XError> create_from_f64_with_max_precision(double f);
 
   /**
    * Construct an [`ICU4XFixedDecimal`] from an float, with a given power of 10 for the lower magnitude
    * 
-   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.from_f64) for more information.
+   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.try_from_f64) for more information.
    */
-  static std::optional<ICU4XFixedDecimal> create_from_f64_with_lower_magnitude(double f, int16_t precision, ICU4XFixedDecimalRoundingMode rounding_mode);
+  static diplomat::result<ICU4XFixedDecimal, ICU4XError> create_from_f64_with_lower_magnitude(double f, int16_t precision, ICU4XFixedDecimalRoundingMode rounding_mode);
 
   /**
    * Construct an [`ICU4XFixedDecimal`] from an float, for a given number of significant digits
    * 
-   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.from_f64) for more information.
+   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.try_from_f64) for more information.
    */
-  static std::optional<ICU4XFixedDecimal> create_from_f64_with_significant_digits(double f, uint8_t digits, ICU4XFixedDecimalRoundingMode rounding_mode);
+  static diplomat::result<ICU4XFixedDecimal, ICU4XError> create_from_f64_with_significant_digits(double f, uint8_t digits, ICU4XFixedDecimalRoundingMode rounding_mode);
 
   /**
    * Construct an [`ICU4XFixedDecimal`] from a string.
    * 
    * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html) for more information.
    */
-  static ICU4XCreateFixedDecimalResult create_fromstr(const std::string_view v);
+  static diplomat::result<ICU4XFixedDecimal, ICU4XError> create_fromstr(const std::string_view v);
 
   /**
    * Multiply the [`ICU4XFixedDecimal`] by a given power of ten.
@@ -129,51 +129,49 @@ class ICU4XFixedDecimal {
   std::unique_ptr<capi::ICU4XFixedDecimal, ICU4XFixedDecimalDeleter> inner;
 };
 
-#include "ICU4XCreateFixedDecimalResult.hpp"
 
 inline ICU4XFixedDecimal ICU4XFixedDecimal::create(int32_t v) {
   return ICU4XFixedDecimal(capi::ICU4XFixedDecimal_create(v));
 }
-inline std::optional<ICU4XFixedDecimal> ICU4XFixedDecimal::create_from_f64_with_max_precision(double f) {
-  auto diplomat_optional_raw_out_value = capi::ICU4XFixedDecimal_create_from_f64_with_max_precision(f);
-  std::optional<ICU4XFixedDecimal> diplomat_optional_out_value;
-  if (diplomat_optional_raw_out_value != nullptr) {
-    diplomat_optional_out_value = ICU4XFixedDecimal(diplomat_optional_raw_out_value);
+inline diplomat::result<ICU4XFixedDecimal, ICU4XError> ICU4XFixedDecimal::create_from_f64_with_max_precision(double f) {
+  auto diplomat_result_raw_out_value = capi::ICU4XFixedDecimal_create_from_f64_with_max_precision(f);
+  diplomat::result<ICU4XFixedDecimal, ICU4XError> diplomat_result_out_value;
+  if (diplomat_result_raw_out_value.is_ok) {
+    diplomat_result_out_value = diplomat::Ok(ICU4XFixedDecimal(diplomat_result_raw_out_value.ok));
   } else {
-    diplomat_optional_out_value = std::nullopt;
+    diplomat_result_out_value = diplomat::Err(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
-  return diplomat_optional_out_value;
+  return diplomat_result_out_value;
 }
-inline std::optional<ICU4XFixedDecimal> ICU4XFixedDecimal::create_from_f64_with_lower_magnitude(double f, int16_t precision, ICU4XFixedDecimalRoundingMode rounding_mode) {
-  auto diplomat_optional_raw_out_value = capi::ICU4XFixedDecimal_create_from_f64_with_lower_magnitude(f, precision, static_cast<capi::ICU4XFixedDecimalRoundingMode>(rounding_mode));
-  std::optional<ICU4XFixedDecimal> diplomat_optional_out_value;
-  if (diplomat_optional_raw_out_value != nullptr) {
-    diplomat_optional_out_value = ICU4XFixedDecimal(diplomat_optional_raw_out_value);
+inline diplomat::result<ICU4XFixedDecimal, ICU4XError> ICU4XFixedDecimal::create_from_f64_with_lower_magnitude(double f, int16_t precision, ICU4XFixedDecimalRoundingMode rounding_mode) {
+  auto diplomat_result_raw_out_value = capi::ICU4XFixedDecimal_create_from_f64_with_lower_magnitude(f, precision, static_cast<capi::ICU4XFixedDecimalRoundingMode>(rounding_mode));
+  diplomat::result<ICU4XFixedDecimal, ICU4XError> diplomat_result_out_value;
+  if (diplomat_result_raw_out_value.is_ok) {
+    diplomat_result_out_value = diplomat::Ok(ICU4XFixedDecimal(diplomat_result_raw_out_value.ok));
   } else {
-    diplomat_optional_out_value = std::nullopt;
+    diplomat_result_out_value = diplomat::Err(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
-  return diplomat_optional_out_value;
+  return diplomat_result_out_value;
 }
-inline std::optional<ICU4XFixedDecimal> ICU4XFixedDecimal::create_from_f64_with_significant_digits(double f, uint8_t digits, ICU4XFixedDecimalRoundingMode rounding_mode) {
-  auto diplomat_optional_raw_out_value = capi::ICU4XFixedDecimal_create_from_f64_with_significant_digits(f, digits, static_cast<capi::ICU4XFixedDecimalRoundingMode>(rounding_mode));
-  std::optional<ICU4XFixedDecimal> diplomat_optional_out_value;
-  if (diplomat_optional_raw_out_value != nullptr) {
-    diplomat_optional_out_value = ICU4XFixedDecimal(diplomat_optional_raw_out_value);
+inline diplomat::result<ICU4XFixedDecimal, ICU4XError> ICU4XFixedDecimal::create_from_f64_with_significant_digits(double f, uint8_t digits, ICU4XFixedDecimalRoundingMode rounding_mode) {
+  auto diplomat_result_raw_out_value = capi::ICU4XFixedDecimal_create_from_f64_with_significant_digits(f, digits, static_cast<capi::ICU4XFixedDecimalRoundingMode>(rounding_mode));
+  diplomat::result<ICU4XFixedDecimal, ICU4XError> diplomat_result_out_value;
+  if (diplomat_result_raw_out_value.is_ok) {
+    diplomat_result_out_value = diplomat::Ok(ICU4XFixedDecimal(diplomat_result_raw_out_value.ok));
   } else {
-    diplomat_optional_out_value = std::nullopt;
+    diplomat_result_out_value = diplomat::Err(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
-  return diplomat_optional_out_value;
+  return diplomat_result_out_value;
 }
-inline ICU4XCreateFixedDecimalResult ICU4XFixedDecimal::create_fromstr(const std::string_view v) {
-  capi::ICU4XCreateFixedDecimalResult diplomat_raw_struct_out_value = capi::ICU4XFixedDecimal_create_fromstr(v.data(), v.size());
-  auto diplomat_optional_raw_out_value_fd = diplomat_raw_struct_out_value.fd;
-  std::optional<ICU4XFixedDecimal> diplomat_optional_out_value_fd;
-  if (diplomat_optional_raw_out_value_fd != nullptr) {
-    diplomat_optional_out_value_fd = ICU4XFixedDecimal(diplomat_optional_raw_out_value_fd);
+inline diplomat::result<ICU4XFixedDecimal, ICU4XError> ICU4XFixedDecimal::create_fromstr(const std::string_view v) {
+  auto diplomat_result_raw_out_value = capi::ICU4XFixedDecimal_create_fromstr(v.data(), v.size());
+  diplomat::result<ICU4XFixedDecimal, ICU4XError> diplomat_result_out_value;
+  if (diplomat_result_raw_out_value.is_ok) {
+    diplomat_result_out_value = diplomat::Ok(ICU4XFixedDecimal(diplomat_result_raw_out_value.ok));
   } else {
-    diplomat_optional_out_value_fd = std::nullopt;
+    diplomat_result_out_value = diplomat::Err(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
-  return ICU4XCreateFixedDecimalResult{ .fd = std::move(diplomat_optional_out_value_fd), .success = std::move(diplomat_raw_struct_out_value.success) };
+  return diplomat_result_out_value;
 }
 inline bool ICU4XFixedDecimal::multiply_pow10(int16_t power) {
   return capi::ICU4XFixedDecimal_multiply_pow10(this->inner.get(), power);

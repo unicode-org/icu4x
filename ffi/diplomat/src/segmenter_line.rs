@@ -8,6 +8,7 @@ use icu_segmenter::WordBreakRule;
 
 #[diplomat::bridge]
 pub mod ffi {
+    use crate::errors::ffi::ICU4XError;
     use crate::provider::ffi::ICU4XDataProvider;
     use alloc::boxed::Box;
     use core::convert::TryFrom;
@@ -61,13 +62,13 @@ pub mod ffi {
         #[diplomat::rust_link(icu_segmenter::LineBreakSegmenter::try_new, FnInStruct)]
         pub fn try_new(
             provider: &ICU4XDataProvider,
-        ) -> DiplomatResult<Box<ICU4XLineBreakSegmenter>, ()> {
+        ) -> DiplomatResult<Box<ICU4XLineBreakSegmenter>, ICU4XError> {
             use icu_provider::serde::AsDeserializingBufferProvider;
             let provider = provider.0.as_deserializing();
             Self::try_new_impl(&provider)
         }
 
-        fn try_new_impl<D>(provider: &D) -> DiplomatResult<Box<ICU4XLineBreakSegmenter>, ()>
+        fn try_new_impl<D>(provider: &D) -> DiplomatResult<Box<ICU4XLineBreakSegmenter>, ICU4XError>
         where
             D: ResourceProvider<LineBreakDataV1Marker>
                 + ResourceProvider<UCharDictionaryBreakDataV1Marker>
@@ -75,7 +76,7 @@ pub mod ffi {
         {
             LineBreakSegmenter::try_new(provider)
                 .map(|o| Box::new(ICU4XLineBreakSegmenter(o)))
-                .map_err(|_| ())
+                .map_err(Into::into)
                 .into()
         }
 
@@ -84,7 +85,7 @@ pub mod ffi {
         pub fn try_new_with_options(
             provider: &ICU4XDataProvider,
             options: ICU4XLineBreakOptions,
-        ) -> DiplomatResult<Box<ICU4XLineBreakSegmenter>, ()> {
+        ) -> DiplomatResult<Box<ICU4XLineBreakSegmenter>, ICU4XError> {
             use icu_provider::serde::AsDeserializingBufferProvider;
             let provider = provider.0.as_deserializing();
             Self::try_new_with_options_impl(&provider, options)
@@ -93,7 +94,7 @@ pub mod ffi {
         fn try_new_with_options_impl<D>(
             provider: &D,
             options: ICU4XLineBreakOptions,
-        ) -> DiplomatResult<Box<ICU4XLineBreakSegmenter>, ()>
+        ) -> DiplomatResult<Box<ICU4XLineBreakSegmenter>, ICU4XError>
         where
             D: ResourceProvider<LineBreakDataV1Marker>
                 + ResourceProvider<UCharDictionaryBreakDataV1Marker>
@@ -101,7 +102,7 @@ pub mod ffi {
         {
             LineBreakSegmenter::try_new_with_options(provider, options.into())
                 .map(|o| Box::new(ICU4XLineBreakSegmenter(o)))
-                .map_err(|_| ())
+                .map_err(Into::into)
                 .into()
         }
 

@@ -1,21 +1,6 @@
 ``pluralrules::ffi``
 ====================
 
-.. js:class:: ICU4XCreatePluralOperandsResult
-
-    This is the result returned by ``ICU4XPluralOperands::create()``
-    See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/icu_plurals/struct.PluralOperands.html>`__ for more information.
-
-    .. js:attribute:: operands
-
-    .. js:attribute:: success
-
-.. js:class:: ICU4XCreatePluralRulesResult
-
-    .. js:attribute:: rules
-
-    .. js:attribute:: success
-
 .. js:class:: ICU4XPluralCategories
 
     FFI version of ``PluralRules::categories()`` data.

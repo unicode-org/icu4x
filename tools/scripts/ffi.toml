@@ -148,7 +148,7 @@ command = "cargo"
 args = ["build", "--package", "icu_freertos",
         "--target", "thumbv8m.main-none-eabihf",
         "--no-default-features", "--features=wearos",
-        "--release",
+        "--profile=release-opt-size",
         "-Zbuild-std", "-Zbuild-std=std,panic_abort", "-Zbuild-std-features=panic_immediate_abort"]
 
 [tasks.test-nostd]

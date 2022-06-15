@@ -12,7 +12,6 @@ use icu_provider::hello_world::HelloWorldV1Marker;
 use icu_provider::prelude::*;
 use icu_provider_fs::export::serializers::{bincode, json, postcard};
 use simple_logger::SimpleLogger;
-use std::fs::File;
 use std::path::PathBuf;
 use std::str::FromStr;
 
@@ -228,8 +227,7 @@ fn main() -> eyre::Result<()> {
     } else if let Some(paths) = matches.values_of("KEYS") {
         icu_datagen::keys(&paths.collect::<Vec<_>>())
     } else if let Some(key_file_path) = matches.value_of_os("KEY_FILE") {
-        File::open(key_file_path)
-            .and_then(icu_datagen::keys_from_file)
+        icu_datagen::keys_from_file(key_file_path)
             .with_context(|| key_file_path.to_string_lossy().into_owned())?
     } else {
         unreachable!();

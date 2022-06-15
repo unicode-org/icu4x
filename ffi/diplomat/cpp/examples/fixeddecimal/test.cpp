@@ -11,7 +11,7 @@
 int main() {
     ICU4XLocale locale = ICU4XLocale::create("bn").value();
     std::cout << "Running test for locale " << locale.tostring().ok().value() << std::endl;
-    ICU4XDataProvider dp = ICU4XDataProvider::create_test().provider.value();
+    ICU4XDataProvider dp = ICU4XDataProvider::create_test();
     ICU4XFixedDecimalFormatOptions opts = {ICU4XFixedDecimalGroupingStrategy::Auto, ICU4XFixedDecimalSignDisplay::Auto};
     ICU4XFixedDecimalFormat fdf = ICU4XFixedDecimalFormat::try_new(locale, dp, opts).ok().value();
 
@@ -40,7 +40,7 @@ int main() {
         return 1;
     }
 
-    decimal = ICU4XFixedDecimal::create_from_f64_with_max_precision(100.01).value();
+    decimal = ICU4XFixedDecimal::create_from_f64_with_max_precision(100.01).ok().value();
     out = fdf.format(decimal).ok().value();
     std::cout << "Formatted float value is " << out << std::endl;
     if (out != "১০০.০১") {
@@ -72,7 +72,7 @@ int main() {
         return 1;
     }
 
-    decimal = ICU4XFixedDecimal::create_from_f64_with_lower_magnitude(100.0006, -2, ICU4XFixedDecimalRoundingMode::HalfExpand).value();
+    decimal = ICU4XFixedDecimal::create_from_f64_with_lower_magnitude(100.0006, -2, ICU4XFixedDecimalRoundingMode::HalfExpand).ok().value();
     out = fdf.format(decimal).ok().value();
     std::cout << "Formatted float value from precision 2 is " << out << std::endl;
     if (out != "১০০.০০") {
@@ -80,7 +80,7 @@ int main() {
         return 1;
     }
 
-    decimal = ICU4XFixedDecimal::create_from_f64_with_significant_digits(100.0006, 5, ICU4XFixedDecimalRoundingMode::HalfExpand).value();
+    decimal = ICU4XFixedDecimal::create_from_f64_with_significant_digits(100.0006, 5, ICU4XFixedDecimalRoundingMode::HalfExpand).ok().value();
     out = fdf.format(decimal).ok().value();
     std::cout << "Formatted float value with 5 digits is " << out << std::endl;
     if (out != "১০০.০০") {
@@ -94,14 +94,14 @@ int main() {
 
     fdf = ICU4XFixedDecimalFormat::try_new_from_decimal_symbols_v1(data, opts).ok().value();
 
-    decimal = ICU4XFixedDecimal::create_from_f64_with_max_precision(123456.8901).value();
+    decimal = ICU4XFixedDecimal::create_from_f64_with_max_precision(123456.8901).ok().value();
     out = fdf.format(decimal).ok().value();
     std::cout << "Formatted float value for custom numeric system is " << out << std::endl;
     if (out != "bcdefg/ijab") {
         std::cout << "Output does not match expected output" << std::endl;
         return 1;
     }
-    decimal = ICU4XFixedDecimal::create_from_f64_with_max_precision(123451234567.8901).value();
+    decimal = ICU4XFixedDecimal::create_from_f64_with_max_precision(123451234567.8901).ok().value();
     out = fdf.format(decimal).ok().value();
     std::cout << "Formatted float value for custom numeric system is " << out << std::endl;
     if (out != "bc_de_fb_cd_efgh/ijab") {

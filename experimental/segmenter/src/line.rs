@@ -2,27 +2,18 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::dictionary::DictionarySegmenter;
+use crate::complex::*;
 use crate::indices::*;
 use crate::language::*;
 use crate::provider::*;
 use crate::symbols::*;
 
+use alloc::string::String;
 use alloc::vec;
 use alloc::vec::Vec;
 use core::char;
 use core::str::CharIndices;
 use icu_provider::prelude::*;
-
-// Use the LSTM when the feature is enabled.
-#[cfg(feature = "lstm")]
-use crate::lstm::get_line_break_utf16;
-
-// No-op function when LSTM is disabled.
-#[cfg(not(feature = "lstm"))]
-fn get_line_break_utf16(_: &[u16]) -> Option<Vec<usize>> {
-    None
-}
 
 /// An enum specifies the strictness of line-breaking rules. It can be passed as
 /// an argument when creating a line breaker.
@@ -414,10 +405,12 @@ pub trait LineBreakType<'l, 's> {
         c: Self::CharType,
     ) -> u8;
 
-    fn compute_line_break_for_complex_language(
-        iterator: &LineBreakIterator<'l, 's, Self>,
-        input: &[u16],
-    ) -> Vec<usize>;
+    fn get_current_position_character_len(iterator: &LineBreakIterator<'l, 's, Self>) -> usize;
+
+    fn handle_complex_language(
+        iterator: &mut LineBreakIterator<'l, 's, Self>,
+        left_codepoint: Self::CharType,
+    ) -> Option<usize>;
 }
 
 /// Implements the [`Iterator`] trait over the line break opportunities of the given string. Please
@@ -447,22 +440,21 @@ impl<'l, 's, Y: LineBreakType<'l, 's>> Iterator for LineBreakIterator<'l, 's, Y>
             return None;
         }
 
+        // If we have break point cache by previous run, return this result
         if !self.result_cache.is_empty() {
-            // We have break point cache by previous run.
             let mut i = 0;
             loop {
                 if i == *self.result_cache.first().unwrap() {
-                    self.result_cache.remove(0);
-                    self.result_cache = self.result_cache.iter().map(|r| r - i).collect();
+                    self.result_cache = self.result_cache.iter().skip(1).map(|r| r - i).collect();
                     return Some(self.current_pos_data.unwrap().0);
                 }
+                i += Y::get_current_position_character_len(self);
                 self.current_pos_data = self.iter.next();
                 if self.current_pos_data.is_none() {
                     // Reach EOF
                     self.result_cache.clear();
                     return Some(self.len);
                 }
-                i += 1;
             }
         }
 
@@ -525,7 +517,7 @@ impl<'l, 's, Y: LineBreakType<'l, 's>> Iterator for LineBreakIterator<'l, 's, Y>
                 && Y::use_complex_breaking(self, left_codepoint.unwrap().1)
                 && Y::use_complex_breaking(self, self.current_pos_data.unwrap().1)
             {
-                let result = self.handle_complex_language(left_codepoint.unwrap().1);
+                let result = Y::handle_complex_language(self, left_codepoint.unwrap().1);
                 if result.is_some() {
                     return result;
                 }
@@ -617,44 +609,6 @@ impl<'l, 's, Y: LineBreakType<'l, 's>> LineBreakIterator<'l, 's, Y> {
             right,
         )
     }
-
-    // UAX14 doesn't define line break rules for some languages such as Thai.
-    // These languages uses dictionary-based breaker, so we use OS's line breaker instead.
-    fn handle_complex_language(&mut self, left_codepoint: Y::CharType) -> Option<usize> {
-        let start_iter = self.iter.clone();
-        let start_point = self.current_pos_data;
-        let mut s = vec![left_codepoint.into() as u16];
-        loop {
-            s.push(self.current_pos_data.unwrap().1.into() as u16);
-            self.current_pos_data = self.iter.next();
-            if self.current_pos_data.is_none() {
-                break;
-            }
-            if !Y::use_complex_breaking(self, self.current_pos_data.unwrap().1) {
-                break;
-            }
-        }
-        // Restore iterator to move to head of complex string
-        self.iter = start_iter;
-        self.current_pos_data = start_point;
-        let breaks = Y::compute_line_break_for_complex_language(self, &s);
-        let mut i = 1;
-        self.result_cache = breaks;
-        // result_cache vector is utf-16 index that is in BMP.
-        loop {
-            if i == *self.result_cache.first().unwrap() {
-                self.result_cache.remove(0);
-                self.result_cache = self.result_cache.iter().map(|r| r - i).collect();
-                return Some(self.current_pos_data.unwrap().0);
-            }
-            self.current_pos_data = self.iter.next();
-            if self.current_pos_data.is_none() {
-                self.result_cache.clear();
-                return Some(self.len);
-            }
-            i += 1;
-        }
-    }
 }
 
 impl<'l, 's> LineBreakType<'l, 's> for char {
@@ -675,42 +629,50 @@ impl<'l, 's> LineBreakType<'l, 's> for char {
         use_complex_breaking_utf32(&iterator.data.property_table, c as u32)
     }
 
-    fn compute_line_break_for_complex_language(
-        iterator: &LineBreakIterator<Self>,
-        input: &[u16],
-    ) -> Vec<usize> {
-        if let Some(mut ret) = get_line_break_utf16(input) {
-            ret.push(input.len());
-            return ret;
-        }
-        if let Ok(segmenter) = DictionarySegmenter::try_new(iterator.dictionary_payload) {
-            let mut result: Vec<usize> = segmenter.segment_utf16(input).collect();
-            result.push(input.len());
-            return result;
-        }
-        [input.len()].to_vec()
+    fn get_current_position_character_len(iterator: &LineBreakIterator<Self>) -> usize {
+        iterator.current_pos_data.unwrap().1.len_utf8()
     }
 
-    /*
-        fn handle_complex_language(iterator: &LineBreakIterator<char>, left_codepoint: char) -> Option<usize> {
-            let start_iter = self.iter.clone();
-            let start_point = self.current_pos_data;
-            loop {
-                self.current_pos_data = self.iter.next();
-                if self.current_pos_data.is_none() {
-                    break;
-                }
-                if !self.use_complex_breaking(self.current_pos_data.unwrap().1) {
-                    break;
-                }
+    fn handle_complex_language(
+        iter: &mut LineBreakIterator<'l, 's, Self>,
+        left_codepoint: char,
+    ) -> Option<usize> {
+        // word segmenter doesn't define break rules for some languages such as Thai.
+        let start_iter = iter.iter.clone();
+        let start_point = iter.current_pos_data;
+        let mut s = String::new();
+        s.push(left_codepoint);
+        loop {
+            s.push(iter.current_pos_data.unwrap().1);
+            iter.current_pos_data = iter.iter.next();
+            if iter.current_pos_data.is_none() {
+                break;
             }
-            if let Some(mut breaks) = get_line_break_utf8(&str) {
-                breaks.push(str.len());
-                return breaks;
+            if !Self::use_complex_breaking(iter, iter.current_pos_data.unwrap().1) {
+                break;
             }
-            [str.len_utf8()].to_vec()
         }
-    */
+
+        // Restore iterator to move to head of complex string
+        iter.iter = start_iter;
+        iter.current_pos_data = start_point;
+        let breaks = complex_language_segment_str(iter.dictionary_payload, &s);
+        iter.result_cache = breaks;
+        let mut i = iter.current_pos_data.unwrap().1.len_utf8();
+        loop {
+            if i == *iter.result_cache.first().unwrap() {
+                // Re-calculate breaking offset
+                iter.result_cache = iter.result_cache.iter().skip(1).map(|r| r - i).collect();
+                return Some(iter.current_pos_data.unwrap().0);
+            }
+            iter.current_pos_data = iter.iter.next();
+            if iter.current_pos_data.is_none() {
+                iter.result_cache.clear();
+                return Some(iter.len);
+            }
+            i += Self::get_current_position_character_len(iter);
+        }
+    }
 }
 
 pub struct Latin1Char(pub u8);
@@ -729,10 +691,14 @@ impl<'l, 's> LineBreakType<'l, 's> for Latin1Char {
         false
     }
 
-    fn compute_line_break_for_complex_language(
-        _: &LineBreakIterator<Self>,
-        _input: &[u16],
-    ) -> Vec<usize> {
+    fn get_current_position_character_len(_: &LineBreakIterator<Self>) -> usize {
+        panic!("not reachable");
+    }
+
+    fn handle_complex_language(
+        _: &mut LineBreakIterator<Self>,
+        _: Self::CharType,
+    ) -> Option<usize> {
         panic!("not reachable");
     }
 }
@@ -758,20 +724,59 @@ impl<'l, 's> LineBreakType<'l, 's> for Utf16Char {
         use_complex_breaking_utf32(&iterator.data.property_table, c)
     }
 
-    fn compute_line_break_for_complex_language(
-        iterator: &LineBreakIterator<Self>,
-        input: &[u16],
-    ) -> Vec<usize> {
-        if let Some(mut ret) = get_line_break_utf16(input) {
-            ret.push(input.len());
-            return ret;
+    fn get_current_position_character_len(iterator: &LineBreakIterator<Self>) -> usize {
+        let ch = iterator.current_pos_data.unwrap().1;
+        if ch >= 0x10000 {
+            2
+        } else {
+            1
         }
-        if let Ok(segmenter) = DictionarySegmenter::try_new(iterator.dictionary_payload) {
-            let mut result: Vec<usize> = segmenter.segment_utf16(input).collect();
-            result.push(input.len());
-            return result;
+    }
+
+    fn handle_complex_language(
+        iterator: &mut LineBreakIterator<Self>,
+        left_codepoint: Self::CharType,
+    ) -> Option<usize> {
+        // word segmenter doesn't define break rules for some languages such as Thai.
+        let start_iter = iterator.iter.clone();
+        let start_point = iterator.current_pos_data;
+        let mut s = vec![left_codepoint as u16];
+        loop {
+            s.push(iterator.current_pos_data.unwrap().1 as u16);
+            iterator.current_pos_data = iterator.iter.next();
+            if iterator.current_pos_data.is_none() {
+                break;
+            }
+            if !Self::use_complex_breaking(iterator, iterator.current_pos_data.unwrap().1) {
+                break;
+            }
         }
-        [input.len()].to_vec()
+
+        // Restore iterator to move to head of complex string
+        iterator.iter = start_iter;
+        iterator.current_pos_data = start_point;
+        let breaks = complex_language_segment_utf16(iterator.dictionary_payload, &s);
+        let mut i = 1;
+        iterator.result_cache = breaks;
+        // result_cache vector is utf-16 index that is in BMP.
+        loop {
+            if i == *iterator.result_cache.first().unwrap() {
+                // Re-calculate breaking offset
+                iterator.result_cache = iterator
+                    .result_cache
+                    .iter()
+                    .skip(1)
+                    .map(|r| r - i)
+                    .collect();
+                return Some(iterator.current_pos_data.unwrap().0);
+            }
+            iterator.current_pos_data = iterator.iter.next();
+            if iterator.current_pos_data.is_none() {
+                iterator.result_cache.clear();
+                return Some(iterator.len);
+            }
+            i += 1;
+        }
     }
 }
 

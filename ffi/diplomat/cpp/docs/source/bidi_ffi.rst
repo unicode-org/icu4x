@@ -6,7 +6,7 @@
     An ICU4X Bidi object, containing loaded bidi data
     See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/icu/properties/bidi/struct.BidiClassAdapter.html>`__ for more information.
 
-    .. cpp:function:: static diplomat::result<ICU4XBidi, std::monostate> try_new(const ICU4XDataProvider& provider)
+    .. cpp:function:: static diplomat::result<ICU4XBidi, ICU4XError> try_new(const ICU4XDataProvider& provider)
 
         Creates a new :cpp:class:`ICU4XBidi` from locale data.
         See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/icu/properties/bidi/struct.BidiClassAdapter.html#method.new>`__ for more information.
@@ -73,9 +73,9 @@
 
     Bidi information for a single processed paragraph
 
-    .. cpp:function:: diplomat::result<std::monostate, std::monostate> set_paragraph_in_text(size_t n)
+    .. cpp:function:: diplomat::result<std::monostate, ICU4XError> set_paragraph_in_text(size_t n)
 
-        Given a paragraph index ``n`` within the surrounding text, this sets this object to the paragraph at that index. Returns an error when out of bounds.
+        Given a paragraph index ``n`` within the surrounding text, this sets this object to the paragraph at that index. Returns ``ICU4XError::OutOfBoundsError`` when out of bounds.
         This is equivalent to calling ``paragraph_at()`` on ``ICU4XBidiInfo`` but doesn't create a new object
 
     .. cpp:function:: ICU4XBidiDirection direction() const
@@ -96,12 +96,12 @@
 
         The end index of this paragraph within the source text
 
-    .. cpp:function:: template<typename W> diplomat::result<std::monostate, std::monostate> reorder_line_to_writeable(size_t range_start, size_t range_end, W& out) const
+    .. cpp:function:: template<typename W> diplomat::result<std::monostate, ICU4XError> reorder_line_to_writeable(size_t range_start, size_t range_end, W& out) const
 
         Reorder a line based on display order. The ranges are specified relative to the source text and must be contained within this paragraph's range.
         See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/unicode_bidi/struct.Paragraph.html#method.level_at>`__ for more information.
 
-    .. cpp:function:: diplomat::result<std::string, std::monostate> reorder_line(size_t range_start, size_t range_end) const
+    .. cpp:function:: diplomat::result<std::string, ICU4XError> reorder_line(size_t range_start, size_t range_end) const
 
         Reorder a line based on display order. The ranges are specified relative to the source text and must be contained within this paragraph's range.
         See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/unicode_bidi/struct.Paragraph.html#method.level_at>`__ for more information.

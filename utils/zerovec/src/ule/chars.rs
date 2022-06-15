@@ -23,7 +23,7 @@ use core::convert::TryFrom;
 ///
 /// let c1 = '𑄃';
 /// let ule = c1.to_unaligned();
-/// assert_eq!(CharULE::as_byte_slice(&[ule]), &[0x03, 0x11, 0x01, 0x00]);
+/// assert_eq!(CharULE::as_byte_slice(&[ule]), &[0x03, 0x11, 0x01]);
 /// let c2 = char::from_unaligned(ule);
 /// assert_eq!(c1, c2);
 /// ```
@@ -38,7 +38,7 @@ use core::convert::TryFrom;
 /// ```
 #[repr(transparent)]
 #[derive(Debug, PartialEq, Eq, Clone, Copy)]
-pub struct CharULE([u8; 4]);
+pub struct CharULE([u8; 3]);
 
 // Safety (based on the safety checklist on the ULE trait):
 //  1. CharULE does not include any uninitialized or padding bytes.
@@ -52,15 +52,15 @@ pub struct CharULE([u8; 4]);
 unsafe impl ULE for CharULE {
     #[inline]
     fn validate_byte_slice(bytes: &[u8]) -> Result<(), ZeroVecError> {
-        if bytes.len() % 4 != 0 {
+        if bytes.len() % 3 != 0 {
             return Err(ZeroVecError::length::<Self>(bytes.len()));
         }
         // Validate the bytes
-        for chunk in bytes.chunks_exact(4) {
+        for chunk in bytes.chunks_exact(3) {
             // TODO: Use slice::as_chunks() when stabilized
             #[allow(clippy::indexing_slicing)]
-            // TODO(#1668) Clippy exceptions need docs or fixing.i
-            let u = u32::from_le_bytes([chunk[0], chunk[1], chunk[2], chunk[3]]);
+            // Won't panic because the chunks are always 3 bytes long
+            let u = u32::from_le_bytes([chunk[0], chunk[1], chunk[2], 0]);
             char::try_from(u).map_err(|_| ZeroVecError::parse::<Self>())?;
         }
         Ok(())
@@ -72,23 +72,19 @@ impl AsULE for char {
 
     #[inline]
     fn to_unaligned(self) -> Self::ULE {
-        let u = u32::from(self);
-        CharULE(u.to_le_bytes())
+        let [u0, u1, u2, _u3] = u32::from(self).to_le_bytes();
+        CharULE([u0, u1, u2])
     }
 
     #[inline]
     fn from_unaligned(unaligned: Self::ULE) -> Self {
-        let u = u32::from_le_bytes(unaligned.0);
         // Safe because the bytes of CharULE are defined to represent a valid Unicode code point.
+        let u = u32::from_le_bytes([unaligned.0[0], unaligned.0[1], unaligned.0[2], 0]);
         // TODO: Use char::from_u32_unchecked() when stabilized
         #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
         Self::try_from(u).unwrap()
     }
 }
-
-// EqULE is true because `char` is transmutable to `u32`, which in turn has the same byte sequence
-// as CharULE on little-endian platforms.
-unsafe impl EqULE for char {}
 
 impl PartialOrd for CharULE {
     fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
@@ -108,8 +104,8 @@ mod test {
 
     #[test]
     fn test_parse() {
-        // 1-byte, 2-byte, 3-byte, and 4-byte character in UTF-8 (not as relevant in UTF-32)
-        let chars = ['w', 'ω', '文', '𑄃'];
+        // 1-byte, 2-byte, 3-byte, and two 4-byte character in UTF-8 (not as relevant in UTF-32)
+        let chars = ['w', 'ω', '文', '𑄃', '🙃'];
         let char_ules: Vec<CharULE> = chars.iter().copied().map(char::to_unaligned).collect();
         let char_bytes: &[u8] = CharULE::as_byte_slice(&char_ules);
 
@@ -123,26 +119,9 @@ mod test {
             .collect();
         assert_eq!(&chars, parsed_chars.as_slice());
 
-        // Check EqULE
-        let char_ule_slice = char::slice_to_unaligned(&chars);
-        #[cfg(target_endian = "little")]
-        assert_eq!(char_ule_slice, Some(char_ules.as_slice()));
-        #[cfg(not(target_endian = "little"))]
-        assert_eq!(char_ule_slice, None);
-
-        // Compare to u32
-        let u32s: Vec<u32> = chars.iter().copied().map(u32::from).collect();
-        let u32_ules: Vec<RawBytesULE<4>> = u32s
-            .iter()
-            .copied()
-            .map(<u32 as AsULE>::to_unaligned)
-            .collect();
-        let u32_bytes: &[u8] = RawBytesULE::<4>::as_byte_slice(&u32_ules);
-        assert_eq!(char_bytes, u32_bytes);
-
         // Compare to golden expected data
         assert_eq!(
-            &[119, 0, 0, 0, 201, 3, 0, 0, 135, 101, 0, 0, 3, 17, 1, 0],
+            &[119, 0, 0, 201, 3, 0, 135, 101, 0, 3, 17, 1, 67, 246, 1],
             char_bytes
         );
     }
