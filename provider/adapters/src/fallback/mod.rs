@@ -8,17 +8,14 @@ use icu_locid::extensions::unicode::{Key, Value};
 use icu_locid::subtags::Variants;
 use icu_provider::prelude::*;
 
-mod adapter;
 mod algorithms;
 
 pub mod provider;
 
-pub use adapter::LocaleFallbackAdapter;
-pub use adapter::LocaleFallbackProvider;
-
 use provider::*;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[non_exhaustive]
 pub enum LocaleFallbackStrategy {
     LanguagePriority,
     RegionPriority,
@@ -93,8 +90,8 @@ impl<'a> LocaleFallbackerForKey<'a> {
     pub fn fallback_for<'b>(&'b self, mut ro: ResourceOptions) -> LocaleFallbackIterator<'a, 'b> {
         self.normalize(&mut ro);
         LocaleFallbackIterator {
-            likely_subtags: &self.likely_subtags,
-            parents: &self.parents,
+            likely_subtags: self.likely_subtags,
+            parents: self.parents,
             key_metadata: &self.key_metadata,
             current: ro,
             backup_extension: None,

@@ -329,7 +329,7 @@ mod tests {
                 ),
             ] {
                 let key_metadata = LocaleFallbackKeyMetadata {
-                    strategy: strategy,
+                    strategy,
                     extension_kw: cas.extension_kw,
                 };
                 let key_fallbacker = if cas.requires_data {
