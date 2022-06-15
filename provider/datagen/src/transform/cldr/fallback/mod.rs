@@ -90,53 +90,56 @@ impl From<FallbackSourceData<'_>> for LocaleFallbackRulesV1<'static> {
         let mut ls2r = ZeroMap2d::new();
         let mut parents = ZeroMap::new();
 
-        // To find single-script languages, collect all language-script pairs
-        let mut l2s_set = HashMap::new();
-        for maximized in source_data
-            .likely_subtags_data
-            .supplemental
-            .likely_subtags
-            .iter_values()
-        {
-            let set: &mut HashSet<Script> = l2s_set.entry(maximized.language).or_default();
-            set.insert(maximized.script.expect("maximized"));
-        }
-
-        // Now populate the maps
+        // First collect the l2s and l2r maps
         for (minimized, maximized) in source_data
             .likely_subtags_data
             .supplemental
             .likely_subtags
             .iter()
+            // Skip "und" for vertical fallback
+            .filter(|(lid, _)| !lid.language.is_empty())
+            // Find language-only entries
+            .filter(|(lid, _)| **lid == LanguageIdentifier::from(lid.language))
         {
             let language = minimized.language;
-            if language.is_empty() {
-                // We never fill in a missing language in vertical fallback
-                continue;
-            }
-            if let Some(script) = minimized.script {
-                assert!(minimized.region.is_none());
-                let region = maximized.region.expect("maximized");
+            let script = maximized.script.expect("maximized");
+            let region = maximized.region.expect("maximized");
+            l2s.insert(&language.into(), &script);
+            l2r.insert(&language.into(), &region);
+        }
+
+        // Now populate the other maps
+        for (minimized, maximized) in source_data
+            .likely_subtags_data
+            .supplemental
+            .likely_subtags
+            .iter()
+            // Skip "und" for vertical fallback
+            .filter(|(lid, _)| !lid.language.is_empty())
+            // Find non-language-only entries
+            .filter(|(lid, _)| **lid != LanguageIdentifier::from(lid.language))
+        {
+            let language = maximized.language;
+            let script = maximized.script.expect("maximized");
+            let region = maximized.region.expect("maximized");
+            if minimized.script.is_some() {
+                assert!(minimized.region.is_none(), "{:?}", minimized);
+                // Skip if the region is the default region
+                if l2s.get_copied(&language.into()) == Some(script) {
+                    continue;
+                }
                 ls2r.insert(&language.into(), &script.into(), &region);
                 continue;
             }
-            if let Some(region) = minimized.region {
-                // Skip if it is a single-script language
-                if l2s_set.get(&language).unwrap().len() == 1 {
+            if minimized.region.is_some() {
+                // Skip if the script is the default script
+                if l2r.get_copied(&language.into()) == Some(region) {
                     continue;
                 }
-                let script = maximized.script.expect("maximized");
                 lr2s.insert(&language.into(), &region.into(), &script);
                 continue;
             }
-            let script = maximized.script.expect("maximized");
-            let region = maximized.region.expect("maximized");
-            l2r.insert(&language.into(), &region);
-            // Skip if it is a single-script language
-            if l2s_set.get(&language).unwrap().len() == 1 {
-                continue;
-            }
-            l2s.insert(&language.into(), &script);
+            unreachable!();
         }
 
         for (source, target) in source_data
