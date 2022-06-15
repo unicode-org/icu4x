@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1655250273555,
+  "lastUpdate": 1655262398315,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -32044,6 +32044,60 @@ window.BENCHMARK_DATA = {
           {
             "name": "uniset/contains_range/worst",
             "value": 9,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "samchen61661@gmail.com",
+            "name": "samchen",
+            "username": "samchen61661"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "6c5e4b3f41dc4fe288758838d4628ef3c48b976c",
+          "message": "Add time period metaZone to TimeZonesProvider (#1961)\n\n* Add time period metaZone to TimeZonesProvider\r\n\r\n* fix type mismatch and handle short timezone/metazone ids\r\n\r\n* fix trait bound error\r\n\r\n* handle metazones who do not have short ids\r\n\r\n* fix compiler errors and add comment\r\n\r\n* address comments\r\n\r\n* address minor comments",
+          "timestamp": "2022-06-14T19:56:03-07:00",
+          "tree_id": "ba63f6ec65e77cd6372f756942a087ebd35e3316",
+          "url": "https://github.com/unicode-org/icu4x/commit/6c5e4b3f41dc4fe288758838d4628ef3c48b976c"
+        },
+        "date": 1655262369991,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 51037829,
+            "range": "± 784450",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/best",
+            "value": 10,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/worst",
+            "value": 10,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/best",
+            "value": 10,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/worst",
+            "value": 10,
             "range": "± 0",
             "unit": "ns/iter"
           }
