@@ -32,6 +32,9 @@ serde = { version = "1.0", default-features = false, features = ["derive", "allo
 crabbake = { version = "0.4", path = "../../experimental/crabbake", optional = true, features = ["derive"]}
 tinystr = { path = "../../utils/tinystr", features = ["zerovec"] }
 
+[dev-dependencies]
+icu_testdata = { path = "../testdata" }
+
 [features]
 std = ["icu_locid/std"]
 serde = ["dep:serde", "zerovec/serde", "icu_locid/serde"]

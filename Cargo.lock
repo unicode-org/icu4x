@@ -1747,6 +1747,7 @@ dependencies = [
  "crabbake",
  "icu_locid",
  "icu_provider",
+ "icu_testdata",
  "serde",
  "tinystr 0.6.0",
  "yoke",

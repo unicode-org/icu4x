@@ -577,7 +577,7 @@ impl ResourceOptions {
     /// Returns whether there are any [`Variant`] subtags in this [`ResourceOptions`].
     #[inline]
     pub fn has_variants(&self) -> bool {
-        self.langid.variants.is_empty()
+        !self.langid.variants.is_empty()
     }
 
     #[inline]

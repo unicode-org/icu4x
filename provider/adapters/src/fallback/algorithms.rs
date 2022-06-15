@@ -84,19 +84,22 @@ impl<'a, 'b> LocaleFallbackIterator<'a, 'b> {
         if let Some(extension_kw) = self.key_metadata.extension_kw {
             if let Some(value) = ro.remove_unicode_ext(&extension_kw) {
                 self.backup_extension = Some(value);
+                println!("Fallback 1");
                 return;
             }
         }
         // 2. Remove the subdivision keyword
         if let Some(value) = ro.remove_unicode_ext(&SUBDIVISION_KEY) {
             self.backup_subdivision = Some(value);
+            println!("Fallback 2");
             return;
         }
         // 3. Assert that the locale is a language identifier
-        debug_assert!(ro.has_unicode_ext());
+        debug_assert!(!ro.has_unicode_ext());
         // 4. Remove variants
         if ro.has_variants() {
             self.backup_variants = Some(ro.clear_variants());
+            println!("Fallback 4");
             return;
         }
         // 5. Check for parent override
@@ -108,6 +111,7 @@ impl<'a, 'b> LocaleFallbackIterator<'a, 'b> {
             let lid = LanguageIdentifier::from(parent);
             ro.set_langid(lid);
             self.restore_extensions_variants();
+            println!("Fallback 5");
             return;
         }
         // 6. Add the script subtag if necessary
@@ -121,6 +125,7 @@ impl<'a, 'b> LocaleFallbackIterator<'a, 'b> {
                 {
                     ro.set_script(Some(script));
                     self.restore_extensions_variants();
+                    println!("Fallback 6");
                     return;
                 }
             }
@@ -128,12 +133,14 @@ impl<'a, 'b> LocaleFallbackIterator<'a, 'b> {
         // 7. Remove region
         if ro.region().is_some() {
             ro.set_region(None);
+            println!("Fallback 7");
             return;
         }
         // 8. Remove language+script
         debug_assert!(!ro.language().is_empty());
         ro.set_script(None);
         ro.set_language(Language::UND);
+        println!("Fallback 8");
     }
 
     fn step_region(&mut self) {
@@ -205,6 +212,60 @@ mod tests {
             let mut ro = ResourceOptions::from(loc);
             key_fallbacker.normalize(&mut ro);
             assert_eq!(cas.expected, ro.to_string());
+        }
+    }
+
+    #[test]
+    fn test_fallback() {
+        struct TestCase {
+            input: &'static str,
+            extension_kw: Option<Key>,
+            expected_language_chain: &'static [&'static str],
+            expected_region_chain: &'static [&'static str],
+        }
+        let cases = [
+            TestCase {
+                input: "en-u-hc-h12-sd-usca",
+                extension_kw: None,
+                expected_language_chain: &["en-US-u-sd-usca", "en-US", "en"],
+                expected_region_chain: &["en-US-u-sd-usca", "und-US-u-sd-usca", "und-US"]
+            },
+            // TestCase {
+            //     input: "en-u-hc-h12-sd-usca",
+            //     strategy: LocaleFallbackStrategy::LanguagePriority,
+            //     extension_kw: Some(unicode_ext_key!("hc")),
+            //     expected: "en-u-hc-h12-sd-usca",
+            // },
+            // TestCase {
+            //     input: "en-u-rg-gb",
+            //     strategy: LocaleFallbackStrategy::LanguagePriority,
+            //     extension_kw: None,
+            //     expected: "en",
+            // },
+            // TestCase {
+            //     input: "en-u-rg-gbxxxx",
+            //     strategy: LocaleFallbackStrategy::RegionPriority,
+            //     extension_kw: None,
+            //     expected: "en-u-rg-gbxxxx",
+            // },
+        ];
+        let provider = icu_testdata::get_provider();
+        let fallbacker = LocaleFallbacker::try_new(&provider).unwrap();
+        for cas in cases {
+            for (strategy, expected_list) in [(LocaleFallbackStrategy::LanguagePriority, cas.expected_language_chain), (LocaleFallbackStrategy::RegionPriority, cas.expected_region_chain)] {
+                let key_fallbacker = fallbacker.for_key_metadata(LocaleFallbackKeyMetadata {
+                    strategy: strategy,
+                    extension_kw: cas.extension_kw,
+                });
+                let loc = Locale::from_str(cas.input).unwrap();
+                let ro = ResourceOptions::from(loc);
+                let mut it = key_fallbacker.fallback_for(ro);
+                for expected in expected_list {
+                    assert_eq!(expected, &it.get().to_string(), "{:?} ({:?})", cas.input, strategy);
+                    it.step();
+                }
+                assert_eq!("und", it.get().to_string());
+            }
         }
     }
 }
