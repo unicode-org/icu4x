@@ -6,7 +6,7 @@ use crate::transform::cldr::cldr_serde;
 use crate::transform::uprops::EnumeratedPropertyCodePointTrieProvider;
 use crate::SourceData;
 use icu_list::provider::*;
-use icu_locid::language;
+use icu_locid::subtags_language as language;
 use icu_provider::datagen::IterableResourceProvider;
 use icu_provider::prelude::*;
 

@@ -12,9 +12,8 @@ use core::mem;
 use icu_locid::subtags::{Language, Region, Script};
 use icu_locid::{
     extensions::unicode::Key,
-    language,
     subtags::{Variant, Variants},
-    LanguageIdentifier, Locale,
+    subtags_language as language, LanguageIdentifier, Locale,
 };
 use icu_provider::prelude::*;
 use tinystr::{tinystr, TinyAsciiStr};

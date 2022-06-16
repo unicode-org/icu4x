@@ -145,9 +145,10 @@ fn char_from_u24(u: U24) -> char {
 fn split_first_u16(s: Option<&ZeroSlice<u16>>) -> (char, &ZeroSlice<u16>) {
     if let Some(slice) = s {
         if let Some(first) = slice.first() {
-            // `unwrap()` must succeed, because `first()` returned `Some`.
             return (
                 char_from_u16(first),
+                // `unwrap()` must succeed, because `first()` returned `Some`.
+                #[allow(clippy::unwrap_used)]
                 slice.get_subslice(1..slice.len()).unwrap(),
             );
         }
@@ -161,9 +162,10 @@ fn split_first_u16(s: Option<&ZeroSlice<u16>>) -> (char, &ZeroSlice<u16>) {
 fn split_first_u32(s: Option<&ZeroSlice<U24>>) -> (char, &ZeroSlice<U24>) {
     if let Some(slice) = s {
         if let Some(first) = slice.first() {
-            // `unwrap()` must succeed, because `first()` returned `Some`.
             return (
                 char_from_u24(first),
+                // `unwrap()` must succeed, because `first()` returned `Some`.
+                #[allow(clippy::unwrap_used)]
                 slice.get_subslice(1..slice.len()).unwrap(),
             );
         }
@@ -641,6 +643,9 @@ impl CharacterAndClass {
     pub fn ccc(&self) -> CanonicalCombiningClass {
         CanonicalCombiningClass((self.0 >> 24) as u8)
     }
+    pub fn character_and_ccc(&self) -> (char, CanonicalCombiningClass) {
+        (self.character(), self.ccc())
+    }
     pub fn set_ccc_from_trie(&mut self, ccc: &CodePointTrie<CanonicalCombiningClass>) {
         debug_assert_eq!(self.0 >> 24, 0xFF, "This method has already been called!");
         let scalar = self.0 & 0xFFFFFF;
@@ -792,6 +797,9 @@ where
         if self.upcoming.len() != 1 {
             return;
         }
+        // index has to be in range due to the check above.
+        // rewriting with `get()` would result in two checks.
+        #[allow(clippy::indexing_slicing)]
         if !self
             .decomposition_starts_with_non_starter
             .contains(self.upcoming[0])
@@ -942,11 +950,19 @@ where
             // However, for forward compatility, support any combination
             // and search for the last starter.
             let mut i = self.upcoming.len() - 1;
-            while self
-                .decomposition_starts_with_non_starter
-                .contains(self.upcoming[i])
-            {
-                i -= 1;
+            loop {
+                if let Some(&ch) = self.upcoming.get(i) {
+                    if self.decomposition_starts_with_non_starter.contains(ch) {
+                        i -= 1;
+                        continue;
+                    }
+                    break;
+                }
+                // GIGO case
+                debug_assert!(false);
+                // This will wrap to zero below
+                i = usize::MAX;
+                break;
             }
             i + 1
         } else {
@@ -1020,10 +1036,15 @@ where
         // Perhaps there is a better borrow checker idiom than a function
         // call for indicating that `upcoming` and `ccc` are disjoint and don't
         // overlap. However, this works.
+        // Indices are in range by construction, so indexing is OK.
+        #[allow(clippy::indexing_slicing)]
         sort_slice_by_ccc(&mut self.upcoming[start_combining..end_combining], self.ccc);
     }
 
     // Assumption: `pos` starts from zero and increases one by one.
+    // Indexing is OK, because we check against `len()` and the `pos`
+    // increases one by one by construction.
+    #[allow(clippy::indexing_slicing)]
     fn look_ahead(&mut self, pos: usize) -> Option<char> {
         if pos + 1 == self.upcoming.len() {
             let c = self.upcoming.remove(pos);
@@ -1046,12 +1067,11 @@ where
     }
 
     fn is_next_decomposition_starts_with_starter(&self) -> bool {
-        if self.upcoming.is_empty() {
-            return true;
+        if let Some(&c) = self.upcoming.first() {
+            !self.decomposition_starts_with_non_starter.contains(c)
+        } else {
+            true
         }
-        !self
-            .decomposition_starts_with_non_starter
-            .contains(self.upcoming[0])
     }
 
     fn prepend_and_sort_non_starter_prefix_of_suffix(&mut self, c: char) {
@@ -1078,6 +1098,8 @@ where
         } else {
             1
         };
+        // Indices in range by construction
+        #[allow(clippy::indexing_slicing)]
         sort_slice_by_ccc(&mut self.upcoming[start..end], self.ccc);
     }
 
@@ -1095,8 +1117,7 @@ where
 
     pub fn next(&mut self) -> CollationElement {
         debug_assert!(self.is_next_decomposition_starts_with_starter());
-        if self.pending_pos < self.pending.len() {
-            let ret = self.pending[self.pending_pos];
+        if let Some(&ret) = self.pending.get(self.pending_pos) {
             self.pending_pos += 1;
             if self.pending_pos == self.pending.len() {
                 self.pending.clear();
@@ -1122,6 +1143,9 @@ where
                 if decomposition == 0 {
                     // The character is its own decomposition
                     let jamo_index = (c as usize).wrapping_sub(HANGUL_L_BASE as usize);
+                    // Attribute belongs on an inner expression, but
+                    // https://github.com/rust-lang/rust/issues/15701
+                    #[allow(clippy::indexing_slicing)]
                     if jamo_index >= self.jamo.len() {
                         ce32 = data.ce32_for_char(c);
                         if ce32 == FALLBACK_CE32 {
@@ -1146,6 +1170,8 @@ where
                         // We need to set data to root, because archaic jamo refer to
                         // the root.
                         data = self.root;
+                        // Index in range by construction above. Not using `get` with
+                        // `if let` in order to put the likely branch first.
                         ce32 = CollationElement32::new_from_ule(self.jamo[jamo_index]);
                     }
                     if self.is_next_decomposition_starts_with_starter() {
@@ -1366,6 +1392,8 @@ where
 
                 // No prefix matches on Hangul
                 self.mark_prefix_unmatchable();
+                // Indexing OK, because indices in range by construction
+                #[allow(clippy::indexing_slicing)]
                 if self.is_next_decomposition_starts_with_starter() {
                     // TODO(#1941): Assuming self-contained CE32s is OK for the root,
                     // but not currently OK for search collation, which at this time
@@ -1395,6 +1423,9 @@ where
                 //
                 // The `unsafe` blocks are OK, because the value is by construction in the Hangul
                 // jamo block, which is in the scalar value range.
+                //
+                // Indexing OK, because indices in range by construction
+                #[allow(clippy::indexing_slicing)]
                 if t != 0 {
                     self.pending.push(
                         CollationElement32::new_from_ule(
@@ -1411,6 +1442,8 @@ where
                     });
                 }
 
+                // Indexing OK, because indices in range by construction
+                #[allow(clippy::indexing_slicing)]
                 return CollationElement32::new_from_ule(self.jamo[l as usize])
                     .to_ce_self_contained_or_gigo();
             }
@@ -1426,7 +1459,7 @@ where
             // combining_characters contains all the combining characters before
             // the next starter sorted by combining class.
             let mut looked_ahead = 0;
-            let mut drain_from_suffix = 0;
+            let mut drain_from_upcoming = 0;
             'outer: loop {
                 'ce32loop: loop {
                     // TODO(#2002): Ensure that the CE32 flavors in this loop are checked in the optimal
@@ -1495,13 +1528,10 @@ where
                                 // TODO(#2001): Pending removals will in practice be small numbers.
                                 // What if we made the item smaller than usize?
                                 let mut pending_removals: SmallVec<[usize; 1]> = SmallVec::new();
-                                while i < combining_characters.len() {
-                                    let combining_and_class = &combining_characters[i];
-                                    let ccc = combining_and_class.ccc();
-                                    match (
-                                        most_recent_skipped_ccc < ccc,
-                                        trie.next(combining_and_class.character()),
-                                    ) {
+                                while let Some((character, ccc)) =
+                                    combining_characters.get(i).map(|c| c.character_and_ccc())
+                                {
+                                    match (most_recent_skipped_ccc < ccc, trie.next(character)) {
                                         (true, TrieResult::Intermediate(ce32_i)) => {
                                             let _ = combining_characters.remove(i);
                                             while let Some(idx) = pending_removals.pop() {
@@ -1651,11 +1681,11 @@ where
                                             }
                                             TrieResult::Intermediate(ce32_i) => {
                                                 longest_matching_state = trie.clone();
-                                                drain_from_suffix = looked_ahead;
+                                                drain_from_upcoming = looked_ahead;
                                                 ce32 = CollationElement32::new(ce32_i as u32);
                                             }
                                             TrieResult::FinalValue(ce32_i) => {
-                                                drain_from_suffix = looked_ahead;
+                                                drain_from_upcoming = looked_ahead;
                                                 ce32 = CollationElement32::new(ce32_i as u32);
                                                 continue 'ce32loop;
                                             }
@@ -1689,7 +1719,7 @@ where
                                             if ce32.tag_checked() != Some(Tag::Digit) {
                                                 break;
                                             }
-                                            drain_from_suffix = looked_ahead;
+                                            drain_from_upcoming = looked_ahead;
                                             digits.push(ce32.digit());
                                         }
                                     }
@@ -1705,6 +1735,8 @@ where
                                         // All zeros, keep a zero
                                         zeros = digits.len() - 1;
                                     }
+                                    // Index in range by construction above
+                                    #[allow(clippy::indexing_slicing)]
                                     let mut remaining = &digits[zeros..];
                                     while !remaining.is_empty() {
                                         // Numeric CEs are generated for segments of
@@ -1718,8 +1750,9 @@ where
                                         // From ICU4C CollationIterator::appendNumericSegmentCEs
                                         if head.len() <= 7 {
                                             let mut digit_iter = head.iter();
-                                            // Unwrap succeeds, because we always have at least one
+                                            // `unwrap` succeeds, because we always have at least one
                                             // digit to even start numeric processing.
+                                            #[allow(clippy::unwrap_used)]
                                             let mut value = u32::from(*digit_iter.next().unwrap());
                                             for &digit in digit_iter {
                                                 value *= 10;
@@ -1795,11 +1828,16 @@ where
                                         //   `head[len - 1]` isn't a leading zero, and `&&`
                                         //   short-circuts, so the `head[len - 2]` access doesn't
                                         //   occur.
+                                        #[allow(clippy::indexing_slicing)]
                                         while head[len - 1] == 0 && head[len - 2] == 0 {
                                             len -= 2;
                                         }
                                         // Read the first pair
+                                        // Index in bounds by construction above.
+                                        #[allow(clippy::indexing_slicing)]
                                         let mut digit_iter = head[..len].iter();
+                                        // `unwrap` succeeds by construction
+                                        #[allow(clippy::unwrap_used)]
                                         let mut pair = if len & 1 == 1 {
                                             // Only "half a pair" if we have an odd number of digits.
                                             u32::from(*digit_iter.next().unwrap())
@@ -1863,28 +1901,30 @@ where
                 }
                 self.prefix_push(c);
                 'combining_outer: loop {
-                    debug_assert!(drain_from_suffix == 0 || combining_characters.is_empty());
+                    debug_assert!(drain_from_upcoming == 0 || combining_characters.is_empty());
                     let mut i = 0;
-                    'combining: while i < combining_characters.len() {
-                        c = combining_characters[i].character();
+                    'combining: while let Some(ch) =
+                        combining_characters.get(i).map(|c| c.character())
+                    {
+                        c = ch;
                         let diacritic_index = (c as usize).wrapping_sub(COMBINING_DIACRITICS_BASE);
                         if let Some(secondary) = self.diacritics.get(diacritic_index) {
-                            // TODO(#2006): unlikely annotation for the first two conditions here:
-                            if c == '\u{0307}'
-                                && self.lithuanian_dot_above
-                                && i + 1 < combining_characters.len()
-                            {
-                                let next_c = combining_characters[i + 1].character();
-                                if next_c == '\u{0300}'
-                                    || next_c == '\u{0301}'
-                                    || next_c == '\u{0303}'
+                            // TODO(#2006): unlikely annotation
+                            if c == '\u{0307}' && self.lithuanian_dot_above {
+                                if let Some(next_c) =
+                                    combining_characters.get(i + 1).map(|c| c.character())
                                 {
-                                    // Lithuanian contracts COMBINING DOT ABOVE with three other diacritics of the
-                                    // same combining class such that the COMBINING DOT ABOVE is ignored for
-                                    // collation. Since the combining class is the same, it's valid to simply
-                                    // look at the next character in `combining_characters`.
-                                    i += 1;
-                                    continue 'combining;
+                                    if next_c == '\u{0300}'
+                                        || next_c == '\u{0301}'
+                                        || next_c == '\u{0303}'
+                                    {
+                                        // Lithuanian contracts COMBINING DOT ABOVE with three other diacritics of the
+                                        // same combining class such that the COMBINING DOT ABOVE is ignored for
+                                        // collation. Since the combining class is the same, it's valid to simply
+                                        // look at the next character in `combining_characters`.
+                                        i += 1;
+                                        continue 'combining;
+                                    }
                                 }
                             }
                             self.pending
@@ -1911,17 +1951,19 @@ where
                     // this, `prefix` and `prefix_push` would need to be refactored
                     // into a struct.
                     i = 0;
-                    while i < drain_from_suffix {
+                    while i < drain_from_upcoming {
+                        // By construction, `drain_from_upcoming` doesn't exceed `upcoming.len()`
+                        #[allow(clippy::indexing_slicing)]
                         let ch = self.upcoming[i];
                         self.prefix_push(ch);
                         i += 1;
                     }
                     // TODO(#2004): The above makes prefix out of sync when starter-contracting
-                    // contractions use `pending_removals` instead of `drain_from_suffix`.
+                    // contractions use `pending_removals` instead of `drain_from_upcoming`.
                     // Do there exist prefixes that overlap contraction suffixes?
                     // At least as of CLDR 40, the two possible non-starters in prefixes,
                     // kana voicing marks, shouldn't be participating in Brahmic contractions.
-                    let _ = self.upcoming.drain(..drain_from_suffix);
+                    let _ = self.upcoming.drain(..drain_from_upcoming);
                     if self.upcoming.is_empty() {
                         // Make the assertion conditional to make CI happy.
                         #[cfg(debug_assertions)]
@@ -1941,7 +1983,7 @@ where
                             // We need to loop back and process another round of
                             // non-starters in order to maintain the invariant of
                             // `upcoming` on the next call to `next()`.
-                            drain_from_suffix = 0;
+                            drain_from_upcoming = 0;
                             next_is_known_to_decompose_to_non_starter = true;
                             self.collect_combining(
                                 &mut next_is_known_to_decompose_to_non_starter,
@@ -1950,6 +1992,8 @@ where
                             continue 'combining_outer;
                         }
                     }
+                    // By construction, we have at least on pending CE by now.
+                    #[allow(clippy::indexing_slicing)]
                     let ret = self.pending[0];
                     debug_assert_eq!(self.pending_pos, 0);
                     if self.pending.len() == 1 {
@@ -1977,6 +2021,7 @@ where
             *next_is_known_to_decompose_to_non_starter = false;
             // `unwrap` is OK, because `!self.is_next_decomposition_starts_with_starter()`
             // means the `unwrap()` must succeed.
+            #[allow(clippy::unwrap_used)]
             let combining = self.next_internal().unwrap();
             if !in_inclusive_range(combining, '\u{0340}', '\u{0F81}') {
                 combining_characters.push(CharacterAndClass::new(combining));

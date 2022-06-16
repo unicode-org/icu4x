@@ -1432,6 +1432,7 @@ dependencies = [
  "crabbake",
  "serde",
  "toml",
+ "zerofrom",
  "zerovec",
 ]
 
@@ -1481,6 +1482,7 @@ dependencies = [
  "icu_uniset",
  "serde",
  "smallvec",
+ "utf16_iter",
  "utf8_iter",
  "zerofrom",
  "zerovec",
@@ -1500,6 +1502,7 @@ dependencies = [
  "eyre",
  "icu_calendar",
  "icu_casemapping",
+ "icu_char16trie",
  "icu_codepointtrie",
  "icu_codepointtrie_builder",
  "icu_collator",
@@ -1658,8 +1661,11 @@ dependencies = [
 name = "icu_normalizer"
 version = "0.6.0"
 dependencies = [
+ "arraystring",
+ "atoi",
  "crabbake",
  "displaydoc",
+ "icu_char16trie",
  "icu_codepointtrie",
  "icu_properties",
  "icu_provider",
@@ -1667,6 +1673,7 @@ dependencies = [
  "icu_uniset",
  "serde",
  "smallvec",
+ "utf16_iter",
  "utf8_iter",
  "zerofrom",
  "zerovec",
@@ -1744,9 +1751,14 @@ dependencies = [
 name = "icu_provider_adapters"
 version = "0.6.0"
 dependencies = [
+ "crabbake",
  "icu_locid",
  "icu_provider",
+ "icu_testdata",
+ "serde",
+ "tinystr 0.6.0",
  "yoke",
+ "zerovec",
 ]
 
 [[package]]
@@ -1835,6 +1847,7 @@ dependencies = [
  "futures",
  "icu_calendar",
  "icu_casemapping",
+ "icu_char16trie",
  "icu_codepointtrie",
  "icu_collator",
  "icu_datagen",
@@ -1847,6 +1860,7 @@ dependencies = [
  "icu_plurals",
  "icu_properties",
  "icu_provider",
+ "icu_provider_adapters",
  "icu_provider_blob",
  "icu_provider_fs",
  "icu_segmenter",
@@ -2094,9 +2108,9 @@ checksum = "a3e378b66a060d48947b590737b30a1be76706c8dd7b8ba0f2fe3989c68a853f"
 
 [[package]]
 name = "matrixmultiply"
-version = "0.3.1"
+version = "0.3.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5a8a15b776d9dfaecd44b03c5828c2199cddff5247215858aac14624f8d6b741"
+checksum = "add85d4dd35074e6fedc608f8c8f513a3548619a9024b751949ef0e8e45a4d84"
 dependencies = [
  "rawpointer",
 ]
@@ -2204,9 +2218,8 @@ checksum = "546c37ac5d9e56f55e73b677106873d9d9f5190605e41a856503623648488cae"
 
 [[package]]
 name = "ndarray"
-version = "0.15.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "08e854964160a323e65baa19a0b1a027f76d590faba01f05c0cbc3187221a8c9"
+version = "0.15.4"
+source = "git+https://github.com/rust-ndarray/ndarray?rev=31244100631382bb8ee30721872a928bfdf07f44#31244100631382bb8ee30721872a928bfdf07f44"
 dependencies = [
  "matrixmultiply",
  "num-complex",
@@ -3620,6 +3633,12 @@ dependencies = [
  "matches",
  "percent-encoding",
 ]
+
+[[package]]
+name = "utf16_iter"
+version = "1.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b8fd690b5b39c6d4c161145f56f1e346e379c0a68a56a65bb927866200eef621"
 
 [[package]]
 name = "utf8_iter"

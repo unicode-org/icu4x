@@ -22,7 +22,6 @@ use crate::provider::CollationReorderingV1Marker;
 use crate::provider::CollationSpecialPrimariesV1Marker;
 use crate::{AlternateHandling, CollatorOptions, MaxVariable, Strength};
 use alloc::string::ToString;
-use core::char::{decode_utf16, DecodeUtf16Error, REPLACEMENT_CHARACTER};
 use core::cmp::Ordering;
 use core::convert::TryFrom;
 use icu_locid::Locale;
@@ -35,6 +34,7 @@ use icu_provider::DataRequest;
 use icu_provider::ResourceOptions;
 use icu_provider::ResourceProvider;
 use smallvec::SmallVec;
+use utf16_iter::Utf16CharsEx;
 use utf8_iter::Utf8CharsEx;
 use zerovec::ule::AsULE;
 
@@ -57,13 +57,7 @@ impl AnyQuaternaryAccumulator {
     }
 }
 
-// Hoisted to function, because the compiler doesn't like having
-// to identical closures.
-#[inline(always)]
-fn utf16_error_to_replacement(r: Result<char, DecodeUtf16Error>) -> char {
-    r.unwrap_or(REPLACEMENT_CHARACTER)
-}
-
+/// Compares strings according to culturally-relevant ordering.
 pub struct Collator {
     special_primaries: Option<DataPayload<CollationSpecialPrimariesV1Marker>>,
     root: DataPayload<CollationDataV1Marker>,
@@ -79,6 +73,7 @@ pub struct Collator {
 }
 
 impl Collator {
+    /// Instantiates a collator for a given locale with the given options
     pub fn try_new<T: Into<Locale>, D>(
         locale: T,
         data_provider: &D,
@@ -109,11 +104,11 @@ impl Collator {
             let original_locale: Locale = locale.into();
             let mut filtered_locale: Locale = original_locale.id.into();
 
-            let key = icu_locid::unicode_ext_key!("co");
+            let key = icu_locid::extensions_unicode_key!("co");
             if let Some(variant) = original_locale.extensions.unicode.keywords.get(&key) {
                 let s = variant.to_string();
-                let zh = filtered_locale.id.language == icu_locid::language!("zh");
-                let sv = filtered_locale.id.language == icu_locid::language!("sv");
+                let zh = filtered_locale.id.language == icu_locid::subtags_language!("zh");
+                let sv = filtered_locale.id.language == icu_locid::subtags_language!("sv");
                 // Omit the explicit collation variant if it is the default.
                 // "standard" is the default for all languages except zh and sv.
                 if !((!zh && !sv && s == "standard")
@@ -269,21 +264,20 @@ impl Collator {
         })
     }
 
+    /// Compare potentially-invalid UTF-16 slices. Unpaired surrogates
+    /// are compared as if each one was a REPLACEMENT CHARACTER.
     pub fn compare_utf16(&self, left: &[u16], right: &[u16]) -> Ordering {
         // TODO(#2010): Identical prefix skipping not implemented.
-        let ret = self.compare_impl(
-            decode_utf16(left.iter().copied()).map(utf16_error_to_replacement),
-            decode_utf16(right.iter().copied()).map(utf16_error_to_replacement),
-        );
+        let ret = self.compare_impl(left.chars(), right.chars());
         if self.options.strength() == Strength::Identical && ret == Ordering::Equal {
             return Decomposition::new(
-                decode_utf16(left.iter().copied()).map(utf16_error_to_replacement),
+                left.chars(),
                 self.decompositions.get(),
                 self.tables.get(),
                 &self.ccc.get().code_point_trie,
             )
             .cmp(Decomposition::new(
-                decode_utf16(right.iter().copied()).map(utf16_error_to_replacement),
+                right.chars(),
                 self.decompositions.get(),
                 self.tables.get(),
                 &self.ccc.get().code_point_trie,
@@ -292,6 +286,7 @@ impl Collator {
         ret
     }
 
+    /// Compare guaranteed-valid UTF-8 slices.
     pub fn compare(&self, left: &str, right: &str) -> Ordering {
         // TODO(#2010): Identical prefix skipping not implemented.
         let ret = self.compare_impl(left.chars(), right.chars());
@@ -312,6 +307,9 @@ impl Collator {
         ret
     }
 
+    /// Compare potentially-valid UTF-8 slices. Invalid input is compared
+    /// as if errors had been replaced with REPLACEMENT CHARACTERs according
+    /// to the WHATWG Encoding Standard.
     pub fn compare_utf8(&self, left: &[u8], right: &[u8]) -> Ordering {
         // TODO(#2010): Identical prefix skipping not implemented.
         let ret = self.compare_impl(left.chars(), right.chars());
@@ -370,22 +368,31 @@ impl Collator {
         // The algorithm comes from CollationCompare::compareUpToQuaternary in ICU4C.
 
         let mut any_variable = false;
+        // Attribute belongs closer to `unwrap`, but
+        // https://github.com/rust-lang/rust/issues/15701
+        #[allow(clippy::unwrap_used)]
         let variable_top = if self.options.alternate_handling() == AlternateHandling::NonIgnorable {
             0
         } else {
             // +1 so that we can use "<" and primary ignorables test out early.
             self.special_primaries
                 .as_ref()
+                // `unwrap()` is OK, because we've ensured in the constructor that value
+                // is `Some` if we have alternate handling.
                 .unwrap()
                 .get()
                 .last_primary_for_group(self.options.max_variable())
                 + 1
         };
 
+        // Attribute belongs on inner expression, but
+        // https://github.com/rust-lang/rust/issues/15701
+        #[allow(clippy::unwrap_used)]
         let numeric_primary = if self.options.numeric() {
             Some(
                 self.special_primaries
                     .as_ref()
+                    // `unwrap` is OK, because we've ensured `Some` in the constructor
                     .unwrap()
                     .get()
                     .numeric_primary,
@@ -394,12 +401,15 @@ impl Collator {
             None
         };
 
+        // Attribute belongs on inner expression, but
+        // https://github.com/rust-lang/rust/issues/15701
+        #[allow(clippy::unwrap_used)]
         let mut left = CollationElements::new(
             left_chars,
             self.root.get(),
             tailoring.get(),
             <&[<u32 as AsULE>::ULE; JAMO_COUNT]>::try_from(self.jamo.get().ce32s.as_ule_slice())
-                .unwrap(), // length already validated
+                .unwrap(), // `unwrap` OK, because length already validated
             &self.diacritics.get().secondaries,
             self.decompositions.get(),
             self.tables.get(),
@@ -407,12 +417,15 @@ impl Collator {
             numeric_primary,
             self.lithuanian_dot_above,
         );
+        // Attribute belongs on inner expression, but
+        // https://github.com/rust-lang/rust/issues/15701
+        #[allow(clippy::unwrap_used)]
         let mut right = CollationElements::new(
             right_chars,
             self.root.get(),
             tailoring.get(),
             <&[<u32 as AsULE>::ULE; JAMO_COUNT]>::try_from(self.jamo.get().ce32s.as_ule_slice())
-                .unwrap(), // length already validated
+                .unwrap(), // `unwrap` OK, because length already validated
             &self.diacritics.get().secondaries,
             self.decompositions.get(),
             self.tables.get(),
@@ -515,8 +528,8 @@ impl Collator {
         // Sadly, we end up pushing the sentinel value, which means these
         // `SmallVec`s allocate more often than if we didn't actually
         // store the sentinel.
-        debug_assert_eq!(left_ces[left_ces.len() - 1], NO_CE);
-        debug_assert_eq!(right_ces[right_ces.len() - 1], NO_CE);
+        debug_assert_eq!(left_ces.last(), Some(&NO_CE));
+        debug_assert_eq!(right_ces.last(), Some(&NO_CE));
 
         // Note: `unwrap_or_default` in the iterations below should never
         // actually end up using the "_or_default" part, because the sentinel
@@ -576,6 +589,8 @@ impl Collator {
                             debug_assert_ne!(left_primary, NO_CE_PRIMARY);
                         }
                         let left_new_remaining = left_iter.as_slice();
+                        // Index in range by construction
+                        #[allow(clippy::indexing_slicing)]
                         let left_prefix =
                             &left_remaining[..left_remaining.len() - 1 - left_new_remaining.len()];
                         left_remaining = left_new_remaining;
@@ -589,6 +604,8 @@ impl Collator {
                             debug_assert_ne!(right_primary, NO_CE_PRIMARY);
                         }
                         let right_new_remaining = right_iter.as_slice();
+                        // Index in range by construction
+                        #[allow(clippy::indexing_slicing)]
                         let right_prefix = &right_remaining
                             [..right_remaining.len() - 1 - right_new_remaining.len()];
                         right_remaining = right_new_remaining;

@@ -251,7 +251,7 @@ pub mod locid {
     //! # Examples
     //!
     //! ```
-    //! use icu::locid::{language, locale, region};
+    //! use icu::locid::{locale, subtags_language as language, subtags_region as region};
     //!
     //! let mut loc = locale!("en-US").clone();
     //!
