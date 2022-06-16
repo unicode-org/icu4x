@@ -6,7 +6,7 @@
 #![allow(clippy::exhaustive_structs)]
 
 use icu_locid::subtags::{Language, Region, Script};
-use icu_locid::{region, script};
+use icu_locid::{subtags_region as region, subtags_script as script};
 use tinystr::TinyAsciiStr;
 
 use icu_provider::prelude::*;
