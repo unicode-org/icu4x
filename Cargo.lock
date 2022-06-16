@@ -1432,6 +1432,7 @@ dependencies = [
  "crabbake",
  "serde",
  "toml",
+ "zerofrom",
  "zerovec",
 ]
 
@@ -1481,6 +1482,7 @@ dependencies = [
  "icu_uniset",
  "serde",
  "smallvec",
+ "utf16_iter",
  "utf8_iter",
  "zerofrom",
  "zerovec",
@@ -1500,6 +1502,7 @@ dependencies = [
  "eyre",
  "icu_calendar",
  "icu_casemapping",
+ "icu_char16trie",
  "icu_codepointtrie",
  "icu_codepointtrie_builder",
  "icu_collator",
@@ -1658,8 +1661,11 @@ dependencies = [
 name = "icu_normalizer"
 version = "0.6.0"
 dependencies = [
+ "arraystring",
+ "atoi",
  "crabbake",
  "displaydoc",
+ "icu_char16trie",
  "icu_codepointtrie",
  "icu_properties",
  "icu_provider",
@@ -1667,6 +1673,7 @@ dependencies = [
  "icu_uniset",
  "serde",
  "smallvec",
+ "utf16_iter",
  "utf8_iter",
  "zerofrom",
  "zerovec",
@@ -1840,6 +1847,7 @@ dependencies = [
  "futures",
  "icu_calendar",
  "icu_casemapping",
+ "icu_char16trie",
  "icu_codepointtrie",
  "icu_collator",
  "icu_datagen",
@@ -3625,6 +3633,12 @@ dependencies = [
  "matches",
  "percent-encoding",
 ]
+
+[[package]]
+name = "utf16_iter"
+version = "1.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b8fd690b5b39c6d4c161145f56f1e346e379c0a68a56a65bb927866200eef621"
 
 [[package]]
 name = "utf8_iter"
