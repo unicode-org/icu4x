@@ -399,6 +399,8 @@ impl From<Option<subtags::Region>> for LanguageIdentifier {
     }
 }
 
+/// Convert from an LSR tuple to a [`LanguageIdentifier`].
+///
 /// # Examples
 ///
 /// ```
@@ -436,5 +438,32 @@ impl
             region: lsr.2,
             ..Default::default()
         }
+    }
+}
+
+/// Convert from a [`LanguageIdentifier`] to an LSR tuple.
+///
+/// # Examples
+///
+/// ```
+/// use icu::locid::LanguageIdentifier;
+/// use icu::locid::{language, region, script, langid};
+///
+/// let lid = langid!("en-Latn-US");
+/// let (lang, script, region) = (&lid).into();
+///
+/// assert_eq!(lang, language!("en"));
+/// assert_eq!(script, Some(script!("Latn")));
+/// assert_eq!(region, Some(region!("US")));
+/// ```
+impl From<&LanguageIdentifier>
+    for (
+        subtags::Language,
+        Option<subtags::Script>,
+        Option<subtags::Region>,
+    )
+{
+    fn from(langid: &LanguageIdentifier) -> Self {
+        (langid.language, langid.script, langid.region)
     }
 }

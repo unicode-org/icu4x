@@ -27,6 +27,8 @@ pub fn get_all_keys() -> Vec<ResourceKey> {
         icu_locale_canonicalizer::provider::LikelySubtagsV1Marker::KEY,
         icu_plurals::provider::CardinalV1Marker::KEY,
         icu_plurals::provider::OrdinalV1Marker::KEY,
+        icu_provider_adapters::fallback::provider::LocaleFallbackLikelySubtagsV1Marker::KEY,
+        icu_provider_adapters::fallback::provider::LocaleFallbackParentsV1Marker::KEY,
         #[cfg(feature = "experimental")]
         icu_casemapping::provider::CaseMappingV1Marker::KEY,
         #[cfg(feature = "experimental")]
@@ -90,6 +92,7 @@ macro_rules! create_datagen_provider {
             [
                 $crate::transform::cldr::AliasesProvider,
                 $crate::transform::cldr::CommonDateProvider,
+                $crate::transform::cldr::FallbackRulesProvider,
                 $crate::transform::cldr::JapaneseErasProvider,
                 $crate::transform::cldr::LikelySubtagsProvider,
                 $crate::transform::cldr::NumbersProvider,
@@ -157,6 +160,7 @@ macro_rules! create_datagen_provider {
             [
                 $crate::transform::cldr::AliasesProvider,
                 $crate::transform::cldr::CommonDateProvider,
+                $crate::transform::cldr::FallbackRulesProvider,
                 $crate::transform::cldr::JapaneseErasProvider,
                 $crate::transform::cldr::LikelySubtagsProvider,
                 $crate::transform::cldr::NumbersProvider,

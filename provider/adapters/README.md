@@ -5,6 +5,7 @@ Adapters for composing and manipulating data providers.
 - Use the [`fork`] module to marshall data requests between multiple possible providers.
 - Use the [`either`] module to choose between multiple provider types at runtime.
 - Use the [`filter`] module to programmatically reject certain data requests.
+- Use the [`fallback`] module to automatically resolve arbitrary locales for data loading.
 
 ## More Information
 

@@ -70,6 +70,8 @@ impl Fields {
 
     /// Empties the [`Fields`] list.
     ///
+    /// Returns the old list.
+    ///
     /// # Examples
     ///
     /// ```
@@ -85,8 +87,8 @@ impl Fields {
     ///
     /// assert_eq!(&fields.to_string(), "");
     /// ```
-    pub fn clear(&mut self) {
-        self.0.clear();
+    pub fn clear(&mut self) -> Self {
+        core::mem::take(self)
     }
 
     /// Returns `true` if the list contains a [`Value`] for the specified [`Key`].
