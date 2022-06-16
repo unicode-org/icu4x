@@ -7,8 +7,8 @@ Normalization Forms.
 
 ## Implementation notes
 
-The normalizer operates on a lazy iterator over Unicode scalar values (Rust `char`) internally
-and iterating over guaranteed-valid UTF-8, potentially-invalid UTF-8, and potentially-invalid
+The normalizer operates on a lazy iterator over Unicode scalar values (Rust `char`) internally.
+Therefore, iterating over guaranteed-valid UTF-8, potentially-invalid UTF-8, and potentially-invalid
 UTF-16 is a step that doesn’t leak into the normalizer internals. UTF errors are treated as
 U+FFFD.
 

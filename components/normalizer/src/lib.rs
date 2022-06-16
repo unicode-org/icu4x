@@ -770,7 +770,7 @@ where
 }
 
 /// An iterator adaptor that turns an `Iterator` over `char` into
-/// a lazily-decomposed and then anonically composed `char` sequence.
+/// a lazily-decomposed and then canonically composed `char` sequence.
 pub struct Composition<'data, I>
 where
     I: Iterator<Item = char>,
@@ -1436,7 +1436,7 @@ impl DecomposingNormalizer {
     normalizer_methods!();
 }
 
-/// A normalizer for performing decomposing normalization.
+/// A normalizer for performing composing normalization.
 pub struct ComposingNormalizer {
     decomposing_normalizer: DecomposingNormalizer,
     canonical_compositions: DataPayload<CanonicalCompositionsV1Marker>,

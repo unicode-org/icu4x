@@ -187,7 +187,9 @@ impl From<&cldr_serde::parent_locales::Resource> for LocaleFallbackParentsV1<'st
 
 #[test]
 fn test_basic() {
-    use icu_locid::{langid, language, region, script};
+    use icu_locid::{
+        langid, subtags_language as language, subtags_region as region, subtags_script as script,
+    };
 
     let provider = FallbackRulesProvider::from(&SourceData::for_test());
     let likely_subtags: DataPayload<LocaleFallbackLikelySubtagsV1Marker> = provider
