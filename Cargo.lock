@@ -1744,7 +1744,7 @@ dependencies = [
 name = "icu_provider_adapters"
 version = "0.6.0"
 dependencies = [
- "crabbake",
+ "databake",
  "icu_locid",
  "icu_provider",
  "icu_testdata",
