@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1655373585769,
+  "lastUpdate": 1655398438900,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -17818,6 +17818,36 @@ window.BENCHMARK_DATA = {
           {
             "name": "provider/testdata/data/testdata.postcard",
             "value": 2703047,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "hsivonen@hsivonen.fi",
+            "name": "Henri Sivonen",
+            "username": "hsivonen"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "8900f2281922e06988c6f08bd3a21531c145c0e3",
+          "message": "Add ComposingNormalizer for NFC, NFKC, and UTS 46 (#2039)\n\nPass normalization conformance tests.\r\n\r\nIncludes regenerated data that fixes an off-by-one error at the decomposition table supplement boundary. Also includes clippy lints and documentation for public items.\r\n\r\nCloses #1979\r\nCloses #1994",
+          "timestamp": "2022-06-16T19:51:41+03:00",
+          "tree_id": "6457b0b64fa92cf6afd61ad43bb0bf66583a3710",
+          "url": "https://github.com/unicode-org/icu4x/commit/8900f2281922e06988c6f08bd3a21531c145c0e3"
+        },
+        "date": 1655398413450,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 2722229,
             "unit": "bytes",
             "biggerIsBetter": false
           }
