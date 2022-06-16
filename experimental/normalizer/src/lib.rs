@@ -1426,7 +1426,7 @@ impl DecomposingNormalizer {
     normalizer_methods!();
 }
 
-/// A normalizer for performing decomposing normalization.
+/// A normalizer for performing composing normalization.
 pub struct ComposingNormalizer {
     decomposing_normalizer: DecomposingNormalizer,
     canonical_compositions: DataPayload<CanonicalCompositionsV1Marker>,
