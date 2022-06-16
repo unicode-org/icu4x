@@ -75,7 +75,7 @@ databake = { version = "0.4", path = "../../utils/databake"}
 proc-macro2 = "1.0"
 crlify = { version = "1", path = "../../utils/crlify"}
 syn = {version = "1.0", features = ["parsing"] }
-writeable = { version = "0.4", path = "../../utils/writeable", optional = true }
+writeable = { version = "0.4", path = "../../utils/writeable" }
 zip = "0.6"
 
 # Dependencies for "bin" feature
@@ -89,12 +89,11 @@ walkdir = { version = "2.3.2", optional = true }
 
 [dev-dependencies]
 dhat = "0.3.0"
-writeable = { path = "../../utils/writeable" }
 icu_testdata = { path = "../testdata", features = ["metadata"] }
 
 [features]
 default = []
-experimental = ["icu_casemapping", "icu_segmenter", "icu_collator", "icu_normalizer", "writeable"]
+experimental = ["icu_casemapping", "icu_segmenter", "icu_collator", "icu_normalizer"]
 bin = ["clap", "cached-path", "eyre", "pathdiff","sha2", "simple_logger", "walkdir"]
 
 [[bin]]

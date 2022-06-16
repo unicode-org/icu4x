@@ -112,6 +112,7 @@ cldr_json_glob = [
     "cldr-core/supplemental/numberingSystems.json",
     "cldr-core/supplemental/metaZones.json",
     "cldr-core/supplemental/ordinals.json",
+    "cldr-core/supplemental/parentLocales.json",
     "cldr-core/supplemental/plurals.json",
     "cldr-core/supplemental/weekData.json",
     "cldr-dates-full/main/$LOCALES/ca-gregorian.json",
@@ -176,6 +177,7 @@ icu_list = { version = "0.6", path = "../../components/list", optional = true }
 icu_locale_canonicalizer = { version = "0.6", path = "../../components/locale_canonicalizer", optional = true }
 icu_plurals = { version = "0.6", path = "../../components/plurals", optional = true }
 icu_properties = { version = "0.6", path = "../../components/properties", optional = true }
+icu_provider_adapters = { path = "../adapters" }
 icu_segmenter = { version = "0.6", path = "../../experimental/segmenter", optional = true }
 icu_codepointtrie = { version = "0.4", path = "../../utils/codepointtrie", optional = true }
 icu_uniset = { version = "0.5", path = "../../utils/uniset", optional = true }

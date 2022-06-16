@@ -22,7 +22,7 @@ where
     ///
     /// ```
     /// use icu_locid::LanguageIdentifier;
-    /// use icu_locid::{langid, language, locale};
+    /// use icu_locid::{langid, subtags_language as language, locale};
     /// use icu_provider::datagen::*;
     /// use icu_provider::hello_world::*;
     /// use icu_provider::prelude::*;

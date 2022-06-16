@@ -339,7 +339,7 @@ fn test_writeable() {
 /// # Examples
 ///
 /// ```
-/// use icu::locid::language;
+/// use icu::locid::subtags_language as language;
 /// use icu::locid::LanguageIdentifier;
 ///
 /// let language = language!("en");
@@ -360,7 +360,7 @@ impl From<subtags::Language> for LanguageIdentifier {
 /// # Examples
 ///
 /// ```
-/// use icu::locid::script;
+/// use icu::locid::subtags_script as script;
 /// use icu::locid::LanguageIdentifier;
 ///
 /// let script = script!("latn");
@@ -381,7 +381,7 @@ impl From<Option<subtags::Script>> for LanguageIdentifier {
 /// # Examples
 ///
 /// ```
-/// use icu::locid::region;
+/// use icu::locid::subtags_region as region;
 /// use icu::locid::LanguageIdentifier;
 ///
 /// let region = region!("US");
@@ -399,11 +399,13 @@ impl From<Option<subtags::Region>> for LanguageIdentifier {
     }
 }
 
+/// Convert from an LSR tuple to a [`LanguageIdentifier`].
+///
 /// # Examples
 ///
 /// ```
 /// use icu::locid::LanguageIdentifier;
-/// use icu::locid::{language, region, script};
+/// use icu::locid::{subtags_language as language, subtags_region as region, subtags_script as script};
 ///
 /// let lang = language!("en");
 /// let script = script!("Latn");
@@ -436,5 +438,32 @@ impl
             region: lsr.2,
             ..Default::default()
         }
+    }
+}
+
+/// Convert from a [`LanguageIdentifier`] to an LSR tuple.
+///
+/// # Examples
+///
+/// ```
+/// use icu::locid::LanguageIdentifier;
+/// use icu::locid::{language, region, script, langid};
+///
+/// let lid = langid!("en-Latn-US");
+/// let (lang, script, region) = (&lid).into();
+///
+/// assert_eq!(lang, language!("en"));
+/// assert_eq!(script, Some(script!("Latn")));
+/// assert_eq!(region, Some(region!("US")));
+/// ```
+impl From<&LanguageIdentifier>
+    for (
+        subtags::Language,
+        Option<subtags::Script>,
+        Option<subtags::Region>,
+    )
+{
+    fn from(langid: &LanguageIdentifier) -> Self {
+        (langid.language, langid.script, langid.region)
     }
 }
