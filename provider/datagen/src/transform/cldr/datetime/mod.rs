@@ -258,8 +258,7 @@ mod test {
                 .months
                 .format
                 .wide
-                .0
-                .get(&MonthCode(tinystr!(4, "M08")))
+                .get(MonthCode(tinystr!(4, "M08")))
                 .unwrap()
         );
 

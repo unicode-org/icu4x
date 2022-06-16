@@ -252,7 +252,7 @@ mod test {
             (&MonthCode(tinystr!(4, "M11")), "November"),
             (&MonthCode(tinystr!(4, "M12")), "December"),
         ];
-        let months = months::SymbolsV1(months.iter().copied().collect());
+        let months = months::SymbolsV1::Other(months.iter().copied().collect());
 
         let weekdays = weekdays::SymbolsV1([
             Cow::Owned("Monday".to_string()),
