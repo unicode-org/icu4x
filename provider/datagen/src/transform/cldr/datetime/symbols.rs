@@ -209,7 +209,7 @@ impl cldr_serde::ca::months::Symbols {
 
             map.insert(&MonthCode(*code), v);
         }
-        months::SymbolsV1(map)
+        months::SymbolsV1::from_map(map)
     }
 }
 

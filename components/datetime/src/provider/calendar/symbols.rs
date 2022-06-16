@@ -127,10 +127,15 @@ symbols!(
     );
 );
 
-impl months::SymbolsV1<'_> {
+impl<'data> months::SymbolsV1<'data> {
     /// Get the symbol for the given month code
     pub fn get(&self, code: MonthCode) -> Option<&str> {
         self.0.get(&code)
+    }
+
+    /// Construct from a map of codes to symbols
+    pub fn from_map(map: ZeroMap<'data, MonthCode, str>) -> Self {
+        Self(map)
     }
 }
 
