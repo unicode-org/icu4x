@@ -123,7 +123,7 @@ fn test_uts46_basic() {
     assert_eq!(normalizer.normalize("\u{2126}"), "ω"); // ohm sign
     assert_eq!(normalizer.normalize("ﾍﾞ"), "ベ"); // half-width to full-width, the compose
     assert_eq!(normalizer.normalize("ﬁ"), "fi"); // ligature expanded
-    assert_eq!(normalizer.normalize("\u{FDFA}"), "\u{635}\u{644}\u{649} \u{627}\u{644}\u{644}\u{647} \u{639}\u{644}\u{64A}\u{647} \u{648}\u{633}\u{644}\u{645}");
+    assert_eq!(normalizer.normalize("\u{FDFA}"), "\u{0635}\u{0644}\u{0649} \u{0627}\u{0644}\u{0644}\u{0647} \u{0639}\u{0644}\u{064A}\u{0647} \u{0648}\u{0633}\u{0644}\u{0645}");
     // ligature expanded
     assert_eq!(normalizer.normalize("㈎"), "(가)"); // parenthetical expanded and partially recomposed
 
