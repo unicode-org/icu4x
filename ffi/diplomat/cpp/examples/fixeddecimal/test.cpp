@@ -12,8 +12,8 @@ int main() {
     ICU4XLocale locale = ICU4XLocale::create("bn").value();
     std::cout << "Running test for locale " << locale.tostring().ok().value() << std::endl;
     ICU4XDataProvider dp = ICU4XDataProvider::create_test();
-    ICU4XFixedDecimalFormatOptions opts = {ICU4XFixedDecimalGroupingStrategy::Auto, ICU4XFixedDecimalSignDisplay::Auto};
-    ICU4XFixedDecimalFormat fdf = ICU4XFixedDecimalFormat::try_new(locale, dp, opts).ok().value();
+    ICU4XFixedDecimalFormat fdf = ICU4XFixedDecimalFormat::try_new(
+        locale, dp, ICU4XFixedDecimalGroupingStrategy::Auto).ok().value();
 
     ICU4XFixedDecimal decimal = ICU4XFixedDecimal::create(1000007);
     std::string out = fdf.format(decimal).ok().value();

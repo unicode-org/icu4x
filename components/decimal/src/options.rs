@@ -4,15 +4,6 @@
 
 //! Options for [`FixedDecimalFormat`](crate::FixedDecimalFormat).
 
-/// A bag of options defining how numbers will be formatted by
-/// [`FixedDecimalFormat`](crate::FixedDecimalFormat).
-#[derive(Debug, Eq, PartialEq, Clone, Default)]
-#[non_exhaustive]
-pub struct FixedDecimalFormatOptions {
-    /// When to render grouping separators.
-    pub grouping_strategy: GroupingStrategy,
-}
-
 /// Configuration for how often to render grouping separators.
 ///
 /// # Examples
@@ -26,9 +17,7 @@ pub struct FixedDecimalFormatOptions {
 ///
 /// let locale = Locale::UND;
 /// let provider = icu_provider::inv::InvariantDataProvider;
-/// let mut options: options::FixedDecimalFormatOptions = Default::default();
-/// options.grouping_strategy = options::GroupingStrategy::Min2;
-/// let fdf = FixedDecimalFormat::try_new(locale, &provider, options)
+/// let fdf = FixedDecimalFormat::try_new(locale, &provider, options::GroupingStrategy::Min2)
 ///     .expect("Data should load successfully");
 ///
 /// let one_thousand = 1000.into();

@@ -94,19 +94,19 @@ use icu_provider::prelude::*;
 ///
 /// See the crate-level documentation for examples.
 pub struct FixedDecimalFormat {
-    options: options::FixedDecimalFormatOptions,
+    grouping_strategy: options::GroupingStrategy,
     symbols: DataPayload<provider::DecimalSymbolsV1Marker>,
 }
 
 impl FixedDecimalFormat {
-    /// Creates a new [`FixedDecimalFormat`] from locale data and an options bag.
+    /// Creates a new [`FixedDecimalFormat`] from locale data and a grouping strategy.
     pub fn try_new<
         T: Into<Locale>,
         D: ResourceProvider<provider::DecimalSymbolsV1Marker> + ?Sized,
     >(
         locale: T,
         data_provider: &D,
-        options: options::FixedDecimalFormatOptions,
+        grouping_strategy: options::GroupingStrategy,
     ) -> Result<Self, FixedDecimalFormatError> {
         let symbols = data_provider
             .load_resource(&DataRequest {
@@ -114,14 +114,14 @@ impl FixedDecimalFormat {
                 metadata: Default::default(),
             })?
             .take_payload()?;
-        Ok(Self { options, symbols })
+        Ok(Self { grouping_strategy, symbols })
     }
 
     /// Formats a [`FixedDecimal`], returning a [`FormattedFixedDecimal`].
     pub fn format<'l>(&'l self, value: &'l FixedDecimal) -> FormattedFixedDecimal<'l> {
         FormattedFixedDecimal {
             value,
-            options: &self.options,
+            grouping_strategy: &self.grouping_strategy,
             symbols: self.symbols.get(),
         }
     }

@@ -16,7 +16,7 @@ use writeable::Writeable;
 #[derive(Debug, PartialEq, Clone)]
 pub struct FormattedFixedDecimal<'l> {
     pub(crate) value: &'l FixedDecimal,
-    pub(crate) options: &'l FixedDecimalFormatOptions,
+    pub(crate) grouping_strategy: &'l GroupingStrategy,
     pub(crate) symbols: &'l DecimalSymbolsV1<'l>,
 }
 
@@ -52,7 +52,7 @@ impl<'l> Writeable for FormattedFixedDecimal<'l> {
             if grouper::check(
                 upper_magnitude,
                 m,
-                self.options.grouping_strategy,
+                *self.grouping_strategy,
                 &self.symbols.grouping_sizes,
             ) {
                 sink.write_str(&self.symbols.grouping_separator)?;

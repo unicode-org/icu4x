@@ -488,7 +488,7 @@ pub fn analyze_patterns(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use icu_decimal::options::{FixedDecimalFormatOptions, GroupingStrategy};
+    use icu_decimal::options::{GroupingStrategy};
 
     #[test]
     #[cfg(feature = "serde")]
@@ -540,12 +540,10 @@ mod tests {
         ];
 
         let provider = icu_testdata::get_provider();
-        let mut fixed_decimal_format_options = FixedDecimalFormatOptions::default();
-        fixed_decimal_format_options.grouping_strategy = GroupingStrategy::Never;
         let fixed_decimal_format = FixedDecimalFormat::try_new(
             icu_locid::locale!("en"),
             &provider,
-            fixed_decimal_format_options,
+            GroupingStrategy::Never,
         )
         .unwrap();
 
