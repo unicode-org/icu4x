@@ -2,64 +2,72 @@
   "months": {
     "format": {
       "abbreviated": {
-        "M01": "Ene",
-        "M02": "Peb",
-        "M03": "Mar",
-        "M04": "Abr",
-        "M05": "May",
-        "M06": "Hun",
-        "M07": "Hul",
-        "M08": "Ago",
-        "M09": "Set",
-        "M10": "Okt",
-        "M11": "Nob",
-        "M12": "Dis"
+        "SolarTwelve": [
+          "Ene",
+          "Okt",
+          "Nob",
+          "Dis",
+          "Peb",
+          "Mar",
+          "Abr",
+          "May",
+          "Hun",
+          "Hul",
+          "Ago",
+          "Set"
+        ]
       },
       "narrow": {
-        "M01": "Ene",
-        "M02": "Peb",
-        "M03": "Mar",
-        "M04": "Abr",
-        "M05": "May",
-        "M06": "Hun",
-        "M07": "Hul",
-        "M08": "Ago",
-        "M09": "Set",
-        "M10": "Okt",
-        "M11": "Nob",
-        "M12": "Dis"
+        "SolarTwelve": [
+          "Ene",
+          "Okt",
+          "Nob",
+          "Dis",
+          "Peb",
+          "Mar",
+          "Abr",
+          "May",
+          "Hun",
+          "Hul",
+          "Ago",
+          "Set"
+        ]
       },
       "short": null,
       "wide": {
-        "M01": "Enero",
-        "M02": "Pebrero",
-        "M03": "Marso",
-        "M04": "Abril",
-        "M05": "Mayo",
-        "M06": "Hunyo",
-        "M07": "Hulyo",
-        "M08": "Agosto",
-        "M09": "Setyembre",
-        "M10": "Oktubre",
-        "M11": "Nobyembre",
-        "M12": "Disyembre"
+        "SolarTwelve": [
+          "Enero",
+          "Oktubre",
+          "Nobyembre",
+          "Disyembre",
+          "Pebrero",
+          "Marso",
+          "Abril",
+          "Mayo",
+          "Hunyo",
+          "Hulyo",
+          "Agosto",
+          "Setyembre"
+        ]
       }
     },
     "stand_alone": {
       "abbreviated": null,
       "narrow": {
-        "M01": "E",
-        "M02": "P",
-        "M03": "M",
-        "M04": "A",
-        "M05": "M",
-        "M06": "Hun",
-        "M07": "Hul",
-        "M08": "Ago",
-        "M09": "Set",
-        "M10": "Okt",
-        "M11": "Nob",
-        "M12": "Dis"
+        "SolarTwelve": [
+          "E",
+          "Okt",
+          "Nob",
+          "Dis",
+          "P",
+          "M",
+          "A",
+          "M",
+          "Hun",
+          "Hul",
+          "Ago",
+          "Set"
+        ]
       },
       "short": null,
       "wide": null

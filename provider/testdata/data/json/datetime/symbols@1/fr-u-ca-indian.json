@@ -2,47 +2,53 @@
   "months": {
     "format": {
       "abbreviated": {
-        "M01": "chai.",
-        "M02": "vai.",
-        "M03": "jyai.",
-        "M04": "āsha.",
-        "M05": "shrā.",
-        "M06": "bhā.",
-        "M07": "āshw.",
-        "M08": "kār.",
-        "M09": "mār.",
-        "M10": "pau.",
-        "M11": "māgh",
-        "M12": "phāl."
+        "SolarTwelve": [
+          "chai.",
+          "pau.",
+          "māgh",
+          "phāl.",
+          "vai.",
+          "jyai.",
+          "āsha.",
+          "shrā.",
+          "bhā.",
+          "āshw.",
+          "kār.",
+          "mār."
+        ]
       },
       "narrow": {
-        "M01": "1",
-        "M02": "2",
-        "M03": "3",
-        "M04": "4",
-        "M05": "5",
-        "M06": "6",
-        "M07": "7",
-        "M08": "8",
-        "M09": "9",
-        "M10": "10",
-        "M11": "11",
-        "M12": "12"
+        "SolarTwelve": [
+          "1",
+          "10",
+          "11",
+          "12",
+          "2",
+          "3",
+          "4",
+          "5",
+          "6",
+          "7",
+          "8",
+          "9"
+        ]
       },
       "short": null,
       "wide": {
-        "M01": "chaitra",
-        "M02": "vaishākh",
-        "M03": "jyaishtha",
-        "M04": "āshādha",
-        "M05": "shrāvana",
-        "M06": "bhādrapad",
-        "M07": "āshwin",
-        "M08": "kārtik",
-        "M09": "mārgashīrsha",
-        "M10": "paush",
-        "M11": "māgh",
-        "M12": "phālgun"
+        "SolarTwelve": [
+          "chaitra",
+          "paush",
+          "māgh",
+          "phālgun",
+          "vaishākh",
+          "jyaishtha",
+          "āshādha",
+          "shrāvana",
+          "bhādrapad",
+          "āshwin",
+          "kārtik",
+          "mārgashīrsha"
+        ]
       }
     },
     "stand_alone": null

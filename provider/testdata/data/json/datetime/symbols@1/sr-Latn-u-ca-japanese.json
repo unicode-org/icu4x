@@ -2,47 +2,53 @@
   "months": {
     "format": {
       "abbreviated": {
-        "M01": "jan",
-        "M02": "feb",
-        "M03": "mar",
-        "M04": "apr",
-        "M05": "maj",
-        "M06": "jun",
-        "M07": "jul",
-        "M08": "avg",
-        "M09": "sep",
-        "M10": "okt",
-        "M11": "nov",
-        "M12": "dec"
+        "SolarTwelve": [
+          "jan",
+          "okt",
+          "nov",
+          "dec",
+          "feb",
+          "mar",
+          "apr",
+          "maj",
+          "jun",
+          "jul",
+          "avg",
+          "sep"
+        ]
       },
       "narrow": {
-        "M01": "j",
-        "M02": "f",
-        "M03": "m",
-        "M04": "a",
-        "M05": "m",
-        "M06": "j",
-        "M07": "j",
-        "M08": "a",
-        "M09": "s",
-        "M10": "o",
-        "M11": "n",
-        "M12": "d"
+        "SolarTwelve": [
+          "j",
+          "o",
+          "n",
+          "d",
+          "f",
+          "m",
+          "a",
+          "m",
+          "j",
+          "j",
+          "a",
+          "s"
+        ]
       },
       "short": null,
       "wide": {
-        "M01": "januar",
-        "M02": "februar",
-        "M03": "mart",
-        "M04": "april",
-        "M05": "maj",
-        "M06": "jun",
-        "M07": "jul",
-        "M08": "avgust",
-        "M09": "septembar",
-        "M10": "oktobar",
-        "M11": "novembar",
-        "M12": "decembar"
+        "SolarTwelve": [
+          "januar",
+          "oktobar",
+          "novembar",
+          "decembar",
+          "februar",
+          "mart",
+          "april",
+          "maj",
+          "jun",
+          "jul",
+          "avgust",
+          "septembar"
+        ]
       }
     },
     "stand_alone": null
