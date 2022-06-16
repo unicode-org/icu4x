@@ -169,7 +169,9 @@ impl<'de> Deserialize<'de> for Variant {
 
 #[test]
 fn json() {
-    use crate::{langid, language, region, script};
+    use crate::{
+        langid, subtags_language as language, subtags_region as region, subtags_script as script,
+    };
 
     assert_eq!(
         serde_json::to_string(&langid!("en-US")).unwrap(),
@@ -208,7 +210,9 @@ fn json() {
 
 #[test]
 fn postcard() {
-    use crate::{langid, language, region, script};
+    use crate::{
+        langid, subtags_language as language, subtags_region as region, subtags_script as script,
+    };
 
     assert_eq!(
         postcard::to_stdvec(&langid!("en-US")).unwrap(),
