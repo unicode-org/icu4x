@@ -4,12 +4,12 @@
 
 use icu_locid::extensions::unicode::Key;
 use icu_locid::subtags::Language;
-use icu_locid::unicode_ext_key;
+use icu_locid::extensions_unicode_key as key;
 use icu_locid::LanguageIdentifier;
 
 use super::*;
 
-const SUBDIVISION_KEY: Key = unicode_ext_key!("sd");
+const SUBDIVISION_KEY: Key = key!("sd");
 
 impl<'a> LocaleFallbackerWithConfig<'a> {
     pub(crate) fn normalize(&self, ro: &mut ResourceOptions) {
@@ -220,7 +220,7 @@ mod tests {
         TestCase {
             input: "en-US-fonipa-u-hc-h12-sd-usca",
             requires_data: false,
-            extension_kw: Some(unicode_ext_key!("hc")),
+            extension_kw: Some(key!("hc")),
             expected_language_chain: &[
                 "en-US-fonipa-u-hc-h12-sd-usca",
                 "en-US-fonipa-u-sd-usca",
