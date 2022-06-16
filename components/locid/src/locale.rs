@@ -79,7 +79,7 @@ pub struct Locale {
 
 #[test]
 fn test() {
-    assert_eq!(core::mem::size_of::<Locale>(), 184);
+    assert_eq!(core::mem::size_of::<Locale>(), 216);
 }
 
 impl Locale {

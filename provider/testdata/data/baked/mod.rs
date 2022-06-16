@@ -7,6 +7,7 @@ mod calendar;
 mod collator;
 mod datetime;
 mod decimal;
+mod fallback;
 mod list;
 mod locale_canonicalizer;
 mod normalizer;

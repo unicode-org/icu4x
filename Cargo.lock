@@ -1751,9 +1751,14 @@ dependencies = [
 name = "icu_provider_adapters"
 version = "0.6.0"
 dependencies = [
+ "crabbake",
  "icu_locid",
  "icu_provider",
+ "icu_testdata",
+ "serde",
+ "tinystr 0.6.0",
  "yoke",
+ "zerovec",
 ]
 
 [[package]]
@@ -1855,6 +1860,7 @@ dependencies = [
  "icu_plurals",
  "icu_properties",
  "icu_provider",
+ "icu_provider_adapters",
  "icu_provider_blob",
  "icu_provider_fs",
  "icu_segmenter",
