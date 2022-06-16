@@ -764,7 +764,7 @@ where
 }
 
 /// An iterator adaptor that turns an `Iterator` over `char` into
-/// a lazily-decomposed and then anonically composed `char` sequence.
+/// a lazily-decomposed and then canonically composed `char` sequence.
 pub struct Composition<'data, I>
 where
     I: Iterator<Item = char>,
