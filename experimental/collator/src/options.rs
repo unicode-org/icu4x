@@ -510,7 +510,7 @@ impl CollatorOptions {
         (self.0 & CollatorOptions::BACKWARD_SECOND_LEVEL_MASK) != 0
     }
 
-    /// Whether second level compares the last accend difference
+    /// Whether second level compares the last accent difference
     /// instead of the first accent difference.
     pub fn set_backward_second_level(&mut self, backward_second_level: Option<bool>) {
         self.0 &= !CollatorOptions::BACKWARD_SECOND_LEVEL_MASK;
