@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1655360072351,
+  "lastUpdate": 1655366589493,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -17753,6 +17753,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/12f2ed1fba13a5e920b4488536f8e434a69b369a"
         },
         "date": 1655360049089,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 2703047,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "c2e3dc226dd3277169314c846586866e45876506",
+          "message": "icu_locid macro rename (#2057)",
+          "timestamp": "2022-06-16T10:00:38+02:00",
+          "tree_id": "0a22a25e709fb7f3f61e5ee9d68365c9b5906ce6",
+          "url": "https://github.com/unicode-org/icu4x/commit/c2e3dc226dd3277169314c846586866e45876506"
+        },
+        "date": 1655366564011,
         "tool": "ndjson",
         "benches": [
           {
