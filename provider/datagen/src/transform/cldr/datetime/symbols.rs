@@ -197,7 +197,7 @@ impl cldr_serde::ca::months::Symbols {
     fn get(&self, ctx: &&'static [TinyStr4]) -> months::SymbolsV1<'static> {
         if ctx.len() == 12 && self.0.len() == 12 {
             let mut arr: [Cow<'static, str>; 12] = Default::default();
-            for (i, (k, v)) in self.0.iter().enumerate() {
+            for (k, v) in self.0.iter() {
                 let index: usize = k
                     .parse()
                     .expect("CLDR month indices must parse as numbers!");
@@ -205,7 +205,7 @@ impl cldr_serde::ca::months::Symbols {
                     panic!("CLDR month indices cannot be zero");
                 }
 
-                arr[i] = Cow::Owned(v.into());
+                arr[index] = Cow::Owned(v.into());
             }
 
             for (i, val) in arr.iter().enumerate() {
