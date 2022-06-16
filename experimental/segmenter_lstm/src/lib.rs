@@ -2,6 +2,10 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+#![cfg_attr(not(any(test, feature = "std")), no_std)]
+
+extern crate alloc;
+
 mod error;
 pub mod lstm;
 pub mod math_helper;

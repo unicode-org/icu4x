@@ -5,9 +5,11 @@
 use crate::error::Error;
 use crate::math_helper;
 use crate::structs;
+use alloc::string::{String, ToString};
+use alloc::vec::Vec;
+use core::str;
 use icu_provider::DataPayload;
 use ndarray::{Array1, Array2, ArrayBase, Dim, ViewRepr};
-use std::str;
 use unicode_segmentation::UnicodeSegmentation;
 
 pub struct Lstm {
@@ -17,7 +19,7 @@ pub struct Lstm {
 impl Lstm {
     /// `try_new` is the initiator of struct `Lstm`
     pub fn try_new(data: DataPayload<structs::LstmDataMarker>) -> Result<Self, Error> {
-        if data.get().dic.len() > std::i16::MAX as usize {
+        if data.get().dic.len() > core::i16::MAX as usize {
             return Err(Error::Limit);
         }
         if !data.get().model.contains("_codepoints_") && !data.get().model.contains("_graphclust_")
