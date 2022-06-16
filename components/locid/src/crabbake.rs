@@ -9,27 +9,27 @@ impl Bakeable for Script {
     fn bake(&self, env: &CrateEnv) -> TokenStream {
         env.insert("icu_locid");
         let string = self.as_str();
-        quote! { ::icu_locid::script!(#string) }
+        quote! { ::icu_locid::subtags_script!(#string) }
     }
 }
 impl Bakeable for Language {
     fn bake(&self, env: &CrateEnv) -> TokenStream {
         env.insert("icu_locid");
         let string = self.as_str();
-        quote! { ::icu_locid::language!(#string) }
+        quote! { ::icu_locid::subtags_language!(#string) }
     }
 }
 impl Bakeable for Region {
     fn bake(&self, env: &CrateEnv) -> TokenStream {
         env.insert("icu_locid");
         let string = self.as_str();
-        quote! { ::icu_locid::region!(#string) }
+        quote! { ::icu_locid::subtags_region!(#string) }
     }
 }
 impl Bakeable for Variant {
     fn bake(&self, env: &CrateEnv) -> TokenStream {
         env.insert("icu_locid");
         let string = self.as_str();
-        quote! { ::icu_locid::variant!(#string) }
+        quote! { ::icu_locid::subtags_variant!(#string) }
     }
 }

@@ -38,21 +38,21 @@ use super::Value;
 /// Access a [`Keywords`] object from a [`Locale`]:
 ///
 /// ```
-/// use icu::locid::{unicode_ext_key, unicode_ext_value, Locale};
+/// use icu::locid::{extensions_unicode_key as key, extensions_unicode_value as value, Locale};
 ///
 /// let loc: Locale = "und-u-hc-h23-kc-true".parse().expect("Valid BCP-47");
 ///
 /// assert_eq!(
-///     loc.extensions.unicode.keywords.get(&unicode_ext_key!("ca")),
+///     loc.extensions.unicode.keywords.get(&key!("ca")),
 ///     None
 /// );
 /// assert_eq!(
-///     loc.extensions.unicode.keywords.get(&unicode_ext_key!("hc")),
-///     Some(&unicode_ext_value!("h23"))
+///     loc.extensions.unicode.keywords.get(&key!("hc")),
+///     Some(&value!("h23"))
 /// );
 /// assert_eq!(
-///     loc.extensions.unicode.keywords.get(&unicode_ext_key!("kc")),
-///     Some(&unicode_ext_value!("true"))
+///     loc.extensions.unicode.keywords.get(&key!("kc")),
+///     Some(&value!("true"))
 /// );
 ///
 /// assert_eq!(loc.extensions.unicode.keywords.to_string(), "hc-h23-kc");
@@ -182,12 +182,12 @@ impl Keywords {
     /// ```
     /// use icu::locid::extensions::unicode::Key;
     /// use icu::locid::extensions::unicode::Value;
-    /// use icu::locid::unicode_ext_key;
+    /// use icu::locid::extensions_unicode_key as key;
     /// use icu::locid::Locale;
     /// use std::str::FromStr;
     /// use std::string::ToString;
     ///
-    /// const CA_KEY: Key = unicode_ext_key!("ca");
+    /// const CA_KEY: Key = key!("ca");
     /// let japanese = Value::from_str("japanese").expect("valid extension subtag");
     /// let buddhist = Value::from_str("buddhist").expect("valid extension subtag");
     ///
@@ -209,11 +209,11 @@ impl Keywords {
     ///
     /// ```
     /// use icu::locid::extensions::unicode::Key;
-    /// use icu::locid::unicode_ext_key;
+    /// use icu::locid::extensions_unicode_key as key;
     /// use icu::locid::Locale;
     /// use std::str::FromStr;
     ///
-    /// const CA_KEY: Key = unicode_ext_key!("ca");
+    /// const CA_KEY: Key = key!("ca");
     ///
     /// let mut loc: Locale = "und-u-hello-ca-buddhist-hc-h12"
     ///     .parse()
