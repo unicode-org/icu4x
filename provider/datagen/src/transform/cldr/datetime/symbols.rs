@@ -195,21 +195,42 @@ symbols_from!([months, months], &'static [TinyStr4]);
 
 impl cldr_serde::ca::months::Symbols {
     fn get(&self, ctx: &&'static [TinyStr4]) -> months::SymbolsV1<'static> {
-        let mut map: ZeroMap<MonthCode, str> = ZeroMap::default();
-        for (k, v) in self.0.iter() {
-            let index: usize = k
-                .parse()
-                .expect("CLDR month indices must parse as numbers!");
-            if index == 0 {
-                panic!("CLDR month indices cannot be zero");
-            }
-            let code = ctx
-                .get(index - 1)
-                .expect("Found out of bounds month index for calendar");
+        if ctx.len() == 12 && self.0.len() == 12 {
+            let mut arr: [Cow<'static, str>; 12] = Default::default();
+            for (i, (k, v)) in self.0.iter().enumerate() {
+                let index: usize = k
+                    .parse()
+                    .expect("CLDR month indices must parse as numbers!");
+                if index == 0 {
+                    panic!("CLDR month indices cannot be zero");
+                }
 
-            map.insert(&MonthCode(*code), v);
+                arr[i] = Cow::Owned(v.into());
+            }
+
+            for (i, val) in arr.iter().enumerate() {
+                if val.is_empty() {
+                    panic!("Solar calendar does not have data for month {i}");
+                }
+            }
+            months::SymbolsV1::SolarTwelve(arr)
+        } else {
+            let mut map: ZeroMap<MonthCode, str> = ZeroMap::default();
+            for (k, v) in self.0.iter() {
+                let index: usize = k
+                    .parse()
+                    .expect("CLDR month indices must parse as numbers!");
+                if index == 0 {
+                    panic!("CLDR month indices cannot be zero");
+                }
+                let code = ctx
+                    .get(index - 1)
+                    .expect("Found out of bounds month index for calendar");
+
+                map.insert(&MonthCode(*code), v);
+            }
+            months::SymbolsV1::Other(map)
         }
-        months::SymbolsV1::from_map(map)
     }
 }
 
