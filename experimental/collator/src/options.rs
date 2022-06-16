@@ -563,7 +563,7 @@ impl CollatorOptions {
         (self.0 & CollatorOptions::UPPER_FIRST_MASK) != 0
     }
 
-    /// For options left at defaults in this `CollatorOptions`,
+    /// For options left as defaults in this `CollatorOptions`,
     /// set the value from `other`. Values taken from `other`
     /// are marked as explicitly set if they were explicitly
     /// set in `other`.
