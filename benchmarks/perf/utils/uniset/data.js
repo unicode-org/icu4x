@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1655339670656,
+  "lastUpdate": 1655360613914,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -32260,6 +32260,60 @@ window.BENCHMARK_DATA = {
           {
             "name": "uniset/contains_range/worst",
             "value": 12,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "m_kato@ga2.so-net.ne.jp",
+            "name": "Makoto Kato",
+            "username": "makotokato"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "12f2ed1fba13a5e920b4488536f8e434a69b369a",
+          "message": "Remove std dependency from segmenter_lstm. (#2064)",
+          "timestamp": "2022-06-16T15:12:20+09:00",
+          "tree_id": "2ab0c94bed062547349e43bd17371121f87d3f76",
+          "url": "https://github.com/unicode-org/icu4x/commit/12f2ed1fba13a5e920b4488536f8e434a69b369a"
+        },
+        "date": 1655360581992,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 35914016,
+            "range": "± 1084159",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/best",
+            "value": 10,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/worst",
+            "value": 11,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/best",
+            "value": 10,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/worst",
+            "value": 11,
             "range": "± 0",
             "unit": "ns/iter"
           }
