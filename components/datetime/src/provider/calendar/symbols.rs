@@ -127,6 +127,13 @@ symbols!(
     );
 );
 
+impl months::SymbolsV1<'_> {
+    /// Get the symbol for the given month code
+    pub fn get(&self, code: MonthCode) -> Option<&str> {
+        self.0.get(&code)
+    }
+}
+
 symbols!(
     weekdays,
     pub struct SymbolsV1<'data>(

@@ -316,8 +316,7 @@ impl<'data> DateTimeSymbols for provider::calendar::DateSymbolsV1<'data> {
                     };
                     if let Some(symbols) = symbols {
                         return symbols
-                            .0
-                            .get(&code)
+                            .get(code)
                             .ok_or(DateTimeFormatError::MissingMonthSymbol(code));
                     } else {
                         return self.get_symbol_for_month(fields::Month::Format, length, code);
@@ -333,8 +332,7 @@ impl<'data> DateTimeSymbols for provider::calendar::DateSymbolsV1<'data> {
             _ => &widths.abbreviated,
         };
         symbols
-            .0
-            .get(&code)
+            .get(code)
             .ok_or(DateTimeFormatError::MissingMonthSymbol(code))
     }
 
