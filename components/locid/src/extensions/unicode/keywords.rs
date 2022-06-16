@@ -231,6 +231,8 @@ impl Keywords {
 
     /// Clears all Unicode extension keywords, leaving Unicode attributes.
     ///
+    /// Returns the old Unicode extension keywords.
+    ///
     /// # Example
     ///
     /// ```
@@ -241,8 +243,8 @@ impl Keywords {
     /// loc.extensions.unicode.keywords.clear();
     /// assert_eq!(loc, "und-u-hello".parse().unwrap());
     /// ```
-    pub fn clear(&mut self) {
-        self.0.clear();
+    pub fn clear(&mut self) -> Self {
+        core::mem::take(self)
     }
 
     /// Retains a subset of keywords as specified by the predicate function.

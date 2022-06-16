@@ -73,6 +73,8 @@ impl Variants {
 
     /// Empties the [`Variants`] list.
     ///
+    /// Returns the old list.
+    ///
     /// # Examples
     ///
     /// ```
@@ -92,8 +94,8 @@ impl Variants {
     ///
     /// assert_eq!(variants.to_string(), "");
     /// ```
-    pub fn clear(&mut self) {
-        self.0 = ShortVec::new();
+    pub fn clear(&mut self) -> Self {
+        core::mem::take(self)
     }
 
     pub(crate) fn for_each_subtag_str<E, F>(&self, f: &mut F) -> Result<(), E>
