@@ -51,7 +51,7 @@ macro_rules! symbols {
         pub mod $name {
             use super::*;
 
-            #[derive(Debug, PartialEq, Clone, Default, zerofrom::ZeroFrom, yoke::Yokeable)]
+            #[derive(Debug, PartialEq, Clone, zerofrom::ZeroFrom, yoke::Yokeable)]
             #[cfg_attr(
                 feature = "datagen",
                 derive(serde::Serialize, crabbake::Bakeable),
@@ -122,25 +122,48 @@ macro_rules! symbols {
 
 symbols!(
     months,
-    pub struct SymbolsV1<'data>(
-        #[cfg_attr(feature = "serde", serde(borrow))] pub ZeroMap<'data, MonthCode, str>,
-    );
+    pub enum SymbolsV1<'data> {
+        /// Twelve symbols for a solar calendar
+        SolarTwelve(
+            #[cfg_attr(
+                feature = "serde",
+                serde(
+                    borrow,
+                    deserialize_with = "icu_provider::serde::borrow_de_utils::array_of_cow"
+                )
+            )]
+            [Cow<'data, str>; 12],
+        ),
+        /// A calendar with an arbitrary number of months, potentially including leap months
+        #[cfg_attr(feature = "serde", serde(borrow))]
+        Other(ZeroMap<'data, MonthCode, str>),
+    }
 );
 
 impl<'data> months::SymbolsV1<'data> {
     /// Get the symbol for the given month code
     pub fn get(&self, code: MonthCode) -> Option<&str> {
-        self.0.get(&code)
+        match *self {
+            Self::SolarTwelve(_) => todo!(),
+            Self::Other(ref map) => map.get(&code),
+        }
     }
 
     /// Construct from a map of codes to symbols
     pub fn from_map(map: ZeroMap<'data, MonthCode, str>) -> Self {
-        Self(map)
+        Self::Other(map)
+    }
+}
+
+impl Default for months::SymbolsV1<'_> {
+    fn default() -> Self {
+        Self::Other(Default::default())
     }
 }
 
 symbols!(
     weekdays,
+    #[derive(Default)]
     pub struct SymbolsV1<'data>(
         #[cfg_attr(
             feature = "serde",
@@ -155,6 +178,7 @@ symbols!(
 
 symbols!(
     day_periods,
+    #[derive(Default)]
     pub struct SymbolsV1<'data> {
         #[cfg_attr(feature = "serde", serde(borrow))]
         pub am: Cow<'data, str>,
