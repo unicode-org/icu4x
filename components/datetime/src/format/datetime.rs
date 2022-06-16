@@ -488,7 +488,7 @@ pub fn analyze_patterns(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use icu_decimal::options::{GroupingStrategy};
+    use icu_decimal::options::GroupingStrategy;
 
     #[test]
     #[cfg(feature = "serde")]

@@ -16,9 +16,7 @@ use crate::{
 use alloc::string::String;
 
 use icu_decimal::{
-    options::{GroupingStrategy},
-    provider::DecimalSymbolsV1Marker,
-    FixedDecimalFormat,
+    options::GroupingStrategy, provider::DecimalSymbolsV1Marker, FixedDecimalFormat,
 };
 use icu_locid::Locale;
 use icu_plurals::{provider::OrdinalV1Marker, PluralRules};

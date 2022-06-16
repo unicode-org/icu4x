@@ -114,7 +114,10 @@ impl FixedDecimalFormat {
                 metadata: Default::default(),
             })?
             .take_payload()?;
-        Ok(Self { grouping_strategy, symbols })
+        Ok(Self {
+            grouping_strategy,
+            symbols,
+        })
     }
 
     /// Formats a [`FixedDecimal`], returning a [`FormattedFixedDecimal`].

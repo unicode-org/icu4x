@@ -7,9 +7,7 @@ pub mod ffi {
     use alloc::boxed::Box;
     use diplomat_runtime::DiplomatResult;
     use icu_decimal::{
-        options::{GroupingStrategy},
-        provider::DecimalSymbolsV1Marker,
-        FixedDecimalFormat,
+        options::GroupingStrategy, provider::DecimalSymbolsV1Marker, FixedDecimalFormat,
     };
     use icu_locid::Locale;
     use icu_provider::ResourceMarker;
