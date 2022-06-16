@@ -141,7 +141,7 @@ pub struct LocaleFallbackConfig {
     /// let provider = icu_testdata::get_provider();
     /// let fallbacker = LocaleFallbacker::try_new(&provider).expect("data");
     /// let mut config = LocaleFallbackConfig::default();
-    /// config.extension_kw = Some(icu_locid::unicode_ext_key!("ns"));
+    /// config.extension_kw = Some(icu_locid::extensions_unicode_key!("ns"));
     /// let key_fallbacker = fallbacker.for_config(config);
     /// let mut fallback_iterator = key_fallbacker.fallback_for(loc.into());
     ///

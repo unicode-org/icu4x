@@ -447,7 +447,7 @@ impl
 ///
 /// ```
 /// use icu::locid::LanguageIdentifier;
-/// use icu::locid::{language, region, script, langid};
+/// use icu::locid::{subtags_language as language, subtags_region as region, subtags_script as script, langid};
 ///
 /// let lid = langid!("en-Latn-US");
 /// let (lang, script, region) = (&lid).into();
