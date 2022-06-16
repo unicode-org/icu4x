@@ -104,6 +104,7 @@ pub fn parse_language_identifier(
     parse_language_identifier_from_iter(&mut iter, mode)
 }
 
+#[allow(clippy::type_complexity)]
 pub const fn parse_language_identifier_with_single_variant_from_iter(
     mut iter: SubtagIterator,
     mode: ParserMode,
@@ -180,6 +181,7 @@ pub const fn parse_language_identifier_with_single_variant_from_iter(
     Ok((language, script, region, variant))
 }
 
+#[allow(clippy::type_complexity)]
 pub const fn parse_language_identifier_with_single_variant(
     t: &[u8],
     mode: ParserMode,
