@@ -4,9 +4,6 @@
       "abbreviated": {
         "SolarTwelve": [
           "ene",
-          "oct",
-          "nov",
-          "dic",
           "feb",
           "mar",
           "abr",
@@ -14,15 +11,15 @@
           "jun",
           "jul",
           "ago",
-          "sept"
+          "sept",
+          "oct",
+          "nov",
+          "dic"
         ]
       },
       "narrow": {
         "SolarTwelve": [
           "E",
-          "O",
-          "N",
-          "D",
           "F",
           "M",
           "A",
@@ -30,16 +27,16 @@
           "J",
           "J",
           "A",
-          "S"
+          "S",
+          "O",
+          "N",
+          "D"
         ]
       },
       "short": null,
       "wide": {
         "SolarTwelve": [
           "enero",
-          "octubre",
-          "noviembre",
-          "diciembre",
           "febrero",
           "marzo",
           "abril",
@@ -47,7 +44,10 @@
           "junio",
           "julio",
           "agosto",
-          "septiembre"
+          "septiembre",
+          "octubre",
+          "noviembre",
+          "diciembre"
         ]
       }
     },

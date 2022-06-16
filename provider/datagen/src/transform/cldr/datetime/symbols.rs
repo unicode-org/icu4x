@@ -205,7 +205,7 @@ impl cldr_serde::ca::months::Symbols {
                     panic!("CLDR month indices cannot be zero");
                 }
 
-                arr[index] = Cow::Owned(v.into());
+                arr[index - 1] = Cow::Owned(v.into());
             }
 
             for (i, val) in arr.iter().enumerate() {

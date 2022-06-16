@@ -4,9 +4,6 @@
       "abbreviated": {
         "SolarTwelve": [
           "Chaitra",
-          "Pausa",
-          "Magha",
-          "Phalguna",
           "Vaisakha",
           "Jyaistha",
           "Asadha",
@@ -14,15 +11,15 @@
           "Bhadra",
           "Asvina",
           "Kartika",
-          "Agrahayana"
+          "Agrahayana",
+          "Pausa",
+          "Magha",
+          "Phalguna"
         ]
       },
       "narrow": {
         "SolarTwelve": [
           "1",
-          "10",
-          "11",
-          "12",
           "2",
           "3",
           "4",
@@ -30,16 +27,16 @@
           "6",
           "7",
           "8",
-          "9"
+          "9",
+          "10",
+          "11",
+          "12"
         ]
       },
       "short": null,
       "wide": {
         "SolarTwelve": [
           "Chaitra",
-          "Pausa",
-          "Magha",
-          "Phalguna",
           "Vaisakha",
           "Jyaistha",
           "Asadha",
@@ -47,7 +44,10 @@
           "Bhadra",
           "Asvina",
           "Kartika",
-          "Agrahayana"
+          "Agrahayana",
+          "Pausa",
+          "Magha",
+          "Phalguna"
         ]
       }
     },

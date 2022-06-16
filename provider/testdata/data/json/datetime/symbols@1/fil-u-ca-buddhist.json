@@ -4,9 +4,6 @@
       "abbreviated": {
         "SolarTwelve": [
           "Ene",
-          "Okt",
-          "Nob",
-          "Dis",
           "Peb",
           "Mar",
           "Abr",
@@ -14,15 +11,15 @@
           "Hun",
           "Hul",
           "Ago",
-          "Set"
+          "Set",
+          "Okt",
+          "Nob",
+          "Dis"
         ]
       },
       "narrow": {
         "SolarTwelve": [
           "Ene",
-          "Okt",
-          "Nob",
-          "Dis",
           "Peb",
           "Mar",
           "Abr",
@@ -30,16 +27,16 @@
           "Hun",
           "Hul",
           "Ago",
-          "Set"
+          "Set",
+          "Okt",
+          "Nob",
+          "Dis"
         ]
       },
       "short": null,
       "wide": {
         "SolarTwelve": [
           "Enero",
-          "Oktubre",
-          "Nobyembre",
-          "Disyembre",
           "Pebrero",
           "Marso",
           "Abril",
@@ -47,7 +44,10 @@
           "Hunyo",
           "Hulyo",
           "Agosto",
-          "Setyembre"
+          "Setyembre",
+          "Oktubre",
+          "Nobyembre",
+          "Disyembre"
         ]
       }
     },
@@ -56,9 +56,6 @@
       "narrow": {
         "SolarTwelve": [
           "E",
-          "Okt",
-          "Nob",
-          "Dis",
           "P",
           "M",
           "A",
@@ -66,7 +63,10 @@
           "Hun",
           "Hul",
           "Ago",
-          "Set"
+          "Set",
+          "Okt",
+          "Nob",
+          "Dis"
         ]
       },
       "short": null,

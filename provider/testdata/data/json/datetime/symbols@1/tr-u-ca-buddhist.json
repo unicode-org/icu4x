@@ -4,9 +4,6 @@
       "abbreviated": {
         "SolarTwelve": [
           "Oca",
-          "Eki",
-          "Kas",
-          "Ara",
           "Şub",
           "Mar",
           "Nis",
@@ -14,15 +11,15 @@
           "Haz",
           "Tem",
           "Ağu",
-          "Eyl"
+          "Eyl",
+          "Eki",
+          "Kas",
+          "Ara"
         ]
       },
       "narrow": {
         "SolarTwelve": [
           "O",
-          "E",
-          "K",
-          "A",
           "Ş",
           "M",
           "N",
@@ -30,16 +27,16 @@
           "H",
           "T",
           "A",
-          "E"
+          "E",
+          "E",
+          "K",
+          "A"
         ]
       },
       "short": null,
       "wide": {
         "SolarTwelve": [
           "Ocak",
-          "Ekim",
-          "Kasım",
-          "Aralık",
           "Şubat",
           "Mart",
           "Nisan",
@@ -47,7 +44,10 @@
           "Haziran",
           "Temmuz",
           "Ağustos",
-          "Eylül"
+          "Eylül",
+          "Ekim",
+          "Kasım",
+          "Aralık"
         ]
       }
     },
