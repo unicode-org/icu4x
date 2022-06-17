@@ -4,6 +4,9 @@
 
 #![allow(missing_docs)] // TODO(#686) - Add missing docs.
 
+// allowed for providers
+#![allow(clippy::exhaustive_structs, clippy::exhaustive_enums)]
+
 use alloc::borrow::Cow;
 use icu_calendar::types::MonthCode;
 use icu_provider::{yoke, zerofrom};
@@ -123,6 +126,7 @@ macro_rules! symbols {
 
 symbols!(
     months,
+    #[allow(clippy::large_enum_variant)]
     pub enum SymbolsV1<'data> {
         /// Twelve symbols for a solar calendar
         ///
