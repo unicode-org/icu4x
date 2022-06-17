@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use zerofrom::ZeroFrom;
 use zerovec::ule::AsULE;
 use zerovec::ZeroVec;
 
@@ -77,7 +78,7 @@ fn skip_node_value(pos: usize, lead: u16) -> usize {
 /// - [ICU4J CharsTrie](https://unicode-org.github.io/icu-docs/apidoc/released/icu4j/com/ibm/icu/util/CharsTrie.html) API.
 #[cfg_attr(feature = "serde", derive(serde::Deserialize, serde::Serialize))]
 #[cfg_attr(feature = "databake", derive(databake::Bake), databake(path = icu_char16trie::char16trie))]
-#[derive(Clone)]
+#[derive(Clone, Debug, PartialEq, Eq, ZeroFrom)]
 pub struct Char16Trie<'data> {
     /// An array of u16 containing the trie data.
     #[cfg_attr(feature = "serde", serde(borrow))]

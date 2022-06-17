@@ -5,6 +5,8 @@
 // The reordering algorithms in this file are adapted from ICU4C and,
 // therefore, are subject to the ICU license as described in LICENSE.
 
+//! Data structs for the collator
+
 use icu_char16trie::char16trie::Char16TrieIterator;
 use icu_codepointtrie::CodePointTrie;
 use icu_provider::{yoke, zerofrom};
@@ -54,17 +56,25 @@ fn data_ce_to_primary(data_ce: u64, c: char) -> u32 {
     primary | ((p & 0xFF000000) + ((offset as u32) << 24))
 }
 
+/// The main collation data either for the root or for a tailoring
 #[icu_provider::data_struct(CollationDataV1Marker = "collator/data@1")]
 #[derive(Debug, PartialEq, Clone)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake), databake(path = icu_collator::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct CollationDataV1<'data> {
+    /// Mapping from `char` to `CollationElement32` (represented
+    /// as its `u32` bits).
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub trie: CodePointTrie<'data, u32>,
+    /// `CollationElement`s used in expansions and offset CE32s
+    /// (represented as their `u64` bits)
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub ces: ZeroVec<'data, u64>,
+    /// `CollationElement32`s used in expansions and as defaults
+    /// for digits when the numeric mode is not in use
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub ce32s: ZeroVec<'data, u32>,
+    /// Defaults and tries for prefix and contraction matching
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub contexts: ZeroVec<'data, u16>,
 }
@@ -107,6 +117,7 @@ impl<'data> CollationDataV1<'data> {
         index: usize,
     ) -> (CollationElement32, &'data ZeroSlice<u16>) {
         if let Some(slice) = self.contexts.get_subslice(index..self.contexts.len()) {
+            #[allow(clippy::unwrap_used)]
             if slice.len() >= 2 {
                 // `unwrap` must succeed due to the length check above.
                 let first = slice.get(0).unwrap();
@@ -149,38 +160,78 @@ impl<'data> CollationDataV1<'data> {
     }
 }
 
+/// Secondary weights for the start of the Combining Diacritics block.
 #[icu_provider::data_struct(CollationDiacriticsV1Marker = "collator/dia@1")]
 #[derive(Debug, PartialEq, Clone)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake), databake(path = icu_collator::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct CollationDiacriticsV1<'data> {
+    /// Secondary weights for characters starting from U+0300 up
+    /// to but not including U+034F. May be shorter than that;
+    /// zero-length when a tailoring opts out of using this
+    /// feature altogether.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub secondaries: ZeroVec<'data, u16>,
 }
 
+/// `CollationElement32`s for the Hangul Jamo Unicode Block
 #[icu_provider::data_struct(CollationJamoV1Marker = "collator/jamo@1")]
 #[derive(Debug, PartialEq, Clone)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake), databake(path = icu_collator::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct CollationJamoV1<'data> {
+    /// `CollationElement32`s (as `u32`s) for the Hangul Jamo Unicode Block.
+    /// The length must be equal to the size of the block (256).
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub ce32s: ZeroVec<'data, u32>,
 }
 
+/// Script reordering data
 #[icu_provider::data_struct(CollationReorderingV1Marker = "collator/reord@1")]
 #[derive(Debug, PartialEq, Clone)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake), databake(path = icu_collator::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct CollationReorderingV1<'data> {
+    /// Limit of last reordered range. 0 if no reordering or no split bytes.
+    ///
+    /// Comment from ICU4C's `collationsettings.h`
     pub min_high_no_reorder: u32,
+    /// 256-byte table for reordering permutation of primary lead
+    /// bytes; NULL if no reordering. A 0 entry at a non-zero index means
+    /// that the primary lead byte is "split" (there are different offsets
+    /// for primaries that share that lead byte) and the reordering offset
+    /// must be determined via the reorderRanges.
+    ///
+    /// Comment from ICU4C's `collationsettings.h`
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub reorder_table: ZeroVec<'data, u8>, // len always 256
+    /// Primary-weight ranges for script reordering, to be used by
+    /// reorder(p) for split-reordered primary lead bytes.
+    ///
+    /// Each entry is a (limit, offset) pair. The upper 16 bits of the
+    /// entry are the upper 16 bits of the exclusive primary limit of
+    /// a range. Primaries between the previous limit and this one have
+    /// their lead bytes modified by the signed offset (-0xff..+0xff)
+    /// stored in the lower 16 bits.
+    ///
+    /// CollationData::makeReorderRanges() writes a full list where the
+    /// first range (at least for terminators and separators) has a 0
+    /// offset. The last range has a non-zero offset. minHighNoReorder
+    /// is set to the limit of that last range.
+    ///
+    /// In the settings object, the initial ranges before the first
+    /// split lead byte are omitted for efficiency; they are handled
+    /// by reorder(p) via the reorderTable. If there are no
+    /// split-reordered lead bytes, then no ranges are needed.
+    ///
+    /// Comment from ICU4C's `collationsettings.h`; names refer to
+    /// ICU4C.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub reorder_ranges: ZeroVec<'data, u32>,
 }
 
 impl<'data> CollationReorderingV1<'data> {
-    pub fn reorder(&self, primary: u32) -> u32 {
+    pub(crate) fn reorder(&self, primary: u32) -> u32 {
         if let Some(b) = self.reorder_table.get((primary >> 24) as usize) {
             if b != 0 || primary <= NO_CE_PRIMARY {
                 (u32::from(b) << 24) | (primary & 0x00FFFFFF)
@@ -211,6 +262,9 @@ impl<'data> CollationReorderingV1<'data> {
     }
 }
 
+/// Each non-alias collation that the data provider knows
+/// about explicitly has an data entry at least for this
+/// struct.
 #[icu_provider::data_struct(CollationMetadataV1Marker = "collator/meta@1")]
 #[derive(Debug, PartialEq, Clone, Copy)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake), databake(path = icu_collator::provider))]
@@ -294,17 +348,24 @@ impl CollationMetadataV1 {
     }
 }
 
+/// Special primaries associated with the root collation
 #[icu_provider::data_struct(CollationSpecialPrimariesV1Marker = "collator/prim@1")]
 #[derive(Debug, PartialEq, Clone)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake), databake(path = icu_collator::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct CollationSpecialPrimariesV1<'data> {
+    /// The primaries corresponding to `MaxVariable`
+    /// character classes packed so that each fits in
+    /// 16 bits. Length must match the number of enum
+    /// variants in `MaxVariable`, currently 4.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub last_primaries: ZeroVec<'data, u16>,
+    /// The high 8 bits of the numeric primary
     pub numeric_primary: u8,
 }
 
 impl<'data> CollationSpecialPrimariesV1<'data> {
+    #[allow(clippy::unwrap_used)]
     pub(crate) fn last_primary_for_group(&self, max_variable: MaxVariable) -> u32 {
         // `unwrap` is OK, because `Collator::try_new` validates the length.
         //
