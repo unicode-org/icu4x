@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1655509347747,
+  "lastUpdate": 1655510207892,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -41063,6 +41063,102 @@ window.BENCHMARK_DATA = {
             "name": "pattern/parse",
             "value": 6303,
             "range": "± 35",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "3736032598204a86e90273c34460160be5767b5c",
+          "message": "Use month codes in formatting (#2071)\n\n\r\n* Make MonthCode ULEable\r\n\r\n* Move month symbols to zeromap + month code\r\n\r\n* Add .get() functions to symbols converter\r\n\r\n* support contexts in .get()\r\n\r\n* introduce month code map\r\n\r\n\r\n* Special case twelve month solar calendars",
+          "timestamp": "2022-06-17T23:42:35Z",
+          "tree_id": "62ec76abf0eef9758234b3d62648bb2e7d3973da",
+          "url": "https://github.com/unicode-org/icu4x/commit/3736032598204a86e90273c34460160be5767b5c"
+        },
+        "date": 1655510176977,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 154996,
+            "range": "± 9150",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 1404067,
+            "range": "± 66794",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 271013,
+            "range": "± 13763",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/DateTimeFormat/format_to_write",
+            "value": 146925,
+            "range": "± 9468",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/DateTimeFormat/format_to_string",
+            "value": 153023,
+            "range": "± 8958",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/format",
+            "value": 150345,
+            "range": "± 5681",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/to_string",
+            "value": 163563,
+            "range": "± 11063",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/ZonedDateTimeFormat/format_to_write",
+            "value": 262854,
+            "range": "± 20505",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/ZonedDateTimeFormat/format_to_string",
+            "value": 278734,
+            "range": "± 18984",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/format",
+            "value": 264396,
+            "range": "± 14077",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/to_string",
+            "value": 285486,
+            "range": "± 23653",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "pattern/parse",
+            "value": 6936,
+            "range": "± 690",
             "unit": "ns/iter"
           }
         ]
