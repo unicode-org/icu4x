@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1655480865636,
+  "lastUpdate": 1655489682666,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -17873,6 +17873,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/ccb1b6fbf8f01ba3c2da46ce06417d5187099e2d"
         },
         "date": 1655480836766,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 2722229,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "49699333+dependabot[bot]@users.noreply.github.com",
+            "name": "dependabot[bot]",
+            "username": "dependabot[bot]"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "417ff5d9ac03c5484f56964aafcebcb07be47c20",
+          "message": "Bump regex from 1.5.4 to 1.5.5 (#1998)\n\nBumps [regex](https://github.com/rust-lang/regex) from 1.5.4 to 1.5.5.\r\n- [Release notes](https://github.com/rust-lang/regex/releases)\r\n- [Changelog](https://github.com/rust-lang/regex/blob/master/CHANGELOG.md)\r\n- [Commits](https://github.com/rust-lang/regex/compare/1.5.4...1.5.5)\r\n\r\n---\r\nupdated-dependencies:\r\n- dependency-name: regex\r\n  dependency-type: indirect\r\n...\r\n\r\nSigned-off-by: dependabot[bot] <support@github.com>\r\n\r\nCo-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>",
+          "timestamp": "2022-06-17T18:12:02Z",
+          "tree_id": "bb12ccd1ede64eefa80c671b5502bbcfbae044b0",
+          "url": "https://github.com/unicode-org/icu4x/commit/417ff5d9ac03c5484f56964aafcebcb07be47c20"
+        },
+        "date": 1655489651487,
         "tool": "ndjson",
         "benches": [
           {
