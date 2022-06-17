@@ -277,10 +277,7 @@ mod tests {
             metazone_period
                 .get()
                 .0
-                .get_copied(
-                    &TimeZoneBcp47Id(tinystr!(8, "gblon")),
-                    &String::from("1971-10-31 02:00")
-                )
+                .get_copied(&TimeZoneBcp47Id(tinystr!(8, "gblon")), &963480)
                 .unwrap()
         );
     }

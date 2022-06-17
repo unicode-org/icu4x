@@ -302,6 +302,23 @@ impl Iso {
         }
     }
 
+    // Minute count representation of calendars starting from  00:00:00 UTC on Jan 1st, 1970.
+    pub fn unix_epoch_minute_from_iso(date: IsoDateInner) -> i32 {
+        let minutes_a_day = 60 * 24;
+        (Self::fixed_from_iso(date)
+            - Self::fixed_from_iso(IsoDateInner(ArithmeticDate::new(1969, 12, 31))))
+            * minutes_a_day
+    }
+
+    // Convert minute count since 00:00:00 UTC on Jan 1st, 1970 to ISO Date.
+    pub fn iso_from_unix_epoch_minute(minute: i32) -> Date<Iso> {
+        let minutes_a_day = 60 * 24;
+        let total = Self::fixed_from_iso(IsoDateInner(ArithmeticDate::new(1969, 12, 31)))
+            * minutes_a_day
+            + minute;
+        Self::iso_from_fixed(total / minutes_a_day)
+    }
+
     // Fixed is day count representation of calendars starting from Jan 1st of year 1.
     // The fixed calculations algorithms are from the Calendrical Calculations book.
     //
@@ -571,5 +588,12 @@ mod test {
         let today_minus_1 = Date::new_iso_date(2020, 2, 29).unwrap();
         let offset = today.added(DateDuration::new(0, 0, 0, -1));
         assert_eq!(offset, today_minus_1);
+    }
+
+    #[test]
+    fn test_offset_minute_since_unix_epoch() {
+        let today = Date::new_iso_date(2020, 2, 28).unwrap();
+        assert_eq!(Iso::unix_epoch_minute_from_iso(*today.inner()), 26382240);
+        assert_eq!(Iso::iso_from_unix_epoch_minute(26382240), today);
     }
 }
