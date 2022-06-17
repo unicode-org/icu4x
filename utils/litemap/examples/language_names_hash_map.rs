@@ -11,8 +11,8 @@
 
 icu_benchmark_macros::static_setup!();
 
-use icu_locid::language;
 use icu_locid::subtags::Language;
+use icu_locid::subtags_language as language;
 use std::collections::HashMap;
 
 const DATA: [(Language, &str); 11] = [

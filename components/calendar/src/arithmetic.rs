@@ -12,8 +12,8 @@ pub mod week_of {
     #[derive(Clone, Copy, Debug)]
     #[cfg_attr(
         feature = "datagen",
-        derive(serde::Serialize, crabbake::Bakeable),
-        crabbake(path = icu_calendar::arithmetic::week_of),
+        derive(serde::Serialize, databake::Bake),
+        databake(path = icu_calendar::arithmetic::week_of),
     )]
     #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
     #[allow(clippy::exhaustive_structs)] // this type is stable

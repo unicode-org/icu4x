@@ -37,8 +37,8 @@ pub struct Year {
 #[allow(clippy::exhaustive_structs)] // this is a newtype
 #[cfg_attr(
     feature = "datagen",
-    derive(serde::Serialize, crabbake::Bakeable),
-    crabbake(path = icu_calendar::types),
+    derive(serde::Serialize, databake::Bake),
+    databake(path = icu_calendar::types),
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct MonthCode(pub TinyStr4);
@@ -431,8 +431,8 @@ impl FromStr for GmtOffset {
 #[repr(i8)]
 #[cfg_attr(
     feature = "datagen",
-    derive(serde::Serialize, crabbake::Bakeable),
-    crabbake(path = icu_calendar::types),
+    derive(serde::Serialize, databake::Bake),
+    databake(path = icu_calendar::types),
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[allow(clippy::exhaustive_enums)] // This is stable

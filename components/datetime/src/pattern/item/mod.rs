@@ -13,8 +13,8 @@ pub use generic::GenericPatternItem;
 #[derive(Debug, PartialEq, Clone, Copy)]
 #[cfg_attr(
     feature = "datagen",
-    derive(serde::Serialize, crabbake::Bakeable),
-    crabbake(path = icu_datetime::pattern::item),
+    derive(serde::Serialize, databake::Bake),
+    databake(path = icu_datetime::pattern::item),
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[allow(clippy::exhaustive_enums)] // this type is stable

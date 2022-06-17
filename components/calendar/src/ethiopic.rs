@@ -42,7 +42,8 @@ use crate::{
 use core::marker::PhantomData;
 use tinystr::tinystr;
 
-// The Ethiopic Calendar
+/// The Ethiopic Calendar
+// The bool specifies whether dates should be in the Amete Alem era scheme
 #[derive(Copy, Clone, Debug, Hash, Default, Eq, PartialEq)]
 pub struct Ethiopic(pub(crate) bool);
 

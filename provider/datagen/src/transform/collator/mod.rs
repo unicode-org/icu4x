@@ -10,8 +10,8 @@ use icu_codepointtrie::toml::CodePointTrieToml;
 use icu_codepointtrie::CodePointTrie;
 use icu_collator::provider::*;
 use icu_locid::extensions::unicode::Value;
-use icu_locid::language;
-use icu_locid::unicode_ext_key;
+use icu_locid::extensions_unicode_key as key;
+use icu_locid::subtags_language as language;
 use icu_locid::LanguageIdentifier;
 use icu_locid::Locale;
 use icu_provider::datagen::IterableResourceProvider;
@@ -84,7 +84,7 @@ fn locale_to_file_name(opts: &ResourceOptions) -> String {
             .replace('-', "_")
             .to_ascii_lowercase()
     };
-    if let Some(extension) = &opts.get_unicode_ext(&unicode_ext_key!("co")) {
+    if let Some(extension) = &opts.get_unicode_ext(&key!("co")) {
         s.push('_');
         s.push_str(match extension.to_string().as_str() {
             "trad" => "traditional",
@@ -133,7 +133,7 @@ fn file_name_to_locale(file_name: &str) -> Option<Locale> {
             _ => variant,
         };
         locale.extensions.unicode.keywords.set(
-            unicode_ext_key!("co"),
+            key!("co"),
             Value::from_str(shortened).expect("valid extension subtag"),
         );
     };

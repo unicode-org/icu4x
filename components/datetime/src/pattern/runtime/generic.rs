@@ -16,8 +16,8 @@ use zerovec::ZeroVec;
 #[allow(clippy::exhaustive_structs)] // this type is stable
 #[cfg_attr(
     feature = "datagen",
-    derive(crabbake::Bakeable),
-    crabbake(path = icu_datetime::pattern::runtime),
+    derive(databake::Bake),
+    databake(path = icu_datetime::pattern::runtime),
 )]
 pub struct GenericPattern<'data> {
     pub items: ZeroVec<'data, GenericPatternItem>,

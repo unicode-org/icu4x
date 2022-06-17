@@ -14,7 +14,7 @@ use crate::{
 use alloc::string::String;
 use core::marker::PhantomData;
 use icu_decimal::provider::DecimalSymbolsV1Marker;
-use icu_locid::{unicode_ext_key, Locale};
+use icu_locid::{extensions_unicode_key as key, Locale};
 use icu_plurals::provider::OrdinalV1Marker;
 use icu_provider::prelude::*;
 
@@ -100,7 +100,7 @@ impl<C: CldrCalendar> DateTimeFormat<C> {
             .extensions
             .unicode
             .keywords
-            .set(unicode_ext_key!("ca"), C::BCP_47_IDENTIFIER);
+            .set(key!("ca"), C::BCP_47_IDENTIFIER);
         Ok(Self(
             raw::DateTimeFormat::try_new(locale, data_provider, options)?,
             PhantomData,

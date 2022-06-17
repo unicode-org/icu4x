@@ -23,7 +23,9 @@ use icu_datetime::{
     CldrCalendar, DateTimeFormat, DateTimeFormatOptions, ZonedDateTimeFormat,
 };
 use icu_decimal::provider::DecimalSymbolsV1Marker;
-use icu_locid::{unicode_ext_key, unicode_ext_value, LanguageIdentifier, Locale};
+use icu_locid::{
+    extensions_unicode_key as key, extensions_unicode_value as value, LanguageIdentifier, Locale,
+};
 use icu_plurals::provider::OrdinalV1Marker;
 use icu_provider::prelude::*;
 use icu_provider_adapters::fork::by_key::MultiForkByKeyProvider;
@@ -233,7 +235,7 @@ fn test_dayperiod_patterns() {
             .extensions
             .unicode
             .keywords
-            .set(unicode_ext_key!("ca"), unicode_ext_value!("gregory"));
+            .set(key!("ca"), value!("gregory"));
         let mut patterns_data: DataPayload<DatePatternsV1Marker> = provider
             .load_resource(&DataRequest {
                 options: ResourceOptions::from(&locale),
@@ -399,7 +401,7 @@ fn test_time_zone_patterns() {
             .extensions
             .unicode
             .keywords
-            .set(unicode_ext_key!("ca"), unicode_ext_value!("gregory"));
+            .set(key!("ca"), value!("gregory"));
         let mut config = test.config;
         let mut datetime: MockZonedDateTime = test.datetime.parse().unwrap();
         datetime.time_zone.time_zone_id = config.time_zone_id.take().map(TimeZoneBcp47Id);

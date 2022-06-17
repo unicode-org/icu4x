@@ -27,6 +27,8 @@ pub fn get_all_keys() -> Vec<ResourceKey> {
         icu_locale_canonicalizer::provider::LikelySubtagsV1Marker::KEY,
         icu_plurals::provider::CardinalV1Marker::KEY,
         icu_plurals::provider::OrdinalV1Marker::KEY,
+        icu_provider_adapters::fallback::provider::LocaleFallbackLikelySubtagsV1Marker::KEY,
+        icu_provider_adapters::fallback::provider::LocaleFallbackParentsV1Marker::KEY,
         #[cfg(feature = "experimental")]
         icu_casemapping::provider::CaseMappingV1Marker::KEY,
         #[cfg(feature = "experimental")]
@@ -39,6 +41,14 @@ pub fn get_all_keys() -> Vec<ResourceKey> {
         icu_normalizer::provider::CanonicalDecompositionTablesV1Marker::KEY,
         #[cfg(feature = "experimental")]
         icu_normalizer::provider::CompatibilityDecompositionTablesV1Marker::KEY,
+        #[cfg(feature = "experimental")]
+        icu_normalizer::provider::CanonicalCompositionsV1Marker::KEY,
+        #[cfg(feature = "experimental")]
+        icu_normalizer::provider::CanonicalCompositionPassthroughV1Marker::KEY,
+        #[cfg(feature = "experimental")]
+        icu_normalizer::provider::CompatibilityCompositionPassthroughV1Marker::KEY,
+        #[cfg(feature = "experimental")]
+        icu_normalizer::provider::Uts46CompositionPassthroughV1Marker::KEY,
     ];
     v.extend(icu_properties::provider::ALL_KEYS);
     #[cfg(feature = "experimental")]
@@ -90,6 +100,7 @@ macro_rules! create_datagen_provider {
             [
                 $crate::transform::cldr::AliasesProvider,
                 $crate::transform::cldr::CommonDateProvider,
+                $crate::transform::cldr::FallbackRulesProvider,
                 $crate::transform::cldr::JapaneseErasProvider,
                 $crate::transform::cldr::LikelySubtagsProvider,
                 $crate::transform::cldr::NumbersProvider,
@@ -157,6 +168,7 @@ macro_rules! create_datagen_provider {
             [
                 $crate::transform::cldr::AliasesProvider,
                 $crate::transform::cldr::CommonDateProvider,
+                $crate::transform::cldr::FallbackRulesProvider,
                 $crate::transform::cldr::JapaneseErasProvider,
                 $crate::transform::cldr::LikelySubtagsProvider,
                 $crate::transform::cldr::NumbersProvider,
@@ -174,6 +186,10 @@ macro_rules! create_datagen_provider {
                 $crate::transform::uprops::Uts46DecompositionSupplementProvider,
                 $crate::transform::uprops::CanonicalDecompositionTablesProvider,
                 $crate::transform::uprops::CompatibilityDecompositionTablesProvider,
+                $crate::transform::uprops::CanonicalCompositionsProvider,
+                $crate::transform::uprops::CanonicalCompositionPassthroughProvider,
+                $crate::transform::uprops::CompatibilityCompositionPassthroughProvider,
+                $crate::transform::uprops::Uts46CompositionPassthroughProvider,
                 $crate::transform::collator::CollationProvider,
             ]
         )

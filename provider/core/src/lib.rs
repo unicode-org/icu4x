@@ -45,7 +45,7 @@
 //! - [`CldrJsonDataProvider`] reads structured data from CLDR JSON source files and returns
 //!   structured Rust objects.
 //! - [`AnyPayloadProvider`] wraps a specific data struct and returns it.
-//! - The upcoming `crabbake` provider which reads structured data from Rust source files
+//! - The `BakedDataProvider` which encodes structured data directly in Rust source
 //!
 //! ### Type 2 Providers
 //!

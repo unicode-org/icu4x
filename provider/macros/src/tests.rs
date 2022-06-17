@@ -117,17 +117,17 @@ fn test_multi_named_resource_marker() {
 }
 
 #[test]
-fn test_crabbake() {
+fn test_databake() {
     check(
         vec![quote!(BarV1Marker = "demo/bar@1")],
         quote!(
-            #[crabbake(path = test::path)]
+            #[databake(path = test::path)]
             pub struct FooV1;
         ),
         quote!(
             #[doc = "Marker type for [`FooV1`]: \"demo/bar@1\""]
-            #[derive(Default, crabbake::Bakeable)]
-            #[crabbake(path = test::path)]
+            #[derive(Default, databake::Bake)]
+            #[databake(path = test::path)]
             pub struct BarV1Marker;
             impl icu_provider::DataMarker for BarV1Marker {
                 type Yokeable = FooV1;
@@ -136,7 +136,7 @@ fn test_crabbake() {
                 const KEY: icu_provider::ResourceKey = icu_provider::resource_key!("demo/bar@1");
             }
             #[derive(yoke::Yokeable, zerofrom::ZeroFrom)]
-            #[crabbake(path = test::path)]
+            #[databake(path = test::path)]
             pub struct FooV1;
         ),
     );

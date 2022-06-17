@@ -56,6 +56,7 @@ icu_provider_fs = { version = "0.6", path = "../fs", features = ["export"] }
 # Other
 displaydoc = { version = "0.2.3", default-features = false }
 elsa = "1.7"
+icu_char16trie = { version = "0.1", path = "../../experimental/char16trie", features = ["serde"] }
 icu_codepointtrie = { version = "0.4", path = "../../utils/codepointtrie", features = ["serde"] }
 icu_codepointtrie_builder = { path = "../../utils/codepointtrie/builder" }
 icu_locid = { version = "0.6", path = "../../components/locid", features = ["std"]}
@@ -71,11 +72,11 @@ tinystr = { path = "../../utils/tinystr", version = "0.6", features = ["alloc", 
 toml = "0.5"
 zerovec = { version = "0.7", path = "../../utils/zerovec", features = ["serde", "yoke"] }
 quote = "1.0.9"
-crabbake = { version = "0.4", path = "../../experimental/crabbake"}
+databake = { version = "0.4", path = "../../utils/databake"}
 proc-macro2 = "1.0"
 crlify = { version = "1", path = "../../utils/crlify"}
 syn = {version = "1.0", features = ["parsing"] }
-writeable = { version = "0.4", path = "../../utils/writeable", optional = true }
+writeable = { version = "0.4", path = "../../utils/writeable" }
 zip = "0.6"
 
 # Dependencies for "bin" feature
@@ -89,12 +90,11 @@ walkdir = { version = "2.3.2", optional = true }
 
 [dev-dependencies]
 dhat = "0.3.0"
-writeable = { path = "../../utils/writeable" }
 icu_testdata = { path = "../testdata", features = ["metadata"] }
 
 [features]
 default = []
-experimental = ["icu_casemapping", "icu_segmenter", "icu_collator", "icu_normalizer", "writeable"]
+experimental = ["icu_casemapping", "icu_segmenter", "icu_collator", "icu_normalizer"]
 bin = ["clap", "cached-path", "eyre", "pathdiff","sha2", "simple_logger", "walkdir"]
 
 [[bin]]

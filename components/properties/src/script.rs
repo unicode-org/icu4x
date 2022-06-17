@@ -230,8 +230,8 @@ impl ScriptExtensionsSet<'_> {
 #[cfg_attr(feature = "serde", derive(Deserialize))]
 #[cfg_attr(
     feature = "datagen",
-    derive(Serialize, crabbake::Bakeable),
-    crabbake(path = icu_properties::script),
+    derive(Serialize, databake::Bake),
+    databake(path = icu_properties::script),
 )]
 #[derive(Clone, Debug, Eq, PartialEq, yoke::Yokeable, zerofrom::ZeroFrom)]
 pub struct ScriptWithExtensions<'data> {

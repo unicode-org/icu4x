@@ -60,7 +60,7 @@ locales = [
     # Spanish:
     #  - Most popular Romance language
     #  - South American dialect
-    #  - Has context dependent list fragments 
+    #  - Has context dependent list fragments
     "es",
     "es-AR",
 
@@ -112,6 +112,7 @@ cldr_json_glob = [
     "cldr-core/supplemental/numberingSystems.json",
     "cldr-core/supplemental/metaZones.json",
     "cldr-core/supplemental/ordinals.json",
+    "cldr-core/supplemental/parentLocales.json",
     "cldr-core/supplemental/plurals.json",
     "cldr-core/supplemental/weekData.json",
     "cldr-dates-full/main/$LOCALES/ca-gregorian.json",
@@ -167,7 +168,7 @@ serde_json = { version = "1.0", optional = true, default-features = false, featu
 displaydoc = { version = "0.2.3", default-features = false, optional = true }
 writeable = { version = "0.4", path = "../../utils/writeable", optional = true }
 
-# crabbake deps
+# databake deps
 icu_calendar = { version = "0.6", path = "../../components/calendar", optional = true }
 icu_casemapping = { version = "0.1", path = "../../experimental/casemapping", optional = true }
 icu_datetime = { version = "0.6", path = "../../components/datetime", optional = true }
@@ -176,7 +177,9 @@ icu_list = { version = "0.6", path = "../../components/list", optional = true }
 icu_locale_canonicalizer = { version = "0.6", path = "../../components/locale_canonicalizer", optional = true }
 icu_plurals = { version = "0.6", path = "../../components/plurals", optional = true }
 icu_properties = { version = "0.6", path = "../../components/properties", optional = true }
+icu_provider_adapters = { path = "../adapters" }
 icu_segmenter = { version = "0.6", path = "../../experimental/segmenter", optional = true }
+icu_char16trie = { version = "0.1", path = "../../experimental/char16trie", optional = true }
 icu_codepointtrie = { version = "0.4", path = "../../utils/codepointtrie", optional = true }
 icu_uniset = { version = "0.5", path = "../../utils/uniset", optional = true }
 icu_normalizer = { version = "0.6", path = "../../experimental/normalizer", optional = true }
@@ -215,6 +218,7 @@ baked = [
     "icu_plurals",
     "icu_properties",
     "icu_segmenter",
+    "icu_char16trie",
     "icu_codepointtrie",
     "icu_uniset",
     "tinystr",

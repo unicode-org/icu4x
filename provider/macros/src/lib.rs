@@ -57,7 +57,7 @@ mod tests;
 /// assert_eq!(BazV1Marker::KEY.get_path(), "demo/baz@1");
 /// ```
 ///
-/// If the `#[crabbake(path = ...)]` attribute is present on the data struct, this will also
+/// If the `#[databake(path = ...)]` attribute is present on the data struct, this will also
 /// implement it on the markers.
 pub fn data_struct(attr: TokenStream, item: TokenStream) -> TokenStream {
     TokenStream::from(data_struct_impl(
@@ -92,13 +92,13 @@ fn data_struct_impl(attr: AttributeArgs, input: DeriveInput) -> TokenStream2 {
         .to_compile_error();
     }
 
-    let crabbake_derive = input
+    let bake_derive = input
         .attrs
         .iter()
-        .find(|a| a.path.is_ident("crabbake"))
+        .find(|a| a.path.is_ident("databake"))
         .map(|a| {
             quote! {
-                #[derive(Default, crabbake::Bakeable)]
+                #[derive(Default, databake::Bake)]
                 #a
             }
         })
@@ -120,7 +120,7 @@ fn data_struct_impl(attr: AttributeArgs, input: DeriveInput) -> TokenStream2 {
                 let docs = format!("Marker type for [`{}`]: \"{}\"", name, key_str);
                 result.extend(quote!(
                     #[doc = #docs]
-                    #crabbake_derive
+                    #bake_derive
                     pub struct #marker_name;
                     impl icu_provider::DataMarker for #marker_name {
                         type Yokeable = #name_with_lt;
@@ -134,7 +134,7 @@ fn data_struct_impl(attr: AttributeArgs, input: DeriveInput) -> TokenStream2 {
                 let docs = format!("Marker type for [`{}`]", name);
                 result.extend(quote!(
                     #[doc = #docs]
-                    #crabbake_derive
+                    #bake_derive
                     pub struct #marker_name;
                     impl icu_provider::DataMarker for #marker_name {
                         type Yokeable = #name_with_lt;

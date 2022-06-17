@@ -2,7 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use icu_locid::{langid, language, region, LanguageIdentifier};
+use icu_locid::{
+    langid, subtags_language as language, subtags_region as region, LanguageIdentifier,
+};
 
 const LIDS: &[LanguageIdentifier] = &[
     langid!("en"),
