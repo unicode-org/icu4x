@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1655509365311,
+  "lastUpdate": 1655510087125,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -32489,6 +32489,66 @@ window.BENCHMARK_DATA = {
             "name": "from_string/1000000001",
             "value": 85,
             "range": "± 3",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "3736032598204a86e90273c34460160be5767b5c",
+          "message": "Use month codes in formatting (#2071)\n\n\r\n* Make MonthCode ULEable\r\n\r\n* Move month symbols to zeromap + month code\r\n\r\n* Add .get() functions to symbols converter\r\n\r\n* support contexts in .get()\r\n\r\n* introduce month code map\r\n\r\n\r\n* Special case twelve month solar calendars",
+          "timestamp": "2022-06-17T23:42:35Z",
+          "tree_id": "62ec76abf0eef9758234b3d62648bb2e7d3973da",
+          "url": "https://github.com/unicode-org/icu4x/commit/3736032598204a86e90273c34460160be5767b5c"
+        },
+        "date": 1655510060134,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 115111,
+            "range": "± 496",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 27094,
+            "range": "± 96",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 70962,
+            "range": "± 1174",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 188,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 93,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 75,
+            "range": "± 0",
             "unit": "ns/iter"
           }
         ]
