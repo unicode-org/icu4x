@@ -17,7 +17,7 @@ use std::mem::ManuallyDrop;
 #[global_allocator]
 static ALLOC: dhat::Alloc = dhat::Alloc;
 
-// Types in this list cannot be zero-copy deserialized (and are unlikely to work with CrabBake).
+// Types in this list cannot be zero-copy deserialized.
 //
 // Such types contain some data that was allocated during deserializations
 //
@@ -28,11 +28,10 @@ static EXPECTED_NET_VIOLATIONS: &[&str] = &[
 ];
 
 // Types in this list can be zero-copy deserialized (and do not contain allocated data),
-// however there is some allocation that occurs during deserialization for validation. This is unlikely to affect
-// CrabBake since CrabBake can bypass validation steps.
+// however there is some allocation that occurs during deserialization for validation.
 //
 // Entries in this list represent a less-than-ideal state of things, however ICU4X is shippable with violations
-// in this list since it does not affect CrabBake.
+// in this list since it does not affect databake.
 static EXPECTED_TOTAL_VIOLATIONS: &[&str] = &[
     // Regex DFAs need to be validated, which involved creating a BTreeMap
     "list/and@1",

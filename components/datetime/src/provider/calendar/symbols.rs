@@ -12,8 +12,8 @@ use zerovec::ZeroMap;
 #[derive(Debug, PartialEq, Clone, Default)]
 #[cfg_attr(
     feature = "datagen",
-    derive(serde::Serialize, crabbake::Bakeable),
-    crabbake(path = icu_datetime::provider::calendar),
+    derive(serde::Serialize, databake::Bake),
+    databake(path = icu_datetime::provider::calendar),
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
@@ -31,8 +31,8 @@ pub struct DateSymbolsV1<'data> {
 #[derive(Debug, PartialEq, Clone, Default, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(
     feature = "datagen",
-    derive(serde::Serialize, crabbake::Bakeable),
-    crabbake(path = icu_datetime::provider::calendar),
+    derive(serde::Serialize, databake::Bake),
+    databake(path = icu_datetime::provider::calendar),
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
@@ -53,8 +53,8 @@ macro_rules! symbols {
             #[derive(Debug, PartialEq, Clone, Default, zerofrom::ZeroFrom, yoke::Yokeable)]
             #[cfg_attr(
                 feature = "datagen",
-                derive(serde::Serialize, crabbake::Bakeable),
-                crabbake(path = icu_datetime::provider::calendar::$name),
+                derive(serde::Serialize, databake::Bake),
+                databake(path = icu_datetime::provider::calendar::$name),
             )]
             #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
             $symbols
@@ -64,8 +64,8 @@ macro_rules! symbols {
             #[derive(Debug, PartialEq, Clone, Default, yoke::Yokeable, zerofrom::ZeroFrom)]
             #[cfg_attr(
                 feature = "datagen",
-                derive(serde::Serialize, crabbake::Bakeable),
-                crabbake(path = icu_datetime::provider::calendar::$name),
+                derive(serde::Serialize, databake::Bake),
+                databake(path = icu_datetime::provider::calendar::$name),
             )]
             #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
             pub struct FormatWidthsV1<'data> {
@@ -83,8 +83,8 @@ macro_rules! symbols {
             #[derive(Debug, PartialEq, Clone, Default, yoke::Yokeable, zerofrom::ZeroFrom)]
             #[cfg_attr(
                 feature = "datagen",
-                derive(serde::Serialize, crabbake::Bakeable),
-                crabbake(path = icu_datetime::provider::calendar::$name),
+                derive(serde::Serialize, databake::Bake),
+                databake(path = icu_datetime::provider::calendar::$name),
             )]
             #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
             pub struct StandAloneWidthsV1<'data> {
@@ -101,8 +101,8 @@ macro_rules! symbols {
             #[derive(Debug, PartialEq, Clone, Default, yoke::Yokeable, zerofrom::ZeroFrom)]
             #[cfg_attr(
                 feature = "datagen",
-                derive(serde::Serialize, crabbake::Bakeable),
-                crabbake(path = icu_datetime::provider::calendar::$name),
+                derive(serde::Serialize, databake::Bake),
+                databake(path = icu_datetime::provider::calendar::$name),
             )]
             #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
             pub struct ContextsV1<'data> {

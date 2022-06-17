@@ -168,7 +168,7 @@ serde_json = { version = "1.0", optional = true, default-features = false, featu
 displaydoc = { version = "0.2.3", default-features = false, optional = true }
 writeable = { version = "0.4", path = "../../utils/writeable", optional = true }
 
-# crabbake deps
+# databake deps
 icu_calendar = { version = "0.6", path = "../../components/calendar", optional = true }
 icu_casemapping = { version = "0.1", path = "../../experimental/casemapping", optional = true }
 icu_datetime = { version = "0.6", path = "../../components/datetime", optional = true }

@@ -24,8 +24,8 @@ use icu_provider::{yoke, zerofrom};
 #[derive(Default, Clone, PartialEq, Debug)]
 #[cfg_attr(
     feature = "datagen",
-    derive(serde::Serialize, crabbake::Bakeable),
-    crabbake(path = icu_plurals::provider),
+    derive(serde::Serialize, databake::Bake),
+    databake(path = icu_plurals::provider),
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[allow(missing_docs)] // TODO(#1029) - Add missing docs.

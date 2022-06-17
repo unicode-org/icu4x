@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crabbake::{quote, CrateEnv, TokenStream};
+use databake::{quote, CrateEnv, TokenStream};
 use icu_provider::datagen::*;
 use icu_provider::prelude::*;
 use itertools::Itertools;
@@ -26,7 +26,7 @@ macro_rules! move_out {
 type SyncTokenStream = String;
 
 #[allow(clippy::type_complexity)]
-pub(crate) struct ConstExporter {
+pub(crate) struct BakedDataExporter {
     // Input arguments
     mod_directory: PathBuf,
     pretty: bool,
@@ -40,7 +40,7 @@ pub(crate) struct ConstExporter {
     dependencies: CrateEnv,
 }
 
-impl ConstExporter {
+impl BakedDataExporter {
     pub fn new(mod_directory: PathBuf, pretty: bool, insert_feature_gates: bool) -> Self {
         let _ = std::fs::remove_dir_all(&mod_directory);
         Self {
@@ -95,7 +95,7 @@ impl ConstExporter {
     }
 }
 
-impl DataExporter for ConstExporter {
+impl DataExporter for BakedDataExporter {
     fn put_payload(
         &self,
         key: ResourceKey,

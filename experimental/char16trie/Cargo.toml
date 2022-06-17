@@ -28,7 +28,7 @@ include = [
 [dependencies]
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }
 zerovec = { version = "0.7", path = "../../utils/zerovec", features = ["yoke"] }
-crabbake = { version = "0.4", path = "../../experimental/crabbake", optional = true, features = ["derive"] }
+databake = { version = "0.4", path = "../../utils/databake", optional = true, features = ["derive"] }
 zerofrom = { version = "0.1.0", path = "../../utils/zerofrom", features = ["derive"]  }
 
 [dev-dependencies]
@@ -41,4 +41,4 @@ path = "src/lib.rs"
 [features]
 default = []
 serde = ["dep:serde", "zerovec/serde"]
-crabbake = ["dep:crabbake", "zerovec/crabbake"]
+databake = ["dep:databake", "zerovec/databake"]

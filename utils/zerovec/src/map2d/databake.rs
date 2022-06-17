@@ -3,16 +3,16 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::{maps::ZeroMap2dBorrowed, maps::ZeroMapKV, ZeroMap2d};
-use crabbake::*;
+use databake::*;
 
-impl<'a, K0, K1, V> Bakeable for ZeroMap2d<'a, K0, K1, V>
+impl<'a, K0, K1, V> Bake for ZeroMap2d<'a, K0, K1, V>
 where
     K0: ZeroMapKV<'a> + ?Sized,
     K1: ZeroMapKV<'a> + ?Sized,
     V: ZeroMapKV<'a> + ?Sized,
-    K0::Container: Bakeable,
-    K1::Container: Bakeable,
-    V::Container: Bakeable,
+    K0::Container: Bake,
+    K1::Container: Bake,
+    V::Container: Bake,
 {
     fn bake(&self, env: &CrateEnv) -> TokenStream {
         env.insert("zerovec");
@@ -24,14 +24,14 @@ where
     }
 }
 
-impl<'a, K0, K1, V> Bakeable for ZeroMap2dBorrowed<'a, K0, K1, V>
+impl<'a, K0, K1, V> Bake for ZeroMap2dBorrowed<'a, K0, K1, V>
 where
     K0: ZeroMapKV<'a> + ?Sized,
     K1: ZeroMapKV<'a> + ?Sized,
     V: ZeroMapKV<'a> + ?Sized,
-    &'a K0::Slice: Bakeable,
-    &'a K1::Slice: Bakeable,
-    &'a V::Slice: Bakeable,
+    &'a K0::Slice: Bake,
+    &'a K1::Slice: Bake,
+    &'a V::Slice: Bake,
 {
     fn bake(&self, env: &CrateEnv) -> TokenStream {
         env.insert("zerovec");

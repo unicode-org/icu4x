@@ -3,14 +3,14 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::{maps::ZeroMapBorrowed, maps::ZeroMapKV, ZeroMap};
-use crabbake::*;
+use databake::*;
 
-impl<'a, K, V> Bakeable for ZeroMap<'a, K, V>
+impl<'a, K, V> Bake for ZeroMap<'a, K, V>
 where
     K: ZeroMapKV<'a> + ?Sized,
     V: ZeroMapKV<'a> + ?Sized,
-    K::Container: Bakeable,
-    V::Container: Bakeable,
+    K::Container: Bake,
+    V::Container: Bake,
 {
     fn bake(&self, env: &CrateEnv) -> TokenStream {
         env.insert("zerovec");
@@ -20,12 +20,12 @@ where
     }
 }
 
-impl<'a, K, V> Bakeable for ZeroMapBorrowed<'a, K, V>
+impl<'a, K, V> Bake for ZeroMapBorrowed<'a, K, V>
 where
     K: ZeroMapKV<'a> + ?Sized,
     V: ZeroMapKV<'a> + ?Sized,
-    &'a K::Slice: Bakeable,
-    &'a V::Slice: Bakeable,
+    &'a K::Slice: Bake,
+    &'a V::Slice: Bake,
 {
     fn bake(&self, env: &CrateEnv) -> TokenStream {
         env.insert("zerovec");

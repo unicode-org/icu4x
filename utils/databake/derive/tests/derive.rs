@@ -2,12 +2,12 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crabbake::{Bakeable, CrateEnv};
+use databake::{Bake, CrateEnv};
 use quote::quote;
 use std::borrow::Cow;
 
-#[derive(Bakeable)]
-#[crabbake(path = test)]
+#[derive(Bake)]
+#[databake(path = test)]
 pub struct IntExample {
     x: u8,
 }
@@ -20,8 +20,8 @@ fn test_int_example() {
     );
 }
 
-#[derive(Bakeable)]
-#[crabbake(path = test)]
+#[derive(Bake)]
+#[databake(path = test)]
 pub struct GenericsExample<T> {
     x: u32,
     y: T,
@@ -37,8 +37,8 @@ fn test_generics_example() {
     );
 }
 
-#[derive(Bakeable)]
-#[crabbake(path = test)]
+#[derive(Bake)]
+#[databake(path = test)]
 pub struct CowExample<'a> {
     x: u8,
     y: &'a str,

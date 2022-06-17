@@ -8,8 +8,8 @@ pub(crate) mod owned;
 pub(crate) mod slice;
 pub(crate) mod vec;
 
-#[cfg(feature = "crabbake")]
-mod crabbake;
+#[cfg(feature = "databake")]
+mod databake;
 
 #[cfg(feature = "serde")]
 mod serde;
