@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1655399068499,
+  "lastUpdate": 1655481343031,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -32422,6 +32422,60 @@ window.BENCHMARK_DATA = {
           {
             "name": "uniset/contains_range/worst",
             "value": 10,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "ccb1b6fbf8f01ba3c2da46ce06417d5187099e2d",
+          "message": "Stabilizing `crabbake` as `databake` (#2068)\n\n* databake\r\n\r\n* fix\r\n\r\n* fmt\r\n\r\n* fix\r\n\r\n* fix\r\n\r\n* cargo.lock",
+          "timestamp": "2022-06-17T15:45:14Z",
+          "tree_id": "36e6b16d9c649ca3375d2619d1e40b1fafa41f14",
+          "url": "https://github.com/unicode-org/icu4x/commit/ccb1b6fbf8f01ba3c2da46ce06417d5187099e2d"
+        },
+        "date": 1655481314997,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 39361238,
+            "range": "± 243150",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/best",
+            "value": 12,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/worst",
+            "value": 12,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/best",
+            "value": 12,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/worst",
+            "value": 12,
             "range": "± 0",
             "unit": "ns/iter"
           }
