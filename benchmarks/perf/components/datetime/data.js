@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1655490310114,
+  "lastUpdate": 1655509347747,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -40967,6 +40967,102 @@ window.BENCHMARK_DATA = {
             "name": "pattern/parse",
             "value": 6216,
             "range": "± 281",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "a5468f59e0c55de4e94ab29be2ec4d5b0eff482a",
+          "message": "Fix example to use -u-nu instead of -u-ns (#2077)",
+          "timestamp": "2022-06-17T18:29:29-05:00",
+          "tree_id": "a23bf9d9819a4cf252f1ad45356528db8b7bbf63",
+          "url": "https://github.com/unicode-org/icu4x/commit/a5468f59e0c55de4e94ab29be2ec4d5b0eff482a"
+        },
+        "date": 1655509322382,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 111834,
+            "range": "± 290",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 1097120,
+            "range": "± 12960",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 213236,
+            "range": "± 1307",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/DateTimeFormat/format_to_write",
+            "value": 106248,
+            "range": "± 212",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/DateTimeFormat/format_to_string",
+            "value": 116368,
+            "range": "± 630",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/format",
+            "value": 111731,
+            "range": "± 1321",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/to_string",
+            "value": 120110,
+            "range": "± 211",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/ZonedDateTimeFormat/format_to_write",
+            "value": 208772,
+            "range": "± 605",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/ZonedDateTimeFormat/format_to_string",
+            "value": 224986,
+            "range": "± 931",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/format",
+            "value": 215122,
+            "range": "± 400",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/to_string",
+            "value": 229251,
+            "range": "± 358",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "pattern/parse",
+            "value": 6303,
+            "range": "± 35",
             "unit": "ns/iter"
           }
         ]
