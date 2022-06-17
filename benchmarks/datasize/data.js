@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1655398438900,
+  "lastUpdate": 1655480865636,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -17843,6 +17843,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/8900f2281922e06988c6f08bd3a21531c145c0e3"
         },
         "date": 1655398413450,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 2722229,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "ccb1b6fbf8f01ba3c2da46ce06417d5187099e2d",
+          "message": "Stabilizing `crabbake` as `databake` (#2068)\n\n* databake\r\n\r\n* fix\r\n\r\n* fmt\r\n\r\n* fix\r\n\r\n* fix\r\n\r\n* cargo.lock",
+          "timestamp": "2022-06-17T15:45:14Z",
+          "tree_id": "36e6b16d9c649ca3375d2619d1e40b1fafa41f14",
+          "url": "https://github.com/unicode-org/icu4x/commit/ccb1b6fbf8f01ba3c2da46ce06417d5187099e2d"
+        },
+        "date": 1655480836766,
         "tool": "ndjson",
         "benches": [
           {
