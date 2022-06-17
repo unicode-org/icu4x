@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1655508706909,
+  "lastUpdate": 1655509495424,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -17938,6 +17938,36 @@ window.BENCHMARK_DATA = {
           {
             "name": "provider/testdata/data/testdata.postcard",
             "value": 2722229,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "3736032598204a86e90273c34460160be5767b5c",
+          "message": "Use month codes in formatting (#2071)\n\n\r\n* Make MonthCode ULEable\r\n\r\n* Move month symbols to zeromap + month code\r\n\r\n* Add .get() functions to symbols converter\r\n\r\n* support contexts in .get()\r\n\r\n* introduce month code map\r\n\r\n\r\n* Special case twelve month solar calendars",
+          "timestamp": "2022-06-17T23:42:35Z",
+          "tree_id": "62ec76abf0eef9758234b3d62648bb2e7d3973da",
+          "url": "https://github.com/unicode-org/icu4x/commit/3736032598204a86e90273c34460160be5767b5c"
+        },
+        "date": 1655509469945,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 2734565,
             "unit": "bytes",
             "biggerIsBetter": false
           }
