@@ -59,6 +59,6 @@ required-features = ["lstm"]
 
 [features]
 default = ["lstm"]
-lstm = ["litemap", "ndarray", "unicode-segmentation"]
+lstm = ["litemap", "ndarray", "serde", "unicode-segmentation"]
 serde = ["dep:serde", "zerovec/serde", "icu_codepointtrie/serde"]
 datagen = ["serde", "crabbake", "zerovec/crabbake", "icu_codepointtrie/crabbake"]
