@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1655490128132,
+  "lastUpdate": 1655509183946,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -32530,6 +32530,60 @@ window.BENCHMARK_DATA = {
           {
             "name": "uniset/contains_range/worst",
             "value": 7,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "a5468f59e0c55de4e94ab29be2ec4d5b0eff482a",
+          "message": "Fix example to use -u-nu instead of -u-ns (#2077)",
+          "timestamp": "2022-06-17T18:29:29-05:00",
+          "tree_id": "a23bf9d9819a4cf252f1ad45356528db8b7bbf63",
+          "url": "https://github.com/unicode-org/icu4x/commit/a5468f59e0c55de4e94ab29be2ec4d5b0eff482a"
+        },
+        "date": 1655509158816,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 44082639,
+            "range": "± 319818",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/best",
+            "value": 9,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/worst",
+            "value": 9,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/best",
+            "value": 9,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/worst",
+            "value": 9,
             "range": "± 0",
             "unit": "ns/iter"
           }
