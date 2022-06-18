@@ -629,6 +629,11 @@ impl AnyProvider for BakedDataProvider {
                         req,
                     )?)
                 }
+                <::icu_segmenter::provider::UCharDictionaryBreakDataV1Marker as ResourceMarker>::KEY => {
+                    AnyPayload::from_static_ref::<<::icu_segmenter::provider::UCharDictionaryBreakDataV1Marker as DataMarker>::Yokeable>(
+                        litemap_slice_get(segmenter::dictionary_v1::DATA, key, req)?,
+                    )
+                }
                 <::icu_segmenter::provider::WordBreakDataV1Marker as ResourceMarker>::KEY => {
                     AnyPayload::from_static_ref::<<::icu_segmenter::provider::WordBreakDataV1Marker as DataMarker>::Yokeable>(litemap_slice_get(
                         segmenter::word_v1::DATA,

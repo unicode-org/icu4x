@@ -94,11 +94,22 @@ pub fn complex_language_segment_str(
 #[cfg(test)]
 mod tests {
     use super::*;
+    use icu_locid::Locale;
+    use icu_provider::{DataRequest, ResourceOptions, ResourceProvider};
 
     #[test]
     fn thai_word_break() {
         const TEST_STR: &str = "ภาษาไทยภาษาไทย";
-        let payload = Default::default();
+        let provider = icu_testdata::get_provider();
+        let locale: Locale = ("th").parse().unwrap();
+        let payload = provider
+            .load_resource(&DataRequest {
+                options: ResourceOptions::from(locale),
+                metadata: Default::default(),
+            })
+            .unwrap()
+            .take_payload()
+            .unwrap();
         let breaks = complex_language_segment_str(&payload, TEST_STR);
         assert_eq!(breaks, [12, 21, 33, 42], "Thai test by UTF-8");
 

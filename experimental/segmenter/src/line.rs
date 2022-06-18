@@ -13,6 +13,7 @@ use alloc::vec;
 use alloc::vec::Vec;
 use core::char;
 use core::str::CharIndices;
+use icu_locid::Locale;
 use icu_provider::prelude::*;
 
 /// An enum specifies the strictness of line-breaking rules. It can be passed as
@@ -124,11 +125,14 @@ impl LineBreakSegmenter {
             .load_resource(&DataRequest::default())?
             .take_payload()?;
 
-        // TODO: Use `provider` parameter after we support loading dictionary data from the
-        // production-ready providers.
-        let inv_provider = icu_provider::inv::InvariantDataProvider;
-        let dictionary_payload = inv_provider
-            .load_resource(&DataRequest::default())?
+        let locale: Locale = ("th")
+            .parse()
+            .map_err(|_| DataError::custom("cannot parse locale string"))?;
+        let dictionary_payload = provider
+            .load_resource(&DataRequest {
+                options: ResourceOptions::from(locale),
+                metadata: Default::default(),
+            })?
             .take_payload()?;
         Ok(Self {
             options,

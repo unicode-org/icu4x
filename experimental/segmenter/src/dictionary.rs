@@ -166,10 +166,29 @@ impl<'l> DictionarySegmenter<'l> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use icu_locid::Locale;
     use zerovec::ZeroSlice;
+
+    fn get_payload(
+        locale_str: &str,
+    ) -> Result<DataPayload<UCharDictionaryBreakDataV1Marker>, DataError> {
+        let provider = icu_testdata::get_provider();
+        let locale: Locale = (locale_str)
+            .parse()
+            .map_err(|_| DataError::custom("Cannot parse locale string"))?;
+        provider
+            .load_resource(&DataRequest {
+                options: ResourceOptions::from(locale),
+                metadata: Default::default(),
+            })?
+            .take_payload()
+    }
 
     #[test]
     fn burmese_dictionary_test() {
+        // TODO:
+        // testdata doesn't include Khmer data. If adding it, replace with testdata.
+        //
         // This test data is created by the following using ICU4C tools
         // LD_LIBRARY_PATH=lib bin/gendict --uchars data/brkitr/dictionaries/burmesedict.txt tmp.bin
         // dd if=tmp.bin of=cjdict.dict bs=1 skip=64
@@ -197,20 +216,7 @@ mod tests {
 
     #[test]
     fn cj_dictionary_test() {
-        // This test data is created by the following using ICU4C tools
-        // LD_LIBRARY_PATH=lib bin/gendict --uchars data/brkitr/dictionaries/cjdict.txt tmp.bin
-        // dd if=tmp.bin of=cjdict.dict bs=1 skip=64
-        const CJ_DICTIONARY: &ZeroSlice<u16> = match ZeroSlice::<u16>::try_from_bytes(
-            include_bytes!("../tests/testdata/cjdic.dict"),
-        ) {
-            Ok(s) => s,
-            Err(_) => panic!("invalid dictionary data"),
-        };
-
-        let data = UCharDictionaryBreakDataV1 {
-            trie_data: CJ_DICTIONARY.as_zerovec(),
-        };
-        let payload = DataPayload::<UCharDictionaryBreakDataV1Marker>::from_owned(data);
+        let payload = get_payload("ja").unwrap();
         let segmenter = DictionarySegmenter::try_new(&payload).expect("Data exists");
 
         // Match case
@@ -234,6 +240,9 @@ mod tests {
 
     #[test]
     fn khmer_dictionary_test() {
+        // TODO:
+        // testdata doesn't include Khmer data. If adding it, replace with testdata.
+        //
         // This test data is created by the following using ICU4C tools
         // LD_LIBRARY_PATH=lib bin/gendict --uchars data/brkitr/dictionaries/khmerdict.txt tmp.bin
         // dd if=tmp.bin of=khmer.dict bs=1 skip=64
@@ -260,6 +269,9 @@ mod tests {
 
     #[test]
     fn lao_dictionary_test() {
+        // TODO:
+        // testdata doesn't include Lao. If adding it, replace with testdata.
+        //
         // This test data is created by the following using ICU4C tools
         // LD_LIBRARY_PATH=lib bin/gendict --uchars data/brkitr/dictionaries/laodict.txt tmp.bin
         // dd if=tmp.bin of=lao.dict bs=1 skip=64

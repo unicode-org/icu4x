@@ -10,6 +10,7 @@ use crate::transform::uprops::{
 use crate::SourceData;
 use icu_codepointtrie::CodePointTrie;
 use icu_codepointtrie_builder::{CodePointTrieBuilder, CodePointTrieBuilderData};
+use icu_locid::langid;
 use icu_properties::{
     maps, sets, EastAsianWidth, GeneralCategory, GraphemeClusterBreak, LineBreak, SentenceBreak,
     WordBreak,
@@ -700,6 +701,105 @@ impl IterableResourceProvider<WordBreakDataV1Marker> for SegmenterRuleProvider {
 impl IterableResourceProvider<SentenceBreakDataV1Marker> for SegmenterRuleProvider {
     fn supported_options(&self) -> Result<Vec<ResourceOptions>, DataError> {
         Ok(vec![Default::default()])
+    }
+}
+
+#[derive(serde::Deserialize, Debug)]
+struct SegmenterDictionaryData {
+    trie_data: Vec<u16>,
+}
+
+/// A data provider reading from segmenter dictionary files.
+#[derive(Debug)]
+pub struct SegmenterDictionaryProvider {
+    source: SourceData,
+}
+
+impl SegmenterDictionaryProvider {
+    fn get_toml_filename(options: &ResourceOptions) -> Result<&'static str, DataError> {
+        if options.get_langid() == langid!("km") {
+            Ok("dictionary_km.toml")
+        } else if options.get_langid() == langid!("ja") {
+            Ok("dictionary_cj.toml")
+        } else if options.get_langid() == langid!("lo") {
+            Ok("dictionary_lo.toml")
+        } else if options.get_langid() == langid!("my") {
+            Ok("dictionary_my.toml")
+        } else if options.get_langid() == langid!("th") {
+            Ok("dictionary_th.toml")
+        } else {
+            Err(DataError::custom("Unsupported options"))
+        }
+    }
+}
+
+impl From<&SourceData> for SegmenterDictionaryProvider {
+    fn from(source: &SourceData) -> Self {
+        Self {
+            source: source.clone(),
+        }
+    }
+}
+
+impl ResourceProvider<UCharDictionaryBreakDataV1Marker> for SegmenterDictionaryProvider {
+    fn load_resource(
+        &self,
+        req: &DataRequest,
+    ) -> Result<DataResponse<UCharDictionaryBreakDataV1Marker>, DataError> {
+        if req.options.get_langid() == langid!("ja")
+            || req.options.get_langid() == langid!("km")
+            || req.options.get_langid() == langid!("lo")
+            || req.options.get_langid() == langid!("my")
+            || req.options.get_langid() == langid!("th")
+        {
+            let toml_data = self
+                .source
+                .segmenter()?
+                .read_and_parse_toml::<SegmenterDictionaryData>(Self::get_toml_filename(
+                    &req.options,
+                )?)?;
+            let data = UCharDictionaryBreakDataV1 {
+                trie_data: ZeroVec::alloc_from_slice(&toml_data.trie_data),
+            };
+            Ok(DataResponse {
+                metadata: DataResponseMetadata::default(),
+                payload: Some(DataPayload::from_owned(data)),
+            })
+        } else {
+            Err(DataError::custom("Unsupported"))
+        }
+    }
+}
+
+icu_provider::make_exportable_provider!(
+    SegmenterDictionaryProvider,
+    [UCharDictionaryBreakDataV1Marker,]
+);
+
+impl IterableResourceProvider<UCharDictionaryBreakDataV1Marker> for SegmenterDictionaryProvider {
+    fn supported_options(&self) -> Result<Vec<ResourceOptions>, DataError> {
+        let mut r = Vec::new();
+        let locale: icu_locid::Locale = ("th")
+            .parse()
+            .map_err(|_| DataError::custom("Cannot parse locale string"))?;
+        r.push(ResourceOptions::from(locale));
+        let locale: icu_locid::Locale = ("km")
+            .parse()
+            .map_err(|_| DataError::custom("Cannot parse locale string"))?;
+        r.push(ResourceOptions::from(locale));
+        let locale: icu_locid::Locale = ("lo")
+            .parse()
+            .map_err(|_| DataError::custom("Cannot parse locale string"))?;
+        r.push(ResourceOptions::from(locale));
+        let locale: icu_locid::Locale = ("my")
+            .parse()
+            .map_err(|_| DataError::custom("Cannot parse locale string"))?;
+        r.push(ResourceOptions::from(locale));
+        let locale: icu_locid::Locale = ("ja")
+            .parse()
+            .map_err(|_| DataError::custom("Cannot parse locale string"))?;
+        r.push(ResourceOptions::from(locale));
+        Ok(r)
     }
 }
 
