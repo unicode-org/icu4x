@@ -43,6 +43,15 @@ impl<T> ShortVec<T> {
             ShortVec::Multi(v) => v.as_slice(),
         }
     }
+
+    // pub fn contains(&self, needle: &T) -> bool
+    // where T: PartialEq {
+    //     match self {
+    //         ShortVec::Empty => false,
+    //         ShortVec::Single(v) => v == needle,
+    //         ShortVec::Multi(v) => v.contains(needle),
+    //     }
+    // }
 }
 
 impl<T> From<Vec<T>> for ShortVec<T> {

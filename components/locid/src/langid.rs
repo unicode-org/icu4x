@@ -283,6 +283,36 @@ impl LanguageIdentifier {
         }
         Ok(())
     }
+
+    pub fn merge(&mut self, other: &LanguageIdentifier, r#override: bool) {
+        if !other.language.is_empty() && (self.language.is_empty() || r#override) {
+            self.language = other.language;
+        }
+        if other.script.is_some() && (self.script.is_none() || r#override) {
+            self.script = other.script;
+        }
+        if other.region.is_some() && (self.region.is_none() || r#override) {
+            self.region = other.region;
+        }
+        if !other.variants.is_empty() {
+            self.variants.merge(&other.variants);
+        }
+    }
+
+    pub fn merge_subtags(
+        &mut self,
+        language: Option<subtags::Language>,
+        script: Option<subtags::Script>,
+        region: Option<subtags::Region>,
+        variants: Option<subtags::Variants>,
+    ) {
+        self.language = language.unwrap_or(self.language);
+        self.script = script.or(self.script);
+        self.region = region.or(self.region);
+        if let Some(v) = variants {
+            self.variants.merge(&v);
+        }
+    }
 }
 
 impl AsRef<LanguageIdentifier> for LanguageIdentifier {

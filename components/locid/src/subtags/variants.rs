@@ -104,6 +104,20 @@ impl Variants {
     {
         self.deref().iter().map(|t| t.as_str()).try_for_each(f)
     }
+
+    pub fn merge(&mut self, other: &Self) {
+        if self.is_empty() {
+            self.0 = other.0.clone();
+        } else {
+            let mut merged = self.to_vec();
+            for v in other.iter() {
+                if let Err(idx) = merged.binary_search(v) {
+                    merged.insert(idx, *v);
+                }
+            }
+            self.0 = merged.into();
+        }
+    }
 }
 
 impl_writeable_for_subtag_list!(Variants, "macos", "posix");

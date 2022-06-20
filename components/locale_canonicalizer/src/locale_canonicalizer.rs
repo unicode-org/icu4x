@@ -258,6 +258,7 @@ fn update_langid(
 ) -> CanonicalizationResult {
     let mut modified = false;
 
+    //XXX: langid.merge_subtags(Some(language), script, region, None);
     if langid.language.is_empty() && !language.is_empty() {
         langid.language = language;
         modified = true;
