@@ -29,7 +29,10 @@ impl AbstractSerializer for Serializer {
         };
         obj.serialize(&mut serializer)
             .map_err(|e| DataError::custom("Postcard serialize").with_display_context(&e))?;
-        let output = serializer.output.finalize().expect("Failed to finalize serializer output");
+        let output = serializer
+            .output
+            .finalize()
+            .map_err(|_| DataError::custom("Postcard finalize"))?;
         sink.write_all(&output)?;
         Ok(())
     }

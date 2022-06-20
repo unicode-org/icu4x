@@ -47,7 +47,9 @@ impl DataExporter for BlobExporter<'_> {
         self.resources.lock().expect("poison").push((
             key.get_hash(),
             options.write_to_string().into_owned().into_bytes(),
-            output.finalize().expect("Failed to finalize serializer output"),
+            output
+                .finalize()
+                .expect("Failed to finalize serializer output"),
         ));
         Ok(())
     }
