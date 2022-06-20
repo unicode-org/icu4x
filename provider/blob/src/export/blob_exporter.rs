@@ -9,7 +9,7 @@ use std::sync::Mutex;
 use writeable::Writeable;
 use zerovec::ZeroMap2d;
 
-use postcard::ser_flavors::AllocVec;
+use postcard::ser_flavors::{AllocVec, Flavor};
 
 /// A data exporter that writes data to a single-file blob.
 /// See the module-level docs for an example.
@@ -47,7 +47,7 @@ impl DataExporter for BlobExporter<'_> {
         self.resources.lock().expect("poison").push((
             key.get_hash(),
             options.write_to_string().into_owned().into_bytes(),
-            output.vec,
+            output.finalize().expect("Failed to finalize serializer output"),
         ));
         Ok(())
     }

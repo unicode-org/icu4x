@@ -6,7 +6,7 @@ use super::AbstractSerializer;
 use icu_provider::buf::BufferFormat;
 use icu_provider::datagen::*;
 use icu_provider::prelude::*;
-use postcard::ser_flavors::AllocVec;
+use postcard::ser_flavors::{AllocVec, Flavor};
 use std::io;
 
 /// A serializer for Postcard.
@@ -29,8 +29,8 @@ impl AbstractSerializer for Serializer {
         };
         obj.serialize(&mut serializer)
             .map_err(|e| DataError::custom("Postcard serialize").with_display_context(&e))?;
-        let output = serializer.output;
-        sink.write_all(&output.vec)?;
+        let output = serializer.output.finalize().expect("Failed to finalize serializer output");
+        sink.write_all(&output)?;
         Ok(())
     }
 
