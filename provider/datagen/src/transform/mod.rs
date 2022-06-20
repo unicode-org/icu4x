@@ -8,7 +8,7 @@
 //! This module exports feature-specific providers. Use [`crate::create_datagen_provider`]
 //! for a provider that covers all ICU4X keys.
 //!
-//! **Important:** Therse data provider implementations are not optimized
+//! **Important:** These data provider implementations are not optimized
 //! for production use. Read more in the [data provider] docs.
 //!
 //! [`ICU4X`]: ../icu/index.html
