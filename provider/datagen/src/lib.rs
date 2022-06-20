@@ -195,6 +195,8 @@ pub enum Out {
         serializer: Box<dyn serializers::AbstractSerializer + Sync>,
         /// Whether to overwrite existing data.
         overwrite: bool,
+        /// Whether to create a fingerprint file with SHA2 hashes
+        fingerprint: bool,
     },
     /// Output as a postcard blob to the given sink.
     Blob(Box<dyn std::io::Write + Sync>),
@@ -235,6 +237,7 @@ pub fn datagen(
                     output_path,
                     serializer,
                     overwrite,
+                    fingerprint,
                 } => {
                     let mut options =
                         icu_provider_fs::export::fs_exporter::ExporterOptions::default();
@@ -243,6 +246,7 @@ pub fn datagen(
                         options.overwrite =
                             icu_provider_fs::export::fs_exporter::OverwriteOption::RemoveAndReplace
                     }
+                    options.fingerprint = fingerprint;
                     Box::new(icu_provider_fs::export::FilesystemExporter::try_new(
                         serializer, options,
                     )?)

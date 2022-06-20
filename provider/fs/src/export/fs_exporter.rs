@@ -7,8 +7,10 @@ use crate::manifest::Manifest;
 use icu_provider::datagen::*;
 use icu_provider::prelude::*;
 use serde::{Deserialize, Serialize};
+use sha2::{Digest, Sha256};
 use std::fs;
 use std::path::PathBuf;
+use std::sync::Mutex;
 use writeable::Writeable;
 
 #[non_exhaustive]
@@ -30,6 +32,8 @@ pub struct ExporterOptions {
     pub root: PathBuf,
     /// Option for initializing the output directory.
     pub overwrite: OverwriteOption,
+    /// Whether to create a fingerprint file with SHA2 hashes
+    pub fingerprint: bool,
 }
 
 impl Default for ExporterOptions {
@@ -37,6 +41,7 @@ impl Default for ExporterOptions {
         Self {
             root: PathBuf::from("icu4x_data"),
             overwrite: OverwriteOption::CheckEmpty,
+            fingerprint: false,
         }
     }
 }
@@ -47,6 +52,7 @@ pub struct FilesystemExporter {
     root: PathBuf,
     manifest: Manifest,
     serializer: Box<dyn AbstractSerializer + Sync>,
+    fingerprints: Option<Mutex<Vec<(ResourceKey, ResourceOptions, String)>>>,
 }
 
 impl FilesystemExporter {
@@ -58,6 +64,11 @@ impl FilesystemExporter {
             root: options.root,
             manifest: Manifest::for_format(serializer.get_buffer_format())?,
             serializer,
+            fingerprints: if options.fingerprint {
+                Some(Mutex::new(vec![]))
+            } else {
+                None
+            },
         };
 
         match options.overwrite {
@@ -93,11 +104,60 @@ impl DataExporter for FilesystemExporter {
             fs::create_dir_all(&parent_dir)
                 .map_err(|e| DataError::from(e).with_path_context(&parent_dir))?;
         }
-        let mut file = fs::File::create(&path_buf)
-            .map_err(|e| DataError::from(e).with_path_context(&path_buf))?;
+        let mut file = HashingFile(
+            std::io::BufWriter::new(
+                fs::File::create(&path_buf)
+                    .map_err(|e| DataError::from(e).with_path_context(&path_buf))?,
+            ),
+            if self.fingerprints.is_some() {
+                Some(Sha256::new())
+            } else {
+                None
+            },
+        );
         self.serializer
             .serialize(obj, &mut file)
             .map_err(|e| e.with_path_context(&path_buf))?;
+        if let Some(hash) = file.1 {
+            self.fingerprints
+                .as_ref()
+                .expect("present iff file.1 is present")
+                .lock()
+                .expect("poison")
+                .push((key, options.clone(), format!("{:x}", hash.finalize())));
+        }
         Ok(())
+    }
+
+    fn close(&mut self) -> Result<(), DataError> {
+        if let Some(fingerprints) = self.fingerprints.as_mut() {
+            let fingerprints = fingerprints.get_mut().expect("poison");
+            fingerprints.sort();
+            let path = self.root.join("fingerprints.txt");
+            let mut file = std::fs::File::create(&path)
+                .map_err(|e| DataError::from(e).with_path_context(&path))?;
+            for (key, options, hash) in fingerprints {
+                use std::io::Write;
+                writeln!(file, "{key}/{options}: {hash}")?;
+            }
+        }
+        Ok(())
+    }
+}
+
+struct HashingFile(std::io::BufWriter<fs::File>, Option<Sha256>);
+
+impl std::io::Write for HashingFile {
+    fn write(&mut self, buf: &[u8]) -> std::io::Result<usize> {
+        if let Some(hash) = self.1.as_mut() {
+            hash.write_all(buf)?;
+        }
+        self.0.write(buf)
+    }
+    fn flush(&mut self) -> std::io::Result<()> {
+        if let Some(hash) = self.1.as_mut() {
+            hash.flush()?;
+        }
+        self.0.flush()
     }
 }

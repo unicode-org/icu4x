@@ -84,9 +84,6 @@ cached-path = "0.5"
 clap = { version = "2.33", optional = true }
 eyre = { version = "0.6", optional = true }
 simple_logger = { version = "1.12", optional = true }
-sha2 = { version = "0.10.2", optional = true }
-pathdiff = { version = "0.2.1", optional = true }
-walkdir = { version = "2.3.2", optional = true }
 
 [dev-dependencies]
 dhat = "0.3.0"
@@ -95,7 +92,7 @@ icu_testdata = { path = "../testdata", features = ["metadata"] }
 [features]
 default = []
 experimental = ["icu_casemapping", "icu_segmenter", "icu_collator", "icu_normalizer"]
-bin = ["clap", "eyre", "pathdiff","sha2", "simple_logger", "walkdir"]
+bin = ["clap", "eyre", "simple_logger"]
 
 [[bin]]
 name = "icu4x-datagen"
@@ -105,8 +102,3 @@ required-features = ["bin"]
 [[test]]
 name = "icu4x-verify-zero-copy"
 path = "tests/verify-zero-copy.rs"
-
-[[bin]]
-name = "icu4x-fingerprint-data"
-path = "src/bin/fingerprint-data.rs"
-required-features = ["bin"]
