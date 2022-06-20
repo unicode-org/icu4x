@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1655739495025,
+  "lastUpdate": 1655757968067,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -41255,6 +41255,102 @@ window.BENCHMARK_DATA = {
             "name": "pattern/parse",
             "value": 5233,
             "range": "± 5",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "1e072b3248b93a974e21f3d01bc6a165eb272554",
+          "message": "Update postcard to latest alpha (#2091)\n\n* Update postcard to alpha 4\n\n* Fix errors\n\n* better api\n\n* clippy + fmt",
+          "timestamp": "2022-06-20T13:31:54-07:00",
+          "tree_id": "d6b1e5bb0dda3bd3957519dcc55db8296cae65d5",
+          "url": "https://github.com/unicode-org/icu4x/commit/1e072b3248b93a974e21f3d01bc6a165eb272554"
+        },
+        "date": 1655757936363,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 147872,
+            "range": "± 9733",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 1386992,
+            "range": "± 64676",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 264279,
+            "range": "± 2234",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/DateTimeFormat/format_to_write",
+            "value": 138752,
+            "range": "± 9004",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/DateTimeFormat/format_to_string",
+            "value": 142169,
+            "range": "± 2341",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/format",
+            "value": 138278,
+            "range": "± 1998",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/to_string",
+            "value": 149492,
+            "range": "± 2548",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/ZonedDateTimeFormat/format_to_write",
+            "value": 267773,
+            "range": "± 10375",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/ZonedDateTimeFormat/format_to_string",
+            "value": 270776,
+            "range": "± 4806",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/format",
+            "value": 258837,
+            "range": "± 4969",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/to_string",
+            "value": 278999,
+            "range": "± 3765",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "pattern/parse",
+            "value": 7078,
+            "range": "± 404",
             "unit": "ns/iter"
           }
         ]
