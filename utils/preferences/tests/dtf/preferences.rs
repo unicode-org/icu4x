@@ -1,4 +1,4 @@
-use icu_locid::{extensions::unicode, unicode_ext_value};
+use icu_locid::{extensions::unicode, extensions_unicode_value};
 
 #[derive(Clone, Copy)]
 pub enum Calendar {
@@ -11,8 +11,8 @@ impl TryFrom<&unicode::Value> for Calendar {
 
     fn try_from(i: &unicode::Value) -> Result<Self, Self::Error> {
         match i {
-            _ if *i == unicode_ext_value!("gregory") => Ok(Self::Gregory),
-            _ if *i == unicode_ext_value!("buddhist") => Ok(Self::Buddhist),
+            _ if *i == extensions_unicode_value!("gregory") => Ok(Self::Gregory),
+            _ if *i == extensions_unicode_value!("buddhist") => Ok(Self::Buddhist),
             _ => Err(()),
         }
     }
@@ -29,8 +29,8 @@ impl TryFrom<&unicode::Value> for NumberingSystem {
 
     fn try_from(i: &unicode::Value) -> Result<Self, Self::Error> {
         match i {
-            _ if *i == unicode_ext_value!("latn") => Ok(Self::Latn),
-            _ if *i == unicode_ext_value!("arab") => Ok(Self::Arab),
+            _ if *i == extensions_unicode_value!("latn") => Ok(Self::Latn),
+            _ if *i == extensions_unicode_value!("arab") => Ok(Self::Arab),
             _ => Err(()),
         }
     }

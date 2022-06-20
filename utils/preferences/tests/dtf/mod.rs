@@ -5,7 +5,7 @@ mod preferences;
 use data_provider::get_defaults;
 use icu_datetime::options::length;
 use icu_datetime::options::preferences::HourCycle;
-use icu_locid::{unicode_ext_key, LanguageIdentifier, Locale};
+use icu_locid::{extensions_unicode_key, LanguageIdentifier, Locale};
 use icu_preferences::{preferences, Preferences};
 use options::{DayPeriod, LocaleMatcher};
 use preferences::{Calendar, NumberingSystem};
@@ -15,9 +15,9 @@ preferences!(
     DTFDefaultPreferencesBag,
     DTFResolvedPreferencesBag,
     {
-        hour_cycle => Option<HourCycle>, HourCycle, Some(unicode_ext_key!("hc")),
-        calendar => Option<Calendar>, Calendar, Some(unicode_ext_key!("ca")),
-        numbering_system => Option<NumberingSystem>, NumberingSystem, Some(unicode_ext_key!("nu"))
+        hour_cycle => Option<HourCycle>, HourCycle, Some(extensions_unicode_key!("hc")),
+        calendar => Option<Calendar>, Calendar, Some(extensions_unicode_key!("ca")),
+        numbering_system => Option<NumberingSystem>, NumberingSystem, Some(extensions_unicode_key!("nu"))
     },
     DTFOptionsBag,
     {
