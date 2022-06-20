@@ -182,22 +182,3 @@ args = [
     "--",
     "-v",
 ]
-
-[tasks.testdata-build-postcard-tree]
-description = "Build ICU4X Postcard data to a filesystem structure at provider/testdata/data/postcard, overwriting if already present. Useful for breaking out the postcard data into individual files for debugging."
-category = "ICU4X Data"
-command = "cargo"
-args = [
-    "run",
-    "--bin=icu4x-datagen",
-    "--features=experimental,bin",
-    "--",
-    "--cldr-root=provider/testdata/data/cldr",
-    "--uprops-root=provider/testdata/data/uprops",
-    "--out=provider/testdata/data/postcard",
-    "--syntax=postcard",
-    "--overwrite",
-    "--all-keys",
-    "--all-locales",
-    "--ignore-missing-data",
-]

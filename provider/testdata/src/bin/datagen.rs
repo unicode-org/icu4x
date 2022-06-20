@@ -4,7 +4,7 @@
 
 use icu_datagen::*;
 use icu_locid::langid;
-use icu_provider_fs::export::serializers::json;
+use icu_provider_fs::export::serializers::{json, postcard};
 use icu_testdata::{metadata, paths};
 use std::fs::File;
 
@@ -48,6 +48,12 @@ fn main() {
         overwrite: true,
     };
 
+    let postcard_out = Out::Fs {
+        output_path: paths::data_root().join("postcard"),
+        serializer: Box::new(postcard::Serializer::default()),
+        overwrite: true,
+    };
+
     let blob_out = Out::Blob(Box::new(
         File::create(paths::data_root().join("testdata.postcard")).unwrap(),
     ));
@@ -65,7 +71,7 @@ fn main() {
             .filter(|k| !IGNORED_KEYS.contains(&k.get_path()))
             .collect::<Vec<_>>(),
         &source_data,
-        vec![json_out, blob_out, mod_out],
+        vec![json_out, blob_out, mod_out, postcard_out],
     )
     .unwrap();
 
