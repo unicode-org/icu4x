@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1655738878992,
+  "lastUpdate": 1655757279363,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -17993,6 +17993,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/798afbf36461319a7afdfceae01c539d0c3d882c"
         },
         "date": 1655738850844,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 2734565,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "1e072b3248b93a974e21f3d01bc6a165eb272554",
+          "message": "Update postcard to latest alpha (#2091)\n\n* Update postcard to alpha 4\n\n* Fix errors\n\n* better api\n\n* clippy + fmt",
+          "timestamp": "2022-06-20T13:31:54-07:00",
+          "tree_id": "d6b1e5bb0dda3bd3957519dcc55db8296cae65d5",
+          "url": "https://github.com/unicode-org/icu4x/commit/1e072b3248b93a974e21f3d01bc6a165eb272554"
+        },
+        "date": 1655757248570,
         "tool": "ndjson",
         "benches": [
           {
