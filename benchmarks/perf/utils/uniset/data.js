@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1655739347251,
+  "lastUpdate": 1655757746474,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -32692,6 +32692,60 @@ window.BENCHMARK_DATA = {
           {
             "name": "uniset/contains_range/worst",
             "value": 8,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "1e072b3248b93a974e21f3d01bc6a165eb272554",
+          "message": "Update postcard to latest alpha (#2091)\n\n* Update postcard to alpha 4\n\n* Fix errors\n\n* better api\n\n* clippy + fmt",
+          "timestamp": "2022-06-20T13:31:54-07:00",
+          "tree_id": "d6b1e5bb0dda3bd3957519dcc55db8296cae65d5",
+          "url": "https://github.com/unicode-org/icu4x/commit/1e072b3248b93a974e21f3d01bc6a165eb272554"
+        },
+        "date": 1655757719706,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 40246151,
+            "range": "± 129370",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/best",
+            "value": 12,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/worst",
+            "value": 12,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/best",
+            "value": 12,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/worst",
+            "value": 12,
             "range": "± 0",
             "unit": "ns/iter"
           }
