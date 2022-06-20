@@ -13,6 +13,7 @@ use std::sync::Arc;
 
 /// Specifies a variant of CLDR JSON
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
+#[non_exhaustive]
 pub enum LocaleSubset {
     /// Includes all data
     Full,

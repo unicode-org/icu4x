@@ -17,8 +17,7 @@ macro_rules! normalization_provider {
     ($marker:ident, $provider:ident, $serde_struct:ident, $file_name:literal, $conversion:expr, $toml_data:ident) => {
         use icu_normalizer::provider::$marker;
 
-        /// The provider struct holding the `SourceData` and the `RWLock`-wrapped
-        /// TOML data.
+        /// The provider struct holding the `SourceData`
         pub struct $provider {
             source: SourceData,
         }
@@ -36,7 +35,7 @@ macro_rules! normalization_provider {
                 &self,
                 _req: &DataRequest,
             ) -> Result<DataResponse<$marker>, DataError> {
-                let $toml_data: &super::decompositions_serde::$serde_struct =
+                let $toml_data: &super::normalizer_serde::$serde_struct =
                     self.source.read_and_parse_uprops($file_name)?;
 
                 $conversion

@@ -115,9 +115,15 @@ impl SourceData {
     /// Create `SourceData` pointing to test data.
     pub(crate) fn for_test() -> Self {
         Self::default()
-            .with_cldr(icu_testdata::paths::cldr_json_root(), CldrLocaleSubset::Full)
+            .with_cldr(
+                icu_testdata::paths::cldr_json_root(),
+                CldrLocaleSubset::Full,
+            )
             .expect("testdata is valid")
-            .with_icuexport(icu_testdata::paths::icuexport_toml_root(), IcuTrieType::Small)
+            .with_icuexport(
+                icu_testdata::paths::icuexport_toml_root(),
+                IcuTrieType::Small,
+            )
             .expect("testdata is valid")
     }
 
