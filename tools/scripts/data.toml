@@ -162,7 +162,7 @@ args = [
     "--features=bin",
     "--",
     "--cldr-tag=41.0.0",
-    "--uprops-tag=release-71-1",
+    "--icuexport-tag=release-71-1",
     "--format=blob",
     "--syntax=postcard",
     "--all-keys",

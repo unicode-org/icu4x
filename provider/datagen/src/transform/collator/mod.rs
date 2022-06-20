@@ -160,10 +160,10 @@ macro_rules! collation_provider {
                 fn load_resource(&self, req: &DataRequest) -> Result<DataResponse<$marker>, DataError> {
                     let $toml_data: &$serde_struct = self
                         .source
-                        .get_coll_paths()?
+                        .icuexport()?
                         .read_and_parse_toml(
                             &format!(
-                                "{}{}.toml",
+                                "coll/{}{}.toml",
                                 locale_to_file_name(&req.options), $suffix)
                         )?;
 
@@ -182,8 +182,8 @@ macro_rules! collation_provider {
                 fn supported_options(&self) -> Result<Vec<ResourceOptions>, DataError> {
                     Ok(self
                         .source
-                        .get_coll_paths()?
-                        .list()?
+                        .icuexport()?
+                        .list("coll")?
                         .filter_map(|entry|
                             entry
                                 .file_stem()
