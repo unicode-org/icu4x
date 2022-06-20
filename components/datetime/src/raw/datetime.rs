@@ -10,7 +10,10 @@ use crate::{
     options::components,
     options::DateTimeFormatOptions,
     provider::calendar::patterns::PatternPluralsFromPatternsV1Marker,
-    provider::calendar::{DatePatternsV1Marker, DateSkeletonPatternsV1Marker, DateSymbolsV1Marker},
+    provider::calendar::{
+        DatePatternsV1Marker, DateSkeletonPatternsV1Marker, DateSymbolsV1Marker,
+        TimePatternsV1Marker,
+    },
     provider::week_data::WeekDataV1Marker,
 };
 use alloc::string::String;
@@ -54,6 +57,7 @@ impl DateTimeFormat {
     where
         D: ResourceProvider<DateSymbolsV1Marker>
             + ResourceProvider<DatePatternsV1Marker>
+            + ResourceProvider<TimePatternsV1Marker>
             + ResourceProvider<DateSkeletonPatternsV1Marker>
             + ResourceProvider<DecimalSymbolsV1Marker>
             + ResourceProvider<OrdinalV1Marker>

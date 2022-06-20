@@ -20,13 +20,13 @@ This is currently an alias for [`get_postcard_provider`], as it is fast and has 
 ### Downloading fresh CLDR data
 
 ```bash
-$ cargo run --bin --features=bin icu4x-testdata-download-sources
+$ cargo run --features=bin --bin icu4x-testdata-download-sources
 ```
 
 ### Regenerating JSON and postcard data
 
 ```bash
-$ cargo run --bin --features=bin icu4x-testdata-datagen
+$ cargo run --features=bin --bin icu4x-testdata-datagen
 ```
 
 ## Examples

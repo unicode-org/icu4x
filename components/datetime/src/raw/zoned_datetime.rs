@@ -22,7 +22,10 @@ use crate::{
     pattern::runtime::PatternPlurals,
     provider::{
         self,
-        calendar::{DatePatternsV1Marker, DateSkeletonPatternsV1Marker, DateSymbolsV1Marker},
+        calendar::{
+            DatePatternsV1Marker, DateSkeletonPatternsV1Marker, DateSymbolsV1Marker,
+            TimePatternsV1Marker,
+        },
         week_data::WeekDataV1Marker,
     },
     raw,
@@ -56,6 +59,7 @@ impl ZonedDateTimeFormat {
     where
         DP: ResourceProvider<DateSymbolsV1Marker>
             + ResourceProvider<DatePatternsV1Marker>
+            + ResourceProvider<TimePatternsV1Marker>
             + ResourceProvider<DateSkeletonPatternsV1Marker>
             + ResourceProvider<WeekDataV1Marker>
             + ?Sized,
