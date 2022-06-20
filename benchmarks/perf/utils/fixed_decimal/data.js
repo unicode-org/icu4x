@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1655739548469,
+  "lastUpdate": 1655757944236,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -32609,6 +32609,66 @@ window.BENCHMARK_DATA = {
             "name": "from_string/1000000001",
             "value": 96,
             "range": "± 4",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "1e072b3248b93a974e21f3d01bc6a165eb272554",
+          "message": "Update postcard to latest alpha (#2091)\n\n* Update postcard to alpha 4\n\n* Fix errors\n\n* better api\n\n* clippy + fmt",
+          "timestamp": "2022-06-20T13:31:54-07:00",
+          "tree_id": "d6b1e5bb0dda3bd3957519dcc55db8296cae65d5",
+          "url": "https://github.com/unicode-org/icu4x/commit/1e072b3248b93a974e21f3d01bc6a165eb272554"
+        },
+        "date": 1655757914003,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 155429,
+            "range": "± 6490",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 34130,
+            "range": "± 81",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 86687,
+            "range": "± 310",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 263,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 124,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 100,
+            "range": "± 0",
             "unit": "ns/iter"
           }
         ]
