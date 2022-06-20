@@ -1,14 +1,12 @@
 #[macro_export]
 macro_rules! preferences {
-    ($name:ident, $resolved_name:ident, {$($key:ident => $pref:ty, $resolved:ty, $ue:expr),*}) => (
-        // pub trait $trait: Preferences {
-        //     $(
-        //         fn $key(&self) -> $pref {
-        //             None
-        //         }
-        //     )*
-        // }
-
+    ($name:ident,
+     $default_name:ident,
+     $resolved_name:ident,
+     {$($key:ident => $pref:ty, $resolved:ty, $ue:expr),*},
+     $options_name:ident,
+     {$($k:ident => $v:ty),*}
+     ) => (
         #[derive(Default)]
         #[non_exhaustive]
         pub struct $name {
@@ -18,12 +16,30 @@ macro_rules! preferences {
             )*
         }
 
+        #[non_exhaustive]
+        pub struct $default_name {
+            $(
+                pub $key: $resolved,
+            )*
+        }
+
         pub struct $resolved_name {
             pub lid: icu_locid::LanguageIdentifier,
 
             $(
-                $key: $resolved,
+                pub $key: $resolved,
             )*
+        }
+
+        impl From<(LanguageIdentifier, &$default_name)> for $resolved_name {
+            fn from(input: (LanguageIdentifier, &$default_name)) -> Self {
+                Self {
+                    lid: input.0,
+                    $(
+                        $key: input.1.$key,
+                    )*
+                }
+            }
         }
 
         impl Preferences for $name {
@@ -43,40 +59,32 @@ macro_rules! preferences {
             }
         }
 
-        // impl $trait for $name {
-        //     $(
-        //         fn $key(&self) -> $pref {
-        //             self.$key
-        //         }
-        //     )*
-        // }
+        impl From<Locale> for $name {
+            fn from(loc: Locale) -> Self {
+                let lid = Some(loc.id);
 
-        impl TryFrom<Locale> for $name {
-            type Error = ();
+                $(
+                    let mut $key = None;
+                )*
 
-            fn try_from(loc: Locale) -> Result<Self, Self::Error> {
-                let mut lid = Some(loc.id);
+                for (k, v) in loc.extensions.unicode.keywords.iter() {
+                    $(
+                      if let Some(ue) = &$ue {
+                          if k == ue {
+                              if let Ok(r) = TryInto::try_into(v) {
+                                  $key = Some(r);
+                              }
+                          }
+                      }
+                    )*
+                }
 
-                Ok(Self {
+                Self {
                     lid,
                     $(
-                        $key: {
-                            if let Some(ue) = $ue {
-                                if let Some(value) = loc
-                                    .extensions
-                                    .unicode
-                                    .keywords
-                                    .get(&ue) {
-                                        Some(TryInto::try_into(value)?)
-                                    } else {
-                                        None
-                                    }
-                            } else {
-                                None
-                            }
-                        },
+                        $key,
                     )*
-                })
+                }
             }
         }
 
@@ -98,6 +106,7 @@ macro_rules! preferences {
                 }
 
                 $(
+                    //XXX: Use same loop as in From
                     let ue = $ue.unwrap();
                     if self.$key.is_none() {
                         if let Some(value) = locale
@@ -115,7 +124,7 @@ macro_rules! preferences {
         }
 
         impl $resolved_name {
-            fn resolve(&mut self, prefs: &$name) {
+            pub fn resolve(&mut self, prefs: &$name) {
                 let mut language = prefs.language();
                 if language.is_empty() {
                     language = &self.lid.language;
@@ -126,6 +135,14 @@ macro_rules! preferences {
                     }
                 )*
             }
+        }
+
+        #[derive(Default, Debug)]
+        #[non_exhaustive]
+        pub struct $options_name {
+            $(
+                pub $k: $v,
+            )*
         }
     )
 }
