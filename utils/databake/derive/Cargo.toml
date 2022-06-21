@@ -3,8 +3,8 @@
 # (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 [package]
-name = "crabbake-derive"
-description = "Custom derive for the crabbake crate"
+name = "databake-derive"
+description = "Custom derive for the databake crate"
 version = "0.4.0"
 authors = ["The ICU4X Project Developers"]
 edition = "2018"
@@ -36,4 +36,4 @@ syn = { version = "1.0.73", features = ["derive", "fold"] }
 synstructure = "0.12.4"
 
 [dev-dependencies]
-crabbake = { version = "0.4.0", path = "..", features = ["derive"]}
+databake = { version = "0.4.0", path = "..", features = ["derive"]}

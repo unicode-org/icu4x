@@ -4,16 +4,21 @@
 
 #![allow(missing_docs)] // TODO(#686) - Add missing docs.
 
+// allowed for providers
+#![allow(clippy::exhaustive_structs, clippy::exhaustive_enums)]
+
 use alloc::borrow::Cow;
+use icu_calendar::types::MonthCode;
 use icu_provider::{yoke, zerofrom};
+use tinystr::{tinystr, TinyStr4};
 use zerovec::ZeroMap;
 
 #[icu_provider::data_struct(DateSymbolsV1Marker = "datetime/symbols@1")]
 #[derive(Debug, PartialEq, Clone, Default)]
 #[cfg_attr(
     feature = "datagen",
-    derive(serde::Serialize, crabbake::Bakeable),
-    crabbake(path = icu_datetime::provider::calendar),
+    derive(serde::Serialize, databake::Bake),
+    databake(path = icu_datetime::provider::calendar),
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
@@ -31,8 +36,8 @@ pub struct DateSymbolsV1<'data> {
 #[derive(Debug, PartialEq, Clone, Default, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(
     feature = "datagen",
-    derive(serde::Serialize, crabbake::Bakeable),
-    crabbake(path = icu_datetime::provider::calendar),
+    derive(serde::Serialize, databake::Bake),
+    databake(path = icu_datetime::provider::calendar),
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
@@ -50,13 +55,14 @@ macro_rules! symbols {
         pub mod $name {
             use super::*;
 
-            #[derive(Debug, PartialEq, Clone, Default, zerofrom::ZeroFrom, yoke::Yokeable)]
+            #[derive(Debug, PartialEq, Clone, zerofrom::ZeroFrom, yoke::Yokeable)]
             #[cfg_attr(
                 feature = "datagen",
-                derive(serde::Serialize, crabbake::Bakeable),
-                crabbake(path = icu_datetime::provider::calendar::$name),
+                derive(serde::Serialize, databake::Bake),
+                databake(path = icu_datetime::provider::calendar::$name),
             )]
             #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+            #[yoke(prove_covariance_manually)]
             $symbols
 
             // UTS 35 specifies that `format` widths are mandatory
@@ -64,10 +70,11 @@ macro_rules! symbols {
             #[derive(Debug, PartialEq, Clone, Default, yoke::Yokeable, zerofrom::ZeroFrom)]
             #[cfg_attr(
                 feature = "datagen",
-                derive(serde::Serialize, crabbake::Bakeable),
-                crabbake(path = icu_datetime::provider::calendar::$name),
+                derive(serde::Serialize, databake::Bake),
+                databake(path = icu_datetime::provider::calendar::$name),
             )]
             #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+            #[yoke(prove_covariance_manually)]
             pub struct FormatWidthsV1<'data> {
                 #[cfg_attr(feature = "serde", serde(borrow))]
                 pub abbreviated: SymbolsV1<'data>,
@@ -83,10 +90,11 @@ macro_rules! symbols {
             #[derive(Debug, PartialEq, Clone, Default, yoke::Yokeable, zerofrom::ZeroFrom)]
             #[cfg_attr(
                 feature = "datagen",
-                derive(serde::Serialize, crabbake::Bakeable),
-                crabbake(path = icu_datetime::provider::calendar::$name),
+                derive(serde::Serialize, databake::Bake),
+                databake(path = icu_datetime::provider::calendar::$name),
             )]
             #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+            #[yoke(prove_covariance_manually)]
             pub struct StandAloneWidthsV1<'data> {
                 #[cfg_attr(feature = "serde", serde(borrow))]
                 pub abbreviated: Option<SymbolsV1<'data>>,
@@ -101,10 +109,11 @@ macro_rules! symbols {
             #[derive(Debug, PartialEq, Clone, Default, yoke::Yokeable, zerofrom::ZeroFrom)]
             #[cfg_attr(
                 feature = "datagen",
-                derive(serde::Serialize, crabbake::Bakeable),
-                crabbake(path = icu_datetime::provider::calendar::$name),
+                derive(serde::Serialize, databake::Bake),
+                databake(path = icu_datetime::provider::calendar::$name),
             )]
             #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+            #[yoke(prove_covariance_manually)]
             pub struct ContextsV1<'data> {
                 #[cfg_attr(feature = "serde", serde(borrow))]
                 pub format: FormatWidthsV1<'data>,
@@ -117,20 +126,77 @@ macro_rules! symbols {
 
 symbols!(
     months,
-    pub struct SymbolsV1<'data>(
-        #[cfg_attr(
-            feature = "serde",
-            serde(
-                borrow,
-                deserialize_with = "icu_provider::serde::borrow_de_utils::array_of_cow"
-            )
-        )]
-        pub [Cow<'data, str>; 12],
-    );
+    #[allow(clippy::large_enum_variant)]
+    pub enum SymbolsV1<'data> {
+        /// Twelve symbols for a solar calendar
+        ///
+        /// This is an optimization to reduce data size.
+        SolarTwelve(
+            #[cfg_attr(
+                feature = "serde",
+                serde(
+                    borrow,
+                    deserialize_with = "icu_provider::serde::borrow_de_utils::array_of_cow"
+                )
+            )]
+            [Cow<'data, str>; 12],
+        ),
+        /// A calendar with an arbitrary number of months, potentially including leap months
+        #[cfg_attr(feature = "serde", serde(borrow))]
+        Other(ZeroMap<'data, MonthCode, str>),
+    }
 );
+
+impl<'data> months::SymbolsV1<'data> {
+    /// Get the symbol for the given month code
+    pub fn get(&self, code: MonthCode) -> Option<&str> {
+        match *self {
+            Self::SolarTwelve(ref arr) => {
+                // The tinystr macro doesn't work in match patterns
+                // so we use consts first
+                const CODE_1: TinyStr4 = tinystr!(4, "M01");
+                const CODE_2: TinyStr4 = tinystr!(4, "M02");
+                const CODE_3: TinyStr4 = tinystr!(4, "M03");
+                const CODE_4: TinyStr4 = tinystr!(4, "M04");
+                const CODE_5: TinyStr4 = tinystr!(4, "M05");
+                const CODE_6: TinyStr4 = tinystr!(4, "M06");
+                const CODE_7: TinyStr4 = tinystr!(4, "M07");
+                const CODE_8: TinyStr4 = tinystr!(4, "M08");
+                const CODE_9: TinyStr4 = tinystr!(4, "M09");
+                const CODE_10: TinyStr4 = tinystr!(4, "M10");
+                const CODE_11: TinyStr4 = tinystr!(4, "M11");
+                const CODE_12: TinyStr4 = tinystr!(4, "M12");
+                let idx = match code.0 {
+                    CODE_1 => 0,
+                    CODE_2 => 1,
+                    CODE_3 => 2,
+                    CODE_4 => 3,
+                    CODE_5 => 4,
+                    CODE_6 => 5,
+                    CODE_7 => 6,
+                    CODE_8 => 7,
+                    CODE_9 => 8,
+                    CODE_10 => 9,
+                    CODE_11 => 10,
+                    CODE_12 => 11,
+                    _ => return None,
+                };
+                arr.get(idx).map(|x| &**x)
+            }
+            Self::Other(ref map) => map.get(&code),
+        }
+    }
+}
+
+impl Default for months::SymbolsV1<'_> {
+    fn default() -> Self {
+        Self::Other(Default::default())
+    }
+}
 
 symbols!(
     weekdays,
+    #[derive(Default)]
     pub struct SymbolsV1<'data>(
         #[cfg_attr(
             feature = "serde",
@@ -145,6 +211,7 @@ symbols!(
 
 symbols!(
     day_periods,
+    #[derive(Default)]
     pub struct SymbolsV1<'data> {
         #[cfg_attr(feature = "serde", serde(borrow))]
         pub am: Cow<'data, str>,
@@ -172,22 +239,24 @@ symbols!(
 #[cfg(all(test, feature = "datagen"))]
 mod test {
     use super::*;
+    use tinystr::tinystr;
 
     fn serialize() -> Vec<u8> {
-        let months = months::SymbolsV1([
-            Cow::Owned("January".to_string()),
-            Cow::Owned("February".to_string()),
-            Cow::Owned("March".to_string()),
-            Cow::Owned("April".to_string()),
-            Cow::Owned("May".to_string()),
-            Cow::Owned("June".to_string()),
-            Cow::Owned("July".to_string()),
-            Cow::Owned("August".to_string()),
-            Cow::Owned("September".to_string()),
-            Cow::Owned("October".to_string()),
-            Cow::Owned("November".to_string()),
-            Cow::Owned("December".to_string()),
-        ]);
+        let months = [
+            (&MonthCode(tinystr!(4, "M01")), "January"),
+            (&MonthCode(tinystr!(4, "M02")), "February"),
+            (&MonthCode(tinystr!(4, "M03")), "March"),
+            (&MonthCode(tinystr!(4, "M04")), "April"),
+            (&MonthCode(tinystr!(4, "M05")), "May"),
+            (&MonthCode(tinystr!(4, "M06")), "June"),
+            (&MonthCode(tinystr!(4, "M07")), "July"),
+            (&MonthCode(tinystr!(4, "M08")), "August"),
+            (&MonthCode(tinystr!(4, "M09")), "September"),
+            (&MonthCode(tinystr!(4, "M10")), "October"),
+            (&MonthCode(tinystr!(4, "M11")), "November"),
+            (&MonthCode(tinystr!(4, "M12")), "December"),
+        ];
+        let months = months::SymbolsV1::Other(months.iter().copied().collect());
 
         let weekdays = weekdays::SymbolsV1([
             Cow::Owned("Monday".to_string()),
@@ -256,18 +325,6 @@ mod test {
             },
         })
         .unwrap()
-    }
-
-    #[test]
-    fn months_borrows() {
-        let bytes = serialize();
-        let de = bincode::deserialize::<DateSymbolsV1>(&bytes).unwrap();
-
-        assert!(matches!(de.months.format.narrow.0[2], Cow::Borrowed(_)));
-        assert!(matches!(
-            de.months.format.short.as_ref().unwrap().0[11],
-            Cow::Borrowed(_)
-        ));
     }
 
     #[test]

@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! Custom derives for `Bakeable`
+//! Custom derives for `Bake`
 
 use proc_macro::TokenStream;
 use proc_macro2::TokenStream as TokenStream2;
@@ -15,13 +15,13 @@ use syn::{
 };
 use synstructure::{AddBounds, Structure};
 
-#[proc_macro_derive(Bakeable, attributes(crabbake))]
-pub fn bakeable_derive(input: TokenStream) -> TokenStream {
+#[proc_macro_derive(Bake, attributes(databake))]
+pub fn bake_derive(input: TokenStream) -> TokenStream {
     let input = parse_macro_input!(input as DeriveInput);
-    TokenStream::from(bakeable_derive_impl(&input))
+    TokenStream::from(bake_derive_impl(&input))
 }
 
-fn bakeable_derive_impl(input: &DeriveInput) -> TokenStream2 {
+fn bake_derive_impl(input: &DeriveInput) -> TokenStream2 {
     let mut structure = Structure::new(input);
 
     struct PathAttr(Punctuated<PathSegment, Token![::]>);
@@ -40,8 +40,8 @@ fn bakeable_derive_impl(input: &DeriveInput) -> TokenStream2 {
     let path = input
         .attrs
         .iter()
-        .find(|a| a.path.is_ident("crabbake"))
-        .expect("missing crabbake(path = ...) attribute")
+        .find(|a| a.path.is_ident("databake"))
+        .expect("missing databake(path = ...) attribute")
         .parse_args::<PathAttr>()
         .unwrap()
         .0;
@@ -59,7 +59,7 @@ fn bakeable_derive_impl(input: &DeriveInput) -> TokenStream2 {
 
         quote! {
             #(#recursive_bakes)*
-            crabbake::quote! { ::#path::#constructor }
+            databake::quote! { ::#path::#constructor }
         }
     });
 
@@ -69,8 +69,8 @@ fn bakeable_derive_impl(input: &DeriveInput) -> TokenStream2 {
     let crate_name = quote!(#crate_name).to_string();
 
     structure.gen_impl(quote! {
-        gen impl crabbake::Bakeable for @Self {
-            fn bake(&self, ctx: &crabbake::CrateEnv) -> crabbake::TokenStream {
+        gen impl databake::Bake for @Self {
+            fn bake(&self, ctx: &databake::CrateEnv) -> databake::TokenStream {
                 ctx.insert(#crate_name);
                 match self {
                     #body

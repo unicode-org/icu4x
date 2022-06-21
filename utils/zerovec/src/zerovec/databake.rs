@@ -4,9 +4,9 @@
 
 use super::ZeroVec;
 use crate::{ule::AsULE, ZeroSlice};
-use crabbake::*;
+use databake::*;
 
-impl<T> Bakeable for ZeroVec<'_, T>
+impl<T> Bake for ZeroVec<'_, T>
 where
     T: AsULE + ?Sized,
 {
@@ -18,7 +18,7 @@ where
     }
 }
 
-impl<T> Bakeable for &ZeroSlice<T>
+impl<T> Bake for &ZeroSlice<T>
 where
     T: AsULE + ?Sized,
 {

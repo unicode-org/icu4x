@@ -16,9 +16,9 @@ use zerovec::{
 
 #[derive(yoke::Yokeable, zerofrom::ZeroFrom, Clone, PartialEq, Debug)]
 #[cfg_attr(
-    feature = "crabbake",
-    derive(crabbake::Bakeable),
-    crabbake(path = icu_plurals::rules::runtime::ast),
+    feature = "databake",
+    derive(databake::Bake),
+    databake(path = icu_plurals::rules::runtime::ast),
 )]
 pub struct Rule<'data>(pub VarZeroVec<'data, RelationULE>);
 

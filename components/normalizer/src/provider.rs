@@ -18,7 +18,7 @@ use crate::u24::U24;
 /// Main data for NFD
 #[icu_provider::data_struct(CanonicalDecompositionDataV1Marker = "normalizer/nfd@1")]
 #[derive(Debug, PartialEq, Clone)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize, crabbake::Bakeable), crabbake(path = icu_normalizer::provider))]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake), databake(path = icu_normalizer::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct DecompositionDataV1<'data> {
     /// Trie for NFD decomposition.
@@ -37,7 +37,7 @@ pub struct DecompositionDataV1<'data> {
     Uts46DecompositionSupplementV1Marker = "normalizer/uts46d@1"
 )]
 #[derive(Debug, PartialEq, Clone)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize, crabbake::Bakeable), crabbake(path = icu_normalizer::provider))]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake), databake(path = icu_normalizer::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct DecompositionSupplementV1<'data> {
     /// Trie for the decompositions that differ from NFD.
@@ -83,7 +83,7 @@ impl DecompositionSupplementV1<'_> {
     CompatibilityDecompositionTablesV1Marker = "normalizer/nfkdex@1"
 )]
 #[derive(Debug, PartialEq, Clone)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize, crabbake::Bakeable), crabbake(path = icu_normalizer::provider))]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake), databake(path = icu_normalizer::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct DecompositionTablesV1<'data> {
     /// Decompositions that are fully within the BMP
@@ -98,7 +98,7 @@ pub struct DecompositionTablesV1<'data> {
 /// Non-Hangul canonical compositions
 #[icu_provider::data_struct(CanonicalCompositionsV1Marker = "normalizer/comp@1")]
 #[derive(Debug, PartialEq, Clone)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize, crabbake::Bakeable), crabbake(path = icu_normalizer::provider))]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake), databake(path = icu_normalizer::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct CanonicalCompositionsV1<'data> {
     /// Trie keys are two-`char` strings with the second
@@ -115,7 +115,7 @@ pub struct CanonicalCompositionsV1<'data> {
     Uts46CompositionPassthroughV1Marker = "normalizer/uts46@1"
 )]
 #[derive(Debug, PartialEq, Clone)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize, crabbake::Bakeable), crabbake(path = icu_normalizer::provider))]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake), databake(path = icu_normalizer::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct CompositionPassthroughV1<'data> {
     /// The set of characters that are starters that normalize to themselves

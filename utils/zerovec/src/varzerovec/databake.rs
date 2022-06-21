@@ -3,9 +3,9 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::{ule::VarULE, VarZeroSlice, VarZeroVec};
-use crabbake::*;
+use databake::*;
 
-impl<T: VarULE + ?Sized> Bakeable for VarZeroVec<'_, T> {
+impl<T: VarULE + ?Sized> Bake for VarZeroVec<'_, T> {
     fn bake(&self, env: &CrateEnv) -> TokenStream {
         env.insert("zerovec");
         let bytes = self.as_bytes();
@@ -14,7 +14,7 @@ impl<T: VarULE + ?Sized> Bakeable for VarZeroVec<'_, T> {
     }
 }
 
-impl<T: VarULE + ?Sized> Bakeable for &VarZeroSlice<T> {
+impl<T: VarULE + ?Sized> Bake for &VarZeroSlice<T> {
     fn bake(&self, env: &CrateEnv) -> TokenStream {
         env.insert("zerovec");
         let bytes = self.as_bytes();

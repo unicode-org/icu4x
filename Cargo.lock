@@ -397,6 +397,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "cobs"
+version = "0.2.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "67ba02a97a2bd10f4b59b25c7973101c79642302776489e030cd13cdab09ed15"
+
+[[package]]
 name = "colored"
 version = "1.9.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -477,27 +483,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "95059428f66df56b63431fdb4e1947ed2190586af5c5a8a8b71122bdf5a7f469"
 dependencies = [
  "libc",
-]
-
-[[package]]
-name = "crabbake"
-version = "0.4.0"
-dependencies = [
- "crabbake-derive",
- "proc-macro2",
- "quote",
- "syn",
-]
-
-[[package]]
-name = "crabbake-derive"
-version = "0.4.0"
-dependencies = [
- "crabbake",
- "proc-macro2",
- "quote",
- "syn",
- "synstructure",
 ]
 
 [[package]]
@@ -669,6 +654,27 @@ dependencies = [
  "darling_core",
  "quote",
  "syn",
+]
+
+[[package]]
+name = "databake"
+version = "0.4.0"
+dependencies = [
+ "databake-derive",
+ "proc-macro2",
+ "quote",
+ "syn",
+]
+
+[[package]]
+name = "databake-derive"
+version = "0.4.0"
+dependencies = [
+ "databake",
+ "proc-macro2",
+ "quote",
+ "syn",
+ "synstructure",
 ]
 
 [[package]]
@@ -1355,8 +1361,8 @@ dependencies = [
 name = "icu_calendar"
 version = "0.6.0"
 dependencies = [
- "crabbake",
  "criterion",
+ "databake",
  "displaydoc",
  "icu",
  "icu_benchmark_macros",
@@ -1414,7 +1420,7 @@ dependencies = [
 name = "icu_casemapping"
 version = "0.1.0"
 dependencies = [
- "crabbake",
+ "databake",
  "displaydoc",
  "icu_codepointtrie",
  "icu_locid",
@@ -1429,7 +1435,7 @@ dependencies = [
 name = "icu_char16trie"
 version = "0.1.0"
 dependencies = [
- "crabbake",
+ "databake",
  "serde",
  "toml",
  "zerofrom",
@@ -1440,8 +1446,8 @@ dependencies = [
 name = "icu_codepointtrie"
 version = "0.4.0"
 dependencies = [
- "crabbake",
  "criterion",
+ "databake",
  "displaydoc",
  "iai",
  "icu_uniset",
@@ -1470,7 +1476,7 @@ version = "0.6.0"
 dependencies = [
  "arraystring",
  "atoi",
- "crabbake",
+ "databake",
  "displaydoc",
  "icu_char16trie",
  "icu_codepointtrie",
@@ -1494,8 +1500,8 @@ version = "0.6.0"
 dependencies = [
  "cached-path",
  "clap",
- "crabbake",
  "crlify",
+ "databake",
  "dhat 0.3.0",
  "displaydoc",
  "elsa",
@@ -1547,8 +1553,8 @@ name = "icu_datetime"
 version = "0.6.0"
 dependencies = [
  "bincode",
- "crabbake",
  "criterion",
+ "databake",
  "displaydoc",
  "either",
  "fixed_decimal",
@@ -1576,8 +1582,8 @@ dependencies = [
 name = "icu_decimal"
 version = "0.6.0"
 dependencies = [
- "crabbake",
  "criterion",
+ "databake",
  "displaydoc",
  "fixed_decimal",
  "getrandom",
@@ -1607,8 +1613,8 @@ dependencies = [
 name = "icu_list"
 version = "0.6.0"
 dependencies = [
- "crabbake",
  "criterion",
+ "databake",
  "deduplicating_array",
  "displaydoc",
  "icu_benchmark_macros",
@@ -1627,8 +1633,8 @@ dependencies = [
 name = "icu_locale_canonicalizer"
 version = "0.6.0"
 dependencies = [
- "crabbake",
  "criterion",
+ "databake",
  "icu_locid",
  "icu_provider",
  "icu_testdata",
@@ -1642,8 +1648,8 @@ dependencies = [
 name = "icu_locid"
 version = "0.6.0"
 dependencies = [
- "crabbake",
  "criterion",
+ "databake",
  "displaydoc",
  "iai",
  "icu",
@@ -1663,7 +1669,7 @@ version = "0.6.0"
 dependencies = [
  "arraystring",
  "atoi",
- "crabbake",
+ "databake",
  "displaydoc",
  "icu_char16trie",
  "icu_codepointtrie",
@@ -1692,8 +1698,8 @@ dependencies = [
 name = "icu_plurals"
 version = "0.6.0"
 dependencies = [
- "crabbake",
  "criterion",
+ "databake",
  "displaydoc",
  "fixed_decimal",
  "icu",
@@ -1710,7 +1716,7 @@ dependencies = [
 name = "icu_properties"
 version = "0.6.0"
 dependencies = [
- "crabbake",
+ "databake",
  "displaydoc",
  "icu",
  "icu_codepointtrie",
@@ -1727,7 +1733,7 @@ name = "icu_provider"
 version = "0.6.0"
 dependencies = [
  "bincode",
- "crabbake",
+ "databake",
  "dhat 0.3.0",
  "displaydoc",
  "erased-serde",
@@ -1751,7 +1757,7 @@ dependencies = [
 name = "icu_provider_adapters"
 version = "0.6.0"
 dependencies = [
- "crabbake",
+ "databake",
  "icu_locid",
  "icu_provider",
  "icu_testdata",
@@ -1809,8 +1815,8 @@ dependencies = [
 name = "icu_segmenter"
 version = "0.6.0"
 dependencies = [
- "crabbake",
  "criterion",
+ "databake",
  "icu_char16trie",
  "icu_codepointtrie",
  "icu_provider",
@@ -1880,8 +1886,8 @@ dependencies = [
 name = "icu_uniset"
 version = "0.5.0"
 dependencies = [
- "crabbake",
  "criterion",
+ "databake",
  "displaydoc",
  "icu_benchmark_macros",
  "postcard",
@@ -2487,20 +2493,14 @@ dependencies = [
 
 [[package]]
 name = "postcard"
-version = "1.0.0-alpha.2"
+version = "1.0.0-alpha.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c4a90a38b02628f311cb75c0d5e2e43113fff9ce3322b9c1c19cb656ca674687"
+checksum = "5b6cf96c947e1a6261e1493877b196db7d4dcbeaabc4ba0f45be149dc885442b"
 dependencies = [
+ "cobs",
  "heapless",
- "postcard-cobs",
  "serde",
 ]
-
-[[package]]
-name = "postcard-cobs"
-version = "0.1.5-pre"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7c68cb38ed13fd7bc9dd5db8f165b7c8d9c1a315104083a2b10f11354c2af97f"
 
 [[package]]
 name = "ppv-lite86"
@@ -2667,9 +2667,9 @@ dependencies = [
 
 [[package]]
 name = "regex"
-version = "1.5.4"
+version = "1.5.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d07a8629359eb56f1e2fb1652bb04212c072a87ba68546a04065d525673ac461"
+checksum = "1a11647b6b25ff05a515cb92c365cec08801e83423a235b51e231e1808747286"
 dependencies = [
  "aho-corasick",
  "memchr",
@@ -3412,8 +3412,8 @@ name = "tinystr"
 version = "0.6.0"
 dependencies = [
  "bincode",
- "crabbake",
  "criterion",
+ "databake",
  "displaydoc",
  "postcard",
  "rand",
@@ -4141,8 +4141,8 @@ name = "zerovec"
 version = "0.7.0"
 dependencies = [
  "bincode",
- "crabbake",
  "criterion",
+ "databake",
  "getrandom",
  "iai",
  "icu_benchmark_macros",
