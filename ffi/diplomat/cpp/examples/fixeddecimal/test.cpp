@@ -92,7 +92,7 @@ int main() {
 
     auto data = ICU4XDataStruct::create_decimal_symbols_v1("+", "", "-", "", "/", "_", 4, 2, 4, digits).ok().value();
 
-    fdf = ICU4XFixedDecimalFormat::try_new_from_decimal_symbols_v1(data, opts).ok().value();
+    fdf = ICU4XFixedDecimalFormat::try_new_from_decimal_symbols_v1(data, ICU4XFixedDecimalGroupingStrategy::Auto).ok().value();
 
     decimal = ICU4XFixedDecimal::create_from_f64_with_max_precision(123456.8901).ok().value();
     out = fdf.format(decimal).ok().value();
