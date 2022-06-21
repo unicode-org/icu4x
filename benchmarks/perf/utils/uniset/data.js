@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1655757746474,
+  "lastUpdate": 1655839515252,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -32746,6 +32746,60 @@ window.BENCHMARK_DATA = {
           {
             "name": "uniset/contains_range/worst",
             "value": 12,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "hsivonen@hsivonen.fi",
+            "name": "Henri Sivonen",
+            "username": "hsivonen"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "02702d3c1544a41ce04b78d01c619a77aac53e2c",
+          "message": "Refresh collator and normalizer data from ICU4C 71 branch CI (#2090)",
+          "timestamp": "2022-06-21T22:14:06+03:00",
+          "tree_id": "9d5776b3a8545efa89f5de6c2bc0b64df3cbdf68",
+          "url": "https://github.com/unicode-org/icu4x/commit/02702d3c1544a41ce04b78d01c619a77aac53e2c"
+        },
+        "date": 1655839490122,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 45117191,
+            "range": "± 111267",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/best",
+            "value": 9,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/worst",
+            "value": 9,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/best",
+            "value": 9,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/worst",
+            "value": 9,
             "range": "± 0",
             "unit": "ns/iter"
           }
