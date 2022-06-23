@@ -103,6 +103,7 @@ impl<const N: usize> TinyAsciiStr<N> {
 
     #[inline]
     pub const fn as_str(&self) -> &str {
+        // as_bytes is valid utf8
         unsafe { str::from_utf8_unchecked(self.as_bytes()) }
     }
 
@@ -115,7 +116,7 @@ impl<const N: usize> TinyAsciiStr<N> {
             Aligned8::from_bytes(&self.bytes).len()
         } else {
             let mut i = 0;
-            #[allow(clippy::indexing_slicing)]
+            #[allow(clippy::indexing_slicing)] // < N is safe
             while i < N && self.bytes[i] > 0 {
                 i += 1
             }
@@ -133,6 +134,7 @@ impl<const N: usize> TinyAsciiStr<N> {
     #[must_use]
     pub const fn as_bytes(&self) -> &[u8] {
         // Should be `&self.bytes[0..self.len()]` but that's not const.
+        // Safe because self.len() < N.
         unsafe {
             let slice = self.bytes.as_slice();
             let (data, _): (usize, usize) = core::mem::transmute(slice);
