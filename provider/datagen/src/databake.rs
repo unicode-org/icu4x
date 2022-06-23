@@ -271,9 +271,11 @@ impl DataExporter for BakedDataExporter {
             .dedup()
             .map(|p| p.parse::<TokenStream>().unwrap());
 
-        let marker_data_feature = move_out!(self.marker_data_feature)
+        let mut marker_data_feature = move_out!(self.marker_data_feature)
             .into_inner()
-            .expect("poison")
+            .expect("poison");
+        marker_data_feature.sort();
+        let marker_data_feature = marker_data_feature
             .into_iter()
             .map(|(marker_str, data_str, feature_str)| {
                 (
