@@ -62,8 +62,8 @@ macro_rules! impl_resource_provider {
 
                     let resource: &cldr_serde::ca::Resource = self
                         .source
-                        .get_cldr_paths()?
-                        .cldr_dates(cldr_cal).read_and_parse(&langid, &format!("ca-{}.json", cldr_cal))?;
+                        .cldr()?
+                        .dates(cldr_cal).read_and_parse(&langid, &format!("ca-{}.json", cldr_cal))?;
 
                     let mut data =
                         resource
@@ -81,7 +81,7 @@ macro_rules! impl_resource_provider {
                     // supports symbols for both era patterns based on the settings on the date. Load in ethioaa data as well when dealing with
                     // ethiopic.
                     if calendar == value!("ethiopic") {
-                        let ethioaa: &cldr_serde::ca::Resource = self.source.get_cldr_paths()?.cldr_dates("ethiopic").read_and_parse(&langid, "ca-ethiopic-amete-alem.json")?;
+                        let ethioaa: &cldr_serde::ca::Resource = self.source.cldr()?.dates("ethiopic").read_and_parse(&langid, "ca-ethiopic-amete-alem.json")?;
 
                         let ethioaa_data = ethioaa
                             .main
@@ -119,8 +119,8 @@ macro_rules! impl_resource_provider {
                     for (cal_value, cldr_cal) in self.supported_cals.iter() {
                         r.extend(self
                                     .source
-                                    .get_cldr_paths()?
-                                    .cldr_dates(cldr_cal).list_langs()?
+                                    .cldr()?
+                                    .dates(cldr_cal).list_langs()?
                             .map(|lid| {
                                 let mut locale: Locale = lid.into();
                                 locale

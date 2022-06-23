@@ -33,7 +33,7 @@
 //! The command line interface is available with the `bin` feature.
 //! ```bash
 //! cargo run --features bin -- \
-//!     --uprops-root /path/to/uprops/root \
+//!     --icu_exports-root /path/to/icu_exports/root \
 //!     --all-keys \
 //!     --locales de,en-AU \
 //!     --format blob \
@@ -62,9 +62,9 @@ mod registry;
 mod source;
 pub mod transform;
 
-pub use error::{MISSING_CLDR_ERROR, MISSING_COLLATION_ERROR, MISSING_UPROPS_ERROR};
-pub use registry::get_all_keys;
-pub use source::{SourceData, TrieType};
+pub use error::*;
+pub use registry::all_keys;
+pub use source::{CldrLocaleSubset, IcuTrieType, SourceData};
 
 use icu_locid::LanguageIdentifier;
 use icu_provider::datagen::*;
@@ -77,7 +77,9 @@ use std::io::{BufRead, BufReader};
 use std::path::{Path, PathBuf};
 
 /// Parses a list of human-readable key identifiers and returns a
-/// list of [`ResourceKey`]s. Invalid key names are ignored.
+/// list of [`ResourceKey`]s.
+///
+/// Unknown key names are ignored.
 ///
 /// # Example
 /// ```
@@ -92,14 +94,16 @@ use std::path::{Path, PathBuf};
 /// ```
 pub fn keys<S: AsRef<str>>(strings: &[S]) -> Vec<ResourceKey> {
     let keys = strings.iter().map(AsRef::as_ref).collect::<HashSet<&str>>();
-    get_all_keys()
+    all_keys()
         .into_iter()
         .filter(|k| keys.contains(k.get_path()))
         .collect()
 }
 
 /// Parses a file of human-readable key identifiers and returns a
-/// list of [`ResourceKey`]s. Invalid key names are ignored.
+/// list of [`ResourceKey`]s.
+///
+/// Unknown key names are ignored.
 ///
 /// # Example
 ///
@@ -127,14 +131,15 @@ pub fn keys_from_file<P: AsRef<Path>>(path: P) -> std::io::Result<Vec<ResourceKe
     let keys = BufReader::new(std::fs::File::open(path.as_ref())?)
         .lines()
         .collect::<std::io::Result<HashSet<String>>>()?;
-    Ok(get_all_keys()
+    Ok(all_keys()
         .into_iter()
         .filter(|k| keys.contains(k.get_path()))
         .collect())
 }
 
-/// Parses a compiled binary and returns a list of used [`ResourceKey`]s. Unknown
-/// key names are ignored.
+/// Parses a compiled binary and returns a list of used [`ResourceKey`]s used by it.
+///
+/// Unknown key names are ignored.
 ///
 /// # Example
 ///
@@ -173,7 +178,7 @@ pub fn keys_from_bin<P: AsRef<Path>>(path: P) -> std::io::Result<Vec<ResourceKey
         }
     }
 
-    Ok(get_all_keys()
+    Ok(all_keys()
         .into_iter()
         .filter(|k| candidates.contains(k.get_path().as_bytes()))
         .collect())
@@ -211,9 +216,9 @@ pub enum Out {
 /// * `locales`: If this is present, only locales that are either `und` or
 ///   contained (strictly, i.e. `en` != `en-US`) in the slice will be generated.
 ///   Otherwise, all locales supported by the source data will be generated.
-/// * `keys`: The keys for which to generate data. See [`get_all_keys()`].
-/// * `sources`: The underlying source data. CLDR and/or uprops data can be missing if no
-///   requested key requires them, otherwise [`MISSING_CLDR_ERROR`] or [`MISSING_UPROPS_ERROR`]
+/// * `keys`: The keys for which to generate data. See [`all_keys`], [`keys`], [`keys_from_file`], [`keys_from_bin`].
+/// * `sources`: The underlying source data. CLDR and/or ICU data can be missing if no
+///   requested key requires them, otherwise [`MISSING_CLDR_ERROR`] or [`MISSING_ICUEXPORT_ERROR`]
 ///   will be returned.
 /// * `out`: The output format and location. See the documentation on [`Out`]
 pub fn datagen(

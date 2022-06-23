@@ -17,8 +17,7 @@ macro_rules! normalization_provider {
     ($marker:ident, $provider:ident, $serde_struct:ident, $file_name:literal, $conversion:expr, $toml_data:ident) => {
         use icu_normalizer::provider::$marker;
 
-        /// The provider struct holding the `SourceData` and the `RWLock`-wrapped
-        /// TOML data.
+        /// The provider struct holding the `SourceData`
         pub struct $provider {
             source: SourceData,
         }
@@ -36,10 +35,8 @@ macro_rules! normalization_provider {
                 &self,
                 _req: &DataRequest,
             ) -> Result<DataResponse<$marker>, DataError> {
-                let $toml_data: &super::normalizer_serde::$serde_struct = self
-                    .source
-                    .get_uprops_paths()?
-                    .read_and_parse_toml($file_name)?;
+                let $toml_data: &super::normalizer_serde::$serde_struct =
+                    self.source.read_and_parse_uprops($file_name)?;
 
                 $conversion
             }
@@ -188,34 +185,34 @@ macro_rules! normalization_canonical_compositions_provider {
 normalization_data_provider!(
     CanonicalDecompositionDataV1Marker,
     CanonicalDecompositionDataProvider,
-    "nfd.toml"
+    "nfd"
 );
 
 normalization_supplement_provider!(
     CompatibilityDecompositionSupplementV1Marker,
     CompatibilityDecompositionSupplementProvider,
-    "nfkd.toml"
+    "nfkd"
 );
 
 normalization_supplement_provider!(
     Uts46DecompositionSupplementV1Marker,
     Uts46DecompositionSupplementProvider,
-    "uts46d.toml"
+    "uts46d"
 );
 
 normalization_tables_provider!(
     CanonicalDecompositionTablesV1Marker,
     CanonicalDecompositionTablesProvider,
-    "nfdex.toml"
+    "nfdex"
 );
 
 normalization_tables_provider!(
     CompatibilityDecompositionTablesV1Marker,
     CompatibilityDecompositionTablesProvider,
-    "nfkdex.toml"
+    "nfkdex"
 );
 
-// No uts46dex.toml, because that data is also in nfkdex.toml.
+// No uts46dex, because that data is also in nfkdex.
 
 normalization_passthrough_provider!(
     CanonicalCompositionPassthroughV1Marker,
@@ -231,23 +228,23 @@ normalization_passthrough_provider!(
     // enough for an app to want NFC and for it to be maximally
     // performant that it doesn't make sense to default to
     // this size optimization.
-    "nfc.toml"
+    "nfc"
 );
 
 normalization_passthrough_provider!(
     CompatibilityCompositionPassthroughV1Marker,
     CompatibilityCompositionPassthroughProvider,
-    "nfkc.toml"
+    "nfkc"
 );
 
 normalization_passthrough_provider!(
     Uts46CompositionPassthroughV1Marker,
     Uts46CompositionPassthroughProvider,
-    "uts46.toml"
+    "uts46"
 );
 
 normalization_canonical_compositions_provider!(
     CanonicalCompositionsV1Marker,
     CanonicalCompositionsProvider,
-    "compositions.toml"
+    "compositions"
 );

@@ -5,7 +5,7 @@
 use icu_provider::{ResourceKey, ResourceMarker};
 
 /// List of all supported keys
-pub fn get_all_keys() -> Vec<ResourceKey> {
+pub fn all_keys() -> Vec<ResourceKey> {
     let mut v = vec![
         icu_calendar::provider::JapaneseErasV1Marker::KEY,
         icu_datetime::provider::calendar::DatePatternsV1Marker::KEY,
@@ -210,7 +210,7 @@ macro_rules! create_datagen_provider {
 fn no_key_collisions() {
     let mut map = std::collections::BTreeMap::new();
     let mut failed = false;
-    for key in get_all_keys() {
+    for key in all_keys() {
         if let Some(colliding_key) = map.insert(key.get_hash(), key) {
             println!(
                 "{:?} and {:?} collide at {:?}",

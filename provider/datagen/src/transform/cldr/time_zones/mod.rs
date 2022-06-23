@@ -35,8 +35,8 @@ macro_rules! impl_resource_provider {
 
                     let resource: &cldr_serde::time_zones::time_zone_names::Resource = self
                         .source
-                        .get_cldr_paths()?
-                        .cldr_dates("gregorian")
+                        .cldr()?
+                        .dates("gregorian")
                         .read_and_parse(&langid, "timeZoneNames.json")?;
                     let time_zone_names = resource
                         .main
@@ -49,8 +49,8 @@ macro_rules! impl_resource_provider {
 
                     let resource: &cldr_serde::time_zones::bcp47_tzid::Resource = self
                         .source
-                        .get_cldr_paths()?
-                        .cldr_bcp47()
+                        .cldr()?
+                        .bcp47()
                         .read_and_parse("timezone.json")?;
 
                     let mut bcp47_tzids = LiteMap::new();
@@ -64,8 +64,8 @@ macro_rules! impl_resource_provider {
 
                     let resource: &cldr_serde::time_zones::meta_zones::Resource = self
                         .source
-                        .get_cldr_paths()?
-                        .cldr_core()
+                        .cldr()?
+                        .core()
                         .read_and_parse("supplemental/metaZones.json")?;
 
                     let mut meta_zone_ids = LiteMap::new();
@@ -96,8 +96,8 @@ macro_rules! impl_resource_provider {
                 fn supported_options(&self) -> Result<Vec<ResourceOptions>, DataError> {
                     Ok(self
                         .source
-                        .get_cldr_paths()?
-                        .cldr_dates("gregorian")
+                        .cldr()?
+                        .dates("gregorian")
                         .list_langs()?
                         .map(Into::<ResourceOptions>::into)
                         .collect())

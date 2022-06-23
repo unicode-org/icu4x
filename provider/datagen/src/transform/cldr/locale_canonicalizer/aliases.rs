@@ -35,8 +35,8 @@ impl ResourceProvider<AliasesV1Marker> for AliasesProvider {
 
         let data: &cldr_serde::aliases::Resource = self
             .source
-            .get_cldr_paths()?
-            .cldr_core()
+            .cldr()?
+            .core()
             .read_and_parse("supplemental/aliases.json")?;
         let metadata = DataResponseMetadata::default();
         // TODO(#1109): Set metadata.data_langid correctly.
