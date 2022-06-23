@@ -1,5 +1,5 @@
 // @generated
-mod lengths_v1;
-mod skeletons_v1;
-mod symbols_v1;
-mod week_data_v1;
+pub mod lengths_v1;
+pub mod skeletons_v1;
+pub mod symbols_v1;
+pub mod week_data_v1;

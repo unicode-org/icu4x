@@ -36,6 +36,9 @@ pub(crate) struct BakedDataExporter {
     // All mod.rs files in the module tree. Because generation is parallel,
     // this will be non-deterministic and have to be sorted later.
     mod_files: Mutex<HashMap<PathBuf, Vec<String>>>,
+    /// Triples of the ResourceMarker, the path to the DATA slice, and the feature that includes it.
+    /// This is populated by `put_payload` and consumed by `flush` which writes the implementations.
+    marker_data_feature: Mutex<Vec<(SyncTokenStream, SyncTokenStream, SyncTokenStream)>>,
     // List of dependencies used by baking.
     dependencies: CrateEnv,
 }
@@ -49,6 +52,7 @@ impl BakedDataExporter {
             insert_feature_gates,
             data: Default::default(),
             mod_files: Default::default(),
+            marker_data_feature: Default::default(),
             dependencies: Default::default(),
         }
     }
@@ -193,12 +197,13 @@ impl DataExporter for BakedDataExporter {
 
             let mut path = PathBuf::new();
             let mut supers = quote!();
-            for level in module_path.segments {
+            for level in &module_path.segments {
                 let mut map = self.mod_files.lock().expect("poison");
                 if !map.contains_key(&path) {
                     map.insert(path.clone(), Vec::new());
                 }
                 map.get_mut(&path).unwrap().push(level.ident.to_string());
+                drop(map);
                 path = path.join(level.ident.to_string());
                 supers = quote! { super:: #supers };
             }
@@ -213,7 +218,7 @@ impl DataExporter for BakedDataExporter {
                     }
                 } else {
                     quote! {
-                        &'static <#marker as DataMarker>::Yokeable
+                        &'static <#marker as ::icu_provider::DataMarker>::Yokeable
                     }
                 };
 
@@ -222,33 +227,25 @@ impl DataExporter for BakedDataExporter {
                 quote! {
                     #feature
 
-                    use ::icu_provider::prelude::*;
-
-                    impl ResourceProvider<#marker> for #supers BakedDataProvider {
-                        fn load_resource(
-                            &self,
-                            req: &DataRequest,
-                        ) -> Result<DataResponse<#marker>, DataError> {
-                            static VALUES: &[(&str, DataStruct)] = &[#(#all_options),*];
-                            #[allow(clippy::unwrap_used)] // binary search Ok() is safe to index
-                            let value = VALUES
-                                .binary_search_by(|(k, _)| req.options.strict_cmp(k.as_bytes()).reverse())
-                                .map(|i| VALUES.get(i).unwrap().1)
-                                .map_err(|_| {
-                                    DataErrorKind::MissingResourceOptions.with_req(<#marker>::KEY, req)
-                                })?;
-                            Ok(DataResponse {
-                                metadata: DataResponseMetadata::default(),
-                                payload: Some(DataPayload::from_owned(zerofrom::ZeroFrom::zero_from(value))),
-                            })
-                        }
-                    }
-
                     type DataStruct = #struct_type;
+
+                    pub static DATA: &[(&str, DataStruct)] = &[#(#all_options),*];
 
                     #(#statics)*
                 },
-            ).map_err(|e| e.with_path_context(&path))?;
+            )
+            .map_err(|e| e.with_path_context(&path))?;
+
+            self.marker_data_feature.lock().expect("poison").push((
+                quote!(#marker).to_string(),
+                quote!(#module_path).to_string(),
+                if self.insert_feature_gates {
+                    let feature = marker.segments.iter().next().unwrap().ident.to_string();
+                    quote! { #[cfg(feature = #feature)] }.to_string()
+                } else {
+                    String::new()
+                },
+            ));
         }
         Ok(())
     }
@@ -262,37 +259,141 @@ impl DataExporter for BakedDataExporter {
             log::info!("{}", crate_name);
         }
 
-        move_out!(self.mod_files)
+        let mut mod_files = move_out!(self.mod_files).into_inner().expect("poison");
+        for (_, mods) in mod_files.iter_mut() {
+            mods.sort();
+        }
+
+        let mods = mod_files
+            .remove(&PathBuf::new())
+            .expect("root exists")
+            .into_iter()
+            .dedup()
+            .map(|p| p.parse::<TokenStream>().unwrap());
+
+        let marker_data_feature = move_out!(self.marker_data_feature)
             .into_inner()
             .expect("poison")
-            .into_par_iter()
-            .try_for_each(|(path, mut mods)| {
-                mods.sort();
-                let mods = mods
-                    .into_iter()
-                    .dedup()
-                    .map(|p| p.parse::<TokenStream>().unwrap());
-                let maybe_decl = if path.as_os_str().is_empty() {
-                    quote! {
+            .into_iter()
+            .map(|(marker_str, data_str, feature_str)| {
+                (
+                    marker_str.parse::<TokenStream>().unwrap(),
+                    data_str.parse::<TokenStream>().unwrap(),
+                    feature_str.parse::<TokenStream>().unwrap(),
+                )
+            })
+            .collect::<Vec<_>>();
+
+        let any_cases = marker_data_feature.iter().map(|(marker, data, feature)| {
+            if marker.to_string() == ":: icu_datetime :: provider :: calendar :: DateSkeletonPatternsV1Marker" {
+                quote! {
+                    #feature
+                    <#marker as ::icu_provider::ResourceMarker>::KEY =>
+                        ::icu_provider::AnyPayload::from_rc_payload::<#marker>(
+                            alloc::rc::Rc::new(
+                                ::icu_provider::DataPayload::from_owned(
+                                    ::icu_provider::zerofrom::ZeroFrom::zero_from(
+                                        litemap_slice_get(#data::DATA, key, req)?
+                        )))),
+                }
+            } else {
+                quote!{
+                    #feature
+                    <#marker as ::icu_provider::ResourceMarker>::KEY =>
+                        ::icu_provider::AnyPayload::from_static_ref::<<#marker as ::icu_provider::DataMarker>::Yokeable>(litemap_slice_get(#data::DATA, key, req)?),
+                }
+            }
+        });
+
+        let resource_impls = marker_data_feature.iter().map(|(marker, data, feature)| {
+            quote! {
+                #feature
+                impl_resource_provider!(#marker, #data::DATA);
+            }
+        });
+
+        self.write_to_file(
+            PathBuf::from("mod"),
+            quote! {
+                #(
+                    mod #mods;
+                )*
+
+                macro_rules! declare_baked_provider {
+                    ($name:ident, impl AnyProvider) => {
+                        declare_baked_provider!($name);
+
+                        impl ::icu_provider::AnyProvider for $name {
+                            fn load_any(&self, key: ::icu_provider::ResourceKey, req: &::icu_provider::DataRequest) -> Result<::icu_provider::AnyResponse, ::icu_provider::DataError> {
+                                Ok(::icu_provider::AnyResponse {
+                                    payload: Some(match key {
+                                        #(#any_cases)*
+                                        _ => return Err(::icu_provider::DataErrorKind::MissingResourceKey.with_req(key, req)),
+                                    }),
+                                    metadata: Default::default(),
+                                })
+                            }
+                        }
+                    };
+                    ($name:ident) => {
                         /// This data provider was programmatically generated by [`icu_datagen`](
                         /// https://unicode-org.github.io/icu4x-docs/doc/icu_datagen/enum.Out.html#variant.Module).
                         #[non_exhaustive]
-                        pub struct BakedDataProvider;
+                        pub struct $name;
+
+                        fn litemap_slice_get<T: ?Sized>(
+                            values: &'static [(&'static str, &'static T)],
+                            key: ::icu_provider::ResourceKey,
+                            req: &::icu_provider::DataRequest,
+                        ) -> Result<&'static T, ::icu_provider::DataError> {
+                            #[allow(clippy::unwrap_used)]
+                            values
+                                .binary_search_by(|(k, _)| req.options.strict_cmp(k.as_bytes()).reverse())
+                                .map(|i| values.get(i).unwrap().1)
+                                .map_err(|_| ::icu_provider::DataErrorKind::MissingResourceOptions.with_req(key, req))
+                        }
+
+                        macro_rules! impl_resource_provider {
+                            ($marker:ty, $data:expr) => {
+                                impl ::icu_provider::ResourceProvider<$marker> for $name {
+                                    fn load_resource(
+                                        &self,
+                                        req: &::icu_provider::DataRequest,
+                                    ) -> Result<::icu_provider::DataResponse<$marker>, ::icu_provider::DataError> {
+                                        Ok(::icu_provider::DataResponse {
+                                            metadata: ::icu_provider::DataResponseMetadata::default(),
+                                            payload: Some(::icu_provider::DataPayload::from_owned(::icu_provider::zerofrom::ZeroFrom::zero_from(
+                                                litemap_slice_get($data, <$marker as ::icu_provider::ResourceMarker>::KEY, req)?,
+                                            ))),
+                                        })
+                                    }
+                                }
+                            };
+                        }
+
+                        #(#resource_impls)*
                     }
-                } else {
-                    quote!()
-                };
-                self.write_to_file(
-                    &path.join("mod"),
-                    quote! {
-                        #maybe_decl
-                        #(
-                            mod #mods;
-                        )*
-                    },
-                )
-                .map_err(|e| e.with_path_context(&path.join("mod/*")))
-            })?;
+                }
+            }
+        )
+        .map_err(|e| e.with_path_context(&PathBuf::from("mod.rs")))?;
+
+        mod_files.into_par_iter().try_for_each(|(path, mut mods)| {
+            mods.sort();
+            let mods = mods
+                .into_iter()
+                .dedup()
+                .map(|p| p.parse::<TokenStream>().unwrap());
+            self.write_to_file(
+                &path.join("mod"),
+                quote! {
+                    #(
+                        pub mod #mods;
+                    )*
+                },
+            )
+            .map_err(|e| e.with_path_context(&path.join("mod.rs")))
+        })?;
 
         Ok(())
     }

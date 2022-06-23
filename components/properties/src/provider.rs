@@ -84,7 +84,7 @@ macro_rules! expand {
                 impl databake::Bake for $bin_marker {
                     fn bake(&self, env: &databake::CrateEnv) -> databake::TokenStream {
                         env.insert("icu_properties");
-                        databake::quote!{ icu_properties::provider::$bin_marker }
+                        databake::quote!{ ::icu_properties::provider::$bin_marker }
                     }
                 }
             )+
@@ -111,7 +111,7 @@ macro_rules! expand {
                 impl databake::Bake for $enum_marker {
                     fn bake(&self, env: &databake::CrateEnv) -> databake::TokenStream {
                         env.insert("icu_properties");
-                        databake::quote!{ icu_properties::provider::$enum_marker }
+                        databake::quote!{ ::icu_properties::provider::$enum_marker }
                     }
                 }
             )+
