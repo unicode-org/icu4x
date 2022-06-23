@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1655965056250,
+  "lastUpdate": 1655992509995,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -18113,6 +18113,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/9ac11ffdb47f59374c6e2ed933e071bea492eb7d"
         },
         "date": 1655965028089,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 2734513,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "3ab56808c76c485bcc73fd534a2e551ccf8c885b",
+          "message": "Datagen API changes: `SourceData::{uprops, coll} -> SourceData::icuexport` (#2089)",
+          "timestamp": "2022-06-23T15:52:41+02:00",
+          "tree_id": "48cd0ffa7f6733dd8627bc1df6a5a64b557b60aa",
+          "url": "https://github.com/unicode-org/icu4x/commit/3ab56808c76c485bcc73fd534a2e551ccf8c885b"
+        },
+        "date": 1655992482461,
         "tool": "ndjson",
         "benches": [
           {
