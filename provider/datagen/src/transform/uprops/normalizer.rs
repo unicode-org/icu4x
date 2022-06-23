@@ -185,6 +185,39 @@ macro_rules! normalization_canonical_compositions_provider {
     };
 }
 
+macro_rules! normalization_non_recursive_decomposition_supplement_provider {
+    ($marker:ident, $provider:ident, $file_name:literal) => {
+        normalization_provider!(
+            $marker,
+            $provider,
+            NonRecursiveDecompositionSupplement,
+            $file_name,
+            {
+                let trie = CodePointTrie::<u32>::try_from(&toml_data.trie)
+                    .map_err(|e| DataError::custom("trie conversion").with_display_context(&e))?;
+                let mut scalars24: Vec<U24> = Vec::new();
+                for &u in toml_data.scalars32.iter() {
+                    scalars24.push(
+                        u.try_into()
+                            .map_err(|_| DataError::custom("scalars24 conversion"))?,
+                    );
+                }
+
+                Ok(DataResponse {
+                    metadata: DataResponseMetadata::default(),
+                    payload: Some(DataPayload::from_owned(
+                        NonRecursiveDecompositionSupplementV1 {
+                            trie,
+                            scalars24: ZeroVec::alloc_from_slice(&scalars24),
+                        },
+                    )),
+                })
+            },
+            toml_data // simply matches the identifier in the above block
+        );
+    };
+}
+
 normalization_data_provider!(
     CanonicalDecompositionDataV1Marker,
     CanonicalDecompositionDataProvider,
@@ -250,4 +283,10 @@ normalization_canonical_compositions_provider!(
     CanonicalCompositionsV1Marker,
     CanonicalCompositionsProvider,
     "compositions.toml"
+);
+
+normalization_non_recursive_decomposition_supplement_provider!(
+    NonRecursiveDecompositionSupplementV1Marker,
+    NonRecursiveDecompositionSupplementProvider,
+    "decompositionex.toml"
 );

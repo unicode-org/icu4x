@@ -1,5 +1,6 @@
 // @generated
 mod comp_v1;
+mod decomp_v1;
 mod nfc_v1;
 mod nfd_v1;
 mod nfdex_v1;

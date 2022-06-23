@@ -77,6 +77,7 @@ use alloc::string::String;
 use alloc::vec::Vec;
 use core::char::REPLACEMENT_CHARACTER;
 use icu_char16trie::char16trie::Char16Trie;
+use icu_char16trie::char16trie::Char16TrieIterator;
 use icu_char16trie::char16trie::TrieResult;
 use icu_codepointtrie::CodePointTrie;
 use icu_properties::provider::CanonicalCombiningClassV1Marker;
@@ -93,6 +94,7 @@ use provider::CompatibilityDecompositionTablesV1Marker;
 use provider::CompositionPassthroughV1;
 use provider::DecompositionSupplementV1;
 use provider::DecompositionTablesV1;
+use provider::NonRecursiveDecompositionSupplementV1Marker;
 use provider::Uts46CompositionPassthroughV1Marker;
 use smallvec::SmallVec;
 use u24::EMPTY_U24;
@@ -159,6 +161,9 @@ const HANGUL_T_COUNT: u32 = 28;
 const HANGUL_N_COUNT: u32 = 588;
 /// Syllable count
 const HANGUL_S_COUNT: u32 = 11172;
+
+// Not from spec, one past conjoining trail consonants.
+const HANGUL_T_LIMIT: u32 = 0x11C3;
 
 /// If `opt` is `Some`, unwrap it. If `None`, panic if debug assertions
 /// are enabled and return `default` if debug assertions are not enabled.
@@ -239,6 +244,42 @@ fn in_inclusive_range(c: char, start: char, end: char) -> bool {
 #[inline(always)]
 fn in_range_len(c: char, start: u32, len: u32) -> bool {
     u32::from(c).wrapping_sub(start) < len
+}
+
+/// Performs (non-Hangul) canonical composition on a pair of characters
+/// or returns `None` if these characters don't compose. Composition
+/// exclusions are taken into account.
+#[inline(always)]
+fn compose_non_hangul(mut iter: Char16TrieIterator, starter: char, second: char) -> Option<char> {
+    // To make the trie smaller, the pairs are stored second character first.
+    // Given how this method is used in ways where it's known that `second`
+    // is or isn't a starter. We could potentially split the trie into two
+    // tries depending on whether `second` is a starter.
+    match iter.next(second) {
+        TrieResult::NoMatch => None,
+        TrieResult::NoValue => match iter.next(starter) {
+            TrieResult::NoMatch => None,
+            TrieResult::FinalValue(i) => {
+                if let Some(c) = char::from_u32(i as u32) {
+                    Some(c)
+                } else {
+                    // GIGO case
+                    debug_assert!(false);
+                    None
+                }
+            }
+            TrieResult::NoValue | TrieResult::Intermediate(_) => {
+                // GIGO case
+                debug_assert!(false);
+                None
+            }
+        },
+        TrieResult::FinalValue(_) | TrieResult::Intermediate(_) => {
+            // GIGO case
+            debug_assert!(false);
+            None
+        }
+    }
 }
 
 /// Pack a `char` and a `CanonicalCombiningClass` in
@@ -812,37 +853,9 @@ where
     /// Performs (non-Hangul) canonical composition on a pair of characters
     /// or returns `None` if these characters don't compose. Composition
     /// exclusions are taken into account.
+    #[inline(always)]
     fn compose_non_hangul(&self, starter: char, second: char) -> Option<char> {
-        let mut iter = self.canonical_compositions.iter();
-        // To make the trie smaller, the pairs are stored second character first.
-        // Given how this method is used in ways where it's known that `second`
-        // is or isn't a starter. We could potentially split the trie into two
-        // tries depending on whether `second` is a starter.
-        match iter.next(second) {
-            TrieResult::NoMatch => None,
-            TrieResult::NoValue => match iter.next(starter) {
-                TrieResult::NoMatch => None,
-                TrieResult::FinalValue(i) => {
-                    if let Some(c) = char::from_u32(i as u32) {
-                        Some(c)
-                    } else {
-                        // GIGO case
-                        debug_assert!(false);
-                        None
-                    }
-                }
-                TrieResult::NoValue | TrieResult::Intermediate(_) => {
-                    // GIGO case
-                    debug_assert!(false);
-                    None
-                }
-            },
-            TrieResult::FinalValue(_) | TrieResult::Intermediate(_) => {
-                // GIGO case
-                debug_assert!(false);
-                None
-            }
-        }
+        compose_non_hangul(self.canonical_compositions.iter(), starter, second)
     }
 }
 
@@ -1596,6 +1609,262 @@ impl ComposingNormalizer {
     }
 
     normalizer_methods!();
+}
+
+/// A struct for providing the raw canonical composition operation.
+pub struct CanonicalComposition {
+    canonical_compositions: DataPayload<CanonicalCompositionsV1Marker>,
+}
+
+impl CanonicalComposition {
+    /// Performs canonical composition (including Hangul) on a pair of
+    /// characters or returns `None` if these characters don't compose.
+    /// Composition exclusions are taken into account.
+    #[inline]
+    pub fn compose(&self, starter: char, second: char) -> Option<char> {
+        let v = u32::from(second).wrapping_sub(HANGUL_V_BASE);
+        if v >= HANGUL_T_LIMIT - HANGUL_V_BASE {
+            return self.compose_non_hangul(starter, second);
+        }
+        if v < HANGUL_V_COUNT {
+            let l = u32::from(starter).wrapping_sub(HANGUL_L_BASE);
+            if l < HANGUL_L_COUNT {
+                let lv = l * HANGUL_N_COUNT + v * HANGUL_T_COUNT;
+                // Safe, because the inputs are known to be in range.
+                return Some(unsafe { char::from_u32_unchecked(HANGUL_S_BASE + lv) });
+            }
+            return None;
+        }
+        if in_inclusive_range(second, '\u{11A8}', '\u{11C2}') {
+            let lv = u32::from(starter).wrapping_sub(HANGUL_S_BASE);
+            if lv < HANGUL_S_COUNT && lv % HANGUL_T_COUNT == 0 {
+                let lvt = lv + (u32::from(second) - HANGUL_T_BASE);
+                // Safe, because the inputs are known to be in range.
+                return Some(unsafe { char::from_u32_unchecked(HANGUL_S_BASE + lvt) });
+            }
+        }
+        None
+    }
+
+    /// Performs non-Hangul canonical composition on a pair of characters
+    /// or returns `None` if these characters don't compose. Composition
+    /// exclusions are taken into account. (The return value is `None` with
+    /// Hangul arguments.)
+    #[inline(always)]
+    fn compose_non_hangul(&self, starter: char, second: char) -> Option<char> {
+        compose_non_hangul(
+            self.canonical_compositions
+                .get()
+                .canonical_compositions
+                .iter(),
+            starter,
+            second,
+        )
+    }
+
+    /// Construct from data provider.
+    pub fn try_new<D>(data_provider: &D) -> Result<Self, NormalizerError>
+    where
+        D: ResourceProvider<CanonicalCompositionsV1Marker> + ?Sized,
+    {
+        let canonical_compositions: DataPayload<CanonicalCompositionsV1Marker> = data_provider
+            .load_resource(&DataRequest::default())?
+            .take_payload()?;
+        Ok(CanonicalComposition {
+            canonical_compositions,
+        })
+    }
+}
+
+/// The outcome of non-recursive canonical decomposition of a character.
+pub enum Decomposed {
+    /// The character is its own canonical decomposition.
+    Default,
+    /// The character decomposes to a single different character.
+    Singleton(char),
+    /// The character decomposes to two characters.
+    Expansion(char, char),
+}
+
+/// A struct for providing the raw (non-recursive) canonical decomposition operation.
+pub struct CanonicalDecomposition {
+    decompositions: DataPayload<CanonicalDecompositionDataV1Marker>,
+    tables: DataPayload<CanonicalDecompositionTablesV1Marker>,
+    non_recursive: DataPayload<NonRecursiveDecompositionSupplementV1Marker>,
+}
+
+impl CanonicalDecomposition {
+    /// Performs non-recursive canonical decomposition.
+    #[inline]
+    pub fn decompose(&self, c: char) -> Decomposed {
+        let lvt = u32::from(c).wrapping_sub(HANGUL_S_BASE);
+        if lvt >= HANGUL_S_COUNT {
+            return self.decompose_non_hangul(c);
+        }
+        let t = lvt % HANGUL_T_COUNT;
+        if t == 0 {
+            let l = lvt / HANGUL_N_COUNT;
+            let v = (lvt % HANGUL_N_COUNT) / HANGUL_T_COUNT;
+            // Safe because values known to be in range
+            return Decomposed::Expansion(
+                unsafe { char::from_u32_unchecked(HANGUL_L_BASE + l) },
+                unsafe { char::from_u32_unchecked(HANGUL_V_BASE + v) },
+            );
+        }
+        let lv = lvt - t;
+        // Safe because values known to be in range
+        Decomposed::Expansion(
+            unsafe { char::from_u32_unchecked(HANGUL_S_BASE + lv) },
+            unsafe { char::from_u32_unchecked(HANGUL_T_BASE + t) },
+        )
+    }
+
+    /// Performs non-recursive canonical decomposition except Hangul syllables
+    /// are reported as `Decomposed::Default`.
+    #[inline(always)]
+    fn decompose_non_hangul(&self, c: char) -> Decomposed {
+        let decomposition = self.decompositions.get().trie.get(u32::from(c));
+        if decomposition == 0 {
+            return Decomposed::Default;
+        }
+        // The loop is only broken out of as goto forward
+        #[allow(clippy::never_loop)]
+        loop {
+            let high = (decomposition >> 16) as u16;
+            let low = decomposition as u16;
+            if high != 0 && low != 0 {
+                // Decomposition into two BMP characters: starter and non-starter
+                if in_inclusive_range(c, '\u{1F71}', '\u{1FFB}') {
+                    // Look in the other trie due to oxia singleton
+                    // mappings to corresponding character with tonos.
+                    break;
+                } else if c == '\u{212B}' {
+                    // ANGSTROM SIGN
+                    return Decomposed::Singleton('\u{00C5}');
+                }
+                return Decomposed::Expansion(char_from_u16(high), char_from_u16(low));
+            }
+            if high != 0 {
+                // Decomposition into one BMP character
+                return Decomposed::Singleton(char_from_u16(high));
+            }
+            // Complex decomposition
+            // Format for 16-bit value:
+            // 15..13: length minus two for 16-bit case and length minus one for
+            //         the 32-bit case. Length 8 needs to fit in three bits in
+            //         the 16-bit case, and this way the value is future-proofed
+            //         up to 9 in the 16-bit case. Zero is unused and length one
+            //         in the 16-bit case goes directly into the trie.
+            //     12: 1 if all trailing characters are guaranteed non-starters,
+            //         0 if no guarantees about non-starterness.
+            //         Note: The bit choice is this way around to allow for
+            //         dynamically falling back to not having this but instead
+            //         having one more bit for length by merely choosing
+            //         different masks.
+            //  11..0: Start offset in storage. The offset is to the logical
+            //         sequence of scalars16, scalars32, supplementary_scalars16,
+            //         supplementary_scalars32.
+            let offset = usize::from(low & 0xFFF);
+            let tables = self.tables.get();
+            if offset < tables.scalars16.len() {
+                if usize::from(low >> 13) != 0 {
+                    // i.e. logical len isn't 2
+                    break;
+                }
+                if let Some(first) = tables.scalars16.get(offset) {
+                    if let Some(second) = tables.scalars16.get(offset + 1) {
+                        // Two BMP starters
+                        return Decomposed::Expansion(char_from_u16(first), char_from_u16(second));
+                    }
+                }
+                // GIGO case
+                debug_assert!(false);
+                return Decomposed::Default;
+            }
+            let len = usize::from(low >> 13) + 1;
+            if len > 2 {
+                break;
+            }
+            let offset24 = offset - tables.scalars16.len();
+            if let Some(first) = tables.scalars24.get(offset24) {
+                let first_c = char_from_u24(first);
+                if len == 1 {
+                    return Decomposed::Singleton(first_c);
+                }
+                if let Some(second) = tables.scalars24.get(offset24 + 1) {
+                    let second_c = char_from_u24(second);
+                    return Decomposed::Expansion(first_c, second_c);
+                }
+            }
+            // GIGO case
+            debug_assert!(false);
+            return Decomposed::Default;
+        }
+        let non_recursive = self.non_recursive.get();
+        let non_recursive_decomposition = non_recursive.trie.get(u32::from(c));
+        if non_recursive_decomposition == 0 {
+            // GIGO case
+            debug_assert!(false);
+            return Decomposed::Default;
+        }
+        let high = (non_recursive_decomposition >> 16) as u16;
+        let low = non_recursive_decomposition as u16;
+        if high != 0 && low != 0 {
+            // Decomposition into two BMP characters
+            return Decomposed::Expansion(char_from_u16(high), char_from_u16(low));
+        }
+        if high != 0 {
+            // Decomposition into one BMP character
+            return Decomposed::Singleton(char_from_u16(high));
+        }
+        // Decomposition into two non-BMP characters
+        // Low is offset into a table plus one to keep it non-zero.
+        let offset = usize::from(low - 1);
+        if let Some(first) = non_recursive.scalars24.get(offset) {
+            if let Some(second) = non_recursive.scalars24.get(offset + 1) {
+                return Decomposed::Expansion(char_from_u24(first), char_from_u24(second));
+            }
+        }
+        // GIGO case
+        debug_assert!(false);
+        Decomposed::Default
+    }
+
+    /// Construct from data provider.
+    pub fn try_new<D>(data_provider: &D) -> Result<Self, NormalizerError>
+    where
+        D: ResourceProvider<CanonicalDecompositionDataV1Marker>
+            + ResourceProvider<CanonicalDecompositionTablesV1Marker>
+            + ResourceProvider<NonRecursiveDecompositionSupplementV1Marker>
+            + ?Sized,
+    {
+        let decompositions: DataPayload<CanonicalDecompositionDataV1Marker> = data_provider
+            .load_resource(&DataRequest::default())?
+            .take_payload()?;
+        let tables: DataPayload<CanonicalDecompositionTablesV1Marker> = data_provider
+            .load_resource(&DataRequest::default())?
+            .take_payload()?;
+
+        if tables.get().scalars16.len() + tables.get().scalars24.len() > 0xFFF {
+            // The data is from a future where there exists a normalization flavor whose
+            // complex decompositions take more than 0xFFF but fewer than 0x1FFF code points
+            // of space. If a good use case from such a decomposition flavor arises, we can
+            // dynamically change the bit masks so that the length mask becomes 0x1FFF instead
+            // of 0xFFF and the all-non-starters mask becomes 0 instead of 0x1000. However,
+            // since for now the masks are hard-coded, error out.
+            return Err(NormalizerError::FutureExtension);
+        }
+
+        let non_recursive: DataPayload<NonRecursiveDecompositionSupplementV1Marker> = data_provider
+            .load_resource(&DataRequest::default())?
+            .take_payload()?;
+
+        Ok(CanonicalDecomposition {
+            decompositions,
+            tables,
+            non_recursive,
+        })
+    }
 }
 
 #[cfg(all(test, feature = "serde"))]

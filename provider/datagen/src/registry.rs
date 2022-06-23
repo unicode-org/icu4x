@@ -49,6 +49,8 @@ pub fn get_all_keys() -> Vec<ResourceKey> {
         icu_normalizer::provider::CompatibilityCompositionPassthroughV1Marker::KEY,
         #[cfg(feature = "experimental")]
         icu_normalizer::provider::Uts46CompositionPassthroughV1Marker::KEY,
+        #[cfg(feature = "experimental")]
+        icu_normalizer::provider::NonRecursiveDecompositionSupplementV1Marker::KEY,
     ];
     v.extend(icu_properties::provider::ALL_KEYS);
     #[cfg(feature = "experimental")]
@@ -190,6 +192,7 @@ macro_rules! create_datagen_provider {
                 $crate::transform::uprops::CanonicalCompositionPassthroughProvider,
                 $crate::transform::uprops::CompatibilityCompositionPassthroughProvider,
                 $crate::transform::uprops::Uts46CompositionPassthroughProvider,
+                $crate::transform::uprops::NonRecursiveDecompositionSupplementProvider,
                 $crate::transform::collator::CollationProvider,
             ]
         )

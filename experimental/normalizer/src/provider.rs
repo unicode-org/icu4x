@@ -124,3 +124,19 @@ pub struct CompositionPassthroughV1<'data> {
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub potential_passthrough_and_not_backward_combining: UnicodeSet<'data>,
 }
+
+/// Non-recursive canonical decompositions that differ from
+/// `DecompositionDataV1`.
+#[icu_provider::data_struct(NonRecursiveDecompositionSupplementV1Marker = "normalizer/decomp@1")]
+#[derive(Debug, PartialEq, Clone)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake), databake(path = icu_normalizer::provider))]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+pub struct NonRecursiveDecompositionSupplementV1<'data> {
+    /// Trie for the supplementary non-recursive decompositions
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub trie: CodePointTrie<'data, u32>,
+    /// Decompositions with at least one character outside
+    /// the BMP
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub scalars24: ZeroVec<'data, U24>,
+}

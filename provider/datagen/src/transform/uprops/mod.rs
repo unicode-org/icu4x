@@ -49,6 +49,8 @@ pub use normalizer::CompatibilityDecompositionSupplementProvider;
 #[cfg(feature = "experimental")]
 pub use normalizer::CompatibilityDecompositionTablesProvider;
 #[cfg(feature = "experimental")]
+pub use normalizer::NonRecursiveDecompositionSupplementProvider;
+#[cfg(feature = "experimental")]
 pub use normalizer::Uts46CompositionPassthroughProvider;
 #[cfg(feature = "experimental")]
 pub use normalizer::Uts46DecompositionSupplementProvider;
