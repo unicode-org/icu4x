@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1655993116636,
+  "lastUpdate": 1656005628656,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -32962,6 +32962,60 @@ window.BENCHMARK_DATA = {
           {
             "name": "uniset/contains_range/worst",
             "value": 11,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "dminor@mozilla.com",
+            "name": "Dan Minor",
+            "username": "dminor"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "3e7d4e563cb7e869947ad570a3f8f3ee961c393e",
+          "message": "Split date and time data keys. (#2093)\n\n* Split date and time data keys.\r\n\r\nThis is a first step towards fixing #380.\r\n\r\n* Revert accidental change to work_log.rs\r\n\r\n* Update readme\r\n\r\n* Address review feedback",
+          "timestamp": "2022-06-23T13:23:39-04:00",
+          "tree_id": "888beb4b69bcdcb2defab92c6f9c53aaad80b65a",
+          "url": "https://github.com/unicode-org/icu4x/commit/3e7d4e563cb7e869947ad570a3f8f3ee961c393e"
+        },
+        "date": 1656005604603,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 40115747,
+            "range": "± 114572",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/best",
+            "value": 7,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/worst",
+            "value": 7,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/best",
+            "value": 7,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/worst",
+            "value": 7,
             "range": "± 0",
             "unit": "ns/iter"
           }
