@@ -308,7 +308,7 @@ pub fn datagen(
 #[test]
 fn test_keys() {
     assert_eq!(
-        keys(&["list/and@1", "datetime/lengths@1", "trash",]),
+        keys(&["list/and@1", "datetime/datelengths@1", "trash",]),
         vec![
             icu_datetime::provider::calendar::DatePatternsV1Marker::KEY,
             icu_list::provider::AndListV1Marker::KEY,
@@ -336,7 +336,7 @@ fn test_keys_from_file() {
 
 #[test]
 fn test_keys_from_bin() {
-    // File obtained by changing work_log.rs to use `icu_testdata::get_smaller_static_provider`
+    // File obtained by changing work_log.rs to use `icu_testdata::get_smaller_postcard_provider`
     // and running `cargo +nightly wasm-build-release --examples -p icu_datetime --features serde \
     // && cp target/wasm32-unknown-unknown/release/examples/work_log.wasm provider/datagen/tests/data/`
     assert_eq!(
@@ -344,6 +344,7 @@ fn test_keys_from_bin() {
             .unwrap(),
         vec![
             icu_datetime::provider::calendar::DatePatternsV1Marker::KEY,
+            icu_datetime::provider::calendar::TimePatternsV1Marker::KEY,
             icu_datetime::provider::calendar::DateSkeletonPatternsV1Marker::KEY,
             icu_datetime::provider::calendar::DateSymbolsV1Marker::KEY,
             icu_datetime::provider::week_data::WeekDataV1Marker::KEY,

@@ -1,0 +1,15 @@
+{
+  "time_h11_h12": {
+    "full": "hh:mm:ss a",
+    "long": "hh:mm:ss a",
+    "medium": "hh:mm:ss a",
+    "short": "hh:mm a"
+  },
+  "time_h23_h24": {
+    "full": "HH:mm:ss zzzz",
+    "long": "HH:mm:ss z",
+    "medium": "HH:mm:ss",
+    "short": "HH:mm"
+  },
+  "preferred_hour_cycle": "H23H24"
+}

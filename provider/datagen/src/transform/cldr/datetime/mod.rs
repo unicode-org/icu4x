@@ -145,7 +145,8 @@ impl_resource_provider!(
     (DateSkeletonPatternsV1Marker, |dates, _| {
         DateSkeletonPatternsV1::from(dates)
     }),
-    (DatePatternsV1Marker, |dates, _| DatePatternsV1::from(dates))
+    (DatePatternsV1Marker, |dates, _| DatePatternsV1::from(dates)),
+    (TimePatternsV1Marker, |dates, _| TimePatternsV1::from(dates))
 );
 
 #[cfg(test)]

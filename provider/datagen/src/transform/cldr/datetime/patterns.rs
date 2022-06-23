@@ -98,6 +98,18 @@ impl From<&cldr_serde::ca::Dates> for DatePatternsV1<'_> {
     fn from(other: &cldr_serde::ca::Dates) -> Self {
         let length_combinations_v1 =
             patterns::GenericLengthPatternsV1::from(&other.datetime_formats);
+
+        Self {
+            date: (&other.date_formats).into(),
+            length_combinations: length_combinations_v1,
+        }
+    }
+}
+
+impl From<&cldr_serde::ca::Dates> for TimePatternsV1<'_> {
+    fn from(other: &cldr_serde::ca::Dates) -> Self {
+        let length_combinations_v1 =
+            patterns::GenericLengthPatternsV1::from(&other.datetime_formats);
         let skeletons_v1 = DateSkeletonPatternsV1::from(other);
 
         let pattern_str_full = other.time_formats.full.get_pattern();
@@ -203,11 +215,9 @@ impl From<&cldr_serde::ca::Dates> for DatePatternsV1<'_> {
         };
 
         Self {
-            date: (&other.date_formats).into(),
             time_h11_h12,
             time_h23_h24,
             preferred_hour_cycle,
-            length_combinations: length_combinations_v1,
         }
     }
 }

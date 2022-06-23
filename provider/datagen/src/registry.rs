@@ -9,6 +9,7 @@ pub fn all_keys() -> Vec<ResourceKey> {
     let mut v = vec![
         icu_calendar::provider::JapaneseErasV1Marker::KEY,
         icu_datetime::provider::calendar::DatePatternsV1Marker::KEY,
+        icu_datetime::provider::calendar::TimePatternsV1Marker::KEY,
         icu_datetime::provider::calendar::DateSkeletonPatternsV1Marker::KEY,
         icu_datetime::provider::calendar::DateSymbolsV1Marker::KEY,
         icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker::KEY,
