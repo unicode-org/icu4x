@@ -149,6 +149,10 @@ const HANGUL_L_BASE: u32 = 0x1100;
 const HANGUL_V_BASE: u32 = 0x1161;
 /// Trail jamo base
 const HANGUL_T_BASE: u32 = 0x11A7;
+/// Lead jamo count
+const HANGUL_L_COUNT: u32 = 19;
+/// Vowel jamo count
+const HANGUL_V_COUNT: u32 = 21;
 /// Trail jamo count
 const HANGUL_T_COUNT: u32 = 28;
 /// Vowel jamo count times trail jamo count
@@ -230,6 +234,11 @@ fn split_first_u24(s: Option<&ZeroSlice<U24>>) -> (char, &ZeroSlice<U24>) {
 #[inline(always)]
 fn in_inclusive_range(c: char, start: char, end: char) -> bool {
     u32::from(c).wrapping_sub(u32::from(start)) <= (u32::from(end) - u32::from(start))
+}
+
+#[inline(always)]
+fn in_range_len(c: char, start: u32, len: u32) -> bool {
+    u32::from(c).wrapping_sub(start) < len
 }
 
 /// Pack a `char` and a `CanonicalCombiningClass` in
@@ -941,8 +950,8 @@ where
                     }
                     CompositionAction::HangulVowel => {
                         // Unicode Standard 14.0, page 145
-                        debug_assert!(in_inclusive_range(starter, '\u{1100}', '\u{1112}'));
-                        debug_assert!(in_inclusive_range(next_starter, '\u{1161}', '\u{1175}'));
+                        debug_assert!(in_range_len(starter, HANGUL_L_BASE, HANGUL_L_COUNT));
+                        debug_assert!(in_range_len(next_starter, HANGUL_V_BASE, HANGUL_V_COUNT));
                         let l = u32::from(starter) - HANGUL_L_BASE;
                         let v = u32::from(next_starter) - HANGUL_V_BASE;
                         let lv = l * HANGUL_N_COUNT + v * HANGUL_T_COUNT;
@@ -953,7 +962,7 @@ where
                         // Unicode Standard 14.0, page 146
                         let lv = u32::from(starter) - HANGUL_S_BASE;
                         debug_assert_eq!(lv % HANGUL_T_COUNT, 0);
-                        debug_assert!(in_inclusive_range(next_starter, '\u{11A8}', '\u{11C2}'));
+                        debug_assert!(in_range_len(next_starter, HANGUL_T_BASE, HANGUL_T_COUNT));
                         let lvt = lv + (u32::from(next_starter) - HANGUL_T_BASE);
                         // Safe, because the inputs are known to be in range.
                         starter = unsafe { char::from_u32_unchecked(HANGUL_S_BASE + lvt) };
@@ -965,11 +974,11 @@ where
             // `buffer_pos` may be non-zero for NFKC and parenthesized Hangul.
             if let Some(potential) = self.decomposition.buffer.get(self.decomposition.buffer_pos) {
                 let potential_c = potential.character();
-                if in_inclusive_range(potential_c, '\u{1161}', '\u{1175}') {
+                let v = u32::from(potential_c).wrapping_sub(HANGUL_V_BASE);
+                if v < HANGUL_V_COUNT {
                     // Hangul vowel
-                    if in_inclusive_range(starter, '\u{1100}', '\u{1112}') {
-                        let l = u32::from(starter) - HANGUL_L_BASE;
-                        let v = u32::from(potential_c) - HANGUL_V_BASE;
+                    let l = u32::from(starter).wrapping_sub(HANGUL_L_BASE);
+                    if l < HANGUL_L_COUNT {
                         let lv = l * HANGUL_N_COUNT + v * HANGUL_T_COUNT;
                         // Safe, because the inputs are known to be in range.
                         starter = unsafe { char::from_u32_unchecked(HANGUL_S_BASE + lv) };
@@ -981,11 +990,12 @@ where
 
             if let Some(potential) = self.decomposition.buffer.get(self.decomposition.buffer_pos) {
                 let potential_c = potential.character();
-                if in_inclusive_range(potential_c, '\u{11A8}', '\u{11C2}') {
+                let t = u32::from(potential_c).wrapping_sub(HANGUL_T_BASE);
+                if t < HANGUL_T_COUNT {
                     // Hangul trail
-                    let lv = u32::from(starter) - HANGUL_S_BASE;
+                    let lv = u32::from(starter).wrapping_sub(HANGUL_S_BASE);
                     if lv < HANGUL_S_COUNT && lv % HANGUL_T_COUNT == 0 {
-                        let lvt = lv + (u32::from(potential_c) - HANGUL_T_BASE);
+                        let lvt = lv + t;
                         // Safe, because the inputs are known to be in range.
                         starter = unsafe { char::from_u32_unchecked(HANGUL_S_BASE + lvt) };
 
@@ -1077,9 +1087,9 @@ where
                     // Won't combine backwards anyway.
                     return Some(starter);
                 }
-                if in_inclusive_range(pending_starter, '\u{11A8}', '\u{11C2}') {
+                if in_range_len(pending_starter, HANGUL_T_BASE, HANGUL_T_COUNT) {
                     // Hangul trail
-                    let lv = u32::from(starter) - HANGUL_S_BASE;
+                    let lv = u32::from(starter).wrapping_sub(HANGUL_S_BASE);
                     if lv < HANGUL_S_COUNT && lv % HANGUL_T_COUNT == 0 {
                         // We need to loop back in order to uphold invariants in case
                         // the character after decomposes to a non-starter.
@@ -1095,9 +1105,9 @@ where
                     // Won't combine in another way anyway
                     return Some(starter);
                 }
-                if in_inclusive_range(pending_starter, '\u{1161}', '\u{1175}') {
+                if in_range_len(pending_starter, HANGUL_V_BASE, HANGUL_V_COUNT) {
                     // Hangul vowel
-                    if in_inclusive_range(starter, '\u{1100}', '\u{1112}') {
+                    if in_range_len(starter, HANGUL_L_BASE, HANGUL_L_COUNT) {
                         // We need to loop back in order to uphold invariants in case
                         // the character after decomposes to a non-starter.
                         undecomposed_starter = pending_starter;
