@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1655993271658,
+  "lastUpdate": 1656005794509,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -41735,6 +41735,102 @@ window.BENCHMARK_DATA = {
             "name": "pattern/parse",
             "value": 5549,
             "range": "± 30",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "dminor@mozilla.com",
+            "name": "Dan Minor",
+            "username": "dminor"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "3e7d4e563cb7e869947ad570a3f8f3ee961c393e",
+          "message": "Split date and time data keys. (#2093)\n\n* Split date and time data keys.\r\n\r\nThis is a first step towards fixing #380.\r\n\r\n* Revert accidental change to work_log.rs\r\n\r\n* Update readme\r\n\r\n* Address review feedback",
+          "timestamp": "2022-06-23T13:23:39-04:00",
+          "tree_id": "888beb4b69bcdcb2defab92c6f9c53aaad80b65a",
+          "url": "https://github.com/unicode-org/icu4x/commit/3e7d4e563cb7e869947ad570a3f8f3ee961c393e"
+        },
+        "date": 1656005770512,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 118273,
+            "range": "± 1128",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 1143336,
+            "range": "± 5909",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 215536,
+            "range": "± 1034",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/DateTimeFormat/format_to_write",
+            "value": 112264,
+            "range": "± 10294",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/DateTimeFormat/format_to_string",
+            "value": 122683,
+            "range": "± 10030",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/format",
+            "value": 104399,
+            "range": "± 2470",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/to_string",
+            "value": 113124,
+            "range": "± 650",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/ZonedDateTimeFormat/format_to_write",
+            "value": 211162,
+            "range": "± 622",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/ZonedDateTimeFormat/format_to_string",
+            "value": 198612,
+            "range": "± 1016",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/format",
+            "value": 215500,
+            "range": "± 1376",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/to_string",
+            "value": 233094,
+            "range": "± 1462",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "pattern/parse",
+            "value": 5455,
+            "range": "± 8",
             "unit": "ns/iter"
           }
         ]
