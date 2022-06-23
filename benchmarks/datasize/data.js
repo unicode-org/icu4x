@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1656005161677,
+  "lastUpdate": 1656006412206,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -18173,6 +18173,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/3e7d4e563cb7e869947ad570a3f8f3ee961c393e"
         },
         "date": 1656005135478,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 2737318,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "6d0d0068c1b840eafdd8a4351e0112995eab03fa",
+          "message": "Add more size tests to locid (#2078)",
+          "timestamp": "2022-06-23T12:44:18-05:00",
+          "tree_id": "c7591c753d0d4022a35d226aa294545aa84e957e",
+          "url": "https://github.com/unicode-org/icu4x/commit/6d0d0068c1b840eafdd8a4351e0112995eab03fa"
+        },
+        "date": 1656006382645,
         "tool": "ndjson",
         "benches": [
           {
