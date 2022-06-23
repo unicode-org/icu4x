@@ -117,6 +117,6 @@ impl<T: TrieValue> TryFrom<&CodePointTrieToml> for CodePointTrie<'static, T> {
             reason: "Could not parse data array to typed array",
         })?;
 
-        CodePointTrie::<T>::try_new(header, index, data)
+        CodePointTrie::<T>::try_new(header, index, data, data.last())
     }
 }

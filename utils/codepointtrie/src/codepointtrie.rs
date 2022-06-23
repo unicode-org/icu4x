@@ -112,6 +112,8 @@ pub struct CodePointTrie<'trie, T: TrieValue> {
     index: ZeroVec<'trie, u16>,
     #[cfg_attr(feature = "serde", serde(borrow))]
     data: ZeroVec<'trie, T>,
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    error_value: &'trie T,
 }
 
 /// This struct contains the fixed-length header fields of a [`CodePointTrie`].
@@ -171,11 +173,13 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
         header: CodePointTrieHeader,
         index: ZeroVec<'trie, u16>,
         data: ZeroVec<'trie, T>,
+        error_value: &'trie T,
     ) -> Self {
         Self {
             header,
             index,
             data,
+            error_value,
         }
     }
 
@@ -185,6 +189,7 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
         header: CodePointTrieHeader,
         index: ZeroVec<'trie, u16>,
         data: ZeroVec<'trie, T>,
+        error_value: &'trie T,
     ) -> Result<CodePointTrie<'trie, T>, Error> {
         // Validation invariants are not needed here when constructing a new
         // `CodePointTrie` because:
@@ -202,6 +207,7 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
             header,
             index,
             data,
+            error_value,
         };
         Ok(trie)
     }
@@ -390,6 +396,7 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
             header: self.header,
             index: self.index,
             data: converted_data,
+            error_value: self.error_value,
         })
     }
 
