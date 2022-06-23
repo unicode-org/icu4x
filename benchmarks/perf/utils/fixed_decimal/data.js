@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1656007054450,
+  "lastUpdate": 1656015633705,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -33029,6 +33029,66 @@ window.BENCHMARK_DATA = {
             "name": "from_string/1000000001",
             "value": 84,
             "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "hsivonen@hsivonen.fi",
+            "name": "Henri Sivonen",
+            "username": "hsivonen"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "7870301dd1dab0770e84902bc3f13afc4de1b198",
+          "message": "Clean up Hangul math in Composition (#2096)\n\n* Clean up Hangul math in Composition\r\n\r\n* Use named constants instead of magic numbers.\r\n* Use wrapping_sub with HANGUL_S_BASE. (Couldn't find a way to trigger a debug-mode overflow without this, though.)\r\n\r\n* Fix off-by-one errors with trail jamos",
+          "timestamp": "2022-06-23T13:05:15-07:00",
+          "tree_id": "3f89c789c337893fc1d4453749a7a8f5197d0564",
+          "url": "https://github.com/unicode-org/icu4x/commit/7870301dd1dab0770e84902bc3f13afc4de1b198"
+        },
+        "date": 1656015600114,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 140479,
+            "range": "± 4962",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 33652,
+            "range": "± 1449",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 82304,
+            "range": "± 3816",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 275,
+            "range": "± 18",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 129,
+            "range": "± 5",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 92,
+            "range": "± 5",
             "unit": "ns/iter"
           }
         ]
