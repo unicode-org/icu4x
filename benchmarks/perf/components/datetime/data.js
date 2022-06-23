@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1656007092970,
+  "lastUpdate": 1656015653297,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -41927,6 +41927,102 @@ window.BENCHMARK_DATA = {
             "name": "pattern/parse",
             "value": 5922,
             "range": "± 47",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "hsivonen@hsivonen.fi",
+            "name": "Henri Sivonen",
+            "username": "hsivonen"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "7870301dd1dab0770e84902bc3f13afc4de1b198",
+          "message": "Clean up Hangul math in Composition (#2096)\n\n* Clean up Hangul math in Composition\r\n\r\n* Use named constants instead of magic numbers.\r\n* Use wrapping_sub with HANGUL_S_BASE. (Couldn't find a way to trigger a debug-mode overflow without this, though.)\r\n\r\n* Fix off-by-one errors with trail jamos",
+          "timestamp": "2022-06-23T13:05:15-07:00",
+          "tree_id": "3f89c789c337893fc1d4453749a7a8f5197d0564",
+          "url": "https://github.com/unicode-org/icu4x/commit/7870301dd1dab0770e84902bc3f13afc4de1b198"
+        },
+        "date": 1656015623167,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 120020,
+            "range": "± 189",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 1107340,
+            "range": "± 2096",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 213587,
+            "range": "± 354",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/DateTimeFormat/format_to_write",
+            "value": 112976,
+            "range": "± 170",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/DateTimeFormat/format_to_string",
+            "value": 121371,
+            "range": "± 165",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/format",
+            "value": 119743,
+            "range": "± 485",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/to_string",
+            "value": 127760,
+            "range": "± 556",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/ZonedDateTimeFormat/format_to_write",
+            "value": 209103,
+            "range": "± 503",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/ZonedDateTimeFormat/format_to_string",
+            "value": 220428,
+            "range": "± 381",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/format",
+            "value": 214136,
+            "range": "± 521",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/to_string",
+            "value": 226003,
+            "range": "± 406",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "pattern/parse",
+            "value": 5834,
+            "range": "± 34",
             "unit": "ns/iter"
           }
         ]
