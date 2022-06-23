@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1656006412206,
+  "lastUpdate": 1656014891214,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -18203,6 +18203,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/6d0d0068c1b840eafdd8a4351e0112995eab03fa"
         },
         "date": 1656006382645,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 2737318,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "hsivonen@hsivonen.fi",
+            "name": "Henri Sivonen",
+            "username": "hsivonen"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "7870301dd1dab0770e84902bc3f13afc4de1b198",
+          "message": "Clean up Hangul math in Composition (#2096)\n\n* Clean up Hangul math in Composition\r\n\r\n* Use named constants instead of magic numbers.\r\n* Use wrapping_sub with HANGUL_S_BASE. (Couldn't find a way to trigger a debug-mode overflow without this, though.)\r\n\r\n* Fix off-by-one errors with trail jamos",
+          "timestamp": "2022-06-23T13:05:15-07:00",
+          "tree_id": "3f89c789c337893fc1d4453749a7a8f5197d0564",
+          "url": "https://github.com/unicode-org/icu4x/commit/7870301dd1dab0770e84902bc3f13afc4de1b198"
+        },
+        "date": 1656014857842,
         "tool": "ndjson",
         "benches": [
           {
