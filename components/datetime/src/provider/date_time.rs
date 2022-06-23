@@ -165,6 +165,7 @@ where
         date_patterns_data.try_map_project_with_capture(
             (date_length, time_length, preferences, time_patterns_data),
             |data, (date_length, time_length, preferences, time_patterns_data), _| {
+                // TODO (#1131) - We may be able to remove the clone here.
                 let date = pattern_for_date_length_inner(data.clone(), date_length)
                     .expect_pattern("Lengths are single patterns");
 
@@ -175,6 +176,7 @@ where
                     length::Date::Short => data.length_combinations.short,
                 };
 
+                // TODO (#1131) - We may be able to remove the clone here.
                 let time = pattern_for_time_length_inner(
                     time_patterns_data.get().clone(),
                     time_length,
