@@ -402,10 +402,10 @@ pub struct Value(pub u64);
 #[derive(Debug, Clone, PartialEq)]
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct Samples {
-    /// The list of integer samples provided (denoted 
+    /// The list of integer samples provided (denoted
     /// [in LDML by `@integer`](http://unicode.org/reports/tr35/tr35-numbers.html#Samples)).
     pub integer: Option<SampleList>,
-    /// The list of samples with decimal fractions provided (denoted 
+    /// The list of samples with decimal fractions provided (denoted
     /// [in LDML by `@decimal`](http://unicode.org/reports/tr35/tr35-numbers.html#Samples)).
     pub decimal: Option<SampleList>,
 }
