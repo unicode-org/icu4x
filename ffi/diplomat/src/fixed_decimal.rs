@@ -2,8 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use fixed_decimal::decimal::RoundingMode;
-
 #[diplomat::bridge]
 pub mod ffi {
     use alloc::boxed::Box;
@@ -16,15 +14,6 @@ pub mod ffi {
     #[diplomat::opaque]
     #[diplomat::rust_link(fixed_decimal::decimal::FixedDecimal, Struct)]
     pub struct ICU4XFixedDecimal(pub FixedDecimal);
-
-    /// How to round digits when constructing an ICU4XFixedDecimal from a
-    /// floating point number
-    pub enum ICU4XFixedDecimalRoundingMode {
-        /// Truncate leftover digits
-        Truncate,
-        ///  Round up from 0.5
-        HalfExpand,
-    }
 
     fn convert(dec: FixedDecimal) -> Box<ICU4XFixedDecimal> {
         Box::new(ICU4XFixedDecimal(dec))
@@ -55,9 +44,8 @@ pub mod ffi {
         pub fn create_from_f64_with_lower_magnitude(
             f: f64,
             precision: i16,
-            rounding_mode: ICU4XFixedDecimalRoundingMode,
         ) -> DiplomatResult<Box<ICU4XFixedDecimal>, ICU4XError> {
-            let precision = DoublePrecision::Magnitude(precision, rounding_mode.into());
+            let precision = DoublePrecision::Magnitude(precision);
             FixedDecimal::try_from_f64(f, precision)
                 .map(convert)
                 .map_err(Into::into)
@@ -69,9 +57,8 @@ pub mod ffi {
         pub fn create_from_f64_with_significant_digits(
             f: f64,
             digits: u8,
-            rounding_mode: ICU4XFixedDecimalRoundingMode,
         ) -> DiplomatResult<Box<ICU4XFixedDecimal>, ICU4XError> {
-            let precision = DoublePrecision::SignificantDigits(digits, rounding_mode.into());
+            let precision = DoublePrecision::SignificantDigits(digits);
             FixedDecimal::try_from_f64(f, precision)
                 .map(convert)
                 .map_err(Into::into)
@@ -123,15 +110,6 @@ pub mod ffi {
         pub fn to_string(&self, to: &mut diplomat_runtime::DiplomatWriteable) {
             #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
             self.0.write_to(to).unwrap();
-        }
-    }
-}
-
-impl From<ffi::ICU4XFixedDecimalRoundingMode> for RoundingMode {
-    fn from(other: ffi::ICU4XFixedDecimalRoundingMode) -> Self {
-        match other {
-            ffi::ICU4XFixedDecimalRoundingMode::Truncate => Self::Truncate,
-            ffi::ICU4XFixedDecimalRoundingMode::HalfExpand => Self::HalfExpand,
         }
     }
 }
