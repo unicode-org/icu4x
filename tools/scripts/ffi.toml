@@ -36,7 +36,10 @@ dependencies = [
 script_runner = "@duckscript"
 script = '''
 exit_on_error true
-exec --fail-on-error git diff --exit-code -- ffi/diplomat
+code = exec --get-exit-code git diff --exit-code -- ffi/diplomat
+if code
+    trigger_error "This is the message"
+end
 '''
 
 [tasks.diplomat-gen]
