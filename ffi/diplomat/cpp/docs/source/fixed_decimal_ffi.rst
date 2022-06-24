@@ -64,13 +64,3 @@
 
         Format the :cpp:class:`ICU4XFixedDecimal` as a string.
         See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.write_to>`__ for more information.
-
-    How to round digits when constructing an ICU4XFixedDecimal from a floating point number
-
-    .. cpp:enumerator:: Truncate
-
-        Truncate leftover digits
-
-    .. cpp:enumerator:: HalfExpand
-
-        Round up from 0.5
