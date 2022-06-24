@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1656015633705,
+  "lastUpdate": 1656031093129,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -33089,6 +33089,66 @@ window.BENCHMARK_DATA = {
             "name": "from_string/1000000001",
             "value": 92,
             "range": "± 5",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "younies.mahmoud@gmail.com",
+            "name": "Younies Mahmoud",
+            "username": "younies"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "a9bff5edd1d11ba9100b2892c4ccc30fcee8bf26",
+          "message": "Add the rounded versions to the rounding modes. (#2100)",
+          "timestamp": "2022-06-24T02:26:18+02:00",
+          "tree_id": "2826fa9efcb51b1384282c0a6ce37f2640379d4e",
+          "url": "https://github.com/unicode-org/icu4x/commit/a9bff5edd1d11ba9100b2892c4ccc30fcee8bf26"
+        },
+        "date": 1656031070260,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 122359,
+            "range": "± 5612",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 25056,
+            "range": "± 57",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 72225,
+            "range": "± 408",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 193,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 91,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 73,
+            "range": "± 0",
             "unit": "ns/iter"
           }
         ]
