@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1656112823415,
+  "lastUpdate": 1656112842157,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -18443,6 +18443,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/1257084134cdd5b2e5fd4473eb2da50cf29eeeea"
         },
         "date": 1656112792104,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 2737318,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "elango@unicode.org",
+            "name": "Elango",
+            "username": "echeran"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "47251d48592f7ebb0c8221dca9b60415d90c74ef",
+          "message": "Better error message for verify-diplomat-gen failures (#2106)",
+          "timestamp": "2022-06-24T23:18:19Z",
+          "tree_id": "affb3d5078cfbc0e5f7f04dbeb10b1645dd3a9ee",
+          "url": "https://github.com/unicode-org/icu4x/commit/47251d48592f7ebb0c8221dca9b60415d90c74ef"
+        },
+        "date": 1656112817030,
         "tool": "ndjson",
         "benches": [
           {
