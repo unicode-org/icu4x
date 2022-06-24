@@ -1613,8 +1613,6 @@ pub fn get_for_general_category_group(
 ) -> Result<UnicodeSet<'static>, PropertiesError> {
     let gc_map_payload = maps::get_general_category(provider)?;
     let matching_gc_ranges = gc_map_payload
-        .get()
-        .code_point_trie
         .iter_ranges()
         .filter(|cpm_range| (1 << cpm_range.value as u32) & enum_val.0 != 0)
         .map(|cpm_range| cpm_range.range);
