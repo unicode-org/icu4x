@@ -12,7 +12,7 @@ extern "C" {
 typedef struct ICU4XCodePointMapData16 ICU4XCodePointMapData16;
 #include "ICU4XError.h"
 typedef struct diplomat_result_box_ICU4XCodePointMapData16_ICU4XError {
-    union {
+    union {    
         ICU4XCodePointMapData16* ok;
         ICU4XError err;
     };
