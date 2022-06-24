@@ -185,16 +185,7 @@ impl Locale {
     /// }
     /// ```
     pub fn strict_cmp(&self, other: &[u8]) -> Ordering {
-        let other_iter = other.split(|b| *b == b'-');
-        let r = self.strict_cmp_iter(other_iter);
-        let mut other_iter = match r {
-            SubtagOrderingResult::Subtags(it) => it,
-            SubtagOrderingResult::Ordering(o) => return o,
-        };
-        if other_iter.next().is_some() {
-            return Ordering::Less;
-        }
-        Ordering::Equal
+        self.strict_cmp_iter(other.split(|b| *b == b'-')).end()
     }
 
     /// Compare this `Locale` with an iterator of BCP-47 subtags.
