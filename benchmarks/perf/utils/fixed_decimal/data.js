@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1656031163545,
+  "lastUpdate": 1656042669687,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -33209,6 +33209,66 @@ window.BENCHMARK_DATA = {
             "name": "from_string/1000000001",
             "value": 89,
             "range": "± 2",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "elango@unicode.org",
+            "name": "Elango",
+            "username": "echeran"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "74fa972927418c70479c47998f0ca17b483605ac",
+          "message": "Fix enum discriminant (#2102)",
+          "timestamp": "2022-06-24T03:38:03Z",
+          "tree_id": "720530be815bc26b1470853fb3ef6550ec65978a",
+          "url": "https://github.com/unicode-org/icu4x/commit/74fa972927418c70479c47998f0ca17b483605ac"
+        },
+        "date": 1656042640539,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 122673,
+            "range": "± 12794",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 28938,
+            "range": "± 1382",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 72093,
+            "range": "± 6407",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 219,
+            "range": "± 22",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 115,
+            "range": "± 7",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 90,
+            "range": "± 8",
             "unit": "ns/iter"
           }
         ]
