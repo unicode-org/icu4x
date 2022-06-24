@@ -33,6 +33,7 @@ pub struct CodePointMapData<T: TrieValue> {
 
 /// Private marker type for CodePointMapData
 /// to work for all same-value map properties at once
+#[derive(Clone, Copy, PartialEq, Eq, Hash, Debug)]
 struct ErasedMaplikeMarker<T>(PhantomData<T>);
 impl<T: TrieValue> DataMarker for ErasedMaplikeMarker<T> {
     type Yokeable = UnicodePropertyMapV1<'static, T>;
@@ -92,6 +93,7 @@ impl<T: TrieValue> CodePointMapData<T> {
 
 /// A borrowed wrapper around code point set data, returned by
 /// [`CodePointSetData::as_borrowed()`]. More efficient to query.
+#[derive(Clone, Copy)]
 pub struct CodePointMapDataBorrowed<'a, T: TrieValue> {
     map: &'a UnicodePropertyMapV1<'a, T>,
 }

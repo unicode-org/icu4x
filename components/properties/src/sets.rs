@@ -29,6 +29,7 @@ pub struct CodePointSetData {
 
 /// Private marker type for CodePointSetData
 /// to work for all set properties at once
+#[derive(Clone, Copy, PartialEq, Eq, Hash, Debug)]
 pub(crate) struct ErasedSetlikeMarker;
 impl DataMarker for ErasedSetlikeMarker {
     type Yokeable = UnicodePropertyV1<'static>;
@@ -84,6 +85,7 @@ impl CodePointSetData {
 
 /// A borrowed wrapper around code point set data, returned by
 /// [`CodePointSetData::as_borrowed()`]. More efficient to query.
+#[derive(Clone, Copy)]
 pub struct CodePointSetDataBorrowed<'a> {
     set: &'a UnicodePropertyV1<'a>,
 }

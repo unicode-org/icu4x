@@ -22,11 +22,10 @@
 //! // Create an adapter to provide the data to `BidiInfo`.
 //! let provider = icu_testdata::get_provider();
 //!
-//! let payload = maps::get_bidi_class(&provider).expect("The data should be valid");
-//! let data_struct = payload.get();
-//! let bc = &data_struct.code_point_trie;
+//! let data = maps::get_bidi_class(&provider).expect("The data should be valid");
+//! let bc = data.as_borrowed();
 //!
-//! let adapter = BidiClassAdapter::new(&bc);
+//! let adapter = BidiClassAdapter::new(bc);
 //! // Resolve embedding levels within the text.  Pass `None` to detect the
 //! // paragraph level automatically.
 //!
@@ -48,9 +47,9 @@
 //! ```
 
 use crate::props::BidiClass;
-use icu_codepointtrie::CodePointTrie;
 use unicode_bidi::data_source::BidiDataSource;
 use unicode_bidi::BidiClass as DataSourceBidiClass;
+use crate::maps::CodePointMapDataBorrowed;
 
 /// An adapter to convert from icu4x `BidiClass` to `unicode_bidi::BidiClass`.
 ///
@@ -65,22 +64,21 @@ use unicode_bidi::BidiClass as DataSourceBidiClass;
 ///
 /// let provider = icu_testdata::get_provider();
 ///
-/// let payload = maps::get_bidi_class(&provider).expect("The data should be valid");
-/// let data_struct = payload.get();
-/// let bc = &data_struct.code_point_trie;
+/// let data = maps::get_bidi_class(&provider).expect("The data should be valid");
+/// let bc = data.as_borrowed();
 ///
-/// let adapter = BidiClassAdapter::new(&bc);
+/// let adapter = BidiClassAdapter::new(bc);
 /// assert_eq!(adapter.bidi_class('a'), DataSourceBidiClass::L);
 /// assert_eq!(adapter.bidi_class('ع'), DataSourceBidiClass::AL);
 /// ```
 pub struct BidiClassAdapter<'a> {
-    bidi_trie: &'a CodePointTrie<'a, BidiClass>,
+    data: CodePointMapDataBorrowed<'a, BidiClass>,
 }
 
 impl<'a> BidiClassAdapter<'a> {
     /// Creates new instance of `BidiClassAdapter`.
-    pub fn new(bidi_trie: &'a CodePointTrie<'a, BidiClass>) -> BidiClassAdapter<'a> {
-        BidiClassAdapter { bidi_trie }
+    pub fn new(data: CodePointMapDataBorrowed<'a, BidiClass>) -> BidiClassAdapter<'a> {
+        BidiClassAdapter { data }
     }
 }
 
@@ -98,17 +96,16 @@ impl<'a> BidiDataSource for BidiClassAdapter<'a> {
     ///
     /// let provider = icu_testdata::get_provider();
     ///
-    /// let payload = maps::get_bidi_class(&provider).expect("The data should be valid");
-    /// let data_struct = payload.get();
-    /// let bc = &data_struct.code_point_trie;
+    /// let data = maps::get_bidi_class(&provider).expect("The data should be valid");
+    /// let bc = data.as_borrowed();
     ///
-    /// let adapter = BidiClassAdapter::new(&bc);
+    /// let adapter = BidiClassAdapter::new(bc);
     /// assert_eq!(adapter.bidi_class('a'), DataSourceBidiClass::L);
     /// ```
     ///
     /// [`CodePointTrie`]: icu_codepointtrie::CodePointTrie
     fn bidi_class(&self, c: char) -> DataSourceBidiClass {
-        let bidi_class = self.bidi_trie.get(c as u32);
+        let bidi_class = self.data.get(c);
         match bidi_class {
             BidiClass::LeftToRight => DataSourceBidiClass::L,
             BidiClass::RightToLeft => DataSourceBidiClass::R,
