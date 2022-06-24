@@ -1822,7 +1822,6 @@ dependencies = [
  "icu_provider",
  "icu_testdata",
  "lazy_static",
- "litemap",
  "ndarray",
  "num-traits",
  "serde",
