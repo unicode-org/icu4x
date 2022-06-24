@@ -2109,6 +2109,11 @@ fn test_float() {
             expected: "99900",
         },
         TestCase {
+            input: 0.0099,
+            precision: DoublePrecision::SignificantDigits(1),
+            expected: "0.01",
+        },
+        TestCase {
             input: 9.9888,
             precision: DoublePrecision::SignificantDigits(1),
             expected: "10",
