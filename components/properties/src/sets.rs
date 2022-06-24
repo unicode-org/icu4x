@@ -74,6 +74,12 @@ impl CodePointSetData {
             data: data.map_project(|m, _| m),
         }
     }
+
+    // TODO: we should instead integrate better with UnicodeSetBuilder
+    #[doc(hidden)]
+    pub fn as_unicodeset<'a>(&'a self) -> &'a UnicodeSet<'a> {
+        &self.data.get().inv_list
+    }
 }
 
 /// A borrowed wrapper around code point set data, returned by
@@ -1644,10 +1650,8 @@ mod tests {
         use icu::properties::Script;
 
         let provider = icu_testdata::get_provider();
-        let payload = maps::get_script(&provider).expect("The data should be valid");
-        let data_struct = payload.get();
-        let script = &data_struct.code_point_trie;
-        let thai = script.get_set_for_value(Script::Thai);
+        let data = maps::get_script(&provider).expect("The data should be valid");
+        let thai = data.get_set_for_value(Script::Thai);
 
         assert!(thai.contains('\u{0e01}')); // U+0E01 THAI CHARACTER KO KAI
         assert!(thai.contains('\u{0e50}')); // U+0E50 THAI DIGIT ZERO
@@ -1668,14 +1672,13 @@ mod tests {
             let category_set = sets::get_for_general_category_group(&provider, category)
                 .expect("The data should be valid");
 
-            let gc_payload =
+            let data =
                 maps::get_general_category(&provider).expect("The data should be valid");
-            let data_struct = gc_payload.get();
-            let gc = &data_struct.code_point_trie;
+            let gc = data.as_borrowed();
 
             let mut builder = UnicodeSetBuilder::new();
             for subcategory in subcategories {
-                builder.add_set(&gc.get_set_for_value(*subcategory));
+                builder.add_set(gc.get_set_for_value(*subcategory).as_unicodeset());
             }
             let combined_set = builder.build();
             println!("{:?} {:?}", category, subcategories);
@@ -1758,9 +1761,8 @@ mod tests {
         use icu::properties::GeneralCategory;
 
         let provider = icu_testdata::get_provider();
-        let gc_payload = maps::get_general_category(&provider).expect("The data should be valid");
-        let data_struct = gc_payload.get();
-        let gc = &data_struct.code_point_trie;
+        let data = maps::get_general_category(&provider).expect("The data should be valid");
+        let gc = data.as_borrowed();
         let surrogates = gc.get_set_for_value(GeneralCategory::Surrogate);
 
         assert!(surrogates.contains_u32(0xd800));
