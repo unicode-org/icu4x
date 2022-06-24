@@ -64,6 +64,7 @@ macro_rules! expand {
     ) => {
 
             $(
+                #[doc = core::concat!("Data marker for the '", $bin_s, "' Unicode property")]
                 pub struct $bin_marker;
 
                 impl DataMarker for $bin_marker {
@@ -90,6 +91,7 @@ macro_rules! expand {
             )+
 
             $(
+                #[doc = core::concat!("Data marker for the '", $enum_s, "' Unicode property")]
                 pub struct $enum_marker;
 
                 impl DataMarker for $enum_marker {
