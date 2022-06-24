@@ -1946,7 +1946,7 @@ impl FixedDecimal {
 
                 // This means the significant digits has been increased by 1.
                 if decimal.magnitude > old_magnitude {
-                    decimal.truncate_right(position + 1);
+                    decimal.lower_magnitude = cmp::min(0, position + 1);
                 }
             }
         }
