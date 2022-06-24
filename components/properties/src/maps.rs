@@ -149,7 +149,7 @@ macro_rules! make_map_property {
 make_map_property! {
     property: "General_Category";
     marker: GeneralCategoryProperty;
-    value: GeneralCategory;
+    value: crate::GeneralCategory;
     resource_marker: GeneralCategoryV1Marker;
     func:
     /// Return a [`CodePointTrie`] for the General_Category Unicode enumerated property. See [`GeneralCategory`].
@@ -178,7 +178,7 @@ make_map_property! {
 make_map_property! {
     property: "Bidi_Class";
     marker: BidiClassProperty;
-    value: BidiClass;
+    value: crate::BidiClass;
     resource_marker: BidiClassV1Marker;
     func:
     /// Return a [`CodePointTrie`] for the Bidi_Class Unicode enumerated property. See [`BidiClass`].
@@ -207,7 +207,7 @@ make_map_property! {
 make_map_property! {
     property: "Script";
     marker: ScriptProperty;
-    value: Script;
+    value: crate::Script;
     resource_marker: ScriptV1Marker;
     func:
     /// Return a [`CodePointTrie`] for the Script Unicode enumerated property. See [`Script`].
@@ -236,7 +236,7 @@ make_map_property! {
 make_map_property! {
     property: "East_Asian_Width";
     marker: EastAsianWidthProperty;
-    value: EastAsianWidth;
+    value: crate::EastAsianWidth;
     resource_marker: EastAsianWidthV1Marker;
     func:
     /// Return a [`CodePointTrie`] for the East_Asian_Width Unicode enumerated
@@ -262,7 +262,7 @@ make_map_property! {
 make_map_property! {
     property: "Line_Break";
     marker: LineBreakProperty;
-    value: LineBreak;
+    value: crate::LineBreak;
     resource_marker: LineBreakV1Marker;
     func:
     /// Return a [`CodePointTrie`] for the Line_Break Unicode enumerated
@@ -288,7 +288,7 @@ make_map_property! {
 make_map_property! {
     property: "Grapheme_Cluster_Break";
     marker: GraphemeClusterBreakProperty;
-    value: GraphemeClusterBreak;
+    value: crate::GraphemeClusterBreak;
     resource_marker: GraphemeClusterBreakV1Marker;
     func:
     /// Return a [`CodePointTrie`] for the Grapheme_Cluster_Break Unicode enumerated
@@ -314,7 +314,7 @@ make_map_property! {
 make_map_property! {
     property: "Word_Break";
     marker: WordBreakProperty;
-    value: WordBreak;
+    value: crate::WordBreak;
     resource_marker: WordBreakV1Marker;
     func:
     /// Return a [`CodePointTrie`] for the Word_Break Unicode enumerated
@@ -340,7 +340,7 @@ make_map_property! {
 make_map_property! {
     property: "Sentence_Break";
     marker: SentenceBreakProperty;
-    value: SentenceBreak;
+    value: crate::SentenceBreak;
     resource_marker: SentenceBreakV1Marker;
     func:
     /// Return a [`CodePointTrie`] for the Sentence_Break Unicode enumerated
@@ -366,7 +366,7 @@ make_map_property! {
 make_map_property! {
     property: "Canonical_Combining_Class";
     marker: CanonicalCombiningClassProperty;
-    value: CanonicalCombiningClass;
+    value: crate::CanonicalCombiningClass;
     resource_marker: CanonicalCombiningClassV1Marker;
     func:
     /// Return a [`CodePointTrie`] for the Canonical_Combining_Class Unicode property. See
