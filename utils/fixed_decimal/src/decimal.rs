@@ -1940,7 +1940,7 @@ impl FixedDecimal {
                     return Err(Error::Limit);
                 }
 
-                let position = decimal.magnitude.wrapping_sub((sig - 1) as i16);
+                let position = decimal.magnitude - (sig as i16) + 1;
                 let old_magnitude = decimal.magnitude;
                 decimal.half_even(position);
 
