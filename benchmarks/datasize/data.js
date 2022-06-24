@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1656042038084,
+  "lastUpdate": 1656044829536,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -18323,6 +18323,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/74fa972927418c70479c47998f0ca17b483605ac"
         },
         "date": 1656042008639,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 2737318,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "m_kato@ga2.so-net.ne.jp",
+            "name": "Makoto Kato",
+            "username": "makotokato"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "c9aef93b9f57996b2717b359ae2015ca7e5579be",
+          "message": "Merge segmenter_lstm with segmenter (#2087)",
+          "timestamp": "2022-06-24T13:24:43+09:00",
+          "tree_id": "d66a523bb465356c245036b09465ca78f558f4d2",
+          "url": "https://github.com/unicode-org/icu4x/commit/c9aef93b9f57996b2717b359ae2015ca7e5579be"
+        },
+        "date": 1656044803744,
         "tool": "ndjson",
         "benches": [
           {
