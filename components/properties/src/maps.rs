@@ -162,13 +162,12 @@ make_map_property! {
     ///
     /// let provider = icu_testdata::get_provider();
     ///
-    /// let payload =
+    /// let data =
     ///     maps::get_general_category(&provider)
     ///         .expect("The data should be valid");
-    /// let data_struct = payload.get();
-    /// let gc = &data_struct.code_point_trie;
-    /// assert_eq!(gc.get('木' as u32), GeneralCategory::OtherLetter);  // U+6728
-    /// assert_eq!(gc.get('🎃' as u32), GeneralCategory::OtherSymbol);  // U+1F383 JACK-O-LANTERN
+    /// let gc = data.as_borrowed();
+    /// assert_eq!(gc.get('木'), GeneralCategory::OtherLetter);  // U+6728
+    /// assert_eq!(gc.get('🎃'), GeneralCategory::OtherSymbol);  // U+1F383 JACK-O-LANTERN
     /// ```
     ///
     /// [`CodePointTrie`]: icu_codepointtrie::CodePointTrie
@@ -191,13 +190,12 @@ make_map_property! {
     ///
     /// let provider = icu_testdata::get_provider();
     ///
-    /// let payload =
+    /// let data =
     ///     maps::get_bidi_class(&provider)
     ///         .expect("The data should be valid");
-    /// let data_struct = payload.get();
-    /// let bc = &data_struct.code_point_trie;
-    /// assert_eq!(bc.get('y' as u32), BidiClass::LeftToRight);  // U+0079
-    /// assert_eq!(bc.get('ع' as u32), BidiClass::ArabicLetter);  // U+0639
+    /// let bc = data.as_borrowed();
+    /// assert_eq!(bc.get('y'), BidiClass::LeftToRight);  // U+0079
+    /// assert_eq!(bc.get('ع'), BidiClass::ArabicLetter);  // U+0639
     /// ```
     ///
     /// [`CodePointTrie`]: icu_codepointtrie::CodePointTrie
@@ -220,13 +218,12 @@ make_map_property! {
     ///
     /// let provider = icu_testdata::get_provider();
     ///
-    /// let payload =
+    /// let data =
     ///     maps::get_script(&provider)
     ///         .expect("The data should be valid");
-    /// let data_struct = payload.get();
-    /// let script = &data_struct.code_point_trie;
-    /// assert_eq!(script.get('木' as u32), Script::Han);  // U+6728
-    /// assert_eq!(script.get('🎃' as u32), Script::Common);  // U+1F383 JACK-O-LANTERN
+    /// let script = data.as_borrowed();
+    /// assert_eq!(script.get('木'), Script::Han);  // U+6728
+    /// assert_eq!(script.get('🎃'), Script::Common);  // U+1F383 JACK-O-LANTERN
     /// ```
     ///
     /// [`CodePointTrie`]: icu_codepointtrie::CodePointTrie
@@ -248,11 +245,11 @@ make_map_property! {
     /// use icu::properties::{maps, EastAsianWidth};
     ///
     /// let provider = icu_testdata::get_provider();
-    /// let payload = maps::get_east_asian_width(&provider).expect("The data should be valid!");
+    /// let data = maps::get_east_asian_width(&provider).expect("The data should be valid!");
     /// let eaw = &payload.get().code_point_trie;
     ///
-    /// assert_eq!(eaw.get('ｱ' as u32), EastAsianWidth::Halfwidth); // U+FF71: Halfwidth Katakana Letter A
-    /// assert_eq!(eaw.get('ア' as u32), EastAsianWidth::Wide); //U+30A2: Katakana Letter A
+    /// assert_eq!(eaw.get('ｱ'), EastAsianWidth::Halfwidth); // U+FF71: Halfwidth Katakana Letter A
+    /// assert_eq!(eaw.get('ア'), EastAsianWidth::Wide); //U+30A2: Katakana Letter A
     /// ```
     ///
     /// [`CodePointTrie`]: icu_codepointtrie::CodePointTrie
@@ -274,11 +271,11 @@ make_map_property! {
     /// use icu::properties::{maps, LineBreak};
     ///
     /// let provider = icu_testdata::get_provider();
-    /// let payload = maps::get_line_break(&provider).expect("The data should be valid!");
+    /// let data = maps::get_line_break(&provider).expect("The data should be valid!");
     /// let lb = &payload.get().code_point_trie;
     ///
-    /// assert_eq!(lb.get(')' as u32), LineBreak::CloseParenthesis); // U+0029: Right Parenthesis
-    /// assert_eq!(lb.get('ぁ' as u32), LineBreak::ConditionalJapaneseStarter); //U+3041: Hiragana Letter Small A
+    /// assert_eq!(lb.get(')'), LineBreak::CloseParenthesis); // U+0029: Right Parenthesis
+    /// assert_eq!(lb.get('ぁ'), LineBreak::ConditionalJapaneseStarter); //U+3041: Hiragana Letter Small A
     /// ```
     ///
     /// [`CodePointTrie`]: icu_codepointtrie::CodePointTrie
@@ -300,11 +297,11 @@ make_map_property! {
     /// use icu::properties::{maps, GraphemeClusterBreak};
     ///
     /// let provider = icu_testdata::get_provider();
-    /// let payload = maps::get_grapheme_cluster_break(&provider).expect("The data should be valid!");
+    /// let data = maps::get_grapheme_cluster_break(&provider).expect("The data should be valid!");
     /// let gcb = &payload.get().code_point_trie;
     ///
-    /// assert_eq!(gcb.get('🇦' as u32), GraphemeClusterBreak::RegionalIndicator); // U+1F1E6: Regional Indicator Symbol Letter A
-    /// assert_eq!(gcb.get('ำ' as u32), GraphemeClusterBreak::SpacingMark); //U+0E33: Thai Character Sara Am
+    /// assert_eq!(gcb.get('🇦'), GraphemeClusterBreak::RegionalIndicator); // U+1F1E6: Regional Indicator Symbol Letter A
+    /// assert_eq!(gcb.get('ำ'), GraphemeClusterBreak::SpacingMark); //U+0E33: Thai Character Sara Am
     /// ```
     ///
     /// [`CodePointTrie`]: icu_codepointtrie::CodePointTrie
@@ -326,11 +323,11 @@ make_map_property! {
     /// use icu::properties::{maps, WordBreak};
     ///
     /// let provider = icu_testdata::get_provider();
-    /// let payload = maps::get_word_break(&provider).expect("The data should be valid!");
+    /// let data = maps::get_word_break(&provider).expect("The data should be valid!");
     /// let wb = &payload.get().code_point_trie;
     ///
-    /// assert_eq!(wb.get('.' as u32), WordBreak::MidNumLet); // U+002E: Full Stop
-    /// assert_eq!(wb.get('，' as u32), WordBreak::MidNum); // U+FF0C: Fullwidth Comma
+    /// assert_eq!(wb.get('.'), WordBreak::MidNumLet); // U+002E: Full Stop
+    /// assert_eq!(wb.get('，'), WordBreak::MidNum); // U+FF0C: Fullwidth Comma
     /// ```
     ///
     /// [`CodePointTrie`]: icu_codepointtrie::CodePointTrie
@@ -352,11 +349,11 @@ make_map_property! {
     /// use icu::properties::{maps, SentenceBreak};
     ///
     /// let provider = icu_testdata::get_provider();
-    /// let payload = maps::get_sentence_break(&provider).expect("The data should be valid!");
+    /// let data = maps::get_sentence_break(&provider).expect("The data should be valid!");
     /// let sb = &payload.get().code_point_trie;
     ///
-    /// assert_eq!(sb.get('９' as u32), SentenceBreak::Numeric); // U+FF19: Fullwidth Digit Nine
-    /// assert_eq!(sb.get(',' as u32), SentenceBreak::SContinue); // U+002C: Comma
+    /// assert_eq!(sb.get('９'), SentenceBreak::Numeric); // U+FF19: Fullwidth Digit Nine
+    /// assert_eq!(sb.get(','), SentenceBreak::SContinue); // U+002C: Comma
     /// ```
     ///
     /// [`CodePointTrie`]: icu_codepointtrie::CodePointTrie
@@ -378,10 +375,10 @@ make_map_property! {
     /// use icu::properties::{maps, CanonicalCombiningClass};
     ///
     /// let provider = icu_testdata::get_provider();
-    /// let payload = maps::get_canonical_combining_class(&provider).expect("The data should be valid!");
+    /// let data = maps::get_canonical_combining_class(&provider).expect("The data should be valid!");
     /// let sb = &payload.get().code_point_trie;
     ///
-    /// assert_eq!(sb.get('a' as u32), CanonicalCombiningClass::NotReordered); // U+0061: LATIN SMALL LETTER A
+    /// assert_eq!(sb.get('a'), CanonicalCombiningClass::NotReordered); // U+0061: LATIN SMALL LETTER A
     /// assert_eq!(sb.get(0x0301), CanonicalCombiningClass::Above); // U+0301: COMBINING ACUTE ACCENT
     /// ```
     ///
