@@ -2,23 +2,24 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::error::Error;
+use crate::lstm_error::Error;
+use crate::lstm_structs::LstmDataMarker;
 use crate::math_helper;
-use crate::structs;
 use alloc::string::{String, ToString};
 use alloc::vec::Vec;
 use core::str;
 use icu_provider::DataPayload;
 use ndarray::{Array1, Array2, ArrayBase, Dim, ViewRepr};
 use unicode_segmentation::UnicodeSegmentation;
+use zerovec::ule::AsULE;
 
 pub struct Lstm {
-    data: DataPayload<structs::LstmDataMarker>,
+    data: DataPayload<LstmDataMarker>,
 }
 
 impl Lstm {
     /// `try_new` is the initiator of struct `Lstm`
-    pub fn try_new(data: DataPayload<structs::LstmDataMarker>) -> Result<Self, Error> {
+    pub fn try_new(data: DataPayload<LstmDataMarker>) -> Result<Self, Error> {
         if data.get().dic.len() > core::i16::MAX as usize {
             return Err(Error::Limit);
         }
@@ -43,6 +44,7 @@ impl Lstm {
     }
 
     /// `get_model_name` returns the name of the LSTM model.
+    #[allow(dead_code)]
     pub fn get_model_name(&self) -> &str {
         &self.data.get().model
     }
@@ -62,12 +64,12 @@ impl Lstm {
 
     /// `_return_id` returns the id corresponding to a code point or a grapheme cluster based on the model dictionary.
     fn return_id(&self, g: &str) -> i16 {
-        *self
-            .data
-            .get()
-            .dic
-            .get(g)
-            .unwrap_or(&(self.data.get().dic.len() as i16))
+        let id = self.data.get().dic.get(g);
+        if let Some(id) = id {
+            i16::from_unaligned(*id)
+        } else {
+            self.data.get().dic.len() as i16
+        }
     }
 
     /// `compute_hc1` implemens the evaluation of one LSTM layer.
@@ -166,5 +168,97 @@ impl Lstm {
             bies.push(self.compute_bies(probs).unwrap());
         }
         bies
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use serde::{Deserialize, Serialize};
+    use std::fs::File;
+    use std::io::BufReader;
+
+    /// `TestCase` is a struct used to store a single test case.
+    /// Each test case has two attributs: `unseg` which denots the unsegmented line, and `true_bies` which indicates the Bies
+    /// sequence representing the true segmentation.
+    #[derive(PartialEq, Debug, Serialize, Deserialize)]
+    pub struct TestCase {
+        pub unseg: String,
+        pub expected_bies: String,
+        pub true_bies: String,
+    }
+
+    /// `TestTextData` is a struct to store a vector of `TestCase` that represents a test text.
+    #[derive(PartialEq, Debug, Serialize, Deserialize)]
+    pub struct TestTextData {
+        pub testcases: Vec<TestCase>,
+    }
+
+    #[derive(Debug)]
+    pub struct TestText {
+        pub data: TestTextData,
+    }
+
+    impl TestText {
+        pub fn new(data: TestTextData) -> Self {
+            Self { data }
+        }
+    }
+
+    fn load_lstm_data(filename: &str) -> DataPayload<LstmDataMarker> {
+        DataPayload::<LstmDataMarker>::try_from_rc_buffer_badly(
+            std::fs::read(filename)
+                .expect("File can read to end")
+                .into(),
+            |bytes| serde_json::from_slice(bytes),
+        )
+        .expect("JSON syntax error")
+    }
+
+    fn load_test_text(filename: &str) -> TestTextData {
+        let file = File::open(filename).expect("File should be present");
+        let reader = BufReader::new(file);
+        serde_json::from_reader(reader).expect("JSON syntax error")
+    }
+
+    #[test]
+    #[ignore = "dic entries of graphclust data aren't sorted"]
+    fn test_model_loading() {
+        let filename = "tests/testdata/Thai_graphclust_exclusive_model4_heavy/weights.json";
+        let lstm_data = load_lstm_data(filename);
+        let lstm = Lstm::try_new(lstm_data).unwrap();
+        assert_eq!(
+            lstm.get_model_name(),
+            String::from("Thai_graphclust_exclusive_model4_heavy")
+        );
+    }
+
+    #[test]
+    fn segment_file_by_lstm() {
+        // Choosing the embedding system. It can be "graphclust" or "codepoints".
+        let embedding: &str = "codepoints";
+        let mut model_filename = "tests/testdata/Thai_".to_owned();
+        model_filename.push_str(embedding);
+        model_filename.push_str("_exclusive_model4_heavy/weights.json");
+        let lstm_data = load_lstm_data(&model_filename);
+        let lstm = Lstm::try_new(lstm_data).unwrap();
+
+        // Importing the test data
+        let mut test_text_filename = "tests/testdata/test_text_".to_owned();
+        test_text_filename.push_str(embedding);
+        test_text_filename.push_str(".json");
+        let test_text_data = load_test_text(&test_text_filename);
+        let test_text = TestText::new(test_text_data);
+
+        // Testing
+        for test_case in test_text.data.testcases {
+            let lstm_output = lstm.word_segmenter(&test_case.unseg);
+            println!("Test case      : {}", test_case.unseg);
+            println!("Expected bies  : {}", test_case.expected_bies);
+            println!("Estimated bies : {}", lstm_output);
+            println!("True bies      : {}", test_case.true_bies);
+            println!("****************************************************");
+            assert_eq!(test_case.expected_bies, lstm_output);
+        }
     }
 }
