@@ -125,11 +125,10 @@ make_set_property! {
     /// use icu_properties::sets;
     ///
     /// let provider = icu_testdata::get_provider();
-    /// let payload =
+    /// let data =
     ///     sets::get_ascii_hex_digit(&provider)
     ///         .expect("The data should be valid");
-    /// let data_struct = payload.get();
-    /// let ascii_hex_digit = &data_struct.inv_list;
+    /// let ascii_hex_digit = data.as_borrowed();;
     ///
     /// assert!(ascii_hex_digit.contains('3'));
     /// assert!(!ascii_hex_digit.contains('੩'));  // U+0A69 GURMUKHI DIGIT THREE
@@ -163,11 +162,10 @@ make_set_property! {
     /// use icu_properties::sets;
     ///
     /// let provider = icu_testdata::get_provider();
-    /// let payload =
+    /// let data =
     ///     sets::get_alphabetic(&provider)
     ///         .expect("The data should be valid");
-    /// let data_struct = payload.get();
-    /// let alphabetic = &data_struct.inv_list;
+    /// let alphabetic = data.as_borrowed();;
     ///
     /// assert!(!alphabetic.contains('3'));
     /// assert!(!alphabetic.contains('੩'));  // U+0A69 GURMUKHI DIGIT THREE
@@ -192,11 +190,10 @@ make_set_property! {
     /// use icu_properties::sets;
     ///
     /// let provider = icu_testdata::get_provider();
-    /// let payload =
+    /// let data =
     ///     sets::get_bidi_control(&provider)
     ///         .expect("The data should be valid");
-    /// let data_struct = payload.get();
-    /// let bidi_control = &data_struct.inv_list;
+    /// let bidi_control = data.as_borrowed();;
     ///
     /// assert!(bidi_control.contains_u32(0x200F));  // RIGHT-TO-LEFT MARK
     /// assert!(!bidi_control.contains('ش'));  // U+0634 ARABIC LETTER SHEEN
@@ -218,11 +215,10 @@ make_set_property! {
     /// use icu_properties::sets;
     ///
     /// let provider = icu_testdata::get_provider();
-    /// let payload =
+    /// let data =
     ///     sets::get_bidi_mirrored(&provider)
     ///         .expect("The data should be valid");
-    /// let data_struct = payload.get();
-    /// let bidi_mirrored = &data_struct.inv_list;
+    /// let bidi_mirrored = data.as_borrowed();;
     ///
     /// assert!(bidi_mirrored.contains('['));
     /// assert!(bidi_mirrored.contains(']'));
@@ -256,11 +252,10 @@ make_set_property! {
     /// use icu_properties::sets;
     ///
     /// let provider = icu_testdata::get_provider();
-    /// let payload =
+    /// let data =
     ///     sets::get_cased(&provider)
     ///         .expect("The data should be valid");
-    /// let data_struct = payload.get();
-    /// let cased = &data_struct.inv_list;
+    /// let cased = data.as_borrowed();;
     ///
     /// assert!(cased.contains('Ꙡ'));  // U+A660 CYRILLIC CAPITAL LETTER REVERSED TSE
     /// assert!(!cased.contains('ދ'));  // U+078B THAANA LETTER DHAALU
@@ -282,11 +277,10 @@ make_set_property! {
     /// use icu_properties::sets;
     ///
     /// let provider = icu_testdata::get_provider();
-    /// let payload =
+    /// let data =
     ///     sets::get_case_ignorable(&provider)
     ///         .expect("The data should be valid");
-    /// let data_struct = payload.get();
-    /// let case_ignorable = &data_struct.inv_list;
+    /// let case_ignorable = data.as_borrowed();;
     ///
     /// assert!(case_ignorable.contains(':'));
     /// assert!(!case_ignorable.contains('λ'));  // U+03BB GREEK SMALL LETTER LAMDA
@@ -319,11 +313,10 @@ make_set_property! {
     /// use icu_properties::sets;
     ///
     /// let provider = icu_testdata::get_provider();
-    /// let payload =
+    /// let data =
     ///     sets::get_changes_when_casefolded(&provider)
     ///         .expect("The data should be valid");
-    /// let data_struct = payload.get();
-    /// let changes_when_casefolded = &data_struct.inv_list;
+    /// let changes_when_casefolded = data.as_borrowed();;
     ///
     /// assert!(changes_when_casefolded.contains('ß'));  // U+00DF LATIN SMALL LETTER SHARP S
     /// assert!(!changes_when_casefolded.contains('ᜉ'));  // U+1709 TAGALOG LETTER PA
@@ -355,11 +348,10 @@ make_set_property! {
     /// use icu_properties::sets;
     ///
     /// let provider = icu_testdata::get_provider();
-    /// let payload =
+    /// let data =
     ///     sets::get_changes_when_nfkc_casefolded(&provider)
     ///         .expect("The data should be valid");
-    /// let data_struct = payload.get();
-    /// let changes_when_nfkc_casefolded = &data_struct.inv_list;
+    /// let changes_when_nfkc_casefolded = data.as_borrowed();;
     ///
     /// assert!(changes_when_nfkc_casefolded.contains('🄵'));  // U+1F135 SQUARED LATIN CAPITAL LETTER F
     /// assert!(!changes_when_nfkc_casefolded.contains('f'));
@@ -381,11 +373,10 @@ make_set_property! {
     /// use icu_properties::sets;
     ///
     /// let provider = icu_testdata::get_provider();
-    /// let payload =
+    /// let data =
     ///     sets::get_changes_when_lowercased(&provider)
     ///         .expect("The data should be valid");
-    /// let data_struct = payload.get();
-    /// let changes_when_lowercased = &data_struct.inv_list;
+    /// let changes_when_lowercased = data.as_borrowed();;
     ///
     /// assert!(changes_when_lowercased.contains('Ⴔ'));  // U+10B4 GEORGIAN CAPITAL LETTER PHAR
     /// assert!(!changes_when_lowercased.contains('ფ'));  // U+10E4 GEORGIAN LETTER PHAR
@@ -407,11 +398,10 @@ make_set_property! {
     /// use icu_properties::sets;
     ///
     /// let provider = icu_testdata::get_provider();
-    /// let payload =
+    /// let data =
     ///     sets::get_changes_when_titlecased(&provider)
     ///         .expect("The data should be valid");
-    /// let data_struct = payload.get();
-    /// let changes_when_titlecased = &data_struct.inv_list;
+    /// let changes_when_titlecased = data.as_borrowed();;
     ///
     /// assert!(changes_when_titlecased.contains('æ'));  // U+00E6 LATIN SMALL LETTER AE
     /// assert!(!changes_when_titlecased.contains('Æ'));  // U+00E6 LATIN CAPITAL LETTER AE
@@ -433,11 +423,10 @@ make_set_property! {
     /// use icu_properties::sets;
     ///
     /// let provider = icu_testdata::get_provider();
-    /// let payload =
+    /// let data =
     ///     sets::get_changes_when_uppercased(&provider)
     ///         .expect("The data should be valid");
-    /// let data_struct = payload.get();
-    /// let changes_when_uppercased = &data_struct.inv_list;
+    /// let changes_when_uppercased = data.as_borrowed();;
     ///
     /// assert!(changes_when_uppercased.contains('ւ'));  // U+0582 ARMENIAN SMALL LETTER YIWN
     /// assert!(!changes_when_uppercased.contains('Ւ'));  // U+0552 ARMENIAN CAPITAL LETTER YIWN
@@ -460,11 +449,10 @@ make_set_property! {
     /// use icu_properties::sets;
     ///
     /// let provider = icu_testdata::get_provider();
-    /// let payload =
+    /// let data =
     ///     sets::get_dash(&provider)
     ///         .expect("The data should be valid");
-    /// let data_struct = payload.get();
-    /// let dash = &data_struct.inv_list;
+    /// let dash = data.as_borrowed();;
     ///
     /// assert!(dash.contains('⸺'));  // U+2E3A TWO-EM DASH
     /// assert!(dash.contains('-'));  // U+002D
@@ -488,11 +476,10 @@ make_set_property! {
     /// use icu_properties::sets;
     ///
     /// let provider = icu_testdata::get_provider();
-    /// let payload =
+    /// let data =
     ///     sets::get_deprecated(&provider)
     ///         .expect("The data should be valid");
-    /// let data_struct = payload.get();
-    /// let deprecated = &data_struct.inv_list;
+    /// let deprecated = data.as_borrowed();;
     ///
     /// assert!(deprecated.contains('ឣ'));  // U+17A3 KHMER INDEPENDENT VOWEL QAQ
     /// assert!(!deprecated.contains('A'));
@@ -517,11 +504,10 @@ make_set_property! {
     /// use icu_properties::sets;
     ///
     /// let provider = icu_testdata::get_provider();
-    /// let payload =
+    /// let data =
     ///     sets::get_default_ignorable_code_point(&provider)
     ///         .expect("The data should be valid");
-    /// let data_struct = payload.get();
-    /// let default_ignorable_code_point = &data_struct.inv_list;
+    /// let default_ignorable_code_point = data.as_borrowed();;
     ///
     /// assert!(default_ignorable_code_point.contains_u32(0x180B));  // MONGOLIAN FREE VARIATION SELECTOR ONE
     /// assert!(!default_ignorable_code_point.contains('E'));
@@ -543,11 +529,10 @@ make_set_property! {
     /// use icu_properties::sets;
     ///
     /// let provider = icu_testdata::get_provider();
-    /// let payload =
+    /// let data =
     ///     sets::get_diacritic(&provider)
     ///         .expect("The data should be valid");
-    /// let data_struct = payload.get();
-    /// let diacritic = &data_struct.inv_list;
+    /// let diacritic = data.as_borrowed();;
     ///
     /// assert!(diacritic.contains('\u{05B3}'));  // HEBREW POINT HATAF QAMATS
     /// assert!(!diacritic.contains('א'));  // U+05D0 HEBREW LETTER ALEF
@@ -569,11 +554,10 @@ make_set_property! {
     /// use icu_properties::sets;
     ///
     /// let provider = icu_testdata::get_provider();
-    /// let payload =
+    /// let data =
     ///     sets::get_emoji_modifier_base(&provider)
     ///         .expect("The data should be valid");
-    /// let data_struct = payload.get();
-    /// let emoji_modifier_base = &data_struct.inv_list;
+    /// let emoji_modifier_base = data.as_borrowed();;
     ///
     /// assert!(emoji_modifier_base.contains('✊'));  // U+270A RAISED FIST
     /// assert!(!emoji_modifier_base.contains('⛰'));  // U+26F0 MOUNTAIN
@@ -596,11 +580,10 @@ make_set_property! {
     /// use icu_properties::sets;
     ///
     /// let provider = icu_testdata::get_provider();
-    /// let payload =
+    /// let data =
     ///     sets::get_emoji_component(&provider)
     ///         .expect("The data should be valid");
-    /// let data_struct = payload.get();
-    /// let emoji_component = &data_struct.inv_list;
+    /// let emoji_component = data.as_borrowed();;
     ///
     /// assert!(emoji_component.contains('🇹'));  // U+1F1F9 REGIONAL INDICATOR SYMBOL LETTER T
     /// assert!(emoji_component.contains_u32(0x20E3));  // COMBINING ENCLOSING KEYCAP
@@ -624,11 +607,10 @@ make_set_property! {
     /// use icu_properties::sets;
     ///
     /// let provider = icu_testdata::get_provider();
-    /// let payload =
+    /// let data =
     ///     sets::get_emoji_modifier(&provider)
     ///         .expect("The data should be valid");
-    /// let data_struct = payload.get();
-    /// let emoji_modifier = &data_struct.inv_list;
+    /// let emoji_modifier = data.as_borrowed();;
     ///
     /// assert!(emoji_modifier.contains_u32(0x1F3FD));  // EMOJI MODIFIER FITZPATRICK TYPE-4
     /// assert!(!emoji_modifier.contains_u32(0x200C));  // ZERO WIDTH NON-JOINER
@@ -650,11 +632,10 @@ make_set_property! {
     /// use icu_properties::sets;
     ///
     /// let provider = icu_testdata::get_provider();
-    /// let payload =
+    /// let data =
     ///     sets::get_emoji(&provider)
     ///         .expect("The data should be valid");
-    /// let data_struct = payload.get();
-    /// let emoji = &data_struct.inv_list;
+    /// let emoji = data.as_borrowed();;
     ///
     /// assert!(emoji.contains('🔥'));  // U+1F525 FIRE
     /// assert!(!emoji.contains('V'));
@@ -676,11 +657,10 @@ make_set_property! {
     /// use icu_properties::sets;
     ///
     /// let provider = icu_testdata::get_provider();
-    /// let payload =
+    /// let data =
     ///     sets::get_emoji_presentation(&provider)
     ///         .expect("The data should be valid");
-    /// let data_struct = payload.get();
-    /// let emoji_presentation = &data_struct.inv_list;
+    /// let emoji_presentation = data.as_borrowed();;
     ///
     /// assert!(emoji_presentation.contains('🦬')); // U+1F9AC BISON
     /// assert!(!emoji_presentation.contains('♻'));  // U+267B BLACK UNIVERSAL RECYCLING SYMBOL
@@ -703,11 +683,10 @@ make_set_property! {
     /// use icu_properties::sets;
     ///
     /// let provider = icu_testdata::get_provider();
-    /// let payload =
+    /// let data =
     ///     sets::get_extender(&provider)
     ///         .expect("The data should be valid");
-    /// let data_struct = payload.get();
-    /// let extender = &data_struct.inv_list;
+    /// let extender = data.as_borrowed();;
     ///
     /// assert!(extender.contains('ヾ'));  // U+30FE KATAKANA VOICED ITERATION MARK
     /// assert!(extender.contains('ー'));  // U+30FC KATAKANA-HIRAGANA PROLONGED SOUND MARK
@@ -731,11 +710,10 @@ make_set_property! {
     /// use icu_properties::sets;
     ///
     /// let provider = icu_testdata::get_provider();
-    /// let payload =
+    /// let data =
     ///     sets::get_extended_pictographic(&provider)
     ///         .expect("The data should be valid");
-    /// let data_struct = payload.get();
-    /// let extended_pictographic = &data_struct.inv_list;
+    /// let extended_pictographic = data.as_borrowed();;
     ///
     /// assert!(extended_pictographic.contains('🥳')); // U+1F973 FACE WITH PARTY HORN AND PARTY HAT
     /// assert!(!extended_pictographic.contains('🇪'));  // U+1F1EA REGIONAL INDICATOR SYMBOL LETTER E
@@ -769,11 +747,10 @@ make_set_property! {
     /// use icu_properties::sets;
     ///
     /// let provider = icu_testdata::get_provider();
-    /// let payload =
+    /// let data =
     ///     sets::get_grapheme_base(&provider)
     ///         .expect("The data should be valid");
-    /// let data_struct = payload.get();
-    /// let grapheme_base = &data_struct.inv_list;
+    /// let grapheme_base = data.as_borrowed();;
     ///
     /// assert!(grapheme_base.contains('ക'));  // U+0D15 MALAYALAM LETTER KA
     /// assert!(grapheme_base.contains('\u{0D3F}'));  // U+0D3F MALAYALAM VOWEL SIGN I
@@ -797,11 +774,10 @@ make_set_property! {
     /// use icu_properties::sets;
     ///
     /// let provider = icu_testdata::get_provider();
-    /// let payload =
+    /// let data =
     ///     sets::get_grapheme_extend(&provider)
     ///         .expect("The data should be valid");
-    /// let data_struct = payload.get();
-    /// let grapheme_extend = &data_struct.inv_list;
+    /// let grapheme_extend = data.as_borrowed();;
     ///
     /// assert!(!grapheme_extend.contains('ക'));  // U+0D15 MALAYALAM LETTER KA
     /// assert!(!grapheme_extend.contains('\u{0D3F}'));  // U+0D3F MALAYALAM VOWEL SIGN I
@@ -836,11 +812,10 @@ make_set_property! {
     /// use icu_properties::sets;
     ///
     /// let provider = icu_testdata::get_provider();
-    /// let payload =
+    /// let data =
     ///     sets::get_hex_digit(&provider)
     ///         .expect("The data should be valid");
-    /// let data_struct = payload.get();
-    /// let hex_digit = &data_struct.inv_list;
+    /// let hex_digit = data.as_borrowed();;
     ///
     /// assert!(hex_digit.contains('0'));
     /// assert!(!hex_digit.contains('੩'));  // U+0A69 GURMUKHI DIGIT THREE
@@ -880,11 +855,10 @@ make_set_property! {
     /// use icu_properties::sets;
     ///
     /// let provider = icu_testdata::get_provider();
-    /// let payload =
+    /// let data =
     ///     sets::get_id_continue(&provider)
     ///         .expect("The data should be valid");
-    /// let data_struct = payload.get();
-    /// let id_continue = &data_struct.inv_list;
+    /// let id_continue = data.as_borrowed();;
     ///
     /// assert!(id_continue.contains('x'));
     /// assert!(id_continue.contains('1'));
@@ -911,11 +885,10 @@ make_set_property! {
     /// use icu_properties::sets;
     ///
     /// let provider = icu_testdata::get_provider();
-    /// let payload =
+    /// let data =
     ///     sets::get_ideographic(&provider)
     ///         .expect("The data should be valid");
-    /// let data_struct = payload.get();
-    /// let ideographic = &data_struct.inv_list;
+    /// let ideographic = data.as_borrowed();;
     ///
     /// assert!(ideographic.contains('川'));  // U+5DDD CJK UNIFIED IDEOGRAPH-5DDD
     /// assert!(!ideographic.contains('밥'));  // U+BC25 HANGUL SYLLABLE BAB
@@ -939,11 +912,10 @@ make_set_property! {
     /// use icu_properties::sets;
     ///
     /// let provider = icu_testdata::get_provider();
-    /// let payload =
+    /// let data =
     ///     sets::get_id_start(&provider)
     ///         .expect("The data should be valid");
-    /// let data_struct = payload.get();
-    /// let id_start = &data_struct.inv_list;
+    /// let id_start = data.as_borrowed();;
     ///
     /// assert!(id_start.contains('x'));
     /// assert!(!id_start.contains('1'));
@@ -969,11 +941,10 @@ make_set_property! {
     /// use icu_properties::sets;
     ///
     /// let provider = icu_testdata::get_provider();
-    /// let payload =
+    /// let data =
     ///     sets::get_ids_binary_operator(&provider)
     ///         .expect("The data should be valid");
-    /// let data_struct = payload.get();
-    /// let ids_binary_operator = &data_struct.inv_list;
+    /// let ids_binary_operator = data.as_borrowed();;
     ///
     /// assert!(ids_binary_operator.contains_u32(0x2FF5));  // IDEOGRAPHIC DESCRIPTION CHARACTER SURROUND FROM ABOVE
     /// assert!(!ids_binary_operator.contains_u32(0x3006));  // IDEOGRAPHIC CLOSING MARK
@@ -995,11 +966,10 @@ make_set_property! {
     /// use icu_properties::sets;
     ///
     /// let provider = icu_testdata::get_provider();
-    /// let payload =
+    /// let data =
     ///     sets::get_ids_trinary_operator(&provider)
     ///         .expect("The data should be valid");
-    /// let data_struct = payload.get();
-    /// let ids_trinary_operator = &data_struct.inv_list;
+    /// let ids_trinary_operator = data.as_borrowed();;
     ///
     /// assert!(ids_trinary_operator.contains_u32(0x2FF2));  // IDEOGRAPHIC DESCRIPTION CHARACTER LEFT TO MIDDLE AND RIGHT
     /// assert!(ids_trinary_operator.contains_u32(0x2FF3));  // IDEOGRAPHIC DESCRIPTION CHARACTER ABOVE TO MIDDLE AND BELOW
@@ -1025,11 +995,10 @@ make_set_property! {
     /// use icu_properties::sets;
     ///
     /// let provider = icu_testdata::get_provider();
-    /// let payload =
+    /// let data =
     ///     sets::get_join_control(&provider)
     ///         .expect("The data should be valid");
-    /// let data_struct = payload.get();
-    /// let join_control = &data_struct.inv_list;
+    /// let join_control = data.as_borrowed();;
     ///
     /// assert!(join_control.contains_u32(0x200C));  // ZERO WIDTH NON-JOINER
     /// assert!(join_control.contains_u32(0x200D));  // ZERO WIDTH JOINER
@@ -1052,11 +1021,10 @@ make_set_property! {
     /// use icu_properties::sets;
     ///
     /// let provider = icu_testdata::get_provider();
-    /// let payload =
+    /// let data =
     ///     sets::get_logical_order_exception(&provider)
     ///         .expect("The data should be valid");
-    /// let data_struct = payload.get();
-    /// let logical_order_exception = &data_struct.inv_list;
+    /// let logical_order_exception = data.as_borrowed();;
     ///
     /// assert!(logical_order_exception.contains('ແ'));  // U+0EC1 LAO VOWEL SIGN EI
     /// assert!(!logical_order_exception.contains('ະ'));  // U+0EB0 LAO VOWEL SIGN A
@@ -1078,11 +1046,10 @@ make_set_property! {
     /// use icu_properties::sets;
     ///
     /// let provider = icu_testdata::get_provider();
-    /// let payload =
+    /// let data =
     ///     sets::get_lowercase(&provider)
     ///         .expect("The data should be valid");
-    /// let data_struct = payload.get();
-    /// let lowercase = &data_struct.inv_list;
+    /// let lowercase = data.as_borrowed();;
     ///
     /// assert!(lowercase.contains('a'));
     /// assert!(!lowercase.contains('A'));
@@ -1104,11 +1071,10 @@ make_set_property! {
     /// use icu_properties::sets;
     ///
     /// let provider = icu_testdata::get_provider();
-    /// let payload =
+    /// let data =
     ///     sets::get_math(&provider)
     ///         .expect("The data should be valid");
-    /// let data_struct = payload.get();
-    /// let math = &data_struct.inv_list;
+    /// let math = data.as_borrowed();;
     ///
     /// assert!(math.contains('='));
     /// assert!(math.contains('+'));
@@ -1134,11 +1100,10 @@ make_set_property! {
     /// use icu_properties::sets;
     ///
     /// let provider = icu_testdata::get_provider();
-    /// let payload =
+    /// let data =
     ///     sets::get_noncharacter_code_point(&provider)
     ///         .expect("The data should be valid");
-    /// let data_struct = payload.get();
-    /// let noncharacter_code_point = &data_struct.inv_list;
+    /// let noncharacter_code_point = data.as_borrowed();;
     ///
     /// assert!(noncharacter_code_point.contains_u32(0xFDD0));
     /// assert!(noncharacter_code_point.contains_u32(0xFFFF));
@@ -1203,11 +1168,10 @@ make_set_property! {
     /// use icu_properties::sets;
     ///
     /// let provider = icu_testdata::get_provider();
-    /// let payload =
+    /// let data =
     ///     sets::get_pattern_syntax(&provider)
     ///         .expect("The data should be valid");
-    /// let data_struct = payload.get();
-    /// let pattern_syntax = &data_struct.inv_list;
+    /// let pattern_syntax = data.as_borrowed();;
     ///
     /// assert!(pattern_syntax.contains('{'));
     /// assert!(pattern_syntax.contains('⇒'));  // U+21D2 RIGHTWARDS DOUBLE ARROW
@@ -1232,11 +1196,10 @@ make_set_property! {
     /// use icu_properties::sets;
     ///
     /// let provider = icu_testdata::get_provider();
-    /// let payload =
+    /// let data =
     ///     sets::get_pattern_white_space(&provider)
     ///         .expect("The data should be valid");
-    /// let data_struct = payload.get();
-    /// let pattern_white_space = &data_struct.inv_list;
+    /// let pattern_white_space = data.as_borrowed();;
     ///
     /// assert!(pattern_white_space.contains(' '));
     /// assert!(pattern_white_space.contains_u32(0x2029));  // PARAGRAPH SEPARATOR
@@ -1282,11 +1245,10 @@ make_set_property! {
     /// use icu_properties::sets;
     ///
     /// let provider = icu_testdata::get_provider();
-    /// let payload =
+    /// let data =
     ///     sets::get_quotation_mark(&provider)
     ///         .expect("The data should be valid");
-    /// let data_struct = payload.get();
-    /// let quotation_mark = &data_struct.inv_list;
+    /// let quotation_mark = data.as_borrowed();;
     ///
     /// assert!(quotation_mark.contains('\''));
     /// assert!(quotation_mark.contains('„'));  // U+201E DOUBLE LOW-9 QUOTATION MARK
@@ -1309,11 +1271,10 @@ make_set_property! {
     /// use icu_properties::sets;
     ///
     /// let provider = icu_testdata::get_provider();
-    /// let payload =
+    /// let data =
     ///     sets::get_radical(&provider)
     ///         .expect("The data should be valid");
-    /// let data_struct = payload.get();
-    /// let radical = &data_struct.inv_list;
+    /// let radical = data.as_borrowed();;
     ///
     /// assert!(radical.contains('⺆'));  // U+2E86 CJK RADICAL BOX
     /// assert!(!radical.contains('丹'));  // U+F95E CJK COMPATIBILITY IDEOGRAPH-F95E
@@ -1335,11 +1296,10 @@ make_set_property! {
     /// use icu_properties::sets;
     ///
     /// let provider = icu_testdata::get_provider();
-    /// let payload =
+    /// let data =
     ///     sets::get_regional_indicator(&provider)
     ///         .expect("The data should be valid");
-    /// let data_struct = payload.get();
-    /// let regional_indicator = &data_struct.inv_list;
+    /// let regional_indicator = data.as_borrowed();;
     ///
     /// assert!(regional_indicator.contains('🇹'));  // U+1F1F9 REGIONAL INDICATOR SYMBOL LETTER T
     /// assert!(!regional_indicator.contains('Ⓣ'));  // U+24C9 CIRCLED LATIN CAPITAL LETTER T
@@ -1363,11 +1323,10 @@ make_set_property! {
     /// use icu_properties::sets;
     ///
     /// let provider = icu_testdata::get_provider();
-    /// let payload =
+    /// let data =
     ///     sets::get_soft_dotted(&provider)
     ///         .expect("The data should be valid");
-    /// let data_struct = payload.get();
-    /// let soft_dotted = &data_struct.inv_list;
+    /// let soft_dotted = data.as_borrowed();;
     ///
     /// assert!(soft_dotted.contains('і'));  //U+0456 CYRILLIC SMALL LETTER BYELORUSSIAN-UKRAINIAN I
     /// assert!(!soft_dotted.contains('ı'));  // U+0131 LATIN SMALL LETTER DOTLESS I
@@ -1411,11 +1370,10 @@ make_set_property! {
     /// use icu_properties::sets;
     ///
     /// let provider = icu_testdata::get_provider();
-    /// let payload =
+    /// let data =
     ///     sets::get_sentence_terminal(&provider)
     ///         .expect("The data should be valid");
-    /// let data_struct = payload.get();
-    /// let sentence_terminal = &data_struct.inv_list;
+    /// let sentence_terminal = data.as_borrowed();;
     ///
     /// assert!(sentence_terminal.contains('.'));
     /// assert!(sentence_terminal.contains('?'));
@@ -1440,11 +1398,10 @@ make_set_property! {
     /// use icu_properties::sets;
     ///
     /// let provider = icu_testdata::get_provider();
-    /// let payload =
+    /// let data =
     ///     sets::get_terminal_punctuation(&provider)
     ///         .expect("The data should be valid");
-    /// let data_struct = payload.get();
-    /// let terminal_punctuation = &data_struct.inv_list;
+    /// let terminal_punctuation = data.as_borrowed();;
     ///
     /// assert!(terminal_punctuation.contains('.'));
     /// assert!(terminal_punctuation.contains('?'));
@@ -1469,11 +1426,10 @@ make_set_property! {
     /// use icu_properties::sets;
     ///
     /// let provider = icu_testdata::get_provider();
-    /// let payload =
+    /// let data =
     ///     sets::get_unified_ideograph(&provider)
     ///         .expect("The data should be valid");
-    /// let data_struct = payload.get();
-    /// let unified_ideograph = &data_struct.inv_list;
+    /// let unified_ideograph = data.as_borrowed();;
     ///
     /// assert!(unified_ideograph.contains('川'));  // U+5DDD CJK UNIFIED IDEOGRAPH-5DDD
     /// assert!(unified_ideograph.contains('木'));  // U+6728 CJK UNIFIED IDEOGRAPH-6728
@@ -1496,11 +1452,10 @@ make_set_property! {
     /// use icu_properties::sets;
     ///
     /// let provider = icu_testdata::get_provider();
-    /// let payload =
+    /// let data =
     ///     sets::get_uppercase(&provider)
     ///         .expect("The data should be valid");
-    /// let data_struct = payload.get();
-    /// let uppercase = &data_struct.inv_list;
+    /// let uppercase = data.as_borrowed();;
     ///
     /// assert!(uppercase.contains('U'));
     /// assert!(!uppercase.contains('u'));
@@ -1522,11 +1477,10 @@ make_set_property! {
     /// use icu_properties::sets;
     ///
     /// let provider = icu_testdata::get_provider();
-    /// let payload =
+    /// let data =
     ///     sets::get_variation_selector(&provider)
     ///         .expect("The data should be valid");
-    /// let data_struct = payload.get();
-    /// let variation_selector = &data_struct.inv_list;
+    /// let variation_selector = data.as_borrowed();;
     ///
     /// assert!(variation_selector.contains_u32(0x180D));  // MONGOLIAN FREE VARIATION SELECTOR THREE
     /// assert!(!variation_selector.contains_u32(0x303E));  // IDEOGRAPHIC VARIATION INDICATOR
@@ -1552,11 +1506,10 @@ make_set_property! {
     /// use icu_properties::sets;
     ///
     /// let provider = icu_testdata::get_provider();
-    /// let payload =
+    /// let data =
     ///     sets::get_white_space(&provider)
     ///         .expect("The data should be valid");
-    /// let data_struct = payload.get();
-    /// let white_space = &data_struct.inv_list;
+    /// let white_space = data.as_borrowed();;
     ///
     /// assert!(white_space.contains(' '));
     /// assert!(white_space.contains_u32(0x000A));  // NEW LINE
@@ -1592,11 +1545,10 @@ make_set_property! {
     /// use icu_properties::sets;
     ///
     /// let provider = icu_testdata::get_provider();
-    /// let payload =
+    /// let data =
     ///     sets::get_xid_continue(&provider)
     ///         .expect("The data should be valid");
-    /// let data_struct = payload.get();
-    /// let xid_continue = &data_struct.inv_list;
+    /// let xid_continue = data.as_borrowed();;
     ///
     /// assert!(xid_continue.contains('x'));
     /// assert!(xid_continue.contains('1'));
@@ -1624,11 +1576,10 @@ make_set_property! {
     /// use icu_properties::sets;
     ///
     /// let provider = icu_testdata::get_provider();
-    /// let payload =
+    /// let data =
     ///     sets::get_xid_start(&provider)
     ///         .expect("The data should be valid");
-    /// let data_struct = payload.get();
-    /// let xid_start = &data_struct.inv_list;
+    /// let xid_start = data.as_borrowed();;
     ///
     /// assert!(xid_start.contains('x'));
     /// assert!(!xid_start.contains('1'));
@@ -1687,7 +1638,7 @@ mod tests {
         use icu::properties::Script;
 
         let provider = icu_testdata::get_provider();
-        let payload = maps::get_script(&provider).expect("The data should be valid");
+        let data = maps::get_script(&provider).expect("The data should be valid");
         let data_struct = payload.get();
         let script = &data_struct.code_point_trie;
         let thai = script.get_set_for_value(Script::Thai);
