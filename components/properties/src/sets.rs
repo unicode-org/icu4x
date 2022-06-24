@@ -21,19 +21,21 @@ use core::iter::FromIterator;
 use icu_provider::prelude::*;
 use icu_uniset::UnicodeSet;
 
-/// TODO(#1239): Finalize this API.
-pub type UnisetResult<M> = Result<CodePointSetData<M>, PropertiesError>;
-
 /// A wrapper around code point set data, returned by property getters for
 /// unicode sets.
-pub struct CodePointSetData<M: DataMarker> {
-    data: DataPayload<M>,
+pub struct CodePointSetData {
+    data: DataPayload<ErasedSetlikeMarker>,
 }
 
-impl<M> CodePointSetData<M>
-where
-    M: DataMarker<Yokeable = UnicodePropertyV1<'static>>,
-{
+/// Private marker type for CodePointSetData
+/// to work for all set properties at once
+
+struct ErasedSetlikeMarker;
+impl DataMarker for ErasedSetlikeMarker {
+    type Yokeable = UnicodePropertyV1<'static>;
+}
+
+impl CodePointSetData {
     /// Check if the set contains a character
     ///
     /// If calling multiple times, consider calling [`Self::as_borrowed()`]
@@ -65,11 +67,18 @@ where
     /// Construct a new one from loaded data
     ///
     /// Typically it is preferable to use getters like [`get_ascii_hex_digit()`] instead
-    pub fn from_data(data: DataPayload<M>) -> Self {
-        Self { data }
+    pub fn from_data<M>(data: DataPayload<M>) -> Self
+    where
+        M: DataMarker<Yokeable = UnicodePropertyV1<'static>>,
+    {
+        Self {
+            data: data.map_project(|m, _| m),
+        }
     }
 }
 
+/// A borrowed wrapper around code point set data, returned by 
+/// [`CodePointSetData::as_borrowed()`]. More efficient to query.
 pub struct CodePointSetDataBorrowed<'a> {
     set: &'a UnicodePropertyV1<'a>,
 }
@@ -106,7 +115,7 @@ macro_rules! make_set_property {
         $(#[$attr])*
         $vis fn $funcname(
             provider: &(impl ResourceProvider<$resource_marker> + ?Sized)
-        ) -> UnisetResult<$resource_marker> {
+        ) -> Result<CodePointSetData, PropertiesError> {
             Ok(provider.load_resource(&Default::default()).and_then(DataResponse::take_payload).map(CodePointSetData::from_data)?)
         }
     }
