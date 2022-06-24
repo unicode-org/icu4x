@@ -574,6 +574,7 @@ impl<'data> ScriptWithExtensions<'data> {
     }
 }
 
+#[allow(missing_docs)]
 pub type ScriptWithExtensionsResult =
     Result<DataPayload<ScriptWithExtensionsPropertyV1Marker>, PropertiesError>;
 
