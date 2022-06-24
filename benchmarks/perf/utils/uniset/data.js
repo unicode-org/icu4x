@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1656030978032,
+  "lastUpdate": 1656030997989,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -33178,6 +33178,60 @@ window.BENCHMARK_DATA = {
           {
             "name": "uniset/contains_range/worst",
             "value": 8,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "younies.mahmoud@gmail.com",
+            "name": "Younies Mahmoud",
+            "username": "younies"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "a9bff5edd1d11ba9100b2892c4ccc30fcee8bf26",
+          "message": "Add the rounded versions to the rounding modes. (#2100)",
+          "timestamp": "2022-06-24T02:26:18+02:00",
+          "tree_id": "2826fa9efcb51b1384282c0a6ce37f2640379d4e",
+          "url": "https://github.com/unicode-org/icu4x/commit/a9bff5edd1d11ba9100b2892c4ccc30fcee8bf26"
+        },
+        "date": 1656030970484,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 40289285,
+            "range": "± 129529",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/best",
+            "value": 12,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/worst",
+            "value": 12,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/best",
+            "value": 12,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/worst",
+            "value": 12,
             "range": "± 0",
             "unit": "ns/iter"
           }
