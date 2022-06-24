@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1656112842157,
+  "lastUpdate": 1656114968194,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -18473,6 +18473,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/47251d48592f7ebb0c8221dca9b60415d90c74ef"
         },
         "date": 1656112817030,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 2737318,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "e3830ee36d1551771868b6bc266e02fd33104628",
+          "message": "Add initial strict_cmp_iter function (#2111)",
+          "timestamp": "2022-06-24T16:53:57-07:00",
+          "tree_id": "cc7e8fdb445ca5983fbd7cf2a932d70014185965",
+          "url": "https://github.com/unicode-org/icu4x/commit/e3830ee36d1551771868b6bc266e02fd33104628"
+        },
+        "date": 1656114943976,
         "tool": "ndjson",
         "benches": [
           {
