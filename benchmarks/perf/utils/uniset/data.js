@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1656015497066,
+  "lastUpdate": 1656030978032,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -33124,6 +33124,60 @@ window.BENCHMARK_DATA = {
           {
             "name": "uniset/contains_range/worst",
             "value": 10,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "76e8d7a9807288c6277c52afb8e54e210240dbe7",
+          "message": "Add FixedDecimal strip_left and strip_right (#1986)\n\nAdd FixedDecimal strip_left and strip_right",
+          "timestamp": "2022-06-24T02:25:45+02:00",
+          "tree_id": "740172b2bf80b5d7733614dca30bce448aa8e25f",
+          "url": "https://github.com/unicode-org/icu4x/commit/76e8d7a9807288c6277c52afb8e54e210240dbe7"
+        },
+        "date": 1656030949995,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 42864191,
+            "range": "± 3149175",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/best",
+            "value": 8,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/worst",
+            "value": 8,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/best",
+            "value": 8,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/worst",
+            "value": 8,
             "range": "± 0",
             "unit": "ns/iter"
           }
