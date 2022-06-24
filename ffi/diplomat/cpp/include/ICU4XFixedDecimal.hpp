@@ -15,7 +15,6 @@ namespace capi {
 
 class ICU4XFixedDecimal;
 #include "ICU4XError.hpp"
-#include "ICU4XFixedDecimalRoundingMode.hpp"
 
 /**
  * A destruction policy for using ICU4XFixedDecimal with std::unique_ptr.
@@ -54,14 +53,14 @@ class ICU4XFixedDecimal {
    * 
    * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.try_from_f64) for more information.
    */
-  static diplomat::result<ICU4XFixedDecimal, ICU4XError> create_from_f64_with_lower_magnitude(double f, int16_t precision, ICU4XFixedDecimalRoundingMode rounding_mode);
+  static diplomat::result<ICU4XFixedDecimal, ICU4XError> create_from_f64_with_lower_magnitude(double f, int16_t precision);
 
   /**
    * Construct an [`ICU4XFixedDecimal`] from an float, for a given number of significant digits
    * 
    * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.try_from_f64) for more information.
    */
-  static diplomat::result<ICU4XFixedDecimal, ICU4XError> create_from_f64_with_significant_digits(double f, uint8_t digits, ICU4XFixedDecimalRoundingMode rounding_mode);
+  static diplomat::result<ICU4XFixedDecimal, ICU4XError> create_from_f64_with_significant_digits(double f, uint8_t digits);
 
   /**
    * Construct an [`ICU4XFixedDecimal`] from a string.
@@ -143,8 +142,8 @@ inline diplomat::result<ICU4XFixedDecimal, ICU4XError> ICU4XFixedDecimal::create
   }
   return diplomat_result_out_value;
 }
-inline diplomat::result<ICU4XFixedDecimal, ICU4XError> ICU4XFixedDecimal::create_from_f64_with_lower_magnitude(double f, int16_t precision, ICU4XFixedDecimalRoundingMode rounding_mode) {
-  auto diplomat_result_raw_out_value = capi::ICU4XFixedDecimal_create_from_f64_with_lower_magnitude(f, precision, static_cast<capi::ICU4XFixedDecimalRoundingMode>(rounding_mode));
+inline diplomat::result<ICU4XFixedDecimal, ICU4XError> ICU4XFixedDecimal::create_from_f64_with_lower_magnitude(double f, int16_t precision) {
+  auto diplomat_result_raw_out_value = capi::ICU4XFixedDecimal_create_from_f64_with_lower_magnitude(f, precision);
   diplomat::result<ICU4XFixedDecimal, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
     diplomat_result_out_value = diplomat::Ok(ICU4XFixedDecimal(diplomat_result_raw_out_value.ok));
@@ -153,8 +152,8 @@ inline diplomat::result<ICU4XFixedDecimal, ICU4XError> ICU4XFixedDecimal::create
   }
   return diplomat_result_out_value;
 }
-inline diplomat::result<ICU4XFixedDecimal, ICU4XError> ICU4XFixedDecimal::create_from_f64_with_significant_digits(double f, uint8_t digits, ICU4XFixedDecimalRoundingMode rounding_mode) {
-  auto diplomat_result_raw_out_value = capi::ICU4XFixedDecimal_create_from_f64_with_significant_digits(f, digits, static_cast<capi::ICU4XFixedDecimalRoundingMode>(rounding_mode));
+inline diplomat::result<ICU4XFixedDecimal, ICU4XError> ICU4XFixedDecimal::create_from_f64_with_significant_digits(double f, uint8_t digits) {
+  auto diplomat_result_raw_out_value = capi::ICU4XFixedDecimal_create_from_f64_with_significant_digits(f, digits);
   diplomat::result<ICU4XFixedDecimal, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
     diplomat_result_out_value = diplomat::Ok(ICU4XFixedDecimal(diplomat_result_raw_out_value.ok));
