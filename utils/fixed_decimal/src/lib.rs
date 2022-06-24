@@ -59,7 +59,6 @@ mod uint_iterator;
 pub use decimal::DoublePrecision;
 
 pub use decimal::FixedDecimal;
-pub use decimal::RoundingMode;
 use displaydoc::Display;
 pub use signum::Signum;
 
