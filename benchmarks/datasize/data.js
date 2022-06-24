@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1656014891214,
+  "lastUpdate": 1656030498152,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -18233,6 +18233,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/7870301dd1dab0770e84902bc3f13afc4de1b198"
         },
         "date": 1656014857842,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 2737318,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "76e8d7a9807288c6277c52afb8e54e210240dbe7",
+          "message": "Add FixedDecimal strip_left and strip_right (#1986)\n\nAdd FixedDecimal strip_left and strip_right",
+          "timestamp": "2022-06-24T02:25:45+02:00",
+          "tree_id": "740172b2bf80b5d7733614dca30bce448aa8e25f",
+          "url": "https://github.com/unicode-org/icu4x/commit/76e8d7a9807288c6277c52afb8e54e210240dbe7"
+        },
+        "date": 1656030469041,
         "tool": "ndjson",
         "benches": [
           {
