@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1656086541565,
+  "lastUpdate": 1656094236976,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -18383,6 +18383,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/68107ef8a4142be0f2172d23a4703a7b40ca419f"
         },
         "date": 1656086513520,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 2737318,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "29b0e027697fb54c2cad189060bff87507bfc373",
+          "message": "Re-enable LTO on default release build (#2046)",
+          "timestamp": "2022-06-24T11:08:10-07:00",
+          "tree_id": "06df18abdac9c1ca2593afd65152dd802a8199ff",
+          "url": "https://github.com/unicode-org/icu4x/commit/29b0e027697fb54c2cad189060bff87507bfc373"
+        },
+        "date": 1656094207932,
         "tool": "ndjson",
         "benches": [
           {
