@@ -1941,7 +1941,13 @@ impl FixedDecimal {
                 }
 
                 let position = decimal.magnitude.wrapping_sub((sig - 1) as i16);
+                let old_magnitude = decimal.magnitude;
                 decimal.half_even(position);
+
+                // This means the significant digits has been increased by 1.
+                if decimal.magnitude > old_magnitude {
+                    decimal.truncate_right(position + 1);
+                }
             }
         }
         #[cfg(debug_assertions)]
@@ -2110,7 +2116,17 @@ fn test_float() {
         TestCase {
             input: 9.9888,
             precision: DoublePrecision::SignificantDigits(2),
-            expected: "10.0", // TODO: Discussion, shall we make it "10".
+            expected: "10",
+        },
+        TestCase {
+            input: 99888.0,
+            precision: DoublePrecision::SignificantDigits(1),
+            expected: "100000",
+        },
+        TestCase {
+            input: 99888.0,
+            precision: DoublePrecision::SignificantDigits(2),
+            expected: "100000",
         },
         TestCase {
             input: 9.9888,
