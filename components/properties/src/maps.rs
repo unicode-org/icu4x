@@ -45,7 +45,7 @@ impl<T: TrieValue> CodePointMapData<T> {
     /// This avoids a potential small cost per [`Self::get()`] call by consolidating it
     /// up front.
     #[inline]
-    pub fn as_borrowed<'a>(&'a self) -> CodePointMapDataBorrowed<'a, T> {
+    pub fn as_borrowed(&self) -> CodePointMapDataBorrowed<'_, T> {
         CodePointMapDataBorrowed {
             map: self.data.get(),
         }

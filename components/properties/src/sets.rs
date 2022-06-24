@@ -59,7 +59,7 @@ impl CodePointSetData {
     /// This avoids a potential small cost per [`Self::contains()`] call by consolidating it
     /// up front.
     #[inline]
-    pub fn as_borrowed<'a>(&'a self) -> CodePointSetDataBorrowed<'a> {
+    pub fn as_borrowed(&self) -> CodePointSetDataBorrowed<'_> {
         CodePointSetDataBorrowed {
             set: self.data.get(),
         }
@@ -78,7 +78,7 @@ impl CodePointSetData {
 
     // TODO: we should instead integrate better with UnicodeSetBuilder
     #[doc(hidden)]
-    pub fn as_unicodeset<'a>(&'a self) -> &'a UnicodeSet<'a> {
+    pub fn as_unicodeset(&self) -> &'_ UnicodeSet<'_> {
         &self.data.get().inv_list
     }
 }

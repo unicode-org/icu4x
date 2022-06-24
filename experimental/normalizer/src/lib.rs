@@ -284,10 +284,10 @@ impl CharacterAndClass {
 
 // This function exists as a borrow check helper.
 #[inline(always)]
-fn assign_ccc_and_sort_combining<'data>(
+fn assign_ccc_and_sort_combining(
     slice: &mut [CharacterAndClass],
     combining_start: usize,
-    ccc: CodePointMapDataBorrowed<'data, CanonicalCombiningClass>,
+    ccc: CodePointMapDataBorrowed<CanonicalCombiningClass>,
 ) {
     slice.iter_mut().for_each(|cc| cc.set_ccc_from_trie(ccc));
     // Slicing succeeds by construction; we've always ensured that `combining_start`
@@ -298,9 +298,9 @@ fn assign_ccc_and_sort_combining<'data>(
 
 // This function exists as a borrow check helper.
 #[inline(always)]
-fn sort_slice_by_ccc<'data>(
+fn sort_slice_by_ccc(
     slice: &mut [CharacterAndClass],
-    ccc: CodePointMapDataBorrowed<'data, CanonicalCombiningClass>,
+    ccc: CodePointMapDataBorrowed<CanonicalCombiningClass>,
 ) {
     // We don't look up the canonical combining class for starters
     // of for single combining characters between starters. When

@@ -656,10 +656,7 @@ impl CharacterAndClass {
 
 // This trivial function exists as a borrow check helper.
 #[inline(always)]
-fn sort_slice_by_ccc<'data>(
-    slice: &mut [char],
-    ccc: CodePointMapDataBorrowed<'data, CanonicalCombiningClass>,
-) {
+fn sort_slice_by_ccc(slice: &mut [char], ccc: CodePointMapDataBorrowed<CanonicalCombiningClass>) {
     slice.sort_by_key(|cc| ccc.get(*cc));
 }
 
