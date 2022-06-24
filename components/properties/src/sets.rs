@@ -22,7 +22,71 @@ use icu_provider::prelude::*;
 use icu_uniset::UnicodeSet;
 
 /// TODO(#1239): Finalize this API.
-pub type UnisetResult<M> = Result<DataPayload<M>, PropertiesError>;
+pub type UnisetResult<M> = Result<CodePointSetData<M>, PropertiesError>;
+
+/// A wrapper around code point set data, returned by property getters for
+/// unicode sets.
+pub struct CodePointSetData<M: DataMarker> {
+    data: DataPayload<M>,
+}
+
+impl<M> CodePointSetData<M>
+where
+    M: DataMarker<Yokeable = UnicodePropertyV1<'static>>,
+{
+    /// Check if the set contains a character
+    ///
+    /// If calling multiple times, consider calling [`Self::as_borrowed()`]
+    /// first
+    #[inline]
+    pub fn contains(&self, ch: char) -> bool {
+        self.data.get().inv_list.contains(ch)
+    }
+
+    /// Check if the set contains a character as a UTF32 code unit
+    ///
+    /// If calling multiple times, consider calling [`Self::as_borrowed()`]
+    /// first
+    #[inline]
+    pub fn contains_u32(&self, ch: u32) -> bool {
+        self.data.get().inv_list.contains_u32(ch)
+    }
+
+    /// Construct a borrowed version of this type that can be queried
+    ///
+    /// This avoids a potential small cost per [`Self::contains()`] call by consolidating it
+    /// up front.
+    #[inline]
+    pub fn as_borrowed<'a>(&'a self) -> CodePointSetDataBorrowed<'a> {
+        CodePointSetDataBorrowed {
+            set: self.data.get(),
+        }
+    }
+    /// Construct a new one from loaded data
+    ///
+    /// Typically it is preferable to use getters like [`get_ascii_hex_digit()`] instead
+    pub fn from_data(data: DataPayload<M>) -> Self {
+        Self { data }
+    }
+}
+
+pub struct CodePointSetDataBorrowed<'a> {
+    set: &'a UnicodePropertyV1<'a>,
+}
+
+impl<'a> CodePointSetDataBorrowed<'a> {
+    /// Check if the set contains a character
+    #[inline]
+    pub fn contains(&self, ch: char) -> bool {
+        self.set.inv_list.contains(ch)
+    }
+
+    /// Check if the set contains a character as a UTF32 code unit
+    #[inline]
+    pub fn contains_u32(&self, ch: u32) -> bool {
+        self.set.inv_list.contains_u32(ch)
+    }
+}
 
 //
 // Binary property getter fns
@@ -43,7 +107,7 @@ macro_rules! make_set_property {
         $vis fn $funcname(
             provider: &(impl ResourceProvider<$resource_marker> + ?Sized)
         ) -> UnisetResult<$resource_marker> {
-            Ok(provider.load_resource(&Default::default()).and_then(DataResponse::take_payload)?)
+            Ok(provider.load_resource(&Default::default()).and_then(DataResponse::take_payload).map(CodePointSetData::from_data)?)
         }
     }
 }
