@@ -1638,7 +1638,7 @@ mod tests {
         use icu::properties::Script;
 
         let provider = icu_testdata::get_provider();
-        let data = maps::get_script(&provider).expect("The data should be valid");
+        let payload = maps::get_script(&provider).expect("The data should be valid");
         let data_struct = payload.get();
         let script = &data_struct.code_point_trie;
         let thai = script.get_set_for_value(Script::Thai);

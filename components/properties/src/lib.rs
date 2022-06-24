@@ -24,9 +24,8 @@
 //!
 //! // A binary property as a `UnicodeSet`
 //!
-//! let payload = sets::get_emoji(&provider).expect("The data should be valid");
-//! let data_struct = payload.get();
-//! let emoji = &data_struct.inv_list;
+//! let data = sets::get_emoji(&provider).expect("The data should be valid");
+//! let emoji = data.as_borrowed();
 //!
 //! assert!(emoji.contains('🎃')); // U+1F383 JACK-O-LANTERN
 //! assert!(!emoji.contains('木')); // U+6728
