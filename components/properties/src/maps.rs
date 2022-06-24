@@ -14,12 +14,116 @@
 
 use crate::error::PropertiesError;
 use crate::provider::*;
+use crate::sets::{CodePointSetData, ErasedSetlikeMarker};
 #[cfg(doc)]
 use crate::*;
+use core::marker::PhantomData;
+use core::ops::RangeInclusive;
+use icu_codepointtrie::{CodePointMapRange, TrieValue};
 use icu_provider::prelude::*;
 
 /// TODO(#1239): Finalize this API.
 pub type CodePointMapResult<M> = Result<DataPayload<M>, PropertiesError>;
+
+/// A wrapper around code point set data, returned by property getters for
+/// unicode sets.
+pub struct CodePointMapData<T: TrieValue> {
+    data: DataPayload<ErasedMaplikeMarker<T>>,
+}
+
+/// Private marker type for CodePointMapData
+/// to work for all same-value map properties at once
+struct ErasedMaplikeMarker<T>(PhantomData<T>);
+impl<T: TrieValue> DataMarker for ErasedMaplikeMarker<T> {
+    type Yokeable = UnicodePropertyMapV1<'static, T>;
+}
+
+impl<T: TrieValue> CodePointMapData<T> {
+    /// Construct a borrowed version of this type that can be queried
+    ///
+    /// This avoids a potential small cost per [`Self::get()`] call by consolidating it
+    /// up front.
+    #[inline]
+    pub fn as_borrowed<'a>(&'a self) -> CodePointMapDataBorrowed<'a, T> {
+        CodePointMapDataBorrowed {
+            map: self.data.get(),
+        }
+    }
+
+    /// Get the value this map has associated with code point `ch`
+    pub fn get(&self, ch: char) -> T {
+        self.data.get().code_point_trie.get(ch as u32)
+    }
+
+    /// Get the value this map has associated with code point `ch`
+    pub fn get_u32(&self, ch: u32) -> T {
+        self.data.get().code_point_trie.get(ch)
+    }
+
+    /// Returns an iterator over ranges of code points with the same value
+    pub fn iter_ranges(&self) -> impl Iterator<Item = CodePointMapRange<T>> + '_ {
+        self.data.get().code_point_trie.iter_ranges()
+    }
+
+    /// Get an iterator over all map ranges for a particular value
+    pub fn get_ranges_for_value(&self, value: T) -> impl Iterator<Item = RangeInclusive<u32>> + '_ {
+        self.data.get().code_point_trie.get_ranges_for_value(value)
+    }
+
+    /// Get a [`CodePointSetData`] for all elements corresponding to a particular value
+    pub fn get_set_for_value(&self, value: T) -> CodePointSetData {
+        let set = self.data.get().code_point_trie.get_set_for_value(value);
+        let set = UnicodePropertyV1 { inv_list: set };
+        CodePointSetData::from_data(DataPayload::<ErasedSetlikeMarker>::from_owned(set))
+    }
+
+    /// Construct a new one from loaded data
+    ///
+    /// Typically it is preferable to use getters like [`get_general_category()`] instead
+    pub fn from_data<M>(data: DataPayload<M>) -> Self
+    where
+        M: DataMarker<Yokeable = UnicodePropertyMapV1<'static, T>>,
+    {
+        Self {
+            data: data.map_project(|m, _| m),
+        }
+    }
+}
+
+/// A borrowed wrapper around code point set data, returned by
+/// [`CodePointSetData::as_borrowed()`]. More efficient to query.
+pub struct CodePointMapDataBorrowed<'a, T: TrieValue> {
+    map: &'a UnicodePropertyMapV1<'a, T>,
+}
+
+impl<'a, T: TrieValue> CodePointMapDataBorrowed<'a, T> {
+    /// Get the value this map has associated with code point `ch`
+    pub fn get(&self, ch: char) -> T {
+        self.map.code_point_trie.get(ch as u32)
+    }
+
+    /// Get the value this map has associated with code point `ch`
+    pub fn get_u32(&self, ch: u32) -> T {
+        self.map.code_point_trie.get(ch)
+    }
+
+    /// Returns an iterator over ranges of code points with the same value
+    pub fn iter_ranges(&self) -> impl Iterator<Item = CodePointMapRange<T>> + '_ {
+        self.map.code_point_trie.iter_ranges()
+    }
+
+    /// Get an iterator over all map ranges for a particular value
+    pub fn get_ranges_for_value(&self, value: T) -> impl Iterator<Item = RangeInclusive<u32>> + '_ {
+        self.map.code_point_trie.get_ranges_for_value(value)
+    }
+
+    /// Get a [`CodePointSetData`] for all elements corresponding to a particular value
+    pub fn get_set_for_value(&self, value: T) -> CodePointSetData {
+        let set = self.map.code_point_trie.get_set_for_value(value);
+        let set = UnicodePropertyV1 { inv_list: set };
+        CodePointSetData::from_data(DataPayload::<ErasedSetlikeMarker>::from_owned(set))
+    }
+}
 
 macro_rules! make_map_property {
     (
@@ -36,8 +140,8 @@ macro_rules! make_map_property {
         $(#[$attr])*
         $vis fn $name(
             provider: &(impl ResourceProvider<$resource_marker> + ?Sized)
-        ) -> CodePointMapResult<$resource_marker> {
-            Ok(provider.load_resource(&Default::default()).and_then(DataResponse::take_payload)?)
+        ) -> Result<CodePointMapData<$value_ty>, PropertiesError> {
+            Ok(provider.load_resource(&Default::default()).and_then(DataResponse::take_payload).map(CodePointMapData::from_data)?)
         }
     }
 }
