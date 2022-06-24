@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::ordering::SubtagOrderingResult;
 use crate::parser::{get_subtag_iterator, parse_locale, ParserError};
 use crate::{extensions, subtags, LanguageIdentifier};
 use alloc::string::String;
@@ -187,8 +188,8 @@ impl Locale {
         let other_iter = other.split(|b| *b == b'-');
         let r = self.strict_cmp_iter(other_iter);
         let mut other_iter = match r {
-            Ok(it) => it,
-            Err(o) => return o,
+            SubtagOrderingResult::Subtags(it) => it,
+            SubtagOrderingResult::Ordering(o) => return o,
         };
         if other_iter.next().is_some() {
             return Ordering::Less;
@@ -197,35 +198,43 @@ impl Locale {
     }
 
     /// Compare this `Locale` with an iterator of BCP-47 subtags.
-    /// 
-    /// The `Ok` result returns the iterator of subtags to the caller. If it is empty, the locale
-    /// and the subtag iterator are equal. If it is not empty, the locale contains fewer subtags
-    /// than the iterator, so `Ordering::Less` is the comparison result.
-    /// 
-    /// The `Err` result means that the locale and iterator are not equal and further inspection
-    /// of the iterator is not necessary.
-    /// 
+    ///
     /// This function has the same equality semantics as [`Locale::strict_cmp`]. It is intended as
     /// a more modular version that allows multiple subtag iterators to be chained together.
-    /// 
+    ///
+    /// For an additional example, see [`SubtagOrderingResult`].
+    ///
     /// # Examples
-    /// 
+    ///
     /// ```
     /// use icu::locid::Locale;
     /// use std::cmp::Ordering;
-    /// 
+    ///
     /// let subtags: &[&[u8]] = &[&*b"ca", &*b"ES", &*b"valencia", &*b"u", &*b"ca", &*b"hebrew"];
-    /// 
+    ///
+    /// let loc = "ca-ES-valencia-u-ca-hebrew".parse::<Locale>().unwrap();
     /// assert_eq!(
     ///     Ordering::Equal,
-    ///     "ca-ES-valencia-u-ca-hebrew".parse::<Locale>().unwrap().strict_cmp_iter(subtags.iter().copied())
+    ///     loc.strict_cmp_iter(subtags.iter().copied()).end()
+    /// );
+    ///
+    /// let loc = "ca-ES-valencia".parse::<Locale>().unwrap();
+    /// assert_eq!(
+    ///     Ordering::Less,
+    ///     loc.strict_cmp_iter(subtags.iter().copied()).end()
+    /// );
+    ///
+    /// let loc = "ca-ES-valencia-u-nu-arab".parse::<Locale>().unwrap();
+    /// assert_eq!(
+    ///     Ordering::Greater,
+    ///     loc.strict_cmp_iter(subtags.iter().copied()).end()
     /// );
     /// ```
-    pub fn strict_cmp_iter<'l, I>(&self, mut subtags: I) -> Result<I, Ordering>
+    pub fn strict_cmp_iter<'l, I>(&self, mut subtags: I) -> SubtagOrderingResult<I>
     where
         I: Iterator<Item = &'l [u8]>,
     {
-        self.for_each_subtag_str(&mut |subtag| {
+        let r = self.for_each_subtag_str(&mut |subtag| {
             if let Some(other) = subtags.next() {
                 match subtag.as_bytes().cmp(other) {
                     Ordering::Equal => Ok(()),
@@ -234,8 +243,11 @@ impl Locale {
             } else {
                 Err(Ordering::Greater)
             }
-        })
-        .map(|_| subtags)
+        });
+        match r {
+            Ok(_) => SubtagOrderingResult::Subtags(subtags),
+            Err(o) => SubtagOrderingResult::Ordering(o),
+        }
     }
 
     /// Compare this `Locale` with a potentially unnormalized BCP-47 string.
