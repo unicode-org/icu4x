@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1656045383483,
+  "lastUpdate": 1656086912481,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -33317,6 +33317,60 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 45120845,
             "range": "± 170029",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/best",
+            "value": 9,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/worst",
+            "value": 9,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/best",
+            "value": 9,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/worst",
+            "value": 9,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "m_kato@ga2.so-net.ne.jp",
+            "name": "Makoto Kato",
+            "username": "makotokato"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "68107ef8a4142be0f2172d23a4703a7b40ca419f",
+          "message": "Remove litemap dependency from segmenter. (#2105)",
+          "timestamp": "2022-06-24T15:58:12Z",
+          "tree_id": "fdca447181588d981d0706ef913d444ba5df20e2",
+          "url": "https://github.com/unicode-org/icu4x/commit/68107ef8a4142be0f2172d23a4703a7b40ca419f"
+        },
+        "date": 1656086886670,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 45546580,
+            "range": "± 196058",
             "unit": "ns/iter"
           },
           {
