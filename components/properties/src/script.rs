@@ -574,7 +574,7 @@ impl<'data> ScriptWithExtensions<'data> {
     }
 }
 
-#[allow(missing_docs)]
+#[allow(missing_docs)]  // TODO(1239): Remove/replace this type, or else document it.
 pub type ScriptWithExtensionsResult =
     Result<DataPayload<ScriptWithExtensionsPropertyV1Marker>, PropertiesError>;
 
