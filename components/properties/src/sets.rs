@@ -1674,8 +1674,7 @@ mod tests {
             let category_set = sets::get_for_general_category_group(&provider, category)
                 .expect("The data should be valid");
 
-            let data =
-                maps::get_general_category(&provider).expect("The data should be valid");
+            let data = maps::get_general_category(&provider).expect("The data should be valid");
             let gc = data.as_borrowed();
 
             let mut builder = UnicodeSetBuilder::new();

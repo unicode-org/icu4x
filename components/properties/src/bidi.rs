@@ -46,10 +46,10 @@
 //! assert_eq!(display, concat!["a", "b", "c", "ג", "ב", "א",]);
 //! ```
 
+use crate::maps::CodePointMapDataBorrowed;
 use crate::props::BidiClass;
 use unicode_bidi::data_source::BidiDataSource;
 use unicode_bidi::BidiClass as DataSourceBidiClass;
-use crate::maps::CodePointMapDataBorrowed;
 
 /// An adapter to convert from icu4x `BidiClass` to `unicode_bidi::BidiClass`.
 ///
