@@ -85,6 +85,7 @@ pub mod extensions;
 mod langid;
 mod locale;
 mod macros;
+pub mod ordering;
 mod parser;
 #[cfg(feature = "serde")]
 mod serde;
