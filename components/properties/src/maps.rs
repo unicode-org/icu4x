@@ -246,7 +246,7 @@ make_map_property! {
     ///
     /// let provider = icu_testdata::get_provider();
     /// let data = maps::get_east_asian_width(&provider).expect("The data should be valid!");
-    /// let eaw = &payload.get().code_point_trie;
+    /// let eaw = data.as_borrowed();;
     ///
     /// assert_eq!(eaw.get('ｱ'), EastAsianWidth::Halfwidth); // U+FF71: Halfwidth Katakana Letter A
     /// assert_eq!(eaw.get('ア'), EastAsianWidth::Wide); //U+30A2: Katakana Letter A
@@ -272,7 +272,7 @@ make_map_property! {
     ///
     /// let provider = icu_testdata::get_provider();
     /// let data = maps::get_line_break(&provider).expect("The data should be valid!");
-    /// let lb = &payload.get().code_point_trie;
+    /// let lb = data.as_borrowed();
     ///
     /// assert_eq!(lb.get(')'), LineBreak::CloseParenthesis); // U+0029: Right Parenthesis
     /// assert_eq!(lb.get('ぁ'), LineBreak::ConditionalJapaneseStarter); //U+3041: Hiragana Letter Small A
@@ -298,7 +298,7 @@ make_map_property! {
     ///
     /// let provider = icu_testdata::get_provider();
     /// let data = maps::get_grapheme_cluster_break(&provider).expect("The data should be valid!");
-    /// let gcb = &payload.get().code_point_trie;
+    /// let gcb = data.as_borrowed();
     ///
     /// assert_eq!(gcb.get('🇦'), GraphemeClusterBreak::RegionalIndicator); // U+1F1E6: Regional Indicator Symbol Letter A
     /// assert_eq!(gcb.get('ำ'), GraphemeClusterBreak::SpacingMark); //U+0E33: Thai Character Sara Am
@@ -324,7 +324,7 @@ make_map_property! {
     ///
     /// let provider = icu_testdata::get_provider();
     /// let data = maps::get_word_break(&provider).expect("The data should be valid!");
-    /// let wb = &payload.get().code_point_trie;
+    /// let wb = data.as_borrowed();
     ///
     /// assert_eq!(wb.get('.'), WordBreak::MidNumLet); // U+002E: Full Stop
     /// assert_eq!(wb.get('，'), WordBreak::MidNum); // U+FF0C: Fullwidth Comma
@@ -350,7 +350,7 @@ make_map_property! {
     ///
     /// let provider = icu_testdata::get_provider();
     /// let data = maps::get_sentence_break(&provider).expect("The data should be valid!");
-    /// let sb = &payload.get().code_point_trie;
+    /// let sb = data.as_borrowed();;
     ///
     /// assert_eq!(sb.get('９'), SentenceBreak::Numeric); // U+FF19: Fullwidth Digit Nine
     /// assert_eq!(sb.get(','), SentenceBreak::SContinue); // U+002C: Comma
@@ -376,7 +376,7 @@ make_map_property! {
     ///
     /// let provider = icu_testdata::get_provider();
     /// let data = maps::get_canonical_combining_class(&provider).expect("The data should be valid!");
-    /// let sb = &payload.get().code_point_trie;
+    /// let sb = data.as_borrowed();;
     ///
     /// assert_eq!(sb.get('a'), CanonicalCombiningClass::NotReordered); // U+0061: LATIN SMALL LETTER A
     /// assert_eq!(sb.get(0x0301), CanonicalCombiningClass::Above); // U+0301: COMBINING ACUTE ACCENT
