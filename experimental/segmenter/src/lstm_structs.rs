@@ -4,10 +4,10 @@
 
 use alloc::borrow::Cow;
 use icu_provider::prelude::*;
-use litemap::LiteMap;
 use ndarray::Array1;
 use ndarray::Array2;
 use serde::{Deserialize, Serialize};
+use zerovec::ZeroMap;
 
 /// 'LstmData' is a struct that store a LSTM model. Its attributes are:
 /// `model`: name of the model
@@ -18,13 +18,12 @@ use serde::{Deserialize, Serialize};
 /// `mat8` - `mat9`: the matrices associated with output layer (weight and bias term respectiely)
 #[icu_provider::data_struct(LstmDataMarker)]
 #[derive(PartialEq, Debug, Serialize, Deserialize, Clone)]
+#[yoke(prove_covariance_manually)]
 pub struct LstmData<'data> {
     #[serde(borrow)]
     pub model: Cow<'data, str>,
-    // TODO: replacing LiteMap with ZeroMap if possible
     #[serde(borrow)]
-    #[zerofrom(clone)]
-    pub dic: LiteMap<Cow<'data, str>, i16>,
+    pub dic: ZeroMap<'data, str, i16>,
     #[zerofrom(clone)]
     pub mat1: Array2<f32>,
     #[zerofrom(clone)]
