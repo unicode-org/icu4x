@@ -304,44 +304,43 @@ impl GeneralCategoryGroup {
     /// use icu_codepointtrie::CodePointTrie;
     ///
     /// let provider = icu_testdata::get_provider();
-    /// let payload = maps::get_general_category(&provider).expect("The data should be valid");
-    /// let data_struct = payload.get();
-    /// let gc = &data_struct.code_point_trie;
+    /// let data = maps::get_general_category(&provider).expect("The data should be valid");
+    /// let gc = data.as_borrowed();
     ///
-    /// assert_eq!(gc.get('A' as u32), GeneralCategory::UppercaseLetter);
-    /// assert!(GeneralCategoryGroup::CasedLetter.contains(gc.get('A' as u32)));
+    /// assert_eq!(gc.get('A'), GeneralCategory::UppercaseLetter);
+    /// assert!(GeneralCategoryGroup::CasedLetter.contains(gc.get('A')));
     ///
     /// // U+0B1E ORIYA LETTER NYA
-    /// assert_eq!(gc.get('ଞ' as u32), GeneralCategory::OtherLetter);
-    /// assert!(GeneralCategoryGroup::Letter.contains(gc.get('ଞ' as u32)));
-    /// assert!(!GeneralCategoryGroup::CasedLetter.contains(gc.get('ଞ' as u32)));
+    /// assert_eq!(gc.get('ଞ'), GeneralCategory::OtherLetter);
+    /// assert!(GeneralCategoryGroup::Letter.contains(gc.get('ଞ')));
+    /// assert!(!GeneralCategoryGroup::CasedLetter.contains(gc.get('ଞ')));
     ///
     /// // U+0301 COMBINING ACUTE ACCENT
-    /// assert_eq!(gc.get(0x0301), GeneralCategory::NonspacingMark);
-    /// assert!(GeneralCategoryGroup::Mark.contains(gc.get(0x0301)));
-    /// assert!(!GeneralCategoryGroup::Letter.contains(gc.get(0x0301)));
+    /// assert_eq!(gc.get_u32(0x0301), GeneralCategory::NonspacingMark);
+    /// assert!(GeneralCategoryGroup::Mark.contains(gc.get_u32(0x0301)));
+    /// assert!(!GeneralCategoryGroup::Letter.contains(gc.get_u32(0x0301)));
     ///
-    /// assert_eq!(gc.get('0' as u32), GeneralCategory::DecimalNumber);
-    /// assert!(GeneralCategoryGroup::Number.contains(gc.get('0' as u32)));
-    /// assert!(!GeneralCategoryGroup::Mark.contains(gc.get('0' as u32)));
+    /// assert_eq!(gc.get('0'), GeneralCategory::DecimalNumber);
+    /// assert!(GeneralCategoryGroup::Number.contains(gc.get('0')));
+    /// assert!(!GeneralCategoryGroup::Mark.contains(gc.get('0')));
     ///
-    /// assert_eq!(gc.get('(' as u32), GeneralCategory::OpenPunctuation);
-    /// assert!(GeneralCategoryGroup::Punctuation.contains(gc.get('(' as u32)));
-    /// assert!(!GeneralCategoryGroup::Number.contains(gc.get('(' as u32)));
+    /// assert_eq!(gc.get('('), GeneralCategory::OpenPunctuation);
+    /// assert!(GeneralCategoryGroup::Punctuation.contains(gc.get('(')));
+    /// assert!(!GeneralCategoryGroup::Number.contains(gc.get('(')));
     ///
     /// // U+2713 CHECK MARK
-    /// assert_eq!(gc.get('✓' as u32), GeneralCategory::OtherSymbol);
-    /// assert!(GeneralCategoryGroup::Symbol.contains(gc.get('✓' as u32)));
-    /// assert!(!GeneralCategoryGroup::Punctuation.contains(gc.get('✓' as u32)));
+    /// assert_eq!(gc.get('✓'), GeneralCategory::OtherSymbol);
+    /// assert!(GeneralCategoryGroup::Symbol.contains(gc.get('✓')));
+    /// assert!(!GeneralCategoryGroup::Punctuation.contains(gc.get('✓')));
     ///
-    /// assert_eq!(gc.get(' ' as u32), GeneralCategory::SpaceSeparator);
-    /// assert!(GeneralCategoryGroup::Separator.contains(gc.get(' ' as u32)));
-    /// assert!(!GeneralCategoryGroup::Symbol.contains(gc.get(' ' as u32)));
+    /// assert_eq!(gc.get(' '), GeneralCategory::SpaceSeparator);
+    /// assert!(GeneralCategoryGroup::Separator.contains(gc.get(' ')));
+    /// assert!(!GeneralCategoryGroup::Symbol.contains(gc.get(' ')));
     ///
     /// // U+E007F CANCEL TAG
-    /// assert_eq!(gc.get(0xE007F), GeneralCategory::Format);
-    /// assert!(GeneralCategoryGroup::Other.contains(gc.get(0xE007F)));
-    /// assert!(!GeneralCategoryGroup::Separator.contains(gc.get(0xE007F)));
+    /// assert_eq!(gc.get_u32(0xE007F), GeneralCategory::Format);
+    /// assert!(GeneralCategoryGroup::Other.contains(gc.get_u32(0xE007F)));
+    /// assert!(!GeneralCategoryGroup::Separator.contains(gc.get_u32(0xE007F)));
     /// ```
     pub fn contains(&self, val: GeneralCategory) -> bool {
         0 != (1 << (val as u32)) & self.0
