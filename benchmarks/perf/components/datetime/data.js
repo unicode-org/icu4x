@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1656117819606,
+  "lastUpdate": 1656120345253,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -42983,6 +42983,102 @@ window.BENCHMARK_DATA = {
             "name": "pattern/parse",
             "value": 5914,
             "range": "± 146",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "elango@unicode.org",
+            "name": "Elango",
+            "username": "echeran"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "0b5546af517832709e9bbafbb3a06f7af212bb15",
+          "message": "Enable missing docs lint in plurals (#2108)",
+          "timestamp": "2022-06-25T01:10:58Z",
+          "tree_id": "5669ef048c6f1499165da783e5905c7cf9911616",
+          "url": "https://github.com/unicode-org/icu4x/commit/0b5546af517832709e9bbafbb3a06f7af212bb15"
+        },
+        "date": 1656120319020,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 86092,
+            "range": "± 573",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 836360,
+            "range": "± 1168",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 181553,
+            "range": "± 487",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/DateTimeFormat/format_to_write",
+            "value": 81848,
+            "range": "± 83",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/DateTimeFormat/format_to_string",
+            "value": 90632,
+            "range": "± 328",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/format",
+            "value": 86368,
+            "range": "± 188",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/to_string",
+            "value": 94363,
+            "range": "± 191",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/ZonedDateTimeFormat/format_to_write",
+            "value": 176963,
+            "range": "± 910",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/ZonedDateTimeFormat/format_to_string",
+            "value": 188258,
+            "range": "± 1337",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/format",
+            "value": 182271,
+            "range": "± 909",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/to_string",
+            "value": 193374,
+            "range": "± 296",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "pattern/parse",
+            "value": 5094,
+            "range": "± 7",
             "unit": "ns/iter"
           }
         ]
