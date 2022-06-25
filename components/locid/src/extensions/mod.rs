@@ -73,7 +73,7 @@ pub enum ExtensionType {
 }
 
 impl ExtensionType {
-    pub fn from_byte(key: u8) -> Result<Self, ParserError> {
+    pub(crate) fn from_byte(key: u8) -> Result<Self, ParserError> {
         let key = key.to_ascii_lowercase();
         match key {
             b'u' => Ok(Self::Unicode),
