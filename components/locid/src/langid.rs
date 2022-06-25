@@ -160,10 +160,10 @@ impl LanguageIdentifier {
         Ok(lang_id.to_string())
     }
 
-    /// Compare this `LanguageIdentifier` with BCP-47 bytes.
+    /// Compare this [`LanguageIdentifier`] with BCP-47 bytes.
     ///
     /// The return value is equivalent to what would happen if you first converted this
-    /// `LanguageIdentifier` to a BCP-47 string and then performed a byte comparison.
+    /// [`LanguageIdentifier`] to a BCP-47 string and then performed a byte comparison.
     ///
     /// This function is case-sensitive and results in a *total order*, so it is appropriate for
     /// binary search. The only argument producing [`Ordering::Equal`] is `self.to_string()`.
@@ -198,7 +198,7 @@ impl LanguageIdentifier {
         self.strict_cmp_iter(other.split(|b| *b == b'-')).end()
     }
 
-    /// Compare this `LanguageIdentifier` with an iterator of BCP-47 subtags.
+    /// Compare this [`LanguageIdentifier`] with an iterator of BCP-47 subtags.
     ///
     /// This function has the same equality semantics as [`LanguageIdentifier::strict_cmp`]. It is intended as
     /// a more modular version that allows multiple subtag iterators to be chained together.
