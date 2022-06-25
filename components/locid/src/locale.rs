@@ -70,9 +70,9 @@ use core::str::FromStr;
 #[derive(Default, PartialEq, Eq, Clone, Hash, PartialOrd, Ord)]
 #[allow(clippy::exhaustive_structs)] // This struct is stable (and invoked by a macro)
 pub struct Locale {
-    // Language component of the Locale
+    /// The basic language/script/region components in the locale identifier along with any variants.
     pub id: LanguageIdentifier,
-    // Unicode Locale Extensions
+    /// Any extension subtags represents in the locale identifier .
     pub extensions: extensions::Extensions,
 }
 

@@ -89,9 +89,15 @@ impl ExtensionType {
 #[derive(Debug, Default, PartialEq, Eq, Clone, Hash, PartialOrd, Ord)]
 #[non_exhaustive]
 pub struct Extensions {
+    /// A representation of the data for a Unicode extension subtag, when present in the locale identifer.
     pub unicode: Unicode,
+    /// A representation of the data for a transform extension subtag, when present in the locale identifer.
     pub transform: Transform,
+    /// A representation of the data for a private-use extension subtag, when present in the locale identifer.
     pub private: Private,
+    /// A sequence of any other extension subtags that are present in the locale identifier but are not formally
+    /// [defined](https://unicode.org/reports/tr35/) and represented explicitly as [`Unicode`], [`Transform`],
+    /// and [`Private`] are.
     pub other: Vec<Other>,
 }
 
