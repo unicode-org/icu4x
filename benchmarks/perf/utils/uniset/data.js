@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1656115524602,
+  "lastUpdate": 1656117632291,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -33587,6 +33587,60 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 42479648,
             "range": "± 2436793",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/worst",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/worst",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "younies.mahmoud@gmail.com",
+            "name": "Younies Mahmoud",
+            "username": "younies"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "71f8308f90d1e75fe0dffcff3e836faa5aebd223",
+          "message": "Remove rounding mode and use half_even as a default rounding mode. (#2104)\n\nRemove rounding mode and use half_even as a default rounding mode.",
+          "timestamp": "2022-06-25T02:29:38+02:00",
+          "tree_id": "1f41fd48c6e8560d67efeafa9a1a715d9c934228",
+          "url": "https://github.com/unicode-org/icu4x/commit/71f8308f90d1e75fe0dffcff3e836faa5aebd223"
+        },
+        "date": 1656117606273,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 44930432,
+            "range": "± 149708",
             "unit": "ns/iter"
           },
           {
