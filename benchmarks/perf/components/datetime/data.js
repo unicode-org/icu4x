@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1656115647743,
+  "lastUpdate": 1656117819606,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -42887,6 +42887,102 @@ window.BENCHMARK_DATA = {
             "name": "pattern/parse",
             "value": 5343,
             "range": "± 150",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "younies.mahmoud@gmail.com",
+            "name": "Younies Mahmoud",
+            "username": "younies"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "71f8308f90d1e75fe0dffcff3e836faa5aebd223",
+          "message": "Remove rounding mode and use half_even as a default rounding mode. (#2104)\n\nRemove rounding mode and use half_even as a default rounding mode.",
+          "timestamp": "2022-06-25T02:29:38+02:00",
+          "tree_id": "1f41fd48c6e8560d67efeafa9a1a715d9c934228",
+          "url": "https://github.com/unicode-org/icu4x/commit/71f8308f90d1e75fe0dffcff3e836faa5aebd223"
+        },
+        "date": 1656117787657,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 102392,
+            "range": "± 1873",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 968655,
+            "range": "± 16728",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 210109,
+            "range": "± 6262",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/DateTimeFormat/format_to_write",
+            "value": 94834,
+            "range": "± 2286",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/DateTimeFormat/format_to_string",
+            "value": 106237,
+            "range": "± 1830",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/format",
+            "value": 102057,
+            "range": "± 1965",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/to_string",
+            "value": 108898,
+            "range": "± 2412",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/ZonedDateTimeFormat/format_to_write",
+            "value": 204734,
+            "range": "± 4944",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/ZonedDateTimeFormat/format_to_string",
+            "value": 220598,
+            "range": "± 4240",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/format",
+            "value": 210063,
+            "range": "± 4427",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/to_string",
+            "value": 224490,
+            "range": "± 5545",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "pattern/parse",
+            "value": 5914,
+            "range": "± 146",
             "unit": "ns/iter"
           }
         ]
