@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1656117632291,
+  "lastUpdate": 1656120179336,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -33641,6 +33641,60 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 44930432,
             "range": "± 149708",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/worst",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/worst",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "elango@unicode.org",
+            "name": "Elango",
+            "username": "echeran"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "0b5546af517832709e9bbafbb3a06f7af212bb15",
+          "message": "Enable missing docs lint in plurals (#2108)",
+          "timestamp": "2022-06-25T01:10:58Z",
+          "tree_id": "5669ef048c6f1499165da783e5905c7cf9911616",
+          "url": "https://github.com/unicode-org/icu4x/commit/0b5546af517832709e9bbafbb3a06f7af212bb15"
+        },
+        "date": 1656120153085,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 44932077,
+            "range": "± 104092",
             "unit": "ns/iter"
           },
           {
