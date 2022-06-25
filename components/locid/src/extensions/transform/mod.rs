@@ -71,7 +71,10 @@ use litemap::LiteMap;
 #[derive(Clone, PartialEq, Eq, Debug, Default, Hash, PartialOrd, Ord)]
 #[allow(clippy::exhaustive_structs)] // spec-backed stable datastructure
 pub struct Transform {
+    /// The [`LanguageIdentifier`] specified with this locale extension, or `None` if not present.
     pub lang: Option<LanguageIdentifier>,
+    /// The key-value pairs present in this locale extension, with each extension key subtag
+    /// associated to its provided value subtag.
     pub fields: Fields,
 }
 

@@ -70,7 +70,10 @@ use litemap::LiteMap;
 #[derive(Clone, PartialEq, Eq, Debug, Default, Hash, PartialOrd, Ord)]
 #[allow(clippy::exhaustive_structs)] // spec-backed stable datastructure
 pub struct Unicode {
+    /// The key-value pairs present in this locale extension, with each extension key subtag
+    /// associated to its provided value subtag.
     pub keywords: Keywords,
+    /// A canonically ordered sequence of single standalone subtags for this locale extension.
     pub attributes: Attributes,
 }
 
