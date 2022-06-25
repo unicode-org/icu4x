@@ -72,7 +72,7 @@ use core::str::FromStr;
 pub struct Locale {
     /// The basic language/script/region components in the locale identifier along with any variants.
     pub id: LanguageIdentifier,
-    /// Any extension subtags represents in the locale identifier.
+    /// Any extensions present in the locale identifier.
     pub extensions: extensions::Extensions,
 }
 
