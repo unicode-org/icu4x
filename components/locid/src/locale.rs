@@ -166,22 +166,24 @@ impl Locale {
     /// use icu::locid::Locale;
     /// use std::cmp::Ordering;
     ///
-    /// let bcp47_strings: &[&[u8]] = &[
-    ///     b"pl-Latn-PL",
-    ///     b"und",
-    ///     b"und-fonipa",
-    ///     b"und-t-m0-true",
-    ///     b"und-u-ca-hebrew",
-    ///     b"und-u-ca-japanese",
-    ///     b"zh",
+    /// let bcp47_strings: &[&str] = &[
+    ///     "pl-Latn-PL",
+    ///     "und",
+    ///     "und-fonipa",
+    ///     "und-t-m0-true",
+    ///     "und-u-ca-hebrew",
+    ///     "und-u-ca-japanese",
+    ///     "zh",
     /// ];
     ///
     /// for ab in bcp47_strings.windows(2) {
     ///     let a = ab[0];
     ///     let b = ab[1];
     ///     assert!(a.cmp(b) == Ordering::Less);
-    ///     let a_langid = Locale::from_bytes(a).unwrap();
-    ///     assert!(a_langid.strict_cmp(b) == Ordering::Less);
+    ///     let a_loc = a.parse::<Locale>().unwrap();
+    ///     assert_eq!(a, a_loc.to_string());
+    ///     assert!(a_loc.strict_cmp(a.as_bytes()) == Ordering::Equal);
+    ///     assert!(a_loc.strict_cmp(b.as_bytes()) == Ordering::Less);
     /// }
     /// ```
     pub fn strict_cmp(&self, other: &[u8]) -> Ordering {
