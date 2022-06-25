@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1656114968194,
+  "lastUpdate": 1656117122008,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -18503,6 +18503,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/e3830ee36d1551771868b6bc266e02fd33104628"
         },
         "date": 1656114943976,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 2737318,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "younies.mahmoud@gmail.com",
+            "name": "Younies Mahmoud",
+            "username": "younies"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "71f8308f90d1e75fe0dffcff3e836faa5aebd223",
+          "message": "Remove rounding mode and use half_even as a default rounding mode. (#2104)\n\nRemove rounding mode and use half_even as a default rounding mode.",
+          "timestamp": "2022-06-25T02:29:38+02:00",
+          "tree_id": "1f41fd48c6e8560d67efeafa9a1a715d9c934228",
+          "url": "https://github.com/unicode-org/icu4x/commit/71f8308f90d1e75fe0dffcff3e836faa5aebd223"
+        },
+        "date": 1656117095563,
         "tool": "ndjson",
         "benches": [
           {
