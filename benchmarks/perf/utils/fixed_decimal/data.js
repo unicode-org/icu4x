@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1656120292210,
+  "lastUpdate": 1656287029073,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -33736,6 +33736,66 @@ window.BENCHMARK_DATA = {
           {
             "name": "to_string/to_string/908070605040302010",
             "value": 185,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 76,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 78,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "6efed33a0e199d0d11acb550613219c339906d08",
+          "message": "Fix feature in calendar benches (#2116)",
+          "timestamp": "2022-06-26T16:31:34-07:00",
+          "tree_id": "18ef596bcd8cebdfbe85406d3d78c1ef3bfd5f94",
+          "url": "https://github.com/unicode-org/icu4x/commit/6efed33a0e199d0d11acb550613219c339906d08"
+        },
+        "date": 1656287000969,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 110020,
+            "range": "± 332",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 23958,
+            "range": "± 198",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 61433,
+            "range": "± 105",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 191,
             "range": "± 0",
             "unit": "ns/iter"
           },
