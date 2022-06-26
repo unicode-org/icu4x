@@ -80,6 +80,9 @@ where
         match self.config.priority {
             FallbackPriority::Language => self.step_language(),
             FallbackPriority::Region => self.step_region(),
+            // This case should not normally happen, but `FallbackPriority` is non_exhaustive.
+            // Make it go directly to `und`.
+            _ => *self.current.borrow_mut() = Default::default(),
         };
         self
     }

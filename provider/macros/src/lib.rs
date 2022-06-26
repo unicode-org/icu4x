@@ -220,7 +220,9 @@ fn data_struct_impl(attr: AttributeArgs, input: DeriveInput) -> TokenStream2 {
                 };
                 let extension_key_expression = match &extension_key {
                     Some(extension_key) => {
-                        quote!(Some(icu_provider::_internal::extensions_unicode_key!(#extension_key)))
+                        quote!(Some(
+                            icu_provider::_internal::extensions_unicode_key!(#extension_key)
+                        ))
                     }
                     None => quote!(None),
                 };

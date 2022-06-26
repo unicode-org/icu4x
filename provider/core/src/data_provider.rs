@@ -20,11 +20,11 @@ use core::fmt::Debug;
 use core::marker::PhantomData;
 use icu_locid::LanguageIdentifier;
 
-#[derive(Default, Debug, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Default, Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
 #[non_exhaustive]
 pub struct DataRequestMetadata;
 
-#[derive(Default, Debug, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Default, Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct DataRequest {
     pub options: ResourceOptions,
@@ -34,6 +34,20 @@ pub struct DataRequest {
 impl fmt::Display for DataRequest {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         fmt::Display::fmt(&self.options, f)
+    }
+}
+
+// XXX: DataRequest should technically not implement `Borrow<ResourceOptions>` since it has
+// multiple fields, but there is no `AsRefMut` and we need a mutable reference.
+impl core::borrow::Borrow<ResourceOptions> for DataRequest {
+    fn borrow(&self) -> &ResourceOptions {
+        &self.options
+    }
+}
+
+impl core::borrow::BorrowMut<ResourceOptions> for DataRequest {
+    fn borrow_mut(&mut self) -> &mut ResourceOptions {
+        &mut self.options
     }
 }
 

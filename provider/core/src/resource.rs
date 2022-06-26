@@ -91,6 +91,7 @@ unsafe impl EqULE for ResourceKeyHash {}
 /// For example, if `"en-US"` is requested, but we have no data for that specific locale,
 /// fallback may take us to `"en"` or `"und-US"` to check for data.
 #[derive(Debug, PartialEq, Eq, Copy, Clone, PartialOrd, Ord)]
+#[non_exhaustive]
 pub enum FallbackPriority {
     /// Prioritize the language. This is the default behavior.
     ///

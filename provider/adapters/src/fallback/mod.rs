@@ -45,9 +45,11 @@ use icu_locid::subtags::Variants;
 use icu_provider::prelude::*;
 use icu_provider::{FallbackPriority, ResourceKeyMetadata};
 
+mod adapter;
 mod algorithms;
-
 pub mod provider;
+
+pub use adapter::LocaleFallbackProvider;
 
 use provider::*;
 
