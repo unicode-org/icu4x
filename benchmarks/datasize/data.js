@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1656119603060,
+  "lastUpdate": 1656286446692,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -18563,6 +18563,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/0b5546af517832709e9bbafbb3a06f7af212bb15"
         },
         "date": 1656119574209,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 2737318,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "6efed33a0e199d0d11acb550613219c339906d08",
+          "message": "Fix feature in calendar benches (#2116)",
+          "timestamp": "2022-06-26T16:31:34-07:00",
+          "tree_id": "18ef596bcd8cebdfbe85406d3d78c1ef3bfd5f94",
+          "url": "https://github.com/unicode-org/icu4x/commit/6efed33a0e199d0d11acb550613219c339906d08"
+        },
+        "date": 1656286417972,
         "tool": "ndjson",
         "benches": [
           {
