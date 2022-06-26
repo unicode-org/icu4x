@@ -6,6 +6,7 @@ use icu_locid::extensions::unicode::Key;
 use icu_locid::extensions_unicode_key as key;
 use icu_locid::subtags::Language;
 use icu_locid::LanguageIdentifier;
+use icu_provider::FallbackPriority;
 
 use super::*;
 
@@ -58,7 +59,7 @@ impl<'a> LocaleFallbackerWithConfig<'a> {
                 // Always retain -u-sd
                 SUBDIVISION_KEY => true,
                 // Retain the query-specific keyword
-                _ if Some(*key) == self.key_metadata.extension_kw => true,
+                _ if Some(*key) == self.config.extension_key => true,
                 // Drop all others
                 _ => false,
             }
@@ -73,9 +74,9 @@ impl<'a, 'b> LocaleFallbackIterator<'a, 'b> {
     ///
     /// The fallback is completed once the inner [`ResourceOptions`] becomes `und`.
     pub fn step(&mut self) -> &mut Self {
-        match self.key_metadata.strategy {
-            LocaleFallbackStrategy::LanguagePriority => self.step_language(),
-            LocaleFallbackStrategy::RegionPriority => self.step_region(),
+        match self.config.priority {
+            FallbackPriority::Language => self.step_language(),
+            FallbackPriority::Region => self.step_region(),
         };
         self
     }
@@ -83,8 +84,8 @@ impl<'a, 'b> LocaleFallbackIterator<'a, 'b> {
     fn step_language(&mut self) {
         let ro = &mut self.current;
         // 1. Remove the extension fallback keyword
-        if let Some(extension_kw) = self.key_metadata.extension_kw {
-            if let Some(value) = ro.remove_unicode_ext(&extension_kw) {
+        if let Some(extension_key) = self.config.extension_key {
+            if let Some(value) = ro.remove_unicode_ext(&extension_key) {
                 self.backup_extension = Some(value);
                 return;
             }
@@ -141,8 +142,8 @@ impl<'a, 'b> LocaleFallbackIterator<'a, 'b> {
     fn step_region(&mut self) {
         let ro = &mut self.current;
         // 1. Remove the extension fallback keyword
-        if let Some(extension_kw) = self.key_metadata.extension_kw {
-            if let Some(value) = ro.remove_unicode_ext(&extension_kw) {
+        if let Some(extension_key) = self.config.extension_key {
+            if let Some(value) = ro.remove_unicode_ext(&extension_key) {
                 self.backup_extension = Some(value);
                 return;
             }
@@ -174,8 +175,8 @@ impl<'a, 'b> LocaleFallbackIterator<'a, 'b> {
     fn restore_extensions_variants(&mut self) {
         let ro = &mut self.current;
         if let Some(value) = self.backup_extension.take() {
-            #[allow(clippy::unwrap_used)] // not reachable unless extension_kw is present
-            ro.set_unicode_ext(self.key_metadata.extension_kw.unwrap(), value);
+            #[allow(clippy::unwrap_used)] // not reachable unless extension_key is present
+            ro.set_unicode_ext(self.config.extension_key.unwrap(), value);
         }
         if let Some(value) = self.backup_subdivision.take() {
             ro.set_unicode_ext(SUBDIVISION_KEY, value);
@@ -195,7 +196,7 @@ mod tests {
     struct TestCase {
         input: &'static str,
         requires_data: bool,
-        extension_kw: Option<Key>,
+        extension_key: Option<Key>,
         // Note: The first entry in the chain is the normalized locale
         expected_language_chain: &'static [&'static str],
         expected_region_chain: &'static [&'static str],
@@ -206,21 +207,21 @@ mod tests {
         TestCase {
             input: "en-u-hc-h12-sd-usca",
             requires_data: false,
-            extension_kw: None,
+            extension_key: None,
             expected_language_chain: &["en-u-sd-usca", "en"],
             expected_region_chain: &["en-u-sd-usca", "en", "und-u-sd-usca"],
         },
         TestCase {
             input: "en-US-u-hc-h12-sd-usca",
             requires_data: false,
-            extension_kw: None,
+            extension_key: None,
             expected_language_chain: &["en-US-u-sd-usca", "en-US", "en"],
             expected_region_chain: &["en-US-u-sd-usca", "en-US", "und-US-u-sd-usca", "und-US"],
         },
         TestCase {
             input: "en-US-fonipa-u-hc-h12-sd-usca",
             requires_data: false,
-            extension_kw: Some(key!("hc")),
+            extension_key: Some(key!("hc")),
             expected_language_chain: &[
                 "en-US-fonipa-u-hc-h12-sd-usca",
                 "en-US-fonipa-u-sd-usca",
@@ -242,21 +243,21 @@ mod tests {
         TestCase {
             input: "en-u-hc-h12-sd-usca",
             requires_data: true,
-            extension_kw: None,
+            extension_key: None,
             expected_language_chain: &["en-US-u-sd-usca", "en-US", "en"],
             expected_region_chain: &["en-US-u-sd-usca", "en-US", "und-US-u-sd-usca", "und-US"],
         },
         TestCase {
             input: "en-Latn-u-sd-usca",
             requires_data: true,
-            extension_kw: None,
+            extension_key: None,
             expected_language_chain: &["en-US-u-sd-usca", "en-US", "en"],
             expected_region_chain: &["en-US-u-sd-usca", "en-US", "und-US-u-sd-usca", "und-US"],
         },
         TestCase {
             input: "en-Latn-US-u-sd-usca",
             requires_data: true,
-            extension_kw: None,
+            extension_key: None,
             expected_language_chain: &["en-US-u-sd-usca", "en-US", "en"],
             expected_region_chain: &["en-US-u-sd-usca", "en-US", "und-US-u-sd-usca", "und-US"],
         },
@@ -264,21 +265,21 @@ mod tests {
             // NOTE: -u-rg is not yet supported; when it is, this test should be updated
             input: "en-u-rg-gbxxxx",
             requires_data: false,
-            extension_kw: None,
+            extension_key: None,
             expected_language_chain: &["en"],
             expected_region_chain: &["en"],
         },
         TestCase {
             input: "sr-ME",
             requires_data: true,
-            extension_kw: None,
+            extension_key: None,
             expected_language_chain: &["sr-ME", "sr-Latn-ME", "sr-Latn"],
             expected_region_chain: &["sr-ME", "und-ME"],
         },
         TestCase {
             input: "sr-ME-fonipa",
             requires_data: true,
-            extension_kw: None,
+            extension_key: None,
             expected_language_chain: &[
                 "sr-ME-fonipa",
                 "sr-ME",
@@ -291,35 +292,35 @@ mod tests {
         TestCase {
             input: "de-Latn-LI",
             requires_data: true,
-            extension_kw: None,
+            extension_key: None,
             expected_language_chain: &["de-LI", "de"],
             expected_region_chain: &["de-LI", "und-LI"],
         },
         TestCase {
             input: "ca-ES-valencia",
             requires_data: true,
-            extension_kw: None,
+            extension_key: None,
             expected_language_chain: &["ca-ES-valencia", "ca-ES", "ca"],
             expected_region_chain: &["ca-ES-valencia", "ca-ES", "und-ES-valencia", "und-ES"],
         },
         TestCase {
             input: "es-AR",
             requires_data: true,
-            extension_kw: None,
+            extension_key: None,
             expected_language_chain: &["es-AR", "es-419", "es"],
             expected_region_chain: &["es-AR", "und-AR"],
         },
         TestCase {
             input: "hi-IN",
             requires_data: true,
-            extension_kw: None,
+            extension_key: None,
             expected_language_chain: &["hi-IN", "hi"],
             expected_region_chain: &["hi-IN", "und-IN"],
         },
         TestCase {
             input: "hi-Latn-IN",
             requires_data: true,
-            extension_kw: None,
+            extension_key: None,
             expected_language_chain: &["hi-Latn-IN", "hi-Latn", "en-IN", "en-001", "en"],
             expected_region_chain: &["hi-Latn-IN", "und-IN"],
         },
@@ -331,24 +332,24 @@ mod tests {
         let provider = icu_testdata::get_provider();
         let fallbacker_with_data = LocaleFallbacker::try_new(&provider).unwrap();
         for cas in TEST_CASES {
-            for (strategy, expected_chain) in [
+            for (priority, expected_chain) in [
                 (
-                    LocaleFallbackStrategy::LanguagePriority,
+                    FallbackPriority::Language,
                     cas.expected_language_chain,
                 ),
                 (
-                    LocaleFallbackStrategy::RegionPriority,
+                    FallbackPriority::Region,
                     cas.expected_region_chain,
                 ),
             ] {
-                let key_metadata = LocaleFallbackConfig {
-                    strategy,
-                    extension_kw: cas.extension_kw,
+                let config = LocaleFallbackConfig {
+                    priority,
+                    extension_key: cas.extension_key,
                 };
                 let key_fallbacker = if cas.requires_data {
-                    fallbacker_with_data.for_config(key_metadata)
+                    fallbacker_with_data.for_config(config)
                 } else {
-                    fallbacker_no_data.for_config(key_metadata)
+                    fallbacker_no_data.for_config(config)
                 };
                 let loc = Locale::from_str(cas.input).unwrap();
                 let ro = ResourceOptions::from(loc);
@@ -359,7 +360,7 @@ mod tests {
                         &it.get().to_string(),
                         "{:?} ({:?})",
                         cas.input,
-                        strategy
+                        priority
                     );
                     it.step();
                 }
@@ -368,7 +369,7 @@ mod tests {
                     it.get().to_string(),
                     "{:?} ({:?})",
                     cas.input,
-                    strategy
+                    priority
                 );
             }
         }
