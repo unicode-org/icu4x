@@ -69,7 +69,10 @@ impl<'a> LocaleFallbackerWithConfig<'a> {
     }
 }
 
-impl<'a, 'b> LocaleFallbackIterator<'a, 'b> {
+impl<'a, 'b, T> LocaleFallbackIterator<'a, 'b, T>
+where
+    T: BorrowMut<ResourceOptions>,
+{
     /// Performs one step of the locale fallback algorithm.
     ///
     /// The fallback is completed once the inner [`ResourceOptions`] becomes `und`.
@@ -82,7 +85,7 @@ impl<'a, 'b> LocaleFallbackIterator<'a, 'b> {
     }
 
     fn step_language(&mut self) {
-        let ro = &mut self.current;
+        let ro = self.current.borrow_mut();
         // 1. Remove the extension fallback keyword
         if let Some(extension_key) = self.config.extension_key {
             if let Some(value) = ro.remove_unicode_ext(&extension_key) {
@@ -140,7 +143,7 @@ impl<'a, 'b> LocaleFallbackIterator<'a, 'b> {
     }
 
     fn step_region(&mut self) {
-        let ro = &mut self.current;
+        let ro = self.current.borrow_mut();
         // 1. Remove the extension fallback keyword
         if let Some(extension_key) = self.config.extension_key {
             if let Some(value) = ro.remove_unicode_ext(&extension_key) {
@@ -173,7 +176,7 @@ impl<'a, 'b> LocaleFallbackIterator<'a, 'b> {
     }
 
     fn restore_extensions_variants(&mut self) {
-        let ro = &mut self.current;
+        let ro = self.current.borrow_mut();
         if let Some(value) = self.backup_extension.take() {
             #[allow(clippy::unwrap_used)] // not reachable unless extension_key is present
             ro.set_unicode_ext(self.config.extension_key.unwrap(), value);
@@ -346,8 +349,8 @@ mod tests {
                     fallbacker_no_data.for_config(config)
                 };
                 let loc = Locale::from_str(cas.input).unwrap();
-                let ro = ResourceOptions::from(loc);
-                let mut it = key_fallbacker.fallback_for(ro);
+                let mut ro = ResourceOptions::from(loc);
+                let mut it = key_fallbacker.fallback_for(&mut ro);
                 for expected in expected_chain {
                     assert_eq!(
                         expected,
