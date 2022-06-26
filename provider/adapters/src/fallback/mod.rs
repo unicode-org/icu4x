@@ -41,7 +41,7 @@
 use icu_locid::extensions::unicode::{Key, Value};
 use icu_locid::subtags::Variants;
 use icu_provider::prelude::*;
-use icu_provider::FallbackPriority;
+use icu_provider::{FallbackPriority, ResourceKeyMetadata};
 
 mod algorithms;
 
@@ -50,13 +50,13 @@ pub mod provider;
 use provider::*;
 
 /// Configuration settings for a particular fallback operation.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
+#[derive(Debug, Clone, PartialEq, Eq, Default)]
 #[non_exhaustive]
 pub struct LocaleFallbackConfig {
     /// Strategy for choosing which subtags to drop during locale fallback.
-    /// 
+    ///
     /// # Examples
-    /// 
+    ///
     /// Retain the language and script subtags until the final step:
     ///
     /// ```
@@ -82,7 +82,7 @@ pub struct LocaleFallbackConfig {
     /// fallback_iterator.step();
     /// assert_eq!(fallback_iterator.get().to_string(), "und");
     /// ```
-    /// 
+    ///
     /// Retain the region subtag until the final step:
     ///
     /// ```
@@ -138,6 +138,15 @@ pub struct LocaleFallbackConfig {
     /// assert_eq!(fallback_iterator.get().to_string(), "und");
     /// ```
     pub extension_key: Option<Key>,
+}
+
+impl From<ResourceKeyMetadata> for LocaleFallbackConfig {
+    fn from(key_metadata: ResourceKeyMetadata) -> Self {
+        LocaleFallbackConfig {
+            priority: key_metadata.fallback_priority,
+            extension_key: key_metadata.extension_key,
+        }
+    }
 }
 
 /// Entry type for locale fallbacking.
@@ -207,6 +216,41 @@ impl LocaleFallbacker {
             parents: self.parents.get(),
             config,
         }
+    }
+
+    /// Creates the intermediate [`LocaleFallbackerWithConfig`] based on a [`ResourceKey`].
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu_provider_adapters::fallback::LocaleFallbacker;
+    /// use icu_provider::prelude::*;
+    /// use std::borrow::Cow;
+    ///
+    /// // Define the data struct with key.
+    /// #[icu_provider::data_struct(
+    ///     marker(FooV1Marker, "demo/foo@1", fallback_by = "region")
+    /// )]
+    /// pub struct FooV1<'data> {
+    ///     message: Cow<'data, str>,
+    /// };
+    ///
+    /// // Set up the fallback iterator.
+    /// let loc = icu_locid::Locale::from_bytes(b"en-GB").unwrap();
+    /// let provider = icu_testdata::get_provider();
+    /// let fallbacker = LocaleFallbacker::try_new(&provider).expect("data");
+    /// let key_fallbacker = fallbacker.for_key(FooV1Marker::KEY);
+    /// let mut fallback_iterator = key_fallbacker.fallback_for(loc.into());
+    ///
+    /// // Run the algorithm and check the results.
+    /// assert_eq!(fallback_iterator.get().to_string(), "en-GB");
+    /// fallback_iterator.step();
+    /// assert_eq!(fallback_iterator.get().to_string(), "und-GB");
+    /// fallback_iterator.step();
+    /// assert_eq!(fallback_iterator.get().to_string(), "und");
+    /// ```
+    pub fn for_key(&self, resource_key: ResourceKey) -> LocaleFallbackerWithConfig {
+        self.for_config(resource_key.get_metadata().into())
     }
 }
 

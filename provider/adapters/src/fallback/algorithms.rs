@@ -333,14 +333,8 @@ mod tests {
         let fallbacker_with_data = LocaleFallbacker::try_new(&provider).unwrap();
         for cas in TEST_CASES {
             for (priority, expected_chain) in [
-                (
-                    FallbackPriority::Language,
-                    cas.expected_language_chain,
-                ),
-                (
-                    FallbackPriority::Region,
-                    cas.expected_region_chain,
-                ),
+                (FallbackPriority::Language, cas.expected_language_chain),
+                (FallbackPriority::Region, cas.expected_region_chain),
             ] {
                 let config = LocaleFallbackConfig {
                     priority,
