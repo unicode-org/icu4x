@@ -29,7 +29,6 @@ fn bench_date<A: AsCalendar>(date: &mut Date<A>) {
     let _ = black_box(date.to_iso());
 }
 
-#[cfg(feature = "bench")]
 fn bench_calendar<C: Clone + Calendar>(
     group: &mut BenchmarkGroup<WallTime>,
     name: &str,
