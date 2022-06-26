@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1656120179336,
+  "lastUpdate": 1656286923072,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -33695,6 +33695,60 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 44932077,
             "range": "± 104092",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/worst",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/worst",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "6efed33a0e199d0d11acb550613219c339906d08",
+          "message": "Fix feature in calendar benches (#2116)",
+          "timestamp": "2022-06-26T16:31:34-07:00",
+          "tree_id": "18ef596bcd8cebdfbe85406d3d78c1ef3bfd5f94",
+          "url": "https://github.com/unicode-org/icu4x/commit/6efed33a0e199d0d11acb550613219c339906d08"
+        },
+        "date": 1656286896125,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 44764201,
+            "range": "± 126053",
             "unit": "ns/iter"
           },
           {
