@@ -47,7 +47,7 @@ mod tests;
 /// #[icu_provider::data_struct(
 ///     FooV1Marker,
 ///     BarV1Marker = "demo/bar@1",
-///     BazV1Marker = "demo/baz@1"
+///     marker(BazV1Marker, "demo/baz@1", fallback_by = "region", extension_key = "ca")
 /// )]
 /// pub struct FooV1<'data> {
 ///     message: Cow<'data, str>,
@@ -57,7 +57,24 @@ mod tests;
 /// // The other two implement `ResourceMarker`.
 ///
 /// assert_eq!(BarV1Marker::KEY.get_path(), "demo/bar@1");
+/// assert_eq!(
+///     BarV1Marker::KEY.get_metadata().fallback_priority,
+///     icu_provider::FallbackPriority::Language
+/// );
+/// assert_eq!(
+///     BarV1Marker::KEY.get_metadata().extension_key,
+///     None
+/// );
+///
 /// assert_eq!(BazV1Marker::KEY.get_path(), "demo/baz@1");
+/// assert_eq!(
+///     BazV1Marker::KEY.get_metadata().fallback_priority,
+///     icu_provider::FallbackPriority::Region
+/// );
+/// assert_eq!(
+///     BazV1Marker::KEY.get_metadata().extension_key,
+///     Some(icu_locid::extensions_unicode_key!("ca"))
+/// );
 /// ```
 ///
 /// If the `#[databake(path = ...)]` attribute is present on the data struct, this will also
@@ -113,7 +130,7 @@ fn data_struct_impl(attr: AttributeArgs, input: DeriveInput) -> TokenStream2 {
         let mut marker_name: Option<syn::Path> = None;
         let mut key_lit: Option<syn::LitStr> = None;
         let mut fallback_by: Option<syn::LitStr> = None;
-        let mut extension_kw: Option<syn::LitStr> = None;
+        let mut extension_key: Option<syn::LitStr> = None;
 
         match single_attr {
             NestedMeta::Meta(Meta::List(meta_list)) => {
@@ -140,7 +157,7 @@ fn data_struct_impl(attr: AttributeArgs, input: DeriveInput) -> TokenStream2 {
                             };
                             match name_ident_str.as_str() {
                                 "fallback_by" => fallback_by = Some(lit_str),
-                                "extension_kw" => extension_kw = Some(lit_str),
+                                "extension_key" => extension_key = Some(lit_str),
                                 _ => panic!("Invalid argument name in marker()"),
                             }
                         }
@@ -168,12 +185,18 @@ fn data_struct_impl(attr: AttributeArgs, input: DeriveInput) -> TokenStream2 {
             None => panic!("#[data_struct] arguments must include a marker name"),
         };
 
-        let docs = match (&key_lit, &fallback_by, &extension_kw) {
-            (Some(key_lit), None, None) => {
-                format!("Marker type for [`{}`]: \"{}\"", name, key_lit.value())
-            }
-            (None, None, None) => format!("Marker type for [`{}`]", name),
-            _ => panic!("Invalid combination of options for marker()"),
+        let docs = if let Some(key_lit) = &key_lit {
+            let fallback_by_docs_str = match &fallback_by {
+                Some(fallback_by) => fallback_by.value(),
+                None => "language (default)".to_string(),
+            };
+            let extension_key_docs_str = match &extension_key {
+                Some(extension_key) => extension_key.value(),
+                None => "none (default)".to_string(),
+            };
+            format!("Marker type for [`{}`]: \"{}\"\n\n- Fallback priority: {}\n- Extension keyword: {}", name, key_lit.value(), fallback_by_docs_str, extension_key_docs_str)
+        } else {
+            format!("Marker type for [`{}`]", name)
         };
 
         result.extend(quote!(
@@ -186,11 +209,39 @@ fn data_struct_impl(attr: AttributeArgs, input: DeriveInput) -> TokenStream2 {
         ));
 
         if let Some(key_lit) = &key_lit {
-            result.extend(quote!(
-                impl icu_provider::ResourceMarker for #marker_name {
-                    const KEY: icu_provider::ResourceKey = icu_provider::resource_key!(#key_lit);
-                }
-            ));
+            if fallback_by.is_some() || extension_key.is_some() {
+                let fallback_by_expression = match &fallback_by {
+                    Some(fallback_by) => match fallback_by.value().as_str() {
+                        "language" => quote!(icu_provider::FallbackPriority::Language),
+                        "region" => quote!(icu_provider::FallbackPriority::Region),
+                        _ => panic!("Invalid value for fallback_by"),
+                    },
+                    None => quote!(icu_provider::FallbackPriority::const_default()),
+                };
+                let extension_key_expression = match &extension_key {
+                    Some(extension_key) => {
+                        quote!(Some(icu_provider::_internal::extensions_unicode_key!(#extension_key)))
+                    }
+                    None => quote!(None),
+                };
+                result.extend(quote!(
+                    impl icu_provider::ResourceMarker for #marker_name {
+                        const KEY: icu_provider::ResourceKey = icu_provider::resource_key!(
+                            #key_lit,
+                            icu_provider::ResourceKeyMetadata::from_fallback_priority_and_extension_key(
+                                #fallback_by_expression,
+                                #extension_key_expression,
+                            )
+                        );
+                    }
+                ));
+            } else {
+                result.extend(quote!(
+                    impl icu_provider::ResourceMarker for #marker_name {
+                        const KEY: icu_provider::ResourceKey = icu_provider::resource_key!(#key_lit);
+                    }
+                ));
+            }
         }
     }
 

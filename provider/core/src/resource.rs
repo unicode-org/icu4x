@@ -86,6 +86,73 @@ impl AsULE for ResourceKeyHash {
 // Safe since the ULE type is `self`.
 unsafe impl EqULE for ResourceKeyHash {}
 
+/// Hint for what to prioritize during fallback when data is unavailable.
+///
+/// For example, if `"en-US"` is requested, but we have no data for that specific locale,
+/// fallback may take us to `"en"` or `"und-US"` to check for data.
+#[derive(Debug, PartialEq, Eq, Copy, Clone, PartialOrd, Ord)]
+pub enum FallbackPriority {
+    /// Prioritize the language. This is the default behavior.
+    ///
+    /// For example, `"en-US"` should go to `"en"` and then `"und"`.
+    Language,
+    /// Prioritize the region.
+    ///
+    /// For example, `"en-US"` should go to `"und-US"` and then `"und"`.
+    Region,
+}
+
+impl FallbackPriority {
+    /// Const-friendly version of [`Default::default`].
+    pub const fn const_default() -> Self {
+        Self::Language
+    }
+}
+
+impl Default for FallbackPriority {
+    fn default() -> Self {
+        Self::const_default()
+    }
+}
+
+/// Metadata statically associated with a particular [`ResourceKey`].
+#[derive(Debug, PartialEq, Eq, Copy, Clone, PartialOrd, Ord)]
+#[non_exhaustive]
+pub struct ResourceKeyMetadata {
+    /// What to prioritize when fallbacking on this [`ResourceKey`].
+    pub fallback_priority: FallbackPriority,
+    /// A Unicode extension keyword to consider when loading data for this [`ResourceKey`].
+    pub extension_key: Option<icu_locid::extensions::unicode::Key>,
+}
+
+impl ResourceKeyMetadata {
+    /// Const-friendly version of [`Default::default`].
+    pub const fn const_default() -> Self {
+        Self {
+            fallback_priority: FallbackPriority::const_default(),
+            extension_key: None,
+        }
+    }
+
+    /// Create a new [`ResourceKeyMetadata`] with the specified options.
+    pub const fn from_fallback_priority_and_extension_key(
+        fallback_priority: FallbackPriority,
+        extension_key: Option<icu_locid::extensions::unicode::Key>,
+    ) -> Self {
+        // Note: We need this function because the struct is non-exhaustive.
+        Self {
+            fallback_priority,
+            extension_key,
+        }
+    }
+}
+
+impl Default for ResourceKeyMetadata {
+    fn default() -> Self {
+        Self::const_default()
+    }
+}
+
 /// Used for loading data from an ICU4X data provider.
 ///
 /// A resource key is tightly coupled with the code that uses it to load data at runtime.
@@ -115,6 +182,7 @@ pub struct ResourceKey {
     // in a compiled binary.
     path: &'static str,
     hash: ResourceKeyHash,
+    metadata: ResourceKeyMetadata,
 }
 
 #[cfg(test)]
@@ -149,11 +217,20 @@ impl ResourceKey {
         self.hash
     }
 
+    /// Gets the metadata associated with this [`ResourceKey`].
+    #[inline]
+    pub const fn get_metadata(&self) -> ResourceKeyMetadata {
+        self.metadata
+    }
+
     #[doc(hidden)]
     // Error is a str of the expected character class and the index where it wasn't encountered
     // The indexing operations in this function have been reviewed in detail and won't panic.
     #[allow(clippy::indexing_slicing)]
-    pub const fn construct_internal(path: &'static str) -> Result<Self, (&'static str, usize)> {
+    pub const fn construct_internal(
+        path: &'static str,
+        metadata: ResourceKeyMetadata,
+    ) -> Result<Self, (&'static str, usize)> {
         if path.len() < leading_tag!().len() + trailing_tag!().len() {
             return Err(("tag", 0));
         }
@@ -203,6 +280,7 @@ impl ResourceKey {
                     return Ok(Self {
                         path,
                         hash: ResourceKeyHash::compute_from_str(path),
+                        metadata,
                     })
                 }
 
@@ -258,16 +336,24 @@ impl ResourceKey {
 #[test]
 fn test_path_syntax() {
     // Valid keys:
-    assert!(ResourceKey::construct_internal(tagged!("hello/world@1")).is_ok());
-    assert!(ResourceKey::construct_internal(tagged!("hello/world/foo@1")).is_ok());
-    assert!(ResourceKey::construct_internal(tagged!("hello/world@999")).is_ok());
-    assert!(ResourceKey::construct_internal(tagged!("hello_world/foo@1")).is_ok());
-    assert!(ResourceKey::construct_internal(tagged!("hello_458/world@1")).is_ok());
-    assert!(ResourceKey::construct_internal(tagged!("hello_world@1")).is_ok());
+    assert!(ResourceKey::construct_internal(tagged!("hello/world@1"), Default::default()).is_ok());
+    assert!(
+        ResourceKey::construct_internal(tagged!("hello/world/foo@1"), Default::default()).is_ok()
+    );
+    assert!(
+        ResourceKey::construct_internal(tagged!("hello/world@999"), Default::default()).is_ok()
+    );
+    assert!(
+        ResourceKey::construct_internal(tagged!("hello_world/foo@1"), Default::default()).is_ok()
+    );
+    assert!(
+        ResourceKey::construct_internal(tagged!("hello_458/world@1"), Default::default()).is_ok()
+    );
+    assert!(ResourceKey::construct_internal(tagged!("hello_world@1"), Default::default()).is_ok());
 
     // No version:
     assert_eq!(
-        ResourceKey::construct_internal(tagged!("hello/world")),
+        ResourceKey::construct_internal(tagged!("hello/world"), Default::default()),
         Err((
             "[a-zA-z0-9_/@]",
             concat!(leading_tag!(), "hello/world").len()
@@ -275,35 +361,41 @@ fn test_path_syntax() {
     );
 
     assert_eq!(
-        ResourceKey::construct_internal(tagged!("hello/world@")),
+        ResourceKey::construct_internal(tagged!("hello/world@"), Default::default()),
         Err(("[0-9]", concat!(leading_tag!(), "hello/world@").len()))
     );
     assert_eq!(
-        ResourceKey::construct_internal(tagged!("hello/world@foo")),
+        ResourceKey::construct_internal(tagged!("hello/world@foo"), Default::default()),
         Err(("[0-9]", concat!(leading_tag!(), "hello/world@").len()))
     );
     assert_eq!(
-        ResourceKey::construct_internal(tagged!("hello/world@1foo")),
+        ResourceKey::construct_internal(tagged!("hello/world@1foo"), Default::default()),
         Err(("[0-9]", concat!(leading_tag!(), "hello/world@1").len()))
     );
 
     // Invalid characters:
     assert_eq!(
-        ResourceKey::construct_internal(tagged!("你好/世界@1")),
+        ResourceKey::construct_internal(tagged!("你好/世界@1"), Default::default()),
         Err(("[a-zA-Z0-9_]", leading_tag!().len()))
     );
 
     // Invalid tag:
     assert_eq!(
-        ResourceKey::construct_internal(concat!("hello/world@1", trailing_tag!())),
+        ResourceKey::construct_internal(
+            concat!("hello/world@1", trailing_tag!()),
+            Default::default()
+        ),
         Err(("tag", 0))
     );
     assert_eq!(
-        ResourceKey::construct_internal(concat!(leading_tag!(), "hello/world@1")),
+        ResourceKey::construct_internal(
+            concat!(leading_tag!(), "hello/world@1"),
+            Default::default()
+        ),
         Err(("tag", concat!(leading_tag!(), "hello/world@1").len()))
     );
     assert_eq!(
-        ResourceKey::construct_internal("hello/world@1"),
+        ResourceKey::construct_internal("hello/world@1", Default::default()),
         Err(("tag", 0))
     );
 }
@@ -312,12 +404,14 @@ fn test_path_syntax() {
 #[macro_export]
 macro_rules! resource_key {
     ($path:expr) => {{
+        $crate::resource_key!($path, $crate::ResourceKeyMetadata::const_default())
+    }};
+    ($path:expr, $metadata:expr) => {{
         // Force the ResourceKey into a const context
         const RESOURCE_KEY_MACRO_CONST: $crate::ResourceKey = {
-            match $crate::ResourceKey::construct_internal($crate::tagged!($path)) {
+            match $crate::ResourceKey::construct_internal($crate::tagged!($path), $metadata) {
                 Ok(v) => v,
-                #[allow(clippy::panic)]
-                // TODO(#1668) Clippy exceptions need docs or fixing.
+                #[allow(clippy::panic)] // Const context
                 Err(_) => panic!(concat!("Invalid resource key: ", $path)),
                 // TODO Once formatting is const:
                 // Err((expected, index)) => panic!(
