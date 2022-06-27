@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1656347265867,
+  "lastUpdate": 1656349679837,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -18623,6 +18623,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/f6cad74993ff4bd455f1afb92c6e9499187f3629"
         },
         "date": 1656347236121,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 2737318,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "d206a7173722b167dabd3cec71c8f87965669226",
+          "message": "Add more strict_cmp_iter and migrate ResourceOptions::strict_cmp (#2114)",
+          "timestamp": "2022-06-27T12:05:33-05:00",
+          "tree_id": "e1806f4993252d8a0dd29fb9f3b49c2377597d33",
+          "url": "https://github.com/unicode-org/icu4x/commit/d206a7173722b167dabd3cec71c8f87965669226"
+        },
+        "date": 1656349653369,
         "tool": "ndjson",
         "benches": [
           {
