@@ -41,6 +41,20 @@ impl CodePointSetData {
     ///
     /// If calling multiple times, consider calling [`Self::as_borrowed()`]
     /// first
+    ///
+    /// ```rust
+    /// use icu_properties::sets;
+    ///
+    /// let provider = icu_testdata::get_provider();
+    /// let alphabetic =
+    ///     sets::get_alphabetic(&provider)
+    ///         .expect("The data should be valid");
+    ///
+    /// assert!(!alphabetic.contains('3'));
+    /// assert!(!alphabetic.contains('੩'));  // U+0A69 GURMUKHI DIGIT THREE
+    /// assert!(alphabetic.contains('A'));
+    /// assert!(alphabetic.contains('Ä'));  // U+00C4 LATIN CAPITAL LETTER A WITH DIAERESIS
+    /// ```
     #[inline]
     pub fn contains(&self, ch: char) -> bool {
         self.data.get().inv_list.contains(ch)
@@ -50,6 +64,18 @@ impl CodePointSetData {
     ///
     /// If calling multiple times, consider calling [`Self::as_borrowed()`]
     /// first
+    ///
+    /// ```rust
+    /// use icu_properties::sets;
+    ///
+    /// let provider = icu_testdata::get_provider();
+    /// let alphabetic =
+    ///     sets::get_alphabetic(&provider)
+    ///         .expect("The data should be valid");
+    ///
+    /// assert!(!alphabetic.contains_u32(0x0A69));  // U+0A69 GURMUKHI DIGIT THREE
+    /// assert!(alphabetic.contains_u32(0x00C4));  // U+00C4 LATIN CAPITAL LETTER A WITH DIAERESIS
+    /// ```
     #[inline]
     pub fn contains_u32(&self, ch: u32) -> bool {
         self.data.get().inv_list.contains_u32(ch)
@@ -59,6 +85,20 @@ impl CodePointSetData {
     ///
     /// This avoids a potential small cost per [`Self::contains()`] call by consolidating it
     /// up front.
+    ///
+    /// ```rust
+    /// use icu_properties::sets;
+    ///
+    /// let provider = icu_testdata::get_provider();
+    /// let data =
+    ///     sets::get_alphabetic(&provider)
+    ///         .expect("The data should be valid");
+    ///
+    /// let alphabetic = data.as_borrowed();
+    ///
+    /// assert!(!alphabetic.contains('3'));
+    /// assert!(alphabetic.contains('A'));
+    /// ```
     #[inline]
     pub fn as_borrowed(&self) -> CodePointSetDataBorrowed<'_> {
         CodePointSetDataBorrowed {
@@ -101,12 +141,40 @@ pub struct CodePointSetDataBorrowed<'a> {
 
 impl<'a> CodePointSetDataBorrowed<'a> {
     /// Check if the set contains a character
+    ///
+    /// ```rust
+    /// use icu_properties::sets;
+    ///
+    /// let provider = icu_testdata::get_provider();
+    /// let data =
+    ///     sets::get_alphabetic(&provider)
+    ///         .expect("The data should be valid");
+    /// let alphabetic = data.as_borrowed();
+    ///
+    /// assert!(!alphabetic.contains('3'));
+    /// assert!(!alphabetic.contains('੩'));  // U+0A69 GURMUKHI DIGIT THREE
+    /// assert!(alphabetic.contains('A'));
+    /// assert!(alphabetic.contains('Ä'));  // U+00C4 LATIN CAPITAL LETTER A WITH DIAERESIS
+    /// ```
     #[inline]
     pub fn contains(&self, ch: char) -> bool {
         self.set.inv_list.contains(ch)
     }
 
     /// Check if the set contains a character as a UTF32 code unit
+    ///
+    /// ```rust
+    /// use icu_properties::sets;
+    ///
+    /// let provider = icu_testdata::get_provider();
+    /// let data =
+    ///     sets::get_alphabetic(&provider)
+    ///         .expect("The data should be valid");
+    /// let alphabetic = data.as_borrowed();
+    ///
+    /// assert!(!alphabetic.contains_u32(0x0A69));  // U+0A69 GURMUKHI DIGIT THREE
+    /// assert!(alphabetic.contains_u32(0x00C4));  // U+00C4 LATIN CAPITAL LETTER A WITH DIAERESIS
+    /// ```
     #[inline]
     pub fn contains_u32(&self, ch: u32) -> bool {
         self.set.inv_list.contains_u32(ch)
