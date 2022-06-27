@@ -152,10 +152,10 @@ impl Locale {
         Ok(locale.to_string())
     }
 
-    /// Compare this `Locale` with BCP-47 bytes.
+    /// Compare this [`Locale`] with BCP-47 bytes.
     ///
     /// The return value is equivalent to what would happen if you first converted this
-    /// `Locale` to a BCP-47 string and then performed a byte comparison.
+    /// [`Locale`] to a BCP-47 string and then performed a byte comparison.
     ///
     /// This function is case-sensitive and results in a *total order*, so it is appropriate for
     /// binary search. The only argument producing [`Ordering::Equal`] is `self.to_string()`.
@@ -166,29 +166,31 @@ impl Locale {
     /// use icu::locid::Locale;
     /// use std::cmp::Ordering;
     ///
-    /// let bcp47_strings: &[&[u8]] = &[
-    ///     b"pl-Latn-PL",
-    ///     b"und",
-    ///     b"und-fonipa",
-    ///     b"und-t-m0-true",
-    ///     b"und-u-ca-hebrew",
-    ///     b"und-u-ca-japanese",
-    ///     b"zh",
+    /// let bcp47_strings: &[&str] = &[
+    ///     "pl-Latn-PL",
+    ///     "und",
+    ///     "und-fonipa",
+    ///     "und-t-m0-true",
+    ///     "und-u-ca-hebrew",
+    ///     "und-u-ca-japanese",
+    ///     "zh",
     /// ];
     ///
     /// for ab in bcp47_strings.windows(2) {
     ///     let a = ab[0];
     ///     let b = ab[1];
     ///     assert!(a.cmp(b) == Ordering::Less);
-    ///     let a_langid = Locale::from_bytes(a).unwrap();
-    ///     assert!(a_langid.strict_cmp(b) == Ordering::Less);
+    ///     let a_loc = a.parse::<Locale>().unwrap();
+    ///     assert_eq!(a, a_loc.to_string());
+    ///     assert!(a_loc.strict_cmp(a.as_bytes()) == Ordering::Equal);
+    ///     assert!(a_loc.strict_cmp(b.as_bytes()) == Ordering::Less);
     /// }
     /// ```
     pub fn strict_cmp(&self, other: &[u8]) -> Ordering {
         self.strict_cmp_iter(other.split(|b| *b == b'-')).end()
     }
 
-    /// Compare this `Locale` with an iterator of BCP-47 subtags.
+    /// Compare this [`Locale`] with an iterator of BCP-47 subtags.
     ///
     /// This function has the same equality semantics as [`Locale::strict_cmp`]. It is intended as
     /// a more modular version that allows multiple subtag iterators to be chained together.

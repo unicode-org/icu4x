@@ -5,6 +5,7 @@
 //! Resource paths and related types.
 
 use alloc::borrow::Cow;
+use icu_locid::ordering::SubtagOrderingResult;
 
 use crate::error::{DataError, DataErrorKind};
 use crate::helpers;
@@ -432,13 +433,63 @@ impl From<&Locale> for ResourceOptions {
 }
 
 impl ResourceOptions {
+    /// Compare this [`ResourceOptions`] with BCP-47 bytes.
+    ///
+    /// The return value is equivalent to what would happen if you first converted this
+    /// [`ResourceOptions`] to a BCP-47 string and then performed a byte comparison.
+    ///
+    /// This function is case-sensitive and results in a *total order*, so it is appropriate for
+    /// binary search. The only argument producing [`Ordering::Equal`] is `self.to_string()`.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu_provider::ResourceOptions;
+    /// use icu_locid::Locale;
+    /// use std::cmp::Ordering;
+    ///
+    /// let bcp47_strings: &[&str] = &[
+    ///     "ca-ES",
+    ///     "ca-ES-u-ca-buddhist",
+    ///     "ca-ES-valencia",
+    ///     "pl-Latn-PL",
+    ///     "und",
+    ///     "und-fonipa",
+    ///     "und-u-ca-hebrew",
+    ///     "und-u-ca-japanese",
+    ///     "zh",
+    /// ];
+    ///
+    /// for ab in bcp47_strings.windows(2) {
+    ///     let a = ab[0];
+    ///     let b = ab[1];
+    ///     assert!(a.cmp(b) == Ordering::Less);
+    ///     let a_loc: ResourceOptions = a.parse::<Locale>().unwrap().into();
+    ///     assert_eq!(a, a_loc.to_string());
+    ///     assert!(a_loc.strict_cmp(a.as_bytes()) == Ordering::Equal, "{} == {}", a, a);
+    ///     assert!(a_loc.strict_cmp(b.as_bytes()) == Ordering::Less, "{} < {}", a, b);
+    ///     let b_loc: ResourceOptions = b.parse::<Locale>().unwrap().into();
+    ///     assert_eq!(b, b_loc.to_string());
+    ///     assert!(b_loc.strict_cmp(b.as_bytes()) == Ordering::Equal, "{} == {}", b, b);
+    ///     assert!(b_loc.strict_cmp(a.as_bytes()) == Ordering::Greater, "{} > {}", b, a);
+    /// }
+    /// ```
     pub fn strict_cmp(&self, other: &[u8]) -> Ordering {
-        if self.keywords.is_empty() {
-            self.langid.strict_cmp(other)
-        } else {
-            // TODO: Avoid the allocation
-            self.write_to_string().as_bytes().cmp(other)
+        let subtags = other.split(|b| *b == b'-');
+        let mut subtag_result = self.langid.strict_cmp_iter(subtags);
+        if self.has_unicode_ext() {
+            let mut subtags = match subtag_result {
+                SubtagOrderingResult::Subtags(s) => s,
+                SubtagOrderingResult::Ordering(o) => return o,
+            };
+            match subtags.next() {
+                Some(b"u") => (),
+                Some(s) => return s.cmp(b"u").reverse(),
+                None => return Ordering::Greater,
+            }
+            subtag_result = self.keywords.strict_cmp_iter(subtags);
         }
+        subtag_result.end()
     }
 }
 
