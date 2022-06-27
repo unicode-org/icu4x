@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1656360146427,
+  "lastUpdate": 1656364207757,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -33989,6 +33989,66 @@ window.BENCHMARK_DATA = {
             "name": "from_string/1000000001",
             "value": 73,
             "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "elango@unicode.org",
+            "name": "Elango",
+            "username": "echeran"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "5e47573eb913f3ccab8026f925f25e69e69fe120",
+          "message": "Move boilerplate to canonical location for list component (#2123)",
+          "timestamp": "2022-06-27T20:56:49Z",
+          "tree_id": "be569d9bf7bcaaeaf9afd8c5737a1a9e18ecc947",
+          "url": "https://github.com/unicode-org/icu4x/commit/5e47573eb913f3ccab8026f925f25e69e69fe120"
+        },
+        "date": 1656364175069,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 111916,
+            "range": "± 8332",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 24741,
+            "range": "± 2953",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 65613,
+            "range": "± 6079",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 208,
+            "range": "± 15",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 88,
+            "range": "± 6",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 85,
+            "range": "± 5",
             "unit": "ns/iter"
           }
         ]
