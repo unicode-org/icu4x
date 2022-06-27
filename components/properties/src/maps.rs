@@ -41,6 +41,24 @@ impl<T: TrieValue> CodePointMapData<T> {
     ///
     /// This avoids a potential small cost per [`Self::get()`] call by consolidating it
     /// up front.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu::properties::{maps, GeneralCategory};
+    /// use icu_codepointtrie::CodePointTrie;
+    ///
+    /// let provider = icu_testdata::get_provider();
+    ///
+    /// let data =
+    ///     maps::get_general_category(&provider)
+    ///         .expect("The data should be valid");
+    ///
+    /// let gc = data.as_borrowed();
+    ///
+    /// assert_eq!(gc.get('木'), GeneralCategory::OtherLetter);  // U+6728
+    /// assert_eq!(gc.get('🎃'), GeneralCategory::OtherSymbol);  // U+1F383 JACK-O-LANTERN
+    /// ```
     #[inline]
     pub fn as_borrowed(&self) -> CodePointMapDataBorrowed<'_, T> {
         CodePointMapDataBorrowed {
@@ -49,11 +67,41 @@ impl<T: TrieValue> CodePointMapData<T> {
     }
 
     /// Get the value this map has associated with code point `ch`
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu::properties::{maps, GeneralCategory};
+    /// use icu_codepointtrie::CodePointTrie;
+    ///
+    /// let provider = icu_testdata::get_provider();
+    ///
+    /// let gc =
+    ///     maps::get_general_category(&provider)
+    ///         .expect("The data should be valid");
+    /// assert_eq!(gc.get('木'), GeneralCategory::OtherLetter);  // U+6728
+    /// assert_eq!(gc.get('🎃'), GeneralCategory::OtherSymbol);  // U+1F383 JACK-O-LANTERN
+    /// ```
     pub fn get(&self, ch: char) -> T {
         self.data.get().code_point_trie.get(ch as u32)
     }
 
     /// Get the value this map has associated with code point `ch`
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu::properties::{maps, GeneralCategory};
+    /// use icu_codepointtrie::CodePointTrie;
+    ///
+    /// let provider = icu_testdata::get_provider();
+    ///
+    /// let gc =
+    ///     maps::get_general_category(&provider)
+    ///         .expect("The data should be valid");
+    /// assert_eq!(gc.get_u32(0x6728), GeneralCategory::OtherLetter);  // U+6728 (木)
+    /// assert_eq!(gc.get_u32(0x1F383), GeneralCategory::OtherSymbol);  // U+1F383 JACK-O-LANTERN
+    /// ```
     pub fn get_u32(&self, ch: u32) -> T {
         self.data.get().code_point_trie.get(ch)
     }
@@ -105,11 +153,45 @@ pub struct CodePointMapDataBorrowed<'a, T: TrieValue> {
 
 impl<'a, T: TrieValue> CodePointMapDataBorrowed<'a, T> {
     /// Get the value this map has associated with code point `ch`
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu::properties::{maps, GeneralCategory};
+    /// use icu_codepointtrie::CodePointTrie;
+    ///
+    /// let provider = icu_testdata::get_provider();
+    ///
+    /// let data =
+    ///     maps::get_general_category(&provider)
+    ///         .expect("The data should be valid");
+    /// let gc = data.as_borrowed();
+    ///
+    /// assert_eq!(gc.get('木'), GeneralCategory::OtherLetter);  // U+6728
+    /// assert_eq!(gc.get('🎃'), GeneralCategory::OtherSymbol);  // U+1F383 JACK-O-LANTERN
+    /// ```
     pub fn get(&self, ch: char) -> T {
         self.map.code_point_trie.get(ch as u32)
     }
 
     /// Get the value this map has associated with code point `ch`
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu::properties::{maps, GeneralCategory};
+    /// use icu_codepointtrie::CodePointTrie;
+    ///
+    /// let provider = icu_testdata::get_provider();
+    ///
+    /// let data =
+    ///     maps::get_general_category(&provider)
+    ///         .expect("The data should be valid");
+    /// let gc = data.as_borrowed();
+    ///
+    /// assert_eq!(gc.get_u32(0x6728), GeneralCategory::OtherLetter);  // U+6728 (木)
+    /// assert_eq!(gc.get_u32(0x1F383), GeneralCategory::OtherSymbol);  // U+1F383 JACK-O-LANTERN
+    /// ```
     pub fn get_u32(&self, ch: u32) -> T {
         self.map.code_point_trie.get(ch)
     }
