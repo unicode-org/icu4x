@@ -22,9 +22,6 @@ use core::ops::RangeInclusive;
 use icu_codepointtrie::{CodePointMapRange, TrieValue};
 use icu_provider::prelude::*;
 
-/// TODO(#1239): Finalize this API.
-pub type CodePointMapResult<M> = Result<DataPayload<M>, PropertiesError>;
-
 /// A wrapper around code point set data, returned by property getters for
 /// unicode sets.
 pub struct CodePointMapData<T: TrieValue> {
