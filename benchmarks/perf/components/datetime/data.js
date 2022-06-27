@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1656364255523,
+  "lastUpdate": 1656364316729,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -43559,6 +43559,102 @@ window.BENCHMARK_DATA = {
             "name": "pattern/parse",
             "value": 6125,
             "range": "± 12",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "elango@unicode.org",
+            "name": "Elango",
+            "username": "echeran"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "aea6914ee35616170ce0b9f87db8713347f09dd1",
+          "message": "Add missing_docs boilerplate to icu component (#2124)",
+          "timestamp": "2022-06-27T20:57:08Z",
+          "tree_id": "be8e399873ef2fdf98e97a8d79ab92867105e42c",
+          "url": "https://github.com/unicode-org/icu4x/commit/aea6914ee35616170ce0b9f87db8713347f09dd1"
+        },
+        "date": 1656364287266,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 86042,
+            "range": "± 92",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 837139,
+            "range": "± 2507",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 168152,
+            "range": "± 230",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/DateTimeFormat/format_to_write",
+            "value": 80192,
+            "range": "± 413",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/DateTimeFormat/format_to_string",
+            "value": 89193,
+            "range": "± 105",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/format",
+            "value": 86433,
+            "range": "± 125",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/to_string",
+            "value": 93714,
+            "range": "± 62",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/ZonedDateTimeFormat/format_to_write",
+            "value": 163253,
+            "range": "± 497",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/ZonedDateTimeFormat/format_to_string",
+            "value": 176335,
+            "range": "± 198",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/format",
+            "value": 168666,
+            "range": "± 162",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/to_string",
+            "value": 188251,
+            "range": "± 230",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "pattern/parse",
+            "value": 4624,
+            "range": "± 84",
             "unit": "ns/iter"
           }
         ]
