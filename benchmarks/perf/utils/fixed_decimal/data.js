@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1656350292968,
+  "lastUpdate": 1656360146427,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -33928,6 +33928,66 @@ window.BENCHMARK_DATA = {
           {
             "name": "from_string/1000000001",
             "value": 81,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "elango@unicode.org",
+            "name": "Elango",
+            "username": "echeran"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "16a13b1ca940567d394b86ee6fbbf9d50b656840",
+          "message": "Add docs in locid to replace missing_docs warning suppressions (#2113)",
+          "timestamp": "2022-06-27T19:48:45Z",
+          "tree_id": "b8fd402a0daa0ea1ce5ec7ef073ef9338dec76fa",
+          "url": "https://github.com/unicode-org/icu4x/commit/16a13b1ca940567d394b86ee6fbbf9d50b656840"
+        },
+        "date": 1656360117793,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 102797,
+            "range": "± 408",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 22384,
+            "range": "± 587",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 65710,
+            "range": "± 234",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 168,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 66,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 73,
             "range": "± 0",
             "unit": "ns/iter"
           }
