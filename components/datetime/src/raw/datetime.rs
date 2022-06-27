@@ -8,7 +8,7 @@
 use crate::{
     format::datetime,
     options::components,
-    options::DateTimeFormatOptions,
+    options::{preferences, DateTimeFormatOptions, length},
     provider::calendar::patterns::PatternPluralsFromPatternsV1Marker,
     provider::calendar::{
         DatePatternsV1Marker, DateSkeletonPatternsV1Marker, DateSymbolsV1Marker,
@@ -31,6 +31,124 @@ use crate::{
     date::DateTimeInput, date::ExtractedDateTimeInput, pattern::runtime::PatternPlurals, provider,
     DateTimeFormatError, FormattedDateTime,
 };
+
+pub(crate) struct TimeFormat {
+    pub locale: Locale,
+    pub patterns: DataPayload<PatternPluralsFromPatternsV1Marker>,
+    pub fixed_decimal_format: FixedDecimalFormat,
+}
+
+impl TimeFormat {
+    /// Constructor that takes a selected [`Locale`], reference to a [`DataProvider`] and
+    /// a list of options, then collects all data necessary to format date and time values into the given locale,
+    /// using the short style.
+    ///
+    /// The "calendar" argument should be a Unicode BCP47 calendar identifier
+    #[inline(never)]
+    pub fn try_new<D>(
+        locale: Locale,
+        data_provider: &D,
+        length: length::Time,
+        preferences: Option<preferences::Bag>,
+    ) -> Result<Self, DateTimeFormatError>
+    where
+        D: ResourceProvider<TimePatternsV1Marker>
+            + ResourceProvider<DecimalSymbolsV1Marker>
+            + ?Sized,
+    {
+        let patterns =
+            provider::date_time::pattern_for_time_length(data_provider, &locale, length, preferences)?;
+
+        // TODO(#1109): Implement proper vertical fallback
+        let mut locale_no_extensions = locale.clone();
+        locale_no_extensions.extensions.unicode.clear();
+
+        let mut fixed_decimal_format_options = FixedDecimalFormatOptions::default();
+        fixed_decimal_format_options.grouping_strategy = GroupingStrategy::Never;
+        fixed_decimal_format_options.sign_display = SignDisplay::Never;
+
+        let fixed_decimal_format = FixedDecimalFormat::try_new(
+            locale_no_extensions,
+            data_provider,
+            fixed_decimal_format_options,
+        )
+        .map_err(DateTimeFormatError::FixedDecimalFormat)?;
+
+        Ok(Self::new(
+            locale,
+            patterns,
+            fixed_decimal_format,
+        ))
+    }
+
+    /// Creates a new [`DateTimeFormat`] regardless of whether there are time-zone symbols in the pattern.
+    pub fn new(
+        locale: Locale,
+        patterns: DataPayload<PatternPluralsFromPatternsV1Marker>,
+        fixed_decimal_format: FixedDecimalFormat,
+    ) -> Self {
+        Self {
+            locale,
+            patterns,
+            fixed_decimal_format,
+        }
+    }
+
+    /// Takes a [`DateTimeInput`] implementer and returns an instance of a [`FormattedDateTime`]
+    /// that contains all information necessary to display a formatted date and operate on it.
+    #[inline]
+    pub fn format<'l, T>(&'l self, value: &'l T) -> FormattedDateTime<'l, T>
+    where
+        T: DateTimeInput,
+    {
+        FormattedDateTime {
+            patterns: &self.patterns,
+            symbols: None,
+            datetime: value,
+            week_data: None,
+            locale: &self.locale,
+            ordinal_rules: None,
+            fixed_decimal_format: &self.fixed_decimal_format,
+        }
+    }
+
+    /// Takes a mutable reference to anything that implements [`Write`](std::fmt::Write) trait
+    /// and a [`DateTimeInput`] implementer and populates the buffer with a formatted value.
+    #[inline(never)]
+    pub fn format_to_write(
+        &self,
+        w: &mut impl core::fmt::Write,
+        value: &impl DateTimeInput,
+    ) -> core::fmt::Result {
+        datetime::write_pattern_plurals(
+            &self.patterns.get().0,
+            None,
+            value,
+            None,
+            None,
+            &self.fixed_decimal_format,
+            &self.locale,
+            w,
+        )
+        .map_err(|_| core::fmt::Error)
+    }
+
+    /// Takes a [`DateTimeInput`] implementer and returns it formatted as a string.
+    #[inline]
+    pub fn format_to_string(&self, value: &impl DateTimeInput) -> String {
+        let mut s = String::new();
+        #[allow(clippy::expect_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
+        self.format_to_write(&mut s, value)
+            .expect("Failed to write to a String.");
+        s
+    }
+
+    /// Returns a [`components::Bag`] that represents the resolved components for the
+    /// options that were provided to the [`DateTimeFormat`].
+    pub fn resolve_components(&self) -> components::Bag {
+        components::Bag::from(&self.patterns.get().0)
+    }
+}
 
 /// This is the internal "raw" version of [crate::DateTimeFormat], i.e. a version of DateTimeFormat
 /// without the generic parameter. The actual implementation of [crate::DateTimeFormat] should live here.
