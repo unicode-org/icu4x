@@ -6,7 +6,7 @@
 
 use displaydoc::Display;
 
-/// A list of possible error outcomes for the [`FixedDecimal`](crate::FixedDecimal) struct.
+/// A list of possible error outcomes for operations in this crate.
 #[derive(Display, Debug, Copy, Clone)]
 #[non_exhaustive]
 pub enum Error {
