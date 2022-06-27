@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1656363558089,
+  "lastUpdate": 1656363597120,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -18713,6 +18713,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/5e47573eb913f3ccab8026f925f25e69e69fe120"
         },
         "date": 1656363531092,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 2737318,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "elango@unicode.org",
+            "name": "Elango",
+            "username": "echeran"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "aea6914ee35616170ce0b9f87db8713347f09dd1",
+          "message": "Add missing_docs boilerplate to icu component (#2124)",
+          "timestamp": "2022-06-27T20:57:08Z",
+          "tree_id": "be8e399873ef2fdf98e97a8d79ab92867105e42c",
+          "url": "https://github.com/unicode-org/icu4x/commit/aea6914ee35616170ce0b9f87db8713347f09dd1"
+        },
+        "date": 1656363564797,
         "tool": "ndjson",
         "benches": [
           {
