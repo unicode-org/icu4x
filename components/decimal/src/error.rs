@@ -6,10 +6,11 @@
 
 use displaydoc::Display;
 
-#[allow(missing_docs)] // TODO(#1025) - Add missing docs.
+/// A list of possible error outcomes for the [`FixedDecimal`](crate::FixedDecimal) struct.
 #[derive(Display, Debug, Copy, Clone)]
 #[non_exhaustive]
 pub enum Error {
+    /// An error originating inside of the [data provider](icu_provider).
     #[displaydoc("error loading data: {0}")]
     Data(icu_provider::DataError),
 }
