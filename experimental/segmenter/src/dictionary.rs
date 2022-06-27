@@ -5,6 +5,7 @@
 use crate::indices::Utf16Indices;
 use crate::provider::*;
 
+use core::iter::Peekable;
 use core::str::CharIndices;
 use icu_char16trie::char16trie::{Char16Trie, TrieResult};
 use icu_provider::prelude::*;
@@ -32,7 +33,7 @@ pub trait DictionaryType<'l, 's> {
 #[derive(Clone)]
 pub struct DictionaryBreakIterator<'l, 's, Y: DictionaryType<'l, 's> + ?Sized> {
     trie: Char16Trie<'l>,
-    iter: Y::IterAttr,
+    iter: Peekable<Y::IterAttr>,
     len: usize,
     // TODO transform value for byte trie
 }
@@ -63,14 +64,11 @@ impl<'l, 's, Y: DictionaryType<'l, 's> + ?Sized> Iterator for DictionaryBreakIte
                 TrieResult::Intermediate(_) => {
                     {
                         // If next character doesn't allow for grapheme, we don't recognize this word as intermediate state.
-                        let tmp = self.iter.clone();
-                        if let Some(tmp_next) = self.iter.next() {
+                        if let Some(tmp_next) = self.iter.peek() {
                             if is_grapheme_extend(Y::to_char(tmp_next.1)) {
-                                self.iter = tmp;
                                 continue;
                             }
                         }
-                        self.iter = tmp;
                     }
                     intermediate_length = next.0 + Y::char_len(next.1);
                     previous_match = Some(self.iter.clone());
@@ -150,7 +148,7 @@ impl<'l> DictionarySegmenter<'l> {
     pub fn segment_str<'s>(&self, input: &'s str) -> DictionaryBreakIterator<'l, 's, char> {
         DictionaryBreakIterator {
             trie: Char16Trie::new(self.payload.get().trie_data.clone()),
-            iter: input.char_indices(),
+            iter: input.char_indices().peekable(),
             len: input.len(),
         }
     }
@@ -159,7 +157,7 @@ impl<'l> DictionarySegmenter<'l> {
     pub fn segment_utf16<'s>(&self, input: &'s [u16]) -> DictionaryBreakIterator<'l, 's, u32> {
         DictionaryBreakIterator {
             trie: Char16Trie::new(self.payload.get().trie_data.clone()),
-            iter: Utf16Indices::new(input),
+            iter: Utf16Indices::new(input).peekable(),
             len: input.len(),
         }
     }
