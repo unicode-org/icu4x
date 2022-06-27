@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1656359490142,
+  "lastUpdate": 1656363558089,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -18683,6 +18683,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/16a13b1ca940567d394b86ee6fbbf9d50b656840"
         },
         "date": 1656359458899,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 2737318,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "elango@unicode.org",
+            "name": "Elango",
+            "username": "echeran"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "5e47573eb913f3ccab8026f925f25e69e69fe120",
+          "message": "Move boilerplate to canonical location for list component (#2123)",
+          "timestamp": "2022-06-27T20:56:49Z",
+          "tree_id": "be569d9bf7bcaaeaf9afd8c5737a1a9e18ecc947",
+          "url": "https://github.com/unicode-org/icu4x/commit/5e47573eb913f3ccab8026f925f25e69e69fe120"
+        },
+        "date": 1656363531092,
         "tool": "ndjson",
         "benches": [
           {
