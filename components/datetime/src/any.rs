@@ -16,7 +16,10 @@ use icu_locid::Locale;
 use icu_provider::prelude::*;
 
 use crate::provider::{
-    calendar::{DatePatternsV1Marker, DateSkeletonPatternsV1Marker, DateSymbolsV1Marker},
+    calendar::{
+        DatePatternsV1Marker, DateSkeletonPatternsV1Marker, DateSymbolsV1Marker,
+        TimePatternsV1Marker,
+    },
     week_data::WeekDataV1Marker,
 };
 use crate::{date::DateTimeInput, DateTimeFormatError, FormattedDateTime};
@@ -70,8 +73,9 @@ impl AnyDateTimeFormat {
     /// Construct a new [`AnyDateTimeFormat`] from a data provider that implements
     /// [`AnyProvider`].
     ///
-    /// The provider must be able to provide data for the following keys: `datetime/symbols@1`, `datetime/lengths@1`,
-    /// `datetime/symbols@1`, `datetime/skeletons@1`, `datetime/week_data@1`, and `plurals/ordinals@1`.
+    /// The provider must be able to provide data for the following keys: `datetime/symbols@1`, `datetime/timelengths@1`,
+    /// `datetime/timelengths@1`, `datetime/symbols@1`, `datetime/skeletons@1`, `datetime/week_data@1`, and `plurals/ordinals@1`.
+
     ///
     /// Furthermore, based on the type of calendar used, one of the following data keys may be necessary:
     ///
@@ -92,8 +96,8 @@ impl AnyDateTimeFormat {
     /// Construct a new [`AnyDateTimeFormat`] from a data provider that implements
     /// [`BufferProvider`].
     ///
-    /// The provider must be able to provide data for the following keys: `datetime/symbols@1`, `datetime/lengths@1`,
-    /// `datetime/symbols@1`, `datetime/skeletons@1`, `datetime/week_data@1`, and `plurals/ordinals@1`.
+    /// The provider must be able to provide data for the following keys: `datetime/symbols@1`, `datetime/datelengths@1`,
+    /// `datetime/timelengths@1`, `datetime/symbols@1`, `datetime/skeletons@1`, `datetime/week_data@1`, and `plurals/ordinals@1`.
     ///
     /// Furthermore, based on the type of calendar used, one of the following data keys may be necessary:
     ///
@@ -176,6 +180,7 @@ impl AnyDateTimeFormat {
         T: Into<Locale>,
         P: ResourceProvider<DateSymbolsV1Marker>
             + ResourceProvider<DatePatternsV1Marker>
+            + ResourceProvider<TimePatternsV1Marker>
             + ResourceProvider<DateSkeletonPatternsV1Marker>
             + ResourceProvider<OrdinalV1Marker>
             + ResourceProvider<WeekDataV1Marker>

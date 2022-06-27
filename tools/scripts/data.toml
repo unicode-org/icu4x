@@ -162,7 +162,7 @@ args = [
     "--features=bin",
     "--",
     "--cldr-tag=41.0.0",
-    "--uprops-tag=release-71-1",
+    "--icuexport-tag=release-71-1",
     "--format=blob",
     "--syntax=postcard",
     "--all-keys",
@@ -182,28 +182,3 @@ args = [
     "--",
     "-v",
 ]
-
-[tasks.testdata-build-postcard-tree]
-description = "Build ICU4X Postcard data to a filesystem structure at provider/testdata/data/postcard, overwriting if already present. Useful for breaking out the postcard data into individual files for debugging."
-category = "ICU4X Data"
-command = "cargo"
-args = [
-    "run",
-    "--bin=icu4x-datagen",
-    "--features=experimental,bin",
-    "--",
-    "--cldr-root=provider/testdata/data/cldr",
-    "--uprops-root=provider/testdata/data/uprops",
-    "--out=provider/testdata/data/postcard",
-    "--syntax=postcard",
-    "--overwrite",
-    "--all-keys",
-    "--all-locales",
-    "--ignore-missing-data",
-]
-
-[tasks.icu4x-key-extract]
-description = "Extracts ICU4X resource keys used by a binary."
-category = "ICU4X Data"
-script_runner = "bash"
-script = '''strings ${1} | grep -e "icu4x_key_tag\w" | sed s/icu4x_key_tag// | sort > ${2}'''

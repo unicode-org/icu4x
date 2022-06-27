@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::ordering::SubtagOrderingResult;
 use crate::parser::{get_subtag_iterator, parse_locale, ParserError};
 use crate::{extensions, subtags, LanguageIdentifier};
 use alloc::string::String;
@@ -29,7 +30,7 @@ use core::str::FromStr;
 ///
 /// assert_eq!(loc.id.language, "en".parse::<Language>().unwrap());
 /// assert_eq!(loc.id.script, None);
-/// assert_eq!(loc.id.region, Some("US".parse::<Region>().unwrap()));
+/// assert_eq!(loc.id.region, "US".parse::<Region>().ok());
 /// assert_eq!(loc.id.variants.len(), 0);
 /// assert_eq!(loc.to_string(), "en-US-u-ca-buddhist");
 ///
@@ -62,9 +63,9 @@ use core::str::FromStr;
 ///     .expect("Failed to parse.");
 ///
 /// assert_eq!(loc.id.language, "en".parse::<Language>().unwrap());
-/// assert_eq!(loc.id.script, Some("Latn".parse::<Script>().unwrap()));
-/// assert_eq!(loc.id.region, Some("US".parse::<Region>().unwrap()));
-/// assert_eq!(loc.id.variants.get(0).unwrap(), "valencia");
+/// assert_eq!(loc.id.script, "Latn".parse::<Script>().ok());
+/// assert_eq!(loc.id.region, "US".parse::<Region>().ok());
+/// assert_eq!(loc.id.variants.get(0), "valencia".parse::<Variant>().ok().as_ref());
 /// ```
 /// [`Unicode Locale Identifier`]: https://unicode.org/reports/tr35/tr35.html#Unicode_locale_identifier
 #[derive(Default, PartialEq, Eq, Clone, Hash, PartialOrd, Ord)]
@@ -75,6 +76,28 @@ pub struct Locale {
     pub id: LanguageIdentifier,
     // Unicode Locale Extensions
     pub extensions: extensions::Extensions,
+}
+
+#[test]
+fn test_sizes() {
+    assert_eq!(core::mem::size_of::<subtags::Language>(), 3);
+    assert_eq!(core::mem::size_of::<subtags::Script>(), 4);
+    assert_eq!(core::mem::size_of::<subtags::Region>(), 3);
+    assert_eq!(core::mem::size_of::<subtags::Variant>(), 8);
+    assert_eq!(core::mem::size_of::<subtags::Variants>(), 32);
+    assert_eq!(core::mem::size_of::<LanguageIdentifier>(), 48);
+
+    assert_eq!(core::mem::size_of::<extensions::transform::Transform>(), 72);
+    assert_eq!(core::mem::size_of::<Option<LanguageIdentifier>>(), 48);
+    assert_eq!(core::mem::size_of::<extensions::transform::Fields>(), 24);
+
+    assert_eq!(core::mem::size_of::<extensions::unicode::Attributes>(), 24);
+    assert_eq!(core::mem::size_of::<extensions::unicode::Keywords>(), 24);
+    assert_eq!(core::mem::size_of::<Vec<extensions::other::Other>>(), 24);
+    assert_eq!(core::mem::size_of::<extensions::private::Private>(), 24);
+    assert_eq!(core::mem::size_of::<extensions::Extensions>(), 168);
+
+    assert_eq!(core::mem::size_of::<Locale>(), 216);
 }
 
 impl Locale {
@@ -162,9 +185,48 @@ impl Locale {
     /// }
     /// ```
     pub fn strict_cmp(&self, other: &[u8]) -> Ordering {
-        let mut other_iter = other.split(|b| *b == b'-');
+        self.strict_cmp_iter(other.split(|b| *b == b'-')).end()
+    }
+
+    /// Compare this `Locale` with an iterator of BCP-47 subtags.
+    ///
+    /// This function has the same equality semantics as [`Locale::strict_cmp`]. It is intended as
+    /// a more modular version that allows multiple subtag iterators to be chained together.
+    ///
+    /// For an additional example, see [`SubtagOrderingResult`].
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::locid::Locale;
+    /// use std::cmp::Ordering;
+    ///
+    /// let subtags: &[&[u8]] = &[&*b"ca", &*b"ES", &*b"valencia", &*b"u", &*b"ca", &*b"hebrew"];
+    ///
+    /// let loc = "ca-ES-valencia-u-ca-hebrew".parse::<Locale>().unwrap();
+    /// assert_eq!(
+    ///     Ordering::Equal,
+    ///     loc.strict_cmp_iter(subtags.iter().copied()).end()
+    /// );
+    ///
+    /// let loc = "ca-ES-valencia".parse::<Locale>().unwrap();
+    /// assert_eq!(
+    ///     Ordering::Less,
+    ///     loc.strict_cmp_iter(subtags.iter().copied()).end()
+    /// );
+    ///
+    /// let loc = "ca-ES-valencia-u-nu-arab".parse::<Locale>().unwrap();
+    /// assert_eq!(
+    ///     Ordering::Greater,
+    ///     loc.strict_cmp_iter(subtags.iter().copied()).end()
+    /// );
+    /// ```
+    pub fn strict_cmp_iter<'l, I>(&self, mut subtags: I) -> SubtagOrderingResult<I>
+    where
+        I: Iterator<Item = &'l [u8]>,
+    {
         let r = self.for_each_subtag_str(&mut |subtag| {
-            if let Some(other) = other_iter.next() {
+            if let Some(other) = subtags.next() {
                 match subtag.as_bytes().cmp(other) {
                     Ordering::Equal => Ok(()),
                     not_equal => Err(not_equal),
@@ -173,13 +235,10 @@ impl Locale {
                 Err(Ordering::Greater)
             }
         });
-        if let Err(o) = r {
-            return o;
+        match r {
+            Ok(_) => SubtagOrderingResult::Subtags(subtags),
+            Err(o) => SubtagOrderingResult::Ordering(o),
         }
-        if other_iter.next().is_some() {
-            return Ordering::Less;
-        }
-        Ordering::Equal
     }
 
     /// Compare this `Locale` with a potentially unnormalized BCP-47 string.
@@ -336,7 +395,7 @@ fn test_writeable() {
 /// # Examples
 ///
 /// ```
-/// use icu::locid::language;
+/// use icu::locid::subtags_language as language;
 /// use icu::locid::Locale;
 ///
 /// let language = language!("en");
@@ -357,7 +416,7 @@ impl From<subtags::Language> for Locale {
 /// # Examples
 ///
 /// ```
-/// use icu::locid::script;
+/// use icu::locid::subtags_script as script;
 /// use icu::locid::Locale;
 ///
 /// let script = script!("latn");
@@ -378,7 +437,7 @@ impl From<Option<subtags::Script>> for Locale {
 /// # Examples
 ///
 /// ```
-/// use icu::locid::region;
+/// use icu::locid::subtags_region as region;
 /// use icu::locid::Locale;
 ///
 /// let region = region!("US");
@@ -400,7 +459,7 @@ impl From<Option<subtags::Region>> for Locale {
 ///
 /// ```
 /// use icu::locid::Locale;
-/// use icu::locid::{language, region, script};
+/// use icu::locid::{subtags_language as language, subtags_region as region, subtags_script as script};
 ///
 /// let lang = language!("en");
 /// let script = script!("Latn");

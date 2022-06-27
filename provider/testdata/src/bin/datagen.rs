@@ -2,13 +2,13 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use icu_datagen::{Out, SourceData, TrieType};
+use icu_datagen::*;
 use icu_locid::langid;
-use icu_provider_fs::export::serializers::json;
+use icu_provider_fs::export::serializers::{json, postcard};
 use icu_testdata::{metadata, paths};
 use std::fs::File;
 
-// Uprops test data isn't complete, so we don't test these keys.
+// icuexport test data isn't complete, so we don't test these keys.
 const IGNORED_KEYS: &[&str] = &[
     "props/alnum@1",
     "props/blank@1",
@@ -36,17 +36,21 @@ fn main() {
         .unwrap();
 
     let source_data = SourceData::default()
-        .with_cldr(paths::cldr_json_root(), "full".to_string())
+        .with_cldr(paths::cldr_json_root(), CldrLocaleSubset::Full)
         .unwrap()
-        .with_uprops(paths::uprops_toml_root(), TrieType::Small)
-        .unwrap()
-        .with_coll(paths::coll_toml_root())
+        .with_icuexport(paths::icuexport_toml_root(), IcuTrieType::Small)
         .unwrap();
     let locales = metadata::load().unwrap().package_metadata.locales;
 
     let json_out = Out::Fs {
         output_path: paths::data_root().join("json"),
         serializer: Box::new(json::Serializer::pretty()),
+        overwrite: true,
+    };
+
+    let postcard_out = Out::Fs {
+        output_path: paths::data_root().join("postcard"),
+        serializer: Box::new(postcard::Serializer::default()),
         overwrite: true,
     };
 
@@ -62,12 +66,12 @@ fn main() {
 
     icu_datagen::datagen(
         Some(&locales),
-        &icu_datagen::get_all_keys()
+        &icu_datagen::all_keys()
             .into_iter()
             .filter(|k| !IGNORED_KEYS.contains(&k.get_path()))
             .collect::<Vec<_>>(),
         &source_data,
-        vec![json_out, blob_out, mod_out],
+        vec![json_out, blob_out, mod_out, postcard_out],
     )
     .unwrap();
 

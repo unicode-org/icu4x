@@ -8,23 +8,23 @@
 //! use icu::calendar::{coptic::Coptic, Date, DateTime};
 //!
 //! // `Date` type
-//! let date_iso = Date::new_iso_date_from_integers(1970, 1, 2)
+//! let date_iso = Date::new_iso_date(1970, 1, 2)
 //!     .expect("Failed to initialize ISO Date instance.");
 //! let date_coptic = Date::new_from_iso(date_iso, Coptic);
 //!
 //! // `DateTime` type
-//! let datetime_iso = DateTime::new_iso_datetime_from_integers(1970, 1, 2, 13, 1, 0)
+//! let datetime_iso = DateTime::new_iso_datetime(1970, 1, 2, 13, 1, 0)
 //!     .expect("Failed to initialize ISO DateTime instance.");
 //! let datetime_coptic = DateTime::new_from_iso(datetime_iso, Coptic);
 //!
 //! // `Date` checks
 //! assert_eq!(date_coptic.year().number, 1686);
-//! assert_eq!(date_coptic.month().number, 4);
+//! assert_eq!(date_coptic.month().ordinal, 4);
 //! assert_eq!(date_coptic.day_of_month().0, 24);
 //!
 //! // `DateTime` type
 //! assert_eq!(datetime_coptic.date.year().number, 1686);
-//! assert_eq!(datetime_coptic.date.month().number, 4);
+//! assert_eq!(datetime_coptic.date.month().ordinal, 4);
 //! assert_eq!(datetime_coptic.date.day_of_month().0, 24);
 //! assert_eq!(datetime_coptic.time.hour.number(), 13);
 //! assert_eq!(datetime_coptic.time.minute.number(), 1);
@@ -32,7 +32,7 @@
 //! ```
 
 use crate::any_calendar::AnyCalendarKind;
-use crate::iso::{Iso, IsoYear};
+use crate::iso::Iso;
 use crate::julian::Julian;
 use crate::{
     types, ArithmeticDate, Calendar, CalendarArithmetic, Date, DateDuration, DateDurationUnit,
@@ -40,7 +40,6 @@ use crate::{
 };
 use core::convert::TryInto;
 use core::marker::PhantomData;
-use tinystr::tinystr;
 
 /// The Coptic calendar
 #[derive(Copy, Clone, Debug, Hash, Default, Eq, PartialEq)]
@@ -123,10 +122,7 @@ impl Calendar for Coptic {
     }
 
     fn month(&self, date: &Self::DateInner) -> types::Month {
-        types::Month {
-            number: date.0.month.into(),
-            code: types::MonthCode(tinystr!(8, "TODO")),
-        }
+        date.0.solar_month()
     }
 
     fn day_of_month(&self, date: &Self::DateInner) -> types::DayOfMonth {
@@ -134,14 +130,14 @@ impl Calendar for Coptic {
     }
 
     fn day_of_year_info(&self, date: &Self::DateInner) -> types::DayOfYearInfo {
-        let prev_year = IsoYear(date.0.year - 1);
-        let next_year = IsoYear(date.0.year + 1);
+        let prev_year = date.0.year - 1;
+        let next_year = date.0.year + 1;
         types::DayOfYearInfo {
             day_of_year: date.0.day_of_year(),
             days_in_year: date.0.days_in_year(),
-            prev_year: prev_year.into(),
-            days_in_prev_year: Coptic::days_in_year_direct(prev_year.0),
-            next_year: next_year.into(),
+            prev_year: crate::gregorian::year_as_gregorian(prev_year),
+            days_in_prev_year: Coptic::days_in_year_direct(prev_year),
+            next_year: crate::gregorian::year_as_gregorian(next_year),
         }
     }
 
@@ -211,7 +207,7 @@ impl Date<Coptic> {
     ///     Date::new_coptic_date(1686, 5, 6).expect("Failed to initialize Coptic Date instance.");
     ///
     /// assert_eq!(date_coptic.year().number, 1686);
-    /// assert_eq!(date_coptic.month().number, 5);
+    /// assert_eq!(date_coptic.month().ordinal, 5);
     /// assert_eq!(date_coptic.day_of_month().0, 6);
     /// ```
     pub fn new_coptic_date(year: i32, month: u8, day: u8) -> Result<Date<Coptic>, DateTimeError> {
@@ -241,7 +237,7 @@ impl DateTime<Coptic> {
     ///     .expect("Failed to initialize Coptic DateTime instance.");
     ///
     /// assert_eq!(datetime_coptic.date.year().number, 1686);
-    /// assert_eq!(datetime_coptic.date.month().number, 5);
+    /// assert_eq!(datetime_coptic.date.month().ordinal, 5);
     /// assert_eq!(datetime_coptic.date.day_of_month().0, 6);
     /// assert_eq!(datetime_coptic.time.hour.number(), 13);
     /// assert_eq!(datetime_coptic.time.minute.number(), 1);

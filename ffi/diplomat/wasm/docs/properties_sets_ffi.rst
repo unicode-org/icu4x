@@ -15,13 +15,3 @@
 
         Checks whether the code point is in the set.
         See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/icu_uniset/struct.UnicodeSet.html#method.contains>`__ for more information.
-
-.. js:class:: ICU4XCodePointSetDataResult
-
-    .. js:attribute:: data
-
-        The :js:class:`ICU4XCodePointSetData`, if creation was successful.
-
-    .. js:attribute:: success
-
-        Whether creating the :js:class:`ICU4XCodePointSetData` was successful.

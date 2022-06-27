@@ -10,8 +10,8 @@ mod kv;
 pub(crate) mod map;
 mod vecs;
 
-#[cfg(feature = "crabbake")]
-mod crabbake;
+#[cfg(feature = "databake")]
+mod databake;
 #[cfg(feature = "serde")]
 mod serde;
 #[cfg(feature = "serde")]

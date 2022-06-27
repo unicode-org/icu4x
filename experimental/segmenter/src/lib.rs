@@ -136,6 +136,7 @@
 
 extern crate alloc;
 
+mod complex;
 mod dictionary;
 mod indices;
 mod language;
@@ -156,18 +157,14 @@ extern crate lazy_static;
 // Use the LSTM when the feature is enabled.
 #[cfg(feature = "lstm")]
 mod lstm;
-
-// No-op functions when LSTM is disabled.
-#[cfg(not(feature = "lstm"))]
-mod lstm {
-    use alloc::vec::Vec;
-    pub fn get_line_break_utf16(_: &[u16]) -> Option<Vec<usize>> {
-        None
-    }
-    pub fn get_line_break_utf8(_: &str) -> Option<Vec<usize>> {
-        None
-    }
-}
+#[cfg(feature = "lstm")]
+mod lstm_bies;
+#[cfg(feature = "lstm")]
+mod lstm_error;
+#[cfg(feature = "lstm")]
+mod lstm_structs;
+#[cfg(feature = "lstm")]
+mod math_helper;
 
 pub use crate::dictionary::{DictionaryBreakIterator, DictionarySegmenter};
 pub use crate::grapheme::{
@@ -178,6 +175,8 @@ pub use crate::line::{
     Latin1Char, LineBreakIterator, LineBreakOptions, LineBreakRule, LineBreakSegmenter, Utf16Char,
     WordBreakRule,
 };
+#[cfg(feature = "lstm")]
+pub use crate::lstm_structs::LstmDataMarker;
 pub use crate::provider::{
     GraphemeClusterBreakDataV1Marker, LineBreakDataV1Marker, RuleBreakDataV1,
     RuleBreakPropertyTable, RuleBreakStateTable, SentenceBreakDataV1Marker,

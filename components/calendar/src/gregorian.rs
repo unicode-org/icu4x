@@ -8,23 +8,23 @@
 //! use icu::calendar::{gregorian::Gregorian, Date, DateTime};
 //!
 //! // `Date` type
-//! let date_iso = Date::new_iso_date_from_integers(1970, 1, 2)
+//! let date_iso = Date::new_iso_date(1970, 1, 2)
 //!     .expect("Failed to initialize ISO Date instance.");
 //! let date_gregorian = Date::new_from_iso(date_iso, Gregorian);
 //!
 //! // `DateTime` type
-//! let datetime_iso = DateTime::new_iso_datetime_from_integers(1970, 1, 2, 13, 1, 0)
+//! let datetime_iso = DateTime::new_iso_datetime(1970, 1, 2, 13, 1, 0)
 //!     .expect("Failed to initialize ISO DateTime instance.");
 //! let datetime_gregorian = DateTime::new_from_iso(datetime_iso, Gregorian);
 //!
 //! // `Date` checks
 //! assert_eq!(date_gregorian.year().number, 1970);
-//! assert_eq!(date_gregorian.month().number, 1);
+//! assert_eq!(date_gregorian.month().ordinal, 1);
 //! assert_eq!(date_gregorian.day_of_month().0, 2);
 //!
 //! // `DateTime` type
 //! assert_eq!(datetime_gregorian.date.year().number, 1970);
-//! assert_eq!(datetime_gregorian.date.month().number, 1);
+//! assert_eq!(datetime_gregorian.date.month().ordinal, 1);
 //! assert_eq!(datetime_gregorian.date.day_of_month().0, 2);
 //! assert_eq!(datetime_gregorian.time.hour.number(), 13);
 //! assert_eq!(datetime_gregorian.time.minute.number(), 1);
@@ -32,9 +32,8 @@
 //! ```
 
 use crate::any_calendar::AnyCalendarKind;
-use crate::iso::{Iso, IsoDateInner, IsoDay, IsoMonth, IsoYear};
+use crate::iso::{Iso, IsoDateInner};
 use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, DateTime, DateTimeError};
-use core::convert::TryInto;
 use tinystr::tinystr;
 
 /// The Gregorian Calendar
@@ -87,7 +86,7 @@ impl Calendar for Gregorian {
 
     /// The calendar-specific year represented by `date`
     fn year(&self, date: &Self::DateInner) -> types::Year {
-        year_as_gregorian(date.0.year.0)
+        year_as_gregorian(date.0 .0.year)
     }
 
     /// The calendar-specific month represented by `date`
@@ -102,14 +101,14 @@ impl Calendar for Gregorian {
 
     /// Information of the day of the year
     fn day_of_year_info(&self, date: &Self::DateInner) -> types::DayOfYearInfo {
-        let prev_year = IsoYear(date.0.year.0 - 1);
-        let next_year = IsoYear(date.0.year.0 + 1);
+        let prev_year = date.0 .0.year - 1;
+        let next_year = date.0 .0.year + 1;
         types::DayOfYearInfo {
             day_of_year: Iso::day_of_year(date.0),
-            days_in_year: Iso::days_in_year(date.0.year),
-            prev_year: year_as_gregorian(prev_year.0),
-            days_in_prev_year: Iso::days_in_year(prev_year),
-            next_year: year_as_gregorian(next_year.0),
+            days_in_year: Iso::days_in_year_direct(date.0 .0.year),
+            prev_year: year_as_gregorian(prev_year),
+            days_in_prev_year: Iso::days_in_year_direct(prev_year),
+            next_year: year_as_gregorian(next_year),
         }
     }
 
@@ -128,25 +127,21 @@ impl Date<Gregorian> {
     /// Years are specified as ISO years.
     ///
     /// ```rust
-    /// use icu::calendar::{iso::IsoDay, iso::IsoMonth, iso::IsoYear, Date};
+    /// use icu::calendar::{Date};
     /// use std::convert::TryFrom;
     ///
-    /// let iso_year = IsoYear(1970);
-    /// let iso_month = IsoMonth::try_from(1).expect("Failed to initialize IsoMonth instance.");
-    /// let iso_day = IsoDay::try_from(2).expect("Failed to initialize IsoDay instance.");
-    ///
     /// // Conversion from ISO to Gregorian
-    /// let date_gregorian = Date::new_gregorian_date(iso_year, iso_month, iso_day)
+    /// let date_gregorian = Date::new_gregorian_date(1970, 1, 2)
     ///     .expect("Failed to initialize Gregorian Date instance.");
     ///
     /// assert_eq!(date_gregorian.year().number, 1970);
-    /// assert_eq!(date_gregorian.month().number, 1);
+    /// assert_eq!(date_gregorian.month().ordinal, 1);
     /// assert_eq!(date_gregorian.day_of_month().0, 2);
     /// ```
     pub fn new_gregorian_date(
-        year: IsoYear,
-        month: IsoMonth,
-        day: IsoDay,
+        year: i32,
+        month: u8,
+        day: u8,
     ) -> Result<Date<Gregorian>, DateTimeError> {
         Date::new_iso_date(year, month, day).map(|d| Date::new_from_iso(d, Gregorian))
     }
@@ -164,7 +159,7 @@ impl DateTime<Gregorian> {
     ///     .expect("Failed to initialize Gregorian DateTime instance.");
     ///
     /// assert_eq!(datetime_gregorian.date.year().number, 1970);
-    /// assert_eq!(datetime_gregorian.date.month().number, 1);
+    /// assert_eq!(datetime_gregorian.date.month().ordinal, 1);
     /// assert_eq!(datetime_gregorian.date.day_of_month().0, 2);
     /// assert_eq!(datetime_gregorian.time.hour.number(), 13);
     /// assert_eq!(datetime_gregorian.time.minute.number(), 1);
@@ -179,7 +174,7 @@ impl DateTime<Gregorian> {
         second: u8,
     ) -> Result<DateTime<Gregorian>, DateTimeError> {
         Ok(DateTime {
-            date: Date::new_gregorian_date(year.into(), month.try_into()?, day.try_into()?)?,
+            date: Date::new_gregorian_date(year, month, day)?,
             time: types::Time::try_new(hour, minute, second, 0)?,
         })
     }

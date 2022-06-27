@@ -1,16 +1,6 @@
 ``fixed_decimal::ffi``
 ======================
 
-.. cpp:struct:: ICU4XCreateFixedDecimalResult
-
-    .. cpp:member:: std::optional<ICU4XFixedDecimal> fd
-
-        Will be None if ``success`` is ``false``
-
-    .. cpp:member:: bool success
-
-        Currently just a boolean, but we might add a proper error enum as necessary
-
 .. cpp:class:: ICU4XFixedDecimal
 
     See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html>`__ for more information.
@@ -20,22 +10,22 @@
         Construct an :cpp:class:`ICU4XFixedDecimal` from an integer.
         See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html>`__ for more information.
 
-    .. cpp:function:: static std::optional<ICU4XFixedDecimal> create_from_f64_with_max_precision(double f)
+    .. cpp:function:: static diplomat::result<ICU4XFixedDecimal, ICU4XError> create_from_f64_with_max_precision(double f)
 
         Construct an :cpp:class:`ICU4XFixedDecimal` from an float, with enough digits to recover the original floating point in IEEE 754 without needing trailing zeros
-        See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.from_f64>`__ for more information.
+        See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.try_from_f64>`__ for more information.
 
-    .. cpp:function:: static std::optional<ICU4XFixedDecimal> create_from_f64_with_lower_magnitude(double f, int16_t precision, ICU4XFixedDecimalRoundingMode rounding_mode)
+    .. cpp:function:: static diplomat::result<ICU4XFixedDecimal, ICU4XError> create_from_f64_with_lower_magnitude(double f, int16_t precision)
 
         Construct an :cpp:class:`ICU4XFixedDecimal` from an float, with a given power of 10 for the lower magnitude
-        See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.from_f64>`__ for more information.
+        See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.try_from_f64>`__ for more information.
 
-    .. cpp:function:: static std::optional<ICU4XFixedDecimal> create_from_f64_with_significant_digits(double f, uint8_t digits, ICU4XFixedDecimalRoundingMode rounding_mode)
+    .. cpp:function:: static diplomat::result<ICU4XFixedDecimal, ICU4XError> create_from_f64_with_significant_digits(double f, uint8_t digits)
 
         Construct an :cpp:class:`ICU4XFixedDecimal` from an float, for a given number of significant digits
-        See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.from_f64>`__ for more information.
+        See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.try_from_f64>`__ for more information.
 
-    .. cpp:function:: static ICU4XCreateFixedDecimalResult create_fromstr(const std::string_view v)
+    .. cpp:function:: static diplomat::result<ICU4XFixedDecimal, ICU4XError> create_fromstr(const std::string_view v)
 
         Construct an :cpp:class:`ICU4XFixedDecimal` from a string.
         See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html>`__ for more information.
@@ -74,15 +64,3 @@
 
         Format the :cpp:class:`ICU4XFixedDecimal` as a string.
         See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.write_to>`__ for more information.
-
-.. cpp:enum-struct:: ICU4XFixedDecimalRoundingMode
-
-    How to round digits when constructing an ICU4XFixedDecimal from a floating point number
-
-    .. cpp:enumerator:: Truncate
-
-        Truncate leftover digits
-
-    .. cpp:enumerator:: HalfExpand
-
-        Round up from 0.5

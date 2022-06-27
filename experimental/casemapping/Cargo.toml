@@ -31,7 +31,7 @@ icu_uniset = { version = "0.5", path = "../../utils/uniset" }
 yoke = { version = "0.6.0", path = "../../utils/yoke", features = ["derive"] }
 zerovec = { version = "0.7", path = "../../utils/zerovec", features = ["yoke"] }
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }
-crabbake = { path = "../../experimental/crabbake", optional = true, features = ["derive"]}
+databake = { path = "../../utils/databake", optional = true, features = ["derive"]}
 
 [lib]
 path = "src/lib.rs"
@@ -41,4 +41,4 @@ bench = false  # This option is required for Benchmark CI
 std = ["icu_provider/std"]
 default = []
 serde = ["dep:serde", "zerovec/serde", "icu_codepointtrie/serde"]
-datagen = ["serde", "std", "crabbake", "zerovec/crabbake", "icu_codepointtrie/crabbake"]
+datagen = ["serde", "std", "databake", "zerovec/databake", "icu_codepointtrie/databake"]

@@ -11,10 +11,10 @@ extern "C" {
 #endif
 
 typedef struct ICU4XBidiParagraph ICU4XBidiParagraph;
-#include "diplomat_result_void_void.h"
+#include "diplomat_result_void_ICU4XError.h"
 #include "ICU4XBidiDirection.h"
 
-diplomat_result_void_void ICU4XBidiParagraph_set_paragraph_in_text(ICU4XBidiParagraph* self, size_t n);
+diplomat_result_void_ICU4XError ICU4XBidiParagraph_set_paragraph_in_text(ICU4XBidiParagraph* self, size_t n);
 
 ICU4XBidiDirection ICU4XBidiParagraph_direction(const ICU4XBidiParagraph* self);
 
@@ -24,7 +24,7 @@ size_t ICU4XBidiParagraph_range_start(const ICU4XBidiParagraph* self);
 
 size_t ICU4XBidiParagraph_range_end(const ICU4XBidiParagraph* self);
 
-diplomat_result_void_void ICU4XBidiParagraph_reorder_line(const ICU4XBidiParagraph* self, size_t range_start, size_t range_end, DiplomatWriteable* out);
+diplomat_result_void_ICU4XError ICU4XBidiParagraph_reorder_line(const ICU4XBidiParagraph* self, size_t range_start, size_t range_end, DiplomatWriteable* out);
 
 uint8_t ICU4XBidiParagraph_level_at(const ICU4XBidiParagraph* self, size_t pos);
 void ICU4XBidiParagraph_destroy(ICU4XBidiParagraph* self);

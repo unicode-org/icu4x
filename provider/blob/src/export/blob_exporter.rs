@@ -9,7 +9,7 @@ use std::sync::Mutex;
 use writeable::Writeable;
 use zerovec::ZeroMap2d;
 
-use postcard::ser_flavors::{AllocVec, Encoder, Flavor};
+use postcard::ser_flavors::{AllocVec, Flavor};
 
 /// A data exporter that writes data to a single-file blob.
 /// See the module-level docs for an example.
@@ -38,22 +38,18 @@ impl DataExporter for BlobExporter<'_> {
     ) -> Result<(), DataError> {
         log::trace!("Adding: {}/{}", key, options);
         let mut serializer = postcard::Serializer {
-            output: Encoder {
-                flavor: AllocVec::new(),
-            },
+            output: AllocVec::new(),
         };
         payload.serialize(&mut serializer)?;
 
-        let output = serializer
-            .output
-            .flavor
-            .release()
-            .map_err(|_| DataError::custom("postcard release() failed"))?;
+        let output = serializer.output;
         #[allow(clippy::expect_used)]
         self.resources.lock().expect("poison").push((
             key.get_hash(),
             options.write_to_string().into_owned().into_bytes(),
-            output,
+            output
+                .finalize()
+                .expect("Failed to finalize serializer output"),
         ));
         Ok(())
     }

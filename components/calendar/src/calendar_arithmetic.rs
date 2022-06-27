@@ -5,6 +5,7 @@
 use crate::{types, Calendar, DateDuration, DateDurationUnit};
 use core::convert::TryInto;
 use core::marker::PhantomData;
+use tinystr::tinystr;
 
 #[derive(Copy, Clone, Debug, Hash, Eq, PartialEq)]
 #[allow(clippy::exhaustive_structs)] // this type is stable
@@ -24,6 +25,15 @@ pub trait CalendarArithmetic: Calendar {
 }
 
 impl<C: CalendarArithmetic> ArithmeticDate<C> {
+    #[inline]
+    pub fn new(year: i32, month: u8, day: u8) -> Self {
+        ArithmeticDate {
+            year,
+            month,
+            day,
+            marker: PhantomData,
+        }
+    }
     #[inline]
     pub fn offset_date(&mut self, mut offset: DateDuration<C>) {
         self.year += offset.years;
@@ -131,5 +141,36 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
     #[inline]
     pub fn day_of_month(&self) -> types::DayOfMonth {
         types::DayOfMonth(self.day.into())
+    }
+
+    /// The [`types::Month`] for the current month (with month code) for a solar calendar
+    /// Lunar calendars should not use this method and instead manually implement a month code
+    /// resolver.
+    ///
+    /// Returns "und" if run with months that are out of bounds for the current
+    /// calendar.
+    #[inline]
+    pub fn solar_month(&self) -> types::Month {
+        let code = match self.month {
+            a if a > C::months_for_every_year() => tinystr!(4, "und"),
+            1 => tinystr!(4, "M01"),
+            2 => tinystr!(4, "M02"),
+            3 => tinystr!(4, "M03"),
+            4 => tinystr!(4, "M04"),
+            5 => tinystr!(4, "M05"),
+            6 => tinystr!(4, "M06"),
+            7 => tinystr!(4, "M07"),
+            8 => tinystr!(4, "M08"),
+            9 => tinystr!(4, "M09"),
+            10 => tinystr!(4, "M10"),
+            11 => tinystr!(4, "M11"),
+            12 => tinystr!(4, "M12"),
+            13 => tinystr!(4, "M13"),
+            _ => tinystr!(4, "und"),
+        };
+        types::Month {
+            ordinal: self.month as u32,
+            code: types::MonthCode(code),
+        }
     }
 }

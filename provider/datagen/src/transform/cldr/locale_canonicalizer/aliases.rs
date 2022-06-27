@@ -5,7 +5,7 @@
 use crate::transform::cldr::cldr_serde;
 use crate::SourceData;
 use icu_locale_canonicalizer::provider::*;
-use icu_locid::{language, subtags, LanguageIdentifier};
+use icu_locid::{subtags, subtags_language as language, LanguageIdentifier};
 use icu_provider::datagen::IterableResourceProvider;
 use icu_provider::prelude::*;
 use tinystr::TinyAsciiStr;
@@ -35,8 +35,8 @@ impl ResourceProvider<AliasesV1Marker> for AliasesProvider {
 
         let data: &cldr_serde::aliases::Resource = self
             .source
-            .get_cldr_paths()?
-            .cldr_core()
+            .cldr()?
+            .core()
             .read_and_parse("supplemental/aliases.json")?;
         let metadata = DataResponseMetadata::default();
         // TODO(#1109): Set metadata.data_langid correctly.
@@ -147,7 +147,7 @@ impl From<&cldr_serde::aliases::Resource> for AliasesV1<'_> {
                                 && !replacement.language.is_empty()
                                 && replacement.script.is_none()
                                 && replacement.region.is_none()
-                                && replacement.variants == subtags::Variants::new() =>
+                                && replacement.variants.is_empty() =>
                         {
                             sgn_region.insert(&region.into(), &replacement.language);
                         }
@@ -332,11 +332,11 @@ fn test_basic() {
 
     assert_eq!(
         data.get().script.iter().next().unwrap(),
-        (&tinystr!(4, "Qaai"), &icu_locid::script!("Zinh"))
+        (&tinystr!(4, "Qaai"), &icu_locid::subtags_script!("Zinh"))
     );
 
     assert_eq!(
         data.get().region_num.get(&tinystr!(3, "768")).unwrap(),
-        &icu_locid::region!("TG")
+        &icu_locid::subtags_region!("TG")
     );
 }

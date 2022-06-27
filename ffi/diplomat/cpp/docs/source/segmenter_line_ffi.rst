@@ -46,12 +46,12 @@
     An ICU4X line-break segmenter, capable of finding breakpoints in strings.
     See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/icu_segmenter/struct.LineBreakSegmenter.html>`__ for more information.
 
-    .. cpp:function:: static diplomat::result<ICU4XLineBreakSegmenter, std::monostate> try_new(const ICU4XDataProvider& provider)
+    .. cpp:function:: static diplomat::result<ICU4XLineBreakSegmenter, ICU4XError> try_new(const ICU4XDataProvider& provider)
 
         Construct a :cpp:class:`ICU4XLineBreakSegmenter` with default options.
         See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/icu_segmenter/struct.LineBreakSegmenter.html#method.try_new>`__ for more information.
 
-    .. cpp:function:: static diplomat::result<ICU4XLineBreakSegmenter, std::monostate> try_new_with_options(const ICU4XDataProvider& provider, ICU4XLineBreakOptions options)
+    .. cpp:function:: static diplomat::result<ICU4XLineBreakSegmenter, ICU4XError> try_new_with_options(const ICU4XDataProvider& provider, ICU4XLineBreakOptions options)
 
         Construct a :cpp:class:`ICU4XLineBreakSegmenter` with custom options.
         See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/icu_segmenter/struct.LineBreakSegmenter.html#method.try_new_with_options>`__ for more information.

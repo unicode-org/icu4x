@@ -2,12 +2,16 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+//! Normalizer-specific error
+
 use displaydoc::Display;
 use icu_properties::PropertiesError;
 use icu_provider::prelude::DataError;
 
+/// Normalizer-specific error
 #[derive(Display, Debug)]
 pub enum NormalizerError {
+    /// Error coming from the data provider
     #[displaydoc("{0}")]
     DataProvider(DataError),
     /// The data uses a planned but unsupported feature.

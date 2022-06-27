@@ -8,17 +8,13 @@
 
 int main() {
     ICU4XLocale* locale = ICU4XLocale_create("bn", 2);
-    ICU4XCreateDataProviderResult result = ICU4XDataProvider_create_test();
-    if (!result.success) {
-        printf("Failed to create test data provider\n");
-        return 1;
-    }
-    ICU4XDataProvider* provider = result.provider;
+    ICU4XDataProvider* provider = ICU4XDataProvider_create_test();
+
     ICU4XFixedDecimal* decimal = ICU4XFixedDecimal_create(1000007);
 
     ICU4XFixedDecimalFormatOptions opts = {ICU4XFixedDecimalGroupingStrategy_Auto, ICU4XFixedDecimalSignDisplay_Auto};
 
-    diplomat_result_box_ICU4XFixedDecimalFormat_void fdf_result = ICU4XFixedDecimalFormat_try_new(locale, provider, opts);
+    diplomat_result_box_ICU4XFixedDecimalFormat_ICU4XError fdf_result = ICU4XFixedDecimalFormat_try_new(locale, provider, opts);
     if (!fdf_result.is_ok)  {
         printf("Failed to create FixedDecimalFormat\n");
         return 1;
@@ -66,12 +62,12 @@ int main() {
 
     ICU4XFixedDecimal_destroy(decimal);
 
-    ICU4XCreateFixedDecimalResult fd_result = ICU4XFixedDecimal_create_fromstr("1000007.070", 11);
-    if (!fd_result.success) {
+    diplomat_result_box_ICU4XFixedDecimal_ICU4XError fd_result = ICU4XFixedDecimal_create_fromstr("1000007.070", 11);
+    if (!fd_result.is_ok) {
         printf("Failed to create FixedDecimal from string.\n");
         return 1;
     }
-    decimal = fd_result.fd;
+    decimal = fd_result.ok;
 
     write = diplomat_simple_writeable(output, 40);
 

@@ -16,6 +16,7 @@ pub mod ffi {
     use unicode_bidi::Level;
     use unicode_bidi::Paragraph;
 
+    use crate::errors::ffi::ICU4XError;
     use crate::provider::ffi::ICU4XDataProvider;
 
     pub enum ICU4XBidiDirection {
@@ -33,14 +34,13 @@ pub mod ffi {
     impl ICU4XBidi {
         /// Creates a new [`ICU4XBidi`] from locale data.
         #[diplomat::rust_link(icu::properties::bidi::BidiClassAdapter::new, FnInStruct)]
-        pub fn try_new(provider: &ICU4XDataProvider) -> DiplomatResult<Box<ICU4XBidi>, ()> {
+        pub fn try_new(provider: &ICU4XDataProvider) -> DiplomatResult<Box<ICU4XBidi>, ICU4XError> {
             use icu_provider::serde::AsDeserializingBufferProvider;
             let provider = provider.0.as_deserializing();
-            if let Result::Ok(bidi) = maps::get_bidi_class(&provider) {
-                Ok(Box::new(ICU4XBidi(bidi))).into()
-            } else {
-                Err(()).into()
-            }
+            maps::get_bidi_class(&provider)
+                .map(|bidi| Box::new(ICU4XBidi(bidi)))
+                .map_err(Into::into)
+                .into()
         }
 
         /// Use the data loaded in this object to process a string and calculate bidi information
@@ -135,16 +135,16 @@ pub mod ffi {
 
     impl<'info> ICU4XBidiParagraph<'info> {
         /// Given a paragraph index `n` within the surrounding text, this sets this
-        /// object to the paragraph at that index. Returns an error when out of bounds.
+        /// object to the paragraph at that index. Returns `ICU4XError::OutOfBoundsError` when out of bounds.
         ///
         /// This is equivalent to calling `paragraph_at()` on `ICU4XBidiInfo` but doesn't
         /// create a new object
-        pub fn set_paragraph_in_text(&mut self, n: usize) -> DiplomatResult<(), ()> {
+        pub fn set_paragraph_in_text(&mut self, n: usize) -> DiplomatResult<(), ICU4XError> {
             let para = self.0.info.paragraphs.get(n);
             let para = if let Some(para) = para {
                 para
             } else {
-                return Err(()).into();
+                return Err(ICU4XError::OutOfBoundsError).into();
             };
 
             self.0 = Paragraph::new(self.0.info, para);
@@ -180,9 +180,9 @@ pub mod ffi {
             range_start: usize,
             range_end: usize,
             out: &mut DiplomatWriteable,
-        ) -> DiplomatResult<(), ()> {
+        ) -> DiplomatResult<(), ICU4XError> {
             if range_start < self.range_start() || range_end > self.range_end() {
-                return Err(()).into();
+                return Err(ICU4XError::OutOfBoundsError).into();
             }
 
             let info = self.0.info;
@@ -190,7 +190,7 @@ pub mod ffi {
 
             let reordered = info.reorder_line(para, range_start..range_end);
 
-            out.write_str(&reordered).map_err(|_| ()).into()
+            out.write_str(&reordered).map_err(Into::into).into()
         }
 
         /// Get the BIDI level at a particular byte index in this paragraph.

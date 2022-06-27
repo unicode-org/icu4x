@@ -16,14 +16,19 @@ use icu_datetime::{
     mock::{parse_gregorian_from_str, zoned_datetime::MockZonedDateTime},
     pattern::runtime,
     provider::{
-        calendar::{DatePatternsV1Marker, DateSkeletonPatternsV1Marker, DateSymbolsV1Marker},
+        calendar::{
+            DatePatternsV1Marker, DateSkeletonPatternsV1Marker, DateSymbolsV1Marker,
+            TimePatternsV1Marker,
+        },
         week_data::WeekDataV1Marker,
     },
     time_zone::{TimeZoneFormat, TimeZoneFormatOptions},
     CldrCalendar, DateTimeFormat, DateTimeFormatOptions, ZonedDateTimeFormat,
 };
 use icu_decimal::provider::DecimalSymbolsV1Marker;
-use icu_locid::{unicode_ext_key, unicode_ext_value, LanguageIdentifier, Locale};
+use icu_locid::{
+    extensions_unicode_key as key, extensions_unicode_value as value, LanguageIdentifier, Locale,
+};
 use icu_plurals::provider::OrdinalV1Marker;
 use icu_provider::prelude::*;
 use icu_provider_adapters::fork::by_key::MultiForkByKeyProvider;
@@ -145,6 +150,7 @@ fn assert_fixture_element<A, D>(
     A::Calendar: CldrCalendar,
     D: ResourceProvider<DateSymbolsV1Marker>
         + ResourceProvider<DatePatternsV1Marker>
+        + ResourceProvider<TimePatternsV1Marker>
         + ResourceProvider<DateSkeletonPatternsV1Marker>
         + ResourceProvider<DecimalSymbolsV1Marker>
         + ResourceProvider<OrdinalV1Marker>
@@ -233,8 +239,8 @@ fn test_dayperiod_patterns() {
             .extensions
             .unicode
             .keywords
-            .set(unicode_ext_key!("ca"), unicode_ext_value!("gregory"));
-        let mut patterns_data: DataPayload<DatePatternsV1Marker> = provider
+            .set(key!("ca"), value!("gregory"));
+        let mut date_patterns_data: DataPayload<DatePatternsV1Marker> = provider
             .load_resource(&DataRequest {
                 options: ResourceOptions::from(&locale),
                 metadata: Default::default(),
@@ -242,7 +248,18 @@ fn test_dayperiod_patterns() {
             .unwrap()
             .take_payload()
             .unwrap();
-        patterns_data.with_mut(|data| {
+        date_patterns_data.with_mut(|data| {
+            data.length_combinations.long = "{0}".parse().unwrap();
+        });
+        let mut time_patterns_data: DataPayload<TimePatternsV1Marker> = provider
+            .load_resource(&DataRequest {
+                options: ResourceOptions::from(&locale),
+                metadata: Default::default(),
+            })
+            .unwrap()
+            .take_payload()
+            .unwrap();
+        date_patterns_data.with_mut(|data| {
             data.length_combinations.long = "{0}".parse().unwrap();
         });
         let symbols_data: DataPayload<DateSymbolsV1Marker> = provider
@@ -284,7 +301,7 @@ fn test_dayperiod_patterns() {
                     for pattern_input in patterns {
                         let new_pattern1: runtime::Pattern = pattern_input.parse().unwrap();
                         let new_pattern2: runtime::Pattern = pattern_input.parse().unwrap();
-                        patterns_data.with_mut(move |data| {
+                        time_patterns_data.with_mut(move |data| {
                             data.time_h11_h12.long = new_pattern1;
                             data.time_h23_h24.long = new_pattern2;
                         });
@@ -300,7 +317,11 @@ fn test_dayperiod_patterns() {
                                 },
                                 AnyPayloadProvider {
                                     key: DatePatternsV1Marker::KEY,
-                                    data: patterns_data.clone().wrap_into_any_payload(),
+                                    data: date_patterns_data.clone().wrap_into_any_payload(),
+                                },
+                                AnyPayloadProvider {
+                                    key: TimePatternsV1Marker::KEY,
+                                    data: time_patterns_data.clone().wrap_into_any_payload(),
                                 },
                                 AnyPayloadProvider {
                                     key: WeekDataV1Marker::KEY,
@@ -399,14 +420,22 @@ fn test_time_zone_patterns() {
             .extensions
             .unicode
             .keywords
-            .set(unicode_ext_key!("ca"), unicode_ext_value!("gregory"));
+            .set(key!("ca"), value!("gregory"));
         let mut config = test.config;
         let mut datetime: MockZonedDateTime = test.datetime.parse().unwrap();
         datetime.time_zone.time_zone_id = config.time_zone_id.take().map(TimeZoneBcp47Id);
         datetime.time_zone.metazone_id = config.metazone_id.take().map(MetaZoneId);
         datetime.time_zone.time_variant = config.time_variant.take();
 
-        let mut patterns_data: DataPayload<DatePatternsV1Marker> = date_provider
+        let mut date_patterns_data: DataPayload<DatePatternsV1Marker> = date_provider
+            .load_resource(&DataRequest {
+                options: ResourceOptions::from(&locale),
+                metadata: Default::default(),
+            })
+            .unwrap()
+            .take_payload()
+            .unwrap();
+        let mut time_patterns_data: DataPayload<TimePatternsV1Marker> = date_provider
             .load_resource(&DataRequest {
                 options: ResourceOptions::from(&locale),
                 metadata: Default::default(),
@@ -439,7 +468,7 @@ fn test_time_zone_patterns() {
             .take_payload()
             .unwrap();
 
-        patterns_data.with_mut(|data| {
+        date_patterns_data.with_mut(|data| {
             data.length_combinations.long = "{0}".parse().unwrap();
         });
 
@@ -453,7 +482,7 @@ fn test_time_zone_patterns() {
             for pattern_input in patterns {
                 let new_pattern1: runtime::Pattern = pattern_input.parse().unwrap();
                 let new_pattern2: runtime::Pattern = pattern_input.parse().unwrap();
-                patterns_data.with_mut(move |data| {
+                time_patterns_data.with_mut(move |data| {
                     data.time_h11_h12.long = new_pattern1;
                     data.time_h23_h24.long = new_pattern2;
                 });
@@ -469,7 +498,11 @@ fn test_time_zone_patterns() {
                         },
                         AnyPayloadProvider {
                             key: DatePatternsV1Marker::KEY,
-                            data: patterns_data.clone().wrap_into_any_payload(),
+                            data: date_patterns_data.clone().wrap_into_any_payload(),
+                        },
+                        AnyPayloadProvider {
+                            key: TimePatternsV1Marker::KEY,
+                            data: time_patterns_data.clone().wrap_into_any_payload(),
                         },
                         AnyPayloadProvider {
                             key: WeekDataV1Marker::KEY,

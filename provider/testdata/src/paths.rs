@@ -14,9 +14,9 @@ pub fn cldr_json_root() -> PathBuf {
     data_root().join("cldr")
 }
 
-/// Returns the absolute path to the UProps TOML root directory.
-pub fn uprops_toml_root() -> PathBuf {
-    data_root().join("uprops")
+/// Returns the absolute path to the icuexport TOML root directory.
+pub fn icuexport_toml_root() -> PathBuf {
+    data_root().join("icuexport")
 }
 
 /// Returns the absolute path to the collation tailoring TOML root directory.

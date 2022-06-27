@@ -15,6 +15,7 @@ namespace capi {
 
 class ICU4XDataProvider;
 class ICU4XLineBreakSegmenter;
+#include "ICU4XError.hpp"
 struct ICU4XLineBreakOptions;
 class ICU4XLineBreakIteratorUtf8;
 class ICU4XLineBreakIteratorUtf16;
@@ -42,14 +43,14 @@ class ICU4XLineBreakSegmenter {
    * 
    * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu_segmenter/struct.LineBreakSegmenter.html#method.try_new) for more information.
    */
-  static diplomat::result<ICU4XLineBreakSegmenter, std::monostate> try_new(const ICU4XDataProvider& provider);
+  static diplomat::result<ICU4XLineBreakSegmenter, ICU4XError> try_new(const ICU4XDataProvider& provider);
 
   /**
    * Construct a [`ICU4XLineBreakSegmenter`] with custom options.
    * 
    * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu_segmenter/struct.LineBreakSegmenter.html#method.try_new_with_options) for more information.
    */
-  static diplomat::result<ICU4XLineBreakSegmenter, std::monostate> try_new_with_options(const ICU4XDataProvider& provider, ICU4XLineBreakOptions options);
+  static diplomat::result<ICU4XLineBreakSegmenter, ICU4XError> try_new_with_options(const ICU4XDataProvider& provider, ICU4XLineBreakOptions options);
 
   /**
    * Segments a UTF-8 string.
@@ -87,24 +88,24 @@ class ICU4XLineBreakSegmenter {
 #include "ICU4XLineBreakIteratorUtf16.hpp"
 #include "ICU4XLineBreakIteratorLatin1.hpp"
 
-inline diplomat::result<ICU4XLineBreakSegmenter, std::monostate> ICU4XLineBreakSegmenter::try_new(const ICU4XDataProvider& provider) {
+inline diplomat::result<ICU4XLineBreakSegmenter, ICU4XError> ICU4XLineBreakSegmenter::try_new(const ICU4XDataProvider& provider) {
   auto diplomat_result_raw_out_value = capi::ICU4XLineBreakSegmenter_try_new(provider.AsFFI());
-  diplomat::result<ICU4XLineBreakSegmenter, std::monostate> diplomat_result_out_value;
+  diplomat::result<ICU4XLineBreakSegmenter, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
     diplomat_result_out_value = diplomat::Ok(ICU4XLineBreakSegmenter(diplomat_result_raw_out_value.ok));
   } else {
-    diplomat_result_out_value = diplomat::Err(std::monostate());
+    diplomat_result_out_value = diplomat::Err(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
   return diplomat_result_out_value;
 }
-inline diplomat::result<ICU4XLineBreakSegmenter, std::monostate> ICU4XLineBreakSegmenter::try_new_with_options(const ICU4XDataProvider& provider, ICU4XLineBreakOptions options) {
+inline diplomat::result<ICU4XLineBreakSegmenter, ICU4XError> ICU4XLineBreakSegmenter::try_new_with_options(const ICU4XDataProvider& provider, ICU4XLineBreakOptions options) {
   ICU4XLineBreakOptions diplomat_wrapped_struct_options = options;
   auto diplomat_result_raw_out_value = capi::ICU4XLineBreakSegmenter_try_new_with_options(provider.AsFFI(), capi::ICU4XLineBreakOptions{ .line_break_rule = static_cast<capi::ICU4XLineBreakRule>(diplomat_wrapped_struct_options.line_break_rule), .word_break_rule = static_cast<capi::ICU4XWordBreakRule>(diplomat_wrapped_struct_options.word_break_rule), .ja_zh = diplomat_wrapped_struct_options.ja_zh });
-  diplomat::result<ICU4XLineBreakSegmenter, std::monostate> diplomat_result_out_value;
+  diplomat::result<ICU4XLineBreakSegmenter, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
     diplomat_result_out_value = diplomat::Ok(ICU4XLineBreakSegmenter(diplomat_result_raw_out_value.ok));
   } else {
-    diplomat_result_out_value = diplomat::Err(std::monostate());
+    diplomat_result_out_value = diplomat::Err(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
   return diplomat_result_out_value;
 }

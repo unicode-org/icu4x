@@ -13,10 +13,13 @@ use core::default::Default;
 use core::fmt;
 use core::fmt::Write;
 use icu_locid::extensions::unicode as unicode_ext;
-use icu_locid::subtags::{Language, Region, Script};
+use icu_locid::subtags::{Language, Region, Script, Variants};
 use icu_locid::{LanguageIdentifier, Locale};
 use writeable::{LengthHint, Writeable};
 use zerovec::ule::*;
+
+#[cfg(doc)]
+use icu_locid::subtags::Variant;
 
 #[doc(hidden)]
 #[macro_export]
@@ -265,26 +268,29 @@ fn test_path_syntax() {
     // No version:
     assert_eq!(
         ResourceKey::construct_internal(tagged!("hello/world")),
-        Err(("[a-zA-z0-9_/@]", 25))
+        Err((
+            "[a-zA-z0-9_/@]",
+            concat!(leading_tag!(), "hello/world").len()
+        ))
     );
 
     assert_eq!(
         ResourceKey::construct_internal(tagged!("hello/world@")),
-        Err(("[0-9]", 26))
+        Err(("[0-9]", concat!(leading_tag!(), "hello/world@").len()))
     );
     assert_eq!(
         ResourceKey::construct_internal(tagged!("hello/world@foo")),
-        Err(("[0-9]", 26))
+        Err(("[0-9]", concat!(leading_tag!(), "hello/world@").len()))
     );
     assert_eq!(
         ResourceKey::construct_internal(tagged!("hello/world@1foo")),
-        Err(("[0-9]", 27))
+        Err(("[0-9]", concat!(leading_tag!(), "hello/world@1").len()))
     );
 
     // Invalid characters:
     assert_eq!(
         ResourceKey::construct_internal(tagged!("你好/世界@1")),
-        Err(("[a-zA-Z0-9_]", 14))
+        Err(("[a-zA-Z0-9_]", leading_tag!().len()))
     );
 
     // Invalid tag:
@@ -294,7 +300,7 @@ fn test_path_syntax() {
     );
     assert_eq!(
         ResourceKey::construct_internal(concat!(leading_tag!(), "hello/world@1")),
-        Err(("tag", 27))
+        Err(("tag", concat!(leading_tag!(), "hello/world@1").len()))
     );
     assert_eq!(
         ResourceKey::construct_internal("hello/world@1"),
@@ -495,6 +501,12 @@ impl ResourceOptions {
         self.langid.clone()
     }
 
+    /// Overrides the entire [`LanguageIdentifier`] portion of this [`ResourceOptions`].
+    #[inline]
+    pub fn set_langid(&mut self, lid: LanguageIdentifier) {
+        self.langid = lid;
+    }
+
     /// Converts this [`ResourceOptions`] into a [`Locale`].
     ///
     /// See also [`ResourceOptions::get_langid()`].
@@ -502,7 +514,7 @@ impl ResourceOptions {
     /// # Examples
     ///
     /// ```
-    /// use icu_locid::{langid, language, region, Locale};
+    /// use icu_locid::{langid, subtags_language as language, subtags_region as region, Locale};
     /// use icu_provider::prelude::*;
     ///
     /// let locale: Locale = "it-IT-u-ca-coptic".parse().expect("Valid BCP-47");
@@ -527,23 +539,74 @@ impl ResourceOptions {
     }
 
     /// Returns the [`Language`] for this [`ResourceOptions`].
+    #[inline]
     pub fn language(&self) -> Language {
         self.langid.language
     }
 
+    /// Returns the [`Language`] for this [`ResourceOptions`].
+    #[inline]
+    pub fn set_language(&mut self, language: Language) {
+        self.langid.language = language;
+    }
+
     /// Returns the [`Script`] for this [`ResourceOptions`].
+    #[inline]
     pub fn script(&self) -> Option<Script> {
         self.langid.script
     }
 
+    /// Sets the [`Script`] for this [`ResourceOptions`].
+    #[inline]
+    pub fn set_script(&mut self, script: Option<Script>) {
+        self.langid.script = script;
+    }
+
     /// Returns the [`Region`] for this [`ResourceOptions`].
+    #[inline]
     pub fn region(&self) -> Option<Region> {
         self.langid.region
     }
 
+    /// Sets the [`Region`] for this [`ResourceOptions`].
+    #[inline]
+    pub fn set_region(&mut self, region: Option<Region>) {
+        self.langid.region = region;
+    }
+
+    /// Returns whether there are any [`Variant`] subtags in this [`ResourceOptions`].
+    #[inline]
+    pub fn has_variants(&self) -> bool {
+        !self.langid.variants.is_empty()
+    }
+
+    #[inline]
+    pub fn set_variants(&mut self, variants: Variants) {
+        self.langid.variants = variants;
+    }
+
+    /// Removes all [`Variant`] subtags in this [`ResourceOptions`].
+    #[inline]
+    pub fn clear_variants(&mut self) -> Variants {
+        self.langid.variants.clear()
+    }
+
     /// Gets the value of the specified Unicode extension keyword for this [`ResourceOptions`].
+    #[inline]
     pub fn get_unicode_ext(&self, key: &unicode_ext::Key) -> Option<unicode_ext::Value> {
         self.keywords.get(key).cloned()
+    }
+
+    /// Returns whether there are any Unicode extension keywords in this [`ResourceOptions`].
+    #[inline]
+    pub fn has_unicode_ext(&self) -> bool {
+        !self.keywords.is_empty()
+    }
+
+    /// Returns whether a specific Unicode extension keyword is present in this [`ResourceOptions`].
+    #[inline]
+    pub fn contains_unicode_ext(&self, key: &unicode_ext::Key) -> bool {
+        self.keywords.contains_key(key)
     }
 
     /// Returns whether this [`ResourceOptions`] contains a Unicode extension keyword
@@ -552,21 +615,48 @@ impl ResourceOptions {
     /// # Examples
     ///
     /// ```
-    /// use icu_locid::{unicode_ext_key, unicode_ext_value, Locale};
+    /// use icu_locid::{extensions_unicode_key as key, extensions_unicode_value as value, Locale};
     /// use icu_provider::prelude::*;
     ///
     /// let locale: Locale = "it-IT-u-ca-coptic".parse().expect("Valid BCP-47");
     /// let options: ResourceOptions = locale.into();
     ///
-    /// assert_eq!(options.get_unicode_ext(&unicode_ext_key!("hc")), None);
+    /// assert_eq!(options.get_unicode_ext(&key!("hc")), None);
     /// assert_eq!(
-    ///     options.get_unicode_ext(&unicode_ext_key!("ca")),
-    ///     Some(unicode_ext_value!("coptic"))
+    ///     options.get_unicode_ext(&key!("ca")),
+    ///     Some(value!("coptic"))
     /// );
-    /// assert!(options.matches_unicode_ext(&unicode_ext_key!("ca"), &unicode_ext_value!("coptic"),));
+    /// assert!(options.matches_unicode_ext(&key!("ca"), &value!("coptic"),));
     /// ```
+    #[inline]
     pub fn matches_unicode_ext(&self, key: &unicode_ext::Key, value: &unicode_ext::Value) -> bool {
         self.keywords.get(key) == Some(value)
+    }
+
+    /// Sets the value for a specific Unicode extension keyword on this [`ResourceOptions`].
+    #[inline]
+    pub fn set_unicode_ext(
+        &mut self,
+        key: unicode_ext::Key,
+        value: unicode_ext::Value,
+    ) -> Option<unicode_ext::Value> {
+        self.keywords.set(key, value)
+    }
+
+    /// Removes a specific Unicode extension keyword from this [`ResourceOptions`], returning
+    /// the value if it was present.
+    #[inline]
+    pub fn remove_unicode_ext(&mut self, key: &unicode_ext::Key) -> Option<unicode_ext::Value> {
+        self.keywords.remove(key)
+    }
+
+    /// Retains a subset of keywords as specified by the predicate function.
+    #[inline]
+    pub fn retain_unicode_ext<F>(&mut self, predicate: F)
+    where
+        F: FnMut(&unicode_ext::Key) -> bool,
+    {
+        self.keywords.retain_by_key(predicate)
     }
 }
 

@@ -7,7 +7,7 @@ use icu_calendar::{
     Gregorian,
 };
 use icu_locid::extensions::unicode::Value;
-use icu_locid::unicode_ext_value;
+use icu_locid::extensions_unicode_value as value;
 
 /// A calendar that can be found in CLDR
 ///
@@ -19,25 +19,25 @@ pub trait CldrCalendar {
 }
 
 impl CldrCalendar for Gregorian {
-    const BCP_47_IDENTIFIER: Value = unicode_ext_value!("gregory");
+    const BCP_47_IDENTIFIER: Value = value!("gregory");
 }
 
 impl CldrCalendar for Buddhist {
-    const BCP_47_IDENTIFIER: Value = unicode_ext_value!("buddhist");
+    const BCP_47_IDENTIFIER: Value = value!("buddhist");
 }
 
 impl CldrCalendar for Japanese {
-    const BCP_47_IDENTIFIER: Value = unicode_ext_value!("japanese");
+    const BCP_47_IDENTIFIER: Value = value!("japanese");
 }
 
 impl CldrCalendar for Coptic {
-    const BCP_47_IDENTIFIER: Value = unicode_ext_value!("coptic");
+    const BCP_47_IDENTIFIER: Value = value!("coptic");
 }
 
 impl CldrCalendar for Indian {
-    const BCP_47_IDENTIFIER: Value = unicode_ext_value!("indian");
+    const BCP_47_IDENTIFIER: Value = value!("indian");
 }
 
 impl CldrCalendar for Ethiopic {
-    const BCP_47_IDENTIFIER: Value = unicode_ext_value!("ethiopic");
+    const BCP_47_IDENTIFIER: Value = value!("ethiopic");
 }
