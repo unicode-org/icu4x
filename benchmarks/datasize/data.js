@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1656286446692,
+  "lastUpdate": 1656347265867,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -18593,6 +18593,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/6efed33a0e199d0d11acb550613219c339906d08"
         },
         "date": 1656286417972,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 2737318,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "f6cad74993ff4bd455f1afb92c6e9499187f3629",
+          "message": "Add iai benches for VarZeroVec (#2119)",
+          "timestamp": "2022-06-27T11:25:17-05:00",
+          "tree_id": "93af65e709f631cc8b611f9ec09713df7619bca7",
+          "url": "https://github.com/unicode-org/icu4x/commit/f6cad74993ff4bd455f1afb92c6e9499187f3629"
+        },
+        "date": 1656347236121,
         "tool": "ndjson",
         "benches": [
           {
