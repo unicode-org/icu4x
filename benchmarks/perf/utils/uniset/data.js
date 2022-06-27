@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1656350179645,
+  "lastUpdate": 1656360072421,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -33857,6 +33857,60 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 55601648,
             "range": "± 825976",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/worst",
+            "value": 3,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/worst",
+            "value": 3,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "elango@unicode.org",
+            "name": "Elango",
+            "username": "echeran"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "16a13b1ca940567d394b86ee6fbbf9d50b656840",
+          "message": "Add docs in locid to replace missing_docs warning suppressions (#2113)",
+          "timestamp": "2022-06-27T19:48:45Z",
+          "tree_id": "b8fd402a0daa0ea1ce5ec7ef073ef9338dec76fa",
+          "url": "https://github.com/unicode-org/icu4x/commit/16a13b1ca940567d394b86ee6fbbf9d50b656840"
+        },
+        "date": 1656360038407,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 45541786,
+            "range": "± 1968920",
             "unit": "ns/iter"
           },
           {
