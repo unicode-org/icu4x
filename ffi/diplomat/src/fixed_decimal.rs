@@ -2,7 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use fixed_decimal::decimal::RoundingMode;
 use fixed_decimal::decimal::Sign;
 
 #[diplomat::bridge]
@@ -17,15 +16,6 @@ pub mod ffi {
     #[diplomat::opaque]
     #[diplomat::rust_link(fixed_decimal::decimal::FixedDecimal, Struct)]
     pub struct ICU4XFixedDecimal(pub FixedDecimal);
-
-    /// How to round digits when constructing an ICU4XFixedDecimal from a
-    /// floating point number
-    pub enum ICU4XFixedDecimalRoundingMode {
-        /// Truncate leftover digits
-        Truncate,
-        ///  Round up from 0.5
-        HalfExpand,
-    }
 
     /// The sign of a FixedDecimal, as shown in formatting.
     pub enum ICU4XFixedDecimalSign {
@@ -66,9 +56,8 @@ pub mod ffi {
         pub fn create_from_f64_with_lower_magnitude(
             f: f64,
             precision: i16,
-            rounding_mode: ICU4XFixedDecimalRoundingMode,
         ) -> DiplomatResult<Box<ICU4XFixedDecimal>, ICU4XError> {
-            let precision = DoublePrecision::Magnitude(precision, rounding_mode.into());
+            let precision = DoublePrecision::Magnitude(precision);
             FixedDecimal::try_from_f64(f, precision)
                 .map(convert)
                 .map_err(Into::into)
@@ -80,9 +69,8 @@ pub mod ffi {
         pub fn create_from_f64_with_significant_digits(
             f: f64,
             digits: u8,
-            rounding_mode: ICU4XFixedDecimalRoundingMode,
         ) -> DiplomatResult<Box<ICU4XFixedDecimal>, ICU4XError> {
-            let precision = DoublePrecision::SignificantDigits(digits, rounding_mode.into());
+            let precision = DoublePrecision::SignificantDigits(digits);
             FixedDecimal::try_from_f64(f, precision)
                 .map(convert)
                 .map_err(Into::into)
@@ -144,15 +132,6 @@ impl From<ffi::ICU4XFixedDecimalSign> for Sign {
             ffi::ICU4XFixedDecimalSign::None => Self::None,
             ffi::ICU4XFixedDecimalSign::Negative => Self::Negative,
             ffi::ICU4XFixedDecimalSign::Positive => Self::Positive,
-        }
-    }
-}
-
-impl From<ffi::ICU4XFixedDecimalRoundingMode> for RoundingMode {
-    fn from(other: ffi::ICU4XFixedDecimalRoundingMode) -> Self {
-        match other {
-            ffi::ICU4XFixedDecimalRoundingMode::Truncate => Self::Truncate,
-            ffi::ICU4XFixedDecimalRoundingMode::HalfExpand => Self::HalfExpand,
         }
     }
 }

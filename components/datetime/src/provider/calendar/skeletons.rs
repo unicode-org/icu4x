@@ -52,17 +52,17 @@ impl TryFrom<&str> for SkeletonV1 {
 // See https://github.com/unicode-org/icu4x/issues/1678.
 
 #[cfg(feature = "datagen")]
-impl crabbake::Bakeable for DateSkeletonPatternsV1<'_> {
-    fn bake(&self, env: &crabbake::CrateEnv) -> crabbake::TokenStream {
+impl databake::Bake for DateSkeletonPatternsV1<'_> {
+    fn bake(&self, env: &databake::CrateEnv) -> databake::TokenStream {
         env.insert("icu_datetime");
         let vals = self.0.iter().map(|(skeleton, pattern)| {
             let fields = skeleton.0 .0.iter().map(|f| f.bake(env));
             let pattern = pattern.bake(env);
-            crabbake::quote! {
+            databake::quote! {
                 (&[#(#fields),*], #pattern)
             }
         });
-        crabbake::quote! {
+        databake::quote! {
             [#(#vals),*]
         }
     }
@@ -76,10 +76,10 @@ impl Default for DateSkeletonPatternsV1Marker {
 }
 
 #[cfg(feature = "datagen")]
-impl crabbake::Bakeable for DateSkeletonPatternsV1Marker {
-    fn bake(&self, env: &crabbake::CrateEnv) -> crabbake::TokenStream {
+impl databake::Bake for DateSkeletonPatternsV1Marker {
+    fn bake(&self, env: &databake::CrateEnv) -> databake::TokenStream {
         env.insert("icu_datetime");
-        crabbake::quote! {
+        databake::quote! {
             ::icu_datetime::provider::calendar::DateSkeletonPatternsV1Marker
         }
     }

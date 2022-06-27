@@ -1633,8 +1633,8 @@ static UND: DataStruct = &::icu_locale_canonicalizer::provider::LikelySubtagsV1 
         )
     },
     und: (
-        ::icu_locid::language!("en"),
-        ::icu_locid::script!("Latn"),
-        ::icu_locid::region!("US"),
+        ::icu_locid::subtags_language!("en"),
+        ::icu_locid::subtags_script!("Latn"),
+        ::icu_locid::subtags_region!("US"),
     ),
 };

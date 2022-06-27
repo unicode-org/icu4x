@@ -2,14 +2,13 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use icu_datagen::get_all_keys;
 use icu_provider::datagen::IterableDynProvider;
 use icu_provider::datagen::{DataConverter, HeapStatsMarker};
 use icu_provider_adapters::filter::Filterable;
 
 use icu_provider::prelude::*;
 
-use icu_datagen::{SourceData, TrieType};
+use icu_datagen::{all_keys, CldrLocaleSubset, IcuTrieType, SourceData};
 use litemap::LiteMap;
 use std::cmp;
 use std::mem::ManuallyDrop;
@@ -17,7 +16,7 @@ use std::mem::ManuallyDrop;
 #[global_allocator]
 static ALLOC: dhat::Alloc = dhat::Alloc;
 
-// Types in this list cannot be zero-copy deserialized (and are unlikely to work with CrabBake).
+// Types in this list cannot be zero-copy deserialized.
 //
 // Such types contain some data that was allocated during deserializations
 //
@@ -28,11 +27,10 @@ static EXPECTED_NET_VIOLATIONS: &[&str] = &[
 ];
 
 // Types in this list can be zero-copy deserialized (and do not contain allocated data),
-// however there is some allocation that occurs during deserialization for validation. This is unlikely to affect
-// CrabBake since CrabBake can bypass validation steps.
+// however there is some allocation that occurs during deserialization for validation.
 //
 // Entries in this list represent a less-than-ideal state of things, however ICU4X is shippable with violations
-// in this list since it does not affect CrabBake.
+// in this list since it does not affect databake.
 static EXPECTED_TOTAL_VIOLATIONS: &[&str] = &[
     // Regex DFAs need to be validated, which involved creating a BTreeMap
     "list/and@1",
@@ -51,11 +49,15 @@ fn main() {
         .locales;
 
     let converter = icu_datagen::create_datagen_provider!(SourceData::default()
-        .with_cldr(icu_testdata::paths::cldr_json_root(), "full".to_string())
+        .with_cldr(
+            icu_testdata::paths::cldr_json_root(),
+            CldrLocaleSubset::Full
+        )
         .unwrap()
-        .with_uprops(icu_testdata::paths::uprops_toml_root(), TrieType::Small)
-        .unwrap()
-        .with_coll(icu_testdata::paths::coll_toml_root())
+        .with_icuexport(
+            icu_testdata::paths::icuexport_toml_root(),
+            IcuTrieType::Small
+        )
         .unwrap())
     .filterable("icu4x-datagen locales")
     .filter_by_langid_allowlist_strict(&selected_locales);
@@ -69,7 +71,7 @@ fn main() {
     // violations for total_bytes_allocated (but not net_bytes_allocated)
     let mut total_violations: LiteMap<&'static str, u64> = LiteMap::new();
 
-    for key in get_all_keys().into_iter() {
+    for key in all_keys().into_iter() {
         let mut max_total_violation = 0;
         let mut max_net_violation = 0;
 

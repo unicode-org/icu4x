@@ -8,6 +8,7 @@ use crate::pattern::PatternError;
 use crate::skeleton::SkeletonError;
 use displaydoc::Display;
 use icu_calendar::any_calendar::AnyCalendarKind;
+use icu_calendar::types::MonthCode;
 use icu_decimal::FixedDecimalFormatError;
 use icu_plurals::PluralRulesError;
 use icu_provider::prelude::DataError;
@@ -50,7 +51,7 @@ pub enum DateTimeFormatError {
     MissingWeekdaySymbol(usize),
     /// An error originating from a missing month symbol in the data.
     #[displaydoc("Data file missing month symbol for month code {0}")]
-    MissingMonthSymbol(usize),
+    MissingMonthSymbol(MonthCode),
     /// An error originating from a missing era symbol in the data.
     #[displaydoc("Data file missing era symbol for era code {0}")]
     MissingEraSymbol(TinyStr16),

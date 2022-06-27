@@ -2,15 +2,16 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! This module transforms collation-related TOML files created by
-//! `genrb -X` in the ICU4C repo to ICU4X-internal data structures.
+//! This module contains provider implementations backed by TOML files
+//! exported from ICU.
 
 use crate::SourceData;
 use icu_codepointtrie::toml::CodePointTrieToml;
 use icu_codepointtrie::CodePointTrie;
 use icu_collator::provider::*;
 use icu_locid::extensions::unicode::Value;
-use icu_locid::unicode_ext_key;
+use icu_locid::extensions_unicode_key as key;
+use icu_locid::subtags_language as language;
 use icu_locid::LanguageIdentifier;
 use icu_locid::Locale;
 use icu_provider::datagen::IterableResourceProvider;
@@ -83,7 +84,7 @@ fn locale_to_file_name(opts: &ResourceOptions) -> String {
             .replace('-', "_")
             .to_ascii_lowercase()
     };
-    if let Some(extension) = &opts.get_unicode_ext(&unicode_ext_key!("co")) {
+    if let Some(extension) = &opts.get_unicode_ext(&key!("co")) {
         s.push('_');
         s.push_str(match extension.to_string().as_str() {
             "trad" => "traditional",
@@ -99,9 +100,9 @@ fn locale_to_file_name(opts: &ResourceOptions) -> String {
         // The Swedish naming seems ad hoc from
         // https://unicode-org.atlassian.net/browse/CLDR-679 .
 
-        if opts.get_langid().language == "zh" {
+        if opts.get_langid().language == language!("zh") {
             s.push_str("_pinyin");
-        } else if opts.get_langid().language == "sv" {
+        } else if opts.get_langid().language == language!("sv") {
             s.push_str("_reformed");
         } else {
             s.push_str("_standard");
@@ -132,7 +133,7 @@ fn file_name_to_locale(file_name: &str) -> Option<Locale> {
             _ => variant,
         };
         locale.extensions.unicode.keywords.set(
-            unicode_ext_key!("co"),
+            key!("co"),
             Value::from_str(shortened).expect("valid extension subtag"),
         );
     };
@@ -159,10 +160,10 @@ macro_rules! collation_provider {
                 fn load_resource(&self, req: &DataRequest) -> Result<DataResponse<$marker>, DataError> {
                     let $toml_data: &$serde_struct = self
                         .source
-                        .get_coll_paths()?
+                        .icuexport()?
                         .read_and_parse_toml(
                             &format!(
-                                "{}{}.toml",
+                                "coll/{}{}.toml",
                                 locale_to_file_name(&req.options), $suffix)
                         )?;
 
@@ -181,8 +182,8 @@ macro_rules! collation_provider {
                 fn supported_options(&self) -> Result<Vec<ResourceOptions>, DataError> {
                     Ok(self
                         .source
-                        .get_coll_paths()?
-                        .list()?
+                        .icuexport()?
+                        .list("coll")?
                         .filter_map(|entry|
                             entry
                                 .file_stem()

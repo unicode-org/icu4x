@@ -5,7 +5,7 @@
 use alloc::string::String;
 use core::marker::PhantomData;
 use icu_decimal::provider::DecimalSymbolsV1Marker;
-use icu_locid::{unicode_ext_key, Locale};
+use icu_locid::{extensions_unicode_key as key, Locale};
 use icu_plurals::provider::OrdinalV1Marker;
 use icu_provider::prelude::*;
 
@@ -15,7 +15,10 @@ use crate::{
     options::DateTimeFormatOptions,
     provider::{
         self,
-        calendar::{DatePatternsV1Marker, DateSkeletonPatternsV1Marker, DateSymbolsV1Marker},
+        calendar::{
+            DatePatternsV1Marker, DateSkeletonPatternsV1Marker, DateSymbolsV1Marker,
+            TimePatternsV1Marker,
+        },
         week_data::WeekDataV1Marker,
     },
     raw,
@@ -121,6 +124,7 @@ impl<C: CldrCalendar> ZonedDateTimeFormat<C> {
         L: Into<Locale>,
         DP: ResourceProvider<DateSymbolsV1Marker>
             + ResourceProvider<DatePatternsV1Marker>
+            + ResourceProvider<TimePatternsV1Marker>
             + ResourceProvider<DateSkeletonPatternsV1Marker>
             + ResourceProvider<WeekDataV1Marker>
             + ?Sized,
@@ -140,7 +144,7 @@ impl<C: CldrCalendar> ZonedDateTimeFormat<C> {
             .extensions
             .unicode
             .keywords
-            .set(unicode_ext_key!("ca"), C::BCP_47_IDENTIFIER);
+            .set(key!("ca"), C::BCP_47_IDENTIFIER);
         Ok(Self(
             raw::ZonedDateTimeFormat::try_new(
                 locale,

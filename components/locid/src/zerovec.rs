@@ -57,7 +57,7 @@
 //! ```
 //! use icu_locid::subtags::{Language, Region, Script};
 //! use icu_locid::LanguageIdentifier;
-//! use icu_locid::{langid, language, region, script};
+//! use icu_locid::{langid, subtags_language as language, subtags_region as region, subtags_script as script};
 //! use zerovec::ZeroMap;
 //!
 //! // ZeroMap from integer to LSR (language-script-region)
@@ -157,7 +157,7 @@ unsafe impl ULE for Language {
 /// # Example
 ///
 /// ```
-/// use icu::locid::language;
+/// use icu::locid::subtags_language as language;
 /// use icu::locid::subtags::Language;
 /// use zerovec::ZeroVec;
 ///
@@ -217,8 +217,7 @@ unsafe impl ULE for Script {
 /// # Example
 ///
 /// ```
-/// use icu::locid::script;
-/// use icu::locid::subtags::Script;
+/// use icu::locid::{subtags_script as script, subtags::Script};
 /// use zerovec::ZeroVec;
 ///
 /// let zv =
@@ -277,7 +276,7 @@ unsafe impl ULE for Region {
 /// # Example
 ///
 /// ```
-/// use icu::locid::region;
+/// use icu::locid::subtags_region as region;
 /// use icu::locid::subtags::Region;
 /// use zerovec::ZeroVec;
 ///
@@ -337,7 +336,7 @@ unsafe impl ULE for Variant {
 ///
 /// ```
 /// use icu::locid::subtags::Variant;
-/// use icu::locid::variant;
+/// use icu::locid::subtags_variant as variant;
 /// use zerovec::ZeroVec;
 ///
 /// let zv = ZeroVec::<Variant>::parse_byte_slice(b"fonipa\0\01992\0\0\0\0posix\0\0\0")

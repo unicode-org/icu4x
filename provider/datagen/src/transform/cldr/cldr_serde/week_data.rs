@@ -8,7 +8,7 @@
 //! `<https://github.com/unicode-org/cldr-json/blob/main/cldr-json/cldr-core/supplemental/weekData.json>`
 
 use core::convert::TryFrom;
-use icu_locid::{region, subtags::Region};
+use icu_locid::{subtags::Region, subtags_region as region};
 use serde::{Deserialize, Deserializer};
 use std::collections::BTreeMap;
 use std::num::ParseIntError;

@@ -12,8 +12,8 @@ pub mod week_of {
     #[derive(Clone, Copy, Debug)]
     #[cfg_attr(
         feature = "datagen",
-        derive(serde::Serialize, crabbake::Bakeable),
-        crabbake(path = icu_calendar::arithmetic::week_of),
+        derive(serde::Serialize, databake::Bake),
+        databake(path = icu_calendar::arithmetic::week_of),
     )]
     #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
     #[allow(clippy::exhaustive_structs)] // this type is stable
@@ -374,7 +374,7 @@ pub mod week_of {
             let month = ((yyyymmdd / 100) % 100) as u8;
             let day = (yyyymmdd % 100) as u8;
 
-            let date = Date::new_iso_date_from_integers(year, month, day)?;
+            let date = Date::new_iso_date(year, month, day)?;
             let previous_month = date.clone().added(DateDuration::new(0, -1, 0, 0));
 
             week_of(

@@ -2,7 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::source::TomlCache;
 use crate::SourceData;
 use icu_properties::provider::*;
 use icu_provider::datagen::*;
@@ -23,12 +22,11 @@ impl From<&SourceData> for BinaryPropertyUnicodeSetDataProvider {
 }
 
 fn get_binary<'a>(
-    source: &'a TomlCache,
+    source: &'a SourceData,
     key: &str,
 ) -> Result<&'a super::uprops_serde::binary::BinaryProperty, DataError> {
-    let toml_obj: &super::uprops_serde::binary::Main =
-        source.read_and_parse_toml(&format!("{}.toml", key))?;
-    toml_obj
+    source
+        .read_and_parse_uprops::<super::uprops_serde::binary::Main>(key)?
         .binary_property
         .get(0)
         .ok_or_else(|| DataErrorKind::MissingResourceKey.into_error())
@@ -42,9 +40,7 @@ macro_rules! expand {
                     &self,
                     _: &DataRequest,
                 ) -> Result<DataResponse<$marker>, DataError> {
-                    let data = get_binary(self
-                        .source
-                        .get_uprops_paths()?, $prop_name)?;
+                    let data = get_binary(&self.source, $prop_name)?;
 
                     let mut builder = UnicodeSetBuilder::new();
                     for (start, end) in &data.ranges {
@@ -65,9 +61,7 @@ macro_rules! expand {
                 fn supported_options(
                     &self,
                 ) -> Result<Vec<ResourceOptions>, DataError> {
-                    get_binary(self
-                        .source
-                        .get_uprops_paths()?, $prop_name)?;
+                    get_binary(&self.source, $prop_name)?;
 
                     Ok(vec![Default::default()])
                 }

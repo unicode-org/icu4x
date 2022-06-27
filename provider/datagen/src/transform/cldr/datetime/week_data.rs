@@ -32,8 +32,8 @@ impl IterableResourceProvider<WeekDataV1Marker> for WeekDataProvider {
     fn supported_options(&self) -> Result<Vec<ResourceOptions>, DataError> {
         let week_data: &cldr_serde::week_data::Resource = self
             .source
-            .get_cldr_paths()?
-            .cldr_core()
+            .cldr()?
+            .core()
             .read_and_parse("supplemental/weekData.json")?;
         let week_data = &week_data.supplemental.week_data;
         let regions: HashSet<ResourceOptions> = week_data
@@ -67,8 +67,8 @@ impl ResourceProvider<WeekDataV1Marker> for WeekDataProvider {
 
         let week_data: &cldr_serde::week_data::Resource = self
             .source
-            .get_cldr_paths()?
-            .cldr_core()
+            .cldr()?
+            .core()
             .read_and_parse("supplemental/weekData.json")?;
         let week_data = &week_data.supplemental.week_data;
 
@@ -101,7 +101,7 @@ icu_provider::make_exportable_provider!(WeekDataProvider, [WeekDataV1Marker,]);
 #[test]
 fn basic_cldr_week_data() {
     use icu_calendar::types::IsoWeekday;
-    use icu_locid::region;
+    use icu_locid::subtags_region as region;
 
     let provider = WeekDataProvider::from(&SourceData::for_test());
 

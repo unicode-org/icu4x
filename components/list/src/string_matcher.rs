@@ -25,12 +25,12 @@ impl PartialEq for StringMatcher<'_> {
 }
 
 #[cfg(feature = "datagen")]
-impl crabbake::Bakeable for StringMatcher<'_> {
-    fn bake(&self, ctx: &crabbake::CrateEnv) -> crabbake::TokenStream {
+impl databake::Bake for StringMatcher<'_> {
+    fn bake(&self, ctx: &databake::CrateEnv) -> databake::TokenStream {
         ctx.insert("icu_list");
         let bytes = (&*self.dfa_bytes).bake(ctx);
         // Safe because our own data is safe
-        crabbake::quote! {
+        databake::quote! {
             unsafe { ::icu_list::provider::StringMatcher::from_dfa_bytes_unchecked(#bytes) }
         }
     }
@@ -98,7 +98,7 @@ impl<'de: 'data, 'data> serde::Deserialize<'de> for StringMatcher<'data> {
 }
 
 impl<'data> StringMatcher<'data> {
-    /// Creates a `StringMatcher` from a serialized DFA. Used internally by Crabbake.
+    /// Creates a `StringMatcher` from a serialized DFA. Used internally by databake.
     ///
     /// # Safety
     ///

@@ -28,6 +28,16 @@ where
     }
 }
 
+impl<'zf, T> ZeroFrom<'zf, ZeroSlice<T>> for &'zf ZeroSlice<T>
+where
+    T: 'static + AsULE + ?Sized,
+{
+    #[inline]
+    fn zero_from(other: &'zf ZeroSlice<T>) -> Self {
+        other
+    }
+}
+
 impl<'zf> ZeroFrom<'zf, FlexZeroVec<'_>> for FlexZeroVec<'zf> {
     #[inline]
     fn zero_from(other: &'zf FlexZeroVec<'_>) -> Self {
@@ -39,6 +49,13 @@ impl<'zf> ZeroFrom<'zf, FlexZeroSlice> for FlexZeroVec<'zf> {
     #[inline]
     fn zero_from(other: &'zf FlexZeroSlice) -> Self {
         FlexZeroVec::Borrowed(&*other)
+    }
+}
+
+impl<'zf> ZeroFrom<'zf, FlexZeroSlice> for &'zf FlexZeroSlice {
+    #[inline]
+    fn zero_from(other: &'zf FlexZeroSlice) -> Self {
+        other
     }
 }
 
@@ -59,6 +76,16 @@ where
     #[inline]
     fn zero_from(other: &'zf VarZeroVec<'_, T>) -> Self {
         other.as_slice().into()
+    }
+}
+
+impl<'zf, T> ZeroFrom<'zf, VarZeroSlice<T>> for &'zf VarZeroSlice<T>
+where
+    T: 'static + VarULE + ?Sized,
+{
+    #[inline]
+    fn zero_from(other: &'zf VarZeroSlice<T>) -> Self {
+        other
     }
 }
 

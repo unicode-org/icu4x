@@ -67,7 +67,7 @@ use crate::helpers::result_is_err_missing_resource_key;
 ///
 /// ```
 /// # #[cfg(feature = "deserialize_json")] {
-/// use icu_locid::{language, locale};
+/// use icu_locid::{subtags_language as language, locale};
 /// use icu_provider::hello_world::*;
 /// use icu_provider::prelude::*;
 /// use icu_provider_adapters::filter::Filterable;
@@ -196,7 +196,7 @@ where
 ///
 /// ```
 /// # #[cfg(feature = "deserialize_json")] {
-/// use icu_locid::{language, locale};
+/// use icu_locid::{subtags_language as language, locale};
 /// use icu_provider::hello_world::*;
 /// use icu_provider::prelude::*;
 /// use icu_provider_adapters::filter::Filterable;

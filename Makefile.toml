@@ -56,6 +56,13 @@ dependencies = [
     "test-docs",
 ]
 
+[tasks.ci-job-full-data]
+description = "Run full data generation on latest CLDR and ICU"
+category = "CI"
+dependencies = [
+    "full-data",
+]
+
 [tasks.ci-job-ffi]
 description = "Run all tests for the CI 'ffi' job"
 category = "CI"
@@ -123,8 +130,9 @@ dependencies = [
     "ci-job-test",
     "ci-job-wasm",
 
-    # Note: CI doesn't call this directly
+    # Note: CI doesn't call these directly
     "ci-job-clippy",
+    "ci-job-full-data",
 
     # benchmarking and coverage jobs not included
 ]

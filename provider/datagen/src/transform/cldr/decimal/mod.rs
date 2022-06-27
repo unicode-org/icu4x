@@ -32,8 +32,8 @@ impl NumbersProvider {
     fn get_digits_for_numbering_system(&self, nsname: TinyStr8) -> Result<[char; 10], DataError> {
         let resource: &cldr_serde::numbering_systems::Resource = self
             .source
-            .get_cldr_paths()?
-            .cldr_core()
+            .cldr()?
+            .core()
             .read_and_parse("supplemental/numberingSystems.json")?;
 
         fn digits_str_to_chars(digits_str: &str) -> Option<[char; 10]> {
@@ -71,8 +71,8 @@ impl ResourceProvider<DecimalSymbolsV1Marker> for NumbersProvider {
 
         let resource: &cldr_serde::numbers::Resource = self
             .source
-            .get_cldr_paths()?
-            .cldr_numbers()
+            .cldr()?
+            .numbers()
             .read_and_parse(&langid, "numbers.json")?;
 
         #[allow(clippy::expect_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
@@ -104,8 +104,8 @@ impl IterableResourceProvider<DecimalSymbolsV1Marker> for NumbersProvider {
     fn supported_options(&self) -> Result<Vec<ResourceOptions>, DataError> {
         Ok(self
             .source
-            .get_cldr_paths()?
-            .cldr_numbers()
+            .cldr()?
+            .numbers()
             .list_langs()?
             .map(Into::<ResourceOptions>::into)
             .collect())

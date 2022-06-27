@@ -25,7 +25,7 @@ pub enum SymbolError {
 impl std::error::Error for SymbolError {}
 
 #[derive(Debug, Eq, PartialEq, Clone, Copy)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize, crabbake::Bakeable), crabbake(path = icu_datetime::fields))]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake), databake(path = icu_datetime::fields))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[allow(clippy::exhaustive_enums)] // part of data struct
 pub enum FieldSymbol {
@@ -321,8 +321,8 @@ macro_rules! field_type {
         // See: https://github.com/unicode-org/icu4x/issues/1044
         #[cfg_attr(
             feature = "datagen",
-            derive(serde::Serialize, crabbake::Bakeable),
-            crabbake(path = icu_datetime::fields),
+            derive(serde::Serialize, databake::Bake),
+            databake(path = icu_datetime::fields),
         )]
         #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
         #[allow(clippy::enum_variant_names)]

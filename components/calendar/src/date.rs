@@ -69,11 +69,11 @@ impl<'a, C> Deref for Ref<'a, C> {
 /// use icu::calendar::Date;
 ///
 /// // Example: creation of ISO date from integers.
-/// let date_iso = Date::new_iso_date_from_integers(1970, 1, 2)
+/// let date_iso = Date::new_iso_date(1970, 1, 2)
 ///     .expect("Failed to initialize ISO Date instance.");
 ///
 /// assert_eq!(date_iso.year().number, 1970);
-/// assert_eq!(date_iso.month().number, 1);
+/// assert_eq!(date_iso.month().ordinal, 1);
 /// assert_eq!(date_iso.day_of_month().0, 2);
 /// ```
 pub struct Date<A: AsCalendar> {

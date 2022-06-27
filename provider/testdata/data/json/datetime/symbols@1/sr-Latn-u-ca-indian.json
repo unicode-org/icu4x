@@ -1,49 +1,55 @@
 {
   "months": {
     "format": {
-      "abbreviated": [
-        "Čaitra",
-        "Vaisaka",
-        "Jiaista",
-        "Asada",
-        "Sravana",
-        "Badra",
-        "Asvina",
-        "Kartika",
-        "Argajana",
-        "Pauza",
-        "Maga",
-        "Falguna"
-      ],
-      "narrow": [
-        "1",
-        "2",
-        "3",
-        "4",
-        "5",
-        "6",
-        "7",
-        "8",
-        "9",
-        "10",
-        "11",
-        "12"
-      ],
+      "abbreviated": {
+        "SolarTwelve": [
+          "Čaitra",
+          "Vaisaka",
+          "Jiaista",
+          "Asada",
+          "Sravana",
+          "Badra",
+          "Asvina",
+          "Kartika",
+          "Argajana",
+          "Pauza",
+          "Maga",
+          "Falguna"
+        ]
+      },
+      "narrow": {
+        "SolarTwelve": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5",
+          "6",
+          "7",
+          "8",
+          "9",
+          "10",
+          "11",
+          "12"
+        ]
+      },
       "short": null,
-      "wide": [
-        "Čaitra",
-        "Vaisaka",
-        "Jiaista",
-        "Asada",
-        "Sravana",
-        "Badra",
-        "Asvina",
-        "Kartika",
-        "Argajana",
-        "Pauza",
-        "Maga",
-        "Falguna"
-      ]
+      "wide": {
+        "SolarTwelve": [
+          "Čaitra",
+          "Vaisaka",
+          "Jiaista",
+          "Asada",
+          "Sravana",
+          "Badra",
+          "Asvina",
+          "Kartika",
+          "Argajana",
+          "Pauza",
+          "Maga",
+          "Falguna"
+        ]
+      }
     },
     "stand_alone": null
   },

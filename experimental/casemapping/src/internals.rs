@@ -250,8 +250,8 @@ impl TrieValue for CaseMappingData {
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(
     feature = "datagen",
-    derive(serde::Serialize, crabbake::Bakeable),
-    crabbake(path = icu_casemapping::provider),
+    derive(serde::Serialize, databake::Bake),
+    databake(path = icu_casemapping::provider),
 )]
 #[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[yoke(prove_covariance_manually)]
@@ -345,8 +345,8 @@ impl FoldOptions {
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(
     feature = "datagen",
-    derive(serde::Serialize, crabbake::Bakeable),
-    crabbake(path = icu_casemapping::provider),
+    derive(serde::Serialize, databake::Bake),
+    databake(path = icu_casemapping::provider),
 )]
 #[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[yoke(prove_covariance_manually)]

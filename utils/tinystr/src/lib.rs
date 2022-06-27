@@ -71,8 +71,8 @@ mod int_ops;
 #[cfg(feature = "serde")]
 mod serde;
 
-#[cfg(feature = "crabbake")]
-mod crabbake;
+#[cfg(feature = "databake")]
+mod databake;
 
 #[cfg(feature = "zerovec")]
 mod ule;
