@@ -6,9 +6,13 @@ use core::cmp::{Ord, PartialOrd};
 use displaydoc::Display;
 use zerovec::ule::{AsULE, ZeroVecError, ULE};
 
+/// An error relating to the length for a field within a parsed Date / Time
+/// formatting pattern.
 #[derive(Display, Debug, PartialEq, Copy, Clone)]
 #[non_exhaustive]
 pub enum LengthError {
+    /// The length of the field string within the pattern is invalid, according to
+    /// the field type and its supported field patterns in LDML. See [`FieldLength`].
     #[displaydoc("Invalid length")]
     InvalidLength,
 }
@@ -16,6 +20,11 @@ pub enum LengthError {
 #[cfg(feature = "std")]
 impl std::error::Error for LengthError {}
 
+/// An enum representing the length of a field within a date or time formatting pattern string,
+/// in which the pattern field is typically represented as a letter repeated a few times, ex:
+/// `MMM`, `dd, `y`.  See the relevant 
+/// [LDML section in UTS 35](https://unicode.org/reports/tr35/tr35-dates.html#Date_Format_Patterns)
+/// for more details.
 #[derive(Debug, Eq, PartialEq, Clone, Copy, Ord, PartialOrd)]
 #[cfg_attr(
     feature = "datagen",
@@ -25,12 +34,23 @@ impl std::error::Error for LengthError {}
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[allow(clippy::exhaustive_enums)] // part of data struct
 pub enum FieldLength {
+    /// Typical style is 1-2 digits. For numeric-only fields.
     One,
+    /// Typical style is 2 digits. For numeric-only fields.
     TwoDigit,
+    /// Abbreviated (spellout) format.
     Abbreviated,
+    /// Wide / Long / Full  (spellout) format.
     Wide,
+    /// Narrow / Long / Full  (spellout) format.
     Narrow,
+    /// Meaning is field-dependent, for patterns that are 6 characters long. Ex: a [`Weekday`] pattern like
+    /// `EEEEEE` means Short, but `jjjjjj` or `CCCCCC` for [`Hour`] may mean
+    /// "Numeric hour (2 digits, zero pad if needed)". See 
+    /// [LDML in UTS 35](https://unicode.org/reports/tr35/tr35-dates.html#Date_Format_Patterns)
+    /// for more detials.
     Six,
+    /// A fixed size format for numeric-only fields that is at most 127 digits.
     Fixed(u8),
 }
 

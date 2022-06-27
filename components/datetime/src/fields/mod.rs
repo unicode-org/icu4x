@@ -16,9 +16,11 @@ use core::{
     convert::TryFrom,
 };
 
+/// A list of possible error outcomes for operations in this crate.
 #[derive(Display, Debug, Copy, Clone)]
 #[non_exhaustive]
 pub enum Error {
+    /// An error originating inside of the [data provider](icu_provider).
     #[displaydoc("Field {0:?} is not a valid length")]
     InvalidLength(FieldSymbol),
 }
@@ -26,6 +28,9 @@ pub enum Error {
 #[cfg(feature = "std")]
 impl std::error::Error for Error {}
 
+/// A field with a date pattern string. A date field is the repetition of a specific pattern 
+/// character one or more times. The pattern character is the field symbol, which corresponds
+/// to a particular meaning for the field.
 #[derive(Debug, Eq, PartialEq, Clone, Copy, Ord, PartialOrd)]
 #[cfg_attr(
     feature = "datagen",
@@ -35,7 +40,11 @@ impl std::error::Error for Error {}
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[zerovec::make_ule(FieldULE)]
 pub struct Field {
+    /// The field symbol for the `Field`, which corresponds to the field's meaning with the 
+    /// date pattern.
     pub symbol: FieldSymbol,
+    /// The length of the `Field`, which in conjunction with the `FieldSymbol` informs the width or
+    /// style of the formatting output corresponding to this field.
     pub length: FieldLength,
 }
 

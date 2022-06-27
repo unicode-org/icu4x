@@ -8,12 +8,14 @@ use displaydoc::Display;
 use icu_provider::{yoke, zerofrom};
 use zerovec::ule::{AsULE, ZeroVecError, ULE};
 
+/// 
 #[derive(Display, Debug, PartialEq, Copy, Clone)]
 #[non_exhaustive]
 pub enum SymbolError {
     /// Invalid field symbol index.
     #[displaydoc("Invalid field symbol index: {0}")]
     InvalidIndex(u8),
+    /// Unknown field symbol.
     #[displaydoc("Unknown field symbol: {0}")]
     Unknown(char),
     /// Invalid character for a field symbol.
@@ -24,21 +26,36 @@ pub enum SymbolError {
 #[cfg(feature = "std")]
 impl std::error::Error for SymbolError {}
 
+/// A field symbol for a date / time formatting pattern. Field symbols are a more granular distinction
+/// for a pattern field within the category of a field type. Examples of field types are: 
+/// `Year`, `Month`, `Hour`.  Within the `Hour` field type, examples of field symbols are: `Hour:H12`,
+/// `Hour:H24`.
 #[derive(Debug, Eq, PartialEq, Clone, Copy)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake), databake(path = icu_datetime::fields))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[allow(clippy::exhaustive_enums)] // part of data struct
 pub enum FieldSymbol {
+    /// Era name.
     Era,
+    /// Year number or year name.
     Year(Year),
+    /// Month number or month name.
     Month(Month),
+    /// Week number or week name.
     Week(Week),
+    /// Day number relative to a time period longer than a week (ex: month, year).
     Day(Day),
+    /// Day number or day name relative to a week.
     Weekday(Weekday),
+    /// Name of a period within a day.
     DayPeriod(DayPeriod),
+    /// Hour number within a day, possibly with day period.
     Hour(Hour),
+    /// Minute number within an hour.
     Minute,
+    /// Seconds number within a minute, including fractional seconds, or milliseconds within a day.
     Second(Second),
+    /// Time zone as a name, a zone ID, or a ISO 8601 numerical offset.
     TimeZone(TimeZone),
 }
 
@@ -143,6 +160,7 @@ impl FieldSymbol {
     }
 }
 
+#[doc(hidden)]
 #[repr(transparent)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 pub struct FieldSymbolULE(u8);
@@ -187,14 +205,14 @@ unsafe impl ULE for FieldSymbolULE {
 
 #[derive(Debug, Eq, PartialEq, Clone, Copy)]
 #[allow(clippy::exhaustive_enums)] // used in data struct
-pub enum TextOrNumeric {
+pub(crate) enum TextOrNumeric {
     Text,
     Numeric,
 }
 
 /// [`FieldSymbols`](FieldSymbol) can be either text or numeric. This categorization is important
 /// when matching skeletons with a components [`Bag`](crate::options::components::Bag).
-pub trait LengthType {
+pub(crate) trait LengthType {
     fn get_length_type(&self, length: FieldLength) -> TextOrNumeric;
 }
 
