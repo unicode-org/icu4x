@@ -7,19 +7,13 @@ use icu_provider::{DataError, DataErrorKind};
 /// Identifies errors that are due to missing CLDR data.
 ///
 /// See [`datagen`](crate::datagen).
-pub const MISSING_CLDR_ERROR: DataError = DataErrorKind::MissingSourceData.with_str_context("CLDR");
+pub const MISSING_CLDR_ERROR: DataError = DataErrorKind::MissingSourceData.with_str_context("cldr");
 
-/// Identifies errors that are due to missing Unicode properties data.
+/// Identifies errors that are due to missing ICU export data.
 ///
 /// See [`datagen`](crate::datagen).
-pub const MISSING_UPROPS_ERROR: DataError =
-    DataErrorKind::MissingSourceData.with_str_context("Uprops");
-
-/// Identifies errors that are due to missing collation data.
-///
-/// See ['datagen`](crate::datagen).
-pub const MISSING_COLLATION_ERROR: DataError =
-    DataErrorKind::MissingSourceData.with_str_context("Collation");
+pub const MISSING_ICUEXPORT_ERROR: DataError =
+    DataErrorKind::MissingSourceData.with_str_context("icuexport");
 
 pub(crate) fn data_error_from_toml(other: toml::de::Error) -> DataError {
     DataError::custom("Toml deserialize").with_display_context(&other)

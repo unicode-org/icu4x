@@ -22,7 +22,6 @@ experimental/collator/            @hsivonen @echeran
 experimental/normalizer/          @hsivonen @echeran
 experimental/provider_ppucd/      @echeran
 experimental/segmenter/           @aethanyc @makotokato
-experimental/segmenter_lstm/      @aethanyc @sffc
 ffi/capi/                         @Manishearth
 ffi/cpp/                          @Manishearth
 ffi/ecma402/                      @filmil

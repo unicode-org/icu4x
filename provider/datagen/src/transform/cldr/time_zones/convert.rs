@@ -4,12 +4,17 @@
 
 use icu_datetime::provider::time_zones::{
     ExemplarCitiesV1, MetaZoneGenericNamesLongV1, MetaZoneGenericNamesShortV1, MetaZoneId,
-    MetaZoneSpecificNamesLongV1, MetaZoneSpecificNamesShortV1, TimeZoneBcp47Id, TimeZoneFormatsV1,
+    MetaZonePeriodV1, MetaZoneSpecificNamesLongV1, MetaZoneSpecificNamesShortV1, TimeZoneBcp47Id,
+    TimeZoneFormatsV1,
 };
+use litemap::LiteMap;
 use std::borrow::Cow;
 use tinystr::TinyStr8;
 use zerovec::{ZeroMap, ZeroMap2d};
 
+use crate::transform::cldr::cldr_serde::time_zones::meta_zones::{
+    MetaLocationOrSubRegion, MetaZoneForPeriod, ZonePeriod,
+};
 use crate::transform::cldr::cldr_serde::{
     time_zones::time_zone_names::*, time_zones::CldrTimeZonesData,
 };
@@ -133,6 +138,70 @@ impl From<&CldrTimeZonesData> for ExemplarCitiesV1<'static> {
                             }
                         })
                 })
+                .collect(),
+        )
+    }
+}
+
+impl From<&CldrTimeZonesData> for MetaZonePeriodV1<'static> {
+    fn from(other: &CldrTimeZonesData) -> Self {
+        let data = &other.meta_zone_periods;
+        let bcp47_tzid_data = &other.bcp47_tzids;
+        let meta_zone_id_data = &other.meta_zone_ids;
+        Self(
+            data.iter()
+                .flat_map(|(key, zone)| {
+                    let key = key;
+                    match zone {
+                        ZonePeriod::Region(periods) => match bcp47_tzid_data.get(key) {
+                            Some(bcp47) => {
+                                vec![(*bcp47, periods.clone(), meta_zone_id_data.clone())]
+                            }
+                            None => panic!("Cannot find bcp47 for {:?}.", key),
+                        },
+                        ZonePeriod::LocationOrSubRegion(place) => place
+                            .iter()
+                            .flat_map(move |(inner_key, location_or_subregion)| {
+                                let mut key = key.clone();
+                                key.push('/');
+                                key.push_str(inner_key);
+                                match location_or_subregion {
+                                    MetaLocationOrSubRegion::Location(periods) => {
+                                        match bcp47_tzid_data.get(&key) {
+                                            Some(bcp47) => {
+                                                vec![(
+                                                    *bcp47,
+                                                    periods.clone(),
+                                                    meta_zone_id_data.clone(),
+                                                )]
+                                            }
+                                            None => panic!("Cannot find bcp47 for {:?}.", key),
+                                        }
+                                    }
+                                    MetaLocationOrSubRegion::SubRegion(subregion) => subregion
+                                        .iter()
+                                        .flat_map(move |(inner_inner_key, periods)| {
+                                            let mut key = key.clone();
+                                            key.push('/');
+                                            key.push_str(inner_inner_key);
+                                            match bcp47_tzid_data.get(&key) {
+                                                Some(bcp47) => {
+                                                    vec![(
+                                                        *bcp47,
+                                                        periods.clone(),
+                                                        meta_zone_id_data.clone(),
+                                                    )]
+                                                }
+                                                None => panic!("Cannot find bcp47 for {:?}.", key),
+                                            }
+                                        })
+                                        .collect::<Vec<_>>(),
+                                }
+                            })
+                            .collect::<Vec<_>>(),
+                    }
+                })
+                .flat_map(metazone_periods_iter)
                 .collect(),
         )
     }
@@ -366,5 +435,59 @@ fn iterate_zone_format_for_time_zone_id(
                     .expect("Time-zone variant was not compatible with TinyStr8"),
                 value,
             )
+        })
+}
+
+fn metazone_periods_iter(
+    pair: (
+        TimeZoneBcp47Id,
+        Vec<MetaZoneForPeriod>,
+        LiteMap<String, MetaZoneId>,
+    ),
+) -> impl Iterator<Item = (TimeZoneBcp47Id, String, Option<MetaZoneId>)> {
+    let (time_zone_key, periods, meta_zone_id_data) = pair;
+    periods
+        .into_iter()
+        .map(move |period| match &period.uses_meta_zone.from {
+            Some(from) => {
+                match meta_zone_id_data.get(&period.uses_meta_zone.mzone) {
+                    Some(meta_zone_short_id) => {
+                        (time_zone_key, from.clone(), Some(*meta_zone_short_id))
+                    }
+                    None => {
+                        // TODO(#1781): Remove this special case once the short id is updated in CLDR
+                        if &period.uses_meta_zone.mzone == "Yukon" {
+                            (
+                                time_zone_key,
+                                from.clone(),
+                                Some(MetaZoneId(tinystr::tinystr!(4, "yuko"))),
+                            )
+                        } else {
+                            (time_zone_key, from.clone(), None)
+                        }
+                    }
+                }
+            }
+            None => {
+                match meta_zone_id_data.get(&period.uses_meta_zone.mzone) {
+                    Some(meta_zone_short_id) => (
+                        time_zone_key,
+                        String::from("1970-00-00 00:00"),
+                        Some(*meta_zone_short_id),
+                    ),
+                    None => {
+                        // TODO(#1781): Remove this special case once the short id is updated in CLDR
+                        if &period.uses_meta_zone.mzone == "Yukon" {
+                            (
+                                time_zone_key,
+                                String::from("1970-00-00 00:00"),
+                                Some(MetaZoneId(tinystr::tinystr!(4, "yuko"))),
+                            )
+                        } else {
+                            (time_zone_key, String::from("1970-00-00 00:00"), None)
+                        }
+                    }
+                }
+            }
         })
 }

@@ -13,8 +13,10 @@ use crate::iso::Iso;
 use crate::japanese::Japanese;
 use crate::{types, AsCalendar, Calendar, Date, DateDuration, DateDurationUnit, DateTime, Ref};
 
-use icu_locid::extensions::unicode::Value;
-use icu_locid::{unicode_ext_key, unicode_ext_value, Locale};
+use icu_locid::{
+    extensions::unicode::Value, extensions_unicode_key as key, extensions_unicode_value as value,
+    Locale,
+};
 
 use icu_provider::prelude::*;
 
@@ -35,8 +37,6 @@ pub enum AnyCalendar {
     Gregorian(Gregorian),
     Buddhist(Buddhist),
     Japanese(Japanese),
-    /// The Ethiopic calendar; the bool specifies whether dates
-    /// that this calendar produces should be in the Amete Alem era scheme
     Ethiopic(Ethiopic),
     Indian(Indian),
     Coptic(Coptic),
@@ -440,19 +440,19 @@ impl AnyCalendarKind {
     }
 
     pub fn from_bcp47(x: &Value) -> Option<Self> {
-        Some(if *x == unicode_ext_value!("gregory") {
+        Some(if *x == value!("gregory") {
             AnyCalendarKind::Gregorian
-        } else if *x == unicode_ext_value!("buddhist") {
+        } else if *x == value!("buddhist") {
             AnyCalendarKind::Buddhist
-        } else if *x == unicode_ext_value!("indian") {
+        } else if *x == value!("indian") {
             AnyCalendarKind::Indian
-        } else if *x == unicode_ext_value!("coptic") {
+        } else if *x == value!("coptic") {
             AnyCalendarKind::Coptic
-        } else if *x == unicode_ext_value!("iso") {
+        } else if *x == value!("iso") {
             AnyCalendarKind::Iso
-        } else if *x == unicode_ext_value!("ethiopic") {
+        } else if *x == value!("ethiopic") {
             AnyCalendarKind::Ethiopic
-        } else if *x == unicode_ext_value!("ethioaa") {
+        } else if *x == value!("ethioaa") {
             AnyCalendarKind::Ethioaa
         } else {
             return None;
@@ -476,7 +476,7 @@ impl AnyCalendarKind {
         l.extensions
             .unicode
             .keywords
-            .get(&unicode_ext_key!("ca"))
+            .get(&key!("ca"))
             .and_then(Self::from_bcp47)
     }
 }

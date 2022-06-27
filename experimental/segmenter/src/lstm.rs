@@ -3,14 +3,14 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::language::*;
+use crate::lstm_bies::Lstm;
+use crate::lstm_structs::{LstmData, LstmDataMarker};
 
 use alloc::string::String;
 use alloc::string::ToString;
 use core::char::decode_utf16;
 use icu_provider::DataError;
 use icu_provider::DataPayload;
-use icu_segmenter_lstm::lstm::Lstm;
-use icu_segmenter_lstm::structs;
 
 // TODO:
 // json file is big, So I should use anoher binary format like npy.
@@ -21,14 +21,14 @@ const BURMESE_MODEL: &[u8; 475209] =
     include_bytes!("../tests/testdata/json/core/segmenter_lstm@1/my.json");
 
 lazy_static! {
-    static ref THAI_LSTM: structs::LstmData<'static> =
+    static ref THAI_LSTM: LstmData<'static> =
         serde_json::from_slice(THAI_MODEL).expect("JSON syntax error");
-    static ref BURMESE_LSTM: structs::LstmData<'static> =
+    static ref BURMESE_LSTM: LstmData<'static> =
         serde_json::from_slice(BURMESE_MODEL).expect("JSON syntax error");
 }
 
 // LSTM model depends on language, So we have to switch models per language.
-pub fn get_best_lstm_model(codepoint: u32) -> Option<DataPayload<structs::LstmDataMarker>> {
+pub fn get_best_lstm_model(codepoint: u32) -> Option<DataPayload<LstmDataMarker>> {
     let lang = get_language(codepoint);
     match lang {
         Language::Thai => Some(DataPayload::from_owned(THAI_LSTM.clone())),
@@ -111,7 +111,7 @@ pub struct LstmSegmenter {
 }
 
 impl LstmSegmenter {
-    pub fn try_new(payload: DataPayload<structs::LstmDataMarker>) -> Result<Self, DataError> {
+    pub fn try_new(payload: DataPayload<LstmDataMarker>) -> Result<Self, DataError> {
         let lstm = Lstm::try_new(payload).unwrap();
 
         Ok(Self { lstm })

@@ -44,7 +44,7 @@
 //! ## Macros
 //!
 //! ```rust
-//! use icu::locid::{langid, language, region};
+//! use icu::locid::{langid, subtags_language as language, subtags_region as region};
 //!
 //! let lid = langid!("EN_US");
 //!
@@ -79,12 +79,13 @@ extern crate alloc;
 #[macro_use]
 mod helpers;
 
-#[cfg(feature = "crabbake")]
-mod crabbake;
+#[cfg(feature = "databake")]
+mod databake;
 pub mod extensions;
 mod langid;
 mod locale;
 mod macros;
+pub mod ordering;
 mod parser;
 #[cfg(feature = "serde")]
 mod serde;

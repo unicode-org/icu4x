@@ -18,8 +18,8 @@ use icu_uniset::UnicodeSet;
 #[derive(Debug, Eq, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(
     feature = "datagen", 
-    derive(serde::Serialize, crabbake::Bakeable),
-    crabbake(path = icu_properties::provider),
+    derive(serde::Serialize, databake::Bake),
+    databake(path = icu_properties::provider),
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct UnicodePropertyV1<'data> {
@@ -32,8 +32,8 @@ pub struct UnicodePropertyV1<'data> {
 #[derive(Clone, Debug, Eq, PartialEq, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(
     feature = "datagen", 
-    derive(serde::Serialize, crabbake::Bakeable),
-    crabbake(path = icu_properties::provider),
+    derive(serde::Serialize, databake::Bake),
+    databake(path = icu_properties::provider),
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct UnicodePropertyMapV1<'data, T: TrieValue> {
@@ -47,8 +47,8 @@ pub struct UnicodePropertyMapV1<'data, T: TrieValue> {
 #[derive(Debug, Eq, PartialEq, Clone)]
 #[cfg_attr(
     feature = "datagen", 
-    derive(serde::Serialize, crabbake::Bakeable),
-    crabbake(path = icu_properties::provider),
+    derive(serde::Serialize, databake::Bake),
+    databake(path = icu_properties::provider),
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct ScriptWithExtensionsPropertyV1<'data> {
@@ -64,6 +64,7 @@ macro_rules! expand {
     ) => {
 
             $(
+                #[doc = core::concat!("Data marker for the '", $bin_s, "' Unicode property")]
                 pub struct $bin_marker;
 
                 impl DataMarker for $bin_marker {
@@ -81,15 +82,16 @@ macro_rules! expand {
                 }
 
                 #[cfg(feature = "datagen")]
-                impl crabbake::Bakeable for $bin_marker {
-                    fn bake(&self, env: &crabbake::CrateEnv) -> crabbake::TokenStream {
+                impl databake::Bake for $bin_marker {
+                    fn bake(&self, env: &databake::CrateEnv) -> databake::TokenStream {
                         env.insert("icu_properties");
-                        crabbake::quote!{ icu_properties::provider::$bin_marker }
+                        databake::quote!{ icu_properties::provider::$bin_marker }
                     }
                 }
             )+
 
             $(
+                #[doc = core::concat!("Data marker for the '", $enum_s, "' Unicode property")]
                 pub struct $enum_marker;
 
                 impl DataMarker for $enum_marker {
@@ -108,10 +110,10 @@ macro_rules! expand {
                 }
 
                 #[cfg(feature = "datagen")]
-                impl crabbake::Bakeable for $enum_marker {
-                    fn bake(&self, env: &crabbake::CrateEnv) -> crabbake::TokenStream {
+                impl databake::Bake for $enum_marker {
+                    fn bake(&self, env: &databake::CrateEnv) -> databake::TokenStream {
                         env.insert("icu_properties");
-                        crabbake::quote!{ icu_properties::provider::$enum_marker }
+                        databake::quote!{ icu_properties::provider::$enum_marker }
                     }
                 }
             )+

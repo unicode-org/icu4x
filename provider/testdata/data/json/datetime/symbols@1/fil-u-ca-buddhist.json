@@ -1,66 +1,74 @@
 {
   "months": {
     "format": {
-      "abbreviated": [
-        "Ene",
-        "Peb",
-        "Mar",
-        "Abr",
-        "May",
-        "Hun",
-        "Hul",
-        "Ago",
-        "Set",
-        "Okt",
-        "Nob",
-        "Dis"
-      ],
-      "narrow": [
-        "Ene",
-        "Peb",
-        "Mar",
-        "Abr",
-        "May",
-        "Hun",
-        "Hul",
-        "Ago",
-        "Set",
-        "Okt",
-        "Nob",
-        "Dis"
-      ],
+      "abbreviated": {
+        "SolarTwelve": [
+          "Ene",
+          "Peb",
+          "Mar",
+          "Abr",
+          "May",
+          "Hun",
+          "Hul",
+          "Ago",
+          "Set",
+          "Okt",
+          "Nob",
+          "Dis"
+        ]
+      },
+      "narrow": {
+        "SolarTwelve": [
+          "Ene",
+          "Peb",
+          "Mar",
+          "Abr",
+          "May",
+          "Hun",
+          "Hul",
+          "Ago",
+          "Set",
+          "Okt",
+          "Nob",
+          "Dis"
+        ]
+      },
       "short": null,
-      "wide": [
-        "Enero",
-        "Pebrero",
-        "Marso",
-        "Abril",
-        "Mayo",
-        "Hunyo",
-        "Hulyo",
-        "Agosto",
-        "Setyembre",
-        "Oktubre",
-        "Nobyembre",
-        "Disyembre"
-      ]
+      "wide": {
+        "SolarTwelve": [
+          "Enero",
+          "Pebrero",
+          "Marso",
+          "Abril",
+          "Mayo",
+          "Hunyo",
+          "Hulyo",
+          "Agosto",
+          "Setyembre",
+          "Oktubre",
+          "Nobyembre",
+          "Disyembre"
+        ]
+      }
     },
     "stand_alone": {
       "abbreviated": null,
-      "narrow": [
-        "E",
-        "P",
-        "M",
-        "A",
-        "M",
-        "Hun",
-        "Hul",
-        "Ago",
-        "Set",
-        "Okt",
-        "Nob",
-        "Dis"
-      ],
+      "narrow": {
+        "SolarTwelve": [
+          "E",
+          "P",
+          "M",
+          "A",
+          "M",
+          "Hun",
+          "Hul",
+          "Ago",
+          "Set",
+          "Okt",
+          "Nob",
+          "Dis"
+        ]
+      },
       "short": null,
       "wide": null
     }

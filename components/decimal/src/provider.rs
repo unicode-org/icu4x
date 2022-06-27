@@ -16,8 +16,8 @@ use icu_provider::{yoke, zerofrom};
 #[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(
     feature = "datagen",
-    derive(serde::Serialize, crabbake::Bakeable),
-    crabbake(path = icu_decimal::provider),
+    derive(serde::Serialize, databake::Bake),
+    databake(path = icu_decimal::provider),
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct AffixesV1<'data> {
@@ -35,8 +35,8 @@ pub struct AffixesV1<'data> {
 #[derive(Debug, PartialEq, Clone, yoke::Yokeable, Copy, zerofrom::ZeroFrom)]
 #[cfg_attr(
     feature = "datagen",
-    derive(serde::Serialize, crabbake::Bakeable),
-    crabbake(path = icu_decimal::provider),
+    derive(serde::Serialize, databake::Bake),
+    databake(path = icu_decimal::provider),
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct GroupingSizesV1 {
@@ -60,8 +60,8 @@ pub struct GroupingSizesV1 {
 #[derive(Debug, PartialEq, Clone)]
 #[cfg_attr(
     feature = "datagen",
-    derive(serde::Serialize, crabbake::Bakeable),
-    crabbake(path = icu_decimal::provider),
+    derive(serde::Serialize, databake::Bake),
+    databake(path = icu_decimal::provider),
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct DecimalSymbolsV1<'data> {

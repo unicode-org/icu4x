@@ -18,12 +18,11 @@ members = [
     "experimental/bies",
     "experimental/casemapping",
     "experimental/char16trie",
-    "experimental/crabbake",
-    "experimental/crabbake/derive",
+    "utils/databake",
+    "utils/databake/derive",
     "experimental/collator",
     "experimental/normalizer",
     "experimental/segmenter",
-    "experimental/segmenter_lstm",
     "ffi/capi_cdylib",
     "ffi/diplomat",
     "ffi/capi_staticlib",
@@ -58,12 +57,13 @@ members = [
 ]
 exclude = ["provider/testdata/data/const"]
 
+# LTO is needed for WASM and other size-optimized builds,
+# and it improve the performance of benchmarks
 [profile.release]
+lto = true
 
-# LTO is needed for WASM and other size-optimized builds
 [profile.release-opt-size]
 inherits = "release"
-lto = true
 opt-level = "s"
 
 # Enable debug information specifically for memory profiling.

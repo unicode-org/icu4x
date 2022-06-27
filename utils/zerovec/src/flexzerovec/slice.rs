@@ -160,7 +160,7 @@ impl FlexZeroSlice {
 
     /// Borrows this `FlexZeroSlice` as a [`FlexZeroVec::Borrowed`].
     #[inline]
-    pub fn as_flexzerovec(&self) -> FlexZeroVec {
+    pub const fn as_flexzerovec(&self) -> FlexZeroVec {
         FlexZeroVec::Borrowed(self)
     }
 

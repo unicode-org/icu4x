@@ -2,6 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+//! Little-endian unaligned 24-bit unsigned integer.
+
 use core::convert::TryFrom;
 use zerovec::{
     ule::{AsULE, ULE},
@@ -12,8 +14,8 @@ use zerovec::{
 #[derive(Copy, Clone, Debug, Eq, PartialEq)]
 #[cfg_attr(
     feature = "datagen",
-    derive(serde::Serialize, crabbake::Bakeable),
-    crabbake(path = icu_normalizer::u24),
+    derive(serde::Serialize, databake::Bake),
+    databake(path = icu_normalizer::u24),
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct U24(pub [u8; 3]);

@@ -20,8 +20,8 @@ use zerovec::{ZeroSlice, ZeroVec};
 #[derive(Debug, PartialEq, Clone)]
 #[cfg_attr(
     feature = "datagen",
-    derive(serde::Serialize,crabbake::Bakeable),
-    crabbake(path = icu_segmenter::provider),
+    derive(serde::Serialize,databake::Bake),
+    databake(path = icu_segmenter::provider),
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct RuleBreakDataV1<'data> {
@@ -46,8 +46,8 @@ pub struct RuleBreakDataV1<'data> {
 #[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(
     feature = "datagen",
-    derive(serde::Serialize,crabbake::Bakeable),
-    crabbake(path = icu_segmenter::provider),
+    derive(serde::Serialize,databake::Bake),
+    databake(path = icu_segmenter::provider),
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct RuleBreakPropertyTable<'data>(
@@ -58,8 +58,8 @@ pub struct RuleBreakPropertyTable<'data>(
 #[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(
     feature = "datagen",
-    derive(serde::Serialize,crabbake::Bakeable),
-    crabbake(path = icu_segmenter::provider),
+    derive(serde::Serialize,databake::Bake),
+    databake(path = icu_segmenter::provider),
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct RuleBreakStateTable<'data>(
@@ -71,8 +71,8 @@ pub struct RuleBreakStateTable<'data>(
 #[derive(Debug, PartialEq, Clone)]
 #[cfg_attr(
     feature = "datagen",
-    derive(serde::Serialize,crabbake::Bakeable),
-    crabbake(path = icu_segmenter::provider),
+    derive(serde::Serialize,databake::Bake),
+    databake(path = icu_segmenter::provider),
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct UCharDictionaryBreakDataV1<'data> {

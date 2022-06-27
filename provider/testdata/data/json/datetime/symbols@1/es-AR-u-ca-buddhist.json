@@ -1,49 +1,55 @@
 {
   "months": {
     "format": {
-      "abbreviated": [
-        "ene",
-        "feb",
-        "mar",
-        "abr",
-        "may",
-        "jun",
-        "jul",
-        "ago",
-        "sept",
-        "oct",
-        "nov",
-        "dic"
-      ],
-      "narrow": [
-        "E",
-        "F",
-        "M",
-        "A",
-        "M",
-        "J",
-        "J",
-        "A",
-        "S",
-        "O",
-        "N",
-        "D"
-      ],
+      "abbreviated": {
+        "SolarTwelve": [
+          "ene",
+          "feb",
+          "mar",
+          "abr",
+          "may",
+          "jun",
+          "jul",
+          "ago",
+          "sept",
+          "oct",
+          "nov",
+          "dic"
+        ]
+      },
+      "narrow": {
+        "SolarTwelve": [
+          "E",
+          "F",
+          "M",
+          "A",
+          "M",
+          "J",
+          "J",
+          "A",
+          "S",
+          "O",
+          "N",
+          "D"
+        ]
+      },
       "short": null,
-      "wide": [
-        "enero",
-        "febrero",
-        "marzo",
-        "abril",
-        "mayo",
-        "junio",
-        "julio",
-        "agosto",
-        "septiembre",
-        "octubre",
-        "noviembre",
-        "diciembre"
-      ]
+      "wide": {
+        "SolarTwelve": [
+          "enero",
+          "febrero",
+          "marzo",
+          "abril",
+          "mayo",
+          "junio",
+          "julio",
+          "agosto",
+          "septiembre",
+          "octubre",
+          "noviembre",
+          "diciembre"
+        ]
+      }
     },
     "stand_alone": null
   },

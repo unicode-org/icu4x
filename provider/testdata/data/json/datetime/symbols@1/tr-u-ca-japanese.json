@@ -1,49 +1,55 @@
 {
   "months": {
     "format": {
-      "abbreviated": [
-        "Oca",
-        "Şub",
-        "Mar",
-        "Nis",
-        "May",
-        "Haz",
-        "Tem",
-        "Ağu",
-        "Eyl",
-        "Eki",
-        "Kas",
-        "Ara"
-      ],
-      "narrow": [
-        "O",
-        "Ş",
-        "M",
-        "N",
-        "M",
-        "H",
-        "T",
-        "A",
-        "E",
-        "E",
-        "K",
-        "A"
-      ],
+      "abbreviated": {
+        "SolarTwelve": [
+          "Oca",
+          "Şub",
+          "Mar",
+          "Nis",
+          "May",
+          "Haz",
+          "Tem",
+          "Ağu",
+          "Eyl",
+          "Eki",
+          "Kas",
+          "Ara"
+        ]
+      },
+      "narrow": {
+        "SolarTwelve": [
+          "O",
+          "Ş",
+          "M",
+          "N",
+          "M",
+          "H",
+          "T",
+          "A",
+          "E",
+          "E",
+          "K",
+          "A"
+        ]
+      },
       "short": null,
-      "wide": [
-        "Ocak",
-        "Şubat",
-        "Mart",
-        "Nisan",
-        "Mayıs",
-        "Haziran",
-        "Temmuz",
-        "Ağustos",
-        "Eylül",
-        "Ekim",
-        "Kasım",
-        "Aralık"
-      ]
+      "wide": {
+        "SolarTwelve": [
+          "Ocak",
+          "Şubat",
+          "Mart",
+          "Nisan",
+          "Mayıs",
+          "Haziran",
+          "Temmuz",
+          "Ağustos",
+          "Eylül",
+          "Ekim",
+          "Kasım",
+          "Aralık"
+        ]
+      }
     },
     "stand_alone": null
   },

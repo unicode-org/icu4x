@@ -78,7 +78,6 @@ where
 }
 
 /// This impl can be made available by enabling the optional `serde` feature of the `zerovec` crate
-#[cfg(feature = "serde")]
 impl<T> Serialize for ZeroVec<'_, T>
 where
     T: Serialize + AsULE,
@@ -115,7 +114,34 @@ where
 }
 
 /// This impl can be made available by enabling the optional `serde` feature of the `zerovec` crate
-#[cfg(feature = "serde")]
+impl<'de, 'a, T> Deserialize<'de> for &'a ZeroSlice<T>
+where
+    T: Deserialize<'de> + AsULE + 'static,
+    'de: 'a,
+{
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        if deserializer.is_human_readable() {
+            Err(de::Error::custom(
+                "&ZeroSlice cannot be deserialized from human-readable formats",
+            ))
+        } else {
+            let deserialized: ZeroVec<'a, T> = ZeroVec::deserialize(deserializer)?;
+            let borrowed = if let ZeroVec::Borrowed(b) = deserialized {
+                b
+            } else {
+                return Err(de::Error::custom(
+                    "&ZeroSlice can only deserialize in zero-copy ways",
+                ));
+            };
+            Ok(ZeroSlice::from_ule_slice(borrowed))
+        }
+    }
+}
+
+/// This impl can be made available by enabling the optional `serde` feature of the `zerovec` crate
 impl<T> Serialize for ZeroSlice<T>
 where
     T: Serialize + AsULE,
