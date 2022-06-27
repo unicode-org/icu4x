@@ -68,10 +68,12 @@ use litemap::LiteMap;
 /// assert_eq!(loc.extensions.unicode.keywords.get(&key), Some(&value));
 /// ```
 #[derive(Clone, PartialEq, Eq, Debug, Default, Hash, PartialOrd, Ord)]
-#[allow(missing_docs)] // TODO(#1028) - Add missing docs.
 #[allow(clippy::exhaustive_structs)] // spec-backed stable datastructure
 pub struct Unicode {
+    /// The key-value pairs present in this locale extension, with each extension key subtag
+    /// associated to its provided value subtag.
     pub keywords: Keywords,
+    /// A canonically ordered sequence of single standalone subtags for this locale extension.
     pub attributes: Attributes,
 }
 
