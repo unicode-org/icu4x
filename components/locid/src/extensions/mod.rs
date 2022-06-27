@@ -27,7 +27,7 @@
 //!     .parse()
 //!     .expect("Failed to parse.");
 //!
-//! assert_eq!(loc.id.language, "en");
+//! assert_eq!(loc.id.language, "en".parse().unwrap());
 //! assert_eq!(loc.id.script, None);
 //! assert_eq!(loc.id.region, Some("US".parse().unwrap()));
 //! assert_eq!(loc.id.variants.len(), 0);

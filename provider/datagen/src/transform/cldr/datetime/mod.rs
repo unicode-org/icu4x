@@ -5,7 +5,7 @@
 use crate::transform::cldr::cldr_serde;
 use crate::SourceData;
 use icu_datetime::provider::calendar::*;
-use icu_locid::{unicode_ext_key, Locale};
+use icu_locid::{extensions_unicode_key as key, extensions_unicode_value as value, Locale};
 use icu_provider::datagen::IterableResourceProvider;
 use icu_provider::prelude::*;
 use litemap::LiteMap;
@@ -28,12 +28,12 @@ impl From<&SourceData> for CommonDateProvider {
         CommonDateProvider {
             source: source.clone(),
             supported_cals: [
-                (icu_locid::unicode_ext_value!("gregory"), "gregorian"),
-                (icu_locid::unicode_ext_value!("buddhist"), "buddhist"),
-                (icu_locid::unicode_ext_value!("japanese"), "japanese"),
-                (icu_locid::unicode_ext_value!("coptic"), "coptic"),
-                (icu_locid::unicode_ext_value!("indian"), "indian"),
-                (icu_locid::unicode_ext_value!("ethiopic"), "ethiopic"),
+                (value!("gregory"), "gregorian"),
+                (value!("buddhist"), "buddhist"),
+                (value!("japanese"), "japanese"),
+                (value!("coptic"), "coptic"),
+                (value!("indian"), "indian"),
+                (value!("ethiopic"), "ethiopic"),
             ]
             .into_iter()
             .collect(),
@@ -52,7 +52,7 @@ macro_rules! impl_resource_provider {
                     let langid = req.options.get_langid();
                     let calendar = req
                         .options
-                        .get_unicode_ext(&unicode_ext_key!("ca"))
+                        .get_unicode_ext(&key!("ca"))
                         .ok_or_else(|| DataErrorKind::NeedsVariant.into_error())?;
 
                     let cldr_cal = self
@@ -60,29 +60,28 @@ macro_rules! impl_resource_provider {
                         .get(&calendar)
                         .ok_or_else(|| DataErrorKind::MissingVariant.into_error())?;
 
-                    let resource: &cldr_serde::ca::Resource =
-                    self
-                    .source
-                    .get_cldr_paths()?
-                    .cldr_dates(cldr_cal).read_and_parse(&langid, &format!("ca-{}.json", cldr_cal))?;
+                    let resource: &cldr_serde::ca::Resource = self
+                        .source
+                        .cldr()?
+                        .dates(cldr_cal).read_and_parse(&langid, &format!("ca-{}.json", cldr_cal))?;
 
                     let mut data =
-                            resource
-                                .main
-                                .0
-                                .get(&langid)
-                                .expect("CLDR file contains the expected language")
-                                .dates
-                                .calendars
-                                .get(*cldr_cal)
-                                .expect("CLDR file contains the expected calendar")
-                                .clone();
+                        resource
+                            .main
+                            .0
+                            .get(&langid)
+                            .expect("CLDR file contains the expected language")
+                            .dates
+                            .calendars
+                            .get(*cldr_cal)
+                            .expect("CLDR file contains the expected calendar")
+                            .clone();
 
                     // CLDR treats ethiopic and ethioaa as separate calendars; however we treat them as a single resource key that
                     // supports symbols for both era patterns based on the settings on the date. Load in ethioaa data as well when dealing with
                     // ethiopic.
-                    if calendar == icu_locid::unicode_ext_value!("ethiopic") {
-                        let ethioaa: &cldr_serde::ca::Resource = self.source.get_cldr_paths()?.cldr_dates("ethiopic").read_and_parse(&langid, "ca-ethiopic-amete-alem.json")?;
+                    if calendar == value!("ethiopic") {
+                        let ethioaa: &cldr_serde::ca::Resource = self.source.cldr()?.dates("ethiopic").read_and_parse(&langid, "ca-ethiopic-amete-alem.json")?;
 
                         let ethioaa_data = ethioaa
                             .main
@@ -120,15 +119,15 @@ macro_rules! impl_resource_provider {
                     for (cal_value, cldr_cal) in self.supported_cals.iter() {
                         r.extend(self
                                     .source
-                                    .get_cldr_paths()?
-                                    .cldr_dates(cldr_cal).list_langs()?
+                                    .cldr()?
+                                    .dates(cldr_cal).list_langs()?
                             .map(|lid| {
                                 let mut locale: Locale = lid.into();
                                 locale
                                     .extensions
                                     .unicode
                                     .keywords
-                                    .set(unicode_ext_key!("ca"), cal_value.clone());
+                                    .set(key!("ca"), cal_value.clone());
                                 ResourceOptions::from(locale)
                             }));
                     }
@@ -146,7 +145,8 @@ impl_resource_provider!(
     (DateSkeletonPatternsV1Marker, |dates, _| {
         DateSkeletonPatternsV1::from(dates)
     }),
-    (DatePatternsV1Marker, |dates, _| DatePatternsV1::from(dates))
+    (DatePatternsV1Marker, |dates, _| DatePatternsV1::from(dates)),
+    (TimePatternsV1Marker, |dates, _| TimePatternsV1::from(dates))
 );
 
 #[cfg(test)]
@@ -237,6 +237,8 @@ mod test {
 
     #[test]
     fn test_basic_symbols() {
+        use icu_calendar::types::MonthCode;
+        use tinystr::tinystr;
         let provider = CommonDateProvider::from(&SourceData::for_test());
 
         let locale: Locale = "cs-u-ca-gregory".parse().unwrap();
@@ -249,7 +251,16 @@ mod test {
             .take_payload()
             .unwrap();
 
-        assert_eq!("srpna", cs_dates.get().months.format.wide.0[7]);
+        assert_eq!(
+            "srpna",
+            cs_dates
+                .get()
+                .months
+                .format
+                .wide
+                .get(MonthCode(tinystr!(4, "M08")))
+                .unwrap()
+        );
 
         assert_eq!(
             "po",

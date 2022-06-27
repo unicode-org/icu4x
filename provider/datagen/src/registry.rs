@@ -5,16 +5,18 @@
 use icu_provider::{ResourceKey, ResourceMarker};
 
 /// List of all supported keys
-pub fn get_all_keys() -> Vec<ResourceKey> {
+pub fn all_keys() -> Vec<ResourceKey> {
     let mut v = vec![
         icu_calendar::provider::JapaneseErasV1Marker::KEY,
         icu_datetime::provider::calendar::DatePatternsV1Marker::KEY,
+        icu_datetime::provider::calendar::TimePatternsV1Marker::KEY,
         icu_datetime::provider::calendar::DateSkeletonPatternsV1Marker::KEY,
         icu_datetime::provider::calendar::DateSymbolsV1Marker::KEY,
         icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker::KEY,
         icu_datetime::provider::time_zones::ExemplarCitiesV1Marker::KEY,
         icu_datetime::provider::time_zones::MetaZoneGenericNamesLongV1Marker::KEY,
         icu_datetime::provider::time_zones::MetaZoneGenericNamesShortV1Marker::KEY,
+        icu_datetime::provider::time_zones::MetaZonePeriodV1Marker::KEY,
         icu_datetime::provider::time_zones::MetaZoneSpecificNamesLongV1Marker::KEY,
         icu_datetime::provider::time_zones::MetaZoneSpecificNamesShortV1Marker::KEY,
         icu_datetime::provider::week_data::WeekDataV1Marker::KEY,
@@ -26,6 +28,8 @@ pub fn get_all_keys() -> Vec<ResourceKey> {
         icu_locale_canonicalizer::provider::LikelySubtagsV1Marker::KEY,
         icu_plurals::provider::CardinalV1Marker::KEY,
         icu_plurals::provider::OrdinalV1Marker::KEY,
+        icu_provider_adapters::fallback::provider::LocaleFallbackLikelySubtagsV1Marker::KEY,
+        icu_provider_adapters::fallback::provider::LocaleFallbackParentsV1Marker::KEY,
         #[cfg(feature = "experimental")]
         icu_casemapping::provider::CaseMappingV1Marker::KEY,
         #[cfg(feature = "experimental")]
@@ -38,6 +42,14 @@ pub fn get_all_keys() -> Vec<ResourceKey> {
         icu_normalizer::provider::CanonicalDecompositionTablesV1Marker::KEY,
         #[cfg(feature = "experimental")]
         icu_normalizer::provider::CompatibilityDecompositionTablesV1Marker::KEY,
+        #[cfg(feature = "experimental")]
+        icu_normalizer::provider::CanonicalCompositionsV1Marker::KEY,
+        #[cfg(feature = "experimental")]
+        icu_normalizer::provider::CanonicalCompositionPassthroughV1Marker::KEY,
+        #[cfg(feature = "experimental")]
+        icu_normalizer::provider::CompatibilityCompositionPassthroughV1Marker::KEY,
+        #[cfg(feature = "experimental")]
+        icu_normalizer::provider::Uts46CompositionPassthroughV1Marker::KEY,
     ];
     v.extend(icu_properties::provider::ALL_KEYS);
     #[cfg(feature = "experimental")]
@@ -89,6 +101,7 @@ macro_rules! create_datagen_provider {
             [
                 $crate::transform::cldr::AliasesProvider,
                 $crate::transform::cldr::CommonDateProvider,
+                $crate::transform::cldr::FallbackRulesProvider,
                 $crate::transform::cldr::JapaneseErasProvider,
                 $crate::transform::cldr::LikelySubtagsProvider,
                 $crate::transform::cldr::NumbersProvider,
@@ -156,6 +169,7 @@ macro_rules! create_datagen_provider {
             [
                 $crate::transform::cldr::AliasesProvider,
                 $crate::transform::cldr::CommonDateProvider,
+                $crate::transform::cldr::FallbackRulesProvider,
                 $crate::transform::cldr::JapaneseErasProvider,
                 $crate::transform::cldr::LikelySubtagsProvider,
                 $crate::transform::cldr::NumbersProvider,
@@ -173,6 +187,10 @@ macro_rules! create_datagen_provider {
                 $crate::transform::uprops::Uts46DecompositionSupplementProvider,
                 $crate::transform::uprops::CanonicalDecompositionTablesProvider,
                 $crate::transform::uprops::CompatibilityDecompositionTablesProvider,
+                $crate::transform::uprops::CanonicalCompositionsProvider,
+                $crate::transform::uprops::CanonicalCompositionPassthroughProvider,
+                $crate::transform::uprops::CompatibilityCompositionPassthroughProvider,
+                $crate::transform::uprops::Uts46CompositionPassthroughProvider,
                 $crate::transform::collator::CollationProvider,
             ]
         )
@@ -193,7 +211,7 @@ macro_rules! create_datagen_provider {
 fn no_key_collisions() {
     let mut map = std::collections::BTreeMap::new();
     let mut failed = false;
-    for key in get_all_keys() {
+    for key in all_keys() {
         if let Some(colliding_key) = map.insert(key.get_hash(), key) {
             println!(
                 "{:?} and {:?} collide at {:?}",

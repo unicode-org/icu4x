@@ -26,8 +26,8 @@ pub use crate::string_matcher::StringMatcher;
 #[derive(Clone, Debug)]
 #[cfg_attr(
     feature = "datagen",
-    derive(serde::Serialize, crabbake::Bakeable),
-    crabbake(path = icu_list::provider),
+    derive(serde::Serialize, databake::Bake),
+    databake(path = icu_list::provider),
 )]
 pub struct ListFormatterPatternsV1<'data>(
     #[cfg_attr(feature = "datagen", serde(with = "deduplicating_array"))]
@@ -98,8 +98,8 @@ impl<'data> ListFormatterPatternsV1<'data> {
 #[derive(Clone, Debug, PartialEq, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(
     feature = "datagen",
-    derive(serde::Serialize, crabbake::Bakeable),
-    crabbake(path = icu_list::provider),
+    derive(serde::Serialize, databake::Bake),
+    databake(path = icu_list::provider),
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct ConditionalListJoinerPattern<'data> {
@@ -115,8 +115,8 @@ pub struct ConditionalListJoinerPattern<'data> {
 #[derive(Clone, Debug, PartialEq, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(
     feature = "datagen",
-    derive(serde::Serialize, crabbake::Bakeable),
-    crabbake(path = icu_list::provider),
+    derive(serde::Serialize, databake::Bake),
+    databake(path = icu_list::provider),
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct SpecialCasePattern<'data> {
@@ -172,7 +172,7 @@ impl<'de: 'data, 'data> serde::Deserialize<'de> for ListJoinerPattern<'data> {
 }
 
 impl<'a> ListJoinerPattern<'a> {
-    /// Constructs a [`ListJoinerPattern`] from raw parts. Used by crabbake.
+    /// Constructs a [`ListJoinerPattern`] from raw parts. Used by databake.
     ///
     /// # Safety
     /// index_1 may be at most string.len()
@@ -326,12 +326,12 @@ mod datagen {
         }
     }
 
-    impl crabbake::Bakeable for ListJoinerPattern<'_> {
-        fn bake(&self, env: &crabbake::CrateEnv) -> crabbake::TokenStream {
+    impl databake::Bake for ListJoinerPattern<'_> {
+        fn bake(&self, env: &databake::CrateEnv) -> databake::TokenStream {
             let string = (&*self.string).bake(env);
             let index_1 = self.index_1.bake(env);
             // Safe because our own data is safe
-            crabbake::quote! { unsafe {
+            databake::quote! { unsafe {
                 ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(#string, #index_1)
             }}
         }

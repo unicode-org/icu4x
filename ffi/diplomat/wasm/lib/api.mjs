@@ -542,7 +542,7 @@ const ICU4XError_js_to_rust = {
   "LocaleParserError": 513,
   "DataStructValidityError": 768,
   "PropertyUnknownScriptIdError": 1024,
-  "PropertyUnknownGeneralCategoryGroupError": 41,
+  "PropertyUnknownGeneralCategoryGroupError": 1025,
   "DecimalLimitError": 1280,
   "DecimalSyntaxError": 1281,
   "PluralParserError": 1536,
@@ -569,7 +569,7 @@ const ICU4XError_rust_to_js = {
   513: "LocaleParserError",
   768: "DataStructValidityError",
   1024: "PropertyUnknownScriptIdError",
-  41: "PropertyUnknownGeneralCategoryGroupError",
+  1025: "PropertyUnknownGeneralCategoryGroupError",
   1280: "DecimalLimitError",
   1281: "DecimalSyntaxError",
   1536: "PluralParserError",
@@ -623,7 +623,7 @@ export class ICU4XFixedDecimal {
     return diplomat_out;
   }
 
-  static create_from_f64_with_lower_magnitude(f, precision, rounding_mode) {
+  static create_from_f64_with_lower_magnitude(f, precision) {
     const diplomat_out = (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
       const result_tag = {};
@@ -632,7 +632,7 @@ export class ICU4XFixedDecimal {
         size: 5,
         align: 4,
       });
-      wasm.ICU4XFixedDecimal_create_from_f64_with_lower_magnitude(diplomat_receive_buffer, f, precision, ICU4XFixedDecimalRoundingMode_js_to_rust[rounding_mode]);
+      wasm.ICU4XFixedDecimal_create_from_f64_with_lower_magnitude(diplomat_receive_buffer, f, precision);
       const is_ok = (new Uint8Array(wasm.memory.buffer, diplomat_receive_buffer + 4, 1))[0] == 1;
       if (is_ok) {
         const ok_value = (() => {
@@ -649,7 +649,7 @@ export class ICU4XFixedDecimal {
     return diplomat_out;
   }
 
-  static create_from_f64_with_significant_digits(f, digits, rounding_mode) {
+  static create_from_f64_with_significant_digits(f, digits) {
     const diplomat_out = (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
       const result_tag = {};
@@ -658,7 +658,7 @@ export class ICU4XFixedDecimal {
         size: 5,
         align: 4,
       });
-      wasm.ICU4XFixedDecimal_create_from_f64_with_significant_digits(diplomat_receive_buffer, f, digits, ICU4XFixedDecimalRoundingMode_js_to_rust[rounding_mode]);
+      wasm.ICU4XFixedDecimal_create_from_f64_with_significant_digits(diplomat_receive_buffer, f, digits);
       const is_ok = (new Uint8Array(wasm.memory.buffer, diplomat_receive_buffer + 4, 1))[0] == 1;
       if (is_ok) {
         const ok_value = (() => {
@@ -869,15 +869,6 @@ const ICU4XFixedDecimalGroupingStrategy_rust_to_js = {
   1: "Never",
   2: "Always",
   3: "Min2",
-};
-
-const ICU4XFixedDecimalRoundingMode_js_to_rust = {
-  "Truncate": 0,
-  "HalfExpand": 1,
-};
-const ICU4XFixedDecimalRoundingMode_rust_to_js = {
-  0: "Truncate",
-  1: "HalfExpand",
 };
 
 const ICU4XFixedDecimalSignDisplay_js_to_rust = {

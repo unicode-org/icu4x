@@ -37,7 +37,7 @@ impl Key {
     ///
     /// let key = Key::from_bytes(b"i0").expect("Parsing failed.");
     ///
-    /// assert_eq!(key, "i0");
+    /// assert_eq!(key.as_str(), "i0");
     /// ```
     pub const fn from_bytes(key: &[u8]) -> Result<Self, ParserError> {
         #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
@@ -84,11 +84,5 @@ impl_writeable_for_single_subtag!(Key, "k0");
 impl PartialEq<str> for Key {
     fn eq(&self, other: &str) -> bool {
         self.as_str() == other
-    }
-}
-
-impl PartialEq<&str> for Key {
-    fn eq(&self, other: &&str) -> bool {
-        self.as_str() == *other
     }
 }

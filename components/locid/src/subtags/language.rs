@@ -55,7 +55,7 @@ impl Language {
     ///
     /// let lang = Language::from_bytes(b"en").expect("Parsing failed.");
     ///
-    /// assert_eq!(lang, "en");
+    /// assert_eq!(lang.as_str(), "en");
     /// ```
     pub const fn from_bytes(v: &[u8]) -> Result<Self, ParserError> {
         Self::from_bytes_manual_slice(v, 0, v.len())
@@ -122,7 +122,7 @@ impl Language {
     ///
     /// let raw = lang.into_raw();
     /// let lang = unsafe { Language::from_raw_unchecked(raw) };
-    /// assert_eq!(lang, "en");
+    /// assert_eq!(lang.as_str(), "en");
     /// ```
     pub fn into_raw(self) -> [u8; 3] {
         *self.0.all_bytes()
@@ -140,7 +140,7 @@ impl Language {
     ///
     /// let raw = lang.into_raw();
     /// let lang = unsafe { Language::from_raw_unchecked(raw) };
-    /// assert_eq!(lang, "en");
+    /// assert_eq!(lang.as_str(), "en");
     /// ```
     ///
     /// # Safety
@@ -161,7 +161,7 @@ impl Language {
     /// assert_eq!(Language::default(), Language::UND);
     /// assert_eq!("und", Language::UND.to_string());
     /// ```
-    pub const UND: Self = crate::language!("und");
+    pub const UND: Self = crate::subtags_language!("und");
 
     /// A helper function for displaying
     /// a [`Language`] subtag as a `&`[`str`].
@@ -222,6 +222,29 @@ impl Language {
     pub fn is_empty(self) -> bool {
         self == Self::UND
     }
+
+    /// Compare this `Language` with BCP-47 bytes.
+    ///
+    /// The return value is equivalent to what would happen if you first converted this
+    /// `Language` to a BCP-47 string and then performed a byte comparison.
+    ///
+    /// This function is case-sensitive and results in a *total order*, so it is appropriate for
+    /// binary search. The only argument producing [`Ordering::Equal`](core::cmp::Ordering::Equal)
+    /// is `self.to_string()`.
+    #[inline]
+    pub fn strict_cmp(&self, other: &[u8]) -> core::cmp::Ordering {
+        self.as_str().as_bytes().cmp(other)
+    }
+
+    /// Compare this `Language` with a potentially unnormalized BCP-47 string.
+    ///
+    /// The return value is equivalent to what would happen if you first parsed the
+    /// BCP-47 string to a `Language` and then performed a structucal comparison.
+    ///
+    #[inline]
+    pub fn normalizing_eq(&self, other: &str) -> bool {
+        self.as_str().eq_ignore_ascii_case(other)
+    }
 }
 
 impl FromStr for Language {
@@ -254,12 +277,6 @@ fn test_writeable() {
     writeable::assert_writeable_eq!(&Language::from_str("aa").unwrap(), "aa");
     writeable::assert_writeable_eq!(&Language::from_str("xyz").unwrap(), "xyz");
     writeable::assert_writeable_eq!(&Language::from_str("und").unwrap(), "und");
-}
-
-impl PartialEq<&str> for Language {
-    fn eq(&self, other: &&str) -> bool {
-        self.as_str() == *other
-    }
 }
 
 impl<'l> From<&'l Language> for &'l str {

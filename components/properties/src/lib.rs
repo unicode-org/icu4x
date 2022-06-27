@@ -76,6 +76,7 @@
         clippy::exhaustive_enums
     )
 )]
+#![warn(missing_docs)]
 
 #[cfg(feature = "bidi")]
 pub mod bidi;

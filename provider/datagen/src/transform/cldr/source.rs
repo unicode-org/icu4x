@@ -11,9 +11,32 @@ use std::fmt::Debug;
 use std::str::FromStr;
 use std::sync::Arc;
 
+/// Specifies a variant of CLDR JSON
+#[derive(Debug, Copy, Clone, PartialEq, Eq)]
+#[non_exhaustive]
+pub enum LocaleSubset {
+    /// Includes all data
+    Full,
+    /// Includes locales listed as modern coverage targets by the CLDR subcomittee
+    Modern,
+}
+
+impl std::fmt::Display for LocaleSubset {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(
+            f,
+            "{}",
+            match self {
+                Self::Full => "full",
+                Self::Modern => "modern",
+            }
+        )
+    }
+}
+
 pub(crate) struct CldrCache {
     root: AbstractFs,
-    locale_subset: String,
+    locale_subset: LocaleSubset,
     cache: Arc<FrozenMap<String, Box<dyn Any + Send + Sync>>>,
 }
 
@@ -28,7 +51,7 @@ impl Debug for CldrCache {
 }
 
 impl CldrCache {
-    pub(crate) fn new(root: AbstractFs, locale_subset: String) -> Self {
+    pub(crate) fn new(root: AbstractFs, locale_subset: LocaleSubset) -> Self {
         Self {
             root,
             locale_subset,
@@ -36,23 +59,23 @@ impl CldrCache {
         }
     }
 
-    pub(crate) fn cldr_core(&self) -> CldrDirNoLang<'_> {
+    pub(crate) fn core(&self) -> CldrDirNoLang<'_> {
         CldrDirNoLang(self, "cldr-core".to_string())
     }
 
-    pub(crate) fn cldr_numbers(&self) -> CldrDirLang<'_> {
+    pub(crate) fn numbers(&self) -> CldrDirLang<'_> {
         CldrDirLang(self, format!("cldr-numbers-{}/main", self.locale_subset))
     }
 
-    pub(crate) fn cldr_misc(&self) -> CldrDirLang<'_> {
+    pub(crate) fn misc(&self) -> CldrDirLang<'_> {
         CldrDirLang(self, format!("cldr-misc-{}/main", self.locale_subset))
     }
 
-    pub(crate) fn cldr_bcp47(&self) -> CldrDirNoLang<'_> {
+    pub(crate) fn bcp47(&self) -> CldrDirNoLang<'_> {
         CldrDirNoLang(self, "cldr-bcp47/bcp47".to_string())
     }
 
-    pub(crate) fn cldr_dates(&self, cal: &str) -> CldrDirLang<'_> {
+    pub(crate) fn dates(&self, cal: &str) -> CldrDirLang<'_> {
         CldrDirLang(
             self,
             if cal == "gregorian" {

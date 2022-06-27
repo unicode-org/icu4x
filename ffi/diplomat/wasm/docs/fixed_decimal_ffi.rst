@@ -15,12 +15,12 @@
         Construct an :js:class:`ICU4XFixedDecimal` from an float, with enough digits to recover the original floating point in IEEE 754 without needing trailing zeros
         See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.try_from_f64>`__ for more information.
 
-    .. js:staticfunction:: create_from_f64_with_lower_magnitude(f, precision, rounding_mode)
+    .. js:staticfunction:: create_from_f64_with_lower_magnitude(f, precision)
 
         Construct an :js:class:`ICU4XFixedDecimal` from an float, with a given power of 10 for the lower magnitude
         See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.try_from_f64>`__ for more information.
 
-    .. js:staticfunction:: create_from_f64_with_significant_digits(f, digits, rounding_mode)
+    .. js:staticfunction:: create_from_f64_with_significant_digits(f, digits)
 
         Construct an :js:class:`ICU4XFixedDecimal` from an float, for a given number of significant digits
         See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.try_from_f64>`__ for more information.
@@ -59,7 +59,3 @@
 
         Format the :js:class:`ICU4XFixedDecimal` as a string.
         See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.write_to>`__ for more information.
-
-.. js:class:: ICU4XFixedDecimalRoundingMode
-
-    How to round digits when constructing an ICU4XFixedDecimal from a floating point number

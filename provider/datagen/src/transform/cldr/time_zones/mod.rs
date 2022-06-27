@@ -35,8 +35,8 @@ macro_rules! impl_resource_provider {
 
                     let resource: &cldr_serde::time_zones::time_zone_names::Resource = self
                         .source
-                        .get_cldr_paths()?
-                        .cldr_dates("gregorian")
+                        .cldr()?
+                        .dates("gregorian")
                         .read_and_parse(&langid, "timeZoneNames.json")?;
                     let time_zone_names = resource
                         .main
@@ -49,8 +49,8 @@ macro_rules! impl_resource_provider {
 
                     let resource: &cldr_serde::time_zones::bcp47_tzid::Resource = self
                         .source
-                        .get_cldr_paths()?
-                        .cldr_bcp47()
+                        .cldr()?
+                        .bcp47()
                         .read_and_parse("timezone.json")?;
 
                     let mut bcp47_tzids = LiteMap::new();
@@ -64,8 +64,8 @@ macro_rules! impl_resource_provider {
 
                     let resource: &cldr_serde::time_zones::meta_zones::Resource = self
                         .source
-                        .get_cldr_paths()?
-                        .cldr_core()
+                        .cldr()?
+                        .core()
                         .read_and_parse("supplemental/metaZones.json")?;
 
                     let mut meta_zone_ids = LiteMap::new();
@@ -74,6 +74,7 @@ macro_rules! impl_resource_provider {
                     {
                         meta_zone_ids.insert(meta_zone_id_data.long_id.to_string(), meta_zone_id.clone());
                     }
+                    let meta_zone_periods = resource.supplemental.meta_zones.meta_zone_info.time_zone.0.clone();
 
                     let metadata = DataResponseMetadata::default();
                     // TODO(#1109): Set metadata.data_langid correctly.
@@ -84,6 +85,7 @@ macro_rules! impl_resource_provider {
                                 time_zone_names,
                                 bcp47_tzids,
                                 meta_zone_ids,
+                                meta_zone_periods,
                             }),
                         )),
                     })
@@ -94,8 +96,8 @@ macro_rules! impl_resource_provider {
                 fn supported_options(&self) -> Result<Vec<ResourceOptions>, DataError> {
                     Ok(self
                         .source
-                        .get_cldr_paths()?
-                        .cldr_dates("gregorian")
+                        .cldr()?
+                        .dates("gregorian")
                         .list_langs()?
                         .map(Into::<ResourceOptions>::into)
                         .collect())
@@ -113,7 +115,8 @@ impl_resource_provider!(
     MetaZoneGenericNamesLongV1Marker,
     MetaZoneGenericNamesShortV1Marker,
     MetaZoneSpecificNamesLongV1Marker,
-    MetaZoneSpecificNamesShortV1Marker
+    MetaZoneSpecificNamesShortV1Marker,
+    MetaZonePeriodV1Marker
 );
 
 #[cfg(test)]
@@ -257,6 +260,26 @@ mod tests {
                 .get(
                     &TimeZoneBcp47Id(tinystr!(8, "utc")),
                     &tinystr!(8, "standard")
+                )
+                .unwrap()
+        );
+
+        let metazone_period: DataPayload<MetaZonePeriodV1Marker> = provider
+            .load_resource(&DataRequest {
+                options: langid!("en").into(),
+                metadata: Default::default(),
+            })
+            .unwrap()
+            .take_payload()
+            .unwrap();
+        assert_eq!(
+            Some(MetaZoneId(tinystr!(4, "mgmt"))),
+            metazone_period
+                .get()
+                .0
+                .get_copied(
+                    &TimeZoneBcp47Id(tinystr!(8, "gblon")),
+                    &String::from("1971-10-31 02:00")
                 )
                 .unwrap()
         );

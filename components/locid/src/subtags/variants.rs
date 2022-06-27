@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use super::Variant;
-use alloc::boxed::Box;
+use crate::helpers::ShortVec;
 
 use alloc::vec::Vec;
 use core::ops::Deref;
@@ -29,7 +29,7 @@ use core::ops::Deref;
 /// assert_eq!(variants.to_string(), "macos-posix");
 /// ```
 #[derive(Default, Debug, PartialEq, Eq, Clone, Hash, PartialOrd, Ord)]
-pub struct Variants(Option<Box<[Variant]>>);
+pub struct Variants(ShortVec<Variant>);
 
 impl Variants {
     /// Returns a new empty list of variants. Same as [`default()`](Default::default()), but is `const`.
@@ -43,7 +43,7 @@ impl Variants {
     /// ```
     #[inline]
     pub const fn new() -> Self {
-        Self(None)
+        Self(ShortVec::new())
     }
 
     /// Creates a new [`Variants`] set from a [`Vec`].
@@ -68,70 +68,12 @@ impl Variants {
     /// for the caller to use [`binary_search`](slice::binary_search) instead of [`sort`](slice::sort)
     /// and [`dedup`](Vec::dedup()).
     pub fn from_vec_unchecked(input: Vec<Variant>) -> Self {
-        if input.is_empty() {
-            Self(None)
-        } else {
-            Self(Some(input.into_boxed_slice()))
-        }
-    }
-
-    /// Deconstructs the [`Variants`] into raw format to be consumed
-    /// by [`from_raw_unchecked()`](Variants::from_raw_unchecked()).
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use icu::locid::subtags::{Variant, Variants};
-    ///
-    /// let variant1: Variant = "posix".parse().expect("Parsing failed.");
-    /// let variant2: Variant = "macos".parse().expect("Parsing failed.");
-    /// let mut v = vec![variant1, variant2];
-    /// v.sort();
-    /// v.dedup();
-    ///
-    /// let variants = unsafe { Variants::from_vec_unchecked(v) };
-    ///
-    /// let raw = variants.into_raw();
-    /// let variants = unsafe { Variants::from_raw_unchecked(raw) };
-    /// assert_eq!(variants.len(), 2);
-    /// ```
-    pub fn into_raw(self) -> Option<Box<[Variant]>> {
-        self.0
-    }
-
-    /// Constructor which takes a raw value returned by [`into_raw()`](Variants::into_raw()).
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use icu::locid::subtags::{Variant, Variants};
-    ///
-    /// let variant1: Variant = "posix".parse().expect("Parsing failed.");
-    /// let variant2: Variant = "macos".parse().expect("Parsing failed.");
-    /// let mut v = vec![variant1, variant2];
-    /// v.sort();
-    /// v.dedup();
-    ///
-    /// let variants = unsafe { Variants::from_vec_unchecked(v) };
-    ///
-    /// let raw = variants.into_raw();
-    /// let variants = unsafe { Variants::from_raw_unchecked(raw) };
-    /// assert_eq!(variants.len(), 2);
-    /// ```
-    ///
-    /// Notice: For performance- and memory-constrained environments, it is recommended
-    /// for the caller to use [`binary_search`](slice::binary_search) instead of [`sort`](slice::sort)
-    /// and [`dedup`](Vec::dedup()).
-    ///
-    /// # Safety
-    ///
-    /// This function accepts any [`Box`]`<`[`Variant`]`>` that is expected to be a
-    /// valid list of sorted variants.
-    pub const unsafe fn from_raw_unchecked(input: Option<Box<[Variant]>>) -> Self {
-        Self(input)
+        Self(ShortVec::from(input))
     }
 
     /// Empties the [`Variants`] list.
+    ///
+    /// Returns the old list.
     ///
     /// # Examples
     ///
@@ -152,8 +94,8 @@ impl Variants {
     ///
     /// assert_eq!(variants.to_string(), "");
     /// ```
-    pub fn clear(&mut self) {
-        self.0 = None;
+    pub fn clear(&mut self) -> Self {
+        core::mem::take(self)
     }
 
     pub(crate) fn for_each_subtag_str<E, F>(&self, f: &mut F) -> Result<(), E>
@@ -170,10 +112,6 @@ impl Deref for Variants {
     type Target = [Variant];
 
     fn deref(&self) -> &[Variant] {
-        if let Some(ref variants) = self.0 {
-            variants
-        } else {
-            &[]
-        }
+        self.0.as_slice()
     }
 }

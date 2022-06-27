@@ -6,7 +6,7 @@ use crate::transform::cldr::cldr_serde;
 use crate::transform::uprops::EnumeratedPropertyCodePointTrieProvider;
 use crate::SourceData;
 use icu_list::provider::*;
-use icu_locid::language;
+use icu_locid::subtags_language as language;
 use icu_provider::datagen::IterableResourceProvider;
 use icu_provider::prelude::*;
 
@@ -32,8 +32,8 @@ impl<M: ResourceMarker<Yokeable = ListFormatterPatternsV1<'static>>> ResourcePro
 
         let resource: &cldr_serde::list_patterns::Resource = self
             .source
-            .get_cldr_paths()?
-            .cldr_misc()
+            .cldr()?
+            .misc()
             .read_and_parse(&langid, "listPatterns.json")?;
 
         let data = &resource
@@ -138,8 +138,8 @@ impl<M: ResourceMarker<Yokeable = ListFormatterPatternsV1<'static>>> IterableRes
     fn supported_options(&self) -> Result<Vec<ResourceOptions>, DataError> {
         Ok(self
             .source
-            .get_cldr_paths()?
-            .cldr_misc()
+            .cldr()?
+            .misc()
             .list_langs()?
             .map(Into::<ResourceOptions>::into)
             .collect())
