@@ -87,6 +87,7 @@
         clippy::panic
     )
 )]
+#![warn(missing_docs)]
 
 pub mod calendar {
     //! Contains the core types used by ICU4X for dealing
