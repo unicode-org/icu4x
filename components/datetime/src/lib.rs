@@ -2,8 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-#![warn(missing_docs)]
-
 //! `icu_datetime` is one of the [`ICU4X`] components.
 //!
 //! This API provides necessary functionality for formatting date and time to user readable textual representation.
@@ -79,6 +77,7 @@
         clippy::exhaustive_enums
     )
 )]
+#![warn(missing_docs)]
 
 extern crate alloc;
 
