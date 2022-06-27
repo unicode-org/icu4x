@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1656349679837,
+  "lastUpdate": 1656359490142,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -18653,6 +18653,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/d206a7173722b167dabd3cec71c8f87965669226"
         },
         "date": 1656349653369,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 2737318,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "elango@unicode.org",
+            "name": "Elango",
+            "username": "echeran"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "16a13b1ca940567d394b86ee6fbbf9d50b656840",
+          "message": "Add docs in locid to replace missing_docs warning suppressions (#2113)",
+          "timestamp": "2022-06-27T19:48:45Z",
+          "tree_id": "b8fd402a0daa0ea1ce5ec7ef073ef9338dec76fa",
+          "url": "https://github.com/unicode-org/icu4x/commit/16a13b1ca940567d394b86ee6fbbf9d50b656840"
+        },
+        "date": 1656359458899,
         "tool": "ndjson",
         "benches": [
           {
