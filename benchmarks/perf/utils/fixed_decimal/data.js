@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1656287029073,
+  "lastUpdate": 1656347909979,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -33808,6 +33808,66 @@ window.BENCHMARK_DATA = {
           {
             "name": "from_string/1000000001",
             "value": 78,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "f6cad74993ff4bd455f1afb92c6e9499187f3629",
+          "message": "Add iai benches for VarZeroVec (#2119)",
+          "timestamp": "2022-06-27T11:25:17-05:00",
+          "tree_id": "93af65e709f631cc8b611f9ec09713df7619bca7",
+          "url": "https://github.com/unicode-org/icu4x/commit/f6cad74993ff4bd455f1afb92c6e9499187f3629"
+        },
+        "date": 1656347884186,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 109657,
+            "range": "± 529",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 20773,
+            "range": "± 130",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 54594,
+            "range": "± 208",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 164,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 67,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 69,
             "range": "± 0",
             "unit": "ns/iter"
           }
