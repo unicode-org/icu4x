@@ -44,7 +44,7 @@ icu_provider = { version = "0.6", path = "../../provider/core", features = ["mac
 icu_locid = { version = "0.6", path = "../../components/locid" }
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }
 zerovec = { version = "0.7", path = "../../utils/zerovec", default-features = false, features = ["derive"] }
-databake = { version = "0.4", path = "../../utils/databake", optional = true, features = ["derive"] }
+databake = { version = "0.1.0", path = "../../utils/databake", optional = true, features = ["derive"] }
 
 [dev-dependencies]
 criterion = "0.3"
