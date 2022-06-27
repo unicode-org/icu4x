@@ -107,7 +107,7 @@ impl<M: ResourceMarker<Yokeable = ListFormatterPatternsV1<'static>>> ResourcePro
                         .map_err(|e| DataError::custom("data for CodePointTrie of Script")
                             .with_display_context(&e))?
                         .get_set_for_value(icu_properties::Script::Hebrew)
-                        .as_unicodeset()
+                        .to_unicode_set()
                         .iter_ranges()
                         .map(|range| format!(r#"\u{:04x}-\u{:04x}"#, range.start(), range.end()))
                         .fold(String::new(), |a, b| a + &b)

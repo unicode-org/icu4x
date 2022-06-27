@@ -20,6 +20,7 @@ use crate::*;
 use core::iter::FromIterator;
 use icu_provider::prelude::*;
 use icu_uniset::UnicodeSet;
+use zerofrom::ZeroFrom;
 
 /// A wrapper around code point set data, returned by property getters for
 /// unicode sets.
@@ -76,10 +77,18 @@ impl CodePointSetData {
         }
     }
 
-    // TODO: we should instead integrate better with UnicodeSetBuilder
-    #[doc(hidden)]
-    pub fn as_unicodeset(&self) -> &'_ UnicodeSet<'_> {
-        &self.data.get().inv_list
+    /// Convert this type to a [`UnicodeSet`], borrowing if possible,
+    /// otherwise allocating a new [`UnicodeSet`].
+    ///
+    /// The data backing this is extensible and supports multiple implementations.
+    /// Currently it is always [`UnicodeSet`], however in the future more backends may be
+    /// added, and users may select which at data generation time.
+    ///
+    /// If using this function it is preferable to stick to [`UnicodeSet`] representations
+    /// in the data, however exceptions can be made if the performance hit is considered to
+    /// be okay.
+    pub fn to_unicode_set(&self) -> UnicodeSet<'_> {
+        ZeroFrom::zero_from(&self.data.get().inv_list)
     }
 }
 
@@ -1679,7 +1688,7 @@ mod tests {
 
             let mut builder = UnicodeSetBuilder::new();
             for subcategory in subcategories {
-                builder.add_set(gc.get_set_for_value(*subcategory).as_unicodeset());
+                builder.add_set(gc.get_set_for_value(*subcategory).to_unicode_set());
             }
             let combined_set = builder.build();
             println!("{:?} {:?}", category, subcategories);
