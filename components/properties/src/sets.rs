@@ -117,6 +117,12 @@ impl CodePointSetData {
         }
     }
 
+    /// Construct a new one an owned [`UnicodeSet`]
+    pub fn from_unicode_set(set: UnicodeSet<'static>) -> Self {
+        let set = UnicodePropertyV1 { inv_list: set };
+        CodePointSetData::from_data(DataPayload::<ErasedSetlikeMarker>::from_owned(set))
+    }
+
     /// Convert this type to a [`UnicodeSet`], borrowing if possible,
     /// otherwise allocating a new [`UnicodeSet`].
     ///
@@ -1689,19 +1695,19 @@ make_set_property! {
 // Enumerated property getter fns
 //
 
-/// Return a [`UnicodeSet`] for a value or a grouping of values of the General_Category property. See [`GeneralCategoryGroup`].
-///
-/// [`UnicodeSet`]: icu_uniset::UnicodeSet
+/// Return a [`CodePointSetData`] for a value or a grouping of values of the General_Category property. See [`GeneralCategoryGroup`].
 pub fn get_for_general_category_group(
     provider: &(impl ResourceProvider<GeneralCategoryV1Marker> + ?Sized),
     enum_val: GeneralCategoryGroup,
-) -> Result<UnicodeSet<'static>, PropertiesError> {
+) -> Result<CodePointSetData, PropertiesError> {
     let gc_map_payload = maps::get_general_category(provider)?;
-    let matching_gc_ranges = gc_map_payload
+    let trie = gc_map_payload.to_code_point_trie();
+    let matching_gc_ranges = trie
         .iter_ranges()
         .filter(|cpm_range| (1 << cpm_range.value as u32) & enum_val.0 != 0)
         .map(|cpm_range| cpm_range.range);
-    Ok(UnicodeSet::from_iter(matching_gc_ranges))
+    let set = UnicodeSet::from_iter(matching_gc_ranges);
+    Ok(CodePointSetData::from_unicode_set(set))
 }
 
 #[cfg(test)]
@@ -1750,13 +1756,14 @@ mod tests {
         let test_group = |category: GeneralCategoryGroup, subcategories: &[GeneralCategory]| {
             let category_set = sets::get_for_general_category_group(&provider, category)
                 .expect("The data should be valid");
+            let category_set = category_set.to_unicode_set();
 
             let data = maps::get_general_category(&provider).expect("The data should be valid");
             let gc = data.as_borrowed();
 
             let mut builder = UnicodeSetBuilder::new();
             for subcategory in subcategories {
-                builder.add_set(gc.get_set_for_value(*subcategory).to_unicode_set());
+                builder.add_set(&gc.get_set_for_value(*subcategory).to_unicode_set());
             }
             let combined_set = builder.build();
             println!("{:?} {:?}", category, subcategories);

@@ -18,9 +18,9 @@ use crate::sets::{CodePointSetData, ErasedSetlikeMarker};
 #[cfg(doc)]
 use crate::*;
 use core::marker::PhantomData;
-use core::ops::RangeInclusive;
-use icu_codepointtrie::{CodePointMapRange, TrieValue};
+use icu_codepointtrie::{CodePointTrie, TrieValue};
 use icu_provider::prelude::*;
+use zerofrom::ZeroFrom;
 
 /// A wrapper around code point set data, returned by property getters for
 /// unicode sets.
@@ -58,21 +58,10 @@ impl<T: TrieValue> CodePointMapData<T> {
         self.data.get().code_point_trie.get(ch)
     }
 
-    /// Returns an iterator over ranges of code points with the same value
-    pub fn iter_ranges(&self) -> impl Iterator<Item = CodePointMapRange<T>> + '_ {
-        self.data.get().code_point_trie.iter_ranges()
-    }
-
-    /// Get an iterator over all map ranges for a particular value
-    pub fn get_ranges_for_value(&self, value: T) -> impl Iterator<Item = RangeInclusive<u32>> + '_ {
-        self.data.get().code_point_trie.get_ranges_for_value(value)
-    }
-
     /// Get a [`CodePointSetData`] for all elements corresponding to a particular value
     pub fn get_set_for_value(&self, value: T) -> CodePointSetData {
         let set = self.data.get().code_point_trie.get_set_for_value(value);
-        let set = UnicodePropertyV1 { inv_list: set };
-        CodePointSetData::from_data(DataPayload::<ErasedSetlikeMarker>::from_owned(set))
+        CodePointSetData::from_unicode_set(set)
     }
 
     /// Construct a new one from loaded data
@@ -83,6 +72,27 @@ impl<T: TrieValue> CodePointMapData<T> {
         M: DataMarker<Yokeable = UnicodePropertyMapV1<'static, T>>,
     {
         Self { data: data.cast() }
+    }
+
+    /// Construct a new one an owned [`CodePointTrie`]
+    pub fn from_code_point_trie(trie: CodePointTrie<'static, T>) -> Self {
+        let set = UnicodePropertyMapV1 {
+            code_point_trie: trie,
+        };
+        CodePointMapData::from_data(DataPayload::<ErasedMaplikeMarker<T>>::from_owned(set))
+    }
+    /// Convert this type to a [`CodePointTrie`], borrowing if possible,
+    /// otherwise allocating a new [`CodePointTrie`].
+    ///
+    /// The data backing this is extensible and supports multiple implementations.
+    /// Currently it is always [`CodePointTrie`], however in the future more backends may be
+    /// added, and users may select which at data generation time.
+    ///
+    /// If using this function it is preferable to stick to [`CodePointTrie`] representations
+    /// in the data, however exceptions can be made if the performance hit is considered to
+    /// be okay.
+    pub fn to_code_point_trie(&self) -> CodePointTrie<'_, T> {
+        ZeroFrom::zero_from(&self.data.get().code_point_trie)
     }
 }
 
@@ -102,16 +112,6 @@ impl<'a, T: TrieValue> CodePointMapDataBorrowed<'a, T> {
     /// Get the value this map has associated with code point `ch`
     pub fn get_u32(&self, ch: u32) -> T {
         self.map.code_point_trie.get(ch)
-    }
-
-    /// Returns an iterator over ranges of code points with the same value
-    pub fn iter_ranges(&self) -> impl Iterator<Item = CodePointMapRange<T>> + '_ {
-        self.map.code_point_trie.iter_ranges()
-    }
-
-    /// Get an iterator over all map ranges for a particular value
-    pub fn get_ranges_for_value(&self, value: T) -> impl Iterator<Item = RangeInclusive<u32>> + '_ {
-        self.map.code_point_trie.get_ranges_for_value(value)
     }
 
     /// Get a [`CodePointSetData`] for all elements corresponding to a particular value
