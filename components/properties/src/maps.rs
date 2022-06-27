@@ -82,9 +82,7 @@ impl<T: TrieValue> CodePointMapData<T> {
     where
         M: DataMarker<Yokeable = UnicodePropertyMapV1<'static, T>>,
     {
-        Self {
-            data: data.map_project(|m, _| m),
-        }
+        Self { data: data.cast() }
     }
 }
 
