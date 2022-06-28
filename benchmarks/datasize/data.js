@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1656386764304,
+  "lastUpdate": 1656389975959,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -18863,6 +18863,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/a062a9307535788f4637bc05c37bfb5214cfda26"
         },
         "date": 1656386734797,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 2737318,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "aethanyc@gmail.com",
+            "name": "Ting-Yu Lin",
+            "username": "aethanyc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "7599633efc14cfa1ab56641cfdebc97f3e54a198",
+          "message": "Add Shane F. Carr as a segmenter crate owner (#2121)\n\nSee the proposal\r\nhttps://github.com/unicode-org/icu4x/pull/2087#discussion_r901167763",
+          "timestamp": "2022-06-27T21:17:09-07:00",
+          "tree_id": "1cbca1ac88b0c9803cd9667c3fa1ba5d1ba575c8",
+          "url": "https://github.com/unicode-org/icu4x/commit/7599633efc14cfa1ab56641cfdebc97f3e54a198"
+        },
+        "date": 1656389946626,
         "tool": "ndjson",
         "benches": [
           {
