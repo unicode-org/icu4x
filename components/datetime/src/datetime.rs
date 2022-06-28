@@ -6,7 +6,11 @@
 //! Central to this is the [`DateTimeFormat`].
 
 use crate::{
-    options::{components, length::{Bag, Date, Time}, preferences, DateTimeFormatOptions},
+    options::{
+        components,
+        length::{Date, Time},
+        preferences, DateTimeFormatOptions,
+    },
     provider::calendar::{
         DatePatternsV1Marker, DateSkeletonPatternsV1Marker, DateSymbolsV1Marker,
         TimePatternsV1Marker, TimeSymbolsV1Marker,
@@ -327,7 +331,39 @@ impl<C: CldrCalendar> TimeFormat<C> {
     }
 }
 
-pub struct DateFormat<C>(pub(super) raw::DateTimeFormat, PhantomData<C>);
+/// [`DateFormat`] is a structure of the [`icu_datetime`] component that provides date formatting only.
+/// When constructed, it uses data from the [data provider], selected [`Locale`] and provided preferences to
+/// collect all data necessary to format any date into that locale.
+///
+/// For that reason, one should think of the process of formatting a date in two steps - first, a computational
+/// heavy construction of [`DateFormat`], and then fast formatting of [`DateTimeInput`] data using the instance.
+///
+/// [`icu_datetime`]: crate
+/// [`DateTimeFormat`]: crate::datetime::DateFormat
+///
+/// # Examples
+///
+/// ```
+/// use icu::calendar::{DateTime, Gregorian};
+/// use icu::datetime::DateFormat;
+/// use icu::locid::locale;
+/// use icu_provider::inv::InvariantDataProvider;
+///
+/// let provider = InvariantDataProvider;
+///
+/// let df = DateFormat::<Gregorian>::try_new_short(locale!("en"), &provider)
+///     .expect("Failed to create DateTimeFormat instance.");
+///
+/// let datetime = DateTime::new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
+///     .expect("Failed to construct DateTime.");
+///
+/// let value = df.format_to_string(&datetime);
+/// ```
+///
+/// This model replicates that of `ICU` and `ECMA402`.
+///
+/// [data provider]: icu_provider
+pub struct DateFormat<C>(pub(super) raw::DateFormat, PhantomData<C>);
 
 impl<C: CldrCalendar> DateFormat<C> {
     /// Constructor that takes a selected [`Locale`], reference to a [data provider] and
@@ -337,29 +373,26 @@ impl<C: CldrCalendar> DateFormat<C> {
     ///
     /// ```
     /// use icu::calendar::Gregorian;
-    /// use icu::datetime::{DateTimeFormat, DateTimeFormatOptions};
+    /// use icu::datetime::DateFormat;
     /// use icu::locid::locale;
     /// use icu_provider::inv::InvariantDataProvider;
     ///
     /// let provider = InvariantDataProvider;
     ///
-    /// let options = DateTimeFormatOptions::default();
+    /// let df = DateFormat::<Gregorian>::try_new_full(locale!("en"), &provider);
     ///
-    /// let dtf = DateTimeFormat::<Gregorian>::try_new(locale!("en"), &provider, &options);
-    ///
-    /// assert_eq!(dtf.is_ok(), true);
+    /// assert_eq!(df.is_ok(), true);
     /// ```
     ///
     /// [data provider]: icu_provider
     #[inline]
-    pub fn try_new_short<T: Into<Locale>, D>(
+    pub fn try_new_full<T: Into<Locale>, D>(
         locale: T,
         data_provider: &D,
     ) -> Result<Self, DateTimeFormatError>
     where
         D: ResourceProvider<DateSymbolsV1Marker>
             + ResourceProvider<DatePatternsV1Marker>
-            + ResourceProvider<TimePatternsV1Marker>
             + ResourceProvider<DateSkeletonPatternsV1Marker>
             + ResourceProvider<DecimalSymbolsV1Marker>
             + ResourceProvider<OrdinalV1Marker>
@@ -375,9 +408,238 @@ impl<C: CldrCalendar> DateFormat<C> {
             .set(key!("ca"), C::BCP_47_IDENTIFIER);
 
         Ok(Self(
-            raw::DateTimeFormat::try_new(locale, data_provider, &DateTimeFormatOptions::from(Bag::from_date_style(Date::Short)))?,
+            raw::DateFormat::try_new(locale, data_provider, Date::Full)?,
             PhantomData,
         ))
+    }
+
+    /// Constructor that takes a selected [`Locale`], reference to a [data provider] and
+    /// a list of options, then collects all data necessary to format date and time values into the given locale.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::calendar::Gregorian;
+    /// use icu::datetime::DateFormat;
+    /// use icu::locid::locale;
+    /// use icu_provider::inv::InvariantDataProvider;
+    ///
+    /// let provider = InvariantDataProvider;
+    ///
+    /// let df = DateFormat::<Gregorian>::try_new_long(locale!("en"), &provider);
+    ///
+    /// assert_eq!(df.is_ok(), true);
+    /// ```
+    ///
+    /// [data provider]: icu_provider
+    #[inline]
+    pub fn try_new_long<T: Into<Locale>, D>(
+        locale: T,
+        data_provider: &D,
+    ) -> Result<Self, DateTimeFormatError>
+    where
+        D: ResourceProvider<DateSymbolsV1Marker>
+            + ResourceProvider<DatePatternsV1Marker>
+            + ResourceProvider<DateSkeletonPatternsV1Marker>
+            + ResourceProvider<DecimalSymbolsV1Marker>
+            + ResourceProvider<OrdinalV1Marker>
+            + ResourceProvider<WeekDataV1Marker>
+            + ?Sized,
+    {
+        let mut locale = locale.into();
+        // TODO(#419): Resolve the locale calendar with the API calendar.
+        locale
+            .extensions
+            .unicode
+            .keywords
+            .set(key!("ca"), C::BCP_47_IDENTIFIER);
+
+        Ok(Self(
+            raw::DateFormat::try_new(locale, data_provider, Date::Long)?,
+            PhantomData,
+        ))
+    }
+
+    /// Constructor that takes a selected [`Locale`], reference to a [data provider] and
+    /// a list of options, then collects all data necessary to format date and time values into the given locale.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::calendar::Gregorian;
+    /// use icu::datetime::DateFormat;
+    /// use icu::locid::locale;
+    /// use icu_provider::inv::InvariantDataProvider;
+    ///
+    /// let provider = InvariantDataProvider;
+    ///
+    /// let df = DateFormat::<Gregorian>::try_new_medium(locale!("en"), &provider);
+    ///
+    /// assert_eq!(df.is_ok(), true);
+    /// ```
+    ///
+    /// [data provider]: icu_provider
+    #[inline]
+    pub fn try_new_medium<T: Into<Locale>, D>(
+        locale: T,
+        data_provider: &D,
+    ) -> Result<Self, DateTimeFormatError>
+    where
+        D: ResourceProvider<DateSymbolsV1Marker>
+            + ResourceProvider<DatePatternsV1Marker>
+            + ResourceProvider<DateSkeletonPatternsV1Marker>
+            + ResourceProvider<DecimalSymbolsV1Marker>
+            + ResourceProvider<OrdinalV1Marker>
+            + ResourceProvider<WeekDataV1Marker>
+            + ?Sized,
+    {
+        let mut locale = locale.into();
+        // TODO(#419): Resolve the locale calendar with the API calendar.
+        locale
+            .extensions
+            .unicode
+            .keywords
+            .set(key!("ca"), C::BCP_47_IDENTIFIER);
+
+        Ok(Self(
+            raw::DateFormat::try_new(locale, data_provider, Date::Medium)?,
+            PhantomData,
+        ))
+    }
+
+    /// Constructor that takes a selected [`Locale`], reference to a [data provider] and
+    /// a list of options, then collects all data necessary to format date and time values into the given locale.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::calendar::Gregorian;
+    /// use icu::datetime::DateFormat;
+    /// use icu::locid::locale;
+    /// use icu_provider::inv::InvariantDataProvider;
+    ///
+    /// let provider = InvariantDataProvider;
+    ///
+    /// let df = DateFormat::<Gregorian>::try_new_short(locale!("en"), &provider);
+    ///
+    /// assert_eq!(df.is_ok(), true);
+    /// ```
+    ///
+    /// [data provider]: icu_provider
+    #[inline]
+    pub fn try_new_short<T: Into<Locale>, D>(
+        locale: T,
+        data_provider: &D,
+    ) -> Result<Self, DateTimeFormatError>
+    where
+        D: ResourceProvider<DateSymbolsV1Marker>
+            + ResourceProvider<DatePatternsV1Marker>
+            + ResourceProvider<DateSkeletonPatternsV1Marker>
+            + ResourceProvider<DecimalSymbolsV1Marker>
+            + ResourceProvider<OrdinalV1Marker>
+            + ResourceProvider<WeekDataV1Marker>
+            + ?Sized,
+    {
+        let mut locale = locale.into();
+        // TODO(#419): Resolve the locale calendar with the API calendar.
+        locale
+            .extensions
+            .unicode
+            .keywords
+            .set(key!("ca"), C::BCP_47_IDENTIFIER);
+
+        Ok(Self(
+            raw::DateFormat::try_new(locale, data_provider, Date::Short)?,
+            PhantomData,
+        ))
+    }
+
+    /// Takes a [`DateTimeInput`] implementer and returns an instance of a [`FormattedDateTime`]
+    /// that contains all information necessary to display a formatted date and operate on it.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::calendar::{DateTime, Gregorian};
+    /// use icu::datetime::DateFormat;
+    /// use icu_provider::inv::InvariantDataProvider;
+    /// # let locale = icu::locid::locale!("en");
+    /// # let provider = InvariantDataProvider;
+    /// let df = DateFormat::<Gregorian>::try_new_short(locale, &provider)
+    ///     .expect("Failed to create TimeFormat instance.");
+    ///
+    /// let datetime = DateTime::new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
+    ///     .expect("Failed to construct DateTime.");
+    ///
+    /// let formatted = df.format(&datetime);
+    ///
+    /// let _ = format!("Time: {}", formatted);
+    /// ```
+    ///
+    /// At the moment, there's little value in using that over one of the other `format` methods,
+    /// but [`FormattedDateTime`] will grow with methods for iterating over fields, extracting information
+    /// about formatted date and so on.
+    #[inline]
+    pub fn format<'l, T>(&'l self, value: &'l T) -> FormattedDateTime<'l, T>
+    where
+        T: DateTimeInput<Calendar = C>,
+    {
+        self.0.format(value)
+    }
+
+    /// Takes a mutable reference to anything that implements [`Write`](std::fmt::Write) trait
+    /// and a [`DateTimeInput`] implementer and populates the buffer with a formatted value.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::calendar::{DateTime, Gregorian};
+    /// use icu::datetime::DateFormat;
+    /// use icu_provider::inv::InvariantDataProvider;
+    /// # let locale = icu::locid::locale!("en");
+    /// # let provider = InvariantDataProvider;
+    /// let df = DateFormat::<Gregorian>::try_new_short(locale, &provider)
+    ///     .expect("Failed to create DateTimeFormat instance.");
+    ///
+    /// let datetime = DateTime::new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
+    ///     .expect("Failed to construct DateTime.");
+    ///
+    /// let mut buffer = String::new();
+    /// df.format_to_write(&mut buffer, &datetime)
+    ///     .expect("Failed to write to a buffer.");
+    ///
+    /// let _ = format!("Time: {}", buffer);
+    /// ```
+    #[inline]
+    pub fn format_to_write(
+        &self,
+        w: &mut impl core::fmt::Write,
+        value: &impl DateTimeInput<Calendar = C>,
+    ) -> core::fmt::Result {
+        self.0.format_to_write(w, value)
+    }
+
+    /// Takes a [`DateTimeInput`] implementer and returns it formatted as a string.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::calendar::{DateTime, Gregorian};
+    /// use icu::datetime::DateFormat;
+    /// use icu_provider::inv::InvariantDataProvider;
+    /// # let locale = icu::locid::locale!("en");
+    /// # let provider = InvariantDataProvider;
+    /// let df = DateFormat::<Gregorian>::try_new_short(locale, &provider)
+    ///     .expect("Failed to create DateTimeFormat instance.");
+    ///
+    /// let datetime = DateTime::new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
+    ///     .expect("Failed to construct DateTime.");
+    ///
+    /// let _ = df.format_to_string(&datetime);
+    /// ```
+    #[inline]
+    pub fn format_to_string(&self, value: &impl DateTimeInput<Calendar = C>) -> String {
+        self.0.format_to_string(value)
     }
 }
 
@@ -419,7 +681,6 @@ impl<C: CldrCalendar> DateFormat<C> {
 pub struct DateTimeFormat<C>(pub(super) raw::DateTimeFormat, PhantomData<C>);
 
 impl<C: CldrCalendar> DateTimeFormat<C> {
-
     /// Constructor that takes a selected [`Locale`], reference to a [data provider] and
     /// a list of options, then collects all data necessary to format date and time values into the given locale.
     ///
