@@ -39,7 +39,7 @@ zerofrom = { version = "0.1.0", path = "../zerofrom", features = ["derive"] }
 zerovec = { version = "0.7", path = "../zerovec", features = ["yoke"] }
 
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }
-databake = { version = "0.4", path = "../../utils/databake", features = ["derive"], optional = true }
+databake = { version = "0.1.0", path = "../../utils/databake", features = ["derive"], optional = true }
 
 [dev-dependencies]
 postcard = { version = "1.0.0-alpha.4", features = ["alloc"] }

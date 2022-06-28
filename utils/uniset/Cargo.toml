@@ -38,7 +38,7 @@ displaydoc = { version = "0.2.3", default-features = false }
 yoke = { version = "0.6.0", path = "../yoke", features = ["derive"] }
 zerofrom = { version = "0.1.0", path = "../zerofrom", features = ["derive"] }
 zerovec = { version = "0.7", path = "../zerovec", features = ["yoke"] }
-databake = { version = "0.4", path = "../../utils/databake", features = ["derive"], optional = true }
+databake = { version = "0.1.0", path = "../../utils/databake", features = ["derive"], optional = true }
 
 [dev-dependencies]
 criterion = "0.3.3"
