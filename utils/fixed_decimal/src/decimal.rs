@@ -422,56 +422,6 @@ impl FixedDecimal {
         }
     }
 
-    /// Change the value from negative to positive or from positive to negative, modifying self.
-    /// Negative zero is supported.
-    /// Negating a number with negative sign results in one with no sign (rather than an explicit positive sign).
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use fixed_decimal::FixedDecimal;
-    ///
-    /// let mut dec = FixedDecimal::from(42);
-    /// assert_eq!("42", dec.to_string());
-    ///
-    /// dec.negate();
-    /// assert_eq!("-42", dec.to_string());
-    ///
-    /// dec.negate();
-    /// assert_eq!("42", dec.to_string());
-    ///
-    /// // Negative zero example
-    /// let zero = FixedDecimal::from(0);
-    /// let mut negative_zero = FixedDecimal::from(0);
-    /// negative_zero.negate();
-    ///
-    /// assert_eq!("0", zero.to_string());
-    /// assert_eq!("-0", negative_zero.to_string());
-    /// assert_ne!(zero, negative_zero);
-    /// ```
-    pub fn negate(&mut self) {
-        self.sign = if self.sign == Sign::Negative {
-            Sign::None
-        } else {
-            Sign::Negative
-        };
-    }
-
-    /// Change the value from negative to positive or from positive to negative, consuming self
-    /// and returning a new object.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use fixed_decimal::FixedDecimal;
-    ///
-    /// assert_eq!(FixedDecimal::from(-42), FixedDecimal::from(42).negated());
-    /// ```
-    pub fn negated(mut self) -> Self {
-        self.negate();
-        self
-    }
-
     /// Change the sign to the one given.
     ///
     /// # Examples
@@ -1586,12 +1536,13 @@ impl FixedDecimal {
     /// ```
     /// use fixed_decimal::FixedDecimal;
     /// use fixed_decimal::Signum;
+    /// # use std::str::FromStr;
     ///
     /// assert_eq!(Signum::AboveZero, FixedDecimal::from(42).signum());
     /// assert_eq!(Signum::PositiveZero, FixedDecimal::from(0).signum());
     /// assert_eq!(
     ///     Signum::NegativeZero,
-    ///     FixedDecimal::from(0).negated().signum()
+    ///     FixedDecimal::from_str("-0").unwrap().signum()
     /// );
     /// assert_eq!(Signum::BelowZero, FixedDecimal::from(-42).signum());
     /// ```
@@ -2709,7 +2660,7 @@ fn test_signum_zero() {
             expected_signum: Signum::PositiveZero,
         },
         TestCase {
-            fixed_decimal: FixedDecimal::from(0).negated(),
+            fixed_decimal: FixedDecimal::from_str("-0").unwrap(),
             expected_signum: Signum::NegativeZero,
         },
         TestCase {

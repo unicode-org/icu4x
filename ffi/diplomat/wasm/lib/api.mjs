@@ -711,8 +711,8 @@ export class ICU4XFixedDecimal {
     return diplomat_out;
   }
 
-  negate() {
-    const diplomat_out = wasm.ICU4XFixedDecimal_negate(this.underlying);
+  set_sign(sign) {
+    const diplomat_out = wasm.ICU4XFixedDecimal_set_sign(this.underlying, ICU4XFixedDecimalSign_js_to_rust[sign]);
   }
 
   pad_left(position) {
@@ -869,6 +869,17 @@ const ICU4XFixedDecimalGroupingStrategy_rust_to_js = {
   1: "Never",
   2: "Always",
   3: "Min2",
+};
+
+const ICU4XFixedDecimalSign_js_to_rust = {
+  "None": 0,
+  "Negative": 1,
+  "Positive": 2,
+};
+const ICU4XFixedDecimalSign_rust_to_js = {
+  0: "None",
+  1: "Negative",
+  2: "Positive",
 };
 
 const ICU4XFixedDecimalSignDisplay_js_to_rust = {

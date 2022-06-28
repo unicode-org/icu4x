@@ -2,7 +2,7 @@ import { ICU4XFixedDecimal, ICU4XDataProvider, ICU4XLocale, ICU4XFixedDecimalFor
 
 const decimal = ICU4XFixedDecimal.create(1234);
 decimal.multiply_pow10(-2);
-decimal.negate();
+decimal.set_sign("Negative");
 console.log(decimal.to_string());
 
 const dataProvider = ICU4XDataProvider.create_test().provider;

@@ -12,6 +12,7 @@ extern "C" {
 
 typedef struct ICU4XFixedDecimal ICU4XFixedDecimal;
 #include "diplomat_result_box_ICU4XFixedDecimal_ICU4XError.h"
+#include "ICU4XFixedDecimalSign.h"
 
 ICU4XFixedDecimal* ICU4XFixedDecimal_create(int32_t v);
 
@@ -25,7 +26,7 @@ diplomat_result_box_ICU4XFixedDecimal_ICU4XError ICU4XFixedDecimal_create_fromst
 
 bool ICU4XFixedDecimal_multiply_pow10(ICU4XFixedDecimal* self, int16_t power);
 
-void ICU4XFixedDecimal_negate(ICU4XFixedDecimal* self);
+void ICU4XFixedDecimal_set_sign(ICU4XFixedDecimal* self, ICU4XFixedDecimalSign sign);
 
 void ICU4XFixedDecimal_pad_left(ICU4XFixedDecimal* self, int16_t position);
 
