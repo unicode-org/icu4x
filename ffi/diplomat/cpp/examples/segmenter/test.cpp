@@ -3,7 +3,10 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 #include "../../include/ICU4XDataProvider.hpp"
+#include "../../include/ICU4XGraphemeClusterBreakSegmenter.hpp"
 #include "../../include/ICU4XLineBreakSegmenter.hpp"
+#include "../../include/ICU4XSentenceBreakSegmenter.hpp"
+#include "../../include/ICU4XWordBreakSegmenter.hpp"
 
 #include <iostream>
 #include <string_view>
@@ -48,6 +51,42 @@ void test_line(const std::string_view& str) {
     iterate_breakpoints(iterator);
 }
 
+void test_grapheme(const std::string_view& str) {
+    const auto provider = ICU4XDataProvider::create_test();
+    const auto segmenter = ICU4XWordBreakSegmenter::try_new(provider).ok().value();
+    cout << "Finding grapheme cluster breakpoints in string:" << endl
+         << str << endl;
+    print_ruler(str.size());
+
+    cout << "Grapheme cluster breakpoints:";
+    auto iterator = segmenter.segment_utf8(str);
+    iterate_breakpoints(iterator);
+}
+
+void test_word(const std::string_view& str) {
+    const auto provider = ICU4XDataProvider::create_test();
+    const auto segmenter = ICU4XGraphemeClusterBreakSegmenter::try_new(provider).ok().value();
+    cout << "Finding word breakpoints in string:" << endl
+         << str << endl;
+    print_ruler(str.size());
+
+    cout << "Word breakpoints:";
+    auto iterator = segmenter.segment_utf8(str);
+    iterate_breakpoints(iterator);
+}
+
+void test_sentence(const std::string_view& str) {
+    const auto provider = ICU4XDataProvider::create_test();
+    const auto segmenter = ICU4XSentenceBreakSegmenter::try_new(provider).ok().value();
+    cout << "Finding sentence breakpoints in string:" << endl
+         << str << endl;
+    print_ruler(str.size());
+
+    cout << "Sentence breakpoints:";
+    auto iterator = segmenter.segment_utf8(str);
+    iterate_breakpoints(iterator);
+}
+
 int main(int argc, char* argv[]) {
     std::string_view str;
     if (argc >= 2) {
@@ -59,5 +98,13 @@ int main(int argc, char* argv[]) {
     test_line(str);
     cout << endl;
 
+    test_grapheme(str);
+    cout << endl;
+
+    test_word(str);
+    cout << endl;
+
+    test_sentence(str);
+    cout << endl;
     return 0;
 }
