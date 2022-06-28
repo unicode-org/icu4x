@@ -2,16 +2,53 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-#include "../../include/ICU4XLineBreakSegmenter.hpp"
 #include "../../include/ICU4XDataProvider.hpp"
+#include "../../include/ICU4XLineBreakSegmenter.hpp"
 
 #include <iostream>
 #include <string_view>
 
-int main(int argc, char* argv[]) {
-    ICU4XDataProvider provider = ICU4XDataProvider::create_test();
-    ICU4XLineBreakSegmenter segmenter = ICU4XLineBreakSegmenter::try_new(provider).ok().value();
+using std::cout;
+using std::endl;
 
+void print_ruler(size_t str_len) {
+    for (size_t i = 0; i < str_len; i++) {
+        if (i % 10 == 0) {
+            cout << "0";
+        } else if (i % 5 == 0) {
+            cout << "5";
+        } else {
+            cout << ".";
+        }
+    }
+    cout << endl;
+}
+
+template <typename Iterator>
+void iterate_breakpoints(Iterator& iterator) {
+    while (true) {
+        int32_t breakpoint = iterator.next();
+        if (breakpoint == -1) {
+            break;
+        }
+        cout << " " << breakpoint;
+    }
+    cout << endl;
+}
+
+void test_line(const std::string_view& str) {
+    const auto provider = ICU4XDataProvider::create_test();
+    const auto segmenter = ICU4XLineBreakSegmenter::try_new(provider).ok().value();
+    cout << "Finding line breakpoints in string:" << endl
+         << str << endl;
+    print_ruler(str.size());
+
+    cout << "Line breakpoints:";
+    auto iterator = segmenter.segment_utf8(str);
+    iterate_breakpoints(iterator);
+}
+
+int main(int argc, char* argv[]) {
     std::string_view str;
     if (argc >= 2) {
         str = argv[1];
@@ -19,29 +56,8 @@ int main(int argc, char* argv[]) {
         str = "The quick brown fox jumps over the lazy dog.";
     }
 
-    std::cout << "Segmenting string:" << std::endl << str << std::endl;
-    for (size_t i=0; i<str.size(); i++) {
-        if (i % 10 == 0) {
-            std::cout << "0";
-        } else if (i % 5 == 0) {
-            std::cout << "5";
-        } else {
-            std::cout << ".";
-        }
-    }
-    std::cout << std::endl;
-
-    ICU4XLineBreakIteratorUtf8 iterator = segmenter.segment_utf8(str);
-
-    std::cout << "Breakpoints:";
-    while (true) {
-        int32_t breakpoint = iterator.next();
-        if (breakpoint == -1) {
-            break;
-        }
-        std::cout << " " << breakpoint;
-    }
-    std::cout << std::endl;
+    test_line(str);
+    cout << endl;
 
     return 0;
 }
