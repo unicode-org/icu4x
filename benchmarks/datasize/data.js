@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1656377472310,
+  "lastUpdate": 1656378840484,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -18803,6 +18803,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/252deb371a03409cf00f68712ebf86145f79aac8"
         },
         "date": 1656377443148,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 2737318,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "f62d39c412b4f63a618eeff2ee0fcc0cfccef8c8",
+          "message": "Use get_by in BlobDataProvider lookup function (#2033)",
+          "timestamp": "2022-06-27T18:11:33-07:00",
+          "tree_id": "d559068971629063e8baecf66c9f97c9391a2d42",
+          "url": "https://github.com/unicode-org/icu4x/commit/f62d39c412b4f63a618eeff2ee0fcc0cfccef8c8"
+        },
+        "date": 1656378813274,
         "tool": "ndjson",
         "benches": [
           {
