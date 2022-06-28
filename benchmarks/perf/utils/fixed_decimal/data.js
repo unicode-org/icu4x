@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1656364264988,
+  "lastUpdate": 1656375898663,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -34108,6 +34108,66 @@ window.BENCHMARK_DATA = {
           {
             "name": "from_string/1000000001",
             "value": 52,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "m_kato@ga2.so-net.ne.jp",
+            "name": "Makoto Kato",
+            "username": "makotokato"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "6dd25ceadde72325e7dd72f8f06eab75b180492a",
+          "message": "Add Burmese dictionary for test (#1897)\n\n* Add Burmese dictionary for test\r\n\r\nWhen using Burmese dictionary from ICU4C simply, dictionary segmenter cannot\r\nhandle correct segment. We have to consider Extend and SpacingMark of grapheme.\r\n\r\n* Use Peekable instead of clone().",
+          "timestamp": "2022-06-28T09:12:14+09:00",
+          "tree_id": "c9b5ddc19a654e52f475192d942128bee602b8df",
+          "url": "https://github.com/unicode-org/icu4x/commit/6dd25ceadde72325e7dd72f8f06eab75b180492a"
+        },
+        "date": 1656375872333,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 109918,
+            "range": "± 540",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 23835,
+            "range": "± 238",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 61541,
+            "range": "± 334",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 185,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 76,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 78,
             "range": "± 0",
             "unit": "ns/iter"
           }
