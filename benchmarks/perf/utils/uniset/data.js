@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1656390503734,
+  "lastUpdate": 1656429753855,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -34312,6 +34312,60 @@ window.BENCHMARK_DATA = {
           {
             "name": "uniset/contains_range/worst",
             "value": 3,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "93ae865ce5365944f1869e4838866572d87a1953",
+          "message": "Set databake version to 0.1.0 for publishing (#2126)\n\n* Unbump databake ver\r\n\r\n* Autoreplace databake deps\r\n\r\n* straggling fixes\r\n\r\n* lockfile",
+          "timestamp": "2022-06-28T15:10:49Z",
+          "tree_id": "a12a7c5dcd6f12f7aa5d9e00dd9a3de8d9192a1b",
+          "url": "https://github.com/unicode-org/icu4x/commit/93ae865ce5365944f1869e4838866572d87a1953"
+        },
+        "date": 1656429726828,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 44910571,
+            "range": "± 1803432",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/worst",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/worst",
+            "value": 2,
             "range": "± 0",
             "unit": "ns/iter"
           }
