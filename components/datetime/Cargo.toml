@@ -46,7 +46,7 @@ serde-tuple-vec-map = { version = "1.0", optional = true }
 smallvec = "1.6"
 displaydoc = { version = "0.2.3", default-features = false }
 either = { version = "1.6.1", default-features = false }
-databake = { path = "../../utils/databake", optional = true, features = ["derive"]}
+databake = { version = "0.1.0", path = "../../utils/databake", optional = true, features = ["derive"]}
 fixed_decimal = { version = "0.3", path = "../../utils/fixed_decimal" }
 
 [dev-dependencies]

@@ -31,7 +31,7 @@ icu_uniset = { version = "0.5", path = "../../utils/uniset" }
 yoke = { version = "0.6.0", path = "../../utils/yoke", features = ["derive"] }
 zerovec = { version = "0.7", path = "../../utils/zerovec", features = ["yoke"] }
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }
-databake = { path = "../../utils/databake", optional = true, features = ["derive"]}
+databake = { version = "0.1.0", path = "../../utils/databake", optional = true, features = ["derive"]}
 
 [lib]
 path = "src/lib.rs"
