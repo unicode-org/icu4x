@@ -324,8 +324,8 @@ impl Ord for FieldSymbol {
 }
 
 macro_rules! field_type {
-    ($i:ident; { $($key:expr => $val:ident = $idx:expr,)* }; $length_type:ident; $ule_name:ident) => (
-        field_type!($i; {$($key => $val = $idx,)*}; $ule_name);
+    ($(#[$enum_attr:meta])* $i:ident; { $( $(#[$variant_attr:meta])* $key:literal => $val:ident = $idx:expr,)* }; $length_type:ident; $ule_name:ident) => (
+        field_type!($(#[$enum_attr])* $i; {$( $(#[$variant_attr])* $key => $val = $idx,)*}; $ule_name);
 
         impl LengthType for $i {
             fn get_length_type(&self, _length: FieldLength) -> TextOrNumeric {
@@ -333,7 +333,7 @@ macro_rules! field_type {
             }
         }
     );
-    ($i:ident; { $($key:expr => $val:ident = $idx:expr,)* }; $ule_name:ident) => (
+    ($(#[$enum_attr:meta])* $i:ident; { $( $(#[$variant_attr:meta])* $key:literal => $val:ident = $idx:expr,)* }; $ule_name:ident) => (
         #[derive(Debug, Eq, PartialEq, Ord, PartialOrd, Clone, Copy, yoke::Yokeable, zerofrom::ZeroFrom)]
         // FIXME: This should be replaced with a custom derive.
         // See: https://github.com/unicode-org/icu4x/issues/1044
@@ -347,8 +347,9 @@ macro_rules! field_type {
         #[repr(u8)]
         #[zerovec::make_ule($ule_name)]
         #[allow(clippy::exhaustive_enums)] // used in data struct
+        $(#[$enum_attr])*
         pub enum $i {
-            $($val = $idx, )*
+            $($(#[$variant_attr])* $val = $idx, )*
         }
 
         impl $i {
