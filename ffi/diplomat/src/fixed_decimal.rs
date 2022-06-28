@@ -18,6 +18,7 @@ pub mod ffi {
     pub struct ICU4XFixedDecimal(pub FixedDecimal);
 
     /// The sign of a FixedDecimal, as shown in formatting.
+    #[diplomat::rust_link(fixed_decimal::decimal::Sign, Enum)]
     pub enum ICU4XFixedDecimalSign {
         /// No sign (implicitly positive, e.g., 1729).
         None,
@@ -93,7 +94,7 @@ pub mod ffi {
         }
 
         /// Set the sign of the [`ICU4XFixedDecimal`].
-        #[diplomat::rust_link(fixed_decimal::decimal::FixedDecimal::negate, FnInStruct)]
+        #[diplomat::rust_link(fixed_decimal::decimal::FixedDecimal::set_sign, FnInStruct)]
         pub fn set_sign(&mut self, sign: ICU4XFixedDecimalSign) {
             self.0.set_sign(sign.into())
         }

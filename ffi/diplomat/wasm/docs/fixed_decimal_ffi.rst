@@ -38,7 +38,7 @@
     .. js:function:: set_sign(sign)
 
         Set the sign of the :js:class:`ICU4XFixedDecimal`.
-        See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.negate>`__ for more information.
+        See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.set_sign>`__ for more information.
 
     .. js:function:: pad_left(position)
 
@@ -63,3 +63,4 @@
 .. js:class:: ICU4XFixedDecimalSign
 
     The sign of a FixedDecimal, as shown in formatting.
+    See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/enum.Sign.html>`__ for more information.
