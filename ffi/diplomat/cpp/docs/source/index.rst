@@ -16,7 +16,10 @@ Documentation
    properties_maps_ffi
    properties_sets_ffi
    provider_ffi
+   segmenter_grapheme_ffi
    segmenter_line_ffi
+   segmenter_sentence_ffi
+   segmenter_word_ffi
 
 Indices and tables
 ==================
