@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1656429217084,
+  "lastUpdate": 1656432066925,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -18923,6 +18923,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/93ae865ce5365944f1869e4838866572d87a1953"
         },
         "date": 1656429184794,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 2737318,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "elango@unicode.org",
+            "name": "Elango",
+            "username": "echeran"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "16f5736bfb53b4125059006150bb5a60ca7f76df",
+          "message": "Enable missing docs lint in decimal component (#2125)",
+          "timestamp": "2022-06-28T15:55:31Z",
+          "tree_id": "ea322b534cfd5260c6708afc106ed83bbc9e1024",
+          "url": "https://github.com/unicode-org/icu4x/commit/16f5736bfb53b4125059006150bb5a60ca7f76df"
+        },
+        "date": 1656432035125,
         "tool": "ndjson",
         "benches": [
           {
