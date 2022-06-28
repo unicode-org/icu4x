@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1656378840484,
+  "lastUpdate": 1656386764304,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -18833,6 +18833,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/f62d39c412b4f63a618eeff2ee0fcc0cfccef8c8"
         },
         "date": 1656378813274,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 2737318,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "egg.robin.leroy@gmail.com",
+            "name": "Robin Leroy",
+            "username": "eggrobin"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "a062a9307535788f4637bc05c37bfb5214cfda26",
+          "message": "Switch FixedDecimal to a trivaluate sign (#2025)",
+          "timestamp": "2022-06-27T22:23:34-05:00",
+          "tree_id": "b446f79e3a9bf1f1b0af50e1166d9e477a53bf04",
+          "url": "https://github.com/unicode-org/icu4x/commit/a062a9307535788f4637bc05c37bfb5214cfda26"
+        },
+        "date": 1656386734797,
         "tool": "ndjson",
         "benches": [
           {
