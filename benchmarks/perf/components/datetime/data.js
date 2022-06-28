@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1656439644926,
+  "lastUpdate": 1656442858646,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -44423,6 +44423,102 @@ window.BENCHMARK_DATA = {
             "name": "pattern/parse",
             "value": 5177,
             "range": "± 43",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "2568d2a7b392e2820579ae091bac54c50f99fbae",
+          "message": "Better properties return values (#2112)\n\n* Add CodePointSetData\r\n\r\n* find and replace tests\r\n\r\n* Manual test fixes\r\n\r\n* Type erase it\r\n\r\n* Add CodePointMapData\r\n\r\n* find-and-replace crate::\r\n\r\n* fix cargo check\r\n\r\n* find-and-replace tests\r\n\r\n* find-and-replace doctests\r\n\r\n* fix tests\r\n\r\n* fix bidi\r\n\r\n* fix props test\r\n\r\n* more fixes\r\n\r\n* Fix FFI\r\n\r\n* Fixup normalizer & collator\r\n\r\n* Update datagen\r\n\r\n* readme\r\n\r\n* clip\r\n\r\n* fix tests\r\n\r\n* rm unused result type\r\n\r\n* cast\r\n\r\n* Add to_unicode_set()\r\n\r\n* update test\r\n\r\n* Add doctests for sets\r\n\r\n* Remove range-specific code, add conversions to/from unicode sets / CPTs instead\r\n\r\n* more examples\r\n\r\n* fixes\r\n\r\n* fix\r\n\r\n* add more doctest",
+          "timestamp": "2022-06-28T18:46:51Z",
+          "tree_id": "81ed7853fee4ccafc83c53f16323c1662e23eeeb",
+          "url": "https://github.com/unicode-org/icu4x/commit/2568d2a7b392e2820579ae091bac54c50f99fbae"
+        },
+        "date": 1656442831217,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 88778,
+            "range": "± 758",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 859861,
+            "range": "± 2007",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 185296,
+            "range": "± 1243",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/DateTimeFormat/format_to_write",
+            "value": 85163,
+            "range": "± 139",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/DateTimeFormat/format_to_string",
+            "value": 93820,
+            "range": "± 508",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/format",
+            "value": 89036,
+            "range": "± 1243",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/to_string",
+            "value": 96296,
+            "range": "± 153",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/ZonedDateTimeFormat/format_to_write",
+            "value": 180803,
+            "range": "± 351",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/ZonedDateTimeFormat/format_to_string",
+            "value": 191761,
+            "range": "± 381",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/format",
+            "value": 186358,
+            "range": "± 421",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/to_string",
+            "value": 200761,
+            "range": "± 1635",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "pattern/parse",
+            "value": 5183,
+            "range": "± 29",
             "unit": "ns/iter"
           }
         ]
