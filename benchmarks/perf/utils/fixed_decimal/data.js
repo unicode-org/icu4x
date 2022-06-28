@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1656375898663,
+  "lastUpdate": 1656378090446,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -34168,6 +34168,66 @@ window.BENCHMARK_DATA = {
           {
             "name": "from_string/1000000001",
             "value": 78,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "252deb371a03409cf00f68712ebf86145f79aac8",
+          "message": "Add Lao and Khmer LSTM models (#2120)",
+          "timestamp": "2022-06-27T17:48:45-07:00",
+          "tree_id": "c928f3eea9de6f0ddb0d57a0e46f4a2e460d231d",
+          "url": "https://github.com/unicode-org/icu4x/commit/252deb371a03409cf00f68712ebf86145f79aac8"
+        },
+        "date": 1656378061860,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 104821,
+            "range": "± 424",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 21305,
+            "range": "± 106",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 65551,
+            "range": "± 286",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 166,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 66,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 74,
             "range": "± 0",
             "unit": "ns/iter"
           }
