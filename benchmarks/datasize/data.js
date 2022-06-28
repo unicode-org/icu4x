@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1656389975959,
+  "lastUpdate": 1656429217084,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -18893,6 +18893,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/7599633efc14cfa1ab56641cfdebc97f3e54a198"
         },
         "date": 1656389946626,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 2737318,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "93ae865ce5365944f1869e4838866572d87a1953",
+          "message": "Set databake version to 0.1.0 for publishing (#2126)\n\n* Unbump databake ver\r\n\r\n* Autoreplace databake deps\r\n\r\n* straggling fixes\r\n\r\n* lockfile",
+          "timestamp": "2022-06-28T15:10:49Z",
+          "tree_id": "a12a7c5dcd6f12f7aa5d9e00dd9a3de8d9192a1b",
+          "url": "https://github.com/unicode-org/icu4x/commit/93ae865ce5365944f1869e4838866572d87a1953"
+        },
+        "date": 1656429184794,
         "tool": "ndjson",
         "benches": [
           {
