@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1656364161955,
+  "lastUpdate": 1656375790019,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -34019,6 +34019,60 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 44963438,
             "range": "± 61915",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/worst",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/worst",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "m_kato@ga2.so-net.ne.jp",
+            "name": "Makoto Kato",
+            "username": "makotokato"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "6dd25ceadde72325e7dd72f8f06eab75b180492a",
+          "message": "Add Burmese dictionary for test (#1897)\n\n* Add Burmese dictionary for test\r\n\r\nWhen using Burmese dictionary from ICU4C simply, dictionary segmenter cannot\r\nhandle correct segment. We have to consider Extend and SpacingMark of grapheme.\r\n\r\n* Use Peekable instead of clone().",
+          "timestamp": "2022-06-28T09:12:14+09:00",
+          "tree_id": "c9b5ddc19a654e52f475192d942128bee602b8df",
+          "url": "https://github.com/unicode-org/icu4x/commit/6dd25ceadde72325e7dd72f8f06eab75b180492a"
+        },
+        "date": 1656375762815,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 44976960,
+            "range": "± 524904",
             "unit": "ns/iter"
           },
           {
