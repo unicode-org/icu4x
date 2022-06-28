@@ -9,13 +9,6 @@ use core::ops::RangeInclusive;
 use core::str::FromStr;
 use tinystr::TinyAsciiStr;
 
-#[derive(Debug, PartialEq, Eq, Clone, Hash, PartialOrd, Ord)]
-#[allow(missing_docs)] // TODO(#1028) - Add missing docs.
-pub struct Value(Vec<TinyAsciiStr<{ *TYPE_LENGTH.end() }>>);
-
-const TYPE_LENGTH: RangeInclusive<usize> = 3..=8;
-const TRUE_TVALUE: TinyAsciiStr<8> = tinystr::tinystr!(8, "true");
-
 /// A value used in a list of [`Fields`](super::Fields).
 ///
 /// The value has to be a sequence of one or more alphanumerical strings
@@ -35,6 +28,12 @@ const TRUE_TVALUE: TinyAsciiStr<8> = tinystr::tinystr!(8, "true");
 /// assert_eq!(&value1.to_string(), "hybrid");
 /// assert_eq!(&value2.to_string(), "hybrid-foobar");
 /// ```
+#[derive(Debug, PartialEq, Eq, Clone, Hash, PartialOrd, Ord)]
+pub struct Value(Vec<TinyAsciiStr<{ *TYPE_LENGTH.end() }>>);
+
+const TYPE_LENGTH: RangeInclusive<usize> = 3..=8;
+const TRUE_TVALUE: TinyAsciiStr<8> = tinystr::tinystr!(8, "true");
+
 impl Value {
     /// A constructor which takes a utf8 slice, parses it and
     /// produces a well-formed [`Value`].

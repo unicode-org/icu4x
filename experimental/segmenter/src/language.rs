@@ -11,13 +11,18 @@ use core::str::Chars;
 pub enum Language {
     Burmese,
     Thai,
+    Khmer,
+    Lao,
     Unknown,
 }
 
 pub fn get_language(codepoint: u32) -> Language {
     match codepoint {
         0xe01..=0xe7f => Language::Thai,
+        0x0E80..=0x0EFF => Language::Lao,
         0x1000..=0x109f => Language::Burmese,
+        0x1780..=0x17FF => Language::Khmer,
+        0x19E0..=0x19FF => Language::Khmer,
         0xa9e0..=0xa9ff => Language::Burmese,
         0xaa60..=0xaa7f => Language::Burmese,
 
