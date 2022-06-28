@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1656439484879,
+  "lastUpdate": 1656442699087,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -34474,6 +34474,60 @@ window.BENCHMARK_DATA = {
           {
             "name": "uniset/contains_range/worst",
             "value": 3,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "2568d2a7b392e2820579ae091bac54c50f99fbae",
+          "message": "Better properties return values (#2112)\n\n* Add CodePointSetData\r\n\r\n* find and replace tests\r\n\r\n* Manual test fixes\r\n\r\n* Type erase it\r\n\r\n* Add CodePointMapData\r\n\r\n* find-and-replace crate::\r\n\r\n* fix cargo check\r\n\r\n* find-and-replace tests\r\n\r\n* find-and-replace doctests\r\n\r\n* fix tests\r\n\r\n* fix bidi\r\n\r\n* fix props test\r\n\r\n* more fixes\r\n\r\n* Fix FFI\r\n\r\n* Fixup normalizer & collator\r\n\r\n* Update datagen\r\n\r\n* readme\r\n\r\n* clip\r\n\r\n* fix tests\r\n\r\n* rm unused result type\r\n\r\n* cast\r\n\r\n* Add to_unicode_set()\r\n\r\n* update test\r\n\r\n* Add doctests for sets\r\n\r\n* Remove range-specific code, add conversions to/from unicode sets / CPTs instead\r\n\r\n* more examples\r\n\r\n* fixes\r\n\r\n* fix\r\n\r\n* add more doctest",
+          "timestamp": "2022-06-28T18:46:51Z",
+          "tree_id": "81ed7853fee4ccafc83c53f16323c1662e23eeeb",
+          "url": "https://github.com/unicode-org/icu4x/commit/2568d2a7b392e2820579ae091bac54c50f99fbae"
+        },
+        "date": 1656442673756,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 39386050,
+            "range": "± 136419",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/worst",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/worst",
+            "value": 2,
             "range": "± 0",
             "unit": "ns/iter"
           }
