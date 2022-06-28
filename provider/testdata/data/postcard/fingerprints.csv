@@ -1020,6 +1020,7 @@ segmenter/dictionary@1, ja, 2003393B, e19e4aadb14095e730f66cb984b154ea5cecdcd6e6
 segmenter/dictionary@1, th, 224981B, 7542b8d40e8b27fbb485447575b1bf22fd0d48879f5521bb53c0c161846677e8
 segmenter/grapheme@1, und, 9021B, 286bfca3f9a79c60c10ad6a31a224ae5887f458f729e6b27da759b44dddfe3ff
 segmenter/line@1, und, 18634B, fa62ac7cf85336379134624daf19196331e3851cc1a6b24020f8ee7d21aeb60c
+segmenter/lstm@1, th, 72234B, 90efb9ee34a1611dfb141dd83410fbf16715ad36d1ddbc55f9497d0798a1f2c8
 segmenter/sentence@1, und, 14101B, 111e8b367eda63cdb1ffba0539600d0d6e56b152923ea32eb71e718515c59a95
 segmenter/word@1, und, 13578B, abdeca21582c56b1795bea75faa53c4c809d1f1c6c812b0e869877fffb871c85
 time_zone/exemplar_cities@1, ar, 11167B, ec1f3523714676c8682961f94aa31f0c3fa7cf360c84ebabc8c4c5ba50afe328
