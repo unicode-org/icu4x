@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1656375951631,
+  "lastUpdate": 1656378144376,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -43751,6 +43751,102 @@ window.BENCHMARK_DATA = {
             "name": "pattern/parse",
             "value": 5118,
             "range": "± 19",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "252deb371a03409cf00f68712ebf86145f79aac8",
+          "message": "Add Lao and Khmer LSTM models (#2120)",
+          "timestamp": "2022-06-27T17:48:45-07:00",
+          "tree_id": "c928f3eea9de6f0ddb0d57a0e46f4a2e460d231d",
+          "url": "https://github.com/unicode-org/icu4x/commit/252deb371a03409cf00f68712ebf86145f79aac8"
+        },
+        "date": 1656378114332,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 108381,
+            "range": "± 8547",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 923452,
+            "range": "± 39077",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 188640,
+            "range": "± 12519",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/DateTimeFormat/format_to_write",
+            "value": 92099,
+            "range": "± 4775",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/DateTimeFormat/format_to_string",
+            "value": 96238,
+            "range": "± 5343",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/format",
+            "value": 96792,
+            "range": "± 6252",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/to_string",
+            "value": 106903,
+            "range": "± 5287",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/ZonedDateTimeFormat/format_to_write",
+            "value": 197284,
+            "range": "± 5659",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/ZonedDateTimeFormat/format_to_string",
+            "value": 206435,
+            "range": "± 9813",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/format",
+            "value": 201644,
+            "range": "± 8416",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/to_string",
+            "value": 221123,
+            "range": "± 8741",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "pattern/parse",
+            "value": 5569,
+            "range": "± 453",
             "unit": "ns/iter"
           }
         ]
