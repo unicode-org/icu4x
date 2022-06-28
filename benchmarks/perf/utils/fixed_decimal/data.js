@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1656387375257,
+  "lastUpdate": 1656390573450,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -34349,6 +34349,66 @@ window.BENCHMARK_DATA = {
             "name": "from_string/1000000001",
             "value": 87,
             "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "aethanyc@gmail.com",
+            "name": "Ting-Yu Lin",
+            "username": "aethanyc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "7599633efc14cfa1ab56641cfdebc97f3e54a198",
+          "message": "Add Shane F. Carr as a segmenter crate owner (#2121)\n\nSee the proposal\r\nhttps://github.com/unicode-org/icu4x/pull/2087#discussion_r901167763",
+          "timestamp": "2022-06-27T21:17:09-07:00",
+          "tree_id": "1cbca1ac88b0c9803cd9667c3fa1ba5d1ba575c8",
+          "url": "https://github.com/unicode-org/icu4x/commit/7599633efc14cfa1ab56641cfdebc97f3e54a198"
+        },
+        "date": 1656390546283,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 97166,
+            "range": "± 5912",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 19379,
+            "range": "± 997",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 54622,
+            "range": "± 6394",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 167,
+            "range": "± 7",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 65,
+            "range": "± 4",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 70,
+            "range": "± 3",
             "unit": "ns/iter"
           }
         ]
