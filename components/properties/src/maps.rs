@@ -107,6 +107,24 @@ impl<T: TrieValue> CodePointMapData<T> {
     }
 
     /// Get a [`CodePointSetData`] for all elements corresponding to a particular value
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu::properties::{maps, GeneralCategory};
+    /// use icu_codepointtrie::CodePointTrie;
+    ///
+    /// let provider = icu_testdata::get_provider();
+    ///
+    /// let gc =
+    ///     maps::get_general_category(&provider)
+    ///         .expect("The data should be valid");
+    ///
+    /// let other_letter_set = gc.get_set_for_value(GeneralCategory::OtherLetter);
+    ///
+    /// assert!(other_letter_set.contains('木'));  // U+6728
+    /// assert!(!other_letter_set.contains('🎃'));  // U+1F383 JACK-O-LANTERN
+    /// ```
     pub fn get_set_for_value(&self, value: T) -> CodePointSetData {
         let set = self.data.get().code_point_trie.get_set_for_value(value);
         CodePointSetData::from_unicode_set(set)
@@ -197,6 +215,25 @@ impl<'a, T: TrieValue> CodePointMapDataBorrowed<'a, T> {
     }
 
     /// Get a [`CodePointSetData`] for all elements corresponding to a particular value
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu::properties::{maps, GeneralCategory};
+    /// use icu_codepointtrie::CodePointTrie;
+    ///
+    /// let provider = icu_testdata::get_provider();
+    ///
+    /// let data =
+    ///     maps::get_general_category(&provider)
+    ///         .expect("The data should be valid");
+    /// let gc = data.as_borrowed();
+    ///
+    /// let other_letter_set = gc.get_set_for_value(GeneralCategory::OtherLetter);
+    ///
+    /// assert!(other_letter_set.contains('木'));  // U+6728
+    /// assert!(!other_letter_set.contains('🎃'));  // U+1F383 JACK-O-LANTERN
+    /// ```
     pub fn get_set_for_value(&self, value: T) -> CodePointSetData {
         let set = self.map.code_point_trie.get_set_for_value(value);
         CodePointSetData::from_unicode_set(set)
