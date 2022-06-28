@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1656432066925,
+  "lastUpdate": 1656439016586,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -18953,6 +18953,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/16f5736bfb53b4125059006150bb5a60ca7f76df"
         },
         "date": 1656432035125,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 2737318,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "egg.robin.leroy@gmail.com",
+            "name": "Robin Leroy",
+            "username": "eggrobin"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "71ab5da68feac2427faef85675cb4e06a65c1b7d",
+          "message": "Remove negate (#2060)",
+          "timestamp": "2022-06-28T19:54:05+02:00",
+          "tree_id": "70536eefaf2a9e352cc498ee4ad7d80b735c9430",
+          "url": "https://github.com/unicode-org/icu4x/commit/71ab5da68feac2427faef85675cb4e06a65c1b7d"
+        },
+        "date": 1656438983031,
         "tool": "ndjson",
         "benches": [
           {
