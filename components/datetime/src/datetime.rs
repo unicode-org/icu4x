@@ -363,9 +363,9 @@ impl<C: CldrCalendar> TimeFormat<C> {
 /// This model replicates that of `ICU` and `ECMA402`.
 ///
 /// [data provider]: icu_provider
-pub struct DateFormat<C>(pub(super) raw::DateFormat, PhantomData<C>);
+pub struct DateFormat<'a, C>(pub(super) raw::DateFormat<'a>, PhantomData<C>);
 
-impl<C: CldrCalendar> DateFormat<C> {
+impl<'a, C: CldrCalendar> DateFormat<'a, C> {
     /// Constructor that takes a selected [`Locale`], reference to a [data provider] and
     /// a list of options, then collects all data necessary to format date and time values into the given locale.
     ///
@@ -681,6 +681,17 @@ impl<C: CldrCalendar> DateFormat<C> {
 pub struct DateTimeFormat<C>(pub(super) raw::DateTimeFormat, PhantomData<C>);
 
 impl<C: CldrCalendar> DateTimeFormat<C> {
+    pub fn try_from_date_and_time<T: Into<Locale>>(
+        date: DateFormat<C>,
+        time: TimeFormat<C>,
+    ) -> Result<Self, DateTimeFormatError>
+where {
+        Ok(Self(
+            raw::DateTimeFormat::try_from_date_and_time(date.0, time.0)?,
+            PhantomData,
+        ))
+    }
+
     /// Constructor that takes a selected [`Locale`], reference to a [data provider] and
     /// a list of options, then collects all data necessary to format date and time values into the given locale.
     ///

@@ -6,15 +6,19 @@
 //! Central to this is the [`DateTimeFormat`].
 
 use crate::{
+    date::{DateTimeInput, ExtractedDateTimeInput},
     format::datetime,
     options::components,
     options::{length, preferences, DateTimeFormatOptions},
+    pattern::runtime::{GenericPattern, PatternPlurals},
+    provider,
     provider::calendar::patterns::PatternPluralsFromPatternsV1Marker,
     provider::calendar::{
         DatePatternsV1Marker, DateSkeletonPatternsV1Marker, DateSymbolsV1Marker,
         TimePatternsV1Marker, TimeSymbolsV1Marker,
     },
     provider::week_data::WeekDataV1Marker,
+    DateTimeFormatError, FormattedDateTime,
 };
 use alloc::string::String;
 
@@ -26,11 +30,6 @@ use icu_decimal::{
 use icu_locid::Locale;
 use icu_plurals::{provider::OrdinalV1Marker, PluralRules};
 use icu_provider::prelude::*;
-
-use crate::{
-    date::DateTimeInput, date::ExtractedDateTimeInput, pattern::runtime::PatternPlurals, provider,
-    DateTimeFormatError, FormattedDateTime,
-};
 
 pub(crate) struct TimeFormat {
     pub locale: Locale,
@@ -150,8 +149,9 @@ impl TimeFormat {
     }
 }
 
-pub(crate) struct DateFormat {
+pub(crate) struct DateFormat<'a> {
     pub locale: Locale,
+    pub generic_pattern: GenericPattern<'a>,
     pub patterns: DataPayload<PatternPluralsFromPatternsV1Marker>,
     pub symbols: Option<DataPayload<DateSymbolsV1Marker>>,
     pub week_data: Option<DataPayload<WeekDataV1Marker>>,
@@ -159,7 +159,7 @@ pub(crate) struct DateFormat {
     pub fixed_decimal_format: FixedDecimalFormat,
 }
 
-impl DateFormat {
+impl<'a> DateFormat<'a> {
     /// Constructor that takes a selected [`Locale`], reference to a [`DataProvider`] and
     /// a list of options, then collects all data necessary to format date and time values into the given locale.
     ///
@@ -235,8 +235,11 @@ impl DateFormat {
         )
         .map_err(DateTimeFormatError::FixedDecimalFormat)?;
 
+        let generic_pattern = GenericPattern::default();
+
         Ok(Self::new(
             locale,
+            generic_pattern,
             patterns,
             symbols_data,
             week_data,
@@ -248,6 +251,7 @@ impl DateFormat {
     /// Creates a new [`DateTimeFormat`] regardless of whether there are time-zone symbols in the pattern.
     pub fn new(
         locale: Locale,
+        generic_pattern: GenericPattern<'a>,
         patterns: DataPayload<PatternPluralsFromPatternsV1Marker>,
         symbols: Option<DataPayload<DateSymbolsV1Marker>>,
         week_data: Option<DataPayload<WeekDataV1Marker>>,
@@ -256,6 +260,7 @@ impl DateFormat {
     ) -> Self {
         Self {
             locale,
+            generic_pattern,
             patterns,
             symbols,
             week_data,
@@ -333,6 +338,36 @@ pub(crate) struct DateTimeFormat {
 }
 
 impl DateTimeFormat {
+    pub fn try_from_date_and_time(
+        date: DateFormat,
+        time: TimeFormat,
+    ) -> Result<Self, DateTimeFormatError> {
+        let patterns = date.patterns.try_map_project_with_capture::<PatternPluralsFromPatternsV1Marker, (GenericPattern, TimeFormat), DateTimeFormatError> (
+            (date.generic_pattern, time),
+            |data, (generic_pattern, time), _| {
+                let date_pattern = data.0.expect_pattern("Lengths are single patterns");
+                let time_pattern: crate::pattern::runtime::Pattern = time
+                    .patterns
+                    .get()
+                    .clone()
+                    .0
+                    .expect_pattern("Lengths are single patterns");
+
+                    Ok(PatternPlurals::from(generic_pattern
+                        .combined(date_pattern, time_pattern)?).into())
+            },
+        )?;
+
+        Ok(Self {
+            locale: date.locale,
+            patterns,
+            symbols: date.symbols,
+            week_data: date.week_data,
+            ordinal_rules: date.ordinal_rules,
+            fixed_decimal_format: date.fixed_decimal_format,
+        })
+    }
+
     /// Constructor that takes a selected [`Locale`], reference to a [`DataProvider`] and
     /// a list of options, then collects all data necessary to format date and time values into the given locale.
     ///
