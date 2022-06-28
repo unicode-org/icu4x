@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1656364316729,
+  "lastUpdate": 1656375951631,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -43655,6 +43655,102 @@ window.BENCHMARK_DATA = {
             "name": "pattern/parse",
             "value": 4624,
             "range": "± 84",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "m_kato@ga2.so-net.ne.jp",
+            "name": "Makoto Kato",
+            "username": "makotokato"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "6dd25ceadde72325e7dd72f8f06eab75b180492a",
+          "message": "Add Burmese dictionary for test (#1897)\n\n* Add Burmese dictionary for test\r\n\r\nWhen using Burmese dictionary from ICU4C simply, dictionary segmenter cannot\r\nhandle correct segment. We have to consider Extend and SpacingMark of grapheme.\r\n\r\n* Use Peekable instead of clone().",
+          "timestamp": "2022-06-28T09:12:14+09:00",
+          "tree_id": "c9b5ddc19a654e52f475192d942128bee602b8df",
+          "url": "https://github.com/unicode-org/icu4x/commit/6dd25ceadde72325e7dd72f8f06eab75b180492a"
+        },
+        "date": 1656375924968,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 86343,
+            "range": "± 199",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 842586,
+            "range": "± 2021",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 181728,
+            "range": "± 404",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/DateTimeFormat/format_to_write",
+            "value": 81780,
+            "range": "± 138",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/DateTimeFormat/format_to_string",
+            "value": 90308,
+            "range": "± 159",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/format",
+            "value": 85954,
+            "range": "± 463",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/to_string",
+            "value": 93290,
+            "range": "± 108",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/ZonedDateTimeFormat/format_to_write",
+            "value": 175528,
+            "range": "± 158",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/ZonedDateTimeFormat/format_to_string",
+            "value": 187364,
+            "range": "± 356",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/format",
+            "value": 181327,
+            "range": "± 1441",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/to_string",
+            "value": 190564,
+            "range": "± 142",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "pattern/parse",
+            "value": 5118,
+            "range": "± 19",
             "unit": "ns/iter"
           }
         ]
