@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1656387395488,
+  "lastUpdate": 1656390625446,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -44039,6 +44039,102 @@ window.BENCHMARK_DATA = {
             "name": "pattern/parse",
             "value": 5126,
             "range": "± 49",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "aethanyc@gmail.com",
+            "name": "Ting-Yu Lin",
+            "username": "aethanyc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "7599633efc14cfa1ab56641cfdebc97f3e54a198",
+          "message": "Add Shane F. Carr as a segmenter crate owner (#2121)\n\nSee the proposal\r\nhttps://github.com/unicode-org/icu4x/pull/2087#discussion_r901167763",
+          "timestamp": "2022-06-27T21:17:09-07:00",
+          "tree_id": "1cbca1ac88b0c9803cd9667c3fa1ba5d1ba575c8",
+          "url": "https://github.com/unicode-org/icu4x/commit/7599633efc14cfa1ab56641cfdebc97f3e54a198"
+        },
+        "date": 1656390595778,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 87098,
+            "range": "± 99",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 833601,
+            "range": "± 697",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 169766,
+            "range": "± 204",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/DateTimeFormat/format_to_write",
+            "value": 81477,
+            "range": "± 75",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/DateTimeFormat/format_to_string",
+            "value": 90235,
+            "range": "± 105",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/format",
+            "value": 87808,
+            "range": "± 121",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/to_string",
+            "value": 94758,
+            "range": "± 138",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/ZonedDateTimeFormat/format_to_write",
+            "value": 164644,
+            "range": "± 397",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/ZonedDateTimeFormat/format_to_string",
+            "value": 177187,
+            "range": "± 277",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/format",
+            "value": 169824,
+            "range": "± 171",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/to_string",
+            "value": 181259,
+            "range": "± 319",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "pattern/parse",
+            "value": 4656,
+            "range": "± 3",
             "unit": "ns/iter"
           }
         ]
