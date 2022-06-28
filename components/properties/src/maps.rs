@@ -14,7 +14,7 @@
 
 use crate::error::PropertiesError;
 use crate::provider::*;
-use crate::sets::{CodePointSetData, ErasedSetlikeMarker};
+use crate::sets::CodePointSetData;
 #[cfg(doc)]
 use crate::*;
 use core::marker::PhantomData;
@@ -199,7 +199,7 @@ impl<'a, T: TrieValue> CodePointMapDataBorrowed<'a, T> {
     /// Get a [`CodePointSetData`] for all elements corresponding to a particular value
     pub fn get_set_for_value(&self, value: T) -> CodePointSetData {
         let set = self.map.code_point_trie.get_set_for_value(value);
-        CodePointSetData::from_unicode_set(set);
+        CodePointSetData::from_unicode_set(set)
     }
 }
 
