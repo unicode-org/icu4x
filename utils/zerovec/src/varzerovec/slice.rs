@@ -94,6 +94,16 @@ impl<T: VarULE + ?Sized> VarZeroSlice<T> {
         }
     }
 
+    /// Uses a `&[u8]` buffer as a `VarZeroSlice<T>` without any verification.
+    ///
+    /// # Safety
+    ///
+    /// `bytes` need to be an output from [`VarZeroSlice::as_bytes()`].
+    pub const unsafe fn from_bytes_unchecked(bytes: &[u8]) -> &Self {
+        // self is really just a wrapper around a byte slice
+        mem::transmute(bytes)
+    }
+
     /// Get the number of elements in this slice
     ///
     /// # Example
