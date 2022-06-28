@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1656387249990,
+  "lastUpdate": 1656390503734,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -34258,6 +34258,60 @@ window.BENCHMARK_DATA = {
           {
             "name": "uniset/contains_range/worst",
             "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "aethanyc@gmail.com",
+            "name": "Ting-Yu Lin",
+            "username": "aethanyc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "7599633efc14cfa1ab56641cfdebc97f3e54a198",
+          "message": "Add Shane F. Carr as a segmenter crate owner (#2121)\n\nSee the proposal\r\nhttps://github.com/unicode-org/icu4x/pull/2087#discussion_r901167763",
+          "timestamp": "2022-06-27T21:17:09-07:00",
+          "tree_id": "1cbca1ac88b0c9803cd9667c3fa1ba5d1ba575c8",
+          "url": "https://github.com/unicode-org/icu4x/commit/7599633efc14cfa1ab56641cfdebc97f3e54a198"
+        },
+        "date": 1656390469929,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 51689052,
+            "range": "± 1410886",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/best",
+            "value": 3,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/worst",
+            "value": 3,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/best",
+            "value": 3,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/worst",
+            "value": 3,
             "range": "± 0",
             "unit": "ns/iter"
           }
