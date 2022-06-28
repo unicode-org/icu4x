@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1656375283704,
+  "lastUpdate": 1656377472310,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -18773,6 +18773,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/6dd25ceadde72325e7dd72f8f06eab75b180492a"
         },
         "date": 1656375254548,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 2737318,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "252deb371a03409cf00f68712ebf86145f79aac8",
+          "message": "Add Lao and Khmer LSTM models (#2120)",
+          "timestamp": "2022-06-27T17:48:45-07:00",
+          "tree_id": "c928f3eea9de6f0ddb0d57a0e46f4a2e460d231d",
+          "url": "https://github.com/unicode-org/icu4x/commit/252deb371a03409cf00f68712ebf86145f79aac8"
+        },
+        "date": 1656377443148,
         "tool": "ndjson",
         "benches": [
           {
