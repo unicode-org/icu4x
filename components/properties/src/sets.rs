@@ -127,7 +127,7 @@ impl CodePointSetData {
     /// otherwise allocating a new [`UnicodeSet`].
     ///
     /// The data backing this is extensible and supports multiple implementations.
-    /// Currently it is always [`UnicodeSet`], however in the future more backends may be
+    /// Currently it is always [`UnicodeSet`]; however in the future more backends may be
     /// added, and users may select which at data generation time.
     ///
     /// If using this function it is preferable to stick to [`UnicodeSet`] representations

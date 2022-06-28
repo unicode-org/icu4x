@@ -133,7 +133,7 @@ impl<T: TrieValue> CodePointMapData<T> {
     /// otherwise allocating a new [`CodePointTrie`].
     ///
     /// The data backing this is extensible and supports multiple implementations.
-    /// Currently it is always [`CodePointTrie`], however in the future more backends may be
+    /// Currently it is always [`CodePointTrie`]; however in the future more backends may be
     /// added, and users may select which at data generation time.
     ///
     /// If using this function it is preferable to stick to [`CodePointTrie`] representations
@@ -199,8 +199,7 @@ impl<'a, T: TrieValue> CodePointMapDataBorrowed<'a, T> {
     /// Get a [`CodePointSetData`] for all elements corresponding to a particular value
     pub fn get_set_for_value(&self, value: T) -> CodePointSetData {
         let set = self.map.code_point_trie.get_set_for_value(value);
-        let set = UnicodePropertyV1 { inv_list: set };
-        CodePointSetData::from_data(DataPayload::<ErasedSetlikeMarker>::from_owned(set))
+        CodePointSetData::from_unicode_set(set);
     }
 }
 
