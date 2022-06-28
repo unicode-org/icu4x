@@ -80,7 +80,7 @@ class ICU4XFixedDecimal {
   /**
    * Set the sign of the [`ICU4XFixedDecimal`].
    * 
-   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.negate) for more information.
+   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.set_sign) for more information.
    */
   void set_sign(ICU4XFixedDecimalSign sign);
 
