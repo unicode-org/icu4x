@@ -25,7 +25,7 @@ script = '''
 exit_on_error true
 
 # Check files matching these patterns.
-glob_pattern_array = array "./**/*.rs" "./**/*.yml" "./**/*.toml" "./**/*.rst" "./**/*.bat"
+glob_pattern_array = array "./**/*.rs" "./**/*.yml" "./**/*.toml" "./**/*.rst" "./**/*.bat" "./**/*.c" "./**/*.cpp"
 
 # Skip the files matching these patterns.
 glob_skip_pattern_array = array "**/target/**/*.rs" "ffi/diplomat/cpp/docs/**/*" "ffi/diplomat/wasm/docs/**/*" "**/node_modules/**/*" "provider/testdata/data/**/*"
