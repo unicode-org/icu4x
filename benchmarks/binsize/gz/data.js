@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1656439213552,
+  "lastUpdate": 1656442396157,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -103349,6 +103349,192 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/71ab5da68feac2427faef85675cb4e06a65c1b7d"
         },
         "date": 1656439183964,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "work_log+opt.wasm.gz",
+            "value": 624393,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "syntatically_canonicalize_locales+opt.wasm.gz",
+            "value": 12385,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "language_names_hash_map+opt.wasm.gz",
+            "value": 4384,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "zv_serde+opt.wasm.gz",
+            "value": 225,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "iso_date_manipulations+opt.wasm.gz",
+            "value": 3090,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "unread_emails+opt.wasm.gz",
+            "value": 521581,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "litemap_bincode+opt.wasm.gz",
+            "value": 9645,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "tui+opt.wasm.gz",
+            "value": 655010,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "make+opt.wasm.gz",
+            "value": 4585,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "make_var+opt.wasm.gz",
+            "value": 36913,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "litemap_postcard+opt.wasm.gz",
+            "value": 4060,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "simple_static+opt.wasm.gz",
+            "value": 8347,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "elevator_floors+opt.wasm.gz",
+            "value": 521766,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "permyriad+opt.wasm.gz",
+            "value": 4125,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "filter_langids+opt.wasm.gz",
+            "value": 6453,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "unicode_bmp_blocks_selector+opt.wasm.gz",
+            "value": 6416,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "iso_datetime_manipulations+opt.wasm.gz",
+            "value": 3352,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "yoke_derive+opt.wasm.gz",
+            "value": 3783,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "derives+opt.wasm.gz",
+            "value": 5647,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "and_list+opt.wasm.gz",
+            "value": 11465,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "postcard+opt.wasm.gz",
+            "value": 5040,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "code_line_diff+opt.wasm.gz",
+            "value": 533190,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "language_names_lite_map+opt.wasm.gz",
+            "value": 3088,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "zf_derive+opt.wasm.gz",
+            "value": 3781,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "writeable_message+opt.wasm.gz",
+            "value": 9121,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "owned_pattern+opt.wasm.gz",
+            "value": 6671,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "borrowed_pattern+opt.wasm.gz",
+            "value": 5688,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "2568d2a7b392e2820579ae091bac54c50f99fbae",
+          "message": "Better properties return values (#2112)\n\n* Add CodePointSetData\r\n\r\n* find and replace tests\r\n\r\n* Manual test fixes\r\n\r\n* Type erase it\r\n\r\n* Add CodePointMapData\r\n\r\n* find-and-replace crate::\r\n\r\n* fix cargo check\r\n\r\n* find-and-replace tests\r\n\r\n* find-and-replace doctests\r\n\r\n* fix tests\r\n\r\n* fix bidi\r\n\r\n* fix props test\r\n\r\n* more fixes\r\n\r\n* Fix FFI\r\n\r\n* Fixup normalizer & collator\r\n\r\n* Update datagen\r\n\r\n* readme\r\n\r\n* clip\r\n\r\n* fix tests\r\n\r\n* rm unused result type\r\n\r\n* cast\r\n\r\n* Add to_unicode_set()\r\n\r\n* update test\r\n\r\n* Add doctests for sets\r\n\r\n* Remove range-specific code, add conversions to/from unicode sets / CPTs instead\r\n\r\n* more examples\r\n\r\n* fixes\r\n\r\n* fix\r\n\r\n* add more doctest",
+          "timestamp": "2022-06-28T18:46:51Z",
+          "tree_id": "81ed7853fee4ccafc83c53f16323c1662e23eeeb",
+          "url": "https://github.com/unicode-org/icu4x/commit/2568d2a7b392e2820579ae091bac54c50f99fbae"
+        },
+        "date": 1656442369171,
         "tool": "ndjson",
         "benches": [
           {
