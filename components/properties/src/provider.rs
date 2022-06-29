@@ -91,7 +91,7 @@ impl<'data> UnicodePropertyV1<'data> {
     }
 
     #[inline]
-    pub(crate) fn to_unicode_set<'a>(&'a self) -> UnicodeSet<'a> {
+    pub(crate) fn to_unicode_set(&'_ self) -> UnicodeSet<'_> {
         match *self {
             Self::InversionList(ref l) => ZeroFrom::zero_from(l),
         }
