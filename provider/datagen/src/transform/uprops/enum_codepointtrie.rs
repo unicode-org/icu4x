@@ -84,7 +84,7 @@ expand!(
 mod tests {
     use super::*;
     use icu_codepointtrie::CodePointTrie;
-    use icu_properties::provider::{GeneralCategoryV1Marker, ScriptV1Marker};
+    use icu_properties::provider::{GeneralCategoryV1Marker, ScriptV1Marker, UnicodePropertyMapV1};
     use icu_properties::{GeneralCategory, Script};
 
     // A test of the UnicodeProperty General_Category is truly a test of the
@@ -100,7 +100,10 @@ mod tests {
             .and_then(DataResponse::take_payload)
             .expect("Loading was successful");
 
-        let trie: &CodePointTrie<GeneralCategory> = &payload.get().code_point_trie;
+        let trie: &CodePointTrie<GeneralCategory> = match payload.get() {
+            UnicodePropertyMapV1::CodePointTrie(ref t) => t,
+            _ => unreachable!("Should have serialized to a code point trie"),
+        };
 
         assert_eq!(trie.get('꣓' as u32), GeneralCategory::DecimalNumber);
         assert_eq!(trie.get('≈' as u32), GeneralCategory::MathSymbol);
@@ -115,8 +118,10 @@ mod tests {
             .and_then(DataResponse::take_payload)
             .expect("Loading was successful");
 
-        let trie: &CodePointTrie<Script> = &payload.get().code_point_trie;
-
+        let trie: &CodePointTrie<Script> = match payload.get() {
+            UnicodePropertyMapV1::CodePointTrie(ref t) => t,
+            _ => unreachable!("Should have serialized to a code point trie"),
+        };
         assert_eq!(trie.get('꣓' as u32), Script::Saurashtra);
         assert_eq!(trie.get('≈' as u32), Script::Common);
     }
