@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1656442835048,
+  "lastUpdate": 1656463485627,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -34648,6 +34648,66 @@ window.BENCHMARK_DATA = {
           {
             "name": "from_string/1000000001",
             "value": 72,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "4929e0909be19af723cf76cdae4d3e9a9f0e9d0c",
+          "message": "Update release process doc to include doc_comment_in_code_block_width rustfmt option (#2134)",
+          "timestamp": "2022-06-28T17:31:50-07:00",
+          "tree_id": "bf430cbfbfeccdb77e18544157cd243a9f693f84",
+          "url": "https://github.com/unicode-org/icu4x/commit/4929e0909be19af723cf76cdae4d3e9a9f0e9d0c"
+        },
+        "date": 1656463456279,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 123022,
+            "range": "± 448",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 25291,
+            "range": "± 160",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 71639,
+            "range": "± 150",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 200,
+            "range": "± 2",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 95,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 87,
             "range": "± 0",
             "unit": "ns/iter"
           }
