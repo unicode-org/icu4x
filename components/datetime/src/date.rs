@@ -77,13 +77,13 @@ pub trait TimeZoneInput {
     fn gmt_offset(&self) -> GmtOffset;
 
     /// The IANA time-zone identifier.
-    fn time_zone_id(&self) -> Option<&TimeZoneBcp47Id>;
+    fn time_zone_id(&self) -> Option<TimeZoneBcp47Id>;
 
     /// The metazone identifier.
-    fn metazone_id(&self) -> Option<&MetaZoneId>;
+    fn metazone_id(&self) -> Option<MetaZoneId>;
 
     /// The time variant (e.g. "daylight", "standard")
-    fn time_variant(&self) -> Option<&TinyStr8>;
+    fn time_variant(&self) -> Option<TinyStr8>;
 }
 
 /// A combination of a formattable calendar date and ISO time.
@@ -180,9 +180,9 @@ impl ExtractedTimeZoneInput {
         Self {
             date_time_input: ExtractedDateTimeInput::extract_from(input),
             gmt_offset: input.gmt_offset(),
-            time_zone_id: input.time_zone_id().cloned(),
-            metazone_id: input.metazone_id().cloned(),
-            time_variant: input.time_variant().cloned(),
+            time_zone_id: input.time_zone_id(),
+            metazone_id: input.metazone_id(),
+            time_variant: input.time_variant(),
         }
     }
 }
@@ -269,14 +269,14 @@ impl TimeZoneInput for ExtractedTimeZoneInput {
     fn gmt_offset(&self) -> GmtOffset {
         self.gmt_offset
     }
-    fn time_zone_id(&self) -> Option<&TimeZoneBcp47Id> {
-        self.time_zone_id.as_ref()
+    fn time_zone_id(&self) -> Option<TimeZoneBcp47Id> {
+        self.time_zone_id
     }
-    fn metazone_id(&self) -> Option<&MetaZoneId> {
-        self.metazone_id.as_ref()
+    fn metazone_id(&self) -> Option<MetaZoneId> {
+        self.metazone_id
     }
-    fn time_variant(&self) -> Option<&TinyStr8> {
-        self.time_variant.as_ref()
+    fn time_variant(&self) -> Option<TinyStr8> {
+        self.time_variant
     }
 }
 

@@ -149,15 +149,15 @@ impl TimeZoneInput for MockZonedDateTime {
         self.time_zone.gmt_offset()
     }
 
-    fn time_zone_id(&self) -> Option<&TimeZoneBcp47Id> {
+    fn time_zone_id(&self) -> Option<TimeZoneBcp47Id> {
         self.time_zone.time_zone_id()
     }
 
-    fn metazone_id(&self) -> Option<&MetaZoneId> {
+    fn metazone_id(&self) -> Option<MetaZoneId> {
         self.time_zone.metazone_id()
     }
 
-    fn time_variant(&self) -> Option<&TinyStr8> {
+    fn time_variant(&self) -> Option<TinyStr8> {
         self.time_zone.time_variant()
     }
 }
