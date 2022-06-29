@@ -426,14 +426,41 @@ macro_rules! field_type {
     );
 }
 
-field_type!(Year; {
-    'y' => Calendar = 0,
-    'Y' => WeekOf = 1,
-}; Numeric; YearULE);
+field_type! (
+    /// An enum for the possible symbols of a year field in a date pattern.
+    Year; {
+        /// Field symbol for calendar year (numeric).
+        /// 
+        /// In most cases the length of the y field specifies the minimum number of digits to display, zero-padded as necessary. For most use cases, “y” or “yy” should be adequate.
+        /// 
+        /// For more details, see documentation on [date field symbols](https://unicode.org/reports/tr35/tr35-dates.html#table-date-field-symbol-table).
+        'y' => Calendar = 0,
+        /// Field symbol for year in "week of year".
+        /// 
+        /// This works for “Week of Year” based calendars in which the year transition occurs on a week boundary; may differ from calendar year ‘y’ near a year transition. This numeric year designation is used in conjunction with [`Week::WeekOfYear`], but can be used in non-Gregorian based calendar systems where week date processing is desired. The field length is interpreted in the same was as for ‘y’.
+        /// 
+        /// For more details, see documentation on [date field symbols](https://unicode.org/reports/tr35/tr35-dates.html#table-date-field-symbol-table).
+        'Y' => WeekOf = 1,
+    }; 
+    Numeric; 
+    YearULE
+);
 
-field_type!(Month; {
-    'M' => Format = 0,
-    'L' => StandAlone = 1,
+field_type!(
+    /// An enum for the possible symbols of a month field in a date pattern.
+    Month; {
+        /// Field symbol for format style month number/name.
+        /// 
+        /// The format style name is an additional form of the month name that is different than the stand-alone form, which can be necessary depending on the language and context.
+        /// 
+        /// For more details, see documentation on [date field symbols](https://unicode.org/reports/tr35/tr35-dates.html#table-date-field-symbol-table).
+        'M' => Format = 0,
+        /// Field symbol for stand-alone month number/name.
+        /// 
+        /// The stand-alone month name is used when the month is displayed by itself.
+        /// 
+        /// For more details, see documentation on [date field symbols](https://unicode.org/reports/tr35/tr35-dates.html#table-date-field-symbol-table).
+        'L' => StandAlone = 1,
 }; MonthULE);
 
 impl LengthType for Month {
@@ -453,12 +480,33 @@ impl LengthType for Month {
     }
 }
 
-field_type!(Day; {
-    'd' => DayOfMonth = 0,
-    'D' => DayOfYear = 1,
-    'F' => DayOfWeekInMonth = 2,
-    'g' => ModifiedJulianDay = 3,
-}; Numeric; DayULE);
+field_type!(
+    /// An enum for the possible symbols of a day field in a date pattern.
+    Day; {
+        /// Field symbol for day of month (numeric).
+        /// 
+        /// For more details, see documentation on [date field symbols](https://unicode.org/reports/tr35/tr35-dates.html#table-date-field-symbol-table).
+        'd' => DayOfMonth = 0,
+        /// Field symbol for day of year (numeric).
+        /// 
+        /// For more details, see documentation on [date field symbols](https://unicode.org/reports/tr35/tr35-dates.html#table-date-field-symbol-table).
+        'D' => DayOfYear = 1,
+        /// Field symbol for the day of week occurrence relative to the month (numeric).
+        /// 
+        /// For the example "2nd Wed in July", this field would provide "2".  Should likely be paired with the [`Weekday`] field.
+        /// 
+        /// For more details, see documentation on [date field symbols](https://unicode.org/reports/tr35/tr35-dates.html#table-date-field-symbol-table).
+        'F' => DayOfWeekInMonth = 2,
+        /// Field symbol for the modified Julian day (numeric).
+        /// 
+        /// The value of this field differs from the conventional Julian day number in a couple of ways, which are based on measuring relative to the local time zone.
+        /// 
+        /// For more details, see documentation on [date field symbols](https://unicode.org/reports/tr35/tr35-dates.html#table-date-field-symbol-table).
+        'g' => ModifiedJulianDay = 3,
+    }; 
+    Numeric; 
+    DayULE
+);
 
 field_type!(Hour; {
     'K' => H11 = 0,
