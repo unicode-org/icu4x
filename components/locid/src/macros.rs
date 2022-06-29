@@ -138,16 +138,16 @@ macro_rules! subtags_variant {
 /// assert_eq!(CA_ES_VALENCIA, ca_es_valencia);
 /// ```
 ///
-/// *Note*: The macro cannot produce language identifiers with variants due to const
+/// *Note*: The macro cannot produce language identifiers with more than one variants due to const
 /// limitations (see [`Heap Allocations in Constants`]):
 ///
 /// ```compile_fail
-/// icu::locid::langid("de_at-foobar");
+/// icu::locid::langid!("und-variant1-variant2");
 /// ```
 ///
 /// Use runtime parsing instead:
 /// ```
-/// "de_at-foobar"
+/// "und-variant1-variant2"
 ///     .parse::<icu::locid::LanguageIdentifier>()
 ///     .unwrap();
 /// ```
@@ -181,15 +181,15 @@ macro_rules! langid {
 /// ```
 /// use icu::locid::{locale, Locale};
 ///
-/// const DE_AT: Locale = locale!("de_at");
+/// const DE_AT_FOOBAR: Locale = locale!("de_at-foobar");
 ///
-/// let de_at: Locale = "de_at".parse().unwrap();
+/// let de_at_foobar: Locale = "de_at-foobar".parse().unwrap();
 ///
-/// assert_eq!(DE_AT, de_at);
+/// assert_eq!(DE_AT_FOOBAR, de_at_foobar);
 /// ```
 ///
-/// *Note*: The macro cannot produce locales with variants or extensions due to
-/// const limitations (see [`Heap Allocations in Constants`]):
+/// *Note*: The macro cannot produce locales with more than one variant or extensions due to const
+/// limitations (see [`Heap Allocations in Constants`]):
 ///
 /// ```compile_fail
 /// icu::locid::locale!("en-US-u-ca-ja");

@@ -147,8 +147,12 @@ pub const fn parse_language_identifier_with_single_variant_from_iter(
                 region = Some(r);
                 position = ParserPosition::Variant;
             } else if let Ok(v) = subtags::Variant::from_bytes_manual_slice(t, start, end) {
+                if variant.is_some() {
+                    // We cannot handle multiple variants in a const context
+                    return Err(ParserError::InvalidSubtag);
+                }
                 variant = Some(v);
-                break;
+                position = ParserPosition::Variant;
             } else if matches!(mode, ParserMode::Partial) {
                 break;
             } else {
@@ -159,16 +163,24 @@ pub const fn parse_language_identifier_with_single_variant_from_iter(
                 region = Some(s);
                 position = ParserPosition::Variant;
             } else if let Ok(v) = subtags::Variant::from_bytes_manual_slice(t, start, end) {
+                if variant.is_some() {
+                    // We cannot handle multiple variants in a const context
+                    return Err(ParserError::InvalidSubtag);
+                }
                 variant = Some(v);
-                break;
+                position = ParserPosition::Variant;
             } else if matches!(mode, ParserMode::Partial) {
                 break;
             } else {
                 return Err(ParserError::InvalidSubtag);
             }
         } else if let Ok(v) = subtags::Variant::from_bytes_manual_slice(t, start, end) {
+            if variant.is_some() {
+                // We cannot handle multiple variants in a const context
+                return Err(ParserError::InvalidSubtag);
+            }
             variant = Some(v);
-            break;
+            position = ParserPosition::Variant;
         } else if matches!(mode, ParserMode::Partial) {
             break;
         } else {
