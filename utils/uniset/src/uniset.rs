@@ -60,14 +60,14 @@ impl<'de: 'a, 'a> serde::Deserialize<'de> for UnicodeSet<'a> {
     }
 }
 
-#[cfg(feature = "crabbake")]
-impl crabbake::Bakeable for UnicodeSet<'_> {
-    fn bake(&self, env: &crabbake::CrateEnv) -> crabbake::TokenStream {
+#[cfg(feature = "databake")]
+impl databake::Bake for UnicodeSet<'_> {
+    fn bake(&self, env: &databake::CrateEnv) -> databake::TokenStream {
         env.insert("icu_uniset");
         let inv_list = self.inv_list.bake(env);
         let size = self.size.bake(env);
         // Safe because our parts are safe.
-        crabbake::quote! { unsafe {
+        databake::quote! { unsafe {
             #[allow(unused_unsafe)]
             ::icu_uniset::UnicodeSet::from_parts_unchecked(#inv_list, #size)
         }}
@@ -131,7 +131,7 @@ impl<'data> UnicodeSet<'data> {
         }
     }
 
-    #[doc(hidden)] // Crabbake internal
+    #[doc(hidden)] // databake internal
     pub const unsafe fn from_parts_unchecked(inv_list: ZeroVec<'data, u32>, size: usize) -> Self {
         Self { inv_list, size }
     }

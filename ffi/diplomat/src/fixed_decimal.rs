@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use fixed_decimal::decimal::RoundingMode;
+use fixed_decimal::decimal::Sign;
 
 #[diplomat::bridge]
 pub mod ffi {
@@ -17,13 +17,15 @@ pub mod ffi {
     #[diplomat::rust_link(fixed_decimal::decimal::FixedDecimal, Struct)]
     pub struct ICU4XFixedDecimal(pub FixedDecimal);
 
-    /// How to round digits when constructing an ICU4XFixedDecimal from a
-    /// floating point number
-    pub enum ICU4XFixedDecimalRoundingMode {
-        /// Truncate leftover digits
-        Truncate,
-        ///  Round up from 0.5
-        HalfExpand,
+    /// The sign of a FixedDecimal, as shown in formatting.
+    #[diplomat::rust_link(fixed_decimal::decimal::Sign, Enum)]
+    pub enum ICU4XFixedDecimalSign {
+        /// No sign (implicitly positive, e.g., 1729).
+        None,
+        /// A negative sign, e.g., -1729.
+        Negative,
+        /// An explicit positive sign, e.g., +1729.
+        Positive,
     }
 
     fn convert(dec: FixedDecimal) -> Box<ICU4XFixedDecimal> {
@@ -55,9 +57,8 @@ pub mod ffi {
         pub fn create_from_f64_with_lower_magnitude(
             f: f64,
             precision: i16,
-            rounding_mode: ICU4XFixedDecimalRoundingMode,
         ) -> DiplomatResult<Box<ICU4XFixedDecimal>, ICU4XError> {
-            let precision = DoublePrecision::Magnitude(precision, rounding_mode.into());
+            let precision = DoublePrecision::Magnitude(precision);
             FixedDecimal::try_from_f64(f, precision)
                 .map(convert)
                 .map_err(Into::into)
@@ -69,9 +70,8 @@ pub mod ffi {
         pub fn create_from_f64_with_significant_digits(
             f: f64,
             digits: u8,
-            rounding_mode: ICU4XFixedDecimalRoundingMode,
         ) -> DiplomatResult<Box<ICU4XFixedDecimal>, ICU4XError> {
-            let precision = DoublePrecision::SignificantDigits(digits, rounding_mode.into());
+            let precision = DoublePrecision::SignificantDigits(digits);
             FixedDecimal::try_from_f64(f, precision)
                 .map(convert)
                 .map_err(Into::into)
@@ -93,10 +93,10 @@ pub mod ffi {
             self.0.multiply_pow10(power).is_ok()
         }
 
-        /// Invert the sign of the [`ICU4XFixedDecimal`].
-        #[diplomat::rust_link(fixed_decimal::decimal::FixedDecimal::negate, FnInStruct)]
-        pub fn negate(&mut self) {
-            self.0.negate()
+        /// Set the sign of the [`ICU4XFixedDecimal`].
+        #[diplomat::rust_link(fixed_decimal::decimal::FixedDecimal::set_sign, FnInStruct)]
+        pub fn set_sign(&mut self, sign: ICU4XFixedDecimalSign) {
+            self.0.set_sign(sign.into())
         }
 
         /// Zero-pad the [`ICU4XFixedDecimal`] on the left to a particular position
@@ -127,11 +127,12 @@ pub mod ffi {
     }
 }
 
-impl From<ffi::ICU4XFixedDecimalRoundingMode> for RoundingMode {
-    fn from(other: ffi::ICU4XFixedDecimalRoundingMode) -> Self {
+impl From<ffi::ICU4XFixedDecimalSign> for Sign {
+    fn from(other: ffi::ICU4XFixedDecimalSign) -> Self {
         match other {
-            ffi::ICU4XFixedDecimalRoundingMode::Truncate => Self::Truncate,
-            ffi::ICU4XFixedDecimalRoundingMode::HalfExpand => Self::HalfExpand,
+            ffi::ICU4XFixedDecimalSign::None => Self::None,
+            ffi::ICU4XFixedDecimalSign::Negative => Self::Negative,
+            ffi::ICU4XFixedDecimalSign::Positive => Self::Positive,
         }
     }
 }

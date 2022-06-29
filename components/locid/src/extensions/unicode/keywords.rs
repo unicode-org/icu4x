@@ -3,11 +3,13 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use core::borrow::Borrow;
+use core::cmp::Ordering;
 use core::iter::FromIterator;
 use litemap::LiteMap;
 
 use super::Key;
 use super::Value;
+use crate::ordering::SubtagOrderingResult;
 
 /// A list of [`Key`]-[`Value`] pairs representing functional information
 /// about locale's internationnalization preferences.
@@ -268,6 +270,96 @@ impl Keywords {
         F: FnMut(&Key) -> bool,
     {
         self.0.retain(|k, _| predicate(k))
+    }
+
+    /// Compare this [`Keywords`] with BCP-47 bytes.
+    ///
+    /// The return value is equivalent to what would happen if you first converted this
+    /// [`Keywords`] to a BCP-47 string and then performed a byte comparison.
+    ///
+    /// This function is case-sensitive and results in a *total order*, so it is appropriate for
+    /// binary search. The only argument producing [`Ordering::Equal`] is `self.to_string()`.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::locid::Locale;
+    /// use icu::locid::extensions::unicode::Keywords;
+    /// use std::cmp::Ordering;
+    ///
+    /// let bcp47_strings: &[&str] = &[
+    ///     "ca-hebrew",
+    ///     "ca-japanese",
+    ///     "ca-japanese-nu-latn",
+    ///     "nu-latn",
+    /// ];
+    ///
+    /// for ab in bcp47_strings.windows(2) {
+    ///     let a = ab[0];
+    ///     let b = ab[1];
+    ///     assert!(a.cmp(b) == Ordering::Less);
+    ///     let a_kwds = format!("und-u-{}", a).parse::<Locale>().unwrap().extensions.unicode.keywords;
+    ///     assert_eq!(a, a_kwds.to_string());
+    ///     assert!(a_kwds.strict_cmp(a.as_bytes()) == Ordering::Equal);
+    ///     assert!(a_kwds.strict_cmp(b.as_bytes()) == Ordering::Less);
+    /// }
+    /// ```
+    pub fn strict_cmp(&self, other: &[u8]) -> Ordering {
+        self.strict_cmp_iter(other.split(|b| *b == b'-')).end()
+    }
+
+    /// Compare this [`Keywords`] with an iterator of BCP-47 subtags.
+    ///
+    /// This function has the same equality semantics as [`Keywords::strict_cmp`]. It is intended as
+    /// a more modular version that allows multiple subtag iterators to be chained together.
+    ///
+    /// For an additional example, see [`SubtagOrderingResult`].
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::locid::Locale;
+    /// use icu::locid::extensions::unicode::Keywords;
+    /// use std::cmp::Ordering;
+    ///
+    /// let subtags: &[&[u8]] = &[&*b"ca", &*b"buddhist"];
+    ///
+    /// let kwds = "und-u-ca-buddhist".parse::<Locale>().unwrap().extensions.unicode.keywords;
+    /// assert_eq!(
+    ///     Ordering::Equal,
+    ///     kwds.strict_cmp_iter(subtags.iter().copied()).end()
+    /// );
+    ///
+    /// let kwds = "und".parse::<Locale>().unwrap().extensions.unicode.keywords;
+    /// assert_eq!(
+    ///     Ordering::Less,
+    ///     kwds.strict_cmp_iter(subtags.iter().copied()).end()
+    /// );
+    ///
+    /// let kwds = "und-u-nu-latn".parse::<Locale>().unwrap().extensions.unicode.keywords;
+    /// assert_eq!(
+    ///     Ordering::Greater,
+    ///     kwds.strict_cmp_iter(subtags.iter().copied()).end()
+    /// );
+    /// ```
+    pub fn strict_cmp_iter<'l, I>(&self, mut subtags: I) -> SubtagOrderingResult<I>
+    where
+        I: Iterator<Item = &'l [u8]>,
+    {
+        let r = self.for_each_subtag_str(&mut |subtag| {
+            if let Some(other) = subtags.next() {
+                match subtag.as_bytes().cmp(other) {
+                    Ordering::Equal => Ok(()),
+                    not_equal => Err(not_equal),
+                }
+            } else {
+                Err(Ordering::Greater)
+            }
+        });
+        match r {
+            Ok(_) => SubtagOrderingResult::Subtags(subtags),
+            Err(o) => SubtagOrderingResult::Ordering(o),
+        }
     }
 
     pub(crate) fn for_each_subtag_str<E, F>(&self, f: &mut F) -> Result<(), E>

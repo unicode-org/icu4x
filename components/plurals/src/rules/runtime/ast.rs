@@ -2,7 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-#![allow(missing_docs)]
 #![allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
 #![allow(clippy::exhaustive_enums, clippy::exhaustive_structs)] // TODO(#1668) Clippy exceptions need docs or fixing.
 
@@ -16,9 +15,9 @@ use zerovec::{
 
 #[derive(yoke::Yokeable, zerofrom::ZeroFrom, Clone, PartialEq, Debug)]
 #[cfg_attr(
-    feature = "crabbake",
-    derive(crabbake::Bakeable),
-    crabbake(path = icu_plurals::rules::runtime::ast),
+    feature = "databake",
+    derive(databake::Bake),
+    databake(path = icu_plurals::rules::runtime::ast),
 )]
 pub struct Rule<'data>(pub VarZeroVec<'data, RelationULE>);
 

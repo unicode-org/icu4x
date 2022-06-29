@@ -2,20 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! This module contains implementations of the [`ICU4X`] [data provider] interface
-//! based on Unicode properties and TOML files implementing [Unicode Standard Annex #14][UAX14] and
-//! [Unicode Standard Annex #29][UAX29] breaking rules.
-//!
-//! This module exports feature-specific providers. Use [`crate::create_datagen_provider`]
-//! for an all-inclusive provider.
-//!
-//! **Important:** This data provider implementation is not optimized
-//! for production use. Read more in the [data provider] docs.
-//!
-//! [`ICU4X`]: ../icu/index.html
-//! [data provider]: icu_provider
-//! [UAX14]: https://www.unicode.org/reports/tr14/
-//! [UAX29]: https://www.unicode.org/reports/tr29/
+//! This module contains provider implementations backed by built-in segmentation data.
 
 use crate::transform::uprops::{
     BinaryPropertyUnicodeSetDataProvider, EnumeratedPropertyCodePointTrieProvider,
@@ -228,9 +215,9 @@ fn get_line_segmenter_value_from_name(name: &str) -> LineBreak {
     }
 }
 
-fn is_cjk_fullwidth(eaw: &CodePointTrie<EastAsianWidth>, codepoint: u32) -> bool {
+fn is_cjk_fullwidth(eaw: maps::CodePointMapDataBorrowed<EastAsianWidth>, codepoint: u32) -> bool {
     matches!(
-        eaw.get(codepoint),
+        eaw.get_u32(codepoint),
         EastAsianWidth::Ambiguous | EastAsianWidth::Fullwidth | EastAsianWidth::Wide
     )
 }
@@ -256,7 +243,7 @@ impl SegmenterRuleProvider {
     ) -> Result<RuleBreakDataV1<'static>, DataError> {
         let segmenter = self
             .source
-            .get_segmenter_paths()?
+            .segmenter()?
             .read_and_parse_toml::<SegmenterRuleTable>(&format!(
                 "{}.toml",
                 key.get_path()
@@ -268,34 +255,31 @@ impl SegmenterRuleProvider {
         // Load enumerate Unicode property dependencies.
         let cp_map_provider = EnumeratedPropertyCodePointTrieProvider::from(&self.source);
 
-        let payload = maps::get_word_break(&cp_map_provider).expect("The data should be valid!");
-        let wb = &payload.get().code_point_trie;
+        let data = maps::get_word_break(&cp_map_provider).expect("The data should be valid!");
+        let wb = data.as_borrowed();
 
-        let payload =
+        let data =
             maps::get_grapheme_cluster_break(&cp_map_provider).expect("The data should be valid!");
-        let gb = &payload.get().code_point_trie;
+        let gb = data.as_borrowed();
 
-        let payload =
-            maps::get_sentence_break(&cp_map_provider).expect("The data should be valid!");
-        let sb = &payload.get().code_point_trie;
+        let data = maps::get_sentence_break(&cp_map_provider).expect("The data should be valid!");
+        let sb = data.as_borrowed();
 
-        let payload = maps::get_line_break(&cp_map_provider).expect("The data should be valid!");
-        let lb = &payload.get().code_point_trie;
+        let data = maps::get_line_break(&cp_map_provider).expect("The data should be valid!");
+        let lb = data.as_borrowed();
 
-        let payload =
-            maps::get_east_asian_width(&cp_map_provider).expect("The data should be valid!");
-        let eaw = &payload.get().code_point_trie;
+        let data = maps::get_east_asian_width(&cp_map_provider).expect("The data should be valid!");
+        let eaw = data.as_borrowed();
 
-        let payload =
-            maps::get_general_category(&cp_map_provider).expect("The data should be valid!");
-        let gc = &payload.get().code_point_trie;
+        let data = maps::get_general_category(&cp_map_provider).expect("The data should be valid!");
+        let gc = data.as_borrowed();
 
         // Load binary Unicode property dependencies.
         let uniset_provider = BinaryPropertyUnicodeSetDataProvider::from(&self.source);
 
-        let payload =
+        let data =
             sets::get_extended_pictographic(&uniset_provider).expect("The data should be valid!");
-        let extended_pictographic = &payload.get().inv_list;
+        let extended_pictographic = data.as_borrowed();
 
         // As of Unicode 14.0.0, the break property and the largest codepoint defined in UCD are
         // summarized in the following list. See details in the property txt in
@@ -353,7 +337,7 @@ impl SegmenterRuleProvider {
                             // Word break property doesn't define SA, but we will use non-UAX29 rules.
                             // SA property is within 0..U+0x20000
                             for c in 0..0x20000 {
-                                if lb.get(c) == LineBreak::ComplexContext {
+                                if lb.get_u32(c) == LineBreak::ComplexContext {
                                     properties_map[c as usize] = property_index
                                 }
                             }
@@ -362,7 +346,7 @@ impl SegmenterRuleProvider {
 
                         let prop = get_word_segmenter_value_from_name(&*p.name);
                         for c in 0..(UAX29_CODEPOINT_TABLE_LEN as u32) {
-                            if wb.get(c) == prop {
+                            if wb.get_u32(c) == prop {
                                 properties_map[c as usize] = property_index;
                             }
                         }
@@ -385,7 +369,7 @@ impl SegmenterRuleProvider {
 
                         let prop = get_grapheme_segmenter_value_from_name(&*p.name);
                         for c in 0..(UAX29_CODEPOINT_TABLE_LEN as u32) {
-                            if gb.get(c) == prop {
+                            if gb.get_u32(c) == prop {
                                 properties_map[c as usize] = property_index;
                             }
                         }
@@ -395,7 +379,7 @@ impl SegmenterRuleProvider {
                     "sentence" => {
                         let prop = get_sentence_segmenter_value_from_name(&*p.name);
                         for c in 0..(UAX29_CODEPOINT_TABLE_LEN as u32) {
-                            if sb.get(c) == prop {
+                            if sb.get_u32(c) == prop {
                                 properties_map[c as usize] = property_index;
                             }
                         }
@@ -411,16 +395,16 @@ impl SegmenterRuleProvider {
                             || p.name == "PR_EAW"
                         {
                             for i in 0..0x20000 {
-                                match lb.get(i) {
+                                match lb.get_u32(i) {
                                     LineBreak::OpenPunctuation => {
                                         if (p.name == "OP_OP30"
-                                            && (eaw.get(i) != EastAsianWidth::Fullwidth
-                                                && eaw.get(i) != EastAsianWidth::Halfwidth
-                                                && eaw.get(i) != EastAsianWidth::Wide))
+                                            && (eaw.get_u32(i) != EastAsianWidth::Fullwidth
+                                                && eaw.get_u32(i) != EastAsianWidth::Halfwidth
+                                                && eaw.get_u32(i) != EastAsianWidth::Wide))
                                             || (p.name == "OP_EA"
-                                                && (eaw.get(i) == EastAsianWidth::Fullwidth
-                                                    || eaw.get(i) == EastAsianWidth::Halfwidth
-                                                    || eaw.get(i) == EastAsianWidth::Wide))
+                                                && (eaw.get_u32(i) == EastAsianWidth::Fullwidth
+                                                    || eaw.get_u32(i) == EastAsianWidth::Halfwidth
+                                                    || eaw.get_u32(i) == EastAsianWidth::Wide))
                                         {
                                             properties_map[i as usize] = property_index;
                                         }
@@ -429,9 +413,9 @@ impl SegmenterRuleProvider {
                                     LineBreak::CloseParenthesis => {
                                         // CP_EA is unused on the latest spec.
                                         if p.name == "CP_EA"
-                                            && (eaw.get(i) == EastAsianWidth::Fullwidth
-                                                || eaw.get(i) == EastAsianWidth::Halfwidth
-                                                || eaw.get(i) == EastAsianWidth::Wide)
+                                            && (eaw.get_u32(i) == EastAsianWidth::Fullwidth
+                                                || eaw.get_u32(i) == EastAsianWidth::Halfwidth
+                                                || eaw.get_u32(i) == EastAsianWidth::Wide)
                                         {
                                             properties_map[i as usize] = property_index;
                                         }
@@ -439,7 +423,7 @@ impl SegmenterRuleProvider {
 
                                     LineBreak::Ideographic => {
                                         if p.name == "ID_CN"
-                                            && gc.get(i) == GeneralCategory::Unassigned
+                                            && gc.get_u32(i) == GeneralCategory::Unassigned
                                         {
                                             if let Some(c) = char::from_u32(i) {
                                                 if extended_pictographic.contains(c) {
@@ -469,7 +453,7 @@ impl SegmenterRuleProvider {
 
                         let prop = get_line_segmenter_value_from_name(&*p.name);
                         for c in 0..0x20000 {
-                            if lb.get(c) == prop {
+                            if lb.get_u32(c) == prop {
                                 properties_map[c as usize] = property_index;
                             }
                         }

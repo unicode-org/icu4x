@@ -6,7 +6,7 @@ use crate::dynutil::UpcastDataPayload;
 use crate::prelude::*;
 use crate::yoke::*;
 use alloc::boxed::Box;
-use crabbake::{Bakeable, CrateEnv, TokenStream};
+use databake::{Bake, CrateEnv, TokenStream};
 
 trait ExportableYoke {
     fn bake_yoke(&self, env: &CrateEnv) -> TokenStream;
@@ -19,7 +19,7 @@ trait ExportableYoke {
 impl<Y, C> ExportableYoke for Yoke<Y, C>
 where
     Y: for<'a> Yokeable<'a>,
-    for<'a> <Y as Yokeable<'a>>::Output: Bakeable + serde::Serialize,
+    for<'a> <Y as Yokeable<'a>>::Output: Bake + serde::Serialize,
 {
     fn bake_yoke(&self, ctx: &CrateEnv) -> TokenStream {
         self.get().bake(ctx)
@@ -40,14 +40,14 @@ where
 #[derive(yoke::Yokeable)]
 pub struct ExportBox {
     payload: Box<dyn ExportableYoke + Sync>,
-    marker: Box<dyn Bakeable + Sync>,
+    marker: Box<dyn Bake + Sync>,
 }
 
 impl<M> UpcastDataPayload<M> for ExportMarker
 where
-    M: DataMarker + Default + Bakeable + 'static + Sync,
+    M: DataMarker + Default + Bake + 'static + Sync,
     M::Yokeable: Sync,
-    for<'a> <M::Yokeable as Yokeable<'a>>::Output: Bakeable + serde::Serialize,
+    for<'a> <M::Yokeable as Yokeable<'a>>::Output: Bake + serde::Serialize,
 {
     fn upcast(other: DataPayload<M>) -> DataPayload<ExportMarker> {
         DataPayload::from_owned(ExportBox {
@@ -90,7 +90,7 @@ impl DataPayload<ExportMarker> {
     }
 
     /// Serializes this [`DataPayload`]'s value and marker type into [`TokenStream`]s
-    /// using their [`Bakeable`] implementations.
+    /// using their [`Bake`] implementations.
     ///
     /// # Examples
     ///
@@ -99,14 +99,14 @@ impl DataPayload<ExportMarker> {
     /// use icu_provider::dynutil::UpcastDataPayload;
     /// use icu_provider::hello_world::HelloWorldV1Marker;
     /// use icu_provider::prelude::*;
-    /// # use crabbake::quote;
+    /// # use databake::quote;
     /// # use std::collections::BTreeSet;
     ///
     /// // Create an example DataPayload
     /// let payload: DataPayload<HelloWorldV1Marker> = Default::default();
     /// let export: DataPayload<ExportMarker> = UpcastDataPayload::upcast(payload);
     ///
-    /// let env = crabbake::CrateEnv::default();
+    /// let env = databake::CrateEnv::default();
     /// let (tokens, marker) = export.tokenize(&env);
     /// assert_eq!(
     ///     quote! {

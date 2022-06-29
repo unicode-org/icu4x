@@ -101,7 +101,7 @@ fn main() -> eyre::Result<()> {
     } else if format == "blob" {
         let blob = fs::read(base)?;
         let provider = BlobDataProvider::new_from_blob(blob)?;
-        let mut all_keys = icu_datagen::get_all_keys();
+        let mut all_keys = icu_datagen::all_keys();
         all_keys.sort_by_key(|k| k.get_path());
         let map = provider.get_map();
         for key in all_keys {

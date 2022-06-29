@@ -56,8 +56,8 @@ use crate::internals::{ClosureSet, DotType, MappingKind};
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(
     feature = "datagen", 
-    derive(serde::Serialize, crabbake::Bakeable),
-    crabbake(path = icu_casemapping::provider),
+    derive(serde::Serialize, databake::Bake),
+    databake(path = icu_casemapping::provider),
 )]
 #[derive(Debug, Eq, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
 pub struct CaseMappingExceptions<'data> {

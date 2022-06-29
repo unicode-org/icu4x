@@ -32,7 +32,7 @@ typedef enum ICU4XError {
   ICU4XError_LocaleParserError = 513,
   ICU4XError_DataStructValidityError = 768,
   ICU4XError_PropertyUnknownScriptIdError = 1024,
-  ICU4XError_PropertyUnknownGeneralCategoryGroupError = 41,
+  ICU4XError_PropertyUnknownGeneralCategoryGroupError = 1025,
   ICU4XError_DecimalLimitError = 1280,
   ICU4XError_DecimalSyntaxError = 1281,
   ICU4XError_PluralParserError = 1536,

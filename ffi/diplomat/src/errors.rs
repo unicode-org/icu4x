@@ -60,7 +60,7 @@ pub mod ffi {
 
         // property errors
         PropertyUnknownScriptIdError = 0x4_00,
-        PropertyUnknownGeneralCategoryGroupError = 41,
+        PropertyUnknownGeneralCategoryGroupError = 0x4_01,
 
         // decimal errors
         DecimalLimitError = 0x5_00,

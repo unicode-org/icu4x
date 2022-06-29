@@ -38,7 +38,7 @@ icu_locid = { version = "0.6", path = "../locid" }
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }
 displaydoc = { version = "0.2.3", default-features = false }
 zerovec = { version = "0.7", path = "../../utils/zerovec", features = ["yoke"] }
-crabbake = { version = "0.4", path = "../../experimental/crabbake", optional = true, features = ["derive"]}
+databake = { version = "0.1.0", path = "../../utils/databake", optional = true, features = ["derive"]}
 
 [dev-dependencies]
 criterion = "0.3"
@@ -59,7 +59,7 @@ std = ["icu_locid/std", "icu_provider/std"]
 default = []
 bench = ["serde"]
 serde = ["dep:serde", "zerovec/serde", "icu_locid/serde"]
-datagen = ["serde", "zerovec/crabbake", "crabbake"]
+datagen = ["serde", "zerovec/databake", "databake"]
 
 [[bench]]
 name = "operands"

@@ -30,8 +30,7 @@ impl ResourceProvider<CaseMappingV1Marker> for CaseMappingDataProvider {
     ) -> Result<DataResponse<CaseMappingV1Marker>, DataError> {
         let toml = &self
             .source
-            .get_uprops_paths()?
-            .read_and_parse_toml::<super::uprops_serde::case::Main>("ucase.toml")?
+            .read_and_parse_uprops::<super::uprops_serde::case::Main>("ucase")?
             .ucase;
 
         let trie_data = &toml.code_point_trie;

@@ -15,7 +15,7 @@ namespace capi {
 
 class ICU4XFixedDecimal;
 #include "ICU4XError.hpp"
-#include "ICU4XFixedDecimalRoundingMode.hpp"
+#include "ICU4XFixedDecimalSign.hpp"
 
 /**
  * A destruction policy for using ICU4XFixedDecimal with std::unique_ptr.
@@ -54,14 +54,14 @@ class ICU4XFixedDecimal {
    * 
    * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.try_from_f64) for more information.
    */
-  static diplomat::result<ICU4XFixedDecimal, ICU4XError> create_from_f64_with_lower_magnitude(double f, int16_t precision, ICU4XFixedDecimalRoundingMode rounding_mode);
+  static diplomat::result<ICU4XFixedDecimal, ICU4XError> create_from_f64_with_lower_magnitude(double f, int16_t precision);
 
   /**
    * Construct an [`ICU4XFixedDecimal`] from an float, for a given number of significant digits
    * 
    * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.try_from_f64) for more information.
    */
-  static diplomat::result<ICU4XFixedDecimal, ICU4XError> create_from_f64_with_significant_digits(double f, uint8_t digits, ICU4XFixedDecimalRoundingMode rounding_mode);
+  static diplomat::result<ICU4XFixedDecimal, ICU4XError> create_from_f64_with_significant_digits(double f, uint8_t digits);
 
   /**
    * Construct an [`ICU4XFixedDecimal`] from a string.
@@ -78,11 +78,11 @@ class ICU4XFixedDecimal {
   bool multiply_pow10(int16_t power);
 
   /**
-   * Invert the sign of the [`ICU4XFixedDecimal`].
+   * Set the sign of the [`ICU4XFixedDecimal`].
    * 
-   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.negate) for more information.
+   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.set_sign) for more information.
    */
-  void negate();
+  void set_sign(ICU4XFixedDecimalSign sign);
 
   /**
    * Zero-pad the [`ICU4XFixedDecimal`] on the left to a particular position
@@ -143,8 +143,8 @@ inline diplomat::result<ICU4XFixedDecimal, ICU4XError> ICU4XFixedDecimal::create
   }
   return diplomat_result_out_value;
 }
-inline diplomat::result<ICU4XFixedDecimal, ICU4XError> ICU4XFixedDecimal::create_from_f64_with_lower_magnitude(double f, int16_t precision, ICU4XFixedDecimalRoundingMode rounding_mode) {
-  auto diplomat_result_raw_out_value = capi::ICU4XFixedDecimal_create_from_f64_with_lower_magnitude(f, precision, static_cast<capi::ICU4XFixedDecimalRoundingMode>(rounding_mode));
+inline diplomat::result<ICU4XFixedDecimal, ICU4XError> ICU4XFixedDecimal::create_from_f64_with_lower_magnitude(double f, int16_t precision) {
+  auto diplomat_result_raw_out_value = capi::ICU4XFixedDecimal_create_from_f64_with_lower_magnitude(f, precision);
   diplomat::result<ICU4XFixedDecimal, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
     diplomat_result_out_value = diplomat::Ok(ICU4XFixedDecimal(diplomat_result_raw_out_value.ok));
@@ -153,8 +153,8 @@ inline diplomat::result<ICU4XFixedDecimal, ICU4XError> ICU4XFixedDecimal::create
   }
   return diplomat_result_out_value;
 }
-inline diplomat::result<ICU4XFixedDecimal, ICU4XError> ICU4XFixedDecimal::create_from_f64_with_significant_digits(double f, uint8_t digits, ICU4XFixedDecimalRoundingMode rounding_mode) {
-  auto diplomat_result_raw_out_value = capi::ICU4XFixedDecimal_create_from_f64_with_significant_digits(f, digits, static_cast<capi::ICU4XFixedDecimalRoundingMode>(rounding_mode));
+inline diplomat::result<ICU4XFixedDecimal, ICU4XError> ICU4XFixedDecimal::create_from_f64_with_significant_digits(double f, uint8_t digits) {
+  auto diplomat_result_raw_out_value = capi::ICU4XFixedDecimal_create_from_f64_with_significant_digits(f, digits);
   diplomat::result<ICU4XFixedDecimal, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
     diplomat_result_out_value = diplomat::Ok(ICU4XFixedDecimal(diplomat_result_raw_out_value.ok));
@@ -176,8 +176,8 @@ inline diplomat::result<ICU4XFixedDecimal, ICU4XError> ICU4XFixedDecimal::create
 inline bool ICU4XFixedDecimal::multiply_pow10(int16_t power) {
   return capi::ICU4XFixedDecimal_multiply_pow10(this->inner.get(), power);
 }
-inline void ICU4XFixedDecimal::negate() {
-  capi::ICU4XFixedDecimal_negate(this->inner.get());
+inline void ICU4XFixedDecimal::set_sign(ICU4XFixedDecimalSign sign) {
+  capi::ICU4XFixedDecimal_set_sign(this->inner.get(), static_cast<capi::ICU4XFixedDecimalSign>(sign));
 }
 inline void ICU4XFixedDecimal::pad_left(int16_t position) {
   capi::ICU4XFixedDecimal_pad_left(this->inner.get(), position);

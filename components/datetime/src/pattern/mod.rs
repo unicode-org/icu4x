@@ -22,8 +22,8 @@ pub use item::{GenericPatternItem, PatternItem};
 )]
 #[cfg_attr(
     feature = "datagen",
-    derive(serde::Serialize, crabbake::Bakeable),
-    crabbake(path = icu_datetime::pattern),
+    derive(serde::Serialize, databake::Bake),
+    databake(path = icu_datetime::pattern),
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[non_exhaustive]

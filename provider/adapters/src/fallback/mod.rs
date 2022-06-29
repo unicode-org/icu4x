@@ -137,16 +137,16 @@ pub struct LocaleFallbackConfig {
     /// use icu_provider_adapters::fallback::LocaleFallbackStrategy;
     ///
     /// // Set up the fallback iterator.
-    /// let loc = icu_locid::Locale::from_bytes(b"ar-EG-u-ns-latn").unwrap();
+    /// let loc = icu_locid::Locale::from_bytes(b"ar-EG-u-nu-latn").unwrap();
     /// let provider = icu_testdata::get_provider();
     /// let fallbacker = LocaleFallbacker::try_new(&provider).expect("data");
     /// let mut config = LocaleFallbackConfig::default();
-    /// config.extension_kw = Some(icu_locid::extensions_unicode_key!("ns"));
+    /// config.extension_kw = Some(icu_locid::extensions_unicode_key!("nu"));
     /// let key_fallbacker = fallbacker.for_config(config);
     /// let mut fallback_iterator = key_fallbacker.fallback_for(loc.into());
     ///
     /// // Run the algorithm and check the results.
-    /// assert_eq!(fallback_iterator.get().to_string(), "ar-EG-u-ns-latn");
+    /// assert_eq!(fallback_iterator.get().to_string(), "ar-EG-u-nu-latn");
     /// fallback_iterator.step();
     /// assert_eq!(fallback_iterator.get().to_string(), "ar-EG");
     /// fallback_iterator.step();

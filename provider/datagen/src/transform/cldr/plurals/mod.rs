@@ -28,16 +28,16 @@ impl PluralsProvider {
         match key {
             CardinalV1Marker::KEY => self
                 .source
-                .get_cldr_paths()?
-                .cldr_core()
+                .cldr()?
+                .core()
                 .read_and_parse::<cldr_serde::plurals::Resource>("supplemental/plurals.json")?
                 .supplemental
                 .plurals_type_cardinal
                 .as_ref(),
             OrdinalV1Marker::KEY => self
                 .source
-                .get_cldr_paths()?
-                .cldr_core()
+                .cldr()?
+                .core()
                 .read_and_parse::<cldr_serde::plurals::Resource>("supplemental/ordinals.json")?
                 .supplemental
                 .plurals_type_ordinal

@@ -7,9 +7,8 @@ use icu_provider::buf::BufferFormat;
 use icu_provider::prelude::*;
 use icu_provider::RcWrap;
 use serde::de::Deserialize;
-use writeable::Writeable;
 use yoke::*;
-use zerovec::maps::{KeyError, ZeroMap2dBorrowed};
+use zerovec::maps::ZeroMap2dBorrowed;
 
 /// A data provider loading data from blobs dynamically created at runtime.
 ///
@@ -98,14 +97,15 @@ impl BufferProvider for BlobDataProvider {
                 self.data.try_map_project_cloned_with_capture(
                     (key, req),
                     |zm, (key, req), _| {
-                        zm.get(&key.get_hash(), req.options.write_to_string().as_bytes())
-                            .map_err(|e| {
-                                match e {
-                                    KeyError::K0 => DataErrorKind::MissingResourceKey,
-                                    KeyError::K1 => DataErrorKind::MissingResourceOptions,
-                                }
-                                .with_req(key, req)
-                            })
+                        let partial_result: Result<&[u8], DataErrorKind> = zm
+                            .get0(&key.get_hash())
+                            .ok_or(DataErrorKind::MissingResourceKey)
+                            .and_then(|cursor| {
+                                cursor
+                                    .get1_by(|bytes| req.options.strict_cmp(bytes).reverse())
+                                    .ok_or(DataErrorKind::MissingResourceOptions)
+                            });
+                        partial_result.map_err(|e| e.with_req(key, req))
                     },
                 )?,
             )),

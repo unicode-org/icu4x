@@ -21,7 +21,7 @@ test("multiply a decimal by a power of 10", t => {
 
 test("negate a decimal", t => {
   const decimal = ICU4XFixedDecimal.create(1234);
-  decimal.negate();
+  decimal.set_sign("Negative");
 
   t.is(decimal.to_string(), "-1234");
 });

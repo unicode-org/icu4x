@@ -312,3 +312,31 @@ fn test_conformance() {
             .eq(strings[4].chars()));
     }
 }
+
+#[test]
+fn test_hangul() {
+    use icu_uniset::{UnicodeSet, UnicodeSetBuilder};
+    use zerofrom::ZeroFrom;
+    let builder = UnicodeSetBuilder::new();
+    let set: UnicodeSet = builder.build();
+
+    let data_provider = icu_testdata::get_provider();
+
+    let normalizer: ComposingNormalizer = ComposingNormalizer::try_new_nfc(&data_provider).unwrap();
+    {
+        let mut norm_iter = normalizer.normalize_iter("A\u{AC00}\u{11A7}".chars());
+        // Pessimize passthrough to avoid hiding bugs.
+        norm_iter
+            .decomposition
+            .potential_passthrough_and_not_backward_combining = Some(ZeroFrom::zero_from(&set));
+        assert!(norm_iter.eq("A\u{AC00}\u{11A7}".chars()));
+    }
+    {
+        let mut norm_iter = normalizer.normalize_iter("A\u{AC00}\u{11C2}".chars());
+        // Pessimize passthrough to avoid hiding bugs.
+        norm_iter
+            .decomposition
+            .potential_passthrough_and_not_backward_combining = Some(ZeroFrom::zero_from(&set));
+        assert!(norm_iter.eq("A\u{AC1B}".chars()));
+    }
+}

@@ -136,7 +136,7 @@ where
         }
     }
 
-    #[doc(hidden)] // Crabbake internal
+    #[doc(hidden)] // databake internal
     pub const unsafe fn from_parts_unchecked(
         keys0: K0::Container,
         joiner: ZeroVec<'a, u32>,

@@ -39,9 +39,9 @@ type UnvalidatedLanguageIdentifierPair = StrStrPairVarULE;
 )]
 #[cfg_attr(
     feature = "datagen",
-    derive(serde::Serialize, crabbake::Bakeable),
+    derive(serde::Serialize, databake::Bake),
     zerovec::derive(Serialize),
-    crabbake(path = icu_locale_canonicalizer::provider),
+    databake(path = icu_locale_canonicalizer::provider),
 )]
 /// A pair of strings with a EncodeAsVarULE implementation.
 pub struct StrStrPair<'a>(
@@ -53,8 +53,8 @@ pub struct StrStrPair<'a>(
 #[derive(PartialEq, Clone, Default)]
 #[cfg_attr(
     feature = "datagen",
-    derive(serde::Serialize, crabbake::Bakeable),
-    crabbake(path = icu_locale_canonicalizer::provider),
+    derive(serde::Serialize, databake::Bake),
+    databake(path = icu_locale_canonicalizer::provider),
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
@@ -118,8 +118,8 @@ pub struct AliasesV1<'data> {
 #[derive(Debug, PartialEq, Clone)]
 #[cfg_attr(
     feature = "datagen",
-    derive(serde::Serialize, crabbake::Bakeable),
-    crabbake(path = icu_locale_canonicalizer::provider),
+    derive(serde::Serialize, databake::Bake),
+    databake(path = icu_locale_canonicalizer::provider),
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 /// This likely subtags data is used for the minimize and maximize operations.

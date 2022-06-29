@@ -42,7 +42,7 @@ icu_uniset = { version = "0.5", path = "../../utils/uniset" }
 icu_properties = { version = "0.6", path = "../../components/properties" }
 utf8_iter = "1.0"
 utf16_iter = "1.0"
-crabbake = { version = "0.4", path = "../../experimental/crabbake", optional = true, features = ["derive"] }
+databake = { version = "0.1.0", path = "../../utils/databake", optional = true, features = ["derive"] }
 zerofrom = { version = "0.1.0", path = "../../utils/zerofrom" }
 icu_char16trie = { version = "0.1", path = "../../experimental/char16trie" }
 
@@ -58,4 +58,4 @@ bench = false  # This option is required for Benchmark CI
 [features]
 default = []
 serde = ["dep:serde", "icu_codepointtrie/serde", "zerovec/serde", "icu_uniset/serde", "icu_properties/serde", "icu_char16trie/serde"]
-datagen = ["serde", "crabbake", "icu_codepointtrie/crabbake", "zerovec/crabbake", "icu_uniset/crabbake", "icu_properties/crabbake", "icu_char16trie/crabbake"]
+datagen = ["serde", "databake", "icu_codepointtrie/databake", "zerovec/databake", "icu_uniset/databake", "icu_properties/databake", "icu_char16trie/databake"]

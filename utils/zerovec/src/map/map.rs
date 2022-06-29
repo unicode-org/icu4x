@@ -98,7 +98,7 @@ where
         }
     }
 
-    #[doc(hidden)] // Crabbake internal
+    #[doc(hidden)] // databake internal
     pub const unsafe fn from_parts_unchecked(keys: K::Container, values: V::Container) -> Self {
         Self { keys, values }
     }

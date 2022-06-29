@@ -5,6 +5,7 @@
 use core::cmp::Ordering;
 use core::str::FromStr;
 
+use crate::ordering::SubtagOrderingResult;
 use crate::parser::{
     get_subtag_iterator, parse_language_identifier, parse_language_identifier_with_single_variant,
     ParserError, ParserMode,
@@ -161,10 +162,10 @@ impl LanguageIdentifier {
         Ok(lang_id.to_string())
     }
 
-    /// Compare this `LanguageIdentifier` with BCP-47 bytes.
+    /// Compare this [`LanguageIdentifier`] with BCP-47 bytes.
     ///
     /// The return value is equivalent to what would happen if you first converted this
-    /// `LanguageIdentifier` to a BCP-47 string and then performed a byte comparison.
+    /// [`LanguageIdentifier`] to a BCP-47 string and then performed a byte comparison.
     ///
     /// This function is case-sensitive and results in a *total order*, so it is appropriate for
     /// binary search. The only argument producing [`Ordering::Equal`] is `self.to_string()`.
@@ -175,28 +176,69 @@ impl LanguageIdentifier {
     /// use icu::locid::LanguageIdentifier;
     /// use std::cmp::Ordering;
     ///
-    /// let bcp47_strings: &[&[u8]] = &[
-    ///     b"pl-Latn-PL",
-    ///     b"und",
-    ///     b"und-Adlm",
-    ///     b"und-GB",
-    ///     b"und-ZA",
-    ///     b"und-fonipa",
-    ///     b"zh",
+    /// let bcp47_strings: &[&str] = &[
+    ///     "pl-Latn-PL",
+    ///     "und",
+    ///     "und-Adlm",
+    ///     "und-GB",
+    ///     "und-ZA",
+    ///     "und-fonipa",
+    ///     "zh",
     /// ];
     ///
     /// for ab in bcp47_strings.windows(2) {
     ///     let a = ab[0];
     ///     let b = ab[1];
     ///     assert!(a.cmp(b) == Ordering::Less);
-    ///     let a_langid = LanguageIdentifier::from_bytes(a).unwrap();
-    ///     assert!(a_langid.strict_cmp(b) == Ordering::Less);
+    ///     let a_langid = a.parse::<LanguageIdentifier>().unwrap();
+    ///     assert_eq!(a, a_langid.to_string());
+    ///     assert!(a_langid.strict_cmp(a.as_bytes()) == Ordering::Equal);
+    ///     assert!(a_langid.strict_cmp(b.as_bytes()) == Ordering::Less);
     /// }
     /// ```
     pub fn strict_cmp(&self, other: &[u8]) -> Ordering {
-        let mut other_iter = other.split(|b| *b == b'-');
+        self.strict_cmp_iter(other.split(|b| *b == b'-')).end()
+    }
+
+    /// Compare this [`LanguageIdentifier`] with an iterator of BCP-47 subtags.
+    ///
+    /// This function has the same equality semantics as [`LanguageIdentifier::strict_cmp`]. It is intended as
+    /// a more modular version that allows multiple subtag iterators to be chained together.
+    ///
+    /// For an additional example, see [`SubtagOrderingResult`].
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::locid::LanguageIdentifier;
+    /// use std::cmp::Ordering;
+    ///
+    /// let subtags: &[&[u8]] = &[&*b"ca", &*b"ES", &*b"valencia"];
+    ///
+    /// let loc = "ca-ES-valencia".parse::<LanguageIdentifier>().unwrap();
+    /// assert_eq!(
+    ///     Ordering::Equal,
+    ///     loc.strict_cmp_iter(subtags.iter().copied()).end()
+    /// );
+    ///
+    /// let loc = "ca-ES".parse::<LanguageIdentifier>().unwrap();
+    /// assert_eq!(
+    ///     Ordering::Less,
+    ///     loc.strict_cmp_iter(subtags.iter().copied()).end()
+    /// );
+    ///
+    /// let loc = "ca-ZA".parse::<LanguageIdentifier>().unwrap();
+    /// assert_eq!(
+    ///     Ordering::Greater,
+    ///     loc.strict_cmp_iter(subtags.iter().copied()).end()
+    /// );
+    /// ```
+    pub fn strict_cmp_iter<'l, I>(&self, mut subtags: I) -> SubtagOrderingResult<I>
+    where
+        I: Iterator<Item = &'l [u8]>,
+    {
         let r = self.for_each_subtag_str(&mut |subtag| {
-            if let Some(other) = other_iter.next() {
+            if let Some(other) = subtags.next() {
                 match subtag.as_bytes().cmp(other) {
                     Ordering::Equal => Ok(()),
                     not_equal => Err(not_equal),
@@ -205,14 +247,12 @@ impl LanguageIdentifier {
                 Err(Ordering::Greater)
             }
         });
-        if let Err(o) = r {
-            return o;
+        match r {
+            Ok(_) => SubtagOrderingResult::Subtags(subtags),
+            Err(o) => SubtagOrderingResult::Ordering(o),
         }
-        if other_iter.next().is_some() {
-            return Ordering::Less;
-        }
-        Ordering::Equal
     }
+
     /// Compare this `LanguageIdentifier` with a potentially unnormalized BCP-47 string.
     ///
     /// The return value is equivalent to what would happen if you first parsed the

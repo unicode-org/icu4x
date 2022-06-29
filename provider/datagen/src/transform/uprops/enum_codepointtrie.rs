@@ -2,7 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::source::TomlCache;
 use crate::SourceData;
 use icu_codepointtrie::CodePointTrie;
 use icu_properties::provider::*;
@@ -26,12 +25,11 @@ impl From<&SourceData> for EnumeratedPropertyCodePointTrieProvider {
 }
 
 fn get_enumerated<'a>(
-    source: &'a TomlCache,
+    source: &'a SourceData,
     key: &str,
 ) -> Result<&'a super::uprops_serde::enumerated::EnumeratedPropertyMap, DataError> {
-    let toml_obj: &super::uprops_serde::enumerated::Main =
-        source.read_and_parse_toml(&format!("{}.toml", key))?;
-    toml_obj
+    source
+        .read_and_parse_uprops::<super::uprops_serde::enumerated::Main>(key)?
         .enum_property
         .get(0)
         .ok_or_else(|| DataErrorKind::MissingResourceKey.into_error())
@@ -43,7 +41,7 @@ macro_rules! expand {
             impl ResourceProvider<$marker> for EnumeratedPropertyCodePointTrieProvider
             {
                 fn load_resource(&self, _: &DataRequest) -> Result<DataResponse<$marker>, DataError> {
-                    let source_cpt_data = &get_enumerated(self.source.get_uprops_paths()?, $prop_name)?.code_point_trie;
+                    let source_cpt_data = &get_enumerated(&self.source, $prop_name)?.code_point_trie;
 
                     let code_point_trie = CodePointTrie::try_from(source_cpt_data).map_err(|e| {
                         DataError::custom("Could not parse CodePointTrie TOML").with_display_context(&e)
@@ -60,7 +58,7 @@ macro_rules! expand {
                 fn supported_options(
                     &self,
                 ) -> Result<Vec<ResourceOptions>, DataError> {
-                    get_enumerated(self.source.get_uprops_paths()?, $prop_name)?;
+                    get_enumerated(&self.source, $prop_name)?;
                     Ok(vec![Default::default()])
                 }
             }

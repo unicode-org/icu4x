@@ -7,9 +7,12 @@
 use crate::error::DateTimeError;
 use core::convert::TryFrom;
 use core::convert::TryInto;
+use core::fmt;
 use core::ops::{Add, Sub};
 use core::str::FromStr;
-use tinystr::{TinyStr16, TinyStr8};
+use tinystr::{TinyStr16, TinyStr4};
+use zerovec::maps::ZeroMapKV;
+use zerovec::ule::AsULE;
 
 #[derive(Copy, Clone, Debug, PartialEq)]
 #[allow(clippy::exhaustive_structs)] // this is a newtype
@@ -30,11 +33,38 @@ pub struct Year {
     pub related_iso: i32,
 }
 
-/// TODO(#486): Implement month codes.
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[allow(clippy::exhaustive_structs)] // this is a newtype
-pub struct MonthCode(pub TinyStr8);
+#[cfg_attr(
+    feature = "datagen",
+    derive(serde::Serialize, databake::Bake),
+    databake(path = icu_calendar::types),
+)]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+pub struct MonthCode(pub TinyStr4);
 
+impl AsULE for MonthCode {
+    type ULE = TinyStr4;
+    fn to_unaligned(self) -> TinyStr4 {
+        self.0
+    }
+    fn from_unaligned(u: TinyStr4) -> Self {
+        Self(u)
+    }
+}
+
+impl<'a> ZeroMapKV<'a> for MonthCode {
+    type Container = zerovec::ZeroVec<'a, MonthCode>;
+    type Slice = zerovec::ZeroSlice<MonthCode>;
+    type GetType = <MonthCode as AsULE>::ULE;
+    type OwnedType = MonthCode;
+}
+
+impl fmt::Display for MonthCode {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "{}", self.0)
+    }
+}
 /// Representation of a formattable month.
 #[derive(Clone, Debug, PartialEq)]
 #[allow(clippy::exhaustive_structs)] // this type is stable
@@ -401,8 +431,8 @@ impl FromStr for GmtOffset {
 #[repr(i8)]
 #[cfg_attr(
     feature = "datagen",
-    derive(serde::Serialize, crabbake::Bakeable),
-    crabbake(path = icu_calendar::types),
+    derive(serde::Serialize, databake::Bake),
+    databake(path = icu_calendar::types),
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[allow(clippy::exhaustive_enums)] // This is stable

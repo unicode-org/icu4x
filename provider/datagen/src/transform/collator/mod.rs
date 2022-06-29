@@ -2,8 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! This module transforms collation-related TOML files created by
-//! `genrb -X` in the ICU4C repo to ICU4X-internal data structures.
+//! This module contains provider implementations backed by TOML files
+//! exported from ICU.
 
 use crate::SourceData;
 use icu_codepointtrie::toml::CodePointTrieToml;
@@ -160,10 +160,10 @@ macro_rules! collation_provider {
                 fn load_resource(&self, req: &DataRequest) -> Result<DataResponse<$marker>, DataError> {
                     let $toml_data: &$serde_struct = self
                         .source
-                        .get_coll_paths()?
+                        .icuexport()?
                         .read_and_parse_toml(
                             &format!(
-                                "{}{}.toml",
+                                "coll/{}{}.toml",
                                 locale_to_file_name(&req.options), $suffix)
                         )?;
 
@@ -182,8 +182,8 @@ macro_rules! collation_provider {
                 fn supported_options(&self) -> Result<Vec<ResourceOptions>, DataError> {
                     Ok(self
                         .source
-                        .get_coll_paths()?
-                        .list()?
+                        .icuexport()?
+                        .list("coll")?
                         .filter_map(|entry|
                             entry
                                 .file_stem()

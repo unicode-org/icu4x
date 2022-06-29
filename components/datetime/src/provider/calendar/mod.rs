@@ -13,18 +13,32 @@ use icu_provider::{yoke, zerofrom};
 pub use skeletons::*;
 pub use symbols::*;
 
-#[icu_provider::data_struct(DatePatternsV1Marker = "datetime/lengths@1")]
+#[icu_provider::data_struct(DatePatternsV1Marker = "datetime/datelengths@1")]
 #[derive(Debug, PartialEq, Clone, Default)]
 #[cfg_attr(
     feature = "datagen",
-    derive(serde::Serialize, crabbake::Bakeable),
-    crabbake(path = icu_datetime::provider::calendar),
+    derive(serde::Serialize, databake::Bake),
+    databake(path = icu_datetime::provider::calendar),
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct DatePatternsV1<'data> {
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub date: patterns::LengthPatternsV1<'data>,
 
+    /// Patterns used to combine date and time length patterns into full date_time patterns.
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub length_combinations: patterns::GenericLengthPatternsV1<'data>,
+}
+
+#[icu_provider::data_struct(TimePatternsV1Marker = "datetime/timelengths@1")]
+#[derive(Debug, PartialEq, Clone, Default)]
+#[cfg_attr(
+    feature = "datagen",
+    derive(serde::Serialize, databake::Bake),
+    databake(path = icu_datetime::provider::calendar),
+)]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+pub struct TimePatternsV1<'data> {
     /// These patterns are common uses of time formatting, broken down by the length of the
     /// pattern. Users can override the hour cycle with a preference, so there are two
     /// pattern groups stored here. Note that the pattern will contain either h11 or h12.
@@ -39,10 +53,6 @@ pub struct DatePatternsV1<'data> {
 
     /// By default a locale will prefer one hour cycle type over another.
     pub preferred_hour_cycle: pattern::CoarseHourCycle,
-
-    /// Patterns used to combine date and time length patterns into full date_time patterns.
-    #[cfg_attr(feature = "serde", serde(borrow))]
-    pub length_combinations: patterns::GenericLengthPatternsV1<'data>,
 }
 
 pub mod patterns {
@@ -53,8 +63,8 @@ pub mod patterns {
     #[derive(Debug, PartialEq, Clone, Default, yoke::Yokeable, zerofrom::ZeroFrom)]
     #[cfg_attr(
         feature = "datagen",
-        derive(serde::Serialize, crabbake::Bakeable),
-        crabbake(path = icu_datetime::provider::calendar::patterns),
+        derive(serde::Serialize, databake::Bake),
+        databake(path = icu_datetime::provider::calendar::patterns),
     )]
     #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
     pub struct LengthPatternsV1<'data> {
@@ -71,8 +81,8 @@ pub mod patterns {
     #[derive(Debug, PartialEq, Clone, Default, yoke::Yokeable, zerofrom::ZeroFrom)]
     #[cfg_attr(
         feature = "datagen",
-        derive(serde::Serialize, crabbake::Bakeable),
-        crabbake(path = icu_datetime::provider::calendar::patterns),
+        derive(serde::Serialize, databake::Bake),
+        databake(path = icu_datetime::provider::calendar::patterns),
     )]
     #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
     pub struct LengthPatternPluralsV1<'data> {
@@ -89,8 +99,8 @@ pub mod patterns {
     #[derive(Debug, PartialEq, Clone, Default, yoke::Yokeable, zerofrom::ZeroFrom)]
     #[cfg_attr(
         feature = "datagen",
-        derive(serde::Serialize, crabbake::Bakeable),
-        crabbake(path = icu_datetime::provider::calendar::patterns),
+        derive(serde::Serialize, databake::Bake),
+        databake(path = icu_datetime::provider::calendar::patterns),
     )]
     #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
     pub struct GenericLengthPatternsV1<'data> {

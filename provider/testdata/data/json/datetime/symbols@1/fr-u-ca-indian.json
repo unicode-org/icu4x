@@ -1,49 +1,55 @@
 {
   "months": {
     "format": {
-      "abbreviated": [
-        "chai.",
-        "vai.",
-        "jyai.",
-        "āsha.",
-        "shrā.",
-        "bhā.",
-        "āshw.",
-        "kār.",
-        "mār.",
-        "pau.",
-        "māgh",
-        "phāl."
-      ],
-      "narrow": [
-        "1",
-        "2",
-        "3",
-        "4",
-        "5",
-        "6",
-        "7",
-        "8",
-        "9",
-        "10",
-        "11",
-        "12"
-      ],
+      "abbreviated": {
+        "SolarTwelve": [
+          "chai.",
+          "vai.",
+          "jyai.",
+          "āsha.",
+          "shrā.",
+          "bhā.",
+          "āshw.",
+          "kār.",
+          "mār.",
+          "pau.",
+          "māgh",
+          "phāl."
+        ]
+      },
+      "narrow": {
+        "SolarTwelve": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5",
+          "6",
+          "7",
+          "8",
+          "9",
+          "10",
+          "11",
+          "12"
+        ]
+      },
       "short": null,
-      "wide": [
-        "chaitra",
-        "vaishākh",
-        "jyaishtha",
-        "āshādha",
-        "shrāvana",
-        "bhādrapad",
-        "āshwin",
-        "kārtik",
-        "mārgashīrsha",
-        "paush",
-        "māgh",
-        "phālgun"
-      ]
+      "wide": {
+        "SolarTwelve": [
+          "chaitra",
+          "vaishākh",
+          "jyaishtha",
+          "āshādha",
+          "shrāvana",
+          "bhādrapad",
+          "āshwin",
+          "kārtik",
+          "mārgashīrsha",
+          "paush",
+          "māgh",
+          "phālgun"
+        ]
+      }
     },
     "stand_alone": null
   },

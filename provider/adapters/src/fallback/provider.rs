@@ -27,8 +27,8 @@ type UnvalidatedRegion = TinyAsciiStr<3>;
 #[derive(Default, Clone, PartialEq, Debug)]
 #[cfg_attr(
     feature = "datagen",
-    derive(serde::Serialize, crabbake::Bakeable),
-    crabbake(path = icu_provider_adapters::fallback::provider),
+    derive(serde::Serialize, databake::Bake),
+    databake(path = icu_provider_adapters::fallback::provider),
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
@@ -70,8 +70,8 @@ pub const DEFAULT_REGION: Region = region!("ZZ");
 #[derive(Default, Clone, PartialEq, Debug)]
 #[cfg_attr(
     feature = "datagen",
-    derive(serde::Serialize, crabbake::Bakeable),
-    crabbake(path = icu_provider_adapters::fallback::provider),
+    derive(serde::Serialize, databake::Bake),
+    databake(path = icu_provider_adapters::fallback::provider),
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]

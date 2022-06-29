@@ -16,8 +16,8 @@ use icu_provider::{yoke, zerofrom};
 #[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(
     feature = "datagen",
-    derive(serde::Serialize, crabbake::Bakeable),
-    crabbake(path = icu_datetime::pattern::runtime),
+    derive(serde::Serialize, databake::Bake),
+    databake(path = icu_datetime::pattern::runtime),
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[allow(clippy::exhaustive_structs)] // part of data struct
@@ -137,8 +137,8 @@ impl<'data> PluralPattern<'data> {
 #[allow(clippy::exhaustive_enums)] // this type is stable
 #[cfg_attr(
     feature = "datagen",
-    derive(crabbake::Bakeable),
-    crabbake(path = icu_datetime::pattern::runtime),
+    derive(databake::Bake),
+    databake(path = icu_datetime::pattern::runtime),
 )]
 pub enum PatternPlurals<'data> {
     /// A collection of pattern variants for when plurals differ.
