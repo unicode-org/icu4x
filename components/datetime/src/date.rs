@@ -132,7 +132,7 @@ pub(crate) struct DateTimeInputWithLocale<'data, T: DateTimeInput> {
 /// A [`DateTimeInput`] type with all of the fields pre-extracted
 ///
 /// See [`DateTimeInput`] for documentation on individual fields
-struct ExtractedDateTimeInput {
+pub(crate) struct ExtractedDateTimeInput {
     year: Option<Year>,
     month: Option<Month>,
     day_of_month: Option<DayOfMonth>,
@@ -148,7 +148,7 @@ struct ExtractedDateTimeInput {
 /// A [`ZonedDateTimeInput`] type with all of the fields pre-extracted
 ///
 /// See [`ZonedDateTimeInput`] for documentation on individual fields
-struct ExtractedTimeZoneInput {
+pub(crate) struct ExtractedTimeZoneInput {
     date_time_input: ExtractedDateTimeInput,
     gmt_offset: GmtOffset,
     time_zone_id: Option<TimeZoneBcp47Id>,
@@ -158,7 +158,7 @@ struct ExtractedTimeZoneInput {
 
 impl ExtractedDateTimeInput {
     /// Construct given an instance of a [`DateTimeInput`].
-    fn extract_from<T: DateTimeInput>(input: &T) -> Self {
+    pub(crate) fn extract_from<T: DateTimeInput>(input: &T) -> Self {
         Self {
             year: input.year(),
             month: input.month(),
@@ -176,7 +176,7 @@ impl ExtractedDateTimeInput {
 
 impl ExtractedTimeZoneInput {
     /// Construct given an instance of a [`ZonedDateTimeInput`].
-    fn extract_from<T: ZonedDateTimeInput>(input: &T) -> Self {
+    pub(crate) fn extract_from<T: ZonedDateTimeInput>(input: &T) -> Self {
         Self {
             date_time_input: ExtractedDateTimeInput::extract_from(input),
             gmt_offset: input.gmt_offset(),
