@@ -605,20 +605,58 @@ impl LengthType for Weekday {
     }
 }
 
-field_type!(DayPeriod; {
-    'a' => AmPm = 0,
-    'b' => NoonMidnight = 1,
-}; Text; DayPeriodULE);
+field_type!(
+    /// An enum for the possible symbols of a day period field in a date pattern.
+    DayPeriod; {
+        /// Field symbol for the AM, PM day period.  (Does not include noon, midnight.)
+        /// 
+        /// For more details, see documentation on [date field symbols](https://unicode.org/reports/tr35/tr35-dates.html#table-date-field-symbol-table).
+        'a' => AmPm = 0,
+        /// Field symbol for the am, pm, noon, midnight day period.
+        /// 
+        /// For more details, see documentation on [date field symbols](https://unicode.org/reports/tr35/tr35-dates.html#table-date-field-symbol-table).
+        'b' => NoonMidnight = 1,
+    }; 
+    Text; 
+    DayPeriodULE
+);
 
-field_type!(TimeZone; {
-    'z' => LowerZ = 0,
-    'Z' => UpperZ = 1,
-    'O' => UpperO = 2,
-    'v' => LowerV = 3,
-    'V' => UpperV = 4,
-    'x' => LowerX = 5,
-    'X' => UpperX = 6,
-}; TimeZoneULE);
+field_type!(
+    /// An enum for the possible symbols of a time zone field in a date pattern.
+    TimeZone; {
+        /// Field symbol for the specific non-location format of a time zone.
+        /// 
+        /// For more details, see documentation on [date field symbols](https://unicode.org/reports/tr35/tr35-dates.html#table-date-field-symbol-table).
+        'z' => LowerZ = 0,
+        /// Field symbol for any of: the ISO8601 basic format with hours, minutes and optional seconds fields, the
+        /// long localized GMT format, or the ISO8601 extended format with hours, minutes and optional seconds fields.
+        /// 
+        /// For more details, see documentation on [date field symbols](https://unicode.org/reports/tr35/tr35-dates.html#table-date-field-symbol-table).
+        'Z' => UpperZ = 1,
+        /// Field symbol for the localized GMT format of a time zone.
+        /// 
+        /// For more details, see documentation on [date field symbols](https://unicode.org/reports/tr35/tr35-dates.html#table-date-field-symbol-table).
+        'O' => UpperO = 2,
+        /// Field symbol for the generic non-location format of a time zone.
+        /// 
+        /// For more details, see documentation on [date field symbols](https://unicode.org/reports/tr35/tr35-dates.html#table-date-field-symbol-table).
+        'v' => LowerV = 3,
+        /// Field symbol for any of: the time zone id, time zone exemplar city, or generic location format.
+        /// 
+        /// For more details, see documentation on [date field symbols](https://unicode.org/reports/tr35/tr35-dates.html#table-date-field-symbol-table).
+        'V' => UpperV = 4,
+        /// Field symbol for either the ISO8601 basic format or ISO8601 extended format, with an optional ISO8601 UTC indicator `"Z"`.
+        /// 
+        /// For more details, see documentation on [date field symbols](https://unicode.org/reports/tr35/tr35-dates.html#table-date-field-symbol-table).
+        'x' => LowerX = 5,
+        /// Field symbol for either the ISO8601 basic format or ISO8601 extended format.  This does not allow an
+        /// optional ISO8601 UTC indicator `"Z"`, unlike [`TimeZone::LowerX`].
+        /// 
+        /// For more details, see documentation on [date field symbols](https://unicode.org/reports/tr35/tr35-dates.html#table-date-field-symbol-table).
+        'X' => UpperX = 6,
+    }; 
+    TimeZoneULE
+);
 
 impl LengthType for TimeZone {
     fn get_length_type(&self, length: FieldLength) -> TextOrNumeric {
