@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1656534970382,
+  "lastUpdate": 1656543149015,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -34613,6 +34613,60 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 44997545,
             "range": "± 146757",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/worst",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/worst",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "871f7618cbb4877fbb8d8e652d402f77bbcfc458",
+          "message": "Move properties data over to an (extensible) enum (#2140)\n\n* Move properties data over to enums",
+          "timestamp": "2022-06-29T22:41:44Z",
+          "tree_id": "ad4610bf90b8913091a0f9e75e94b0134e359629",
+          "url": "https://github.com/unicode-org/icu4x/commit/871f7618cbb4877fbb8d8e652d402f77bbcfc458"
+        },
+        "date": 1656543120926,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 44732206,
+            "range": "± 250658",
             "unit": "ns/iter"
           },
           {
