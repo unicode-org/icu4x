@@ -350,7 +350,12 @@ macro_rules! field_type {
         #[allow(clippy::exhaustive_enums)] // used in data struct
         $(#[$enum_attr])*
         pub enum $i {
-            $($(#[$variant_attr])* $val = $idx, )*
+            $(
+                $(#[$variant_attr])* 
+                #[doc = core::concat!("\n\nThis field symbol is represented by the character `", $key, "` in a date formatting pattern string.")]
+                #[doc = "\n\nFor more details, see documentation on [date field symbols](https://unicode.org/reports/tr35/tr35-dates.html#table-date-field-symbol-table)."]
+                $val = $idx, 
+            )*
         }
 
         impl $i {
@@ -433,14 +438,10 @@ field_type! (
         /// Field symbol for calendar year (numeric).
         /// 
         /// In most cases the length of this field specifies the minimum number of digits to display, zero-padded as necessary. For most use cases, [`Year::Calendar`] or [`Year::WeekOf`] should be adequate.
-        /// 
-        /// For more details, see documentation on [date field symbols](https://unicode.org/reports/tr35/tr35-dates.html#table-date-field-symbol-table).
         'y' => Calendar = 0,
         /// Field symbol for year in "week of year".
         /// 
         /// This works for “week of year” based calendars in which the year transition occurs on a week boundary; may differ from calendar year [`Year::Calendar`] near a year transition. This numeric year designation is used in conjunction with [`Week::WeekOfYear`], but can be used in non-Gregorian based calendar systems where week date processing is desired. The field length is interpreted in the same was as for [`Year::Calendar`].
-        /// 
-        /// For more details, see documentation on [date field symbols](https://unicode.org/reports/tr35/tr35-dates.html#table-date-field-symbol-table).
         'Y' => WeekOf = 1,
     }; 
     Numeric; 
@@ -453,14 +454,10 @@ field_type!(
         /// Field symbol for format style month number/name.
         /// 
         /// The format style name is an additional form of the month name that is different than the stand-alone form, which can be necessary depending on the language and context.
-        /// 
-        /// For more details, see documentation on [date field symbols](https://unicode.org/reports/tr35/tr35-dates.html#table-date-field-symbol-table).
         'M' => Format = 0,
         /// Field symbol for stand-alone month number/name.
         /// 
         /// The stand-alone month name is used when the month is displayed by itself.
-        /// 
-        /// For more details, see documentation on [date field symbols](https://unicode.org/reports/tr35/tr35-dates.html#table-date-field-symbol-table).
         'L' => StandAlone = 1,
 }; MonthULE);
 
@@ -485,24 +482,16 @@ field_type!(
     /// An enum for the possible symbols of a day field in a date pattern.
     Day; {
         /// Field symbol for day of month (numeric).
-        /// 
-        /// For more details, see documentation on [date field symbols](https://unicode.org/reports/tr35/tr35-dates.html#table-date-field-symbol-table).
         'd' => DayOfMonth = 0,
         /// Field symbol for day of year (numeric).
-        /// 
-        /// For more details, see documentation on [date field symbols](https://unicode.org/reports/tr35/tr35-dates.html#table-date-field-symbol-table).
         'D' => DayOfYear = 1,
         /// Field symbol for the day of week occurrence relative to the month (numeric).
         /// 
         /// For the example `"2nd Wed in July"`, this field would provide `"2"`.  Should likely be paired with the [`Weekday`] field.
-        /// 
-        /// For more details, see documentation on [date field symbols](https://unicode.org/reports/tr35/tr35-dates.html#table-date-field-symbol-table).
         'F' => DayOfWeekInMonth = 2,
         /// Field symbol for the modified Julian day (numeric).
         /// 
         /// The value of this field differs from the conventional Julian day number in a couple of ways, which are based on measuring relative to the local time zone.
-        /// 
-        /// For more details, see documentation on [date field symbols](https://unicode.org/reports/tr35/tr35-dates.html#table-date-field-symbol-table).
         'g' => ModifiedJulianDay = 3,
     }; 
     Numeric; 
@@ -513,20 +502,12 @@ field_type!(
     /// An enum for the possible symbols of an hour field in a date pattern.
     Hour; {
         /// Field symbol for numeric hour [0-11].
-        /// 
-        /// For more details, see documentation on [date field symbols](https://unicode.org/reports/tr35/tr35-dates.html#table-date-field-symbol-table).
         'K' => H11 = 0,
         /// Field symbol for numeric hour [1-12].
-        /// 
-        /// For more details, see documentation on [date field symbols](https://unicode.org/reports/tr35/tr35-dates.html#table-date-field-symbol-table).
         'h' => H12 = 1,
         /// Field symbol for numeric hour [0-23].
-        /// 
-        /// For more details, see documentation on [date field symbols](https://unicode.org/reports/tr35/tr35-dates.html#table-date-field-symbol-table).
         'H' => H23 = 2,
         /// Field symbol for numeric hour [1-24].
-        /// 
-        /// For more details, see documentation on [date field symbols](https://unicode.org/reports/tr35/tr35-dates.html#table-date-field-symbol-table).
         'k' => H24 = 3,
     }; 
     Numeric; 
@@ -537,20 +518,14 @@ field_type!(
     /// An enum for the possible symbols of a second field in a date pattern.
     Second; {
         /// Field symbol for second (numeric).
-        /// 
-        /// For more details, see documentation on [date field symbols](https://unicode.org/reports/tr35/tr35-dates.html#table-date-field-symbol-table).
         's' => Second = 0,
         /// Field symbol for fractional second (numeric).
         /// 
         /// Truncates, like other numeric time fields, but in this case to the number of digits specified by the field length.
-        /// 
-        /// For more details, see documentation on [date field symbols](https://unicode.org/reports/tr35/tr35-dates.html#table-date-field-symbol-table).
         'S' => FractionalSecond = 1,
         /// Field symbol for milliseconds in day (numeric).
         /// 
         /// This field behaves exactly like a composite of all time-related fields, not including the zone fields.
-        /// 
-        /// For more details, see documentation on [date field symbols](https://unicode.org/reports/tr35/tr35-dates.html#table-date-field-symbol-table).
         'A' => Millisecond = 2,
     }; 
     Numeric; 
@@ -563,12 +538,8 @@ field_type!(
         /// Field symbol for week of year (numeric).
         /// 
         /// When used in a pattern with year, use [`Year::WeekOf`] for the year field instead of [`Year::Calendar`].
-        /// 
-        /// For more details, see documentation on [date field symbols](https://unicode.org/reports/tr35/tr35-dates.html#table-date-field-symbol-table).
         'w' => WeekOfYear = 0,
         /// Field symbol for week of month (numeric).
-        /// 
-        /// For more details, see documentation on [date field symbols](https://unicode.org/reports/tr35/tr35-dates.html#table-date-field-symbol-table).
         'W' => WeekOfMonth = 1,
     }; 
     Numeric; 
@@ -579,16 +550,10 @@ field_type!(
     /// An enum for the possible symbols of a weekday field in a date pattern.
     Weekday;  {
         /// Field symbol for day of week name, format style.
-        /// 
-        /// For more details, see documentation on [date field symbols](https://unicode.org/reports/tr35/tr35-dates.html#table-date-field-symbol-table).
         'E' => Format = 0,
         /// Field symbol for local day of week number/name, format style.
-        /// 
-        /// For more details, see documentation on [date field symbols](https://unicode.org/reports/tr35/tr35-dates.html#table-date-field-symbol-table).
         'e' => Local = 1,
         /// Field symbol for stand-alone local day of week number/name.
-        /// 
-        /// For more details, see documentation on [date field symbols](https://unicode.org/reports/tr35/tr35-dates.html#table-date-field-symbol-table).
         'c' => StandAlone = 2,
     }; 
     WeekdayULE
@@ -610,12 +575,8 @@ field_type!(
     /// An enum for the possible symbols of a day period field in a date pattern.
     DayPeriod; {
         /// Field symbol for the AM, PM day period.  (Does not include noon, midnight.)
-        /// 
-        /// For more details, see documentation on [date field symbols](https://unicode.org/reports/tr35/tr35-dates.html#table-date-field-symbol-table).
         'a' => AmPm = 0,
         /// Field symbol for the am, pm, noon, midnight day period.
-        /// 
-        /// For more details, see documentation on [date field symbols](https://unicode.org/reports/tr35/tr35-dates.html#table-date-field-symbol-table).
         'b' => NoonMidnight = 1,
     }; 
     Text; 
@@ -626,34 +587,20 @@ field_type!(
     /// An enum for the possible symbols of a time zone field in a date pattern.
     TimeZone; {
         /// Field symbol for the specific non-location format of a time zone.
-        /// 
-        /// For more details, see documentation on [date field symbols](https://unicode.org/reports/tr35/tr35-dates.html#table-date-field-symbol-table).
         'z' => LowerZ = 0,
         /// Field symbol for any of: the ISO8601 basic format with hours, minutes and optional seconds fields, the
         /// long localized GMT format, or the ISO8601 extended format with hours, minutes and optional seconds fields.
-        /// 
-        /// For more details, see documentation on [date field symbols](https://unicode.org/reports/tr35/tr35-dates.html#table-date-field-symbol-table).
         'Z' => UpperZ = 1,
         /// Field symbol for the localized GMT format of a time zone.
-        /// 
-        /// For more details, see documentation on [date field symbols](https://unicode.org/reports/tr35/tr35-dates.html#table-date-field-symbol-table).
         'O' => UpperO = 2,
         /// Field symbol for the generic non-location format of a time zone.
-        /// 
-        /// For more details, see documentation on [date field symbols](https://unicode.org/reports/tr35/tr35-dates.html#table-date-field-symbol-table).
         'v' => LowerV = 3,
         /// Field symbol for any of: the time zone id, time zone exemplar city, or generic location format.
-        /// 
-        /// For more details, see documentation on [date field symbols](https://unicode.org/reports/tr35/tr35-dates.html#table-date-field-symbol-table).
         'V' => UpperV = 4,
         /// Field symbol for either the ISO8601 basic format or ISO8601 extended format, with an optional ISO8601 UTC indicator `Z`.
-        /// 
-        /// For more details, see documentation on [date field symbols](https://unicode.org/reports/tr35/tr35-dates.html#table-date-field-symbol-table).
         'x' => LowerX = 5,
         /// Field symbol for either the ISO8601 basic format or ISO8601 extended format.  This does not allow an
         /// optional ISO8601 UTC indicator `Z`, whereas [`TimeZone::LowerX`] allows the optional `Z`.
-        /// 
-        /// For more details, see documentation on [date field symbols](https://unicode.org/reports/tr35/tr35-dates.html#table-date-field-symbol-table).
         'X' => UpperX = 6,
     }; 
     TimeZoneULE
