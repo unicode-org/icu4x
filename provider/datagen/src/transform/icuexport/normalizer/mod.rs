@@ -2,6 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+//! This module contains provider implementations backed by TOML files
+//! exported from ICU.
+
 use crate::SourceData;
 use icu_char16trie::char16trie::Char16Trie;
 use icu_codepointtrie::CodePointTrie;
@@ -13,11 +16,13 @@ use icu_uniset::UnicodeSetBuilder;
 use std::convert::TryFrom;
 use zerovec::ZeroVec;
 
+mod normalizer_serde;
+
 macro_rules! normalization_provider {
     ($marker:ident, $provider:ident, $serde_struct:ident, $file_name:literal, $conversion:expr, $toml_data:ident) => {
         use icu_normalizer::provider::$marker;
 
-        /// The provider struct holding the `SourceData`
+        /// A data provider reading from TOML files produced by the ICU4C icuexportdata tool.
         pub struct $provider {
             source: SourceData,
         }
@@ -35,8 +40,12 @@ macro_rules! normalization_provider {
                 &self,
                 _req: &DataRequest,
             ) -> Result<DataResponse<$marker>, DataError> {
-                let $toml_data: &super::normalizer_serde::$serde_struct =
-                    self.source.read_and_parse_uprops($file_name)?;
+                let $toml_data: &normalizer_serde::$serde_struct =
+                    self.source.icuexport()?.read_and_parse_toml(&format!(
+                        "norm/{}/{}.toml",
+                        self.source.trie_type(),
+                        $file_name
+                    ))?;
 
                 $conversion
             }

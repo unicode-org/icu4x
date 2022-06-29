@@ -5,7 +5,6 @@
 use clap::{App, Arg, ArgGroup};
 use eyre::WrapErr;
 
-use icu_codepointtrie::TrieType;
 use icu_datagen::SourceData;
 use icu_locid::LanguageIdentifier;
 use icu_provider::hello_world::HelloWorldV1Marker;
@@ -249,16 +248,14 @@ fn main() -> eyre::Result<()> {
         source_data = source_data.with_cldr(PathBuf::from(path), cldr_locales)?;
     }
 
-    let trie_type = match matches.value_of("TRIE_TYPE") {
-        Some("small") => TrieType::Small,
-        Some("fast") => TrieType::Fast,
-        _ => unreachable!(),
-    };
-
     if let Some(tag) = matches.value_of("ICUEXPORT_TAG") {
-        source_data = source_data.with_icuexport_for_tag(tag, trie_type)?;
+        source_data = source_data.with_icuexport_for_tag(tag)?;
     } else if let Some(path) = matches.value_of("ICUEXPORT_ROOT") {
-        source_data = source_data.with_icuexport(PathBuf::from(path), trie_type)?;
+        source_data = source_data.with_icuexport(PathBuf::from(path))?;
+    }
+
+    if matches.value_of("TRIE_TYPE") == Some("fast") {
+        source_data = source_data.with_fast_tries();
     }
 
     let out = match matches

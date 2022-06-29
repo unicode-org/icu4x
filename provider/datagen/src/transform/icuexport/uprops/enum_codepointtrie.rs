@@ -29,7 +29,12 @@ fn get_enumerated<'a>(
     key: &str,
 ) -> Result<&'a super::uprops_serde::enumerated::EnumeratedPropertyMap, DataError> {
     source
-        .read_and_parse_uprops::<super::uprops_serde::enumerated::Main>(key)?
+        .icuexport()?
+        .read_and_parse_toml::<super::uprops_serde::enumerated::Main>(&format!(
+            "uprops/{}/{}.toml",
+            source.trie_type(),
+            key
+        ))?
         .enum_property
         .get(0)
         .ok_or_else(|| DataErrorKind::MissingResourceKey.into_error())
