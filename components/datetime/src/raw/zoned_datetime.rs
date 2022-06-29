@@ -24,7 +24,7 @@ use crate::{
         self,
         calendar::{
             DatePatternsV1Marker, DateSkeletonPatternsV1Marker, DateSymbolsV1Marker,
-            TimePatternsV1Marker,
+            TimePatternsV1Marker, TimeSymbolsV1Marker,
         },
         week_data::WeekDataV1Marker,
     },
@@ -58,6 +58,7 @@ impl ZonedDateTimeFormat {
     ) -> Result<Self, DateTimeFormatError>
     where
         DP: ResourceProvider<DateSymbolsV1Marker>
+            + ResourceProvider<TimeSymbolsV1Marker>
             + ResourceProvider<DatePatternsV1Marker>
             + ResourceProvider<TimePatternsV1Marker>
             + ResourceProvider<DateSkeletonPatternsV1Marker>
@@ -107,7 +108,20 @@ impl ZonedDateTimeFormat {
             None
         };
 
-        let symbols_data = if required.symbols_data {
+        let date_symbols_data = if required.date_symbols_data {
+            Some(
+                date_provider
+                    .load_resource(&DataRequest {
+                        options: ResourceOptions::from(&locale),
+                        metadata: Default::default(),
+                    })?
+                    .take_payload()?,
+            )
+        } else {
+            None
+        };
+
+        let time_symbols_data = if required.time_symbols_data {
             Some(
                 date_provider
                     .load_resource(&DataRequest {
@@ -134,7 +148,8 @@ impl ZonedDateTimeFormat {
         let datetime_format = raw::DateTimeFormat::new(
             locale,
             patterns,
-            symbols_data,
+            date_symbols_data,
+            time_symbols_data,
             week_data,
             ordinal_rules,
             fixed_decimal_format,
