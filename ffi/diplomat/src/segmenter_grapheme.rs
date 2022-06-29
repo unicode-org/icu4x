@@ -17,7 +17,8 @@ pub mod ffi {
     };
 
     #[diplomat::opaque]
-    /// An ICU4X word-break segmenter, capable of finding word breakpoints in strings.
+    /// An ICU4X grapheme-cluster-break segmenter, capable of finding grapheme cluster breakpoints
+    /// in strings.
     #[diplomat::rust_link(icu_segmenter::GraphemeClusterBreakSegmenter, Struct)]
     pub struct ICU4XGraphemeClusterBreakSegmenter(GraphemeClusterBreakSegmenter);
 
