@@ -142,6 +142,9 @@ macro_rules! impl_resource_provider {
 
 impl_resource_provider!(
     (DateSymbolsV1Marker, symbols::convert_dates),
+    (TimeSymbolsV1Marker, |dates, _| {
+        symbols::convert_times(dates)
+    }),
     (DateSkeletonPatternsV1Marker, |dates, _| {
         DateSkeletonPatternsV1::from(dates)
     }),

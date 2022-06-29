@@ -14,8 +14,13 @@ pub fn convert_dates(other: &cldr_serde::ca::Dates, calendar: &str) -> DateSymbo
     DateSymbolsV1 {
         months: other.months.get(&get_month_code_map(calendar)),
         weekdays: other.days.get(&()),
-        day_periods: other.day_periods.get(&()),
         eras: convert_eras(&other.eras, calendar),
+    }
+}
+
+pub fn convert_times(other: &cldr_serde::ca::Dates) -> TimeSymbolsV1<'static> {
+    TimeSymbolsV1 {
+        day_periods: other.day_periods.get(&()),
     }
 }
 

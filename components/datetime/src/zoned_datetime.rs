@@ -17,7 +17,7 @@ use crate::{
         self,
         calendar::{
             DatePatternsV1Marker, DateSkeletonPatternsV1Marker, DateSymbolsV1Marker,
-            TimePatternsV1Marker,
+            TimePatternsV1Marker, TimeSymbolsV1Marker,
         },
         week_data::WeekDataV1Marker,
     },
@@ -123,6 +123,7 @@ impl<C: CldrCalendar> ZonedDateTimeFormat<C> {
     where
         L: Into<Locale>,
         DP: ResourceProvider<DateSymbolsV1Marker>
+            + ResourceProvider<TimeSymbolsV1Marker>
             + ResourceProvider<DatePatternsV1Marker>
             + ResourceProvider<TimePatternsV1Marker>
             + ResourceProvider<DateSkeletonPatternsV1Marker>
