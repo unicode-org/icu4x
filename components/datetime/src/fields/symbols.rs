@@ -493,7 +493,7 @@ field_type!(
         'D' => DayOfYear = 1,
         /// Field symbol for the day of week occurrence relative to the month (numeric).
         /// 
-        /// For the example "2nd Wed in July", this field would provide "2".  Should likely be paired with the [`Weekday`] field.
+        /// For the example `"2nd Wed in July"`, this field would provide `"2"`.  Should likely be paired with the [`Weekday`] field.
         /// 
         /// For more details, see documentation on [date field symbols](https://unicode.org/reports/tr35/tr35-dates.html#table-date-field-symbol-table).
         'F' => DayOfWeekInMonth = 2,
@@ -508,18 +508,6 @@ field_type!(
     DayULE
 );
 
-field_type!(Hour; {
-    'K' => H11 = 0,
-    'h' => H12 = 1,
-    'H' => H23 = 2,
-    'k' => H24 = 3,
-}; Numeric; HourULE);
-
-field_type!(Second; {
-    's' => Second = 0,
-    'S' => FractionalSecond = 1,
-    'A' => Millisecond = 2,
-}; Numeric; SecondULE);
 
 field_type!(Week; {
     'w' => WeekOfYear = 0,
@@ -531,6 +519,53 @@ field_type!(Weekday; {
     'e' => Local = 1,
     'c' => StandAlone = 2,
 }; WeekdayULE);
+field_type!(
+    /// An enum for the possible symbols of a hour field in a date pattern.
+    Hour; {
+        /// Field symbol for numeric hour [0-11].
+        /// 
+        /// For more details, see documentation on [date field symbols](https://unicode.org/reports/tr35/tr35-dates.html#table-date-field-symbol-table).
+        'K' => H11 = 0,
+        /// Field symbol for numeric hour [1-12].
+        /// 
+        /// For more details, see documentation on [date field symbols](https://unicode.org/reports/tr35/tr35-dates.html#table-date-field-symbol-table).
+        'h' => H12 = 1,
+        /// Field symbol for numeric hour [0-23].
+        /// 
+        /// For more details, see documentation on [date field symbols](https://unicode.org/reports/tr35/tr35-dates.html#table-date-field-symbol-table).
+        'H' => H23 = 2,
+        /// Field symbol for numeric hour [1-24].
+        /// 
+        /// For more details, see documentation on [date field symbols](https://unicode.org/reports/tr35/tr35-dates.html#table-date-field-symbol-table).
+        'k' => H24 = 3,
+    }; 
+    Numeric; 
+    HourULE
+);
+
+field_type!(
+    /// An enum for the possible symbols of a second field in a date pattern.
+    Second; {
+        /// Field symbol for second (numeric).
+        /// 
+        /// For more details, see documentation on [date field symbols](https://unicode.org/reports/tr35/tr35-dates.html#table-date-field-symbol-table).
+        's' => Second = 0,
+        /// Field symbol for fractional second (numeric).
+        /// 
+        /// Truncates, like other numeric time fields, but in this case to the number of digits specified by the field length.
+        /// 
+        /// For more details, see documentation on [date field symbols](https://unicode.org/reports/tr35/tr35-dates.html#table-date-field-symbol-table).
+        'S' => FractionalSecond = 1,
+        /// Field symbol for milliseconds in day (numeric).
+        /// 
+        /// This field behaves exactly like a composite of all time-related fields, not including the zone fields.
+        /// 
+        /// For more details, see documentation on [date field symbols](https://unicode.org/reports/tr35/tr35-dates.html#table-date-field-symbol-table).
+        'A' => Millisecond = 2,
+    }; 
+    Numeric; 
+    SecondULE
+);
 
 impl LengthType for Weekday {
     fn get_length_type(&self, length: FieldLength) -> TextOrNumeric {
