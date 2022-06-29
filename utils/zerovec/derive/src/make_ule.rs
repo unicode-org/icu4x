@@ -275,6 +275,7 @@ fn make_ule_struct_impl(
         #[repr(#repr_attr)]
         #[derive(Copy, Clone, PartialEq, Eq)]
         #[doc = #doc]
+        #[allow(missing_docs)]
         #vis struct #ule_name #field_inits #semi
     );
     let derived = crate::ule::derive_impl(&ule_struct);
