@@ -113,6 +113,12 @@ fn main() -> eyre::Result<()> {
                 .default_value("small"),
         )
         .arg(
+            Arg::with_name("UNIHAN")
+                .long("unihan")
+                .takes_value(false)
+                .help("Use unihan collation data.")
+        )
+        .arg(
             Arg::with_name("CLDR_LOCALE_SUBSET")
                 .long("cldr-locale-subset")
                 .takes_value(true)
@@ -256,6 +262,10 @@ fn main() -> eyre::Result<()> {
 
     if matches.value_of("TRIE_TYPE") == Some("fast") {
         source_data = source_data.with_fast_tries();
+    }
+
+    if matches.is_present("UNIHAN") {
+        source_data = source_data.with_unihan();
     }
 
     let out = match matches

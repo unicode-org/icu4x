@@ -22,7 +22,7 @@ pub struct SourceData {
     icuexport_paths: Option<Arc<TomlCache>>,
     segmenter_paths: Arc<TomlCache>,
     trie_type: IcuTrieType,
-    collation_mode: CollationHanOptimization,
+    collation_mode: CollationHanMode,
 }
 
 impl Default for SourceData {
@@ -35,7 +35,7 @@ impl Default for SourceData {
                     .expect("valid dir"),
             )),
             trie_type: IcuTrieType::Small,
-            collation_mode: CollationHanOptimization::Implicit,
+            collation_mode: CollationHanMode::Implicit,
         }
     }
 }
@@ -76,10 +76,11 @@ impl SourceData {
         }
     }
 
-    /// Set this to optimize collation data for unified han instead of implicit han (default)
-    pub fn with_unified_han_optimization(self) -> Self {
+    /// Set this to use unihan collation data. This will significantly increase data size.
+    /// See <https://github.com/unicode-org/icu/blob/main/docs/userguide/icu_data/buildtool.md#collation-ucadata>
+    pub fn with_unihan(self) -> Self {
         Self {
-            collation_mode: CollationHanOptimization::Unified,
+            collation_mode: CollationHanMode::Uni,
             ..self
         }
     }
@@ -107,7 +108,7 @@ impl SourceData {
         self.with_icuexport(
             cached_path::CacheBuilder::new().freshness_lifetime(u64::MAX).build().and_then(|cache| cache
                 .cached_path(
-                    &format!("https://github.com/unicode-org/icu/releases/download/{}/icuexportdata_uprops_full.zip", tag)
+                    &format!("https://github.com/unicode-org/icu/releases/download/{}/icuexportdata_{}.zip", tag, tag.replace('/', "-"))
             )).map_err(|e| DataError::custom("Download").with_display_context(&e))?)
     }
 
@@ -161,7 +162,7 @@ impl SourceData {
     }
 
     #[cfg_attr(not(feature = "experimental"), allow(dead_code))]
-    pub(crate) fn collation_mode(&self) -> CollationHanOptimization {
+    pub(crate) fn collation_mode(&self) -> CollationHanMode {
         self.collation_mode
     }
 }
@@ -174,7 +175,7 @@ pub(crate) enum IcuTrieType {
 
 impl IcuTrieType {
     #[cfg_attr(not(feature = "experimental"), allow(dead_code))]
-    pub(crate) fn to_internal(&self) -> icu_codepointtrie::TrieType {
+    pub(crate) fn to_internal(self) -> icu_codepointtrie::TrieType {
         match self {
             IcuTrieType::Fast => icu_codepointtrie::TrieType::Fast,
             IcuTrieType::Small => icu_codepointtrie::TrieType::Small,
@@ -192,16 +193,16 @@ impl std::fmt::Display for IcuTrieType {
 }
 
 #[derive(Clone, Copy, Debug)]
-pub(crate) enum CollationHanOptimization {
+pub(crate) enum CollationHanMode {
     Implicit,
-    Unified,
+    Uni,
 }
 
-impl std::fmt::Display for CollationHanOptimization {
+impl std::fmt::Display for CollationHanMode {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> Result<(), std::fmt::Error> {
         match self {
-            CollationHanOptimization::Implicit => write!(f, "implicithan"),
-            CollationHanOptimization::Unified => write!(f, "unifiedhan"),
+            CollationHanMode::Implicit => write!(f, "implicithan"),
+            CollationHanMode::Uni => write!(f, "unihan"),
         }
     }
 }

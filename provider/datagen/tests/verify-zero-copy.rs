@@ -8,7 +8,7 @@ use icu_provider_adapters::filter::Filterable;
 
 use icu_provider::prelude::*;
 
-use icu_datagen::{all_keys, CldrLocaleSubset, IcuTrieType, SourceData};
+use icu_datagen::{all_keys, CldrLocaleSubset, SourceData};
 use litemap::LiteMap;
 use std::cmp;
 use std::mem::ManuallyDrop;
@@ -56,7 +56,6 @@ fn main() {
         .unwrap()
         .with_icuexport(
             icu_testdata::paths::icuexport_toml_root(),
-            IcuTrieType::Small
         )
         .unwrap())
     .filterable("icu4x-datagen locales")
