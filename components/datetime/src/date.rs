@@ -148,7 +148,7 @@ pub(crate) struct ExtractedDateTimeInput {
 /// A [`ZonedDateTimeInput`] type with all of the fields pre-extracted
 ///
 /// See [`ZonedDateTimeInput`] for documentation on individual fields
-pub(crate) struct ExtractedTimeZoneInput {
+pub(crate) struct ExtractedZonedDateTimeInput {
     date_time_input: ExtractedDateTimeInput,
     gmt_offset: GmtOffset,
     time_zone_id: Option<TimeZoneBcp47Id>,
@@ -174,7 +174,7 @@ impl ExtractedDateTimeInput {
     }
 }
 
-impl ExtractedTimeZoneInput {
+impl ExtractedZonedDateTimeInput {
     /// Construct given an instance of a [`ZonedDateTimeInput`].
     pub(crate) fn extract_from<T: ZonedDateTimeInput>(input: &T) -> Self {
         Self {
@@ -226,7 +226,7 @@ impl IsoTimeInput for ExtractedDateTimeInput {
     }
 }
 
-impl DateInput for ExtractedTimeZoneInput {
+impl DateInput for ExtractedZonedDateTimeInput {
     /// This actually doesn't matter, by the time we use this
     /// it's purely internal raw code where calendars are irrelevant
     type Calendar = icu_calendar::any_calendar::AnyCalendar;
@@ -250,7 +250,7 @@ impl DateInput for ExtractedTimeZoneInput {
     }
 }
 
-impl IsoTimeInput for ExtractedTimeZoneInput {
+impl IsoTimeInput for ExtractedZonedDateTimeInput {
     fn hour(&self) -> Option<IsoHour> {
         self.date_time_input.hour
     }
@@ -265,7 +265,7 @@ impl IsoTimeInput for ExtractedTimeZoneInput {
     }
 }
 
-impl TimeZoneInput for ExtractedTimeZoneInput {
+impl TimeZoneInput for ExtractedZonedDateTimeInput {
     fn gmt_offset(&self) -> GmtOffset {
         self.gmt_offset
     }
