@@ -53,7 +53,7 @@ void test_line(const std::string_view& str) {
 
 void test_grapheme(const std::string_view& str) {
     const auto provider = ICU4XDataProvider::create_test();
-    const auto segmenter = ICU4XWordBreakSegmenter::try_new(provider).ok().value();
+    const auto segmenter = ICU4XGraphemeClusterBreakSegmenter::try_new(provider).ok().value();
     cout << "Finding grapheme cluster breakpoints in string:" << endl
          << str << endl;
     print_ruler(str.size());
@@ -65,7 +65,7 @@ void test_grapheme(const std::string_view& str) {
 
 void test_word(const std::string_view& str) {
     const auto provider = ICU4XDataProvider::create_test();
-    const auto segmenter = ICU4XGraphemeClusterBreakSegmenter::try_new(provider).ok().value();
+    const auto segmenter = ICU4XWordBreakSegmenter::try_new(provider).ok().value();
     cout << "Finding word breakpoints in string:" << endl
          << str << endl;
     print_ruler(str.size());
