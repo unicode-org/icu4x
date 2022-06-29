@@ -129,6 +129,157 @@ pub(crate) struct DateTimeInputWithLocale<'data, T: DateTimeInput> {
     calendar: Option<&'data week_of::CalendarInfo>,
 }
 
+/// A [`DateTimeInput`] type with all of the fields pre-extracted
+///
+/// See [`DateTimeInput`] for documentation on individual fields
+struct ExtractedDateTimeInput {
+    year: Option<Year>,
+    month: Option<Month>,
+    day_of_month: Option<DayOfMonth>,
+    iso_weekday: Option<IsoWeekday>,
+    day_of_year_info: Option<DayOfYearInfo>,
+    any_calendar_kind: Option<AnyCalendarKind>,
+    hour: Option<IsoHour>,
+    minute: Option<IsoMinute>,
+    second: Option<IsoSecond>,
+    nanosecond: Option<NanoSecond>,
+}
+
+/// A [`ZonedDateTimeInput`] type with all of the fields pre-extracted
+///
+/// See [`ZonedDateTimeInput`] for documentation on individual fields
+struct ExtractedTimeZoneInput {
+    date_time_input: ExtractedDateTimeInput,
+    gmt_offset: GmtOffset,
+    time_zone_id: Option<TimeZoneBcp47Id>,
+    metazone_id: Option<MetaZoneId>,
+    time_variant: Option<TinyStr8>,
+}
+
+impl ExtractedDateTimeInput {
+    /// Construct given an instance of a [`DateTimeInput`].
+    fn extract_from<T: DateTimeInput>(input: &T) -> Self {
+        Self {
+            year: input.year(),
+            month: input.month(),
+            day_of_month: input.day_of_month(),
+            iso_weekday: input.iso_weekday(),
+            day_of_year_info: input.day_of_year_info(),
+            any_calendar_kind: input.any_calendar_kind(),
+            hour: input.hour(),
+            minute: input.minute(),
+            second: input.second(),
+            nanosecond: input.nanosecond(),
+        }
+    }
+}
+
+impl ExtractedTimeZoneInput {
+    /// Construct given an instance of a [`ZonedDateTimeInput`].
+    fn extract_from<T: ZonedDateTimeInput>(input: &T) -> Self {
+        Self {
+            date_time_input: ExtractedDateTimeInput::extract_from(input),
+            gmt_offset: input.gmt_offset(),
+            time_zone_id: input.time_zone_id().cloned(),
+            metazone_id: input.metazone_id().cloned(),
+            time_variant: input.time_variant().cloned(),
+        }
+    }
+}
+
+impl DateInput for ExtractedDateTimeInput {
+    /// This actually doesn't matter, by the time we use this
+    /// it's purely internal raw code where calendars are irrelevant
+    type Calendar = icu_calendar::any_calendar::AnyCalendar;
+    fn year(&self) -> Option<Year> {
+        self.year
+    }
+    fn month(&self) -> Option<Month> {
+        self.month
+    }
+    fn day_of_month(&self) -> Option<DayOfMonth> {
+        self.day_of_month
+    }
+    fn iso_weekday(&self) -> Option<IsoWeekday> {
+        self.iso_weekday
+    }
+    fn day_of_year_info(&self) -> Option<DayOfYearInfo> {
+        self.day_of_year_info
+    }
+    fn any_calendar_kind(&self) -> Option<AnyCalendarKind> {
+        self.any_calendar_kind
+    }
+}
+
+impl IsoTimeInput for ExtractedDateTimeInput {
+    fn hour(&self) -> Option<IsoHour> {
+        self.hour
+    }
+    fn minute(&self) -> Option<IsoMinute> {
+        self.minute
+    }
+    fn second(&self) -> Option<IsoSecond> {
+        self.second
+    }
+    fn nanosecond(&self) -> Option<NanoSecond> {
+        self.nanosecond
+    }
+}
+
+impl DateInput for ExtractedTimeZoneInput {
+    /// This actually doesn't matter, by the time we use this
+    /// it's purely internal raw code where calendars are irrelevant
+    type Calendar = icu_calendar::any_calendar::AnyCalendar;
+    fn year(&self) -> Option<Year> {
+        self.date_time_input.year
+    }
+    fn month(&self) -> Option<Month> {
+        self.date_time_input.month
+    }
+    fn day_of_month(&self) -> Option<DayOfMonth> {
+        self.date_time_input.day_of_month
+    }
+    fn iso_weekday(&self) -> Option<IsoWeekday> {
+        self.date_time_input.iso_weekday
+    }
+    fn day_of_year_info(&self) -> Option<DayOfYearInfo> {
+        self.date_time_input.day_of_year_info
+    }
+    fn any_calendar_kind(&self) -> Option<AnyCalendarKind> {
+        self.date_time_input.any_calendar_kind
+    }
+}
+
+impl IsoTimeInput for ExtractedTimeZoneInput {
+    fn hour(&self) -> Option<IsoHour> {
+        self.date_time_input.hour
+    }
+    fn minute(&self) -> Option<IsoMinute> {
+        self.date_time_input.minute
+    }
+    fn second(&self) -> Option<IsoSecond> {
+        self.date_time_input.second
+    }
+    fn nanosecond(&self) -> Option<NanoSecond> {
+        self.date_time_input.nanosecond
+    }
+}
+
+impl TimeZoneInput for ExtractedTimeZoneInput {
+    fn gmt_offset(&self) -> GmtOffset {
+        self.gmt_offset
+    }
+    fn time_zone_id(&self) -> Option<&TimeZoneBcp47Id> {
+        self.time_zone_id.as_ref()
+    }
+    fn metazone_id(&self) -> Option<&MetaZoneId> {
+        self.metazone_id.as_ref()
+    }
+    fn time_variant(&self) -> Option<&TinyStr8> {
+        self.time_variant.as_ref()
+    }
+}
+
 fn compute_week_of_year<T: DateInput>(
     datetime: &T,
     calendar: &week_of::CalendarInfo,
