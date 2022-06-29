@@ -51,7 +51,7 @@ macro_rules! expand {
                     Ok(DataResponse {
                         metadata: DataResponseMetadata::default(),
                         payload: Some(DataPayload::from_owned(
-                            UnicodePropertyV1 { inv_list },
+                            UnicodePropertyV1::InversionList(inv_list),
                         )),
                     })
                 }

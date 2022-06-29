@@ -46,7 +46,7 @@ macro_rules! expand {
                     let code_point_trie = CodePointTrie::try_from(source_cpt_data).map_err(|e| {
                         DataError::custom("Could not parse CodePointTrie TOML").with_display_context(&e)
                     })?;
-                    let data_struct = UnicodePropertyMapV1 { code_point_trie };
+                    let data_struct = UnicodePropertyMapV1::CodePointTrie(code_point_trie);
                     Ok(DataResponse {
                         metadata: DataResponseMetadata::default(),
                         payload: Some(DataPayload::from_owned(data_struct)),
