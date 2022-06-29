@@ -2,6 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+//! Enums representing the fields in a date pattern, including the field's type, length and symbol.
+
 #![allow(clippy::exhaustive_structs)] // Field and FieldULE part of data struct
 
 mod length;
