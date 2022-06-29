@@ -6,8 +6,7 @@ use core::cmp::{Ord, PartialOrd};
 use displaydoc::Display;
 use zerovec::ule::{AsULE, ZeroVecError, ULE};
 
-/// An error relating to the length for a field within a parsed Date / Time
-/// formatting pattern.
+/// An error relating to the length of a field within a date pattern.
 #[derive(Display, Debug, PartialEq, Copy, Clone)]
 #[non_exhaustive]
 pub enum LengthError {

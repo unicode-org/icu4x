@@ -8,7 +8,7 @@ use displaydoc::Display;
 use icu_provider::{yoke, zerofrom};
 use zerovec::ule::{AsULE, ZeroVecError, ULE};
 
-/// 
+/// An error relating to the field symbol for a date pattern field.
 #[derive(Display, Debug, PartialEq, Copy, Clone)]
 #[non_exhaustive]
 pub enum SymbolError {

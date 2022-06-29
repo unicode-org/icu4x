@@ -16,7 +16,11 @@ use core::{
     convert::TryFrom,
 };
 
-/// A list of possible error outcomes for operations in this crate.
+/// An error relating to the field for a date pattern field as a whole.
+/// 
+/// Separate error types exist for parts of a field, like the
+/// [`LengthError`](error for the field length) and the 
+/// [`SymbolError`](error for the field symbol).
 #[derive(Display, Debug, Copy, Clone)]
 #[non_exhaustive]
 pub enum Error {
