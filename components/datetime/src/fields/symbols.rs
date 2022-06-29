@@ -508,17 +508,6 @@ field_type!(
     DayULE
 );
 
-
-field_type!(Week; {
-    'w' => WeekOfYear = 0,
-    'W' => WeekOfMonth = 1,
-}; Numeric; WeekULE);
-
-field_type!(Weekday; {
-    'E' => Format = 0,
-    'e' => Local = 1,
-    'c' => StandAlone = 2,
-}; WeekdayULE);
 field_type!(
     /// An enum for the possible symbols of a hour field in a date pattern.
     Hour; {
@@ -565,6 +554,43 @@ field_type!(
     }; 
     Numeric; 
     SecondULE
+);
+
+field_type!(
+    /// An enum for the possible symbols of a week field in a date pattern.
+    Week; {
+        /// Field symbol for week of year (numeric).
+        /// 
+        /// When used in a pattern with year, use [`Year::WeekOf`] for the year field instead of [`Year::Calendar`].
+        /// 
+        /// For more details, see documentation on [date field symbols](https://unicode.org/reports/tr35/tr35-dates.html#table-date-field-symbol-table).
+        'w' => WeekOfYear = 0,
+        /// Field symbol for week of month (numeric).
+        /// 
+        /// For more details, see documentation on [date field symbols](https://unicode.org/reports/tr35/tr35-dates.html#table-date-field-symbol-table).
+        'W' => WeekOfMonth = 1,
+    }; 
+    Numeric; 
+    WeekULE
+);
+
+field_type!(
+    /// An enum for the possible symbols of a weekday field in a date pattern.
+    Weekday;  {
+        /// Field symbol for day of week name, format style.
+        /// 
+        /// For more details, see documentation on [date field symbols](https://unicode.org/reports/tr35/tr35-dates.html#table-date-field-symbol-table).
+        'E' => Format = 0,
+        /// Field symbol for local day of week number/name, format style.
+        /// 
+        /// For more details, see documentation on [date field symbols](https://unicode.org/reports/tr35/tr35-dates.html#table-date-field-symbol-table).
+        'e' => Local = 1,
+        /// Field symbol for stand-alone local day of week number/name.
+        /// 
+        /// For more details, see documentation on [date field symbols](https://unicode.org/reports/tr35/tr35-dates.html#table-date-field-symbol-table).
+        'c' => StandAlone = 2,
+    }; 
+    WeekdayULE
 );
 
 impl LengthType for Weekday {
