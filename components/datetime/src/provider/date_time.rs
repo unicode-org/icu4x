@@ -10,8 +10,8 @@ use crate::pattern::{hour_cycle, runtime::PatternPlurals};
 use crate::provider;
 use crate::provider::calendar::patterns::PatternPluralsV1;
 use crate::provider::calendar::{
-    patterns::PatternPluralsFromPatternsV1Marker, DatePatternsV1Marker,
-    DateSkeletonPatternsV1Marker, TimePatternsV1Marker,
+    patterns::GenericPatternV1Marker, patterns::PatternPluralsFromPatternsV1Marker,
+    DatePatternsV1Marker, DateSkeletonPatternsV1Marker, TimePatternsV1Marker,
 };
 use crate::provider::calendar::{DatePatternsV1, TimePatternsV1};
 use crate::skeleton;
@@ -131,6 +131,30 @@ where
     Ok(
         patterns_data.map_project_with_capture(length, |data, length, _| {
             let pattern = pattern_for_date_length_inner(data, length);
+            pattern.into()
+        }),
+    )
+}
+
+/// Determine the appropriate `Pattern` for a given `options::length::Date` bag.
+pub(crate) fn generic_pattern_for_date_length<D>(
+    data_provider: &D,
+    locale: &Locale,
+    length: length::Date,
+) -> Result<DataPayload<GenericPatternV1Marker>>
+where
+    D: ResourceProvider<DatePatternsV1Marker> + ?Sized,
+{
+    let patterns_data = date_patterns_data_payload(data_provider, locale)?;
+    Ok(
+        patterns_data.map_project_with_capture(length, |data, length, _| {
+            let pattern = match length {
+                length::Date::Full => data.length_combinations.full,
+                length::Date::Long => data.length_combinations.long,
+                length::Date::Medium => data.length_combinations.medium,
+                length::Date::Short => data.length_combinations.short,
+            };
+
             pattern.into()
         }),
     )

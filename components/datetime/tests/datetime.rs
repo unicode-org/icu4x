@@ -30,7 +30,8 @@ use icu_datetime::{
         week_data::WeekDataV1Marker,
     },
     time_zone::{TimeZoneFormat, TimeZoneFormatOptions},
-    CldrCalendar, DateTimeFormat, DateTimeFormatOptions, ZonedDateTimeFormat,
+    CldrCalendar, DateFormat, DateTimeFormat, DateTimeFormatOptions, TimeFormat,
+    ZonedDateTimeFormat,
 };
 use icu_decimal::provider::DecimalSymbolsV1Marker;
 use icu_locid::{
@@ -177,6 +178,7 @@ fn assert_fixture_element<A, D>(
 {
     let any_input = input_value.to_any();
     let iso_any_input = input_iso.to_any();
+    let locale: Locale = locale.parse().unwrap();
     let dtf = DateTimeFormat::<A::Calendar>::try_new(locale.clone(), provider, options).unwrap();
     let result = dtf.format_to_string(input_value);
 
@@ -206,6 +208,80 @@ fn assert_fixture_element<A, D>(
     let mut s = String::new();
     write!(s, "{}", fdt).unwrap();
     assert_eq!(s, output_value, "{}", description);
+
+    if let DateTimeFormatOptions::Length(bag) = options {
+        if bag.date.is_some() && bag.time.is_some() {
+            let df =
+                DateFormat::<A::Calendar>::try_new(locale.clone(), provider, bag.date.unwrap())
+                    .unwrap();
+            let tf = TimeFormat::<A::Calendar>::try_new(
+                locale,
+                provider,
+                bag.time.unwrap(),
+                bag.preferences,
+            )
+            .unwrap();
+
+            let dtf = DateTimeFormat::try_from_date_and_time(df, tf).unwrap();
+            let result = dtf.format_to_string(input_value);
+
+            assert_eq!(result, output_value, "{}", description);
+
+            let mut s = String::new();
+            dtf.format_to_write(&mut s, input_value).unwrap();
+            assert_eq!(s, output_value, "{}", description);
+
+            let fdt = dtf.format(input_value);
+            let s = fdt.to_string();
+            assert_eq!(s, output_value, "{}", description);
+
+            let mut s = String::new();
+            write!(s, "{}", fdt).unwrap();
+            assert_eq!(s, output_value, "{}", description);
+        } else if bag.date.is_some() {
+            let df =
+                DateFormat::<A::Calendar>::try_new(locale, provider, bag.date.unwrap()).unwrap();
+            let result = df.format_to_string(input_value);
+
+            assert_eq!(result, output_value, "{}", description);
+
+            let mut s = String::new();
+            df.format_to_write(&mut s, input_value).unwrap();
+            assert_eq!(s, output_value, "{}", description);
+
+            let fdt = df.format(input_value);
+            let s = fdt.to_string();
+            assert_eq!(s, output_value, "{}", description);
+
+            let mut s = String::new();
+            write!(s, "{}", fdt).unwrap();
+            assert_eq!(s, output_value, "{}", description);
+        } else if bag.time.is_some() {
+            let tf = TimeFormat::<A::Calendar>::try_new(
+                locale,
+                provider,
+                bag.time.unwrap(),
+                bag.preferences,
+            )
+            .unwrap();
+
+            let result = tf.format_to_string(input_value);
+
+            assert_eq!(result, output_value, "{}", description);
+
+            let mut s = String::new();
+            tf.format_to_write(&mut s, input_value).unwrap();
+            assert_eq!(s, output_value, "{}", description);
+
+            let fdt = tf.format(input_value);
+            let s = fdt.to_string();
+            assert_eq!(s, output_value, "{}", description);
+
+            let mut s = String::new();
+            write!(s, "{}", fdt).unwrap();
+            assert_eq!(s, output_value, "{}", description);
+        }
+    }
 }
 
 fn test_fixture_with_time_zones(fixture_name: &str, config: TimeZoneConfig) {
