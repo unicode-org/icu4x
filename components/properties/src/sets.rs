@@ -20,7 +20,6 @@ use crate::*;
 use core::iter::FromIterator;
 use icu_provider::prelude::*;
 use icu_uniset::UnicodeSet;
-use zerofrom::ZeroFrom;
 
 /// A wrapper around code point set data, returned by property getters for
 /// unicode sets.
@@ -57,7 +56,7 @@ impl CodePointSetData {
     /// ```
     #[inline]
     pub fn contains(&self, ch: char) -> bool {
-        self.data.get().inv_list.contains(ch)
+        self.data.get().contains(ch)
     }
 
     /// Check if the set contains a character as a UTF32 code unit
@@ -78,7 +77,7 @@ impl CodePointSetData {
     /// ```
     #[inline]
     pub fn contains_u32(&self, ch: u32) -> bool {
-        self.data.get().inv_list.contains_u32(ch)
+        self.data.get().contains_u32(ch)
     }
 
     /// Construct a borrowed version of this type that can be queried
@@ -119,7 +118,7 @@ impl CodePointSetData {
 
     /// Construct a new one an owned [`UnicodeSet`]
     pub fn from_unicode_set(set: UnicodeSet<'static>) -> Self {
-        let set = UnicodePropertyV1 { inv_list: set };
+        let set = UnicodePropertyV1::from_unicode_set(set);
         CodePointSetData::from_data(DataPayload::<ErasedSetlikeMarker>::from_owned(set))
     }
 
@@ -134,7 +133,7 @@ impl CodePointSetData {
     /// in the data, however exceptions can be made if the performance hit is considered to
     /// be okay.
     pub fn to_unicode_set(&self) -> UnicodeSet<'_> {
-        ZeroFrom::zero_from(&self.data.get().inv_list)
+        self.data.get().to_unicode_set()
     }
 }
 
@@ -164,7 +163,7 @@ impl<'a> CodePointSetDataBorrowed<'a> {
     /// ```
     #[inline]
     pub fn contains(&self, ch: char) -> bool {
-        self.set.inv_list.contains(ch)
+        self.set.contains(ch)
     }
 
     /// Check if the set contains a character as a UTF32 code unit
@@ -183,7 +182,7 @@ impl<'a> CodePointSetDataBorrowed<'a> {
     /// ```
     #[inline]
     pub fn contains_u32(&self, ch: u32) -> bool {
-        self.set.inv_list.contains_u32(ch)
+        self.set.contains_u32(ch)
     }
 }
 
