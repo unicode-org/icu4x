@@ -32,9 +32,9 @@ pub enum Error {
 #[cfg(feature = "std")]
 impl std::error::Error for Error {}
 
-/// A field with a date pattern string. A date field is the repetition of a specific pattern 
-/// character one or more times. The pattern character is the field symbol, which corresponds
-/// to a particular meaning for the field.
+/// A field within a date pattern string, also referred to as a date field. A date field is the
+/// repetition of a specific pattern character one or more times within the pattern string.
+/// The pattern character is known as the field symbol, which indicates the particular meaning for the field.
 #[derive(Debug, Eq, PartialEq, Clone, Copy, Ord, PartialOrd)]
 #[cfg_attr(
     feature = "datagen",

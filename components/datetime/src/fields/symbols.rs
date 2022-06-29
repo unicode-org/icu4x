@@ -28,8 +28,8 @@ impl std::error::Error for SymbolError {}
 
 /// A field symbol for a date / time formatting pattern. Field symbols are a more granular distinction
 /// for a pattern field within the category of a field type. Examples of field types are: 
-/// `Year`, `Month`, `Hour`.  Within the `Hour` field type, examples of field symbols are: `Hour:H12`,
-/// `Hour:H24`.
+/// `Year`, `Month`, `Hour`.  Within the [`Hour`] field type, examples of field symbols are: [`Hour::H12`],
+/// [`Hour::H24`].
 #[derive(Debug, Eq, PartialEq, Clone, Copy)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake), databake(path = icu_datetime::fields))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
@@ -509,7 +509,7 @@ field_type!(
 );
 
 field_type!(
-    /// An enum for the possible symbols of a hour field in a date pattern.
+    /// An enum for the possible symbols of an hour field in a date pattern.
     Hour; {
         /// Field symbol for numeric hour [0-11].
         /// 
