@@ -26,10 +26,11 @@ pub enum SymbolError {
 #[cfg(feature = "std")]
 impl std::error::Error for SymbolError {}
 
-/// A field symbol for a date / time formatting pattern. Field symbols are a more granular distinction
+/// A field symbol for a date formatting pattern. Field symbols are a more granular distinction
 /// for a pattern field within the category of a field type. Examples of field types are: 
 /// `Year`, `Month`, `Hour`.  Within the [`Hour`] field type, examples of field symbols are: [`Hour::H12`],
-/// [`Hour::H24`].
+/// [`Hour::H24`]. Each field symbol is represented within the date formatting pattern string 
+/// by a distinct character from the set of `A..Z` and `a..z`.
 #[derive(Debug, Eq, PartialEq, Clone, Copy)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake), databake(path = icu_datetime::fields))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
@@ -431,13 +432,13 @@ field_type! (
     Year; {
         /// Field symbol for calendar year (numeric).
         /// 
-        /// In most cases the length of the y field specifies the minimum number of digits to display, zero-padded as necessary. For most use cases, “y” or “yy” should be adequate.
+        /// In most cases the length of this field specifies the minimum number of digits to display, zero-padded as necessary. For most use cases, [`Year::Calendar`] or [`Year::WeekOf`] should be adequate.
         /// 
         /// For more details, see documentation on [date field symbols](https://unicode.org/reports/tr35/tr35-dates.html#table-date-field-symbol-table).
         'y' => Calendar = 0,
         /// Field symbol for year in "week of year".
         /// 
-        /// This works for “Week of Year” based calendars in which the year transition occurs on a week boundary; may differ from calendar year ‘y’ near a year transition. This numeric year designation is used in conjunction with [`Week::WeekOfYear`], but can be used in non-Gregorian based calendar systems where week date processing is desired. The field length is interpreted in the same was as for ‘y’.
+        /// This works for “week of year” based calendars in which the year transition occurs on a week boundary; may differ from calendar year [`Year::Calendar`] near a year transition. This numeric year designation is used in conjunction with [`Week::WeekOfYear`], but can be used in non-Gregorian based calendar systems where week date processing is desired. The field length is interpreted in the same was as for [`Year::Calendar`].
         /// 
         /// For more details, see documentation on [date field symbols](https://unicode.org/reports/tr35/tr35-dates.html#table-date-field-symbol-table).
         'Y' => WeekOf = 1,
@@ -645,12 +646,12 @@ field_type!(
         /// 
         /// For more details, see documentation on [date field symbols](https://unicode.org/reports/tr35/tr35-dates.html#table-date-field-symbol-table).
         'V' => UpperV = 4,
-        /// Field symbol for either the ISO8601 basic format or ISO8601 extended format, with an optional ISO8601 UTC indicator `"Z"`.
+        /// Field symbol for either the ISO8601 basic format or ISO8601 extended format, with an optional ISO8601 UTC indicator `Z`.
         /// 
         /// For more details, see documentation on [date field symbols](https://unicode.org/reports/tr35/tr35-dates.html#table-date-field-symbol-table).
         'x' => LowerX = 5,
         /// Field symbol for either the ISO8601 basic format or ISO8601 extended format.  This does not allow an
-        /// optional ISO8601 UTC indicator `"Z"`, unlike [`TimeZone::LowerX`].
+        /// optional ISO8601 UTC indicator `Z`, whereas [`TimeZone::LowerX`] allows the optional `Z`.
         /// 
         /// For more details, see documentation on [date field symbols](https://unicode.org/reports/tr35/tr35-dates.html#table-date-field-symbol-table).
         'X' => UpperX = 6,
