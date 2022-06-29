@@ -19,9 +19,9 @@ use core::{
 };
 
 /// An error relating to the field for a date pattern field as a whole.
-/// 
+///
 /// Separate error types exist for parts of a field, like the
-/// [`LengthError`](error for the field length) and the 
+/// [`LengthError`](error for the field length) and the
 /// [`SymbolError`](error for the field symbol).
 #[derive(Display, Debug, Copy, Clone)]
 #[non_exhaustive]
@@ -46,7 +46,7 @@ impl std::error::Error for Error {}
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[zerovec::make_ule(FieldULE)]
 pub struct Field {
-    /// The field symbol for the `Field`, which corresponds to the field's meaning with the 
+    /// The field symbol for the `Field`, which corresponds to the field's meaning with the
     /// date pattern.
     pub symbol: FieldSymbol,
     /// The length of the `Field`, which in conjunction with the `FieldSymbol` informs the width or

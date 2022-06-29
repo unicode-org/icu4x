@@ -27,9 +27,9 @@ pub enum SymbolError {
 impl std::error::Error for SymbolError {}
 
 /// A field symbol for a date formatting pattern. Field symbols are a more granular distinction
-/// for a pattern field within the category of a field type. Examples of field types are: 
+/// for a pattern field within the category of a field type. Examples of field types are:
 /// `Year`, `Month`, `Hour`.  Within the [`Hour`] field type, examples of field symbols are: [`Hour::H12`],
-/// [`Hour::H24`]. Each field symbol is represented within the date formatting pattern string 
+/// [`Hour::H24`]. Each field symbol is represented within the date formatting pattern string
 /// by a distinct character from the set of `A..Z` and `a..z`.
 #[derive(Debug, Eq, PartialEq, Clone, Copy)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake), databake(path = icu_datetime::fields))]
@@ -351,10 +351,10 @@ macro_rules! field_type {
         $(#[$enum_attr])*
         pub enum $i {
             $(
-                $(#[$variant_attr])* 
+                $(#[$variant_attr])*
                 #[doc = core::concat!("\n\nThis field symbol is represented by the character `", $key, "` in a date formatting pattern string.")]
                 #[doc = "\n\nFor more details, see documentation on [date field symbols](https://unicode.org/reports/tr35/tr35-dates.html#table-date-field-symbol-table)."]
-                $val = $idx, 
+                $val = $idx,
             )*
         }
 
@@ -436,15 +436,15 @@ field_type! (
     /// An enum for the possible symbols of a year field in a date pattern.
     Year; {
         /// Field symbol for calendar year (numeric).
-        /// 
+        ///
         /// In most cases the length of this field specifies the minimum number of digits to display, zero-padded as necessary. For most use cases, [`Year::Calendar`] or [`Year::WeekOf`] should be adequate.
         'y' => Calendar = 0,
         /// Field symbol for year in "week of year".
-        /// 
+        ///
         /// This works for “week of year” based calendars in which the year transition occurs on a week boundary; may differ from calendar year [`Year::Calendar`] near a year transition. This numeric year designation is used in conjunction with [`Week::WeekOfYear`], but can be used in non-Gregorian based calendar systems where week date processing is desired. The field length is interpreted in the same way as for [`Year::Calendar`].
         'Y' => WeekOf = 1,
-    }; 
-    Numeric; 
+    };
+    Numeric;
     YearULE
 );
 
@@ -486,15 +486,15 @@ field_type!(
         /// Field symbol for day of year (numeric).
         'D' => DayOfYear = 1,
         /// Field symbol for the day of week occurrence relative to the month (numeric).
-        /// 
+        ///
         /// For the example `"2nd Wed in July"`, this field would provide `"2"`.  Should likely be paired with the [`Weekday`] field.
         'F' => DayOfWeekInMonth = 2,
         /// Field symbol for the modified Julian day (numeric).
-        /// 
+        ///
         /// The value of this field differs from the conventional Julian day number in a couple of ways, which are based on measuring relative to the local time zone.
         'g' => ModifiedJulianDay = 3,
-    }; 
-    Numeric; 
+    };
+    Numeric;
     DayULE
 );
 
@@ -509,8 +509,8 @@ field_type!(
         'H' => H23 = 2,
         /// Field symbol for numeric hour [1-24].
         'k' => H24 = 3,
-    }; 
-    Numeric; 
+    };
+    Numeric;
     HourULE
 );
 
@@ -520,15 +520,15 @@ field_type!(
         /// Field symbol for second (numeric).
         's' => Second = 0,
         /// Field symbol for fractional second (numeric).
-        /// 
+        ///
         /// Truncates, like other numeric time fields, but in this case to the number of digits specified by the field length.
         'S' => FractionalSecond = 1,
         /// Field symbol for milliseconds in day (numeric).
-        /// 
+        ///
         /// This field behaves exactly like a composite of all time-related fields, not including the zone fields.
         'A' => Millisecond = 2,
-    }; 
-    Numeric; 
+    };
+    Numeric;
     SecondULE
 );
 
@@ -536,13 +536,13 @@ field_type!(
     /// An enum for the possible symbols of a week field in a date pattern.
     Week; {
         /// Field symbol for week of year (numeric).
-        /// 
+        ///
         /// When used in a pattern with year, use [`Year::WeekOf`] for the year field instead of [`Year::Calendar`].
         'w' => WeekOfYear = 0,
         /// Field symbol for week of month (numeric).
         'W' => WeekOfMonth = 1,
-    }; 
-    Numeric; 
+    };
+    Numeric;
     WeekULE
 );
 
@@ -555,7 +555,7 @@ field_type!(
         'e' => Local = 1,
         /// Field symbol for stand-alone local day of week number/name.
         'c' => StandAlone = 2,
-    }; 
+    };
     WeekdayULE
 );
 
@@ -578,8 +578,8 @@ field_type!(
         'a' => AmPm = 0,
         /// Field symbol for the am, pm, noon, midnight day period.
         'b' => NoonMidnight = 1,
-    }; 
-    Text; 
+    };
+    Text;
     DayPeriodULE
 );
 
@@ -602,7 +602,7 @@ field_type!(
         /// Field symbol for either the ISO8601 basic format or ISO8601 extended format.  This does not allow an
         /// optional ISO8601 UTC indicator `Z`, whereas [`TimeZone::LowerX`] allows the optional `Z`.
         'X' => UpperX = 6,
-    }; 
+    };
     TimeZoneULE
 );
 

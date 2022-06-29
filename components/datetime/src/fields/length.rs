@@ -24,7 +24,7 @@ impl std::error::Error for LengthError {}
 
 /// An enum representing the length of a field within a date or time formatting pattern string,
 /// in which the pattern field is represented as a letter occuring 1 or more times in a row, ex:
-/// `MMM`, `dd`, `y`.  See the 
+/// `MMM`, `dd`, `y`.  See the
 /// [LDML documentation in UTS 35](https://unicode.org/reports/tr35/tr35-dates.html#Date_Format_Patterns)
 /// for more details.
 #[derive(Debug, Eq, PartialEq, Clone, Copy, Ord, PartialOrd)]
@@ -48,9 +48,9 @@ pub enum FieldLength {
     Narrow,
     /// Meaning is field-dependent, for patterns that are 6 characters long. Ex: a [`Weekday`] pattern like
     /// `EEEEEE` means "Short", but `jjjjjj` or `CCCCCC` for [`Hour`] may mean
-    /// "Numeric hour (2 digits, zero pad if needed)". See the 
-/// [LDML documentation in UTS 35](https://unicode.org/reports/tr35/tr35-dates.html#Date_Format_Patterns)
-/// for more details.
+    /// "Numeric hour (2 digits, zero pad if needed)". See the
+    /// [LDML documentation in UTS 35](https://unicode.org/reports/tr35/tr35-dates.html#Date_Format_Patterns)
+    /// for more details.
     Six,
     /// A fixed size format for numeric-only fields that is at most 127 digits.
     Fixed(u8),
