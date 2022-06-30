@@ -282,10 +282,10 @@ impl AnyDateTimeFormat {
     }
 
     /// Checks if a date is constructed with the same calendar
-    fn check_calendars(
+    fn convert_if_necessary(
         &self,
         value: &impl DateTimeInput<Calendar = AnyCalendar>,
-    ) -> Result<(), DateTimeFormatError> {
+    ) -> Option<DateTime<AnyCalendar>> {
         let this_calendar = self.1.kind();
         let date_calendar = value.any_calendar_kind();
         if Some(this_calendar) != date_calendar {
@@ -295,6 +295,6 @@ impl AnyDateTimeFormat {
             ));
         }
 
-        Ok(())
+        None
     }
 }
