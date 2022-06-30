@@ -179,6 +179,7 @@ impl ZonedDateTimeFormat {
     where
         T: ZonedDateTimeInput,
     {
+        // Todo: optimize extraction #2143
         FormattedZonedDateTime {
             zoned_datetime_format: self,
             zoned_datetime: ExtractedZonedDateTimeInput::extract_from(value),

@@ -174,6 +174,7 @@ impl DateTimeFormat {
     where
         T: DateTimeInput,
     {
+        // Todo: optimize extraction #2143
         FormattedDateTime {
             patterns: &self.patterns,
             date_symbols: self.date_symbols.as_ref().map(|s| s.get()),
