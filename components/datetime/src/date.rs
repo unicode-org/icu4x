@@ -152,7 +152,7 @@ pub(crate) struct ExtractedDateTimeInput {
 ///
 /// See [`ZonedDateTimeInput`] for documentation on individual fields
 pub(crate) struct ExtractedZonedDateTimeInput {
-    date_time_input: ExtractedDateTimeInput,
+    pub(crate) date_time_input: ExtractedDateTimeInput,
     gmt_offset: GmtOffset,
     time_zone_id: Option<TimeZoneBcp47Id>,
     metazone_id: Option<MetaZoneId>,

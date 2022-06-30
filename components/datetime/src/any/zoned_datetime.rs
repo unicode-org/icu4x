@@ -2,16 +2,14 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::{
-    options::{components, DateTimeFormatOptions},
-    raw,
-};
+use crate::{options::DateTimeFormatOptions, raw};
 use alloc::string::String;
 
 use icu_locid::Locale;
 
 use icu_provider::prelude::*;
 
+use crate::date::{ExtractedDateTimeInput, ExtractedZonedDateTimeInput, ZonedDateTimeInput};
 use crate::provider::{
     self,
     calendar::{
@@ -21,7 +19,7 @@ use crate::provider::{
     week_data::WeekDataV1Marker,
 };
 use crate::time_zone::TimeZoneFormatOptions;
-use crate::{date::DateTimeInput, DateTimeFormatError, FormattedDateTime};
+use crate::{DateTimeFormatError, FormattedZonedDateTime};
 use icu_calendar::any_calendar::{AnyCalendar, AnyCalendarKind};
 use icu_calendar::provider::JapaneseErasV1Marker;
 use icu_calendar::{types::Time, DateTime};
@@ -244,136 +242,85 @@ impl ZonedAnyDateTimeFormat {
         )
     }
 
-    // /// Takes a [`ZonedAnyDateTimeInput`] implementer and returns an instance of a [`FormattedZonedDateTime`]
-    // /// that contains all information necessary to display a formatted zoned datetime and operate on it.
-    // ///
-    // /// # Examples
-    // ///
-    // /// ```
-    // /// use icu::calendar::Gregorian;
-    // /// use icu::datetime::mock::zoned_datetime::MockZonedDateTime;
-    // /// use icu::datetime::ZonedDateTimeFormat;
-    // /// use icu_datetime::TimeZoneFormatOptions;
-    // /// use icu_provider::inv::InvariantDataProvider;
-    // /// # let locale = icu::locid::locale!("en");
-    // /// # let date_provider = InvariantDataProvider;
-    // /// # let zone_provider = InvariantDataProvider;
-    // /// # let plural_provider = InvariantDataProvider;
-    // /// # let decimal_provider = InvariantDataProvider;
-    // /// # let options = icu::datetime::DateTimeFormatOptions::default();
-    // /// let zdtf = ZonedDateTimeFormat::<Gregorian>::try_new(
-    // ///     locale,
-    // ///     &date_provider,
-    // ///     &zone_provider,
-    // ///     &plural_provider,
-    // ///     &decimal_provider,
-    // ///     &options,
-    // ///     &TimeZoneFormatOptions::default(),
-    // /// )
-    // /// .expect("Failed to create ZonedDateTimeFormat instance.");
-    // ///
-    // /// let zoned_datetime: MockZonedDateTime = "2021-04-08T16:12:37.000-07:00"
-    // ///     .parse()
-    // ///     .expect("Failed to parse zoned datetime");
-    // ///
-    // /// let formatted_date = zdtf.format(&zoned_datetime);
-    // ///
-    // /// let _ = format!("Date: {}", formatted_date);
-    // /// ```
-    // ///
-    // /// At the moment, there's little value in using that over one of the other `format` methods,
-    // /// but [`FormattedZonedDateTime`] will grow with methods for iterating over fields, extracting information
-    // /// about formatted date and so on.
-    // #[inline]
-    // pub fn format<'l, T>(&'l self, value: &T) -> FormattedZonedDateTime<'l>
-    // where
-    //     T: ZonedDateTimeInput,
-    // {
-    //     self.0.format(value)
-    // }
+    /// Takes a [`ZonedDateTimeInput`] implementer and returns an instance of a [`FormattedZonedDateTime`]
+    /// that contains all information necessary to display a formatted date and operate on it.
+    ///
+    /// This function will fail if the date passed in uses a different calendar than that of the
+    /// AnyCalendar. Please convert dates before passing them in if necessary.
+    #[inline]
+    pub fn format<'l, T>(
+        &'l self,
+        value: &T,
+    ) -> Result<FormattedZonedDateTime<'l>, DateTimeFormatError>
+    where
+        T: ZonedDateTimeInput<Calendar = AnyCalendar>,
+    {
+        if let Some(converted) = self.convert_if_necessary(value) {
+            Ok(self.0.format(&converted))
+        } else {
+            Ok(self.0.format(value))
+        }
+    }
 
-    // /// Takes a mutable reference to anything that implements the [`Write`](std::fmt::Write) trait
-    // /// and a [`ZonedDateTimeInput`] implementer, then populates the buffer with a formatted value.
-    // ///
-    // /// # Examples
-    // ///
-    // /// ```
-    // /// use icu::calendar::Gregorian;
-    // /// use icu::datetime::mock::zoned_datetime::MockZonedDateTime;
-    // /// use icu::datetime::ZonedDateTimeFormat;
-    // /// use icu_datetime::TimeZoneFormatOptions;
-    // /// # use icu_provider::inv::InvariantDataProvider;
-    // /// # let locale = icu::locid::locale!("en");
-    // /// # let date_provider = InvariantDataProvider;
-    // /// # let zone_provider = InvariantDataProvider;
-    // /// # let plural_provider = InvariantDataProvider;
-    // /// # let decimal_provider = InvariantDataProvider;
-    // /// # let options = icu::datetime::DateTimeFormatOptions::default();
-    // /// let zdtf = ZonedDateTimeFormat::<Gregorian>::try_new(
-    // ///     locale,
-    // ///     &date_provider,
-    // ///     &zone_provider,
-    // ///     &plural_provider,
-    // ///     &decimal_provider,
-    // ///     &options.into(),
-    // ///     &TimeZoneFormatOptions::default(),
-    // /// )
-    // /// .expect("Failed to create ZonedDateTimeFormat instance.");
-    // ///
-    // /// let zoned_datetime: MockZonedDateTime = "2021-04-08T16:12:37.000-07:00"
-    // ///     .parse()
-    // ///     .expect("Failed to parse zoned datetime");
-    // ///
-    // /// let mut buffer = String::new();
-    // /// zdtf.format_to_write(&mut buffer, &zoned_datetime)
-    // ///     .expect("Failed to write to a buffer.");
-    // ///
-    // /// let _ = format!("Date: {}", buffer);
-    // /// ```
-    // #[inline]
-    // pub fn format_to_write(
-    //     &self,
-    //     w: &mut impl core::fmt::Write,
-    //     value: &impl ZonedDateTimeInput,
-    // ) -> core::fmt::Result {
-    //     self.0.format_to_write(w, value)
-    // }
+    /// Takes a mutable reference to anything that implements [`Write`](std::fmt::Write) trait
+    /// and a [`DateTimeInput`] implementer and populates the buffer with a formatted value.
+    ///
+    /// This function will fail if the date passed in uses a different calendar than that of the
+    /// AnyCalendar. Please convert dates before passing them in if necessary.
+    #[inline]
+    pub fn format_to_write(
+        &self,
+        w: &mut impl core::fmt::Write,
+        value: &impl ZonedDateTimeInput<Calendar = AnyCalendar>,
+    ) -> Result<(), DateTimeFormatError> {
+        if let Some(converted) = self.convert_if_necessary(value) {
+            self.0.format_to_write(w, &converted)?;
+        } else {
+            self.0.format_to_write(w, value)?;
+        }
+        Ok(())
+    }
 
-    // /// Takes a [`ZonedDateTimeInput`] implementer and returns it formatted as a string.
-    // ///
-    // /// # Examples
-    // ///
-    // /// ```
-    // /// use icu::calendar::Gregorian;
-    // /// use icu::datetime::mock::zoned_datetime::MockZonedDateTime;
-    // /// use icu::datetime::ZonedDateTimeFormat;
-    // /// use icu_datetime::TimeZoneFormatOptions;
-    // /// use icu_provider::inv::InvariantDataProvider;
-    // /// # let locale = icu::locid::locale!("en");
-    // /// # let date_provider = InvariantDataProvider;
-    // /// # let zone_provider = InvariantDataProvider;
-    // /// # let plural_provider = InvariantDataProvider;
-    // /// # let decimal_provider = InvariantDataProvider;
-    // /// # let options = icu::datetime::DateTimeFormatOptions::default();
-    // /// let zdtf = ZonedDateTimeFormat::<Gregorian>::try_new(
-    // ///     locale,
-    // ///     &date_provider,
-    // ///     &zone_provider,
-    // ///     &plural_provider,
-    // ///     &decimal_provider,
-    // ///     &options.into(),
-    // ///     &TimeZoneFormatOptions::default(),
-    // /// )
-    // /// .expect("Failed to create ZonedDateTimeFormat instance.");
-    // ///
-    // /// let zoned_datetime: MockZonedDateTime = "2021-04-08T16:12:37.000-07:00"
-    // ///     .parse()
-    // ///     .expect("Failed to parse zoned datetime");
-    // ///
-    // /// let _ = zdtf.format_to_string(&zoned_datetime);
-    // /// ```
-    // #[inline]
-    // pub fn format_to_string(&self, value: &impl ZonedDateTimeInput) -> String {
-    //     self.0.format_to_string(value)
-    // }
+    /// Takes a [`DateTimeInput`] implementer and returns it formatted as a string.
+    ///
+    /// This function will fail if the date passed in uses a different calendar than that of the
+    /// AnyCalendar. Please convert dates before passing them in if necessary.
+    #[inline]
+    pub fn format_to_string(
+        &self,
+        value: &impl ZonedDateTimeInput<Calendar = AnyCalendar>,
+    ) -> Result<String, DateTimeFormatError> {
+        if let Some(converted) = self.convert_if_necessary(value) {
+            Ok(self.0.format_to_string(&converted))
+        } else {
+            Ok(self.0.format_to_string(value))
+        }
+    }
+
+    /// Converts a date to the correct calendar if necessary
+    fn convert_if_necessary<'a>(
+        &'a self,
+        value: &impl ZonedDateTimeInput<Calendar = AnyCalendar>,
+    ) -> Option<ExtractedZonedDateTimeInput> {
+        let this_calendar = self.1.kind();
+        let date_calendar = value.any_calendar_kind();
+        if Some(this_calendar) != date_calendar {
+            let date = value.to_iso();
+            let time = Time::new(
+                value.hour().unwrap_or_default(),
+                value.minute().unwrap_or_default(),
+                value.second().unwrap_or_default(),
+                value.nanosecond().unwrap_or_default(),
+            );
+            let datetime = DateTime::new(date, time).to_any();
+            let converted = self.1.convert_any_datetime(&datetime);
+            // FIXME(#2145) this is very hacky, can be improved after we improve ZonedDateTimeInput
+            let converted = ExtractedDateTimeInput::extract_from(&converted);
+            let mut extracted = ExtractedZonedDateTimeInput::extract_from(value);
+            extracted.date_time_input = converted;
+            Some(extracted)
+        } else {
+            None
+        }
+    }
 }
