@@ -15,7 +15,7 @@ mod time_zone;
 /// https://unicode-org.github.io/icu4x-docs/doc/icu_datagen/enum.Out.html#variant.Module).
 #[non_exhaustive]
 pub struct BakedDataProvider;
-use icu_provider::prelude::*;
+use ::icu_provider::prelude::*;
 impl ResourceProvider<::icu_calendar::provider::JapaneseErasV1Marker> for BakedDataProvider {
     fn load_resource(
         &self,

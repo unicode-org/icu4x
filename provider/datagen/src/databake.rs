@@ -72,6 +72,17 @@ impl BakedDataExporter {
         }
 
         if self.pretty {
+            if path.file_stem().and_then(std::ffi::OsStr::to_str) == Some("any") {
+                // Rustfmt cannot handle the match statement in this file. This prettifies it a bit
+                let mut content = std::fs::read_to_string(&path)?;
+                content = content.replace(" :: ", "::");
+                content = content.replace(" ,", ",");
+                content = content.replace(" ?", "?");
+                content = content.replace(" <::", "\n            <::");
+                content = content.replace(" _", "\n            _");
+                File::create(&path)?.write_all(content.as_bytes())?;
+            }
+
             std::process::Command::new("rustfmt")
                 // When called on a file, rustfmt also formats all submodules.
                 // Because we might have massive submodules that are already
@@ -81,12 +92,16 @@ impl BakedDataExporter {
                 .stdout(std::process::Stdio::from(File::create(
                     path.with_extension("rs"),
                 )?))
-                // The default, "auto", is meant to detect the existing line endings and preserve them.
-                // However, this seems to be broken and generates Unix line endings on Windows, which
-                // introduces Git diffs when regenerating.
                 .args(&[
-                    "--config",
-                    "newline_style=native,format_generated_files=true,normalize_doc_attributes=true",
+                    // The default, "auto", is meant to detect the existing line endings and preserve them.
+                    // However, this seems to be broken and generates Unix line endings on Windows.
+                    "--config=newline_style=native",
+                    // false by default, which is nice because then cargo fmt won't touch these again
+                    "--config=format_generated_files=true",
+                    // quote! stringifies doc comments as attributes, which is not very readable
+                    "--config=normalize_doc_attributes=true",
+                    // Defaults to 2015, but the 2021 parser is better
+                    "--edition=2021",
                 ])
                 .spawn()
                 .unwrap()
