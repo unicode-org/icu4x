@@ -134,8 +134,10 @@ impl DataExporter for FilesystemExporter {
             let fingerprints = fingerprints.get_mut().expect("poison");
             fingerprints.sort();
             let path = self.root.join("fingerprints.txt");
-            let mut file = std::fs::File::create(&path)
-                .map_err(|e| DataError::from(e).with_path_context(&path))?;
+            let mut file = crlify::BufWriterWithLineEndingFix::new(
+                std::fs::File::create(&path)
+                    .map_err(|e| DataError::from(e).with_path_context(&path))?,
+            );
             for (key, options, hash) in fingerprints {
                 use std::io::Write;
                 writeln!(file, "{key}/{options}: {hash}")?;
