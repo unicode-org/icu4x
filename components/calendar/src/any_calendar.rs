@@ -430,6 +430,7 @@ impl AnyCalendarKind {
         Some(match x {
             "gregory" => AnyCalendarKind::Gregorian,
             "buddhist" => AnyCalendarKind::Buddhist,
+            "japanese" => AnyCalendarKind::Japanese,
             "indian" => AnyCalendarKind::Indian,
             "coptic" => AnyCalendarKind::Coptic,
             "iso" => AnyCalendarKind::Iso,
@@ -444,6 +445,8 @@ impl AnyCalendarKind {
             AnyCalendarKind::Gregorian
         } else if *x == value!("buddhist") {
             AnyCalendarKind::Buddhist
+        } else if *x == value!("japanese") {
+            AnyCalendarKind::Japanese
         } else if *x == value!("indian") {
             AnyCalendarKind::Indian
         } else if *x == value!("coptic") {

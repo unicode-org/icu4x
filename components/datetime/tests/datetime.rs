@@ -8,8 +8,8 @@ mod fixtures;
 mod patterns;
 
 use icu_calendar::{
-    buddhist::Buddhist, coptic::Coptic, ethiopic::Ethiopic, indian::Indian, japanese::Japanese,
-    AsCalendar, DateTime, Gregorian,
+    any_calendar::AnyCalendarKind, buddhist::Buddhist, coptic::Coptic, ethiopic::Ethiopic,
+    indian::Indian, japanese::Japanese, AsCalendar, DateTime, Gregorian,
 };
 use icu_datetime::provider::time_zones::{MetaZoneId, TimeZoneBcp47Id};
 use icu_datetime::{
@@ -41,6 +41,7 @@ use patterns::{
     },
 };
 use std::fmt::Write;
+use std::str::FromStr;
 use tinystr::tinystr;
 
 fn test_fixture(fixture_name: &str) {
@@ -70,63 +71,62 @@ fn test_fixture(fixture_name: &str) {
             None => format!("\n  file: {}.json\n", fixture_name),
         };
         for (locale, output_value) in fx.output.values.into_iter() {
-            if let Some(locale) = locale.strip_prefix("buddhist/") {
-                assert_fixture_element(
-                    locale,
-                    &input_buddhist,
-                    &output_value,
-                    &provider,
-                    &options,
-                    &description,
-                )
-            } else if let Some(locale) = locale.strip_prefix("japanese/") {
-                assert_fixture_element(
-                    locale,
-                    &input_japanese,
-                    &output_value,
-                    &provider,
-                    &options,
-                    &description,
-                )
-            } else if let Some(locale) = locale.strip_prefix("coptic/") {
-                assert_fixture_element(
-                    locale,
-                    &input_coptic,
-                    &output_value,
-                    &provider,
-                    &options,
-                    &description,
-                )
-            } else if let Some(locale) = locale.strip_prefix("indian/") {
-                assert_fixture_element(
-                    locale,
-                    &input_indian,
-                    &output_value,
-                    &provider,
-                    &options,
-                    &description,
-                )
-            } else if let Some(locale) = locale.strip_prefix("ethiopic/") {
-                assert_fixture_element(
-                    locale,
-                    &input_ethiopic,
-                    &output_value,
-                    &provider,
-                    &options,
-                    &description,
-                )
-            } else if let Some(locale) = locale.strip_prefix("ethioaa/") {
-                assert_fixture_element(
-                    locale,
-                    &input_ethioaa,
-                    &output_value,
-                    &provider,
-                    &options,
-                    &description,
-                )
+            let locale = Locale::from_str(&locale).expect("Expected parseable locale in fixture");
+            if let Some(kind) = AnyCalendarKind::from_locale(&locale) {
+                match kind {
+                    AnyCalendarKind::Buddhist => assert_fixture_element(
+                        locale,
+                        &input_buddhist,
+                        &output_value,
+                        &provider,
+                        &options,
+                        &description,
+                    ),
+                    AnyCalendarKind::Japanese => assert_fixture_element(
+                        locale,
+                        &input_japanese,
+                        &output_value,
+                        &provider,
+                        &options,
+                        &description,
+                    ),
+                    AnyCalendarKind::Coptic => assert_fixture_element(
+                        locale,
+                        &input_coptic,
+                        &output_value,
+                        &provider,
+                        &options,
+                        &description,
+                    ),
+                    AnyCalendarKind::Indian => assert_fixture_element(
+                        locale,
+                        &input_indian,
+                        &output_value,
+                        &provider,
+                        &options,
+                        &description,
+                    ),
+                    AnyCalendarKind::Ethiopic => assert_fixture_element(
+                        locale,
+                        &input_ethiopic,
+                        &output_value,
+                        &provider,
+                        &options,
+                        &description,
+                    ),
+                    AnyCalendarKind::Ethioaa => assert_fixture_element(
+                        locale,
+                        &input_ethioaa,
+                        &output_value,
+                        &provider,
+                        &options,
+                        &description,
+                    ),
+                    _ => panic!("datetime test does not support locale {:?}", locale),
+                }
             } else {
                 assert_fixture_element(
-                    &locale,
+                    locale,
                     &input_value,
                     &output_value,
                     &provider,
@@ -139,7 +139,7 @@ fn test_fixture(fixture_name: &str) {
 }
 
 fn assert_fixture_element<A, D>(
-    locale: &str,
+    locale: Locale,
     input_value: &DateTime<A>,
     output_value: &str,
     provider: &D,
@@ -157,7 +157,6 @@ fn assert_fixture_element<A, D>(
         + ResourceProvider<OrdinalV1Marker>
         + ResourceProvider<WeekDataV1Marker>,
 {
-    let locale: Locale = locale.parse().unwrap();
     let dtf = DateTimeFormat::<A::Calendar>::try_new(locale, provider, options).unwrap();
     let result = dtf.format_to_string(input_value);
 
