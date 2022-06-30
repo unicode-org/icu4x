@@ -112,8 +112,9 @@ impl AnyDateTimeFormat {
     /// let provider = icu_testdata::get_provider();
     ///
     /// let mut options = length::Bag::from_date_time_style(length::Date::Medium, length::Time::Short);
+    /// let locale = Locale::from_str("en-u-ca-gregory").unwrap();
     ///
-    /// let dtf = AnyDateTimeFormat::try_new_with_buffer_provider(Locale::from_str("en-u-ca-gregory").unwrap(), &provider, &options.into())
+    /// let dtf = AnyDateTimeFormat::try_new_with_buffer_provider(locale, &provider, &options.into())
     ///     .expect("Failed to create DateTimeFormat instance.");
     ///
     /// let datetime = DateTime::new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
@@ -156,8 +157,9 @@ impl AnyDateTimeFormat {
     /// let provider = icu_testdata::get_provider();
     ///
     /// let mut options = length::Bag::from_date_time_style(length::Date::Medium, length::Time::Short);
+    /// let locale = Locale::from_str("en-u-ca-gregory").unwrap();
     ///
-    /// let dtf = AnyDateTimeFormat::try_new_unstable(Locale::from_str("en-u-ca-gregory").unwrap(), &provider, &options.into())
+    /// let dtf = AnyDateTimeFormat::try_new_unstable(locale, &provider, &options.into())
     ///     .expect("Failed to create DateTimeFormat instance.");
     ///
     /// let datetime = DateTime::new_gregorian_datetime(2020, 9, 1, 12, 34, 28)

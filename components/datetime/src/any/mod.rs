@@ -6,5 +6,7 @@
 //! capable of formatting dates from any calendar
 
 mod datetime;
+mod zoned_datetime;
 
 pub use datetime::AnyDateTimeFormat;
+pub use zoned_datetime::ZonedAnyDateTimeFormat;
