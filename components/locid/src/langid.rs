@@ -58,7 +58,7 @@ use alloc::string::ToString;
 /// ```
 ///
 /// [`Unicode BCP47 Language Identifier`]: https://unicode.org/reports/tr35/tr35.html#Unicode_language_identifier
-#[derive(Default, PartialEq, Eq, Clone, Hash, PartialOrd, Ord)]
+#[derive(Default, PartialEq, Eq, Clone, Hash)]
 #[allow(clippy::exhaustive_structs)] // This struct is stable (and invoked by a macro)
 pub struct LanguageIdentifier {
     /// Language subtag of the language identifier.
@@ -348,6 +348,18 @@ impl FromStr for LanguageIdentifier {
 
     fn from_str(source: &str) -> Result<Self, Self::Err> {
         Self::from_bytes(source.as_bytes())
+    }
+}
+
+impl Ord for LanguageIdentifier {
+    fn cmp(&self, other: &Self) -> Ordering {
+        self.strict_cmp(other.to_string().as_bytes())
+    }
+}
+
+impl PartialOrd for LanguageIdentifier {
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        Some(self.cmp(other))
     }
 }
 

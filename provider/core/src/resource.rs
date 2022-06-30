@@ -365,7 +365,7 @@ impl Writeable for ResourceKey {
 /// A variant and language identifier, used for requesting data from a data provider.
 ///
 /// The fields in a [`ResourceOptions`] are not generally known until runtime.
-#[derive(PartialEq, Clone, Default, PartialOrd, Eq, Ord, Hash)]
+#[derive(PartialEq, Clone, Default, Eq, Hash)]
 pub struct ResourceOptions {
     langid: LanguageIdentifier,
     keywords: unicode_ext::Keywords,
@@ -380,6 +380,18 @@ impl fmt::Debug for ResourceOptions {
 impl fmt::Display for ResourceOptions {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         writeable::Writeable::write_to(self, f)
+    }
+}
+
+impl Ord for ResourceOptions {
+    fn cmp(&self, other: &Self) -> Ordering {
+        self.strict_cmp(other.to_string().as_bytes())
+    }
+}
+
+impl PartialOrd for ResourceOptions {
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        Some(self.cmp(other))
     }
 }
 
