@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::ordering::SubtagOrderingResult;
 use crate::parser::{get_subtag_iterator, parse_locale, ParserError};
 use crate::{extensions, subtags, LanguageIdentifier};
 use alloc::string::String;
@@ -68,17 +69,33 @@ use core::str::FromStr;
 /// ```
 /// [`Unicode Locale Identifier`]: https://unicode.org/reports/tr35/tr35.html#Unicode_locale_identifier
 #[derive(Default, PartialEq, Eq, Clone, Hash, PartialOrd, Ord)]
-#[allow(missing_docs)] // TODO(#1028) - Add missing docs.
 #[allow(clippy::exhaustive_structs)] // This struct is stable (and invoked by a macro)
 pub struct Locale {
-    // Language component of the Locale
+    /// The basic language/script/region components in the locale identifier along with any variants.
     pub id: LanguageIdentifier,
-    // Unicode Locale Extensions
+    /// Any extensions present in the locale identifier.
     pub extensions: extensions::Extensions,
 }
 
 #[test]
-fn test() {
+fn test_sizes() {
+    assert_eq!(core::mem::size_of::<subtags::Language>(), 3);
+    assert_eq!(core::mem::size_of::<subtags::Script>(), 4);
+    assert_eq!(core::mem::size_of::<subtags::Region>(), 3);
+    assert_eq!(core::mem::size_of::<subtags::Variant>(), 8);
+    assert_eq!(core::mem::size_of::<subtags::Variants>(), 32);
+    assert_eq!(core::mem::size_of::<LanguageIdentifier>(), 48);
+
+    assert_eq!(core::mem::size_of::<extensions::transform::Transform>(), 72);
+    assert_eq!(core::mem::size_of::<Option<LanguageIdentifier>>(), 48);
+    assert_eq!(core::mem::size_of::<extensions::transform::Fields>(), 24);
+
+    assert_eq!(core::mem::size_of::<extensions::unicode::Attributes>(), 24);
+    assert_eq!(core::mem::size_of::<extensions::unicode::Keywords>(), 24);
+    assert_eq!(core::mem::size_of::<Vec<extensions::other::Other>>(), 24);
+    assert_eq!(core::mem::size_of::<extensions::private::Private>(), 24);
+    assert_eq!(core::mem::size_of::<extensions::Extensions>(), 168);
+
     assert_eq!(core::mem::size_of::<Locale>(), 216);
 }
 
@@ -134,10 +151,10 @@ impl Locale {
         Ok(locale.to_string())
     }
 
-    /// Compare this `Locale` with BCP-47 bytes.
+    /// Compare this [`Locale`] with BCP-47 bytes.
     ///
     /// The return value is equivalent to what would happen if you first converted this
-    /// `Locale` to a BCP-47 string and then performed a byte comparison.
+    /// [`Locale`] to a BCP-47 string and then performed a byte comparison.
     ///
     /// This function is case-sensitive and results in a *total order*, so it is appropriate for
     /// binary search. The only argument producing [`Ordering::Equal`] is `self.to_string()`.
@@ -148,28 +165,69 @@ impl Locale {
     /// use icu::locid::Locale;
     /// use std::cmp::Ordering;
     ///
-    /// let bcp47_strings: &[&[u8]] = &[
-    ///     b"pl-Latn-PL",
-    ///     b"und",
-    ///     b"und-fonipa",
-    ///     b"und-t-m0-true",
-    ///     b"und-u-ca-hebrew",
-    ///     b"und-u-ca-japanese",
-    ///     b"zh",
+    /// let bcp47_strings: &[&str] = &[
+    ///     "pl-Latn-PL",
+    ///     "und",
+    ///     "und-fonipa",
+    ///     "und-t-m0-true",
+    ///     "und-u-ca-hebrew",
+    ///     "und-u-ca-japanese",
+    ///     "zh",
     /// ];
     ///
     /// for ab in bcp47_strings.windows(2) {
     ///     let a = ab[0];
     ///     let b = ab[1];
     ///     assert!(a.cmp(b) == Ordering::Less);
-    ///     let a_langid = Locale::from_bytes(a).unwrap();
-    ///     assert!(a_langid.strict_cmp(b) == Ordering::Less);
+    ///     let a_loc = a.parse::<Locale>().unwrap();
+    ///     assert_eq!(a, a_loc.to_string());
+    ///     assert!(a_loc.strict_cmp(a.as_bytes()) == Ordering::Equal);
+    ///     assert!(a_loc.strict_cmp(b.as_bytes()) == Ordering::Less);
     /// }
     /// ```
     pub fn strict_cmp(&self, other: &[u8]) -> Ordering {
-        let mut other_iter = other.split(|b| *b == b'-');
+        self.strict_cmp_iter(other.split(|b| *b == b'-')).end()
+    }
+
+    /// Compare this [`Locale`] with an iterator of BCP-47 subtags.
+    ///
+    /// This function has the same equality semantics as [`Locale::strict_cmp`]. It is intended as
+    /// a more modular version that allows multiple subtag iterators to be chained together.
+    ///
+    /// For an additional example, see [`SubtagOrderingResult`].
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::locid::Locale;
+    /// use std::cmp::Ordering;
+    ///
+    /// let subtags: &[&[u8]] = &[&*b"ca", &*b"ES", &*b"valencia", &*b"u", &*b"ca", &*b"hebrew"];
+    ///
+    /// let loc = "ca-ES-valencia-u-ca-hebrew".parse::<Locale>().unwrap();
+    /// assert_eq!(
+    ///     Ordering::Equal,
+    ///     loc.strict_cmp_iter(subtags.iter().copied()).end()
+    /// );
+    ///
+    /// let loc = "ca-ES-valencia".parse::<Locale>().unwrap();
+    /// assert_eq!(
+    ///     Ordering::Less,
+    ///     loc.strict_cmp_iter(subtags.iter().copied()).end()
+    /// );
+    ///
+    /// let loc = "ca-ES-valencia-u-nu-arab".parse::<Locale>().unwrap();
+    /// assert_eq!(
+    ///     Ordering::Greater,
+    ///     loc.strict_cmp_iter(subtags.iter().copied()).end()
+    /// );
+    /// ```
+    pub fn strict_cmp_iter<'l, I>(&self, mut subtags: I) -> SubtagOrderingResult<I>
+    where
+        I: Iterator<Item = &'l [u8]>,
+    {
         let r = self.for_each_subtag_str(&mut |subtag| {
-            if let Some(other) = other_iter.next() {
+            if let Some(other) = subtags.next() {
                 match subtag.as_bytes().cmp(other) {
                     Ordering::Equal => Ok(()),
                     not_equal => Err(not_equal),
@@ -178,13 +236,10 @@ impl Locale {
                 Err(Ordering::Greater)
             }
         });
-        if let Err(o) = r {
-            return o;
+        match r {
+            Ok(_) => SubtagOrderingResult::Subtags(subtags),
+            Err(o) => SubtagOrderingResult::Ordering(o),
         }
-        if other_iter.next().is_some() {
-            return Ordering::Less;
-        }
-        Ordering::Equal
     }
 
     /// Compare this `Locale` with a potentially unnormalized BCP-47 string.

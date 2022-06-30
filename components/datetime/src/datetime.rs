@@ -7,7 +7,10 @@
 
 use crate::{
     options::{components, DateTimeFormatOptions},
-    provider::calendar::{DatePatternsV1Marker, DateSkeletonPatternsV1Marker, DateSymbolsV1Marker},
+    provider::calendar::{
+        DatePatternsV1Marker, DateSkeletonPatternsV1Marker, DateSymbolsV1Marker,
+        TimePatternsV1Marker, TimeSymbolsV1Marker,
+    },
     provider::week_data::WeekDataV1Marker,
     raw,
 };
@@ -87,7 +90,9 @@ impl<C: CldrCalendar> DateTimeFormat<C> {
     ) -> Result<Self, DateTimeFormatError>
     where
         D: ResourceProvider<DateSymbolsV1Marker>
+            + ResourceProvider<TimeSymbolsV1Marker>
             + ResourceProvider<DatePatternsV1Marker>
+            + ResourceProvider<TimePatternsV1Marker>
             + ResourceProvider<DateSkeletonPatternsV1Marker>
             + ResourceProvider<DecimalSymbolsV1Marker>
             + ResourceProvider<OrdinalV1Marker>

@@ -40,8 +40,8 @@ impl ResourceProvider<LocaleFallbackLikelySubtagsV1Marker> for FallbackRulesProv
 
         let likely_subtags_data: &cldr_serde::likely_subtags::Resource = self
             .source
-            .get_cldr_paths()?
-            .cldr_core()
+            .cldr()?
+            .core()
             .read_and_parse("supplemental/likelySubtags.json")?;
 
         let metadata = DataResponseMetadata::default();
@@ -65,8 +65,8 @@ impl ResourceProvider<LocaleFallbackParentsV1Marker> for FallbackRulesProvider {
 
         let parents_data: &cldr_serde::parent_locales::Resource = self
             .source
-            .get_cldr_paths()?
-            .cldr_core()
+            .cldr()?
+            .core()
             .read_and_parse("supplemental/parentLocales.json")?;
 
         let metadata = DataResponseMetadata::default();

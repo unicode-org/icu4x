@@ -20,9 +20,9 @@ suite = suite.add("FixedDecimal.multiply_pow10", () => {
   decimal.multiply_pow10(-2);
 });
 
-suite = suite.add("FixedDecimal.negate", () => {
-  decimal.negate();
-  decimal.negate();
+suite = suite.add("FixedDecimal.set_sign", () => {
+  decimal.set_sign("Negative");
+  decimal.set_sign("None");
 });
 
 suite

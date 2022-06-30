@@ -32,8 +32,8 @@ impl<M: ResourceMarker<Yokeable = ListFormatterPatternsV1<'static>>> ResourcePro
 
         let resource: &cldr_serde::list_patterns::Resource = self
             .source
-            .get_cldr_paths()?
-            .cldr_misc()
+            .cldr()?
+            .misc()
             .read_and_parse(&langid, "listPatterns.json")?;
 
         let data = &resource
@@ -106,9 +106,8 @@ impl<M: ResourceMarker<Yokeable = ListFormatterPatternsV1<'static>>> ResourcePro
                         )
                         .map_err(|e| DataError::custom("data for CodePointTrie of Script")
                             .with_display_context(&e))?
-                        .get()
-                        .code_point_trie
                         .get_set_for_value(icu_properties::Script::Hebrew)
+                        .to_unicode_set()
                         .iter_ranges()
                         .map(|range| format!(r#"\u{:04x}-\u{:04x}"#, range.start(), range.end()))
                         .fold(String::new(), |a, b| a + &b)
@@ -138,8 +137,8 @@ impl<M: ResourceMarker<Yokeable = ListFormatterPatternsV1<'static>>> IterableRes
     fn supported_options(&self) -> Result<Vec<ResourceOptions>, DataError> {
         Ok(self
             .source
-            .get_cldr_paths()?
-            .cldr_misc()
+            .cldr()?
+            .misc()
             .list_langs()?
             .map(Into::<ResourceOptions>::into)
             .collect())

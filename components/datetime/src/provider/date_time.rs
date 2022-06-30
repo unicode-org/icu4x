@@ -9,11 +9,11 @@ use crate::options::{components, length, preferences, DateTimeFormatOptions};
 use crate::pattern::{hour_cycle, runtime::PatternPlurals};
 use crate::provider;
 use crate::provider::calendar::patterns::PatternPluralsV1;
-use crate::provider::calendar::DatePatternsV1;
 use crate::provider::calendar::{
     patterns::PatternPluralsFromPatternsV1Marker, DatePatternsV1Marker,
-    DateSkeletonPatternsV1Marker,
+    DateSkeletonPatternsV1Marker, TimePatternsV1Marker,
 };
+use crate::provider::calendar::{DatePatternsV1, TimePatternsV1};
 use crate::skeleton;
 use icu_calendar::types::{Era, MonthCode};
 use icu_locid::Locale;
@@ -22,7 +22,7 @@ use icu_provider::prelude::*;
 type Result<T> = core::result::Result<T, DateTimeFormatError>;
 
 fn pattern_for_time_length_inner<'data>(
-    data: DatePatternsV1<'data>,
+    data: TimePatternsV1<'data>,
     length: length::Time,
     preferences: &Option<preferences::Bag>,
 ) -> PatternPlurals<'data> {
@@ -81,6 +81,7 @@ impl<D: ?Sized> Clone for PatternSelector<'_, D> {
 impl<D> PatternSelector<'_, D>
 where
     D: ResourceProvider<DatePatternsV1Marker>
+        + ResourceProvider<TimePatternsV1Marker>
         + ResourceProvider<DateSkeletonPatternsV1Marker>
         + ?Sized,
 {
@@ -123,7 +124,7 @@ where
         self,
         length: length::Date,
     ) -> Result<DataPayload<PatternPluralsFromPatternsV1Marker>> {
-        let patterns_data = self.patterns_data_payload()?;
+        let patterns_data = self.date_patterns_data_payload()?;
         Ok(
             patterns_data.map_project_with_capture(length, |data, length, _| {
                 let pattern = pattern_for_date_length_inner(data, length);
@@ -140,7 +141,7 @@ where
         length: length::Time,
         preferences: Option<preferences::Bag>,
     ) -> Result<DataPayload<PatternPluralsFromPatternsV1Marker>> {
-        let patterns_data = self.patterns_data_payload()?;
+        let patterns_data = self.time_patterns_data_payload()?;
         Ok(patterns_data.map_project_with_capture(
             (length, preferences),
             |data, (length, preferences), _| {
@@ -158,13 +159,14 @@ where
         time_length: length::Time,
         preferences: Option<preferences::Bag>,
     ) -> Result<DataPayload<PatternPluralsFromPatternsV1Marker>> {
-        let patterns_data = self.patterns_data_payload()?;
-        patterns_data.try_map_project_with_capture(
-            (date_length, time_length, preferences),
-            |data, (date_length, time_length, preferences), _| {
+        let time_patterns_data = self.time_patterns_data_payload()?;
+
+        let date_patterns_data = self.date_patterns_data_payload()?;
+        date_patterns_data.try_map_project_with_capture(
+            (date_length, time_length, preferences, time_patterns_data),
+            |data, (date_length, time_length, preferences, time_patterns_data), _| {
+                // TODO (#1131) - We may be able to remove the clone here.
                 let date = pattern_for_date_length_inner(data.clone(), date_length)
-                    .expect_pattern("Lengths are single patterns");
-                let time = pattern_for_time_length_inner(data.clone(), time_length, &preferences)
                     .expect_pattern("Lengths are single patterns");
 
                 let pattern = match date_length {
@@ -173,8 +175,15 @@ where
                     length::Date::Medium => data.length_combinations.medium,
                     length::Date::Short => data.length_combinations.short,
                 };
-                let pattern = pattern.combined(date, time)?;
-                Ok(PatternPlurals::from(pattern).into())
+
+                // TODO (#1131) - We may be able to remove the clone here.
+                let time = pattern_for_time_length_inner(
+                    time_patterns_data.get().clone(),
+                    time_length,
+                    &preferences,
+                )
+                .expect_pattern("Lengths are single patterns");
+                Ok(PatternPlurals::from(pattern.combined(date, time)?).into())
             },
         )
     }
@@ -185,7 +194,7 @@ where
         components: &components::Bag,
     ) -> Result<DataPayload<PatternPluralsFromPatternsV1Marker>> {
         let skeletons_data = self.skeleton_data_payload()?;
-        let patterns_data = self.patterns_data_payload()?;
+        let patterns_data = self.date_patterns_data_payload()?;
         // Not all skeletons are currently supported.
         let requested_fields = components.to_vec_fields();
         let patterns = match skeleton::create_best_pattern_for_fields(
@@ -204,7 +213,18 @@ where
             patterns.into_owned(),
         )))
     }
-    fn patterns_data_payload(self) -> Result<DataPayload<DatePatternsV1Marker>> {
+    fn date_patterns_data_payload(self) -> Result<DataPayload<DatePatternsV1Marker>> {
+        let data = self
+            .data_provider
+            .load_resource(&DataRequest {
+                options: ResourceOptions::from(self.locale),
+                metadata: Default::default(),
+            })?
+            .take_payload()?;
+        Ok(data)
+    }
+
+    fn time_patterns_data_payload(self) -> Result<DataPayload<TimePatternsV1Marker>> {
         let data = self
             .data_provider
             .load_resource(&DataRequest {
@@ -227,7 +247,7 @@ where
     }
 }
 
-pub trait DateTimeSymbols {
+pub trait DateSymbols {
     fn get_symbol_for_month(
         &self,
         month: fields::Month,
@@ -240,17 +260,10 @@ pub trait DateTimeSymbols {
         length: fields::FieldLength,
         day: date::IsoWeekday,
     ) -> Result<&str>;
-    fn get_symbol_for_day_period(
-        &self,
-        day_period: fields::DayPeriod,
-        length: fields::FieldLength,
-        hour: date::IsoHour,
-        is_top_of_hour: bool,
-    ) -> Result<&str>;
     fn get_symbol_for_era(&self, length: fields::FieldLength, era_code: Era) -> Result<&str>;
 }
 
-impl<'data> DateTimeSymbols for provider::calendar::DateSymbolsV1<'data> {
+impl<'data> DateSymbols for provider::calendar::DateSymbolsV1<'data> {
     fn get_symbol_for_weekday(
         &self,
         weekday: fields::Weekday,
@@ -336,6 +349,29 @@ impl<'data> DateTimeSymbols for provider::calendar::DateSymbolsV1<'data> {
             .ok_or(DateTimeFormatError::MissingMonthSymbol(code))
     }
 
+    fn get_symbol_for_era(&self, length: fields::FieldLength, era_code: Era) -> Result<&str> {
+        let symbols = match length {
+            fields::FieldLength::Wide => &self.eras.names,
+            fields::FieldLength::Narrow => &self.eras.narrow,
+            _ => &self.eras.abbr,
+        };
+        symbols
+            .get(&era_code.0)
+            .ok_or(DateTimeFormatError::MissingEraSymbol(era_code.0))
+    }
+}
+
+pub trait TimeSymbols {
+    fn get_symbol_for_day_period(
+        &self,
+        day_period: fields::DayPeriod,
+        length: fields::FieldLength,
+        hour: date::IsoHour,
+        is_top_of_hour: bool,
+    ) -> Result<&str>;
+}
+
+impl<'data> TimeSymbols for provider::calendar::TimeSymbolsV1<'data> {
     fn get_symbol_for_day_period(
         &self,
         day_period: fields::DayPeriod,
@@ -356,16 +392,5 @@ impl<'data> DateTimeSymbols for provider::calendar::DateSymbolsV1<'data> {
             (_, hour, _) if hour < 12 => &symbols.am,
             _ => &symbols.pm,
         })
-    }
-
-    fn get_symbol_for_era(&self, length: fields::FieldLength, era_code: Era) -> Result<&str> {
-        let symbols = match length {
-            fields::FieldLength::Wide => &self.eras.names,
-            fields::FieldLength::Narrow => &self.eras.narrow,
-            _ => &self.eras.abbr,
-        };
-        symbols
-            .get(&era_code.0)
-            .ok_or(DateTimeFormatError::MissingEraSymbol(era_code.0))
     }
 }

@@ -658,7 +658,7 @@ dependencies = [
 
 [[package]]
 name = "databake"
-version = "0.4.0"
+version = "0.1.0"
 dependencies = [
  "databake-derive",
  "proc-macro2",
@@ -668,7 +668,7 @@ dependencies = [
 
 [[package]]
 name = "databake-derive"
-version = "0.4.0"
+version = "0.1.0"
 dependencies = [
  "databake",
  "proc-macro2",
@@ -1820,26 +1820,15 @@ dependencies = [
  "icu_char16trie",
  "icu_codepointtrie",
  "icu_provider",
- "icu_segmenter_lstm",
  "icu_testdata",
  "lazy_static",
+ "ndarray",
+ "num-traits",
  "serde",
  "serde-json-core",
  "serde_json",
- "zerovec",
-]
-
-[[package]]
-name = "icu_segmenter_lstm"
-version = "0.1.0"
-dependencies = [
- "icu_provider",
- "litemap",
- "ndarray",
- "serde",
- "serde_json",
  "unicode-segmentation",
- "yoke",
+ "zerovec",
 ]
 
 [[package]]

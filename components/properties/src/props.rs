@@ -15,9 +15,9 @@ use serde::{Deserialize, Serialize};
 #[non_exhaustive]
 #[repr(i32)]
 pub enum EnumeratedProperty {
-    // Enumerated property Bidi_Class.
+    /// The Bidi_Class property.
     BidiClass = 0x1000,
-    /// the Canonical_Combining_Class property.
+    /// The Canonical_Combining_Class property.
     CanonicalCombiningClass = 0x1002,
     /// The East_Asian_Width property. See [`EastAsianWidth`].
     EastAsianWidth = 0x1004,
@@ -25,15 +25,15 @@ pub enum EnumeratedProperty {
     GeneralCategory = 0x1005,
     /// A pseudo-property that is used to represent groupings of `GeneralCategory`.
     GeneralCategoryGroup = 0x2000,
-    /// The Line_Break enumerated property. See [`LineBreak`].
+    /// The Line_Break property. See [`LineBreak`].
     LineBreak = 0x1008,
     /// The Script property. See [`Script`].
     Script = 0x100A,
-    /// The Grapheme_Cluster_Break enumerated property. See [`GraphemeClusterBreak`].
+    /// The Grapheme_Cluster_Break property. See [`GraphemeClusterBreak`].
     GraphemeClusterBreak = 0x1012,
-    /// The Sentence_Break enumerated property. See [`SentenceBreak`].
+    /// The Sentence_Break property. See [`SentenceBreak`].
     SentenceBreak = 0x1013,
-    /// The Word_Break enumerated property. See [`WordBreak`].
+    /// The Word_Break property. See [`WordBreak`].
     WordBreak = 0x1014,
     /// The Script_Extensions property. See [`Script`].
     ScriptExtensions = 0x7000, // TODO(#1160) - this is a Miscellaneous property, not Enumerated
@@ -55,28 +55,51 @@ pub struct BidiClass(pub u8);
 
 #[allow(non_upper_case_globals)]
 impl BidiClass {
+    /// (`L`) any strong left-to-right character
     pub const LeftToRight: BidiClass = BidiClass(0);
+    /// (`R`) any strong right-to-left (non-Arabic-type) character
     pub const RightToLeft: BidiClass = BidiClass(1);
+    /// (`EN`) any ASCII digit or Eastern Arabic-Indic digit
     pub const EuropeanNumber: BidiClass = BidiClass(2);
+    /// (`ES`) plus and minus signs
     pub const EuropeanSeparator: BidiClass = BidiClass(3);
+    /// (`ET`) a terminator in a numeric format context, includes currency signs
     pub const EuropeanTerminator: BidiClass = BidiClass(4);
+    /// (`AN`) any Arabic-Indic digit
     pub const ArabicNumber: BidiClass = BidiClass(5);
+    /// (`CS`) commas, colons, and slashes
     pub const CommonSeparator: BidiClass = BidiClass(6);
+    /// (`B`) various newline characters
     pub const ParagraphSeparator: BidiClass = BidiClass(7);
+    /// (`S`) various segment-related control codes
     pub const SegmentSeparator: BidiClass = BidiClass(8);
+    /// (`WS`) spaces
     pub const WhiteSpace: BidiClass = BidiClass(9);
+    /// (`ON`) most other symbols and punctuation marks
     pub const OtherNeutral: BidiClass = BidiClass(10);
+    /// (`LRE`) U+202A: the LR embedding control
     pub const LeftToRightEmbedding: BidiClass = BidiClass(11);
+    /// (`LRO`) U+202D: the LR override control
     pub const LeftToRightOverride: BidiClass = BidiClass(12);
+    /// (`AL`) any strong right-to-left (Arabic-type) character
     pub const ArabicLetter: BidiClass = BidiClass(13);
+    /// (`RLE`) U+202B: the RL embedding control
     pub const RightToLeftEmbedding: BidiClass = BidiClass(14);
+    /// (`RLO`) U+202E: the RL override control
     pub const RightToLeftOverride: BidiClass = BidiClass(15);
+    /// (`PDF`) U+202C: terminates an embedding or override control
     pub const PopDirectionalFormat: BidiClass = BidiClass(16);
+    /// (`NSM`) any nonspacing mark
     pub const NonspacingMark: BidiClass = BidiClass(17);
+    /// (`BN`) most format characters, control codes, or noncharacters
     pub const BoundaryNeutral: BidiClass = BidiClass(18);
+    /// (`FSI`) U+2068: the first strong isolate control
     pub const FirstStrongIsolate: BidiClass = BidiClass(19);
+    /// (`LRI`) U+2066: the LR isolate control
     pub const LeftToRightIsolate: BidiClass = BidiClass(20);
+    /// (`RLI`) U+2067: the RL isolate control
     pub const RightToLeftIsolate: BidiClass = BidiClass(21);
+    /// (`PDI`) U+2069: terminates an isolate control
     pub const PopDirectionalIsolate: BidiClass = BidiClass(22);
 }
 
@@ -304,44 +327,43 @@ impl GeneralCategoryGroup {
     /// use icu_codepointtrie::CodePointTrie;
     ///
     /// let provider = icu_testdata::get_provider();
-    /// let payload = maps::get_general_category(&provider).expect("The data should be valid");
-    /// let data_struct = payload.get();
-    /// let gc = &data_struct.code_point_trie;
+    /// let data = maps::get_general_category(&provider).expect("The data should be valid");
+    /// let gc = data.as_borrowed();
     ///
-    /// assert_eq!(gc.get('A' as u32), GeneralCategory::UppercaseLetter);
-    /// assert!(GeneralCategoryGroup::CasedLetter.contains(gc.get('A' as u32)));
+    /// assert_eq!(gc.get('A'), GeneralCategory::UppercaseLetter);
+    /// assert!(GeneralCategoryGroup::CasedLetter.contains(gc.get('A')));
     ///
     /// // U+0B1E ORIYA LETTER NYA
-    /// assert_eq!(gc.get('ଞ' as u32), GeneralCategory::OtherLetter);
-    /// assert!(GeneralCategoryGroup::Letter.contains(gc.get('ଞ' as u32)));
-    /// assert!(!GeneralCategoryGroup::CasedLetter.contains(gc.get('ଞ' as u32)));
+    /// assert_eq!(gc.get('ଞ'), GeneralCategory::OtherLetter);
+    /// assert!(GeneralCategoryGroup::Letter.contains(gc.get('ଞ')));
+    /// assert!(!GeneralCategoryGroup::CasedLetter.contains(gc.get('ଞ')));
     ///
     /// // U+0301 COMBINING ACUTE ACCENT
-    /// assert_eq!(gc.get(0x0301), GeneralCategory::NonspacingMark);
-    /// assert!(GeneralCategoryGroup::Mark.contains(gc.get(0x0301)));
-    /// assert!(!GeneralCategoryGroup::Letter.contains(gc.get(0x0301)));
+    /// assert_eq!(gc.get_u32(0x0301), GeneralCategory::NonspacingMark);
+    /// assert!(GeneralCategoryGroup::Mark.contains(gc.get_u32(0x0301)));
+    /// assert!(!GeneralCategoryGroup::Letter.contains(gc.get_u32(0x0301)));
     ///
-    /// assert_eq!(gc.get('0' as u32), GeneralCategory::DecimalNumber);
-    /// assert!(GeneralCategoryGroup::Number.contains(gc.get('0' as u32)));
-    /// assert!(!GeneralCategoryGroup::Mark.contains(gc.get('0' as u32)));
+    /// assert_eq!(gc.get('0'), GeneralCategory::DecimalNumber);
+    /// assert!(GeneralCategoryGroup::Number.contains(gc.get('0')));
+    /// assert!(!GeneralCategoryGroup::Mark.contains(gc.get('0')));
     ///
-    /// assert_eq!(gc.get('(' as u32), GeneralCategory::OpenPunctuation);
-    /// assert!(GeneralCategoryGroup::Punctuation.contains(gc.get('(' as u32)));
-    /// assert!(!GeneralCategoryGroup::Number.contains(gc.get('(' as u32)));
+    /// assert_eq!(gc.get('('), GeneralCategory::OpenPunctuation);
+    /// assert!(GeneralCategoryGroup::Punctuation.contains(gc.get('(')));
+    /// assert!(!GeneralCategoryGroup::Number.contains(gc.get('(')));
     ///
     /// // U+2713 CHECK MARK
-    /// assert_eq!(gc.get('✓' as u32), GeneralCategory::OtherSymbol);
-    /// assert!(GeneralCategoryGroup::Symbol.contains(gc.get('✓' as u32)));
-    /// assert!(!GeneralCategoryGroup::Punctuation.contains(gc.get('✓' as u32)));
+    /// assert_eq!(gc.get('✓'), GeneralCategory::OtherSymbol);
+    /// assert!(GeneralCategoryGroup::Symbol.contains(gc.get('✓')));
+    /// assert!(!GeneralCategoryGroup::Punctuation.contains(gc.get('✓')));
     ///
-    /// assert_eq!(gc.get(' ' as u32), GeneralCategory::SpaceSeparator);
-    /// assert!(GeneralCategoryGroup::Separator.contains(gc.get(' ' as u32)));
-    /// assert!(!GeneralCategoryGroup::Symbol.contains(gc.get(' ' as u32)));
+    /// assert_eq!(gc.get(' '), GeneralCategory::SpaceSeparator);
+    /// assert!(GeneralCategoryGroup::Separator.contains(gc.get(' ')));
+    /// assert!(!GeneralCategoryGroup::Symbol.contains(gc.get(' ')));
     ///
     /// // U+E007F CANCEL TAG
-    /// assert_eq!(gc.get(0xE007F), GeneralCategory::Format);
-    /// assert!(GeneralCategoryGroup::Other.contains(gc.get(0xE007F)));
-    /// assert!(!GeneralCategoryGroup::Separator.contains(gc.get(0xE007F)));
+    /// assert_eq!(gc.get_u32(0xE007F), GeneralCategory::Format);
+    /// assert!(GeneralCategoryGroup::Other.contains(gc.get_u32(0xE007F)));
+    /// assert!(!GeneralCategoryGroup::Separator.contains(gc.get_u32(0xE007F)));
     /// ```
     pub fn contains(&self, val: GeneralCategory) -> bool {
         0 != (1 << (val as u32)) & self.0

@@ -28,7 +28,9 @@ use icu_locid::Locale;
 use icu_normalizer::provider::CanonicalDecompositionDataV1Marker;
 use icu_normalizer::provider::CanonicalDecompositionTablesV1Marker;
 use icu_normalizer::Decomposition;
+use icu_properties::maps::CodePointMapData;
 use icu_properties::provider::CanonicalCombiningClassV1Marker;
+use icu_properties::CanonicalCombiningClass;
 use icu_provider::DataPayload;
 use icu_provider::DataRequest;
 use icu_provider::ResourceOptions;
@@ -68,7 +70,7 @@ pub struct Collator {
     reordering: Option<DataPayload<CollationReorderingV1Marker>>,
     decompositions: DataPayload<CanonicalDecompositionDataV1Marker>,
     tables: DataPayload<CanonicalDecompositionTablesV1Marker>,
-    ccc: DataPayload<CanonicalCombiningClassV1Marker>,
+    ccc: CodePointMapData<CanonicalCombiningClass>,
     lithuanian_dot_above: bool,
 }
 
@@ -215,8 +217,7 @@ impl Collator {
             .load_resource(&DataRequest::default())?
             .take_payload()?;
 
-        let ccc: DataPayload<CanonicalCombiningClassV1Marker> =
-            icu_properties::maps::get_canonical_combining_class(data_provider)?;
+        let ccc = icu_properties::maps::get_canonical_combining_class(data_provider)?;
 
         let mut altered_defaults = CollatorOptions::new();
 
@@ -274,13 +275,13 @@ impl Collator {
                 left.chars(),
                 self.decompositions.get(),
                 self.tables.get(),
-                &self.ccc.get().code_point_trie,
+                self.ccc.as_borrowed(),
             )
             .cmp(Decomposition::new(
                 right.chars(),
                 self.decompositions.get(),
                 self.tables.get(),
-                &self.ccc.get().code_point_trie,
+                self.ccc.as_borrowed(),
             ));
         }
         ret
@@ -295,13 +296,13 @@ impl Collator {
                 left.chars(),
                 self.decompositions.get(),
                 self.tables.get(),
-                &self.ccc.get().code_point_trie,
+                self.ccc.as_borrowed(),
             )
             .cmp(Decomposition::new(
                 right.chars(),
                 self.decompositions.get(),
                 self.tables.get(),
-                &self.ccc.get().code_point_trie,
+                self.ccc.as_borrowed(),
             ));
         }
         ret
@@ -318,13 +319,13 @@ impl Collator {
                 left.chars(),
                 self.decompositions.get(),
                 self.tables.get(),
-                &self.ccc.get().code_point_trie,
+                self.ccc.as_borrowed(),
             )
             .cmp(Decomposition::new(
                 right.chars(),
                 self.decompositions.get(),
                 self.tables.get(),
-                &self.ccc.get().code_point_trie,
+                self.ccc.as_borrowed(),
             ));
         }
         ret
@@ -413,7 +414,7 @@ impl Collator {
             &self.diacritics.get().secondaries,
             self.decompositions.get(),
             self.tables.get(),
-            &self.ccc.get().code_point_trie,
+            self.ccc.as_borrowed(),
             numeric_primary,
             self.lithuanian_dot_above,
         );
@@ -429,7 +430,7 @@ impl Collator {
             &self.diacritics.get().secondaries,
             self.decompositions.get(),
             self.tables.get(),
-            &self.ccc.get().code_point_trie,
+            self.ccc.as_borrowed(),
             numeric_primary,
             self.lithuanian_dot_above,
         );
