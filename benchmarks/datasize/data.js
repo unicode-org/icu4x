@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1656605446519,
+  "lastUpdate": 1656611853652,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -19133,6 +19133,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/c1fc6a103ddb06f2250b35d1e745be66e140d4e3"
         },
         "date": 1656605417247,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 2740181,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "aethanyc@gmail.com",
+            "name": "Ting-Yu Lin",
+            "username": "aethanyc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "cd92d9670ec7ef81d36c89e745ee466c4dc6275d",
+          "message": "Add FFI for UAX 29 Segmenters (#2132)\n\nSummary of this PR:\r\n\r\n* Add FFI for UAX 29 segmenters.\r\n\r\n`segmenters_word.rs`, `segmenters_grapheme.rs` and `segmenters_sentence.rs`\r\nshare the almost the same implementation, except that the grapheme and sentence\r\nhave no trait bound `ResourceProvider<UCharDictionaryBreakDataV1Marker>` on\r\ntheir provider argument on `try_new_impl`.\r\n\r\n* Check in diplomat-gen generated files, which are generated via `cargo make diplomat-gen`.\r\n\r\n* Generalize line break C++ sample code, and add sample code for UAX 29 segmenters.",
+          "timestamp": "2022-06-30T10:55:09-07:00",
+          "tree_id": "ed70fa6e58a4e2081e126edddb5ee49d9b09e463",
+          "url": "https://github.com/unicode-org/icu4x/commit/cd92d9670ec7ef81d36c89e745ee466c4dc6275d"
+        },
+        "date": 1656611827654,
         "tool": "ndjson",
         "benches": [
           {
