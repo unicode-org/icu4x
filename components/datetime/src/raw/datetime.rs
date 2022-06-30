@@ -28,8 +28,8 @@ use icu_plurals::{provider::OrdinalV1Marker, PluralRules};
 use icu_provider::prelude::*;
 
 use crate::{
-    date::DateTimeInput, pattern::runtime::PatternPlurals, provider, DateTimeFormatError,
-    FormattedDateTime,
+    date::DateTimeInput, date::ExtractedDateTimeInput, pattern::runtime::PatternPlurals, provider,
+    DateTimeFormatError, FormattedDateTime,
 };
 
 /// This is the internal "raw" version of [crate::DateTimeFormat], i.e. a version of DateTimeFormat
@@ -170,15 +170,16 @@ impl DateTimeFormat {
     /// Takes a [`DateTimeInput`] implementer and returns an instance of a [`FormattedDateTime`]
     /// that contains all information necessary to display a formatted date and operate on it.
     #[inline]
-    pub fn format<'l, T>(&'l self, value: &'l T) -> FormattedDateTime<'l, T>
+    pub fn format<'l, T>(&'l self, value: &'l T) -> FormattedDateTime<'l>
     where
         T: DateTimeInput,
     {
+        // Todo: optimize extraction #2143
         FormattedDateTime {
             patterns: &self.patterns,
             date_symbols: self.date_symbols.as_ref().map(|s| s.get()),
             time_symbols: self.time_symbols.as_ref().map(|s| s.get()),
-            datetime: value,
+            datetime: ExtractedDateTimeInput::extract_from(value),
             week_data: self.week_data.as_ref().map(|s| s.get()),
             locale: &self.locale,
             ordinal_rules: self.ordinal_rules.as_ref(),

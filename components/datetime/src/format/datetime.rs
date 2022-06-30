@@ -2,7 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::date::{DateTimeInput, DateTimeInputWithLocale, LocalizedDateTimeInput};
+use crate::date::{
+    DateTimeInput, DateTimeInputWithLocale, ExtractedDateTimeInput, LocalizedDateTimeInput,
+};
 use crate::error::DateTimeFormatError as Error;
 use crate::fields::{self, Field, FieldLength, FieldSymbol, Second, Week, Year};
 use crate::pattern::{
@@ -47,30 +49,24 @@ use writeable::Writeable;
 ///
 /// let _ = format!("Date: {}", formatted_date);
 /// ```
-pub struct FormattedDateTime<'l, T>
-where
-    T: DateTimeInput,
-{
+pub struct FormattedDateTime<'l> {
     pub(crate) patterns: &'l DataPayload<PatternPluralsFromPatternsV1Marker>,
     pub(crate) date_symbols: Option<&'l provider::calendar::DateSymbolsV1<'l>>,
     pub(crate) time_symbols: Option<&'l provider::calendar::TimeSymbolsV1<'l>>,
-    pub(crate) datetime: &'l T,
+    pub(crate) datetime: ExtractedDateTimeInput,
     pub(crate) week_data: Option<&'l WeekDataV1>,
     pub(crate) locale: &'l Locale,
     pub(crate) ordinal_rules: Option<&'l PluralRules>,
     pub(crate) fixed_decimal_format: &'l FixedDecimalFormat,
 }
 
-impl<'l, T> Writeable for FormattedDateTime<'l, T>
-where
-    T: DateTimeInput,
-{
+impl<'l> Writeable for FormattedDateTime<'l> {
     fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
         write_pattern_plurals(
             &self.patterns.get().0,
             self.date_symbols,
             self.time_symbols,
-            self.datetime,
+            &self.datetime,
             self.week_data,
             self.ordinal_rules,
             self.fixed_decimal_format,
@@ -83,10 +79,7 @@ where
     // TODO(#489): Implement write_len
 }
 
-impl<'l, T> fmt::Display for FormattedDateTime<'l, T>
-where
-    T: DateTimeInput,
-{
+impl<'l> fmt::Display for FormattedDateTime<'l> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         self.write_to(f)
     }

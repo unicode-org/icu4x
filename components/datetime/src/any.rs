@@ -210,7 +210,7 @@ impl AnyDateTimeFormat {
     pub fn format<'l, T>(
         &'l self,
         value: &'l T,
-    ) -> Result<FormattedDateTime<'l, T>, DateTimeFormatError>
+    ) -> Result<FormattedDateTime<'l>, DateTimeFormatError>
     where
         T: DateTimeInput<Calendar = AnyCalendar>,
     {
