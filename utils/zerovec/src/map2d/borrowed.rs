@@ -2,7 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::ule::AsULE;
 use crate::ZeroSlice;
 
 use core::cmp::Ordering;
@@ -284,8 +283,8 @@ impl<'a, K0, K1, V> ZeroMap2dBorrowed<'a, K0, K1, V>
 where
     K0: ZeroMapKV<'a> + Ord,
     K1: ZeroMapKV<'a> + Ord,
-    V: ZeroMapKV<'a, GetType = V::ULE>,
-    V: AsULE + Copy,
+    V: ZeroMapKV<'a>,
+    V: Copy,
     K0: ?Sized,
     K1: ?Sized,
 {

@@ -6,7 +6,6 @@ use crate::blob_schema::*;
 use icu_provider::buf::BufferFormat;
 use icu_provider::prelude::*;
 use serde::de::Deserialize;
-use zerovec::maps::ZeroMap2dBorrowed;
 
 /// A data provider loading data statically baked in to the binary.
 ///
@@ -48,7 +47,7 @@ use zerovec::maps::ZeroMap2dBorrowed;
 ///
 /// [`BlobDataProvider`]: crate::BlobDataProvider
 pub struct StaticDataProvider {
-    data: ZeroMap2dBorrowed<'static, ResourceKeyHash, [u8], [u8]>,
+    data: BlobSchemaV1<'static>,
 }
 
 impl StaticDataProvider {
@@ -58,7 +57,7 @@ impl StaticDataProvider {
             data: BlobSchema::deserialize(&mut postcard::Deserializer::from_bytes(blob)).map(
                 |blob| {
                     let BlobSchema::V001(blob) = blob;
-                    blob.resources
+                    blob
                 },
             )?,
         })
@@ -89,7 +88,7 @@ impl StaticDataProvider {
     /// ```
     pub fn new_empty() -> Self {
         StaticDataProvider {
-            data: ZeroMap2dBorrowed::new(),
+            data: Default::default(),
         }
     }
 }
@@ -103,21 +102,25 @@ impl BufferProvider for StaticDataProvider {
         let mut metadata = DataResponseMetadata::default();
         // TODO(#1109): Set metadata.data_langid correctly.
         metadata.buffer_format = Some(BufferFormat::Postcard1);
+        let idx = self
+            .data
+            .keys
+            .get0(&key.get_hash())
+            .ok_or(DataErrorKind::MissingResourceKey)
+            .and_then(|cursor| {
+                cursor
+                    .get1_copied_by(|bytes| req.options.strict_cmp(bytes).reverse())
+                    .ok_or(DataErrorKind::MissingResourceOptions)
+            })
+            .map_err(|kind| kind.with_req(key, req))?;
+        let bytes = self
+            .data
+            .buffers
+            .get(idx)
+            .ok_or(DataErrorKind::InvalidState.with_req(key, req))?;
         Ok(DataResponse {
             metadata,
-            payload: {
-                let partial_result: Result<&[u8], DataErrorKind> = self
-                    .data
-                    .get0(&key.get_hash())
-                    .ok_or(DataErrorKind::MissingResourceKey)
-                    .and_then(|cursor| {
-                        cursor
-                            .get1_by(|bytes| req.options.strict_cmp(bytes).reverse())
-                            .ok_or(DataErrorKind::MissingResourceOptions)
-                    });
-                let bytes = partial_result.map_err(|e| e.with_req(key, req))?;
-                Some(DataPayload::from_static_buffer(bytes))
-            },
+            payload: { Some(DataPayload::from_static_buffer(bytes)) },
         })
     }
 }

@@ -4,6 +4,7 @@
 
 use icu_provider::prelude::*;
 use zerovec::maps::ZeroMap2dBorrowed;
+use zerovec::VarZeroSlice;
 
 /// A versioned Serde schema for ICU4X data blobs.
 #[derive(serde::Deserialize)]
@@ -14,10 +15,23 @@ pub enum BlobSchema<'data> {
 }
 
 /// Version 1 of the ICU4X data blob schema.
-#[derive(serde::Deserialize)]
+#[derive(serde::Deserialize, yoke::Yokeable)]
+#[yoke(prove_covariance_manually)]
 #[cfg_attr(feature = "export", derive(serde::Serialize))]
 pub struct BlobSchemaV1<'data> {
-    /// Map from key hash and locale to buffer
+    /// Map from key hash and locale to buffer index
     #[serde(borrow)]
-    pub resources: ZeroMap2dBorrowed<'data, ResourceKeyHash, [u8], [u8]>,
+    pub keys: ZeroMap2dBorrowed<'data, ResourceKeyHash, [u8], usize>,
+    /// Vector of buffers
+    #[serde(borrow)]
+    pub buffers: &'data VarZeroSlice<[u8]>,
+}
+
+impl Default for BlobSchemaV1<'_> {
+    fn default() -> Self {
+        Self {
+            keys: ZeroMap2dBorrowed::new(),
+            buffers: VarZeroSlice::new_empty(),
+        }
+    }
 }
