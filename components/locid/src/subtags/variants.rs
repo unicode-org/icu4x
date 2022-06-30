@@ -46,8 +46,7 @@ impl Variants {
         Self(ShortVec::new())
     }
 
-    /// Creates a new [`Variants`] set from a [`Option<Variant>`].
-    /// The caller is expected to provide a single variant or None.
+    /// Creates a new [`Variants`] set from a single [`Variant`].
     ///
     /// # Examples
     ///
@@ -55,15 +54,11 @@ impl Variants {
     /// use icu::locid::subtags::{Variant, Variants};
     ///
     /// let variant: Variant = "posix".parse().expect("Parsing failed.");
-    /// let mut v = Some(variant);
-    /// let variants = Variants::from_optional_variant(v);
+    /// let variants = Variants::from_variant(variant);
     /// ```
     #[inline]
-    pub const fn from_optional_variant(variant: Option<Variant>) -> Self {
-        match variant {
-            Some(variant) => Self(ShortVec::new_single(variant)),
-            _ => Self(ShortVec::new()),
-        }
+    pub const fn from_variant(variant: Variant) -> Self {
+        Self(ShortVec::new_single(variant))
     }
 
     /// Creates a new [`Variants`] set from a [`Vec`].

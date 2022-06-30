@@ -131,11 +131,11 @@ macro_rules! subtags_variant {
 /// ```
 /// use icu::locid::{langid, LanguageIdentifier};
 ///
-/// const CA_ES_VALENCIA: LanguageIdentifier = langid!("ca_ES-valencia");
+/// const DE_AT: LanguageIdentifier = langid!("de_at");
 ///
-/// let ca_es_valencia: LanguageIdentifier = "ca_es-valencia".parse().unwrap();
+/// let de_at: LanguageIdentifier = "de_at".parse().unwrap();
 ///
-/// assert_eq!(CA_ES_VALENCIA, ca_es_valencia);
+/// assert_eq!(DE_AT, de_at);
 /// ```
 ///
 /// *Note*: The macro cannot produce language identifiers with more than one variants due to const
@@ -163,7 +163,10 @@ macro_rules! langid {
                     language,
                     script,
                     region,
-                    variants: $crate::subtags::Variants::from_optional_variant(variant),
+                    variants: match variant {
+                        Some(v) => $crate::subtags::Variants::from_variant(v),
+                        None => $crate::subtags::Variants::new(),
+                    }
                 },
                 #[allow(clippy::panic)] // const context
                 _ => panic!(concat!("Invalid language code: ", $langid, " . Note langid! macro can only support up to a single variant tag. Use runtime parsing instead.")),
@@ -181,11 +184,11 @@ macro_rules! langid {
 /// ```
 /// use icu::locid::{locale, Locale};
 ///
-/// const DE_AT_FOOBAR: Locale = locale!("de_at-foobar");
+/// const DE_AT: Locale = locale!("de_at");
 ///
-/// let de_at_foobar: Locale = "de_at-foobar".parse().unwrap();
+/// let de_at: Locale = "de_at".parse().unwrap();
 ///
-/// assert_eq!(DE_AT_FOOBAR, de_at_foobar);
+/// assert_eq!(DE_AT, de_at);
 /// ```
 ///
 /// *Note*: The macro cannot produce locales with more than one variant or extensions due to const
@@ -211,7 +214,10 @@ macro_rules! locale {
                         language,
                         script,
                         region,
-                        variants: $crate::subtags::Variants::from_optional_variant(variant),
+                        variants: match variant {
+                            Some(v) => $crate::subtags::Variants::from_variant(v),
+                            None => $crate::subtags::Variants::new(),
+                        },
                     },
                     extensions: $crate::extensions::Extensions::new(),
                 },
@@ -342,4 +348,24 @@ macro_rules! extensions_transform_key {
             };
         R
     }};
+}
+
+#[cfg(test)]
+mod test {
+    use crate::LanguageIdentifier;
+    use crate::Locale;
+
+    #[test]
+    fn test_langid_macro_can_parse_langid_with_single_variant() {
+        const DE_AT_FOOBAR: LanguageIdentifier = langid!("de_at-foobar");
+        let de_at_foobar: LanguageIdentifier = "de_at-foobar".parse().unwrap();
+        assert_eq!(DE_AT_FOOBAR, de_at_foobar);
+    }
+
+    #[test]
+    fn test_locale_macro_can_parse_locale_with_single_variant() {
+        const DE_AT_FOOBAR: Locale = locale!("de_at-foobar");
+        let de_at_foobar: Locale = "de_at-foobar".parse().unwrap();
+        assert_eq!(DE_AT_FOOBAR, de_at_foobar);
+    }
 }
