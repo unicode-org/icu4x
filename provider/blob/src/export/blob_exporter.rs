@@ -19,8 +19,10 @@ use postcard::ser_flavors::{AllocVec, Flavor};
 /// A data exporter that writes data to a single-file blob.
 /// See the module-level docs for an example.
 pub struct BlobExporter<'w> {
+    /// List of (key hash, resource options byte string, blob ID)
     #[allow(clippy::type_complexity)]
     resources: Mutex<Vec<(ResourceKeyHash, Vec<u8>, usize)>>,
+    /// Map from blob to blob ID
     unique_resources: Mutex<HashMap<Vec<u8>, usize>>,
     sink: Box<dyn std::io::Write + Sync + 'w>,
 }
@@ -67,26 +69,38 @@ impl DataExporter for BlobExporter<'_> {
     }
 
     fn close(&mut self) -> Result<(), DataError> {
+        // The blob IDs are unstable due to the parallel nature of datagen.
+        // In order to make a canonical form, we sort them lexicographically now.
+
+        // This is a sorted list of blob to old ID; the index in the vec is the new ID
+        let sorted: Vec<(Vec<u8>, usize)> = {
+            let mut unique_resources = self.unique_resources.lock().expect("poison");
+            let mut sorted: Vec<(Vec<u8>, usize)> = unique_resources.drain().collect();
+            sorted.sort();
+            sorted
+        };
+
+        // This is a map from old ID to new ID
+        let remap: HashMap<usize, usize> = sorted
+            .iter()
+            .enumerate()
+            .map(|(new_id, (_, old_id))| (*old_id, new_id))
+            .collect();
+
+        // Now build up the ZeroMap2d, changing old ID to new ID
         let zm = self
             .resources
             .get_mut()
             .expect("poison")
             .drain(..)
+            .map(|(hash, locale, old_id)| {
+                (hash, locale, remap.get(&old_id).expect("in-bound index"))
+            })
             .collect::<ZeroMap2d<_, _, _>>();
 
+        // Convert the sorted list to a VarZeroVec
         let vzv: VarZeroVec<[u8]> = {
-            let mut unique_resources = self.unique_resources.lock().expect("poison");
-            let mut buffer_options: Vec<Option<Vec<u8>>> = vec![None; unique_resources.len()];
-            for (buffer, idx) in unique_resources.drain() {
-                buffer_options
-                    .get_mut(idx)
-                    .expect("only in-bounds indices in the map")
-                    .replace(buffer);
-            }
-            let buffers: Vec<Vec<u8>> = buffer_options
-                .into_iter()
-                .map(|opt| opt.expect("all buffers should be present"))
-                .collect();
+            let buffers: Vec<Vec<u8>> = sorted.into_iter().map(|(blob, _)| blob).collect();
             buffers.as_slice().into()
         };
 
