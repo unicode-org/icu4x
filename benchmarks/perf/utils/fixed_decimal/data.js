@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1656606032964,
+  "lastUpdate": 1656612524330,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -34889,6 +34889,66 @@ window.BENCHMARK_DATA = {
             "name": "from_string/1000000001",
             "value": 76,
             "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "aethanyc@gmail.com",
+            "name": "Ting-Yu Lin",
+            "username": "aethanyc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "cd92d9670ec7ef81d36c89e745ee466c4dc6275d",
+          "message": "Add FFI for UAX 29 Segmenters (#2132)\n\nSummary of this PR:\r\n\r\n* Add FFI for UAX 29 segmenters.\r\n\r\n`segmenters_word.rs`, `segmenters_grapheme.rs` and `segmenters_sentence.rs`\r\nshare the almost the same implementation, except that the grapheme and sentence\r\nhave no trait bound `ResourceProvider<UCharDictionaryBreakDataV1Marker>` on\r\ntheir provider argument on `try_new_impl`.\r\n\r\n* Check in diplomat-gen generated files, which are generated via `cargo make diplomat-gen`.\r\n\r\n* Generalize line break C++ sample code, and add sample code for UAX 29 segmenters.",
+          "timestamp": "2022-06-30T10:55:09-07:00",
+          "tree_id": "ed70fa6e58a4e2081e126edddb5ee49d9b09e463",
+          "url": "https://github.com/unicode-org/icu4x/commit/cd92d9670ec7ef81d36c89e745ee466c4dc6275d"
+        },
+        "date": 1656612491983,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 117209,
+            "range": "± 5747",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 24699,
+            "range": "± 2017",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 71095,
+            "range": "± 3510",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 217,
+            "range": "± 10",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 101,
+            "range": "± 5",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 101,
+            "range": "± 2",
             "unit": "ns/iter"
           }
         ]
