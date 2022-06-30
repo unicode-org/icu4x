@@ -13,6 +13,7 @@ use icu_plurals::{provider::OrdinalV1Marker, PluralRules};
 use icu_provider::prelude::*;
 
 use crate::{
+    date::ExtractedZonedDateTimeInput,
     date::ZonedDateTimeInput,
     format::{
         datetime,
@@ -174,13 +175,14 @@ impl ZonedDateTimeFormat {
     /// Takes a [`ZonedDateTimeInput`] implementer and returns an instance of a [`FormattedZonedDateTime`]
     /// that contains all information necessary to display a formatted zoned datetime and operate on it.
     #[inline]
-    pub fn format<'l, T>(&'l self, value: &'l T) -> FormattedZonedDateTime<'l, T>
+    pub fn format<'l, T>(&'l self, value: &'l T) -> FormattedZonedDateTime<'l>
     where
         T: ZonedDateTimeInput,
     {
+        // Todo: optimize extraction #2143
         FormattedZonedDateTime {
             zoned_datetime_format: self,
-            zoned_datetime: value,
+            zoned_datetime: ExtractedZonedDateTimeInput::extract_from(value),
         }
     }
 
