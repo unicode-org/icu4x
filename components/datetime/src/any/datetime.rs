@@ -8,7 +8,7 @@ use crate::{
 };
 use alloc::string::String;
 
-use icu_locid::Locale;
+use icu_locid::{extensions_unicode_key as key, extensions_unicode_value as value, Locale};
 
 use icu_provider::prelude::*;
 
@@ -188,10 +188,28 @@ impl AnyDateTimeFormat {
             + ResourceProvider<JapaneseErasV1Marker>
             + ?Sized,
     {
-        let locale = locale.into();
+        let mut locale = locale.into();
 
         // TODO (#2038), DO NOT SHIP 1.0 without fixing this
-        let kind = AnyCalendarKind::from_locale(&locale).unwrap_or(AnyCalendarKind::Gregorian);
+        let kind = if let Some(kind) = AnyCalendarKind::from_locale(&locale) {
+            kind
+        } else {
+            locale
+                .extensions
+                .unicode
+                .keywords
+                .set(key!("ca"), value!("gregory"));
+            AnyCalendarKind::Gregorian
+        };
+
+        // We share data under ethiopic
+        if kind == AnyCalendarKind::Ethioaa {
+            locale
+                .extensions
+                .unicode
+                .keywords
+                .set(key!("ca"), value!("ethiopic"));
+        }
 
         let calendar = AnyCalendar::try_new_unstable(kind, data_provider)?;
 
