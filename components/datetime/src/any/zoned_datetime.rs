@@ -120,6 +120,7 @@ impl ZonedAnyDateTimeFormat {
     ///
     /// [data provider]: icu_provider
     #[inline]
+    #[allow(clippy::too_many_arguments)]
     pub fn try_new_unstable<L, DP, ZP, PP, DEP, CEP>(
         locale: L,
         date_provider: &DP,
@@ -304,8 +305,8 @@ impl ZonedAnyDateTimeFormat {
     }
 
     /// Converts a date to the correct calendar if necessary
-    fn convert_if_necessary<'a>(
-        &'a self,
+    fn convert_if_necessary(
+        &self,
         value: &impl ZonedDateTimeInput<Calendar = AnyCalendar>,
     ) -> Option<ExtractedZonedDateTimeInput> {
         let this_calendar = self.1.kind();
