@@ -25,6 +25,7 @@ use crate::provider::{
 use crate::{date::DateTimeInput, DateTimeFormatError, FormattedDateTime};
 use icu_calendar::any_calendar::{AnyCalendar, AnyCalendarKind};
 use icu_calendar::provider::JapaneseErasV1Marker;
+use icu_calendar::{types::Time, DateTime};
 use icu_decimal::provider::DecimalSymbolsV1Marker;
 use icu_plurals::provider::OrdinalV1Marker;
 
@@ -146,7 +147,7 @@ impl AnyDateTimeFormat {
     /// preferable to use a provider that implements `ResourceProvider<D>` for all `D`, and ensure data is loaded as
     /// appropriate. The [`Self::try_new_with_buffer_provider()`], [`Self::try_new_with_any_provider()`] constructors
     /// may also be used if compile stability is desired.
-    ///
+    ///inutes().unwrap_or_def
     /// # Examples
     ///
     /// ```
@@ -207,15 +208,15 @@ impl AnyDateTimeFormat {
     /// This function will fail if the date passed in uses a different calendar than that of the
     /// AnyCalendar. Please convert dates before passing them in if necessary.
     #[inline]
-    pub fn format<'l, T>(
-        &'l self,
-        value: &'l T,
-    ) -> Result<FormattedDateTime<'l>, DateTimeFormatError>
+    pub fn format<'l, T>(&'l self, value: &T) -> Result<FormattedDateTime<'l>, DateTimeFormatError>
     where
         T: DateTimeInput<Calendar = AnyCalendar>,
     {
-        self.check_calendars(value)?;
-        Ok(self.0.format(value))
+        if let Some(converted) = self.convert_if_necessary(value) {
+            Ok(self.0.format(&converted))
+        } else {
+            Ok(self.0.format(value))
+        }
     }
 
     /// Takes a mutable reference to anything that implements [`Write`](std::fmt::Write) trait
@@ -229,8 +230,11 @@ impl AnyDateTimeFormat {
         w: &mut impl core::fmt::Write,
         value: &impl DateTimeInput<Calendar = AnyCalendar>,
     ) -> Result<(), DateTimeFormatError> {
-        self.check_calendars(value)?;
-        self.0.format_to_write(w, value)?;
+        if let Some(converted) = self.convert_if_necessary(value) {
+            self.0.format_to_write(w, &converted)?;
+        } else {
+            self.0.format_to_write(w, value)?;
+        }
         Ok(())
     }
 
@@ -243,8 +247,11 @@ impl AnyDateTimeFormat {
         &self,
         value: &impl DateTimeInput<Calendar = AnyCalendar>,
     ) -> Result<String, DateTimeFormatError> {
-        self.check_calendars(value)?;
-        Ok(self.0.format_to_string(value))
+        if let Some(converted) = self.convert_if_necessary(value) {
+            Ok(self.0.format_to_string(&converted))
+        } else {
+            Ok(self.0.format_to_string(value))
+        }
     }
 
     /// Returns a [`components::Bag`] that represents the resolved components for the
@@ -282,19 +289,25 @@ impl AnyDateTimeFormat {
     }
 
     /// Checks if a date is constructed with the same calendar
-    fn convert_if_necessary(
-        &self,
+    fn convert_if_necessary<'a>(
+        &'a self,
         value: &impl DateTimeInput<Calendar = AnyCalendar>,
-    ) -> Option<DateTime<AnyCalendar>> {
+    ) -> Option<DateTime<icu_calendar::Ref<'a, AnyCalendar>>> {
         let this_calendar = self.1.kind();
         let date_calendar = value.any_calendar_kind();
         if Some(this_calendar) != date_calendar {
-            return Err(DateTimeFormatError::MismatchedAnyCalendar(
-                this_calendar,
-                date_calendar,
-            ));
+            let date = value.to_iso();
+            let time = Time::new(
+                value.hour().unwrap_or_default(),
+                value.minute().unwrap_or_default(),
+                value.second().unwrap_or_default(),
+                value.nanosecond().unwrap_or_default(),
+            );
+            let datetime = DateTime::new(date, time).to_any();
+            let converted = self.1.convert_any_datetime(&datetime);
+            Some(converted)
+        } else {
+            None
         }
-
-        None
     }
 }
