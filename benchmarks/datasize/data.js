@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1656542678335,
+  "lastUpdate": 1656605446519,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -19103,6 +19103,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/871f7618cbb4877fbb8d8e652d402f77bbcfc458"
         },
         "date": 1656542642913,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 2740181,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "c1fc6a103ddb06f2250b35d1e745be66e140d4e3",
+          "message": "Move Formatted[Zoned]DateTime over to preextracting the date time input info (#2138)\n\n* Add ExtractedFooInput\n\n* No longer return references from TimeZoneInput\n\n* Move FormattedDateTime over to ExtractedDateTimeInput\n\n* Move FormattedZonedDateTime over to ExtractedZonedDateTimeInput\n\n* todo comment",
+          "timestamp": "2022-06-30T09:08:14-07:00",
+          "tree_id": "e74a17045808b3eec6a0029d02eaa5a54875a029",
+          "url": "https://github.com/unicode-org/icu4x/commit/c1fc6a103ddb06f2250b35d1e745be66e140d4e3"
+        },
+        "date": 1656605417247,
         "tool": "ndjson",
         "benches": [
           {
