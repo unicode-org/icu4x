@@ -161,7 +161,7 @@ impl FieldSymbol {
     }
 }
 
-#[doc(hidden)]
+/// [`ULE`](zerovec::ule::ULE) type for [`FieldSymbol`]
 #[repr(transparent)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 pub struct FieldSymbolULE(u8);

@@ -269,12 +269,13 @@ fn make_ule_struct_impl(
     let repr_attr = utils::repr_for(&struc.fields);
     let vis = &input.vis;
 
-    let doc = format!("[`ULE`](zerovec::ule::ULE) type for {name}");
+    let doc = format!("[`ULE`](zerovec::ule::ULE) type for [`{name}`]");
 
     let ule_struct: DeriveInput = parse_quote!(
         #[repr(#repr_attr)]
         #[derive(Copy, Clone, PartialEq, Eq)]
         #[doc = #doc]
+        // We suppress the `missing_docs` lint for the fields of the struct.
         #[allow(missing_docs)]
         #vis struct #ule_name #field_inits #semi
     );
