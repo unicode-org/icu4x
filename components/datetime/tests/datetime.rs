@@ -8,11 +8,18 @@ mod fixtures;
 mod patterns;
 
 use icu_calendar::{
-    any_calendar::AnyCalendarKind, buddhist::Buddhist, coptic::Coptic, ethiopic::Ethiopic,
-    indian::Indian, japanese::Japanese, AsCalendar, DateTime, Gregorian,
+    any_calendar::{AnyCalendarKind, IncludedInAnyCalendar},
+    buddhist::Buddhist,
+    coptic::Coptic,
+    ethiopic::Ethiopic,
+    indian::Indian,
+    japanese::Japanese,
+    provider::JapaneseErasV1Marker,
+    AsCalendar, DateTime, Gregorian,
 };
 use icu_datetime::provider::time_zones::{MetaZoneId, TimeZoneBcp47Id};
 use icu_datetime::{
+    any::AnyDateTimeFormat,
     mock::{parse_gregorian_from_str, zoned_datetime::MockZonedDateTime},
     pattern::runtime,
     provider::{
@@ -148,6 +155,7 @@ fn assert_fixture_element<A, D>(
 ) where
     A: AsCalendar,
     A::Calendar: CldrCalendar,
+    A::Calendar: IncludedInAnyCalendar,
     D: ResourceProvider<DateSymbolsV1Marker>
         + ResourceProvider<TimeSymbolsV1Marker>
         + ResourceProvider<DatePatternsV1Marker>
@@ -155,10 +163,18 @@ fn assert_fixture_element<A, D>(
         + ResourceProvider<DateSkeletonPatternsV1Marker>
         + ResourceProvider<DecimalSymbolsV1Marker>
         + ResourceProvider<OrdinalV1Marker>
-        + ResourceProvider<WeekDataV1Marker>,
+        + ResourceProvider<WeekDataV1Marker>
+        + ResourceProvider<JapaneseErasV1Marker>,
 {
-    let dtf = DateTimeFormat::<A::Calendar>::try_new(locale, provider, options).unwrap();
+    println!("{:?}", locale);
+    let any_input = input_value.to_any();
+    let dtf = DateTimeFormat::<A::Calendar>::try_new(locale.clone(), provider, options).unwrap();
     let result = dtf.format_to_string(input_value);
+
+    assert_eq!(result, output_value, "{}", description);
+
+    let any_dtf = AnyDateTimeFormat::try_new_unstable(locale, provider, options).unwrap();
+    let result = any_dtf.format_to_string(&any_input).unwrap();
 
     assert_eq!(result, output_value, "{}", description);
 
