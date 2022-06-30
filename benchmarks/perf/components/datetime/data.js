@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1656606248483,
+  "lastUpdate": 1656612612885,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -44903,6 +44903,102 @@ window.BENCHMARK_DATA = {
             "name": "pattern/parse",
             "value": 7458,
             "range": "± 1154",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "aethanyc@gmail.com",
+            "name": "Ting-Yu Lin",
+            "username": "aethanyc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "cd92d9670ec7ef81d36c89e745ee466c4dc6275d",
+          "message": "Add FFI for UAX 29 Segmenters (#2132)\n\nSummary of this PR:\r\n\r\n* Add FFI for UAX 29 segmenters.\r\n\r\n`segmenters_word.rs`, `segmenters_grapheme.rs` and `segmenters_sentence.rs`\r\nshare the almost the same implementation, except that the grapheme and sentence\r\nhave no trait bound `ResourceProvider<UCharDictionaryBreakDataV1Marker>` on\r\ntheir provider argument on `try_new_impl`.\r\n\r\n* Check in diplomat-gen generated files, which are generated via `cargo make diplomat-gen`.\r\n\r\n* Generalize line break C++ sample code, and add sample code for UAX 29 segmenters.",
+          "timestamp": "2022-06-30T10:55:09-07:00",
+          "tree_id": "ed70fa6e58a4e2081e126edddb5ee49d9b09e463",
+          "url": "https://github.com/unicode-org/icu4x/commit/cd92d9670ec7ef81d36c89e745ee466c4dc6275d"
+        },
+        "date": 1656612579006,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 129097,
+            "range": "± 6571",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 1101959,
+            "range": "± 62445",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 248081,
+            "range": "± 19094",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/DateTimeFormat/format_to_write",
+            "value": 114905,
+            "range": "± 6600",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/DateTimeFormat/format_to_string",
+            "value": 134817,
+            "range": "± 9389",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/format",
+            "value": 131982,
+            "range": "± 8379",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/to_string",
+            "value": 143336,
+            "range": "± 14075",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/ZonedDateTimeFormat/format_to_write",
+            "value": 229019,
+            "range": "± 16218",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/ZonedDateTimeFormat/format_to_string",
+            "value": 255004,
+            "range": "± 12754",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/format",
+            "value": 250917,
+            "range": "± 16209",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/to_string",
+            "value": 263557,
+            "range": "± 16108",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "pattern/parse",
+            "value": 5823,
+            "range": "± 436",
             "unit": "ns/iter"
           }
         ]
