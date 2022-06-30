@@ -451,13 +451,11 @@ field_type! (
 field_type!(
     /// An enum for the possible symbols of a month field in a date pattern.
     Month; {
-        /// Field symbol for format style month number/name.
-        /// 
-        /// The format style name is an additional form of the month name that is different than the stand-alone form, which can be necessary depending on the language and context.
+        /// Field symbol for month number or name in a pattern that contains multiple fields.
         'M' => Format = 0,
-        /// Field symbol for stand-alone month number/name.
+        /// Field symbol for a "stand-alone" month number or name.
         /// 
-        /// The stand-alone month name is used when the month is displayed by itself.
+        /// The stand-alone month name is used when the month is displayed by itself. This may differ from the standard form based on the language and context.
         'L' => StandAlone = 1,
 }; MonthULE);
 
@@ -521,7 +519,7 @@ field_type!(
         's' => Second = 0,
         /// Field symbol for fractional second (numeric).
         ///
-        /// Truncates, like other numeric time fields, but in this case to the number of digits specified by the field length.
+        /// Produces the number of digits specified by the field length.
         'S' => FractionalSecond = 1,
         /// Field symbol for milliseconds in day (numeric).
         ///
@@ -549,11 +547,15 @@ field_type!(
 field_type!(
     /// An enum for the possible symbols of a weekday field in a date pattern.
     Weekday;  {
-        /// Field symbol for day of week name, format style.
+        /// Field symbol for day of week (text format only).
         'E' => Format = 0,
-        /// Field symbol for local day of week number/name, format style.
+        /// Field symbol for day of week; numeric formats produce a locale-dependent ordinal weekday number.
+        ///
+        /// For example, in de-DE, Monday is the 1st day of the week.
         'e' => Local = 1,
         /// Field symbol for stand-alone local day of week number/name.
+        ///
+        /// The stand-alone weekday name is used when the weekday is displayed by itself. This may differ from the standard form based on the language and context.
         'c' => StandAlone = 2,
     };
     WeekdayULE
@@ -587,13 +589,19 @@ field_type!(
     /// An enum for the possible symbols of a time zone field in a date pattern.
     TimeZone; {
         /// Field symbol for the specific non-location format of a time zone.
+        ///
+        /// For example: "Pacific Standard Time"
         'z' => LowerZ = 0,
         /// Field symbol for any of: the ISO8601 basic format with hours, minutes and optional seconds fields, the
         /// long localized GMT format, or the ISO8601 extended format with hours, minutes and optional seconds fields.
         'Z' => UpperZ = 1,
         /// Field symbol for the localized GMT format of a time zone.
+        ///
+        /// For example: "GMT-07:00"
         'O' => UpperO = 2,
         /// Field symbol for the generic non-location format of a time zone.
+        ///
+        /// For example: "Pacific Time"
         'v' => LowerV = 3,
         /// Field symbol for any of: the time zone id, time zone exemplar city, or generic location format.
         'V' => UpperV = 4,
