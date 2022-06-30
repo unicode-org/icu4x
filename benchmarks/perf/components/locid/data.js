@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1656606193677,
+  "lastUpdate": 1656612635195,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -62272,6 +62272,150 @@ window.BENCHMARK_DATA = {
           {
             "name": "subtags/language/parse",
             "value": 204,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "subtags/script/parse",
+            "value": 139,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "subtags/region/parse",
+            "value": 211,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "subtags/variant/parse",
+            "value": 175,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "aethanyc@gmail.com",
+            "name": "Ting-Yu Lin",
+            "username": "aethanyc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "cd92d9670ec7ef81d36c89e745ee466c4dc6275d",
+          "message": "Add FFI for UAX 29 Segmenters (#2132)\n\nSummary of this PR:\r\n\r\n* Add FFI for UAX 29 segmenters.\r\n\r\n`segmenters_word.rs`, `segmenters_grapheme.rs` and `segmenters_sentence.rs`\r\nshare the almost the same implementation, except that the grapheme and sentence\r\nhave no trait bound `ResourceProvider<UCharDictionaryBreakDataV1Marker>` on\r\ntheir provider argument on `try_new_impl`.\r\n\r\n* Check in diplomat-gen generated files, which are generated via `cargo make diplomat-gen`.\r\n\r\n* Generalize line break C++ sample code, and add sample code for UAX 29 segmenters.",
+          "timestamp": "2022-06-30T10:55:09-07:00",
+          "tree_id": "ed70fa6e58a4e2081e126edddb5ee49d9b09e463",
+          "url": "https://github.com/unicode-org/icu4x/commit/cd92d9670ec7ef81d36c89e745ee466c4dc6275d"
+        },
+        "date": 1656612605365,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 3391,
+            "range": "± 11",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/construct/langid",
+            "value": 831,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/to_string/langid",
+            "value": 877,
+            "range": "± 10",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/to_string/langid/writeable",
+            "value": 467,
+            "range": "± 4",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/compare/struct/langid",
+            "value": 77,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/compare/str/langid",
+            "value": 772,
+            "range": "± 2",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/compare/strict_cmp/langid",
+            "value": 357,
+            "range": "± 2",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/canonicalize/langid",
+            "value": 2114,
+            "range": "± 16",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 4093,
+            "range": "± 40",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/construct/locale",
+            "value": 1816,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/to_string/locale",
+            "value": 1133,
+            "range": "± 2",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/to_string/locale/writeable",
+            "value": 792,
+            "range": "± 2",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/compare/struct/locale",
+            "value": 229,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/compare/str/locale",
+            "value": 1802,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/compare/strict_cmp/locale",
+            "value": 532,
+            "range": "± 3",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/canonicalize/locale",
+            "value": 3582,
+            "range": "± 3",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "subtags/language/parse",
+            "value": 205,
             "range": "± 0",
             "unit": "ns/iter"
           },
