@@ -18,7 +18,7 @@ use icu_datetime::{
     provider::{
         calendar::{
             DatePatternsV1Marker, DateSkeletonPatternsV1Marker, DateSymbolsV1Marker,
-            TimePatternsV1Marker,
+            TimePatternsV1Marker, TimeSymbolsV1Marker,
         },
         week_data::WeekDataV1Marker,
     },
@@ -149,6 +149,7 @@ fn assert_fixture_element<A, D>(
     A: AsCalendar,
     A::Calendar: CldrCalendar,
     D: ResourceProvider<DateSymbolsV1Marker>
+        + ResourceProvider<TimeSymbolsV1Marker>
         + ResourceProvider<DatePatternsV1Marker>
         + ResourceProvider<TimePatternsV1Marker>
         + ResourceProvider<DateSkeletonPatternsV1Marker>
@@ -262,7 +263,15 @@ fn test_dayperiod_patterns() {
         date_patterns_data.with_mut(|data| {
             data.length_combinations.long = "{0}".parse().unwrap();
         });
-        let symbols_data: DataPayload<DateSymbolsV1Marker> = provider
+        let date_symbols_data: DataPayload<DateSymbolsV1Marker> = provider
+            .load_resource(&DataRequest {
+                options: ResourceOptions::from(&locale),
+                metadata: Default::default(),
+            })
+            .unwrap()
+            .take_payload()
+            .unwrap();
+        let time_symbols_data: DataPayload<TimeSymbolsV1Marker> = provider
             .load_resource(&DataRequest {
                 options: ResourceOptions::from(&locale),
                 metadata: Default::default(),
@@ -309,7 +318,11 @@ fn test_dayperiod_patterns() {
                             providers: vec![
                                 AnyPayloadProvider {
                                     key: DateSymbolsV1Marker::KEY,
-                                    data: symbols_data.clone().wrap_into_any_payload(),
+                                    data: date_symbols_data.clone().wrap_into_any_payload(),
+                                },
+                                AnyPayloadProvider {
+                                    key: TimeSymbolsV1Marker::KEY,
+                                    data: time_symbols_data.clone().wrap_into_any_payload(),
                                 },
                                 AnyPayloadProvider {
                                     key: DateSkeletonPatternsV1Marker::KEY,

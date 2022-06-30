@@ -28,8 +28,8 @@ impl ResourceProvider<icu_properties::provider::GeneralCategoryV1Marker>
 }
 type DataStruct =
     &'static <icu_properties::provider::GeneralCategoryV1Marker as DataMarker>::Yokeable;
-static UND: DataStruct = &::icu_properties::provider::UnicodePropertyMapV1 {
-    code_point_trie: ::icu_codepointtrie::CodePointTrie::from_parts(
+static UND: DataStruct = &::icu_properties::provider::UnicodePropertyMapV1::CodePointTrie(
+    ::icu_codepointtrie::CodePointTrie::from_parts(
         ::icu_codepointtrie::CodePointTrieHeader {
             high_start: 1114112u32,
             shifted12_high_start: 272u16,
@@ -1192,4 +1192,4 @@ static UND: DataStruct = &::icu_properties::provider::UnicodePropertyMapV1 {
             ])
         },
     ),
-};
+);

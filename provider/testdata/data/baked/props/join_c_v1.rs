@@ -25,16 +25,12 @@ impl ResourceProvider<icu_properties::provider::JoinControlV1Marker>
     }
 }
 type DataStruct = &'static <icu_properties::provider::JoinControlV1Marker as DataMarker>::Yokeable;
-static UND: DataStruct = &::icu_properties::provider::UnicodePropertyV1 {
-    inv_list: unsafe {
-        #[allow(unused_unsafe)]
-        ::icu_uniset::UnicodeSet::from_parts_unchecked(
-            unsafe {
-                ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                    12u8, 32u8, 0u8, 0u8, 14u8, 32u8, 0u8, 0u8,
-                ])
-            },
-            2usize,
-        )
-    },
-};
+static UND: DataStruct = &::icu_properties::provider::UnicodePropertyV1::InversionList(unsafe {
+    #[allow(unused_unsafe)]
+    ::icu_uniset::UnicodeSet::from_parts_unchecked(
+        unsafe {
+            ::zerovec::ZeroVec::from_bytes_unchecked(&[12u8, 32u8, 0u8, 0u8, 14u8, 32u8, 0u8, 0u8])
+        },
+        2usize,
+    )
+});

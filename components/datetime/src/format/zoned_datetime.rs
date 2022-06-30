@@ -102,9 +102,15 @@ where
     T: ZonedDateTimeInput,
     W: fmt::Write + ?Sized,
 {
-    let symbols = zoned_datetime_format
+    let date_symbols = zoned_datetime_format
         .datetime_format
-        .symbols
+        .date_symbols
+        .as_ref()
+        .map(|s| s.get());
+
+    let time_symbols = zoned_datetime_format
+        .datetime_format
+        .time_symbols
         .as_ref()
         .map(|s| s.get());
 
@@ -118,7 +124,8 @@ where
             pattern,
             field,
             next_item,
-            symbols,
+            date_symbols,
+            time_symbols,
             loc_datetime,
             &zoned_datetime_format.datetime_format.fixed_decimal_format,
             w,

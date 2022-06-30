@@ -12,6 +12,7 @@ pub fn all_keys() -> Vec<ResourceKey> {
         icu_datetime::provider::calendar::TimePatternsV1Marker::KEY,
         icu_datetime::provider::calendar::DateSkeletonPatternsV1Marker::KEY,
         icu_datetime::provider::calendar::DateSymbolsV1Marker::KEY,
+        icu_datetime::provider::calendar::TimeSymbolsV1Marker::KEY,
         icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker::KEY,
         icu_datetime::provider::time_zones::ExemplarCitiesV1Marker::KEY,
         icu_datetime::provider::time_zones::MetaZoneGenericNamesLongV1Marker::KEY,

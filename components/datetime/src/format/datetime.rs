@@ -11,7 +11,7 @@ use crate::pattern::{
 };
 use crate::provider;
 use crate::provider::calendar::patterns::PatternPluralsFromPatternsV1Marker;
-use crate::provider::date_time::DateTimeSymbols;
+use crate::provider::date_time::{DateSymbols, TimeSymbols};
 use crate::provider::week_data::WeekDataV1;
 
 use core::fmt;
@@ -52,7 +52,8 @@ where
     T: DateTimeInput,
 {
     pub(crate) patterns: &'l DataPayload<PatternPluralsFromPatternsV1Marker>,
-    pub(crate) symbols: Option<&'l provider::calendar::DateSymbolsV1<'l>>,
+    pub(crate) date_symbols: Option<&'l provider::calendar::DateSymbolsV1<'l>>,
+    pub(crate) time_symbols: Option<&'l provider::calendar::TimeSymbolsV1<'l>>,
     pub(crate) datetime: &'l T,
     pub(crate) week_data: Option<&'l WeekDataV1>,
     pub(crate) locale: &'l Locale,
@@ -67,7 +68,8 @@ where
     fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
         write_pattern_plurals(
             &self.patterns.get().0,
-            self.symbols,
+            self.date_symbols,
+            self.time_symbols,
             self.datetime,
             self.week_data,
             self.ordinal_rules,
@@ -130,7 +132,8 @@ where
 
 fn write_pattern<T, W>(
     pattern: &crate::pattern::runtime::Pattern,
-    symbols: Option<&provider::calendar::DateSymbolsV1>,
+    date_symbols: Option<&provider::calendar::DateSymbolsV1>,
+    time_symbols: Option<&provider::calendar::TimeSymbolsV1>,
     loc_datetime: &impl LocalizedDateTimeInput<T>,
     fixed_decimal_format: &FixedDecimalFormat,
     w: &mut W,
@@ -146,7 +149,8 @@ where
                 pattern,
                 field,
                 iter.peek(),
-                symbols,
+                date_symbols,
+                time_symbols,
                 loc_datetime,
                 fixed_decimal_format,
                 w,
@@ -161,7 +165,8 @@ where
 #[allow(clippy::too_many_arguments)]
 pub fn write_pattern_plurals<T, W>(
     patterns: &PatternPlurals,
-    symbols: Option<&provider::calendar::DateSymbolsV1>,
+    date_symbols: Option<&provider::calendar::DateSymbolsV1>,
+    time_symbols: Option<&provider::calendar::TimeSymbolsV1>,
     datetime: &T,
     week_data: Option<&WeekDataV1>,
     ordinal_rules: Option<&PluralRules>,
@@ -175,7 +180,14 @@ where
 {
     let loc_datetime = DateTimeInputWithLocale::new(datetime, week_data.map(|d| &d.0), locale);
     let pattern = patterns.select(&loc_datetime, ordinal_rules)?;
-    write_pattern(pattern, symbols, &loc_datetime, fixed_decimal_format, w)
+    write_pattern(
+        pattern,
+        date_symbols,
+        time_symbols,
+        &loc_datetime,
+        fixed_decimal_format,
+        w,
+    )
 }
 
 // This function assumes that the correct decision has been
@@ -183,11 +195,13 @@ where
 //
 // When modifying the list of fields using symbols,
 // update the matching query in `analyze_pattern` function.
+#[allow(clippy::too_many_arguments)]
 pub(super) fn write_field<T, W>(
     pattern: &crate::pattern::runtime::Pattern,
     field: fields::Field,
     next_item: Option<&PatternItem>,
-    symbols: Option<&crate::provider::calendar::DateSymbolsV1>,
+    date_symbols: Option<&crate::provider::calendar::DateSymbolsV1>,
+    time_symbols: Option<&crate::provider::calendar::TimeSymbolsV1>,
     datetime: &impl LocalizedDateTimeInput<T>,
     fixed_decimal_format: &FixedDecimalFormat,
     w: &mut W,
@@ -199,8 +213,8 @@ where
     match field.symbol {
         FieldSymbol::Era => {
             #[allow(clippy::expect_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
-            let symbol = symbols
-                .expect("Expect symbols to be present")
+            let symbol = date_symbols
+                .expect("Expect date symbols to be present")
                 .get_symbol_for_era(
                     field.length,
                     datetime
@@ -246,8 +260,8 @@ where
             )?,
             length => {
                 #[allow(clippy::expect_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
-                let symbol = symbols
-                    .expect("Expect symbols to be present")
+                let symbol = date_symbols
+                    .expect("Expect date symbols to be present")
                     .get_symbol_for_month(
                         month,
                         length,
@@ -280,8 +294,8 @@ where
                 .iso_weekday()
                 .ok_or(Error::MissingInputField)?;
             #[allow(clippy::expect_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
-            let symbol = symbols
-                .expect("Expect symbols to be present")
+            let symbol = date_symbols
+                .expect("Expect date symbols to be present")
                 .get_symbol_for_weekday(weekday, field.length, dow)?;
             w.write_str(symbol)?
         }
@@ -390,8 +404,8 @@ where
         }
         FieldSymbol::DayPeriod(period) => {
             #[allow(clippy::expect_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
-            let symbol = symbols
-                .expect("Expect symbols to be present")
+            let symbol = time_symbols
+                .expect("Expect time symbols to be present")
                 .get_symbol_for_day_period(
                     period,
                     field.length,
@@ -413,7 +427,9 @@ where
 #[derive(Default)]
 pub struct RequiredData {
     // DateSymbolsV1 is required.
-    pub symbols_data: bool,
+    pub date_symbols_data: bool,
+    // TimeSymbolsV1 is required.
+    pub time_symbols_data: bool,
     // WeekDataV1 is required.
     pub week_data: bool,
 }
@@ -434,16 +450,20 @@ impl RequiredData {
         });
 
         for field in fields {
-            if !self.symbols_data {
-                self.symbols_data = match field.symbol {
+            if !self.date_symbols_data {
+                self.date_symbols_data = match field.symbol {
                     FieldSymbol::Era => true,
                     FieldSymbol::Month(_) => {
                         !matches!(field.length, FieldLength::One | FieldLength::TwoDigit)
                     }
-                    FieldSymbol::Weekday(_) | FieldSymbol::DayPeriod(_) => true,
+                    FieldSymbol::Weekday(_) => true,
                     _ => false,
                 }
             }
+            if !self.time_symbols_data {
+                self.time_symbols_data = matches!(field.symbol, FieldSymbol::DayPeriod(_));
+            }
+
             if !self.week_data {
                 self.week_data = matches!(
                     field.symbol,
@@ -452,7 +472,7 @@ impl RequiredData {
             }
 
             if supports_time_zones {
-                if self.symbols_data && self.week_data {
+                if self.date_symbols_data && self.time_symbols_data && self.week_data {
                     // If we support time zones, and require everything else, we
                     // know all we need to return already.
                     return Ok(true);
@@ -492,13 +512,21 @@ mod tests {
     #[test]
     #[cfg(feature = "serde")]
     fn test_basic() {
-        use crate::provider::calendar::DateSymbolsV1Marker;
+        use crate::provider::calendar::{DateSymbolsV1Marker, TimeSymbolsV1Marker};
         use icu_calendar::DateTime;
         use icu_provider::prelude::*;
 
         let provider = icu_testdata::get_provider();
         let locale: Locale = "en-u-ca-gregory".parse().unwrap();
-        let data: DataPayload<DateSymbolsV1Marker> = provider
+        let date_data: DataPayload<DateSymbolsV1Marker> = provider
+            .load_resource(&DataRequest {
+                options: locale.clone().into(),
+                metadata: Default::default(),
+            })
+            .unwrap()
+            .take_payload()
+            .unwrap();
+        let time_data: DataPayload<TimeSymbolsV1Marker> = provider
             .load_resource(&DataRequest {
                 options: locale.clone().into(),
                 metadata: Default::default(),
@@ -515,7 +543,8 @@ mod tests {
         let loc_datetime = DateTimeInputWithLocale::new(&datetime, None, &"und".parse().unwrap());
         write_pattern(
             &pattern,
-            Some(data.get()),
+            Some(date_data.get()),
+            Some(time_data.get()),
             &loc_datetime,
             &fixed_decimal_format,
             &mut sink,
