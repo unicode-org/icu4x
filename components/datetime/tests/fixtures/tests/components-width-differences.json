@@ -29,12 +29,12 @@
         "output": {
             "values": {
                 "en": "2020 AD",
-                "buddhist/en": "2563 BE",
-                "coptic/en": "1736 ERA1",
-                "coptic/fr": "1736 ap. D.",
-                "ethiopic/en" : "2012 ERA0",
-                "ethiopic/fr" : "2012 av. Inc.",
-                "ethioaa/fr" : "2012 ERA0"
+                "en-u-ca-buddhist": "2563 BE",
+                "en-u-ca-coptic": "1736 ERA1",
+                "fr-u-ca-coptic": "1736 ap. D.",
+                "en-u-ca-ethiopic" : "2012 ERA0",
+                "fr-u-ca-ethiopic" : "2012 av. Inc.",
+                "fr-u-ca-ethioaa" : "2012 ERA0"
             }
         }
     },
@@ -89,10 +89,10 @@
         "output": {
             "values": {
                 "en": "1/7/2020",
-                "buddhist/en": "1/7/2563 BE",
+                "en-u-ca-buddhist": "1/7/2563 BE",
                 "fr": "07/01/2020",
-                "coptic/en": "4/28/1736 ERA1",
-                "coptic/fr": "28/4/1736 ap. D."
+                "en-u-ca-coptic": "4/28/1736 ERA1",
+                "fr-u-ca-coptic": "28/4/1736 ap. D."
             }
         }
     },
@@ -111,10 +111,10 @@
         "output": {
             "values": {
                 "en": "01/7/2020",
-                "buddhist/en": "01/7/2563 BE",
+                "en-u-ca-buddhist": "01/7/2563 BE",
                 "fr": "7/01/2020",
-                "coptic/en": "04/28/1736 ERA1",
-                "coptic/fr": "28/04/1736 ap. D."
+                "en-u-ca-coptic": "04/28/1736 ERA1",
+                "fr-u-ca-coptic": "28/04/1736 ap. D."
             }
         }
     },
@@ -133,10 +133,10 @@
         "output": {
             "values": {
                 "en": "Jan 7, 2020",
-                "buddhist/en": "Jan 7, 2563 BE",
+                "en-u-ca-buddhist": "Jan 7, 2563 BE",
                 "fr": "7 janv. 2020",
-                "coptic/en": "Kiahk 28, 1736 ERA1",
-                "coptic/fr": "28 kya. 1736 ap. D."
+                "en-u-ca-coptic": "Kiahk 28, 1736 ERA1",
+                "fr-u-ca-coptic": "28 kya. 1736 ap. D."
             }
         }
     },
@@ -155,10 +155,10 @@
         "output": {
             "values": {
                 "en": "January 7, 2020",
-                "buddhist/en": "January 7, 2563 BE",
+                "en-u-ca-buddhist": "January 7, 2563 BE",
                 "fr": "7 janvier 2020",
-                "coptic/en": "Kiahk 28, 1736 ERA1",
-                "coptic/fr": "28 kyahk 1736 ap. D."
+                "en-u-ca-coptic": "Kiahk 28, 1736 ERA1",
+                "fr-u-ca-coptic": "28 kyahk 1736 ap. D."
             }
         }
     },
@@ -177,10 +177,10 @@
         "output": {
             "values": {
                 "en": "J 7, 2020",
-                "buddhist/en": "J 7, 2563 BE",
+                "en-u-ca-buddhist": "J 7, 2563 BE",
                 "fr": "7 J 2020",
-                "coptic/en": "4 28, 1736 ERA1",
-                "coptic/fr": "28 4 1736 ap. D."
+                "en-u-ca-coptic": "4 28, 1736 ERA1",
+                "fr-u-ca-coptic": "28 4 1736 ap. D."
             }
         }
     }
