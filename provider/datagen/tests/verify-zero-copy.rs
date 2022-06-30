@@ -54,9 +54,7 @@ fn main() {
             CldrLocaleSubset::Full
         )
         .unwrap()
-        .with_icuexport(
-            icu_testdata::paths::icuexport_toml_root(),
-        )
+        .with_icuexport(icu_testdata::paths::icuexport_toml_root(),)
         .unwrap())
     .filterable("icu4x-datagen locales")
     .filter_by_langid_allowlist_strict(&selected_locales);

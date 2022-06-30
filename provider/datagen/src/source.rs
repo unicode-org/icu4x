@@ -129,10 +129,7 @@ impl SourceData {
                 CldrLocaleSubset::Full,
             )
             .expect("testdata is valid")
-            .with_icuexport(
-                icu_testdata::paths::icuexport_toml_root(),
-                IcuTrieType::Small,
-            )
+            .with_icuexport(icu_testdata::paths::icuexport_toml_root())
             .expect("testdata is valid")
     }
 
