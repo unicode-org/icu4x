@@ -247,7 +247,7 @@ where
     }
 }
 
-pub trait DateTimeSymbols {
+pub trait DateSymbols {
     fn get_symbol_for_month(
         &self,
         month: fields::Month,
@@ -260,17 +260,10 @@ pub trait DateTimeSymbols {
         length: fields::FieldLength,
         day: date::IsoWeekday,
     ) -> Result<&str>;
-    fn get_symbol_for_day_period(
-        &self,
-        day_period: fields::DayPeriod,
-        length: fields::FieldLength,
-        hour: date::IsoHour,
-        is_top_of_hour: bool,
-    ) -> Result<&str>;
     fn get_symbol_for_era(&self, length: fields::FieldLength, era_code: Era) -> Result<&str>;
 }
 
-impl<'data> DateTimeSymbols for provider::calendar::DateSymbolsV1<'data> {
+impl<'data> DateSymbols for provider::calendar::DateSymbolsV1<'data> {
     fn get_symbol_for_weekday(
         &self,
         weekday: fields::Weekday,
@@ -356,6 +349,29 @@ impl<'data> DateTimeSymbols for provider::calendar::DateSymbolsV1<'data> {
             .ok_or(DateTimeFormatError::MissingMonthSymbol(code))
     }
 
+    fn get_symbol_for_era(&self, length: fields::FieldLength, era_code: Era) -> Result<&str> {
+        let symbols = match length {
+            fields::FieldLength::Wide => &self.eras.names,
+            fields::FieldLength::Narrow => &self.eras.narrow,
+            _ => &self.eras.abbr,
+        };
+        symbols
+            .get(&era_code.0)
+            .ok_or(DateTimeFormatError::MissingEraSymbol(era_code.0))
+    }
+}
+
+pub trait TimeSymbols {
+    fn get_symbol_for_day_period(
+        &self,
+        day_period: fields::DayPeriod,
+        length: fields::FieldLength,
+        hour: date::IsoHour,
+        is_top_of_hour: bool,
+    ) -> Result<&str>;
+}
+
+impl<'data> TimeSymbols for provider::calendar::TimeSymbolsV1<'data> {
     fn get_symbol_for_day_period(
         &self,
         day_period: fields::DayPeriod,
@@ -376,16 +392,5 @@ impl<'data> DateTimeSymbols for provider::calendar::DateSymbolsV1<'data> {
             (_, hour, _) if hour < 12 => &symbols.am,
             _ => &symbols.pm,
         })
-    }
-
-    fn get_symbol_for_era(&self, length: fields::FieldLength, era_code: Era) -> Result<&str> {
-        let symbols = match length {
-            fields::FieldLength::Wide => &self.eras.names,
-            fields::FieldLength::Narrow => &self.eras.narrow,
-            _ => &self.eras.abbr,
-        };
-        symbols
-            .get(&era_code.0)
-            .ok_or(DateTimeFormatError::MissingEraSymbol(era_code.0))
     }
 }

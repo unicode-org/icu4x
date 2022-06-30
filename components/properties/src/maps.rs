@@ -20,7 +20,6 @@ use crate::*;
 use core::marker::PhantomData;
 use icu_codepointtrie::{CodePointTrie, TrieValue};
 use icu_provider::prelude::*;
-use zerofrom::ZeroFrom;
 
 /// A wrapper around code point set data, returned by property getters for
 /// unicode sets.
@@ -83,7 +82,7 @@ impl<T: TrieValue> CodePointMapData<T> {
     /// assert_eq!(gc.get('🎃'), GeneralCategory::OtherSymbol);  // U+1F383 JACK-O-LANTERN
     /// ```
     pub fn get(&self, ch: char) -> T {
-        self.data.get().code_point_trie.get(ch as u32)
+        self.data.get().get_u32(ch as u32)
     }
 
     /// Get the value this map has associated with code point `ch`
@@ -103,7 +102,7 @@ impl<T: TrieValue> CodePointMapData<T> {
     /// assert_eq!(gc.get_u32(0x1F383), GeneralCategory::OtherSymbol);  // U+1F383 JACK-O-LANTERN
     /// ```
     pub fn get_u32(&self, ch: u32) -> T {
-        self.data.get().code_point_trie.get(ch)
+        self.data.get().get_u32(ch)
     }
 
     /// Get a [`CodePointSetData`] for all elements corresponding to a particular value
@@ -126,7 +125,7 @@ impl<T: TrieValue> CodePointMapData<T> {
     /// assert!(!other_letter_set.contains('🎃'));  // U+1F383 JACK-O-LANTERN
     /// ```
     pub fn get_set_for_value(&self, value: T) -> CodePointSetData {
-        let set = self.data.get().code_point_trie.get_set_for_value(value);
+        let set = self.data.get().get_set_for_value(value);
         CodePointSetData::from_unicode_set(set)
     }
 
@@ -142,9 +141,7 @@ impl<T: TrieValue> CodePointMapData<T> {
 
     /// Construct a new one an owned [`CodePointTrie`]
     pub fn from_code_point_trie(trie: CodePointTrie<'static, T>) -> Self {
-        let set = UnicodePropertyMapV1 {
-            code_point_trie: trie,
-        };
+        let set = UnicodePropertyMapV1::from_code_point_trie(trie);
         CodePointMapData::from_data(DataPayload::<ErasedMaplikeMarker<T>>::from_owned(set))
     }
     /// Convert this type to a [`CodePointTrie`], borrowing if possible,
@@ -158,7 +155,7 @@ impl<T: TrieValue> CodePointMapData<T> {
     /// in the data, however exceptions can be made if the performance hit is considered to
     /// be okay.
     pub fn to_code_point_trie(&self) -> CodePointTrie<'_, T> {
-        ZeroFrom::zero_from(&self.data.get().code_point_trie)
+        self.data.get().to_code_point_trie()
     }
 }
 
@@ -189,7 +186,7 @@ impl<'a, T: TrieValue> CodePointMapDataBorrowed<'a, T> {
     /// assert_eq!(gc.get('🎃'), GeneralCategory::OtherSymbol);  // U+1F383 JACK-O-LANTERN
     /// ```
     pub fn get(&self, ch: char) -> T {
-        self.map.code_point_trie.get(ch as u32)
+        self.map.get_u32(ch as u32)
     }
 
     /// Get the value this map has associated with code point `ch`
@@ -211,7 +208,7 @@ impl<'a, T: TrieValue> CodePointMapDataBorrowed<'a, T> {
     /// assert_eq!(gc.get_u32(0x1F383), GeneralCategory::OtherSymbol);  // U+1F383 JACK-O-LANTERN
     /// ```
     pub fn get_u32(&self, ch: u32) -> T {
-        self.map.code_point_trie.get(ch)
+        self.map.get_u32(ch)
     }
 
     /// Get a [`CodePointSetData`] for all elements corresponding to a particular value
@@ -235,7 +232,7 @@ impl<'a, T: TrieValue> CodePointMapDataBorrowed<'a, T> {
     /// assert!(!other_letter_set.contains('🎃'));  // U+1F383 JACK-O-LANTERN
     /// ```
     pub fn get_set_for_value(&self, value: T) -> CodePointSetData {
-        let set = self.map.code_point_trie.get_set_for_value(value);
+        let set = self.map.get_set_for_value(value);
         CodePointSetData::from_unicode_set(set)
     }
 }

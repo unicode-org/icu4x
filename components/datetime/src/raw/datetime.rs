@@ -12,7 +12,7 @@ use crate::{
     provider::calendar::patterns::PatternPluralsFromPatternsV1Marker,
     provider::calendar::{
         DatePatternsV1Marker, DateSkeletonPatternsV1Marker, DateSymbolsV1Marker,
-        TimePatternsV1Marker,
+        TimePatternsV1Marker, TimeSymbolsV1Marker,
     },
     provider::week_data::WeekDataV1Marker,
 };
@@ -28,8 +28,8 @@ use icu_plurals::{provider::OrdinalV1Marker, PluralRules};
 use icu_provider::prelude::*;
 
 use crate::{
-    date::DateTimeInput, pattern::runtime::PatternPlurals, provider, DateTimeFormatError,
-    FormattedDateTime,
+    date::DateTimeInput, date::ExtractedDateTimeInput, pattern::runtime::PatternPlurals, provider,
+    DateTimeFormatError, FormattedDateTime,
 };
 
 /// This is the internal "raw" version of [crate::DateTimeFormat], i.e. a version of DateTimeFormat
@@ -37,7 +37,8 @@ use crate::{
 pub(crate) struct DateTimeFormat {
     pub locale: Locale,
     pub patterns: DataPayload<PatternPluralsFromPatternsV1Marker>,
-    pub symbols: Option<DataPayload<DateSymbolsV1Marker>>,
+    pub date_symbols: Option<DataPayload<DateSymbolsV1Marker>>,
+    pub time_symbols: Option<DataPayload<TimeSymbolsV1Marker>>,
     pub week_data: Option<DataPayload<WeekDataV1Marker>>,
     pub ordinal_rules: Option<PluralRules>,
     pub fixed_decimal_format: FixedDecimalFormat,
@@ -56,6 +57,7 @@ impl DateTimeFormat {
     ) -> Result<Self, DateTimeFormatError>
     where
         D: ResourceProvider<DateSymbolsV1Marker>
+            + ResourceProvider<TimeSymbolsV1Marker>
             + ResourceProvider<DatePatternsV1Marker>
             + ResourceProvider<TimePatternsV1Marker>
             + ResourceProvider<DateSkeletonPatternsV1Marker>
@@ -96,7 +98,20 @@ impl DateTimeFormat {
             None
         };
 
-        let symbols_data = if required.symbols_data {
+        let date_symbols_data = if required.date_symbols_data {
+            Some(
+                data_provider
+                    .load_resource(&DataRequest {
+                        options: ResourceOptions::from(&locale),
+                        metadata: Default::default(),
+                    })?
+                    .take_payload()?,
+            )
+        } else {
+            None
+        };
+
+        let time_symbols_data = if required.time_symbols_data {
             Some(
                 data_provider
                     .load_resource(&DataRequest {
@@ -123,7 +138,8 @@ impl DateTimeFormat {
         Ok(Self::new(
             locale,
             patterns,
-            symbols_data,
+            date_symbols_data,
+            time_symbols_data,
             week_data,
             ordinal_rules,
             fixed_decimal_format,
@@ -134,7 +150,8 @@ impl DateTimeFormat {
     pub fn new(
         locale: Locale,
         patterns: DataPayload<PatternPluralsFromPatternsV1Marker>,
-        symbols: Option<DataPayload<DateSymbolsV1Marker>>,
+        date_symbols: Option<DataPayload<DateSymbolsV1Marker>>,
+        time_symbols: Option<DataPayload<TimeSymbolsV1Marker>>,
         week_data: Option<DataPayload<WeekDataV1Marker>>,
         ordinal_rules: Option<PluralRules>,
         fixed_decimal_format: FixedDecimalFormat,
@@ -142,7 +159,8 @@ impl DateTimeFormat {
         Self {
             locale,
             patterns,
-            symbols,
+            date_symbols,
+            time_symbols,
             week_data,
             ordinal_rules,
             fixed_decimal_format,
@@ -152,14 +170,16 @@ impl DateTimeFormat {
     /// Takes a [`DateTimeInput`] implementer and returns an instance of a [`FormattedDateTime`]
     /// that contains all information necessary to display a formatted date and operate on it.
     #[inline]
-    pub fn format<'l, T>(&'l self, value: &'l T) -> FormattedDateTime<'l, T>
+    pub fn format<'l, T>(&'l self, value: &'l T) -> FormattedDateTime<'l>
     where
         T: DateTimeInput,
     {
+        // Todo: optimize extraction #2143
         FormattedDateTime {
             patterns: &self.patterns,
-            symbols: self.symbols.as_ref().map(|s| s.get()),
-            datetime: value,
+            date_symbols: self.date_symbols.as_ref().map(|s| s.get()),
+            time_symbols: self.time_symbols.as_ref().map(|s| s.get()),
+            datetime: ExtractedDateTimeInput::extract_from(value),
             week_data: self.week_data.as_ref().map(|s| s.get()),
             locale: &self.locale,
             ordinal_rules: self.ordinal_rules.as_ref(),
@@ -177,7 +197,8 @@ impl DateTimeFormat {
     ) -> core::fmt::Result {
         datetime::write_pattern_plurals(
             &self.patterns.get().0,
-            self.symbols.as_ref().map(|s| s.get()),
+            self.date_symbols.as_ref().map(|s| s.get()),
+            self.time_symbols.as_ref().map(|s| s.get()),
             value,
             self.week_data.as_ref().map(|s| s.get()),
             self.ordinal_rules.as_ref(),

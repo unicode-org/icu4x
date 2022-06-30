@@ -51,7 +51,7 @@ macro_rules! expand {
                     Ok(DataResponse {
                         metadata: DataResponseMetadata::default(),
                         payload: Some(DataPayload::from_owned(
-                            UnicodePropertyV1 { inv_list },
+                            UnicodePropertyV1::InversionList(inv_list),
                         )),
                     })
                 }
@@ -142,6 +142,7 @@ expand!(
 
 #[test]
 fn test_basic() {
+    use icu_properties::provider::UnicodePropertyV1;
     use icu_properties::provider::WhiteSpaceV1Marker;
     use icu_uniset::UnicodeSet;
 
@@ -152,7 +153,10 @@ fn test_basic() {
         .and_then(DataResponse::take_payload)
         .expect("Loading was successful");
 
-    let whitespace: &UnicodeSet = &payload.get().inv_list;
+    let whitespace: &UnicodeSet = match payload.get() {
+        UnicodePropertyV1::InversionList(ref l) => l,
+        _ => unreachable!("Should have serialized to an inversion list"),
+    };
 
     assert!(whitespace.contains(' '));
     assert!(whitespace.contains('\n'));

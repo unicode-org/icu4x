@@ -9,7 +9,7 @@ use crate::{
     options::{components, DateTimeFormatOptions},
     provider::calendar::{
         DatePatternsV1Marker, DateSkeletonPatternsV1Marker, DateSymbolsV1Marker,
-        TimePatternsV1Marker,
+        TimePatternsV1Marker, TimeSymbolsV1Marker,
     },
     provider::week_data::WeekDataV1Marker,
     raw,
@@ -90,6 +90,7 @@ impl<C: CldrCalendar> DateTimeFormat<C> {
     ) -> Result<Self, DateTimeFormatError>
     where
         D: ResourceProvider<DateSymbolsV1Marker>
+            + ResourceProvider<TimeSymbolsV1Marker>
             + ResourceProvider<DatePatternsV1Marker>
             + ResourceProvider<TimePatternsV1Marker>
             + ResourceProvider<DateSkeletonPatternsV1Marker>
@@ -138,7 +139,7 @@ impl<C: CldrCalendar> DateTimeFormat<C> {
     /// but [`FormattedDateTime`] will grow with methods for iterating over fields, extracting information
     /// about formatted date and so on.
     #[inline]
-    pub fn format<'l, T>(&'l self, value: &'l T) -> FormattedDateTime<'l, T>
+    pub fn format<'l, T>(&'l self, value: &'l T) -> FormattedDateTime<'l>
     where
         T: DateTimeInput<Calendar = C>,
     {

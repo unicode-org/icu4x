@@ -5,7 +5,9 @@
 //! A collection of code for formatting DateTimes with time zones.
 
 use crate::date::ZonedDateTimeInput;
-use crate::date::{LocalizedDateTimeInput, ZonedDateTimeInputWithLocale};
+use crate::date::{
+    ExtractedZonedDateTimeInput, LocalizedDateTimeInput, ZonedDateTimeInputWithLocale,
+};
 use crate::error::DateTimeFormatError as Error;
 use crate::fields::{self, FieldSymbol};
 use crate::pattern::{runtime, PatternItem};
@@ -16,32 +18,23 @@ use writeable::Writeable;
 use super::datetime;
 
 #[allow(missing_docs)] // TODO(#686) - Add missing docs.
-pub struct FormattedZonedDateTime<'l, T>
-where
-    T: ZonedDateTimeInput,
-{
+pub struct FormattedZonedDateTime<'l> {
     pub(crate) zoned_datetime_format: &'l raw::ZonedDateTimeFormat,
-    pub(crate) zoned_datetime: &'l T,
+    pub(crate) zoned_datetime: ExtractedZonedDateTimeInput,
 }
 
-impl<'l, T> Writeable for FormattedZonedDateTime<'l, T>
-where
-    T: ZonedDateTimeInput,
-{
+impl<'l> Writeable for FormattedZonedDateTime<'l> {
     fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
-        write_pattern(self.zoned_datetime_format, self.zoned_datetime, sink)
+        write_pattern(self.zoned_datetime_format, &self.zoned_datetime, sink)
             .map_err(|_| core::fmt::Error)
     }
 
     // TODO(#489): Implement write_len
 }
 
-impl<'l, T> fmt::Display for FormattedZonedDateTime<'l, T>
-where
-    T: ZonedDateTimeInput,
-{
+impl<'l> fmt::Display for FormattedZonedDateTime<'l> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write_pattern(self.zoned_datetime_format, self.zoned_datetime, f)
+        write_pattern(self.zoned_datetime_format, &self.zoned_datetime, f)
             .map_err(|_| core::fmt::Error)
     }
 }
@@ -102,9 +95,15 @@ where
     T: ZonedDateTimeInput,
     W: fmt::Write + ?Sized,
 {
-    let symbols = zoned_datetime_format
+    let date_symbols = zoned_datetime_format
         .datetime_format
-        .symbols
+        .date_symbols
+        .as_ref()
+        .map(|s| s.get());
+
+    let time_symbols = zoned_datetime_format
+        .datetime_format
+        .time_symbols
         .as_ref()
         .map(|s| s.get());
 
@@ -118,7 +117,8 @@ where
             pattern,
             field,
             next_item,
-            symbols,
+            date_symbols,
+            time_symbols,
             loc_datetime,
             &zoned_datetime_format.datetime_format.fixed_decimal_format,
             w,
