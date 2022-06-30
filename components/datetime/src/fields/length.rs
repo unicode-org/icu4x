@@ -48,7 +48,7 @@ pub enum FieldLength {
     Narrow,
     /// Meaning is field-dependent, for patterns that are 6 characters long. Ex: a [`Weekday`] pattern like
     /// `EEEEEE` means "Short", but `jjjjjj` or `CCCCCC` for [`Hour`] may mean
-    /// "Numeric hour (2 digits, zero pad if needed)". See the
+    /// "Numeric hour (2 digits, zero pad if needed), narrow dayPeriod if used". See the
     /// [LDML documentation in UTS 35](https://unicode.org/reports/tr35/tr35-dates.html#Date_Format_Patterns)
     /// for more details.
     Six,
