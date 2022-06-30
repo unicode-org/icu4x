@@ -2,9 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! This module contains the untyped [`AnyCalendar`]-based `DateTimeFormat` APIs that are
-//! capable of formatting dates from any calendar
-
 use crate::{
     options::{components, DateTimeFormatOptions},
     raw,
@@ -68,7 +65,7 @@ use icu_plurals::provider::OrdinalV1Marker;
 /// This model replicates that of `ICU` and `ECMA402`.
 ///
 /// [data provider]: icu_provider
-pub struct AnyDateTimeFormat(pub(super) raw::DateTimeFormat, AnyCalendar);
+pub struct AnyDateTimeFormat(pub(crate) raw::DateTimeFormat, AnyCalendar);
 
 impl AnyDateTimeFormat {
     /// Construct a new [`AnyDateTimeFormat`] from a data provider that implements
