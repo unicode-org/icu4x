@@ -103,22 +103,18 @@ fn main() -> eyre::Result<()> {
         let provider = BlobDataProvider::new_from_blob(blob)?;
         let mut all_keys = icu_datagen::all_keys();
         all_keys.sort_by_key(|k| k.get_path());
-        let map = provider.get_map();
         for key in all_keys {
-            let hash = key.get_hash();
-            if let Some(cursor) = map.get0(&hash) {
-                for (locale, data) in cursor.iter1() {
-                    let mut hasher = Sha256::new();
-                    hasher.update(&data);
-                    let result = hasher.finalize();
-                    let slash = if locale.is_empty() { "" } else { "/" };
-                    let path = key.get_path();
-                    let locale_str = std::str::from_utf8(locale)
-                        .expect("Locales in the data provider should be valid strings");
+            for (locale, data) in provider.iter_for_key(key)? {
+                let mut hasher = Sha256::new();
+                hasher.update(&data);
+                let result = hasher.finalize();
+                let slash = if locale.is_empty() { "" } else { "/" };
+                let path = key.get_path();
+                let locale_str = std::str::from_utf8(locale)
+                    .expect("Locales in the data provider should be valid strings");
 
-                    log::trace!("Hash for {path}{slash}{locale_str} is {result:x}");
-                    writeln!(out, "{path}{slash}{locale_str}: {result:x}")?;
-                }
+                log::trace!("Hash for {path}{slash}{locale_str} is {result:x}");
+                writeln!(out, "{path}{slash}{locale_str}: {result:x}")?;
             }
         }
     } else {
