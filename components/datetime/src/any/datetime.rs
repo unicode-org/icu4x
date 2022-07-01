@@ -222,13 +222,14 @@ impl AnyDateTimeFormat {
     /// that contains all information necessary to display a formatted date and operate on it.
     ///
     /// This function will fail if the date passed in uses a different calendar than that of the
-    /// AnyCalendar. Please convert dates before passing them in if necessary.
+    /// AnyCalendar. Please convert dates before passing them in if necessary. This function
+    /// will automatically convert and format dates that are associated with the ISO calendar.
     #[inline]
     pub fn format<'l, T>(&'l self, value: &T) -> Result<FormattedDateTime<'l>, DateTimeFormatError>
     where
         T: DateTimeInput<Calendar = AnyCalendar>,
     {
-        if let Some(converted) = self.convert_if_necessary(value) {
+        if let Some(converted) = self.convert_if_necessary(value)? {
             Ok(self.0.format(&converted))
         } else {
             Ok(self.0.format(value))
@@ -239,14 +240,15 @@ impl AnyDateTimeFormat {
     /// and a [`DateTimeInput`] implementer and populates the buffer with a formatted value.
     ///
     /// This function will fail if the date passed in uses a different calendar than that of the
-    /// AnyCalendar. Please convert dates before passing them in if necessary.
+    /// AnyCalendar. Please convert dates before passing them in if necessary. This function
+    /// will automatically convert and format dates that are associated with the ISO calendar.
     #[inline]
     pub fn format_to_write(
         &self,
         w: &mut impl core::fmt::Write,
         value: &impl DateTimeInput<Calendar = AnyCalendar>,
     ) -> Result<(), DateTimeFormatError> {
-        if let Some(converted) = self.convert_if_necessary(value) {
+        if let Some(converted) = self.convert_if_necessary(value)? {
             self.0.format_to_write(w, &converted)?;
         } else {
             self.0.format_to_write(w, value)?;
@@ -257,13 +259,14 @@ impl AnyDateTimeFormat {
     /// Takes a [`DateTimeInput`] implementer and returns it formatted as a string.
     ///
     /// This function will fail if the date passed in uses a different calendar than that of the
-    /// AnyCalendar. Please convert dates before passing them in if necessary.
+    /// AnyCalendar. Please convert dates before passing them in if necessary. This function
+    /// will automatically convert and format dates that are associated with the ISO calendar.
     #[inline]
     pub fn format_to_string(
         &self,
         value: &impl DateTimeInput<Calendar = AnyCalendar>,
     ) -> Result<String, DateTimeFormatError> {
-        if let Some(converted) = self.convert_if_necessary(value) {
+        if let Some(converted) = self.convert_if_necessary(value)? {
             Ok(self.0.format_to_string(&converted))
         } else {
             Ok(self.0.format_to_string(value))
@@ -305,13 +308,22 @@ impl AnyDateTimeFormat {
     }
 
     /// Converts a date to the correct calendar if necessary
+    ///
+    /// Returns Err if the date is not ISO or compatible with the current calendar, returns Ok(None)
+    /// if the date is compatible with the current calendar and doesn't need conversion
     fn convert_if_necessary<'a>(
         &'a self,
         value: &impl DateTimeInput<Calendar = AnyCalendar>,
-    ) -> Option<DateTime<icu_calendar::Ref<'a, AnyCalendar>>> {
+    ) -> Result<Option<DateTime<icu_calendar::Ref<'a, AnyCalendar>>>, DateTimeFormatError> {
         let this_calendar = self.1.kind();
         let date_calendar = value.any_calendar_kind();
         if Some(this_calendar) != date_calendar {
+            if date_calendar != Some(AnyCalendarKind::Iso) {
+                return Err(DateTimeFormatError::MismatchedAnyCalendar(
+                    this_calendar,
+                    date_calendar,
+                ));
+            }
             let date = value.to_iso();
             let time = Time::new(
                 value.hour().unwrap_or_default(),
@@ -321,9 +333,9 @@ impl AnyDateTimeFormat {
             );
             let datetime = DateTime::new(date, time).to_any();
             let converted = self.1.convert_any_datetime(&datetime);
-            Some(converted)
+            Ok(Some(converted))
         } else {
-            None
+            Ok(None)
         }
     }
 }
