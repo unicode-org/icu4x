@@ -19,7 +19,9 @@ pub enum BlobSchema<'data> {
 #[yoke(prove_covariance_manually)]
 #[cfg_attr(feature = "export", derive(serde::Serialize))]
 pub struct BlobSchemaV1<'data> {
-    /// Map from key hash and locale to buffer index
+    /// Map from key hash and locale to buffer index.
+    /// Weak invariant: the `usize` values are valid indices into `self.buffers`
+    /// Weak invariant: there is at least one value for every integer in 0..self.buffers.len()
     #[serde(borrow)]
     pub keys: ZeroMap2dBorrowed<'data, ResourceKeyHash, [u8], usize>,
     /// Vector of buffers
@@ -33,5 +35,38 @@ impl Default for BlobSchemaV1<'_> {
             keys: ZeroMap2dBorrowed::new(),
             buffers: VarZeroSlice::new_empty(),
         }
+    }
+}
+
+impl<'data> BlobSchemaV1<'data> {
+    /// Verifies the inv
+    pub(crate) fn is_valid(&self) -> bool {
+        use zerovec::maps::ZeroVecLike;
+        if self.keys.is_empty() && self.buffers.is_empty() {
+            return true;
+        }
+        // Note: We could check that every index occurs at least once, but that's a more expensive
+        // operation, so we will just check for the min and max index.
+        let mut seen_min = false;
+        let mut seen_max = false;
+        for cursor in self.keys.iter0() {
+            for (_, ule) in cursor.iter1() {
+                let mut result = Option::<usize>::None;
+                zerovec::vecs::FlexZeroVec::zvl_get_as_t(ule, |v| result.replace(*v));
+                #[allow(clippy::unwrap_used)]
+                // `zvl_get_as_t` guarantees that the callback is invoked
+                let idx = result.unwrap();
+                if idx >= self.buffers.len() {
+                    return false;
+                }
+                if idx == 0 {
+                    seen_min = true;
+                }
+                if idx + 1 == self.buffers.len() {
+                    seen_max = true;
+                }
+            }
+        }
+        return seen_min && seen_max;
     }
 }

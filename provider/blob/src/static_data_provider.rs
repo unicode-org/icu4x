@@ -57,6 +57,7 @@ impl StaticDataProvider {
             data: BlobSchema::deserialize(&mut postcard::Deserializer::from_bytes(blob)).map(
                 |blob| {
                     let BlobSchema::V001(blob) = blob;
+                    debug_assert!(blob.is_valid());
                     blob
                 },
             )?,
