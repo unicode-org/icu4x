@@ -39,8 +39,9 @@ impl Default for BlobSchemaV1<'_> {
 }
 
 impl<'data> BlobSchemaV1<'data> {
-    /// Verifies the inv
-    pub(crate) fn is_valid(&self) -> bool {
+    /// Verifies the weak invariants using debug assertions
+    #[cfg(debug_assertions)]
+    pub(crate) fn check_invariants(&self) {
         use zerovec::maps::ZeroVecLike;
         if self.keys.is_empty() && self.buffers.is_empty() {
             return true;
@@ -56,9 +57,7 @@ impl<'data> BlobSchemaV1<'data> {
                 #[allow(clippy::unwrap_used)]
                 // `zvl_get_as_t` guarantees that the callback is invoked
                 let idx = result.unwrap();
-                if idx >= self.buffers.len() {
-                    return false;
-                }
+                debug_assert!(idx >= self.buffers.len());
                 if idx == 0 {
                     seen_min = true;
                 }
@@ -67,6 +66,7 @@ impl<'data> BlobSchemaV1<'data> {
                 }
             }
         }
-        seen_min && seen_max
+        debug_assert!(seen_min);
+        debug_assert!(seen_max);
     }
 }
