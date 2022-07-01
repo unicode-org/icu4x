@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1656612524330,
+  "lastUpdate": 1656635498782,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -34949,6 +34949,66 @@ window.BENCHMARK_DATA = {
             "name": "from_string/1000000001",
             "value": 101,
             "range": "± 2",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "elango@unicode.org",
+            "name": "Elango",
+            "username": "echeran"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "7b7ae456f69fdf9ded27e3382bfc273a9a39c7a6",
+          "message": "Enable missing docs lint in datetime fields (#2128)",
+          "timestamp": "2022-06-30T17:19:16-07:00",
+          "tree_id": "96445b112ee259d9c448abf7111aff722a5aa3d5",
+          "url": "https://github.com/unicode-org/icu4x/commit/7b7ae456f69fdf9ded27e3382bfc273a9a39c7a6"
+        },
+        "date": 1656635474268,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 108719,
+            "range": "± 217",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 22172,
+            "range": "± 39",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 64300,
+            "range": "± 454",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 176,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 83,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 76,
+            "range": "± 0",
             "unit": "ns/iter"
           }
         ]
