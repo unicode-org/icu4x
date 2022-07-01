@@ -317,6 +317,7 @@ impl AnyDateTimeFormat {
     ) -> Result<Option<DateTime<icu_calendar::Ref<'a, AnyCalendar>>>, DateTimeFormatError> {
         let this_calendar = self.1.kind();
         let date_calendar = value.any_calendar_kind();
+
         if Some(this_calendar) != date_calendar {
             if date_calendar != Some(AnyCalendarKind::Iso) {
                 return Err(DateTimeFormatError::MismatchedAnyCalendar(
