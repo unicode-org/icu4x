@@ -2,8 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use icu_calendar::Date;
-use icu_calendar::Iso;
+use icu_calendar::DateTime;
 use icu_datetime::provider::time_zones::{
     ExemplarCitiesV1, MetaZoneGenericNamesLongV1, MetaZoneGenericNamesShortV1, MetaZoneId,
     MetaZonePeriodV1, MetaZoneSpecificNamesLongV1, MetaZoneSpecificNamesShortV1, TimeZoneBcp47Id,
@@ -452,6 +451,7 @@ fn metazone_periods_iter(
         .into_iter()
         .map(move |period| match &period.uses_meta_zone.from {
             Some(from) => {
+                // TODO(#2127): Ideally this parsing can move into a library function
                 let parts: Vec<String> = from.split(' ').map(|s| s.to_string()).collect();
                 let date = &parts[0];
                 let time = &parts[1];
@@ -460,10 +460,10 @@ fn metazone_periods_iter(
                 let month = date_parts[1].parse::<u8>().unwrap();
                 let day = date_parts[2].parse::<u8>().unwrap();
                 let time_parts: Vec<String> = time.split(':').map(|s| s.to_string()).collect();
-                let hour = time_parts[0].parse::<i32>().unwrap();
-                let minute = time_parts[1].parse::<i32>().unwrap();
-                let iso = Date::new_iso_date(year, month, day).unwrap();
-                let minutes = Iso::unix_epoch_minute_from_iso(*iso.inner()) + hour * 60 + minute;
+                let hour = time_parts[0].parse::<u8>().unwrap();
+                let minute = time_parts[1].parse::<u8>().unwrap();
+                let iso = DateTime::new_iso_datetime(year, month, day, hour, minute, 0).unwrap();
+                let minutes = iso.minutes_since_local_unix_epoch();
 
                 match meta_zone_id_data.get(&period.uses_meta_zone.mzone) {
                     Some(meta_zone_short_id) => (time_zone_key, minutes, Some(*meta_zone_short_id)),
@@ -482,8 +482,8 @@ fn metazone_periods_iter(
                 }
             }
             None => {
-                let iso = Date::new_iso_date(1969, 12, 31).unwrap();
-                let minutes = Iso::unix_epoch_minute_from_iso(*iso.inner());
+                let iso = DateTime::new_iso_datetime(1970, 1, 1, 0, 0, 0).unwrap();
+                let minutes = iso.minutes_since_local_unix_epoch();
                 match meta_zone_id_data.get(&period.uses_meta_zone.mzone) {
                     Some(meta_zone_short_id) => (time_zone_key, minutes, Some(*meta_zone_short_id)),
                     None => {
