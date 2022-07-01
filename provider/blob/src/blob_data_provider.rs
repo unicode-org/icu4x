@@ -85,7 +85,7 @@ impl BlobDataProvider {
         let cursor = data
             .keys
             .get0(&key.get_hash())
-            .ok_or(DataErrorKind::MissingResourceKey.with_key(key))?;
+            .ok_or_else(|| DataErrorKind::MissingResourceKey.with_key(key))?;
         let iter = cursor.into_iter1().map(move |(locale, ule)| {
             let mut result = Option::<usize>::None;
             FlexZeroVec::zvl_get_as_t(ule, |v| result.replace(*v));
@@ -127,7 +127,7 @@ impl BufferProvider for BlobDataProvider {
                             .map_err(|kind| kind.with_req(key, req))?;
                         blob.buffers
                             .get(idx)
-                            .ok_or(DataErrorKind::InvalidState.with_req(key, req))
+                            .ok_or_else(|| DataErrorKind::InvalidState.with_req(key, req))
                     },
                 )?,
             )),

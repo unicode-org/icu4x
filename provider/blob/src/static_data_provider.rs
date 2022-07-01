@@ -117,7 +117,7 @@ impl BufferProvider for StaticDataProvider {
             .data
             .buffers
             .get(idx)
-            .ok_or(DataErrorKind::InvalidState.with_req(key, req))?;
+            .ok_or_else(|| DataErrorKind::InvalidState.with_req(key, req))?;
         Ok(DataResponse {
             metadata,
             payload: { Some(DataPayload::from_static_buffer(bytes)) },
