@@ -314,6 +314,26 @@ impl LanguageIdentifier {
         iter.next().is_none()
     }
 
+    pub fn merge(&mut self, other: &LanguageIdentifier, r#override: bool) -> bool {
+        let mut modified = false;
+        if !other.language.is_empty() && (self.language.is_empty() || r#override) {
+            self.language = other.language;
+            modified = true;
+        }
+        if other.script.is_some() && (self.script.is_none() || r#override) {
+            self.script = other.script;
+            modified = true;
+        }
+        if other.region.is_some() && (self.region.is_none() || r#override) {
+            self.region = other.region;
+            modified = true;
+        }
+        if !other.variants.is_empty() {
+            modified |= self.variants.merge(&other.variants, r#override);
+        }
+        modified
+    }
+
     pub(crate) fn for_each_subtag_str<E, F>(&self, f: &mut F) -> Result<(), E>
     where
         F: FnMut(&str) -> Result<(), E>,

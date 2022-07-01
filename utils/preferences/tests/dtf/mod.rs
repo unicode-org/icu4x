@@ -6,37 +6,38 @@ use data_provider::get_defaults;
 use icu_datetime::options::length;
 use icu_datetime::options::preferences::HourCycle;
 use icu_locid::{extensions_unicode_key, LanguageIdentifier, Locale};
-use icu_preferences::{preferences, Preferences};
+use icu_preferences::preferences;
 use options::{DayPeriod, LocaleMatcher};
 use preferences::{Calendar, NumberingSystem};
 
 preferences!(
-    DTFPreferencesBag,
-    DTFDefaultPreferencesBag,
-    DTFResolvedPreferencesBag,
+    DateTimeFormatPreferences,
+    DateTimeFormatDefaultPreferences,
+    DateTimeFormatResolvedPreferences,
     {
         hour_cycle => Option<HourCycle>, HourCycle, Some(extensions_unicode_key!("hc")),
         calendar => Option<Calendar>, Calendar, Some(extensions_unicode_key!("ca")),
         numbering_system => Option<NumberingSystem>, NumberingSystem, Some(extensions_unicode_key!("nu"))
-    },
-    DTFOptionsBag,
-    {
-        date_length => Option<length::Date>,
-        time_length => Option<length::Time>,
-        day_period => Option<DayPeriod>,
-        locale_matcher => Option<LocaleMatcher>,
-        time_zone => Option<bool>
     }
 );
 
+#[derive(Default)]
+pub struct DateTimeFormatOptions {
+    pub date_length: Option<length::Date>,
+    pub time_length: Option<length::Time>,
+    pub day_period: Option<DayPeriod>,
+    pub locale_matcher: Option<LocaleMatcher>,
+    pub time_zone: Option<bool>,
+}
+
 pub struct DateTimeFormat {
-    prefs: DTFResolvedPreferencesBag,
-    options: Option<DTFOptionsBag>,
+    prefs: DateTimeFormatResolvedPreferences,
+    options: DateTimeFormatOptions,
 }
 
 impl DateTimeFormat {
-    pub fn new(prefs: DTFPreferencesBag, options: Option<DTFOptionsBag>) -> Self {
-        let mut resolved = get_defaults(&prefs);
+    pub fn new(prefs: DateTimeFormatPreferences, options: DateTimeFormatOptions) -> Self {
+        let mut resolved = get_defaults(&prefs.lid);
 
         resolved.resolve(&prefs);
 
@@ -47,6 +48,7 @@ impl DateTimeFormat {
     }
 
     fn get_time(&self) -> String {
+        println!("{:#?}", self.prefs.hour_cycle);
         match self.prefs.hour_cycle {
             HourCycle::H11 => "00:13 am",
             HourCycle::H12 => "12:13 am",
@@ -61,24 +63,22 @@ impl DateTimeFormat {
     }
 
     pub fn format(&self, _input: u64) -> String {
-        if let Some(options) = &self.options {
-            match (options.date_length, options.time_length) {
-                (Some(_), None) => {
-                    return self.get_date();
-                }
-                (None, Some(_)) => {
-                    return self.get_time();
-                }
-                (Some(_), Some(_)) => {
-                    return format!("{}{}{}", self.get_date(), ", ", self.get_time(),);
-                }
-                _ => {}
+        match (self.options.date_length, self.options.time_length) {
+            (Some(_), None) => {
+                return self.get_date();
             }
+            (None, Some(_)) => {
+                return self.get_time();
+            }
+            (Some(_), Some(_)) => {
+                return format!("{}{}{}", self.get_date(), ", ", self.get_time(),);
+            }
+            _ => {}
         }
         return format!("{}{}{}", self.get_date(), ", ", self.get_time(),);
     }
 
-    pub fn resolved_options(&self) -> &DTFResolvedPreferencesBag {
+    pub fn resolved_options(&self) -> &DateTimeFormatResolvedPreferences {
         &self.prefs
     }
 }

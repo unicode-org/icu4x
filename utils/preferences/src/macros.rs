@@ -3,9 +3,7 @@ macro_rules! preferences {
     ($name:ident,
      $default_name:ident,
      $resolved_name:ident,
-     {$($key:ident => $pref:ty, $resolved:ty, $ue:expr),*},
-     $options_name:ident,
-     {$($k:ident => $v:ty),*}
+     {$($key:ident => $pref:ty, $resolved:ty, $ue:expr),*}
      ) => (
         #[derive(Default)]
         #[non_exhaustive]
@@ -42,23 +40,6 @@ macro_rules! preferences {
             }
         }
 
-        impl Preferences for $name {
-            fn language(&self) -> &icu_locid::subtags::Language {
-                self.lid
-                    .as_ref()
-                    .map(|lid| &lid.language)
-                    .unwrap_or(&icu_locid::subtags::Language::UND)
-            }
-
-            fn script(&self) -> Option<&icu_locid::subtags::Script> {
-                self.lid.as_ref().and_then(|lid| lid.script.as_ref())
-            }
-
-            fn region(&self) -> Option<&icu_locid::subtags::Region> {
-                self.lid.as_ref().and_then(|lid| lid.region.as_ref())
-            }
-        }
-
         impl From<Locale> for $name {
             fn from(loc: Locale) -> Self {
                 let lid = Some(loc.id);
@@ -90,59 +71,37 @@ macro_rules! preferences {
 
         impl $name {
             #[allow(clippy::result_unit_err)]
-            pub fn merge_locale(&mut self, locale: &Locale) -> Result<(), ()> {
+            pub fn merge_locale(&mut self, locale: &Locale) {
                 if let Some(lid) = &mut self.lid {
-                    if lid.language.is_empty() && !locale.id.language.is_empty() {
-                        lid.language = locale.id.language;
-                    };
-                    if lid.script.is_none() && locale.id.script.is_some() {
-                        lid.script = locale.id.script;
-                    }
-                    if lid.region.is_none() && locale.id.region.is_some() {
-                        lid.region = locale.id.region;
-                    }
+                    lid.merge(&locale.id, false);
                 } else {
                     self.lid = Some(locale.id.clone());
                 }
 
-                $(
-                    //XXX: Use same loop as in From
-                    let ue = $ue.unwrap();
-                    if self.$key.is_none() {
-                        if let Some(value) = locale
-                            .extensions
-                            .unicode
-                            .keywords
-                            .get(&ue)
-                        {
-                            self.$key = Some(TryInto::try_into(value)?);
-                        }
-                    }
-                )*
-                Ok(())
+                for (k, v) in locale.extensions.unicode.keywords.iter() {
+                    $(
+                      if self.$key.is_none() {
+                          if let Some(ue) = &$ue {
+                              if k == ue {
+                                  if let Ok(r) = TryInto::try_into(v) {
+                                      self.$key = Some(r);
+                                  }
+                              }
+                          }
+                      }
+                    )*
+                }
             }
         }
 
         impl $resolved_name {
             pub fn resolve(&mut self, prefs: &$name) {
-                let mut language = prefs.language();
-                if language.is_empty() {
-                    language = &self.lid.language;
-                }
                 $(
                     if let Some(v) = prefs.$key {
                         self.$key = v;
                     }
                 )*
             }
-        }
-
-        #[derive(Default, Debug)]
-        #[non_exhaustive]
-        pub struct $options_name {
-            $(
-                pub $k: $v,
-            )*
         }
     )
 }

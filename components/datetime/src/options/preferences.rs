@@ -35,10 +35,6 @@
 //! ```
 use crate::fields;
 use icu_locid::{extensions::unicode, extensions_unicode_value};
-// use icu_locid::{
-//     extensions::unicode::Value, extensions_unicode_key as key, extensions_unicode_value as value,
-//     Locale,
-// };
 use core::convert::TryFrom;
 
 #[cfg(feature = "serde")]

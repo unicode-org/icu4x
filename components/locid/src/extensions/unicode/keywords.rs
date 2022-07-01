@@ -364,6 +364,20 @@ impl Keywords {
         }
     }
 
+    pub fn merge(&mut self, other: &Self, r#override: bool) -> bool {
+        let mut modified = false;
+        for (k, v) in other.iter() {
+            if r#override {
+                if self.0.insert(*k, v.clone()).is_some() {
+                    modified = true;
+                }
+            } else if self.0.try_insert(*k, v.clone()).is_none() {
+                modified = true;
+            }
+        }
+        modified
+    }
+
     pub(crate) fn for_each_subtag_str<E, F>(&self, f: &mut F) -> Result<(), E>
     where
         F: FnMut(&str) -> Result<(), E>,
@@ -373,6 +387,10 @@ impl Keywords {
             v.for_each_subtag_str(f)?;
         }
         Ok(())
+    }
+
+    pub fn iter<'a>(&'a self) -> impl Iterator<Item = (&'a Key, &'a Value)> {
+        self.0.iter()
     }
 
     /// This needs to be its own method to help with type inference in helpers.rs

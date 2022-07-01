@@ -109,6 +109,31 @@ impl Variants {
         core::mem::take(self)
     }
 
+    pub fn merge(&mut self, other: &Self, r#override: bool) -> bool {
+        let mut modified = false;
+        if self.is_empty() && !other.is_empty() {
+            self.0 = other.0.clone();
+            modified = true;
+        } else {
+            let mut merged = self.to_vec();
+            for v in other.iter() {
+                match merged.binary_search(v) {
+                    Ok(idx) if r#override => {
+                        merged.insert(idx, *v);
+                        modified = true;
+                    }
+                    Err(idx) => {
+                        merged.insert(idx, *v);
+                        modified = true;
+                    }
+                    _ => {}
+                }
+            }
+            self.0 = merged.into();
+        }
+        modified
+    }
+
     pub(crate) fn for_each_subtag_str<E, F>(&self, f: &mut F) -> Result<(), E>
     where
         F: FnMut(&str) -> Result<(), E>,
