@@ -67,6 +67,6 @@ impl<'data> BlobSchemaV1<'data> {
                 }
             }
         }
-        return seen_min && seen_max;
+        seen_min && seen_max
     }
 }
