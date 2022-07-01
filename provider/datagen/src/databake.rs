@@ -74,6 +74,7 @@ impl BakedDataExporter {
         if self.pretty {
             if path.file_stem().and_then(std::ffi::OsStr::to_str) == Some("any") {
                 // Rustfmt cannot handle the match statement in this file. This prettifies it a bit
+                // See https://github.com/rust-lang/rustfmt/issues/5422
                 let mut content = std::fs::read_to_string(&path)?;
                 content = content.replace(" :: ", "::");
                 content = content.replace(" ,", ",");
