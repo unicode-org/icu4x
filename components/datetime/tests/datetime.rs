@@ -166,7 +166,6 @@ fn assert_fixture_element<A, D>(
         + ResourceProvider<WeekDataV1Marker>
         + ResourceProvider<JapaneseErasV1Marker>,
 {
-    println!("{:?}", locale);
     let any_input = input_value.to_any();
     let dtf = DateTimeFormat::<A::Calendar>::try_new(locale.clone(), provider, options).unwrap();
     let result = dtf.format_to_string(input_value);
