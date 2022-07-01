@@ -248,13 +248,17 @@ fn main() -> eyre::Result<()> {
     };
 
     let mut source_data = SourceData::default();
-    if let Some(tag) = matches.value_of("CLDR_TAG") {
+    if Some("latest") == matches.value_of("CLDR_TAG") {
+        source_data = source_data.with_cldr_latest(cldr_locales)?;
+    } else if let Some(tag) = matches.value_of("CLDR_TAG") {
         source_data = source_data.with_cldr_for_tag(tag, cldr_locales)?;
     } else if let Some(path) = matches.value_of("CLDR_ROOT") {
         source_data = source_data.with_cldr(PathBuf::from(path), cldr_locales)?;
     }
 
-    if let Some(tag) = matches.value_of("ICUEXPORT_TAG") {
+    if Some("latest") == matches.value_of("ICUEXPORT_TAG") {
+        source_data = source_data.with_icuexport_latest()?;
+    } else if let Some(tag) = matches.value_of("ICUEXPORT_TAG") {
         source_data = source_data.with_icuexport_for_tag(tag)?;
     } else if let Some(path) = matches.value_of("ICUEXPORT_ROOT") {
         source_data = source_data.with_icuexport(PathBuf::from(path))?;
