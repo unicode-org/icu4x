@@ -104,21 +104,30 @@ impl DataExporter for FilesystemExporter {
             fs::create_dir_all(&parent_dir)
                 .map_err(|e| DataError::from(e).with_path_context(&parent_dir))?;
         }
-        let mut file = HashingFile(
-            std::io::BufWriter::new(
-                fs::File::create(&path_buf)
-                    .map_err(|e| DataError::from(e).with_path_context(&path_buf))?,
-            ),
-            if self.fingerprints.is_some() {
+
+        let mut file = HashingFile {
+            file: if self.serializer.is_text_format() {
+                Box::new(crlify::BufWriterWithLineEndingFix::new(
+                    fs::File::create(&path_buf)
+                        .map_err(|e| DataError::from(e).with_path_context(&path_buf))?,
+                ))
+            } else {
+                Box::new(std::io::BufWriter::new(
+                    fs::File::create(&path_buf)
+                        .map_err(|e| DataError::from(e).with_path_context(&path_buf))?,
+                ))
+            },
+            hash: if self.fingerprints.is_some() {
                 Some(Sha256::new())
             } else {
                 None
             },
-        );
+        };
+
         self.serializer
             .serialize(obj, &mut file)
             .map_err(|e| e.with_path_context(&path_buf))?;
-        if let Some(hash) = file.1 {
+        if let Some(hash) = file.hash {
             self.fingerprints
                 .as_ref()
                 .expect("present iff file.1 is present")
@@ -147,19 +156,23 @@ impl DataExporter for FilesystemExporter {
     }
 }
 
-struct HashingFile(std::io::BufWriter<fs::File>, Option<Sha256>);
+struct HashingFile {
+    file: Box<dyn std::io::Write>,
+    hash: Option<Sha256>,
+}
 
 impl std::io::Write for HashingFile {
     fn write(&mut self, buf: &[u8]) -> std::io::Result<usize> {
-        if let Some(hash) = self.1.as_mut() {
+        if let Some(hash) = self.hash.as_mut() {
             hash.write_all(buf)?;
         }
-        self.0.write(buf)
+        self.file.write(buf)
     }
+
     fn flush(&mut self) -> std::io::Result<()> {
-        if let Some(hash) = self.1.as_mut() {
+        if let Some(hash) = self.hash.as_mut() {
             hash.flush()?;
         }
-        self.0.flush()
+        self.file.flush()
     }
 }
