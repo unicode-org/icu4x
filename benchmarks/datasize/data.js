@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1656611853652,
+  "lastUpdate": 1656634909322,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -19163,6 +19163,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/cd92d9670ec7ef81d36c89e745ee466c4dc6275d"
         },
         "date": 1656611827654,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 2740181,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "elango@unicode.org",
+            "name": "Elango",
+            "username": "echeran"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "7b7ae456f69fdf9ded27e3382bfc273a9a39c7a6",
+          "message": "Enable missing docs lint in datetime fields (#2128)",
+          "timestamp": "2022-06-30T17:19:16-07:00",
+          "tree_id": "96445b112ee259d9c448abf7111aff722a5aa3d5",
+          "url": "https://github.com/unicode-org/icu4x/commit/7b7ae456f69fdf9ded27e3382bfc273a9a39c7a6"
+        },
+        "date": 1656634879381,
         "tool": "ndjson",
         "benches": [
           {
