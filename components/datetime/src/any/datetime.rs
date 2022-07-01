@@ -57,7 +57,7 @@ use icu_plurals::provider::OrdinalV1Marker;
 ///     .expect("Failed to construct DateTime.");
 /// let any_datetime = datetime.to_any();
 ///
-/// let value = dtf.format_to_string(&any_datetime);
+/// let value = dtf.format_to_string(&any_datetime).expect("calendars should match");
 /// assert_eq!(value, "Sep 1, 2020, 12:34 PM");
 /// ```
 ///
@@ -121,7 +121,7 @@ impl AnyDateTimeFormat {
     ///     .expect("Failed to construct DateTime.");
     /// let any_datetime = datetime.to_any();
     ///
-    /// let value = dtf.format_to_string(&any_datetime);
+    /// let value = dtf.format_to_string(&any_datetime).expect("calendars should match");
     /// assert_eq!(value, "Sep 1, 2020, 12:34 PM");
     /// ```
     #[inline]
@@ -166,7 +166,7 @@ impl AnyDateTimeFormat {
     ///     .expect("Failed to construct DateTime.");
     /// let any_datetime = datetime.to_any();
     ///
-    /// let value = dtf.format_to_string(&any_datetime);
+    /// let value = dtf.format_to_string(&any_datetime).expect("calendars should match");
     /// assert_eq!(value, "Sep 1, 2020, 12:34 PM");
     /// ```
     #[inline(never)]
@@ -220,20 +220,26 @@ impl AnyDateTimeFormat {
     }
     /// Takes a [`DateTimeInput`] implementer and returns an instance of a [`FormattedDateTime`]
     /// that contains all information necessary to display a formatted date and operate on it.
+    ///
+    /// This function will fail if the date passed in uses a different calendar than that of the
+    /// AnyCalendar. Please convert dates before passing them in if necessary.
     #[inline]
-    pub fn format<'l, T>(&'l self, value: &T) -> FormattedDateTime<'l>
+    pub fn format<'l, T>(&'l self, value: &T) -> Result<FormattedDateTime<'l>, DateTimeFormatError>
     where
         T: DateTimeInput<Calendar = AnyCalendar>,
     {
         if let Some(converted) = self.convert_if_necessary(value) {
-            self.0.format(&converted)
+            Ok(self.0.format(&converted))
         } else {
-            self.0.format(value)
+            Ok(self.0.format(value))
         }
     }
 
     /// Takes a mutable reference to anything that implements [`Write`](std::fmt::Write) trait
     /// and a [`DateTimeInput`] implementer and populates the buffer with a formatted value.
+    ///
+    /// This function will fail if the date passed in uses a different calendar than that of the
+    /// AnyCalendar. Please convert dates before passing them in if necessary.
     #[inline]
     pub fn format_to_write(
         &self,
@@ -253,11 +259,14 @@ impl AnyDateTimeFormat {
     /// This function will fail if the date passed in uses a different calendar than that of the
     /// AnyCalendar. Please convert dates before passing them in if necessary.
     #[inline]
-    pub fn format_to_string(&self, value: &impl DateTimeInput<Calendar = AnyCalendar>) -> String {
+    pub fn format_to_string(
+        &self,
+        value: &impl DateTimeInput<Calendar = AnyCalendar>,
+    ) -> Result<String, DateTimeFormatError> {
         if let Some(converted) = self.convert_if_necessary(value) {
-            self.0.format_to_string(&converted)
+            Ok(self.0.format_to_string(&converted))
         } else {
-            self.0.format_to_string(value)
+            Ok(self.0.format_to_string(value))
         }
     }
 

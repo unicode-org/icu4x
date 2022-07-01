@@ -7,6 +7,7 @@ use crate::fields::FieldSymbol;
 use crate::pattern::PatternError;
 use crate::skeleton::SkeletonError;
 use displaydoc::Display;
+use icu_calendar::any_calendar::AnyCalendarKind;
 use icu_calendar::types::MonthCode;
 use icu_decimal::FixedDecimalFormatError;
 use icu_plurals::PluralRulesError;
@@ -60,6 +61,9 @@ pub enum DateTimeFormatError {
     /// An error originating from FixedDecimalFormat
     #[displaydoc("{0}")]
     FixedDecimalFormat(FixedDecimalFormatError),
+    /// An error from mixing calendar types
+    #[displaydoc("AnyDateTimeFormat for {0} calendar was given a {0:?} calendar")]
+    MismatchedAnyCalendar(AnyCalendarKind, Option<AnyCalendarKind>),
 }
 
 #[cfg(feature = "std")]

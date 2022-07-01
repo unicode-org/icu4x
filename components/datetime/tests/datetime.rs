@@ -174,7 +174,7 @@ fn assert_fixture_element<A, D>(
     assert_eq!(result, output_value, "{}", description);
 
     let any_dtf = AnyDateTimeFormat::try_new_unstable(locale, provider, options).unwrap();
-    let result = any_dtf.format_to_string(&any_input);
+    let result = any_dtf.format_to_string(&any_input).unwrap();
 
     assert_eq!(result, output_value, "{}", description);
 
