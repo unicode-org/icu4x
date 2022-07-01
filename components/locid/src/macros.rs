@@ -129,7 +129,7 @@ macro_rules! subtags_variant {
 /// # Examples
 ///
 /// ```
-/// use icu::locid::{langid, LanguageIdentifier};
+/// use icu::locid::{locale, LanguageIdentifier};
 ///
 /// const DE_AT: LanguageIdentifier = langid!("de_at");
 ///
@@ -225,8 +225,8 @@ macro_rules! locale {
                 _ => panic!(concat!(
                     "Invalid language code: ",
                     $locale,
-                    " . Note the locale! macro only supports up to one variant tag,\
-                                        Unicode extensions are not supported, use \
+                    " . Note the locale! macro only supports up to one variant tag; \
+                                        unicode extensions are not supported. Use \
                                         runtime parsing instead."
                 )),
             };

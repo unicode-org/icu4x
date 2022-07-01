@@ -171,9 +171,11 @@ pub const fn parse_language_identifier_with_single_variant_from_iter(
                 return Err(ParserError::InvalidSubtag);
             }
         } else if let Ok(v) = subtags::Variant::from_bytes_manual_slice(t, start, end) {
-            // We cannot handle multiple variants in a const context
             debug_assert!(matches!(position, ParserPosition::Variant));
-            debug_assert!(variant.is_none());
+            if variant.is_some() {
+                // We cannot handle multiple variants in a const context
+                return Err(ParserError::InvalidSubtag);
+            }
             variant = Some(v);
         } else if matches!(mode, ParserMode::Partial) {
             break;
