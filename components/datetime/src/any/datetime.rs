@@ -144,7 +144,7 @@ impl AnyDateTimeFormat {
     /// preferable to use a provider that implements `ResourceProvider<D>` for all `D`, and ensure data is loaded as
     /// appropriate. The [`Self::try_new_with_buffer_provider()`], [`Self::try_new_with_any_provider()`] constructors
     /// may also be used if compile stability is desired.
-    ///inutes().unwrap_or_def
+    ///
     /// # Examples
     ///
     /// ```
