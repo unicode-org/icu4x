@@ -12,6 +12,12 @@ impl Bake for Script {
         quote! { ::icu_locid::subtags_script!(#string) }
     }
 }
+
+#[test]
+fn bake_script() {
+    test_bake!(Script, const: crate::subtags_script!("Hant"), icu_locid);
+}
+
 impl Bake for Language {
     fn bake(&self, env: &CrateEnv) -> TokenStream {
         env.insert("icu_locid");
@@ -19,6 +25,12 @@ impl Bake for Language {
         quote! { ::icu_locid::subtags_language!(#string) }
     }
 }
+
+#[test]
+fn bake_language() {
+    test_bake!(Language, const: crate::subtags_language!("de"), icu_locid);
+}
+
 impl Bake for Region {
     fn bake(&self, env: &CrateEnv) -> TokenStream {
         env.insert("icu_locid");
@@ -26,10 +38,21 @@ impl Bake for Region {
         quote! { ::icu_locid::subtags_region!(#string) }
     }
 }
+
+#[test]
+fn bake_region() {
+    test_bake!(Region, const: crate::subtags_region!("FR"), icu_locid);
+}
+
 impl Bake for Variant {
     fn bake(&self, env: &CrateEnv) -> TokenStream {
         env.insert("icu_locid");
         let string = self.as_str();
         quote! { ::icu_locid::subtags_variant!(#string) }
     }
+}
+
+#[test]
+fn bake_variant() {
+    test_bake!(Variant, const: crate::subtags_variant!("posix"), icu_locid);
 }

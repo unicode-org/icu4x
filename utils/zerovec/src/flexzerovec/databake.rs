@@ -13,7 +13,7 @@ impl Bake for FlexZeroVec<'_> {
     }
 }
 
-impl Bake for &FlexZeroSlice {
+impl Bake for FlexZeroSlice {
     fn bake(&self, env: &CrateEnv) -> TokenStream {
         env.insert("zerovec");
         let bytes = self.as_bytes();
@@ -24,7 +24,8 @@ impl Bake for &FlexZeroSlice {
 #[test]
 fn test_baked_vec() {
     test_bake!(
-        unsafe {
+        FlexZeroVec,
+        const: unsafe {
             crate::vecs::FlexZeroSlice::from_byte_slice_unchecked(&[
                 2u8, 1u8, 0u8, 22u8, 0u8, 77u8, 1u8, 92u8, 17u8,
             ])
@@ -37,7 +38,8 @@ fn test_baked_vec() {
 #[test]
 fn test_baked_slice() {
     test_bake!(
-        unsafe {
+        FlexZeroSlice,
+        const: unsafe {
             crate::vecs::FlexZeroSlice::from_byte_slice_unchecked(&[
                 2u8, 1u8, 0u8, 22u8, 0u8, 77u8, 1u8, 92u8, 17u8,
             ])

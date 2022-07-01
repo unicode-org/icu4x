@@ -172,18 +172,28 @@ where
 
 /// This macro tests that an expression evaluates to a value that bakes to the same expression.
 ///
+/// Its mandatory arguments are a type and an expression (of that type).
 ///
 /// ```
 /// # use databake::test_bake;
-/// test_bake!(18usize);
+/// test_bake!(usize, 18usize);
 /// ```
 ///
+/// ## `Const`
+///
+/// We usually want baked output to be const constructible. To test this, add the `const:` prefix to
+/// the expression:
+///
+/// ```
+/// # use databake::test_bake;
+/// test_bake!(usize, const: 18usize);
+/// ```
+///
+/// ## Crates and imports
 ///
 /// As most output will need to reference its crate, and its not possible to name a crate from
-/// within it, the second (optional) parameter can be used to specify the crate name. The `crate`
-/// identifier in the original expression will be replaced by this in the expected output.
-///
-/// This test will pass if `MyStruct::bake` returns `::my_crate::MyStruct(42usize)`:
+/// within it, a third parameter can be used to specify the crate name. The `crate` identifier
+/// in the original expression will be replaced by this in the expected output.
 ///
 /// ```no_run
 /// # use databake::*;
@@ -194,20 +204,26 @@ where
 /// # // We need an explicit main to put the struct at the crate root
 /// # fn main() {
 /// test_bake!(
-///     crate::MyStruct(42usize),
+///     MyStruct,
+///     crate::MyStruct(42usize), // matches `::my_crate::MyStruct(42usize)`
 ///     my_crate,
 /// );
 /// # }
 /// ```
 ///
-///
-/// A third, optional, parameter is a list of crate names that are expected to be added to the
+/// A fourth, optional, parameter is a list of crate names that are expected to be added to the
 /// `CrateEnv`. The `crate`-replacement crate will always be checked.
 #[macro_export]
 macro_rules! test_bake {
-    ($expr:expr $(, $krate:ident)? $(, [$($env_crate:ident),+])? $(,)?) => {
+    ($type:ty, const: $expr:expr $(, $krate:ident)? $(, [$($env_crate:ident),+])? $(,)?) => {
+        const _: &$type = &$expr;
+        $crate::test_bake!($type, $expr $(, $krate)? $(, [$($env_crate),+])?);
+    };
+
+    ($type:ty, $expr:expr $(, $krate:ident)? $(, [$($env_crate:ident),+])? $(,)?) => {
         let env = Default::default();
-        let bake = $crate::Bake::bake(&($expr), &env).to_string();
+        let expr: &$type = &$expr;
+        let bake = $crate::Bake::bake(expr, &env).to_string();
         let expected_bake = $crate::quote!($expr).to_string();
         $(
             let expected_bake = expected_bake.replace("crate", concat!(":: ", stringify!($krate)));
