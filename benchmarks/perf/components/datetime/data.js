@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1656692978303,
+  "lastUpdate": 1656695752943,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -45191,6 +45191,102 @@ window.BENCHMARK_DATA = {
             "name": "pattern/parse",
             "value": 4863,
             "range": "± 7",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "f289ccd4205475725cda178c2bf30ac87d7470c2",
+          "message": "Making fingerprinting a flag on datagen (#2144)",
+          "timestamp": "2022-07-01T10:02:33-07:00",
+          "tree_id": "29073d56329d6a111fa47a8eac436927ace24b8d",
+          "url": "https://github.com/unicode-org/icu4x/commit/f289ccd4205475725cda178c2bf30ac87d7470c2"
+        },
+        "date": 1656695727688,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 95662,
+            "range": "± 6713",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 900782,
+            "range": "± 737",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 191516,
+            "range": "± 9436",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/DateTimeFormat/format_to_write",
+            "value": 84761,
+            "range": "± 596",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/DateTimeFormat/format_to_string",
+            "value": 81305,
+            "range": "± 682",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/format",
+            "value": 96415,
+            "range": "± 534",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/to_string",
+            "value": 103765,
+            "range": "± 188",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/ZonedDateTimeFormat/format_to_write",
+            "value": 179733,
+            "range": "± 350",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/ZonedDateTimeFormat/format_to_string",
+            "value": 168584,
+            "range": "± 262",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/format",
+            "value": 169101,
+            "range": "± 369",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/to_string",
+            "value": 181656,
+            "range": "± 318",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "pattern/parse",
+            "value": 4516,
+            "range": "± 12",
             "unit": "ns/iter"
           }
         ]
