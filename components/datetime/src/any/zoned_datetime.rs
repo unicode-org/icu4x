@@ -30,7 +30,7 @@ use icu_plurals::provider::OrdinalV1Marker;
 /// dates from any calendar, selected at runtime.
 ///
 /// This is equivalently the composition of
-/// [`AnyDateTimeFormat`](crate::any::DateTimeFormat) and [`TimeZoneFormat`](crate::TimeZoneFormat).
+/// [`AnyDateTimeFormat`](crate::any::AnyDateTimeFormat) and [`TimeZoneFormat`](crate::TimeZoneFormat).
 ///
 /// [`ZonedAnyDateTimeFormat`] uses data from the [data provider]s, the selected [`Locale`], and the
 /// provided pattern to collect all data necessary to format a datetime with time zones into that locale.
@@ -235,7 +235,7 @@ impl ZonedAnyDateTimeFormat {
     ///
     /// - `u-ca-japanese` (Japanese calendar): `calendar/japanese@1`
     ///
-    /// Test TBD: https://github.com/unicode-org/icu4x/issues/2145
+    /// Test TBD: <https://github.com/unicode-org/icu4x/issues/2145>
     #[inline]
     #[cfg(feature = "serde")]
     pub fn try_new_with_buffer_provider<T: Into<Locale>, P>(
@@ -275,7 +275,7 @@ impl ZonedAnyDateTimeFormat {
     }
 
     /// Takes a mutable reference to anything that implements [`Write`](std::fmt::Write) trait
-    /// and a [`DateTimeInput`] implementer and populates the buffer with a formatted value.
+    /// and a [`ZonedDateTimeInput`] implementer and populates the buffer with a formatted value.
     #[inline]
     pub fn format_to_write(
         &self,
@@ -290,7 +290,7 @@ impl ZonedAnyDateTimeFormat {
         Ok(())
     }
 
-    /// Takes a [`DateTimeInput`] implementer and returns it formatted as a string.
+    /// Takes a [`ZonedDateTimeInput`] implementer and returns it formatted as a string.
 
     #[inline]
     pub fn format_to_string(

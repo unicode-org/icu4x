@@ -2,8 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! This module contains the untyped [`AnyCalendar`]-based `DateTimeFormat` APIs that are
-//! capable of formatting dates from any calendar
+//! This module contains the untyped [`AnyCalendar`](icu_calendar::any_calendar::AnyCalendar)-based 
+//! `DateTimeFormat` APIs that are capable of formatting dates from any calendar
 
 mod datetime;
 mod zoned_datetime;
