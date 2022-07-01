@@ -1,43 +1,20 @@
 // @generated
-use icu_provider::prelude::*;
-impl ResourceProvider<::icu_plurals::provider::CardinalV1Marker>
-    for super::super::BakedDataProvider
-{
-    fn load_resource(
-        &self,
-        req: &DataRequest,
-    ) -> Result<DataResponse<::icu_plurals::provider::CardinalV1Marker>, DataError> {
-        static VALUES: &[(&str, DataStruct)] = &[
-            ("ar", AR),
-            ("bn", BN),
-            ("en", EN),
-            ("es", ES),
-            ("fil", FIL),
-            ("fr", FR),
-            ("ja", JA_TH_UND),
-            ("ru", RU),
-            ("sr", SR),
-            ("th", JA_TH_UND),
-            ("tr", TR),
-            ("und", JA_TH_UND),
-        ];
-        #[allow(clippy::unwrap_used)]
-        let value = VALUES
-            .binary_search_by(|(k, _)| req.options.strict_cmp(k.as_bytes()).reverse())
-            .map(|i| VALUES.get(i).unwrap().1)
-            .map_err(|_| {
-                DataErrorKind::MissingResourceOptions
-                    .with_req(<::icu_plurals::provider::CardinalV1Marker>::KEY, req)
-            })?;
-        Ok(DataResponse {
-            metadata: DataResponseMetadata::default(),
-            payload: Some(DataPayload::from_owned(zerofrom::ZeroFrom::zero_from(
-                value,
-            ))),
-        })
-    }
-}
-type DataStruct = &'static <::icu_plurals::provider::CardinalV1Marker as DataMarker>::Yokeable;
+type DataStruct =
+    &'static <::icu_plurals::provider::CardinalV1Marker as ::icu_provider::DataMarker>::Yokeable;
+pub static DATA: &[(&str, DataStruct)] = &[
+    ("ar", AR),
+    ("bn", BN),
+    ("en", EN),
+    ("es", ES),
+    ("fil", FIL),
+    ("fr", FR),
+    ("ja", JA_TH_UND),
+    ("ru", RU),
+    ("sr", SR),
+    ("th", JA_TH_UND),
+    ("tr", TR),
+    ("und", JA_TH_UND),
+];
 static AR: DataStruct = &::icu_plurals::provider::PluralRulesV1 {
     zero: Some(::icu_plurals::rules::runtime::ast::Rule(unsafe {
         ::zerovec::VarZeroVec::from_bytes_unchecked(&[

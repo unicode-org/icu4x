@@ -6,7 +6,7 @@ use super::AbstractSerializer;
 use icu_provider::buf::BufferFormat;
 use icu_provider::datagen::*;
 use icu_provider::prelude::*;
-use std::io::{self, Write};
+use std::io;
 
 #[non_exhaustive]
 #[derive(Copy, Clone, Debug, PartialEq)]
@@ -42,9 +42,8 @@ impl AbstractSerializer for Serializer {
     fn serialize(
         &self,
         obj: &DataPayload<ExportMarker>,
-        sink: &mut dyn io::Write,
+        mut sink: &mut dyn io::Write,
     ) -> Result<(), DataError> {
-        let mut sink = crlify::BufWriterWithLineEndingFix::new(sink);
         match self.style {
             StyleOption::Compact => obj.serialize(&mut serde_json::Serializer::new(&mut sink)),
             StyleOption::Pretty => obj.serialize(&mut serde_json::Serializer::pretty(&mut sink)),
@@ -57,6 +56,10 @@ impl AbstractSerializer for Serializer {
 
     fn get_buffer_format(&self) -> BufferFormat {
         BufferFormat::Json
+    }
+
+    fn is_text_format(&self) -> bool {
+        true
     }
 }
 
