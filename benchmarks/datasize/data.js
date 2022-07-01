@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1656692332454,
+  "lastUpdate": 1656695103359,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -19223,6 +19223,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/fdfe48e008f38285b76d9d1d467dacac7840a85f"
         },
         "date": 1656692302211,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 2740181,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "f289ccd4205475725cda178c2bf30ac87d7470c2",
+          "message": "Making fingerprinting a flag on datagen (#2144)",
+          "timestamp": "2022-07-01T10:02:33-07:00",
+          "tree_id": "29073d56329d6a111fa47a8eac436927ace24b8d",
+          "url": "https://github.com/unicode-org/icu4x/commit/f289ccd4205475725cda178c2bf30ac87d7470c2"
+        },
+        "date": 1656695072435,
         "tool": "ndjson",
         "benches": [
           {
