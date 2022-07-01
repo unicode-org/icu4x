@@ -117,7 +117,7 @@ impl SourceData {
         // TODO query GitHub for the latest tags.
         Self::default()
             .with_cldr_for_tag("41.0.0", locale_subset)?
-            .with_icuexport_for_tag("icu4x/2022-06-29")
+            .with_icuexport_for_tag("icu4x/2022-06-30/71.x")
     }
 
     #[cfg(test)]
