@@ -15,7 +15,7 @@ use icu_calendar::{
     indian::Indian,
     japanese::Japanese,
     provider::JapaneseErasV1Marker,
-    AsCalendar, DateTime, Gregorian,
+    AsCalendar, DateTime, Gregorian, Iso,
 };
 use icu_datetime::provider::time_zones::{MetaZoneId, TimeZoneBcp47Id};
 use icu_datetime::{
@@ -61,6 +61,7 @@ fn test_fixture(fixture_name: &str) {
         let japanese = Japanese::try_new(&provider).expect("Cannot load japanese data");
         let options = fixtures::get_options(&fx.input.options);
         let input_value = parse_gregorian_from_str(&fx.input.value).unwrap();
+        let input_iso = input_value.to_calendar(Iso);
         let input_buddhist = input_value.to_calendar(Buddhist);
         let input_japanese = input_value.to_calendar(japanese);
         let input_coptic = input_value.to_calendar(Coptic);
@@ -84,6 +85,7 @@ fn test_fixture(fixture_name: &str) {
                     AnyCalendarKind::Buddhist => assert_fixture_element(
                         locale,
                         &input_buddhist,
+                        &input_iso,
                         &output_value,
                         &provider,
                         &options,
@@ -92,6 +94,7 @@ fn test_fixture(fixture_name: &str) {
                     AnyCalendarKind::Japanese => assert_fixture_element(
                         locale,
                         &input_japanese,
+                        &input_iso,
                         &output_value,
                         &provider,
                         &options,
@@ -100,6 +103,7 @@ fn test_fixture(fixture_name: &str) {
                     AnyCalendarKind::Coptic => assert_fixture_element(
                         locale,
                         &input_coptic,
+                        &input_iso,
                         &output_value,
                         &provider,
                         &options,
@@ -108,6 +112,7 @@ fn test_fixture(fixture_name: &str) {
                     AnyCalendarKind::Indian => assert_fixture_element(
                         locale,
                         &input_indian,
+                        &input_iso,
                         &output_value,
                         &provider,
                         &options,
@@ -116,6 +121,7 @@ fn test_fixture(fixture_name: &str) {
                     AnyCalendarKind::Ethiopic => assert_fixture_element(
                         locale,
                         &input_ethiopic,
+                        &input_iso,
                         &output_value,
                         &provider,
                         &options,
@@ -124,6 +130,7 @@ fn test_fixture(fixture_name: &str) {
                     AnyCalendarKind::Ethioaa => assert_fixture_element(
                         locale,
                         &input_ethioaa,
+                        &input_iso,
                         &output_value,
                         &provider,
                         &options,
@@ -135,6 +142,7 @@ fn test_fixture(fixture_name: &str) {
                 assert_fixture_element(
                     locale,
                     &input_value,
+                    &input_iso,
                     &output_value,
                     &provider,
                     &options,
@@ -148,6 +156,7 @@ fn test_fixture(fixture_name: &str) {
 fn assert_fixture_element<A, D>(
     locale: Locale,
     input_value: &DateTime<A>,
+    input_iso: &DateTime<Iso>,
     output_value: &str,
     provider: &D,
     options: &DateTimeFormatOptions,
@@ -167,6 +176,7 @@ fn assert_fixture_element<A, D>(
         + ResourceProvider<JapaneseErasV1Marker>,
 {
     let any_input = input_value.to_any();
+    let iso_any_input = input_iso.to_any();
     let dtf = DateTimeFormat::<A::Calendar>::try_new(locale.clone(), provider, options).unwrap();
     let result = dtf.format_to_string(input_value);
 
@@ -175,7 +185,15 @@ fn assert_fixture_element<A, D>(
     let any_dtf = AnyDateTimeFormat::try_new_unstable(locale, provider, options).unwrap();
     let result = any_dtf.format_to_string(&any_input).unwrap();
 
-    assert_eq!(result, output_value, "{}", description);
+    assert_eq!(result, output_value, "(AnyDateTimeFormat) {}", description);
+
+    let result = any_dtf.format_to_string(&iso_any_input).unwrap();
+
+    assert_eq!(
+        result, output_value,
+        "(AnyDateTimeFormat iso conversion) {}",
+        description
+    );
 
     let mut s = String::new();
     dtf.format_to_write(&mut s, input_value).unwrap();
