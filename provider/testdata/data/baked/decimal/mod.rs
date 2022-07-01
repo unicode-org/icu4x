@@ -1,2 +1,2 @@
 // @generated
-mod symbols_v1;
+pub mod symbols_v1;
