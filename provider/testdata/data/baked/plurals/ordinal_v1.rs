@@ -1,43 +1,20 @@
 // @generated
-use icu_provider::prelude::*;
-impl ResourceProvider<::icu_plurals::provider::OrdinalV1Marker>
-    for super::super::BakedDataProvider
-{
-    fn load_resource(
-        &self,
-        req: &DataRequest,
-    ) -> Result<DataResponse<::icu_plurals::provider::OrdinalV1Marker>, DataError> {
-        static VALUES: &[(&str, DataStruct)] = &[
-            ("ar", AR_ES_JA_RU_SR_TH_TR_UND),
-            ("bn", BN),
-            ("en", EN),
-            ("es", AR_ES_JA_RU_SR_TH_TR_UND),
-            ("fil", FIL_FR),
-            ("fr", FIL_FR),
-            ("ja", AR_ES_JA_RU_SR_TH_TR_UND),
-            ("ru", AR_ES_JA_RU_SR_TH_TR_UND),
-            ("sr", AR_ES_JA_RU_SR_TH_TR_UND),
-            ("th", AR_ES_JA_RU_SR_TH_TR_UND),
-            ("tr", AR_ES_JA_RU_SR_TH_TR_UND),
-            ("und", AR_ES_JA_RU_SR_TH_TR_UND),
-        ];
-        #[allow(clippy::unwrap_used)]
-        let value = VALUES
-            .binary_search_by(|(k, _)| req.options.strict_cmp(k.as_bytes()).reverse())
-            .map(|i| VALUES.get(i).unwrap().1)
-            .map_err(|_| {
-                DataErrorKind::MissingResourceOptions
-                    .with_req(<::icu_plurals::provider::OrdinalV1Marker>::KEY, req)
-            })?;
-        Ok(DataResponse {
-            metadata: DataResponseMetadata::default(),
-            payload: Some(DataPayload::from_owned(zerofrom::ZeroFrom::zero_from(
-                value,
-            ))),
-        })
-    }
-}
-type DataStruct = &'static <::icu_plurals::provider::OrdinalV1Marker as DataMarker>::Yokeable;
+type DataStruct =
+    &'static <::icu_plurals::provider::OrdinalV1Marker as ::icu_provider::DataMarker>::Yokeable;
+pub static DATA: &[(&str, DataStruct)] = &[
+    ("ar", AR_ES_JA_RU_SR_TH_TR_UND),
+    ("bn", BN),
+    ("en", EN),
+    ("es", AR_ES_JA_RU_SR_TH_TR_UND),
+    ("fil", FIL_FR),
+    ("fr", FIL_FR),
+    ("ja", AR_ES_JA_RU_SR_TH_TR_UND),
+    ("ru", AR_ES_JA_RU_SR_TH_TR_UND),
+    ("sr", AR_ES_JA_RU_SR_TH_TR_UND),
+    ("th", AR_ES_JA_RU_SR_TH_TR_UND),
+    ("tr", AR_ES_JA_RU_SR_TH_TR_UND),
+    ("und", AR_ES_JA_RU_SR_TH_TR_UND),
+];
 static AR_ES_JA_RU_SR_TH_TR_UND: DataStruct = &::icu_plurals::provider::PluralRulesV1 {
     zero: None,
     one: None,

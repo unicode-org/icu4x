@@ -1,55 +1,26 @@
 // @generated
-use icu_provider::prelude::*;
-impl ResourceProvider<::icu_datetime::provider::time_zones::MetaZoneSpecificNamesShortV1Marker>
-    for super::super::BakedDataProvider
-{
-    fn load_resource(
-        &self,
-        req: &DataRequest,
-    ) -> Result<
-        DataResponse<::icu_datetime::provider::time_zones::MetaZoneSpecificNamesShortV1Marker>,
-        DataError,
-    > {
-        static VALUES: &[(&str, DataStruct)] = &[
-            ("ar", AR_AR_EG),
-            ("ar-EG", AR_AR_EG),
-            ("bn", BN_CCP),
-            ("ccp", BN_CCP),
-            ("en", EN),
-            ("en-001", EN_001),
-            ("en-ZA", EN_ZA),
-            ("es", ES_SR_SR_CYRL_SR_LATN),
-            ("es-AR", ES_AR),
-            ("fil", FIL_FR_RU_TH_TR_UND),
-            ("fr", FIL_FR_RU_TH_TR_UND),
-            ("ja", JA),
-            ("ru", FIL_FR_RU_TH_TR_UND),
-            ("sr", ES_SR_SR_CYRL_SR_LATN),
-            ("sr-Cyrl", ES_SR_SR_CYRL_SR_LATN),
-            ("sr-Latn", ES_SR_SR_CYRL_SR_LATN),
-            ("th", FIL_FR_RU_TH_TR_UND),
-            ("tr", FIL_FR_RU_TH_TR_UND),
-            ("und", FIL_FR_RU_TH_TR_UND),
-        ];
-        #[allow(clippy::unwrap_used)]
-        let value = VALUES
-            .binary_search_by(|(k, _)| req.options.strict_cmp(k.as_bytes()).reverse())
-            .map(|i| VALUES.get(i).unwrap().1)
-            .map_err(|_| {
-                DataErrorKind::MissingResourceOptions.with_req(
-                    <::icu_datetime::provider::time_zones::MetaZoneSpecificNamesShortV1Marker>::KEY,
-                    req,
-                )
-            })?;
-        Ok(DataResponse {
-            metadata: DataResponseMetadata::default(),
-            payload: Some(DataPayload::from_owned(zerofrom::ZeroFrom::zero_from(
-                value,
-            ))),
-        })
-    }
-}
-type DataStruct = & 'static < :: icu_datetime :: provider :: time_zones :: MetaZoneSpecificNamesShortV1Marker as DataMarker > :: Yokeable ;
+type DataStruct = & 'static < :: icu_datetime :: provider :: time_zones :: MetaZoneSpecificNamesShortV1Marker as :: icu_provider :: DataMarker > :: Yokeable ;
+pub static DATA: &[(&str, DataStruct)] = &[
+    ("ar", AR_AR_EG),
+    ("ar-EG", AR_AR_EG),
+    ("bn", BN_CCP),
+    ("ccp", BN_CCP),
+    ("en", EN),
+    ("en-001", EN_001),
+    ("en-ZA", EN_ZA),
+    ("es", ES_SR_SR_CYRL_SR_LATN),
+    ("es-AR", ES_AR),
+    ("fil", FIL_FR_RU_TH_TR_UND),
+    ("fr", FIL_FR_RU_TH_TR_UND),
+    ("ja", JA),
+    ("ru", FIL_FR_RU_TH_TR_UND),
+    ("sr", ES_SR_SR_CYRL_SR_LATN),
+    ("sr-Cyrl", ES_SR_SR_CYRL_SR_LATN),
+    ("sr-Latn", ES_SR_SR_CYRL_SR_LATN),
+    ("th", FIL_FR_RU_TH_TR_UND),
+    ("tr", FIL_FR_RU_TH_TR_UND),
+    ("und", FIL_FR_RU_TH_TR_UND),
+];
 static AR_AR_EG: DataStruct = &::icu_datetime::provider::time_zones::MetaZoneSpecificNamesShortV1 {
     defaults: unsafe {
         #[allow(unused_unsafe)]

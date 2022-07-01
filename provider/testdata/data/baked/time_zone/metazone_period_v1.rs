@@ -1,54 +1,26 @@
 // @generated
-use icu_provider::prelude::*;
-impl ResourceProvider<::icu_datetime::provider::time_zones::MetaZonePeriodV1Marker>
-    for super::super::BakedDataProvider
-{
-    fn load_resource(
-        &self,
-        req: &DataRequest,
-    ) -> Result<DataResponse<::icu_datetime::provider::time_zones::MetaZonePeriodV1Marker>, DataError>
-    {
-        static VALUES: &[(&str, DataStruct)] = &[
-            ("ar", AR_AR_EG_BN_CCP_EN_EN_001_EN_ZA_ES_ES_AR),
-            ("ar-EG", AR_AR_EG_BN_CCP_EN_EN_001_EN_ZA_ES_ES_AR),
-            ("bn", AR_AR_EG_BN_CCP_EN_EN_001_EN_ZA_ES_ES_AR),
-            ("ccp", AR_AR_EG_BN_CCP_EN_EN_001_EN_ZA_ES_ES_AR),
-            ("en", AR_AR_EG_BN_CCP_EN_EN_001_EN_ZA_ES_ES_AR),
-            ("en-001", AR_AR_EG_BN_CCP_EN_EN_001_EN_ZA_ES_ES_AR),
-            ("en-ZA", AR_AR_EG_BN_CCP_EN_EN_001_EN_ZA_ES_ES_AR),
-            ("es", AR_AR_EG_BN_CCP_EN_EN_001_EN_ZA_ES_ES_AR),
-            ("es-AR", AR_AR_EG_BN_CCP_EN_EN_001_EN_ZA_ES_ES_AR),
-            ("fil", AR_AR_EG_BN_CCP_EN_EN_001_EN_ZA_ES_ES_AR),
-            ("fr", AR_AR_EG_BN_CCP_EN_EN_001_EN_ZA_ES_ES_AR),
-            ("ja", AR_AR_EG_BN_CCP_EN_EN_001_EN_ZA_ES_ES_AR),
-            ("ru", AR_AR_EG_BN_CCP_EN_EN_001_EN_ZA_ES_ES_AR),
-            ("sr", AR_AR_EG_BN_CCP_EN_EN_001_EN_ZA_ES_ES_AR),
-            ("sr-Cyrl", AR_AR_EG_BN_CCP_EN_EN_001_EN_ZA_ES_ES_AR),
-            ("sr-Latn", AR_AR_EG_BN_CCP_EN_EN_001_EN_ZA_ES_ES_AR),
-            ("th", AR_AR_EG_BN_CCP_EN_EN_001_EN_ZA_ES_ES_AR),
-            ("tr", AR_AR_EG_BN_CCP_EN_EN_001_EN_ZA_ES_ES_AR),
-            ("und", AR_AR_EG_BN_CCP_EN_EN_001_EN_ZA_ES_ES_AR),
-        ];
-        #[allow(clippy::unwrap_used)]
-        let value = VALUES
-            .binary_search_by(|(k, _)| req.options.strict_cmp(k.as_bytes()).reverse())
-            .map(|i| VALUES.get(i).unwrap().1)
-            .map_err(|_| {
-                DataErrorKind::MissingResourceOptions.with_req(
-                    <::icu_datetime::provider::time_zones::MetaZonePeriodV1Marker>::KEY,
-                    req,
-                )
-            })?;
-        Ok(DataResponse {
-            metadata: DataResponseMetadata::default(),
-            payload: Some(DataPayload::from_owned(zerofrom::ZeroFrom::zero_from(
-                value,
-            ))),
-        })
-    }
-}
-type DataStruct =
-    &'static <::icu_datetime::provider::time_zones::MetaZonePeriodV1Marker as DataMarker>::Yokeable;
+type DataStruct = & 'static < :: icu_datetime :: provider :: time_zones :: MetaZonePeriodV1Marker as :: icu_provider :: DataMarker > :: Yokeable ;
+pub static DATA: &[(&str, DataStruct)] = &[
+    ("ar", AR_AR_EG_BN_CCP_EN_EN_001_EN_ZA_ES_ES_AR),
+    ("ar-EG", AR_AR_EG_BN_CCP_EN_EN_001_EN_ZA_ES_ES_AR),
+    ("bn", AR_AR_EG_BN_CCP_EN_EN_001_EN_ZA_ES_ES_AR),
+    ("ccp", AR_AR_EG_BN_CCP_EN_EN_001_EN_ZA_ES_ES_AR),
+    ("en", AR_AR_EG_BN_CCP_EN_EN_001_EN_ZA_ES_ES_AR),
+    ("en-001", AR_AR_EG_BN_CCP_EN_EN_001_EN_ZA_ES_ES_AR),
+    ("en-ZA", AR_AR_EG_BN_CCP_EN_EN_001_EN_ZA_ES_ES_AR),
+    ("es", AR_AR_EG_BN_CCP_EN_EN_001_EN_ZA_ES_ES_AR),
+    ("es-AR", AR_AR_EG_BN_CCP_EN_EN_001_EN_ZA_ES_ES_AR),
+    ("fil", AR_AR_EG_BN_CCP_EN_EN_001_EN_ZA_ES_ES_AR),
+    ("fr", AR_AR_EG_BN_CCP_EN_EN_001_EN_ZA_ES_ES_AR),
+    ("ja", AR_AR_EG_BN_CCP_EN_EN_001_EN_ZA_ES_ES_AR),
+    ("ru", AR_AR_EG_BN_CCP_EN_EN_001_EN_ZA_ES_ES_AR),
+    ("sr", AR_AR_EG_BN_CCP_EN_EN_001_EN_ZA_ES_ES_AR),
+    ("sr-Cyrl", AR_AR_EG_BN_CCP_EN_EN_001_EN_ZA_ES_ES_AR),
+    ("sr-Latn", AR_AR_EG_BN_CCP_EN_EN_001_EN_ZA_ES_ES_AR),
+    ("th", AR_AR_EG_BN_CCP_EN_EN_001_EN_ZA_ES_ES_AR),
+    ("tr", AR_AR_EG_BN_CCP_EN_EN_001_EN_ZA_ES_ES_AR),
+    ("und", AR_AR_EG_BN_CCP_EN_EN_001_EN_ZA_ES_ES_AR),
+];
 static AR_AR_EG_BN_CCP_EN_EN_001_EN_ZA_ES_ES_AR: DataStruct =
     &::icu_datetime::provider::time_zones::MetaZonePeriodV1(unsafe {
         #[allow(unused_unsafe)]

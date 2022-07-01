@@ -65,6 +65,13 @@
 //! std::fs::remove_dir_all(&demo_path).expect("Should clean up test directory");
 //! ```
 
+#![allow(
+    clippy::indexing_slicing,
+    clippy::unwrap_used,
+    clippy::expect_used,
+    clippy::panic
+)]
+
 pub mod fs_exporter;
 pub mod serializers;
 pub use fs_exporter::FilesystemExporter;

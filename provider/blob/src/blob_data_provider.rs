@@ -77,29 +77,6 @@ impl BlobDataProvider {
             })?,
         })
     }
-
-    #[doc(hidden)]
-    pub fn iter_for_key(
-        &self,
-        key: ResourceKey,
-    ) -> Result<impl Iterator<Item = (&[u8], &[u8])> + '_, DataError> {
-        let data = self.data.get();
-        let cursor = data
-            .keys
-            .get0(&key.get_hash())
-            .ok_or_else(|| DataErrorKind::MissingResourceKey.with_key(key))?;
-        let iter = cursor.into_iter1().map(move |(locale, ule)| {
-            let mut result = Option::<usize>::None;
-            FlexZeroVec::zvl_get_as_t(ule, |v| result.replace(*v));
-            #[allow(clippy::unwrap_used)] // `zvl_get_as_t` guarantees that the callback is invoked
-            let idx = result.unwrap();
-            #[allow(clippy::unwrap_used)]
-            // internal function (this should really be an InvalidState error)
-            let buffer = data.buffers.get(idx).unwrap();
-            (locale, buffer)
-        });
-        Ok(iter)
-    }
 }
 
 impl BufferProvider for BlobDataProvider {
