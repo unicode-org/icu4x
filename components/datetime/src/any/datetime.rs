@@ -2,16 +2,13 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! This module contains the untyped [`AnyCalendar`]-based `DateTimeFormat` APIs that are
-//! capable of formatting dates from any calendar
-
 use crate::{
     options::{components, DateTimeFormatOptions},
     raw,
 };
 use alloc::string::String;
 
-use icu_locid::Locale;
+use icu_locid::{extensions_unicode_key as key, extensions_unicode_value as value, Locale};
 
 use icu_provider::prelude::*;
 
@@ -25,6 +22,7 @@ use crate::provider::{
 use crate::{date::DateTimeInput, DateTimeFormatError, FormattedDateTime};
 use icu_calendar::any_calendar::{AnyCalendar, AnyCalendarKind};
 use icu_calendar::provider::JapaneseErasV1Marker;
+use icu_calendar::{types::Time, DateTime};
 use icu_decimal::provider::DecimalSymbolsV1Marker;
 use icu_plurals::provider::OrdinalV1Marker;
 
@@ -35,10 +33,9 @@ use icu_plurals::provider::OrdinalV1Marker;
 /// collect all data necessary to format any dates into that locale.
 ///
 /// For that reason, one should think of the process of formatting a date in two steps - first, a computational
-/// heavy construction of [`DateTimeFormat`](crate::DateTimeFormat), and then fast formatting of [`DateTime`](icu_calendar::DateTime) data using the instance.
+/// heavy construction of [`AnyDateTimeFormat`], and then fast formatting of [`DateTime`](icu_calendar::DateTime) data using the instance.
 ///
 /// [`icu_datetime`]: crate
-/// [`DateTimeFormat`]: crate::datetime::DateTimeFormat
 ///
 /// # Examples
 ///
@@ -67,7 +64,7 @@ use icu_plurals::provider::OrdinalV1Marker;
 /// This model replicates that of `ICU` and `ECMA402`.
 ///
 /// [data provider]: icu_provider
-pub struct AnyDateTimeFormat(pub(super) raw::DateTimeFormat, AnyCalendar);
+pub struct AnyDateTimeFormat(pub(crate) raw::DateTimeFormat, AnyCalendar);
 
 impl AnyDateTimeFormat {
     /// Construct a new [`AnyDateTimeFormat`] from a data provider that implements
@@ -115,8 +112,9 @@ impl AnyDateTimeFormat {
     /// let provider = icu_testdata::get_provider();
     ///
     /// let mut options = length::Bag::from_date_time_style(length::Date::Medium, length::Time::Short);
+    /// let locale = Locale::from_str("en-u-ca-gregory").unwrap();
     ///
-    /// let dtf = AnyDateTimeFormat::try_new_with_buffer_provider(Locale::from_str("en-u-ca-gregory").unwrap(), &provider, &options.into())
+    /// let dtf = AnyDateTimeFormat::try_new_with_buffer_provider(locale, &provider, &options.into())
     ///     .expect("Failed to create DateTimeFormat instance.");
     ///
     /// let datetime = DateTime::new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
@@ -159,8 +157,9 @@ impl AnyDateTimeFormat {
     /// let provider = icu_testdata::get_provider();
     ///
     /// let mut options = length::Bag::from_date_time_style(length::Date::Medium, length::Time::Short);
+    /// let locale = Locale::from_str("en-u-ca-gregory").unwrap();
     ///
-    /// let dtf = AnyDateTimeFormat::try_new_unstable(Locale::from_str("en-u-ca-gregory").unwrap(), &provider, &options.into())
+    /// let dtf = AnyDateTimeFormat::try_new_unstable(locale, &provider, &options.into())
     ///     .expect("Failed to create DateTimeFormat instance.");
     ///
     /// let datetime = DateTime::new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
@@ -189,10 +188,28 @@ impl AnyDateTimeFormat {
             + ResourceProvider<JapaneseErasV1Marker>
             + ?Sized,
     {
-        let locale = locale.into();
+        let mut locale = locale.into();
 
         // TODO (#2038), DO NOT SHIP 1.0 without fixing this
-        let kind = AnyCalendarKind::from_locale(&locale).unwrap_or(AnyCalendarKind::Gregorian);
+        let kind = if let Some(kind) = AnyCalendarKind::from_locale(&locale) {
+            kind
+        } else {
+            locale
+                .extensions
+                .unicode
+                .keywords
+                .set(key!("ca"), value!("gregory"));
+            AnyCalendarKind::Gregorian
+        };
+
+        // We share data under ethiopic
+        if kind == AnyCalendarKind::Ethioaa {
+            locale
+                .extensions
+                .unicode
+                .keywords
+                .set(key!("ca"), value!("ethiopic"));
+        }
 
         let calendar = AnyCalendar::try_new_unstable(kind, data_provider)?;
 
@@ -205,51 +222,60 @@ impl AnyDateTimeFormat {
     /// that contains all information necessary to display a formatted date and operate on it.
     ///
     /// This function will fail if the date passed in uses a different calendar than that of the
-    /// AnyCalendar. Please convert dates before passing them in if necessary.
+    /// AnyCalendar. Please convert dates before passing them in if necessary. This function
+    /// will automatically convert and format dates that are associated with the ISO calendar.
     #[inline]
-    pub fn format<'l, T>(
-        &'l self,
-        value: &'l T,
-    ) -> Result<FormattedDateTime<'l>, DateTimeFormatError>
+    pub fn format<'l, T>(&'l self, value: &T) -> Result<FormattedDateTime<'l>, DateTimeFormatError>
     where
         T: DateTimeInput<Calendar = AnyCalendar>,
     {
-        self.check_calendars(value)?;
-        Ok(self.0.format(value))
+        if let Some(converted) = self.convert_if_necessary(value)? {
+            Ok(self.0.format(&converted))
+        } else {
+            Ok(self.0.format(value))
+        }
     }
 
     /// Takes a mutable reference to anything that implements [`Write`](std::fmt::Write) trait
     /// and a [`DateTimeInput`] implementer and populates the buffer with a formatted value.
     ///
     /// This function will fail if the date passed in uses a different calendar than that of the
-    /// AnyCalendar. Please convert dates before passing them in if necessary.
+    /// AnyCalendar. Please convert dates before passing them in if necessary. This function
+    /// will automatically convert and format dates that are associated with the ISO calendar.
     #[inline]
     pub fn format_to_write(
         &self,
         w: &mut impl core::fmt::Write,
         value: &impl DateTimeInput<Calendar = AnyCalendar>,
     ) -> Result<(), DateTimeFormatError> {
-        self.check_calendars(value)?;
-        self.0.format_to_write(w, value)?;
+        if let Some(converted) = self.convert_if_necessary(value)? {
+            self.0.format_to_write(w, &converted)?;
+        } else {
+            self.0.format_to_write(w, value)?;
+        }
         Ok(())
     }
 
     /// Takes a [`DateTimeInput`] implementer and returns it formatted as a string.
     ///
     /// This function will fail if the date passed in uses a different calendar than that of the
-    /// AnyCalendar. Please convert dates before passing them in if necessary.
+    /// AnyCalendar. Please convert dates before passing them in if necessary. This function
+    /// will automatically convert and format dates that are associated with the ISO calendar.
     #[inline]
     pub fn format_to_string(
         &self,
         value: &impl DateTimeInput<Calendar = AnyCalendar>,
     ) -> Result<String, DateTimeFormatError> {
-        self.check_calendars(value)?;
-        Ok(self.0.format_to_string(value))
+        if let Some(converted) = self.convert_if_necessary(value)? {
+            Ok(self.0.format_to_string(&converted))
+        } else {
+            Ok(self.0.format_to_string(value))
+        }
     }
 
     /// Returns a [`components::Bag`] that represents the resolved components for the
-    /// options that were provided to the [`DateTimeFormat`](crate::DateTimeFormat). The developer may request
-    /// a certain set of options for a [`DateTimeFormat`](crate::DateTimeFormat) but the locale and resolution
+    /// options that were provided to the [`AnyDateTimeFormat`]. The developer may request
+    /// a certain set of options for a [`AnyDateTimeFormat`] but the locale and resolution
     /// algorithm may change certain details of what actually gets resolved.
     ///
     /// # Examples
@@ -281,20 +307,36 @@ impl AnyDateTimeFormat {
         self.0.resolve_components()
     }
 
-    /// Checks if a date is constructed with the same calendar
-    fn check_calendars(
-        &self,
+    /// Converts a date to the correct calendar if necessary
+    ///
+    /// Returns Err if the date is not ISO or compatible with the current calendar, returns Ok(None)
+    /// if the date is compatible with the current calendar and doesn't need conversion
+    fn convert_if_necessary<'a>(
+        &'a self,
         value: &impl DateTimeInput<Calendar = AnyCalendar>,
-    ) -> Result<(), DateTimeFormatError> {
+    ) -> Result<Option<DateTime<icu_calendar::Ref<'a, AnyCalendar>>>, DateTimeFormatError> {
         let this_calendar = self.1.kind();
         let date_calendar = value.any_calendar_kind();
-        if Some(this_calendar) != date_calendar {
-            return Err(DateTimeFormatError::MismatchedAnyCalendar(
-                this_calendar,
-                date_calendar,
-            ));
-        }
 
-        Ok(())
+        if Some(this_calendar) != date_calendar {
+            if date_calendar != Some(AnyCalendarKind::Iso) {
+                return Err(DateTimeFormatError::MismatchedAnyCalendar(
+                    this_calendar,
+                    date_calendar,
+                ));
+            }
+            let date = value.to_iso();
+            let time = Time::new(
+                value.hour().unwrap_or_default(),
+                value.minute().unwrap_or_default(),
+                value.second().unwrap_or_default(),
+                value.nanosecond().unwrap_or_default(),
+            );
+            let datetime = DateTime::new(date, time).to_any();
+            let converted = self.1.convert_any_datetime(&datetime);
+            Ok(Some(converted))
+        } else {
+            Ok(None)
+        }
     }
 }
