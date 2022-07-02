@@ -44,7 +44,7 @@ impl<'data> BlobSchemaV1<'data> {
     pub(crate) fn check_invariants(&self) {
         use zerovec::maps::ZeroVecLike;
         if self.keys.is_empty() && self.buffers.is_empty() {
-            return true;
+            return;
         }
         // Note: We could check that every index occurs at least once, but that's a more expensive
         // operation, so we will just check for the min and max index.

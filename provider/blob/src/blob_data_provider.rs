@@ -8,8 +8,6 @@ use icu_provider::prelude::*;
 use icu_provider::RcWrap;
 use serde::de::Deserialize;
 use yoke::*;
-use zerovec::maps::ZeroVecLike;
-use zerovec::vecs::FlexZeroVec;
 
 /// A data provider loading data from blobs dynamically created at runtime.
 ///
@@ -104,9 +102,11 @@ impl BufferProvider for BlobDataProvider {
                                     .ok_or(DataErrorKind::MissingResourceOptions)
                             })
                             .map_err(|kind| kind.with_req(key, req))?;
-                        blob.buffers
-                            .get(idx)
-                            .ok_or_else(|| DataErrorKind::InvalidState.with_req(key, req))
+                        blob.buffers.get(idx).ok_or_else(|| {
+                            DataErrorKind::InvalidState
+                                .with_req(key, req)
+                                .with_str_context("Invalid bytes in BlobDataProvider")
+                        })
                     },
                 )?,
             )),
