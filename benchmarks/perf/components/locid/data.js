@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1656695930123,
+  "lastUpdate": 1656739015011,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -62867,6 +62867,150 @@ window.BENCHMARK_DATA = {
             "name": "subtags/variant/parse",
             "value": 189,
             "range": "± 12",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "7b52dbfe57043da5459c12627671a779d467dc0f",
+          "message": "Finish up AnyCalendar formatting features work (#2146)\n\n* Add DateInput::to_iso()\n\n* Convert dates when feeding through AnyCalendar\n\n* Move AnyDTF to module\n\n* cleanup docs\n\n* Add ZonedAnyDTF\n\n* Add formatting\n\n* Update tests to use real locales\n\n* update fixtures\n\n* Fix issues with creating locales\n\n* Update DTF fixture tests to also test AnyDTF\n\n* Get rid of error cases for AnyDTF\n\n* clippy\n\n* docs\n\n* typo\n\n* fmt\n\n* Revert \"Get rid of error cases for AnyDTF\"\n\nThis reverts commit 021d79d93f298fea23416b447275db6bcf81d85a.\n\n* error for non ISO calendars\n\n* rm println\n\n* Fix Ethiopic calendar cloning\n\n* Fix ethiopic return values\n\n* test iso conversion\n\n* fmt",
+          "timestamp": "2022-07-01T21:58:15-07:00",
+          "tree_id": "9fbe9381252e4b585ec27f1c63bfd0040f69ab8d",
+          "url": "https://github.com/unicode-org/icu4x/commit/7b52dbfe57043da5459c12627671a779d467dc0f"
+        },
+        "date": 1656738979740,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 4063,
+            "range": "± 476",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/construct/langid",
+            "value": 949,
+            "range": "± 44",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/to_string/langid",
+            "value": 1204,
+            "range": "± 61",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/to_string/langid/writeable",
+            "value": 585,
+            "range": "± 41",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/compare/struct/langid",
+            "value": 96,
+            "range": "± 2",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/compare/str/langid",
+            "value": 852,
+            "range": "± 18",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/compare/strict_cmp/langid",
+            "value": 435,
+            "range": "± 14",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/canonicalize/langid",
+            "value": 2831,
+            "range": "± 114",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 5211,
+            "range": "± 291",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/construct/locale",
+            "value": 2096,
+            "range": "± 91",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/to_string/locale",
+            "value": 1513,
+            "range": "± 59",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/to_string/locale/writeable",
+            "value": 1076,
+            "range": "± 44",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/compare/struct/locale",
+            "value": 265,
+            "range": "± 10",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/compare/str/locale",
+            "value": 2135,
+            "range": "± 93",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/compare/strict_cmp/locale",
+            "value": 628,
+            "range": "± 31",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/canonicalize/locale",
+            "value": 4399,
+            "range": "± 220",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "subtags/language/parse",
+            "value": 199,
+            "range": "± 9",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "subtags/script/parse",
+            "value": 138,
+            "range": "± 6",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "subtags/region/parse",
+            "value": 199,
+            "range": "± 7",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "subtags/variant/parse",
+            "value": 190,
+            "range": "± 7",
             "unit": "ns/iter"
           }
         ]
