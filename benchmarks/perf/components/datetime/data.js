@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1656695752943,
+  "lastUpdate": 1656738800318,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -45287,6 +45287,102 @@ window.BENCHMARK_DATA = {
             "name": "pattern/parse",
             "value": 4516,
             "range": "± 12",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "7b52dbfe57043da5459c12627671a779d467dc0f",
+          "message": "Finish up AnyCalendar formatting features work (#2146)\n\n* Add DateInput::to_iso()\n\n* Convert dates when feeding through AnyCalendar\n\n* Move AnyDTF to module\n\n* cleanup docs\n\n* Add ZonedAnyDTF\n\n* Add formatting\n\n* Update tests to use real locales\n\n* update fixtures\n\n* Fix issues with creating locales\n\n* Update DTF fixture tests to also test AnyDTF\n\n* Get rid of error cases for AnyDTF\n\n* clippy\n\n* docs\n\n* typo\n\n* fmt\n\n* Revert \"Get rid of error cases for AnyDTF\"\n\nThis reverts commit 021d79d93f298fea23416b447275db6bcf81d85a.\n\n* error for non ISO calendars\n\n* rm println\n\n* Fix Ethiopic calendar cloning\n\n* Fix ethiopic return values\n\n* test iso conversion\n\n* fmt",
+          "timestamp": "2022-07-01T21:58:15-07:00",
+          "tree_id": "9fbe9381252e4b585ec27f1c63bfd0040f69ab8d",
+          "url": "https://github.com/unicode-org/icu4x/commit/7b52dbfe57043da5459c12627671a779d467dc0f"
+        },
+        "date": 1656738772733,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 95800,
+            "range": "± 131",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 897890,
+            "range": "± 4304",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 189232,
+            "range": "± 898",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/DateTimeFormat/format_to_write",
+            "value": 84924,
+            "range": "± 120",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/DateTimeFormat/format_to_string",
+            "value": 92553,
+            "range": "± 97",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/format",
+            "value": 95217,
+            "range": "± 163",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/to_string",
+            "value": 103173,
+            "range": "± 142",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/ZonedDateTimeFormat/format_to_write",
+            "value": 177460,
+            "range": "± 200",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/ZonedDateTimeFormat/format_to_string",
+            "value": 190736,
+            "range": "± 295",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/format",
+            "value": 188748,
+            "range": "± 144",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/to_string",
+            "value": 203237,
+            "range": "± 194",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "pattern/parse",
+            "value": 5125,
+            "range": "± 13",
             "unit": "ns/iter"
           }
         ]
