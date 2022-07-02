@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1656695947049,
+  "lastUpdate": 1656739091263,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -61445,6 +61445,150 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/select/fs",
             "value": 2259,
             "range": "± 161",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "7b52dbfe57043da5459c12627671a779d467dc0f",
+          "message": "Finish up AnyCalendar formatting features work (#2146)\n\n* Add DateInput::to_iso()\n\n* Convert dates when feeding through AnyCalendar\n\n* Move AnyDTF to module\n\n* cleanup docs\n\n* Add ZonedAnyDTF\n\n* Add formatting\n\n* Update tests to use real locales\n\n* update fixtures\n\n* Fix issues with creating locales\n\n* Update DTF fixture tests to also test AnyDTF\n\n* Get rid of error cases for AnyDTF\n\n* clippy\n\n* docs\n\n* typo\n\n* fmt\n\n* Revert \"Get rid of error cases for AnyDTF\"\n\nThis reverts commit 021d79d93f298fea23416b447275db6bcf81d85a.\n\n* error for non ISO calendars\n\n* rm println\n\n* Fix Ethiopic calendar cloning\n\n* Fix ethiopic return values\n\n* test iso conversion\n\n* fmt",
+          "timestamp": "2022-07-01T21:58:15-07:00",
+          "tree_id": "9fbe9381252e4b585ec27f1c63bfd0040f69ab8d",
+          "url": "https://github.com/unicode-org/icu4x/commit/7b52dbfe57043da5459c12627671a779d467dc0f"
+        },
+        "date": 1656739055795,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1427,
+            "range": "± 122",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/operands/create/usize",
+            "value": 16,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/operands/create/isize",
+            "value": 25,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/operands/create/string",
+            "value": 1170,
+            "range": "± 56",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/operands/create/string/samples/0",
+            "value": 24,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/operands/create/string/samples/10",
+            "value": 25,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/operands/create/string/samples/200",
+            "value": 28,
+            "range": "± 3",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/operands/create/string/samples/3000",
+            "value": 30,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/operands/create/string/samples/40000",
+            "value": 33,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/operands/create/string/samples/500000",
+            "value": 36,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/operands/create/string/samples/6000000",
+            "value": 38,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/operands/create/string/samples/70000000",
+            "value": 41,
+            "range": "± 2",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/operands/eq/mostly_unequal",
+            "value": 173,
+            "range": "± 6",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/operands/eq/mostly_equal",
+            "value": 189,
+            "range": "± 8",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/operands/create/from_fixed_decimal",
+            "value": 179,
+            "range": "± 7",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 6427,
+            "range": "± 292",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/lex",
+            "value": 2095,
+            "range": "± 131",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 19233,
+            "range": "± 909",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/construct/fs",
+            "value": 8404,
+            "range": "± 388",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/select/fs",
+            "value": 2845,
+            "range": "± 414",
             "unit": "ns/iter"
           }
         ]
