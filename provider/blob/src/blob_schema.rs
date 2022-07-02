@@ -57,7 +57,7 @@ impl<'data> BlobSchemaV1<'data> {
                 #[allow(clippy::unwrap_used)]
                 // `zvl_get_as_t` guarantees that the callback is invoked
                 let idx = result.unwrap();
-                debug_assert!(idx >= self.buffers.len());
+                debug_assert!(idx < self.buffers.len());
                 if idx == 0 {
                     seen_min = true;
                 }
