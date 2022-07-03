@@ -278,7 +278,24 @@ impl DateTime<Iso> {
         })
     }
 
-    // Minute count representation of calendars starting from 00:00:00 on Jan 1st, 1970.
+    /// Minute count representation of calendars starting from 00:00:00 on Jan 1st, 1970.
+    ///
+    /// ```rust
+    /// use icu::calendar::DateTime;
+    ///
+    /// let today = DateTime::new_iso_datetime(2020, 2, 29, 0, 0, 0).unwrap();
+    ///
+    /// assert_eq!(today.minutes_since_local_unix_epoch(), 26382240);
+    /// assert_eq!(
+    ///             DateTime::from_minutes_since_local_unix_epoch(26382240),
+    ///             Ok(today)
+    ///         );
+    ///
+    /// let today = DateTime::new_iso_datetime(1970, 1, 1, 0, 0, 0).unwrap();
+    ///
+    /// assert_eq!(today.minutes_since_local_unix_epoch(), 0);
+    /// assert_eq!(DateTime::from_minutes_since_local_unix_epoch(0), Ok(today));
+    /// ```
     pub fn minutes_since_local_unix_epoch(&self) -> i32 {
         let minutes_a_hour = 60;
         let hours_a_day = 24;
@@ -294,7 +311,24 @@ impl DateTime<Iso> {
         }
     }
 
-    // Convert minute count since 00:00:00 on Jan 1st, 1970 to ISO Date.
+    /// Convert minute count since 00:00:00 on Jan 1st, 1970 to ISO Date.
+    ///
+    /// ```rust
+    /// use icu::calendar::DateTime;
+    ///
+    /// let today = DateTime::new_iso_datetime(2020, 2, 29, 0, 0, 0).unwrap();
+    ///
+    /// assert_eq!(today.minutes_since_local_unix_epoch(), 26382240);
+    /// assert_eq!(
+    ///             DateTime::from_minutes_since_local_unix_epoch(26382240),
+    ///             Ok(today)
+    ///         );
+    ///
+    /// let today = DateTime::new_iso_datetime(1970, 1, 1, 0, 0, 0).unwrap();
+    ///
+    /// assert_eq!(today.minutes_since_local_unix_epoch(), 0);
+    /// assert_eq!(DateTime::from_minutes_since_local_unix_epoch(0), Ok(today));
+    /// ```
     pub fn from_minutes_since_local_unix_epoch(
         minute: i32,
     ) -> Result<DateTime<Iso>, DateTimeError> {
@@ -305,22 +339,16 @@ impl DateTime<Iso> {
         if let Ok(unix_epoch) = DateTime::new_iso_datetime(1970, 1, 1, 0, 0, 0) {
             let unix_epoch_days = Iso::fixed_from_iso(*unix_epoch.date.inner());
             let date = Iso::iso_from_fixed(unix_epoch_days + extra_days);
-            match (
-                i8::try_from((minute / minutes_a_hour) % hours_a_day).ok(),
-                i8::try_from(minute % minutes_a_hour).ok(),
-            ) {
-                (Some(hour_field), Some(minute_field)) => DateTime::new_iso_datetime(
-                    date.year().number,
-                    date.month().ordinal as u8,
-                    date.day_of_month().0 as u8,
-                    hour_field as u8,
-                    minute_field as u8,
-                    0,
-                ),
-                _ => DateTime::new_iso_datetime(0, 0, 0, 0, 0, 0),
-            }
+            DateTime::new_iso_datetime(
+                date.year().number,
+                date.month().ordinal as u8,
+                date.day_of_month().0 as u8,
+                ((minute / minutes_a_hour) % hours_a_day) as u8,
+                (minute % minutes_a_hour) as u8,
+                0,
+            )
         } else {
-            DateTime::new_iso_datetime(0, 0, 0, 0, 0, 0)
+            unreachable!("DateTime should be created successfully")
         }
     }
 }
@@ -618,21 +646,5 @@ mod test {
         let today_minus_1 = Date::new_iso_date(2020, 2, 29).unwrap();
         let offset = today.added(DateDuration::new(0, 0, 0, -1));
         assert_eq!(offset, today_minus_1);
-    }
-
-    #[test]
-    fn test_offset_minute_since_unix_epoch() {
-        let today = DateTime::new_iso_datetime(2020, 2, 29, 0, 0, 0).unwrap();
-        assert_eq!(today.minutes_since_local_unix_epoch(), 26382240);
-        assert_eq!(
-            DateTime::from_minutes_since_local_unix_epoch(26382240),
-            Ok(today)
-        );
-        let today = DateTime::new_iso_datetime(1970, 1, 1, 0, 0, 0).unwrap();
-        assert_eq!(today.minutes_since_local_unix_epoch(), 0);
-        assert_eq!(
-            DateTime::from_minutes_since_local_unix_epoch(0),
-            Ok(today)
-        );
     }
 }
