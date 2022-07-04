@@ -264,7 +264,7 @@ impl AbstractFs {
                 .expect("validated in constructor")
                 .file_names()
                 .filter_map(|p| p.strip_prefix(path))
-                .filter_map(|suffix| suffix.split('/').filter(|s| !s.is_empty()).next())
+                .filter_map(|suffix| suffix.split('/').find(|s| !s.is_empty()))
                 .map(PathBuf::from)
                 .collect(),
         })
