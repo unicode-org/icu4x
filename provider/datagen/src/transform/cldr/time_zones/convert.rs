@@ -7,8 +7,8 @@ use icu_datetime::provider::time_zones::{
     MetaZonePeriodV1, MetaZoneSpecificNamesLongV1, MetaZoneSpecificNamesShortV1, TimeZoneBcp47Id,
     TimeZoneFormatsV1,
 };
-use litemap::LiteMap;
 use std::borrow::Cow;
+use std::collections::HashMap;
 use tinystr::TinyStr8;
 use zerovec::{ZeroMap, ZeroMap2d};
 
@@ -404,8 +404,7 @@ fn iterate_zone_format_for_meta_zone_id(
     pair: (MetaZoneId, ZoneFormat),
 ) -> impl Iterator<Item = (MetaZoneId, TinyStr8, String)> {
     let (key1, zf) = pair;
-    zf.0.into_tuple_vec()
-        .into_iter()
+    zf.0.into_iter()
         .filter(|(key, _)| !key.eq("generic"))
         .map(move |(key, value)| {
             (
@@ -423,8 +422,7 @@ fn iterate_zone_format_for_time_zone_id(
     pair: (TimeZoneBcp47Id, ZoneFormat),
 ) -> impl Iterator<Item = (TimeZoneBcp47Id, TinyStr8, String)> {
     let (key1, zf) = pair;
-    zf.0.into_tuple_vec()
-        .into_iter()
+    zf.0.into_iter()
         .filter(|(key, _)| !key.eq("generic"))
         .map(move |(key, value)| {
             (
@@ -442,7 +440,7 @@ fn metazone_periods_iter(
     pair: (
         TimeZoneBcp47Id,
         Vec<MetaZoneForPeriod>,
-        LiteMap<String, MetaZoneId>,
+        HashMap<String, MetaZoneId>,
     ),
 ) -> impl Iterator<Item = (TimeZoneBcp47Id, String, Option<MetaZoneId>)> {
     let (time_zone_key, periods, meta_zone_id_data) = pair;

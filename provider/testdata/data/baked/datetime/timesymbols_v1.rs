@@ -1,54 +1,18 @@
 // @generated
 type DataStruct = & 'static < :: icu_datetime :: provider :: calendar :: TimeSymbolsV1Marker as :: icu_provider :: DataMarker > :: Yokeable ;
 pub static DATA: &[(&str, DataStruct)] = &[
-    (
-        "ar-EG-u-ca-buddhist",
-        AR_U_CA_BUDDHIST_AR_U_CA_COPTIC_AR_U_CA_ETHIOPIC,
-    ),
-    (
-        "ar-EG-u-ca-coptic",
-        AR_U_CA_BUDDHIST_AR_U_CA_COPTIC_AR_U_CA_ETHIOPIC,
-    ),
-    (
-        "ar-EG-u-ca-ethiopic",
-        AR_U_CA_BUDDHIST_AR_U_CA_COPTIC_AR_U_CA_ETHIOPIC,
-    ),
-    (
-        "ar-EG-u-ca-gregory",
-        AR_U_CA_BUDDHIST_AR_U_CA_COPTIC_AR_U_CA_ETHIOPIC,
-    ),
-    (
-        "ar-EG-u-ca-indian",
-        AR_U_CA_BUDDHIST_AR_U_CA_COPTIC_AR_U_CA_ETHIOPIC,
-    ),
-    (
-        "ar-EG-u-ca-japanese",
-        AR_U_CA_BUDDHIST_AR_U_CA_COPTIC_AR_U_CA_ETHIOPIC,
-    ),
-    (
-        "ar-u-ca-buddhist",
-        AR_U_CA_BUDDHIST_AR_U_CA_COPTIC_AR_U_CA_ETHIOPIC,
-    ),
-    (
-        "ar-u-ca-coptic",
-        AR_U_CA_BUDDHIST_AR_U_CA_COPTIC_AR_U_CA_ETHIOPIC,
-    ),
-    (
-        "ar-u-ca-ethiopic",
-        AR_U_CA_BUDDHIST_AR_U_CA_COPTIC_AR_U_CA_ETHIOPIC,
-    ),
-    (
-        "ar-u-ca-gregory",
-        AR_U_CA_BUDDHIST_AR_U_CA_COPTIC_AR_U_CA_ETHIOPIC,
-    ),
-    (
-        "ar-u-ca-indian",
-        AR_U_CA_BUDDHIST_AR_U_CA_COPTIC_AR_U_CA_ETHIOPIC,
-    ),
-    (
-        "ar-u-ca-japanese",
-        AR_U_CA_BUDDHIST_AR_U_CA_COPTIC_AR_U_CA_ETHIOPIC,
-    ),
+    ("ar-EG-u-ca-buddhist", AR_EG_U_CA_BUDDHIST_AR_EG_U_CA_COPTIC),
+    ("ar-EG-u-ca-coptic", AR_EG_U_CA_BUDDHIST_AR_EG_U_CA_COPTIC),
+    ("ar-EG-u-ca-ethiopic", AR_EG_U_CA_BUDDHIST_AR_EG_U_CA_COPTIC),
+    ("ar-EG-u-ca-gregory", AR_EG_U_CA_BUDDHIST_AR_EG_U_CA_COPTIC),
+    ("ar-EG-u-ca-indian", AR_EG_U_CA_BUDDHIST_AR_EG_U_CA_COPTIC),
+    ("ar-EG-u-ca-japanese", AR_EG_U_CA_BUDDHIST_AR_EG_U_CA_COPTIC),
+    ("ar-u-ca-buddhist", AR_EG_U_CA_BUDDHIST_AR_EG_U_CA_COPTIC),
+    ("ar-u-ca-coptic", AR_EG_U_CA_BUDDHIST_AR_EG_U_CA_COPTIC),
+    ("ar-u-ca-ethiopic", AR_EG_U_CA_BUDDHIST_AR_EG_U_CA_COPTIC),
+    ("ar-u-ca-gregory", AR_EG_U_CA_BUDDHIST_AR_EG_U_CA_COPTIC),
+    ("ar-u-ca-indian", AR_EG_U_CA_BUDDHIST_AR_EG_U_CA_COPTIC),
+    ("ar-u-ca-japanese", AR_EG_U_CA_BUDDHIST_AR_EG_U_CA_COPTIC),
     (
         "bn-u-ca-buddhist",
         BN_U_CA_BUDDHIST_BN_U_CA_COPTIC_BN_U_CA_ETHIOPIC,
@@ -291,27 +255,27 @@ pub static DATA: &[(&str, DataStruct)] = &[
     ),
     (
         "sr-Cyrl-u-ca-buddhist",
-        SR_U_CA_BUDDHIST_SR_U_CA_COPTIC_SR_U_CA_ETHIOPIC,
+        SR_CYRL_U_CA_BUDDHIST_SR_CYRL_U_CA_COPTIC,
     ),
     (
         "sr-Cyrl-u-ca-coptic",
-        SR_U_CA_BUDDHIST_SR_U_CA_COPTIC_SR_U_CA_ETHIOPIC,
+        SR_CYRL_U_CA_BUDDHIST_SR_CYRL_U_CA_COPTIC,
     ),
     (
         "sr-Cyrl-u-ca-ethiopic",
-        SR_U_CA_BUDDHIST_SR_U_CA_COPTIC_SR_U_CA_ETHIOPIC,
+        SR_CYRL_U_CA_BUDDHIST_SR_CYRL_U_CA_COPTIC,
     ),
     (
         "sr-Cyrl-u-ca-gregory",
-        SR_U_CA_BUDDHIST_SR_U_CA_COPTIC_SR_U_CA_ETHIOPIC,
+        SR_CYRL_U_CA_BUDDHIST_SR_CYRL_U_CA_COPTIC,
     ),
     (
         "sr-Cyrl-u-ca-indian",
-        SR_U_CA_BUDDHIST_SR_U_CA_COPTIC_SR_U_CA_ETHIOPIC,
+        SR_CYRL_U_CA_BUDDHIST_SR_CYRL_U_CA_COPTIC,
     ),
     (
         "sr-Cyrl-u-ca-japanese",
-        SR_U_CA_BUDDHIST_SR_U_CA_COPTIC_SR_U_CA_ETHIOPIC,
+        SR_CYRL_U_CA_BUDDHIST_SR_CYRL_U_CA_COPTIC,
     ),
     (
         "sr-Latn-u-ca-buddhist",
@@ -339,27 +303,18 @@ pub static DATA: &[(&str, DataStruct)] = &[
     ),
     (
         "sr-u-ca-buddhist",
-        SR_U_CA_BUDDHIST_SR_U_CA_COPTIC_SR_U_CA_ETHIOPIC,
+        SR_CYRL_U_CA_BUDDHIST_SR_CYRL_U_CA_COPTIC,
     ),
-    (
-        "sr-u-ca-coptic",
-        SR_U_CA_BUDDHIST_SR_U_CA_COPTIC_SR_U_CA_ETHIOPIC,
-    ),
+    ("sr-u-ca-coptic", SR_CYRL_U_CA_BUDDHIST_SR_CYRL_U_CA_COPTIC),
     (
         "sr-u-ca-ethiopic",
-        SR_U_CA_BUDDHIST_SR_U_CA_COPTIC_SR_U_CA_ETHIOPIC,
+        SR_CYRL_U_CA_BUDDHIST_SR_CYRL_U_CA_COPTIC,
     ),
-    (
-        "sr-u-ca-gregory",
-        SR_U_CA_BUDDHIST_SR_U_CA_COPTIC_SR_U_CA_ETHIOPIC,
-    ),
-    (
-        "sr-u-ca-indian",
-        SR_U_CA_BUDDHIST_SR_U_CA_COPTIC_SR_U_CA_ETHIOPIC,
-    ),
+    ("sr-u-ca-gregory", SR_CYRL_U_CA_BUDDHIST_SR_CYRL_U_CA_COPTIC),
+    ("sr-u-ca-indian", SR_CYRL_U_CA_BUDDHIST_SR_CYRL_U_CA_COPTIC),
     (
         "sr-u-ca-japanese",
-        SR_U_CA_BUDDHIST_SR_U_CA_COPTIC_SR_U_CA_ETHIOPIC,
+        SR_CYRL_U_CA_BUDDHIST_SR_CYRL_U_CA_COPTIC,
     ),
     (
         "th-u-ca-buddhist",
@@ -434,7 +389,7 @@ pub static DATA: &[(&str, DataStruct)] = &[
         BN_U_CA_BUDDHIST_BN_U_CA_COPTIC_BN_U_CA_ETHIOPIC,
     ),
 ];
-static AR_U_CA_BUDDHIST_AR_U_CA_COPTIC_AR_U_CA_ETHIOPIC: DataStruct =
+static AR_EG_U_CA_BUDDHIST_AR_EG_U_CA_COPTIC: DataStruct =
     &::icu_datetime::provider::calendar::TimeSymbolsV1 {
         day_periods: ::icu_datetime::provider::calendar::day_periods::ContextsV1 {
             format: ::icu_datetime::provider::calendar::day_periods::FormatWidthsV1 {
@@ -786,6 +741,45 @@ static RU_U_CA_BUDDHIST_RU_U_CA_COPTIC_RU_U_CA_ETHIOPIC: DataStruct =
             stand_alone: None,
         },
     };
+static SR_CYRL_U_CA_BUDDHIST_SR_CYRL_U_CA_COPTIC: DataStruct =
+    &::icu_datetime::provider::calendar::TimeSymbolsV1 {
+        day_periods: ::icu_datetime::provider::calendar::day_periods::ContextsV1 {
+            format: ::icu_datetime::provider::calendar::day_periods::FormatWidthsV1 {
+                abbreviated: ::icu_datetime::provider::calendar::day_periods::SymbolsV1 {
+                    am: ::alloc::borrow::Cow::Borrowed("AM"),
+                    pm: ::alloc::borrow::Cow::Borrowed("PM"),
+                    noon: Some(::alloc::borrow::Cow::Borrowed("подне")),
+                    midnight: Some(::alloc::borrow::Cow::Borrowed("поноћ")),
+                },
+                narrow: ::icu_datetime::provider::calendar::day_periods::SymbolsV1 {
+                    am: ::alloc::borrow::Cow::Borrowed("AM"),
+                    pm: ::alloc::borrow::Cow::Borrowed("PM"),
+                    noon: Some(::alloc::borrow::Cow::Borrowed("подне")),
+                    midnight: Some(::alloc::borrow::Cow::Borrowed("поноћ")),
+                },
+                short: None,
+                wide: ::icu_datetime::provider::calendar::day_periods::SymbolsV1 {
+                    am: ::alloc::borrow::Cow::Borrowed("AM"),
+                    pm: ::alloc::borrow::Cow::Borrowed("PM"),
+                    noon: Some(::alloc::borrow::Cow::Borrowed("подне")),
+                    midnight: Some(::alloc::borrow::Cow::Borrowed("поноћ")),
+                },
+            },
+            stand_alone: Some(
+                ::icu_datetime::provider::calendar::day_periods::StandAloneWidthsV1 {
+                    abbreviated: None,
+                    narrow: Some(::icu_datetime::provider::calendar::day_periods::SymbolsV1 {
+                        am: ::alloc::borrow::Cow::Borrowed("пре подне"),
+                        pm: ::alloc::borrow::Cow::Borrowed("по подне"),
+                        noon: Some(::alloc::borrow::Cow::Borrowed("подне")),
+                        midnight: Some(::alloc::borrow::Cow::Borrowed("поноћ")),
+                    }),
+                    short: None,
+                    wide: None,
+                },
+            ),
+        },
+    };
 static SR_LATN_U_CA_BUDDHIST_SR_LATN_U_CA_COPTIC: DataStruct =
     &::icu_datetime::provider::calendar::TimeSymbolsV1 {
         day_periods: ::icu_datetime::provider::calendar::day_periods::ContextsV1 {
@@ -818,45 +812,6 @@ static SR_LATN_U_CA_BUDDHIST_SR_LATN_U_CA_COPTIC: DataStruct =
                         pm: ::alloc::borrow::Cow::Borrowed("po podne"),
                         noon: Some(::alloc::borrow::Cow::Borrowed("podne")),
                         midnight: Some(::alloc::borrow::Cow::Borrowed("ponoć")),
-                    }),
-                    short: None,
-                    wide: None,
-                },
-            ),
-        },
-    };
-static SR_U_CA_BUDDHIST_SR_U_CA_COPTIC_SR_U_CA_ETHIOPIC: DataStruct =
-    &::icu_datetime::provider::calendar::TimeSymbolsV1 {
-        day_periods: ::icu_datetime::provider::calendar::day_periods::ContextsV1 {
-            format: ::icu_datetime::provider::calendar::day_periods::FormatWidthsV1 {
-                abbreviated: ::icu_datetime::provider::calendar::day_periods::SymbolsV1 {
-                    am: ::alloc::borrow::Cow::Borrowed("AM"),
-                    pm: ::alloc::borrow::Cow::Borrowed("PM"),
-                    noon: Some(::alloc::borrow::Cow::Borrowed("подне")),
-                    midnight: Some(::alloc::borrow::Cow::Borrowed("поноћ")),
-                },
-                narrow: ::icu_datetime::provider::calendar::day_periods::SymbolsV1 {
-                    am: ::alloc::borrow::Cow::Borrowed("AM"),
-                    pm: ::alloc::borrow::Cow::Borrowed("PM"),
-                    noon: Some(::alloc::borrow::Cow::Borrowed("подне")),
-                    midnight: Some(::alloc::borrow::Cow::Borrowed("поноћ")),
-                },
-                short: None,
-                wide: ::icu_datetime::provider::calendar::day_periods::SymbolsV1 {
-                    am: ::alloc::borrow::Cow::Borrowed("AM"),
-                    pm: ::alloc::borrow::Cow::Borrowed("PM"),
-                    noon: Some(::alloc::borrow::Cow::Borrowed("подне")),
-                    midnight: Some(::alloc::borrow::Cow::Borrowed("поноћ")),
-                },
-            },
-            stand_alone: Some(
-                ::icu_datetime::provider::calendar::day_periods::StandAloneWidthsV1 {
-                    abbreviated: None,
-                    narrow: Some(::icu_datetime::provider::calendar::day_periods::SymbolsV1 {
-                        am: ::alloc::borrow::Cow::Borrowed("пре подне"),
-                        pm: ::alloc::borrow::Cow::Borrowed("по подне"),
-                        noon: Some(::alloc::borrow::Cow::Borrowed("подне")),
-                        midnight: Some(::alloc::borrow::Cow::Borrowed("поноћ")),
                     }),
                     short: None,
                     wide: None,

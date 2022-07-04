@@ -118,6 +118,19 @@ pub struct ResourceKey {
     hash: ResourceKeyHash,
 }
 
+// I don't think this lint makes sense, see https://github.com/rust-lang/rust-clippy/issues/2627.
+// It's not possible to violate the hash invariant (k1 == k2 -> hash(k1) == hash(k2)) without
+// using non-determinism or unsafe code when PartialEq is derived.
+#[allow(clippy::derive_hash_xor_eq)]
+
+// Custom implementation to avoid hashing the path.
+impl core::hash::Hash for ResourceKey {
+    #[inline]
+    fn hash<H: core::hash::Hasher>(&self, state: &mut H) {
+        self.hash.hash(state)
+    }
+}
+
 #[cfg(test)]
 static_assertions::const_assert_eq!(24, core::mem::size_of::<ResourceKey>());
 

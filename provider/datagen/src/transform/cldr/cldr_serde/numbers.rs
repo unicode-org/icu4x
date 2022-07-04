@@ -9,9 +9,9 @@
 
 use icu_locid::LanguageIdentifier;
 use itertools::Itertools;
-use litemap::LiteMap;
 use serde::de::{Deserializer, Error, MapAccess, Unexpected, Visitor};
 use serde::Deserialize;
+use std::collections::HashMap;
 use tinystr::TinyStr8;
 
 #[derive(PartialEq, Debug, Deserialize)]
@@ -33,9 +33,9 @@ pub struct DecimalFormats {
 #[derive(PartialEq, Debug, Default)]
 pub struct NumberingSystemData {
     /// Map from numbering system to symbols
-    pub symbols: LiteMap<TinyStr8, Symbols>,
+    pub symbols: HashMap<TinyStr8, Symbols>,
     /// Map from numbering system to decimal formats
-    pub formats: LiteMap<TinyStr8, DecimalFormats>,
+    pub formats: HashMap<TinyStr8, DecimalFormats>,
 }
 
 pub struct NumberingSystemDataVisitor;
@@ -107,7 +107,7 @@ pub struct LangNumbers {
 }
 
 #[derive(PartialEq, Debug, Deserialize)]
-pub struct LangData(pub LiteMap<LanguageIdentifier, LangNumbers>);
+pub struct LangData(pub HashMap<LanguageIdentifier, LangNumbers>);
 
 #[derive(PartialEq, Debug, Deserialize)]
 pub struct Resource {

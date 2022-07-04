@@ -6,7 +6,6 @@ use databake::{quote, CrateEnv, TokenStream};
 use icu_provider::datagen::*;
 use icu_provider::prelude::*;
 use itertools::Itertools;
-use litemap::LiteMap;
 use rayon::prelude::*;
 use std::collections::HashMap;
 use std::fs::File;
@@ -31,8 +30,8 @@ pub(crate) struct BakedDataExporter {
     mod_directory: PathBuf,
     pretty: bool,
     insert_feature_gates: bool,
-    // Temporary storage for put_payload: key -> (marker path, options -> bake)
-    data: Mutex<LiteMap<ResourceKey, (SyncTokenStream, LiteMap<ResourceOptions, SyncTokenStream>)>>,
+    // Temporary storage for put_payload: key -> (marker path, bake -> [options])
+    data: Mutex<HashMap<ResourceKey, (SyncTokenStream, HashMap<SyncTokenStream, Vec<String>>)>>,
     // All mod.rs files in the module tree. Because generation is parallel,
     // this will be non-deterministic and have to be sorted later.
     mod_files: Mutex<HashMap<PathBuf, Vec<String>>>,
@@ -123,36 +122,26 @@ impl DataExporter for BakedDataExporter {
         payload: &DataPayload<ExportMarker>,
     ) -> Result<(), DataError> {
         let (payload, marker_type) = payload.tokenize(&self.dependencies);
-        let payload_string = payload.to_string();
-        let mut map = self.data.lock().expect("poison");
-        if !map.contains_key(&key) {
-            map.insert(key, (marker_type.to_string(), LiteMap::new()));
-        }
-        map.get_mut(&key)
-            .unwrap()
+        self.data
+            .lock()
+            .expect("poison")
+            .entry(key)
+            .or_insert_with(|| (marker_type.to_string(), Default::default()))
             .1
-            .insert(options.clone(), payload_string);
+            .entry(payload.to_string())
+            .or_default()
+            .push(options.to_string());
         Ok(())
     }
 
     fn flush(&self, key: ResourceKey) -> Result<(), DataError> {
         let tmp = self.data.lock().expect("poison").remove(&key);
-        if let Some((marker, raw)) = tmp {
-            let mut sorted = raw.into_tuple_vec();
-            // Sort by payload bake so we can deduplicate.
-            sorted.sort_by(|(_, a), (_, b)| a.cmp(b));
-
+        if let Some((marker, values)) = tmp {
             let mut statics = Vec::new();
             let mut all_options = Vec::new();
 
-            for (payload_bake_string, group) in &sorted
-                .into_iter()
-                .group_by(|(_, payload_bake_string)| payload_bake_string.clone())
-            {
-                // These are sorted because we stably sorted earlier.
-                let options = group
-                    .map(|(options, _)| options.to_string())
-                    .collect::<Vec<_>>();
+            for (payload_bake_string, mut options) in values {
+                options.sort();
                 let ident_string = options
                     .iter()
                     .map(|options| {

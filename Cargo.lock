@@ -1528,7 +1528,6 @@ dependencies = [
  "icu_testdata",
  "icu_uniset",
  "itertools",
- "litemap",
  "log",
  "proc-macro2",
  "quote",
@@ -1769,7 +1768,6 @@ version = "0.6.0"
 dependencies = [
  "icu_locid",
  "icu_provider",
- "litemap",
  "log",
  "postcard",
  "serde",
