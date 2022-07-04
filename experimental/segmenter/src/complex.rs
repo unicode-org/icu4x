@@ -107,9 +107,9 @@ mod tests {
                 options: ResourceOptions::from(locale),
                 metadata: Default::default(),
             })
-            .unwrap()
+            .expect("Loading should succeed!")
             .take_payload()
-            .unwrap();
+            .expect("Data should be present!");
         let breaks = complex_language_segment_str(&payload, TEST_STR);
         assert_eq!(breaks, [12, 21, 33, 42], "Thai test by UTF-8");
 
