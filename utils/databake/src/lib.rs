@@ -19,6 +19,57 @@
 //!     r#"[Some ((18i32 , :: alloc :: borrow :: Cow :: Borrowed ("hi")))]"#,
 //! );
 //! ```
+//!
+//! # Derive
+//! `Bake` can be automatically derived if the `derive` feature is enabled.
+//!
+//! ```
+//! use databake::*;
+//!
+//! #[derive(Bake)]
+//! #[databake(path = my_crate)]
+//! struct MyStruct {
+//!   number: u32,
+//!   string: &'static str,
+//!   slice: &'static [bool],
+//! }
+//!
+//! #[derive(Bake)]
+//! #[databake(path = my_crate)]
+//! struct AnotherOne(MyStruct, char);
+//! ```
+//!
+//! # Testing
+//! The [`test_bake`] macro can be uses to assert that a particular expression is a `Bake` fixed point.
+//!
+//! ```no_run https://github.com/rust-lang/rust/issues/98906
+//! # use databake::*;
+//! # #[derive(Bake)]
+//! # #[databake(path = my_crate)]
+//! # struct MyStruct {
+//! #   number: u32,
+//! #   string: &'static str,
+//! #   slice: &'static [bool],
+//! # }
+//! #
+//! # #[derive(Bake)]
+//! # #[databake(path = my_crate)]
+//! # struct AnotherOne(MyStruct, char);
+//! # fn main() {
+//! test_bake!(
+//!     AnotherOne,
+//!     const: crate::AnotherOne(
+//!         crate::MyStruct {
+//!           number: 17u32,
+//!           string: "foo",
+//!           slice: &[true, false],
+//!         },
+//!         'b',
+//!     ),
+//!     my_crate,
+//! );
+//! # }
+//! ```
 
 extern crate alloc;
 use alloc::borrow::{Cow, ToOwned};
@@ -81,7 +132,7 @@ macro_rules! literal {
     }
 }
 
-literal!(u8, u16, u32, u64, u128, usize, i8, i16, i32, i64, i128, isize, &str, char);
+literal!(u8, u16, u32, u64, u128, usize, i8, i16, i32, i64, i128, isize, &str, char, bool);
 
 impl<'a, T> Bake for &'a [T]
 where

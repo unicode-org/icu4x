@@ -24,8 +24,8 @@ impl<'a, K, V> Bake for ZeroMapBorrowed<'a, K, V>
 where
     K: ZeroMapKV<'a> + ?Sized,
     V: ZeroMapKV<'a> + ?Sized,
-    K::Slice: Bake,
-    V::Slice: Bake,
+    &'a K::Slice: Bake,
+    &'a V::Slice: Bake,
 {
     fn bake(&self, env: &CrateEnv) -> TokenStream {
         env.insert("zerovec");

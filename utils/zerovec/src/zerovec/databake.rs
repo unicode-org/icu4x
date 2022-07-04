@@ -17,7 +17,7 @@ where
     }
 }
 
-impl<T> Bake for ZeroSlice<T>
+impl<T> Bake for &ZeroSlice<T>
 where
     T: AsULE + ?Sized,
 {
@@ -42,7 +42,7 @@ fn test_baked_vec() {
 #[test]
 fn test_baked_slice() {
     test_bake!(
-        ZeroSlice<u32>,
+        &ZeroSlice<u32>,
         const: unsafe {
             crate::ZeroSlice::from_bytes_unchecked(&[2u8, 1u8, 0u8, 22u8, 0u8, 77u8, 1u8, 92u8])
         },

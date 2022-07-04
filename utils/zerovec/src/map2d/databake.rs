@@ -29,9 +29,9 @@ where
     K0: ZeroMapKV<'a> + ?Sized,
     K1: ZeroMapKV<'a> + ?Sized,
     V: ZeroMapKV<'a> + ?Sized,
-    K0::Slice: Bake,
-    K1::Slice: Bake,
-    V::Slice: Bake,
+    &'a K0::Slice: Bake,
+    &'a K1::Slice: Bake,
+    &'a V::Slice: Bake,
 {
     fn bake(&self, env: &CrateEnv) -> TokenStream {
         env.insert("zerovec");
