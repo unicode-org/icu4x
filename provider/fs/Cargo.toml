@@ -50,7 +50,7 @@ sha2 = { version = "0.10.2", optional = true }
 [dev-dependencies]
 icu_locid = { version = "0.6", path = "../../components/locid", features = ["serde"] }
 icu_benchmark_macros = { version = "0.6", path = "../../tools/benchmark/macros" }
-icu_provider = { version = "0.6", path = "../core", features = ["deserialize_json", "deserialize_bincode_1", "deserialize_postcard_07"] }
+icu_provider = { version = "0.6", path = "../core", features = ["deserialize_json", "deserialize_bincode_1", "deserialize_postcard_07", "datagen"] }
 criterion = "0.3.3"
 
 [features]

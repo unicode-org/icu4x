@@ -1737,7 +1737,6 @@ dependencies = [
  "icu_locid",
  "icu_provider_adapters",
  "icu_provider_macros",
- "litemap",
  "log",
  "postcard",
  "serde",

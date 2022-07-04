@@ -28,7 +28,7 @@ where
     /// use icu_provider::prelude::*;
     /// use icu_provider_adapters::filter::Filterable;
     ///
-    /// let provider = HelloWorldProvider::new_with_placeholder_data()
+    /// let provider = HelloWorldProvider
     ///     .filterable("Demo no-English filter")
     ///     .filter_by_langid(|langid| langid.language != language!("en"));
     ///
@@ -102,7 +102,7 @@ where
     /// use icu_provider_adapters::filter::Filterable;
     ///
     /// let allowlist = vec![langid!("de"), langid!("zh")];
-    /// let provider = HelloWorldProvider::new_with_placeholder_data()
+    /// let provider = HelloWorldProvider
     ///     .filterable("Demo German+Chinese filter")
     ///     .filter_by_langid_allowlist_strict(&allowlist);
     ///
@@ -162,7 +162,7 @@ where
     /// use icu_provider::prelude::*;
     /// use icu_provider_adapters::filter::Filterable;
     ///
-    /// let provider = HelloWorldProvider::new_with_placeholder_data()
+    /// let provider = HelloWorldProvider
     ///     .filterable("Demo require-langid filter")
     ///     .require_langid();
     ///
