@@ -263,10 +263,8 @@ impl AbstractFs {
             Self::Zip(root) => zip::ZipArchive::new(File::open(root)?)
                 .expect("validated in constructor")
                 .file_names()
-                .filter_map(|p| p.strip_prefix('/'))
                 .filter_map(|p| p.strip_prefix(path))
-                .filter_map(|suffix| suffix.split('/').next())
-                .filter(|s| !s.is_empty())
+                .filter_map(|suffix| suffix.split('/').filter(|s| !s.is_empty()).next())
                 .map(PathBuf::from)
                 .collect(),
         })
