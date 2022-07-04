@@ -10,7 +10,7 @@ use crate::transform::uprops::{
 use crate::SourceData;
 use icu_codepointtrie::CodePointTrie;
 use icu_codepointtrie_builder::{CodePointTrieBuilder, CodePointTrieBuilderData};
-use icu_locid::langid;
+use icu_locid::{langid, locale};
 use icu_properties::{
     maps, sets, EastAsianWidth, GeneralCategory, GraphemeClusterBreak, LineBreak, SentenceBreak,
     WordBreak,
@@ -778,28 +778,13 @@ icu_provider::make_exportable_provider!(
 
 impl IterableResourceProvider<UCharDictionaryBreakDataV1Marker> for SegmenterDictionaryProvider {
     fn supported_options(&self) -> Result<Vec<ResourceOptions>, DataError> {
-        let mut r = Vec::new();
-        let locale: icu_locid::Locale = ("th")
-            .parse()
-            .map_err(|_| DataError::custom("Cannot parse locale string"))?;
-        r.push(ResourceOptions::from(locale));
-        let locale: icu_locid::Locale = ("km")
-            .parse()
-            .map_err(|_| DataError::custom("Cannot parse locale string"))?;
-        r.push(ResourceOptions::from(locale));
-        let locale: icu_locid::Locale = ("lo")
-            .parse()
-            .map_err(|_| DataError::custom("Cannot parse locale string"))?;
-        r.push(ResourceOptions::from(locale));
-        let locale: icu_locid::Locale = ("my")
-            .parse()
-            .map_err(|_| DataError::custom("Cannot parse locale string"))?;
-        r.push(ResourceOptions::from(locale));
-        let locale: icu_locid::Locale = ("ja")
-            .parse()
-            .map_err(|_| DataError::custom("Cannot parse locale string"))?;
-        r.push(ResourceOptions::from(locale));
-        Ok(r)
+        Ok(vec![
+            locale!("th").into(),
+            locale!("km").into(),
+            locale!("lo").into(),
+            locale!("my").into(),
+            locale!("ja").into(),
+        ])
     }
 }
 
