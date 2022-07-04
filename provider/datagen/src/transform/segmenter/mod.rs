@@ -716,19 +716,19 @@ pub struct SegmenterDictionaryProvider {
 }
 
 impl SegmenterDictionaryProvider {
-    fn get_toml_filename(options: &ResourceOptions) -> Result<&'static str, DataError> {
+    fn get_toml_filename(options: &ResourceOptions) -> Option<&'static str> {
         if options.get_langid() == langid!("km") {
-            Ok("dictionary_km.toml")
+            Some("dictionary_km.toml")
         } else if options.get_langid() == langid!("ja") {
-            Ok("dictionary_cj.toml")
+            Some("dictionary_cj.toml")
         } else if options.get_langid() == langid!("lo") {
-            Ok("dictionary_lo.toml")
+            Some("dictionary_lo.toml")
         } else if options.get_langid() == langid!("my") {
-            Ok("dictionary_my.toml")
+            Some("dictionary_my.toml")
         } else if options.get_langid() == langid!("th") {
-            Ok("dictionary_th.toml")
+            Some("dictionary_th.toml")
         } else {
-            Err(DataError::custom("Unsupported options"))
+            None
         }
     }
 }
@@ -755,9 +755,10 @@ impl ResourceProvider<UCharDictionaryBreakDataV1Marker> for SegmenterDictionaryP
             let toml_data = self
                 .source
                 .segmenter()?
-                .read_and_parse_toml::<SegmenterDictionaryData>(Self::get_toml_filename(
-                    &req.options,
-                )?)?;
+                .read_and_parse_toml::<SegmenterDictionaryData>(
+                    Self::get_toml_filename(&req.options)
+                        .ok_or_else(|| DataErrorKind::MissingResourceOptions.into_error())?,
+                )?;
             let data = UCharDictionaryBreakDataV1 {
                 trie_data: ZeroVec::alloc_from_slice(&toml_data.trie_data),
             };
