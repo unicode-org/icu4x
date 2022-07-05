@@ -277,7 +277,7 @@ mod tests {
             metazone_period
                 .get()
                 .0
-                .get_copied(&TimeZoneBcp47Id(tinystr!(8, "gblon")), &963480)
+                .get_copied(&TimeZoneBcp47Id(tinystr!(8, "gblon")), &962040)
                 .unwrap()
         );
     }
