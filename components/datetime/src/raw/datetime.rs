@@ -119,7 +119,7 @@ impl TimeFormat {
     /// Takes a [`DateTimeInput`] implementer and returns an instance of a [`FormattedDateTime`]
     /// that contains all information necessary to display a formatted date and operate on it.
     #[inline]
-    pub fn format<'l, T>(&'l self, value: &'l T) -> FormattedDateTime<'l, T>
+    pub fn format<'l, T>(&'l self, value: &'l T) -> FormattedDateTime<'l>
     where
         T: DateTimeInput,
     {
@@ -127,7 +127,7 @@ impl TimeFormat {
             patterns: &self.patterns,
             date_symbols: None,
             time_symbols: self.symbols.as_ref().map(|s| s.get()),
-            datetime: value,
+            datetime: ExtractedDateTimeInput::extract_from(value),
             week_data: None,
             locale: &self.locale,
             ordinal_rules: None,
@@ -289,7 +289,7 @@ impl DateFormat {
     /// Takes a [`DateTimeInput`] implementer and returns an instance of a [`FormattedDateTime`]
     /// that contains all information necessary to display a formatted date and operate on it.
     #[inline]
-    pub fn format<'l, T>(&'l self, value: &'l T) -> FormattedDateTime<'l, T>
+    pub fn format<'l, T>(&'l self, value: &'l T) -> FormattedDateTime<'l>
     where
         T: DateTimeInput,
     {
@@ -297,7 +297,7 @@ impl DateFormat {
             patterns: &self.patterns,
             date_symbols: self.symbols.as_ref().map(|s| s.get()),
             time_symbols: None,
-            datetime: value,
+            datetime: ExtractedDateTimeInput::extract_from(value),
             week_data: None,
             locale: &self.locale,
             ordinal_rules: None,

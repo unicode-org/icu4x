@@ -178,13 +178,12 @@ fn assert_fixture_element<A, D>(
 {
     let any_input = input_value.to_any();
     let iso_any_input = input_iso.to_any();
-    let locale: Locale = locale.parse().unwrap();
     let dtf = DateTimeFormat::<A::Calendar>::try_new(locale.clone(), provider, options).unwrap();
     let result = dtf.format_to_string(input_value);
 
     assert_eq!(result, output_value, "{}", description);
 
-    let any_dtf = AnyDateTimeFormat::try_new_unstable(locale, provider, options).unwrap();
+    let any_dtf = AnyDateTimeFormat::try_new_unstable(locale.clone(), provider, options).unwrap();
     let result = any_dtf.format_to_string(&any_input).unwrap();
 
     assert_eq!(result, output_value, "(AnyDateTimeFormat) {}", description);
