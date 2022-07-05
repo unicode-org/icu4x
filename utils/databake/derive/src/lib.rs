@@ -15,6 +15,22 @@ use syn::{
 };
 use synstructure::{AddBounds, Structure};
 
+/// This custom derive auto-implements the `Bake` trait on any given type that can be
+/// in theory const-constructed.
+///
+/// For a type `Person` defined in the module `module` of crate `bar`, this derive
+/// can be used as follows:
+///
+/// ```rust
+/// use databake::Bake;
+///
+/// #[derive(Bake)]
+/// #[databake(path = bar::module)]
+/// pub struct Person<'a> {
+///    pub name: &'a str,
+///    pub age: u32,
+/// }
+/// ```
 #[proc_macro_derive(Bake, attributes(databake))]
 pub fn bake_derive(input: TokenStream) -> TokenStream {
     let input = parse_macro_input!(input as DeriveInput);
