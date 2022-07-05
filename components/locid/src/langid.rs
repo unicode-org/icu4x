@@ -314,6 +314,23 @@ impl LanguageIdentifier {
         iter.next().is_none()
     }
 
+    /// Merge an instance of [`LanguageIdentifier`] into this one.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::locid::langid;
+    ///
+    /// let mut lid = langid!("und-US");
+    /// let lid2 = langid!("en-Latn-GB");
+    ///
+    /// lid.merge(&lid2, false);
+    /// assert_eq!(lid, langid!("en-Latn-US"));
+    ///
+    /// lid.merge(&lid2, true);
+    /// assert_eq!(lid, langid!("en-Latn-GB"));
+    ///
+    /// ```
     pub fn merge(&mut self, other: &LanguageIdentifier, r#override: bool) -> bool {
         let mut modified = false;
         if !other.language.is_empty() && (self.language.is_empty() || r#override) {
@@ -329,7 +346,7 @@ impl LanguageIdentifier {
             modified = true;
         }
         if !other.variants.is_empty() {
-            modified |= self.variants.merge(&other.variants, r#override);
+            modified |= self.variants.merge(&other.variants);
         }
         modified
     }

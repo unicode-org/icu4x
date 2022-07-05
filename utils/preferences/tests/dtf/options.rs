@@ -1,8 +1,6 @@
 #[derive(Debug)]
 pub enum DayPeriod {
-    Narrow,
     Short,
-    Long,
 }
 
 impl Default for DayPeriod {

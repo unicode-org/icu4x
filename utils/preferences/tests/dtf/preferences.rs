@@ -1,4 +1,5 @@
 use icu_locid::{extensions::unicode, extensions_unicode_value};
+use tinystr::{tinystr, TinyStr4};
 
 #[derive(Clone, Copy)]
 pub enum Calendar {
@@ -19,18 +20,15 @@ impl TryFrom<&unicode::Value> for Calendar {
 }
 
 #[derive(Clone, Copy)]
-pub enum NumberingSystem {
-    Latn,
-    Arab,
-}
+pub struct NumberingSystem(pub TinyStr4);
 
 impl TryFrom<&unicode::Value> for NumberingSystem {
     type Error = ();
 
     fn try_from(i: &unicode::Value) -> Result<Self, Self::Error> {
         match i {
-            _ if *i == extensions_unicode_value!("latn") => Ok(Self::Latn),
-            _ if *i == extensions_unicode_value!("arab") => Ok(Self::Arab),
+            _ if *i == extensions_unicode_value!("latn") => Ok(Self(tinystr!(4, "latn"))),
+            _ if *i == extensions_unicode_value!("arab") => Ok(Self(tinystr!(4, "arab"))),
             _ => Err(()),
         }
     }

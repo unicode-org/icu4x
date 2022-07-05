@@ -109,7 +109,28 @@ impl Variants {
         core::mem::take(self)
     }
 
-    pub fn merge(&mut self, other: &Self, r#override: bool) -> bool {
+    /// Merge an instance of [`Variants`] into this one.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::locid::subtags::Variants;
+    /// use icu::locid::subtags_variant as variant;
+    ///
+    /// let mut variants = Variants::from_vec_unchecked(vec![
+    ///     variant!("macos"),
+    /// ]);
+    ///
+    /// let variants2 = Variants::from_vec_unchecked(vec![
+    ///     variant!("posix"),
+    /// ]);
+    ///
+    /// variants.merge(&variants2);
+    ///
+    /// assert!(variants.contains(&variant!("macos")));
+    /// assert!(variants.contains(&variant!("posix")));
+    /// ```
+    pub fn merge(&mut self, other: &Self) -> bool {
         let mut modified = false;
         if self.is_empty() && !other.is_empty() {
             self.0 = other.0.clone();
@@ -117,19 +138,14 @@ impl Variants {
         } else {
             let mut merged = self.to_vec();
             for v in other.iter() {
-                match merged.binary_search(v) {
-                    Ok(idx) if r#override => {
-                        merged.insert(idx, *v);
-                        modified = true;
-                    }
-                    Err(idx) => {
-                        merged.insert(idx, *v);
-                        modified = true;
-                    }
-                    _ => {}
+                if let Err(idx) = merged.binary_search(v) {
+                    merged.insert(idx, *v);
+                    modified = true;
                 }
             }
-            self.0 = merged.into();
+            if modified {
+                self.0 = merged.into();
+            }
         }
         modified
     }

@@ -1852,6 +1852,7 @@ version = "0.0.1"
 dependencies = [
  "icu_datetime",
  "icu_locid",
+ "tinystr 0.6.0",
 ]
 
 [[package]]

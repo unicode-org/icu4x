@@ -34,8 +34,8 @@
 //! let prefs = preferences::Bag::from_hour_cycle(preferences::HourCycle::H23);
 //! ```
 use crate::fields;
-use icu_locid::{extensions::unicode, extensions_unicode_value};
 use core::convert::TryFrom;
+use icu_locid::{extensions::unicode, extensions_unicode_value};
 
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};

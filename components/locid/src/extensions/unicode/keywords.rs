@@ -364,6 +364,45 @@ impl Keywords {
         }
     }
 
+    /// Merge an instance of [`Keywords`] into this one.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::locid::extensions::unicode::Keywords;
+    /// use icu::locid::{
+    ///     extensions_unicode_key as key,
+    ///     extensions_unicode_value as value,
+    /// };
+    ///
+    /// let mut kw: Keywords = vec![
+    ///     (
+    ///         key!("ca"),
+    ///         value!("latn"),
+    ///     ),
+    /// ].into_iter().collect();
+    ///
+    /// let kw2: Keywords = vec![
+    ///     (
+    ///         key!("ca"),
+    ///         value!("arab"),
+    ///     ),
+    ///     (
+    ///         key!("hc"),
+    ///         value!("h24"),
+    ///     ),
+    /// ].into_iter().collect();
+    ///
+    /// kw.merge(&kw2, false);
+    ///
+    /// assert_eq!(kw.get(&key!("hc")), Some(&value!("h24")));
+    /// assert_eq!(kw.get(&key!("ca")), Some(&value!("latn")));
+    ///
+    /// kw.merge(&kw2, true);
+    ///
+    /// assert_eq!(kw.get(&key!("hc")), Some(&value!("h24")));
+    /// assert_eq!(kw.get(&key!("ca")), Some(&value!("arab")));
+    /// ```
     pub fn merge(&mut self, other: &Self, r#override: bool) -> bool {
         let mut modified = false;
         for (k, v) in other.iter() {
@@ -378,6 +417,11 @@ impl Keywords {
         modified
     }
 
+    /// Produce an ordered iterator over key-value pairs
+    pub fn iter(&self) -> impl Iterator<Item = (&Key, &Value)> {
+        self.0.iter()
+    }
+
     pub(crate) fn for_each_subtag_str<E, F>(&self, f: &mut F) -> Result<(), E>
     where
         F: FnMut(&str) -> Result<(), E>,
@@ -387,10 +431,6 @@ impl Keywords {
             v.for_each_subtag_str(f)?;
         }
         Ok(())
-    }
-
-    pub fn iter<'a>(&'a self) -> impl Iterator<Item = (&'a Key, &'a Value)> {
-        self.0.iter()
     }
 
     /// This needs to be its own method to help with type inference in helpers.rs
