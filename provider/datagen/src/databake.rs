@@ -141,7 +141,7 @@ impl DataExporter for BakedDataExporter {
             .lock()
             .expect("poison")
             .remove(&key)
-            .expect("there should be data to flush");
+            .ok_or(DataError::custom("No data").with_key(key))?;
         let mut sorted = raw.into_tuple_vec();
         // Sort by payload bake so we can deduplicate.
         sorted.sort_by(|(_, a), (_, b)| a.cmp(b));
