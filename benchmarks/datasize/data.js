@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1657124960274,
+  "lastUpdate": 1657140727285,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -19343,6 +19343,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/3b9553eb44a9f36ac3fb245f15890a7bd2324cd9"
         },
         "date": 1657124929021,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 2535209,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "0239dcce3478efdf39cd462528d456adceacf7d2",
+          "message": "Formatting databake any.rs correctly (#2154)",
+          "timestamp": "2022-07-06T22:49:59+02:00",
+          "tree_id": "66e7e28f85bb4c2003286158075b6cc03700ad36",
+          "url": "https://github.com/unicode-org/icu4x/commit/0239dcce3478efdf39cd462528d456adceacf7d2"
+        },
+        "date": 1657140693552,
         "tool": "ndjson",
         "benches": [
           {
