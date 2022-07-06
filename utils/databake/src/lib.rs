@@ -16,7 +16,7 @@
 //! let data = [Some((18, Cow::Borrowed("hi")))];
 //! assert_eq!(
 //!     data.bake(&Default::default()).to_string(),
-//!     r#"[Some ((18i32 , :: alloc :: borrow :: Cow :: Borrowed ("hi") ,)) ,]"#,
+//!     r#"[Some ((18i32 , alloc :: borrow :: Cow :: Borrowed ("hi") ,)) ,]"#,
 //! );
 //! ```
 //!
@@ -71,8 +71,8 @@
 //! # }
 //! ```
 
-extern crate alloc;
-use alloc::borrow::{Cow, ToOwned};
+mod alloc;
+mod primitives;
 
 #[doc(no_inline)]
 pub use proc_macro2::TokenStream;
@@ -116,123 +116,6 @@ pub trait Bake {
     /// Crates that are required for the evaluation of the [`TokenStream`] will be
     /// added to `ctx`.
     fn bake(&self, ctx: &CrateEnv) -> TokenStream;
-}
-
-macro_rules! literal {
-    ($($type:ty,)*) => {
-        $(
-            impl Bake for $type {
-                fn bake(&self, _: &CrateEnv) -> TokenStream {
-                    quote! {
-                        #self
-                    }
-                }
-            }
-        )*
-    }
-}
-
-literal!(
-    u8, u16, u32, u64, u128, usize, 
-    i8, i16, i32, i64, i128, isize, 
-    f32, f64,
-    &str,
-    char,
-    bool,
-);
-
-impl<'a, T> Bake for &'a [T]
-where
-    T: Bake,
-{
-    fn bake(&self, ctx: &CrateEnv) -> TokenStream {
-        let data = self.iter().map(|d| d.bake(ctx));
-        quote! {
-            &[#(#data,)*]
-        }
-    }
-}
-
-impl<'a, T, const N: usize> Bake for [T; N]
-where
-    T: Bake,
-{
-    fn bake(&self, ctx: &CrateEnv) -> TokenStream {
-        let data = self.iter().map(|d| d.bake(ctx));
-        quote! {
-            [#(#data,)*]
-        }
-    }
-}
-
-impl<T> Bake for Option<T>
-where
-    T: Bake,
-{
-    fn bake(&self, ctx: &CrateEnv) -> TokenStream {
-        match self {
-            None => quote! { None },
-            Some(t) => {
-                let t = t.bake(ctx);
-                quote! {
-                    Some(#t)
-                }
-            }
-        }
-    }
-}
-
-macro_rules! tuple {
-    ($($ty:ident, $ident:ident),*) => {
-        impl<$($ty),*> Bake for ($($ty,)*) where $($ty: Bake),* {
-            fn bake(&self, _ctx: &CrateEnv) -> TokenStream {
-                let ($($ident,)*) = self;
-                $(
-                    let $ident = $ident.bake(_ctx);
-                )*
-                quote! {
-                    ($(#$ident,)*)
-                }
-            }
-        }
-    }
-}
-
-tuple!();
-tuple!(A, a);
-tuple!(A, a, B, b);
-tuple!(A, a, B, b, C, c);
-tuple!(A, a, B, b, C, c, D, d);
-tuple!(A, a, B, b, C, c, D, d, E, e);
-tuple!(A, a, B, b, C, c, D, d, E, e, F, f);
-tuple!(A, a, B, b, C, c, D, d, E, e, F, f, G, g);
-tuple!(A, a, B, b, C, c, D, d, E, e, F, f, G, g, H, h);
-tuple!(A, a, B, b, C, c, D, d, E, e, F, f, G, g, H, h, I, i);
-tuple!(A, a, B, b, C, c, D, d, E, e, F, f, G, g, H, h, I, i, J, j);
-
-impl<T: ?Sized + ToOwned> Bake for Cow<'_, T>
-where
-    for<'a> &'a T: Bake,
-{
-    fn bake(&self, ctx: &CrateEnv) -> TokenStream {
-        ctx.insert("alloc");
-        let t = <&T as Bake>::bake(&&**self, ctx);
-        quote! {
-            ::alloc::borrow::Cow::Borrowed(#t)
-        }
-    }
-}
-
-impl<'a, T> Bake for &'a T
-where
-    T: Bake,
-{
-    fn bake(&self, ctx: &CrateEnv) -> TokenStream {
-        let t = <T as Bake>::bake(*self, ctx);
-        quote! {
-            &#t
-        }
-    }
 }
 
 /// This macro tests that an expression evaluates to a value that bakes to the same expression.
@@ -296,13 +179,13 @@ macro_rules! test_bake {
         assert_eq!(bake, expected_bake);
 
         #[allow(unused_variable)]
-        let env = env.into_iter().collect::<std::collections::HashSet<_>>();
+        let _env = env.into_iter().collect::<std::collections::HashSet<_>>();
         $(
-            assert!(env.contains(stringify!($krate)), "Crate {:?} was not added to the CrateEnv", stringify!($krate));
+            assert!(_env.contains(stringify!($krate)), "Crate {:?} was not added to the CrateEnv", stringify!($krate));
         )?
         $(
             $(
-                assert!(env.contains(stringify!($env_crate)), "Crate {:?} was not added to the CrateEnv", stringify!($env_crate));
+                assert!(_env.contains(stringify!($env_crate)), "Crate {:?} was not added to the CrateEnv", stringify!($env_crate));
             )+
         )?
     };

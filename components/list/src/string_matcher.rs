@@ -28,7 +28,7 @@ impl PartialEq for StringMatcher<'_> {
 impl databake::Bake for StringMatcher<'_> {
     fn bake(&self, env: &databake::CrateEnv) -> databake::TokenStream {
         env.insert("icu_list");
-        let bytes = (&*self.dfa_bytes).bake(env);
+        let bytes = (&&*self.dfa_bytes).bake(env);
         // Safe because our own data is safe
         databake::quote! {
             unsafe { ::icu_list::provider::StringMatcher::from_dfa_bytes_unchecked(#bytes) }
@@ -199,11 +199,12 @@ mod test {
     }
 
     #[test]
+    #[ignore] // https://github.com/rust-lang/rust/issues/98906
     fn databake() {
         databake::test_bake!(
             StringMatcher,
             const: unsafe {
-                crate::provider::StringMatcher::from_dfa_bytes_unchecked(&[49u8, 50u8, 51u8])
+                crate::provider::StringMatcher::from_dfa_bytes_unchecked(&[49u8, 50u8, 51u8, ])
             },
             icu_list
         );
