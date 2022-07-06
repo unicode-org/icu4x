@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1656738701119,
+  "lastUpdate": 1657118498980,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -35008,6 +35008,60 @@ window.BENCHMARK_DATA = {
           {
             "name": "uniset/contains_range/best",
             "value": 3,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/worst",
+            "value": 3,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "dminor@mozilla.com",
+            "name": "Dan Minor",
+            "username": "dminor"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "ba52ba20451ae48ac756bddc6c00f2f2f9c41724",
+          "message": "Class Hierarchy for DateTimeFormat (#2133)\n\n* Create separate TimeFormat structure\r\n\r\n* Create separate DateFormat structure\r\n\r\n* Add DateTimeFormat::try_from_date_and_time\r\n\r\n* Review feedback, fixes and testing\r\n\r\n* Fixes after rebase",
+          "timestamp": "2022-07-06T10:31:52-04:00",
+          "tree_id": "a5c41d88f4d045b5a04490ccff1b983f68a4e56a",
+          "url": "https://github.com/unicode-org/icu4x/commit/ba52ba20451ae48ac756bddc6c00f2f2f9c41724"
+        },
+        "date": 1657118466327,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 50642823,
+            "range": "± 1815398",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/worst",
+            "value": 3,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/best",
+            "value": 2,
             "range": "± 0",
             "unit": "ns/iter"
           },
