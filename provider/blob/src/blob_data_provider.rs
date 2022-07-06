@@ -103,9 +103,7 @@ impl BufferProvider for BlobDataProvider {
                             })
                             .map_err(|kind| kind.with_req(key, req))?;
                         blob.buffers.get(idx).ok_or_else(|| {
-                            DataErrorKind::InvalidState
-                                .with_req(key, req)
-                                .with_str_context("Invalid bytes in BlobDataProvider")
+                            DataError::custom("Invalid blob bytes").with_req(key, req)
                         })
                     },
                 )?,
