@@ -658,7 +658,7 @@ dependencies = [
 
 [[package]]
 name = "databake"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "databake-derive",
  "proc-macro2",
@@ -668,7 +668,7 @@ dependencies = [
 
 [[package]]
 name = "databake-derive"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "databake",
  "proc-macro2",
