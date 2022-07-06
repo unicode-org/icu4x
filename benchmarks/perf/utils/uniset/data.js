@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1657125516046,
+  "lastUpdate": 1657141174409,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -35099,6 +35099,60 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 44578650,
             "range": "± 131422",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/worst",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/worst",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "0239dcce3478efdf39cd462528d456adceacf7d2",
+          "message": "Formatting databake any.rs correctly (#2154)",
+          "timestamp": "2022-07-06T22:49:59+02:00",
+          "tree_id": "66e7e28f85bb4c2003286158075b6cc03700ad36",
+          "url": "https://github.com/unicode-org/icu4x/commit/0239dcce3478efdf39cd462528d456adceacf7d2"
+        },
+        "date": 1657141146507,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 44611462,
+            "range": "± 138218",
             "unit": "ns/iter"
           },
           {
