@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1657118612404,
+  "lastUpdate": 1657125634090,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -35248,6 +35248,66 @@ window.BENCHMARK_DATA = {
           {
             "name": "from_string/1000000001",
             "value": 70,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "samchen61661@gmail.com",
+            "name": "samchen",
+            "username": "samchen61661"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "3b9553eb44a9f36ac3fb245f15890a7bd2324cd9",
+          "message": "convert metazone period from string to i32 (#2085)\n\n* convert metazone period from string to i32\r\n\r\n* address comments\r\n\r\n* address minor comments\r\n\r\n* remove unnecssary import\r\n\r\n* fix test\r\n\r\n* make testdata",
+          "timestamp": "2022-07-06T09:27:20-07:00",
+          "tree_id": "34dffe06089cbab69c92cc1a235b5eb58b7a93d7",
+          "url": "https://github.com/unicode-org/icu4x/commit/3b9553eb44a9f36ac3fb245f15890a7bd2324cd9"
+        },
+        "date": 1657125605263,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 123057,
+            "range": "± 7341",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 25415,
+            "range": "± 170",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 72369,
+            "range": "± 173",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 201,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 95,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 86,
             "range": "± 0",
             "unit": "ns/iter"
           }
