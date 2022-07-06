@@ -16,7 +16,7 @@
 //! let data = [Some((18, Cow::Borrowed("hi")))];
 //! assert_eq!(
 //!     data.bake(&Default::default()).to_string(),
-//!     r#"[Some ((18i32 , :: alloc :: borrow :: Cow :: Borrowed ("hi")))]"#,
+//!     r#"[Some ((18i32 , :: alloc :: borrow :: Cow :: Borrowed ("hi") ,)) ,]"#,
 //! );
 //! ```
 //!
@@ -119,7 +119,7 @@ pub trait Bake {
 }
 
 macro_rules! literal {
-    ($($type:ty),*) => {
+    ($($type:ty,)*) => {
         $(
             impl Bake for $type {
                 fn bake(&self, _: &CrateEnv) -> TokenStream {
@@ -132,7 +132,14 @@ macro_rules! literal {
     }
 }
 
-literal!(u8, u16, u32, u64, u128, usize, i8, i16, i32, i64, i128, isize, &str, char, bool);
+literal!(
+    u8, u16, u32, u64, u128, usize, 
+    i8, i16, i32, i64, i128, isize, 
+    f32, f64,
+    &str,
+    char,
+    bool,
+);
 
 impl<'a, T> Bake for &'a [T]
 where
@@ -141,7 +148,7 @@ where
     fn bake(&self, ctx: &CrateEnv) -> TokenStream {
         let data = self.iter().map(|d| d.bake(ctx));
         quote! {
-            &[#(#data),*]
+            &[#(#data,)*]
         }
     }
 }
@@ -153,7 +160,7 @@ where
     fn bake(&self, ctx: &CrateEnv) -> TokenStream {
         let data = self.iter().map(|d| d.bake(ctx));
         quote! {
-            [#(#data),*]
+            [#(#data,)*]
         }
     }
 }
@@ -177,24 +184,31 @@ where
 
 macro_rules! tuple {
     ($($ty:ident, $ident:ident),*) => {
-        impl<$($ty),*> Bake for ($($ty),*) where $($ty: Bake),* {
-            fn bake(&self, ctx: &CrateEnv) -> TokenStream {
-                let ($($ident),*) = self;
+        impl<$($ty),*> Bake for ($($ty,)*) where $($ty: Bake),* {
+            fn bake(&self, _ctx: &CrateEnv) -> TokenStream {
+                let ($($ident,)*) = self;
                 $(
-                    let $ident = $ident.bake(ctx);
+                    let $ident = $ident.bake(_ctx);
                 )*
                 quote! {
-                    ($(#$ident),*)
+                    ($(#$ident,)*)
                 }
             }
         }
     }
 }
 
+tuple!();
+tuple!(A, a);
 tuple!(A, a, B, b);
 tuple!(A, a, B, b, C, c);
 tuple!(A, a, B, b, C, c, D, d);
 tuple!(A, a, B, b, C, c, D, d, E, e);
+tuple!(A, a, B, b, C, c, D, d, E, e, F, f);
+tuple!(A, a, B, b, C, c, D, d, E, e, F, f, G, g);
+tuple!(A, a, B, b, C, c, D, d, E, e, F, f, G, g, H, h);
+tuple!(A, a, B, b, C, c, D, d, E, e, F, f, G, g, H, h, I, i);
+tuple!(A, a, B, b, C, c, D, d, E, e, F, f, G, g, H, h, I, i, J, j);
 
 impl<T: ?Sized + ToOwned> Bake for Cow<'_, T>
 where
