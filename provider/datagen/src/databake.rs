@@ -72,18 +72,6 @@ impl BakedDataExporter {
         }
 
         if self.pretty {
-            if path.file_stem().and_then(std::ffi::OsStr::to_str) == Some("any") {
-                // Rustfmt cannot handle the match statement in this file. This prettifies it a bit
-                // See https://github.com/rust-lang/rustfmt/issues/5422
-                let mut content = std::fs::read_to_string(&path)?;
-                content = content.replace(" :: ", "::");
-                content = content.replace(" ,", ",");
-                content = content.replace(" ?", "?");
-                content = content.replace(" <::", "\n            <::");
-                content = content.replace(" _", "\n            _");
-                File::create(&path)?.write_all(content.as_bytes())?;
-            }
-
             std::process::Command::new("rustfmt")
                 // When called on a file, rustfmt also formats all submodules.
                 // Because we might have massive submodules that are already
@@ -101,8 +89,14 @@ impl BakedDataExporter {
                     "--config=format_generated_files=true",
                     // quote! stringifies doc comments as attributes, which is not very readable
                     "--config=normalize_doc_attributes=true",
-                    // Defaults to 2015, but the 2021 parser is better
+                    // Defaults to 2015, but we're outputting 2021
                     "--edition=2021",
+                    // Rustfmt silently gives up if it cannot achieve the max width, which happens for any.rs
+                    if path.file_stem().and_then(std::ffi::OsStr::to_str) == Some("any") {
+                        "--config=max_width=150"
+                    } else {
+                        "--config=max_width=100"
+                    },
                 ])
                 .spawn()
                 .unwrap()
@@ -356,19 +350,21 @@ impl DataExporter for BakedDataExporter {
             if marker.to_string() == ":: icu_datetime :: provider :: calendar :: DateSkeletonPatternsV1Marker" {
                 quote! {
                     #feature
-                    <#marker as ResourceMarker>::KEY =>
+                    <#marker as ResourceMarker>::KEY => {
                         AnyPayload::from_rc_payload::<#marker>(
                             alloc::rc::Rc::new(
                                 DataPayload::from_owned(
                                     zerofrom::ZeroFrom::zero_from(
                                         litemap_slice_get(#data::DATA, key, req)?
-                        )))),
+                        ))))
+                    }
                 }
             } else {
                 quote!{
                     #feature
-                    <#marker as ResourceMarker>::KEY =>
-                        AnyPayload::from_static_ref::<<#marker as DataMarker>::Yokeable>(litemap_slice_get(#data::DATA, key, req)?),
+                    <#marker as ResourceMarker>::KEY => {
+                        AnyPayload::from_static_ref::<<#marker as DataMarker>::Yokeable>(litemap_slice_get(#data::DATA, key, req)?)
+                    }
                 }
             }
         });
