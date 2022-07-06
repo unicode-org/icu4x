@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1657118498980,
+  "lastUpdate": 1657125516046,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -35068,6 +35068,60 @@ window.BENCHMARK_DATA = {
           {
             "name": "uniset/contains_range/worst",
             "value": 3,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "samchen61661@gmail.com",
+            "name": "samchen",
+            "username": "samchen61661"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "3b9553eb44a9f36ac3fb245f15890a7bd2324cd9",
+          "message": "convert metazone period from string to i32 (#2085)\n\n* convert metazone period from string to i32\r\n\r\n* address comments\r\n\r\n* address minor comments\r\n\r\n* remove unnecssary import\r\n\r\n* fix test\r\n\r\n* make testdata",
+          "timestamp": "2022-07-06T09:27:20-07:00",
+          "tree_id": "34dffe06089cbab69c92cc1a235b5eb58b7a93d7",
+          "url": "https://github.com/unicode-org/icu4x/commit/3b9553eb44a9f36ac3fb245f15890a7bd2324cd9"
+        },
+        "date": 1657125487128,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 44578650,
+            "range": "± 131422",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/worst",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/worst",
+            "value": 2,
             "range": "± 0",
             "unit": "ns/iter"
           }
