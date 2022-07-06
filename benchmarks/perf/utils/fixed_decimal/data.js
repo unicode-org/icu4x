@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1656738848245,
+  "lastUpdate": 1657118612404,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -35189,6 +35189,66 @@ window.BENCHMARK_DATA = {
             "name": "from_string/1000000001",
             "value": 94,
             "range": "± 6",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "dminor@mozilla.com",
+            "name": "Dan Minor",
+            "username": "dminor"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "ba52ba20451ae48ac756bddc6c00f2f2f9c41724",
+          "message": "Class Hierarchy for DateTimeFormat (#2133)\n\n* Create separate TimeFormat structure\r\n\r\n* Create separate DateFormat structure\r\n\r\n* Add DateTimeFormat::try_from_date_and_time\r\n\r\n* Review feedback, fixes and testing\r\n\r\n* Fixes after rebase",
+          "timestamp": "2022-07-06T10:31:52-04:00",
+          "tree_id": "a5c41d88f4d045b5a04490ccff1b983f68a4e56a",
+          "url": "https://github.com/unicode-org/icu4x/commit/ba52ba20451ae48ac756bddc6c00f2f2f9c41724"
+        },
+        "date": 1657118581880,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 106063,
+            "range": "± 500",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 21379,
+            "range": "± 102",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 64362,
+            "range": "± 217",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 169,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 65,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 70,
+            "range": "± 0",
             "unit": "ns/iter"
           }
         ]
