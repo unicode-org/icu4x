@@ -115,9 +115,11 @@ impl BufferProvider for StaticDataProvider {
                     .ok_or(DataErrorKind::MissingResourceOptions)
             })
             .map_err(|kind| kind.with_req(key, req))?;
-        let bytes = self.data.buffers.get(idx).ok_or_else(|| {
-            DataError::custom("Invalid blob bytes").with_req(key, req)
-        })?;
+        let bytes = self
+            .data
+            .buffers
+            .get(idx)
+            .ok_or_else(|| DataError::custom("Invalid blob bytes").with_req(key, req))?;
         Ok(DataResponse {
             metadata,
             payload: { Some(DataPayload::from_static_buffer(bytes)) },
