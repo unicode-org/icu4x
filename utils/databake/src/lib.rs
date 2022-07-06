@@ -59,6 +59,10 @@ impl IntoIterator for CrateEnv {
 /// The `Bake` trait allows a piece of data to write itself into a Rust expression.
 ///
 /// This can be used to generate files with hardcoded data.
+///
+/// It is preferred for `Bake` implementations to work in `const` contexts.
+/// This trait does not enforce `const`ness, however this crate does not by default
+/// provide `Bake` implementations for types like `String` that cannot be const-constructed.
 pub trait Bake {
     /// Returns a [`TokenStream`] that would evalutate to `self`.
     ///

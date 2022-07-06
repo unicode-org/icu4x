@@ -15,8 +15,9 @@ use syn::{
 };
 use synstructure::{AddBounds, Structure};
 
-/// This custom derive auto-implements the `Bake` trait on any given type that can be
-/// in theory const-constructed.
+/// This custom derive auto-implements the `Bake` trait on any given type that has public
+/// fields that also implement `Bake`. It is preferred for `Bake` implementations to
+/// work in `const` contexts.
 ///
 /// For a type `Person` defined in the module `module` of crate `bar`, this derive
 /// can be used as follows:
