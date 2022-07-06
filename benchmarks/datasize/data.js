@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1656738072678,
+  "lastUpdate": 1657118040935,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -19283,6 +19283,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/7b52dbfe57043da5459c12627671a779d467dc0f"
         },
         "date": 1656738037401,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 2740181,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "dminor@mozilla.com",
+            "name": "Dan Minor",
+            "username": "dminor"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "ba52ba20451ae48ac756bddc6c00f2f2f9c41724",
+          "message": "Class Hierarchy for DateTimeFormat (#2133)\n\n* Create separate TimeFormat structure\r\n\r\n* Create separate DateFormat structure\r\n\r\n* Add DateTimeFormat::try_from_date_and_time\r\n\r\n* Review feedback, fixes and testing\r\n\r\n* Fixes after rebase",
+          "timestamp": "2022-07-06T10:31:52-04:00",
+          "tree_id": "a5c41d88f4d045b5a04490ccff1b983f68a4e56a",
+          "url": "https://github.com/unicode-org/icu4x/commit/ba52ba20451ae48ac756bddc6c00f2f2f9c41724"
+        },
+        "date": 1657118005744,
         "tool": "ndjson",
         "benches": [
           {
