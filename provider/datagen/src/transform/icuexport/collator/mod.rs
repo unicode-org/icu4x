@@ -122,7 +122,7 @@ macro_rules! collation_provider {
                         .read_and_parse_toml(
                             &format!(
                                 "collation/{}/{}{}.toml",
-                                self.source.collation_mode(),
+                                self.source.collation_han_database(),
                                 locale_to_file_name(&req.options), $suffix)
                         )?;
 
@@ -142,7 +142,7 @@ macro_rules! collation_provider {
                     Ok(self
                         .source
                         .icuexport()?
-                        .list(&format!("collation/{}", self.source.collation_mode()))?
+                        .list(&format!("collation/{}", self.source.collation_han_database()))?
                         .filter_map(|entry|
                             entry
                                 .file_stem()

@@ -5,7 +5,7 @@
 use clap::{App, Arg, ArgGroup};
 use eyre::WrapErr;
 
-use icu_datagen::SourceData;
+use icu_datagen::*;
 use icu_locid::LanguageIdentifier;
 use icu_provider::hello_world::HelloWorldV1Marker;
 use icu_provider::prelude::*;
@@ -113,10 +113,12 @@ fn main() -> eyre::Result<()> {
                 .default_value("small"),
         )
         .arg(
-            Arg::with_name("UNIHAN")
-                .long("unihan")
-                .takes_value(false)
-                .help("Use unihan collation data.")
+            Arg::with_name("COLLATION_HAN_DATABASE")
+                .long("collation-han-database")
+                .takes_value(true)
+                .possible_values(&["unihan", "implicit"])
+                .default_value("implicit")
+                .help("Which collation han database to use.")
         )
         .arg(
             Arg::with_name("CLDR_LOCALE_SUBSET")
@@ -268,9 +270,11 @@ fn main() -> eyre::Result<()> {
         source_data = source_data.with_fast_tries();
     }
 
-    if matches.is_present("UNIHAN") {
-        source_data = source_data.with_unihan();
-    }
+    source_data =
+        source_data.with_collation_han_database(match matches.value_of("COLLATION_HAN_DATABASE") {
+            Some("unihan") => CollationHanDatabase::Unihan,
+            _ => CollationHanDatabase::Implicit,
+        });
 
     let out = match matches
         .value_of("FORMAT")

@@ -22,7 +22,7 @@ pub struct SourceData {
     icuexport_paths: Option<Arc<TomlCache>>,
     segmenter_paths: Arc<TomlCache>,
     trie_type: IcuTrieType,
-    collation_mode: CollationHanMode,
+    collation_han_database: CollationHanDatabase,
 }
 
 impl Default for SourceData {
@@ -35,7 +35,7 @@ impl Default for SourceData {
                     .expect("valid dir"),
             )),
             trie_type: IcuTrieType::Small,
-            collation_mode: CollationHanMode::Implicit,
+            collation_han_database: CollationHanDatabase::Implicit,
         }
     }
 }
@@ -139,11 +139,10 @@ impl SourceData {
         }
     }
 
-    /// Set this to use unihan collation data. This will significantly increase data size.
-    /// See <https://github.com/unicode-org/icu/blob/main/docs/userguide/icu_data/buildtool.md#collation-ucadata>
-    pub fn with_unihan(self) -> Self {
+    /// Set the [`CollationHanDatabase`] version.
+    pub fn with_collation_han_database(self, collation_han_database: CollationHanDatabase) -> Self {
         Self {
-            collation_mode: CollationHanMode::Uni,
+            collation_han_database,
             ..self
         }
     }
@@ -187,8 +186,8 @@ impl SourceData {
     }
 
     #[cfg_attr(not(feature = "experimental"), allow(dead_code))]
-    pub(crate) fn collation_mode(&self) -> CollationHanMode {
-        self.collation_mode
+    pub(crate) fn collation_han_database(&self) -> CollationHanDatabase {
+        self.collation_han_database
     }
 }
 
@@ -217,17 +216,22 @@ impl std::fmt::Display for IcuTrieType {
     }
 }
 
+/// Specifies the collation Han database to use. Unihan is more precise but significantly increases data size.
+/// See <https://github.com/unicode-org/icu/blob/main/docs/userguide/icu_data/buildtool.md#collation-ucadata>
 #[derive(Clone, Copy, Debug)]
-pub(crate) enum CollationHanMode {
+#[non_exhaustive]
+pub enum CollationHanDatabase {
+    /// Implicit
     Implicit,
-    Uni,
+    /// Unihan
+    Unihan,
 }
 
-impl std::fmt::Display for CollationHanMode {
+impl std::fmt::Display for CollationHanDatabase {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> Result<(), std::fmt::Error> {
         match self {
-            CollationHanMode::Implicit => write!(f, "implicithan"),
-            CollationHanMode::Uni => write!(f, "unihan"),
+            CollationHanDatabase::Implicit => write!(f, "implicithan"),
+            CollationHanDatabase::Unihan => write!(f, "unihan"),
         }
     }
 }

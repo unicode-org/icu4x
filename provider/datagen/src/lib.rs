@@ -64,7 +64,7 @@ pub mod transform;
 
 pub use error::*;
 pub use registry::all_keys;
-pub use source::{CldrLocaleSubset, SourceData};
+pub use source::*;
 
 use icu_locid::LanguageIdentifier;
 use icu_provider::datagen::*;
