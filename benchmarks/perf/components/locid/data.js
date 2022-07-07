@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1657141440394,
+  "lastUpdate": 1657215961458,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -63443,6 +63443,150 @@ window.BENCHMARK_DATA = {
             "name": "subtags/variant/parse",
             "value": 163,
             "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "aethanyc@gmail.com",
+            "name": "Ting-Yu Lin",
+            "username": "aethanyc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "88d887e23ce4322a1ec9c53325bf848e381222db",
+          "message": "Enable license header check for C & C++ files (#2131)\n\nEnable `*.c` and `*.cpp` to cover the sample code, e.g in\r\n`ffi/diplomat/cpp/examples`. `*.h` and `*.hpp` are not checked because the\r\nheaders generated via diplomat do not contain ICU4X license header.",
+          "timestamp": "2022-07-07T17:28:31Z",
+          "tree_id": "18fc87d9f8dc5e1852277c30a14feec6f5abe64f",
+          "url": "https://github.com/unicode-org/icu4x/commit/88d887e23ce4322a1ec9c53325bf848e381222db"
+        },
+        "date": 1657215923523,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 4380,
+            "range": "± 153",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/construct/langid",
+            "value": 983,
+            "range": "± 58",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/to_string/langid",
+            "value": 1267,
+            "range": "± 92",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/to_string/langid/writeable",
+            "value": 603,
+            "range": "± 43",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/compare/struct/langid",
+            "value": 100,
+            "range": "± 8",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/compare/str/langid",
+            "value": 891,
+            "range": "± 58",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/compare/strict_cmp/langid",
+            "value": 419,
+            "range": "± 24",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/canonicalize/langid",
+            "value": 2954,
+            "range": "± 368",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 4666,
+            "range": "± 459",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/construct/locale",
+            "value": 2219,
+            "range": "± 194",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/to_string/locale",
+            "value": 1644,
+            "range": "± 87",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/to_string/locale/writeable",
+            "value": 1091,
+            "range": "± 71",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/compare/struct/locale",
+            "value": 278,
+            "range": "± 13",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/compare/str/locale",
+            "value": 2239,
+            "range": "± 110",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/compare/strict_cmp/locale",
+            "value": 659,
+            "range": "± 42",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/canonicalize/locale",
+            "value": 4309,
+            "range": "± 304",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "subtags/language/parse",
+            "value": 213,
+            "range": "± 12",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "subtags/script/parse",
+            "value": 149,
+            "range": "± 15",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "subtags/region/parse",
+            "value": 213,
+            "range": "± 7",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "subtags/variant/parse",
+            "value": 204,
+            "range": "± 10",
             "unit": "ns/iter"
           }
         ]
