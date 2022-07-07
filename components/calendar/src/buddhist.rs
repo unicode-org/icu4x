@@ -191,6 +191,6 @@ fn iso_year_as_buddhist(year: i32) -> types::Year {
     types::Year {
         era: types::Era(tinystr!(16, "be")),
         number: buddhist_year,
-        related_iso: year,
+        related_iso: None,
     }
 }

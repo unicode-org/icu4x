@@ -130,7 +130,7 @@ impl Calendar for Japanese {
         types::Year {
             era: types::Era(date.era),
             number: date.adjusted_year(),
-            related_iso: date.inner.0.year,
+            related_iso: None,
         }
     }
 

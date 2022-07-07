@@ -490,7 +490,7 @@ impl Iso {
         types::Year {
             era: types::Era(tinystr!(16, "default")),
             number: year,
-            related_iso: year,
+            related_iso: None,
         }
     }
 }

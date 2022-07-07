@@ -125,7 +125,7 @@ impl Calendar for Indian {
         types::Year {
             era: types::Era(tinystr!(16, "saka")),
             number: date.0.year,
-            related_iso: date.0.year + 78,
+            related_iso: None,
         }
     }
 
@@ -141,12 +141,12 @@ impl Calendar for Indian {
         let prev_year = types::Year {
             era: types::Era(tinystr!(16, "saka")),
             number: date.0.year - 1,
-            related_iso: date.0.year + 77,
+            related_iso: None,
         };
         let next_year = types::Year {
             era: types::Era(tinystr!(16, "saka")),
             number: date.0.year + 1,
-            related_iso: date.0.year + 79,
+            related_iso: None,
         };
         types::DayOfYearInfo {
             day_of_year: date.0.day_of_year(),

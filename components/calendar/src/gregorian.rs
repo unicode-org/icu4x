@@ -185,13 +185,13 @@ pub fn year_as_gregorian(year: i32) -> types::Year {
         types::Year {
             era: types::Era(tinystr!(16, "ad")),
             number: year,
-            related_iso: year,
+            related_iso: None,
         }
     } else {
         types::Year {
             era: types::Era(tinystr!(16, "bc")),
             number: 1 - year,
-            related_iso: year,
+            related_iso: None,
         }
     }
 }

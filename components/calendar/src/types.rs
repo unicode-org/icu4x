@@ -19,8 +19,10 @@ use zerovec::ule::AsULE;
 pub struct Era(pub TinyStr16);
 
 /// Representation of a formattable year.
+///
+/// More fields may be added in the future
 #[derive(Copy, Clone, Debug, PartialEq)]
-#[allow(clippy::exhaustive_structs)] // this type is stable
+#[non_exhaustive]
 pub struct Year {
     /// The era containing the year.
     pub era: Era,
@@ -30,9 +32,25 @@ pub struct Year {
 
     /// The related ISO year. This is normally the ISO (proleptic Gregorian) year having the greatest
     /// overlap with the calendar year. It is used in certain date formatting patterns.
-    pub related_iso: i32,
+    ///
+    /// Can be None if the calendar does not typically use related_iso (and CLDR does not contain patterns
+    /// using it)
+    pub related_iso: Option<i32>,
 }
 
+impl Year {
+    /// Construct a new Year given an era and number
+    ///
+    /// Other fields can be set mutably after construction
+    /// as needed
+    pub fn new(era: Era, number: i32) -> Self {
+        Self {
+            era,
+            number,
+            related_iso: None,
+        }
+    }
+}
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[allow(clippy::exhaustive_structs)] // this is a newtype
 #[cfg_attr(

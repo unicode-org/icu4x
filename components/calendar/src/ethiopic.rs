@@ -211,19 +211,19 @@ impl Ethiopic {
             types::Year {
                 era: types::Era(tinystr!(16, "mundi")),
                 number: year + 5493,
-                related_iso: year + 5493 + 8,
+                related_iso: None,
             }
         } else if year > 0 {
             types::Year {
                 era: types::Era(tinystr!(16, "incarnation")),
                 number: year,
-                related_iso: year + 8,
+                related_iso: None,
             }
         } else {
             types::Year {
                 era: types::Era(tinystr!(16, "before-incar")),
                 number: 1 - year,
-                related_iso: year + 8,
+                related_iso: None,
             }
         }
     }
