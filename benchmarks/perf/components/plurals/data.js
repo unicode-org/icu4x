@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1657215917872,
+  "lastUpdate": 1657235432370,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -62164,6 +62164,150 @@ window.BENCHMARK_DATA = {
           {
             "name": "plurals/pluralrules/select/fs",
             "value": 2069,
+            "range": "± 5",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "m_kato@ga2.so-net.ne.jp",
+            "name": "Makoto Kato",
+            "username": "makotokato"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "2ac1003bd83501ab70b3136cad7ee0fc7db8ea52",
+          "message": "Add segmenter dictionary data to datagen (#2135)\n\n* Add segmenter dictionary data to testdata.\r\n\r\n* Add license header and comnet to toml files\r\n\r\n* Use locale! macro instead\r\n\r\n* Use expect instead of unwrap in test.\r\n\r\n* Use DataErrorKind::MissingResourceOptions\r\n\r\n* Use locale macro more.\r\n\r\n* Remove unnecessary condition in datagen.\r\n\r\n* Fix clippy",
+          "timestamp": "2022-07-08T07:55:15+09:00",
+          "tree_id": "598554f2cc4a784db07570bf117148564cadeba8",
+          "url": "https://github.com/unicode-org/icu4x/commit/2ac1003bd83501ab70b3136cad7ee0fc7db8ea52"
+        },
+        "date": 1657235402787,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1100,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/operands/create/usize",
+            "value": 13,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/operands/create/isize",
+            "value": 21,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/operands/create/string",
+            "value": 939,
+            "range": "± 2",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/operands/create/string/samples/0",
+            "value": 18,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/operands/create/string/samples/10",
+            "value": 19,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/operands/create/string/samples/200",
+            "value": 21,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/operands/create/string/samples/3000",
+            "value": 24,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/operands/create/string/samples/40000",
+            "value": 26,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/operands/create/string/samples/500000",
+            "value": 28,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/operands/create/string/samples/6000000",
+            "value": 31,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/operands/create/string/samples/70000000",
+            "value": 33,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/operands/eq/mostly_unequal",
+            "value": 150,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/operands/eq/mostly_equal",
+            "value": 167,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/operands/create/from_fixed_decimal",
+            "value": 145,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 5059,
+            "range": "± 17",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/lex",
+            "value": 1684,
+            "range": "± 4",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 14912,
+            "range": "± 16",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/construct/fs",
+            "value": 6407,
+            "range": "± 3",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/select/fs",
+            "value": 2327,
             "range": "± 5",
             "unit": "ns/iter"
           }
