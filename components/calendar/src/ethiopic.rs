@@ -122,7 +122,7 @@ impl Calendar for Ethiopic {
         Self::year_as_ethiopic(date.0.year, self.0)
     }
 
-    fn month(&self, date: &Self::DateInner) -> types::Month {
+    fn month(&self, date: &Self::DateInner) -> types::FormattableMonth {
         date.0.solar_month()
     }
 

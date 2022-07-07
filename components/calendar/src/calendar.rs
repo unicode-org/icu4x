@@ -63,7 +63,7 @@ pub trait Calendar {
     fn year(&self, date: &Self::DateInner) -> types::FormattableYear;
 
     /// The calendar-specific month represented by `date`
-    fn month(&self, date: &Self::DateInner) -> types::Month;
+    fn month(&self, date: &Self::DateInner) -> types::FormattableMonth;
 
     /// The calendar-specific day-of-month represented by `date`
     fn day_of_month(&self, date: &Self::DateInner) -> types::DayOfMonth;

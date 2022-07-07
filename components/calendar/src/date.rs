@@ -167,7 +167,7 @@ impl<A: AsCalendar> Date<A> {
 
     /// The calendar-specific month represented by `self`
     #[inline]
-    pub fn month(&self) -> types::Month {
+    pub fn month(&self) -> types::FormattableMonth {
         self.calendar.as_calendar().month(&self.inner)
     }
 

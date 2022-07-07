@@ -105,7 +105,7 @@ impl DateInput for MockZonedDateTime {
         self.datetime.year()
     }
 
-    fn month(&self) -> Option<Month> {
+    fn month(&self) -> Option<FormattableMonth> {
         self.datetime.month()
     }
 

@@ -129,7 +129,7 @@ impl Calendar for Indian {
         }
     }
 
-    fn month(&self, date: &Self::DateInner) -> types::Month {
+    fn month(&self, date: &Self::DateInner) -> types::FormattableMonth {
         date.0.solar_month()
     }
 

@@ -121,7 +121,7 @@ impl Calendar for Coptic {
         crate::gregorian::year_as_gregorian(date.0.year)
     }
 
-    fn month(&self, date: &Self::DateInner) -> types::Month {
+    fn month(&self, date: &Self::DateInner) -> types::FormattableMonth {
         date.0.solar_month()
     }
 

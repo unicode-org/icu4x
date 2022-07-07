@@ -30,7 +30,7 @@ pub trait DateInput {
     fn year(&self) -> Option<FormattableYear>;
 
     /// Gets the month input.
-    fn month(&self) -> Option<Month>;
+    fn month(&self) -> Option<FormattableMonth>;
 
     /// Gets the day input.
     fn day_of_month(&self) -> Option<DayOfMonth>;
@@ -137,7 +137,7 @@ pub(crate) struct DateTimeInputWithLocale<'data, T: DateTimeInput> {
 /// See [`DateTimeInput`] for documentation on individual fields
 pub(crate) struct ExtractedDateTimeInput {
     year: Option<FormattableYear>,
-    month: Option<Month>,
+    month: Option<FormattableMonth>,
     day_of_month: Option<DayOfMonth>,
     iso_weekday: Option<IsoWeekday>,
     day_of_year_info: Option<DayOfYearInfo>,
@@ -197,7 +197,7 @@ impl DateInput for ExtractedDateTimeInput {
     fn year(&self) -> Option<FormattableYear> {
         self.year
     }
-    fn month(&self) -> Option<Month> {
+    fn month(&self) -> Option<FormattableMonth> {
         self.month
     }
     fn day_of_month(&self) -> Option<DayOfMonth> {
@@ -239,7 +239,7 @@ impl DateInput for ExtractedZonedDateTimeInput {
     fn year(&self) -> Option<FormattableYear> {
         self.date_time_input.year
     }
-    fn month(&self) -> Option<Month> {
+    fn month(&self) -> Option<FormattableMonth> {
         self.date_time_input.month
     }
     fn day_of_month(&self) -> Option<DayOfMonth> {
@@ -488,7 +488,7 @@ impl<C: Calendar, A: AsCalendar<Calendar = C>> DateInput for Date<A> {
     }
 
     /// Gets the month input.
-    fn month(&self) -> Option<Month> {
+    fn month(&self) -> Option<FormattableMonth> {
         Some(self.month())
     }
 
@@ -524,7 +524,7 @@ impl<C: Calendar, A: AsCalendar<Calendar = C>> DateInput for DateTime<A> {
     }
 
     /// Gets the month input.
-    fn month(&self) -> Option<Month> {
+    fn month(&self) -> Option<FormattableMonth> {
         Some(self.date.month())
     }
 
