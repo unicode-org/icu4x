@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1657141351162,
+  "lastUpdate": 1657215744790,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -45671,6 +45671,102 @@ window.BENCHMARK_DATA = {
             "name": "pattern/parse",
             "value": 3394,
             "range": "± 1243",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "aethanyc@gmail.com",
+            "name": "Ting-Yu Lin",
+            "username": "aethanyc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "88d887e23ce4322a1ec9c53325bf848e381222db",
+          "message": "Enable license header check for C & C++ files (#2131)\n\nEnable `*.c` and `*.cpp` to cover the sample code, e.g in\r\n`ffi/diplomat/cpp/examples`. `*.h` and `*.hpp` are not checked because the\r\nheaders generated via diplomat do not contain ICU4X license header.",
+          "timestamp": "2022-07-07T17:28:31Z",
+          "tree_id": "18fc87d9f8dc5e1852277c30a14feec6f5abe64f",
+          "url": "https://github.com/unicode-org/icu4x/commit/88d887e23ce4322a1ec9c53325bf848e381222db"
+        },
+        "date": 1657215714497,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 94855,
+            "range": "± 779",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 897803,
+            "range": "± 1038",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 175369,
+            "range": "± 297",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/DateTimeFormat/format_to_write",
+            "value": 84235,
+            "range": "± 75",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/DateTimeFormat/format_to_string",
+            "value": 92156,
+            "range": "± 72",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/format",
+            "value": 95842,
+            "range": "± 72",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/to_string",
+            "value": 102658,
+            "range": "± 149",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/ZonedDateTimeFormat/format_to_write",
+            "value": 163765,
+            "range": "± 167",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/ZonedDateTimeFormat/format_to_string",
+            "value": 176722,
+            "range": "± 182",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/format",
+            "value": 175182,
+            "range": "± 318",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/to_string",
+            "value": 187984,
+            "range": "± 302",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "pattern/parse",
+            "value": 4753,
+            "range": "± 8",
             "unit": "ns/iter"
           }
         ]
