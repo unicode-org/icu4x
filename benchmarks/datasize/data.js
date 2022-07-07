@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1657215021467,
+  "lastUpdate": 1657234632287,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -19408,6 +19408,36 @@ window.BENCHMARK_DATA = {
           {
             "name": "provider/testdata/data/testdata.postcard",
             "value": 2535209,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "m_kato@ga2.so-net.ne.jp",
+            "name": "Makoto Kato",
+            "username": "makotokato"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "2ac1003bd83501ab70b3136cad7ee0fc7db8ea52",
+          "message": "Add segmenter dictionary data to datagen (#2135)\n\n* Add segmenter dictionary data to testdata.\r\n\r\n* Add license header and comnet to toml files\r\n\r\n* Use locale! macro instead\r\n\r\n* Use expect instead of unwrap in test.\r\n\r\n* Use DataErrorKind::MissingResourceOptions\r\n\r\n* Use locale macro more.\r\n\r\n* Remove unnecessary condition in datagen.\r\n\r\n* Fix clippy",
+          "timestamp": "2022-07-08T07:55:15+09:00",
+          "tree_id": "598554f2cc4a784db07570bf117148564cadeba8",
+          "url": "https://github.com/unicode-org/icu4x/commit/2ac1003bd83501ab70b3136cad7ee0fc7db8ea52"
+        },
+        "date": 1657234600186,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4763611,
             "unit": "bytes",
             "biggerIsBetter": false
           }
