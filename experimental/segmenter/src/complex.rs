@@ -94,7 +94,7 @@ pub fn complex_language_segment_str(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use icu_locid::{locale, Locale};
+    use icu_locid::locale;
     use icu_provider::{DataRequest, ResourceOptions, ResourceProvider};
 
     #[test]
