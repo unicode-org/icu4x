@@ -746,29 +746,20 @@ impl ResourceProvider<UCharDictionaryBreakDataV1Marker> for SegmenterDictionaryP
         &self,
         req: &DataRequest,
     ) -> Result<DataResponse<UCharDictionaryBreakDataV1Marker>, DataError> {
-        if req.options.get_langid() == langid!("ja")
-            || req.options.get_langid() == langid!("km")
-            || req.options.get_langid() == langid!("lo")
-            || req.options.get_langid() == langid!("my")
-            || req.options.get_langid() == langid!("th")
-        {
-            let toml_data = self
-                .source
-                .segmenter()?
-                .read_and_parse_toml::<SegmenterDictionaryData>(
-                    Self::get_toml_filename(&req.options)
-                        .ok_or_else(|| DataErrorKind::MissingResourceOptions.into_error())?,
-                )?;
-            let data = UCharDictionaryBreakDataV1 {
-                trie_data: ZeroVec::alloc_from_slice(&toml_data.trie_data),
-            };
-            Ok(DataResponse {
-                metadata: DataResponseMetadata::default(),
-                payload: Some(DataPayload::from_owned(data)),
-            })
-        } else {
-            Err(DataError::custom("Unsupported"))
-        }
+        let toml_data = self
+            .source
+            .segmenter()?
+            .read_and_parse_toml::<SegmenterDictionaryData>(
+                Self::get_toml_filename(&req.options)
+                    .ok_or_else(|| DataErrorKind::MissingResourceOptions.into_error())?,
+            )?;
+        let data = UCharDictionaryBreakDataV1 {
+            trie_data: ZeroVec::alloc_from_slice(&toml_data.trie_data),
+        };
+        Ok(DataResponse {
+            metadata: DataResponseMetadata::default(),
+            payload: Some(DataPayload::from_owned(data)),
+        })
     }
 }
 
