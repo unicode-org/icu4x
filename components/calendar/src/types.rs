@@ -20,7 +20,8 @@ pub struct Era(pub TinyStr16);
 
 /// Representation of a formattable year.
 ///
-/// More fields may be added in the future
+/// More fields may be added in the future, for things like
+/// the cyclic or extended year
 #[derive(Copy, Clone, Debug, PartialEq)]
 #[non_exhaustive]
 pub struct FormattableYear {
