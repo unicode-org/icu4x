@@ -94,14 +94,14 @@ pub fn complex_language_segment_str(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use icu_locid::Locale;
+    use icu_locid::{locale, Locale};
     use icu_provider::{DataRequest, ResourceOptions, ResourceProvider};
 
     #[test]
     fn thai_word_break() {
         const TEST_STR: &str = "ภาษาไทยภาษาไทย";
         let provider = icu_testdata::get_provider();
-        let locale: Locale = ("th").parse().unwrap();
+        let locale = locale!("th");
         let payload = provider
             .load_resource(&DataRequest {
                 options: ResourceOptions::from(locale),

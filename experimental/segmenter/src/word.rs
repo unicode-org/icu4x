@@ -6,7 +6,7 @@ use alloc::string::String;
 use alloc::vec;
 use alloc::vec::Vec;
 use core::str::CharIndices;
-use icu_locid::Locale;
+use icu_locid::locale;
 use icu_provider::prelude::*;
 
 use crate::complex::*;
@@ -41,9 +41,7 @@ impl WordBreakSegmenter {
             .load_resource(&DataRequest::default())?
             .take_payload()?;
 
-        let locale: Locale = ("th")
-            .parse()
-            .map_err(|_| DataError::custom("cannot parse locale string"))?;
+        let locale = locale!("th");
         let dictionary_payload = provider
             .load_resource(&DataRequest {
                 options: ResourceOptions::from(locale),

@@ -166,16 +166,13 @@ impl<'l> DictionarySegmenter<'l> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use icu_locid::Locale;
+    use icu_locid::{locale, Locale};
     use zerovec::ZeroSlice;
 
     fn get_payload(
-        locale_str: &str,
+        locale: Locale,
     ) -> Result<DataPayload<UCharDictionaryBreakDataV1Marker>, DataError> {
         let provider = icu_testdata::get_provider();
-        let locale: Locale = (locale_str)
-            .parse()
-            .map_err(|_| DataError::custom("Cannot parse locale string"))?;
         provider
             .load_resource(&DataRequest {
                 options: ResourceOptions::from(locale),
@@ -216,7 +213,7 @@ mod tests {
 
     #[test]
     fn cj_dictionary_test() {
-        let payload = get_payload("ja").unwrap();
+        let payload = get_payload(locale!("ja")).unwrap();
         let segmenter = DictionarySegmenter::try_new(&payload).expect("Data exists");
 
         // Match case
