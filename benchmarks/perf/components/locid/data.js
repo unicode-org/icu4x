@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1657215961458,
+  "lastUpdate": 1657235407316,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -63587,6 +63587,150 @@ window.BENCHMARK_DATA = {
             "name": "subtags/variant/parse",
             "value": 204,
             "range": "± 10",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "m_kato@ga2.so-net.ne.jp",
+            "name": "Makoto Kato",
+            "username": "makotokato"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "2ac1003bd83501ab70b3136cad7ee0fc7db8ea52",
+          "message": "Add segmenter dictionary data to datagen (#2135)\n\n* Add segmenter dictionary data to testdata.\r\n\r\n* Add license header and comnet to toml files\r\n\r\n* Use locale! macro instead\r\n\r\n* Use expect instead of unwrap in test.\r\n\r\n* Use DataErrorKind::MissingResourceOptions\r\n\r\n* Use locale macro more.\r\n\r\n* Remove unnecessary condition in datagen.\r\n\r\n* Fix clippy",
+          "timestamp": "2022-07-08T07:55:15+09:00",
+          "tree_id": "598554f2cc4a784db07570bf117148564cadeba8",
+          "url": "https://github.com/unicode-org/icu4x/commit/2ac1003bd83501ab70b3136cad7ee0fc7db8ea52"
+        },
+        "date": 1657235369062,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 4086,
+            "range": "± 58",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/construct/langid",
+            "value": 965,
+            "range": "± 20",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/to_string/langid",
+            "value": 1236,
+            "range": "± 26",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/to_string/langid/writeable",
+            "value": 643,
+            "range": "± 6",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/compare/struct/langid",
+            "value": 83,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/compare/str/langid",
+            "value": 887,
+            "range": "± 9",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/compare/strict_cmp/langid",
+            "value": 434,
+            "range": "± 2",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/canonicalize/langid",
+            "value": 2742,
+            "range": "± 31",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 4725,
+            "range": "± 81",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/construct/locale",
+            "value": 2018,
+            "range": "± 39",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/to_string/locale",
+            "value": 1503,
+            "range": "± 25",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/to_string/locale/writeable",
+            "value": 1058,
+            "range": "± 21",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/compare/struct/locale",
+            "value": 271,
+            "range": "± 6",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/compare/str/locale",
+            "value": 2121,
+            "range": "± 19",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/compare/strict_cmp/locale",
+            "value": 640,
+            "range": "± 4",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/canonicalize/locale",
+            "value": 4115,
+            "range": "± 34",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "subtags/language/parse",
+            "value": 204,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "subtags/script/parse",
+            "value": 138,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "subtags/region/parse",
+            "value": 211,
+            "range": "± 2",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "subtags/variant/parse",
+            "value": 192,
+            "range": "± 3",
             "unit": "ns/iter"
           }
         ]
