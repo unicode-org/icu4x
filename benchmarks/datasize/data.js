@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1657140727285,
+  "lastUpdate": 1657215021467,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -19373,6 +19373,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/0239dcce3478efdf39cd462528d456adceacf7d2"
         },
         "date": 1657140693552,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 2535209,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "aethanyc@gmail.com",
+            "name": "Ting-Yu Lin",
+            "username": "aethanyc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "88d887e23ce4322a1ec9c53325bf848e381222db",
+          "message": "Enable license header check for C & C++ files (#2131)\n\nEnable `*.c` and `*.cpp` to cover the sample code, e.g in\r\n`ffi/diplomat/cpp/examples`. `*.h` and `*.hpp` are not checked because the\r\nheaders generated via diplomat do not contain ICU4X license header.",
+          "timestamp": "2022-07-07T17:28:31Z",
+          "tree_id": "18fc87d9f8dc5e1852277c30a14feec6f5abe64f",
+          "url": "https://github.com/unicode-org/icu4x/commit/88d887e23ce4322a1ec9c53325bf848e381222db"
+        },
+        "date": 1657214992485,
         "tool": "ndjson",
         "benches": [
           {
