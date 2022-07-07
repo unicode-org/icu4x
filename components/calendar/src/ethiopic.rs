@@ -118,7 +118,7 @@ impl Calendar for Ethiopic {
         date1.0.until(date2.0, _largest_unit, _smallest_unit)
     }
 
-    fn year(&self, date: &Self::DateInner) -> types::Year {
+    fn year(&self, date: &Self::DateInner) -> types::FormattableYear {
         Self::year_as_ethiopic(date.0.year, self.0)
     }
 
@@ -206,21 +206,21 @@ impl Ethiopic {
         }
     }
 
-    fn year_as_ethiopic(year: i32, amete_alem: bool) -> types::Year {
+    fn year_as_ethiopic(year: i32, amete_alem: bool) -> types::FormattableYear {
         if amete_alem {
-            types::Year {
+            types::FormattableYear {
                 era: types::Era(tinystr!(16, "mundi")),
                 number: year + 5493,
                 related_iso: None,
             }
         } else if year > 0 {
-            types::Year {
+            types::FormattableYear {
                 era: types::Era(tinystr!(16, "incarnation")),
                 number: year,
                 related_iso: None,
             }
         } else {
-            types::Year {
+            types::FormattableYear {
                 era: types::Era(tinystr!(16, "before-incar")),
                 number: 1 - year,
                 related_iso: None,

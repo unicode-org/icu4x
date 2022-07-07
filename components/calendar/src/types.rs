@@ -23,7 +23,7 @@ pub struct Era(pub TinyStr16);
 /// More fields may be added in the future
 #[derive(Copy, Clone, Debug, PartialEq)]
 #[non_exhaustive]
-pub struct Year {
+pub struct FormattableYear {
     /// The era containing the year.
     pub era: Era,
 
@@ -38,7 +38,7 @@ pub struct Year {
     pub related_iso: Option<i32>,
 }
 
-impl Year {
+impl FormattableYear {
     /// Construct a new Year given an era and number
     ///
     /// Other fields can be set mutably after construction
@@ -108,11 +108,11 @@ pub struct DayOfYearInfo {
     /// The number of days in a year.
     pub days_in_year: u32,
     /// The previous year.
-    pub prev_year: Year,
+    pub prev_year: FormattableYear,
     /// The number of days in the previous year.
     pub days_in_prev_year: u32,
     /// The next year.
-    pub next_year: Year,
+    pub next_year: FormattableYear,
 }
 
 /// A day number in a month. Usually 1-based.

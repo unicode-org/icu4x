@@ -121,8 +121,8 @@ impl Calendar for Indian {
         date1.0.until(date2.0, _largest_unit, _smallest_unit)
     }
 
-    fn year(&self, date: &Self::DateInner) -> types::Year {
-        types::Year {
+    fn year(&self, date: &Self::DateInner) -> types::FormattableYear {
+        types::FormattableYear {
             era: types::Era(tinystr!(16, "saka")),
             number: date.0.year,
             related_iso: None,
@@ -138,12 +138,12 @@ impl Calendar for Indian {
     }
 
     fn day_of_year_info(&self, date: &Self::DateInner) -> types::DayOfYearInfo {
-        let prev_year = types::Year {
+        let prev_year = types::FormattableYear {
             era: types::Era(tinystr!(16, "saka")),
             number: date.0.year - 1,
             related_iso: None,
         };
-        let next_year = types::Year {
+        let next_year = types::FormattableYear {
             era: types::Era(tinystr!(16, "saka")),
             number: date.0.year + 1,
             related_iso: None,

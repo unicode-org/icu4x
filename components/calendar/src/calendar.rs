@@ -60,7 +60,7 @@ pub trait Calendar {
     // fn since(&self, from: &Date<Self>, to: &Date<Self>) -> Duration<Self>, Error;
 
     /// The calendar-specific year represented by `date`
-    fn year(&self, date: &Self::DateInner) -> types::Year;
+    fn year(&self, date: &Self::DateInner) -> types::FormattableYear;
 
     /// The calendar-specific month represented by `date`
     fn month(&self, date: &Self::DateInner) -> types::Month;

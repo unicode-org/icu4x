@@ -117,7 +117,7 @@ impl Calendar for Coptic {
         date1.0.until(date2.0, _largest_unit, _smallest_unit)
     }
 
-    fn year(&self, date: &Self::DateInner) -> types::Year {
+    fn year(&self, date: &Self::DateInner) -> types::FormattableYear {
         crate::gregorian::year_as_gregorian(date.0.year)
     }
 

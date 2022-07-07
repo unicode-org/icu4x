@@ -126,8 +126,8 @@ impl Calendar for Japanese {
     }
 
     /// The calendar-specific year represented by `date`
-    fn year(&self, date: &Self::DateInner) -> types::Year {
-        types::Year {
+    fn year(&self, date: &Self::DateInner) -> types::FormattableYear {
+        types::FormattableYear {
             era: types::Era(date.era),
             number: date.adjusted_year(),
             related_iso: None,

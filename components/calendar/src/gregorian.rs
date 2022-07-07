@@ -85,7 +85,7 @@ impl Calendar for Gregorian {
     }
 
     /// The calendar-specific year represented by `date`
-    fn year(&self, date: &Self::DateInner) -> types::Year {
+    fn year(&self, date: &Self::DateInner) -> types::FormattableYear {
         year_as_gregorian(date.0 .0.year)
     }
 
@@ -180,15 +180,15 @@ impl DateTime<Gregorian> {
     }
 }
 
-pub fn year_as_gregorian(year: i32) -> types::Year {
+pub fn year_as_gregorian(year: i32) -> types::FormattableYear {
     if year > 0 {
-        types::Year {
+        types::FormattableYear {
             era: types::Era(tinystr!(16, "ad")),
             number: year,
             related_iso: None,
         }
     } else {
-        types::Year {
+        types::FormattableYear {
             era: types::Era(tinystr!(16, "bc")),
             number: 1 - year,
             related_iso: None,

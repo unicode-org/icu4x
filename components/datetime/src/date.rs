@@ -27,7 +27,7 @@ pub trait DateInput {
     /// The calendar this date relates to
     type Calendar: Calendar;
     /// Gets the era and year input.
-    fn year(&self) -> Option<Year>;
+    fn year(&self) -> Option<FormattableYear>;
 
     /// Gets the month input.
     fn month(&self) -> Option<Month>;
@@ -106,7 +106,7 @@ pub trait LocalizedDateTimeInput<T: DateTimeInput> {
     /// The year number according to week numbering.
     ///
     /// For example, December 31, 2020 is part of the first week of 2021.
-    fn year_week(&self) -> Result<Year, DateTimeError>;
+    fn year_week(&self) -> Result<FormattableYear, DateTimeError>;
 
     /// The week of the month.
     ///
@@ -136,7 +136,7 @@ pub(crate) struct DateTimeInputWithLocale<'data, T: DateTimeInput> {
 ///
 /// See [`DateTimeInput`] for documentation on individual fields
 pub(crate) struct ExtractedDateTimeInput {
-    year: Option<Year>,
+    year: Option<FormattableYear>,
     month: Option<Month>,
     day_of_month: Option<DayOfMonth>,
     iso_weekday: Option<IsoWeekday>,
@@ -194,7 +194,7 @@ impl DateInput for ExtractedDateTimeInput {
     /// This actually doesn't matter, by the time we use this
     /// it's purely internal raw code where calendars are irrelevant
     type Calendar = icu_calendar::any_calendar::AnyCalendar;
-    fn year(&self) -> Option<Year> {
+    fn year(&self) -> Option<FormattableYear> {
         self.year
     }
     fn month(&self) -> Option<Month> {
@@ -236,7 +236,7 @@ impl DateInput for ExtractedZonedDateTimeInput {
     /// This actually doesn't matter, by the time we use this
     /// it's purely internal raw code where calendars are irrelevant
     type Calendar = icu_calendar::any_calendar::AnyCalendar;
-    fn year(&self) -> Option<Year> {
+    fn year(&self) -> Option<FormattableYear> {
         self.date_time_input.year
     }
     fn month(&self) -> Option<Month> {
@@ -315,7 +315,7 @@ fn compute_week_of_year<T: DateInput>(
 fn year_week<T: DateInput>(
     datetime: &T,
     calendar: &week_of::CalendarInfo,
-) -> Result<Year, DateTimeError> {
+) -> Result<FormattableYear, DateTimeError> {
     let (doy_info, week) = compute_week_of_year(datetime, calendar)?;
     Ok(match week.unit {
         week_of::RelativeUnit::Previous => doy_info.prev_year,
@@ -397,7 +397,7 @@ impl<'data, T: DateTimeInput> LocalizedDateTimeInput<T> for DateTimeInputWithLoc
         self.data
     }
 
-    fn year_week(&self) -> Result<Year, DateTimeError> {
+    fn year_week(&self) -> Result<FormattableYear, DateTimeError> {
         year_week(
             self.data,
             #[allow(clippy::expect_used)]
@@ -443,7 +443,7 @@ impl<'data, T: ZonedDateTimeInput> LocalizedDateTimeInput<T>
         self.data
     }
 
-    fn year_week(&self) -> Result<Year, DateTimeError> {
+    fn year_week(&self) -> Result<FormattableYear, DateTimeError> {
         year_week(
             self.data,
             #[allow(clippy::expect_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
@@ -483,7 +483,7 @@ impl<'data, T: ZonedDateTimeInput> LocalizedDateTimeInput<T>
 impl<C: Calendar, A: AsCalendar<Calendar = C>> DateInput for Date<A> {
     type Calendar = C;
     /// Gets the era and year input.
-    fn year(&self) -> Option<Year> {
+    fn year(&self) -> Option<FormattableYear> {
         Some(self.year())
     }
 
@@ -519,7 +519,7 @@ impl<C: Calendar, A: AsCalendar<Calendar = C>> DateInput for Date<A> {
 impl<C: Calendar, A: AsCalendar<Calendar = C>> DateInput for DateTime<A> {
     type Calendar = C;
     /// Gets the era and year input.
-    fn year(&self) -> Option<Year> {
+    fn year(&self) -> Option<FormattableYear> {
         Some(self.date.year())
     }
 
