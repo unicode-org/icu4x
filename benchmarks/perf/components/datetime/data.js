@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1657215744790,
+  "lastUpdate": 1657235303866,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -45767,6 +45767,102 @@ window.BENCHMARK_DATA = {
             "name": "pattern/parse",
             "value": 4753,
             "range": "± 8",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "m_kato@ga2.so-net.ne.jp",
+            "name": "Makoto Kato",
+            "username": "makotokato"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "2ac1003bd83501ab70b3136cad7ee0fc7db8ea52",
+          "message": "Add segmenter dictionary data to datagen (#2135)\n\n* Add segmenter dictionary data to testdata.\r\n\r\n* Add license header and comnet to toml files\r\n\r\n* Use locale! macro instead\r\n\r\n* Use expect instead of unwrap in test.\r\n\r\n* Use DataErrorKind::MissingResourceOptions\r\n\r\n* Use locale macro more.\r\n\r\n* Remove unnecessary condition in datagen.\r\n\r\n* Fix clippy",
+          "timestamp": "2022-07-08T07:55:15+09:00",
+          "tree_id": "598554f2cc4a784db07570bf117148564cadeba8",
+          "url": "https://github.com/unicode-org/icu4x/commit/2ac1003bd83501ab70b3136cad7ee0fc7db8ea52"
+        },
+        "date": 1657235270432,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 125092,
+            "range": "± 6896",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 1082390,
+            "range": "± 113645",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 235073,
+            "range": "± 11460",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/DateTimeFormat/format_to_write",
+            "value": 112173,
+            "range": "± 5040",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/DateTimeFormat/format_to_string",
+            "value": 125812,
+            "range": "± 6841",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/format",
+            "value": 124801,
+            "range": "± 8822",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/to_string",
+            "value": 138116,
+            "range": "± 7955",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/ZonedDateTimeFormat/format_to_write",
+            "value": 216322,
+            "range": "± 10480",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/ZonedDateTimeFormat/format_to_string",
+            "value": 245527,
+            "range": "± 15338",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/format",
+            "value": 238903,
+            "range": "± 14948",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/to_string",
+            "value": 247120,
+            "range": "± 24329",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "pattern/parse",
+            "value": 5475,
+            "range": "± 260",
             "unit": "ns/iter"
           }
         ]
