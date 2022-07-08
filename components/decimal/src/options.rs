@@ -27,7 +27,7 @@ pub struct FixedDecimalFormatOptions {
 /// use writeable::Writeable;
 ///
 /// let locale = Locale::UND;
-/// let provider = icu_provider::inv::InvariantDataProvider;
+/// let provider = icu_testdata::get_provider();
 /// let mut options: options::FixedDecimalFormatOptions = Default::default();
 /// options.grouping_strategy = options::GroupingStrategy::Min2;
 /// let fdf = FixedDecimalFormat::try_new(locale, &provider, options)
@@ -78,7 +78,7 @@ impl Default for GroupingStrategy {
 /// use writeable::Writeable;
 ///
 /// let locale = Locale::UND;
-/// let provider = icu_provider::inv::InvariantDataProvider;
+/// let provider = icu_testdata::get_provider();
 /// let mut options: options::FixedDecimalFormatOptions = Default::default();
 /// options.sign_display = options::SignDisplay::ExceptZero;
 /// let fdf = FixedDecimalFormat::try_new(locale, &provider, options)

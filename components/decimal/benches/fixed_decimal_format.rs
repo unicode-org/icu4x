@@ -26,12 +26,14 @@ fn triangular_nums(range: f64) -> Vec<isize> {
 
 fn overview_bench(c: &mut Criterion) {
     let nums = triangular_nums(1e9);
+    let provider = icu_provider_adapters::any_payload::AnyPayloadProvider::new_default::<
+        icu_decimal::provider::DecimalSymbolsV1Marker,
+    >();
     c.bench_function("icu_decimal/overview", |b| {
         #[allow(clippy::suspicious_map)]
         b.iter(|| {
             // This benchmark demonstrates the performance of the format function on 1000 numbers
             // ranging from -1e9 to 1e9.
-            let provider = icu_provider::inv::InvariantDataProvider;
             let fdf =
                 FixedDecimalFormat::try_new(Locale::UND, &provider, Default::default()).unwrap();
             nums.iter()

@@ -3,10 +3,10 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 //! This module contains various utilities required to generate ICU4X data files, typically
-//! via the `icu4x-datagen` tool. End users should not need to consume anything in this module
-//! as a library unless defining new types that integrate with `icu4x-datagen`.
+//! via the `icu_datagen` reference crate. End users should not need to consume anything in
+//! this module as a library unless defining new types that integrate with `icu_datagen`.
 //!
-//! This module can be enabled with the `datagen` feature on `icu4x-provider-core`.
+//! This module can be enabled with the `datagen` feature on `icu_provider`.
 
 mod data_conversion;
 mod heap_measure;
@@ -14,7 +14,11 @@ mod iter;
 mod payload;
 pub use data_conversion::{DataConverter, ReturnedPayloadError};
 pub use heap_measure::{HeapStats, HeapStatsMarker};
-pub use iter::{IterableDynProvider, IterableResourceProvider};
+pub use iter::IterableResourceProvider;
+
+#[doc(hidden)] // exposed for make_exportable_provider
+pub use iter::IterableDynProvider;
+#[doc(hidden)] // exposed for make_exportable_provider
 pub use payload::{ExportBox, ExportMarker};
 
 use crate::prelude::*;
@@ -45,9 +49,23 @@ pub trait DataExporter: Sync {
 }
 
 /// A [`DynProvider`] that can be used for exporting data.
+///
+/// Use [`make_exportable_provider`] to implement this.
 pub trait ExportableProvider: IterableDynProvider<ExportMarker> + Sync {}
 impl<T> ExportableProvider for T where T: IterableDynProvider<ExportMarker> + Sync {}
 
+/// This macro can be used on a data provider to allow it to be used for data generation.
+///
+/// Data generation 'compiles' data by using this data provider (which usually translates data from
+/// different sources and doesn't have to be efficient) to generate data structs, and then writing
+/// them to an efficient format like [`BlobDataProvider`] or [`BakedDataProvider`]. The requirements
+/// for `make_exportable_provider` are:
+/// * The data struct has to implement [`serde::Serialize`](::serde::Serialize) and [`databake::Bake`]
+/// * The provider needs to implement [`IterableResourceProvider`] for all specified [`ResourceMarker`]s.
+///   This allows the generating code to know which [`ResourceOptions`] to collect.
+///
+/// [`BlobDataProvider`]: ../../icu_provider_blob/struct.BlobDataProvider.html
+/// [`BakedDataProvider`]: ../../icu_datagen/index.html
 #[macro_export]
 macro_rules! make_exportable_provider {
     ($provider:ty, [ $($struct_m:ty),+, ]) => {

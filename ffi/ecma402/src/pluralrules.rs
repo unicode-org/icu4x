@@ -236,14 +236,12 @@ pub struct PluralRules {
 impl ecma402_traits::pluralrules::PluralRules for PluralRules {
     type Error = PluralRulesError;
 
-    fn try_new<L>(l: L, opts: ecma402_traits::pluralrules::Options) -> Result<Self, Self::Error>
+    fn try_new<L>(_l: L, _opts: ecma402_traits::pluralrules::Options) -> Result<Self, Self::Error>
     where
         L: ecma402_traits::Locale,
         Self: Sized,
     {
-        // TODO: introduce a global data provider here.
-        let dp = icu_provider::inv::InvariantDataProvider;
-        Self::try_new_with_provider(l, opts, &dp)
+        todo!("Introduce a global data provider here");
     }
 
     fn select<W>(&self, number: f64, writer: &mut W) -> std::fmt::Result

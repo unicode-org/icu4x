@@ -49,55 +49,40 @@ where
 /// ## Wrapping ResourceProvider
 ///
 /// If your type implements [`ResourceProvider`], pass a list of markers as the second argument.
-/// This results in a `DynProvider<AnyMarker>` that delegates to a specific marker if the key
+/// This results in a `DynProvider` that delegates to a specific marker if the key
 /// matches or else returns [`DataErrorKind::MissingResourceKey`].
 ///
 /// ```
-/// use icu_provider::datagen::*;
-/// use icu_provider::hello_world::*;
-/// use icu_provider::inv::InvariantDataProvider;
 /// use icu_provider::prelude::*;
+/// use icu_provider::hello_world::*;
+/// #
+/// # // Duplicating HelloWorldProvider because the real one already implements DynProvider<AnyMarker>
+/// # struct HelloWorldProvider;
+/// # impl ResourceProvider<HelloWorldV1Marker> for HelloWorldProvider {
+/// #     fn load_resource(
+/// #         &self,
+/// #         req: &DataRequest,
+/// #     ) -> Result<DataResponse<HelloWorldV1Marker>, DataError> {
+/// #         icu_provider::hello_world::HelloWorldProvider.load_resource(req)
+/// #     }
+/// # }
 ///
-/// // Example struct that implements ResourceProvider<HelloWorldV1Marker>
-/// struct MyProvider;
-/// impl ResourceProvider<HelloWorldV1Marker> for MyProvider {
-///     fn load_resource(
-///         &self,
-///         req: &DataRequest,
-///     ) -> Result<DataResponse<HelloWorldV1Marker>, DataError> {
-///         let provider = InvariantDataProvider;
-///         provider.load_resource(req)
-///     }
-/// }
+/// // Implement DataProvider<AnyMarker> on HelloWorldProvider: ResourceProvider<HelloWorldV1Marker>
+/// icu_provider::impl_dyn_provider!(HelloWorldProvider, [HelloWorldV1Marker,], AnyMarker);
 ///
-/// impl IterableResourceProvider<HelloWorldV1Marker> for MyProvider {
-///     fn supported_options(
-///         &self,
-///     ) -> Result<Vec<ResourceOptions>, DataError> {
-///         Ok(vec![Default::default()])
-///     }
-/// }
+/// let req = DataRequest {
+///     options: icu_locid::locale!("de").into(),
+///     metadata: Default::default(),
+/// };
 ///
-/// // Implement DataProvider<AnyMarker> on this struct
-/// icu_provider::impl_dyn_provider!(MyProvider, [HelloWorldV1Marker,], AnyMarker);
+/// // Successful because the key matches:
+/// HelloWorldProvider.load_payload(HelloWorldV1Marker::KEY, &req).unwrap();
 ///
-/// let provider = MyProvider;
-///
-/// // Successful result if the key matches:
-/// assert!(matches!(
-///     provider.load_payload(HelloWorldV1Marker::KEY, &Default::default()),
-///     Ok(_)
-/// ));
-///
-/// // Failure if the key does not match:
-/// let DUMMY_KEY = icu_provider::resource_key!("dummy@1");
-/// assert!(matches!(
-///     provider.load_payload(DUMMY_KEY, &Default::default()),
-///     Err(DataError {
-///         kind: DataErrorKind::MissingResourceKey,
-///         ..
-///     })
-/// ));
+/// // MissingResourceKey error as the key does not match:
+/// assert_eq!(
+///     HelloWorldProvider.load_payload(icu_provider::resource_key!("dummy@1"), &req).unwrap_err().kind,
+///     DataErrorKind::MissingResourceKey,
+/// );
 /// ```
 ///
 /// ## Wrapping DynProvider
@@ -107,50 +92,34 @@ where
 ///
 /// ```
 /// use icu_provider::prelude::*;
-/// use icu_provider::datagen::*;
 /// use icu_provider::hello_world::*;
-/// use icu_provider::inv::InvariantDataProvider;
+/// #
+/// # struct HelloWorldProvider;
+/// # impl DynProvider<HelloWorldV1Marker> for HelloWorldProvider {
+/// #     fn load_payload(&self, key: ResourceKey, req: &DataRequest)
+/// #             -> Result<DataResponse<HelloWorldV1Marker>, DataError> {
+/// #         icu_provider::hello_world::HelloWorldProvider.load_resource(req)
+/// #     }
+/// # }
 ///
-/// // Example struct that implements DynProvider<HelloWorldV1Marker>
-/// struct MyProvider;
-/// impl DynProvider<HelloWorldV1Marker> for MyProvider {
-///     fn load_payload(&self, key: ResourceKey, req: &DataRequest)
-///             -> Result<DataResponse<HelloWorldV1Marker>, DataError> {
-///         let provider = InvariantDataProvider;
-///         provider.load_resource(req)
-///     }
-/// }
-///
-/// impl IterableDynProvider<HelloWorldV1Marker> for MyProvider {
-///     fn supported_options_for_key(&self, _: ResourceKey)
-///         -> Result<Vec<ResourceOptions>, DataError> {
-///         Ok(vec![Default::default()])
-///     }
-/// }
-///
-/// // Implement DataProvider<AnyMarker> on this struct.
-/// // Match HelloWorldV1Marker::KEY and delegate to DynProvider<HelloWorldV1Marker>.
-/// // Send the wildcard match also to DynProvider<HelloWorldV1Marker>.
-/// icu_provider::impl_dyn_provider!(MyProvider, {
+/// // Implement DataProvider<AnyMarker> on HelloWorldProvider: DynProvider<HelloWorldV1Marker>
+/// icu_provider::impl_dyn_provider!(HelloWorldProvider, {
+///     // Match HelloWorldV1Marker::KEY and delegate to DynProvider<HelloWorldV1Marker>.
 ///     HelloWorldV1Marker::KEY => HelloWorldV1Marker,
+///     // Send the wildcard match also to DynProvider<HelloWorldV1Marker>.
 ///     _ => HelloWorldV1Marker,
 /// }, AnyMarker);
 ///
-/// let provider = MyProvider;
-/// let provider = provider.as_any_provider();
+/// let req = DataRequest {
+///     options: icu_locid::locale!("de").into(),
+///     metadata: Default::default(),
+/// };
 ///
-/// // Successful result if the key matches:
-/// assert!(matches!(
-///     provider.load_any(HelloWorldV1Marker::KEY, &Default::default()),
-///     Ok(_)
-/// ));
+/// // Successful because the key matches:
+/// HelloWorldProvider.as_any_provider().load_any(HelloWorldV1Marker::KEY, &req).unwrap();
 ///
-/// // Because of the wildcard, non-matching requests are captured:
-/// let DUMMY_KEY = icu_provider::resource_key!("dummy@1");
-/// assert!(matches!(
-///     provider.load_any(DUMMY_KEY, &Default::default()),
-///     Ok(_)
-/// ));
+/// // Because of the wildcard, any key actually works:
+/// HelloWorldProvider.as_any_provider().load_any(icu_provider::resource_key!("dummy@1"), &req).unwrap();
 /// ```
 ///
 /// [`DynProvider`]: crate::DynProvider

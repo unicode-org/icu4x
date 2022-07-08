@@ -9,30 +9,23 @@ use yoke::trait_hack::YokeTraitHack;
 use yoke::Yokeable;
 use zerofrom::ZeroFrom;
 
-/// A data provider that returns clones of a constant type-erased payload.
+/// A data provider that returns clones of a fixed type-erased payload.
 ///
 /// # Examples
 ///
 /// ```
 /// use icu_provider::hello_world::*;
 /// use icu_provider::prelude::*;
-/// use icu_provider_adapters::struct_provider::AnyPayloadProvider;
+/// use icu_provider_adapters::any_payload::AnyPayloadProvider;
 /// use std::borrow::Cow;
 ///
-/// const CONST_DATA: HelloWorldV1<'static> = HelloWorldV1 {
-///     message: Cow::Borrowed("hello world"),
-/// };
-///
-/// // A placeholder key to use to serve the data struct
-/// const SAMPLE_KEY: ResourceKey = icu_provider::resource_key!("xyz/example@1");
-///
-/// let provider = AnyPayloadProvider {
-///     key: SAMPLE_KEY,
-///     data: AnyPayload::from_static_ref(&CONST_DATA),
-/// };
+/// let provider = AnyPayloadProvider::new_static::<HelloWorldV1Marker>(
+///     &HelloWorldV1 {
+///         message: Cow::Borrowed("hello world"),
+/// });
 ///
 /// let payload: DataPayload<HelloWorldV1Marker> = provider
-///     .load_any(SAMPLE_KEY, &DataRequest::default())
+///     .load_any(HelloWorldV1Marker::KEY, &Default::default())
 ///     .expect("Load should succeed")
 ///     .downcast()
 ///     .expect("Types should match")
@@ -45,6 +38,31 @@ use zerofrom::ZeroFrom;
 pub struct AnyPayloadProvider {
     pub key: ResourceKey,
     pub data: AnyPayload,
+}
+
+impl AnyPayloadProvider {
+    pub fn new_owned<M: ResourceMarker + 'static>(data: M::Yokeable) -> Self {
+        AnyPayloadProvider {
+            key: M::KEY,
+            data: AnyPayload::from_rc_payload::<M>(alloc::rc::Rc::from(DataPayload::from_owned(
+                data,
+            ))),
+        }
+    }
+
+    pub fn new_static<M: ResourceMarker>(data: &'static M::Yokeable) -> Self {
+        AnyPayloadProvider {
+            key: M::KEY,
+            data: AnyPayload::from_static_ref(data),
+        }
+    }
+
+    pub fn new_default<M: ResourceMarker + 'static>() -> Self
+    where
+        M::Yokeable: Default,
+    {
+        Self::new_owned::<M>(M::Yokeable::default())
+    }
 }
 
 impl AnyProvider for AnyPayloadProvider {

@@ -51,20 +51,16 @@ use icu_plurals::provider::OrdinalV1Marker;
 /// use icu::datetime::{options::length, ZonedDateTimeFormat};
 /// use icu::locid::locale;
 /// use icu_datetime::TimeZoneFormatOptions;
-/// use icu_provider::inv::InvariantDataProvider;
 ///
-/// let date_provider = InvariantDataProvider;
-/// let zone_provider = InvariantDataProvider;
-/// let plural_provider = InvariantDataProvider;
-/// let decimal_provider = InvariantDataProvider;
+/// let provider = icu_testdata::get_provider();
 ///
 /// let options = length::Bag::from_date_time_style(length::Date::Medium, length::Time::Short);
 /// let zdtf = ZonedDateTimeFormat::<Gregorian>::try_new(
 ///     locale!("en"),
-///     &date_provider,
-///     &zone_provider,
-///     &plural_provider,
-///     &decimal_provider,
+///     &provider,
+///     &provider,
+///     &provider,
+///     &provider,
 ///     &options.into(),
 ///     &TimeZoneFormatOptions::default(),
 /// )
@@ -96,7 +92,6 @@ impl ZonedAnyDateTimeFormat {
     /// use icu::datetime::{DateTimeFormatOptions, any::ZonedAnyDateTimeFormat};
     /// use icu::locid::Locale;
     /// use icu::datetime::TimeZoneFormatOptions;
-    /// use icu_provider::inv::InvariantDataProvider;
     /// use std::str::FromStr;
     ///
     /// let provider = icu_testdata::get_provider();

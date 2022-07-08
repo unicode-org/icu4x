@@ -65,9 +65,8 @@ where
 /// use icu_datetime::mock::time_zone::MockTimeZone;
 /// use icu_datetime::{TimeZoneFormat, TimeZoneFormatConfig, TimeZoneFormatOptions};
 /// use icu_locid::locale;
-/// use icu_provider::inv::InvariantDataProvider;
 ///
-/// let provider = InvariantDataProvider;
+/// let provider = icu_testdata::get_provider();
 ///
 /// let tzf = TimeZoneFormat::try_from_config(
 ///     locale!("en"),
@@ -352,9 +351,8 @@ impl TimeZoneFormat {
     /// use icu_datetime::mock::time_zone::MockTimeZone;
     /// use icu_datetime::{TimeZoneFormat, TimeZoneFormatConfig, TimeZoneFormatOptions};
     /// use icu_locid::locale;
-    /// use icu_provider::inv::InvariantDataProvider;
     ///
-    /// let provider = InvariantDataProvider;
+    /// let provider = icu_testdata::get_provider();
     ///
     /// let tzf = TimeZoneFormat::try_from_config(
     ///     locale!("en"),
@@ -609,9 +607,8 @@ impl TimeZoneFormat {
     /// use icu_datetime::mock::time_zone::MockTimeZone;
     /// use icu_datetime::{TimeZoneFormat, TimeZoneFormatConfig, TimeZoneFormatOptions};
     /// use icu_locid::locale;
-    /// use icu_provider::inv::InvariantDataProvider;
     ///
-    /// let provider = InvariantDataProvider;
+    /// let provider = icu_testdata::get_provider();
     ///
     /// let tzf = TimeZoneFormat::try_from_config(
     ///     locale!("en"),
@@ -645,9 +642,8 @@ impl TimeZoneFormat {
     /// use icu_datetime::mock::time_zone::MockTimeZone;
     /// use icu_datetime::{TimeZoneFormat, TimeZoneFormatConfig, TimeZoneFormatOptions};
     /// use icu_locid::locale;
-    /// use icu_provider::inv::InvariantDataProvider;
     ///
-    /// let provider = InvariantDataProvider;
+    /// let provider = icu_testdata::get_provider();
     ///
     /// let tzf = TimeZoneFormat::try_from_config(
     ///     locale!("en"),
@@ -682,9 +678,8 @@ impl TimeZoneFormat {
     /// use icu_datetime::mock::time_zone::MockTimeZone;
     /// use icu_datetime::{TimeZoneFormat, TimeZoneFormatConfig, TimeZoneFormatOptions};
     /// use icu_locid::locale;
-    /// use icu_provider::inv::InvariantDataProvider;
     ///
-    /// let provider = InvariantDataProvider;
+    /// let provider = icu_testdata::get_provider();
     ///
     /// let tzf = TimeZoneFormat::try_from_config(
     ///     locale!("en"),

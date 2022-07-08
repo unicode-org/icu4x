@@ -35,13 +35,12 @@ use crate::{date::DateTimeInput, CldrCalendar, DateTimeFormatError, FormattedDat
 ///
 /// # Examples
 ///
-/// ```
+/// ```no_run
 /// use icu::calendar::{DateTime, Gregorian};
 /// use icu::datetime::{TimeFormat, options::length::Time};
 /// use icu::locid::locale;
-/// use icu_provider::inv::InvariantDataProvider;
 ///
-/// let provider = InvariantDataProvider;
+/// let provider = icu_testdata::get_provider();
 ///
 /// let tf = TimeFormat::<Gregorian>::try_new(locale!("en"), &provider, Time::Full, None)
 ///     .expect("Failed to create DateTimeFormat instance.");
@@ -68,9 +67,8 @@ impl<C: CldrCalendar> TimeFormat<C> {
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::{TimeFormat, options::length::Time};
     /// use icu::locid::locale;
-    /// use icu_provider::inv::InvariantDataProvider;
     ///
-    /// let provider = InvariantDataProvider;
+    /// let provider = icu_testdata::get_provider();
     ///
     /// let tf = TimeFormat::<Gregorian>::try_new(locale!("en"), &provider, Time::Short, None);
     ///
@@ -110,12 +108,11 @@ impl<C: CldrCalendar> TimeFormat<C> {
     ///
     /// # Examples
     ///
-    /// ```
+    /// ```no_run
     /// use icu::calendar::{DateTime, Gregorian};
     /// use icu::datetime::{TimeFormat, options::length::Time};
-    /// use icu_provider::inv::InvariantDataProvider;
     /// # let locale = icu::locid::locale!("en");
-    /// # let provider = InvariantDataProvider;
+    /// # let provider = icu_testdata::get_provider();
     /// let tf = TimeFormat::<Gregorian>::try_new(locale, &provider, Time::Full, None)
     ///     .expect("Failed to create TimeFormat instance.");
     ///
@@ -146,9 +143,8 @@ impl<C: CldrCalendar> TimeFormat<C> {
     /// ```
     /// use icu::calendar::{DateTime, Gregorian};
     /// use icu::datetime::{TimeFormat, options::length::Time};
-    /// use icu_provider::inv::InvariantDataProvider;
     /// # let locale = icu::locid::locale!("en");
-    /// # let provider = InvariantDataProvider;
+    /// # let provider = icu_testdata::get_provider();
     /// let tf = TimeFormat::<Gregorian>::try_new(locale, &provider, Time::Short, None)
     ///     .expect("Failed to create TimeFormat instance.");
     ///
@@ -174,12 +170,11 @@ impl<C: CldrCalendar> TimeFormat<C> {
     ///
     /// # Examples
     ///
-    /// ```
+    /// ```no_run
     /// use icu::calendar::{DateTime, Gregorian};
     /// use icu::datetime::{TimeFormat, options::length::Time};
-    /// use icu_provider::inv::InvariantDataProvider;
     /// # let locale = icu::locid::locale!("en");
-    /// # let provider = InvariantDataProvider;
+    /// # let provider = icu_testdata::get_provider();
     /// let tf = TimeFormat::<Gregorian>::try_new(locale, &provider, Time::Long, None)
     ///     .expect("Failed to create TimeFormat instance.");
     ///
@@ -210,9 +205,8 @@ impl<C: CldrCalendar> TimeFormat<C> {
 /// use icu::calendar::{DateTime, Gregorian};
 /// use icu::datetime::{DateFormat, options::length::Date};
 /// use icu::locid::locale;
-/// use icu_provider::inv::InvariantDataProvider;
 ///
-/// let provider = InvariantDataProvider;
+/// let provider = icu_testdata::get_provider();
 ///
 /// let df = DateFormat::<Gregorian>::try_new(locale!("en"), &provider, Date::Full)
 ///     .expect("Failed to create DateFormat instance.");
@@ -238,9 +232,8 @@ impl<C: CldrCalendar> DateFormat<C> {
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::{DateFormat, options::length::Date};
     /// use icu::locid::locale;
-    /// use icu_provider::inv::InvariantDataProvider;
     ///
-    /// let provider = InvariantDataProvider;
+    /// let provider = icu_testdata::get_provider();
     ///
     /// let df = DateFormat::<Gregorian>::try_new(locale!("en"), &provider, Date::Full);
     ///
@@ -284,9 +277,8 @@ impl<C: CldrCalendar> DateFormat<C> {
     /// ```
     /// use icu::calendar::{DateTime, Gregorian};
     /// use icu::datetime::{DateFormat, options::length::Date};
-    /// use icu_provider::inv::InvariantDataProvider;
     /// # let locale = icu::locid::locale!("en");
-    /// # let provider = InvariantDataProvider;
+    /// # let provider = icu_testdata::get_provider();
     /// let df = DateFormat::<Gregorian>::try_new(locale, &provider, Date::Full)
     ///     .expect("Failed to create DateFormat instance.");
     ///
@@ -317,9 +309,8 @@ impl<C: CldrCalendar> DateFormat<C> {
     /// ```
     /// use icu::calendar::{DateTime, Gregorian};
     /// use icu::datetime::{DateFormat, options::length::Date};
-    /// use icu_provider::inv::InvariantDataProvider;
     /// # let locale = icu::locid::locale!("en");
-    /// # let provider = InvariantDataProvider;
+    /// # let provider = icu_testdata::get_provider();
     /// let df = DateFormat::<Gregorian>::try_new(locale, &provider, Date::Short)
     ///     .expect("Failed to create DateFormat instance.");
     ///
@@ -348,9 +339,8 @@ impl<C: CldrCalendar> DateFormat<C> {
     /// ```
     /// use icu::calendar::{DateTime, Gregorian};
     /// use icu::datetime::{DateFormat, options::length::Date};
-    /// use icu_provider::inv::InvariantDataProvider;
     /// # let locale = icu::locid::locale!("en");
-    /// # let provider = InvariantDataProvider;
+    /// # let provider = icu_testdata::get_provider();
     /// let df = DateFormat::<Gregorian>::try_new(locale, &provider, Date::Short)
     ///     .expect("Failed to create DateTimeFormat instance.");
     ///
@@ -381,9 +371,8 @@ impl<C: CldrCalendar> DateFormat<C> {
 /// use icu::calendar::{DateTime, Gregorian};
 /// use icu::datetime::{options::length, DateTimeFormat};
 /// use icu::locid::locale;
-/// use icu_provider::inv::InvariantDataProvider;
 ///
-/// let provider = InvariantDataProvider;
+/// let provider = icu_testdata::get_provider();
 ///
 /// let mut options = length::Bag::from_date_time_style(length::Date::Medium, length::Time::Short);
 ///
@@ -411,9 +400,8 @@ impl<C: CldrCalendar> DateTimeFormat<C> {
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::{options::length, DateFormat, DateTimeFormat, TimeFormat};
     /// use icu::locid::locale;
-    /// use icu_provider::inv::InvariantDataProvider;
     ///
-    /// let provider = InvariantDataProvider;
+    /// let provider = icu_testdata::get_provider();
     ///
     /// let tf = TimeFormat::<Gregorian>::try_new(locale!("en"), &provider, length::Time::Short, None)
     ///     .expect("Failed to create TimeFormat instance.");
@@ -442,13 +430,12 @@ where {
     ///
     /// # Examples
     ///
-    /// ```
+    /// ```no_run
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::{DateTimeFormat, DateTimeFormatOptions};
     /// use icu::locid::locale;
-    /// use icu_provider::inv::InvariantDataProvider;
     ///
-    /// let provider = InvariantDataProvider;
+    /// let provider = icu_testdata::get_provider();
     ///
     /// let options = DateTimeFormatOptions::default();
     ///
@@ -493,12 +480,11 @@ where {
     ///
     /// # Examples
     ///
-    /// ```
+    /// ```no_run
     /// use icu::calendar::{DateTime, Gregorian};
     /// use icu::datetime::{DateTimeFormat, DateTimeFormatOptions};
-    /// use icu_provider::inv::InvariantDataProvider;
     /// # let locale = icu::locid::locale!("en");
-    /// # let provider = InvariantDataProvider;
+    /// # let provider = icu_testdata::get_provider();
     /// # let options = DateTimeFormatOptions::default();
     /// let dtf = DateTimeFormat::<Gregorian>::try_new(locale, &provider, &options)
     ///     .expect("Failed to create DateTimeFormat instance.");
@@ -527,12 +513,11 @@ where {
     ///
     /// # Examples
     ///
-    /// ```
+    /// ```no_run
     /// use icu::calendar::{DateTime, Gregorian};
     /// use icu::datetime::{DateTimeFormat, DateTimeFormatOptions};
-    /// use icu_provider::inv::InvariantDataProvider;
     /// # let locale = icu::locid::locale!("en");
-    /// # let provider = InvariantDataProvider;
+    /// # let provider = icu_testdata::get_provider();
     /// # let options = DateTimeFormatOptions::default();
     /// let dtf = DateTimeFormat::<Gregorian>::try_new(locale, &provider, &options.into())
     ///     .expect("Failed to create DateTimeFormat instance.");
@@ -559,12 +544,11 @@ where {
     ///
     /// # Examples
     ///
-    /// ```
+    /// ```no_run
     /// use icu::calendar::{DateTime, Gregorian};
     /// use icu::datetime::{DateTimeFormat, DateTimeFormatOptions};
-    /// use icu_provider::inv::InvariantDataProvider;
     /// # let locale = icu::locid::locale!("en");
-    /// # let provider = InvariantDataProvider;
+    /// # let provider = icu_testdata::get_provider();
     /// # let options = DateTimeFormatOptions::default();
     /// let dtf = DateTimeFormat::<Gregorian>::try_new(locale, &provider, &options.into())
     ///     .expect("Failed to create DateTimeFormat instance.");
