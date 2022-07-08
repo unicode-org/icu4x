@@ -120,6 +120,14 @@ where
     K: ?Sized,
     V: ?Sized,
 {
+    #[doc(hidden)] // databake internal
+    pub const unsafe fn from_parts_unchecked(
+        keys: &'a <K as ZeroMapKV<'a>>::Slice,
+        values: &'a <V as ZeroMapKV<'a>>::Slice,
+    ) -> Self {
+        Self { keys, values }
+    }
+
     /// The number of elements in the [`ZeroMapBorrowed`]
     pub fn len(&self) -> usize {
         self.values.zvl_len()
