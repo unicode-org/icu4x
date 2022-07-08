@@ -71,18 +71,6 @@ impl BakedDataExporter {
         }
 
         if self.pretty {
-            if path.file_stem().and_then(std::ffi::OsStr::to_str) == Some("any") {
-                // Rustfmt cannot handle the match statement in this file. This prettifies it a bit
-                // See https://github.com/rust-lang/rustfmt/issues/5422
-                let mut content = std::fs::read_to_string(&path)?;
-                content = content.replace(" :: ", "::");
-                content = content.replace(" ,", ",");
-                content = content.replace(" ?", "?");
-                content = content.replace(" <::", "\n            <::");
-                content = content.replace(" _", "\n            _");
-                File::create(&path)?.write_all(content.as_bytes())?;
-            }
-
             std::process::Command::new("rustfmt")
                 // When called on a file, rustfmt also formats all submodules.
                 // Because we might have massive submodules that are already
@@ -100,8 +88,14 @@ impl BakedDataExporter {
                     "--config=format_generated_files=true",
                     // quote! stringifies doc comments as attributes, which is not very readable
                     "--config=normalize_doc_attributes=true",
-                    // Defaults to 2015, but the 2021 parser is better
+                    // Defaults to 2015, but we're outputting 2021
                     "--edition=2021",
+                    // Rustfmt silently gives up if it cannot achieve the max width, which happens for any.rs
+                    if path.file_stem().and_then(std::ffi::OsStr::to_str) == Some("any") {
+                        "--config=max_width=150"
+                    } else {
+                        "--config=max_width=100"
+                    },
                 ])
                 .spawn()
                 .unwrap()
@@ -135,123 +129,125 @@ impl DataExporter for BakedDataExporter {
     }
 
     fn flush(&self, key: ResourceKey) -> Result<(), DataError> {
-        let tmp = self.data.lock().expect("poison").remove(&key);
-        if let Some((marker, values)) = tmp {
-            let mut statics = Vec::new();
-            let mut all_options = Vec::new();
+        let (marker, raw) = self
+            .data
+            .lock()
+            .expect("poison")
+            .remove(&key)
+            .ok_or_else(|| DataError::custom("No data").with_key(key))?;
+        let mut statics = Vec::new();
+        let mut all_options = Vec::new();
 
-            for (payload_bake_string, mut options) in values {
-                options.sort();
-                let ident_string = options
-                    .iter()
-                    .map(|options| {
-                        let mut string = options.replace('-', "_");
-                        string.make_ascii_uppercase();
-                        string
-                    })
-                    .reduce(|mut a, b| {
-                        // Cap identifier length at around 35
-                        if a.len() < 35 {
-                            a.push('_');
-                            a.push_str(&b);
-                        }
-                        a
-                    })
-                    .unwrap();
-                all_options.extend(options.into_iter().map(|o| (o, ident_string.clone())));
-                statics.push((ident_string, payload_bake_string));
-            }
+        for (payload_bake_string, mut options) in raw {
+            options.sort();
+            let ident_string = options
+                .iter()
+                .map(|options| {
+                    let mut string = options.replace('-', "_");
+                    string.make_ascii_uppercase();
+                    string
+                })
+                .reduce(|mut a, b| {
+                    // Cap identifier length at around 35
+                    if a.len() < 35 {
+                        a.push('_');
+                        a.push_str(&b);
+                    }
+                    a
+                })
+                .unwrap();
+            all_options.extend(options.into_iter().map(|o| (o, ident_string.clone())));
+            statics.push((ident_string, payload_bake_string));
+        }
 
-            // Not necessary for functionality, but prettier
-            statics.sort_unstable_by(|(a, _), (b, _)| a.cmp(b));
+        statics.sort_unstable_by(|(a, _), (b, _)| a.cmp(b));
 
-            let statics = statics
-                .into_iter()
-                .map(|(ident_string, payload_bake_string)| {
-                    let ident = ident_string.parse::<TokenStream>().unwrap();
-                    let payload_bake = payload_bake_string.parse::<TokenStream>().unwrap();
-                    quote! { static #ident: DataStruct = &#payload_bake; }
-                });
-
-            all_options.sort_unstable_by(|(a, _), (b, _)| a.cmp(b));
-            let all_options = all_options.into_iter().map(|(options, ident_string)| {
+        let statics = statics
+            .into_iter()
+            .map(|(ident_string, payload_bake_string)| {
                 let ident = ident_string.parse::<TokenStream>().unwrap();
-                quote! { (#options, #ident) }
+                let payload_bake = payload_bake_string.parse::<TokenStream>().unwrap();
+                quote! { static #ident: DataStruct = &#payload_bake; }
             });
 
-            // Replace non-ident-allowed tokens. This can still fail if a segment starts with
-            // a token that is not allowed in an initial position.
-            let module_path = syn::parse_str::<syn::Path>(
-                &key.get_path()
-                    .to_ascii_lowercase()
-                    .replace('@', "_v")
-                    .replace('/', "::"),
-            )
-            .map_err(|_| {
-                DataError::custom("Key component is not a valid Rust identifier").with_key(key)
-            })?;
+        all_options.sort_unstable_by(|(a, _), (b, _)| a.cmp(b));
+        let all_options = all_options.into_iter().map(|(options, ident_string)| {
+            let ident = ident_string.parse::<TokenStream>().unwrap();
+            quote! { (#options, #ident) }
+        });
 
-            let marker = syn::parse_str::<syn::Path>(&marker).unwrap();
+        // Replace non-ident-allowed tokens. This can still fail if a segment starts with
+        // a token that is not allowed in an initial position.
+        let module_path = syn::parse_str::<syn::Path>(
+            &key.get_path()
+                .to_ascii_lowercase()
+                .replace('@', "_v")
+                .replace('/', "::"),
+        )
+        .map_err(|_| {
+            DataError::custom("Key component is not a valid Rust identifier").with_key(key)
+        })?;
 
-            let feature = if self.insert_feature_gates {
-                let feature = marker.segments.iter().next().unwrap().ident.to_string();
-                quote! { #![cfg(feature = #feature)] }
+        let marker = syn::parse_str::<syn::Path>(&marker).unwrap();
+
+        let feature = if self.insert_feature_gates {
+            let feature = marker.segments.iter().next().unwrap().ident.to_string();
+            quote! { #![cfg(feature = #feature)] }
+        } else {
+            quote!()
+        };
+
+        let mut path = PathBuf::new();
+        let mut supers = quote!();
+        for level in &module_path.segments {
+            let mut map = self.mod_files.lock().expect("poison");
+            if !map.contains_key(&path) {
+                map.insert(path.clone(), Vec::new());
+            }
+            map.get_mut(&path).unwrap().push(level.ident.to_string());
+            drop(map);
+            path = path.join(level.ident.to_string());
+            supers = quote! { super:: #supers };
+        }
+
+        let struct_type =
+            if key == icu_datetime::provider::calendar::DateSkeletonPatternsV1Marker::KEY {
+                quote! {
+                    &'static [(
+                        &'static [::icu_datetime::fields::Field],
+                        ::icu_datetime::pattern::runtime::PatternPlurals<'static>
+                    )]
+                }
             } else {
-                quote!()
+                quote! {
+                    &'static <#marker as ::icu_provider::DataMarker>::Yokeable
+                }
             };
 
-            let mut path = PathBuf::new();
-            let mut supers = quote!();
-            for level in &module_path.segments {
-                let mut map = self.mod_files.lock().expect("poison");
-                if !map.contains_key(&path) {
-                    map.insert(path.clone(), Vec::new());
-                }
-                map.get_mut(&path).unwrap().push(level.ident.to_string());
-                drop(map);
-                path = path.join(level.ident.to_string());
-                supers = quote! { super:: #supers };
-            }
+        self.write_to_file(
+            &path,
+            quote! {
+                #feature
 
-            let struct_type =
-                if key == icu_datetime::provider::calendar::DateSkeletonPatternsV1Marker::KEY {
-                    quote! {
-                        &'static [(
-                            &'static [::icu_datetime::fields::Field],
-                            ::icu_datetime::pattern::runtime::PatternPlurals<'static>
-                        )]
-                    }
-                } else {
-                    quote! {
-                        &'static <#marker as ::icu_provider::DataMarker>::Yokeable
-                    }
-                };
+                type DataStruct = #struct_type;
 
-            self.write_to_file(
-                &path,
-                quote! {
-                    #feature
+                pub static DATA: &[(&str, DataStruct)] = &[#(#all_options),*];
 
-                    type DataStruct = #struct_type;
+                #(#statics)*
+            },
+        )
+        .map_err(|e| e.with_path_context(&path))?;
 
-                    pub static DATA: &[(&str, DataStruct)] = &[#(#all_options),*];
-
-                    #(#statics)*
-                },
-            )
-            .map_err(|e| e.with_path_context(&path))?;
-
-            self.marker_data_feature.lock().expect("poison").push((
-                quote!(#marker).to_string(),
-                quote!(#module_path).to_string(),
-                if self.insert_feature_gates {
-                    let feature = marker.segments.iter().next().unwrap().ident.to_string();
-                    quote! { #[cfg(feature = #feature)] }.to_string()
-                } else {
-                    String::new()
-                },
-            ));
-        }
+        self.marker_data_feature.lock().expect("poison").push((
+            quote!(#marker).to_string(),
+            quote!(#module_path).to_string(),
+            if self.insert_feature_gates {
+                let feature = marker.segments.iter().next().unwrap().ident.to_string();
+                quote! { #[cfg(feature = #feature)] }.to_string()
+            } else {
+                String::new()
+            },
+        ));
         Ok(())
     }
 
@@ -345,19 +341,21 @@ impl DataExporter for BakedDataExporter {
             if marker.to_string() == ":: icu_datetime :: provider :: calendar :: DateSkeletonPatternsV1Marker" {
                 quote! {
                     #feature
-                    <#marker as ResourceMarker>::KEY =>
+                    <#marker as ResourceMarker>::KEY => {
                         AnyPayload::from_rc_payload::<#marker>(
                             alloc::rc::Rc::new(
                                 DataPayload::from_owned(
                                     zerofrom::ZeroFrom::zero_from(
                                         litemap_slice_get(#data::DATA, key, req)?
-                        )))),
+                        ))))
+                    }
                 }
             } else {
                 quote!{
                     #feature
-                    <#marker as ResourceMarker>::KEY =>
-                        AnyPayload::from_static_ref::<<#marker as DataMarker>::Yokeable>(litemap_slice_get(#data::DATA, key, req)?),
+                    <#marker as ResourceMarker>::KEY => {
+                        AnyPayload::from_static_ref::<<#marker as DataMarker>::Yokeable>(litemap_slice_get(#data::DATA, key, req)?)
+                    }
                 }
             }
         });

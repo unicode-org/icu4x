@@ -182,6 +182,7 @@ macro_rules! create_datagen_provider {
                 $crate::transform::uprops::EnumeratedPropertyCodePointTrieProvider,
                 $crate::transform::uprops::ScriptWithExtensionsPropertyProvider,
                 $crate::transform::uprops::BinaryPropertyUnicodeSetDataProvider,
+                $crate::transform::segmenter::SegmenterDictionaryProvider,
                 $crate::transform::segmenter::SegmenterRuleProvider,
                 $crate::transform::uprops::CanonicalDecompositionDataProvider,
                 $crate::transform::uprops::CompatibilityDecompositionSupplementProvider,

@@ -1814,6 +1814,7 @@ dependencies = [
  "databake",
  "icu_char16trie",
  "icu_codepointtrie",
+ "icu_locid",
  "icu_provider",
  "icu_testdata",
  "lazy_static",
