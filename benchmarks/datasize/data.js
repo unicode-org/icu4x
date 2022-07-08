@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1657234632287,
+  "lastUpdate": 1657262448442,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -19433,6 +19433,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/2ac1003bd83501ab70b3136cad7ee0fc7db8ea52"
         },
         "date": 1657234600186,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4763611,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "fdab0f12a1343db92581233429bac297ba0ae1c6",
+          "message": "Activating list memory benchmark (#2148)",
+          "timestamp": "2022-07-08T08:38:54+02:00",
+          "tree_id": "e14d425a61e93085cb59b2a68ba11c000c01e530",
+          "url": "https://github.com/unicode-org/icu4x/commit/fdab0f12a1343db92581233429bac297ba0ae1c6"
+        },
+        "date": 1657262416967,
         "tool": "ndjson",
         "benches": [
           {
