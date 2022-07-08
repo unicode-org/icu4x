@@ -30,9 +30,11 @@ all-features = true
 ecma402_traits = { version = "0.2.0" }
 icu = { version = "0.6", path = "../../components/icu", features = ["std"] }
 icu_provider = { version = "0.6", path = "../../provider/core" }
+writeable = { version = "0.4", path = "../../utils/writeable" }
 
 # Bake dependencies
 icu_plurals = { version = "0.6", path = "../../components/plurals" }
+icu_list = { version = "0.6", path = "../../components/list"}
 zerovec = { version = "0.7", path = "../../utils/zerovec" }
 
 [build-dependencies]
