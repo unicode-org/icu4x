@@ -58,6 +58,11 @@ fn main() -> eyre::Result<()> {
                 .help("Whether to pretty-print the output files. Only affects JSON and Rust modules."),
         )
         .arg(
+            Arg::with_name("FINGERPRINT")
+                .long("fingerprint")
+                .help("Whether to add a fingerprints file to the output. Not compatible with --format=blob")
+        )
+        .arg(
             Arg::with_name("CLDR_TAG")
                 .short("t")
                 .long("cldr-tag")
@@ -292,6 +297,7 @@ fn main() -> eyre::Result<()> {
                 _ => Box::new(json::Serializer::default()),
             },
             overwrite: matches.is_present("OVERWRITE"),
+            fingerprint: matches.is_present("FINGERPRINT"),
         },
         "blob" => icu_datagen::Out::Blob(if let Some(path) = matches.value_of_os("OUTPUT") {
             let path_buf = PathBuf::from(path);

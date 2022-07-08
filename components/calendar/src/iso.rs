@@ -276,6 +276,80 @@ impl DateTime<Iso> {
             time: types::Time::try_new(hour, minute, second, 0)?,
         })
     }
+
+    /// Minute count representation of calendars starting from 00:00:00 on Jan 1st, 1970.
+    ///
+    /// ```rust
+    /// use icu::calendar::DateTime;
+    ///
+    /// let today = DateTime::new_iso_datetime(2020, 2, 29, 0, 0, 0).unwrap();
+    ///
+    /// assert_eq!(today.minutes_since_local_unix_epoch(), 26382240);
+    /// assert_eq!(
+    ///             DateTime::from_minutes_since_local_unix_epoch(26382240),
+    ///             Ok(today)
+    ///         );
+    ///
+    /// let today = DateTime::new_iso_datetime(1970, 1, 1, 0, 0, 0).unwrap();
+    ///
+    /// assert_eq!(today.minutes_since_local_unix_epoch(), 0);
+    /// assert_eq!(DateTime::from_minutes_since_local_unix_epoch(0), Ok(today));
+    /// ```
+    pub fn minutes_since_local_unix_epoch(&self) -> i32 {
+        let minutes_a_hour = 60;
+        let hours_a_day = 24;
+        let minutes_a_day = minutes_a_hour * hours_a_day;
+        if let Ok(unix_epoch) = DateTime::new_iso_datetime(1970, 1, 1, 0, 0, 0) {
+            (Iso::fixed_from_iso(*self.date.inner())
+                - Iso::fixed_from_iso(*unix_epoch.date.inner()))
+                * minutes_a_day
+                + i32::from(self.time.hour.number()) * minutes_a_hour
+                + i32::from(self.time.minute.number())
+        } else {
+            0
+        }
+    }
+
+    /// Convert minute count since 00:00:00 on Jan 1st, 1970 to ISO Date.
+    ///
+    /// ```rust
+    /// use icu::calendar::DateTime;
+    ///
+    /// let today = DateTime::new_iso_datetime(2020, 2, 29, 0, 0, 0).unwrap();
+    ///
+    /// assert_eq!(today.minutes_since_local_unix_epoch(), 26382240);
+    /// assert_eq!(
+    ///             DateTime::from_minutes_since_local_unix_epoch(26382240),
+    ///             Ok(today)
+    ///         );
+    ///
+    /// let today = DateTime::new_iso_datetime(1970, 1, 1, 0, 0, 0).unwrap();
+    ///
+    /// assert_eq!(today.minutes_since_local_unix_epoch(), 0);
+    /// assert_eq!(DateTime::from_minutes_since_local_unix_epoch(0), Ok(today));
+    /// ```
+    pub fn from_minutes_since_local_unix_epoch(
+        minute: i32,
+    ) -> Result<DateTime<Iso>, DateTimeError> {
+        let minutes_a_hour = 60;
+        let hours_a_day = 24;
+        let minutes_a_day = minutes_a_hour * hours_a_day;
+        let extra_days = minute / minutes_a_day;
+        if let Ok(unix_epoch) = DateTime::new_iso_datetime(1970, 1, 1, 0, 0, 0) {
+            let unix_epoch_days = Iso::fixed_from_iso(*unix_epoch.date.inner());
+            let date = Iso::iso_from_fixed(unix_epoch_days + extra_days);
+            DateTime::new_iso_datetime(
+                date.year().number,
+                date.month().ordinal as u8,
+                date.day_of_month().0 as u8,
+                ((minute / minutes_a_hour) % hours_a_day) as u8,
+                (minute % minutes_a_hour) as u8,
+                0,
+            )
+        } else {
+            unreachable!("DateTime should be created successfully")
+        }
+    }
 }
 
 impl Iso {

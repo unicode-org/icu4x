@@ -46,12 +46,14 @@ fn main() {
         output_path: paths::data_root().join("json"),
         serializer: Box::new(json::Serializer::pretty()),
         overwrite: true,
+        fingerprint: true,
     };
 
     let postcard_out = Out::Fs {
         output_path: paths::data_root().join("postcard"),
         serializer: Box::new(postcard::Serializer::default()),
         overwrite: true,
+        fingerprint: true,
     };
 
     let blob_out = Out::Blob(Box::new(

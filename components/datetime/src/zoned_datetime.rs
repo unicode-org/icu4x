@@ -201,7 +201,7 @@ impl<C: CldrCalendar> ZonedDateTimeFormat<C> {
     /// but [`FormattedZonedDateTime`] will grow with methods for iterating over fields, extracting information
     /// about formatted date and so on.
     #[inline]
-    pub fn format<'l, T>(&'l self, value: &'l T) -> FormattedZonedDateTime<'l, T>
+    pub fn format<'l, T>(&'l self, value: &T) -> FormattedZonedDateTime<'l>
     where
         T: ZonedDateTimeInput,
     {

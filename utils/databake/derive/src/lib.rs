@@ -49,7 +49,7 @@ fn bake_derive_impl(input: &DeriveInput) -> TokenStream2 {
     let body = structure.each_variant(|vi| {
         let recursive_bakes = vi.bindings().iter().map(|b| {
             let ident = b.binding.clone();
-            quote! { let #ident =  #ident.bake(ctx); }
+            quote! { let #ident =  #ident.bake(env); }
         });
 
         let constructor = vi.construct(|_, i| {
@@ -70,8 +70,8 @@ fn bake_derive_impl(input: &DeriveInput) -> TokenStream2 {
 
     structure.gen_impl(quote! {
         gen impl databake::Bake for @Self {
-            fn bake(&self, ctx: &databake::CrateEnv) -> databake::TokenStream {
-                ctx.insert(#crate_name);
+            fn bake(&self, env: &databake::CrateEnv) -> databake::TokenStream {
+                env.insert(#crate_name);
                 match self {
                     #body
                 }

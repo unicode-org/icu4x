@@ -701,6 +701,7 @@ jobs:
               icu_calendar/iso_date_manipulations
               icu_calendar/iso_datetime_manipulations
               icu_datetime/work_log
+              icu_list/and_list
               icu_locid/syntatically_canonicalize_locales
               icu_locid/filter_langids
               icu_plurals/unread_emails

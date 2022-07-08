@@ -1530,7 +1530,6 @@ dependencies = [
  "itertools",
  "litemap",
  "log",
- "pathdiff",
  "proc-macro2",
  "quote",
  "rayon",
@@ -1538,12 +1537,10 @@ dependencies = [
  "serde",
  "serde-aux",
  "serde_json",
- "sha2",
  "simple_logger",
  "syn",
  "tinystr 0.6.0",
  "toml",
- "walkdir",
  "writeable",
  "zerovec",
  "zip 0.6.2",
@@ -1799,6 +1796,7 @@ dependencies = [
  "serde",
  "serde-json-core",
  "serde_json",
+ "sha2",
  "writeable",
 ]
 
@@ -1820,6 +1818,7 @@ dependencies = [
  "databake",
  "icu_char16trie",
  "icu_codepointtrie",
+ "icu_locid",
  "icu_provider",
  "icu_testdata",
  "lazy_static",
@@ -2401,12 +2400,6 @@ dependencies = [
  "rand_core",
  "subtle",
 ]
-
-[[package]]
-name = "pathdiff"
-version = "0.2.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8835116a5c179084a830efb3adc117ab007512b535bc1a21c991d3b32a6b44dd"
 
 [[package]]
 name = "pbkdf2"
