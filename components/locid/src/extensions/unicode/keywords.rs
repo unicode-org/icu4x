@@ -366,6 +366,8 @@ impl Keywords {
 
     /// Merge an instance of [`Keywords`] into this one.
     ///
+    /// Does not override existing keys.
+    ///
     /// # Examples
     ///
     /// ```
@@ -393,24 +395,15 @@ impl Keywords {
     ///     ),
     /// ].into_iter().collect();
     ///
-    /// kw.merge(&kw2, false);
+    /// kw.merge(kw2);
     ///
     /// assert_eq!(kw.get(&key!("hc")), Some(&value!("h24")));
     /// assert_eq!(kw.get(&key!("ca")), Some(&value!("latn")));
-    ///
-    /// kw.merge(&kw2, true);
-    ///
-    /// assert_eq!(kw.get(&key!("hc")), Some(&value!("h24")));
-    /// assert_eq!(kw.get(&key!("ca")), Some(&value!("arab")));
     /// ```
-    pub fn merge(&mut self, other: &Self, r#override: bool) -> bool {
+    pub fn merge(&mut self, other: Self) -> bool {
         let mut modified = false;
-        for (k, v) in other.iter() {
-            if r#override {
-                if self.0.insert(*k, v.clone()).is_some() {
-                    modified = true;
-                }
-            } else if self.0.try_insert(*k, v.clone()).is_none() {
+        for (k, v) in other.0 {
+            if self.0.try_insert(k, v).is_none() {
                 modified = true;
             }
         }

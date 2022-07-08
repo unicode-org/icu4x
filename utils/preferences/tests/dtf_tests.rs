@@ -37,7 +37,7 @@ fn dtf_prefs() {
         hour_cycle: Some(HourCycle::H24),
         ..Default::default()
     };
-    prefs.merge_locale(&loc);
+    prefs.merge_locale(loc);
     let dtf = DateTimeFormat::new(prefs, Default::default());
     assert_eq!(dtf.format(0), String::from("Monday, June 23rd 2022, 24:13"));
 }
@@ -49,7 +49,7 @@ fn dtf_prefs_with_ca() {
         hour_cycle: Some(HourCycle::H24),
         ..Default::default()
     };
-    prefs.merge_locale(&loc);
+    prefs.merge_locale(loc);
     let dtf = DateTimeFormat::new(prefs, Default::default());
     assert_eq!(dtf.format(0), String::from("Monday, June 23rd 2022, 24:13"));
 }

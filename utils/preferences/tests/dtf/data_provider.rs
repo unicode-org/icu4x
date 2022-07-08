@@ -12,14 +12,14 @@ const DEFAULT_PREFS: DefaultPrefs = DefaultPrefs {
     und: DateTimeFormatDefaultPreferences {
         hour_cycle: HourCycle::H12,
         calendar: Calendar::Gregory,
-        numbering_system: NumberingSystem(tinystr!(4, "latn")),
+        numbering_system: NumberingSystem(tinystr!(8, "latn")),
     },
     list: &[(
         langid!("en-US"),
         DateTimeFormatDefaultPreferences {
             hour_cycle: HourCycle::H12,
             calendar: Calendar::Gregory,
-            numbering_system: NumberingSystem(tinystr!(4, "latn")),
+            numbering_system: NumberingSystem(tinystr!(8, "latn")),
         },
     )],
 };

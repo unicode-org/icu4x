@@ -71,9 +71,9 @@ macro_rules! preferences {
 
         impl $name {
             #[allow(clippy::result_unit_err)]
-            pub fn merge_locale(&mut self, locale: &Locale) {
+            pub fn merge_locale(&mut self, locale: Locale) {
                 if let Some(lid) = &mut self.lid {
-                    lid.merge(&locale.id, false);
+                    lid.merge(locale.id);
                 } else {
                     self.lid = Some(locale.id.clone());
                 }

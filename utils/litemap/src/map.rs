@@ -868,6 +868,19 @@ where
     }
 }
 
+impl<K, V, S> IntoIterator for LiteMap<K, V, S>
+where
+    S: Store<K, V>,
+{
+    type Item = (K, V);
+
+    type IntoIter = S::KeyValueIntoIter;
+
+    fn into_iter(self) -> Self::IntoIter {
+        self.values.lm_into_iter()
+    }
+}
+
 impl<'a, K: 'a, V: 'a, S> LiteMap<K, V, S>
 where
     S: StoreIterable<'a, K, V>,
@@ -1245,4 +1258,16 @@ mod test {
             }
         }
     }
+
+    fn into_iterator() {
+        let mut map = LiteMap::new();
+        map.insert(4, "four");
+        map.insert(6, "six");
+        let mut reference = vec![(6, "six"), (4, "four")];
+
+        for i in map {
+            let r = reference.pop().unwrap();
+            assert_eq!(r, i);
+        }
+        assert!(reference.is_empty());
 }

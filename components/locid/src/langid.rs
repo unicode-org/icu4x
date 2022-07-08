@@ -316,6 +316,8 @@ impl LanguageIdentifier {
 
     /// Merge an instance of [`LanguageIdentifier`] into this one.
     ///
+    /// Does not override existing subtags or keys.
+    ///
     /// # Examples
     ///
     /// ```
@@ -324,24 +326,20 @@ impl LanguageIdentifier {
     /// let mut lid = langid!("und-US");
     /// let lid2 = langid!("en-Latn-GB");
     ///
-    /// lid.merge(&lid2, false);
+    /// lid.merge(lid2);
     /// assert_eq!(lid, langid!("en-Latn-US"));
-    ///
-    /// lid.merge(&lid2, true);
-    /// assert_eq!(lid, langid!("en-Latn-GB"));
-    ///
     /// ```
-    pub fn merge(&mut self, other: &LanguageIdentifier, r#override: bool) -> bool {
+    pub fn merge(&mut self, other: Self) -> bool {
         let mut modified = false;
-        if !other.language.is_empty() && (self.language.is_empty() || r#override) {
+        if !other.language.is_empty() && self.language.is_empty() {
             self.language = other.language;
             modified = true;
         }
-        if other.script.is_some() && (self.script.is_none() || r#override) {
+        if other.script.is_some() && self.script.is_none() {
             self.script = other.script;
             modified = true;
         }
-        if other.region.is_some() && (self.region.is_none() || r#override) {
+        if other.region.is_some() && self.region.is_none() {
             self.region = other.region;
             modified = true;
         }
