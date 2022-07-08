@@ -6,7 +6,7 @@ use alloc::string::String;
 use alloc::vec;
 use alloc::vec::Vec;
 use core::str::CharIndices;
-use icu_locid::locale;
+use icu_locid::{locale, Locale};
 use icu_provider::prelude::*;
 
 use crate::complex::*;
@@ -27,7 +27,11 @@ pub type WordBreakIteratorUtf16<'l, 's> = RuleBreakIterator<'l, 's, WordBreakTyp
 /// encodings. Please see the [module-level documentation](crate) for its usages.
 pub struct WordBreakSegmenter {
     payload: DataPayload<WordBreakDataV1Marker>,
-    dictionary_payload: DataPayload<UCharDictionaryBreakDataV1Marker>,
+    dictionary_cj_payload: Option<DataPayload<UCharDictionaryBreakDataV1Marker>>,
+    dictionary_km_payload: Option<DataPayload<UCharDictionaryBreakDataV1Marker>>,
+    dictionary_lo_payload: Option<DataPayload<UCharDictionaryBreakDataV1Marker>>,
+    dictionary_my_payload: Option<DataPayload<UCharDictionaryBreakDataV1Marker>>,
+    dictionary_th_payload: Option<DataPayload<UCharDictionaryBreakDataV1Marker>>,
 }
 
 impl WordBreakSegmenter {
@@ -39,17 +43,32 @@ impl WordBreakSegmenter {
     {
         let payload = provider.load(Default::default())?.take_payload()?;
 
-        let locale = locale!("th");
-        let dictionary_payload = provider
+        let dictionary_cj_payload = Self::load_dictionary(provider, locale!("ja")).ok();
+        let dictionary_km_payload = Self::load_dictionary(provider, locale!("km")).ok();
+        let dictionary_lo_payload = Self::load_dictionary(provider, locale!("lo")).ok();
+        let dictionary_my_payload = Self::load_dictionary(provider, locale!("my")).ok();
+        let dictionary_th_payload = Self::load_dictionary(provider, locale!("th")).ok();
+
+        Ok(Self {
+            payload,
+            dictionary_cj_payload,
+            dictionary_km_payload,
+            dictionary_lo_payload,
+            dictionary_my_payload,
+            dictionary_th_payload,
+        })
+    }
+
+    fn load_dictionary<D: DataProvider<UCharDictionaryBreakDataV1Marker> + ?Sized>(
+        provider: &D,
+        locale: Locale,
+    ) -> Result<DataPayload<UCharDictionaryBreakDataV1Marker>, DataError> {
+        provider
             .load(DataRequest {
                 locale: &DataLocale::from(locale),
                 metadata: Default::default(),
             })?
-            .take_payload()?;
-        Ok(Self {
-            payload,
-            dictionary_payload,
-        })
+            .take_payload()
     }
 
     /// Create a word break iterator for an `str` (a UTF-8 string).
@@ -60,7 +79,13 @@ impl WordBreakSegmenter {
             current_pos_data: None,
             result_cache: Vec::new(),
             data: self.payload.get(),
-            dictionary_payload: Some(&self.dictionary_payload),
+            dictionary_payloads: [
+                self.dictionary_km_payload.as_ref(),
+                self.dictionary_lo_payload.as_ref(),
+                self.dictionary_my_payload.as_ref(),
+                self.dictionary_th_payload.as_ref(),
+                self.dictionary_cj_payload.as_ref(),
+            ],
         }
     }
 
@@ -72,7 +97,7 @@ impl WordBreakSegmenter {
             current_pos_data: None,
             result_cache: Vec::new(),
             data: self.payload.get(),
-            dictionary_payload: None,
+            dictionary_payloads: [None, None, None, None, None],
         }
     }
 
@@ -84,7 +109,13 @@ impl WordBreakSegmenter {
             current_pos_data: None,
             result_cache: Vec::new(),
             data: self.payload.get(),
-            dictionary_payload: Some(&self.dictionary_payload),
+            dictionary_payloads: [
+                self.dictionary_km_payload.as_ref(),
+                self.dictionary_lo_payload.as_ref(),
+                self.dictionary_my_payload.as_ref(),
+                self.dictionary_th_payload.as_ref(),
+                self.dictionary_cj_payload.as_ref(),
+            ],
         }
     }
 }
@@ -122,7 +153,7 @@ impl<'l, 's> RuleBreakType<'l, 's> for WordBreakType {
         // Restore iterator to move to head of complex string
         iter.iter = start_iter;
         iter.current_pos_data = start_point;
-        let breaks = complex_language_segment_str(iter.dictionary_payload?, &s);
+        let breaks = complex_language_segment_str(iter.dictionary_payloads, &s);
         iter.result_cache = breaks;
         let mut i = iter.current_pos_data.unwrap().1.len_utf8();
         loop {
@@ -196,7 +227,7 @@ impl<'l, 's> RuleBreakType<'l, 's> for WordBreakTypeUtf16 {
         // Restore iterator to move to head of complex string
         iter.iter = start_iter;
         iter.current_pos_data = start_point;
-        let breaks = complex_language_segment_utf16(iter.dictionary_payload?, &s);
+        let breaks = complex_language_segment_utf16(iter.dictionary_payloads, &s);
         let mut i = 1;
         iter.result_cache = breaks;
         // result_cache vector is utf-16 index that is in BMP.

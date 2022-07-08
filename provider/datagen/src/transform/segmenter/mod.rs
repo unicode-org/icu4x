@@ -12,8 +12,8 @@ use icu_codepointtrie::CodePointTrie;
 use icu_codepointtrie_builder::{CodePointTrieBuilder, CodePointTrieBuilderData};
 use icu_locid::{langid, locale};
 use icu_properties::{
-    maps, sets, EastAsianWidth, GeneralCategory, GraphemeClusterBreak, LineBreak, SentenceBreak,
-    WordBreak,
+    maps, sets, EastAsianWidth, GeneralCategory, GraphemeClusterBreak, LineBreak, Script,
+    SentenceBreak, WordBreak,
 };
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
@@ -279,6 +279,9 @@ impl SegmenterRuleProvider {
         let data = maps::get_general_category(&cp_map_provider).expect("The data should be valid!");
         let gc = data.as_borrowed();
 
+        let data = maps::get_script(&cp_map_provider).expect("The data should be valid");
+        let script = data.as_borrowed();
+
         // Load binary Unicode property dependencies.
         let uniset_provider = BinaryPropertyCodePointSetDataProvider::from(&self.source);
 
@@ -341,8 +344,60 @@ impl SegmenterRuleProvider {
                             for c in 0..0x20000 {
                                 if lb.get_u32(c) == LineBreak::ComplexContext {
                                     properties_map[c as usize] = property_index
+                                } else if let Some(c) = char::from_u32(c) {
+                                    match script.get(c) {
+                                        Script::Han | Script::Katakana | Script::Hiragana => {
+                                            properties_map[c as usize] = property_index;
+                                        }
+                                        _ => {}
+                                    }
                                 }
                             }
+
+                            // Hiragana
+                            for c in 0x3041..0x309F {
+                                properties_map[c as usize] = property_index
+                            }
+
+                            // CJK Unified Ideographs Extension A
+                            for c in 0x3400..0x4DBF {
+                                properties_map[c as usize] = property_index
+                            }
+                            // CJK Unified Ideographs
+                            for c in 0x4E00..0x9FFF {
+                                properties_map[c as usize] = property_index
+                            }
+                            // CJK Unified Ideographs Extension B
+                            for c in 0x20000..0x215FF {
+                                properties_map[c as usize] = property_index
+                            }
+                            // CJK Unified Ideographs Extension C
+                            for c in 0x2A700..0x2B73F {
+                                properties_map[c as usize] = property_index
+                            }
+                            // CJK Unified Ideographs Extension D
+                            for c in 0x2B740..0x2B81F {
+                                properties_map[c as usize] = property_index
+                            }
+                            // CJK Unified Ideographs Extension E
+                            for c in 0x2B820..0x2CEAF {
+                                properties_map[c as usize] = property_index
+                            }
+                            // CJK Unified Ideographs Extension F
+                            for c in 0x2CEB0..0x2EBEF {
+                                properties_map[c as usize] = property_index
+                            }
+                            // CJK Unified Ideographs Extension G
+                            for c in 0x30000..0x3134F {
+                                properties_map[c as usize] = property_index
+                            }
+                            // CJK Compatibility Ideographs
+                            for c in 0xF900..0xFAFF {
+                                properties_map[c as usize] = property_index
+                            }
+
+                            // TODO:
+                            // How to handle Katakana in UAX29? UAX29 defines Katakana rule, but CJ dictionary has another rules.
                             continue;
                         }
 

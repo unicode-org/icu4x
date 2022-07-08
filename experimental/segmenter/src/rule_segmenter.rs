@@ -39,7 +39,7 @@ pub struct RuleBreakIterator<'l, 's, Y: RuleBreakType<'l, 's> + ?Sized> {
     pub(crate) current_pos_data: Option<(usize, Y::CharType)>,
     pub(crate) result_cache: alloc::vec::Vec<usize>,
     pub(crate) data: &'l RuleBreakDataV1<'l>,
-    pub(crate) dictionary_payload: Option<&'l DataPayload<UCharDictionaryBreakDataV1Marker>>,
+    pub(crate) dictionary_payloads: [Option<&'l DataPayload<UCharDictionaryBreakDataV1Marker>>; 5],
 }
 
 impl<'l, 's, Y: RuleBreakType<'l, 's>> Iterator for RuleBreakIterator<'l, 's, Y> {

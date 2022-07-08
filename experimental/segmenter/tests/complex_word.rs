@@ -52,3 +52,17 @@ fn word_break_my() {
         "word segmenter with Burmese"
     );
 }
+
+#[test]
+fn word_break_mixed() {
+    let provider = icu_testdata::get_provider();
+    let segmenter = WordBreakSegmenter::try_new(&provider).expect("Data exists");
+
+    let s = "Welcome龟山岛龟山岛Welcome";
+    let iter = segmenter.segment_str(s);
+    assert_eq!(
+        iter.collect::<Vec<usize>>(),
+        vec![0, 7, 16, 25, 32],
+        "word segmenter with Chinese"
+    );
+}
