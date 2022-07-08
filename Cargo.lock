@@ -1322,15 +1322,12 @@ version = "0.1.0"
 name = "icu4x_ecma402"
 version = "0.6.0"
 dependencies = [
- "criterion",
  "ecma402_traits",
  "icu",
- "icu_locid",
+ "icu_datagen",
  "icu_plurals",
  "icu_provider",
- "icu_testdata",
- "serde",
- "serde_json",
+ "zerovec",
 ]
 
 [[package]]
