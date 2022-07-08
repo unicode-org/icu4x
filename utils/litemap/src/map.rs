@@ -870,7 +870,7 @@ where
 
 impl<K, V, S> IntoIterator for LiteMap<K, V, S>
 where
-    S: Store<K, V>,
+    S: StoreIntoIter<K, V>,
 {
     type Item = (K, V);
 
@@ -1259,8 +1259,9 @@ mod test {
         }
     }
 
+    #[test]
     fn into_iterator() {
-        let mut map = LiteMap::new();
+        let mut map = LiteMap::<_, _, Vec<(_, _)>>::new();
         map.insert(4, "four");
         map.insert(6, "six");
         let mut reference = vec![(6, "six"), (4, "four")];
@@ -1270,4 +1271,5 @@ mod test {
             assert_eq!(r, i);
         }
         assert!(reference.is_empty());
+    }
 }

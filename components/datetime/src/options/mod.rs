@@ -33,7 +33,7 @@ pub mod length;
 #[cfg(any(feature = "datagen", feature = "experimental"))]
 pub mod preferences;
 #[cfg(not(any(feature = "datagen", feature = "experimental")))]
-pub(crate) mod preferences;
+pub mod preferences;
 
 /// A bag of options which, together with [`Locale`](icu_locid::Locale), defines how
 /// dates will be formatted with a [`TypedDateTimeFormatter`](crate::TypedDateTimeFormatter) instance.
