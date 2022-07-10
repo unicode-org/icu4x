@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1657262616996,
+  "lastUpdate": 1657471877331,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -19523,6 +19523,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/882e23403327620e4aafde28a9a407bcc6245a54"
         },
         "date": 1657262587791,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4763611,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "c967f2408530cf879aed9b05ebb82c9525efb67c",
+          "message": "Make datagen compatible with new `icuexportdata` structure (#2137)",
+          "timestamp": "2022-07-10T18:49:22+02:00",
+          "tree_id": "43c7aecdbd85cbcbc6e48339ceb323b3454f4a3f",
+          "url": "https://github.com/unicode-org/icu4x/commit/c967f2408530cf879aed9b05ebb82c9525efb67c"
+        },
+        "date": 1657471846286,
         "tool": "ndjson",
         "benches": [
           {
