@@ -936,7 +936,7 @@ impl FormatTimeZone for GenericNonLocationLongFormat {
             .and_then(|metazones| {
                 time_zone
                     .time_zone_id()
-                    .and_then(|tz| metazones.overrides.get(tz))
+                    .and_then(|tz| metazones.overrides.get(&tz))
             })
             .or_else(|| {
                 data_payloads
@@ -946,7 +946,7 @@ impl FormatTimeZone for GenericNonLocationLongFormat {
                     .and_then(|metazones| {
                         time_zone
                             .metazone_id()
-                            .and_then(|mz| metazones.defaults.get(mz))
+                            .and_then(|mz| metazones.defaults.get(&mz))
                     })
             });
 
@@ -974,7 +974,7 @@ impl FormatTimeZone for GenericNonLocationShortFormat {
             .and_then(|metazones| {
                 time_zone
                     .time_zone_id()
-                    .and_then(|tz| metazones.overrides.get(tz))
+                    .and_then(|tz| metazones.overrides.get(&tz))
             })
             .or_else(|| {
                 data_payloads
@@ -984,7 +984,7 @@ impl FormatTimeZone for GenericNonLocationShortFormat {
                     .and_then(|metazones| {
                         time_zone
                             .metazone_id()
-                            .and_then(|mz| metazones.defaults.get(mz))
+                            .and_then(|mz| metazones.defaults.get(&mz))
                     })
             });
 
@@ -1013,7 +1013,7 @@ impl FormatTimeZone for SpecificNonLocationShortFormat {
                 time_zone.time_zone_id().and_then(|tz| {
                     time_zone
                         .time_variant()
-                        .and_then(|variant| metazones.overrides.get(tz, variant).ok())
+                        .and_then(|variant| metazones.overrides.get(&tz, &variant).ok())
                 })
             })
             .or_else(|| {
@@ -1025,7 +1025,7 @@ impl FormatTimeZone for SpecificNonLocationShortFormat {
                         time_zone.metazone_id().and_then(|mz| {
                             time_zone
                                 .time_variant()
-                                .and_then(|variant| metazones.defaults.get(mz, variant).ok())
+                                .and_then(|variant| metazones.defaults.get(&mz, &variant).ok())
                         })
                     })
             });
@@ -1055,7 +1055,7 @@ impl FormatTimeZone for SpecificNonLocationLongFormat {
                 time_zone.time_zone_id().and_then(|tz| {
                     time_zone
                         .time_variant()
-                        .and_then(|variant| metazones.overrides.get(tz, variant).ok())
+                        .and_then(|variant| metazones.overrides.get(&tz, &variant).ok())
                 })
             })
             .or_else(|| {
@@ -1067,7 +1067,7 @@ impl FormatTimeZone for SpecificNonLocationLongFormat {
                         time_zone.metazone_id().and_then(|mz| {
                             time_zone
                                 .time_variant()
-                                .and_then(|variant| metazones.defaults.get(mz, variant).ok())
+                                .and_then(|variant| metazones.defaults.get(&mz, &variant).ok())
                         })
                     })
             });
@@ -1140,7 +1140,7 @@ impl FormatTimeZone for GenericLocationFormat {
             .exemplar_cities
             .as_ref()
             .map(|p| p.get())
-            .and_then(|cities| time_zone.time_zone_id().and_then(|id| cities.0.get(id)))
+            .and_then(|cities| time_zone.time_zone_id().and_then(|id| cities.0.get(&id)))
             .map(|location| {
                 data_payloads
                     .zone_formats
@@ -1248,7 +1248,7 @@ impl FormatTimeZone for ExemplarCityFormat {
             .exemplar_cities
             .as_ref()
             .map(|p| p.get())
-            .and_then(|cities| time_zone.time_zone_id().and_then(|id| cities.0.get(id)));
+            .and_then(|cities| time_zone.time_zone_id().and_then(|id| cities.0.get(&id)));
 
         match formatted_exemplar_city {
             Some(ftz) => Ok(sink.write_str(ftz)),

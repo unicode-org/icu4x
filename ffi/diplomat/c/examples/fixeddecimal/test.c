@@ -43,7 +43,7 @@ int main() {
         return 1;
     }
 
-    ICU4XFixedDecimal_negate(decimal);
+    ICU4XFixedDecimal_set_sign(decimal, ICU4XFixedDecimalSign_Negative);
 
     write = diplomat_simple_writeable(output, 40);
 

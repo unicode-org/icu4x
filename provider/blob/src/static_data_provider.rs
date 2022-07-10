@@ -6,8 +6,7 @@ use crate::blob_schema::*;
 use icu_provider::buf::BufferFormat;
 use icu_provider::prelude::*;
 use serde::de::Deserialize;
-use writeable::Writeable;
-use zerovec::maps::{KeyError, ZeroMap2dBorrowed};
+use zerovec::maps::ZeroMap2dBorrowed;
 
 /// A data provider loading data statically baked in to the binary.
 ///
@@ -106,17 +105,19 @@ impl BufferProvider for StaticDataProvider {
         metadata.buffer_format = Some(BufferFormat::Postcard1);
         Ok(DataResponse {
             metadata,
-            payload: Some(DataPayload::from_static_buffer(
-                self.data
-                    .get(&key.get_hash(), req.options.write_to_string().as_bytes())
-                    .map_err(|e| {
-                        match e {
-                            KeyError::K0 => DataErrorKind::MissingResourceKey,
-                            KeyError::K1 => DataErrorKind::MissingResourceOptions,
-                        }
-                        .with_req(key, req)
-                    })?,
-            )),
+            payload: {
+                let partial_result: Result<&[u8], DataErrorKind> = self
+                    .data
+                    .get0(&key.get_hash())
+                    .ok_or(DataErrorKind::MissingResourceKey)
+                    .and_then(|cursor| {
+                        cursor
+                            .get1_by(|bytes| req.options.strict_cmp(bytes).reverse())
+                            .ok_or(DataErrorKind::MissingResourceOptions)
+                    });
+                let bytes = partial_result.map_err(|e| e.with_req(key, req))?;
+                Some(DataPayload::from_static_buffer(bytes))
+            },
         })
     }
 }

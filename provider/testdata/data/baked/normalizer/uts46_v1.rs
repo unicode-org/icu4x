@@ -1,35 +1,6 @@
 // @generated
-use icu_provider::prelude::*;
-impl ResourceProvider<::icu_normalizer::provider::Uts46CompositionPassthroughV1Marker>
-    for super::super::BakedDataProvider
-{
-    fn load_resource(
-        &self,
-        req: &DataRequest,
-    ) -> Result<
-        DataResponse<::icu_normalizer::provider::Uts46CompositionPassthroughV1Marker>,
-        DataError,
-    > {
-        static VALUES: &[(&str, DataStruct)] = &[("und", UND)];
-        #[allow(clippy::unwrap_used)]
-        let value = VALUES
-            .binary_search_by(|(k, _)| req.options.strict_cmp(k.as_bytes()).reverse())
-            .map(|i| VALUES.get(i).unwrap().1)
-            .map_err(|_| {
-                DataErrorKind::MissingResourceOptions.with_req(
-                    <::icu_normalizer::provider::Uts46CompositionPassthroughV1Marker>::KEY,
-                    req,
-                )
-            })?;
-        Ok(DataResponse {
-            metadata: DataResponseMetadata::default(),
-            payload: Some(DataPayload::from_owned(zerofrom::ZeroFrom::zero_from(
-                value,
-            ))),
-        })
-    }
-}
-type DataStruct = & 'static < :: icu_normalizer :: provider :: Uts46CompositionPassthroughV1Marker as DataMarker > :: Yokeable ;
+type DataStruct = & 'static < :: icu_normalizer :: provider :: Uts46CompositionPassthroughV1Marker as :: icu_provider :: DataMarker > :: Yokeable ;
+pub static DATA: &[(&str, DataStruct)] = &[("und", UND)];
 static UND: DataStruct = &::icu_normalizer::provider::CompositionPassthroughV1 {
     potential_passthrough_and_not_backward_combining: unsafe {
         #[allow(unused_unsafe)]

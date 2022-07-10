@@ -2,6 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use fixed_decimal::decimal::Sign;
+
 #[diplomat::bridge]
 pub mod ffi {
     use alloc::boxed::Box;
@@ -14,6 +16,17 @@ pub mod ffi {
     #[diplomat::opaque]
     #[diplomat::rust_link(fixed_decimal::decimal::FixedDecimal, Struct)]
     pub struct ICU4XFixedDecimal(pub FixedDecimal);
+
+    /// The sign of a FixedDecimal, as shown in formatting.
+    #[diplomat::rust_link(fixed_decimal::decimal::Sign, Enum)]
+    pub enum ICU4XFixedDecimalSign {
+        /// No sign (implicitly positive, e.g., 1729).
+        None,
+        /// A negative sign, e.g., -1729.
+        Negative,
+        /// An explicit positive sign, e.g., +1729.
+        Positive,
+    }
 
     fn convert(dec: FixedDecimal) -> Box<ICU4XFixedDecimal> {
         Box::new(ICU4XFixedDecimal(dec))
@@ -80,10 +93,10 @@ pub mod ffi {
             self.0.multiply_pow10(power).is_ok()
         }
 
-        /// Invert the sign of the [`ICU4XFixedDecimal`].
-        #[diplomat::rust_link(fixed_decimal::decimal::FixedDecimal::negate, FnInStruct)]
-        pub fn negate(&mut self) {
-            self.0.negate()
+        /// Set the sign of the [`ICU4XFixedDecimal`].
+        #[diplomat::rust_link(fixed_decimal::decimal::FixedDecimal::set_sign, FnInStruct)]
+        pub fn set_sign(&mut self, sign: ICU4XFixedDecimalSign) {
+            self.0.set_sign(sign.into())
         }
 
         /// Zero-pad the [`ICU4XFixedDecimal`] on the left to a particular position
@@ -110,6 +123,16 @@ pub mod ffi {
         pub fn to_string(&self, to: &mut diplomat_runtime::DiplomatWriteable) {
             #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
             self.0.write_to(to).unwrap();
+        }
+    }
+}
+
+impl From<ffi::ICU4XFixedDecimalSign> for Sign {
+    fn from(other: ffi::ICU4XFixedDecimalSign) -> Self {
+        match other {
+            ffi::ICU4XFixedDecimalSign::None => Self::None,
+            ffi::ICU4XFixedDecimalSign::Negative => Self::Negative,
+            ffi::ICU4XFixedDecimalSign::Positive => Self::Positive,
         }
     }
 }

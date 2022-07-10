@@ -26,7 +26,7 @@ test("format a long decimal", t => {
 test("format a negated, scaled decimal", t => {
   const decimal = ICU4XFixedDecimal.create(1000007);
   decimal.multiply_pow10(2);
-  decimal.negate();
+  decimal.set_sign("Negative");
 
   t.is(format.format(decimal), "-১০,০০,০০,৭০০");
 });

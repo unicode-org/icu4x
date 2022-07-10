@@ -2,9 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use databake::{Bake, CrateEnv};
-use quote::quote;
-use std::borrow::Cow;
+extern crate alloc;
+
+use databake::*;
 
 #[derive(Bake)]
 #[databake(path = test)]
@@ -13,10 +13,12 @@ pub struct IntExample {
 }
 
 #[test]
+#[ignore] // https://github.com/rust-lang/rust/issues/98906
 fn test_int_example() {
-    assert_eq!(
-        IntExample { x: 17 }.bake(&CrateEnv::default()).to_string(),
-        quote! { ::test::IntExample { x: 17u8, }}.to_string()
+    test_bake!(
+        IntExample,
+        const: crate::IntExample { x: 17u8, },
+        test,
     );
 }
 
@@ -28,12 +30,12 @@ pub struct GenericsExample<T> {
 }
 
 #[test]
+#[ignore] // https://github.com/rust-lang/rust/issues/98906
 fn test_generics_example() {
-    assert_eq!(
-        GenericsExample { x: 17, y: 100isize }
-            .bake(&CrateEnv::default())
-            .to_string(),
-        quote! { ::test::GenericsExample { x: 17u32, y: 100isize, }}.to_string()
+    test_bake!(
+        GenericsExample<isize>,
+        const: crate::GenericsExample { x: 17, y: 100isize },
+        test
     );
 }
 
@@ -42,29 +44,21 @@ fn test_generics_example() {
 pub struct CowExample<'a> {
     x: u8,
     y: &'a str,
-    z: Cow<'a, str>,
-    w: Cow<'a, [u8]>,
+    z: alloc::borrow::Cow<'a, str>,
+    w: alloc::borrow::Cow<'a, [u8]>,
 }
 
 #[test]
+#[ignore] // https://github.com/rust-lang/rust/issues/98906
 fn test_cow_example() {
-    assert_eq!(
-        CowExample {
-            x: 17,
+    test_bake!(
+        CowExample<'static>,
+        const: CowExample {
+            x: 17u8,
             y: "foo",
-            z: Cow::Borrowed("bar"),
-            w: Cow::Borrowed(&[1, 2, 3]),
-        }
-        .bake(&CrateEnv::default())
-        .to_string(),
-        quote! {
-            ::test::CowExample {
-                x: 17u8,
-                y: "foo",
-                z: ::alloc::borrow::Cow::Borrowed("bar"),
-                w: ::alloc::borrow::Cow::Borrowed(&[1u8,2u8,3u8]),
-            }
-        }
-        .to_string()
+            z: alloc::borrow::Cow::Borrowed("bar"),
+            w: alloc::borrow::Cow::Borrowed(&[1u8, 2u8, 3u8, ]),
+        },
+        test
     );
 }
