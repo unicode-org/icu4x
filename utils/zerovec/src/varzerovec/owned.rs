@@ -18,12 +18,11 @@ use core::ops::Deref;
 use core::ops::Range;
 use core::{fmt, ptr, slice};
 
-// Keep these in sync with components.rs
-const LENGTH_WIDTH: usize = 4;
-const METADATA_WIDTH: usize = 0;
-const INDEX_WIDTH: usize = 4;
-const MAX_LENGTH: usize = u32::MAX as usize;
-const MAX_INDEX: usize = u32::MAX as usize;
+use super::components::LENGTH_WIDTH;
+use super::components::METADATA_WIDTH;
+use super::components::INDEX_WIDTH;
+use super::components::MAX_LENGTH;
+use super::components::MAX_INDEX;
 
 /// A fully-owned [`VarZeroVec`]. This type has no lifetime but has the same
 /// internal buffer representation of [`VarZeroVec`], making it cheaply convertible to

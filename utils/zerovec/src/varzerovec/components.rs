@@ -12,12 +12,12 @@ use core::convert::TryFrom;
 use core::marker::PhantomData;
 use core::ops::Range;
 
-// Keep these in sync with owned.rs
-const LENGTH_WIDTH: usize = 4;
-const METADATA_WIDTH: usize = 0;
-const INDEX_WIDTH: usize = 4;
-const MAX_LENGTH: usize = u32::MAX as usize;
-const MAX_INDEX: usize = u32::MAX as usize;
+// Also used by owned.rs
+pub(super) const LENGTH_WIDTH: usize = 4;
+pub(super) const METADATA_WIDTH: usize = 0;
+pub(super) const INDEX_WIDTH: usize = 4;
+pub(super) const MAX_LENGTH: usize = u32::MAX as usize;
+pub(super) const MAX_INDEX: usize = u32::MAX as usize;
 
 fn usizeify(x: RawBytesULE<INDEX_WIDTH>) -> usize {
     x.as_unsigned_int() as usize
