@@ -4,7 +4,7 @@
 
 //! This module contains provider implementations backed by built-in segmentation data.
 
-use crate::transform::uprops::{
+use crate::transform::icuexport::uprops::{
     BinaryPropertyUnicodeSetDataProvider, EnumeratedPropertyCodePointTrieProvider,
 };
 use crate::SourceData;
@@ -598,7 +598,7 @@ impl SegmenterRuleProvider {
             data: CodePointTrieBuilderData::ValuesByCodePoint(&properties_map),
             default_value: 0,
             error_value: 0,
-            trie_type: self.source.trie_type(),
+            trie_type: self.source.trie_type().to_internal(),
         }
         .build();
 

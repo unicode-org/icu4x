@@ -6,7 +6,6 @@
 //! exported from ICU.
 
 use crate::SourceData;
-use icu_codepointtrie::toml::CodePointTrieToml;
 use icu_codepointtrie::CodePointTrie;
 use icu_collator::provider::*;
 use icu_locid::extensions::unicode::Value;
@@ -22,6 +21,8 @@ use std::str::FromStr;
 use writeable::Writeable;
 use zerovec::ZeroVec;
 
+mod collator_serde;
+
 /// Collection of all the key for easy reference from the datagen registry.
 pub const ALL_KEYS: [ResourceKey; 6] = [
     CollationDataV1Marker::KEY,
@@ -31,49 +32,6 @@ pub const ALL_KEYS: [ResourceKey; 6] = [
     CollationReorderingV1Marker::KEY,
     CollationSpecialPrimariesV1Marker::KEY,
 ];
-
-/// Serde counterpart for `CollationDataV1`.
-#[derive(serde::Deserialize)]
-struct CollationData {
-    pub trie: CodePointTrieToml,
-    pub contexts: Vec<u16>,
-    pub ce32s: Vec<u32>,
-    // TOML integers are signed 64-bit, so the range of u64 isn't available
-    pub ces: Vec<i64>,
-}
-
-/// Serde counterpart for `CollationDiacriticsV1`.
-#[derive(serde::Deserialize)]
-struct CollationDiacritics {
-    pub secondaries: Vec<u16>,
-}
-
-/// Serde counterpart for `CollationJamoV1`.
-#[derive(serde::Deserialize)]
-struct CollationJamo {
-    pub ce32s: Vec<u32>,
-}
-
-/// Serde counterpart for `CollationMetadataV1`.
-#[derive(serde::Deserialize)]
-struct CollationMetadata {
-    pub bits: u32,
-}
-
-/// Serde counterpart for `CollationReorderingV1`.
-#[derive(serde::Deserialize)]
-struct CollationReordering {
-    pub min_high_no_reorder: u32,
-    pub reorder_table: Vec<u8>,
-    pub reorder_ranges: Vec<u32>,
-}
-
-/// Serde counterpart for `CollationSpecialPrimariesV1`.
-#[derive(serde::Deserialize)]
-struct CollationSpecialPrimaries {
-    pub last_primaries: Vec<u16>, // length always supposed to be 4
-    pub numeric_primary: u8,
-}
 
 fn locale_to_file_name(opts: &ResourceOptions) -> String {
     let mut s = if opts.get_langid() == LanguageIdentifier::UND {
@@ -158,12 +116,13 @@ macro_rules! collation_provider {
         $(
             impl ResourceProvider<$marker> for CollationProvider {
                 fn load_resource(&self, req: &DataRequest) -> Result<DataResponse<$marker>, DataError> {
-                    let $toml_data: &$serde_struct = self
+                    let $toml_data: &collator_serde::$serde_struct = self
                         .source
                         .icuexport()?
                         .read_and_parse_toml(
                             &format!(
-                                "coll/{}{}.toml",
+                                "collation/{}/{}{}.toml",
+                                self.source.collation_han_database(),
                                 locale_to_file_name(&req.options), $suffix)
                         )?;
 
@@ -183,7 +142,7 @@ macro_rules! collation_provider {
                     Ok(self
                         .source
                         .icuexport()?
-                        .list("coll")?
+                        .list(&format!("collation/{}", self.source.collation_han_database()))?
                         .filter_map(|entry|
                             entry
                                 .file_stem()

@@ -73,28 +73,3 @@ pub mod script_extensions {
         pub script_extensions: Vec<ScriptWithExtensionsProperty>,
     }
 }
-
-#[cfg(feature = "experimental")]
-pub mod case {
-    #[derive(serde::Deserialize)]
-    pub struct Exceptions {
-        pub exceptions: Vec<u16>,
-    }
-
-    #[derive(serde::Deserialize)]
-    pub struct Unfold {
-        pub unfold: Vec<u16>,
-    }
-
-    #[derive(serde::Deserialize)]
-    pub struct Level1 {
-        pub code_point_trie: super::CodePointTrieToml,
-        pub exceptions: Exceptions,
-        pub unfold: Unfold,
-    }
-
-    #[derive(serde::Deserialize)]
-    pub struct Main {
-        pub ucase: Level1,
-    }
-}

@@ -1533,6 +1533,7 @@ dependencies = [
  "proc-macro2",
  "quote",
  "rayon",
+ "reqwest",
  "serde",
  "serde-aux",
  "serde_json",
