@@ -45,6 +45,7 @@ std = ["icu_provider/std", "icu_locid/std", "regex-automata/std", "regex-automat
 serde = ["dep:serde", "icu_provider/serde", "zerovec/serde", "deduplicating_array"]
 serde_human = ["serde", "regex-automata/alloc"]
 datagen = ["serde", "std", "databake"]
+bench = []
 
 [[example]]
 name = "and_list"

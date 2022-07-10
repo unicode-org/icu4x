@@ -8,7 +8,7 @@
 use crate::provider::time_zones::{MetaZoneId, TimeZoneBcp47Id};
 use icu_calendar::any_calendar::AnyCalendarKind;
 use icu_calendar::Calendar;
-use icu_calendar::{arithmetic::week_of, AsCalendar, Date, DateTime};
+use icu_calendar::{arithmetic::week_of, AsCalendar, Date, DateTime, Iso};
 use icu_locid::Locale;
 use tinystr::TinyStr8;
 
@@ -44,6 +44,9 @@ pub trait DateInput {
     /// Gets the kind of calendar this date is for, if associated with AnyCalendar
     /// In most cases you'll probably want to return AnyCalendarKind::Iso
     fn any_calendar_kind(&self) -> Option<AnyCalendarKind>;
+
+    /// Converts date to ISO
+    fn to_iso(&self) -> Date<Iso>;
 }
 
 /// Representation of a time of day according to ISO-8601 conventions. Always indexed from
@@ -149,7 +152,7 @@ pub(crate) struct ExtractedDateTimeInput {
 ///
 /// See [`ZonedDateTimeInput`] for documentation on individual fields
 pub(crate) struct ExtractedZonedDateTimeInput {
-    date_time_input: ExtractedDateTimeInput,
+    pub(crate) date_time_input: ExtractedDateTimeInput,
     gmt_offset: GmtOffset,
     time_zone_id: Option<TimeZoneBcp47Id>,
     metazone_id: Option<MetaZoneId>,
@@ -209,6 +212,9 @@ impl DateInput for ExtractedDateTimeInput {
     fn any_calendar_kind(&self) -> Option<AnyCalendarKind> {
         self.any_calendar_kind
     }
+    fn to_iso(&self) -> Date<Iso> {
+        unreachable!("ExtractedDateTimeInput should never be directly passed to AnyDateTimeFormat")
+    }
 }
 
 impl IsoTimeInput for ExtractedDateTimeInput {
@@ -247,6 +253,11 @@ impl DateInput for ExtractedZonedDateTimeInput {
     }
     fn any_calendar_kind(&self) -> Option<AnyCalendarKind> {
         self.date_time_input.any_calendar_kind
+    }
+    fn to_iso(&self) -> Date<Iso> {
+        unreachable!(
+            "ExtractedZonedDateTimeInput should never be directly passed to AnyDateTimeFormat"
+        )
     }
 }
 
@@ -499,6 +510,10 @@ impl<C: Calendar, A: AsCalendar<Calendar = C>> DateInput for Date<A> {
     fn any_calendar_kind(&self) -> Option<AnyCalendarKind> {
         self.calendar().any_calendar_kind()
     }
+
+    fn to_iso(&self) -> Date<Iso> {
+        Date::to_iso(self)
+    }
 }
 
 impl<C: Calendar, A: AsCalendar<Calendar = C>> DateInput for DateTime<A> {
@@ -530,6 +545,9 @@ impl<C: Calendar, A: AsCalendar<Calendar = C>> DateInput for DateTime<A> {
 
     fn any_calendar_kind(&self) -> Option<AnyCalendarKind> {
         self.date.calendar().any_calendar_kind()
+    }
+    fn to_iso(&self) -> Date<Iso> {
+        Date::to_iso(&self.date)
     }
 }
 

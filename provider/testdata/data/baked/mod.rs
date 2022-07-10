@@ -1571,6 +1571,17 @@ impl ResourceProvider<::icu_segmenter::provider::SentenceBreakDataV1Marker> for 
         })
     }
 }
+impl ResourceProvider<::icu_segmenter::provider::UCharDictionaryBreakDataV1Marker>
+    for BakedDataProvider
+{
+    fn load_resource(
+        &self,
+        req: &DataRequest,
+    ) -> Result<DataResponse<::icu_segmenter::provider::UCharDictionaryBreakDataV1Marker>, DataError>
+    {
+        Ok (DataResponse { metadata : Default :: default () , payload : Some (DataPayload :: from_owned (zerofrom :: ZeroFrom :: zero_from (litemap_slice_get (segmenter :: dictionary_v1 :: DATA , < :: icu_segmenter :: provider :: UCharDictionaryBreakDataV1Marker as ResourceMarker > :: KEY , req) ? ,))) , })
+    }
+}
 impl ResourceProvider<::icu_segmenter::provider::WordBreakDataV1Marker> for BakedDataProvider {
     fn load_resource(
         &self,

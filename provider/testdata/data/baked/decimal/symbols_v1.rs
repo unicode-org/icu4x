@@ -23,15 +23,15 @@ pub static DATA: &[(&str, DataStruct)] = &[
 ];
 static AR_AR_EG: DataStruct = &::icu_decimal::provider::DecimalSymbolsV1 {
     minus_sign_affixes: ::icu_decimal::provider::AffixesV1 {
-        prefix: ::alloc::borrow::Cow::Borrowed("\u{61c}-"),
-        suffix: ::alloc::borrow::Cow::Borrowed(""),
+        prefix: alloc::borrow::Cow::Borrowed("\u{61c}-"),
+        suffix: alloc::borrow::Cow::Borrowed(""),
     },
     plus_sign_affixes: ::icu_decimal::provider::AffixesV1 {
-        prefix: ::alloc::borrow::Cow::Borrowed("\u{61c}+"),
-        suffix: ::alloc::borrow::Cow::Borrowed(""),
+        prefix: alloc::borrow::Cow::Borrowed("\u{61c}+"),
+        suffix: alloc::borrow::Cow::Borrowed(""),
     },
-    decimal_separator: ::alloc::borrow::Cow::Borrowed("٫"),
-    grouping_separator: ::alloc::borrow::Cow::Borrowed("٬"),
+    decimal_separator: alloc::borrow::Cow::Borrowed("٫"),
+    grouping_separator: alloc::borrow::Cow::Borrowed("٬"),
     grouping_sizes: ::icu_decimal::provider::GroupingSizesV1 {
         primary: 3u8,
         secondary: 3u8,
@@ -41,15 +41,15 @@ static AR_AR_EG: DataStruct = &::icu_decimal::provider::DecimalSymbolsV1 {
 };
 static BN: DataStruct = &::icu_decimal::provider::DecimalSymbolsV1 {
     minus_sign_affixes: ::icu_decimal::provider::AffixesV1 {
-        prefix: ::alloc::borrow::Cow::Borrowed("-"),
-        suffix: ::alloc::borrow::Cow::Borrowed(""),
+        prefix: alloc::borrow::Cow::Borrowed("-"),
+        suffix: alloc::borrow::Cow::Borrowed(""),
     },
     plus_sign_affixes: ::icu_decimal::provider::AffixesV1 {
-        prefix: ::alloc::borrow::Cow::Borrowed("+"),
-        suffix: ::alloc::borrow::Cow::Borrowed(""),
+        prefix: alloc::borrow::Cow::Borrowed("+"),
+        suffix: alloc::borrow::Cow::Borrowed(""),
     },
-    decimal_separator: ::alloc::borrow::Cow::Borrowed("."),
-    grouping_separator: ::alloc::borrow::Cow::Borrowed(","),
+    decimal_separator: alloc::borrow::Cow::Borrowed("."),
+    grouping_separator: alloc::borrow::Cow::Borrowed(","),
     grouping_sizes: ::icu_decimal::provider::GroupingSizesV1 {
         primary: 3u8,
         secondary: 2u8,
@@ -59,15 +59,15 @@ static BN: DataStruct = &::icu_decimal::provider::DecimalSymbolsV1 {
 };
 static CCP: DataStruct = &::icu_decimal::provider::DecimalSymbolsV1 {
     minus_sign_affixes: ::icu_decimal::provider::AffixesV1 {
-        prefix: ::alloc::borrow::Cow::Borrowed("-"),
-        suffix: ::alloc::borrow::Cow::Borrowed(""),
+        prefix: alloc::borrow::Cow::Borrowed("-"),
+        suffix: alloc::borrow::Cow::Borrowed(""),
     },
     plus_sign_affixes: ::icu_decimal::provider::AffixesV1 {
-        prefix: ::alloc::borrow::Cow::Borrowed("+"),
-        suffix: ::alloc::borrow::Cow::Borrowed(""),
+        prefix: alloc::borrow::Cow::Borrowed("+"),
+        suffix: alloc::borrow::Cow::Borrowed(""),
     },
-    decimal_separator: ::alloc::borrow::Cow::Borrowed("."),
-    grouping_separator: ::alloc::borrow::Cow::Borrowed(","),
+    decimal_separator: alloc::borrow::Cow::Borrowed("."),
+    grouping_separator: alloc::borrow::Cow::Borrowed(","),
     grouping_sizes: ::icu_decimal::provider::GroupingSizesV1 {
         primary: 3u8,
         secondary: 2u8,
@@ -77,15 +77,15 @@ static CCP: DataStruct = &::icu_decimal::provider::DecimalSymbolsV1 {
 };
 static EN_EN_001_FIL_JA_TH_UND: DataStruct = &::icu_decimal::provider::DecimalSymbolsV1 {
     minus_sign_affixes: ::icu_decimal::provider::AffixesV1 {
-        prefix: ::alloc::borrow::Cow::Borrowed("-"),
-        suffix: ::alloc::borrow::Cow::Borrowed(""),
+        prefix: alloc::borrow::Cow::Borrowed("-"),
+        suffix: alloc::borrow::Cow::Borrowed(""),
     },
     plus_sign_affixes: ::icu_decimal::provider::AffixesV1 {
-        prefix: ::alloc::borrow::Cow::Borrowed("+"),
-        suffix: ::alloc::borrow::Cow::Borrowed(""),
+        prefix: alloc::borrow::Cow::Borrowed("+"),
+        suffix: alloc::borrow::Cow::Borrowed(""),
     },
-    decimal_separator: ::alloc::borrow::Cow::Borrowed("."),
-    grouping_separator: ::alloc::borrow::Cow::Borrowed(","),
+    decimal_separator: alloc::borrow::Cow::Borrowed("."),
+    grouping_separator: alloc::borrow::Cow::Borrowed(","),
     grouping_sizes: ::icu_decimal::provider::GroupingSizesV1 {
         primary: 3u8,
         secondary: 3u8,
@@ -95,15 +95,15 @@ static EN_EN_001_FIL_JA_TH_UND: DataStruct = &::icu_decimal::provider::DecimalSy
 };
 static EN_ZA_RU: DataStruct = &::icu_decimal::provider::DecimalSymbolsV1 {
     minus_sign_affixes: ::icu_decimal::provider::AffixesV1 {
-        prefix: ::alloc::borrow::Cow::Borrowed("-"),
-        suffix: ::alloc::borrow::Cow::Borrowed(""),
+        prefix: alloc::borrow::Cow::Borrowed("-"),
+        suffix: alloc::borrow::Cow::Borrowed(""),
     },
     plus_sign_affixes: ::icu_decimal::provider::AffixesV1 {
-        prefix: ::alloc::borrow::Cow::Borrowed("+"),
-        suffix: ::alloc::borrow::Cow::Borrowed(""),
+        prefix: alloc::borrow::Cow::Borrowed("+"),
+        suffix: alloc::borrow::Cow::Borrowed(""),
     },
-    decimal_separator: ::alloc::borrow::Cow::Borrowed(","),
-    grouping_separator: ::alloc::borrow::Cow::Borrowed("\u{a0}"),
+    decimal_separator: alloc::borrow::Cow::Borrowed(","),
+    grouping_separator: alloc::borrow::Cow::Borrowed("\u{a0}"),
     grouping_sizes: ::icu_decimal::provider::GroupingSizesV1 {
         primary: 3u8,
         secondary: 3u8,
@@ -113,15 +113,15 @@ static EN_ZA_RU: DataStruct = &::icu_decimal::provider::DecimalSymbolsV1 {
 };
 static ES: DataStruct = &::icu_decimal::provider::DecimalSymbolsV1 {
     minus_sign_affixes: ::icu_decimal::provider::AffixesV1 {
-        prefix: ::alloc::borrow::Cow::Borrowed("-"),
-        suffix: ::alloc::borrow::Cow::Borrowed(""),
+        prefix: alloc::borrow::Cow::Borrowed("-"),
+        suffix: alloc::borrow::Cow::Borrowed(""),
     },
     plus_sign_affixes: ::icu_decimal::provider::AffixesV1 {
-        prefix: ::alloc::borrow::Cow::Borrowed("+"),
-        suffix: ::alloc::borrow::Cow::Borrowed(""),
+        prefix: alloc::borrow::Cow::Borrowed("+"),
+        suffix: alloc::borrow::Cow::Borrowed(""),
     },
-    decimal_separator: ::alloc::borrow::Cow::Borrowed(","),
-    grouping_separator: ::alloc::borrow::Cow::Borrowed("."),
+    decimal_separator: alloc::borrow::Cow::Borrowed(","),
+    grouping_separator: alloc::borrow::Cow::Borrowed("."),
     grouping_sizes: ::icu_decimal::provider::GroupingSizesV1 {
         primary: 3u8,
         secondary: 3u8,
@@ -131,15 +131,15 @@ static ES: DataStruct = &::icu_decimal::provider::DecimalSymbolsV1 {
 };
 static ES_AR_SR_SR_CYRL_SR_LATN_TR: DataStruct = &::icu_decimal::provider::DecimalSymbolsV1 {
     minus_sign_affixes: ::icu_decimal::provider::AffixesV1 {
-        prefix: ::alloc::borrow::Cow::Borrowed("-"),
-        suffix: ::alloc::borrow::Cow::Borrowed(""),
+        prefix: alloc::borrow::Cow::Borrowed("-"),
+        suffix: alloc::borrow::Cow::Borrowed(""),
     },
     plus_sign_affixes: ::icu_decimal::provider::AffixesV1 {
-        prefix: ::alloc::borrow::Cow::Borrowed("+"),
-        suffix: ::alloc::borrow::Cow::Borrowed(""),
+        prefix: alloc::borrow::Cow::Borrowed("+"),
+        suffix: alloc::borrow::Cow::Borrowed(""),
     },
-    decimal_separator: ::alloc::borrow::Cow::Borrowed(","),
-    grouping_separator: ::alloc::borrow::Cow::Borrowed("."),
+    decimal_separator: alloc::borrow::Cow::Borrowed(","),
+    grouping_separator: alloc::borrow::Cow::Borrowed("."),
     grouping_sizes: ::icu_decimal::provider::GroupingSizesV1 {
         primary: 3u8,
         secondary: 3u8,
@@ -149,15 +149,15 @@ static ES_AR_SR_SR_CYRL_SR_LATN_TR: DataStruct = &::icu_decimal::provider::Decim
 };
 static FR: DataStruct = &::icu_decimal::provider::DecimalSymbolsV1 {
     minus_sign_affixes: ::icu_decimal::provider::AffixesV1 {
-        prefix: ::alloc::borrow::Cow::Borrowed("-"),
-        suffix: ::alloc::borrow::Cow::Borrowed(""),
+        prefix: alloc::borrow::Cow::Borrowed("-"),
+        suffix: alloc::borrow::Cow::Borrowed(""),
     },
     plus_sign_affixes: ::icu_decimal::provider::AffixesV1 {
-        prefix: ::alloc::borrow::Cow::Borrowed("+"),
-        suffix: ::alloc::borrow::Cow::Borrowed(""),
+        prefix: alloc::borrow::Cow::Borrowed("+"),
+        suffix: alloc::borrow::Cow::Borrowed(""),
     },
-    decimal_separator: ::alloc::borrow::Cow::Borrowed(","),
-    grouping_separator: ::alloc::borrow::Cow::Borrowed("\u{202f}"),
+    decimal_separator: alloc::borrow::Cow::Borrowed(","),
+    grouping_separator: alloc::borrow::Cow::Borrowed("\u{202f}"),
     grouping_sizes: ::icu_decimal::provider::GroupingSizesV1 {
         primary: 3u8,
         secondary: 3u8,

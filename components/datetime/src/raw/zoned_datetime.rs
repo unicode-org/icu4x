@@ -175,7 +175,7 @@ impl ZonedDateTimeFormat {
     /// Takes a [`ZonedDateTimeInput`] implementer and returns an instance of a [`FormattedZonedDateTime`]
     /// that contains all information necessary to display a formatted zoned datetime and operate on it.
     #[inline]
-    pub fn format<'l, T>(&'l self, value: &'l T) -> FormattedZonedDateTime<'l>
+    pub fn format<'l, T>(&'l self, value: &T) -> FormattedZonedDateTime<'l>
     where
         T: ZonedDateTimeInput,
     {
