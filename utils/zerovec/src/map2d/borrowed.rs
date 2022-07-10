@@ -142,6 +142,21 @@ where
     K1: ?Sized,
     V: ?Sized,
 {
+    #[doc(hidden)] // databake internal
+    pub const unsafe fn from_parts_unchecked(
+        keys0: &'a K0::Slice,
+        joiner: &'a ZeroSlice<u32>,
+        keys1: &'a K1::Slice,
+        values: &'a V::Slice,
+    ) -> Self {
+        Self {
+            keys0,
+            joiner,
+            keys1,
+            values,
+        }
+    }
+
     /// The number of elements in the [`ZeroMap2dBorrowed`]
     pub fn len(&self) -> usize {
         self.values.zvl_len()

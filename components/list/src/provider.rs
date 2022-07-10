@@ -328,6 +328,7 @@ mod datagen {
 
     impl databake::Bake for ListJoinerPattern<'_> {
         fn bake(&self, env: &databake::CrateEnv) -> databake::TokenStream {
+            env.insert("icu_list");
             let string = (&*self.string).bake(env);
             let index_1 = self.index_1.bake(env);
             // Safe because our own data is safe
@@ -434,6 +435,15 @@ pub(crate) mod test {
         assert_eq!(
             pattern.size_hint(ListStyle::Narrow, 200),
             LengthHint::exact(2 + 197 * 2) + LengthHint::between(2, 4)
+        );
+    }
+
+    #[test]
+    fn databake() {
+        databake::test_bake!(
+            ListJoinerPattern,
+            const: unsafe { crate::provider::ListJoinerPattern::from_parts_unchecked(", ", 2u8) },
+            icu_list
         );
     }
 }

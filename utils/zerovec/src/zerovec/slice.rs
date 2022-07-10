@@ -58,6 +58,18 @@ where
         T::ULE::parse_byte_slice(bytes).map(Self::from_ule_slice)
     }
 
+    /// Uses a `&[u8]` buffer as a `ZeroVec<T>` without any verification.
+    ///
+    /// # Safety
+    ///
+    /// `bytes` need to be an output from [`ZeroSlice::as_bytes()`].
+    pub const unsafe fn from_bytes_unchecked(bytes: &[u8]) -> &Self {
+        // &[u8] and &[T::ULE] are the same slice with different length metadata.
+        let (data, mut metadata): (usize, usize) = core::mem::transmute(bytes);
+        metadata /= core::mem::size_of::<T::ULE>();
+        core::mem::transmute((data, metadata))
+    }
+
     /// Construct a `&ZeroSlice<T>` from a slice of ULEs.
     ///
     /// This function can be used for constructing ZeroVecs in a const context, avoiding

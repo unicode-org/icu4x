@@ -12,6 +12,7 @@ use crate::{
 };
 use writeable::Writeable;
 
+/// [`FormattedTimeZone`] is a intermediate structure which can be retrieved as an output from [`TimeZoneFormat`].
 pub struct FormattedTimeZone<'l, T>
 where
     T: TimeZoneInput,

@@ -1108,4 +1108,25 @@ mod tests {
             })
         );
     }
+
+    #[test]
+    fn databake() {
+        databake::test_bake!(
+            CodePointTrie<'static, u32>,
+            const: crate::CodePointTrie::from_parts(
+                crate::CodePointTrieHeader {
+                    high_start: 1u32,
+                    shifted12_high_start: 2u16,
+                    index3_null_offset: 3u16,
+                    data_null_offset: 4u32,
+                    null_value: 5u32,
+                    trie_type: crate::TrieType::Small,
+                },
+                unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(&[]) },
+                unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(&[]) },
+            ),
+            icu_codepointtrie,
+            [zerovec],
+        );
+    }
 }

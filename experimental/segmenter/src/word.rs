@@ -6,6 +6,7 @@ use alloc::string::String;
 use alloc::vec;
 use alloc::vec::Vec;
 use core::str::CharIndices;
+use icu_locid::locale;
 use icu_provider::prelude::*;
 
 use crate::complex::*;
@@ -40,11 +41,12 @@ impl WordBreakSegmenter {
             .load_resource(&DataRequest::default())?
             .take_payload()?;
 
-        // TODO: Use `provider` parameter after we support loading dictionary data from the
-        // production-ready providers.
-        let inv_provider = icu_provider::inv::InvariantDataProvider;
-        let dictionary_payload = inv_provider
-            .load_resource(&DataRequest::default())?
+        let locale = locale!("th");
+        let dictionary_payload = provider
+            .load_resource(&DataRequest {
+                options: ResourceOptions::from(locale),
+                metadata: Default::default(),
+            })?
             .take_payload()?;
         Ok(Self {
             payload,

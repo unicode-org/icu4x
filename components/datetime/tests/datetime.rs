@@ -8,22 +8,30 @@ mod fixtures;
 mod patterns;
 
 use icu_calendar::{
-    buddhist::Buddhist, coptic::Coptic, ethiopic::Ethiopic, indian::Indian, japanese::Japanese,
-    AsCalendar, DateTime, Gregorian,
+    any_calendar::{AnyCalendarKind, IncludedInAnyCalendar},
+    buddhist::Buddhist,
+    coptic::Coptic,
+    ethiopic::Ethiopic,
+    indian::Indian,
+    japanese::Japanese,
+    provider::JapaneseErasV1Marker,
+    AsCalendar, DateTime, Gregorian, Iso,
 };
 use icu_datetime::provider::time_zones::{MetaZoneId, TimeZoneBcp47Id};
 use icu_datetime::{
+    any::AnyDateTimeFormat,
     mock::{parse_gregorian_from_str, zoned_datetime::MockZonedDateTime},
     pattern::runtime,
     provider::{
         calendar::{
             DatePatternsV1Marker, DateSkeletonPatternsV1Marker, DateSymbolsV1Marker,
-            TimePatternsV1Marker,
+            TimePatternsV1Marker, TimeSymbolsV1Marker,
         },
         week_data::WeekDataV1Marker,
     },
     time_zone::{TimeZoneFormat, TimeZoneFormatOptions},
-    CldrCalendar, DateTimeFormat, DateTimeFormatOptions, ZonedDateTimeFormat,
+    CldrCalendar, DateFormat, DateTimeFormat, DateTimeFormatOptions, TimeFormat,
+    ZonedDateTimeFormat,
 };
 use icu_decimal::provider::DecimalSymbolsV1Marker;
 use icu_locid::{
@@ -41,6 +49,7 @@ use patterns::{
     },
 };
 use std::fmt::Write;
+use std::str::FromStr;
 use tinystr::tinystr;
 
 fn test_fixture(fixture_name: &str) {
@@ -53,6 +62,7 @@ fn test_fixture(fixture_name: &str) {
         let japanese = Japanese::try_new(&provider).expect("Cannot load japanese data");
         let options = fixtures::get_options(&fx.input.options);
         let input_value = parse_gregorian_from_str(&fx.input.value).unwrap();
+        let input_iso = input_value.to_calendar(Iso);
         let input_buddhist = input_value.to_calendar(Buddhist);
         let input_japanese = input_value.to_calendar(japanese);
         let input_coptic = input_value.to_calendar(Coptic);
@@ -70,64 +80,70 @@ fn test_fixture(fixture_name: &str) {
             None => format!("\n  file: {}.json\n", fixture_name),
         };
         for (locale, output_value) in fx.output.values.into_iter() {
-            if let Some(locale) = locale.strip_prefix("buddhist/") {
-                assert_fixture_element(
-                    locale,
-                    &input_buddhist,
-                    &output_value,
-                    &provider,
-                    &options,
-                    &description,
-                )
-            } else if let Some(locale) = locale.strip_prefix("japanese/") {
-                assert_fixture_element(
-                    locale,
-                    &input_japanese,
-                    &output_value,
-                    &provider,
-                    &options,
-                    &description,
-                )
-            } else if let Some(locale) = locale.strip_prefix("coptic/") {
-                assert_fixture_element(
-                    locale,
-                    &input_coptic,
-                    &output_value,
-                    &provider,
-                    &options,
-                    &description,
-                )
-            } else if let Some(locale) = locale.strip_prefix("indian/") {
-                assert_fixture_element(
-                    locale,
-                    &input_indian,
-                    &output_value,
-                    &provider,
-                    &options,
-                    &description,
-                )
-            } else if let Some(locale) = locale.strip_prefix("ethiopic/") {
-                assert_fixture_element(
-                    locale,
-                    &input_ethiopic,
-                    &output_value,
-                    &provider,
-                    &options,
-                    &description,
-                )
-            } else if let Some(locale) = locale.strip_prefix("ethioaa/") {
-                assert_fixture_element(
-                    locale,
-                    &input_ethioaa,
-                    &output_value,
-                    &provider,
-                    &options,
-                    &description,
-                )
+            let locale = Locale::from_str(&locale).expect("Expected parseable locale in fixture");
+            if let Some(kind) = AnyCalendarKind::from_locale(&locale) {
+                match kind {
+                    AnyCalendarKind::Buddhist => assert_fixture_element(
+                        locale,
+                        &input_buddhist,
+                        &input_iso,
+                        &output_value,
+                        &provider,
+                        &options,
+                        &description,
+                    ),
+                    AnyCalendarKind::Japanese => assert_fixture_element(
+                        locale,
+                        &input_japanese,
+                        &input_iso,
+                        &output_value,
+                        &provider,
+                        &options,
+                        &description,
+                    ),
+                    AnyCalendarKind::Coptic => assert_fixture_element(
+                        locale,
+                        &input_coptic,
+                        &input_iso,
+                        &output_value,
+                        &provider,
+                        &options,
+                        &description,
+                    ),
+                    AnyCalendarKind::Indian => assert_fixture_element(
+                        locale,
+                        &input_indian,
+                        &input_iso,
+                        &output_value,
+                        &provider,
+                        &options,
+                        &description,
+                    ),
+                    AnyCalendarKind::Ethiopic => assert_fixture_element(
+                        locale,
+                        &input_ethiopic,
+                        &input_iso,
+                        &output_value,
+                        &provider,
+                        &options,
+                        &description,
+                    ),
+                    AnyCalendarKind::Ethioaa => assert_fixture_element(
+                        locale,
+                        &input_ethioaa,
+                        &input_iso,
+                        &output_value,
+                        &provider,
+                        &options,
+                        &description,
+                    ),
+                    _ => panic!("datetime test does not support locale {:?}", locale),
+                }
             } else {
                 assert_fixture_element(
-                    &locale,
+                    locale,
                     &input_value,
+                    &input_iso,
                     &output_value,
                     &provider,
                     &options,
@@ -139,8 +155,9 @@ fn test_fixture(fixture_name: &str) {
 }
 
 fn assert_fixture_element<A, D>(
-    locale: &str,
+    locale: Locale,
     input_value: &DateTime<A>,
+    input_iso: &DateTime<Iso>,
     output_value: &str,
     provider: &D,
     options: &DateTimeFormatOptions,
@@ -148,19 +165,36 @@ fn assert_fixture_element<A, D>(
 ) where
     A: AsCalendar,
     A::Calendar: CldrCalendar,
+    A::Calendar: IncludedInAnyCalendar,
     D: ResourceProvider<DateSymbolsV1Marker>
+        + ResourceProvider<TimeSymbolsV1Marker>
         + ResourceProvider<DatePatternsV1Marker>
         + ResourceProvider<TimePatternsV1Marker>
         + ResourceProvider<DateSkeletonPatternsV1Marker>
         + ResourceProvider<DecimalSymbolsV1Marker>
         + ResourceProvider<OrdinalV1Marker>
-        + ResourceProvider<WeekDataV1Marker>,
+        + ResourceProvider<WeekDataV1Marker>
+        + ResourceProvider<JapaneseErasV1Marker>,
 {
-    let locale: Locale = locale.parse().unwrap();
-    let dtf = DateTimeFormat::<A::Calendar>::try_new(locale, provider, options).unwrap();
+    let any_input = input_value.to_any();
+    let iso_any_input = input_iso.to_any();
+    let dtf = DateTimeFormat::<A::Calendar>::try_new(locale.clone(), provider, options).unwrap();
     let result = dtf.format_to_string(input_value);
 
     assert_eq!(result, output_value, "{}", description);
+
+    let any_dtf = AnyDateTimeFormat::try_new_unstable(locale.clone(), provider, options).unwrap();
+    let result = any_dtf.format_to_string(&any_input).unwrap();
+
+    assert_eq!(result, output_value, "(AnyDateTimeFormat) {}", description);
+
+    let result = any_dtf.format_to_string(&iso_any_input).unwrap();
+
+    assert_eq!(
+        result, output_value,
+        "(AnyDateTimeFormat iso conversion) {}",
+        description
+    );
 
     let mut s = String::new();
     dtf.format_to_write(&mut s, input_value).unwrap();
@@ -173,6 +207,80 @@ fn assert_fixture_element<A, D>(
     let mut s = String::new();
     write!(s, "{}", fdt).unwrap();
     assert_eq!(s, output_value, "{}", description);
+
+    if let DateTimeFormatOptions::Length(bag) = options {
+        if bag.date.is_some() && bag.time.is_some() {
+            let df =
+                DateFormat::<A::Calendar>::try_new(locale.clone(), provider, bag.date.unwrap())
+                    .unwrap();
+            let tf = TimeFormat::<A::Calendar>::try_new(
+                locale,
+                provider,
+                bag.time.unwrap(),
+                bag.preferences,
+            )
+            .unwrap();
+
+            let dtf = DateTimeFormat::try_from_date_and_time(df, tf).unwrap();
+            let result = dtf.format_to_string(input_value);
+
+            assert_eq!(result, output_value, "{}", description);
+
+            let mut s = String::new();
+            dtf.format_to_write(&mut s, input_value).unwrap();
+            assert_eq!(s, output_value, "{}", description);
+
+            let fdt = dtf.format(input_value);
+            let s = fdt.to_string();
+            assert_eq!(s, output_value, "{}", description);
+
+            let mut s = String::new();
+            write!(s, "{}", fdt).unwrap();
+            assert_eq!(s, output_value, "{}", description);
+        } else if bag.date.is_some() {
+            let df =
+                DateFormat::<A::Calendar>::try_new(locale, provider, bag.date.unwrap()).unwrap();
+            let result = df.format_to_string(input_value);
+
+            assert_eq!(result, output_value, "{}", description);
+
+            let mut s = String::new();
+            df.format_to_write(&mut s, input_value).unwrap();
+            assert_eq!(s, output_value, "{}", description);
+
+            let fdt = df.format(input_value);
+            let s = fdt.to_string();
+            assert_eq!(s, output_value, "{}", description);
+
+            let mut s = String::new();
+            write!(s, "{}", fdt).unwrap();
+            assert_eq!(s, output_value, "{}", description);
+        } else if bag.time.is_some() {
+            let tf = TimeFormat::<A::Calendar>::try_new(
+                locale,
+                provider,
+                bag.time.unwrap(),
+                bag.preferences,
+            )
+            .unwrap();
+
+            let result = tf.format_to_string(input_value);
+
+            assert_eq!(result, output_value, "{}", description);
+
+            let mut s = String::new();
+            tf.format_to_write(&mut s, input_value).unwrap();
+            assert_eq!(s, output_value, "{}", description);
+
+            let fdt = tf.format(input_value);
+            let s = fdt.to_string();
+            assert_eq!(s, output_value, "{}", description);
+
+            let mut s = String::new();
+            write!(s, "{}", fdt).unwrap();
+            assert_eq!(s, output_value, "{}", description);
+        }
+    }
 }
 
 fn test_fixture_with_time_zones(fixture_name: &str, config: TimeZoneConfig) {
@@ -262,7 +370,15 @@ fn test_dayperiod_patterns() {
         date_patterns_data.with_mut(|data| {
             data.length_combinations.long = "{0}".parse().unwrap();
         });
-        let symbols_data: DataPayload<DateSymbolsV1Marker> = provider
+        let date_symbols_data: DataPayload<DateSymbolsV1Marker> = provider
+            .load_resource(&DataRequest {
+                options: ResourceOptions::from(&locale),
+                metadata: Default::default(),
+            })
+            .unwrap()
+            .take_payload()
+            .unwrap();
+        let time_symbols_data: DataPayload<TimeSymbolsV1Marker> = provider
             .load_resource(&DataRequest {
                 options: ResourceOptions::from(&locale),
                 metadata: Default::default(),
@@ -309,7 +425,11 @@ fn test_dayperiod_patterns() {
                             providers: vec![
                                 AnyPayloadProvider {
                                     key: DateSymbolsV1Marker::KEY,
-                                    data: symbols_data.clone().wrap_into_any_payload(),
+                                    data: date_symbols_data.clone().wrap_into_any_payload(),
+                                },
+                                AnyPayloadProvider {
+                                    key: TimeSymbolsV1Marker::KEY,
+                                    data: time_symbols_data.clone().wrap_into_any_payload(),
                                 },
                                 AnyPayloadProvider {
                                     key: DateSkeletonPatternsV1Marker::KEY,

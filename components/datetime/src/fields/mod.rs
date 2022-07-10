@@ -2,6 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+//! Enums representing the fields in a date pattern, including the field's type, length and symbol.
+
 #![allow(clippy::exhaustive_structs)] // Field and FieldULE part of data struct
 
 mod length;
@@ -16,9 +18,15 @@ use core::{
     convert::TryFrom,
 };
 
+/// An error relating to the field for a date pattern field as a whole.
+///
+/// Separate error types exist for parts of a field, like the
+/// [`LengthError`](error for the field length) and the
+/// [`SymbolError`](error for the field symbol).
 #[derive(Display, Debug, Copy, Clone)]
 #[non_exhaustive]
 pub enum Error {
+    /// An error originating inside of the [data provider](icu_provider).
     #[displaydoc("Field {0:?} is not a valid length")]
     InvalidLength(FieldSymbol),
 }
@@ -26,6 +34,9 @@ pub enum Error {
 #[cfg(feature = "std")]
 impl std::error::Error for Error {}
 
+/// A field within a date pattern string, also referred to as a date field. A date field is the
+/// repetition of a specific pattern character one or more times within the pattern string.
+/// The pattern character is known as the field symbol, which indicates the particular meaning for the field.
 #[derive(Debug, Eq, PartialEq, Clone, Copy, Ord, PartialOrd)]
 #[cfg_attr(
     feature = "datagen",
@@ -35,7 +46,11 @@ impl std::error::Error for Error {}
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[zerovec::make_ule(FieldULE)]
 pub struct Field {
+    /// The field symbol for the `Field`, which corresponds to the field's meaning with the
+    /// date pattern.
     pub symbol: FieldSymbol,
+    /// The length of the `Field`, which in conjunction with the `FieldSymbol` informs the width or
+    /// style of the formatting output corresponding to this field.
     pub length: FieldLength,
 }
 

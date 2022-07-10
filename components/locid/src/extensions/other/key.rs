@@ -29,7 +29,7 @@ const KEY_LENGTH: RangeInclusive<usize> = 2..=8;
 
 impl Key {
     #[allow(missing_docs)] // TODO(#1028) - Add missing docs.
-    pub fn valid_key(v: &[u8]) -> bool {
+    pub(crate) fn valid_key(v: &[u8]) -> bool {
         KEY_LENGTH.contains(&v.len())
     }
 
