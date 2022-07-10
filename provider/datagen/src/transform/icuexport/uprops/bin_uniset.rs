@@ -26,7 +26,12 @@ fn get_binary<'a>(
     key: &str,
 ) -> Result<&'a super::uprops_serde::binary::BinaryProperty, DataError> {
     source
-        .read_and_parse_uprops::<super::uprops_serde::binary::Main>(key)?
+        .icuexport()?
+        .read_and_parse_toml::<super::uprops_serde::binary::Main>(&format!(
+            "uprops/{}/{}.toml",
+            source.trie_type(),
+            key
+        ))?
         .binary_property
         .get(0)
         .ok_or_else(|| DataErrorKind::MissingResourceKey.into_error())

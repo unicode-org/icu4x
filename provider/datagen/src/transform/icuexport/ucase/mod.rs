@@ -2,6 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+//! This module contains provider implementations backed by TOML files
+//! exported from ICU.
+
 use crate::SourceData;
 use icu_casemapping::provider::{CaseMappingV1, CaseMappingV1Marker};
 use icu_casemapping::CaseMappingInternals;
@@ -9,6 +12,8 @@ use icu_codepointtrie::toml::CodePointDataSlice;
 use icu_codepointtrie::CodePointTrieHeader;
 use icu_provider::prelude::*;
 use std::convert::TryFrom;
+
+mod ucase_serde;
 
 /// A data provider reading from TOML files produced by the ICU4C icuexportdata tool.
 pub struct CaseMappingDataProvider {
@@ -30,7 +35,11 @@ impl ResourceProvider<CaseMappingV1Marker> for CaseMappingDataProvider {
     ) -> Result<DataResponse<CaseMappingV1Marker>, DataError> {
         let toml = &self
             .source
-            .read_and_parse_uprops::<super::uprops_serde::case::Main>("ucase")?
+            .icuexport()?
+            .read_and_parse_toml::<ucase_serde::Main>(&format!(
+                "ucase/{}/ucase.toml",
+                self.source.trie_type()
+            ))?
             .ucase;
 
         let trie_data = &toml.code_point_trie;

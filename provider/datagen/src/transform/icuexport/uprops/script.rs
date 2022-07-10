@@ -41,7 +41,11 @@ impl ResourceProvider<ScriptWithExtensionsPropertyV1Marker>
     ) -> Result<DataResponse<ScriptWithExtensionsPropertyV1Marker>, DataError> {
         let scx_data = self
             .source
-            .read_and_parse_uprops::<super::uprops_serde::script_extensions::Main>("scx")?
+            .icuexport()?
+            .read_and_parse_toml::<super::uprops_serde::script_extensions::Main>(&format!(
+                "uprops/{}/scx.toml",
+                self.source.trie_type(),
+            ))?
             .script_extensions
             .get(0)
             .ok_or_else(|| {

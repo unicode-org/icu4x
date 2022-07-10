@@ -64,7 +64,7 @@ pub mod transform;
 
 pub use error::*;
 pub use registry::all_keys;
-pub use source::{CldrLocaleSubset, IcuTrieType, SourceData};
+pub use source::*;
 
 use icu_locid::LanguageIdentifier;
 use icu_provider::datagen::*;
@@ -279,8 +279,10 @@ pub fn datagen(
     }
 
     keys.into_par_iter().try_for_each(|&key| {
-        let options = provider.supported_options_for_key(key)?;
         log::info!("Writing key: {}", key);
+        let options = provider
+            .supported_options_for_key(key)
+            .map_err(|e| e.with_key(key))?;
         let res = options.into_par_iter().try_for_each(|options| {
             let req = DataRequest {
                 options: options.clone(),
@@ -290,13 +292,14 @@ pub fn datagen(
                 .load_payload(key, &req)
                 .and_then(DataResponse::take_payload)
                 .map_err(|e| e.with_req(key, &req))?;
-            exporters
-                .par_iter()
-                .try_for_each(|e| e.put_payload(key, &options, &payload))
+            exporters.par_iter().try_for_each(|e| {
+                e.put_payload(key, &options, &payload)
+                    .map_err(|e| e.with_req(key, &req))
+            })
         });
 
         for e in &exporters {
-            e.flush(key)?;
+            e.flush(key).map_err(|e| e.with_key(key))?;
         }
 
         res
