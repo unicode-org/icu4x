@@ -62,7 +62,6 @@ icu_codepointtrie_builder = { path = "../../utils/codepointtrie/builder" }
 icu_locid = { version = "0.6", path = "../../components/locid", features = ["std"]}
 icu_uniset = { version = "0.5", path = "../../utils/uniset", features = ["serde"] }
 itertools = "0.10"
-litemap = { version = "0.4.0", path = "../../utils/litemap" }
 log = "0.4"
 rayon = "1.5"
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"] }

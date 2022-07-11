@@ -1,48 +1,18 @@
 // @generated
 type DataStruct = & 'static < :: icu_datetime :: provider :: calendar :: DatePatternsV1Marker as :: icu_provider :: DataMarker > :: Yokeable ;
 pub static DATA: &[(&str, DataStruct)] = &[
-    (
-        "ar-EG-u-ca-buddhist",
-        AR_U_CA_BUDDHIST_AR_U_CA_COPTIC_AR_U_CA_ETHIOPIC,
-    ),
-    (
-        "ar-EG-u-ca-coptic",
-        AR_U_CA_BUDDHIST_AR_U_CA_COPTIC_AR_U_CA_ETHIOPIC,
-    ),
-    (
-        "ar-EG-u-ca-ethiopic",
-        AR_U_CA_BUDDHIST_AR_U_CA_COPTIC_AR_U_CA_ETHIOPIC,
-    ),
-    ("ar-EG-u-ca-gregory", AR_U_CA_GREGORY_AR_EG_U_CA_GREGORY),
-    (
-        "ar-EG-u-ca-indian",
-        AR_U_CA_BUDDHIST_AR_U_CA_COPTIC_AR_U_CA_ETHIOPIC,
-    ),
-    (
-        "ar-EG-u-ca-japanese",
-        AR_U_CA_BUDDHIST_AR_U_CA_COPTIC_AR_U_CA_ETHIOPIC,
-    ),
-    (
-        "ar-u-ca-buddhist",
-        AR_U_CA_BUDDHIST_AR_U_CA_COPTIC_AR_U_CA_ETHIOPIC,
-    ),
-    (
-        "ar-u-ca-coptic",
-        AR_U_CA_BUDDHIST_AR_U_CA_COPTIC_AR_U_CA_ETHIOPIC,
-    ),
-    (
-        "ar-u-ca-ethiopic",
-        AR_U_CA_BUDDHIST_AR_U_CA_COPTIC_AR_U_CA_ETHIOPIC,
-    ),
-    ("ar-u-ca-gregory", AR_U_CA_GREGORY_AR_EG_U_CA_GREGORY),
-    (
-        "ar-u-ca-indian",
-        AR_U_CA_BUDDHIST_AR_U_CA_COPTIC_AR_U_CA_ETHIOPIC,
-    ),
-    (
-        "ar-u-ca-japanese",
-        AR_U_CA_BUDDHIST_AR_U_CA_COPTIC_AR_U_CA_ETHIOPIC,
-    ),
+    ("ar-EG-u-ca-buddhist", AR_EG_U_CA_BUDDHIST_AR_EG_U_CA_COPTIC),
+    ("ar-EG-u-ca-coptic", AR_EG_U_CA_BUDDHIST_AR_EG_U_CA_COPTIC),
+    ("ar-EG-u-ca-ethiopic", AR_EG_U_CA_BUDDHIST_AR_EG_U_CA_COPTIC),
+    ("ar-EG-u-ca-gregory", AR_EG_U_CA_GREGORY_AR_U_CA_GREGORY),
+    ("ar-EG-u-ca-indian", AR_EG_U_CA_BUDDHIST_AR_EG_U_CA_COPTIC),
+    ("ar-EG-u-ca-japanese", AR_EG_U_CA_BUDDHIST_AR_EG_U_CA_COPTIC),
+    ("ar-u-ca-buddhist", AR_EG_U_CA_BUDDHIST_AR_EG_U_CA_COPTIC),
+    ("ar-u-ca-coptic", AR_EG_U_CA_BUDDHIST_AR_EG_U_CA_COPTIC),
+    ("ar-u-ca-ethiopic", AR_EG_U_CA_BUDDHIST_AR_EG_U_CA_COPTIC),
+    ("ar-u-ca-gregory", AR_EG_U_CA_GREGORY_AR_U_CA_GREGORY),
+    ("ar-u-ca-indian", AR_EG_U_CA_BUDDHIST_AR_EG_U_CA_COPTIC),
+    ("ar-u-ca-japanese", AR_EG_U_CA_BUDDHIST_AR_EG_U_CA_COPTIC),
     (
         "bn-u-ca-buddhist",
         BN_U_CA_BUDDHIST_BN_U_CA_COPTIC_BN_U_CA_ETHIOPIC,
@@ -104,7 +74,7 @@ pub static DATA: &[(&str, DataStruct)] = &[
     ),
     (
         "en-001-u-ca-japanese",
-        EN_U_CA_BUDDHIST_EN_U_CA_COPTIC_EN_U_CA_ETHIOPIC,
+        EN_001_U_CA_JAPANESE_EN_ZA_U_CA_JAPANESE,
     ),
     ("en-ZA-u-ca-buddhist", EN_ZA_U_CA_BUDDHIST_EN_ZA_U_CA_COPTIC),
     ("en-ZA-u-ca-coptic", EN_ZA_U_CA_BUDDHIST_EN_ZA_U_CA_COPTIC),
@@ -113,29 +83,14 @@ pub static DATA: &[(&str, DataStruct)] = &[
     ("en-ZA-u-ca-indian", EN_ZA_U_CA_BUDDHIST_EN_ZA_U_CA_COPTIC),
     (
         "en-ZA-u-ca-japanese",
-        EN_U_CA_BUDDHIST_EN_U_CA_COPTIC_EN_U_CA_ETHIOPIC,
+        EN_001_U_CA_JAPANESE_EN_ZA_U_CA_JAPANESE,
     ),
-    (
-        "en-u-ca-buddhist",
-        EN_U_CA_BUDDHIST_EN_U_CA_COPTIC_EN_U_CA_ETHIOPIC,
-    ),
-    (
-        "en-u-ca-coptic",
-        EN_U_CA_BUDDHIST_EN_U_CA_COPTIC_EN_U_CA_ETHIOPIC,
-    ),
-    (
-        "en-u-ca-ethiopic",
-        EN_U_CA_BUDDHIST_EN_U_CA_COPTIC_EN_U_CA_ETHIOPIC,
-    ),
+    ("en-u-ca-buddhist", EN_001_U_CA_JAPANESE_EN_ZA_U_CA_JAPANESE),
+    ("en-u-ca-coptic", EN_001_U_CA_JAPANESE_EN_ZA_U_CA_JAPANESE),
+    ("en-u-ca-ethiopic", EN_001_U_CA_JAPANESE_EN_ZA_U_CA_JAPANESE),
     ("en-u-ca-gregory", EN_U_CA_GREGORY),
-    (
-        "en-u-ca-indian",
-        EN_U_CA_BUDDHIST_EN_U_CA_COPTIC_EN_U_CA_ETHIOPIC,
-    ),
-    (
-        "en-u-ca-japanese",
-        EN_U_CA_BUDDHIST_EN_U_CA_COPTIC_EN_U_CA_ETHIOPIC,
-    ),
+    ("en-u-ca-indian", EN_001_U_CA_JAPANESE_EN_ZA_U_CA_JAPANESE),
+    ("en-u-ca-japanese", EN_001_U_CA_JAPANESE_EN_ZA_U_CA_JAPANESE),
     ("es-AR-u-ca-buddhist", ES_AR_U_CA_BUDDHIST_ES_AR_U_CA_COPTIC),
     ("es-AR-u-ca-coptic", ES_AR_U_CA_BUDDHIST_ES_AR_U_CA_COPTIC),
     ("es-AR-u-ca-ethiopic", ES_AR_U_CA_BUDDHIST_ES_AR_U_CA_COPTIC),
@@ -237,64 +192,67 @@ pub static DATA: &[(&str, DataStruct)] = &[
     ),
     (
         "sr-Cyrl-u-ca-buddhist",
-        SR_U_CA_BUDDHIST_SR_U_CA_COPTIC_SR_U_CA_ETHIOPIC,
+        SR_CYRL_U_CA_BUDDHIST_SR_CYRL_U_CA_COPTIC,
     ),
     (
         "sr-Cyrl-u-ca-coptic",
-        SR_U_CA_BUDDHIST_SR_U_CA_COPTIC_SR_U_CA_ETHIOPIC,
+        SR_CYRL_U_CA_BUDDHIST_SR_CYRL_U_CA_COPTIC,
     ),
     (
         "sr-Cyrl-u-ca-ethiopic",
-        SR_U_CA_BUDDHIST_SR_U_CA_COPTIC_SR_U_CA_ETHIOPIC,
+        SR_CYRL_U_CA_BUDDHIST_SR_CYRL_U_CA_COPTIC,
     ),
-    ("sr-Cyrl-u-ca-gregory", SR_U_CA_GREGORY_SR_CYRL_U_CA_GREGORY),
+    (
+        "sr-Cyrl-u-ca-gregory",
+        SR_CYRL_U_CA_GREGORY_SR_LATN_U_CA_GREGORY,
+    ),
     (
         "sr-Cyrl-u-ca-indian",
-        SR_U_CA_BUDDHIST_SR_U_CA_COPTIC_SR_U_CA_ETHIOPIC,
+        SR_CYRL_U_CA_BUDDHIST_SR_CYRL_U_CA_COPTIC,
     ),
     (
         "sr-Cyrl-u-ca-japanese",
-        SR_U_CA_JAPANESE_SR_CYRL_U_CA_JAPANESE,
+        SR_CYRL_U_CA_JAPANESE_SR_LATN_U_CA_JAPANESE,
     ),
     (
         "sr-Latn-u-ca-buddhist",
-        SR_U_CA_BUDDHIST_SR_U_CA_COPTIC_SR_U_CA_ETHIOPIC,
+        SR_CYRL_U_CA_BUDDHIST_SR_CYRL_U_CA_COPTIC,
     ),
     (
         "sr-Latn-u-ca-coptic",
-        SR_U_CA_BUDDHIST_SR_U_CA_COPTIC_SR_U_CA_ETHIOPIC,
+        SR_CYRL_U_CA_BUDDHIST_SR_CYRL_U_CA_COPTIC,
     ),
     (
         "sr-Latn-u-ca-ethiopic",
-        SR_U_CA_BUDDHIST_SR_U_CA_COPTIC_SR_U_CA_ETHIOPIC,
+        SR_CYRL_U_CA_BUDDHIST_SR_CYRL_U_CA_COPTIC,
     ),
-    ("sr-Latn-u-ca-gregory", SR_U_CA_GREGORY_SR_CYRL_U_CA_GREGORY),
+    (
+        "sr-Latn-u-ca-gregory",
+        SR_CYRL_U_CA_GREGORY_SR_LATN_U_CA_GREGORY,
+    ),
     (
         "sr-Latn-u-ca-indian",
-        SR_U_CA_BUDDHIST_SR_U_CA_COPTIC_SR_U_CA_ETHIOPIC,
+        SR_CYRL_U_CA_BUDDHIST_SR_CYRL_U_CA_COPTIC,
     ),
     (
         "sr-Latn-u-ca-japanese",
-        SR_U_CA_JAPANESE_SR_CYRL_U_CA_JAPANESE,
+        SR_CYRL_U_CA_JAPANESE_SR_LATN_U_CA_JAPANESE,
     ),
     (
         "sr-u-ca-buddhist",
-        SR_U_CA_BUDDHIST_SR_U_CA_COPTIC_SR_U_CA_ETHIOPIC,
+        SR_CYRL_U_CA_BUDDHIST_SR_CYRL_U_CA_COPTIC,
     ),
-    (
-        "sr-u-ca-coptic",
-        SR_U_CA_BUDDHIST_SR_U_CA_COPTIC_SR_U_CA_ETHIOPIC,
-    ),
+    ("sr-u-ca-coptic", SR_CYRL_U_CA_BUDDHIST_SR_CYRL_U_CA_COPTIC),
     (
         "sr-u-ca-ethiopic",
-        SR_U_CA_BUDDHIST_SR_U_CA_COPTIC_SR_U_CA_ETHIOPIC,
+        SR_CYRL_U_CA_BUDDHIST_SR_CYRL_U_CA_COPTIC,
     ),
-    ("sr-u-ca-gregory", SR_U_CA_GREGORY_SR_CYRL_U_CA_GREGORY),
+    ("sr-u-ca-gregory", SR_CYRL_U_CA_GREGORY_SR_LATN_U_CA_GREGORY),
+    ("sr-u-ca-indian", SR_CYRL_U_CA_BUDDHIST_SR_CYRL_U_CA_COPTIC),
     (
-        "sr-u-ca-indian",
-        SR_U_CA_BUDDHIST_SR_U_CA_COPTIC_SR_U_CA_ETHIOPIC,
+        "sr-u-ca-japanese",
+        SR_CYRL_U_CA_JAPANESE_SR_LATN_U_CA_JAPANESE,
     ),
-    ("sr-u-ca-japanese", SR_U_CA_JAPANESE_SR_CYRL_U_CA_JAPANESE),
     ("th-u-ca-buddhist", TH_U_CA_BUDDHIST),
     (
         "th-u-ca-coptic",
@@ -350,7 +308,7 @@ pub static DATA: &[(&str, DataStruct)] = &[
         UND_U_CA_BUDDHIST_UND_U_CA_COPTIC_UND_U_CA_ETHIOPIC,
     ),
 ];
-static AR_U_CA_BUDDHIST_AR_U_CA_COPTIC_AR_U_CA_ETHIOPIC: DataStruct =
+static AR_EG_U_CA_BUDDHIST_AR_EG_U_CA_COPTIC: DataStruct =
     &::icu_datetime::provider::calendar::DatePatternsV1 {
         date: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
             full: ::icu_datetime::pattern::runtime::Pattern {
@@ -429,7 +387,7 @@ static AR_U_CA_BUDDHIST_AR_U_CA_COPTIC_AR_U_CA_ETHIOPIC: DataStruct =
                 },
             },
     };
-static AR_U_CA_GREGORY_AR_EG_U_CA_GREGORY: DataStruct =
+static AR_EG_U_CA_GREGORY_AR_U_CA_GREGORY: DataStruct =
     &::icu_datetime::provider::calendar::DatePatternsV1 {
         date: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
             full: ::icu_datetime::pattern::runtime::Pattern {
@@ -796,7 +754,7 @@ static EN_001_U_CA_GREGORY: DataStruct = &::icu_datetime::provider::calendar::Da
         },
     },
 };
-static EN_U_CA_BUDDHIST_EN_U_CA_COPTIC_EN_U_CA_ETHIOPIC: DataStruct =
+static EN_001_U_CA_JAPANESE_EN_ZA_U_CA_JAPANESE: DataStruct =
     &::icu_datetime::provider::calendar::DatePatternsV1 {
         date: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
             full: ::icu_datetime::pattern::runtime::Pattern {
@@ -2325,7 +2283,7 @@ static RU_U_CA_GREGORY: DataStruct = &::icu_datetime::provider::calendar::DatePa
         },
     },
 };
-static SR_U_CA_BUDDHIST_SR_U_CA_COPTIC_SR_U_CA_ETHIOPIC: DataStruct =
+static SR_CYRL_U_CA_BUDDHIST_SR_CYRL_U_CA_COPTIC: DataStruct =
     &::icu_datetime::provider::calendar::DatePatternsV1 {
         date: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
             full: ::icu_datetime::pattern::runtime::Pattern {
@@ -2399,7 +2357,7 @@ static SR_U_CA_BUDDHIST_SR_U_CA_COPTIC_SR_U_CA_ETHIOPIC: DataStruct =
                 },
             },
     };
-static SR_U_CA_GREGORY_SR_CYRL_U_CA_GREGORY: DataStruct =
+static SR_CYRL_U_CA_GREGORY_SR_LATN_U_CA_GREGORY: DataStruct =
     &::icu_datetime::provider::calendar::DatePatternsV1 {
         date: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
             full: ::icu_datetime::pattern::runtime::Pattern {
@@ -2472,7 +2430,7 @@ static SR_U_CA_GREGORY_SR_CYRL_U_CA_GREGORY: DataStruct =
                 },
             },
     };
-static SR_U_CA_JAPANESE_SR_CYRL_U_CA_JAPANESE: DataStruct =
+static SR_CYRL_U_CA_JAPANESE_SR_LATN_U_CA_JAPANESE: DataStruct =
     &::icu_datetime::provider::calendar::DatePatternsV1 {
         date: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
             full: ::icu_datetime::pattern::runtime::Pattern {

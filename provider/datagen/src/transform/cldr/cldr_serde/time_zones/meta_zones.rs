@@ -8,8 +8,8 @@
 //! <https://github.com/unicode-org/cldr-json/blob/main/cldr-json/cldr-core/supplemental/metaZones.json>
 
 use icu_datetime::provider::time_zones::MetaZoneId;
-use litemap::LiteMap;
 use serde::Deserialize;
+use std::collections::HashMap;
 
 #[derive(PartialEq, Debug, Clone, Deserialize)]
 pub struct MetaZoneAliasData {
@@ -19,8 +19,8 @@ pub struct MetaZoneAliasData {
     pub since: String,
 }
 
-#[derive(PartialEq, Debug, Clone, Deserialize)]
-pub struct MetaZoneIds(pub LiteMap<MetaZoneId, MetaZoneAliasData>);
+#[derive(Debug, Clone, Deserialize)]
+pub struct MetaZoneIds(pub HashMap<MetaZoneId, MetaZoneAliasData>);
 
 #[derive(PartialEq, Debug, Clone, Deserialize)]
 pub struct UsesMetaZone {
@@ -43,7 +43,7 @@ pub struct MetaZoneForPeriod {
 #[allow(clippy::enum_variant_names)]
 pub enum MetaLocationOrSubRegion {
     Location(Vec<MetaZoneForPeriod>),
-    SubRegion(LiteMap<String, Vec<MetaZoneForPeriod>>),
+    SubRegion(HashMap<String, Vec<MetaZoneForPeriod>>),
 }
 
 #[derive(PartialEq, Debug, Clone, Deserialize)]
@@ -51,11 +51,11 @@ pub enum MetaLocationOrSubRegion {
 #[allow(clippy::enum_variant_names)]
 pub enum ZonePeriod {
     Region(Vec<MetaZoneForPeriod>),
-    LocationOrSubRegion(LiteMap<String, MetaLocationOrSubRegion>),
+    LocationOrSubRegion(HashMap<String, MetaLocationOrSubRegion>),
 }
 
 #[derive(PartialEq, Debug, Clone, Deserialize)]
-pub struct TimeZonePeriod(pub LiteMap<String, ZonePeriod>);
+pub struct TimeZonePeriod(pub HashMap<String, ZonePeriod>);
 
 #[derive(PartialEq, Debug, Clone, Deserialize)]
 pub struct MetaZoneInfo {
@@ -82,7 +82,7 @@ pub struct MetaZoneTerritory {
 #[derive(PartialEq, Debug, Clone, Deserialize)]
 pub struct MetaZonesTerritory(pub Vec<MetaZoneTerritory>);
 
-#[derive(PartialEq, Debug, Clone, Deserialize)]
+#[derive(Debug, Clone, Deserialize)]
 pub struct MetaZones {
     #[serde(rename = "metazoneInfo")]
     pub meta_zone_info: MetaZoneInfo,
@@ -92,13 +92,13 @@ pub struct MetaZones {
     pub meta_zone_ids: MetaZoneIds,
 }
 
-#[derive(PartialEq, Debug, Clone, Deserialize)]
+#[derive(Debug, Clone, Deserialize)]
 pub struct Supplemental {
     #[serde(rename = "metaZones")]
     pub meta_zones: MetaZones,
 }
 
-#[derive(PartialEq, Debug, Clone, Deserialize)]
+#[derive(Debug, Clone, Deserialize)]
 pub struct Resource {
     pub supplemental: Supplemental,
 }
