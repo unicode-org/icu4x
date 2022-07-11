@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1657471877331,
+  "lastUpdate": 1657520065994,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -19553,6 +19553,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/c967f2408530cf879aed9b05ebb82c9525efb67c"
         },
         "date": 1657471846286,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4763611,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "4f3c3f2e097a16b819af6813a82d823d890dc6a5",
+          "message": "Using `std` maps in datagen (#2152)",
+          "timestamp": "2022-07-11T08:12:34+02:00",
+          "tree_id": "f054c9830bd704efb8f0b7d6862c6d049a0f322e",
+          "url": "https://github.com/unicode-org/icu4x/commit/4f3c3f2e097a16b819af6813a82d823d890dc6a5"
+        },
+        "date": 1657520035186,
         "tool": "ndjson",
         "benches": [
           {
