@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1657520065994,
+  "lastUpdate": 1657544556227,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -19583,6 +19583,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/4f3c3f2e097a16b819af6813a82d823d890dc6a5"
         },
         "date": 1657520035186,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4763611,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "2eae3d2320dce49b6758bc83844fba5ce82e4c5e",
+          "message": "Fixing collator datagen (#2161)",
+          "timestamp": "2022-07-11T15:00:35+02:00",
+          "tree_id": "9a2fe437f1c7224065acd32693416e2e1d011b1b",
+          "url": "https://github.com/unicode-org/icu4x/commit/2eae3d2320dce49b6758bc83844fba5ce82e4c5e"
+        },
+        "date": 1657544526594,
         "tool": "ndjson",
         "benches": [
           {
