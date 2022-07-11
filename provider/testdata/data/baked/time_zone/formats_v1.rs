@@ -1,63 +1,34 @@
 // @generated
-use icu_provider::prelude::*;
-impl ResourceProvider<::icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker>
-    for super::super::BakedDataProvider
-{
-    fn load_resource(
-        &self,
-        req: &DataRequest,
-    ) -> Result<
-        DataResponse<::icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker>,
-        DataError,
-    > {
-        static VALUES: &[(&str, DataStruct)] = &[
-            ("ar", AR_AR_EG),
-            ("ar-EG", AR_AR_EG),
-            ("bn", BN),
-            ("ccp", CCP),
-            ("en", EN_EN_001_EN_ZA),
-            ("en-001", EN_EN_001_EN_ZA),
-            ("en-ZA", EN_EN_001_EN_ZA),
-            ("es", ES),
-            ("es-AR", ES_AR),
-            ("fil", FIL),
-            ("fr", FR),
-            ("ja", JA),
-            ("ru", RU),
-            ("sr", SR_SR_CYRL),
-            ("sr-Cyrl", SR_SR_CYRL),
-            ("sr-Latn", SR_LATN),
-            ("th", TH),
-            ("tr", TR),
-            ("und", UND),
-        ];
-        #[allow(clippy::unwrap_used)]
-        let value = VALUES
-            .binary_search_by(|(k, _)| req.options.strict_cmp(k.as_bytes()).reverse())
-            .map(|i| VALUES.get(i).unwrap().1)
-            .map_err(|_| {
-                DataErrorKind::MissingResourceOptions.with_req(
-                    <::icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker>::KEY,
-                    req,
-                )
-            })?;
-        Ok(DataResponse {
-            metadata: DataResponseMetadata::default(),
-            payload: Some(DataPayload::from_owned(zerofrom::ZeroFrom::zero_from(
-                value,
-            ))),
-        })
-    }
-}
-type DataStruct = & 'static < :: icu_datetime :: provider :: time_zones :: TimeZoneFormatsV1Marker as DataMarker > :: Yokeable ;
+type DataStruct = & 'static < :: icu_datetime :: provider :: time_zones :: TimeZoneFormatsV1Marker as :: icu_provider :: DataMarker > :: Yokeable ;
+pub static DATA: &[(&str, DataStruct)] = &[
+    ("ar", AR_AR_EG),
+    ("ar-EG", AR_AR_EG),
+    ("bn", BN),
+    ("ccp", CCP),
+    ("en", EN_EN_001_EN_ZA),
+    ("en-001", EN_EN_001_EN_ZA),
+    ("en-ZA", EN_EN_001_EN_ZA),
+    ("es", ES),
+    ("es-AR", ES_AR),
+    ("fil", FIL),
+    ("fr", FR),
+    ("ja", JA),
+    ("ru", RU),
+    ("sr", SR_SR_CYRL),
+    ("sr-Cyrl", SR_SR_CYRL),
+    ("sr-Latn", SR_LATN),
+    ("th", TH),
+    ("tr", TR),
+    ("und", UND),
+];
 static AR_AR_EG: DataStruct = &::icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
     hour_format: (
-        ::alloc::borrow::Cow::Borrowed("+HH:mm"),
-        ::alloc::borrow::Cow::Borrowed("-HH:mm"),
+        alloc::borrow::Cow::Borrowed("+HH:mm"),
+        alloc::borrow::Cow::Borrowed("-HH:mm"),
     ),
-    gmt_format: ::alloc::borrow::Cow::Borrowed("غرينتش{0}"),
-    gmt_zero_format: ::alloc::borrow::Cow::Borrowed("غرينتش"),
-    region_format: ::alloc::borrow::Cow::Borrowed("توقيت {0}"),
+    gmt_format: alloc::borrow::Cow::Borrowed("غرينتش{0}"),
+    gmt_zero_format: alloc::borrow::Cow::Borrowed("غرينتش"),
+    region_format: alloc::borrow::Cow::Borrowed("توقيت {0}"),
     region_format_variants: unsafe {
         #[allow(unused_unsafe)]
         ::zerovec::ZeroMap::from_parts_unchecked(
@@ -79,16 +50,16 @@ static AR_AR_EG: DataStruct = &::icu_datetime::provider::time_zones::TimeZoneFor
             },
         )
     },
-    fallback_format: ::alloc::borrow::Cow::Borrowed("{1} ({0})"),
+    fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
 };
 static BN: DataStruct = &::icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
     hour_format: (
-        ::alloc::borrow::Cow::Borrowed("+HH:mm"),
-        ::alloc::borrow::Cow::Borrowed("-HH:mm"),
+        alloc::borrow::Cow::Borrowed("+HH:mm"),
+        alloc::borrow::Cow::Borrowed("-HH:mm"),
     ),
-    gmt_format: ::alloc::borrow::Cow::Borrowed("GMT {0}"),
-    gmt_zero_format: ::alloc::borrow::Cow::Borrowed("GMT"),
-    region_format: ::alloc::borrow::Cow::Borrowed("{0} সময\u{9bc}"),
+    gmt_format: alloc::borrow::Cow::Borrowed("GMT {0}"),
+    gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
+    region_format: alloc::borrow::Cow::Borrowed("{0} সময\u{9bc}"),
     region_format_variants: unsafe {
         #[allow(unused_unsafe)]
         ::zerovec::ZeroMap::from_parts_unchecked(
@@ -111,16 +82,16 @@ static BN: DataStruct = &::icu_datetime::provider::time_zones::TimeZoneFormatsV1
             },
         )
     },
-    fallback_format: ::alloc::borrow::Cow::Borrowed("{1} ({0})"),
+    fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
 };
 static CCP: DataStruct = &::icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
     hour_format: (
-        ::alloc::borrow::Cow::Borrowed("+HH:mm"),
-        ::alloc::borrow::Cow::Borrowed("-HH:mm"),
+        alloc::borrow::Cow::Borrowed("+HH:mm"),
+        alloc::borrow::Cow::Borrowed("-HH:mm"),
     ),
-    gmt_format: ::alloc::borrow::Cow::Borrowed("GMT {0}"),
-    gmt_zero_format: ::alloc::borrow::Cow::Borrowed("GMT"),
-    region_format: ::alloc::borrow::Cow::Borrowed("{0} 𑄃\u{11127}𑄇\u{11134}𑄖\u{11127}"),
+    gmt_format: alloc::borrow::Cow::Borrowed("GMT {0}"),
+    gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
+    region_format: alloc::borrow::Cow::Borrowed("{0} 𑄃\u{11127}𑄇\u{11134}𑄖\u{11127}"),
     region_format_variants: unsafe {
         #[allow(unused_unsafe)]
         ::zerovec::ZeroMap::from_parts_unchecked(
@@ -149,16 +120,16 @@ static CCP: DataStruct = &::icu_datetime::provider::time_zones::TimeZoneFormatsV
             },
         )
     },
-    fallback_format: ::alloc::borrow::Cow::Borrowed("{1} ({0})"),
+    fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
 };
 static EN_EN_001_EN_ZA: DataStruct = &::icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
     hour_format: (
-        ::alloc::borrow::Cow::Borrowed("+HH:mm"),
-        ::alloc::borrow::Cow::Borrowed("-HH:mm"),
+        alloc::borrow::Cow::Borrowed("+HH:mm"),
+        alloc::borrow::Cow::Borrowed("-HH:mm"),
     ),
-    gmt_format: ::alloc::borrow::Cow::Borrowed("GMT{0}"),
-    gmt_zero_format: ::alloc::borrow::Cow::Borrowed("GMT"),
-    region_format: ::alloc::borrow::Cow::Borrowed("{0} Time"),
+    gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
+    gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
+    region_format: alloc::borrow::Cow::Borrowed("{0} Time"),
     region_format_variants: unsafe {
         #[allow(unused_unsafe)]
         ::zerovec::ZeroMap::from_parts_unchecked(
@@ -178,16 +149,16 @@ static EN_EN_001_EN_ZA: DataStruct = &::icu_datetime::provider::time_zones::Time
             },
         )
     },
-    fallback_format: ::alloc::borrow::Cow::Borrowed("{1} ({0})"),
+    fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
 };
 static ES: DataStruct = &::icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
     hour_format: (
-        ::alloc::borrow::Cow::Borrowed("+HH:mm"),
-        ::alloc::borrow::Cow::Borrowed("-HH:mm"),
+        alloc::borrow::Cow::Borrowed("+HH:mm"),
+        alloc::borrow::Cow::Borrowed("-HH:mm"),
     ),
-    gmt_format: ::alloc::borrow::Cow::Borrowed("GMT{0}"),
-    gmt_zero_format: ::alloc::borrow::Cow::Borrowed("GMT"),
-    region_format: ::alloc::borrow::Cow::Borrowed("hora de {0}"),
+    gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
+    gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
+    region_format: alloc::borrow::Cow::Borrowed("hora de {0}"),
     region_format_variants: unsafe {
         #[allow(unused_unsafe)]
         ::zerovec::ZeroMap::from_parts_unchecked(
@@ -208,16 +179,16 @@ static ES: DataStruct = &::icu_datetime::provider::time_zones::TimeZoneFormatsV1
             },
         )
     },
-    fallback_format: ::alloc::borrow::Cow::Borrowed("{1} ({0})"),
+    fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
 };
 static ES_AR: DataStruct = &::icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
     hour_format: (
-        ::alloc::borrow::Cow::Borrowed("+HH:mm"),
-        ::alloc::borrow::Cow::Borrowed("-HH:mm"),
+        alloc::borrow::Cow::Borrowed("+HH:mm"),
+        alloc::borrow::Cow::Borrowed("-HH:mm"),
     ),
-    gmt_format: ::alloc::borrow::Cow::Borrowed("GMT{0}"),
-    gmt_zero_format: ::alloc::borrow::Cow::Borrowed("GMT"),
-    region_format: ::alloc::borrow::Cow::Borrowed("hora de {0}"),
+    gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
+    gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
+    region_format: alloc::borrow::Cow::Borrowed("hora de {0}"),
     region_format_variants: unsafe {
         #[allow(unused_unsafe)]
         ::zerovec::ZeroMap::from_parts_unchecked(
@@ -238,16 +209,16 @@ static ES_AR: DataStruct = &::icu_datetime::provider::time_zones::TimeZoneFormat
             },
         )
     },
-    fallback_format: ::alloc::borrow::Cow::Borrowed("{1} ({0})"),
+    fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
 };
 static FIL: DataStruct = &::icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
     hour_format: (
-        ::alloc::borrow::Cow::Borrowed("+HH:mm"),
-        ::alloc::borrow::Cow::Borrowed("-HH:mm"),
+        alloc::borrow::Cow::Borrowed("+HH:mm"),
+        alloc::borrow::Cow::Borrowed("-HH:mm"),
     ),
-    gmt_format: ::alloc::borrow::Cow::Borrowed("GMT{0}"),
-    gmt_zero_format: ::alloc::borrow::Cow::Borrowed("GMT"),
-    region_format: ::alloc::borrow::Cow::Borrowed("Oras sa {0}"),
+    gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
+    gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
+    region_format: alloc::borrow::Cow::Borrowed("Oras sa {0}"),
     region_format_variants: unsafe {
         #[allow(unused_unsafe)]
         ::zerovec::ZeroMap::from_parts_unchecked(
@@ -268,16 +239,16 @@ static FIL: DataStruct = &::icu_datetime::provider::time_zones::TimeZoneFormatsV
             },
         )
     },
-    fallback_format: ::alloc::borrow::Cow::Borrowed("{1} ({0})"),
+    fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
 };
 static FR: DataStruct = &::icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
     hour_format: (
-        ::alloc::borrow::Cow::Borrowed("+HH:mm"),
-        ::alloc::borrow::Cow::Borrowed("−HH:mm"),
+        alloc::borrow::Cow::Borrowed("+HH:mm"),
+        alloc::borrow::Cow::Borrowed("−HH:mm"),
     ),
-    gmt_format: ::alloc::borrow::Cow::Borrowed("UTC{0}"),
-    gmt_zero_format: ::alloc::borrow::Cow::Borrowed("UTC"),
-    region_format: ::alloc::borrow::Cow::Borrowed("heure : {0}"),
+    gmt_format: alloc::borrow::Cow::Borrowed("UTC{0}"),
+    gmt_zero_format: alloc::borrow::Cow::Borrowed("UTC"),
+    region_format: alloc::borrow::Cow::Borrowed("heure : {0}"),
     region_format_variants: unsafe {
         #[allow(unused_unsafe)]
         ::zerovec::ZeroMap::from_parts_unchecked(
@@ -298,16 +269,16 @@ static FR: DataStruct = &::icu_datetime::provider::time_zones::TimeZoneFormatsV1
             },
         )
     },
-    fallback_format: ::alloc::borrow::Cow::Borrowed("{1} ({0})"),
+    fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
 };
 static JA: DataStruct = &::icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
     hour_format: (
-        ::alloc::borrow::Cow::Borrowed("+HH:mm"),
-        ::alloc::borrow::Cow::Borrowed("-HH:mm"),
+        alloc::borrow::Cow::Borrowed("+HH:mm"),
+        alloc::borrow::Cow::Borrowed("-HH:mm"),
     ),
-    gmt_format: ::alloc::borrow::Cow::Borrowed("GMT{0}"),
-    gmt_zero_format: ::alloc::borrow::Cow::Borrowed("GMT"),
-    region_format: ::alloc::borrow::Cow::Borrowed("{0}時間"),
+    gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
+    gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
+    region_format: alloc::borrow::Cow::Borrowed("{0}時間"),
     region_format_variants: unsafe {
         #[allow(unused_unsafe)]
         ::zerovec::ZeroMap::from_parts_unchecked(
@@ -326,16 +297,16 @@ static JA: DataStruct = &::icu_datetime::provider::time_zones::TimeZoneFormatsV1
             },
         )
     },
-    fallback_format: ::alloc::borrow::Cow::Borrowed("{1}（{0}）"),
+    fallback_format: alloc::borrow::Cow::Borrowed("{1}（{0}）"),
 };
 static RU: DataStruct = &::icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
     hour_format: (
-        ::alloc::borrow::Cow::Borrowed("+HH:mm"),
-        ::alloc::borrow::Cow::Borrowed("-HH:mm"),
+        alloc::borrow::Cow::Borrowed("+HH:mm"),
+        alloc::borrow::Cow::Borrowed("-HH:mm"),
     ),
-    gmt_format: ::alloc::borrow::Cow::Borrowed("GMT{0}"),
-    gmt_zero_format: ::alloc::borrow::Cow::Borrowed("GMT"),
-    region_format: ::alloc::borrow::Cow::Borrowed("{0}"),
+    gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
+    gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
+    region_format: alloc::borrow::Cow::Borrowed("{0}"),
     region_format_variants: unsafe {
         #[allow(unused_unsafe)]
         ::zerovec::ZeroMap::from_parts_unchecked(
@@ -358,16 +329,16 @@ static RU: DataStruct = &::icu_datetime::provider::time_zones::TimeZoneFormatsV1
             },
         )
     },
-    fallback_format: ::alloc::borrow::Cow::Borrowed("{1} ({0})"),
+    fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
 };
 static SR_LATN: DataStruct = &::icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
     hour_format: (
-        ::alloc::borrow::Cow::Borrowed("+HH:mm"),
-        ::alloc::borrow::Cow::Borrowed("-HH:mm"),
+        alloc::borrow::Cow::Borrowed("+HH:mm"),
+        alloc::borrow::Cow::Borrowed("-HH:mm"),
     ),
-    gmt_format: ::alloc::borrow::Cow::Borrowed("GMT{0}"),
-    gmt_zero_format: ::alloc::borrow::Cow::Borrowed("GMT"),
-    region_format: ::alloc::borrow::Cow::Borrowed("{0}"),
+    gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
+    gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
+    region_format: alloc::borrow::Cow::Borrowed("{0}"),
     region_format_variants: unsafe {
         #[allow(unused_unsafe)]
         ::zerovec::ZeroMap::from_parts_unchecked(
@@ -388,16 +359,16 @@ static SR_LATN: DataStruct = &::icu_datetime::provider::time_zones::TimeZoneForm
             },
         )
     },
-    fallback_format: ::alloc::borrow::Cow::Borrowed("{1} ({0})"),
+    fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
 };
 static SR_SR_CYRL: DataStruct = &::icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
     hour_format: (
-        ::alloc::borrow::Cow::Borrowed("+HH:mm"),
-        ::alloc::borrow::Cow::Borrowed("-HH:mm"),
+        alloc::borrow::Cow::Borrowed("+HH:mm"),
+        alloc::borrow::Cow::Borrowed("-HH:mm"),
     ),
-    gmt_format: ::alloc::borrow::Cow::Borrowed("GMT{0}"),
-    gmt_zero_format: ::alloc::borrow::Cow::Borrowed("GMT"),
-    region_format: ::alloc::borrow::Cow::Borrowed("{0}"),
+    gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
+    gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
+    region_format: alloc::borrow::Cow::Borrowed("{0}"),
     region_format_variants: unsafe {
         #[allow(unused_unsafe)]
         ::zerovec::ZeroMap::from_parts_unchecked(
@@ -420,16 +391,16 @@ static SR_SR_CYRL: DataStruct = &::icu_datetime::provider::time_zones::TimeZoneF
             },
         )
     },
-    fallback_format: ::alloc::borrow::Cow::Borrowed("{1} ({0})"),
+    fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
 };
 static TH: DataStruct = &::icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
     hour_format: (
-        ::alloc::borrow::Cow::Borrowed("+HH:mm"),
-        ::alloc::borrow::Cow::Borrowed("-HH:mm"),
+        alloc::borrow::Cow::Borrowed("+HH:mm"),
+        alloc::borrow::Cow::Borrowed("-HH:mm"),
     ),
-    gmt_format: ::alloc::borrow::Cow::Borrowed("GMT{0}"),
-    gmt_zero_format: ::alloc::borrow::Cow::Borrowed("GMT"),
-    region_format: ::alloc::borrow::Cow::Borrowed("เวลา{0}"),
+    gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
+    gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
+    region_format: alloc::borrow::Cow::Borrowed("เวลา{0}"),
     region_format_variants: unsafe {
         #[allow(unused_unsafe)]
         ::zerovec::ZeroMap::from_parts_unchecked(
@@ -453,16 +424,16 @@ static TH: DataStruct = &::icu_datetime::provider::time_zones::TimeZoneFormatsV1
             },
         )
     },
-    fallback_format: ::alloc::borrow::Cow::Borrowed("{1} ({0})"),
+    fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
 };
 static TR: DataStruct = &::icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
     hour_format: (
-        ::alloc::borrow::Cow::Borrowed("+HH:mm"),
-        ::alloc::borrow::Cow::Borrowed("-HH:mm"),
+        alloc::borrow::Cow::Borrowed("+HH:mm"),
+        alloc::borrow::Cow::Borrowed("-HH:mm"),
     ),
-    gmt_format: ::alloc::borrow::Cow::Borrowed("GMT{0}"),
-    gmt_zero_format: ::alloc::borrow::Cow::Borrowed("GMT"),
-    region_format: ::alloc::borrow::Cow::Borrowed("{0} Saati"),
+    gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
+    gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
+    region_format: alloc::borrow::Cow::Borrowed("{0} Saati"),
     region_format_variants: unsafe {
         #[allow(unused_unsafe)]
         ::zerovec::ZeroMap::from_parts_unchecked(
@@ -482,16 +453,16 @@ static TR: DataStruct = &::icu_datetime::provider::time_zones::TimeZoneFormatsV1
             },
         )
     },
-    fallback_format: ::alloc::borrow::Cow::Borrowed("{1} ({0})"),
+    fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
 };
 static UND: DataStruct = &::icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
     hour_format: (
-        ::alloc::borrow::Cow::Borrowed("+HH:mm"),
-        ::alloc::borrow::Cow::Borrowed("-HH:mm"),
+        alloc::borrow::Cow::Borrowed("+HH:mm"),
+        alloc::borrow::Cow::Borrowed("-HH:mm"),
     ),
-    gmt_format: ::alloc::borrow::Cow::Borrowed("GMT{0}"),
-    gmt_zero_format: ::alloc::borrow::Cow::Borrowed("GMT"),
-    region_format: ::alloc::borrow::Cow::Borrowed("{0}"),
+    gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
+    gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
+    region_format: alloc::borrow::Cow::Borrowed("{0}"),
     region_format_variants: unsafe {
         #[allow(unused_unsafe)]
         ::zerovec::ZeroMap::from_parts_unchecked(
@@ -509,5 +480,5 @@ static UND: DataStruct = &::icu_datetime::provider::time_zones::TimeZoneFormatsV
             },
         )
     },
-    fallback_format: ::alloc::borrow::Cow::Borrowed("{1} ({0})"),
+    fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
 };

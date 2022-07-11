@@ -2,13 +2,14 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use icu_calendar::DateTime;
 use icu_datetime::provider::time_zones::{
     ExemplarCitiesV1, MetaZoneGenericNamesLongV1, MetaZoneGenericNamesShortV1, MetaZoneId,
     MetaZonePeriodV1, MetaZoneSpecificNamesLongV1, MetaZoneSpecificNamesShortV1, TimeZoneBcp47Id,
     TimeZoneFormatsV1,
 };
-use litemap::LiteMap;
 use std::borrow::Cow;
+use std::collections::HashMap;
 use tinystr::TinyStr8;
 use zerovec::{ZeroMap, ZeroMap2d};
 
@@ -404,8 +405,7 @@ fn iterate_zone_format_for_meta_zone_id(
     pair: (MetaZoneId, ZoneFormat),
 ) -> impl Iterator<Item = (MetaZoneId, TinyStr8, String)> {
     let (key1, zf) = pair;
-    zf.0.into_tuple_vec()
-        .into_iter()
+    zf.0.into_iter()
         .filter(|(key, _)| !key.eq("generic"))
         .map(move |(key, value)| {
             (
@@ -423,8 +423,7 @@ fn iterate_zone_format_for_time_zone_id(
     pair: (TimeZoneBcp47Id, ZoneFormat),
 ) -> impl Iterator<Item = (TimeZoneBcp47Id, TinyStr8, String)> {
     let (key1, zf) = pair;
-    zf.0.into_tuple_vec()
-        .into_iter()
+    zf.0.into_iter()
         .filter(|(key, _)| !key.eq("generic"))
         .map(move |(key, value)| {
             (
@@ -442,49 +441,59 @@ fn metazone_periods_iter(
     pair: (
         TimeZoneBcp47Id,
         Vec<MetaZoneForPeriod>,
-        LiteMap<String, MetaZoneId>,
+        HashMap<String, MetaZoneId>,
     ),
-) -> impl Iterator<Item = (TimeZoneBcp47Id, String, Option<MetaZoneId>)> {
+) -> impl Iterator<Item = (TimeZoneBcp47Id, i32, Option<MetaZoneId>)> {
     let (time_zone_key, periods, meta_zone_id_data) = pair;
     periods
         .into_iter()
         .map(move |period| match &period.uses_meta_zone.from {
             Some(from) => {
+                // TODO(#2127): Ideally this parsing can move into a library function
+                let parts: Vec<String> = from.split(' ').map(|s| s.to_string()).collect();
+                let date = &parts[0];
+                let time = &parts[1];
+                let date_parts: Vec<String> = date.split('-').map(|s| s.to_string()).collect();
+                let year = date_parts[0].parse::<i32>().unwrap();
+                let month = date_parts[1].parse::<u8>().unwrap();
+                let day = date_parts[2].parse::<u8>().unwrap();
+                let time_parts: Vec<String> = time.split(':').map(|s| s.to_string()).collect();
+                let hour = time_parts[0].parse::<u8>().unwrap();
+                let minute = time_parts[1].parse::<u8>().unwrap();
+                let iso = DateTime::new_iso_datetime(year, month, day, hour, minute, 0).unwrap();
+                let minutes = iso.minutes_since_local_unix_epoch();
+
                 match meta_zone_id_data.get(&period.uses_meta_zone.mzone) {
-                    Some(meta_zone_short_id) => {
-                        (time_zone_key, from.clone(), Some(*meta_zone_short_id))
-                    }
+                    Some(meta_zone_short_id) => (time_zone_key, minutes, Some(*meta_zone_short_id)),
                     None => {
                         // TODO(#1781): Remove this special case once the short id is updated in CLDR
                         if &period.uses_meta_zone.mzone == "Yukon" {
                             (
                                 time_zone_key,
-                                from.clone(),
+                                minutes,
                                 Some(MetaZoneId(tinystr::tinystr!(4, "yuko"))),
                             )
                         } else {
-                            (time_zone_key, from.clone(), None)
+                            (time_zone_key, minutes, None)
                         }
                     }
                 }
             }
             None => {
+                let iso = DateTime::new_iso_datetime(1970, 1, 1, 0, 0, 0).unwrap();
+                let minutes = iso.minutes_since_local_unix_epoch();
                 match meta_zone_id_data.get(&period.uses_meta_zone.mzone) {
-                    Some(meta_zone_short_id) => (
-                        time_zone_key,
-                        String::from("1970-00-00 00:00"),
-                        Some(*meta_zone_short_id),
-                    ),
+                    Some(meta_zone_short_id) => (time_zone_key, minutes, Some(*meta_zone_short_id)),
                     None => {
                         // TODO(#1781): Remove this special case once the short id is updated in CLDR
                         if &period.uses_meta_zone.mzone == "Yukon" {
                             (
                                 time_zone_key,
-                                String::from("1970-00-00 00:00"),
+                                minutes,
                                 Some(MetaZoneId(tinystr::tinystr!(4, "yuko"))),
                             )
                         } else {
-                            (time_zone_key, String::from("1970-00-00 00:00"), None)
+                            (time_zone_key, minutes, None)
                         }
                     }
                 }

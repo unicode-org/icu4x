@@ -2,13 +2,12 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::blob_schema::BlobSchema;
+use crate::blob_schema::{BlobSchema, BlobSchemaV1};
 use icu_provider::buf::BufferFormat;
 use icu_provider::prelude::*;
 use icu_provider::RcWrap;
 use serde::de::Deserialize;
 use yoke::*;
-use zerovec::maps::ZeroMap2dBorrowed;
 
 /// A data provider loading data from blobs dynamically created at runtime.
 ///
@@ -57,7 +56,7 @@ use zerovec::maps::ZeroMap2dBorrowed;
 /// [`StaticDataProvider`]: crate::StaticDataProvider
 pub struct BlobDataProvider {
     #[allow(clippy::type_complexity)]
-    data: Yoke<ZeroMap2dBorrowed<'static, ResourceKeyHash, [u8], [u8]>, RcWrap>,
+    data: Yoke<BlobSchemaV1<'static>, RcWrap>,
 }
 
 impl BlobDataProvider {
@@ -68,17 +67,13 @@ impl BlobDataProvider {
                 BlobSchema::deserialize(&mut postcard::Deserializer::from_bytes(bytes)).map(
                     |blob| {
                         let BlobSchema::V001(blob) = blob;
-                        blob.resources
+                        #[cfg(debug_assertions)]
+                        blob.check_invariants();
+                        blob
                     },
                 )
             })?,
         })
-    }
-
-    #[cfg(feature = "export")]
-    #[doc(hidden)] // See #1771, we don't want this to be a publicly visible API
-    pub fn get_map(&self) -> &ZeroMap2dBorrowed<ResourceKeyHash, [u8], [u8]> {
-        self.data.get()
     }
 }
 
@@ -96,16 +91,20 @@ impl BufferProvider for BlobDataProvider {
             payload: Some(DataPayload::from_yoked_buffer(
                 self.data.try_map_project_cloned_with_capture(
                     (key, req),
-                    |zm, (key, req), _| {
-                        let partial_result: Result<&[u8], DataErrorKind> = zm
+                    |blob, (key, req), _| {
+                        let idx = blob
+                            .keys
                             .get0(&key.get_hash())
                             .ok_or(DataErrorKind::MissingResourceKey)
                             .and_then(|cursor| {
                                 cursor
-                                    .get1_by(|bytes| req.options.strict_cmp(bytes).reverse())
+                                    .get1_copied_by(|bytes| req.options.strict_cmp(bytes).reverse())
                                     .ok_or(DataErrorKind::MissingResourceOptions)
-                            });
-                        partial_result.map_err(|e| e.with_req(key, req))
+                            })
+                            .map_err(|kind| kind.with_req(key, req))?;
+                        blob.buffers.get(idx).ok_or_else(|| {
+                            DataError::custom("Invalid blob bytes").with_req(key, req)
+                        })
                     },
                 )?,
             )),

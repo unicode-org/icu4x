@@ -143,14 +143,14 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
         types::DayOfMonth(self.day.into())
     }
 
-    /// The [`types::Month`] for the current month (with month code) for a solar calendar
+    /// The [`types::FormattableMonth`] for the current month (with month code) for a solar calendar
     /// Lunar calendars should not use this method and instead manually implement a month code
     /// resolver.
     ///
     /// Returns "und" if run with months that are out of bounds for the current
     /// calendar.
     #[inline]
-    pub fn solar_month(&self) -> types::Month {
+    pub fn solar_month(&self) -> types::FormattableMonth {
         let code = match self.month {
             a if a > C::months_for_every_year() => tinystr!(4, "und"),
             1 => tinystr!(4, "M01"),
@@ -168,7 +168,7 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
             13 => tinystr!(4, "M13"),
             _ => tinystr!(4, "und"),
         };
-        types::Month {
+        types::FormattableMonth {
             ordinal: self.month as u32,
             code: types::MonthCode(code),
         }

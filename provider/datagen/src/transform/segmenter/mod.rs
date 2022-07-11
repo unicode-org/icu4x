@@ -4,12 +4,13 @@
 
 //! This module contains provider implementations backed by built-in segmentation data.
 
-use crate::transform::uprops::{
+use crate::transform::icuexport::uprops::{
     BinaryPropertyUnicodeSetDataProvider, EnumeratedPropertyCodePointTrieProvider,
 };
 use crate::SourceData;
 use icu_codepointtrie::CodePointTrie;
 use icu_codepointtrie_builder::{CodePointTrieBuilder, CodePointTrieBuilderData};
+use icu_locid::{langid, locale};
 use icu_properties::{
     maps, sets, EastAsianWidth, GeneralCategory, GraphemeClusterBreak, LineBreak, SentenceBreak,
     WordBreak,
@@ -597,7 +598,7 @@ impl SegmenterRuleProvider {
             data: CodePointTrieBuilderData::ValuesByCodePoint(&properties_map),
             default_value: 0,
             error_value: 0,
-            trie_type: self.source.trie_type(),
+            trie_type: self.source.trie_type().to_internal(),
         }
         .build();
 
@@ -700,6 +701,82 @@ impl IterableResourceProvider<WordBreakDataV1Marker> for SegmenterRuleProvider {
 impl IterableResourceProvider<SentenceBreakDataV1Marker> for SegmenterRuleProvider {
     fn supported_options(&self) -> Result<Vec<ResourceOptions>, DataError> {
         Ok(vec![Default::default()])
+    }
+}
+
+#[derive(serde::Deserialize, Debug)]
+struct SegmenterDictionaryData {
+    trie_data: Vec<u16>,
+}
+
+/// A data provider reading from segmenter dictionary files.
+#[derive(Debug)]
+pub struct SegmenterDictionaryProvider {
+    source: SourceData,
+}
+
+impl SegmenterDictionaryProvider {
+    fn get_toml_filename(options: &ResourceOptions) -> Option<&'static str> {
+        if options.get_langid() == langid!("km") {
+            Some("dictionary_km.toml")
+        } else if options.get_langid() == langid!("ja") {
+            Some("dictionary_cj.toml")
+        } else if options.get_langid() == langid!("lo") {
+            Some("dictionary_lo.toml")
+        } else if options.get_langid() == langid!("my") {
+            Some("dictionary_my.toml")
+        } else if options.get_langid() == langid!("th") {
+            Some("dictionary_th.toml")
+        } else {
+            None
+        }
+    }
+}
+
+impl From<&SourceData> for SegmenterDictionaryProvider {
+    fn from(source: &SourceData) -> Self {
+        Self {
+            source: source.clone(),
+        }
+    }
+}
+
+impl ResourceProvider<UCharDictionaryBreakDataV1Marker> for SegmenterDictionaryProvider {
+    fn load_resource(
+        &self,
+        req: &DataRequest,
+    ) -> Result<DataResponse<UCharDictionaryBreakDataV1Marker>, DataError> {
+        let toml_data = self
+            .source
+            .segmenter()?
+            .read_and_parse_toml::<SegmenterDictionaryData>(
+                Self::get_toml_filename(&req.options)
+                    .ok_or_else(|| DataErrorKind::MissingResourceOptions.into_error())?,
+            )?;
+        let data = UCharDictionaryBreakDataV1 {
+            trie_data: ZeroVec::alloc_from_slice(&toml_data.trie_data),
+        };
+        Ok(DataResponse {
+            metadata: DataResponseMetadata::default(),
+            payload: Some(DataPayload::from_owned(data)),
+        })
+    }
+}
+
+icu_provider::make_exportable_provider!(
+    SegmenterDictionaryProvider,
+    [UCharDictionaryBreakDataV1Marker,]
+);
+
+impl IterableResourceProvider<UCharDictionaryBreakDataV1Marker> for SegmenterDictionaryProvider {
+    fn supported_options(&self) -> Result<Vec<ResourceOptions>, DataError> {
+        Ok(vec![
+            locale!("th").into(),
+            locale!("km").into(),
+            locale!("lo").into(),
+            locale!("my").into(),
+            locale!("ja").into(),
+        ])
     }
 }
 
