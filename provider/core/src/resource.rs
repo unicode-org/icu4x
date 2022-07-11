@@ -229,10 +229,7 @@ impl ResourceKey {
     // Error is a str of the expected character class and the index where it wasn't encountered
     // The indexing operations in this function have been reviewed in detail and won't panic.
     #[allow(clippy::indexing_slicing)]
-    pub const fn construct_internal(
-        path: &'static str,
-        metadata: ResourceKeyMetadata,
-    ) -> Result<Self, (&'static str, usize)> {
+    pub const fn construct_internal(path: &'static str) -> Result<Self, (&'static str, usize)> {
         if path.len() < leading_tag!().len() + trailing_tag!().len() {
             return Err(("tag", 0));
         }
@@ -262,10 +259,19 @@ impl ResourceKey {
             Body,
             At,
             Version,
+            MetaOpen,
+            MetaU,
+            MetaUDash,
+            MetaUDashB,
+            MetaClose,
+            MetaAfter,
         }
         use State::*;
         i = start;
         let mut state = Empty;
+        let mut fallback_priority = FallbackPriority::const_default();
+        let mut extension_key_first_byte = b'\0';
+        let mut extension_key = None;
         loop {
             let byte = if i < end {
                 Some(path.as_bytes()[i])
@@ -278,17 +284,48 @@ impl ResourceKey {
                 (Body, Some(b'@')) => At,
                 (At | Version, Some(b'0'..=b'9')) => Version,
                 // One of these cases will be hit at the latest when i == end, so the loop converges.
-                (Version, None) => {
+                (Version | MetaAfter, None) => {
                     return Ok(Self {
                         path,
                         hash: ResourceKeyHash::compute_from_str(path),
-                        metadata,
+                        metadata: ResourceKeyMetadata {
+                            fallback_priority,
+                            extension_key,
+                        },
                     })
                 }
 
+                (Version | MetaAfter, Some(b'[')) => MetaOpen,
+                (MetaOpen, Some(b'R')) => {
+                    fallback_priority = FallbackPriority::Region;
+                    MetaClose
+                }
+                (MetaOpen, Some(b'u')) => MetaU,
+                (MetaU, Some(b'-')) => MetaUDash,
+                (MetaUDash, Some(b @ b'a'..=b'z')) => {
+                    extension_key_first_byte = b;
+                    MetaUDashB
+                }
+                (MetaUDashB, Some(b @ b'a'..=b'z')) => {
+                    extension_key =
+                        match unicode_ext::Key::from_bytes(&[extension_key_first_byte, b]) {
+                            Ok(v) => Some(v),
+                            Err(_) => unreachable!(),
+                        };
+                    MetaClose
+                }
+                (MetaClose, Some(b']')) => MetaAfter,
+
                 (Empty, _) => return Err(("[a-zA-Z0-9_]", i)),
                 (Body, _) => return Err(("[a-zA-z0-9_/@]", i)),
-                (At | Version, _) => return Err(("[0-9]", i)),
+                (At, _) => return Err(("[0-9]", i)),
+                (Version, _) => return Err(("[0-9\\[]", i)),
+                (MetaOpen, _) => return Err(("[uR]", i)),
+                (MetaU, _) => return Err(("[-]", i)),
+                (MetaUDash, _) => return Err(("[a-z]", i)),
+                (MetaUDashB, _) => return Err(("[a-z]", i)),
+                (MetaClose, _) => return Err(("[\\]]", i)),
+                (MetaAfter, _) => return Err(("[\\[]", i)),
             };
             i += 1;
         }
@@ -338,24 +375,19 @@ impl ResourceKey {
 #[test]
 fn test_path_syntax() {
     // Valid keys:
-    assert!(ResourceKey::construct_internal(tagged!("hello/world@1"), Default::default()).is_ok());
-    assert!(
-        ResourceKey::construct_internal(tagged!("hello/world/foo@1"), Default::default()).is_ok()
-    );
-    assert!(
-        ResourceKey::construct_internal(tagged!("hello/world@999"), Default::default()).is_ok()
-    );
-    assert!(
-        ResourceKey::construct_internal(tagged!("hello_world/foo@1"), Default::default()).is_ok()
-    );
-    assert!(
-        ResourceKey::construct_internal(tagged!("hello_458/world@1"), Default::default()).is_ok()
-    );
-    assert!(ResourceKey::construct_internal(tagged!("hello_world@1"), Default::default()).is_ok());
+    ResourceKey::construct_internal(tagged!("hello/world@1")).unwrap();
+    ResourceKey::construct_internal(tagged!("hello/world/foo@1")).unwrap();
+    ResourceKey::construct_internal(tagged!("hello/world@999")).unwrap();
+    ResourceKey::construct_internal(tagged!("hello_world/foo@1")).unwrap();
+    ResourceKey::construct_internal(tagged!("hello_458/world@1")).unwrap();
+    ResourceKey::construct_internal(tagged!("hello_world@1")).unwrap();
+    ResourceKey::construct_internal(tagged!("foo@1[R]")).unwrap();
+    ResourceKey::construct_internal(tagged!("foo@1[u-ca]")).unwrap();
+    ResourceKey::construct_internal(tagged!("foo@1[R][u-ca]")).unwrap();
 
     // No version:
     assert_eq!(
-        ResourceKey::construct_internal(tagged!("hello/world"), Default::default()),
+        ResourceKey::construct_internal(tagged!("hello/world")),
         Err((
             "[a-zA-z0-9_/@]",
             concat!(leading_tag!(), "hello/world").len()
@@ -363,42 +395,92 @@ fn test_path_syntax() {
     );
 
     assert_eq!(
-        ResourceKey::construct_internal(tagged!("hello/world@"), Default::default()),
+        ResourceKey::construct_internal(tagged!("hello/world@")),
         Err(("[0-9]", concat!(leading_tag!(), "hello/world@").len()))
     );
     assert_eq!(
-        ResourceKey::construct_internal(tagged!("hello/world@foo"), Default::default()),
+        ResourceKey::construct_internal(tagged!("hello/world@foo")),
         Err(("[0-9]", concat!(leading_tag!(), "hello/world@").len()))
     );
     assert_eq!(
-        ResourceKey::construct_internal(tagged!("hello/world@1foo"), Default::default()),
-        Err(("[0-9]", concat!(leading_tag!(), "hello/world@1").len()))
+        ResourceKey::construct_internal(tagged!("hello/world@1foo")),
+        Err(("[0-9\\[]", concat!(leading_tag!(), "hello/world@1").len()))
+    );
+
+    // Invalid meta:
+    assert_eq!(
+        ResourceKey::construct_internal(tagged!("foo@1[U]")),
+        Err(("[uR]", concat!(leading_tag!(), "foo@1[").len()))
+    );
+    assert_eq!(
+        ResourceKey::construct_internal(tagged!("foo@1[uca]")),
+        Err(("[-]", concat!(leading_tag!(), "foo@1[u").len()))
+    );
+    assert_eq!(
+        ResourceKey::construct_internal(tagged!("foo@1[u-")),
+        Err(("[a-z]", concat!(leading_tag!(), "foo@1[u-").len()))
+    );
+    assert_eq!(
+        ResourceKey::construct_internal(tagged!("foo@1[u-caa]")),
+        Err(("[\\]]", concat!(leading_tag!(), "foo@1[u-ca").len()))
+    );
+    assert_eq!(
+        ResourceKey::construct_internal(tagged!("foo@1[R")),
+        Err(("[\\]]", concat!(leading_tag!(), "foo@1[u").len()))
     );
 
     // Invalid characters:
     assert_eq!(
-        ResourceKey::construct_internal(tagged!("你好/世界@1"), Default::default()),
+        ResourceKey::construct_internal(tagged!("你好/世界@1")),
         Err(("[a-zA-Z0-9_]", leading_tag!().len()))
     );
 
     // Invalid tag:
     assert_eq!(
-        ResourceKey::construct_internal(
-            concat!("hello/world@1", trailing_tag!()),
-            Default::default()
-        ),
+        ResourceKey::construct_internal(concat!("hello/world@1", trailing_tag!()),),
         Err(("tag", 0))
     );
     assert_eq!(
-        ResourceKey::construct_internal(
-            concat!(leading_tag!(), "hello/world@1"),
-            Default::default()
-        ),
+        ResourceKey::construct_internal(concat!(leading_tag!(), "hello/world@1"),),
         Err(("tag", concat!(leading_tag!(), "hello/world@1").len()))
     );
     assert_eq!(
-        ResourceKey::construct_internal("hello/world@1", Default::default()),
+        ResourceKey::construct_internal("hello/world@1"),
         Err(("tag", 0))
+    );
+}
+
+#[test]
+fn test_metadata_parsing() {
+    use icu_locid::extensions_unicode_key as key;
+    assert_eq!(
+        ResourceKey::construct_internal(tagged!("hello/world@1")).map(|k| k.get_metadata()),
+        Ok(ResourceKeyMetadata {
+            fallback_priority: FallbackPriority::Language,
+            extension_key: None
+        })
+    );
+    assert_eq!(
+        ResourceKey::construct_internal(tagged!("hello/world@1[R]")).map(|k| k.get_metadata()),
+        Ok(ResourceKeyMetadata {
+            fallback_priority: FallbackPriority::Region,
+            extension_key: None
+        })
+    );
+    assert_eq!(
+        ResourceKey::construct_internal(tagged!("hello/world@1[u-ca]")).map(|k| k.get_metadata()),
+        Ok(ResourceKeyMetadata {
+            fallback_priority: FallbackPriority::Language,
+            extension_key: Some(key!("ca"))
+        })
+    );
+    assert_eq!(
+        ResourceKey::construct_internal(tagged!("hello/world@1[R][u-ca]"))
+            .map(|k| k.get_metadata()),
+        Ok(ResourceKeyMetadata {
+            fallback_priority: FallbackPriority::Region,
+            extension_key: Some(key!("ca"))
+        })
     );
 }
 
@@ -411,7 +493,7 @@ macro_rules! resource_key {
     ($path:expr, $metadata:expr) => {{
         // Force the ResourceKey into a const context
         const RESOURCE_KEY_MACRO_CONST: $crate::ResourceKey = {
-            match $crate::ResourceKey::construct_internal($crate::tagged!($path), $metadata) {
+            match $crate::ResourceKey::construct_internal($crate::tagged!($path)) {
                 Ok(v) => v,
                 #[allow(clippy::panic)] // Const context
                 Err(_) => panic!(concat!("Invalid resource key: ", $path)),
