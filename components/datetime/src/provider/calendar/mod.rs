@@ -135,4 +135,26 @@ pub mod patterns {
     impl DataMarker for PatternPluralsFromPatternsV1Marker {
         type Yokeable = PatternPluralsV1<'static>;
     }
+
+    #[icu_provider::data_struct]
+    #[derive(Debug, PartialEq, Clone, Default)]
+    #[cfg_attr(feature = "datagen", derive(serde::Serialize))]
+    #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+    pub struct GenericPatternV1<'data>(
+        #[cfg_attr(feature = "serde", serde(borrow))] pub GenericPattern<'data>,
+    );
+
+    /// Helper struct used to allow for projection of `DataPayload<DatePatternsV1>` to
+    /// `DataPayload<GenericLengthPatternsV1>`.
+    pub(crate) struct GenericPatternV1Marker;
+
+    impl DataMarker for GenericPatternV1Marker {
+        type Yokeable = GenericPatternV1<'static>;
+    }
+
+    impl<'data> From<GenericPattern<'data>> for GenericPatternV1<'data> {
+        fn from(pattern: GenericPattern<'data>) -> Self {
+            Self(pattern)
+        }
+    }
 }

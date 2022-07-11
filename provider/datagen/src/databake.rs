@@ -6,7 +6,6 @@ use databake::{quote, CrateEnv, TokenStream};
 use icu_provider::datagen::*;
 use icu_provider::prelude::*;
 use itertools::Itertools;
-use litemap::LiteMap;
 use rayon::prelude::*;
 use std::collections::HashMap;
 use std::fs::File;
@@ -31,11 +30,14 @@ pub(crate) struct BakedDataExporter {
     mod_directory: PathBuf,
     pretty: bool,
     insert_feature_gates: bool,
-    // Temporary storage for put_payload: key -> (marker path, options -> bake)
-    data: Mutex<LiteMap<ResourceKey, (SyncTokenStream, LiteMap<ResourceOptions, SyncTokenStream>)>>,
+    // Temporary storage for put_payload: key -> (marker path, bake -> [options])
+    data: Mutex<HashMap<ResourceKey, (SyncTokenStream, HashMap<SyncTokenStream, Vec<String>>)>>,
     // All mod.rs files in the module tree. Because generation is parallel,
     // this will be non-deterministic and have to be sorted later.
     mod_files: Mutex<HashMap<PathBuf, Vec<String>>>,
+    /// Triples of the ResourceMarker, the path to the DATA slice, and the feature that includes it.
+    /// This is populated by `put_payload` and consumed by `flush` which writes the implementations.
+    marker_data_feature: Mutex<Vec<(SyncTokenStream, SyncTokenStream, SyncTokenStream)>>,
     // List of dependencies used by baking.
     dependencies: CrateEnv,
 }
@@ -49,6 +51,7 @@ impl BakedDataExporter {
             insert_feature_gates,
             data: Default::default(),
             mod_files: Default::default(),
+            marker_data_feature: Default::default(),
             dependencies: Default::default(),
         }
     }
@@ -77,12 +80,22 @@ impl BakedDataExporter {
                 .stdout(std::process::Stdio::from(File::create(
                     path.with_extension("rs"),
                 )?))
-                // The default, "auto", is meant to detect the existing line endings and preserve them.
-                // However, this seems to be broken and generates Unix line endings on Windows, which
-                // introduces Git diffs when regenerating.
                 .args(&[
-                    "--config",
-                    "newline_style=native,format_generated_files=true,normalize_doc_attributes=true",
+                    // The default, "auto", is meant to detect the existing line endings and preserve them.
+                    // However, this seems to be broken and generates Unix line endings on Windows.
+                    "--config=newline_style=native",
+                    // false by default, which is nice because then cargo fmt won't touch these again
+                    "--config=format_generated_files=true",
+                    // quote! stringifies doc comments as attributes, which is not very readable
+                    "--config=normalize_doc_attributes=true",
+                    // Defaults to 2015, but we're outputting 2021
+                    "--edition=2021",
+                    // Rustfmt silently gives up if it cannot achieve the max width, which happens for any.rs
+                    if path.file_stem().and_then(std::ffi::OsStr::to_str) == Some("any") {
+                        "--config=max_width=150"
+                    } else {
+                        "--config=max_width=100"
+                    },
                 ])
                 .spawn()
                 .unwrap()
@@ -103,153 +116,138 @@ impl DataExporter for BakedDataExporter {
         payload: &DataPayload<ExportMarker>,
     ) -> Result<(), DataError> {
         let (payload, marker_type) = payload.tokenize(&self.dependencies);
-        let payload_string = payload.to_string();
-        let mut map = self.data.lock().expect("poison");
-        if !map.contains_key(&key) {
-            map.insert(key, (marker_type.to_string(), LiteMap::new()));
-        }
-        map.get_mut(&key)
-            .unwrap()
+        self.data
+            .lock()
+            .expect("poison")
+            .entry(key)
+            .or_insert_with(|| (marker_type.to_string(), Default::default()))
             .1
-            .insert(options.clone(), payload_string);
+            .entry(payload.to_string())
+            .or_default()
+            .push(options.to_string());
         Ok(())
     }
 
     fn flush(&self, key: ResourceKey) -> Result<(), DataError> {
-        let tmp = self.data.lock().expect("poison").remove(&key);
-        if let Some((marker, raw)) = tmp {
-            let mut sorted = raw.into_tuple_vec();
-            // Sort by payload bake so we can deduplicate.
-            sorted.sort_by(|(_, a), (_, b)| a.cmp(b));
+        let (marker, raw) = self
+            .data
+            .lock()
+            .expect("poison")
+            .remove(&key)
+            .ok_or_else(|| DataError::custom("No data").with_key(key))?;
+        let mut statics = Vec::new();
+        let mut all_options = Vec::new();
 
-            let mut statics = Vec::new();
-            let mut all_options = Vec::new();
+        for (payload_bake_string, mut options) in raw {
+            options.sort();
+            let ident_string = options
+                .iter()
+                .map(|options| {
+                    let mut string = options.replace('-', "_");
+                    string.make_ascii_uppercase();
+                    string
+                })
+                .reduce(|mut a, b| {
+                    // Cap identifier length at around 35
+                    if a.len() < 35 {
+                        a.push('_');
+                        a.push_str(&b);
+                    }
+                    a
+                })
+                .unwrap();
+            all_options.extend(options.into_iter().map(|o| (o, ident_string.clone())));
+            statics.push((ident_string, payload_bake_string));
+        }
 
-            for (payload_bake_string, group) in &sorted
-                .into_iter()
-                .group_by(|(_, payload_bake_string)| payload_bake_string.clone())
-            {
-                // These are sorted because we stably sorted earlier.
-                let options = group
-                    .map(|(options, _)| options.to_string())
-                    .collect::<Vec<_>>();
-                let ident_string = options
-                    .iter()
-                    .map(|options| {
-                        let mut string = options.replace('-', "_");
-                        string.make_ascii_uppercase();
-                        string
-                    })
-                    .reduce(|mut a, b| {
-                        // Cap identifier length at around 35
-                        if a.len() < 35 {
-                            a.push('_');
-                            a.push_str(&b);
-                        }
-                        a
-                    })
-                    .unwrap();
-                all_options.extend(options.into_iter().map(|o| (o, ident_string.clone())));
-                statics.push((ident_string, payload_bake_string));
-            }
+        statics.sort_unstable_by(|(a, _), (b, _)| a.cmp(b));
 
-            // Not necessary for functionality, but prettier
-            statics.sort_unstable_by(|(a, _), (b, _)| a.cmp(b));
-
-            let statics = statics
-                .into_iter()
-                .map(|(ident_string, payload_bake_string)| {
-                    let ident = ident_string.parse::<TokenStream>().unwrap();
-                    let payload_bake = payload_bake_string.parse::<TokenStream>().unwrap();
-                    quote! { static #ident: DataStruct = &#payload_bake; }
-                });
-
-            all_options.sort_unstable_by(|(a, _), (b, _)| a.cmp(b));
-            let all_options = all_options.into_iter().map(|(options, ident_string)| {
+        let statics = statics
+            .into_iter()
+            .map(|(ident_string, payload_bake_string)| {
                 let ident = ident_string.parse::<TokenStream>().unwrap();
-                quote! { (#options, #ident) }
+                let payload_bake = payload_bake_string.parse::<TokenStream>().unwrap();
+                quote! { static #ident: DataStruct = &#payload_bake; }
             });
 
-            // Replace non-ident-allowed tokens. This can still fail if a segment starts with
-            // a token that is not allowed in an initial position.
-            let module_path = syn::parse_str::<syn::Path>(
-                &key.get_path()
-                    .to_ascii_lowercase()
-                    .replace('@', "_v")
-                    .replace('/', "::"),
-            )
-            .map_err(|_| {
-                DataError::custom("Key component is not a valid Rust identifier").with_key(key)
-            })?;
+        all_options.sort_unstable_by(|(a, _), (b, _)| a.cmp(b));
+        let all_options = all_options.into_iter().map(|(options, ident_string)| {
+            let ident = ident_string.parse::<TokenStream>().unwrap();
+            quote! { (#options, #ident) }
+        });
 
-            let marker = syn::parse_str::<syn::Path>(&marker).unwrap();
+        // Replace non-ident-allowed tokens. This can still fail if a segment starts with
+        // a token that is not allowed in an initial position.
+        let module_path = syn::parse_str::<syn::Path>(
+            &key.get_path()
+                .to_ascii_lowercase()
+                .replace('@', "_v")
+                .replace('/', "::"),
+        )
+        .map_err(|_| {
+            DataError::custom("Key component is not a valid Rust identifier").with_key(key)
+        })?;
 
-            let feature = if self.insert_feature_gates {
-                let feature = marker.segments.iter().next().unwrap().ident.to_string();
-                quote! { #![cfg(feature = #feature)] }
+        let marker = syn::parse_str::<syn::Path>(&marker).unwrap();
+
+        let feature = if self.insert_feature_gates {
+            let feature = marker.segments.iter().next().unwrap().ident.to_string();
+            quote! { #![cfg(feature = #feature)] }
+        } else {
+            quote!()
+        };
+
+        let mut path = PathBuf::new();
+        let mut supers = quote!();
+        for level in &module_path.segments {
+            let mut map = self.mod_files.lock().expect("poison");
+            if !map.contains_key(&path) {
+                map.insert(path.clone(), Vec::new());
+            }
+            map.get_mut(&path).unwrap().push(level.ident.to_string());
+            drop(map);
+            path = path.join(level.ident.to_string());
+            supers = quote! { super:: #supers };
+        }
+
+        let struct_type =
+            if key == icu_datetime::provider::calendar::DateSkeletonPatternsV1Marker::KEY {
+                quote! {
+                    &'static [(
+                        &'static [::icu_datetime::fields::Field],
+                        ::icu_datetime::pattern::runtime::PatternPlurals<'static>
+                    )]
+                }
             } else {
-                quote!()
+                quote! {
+                    &'static <#marker as ::icu_provider::DataMarker>::Yokeable
+                }
             };
 
-            let mut path = PathBuf::new();
-            let mut supers = quote!();
-            for level in module_path.segments {
-                let mut map = self.mod_files.lock().expect("poison");
-                if !map.contains_key(&path) {
-                    map.insert(path.clone(), Vec::new());
-                }
-                map.get_mut(&path).unwrap().push(level.ident.to_string());
-                path = path.join(level.ident.to_string());
-                supers = quote! { super:: #supers };
-            }
+        self.write_to_file(
+            &path,
+            quote! {
+                #feature
 
-            let struct_type =
-                if key == icu_datetime::provider::calendar::DateSkeletonPatternsV1Marker::KEY {
-                    quote! {
-                        &'static [(
-                            &'static [::icu_datetime::fields::Field],
-                            ::icu_datetime::pattern::runtime::PatternPlurals<'static>
-                        )]
-                    }
-                } else {
-                    quote! {
-                        &'static <#marker as DataMarker>::Yokeable
-                    }
-                };
+                type DataStruct = #struct_type;
 
-            self.write_to_file(
-                &path,
-                quote! {
-                    #feature
+                pub static DATA: &[(&str, DataStruct)] = &[#(#all_options),*];
 
-                    use ::icu_provider::prelude::*;
+                #(#statics)*
+            },
+        )
+        .map_err(|e| e.with_path_context(&path))?;
 
-                    impl ResourceProvider<#marker> for #supers BakedDataProvider {
-                        fn load_resource(
-                            &self,
-                            req: &DataRequest,
-                        ) -> Result<DataResponse<#marker>, DataError> {
-                            static VALUES: &[(&str, DataStruct)] = &[#(#all_options),*];
-                            #[allow(clippy::unwrap_used)] // binary search Ok() is safe to index
-                            let value = VALUES
-                                .binary_search_by(|(k, _)| req.options.strict_cmp(k.as_bytes()).reverse())
-                                .map(|i| VALUES.get(i).unwrap().1)
-                                .map_err(|_| {
-                                    DataErrorKind::MissingResourceOptions.with_req(<#marker>::KEY, req)
-                                })?;
-                            Ok(DataResponse {
-                                metadata: DataResponseMetadata::default(),
-                                payload: Some(DataPayload::from_owned(zerofrom::ZeroFrom::zero_from(value))),
-                            })
-                        }
-                    }
-
-                    type DataStruct = #struct_type;
-
-                    #(#statics)*
-                },
-            ).map_err(|e| e.with_path_context(&path))?;
-        }
+        self.marker_data_feature.lock().expect("poison").push((
+            quote!(#marker).to_string(),
+            quote!(#module_path).to_string(),
+            if self.insert_feature_gates {
+                let feature = marker.segments.iter().next().unwrap().ident.to_string();
+                quote! { #[cfg(feature = #feature)] }.to_string()
+            } else {
+                String::new()
+            },
+        ));
         Ok(())
     }
 
@@ -262,37 +260,140 @@ impl DataExporter for BakedDataExporter {
             log::info!("{}", crate_name);
         }
 
-        move_out!(self.mod_files)
+        let mut mod_files = move_out!(self.mod_files).into_inner().expect("poison");
+        for (_, mods) in mod_files.iter_mut() {
+            mods.sort();
+        }
+
+        let mods = mod_files
+            .remove(&PathBuf::new())
+            .expect("root exists")
+            .into_iter()
+            .dedup()
+            .map(|p| p.parse::<TokenStream>().unwrap());
+
+        let mut marker_data_feature = move_out!(self.marker_data_feature)
             .into_inner()
-            .expect("poison")
-            .into_par_iter()
-            .try_for_each(|(path, mut mods)| {
-                mods.sort();
-                let mods = mods
-                    .into_iter()
-                    .dedup()
-                    .map(|p| p.parse::<TokenStream>().unwrap());
-                let maybe_decl = if path.as_os_str().is_empty() {
-                    quote! {
-                        /// This data provider was programmatically generated by [`icu_datagen`](
-                        /// https://unicode-org.github.io/icu4x-docs/doc/icu_datagen/enum.Out.html#variant.Module).
-                        #[non_exhaustive]
-                        pub struct BakedDataProvider;
-                    }
-                } else {
-                    quote!()
-                };
-                self.write_to_file(
-                    &path.join("mod"),
-                    quote! {
-                        #maybe_decl
-                        #(
-                            mod #mods;
-                        )*
-                    },
+            .expect("poison");
+        marker_data_feature.sort();
+        let marker_data_feature = marker_data_feature
+            .into_iter()
+            .map(|(marker_str, data_str, feature_str)| {
+                (
+                    marker_str.parse::<TokenStream>().unwrap(),
+                    data_str.parse::<TokenStream>().unwrap(),
+                    feature_str.parse::<TokenStream>().unwrap(),
                 )
-                .map_err(|e| e.with_path_context(&path.join("mod/*")))
-            })?;
+            })
+            .collect::<Vec<_>>();
+
+        let resource_impls = marker_data_feature.iter().map(|(marker, data, feature)| {
+            quote! {
+                #feature
+                impl ResourceProvider<#marker> for BakedDataProvider {
+                    fn load_resource(
+                        &self,
+                        req: &DataRequest,
+                    ) -> Result<DataResponse<#marker>, DataError> {
+                        Ok(DataResponse {
+                            metadata: Default::default(),
+                            payload: Some(DataPayload::from_owned(zerofrom::ZeroFrom::zero_from(
+                                litemap_slice_get(#data::DATA, <#marker as ResourceMarker>::KEY, req)?,
+                            ))),
+                        })
+                    }
+                }
+            }
+        });
+
+        self.write_to_file(
+            PathBuf::from("mod"),
+            quote! {
+                #(
+                    mod #mods;
+                )*
+
+                /// This data provider was programmatically generated by [`icu_datagen`](
+                /// https://unicode-org.github.io/icu4x-docs/doc/icu_datagen/enum.Out.html#variant.Module).
+                #[non_exhaustive]
+                pub struct BakedDataProvider;
+                use ::icu_provider::prelude::*;
+
+                #(#resource_impls)*
+
+                fn litemap_slice_get<T: ?Sized>(
+                    values: &'static [(&'static str, &'static T)],
+                    key: ResourceKey,
+                    req: &DataRequest,
+                ) -> Result<&'static T, DataError> {
+                    #[allow(clippy::unwrap_used)]
+                    values
+                        .binary_search_by(|(k, _)| req.options.strict_cmp(k.as_bytes()).reverse())
+                        .map(|i| values.get(i).unwrap().1)
+                        .map_err(|_| DataErrorKind::MissingResourceOptions.with_req(key, req))
+                }
+            },
+        )
+        .map_err(|e| e.with_path_context(&PathBuf::from("mod.rs")))?;
+
+        let any_cases = marker_data_feature.iter().map(|(marker, data, feature)| {
+            // TODO(#1678): Remove the special case
+            if marker.to_string() == ":: icu_datetime :: provider :: calendar :: DateSkeletonPatternsV1Marker" {
+                quote! {
+                    #feature
+                    <#marker as ResourceMarker>::KEY => {
+                        AnyPayload::from_rc_payload::<#marker>(
+                            alloc::rc::Rc::new(
+                                DataPayload::from_owned(
+                                    zerofrom::ZeroFrom::zero_from(
+                                        litemap_slice_get(#data::DATA, key, req)?
+                        ))))
+                    }
+                }
+            } else {
+                quote!{
+                    #feature
+                    <#marker as ResourceMarker>::KEY => {
+                        AnyPayload::from_static_ref::<<#marker as DataMarker>::Yokeable>(litemap_slice_get(#data::DATA, key, req)?)
+                    }
+                }
+            }
+        });
+
+        self.write_to_file(
+            PathBuf::from("any"),
+            quote! {
+                impl AnyProvider for BakedDataProvider {
+                    fn load_any(&self, key: ResourceKey, req: &DataRequest) -> Result<AnyResponse, DataError> {
+                        Ok(AnyResponse {
+                            payload: Some(match key {
+                                #(#any_cases)*
+                                _ => return Err(DataErrorKind::MissingResourceKey.with_req(key, req)),
+                            }),
+                            metadata: Default::default(),
+                        })
+                    }
+                }
+            }
+        )
+        .map_err(|e| e.with_path_context(&PathBuf::from("any.rs")))?;
+
+        mod_files.into_par_iter().try_for_each(|(path, mut mods)| {
+            mods.sort();
+            let mods = mods
+                .into_iter()
+                .dedup()
+                .map(|p| p.parse::<TokenStream>().unwrap());
+            self.write_to_file(
+                &path.join("mod"),
+                quote! {
+                    #(
+                        pub mod #mods;
+                    )*
+                },
+            )
+            .map_err(|e| e.with_path_context(&path.join("mod.rs")))
+        })?;
 
         Ok(())
     }

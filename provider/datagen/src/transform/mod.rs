@@ -15,8 +15,6 @@
 //! [data provider]: icu_provider
 
 pub mod cldr;
-#[cfg(feature = "experimental")]
-pub mod collator;
+pub mod icuexport;
 #[cfg(feature = "experimental")]
 pub mod segmenter;
-pub mod uprops;

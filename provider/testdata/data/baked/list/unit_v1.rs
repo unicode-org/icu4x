@@ -1,48 +1,27 @@
 // @generated
-use icu_provider::prelude::*;
-impl ResourceProvider<::icu_list::provider::UnitListV1Marker> for super::super::BakedDataProvider {
-    fn load_resource(
-        &self,
-        req: &DataRequest,
-    ) -> Result<DataResponse<::icu_list::provider::UnitListV1Marker>, DataError> {
-        static VALUES: &[(&str, DataStruct)] = &[
-            ("ar", AR_AR_EG),
-            ("ar-EG", AR_AR_EG),
-            ("bn", BN_CCP_UND),
-            ("ccp", BN_CCP_UND),
-            ("en", EN_EN_001_EN_ZA_FIL),
-            ("en-001", EN_EN_001_EN_ZA_FIL),
-            ("en-ZA", EN_EN_001_EN_ZA_FIL),
-            ("es", ES_ES_AR),
-            ("es-AR", ES_ES_AR),
-            ("fil", EN_EN_001_EN_ZA_FIL),
-            ("fr", FR),
-            ("ja", JA),
-            ("ru", RU_TR),
-            ("sr", SR_SR_CYRL),
-            ("sr-Cyrl", SR_SR_CYRL),
-            ("sr-Latn", SR_LATN),
-            ("th", TH),
-            ("tr", RU_TR),
-            ("und", BN_CCP_UND),
-        ];
-        #[allow(clippy::unwrap_used)]
-        let value = VALUES
-            .binary_search_by(|(k, _)| req.options.strict_cmp(k.as_bytes()).reverse())
-            .map(|i| VALUES.get(i).unwrap().1)
-            .map_err(|_| {
-                DataErrorKind::MissingResourceOptions
-                    .with_req(<::icu_list::provider::UnitListV1Marker>::KEY, req)
-            })?;
-        Ok(DataResponse {
-            metadata: DataResponseMetadata::default(),
-            payload: Some(DataPayload::from_owned(zerofrom::ZeroFrom::zero_from(
-                value,
-            ))),
-        })
-    }
-}
-type DataStruct = &'static <::icu_list::provider::UnitListV1Marker as DataMarker>::Yokeable;
+type DataStruct =
+    &'static <::icu_list::provider::UnitListV1Marker as ::icu_provider::DataMarker>::Yokeable;
+pub static DATA: &[(&str, DataStruct)] = &[
+    ("ar", AR_AR_EG),
+    ("ar-EG", AR_AR_EG),
+    ("bn", BN_CCP_UND),
+    ("ccp", BN_CCP_UND),
+    ("en", EN_EN_001_EN_ZA_FIL),
+    ("en-001", EN_EN_001_EN_ZA_FIL),
+    ("en-ZA", EN_EN_001_EN_ZA_FIL),
+    ("es", ES_ES_AR),
+    ("es-AR", ES_ES_AR),
+    ("fil", EN_EN_001_EN_ZA_FIL),
+    ("fr", FR),
+    ("ja", JA),
+    ("ru", RU_TR),
+    ("sr", SR_SR_CYRL),
+    ("sr-Cyrl", SR_SR_CYRL),
+    ("sr-Latn", SR_LATN),
+    ("th", TH),
+    ("tr", RU_TR),
+    ("und", BN_CCP_UND),
+];
 static AR_AR_EG: DataStruct = &::icu_list::provider::ListFormatterPatternsV1([
     ::icu_list::provider::ConditionalListJoinerPattern {
         default: unsafe {

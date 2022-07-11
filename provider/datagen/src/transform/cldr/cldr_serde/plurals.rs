@@ -8,8 +8,8 @@
 //! <https://github.com/unicode-org/cldr-json/blob/main/cldr-json/cldr-core/supplemental/plurals.json>
 
 use icu_locid::LanguageIdentifier;
-use litemap::LiteMap;
 use serde::Deserialize;
+use std::collections::HashMap;
 
 #[derive(PartialEq, PartialOrd, Ord, Eq, Debug, Deserialize)]
 pub struct LocalePluralRules {
@@ -26,7 +26,7 @@ pub struct LocalePluralRules {
 }
 
 #[derive(PartialEq, Debug, Deserialize)]
-pub struct Rules(pub LiteMap<LanguageIdentifier, LocalePluralRules>);
+pub struct Rules(pub HashMap<LanguageIdentifier, LocalePluralRules>);
 
 #[derive(PartialEq, Debug, Deserialize)]
 pub struct Supplemental {

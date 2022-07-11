@@ -111,7 +111,7 @@ impl DataPayload<ExportMarker> {
     /// assert_eq!(
     ///     quote! {
     ///         ::icu_provider::hello_world::HelloWorldV1 {
-    ///             message: ::alloc::borrow::Cow::Borrowed("(und) Hello World"),
+    ///             message: alloc::borrow::Cow::Borrowed("(und) Hello World"),
     ///         }
     ///     }
     ///     .to_string(),

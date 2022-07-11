@@ -148,7 +148,7 @@ jobs:
       id: source-data-cache
       with:
         path: data/source
-        key: source-data-41-71
+        key: source-data-41-71b
     - name: Download CLDR source data
       if: steps.source-data-cache.outputs.cache-hit != 'true'
       uses: robinraju/release-downloader@v1.3
@@ -162,8 +162,8 @@ jobs:
       uses: robinraju/release-downloader@v1.3
       with: 
         repository: "unicode-org/icu"
-        tag: "release-71-1"
-        fileName: "icuexportdata_uprops_full.zip"
+        tag: "icu4x/2022-06-30/71.x"
+        fileName: "icuexportdata_icu4x-2022-06-30-71.x.zip"
         out-file-path: "data/source/"
     - name: Run datagen
       uses: actions-rs/cargo@v1.0.1
@@ -171,7 +171,7 @@ jobs:
         command: run
         args: > 
           -p icu_datagen --features bin --release --
-          --icuexport-root data/source/icuexportdata_uprops_full.zip
+          --icuexport-root data/source/icuexportdata_icu4x-2022-06-30-71.x.zip
           --cldr-root data/source/cldr-41.0.0-json-full.zip 
           --all-locales
           --all-keys
@@ -701,6 +701,7 @@ jobs:
               icu_calendar/iso_date_manipulations
               icu_calendar/iso_datetime_manipulations
               icu_datetime/work_log
+              icu_list/and_list
               icu_locid/syntatically_canonicalize_locales
               icu_locid/filter_langids
               icu_plurals/unread_emails

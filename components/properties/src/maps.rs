@@ -14,12 +14,228 @@
 
 use crate::error::PropertiesError;
 use crate::provider::*;
+use crate::sets::CodePointSetData;
 #[cfg(doc)]
 use crate::*;
+use core::marker::PhantomData;
+use icu_codepointtrie::{CodePointTrie, TrieValue};
 use icu_provider::prelude::*;
 
-/// TODO(#1239): Finalize this API.
-pub type CodePointMapResult<M> = Result<DataPayload<M>, PropertiesError>;
+/// A wrapper around code point set data, returned by property getters for
+/// unicode sets.
+pub struct CodePointMapData<T: TrieValue> {
+    data: DataPayload<ErasedMaplikeMarker<T>>,
+}
+
+/// Private marker type for CodePointMapData
+/// to work for all same-value map properties at once
+#[derive(Clone, Copy, PartialEq, Eq, Hash, Debug)]
+struct ErasedMaplikeMarker<T>(PhantomData<T>);
+impl<T: TrieValue> DataMarker for ErasedMaplikeMarker<T> {
+    type Yokeable = UnicodePropertyMapV1<'static, T>;
+}
+
+impl<T: TrieValue> CodePointMapData<T> {
+    /// Construct a borrowed version of this type that can be queried
+    ///
+    /// This avoids a potential small cost per [`Self::get()`] call by consolidating it
+    /// up front.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu::properties::{maps, GeneralCategory};
+    /// use icu_codepointtrie::CodePointTrie;
+    ///
+    /// let provider = icu_testdata::get_provider();
+    ///
+    /// let data =
+    ///     maps::get_general_category(&provider)
+    ///         .expect("The data should be valid");
+    ///
+    /// let gc = data.as_borrowed();
+    ///
+    /// assert_eq!(gc.get('木'), GeneralCategory::OtherLetter);  // U+6728
+    /// assert_eq!(gc.get('🎃'), GeneralCategory::OtherSymbol);  // U+1F383 JACK-O-LANTERN
+    /// ```
+    #[inline]
+    pub fn as_borrowed(&self) -> CodePointMapDataBorrowed<'_, T> {
+        CodePointMapDataBorrowed {
+            map: self.data.get(),
+        }
+    }
+
+    /// Get the value this map has associated with code point `ch`
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu::properties::{maps, GeneralCategory};
+    /// use icu_codepointtrie::CodePointTrie;
+    ///
+    /// let provider = icu_testdata::get_provider();
+    ///
+    /// let gc =
+    ///     maps::get_general_category(&provider)
+    ///         .expect("The data should be valid");
+    /// assert_eq!(gc.get('木'), GeneralCategory::OtherLetter);  // U+6728
+    /// assert_eq!(gc.get('🎃'), GeneralCategory::OtherSymbol);  // U+1F383 JACK-O-LANTERN
+    /// ```
+    pub fn get(&self, ch: char) -> T {
+        self.data.get().get_u32(ch as u32)
+    }
+
+    /// Get the value this map has associated with code point `ch`
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu::properties::{maps, GeneralCategory};
+    /// use icu_codepointtrie::CodePointTrie;
+    ///
+    /// let provider = icu_testdata::get_provider();
+    ///
+    /// let gc =
+    ///     maps::get_general_category(&provider)
+    ///         .expect("The data should be valid");
+    /// assert_eq!(gc.get_u32(0x6728), GeneralCategory::OtherLetter);  // U+6728 (木)
+    /// assert_eq!(gc.get_u32(0x1F383), GeneralCategory::OtherSymbol);  // U+1F383 JACK-O-LANTERN
+    /// ```
+    pub fn get_u32(&self, ch: u32) -> T {
+        self.data.get().get_u32(ch)
+    }
+
+    /// Get a [`CodePointSetData`] for all elements corresponding to a particular value
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu::properties::{maps, GeneralCategory};
+    /// use icu_codepointtrie::CodePointTrie;
+    ///
+    /// let provider = icu_testdata::get_provider();
+    ///
+    /// let gc =
+    ///     maps::get_general_category(&provider)
+    ///         .expect("The data should be valid");
+    ///
+    /// let other_letter_set = gc.get_set_for_value(GeneralCategory::OtherLetter);
+    ///
+    /// assert!(other_letter_set.contains('木'));  // U+6728
+    /// assert!(!other_letter_set.contains('🎃'));  // U+1F383 JACK-O-LANTERN
+    /// ```
+    pub fn get_set_for_value(&self, value: T) -> CodePointSetData {
+        let set = self.data.get().get_set_for_value(value);
+        CodePointSetData::from_unicode_set(set)
+    }
+
+    /// Construct a new one from loaded data
+    ///
+    /// Typically it is preferable to use getters like [`get_general_category()`] instead
+    pub fn from_data<M>(data: DataPayload<M>) -> Self
+    where
+        M: DataMarker<Yokeable = UnicodePropertyMapV1<'static, T>>,
+    {
+        Self { data: data.cast() }
+    }
+
+    /// Construct a new one an owned [`CodePointTrie`]
+    pub fn from_code_point_trie(trie: CodePointTrie<'static, T>) -> Self {
+        let set = UnicodePropertyMapV1::from_code_point_trie(trie);
+        CodePointMapData::from_data(DataPayload::<ErasedMaplikeMarker<T>>::from_owned(set))
+    }
+    /// Convert this type to a [`CodePointTrie`], borrowing if possible,
+    /// otherwise allocating a new [`CodePointTrie`].
+    ///
+    /// The data backing this is extensible and supports multiple implementations.
+    /// Currently it is always [`CodePointTrie`]; however in the future more backends may be
+    /// added, and users may select which at data generation time.
+    ///
+    /// If using this function it is preferable to stick to [`CodePointTrie`] representations
+    /// in the data, however exceptions can be made if the performance hit is considered to
+    /// be okay.
+    pub fn to_code_point_trie(&self) -> CodePointTrie<'_, T> {
+        self.data.get().to_code_point_trie()
+    }
+}
+
+/// A borrowed wrapper around code point set data, returned by
+/// [`CodePointSetData::as_borrowed()`]. More efficient to query.
+#[derive(Clone, Copy)]
+pub struct CodePointMapDataBorrowed<'a, T: TrieValue> {
+    map: &'a UnicodePropertyMapV1<'a, T>,
+}
+
+impl<'a, T: TrieValue> CodePointMapDataBorrowed<'a, T> {
+    /// Get the value this map has associated with code point `ch`
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu::properties::{maps, GeneralCategory};
+    /// use icu_codepointtrie::CodePointTrie;
+    ///
+    /// let provider = icu_testdata::get_provider();
+    ///
+    /// let data =
+    ///     maps::get_general_category(&provider)
+    ///         .expect("The data should be valid");
+    /// let gc = data.as_borrowed();
+    ///
+    /// assert_eq!(gc.get('木'), GeneralCategory::OtherLetter);  // U+6728
+    /// assert_eq!(gc.get('🎃'), GeneralCategory::OtherSymbol);  // U+1F383 JACK-O-LANTERN
+    /// ```
+    pub fn get(&self, ch: char) -> T {
+        self.map.get_u32(ch as u32)
+    }
+
+    /// Get the value this map has associated with code point `ch`
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu::properties::{maps, GeneralCategory};
+    /// use icu_codepointtrie::CodePointTrie;
+    ///
+    /// let provider = icu_testdata::get_provider();
+    ///
+    /// let data =
+    ///     maps::get_general_category(&provider)
+    ///         .expect("The data should be valid");
+    /// let gc = data.as_borrowed();
+    ///
+    /// assert_eq!(gc.get_u32(0x6728), GeneralCategory::OtherLetter);  // U+6728 (木)
+    /// assert_eq!(gc.get_u32(0x1F383), GeneralCategory::OtherSymbol);  // U+1F383 JACK-O-LANTERN
+    /// ```
+    pub fn get_u32(&self, ch: u32) -> T {
+        self.map.get_u32(ch)
+    }
+
+    /// Get a [`CodePointSetData`] for all elements corresponding to a particular value
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu::properties::{maps, GeneralCategory};
+    /// use icu_codepointtrie::CodePointTrie;
+    ///
+    /// let provider = icu_testdata::get_provider();
+    ///
+    /// let data =
+    ///     maps::get_general_category(&provider)
+    ///         .expect("The data should be valid");
+    /// let gc = data.as_borrowed();
+    ///
+    /// let other_letter_set = gc.get_set_for_value(GeneralCategory::OtherLetter);
+    ///
+    /// assert!(other_letter_set.contains('木'));  // U+6728
+    /// assert!(!other_letter_set.contains('🎃'));  // U+1F383 JACK-O-LANTERN
+    /// ```
+    pub fn get_set_for_value(&self, value: T) -> CodePointSetData {
+        let set = self.map.get_set_for_value(value);
+        CodePointSetData::from_unicode_set(set)
+    }
+}
 
 macro_rules! make_map_property {
     (
@@ -36,8 +252,8 @@ macro_rules! make_map_property {
         $(#[$attr])*
         $vis fn $name(
             provider: &(impl ResourceProvider<$resource_marker> + ?Sized)
-        ) -> CodePointMapResult<$resource_marker> {
-            Ok(provider.load_resource(&Default::default()).and_then(DataResponse::take_payload)?)
+        ) -> Result<CodePointMapData<$value_ty>, PropertiesError> {
+            Ok(provider.load_resource(&Default::default()).and_then(DataResponse::take_payload).map(CodePointMapData::from_data)?)
         }
     }
 }
@@ -45,7 +261,7 @@ macro_rules! make_map_property {
 make_map_property! {
     property: "General_Category";
     marker: GeneralCategoryProperty;
-    value: GeneralCategory;
+    value: crate::GeneralCategory;
     resource_marker: GeneralCategoryV1Marker;
     func:
     /// Return a [`CodePointTrie`] for the General_Category Unicode enumerated property. See [`GeneralCategory`].
@@ -58,13 +274,12 @@ make_map_property! {
     ///
     /// let provider = icu_testdata::get_provider();
     ///
-    /// let payload =
+    /// let data =
     ///     maps::get_general_category(&provider)
     ///         .expect("The data should be valid");
-    /// let data_struct = payload.get();
-    /// let gc = &data_struct.code_point_trie;
-    /// assert_eq!(gc.get('木' as u32), GeneralCategory::OtherLetter);  // U+6728
-    /// assert_eq!(gc.get('🎃' as u32), GeneralCategory::OtherSymbol);  // U+1F383 JACK-O-LANTERN
+    /// let gc = data.as_borrowed();
+    /// assert_eq!(gc.get('木'), GeneralCategory::OtherLetter);  // U+6728
+    /// assert_eq!(gc.get('🎃'), GeneralCategory::OtherSymbol);  // U+1F383 JACK-O-LANTERN
     /// ```
     ///
     /// [`CodePointTrie`]: icu_codepointtrie::CodePointTrie
@@ -74,7 +289,7 @@ make_map_property! {
 make_map_property! {
     property: "Bidi_Class";
     marker: BidiClassProperty;
-    value: BidiClass;
+    value: crate::BidiClass;
     resource_marker: BidiClassV1Marker;
     func:
     /// Return a [`CodePointTrie`] for the Bidi_Class Unicode enumerated property. See [`BidiClass`].
@@ -87,13 +302,12 @@ make_map_property! {
     ///
     /// let provider = icu_testdata::get_provider();
     ///
-    /// let payload =
+    /// let data =
     ///     maps::get_bidi_class(&provider)
     ///         .expect("The data should be valid");
-    /// let data_struct = payload.get();
-    /// let bc = &data_struct.code_point_trie;
-    /// assert_eq!(bc.get('y' as u32), BidiClass::LeftToRight);  // U+0079
-    /// assert_eq!(bc.get('ع' as u32), BidiClass::ArabicLetter);  // U+0639
+    /// let bc = data.as_borrowed();
+    /// assert_eq!(bc.get('y'), BidiClass::LeftToRight);  // U+0079
+    /// assert_eq!(bc.get('ع'), BidiClass::ArabicLetter);  // U+0639
     /// ```
     ///
     /// [`CodePointTrie`]: icu_codepointtrie::CodePointTrie
@@ -103,7 +317,7 @@ make_map_property! {
 make_map_property! {
     property: "Script";
     marker: ScriptProperty;
-    value: Script;
+    value: crate::Script;
     resource_marker: ScriptV1Marker;
     func:
     /// Return a [`CodePointTrie`] for the Script Unicode enumerated property. See [`Script`].
@@ -116,13 +330,12 @@ make_map_property! {
     ///
     /// let provider = icu_testdata::get_provider();
     ///
-    /// let payload =
+    /// let data =
     ///     maps::get_script(&provider)
     ///         .expect("The data should be valid");
-    /// let data_struct = payload.get();
-    /// let script = &data_struct.code_point_trie;
-    /// assert_eq!(script.get('木' as u32), Script::Han);  // U+6728
-    /// assert_eq!(script.get('🎃' as u32), Script::Common);  // U+1F383 JACK-O-LANTERN
+    /// let script = data.as_borrowed();
+    /// assert_eq!(script.get('木'), Script::Han);  // U+6728
+    /// assert_eq!(script.get('🎃'), Script::Common);  // U+1F383 JACK-O-LANTERN
     /// ```
     ///
     /// [`CodePointTrie`]: icu_codepointtrie::CodePointTrie
@@ -132,7 +345,7 @@ make_map_property! {
 make_map_property! {
     property: "East_Asian_Width";
     marker: EastAsianWidthProperty;
-    value: EastAsianWidth;
+    value: crate::EastAsianWidth;
     resource_marker: EastAsianWidthV1Marker;
     func:
     /// Return a [`CodePointTrie`] for the East_Asian_Width Unicode enumerated
@@ -144,11 +357,11 @@ make_map_property! {
     /// use icu::properties::{maps, EastAsianWidth};
     ///
     /// let provider = icu_testdata::get_provider();
-    /// let payload = maps::get_east_asian_width(&provider).expect("The data should be valid!");
-    /// let eaw = &payload.get().code_point_trie;
+    /// let data = maps::get_east_asian_width(&provider).expect("The data should be valid!");
+    /// let eaw = data.as_borrowed();;
     ///
-    /// assert_eq!(eaw.get('ｱ' as u32), EastAsianWidth::Halfwidth); // U+FF71: Halfwidth Katakana Letter A
-    /// assert_eq!(eaw.get('ア' as u32), EastAsianWidth::Wide); //U+30A2: Katakana Letter A
+    /// assert_eq!(eaw.get('ｱ'), EastAsianWidth::Halfwidth); // U+FF71: Halfwidth Katakana Letter A
+    /// assert_eq!(eaw.get('ア'), EastAsianWidth::Wide); //U+30A2: Katakana Letter A
     /// ```
     ///
     /// [`CodePointTrie`]: icu_codepointtrie::CodePointTrie
@@ -158,7 +371,7 @@ make_map_property! {
 make_map_property! {
     property: "Line_Break";
     marker: LineBreakProperty;
-    value: LineBreak;
+    value: crate::LineBreak;
     resource_marker: LineBreakV1Marker;
     func:
     /// Return a [`CodePointTrie`] for the Line_Break Unicode enumerated
@@ -170,11 +383,11 @@ make_map_property! {
     /// use icu::properties::{maps, LineBreak};
     ///
     /// let provider = icu_testdata::get_provider();
-    /// let payload = maps::get_line_break(&provider).expect("The data should be valid!");
-    /// let lb = &payload.get().code_point_trie;
+    /// let data = maps::get_line_break(&provider).expect("The data should be valid!");
+    /// let lb = data.as_borrowed();
     ///
-    /// assert_eq!(lb.get(')' as u32), LineBreak::CloseParenthesis); // U+0029: Right Parenthesis
-    /// assert_eq!(lb.get('ぁ' as u32), LineBreak::ConditionalJapaneseStarter); //U+3041: Hiragana Letter Small A
+    /// assert_eq!(lb.get(')'), LineBreak::CloseParenthesis); // U+0029: Right Parenthesis
+    /// assert_eq!(lb.get('ぁ'), LineBreak::ConditionalJapaneseStarter); //U+3041: Hiragana Letter Small A
     /// ```
     ///
     /// [`CodePointTrie`]: icu_codepointtrie::CodePointTrie
@@ -184,7 +397,7 @@ make_map_property! {
 make_map_property! {
     property: "Grapheme_Cluster_Break";
     marker: GraphemeClusterBreakProperty;
-    value: GraphemeClusterBreak;
+    value: crate::GraphemeClusterBreak;
     resource_marker: GraphemeClusterBreakV1Marker;
     func:
     /// Return a [`CodePointTrie`] for the Grapheme_Cluster_Break Unicode enumerated
@@ -196,11 +409,11 @@ make_map_property! {
     /// use icu::properties::{maps, GraphemeClusterBreak};
     ///
     /// let provider = icu_testdata::get_provider();
-    /// let payload = maps::get_grapheme_cluster_break(&provider).expect("The data should be valid!");
-    /// let gcb = &payload.get().code_point_trie;
+    /// let data = maps::get_grapheme_cluster_break(&provider).expect("The data should be valid!");
+    /// let gcb = data.as_borrowed();
     ///
-    /// assert_eq!(gcb.get('🇦' as u32), GraphemeClusterBreak::RegionalIndicator); // U+1F1E6: Regional Indicator Symbol Letter A
-    /// assert_eq!(gcb.get('ำ' as u32), GraphemeClusterBreak::SpacingMark); //U+0E33: Thai Character Sara Am
+    /// assert_eq!(gcb.get('🇦'), GraphemeClusterBreak::RegionalIndicator); // U+1F1E6: Regional Indicator Symbol Letter A
+    /// assert_eq!(gcb.get('ำ'), GraphemeClusterBreak::SpacingMark); //U+0E33: Thai Character Sara Am
     /// ```
     ///
     /// [`CodePointTrie`]: icu_codepointtrie::CodePointTrie
@@ -210,7 +423,7 @@ make_map_property! {
 make_map_property! {
     property: "Word_Break";
     marker: WordBreakProperty;
-    value: WordBreak;
+    value: crate::WordBreak;
     resource_marker: WordBreakV1Marker;
     func:
     /// Return a [`CodePointTrie`] for the Word_Break Unicode enumerated
@@ -222,11 +435,11 @@ make_map_property! {
     /// use icu::properties::{maps, WordBreak};
     ///
     /// let provider = icu_testdata::get_provider();
-    /// let payload = maps::get_word_break(&provider).expect("The data should be valid!");
-    /// let wb = &payload.get().code_point_trie;
+    /// let data = maps::get_word_break(&provider).expect("The data should be valid!");
+    /// let wb = data.as_borrowed();
     ///
-    /// assert_eq!(wb.get('.' as u32), WordBreak::MidNumLet); // U+002E: Full Stop
-    /// assert_eq!(wb.get('，' as u32), WordBreak::MidNum); // U+FF0C: Fullwidth Comma
+    /// assert_eq!(wb.get('.'), WordBreak::MidNumLet); // U+002E: Full Stop
+    /// assert_eq!(wb.get('，'), WordBreak::MidNum); // U+FF0C: Fullwidth Comma
     /// ```
     ///
     /// [`CodePointTrie`]: icu_codepointtrie::CodePointTrie
@@ -236,7 +449,7 @@ make_map_property! {
 make_map_property! {
     property: "Sentence_Break";
     marker: SentenceBreakProperty;
-    value: SentenceBreak;
+    value: crate::SentenceBreak;
     resource_marker: SentenceBreakV1Marker;
     func:
     /// Return a [`CodePointTrie`] for the Sentence_Break Unicode enumerated
@@ -248,11 +461,11 @@ make_map_property! {
     /// use icu::properties::{maps, SentenceBreak};
     ///
     /// let provider = icu_testdata::get_provider();
-    /// let payload = maps::get_sentence_break(&provider).expect("The data should be valid!");
-    /// let sb = &payload.get().code_point_trie;
+    /// let data = maps::get_sentence_break(&provider).expect("The data should be valid!");
+    /// let sb = data.as_borrowed();;
     ///
-    /// assert_eq!(sb.get('９' as u32), SentenceBreak::Numeric); // U+FF19: Fullwidth Digit Nine
-    /// assert_eq!(sb.get(',' as u32), SentenceBreak::SContinue); // U+002C: Comma
+    /// assert_eq!(sb.get('９'), SentenceBreak::Numeric); // U+FF19: Fullwidth Digit Nine
+    /// assert_eq!(sb.get(','), SentenceBreak::SContinue); // U+002C: Comma
     /// ```
     ///
     /// [`CodePointTrie`]: icu_codepointtrie::CodePointTrie
@@ -262,7 +475,7 @@ make_map_property! {
 make_map_property! {
     property: "Canonical_Combining_Class";
     marker: CanonicalCombiningClassProperty;
-    value: CanonicalCombiningClass;
+    value: crate::CanonicalCombiningClass;
     resource_marker: CanonicalCombiningClassV1Marker;
     func:
     /// Return a [`CodePointTrie`] for the Canonical_Combining_Class Unicode property. See
@@ -274,11 +487,11 @@ make_map_property! {
     /// use icu::properties::{maps, CanonicalCombiningClass};
     ///
     /// let provider = icu_testdata::get_provider();
-    /// let payload = maps::get_canonical_combining_class(&provider).expect("The data should be valid!");
-    /// let sb = &payload.get().code_point_trie;
+    /// let data = maps::get_canonical_combining_class(&provider).expect("The data should be valid!");
+    /// let sb = data.as_borrowed();;
     ///
-    /// assert_eq!(sb.get('a' as u32), CanonicalCombiningClass::NotReordered); // U+0061: LATIN SMALL LETTER A
-    /// assert_eq!(sb.get(0x0301), CanonicalCombiningClass::Above); // U+0301: COMBINING ACUTE ACCENT
+    /// assert_eq!(sb.get('a'), CanonicalCombiningClass::NotReordered); // U+0061: LATIN SMALL LETTER A
+    /// assert_eq!(sb.get_u32(0x0301), CanonicalCombiningClass::Above); // U+0301: COMBINING ACUTE ACCENT
     /// ```
     ///
     /// [`CodePointTrie`]: icu_codepointtrie::CodePointTrie

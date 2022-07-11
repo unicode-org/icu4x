@@ -19,7 +19,7 @@ use zerovec::ule::AsULE;
 pub struct Era(pub TinyStr16);
 
 /// Representation of a formattable year.
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Copy, Clone, Debug, PartialEq)]
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct Year {
     /// The era containing the year.
@@ -66,7 +66,7 @@ impl fmt::Display for MonthCode {
     }
 }
 /// Representation of a formattable month.
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Copy, Clone, Debug, PartialEq)]
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct Month {
     /// The month number in this given year. For calendars with leap months, all months after
@@ -82,7 +82,7 @@ pub struct Month {
 /// A struct containing various details about the position of the day within a year. It is returned
 // by the [`day_of_year_info()`](trait.DateInput.html#tymethod.day_of_year_info) method of the
 // [`DateInput`] trait.
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Copy, Clone, Debug, PartialEq)]
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct DayOfYearInfo {
     /// The current day of the year, 1-based.
@@ -99,6 +99,7 @@ pub struct DayOfYearInfo {
 
 /// A day number in a month. Usually 1-based.
 #[allow(clippy::exhaustive_structs)] // this is a newtype
+#[derive(Clone, Copy, Debug, PartialEq)]
 pub struct DayOfMonth(pub u32);
 
 /// A week number in a month. Usually 1-based.

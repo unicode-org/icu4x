@@ -25,6 +25,7 @@ use icu_normalizer::provider::DecompositionDataV1;
 use icu_normalizer::provider::DecompositionTablesV1;
 use icu_normalizer::u24::EMPTY_U24;
 use icu_normalizer::u24::U24;
+use icu_properties::maps::CodePointMapDataBorrowed;
 use icu_properties::CanonicalCombiningClass;
 use icu_uniset::UnicodeSet;
 use smallvec::SmallVec;
@@ -646,20 +647,17 @@ impl CharacterAndClass {
     pub fn character_and_ccc(&self) -> (char, CanonicalCombiningClass) {
         (self.character(), self.ccc())
     }
-    pub fn set_ccc_from_trie(&mut self, ccc: &CodePointTrie<CanonicalCombiningClass>) {
+    pub fn set_ccc_from_trie(&mut self, ccc: CodePointMapDataBorrowed<CanonicalCombiningClass>) {
         debug_assert_eq!(self.0 >> 24, 0xFF, "This method has already been called!");
         let scalar = self.0 & 0xFFFFFF;
-        self.0 = ((ccc.get(scalar).0 as u32) << 24) | scalar;
+        self.0 = ((ccc.get_u32(scalar).0 as u32) << 24) | scalar;
     }
 }
 
 // This trivial function exists as a borrow check helper.
 #[inline(always)]
-fn sort_slice_by_ccc<'data>(
-    slice: &mut [char],
-    ccc: &CodePointTrie<'data, CanonicalCombiningClass>,
-) {
-    slice.sort_by_key(|cc| ccc.get(u32::from(*cc)));
+fn sort_slice_by_ccc(slice: &mut [char], ccc: CodePointMapDataBorrowed<CanonicalCombiningClass>) {
+    slice.sort_by_key(|cc| ccc.get(*cc));
 }
 
 /// Iterator that transforms an iterator over `char` into an iterator
@@ -719,7 +717,7 @@ where
     /// NFD complex decompositions on supplementary planes
     scalars32: &'data ZeroSlice<U24>,
     /// Canonical Combining Class data.
-    ccc: &'data CodePointTrie<'data, CanonicalCombiningClass>,
+    ccc: CodePointMapDataBorrowed<'data, CanonicalCombiningClass>,
     /// If numeric mode is enabled, the 8 high bits of the numeric primary.
     /// `None` if disabled.
     numeric_primary: Option<u8>,
@@ -743,7 +741,7 @@ where
         diacritics: &'data ZeroSlice<u16>,
         decompositions: &'data DecompositionDataV1,
         tables: &'data DecompositionTablesV1,
-        ccc: &'data CodePointTrie<'data, CanonicalCombiningClass>,
+        ccc: CodePointMapDataBorrowed<'data, CanonicalCombiningClass>,
         numeric_primary: Option<u8>,
         lithuanian_dot_above: bool,
     ) -> Self {
@@ -1602,12 +1600,11 @@ where
                                                 let mut longest_matching_index = 0;
                                                 let mut attempt = 0;
                                                 let mut i = 0;
-                                                most_recent_skipped_ccc =
-                                                    self.ccc.get(u32::from(ch));
+                                                most_recent_skipped_ccc = self.ccc.get(ch);
                                                 loop {
                                                     let ahead = self.look_ahead(looked_ahead + i);
                                                     if let Some(ch) = ahead {
-                                                        let ccc = self.ccc.get(u32::from(ch));
+                                                        let ccc = self.ccc.get(ch);
                                                         if ccc
                                                             == CanonicalCombiningClass::NotReordered
                                                         {
