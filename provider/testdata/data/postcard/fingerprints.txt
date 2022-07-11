@@ -1,4 +1,4 @@
-calendar/japanese@1/und: 2cd098dd05e6762e1eb8415b919b23ae20a7c77f2ea5afb3f429d5aca126e131
+calendar/japanese@1/und-u-ca-japanese: 2cd098dd05e6762e1eb8415b919b23ae20a7c77f2ea5afb3f429d5aca126e131
 collator/data@1/bn: d82cb57ef919257ca0be08d9aac81aa52749a03dcee74b9dbaa4d8a9ee7d1c4b
 collator/data@1/es: a6c6cd81e6558751590d745c631ff620be8b92d3d6022cddd3521cefec9f9d25
 collator/data@1/ja: 7a986c8b7ad75d329184dfd6e6abc9538fe737a9224b8548ad350dfa8cd5c0e1

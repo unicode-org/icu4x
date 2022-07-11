@@ -34,12 +34,8 @@ impl From<&SourceData> for JapaneseErasProvider {
 impl ResourceProvider<JapaneseErasV1Marker> for JapaneseErasProvider {
     fn load_resource(
         &self,
-        req: &DataRequest,
+        _req: &DataRequest,
     ) -> Result<DataResponse<JapaneseErasV1Marker>, DataError> {
-        if !req.options.is_empty() {
-            return Err(DataErrorKind::ExtraneousResourceOptions.into_error());
-        }
-
         // The era codes depend on the Latin romanizations of the eras, found
         // in the `en` locale. We load this data to construct era codes but
         // actual user code only needs to load the data for the locales it cares about.
