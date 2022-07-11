@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1657545238947,
+  "lastUpdate": 1657554506198,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -35849,6 +35849,66 @@ window.BENCHMARK_DATA = {
             "name": "from_string/1000000001",
             "value": 90,
             "range": "± 5",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "73040b699a29d771f39425302a3f39db28fbea1a",
+          "message": "Some databake improvements (#2150)\n\n* All-features on docs.rs\r\n\r\n* Add docs\r\n\r\n* Bump databake to 0.1.1\r\n\r\n* lockfile\r\n\r\n* mention const\r\n\r\n* fixes",
+          "timestamp": "2022-07-11T15:36:21Z",
+          "tree_id": "075cbc3fbbd602260795a49b578010acb249b1d1",
+          "url": "https://github.com/unicode-org/icu4x/commit/73040b699a29d771f39425302a3f39db28fbea1a"
+        },
+        "date": 1657554475252,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 105861,
+            "range": "± 382",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 21298,
+            "range": "± 83",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 64999,
+            "range": "± 257",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 169,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 65,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 70,
+            "range": "± 0",
             "unit": "ns/iter"
           }
         ]
