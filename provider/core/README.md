@@ -98,8 +98,8 @@ This trait is normally implemented using the [`impl_dyn_provider!`] macro using 
 
 [`ICU4X`]: ../icu/index.html
 [`DataProvider`]: data_provider::DataProvider
-[`ResourceKey`]: resource::ResourceKey
-[`ResourceOptions`]: resource::ResourceOptions
+[`ResourceKey`]: marker::ResourceKey
+[`ResourceOptions`]: request::ResourceOptions
 [`IterableDynProvider`]: datagen::IterableDynProvider
 [`IterableResourceProvider`]: datagen::IterableResourceProvider
 [`InvariantDataProvider`]: inv::InvariantDataProvider

@@ -100,8 +100,8 @@
 //!
 //! [`ICU4X`]: ../icu/index.html
 //! [`DataProvider`]: data_provider::DataProvider
-//! [`ResourceKey`]: resource::ResourceKey
-//! [`ResourceOptions`]: resource::ResourceOptions
+//! [`ResourceKey`]: marker::ResourceKey
+//! [`ResourceOptions`]: request::ResourceOptions
 //! [`IterableDynProvider`]: datagen::IterableDynProvider
 //! [`IterableResourceProvider`]: datagen::IterableResourceProvider
 //! [`InvariantDataProvider`]: inv::InvariantDataProvider
@@ -147,8 +147,8 @@ mod helpers;
 pub mod inv;
 #[macro_use]
 pub mod marker;
-#[macro_use]
-mod resource;
+mod request;
+mod response;
 #[cfg(feature = "serde")]
 pub mod serde;
 
@@ -163,20 +163,20 @@ pub mod prelude {
     pub use crate::any::AnyResponse;
     pub use crate::buf::BufferMarker;
     pub use crate::buf::BufferProvider;
-    pub use crate::data_provider::DataPayload;
-    pub use crate::data_provider::DataRequest;
-    pub use crate::data_provider::DataResponse;
-    pub use crate::data_provider::DataResponseMetadata;
     pub use crate::data_provider::DynProvider;
     pub use crate::data_provider::ResourceProvider;
     pub use crate::error::DataError;
     pub use crate::error::DataErrorKind;
     pub use crate::marker::DataMarker;
+    pub use crate::marker::ResourceKey;
+    pub use crate::marker::ResourceKeyHash;
     pub use crate::marker::ResourceMarker;
-    pub use crate::resource::ResourceKey;
-    pub use crate::resource::ResourceKeyHash;
-    pub use crate::resource::ResourceOptions;
+    pub use crate::request::DataRequest;
+    pub use crate::request::ResourceOptions;
     pub use crate::resource_key;
+    pub use crate::response::DataPayload;
+    pub use crate::response::DataResponse;
+    pub use crate::response::DataResponseMetadata;
 
     pub use crate::any::AsDowncastingAnyProvider;
     pub use crate::any::AsDynProviderAnyMarkerWrap;
@@ -192,4 +192,4 @@ pub mod prelude {
 pub use prelude::*;
 
 // Less important non-prelude item
-pub use crate::data_provider::RcWrap;
+pub use crate::response::RcWrap;

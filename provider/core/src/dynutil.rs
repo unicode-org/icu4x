@@ -23,7 +23,7 @@ where
     ///
     /// ```
     /// use icu_provider::dynutil::UpcastDataPayload;
-    /// use icu_provider::marker::CowStrMarker;
+    /// use icu_provider::hello_world::CowStrMarker;
     /// use icu_provider::prelude::*;
     /// use std::borrow::Cow;
     ///

@@ -348,7 +348,6 @@ where
 mod test {
     use super::*;
     use crate::hello_world::*;
-    use crate::marker::CowStrMarker;
     use alloc::borrow::Cow;
 
     const CONST_DATA: HelloWorldV1<'static> = HelloWorldV1 {
@@ -369,7 +368,7 @@ mod test {
 
         let err = any_payload.downcast::<CowStrMarker>().unwrap_err();
         assert_eq!(
-            "ICU4X data error: Mismatched types: tried to downcast with icu_provider::marker::impls::CowStrMarker, but actual type is different: icu_provider::hello_world::HelloWorldV1Marker",
+            "ICU4X data error: Mismatched types: tried to downcast with icu_provider::hello_world::CowStrMarker, but actual type is different: icu_provider::hello_world::HelloWorldV1Marker",
             format!("{}", err)
         );
     }
