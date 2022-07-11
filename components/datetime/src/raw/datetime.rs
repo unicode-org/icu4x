@@ -84,7 +84,6 @@ impl TimeFormat {
 
         let mut fixed_decimal_format_options = FixedDecimalFormatOptions::default();
         fixed_decimal_format_options.grouping_strategy = GroupingStrategy::Never;
-        fixed_decimal_format_options.sign_display = SignDisplay::Never;
 
         let fixed_decimal_format = FixedDecimalFormat::try_new(
             locale_no_extensions,
@@ -245,7 +244,6 @@ impl DateFormat {
 
         let mut fixed_decimal_format_options = FixedDecimalFormatOptions::default();
         fixed_decimal_format_options.grouping_strategy = GroupingStrategy::Never;
-        fixed_decimal_format_options.sign_display = SignDisplay::Never;
 
         let fixed_decimal_format = FixedDecimalFormat::try_new(
             locale_no_extensions,
