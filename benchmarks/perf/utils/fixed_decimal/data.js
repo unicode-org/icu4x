@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1657574604351,
+  "lastUpdate": 1657574770189,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -36029,6 +36029,66 @@ window.BENCHMARK_DATA = {
             "name": "from_string/1000000001",
             "value": 70,
             "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "138e2aea5db87f4d9e9a656468e186325fc57ff5",
+          "message": "VarZeroVec refactoring and cleanup (#2047)",
+          "timestamp": "2022-07-11T14:12:07-07:00",
+          "tree_id": "03cda89997b6d04eba9b0ab560903a875cecac35",
+          "url": "https://github.com/unicode-org/icu4x/commit/138e2aea5db87f4d9e9a656468e186325fc57ff5"
+        },
+        "date": 1657574731219,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 148653,
+            "range": "± 18844",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 30525,
+            "range": "± 1722",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 87562,
+            "range": "± 4553",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 240,
+            "range": "± 12",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 115,
+            "range": "± 5",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 106,
+            "range": "± 4",
             "unit": "ns/iter"
           }
         ]
