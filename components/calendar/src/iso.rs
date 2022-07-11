@@ -185,12 +185,12 @@ impl Calendar for Iso {
     }
 
     /// The calendar-specific year represented by `date`
-    fn year(&self, date: &Self::DateInner) -> types::Year {
+    fn year(&self, date: &Self::DateInner) -> types::FormattableYear {
         Self::year_as_iso(date.0.year)
     }
 
     /// The calendar-specific month represented by `date`
-    fn month(&self, date: &Self::DateInner) -> types::Month {
+    fn month(&self, date: &Self::DateInner) -> types::FormattableMonth {
         date.0.solar_month()
     }
 
@@ -486,11 +486,11 @@ impl Iso {
     }
 
     /// Wrap the year in the appropriate era code
-    fn year_as_iso(year: i32) -> types::Year {
-        types::Year {
+    fn year_as_iso(year: i32) -> types::FormattableYear {
+        types::FormattableYear {
             era: types::Era(tinystr!(16, "default")),
             number: year,
-            related_iso: year,
+            related_iso: None,
         }
     }
 }
