@@ -46,6 +46,8 @@ use crate::any_calendar::AnyCalendarKind;
 use crate::iso::{Iso, IsoDateInner};
 use crate::provider::{self, EraStartDate};
 use crate::{types, Calendar, Date, DateDuration, DateDurationUnit};
+use core::str::FromStr;
+use icu_locid::Locale;
 use icu_provider::prelude::*;
 use tinystr::{tinystr, TinyStr16};
 
@@ -69,9 +71,12 @@ impl Japanese {
     pub fn try_new<D: ResourceProvider<provider::JapaneseErasV1Marker> + ?Sized>(
         data_provider: &D,
     ) -> Result<Self, DataError> {
-        let eras = data_provider
-            .load_resource(&DataRequest::default())?
-            .take_payload()?;
+        let mut request = DataRequest::default();
+        // TODO: can use macro after #1800
+        request.options = Locale::from_str("und-u-ca-japanese")
+            .expect("Locale string is known valid")
+            .into();
+        let eras = data_provider.load_resource(&request)?.take_payload()?;
         Ok(Self { eras })
     }
 }

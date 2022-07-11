@@ -5,7 +5,7 @@
 use crate::transform::cldr::cldr_serde;
 use crate::SourceData;
 use icu_calendar::provider::*;
-use icu_locid::langid;
+use icu_locid::{langid, Locale};
 use icu_provider::datagen::IterableResourceProvider;
 use icu_provider::prelude::*;
 use std::collections::BTreeMap;
@@ -195,7 +195,9 @@ icu_provider::make_exportable_provider!(JapaneseErasProvider, [JapaneseErasV1Mar
 
 impl IterableResourceProvider<JapaneseErasV1Marker> for JapaneseErasProvider {
     fn supported_options(&self) -> Result<Vec<ResourceOptions>, DataError> {
-        Ok(vec![Default::default()])
+        Ok(vec![ResourceOptions::from(
+            Locale::from_str("und-u-ca-japanese").unwrap(),
+        )])
     }
 }
 
