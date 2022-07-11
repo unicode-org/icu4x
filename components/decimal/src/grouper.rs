@@ -53,6 +53,7 @@ pub fn check(
 
 #[test]
 fn test_grouper() {
+    use crate::options;
     use crate::provider::*;
     use crate::FixedDecimalFormat;
     use fixed_decimal::FixedDecimal;
@@ -165,10 +166,14 @@ fn test_grouper() {
                 data: DataPayload::<DecimalSymbolsV1Marker>::from_owned(data_struct)
                     .wrap_into_any_payload(),
             };
+            let options = options::FixedDecimalFormatOptions {
+                grouping_strategy: cas.strategy,
+                ..Default::default()
+            };
             let fdf = FixedDecimalFormat::try_new(
                 LanguageIdentifier::UND,
                 &provider.as_downcasting(),
-                cas.strategy,
+                options,
             )
             .unwrap();
             let actual = fdf.format(&dec);

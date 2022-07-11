@@ -7,7 +7,7 @@ pub mod ffi {
     use alloc::boxed::Box;
     use diplomat_runtime::DiplomatResult;
     use icu_decimal::{
-        options::GroupingStrategy, provider::DecimalSymbolsV1Marker, FixedDecimalFormat,
+        options::{FixedDecimalFormatOptions, GroupingStrategy}, provider::DecimalSymbolsV1Marker, FixedDecimalFormat,
     };
     use icu_locid::Locale;
     use icu_provider::ResourceMarker;
@@ -84,8 +84,9 @@ pub mod ffi {
                 ICU4XFixedDecimalGroupingStrategy::Always => GroupingStrategy::Always,
                 ICU4XFixedDecimalGroupingStrategy::Min2 => GroupingStrategy::Min2,
             };
-
-            FixedDecimalFormat::try_new(langid, provider, grouping_strategy)
+            let mut options = FixedDecimalFormatOptions::default();
+            options.grouping_strategy = grouping_strategy;
+            FixedDecimalFormat::try_new(langid, provider, options)
                 .map(|fdf| Box::new(ICU4XFixedDecimalFormat(fdf)))
                 .map_err(Into::into)
                 .into()

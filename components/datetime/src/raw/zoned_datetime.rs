@@ -4,7 +4,9 @@
 
 use alloc::string::String;
 use icu_decimal::{
-    options::GroupingStrategy, provider::DecimalSymbolsV1Marker, FixedDecimalFormat,
+    options::{FixedDecimalFormatOptions, GroupingStrategy},
+    provider::DecimalSymbolsV1Marker,
+    FixedDecimalFormat,
 };
 use icu_locid::Locale;
 use icu_plurals::{provider::OrdinalV1Marker, PluralRules};
@@ -118,10 +120,13 @@ impl ZonedDateTimeFormat {
             None
         };
 
+        let mut fixed_decimal_format_options = FixedDecimalFormatOptions::default();
+        fixed_decimal_format_options.grouping_strategy = GroupingStrategy::Never;
+
         let fixed_decimal_format = FixedDecimalFormat::try_new(
             locale_no_extensions.clone(),
             decimal_provider,
-            GroupingStrategy::Never,
+            fixed_decimal_format_options,
         )
         .map_err(DateTimeFormatError::FixedDecimalFormat)?;
 
