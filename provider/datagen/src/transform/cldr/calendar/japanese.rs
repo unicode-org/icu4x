@@ -5,7 +5,7 @@
 use crate::transform::cldr::cldr_serde;
 use crate::SourceData;
 use icu_calendar::provider::*;
-use icu_locid::{langid, Locale};
+use icu_locid::{extensions_unicode_key as key, extensions_unicode_value as value, langid, Locale};
 use icu_provider::datagen::IterableResourceProvider;
 use icu_provider::prelude::*;
 use std::collections::BTreeMap;
@@ -34,8 +34,9 @@ impl From<&SourceData> for JapaneseErasProvider {
 impl ResourceProvider<JapaneseErasV1Marker> for JapaneseErasProvider {
     fn load_resource(
         &self,
-        _req: &DataRequest,
+        req: &DataRequest,
     ) -> Result<DataResponse<JapaneseErasV1Marker>, DataError> {
+        let japanext = req.options.get_unicode_ext(&key!("ca")) == Some(value!("japanext"));
         // The era codes depend on the Latin romanizations of the eras, found
         // in the `en` locale. We load this data to construct era codes but
         // actual user code only needs to load the data for the locales it cares about.
@@ -92,26 +93,21 @@ impl ResourceProvider<JapaneseErasV1Marker> for JapaneseErasProvider {
 
             let code = era_to_code(era_name, start_date.year)
                 .map_err(|e| DataError::custom("Era codes").with_display_context(&e))?;
-            if start_date.year >= 1868 {
+            if start_date.year >= 1868 || japanext {
                 ret.dates_to_eras
-                    .to_mut()
-                    .push((start_date, code).to_unaligned());
-            } else {
-                ret.dates_to_historical_eras
                     .to_mut()
                     .push((start_date, code).to_unaligned());
             }
         }
 
         ret.dates_to_eras.to_mut().sort_unstable();
-        ret.dates_to_historical_eras.to_mut().sort_unstable();
 
         // Integrity check
         //
         // Era code generation relies on the English era data which could in theory change; we have an integrity check
         // to catch such cases. It is relatively rare for a new era to be added, and in those cases the integrity check can
         // be disabled when generating new data.
-        if env::var("ICU4X_SKIP_JAPANESE_INTEGRITY_CHECK").is_err() {
+        if japanext && env::var("ICU4X_SKIP_JAPANESE_INTEGRITY_CHECK").is_err() {
             #[allow(clippy::expect_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
             let snapshot: JapaneseErasV1 = serde_json::from_str(JAPANESE_FILE)
                 .expect("Failed to parse the precached snapshot-japanese@1.json. This is a bug.");
@@ -191,9 +187,10 @@ icu_provider::make_exportable_provider!(JapaneseErasProvider, [JapaneseErasV1Mar
 
 impl IterableResourceProvider<JapaneseErasV1Marker> for JapaneseErasProvider {
     fn supported_options(&self) -> Result<Vec<ResourceOptions>, DataError> {
-        Ok(vec![ResourceOptions::from(
-            Locale::from_str("und-u-ca-japanese").unwrap(),
-        )])
+        Ok(vec![
+            ResourceOptions::from(Locale::from_str("und-u-ca-japanese").unwrap()),
+            ResourceOptions::from(Locale::from_str("und-u-ca-japanext").unwrap()),
+        ])
     }
 }
 
