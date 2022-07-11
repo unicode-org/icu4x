@@ -40,7 +40,7 @@ writeable = { version = "0.4", path = "../../utils/writeable" }
 displaydoc = { version = "0.2.3", default-features = false }
 zerovec = { version = "0.7", path = "../../utils/zerovec", optional = true }
 litemap = { version = "0.4", path = "../../utils/litemap" }
-databake = { version = "0.4", path = "../../utils/databake", optional = true, features = ["derive"]}
+databake = { version = "0.1.0", path = "../../utils/databake", optional = true, features = ["derive"]}
 
 [dev-dependencies]
 criterion = "0.3.3"

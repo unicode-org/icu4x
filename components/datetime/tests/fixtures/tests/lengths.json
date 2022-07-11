@@ -12,8 +12,8 @@
         "output": {
             "values": {
                 "en" : "Feb 20, 2020, 12:12:00 AM",
-                "buddhist/en": "Feb 20, 2563 BE, 12:12:00 AM",
-                "japanese/en": "Feb 20, 2 Reiwa, 12:12:00 AM"
+                "en-u-ca-buddhist": "Feb 20, 2563 BE, 12:12:00 AM",
+                "en-u-ca-japanese": "Feb 20, 2 Reiwa, 12:12:00 AM"
             }
         }
     },
@@ -46,9 +46,9 @@
         "output": {
             "values": {
                 "en": "February 1, 2045",
-                "buddhist/en": "February 1, 2588 BE",
-                "japanese/en": "February 1, 27 Reiwa",
-                "japanese/ja": "令和27年2月1日"
+                "en-u-ca-buddhist": "February 1, 2588 BE",
+                "en-u-ca-japanese": "February 1, 27 Reiwa",
+                "ja-u-ca-japanese": "令和27年2月1日"
             }
         }
     },
@@ -82,8 +82,8 @@
         "output": {
             "values": {
                 "ru": "21 мар. 2020 г., 08:25",
-                "buddhist/ru": "21 мар. 2563 г. BE, 08:25",
-                "japanese/ja": "令和2年3月21日 8:25"
+                "ru-u-ca-buddhist": "21 мар. 2563 г. BE, 08:25",
+                "ja-u-ca-japanese": "令和2年3月21日 8:25"
             }
         }
     }

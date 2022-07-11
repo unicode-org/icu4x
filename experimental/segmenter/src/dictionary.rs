@@ -5,9 +5,18 @@
 use crate::indices::Utf16Indices;
 use crate::provider::*;
 
+use core::iter::Peekable;
 use core::str::CharIndices;
 use icu_char16trie::char16trie::{Char16Trie, TrieResult};
 use icu_provider::prelude::*;
+
+// SpacingMark and Extend for Myanmar shouldn't be first character of segment.
+//
+// TODO:
+// After moving dictionary to icudata, we should get this property from DataProvider
+fn is_grapheme_extend(ch: char) -> bool {
+    matches!(ch, /* Extened */ '\u{102d}'..='\u{1030}' | '\u{1032}'..='\u{1037}' | '\u{1039}'..='\u{103a}' | '\u{103d}'..='\u{103e}' | '\u{1058}'..='\u{1059}' | '\u{105e}'..='\u{1060}' | '\u{1071}'..='\u{1074}' | '\u{1082}' | '\u{1085}'..='\u{1086}' | '\u{108d}' | '\u{109d}' | /* SpacingMark */ '\u{1031}' | '\u{103b}'..='\u{103c}' | '\u{1056}'..='\u{1057}' | '\u{1084}')
+}
 
 /// A trait for dictionary based iterator
 pub trait DictionaryType<'l, 's> {
@@ -24,7 +33,7 @@ pub trait DictionaryType<'l, 's> {
 #[derive(Clone)]
 pub struct DictionaryBreakIterator<'l, 's, Y: DictionaryType<'l, 's> + ?Sized> {
     trie: Char16Trie<'l>,
-    iter: Y::IterAttr,
+    iter: Peekable<Y::IterAttr>,
     len: usize,
     // TODO transform value for byte trie
 }
@@ -53,6 +62,14 @@ impl<'l, 's, Y: DictionaryType<'l, 's> + ?Sized> Iterator for DictionaryBreakIte
                     return Some(next.0 + Y::char_len(next.1));
                 }
                 TrieResult::Intermediate(_) => {
+                    {
+                        // If next character doesn't allow for grapheme, we don't recognize this word as intermediate state.
+                        if let Some(tmp_next) = self.iter.peek() {
+                            if is_grapheme_extend(Y::to_char(tmp_next.1)) {
+                                continue;
+                            }
+                        }
+                    }
                     intermediate_length = next.0 + Y::char_len(next.1);
                     previous_match = Some(self.iter.clone());
                 }
@@ -131,7 +148,7 @@ impl<'l> DictionarySegmenter<'l> {
     pub fn segment_str<'s>(&self, input: &'s str) -> DictionaryBreakIterator<'l, 's, char> {
         DictionaryBreakIterator {
             trie: Char16Trie::new(self.payload.get().trie_data.clone()),
-            iter: input.char_indices(),
+            iter: input.char_indices().peekable(),
             len: input.len(),
         }
     }
@@ -140,7 +157,7 @@ impl<'l> DictionarySegmenter<'l> {
     pub fn segment_utf16<'s>(&self, input: &'s [u16]) -> DictionaryBreakIterator<'l, 's, u32> {
         DictionaryBreakIterator {
             trie: Char16Trie::new(self.payload.get().trie_data.clone()),
-            iter: Utf16Indices::new(input),
+            iter: Utf16Indices::new(input).peekable(),
             len: input.len(),
         }
     }
@@ -149,24 +166,54 @@ impl<'l> DictionarySegmenter<'l> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use icu_locid::{locale, Locale};
     use zerovec::ZeroSlice;
 
+    fn get_payload(
+        locale: Locale,
+    ) -> Result<DataPayload<UCharDictionaryBreakDataV1Marker>, DataError> {
+        let provider = icu_testdata::get_provider();
+        provider
+            .load_resource(&DataRequest {
+                options: ResourceOptions::from(locale),
+                metadata: Default::default(),
+            })?
+            .take_payload()
+    }
+
     #[test]
-    fn cj_dictionary_test() {
+    fn burmese_dictionary_test() {
+        // TODO:
+        // testdata doesn't include Khmer data. If adding it, replace with testdata.
+        //
         // This test data is created by the following using ICU4C tools
-        // LD_LIBRARY_PATH=lib bin/gendict --uchars data/brkitr/dictionaries/cjdict.txt tmp.bin
+        // LD_LIBRARY_PATH=lib bin/gendict --uchars data/brkitr/dictionaries/burmesedict.txt tmp.bin
         // dd if=tmp.bin of=cjdict.dict bs=1 skip=64
-        const CJ_DICTIONARY: &ZeroSlice<u16> = match ZeroSlice::<u16>::try_from_bytes(
-            include_bytes!("../tests/testdata/cjdic.dict"),
+        const BURMESE_DICTIONARY: &ZeroSlice<u16> = match ZeroSlice::<u16>::try_from_bytes(
+            include_bytes!("../tests/testdata/burmese.dict"),
         ) {
             Ok(s) => s,
             Err(_) => panic!("invalid dictionary data"),
         };
 
         let data = UCharDictionaryBreakDataV1 {
-            trie_data: CJ_DICTIONARY.as_zerovec(),
+            trie_data: BURMESE_DICTIONARY.as_zerovec(),
         };
         let payload = DataPayload::<UCharDictionaryBreakDataV1Marker>::from_owned(data);
+        let segmenter = DictionarySegmenter::try_new(&payload).expect("Data exists");
+        // From css/css-text/word-break/word-break-normal-my-000.html
+        let s = "မြန်မာစာမြန်မာစာမြန်မာစာ";
+        let result: Vec<usize> = segmenter.segment_str(s).collect();
+        assert_eq!(result, vec![18, 24, 42, 48, 66, 72]);
+
+        let s_utf16: Vec<u16> = s.encode_utf16().collect();
+        let result: Vec<usize> = segmenter.segment_utf16(&s_utf16).collect();
+        assert_eq!(result, vec![6, 8, 14, 16, 22, 24]);
+    }
+
+    #[test]
+    fn cj_dictionary_test() {
+        let payload = get_payload(locale!("ja")).unwrap();
         let segmenter = DictionarySegmenter::try_new(&payload).expect("Data exists");
 
         // Match case
@@ -190,6 +237,9 @@ mod tests {
 
     #[test]
     fn khmer_dictionary_test() {
+        // TODO:
+        // testdata doesn't include Khmer data. If adding it, replace with testdata.
+        //
         // This test data is created by the following using ICU4C tools
         // LD_LIBRARY_PATH=lib bin/gendict --uchars data/brkitr/dictionaries/khmerdict.txt tmp.bin
         // dd if=tmp.bin of=khmer.dict bs=1 skip=64
@@ -216,6 +266,9 @@ mod tests {
 
     #[test]
     fn lao_dictionary_test() {
+        // TODO:
+        // testdata doesn't include Lao. If adding it, replace with testdata.
+        //
         // This test data is created by the following using ICU4C tools
         // LD_LIBRARY_PATH=lib bin/gendict --uchars data/brkitr/dictionaries/laodict.txt tmp.bin
         // dd if=tmp.bin of=lao.dict bs=1 skip=64

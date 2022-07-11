@@ -658,7 +658,7 @@ dependencies = [
 
 [[package]]
 name = "databake"
-version = "0.4.0"
+version = "0.1.0"
 dependencies = [
  "databake-derive",
  "proc-macro2",
@@ -668,7 +668,7 @@ dependencies = [
 
 [[package]]
 name = "databake-derive"
-version = "0.4.0"
+version = "0.1.0"
 dependencies = [
  "databake",
  "proc-macro2",
@@ -1528,21 +1528,18 @@ dependencies = [
  "icu_testdata",
  "icu_uniset",
  "itertools",
- "litemap",
  "log",
- "pathdiff",
  "proc-macro2",
  "quote",
  "rayon",
+ "reqwest",
  "serde",
  "serde-aux",
  "serde_json",
- "sha2",
  "simple_logger",
  "syn",
  "tinystr 0.6.0",
  "toml",
- "walkdir",
  "writeable",
  "zerovec",
  "zip 0.6.2",
@@ -1740,7 +1737,6 @@ dependencies = [
  "icu_locid",
  "icu_provider_adapters",
  "icu_provider_macros",
- "litemap",
  "log",
  "postcard",
  "serde",
@@ -1773,7 +1769,6 @@ version = "0.6.0"
 dependencies = [
  "icu_locid",
  "icu_provider",
- "litemap",
  "log",
  "postcard",
  "serde",
@@ -1798,6 +1793,7 @@ dependencies = [
  "serde",
  "serde-json-core",
  "serde_json",
+ "sha2",
  "writeable",
 ]
 
@@ -1819,27 +1815,17 @@ dependencies = [
  "databake",
  "icu_char16trie",
  "icu_codepointtrie",
+ "icu_locid",
  "icu_provider",
- "icu_segmenter_lstm",
  "icu_testdata",
  "lazy_static",
+ "ndarray",
+ "num-traits",
  "serde",
  "serde-json-core",
  "serde_json",
- "zerovec",
-]
-
-[[package]]
-name = "icu_segmenter_lstm"
-version = "0.1.0"
-dependencies = [
- "icu_provider",
- "litemap",
- "ndarray",
- "serde",
- "serde_json",
  "unicode-segmentation",
- "yoke",
+ "zerovec",
 ]
 
 [[package]]
@@ -2411,12 +2397,6 @@ dependencies = [
  "rand_core",
  "subtle",
 ]
-
-[[package]]
-name = "pathdiff"
-version = "0.2.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8835116a5c179084a830efb3adc117ab007512b535bc1a21c991d3b32a6b44dd"
 
 [[package]]
 name = "pbkdf2"
@@ -3465,9 +3445,9 @@ checksum = "cda74da7e1a664f795bb1f8a87ec406fb89a02522cf6e50620d016add6dbbf5c"
 
 [[package]]
 name = "tokio"
-version = "1.13.0"
+version = "1.13.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "588b2d10a336da58d877567cd8fb8a14b463e2104910f8132cd054b4b96e29ee"
+checksum = "52963f91310c08d91cb7bff5786dfc8b79642ab839e188187e92105dbfb9d2c8"
 dependencies = [
  "autocfg",
  "bytes",

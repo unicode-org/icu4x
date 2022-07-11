@@ -10,9 +10,9 @@
 //! <https://github.com/unicode-org/cldr-json/blob/main/cldr-json/cldr-dates-full/main/en/ca-gregorian.json>
 
 use icu_locid::LanguageIdentifier;
-use litemap::LiteMap;
 use serde::Deserialize;
 use std::borrow::Cow;
+use std::collections::HashMap;
 
 macro_rules! symbols {
     ($name: ident, $symbols:item) => {
@@ -51,7 +51,7 @@ macro_rules! symbols {
     }
 }
 
-symbols!(months, pub struct Symbols(pub LiteMap<String, String>););
+symbols!(months, pub struct Symbols(pub HashMap<String, String>););
 
 symbols!(
     days,
@@ -103,11 +103,11 @@ impl LengthPattern {
 #[derive(PartialEq, Debug, Deserialize, Clone)]
 pub struct Eras {
     #[serde(rename = "eraNames")]
-    pub names: LiteMap<String, String>,
+    pub names: HashMap<String, String>,
     #[serde(rename = "eraAbbr")]
-    pub abbr: LiteMap<String, String>,
+    pub abbr: HashMap<String, String>,
     #[serde(rename = "eraNarrow")]
-    pub narrow: LiteMap<String, String>,
+    pub narrow: HashMap<String, String>,
 }
 
 #[derive(PartialEq, Debug, Deserialize, Clone)]
@@ -129,7 +129,7 @@ pub struct DateTimeFormats {
 }
 
 #[derive(PartialEq, Clone, Debug, Deserialize)]
-pub struct AvailableFormats(pub LiteMap<String, String>);
+pub struct AvailableFormats(pub HashMap<String, String>);
 
 /// This struct represents a 1:1 mapping of the CLDR ca-gregorian.json data at the key
 /// "main.LANGID.dates.calendars.gregorian" where "LANGID" is the identifier.
@@ -153,7 +153,7 @@ pub struct Dates {
 
 #[derive(PartialEq, Debug, Deserialize)]
 pub struct DatesCalendars {
-    pub calendars: LiteMap<String, Dates>,
+    pub calendars: HashMap<String, Dates>,
 }
 
 #[derive(PartialEq, Debug, Deserialize)]
@@ -162,7 +162,7 @@ pub struct LangDates {
 }
 
 #[derive(PartialEq, Debug, Deserialize)]
-pub struct LangData(pub LiteMap<LanguageIdentifier, LangDates>);
+pub struct LangData(pub HashMap<LanguageIdentifier, LangDates>);
 
 #[derive(PartialEq, Debug, Deserialize)]
 pub struct Resource {

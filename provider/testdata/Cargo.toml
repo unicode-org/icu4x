@@ -159,7 +159,7 @@ icu_locid = { version = "0.6", path = "../../components/locid", optional = true 
 log = { version = "0.4", optional = true }
 reqwest = { version = "0.11", features = ["stream"], optional = true }
 simple_logger = { version = "1.12", optional = true }
-tokio = { version = "1.5", features = ["rt-multi-thread", "macros", "fs"], optional = true }
+tokio = { version = "1.13", features = ["rt-multi-thread", "macros", "fs"], optional = true }
 
 # metadata feature
 cargo_metadata = { version = "0.13", optional = true }

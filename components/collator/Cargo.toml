@@ -45,7 +45,7 @@ serde = { version = "1.0", default-features = false, features = ["derive", "allo
 zerovec = { version = "0.7", path = "../../utils/zerovec", features = ["serde"] }
 utf8_iter = "1.0"
 utf16_iter = "1.0"
-databake = { version = "0.4", path = "../../utils/databake", optional = true, features = ["derive"] }
+databake = { version = "0.1.0", path = "../../utils/databake", optional = true, features = ["derive"] }
 zerofrom = { version = "0.1.0", path = "../../utils/zerofrom" }
 
 [dev-dependencies]

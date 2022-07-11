@@ -542,7 +542,7 @@ const ICU4XError_js_to_rust = {
   "LocaleParserError": 513,
   "DataStructValidityError": 768,
   "PropertyUnknownScriptIdError": 1024,
-  "PropertyUnknownGeneralCategoryGroupError": 41,
+  "PropertyUnknownGeneralCategoryGroupError": 1025,
   "DecimalLimitError": 1280,
   "DecimalSyntaxError": 1281,
   "PluralParserError": 1536,
@@ -569,7 +569,7 @@ const ICU4XError_rust_to_js = {
   513: "LocaleParserError",
   768: "DataStructValidityError",
   1024: "PropertyUnknownScriptIdError",
-  41: "PropertyUnknownGeneralCategoryGroupError",
+  1025: "PropertyUnknownGeneralCategoryGroupError",
   1280: "DecimalLimitError",
   1281: "DecimalSyntaxError",
   1536: "PluralParserError",
@@ -623,7 +623,7 @@ export class ICU4XFixedDecimal {
     return diplomat_out;
   }
 
-  static create_from_f64_with_lower_magnitude(f, precision, rounding_mode) {
+  static create_from_f64_with_lower_magnitude(f, precision) {
     const diplomat_out = (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
       const result_tag = {};
@@ -632,7 +632,7 @@ export class ICU4XFixedDecimal {
         size: 5,
         align: 4,
       });
-      wasm.ICU4XFixedDecimal_create_from_f64_with_lower_magnitude(diplomat_receive_buffer, f, precision, ICU4XFixedDecimalRoundingMode_js_to_rust[rounding_mode]);
+      wasm.ICU4XFixedDecimal_create_from_f64_with_lower_magnitude(diplomat_receive_buffer, f, precision);
       const is_ok = (new Uint8Array(wasm.memory.buffer, diplomat_receive_buffer + 4, 1))[0] == 1;
       if (is_ok) {
         const ok_value = (() => {
@@ -649,7 +649,7 @@ export class ICU4XFixedDecimal {
     return diplomat_out;
   }
 
-  static create_from_f64_with_significant_digits(f, digits, rounding_mode) {
+  static create_from_f64_with_significant_digits(f, digits) {
     const diplomat_out = (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
       const result_tag = {};
@@ -658,7 +658,7 @@ export class ICU4XFixedDecimal {
         size: 5,
         align: 4,
       });
-      wasm.ICU4XFixedDecimal_create_from_f64_with_significant_digits(diplomat_receive_buffer, f, digits, ICU4XFixedDecimalRoundingMode_js_to_rust[rounding_mode]);
+      wasm.ICU4XFixedDecimal_create_from_f64_with_significant_digits(diplomat_receive_buffer, f, digits);
       const is_ok = (new Uint8Array(wasm.memory.buffer, diplomat_receive_buffer + 4, 1))[0] == 1;
       if (is_ok) {
         const ok_value = (() => {
@@ -711,8 +711,8 @@ export class ICU4XFixedDecimal {
     return diplomat_out;
   }
 
-  negate() {
-    const diplomat_out = wasm.ICU4XFixedDecimal_negate(this.underlying);
+  set_sign(sign) {
+    const diplomat_out = wasm.ICU4XFixedDecimal_set_sign(this.underlying, ICU4XFixedDecimalSign_js_to_rust[sign]);
   }
 
   pad_left(position) {
@@ -871,13 +871,15 @@ const ICU4XFixedDecimalGroupingStrategy_rust_to_js = {
   3: "Min2",
 };
 
-const ICU4XFixedDecimalRoundingMode_js_to_rust = {
-  "Truncate": 0,
-  "HalfExpand": 1,
+const ICU4XFixedDecimalSign_js_to_rust = {
+  "None": 0,
+  "Negative": 1,
+  "Positive": 2,
 };
-const ICU4XFixedDecimalRoundingMode_rust_to_js = {
-  0: "Truncate",
-  1: "HalfExpand",
+const ICU4XFixedDecimalSign_rust_to_js = {
+  0: "None",
+  1: "Negative",
+  2: "Positive",
 };
 
 const ICU4XFixedDecimalSignDisplay_js_to_rust = {
@@ -894,6 +896,141 @@ const ICU4XFixedDecimalSignDisplay_rust_to_js = {
   3: "ExceptZero",
   4: "Negative",
 };
+
+const ICU4XGraphemeClusterBreakIteratorLatin1_box_destroy_registry = new FinalizationRegistry(underlying => {
+  wasm.ICU4XGraphemeClusterBreakIteratorLatin1_destroy(underlying);
+});
+
+export class ICU4XGraphemeClusterBreakIteratorLatin1 {
+  constructor(underlying) {
+    this.underlying = underlying;
+  }
+
+  next() {
+    const diplomat_out = wasm.ICU4XGraphemeClusterBreakIteratorLatin1_next(this.underlying);
+    return diplomat_out;
+  }
+}
+
+const ICU4XGraphemeClusterBreakIteratorUtf16_box_destroy_registry = new FinalizationRegistry(underlying => {
+  wasm.ICU4XGraphemeClusterBreakIteratorUtf16_destroy(underlying);
+});
+
+export class ICU4XGraphemeClusterBreakIteratorUtf16 {
+  constructor(underlying) {
+    this.underlying = underlying;
+  }
+
+  next() {
+    const diplomat_out = wasm.ICU4XGraphemeClusterBreakIteratorUtf16_next(this.underlying);
+    return diplomat_out;
+  }
+}
+
+const ICU4XGraphemeClusterBreakIteratorUtf8_box_destroy_registry = new FinalizationRegistry(underlying => {
+  wasm.ICU4XGraphemeClusterBreakIteratorUtf8_destroy(underlying);
+});
+
+export class ICU4XGraphemeClusterBreakIteratorUtf8 {
+  constructor(underlying) {
+    this.underlying = underlying;
+  }
+
+  next() {
+    const diplomat_out = wasm.ICU4XGraphemeClusterBreakIteratorUtf8_next(this.underlying);
+    return diplomat_out;
+  }
+}
+
+const ICU4XGraphemeClusterBreakSegmenter_box_destroy_registry = new FinalizationRegistry(underlying => {
+  wasm.ICU4XGraphemeClusterBreakSegmenter_destroy(underlying);
+});
+
+export class ICU4XGraphemeClusterBreakSegmenter {
+  constructor(underlying) {
+    this.underlying = underlying;
+  }
+
+  static try_new(provider) {
+    const diplomat_out = (() => {
+      const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
+      const result_tag = {};
+      diplomat_alloc_destroy_registry.register(result_tag, {
+        ptr: diplomat_receive_buffer,
+        size: 5,
+        align: 4,
+      });
+      wasm.ICU4XGraphemeClusterBreakSegmenter_try_new(diplomat_receive_buffer, provider.underlying);
+      const is_ok = (new Uint8Array(wasm.memory.buffer, diplomat_receive_buffer + 4, 1))[0] == 1;
+      if (is_ok) {
+        const ok_value = (() => {
+          const out = new ICU4XGraphemeClusterBreakSegmenter((new Uint32Array(wasm.memory.buffer, diplomat_receive_buffer, 1))[0]);
+          out.owner = result_tag;
+          return out;
+        })();
+        return ok_value;
+      } else {
+        const throw_value = ICU4XError_rust_to_js[(new Int32Array(wasm.memory.buffer, diplomat_receive_buffer, 1))[0]];
+        throw new diplomatRuntime.FFIError(throw_value);
+      }
+    })();
+    return diplomat_out;
+  }
+
+  segment_utf8(input) {
+    let input_diplomat_bytes = (new TextEncoder()).encode(input);
+    let input_diplomat_ptr = wasm.diplomat_alloc(input_diplomat_bytes.length, 1);
+    let input_diplomat_buf = new Uint8Array(wasm.memory.buffer, input_diplomat_ptr, input_diplomat_bytes.length);
+    input_diplomat_buf.set(input_diplomat_bytes, 0);
+    const diplomat_out = (() => {
+      const out = (() => {
+        const out = new ICU4XGraphemeClusterBreakIteratorUtf8(wasm.ICU4XGraphemeClusterBreakSegmenter_segment_utf8(this.underlying, input_diplomat_ptr, input_diplomat_bytes.length));
+        out.owner = null;
+        return out;
+      })();
+      ICU4XGraphemeClusterBreakIteratorUtf8_box_destroy_registry.register(out, out.underlying)
+      return out;
+    })();
+    wasm.diplomat_free(input_diplomat_ptr, input_diplomat_bytes.length, 1);
+    return diplomat_out;
+  }
+
+  segment_utf16(input) {
+    let input_diplomat_bytes = new Uint8Array(input);
+    let input_diplomat_ptr = wasm.diplomat_alloc(input_diplomat_bytes.length, 2);
+    let input_diplomat_buf = new Uint8Array(wasm.memory.buffer, input_diplomat_ptr, input_diplomat_bytes.length);
+    input_diplomat_buf.set(input_diplomat_bytes, 0);
+    const diplomat_out = (() => {
+      const out = (() => {
+        const out = new ICU4XGraphemeClusterBreakIteratorUtf16(wasm.ICU4XGraphemeClusterBreakSegmenter_segment_utf16(this.underlying, input_diplomat_ptr, input_diplomat_bytes.length));
+        out.owner = null;
+        return out;
+      })();
+      ICU4XGraphemeClusterBreakIteratorUtf16_box_destroy_registry.register(out, out.underlying)
+      return out;
+    })();
+    wasm.diplomat_free(input_diplomat_ptr, input_diplomat_bytes.length, 2);
+    return diplomat_out;
+  }
+
+  segment_latin1(input) {
+    let input_diplomat_bytes = new Uint8Array(input);
+    let input_diplomat_ptr = wasm.diplomat_alloc(input_diplomat_bytes.length, 1);
+    let input_diplomat_buf = new Uint8Array(wasm.memory.buffer, input_diplomat_ptr, input_diplomat_bytes.length);
+    input_diplomat_buf.set(input_diplomat_bytes, 0);
+    const diplomat_out = (() => {
+      const out = (() => {
+        const out = new ICU4XGraphemeClusterBreakIteratorLatin1(wasm.ICU4XGraphemeClusterBreakSegmenter_segment_latin1(this.underlying, input_diplomat_ptr, input_diplomat_bytes.length));
+        out.owner = null;
+        return out;
+      })();
+      ICU4XGraphemeClusterBreakIteratorLatin1_box_destroy_registry.register(out, out.underlying)
+      return out;
+    })();
+    wasm.diplomat_free(input_diplomat_ptr, input_diplomat_bytes.length, 1);
+    return diplomat_out;
+  }
+}
 
 const ICU4XLineBreakIteratorLatin1_box_destroy_registry = new FinalizationRegistry(underlying => {
   wasm.ICU4XLineBreakIteratorLatin1_destroy(underlying);
@@ -1667,6 +1804,186 @@ export class ICU4XPluralRules {
   }
 }
 
+const ICU4XSentenceBreakIteratorLatin1_box_destroy_registry = new FinalizationRegistry(underlying => {
+  wasm.ICU4XSentenceBreakIteratorLatin1_destroy(underlying);
+});
+
+export class ICU4XSentenceBreakIteratorLatin1 {
+  constructor(underlying) {
+    this.underlying = underlying;
+  }
+
+  next() {
+    const diplomat_out = wasm.ICU4XSentenceBreakIteratorLatin1_next(this.underlying);
+    return diplomat_out;
+  }
+}
+
+const ICU4XSentenceBreakIteratorUtf16_box_destroy_registry = new FinalizationRegistry(underlying => {
+  wasm.ICU4XSentenceBreakIteratorUtf16_destroy(underlying);
+});
+
+export class ICU4XSentenceBreakIteratorUtf16 {
+  constructor(underlying) {
+    this.underlying = underlying;
+  }
+
+  next() {
+    const diplomat_out = wasm.ICU4XSentenceBreakIteratorUtf16_next(this.underlying);
+    return diplomat_out;
+  }
+}
+
+const ICU4XSentenceBreakIteratorUtf8_box_destroy_registry = new FinalizationRegistry(underlying => {
+  wasm.ICU4XSentenceBreakIteratorUtf8_destroy(underlying);
+});
+
+export class ICU4XSentenceBreakIteratorUtf8 {
+  constructor(underlying) {
+    this.underlying = underlying;
+  }
+
+  next() {
+    const diplomat_out = wasm.ICU4XSentenceBreakIteratorUtf8_next(this.underlying);
+    return diplomat_out;
+  }
+}
+
+const ICU4XSentenceBreakSegmenter_box_destroy_registry = new FinalizationRegistry(underlying => {
+  wasm.ICU4XSentenceBreakSegmenter_destroy(underlying);
+});
+
+export class ICU4XSentenceBreakSegmenter {
+  constructor(underlying) {
+    this.underlying = underlying;
+  }
+
+  static try_new(provider) {
+    const diplomat_out = (() => {
+      const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
+      const result_tag = {};
+      diplomat_alloc_destroy_registry.register(result_tag, {
+        ptr: diplomat_receive_buffer,
+        size: 5,
+        align: 4,
+      });
+      wasm.ICU4XSentenceBreakSegmenter_try_new(diplomat_receive_buffer, provider.underlying);
+      const is_ok = (new Uint8Array(wasm.memory.buffer, diplomat_receive_buffer + 4, 1))[0] == 1;
+      if (is_ok) {
+        const ok_value = (() => {
+          const out = new ICU4XSentenceBreakSegmenter((new Uint32Array(wasm.memory.buffer, diplomat_receive_buffer, 1))[0]);
+          out.owner = result_tag;
+          return out;
+        })();
+        return ok_value;
+      } else {
+        const throw_value = ICU4XError_rust_to_js[(new Int32Array(wasm.memory.buffer, diplomat_receive_buffer, 1))[0]];
+        throw new diplomatRuntime.FFIError(throw_value);
+      }
+    })();
+    return diplomat_out;
+  }
+
+  segment_utf8(input) {
+    let input_diplomat_bytes = (new TextEncoder()).encode(input);
+    let input_diplomat_ptr = wasm.diplomat_alloc(input_diplomat_bytes.length, 1);
+    let input_diplomat_buf = new Uint8Array(wasm.memory.buffer, input_diplomat_ptr, input_diplomat_bytes.length);
+    input_diplomat_buf.set(input_diplomat_bytes, 0);
+    const diplomat_out = (() => {
+      const out = (() => {
+        const out = new ICU4XSentenceBreakIteratorUtf8(wasm.ICU4XSentenceBreakSegmenter_segment_utf8(this.underlying, input_diplomat_ptr, input_diplomat_bytes.length));
+        out.owner = null;
+        return out;
+      })();
+      ICU4XSentenceBreakIteratorUtf8_box_destroy_registry.register(out, out.underlying)
+      return out;
+    })();
+    wasm.diplomat_free(input_diplomat_ptr, input_diplomat_bytes.length, 1);
+    return diplomat_out;
+  }
+
+  segment_utf16(input) {
+    let input_diplomat_bytes = new Uint8Array(input);
+    let input_diplomat_ptr = wasm.diplomat_alloc(input_diplomat_bytes.length, 2);
+    let input_diplomat_buf = new Uint8Array(wasm.memory.buffer, input_diplomat_ptr, input_diplomat_bytes.length);
+    input_diplomat_buf.set(input_diplomat_bytes, 0);
+    const diplomat_out = (() => {
+      const out = (() => {
+        const out = new ICU4XSentenceBreakIteratorUtf16(wasm.ICU4XSentenceBreakSegmenter_segment_utf16(this.underlying, input_diplomat_ptr, input_diplomat_bytes.length));
+        out.owner = null;
+        return out;
+      })();
+      ICU4XSentenceBreakIteratorUtf16_box_destroy_registry.register(out, out.underlying)
+      return out;
+    })();
+    wasm.diplomat_free(input_diplomat_ptr, input_diplomat_bytes.length, 2);
+    return diplomat_out;
+  }
+
+  segment_latin1(input) {
+    let input_diplomat_bytes = new Uint8Array(input);
+    let input_diplomat_ptr = wasm.diplomat_alloc(input_diplomat_bytes.length, 1);
+    let input_diplomat_buf = new Uint8Array(wasm.memory.buffer, input_diplomat_ptr, input_diplomat_bytes.length);
+    input_diplomat_buf.set(input_diplomat_bytes, 0);
+    const diplomat_out = (() => {
+      const out = (() => {
+        const out = new ICU4XSentenceBreakIteratorLatin1(wasm.ICU4XSentenceBreakSegmenter_segment_latin1(this.underlying, input_diplomat_ptr, input_diplomat_bytes.length));
+        out.owner = null;
+        return out;
+      })();
+      ICU4XSentenceBreakIteratorLatin1_box_destroy_registry.register(out, out.underlying)
+      return out;
+    })();
+    wasm.diplomat_free(input_diplomat_ptr, input_diplomat_bytes.length, 1);
+    return diplomat_out;
+  }
+}
+
+const ICU4XWordBreakIteratorLatin1_box_destroy_registry = new FinalizationRegistry(underlying => {
+  wasm.ICU4XWordBreakIteratorLatin1_destroy(underlying);
+});
+
+export class ICU4XWordBreakIteratorLatin1 {
+  constructor(underlying) {
+    this.underlying = underlying;
+  }
+
+  next() {
+    const diplomat_out = wasm.ICU4XWordBreakIteratorLatin1_next(this.underlying);
+    return diplomat_out;
+  }
+}
+
+const ICU4XWordBreakIteratorUtf16_box_destroy_registry = new FinalizationRegistry(underlying => {
+  wasm.ICU4XWordBreakIteratorUtf16_destroy(underlying);
+});
+
+export class ICU4XWordBreakIteratorUtf16 {
+  constructor(underlying) {
+    this.underlying = underlying;
+  }
+
+  next() {
+    const diplomat_out = wasm.ICU4XWordBreakIteratorUtf16_next(this.underlying);
+    return diplomat_out;
+  }
+}
+
+const ICU4XWordBreakIteratorUtf8_box_destroy_registry = new FinalizationRegistry(underlying => {
+  wasm.ICU4XWordBreakIteratorUtf8_destroy(underlying);
+});
+
+export class ICU4XWordBreakIteratorUtf8 {
+  constructor(underlying) {
+    this.underlying = underlying;
+  }
+
+  next() {
+    const diplomat_out = wasm.ICU4XWordBreakIteratorUtf8_next(this.underlying);
+    return diplomat_out;
+  }
+}
+
 const ICU4XWordBreakRule_js_to_rust = {
   "Normal": 0,
   "BreakAll": 1,
@@ -1677,3 +1994,93 @@ const ICU4XWordBreakRule_rust_to_js = {
   1: "BreakAll",
   2: "KeepAll",
 };
+
+const ICU4XWordBreakSegmenter_box_destroy_registry = new FinalizationRegistry(underlying => {
+  wasm.ICU4XWordBreakSegmenter_destroy(underlying);
+});
+
+export class ICU4XWordBreakSegmenter {
+  constructor(underlying) {
+    this.underlying = underlying;
+  }
+
+  static try_new(provider) {
+    const diplomat_out = (() => {
+      const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
+      const result_tag = {};
+      diplomat_alloc_destroy_registry.register(result_tag, {
+        ptr: diplomat_receive_buffer,
+        size: 5,
+        align: 4,
+      });
+      wasm.ICU4XWordBreakSegmenter_try_new(diplomat_receive_buffer, provider.underlying);
+      const is_ok = (new Uint8Array(wasm.memory.buffer, diplomat_receive_buffer + 4, 1))[0] == 1;
+      if (is_ok) {
+        const ok_value = (() => {
+          const out = new ICU4XWordBreakSegmenter((new Uint32Array(wasm.memory.buffer, diplomat_receive_buffer, 1))[0]);
+          out.owner = result_tag;
+          return out;
+        })();
+        return ok_value;
+      } else {
+        const throw_value = ICU4XError_rust_to_js[(new Int32Array(wasm.memory.buffer, diplomat_receive_buffer, 1))[0]];
+        throw new diplomatRuntime.FFIError(throw_value);
+      }
+    })();
+    return diplomat_out;
+  }
+
+  segment_utf8(input) {
+    let input_diplomat_bytes = (new TextEncoder()).encode(input);
+    let input_diplomat_ptr = wasm.diplomat_alloc(input_diplomat_bytes.length, 1);
+    let input_diplomat_buf = new Uint8Array(wasm.memory.buffer, input_diplomat_ptr, input_diplomat_bytes.length);
+    input_diplomat_buf.set(input_diplomat_bytes, 0);
+    const diplomat_out = (() => {
+      const out = (() => {
+        const out = new ICU4XWordBreakIteratorUtf8(wasm.ICU4XWordBreakSegmenter_segment_utf8(this.underlying, input_diplomat_ptr, input_diplomat_bytes.length));
+        out.owner = null;
+        return out;
+      })();
+      ICU4XWordBreakIteratorUtf8_box_destroy_registry.register(out, out.underlying)
+      return out;
+    })();
+    wasm.diplomat_free(input_diplomat_ptr, input_diplomat_bytes.length, 1);
+    return diplomat_out;
+  }
+
+  segment_utf16(input) {
+    let input_diplomat_bytes = new Uint8Array(input);
+    let input_diplomat_ptr = wasm.diplomat_alloc(input_diplomat_bytes.length, 2);
+    let input_diplomat_buf = new Uint8Array(wasm.memory.buffer, input_diplomat_ptr, input_diplomat_bytes.length);
+    input_diplomat_buf.set(input_diplomat_bytes, 0);
+    const diplomat_out = (() => {
+      const out = (() => {
+        const out = new ICU4XWordBreakIteratorUtf16(wasm.ICU4XWordBreakSegmenter_segment_utf16(this.underlying, input_diplomat_ptr, input_diplomat_bytes.length));
+        out.owner = null;
+        return out;
+      })();
+      ICU4XWordBreakIteratorUtf16_box_destroy_registry.register(out, out.underlying)
+      return out;
+    })();
+    wasm.diplomat_free(input_diplomat_ptr, input_diplomat_bytes.length, 2);
+    return diplomat_out;
+  }
+
+  segment_latin1(input) {
+    let input_diplomat_bytes = new Uint8Array(input);
+    let input_diplomat_ptr = wasm.diplomat_alloc(input_diplomat_bytes.length, 1);
+    let input_diplomat_buf = new Uint8Array(wasm.memory.buffer, input_diplomat_ptr, input_diplomat_bytes.length);
+    input_diplomat_buf.set(input_diplomat_bytes, 0);
+    const diplomat_out = (() => {
+      const out = (() => {
+        const out = new ICU4XWordBreakIteratorLatin1(wasm.ICU4XWordBreakSegmenter_segment_latin1(this.underlying, input_diplomat_ptr, input_diplomat_bytes.length));
+        out.owner = null;
+        return out;
+      })();
+      ICU4XWordBreakIteratorLatin1_box_destroy_registry.register(out, out.underlying)
+      return out;
+    })();
+    wasm.diplomat_free(input_diplomat_ptr, input_diplomat_bytes.length, 1);
+    return diplomat_out;
+  }
+}

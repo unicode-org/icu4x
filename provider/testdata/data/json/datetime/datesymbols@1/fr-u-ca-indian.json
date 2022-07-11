@@ -1,0 +1,108 @@
+{
+  "months": {
+    "format": {
+      "abbreviated": {
+        "SolarTwelve": [
+          "chai.",
+          "vai.",
+          "jyai.",
+          "āsha.",
+          "shrā.",
+          "bhā.",
+          "āshw.",
+          "kār.",
+          "mār.",
+          "pau.",
+          "māgh",
+          "phāl."
+        ]
+      },
+      "narrow": {
+        "SolarTwelve": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5",
+          "6",
+          "7",
+          "8",
+          "9",
+          "10",
+          "11",
+          "12"
+        ]
+      },
+      "short": null,
+      "wide": {
+        "SolarTwelve": [
+          "chaitra",
+          "vaishākh",
+          "jyaishtha",
+          "āshādha",
+          "shrāvana",
+          "bhādrapad",
+          "āshwin",
+          "kārtik",
+          "mārgashīrsha",
+          "paush",
+          "māgh",
+          "phālgun"
+        ]
+      }
+    },
+    "stand_alone": null
+  },
+  "weekdays": {
+    "format": {
+      "abbreviated": [
+        "dim.",
+        "lun.",
+        "mar.",
+        "mer.",
+        "jeu.",
+        "ven.",
+        "sam."
+      ],
+      "narrow": [
+        "D",
+        "L",
+        "M",
+        "M",
+        "J",
+        "V",
+        "S"
+      ],
+      "short": [
+        "di",
+        "lu",
+        "ma",
+        "me",
+        "je",
+        "ve",
+        "sa"
+      ],
+      "wide": [
+        "dimanche",
+        "lundi",
+        "mardi",
+        "mercredi",
+        "jeudi",
+        "vendredi",
+        "samedi"
+      ]
+    },
+    "stand_alone": null
+  },
+  "eras": {
+    "names": {
+      "saka": "ère Saka"
+    },
+    "abbr": {
+      "saka": "Saka"
+    },
+    "narrow": {
+      "saka": "Saka"
+    }
+  }
+}

@@ -13,6 +13,7 @@ use icu_plurals::{provider::OrdinalV1Marker, PluralRules};
 use icu_provider::prelude::*;
 
 use crate::{
+    date::ExtractedZonedDateTimeInput,
     date::ZonedDateTimeInput,
     format::{
         datetime,
@@ -22,7 +23,10 @@ use crate::{
     pattern::runtime::PatternPlurals,
     provider::{
         self,
-        calendar::{DatePatternsV1Marker, DateSkeletonPatternsV1Marker, DateSymbolsV1Marker},
+        calendar::{
+            DatePatternsV1Marker, DateSkeletonPatternsV1Marker, DateSymbolsV1Marker,
+            TimePatternsV1Marker, TimeSymbolsV1Marker,
+        },
         week_data::WeekDataV1Marker,
     },
     raw,
@@ -55,7 +59,9 @@ impl ZonedDateTimeFormat {
     ) -> Result<Self, DateTimeFormatError>
     where
         DP: ResourceProvider<DateSymbolsV1Marker>
+            + ResourceProvider<TimeSymbolsV1Marker>
             + ResourceProvider<DatePatternsV1Marker>
+            + ResourceProvider<TimePatternsV1Marker>
             + ResourceProvider<DateSkeletonPatternsV1Marker>
             + ResourceProvider<WeekDataV1Marker>
             + ?Sized,
@@ -103,7 +109,20 @@ impl ZonedDateTimeFormat {
             None
         };
 
-        let symbols_data = if required.symbols_data {
+        let date_symbols_data = if required.date_symbols_data {
+            Some(
+                date_provider
+                    .load_resource(&DataRequest {
+                        options: ResourceOptions::from(&locale),
+                        metadata: Default::default(),
+                    })?
+                    .take_payload()?,
+            )
+        } else {
+            None
+        };
+
+        let time_symbols_data = if required.time_symbols_data {
             Some(
                 date_provider
                     .load_resource(&DataRequest {
@@ -130,7 +149,8 @@ impl ZonedDateTimeFormat {
         let datetime_format = raw::DateTimeFormat::new(
             locale,
             patterns,
-            symbols_data,
+            date_symbols_data,
+            time_symbols_data,
             week_data,
             ordinal_rules,
             fixed_decimal_format,
@@ -155,13 +175,14 @@ impl ZonedDateTimeFormat {
     /// Takes a [`ZonedDateTimeInput`] implementer and returns an instance of a [`FormattedZonedDateTime`]
     /// that contains all information necessary to display a formatted zoned datetime and operate on it.
     #[inline]
-    pub fn format<'l, T>(&'l self, value: &'l T) -> FormattedZonedDateTime<'l, T>
+    pub fn format<'l, T>(&'l self, value: &T) -> FormattedZonedDateTime<'l>
     where
         T: ZonedDateTimeInput,
     {
+        // Todo: optimize extraction #2143
         FormattedZonedDateTime {
             zoned_datetime_format: self,
-            zoned_datetime: value,
+            zoned_datetime: ExtractedZonedDateTimeInput::extract_from(value),
         }
     }
 

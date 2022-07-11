@@ -32,7 +32,7 @@ int main() {
     }
 
     decimal.multiply_pow10(2);
-    decimal.negate();
+    decimal.set_sign(ICU4XFixedDecimalSign::Negative);
     out = fdf.format(decimal).ok().value();
     std::cout << "Value x100 and negated is " << out << std::endl;
     if (out != "-১০,০০,০০,৭০০") {
@@ -72,7 +72,7 @@ int main() {
         return 1;
     }
 
-    decimal = ICU4XFixedDecimal::create_from_f64_with_lower_magnitude(100.0006, -2, ICU4XFixedDecimalRoundingMode::HalfExpand).ok().value();
+    decimal = ICU4XFixedDecimal::create_from_f64_with_lower_magnitude(100.0006, -2).ok().value();
     out = fdf.format(decimal).ok().value();
     std::cout << "Formatted float value from precision 2 is " << out << std::endl;
     if (out != "১০০.০০") {
@@ -80,7 +80,7 @@ int main() {
         return 1;
     }
 
-    decimal = ICU4XFixedDecimal::create_from_f64_with_significant_digits(100.0006, 5, ICU4XFixedDecimalRoundingMode::HalfExpand).ok().value();
+    decimal = ICU4XFixedDecimal::create_from_f64_with_significant_digits(100.0006, 5).ok().value();
     out = fdf.format(decimal).ok().value();
     std::cout << "Formatted float value with 5 digits is " << out << std::endl;
     if (out != "১০০.০০") {

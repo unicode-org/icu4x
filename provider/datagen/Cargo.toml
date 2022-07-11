@@ -62,7 +62,6 @@ icu_codepointtrie_builder = { path = "../../utils/codepointtrie/builder" }
 icu_locid = { version = "0.6", path = "../../components/locid", features = ["std"]}
 icu_uniset = { version = "0.5", path = "../../utils/uniset", features = ["serde"] }
 itertools = "0.10"
-litemap = { version = "0.4.0", path = "../../utils/litemap" }
 log = "0.4"
 rayon = "1.5"
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"] }
@@ -72,21 +71,19 @@ tinystr = { path = "../../utils/tinystr", version = "0.6", features = ["alloc", 
 toml = "0.5"
 zerovec = { version = "0.7", path = "../../utils/zerovec", features = ["serde", "yoke"] }
 quote = "1.0.9"
-databake = { version = "0.4", path = "../../utils/databake"}
+databake = { version = "0.1.0", path = "../../utils/databake"}
 proc-macro2 = "1.0"
 crlify = { version = "1", path = "../../utils/crlify"}
 syn = {version = "1.0", features = ["parsing"] }
 writeable = { version = "0.4", path = "../../utils/writeable" }
 zip = "0.6"
+cached-path = "0.5"
+reqwest = { version = "*", features = ["blocking"] }
 
 # Dependencies for "bin" feature
 clap = { version = "2.33", optional = true }
 eyre = { version = "0.6", optional = true }
 simple_logger = { version = "1.12", optional = true }
-cached-path = { version = "0.5", optional = true }
-sha2 = { version = "0.10.2", optional = true }
-pathdiff = { version = "0.2.1", optional = true }
-walkdir = { version = "2.3.2", optional = true }
 
 [dev-dependencies]
 dhat = "0.3.0"
@@ -95,7 +92,7 @@ icu_testdata = { path = "../testdata", features = ["metadata"] }
 [features]
 default = []
 experimental = ["icu_casemapping", "icu_segmenter"]
-bin = ["clap", "cached-path", "eyre", "pathdiff","sha2", "simple_logger", "walkdir"]
+bin = ["clap", "eyre", "simple_logger"]
 
 [[bin]]
 name = "icu4x-datagen"
@@ -105,8 +102,3 @@ required-features = ["bin"]
 [[test]]
 name = "icu4x-verify-zero-copy"
 path = "tests/verify-zero-copy.rs"
-
-[[bin]]
-name = "icu4x-fingerprint-data"
-path = "src/bin/fingerprint-data.rs"
-required-features = ["bin"]

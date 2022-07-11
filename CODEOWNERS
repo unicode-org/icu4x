@@ -21,8 +21,7 @@ experimental/bies/                @sffc
 experimental/calendar/            @Manishearth @sffc
 experimental/codepointtrie/       @echeran
 experimental/provider_ppucd/      @echeran
-experimental/segmenter/           @aethanyc @makotokato
-experimental/segmenter_lstm/      @aethanyc @sffc
+experimental/segmenter/           @aethanyc @makotokato @sffc
 ffi/capi/                         @Manishearth
 ffi/cpp/                          @Manishearth
 ffi/ecma402/                      @filmil

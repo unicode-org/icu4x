@@ -5,8 +5,7 @@
 use clap::{App, Arg, ArgGroup};
 use eyre::WrapErr;
 
-use icu_codepointtrie::TrieType;
-use icu_datagen::{get_all_keys, SourceData};
+use icu_datagen::*;
 use icu_locid::LanguageIdentifier;
 use icu_provider::hello_world::HelloWorldV1Marker;
 use icu_provider::prelude::*;
@@ -59,6 +58,11 @@ fn main() -> eyre::Result<()> {
                 .help("Whether to pretty-print the output files. Only affects JSON and Rust modules."),
         )
         .arg(
+            Arg::with_name("FINGERPRINT")
+                .long("fingerprint")
+                .help("Whether to add a fingerprints file to the output. Not compatible with --format=blob")
+        )
+        .arg(
             Arg::with_name("CLDR_TAG")
                 .short("t")
                 .long("cldr-tag")
@@ -81,8 +85,8 @@ fn main() -> eyre::Result<()> {
                 .takes_value(true),
         )
         .arg(
-            Arg::with_name("UPROPS_TAG")
-                .long("uprops-tag")
+            Arg::with_name("ICUEXPORT_TAG")
+                .long("icuexport-tag")
                 .value_name("TAG")
                 .help(
                     "Download Unicode Properties data from this GitHub tag (https://github.com/unicode-org/icu/tags)\n\
@@ -91,12 +95,12 @@ fn main() -> eyre::Result<()> {
                 .takes_value(true),
         )
         .arg(
-            Arg::with_name("UPROPS_ROOT")
-                .long("uprops-root")
+            Arg::with_name("ICUEXPORT_ROOT")
+                .long("icuexport-root")
                 .value_name("PATH")
                 .help(
                     "Path to a local icuexportdata_uprops_full directory (see https://github.com/unicode-org/icu/releases).\n\
-                    Ignored if '--uprops-tag is present.\n\
+                    Ignored if '--icuexport-tag is present.\n\
                     Note that some keys do not support versions before release-71-1.",
                 )
                 .takes_value(true),
@@ -112,6 +116,14 @@ fn main() -> eyre::Result<()> {
                     information, see the TrieType enum."
                 )
                 .default_value("small"),
+        )
+        .arg(
+            Arg::with_name("COLLATION_HAN_DATABASE")
+                .long("collation-han-database")
+                .takes_value(true)
+                .possible_values(&["unihan", "implicit"])
+                .default_value("implicit")
+                .help("Which collation han database to use.")
         )
         .arg(
             Arg::with_name("CLDR_LOCALE_SUBSET")
@@ -221,7 +233,7 @@ fn main() -> eyre::Result<()> {
         .transpose()?;
 
     let selected_keys = if matches.is_present("ALL_KEYS") {
-        get_all_keys()
+        icu_datagen::all_keys()
     } else if matches.is_present("HELLO_WORLD") {
         vec![HelloWorldV1Marker::KEY]
     } else if let Some(paths) = matches.values_of("KEYS") {
@@ -237,41 +249,37 @@ fn main() -> eyre::Result<()> {
         eyre::bail!("No keys selected");
     }
 
-    let cldr_locales = matches
-        .value_of("CLDR_LOCALE_SUBSET")
-        .unwrap_or("full")
-        .to_string();
+    let cldr_locales = match matches.value_of("CLDR_LOCALE_SUBSET") {
+        Some("modern") => icu_datagen::CldrLocaleSubset::Modern,
+        _ => icu_datagen::CldrLocaleSubset::Full,
+    };
 
     let mut source_data = SourceData::default();
-    if let Some(tag) = matches.value_of("CLDR_TAG") {
-        source_data = source_data.with_cldr(
-            cached_path::CacheBuilder::new().freshness_lifetime(u64::MAX).build()?
-                .cached_path(
-                    &format!(
-                        "https://github.com/unicode-org/cldr-json/releases/download/{}/cldr-{}-json-{}.zip",
-                        tag, tag, cldr_locales))?,
-            cldr_locales
-            )?;
+    if Some("latest") == matches.value_of("CLDR_TAG") {
+        source_data = source_data.with_cldr_latest(cldr_locales)?;
+    } else if let Some(tag) = matches.value_of("CLDR_TAG") {
+        source_data = source_data.with_cldr_for_tag(tag, cldr_locales)?;
     } else if let Some(path) = matches.value_of("CLDR_ROOT") {
         source_data = source_data.with_cldr(PathBuf::from(path), cldr_locales)?;
     }
 
-    let trie_type = match matches.value_of("TRIE_TYPE") {
-        Some("small") => TrieType::Small,
-        Some("fast") => TrieType::Fast,
-        _ => unreachable!(),
-    };
-
-    if let Some(tag) = matches.value_of("UPROPS_TAG") {
-        source_data = source_data.with_uprops(
-            cached_path::CacheBuilder::new().freshness_lifetime(u64::MAX).build()?
-                .cached_path(
-                    &format!("https://github.com/unicode-org/icu/releases/download/{}/icuexportdata_uprops_full.zip", tag)
-            )?,
-            trie_type)?;
-    } else if let Some(path) = matches.value_of("UPROPS_ROOT") {
-        source_data = source_data.with_uprops(PathBuf::from(path), trie_type)?;
+    if Some("latest") == matches.value_of("ICUEXPORT_TAG") {
+        source_data = source_data.with_icuexport_latest()?;
+    } else if let Some(tag) = matches.value_of("ICUEXPORT_TAG") {
+        source_data = source_data.with_icuexport_for_tag(tag)?;
+    } else if let Some(path) = matches.value_of("ICUEXPORT_ROOT") {
+        source_data = source_data.with_icuexport(PathBuf::from(path))?;
     }
+
+    if matches.value_of("TRIE_TYPE") == Some("fast") {
+        source_data = source_data.with_fast_tries();
+    }
+
+    source_data =
+        source_data.with_collation_han_database(match matches.value_of("COLLATION_HAN_DATABASE") {
+            Some("unihan") => CollationHanDatabase::Unihan,
+            _ => CollationHanDatabase::Implicit,
+        });
 
     let out = match matches
         .value_of("FORMAT")
@@ -289,6 +297,7 @@ fn main() -> eyre::Result<()> {
                 _ => Box::new(json::Serializer::default()),
             },
             overwrite: matches.is_present("OVERWRITE"),
+            fingerprint: matches.is_present("FINGERPRINT"),
         },
         "blob" => icu_datagen::Out::Blob(if let Some(path) = matches.value_of_os("OUTPUT") {
             let path_buf = PathBuf::from(path);
@@ -324,8 +333,8 @@ fn main() -> eyre::Result<()> {
             icu_datagen::MISSING_CLDR_ERROR => eyre::eyre!(
                 "Either --cldr-tag or --cldr-root or --input-from-testdata must be specified"
             ),
-            icu_datagen::MISSING_UPROPS_ERROR => eyre::eyre!(
-                "Either --uprops-tag or --uprops-root or --input-from-testdata must be specified"
+            icu_datagen::MISSING_ICUEXPORT_ERROR => eyre::eyre!(
+                "Either --icuexport-tag or --icuexport-root or --input-from-testdata must be specified"
             ),
             e => e.into(),
         }
