@@ -13,7 +13,7 @@ use icu_provider::{yoke, zerofrom};
 use tinystr::{tinystr, TinyStr4};
 use zerovec::ZeroMap;
 
-#[icu_provider::data_struct(DateSymbolsV1Marker = "datetime/symbols@1")]
+#[icu_provider::data_struct(DateSymbolsV1Marker = "datetime/datesymbols@1")]
 #[derive(Debug, PartialEq, Clone, Default)]
 #[cfg_attr(
     feature = "datagen",
@@ -28,9 +28,21 @@ pub struct DateSymbolsV1<'data> {
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub weekdays: weekdays::ContextsV1<'data>,
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub day_periods: day_periods::ContextsV1<'data>,
-    #[cfg_attr(feature = "serde", serde(borrow))]
     pub eras: Eras<'data>,
+}
+
+#[icu_provider::data_struct(TimeSymbolsV1Marker = "datetime/timesymbols@1")]
+#[derive(Debug, PartialEq, Clone, Default)]
+#[cfg_attr(
+    feature = "datagen",
+    derive(serde::Serialize, databake::Bake),
+    databake(path = icu_datetime::provider::calendar),
+)]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[yoke(prove_covariance_manually)]
+pub struct TimeSymbolsV1<'data> {
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub day_periods: day_periods::ContextsV1<'data>,
 }
 
 #[derive(Debug, PartialEq, Clone, Default, yoke::Yokeable, zerofrom::ZeroFrom)]
@@ -241,7 +253,7 @@ mod test {
     use super::*;
     use tinystr::tinystr;
 
-    fn serialize() -> Vec<u8> {
+    fn serialize_date() -> Vec<u8> {
         let months = [
             (&MonthCode(tinystr!(4, "M01")), "January"),
             (&MonthCode(tinystr!(4, "M02")), "February"),
@@ -267,13 +279,6 @@ mod test {
             Cow::Owned("Saturday".to_string()),
             Cow::Owned("Sunday".to_string()),
         ]);
-
-        let day_periods = day_periods::SymbolsV1 {
-            am: Cow::Owned("am".to_string()),
-            pm: Cow::Owned("pm".to_string()),
-            noon: Some(Cow::Owned("noon".to_string())),
-            midnight: None,
-        };
 
         bincode::serialize(&DateSymbolsV1 {
             months: months::ContextsV1 {
@@ -304,6 +309,24 @@ mod test {
                     wide: Some(weekdays.clone()),
                 }),
             },
+            eras: Eras {
+                names: ZeroMap::new(),
+                abbr: ZeroMap::new(),
+                narrow: ZeroMap::new(),
+            },
+        })
+        .unwrap()
+    }
+
+    fn serialize_time() -> Vec<u8> {
+        let day_periods = day_periods::SymbolsV1 {
+            am: Cow::Owned("am".to_string()),
+            pm: Cow::Owned("pm".to_string()),
+            noon: Some(Cow::Owned("noon".to_string())),
+            midnight: None,
+        };
+
+        bincode::serialize(&TimeSymbolsV1 {
             day_periods: day_periods::ContextsV1 {
                 format: day_periods::FormatWidthsV1 {
                     abbreviated: day_periods.clone(),
@@ -318,18 +341,13 @@ mod test {
                     wide: Some(day_periods.clone()),
                 }),
             },
-            eras: Eras {
-                names: ZeroMap::new(),
-                abbr: ZeroMap::new(),
-                narrow: ZeroMap::new(),
-            },
         })
         .unwrap()
     }
 
     #[test]
     fn weekdays_borrows() {
-        let bytes = serialize();
+        let bytes = serialize_date();
         let de = bincode::deserialize::<DateSymbolsV1>(&bytes).unwrap();
 
         assert!(matches!(de.weekdays.format.narrow.0[2], Cow::Borrowed(_)));
@@ -341,8 +359,8 @@ mod test {
 
     #[test]
     fn day_periods_borrows() {
-        let bytes = serialize();
-        let de = bincode::deserialize::<DateSymbolsV1>(&bytes).unwrap();
+        let bytes = serialize_time();
+        let de = bincode::deserialize::<TimeSymbolsV1>(&bytes).unwrap();
 
         assert!(matches!(
             de.day_periods.format.narrow.noon,

@@ -8,7 +8,7 @@ use icu_datetime::provider::calendar::*;
 use icu_locid::{extensions_unicode_key as key, extensions_unicode_value as value, Locale};
 use icu_provider::datagen::IterableResourceProvider;
 use icu_provider::prelude::*;
-use litemap::LiteMap;
+use std::collections::HashMap;
 
 mod patterns;
 mod skeletons;
@@ -20,7 +20,7 @@ pub mod week_data;
 pub struct CommonDateProvider {
     source: SourceData,
     // BCP-47 value -> CLDR identifier
-    supported_cals: LiteMap<icu_locid::extensions::unicode::Value, &'static str>,
+    supported_cals: HashMap<icu_locid::extensions::unicode::Value, &'static str>,
 }
 
 impl From<&SourceData> for CommonDateProvider {
@@ -62,8 +62,8 @@ macro_rules! impl_resource_provider {
 
                     let resource: &cldr_serde::ca::Resource = self
                         .source
-                        .get_cldr_paths()?
-                        .cldr_dates(cldr_cal).read_and_parse(&langid, &format!("ca-{}.json", cldr_cal))?;
+                        .cldr()?
+                        .dates(cldr_cal).read_and_parse(&langid, &format!("ca-{}.json", cldr_cal))?;
 
                     let mut data =
                         resource
@@ -81,7 +81,7 @@ macro_rules! impl_resource_provider {
                     // supports symbols for both era patterns based on the settings on the date. Load in ethioaa data as well when dealing with
                     // ethiopic.
                     if calendar == value!("ethiopic") {
-                        let ethioaa: &cldr_serde::ca::Resource = self.source.get_cldr_paths()?.cldr_dates("ethiopic").read_and_parse(&langid, "ca-ethiopic-amete-alem.json")?;
+                        let ethioaa: &cldr_serde::ca::Resource = self.source.cldr()?.dates("ethiopic").read_and_parse(&langid, "ca-ethiopic-amete-alem.json")?;
 
                         let ethioaa_data = ethioaa
                             .main
@@ -119,8 +119,8 @@ macro_rules! impl_resource_provider {
                     for (cal_value, cldr_cal) in self.supported_cals.iter() {
                         r.extend(self
                                     .source
-                                    .get_cldr_paths()?
-                                    .cldr_dates(cldr_cal).list_langs()?
+                                    .cldr()?
+                                    .dates(cldr_cal).list_langs()?
                             .map(|lid| {
                                 let mut locale: Locale = lid.into();
                                 locale
@@ -142,10 +142,14 @@ macro_rules! impl_resource_provider {
 
 impl_resource_provider!(
     (DateSymbolsV1Marker, symbols::convert_dates),
+    (TimeSymbolsV1Marker, |dates, _| {
+        symbols::convert_times(dates)
+    }),
     (DateSkeletonPatternsV1Marker, |dates, _| {
         DateSkeletonPatternsV1::from(dates)
     }),
-    (DatePatternsV1Marker, |dates, _| DatePatternsV1::from(dates))
+    (DatePatternsV1Marker, |dates, _| DatePatternsV1::from(dates)),
+    (TimePatternsV1Marker, |dates, _| TimePatternsV1::from(dates))
 );
 
 #[cfg(test)]

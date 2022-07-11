@@ -22,10 +22,10 @@ impl AbstractSerializer for Serializer {
     fn serialize(
         &self,
         obj: &DataPayload<ExportMarker>,
-        mut sink: &mut dyn io::Write,
+        sink: &mut dyn io::Write,
     ) -> Result<(), DataError> {
         obj.serialize(&mut bincode::Serializer::new(
-            &mut sink,
+            sink,
             bincode::config::DefaultOptions::new().with_fixint_encoding(),
         ))
         .map_err(|e| DataError::custom("Bincode serialize").with_display_context(&e))?;

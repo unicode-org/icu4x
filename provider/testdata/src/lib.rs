@@ -130,6 +130,9 @@ pub fn get_smaller_postcard_provider() -> icu_provider_blob::StaticDataProvider 
 include!(concat!(env!("CARGO_MANIFEST_DIR"), "/data/baked/mod.rs"));
 
 #[cfg(feature = "baked")]
+include!(concat!(env!("CARGO_MANIFEST_DIR"), "/data/baked/any.rs"));
+
+#[cfg(feature = "baked")]
 /// Get a data provider that contains hardcoded data without any deserialization overhead.
 pub fn get_baked_provider() -> BakedDataProvider {
     BakedDataProvider

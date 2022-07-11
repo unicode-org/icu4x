@@ -80,7 +80,7 @@ use icu_char16trie::char16trie::Char16Trie;
 use icu_char16trie::char16trie::Char16TrieIterator;
 use icu_char16trie::char16trie::TrieResult;
 use icu_codepointtrie::CodePointTrie;
-use icu_properties::provider::CanonicalCombiningClassV1Marker;
+use icu_properties::maps::{CodePointMapData, CodePointMapDataBorrowed};
 use icu_properties::CanonicalCombiningClass;
 use icu_provider::DataPayload;
 use icu_provider::DataRequest;
@@ -314,18 +314,21 @@ impl CharacterAndClass {
     pub fn character_and_ccc(&self) -> (char, CanonicalCombiningClass) {
         (self.character(), self.ccc())
     }
-    pub fn set_ccc_from_trie(&mut self, ccc_trie: &CodePointTrie<CanonicalCombiningClass>) {
+    pub fn set_ccc_from_trie(
+        &mut self,
+        ccc_trie: CodePointMapDataBorrowed<CanonicalCombiningClass>,
+    ) {
         debug_assert_eq!(self.0 >> 24, 0, "This method has already been called!");
-        self.0 |= (ccc_trie.get(self.0).0 as u32) << 24;
+        self.0 |= (ccc_trie.get_u32(self.0).0 as u32) << 24;
     }
 }
 
 // This function exists as a borrow check helper.
 #[inline(always)]
-fn assign_ccc_and_sort_combining<'data>(
+fn assign_ccc_and_sort_combining(
     slice: &mut [CharacterAndClass],
     combining_start: usize,
-    ccc: &CodePointTrie<'data, CanonicalCombiningClass>,
+    ccc: CodePointMapDataBorrowed<CanonicalCombiningClass>,
 ) {
     slice.iter_mut().for_each(|cc| cc.set_ccc_from_trie(ccc));
     // Slicing succeeds by construction; we've always ensured that `combining_start`
@@ -336,9 +339,9 @@ fn assign_ccc_and_sort_combining<'data>(
 
 // This function exists as a borrow check helper.
 #[inline(always)]
-fn sort_slice_by_ccc<'data>(
+fn sort_slice_by_ccc(
     slice: &mut [CharacterAndClass],
-    ccc: &CodePointTrie<'data, CanonicalCombiningClass>,
+    ccc: CodePointMapDataBorrowed<CanonicalCombiningClass>,
 ) {
     // We don't look up the canonical combining class for starters
     // of for single combining characters between starters. When
@@ -376,7 +379,7 @@ where
     scalars24: &'data ZeroSlice<U24>,
     supplementary_scalars16: &'data ZeroSlice<u16>,
     supplementary_scalars24: &'data ZeroSlice<U24>,
-    ccc: &'data CodePointTrie<'data, CanonicalCombiningClass>,
+    ccc: CodePointMapDataBorrowed<'data, CanonicalCombiningClass>,
     half_width_voicing_marks_become_non_starters: bool,
     iota_subscript_becomes_starter: bool,
     has_starter_exceptions: bool,
@@ -429,7 +432,7 @@ where
         delegate: I,
         decompositions: &'data DecompositionDataV1,
         tables: &'data DecompositionTablesV1,
-        ccc: &'data CodePointTrie<'data, CanonicalCombiningClass>,
+        ccc: CodePointMapDataBorrowed<'data, CanonicalCombiningClass>,
     ) -> Self {
         Self::new_with_supplements(delegate, decompositions, None, tables, None, ccc, None)
     }
@@ -446,7 +449,7 @@ where
         supplementary_decompositions: Option<&'data DecompositionSupplementV1>,
         tables: &'data DecompositionTablesV1,
         supplementary_tables: Option<&'data DecompositionTablesV1>,
-        ccc: &'data CodePointTrie<'data, CanonicalCombiningClass>,
+        ccc: CodePointMapDataBorrowed<'data, CanonicalCombiningClass>,
         potential_passthrough_and_not_backward_combining: Option<UnicodeSet<'data>>,
     ) -> Self {
         let (half_width_voicing_marks_become_non_starters, iota_subscript_becomes_starter) =
@@ -1260,7 +1263,7 @@ pub struct DecomposingNormalizer {
     supplementary_decompositions: Option<SupplementPayloadHolder>,
     tables: DataPayload<CanonicalDecompositionTablesV1Marker>,
     supplementary_tables: Option<DataPayload<CompatibilityDecompositionTablesV1Marker>>,
-    ccc: DataPayload<CanonicalCombiningClassV1Marker>,
+    ccc: CodePointMapData<CanonicalCombiningClass>,
 }
 
 impl DecomposingNormalizer {
@@ -1289,8 +1292,7 @@ impl DecomposingNormalizer {
             return Err(NormalizerError::FutureExtension);
         }
 
-        let ccc: DataPayload<CanonicalCombiningClassV1Marker> =
-            icu_properties::maps::get_canonical_combining_class(data_provider)?;
+        let ccc = icu_properties::maps::get_canonical_combining_class(data_provider)?;
 
         Ok(DecomposingNormalizer {
             decompositions,
@@ -1342,8 +1344,7 @@ impl DecomposingNormalizer {
             return Err(NormalizerError::FutureExtension);
         }
 
-        let ccc: DataPayload<CanonicalCombiningClassV1Marker> =
-            icu_properties::maps::get_canonical_combining_class(data_provider)?;
+        let ccc = icu_properties::maps::get_canonical_combining_class(data_provider)?;
 
         Ok(DecomposingNormalizer {
             decompositions,
@@ -1417,8 +1418,7 @@ impl DecomposingNormalizer {
             return Err(NormalizerError::FutureExtension);
         }
 
-        let ccc: DataPayload<CanonicalCombiningClassV1Marker> =
-            icu_properties::maps::get_canonical_combining_class(data_provider)?;
+        let ccc = icu_properties::maps::get_canonical_combining_class(data_provider)?;
 
         Ok(DecomposingNormalizer {
             decompositions,
@@ -1440,7 +1440,7 @@ impl DecomposingNormalizer {
             self.supplementary_decompositions.as_ref().map(|s| s.get()),
             self.tables.get(),
             self.supplementary_tables.as_ref().map(|s| s.get()),
-            &self.ccc.get().code_point_trie,
+            self.ccc.as_borrowed(),
             None,
         )
     }
@@ -1596,7 +1596,7 @@ impl ComposingNormalizer {
                     .supplementary_tables
                     .as_ref()
                     .map(|s| s.get()),
-                &self.decomposing_normalizer.ccc.get().code_point_trie,
+                self.decomposing_normalizer.ccc.as_borrowed(),
                 Some(ZeroFrom::zero_from(
                     &self
                         .potential_passthrough_and_not_backward_combining

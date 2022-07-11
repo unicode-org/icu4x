@@ -2,8 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-#![warn(missing_docs)]
-
 //! `icu_datetime` is one of the [`ICU4X`] components.
 //!
 //! This API provides necessary functionality for formatting date and time to user readable textual representation.
@@ -79,6 +77,7 @@
         clippy::exhaustive_enums
     )
 )]
+#![warn(missing_docs)]
 
 extern crate alloc;
 
@@ -86,9 +85,7 @@ mod calendar;
 pub mod date;
 pub mod datetime;
 mod error;
-#[allow(missing_docs)] // TODO(#686) - Add missing docs.
 pub mod fields;
-#[allow(missing_docs)] // TODO(#686) - Add missing docs.
 mod format;
 pub mod mock;
 pub mod options;
@@ -107,7 +104,7 @@ pub mod zoned_datetime;
 pub mod any;
 
 pub use calendar::CldrCalendar;
-pub use datetime::DateTimeFormat;
+pub use datetime::{DateFormat, DateTimeFormat, TimeFormat};
 pub use error::DateTimeFormatError;
 pub use format::datetime::FormattedDateTime;
 pub use format::time_zone::FormattedTimeZone;

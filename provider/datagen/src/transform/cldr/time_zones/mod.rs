@@ -8,7 +8,7 @@ use crate::SourceData;
 use icu_datetime::provider::time_zones::*;
 use icu_provider::datagen::IterableResourceProvider;
 use icu_provider::prelude::*;
-use litemap::LiteMap;
+use std::collections::HashMap;
 
 mod convert;
 
@@ -35,8 +35,8 @@ macro_rules! impl_resource_provider {
 
                     let resource: &cldr_serde::time_zones::time_zone_names::Resource = self
                         .source
-                        .get_cldr_paths()?
-                        .cldr_dates("gregorian")
+                        .cldr()?
+                        .dates("gregorian")
                         .read_and_parse(&langid, "timeZoneNames.json")?;
                     let time_zone_names = resource
                         .main
@@ -49,11 +49,11 @@ macro_rules! impl_resource_provider {
 
                     let resource: &cldr_serde::time_zones::bcp47_tzid::Resource = self
                         .source
-                        .get_cldr_paths()?
-                        .cldr_bcp47()
+                        .cldr()?
+                        .bcp47()
                         .read_and_parse("timezone.json")?;
 
-                    let mut bcp47_tzids = LiteMap::new();
+                    let mut bcp47_tzids = HashMap::new();
                     for (bcp47_tzid, bcp47_tzid_data) in resource.keyword.u.time_zones.values.iter() {
                         if let Some(alias) = &bcp47_tzid_data.alias {
                             for data_value in alias.split(" ") {
@@ -64,11 +64,11 @@ macro_rules! impl_resource_provider {
 
                     let resource: &cldr_serde::time_zones::meta_zones::Resource = self
                         .source
-                        .get_cldr_paths()?
-                        .cldr_core()
+                        .cldr()?
+                        .core()
                         .read_and_parse("supplemental/metaZones.json")?;
 
-                    let mut meta_zone_ids = LiteMap::new();
+                    let mut meta_zone_ids = HashMap::new();
                     for (meta_zone_id, meta_zone_id_data) in
                         resource.supplemental.meta_zones.meta_zone_ids.0.iter()
                     {
@@ -96,8 +96,8 @@ macro_rules! impl_resource_provider {
                 fn supported_options(&self) -> Result<Vec<ResourceOptions>, DataError> {
                     Ok(self
                         .source
-                        .get_cldr_paths()?
-                        .cldr_dates("gregorian")
+                        .cldr()?
+                        .dates("gregorian")
                         .list_langs()?
                         .map(Into::<ResourceOptions>::into)
                         .collect())
@@ -277,10 +277,7 @@ mod tests {
             metazone_period
                 .get()
                 .0
-                .get_copied(
-                    &TimeZoneBcp47Id(tinystr!(8, "gblon")),
-                    &String::from("1971-10-31 02:00")
-                )
+                .get_copied(&TimeZoneBcp47Id(tinystr!(8, "gblon")), &962040)
                 .unwrap()
         );
     }

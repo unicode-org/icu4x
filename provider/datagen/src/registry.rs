@@ -5,12 +5,14 @@
 use icu_provider::{ResourceKey, ResourceMarker};
 
 /// List of all supported keys
-pub fn get_all_keys() -> Vec<ResourceKey> {
+pub fn all_keys() -> Vec<ResourceKey> {
     let mut v = vec![
         icu_calendar::provider::JapaneseErasV1Marker::KEY,
         icu_datetime::provider::calendar::DatePatternsV1Marker::KEY,
+        icu_datetime::provider::calendar::TimePatternsV1Marker::KEY,
         icu_datetime::provider::calendar::DateSkeletonPatternsV1Marker::KEY,
         icu_datetime::provider::calendar::DateSymbolsV1Marker::KEY,
+        icu_datetime::provider::calendar::TimeSymbolsV1Marker::KEY,
         icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker::KEY,
         icu_datetime::provider::time_zones::ExemplarCitiesV1Marker::KEY,
         icu_datetime::provider::time_zones::MetaZoneGenericNamesLongV1Marker::KEY,
@@ -56,7 +58,7 @@ pub fn get_all_keys() -> Vec<ResourceKey> {
     #[cfg(feature = "experimental")]
     v.extend(icu_segmenter::ALL_KEYS);
     #[cfg(feature = "experimental")]
-    v.extend(crate::transform::collator::ALL_KEYS);
+    v.extend(crate::transform::icuexport::collator::ALL_KEYS);
     v
 }
 
@@ -110,9 +112,9 @@ macro_rules! create_datagen_provider {
                 $crate::transform::cldr::TimeZonesProvider,
                 $crate::transform::cldr::WeekDataProvider,
                 $crate::transform::cldr::ListProvider,
-                $crate::transform::uprops::EnumeratedPropertyCodePointTrieProvider,
-                $crate::transform::uprops::ScriptWithExtensionsPropertyProvider,
-                $crate::transform::uprops::BinaryPropertyUnicodeSetDataProvider,
+                $crate::transform::icuexport::uprops::EnumeratedPropertyCodePointTrieProvider,
+                $crate::transform::icuexport::uprops::ScriptWithExtensionsPropertyProvider,
+                $crate::transform::icuexport::uprops::BinaryPropertyUnicodeSetDataProvider,
             ]
         )
     };
@@ -121,7 +123,7 @@ macro_rules! create_datagen_provider {
         icu_provider_adapters::make_forking_provider!(
             icu_provider_adapters::fork::by_key::ForkByKeyProvider,
             [
-                icu_provider::hello_world::HelloWorldProvider::new_with_placeholder_data(),
+                icu_provider::hello_world::HelloWorldProvider,
                 $(<$constructor>::from(__source)),+,
             ]
         )
@@ -178,22 +180,23 @@ macro_rules! create_datagen_provider {
                 $crate::transform::cldr::TimeZonesProvider,
                 $crate::transform::cldr::WeekDataProvider,
                 $crate::transform::cldr::ListProvider,
-                $crate::transform::uprops::CaseMappingDataProvider,
-                $crate::transform::uprops::EnumeratedPropertyCodePointTrieProvider,
-                $crate::transform::uprops::ScriptWithExtensionsPropertyProvider,
-                $crate::transform::uprops::BinaryPropertyUnicodeSetDataProvider,
+                $crate::transform::icuexport::collator::CollationProvider,
+                $crate::transform::icuexport::normalizer::CanonicalDecompositionDataProvider,
+                $crate::transform::icuexport::normalizer::CompatibilityDecompositionSupplementProvider,
+                $crate::transform::icuexport::normalizer::Uts46DecompositionSupplementProvider,
+                $crate::transform::icuexport::normalizer::CanonicalDecompositionTablesProvider,
+                $crate::transform::icuexport::normalizer::CompatibilityDecompositionTablesProvider,
+                $crate::transform::icuexport::normalizer::CanonicalCompositionsProvider,
+                $crate::transform::icuexport::normalizer::CanonicalCompositionPassthroughProvider,
+                $crate::transform::icuexport::normalizer::CompatibilityCompositionPassthroughProvider,
+                $crate::transform::icuexport::normalizer::Uts46CompositionPassthroughProvider,
+                $crate::transform::icuexport::normalizer::NonRecursiveDecompositionSupplementProvider,
+                $crate::transform::icuexport::ucase::CaseMappingDataProvider,
+                $crate::transform::icuexport::uprops::EnumeratedPropertyCodePointTrieProvider,
+                $crate::transform::icuexport::uprops::ScriptWithExtensionsPropertyProvider,
+                $crate::transform::icuexport::uprops::BinaryPropertyUnicodeSetDataProvider,
+                $crate::transform::segmenter::SegmenterDictionaryProvider,
                 $crate::transform::segmenter::SegmenterRuleProvider,
-                $crate::transform::uprops::CanonicalDecompositionDataProvider,
-                $crate::transform::uprops::CompatibilityDecompositionSupplementProvider,
-                $crate::transform::uprops::Uts46DecompositionSupplementProvider,
-                $crate::transform::uprops::CanonicalDecompositionTablesProvider,
-                $crate::transform::uprops::CompatibilityDecompositionTablesProvider,
-                $crate::transform::uprops::CanonicalCompositionsProvider,
-                $crate::transform::uprops::CanonicalCompositionPassthroughProvider,
-                $crate::transform::uprops::CompatibilityCompositionPassthroughProvider,
-                $crate::transform::uprops::Uts46CompositionPassthroughProvider,
-                $crate::transform::uprops::NonRecursiveDecompositionSupplementProvider,
-                $crate::transform::collator::CollationProvider,
             ]
         )
     };
@@ -202,7 +205,7 @@ macro_rules! create_datagen_provider {
         icu_provider_adapters::make_forking_provider!(
             icu_provider_adapters::fork::by_key::ForkByKeyProvider,
             [
-                icu_provider::hello_world::HelloWorldProvider::new_with_placeholder_data(),
+                icu_provider::hello_world::HelloWorldProvider,
                 $(<$constructor>::from(__source)),+,
             ]
         )
@@ -213,7 +216,7 @@ macro_rules! create_datagen_provider {
 fn no_key_collisions() {
     let mut map = std::collections::BTreeMap::new();
     let mut failed = false;
-    for key in get_all_keys() {
+    for key in all_keys() {
         if let Some(colliding_key) = map.insert(key.get_hash(), key) {
             println!(
                 "{:?} and {:?} collide at {:?}",

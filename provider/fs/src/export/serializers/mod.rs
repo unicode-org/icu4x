@@ -22,4 +22,9 @@ pub trait AbstractSerializer {
 
     /// Gets the buffer format currently being serialized.
     fn get_buffer_format(&self) -> BufferFormat;
+
+    /// This can be set to get correct CRLF on Windows.
+    fn is_text_format(&self) -> bool {
+        false
+    }
 }

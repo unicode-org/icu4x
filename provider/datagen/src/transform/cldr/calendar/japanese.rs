@@ -45,13 +45,13 @@ impl ResourceProvider<JapaneseErasV1Marker> for JapaneseErasProvider {
         // actual user code only needs to load the data for the locales it cares about.
         let era_names: &cldr_serde::ca::Resource = self
             .source
-            .get_cldr_paths()?
-            .cldr_dates("japanese")
+            .cldr()?
+            .dates("japanese")
             .read_and_parse(&langid!("en"), "ca-japanese.json")?;
         let era_dates: &cldr_serde::japanese::Resource = self
             .source
-            .get_cldr_paths()?
-            .cldr_core()
+            .cldr()?
+            .core()
             .read_and_parse("supplemental/calendarData.json")?;
 
         let era_name_map = &era_names

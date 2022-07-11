@@ -36,8 +36,8 @@ impl ResourceProvider<LikelySubtagsV1Marker> for LikelySubtagsProvider {
 
         let data: &cldr_serde::likely_subtags::Resource = self
             .source
-            .get_cldr_paths()?
-            .cldr_core()
+            .cldr()?
+            .core()
             .read_and_parse("supplemental/likelySubtags.json")?;
 
         let metadata = DataResponseMetadata::default();
