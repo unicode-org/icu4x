@@ -18,11 +18,11 @@ use core::ops::Deref;
 use core::ops::Range;
 use core::{fmt, ptr, slice};
 
-use super::components::LENGTH_WIDTH;
-use super::components::METADATA_WIDTH;
 use super::components::INDEX_WIDTH;
-use super::components::MAX_LENGTH;
+use super::components::LENGTH_WIDTH;
 use super::components::MAX_INDEX;
+use super::components::MAX_LENGTH;
+use super::components::METADATA_WIDTH;
 
 /// A fully-owned [`VarZeroVec`]. This type has no lifetime but has the same
 /// internal buffer representation of [`VarZeroVec`], making it cheaply convertible to
