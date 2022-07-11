@@ -205,7 +205,7 @@ macro_rules! impl_dyn_provider {
         }
 
     };
-    ($provider:ty, [ $($struct_m:ty),+, ], $dyn_m:path) => {
+    ($provider:ty, [ $($struct_m:ident),+, ], $dyn_m:path) => {
         impl $crate::DynProvider<$dyn_m> for $provider
         {
             fn load_payload(
@@ -216,9 +216,14 @@ macro_rules! impl_dyn_provider {
                 $crate::DataResponse<$dyn_m>,
                 $crate::DataError,
             > {
-                match key {
+                #![allow(non_upper_case_globals)]
+                // Reusing the struct names as identifiers
+                $(
+                    const $struct_m: $crate::ResourceKeyHash = $struct_m::KEY.get_hash();
+                )+
+                match key.get_hash() {
                     $(
-                        <$struct_m as $crate::ResourceMarker>::KEY => {
+                        $struct_m => {
                             let result: $crate::DataResponse<$struct_m> =
                                 $crate::ResourceProvider::load_resource(self, req)?;
                             Ok(DataResponse {

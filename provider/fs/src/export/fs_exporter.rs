@@ -52,7 +52,7 @@ pub struct FilesystemExporter {
     root: PathBuf,
     manifest: Manifest,
     serializer: Box<dyn AbstractSerializer + Sync>,
-    fingerprints: Option<Mutex<Vec<(ResourceKey, ResourceOptions, String)>>>,
+    fingerprints: Option<Mutex<Vec<(&'static str, ResourceOptions, String)>>>,
 }
 
 impl FilesystemExporter {
@@ -133,7 +133,7 @@ impl DataExporter for FilesystemExporter {
                 .expect("present iff file.1 is present")
                 .lock()
                 .expect("poison")
-                .push((key, options.clone(), format!("{:x}", hash.finalize())));
+                .push((key.get_path(), options.clone(), format!("{:x}", hash.finalize())));
         }
         Ok(())
     }
