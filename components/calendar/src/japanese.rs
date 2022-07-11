@@ -55,6 +55,7 @@ use tinystr::{tinystr, TinyStr16};
 #[derive(Clone, Debug, Default)]
 pub struct Japanese {
     eras: DataPayload<provider::JapaneseErasV1Marker>,
+    japanext: bool,
 }
 
 #[derive(Copy, Clone, Debug, Hash, Eq, PartialEq)]
@@ -68,16 +69,27 @@ pub struct JapaneseDateInner {
 
 impl Japanese {
     /// Creates a new [`Japanese`] from locale data and an options bag.
+    ///
+    /// Setting `historical_eras` will load historical (pre-meiji) era data
     pub fn try_new<D: ResourceProvider<provider::JapaneseErasV1Marker> + ?Sized>(
         data_provider: &D,
+        historical_eras: bool,
     ) -> Result<Self, DataError> {
         let mut request = DataRequest::default();
         // TODO: can use macro after #1800
-        request.options = Locale::from_str("und-u-ca-japanese")
+        let cal = if historical_eras {
+            "und-u-ca-japanext"
+        } else {
+            "und-u-ca-japanese"
+        };
+        request.options = Locale::from_str(cal)
             .expect("Locale string is known valid")
             .into();
         let eras = data_provider.load_resource(&request)?.take_payload()?;
-        Ok(Self { eras })
+        Ok(Self {
+            eras,
+            japanext: historical_eras,
+        })
     }
 }
 
@@ -170,7 +182,11 @@ impl Calendar for Japanese {
     }
 
     fn any_calendar_kind(&self) -> Option<AnyCalendarKind> {
-        Some(AnyCalendarKind::Japanese)
+        if self.japanext {
+            Some(AnyCalendarKind::Japanext)
+        } else {
+            Some(AnyCalendarKind::Japanese)
+        }
     }
 }
 
@@ -223,9 +239,9 @@ impl Japanese {
         // array and also hardcoded. The hardcoded version is not used if data indicates the
         // presence of newer eras.
         if date >= MEIJI_START {
-            if era_data.dates_to_eras.len() == 5 {
+            if era_data.dates_to_eras.last().map(|x| x.1) == Some(tinystr!(16, "reiwa")) {
                 // Fast path in case eras have not changed since this code was written
-                if date >= REIWA_START {
+                return if date >= REIWA_START {
                     (REIWA_START, tinystr!(16, "reiwa"))
                 } else if date >= HEISEI_START {
                     (HEISEI_START, tinystr!(16, "heisei"))
@@ -235,25 +251,15 @@ impl Japanese {
                     (TAISHO_START, tinystr!(16, "taisho"))
                 } else {
                     (MEIJI_START, tinystr!(16, "meiji"))
-                }
-            } else {
-                era_data
-                    .dates_to_eras
-                    .iter()
-                    .rev()
-                    .find(|&(k, _)| k < date)
-                    .unwrap_or(FALLBACK_ERA)
+                };
             }
-        } else {
-            let historical = &era_data.dates_to_historical_eras;
-            match historical.binary_search_by(|(d, _)| d.cmp(&date)) {
-                Ok(index) => historical.get(index),
-                Err(index) if index == 0 => historical.get(index),
-                Err(index) => historical
-                    .get(index - 1)
-                    .or_else(|| historical.iter().next_back()),
-            }
-            .unwrap_or(FALLBACK_ERA)
         }
+        let data = &era_data.dates_to_eras;
+        match data.binary_search_by(|(d, _)| d.cmp(&date)) {
+            Ok(index) => data.get(index),
+            Err(index) if index == 0 => data.get(index),
+            Err(index) => data.get(index - 1).or_else(|| data.iter().next_back()),
+        }
+        .unwrap_or(FALLBACK_ERA)
     }
 }
