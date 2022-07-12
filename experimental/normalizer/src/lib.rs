@@ -1677,6 +1677,7 @@ impl CanonicalComposition {
 }
 
 /// The outcome of non-recursive canonical decomposition of a character.
+#[derive(Debug, PartialEq, Eq)]
 pub enum Decomposed {
     /// The character is its own canonical decomposition.
     Default,
