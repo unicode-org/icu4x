@@ -55,31 +55,22 @@ impl IterableResourceProvider<AliasesV1Marker> for AliasesProvider {
     }
 }
 
-// The size of the union of all field value sets.
-fn union_size(langid: &LanguageIdentifier) -> usize {
-    let mut size = langid.variants.len();
+
+// Sort rules following algorithm in Preprocessing, step 5 of Appendix C:
+//   - the size of the union of all field value sets, with largest size first
+//   - alphabetically by each field
+fn appendix_c_cmp(langid: &LanguageIdentifier) -> impl Ord {
+    let mut union_size = langid.variants.len() as i8;
     if !langid.language.is_empty() {
-        size += 1;
+        union_size += 1;
     }
     if langid.script.is_some() {
-        size += 1;
+        union_size += 1;
     }
     if langid.region.is_some() {
-        size += 1;
+        union_size += 1;
     }
-    size
-}
-
-// Sort rules by size of union of field sets and alphabeticaly
-// following rules in Preprocessing, step 5 of Appendix C.
-fn rules_cmp(a: &LanguageIdentifier, b: &LanguageIdentifier) -> std::cmp::Ordering {
-    let size_a = union_size(a);
-    let size_b = union_size(b);
-    if size_a == size_b {
-        a.cmp(b)
-    } else {
-        size_b.cmp(&size_a)
-    }
+    (-union_size, langid.language, langid.script, langid.region, langid.variants.clone())
 }
 
 impl From<&cldr_serde::aliases::Resource> for AliasesV1<'_> {
@@ -228,11 +219,9 @@ impl From<&cldr_serde::aliases::Resource> for AliasesV1<'_> {
             }
         }
 
-        // 5. Order the set of rules by
-        //      1. the size of the union of all field value sets, with largest size first
-        //      2. and then alphabetically by field.
-        language_variants.sort_unstable_by(|a, b| rules_cmp(&a.0, &b.0));
-        language.sort_unstable_by(|a, b| rules_cmp(&a.0, &b.0));
+        // 5. Sort the non-special-cased rules
+        language_variants.sort_unstable_by_key(|(langid, _)| appendix_c_cmp(langid));
+        language.sort_unstable_by_key(|(langid, _)| appendix_c_cmp(langid));
 
         let language_variants = zerovec::VarZeroVec::Owned(
             zerovec::vecs::VarZeroVecOwned::try_from_elements(
@@ -275,24 +264,16 @@ impl From<&cldr_serde::aliases::Resource> for AliasesV1<'_> {
 }
 
 #[test]
-fn test_rules_cmp() {
-    let mut rules: Vec<LanguageIdentifier> = vec![
-        icu_locid::langid!("en-GB"),
-        icu_locid::langid!("ca"),
-        "und-hepburn-heploc".parse().unwrap(),
-        icu_locid::langid!("fr-CA"),
-    ];
+fn test_appendix_c_cmp() {
+    let en = icu_locid::langid!("en-GB");
+    let ca = icu_locid::langid!("ca");
+    let und = "und-hepburn-heploc".parse::<LanguageIdentifier>().unwrap();
+    let fr = icu_locid::langid!("fr-CA");
 
-    assert_eq!(union_size(&rules[0]), 2);
-    assert_eq!(union_size(&rules[1]), 1);
-    assert_eq!(union_size(&rules[2]), 2);
-    assert_eq!(union_size(&rules[3]), 2);
+    let mut rules = vec![&en, &ca, &und, &fr];
+    rules.sort_unstable_by_key(|&l| appendix_c_cmp(l));
 
-    rules.sort_unstable_by(rules_cmp);
-    assert_eq!(rules[0].to_string(), "en-GB");
-    assert_eq!(rules[1].to_string(), "fr-CA");
-    assert_eq!(rules[2].to_string(), "und-hepburn-heploc");
-    assert_eq!(rules[3].to_string(), "ca");
+    assert_eq!(rules, &[&en, &fr, &und, &ca]);
 }
 
 #[test]
