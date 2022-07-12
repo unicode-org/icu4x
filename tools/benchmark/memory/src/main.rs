@@ -228,7 +228,7 @@ fn main() {
             .arg("run")
             // +nightly is required for unstable options. This option is used by the CI to provide
             // a pinned version number for nightly.
-            .arg(toolchain)
+            .arg(&toolchain)
             .arg("cargo")
             .arg("run")
             .arg("--example")
