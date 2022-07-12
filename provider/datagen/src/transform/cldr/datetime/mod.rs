@@ -4,12 +4,15 @@
 
 use crate::transform::cldr::cldr_serde;
 use crate::SourceData;
+use icu_calendar::provider::EraStartDate;
 use icu_datetime::provider::calendar::*;
 use icu_locid::{extensions_unicode_key as key, extensions_unicode_value as value, Locale};
 use icu_provider::datagen::IterableResourceProvider;
 use icu_provider::prelude::*;
 use std::collections::HashMap;
-
+use std::collections::HashSet;
+use std::str::FromStr;
+use std::sync::RwLock;
 mod patterns;
 mod skeletons;
 mod symbols;
@@ -21,6 +24,7 @@ pub struct CommonDateProvider {
     source: SourceData,
     // BCP-47 value -> CLDR identifier
     supported_cals: HashMap<icu_locid::extensions::unicode::Value, &'static str>,
+    modern_japanese_eras: RwLock<Option<HashSet<String>>>,
 }
 
 impl From<&SourceData> for CommonDateProvider {
@@ -31,12 +35,14 @@ impl From<&SourceData> for CommonDateProvider {
                 (value!("gregory"), "gregorian"),
                 (value!("buddhist"), "buddhist"),
                 (value!("japanese"), "japanese"),
+                (value!("japanext"), "japanese"),
                 (value!("coptic"), "coptic"),
                 (value!("indian"), "indian"),
                 (value!("ethiopic"), "ethiopic"),
             ]
             .into_iter()
             .collect(),
+            modern_japanese_eras: RwLock::new(None),
         }
     }
 }
@@ -101,6 +107,36 @@ macro_rules! impl_resource_provider {
                         data.eras.names.insert("2".to_string(), mundi_name.clone());
                         data.eras.abbr.insert("2".to_string(), mundi_abbr.clone());
                         data.eras.narrow.insert("2".to_string(), mundi_narrow.clone());
+                    }
+
+                    if calendar == value!("japanese") {
+                        if self.modern_japanese_eras.read().expect("poison").is_none() {
+                                let era_dates: &cldr_serde::japanese::Resource = self
+                                    .source
+                                    .cldr()?
+                                    .core()
+                                    .read_and_parse("supplemental/calendarData.json")?;
+                            let mut set = HashSet::new();
+                            let era_dates_map = &era_dates.supplemental.calendar_data.japanese.eras;
+                            for (era_index, date) in era_dates_map.iter() {
+                                 let start_date = EraStartDate::from_str(&date.start).map_err(|_| {
+                                     DataError::custom("calendarData.json contains unparseable data for a japanese era")
+                                         .with_display_context(&format!("era index {}", era_index))
+                                 })?;
+
+                                if start_date.year >= 1868 {
+                                    set.insert(era_index.into());
+                                }
+                            }
+                            *self.modern_japanese_eras.write().expect("poison") = Some(set);
+                        }
+                        let set = self.modern_japanese_eras.read().expect("poison");
+                        let set = set.as_ref().unwrap();
+
+
+                        data.eras.names.retain(|e, _| set.contains(e));
+                        data.eras.abbr.retain(|e, _| set.contains(e));
+                        data.eras.narrow.retain(|e, _| set.contains(e));
                     }
 
                     let metadata = DataResponseMetadata::default();
