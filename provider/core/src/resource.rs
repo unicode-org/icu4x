@@ -121,7 +121,7 @@ pub struct ResourceKey {
 impl PartialEq for ResourceKey {
     #[inline]
     fn eq(&self, other: &Self) -> bool {
-        self.hash == other.hash
+        self.hash == other.hash && self.get_path() == other.get_path()
     }
 }
 
