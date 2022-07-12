@@ -55,7 +55,6 @@ impl IterableResourceProvider<AliasesV1Marker> for AliasesProvider {
     }
 }
 
-
 // Sort rules following algorithm in Preprocessing, step 5 of Appendix C:
 //   - the size of the union of all field value sets, with largest size first
 //   - alphabetically by each field
@@ -70,7 +69,13 @@ fn appendix_c_cmp(langid: &LanguageIdentifier) -> impl Ord {
     if langid.region.is_some() {
         union_size += 1;
     }
-    (-union_size, langid.language, langid.script, langid.region, langid.variants.clone())
+    (
+        -union_size,
+        langid.language,
+        langid.script,
+        langid.region,
+        langid.variants.clone(),
+    )
 }
 
 impl From<&cldr_serde::aliases::Resource> for AliasesV1<'_> {
