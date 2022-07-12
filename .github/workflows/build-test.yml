@@ -195,6 +195,7 @@ jobs:
       run: |
         rustup install nightly-2022-04-05
         rustup component add --toolchain nightly-2022-04-05 rust-src
+        rustup component add --toolchain stable rust-src
         rustup target add thumbv7m-none-eabi --toolchain nightly-2022-04-05
         rustup target add thumbv8m.main-none-eabihf --toolchain nightly-2022-04-05
         rustup target add x86_64-unknown-linux-gnu --toolchain nightly-2022-04-05
