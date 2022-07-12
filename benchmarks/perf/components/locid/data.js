@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1657659096445,
+  "lastUpdate": 1657662408885,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -65459,6 +65459,150 @@ window.BENCHMARK_DATA = {
             "name": "subtags/variant/parse",
             "value": 187,
             "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "83ac41f4b7aaeb2abab10440ff10f71737c0600f",
+          "message": "Custom eq for ResourceKey (#2163)",
+          "timestamp": "2022-07-12T14:31:30-07:00",
+          "tree_id": "02b478c7fbac577c3a122e6e614f774fb6ea422d",
+          "url": "https://github.com/unicode-org/icu4x/commit/83ac41f4b7aaeb2abab10440ff10f71737c0600f"
+        },
+        "date": 1657662373624,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 3310,
+            "range": "± 268",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/construct/langid",
+            "value": 756,
+            "range": "± 71",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/to_string/langid",
+            "value": 993,
+            "range": "± 102",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/to_string/langid/writeable",
+            "value": 456,
+            "range": "± 36",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/compare/struct/langid",
+            "value": 75,
+            "range": "± 4",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/compare/str/langid",
+            "value": 718,
+            "range": "± 93",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/compare/strict_cmp/langid",
+            "value": 420,
+            "range": "± 36",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/canonicalize/langid",
+            "value": 2298,
+            "range": "± 184",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 4077,
+            "range": "± 512",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/construct/locale",
+            "value": 2026,
+            "range": "± 272",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/to_string/locale",
+            "value": 1230,
+            "range": "± 238",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/to_string/locale/writeable",
+            "value": 841,
+            "range": "± 86",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/compare/struct/locale",
+            "value": 236,
+            "range": "± 29",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/compare/str/locale",
+            "value": 1807,
+            "range": "± 145",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/compare/strict_cmp/locale",
+            "value": 625,
+            "range": "± 51",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/canonicalize/locale",
+            "value": 4024,
+            "range": "± 326",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "subtags/language/parse",
+            "value": 175,
+            "range": "± 10",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "subtags/script/parse",
+            "value": 119,
+            "range": "± 8",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "subtags/region/parse",
+            "value": 185,
+            "range": "± 15",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "subtags/variant/parse",
+            "value": 153,
+            "range": "± 7",
             "unit": "ns/iter"
           }
         ]
