@@ -91,12 +91,12 @@ impl Calendar for Buddhist {
     }
 
     /// The calendar-specific year represented by `date`
-    fn year(&self, date: &Self::DateInner) -> types::Year {
+    fn year(&self, date: &Self::DateInner) -> types::FormattableYear {
         iso_year_as_buddhist(date.0.year)
     }
 
     /// The calendar-specific month represented by `date`
-    fn month(&self, date: &Self::DateInner) -> types::Month {
+    fn month(&self, date: &Self::DateInner) -> types::FormattableMonth {
         Iso.month(date)
     }
 
@@ -186,11 +186,11 @@ impl DateTime<Buddhist> {
     }
 }
 
-fn iso_year_as_buddhist(year: i32) -> types::Year {
+fn iso_year_as_buddhist(year: i32) -> types::FormattableYear {
     let buddhist_year = year + BUDDHIST_ERA_OFFSET;
-    types::Year {
+    types::FormattableYear {
         era: types::Era(tinystr!(16, "be")),
         number: buddhist_year,
-        related_iso: year,
+        related_iso: None,
     }
 }

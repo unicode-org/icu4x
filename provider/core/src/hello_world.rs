@@ -16,8 +16,6 @@ use crate::zerofrom::{self, *};
 use alloc::borrow::Cow;
 use alloc::string::String;
 use core::fmt::Debug;
-use icu_locid::locale;
-use litemap::LiteMap;
 
 /// A struct containing "Hello World" in the requested language.
 #[derive(Debug, PartialEq, Clone, Yokeable, ZeroFrom)]
@@ -61,9 +59,7 @@ impl ResourceMarker for HelloWorldV1Marker {
 /// use icu_provider::hello_world::*;
 /// use icu_provider::prelude::*;
 ///
-/// let provider = HelloWorldProvider::new_with_placeholder_data();
-///
-/// let german_hello_world: DataPayload<HelloWorldV1Marker> = provider
+/// let german_hello_world: DataPayload<HelloWorldV1Marker> = HelloWorldProvider
 ///     .load_resource(&DataRequest {
 ///         options: locale!("de").into(),
 ///         metadata: Default::default(),
@@ -75,41 +71,29 @@ impl ResourceMarker for HelloWorldV1Marker {
 /// assert_eq!("Hallo Welt", german_hello_world.get().message);
 /// ```
 #[derive(Debug, PartialEq, Default)]
-pub struct HelloWorldProvider {
-    map: LiteMap<ResourceOptions, Cow<'static, str>>,
-}
+pub struct HelloWorldProvider;
 
 impl HelloWorldProvider {
-    pub const DATA: &'static [(icu_locid::Locale, &'static str)] = &[
-        (locale!("bn"), "ওহে বিশ্ব"),
-        (locale!("cs"), "Ahoj světe"),
-        (locale!("de"), "Hallo Welt"),
-        (locale!("el"), "Καλημέρα κόσμε"),
-        (locale!("en"), "Hello World"),
-        (locale!("eo"), "Saluton, Mondo"),
-        (locale!("fa"), "سلام دنیا‎"),
-        (locale!("fi"), "hei maailma"),
-        (locale!("is"), "Halló, heimur"),
-        (locale!("ja"), "こんにちは世界"),
-        (locale!("la"), "Ave, munde"),
-        (locale!("pt"), "Olá, mundo"),
-        (locale!("ro"), "Salut, lume"),
-        (locale!("ru"), "Привет, мир"),
-        (locale!("vi"), "Xin chào thế giới"),
-        (locale!("zh"), "你好世界"),
+    // Data from https://en.wiktionary.org/wiki/Hello_World#Translations
+    // Keep this sorted!
+    const DATA: &'static [(&'static str, &'static str)] = &[
+        ("bn", "ওহে বিশ্ব"),
+        ("cs", "Ahoj světe"),
+        ("de", "Hallo Welt"),
+        ("el", "Καλημέρα κόσμε"),
+        ("en", "Hello World"),
+        ("eo", "Saluton, Mondo"),
+        ("fa", "سلام دنیا‎"),
+        ("fi", "hei maailma"),
+        ("is", "Halló, heimur"),
+        ("ja", "こんにちは世界"),
+        ("la", "Ave, munde"),
+        ("pt", "Olá, mundo"),
+        ("ro", "Salut, lume"),
+        ("ru", "Привет, мир"),
+        ("vi", "Xin chào thế giới"),
+        ("zh", "你好世界"),
     ];
-
-    /// Creates a [`HelloWorldProvider`] pre-populated with hardcoded data from Wiktionary.
-    pub fn new_with_placeholder_data() -> HelloWorldProvider {
-        // Data from https://en.wiktionary.org/wiki/Hello_World#Translations
-        HelloWorldProvider {
-            map: Self::DATA
-                .iter()
-                .cloned()
-                .map(|(loc, value)| (loc.into(), value.into()))
-                .collect(),
-        }
-    }
 
     /// Converts this provider into one that serves JSON blobs of the same data.
     pub fn into_json_provider(self) -> HelloWorldJsonProvider {
@@ -122,11 +106,14 @@ impl ResourceProvider<HelloWorldV1Marker> for HelloWorldProvider {
         &self,
         req: &DataRequest,
     ) -> Result<DataResponse<HelloWorldV1Marker>, DataError> {
-        let data = self
-            .map
-            .get(&req.options)
-            .map(|s| HelloWorldV1 { message: s.clone() })
-            .ok_or_else(|| DataErrorKind::MissingLocale.with_key(HelloWorldV1Marker::KEY))?;
+        #[allow(clippy::indexing_slicing)] // binary_search
+        let data = Self::DATA
+            .binary_search_by(|(k, _)| req.options.strict_cmp(k.as_bytes()).reverse())
+            .map(|i| Self::DATA[i].1)
+            .map(|s| HelloWorldV1 {
+                message: Cow::Borrowed(s),
+            })
+            .map_err(|_| DataErrorKind::MissingLocale.with_req(HelloWorldV1Marker::KEY, req))?;
         let metadata = DataResponseMetadata {
             data_langid: Some(req.options.get_langid()),
             ..Default::default()
@@ -170,10 +157,10 @@ impl BufferProvider for HelloWorldJsonProvider {
 #[cfg(feature = "datagen")]
 impl IterableResourceProvider<HelloWorldV1Marker> for HelloWorldProvider {
     fn supported_options(&self) -> Result<Vec<ResourceOptions>, DataError> {
-        Ok(self
-            .map
-            .iter_keys()
-            .cloned()
+        #[allow(clippy::unwrap_used)] // datagen
+        Ok(Self::DATA
+            .iter()
+            .map(|(s, _)| s.parse::<icu_locid::LanguageIdentifier>().unwrap())
             .map(ResourceOptions::from)
             .collect())
     }
@@ -181,9 +168,8 @@ impl IterableResourceProvider<HelloWorldV1Marker> for HelloWorldProvider {
 
 #[test]
 fn test_iter() {
-    let provider = HelloWorldProvider::new_with_placeholder_data();
-    let mut supported_langids: Vec<ResourceOptions> = provider.supported_options().unwrap();
-    supported_langids.sort();
+    use icu_locid::locale;
+    let supported_langids: Vec<ResourceOptions> = HelloWorldProvider.supported_options().unwrap();
 
     assert_eq!(
         supported_langids,

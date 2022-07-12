@@ -40,7 +40,7 @@ fn locale_to_file_name(opts: &ResourceOptions) -> String {
         opts.get_langid()
             .write_to_string()
             .replace('-', "_")
-            .to_ascii_lowercase()
+            .replace("posix", "POSIX")
     };
     if let Some(extension) = &opts.get_unicode_ext(&key!("co")) {
         s.push('_');
@@ -66,7 +66,6 @@ fn locale_to_file_name(opts: &ResourceOptions) -> String {
             s.push_str("_standard");
         }
     }
-    s.make_ascii_lowercase();
     s
 }
 

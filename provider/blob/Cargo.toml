@@ -36,7 +36,6 @@ zerovec = { version = "0.7", path = "../../utils/zerovec", features = ["serde", 
 
 # For the export feature
 log = { version = "0.4", optional = true }
-litemap = { version = "0.4", path = "../../utils/litemap/", optional = true }
 
 [dev-dependencies]
 icu_locid = { version = "0.6", path = "../../components/locid", features = ["serde"] }
@@ -50,7 +49,6 @@ export = [
     "log",
     "postcard/alloc",
     "std", 
-    "litemap",
     "icu_provider/datagen",
     "zerovec/serde",
 ]

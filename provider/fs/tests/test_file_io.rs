@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use icu_locid::langid;
+use icu_provider::datagen::IterableResourceProvider;
 use icu_provider::hello_world::{HelloWorldProvider, HelloWorldV1, HelloWorldV1Marker};
 use icu_provider::prelude::*;
 use icu_provider_fs::FsDataProvider;
@@ -17,18 +18,24 @@ const PATHS: &[&str] = &[JSON_PATH, BINCODE_PATH, POSTCARD_PATH];
 fn test_provider() {
     for path in PATHS {
         let provider = FsDataProvider::try_new(path).unwrap();
-        for (locale, expected) in HelloWorldProvider::DATA.iter() {
+        for options in HelloWorldProvider.supported_options().unwrap() {
             let req = DataRequest {
-                options: locale.clone().into(),
+                options,
                 metadata: Default::default(),
             };
+
+            let expected = HelloWorldProvider
+                .load_resource(&req)
+                .unwrap()
+                .take_payload()
+                .unwrap();
 
             let actual: DataPayload<HelloWorldV1Marker> = provider
                 .load_resource(&req)
                 .unwrap()
                 .take_payload()
                 .unwrap();
-            assert_eq!(&actual.get().message, expected);
+            assert_eq!(actual.get(), expected.get());
 
             let actual: DataPayload<HelloWorldV1Marker> = (&provider as &dyn BufferProvider)
                 .as_deserializing()
@@ -36,7 +43,7 @@ fn test_provider() {
                 .unwrap()
                 .take_payload()
                 .unwrap();
-            assert_eq!(&actual.get().message, expected);
+            assert_eq!(actual.get(), expected.get());
         }
     }
 }

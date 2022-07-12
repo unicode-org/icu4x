@@ -2,8 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use litemap::LiteMap;
 use serde::Deserialize;
+use std::collections::HashMap;
 
 // cldr-core/supplemental/calendarData.json
 #[derive(PartialEq, Debug, Deserialize)]
@@ -24,7 +24,7 @@ pub struct CalendarDatas {
 
 #[derive(PartialEq, Debug, Deserialize)]
 pub struct CalendarData {
-    pub eras: LiteMap<String, EraStart>,
+    pub eras: HashMap<String, EraStart>,
 }
 
 #[derive(PartialEq, Debug, Deserialize)]

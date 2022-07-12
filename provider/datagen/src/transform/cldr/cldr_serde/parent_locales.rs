@@ -8,13 +8,13 @@
 //! <https://github.com/unicode-org/cldr-json/blob/main/cldr-json/cldr-core/supplemental/parentLocales.json>
 
 use icu_locid::LanguageIdentifier;
-use litemap::LiteMap;
 use serde::Deserialize;
+use std::collections::HashMap;
 
 #[derive(PartialEq, Debug, Deserialize)]
 pub struct ParentLocales {
     #[serde(rename = "parentLocale")]
-    pub parent_locale: LiteMap<LanguageIdentifier, LanguageIdentifier>,
+    pub parent_locale: HashMap<LanguageIdentifier, LanguageIdentifier>,
 }
 
 #[derive(PartialEq, Debug, Deserialize)]
