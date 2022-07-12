@@ -73,6 +73,8 @@ dependencies = [ "diplomat-gen-c" ]
 install_crate = { rustup_component_name = "rust-src" }
 script_runner = "@duckscript"
 script = '''
+unset RUSTC
+unset RUSTDOC
 exit_on_error true
 cd ffi/diplomat/c/examples/fixeddecimal_tiny
 exec --fail-on-error make
