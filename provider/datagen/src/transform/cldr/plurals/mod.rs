@@ -25,24 +25,24 @@ impl From<&SourceData> for PluralsProvider {
 
 impl PluralsProvider {
     fn get_rules_for(&self, key: ResourceKey) -> Result<&cldr_serde::plurals::Rules, DataError> {
-        match key {
-            CardinalV1Marker::KEY => self
-                .source
+        if key == CardinalV1Marker::KEY {
+            self.source
                 .cldr()?
                 .core()
                 .read_and_parse::<cldr_serde::plurals::Resource>("supplemental/plurals.json")?
                 .supplemental
                 .plurals_type_cardinal
-                .as_ref(),
-            OrdinalV1Marker::KEY => self
-                .source
+                .as_ref()
+        } else if key == OrdinalV1Marker::KEY {
+            self.source
                 .cldr()?
                 .core()
                 .read_and_parse::<cldr_serde::plurals::Resource>("supplemental/ordinals.json")?
                 .supplemental
                 .plurals_type_ordinal
-                .as_ref(),
-            _ => None,
+                .as_ref()
+        } else {
+            None
         }
         .ok_or(DataError::custom("Unknown key for PluralRulesV1"))
     }
