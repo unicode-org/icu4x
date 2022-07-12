@@ -5,7 +5,6 @@ pub static DATA: &[(&str, DataStruct)] = &[
     ("und-u-ca-japanext", UND_U_CA_JAPANEXT),
 ];
 static UND_U_CA_JAPANESE: DataStruct = &::icu_calendar::provider::JapaneseErasV1 {
-    dates_to_historical_eras: unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(&[]) },
     dates_to_eras: unsafe {
         ::zerovec::ZeroVec::from_bytes_unchecked(&[
             76u8, 7u8, 0u8, 0u8, 9u8, 8u8, 109u8, 101u8, 105u8, 106u8, 105u8, 0u8, 0u8, 0u8, 0u8,
@@ -20,7 +19,6 @@ static UND_U_CA_JAPANESE: DataStruct = &::icu_calendar::provider::JapaneseErasV1
     },
 };
 static UND_U_CA_JAPANEXT: DataStruct = &::icu_calendar::provider::JapaneseErasV1 {
-    dates_to_historical_eras: unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(&[]) },
     dates_to_eras: unsafe {
         ::zerovec::ZeroVec::from_bytes_unchecked(&[
             133u8, 2u8, 0u8, 0u8, 6u8, 19u8, 116u8, 97u8, 105u8, 107u8, 97u8, 45u8, 54u8, 52u8,
