@@ -39,8 +39,12 @@ impl Default for SourceData {
                     .expect("valid dir"),
             )),
             segmenter_lstm_paths: Arc::new(JsonCache::new(
-                AbstractFs::new(PathBuf::from(std::env!("CARGO_MANIFEST_DIR")).join("data"))
-                    .expect("valid dir"),
+                AbstractFs::new(
+                    PathBuf::from(std::env!("CARGO_MANIFEST_DIR"))
+                        .join("data")
+                        .join("lstm"),
+                )
+                .expect("valid dir"),
             )),
             trie_type: IcuTrieType::Small,
             collation_han_database: CollationHanDatabase::Implicit,
@@ -324,9 +328,7 @@ impl JsonCache {
             Some(x) => x,
             None => {
                 let file = self.root.read_to_buf(path)?;
-                let file: S = serde_json::from_slice(&file).map_err(|e| {
-                    crate::error::data_error_from_json(e).with_display_context(&path)
-                })?;
+                let file: S = serde_json::from_slice(&file)?;
                 self.cache.insert(path.to_string(), Box::new(file))
             }
         }
