@@ -50,7 +50,7 @@ impl<T> ExportableProvider for T where T: IterableDynProvider<ExportMarker> + Sy
 
 #[macro_export]
 macro_rules! make_exportable_provider {
-    ($provider:ty, [ $($struct_m:ty),+, ]) => {
+    ($provider:ty, [ $($struct_m:ident),+, ]) => {
         $crate::impl_dyn_provider!(
             $provider,
             [ $($struct_m),+, ],
@@ -59,9 +59,14 @@ macro_rules! make_exportable_provider {
 
         impl $crate::datagen::IterableDynProvider<$crate::datagen::ExportMarker> for $provider {
             fn supported_options_for_key(&self, key: $crate::ResourceKey) -> Result<Vec<$crate::ResourceOptions>, $crate::DataError> {
-                match key {
+                #![allow(non_upper_case_globals)]
+                // Reusing the struct names as identifiers
+                $(
+                    const $struct_m: ResourceKeyHash = <$struct_m as $crate::ResourceMarker>::KEY.get_hash();
+                )+
+                match key.get_hash() {
                     $(
-                        <$struct_m as $crate::ResourceMarker>::KEY => {
+                        $struct_m => {
                             $crate::datagen::IterableResourceProvider::<$struct_m>::supported_options(self)
                         }
                     )+,
@@ -72,15 +77,19 @@ macro_rules! make_exportable_provider {
 
         impl $crate::datagen::DataConverter<$crate::buf::BufferMarker, $crate::datagen::HeapStatsMarker> for $provider {
             fn convert(&self, key: $crate::ResourceKey, from: DataPayload<$crate::buf::BufferMarker>) -> Result<$crate::DataPayload<$crate::datagen::HeapStatsMarker>, $crate::datagen::ReturnedPayloadError<$crate::buf::BufferMarker>> {
-                use $crate::datagen::ReturnedPayloadError;
-                match key {
+                #![allow(non_upper_case_globals)]
+                // Reusing the struct names as identifiers
+                $(
+                    const $struct_m: ResourceKeyHash = <$struct_m as $crate::ResourceMarker>::KEY.get_hash();
+                )+
+                match key.get_hash() {
                     $(
-                        <$struct_m as $crate::ResourceMarker>::KEY => {
+                        $struct_m => {
                             let heap_stats = from.attempt_zero_copy_heap_size::<$struct_m>();
                             return Ok($crate::DataPayload::from_owned(heap_stats));
                         }
                     )+,
-                    _ => Err(ReturnedPayloadError(from, $crate::DataErrorKind::MissingResourceKey.with_key(key)))
+                    _ => Err($crate::datagen::ReturnedPayloadError(from, $crate::DataErrorKind::MissingResourceKey.with_key(key)))
                 }
             }
         }

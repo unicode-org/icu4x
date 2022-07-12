@@ -329,14 +329,16 @@ fn main() -> eyre::Result<()> {
         vec![out],
     )
     .map_err(|e| -> eyre::ErrReport {
-        match e {
-            icu_datagen::MISSING_CLDR_ERROR => eyre::eyre!(
+        if icu_datagen::is_missing_cldr_error(e) {
+            eyre::eyre!(
                 "Either --cldr-tag or --cldr-root or --input-from-testdata must be specified"
-            ),
-            icu_datagen::MISSING_ICUEXPORT_ERROR => eyre::eyre!(
+            )
+        } else if icu_datagen::is_missing_icuexport_error(e) {
+            eyre::eyre!(
                 "Either --icuexport-tag or --icuexport-root or --input-from-testdata must be specified"
-            ),
-            e => e.into(),
+            )
+        } else {
+            e.into()
         }
     })
 }
