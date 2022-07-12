@@ -43,11 +43,14 @@ impl<M: ResourceMarker<Yokeable = ListFormatterPatternsV1<'static>>> ResourcePro
             .expect("CLDR file contains the expected language")
             .list_patterns;
 
-        let (wide, short, narrow) = match M::KEY {
-            AndListV1Marker::KEY => (&data.standard, &data.standard_short, &data.standard_narrow),
-            OrListV1Marker::KEY => (&data.or, &data.or_short, &data.or_narrow),
-            UnitListV1Marker::KEY => (&data.unit, &data.unit_short, &data.unit_narrow),
-            _ => return Err(DataError::custom("Unknown key for ListFormatterPatternsV1")),
+        let (wide, short, narrow) = if M::KEY == AndListV1Marker::KEY {
+            (&data.standard, &data.standard_short, &data.standard_narrow)
+        } else if M::KEY == OrListV1Marker::KEY {
+            (&data.or, &data.or_short, &data.or_narrow)
+        } else if M::KEY == UnitListV1Marker::KEY {
+            (&data.unit, &data.unit_short, &data.unit_narrow)
+        } else {
+            return Err(DataError::custom("Unknown key for ListFormatterPatternsV1"));
         };
 
         let mut patterns = ListFormatterPatternsV1::try_new([
@@ -66,20 +69,21 @@ impl<M: ResourceMarker<Yokeable = ListFormatterPatternsV1<'static>>> ResourcePro
         ])?;
 
         if langid.language == language!("es") {
-            match M::KEY {
+            if M::KEY == AndListV1Marker::KEY || M::KEY == UnitListV1Marker::KEY {
                 // Replace " y " with " e " before /i/ sounds.
                 // https://unicode.org/reports/tr35/tr35-general.html#:~:text=important.%20For%20example%3A-,Spanish,AND,-Use%20%E2%80%98e%E2%80%99%20instead
-                AndListV1Marker::KEY | UnitListV1Marker::KEY => patterns
+                patterns
                     .make_conditional(
                         "{0} y {1}",
                         // Starts with i or (hi but not hia/hie)
                         "i|hi([^ae]|$)",
                         "{0} e {1}",
                     )
-                    .expect("Valid regex and pattern"),
+                    .expect("Valid regex and pattern");
+            } else if M::KEY == OrListV1Marker::KEY {
                 // Replace " o " with " u " before /o/ sound.
                 // https://unicode.org/reports/tr35/tr35-general.html#:~:text=agua%20e%20hielo-,OR,-Use%20%E2%80%98u%E2%80%99%20instead
-                OrListV1Marker::KEY => patterns
+                patterns
                     .make_conditional(
                         "{0} o {1}",
                         // Starts with o, ho, 8 (including 80, 800, ...), or 11 either alone or followed
@@ -87,8 +91,7 @@ impl<M: ResourceMarker<Yokeable = ListFormatterPatternsV1<'static>>> ResourcePro
                         r"o|ho|8|(11(\.?\d\d\d)*(,\d*)?([^\.,\d]|$))",
                         "{0} u {1}",
                     )
-                    .expect("Valid regex and pattern"),
-                _ => unreachable!(),
+                    .expect("Valid regex and pattern");
             }
         }
 
