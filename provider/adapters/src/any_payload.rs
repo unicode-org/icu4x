@@ -41,6 +41,7 @@ pub struct AnyPayloadProvider {
 }
 
 impl AnyPayloadProvider {
+    /// Creates an `AnyPayloadProvider` with an owned (allocated) payload of the given data.
     pub fn new_owned<M: ResourceMarker + 'static>(data: M::Yokeable) -> Self {
         AnyPayloadProvider {
             key: M::KEY,
@@ -50,6 +51,7 @@ impl AnyPayloadProvider {
         }
     }
 
+    /// Creates an `AnyPayloadProvider` with a statically borrowed payload of the given data.
     pub fn new_static<M: ResourceMarker>(data: &'static M::Yokeable) -> Self {
         AnyPayloadProvider {
             key: M::KEY,
@@ -57,6 +59,7 @@ impl AnyPayloadProvider {
         }
     }
 
+    /// Creates an `AnyPayloadProvider` with the default (allocated) version of the data struct.
     pub fn new_default<M: ResourceMarker + 'static>() -> Self
     where
         M::Yokeable: Default,
