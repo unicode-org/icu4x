@@ -1112,7 +1112,7 @@ export class ICU4XGregorianDateFormat {
     return diplomat_out;
   }
 
-  format_to_write(value) {
+  format_datetime(value) {
     const diplomat_out = diplomatRuntime.withWriteable(wasm, (writeable) => {
       return (() => {
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
@@ -1122,7 +1122,7 @@ export class ICU4XGregorianDateFormat {
           size: 5,
           align: 4,
         });
-        wasm.ICU4XGregorianDateFormat_format_to_write(diplomat_receive_buffer, this.underlying, value.underlying, writeable);
+        wasm.ICU4XGregorianDateFormat_format_datetime(diplomat_receive_buffer, this.underlying, value.underlying, writeable);
         const is_ok = (new Uint8Array(wasm.memory.buffer, diplomat_receive_buffer + 4, 1))[0] == 1;
         if (is_ok) {
           const ok_value = {};
@@ -1146,7 +1146,7 @@ export class ICU4XGregorianDateTime {
     this.underlying = underlying;
   }
 
-  static new_gregorian_datetime(year, month, day, hour, minute, second) {
+  static try_new(year, month, day, hour, minute, second) {
     const diplomat_out = (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
       const result_tag = {};
@@ -1155,7 +1155,7 @@ export class ICU4XGregorianDateTime {
         size: 5,
         align: 4,
       });
-      wasm.ICU4XGregorianDateTime_new_gregorian_datetime(diplomat_receive_buffer, year, month, day, hour, minute, second);
+      wasm.ICU4XGregorianDateTime_try_new(diplomat_receive_buffer, year, month, day, hour, minute, second);
       const is_ok = (new Uint8Array(wasm.memory.buffer, diplomat_receive_buffer + 4, 1))[0] == 1;
       if (is_ok) {
         const ok_value = (() => {
@@ -1208,7 +1208,7 @@ export class ICU4XGregorianDateTimeFormat {
     return diplomat_out;
   }
 
-  format_to_write(value) {
+  format_datetime(value) {
     const diplomat_out = diplomatRuntime.withWriteable(wasm, (writeable) => {
       return (() => {
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
@@ -1218,7 +1218,7 @@ export class ICU4XGregorianDateTimeFormat {
           size: 5,
           align: 4,
         });
-        wasm.ICU4XGregorianDateTimeFormat_format_to_write(diplomat_receive_buffer, this.underlying, value.underlying, writeable);
+        wasm.ICU4XGregorianDateTimeFormat_format_datetime(diplomat_receive_buffer, this.underlying, value.underlying, writeable);
         const is_ok = (new Uint8Array(wasm.memory.buffer, diplomat_receive_buffer + 4, 1))[0] == 1;
         if (is_ok) {
           const ok_value = {};
@@ -1268,7 +1268,7 @@ export class ICU4XGregorianTimeFormat {
     return diplomat_out;
   }
 
-  format_to_write(value) {
+  format_datetime(value) {
     const diplomat_out = diplomatRuntime.withWriteable(wasm, (writeable) => {
       return (() => {
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
@@ -1278,7 +1278,7 @@ export class ICU4XGregorianTimeFormat {
           size: 5,
           align: 4,
         });
-        wasm.ICU4XGregorianTimeFormat_format_to_write(diplomat_receive_buffer, this.underlying, value.underlying, writeable);
+        wasm.ICU4XGregorianTimeFormat_format_datetime(diplomat_receive_buffer, this.underlying, value.underlying, writeable);
         const is_ok = (new Uint8Array(wasm.memory.buffer, diplomat_receive_buffer + 4, 1))[0] == 1;
         if (is_ok) {
           const ok_value = {};

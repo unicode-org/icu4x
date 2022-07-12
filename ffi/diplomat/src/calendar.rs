@@ -16,9 +16,9 @@ pub mod ffi {
     pub struct ICU4XGregorianDateTime(pub DateTime<Gregorian>);
 
     impl ICU4XGregorianDateTime {
-        /// Creates a new [`ICU4XGregorianDateTime`] from locale data.
+        /// Creates a new [`ICU4XGregorianDateTime`] from the specified date and time.
         #[diplomat::rust_link(icu::calendar::DateTime::new_gregorian_datetime, FnInStruct)]
-        pub fn new_gregorian_datetime(
+        pub fn try_new(
             year: i32,
             month: u8,
             day: u8,

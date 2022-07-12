@@ -21,6 +21,8 @@ pub mod ffi {
     /// An ICU4X TimeFormat object capable of formatting a [`ICU4XGregorianDateTime`] as a string,
     /// using the Gregorian Calendar.
     #[diplomat::rust_link(icu::datetime::TimeFormat, Struct)]
+    // TODO(#2153) - Rename to ICU4XTimeFormat when we remove the dependency on calendar
+    // from TimeFormat.
     pub struct ICU4XGregorianTimeFormat(pub TimeFormat<Gregorian>);
 
     pub enum ICU4XTimeLength {
@@ -81,7 +83,7 @@ pub mod ffi {
 
         /// Formats a [`ICU4XGregorianDateTime`] to a string.
         #[diplomat::rust_link(icu::datetime::TimeFormat::format_to_write, FnInStruct)]
-        pub fn format_to_write(
+        pub fn format_datetime(
             &self,
             value: &ICU4XGregorianDateTime,
             write: &mut diplomat_runtime::DiplomatWriteable,
@@ -137,7 +139,7 @@ pub mod ffi {
 
         /// Formats a [`ICU4XGregorianDateTime`] to a string.
         #[diplomat::rust_link(icu::datetime::DateFormat::format_to_write, FnInStruct)]
-        pub fn format_to_write(
+        pub fn format_datetime(
             &self,
             value: &ICU4XGregorianDateTime,
             write: &mut diplomat_runtime::DiplomatWriteable,
@@ -211,7 +213,7 @@ pub mod ffi {
 
         /// Formats a [`ICU4XGregorianDateTime`] to a string.
         #[diplomat::rust_link(icu::datetime::DateTimeFormat::format_to_write, FnInStruct)]
-        pub fn format_to_write(
+        pub fn format_datetime(
             &self,
             value: &ICU4XGregorianDateTime,
             write: &mut diplomat_runtime::DiplomatWriteable,

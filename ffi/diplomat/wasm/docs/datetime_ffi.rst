@@ -13,7 +13,7 @@
         Creates a new :js:class:`ICU4XGregorianDateFormat` from locale data.
         See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/icu/decimal/struct.DateFormat.html#method.try_new>`__ for more information.
 
-    .. js:function:: format_to_write(value)
+    .. js:function:: format_datetime(value)
 
         Formats a :js:class:`ICU4XGregorianDateTime` to a string.
         See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.DateFormat.html#method.format_to_write>`__ for more information.
@@ -28,7 +28,7 @@
         Creates a new :js:class:`ICU4XGregorianDateFormat` from locale data.
         See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.DateTimeFormat.html#method.try_new>`__ for more information.
 
-    .. js:function:: format_to_write(value)
+    .. js:function:: format_datetime(value)
 
         Formats a :js:class:`ICU4XGregorianDateTime` to a string.
         See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.DateTimeFormat.html#method.format_to_write>`__ for more information.
@@ -43,7 +43,7 @@
         Creates a new :js:class:`ICU4XGregorianTimeFormat` from locale data.
         See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/icu/decimal/struct.DateFormat.html#method.try_new>`__ for more information.
 
-    .. js:function:: format_to_write(value)
+    .. js:function:: format_datetime(value)
 
         Formats a :js:class:`ICU4XGregorianDateTime` to a string.
         See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TimeFormat.html#method.format_to_write>`__ for more information.

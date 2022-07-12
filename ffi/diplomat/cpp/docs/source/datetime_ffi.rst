@@ -21,12 +21,12 @@
         Creates a new :cpp:class:`ICU4XGregorianDateFormat` from locale data.
         See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/icu/decimal/struct.DateFormat.html#method.try_new>`__ for more information.
 
-    .. cpp:function:: template<typename W> diplomat::result<std::monostate, ICU4XError> format_to_write_to_writeable(const ICU4XGregorianDateTime& value, W& write) const
+    .. cpp:function:: template<typename W> diplomat::result<std::monostate, ICU4XError> format_datetime_to_writeable(const ICU4XGregorianDateTime& value, W& write) const
 
         Formats a :cpp:class:`ICU4XGregorianDateTime` to a string.
         See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.DateFormat.html#method.format_to_write>`__ for more information.
 
-    .. cpp:function:: diplomat::result<std::string, ICU4XError> format_to_write(const ICU4XGregorianDateTime& value) const
+    .. cpp:function:: diplomat::result<std::string, ICU4XError> format_datetime(const ICU4XGregorianDateTime& value) const
 
         Formats a :cpp:class:`ICU4XGregorianDateTime` to a string.
         See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.DateFormat.html#method.format_to_write>`__ for more information.
@@ -41,12 +41,12 @@
         Creates a new :cpp:class:`ICU4XGregorianDateFormat` from locale data.
         See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.DateTimeFormat.html#method.try_new>`__ for more information.
 
-    .. cpp:function:: template<typename W> diplomat::result<std::monostate, ICU4XError> format_to_write_to_writeable(const ICU4XGregorianDateTime& value, W& write) const
+    .. cpp:function:: template<typename W> diplomat::result<std::monostate, ICU4XError> format_datetime_to_writeable(const ICU4XGregorianDateTime& value, W& write) const
 
         Formats a :cpp:class:`ICU4XGregorianDateTime` to a string.
         See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.DateTimeFormat.html#method.format_to_write>`__ for more information.
 
-    .. cpp:function:: diplomat::result<std::string, ICU4XError> format_to_write(const ICU4XGregorianDateTime& value) const
+    .. cpp:function:: diplomat::result<std::string, ICU4XError> format_datetime(const ICU4XGregorianDateTime& value) const
 
         Formats a :cpp:class:`ICU4XGregorianDateTime` to a string.
         See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.DateTimeFormat.html#method.format_to_write>`__ for more information.
@@ -61,12 +61,12 @@
         Creates a new :cpp:class:`ICU4XGregorianTimeFormat` from locale data.
         See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/icu/decimal/struct.DateFormat.html#method.try_new>`__ for more information.
 
-    .. cpp:function:: template<typename W> diplomat::result<std::monostate, ICU4XError> format_to_write_to_writeable(const ICU4XGregorianDateTime& value, W& write) const
+    .. cpp:function:: template<typename W> diplomat::result<std::monostate, ICU4XError> format_datetime_to_writeable(const ICU4XGregorianDateTime& value, W& write) const
 
         Formats a :cpp:class:`ICU4XGregorianDateTime` to a string.
         See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TimeFormat.html#method.format_to_write>`__ for more information.
 
-    .. cpp:function:: diplomat::result<std::string, ICU4XError> format_to_write(const ICU4XGregorianDateTime& value) const
+    .. cpp:function:: diplomat::result<std::string, ICU4XError> format_datetime(const ICU4XGregorianDateTime& value) const
 
         Formats a :cpp:class:`ICU4XGregorianDateTime` to a string.
         See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TimeFormat.html#method.format_to_write>`__ for more information.

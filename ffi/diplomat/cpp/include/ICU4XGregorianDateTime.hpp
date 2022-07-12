@@ -34,11 +34,11 @@ class ICU4XGregorianDateTime {
  public:
 
   /**
-   * Creates a new [`ICU4XGregorianDateTime`] from locale data.
+   * Creates a new [`ICU4XGregorianDateTime`] from the specified date and time.
    * 
    * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html#method.new_gregorian_datetime) for more information.
    */
-  static diplomat::result<ICU4XGregorianDateTime, ICU4XError> new_gregorian_datetime(int32_t year, uint8_t month, uint8_t day, uint8_t hour, uint8_t minute, uint8_t second);
+  static diplomat::result<ICU4XGregorianDateTime, ICU4XError> try_new(int32_t year, uint8_t month, uint8_t day, uint8_t hour, uint8_t minute, uint8_t second);
   inline const capi::ICU4XGregorianDateTime* AsFFI() const { return this->inner.get(); }
   inline capi::ICU4XGregorianDateTime* AsFFIMut() { return this->inner.get(); }
   inline ICU4XGregorianDateTime(capi::ICU4XGregorianDateTime* i) : inner(i) {}
@@ -50,8 +50,8 @@ class ICU4XGregorianDateTime {
 };
 
 
-inline diplomat::result<ICU4XGregorianDateTime, ICU4XError> ICU4XGregorianDateTime::new_gregorian_datetime(int32_t year, uint8_t month, uint8_t day, uint8_t hour, uint8_t minute, uint8_t second) {
-  auto diplomat_result_raw_out_value = capi::ICU4XGregorianDateTime_new_gregorian_datetime(year, month, day, hour, minute, second);
+inline diplomat::result<ICU4XGregorianDateTime, ICU4XError> ICU4XGregorianDateTime::try_new(int32_t year, uint8_t month, uint8_t day, uint8_t hour, uint8_t minute, uint8_t second) {
+  auto diplomat_result_raw_out_value = capi::ICU4XGregorianDateTime_try_new(year, month, day, hour, minute, second);
   diplomat::result<ICU4XGregorianDateTime, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
     diplomat_result_out_value = diplomat::Ok(ICU4XGregorianDateTime(diplomat_result_raw_out_value.ok));

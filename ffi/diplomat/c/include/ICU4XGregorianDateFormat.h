@@ -20,7 +20,7 @@ typedef struct ICU4XGregorianDateFormat ICU4XGregorianDateFormat;
 
 diplomat_result_box_ICU4XGregorianDateFormat_ICU4XError ICU4XGregorianDateFormat_try_new(const ICU4XLocale* locale, const ICU4XDataProvider* provider, ICU4XDateLength length);
 
-diplomat_result_void_ICU4XError ICU4XGregorianDateFormat_format_to_write(const ICU4XGregorianDateFormat* self, const ICU4XGregorianDateTime* value, DiplomatWriteable* write);
+diplomat_result_void_ICU4XError ICU4XGregorianDateFormat_format_datetime(const ICU4XGregorianDateFormat* self, const ICU4XGregorianDateTime* value, DiplomatWriteable* write);
 void ICU4XGregorianDateFormat_destroy(ICU4XGregorianDateFormat* self);
 
 #ifdef __cplusplus
